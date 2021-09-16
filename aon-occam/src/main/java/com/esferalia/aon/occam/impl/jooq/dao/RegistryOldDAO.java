@@ -13,7 +13,6 @@ import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
@@ -52,7 +51,6 @@ import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
@@ -76,7 +74,6 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
-import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
@@ -120,6 +117,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class RegistryOldDAO {
@@ -408,7 +406,7 @@ public class RegistryOldDAO {
 		ctx.getDslContext().update(CREDITOR)
 			.set(CREDITOR.ACCOUNT,account)
 			.set(CREDITOR.MODIFICATION_USER,ctx.getUser())
-			.set(CREDITOR.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(CREDITOR.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.where(CREDITOR.REGISTRY.eq(registry))
 			.execute();
 		ctx.log().info("ACCOUNT " + account + " LINKED TO CREDITOR " + registry);
@@ -423,7 +421,7 @@ public class RegistryOldDAO {
 		ctx.getDslContext().update(CUSTOMER)
 		.set(CUSTOMER.ACCOUNT,account)
 		.set(CUSTOMER.MODIFICATION_USER,ctx.getUser())
-		.set(CUSTOMER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+		.set(CUSTOMER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 		.where(CUSTOMER.REGISTRY.eq(registry))
 		.execute();
 	ctx.log().info("ACCOUNT " + account + " LINKED TO CUSTOMER " + registry);
@@ -437,7 +435,7 @@ public class RegistryOldDAO {
 		ctx.getDslContext().update(SUPPLIER)
 		.set(SUPPLIER.ACCOUNT,account)
 		.set(SUPPLIER.MODIFICATION_USER,ctx.getUser())
-		.set(SUPPLIER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+		.set(SUPPLIER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 		.where(SUPPLIER.REGISTRY.eq(registry))
 		.execute();
 	ctx.log().info("ACCOUNT " + account + " LINKED TO SUPPLIER " + registry);
@@ -796,9 +794,9 @@ public class RegistryOldDAO {
 					,AonEnumUtils.getByte(customer.getTransaction())
 					,AonEnumUtils.getByte(customer.isWithholding())
 					,ctx.getUser()
-					,new Timestamp(new Date().getTime())
+					,new Timestamp(new Date().getTime()).toLocalDateTime()
 					,ctx.getUser()
-					,new Timestamp(new Date().getTime()))
+					,new Timestamp(new Date().getTime()).toLocalDateTime())
 			.execute();
 		return customer;
 	}
@@ -876,8 +874,8 @@ public class RegistryOldDAO {
 				CREDITOR.CREATION_USER, CREDITOR.CREATION_DATE, CREDITOR.MODIFICATION_USER, CREDITOR.MODIFICATION_DATE)
 			.values(creditor.getAccount(), creditor.getDomain().getId(), creditor.getId(),
 					creditor.getScope(), creditor.getStatus().value(), creditor.getTransaction().value(),
-					AonEnumUtils.getByte(creditor.isWithholding()),ctx.getUser(), new Timestamp(new Date().getTime()),
-					ctx.getUser(), new Timestamp(new Date().getTime()))
+					AonEnumUtils.getByte(creditor.isWithholding()),ctx.getUser(), new Timestamp(new Date().getTime()).toLocalDateTime(),
+					ctx.getUser(), new Timestamp(new Date().getTime()).toLocalDateTime())
 			.execute();
 		return creditor;
 	}
@@ -911,8 +909,8 @@ public class RegistryOldDAO {
 					AonEnumUtils.getByte(supplier.getTransaction()), 
 					supplier.getStatus().value(), supplier.getScope(), 
 					AonEnumUtils.getByte(supplier.isPurchaseValuated()), 
-					supplier.getAccount(), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(),
-					new Timestamp(new Date().getTime())).execute();
+					supplier.getAccount(), ctx.getUser(), new Timestamp(new Date().getTime()).toLocalDateTime(), ctx.getUser(),
+					new Timestamp(new Date().getTime()).toLocalDateTime()).execute();
 		return supplier;
 	}
 	
@@ -1030,7 +1028,7 @@ public class RegistryOldDAO {
 	
 	public static RegistryAddInfo insertRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo){
 		return ctx.getDslContext().insertInto(RADDINFO,RADDINFO.DOMAIN, RADDINFO.REGISTRY, RADDINFO.ATTRIBUTE, RADDINFO.VALUE, RADDINFO.VALUE_DATE)
-			.values(raddinfo.getDomain(), raddinfo.getRegistry(), raddinfo.getAttribute(), raddinfo.getValue(), new java.sql.Date(raddinfo.getDate().getTime()))
+			.values(raddinfo.getDomain(), raddinfo.getRegistry(), raddinfo.getAttribute(), raddinfo.getValue(), AonDateUtils.toLocalDate(raddinfo.getDate()))
 			.returning()
 			.fetch().stream().map(new RegistryAddInfoFiller()).findFirst().orElse(new RegistryAddInfo());
 	}
@@ -1038,7 +1036,7 @@ public class RegistryOldDAO {
 	public static RegistryAddInfo updateRegistryAddInfo(AONContext ctx, RegistryAddInfo raddinfo){
 		return ctx.getDslContext().update(RADDINFO)
 				.set(RADDINFO.VALUE, raddinfo.getValue())
-				.set(RADDINFO.VALUE_DATE, new java.sql.Date(raddinfo.getDate().getTime()))
+				.set(RADDINFO.VALUE_DATE, AonDateUtils.toLocalDate(raddinfo.getDate()))
 				.where(RADDINFO.ID.eq(raddinfo.getId()))
 			.returning()
 			.fetch().stream().map(new RegistryAddInfoFiller()).findFirst().orElse(new RegistryAddInfo());
@@ -1101,10 +1099,10 @@ public class RegistryOldDAO {
 					.setId(r.getValue(RPROFILE.ID))
 					.setRegistry(r.getValue(RPROFILE.REGISTRY))
 					.setDomain(r.getValue(RPROFILE.DOMAIN))
-					.setLastUpdate(r.getValue(RPROFILE.LAST_UPDATE))
+					.setLastUpdate(AonDateUtils.toDate(r.getValue(RPROFILE.LAST_UPDATE)))
 					.setQuestion(r.getValue(RPROFILE.QUESTION))
 					.setValueText(r.getValue(RPROFILE.VALUE_TEXT))
-					.setValueDate(r.getValue(RPROFILE.VALUE_DATE))
+					.setValueDate(AonDateUtils.toDate(r.getValue(RPROFILE.VALUE_DATE)))
 					.setValueNumber(r.getValue(RPROFILE.VALUE_NUMBER));
 		}
 	}
@@ -1157,7 +1155,7 @@ public class RegistryOldDAO {
 					.setDomain(r.getValue(RADDINFO.DOMAIN))
 					.setAttribute(r.getValue(RADDINFO.ATTRIBUTE))
 					.setValue(r.getValue(RADDINFO.VALUE))
-					.setDate(r.getValue(RADDINFO.VALUE_DATE));
+					.setDate(AonDateUtils.toDate(r.getValue(RADDINFO.VALUE_DATE)));
 		}
 	}
 

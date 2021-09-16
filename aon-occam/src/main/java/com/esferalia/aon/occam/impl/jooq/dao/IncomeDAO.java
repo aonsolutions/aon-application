@@ -93,7 +93,7 @@ public class IncomeDAO {
 			.values(incomeDetail.getDomain(), incomeDetail.getIncome() != null ? incomeDetail.getIncome().getId() : null, incomeDetail.getItem() != null ? incomeDetail.getItem().getId() : null,
 					line.shortValue(), incomeDetail.getPrice(), incomeDetail.getProject() != null ? incomeDetail.getProject().getId() : null, incomeDetail.getPurchaseDetail(),
 					incomeDetail.getQuantity(), incomeDetail.getWarehouse(), incomeDetail.getDescription(), incomeDetail.getDiscountExpression(),
-					ctx.getUser(), AonDateUtils.toTimestamp(new Date()), ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
+					ctx.getUser(), AonDateUtils.toLocalDateTime(new Date()), ctx.getUser(), AonDateUtils.toTimestamp(new Date()).toLocalDateTime())
 			.returning().fetch().stream().map(new IncomeDetailFiller()).findFirst();
 	}
 	
@@ -111,7 +111,7 @@ public class IncomeDAO {
 				.set(INCOME_DETAIL.DESCRIPTION, incomeDetail.getDescription())
 				.set(INCOME_DETAIL.DISCOUNT_EXPR, incomeDetail.getDiscountExpression())
 				.set(INCOME_DETAIL.MODIFICATION_USER, ctx.getUser())
-				.set(INCOME_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+				.set(INCOME_DETAIL.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 			.where(INCOME_DETAIL.ID.eq(incomeDetail.getId()))
 			.returning().fetch().stream().map(new IncomeDetailFiller()).findFirst();
 	}
@@ -161,7 +161,7 @@ public class IncomeDAO {
 				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
 				.and(workplaceCondition)
 				.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toSql(date)))
+				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toLocalDate(date)))
 				.orderBy(INCOME.ISSUE_TIME.desc())
 				.limit(1).fetch().stream().map(new SpecialIncomeDetailFiller())
 				.findFirst().orElse(new IncomeDetail());
@@ -176,7 +176,7 @@ public class IncomeDAO {
 				.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
 				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
 				.and(workplaceCondition).and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(INCOME.ISSUE_TIME.greaterOrEqual(AonDateUtils.toSql(startDate)))
+				.and(INCOME.ISSUE_TIME.greaterOrEqual(AonDateUtils.toLocalDate(startDate)))
 				.and(INCOME_DETAIL.ID.notIn(ctx.getDslContext().select(INVOICE_DETAIL.SOURCE_ID)
 						.from(INVOICE_DETAIL)															
 						.where(INVOICE_DETAIL.SOURCE.eq((byte)4))
@@ -205,8 +205,8 @@ public class IncomeDAO {
 				.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
 				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
 				.and(workplaceCondition).and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toSql(date)))
-				.and(INCOME.ISSUE_TIME.greaterOrEqual(AonDateUtils.toSql(startDate)))
+				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toLocalDate(date)))
+				.and(INCOME.ISSUE_TIME.greaterOrEqual(AonDateUtils.toLocalDate(startDate)))
 				.and(INCOME_DETAIL.ID.notIn(list))
 				.orderBy(INCOME.ISSUE_TIME.desc()
 						,INCOME_DETAIL.ID.desc()).fetch().stream()
@@ -218,8 +218,8 @@ public class IncomeDAO {
 				.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
 				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
 				.and(workplaceCondition).and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toSql(date)))
-				.and(INCOME.ISSUE_TIME.greaterOrEqual(AonDateUtils.toSql(startDate)))
+				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toLocalDate(date)))
+				.and(INCOME.ISSUE_TIME.greaterOrEqual(AonDateUtils.toLocalDate(startDate)))
 				.orderBy(INCOME.ISSUE_TIME.desc()
 							,INCOME_DETAIL.ID.desc()).fetch().stream()
 				.map(new SpecialIncomeDetailFiller()).collect(Collectors.toCollection(LinkedList::new));	
@@ -264,7 +264,7 @@ public class IncomeDAO {
 						,INCOME_DETAIL.QUANTITY)
 				.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
 				.where(INCOME_DETAIL.ITEM.eq(item.getId()))
-				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toSql(date)))
+				.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toLocalDate(date)))
 				.and(workplaceCondition).and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 				.orderBy(INCOME.ISSUE_TIME.desc()
 						,INCOME_DETAIL.ID.desc())
@@ -277,7 +277,7 @@ public class IncomeDAO {
 		
 		@Override
 		public IncomeDetail apply(Record r) {
-			return new IncomeDetail().setIncome(new Income().setIssueDate(r.getValue(INCOME.ISSUE_TIME)))
+			return new IncomeDetail().setIncome(new Income().setIssueDate(AonDateUtils.toDate(r.getValue(INCOME.ISSUE_TIME))))
 					.setPrice(r.getValue(INCOME_DETAIL.PRICE)).setId(r.getValue(INVOICE_DETAIL.ID))
 					.setDiscountExpression(r.getValue(INCOME_DETAIL.DISCOUNT_EXPR) != null
 							? r.getValue(INCOME_DETAIL.DISCOUNT_EXPR) : "0.0")
@@ -387,7 +387,7 @@ public class IncomeDAO {
 					.setStatus(AonEnumUtils.enumValue(IncomeStatus.class,
 									record.getValue(INCOME.STATUS)))
 					.setReferenceCode(record.getValue(INCOME.REFERENCE_CODE))
-					.setIssueDate(record.getValue(INCOME.ISSUE_TIME))
+					.setIssueDate(AonDateUtils.toDate(record.getValue(INCOME.ISSUE_TIME)))
 					.setSupplier2(supplier)
 					.setScopeName(record.getValue(SCOPE.DESCRIPTION))	
 					.setWorkplaceName(record.getValue(WORKPLACE.DESCRIPTION))
@@ -436,7 +436,7 @@ public class IncomeDAO {
 					.setStatus(AonEnumUtils.enumValue(IncomeStatus.class,
 									record.getValue(INCOME.STATUS)))
 					.setReferenceCode(record.getValue(INCOME.REFERENCE_CODE))
-					.setIssueDate(record.getValue(INCOME.ISSUE_TIME))
+					.setIssueDate(AonDateUtils.toDate(record.getValue(INCOME.ISSUE_TIME)))
 					.setSupplier2(supplier)
 					)
 				.setLine(record.getValue(INCOME_DETAIL.LINE))

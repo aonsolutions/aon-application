@@ -51,10 +51,10 @@ public class FinanceUtilitiesDAO {
 			where = where.and(INVOICE.TYPE.eq( params.getInvoiceType().value()));
 		}
 		if (params != null && params.getFromDate() != null) {
-			where = where.and(INVOICE.ISSUE_DATE.ge( AonDateUtils.toSql( params.getFromDate() )));
+			where = where.and(INVOICE.ISSUE_DATE.ge( AonDateUtils.toLocalDate( params.getFromDate() )));
 		}
 		if (params != null && params.getToDate() != null) {
-			where = where.and(INVOICE.ISSUE_DATE.le( AonDateUtils.toSql( params.getToDate() )));
+			where = where.and(INVOICE.ISSUE_DATE.le( AonDateUtils.toLocalDate( params.getToDate() )));
 		}
 		ctx.getDslContext().select()
 			.from(INVOICE)
@@ -95,8 +95,8 @@ public class FinanceUtilitiesDAO {
 					.setSeries(record.getValue(INVOICE.SERIES))
 					.setNumber(record.getValue(INVOICE.NUMBER))
 					.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-					.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+					.setIssueDate(AonDateUtils.toDate(record.getValue(INVOICE.ISSUE_DATE)))
+					.setTaxDate(AonDateUtils.toDate(record.getValue(INVOICE.TAX_DATE)))
 					.setTotal(record.getValue(INVOICE.TOTAL))
 					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
 					.setRegistry(record.getValue(INVOICE.REGISTRY))
@@ -124,7 +124,7 @@ public class FinanceUtilitiesDAO {
 				.setExpenses(record.getValue(FINANCE.EXPENSES))
 				.setConcept(record.getValue(FINANCE.CONCEPT))
 				.setInvoice(record.getValue(FINANCE.INVOICE)==null?null : new MinimalInvoiceFiller().apply(record)) 
-				.setDueDate(record.getValue(FINANCE.DUE_DATE))
+				.setDueDate(AonDateUtils.toDate(record.getValue(FINANCE.DUE_DATE)))
 				.setPayMethod(record.getValue(FINANCE.PAY_METHOD))
 				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
 				.setPayMethodType(PayMethodType.safeValueOf( record.getValue(PAY_METHOD.TYPE)))
@@ -143,9 +143,9 @@ public class FinanceUtilitiesDAO {
 				.setSourceId(record.getValue(FINANCE.SOURCE_ID))
 				.setFinanceGroup(record.getValue(FINANCE.FINANCE_GROUP))
 				.setCreationUser(record.getValue(FINANCE.CREATION_USER))
-				.setCreationDate(record.getValue(FINANCE.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(FINANCE.CREATION_DATE)))
 				.setModificationUser(record.getValue(FINANCE.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FINANCE.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(record.getValue(FINANCE.MODIFICATION_DATE)))
 				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
 				.setPayMethodType( PayMethodType.safeValueOf(  record.getValue(PAY_METHOD.TYPE)))
 				.setDirty(false)
@@ -187,7 +187,7 @@ public class FinanceUtilitiesDAO {
 						.update(FINANCE)
 						.set(FINANCE.PAYMENT, (byte) (!finance.getInvoice().isSales()?1:0) )
 						.set(FINANCE.MODIFICATION_USER,ctx.getUser())
-						.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 						.where(FINANCE.ID.equal( finance.getId()))
 						.execute();
 					ctx.log().info("[FIX] UPDATE FINANCE  ("+i+") id: " + finance.getId());

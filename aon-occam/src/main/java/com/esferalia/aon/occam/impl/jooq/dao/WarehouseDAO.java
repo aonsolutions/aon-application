@@ -18,6 +18,7 @@ import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TR
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -120,21 +121,21 @@ public class WarehouseDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.DOMAIN);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.COMMENTS);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.CREATION_USER);}
-		@Override public Property<Integer> getInventoryProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.INVENTORY);}
-		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.ISSUE_TIME);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.MODIFICATION_USER);}
-		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.NUMBER);}
-		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.SERIES);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(WAREHOUSE_TRANSFER.SOURCE);}
-		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.SOURCE_ID);}
-		@Override public Property<Integer> getSourceWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE);}
-		@Override public Property<Integer> getTargetWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.DOMAIN);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.COMMENTS);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(WAREHOUSE_TRANSFER.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.CREATION_USER);}
+		@Override public Property<Integer> getInventoryProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.INVENTORY);}
+		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.LocalDateTimePropertyDAO(WAREHOUSE_TRANSFER.ISSUE_TIME);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(WAREHOUSE_TRANSFER.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.MODIFICATION_USER);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.NUMBER);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.SERIES);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.SOURCE_ID);}
+		@Override public Property<Integer> getSourceWarehouseProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE);}
+		@Override public Property<Integer> getTargetWarehouseProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE);}
 	}
 	
 	protected static class WarehouseTransferDetailPropertiesDAO implements WarehouseTransferDetailProperties {
@@ -143,15 +144,15 @@ public class WarehouseDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.DOMAIN);}
-		@Override public Property<Integer> getWarehouseTransferProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER.CREATION_USER);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(WAREHOUSE_TRANSFER_DETAIL.ITEM);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(WAREHOUSE_TRANSFER_DETAIL.QUANTITY);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.DOMAIN);}
+		@Override public Property<Integer> getWarehouseTransferProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(WAREHOUSE_TRANSFER.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER.CREATION_USER);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.ITEM);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(WAREHOUSE_TRANSFER_DETAIL.QUANTITY);}
 	}
 	
 	protected static class DepartmentPropertiesDAO implements DepartmentProperties {
@@ -190,16 +191,16 @@ public class WarehouseDAO {
 				.set(WAREHOUSE_TRANSFER.COMMENTS, warehouseTransfer.getComments())
 				.set(WAREHOUSE_TRANSFER.DOMAIN, warehouseTransfer.getDomain())
 				.set(WAREHOUSE_TRANSFER.INVENTORY, warehouseTransfer.getInventory() != null ? warehouseTransfer.getInventory().getId(): null)				
-				.set(WAREHOUSE_TRANSFER.ISSUE_TIME, new Timestamp(warehouseTransfer.getIssueTime().getTime()))
+				.set(WAREHOUSE_TRANSFER.ISSUE_TIME, AonDateUtils.toLocalDateTime(warehouseTransfer.getIssueTime()))
 				.set(WAREHOUSE_TRANSFER.SERIES, warehouseTransfer.getSeries())
 				.set(WAREHOUSE_TRANSFER.NUMBER, warehouseTransfer.getNumber())
 				.set(WAREHOUSE_TRANSFER.SOURCE, warehouseTransfer.getSource())
 				.set(WAREHOUSE_TRANSFER.SOURCE_ID, warehouseTransfer.getSourceId())
 				.set(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, warehouseTransfer.getSourceWarehouse())
 				.set(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE, warehouseTransfer.getTargetWarehouse())
-				.set(WAREHOUSE_TRANSFER.CREATION_DATE, new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER.CREATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 				.set(WAREHOUSE_TRANSFER.CREATION_USER, ctx.getUser())
-				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE,  new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 				.set(WAREHOUSE_TRANSFER.MODIFICATION_USER, ctx.getUser())
 				.returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
 	}
@@ -209,15 +210,15 @@ public class WarehouseDAO {
 				.set(WAREHOUSE_TRANSFER.COMMENTS, warehouseTransfer.getComments())
 				.set(WAREHOUSE_TRANSFER.DOMAIN, warehouseTransfer.getDomain())
 				.set(WAREHOUSE_TRANSFER.INVENTORY, warehouseTransfer.getInventory() != null ? warehouseTransfer.getInventory().getId(): null)
-				.set(WAREHOUSE_TRANSFER.ISSUE_TIME, new Timestamp(warehouseTransfer.getIssueTime().getTime()))
+				.set(WAREHOUSE_TRANSFER.ISSUE_TIME, AonDateUtils.toLocalDateTime(warehouseTransfer.getIssueTime()))
 				.set(WAREHOUSE_TRANSFER.NUMBER, warehouseTransfer.getNumber())
 				.set(WAREHOUSE_TRANSFER.SOURCE, warehouseTransfer.getSource())
 				.set(WAREHOUSE_TRANSFER.SOURCE_ID, warehouseTransfer.getSourceId())
 				.set(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE, warehouseTransfer.getSourceWarehouse())
 				.set(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE, warehouseTransfer.getTargetWarehouse())
-				.set(WAREHOUSE_TRANSFER.CREATION_DATE, new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER.CREATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 				.set(WAREHOUSE_TRANSFER.CREATION_USER, ctx.getUser())
-				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE,new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 				.set(WAREHOUSE_TRANSFER.MODIFICATION_USER, ctx.getUser())
 				.where(WAREHOUSE_TRANSFER.ID.eq(warehouseTransfer.getId()))
 				.execute();
@@ -229,21 +230,21 @@ public class WarehouseDAO {
 				.set(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER, warehouseTransferDetail.getWarehouseTransfer().getId())
 				.set(WAREHOUSE_TRANSFER_DETAIL.ITEM, warehouseTransferDetail.getItem().getId())
 				.set(WAREHOUSE_TRANSFER_DETAIL.QUANTITY, warehouseTransferDetail.getQuantity())
-				.set(WAREHOUSE_TRANSFER_DETAIL.CREATION_DATE, new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER_DETAIL.CREATION_DATE, DSL.currentLocalDateTime())
 				.set(WAREHOUSE_TRANSFER_DETAIL.CREATION_USER, ctx.getUser())
-				.set(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+				.set(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE, DSL.currentLocalDateTime())
 				.set(WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER, ctx.getUser())
 				.returning(WAREHOUSE_TRANSFER.ID).fetchOne().getId();
 	}
 
 	public static Integer insertWarehouseTransferDetail(AONContext ctx, Stream<WarehouseTransferDetail> warehouseTransferDetail){
-		InsertValuesStep8<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double, Timestamp, String, Timestamp, String> jooq =
+		InsertValuesStep8<WarehouseTransferDetailRecord, Integer, Integer, Integer, Double, LocalDateTime, String, LocalDateTime, String> jooq =
 				ctx.getDslContext().insertInto(WAREHOUSE_TRANSFER_DETAIL, WAREHOUSE_TRANSFER_DETAIL.DOMAIN, WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER,
 				WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.QUANTITY, WAREHOUSE_TRANSFER_DETAIL.CREATION_DATE, WAREHOUSE_TRANSFER_DETAIL.CREATION_USER,
 				WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_DATE, WAREHOUSE_TRANSFER_DETAIL.MODIFICATION_USER);
 		warehouseTransferDetail.forEach(wtd -> {
 			jooq.values(wtd.getDomain(), wtd.getWarehouseTransfer().getId(), wtd.getItem().getId(), wtd.getQuantity(),
-					new Timestamp(new Date().getTime()), ctx.getUser(),new Timestamp(new Date().getTime()), ctx.getUser());
+					AonDateUtils.toLocalDateTime(new Date()), ctx.getUser(), AonDateUtils.toLocalDateTime(new Date()), ctx.getUser());
 		});
 		return jooq.execute();
 	}
@@ -521,10 +522,8 @@ public class WarehouseDAO {
 	public static void insertDeliveryDetail(AONContext ctx,
 			DeliveryDetail detail) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+		LocalDateTime creationDate = AonDateUtils.toLocalDateTime(new Date());
+		LocalDateTime modificationDate = AonDateUtils.toLocalDateTime(new Date());
 		ctx.getDslContext()
 				.insertInto(DELIVERY_DETAIL, DELIVERY_DETAIL.DOMAIN,
 						DELIVERY_DETAIL.DELIVERY, DELIVERY_DETAIL.LINE,
@@ -549,10 +548,8 @@ public class WarehouseDAO {
 			List<DeliveryDetail> list) {
 		ctx.checkWrite();
 		list.forEach(detail -> {
-			Timestamp creationDate = null, modificationDate = null;
-			creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-			modificationDate = new java.sql.Timestamp(
-					new java.util.Date().getTime());
+			LocalDateTime creationDate = AonDateUtils.toLocalDateTime(new Date());
+			LocalDateTime modificationDate = AonDateUtils.toLocalDateTime(new Date());
 			ctx.getDslContext()
 			.insertInto(DELIVERY_DETAIL, DELIVERY_DETAIL.DOMAIN,
 					DELIVERY_DETAIL.DELIVERY, DELIVERY_DETAIL.LINE,
@@ -576,10 +573,8 @@ public class WarehouseDAO {
 	
 	public static void updateDelivery(AONContext ctx, Delivery delivery) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+		LocalDateTime creationDate = AonDateUtils.toLocalDateTime(new Date());
+		LocalDateTime modificationDate = AonDateUtils.toLocalDateTime(new Date());
 		
 		ctx.getDslContext().update(DELIVERY)
 		.set(DELIVERY.DOMAIN, delivery.getDomain())
@@ -588,7 +583,7 @@ public class WarehouseDAO {
 		.set(DELIVERY.NUMBER, delivery.getNumber())
 		.set(DELIVERY.CUSTOMER, delivery.getCustomer())
 		.set(DELIVERY.ADDRESS, delivery.getAddress())
-		.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime()!=null?delivery.getIssueTime().getTime():(new Date()).getTime()))
+		.set(DELIVERY.ISSUE_TIME, AonDateUtils.toLocalDateTime(delivery.getIssueTime()!=null?delivery.getIssueTime():(new Date())))
 		.set(DELIVERY.PAY_METHOD, delivery.getPayMethod())
 		.set(DELIVERY.SECURITY_LEVEL, delivery.getSecurityLevel())
 		.set(DELIVERY.STATUS, (byte)delivery.getStatus().ordinal())
@@ -692,13 +687,11 @@ public class WarehouseDAO {
 				.set(CARRIER_PACKING.CARRIER, carrierPacking.getCarrier() != null ? carrierPacking.getCarrier() : 0)
 				.set(CARRIER_PACKING.CARRIER_REFERENCE, carrierPacking.getCarrierReference())
 				.set(CARRIER_PACKING.COMMENTS, carrierPacking.getComments())
-				.set(CARRIER_PACKING.CREATION_DATE, carrierPacking.getCreationDate() != null ? new Timestamp(carrierPacking.getCreationDate().getTime()) : null)
-				.set(CARRIER_PACKING.CREATION_USER, carrierPacking.getCreationUser())
-				.set(CARRIER_PACKING.DELIVERY_DATE, carrierPacking.getDeliveryDate() != null ? new Timestamp(carrierPacking.getDeliveryDate().getTime()) : null)
+				.set(CARRIER_PACKING.DELIVERY_DATE, carrierPacking.getDeliveryDate() != null ? AonDateUtils.toLocalDateTime(carrierPacking.getDeliveryDate()) : null)
 				.set(CARRIER_PACKING.DOMAIN, carrierPacking.getDomain())
 				.set(CARRIER_PACKING.DRIVER_DOCUMENT, carrierPacking.getDriverDocument())
 				.set(CARRIER_PACKING.DRIVER_NAME, carrierPacking.getDriverName())
-				.set(CARRIER_PACKING.ISSUE_DATE, carrierPacking.getIssueDate() != null ? new Timestamp(carrierPacking.getIssueDate().getTime()) : null)
+				.set(CARRIER_PACKING.ISSUE_DATE, carrierPacking.getIssueDate() != null ? AonDateUtils.toLocalDateTime(carrierPacking.getIssueDate()) : null)
 				.set(CARRIER_PACKING.NUMBER, carrierPacking.getNumber())
 				.set(CARRIER_PACKING.NUMBER_PLATE, carrierPacking.getNumberPlate())
 				.set(CARRIER_PACKING.SERIES, carrierPacking.getSeries())
@@ -708,9 +701,9 @@ public class WarehouseDAO {
 				.set(CARRIER_PACKING.TARE, carrierPacking.getTare())
 				.set(CARRIER_PACKING.ADDITIONAL_TARE, carrierPacking.getAdditionalTare())
 				.set(CARRIER_PACKING.NET, carrierPacking.getNet())
-				.set(CARRIER_PACKING.RECEPTION_START_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionStartDate()))
-				.set(CARRIER_PACKING.RECEPTION_END_DATE, AonDateUtils.toTimestamp(carrierPacking.getReceptionEndDate()))
-				.set(CARRIER_PACKING.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+				.set(CARRIER_PACKING.RECEPTION_START_DATE, AonDateUtils.toLocalDateTime(carrierPacking.getReceptionStartDate()))
+				.set(CARRIER_PACKING.RECEPTION_END_DATE, AonDateUtils.toLocalDateTime(carrierPacking.getReceptionEndDate()))
+				.set(CARRIER_PACKING.MODIFICATION_DATE, DSL.currentLocalDateTime())
 				.set(CARRIER_PACKING.MODIFICATION_USER, ctx.getUser())
 			.where(CARRIER_PACKING_PROPERTIES.getConditions(filter))
 			.returning().fetch().stream().map(new CarrierPackingFiller()).findFirst().orElse(new CarrierPacking());
@@ -747,13 +740,13 @@ public class WarehouseDAO {
 		public WarehouseTransfer apply(WarehouseTransferRecord r) {
 			return new WarehouseTransfer()
 					.setComments(r.getComments())
-					.setCreationDate(r.getCreationDate())
+					.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 					.setCreationUser(r.getCreationUser())
 					.setDomain(r.getDomain())
 					.setId(r.getId())
 					.setInventory(new Inventory().setId(r.getInventory()))
-					.setIssueTime(r.getIssueTime())
-					.setModificationDate(r.getModificationDate())
+					.setIssueTime(AonDateUtils.toDate(r.getIssueTime()))
+					.setModificationDate(AonDateUtils.toDate(r.getModificationDate()))
 					.setModificationUser(r.getModificationUser())
 					.setNumber(r.getNumber())
 					.setSeries(r.getSeries())
@@ -770,12 +763,12 @@ public class WarehouseDAO {
 		@Override
 		public WarehouseTransferDetail apply(WarehouseTransferDetailRecord r) {
 			return new WarehouseTransferDetail()
-					.setCreationDate(r.getCreationDate())
+					.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 					.setCreationUser(r.getCreationUser())
 					.setDomain(r.getDomain())
 					.setId(r.getId())
 					.setItem(new OldItem().setId(r.getItem()))
-					.setModificationDate(r.getModificationDate())
+					.setModificationDate(AonDateUtils.toDate(r.getModificationDate()))
 					.setModificationUser(r.getModificationUser())
 					.setQuantity(r.getQuantity())
 					.setWarehouseTransfer(new WarehouseTransfer().setId(r.getWarehouseTransfer()));
@@ -794,7 +787,7 @@ public class WarehouseDAO {
 					.setQuantity(r.getValue(WAREHOUSE_TRANSFER_DETAIL.QUANTITY))
 					.setWarehouseTransfer(new WarehouseTransfer()
 							.setId(r.getValue(WAREHOUSE_TRANSFER.ID))
-							.setIssueTime(r.getValue(WAREHOUSE_TRANSFER.ISSUE_TIME))
+							.setIssueTime(AonDateUtils.toDate(r.getValue(WAREHOUSE_TRANSFER.ISSUE_TIME)))
 							.setSeries(r.getValue(WAREHOUSE_TRANSFER.SERIES))
 							.setNumber(r.getValue(WAREHOUSE_TRANSFER.NUMBER)));
 		}

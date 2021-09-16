@@ -61,7 +61,7 @@ public class Mod190Test {
 				.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
 				.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 				.join(PERSON).on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
-				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)))
+				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toLocalDate(from),AonDateUtils.toLocalDate(to)))
 				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
 				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
 				.and(SALARY.EMPLOYEE_DOCUMENT.equal(detail.getDocument()))

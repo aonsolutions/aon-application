@@ -144,9 +144,9 @@ public class Mod347DAO {
 				.setContactMail(record.getValue(FS_MOD347.CONTACT_MAIL))
 				.setRepresentativeDocument(record.getValue(FS_MOD347.REPRESENTATIVE_DOCUMENT))
 				.setCreationUser(record.getValue(FS_MOD347.CREATION_USER))
-				.setCreationDate(record.getValue(FS_MOD347.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(FS_MOD347.CREATION_DATE)))
 				.setModificationUser(record.getValue(FS_MOD347.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FS_MOD347.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(record.getValue(FS_MOD347.MODIFICATION_DATE)))
 				.setExcludeInputNationalZero(ensureFlag(0,flags))
 				.setExcludeOutputNationalZero(ensureFlag(1,flags))
 				.setExcludeMod180Declared(ensureFlag(2,flags))
@@ -298,7 +298,7 @@ public class Mod347DAO {
 			.set(FS_MOD347.CONTACT_MAIL,mod347.getContactMail())
 			.set(FS_MOD347.REPRESENTATIVE_DOCUMENT,mod347.getRepresentativeDocument())
 			.set(FS_MOD347.CREATION_USER,ctx.getUser())
-			.set(FS_MOD347.CREATION_DATE, new Timestamp(System.currentTimeMillis()))
+			.set(FS_MOD347.CREATION_DATE, new Timestamp(System.currentTimeMillis()).toLocalDateTime())
 		.returning(FS_MOD347.ID)
 		.fetchOne();
 		mod347.setId(record.getId());
@@ -336,7 +336,7 @@ public class Mod347DAO {
 			.set(FS_MOD347.CONTACT_MAIL,mod347.getContactMail())
 			.set(FS_MOD347.REPRESENTATIVE_DOCUMENT,mod347.getRepresentativeDocument())
 			.set(FS_MOD347.MODIFICATION_USER,ctx.getUser())
-			.set(FS_MOD347.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(FS_MOD347.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.where(FS_MOD347.ID.equal(mod347.getId()))
 		.execute();
 		return mod347;

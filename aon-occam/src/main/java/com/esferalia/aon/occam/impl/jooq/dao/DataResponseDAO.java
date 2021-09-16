@@ -48,9 +48,9 @@ public class DataResponseDAO {
 				DATA_RESPONSE.SOURCE, DATA_RESPONSE.SOURCE_ID,
 				DATA_RESPONSE.CREATION_DATE, DATA_RESPONSE.CREATION_USER,
 				DATA_RESPONSE.MODIFICATION_DATE, DATA_RESPONSE.MODIFICATION_USER)
-		.values(dataResponse.getDomain(), dataResponse.getCode(), AonDateUtils.toSql(dataResponse.getResponseDate()),
+		.values(dataResponse.getDomain(), dataResponse.getCode(), AonDateUtils.toLocalDate(dataResponse.getResponseDate()),
 				dataResponse.getSource().value(), dataResponse.getSourceId(),
-				AonDateUtils.toTimestamp(new Date()), ctx.getUser(), AonDateUtils.toTimestamp(new Date()), ctx.getUser())
+				AonDateUtils.toTimestamp(new Date()).toLocalDateTime(), ctx.getUser(), AonDateUtils.toTimestamp(new Date()).toLocalDateTime(), ctx.getUser())
 		.returning().fetch().stream().map(new DataResponseFiller()).findFirst().orElse(dataResponse);
 	}
 	
@@ -58,10 +58,10 @@ public class DataResponseDAO {
 		return ctx.getDslContext().update(DATA_RESPONSE)
 			.set(DATA_RESPONSE.DOMAIN, dataResponse.getDomain())
 			.set(DATA_RESPONSE.CODE, dataResponse.getCode())
-			.set(DATA_RESPONSE.RESPONSE_DATE, AonDateUtils.toSql(dataResponse.getResponseDate())) 
+			.set(DATA_RESPONSE.RESPONSE_DATE, AonDateUtils.toLocalDate(dataResponse.getResponseDate())) 
 			.set(DATA_RESPONSE.SOURCE, dataResponse.getSource().value())
 			.set(DATA_RESPONSE.SOURCE_ID, dataResponse.getSourceId())
-			.set(DATA_RESPONSE.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.set(DATA_RESPONSE.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 			.set(DATA_RESPONSE.MODIFICATION_USER, ctx.getUser())
 			.where(DATA_RESPONSE_PROPERTIES.getConditions(filter))
 			.execute();
@@ -110,7 +110,7 @@ public class DataResponseDAO {
 				DATA_RESPONSE_DETAIL.MODIFICATION_DATE, DATA_RESPONSE_DETAIL.MODIFICATION_USER)
 		.values(dataResponseDetail.getDomain(), dataResponseDetail.getDataResponse(),
 				dataResponseDetail.getDataVariable(), dataResponseDetail.getDataValue(),
-				AonDateUtils.toTimestamp(new Date()), ctx.getUser(), AonDateUtils.toTimestamp(new Date()), ctx.getUser())
+				AonDateUtils.toLocalDateTime(new Date()), ctx.getUser(), AonDateUtils.toLocalDateTime(new Date()), ctx.getUser())
 		.returning().fetch().stream().map(new DataResponseDetailFiller()).findFirst().orElse(dataResponseDetail);
 	}
 
@@ -120,7 +120,7 @@ public class DataResponseDAO {
 			.set(DATA_RESPONSE_DETAIL.DATA_VARIABLE, dataResponseDetail.getDataVariable())
 			.set(DATA_RESPONSE_DETAIL.DOMAIN, dataResponseDetail.getDomain())
 			.set(DATA_RESPONSE_DETAIL.DATA_VALUE, dataResponseDetail.getDataValue())
-			.set(DATA_RESPONSE_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.set(DATA_RESPONSE_DETAIL.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 			.set(DATA_RESPONSE_DETAIL.MODIFICATION_USER, ctx.getUser())
 			.where(DATA_RESPONSE_DETAIL_PROPERTIES.getConditions(filter))
 			.execute();

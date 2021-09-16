@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.TaskTag.TASK_TAG;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
@@ -80,7 +81,7 @@ public class TaskChartTypeVisitor implements ITaskChartTypeVisitor {
 		LinkedList<Date> list = ctx.getDslContext().select(TASK.START_DATE)
 				.from(TASK)
 				.where(getTaskCondition(ctx, params))
-				.fetch().stream().map(r -> r.getValue(TASK.START_DATE))
+				.fetch().stream().map(r -> AonDateUtils.toDate(r.getValue(TASK.START_DATE)))
 				.collect(Collectors.toCollection(LinkedList::new));
 			for(Integer i = 0; i < 24; i++){
 				Integer hora = i;
@@ -113,7 +114,7 @@ public class TaskChartTypeVisitor implements ITaskChartTypeVisitor {
 		LinkedList<Date> list = ctx.getDslContext().select(TASK.START_DATE)
 				.from(TASK)
 				.where(getTaskCondition(ctx, params))
-				.fetch().stream().map(r -> r.getValue(TASK.START_DATE))
+				.fetch().stream().map(r -> AonDateUtils.toDate(r.getValue(TASK.START_DATE)))
 				.collect(Collectors.toCollection(LinkedList::new));
 			for(Integer i = 0; i < 7; i++){
 				Integer day = i;
@@ -124,7 +125,7 @@ public class TaskChartTypeVisitor implements ITaskChartTypeVisitor {
 	
 	@Override
 	public void visitTaskByDay() {
-		Field<java.sql.Date> date = DSL.date(TASK.START_DATE);
+		Field<LocalDateTime> date = DSL.localDateTime(TASK.START_DATE);
 		AggregateFunction<Integer> count = DSL.count(TASK.ID);
 		ctx.getDslContext().select(date, TASK.STATUS,  count)
 			.from(TASK)
@@ -150,8 +151,8 @@ public class TaskChartTypeVisitor implements ITaskChartTypeVisitor {
 	public static Condition getTaskCondition(AONContext ctx, StatParams params) {
 		Condition c = TASK.DOMAIN.eq(ctx.getDomainId())
 				.and(TASK.NUMBER.isNotNull());
-		if (params.getFrom() != null) c = c.and(TASK.START_DATE.ge(new Timestamp(params.getFrom().getTime())));
-		if (params.getTo() != null) c = c.and(TASK.START_DATE.le(new Timestamp(params.getTo().getTime())));
+		if (params.getFrom() != null) c = c.and(TASK.START_DATE.ge(AonDateUtils.toLocalDateTime(params.getFrom())));
+		if (params.getTo() != null) c = c.and(TASK.START_DATE.le(AonDateUtils.toLocalDateTime(params.getTo())));
 		if (params.getIssueFilter() != null && params.getIssueFilter().getState() != null){
 			if(params.getIssueFilter().getState().equals("open"))
 				c = c.and(TASK.STATUS.eq(TaskStatus.PENDING.value())

@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -295,7 +296,7 @@ public class AccountEntryDAO {
 						.setEntryDomain(record.getValue(ACCOUNT_ENTRY.DOMAIN))
 						.setEntryPperiod(record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
 						.setEntryPeriodName(record.getValue(ACCOUNT_PERIOD.NAME))
-						.setEntryDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+						.setEntryDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE)))
 						.setEntryType(AccountEntryType.safeValueOf( record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)))
 						.setActivity(record.getValue(ACCOUNT_ENTRY.ACTIVITY))
 						.setActivityName(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
@@ -303,9 +304,9 @@ public class AccountEntryDAO {
 						.setComments(record.getValue(ACCOUNT_ENTRY.COMMENTS))
 						.setEntrySecurityLevel(SecurityLevel.safeValueOf(record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)))
 						.setEntryCreationUser(record.getValue(ACCOUNT_ENTRY.CREATION_USER))
-						.setEntryCreationDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE))
+						.setEntryCreationDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE)))
 						.setEntryModificationUser(record.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
-						.setEntryModificationDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
+						.setEntryModificationDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE)))
 						.setDetailId(record.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
 						.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 						.setAccountCode(record.getValue(DET_ACCOUNT.CODE))
@@ -367,14 +368,14 @@ public class AccountEntryDAO {
 			.insertInto(ACCOUNT_ENTRY)
 				.set(ACCOUNT_ENTRY.DOMAIN,ae.getDomain())
 				.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ae.getPeriod())
-				.set(ACCOUNT_ENTRY.ENTRY_DATE,AonDateUtils.toSql(ae.getEntryDate()))
+				.set(ACCOUNT_ENTRY.ENTRY_DATE,AonDateUtils.toLocalDate(ae.getEntryDate()))
 				.set(ACCOUNT_ENTRY.ENTRY_TYPE, AonEnumUtils.getByte(ae.getEntryType())) 
 				.set(ACCOUNT_ENTRY.JOURNAL, ae.getJournal())
 				.set(ACCOUNT_ENTRY.ACTIVITY, ae.getActivity())
 				.set(ACCOUNT_ENTRY.SECURITY_LEVEL,  (byte) (ae.isConfidential()?1:0) )
 				.set(ACCOUNT_ENTRY.COMMENTS,ae.getComments())
 				.set(ACCOUNT_ENTRY.CREATION_USER,ctx.getUser())
-				.set(ACCOUNT_ENTRY.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(ACCOUNT_ENTRY.CREATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 				.returning(ACCOUNT_ENTRY.ID)
 				.fetchOne();
 		ae.setId(record.getValue(ACCOUNT_ENTRY.ID));
@@ -403,7 +404,7 @@ public class AccountEntryDAO {
 				.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount())
 				.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
 				.set(ACCOUNT_ENTRY_DETAIL.CREATION_USER,ctx.getUser())
-				.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 			;
 		}
 		if (insertMore != null) {
@@ -418,14 +419,14 @@ public class AccountEntryDAO {
 		int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
 			.set(ACCOUNT_ENTRY.DOMAIN,ae.getDomain())
 			.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD,ae.getPeriod())
-			.set(ACCOUNT_ENTRY.ENTRY_DATE,AonDateUtils.toSql(ae.getEntryDate()))
+			.set(ACCOUNT_ENTRY.ENTRY_DATE, AonDateUtils.toLocalDate(ae.getEntryDate()))
 			.set(ACCOUNT_ENTRY.ENTRY_TYPE, AonEnumUtils.getByte(ae.getEntryType())) 
 			.set(ACCOUNT_ENTRY.JOURNAL,ae.getJournal())
 			.set(ACCOUNT_ENTRY.ACTIVITY, ae.getActivity())
 			.set(ACCOUNT_ENTRY.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
 			.set(ACCOUNT_ENTRY.COMMENTS,ae.getComments())
 			.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
-			.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(ACCOUNT_ENTRY.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 			.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 			.execute();
 		ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: " + ae.getId());
@@ -454,7 +455,7 @@ public class AccountEntryDAO {
 							.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount())
 							.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
 							.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_USER,ctx.getUser())
-							.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()) )
 							.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
 							.execute();
 						ctx.log().info("UPDATE ACCOUNT_ENTRY_DETAIL  ("+i+" rows) ("+line+") " + detail.getId());
@@ -471,7 +472,7 @@ public class AccountEntryDAO {
 						.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,detail.getBalancingAccount())
 						.set(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER,detail.getDocumentNumber())
 						.set(ACCOUNT_ENTRY_DETAIL.CREATION_USER,ctx.getUser())
-						.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, AonDateUtils.toLocalDateTime(new Date()) )
 						.execute();
 					ctx.log().info("INSERT ACCOUNT_ENTRY_DETAIL ("+line+")");
 				}
@@ -492,8 +493,8 @@ public class AccountEntryDAO {
 
 	public static LinkedHashMap<String, AccountBalance> fetchBalance(
 			AONContext ctx, AccMiningParameters params,boolean pyg) {
-		java.sql.Date start = AonDateUtils.toSql(params.getStartDate()!= null? params.getStartDate() : AonDateUtils.getYearFirstDay(0));
-		java.sql.Date end = AonDateUtils.toSql(params.getEndDate()!= null? params.getEndDate() : AonDateUtils.getYearLastDay(9999));
+		LocalDate start = AonDateUtils.toLocalDate(params.getStartDate()!= null? params.getStartDate() : AonDateUtils.getYearFirstDay(0));
+		LocalDate end = AonDateUtils.toLocalDate(params.getEndDate()!= null? params.getEndDate() : AonDateUtils.getYearLastDay(9999));
 		
 		Field<String> accountField = DSL.substring(ACCOUNT.CODE, 1, params.getAccountLevel()); 
 		Field<BigDecimal> sumDebit = DSL.sum(ACCOUNT_ENTRY_DETAIL.DEBIT); 
@@ -768,7 +769,7 @@ public class AccountEntryDAO {
 			return new AccountingBreakdown()
 			.setEntryId(record.getValue(ACCOUNT_ENTRY.ID))
 			.setJournal(record.getValue(ACCOUNT_ENTRY.JOURNAL))
-			.setIssueDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+			.setIssueDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE)))
 			.setActivity(record.getValue(ENTERPRISE_ACTIVITY.ID))
 			.setActivityDescription(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
 			.setEpigraph(record.getValue(IAE.EPIGRAPH))
@@ -795,7 +796,7 @@ public class AccountEntryDAO {
 				.setPeriodName( record.getValue(ACCOUNT_PERIOD.NAME) )
 				.setPeriodStatus(AccountPeriodStatus.values()[record.getValue(ACCOUNT_PERIOD.STATUS)])
 				.setDomain( record.getValue(ACCOUNT_ENTRY.DOMAIN))
-				.setEntryDate( record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+				.setEntryDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE)))
 				.setEntryType( AccountEntryType.values()[record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)])
 				.setActivity( record.getValue(ACCOUNT_ENTRY.ACTIVITY))
 				.setActivityDescription(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
@@ -803,9 +804,9 @@ public class AccountEntryDAO {
 				.setSecurityLevel(SecurityLevel.values()[record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)])
 				.setComments( record.getValue(ACCOUNT_ENTRY.COMMENTS))
 				.setCreationUser(record.getValue(ACCOUNT_ENTRY.CREATION_USER))
-				.setCreationDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE)))
 				.setModificationUser(record.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
-				.setModificationDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE)))
 				.setDirty(false)
 				;
 		}
@@ -848,19 +849,19 @@ public class AccountEntryDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ID);}
-		@Override public Property<Integer> getJournalProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.JOURNAL);}
-		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ACTIVITY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.DOMAIN);}
-		@Override public Property<Integer> getAccountPeriodProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY.ACCOUNT_PERIOD);}
-		@Override public Property<Date> getEntryDateProperty() {return new FilterDAO.DatePropertyDAO(ACCOUNT_ENTRY.ENTRY_DATE);}
-		@Override public Property<Byte> getEntryTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.ENTRY_TYPE);}
-		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.SECURITY_LEVEL);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY.COMMENTS);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.TimestampPropertyDAO(ACCOUNT_ENTRY.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.TimestampPropertyDAO(ACCOUNT_ENTRY.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY.MODIFICATION_USER);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.ID);}
+		@Override public Property<Integer> getJournalProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.JOURNAL);}
+		@Override public Property<Integer> getActivityProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.ACTIVITY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.DOMAIN);}
+		@Override public Property<Integer> getAccountPeriodProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.ACCOUNT_PERIOD);}
+		@Override public Property<Date> getEntryDateProperty() {return new FilterDAO.LocalDatePropertyDAO(ACCOUNT_ENTRY.ENTRY_DATE);}
+		@Override public Property<Byte> getEntryTypeProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.ENTRY_TYPE);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.SECURITY_LEVEL);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.COMMENTS);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ACCOUNT_ENTRY.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.CREATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ACCOUNT_ENTRY.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY.MODIFICATION_USER);}
 	}
 
 	private static final AccountEntryDetailPropertiesDAO ACCOUNT_ENTRY_DETAIL_PROPERTIES = new AccountEntryDetailPropertiesDAO();
@@ -874,16 +875,16 @@ public class AccountEntryDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY_DETAIL.ACCOUNT);}
-		@Override public Property<String> getAccountCodeProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.CODE);}
-		@Override public Property<String> getAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.DESCRIPTION);}
-		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.CONCEPT);}
-		@Override public Property<Double> getDebitProperty() {return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.DEBIT);}
-		@Override public Property<Double> getCreditProperty() {return new FilterDAO.PropertyDAO<Double>(ACCOUNT_ENTRY_DETAIL.CREDIT);}
-		@Override public Property<String> getDocumentNumber() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);}
-		@Override public Property<Integer> getBalancingAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT);}
-		@Override public Property<String> getBalancingAccountCodeProperty() {return new FilterDAO.PropertyDAO<String>(BAL_ACCOUNT.CODE);}
-		@Override public Property<String> getBalancingAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(BAL_ACCOUNT.DESCRIPTION);}
+		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.ACCOUNT);}
+		@Override public Property<String> getAccountCodeProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.CODE);}
+		@Override public Property<String> getAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.DESCRIPTION);}
+		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.CONCEPT);}
+		@Override public Property<Double> getDebitProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.DEBIT);}
+		@Override public Property<Double> getCreditProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.CREDIT);}
+		@Override public Property<String> getDocumentNumber() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER);}
+		@Override public Property<Integer> getBalancingAccountProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT);}
+		@Override public Property<String> getBalancingAccountCodeProperty() {return new FilterDAO.PropertyDAO<>(BAL_ACCOUNT.CODE);}
+		@Override public Property<String> getBalancingAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<>(BAL_ACCOUNT.DESCRIPTION);}
 	}
 	
 	
@@ -899,7 +900,7 @@ public class AccountEntryDAO {
 					int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
 							.set(ACCOUNT_ENTRY.ENTRY_TYPE, ae.getEntryType().getValue()) 
 							.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
-							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 							.execute();
 					ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: [OpeningType] " + ae.getId());
@@ -917,7 +918,7 @@ public class AccountEntryDAO {
 					int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
 							.set(ACCOUNT_ENTRY.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
  							.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
-							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 							.execute();
 					ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: [Security Level] " + ae.getId());
@@ -929,7 +930,7 @@ public class AccountEntryDAO {
 							.update(INVOICE)
 								.set(INVOICE.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
 								.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-								.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+								.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 								.where(INVOICE.ID.equal( inv.getId()))
 								.execute();
 						return AccountingInvoiceDAO.getAccountingInvoice(ctx, ae.getId());
@@ -948,7 +949,7 @@ public class AccountEntryDAO {
 					int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
 							.set(ACCOUNT_ENTRY.ACTIVITY, ae.getActivity())
  							.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
-							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 							.execute();
 					ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: [Activity] " + ae.getId());
@@ -960,7 +961,7 @@ public class AccountEntryDAO {
 							.update(INVOICE)
 								.set(INVOICE.ACTIVITY, ae.getActivity() )
 								.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-								.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+								.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 								.where(INVOICE.ID.equal( inv.getId()))
 								.execute();
 						return AccountingInvoiceDAO.getAccountingInvoice(ctx, ae.getId());
@@ -983,7 +984,7 @@ public class AccountEntryDAO {
 						.update(INVOICE)
 							.set(INVOICE.INVESTMENT, AonEnumUtils.getByte( inv.isInvestment() ) )
 							.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 							.where(INVOICE.ID.equal( inv.getId()))
 							.execute();
 					return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId());
@@ -1000,9 +1001,9 @@ public class AccountEntryDAO {
 					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
 					ctx.getDslContext()
 						.update(INVOICE)
-							.set(INVOICE.TAX_DATE, AonDateUtils.toSql(inv.getTaxDate()) )
+							.set(INVOICE.TAX_DATE, AonDateUtils.toLocalDate(inv.getTaxDate()) )
 							.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 							.where(INVOICE.ID.equal( inv.getId()))
 							.execute();
 					return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId());
@@ -1022,7 +1023,7 @@ public class AccountEntryDAO {
 						.update(INVOICE)
 							.set(INVOICE.SERVICE, AonEnumUtils.getByte( inv.isService() ) )
 							.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 							.where(INVOICE.ID.equal( inv.getId()))
 							.execute();
 					return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId());
@@ -1042,7 +1043,7 @@ public class AccountEntryDAO {
 						.update(INVOICE)
 							.set(INVOICE.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte( inv.isVatAccrualPayment() ) )
 							.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 							.where(INVOICE.ID.equal( inv.getId()))
 							.execute();
 					return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId());

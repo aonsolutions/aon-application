@@ -26,6 +26,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -673,10 +674,9 @@ public class DesktopState implements Serializable {
 		boolean adminDomainUser = DomainSwitcher.getDomainType(user.getDomain()) == DomainType.ADMIN;
 		if ( this.adminDomain || !adminDomainUser ) {
 			AONContext ctx = AONContext.getAONContext(AonUtil.getDomainName(), ds.getDomainId(), user.getLogin());
-			Timestamp now = new java.sql.Timestamp(new Date().getTime());
 			try {
 				ctx.getDslContext().update(DOMAIN)
-				.set(DOMAIN.LASTACCESS_DATE, now )
+				.set(DOMAIN.LASTACCESS_DATE, DSL.currentLocalDateTime() )
 				.set(DOMAIN.LASTACCESS_USER, user.getLogin() )
 				.where(DOMAIN.ID.eq(ds.getDomainId()))
 				.execute();	

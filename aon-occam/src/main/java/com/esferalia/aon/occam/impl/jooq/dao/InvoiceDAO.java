@@ -30,6 +30,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -179,15 +180,15 @@ public class InvoiceDAO {
 				return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(INVOICING_GROUP.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(INVOICING_GROUP.CREATION_USER);}
-		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICING_GROUP.CUSTOMER);}
-		@Override public Property<Byte> getCustomerGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICING_GROUP.CUSTOMER_GROUPED);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(INVOICING_GROUP.DESCRIPTION);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICING_GROUP.DOMAIN);}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICING_GROUP.ID);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(INVOICING_GROUP.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(INVOICING_GROUP.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(INVOICING_GROUP.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CREATION_USER);}
+		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CUSTOMER);}
+		@Override public Property<Byte> getCustomerGroupedProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.CUSTOMER_GROUPED);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.DESCRIPTION);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.DOMAIN);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.ID);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(INVOICING_GROUP.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICING_GROUP.MODIFICATION_USER);}
 	}
 
 	private static final Registry SELLER_ALIAS = REGISTRY.as("seller");
@@ -270,7 +271,7 @@ public class InvoiceDAO {
 				.orElse(null);
 	}
 
-	private static Result<Record14<Integer, java.sql.Date, Integer, String, Integer, Integer, String, String, Short, String, Double, Double, String, Double>> getBoughtProductInvoices(AONContext ctx, InvoiceFilter filter) {
+	private static Result<Record14<Integer, LocalDate, Integer, String, Integer, Integer, String, String, Short, String, Double, Double, String, Double>> getBoughtProductInvoices(AONContext ctx, InvoiceFilter filter) {
 		ctx.checkRead();
 		return  ctx.getDslContext()
 				.select(INVOICE.ID, DSL.max(INVOICE.ISSUE_DATE), INVOICE.REGISTRY, INVOICE.REFERENCE_CODE
@@ -504,7 +505,7 @@ public class InvoiceDAO {
 			.stream()
 			.map(record -> new InvoiceDetail().setId(record.getValue(INVOICE_DETAIL.ID))
 					.setInvoice(new Invoice().setId(record.getValue(INVOICE.ID))
-						.setIssueDate(record.getValue(DSL.max(INVOICE.ISSUE_DATE)))
+						.setIssueDate(AonDateUtils.toDate(record.getValue(DSL.max(INVOICE.ISSUE_DATE))))
 						.setRegistry(record.getValue(INVOICE.REGISTRY))
 						.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE)))
 					.setItem(Filler.checkField(record, ITEM.ID)
@@ -527,8 +528,8 @@ public class InvoiceDAO {
 					.setSeries(record.getValue(INVOICE.SERIES))
 					.setNumber(record.getValue(INVOICE.NUMBER))
 					.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-					.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+					.setIssueDate(AonDateUtils.toDate(record.getValue(INVOICE.ISSUE_DATE)))
+					.setTaxDate(AonDateUtils.toDate(record.getValue(INVOICE.TAX_DATE)))
 					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
 					.setRegistry(record.getValue(INVOICE.REGISTRY))
 					.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
@@ -557,8 +558,8 @@ public class InvoiceDAO {
 				.setSeries(r.getValue(INVOICE.SERIES))
 				.setNumber(r.getValue(INVOICE.NUMBER))
 				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
-				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(r.getValue(INVOICE.TAX_DATE))
+				.setIssueDate(AonDateUtils.toDate(r.getValue(INVOICE.ISSUE_DATE)))
+				.setTaxDate(AonDateUtils.toDate(r.getValue(INVOICE.TAX_DATE)))
 				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, r.getValue(INVOICE.SECURITY_LEVEL)))
 				.setRegistry( r.getValue(INVOICE.REGISTRY))
 				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
@@ -589,9 +590,9 @@ public class InvoiceDAO {
 				.setTotal(r.getValue(INVOICE.TOTAL))	
 				.setComments(r.getValue(INVOICE.COMMENTS))
 				.setStatus(r.getValue(INVOICE.STATUS))
-				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(r.getValue(INVOICE.CREATION_DATE)))
 				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
-				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(r.getValue(INVOICE.MODIFICATION_DATE)))
 				.setModificationUser(r.getValue(INVOICE.MODIFICATION_USER));
 		}
 	}
@@ -611,8 +612,8 @@ public class InvoiceDAO {
 				.setSeries(record.getValue(INVOICE.SERIES))
 				.setNumber(record.getValue(INVOICE.NUMBER))
 				.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-				.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+				.setIssueDate(AonDateUtils.toDate(record.getValue(INVOICE.ISSUE_DATE)))
+				.setTaxDate(AonDateUtils.toDate(record.getValue(INVOICE.TAX_DATE)))
 				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
 				.setRegistry(record.getValue(INVOICE.REGISTRY))
 				.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
@@ -641,9 +642,9 @@ public class InvoiceDAO {
 				.setComments(record.getValue(INVOICE.COMMENTS))
 				.setStatus(record.getValue(INVOICE.STATUS))
 				.setSiiStatus(pending ? "Pendiente" : record.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE))
-				.setCreationDate(record.getValue(INVOICE.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(INVOICE.CREATION_DATE)))
 				.setCreationUser(record.getValue(INVOICE.CREATION_USER))
-				.setModificationDate(record.getValue(INVOICE.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(record.getValue(INVOICE.MODIFICATION_DATE)))
 				.setModificationUser(record.getValue(INVOICE.MODIFICATION_USER));
 		}	
 	}
@@ -661,8 +662,8 @@ public class InvoiceDAO {
 					.setSeries(record.getValue(INVOICE.SERIES))
 					.setNumber(record.getValue(INVOICE.NUMBER))
 					.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-					.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-					.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+					.setIssueDate(AonDateUtils.toDate(record.getValue(INVOICE.ISSUE_DATE)))
+					.setTaxDate(AonDateUtils.toDate(record.getValue(INVOICE.TAX_DATE)))
 					.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class, record.getValue(INVOICE.SECURITY_LEVEL)))
 					.setRegistry(record.getValue(INVOICE.REGISTRY))
 					.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
@@ -727,7 +728,7 @@ public class InvoiceDAO {
 				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
 				.and(workplaceCondition)
-				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
+				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toLocalDate(date)))
 				.orderBy(INVOICE.ISSUE_DATE.desc())
 				.limit(1).fetch().stream().map(new InvoiceDetailFiller())
 				.findFirst().orElse(new InvoiceDetail());
@@ -743,7 +744,7 @@ public class InvoiceDAO {
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
 				.and(workplaceCondition)
-				.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate)))
+				.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toLocalDate(startDate)))
 				
 				.union(ctx.getDslContext()
 						.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
@@ -755,7 +756,7 @@ public class InvoiceDAO {
 						.and(workplaceCondition)
 						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 						.and(INVOICE_DETAIL.WAREHOUSE.isNull())
-						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate))))
+						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toLocalDate(startDate))))
 				
 				.orderBy(INVOICE.ISSUE_DATE.desc())// ,INVOICE_DETAIL.ID.desc())
 				.fetch().stream().map(new InvoiceDetailFiller())
@@ -772,8 +773,8 @@ public class InvoiceDAO {
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
 				.and(workplaceCondition)
-				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
-				.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate)))
+				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toLocalDate(date)))
+				.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toLocalDate(startDate)))
 				
 				.union(ctx.getDslContext()
 						.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
@@ -785,8 +786,8 @@ public class InvoiceDAO {
 						.and(workplaceCondition)
 						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 						.and(INVOICE_DETAIL.WAREHOUSE.isNull())
-						.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
-						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate))))
+						.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toLocalDate(date)))
+						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toLocalDate(startDate))))
 						
 				
 				.orderBy(INVOICE.ISSUE_DATE.desc())//,INVOICE_DETAIL.ID.desc())
@@ -834,7 +835,7 @@ public class InvoiceDAO {
 				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
 				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
 				.and(workplaceCondition)
-				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
+				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toLocalDate(date)))
 				.union(ctx.getDslContext()
 						.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
 								INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
@@ -843,7 +844,7 @@ public class InvoiceDAO {
 						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
 						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
 						.and(workplaceCondition)
-						.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
+						.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toLocalDate(date)))
 						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
 						.and(INVOICE_DETAIL.WAREHOUSE.isNull()))
 				
@@ -868,9 +869,9 @@ public class InvoiceDAO {
 			.set(INVOICING_GROUP.CUSTOMER, invoicingGroup.getCustomer())
 			.set(INVOICING_GROUP.CUSTOMER_GROUPED, invoicingGroup.getCustomerGrouped())
 			.set(INVOICING_GROUP.DESCRIPTION, invoicingGroup.getDescription())
-			.set(INVOICING_GROUP.CREATION_DATE,  new Timestamp(new Date().getTime()))
+			.set(INVOICING_GROUP.CREATION_DATE,  AonDateUtils.toLocalDateTime(new Date()))
 			.set(INVOICING_GROUP.CREATION_USER, ctx.getUser())
-			.set(INVOICING_GROUP.MODIFICATION_DATE,  new Timestamp(new Date().getTime()))
+			.set(INVOICING_GROUP.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 			.set(INVOICING_GROUP.MODIFICATION_USER, ctx.getUser())
 			.returning(INVOICING_GROUP.ID).fetchOne().getValue(INVOICING_GROUP.ID);
 		return invoicingGroup.setId(id);
@@ -880,7 +881,7 @@ public class InvoiceDAO {
 		ctx.getDslContext()
 			.update(INVOICING_GROUP)
 			.set(INVOICING_GROUP.DESCRIPTION, invoicingGroup.getDescription())
-			.set(INVOICING_GROUP.MODIFICATION_DATE,  new Timestamp(new Date().getTime()))
+			.set(INVOICING_GROUP.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 			.set(INVOICING_GROUP.MODIFICATION_USER, ctx.getUser())
 			.where(INVOICING_GROUP.ID.eq(invoicingGroup.getId()))
 			.execute();
@@ -903,7 +904,7 @@ public class InvoiceDAO {
 		.select(orderedType,INVOICE.SERIES,min,max,records)
 		.from(INVOICE)
 		.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
-		.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
+		.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toLocalDate(from),AonDateUtils.toLocalDate(to)) )
 		.and(INVOICE.TYPE.ne( InvoiceType.UNDEDUCTIBLE.value()) )
 		.groupBy(orderedType,INVOICE.SERIES)
 		.fetch()
@@ -922,7 +923,7 @@ public class InvoiceDAO {
 			.select(orderedType,INVOICE.TRANSACTION,count)
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
-			.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)) )
+			.and((INVOICE.ISSUE_DATE).between(AonDateUtils.toLocalDate(from),AonDateUtils.toLocalDate(to)) )
 			.groupBy(orderedType,INVOICE.TRANSACTION)
 			.fetch()
 			.stream()
@@ -941,7 +942,7 @@ public class InvoiceDAO {
 		@Override
 		public InvoiceDetail apply(Record r) {
 			return new InvoiceDetail().setInvoice(new Invoice()
-						.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
+						.setIssueDate(AonDateUtils.toDate(r.getValue(INVOICE.ISSUE_DATE)))
 						.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
 						.setSeries(r.getValue(INVOICE.SERIES))
 						.setNumber(r.getValue(INVOICE.NUMBER))
@@ -975,9 +976,9 @@ public class InvoiceDAO {
 					.setCustomer(r.getValue(INVOICING_GROUP.CUSTOMER))
 					.setCustomerGrouped(r.getValue(INVOICING_GROUP.CUSTOMER_GROUPED))
 					.setDescription(r.getValue(INVOICING_GROUP.DESCRIPTION))
-					.setCreationDate(r.getValue(INVOICING_GROUP.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(INVOICING_GROUP.CREATION_DATE)))
 					.setCreationUser(r.getValue(INVOICING_GROUP.CREATION_USER))
-					.setModificationDate(r.getValue(INVOICING_GROUP.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(INVOICING_GROUP.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(INVOICING_GROUP.MODIFICATION_USER));		
 		}
 	}
@@ -1060,10 +1061,10 @@ public class InvoiceDAO {
 		.set(INVOICE_DETAIL.PREPAYMENT, (byte)1)
 		.set(INVOICE_DETAIL.SELLER, invoiceDetail.getSeller() != null ? invoiceDetail.getSeller().getId(): null)
 		.set(INVOICE_DETAIL.WORKPLACE, invoiceDetail.getWorkPlace())
-		.set(INVOICE_DETAIL.WAREHOUSE,  invoiceDetail.getWarehouse())
-		.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp(new Date().getTime()))
+		.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse())
+		.set(INVOICE_DETAIL.CREATION_DATE,AonDateUtils.toLocalDateTime(new Date()))
 		.set(INVOICE_DETAIL.CREATION_USER, ctx.getUser())
-		.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+		.set(INVOICE_DETAIL.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 		.set(INVOICE_DETAIL.MODIFICATION_USER, ctx.getUser())
 		.execute();
 		return invoiceDetail.setId(id);
@@ -1087,8 +1088,8 @@ public class InvoiceDAO {
 			.set(INVOICE.RDOCUMENT_COUNTRY, Country.safeIso2( invoice.getRegistryDocumentCountry()))
 			.set(INVOICE.RNAME, invoice.getRegistryName() )
 			.set(INVOICE.RADDRESS, invoice.getRegistryAddress() )
-			.set(INVOICE.ISSUE_DATE, AonDateUtils.toSql( invoice.getIssueDate()) )
-			.set(INVOICE.TAX_DATE, AonDateUtils.toSql(invoice.getTaxDate()) )
+			.set(INVOICE.ISSUE_DATE, AonDateUtils.toLocalDate( invoice.getIssueDate()) )
+			.set(INVOICE.TAX_DATE, AonDateUtils.toLocalDate(invoice.getTaxDate()) )
 			.set(INVOICE.SECURITY_LEVEL, AonEnumUtils.getByte( invoice.isConfidential() ) )
 			.set(INVOICE.STATUS, AonEnumUtils.getByte( invoice.isRecorded() ) )
 			.set(INVOICE.TYPE, AonEnumUtils.getByte( invoice.getType() ) )
@@ -1113,7 +1114,7 @@ public class InvoiceDAO {
 			.set(INVOICE.COMMENTS, invoice.getComments() )
 			.set(INVOICE.REMARKS, invoice.getRemarks() )
 			.set(INVOICE.CREATION_USER, ctx.getUser()) 
-			.set(INVOICE.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(INVOICE.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.returning(INVOICE.ID)
 			.fetchOne();
 		invoice.setId(record.getValue(INVOICE.ID));
@@ -1156,7 +1157,7 @@ public class InvoiceDAO {
 			.set(INVOICE_DETAIL.WORKPLACE,detail.getWorkPlace() )
 			.set(INVOICE_DETAIL.WAREHOUSE,detail.getWarehouse())
 			.set(INVOICE_DETAIL.CREATION_USER ,ctx.getUser())
-			.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.returning(INVOICE_DETAIL.ID)
 			.fetchOne();
 		detail.setId(record.getValue(INVOICE_DETAIL.ID));
@@ -1215,8 +1216,8 @@ public class InvoiceDAO {
 			.set(INVOICE.RDOCUMENT_COUNTRY, Country.safeIso2( invoice.getRegistryDocumentCountry()))
 			.set(INVOICE.RNAME, invoice.getRegistryName() )
 			.set(INVOICE.RADDRESS, invoice.getRegistryAddress() )
-			.set(INVOICE.ISSUE_DATE, AonDateUtils.toSql( invoice.getIssueDate()) )
-			.set(INVOICE.TAX_DATE, AonDateUtils.toSql(invoice.getTaxDate()) )
+			.set(INVOICE.ISSUE_DATE, AonDateUtils.toLocalDate( invoice.getIssueDate()) )
+			.set(INVOICE.TAX_DATE, AonDateUtils.toLocalDate(invoice.getTaxDate()) )
 			.set(INVOICE.SECURITY_LEVEL, AonEnumUtils.getByte( invoice.isConfidential() ) )
 			.set(INVOICE.STATUS, AonEnumUtils.getByte( invoice.isRecorded() ) )
 			.set(INVOICE.TYPE, AonEnumUtils.getByte( invoice.getType() ) )
@@ -1241,7 +1242,7 @@ public class InvoiceDAO {
 			.set(INVOICE.COMMENTS, invoice.getComments() )
 			.set(INVOICE.REMARKS, invoice.getRemarks() )
 			.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.where(INVOICE.ID.equal( invoice.getId()))
 			.execute();
 //		ctx.log().info("UPDATE INVOICE invoice: " + invoice.getId() + "("+i+" rows)");
@@ -1301,7 +1302,7 @@ public class InvoiceDAO {
 						.set(INVOICE.RECTIFICATION_TYPE, RectificationType.NONE.value())
 						.set(INVOICE.RECTIFICATION_INVOICE, (Integer) null)
 						.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 						.where(INVOICE.ID.equal( rectified.getId() ))
 						.execute();
 //					ctx.log().info("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - SOLO UNA): " + rectified.getId());
@@ -1330,7 +1331,7 @@ public class InvoiceDAO {
 						.set(INVOICE.RECTIFICATION_TYPE, rectified.getRectificationType().value())
 						.set(INVOICE.RECTIFICATION_INVOICE, rectified.getRectificationInvoice())
 						.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 						.where(INVOICE.ID.equal( rectified.getId() ))
 						.execute();
 //				ctx.log().info("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - MAS DE UNA): " + rectified.getId());
@@ -1501,7 +1502,7 @@ public class InvoiceDAO {
 				?rectifierInvoice
 				:null)
 			.set(INVOICE.MODIFICATION_USER,ctx.getUser())
-			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.where(INVOICE.ID.equal( invoiceId))
 			.execute();
 	}

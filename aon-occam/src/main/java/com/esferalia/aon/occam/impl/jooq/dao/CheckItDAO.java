@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class CheckItDAO {
@@ -43,7 +45,7 @@ public class CheckItDAO {
 	
 	public static Integer insertStatements(AONContext aonContext, List<BankStatement> bankStatements) {
 		
-		InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query =
+		InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, LocalDate, Byte, Byte, Double, String, Byte, String, String> query =
 				aonContext.getDslContext()
 				.insertInto(
 						  BANK_STATEMENT
@@ -65,7 +67,7 @@ public class CheckItDAO {
 					  bankStatement.getDomain()
 					, bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
 					, bankStatement.getLotNumber()
-					, bankStatement.getOperationDate() != null ? new java.sql.Date(bankStatement.getOperationDate().getTime()) : null
+					, bankStatement.getOperationDate() != null ? AonDateUtils.toLocalDate(bankStatement.getOperationDate()) : null
 					, bankStatement.getCommonConcept().value()
 					, AonEnumUtils.getByte(bankStatement.isPayment())
 					, bankStatement.getAmount()
@@ -136,7 +138,7 @@ public class CheckItDAO {
 	}
 	
 	public static Map<String, Date> getMaxMovementIdAndDate(AONContext aonContext, Integer domainId, RegistryBank rbank) {
-		Record2<String, java.sql.Date> result = aonContext.getDslContext()
+		Record2<String, LocalDate> result = aonContext.getDslContext()
 		.select(DSL.max(BANK_STATEMENT.REFERENCE2).as("maximum"), BANK_STATEMENT.OPERATION_DATE)
 		.from(BANK_STATEMENT)
 		.where(BANK_STATEMENT.REFERENCE1.eq(CHECKIT_R1))
@@ -145,8 +147,8 @@ public class CheckItDAO {
 		.fetchSingle();
 		
 		String id = (String) result.get("maximum");
-		java.sql.Date date = result.get(BANK_STATEMENT.OPERATION_DATE);
-		Date utilDate = date != null ? new Date(date.getTime()) : null;
+		LocalDate date = result.get(BANK_STATEMENT.OPERATION_DATE);
+		Date utilDate = date != null ? AonDateUtils.toDate(date) : null;
 		
 		if (id == null || id.isEmpty()) {
 			return Collections.emptyMap();

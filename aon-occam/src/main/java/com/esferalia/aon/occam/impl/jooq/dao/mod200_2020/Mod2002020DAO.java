@@ -118,7 +118,7 @@ public class Mod2002020DAO  {
 				.setDocument(reg.getDocument())
 				.setName(reg.getName())
 				.setNotary(reg.getNotary())
-				.setNotaryDate(reg.getNotaryDate())))
+				.setNotaryDate(AonDateUtils.toDate(reg.getNotaryDate()))))
 		,UTE_PARTICIPATION( 
 			(mod,reg) -> mod.getUteParticipations().add(new UteParticipation()					
 				.setDocument(reg.getDocument())
@@ -266,15 +266,15 @@ public class Mod2002020DAO  {
 			 .set(FS_MODEL200.CNAE,mod200.getCnae())
 			 .set(FS_MODEL200.PERIOD_TYPE,(byte) mod200.getPeriodType())
 			 .set(FS_MODEL200.PERIOD_START, mod200.getPeriodStart()==null?
-					 null:new java.sql.Date(mod200.getPeriodStart().getTime()))
+					 null:AonDateUtils.toLocalDate(mod200.getPeriodStart()))
 			 .set(FS_MODEL200.PERIOD_END, mod200.getPeriodEnd()==null?
-					 null:new java.sql.Date(mod200.getPeriodEnd().getTime()))
+					 null:AonDateUtils.toLocalDate(mod200.getPeriodEnd()))
 			 .set(FS_MODEL200.FISCAL_GROUP,mod200.getFiscalGroup())
 			 .set(FS_MODEL200.DOMINANT_DOCUMENT,mod200.getDominantDocument())
 			 .set(FS_MODEL200.SECRETARY_DOCUMENT,mod200.getSecretary()==null?null:mod200.getSecretary().getDocument())
 			 .set(FS_MODEL200.SECRETARY_NAME,mod200.getSecretary()==null?null:mod200.getSecretary().getName())
 			 .set(FS_MODEL200.IRNR,(mod200.getSecretary() != null && mod200.getSecretary().getIrnr() != null)
-					 ?new java.sql.Date( mod200.getSecretary().getIrnr().getTime() ):null)
+					 ?AonDateUtils.toLocalDate( mod200.getSecretary().getIrnr() ):null)
 			 .set(FS_MODEL200.RESULT_TYPE,mod200.getResultType())
 			 .set(FS_MODEL200.DEV_TYPE,mod200.getDevType())
 			 .set(FS_MODEL200.PAY_TYPE,mod200.getPayType())
@@ -393,7 +393,7 @@ public class Mod2002020DAO  {
 				detail.setType(Mod2002020RegistryType.REPRESENTATIVE.byteValue());
 				detail.setDocument(AonStringUtils.substring(lr.getDocument(),0,9));
 				detail.setNotary(AonStringUtils.substring(lr.getNotary(),0,20));
-				detail.setNotaryDate( lr.getNotaryDate()==null?null:new java.sql.Date( lr.getNotaryDate().getTime() ) );
+				detail.setNotaryDate( lr.getNotaryDate()==null?null:AonDateUtils.toLocalDate( lr.getNotaryDate() ) );
 				detail.setName(AonStringUtils.substring(lr.getName(),0,45));
 				list.add(detail);
 			}
@@ -536,16 +536,16 @@ public class Mod2002020DAO  {
 		 .set(FS_MODEL200.CNAE,mod200.getCnae())
 		 .set(FS_MODEL200.PERIOD_TYPE,(byte) mod200.getPeriodType())
 		 .set(FS_MODEL200.PERIOD_START, mod200.getPeriodStart()==null?
-				 null:new java.sql.Date(mod200.getPeriodStart().getTime()))
+				 null:AonDateUtils.toLocalDate(mod200.getPeriodStart()))
 		 .set(FS_MODEL200.PERIOD_END, mod200.getPeriodEnd()==null?
-				 null:new java.sql.Date(mod200.getPeriodEnd().getTime()))
+				 null:AonDateUtils.toLocalDate(mod200.getPeriodEnd()))
 		 .set(FS_MODEL200.COMMENTS,mod200.getComments())
 		 .set(FS_MODEL200.FISCAL_GROUP,mod200.getFiscalGroup())
 		 .set(FS_MODEL200.DOMINANT_DOCUMENT,mod200.getDominantDocument())
 		 .set(FS_MODEL200.SECRETARY_DOCUMENT,mod200.getSecretary()==null?null:mod200.getSecretary().getDocument())
 		 .set(FS_MODEL200.SECRETARY_NAME,mod200.getSecretary()==null?null:mod200.getSecretary().getName())
 		 .set(FS_MODEL200.IRNR,(mod200.getSecretary() != null && mod200.getSecretary().getIrnr() != null)
-				 ?new java.sql.Date( mod200.getSecretary().getIrnr().getTime() ):null)
+				 ? AonDateUtils.toLocalDate( mod200.getSecretary().getIrnr()):null)
 		 .set(FS_MODEL200.RESULT_TYPE,mod200.getResultType())
 		 .set(FS_MODEL200.DEV_TYPE,mod200.getDevType())
 		 .set(FS_MODEL200.PAY_TYPE,mod200.getPayType())
@@ -670,8 +670,8 @@ public class Mod2002020DAO  {
 		mod200.setComplementary(record.getComplementary()==1);
 		mod200.setComplementaryReceipt(record.getComplementaryReceipt());
 		mod200.setCnae(record.getCnae());
-		mod200.setPeriodEnd(record.getPeriodEnd());
-		mod200.setPeriodStart(record.getPeriodStart());
+		mod200.setPeriodEnd(AonDateUtils.toDate(record.getPeriodEnd()));
+		mod200.setPeriodStart(AonDateUtils.toDate(record.getPeriodStart()));
 		mod200.setPeriodType(record.getPeriodType());
 		mod200.setReceipt(record.getReceipt());
 		mod200.setComments(record.getComments());
@@ -680,7 +680,7 @@ public class Mod2002020DAO  {
 		Secretary secretary = new Secretary();
 		secretary.setDocument(record.getSecretaryDocument());
 		secretary.setName(record.getSecretaryName());
-		secretary.setIrnr(record.getIrnr());
+		secretary.setIrnr(AonDateUtils.toDate(record.getIrnr()));
 		mod200.setSecretary(secretary);
 		mod200.setComments(record.getComments());
 		mod200.setResultType(record.getResultType());

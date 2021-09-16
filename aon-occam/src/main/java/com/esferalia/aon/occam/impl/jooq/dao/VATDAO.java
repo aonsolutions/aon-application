@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -167,8 +168,8 @@ public class VATDAO  {
 
 	private static Stream<VatContext> getNoAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		
-		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
-		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
+		LocalDate firstDay = AonDateUtils.toLocalDate( fromDate );
+		LocalDate lastDay = AonDateUtils.toLocalDate( toDate);
 		return ctx.getDslContext().select(
 				 INVOICE.ID
 				,INVOICE.SERIES
@@ -217,7 +218,7 @@ public class VATDAO  {
 				.where(VAT_PROPERTIES.getConditions(filter))
 				.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.and(INVOICE.TAX_DATE.between(firstDay,lastDay))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 0))	// No Criterio de Caja.
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.fetch()
@@ -232,8 +233,8 @@ public class VATDAO  {
 		return getAccrualBreakdown(ctx, fromDate, toDate, null, mod); 
 	}
 	private static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter , IFiscalModel mod) {
-		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
-		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
+		LocalDate firstDay = AonDateUtils.toLocalDate( fromDate );
+		LocalDate lastDay = AonDateUtils.toLocalDate( toDate);
 		return ctx.getDslContext().select(
 				 INVOICE.ID
 				,INVOICE.SERIES
@@ -282,7 +283,7 @@ public class VATDAO  {
 				.where(VAT_PROPERTIES.getConditions(filter))
 				.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.and(INVOICE.TAX_DATE.between(firstDay,lastDay))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.fetch()
@@ -293,10 +294,10 @@ public class VATDAO  {
 	}
 	
 	private static Stream<VatContext> getAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
-		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
-		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
+		LocalDate firstDay = AonDateUtils.toLocalDate( fromDate );
+		LocalDate lastDay = AonDateUtils.toLocalDate( toDate);
 		int prevYear = AonDateUtils.getYear(fromDate) - 1;
-		java.sql.Date prevYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(prevYear) );
+		LocalDate prevYearFirstDay = AonDateUtils.toLocalDate( AonDateUtils.getYearFirstDay(prevYear) );
 		return ctx.getDslContext().select(
 			 INVOICE.ID
 			,INVOICE.SERIES
@@ -350,7 +351,7 @@ public class VATDAO  {
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 			.where(VAT_PROPERTIES.getConditions(filter))
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-			.and(FINANCE_TRACKING.TRACKING_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+			.and(FINANCE_TRACKING.TRACKING_DATE.between(firstDay,lastDay))
 			.and(FINANCE_TRACKING.TYPE.in(FinanceTrackingType.PAID.value(),FinanceTrackingType.RETURNED.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
@@ -364,8 +365,8 @@ public class VATDAO  {
 	
 	private static Stream<VatContext> getLastPeriodAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		int prevYear = AonDateUtils.getYear(fromDate) - 1;
-		java.sql.Date firstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(prevYear) );
-		java.sql.Date lastDay = AonDateUtils.toSql( AonDateUtils.getYearLastDay(prevYear) );
+		LocalDate firstDay = AonDateUtils.toLocalDate( AonDateUtils.getYearFirstDay(prevYear) );
+		LocalDate lastDay = AonDateUtils.toLocalDate( AonDateUtils.getYearLastDay(prevYear) );
 		return ctx.getDslContext().select(
 			 INVOICE.ID
 			,INVOICE.SERIES
@@ -417,7 +418,7 @@ public class VATDAO  {
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 			.where(VAT_PROPERTIES.getConditions(filter))
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-			.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+			.and(INVOICE.TAX_DATE.between(firstDay,lastDay))
 			.and(FINANCE.STATUS.eq(FinanceStatus.PENDING.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
@@ -430,8 +431,8 @@ public class VATDAO  {
 
 	// ** **
 	public static Stream<VatContext> getPeriodPendingAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
-		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
-		java.sql.Date lastDay = AonDateUtils.toSql( toDate );
+		LocalDate firstDay = AonDateUtils.toLocalDate( fromDate );
+		LocalDate lastDay = AonDateUtils.toLocalDate( toDate );
 		return ctx.getDslContext().select(
 			 INVOICE.ID
 			,INVOICE.SERIES
@@ -483,7 +484,7 @@ public class VATDAO  {
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 			.where(VAT_PROPERTIES.getConditions(filter))
 			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-			.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+			.and(INVOICE.TAX_DATE.between(firstDay,lastDay))
 			.and(FINANCE.STATUS.eq(FinanceStatus.PENDING.value()))
 			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
@@ -583,7 +584,7 @@ public class VATDAO  {
 				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 				.and(INVOICE.TYPE.equal( InvoiceType.SALES.value() )) // VENTAS
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toLocalDate(fromDate),AonDateUtils.toLocalDate(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
 				.fetch()
 				.stream()
@@ -599,7 +600,7 @@ public class VATDAO  {
 				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 				.and(INVOICE.TYPE.equal( InvoiceType.SALES.value() )) // VENTAS
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toLocalDate(fromDate),AonDateUtils.toLocalDate(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( (byte) 1) ) // Criterio de Caja.
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.fetch()
@@ -624,7 +625,7 @@ public class VATDAO  {
 				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
 				.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // NO VENTAS
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toLocalDate(fromDate),AonDateUtils.toLocalDate(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
 				.fetch()
 				.stream()
@@ -640,7 +641,7 @@ public class VATDAO  {
 				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
 				.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // NO VENTAS
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toLocalDate(fromDate),AonDateUtils.toLocalDate(toDate)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( (byte) 1) ) // Criterio de Caja.
 				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 				.fetch()
@@ -718,8 +719,8 @@ public class VATDAO  {
 				.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_TYPE)))
 				.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 				.setRegistryName(rec.getValue(INVOICE.RNAME))	
-				.setIssueDate(rec.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(rec.getValue(INVOICE.TAX_DATE))
+				.setIssueDate(AonDateUtils.toDate(rec.getValue(INVOICE.ISSUE_DATE)))
+				.setTaxDate(AonDateUtils.toDate(rec.getValue(INVOICE.TAX_DATE)))
 				.setInvoiceType(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)))
 				.setRectificationType(RectificationType.safeValueOf(rec.getValue(INVOICE.RECTIFICATION_TYPE)))
 				.setService(rec.getValue(INVOICE.SERVICE) == 1 || InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.EXPENSES)
@@ -762,9 +763,9 @@ public class VATDAO  {
 				.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_TYPE)))
 				.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 				.setRegistryName(rec.getValue(INVOICE.RNAME))	
-				.setIssueDate(rec.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(rec.getValue(INVOICE.TAX_DATE))
-				.setRegContableDate(rec.getValue(INVOICE.CREATION_DATE))
+				.setIssueDate(AonDateUtils.toDate(rec.getValue(INVOICE.ISSUE_DATE)))
+				.setTaxDate(AonDateUtils.toDate(rec.getValue(INVOICE.TAX_DATE)))
+				.setRegContableDate(AonDateUtils.toDate(rec.getValue(INVOICE.CREATION_DATE)))
 				.setInvoiceType(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)))
 				.setRectificationType(RectificationType.safeValueOf(rec.getValue(INVOICE.RECTIFICATION_TYPE)))
 				.setService(rec.getValue(INVOICE.SERVICE) == 1 || InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)) == InvoiceType.EXPENSES)
@@ -790,9 +791,9 @@ public class VATDAO  {
 				.setDeductibleQuota(rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA) != null ? getDeductibleQuota(rec) : 0.0)
 				
 				.setAmortizationDescription(rec.getValue(AMORTIZATION.DESCRIPTION))
-				.setAmortizationInitialDate(rec.getValue(AMORTIZATION.INITIAL_DATE))
+				.setAmortizationInitialDate(AonDateUtils.toDate(rec.getValue(AMORTIZATION.INITIAL_DATE)))
 				.setAmortizationPercentage(rec.getValue(AMORTIZATION.PERCENTAGE))
-				.setCreationDate(rec.getValue(INVOICE.CREATION_DATE));
+				.setCreationDate(AonDateUtils.toDate(rec.getValue(INVOICE.CREATION_DATE)));
 		}
 	}
 

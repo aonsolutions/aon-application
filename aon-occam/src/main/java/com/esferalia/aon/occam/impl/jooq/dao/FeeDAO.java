@@ -13,6 +13,7 @@ import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -44,6 +45,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class FeeDAO {
 	
@@ -54,28 +56,28 @@ public class FeeDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.DOMAIN);}
-		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.CUSTOMER);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER_FEE.DESCRIPTION);}
-		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.PROJECT);}
-		@Override public Property<Short> getLineProperty() {return new FilterDAO.PropertyDAO<Short>(CUSTOMER_FEE.LINE);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.ITEM);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(CUSTOMER_FEE.QUANTITY);}
-		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<Double>(CUSTOMER_FEE.PRICE);}
-		@Override public Property<String> getDiscountExprProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER_FEE.DISCOUNT_EXPR);}
-		@Override public Property<Date> getInitialDateProperty() {return new FilterDAO.PropertyDAO<Date>(CUSTOMER_FEE.INITIAL_DATE);}
-		@Override public Property<Date> getFinalDateProperty() {return new FilterDAO.PropertyDAO<Date>(CUSTOMER_FEE.FINAL_DATE);}
-		@Override public Property<Date> getBillingDateProperty() {return new FilterDAO.PropertyDAO<Date>(CUSTOMER_FEE.BILLING_DATE);}
-		@Override public Property<Short> getPeriodProperty() {return new FilterDAO.PropertyDAO<Short>(CUSTOMER_FEE.PERIOD);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER_FEE.SECURITY_LEVEL);}
-		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.INVOICING_GROUP);}
-		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.SELLER);}
-		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER_FEE.WORKPLACE);}
-		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.CATEGORY);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.SCOPE);}
-		@Override public Property<Integer> getSegmentProperty() {return new FilterDAO.PropertyDAO<Integer>(RSEGMENT.SEGMENT);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.DOMAIN);}
+		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.CUSTOMER);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.DESCRIPTION);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.PROJECT);}
+		@Override public Property<Short> getLineProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.LINE);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.ITEM);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.QUANTITY);}
+		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.PRICE);}
+		@Override public Property<String> getDiscountExprProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.DISCOUNT_EXPR);}
+		@Override public Property<java.util.Date> getInitialDateProperty() {return new FilterDAO.LocalDatePropertyDAO(CUSTOMER_FEE.INITIAL_DATE);}
+		@Override public Property<java.util.Date> getFinalDateProperty() {return new FilterDAO.LocalDatePropertyDAO(CUSTOMER_FEE.FINAL_DATE);}
+		@Override public Property<java.util.Date> getBillingDateProperty() {return new FilterDAO.LocalDatePropertyDAO(CUSTOMER_FEE.BILLING_DATE);}
+		@Override public Property<Short> getPeriodProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.PERIOD);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.SECURITY_LEVEL);}
+		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.INVOICING_GROUP);}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.SELLER);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER_FEE.WORKPLACE);}
+		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CATEGORY);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.SCOPE);}
+		@Override public Property<Integer> getSegmentProperty() {return new FilterDAO.PropertyDAO<>(RSEGMENT.SEGMENT);}
 	}
 	
 	
@@ -116,9 +118,9 @@ public class FeeDAO {
 					: new OldItem().setId(r.getValue(CUSTOMER_FEE.ITEM)))			
 				.setDescription(r.getValue(CUSTOMER_FEE.DESCRIPTION))
 				.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(CUSTOMER_FEE.SECURITY_LEVEL)))
-				.setStartDate(r.getValue(CUSTOMER_FEE.INITIAL_DATE))
-				.setEndDate(r.getValue(CUSTOMER_FEE.FINAL_DATE))
-				.setBillingDate(r.getValue(CUSTOMER_FEE.BILLING_DATE))
+				.setStartDate(AonDateUtils.toDate(r.getValue(CUSTOMER_FEE.INITIAL_DATE)))
+				.setEndDate(AonDateUtils.toDate(r.getValue(CUSTOMER_FEE.FINAL_DATE)))
+				.setBillingDate(AonDateUtils.toDate(r.getValue(CUSTOMER_FEE.BILLING_DATE)))
 				.setInvoicingGroup(checkField(r, INVOICING_GROUP.ID)
 					? InvoicingGroupFiller.buildInvoicingGroup(r)
 					: new InvoicingGroup().setId(r.getValue(CUSTOMER_FEE.INVOICING_GROUP)))
@@ -166,9 +168,9 @@ public class FeeDAO {
 	}
 	
 	private static Fee insert(AONContext ctx, Fee fee) {
-		Date startDate = fee.getStartDate() != null ? new Date(fee.getStartDate().getTime()) : null;
-		Date endDate = fee.getEndDate() != null ? new Date(fee.getEndDate().getTime()) : null;
-		Date billingDate = fee.getBillingDate() != null ? new Date(fee.getBillingDate().getTime()) : null;
+		LocalDate startDate = fee.getStartDate() != null ? AonDateUtils.toLocalDate(fee.getStartDate()) : null;
+		LocalDate endDate = fee.getEndDate() != null ? AonDateUtils.toLocalDate(fee.getEndDate()) : null;
+		LocalDate billingDate = fee.getBillingDate() != null ? AonDateUtils.toLocalDate(fee.getBillingDate()) : null;
 		
 		Integer id = ctx.getDslContext()
 			.insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE)
@@ -192,9 +194,9 @@ public class FeeDAO {
 //	}
 
 	private static Fee update(AONContext ctx, Fee f) {
-		Date startDate = f.getStartDate() != null ? new Date(f.getStartDate().getTime()) : null;
-		Date endDate = f.getEndDate() != null ? new Date(f.getEndDate().getTime()) : null;
-		Date billingDate = f.getBillingDate() != null ? new Date(f.getBillingDate().getTime()) : null;
+		LocalDate startDate = f.getStartDate() != null ? AonDateUtils.toLocalDate(f.getStartDate()) : null;
+		LocalDate endDate = f.getEndDate() != null ? AonDateUtils.toLocalDate(f.getEndDate()) : null;
+		LocalDate billingDate = f.getBillingDate() != null ? AonDateUtils.toLocalDate(f.getBillingDate()) : null;
 		
 		ctx.getDslContext()
 			.update(CUSTOMER_FEE)

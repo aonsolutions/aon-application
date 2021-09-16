@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Alarm.ALARM;
 import static com.esferalia.aon.jooq.tables.Notice.NOTICE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
+import java.time.LocalDateTime;
 import java.util.function.Function;
 
 import org.jooq.Record;
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.NoticeStatus;
 import com.esferalia.aon.occam.api.model.type.NoticeType;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class GroupwareDAO {
@@ -43,7 +45,7 @@ public class GroupwareDAO {
 	
 	
 	public static Integer insertNotice(AONContext ctx, Notice notice) {
-		java.sql.Timestamp date = new java.sql.Timestamp(notice.getStartDate().getTime());
+		LocalDateTime date = AonDateUtils.toLocalDateTime(notice.getStartDate());
 		
 		return ctx.getDslContext()
 				.insertInto(NOTICE)
@@ -68,7 +70,7 @@ public class GroupwareDAO {
 				.insertInto(ALARM)
 				.set(ALARM.DOMAIN, ctx.getDomainId())
 				.set(ALARM.DESCRIPTION, alarm.getDescription())
-				.set(ALARM.ALARM_DATE, new java.sql.Timestamp(alarm.getAlarmDate().getTime()))
+				.set(ALARM.ALARM_DATE, AonDateUtils.toLocalDateTime(alarm.getAlarmDate()))
 				.set(ALARM.STATUS, alarm.getStatus())
 				.set(ALARM.SOURCE, alarm.getSource())
 				.set(ALARM.SOURCE_ID, alarm.getSourceId())
@@ -91,7 +93,7 @@ public class GroupwareDAO {
 			alarm.setId(record.getValue(ALARM.ID));
 			alarm.setDomain(record.getValue(ALARM.DOMAIN));
 			alarm.setDescription(record.getValue(ALARM.DESCRIPTION));
-			alarm.setAlarmDate(record.getValue(ALARM.ALARM_DATE));
+			alarm.setAlarmDate(AonDateUtils.toDate(record.getValue(ALARM.ALARM_DATE)));
 			alarm.setStatus(record.getValue(ALARM.STATUS));
 			alarm.setSource(record.getValue(ALARM.SOURCE));
 			alarm.setSourceId(record.getValue(ALARM.SOURCE_ID));
@@ -108,7 +110,7 @@ public class GroupwareDAO {
 			Notice notice = new Notice();
 			notice.setId(record.getValue(NOTICE.ID));
 			notice.setDomain(record.getValue(NOTICE.DOMAIN));
-			notice.setStartDate(record.getValue(NOTICE.DATE));
+			notice.setStartDate(AonDateUtils.toDate(record.getValue(NOTICE.DATE)));
 			notice.setCompany(record.getValue(NOTICE.COMPANY));
 			notice.setSource(record.getValue(NOTICE.SOURCE));
 			notice.setSender(new UserFiller().apply(record));

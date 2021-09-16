@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.api.model;
 
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Timestamp;
 
 import com.esferalia.aon.occam.api.model.Filter.Property;

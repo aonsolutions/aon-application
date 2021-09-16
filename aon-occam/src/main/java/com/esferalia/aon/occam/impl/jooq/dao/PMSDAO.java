@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.SurveyResponse.SURVEY_RESPONSE;
 import static com.esferalia.aon.jooq.tables.SurveyResponseDetail.SURVEY_RESPONSE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Collections;
 import java.util.Date;
@@ -41,6 +42,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectReservationService;
 import com.esferalia.aon.occam.api.model.project.ProjectReservationServiceDetail;
 import com.esferalia.aon.occam.api.model.project.ReservationCheckStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class PMSDAO {
 	
@@ -53,8 +55,8 @@ public class PMSDAO {
 			.where(PROJECT_RESERVATION.STATUS.eq((byte) 3))
 				.and(PROJECT_RESERVATION.CHECK_STATUS.lessThan((byte) 3)
 				.and(PROJECT_RESERVATION.HOTEL.eq(hotelId))
-				.and(PROJECT_RESERVATION.START_DATE.lessOrEqual(new java.sql.Date(date.getTime())))
-				.and(PROJECT_RESERVATION.END_DATE.greaterThan(new java.sql.Date(date.getTime()))))
+				.and(PROJECT_RESERVATION.START_DATE.lessOrEqual(AonDateUtils.toLocalDate(date)))
+				.and(PROJECT_RESERVATION.END_DATE.greaterThan(AonDateUtils.toLocalDate(date))))
 			.groupBy(WORKPLACE.DESCRIPTION, PROJECT_RESERVATION_GUEST.DOCUMENT_COUNTRY)	
 			.orderBy(WORKPLACE.DESCRIPTION.asc(), DSL.count(PROJECT_RESERVATION_GUEST.ID).desc())
 			.fetch();
@@ -104,7 +106,7 @@ public class PMSDAO {
 				.join(HOTEL).on(HOTEL.ID.eq(PROJECT_RESERVATION.HOTEL))
 				.join(WORKPLACE).on(WORKPLACE.ID.eq(HOTEL.WORKPLACE))
 				.leftOuterJoin(SURVEY_RESPONSE).on(SURVEY_RESPONSE.REGISTRY.eq(PROJECT_RESERVATION_GUEST.PERSON)
-					.and(SURVEY_RESPONSE.RESPONSE_DATE.between(DSL.timestamp(PROJECT_RESERVATION.START_DATE), DSL.timestamp(PROJECT_RESERVATION.END_DATE).sub(1))))
+					.and(SURVEY_RESPONSE.RESPONSE_DATE.between(DSL.localDateTime(PROJECT_RESERVATION.START_DATE.cast(LocalDateTime.class)), DSL.localDateTime(PROJECT_RESERVATION.END_DATE.cast(LocalDateTime.class)).sub(1))))
 				.join(SURVEY_RESPONSE_DETAIL).on(SURVEY_RESPONSE_DETAIL.SURVEYRESPONSE.eq(SURVEY_RESPONSE.ID).and(SURVEY_RESPONSE_DETAIL.QUESTION.eq(6)))
 			.where(PROJECT_RESERVATION.STATUS.eq((byte)3))
 				.and(PROJECT_RESERVATION.CHECK_STATUS.lessThan((byte)3))
@@ -124,7 +126,7 @@ public class PMSDAO {
 						.and(SURVEY_RESPONSE_DETAIL.VALUE_TEXT.notLike("%@lowcostbeds.com"))
 						.and(SURVEY_RESPONSE_DETAIL.VALUE_TEXT.notLike("%@alwaystravelling.es"))
 						.and(SURVEY_RESPONSE_DETAIL.VALUE_TEXT.notLike("davidmursl@msn.com"))))
-				.and(PROJECT_RESERVATION.START_DATE.lessThan(DSL.currentDate()))
+				.and(PROJECT_RESERVATION.START_DATE.lessThan(DSL.currentLocalDate()))
 			.groupBy(WORKPLACE.DESCRIPTION,PROJECT_RESERVATION.PROJECT, DSL.year(PROJECT_RESERVATION.START_DATE),DSL.month(PROJECT_RESERVATION.START_DATE)
 				,PROJECT_RESERVATION_GUEST.ID)//.having(correos.greaterThan(0))
 		
@@ -308,8 +310,8 @@ public class PMSDAO {
 					.setProject(r.getProject())
 					.setAgency(r.getAgency())
 					.setCrsCode(r.getCrsCode())
-					.setStartDate(r.getStartDate())
-					.setEndDate(r.getEndDate());
+					.setStartDate(AonDateUtils.toDate(r.getStartDate()))
+					.setEndDate(AonDateUtils.toDate(r.getEndDate()));
 		}
 	}
 	
@@ -344,7 +346,7 @@ public class PMSDAO {
 		@Override
 		public ProjectReservationServiceDetail apply(ProjectReservationServiceDetailRecord r) {
 			return new ProjectReservationServiceDetail()
-					.setEffectiveDate(r.getEffectiveDate())
+					.setEffectiveDate(AonDateUtils.toDate(r.getEffectiveDate()))
 					.setQuantity(r.getQuantity())
 					.setPrice(r.getPrice())
 					.setTaxableBase(r.getTaxableBase());

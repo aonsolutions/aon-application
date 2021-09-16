@@ -371,11 +371,11 @@ public class CompanyDAO {
 						:(
 								(
 								ENTERPRISE_ACTIVITY.START_DATE.isNull()
-								.or(ENTERPRISE_ACTIVITY.START_DATE.le(AonDateUtils.toSql(atDate)))
+								.or(ENTERPRISE_ACTIVITY.START_DATE.le(AonDateUtils.toLocalDate(atDate)))
 								)
 							.and(
 								ENTERPRISE_ACTIVITY.END_DATE.isNull()
-								.or(ENTERPRISE_ACTIVITY.END_DATE.ge(AonDateUtils.toSql(atDate)))
+								.or(ENTERPRISE_ACTIVITY.END_DATE.ge(AonDateUtils.toLocalDate(atDate)))
 								)
 						 )
 						)
@@ -427,8 +427,8 @@ public class CompanyDAO {
 				.where(INVEST_ASSET.DOMAIN.equal(domainId)
 						.and(atDate == null
 							?DSL.trueCondition()
-							:((INVEST_ASSET.START_DATE.isNull().or(INVEST_ASSET.START_DATE.ge(AonDateUtils.toSql(atDate))))
-							.and(INVEST_ASSET.END_DATE.isNull().or(INVEST_ASSET.END_DATE.le(AonDateUtils.toSql(atDate)))))
+							:((INVEST_ASSET.START_DATE.isNull().or(INVEST_ASSET.START_DATE.ge(AonDateUtils.toLocalDate(atDate))))
+							.and(INVEST_ASSET.END_DATE.isNull().or(INVEST_ASSET.END_DATE.le(AonDateUtils.toLocalDate(atDate)))))
 							)
 						)
 				.fetch()

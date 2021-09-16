@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.CommercialTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CommercialActivityProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommercialTrackingProperties;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class CommercialDAO {
 
@@ -33,20 +34,20 @@ public class CommercialDAO {
 				return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getActivityProperty(){return new FilterDAO.PropertyDAO<Integer>(COMMERCIAL_TRACKING.ACTIVITY);}
-		@Override public Property<Byte> getAlldayProperty() {return new FilterDAO.PropertyDAO<Byte>(COMMERCIAL_TRACKING.ALLDAY);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(COMMERCIAL_TRACKING.COMMENTS);}
-		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(COMMERCIAL_TRACKING.DATE);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(COMMERCIAL_TRACKING.DOMAIN);}
-		@Override public Property<Timestamp> getEndDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(COMMERCIAL_TRACKING.END_DATE);}
-		@Override public Property<String> getEventIdProperty() {return new FilterDAO.PropertyDAO<String>(COMMERCIAL_TRACKING.EVENTID);}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(COMMERCIAL_TRACKING.ID);}
-		@Override public Property<String> getLocationProperty() {return new FilterDAO.PropertyDAO<String>(COMMERCIAL_TRACKING.LOCATION);}
-		@Override public Property<Integer> getNextCommercialTrackingProperty() {return new FilterDAO.PropertyDAO<Integer>(COMMERCIAL_TRACKING.NEXT_COMMERCIAL_TRACKING);}
-		@Override public Property<Integer> getOfferProperty() {return new FilterDAO.PropertyDAO<Integer>(COMMERCIAL_TRACKING.OFFER);}
-		@Override public Property<Integer> getProjectCommercialProperty() {return new FilterDAO.PropertyDAO<Integer>(COMMERCIAL_TRACKING.PROJECT_COMMERCIAL);}
-		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(COMMERCIAL_TRACKING.SELLER);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(COMMERCIAL_TRACKING.STATUS);}
+		@Override public Property<Integer> getActivityProperty(){return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.ACTIVITY);}
+		@Override public Property<Byte> getAlldayProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.ALLDAY);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.COMMENTS);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(COMMERCIAL_TRACKING.DATE);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.DOMAIN);}
+		@Override public Property<Timestamp> getEndDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(COMMERCIAL_TRACKING.END_DATE);}
+		@Override public Property<String> getEventIdProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.EVENTID);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.ID);}
+		@Override public Property<String> getLocationProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.LOCATION);}
+		@Override public Property<Integer> getNextCommercialTrackingProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.NEXT_COMMERCIAL_TRACKING);}
+		@Override public Property<Integer> getOfferProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.OFFER);}
+		@Override public Property<Integer> getProjectCommercialProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.PROJECT_COMMERCIAL);}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.SELLER);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(COMMERCIAL_TRACKING.STATUS);}
 	}
 	private static class CommercialActivityPropertiesDAO implements CommercialActivityProperties {
 		private Condition[] getConditions(CommercialActivityFilter filter) {
@@ -107,9 +108,9 @@ public class CommercialDAO {
 					.setActivity(r.getActivity())
 					.setAllday(r.getAllday() == 1)
 					.setComments(r.getComments())
-					.setDate(r.getDate())
+					.setDate(AonDateUtils.toDate(r.getDate()))
 					.setDomain(r.getDomain())
-					.setEndDate(r.getEndDate())
+					.setEndDate(AonDateUtils.toDate(r.getEndDate()))
 					.setEventId(r.getEventid())
 					.setId(r.getId())
 					.setLocation(r.getLocation())

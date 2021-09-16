@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -858,8 +859,8 @@ public class AccountingUtilitiesDAO {
 	
 	public static AccUtilitiesResult regenerateInputVat(AONContext ctx, Integer year) {
 		try {
-			java.sql.Date first = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(year));
-			java.sql.Date last = AonDateUtils.toSql( AonDateUtils.getYearLastDay(year));
+			LocalDate first = AonDateUtils.toLocalDate( AonDateUtils.getYearFirstDay(year));
+			LocalDate last = AonDateUtils.toLocalDate( AonDateUtils.getYearLastDay(year));
 
 			MutableInt rectificativeInvoices = new MutableInt(0);
 			MutableInt invoices = new MutableInt(0);
@@ -1124,8 +1125,8 @@ public class AccountingUtilitiesDAO {
 						.setSeries(record.getValue(INVOICE.SERIES))
 						.setNumber(record.getValue(INVOICE.NUMBER))
 						.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-						.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-						.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+						.setIssueDate(AonDateUtils.toDate(record.getValue(INVOICE.ISSUE_DATE)))
+						.setTaxDate(AonDateUtils.toDate(record.getValue(INVOICE.TAX_DATE)))
 						.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
 						.setRegistry(record.getValue(INVOICE.REGISTRY))
 						.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))

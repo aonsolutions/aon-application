@@ -132,7 +132,7 @@ public class DeliveryDAO {
 			.set(DELIVERY.NUMBER, delivery.getNumber())
 			.set(DELIVERY.CUSTOMER, delivery.getCustomer())
 			.set(DELIVERY.ADDRESS, delivery.getAddress())
-			.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime()!=null?delivery.getIssueTime().getTime():(new Date()).getTime()))
+			.set(DELIVERY.ISSUE_TIME, new Timestamp(delivery.getIssueTime()!=null?delivery.getIssueTime().getTime():(new Date()).getTime()).toLocalDateTime())
 			.set(DELIVERY.PAY_METHOD, delivery.getPayMethod())
 			.set(DELIVERY.SECURITY_LEVEL, delivery.getSecurityLevel())
 			.set(DELIVERY.STATUS, (byte)delivery.getStatus().ordinal())
@@ -164,9 +164,9 @@ public class DeliveryDAO {
 			.set(DELIVERY.SHIPPING_PERIOD, delivery.getShippingPeriod())
 			.set(DELIVERY.TRACKING_NUMBER, delivery.getTrackingNumber())
 			.set(DELIVERY.SHIPPING_STATUS, delivery.getShippingStatus())
-			.set(DELIVERY.STATUS_MODIFICATION_DATE, AonDateUtils.toTimestamp(delivery.getStatusModificationDate()))
+			.set(DELIVERY.STATUS_MODIFICATION_DATE, AonDateUtils.toLocalDateTime(delivery.getStatusModificationDate()))
 			.set(DELIVERY.MODIFICATION_USER, ctx.getUser())
-			.set(DELIVERY.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.set(DELIVERY.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 		.where(DELIVERY_PROPERTIES.getConditions(filter)).returning().fetch()
 		.stream().map(new DeliveryFiller()).findFirst().orElse(new Delivery());
 	}
@@ -206,8 +206,8 @@ public class DeliveryDAO {
 						detail.getQuantity(), detail.getPrice(),
 						detail.getDiscountExpression(),
 						detail.getSalesDetail(), 
-						ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
-						ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
+						ctx.getUser(), AonDateUtils.toLocalDateTime(new Date()),
+						ctx.getUser(), AonDateUtils.toLocalDateTime(new Date()))
 				.returning().fetch().stream().map(new DeliveryDetailFiller()).findFirst().orElse(new DeliveryDetail());
 	}
 	
@@ -249,7 +249,7 @@ public class DeliveryDAO {
 				.set(DELIVERY_DETAIL.DISCOUNT_EXPR, deliveryDetail.getDiscountExpression())
 				.set(DELIVERY_DETAIL.SALES_DETAIL, deliveryDetail.getSalesDetail())
 				.set(DELIVERY_DETAIL.MODIFICATION_USER, ctx.getUser())
-				.set(DELIVERY_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+				.set(DELIVERY_DETAIL.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 			.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter)).returning().fetch()
 			.stream().map(new DeliveryDetailFiller()).findFirst().orElse(new DeliveryDetail());
 	}
@@ -359,7 +359,7 @@ public class DeliveryDAO {
 									record.getValue(DELIVERY.STATUS)))
 					.setSeries(record.getValue(DELIVERY.SERIES))
 					.setNumber(record.getValue(DELIVERY.NUMBER))
-					.setIssueTime(record.getValue(DELIVERY.ISSUE_TIME))
+					.setIssueTime(AonDateUtils.toDate(record.getValue(DELIVERY.ISSUE_TIME)))
 					.setCustomer2(customer)
 					.setScopeName(record.getValue(SCOPE.DESCRIPTION))	
 					.setWorkplaceName(record.getValue(WORKPLACE.DESCRIPTION))
@@ -425,7 +425,7 @@ public class DeliveryDAO {
 					.setNumber(record.getValue(DELIVERY.NUMBER))
 					.setStatus(AonEnumUtils.enumValue(DeliveryStatus.class,
 							record.getValue(DELIVERY.STATUS)))
-					.setIssueTime(record.getValue(DELIVERY.ISSUE_TIME))
+					.setIssueTime(AonDateUtils.toDate(record.getValue(DELIVERY.ISSUE_TIME)))
 					.setCustomer2(customer)
 					)
 				.setLine(record.getValue(DELIVERY_DETAIL.LINE))

@@ -216,10 +216,10 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 				.groupBy(INVOICE_TYPE_FIELD,INVOICE.ISSUE_DATE)
 				.orderBy(INVOICE_TYPE_FIELD,INVOICE.ISSUE_DATE)
 		.unionAll(
-			 getDeliverySelect(SALES_TYPE_FIELD,DSL.date( DELIVERY.ISSUE_TIME).as(DATE_FIELD) , delSum ) 
+			 getDeliverySelect(SALES_TYPE_FIELD,DSL.localDateTime( DELIVERY.ISSUE_TIME).as(DATE_FIELD) , delSum ) 
 				.where( getDeliveryCondition())
-				.groupBy(DSL.date( DELIVERY.ISSUE_TIME))
-				.orderBy(DSL.date( DELIVERY.ISSUE_TIME)))
+				.groupBy(DSL.localDateTime( DELIVERY.ISSUE_TIME))
+				.orderBy(DSL.localDateTime( DELIVERY.ISSUE_TIME)))
 		.unionAll(
 				getIncomeSelect(PURCHASE_TYPE_FIELD,INCOME.ISSUE_TIME, incSum ) 
 					.where( getIncomeCondition())
@@ -256,10 +256,10 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 			.groupBy(INVOICE_TYPE_FIELD,INVOICE.ISSUE_DATE)
 			.orderBy(INVOICE_TYPE_FIELD,INVOICE.ISSUE_DATE)
 		.unionAll(
-			 getDeliverySelect(SALES_TYPE_FIELD, DSL.date( DELIVERY.ISSUE_TIME).as(DATE_FIELD) , delSum ) 
+			 getDeliverySelect(SALES_TYPE_FIELD, DSL.localDateTime( DELIVERY.ISSUE_TIME).as(DATE_FIELD) , delSum ) 
 				.where( getDeliveryCondition())
-			.groupBy(DSL.date( DELIVERY.ISSUE_TIME))
-			.orderBy(DSL.date( DELIVERY.ISSUE_TIME)))
+			.groupBy(DSL.localDateTime( DELIVERY.ISSUE_TIME))
+			.orderBy(DSL.localDateTime( DELIVERY.ISSUE_TIME)))
 		.unionAll(
 			getIncomeSelect(PURCHASE_TYPE_FIELD,INCOME.ISSUE_TIME, incSum ) 
 				.where( getIncomeCondition())
@@ -573,10 +573,10 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 			c = c.and(SecurityDAO.getUserScopesCondition(this.ctx, DELIVERY.SCOPE));
 			c = c.and(SecurityDAO.getSecurityLevelCondition(this.ctx, this.ctx.getUser(), DELIVERY.SECURITY_LEVEL));
 			if (this.params.getFrom() != null) {
-				c = c.and(DELIVERY.ISSUE_TIME.ge(AonDateUtils.toTimestamp(this.params.getFrom())));
+				c = c.and(DELIVERY.ISSUE_TIME.ge(AonDateUtils.toLocalDateTime(this.params.getFrom())));
 			}
 			if (this.params.getTo() != null) {
-				c = c.and(DELIVERY.ISSUE_TIME.le(AonDateUtils.toTimestamp(this.params.getTo())));
+				c = c.and(DELIVERY.ISSUE_TIME.le(AonDateUtils.toLocalDateTime(this.params.getTo())));
 			}
 			if (this.params.getRegistry() != null) {
 				c = c.and(DELIVERY.CUSTOMER.eq(this.params.getRegistry()));
@@ -609,10 +609,10 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 			c = c.and(SecurityDAO.getUserScopesCondition(this.ctx, INCOME.SCOPE));
 			c = c.and(SecurityDAO.getSecurityLevelCondition(this.ctx, this.ctx.getUser(), INCOME.SECURITY_LEVEL));
 			if (this.params.getFrom() != null) {
-				c = c.and(INCOME.ISSUE_TIME.ge(AonDateUtils.toSql(this.params.getFrom())));
+				c = c.and(INCOME.ISSUE_TIME.ge(AonDateUtils.toLocalDate(this.params.getFrom())));
 			}
 			if (this.params.getTo() != null) {
-				c = c.and(INCOME.ISSUE_TIME.le(AonDateUtils.toSql(this.params.getTo())));
+				c = c.and(INCOME.ISSUE_TIME.le(AonDateUtils.toLocalDate(this.params.getTo())));
 			}
 			if (this.params.getRegistry() != null) {
 				c = c.and(INCOME.SUPPLIER.eq(this.params.getRegistry()));
@@ -653,11 +653,11 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 		c = c.and(SecurityDAO.getUserScopesCondition(this.ctx, INVOICE.SCOPE));
 		c = c.and(SecurityDAO.getSecurityLevelCondition(this.ctx, this.ctx.getUser(), INVOICE.SECURITY_LEVEL));
 		if (this.params.getFrom() != null) {
-			c = c.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql(this.params.getFrom())));
+			c = c.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toLocalDate(this.params.getFrom())));
 			periodLabel = FMT.format(this.params.getFrom());
 		}
 		if (this.params.getTo() != null) {
-			c = c.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toSql(this.params.getTo())));
+			c = c.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toLocalDate(this.params.getTo())));
 			periodLabel = periodLabel + " al " +  FMT.format(this.params.getTo());
 		}
 		if (this.params.getRegistry() != null) {

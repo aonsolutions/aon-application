@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -80,10 +81,10 @@ public class IRPFDAO extends FiscalModelDAO {
 	}
 
 	private static Stream<IrpfBreakdown> getSalaryIrpfBreakdown(final AONContext ctx, final FiscalModel fm, final boolean diff) {
-		java.sql.Date dateFrom = diff
-				?AonDateUtils.toSql( AonDateUtils.getYearFirstDay(fm.getYear()))
-				:AonDateUtils.toSql( FiscalUtils.getPeriodStart(fm));	
-		java.sql.Date dateTo = AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
+		LocalDate dateFrom = diff
+				? AonDateUtils.toLocalDate( AonDateUtils.getYearFirstDay(fm.getYear()))
+				: AonDateUtils.toLocalDate( FiscalUtils.getPeriodStart(fm));	
+		LocalDate dateTo = AonDateUtils.toLocalDate( FiscalUtils.getPeriodEnd(fm));
 		final LinkedList<IrpfBreakdown> list = new LinkedList<IrpfBreakdown>();
 		ctx.getDslContext()
 			.select(SALARY.ISSUE_DATE
@@ -100,7 +101,7 @@ public class IRPFDAO extends FiscalModelDAO {
 			.fetch()
 			.stream()
 			.forEach( rec -> {
-				Date issueDate = rec.field(SALARY.ISSUE_DATE) != null ? rec.getValue(SALARY.ISSUE_DATE): null;
+				Date issueDate = rec.field(SALARY.ISSUE_DATE) != null ? AonDateUtils.toDate(rec.getValue(SALARY.ISSUE_DATE)): null;
 				IrpfBreakdown br = new IrpfBreakdown()
 						.setFromSalary(true)
 						.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
@@ -225,7 +226,7 @@ public class IRPFDAO extends FiscalModelDAO {
 					.leftOuterJoin(RADDRESS).on(RADDRESS.REGISTRY.equal(INVOICE.REGISTRY)).and(RADDRESS.TYPE.eq((byte) 0) )
 					.where(IRPF_PROPERTIES.getConditions(filter))
 						.and(INVOICE.DOMAIN.equal(domain))
-						.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(dateFrom),AonDateUtils.toSql(dateTo)))
+						.and(INVOICE.TAX_DATE.between(AonDateUtils.toLocalDate(dateFrom),AonDateUtils.toLocalDate(dateTo)))
 						.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
 						
 					.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
@@ -252,7 +253,7 @@ public class IRPFDAO extends FiscalModelDAO {
 				.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 				.where(IRPF_PROPERTIES.getConditions(filter))
 					.and(INVOICE.DOMAIN.equal(domain))
-					.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(dateFrom),AonDateUtils.toSql(dateTo)))
+					.and(INVOICE.TAX_DATE.between(AonDateUtils.toLocalDate(dateFrom),AonDateUtils.toLocalDate(dateTo)))
 					.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
 				.groupBy(INVOICE.RDOCUMENT)
 				.orderBy(INVOICE.ID,INVOICE.RDOCUMENT)
@@ -318,8 +319,8 @@ public class IRPFDAO extends FiscalModelDAO {
 					.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_TYPE)))
 					.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 					.setName(rec.getValue(INVOICE.RNAME))
-					.setIssueDate(rec.getValue(INVOICE.ISSUE_DATE))
-					.setTaxDate(rec.getValue(INVOICE.TAX_DATE))
+					.setIssueDate(AonDateUtils.toDate(rec.getValue(INVOICE.ISSUE_DATE)))
+					.setTaxDate(AonDateUtils.toDate(rec.getValue(INVOICE.TAX_DATE)))
 					.setWithholdingType(AonEnumUtils.enumValue(WithholdingType.class,rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
 					.setIRPFRegime(regime == null? null : IRPFRegime.values()[regime])
 					.setBase(base)

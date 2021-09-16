@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -1199,7 +1200,7 @@ public class DashboardController implements Serializable {
 			try {
 				ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin()); 
 
-				Result<Record9<Byte, Integer, String, java.sql.Date, String, Integer, String, Byte, Integer>> data ;
+				Result<Record9<Byte, Integer, String, LocalDate, String, Integer, String, Byte, Integer>> data ;
 				data =  ctx.getDslContext()
 						.selectDistinct(RATTACH.TYPE,RATTACH.CATEGORY,RATTACH.DESCRIPTION,RATTACH.ATTACH_DATE,RATTACH.DRIVE_ID, RATTACH.DATA.length(),RATTACH.DPARENT_ID,RATTACH.MIMETYPE,RATTACH.ID)
 						.from(RATTACH)
@@ -1208,7 +1209,7 @@ public class DashboardController implements Serializable {
 				
 				recentFiles = new Vector<DashboardRecentFiles>();
 				int j=0;
-				for (Record9<Byte, Integer, String, java.sql.Date, String, Integer, String, Byte,Integer> record : data) {
+				for (Record9<Byte, Integer, String, LocalDate, String, Integer, String, Byte,Integer> record : data) {
 					if (record.value6() != null
 							|| (record.value6() == null && record.value5() != null)) {
 						DashboardRecentFiles drc = new DashboardRecentFiles();
@@ -1531,7 +1532,7 @@ public class DashboardController implements Serializable {
 			//Result<Record6<java.sql.Date, Double, Double, Double, Double, Double>> data ;
 
 			
- 			Result<Record6<java.sql.Date, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> data ;
+ 			Result<Record6<LocalDate, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> data ;
 
 			data =  ctx.getDslContext().select(SALARY.CHARGE_DATE,DSL.sum(SALARY.TOTAL_LIQUID),DSL.sum(SALARY.TOTAL_DEDUCTION),DSL.sum(SALARY.TOTAL_IRPF),DSL.sum(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS),DSL.sum(SALARY.TOTAL_ENTERPRISE))
 					.from(SALARY)
@@ -1545,7 +1546,7 @@ public class DashboardController implements Serializable {
 				*/	
 			Map<Integer, HashMap<String, DashboardPayrollPortal>>  map = new HashMap<Integer,HashMap<String, DashboardPayrollPortal>>();
 			
-			for (Record6<java.sql.Date, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal> record : data) {
+			for (Record6<LocalDate, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal> record : data) {
 				HashMap<String, DashboardPayrollPortal> dpps = new HashMap<String, DashboardPayrollPortal>();
 				DashboardPayrollPortal dpp = new DashboardPayrollPortal();
 				dpp.setDeduction(0.00);dpp.setIrpf(0.00);

@@ -17,6 +17,8 @@ import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -34,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Expedient;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ExpedientDAO {
@@ -45,17 +48,17 @@ public class ExpedientDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT.ID);} 
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.ACTIVE);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT.ALIAS);}
-		@Override public Property<Byte> getCommercialProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.COMMERCIAL);}
-		@Override public Property<Date> getDateProperty() {return new FilterDAO.PropertyDAO<Date>(PROJECT.DATE);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT.DOMAIN);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT.NAME);}
-		@Override public Property<Integer> getProjectTypeProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT.PROJECT_TYPE);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT.REGISTRY);}
-		@Override public Property<Byte> getReservationProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.RESERVATION);}
-		@Override public Property<Byte> getTasProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.TAS);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.ID);} 
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.ACTIVE);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.ALIAS);}
+		@Override public Property<Byte> getCommercialProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.COMMERCIAL);}
+		@Override public Property<java.util.Date> getDateProperty() {return new FilterDAO.LocalDatePropertyDAO(PROJECT.DATE);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.NAME);}
+		@Override public Property<Integer> getProjectTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.PROJECT_TYPE);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.REGISTRY);}
+		@Override public Property<Byte> getReservationProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.RESERVATION);}
+		@Override public Property<Byte> getTasProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.TAS);}
 	}
 	public static Stream<Expedient> resumeExpedient(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return resumeInvoice(ctx, domain, filter)
@@ -156,7 +159,7 @@ public class ExpedientDAO {
 		.orderBy(PROJECT.ID,DSL.year(DAILY_TRACKING.TRACKING_DATE), JOB_TYPE.DESCRIPTION);
 	}
 	
-	private static SelectSeekStep2<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, Byte, java.sql.Date> fullInvoice(AONContext ctx, Integer domain, ProjectFilter filter) {
+	private static SelectSeekStep2<Record10<String, String, LocalDate, Integer, Double, String, Integer, String, String, Integer>, Byte, LocalDate> fullInvoice(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return ctx.getDslContext().select(DSL.when(INVOICE.TYPE.eq((byte)0), "Fra.Compras")
 											.when(INVOICE.TYPE.eq((byte)1), "Fra.Ventas")
 											.when(INVOICE.TYPE.eq((byte)2), "Fra.Gastos")
@@ -172,7 +175,7 @@ public class ExpedientDAO {
 		.orderBy(INVOICE.TYPE, INVOICE.ISSUE_DATE);
 	}
 	
-	private static SelectSeekStep1<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, java.sql.Date> fullIncome(AONContext ctx, Integer domain, ProjectFilter filter) {
+	private static SelectSeekStep1<Record10<String, String, LocalDate, Integer, Double, String, Integer, String, String, Integer>, LocalDate> fullIncome(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return ctx.getDslContext().select(DSL.inline("Alb.Compras").as("Tipo"),
 				INCOME.REFERENCE_CODE.as("Document"),
 				INCOME.ISSUE_TIME.as("Date"), INCOME_DETAIL.PROJECT.as("Expedient"), 
@@ -186,10 +189,10 @@ public class ExpedientDAO {
 		.orderBy(INCOME.ISSUE_TIME);
 	}
 	
-	private static SelectSeekStep1<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, java.sql.Date> fullDelivery(AONContext ctx, Integer domain, ProjectFilter filter) {
+	private static SelectSeekStep1<Record10<String, String, LocalDate, Integer, Double, String, Integer, String, String, Integer>, LocalDate> fullDelivery(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return ctx.getDslContext().select(DSL.inline("Alb.Ventas").as("Tipo"),
 				DSL.concat(DELIVERY.SERIES, DSL.inline("/")).as("Document"),
-				DSL.date(DELIVERY.ISSUE_TIME).as("Date"), DELIVERY.PROJECT.as("Expedient"), 
+				DSL.localDate(DELIVERY.ISSUE_TIME.cast(LocalDate.class)).as("Date"), DELIVERY.PROJECT.as("Expedient"), 
 				DELIVERY_DETAIL.PRICE.as("Base"), PRODUCT.NAME.as("Concept"),
 				DELIVERY.NUMBER.as("Number"), PROJECT.ALIAS, PROJECT.NAME, DSL.year(DELIVERY.ISSUE_TIME).as("Year"))
 		.from(DELIVERY).join(DELIVERY_DETAIL).on(DELIVERY.ID.eq(DELIVERY_DETAIL.DELIVERY).and(DELIVERY.STATUS.eq((byte) 0)))
@@ -197,10 +200,10 @@ public class ExpedientDAO {
 			.join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
 			.join(PROJECT).on(DELIVERY.PROJECT.eq(PROJECT.ID))
 		.where(PROJECT_PROPERTIES.getConditions(filter))
-		.orderBy(DSL.date(DELIVERY.ISSUE_TIME));
+		.orderBy(DSL.localDate(DELIVERY.ISSUE_TIME.cast(LocalDate.class)));
 	}
 	
-	private static SelectSeekStep1<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, java.sql.Date> fullOffer(AONContext ctx, Integer domain, ProjectFilter filter) {
+	private static SelectSeekStep1<Record10<String, String, LocalDate, Integer, Double, String, Integer, String, String, Integer>, LocalDate> fullOffer(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return ctx.getDslContext().select(DSL.inline("Ppto.Ventas").as("Tipo"), 
 				DSL.concat(OFFER.SERIES, DSL.inline("/")).as("Document"),
 				OFFER.ISSUE_DATE.as("Date"), OFFER.PROJECT.as("Expedient"), OFFER_DETAIL.PRICE.as("Base"), PRODUCT.NAME.as("Concept"),
@@ -213,7 +216,7 @@ public class ExpedientDAO {
 		.orderBy(OFFER.ISSUE_DATE);
 	}
 	
-	private static SelectSeekStep1<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, java.sql.Date> fullJob(AONContext ctx, Integer domain, ProjectFilter filter) {
+	private static SelectSeekStep1<Record10<String, String, LocalDate, Integer, Double, String, Integer, String, String, Integer>, LocalDate> fullJob(AONContext ctx, Integer domain, ProjectFilter filter) {
 		return ctx.getDslContext().select(DSL.inline("Mano.Obra").as("Tipo"), DSL.concat(ACTIVITY_TYPE.DESCRIPTION, "").as("Document"), DAILY_TRACKING.TRACKING_DATE.as("Date"), DAILY_TRACKING.PROJECT.as("Expedient"),
 				DAILY_TRACKING.COST.mul(DAILY_TRACKING.TRACKING_DURATION).as("Base"), JOB_TYPE.DESCRIPTION.as("Concept"),
 				DAILY_TRACKING.ID.as("Number"), PROJECT.ALIAS, PROJECT.NAME, DSL.year(DAILY_TRACKING.TRACKING_DATE).as("Year"))
@@ -239,10 +242,10 @@ public class ExpedientDAO {
 		}
 	}
 	
-	private static class FullExpedientFiller implements Function<Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer>, Expedient> {
+	private static class FullExpedientFiller implements Function<Record10<String, String, LocalDate, Integer, Double, String, Integer, String, String, Integer>, Expedient> {
 		
 		@Override
-		public Expedient apply(Record10<String, String, java.sql.Date, Integer, Double, String, Integer, String, String, Integer> r) {
+		public Expedient apply(Record10<String, String, LocalDate, Integer, Double, String, Integer, String, String, Integer> r) {
 			String document = r.value2();
 			if(document != null && "/".equals(document.substring(document.length()-1))) {
 				String n = AonStringUtils.leftPad(r.value7().toString(), 5, "0");
@@ -254,7 +257,7 @@ public class ExpedientDAO {
 				.setYear(r.value10())	
 				.setType(r.value1())
 				.setDocument(document)
-				.setDate(r.value3())
+				.setDate(AonDateUtils.toDate(r.value3()))
 				.setExpendient(r.value4())
 				.setBase(r.value5())
 				.setConcept(r.value6())

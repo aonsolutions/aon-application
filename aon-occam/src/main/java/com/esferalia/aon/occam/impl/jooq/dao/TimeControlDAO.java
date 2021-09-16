@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Location.LOCATION;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Timecontrol.TIMECONTROL;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -12,11 +13,13 @@ import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.jooq.Field;
 import org.jooq.Param;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
@@ -235,7 +238,7 @@ public class TimeControlDAO {
 			.insertInto(TIMECONTROL, TIMECONTROL.DOMAIN, TIMECONTROL.TASK_HOLDER, TIMECONTROL.STATUS,
 				TIMECONTROL.DATE, TIMECONTROL.COMMENTS, TIMECONTROL.LOCATION, TIMECONTROL.LATITUDE, TIMECONTROL.LONGITUDE)
 			.values(tcd.getDomain().getId(), tcd.getTaskHolder().getId(), tcd.getStatus().value(),
-					new Timestamp(tcd.getDate().getTime()), tcd.getComments(), tcd.getLocation().getId(),
+					AonDateUtils.toLocalDateTime(tcd.getDate()), tcd.getComments(), tcd.getLocation().getId(),
 					tcd.getCoordinates().getLatitude(), tcd.getCoordinates().getLongitude())
 			.returning(TIMECONTROL.ID).fetchOne().getValue(TIMECONTROL.ID);
 		ctx.log().debug("INSERT TIMECONTROL id: " + id);	
@@ -252,7 +255,7 @@ public class TimeControlDAO {
 		ctx.checkWrite();
 		ctx.getDslContext()
 			.update(TIMECONTROL)
-			.set(TIMECONTROL.DATE, new Timestamp(tcd.getDate().getTime()))
+			.set(TIMECONTROL.DATE, AonDateUtils.toLocalDateTime(tcd.getDate()))
 			.set(TIMECONTROL.COMMENTS, tcd.getComments())
 			.set(TIMECONTROL.STATUS, tcd.getStatus().value())
 			.set(TIMECONTROL.LOCATION, tcd.getLocation().getId())
@@ -333,7 +336,7 @@ public class TimeControlDAO {
 			return new TimeControlDetail()
 					.setId(record.getValue(TIMECONTROL.ID))
 					.setDomain(new Domain().setId(record.getValue(TIMECONTROL.DOMAIN)))
-					.setDate(record.getValue(TIMECONTROL.DATE))
+					.setDate(AonDateUtils.toDate(record.getValue(TIMECONTROL.DATE)))
 					.setStatus(TimeControlStatus.safeValueOf(record.getValue(TIMECONTROL.STATUS)))
 					.setTaskHolder(TaskHolderFiller.build(record, null))
 					.setLocation(location)

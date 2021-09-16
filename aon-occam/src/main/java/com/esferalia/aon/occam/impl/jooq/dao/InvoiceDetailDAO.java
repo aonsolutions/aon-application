@@ -49,9 +49,9 @@ public class InvoiceDetailDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.ID);}
 		@Override public Property<Integer> getDomainProperty(){return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.DOMAIN);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(INVOICE_DETAIL.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(INVOICE_DETAIL.MODIFICATION_DATE);}
 		@Override public Property<Integer> getInvoiceProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.INVOICE);}
 		@Override public Property<Integer> getInvestAssetProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.INVEST_ASSET);}
 		@Override public Property<Short> getLineProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL.LINE);}
@@ -147,7 +147,7 @@ public class InvoiceDetailDAO {
 		.set(INVOICE_DETAIL.WORKPLACE, invoiceDetail.getWorkPlace() )
 		.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse())
 		.set(INVOICE_DETAIL.MODIFICATION_USER ,ctx.getUser())
-		.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+		.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime())
 		.execute();
 		return invoiceDetail;
 	}
@@ -173,9 +173,9 @@ public class InvoiceDetailDAO {
 			.set(INVOICE_DETAIL.WORKPLACE, invoiceDetail.getWorkPlace() )
 			.set(INVOICE_DETAIL.WAREHOUSE, invoiceDetail.getWarehouse())
 			.set(INVOICE_DETAIL.CREATION_USER ,ctx.getUser())
-			.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime())
 			.set(INVOICE_DETAIL.MODIFICATION_USER ,ctx.getUser())
-			.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.set(INVOICE_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime())
 			.returning(INVOICE_DETAIL.ID).fetchOne().getId();
 		return invoiceDetail.setId(id);
 	}	

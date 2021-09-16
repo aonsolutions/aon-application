@@ -298,7 +298,7 @@ public class FiscalModelsReport {
 
 	@AfterClass
 	public static void afterClass() {
-		CTX.close();
+		//CTX.close();
 	}
 
 	private class Model {

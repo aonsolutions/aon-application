@@ -177,7 +177,7 @@ public class Mod184DAO {
 				.set(FS_MODEL184.LRDOCUMENT,mod184.getLrDocument())
 				.set(FS_MODEL184.LRNAME,mod184.getLrName())
 				.set(FS_MODEL184.CREATION_USER,ctx.getUser())
-				.set(FS_MODEL184.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(FS_MODEL184.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.returning(FS_MODEL184.ID)
 			.fetchOne();
 		mod184.setId(record.getId());
@@ -211,7 +211,7 @@ public class Mod184DAO {
 			.set(FS_MODEL184.LRDOCUMENT,mod184.getLrDocument())
 			.set(FS_MODEL184.LRNAME,mod184.getLrName())
 			.set(FS_MODEL184.MODIFICATION_USER,ctx.getUser())
-			.set(FS_MODEL184.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(FS_MODEL184.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.where(FS_MODEL184.ID.equal(mod184.getId()))
 			.execute();
 		return mod184;
@@ -247,7 +247,7 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.EPIGRAPH,income.getEpigraph())
 			.set(FS_MODEL184_DETAIL.GRANTEE_DOCUMENT,AonStringUtils.substring(income.getGranteeDocument(), 0, 9))
 			.set(FS_MODEL184_DETAIL.GRANTEE_NAME,AonStringUtils.substring(income.getGranteeName(), 0, 40))
-			.set(FS_MODEL184_DETAIL.ADQ_DATE, AonDateUtils.toSql( income.getAdqDate() ))
+			.set(FS_MODEL184_DETAIL.ADQ_DATE, AonDateUtils.toLocalDate( income.getAdqDate() ))
 			.set(FS_MODEL184_DETAIL.INCREASE,income.getIncrease())
 			.set(FS_MODEL184_DETAIL.DECREASE,income.getDecrease())
 			.set(FS_MODEL184_DETAIL.ACCOUNTING_RESULT,income.getAccountingResult())
@@ -298,7 +298,7 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.EPIGRAPH,income.getEpigraph())
 			.set(FS_MODEL184_DETAIL.GRANTEE_DOCUMENT,AonStringUtils.substring(income.getGranteeDocument(), 0, 9))
 			.set(FS_MODEL184_DETAIL.GRANTEE_NAME,AonStringUtils.substring(income.getGranteeName(), 0, 40))
-			.set(FS_MODEL184_DETAIL.ADQ_DATE, AonDateUtils.toSql( income.getAdqDate() ))
+			.set(FS_MODEL184_DETAIL.ADQ_DATE, AonDateUtils.toLocalDate( income.getAdqDate() ))
 			.set(FS_MODEL184_DETAIL.INCREASE,income.getIncrease())
 			.set(FS_MODEL184_DETAIL.DECREASE,income.getDecrease())
 			.set(FS_MODEL184_DETAIL.ACCOUNTING_RESULT,income.getAccountingResult())
@@ -501,9 +501,9 @@ public class Mod184DAO {
 				.setLrDocument(record.getValue(FS_MODEL184.LRDOCUMENT))
 				.setLrName(record.getValue(FS_MODEL184.LRNAME))
 				.setCreationUser(record.getValue(FS_MODEL184.CREATION_USER))
-				.setCreationDate(record.getValue(FS_MODEL184.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(FS_MODEL184.CREATION_DATE)))
 				.setModificationUser(record.getValue(FS_MODEL184.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FS_MODEL184.MODIFICATION_DATE));
+				.setModificationDate(AonDateUtils.toDate(record.getValue(FS_MODEL184.MODIFICATION_DATE)));
 		}
 	}
 			
@@ -521,7 +521,7 @@ public class Mod184DAO {
 				.setEpigraph(record.getValue(FS_MODEL184_DETAIL.EPIGRAPH))
 				.setGranteeDocument(record.getValue(FS_MODEL184_DETAIL.GRANTEE_DOCUMENT))
 				.setGranteeName(record.getValue(FS_MODEL184_DETAIL.GRANTEE_NAME))
-				.setAdqDate(record.getValue(FS_MODEL184_DETAIL.ADQ_DATE))
+				.setAdqDate(AonDateUtils.toDate(record.getValue(FS_MODEL184_DETAIL.ADQ_DATE)))
 				.setIncrease(record.getValue(FS_MODEL184_DETAIL.INCREASE))
 				.setDecrease(record.getValue(FS_MODEL184_DETAIL.DECREASE))
 				.setAccountingResult(record.getValue(FS_MODEL184_DETAIL.ACCOUNTING_RESULT))

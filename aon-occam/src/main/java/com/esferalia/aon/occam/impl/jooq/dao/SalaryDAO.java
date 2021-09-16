@@ -99,12 +99,12 @@ public class SalaryDAO {
 					,SALARY.TOTAL_LIQUID)
 			.from(SALARY)
 			.where(SALARY.DOMAIN.equal(ctx.getDomainId()))
-			.and(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)))
+			.and(SALARY.ISSUE_DATE.between(AonDateUtils.toLocalDate(from),AonDateUtils.toLocalDate(to)))
 			.fetch()
 			.stream()
 			.forEach(rec -> {
 				int salaryId = rec.get(SALARY.ID);
-				Date issueDate = rec.get(SALARY.ISSUE_DATE);
+				Date issueDate = AonDateUtils.toDate(rec.get(SALARY.ISSUE_DATE));
 				String keyMap = AonDateUtils.orderFormat( issueDate )
 						+ (aggregated?"":("-"+AonNumberUtils.toString(salaryId)));
 				if (!map.containsKey(keyMap)) {
@@ -287,9 +287,9 @@ public class SalaryDAO {
 				.map(rootRecord-> {
 				Salary salary = supplier.get()
 				.setId(rootRecord.get(SALARY.ID))		
-				.setStartDate(rootRecord.get(SALARY.START_DATE))
-				.setEndDate(rootRecord.get(SALARY.END_DATE))
-				.setIssueDate(rootRecord.get(SALARY.ISSUE_DATE))
+				.setStartDate(AonDateUtils.toDate(rootRecord.get(SALARY.START_DATE)))
+				.setEndDate(AonDateUtils.toDate(rootRecord.get(SALARY.END_DATE)))
+				.setIssueDate(AonDateUtils.toDate(rootRecord.get(SALARY.ISSUE_DATE)))
 				.setSalaryDays(rootRecord.get(SALARY.TIME_UNITS))
 				.setEmployeeName(rootRecord.get(SALARY.EMPLOYEE_NAME))
 				.setEnterpriseCCC(rootRecord.get(SALARY.CCC))
@@ -308,7 +308,7 @@ public class SalaryDAO {
 				.setInkindIrpfBase(rootRecord.get(SALARY.INKIND_IRPF_BASE))
 				.setTotalEnterprise(rootRecord.get(SALARY.TOTAL_ENTERPRISE))
 				.setTotalSSContributions(rootRecord.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS))
-				.setEmployeeSeniorityDate(rootRecord.get(SALARY.SENIORITY_DATE))
+				.setEmployeeSeniorityDate(AonDateUtils.toDate(rootRecord.get(SALARY.SENIORITY_DATE)))
 				.setEnterpriseAddress(rootRecord.get(SALARY.ENTERPRISE_ADDRESS))
 				.setEmployeeSSNumber(rootRecord.get(SALARY.SOCIAL_SECURITY_NUMBER))
 				.setEmployeeCategory(rootRecord.get(SALARY.CATEGORY))
@@ -328,8 +328,8 @@ public class SalaryDAO {
 					salary.setContextData(
 					dataRecord.get(SALARY_DATA.NAME), 
 					dataRecord.get(SALARY_DATA.EXPRESSION),
-					dataRecord.get(SALARY_DATA.START_DATE),
-					dataRecord.get(SALARY_DATA.END_DATE))
+					AonDateUtils.toDate(dataRecord.get(SALARY_DATA.START_DATE)),
+					AonDateUtils.toDate(dataRecord.get(SALARY_DATA.END_DATE)))
 				);
 				
 				dataIter.back();
@@ -505,9 +505,9 @@ public class SalaryDAO {
 				.map(rootRecord-> {
 				Salary salary = supplier.get()
 				.setId(rootRecord.get(SALARY.ID))		
-				.setStartDate(rootRecord.get(SALARY.START_DATE))
-				.setEndDate(rootRecord.get(SALARY.END_DATE))
-				.setIssueDate(rootRecord.get(SALARY.ISSUE_DATE))
+				.setStartDate(AonDateUtils.toDate(rootRecord.get(SALARY.START_DATE)))
+				.setEndDate(AonDateUtils.toDate(rootRecord.get(SALARY.END_DATE)))
+				.setIssueDate(AonDateUtils.toDate(rootRecord.get(SALARY.ISSUE_DATE)))
 				.setSalaryDays(rootRecord.get(SALARY.TIME_UNITS))
 				.setEmployeeName(rootRecord.get(SALARY.EMPLOYEE_NAME))
 				.setEnterpriseCCC(rootRecord.get(SALARY.CCC))
@@ -526,7 +526,7 @@ public class SalaryDAO {
 				.setInkindIrpfBase(rootRecord.get(SALARY.INKIND_IRPF_BASE))
 				.setTotalEnterprise(rootRecord.get(SALARY.TOTAL_ENTERPRISE))
 				.setTotalSSContributions(rootRecord.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS))
-				.setEmployeeSeniorityDate(rootRecord.get(SALARY.SENIORITY_DATE))
+				.setEmployeeSeniorityDate(AonDateUtils.toDate(rootRecord.get(SALARY.SENIORITY_DATE)))
 				.setEnterpriseAddress(rootRecord.get(SALARY.ENTERPRISE_ADDRESS))
 				.setEmployeeSSNumber(rootRecord.get(SALARY.SOCIAL_SECURITY_NUMBER))
 				.setEmployeeCategory(rootRecord.get(SALARY.CATEGORY))
@@ -546,8 +546,8 @@ public class SalaryDAO {
 					salary.setContextData(
 					dataRecord.get(SALARY_DATA.NAME), 
 					dataRecord.get(SALARY_DATA.EXPRESSION),
-					dataRecord.get(SALARY_DATA.START_DATE),
-					dataRecord.get(SALARY_DATA.END_DATE))
+					AonDateUtils.toDate(dataRecord.get(SALARY_DATA.START_DATE)),
+					AonDateUtils.toDate(dataRecord.get(SALARY_DATA.END_DATE)))
 				);
 				
 				dataIter.back();
@@ -643,9 +643,8 @@ public class SalaryDAO {
 				salary.addContextData(
 				contractDataRecord.get(CONTRACT_DATA.NAME), 
 				contractDataRecord.get(CONTRACT_DATA.EXPRESSION),
-				contractDataRecord.get(CONTRACT_DATA.START_DATE),
-				contractDataRecord.get(CONTRACT_DATA.END_DATE));
-				
+				AonDateUtils.toDate(contractDataRecord.get(CONTRACT_DATA.START_DATE)),
+				AonDateUtils.toDate(contractDataRecord.get(CONTRACT_DATA.END_DATE)));	
 			});
 			
 			return salary;
@@ -743,8 +742,8 @@ public class SalaryDAO {
 					.setEnterpriseDocument(rootRecord.get(SALARY.ENTERPRISE_DOCUMENT))
 					.setEnterpriseName(rootRecord.get(SALARY.ENTERPRISE_NAME))
 					.setEnterpriseCCC(rootRecord.get(SALARY.CCC))
-					.setStartDate(rootRecord.get(SALARY.START_DATE))
-					.setEndDate(rootRecord.get(SALARY.END_DATE))
+					.setStartDate(AonDateUtils.toDate(rootRecord.get(SALARY.START_DATE)))
+					.setEndDate(AonDateUtils.toDate(rootRecord.get(SALARY.END_DATE)))
 					.setTotalPayment(rootRecord.get(SALARY.TOTAL_PAYMENT))
 					;
 					
@@ -757,8 +756,8 @@ public class SalaryDAO {
 						salary.setContextData(
 						salaryDataRecord.get(SALARY_DATA.NAME), 
 						salaryDataRecord.get(SALARY_DATA.EXPRESSION),
-						salaryDataRecord.get(SALARY_DATA.START_DATE),
-						salaryDataRecord.get(SALARY_DATA.END_DATE))
+						AonDateUtils.toDate(salaryDataRecord.get(SALARY_DATA.START_DATE)),
+						AonDateUtils.toDate(salaryDataRecord.get(SALARY_DATA.END_DATE)))
 					);
 					salaryDataIter.back();
 					
@@ -770,8 +769,8 @@ public class SalaryDAO {
 						salary.addContextData(
 						contractDataRecord.get(CONTRACT_DATA.NAME), 
 						contractDataRecord.get(CONTRACT_DATA.EXPRESSION),
-						contractDataRecord.get(CONTRACT_DATA.START_DATE),
-						contractDataRecord.get(CONTRACT_DATA.END_DATE))
+						AonDateUtils.toDate(contractDataRecord.get(CONTRACT_DATA.START_DATE)),
+						AonDateUtils.toDate(contractDataRecord.get(CONTRACT_DATA.END_DATE)))
 					);
 					contractDataIter.back();
 
@@ -786,16 +785,16 @@ public class SalaryDAO {
 							salary.setContextData(
 									"TOTAL_DEVENGADO", 
 									String.format(Locale.ROOT, "%f", d), 
-									salaryRecord.get(SALARY.START_DATE), 
-									salaryRecord.get(SALARY.END_DATE));
+									AonDateUtils.toDate(salaryRecord.get(SALARY.START_DATE)), 
+									AonDateUtils.toDate(salaryRecord.get(SALARY.END_DATE)));
 						});
 						Optional.ofNullable(salaryRecord.get(ENTERPRISE_CCC.TYPE))
 						.ifPresent( b ->  {
 							salary.setContextData(
 									"CCC_TYPE", 
 									String.format(Locale.ROOT, "%d", b), 
-									salaryRecord.get(SALARY.START_DATE), 
-									salaryRecord.get(SALARY.END_DATE));
+									AonDateUtils.toDate(salaryRecord.get(SALARY.START_DATE)), 
+									AonDateUtils.toDate(salaryRecord.get(SALARY.END_DATE)));
 						});
 					}
 					);
@@ -852,8 +851,8 @@ public class SalaryDAO {
 		.where(SALARY.DOMAIN.eq(domainId))
 		.and(SALARY.CCC.eq(salary.getEnterpriseCCC()))
 		.and(SALARY.SOCIAL_SECURITY_NUMBER.eq(salary.getEmployeeSSNumber()))
-		.and(SALARY.START_DATE.le(toSql(salary.getEndDate())))
-		.and(SALARY.END_DATE.ge(toSql(salary.getStartDate())))
+		.and(SALARY.START_DATE.le(AonDateUtils.toLocalDate(salary.getEndDate())))
+		.and(SALARY.END_DATE.ge(AonDateUtils.toLocalDate(salary.getStartDate())))
 		.and(SALARY.TYPE.eq(value(salary.getSalaryType(), com.esferalia.aon.occam.api.model.type.SalaryType.class)))
 		.fetch(SALARY.ID);
 
@@ -934,9 +933,9 @@ public class SalaryDAO {
 		.where(CONTRACT.DOMAIN.eq(domainId))
 		.and(ENTERPRISE_CCC.CCC.eq(salary.getEnterpriseCCC()))
 		.and(PERSON.SOCIAL_SECURITY_NUM.eq(salary.getEmployeeSSNumber()))
-		.and(CONTRACT.START_DATE.le(toSql(salary.getEndDate())))
-		.and(CONTRACT.END_DATE.ge(toSql(salary.getStartDate())).or(CONTRACT.END_DATE.isNull()))
-		.orderBy(DSL.abs(DSL.dateDiff(toSql(salary.getEndDate()), DSL.ifnull(CONTRACT.END_DATE, DSL.date(getNullDate())))).asc())
+		.and(CONTRACT.START_DATE.le(AonDateUtils.toLocalDate(salary.getEndDate())))
+		.and(CONTRACT.END_DATE.ge(AonDateUtils.toLocalDate(salary.getStartDate())).or(CONTRACT.END_DATE.isNull()))
+		.orderBy(DSL.abs(DSL.localDateDiff(AonDateUtils.toLocalDate(salary.getEndDate()), DSL.ifnull(CONTRACT.END_DATE, DSL.localDate(getNullDate())))).asc())
 		.fetchStreamInto(CONTRACT)
 		.findFirst();
 		//.fetchOptionalInto(CONTRACT);
@@ -951,10 +950,10 @@ public class SalaryDAO {
 		record.setRegistration(666); 																				// not null & without default value
 		
 
-		record.setStartDate(toSql(salary.getStartDate()));															// not null & without default value
-		record.setEndDate(toSql(salary.getEndDate()));																// not null & without default value
-		record.setIssueDate(toSql(salary.getIssueDate()));															// not null & without default value
-		record.setChargeDate(toSql(salary.getIssueDate()));															// not null & without default value
+		record.setStartDate(AonDateUtils.toLocalDate(salary.getStartDate()));															// not null & without default value
+		record.setEndDate(AonDateUtils.toLocalDate(salary.getEndDate()));																// not null & without default value
+		record.setIssueDate(AonDateUtils.toLocalDate(salary.getIssueDate()));															// not null & without default value
+		record.setChargeDate(AonDateUtils.toLocalDate(salary.getIssueDate()));															// not null & without default value
 
 		record.setTimeUnits(Optional.ofNullable(salary.getSalaryDays()).orElse(0));									// not null & default 0
 
@@ -966,7 +965,7 @@ public class SalaryDAO {
 		record.setEmployeeName(salary.getEmployeeName());															// default null
 		record.setCategory(salary.getEmployeeCategory());															// default null
 		record.setQuoteGroup(salary.getEmployeeQuoteGroup());														// default null	
-		record.setSeniorityDate(toSql(salary.getEmployeeSeniorityDate()));											// default null
+		record.setSeniorityDate(AonDateUtils.toLocalDate(salary.getEmployeeSeniorityDate()));											// default null
 		record.setEmployeeDocument(salary.getEmployeeDocument());													// default null
 		record.setSocialSecurityNumber(salary.getEmployeeSSNumber());												// default null
 		
@@ -1014,8 +1013,8 @@ public class SalaryDAO {
 		record.setSalary(salary);
 		record.setName(name);
 		record.setExpression(data.getExpression());
-		record.setStartDate(toSql(data.getStartDate()));
-		record.setEndDate(toSql(data.getEndDate()));
+		record.setStartDate(AonDateUtils.toLocalDate(data.getStartDate()));
+		record.setEndDate(AonDateUtils.toLocalDate(data.getEndDate()));
 		
 		return record;
 	}
@@ -1071,8 +1070,8 @@ public class SalaryDAO {
 		if ( record.get(field) == null ) 
 			return;
 		
-		Date salaryStart = record.get(SALARY.START_DATE);
-		Date salaryEnd = record.get(SALARY.END_DATE);
+		Date salaryStart = AonDateUtils.toDate(record.get(SALARY.START_DATE));
+		Date salaryEnd = AonDateUtils.toDate(record.get(SALARY.END_DATE));
 		
 		List<ContextData> datas = salary.getContextData().get(name);
 		if ( datas != null && !datas.isEmpty() )
@@ -1111,67 +1110,67 @@ public class SalaryDAO {
 
 		@Override
 		public Property<Integer> getIdProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(SALARY.ID);
+			return new FilterDAO.PropertyDAO<>(SALARY.ID);
 		}
 
 		@Override
 		public Property<String> getCCCProperty() {
-			return new FilterDAO.PropertyDAO<String>(SALARY.CCC);
+			return new FilterDAO.PropertyDAO<>(SALARY.CCC);
 		}
 
 		@Override
 		public Property<String> getSSProperty() {
-			return new FilterDAO.PropertyDAO<String>(SALARY.SOCIAL_SECURITY_NUMBER);
+			return new FilterDAO.PropertyDAO<>(SALARY.SOCIAL_SECURITY_NUMBER);
 		}
 		
 		@Override
 		public Property<Integer> getContractProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(SALARY.CONTRACT);
+			return new FilterDAO.PropertyDAO<>(SALARY.CONTRACT);
 		}
 
 		@Override
 		public Property<Date> getStartDateProperty() {
-			return new FilterDAO.DatePropertyDAO(SALARY.START_DATE);
+			return new FilterDAO.LocalDatePropertyDAO(SALARY.START_DATE);
 		}
 
 		@Override
 		public Property<Date> getEndDateProperty() {
-			return new FilterDAO.DatePropertyDAO(SALARY.END_DATE);
+			return new FilterDAO.LocalDatePropertyDAO(SALARY.END_DATE);
 		}
 
 		@Override
 		public Property<Boolean> getIsSalaryProperty() {
-			return new FilterDAO.PropertyValueDAO<Byte>(SALARY.TYPE,
+			return new FilterDAO.PropertyValueDAO<>(SALARY.TYPE,
 					SalaryType.SALARY.value());
 		}
 
 		@Override
 		public Property<Boolean> getIsExtraProperty() {
-			return new FilterDAO.PropertyValueDAO<Byte>(SALARY.TYPE,
+			return new FilterDAO.PropertyValueDAO<>(SALARY.TYPE,
 					SalaryType.EXTRA.value());
 		}
 
 		@Override
 		public Property<Boolean> getIsDelayProperty() {
-			return new FilterDAO.PropertyValueDAO<Byte>(SALARY.TYPE,
+			return new FilterDAO.PropertyValueDAO<>(SALARY.TYPE,
 					SalaryType.DELAY.value());
 		}
 
 		@Override
 		public Property<Boolean> getIsSettlementProperty() {
-			return new FilterDAO.PropertyValueDAO<Byte>(SALARY.TYPE,
+			return new FilterDAO.PropertyValueDAO<>(SALARY.TYPE,
 					SalaryType.SETTLE.value());
 		}
 
 		@Override
 		public Property<Boolean> getIsL00Property() {
-			return new FilterDAO.PropertyValueDAO<Byte>(SALARY.TYPE,
+			return new FilterDAO.PropertyValueDAO<>(SALARY.TYPE,
 					SalaryType.L00.value());
 		}
 
 		@Override
 		public Property<Date> getIssueDateProperty() {
-			return new FilterDAO.DatePropertyDAO(SALARY.ISSUE_DATE);
+			return new FilterDAO.LocalDatePropertyDAO(SALARY.ISSUE_DATE);
 		}
 		
 	}
@@ -1203,12 +1202,7 @@ public class SalaryDAO {
 		}
 	}
 	
-	private static java.sql.Date toSql(Date date) {
-		if ( date == null )
-			return null;
-		return new java.sql.Date(date.getTime());
-	}
-	
+
 	private static <T extends Enum<?>> Byte value(T t, Class<T> clazz){
 		T constants [] = clazz.getEnumConstants();
 		for (byte i = 0; i < constants.length; i++)
@@ -1218,10 +1212,10 @@ public class SalaryDAO {
 		return null;
 	}
 	
-	private static java.sql.Date getNullDate() {
+	private static LocalDate getNullDate() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.YEAR, 100);
-		return new java.sql.Date(calendar.getTimeInMillis());
+		return new java.sql.Date(calendar.getTimeInMillis()).toLocalDate();
 	}
 	
 

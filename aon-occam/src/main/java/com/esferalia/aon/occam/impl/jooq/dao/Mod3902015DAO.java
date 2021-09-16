@@ -1094,7 +1094,7 @@ public class Mod3902015DAO {
 				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 				.where(INVOICE_TAX.DOMAIN.equal(mod390.getDomain()))
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.and(INVOICE.TAX_DATE.between(AonDateUtils.toLocalDate(firstDay),AonDateUtils.toLocalDate(lastDay)))
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 0))	// No Criterio de Caja.
 				.groupBy(INVOICE.TYPE
 						,INVOICE.RECTIFICATION_TYPE
@@ -1178,11 +1178,11 @@ public class Mod3902015DAO {
 				.join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
 				.join(INVOICE_TAX).on(INVOICE_DETAIL.ID.equal(INVOICE_TAX.INVOICE_DETAIL))
 				.where(FINANCE_TRACKING.DOMAIN.equal(mod390.getDomain()))
-				.and(FINANCE_TRACKING.TRACKING_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.and(FINANCE_TRACKING.TRACKING_DATE.between(AonDateUtils.toLocalDate(firstDay),AonDateUtils.toLocalDate(lastDay)))
 				.and(FINANCE_TRACKING.TYPE.in((byte)1, (byte)2))
 				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 				// Lo anterior al 2014 no interesa. Ese dia empezo la aplicación del regimen de caja.
-				.and(INVOICE.TAX_DATE.greaterOrEqual( AonDateUtils.toSql(AonDateUtils.getYearFirstDay(2014))))  
+				.and(INVOICE.TAX_DATE.greaterOrEqual( AonDateUtils.toLocalDate(AonDateUtils.getYearFirstDay(2014))))  
 				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	//  Criterio de Caja.
 				.groupBy(INVOICE_TAX.ID
 						,INVOICE_TAX.PERCENTAGE
@@ -1248,7 +1248,7 @@ public class Mod3902015DAO {
 					,DSL.sum(INVOICE.VAT_QUOTA))
 					.from(INVOICE)
 					.where(INVOICE.DOMAIN.equal(mod390.getDomain()))
-					.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+					.and(INVOICE.TAX_DATE.between(AonDateUtils.toLocalDate(firstDay),AonDateUtils.toLocalDate(lastDay)))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
 					.groupBy(INVOICE.TYPE)
 					.having(DSL.sum(INVOICE.VAT_QUOTA).greaterThan( new BigDecimal(0)) )
@@ -1300,8 +1300,8 @@ public class Mod3902015DAO {
 					.and(FINANCE.STATUS.eq((byte)0)
 					.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
 					.and(INVOICE.TAX_DATE.between(
-							 AonDateUtils.toSql(AonDateUtils.getYearFirstDay((mod390.getYear() - 1)))
-							,AonDateUtils.toSql(AonDateUtils.getYearLastDay((mod390.getYear() - 1))))))
+							 AonDateUtils.toLocalDate(AonDateUtils.getYearFirstDay((mod390.getYear() - 1)))
+							,AonDateUtils.toLocalDate(AonDateUtils.getYearLastDay((mod390.getYear() - 1))))))
 					.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
 					.groupBy(INVOICE_TAX.ID
 							,INVOICE_TAX.PERCENTAGE

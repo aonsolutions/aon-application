@@ -19,6 +19,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static java.util.Calendar.DAY_OF_MONTH;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -76,8 +77,8 @@ import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.EmployeePropertiesDAO;
-import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class EmployeeDAO {
 	
@@ -110,11 +111,11 @@ public class EmployeeDAO {
 		.setNaf(r.get(PERSON.SOCIAL_SECURITY_NUM))
 		.setName(r.get(REGISTRY.NAME))
 		.setSex(getSex(r.get(PERSON.GENDER)))
-		.setBirthDate(r.get(PERSON.BIRTH_DATE))
+		.setBirthDate(AonDateUtils.toDate(r.get(PERSON.BIRTH_DATE)))
 		
 		.setEmployeeId(r.get(CONTRACT.ID))
-		.setStartDate(r.get(CONTRACT.START_DATE))
-		.setEndDate(r.get(CONTRACT.END_DATE))
+		.setStartDate(AonDateUtils.toDate(r.get(CONTRACT.START_DATE)))
+		.setEndDate(AonDateUtils.toDate(r.get(CONTRACT.END_DATE)))
 		.setCategory(r.get(CONTRACT.CATEGORY_DESCRIPTION))
 		
 		.setWorkplaceId(r.get(WORKPLACE.ID))
@@ -149,11 +150,11 @@ public class EmployeeDAO {
 			.setNaf(r.get(PERSON.SOCIAL_SECURITY_NUM))
 			.setName(r.get(REGISTRY.NAME))
 			.setSex(getSex(r.get(PERSON.GENDER)))
-			.setBirthDate(r.get(PERSON.BIRTH_DATE))
+			.setBirthDate(AonDateUtils.toDate(r.get(PERSON.BIRTH_DATE)))
 			
 			.setEmployeeId(r.get(CONTRACT.ID))
-			.setStartDate(r.get(CONTRACT.START_DATE))
-			.setEndDate(r.get(CONTRACT.END_DATE))
+			.setStartDate(AonDateUtils.toDate(r.get(CONTRACT.START_DATE)))
+			.setEndDate(AonDateUtils.toDate(r.get(CONTRACT.END_DATE)))
 			.setCategory(r.get(CONTRACT.CATEGORY_DESCRIPTION))
 			
 			.setWorkplaceId(r.get(WORKPLACE.ID));
@@ -206,9 +207,9 @@ public class EmployeeDAO {
 		.set(CONTRACT.WORKPLACE, workplaceRecord.getId())
 		.set(CONTRACT.ENTERPRISE_CCC, enterpriseCccRecord.getId())
 		.set(CONTRACT.ENTERPRISE_ACTIVITY, enterpriseCccRecord.getEnterpriseActivity())
-		.set(CONTRACT.START_DATE, toSql(employee.getStartDate()))
-		.set(CONTRACT.SENIORITY_DATE, toSql(employee.getStartDate()));
-		employee.getEndDate().ifPresent(endDate -> insertContract.set(CONTRACT.END_DATE, toSql(endDate)));
+		.set(CONTRACT.START_DATE, AonDateUtils.toLocalDate(employee.getStartDate()))
+		.set(CONTRACT.SENIORITY_DATE, AonDateUtils.toLocalDate(employee.getStartDate()));
+		employee.getEndDate().ifPresent(endDate -> insertContract.set(CONTRACT.END_DATE, AonDateUtils.toLocalDate(endDate)));
 		employee.getCategory().ifPresent(category -> insertContract.set(CONTRACT.CATEGORY_DESCRIPTION, category));
 		
 		ContractRecord contractRecord = insertContract.returning().fetchOne();
@@ -220,13 +221,13 @@ public class EmployeeDAO {
 		.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
 		.set(CONTRACT_DATA.NAME, "TC2" )
 		.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", employee.getContractType()))
-		.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
+		.set(CONTRACT_DATA.START_DATE, AonDateUtils.toLocalDate(employee.getStartDate()))
 		.newRecord()
 		.set(CONTRACT_DATA.DOMAIN, domainId)
 		.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
 		.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION" )
 		.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", employee.getQuoteGroup()))
-		.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
+		.set(CONTRACT_DATA.START_DATE, AonDateUtils.toLocalDate(employee.getStartDate()))
 		;
 		
 		employee.getFactor().ifPresent(factor -> {
@@ -235,7 +236,7 @@ public class EmployeeDAO {
 			.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
 			.set(CONTRACT_DATA.NAME, "COEFICIENTE_PARCIALIDAD" )
 			.set(CONTRACT_DATA.EXPRESSION, Double.toString(factor))
-			.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
+			.set(CONTRACT_DATA.START_DATE, AonDateUtils.toLocalDate(employee.getStartDate()))
 			;
 		});
 		
@@ -245,27 +246,27 @@ public class EmployeeDAO {
 	}
 
 	public static Bonus [] getBonuses(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate) {
-		return getBonuses(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate));
+		return getBonuses(aonContext.getDslContext(), domainName, ccc, naf, AonDateUtils.toLocalDate(startDate), AonDateUtils.toLocalDate(endDate));
 	}
 
 	public static Bonus [] setBonuses(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Bonus ...bonuses) {
-		return setBonuses(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), bonuses);
+		return setBonuses(aonContext.getDslContext(), domainName, ccc, naf, AonDateUtils.toLocalDate(startDate), AonDateUtils.toLocalDate(endDate), bonuses);
 	}
 
 	public static Deduction [] getDeductions(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate) {
-		return getDeductions(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate));
+		return getDeductions(aonContext.getDslContext(), domainName, ccc, naf, AonDateUtils.toLocalDate(startDate), AonDateUtils.toLocalDate(endDate));
 	}
 
 	public static Deduction [] setDeductions(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Deduction ...deductions) {
-		return setDeductions(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), deductions);
+		return setDeductions(aonContext.getDslContext(), domainName, ccc, naf, AonDateUtils.toLocalDate(startDate), AonDateUtils.toLocalDate(endDate), deductions);
 	}
 
 	public static Cost [] getCosts(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate) {
-		return getCosts(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate));
+		return getCosts(aonContext.getDslContext(), domainName, ccc, naf, AonDateUtils.toLocalDate(startDate), AonDateUtils.toLocalDate(endDate));
 	}
 
 	public static Cost [] setCosts(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Cost ...costs) {
-		return setCosts(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), costs);
+		return setCosts(aonContext.getDslContext(), domainName, ccc, naf, AonDateUtils.toLocalDate(startDate), AonDateUtils.toLocalDate(endDate), costs);
 	}
 
 	public static ContractData[] setContractData(AONContext aonContext, String domainName, ContractFilter filter, ContractData... contractDatas) {
@@ -494,7 +495,7 @@ public class EmployeeDAO {
 				getSecondSurname(name).ifPresent( s -> insertPerson.set(PERSON.SECOND_SURNAME, s));
 			});
 			
-			employee.getBirthDate().ifPresent(birthDate -> insertPerson.set(PERSON.BIRTH_DATE, toSql(birthDate)));
+			employee.getBirthDate().ifPresent(birthDate -> insertPerson.set(PERSON.BIRTH_DATE, AonDateUtils.toLocalDate(birthDate)));
 			employee.getSex().map( sex -> getGender(sex)).ifPresent(gender -> insertPerson.set(PERSON.GENDER, gender.value()));
 
 			insertPerson.execute();
@@ -506,7 +507,7 @@ public class EmployeeDAO {
 	}
 	
 	private static Result<ContractRecord> getContracts(DSLContext dslContext, String domainName, String ccc, String naf,
-			java.sql.Date startDate, java.sql.Date endDate) {
+			LocalDate startDate, LocalDate endDate) {
 		return dslContext
 		.select()
 		.from(DOMAIN)
@@ -522,7 +523,7 @@ public class EmployeeDAO {
 	}
 
 
-	private static Bonus [] setBonuses(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate, Bonus ...bonuses) {
+	private static Bonus [] setBonuses(DSLContext dslContext, String domainName, String ccc, String naf, LocalDate startDate, LocalDate endDate, Bonus ...bonuses) {
 		
 		List<ContractRecord> contractRecords = 
 		getContracts(dslContext, domainName, ccc, naf, startDate, endDate)
@@ -542,7 +543,7 @@ public class EmployeeDAO {
 		return bonuses;
 	}
 
-	private static Deduction [] setDeductions(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate, Deduction ...deductions) {
+	private static Deduction [] setDeductions(DSLContext dslContext, String domainName, String ccc, String naf, LocalDate startDate, LocalDate endDate, Deduction ...deductions) {
 		
 		List<ContractRecord> contractRecords = 
 		getContracts(dslContext, domainName, ccc, naf, startDate, endDate)
@@ -562,7 +563,7 @@ public class EmployeeDAO {
 		return deductions;
 	}
 
-	private static Cost [] setCosts(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate, Cost ...costs) {
+	private static Cost [] setCosts(DSLContext dslContext, String domainName, String ccc, String naf, LocalDate startDate, LocalDate endDate, Cost ...costs) {
 		
 		List<ContractRecord> contractRecords = 
 		getContracts(dslContext, domainName, ccc, naf, startDate, endDate)
@@ -611,40 +612,40 @@ public class EmployeeDAO {
 				.from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractRecord.getId()))
 				.and(CONTRACT_DATA.NAME.eq(contractData.getName()))
-				.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(toSql(contractData.getStartDate()))))
-				.and(DSL.condition(contractData.getEndDate()==null).or(CONTRACT_DATA.START_DATE.le(toSql(contractData.getEndDate()))))
+				.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(AonDateUtils.toLocalDate(contractData.getStartDate()))))
+				.and(DSL.condition(contractData.getEndDate()==null).or(CONTRACT_DATA.START_DATE.le(AonDateUtils.toLocalDate(contractData.getEndDate()))))
 				.fetchStreamInto(CONTRACT_DATA)
 				.forEach(contractDataRecord -> {
-					if ( ( compare(contractData.getStartDate(),  contractDataRecord.getStartDate()) <= 0 ) &&
-						( compare(contractData.getEndDate(),  contractDataRecord.getEndDate()) >= 0 ) ) {
+					if ( ( compare(AonDateUtils.toLocalDate(contractData.getStartDate()),  contractDataRecord.getStartDate()) <= 0 ) &&
+						( compare(AonDateUtils.toLocalDate(contractData.getEndDate()),  contractDataRecord.getEndDate()) >= 0 ) ) {
 						contractDataRecord.delete();
-					}else if ( compare(contractData.getStartDate(),  contractDataRecord.getStartDate()) <= 0 ) {
+					}else if ( compare(AonDateUtils.toLocalDate(contractData.getStartDate()),  contractDataRecord.getStartDate()) <= 0 ) {
 						if ( AonStringUtils.equals(contractData.getExpression(), contractDataRecord.getExpression())) {
-							contractData.setEndDate(contractDataRecord.getEndDate());
+							contractData.setEndDate(AonDateUtils.toDate(contractDataRecord.getEndDate()));
 							contractDataRecord.delete();
 						} else {
-							contractDataRecord.setStartDate(toSql(AonDateUtils.add(contractData.getEndDate(), DAY_OF_MONTH,1)));
+							contractDataRecord.setStartDate(AonDateUtils.toLocalDate(AonDateUtils.add(contractData.getEndDate(), DAY_OF_MONTH,1)));
 							contractDataRecord.update();
 						}
-					} else if ( compare(contractData.getEndDate(),  contractDataRecord.getEndDate()) >= 0  ) {
+					} else if ( compare(AonDateUtils.toLocalDate(contractData.getEndDate()),  contractDataRecord.getEndDate()) >= 0  ) {
 						if ( AonStringUtils.equals(contractData.getExpression(), contractDataRecord.getExpression())) {
-							contractData.setStartDate(contractDataRecord.getStartDate());
+							contractData.setStartDate(AonDateUtils.toDate(contractDataRecord.getStartDate()));
 							contractDataRecord.delete();
 							
 						} else {
-							contractDataRecord.setEndDate(toSql(AonDateUtils.add(contractData.getStartDate(), DAY_OF_MONTH,-1)));
+							contractDataRecord.setEndDate(AonDateUtils.toLocalDate(AonDateUtils.add(contractData.getStartDate(), DAY_OF_MONTH,-1)));
 							contractDataRecord.update();
 						}
 					}else {
 						if ( AonStringUtils.equals(contractData.getExpression(), contractDataRecord.getExpression())) {
-							contractData.setStartDate(contractDataRecord.getStartDate());
-							contractData.setEndDate(contractDataRecord.getEndDate());
+							contractData.setStartDate(AonDateUtils.toDate(contractDataRecord.getStartDate()));
+							contractData.setEndDate(AonDateUtils.toDate(contractDataRecord.getEndDate()));
 							contractDataRecord.delete();
 						} else {
 							ContractDataRecord newContractDataRecord = contractDataRecord.copy();
-							newContractDataRecord.setEndDate(toSql(AonDateUtils.add(contractData.getStartDate(), DAY_OF_MONTH,-1)));
+							newContractDataRecord.setEndDate(AonDateUtils.toLocalDate(AonDateUtils.add(contractData.getStartDate(), DAY_OF_MONTH,-1)));
 							newContractDataRecord.insert();
-							contractDataRecord.setStartDate(toSql(AonDateUtils.add(contractData.getEndDate(), DAY_OF_MONTH,1)));
+							contractDataRecord.setStartDate(AonDateUtils.toLocalDate(AonDateUtils.add(contractData.getEndDate(), DAY_OF_MONTH,1)));
 							contractDataRecord.update();
 						}
 					}
@@ -657,8 +658,8 @@ public class EmployeeDAO {
 				.set(CONTRACT_DATA.DOMAIN, contractRecord.getDomain())
 				.set(CONTRACT_DATA.NAME, contractData.getName())
 				.set(CONTRACT_DATA.EXPRESSION, contractData.getExpression())
-				.set(CONTRACT_DATA.START_DATE, toSql(contractData.getStartDate()))
-				.set(CONTRACT_DATA.END_DATE, toSql(contractData.getEndDate()))
+				.set(CONTRACT_DATA.START_DATE, AonDateUtils.toLocalDate(contractData.getStartDate()))
+				.set(CONTRACT_DATA.END_DATE, AonDateUtils.toLocalDate(contractData.getEndDate()))
 				.execute();
 				;
 			
@@ -677,9 +678,9 @@ public class EmployeeDAO {
 		for (int i = 0; i < contractDatas.length; i++) {
 			ContractData last = list.getLast();
 			ContractData next = contractDatas[i];
-			Date startDate = AonDateUtils.add(next.getStartDate(), DAY_OF_MONTH, -1); 
+			LocalDate startDate = AonDateUtils.toLocalDate(AonDateUtils.add(next.getStartDate(), DAY_OF_MONTH, -1)); 
 			if ( AonStringUtils.equals(last.getExpression(), next.getExpression()) &&
-					compare(startDate, last.getEndDate()) <= 0 ) {
+					compare(startDate, AonDateUtils.toLocalDate(last.getEndDate())) <= 0 ) {
 				last.setEndDate(max(last.getEndDate(), next.getEndDate()));
 			}
 			else {
@@ -700,12 +701,11 @@ public class EmployeeDAO {
 	
 	
 	private static <T  extends HasStartDate & HasEndDate >boolean intersects(ContractRecord r, T b) {
-		return compare(max(r.getStartDate(), b.getStartDate()), min(r.getEndDate(), b.getEndDate())) <= 0;
+		return compare(max(r.getStartDate(), AonDateUtils.toLocalDate(b.getStartDate())), min(r.getEndDate(), AonDateUtils.toLocalDate(b.getEndDate()))) <= 0;
 	}
 	
 	
-	private static Bonus [] getBonuses(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate) {
-		
+	private static Bonus [] getBonuses(DSLContext dslContext, String domainName, String ccc, String naf, LocalDate startDate, LocalDate endDate) {
 		return 
 		dslContext
 		.select()
@@ -725,8 +725,8 @@ public class EmployeeDAO {
 		new Bonus()
 		.setId(get(record, CONTRACT_BONUS.ID))
 		.setDomain(get(record, CONTRACT_BONUS.DOMAIN))
-		.setEndDate(get(record, CONTRACT_BONUS.END_DATE))
-		.setStartDate(get(record, CONTRACT_BONUS.START_DATE))
+		.setEndDate(AonDateUtils.toDate(get(record, CONTRACT_BONUS.END_DATE)))
+		.setStartDate(AonDateUtils.toDate(get(record, CONTRACT_BONUS.START_DATE)))
 		.setExpression(get(record, CONTRACT_BONUS.EXPRESSION, BONUS_CONCEPT.EXPRESSION))
 		.setDescription(get(record, CONTRACT_BONUS.DESCRIPTION, BONUS_CONCEPT.DESCRIPTION))
 		.setType(valueOf(get(record, BONUS_CONCEPT.TYPE), BonusType.class))
@@ -736,7 +736,7 @@ public class EmployeeDAO {
 
 
 
-	private static Bonus [] setBonuses(DSLContext dslContext, String domainName, java.sql.Date startDate, java.sql.Date endDate, ContractRecord contractRecord, Bonus ...bonuses) {
+	private static Bonus [] setBonuses(DSLContext dslContext, String domainName, LocalDate startDate, LocalDate endDate, ContractRecord contractRecord, Bonus ...bonuses) {
 		
 		List<Bonus> bonusList = new ArrayList<Bonus>(bonuses.length);
 		Arrays.stream(bonuses).forEach( bonus -> bonusList.add(bonus));
@@ -760,21 +760,21 @@ public class EmployeeDAO {
 				}
 				else { 
 					// contract bonus ends after end date. So now starts just after end date. 
-					contractBonus.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					contractBonus.setStartDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(endDate), Calendar.DAY_OF_MONTH, 1)));
 					contractBonus.update();
 				}
 			} else {
 				if ( compare(contractBonus.getEndDate(), endDate ) <= 0 ) {
 					// contract bonus starts before start date and ends before end date. So ends just before start date.
-					contractBonus.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					contractBonus.setEndDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(startDate), Calendar.DAY_OF_MONTH, -1)));
 					contractBonus.update();
 				} else {
 					// contract bonus starts before start date and ends after end date. So we need to split it.
 					ContractBonusRecord leftContractBonus = contractBonus;
 					ContractBonusRecord rightContractBonus = contractBonus.copy();
-					leftContractBonus.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					leftContractBonus.setEndDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(startDate), Calendar.DAY_OF_MONTH, -1)));
 					leftContractBonus.update();
-					rightContractBonus.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					rightContractBonus.setStartDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(endDate), Calendar.DAY_OF_MONTH, 1)));
 					rightContractBonus.insert();
 				}
 			}
@@ -787,8 +787,8 @@ public class EmployeeDAO {
 			.insertInto(CONTRACT_BONUS)
 			.set(CONTRACT_BONUS.DOMAIN, contractRecord.getDomain())
 			.set(CONTRACT_BONUS.CONTRACT, contractRecord.getId())
-			.set(CONTRACT_BONUS.START_DATE, toSql(bonus.getStartDate()))
-			.set(CONTRACT_BONUS.END_DATE, toSql(bonus.getEndDate()))
+			.set(CONTRACT_BONUS.START_DATE, AonDateUtils.toLocalDate(bonus.getStartDate()))
+			.set(CONTRACT_BONUS.END_DATE, AonDateUtils.toLocalDate(bonus.getEndDate()))
 			.set(CONTRACT_BONUS.DESCRIPTION, bonus.getDescription())
 			.set(CONTRACT_BONUS.EXPRESSION, bonus.getExpression())
 			.execute()
@@ -801,7 +801,7 @@ public class EmployeeDAO {
 		
 	}
 	
-	private static Deduction [] getDeductions(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate) {
+	private static Deduction [] getDeductions(DSLContext dslContext, String domainName, String ccc, String naf, LocalDate startDate, LocalDate endDate) {
 		
 		return 
 		dslContext
@@ -823,8 +823,8 @@ public class EmployeeDAO {
 		.setId(get(record, CONTRACT_DEDUCTION.ID))
 		.setName(get(record, DEDUCTION_CONCEPT.CODE))
 		.setDomain(get(record, CONTRACT_DEDUCTION.DOMAIN))
-		.setEndDate(get(record, CONTRACT_DEDUCTION.END_DATE))
-		.setStartDate(get(record, CONTRACT_DEDUCTION.START_DATE))
+		.setEndDate(AonDateUtils.toDate(get(record, CONTRACT_DEDUCTION.END_DATE)))
+		.setStartDate(AonDateUtils.toDate(get(record, CONTRACT_DEDUCTION.START_DATE)))
 		.setExpression(get(record, CONTRACT_DEDUCTION.EXPRESSION, DEDUCTION_CONCEPT.EXPRESSION))
 		.setDescription(get(record, CONTRACT_DEDUCTION.DESCRIPTION, DEDUCTION_CONCEPT.DESCRIPTION))
 		.setType(valueOf(get(record, CONTRACT_DEDUCTION.TYPE, DEDUCTION_CONCEPT.TYPE),DeductionType.class))
@@ -832,7 +832,7 @@ public class EmployeeDAO {
 		
 	}
 
-	private static Deduction [] setDeductions(DSLContext dslContext, String domainName, java.sql.Date startDate, java.sql.Date endDate, ContractRecord contractRecord, Deduction ...deductions) {
+	private static Deduction [] setDeductions(DSLContext dslContext, String domainName, LocalDate startDate, LocalDate endDate, ContractRecord contractRecord, Deduction ...deductions) {
 		
 		List<Deduction> deductionsList = new ArrayList<Deduction>(deductions.length);
 		Arrays.stream(deductions).forEach( deduction -> deductionsList.add(deduction));
@@ -861,21 +861,21 @@ public class EmployeeDAO {
 				}
 				else { 
 					// contract bonus ends after end date. So now starts just after end date. 
-					contractDeduction.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					contractDeduction.setStartDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(endDate), Calendar.DAY_OF_MONTH, 1)));
 					contractDeduction.update();
 				}
 			} else {
 				if ( compare(contractDeduction.getEndDate(), endDate ) <= 0 ) {
 					// contract bonus starts before start date and ends before end date. So ends just before start date.
-					contractDeduction.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					contractDeduction.setEndDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(startDate), Calendar.DAY_OF_MONTH, -1)));
 					contractDeduction.update();
 				} else {
 					// contract bonus starts before start date and ends after end date. So we need to split it.
 					ContractDeductionRecord leftContractDeduction = contractDeduction;
 					ContractDeductionRecord rightContractDeduction = contractDeduction.copy();
-					leftContractDeduction.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					leftContractDeduction.setEndDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(startDate), Calendar.DAY_OF_MONTH, -1)));
 					leftContractDeduction.update();
-					rightContractDeduction.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					rightContractDeduction.setStartDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(endDate), Calendar.DAY_OF_MONTH, 1)));
 					rightContractDeduction.insert();
 				}
 			}
@@ -895,14 +895,13 @@ public class EmployeeDAO {
 			.insertInto(CONTRACT_DEDUCTION)
 			.set(CONTRACT_DEDUCTION.DOMAIN, contractRecord.getDomain())
 			.set(CONTRACT_DEDUCTION.CONTRACT, contractRecord.getId())
-			.set(CONTRACT_DEDUCTION.START_DATE, toSql(deduction.getStartDate()))
-			.set(CONTRACT_DEDUCTION.END_DATE, toSql(deduction.getEndDate()))
+			.set(CONTRACT_DEDUCTION.START_DATE, AonDateUtils.toLocalDate((deduction.getStartDate())))
+			.set(CONTRACT_DEDUCTION.END_DATE, AonDateUtils.toLocalDate((deduction.getEndDate())))
 			.set(CONTRACT_DEDUCTION.DESCRIPTION, deduction.getDescription())
 			.set(CONTRACT_DEDUCTION.EXPRESSION, deduction.getExpression())
 			.set(CONTRACT_DEDUCTION.TYPE, valueOf(deduction.getType()))
 			.set(CONTRACT_DEDUCTION.DEDUCTION_CONCEPT, deductionConcept)
-			.execute()
-			;
+			.execute();
 		}
 		
 		
@@ -911,7 +910,7 @@ public class EmployeeDAO {
 		
 	}
 
-	private static Cost [] getCosts(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate) {
+	private static Cost [] getCosts(DSLContext dslContext, String domainName, String ccc, String naf, LocalDate startDate, LocalDate endDate) {
 		
 		return 
 		dslContext
@@ -932,8 +931,8 @@ public class EmployeeDAO {
 		.setId(cost.getId())
 		.setName(cost.getCode())
 		.setDomain(cost.getDomain())
-		.setEndDate(cost.getEndDate())
-		.setStartDate(cost.getStartDate())
+		.setEndDate(AonDateUtils.toDate(cost.getEndDate()))
+		.setStartDate(AonDateUtils.toDate(cost.getStartDate()))
 		.setExpression(cost.getExpression())
 		.setDescription(cost.getDescription())
 		.setType(valueOf(cost.getType(), DeductionType.class))
@@ -941,9 +940,9 @@ public class EmployeeDAO {
 		
 	}
 
-	private static Cost [] setCosts(DSLContext dslContext, String domainName, java.sql.Date startDate, java.sql.Date endDate, ContractRecord contractRecord, Cost ...costs) {
+	private static Cost [] setCosts(DSLContext dslContext, String domainName, LocalDate startDate, LocalDate endDate, ContractRecord contractRecord, Cost ...costs) {
 		
-		List<Cost> costsList = new ArrayList<Cost>(costs.length);
+		List<Cost> costsList = new ArrayList<>(costs.length);
 		Arrays.stream(costs).forEach( deduction -> costsList.add(deduction));
 		
 		dslContext
@@ -970,21 +969,21 @@ public class EmployeeDAO {
 				}
 				else { 
 					// contract bonus ends after end date. So now starts just after end date. 
-					contractCost.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					contractCost.setStartDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(endDate), Calendar.DAY_OF_MONTH, 1)));
 					contractCost.update();
 				}
 			} else {
 				if ( compare(contractCost.getEndDate(), endDate ) <= 0 ) {
 					// contract bonus starts before start date and ends before end date. So ends just before start date.
-					contractCost.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					contractCost.setEndDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(startDate), Calendar.DAY_OF_MONTH, -1)));
 					contractCost.update();
 				} else {
 					// contract bonus starts before start date and ends after end date. So we need to split it.
 					ContractCostRecord leftContractCost = contractCost;
 					ContractCostRecord rightContractCost = contractCost.copy();
-					leftContractCost.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					leftContractCost.setEndDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(startDate), Calendar.DAY_OF_MONTH, -1)));
 					leftContractCost.update();
-					rightContractCost.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					rightContractCost.setStartDate(AonDateUtils.toLocalDate(AonDateUtils.add(AonDateUtils.toDate(endDate), Calendar.DAY_OF_MONTH, 1)));
 					rightContractCost.insert();
 				}
 			}
@@ -998,14 +997,13 @@ public class EmployeeDAO {
 			.insertInto(CONTRACT_COST)
 			.set(CONTRACT_COST.DOMAIN, contractRecord.getDomain())
 			.set(CONTRACT_COST.CONTRACT, contractRecord.getId())
-			.set(CONTRACT_COST.START_DATE, toSql(cost.getStartDate()))
-			.set(CONTRACT_COST.END_DATE, toSql(cost.getEndDate()))
+			.set(CONTRACT_COST.START_DATE, AonDateUtils.toLocalDate((cost.getStartDate())))
+			.set(CONTRACT_COST.END_DATE, AonDateUtils.toLocalDate((cost.getEndDate())))
 			.set(CONTRACT_COST.DESCRIPTION, cost.getDescription())
 			.set(CONTRACT_COST.EXPRESSION, cost.getExpression())
 			.set(CONTRACT_COST.TYPE, valueOf(cost.getType()))
 			.set(CONTRACT_COST.CODE, cost.getName())
-			.execute()
-			;
+			.execute();
 		}
 		
 		return costs;
@@ -1103,15 +1101,16 @@ public class EmployeeDAO {
 	}
 
 	private static boolean equals( Bonus bonus, ContractBonusRecord record) {
-		if( equals(bonus.getStartDate(),record.getStartDate())
-				&& equals(bonus.getEndDate(),record.getEndDate())
+		if( equals(bonus.getStartDate(), AonDateUtils.toDate(record.getStartDate()))
+				&& equals(bonus.getEndDate(), AonDateUtils.toDate(record.getEndDate()))
 				&& AonStringUtils.equals(getExpression(bonus), getExpression(record)))
 			return true;
 		if (  AonStringUtils.equals(getExpression(bonus), getExpression(record)) ){
-			if ((compare( record.getStartDate(), bonus.getStartDate()) <= 0 )
-				&& (compare( record.getEndDate(), bonus.getEndDate()) >= 0 )
-				&& (AonDateUtils.get(bonus.getStartDate(), Calendar.DAY_OF_MONTH) == 1 )
-				&& (bonus.getEndDate() == null || AonDateUtils.get(bonus.getEndDate(), Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(bonus.getEndDate(), Calendar.DAY_OF_MONTH) ))
+			if ((compare( record.getStartDate(), AonDateUtils.toLocalDate(bonus.getStartDate())) <= 0 )
+				&& (compare( record.getEndDate(), AonDateUtils.toLocalDate(bonus.getEndDate())) >= 0 )
+				&& (com.esferalia.aon.watson.util.AonDateUtils.get(bonus.getStartDate(), Calendar.DAY_OF_MONTH) == 1 )
+				&& (bonus.getEndDate() == null || com.esferalia.aon.watson.util.AonDateUtils.get(bonus.getEndDate(), 
+						Calendar.DAY_OF_MONTH) == com.esferalia.aon.watson.util.AonDateUtils.getMax(bonus.getEndDate(), Calendar.DAY_OF_MONTH) ))
 				return true;
 		}
 		
@@ -1121,15 +1120,16 @@ public class EmployeeDAO {
 	}
 	
 	private static boolean equals( Deduction deduction, ContractDeductionRecord record) {
-		if( equals(deduction.getStartDate(),record.getStartDate())
-				&& equals(deduction.getEndDate(),record.getEndDate())
+		if( equals(deduction.getStartDate(), AonDateUtils.toDate(record.getStartDate()))
+				&& equals(deduction.getEndDate(), AonDateUtils.toDate(record.getEndDate()))
 				&& AonStringUtils.equals(getExpression(deduction), getExpression(record)))
 			return true;
 		if (  AonStringUtils.equals(getExpression(deduction), getExpression(record)) ){
-			if ((compare( record.getStartDate(), deduction.getStartDate()) <= 0 )
-				&& (compare( record.getEndDate(), deduction.getEndDate()) >= 0 )
-				&& (AonDateUtils.get(deduction.getStartDate(), Calendar.DAY_OF_MONTH) == 1 )
-				&& (deduction.getEndDate() == null || AonDateUtils.get(deduction.getEndDate(), Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(deduction.getEndDate(), Calendar.DAY_OF_MONTH) ))
+			if ((compare( record.getStartDate(), AonDateUtils.toLocalDate(deduction.getStartDate())) <= 0 )
+				&& (compare( record.getEndDate(), AonDateUtils.toLocalDate(deduction.getEndDate())) >= 0 )
+				&& (com.esferalia.aon.watson.util.AonDateUtils.get(deduction.getStartDate(), Calendar.DAY_OF_MONTH) == 1 )
+				&& (deduction.getEndDate() == null || com.esferalia.aon.watson.util.AonDateUtils.get(deduction.getEndDate(), 
+						Calendar.DAY_OF_MONTH) == com.esferalia.aon.watson.util.AonDateUtils.getMax(deduction.getEndDate(), Calendar.DAY_OF_MONTH) ))
 				return true;
 		}
 		
@@ -1139,15 +1139,16 @@ public class EmployeeDAO {
 	}
 
 	private static boolean equals( Cost cost, ContractCostRecord record) {
-		if( equals(cost.getStartDate(),record.getStartDate())
-				&& equals(cost.getEndDate(),record.getEndDate())
+		if( equals(cost.getStartDate(), AonDateUtils.toDate(record.getStartDate()))
+				&& equals(cost.getEndDate(), AonDateUtils.toDate(record.getEndDate()))
 				&& AonStringUtils.equals(getExpression(cost), getExpression(record)))
 			return true;
 		if (  AonStringUtils.equals(getExpression(cost), getExpression(record)) ){
-			if ((compare( record.getStartDate(), cost.getStartDate()) <= 0 )
-				&& (compare( record.getEndDate(), cost.getEndDate()) >= 0 )
-				&& (AonDateUtils.get(cost.getStartDate(), Calendar.DAY_OF_MONTH) == 1 )
-				&& (cost.getEndDate() == null || AonDateUtils.get(cost.getEndDate(), Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(cost.getEndDate(), Calendar.DAY_OF_MONTH) ))
+			if ((compare( record.getStartDate(),AonDateUtils.toLocalDate(cost.getStartDate())) <= 0 )
+				&& (compare( record.getEndDate(), AonDateUtils.toLocalDate(cost.getEndDate())) >= 0 )
+				&& (com.esferalia.aon.watson.util.AonDateUtils.get(cost.getStartDate(), Calendar.DAY_OF_MONTH) == 1 )
+				&& (cost.getEndDate() == null || com.esferalia.aon.watson.util.AonDateUtils.get(cost.getEndDate(),
+						Calendar.DAY_OF_MONTH) == com.esferalia.aon.watson.util.AonDateUtils.getMax(cost.getEndDate(), Calendar.DAY_OF_MONTH) ))
 				return true;
 		}
 		
@@ -1188,9 +1189,9 @@ public class EmployeeDAO {
 		if ( d2 == null )
 			return false;
 		
-		return  (AonDateUtils.get(d1, Calendar.YEAR) == AonDateUtils.get(d2, Calendar.YEAR))
-				&& (AonDateUtils.get(d1, Calendar.MONTH) == AonDateUtils.get(d2, Calendar.MONTH))
-				&& (AonDateUtils.get(d1, Calendar.DAY_OF_MONTH) == AonDateUtils.get(d2, Calendar.DAY_OF_MONTH));
+		return  (com.esferalia.aon.watson.util.AonDateUtils.get(d1, Calendar.YEAR) == com.esferalia.aon.watson.util.AonDateUtils.get(d2, Calendar.YEAR))
+				&& (com.esferalia.aon.watson.util.AonDateUtils.get(d1, Calendar.MONTH) == com.esferalia.aon.watson.util.AonDateUtils.get(d2, Calendar.MONTH))
+				&& (com.esferalia.aon.watson.util.AonDateUtils.get(d1, Calendar.DAY_OF_MONTH) == com.esferalia.aon.watson.util.AonDateUtils.get(d2, Calendar.DAY_OF_MONTH));
 				
 	}
 	
@@ -1262,12 +1263,6 @@ public class EmployeeDAO {
 
 	private static byte getDniType(String document) {
 		return Document.parse(document).value();
-	}
-	
-	private static java.sql.Date toSql(Date date) {
-		if ( date == null )
-			return null;
-		return new java.sql.Date(date.getTime());
 	}
 	
 	private static byte getCCCType(Employee employee) {
@@ -1448,6 +1443,22 @@ public class EmployeeDAO {
 		}		
 	}	
 
+	public static LocalDate max(LocalDate a, LocalDate b) {
+		return compare(a, b) > 0 ? a : b;
+	}
+
+	public static LocalDate min(LocalDate a, LocalDate b) {
+		return compare(a, b) < 0 ? a : b;
+	}
+
+
+	public static int compare(LocalDate a, LocalDate b) {
+		if (a == null) {
+			return b == null ? 0 : 1;
+		}
+		return b == null ? -1 : a.compareTo(b);
+	}
+
 	public static Date max(Date a, Date b) {
 		return compare(a, b) > 0 ? a : b;
 	}
@@ -1463,5 +1474,4 @@ public class EmployeeDAO {
 		}
 		return b == null ? -1 : a.compareTo(b);
 	}
-
 }

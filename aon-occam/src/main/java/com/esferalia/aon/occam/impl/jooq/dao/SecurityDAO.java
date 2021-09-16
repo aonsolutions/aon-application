@@ -1274,7 +1274,7 @@ public class SecurityDAO {
 		.set(RADDINFO.REGISTRY, user.getRegistry())
 		.set(RADDINFO.ATTRIBUTE, DIGITAL_CERTIFICATE_PASSWORD)
 		.set(RADDINFO.VALUE, certificate.getPassword())
-		.set(RADDINFO.VALUE_DATE, DSL.currentDate() )
+		.set(RADDINFO.VALUE_DATE, DSL.currentLocalDate() )
 		.execute()
 		;
 
@@ -1284,11 +1284,11 @@ public class SecurityDAO {
 		.set(RATTACH.REGISTRY, user.getRegistry())
 		.set(RATTACH.TYPE, DIGITAL_CERTIFICATE.value())
 		.set(RATTACH.MIMETYPE, MimeType.PKCS12.value())
-		.set(RATTACH.ATTACH_DATE, DSL.currentDate())
+		.set(RATTACH.ATTACH_DATE, DSL.currentLocalDate())
 		.set(RATTACH.DATA, certificate.getCertificate())
 		.set(RATTACH.CREATION_USER, user.getLogin())
-		.set(RATTACH.CREATION_DATE, DSL.currentTimestamp())
-		.set(RATTACH.MODIFICATION_DATE, DSL.currentTimestamp())
+		.set(RATTACH.CREATION_DATE, DSL.currentLocalDateTime())
+		.set(RATTACH.MODIFICATION_DATE, DSL.currentLocalDateTime())
 		.execute()
 		;
 		

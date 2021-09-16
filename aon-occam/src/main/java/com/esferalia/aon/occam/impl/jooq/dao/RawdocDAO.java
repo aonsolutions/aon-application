@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.occam.impl.jooq.validation.RawdocValidation;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import es.translogia.tedi.json.TediInvoiceJSON;
@@ -64,15 +65,15 @@ public class RawdocDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RAWDOC.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RAWDOC.DOMAIN);}
-		@Override public Property<Byte> getNatureProperty() {return new FilterDAO.PropertyDAO<Byte>(RAWDOC.NATURE);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RAWDOC.TYPE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(RAWDOC.STATUS);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.TimestampPropertyDAO(RAWDOC.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(RAWDOC.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.TimestampPropertyDAO(RAWDOC.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(RAWDOC.MODIFICATION_USER);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.DOMAIN);}
+		@Override public Property<Byte> getNatureProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.NATURE);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.TYPE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.STATUS);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(RAWDOC.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.CREATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(RAWDOC.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.MODIFICATION_USER);}
 	}
 	
 	private static class RawdocFiller  implements Function<Record,Rawdoc> {
@@ -91,9 +92,9 @@ public class RawdocDAO {
 				.setLog(record.getValue(RAWDOC.LOG))
 				.setMimeType(MimeType.safeValueOf( record.getValue(RAWDOC.MIME_TYPE)))
 				.setCreationUser(record.getValue(RAWDOC.CREATION_USER))
-				.setCreationDate(record.getValue(RAWDOC.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(RAWDOC.CREATION_DATE)))
 				.setModificationUser(record.getValue(RAWDOC.MODIFICATION_USER))
-				.setModificationDate(record.getValue(RAWDOC.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(record.getValue(RAWDOC.MODIFICATION_DATE)))
 				;
 		}
 	}
@@ -117,9 +118,9 @@ public class RawdocDAO {
 				.setDescription(RawdocNature.safeValueOf( record.getValue(RAWDOC.NATURE)).getDescription())
 				.setMimeType(MimeType.safeValueOf( record.getValue(RAWDOC.MIME_TYPE)))
 				.setCreationUser(record.getValue(RAWDOC.CREATION_USER))
-				.setCreationDate(record.getValue(RAWDOC.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(RAWDOC.CREATION_DATE)))
 				.setModificationUser(record.getValue(RAWDOC.MODIFICATION_USER))
-				.setModificationDate(record.getValue(RAWDOC.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(record.getValue(RAWDOC.MODIFICATION_DATE)))
 				;
 		}
 	}
@@ -201,7 +202,7 @@ public class RawdocDAO {
 			.set(RAWDOC.MIME_TYPE,rawdoc.getMimeType() == null? null : rawdoc.getMimeType().value())
 			.set(RAWDOC.DATA,rawdoc.getData())
 			.set(RAWDOC.CREATION_USER,ctx.getUser())
-			.set(RAWDOC.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.set(RAWDOC.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime())
 			.returning(RAWDOC.ID)
 			.fetchOne()
 			.getValue(RAWDOC.ID);
@@ -224,7 +225,7 @@ public class RawdocDAO {
 			.set(RAWDOC.JSON,rawdoc.getJson())
 			.set(RAWDOC.LOG, rawdoc.getLog() != null ? rawdoc.getLog() : getLogArray(ctx, r, rawdoc.getStatus(), null))
 			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime())
 			.where(RAWDOC.ID.eq(rawdoc.getId()))
 			.execute();
 		if(rawdoc.getData() != null && rawdoc.getMimeType() != null) {
@@ -380,7 +381,7 @@ public class RawdocDAO {
 			.set(RAWDOC.STATUS,RawdocStatus.DRAFT.value())
 			.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.DRAFT, null ) )
 			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime())
 			.where(RAWDOC.ID.equal(rawdocId))
 			.execute();
 		ctx.log().info("UPDATE RAWDOC (DRAFT) id: " + rawdocId + " ("+count+" filas)");
@@ -394,7 +395,7 @@ public class RawdocDAO {
 			.set(RAWDOC.STATUS,RawdocStatus.REJECTED.value())
 			.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.REJECTED, reason ))
 			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime())
 			.where(RAWDOC.ID.equal(rawdocId))
 			.execute();
 		ctx.log().info("UPDATE RAWDOC (REJECTED) id: " + rawdocId + " ("+count+" filas)");
@@ -408,7 +409,7 @@ public class RawdocDAO {
 			.set(RAWDOC.STATUS,RawdocStatus.INBOX.value())
 			.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.INBOX, null ) )
 			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
-			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime())
 			.where(RAWDOC.ID.equal(rawdocId))
 			.execute();
 		ctx.log().info("UPDATE RAWDOC (INBOX) id: " + rawdocId + " ("+count+" filas)");

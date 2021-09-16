@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InvoicePropertiesDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;;
 
 public class InvoiceApiDAO {
@@ -103,8 +104,8 @@ public class InvoiceApiDAO {
 				.setSeries(record.getValue(INVOICE.SERIES))
 				.setNumber(record.getValue(INVOICE.NUMBER))
 				.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
-				.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+				.setIssueDate(AonDateUtils.toDate(record.getValue(INVOICE.ISSUE_DATE)))
+				.setTaxDate(AonDateUtils.toDate(record.getValue(INVOICE.TAX_DATE)))
 				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
 			
 				.setRegistry(record.getValue(INVOICE.REGISTRY))
@@ -139,9 +140,9 @@ public class InvoiceApiDAO {
 				.setTotal(record.getValue(INVOICE.TOTAL))	
 				.setComments(record.getValue(INVOICE.COMMENTS))
 				.setStatus(record.getValue(INVOICE.STATUS))
-				.setCreationDate(record.getValue(INVOICE.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(INVOICE.CREATION_DATE)))
 				.setCreationUser(record.getValue(INVOICE.CREATION_USER))
-				.setModificationDate(record.getValue(INVOICE.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(record.getValue(INVOICE.MODIFICATION_DATE)))
 				.setModificationUser(record.getValue(INVOICE.MODIFICATION_USER));
 			
 			try (AONContext ctx = AONContext.getAONContext(aonCtx.getDomainName(),aonCtx.getDomainId(), aonCtx.getUser())){

@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DashboardFiscalPortal implements Serializable {
 	
@@ -119,8 +120,8 @@ public class DashboardFiscalPortal implements Serializable {
 					.join(ACCOUNT_ENTRY).onKey()
 					.join(ACCOUNT).on(ACCOUNT.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 					.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(getDomainId()))
-					.and(ACCOUNT_ENTRY.ENTRY_DATE.greaterOrEqual(new java.sql.Date(getPygEntriesPeriod().getInitiationDate().getTime())))
-					.and(ACCOUNT_ENTRY.ENTRY_DATE.lessOrEqual(new java.sql.Date(getPygEntriesPeriod().getDeadline().getTime())))
+					.and(ACCOUNT_ENTRY.ENTRY_DATE.greaterOrEqual(AonDateUtils.toLocalDate(getPygEntriesPeriod().getInitiationDate())))
+					.and(ACCOUNT_ENTRY.ENTRY_DATE.lessOrEqual(AonDateUtils.toLocalDate(getPygEntriesPeriod().getDeadline())))
 					.and(ACCOUNT_ENTRY.ENTRY_TYPE.notEqual((byte) 2))
 					.and( ACCOUNT.CODE.like("6%").or( ACCOUNT.CODE.like("7%") ))
 					.groupBy(monthField,codeField)

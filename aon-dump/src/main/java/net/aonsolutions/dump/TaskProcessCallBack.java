@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.TaskComment.TASK_COMMENT;
 
 import java.io.PrintStream;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class TaskProcessCallBack extends AbstractChaimCallbackDump{
 			CallbackDump cb, List<Table<?>> ciclica, List<?> references, Condition where) {
 		
 		Date date = new Date();
-		Timestamp time = new Timestamp(date.getTime());
+		LocalDateTime time = new Timestamp(date.getTime()).toLocalDateTime();
 
 		dslContext
 				.insertInto(TASK_COMMENT, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.COMMENT,
@@ -108,7 +109,7 @@ public class TaskProcessCallBack extends AbstractChaimCallbackDump{
 	private void insertTaskComment(String out) {
 		
 		Date date = new Date();
-		Timestamp time = new Timestamp(date.getTime());
+		LocalDateTime time = new Timestamp(date.getTime()).toLocalDateTime();
 		
 		this.aonDump.dslContext
 			.insertInto(TASK_COMMENT, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.COMMENT, TASK_COMMENT.CREATION_USER, TASK_COMMENT.CREATION_DATE)

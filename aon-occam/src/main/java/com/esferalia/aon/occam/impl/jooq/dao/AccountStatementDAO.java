@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -112,7 +113,7 @@ public class AccountStatementDAO {
 						.setEntryDomain(record.getValue(ACCOUNT_ENTRY.DOMAIN))
 						.setEntryPperiod(record.getValue(ACCOUNT_ENTRY.ACCOUNT_PERIOD))
 						.setEntryPeriodName(record.getValue(ACCOUNT_PERIOD.NAME))
-						.setEntryDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+						.setEntryDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE)))
 						.setEntryType(AccountEntryType.safeValueOf( record.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)))
 						.setActivity(record.getValue(ACCOUNT_ENTRY.ACTIVITY))
 						.setActivityName(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
@@ -120,9 +121,9 @@ public class AccountStatementDAO {
 						.setComments(record.getValue(ACCOUNT_ENTRY.COMMENTS))
 						.setEntrySecurityLevel(SecurityLevel.safeValueOf(record.getValue(ACCOUNT_ENTRY.SECURITY_LEVEL)))
 						.setEntryCreationUser(record.getValue(ACCOUNT_ENTRY.CREATION_USER))
-						.setEntryCreationDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE))
+						.setEntryCreationDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.CREATION_DATE)))
 						.setEntryModificationUser(record.getValue(ACCOUNT_ENTRY.MODIFICATION_USER))
-						.setEntryModificationDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE))
+						.setEntryModificationDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.MODIFICATION_DATE)))
 						.setDetailId(record.getValue(ACCOUNT_ENTRY_DETAIL.ID) )
 						.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 						.setAccountCode(record.getValue(DET_ACCOUNT.CODE))
@@ -145,7 +146,7 @@ public class AccountStatementDAO {
 							.innerJoin(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))			
 							.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.eq(flat.getEntryDomain()))
 							  .and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.eq(flat.getAccount()))
-							  .and(ACCOUNT_ENTRY.ENTRY_DATE.lessThan(AonDateUtils.toSql( flat.getEntryDate())))
+							  .and(ACCOUNT_ENTRY.ENTRY_DATE.lessThan(AonDateUtils.toLocalDate(flat.getEntryDate())))
 							.fetch()
 							.stream()
 							.forEach(sumRec -> {
@@ -201,7 +202,7 @@ public class AccountStatementDAO {
 				.stream()
 				.forEach(rec -> {
 					AccountStatementPeriod period = getAccountStatementPeriod(params,ap
-							,rec.getValue( ACCOUNT_ENTRY.ENTRY_DATE )
+							,AonDateUtils.toDate(rec.getValue( ACCOUNT_ENTRY.ENTRY_DATE))
 							,AccountEntryType.safeValueOf(rec.getValue(ACCOUNT_ENTRY.ENTRY_TYPE)));
 					AccountStatement as = map.get(period);
 					if (as == null) {
@@ -298,7 +299,7 @@ public class AccountStatementDAO {
 			return new AccountStatement()
 				.setAccountEntry( record.getValue(ACCOUNT_ENTRY.ID))
 				.setJournal( record.getValue(ACCOUNT_ENTRY.JOURNAL))
-				.setEntryDate( record.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+				.setEntryDate(AonDateUtils.toDate(record.getValue(ACCOUNT_ENTRY.ENTRY_DATE)))
 				.setAccount(record.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.setAccountCode(record.getValue(DET_ACCOUNT.CODE))
 				.setAccountDescription(record.getValue(DET_ACCOUNT.DESCRIPTION))
@@ -609,16 +610,16 @@ public class AccountStatementDAO {
 				throw new AonCoreException("Ejercicio contable no encontrado");			
 			}
 		}
-		java.sql.Date sqlStart = null;
-		java.sql.Date sqlEnd = null;
+		LocalDate sqlStart = null;
+		LocalDate sqlEnd = null;
 		if (ap == null) {
 			Date fromDate = params.getFromDate()!=null ?params.getFromDate() :AccountPeriodDAO.getMinDate(ctx);
 			Date toDate = params.getToDate()!=null ?params.getToDate() :AccountPeriodDAO.getMaxDate(ctx);
-			sqlStart = AonDateUtils.toSql(fromDate);
-			sqlEnd = AonDateUtils.toSql(toDate);
+			sqlStart = AonDateUtils.toLocalDate(fromDate);
+			sqlEnd = AonDateUtils.toLocalDate(toDate);
 		} else {
-			sqlStart = AonDateUtils.toSql(params.getFromDate()!=null ?params.getFromDate() : ap.getInitiationDate());
-			sqlEnd = AonDateUtils.toSql(params.getToDate()==null?ap.getDeadline():params.getToDate());
+			sqlStart = AonDateUtils.toLocalDate(params.getFromDate()!=null ?params.getFromDate() : ap.getInitiationDate());
+			sqlEnd = AonDateUtils.toLocalDate(params.getToDate()==null?ap.getDeadline():params.getToDate());
 		}
 		
 		AggregateFunction<BigDecimal> SUM_DEBIT = DSL.sum( ACCOUNT_ENTRY_DETAIL.DEBIT);
@@ -684,7 +685,7 @@ public class AccountStatementDAO {
 				,getTrialBalanceCondition(ctx, params)
 				.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ap.getId()))
 				.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.OPENING.getValue()))
-				.and(ACCOUNT_ENTRY.ENTRY_DATE.ge(AonDateUtils.toSql(ap.getInitiationDate())))
+				.and(ACCOUNT_ENTRY.ENTRY_DATE.ge(AonDateUtils.toLocalDate(ap.getInitiationDate())))
 				.and(ACCOUNT_ENTRY.ENTRY_DATE.lt(sqlStart))
 				);
 		}
@@ -811,20 +812,20 @@ public class AccountStatementDAO {
 	private static Condition getBasicCondition(AONContext ctx , IAccountParams params, boolean applyDateFilterIfNeeded ) {
 		Condition condition = ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(ctx.getDomainId());
 		if (applyDateFilterIfNeeded) {
-			java.sql.Date sqlStart = null;
-			java.sql.Date sqlEnd = null;
+			LocalDate sqlStart = null;
+			LocalDate sqlEnd = null;
 			if (params.getPeriod() == null) {
 				Date fromDate = params.getFromDate()!=null ?params.getFromDate() :AccountPeriodDAO.getMinDate(ctx);
 				Date toDate = params.getToDate()!=null ?params.getToDate() :AccountPeriodDAO.getMaxDate(ctx);
-				sqlStart = AonDateUtils.toSql(fromDate );
-				sqlEnd = AonDateUtils.toSql(toDate);
+				sqlStart = AonDateUtils.toLocalDate(fromDate );
+				sqlEnd = AonDateUtils.toLocalDate(toDate);
 			} else {
 				AccountPeriod ap = AccountPeriodDAO.getPeriod(ctx, params.getPeriod());
 				if (ap == null) {
 					throw new AonCoreException("Periodo no encontrado");
 				}
-				sqlStart = AonDateUtils.toSql(params.getFromDate()==null?ap.getInitiationDate():params.getFromDate());
-				sqlEnd = AonDateUtils.toSql(params.getToDate()==null?ap.getDeadline():params.getToDate());
+				sqlStart = AonDateUtils.toLocalDate(params.getFromDate()==null?ap.getInitiationDate():params.getFromDate());
+				sqlEnd = AonDateUtils.toLocalDate(params.getToDate()==null?ap.getDeadline():params.getToDate());
 			}
 			condition = condition.and(ACCOUNT_ENTRY.ENTRY_DATE.between(sqlStart,sqlEnd));
 		}

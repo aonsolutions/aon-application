@@ -4,6 +4,9 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -102,6 +105,44 @@ public class AonDateUtils {
 	 */
 	public static java.sql.Date toSql(Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
+	}
+	
+	/**
+	 * Convierte la fecha pasada por parametro en un objeto LocalDate.
+	 * @param Date date
+	 * @return LocalDate correspondiente. Si la fecha es NULL, devuelve NULL.
+	 */
+	public static LocalDate toLocalDate(Date date) {
+		//date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		return date == null ? null : toSql(date).toLocalDate();
+	}
+	
+	/**
+	 * Convierte la fecha pasada por parametro en un objeto LocalDateTime.
+	 * @param Date date
+	 * @return LocalDateTime correspondiente. Si la fecha es NULL, devuelve NULL.
+	 */
+	public static LocalDateTime toLocalDateTime(Date date) {
+		//date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		return date == null ? null : toTimestamp(date).toLocalDateTime();
+	}
+	
+	/**
+	 * Convierte la fecha pasada por parametro (LocalDate) en un objeto Date.
+	 * @param LocalDate date
+	 * @return Date correspondiente. Si la fecha es NULL, devuelve NULL.
+	 */
+	public static Date toDate(LocalDate date) {
+		return date == null ? null : Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
+	}
+	
+	/**
+	 * Convierte la fecha pasada por parametro (LocalDateTime) en un objeto Date.
+	 * @param LocalDateTime date
+	 * @return Date correspondiente. Si la fecha es NULL, devuelve NULL.
+	 */
+	public static Date toDate(LocalDateTime date) {
+		return date == null ? null : Date.from(date.atZone(ZoneId.systemDefault()).toInstant());
 	}
 	
 	/**

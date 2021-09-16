@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -53,24 +54,24 @@ public class CustomerDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.REGISTRY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.DOMAIN);}
-		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.TARIFF);}
-		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.SURCHARGE);}
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.WITHHOLDING);}
-		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.TRANSACTION);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.SCOPE);}
-		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.E_INVOICE);}
-		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.INVOICING_GROUP);}
-		@Override public Property<Byte> getProjectGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.PROJECT_GROUPED);}
-		@Override public Property<Byte> getDeliveryGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.DELIVERY_GROUPED);}
-		@Override public Property<Byte> getDeliveryValuatedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.DELIVERY_VALUATED);}
-		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CUSTOMER.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CUSTOMER.MODIFICATION_DATE);}	
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.DOMAIN);}
+		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.TARIFF);}
+		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.SURCHARGE);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.WITHHOLDING);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.SCOPE);}
+		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.E_INVOICE);}
+		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.INVOICING_GROUP);}
+		@Override public Property<Byte> getProjectGroupedProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.PROJECT_GROUPED);}
+		@Override public Property<Byte> getDeliveryGroupedProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.DELIVERY_GROUPED);}
+		@Override public Property<Byte> getDeliveryValuatedProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.DELIVERY_VALUATED);}
+		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CUSTOMER.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CUSTOMER.MODIFICATION_DATE);}	
 	}
 
 	protected static class CustomerFiller  implements Function<Record, Customer> {
@@ -84,13 +85,13 @@ public class CustomerDAO {
 			return new Customer()
 					.copy(RegistryFiller.build(r, registry))
 					.setAccount(r.getValue(CUSTOMER.ACCOUNT))
-					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(CUSTOMER.CREATION_DATE)))
 					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
 					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED) == 1)
 					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED) == 1)
 					.setEInvoice(r.getValue(CUSTOMER.E_INVOICE) == 1)
 					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
-					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(CUSTOMER.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
 					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED) == 1)
 					.setScope(r.getValue(CUSTOMER.SCOPE))
@@ -166,7 +167,7 @@ public class CustomerDAO {
 			.set(CUSTOMER.DELIVERY_VALUATED,AonEnumUtils.getByte(customer.isDeliveryValuated()))
 			.set(CUSTOMER.ACCOUNT,customer.getAccount())
 			.set(CUSTOMER.CREATION_USER,ctx.getUser())
-			.set(CUSTOMER.CREATION_DATE,new Timestamp(new Date().getTime()))
+			.set(CUSTOMER.CREATION_DATE,new Timestamp(new Date().getTime()).toLocalDateTime())
 			.execute();
 		ctx.log().info("INSERT CUSTOMER id: " + customer.getId());		
 		return customer;
@@ -188,7 +189,7 @@ public class CustomerDAO {
 			.set(CUSTOMER.DELIVERY_VALUATED,AonEnumUtils.getByte(customer.isDeliveryValuated()))
 			.set(CUSTOMER.ACCOUNT,customer.getAccount())
 			.set(CUSTOMER.MODIFICATION_USER,ctx.getUser())
-			.set(CUSTOMER.MODIFICATION_DATE,new Timestamp(new Date().getTime()))
+			.set(CUSTOMER.MODIFICATION_DATE,new Timestamp(new Date().getTime()).toLocalDateTime())
 			.where(CUSTOMER.REGISTRY.eq(customer.getId()))
 			.execute();
 		ctx.log().info("UPDATE CUSTOMER id: " + customer.getId() + ". (" + count + " rows)");		
@@ -221,7 +222,7 @@ public class CustomerDAO {
 		ctx.getDslContext().update(CUSTOMER)
 		.set(CUSTOMER.ACCOUNT,account)
 		.set(CUSTOMER.MODIFICATION_USER,ctx.getUser())
-		.set(CUSTOMER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+		.set(CUSTOMER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 		.where(CUSTOMER.REGISTRY.eq(customerId))
 		.execute();
 	ctx.log().info("ACCOUNT " + account + " LINKED TO CUSTOMER " + customerId);

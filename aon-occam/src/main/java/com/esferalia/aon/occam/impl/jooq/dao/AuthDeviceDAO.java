@@ -55,7 +55,7 @@ public class AuthDeviceDAO {
 			.update(AUTH_DEVICE)
 			.set(AUTH_DEVICE.DEVICE_TYPE, ad.getDeviceType().value())
 			.set(AUTH_DEVICE.DEVICE_TOKEN, ad.getDeviceToken())
-			.set(AUTH_DEVICE.LAST_DATE, Timestamp.from(Instant.now()))
+			.set(AUTH_DEVICE.LAST_DATE, Timestamp.from(Instant.now()).toLocalDateTime())
 			.where(AUTH_DEVICE.ID.eq(ad.getId()))
 			.execute();		
 		return ad;

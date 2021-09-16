@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SalesDetailStatus;
 import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CustomerFiller;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class SalesDAO {
@@ -56,42 +58,42 @@ public class SalesDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.DOMAIN);}
-		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.PROJECT);}
-		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.CUSTOMER);}
-		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<String>(SALES.SERIES);}
-		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.NUMBER);}
-		@Override public Property<String> getPurchaseReferenceProperty() {return new FilterDAO.PropertyDAO<String>(SALES.PURCHASE_REFERENCE);}
-		@Override public Property<Integer> getShippingAddressProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.SHIPPING_ADDRESS);}
-		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.SELLER);}
-		@Override public Property<String> getDiscountExprProperty() {return new FilterDAO.PropertyDAO<String>(SALES.DISCOUNT_EXPR);}
-		@Override public Property<java.sql.Date> getIssueDateProperty() {return new FilterDAO.PropertyDAO<java.sql.Date>(SALES.ISSUE_DATE);}
-		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.PAY_METHOD);}
-		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(SALES.DOCUMENT_TYPE);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(SALES.SECURITY_LEVEL);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(SALES.STATUS);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(SALES.COMMENTS);}
-		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<String>(SALES.REMARKS);}
-		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.WORKPLACE);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.SCOPE);}
-		@Override public Property<Short> getNumberOfPymntsProperty() {return new FilterDAO.PropertyDAO<Short>(SALES.NUMBER_OF_PYMNTS);}
-		@Override public Property<Short> getDaysToFirstPymntProperty() {return new FilterDAO.PropertyDAO<Short>(SALES.DAYS_TO_FIRST_PYMNT);}
-		@Override public Property<Short> getDaysBetweenPymntsProperty() {return new FilterDAO.PropertyDAO<Short>(SALES.DAYS_BETWEEN_PYMNTS);}
-		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<String>(SALES.PYMNT_DAYS);}
-		@Override public Property<String> getBankAccountProperty() {return new FilterDAO.PropertyDAO<String>(SALES.BANK_ACCOUNT);}
-		@Override public Property<String> getBankAliasProperty() {return new FilterDAO.PropertyDAO<String>(SALES.BANK_ALIAS);}
-		@Override public Property<String> getBicProperty() {return new FilterDAO.PropertyDAO<String>(SALES.BIC);}
-		@Override public Property<Byte> getPurchaseGeneratedProperty() {return new FilterDAO.PropertyDAO<Byte>(SALES.PURCHASE_GENERATED);}
-		@Override public Property<Integer> getCarrierProperty() {return new FilterDAO.PropertyDAO<Integer>(SALES.CARRIER);}
-		@Override public Property<String> getShippingAlternativeAddressProperty() {return new FilterDAO.PropertyDAO<String>(SALES.SHIPPING_ALTERNATIVE_ADDRESS);}
-		@Override public Property<String> getShippingAlternativeAddress2Property() {return new FilterDAO.PropertyDAO<String>(SALES.SHIPPING_ALTERNATIVE_ADDRESS2);}
-		@Override public Property<String> getShippingAlternativeZipProperty() {return new FilterDAO.PropertyDAO<String>(SALES.SHIPPING_ALTERNATIVE_ZIP);}
-		@Override public Property<String> getShippingAlternativeCityProperty() {return new FilterDAO.PropertyDAO<String>(SALES.SHIPPING_ALTERNATIVE_CITY);}
-		@Override public Property<String> getShippingAlternativePhoneProperty() {return new FilterDAO.PropertyDAO<String>(SALES.SHIPPING_ALTERNATIVE_PHONE);}
-		@Override public Property<String> getShippingAlternativeRecipientProperty() {return new FilterDAO.PropertyDAO<String>(SALES.SHIPPING_ALTERNATIVE_RECIPIENT);}
-		@Override public Property<String> getShippingContactProperty() {return new FilterDAO.PropertyDAO<String>(SALES.SHIPPING_CONTACT);}
-		@Override public Property<Byte> getShippingPeriodProperty() {return new FilterDAO.PropertyDAO<Byte>(SALES.SHIPPING_PERIOD);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SALES.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(SALES.DOMAIN);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(SALES.PROJECT);}
+		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(SALES.CUSTOMER);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(SALES.SERIES);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(SALES.NUMBER);}
+		@Override public Property<String> getPurchaseReferenceProperty() {return new FilterDAO.PropertyDAO<>(SALES.PURCHASE_REFERENCE);}
+		@Override public Property<Integer> getShippingAddressProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_ADDRESS);}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(SALES.SELLER);}
+		@Override public Property<String> getDiscountExprProperty() {return new FilterDAO.PropertyDAO<>(SALES.DISCOUNT_EXPR);}
+		@Override public Property<java.util.Date> getIssueDateProperty() {return new FilterDAO.LocalDatePropertyDAO(SALES.ISSUE_DATE);}
+		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<>(SALES.PAY_METHOD);}
+		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(SALES.DOCUMENT_TYPE);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(SALES.SECURITY_LEVEL);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(SALES.STATUS);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(SALES.COMMENTS);}
+		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<>(SALES.REMARKS);}
+		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(SALES.WORKPLACE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(SALES.SCOPE);}
+		@Override public Property<Short> getNumberOfPymntsProperty() {return new FilterDAO.PropertyDAO<>(SALES.NUMBER_OF_PYMNTS);}
+		@Override public Property<Short> getDaysToFirstPymntProperty() {return new FilterDAO.PropertyDAO<>(SALES.DAYS_TO_FIRST_PYMNT);}
+		@Override public Property<Short> getDaysBetweenPymntsProperty() {return new FilterDAO.PropertyDAO<>(SALES.DAYS_BETWEEN_PYMNTS);}
+		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<>(SALES.PYMNT_DAYS);}
+		@Override public Property<String> getBankAccountProperty() {return new FilterDAO.PropertyDAO<>(SALES.BANK_ACCOUNT);}
+		@Override public Property<String> getBankAliasProperty() {return new FilterDAO.PropertyDAO<>(SALES.BANK_ALIAS);}
+		@Override public Property<String> getBicProperty() {return new FilterDAO.PropertyDAO<>(SALES.BIC);}
+		@Override public Property<Byte> getPurchaseGeneratedProperty() {return new FilterDAO.PropertyDAO<>(SALES.PURCHASE_GENERATED);}
+		@Override public Property<Integer> getCarrierProperty() {return new FilterDAO.PropertyDAO<>(SALES.CARRIER);}
+		@Override public Property<String> getShippingAlternativeAddressProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_ALTERNATIVE_ADDRESS);}
+		@Override public Property<String> getShippingAlternativeAddress2Property() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_ALTERNATIVE_ADDRESS2);}
+		@Override public Property<String> getShippingAlternativeZipProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_ALTERNATIVE_ZIP);}
+		@Override public Property<String> getShippingAlternativeCityProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_ALTERNATIVE_CITY);}
+		@Override public Property<String> getShippingAlternativePhoneProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_ALTERNATIVE_PHONE);}
+		@Override public Property<String> getShippingAlternativeRecipientProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_ALTERNATIVE_RECIPIENT);}
+		@Override public Property<String> getShippingContactProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_CONTACT);}
+		@Override public Property<Byte> getShippingPeriodProperty() {return new FilterDAO.PropertyDAO<>(SALES.SHIPPING_PERIOD);}
 		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
@@ -174,8 +176,7 @@ public class SalesDAO {
 
 	public static void updateSales(AONContext ctx, Sales sales) {
 		ctx.checkWrite();
-		Timestamp modificationDate = null;
-		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		LocalDateTime modificationDate = AonDateUtils.toLocalDateTime(new Date());
 		
 		ctx.getDslContext()
 				.update(SALES)
@@ -188,7 +189,7 @@ public class SalesDAO {
 				.set(SALES.SHIPPING_ADDRESS, sales.getShippingAddress())
 				.set(SALES.SELLER, sales.getSeller())
 				.set(SALES.DISCOUNT_EXPR, sales.getDiscountExpr())
-				.set(SALES.ISSUE_DATE, new java.sql.Date(sales.getIssueDate().getTime()))
+				.set(SALES.ISSUE_DATE, AonDateUtils.toLocalDate(sales.getIssueDate()))
 				.set(SALES.PAY_METHOD, sales.getPayMethod())
 				.set(SALES.DOCUMENT_TYPE, (byte)sales.getDocumentType())
 				.set(SALES.SECURITY_LEVEL, (byte)sales.getSecurityLevel())
@@ -222,9 +223,8 @@ public class SalesDAO {
 	
 	public static void insertSalesDetail(AONContext ctx, SalesDetail detail) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
-
+		LocalDateTime creationDate = null, modificationDate = null;
+		creationDate = AonDateUtils.toLocalDateTime(new Date());
 		ctx.getDslContext()
 				.insertInto(SALES_DETAIL, SALES_DETAIL.DOMAIN,
 						SALES_DETAIL.SALES, SALES_DETAIL.LINE,
@@ -248,9 +248,7 @@ public class SalesDAO {
 	
 	public static void updateSalesDetail(AONContext ctx, SalesDetail detail) {
 		ctx.checkWrite();
-		Timestamp modificationDate = null;
-		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+		LocalDateTime modificationDate = AonDateUtils.toLocalDateTime(new Date());
 
 		ctx.getDslContext()
 				.update(SALES_DETAIL)
@@ -331,6 +329,7 @@ public class SalesDAO {
 	
 	public static void createCustomer(AONContext ctx, int domain,
 			int registry, int scope) {
+		LocalDateTime now = AonDateUtils.toLocalDateTime(new Date());
 		ctx.checkWrite();
 		ctx.getDslContext()
 				.insertInto(CUSTOMER, CUSTOMER.DOMAIN, CUSTOMER.REGISTRY,
@@ -338,10 +337,7 @@ public class SalesDAO {
 						CUSTOMER.CREATION_DATE, CUSTOMER.CREATION_USER,
 						CUSTOMER.MODIFICATION_DATE, CUSTOMER.MODIFICATION_USER)
 				.values(domain, registry, scope, (byte) 0, (byte) 0,
-						new java.sql.Timestamp(new Date().getTime()),
-						ctx.getUser(),
-						new java.sql.Timestamp(new Date().getTime()),
-						ctx.getUser()).execute();
+						now, ctx.getUser(), now, ctx.getUser()).execute();
 	}
 	
 	public static void createSeller(AONContext ctx, int domain, int registry,
@@ -487,7 +483,7 @@ public class SalesDAO {
 									record.getValue(SALES.STATUS)))
 					.setSeries(record.getValue(SALES.SERIES))
 					.setNumber(record.getValue(SALES.NUMBER))
-					.setIssueDate(record.getValue(SALES.ISSUE_DATE))
+					.setIssueDate(AonDateUtils.toDate(record.getValue(SALES.ISSUE_DATE)))
 					.setCustomer(customer)
 					.setScopeName(record.getValue(SCOPE.DESCRIPTION))						
 					.setPurchaseReference(record.getValue(SALES.PURCHASE_REFERENCE))
@@ -535,8 +531,8 @@ public class SalesDAO {
 			sales.setShippingAddress(r.getValue(SALES.SHIPPING_ADDRESS));
 			sales.setSeller(r.getValue(SALES.SELLER));
 			sales.setDiscountExpr(r.getValue(SALES.DISCOUNT_EXPR));
-			sales.setIssueDate(r.getValue(SALES.ISSUE_DATE));
-			sales.setDeliveryDate(r.getValue(SALES.DELIVERY_DATE));
+			sales.setIssueDate(AonDateUtils.toDate(r.getValue(SALES.ISSUE_DATE)));
+			sales.setDeliveryDate(AonDateUtils.toDate(r.getValue(SALES.DELIVERY_DATE)));
 			sales.setPayMethod(r.getValue(SALES.PAY_METHOD));
 			sales.setDocumentType((int) r.getValue(SALES.DOCUMENT_TYPE));
 			sales.setSecurityLevel((int) r.getValue(SALES.SECURITY_LEVEL));

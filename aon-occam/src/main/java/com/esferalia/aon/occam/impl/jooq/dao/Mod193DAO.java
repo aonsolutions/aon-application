@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -337,8 +338,8 @@ public class Mod193DAO {
 			.set(FS_MODEL193_DETAIL.PERCENT,detail.getPercent())
 			.set(FS_MODEL193_DETAIL.RETENTION,detail.getRetention())
 			.set(FS_MODEL193_DETAIL.DEPONENT_NATURE,AonEnumUtils.getByte(detail.isDeponentNature()))
-			.set(FS_MODEL193_DETAIL.LOAN_START_DATE,AonDateUtils.toSql(detail.getLoanStartDate()))
-			.set(FS_MODEL193_DETAIL.LOAN_DUE_DATE,AonDateUtils.toSql(detail.getLoanDueDate()))
+			.set(FS_MODEL193_DETAIL.LOAN_START_DATE,AonDateUtils.toLocalDate(detail.getLoanStartDate()))
+			.set(FS_MODEL193_DETAIL.LOAN_DUE_DATE,AonDateUtils.toLocalDate(detail.getLoanDueDate()))
 			.set(FS_MODEL193_DETAIL.COMPENSATION,detail.getCompensation())
 			.set(FS_MODEL193_DETAIL.GUARANTEE,detail.getGuarantee())
 			.set(FS_MODEL193_DETAIL.EXPENSES,detail.getExpenses())
@@ -372,8 +373,8 @@ public class Mod193DAO {
 				.set(FS_MODEL193_DETAIL.PERCENT,detail.getPercent())
 				.set(FS_MODEL193_DETAIL.RETENTION,detail.getRetention())
 				.set(FS_MODEL193_DETAIL.DEPONENT_NATURE,AonEnumUtils.getByte(detail.isDeponentNature()))
-				.set(FS_MODEL193_DETAIL.LOAN_START_DATE,AonDateUtils.toSql(detail.getLoanStartDate()))
-				.set(FS_MODEL193_DETAIL.LOAN_DUE_DATE,AonDateUtils.toSql(detail.getLoanDueDate()))
+				.set(FS_MODEL193_DETAIL.LOAN_START_DATE,AonDateUtils.toLocalDate(detail.getLoanStartDate()))
+				.set(FS_MODEL193_DETAIL.LOAN_DUE_DATE,AonDateUtils.toLocalDate(detail.getLoanDueDate()))
 				.set(FS_MODEL193_DETAIL.COMPENSATION,detail.getCompensation())
 				.set(FS_MODEL193_DETAIL.GUARANTEE,detail.getGuarantee())
 				.set(FS_MODEL193_DETAIL.EXPENSES,detail.getExpenses())
@@ -515,8 +516,8 @@ public class Mod193DAO {
 				.setPercent(record.getValue(FS_MODEL193_DETAIL.PERCENT))
 				.setRetention(record.getValue(FS_MODEL193_DETAIL.RETENTION))
 				.setDeponentNature(AonEnumUtils.getBoolean( record.getValue(FS_MODEL193_DETAIL.DEPONENT_NATURE)))
-				.setLoanStartDate(record.getValue(FS_MODEL193_DETAIL.LOAN_START_DATE))
-				.setLoanDueDate(record.getValue(FS_MODEL193_DETAIL.LOAN_DUE_DATE))
+				.setLoanStartDate(AonDateUtils.toDate(record.getValue(FS_MODEL193_DETAIL.LOAN_START_DATE)))
+				.setLoanDueDate(AonDateUtils.toDate(record.getValue(FS_MODEL193_DETAIL.LOAN_DUE_DATE)))
 				.setCompensation(record.getValue(FS_MODEL193_DETAIL.COMPENSATION))
 				.setGuarantee(record.getValue(FS_MODEL193_DETAIL.GUARANTEE))
 				.setExpenses(record.getValue(FS_MODEL193_DETAIL.EXPENSES))
@@ -526,8 +527,8 @@ public class Mod193DAO {
 	}
 
 	private static void insertDetailsFromInvoice(AONContext ctx,final Mod193 mod193) {
-		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod193.getYear()));
-		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod193.getYear()));
+		LocalDate firstDay = AonDateUtils.toLocalDate(AonDateUtils.getYearFirstDay(mod193.getYear()));
+		LocalDate lastDay = AonDateUtils.toLocalDate(AonDateUtils.getYearLastDay(mod193.getYear()));
 
 		Field<Integer> minRegistry = DSL.min(INVOICE.REGISTRY).as(INVOICE.REGISTRY.getName());
 		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE).as(INVOICE_TAX.BASE.getName());

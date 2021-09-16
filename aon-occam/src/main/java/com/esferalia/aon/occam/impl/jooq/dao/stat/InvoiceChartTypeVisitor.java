@@ -147,7 +147,7 @@ public class InvoiceChartTypeVisitor implements IInvoiceChartTypeVisitor {
 			.stream()
 			.forEach(rec -> {
 				InvoiceType type = InvoiceType.values()[rec.getValue(INVOICE.TYPE)];
-				Date issueDate = rec.getValue(INVOICE.ISSUE_DATE);
+				Date issueDate = AonDateUtils.toDate(rec.getValue(INVOICE.ISSUE_DATE));
 				calendar.setTime(issueDate);
 				calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
 				String firstDayOfWeek = FMT.format( calendar.getTime() );
@@ -355,10 +355,10 @@ public class InvoiceChartTypeVisitor implements IInvoiceChartTypeVisitor {
 		c = c.and(SecurityDAO.getUserScopesCondition(ctx, INVOICE.SCOPE));
 		c = c.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), INVOICE.SECURITY_LEVEL));		
 		if (params.getFrom() != null) {
-			c = c.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toSql(params.getFrom())));
+			c = c.and(INVOICE.ISSUE_DATE.ge(AonDateUtils.toLocalDate(params.getFrom())));
 		}
 		if (params.getTo() != null) {
-			c = c.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toSql(params.getTo())));
+			c = c.and(INVOICE.ISSUE_DATE.le(AonDateUtils.toLocalDate(params.getTo())));
 		}
 		if (params.getRegistry() != null) {
 			c = c.and(INVOICE.REGISTRY.eq(params.getRegistry()));

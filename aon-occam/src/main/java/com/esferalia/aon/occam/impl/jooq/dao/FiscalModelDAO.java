@@ -329,7 +329,7 @@ public class FiscalModelDAO {
 				.set(FS_MODEL.CONTACT_CELLULAR,fm.getContactCellular())
 				.set(FS_MODEL.CONTACT_EMAIL,fm.getContactEmail())
 				.set(FS_MODEL.CREATION_USER,ctx.getUser())
-				.set(FS_MODEL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(FS_MODEL.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.returning(FS_MODEL.ID)
 			.fetchOne();
 		fm.setId(record.getId());
@@ -372,7 +372,7 @@ public class FiscalModelDAO {
 				.set(FS_MODEL.CONTACT_CELLULAR,fm.getContactCellular())
 				.set(FS_MODEL.CONTACT_EMAIL,fm.getContactEmail())
 				.set(FS_MODEL.MODIFICATION_USER,ctx.getUser())
-				.set(FS_MODEL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(FS_MODEL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.where(FS_MODEL.ID.equal(fm.getId()))
 			.execute();
 		deleteDetails(ctx, fm);
@@ -758,7 +758,7 @@ public class FiscalModelDAO {
 		}
 		@Override
 		public Date getCreationDate() {
-			return record.getValue(FS_MODEL.CREATION_DATE);
+			return AonDateUtils.toDate(record.getValue(FS_MODEL.CREATION_DATE));
 		}
 		@Override
 		public String getModificationUser() {
@@ -766,7 +766,7 @@ public class FiscalModelDAO {
 		}
 		@Override
 		public Date getModificationDate() {
-			return record.getValue(FS_MODEL.MODIFICATION_DATE);
+			return AonDateUtils.toDate(record.getValue(FS_MODEL.MODIFICATION_DATE));
 		}
 		
 	}

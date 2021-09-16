@@ -41,13 +41,13 @@ public class QualityDAO {
 		if(map.containsKey("from")) {
 			String from = map.get("from")[0];
 			Date d = new Date(Long.parseLong(from));
-			a = a.and(DATA_RESPONSE.RESPONSE_DATE.ge(AonDateUtils.toSql(d)));
+			a = a.and(DATA_RESPONSE.RESPONSE_DATE.ge(AonDateUtils.toLocalDate(d)));
 		}
 		
 		if(map.containsKey("to")){
 			String to = map.get("to")[0];
 			Date d = new Date(Long.parseLong(to));
-			a = a.and(DATA_RESPONSE.RESPONSE_DATE.le(AonDateUtils.toSql(d)));
+			a = a.and(DATA_RESPONSE.RESPONSE_DATE.le(AonDateUtils.toLocalDate(d)));
 		}
 		
 		if(map.containsKey("number")){
@@ -111,13 +111,13 @@ public class QualityDAO {
 		if(map.containsKey("from")) {
 			String from = map.get("from")[0];
 			Date d = new Date(Long.parseLong(from));
-			a = a.and(DATA_RESPONSE.RESPONSE_DATE.ge(AonDateUtils.toSql(d)));
+			a = a.and(DATA_RESPONSE.RESPONSE_DATE.ge(AonDateUtils.toLocalDate(d)));
 		}
 		
 		if(map.containsKey("to")){
 			String to = map.get("to")[0];
 			Date d = new Date(Long.parseLong(to));
-			a = a.and(DATA_RESPONSE.RESPONSE_DATE.le(AonDateUtils.toSql(d)));
+			a = a.and(DATA_RESPONSE.RESPONSE_DATE.le(AonDateUtils.toLocalDate(d)));
 		}
 		
 		if(map.containsKey("number")){

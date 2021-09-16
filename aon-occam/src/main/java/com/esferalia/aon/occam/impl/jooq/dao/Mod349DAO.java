@@ -162,7 +162,7 @@ public class Mod349DAO {
 			.set(FS_MOD349.PERIODICITY_CHANGE,AonEnumUtils.getByte(mod349.isPeriodicityChange()))
 			.set(FS_MOD349.DIFF_ENABLED, AonEnumUtils.getByte(mod349.isDiffEnabled()) )			
 			.set(FS_MOD349.CREATION_USER,ctx.getUser())
-			.set(FS_MOD349.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )						
+			.set(FS_MOD349.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )						
 		.returning(FS_MOD349.ID)
 		.fetchOne();
 		mod349.setId(record.getId());
@@ -192,7 +192,7 @@ public class Mod349DAO {
 			.set(FS_MOD349.DIFF_ENABLED, AonEnumUtils.getByte(mod349.isDiffEnabled()) )
 			.set(FS_MOD349.REPRESENTATIVE_DOCUMENT,mod349.getRepresentativeDocument())
 			.set(FS_MOD349.MODIFICATION_USER,ctx.getUser())
-			.set(FS_MOD349.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )			
+			.set(FS_MOD349.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )			
 			.where(FS_MOD349.ID.equal(mod349.getId()))
 		.execute();
 		return mod349;
@@ -458,10 +458,9 @@ public class Mod349DAO {
 			    .setPeriodicityChange(AonEnumUtils.getBoolean(record.getValue(FS_MOD349.PERIODICITY_CHANGE)))
 			    .setDiffEnabled(AonEnumUtils.getBoolean(record.getValue(FS_MOD349.DIFF_ENABLED)))				
 				.setCreationUser(record.getValue(FS_MOD349.CREATION_USER))
-				.setCreationDate(record.getValue(FS_MOD349.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(FS_MOD349.CREATION_DATE)))
 				.setModificationUser(record.getValue(FS_MOD349.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FS_MOD349.MODIFICATION_DATE))
-				;
+				.setModificationDate(AonDateUtils.toDate(record.getValue(FS_MOD349.MODIFICATION_DATE)));
 		}
 	}
 

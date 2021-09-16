@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
@@ -28,6 +29,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO.TariffFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.TargetAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.TargetValidation;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class TargetDAO {
@@ -74,7 +76,7 @@ public class TargetDAO {
 				TARGET.CREATION_DATE, TARGET.CREATION_USER, TARGET.MODIFICATION_DATE, TARGET.MODIFICATION_USER)
 			.values(target.getAdvertising().value(), target.getDomain().getId(), target.getId(), target.getScope().getId(), target.getStatus().value(),
 					AonEnumUtils.getByte(target.isSurcharge()), target.getTariff().getId(), target.getTransaction().value(), AonEnumUtils.getByte(target.isWithholding()),
-					new Timestamp(new Date().getTime()), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser()).execute();
+					new Timestamp(new Date().getTime()).toLocalDateTime(), ctx.getUser(), new Timestamp(new Date().getTime()).toLocalDateTime(), ctx.getUser()).execute();
 		return target;
 	}
 	
@@ -88,7 +90,7 @@ public class TargetDAO {
 			.set(TARGET.TARIFF, target.getTariff().getId())
 			.set(TARGET.TRANSACTION, target.getTransaction().value())
 			.set(TARGET.WITHHOLDING, AonEnumUtils.getByte(target.isWithholding()))
-			.set(TARGET.MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+			.set(TARGET.MODIFICATION_DATE, DSL.currentLocalDateTime())
 			.set(TARGET.MODIFICATION_USER, ctx.getUser())
 			.where(TARGET.REGISTRY.eq(target.getId()))
 			.execute();
@@ -121,9 +123,9 @@ public class TargetDAO {
 				.setWithholding(getBoolean(r, TARGET.WITHHOLDING))
 				.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(TARGET.TRANSACTION)))
 				.setStatus(TargetStatus.safeValueOf(r.getValue(TARGET.STATUS)))
-				.setCreationDate(r.getValue(TARGET.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(r.getValue(TARGET.CREATION_DATE)))
 				.setCreationUser(r.getValue(TARGET.CREATION_USER))
-				.setModificationDate(r.getValue(TARGET.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(r.getValue(TARGET.MODIFICATION_DATE)))
 				.setModificationUser(r.getValue(TARGET.MODIFICATION_USER));
 		}
 	}

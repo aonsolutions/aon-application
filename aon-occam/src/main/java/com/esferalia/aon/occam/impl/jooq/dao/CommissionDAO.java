@@ -120,7 +120,7 @@ public class CommissionDAO {
 				.set(OFFER_DETAIL_COMMISSION.OFFER_DETAIL, odc.getOfferDetail().getId())
 				.set(OFFER_DETAIL_COMMISSION.AMOUNT, odc.getAmount())
 				.set(OFFER_DETAIL_COMMISSION.COMMISSION, odc.getCommission())
-				.set(OFFER_DETAIL_COMMISSION.PAY_DATE, AonDateUtils.toSql(odc.getPayDate()))
+				.set(OFFER_DETAIL_COMMISSION.PAY_DATE, AonDateUtils.toLocalDate(odc.getPayDate()))
 				.set(OFFER_DETAIL_COMMISSION.STATUS, odc.getStatus().value())
 				.returning().fetch().stream().map(new OfferDetailCommissionFiller())
 				.findFirst().orElse(null);
@@ -132,7 +132,7 @@ public class CommissionDAO {
 				.set(OFFER_DETAIL_COMMISSION.OFFER_DETAIL, odc.getOfferDetail().getId())
 				.set(OFFER_DETAIL_COMMISSION.AMOUNT, odc.getAmount())
 				.set(OFFER_DETAIL_COMMISSION.COMMISSION, odc.getCommission())
-				.set(OFFER_DETAIL_COMMISSION.PAY_DATE, AonDateUtils.toSql(odc.getPayDate()))
+				.set(OFFER_DETAIL_COMMISSION.PAY_DATE, AonDateUtils.toLocalDate(odc.getPayDate()))
 				.set(OFFER_DETAIL_COMMISSION.STATUS, odc.getStatus().value())
 				.where(OFFER_DETAIL_COMMISSION.ID.eq(odc.getId()))
 				.returning().fetch().stream().map(new OfferDetailCommissionFiller())
@@ -167,7 +167,7 @@ public class CommissionDAO {
 				.set(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL, idc.getInvoiceDetail().getId())
 				.set(INVOICE_DETAIL_COMMISSION.AMOUNT, idc.getAmount())
 				.set(INVOICE_DETAIL_COMMISSION.COMMISSION, idc.getCommission())
-				.set(INVOICE_DETAIL_COMMISSION.PAY_DATE, idc.getPayDate() != null ? AonDateUtils.toSql(idc.getPayDate()) : null)
+				.set(INVOICE_DETAIL_COMMISSION.PAY_DATE, idc.getPayDate() != null ? AonDateUtils.toLocalDate(idc.getPayDate()) : null)
 				.set(INVOICE_DETAIL_COMMISSION.STATUS, idc.getStatus().value())
 				.execute();
 				
@@ -180,7 +180,7 @@ public class CommissionDAO {
 				.set(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL, idc.getInvoiceDetail().getId())
 				.set(INVOICE_DETAIL_COMMISSION.AMOUNT, idc.getAmount())
 				.set(INVOICE_DETAIL_COMMISSION.COMMISSION, idc.getCommission())
-				.set(INVOICE_DETAIL_COMMISSION.PAY_DATE, idc.getPayDate() != null ? AonDateUtils.toSql(idc.getPayDate()) : null)
+				.set(INVOICE_DETAIL_COMMISSION.PAY_DATE, idc.getPayDate() != null ? AonDateUtils.toLocalDate(idc.getPayDate()) : null)
 				.set(INVOICE_DETAIL_COMMISSION.STATUS, idc.getStatus().value())
 				.where(INVOICE_DETAIL_COMMISSION.ID.eq(idc.getId()))
 				.returning().fetch().stream().map(new InvoiceDetailCommissionFiller())

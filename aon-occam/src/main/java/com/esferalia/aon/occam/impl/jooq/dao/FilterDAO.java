@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -11,6 +13,7 @@ import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FilterDAO implements Filter {
@@ -232,6 +235,144 @@ public class FilterDAO implements Filter {
 
 		@Override
 		public Filter notIn(Date[] t) {
+			return new FilterDAO(field.notIn(Arrays.asList(t)));
+		}
+		
+	}
+	
+	public static class LocalDatePropertyDAO implements Property<Date> {
+
+		private Field<LocalDate> field;
+		
+		public LocalDatePropertyDAO(Field<LocalDate> field) {
+			this.field = field;
+		}
+
+		@Override
+		public FilterDAO eq(Date date) {
+			return new FilterDAO(field.eq(AonDateUtils.toLocalDate(date)));
+		}
+
+		@Override
+		public FilterDAO ne(Date date) {
+			return new FilterDAO(field.ne(AonDateUtils.toLocalDate(date)));
+		}
+
+		@Override
+		public FilterDAO le(Date date) {
+			return new FilterDAO(field.le(AonDateUtils.toLocalDate(date)));
+		}
+
+		@Override
+		public FilterDAO lt(Date date) {
+			return new FilterDAO(field.lt(AonDateUtils.toLocalDate(date)));
+		}
+
+		@Override
+		public FilterDAO gt(Date date) {
+			return new FilterDAO(field.gt(AonDateUtils.toLocalDate(date)));
+		}
+
+		@Override
+		public FilterDAO ge(Date date) {
+			return new FilterDAO(field.ge(AonDateUtils.toLocalDate(date)));
+		}
+
+		@Override
+		public Filter in(Date[] t) {
+			return new FilterDAO(field.in( Arrays.asList(t)));
+		}
+
+		@Override
+		public Filter isNull() {
+			return new FilterDAO(field.isNotNull());
+		}
+
+		@Override
+		public Filter isNotNull() {
+			return new FilterDAO(field.isNotNull());
+		}
+		@Override
+		public Filter like(Date date) {
+			throw new UnsupportedOperationException();				
+		}
+		
+		@Override
+		public Filter between(Date min, Date max) {
+			return new FilterDAO(field.between(AonDateUtils.toLocalDate(min), AonDateUtils.toLocalDate(max)));
+		}
+
+		@Override
+		public Filter notIn(Date[] t) {
+			return new FilterDAO(field.notIn(Arrays.asList(t)));
+		}
+		
+	}
+	
+	public static class LocalDateTimePropertyDAO implements Property<Timestamp> {
+
+		private Field<LocalDateTime> field;
+		
+		public LocalDateTimePropertyDAO(Field<LocalDateTime> field) {
+			this.field = field;
+		}
+
+		@Override
+		public FilterDAO eq(Timestamp date) {
+			return new FilterDAO(field.eq(date.toLocalDateTime()));
+		}
+
+		@Override
+		public FilterDAO ne(Timestamp date) {
+			return new FilterDAO(field.ne(date.toLocalDateTime()));
+		}
+
+		@Override
+		public FilterDAO le(Timestamp date) {
+			return new FilterDAO(field.le(date.toLocalDateTime()));
+		}
+
+		@Override
+		public FilterDAO lt(Timestamp date) {
+			return new FilterDAO(field.lt(date.toLocalDateTime()));
+		}
+
+		@Override
+		public FilterDAO gt(Timestamp date) {
+			return new FilterDAO(field.gt(date.toLocalDateTime()));
+		}
+
+		@Override
+		public FilterDAO ge(Timestamp date) {
+			return new FilterDAO(field.ge(date.toLocalDateTime()));
+		}
+
+		@Override
+		public Filter in(Timestamp[] t) {
+			return new FilterDAO(field.in( Arrays.asList(t)));
+		}
+
+		@Override
+		public Filter isNull() {
+			return new FilterDAO(field.isNotNull());
+		}
+
+		@Override
+		public Filter isNotNull() {
+			return new FilterDAO(field.isNotNull());
+		}
+		@Override
+		public Filter like(Timestamp date) {
+			throw new UnsupportedOperationException();				
+		}
+		
+		@Override
+		public Filter between(Timestamp min, Timestamp max) {
+			return new FilterDAO(field.between(min.toLocalDateTime(), max.toLocalDateTime()));
+		}
+
+		@Override
+		public Filter notIn(Timestamp[] t) {
 			return new FilterDAO(field.notIn(Arrays.asList(t)));
 		}
 		

@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.TimeZone;
 
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -169,7 +170,7 @@ public class AbstractOccamTest {
 				.getDslContext()
 				.insertInto(DOMAIN)
 				.set(DOMAIN.CREATION_USER, USER)
-				.set(DOMAIN.CREATION_DATE, new java.sql.Timestamp(System.currentTimeMillis()))
+				.set(DOMAIN.CREATION_DATE, DSL.currentLocalDateTime())
 				.set(DOMAIN.DOMAINMANAGEMENT, (byte) 0)
 				.set(DOMAIN.TYPE, (byte) 0)
 				.set(DOMAIN.OWNER, USER )

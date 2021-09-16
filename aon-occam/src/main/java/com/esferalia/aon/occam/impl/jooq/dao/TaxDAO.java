@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class TaxDAO {
@@ -36,20 +38,20 @@ public class TaxDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TAX.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TAX.DOMAIN);}
-		@Override public Property<String> getNameProperty(){return new FilterDAO.PropertyDAO<String>(TAX.NAME);}
-		@Override public Property<Double> getPercentageProperty() {return new FilterDAO.PropertyDAO<Double>(TAX.PERCENTAGE);}
-		@Override public Property<Integer> getPurchaseAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(TAX.PURCHASE_ACCOUNT);}
-		@Override public Property<Integer> getSalesAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(TAX.SALES_ACCOUNT);}
-		@Override public Property<Double> getSurchargeProperty() {return new FilterDAO.PropertyDAO<Double>(TAX.SURCHARGE);}
-		@Override public Property<Byte> getTaxTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(TAX.TAX_TYPE);}
-		@Override public Property<Byte> getVatDeductionTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(TAX.VAT_DEDUCTION_TYPE);}
-		@Override public Property<Byte> getWithholdingTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(TAX.WITHHOLDING_TYPE);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TAX.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(TAX.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TAX.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(TAX.MODIFICATION_USER);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TAX.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TAX.DOMAIN);}
+		@Override public Property<String> getNameProperty(){return new FilterDAO.PropertyDAO<>(TAX.NAME);}
+		@Override public Property<Double> getPercentageProperty() {return new FilterDAO.PropertyDAO<>(TAX.PERCENTAGE);}
+		@Override public Property<Integer> getPurchaseAccountProperty() {return new FilterDAO.PropertyDAO<>(TAX.PURCHASE_ACCOUNT);}
+		@Override public Property<Integer> getSalesAccountProperty() {return new FilterDAO.PropertyDAO<>(TAX.SALES_ACCOUNT);}
+		@Override public Property<Double> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(TAX.SURCHARGE);}
+		@Override public Property<Byte> getTaxTypeProperty() {return new FilterDAO.PropertyDAO<>(TAX.TAX_TYPE);}
+		@Override public Property<Byte> getVatDeductionTypeProperty() {return new FilterDAO.PropertyDAO<>(TAX.VAT_DEDUCTION_TYPE);}
+		@Override public Property<Byte> getWithholdingTypeProperty() {return new FilterDAO.PropertyDAO<>(TAX.WITHHOLDING_TYPE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TAX.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TAX.CREATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TAX.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TAX.MODIFICATION_USER);}
 	}
 	
 	public static Tax getTax(AONContext ctx, TaxFilter filter){
@@ -59,7 +61,6 @@ public class TaxDAO {
 	}
 	
 	public static Tax update(AONContext ctx, Tax tax) {
-		Timestamp now = new Timestamp(new java.util.Date().getTime());
 		ctx.checkWrite();
 		ctx.getDslContext().update(TAX)
 			.set(TAX.DOMAIN, tax.getDomain())
@@ -67,20 +68,19 @@ public class TaxDAO {
 			.set(TAX.TAX_TYPE, tax.getType().value())
 			.set(TAX.PERCENTAGE, tax.getPercentage())
 			.set(TAX.SURCHARGE, tax.getSurcharge())
-			.set(TAX.START_DATE, new java.sql.Date(tax.getStartDate().getTime()))
+			.set(TAX.START_DATE, AonDateUtils.toLocalDate(tax.getStartDate()))
 			.set(TAX.VAT_DEDUCTION_TYPE, tax.getVatDeductionType().value())
 			.set(TAX.WITHHOLDING_TYPE, tax.getWithholdingType().value())
 			.set(TAX.SALES_ACCOUNT, tax.getSalesAccount().getId())
 			.set(TAX.PURCHASE_ACCOUNT, tax.getPurchaseAccount().getId())
 			.set(TAX.MODIFICATION_USER, ctx.getUser())
-			.set(TAX.MODIFICATION_DATE, now)
+			.set(TAX.MODIFICATION_DATE, DSL.currentLocalDateTime())
 			.where(TAX.ID.eq(tax.getId()))
 			.execute();	
 		return tax;
 	}
 	
 	public static Tax insert(AONContext ctx, Tax tax) {
-		Timestamp now = new Timestamp(new java.util.Date().getTime());
 		ctx.checkWrite();
 		Integer id = ctx.getDslContext().insertInto(TAX)
 			.set(TAX.DOMAIN, tax.getDomain())
@@ -88,15 +88,15 @@ public class TaxDAO {
 			.set(TAX.TAX_TYPE, tax.getType().value())
 			.set(TAX.PERCENTAGE, tax.getPercentage())
 			.set(TAX.SURCHARGE, tax.getSurcharge())
-			.set(TAX.START_DATE, new java.sql.Date(tax.getStartDate().getTime()))
+			.set(TAX.START_DATE, AonDateUtils.toLocalDate(tax.getStartDate()))
 			.set(TAX.VAT_DEDUCTION_TYPE, tax.getVatDeductionType() != null ? tax.getVatDeductionType().value() : null)
 			.set(TAX.WITHHOLDING_TYPE, tax.getWithholdingType() != null ? tax.getWithholdingType().value() : null)
 			.set(TAX.SALES_ACCOUNT, tax.getSalesAccount() != null ? tax.getSalesAccount().getId() : null)
 			.set(TAX.PURCHASE_ACCOUNT, tax.getPurchaseAccount()!= null ? tax.getPurchaseAccount().getId() : null)
 			.set(TAX.CREATION_USER, ctx.getUser())
-			.set(TAX.CREATION_DATE, now)
+			.set(TAX.CREATION_DATE, DSL.currentLocalDateTime())
 			.set(TAX.MODIFICATION_USER, ctx.getUser())
-			.set(TAX.MODIFICATION_DATE, now)
+			.set(TAX.MODIFICATION_DATE, DSL.currentLocalDateTime())
 			.returning(TAX.ID).fetchOne().getValue(TAX.ID);
 			
 		return tax.setId(id);
@@ -144,7 +144,7 @@ public class TaxDAO {
 					.setType(TaxType.safeValueOf( rec.getValue(TAX.TAX_TYPE)))
 					.setPercentage(rec.getValue(TAX.PERCENTAGE))
 					.setSurcharge(rec.getValue(TAX.SURCHARGE))
-					.setStartDate(rec.getValue(TAX.START_DATE))
+					.setStartDate(AonDateUtils.toDate(rec.getValue(TAX.START_DATE)))
 					.setVatDeductionType( VatDeductionType.safeValueOf( rec.getValue(TAX.VAT_DEDUCTION_TYPE)))
 					.setWithholdingType(WithholdingType.safeValueOf( rec.getValue(TAX.WITHHOLDING_TYPE)))
 					.setSalesAccount( rec.getValue(SALES_ACCOUNT.ID) == null
@@ -172,9 +172,9 @@ public class TaxDAO {
 								.setActive(AonEnumUtils.getBoolean(rec.getValue(PURCHASE_ACCOUNT.ACTIVE)))
 								.setCostCenter(rec.getValue(PURCHASE_ACCOUNT.COST_CENTER)))
 					.setCreationUser(rec.getValue(TAX.CREATION_USER))
-					.setCreationDate(rec.getValue(TAX.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(rec.getValue(TAX.CREATION_DATE)))
 					.setModificationUser(rec.getValue(TAX.MODIFICATION_USER))
-					.setModificationDate(rec.getValue(TAX.MODIFICATION_DATE));					
+					.setModificationDate(AonDateUtils.toDate(rec.getValue(TAX.MODIFICATION_DATE)));					
 		}
 	}	
 }

@@ -8,6 +8,8 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
+import org.jooq.impl.DSL;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -275,7 +277,7 @@ public class FinanceValidation {
 				int i = ctx.getDslContext().update(FINANCE)
 						.set(FINANCE.PAY_METHOD, finance.getPayMethod())
 						.set(FINANCE.MODIFICATION_USER,ctx.getUser())
-						.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.set(FINANCE.MODIFICATION_DATE, DSL.currentLocalDateTime() )
 						.where(FINANCE.ID.equal( finance.getId()))
 						.execute();
 				ctx.log().info("UPDATE FINANCE  ("+i+") id: " + finance.getId() + " PayMethod");

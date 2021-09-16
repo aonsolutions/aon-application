@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.CreditorAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.CreditorValidation;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class CreditorDAO {
@@ -52,18 +53,18 @@ public class CreditorDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(CREDITOR.REGISTRY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CREDITOR.DOMAIN);}
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<Byte>(CREDITOR.WITHHOLDING);}
-		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<Byte>(CREDITOR.VAT_ACCRUAL_PAYMENT);}
-		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(CREDITOR.TRANSACTION);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(CREDITOR.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(CREDITOR.SCOPE);}
-		@Override public Property<Integer> getAccountProperty() { return new FilterDAO.PropertyDAO<Integer>(CREDITOR.ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(CREDITOR.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CREDITOR.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(CREDITOR.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CREDITOR.MODIFICATION_DATE);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.DOMAIN);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.WITHHOLDING);}
+		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.VAT_ACCRUAL_PAYMENT);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.SCOPE);}
+		@Override public Property<Integer> getAccountProperty() { return new FilterDAO.PropertyDAO<>(CREDITOR.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CREDITOR.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CREDITOR.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CREDITOR.MODIFICATION_DATE);}
 	}
 
 	
@@ -95,10 +96,9 @@ public class CreditorDAO {
 					.setScope(r.getValue(CREDITOR.SCOPE))
 					.setAccount(r.getValue(CREDITOR.ACCOUNT))
 					.setCreationUser(r.getValue(CREDITOR.CREATION_USER))
-					.setCreationDate(r.getValue(CREDITOR.CREATION_DATE))
-					.setModificationDate(r.getValue(CREDITOR.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(CREDITOR.MODIFICATION_USER))
-					;
+					.setCreationDate(AonDateUtils.toDate(r.getValue(CREDITOR.CREATION_DATE)))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(CREDITOR.MODIFICATION_DATE)))
+					.setModificationUser(r.getValue(CREDITOR.MODIFICATION_USER));
 		}
 	}
 	
@@ -159,7 +159,7 @@ public class CreditorDAO {
 			.set(CREDITOR.SCOPE,creditor.getScope())
 			.set(CREDITOR.ACCOUNT,creditor.getAccount())
 			.set(CREDITOR.CREATION_USER,ctx.getUser())
-			.set(CREDITOR.CREATION_DATE,new Timestamp(new Date().getTime()))
+			.set(CREDITOR.CREATION_DATE,new Timestamp(new Date().getTime()).toLocalDateTime())
 			.execute();
 		ctx.log().info("INSERT CREDITOR id: " + creditor.getId());		
 		return creditor;
@@ -175,7 +175,7 @@ public class CreditorDAO {
 			.set(CREDITOR.SCOPE,creditor.getScope())
 			.set(CREDITOR.ACCOUNT,creditor.getAccount())
 			.set(CREDITOR.MODIFICATION_USER,ctx.getUser())
-			.set(CREDITOR.MODIFICATION_DATE,new Timestamp(new Date().getTime()))
+			.set(CREDITOR.MODIFICATION_DATE,new Timestamp(new Date().getTime()).toLocalDateTime())
 			.where(CREDITOR.REGISTRY.eq(creditor.getId()))
 			.execute();
 		ctx.log().info("UPDATE CREDITOR id: " + creditor.getId() + ". (" + count + " rows)");		
@@ -210,7 +210,7 @@ public class CreditorDAO {
 		ctx.getDslContext().update(CREDITOR)
 			.set(CREDITOR.ACCOUNT,account)
 			.set(CREDITOR.MODIFICATION_USER,ctx.getUser())
-			.set(CREDITOR.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(CREDITOR.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.where(CREDITOR.REGISTRY.eq(registry))
 			.execute();
 		ctx.log().info("ACCOUNT " + account + " LINKED TO CREDITOR " + registry);

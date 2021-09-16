@@ -127,13 +127,13 @@ public class QualityServlet extends HttpServlet{
 			if(map.containsKey(MSG.FROM)) {
 				String from = map.get(MSG.FROM)[0];
 				Date d = new Date(Long.parseLong(from));
-				a = a.and(DataResponse.DATA_RESPONSE.RESPONSE_DATE.ge(AonDateUtils.toSql(d)));
+				a = a.and(DataResponse.DATA_RESPONSE.RESPONSE_DATE.ge(AonDateUtils.toLocalDate(d)));
 			}
 			
 			if(map.containsKey(MSG.TO)){
 				String to = map.get(MSG.TO)[0];
 				Date d = new Date(Long.parseLong(to));
-				a = a.and(DataResponse.DATA_RESPONSE.RESPONSE_DATE.le(AonDateUtils.toSql(d)));
+				a = a.and(DataResponse.DATA_RESPONSE.RESPONSE_DATE.le(AonDateUtils.toLocalDate(d)));
 			}
 			
 			if(map.containsKey(MSG.NUMBER)){
@@ -190,11 +190,11 @@ public class QualityServlet extends HttpServlet{
 				.put(MSG.ID, h.getValue(DataResponse.DATA_RESPONSE.ID))
 				.put(MSG.DOMAIN, h.getValue(DataResponse.DATA_RESPONSE.DOMAIN))
 				.put(MSG.NUMBER, h.getValue(DataResponse.DATA_RESPONSE.CODE))
-				.put(MSG.ISSUE_DATE,  h.getValue(DataResponse.DATA_RESPONSE.RESPONSE_DATE) != null ? AonDateUtils.dateTimeFormat(h.getValue(DataResponse.DATA_RESPONSE.RESPONSE_DATE)) : "")
+				.put(MSG.ISSUE_DATE,  h.getValue(DataResponse.DATA_RESPONSE.RESPONSE_DATE) != null ? AonDateUtils.dateTimeFormat(AonDateUtils.toDate(h.getValue(DataResponse.DATA_RESPONSE.RESPONSE_DATE))) : "")
 				.put(MSG.CREATION_USER, h.getValue(DataResponse.DATA_RESPONSE.CREATION_USER))
-				.put(MSG.CREATION_DATE,  h.getValue(DataResponse.DATA_RESPONSE.CREATION_DATE) != null ? AonDateUtils.dateTimeFormat(h.getValue(DataResponse.DATA_RESPONSE.CREATION_DATE)) : "")
+				.put(MSG.CREATION_DATE,  h.getValue(DataResponse.DATA_RESPONSE.CREATION_DATE) != null ? AonDateUtils.dateTimeFormat(AonDateUtils.toDate(h.getValue(DataResponse.DATA_RESPONSE.CREATION_DATE))) : "")
 				.put(MSG.MODIFICATION_USER, h.getValue(DataResponse.DATA_RESPONSE.MODIFICATION_USER))
-				.put(MSG.MODIFICATION_DATE, h.getValue(DataResponse.DATA_RESPONSE.MODIFICATION_DATE) != null ? AonDateUtils.dateTimeFormat(h.getValue(DataResponse.DATA_RESPONSE.MODIFICATION_DATE)) : "")
+				.put(MSG.MODIFICATION_DATE, h.getValue(DataResponse.DATA_RESPONSE.MODIFICATION_DATE) != null ? AonDateUtils.dateTimeFormat(AonDateUtils.toDate(h.getValue(DataResponse.DATA_RESPONSE.MODIFICATION_DATE))) : "")
 				.put("product", h.getValue(IncomeDetail.INCOME_DETAIL.DESCRIPTION))
 				.put("supplier", ToJSON.objectToJSON(h.getValue(Income.INCOME.SUPPLIER), h.getValue(Registry.REGISTRY.NAME))));
 			});

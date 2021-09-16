@@ -71,13 +71,13 @@ public class FinanceDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.DOMAIN);}
 		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.SECURITY_LEVEL);}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.REGISTRY);}
-		@Override public Property<Date> getDueDateProperty() {return new FilterDAO.DatePropertyDAO(FINANCE.DUE_DATE);}
+		@Override public Property<Date> getDueDateProperty() {return new FilterDAO.LocalDatePropertyDAO(FINANCE.DUE_DATE);}
 		@Override public Property<Integer> getInvoiceProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.INVOICE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.STATUS);}
 		@Override public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<Double>(FINANCE.AMOUNT);}
 		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<String>(FINANCE.CONCEPT);}
 		@Override public Property<Byte> getPaymentProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.PAYMENT);}
-		@Override public Property<Date> getInvoiceDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
+		@Override public Property<Date> getInvoiceDateProperty() {return new FilterDAO.LocalDatePropertyDAO(INVOICE.ISSUE_DATE);}
 		@Override public Property<String> getInvoiceReferenceCodeProperty() {return new FilterDAO.PropertyDAO<String>(INVOICE.REFERENCE_CODE);}
 		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.PAY_METHOD);}
 	}
@@ -209,7 +209,7 @@ public class FinanceDAO {
 				.set(FINANCE.EXPENSES,finance.getExpenses())
 				.set(FINANCE.CONCEPT,finance.getConcept())
 				.set(FINANCE.INVOICE,finance.getInvoice()==null?null:finance.getInvoice().getId())
-				.set(FINANCE.DUE_DATE,AonDateUtils.toSql(finance.getDueDate()))
+				.set(FINANCE.DUE_DATE,AonDateUtils.toLocalDate(finance.getDueDate()))
 				.set(FINANCE.PAY_METHOD,finance.getPayMethod()==null?null:finance.getPayMethod())
 				.set(FINANCE.BANK_ACCOUNT,finance.getBankAccount()==null?null:finance.getBankAccount().getIban())
 				.set(FINANCE.BANK_ALIAS,finance.getBankAlias())
@@ -226,7 +226,7 @@ public class FinanceDAO {
 				.set(FINANCE.SOURCE_ID,finance.getSourceId())
 				.set(FINANCE.FINANCE_GROUP,finance.getFinanceGroup())
 				.set(FINANCE.CREATION_USER,ctx.getUser())
-				.set(FINANCE.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(FINANCE.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 				.returning(FINANCE.ID)
 				.fetchOne();
 		ctx.log().info("INSERT FINANCE id: " + record.getValue(FINANCE.ID));		
@@ -249,7 +249,7 @@ public class FinanceDAO {
 			.set(FINANCE.EXPENSES,finance.getExpenses())
 			.set(FINANCE.CONCEPT,finance.getConcept())
 			.set(FINANCE.INVOICE,finance.getInvoice()==null?null:finance.getInvoice().getId())
-			.set(FINANCE.DUE_DATE,AonDateUtils.toSql(finance.getDueDate()))
+			.set(FINANCE.DUE_DATE,AonDateUtils.toLocalDate(finance.getDueDate()))
 			.set(FINANCE.PAY_METHOD,finance.getPayMethod()==null?null:finance.getPayMethod())
 			.set(FINANCE.BANK_ACCOUNT,finance.getBankAccount()==null?null:finance.getBankAccount().getIban())
 			.set(FINANCE.BANK_ALIAS,finance.getBankAlias())
@@ -266,7 +266,7 @@ public class FinanceDAO {
 			.set(FINANCE.SOURCE_ID,finance.getSourceId())
 			.set(FINANCE.FINANCE_GROUP,finance.getFinanceGroup())
 			.set(FINANCE.MODIFICATION_USER,ctx.getUser())
-			.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.where(FINANCE.ID.equal( finance.getId()))
 			.execute();
 		ctx.log().info("UPDATE FINANCE  ("+i+") id: " + finance.getId());
@@ -485,7 +485,7 @@ public class FinanceDAO {
 				.setExpenses(record.getValue(FINANCE.EXPENSES))
 				.setConcept(record.getValue(FINANCE.CONCEPT))
 				.setInvoice(record.getValue(FINANCE.INVOICE)==null?null : new InvoiceDAO.MinimalInvoiceFiller().apply(record)) 
-				.setDueDate(record.getValue(FINANCE.DUE_DATE))
+				.setDueDate(AonDateUtils.toDate(record.getValue(FINANCE.DUE_DATE)))
 				.setPayMethod(record.getValue(FINANCE.PAY_METHOD))
 				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
 				.setPayMethodType(PayMethodType.safeValueOf( record.getValue(PAY_METHOD.TYPE)))
@@ -504,9 +504,9 @@ public class FinanceDAO {
 				.setSourceId(record.getValue(FINANCE.SOURCE_ID))
 				.setFinanceGroup(record.getValue(FINANCE.FINANCE_GROUP))
 				.setCreationUser(record.getValue(FINANCE.CREATION_USER))
-				.setCreationDate(record.getValue(FINANCE.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(FINANCE.CREATION_DATE)))
 				.setModificationUser(record.getValue(FINANCE.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FINANCE.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(record.getValue(FINANCE.MODIFICATION_DATE)))
 				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
 				.setPayMethodType( PayMethodType.safeValueOf(  record.getValue(PAY_METHOD.TYPE)))
 				.setDirty(false)

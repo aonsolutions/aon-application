@@ -29,9 +29,11 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO.LocalDateTimePropertyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.SupplierAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.SupplierValidation;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class SupplierDAO {
@@ -45,21 +47,21 @@ public class SupplierDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(SUPPLIER.REGISTRY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(SUPPLIER.DOMAIN);}
-		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<Integer>(SUPPLIER.TARIFF);}
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.WITHHOLDING);}
-		@Override public Property<Byte> getWithholdingFarmerProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.WITHHOLDING_FARMER);}
-		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.VAT_ACCRUAL_PAYMENT);}
-		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.TRANSACTION);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(SUPPLIER.SCOPE);}
-		@Override public Property<Byte> getPurchaseValuatedProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.PURCHASE_VALUATED);}
-		@Override public Property<Integer> getAccountProperty() { return new FilterDAO.PropertyDAO<Integer>(SUPPLIER.ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(SUPPLIER.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(SUPPLIER.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(SUPPLIER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(SUPPLIER.MODIFICATION_DATE);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.DOMAIN);}
+		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.TARIFF);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.WITHHOLDING);}
+		@Override public Property<Byte> getWithholdingFarmerProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.WITHHOLDING_FARMER);}
+		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.VAT_ACCRUAL_PAYMENT);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.SCOPE);}
+		@Override public Property<Byte> getPurchaseValuatedProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.PURCHASE_VALUATED);}
+		@Override public Property<Integer> getAccountProperty() { return new FilterDAO.PropertyDAO<>(SUPPLIER.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(SUPPLIER.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(SUPPLIER.MODIFICATION_DATE);}
 	}
 
 	
@@ -94,8 +96,8 @@ public class SupplierDAO {
 					.setPurchaseValuated(r.getValue(SUPPLIER.PURCHASE_VALUATED)==1)
 					.setAccount(r.getValue(SUPPLIER.ACCOUNT))
 					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
-					.setCreationDate(r.getValue(SUPPLIER.CREATION_DATE))
-					.setModificationDate(r.getValue(SUPPLIER.MODIFICATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(SUPPLIER.CREATION_DATE)))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(SUPPLIER.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(SUPPLIER.MODIFICATION_USER))
 					;
 		}
@@ -161,7 +163,7 @@ public class SupplierDAO {
 			.set(SUPPLIER.PURCHASE_VALUATED,AonEnumUtils.getByte(supplier.isPurchaseValuated()))
 			.set(SUPPLIER.ACCOUNT,supplier.getAccount())
 			.set(SUPPLIER.CREATION_USER,ctx.getUser())
-			.set(SUPPLIER.CREATION_DATE,new Timestamp(new Date().getTime()))
+			.set(SUPPLIER.CREATION_DATE,new Timestamp(new Date().getTime()).toLocalDateTime())
 			.execute();
 		ctx.log().info("INSERT SUPPLIER id: " + supplier.getId());		
 		return supplier;
@@ -180,7 +182,7 @@ public class SupplierDAO {
 			.set(SUPPLIER.PURCHASE_VALUATED,AonEnumUtils.getByte(supplier.isPurchaseValuated()))
 			.set(SUPPLIER.ACCOUNT,supplier.getAccount())
 			.set(SUPPLIER.MODIFICATION_USER,ctx.getUser())
-			.set(SUPPLIER.MODIFICATION_DATE,new Timestamp(new Date().getTime()))
+			.set(SUPPLIER.MODIFICATION_DATE, DSL.currentLocalDateTime())
 			.where(SUPPLIER.REGISTRY.eq(supplier.getId()))
 			.execute();
 		ctx.log().info("UPDATE SUPPLIER id: " + supplier.getId() + ". (" + count + " rows)");		
@@ -215,7 +217,7 @@ public class SupplierDAO {
 		ctx.getDslContext().update(SUPPLIER)
 			.set(SUPPLIER.ACCOUNT,account)
 			.set(SUPPLIER.MODIFICATION_USER,ctx.getUser())
-			.set(SUPPLIER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(SUPPLIER.MODIFICATION_DATE, DSL.currentLocalDateTime())
 			.where(SUPPLIER.REGISTRY.eq(registry))
 			.execute();
 		ctx.log().info("ACCOUNT " + account + " LINKED TO SUPPLIER " + registry);

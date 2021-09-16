@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.IAgreement;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Payment;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AgreementImpl implements IAgreement {
@@ -70,8 +71,8 @@ public class AgreementImpl implements IAgreement {
 							.set(AGREEMENT_PAYMENT.DOMAIN, payment.getDomain())
 							.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, concept.getId())
 							.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
-							.set(AGREEMENT_PAYMENT.START_DATE,new Date(payment.getStartDate().getTime()))
-							.set(AGREEMENT_PAYMENT.END_DATE,new Date(payment.getStartDate().getTime()))
+							.set(AGREEMENT_PAYMENT.START_DATE, AonDateUtils.toLocalDate(payment.getStartDate()))
+							.set(AGREEMENT_PAYMENT.END_DATE, AonDateUtils.toLocalDate(payment.getStartDate()))
 							.set(AGREEMENT_PAYMENT.MONTH, (byte) payment.getMonth().ordinal());
 					//@formatter:on
 
@@ -131,8 +132,8 @@ public class AgreementImpl implements IAgreement {
 							.set(AGREEMENT_PAYMENT.DOMAIN, payment.getDomain())
 							.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, (-1)*payment.getId())
 							.set(AGREEMENT_PAYMENT.AGREEMENT, agreement.getId())
-							.set(AGREEMENT_PAYMENT.START_DATE,new Date(payment.getStartDate().getTime()))
-							.set(AGREEMENT_PAYMENT.END_DATE,new Date(payment.getStartDate().getTime()))
+							.set(AGREEMENT_PAYMENT.START_DATE, AonDateUtils.toLocalDate(payment.getStartDate()))
+							.set(AGREEMENT_PAYMENT.END_DATE, AonDateUtils.toLocalDate(payment.getStartDate()))
 							.set(AGREEMENT_PAYMENT.MONTH,  payment.getMonth() != null ? (byte) payment.getMonth().ordinal():null)
 							;
 					//@formatter:on

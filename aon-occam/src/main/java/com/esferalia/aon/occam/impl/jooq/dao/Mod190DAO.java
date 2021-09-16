@@ -21,6 +21,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -145,7 +146,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190.RECEIPT_TOTAL, mod190.getReceiptTotal())
 				.set(FS_MODEL190.RETENTION_TOTAL, mod190.getRetentionTotal())
 				.set(FS_MODEL190.CREATION_USER,ctx.getUser())
-				.set(FS_MODEL190.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(FS_MODEL190.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 				.returning(FS_MODEL190.ID).fetchOne();
 		mod190.setId(record.getId());
 		
@@ -182,7 +183,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190.RECEIPT_TOTAL, mod190.getReceiptTotal())
 				.set(FS_MODEL190.RETENTION_TOTAL, mod190.getRetentionTotal())
 				.set(FS_MODEL190.MODIFICATION_USER,ctx.getUser())
-				.set(FS_MODEL190.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(FS_MODEL190.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 				.where(FS_MODEL190.ID.equal(mod190.getId())).execute();
 		return mod190;
 	}
@@ -591,8 +592,8 @@ public class Mod190DAO {
 	}
 
 	private static void insertDetailsFromInvoice(AONContext ctx, final Mod190 mod190) {
-		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod190.getYear()));
-		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod190.getYear()));
+		LocalDate firstDay = AonDateUtils.toLocalDate(AonDateUtils.getYearFirstDay(mod190.getYear()));
+		LocalDate lastDay = AonDateUtils.toLocalDate(AonDateUtils.getYearLastDay(mod190.getYear()));
 
 		Field<Integer> minRegistry = DSL.min(INVOICE.REGISTRY).as(INVOICE.REGISTRY.getName());
 		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE).as(INVOICE_TAX.BASE.getName());
@@ -687,8 +688,8 @@ public class Mod190DAO {
 				.on(IRPF_DATA.CONTRACT.equal(CONTRACT.ID))
 				.where(IRPF_DATA.END_DATE.isNull().or(
 						IRPF_DATA.END_DATE.between(
-								AonDateUtils.toSql(fromDate),
-								AonDateUtils.toSql(toDate))))
+								AonDateUtils.toLocalDate(fromDate),
+								AonDateUtils.toLocalDate(toDate))))
 				.and(CONTRACT.PERSON.equal(person))
 				.orderBy(IRPF_DATA.END_DATE.desc(),IRPF_DATA.START_DATE.asc())
 				.fetchInto(IrpfDataRecord.class);
@@ -942,7 +943,7 @@ public class Mod190DAO {
 				.join(CONTRACT).on(SALARY.CONTRACT.equal(CONTRACT.ID))
 				.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 				.join(PERSON).on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
-				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toLocalDate(firstDay),AonDateUtils.toLocalDate(lastDay)))
 				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
 				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
 				.and(SALARY.TYPE.in(SalaryType.SALARIES )) // Skip SLD ( L00, L13... )
@@ -1044,7 +1045,7 @@ public class Mod190DAO {
 		.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 		.join(PERSON).on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
 		.leftOuterJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.equal(ENTERPRISE_CCC.ID))
-		.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
+		.where(SALARY.ISSUE_DATE.between(AonDateUtils.toLocalDate(firstDay),AonDateUtils.toLocalDate(lastDay)))
 		.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
 		.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
 		.and(SALARY.TYPE.in(SalaryType.SALARIES )) // Skip SLD ( L00, L13... )

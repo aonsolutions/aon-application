@@ -137,7 +137,7 @@ public class PurchaseDAO {
 									record.getValue(PURCHASE.STATUS)))
 					.setSeries(record.getValue(PURCHASE.SERIES))
 					.setNumber(record.getValue(PURCHASE.NUMBER))
-					.setIssueDate(record.getValue(PURCHASE.ISSUE_DATE))
+					.setIssueDate(AonDateUtils.toDate(record.getValue(PURCHASE.ISSUE_DATE)))
 					.setSupplier(supplier)
 					.setScopeName(record.getValue(SCOPE.DESCRIPTION))						
 					.setWorkplaceName(record.getValue(WORKPLACE.DESCRIPTION))
@@ -294,7 +294,7 @@ public class PurchaseDAO {
 				.set(PURCHASE.PURCHASE_REFERENCE, purchase.getPurchaseReference())
 				.set(PURCHASE.ADDRESS, purchase.getAddress())
 				.set(PURCHASE.DISCOUNT_EXPR, purchase.getDiscountExpr())
-				.set(PURCHASE.ISSUE_DATE, AonDateUtils.toSql(purchase.getIssueDate()))
+				.set(PURCHASE.ISSUE_DATE, AonDateUtils.toLocalDate(purchase.getIssueDate()))
 				.set(PURCHASE.PAY_METHOD, purchase.getPayMethod())
 				.set(PURCHASE.DOCUMENT_TYPE, purchase.getDocumentType().value())
 				.set(PURCHASE.SECURITY_LEVEL, (byte) purchase.getSecurityLevel())
@@ -323,9 +323,9 @@ public class PurchaseDAO {
 				.set(PURCHASE.SHIPPING_CONTACT, purchase.getShippingContact())
 				.set(PURCHASE.SHIPPING_PERIOD, purchase.getShippingPeriod() != null ? purchase.getShippingPeriod().byteValue() : null)
 				.set(PURCHASE.CREATION_USER, purchase.getCreationUser())
-				.set(PURCHASE.CREATION_DATE, AonDateUtils.toTimestamp(purchase.getCreationDate()))
+				.set(PURCHASE.CREATION_DATE, AonDateUtils.toLocalDateTime(purchase.getCreationDate()))
 				.set(PURCHASE.MODIFICATION_USER, purchase.getModificationUser())
-				.set(PURCHASE.MODIFICATION_DATE, AonDateUtils.toTimestamp(purchase.getModificationDate()))
+				.set(PURCHASE.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(purchase.getModificationDate()))
 			.where(PURCHASE_PROPERTIES.getConditions(filter))
 			.returning().fetch().stream().map(new FullPurchaseFiller()).findFirst().orElse(new Purchase());
 	}
@@ -369,11 +369,11 @@ public class PurchaseDAO {
 					detail.getQuantity(), detail.getPrice(),
 					detail.getDiscountExpression(), detail.getTaxes(),
 					detail.getStatus().value(), detail.getProposalDetail(), 
-					detail.getDelivered(), AonDateUtils.toSql(detail.getDeliveryDate()),
+					detail.getDelivered(), AonDateUtils.toLocalDate(detail.getDeliveryDate()),
 					detail.getSource() != null ? detail.getSource().value() : null, detail.getSourceId(),
 					detail.getCarrier(), detail.getCarrierPacking(),
-					ctx.getUser(), AonDateUtils.toTimestamp(new Date()),
-					ctx.getUser(), AonDateUtils.toTimestamp(new Date()))
+					ctx.getUser(), AonDateUtils.toLocalDateTime(new Date()),
+					ctx.getUser(), AonDateUtils.toLocalDateTime(new Date()))
 			.execute();
 	}
 	
@@ -399,11 +399,11 @@ public class PurchaseDAO {
 				.set(PURCHASE_DETAIL.SOURCE_ID, purchaseDetail.getSourceId())
 				.set(PURCHASE_DETAIL.PROPOSAL_DETAIL, purchaseDetail.getProposalDetail())
 				.set(PURCHASE_DETAIL.DELIVERED, purchaseDetail.getDelivered())
-				.set(PURCHASE_DETAIL.DELIVERY_DATE, AonDateUtils.toSql(purchaseDetail.getDeliveryDate()))
+				.set(PURCHASE_DETAIL.DELIVERY_DATE, AonDateUtils.toLocalDate(purchaseDetail.getDeliveryDate()))
 				.set(PURCHASE_DETAIL.CREATION_USER, purchaseDetail.getCreationUser())
-				.set(PURCHASE_DETAIL.CREATION_DATE, AonDateUtils.toTimestamp(purchaseDetail.getCreationDate()))
+				.set(PURCHASE_DETAIL.CREATION_DATE, AonDateUtils.toLocalDateTime(purchaseDetail.getCreationDate()))
 				.set(PURCHASE_DETAIL.MODIFICATION_USER, purchaseDetail.getModificationUser())
-				.set(PURCHASE_DETAIL.MODIFICATION_DATE, AonDateUtils.toTimestamp(purchaseDetail.getModificationDate()))
+				.set(PURCHASE_DETAIL.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(purchaseDetail.getModificationDate()))
 				.set(PURCHASE_DETAIL.CARRIER, purchaseDetail.getCarrier())
 				.set(PURCHASE_DETAIL.CARRIER_PACKING, purchaseDetail.getCarrierPacking())
 			.where(PURCHASE_DETAIL_PROPERTIES.getConditions(filter))
@@ -473,8 +473,8 @@ public class PurchaseDAO {
 						SUPPLIER.MODIFICATION_DATE)
 				.values(domain, registry, scope, (byte) 0, (byte) 0, (byte) 0,
 						(byte) 0, (byte) 0,
-						new java.sql.Timestamp(new Date().getTime()),
-						new java.sql.Timestamp(new Date().getTime())).execute();
+						AonDateUtils.toLocalDateTime(new Date()),
+						AonDateUtils.toLocalDateTime(new Date())).execute();
 	}
 	
 	private static Integer obtainSupplier(AONContext ctx, Integer registryId) {
@@ -514,7 +514,7 @@ public class PurchaseDAO {
 			purchase.setPurchaseReference(r.getValue(PURCHASE.PURCHASE_REFERENCE));
 			purchase.setAddress(r.getValue(PURCHASE.ADDRESS));
 			purchase.setDiscountExpr(r.getValue(PURCHASE.DISCOUNT_EXPR));
-			purchase.setIssueDate(r.getValue(PURCHASE.ISSUE_DATE));
+			purchase.setIssueDate(AonDateUtils.toDate(r.getValue(PURCHASE.ISSUE_DATE)));
 			purchase.setPayMethod(r.getValue(PURCHASE.PAY_METHOD));
 			purchase.setDocumentType(PurchaseType.values()[r.getValue(PURCHASE.DOCUMENT_TYPE)]);
 			purchase.setSecurityLevel(r.getValue(PURCHASE.SECURITY_LEVEL));

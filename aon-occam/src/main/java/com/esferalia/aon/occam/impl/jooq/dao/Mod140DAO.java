@@ -188,8 +188,8 @@ public class Mod140DAO {
 		inv.setNumber(record.getValue(INVOICE.NUMBER));
 		inv.setEpigraph(m140ctx.getEpigraph());
 		inv.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE));
-		inv.setIssueDate(record.getValue(INVOICE.ISSUE_DATE));
-		inv.setTaxDate(record.getValue(INVOICE.TAX_DATE));
+		inv.setIssueDate(AonDateUtils.toDate(record.getValue(INVOICE.ISSUE_DATE)));
+		inv.setTaxDate(AonDateUtils.toDate(record.getValue(INVOICE.TAX_DATE)));
 		inv.setRectificationType(AonEnumUtils.enumValue(
 				RectificationType.class,
 				record.getValue(INVOICE.RECTIFICATION_TYPE)));
@@ -243,13 +243,13 @@ public class Mod140DAO {
 			list.add((params.isFilterByTaxDateEnabled()
 					?INVOICE.TAX_DATE
 					:INVOICE.ISSUE_DATE
-					).greaterOrEqual(AonDateUtils.toSql( params.getFromDate())));	
+					).greaterOrEqual(AonDateUtils.toLocalDate( params.getFromDate())));	
 		}
 		if ( params.getToDate() != null) {
 			list.add((params.isFilterByTaxDateEnabled()
 					?INVOICE.TAX_DATE
 					:INVOICE.ISSUE_DATE
-					).lessOrEqual(AonDateUtils.toSql( params.getToDate())));	
+					).lessOrEqual(AonDateUtils.toLocalDate( params.getToDate())));	
 		}
 		return list;
 	}

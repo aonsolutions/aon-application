@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.registry.Raddinfo;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class OCRDAO extends GlobalDAO {
 	
@@ -61,7 +62,7 @@ public class OCRDAO extends GlobalDAO {
 					.setDomain( rec.getValue(RADDINFO.DOMAIN) )
 					.setAttribute( rec.getValue(RADDINFO.ATTRIBUTE) )
 					.setValue( rec.getValue(RADDINFO.VALUE) )
-					.setValueDate( rec.getValue(RADDINFO.VALUE_DATE) ))
+					.setValueDate( AonDateUtils.toDate(rec.getValue(RADDINFO.VALUE_DATE))))
 				.collect(Collectors.toCollection(LinkedList::new));
 			
 			if ( patterns == null || patterns.size() == 0) {
@@ -72,7 +73,7 @@ public class OCRDAO extends GlobalDAO {
 					.set(RADDINFO.REGISTRY, registry)
 					.set(RADDINFO.ATTRIBUTE, OCR_REF_PATTERN)
 					.set(RADDINFO.VALUE, pattern)
-					.set(RADDINFO.VALUE_DATE, new java.sql.Date( date.getTime() ) )
+					.set(RADDINFO.VALUE_DATE, AonDateUtils.toLocalDate(date))
 					.execute();
 			} else {
 				boolean matches = false;
@@ -84,7 +85,7 @@ public class OCRDAO extends GlobalDAO {
 					if (matches) {
 						if ( date.after(raddinfo.getValueDate())) {
 							ctx.getDslContext().update(RADDINFO)
-								.set(RADDINFO.VALUE_DATE, new java.sql.Date( date.getTime() ) )
+								.set(RADDINFO.VALUE_DATE,AonDateUtils.toLocalDate(date))
 								.where(RADDINFO.ID.eq(raddinfo.getId()))
 								.execute();
 						}
@@ -97,7 +98,7 @@ public class OCRDAO extends GlobalDAO {
 						.set(RADDINFO.REGISTRY, registry)
 						.set(RADDINFO.ATTRIBUTE, OCR_REF_PATTERN)
 						.set(RADDINFO.VALUE, generalize( reference ))
-						.set(RADDINFO.VALUE_DATE, new java.sql.Date( date.getTime() ) )
+						.set(RADDINFO.VALUE_DATE, AonDateUtils.toLocalDate(date))
 						.execute();
 				}
 			}

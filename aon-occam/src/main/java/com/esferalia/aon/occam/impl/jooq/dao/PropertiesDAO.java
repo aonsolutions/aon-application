@@ -178,6 +178,7 @@ import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserWorkgroupProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.impl.jooq.dao.FilterDAO.LocalDatePropertyDAO;
 
 public class PropertiesDAO {
 	
@@ -215,8 +216,8 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getRegistryProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.REGISTRY);}
 		@Override public Property<String> getRegistryDocumentProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.RDOCUMENT);}
 		@Override public Property<String> getRegistryNameProperty(){return new FilterDAO.PropertyDAO<>(INVOICE.RNAME);}
-		@Override public Property<java.util.Date> getStartIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
-		@Override public Property<java.util.Date> getEndIssueDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
+		@Override public Property<java.util.Date> getStartIssueDateProperty() {return new FilterDAO.LocalDatePropertyDAO(INVOICE.ISSUE_DATE);}
+		@Override public Property<java.util.Date> getEndIssueDateProperty() {return new FilterDAO.LocalDatePropertyDAO(INVOICE.ISSUE_DATE);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TYPE);}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SCOPE);}
 		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SECURITY_LEVEL);}
@@ -232,15 +233,15 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getProductTypeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.TYPE);}
 		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.TRANSACTION);}
 		@Override public Property<Byte> getInvestmentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.INVESTMENT);}
-		@Override public Property<java.util.Date> getTaxDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.TAX_DATE);}
+		@Override public Property<java.util.Date> getTaxDateProperty() {return new FilterDAO.LocalDatePropertyDAO(INVOICE.TAX_DATE);}
 		@Override public Property<Integer> getPosShiftroperty() {return new FilterDAO.PropertyDAO<>(INVOICE.POS_SHIFT);}
 		@Override public Property<Byte> getVatAccrualPayment() {return new FilterDAO.PropertyDAO<>(INVOICE.VAT_ACCRUAL_PAYMENT);}
 		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SERIES);}
  		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.NUMBER);}
  		@Override public Property<String> getReferenceCodeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.REFERENCE_CODE);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(INVOICE.CREATION_DATE);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(INVOICE.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
 
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
@@ -282,24 +283,24 @@ public class PropertiesDAO {
 			}
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.REGISTRY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.DOMAIN);}
-		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.TARIFF);}
-		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.SURCHARGE);}
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.WITHHOLDING);}
-		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.TRANSACTION);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.SCOPE);}
-		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.E_INVOICE);}
-		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.INVOICING_GROUP);}
-		@Override public Property<Byte> getProjectGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.PROJECT_GROUPED);}
-		@Override public Property<Byte> getDeliveryGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.DELIVERY_GROUPED);}
-		@Override public Property<Byte> getDeliveryValuatedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.DELIVERY_VALUATED);}
-		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CUSTOMER.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CUSTOMER.MODIFICATION_DATE);}	
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.DOMAIN);}
+		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.TARIFF);}
+		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.SURCHARGE);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.WITHHOLDING);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.SCOPE);}
+		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.E_INVOICE);}
+		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.INVOICING_GROUP);}
+		@Override public Property<Byte> getProjectGroupedProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.PROJECT_GROUPED);}
+		@Override public Property<Byte> getDeliveryGroupedProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.DELIVERY_GROUPED);}
+		@Override public Property<Byte> getDeliveryValuatedProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.DELIVERY_VALUATED);}
+		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CUSTOMER.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CUSTOMER.MODIFICATION_DATE);}	
 	}
 	
 	public static class SellerPropertiesDAO implements SellerProperties {
@@ -350,8 +351,8 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.STATUS);}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.ID);}
  		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.SELLER);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.START_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(RSELLER.END_DATE);}
+		@Override public Property<java.util.Date> getStartDateProperty() {return new FilterDAO.LocalDatePropertyDAO(RSELLER.START_DATE);}
+		@Override public Property<java.util.Date> getEndDateProperty() {return new FilterDAO.LocalDatePropertyDAO(RSELLER.END_DATE);}
 	}
 	
 	
@@ -384,9 +385,9 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getPurchaseValuatedProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.PURCHASE_VALUATED);}
 		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.ACCOUNT);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(SUPPLIER.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(SUPPLIER.MODIFICATION_DATE);}
 	}
 	
 	public static class TargetPropertiesDAO implements TargetProperties {
@@ -415,9 +416,9 @@ public class PropertiesDAO {
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TARGET.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(TARGET.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TARGET.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TARGET.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(TARGET.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TARGET.MODIFICATION_DATE);}
 		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<>(TARGET.TARIFF);}
 		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(TARGET.WITHHOLDING);}
 		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(TARGET.TRANSACTION);}
@@ -448,7 +449,7 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
 		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
-		@Override public Property<Date> getBirthDateProperty() {return new FilterDAO.PropertyDAO<>(PERSON.BIRTH_DATE);}
+		@Override public Property<java.util.Date> getBirthDateProperty() {return new FilterDAO.LocalDatePropertyDAO(PERSON.BIRTH_DATE);}
 		@Override public Property<Byte> getGenderProperty() {return new FilterDAO.PropertyDAO<>(PERSON.GENDER);}
 		@Override public Property<Byte> getMaritalStatusProperty() {return new FilterDAO.PropertyDAO<>(PERSON.MARITAL_STATUS);}
 		@Override public Property<String> getSocialSecurityNumProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
@@ -499,22 +500,22 @@ public class PropertiesDAO {
 		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.SERIES);}
 		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.NUMBER);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.TYPE);}
-		@Override public Property<Timestamp> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.ISSUE_DATE);}
+		@Override public Property<Timestamp> getIssueDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CARRIER_PACKING.ISSUE_DATE);}
 		@Override public Property<Integer> getCarrierProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.CARRIER);}
-		@Override public Property<Timestamp> getDeliveryDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.DELIVERY_DATE);}
+		@Override public Property<Timestamp> getDeliveryDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CARRIER_PACKING.DELIVERY_DATE);}
 		@Override public Property<String> getCarrierReferenceProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.CARRIER_REFERENCE);}
 		@Override public Property<String> getNumberPlateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.NUMBER_PLATE);}
 		@Override public Property<String> getDriverNameProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.DRIVER_NAME);}
 		@Override public Property<String> getDriverDocumentProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.DRIVER_DOCUMENT);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CARRIER_PACKING.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CARRIER_PACKING.MODIFICATION_DATE);}
 		@Override public Property<Double> getGrossWeightProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.GROSS);}
 		@Override public Property<Double> getTareProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.TARE);}
 		@Override public Property<Double> getNetProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.NET);}
-		@Override public Property<Timestamp> getReceptionStartDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.RECEPTION_START_DATE);}
-		@Override public Property<Timestamp> getReceptionEndDateProperty() {return new FilterDAO.PropertyDAO<>(CARRIER_PACKING.RECEPTION_END_DATE);}
+		@Override public Property<Timestamp> getReceptionStartDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CARRIER_PACKING.RECEPTION_START_DATE);}
+		@Override public Property<Timestamp> getReceptionEndDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CARRIER_PACKING.RECEPTION_END_DATE);}
 	}
 	
 	/**
@@ -534,16 +535,16 @@ public class PropertiesDAO {
 			}
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(REGISTRY.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(REGISTRY.DOMAIN);}
-		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT);}
-		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.DOCUMENT_TYPE);}
-		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT_COUNTRY);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NAME);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.ALIAS);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.TYPE);}
-		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NATIONALITY);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.SECURITY_LEVEL);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOMAIN);}
+		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_TYPE);}
+		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ALIAS);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
+		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
 	}
 	
 	public static class CarrierPropertiesDAO extends RegistryPropertiesDAO implements CarrierProperties  {
@@ -574,14 +575,14 @@ public class PropertiesDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RNOTE.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RNOTE.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(RNOTE.REGISTRY);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(RNOTE.DESCRIPTION);}
-		@Override public Property<Date> getNoteDateProperty() {return new FilterDAO.PropertyDAO<Date>(RNOTE.NOTE_DATE);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(RNOTE.COMMENTS);}
-		@Override public Property<Byte> getNoteTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RNOTE.NOTE_TYPE);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(RNOTE.SECURITY_LEVEL);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RNOTE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RNOTE.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RNOTE.REGISTRY);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(RNOTE.DESCRIPTION);}
+		@Override public Property<java.util.Date> getNoteDateProperty() {return new FilterDAO.LocalDatePropertyDAO(RNOTE.NOTE_DATE);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(RNOTE.COMMENTS);}
+		@Override public Property<Byte> getNoteTypeProperty() {return new FilterDAO.PropertyDAO<>(RNOTE.NOTE_TYPE);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(RNOTE.SECURITY_LEVEL);}
 	}
 	
 	public static class RItemPropertiesDAO implements RegistryItemProperties{
@@ -673,7 +674,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getPurchaseReferenceProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.PURCHASE_REFERENCE);}
 		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.ADDRESS);}
 		@Override public Property<String> getDiscountExprProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.DISCOUNT_EXPR);}
-		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.ISSUE_DATE);}
+		@Override public Property<java.util.Date> getIssueDateProperty() {return new FilterDAO.LocalDatePropertyDAO(PURCHASE.ISSUE_DATE);}
 		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.PAY_METHOD);}
 		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.DOCUMENT_TYPE);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.SECURITY_LEVEL);}
@@ -701,17 +702,17 @@ public class PropertiesDAO {
 		@Override public Property<String> getShippingContactProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.SHIPPING_CONTACT);}
 		@Override public Property<Byte> getShippingPeriodProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.SHIPPING_PERIOD);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PURCHASE.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PURCHASE.MODIFICATION_DATE);}
 		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE_DETAIL.CARRIER_PACKING);}
 	
 		// REGISTRY
 		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<String> getRegistryDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
 
-		@Override public Property<Date> getStartIssueDateProperty() {return null;}
-		@Override public Property<Date> getEndIssueDateProperty() {return null;}
+		@Override public Property<java.util.Date> getStartIssueDateProperty() {return null;}
+		@Override public Property<java.util.Date> getEndIssueDateProperty() {return null;}
 		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
 	
@@ -735,7 +736,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.NUMBER);}
 		@Override public Property<Integer> getCustomerProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CUSTOMER);}
 		@Override public Property<Integer> getAddressProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ADDRESS);}
-		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.ISSUE_TIME);}
+		@Override public Property<Timestamp> getIssueTimeProperty() {return new FilterDAO.LocalDateTimePropertyDAO(DELIVERY.ISSUE_TIME);}
 		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.PAY_METHOD);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.SECURITY_LEVEL);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.STATUS);}
@@ -750,9 +751,9 @@ public class PropertiesDAO {
 		@Override public Property<String> getBankAccountProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BANK_ACCOUNT);}
 		@Override public Property<String> getBankAliasProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BANK_ALIAS);}
 		@Override public Property<String> getBicProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.BIC);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(DELIVERY.CREATION_DATE);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(DELIVERY.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.MODIFICATION_USER);}
 		@Override public Property<Integer> getCarrierProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CARRIER);}
 		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY.CARRIER_PACKING);}
@@ -788,9 +789,9 @@ public class PropertiesDAO {
 		@Override public Property<Double> getPrice() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.PRICE);}
 		@Override public Property<String> getDiscountExpressionProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.DISCOUNT_EXPR);}
 		@Override public Property<Integer> getSalesDetail() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.SALES_DETAIL);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(DELIVERY_DETAIL.CREATION_DATE);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(DELIVERY_DETAIL.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DELIVERY_DETAIL.MODIFICATION_USER);}
 	}
 	
@@ -828,12 +829,12 @@ public class PropertiesDAO {
 		@Override public Property<String> getBicProperty() {return new FilterDAO.PropertyDAO<>(INCOME.BIC);}
 		@Override public Property<Integer> getCarrierPackingProperty() {return new FilterDAO.PropertyDAO<>(INCOME.CARRIER_PACKING);}
 		@Override public Property<String> getReferenceCodeProperty() {return new FilterDAO.PropertyDAO<>(INCOME.REFERENCE_CODE);}
-		@Override public Property<Date> getIssueTimeProperty() {return new FilterDAO.PropertyDAO<>(INCOME.ISSUE_TIME);}
+		@Override public Property<java.util.Date> getIssueTimeProperty() {return new FilterDAO.LocalDatePropertyDAO(INCOME.ISSUE_TIME);}
 		
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PURCHASE.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PURCHASE.MODIFICATION_DATE);}
 
 		@Override public Property<Byte> getConfidentialProperty() {return null;}
 	}
@@ -865,9 +866,9 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getPurchaseDetailProperty() {return new FilterDAO.PropertyDAO<>(INCOME_DETAIL.PURCHASE_DETAIL);}
 		
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PURCHASE.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PURCHASE.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PURCHASE.MODIFICATION_DATE);}
 	}
 	
 	protected static class RecordDataPropertiesDAO implements RecordDataProperties {
@@ -886,11 +887,11 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.ID);} 
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.DOMAIN);}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.REGISTRY);}
-		@Override public Property<Date> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.CREATION_DATE);}
+		@Override public Property<java.util.Date> getCreationDateProperty() {return new FilterDAO.LocalDatePropertyDAO(RECORD_DATA.CREATION_DATE);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.DESCRIPTION);}
 		@Override public Property<String> getNotaryProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.NOTARY);}
 		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.NUMBER);}
-		@Override public Property<Date> getRecordDateProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.RECORD_DATE);}
+		@Override public Property<java.util.Date> getRecordDateProperty() {return new FilterDAO.LocalDatePropertyDAO(RECORD_DATA.RECORD_DATE);}
 		@Override public Property<String> getVolumeProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.VOLUME);}
 		@Override public Property<String> getSectionProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.SECTION);}
  		@Override public Property<String> getPageProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.PAGE);}
@@ -966,7 +967,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.REGISTRY);}
 		@Override public Property<String> getAttributeProperty() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.ATTRIBUTE);}
 		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.VALUE);}
-		@Override public Property<Date> getValueDate() {return new FilterDAO.PropertyDAO<>(Raddinfo.RADDINFO.VALUE_DATE);}
+		@Override public Property<java.util.Date> getValueDate() {return new FilterDAO.LocalDatePropertyDAO(Raddinfo.RADDINFO.VALUE_DATE);}
 
 	}
 	
@@ -985,13 +986,13 @@ public class PropertiesDAO {
 		}
 
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(DATA_RESPONSE.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(DATA_RESPONSE.MODIFICATION_DATE);}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.DOMAIN);}
 		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.CODE);}
-		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.RESPONSE_DATE);}
+		@Override public Property<java.util.Date> getIssueDateProperty() {return new FilterDAO.LocalDatePropertyDAO(DATA_RESPONSE.RESPONSE_DATE);}
 		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.CODE);}
 		
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE.SOURCE);}
@@ -1016,9 +1017,9 @@ public class PropertiesDAO {
 		}
 
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(DATA_RESPONSE_DETAIL.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(DATA_RESPONSE_DETAIL.MODIFICATION_DATE);}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DOMAIN);}
 		@Override public Property<Integer> getDataResponseProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_RESPONSE);}
@@ -1044,8 +1045,8 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.DOMAIN);}
 		@Override public Property<String> getNafProperty() {return new FilterDAO.PropertyDAO<>(PERSON.SOCIAL_SECURITY_NUM);}
 		@Override public Property<String> getCCCProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.CCC);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.START_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.END_DATE);}
+		@Override public Property<java.util.Date> getStartDateProperty() {return new FilterDAO.LocalDatePropertyDAO(CONTRACT.START_DATE);}
+		@Override public Property<java.util.Date> getEndDateProperty() {return new FilterDAO.LocalDatePropertyDAO(CONTRACT.END_DATE);}
 
 	}
 
@@ -1068,13 +1069,13 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getPersonProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.PERSON);}
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.WORKPLACE);}
 		@Override public Property<Integer> getEnterpriseCCCProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.ENTERPRISE_CCC);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.START_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.END_DATE);}
+		@Override public Property<java.util.Date> getStartDateProperty() {return new FilterDAO.LocalDatePropertyDAO(CONTRACT.START_DATE);}
+		@Override public Property<java.util.Date> getEndDateProperty() {return new FilterDAO.LocalDatePropertyDAO(CONTRACT.END_DATE);}
 		@Override public Property<Integer> getCalendarProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.CALENDAR);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.DESCRIPTION);}
 		@Override public Property<Byte> getSepeStatusProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SEPE_STATUS);}
 		@Override public Property<Integer> getRegistrationProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.REGISTRATION);}
-		@Override public Property<Date> getSeniorityDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SENIORITY_DATE);}
+		@Override public Property<java.util.Date> getSeniorityDateProperty() {return new FilterDAO.LocalDatePropertyDAO(CONTRACT.SENIORITY_DATE);}
 		@Override public Property<Integer> getEnterpriseActivityProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.ENTERPRISE_ACTIVITY);}
 		@Override public Property<Byte> getSSRegimeProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.SS_REGIME);}
 		@Override public Property<Integer> getAgreementLevelProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.AGREEMENT_LEVEL);}
@@ -1103,8 +1104,8 @@ public class PropertiesDAO {
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.NAME);}
 		@Override public Property<Integer> getContractProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.CONTRACT);}
 		@Override public Property<String> getExpressionProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.EXPRESSION);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.START_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DATA.END_DATE);}
+		@Override public Property<java.util.Date> getStartDateProperty() {return new FilterDAO.LocalDatePropertyDAO(CONTRACT_DATA.START_DATE);}
+		@Override public Property<java.util.Date> getEndDateProperty() {return new FilterDAO.LocalDatePropertyDAO(CONTRACT_DATA.END_DATE);}
 	}
 	
 	protected static class IrpfDataPropertiesDAO implements IrpfDataProperties{
@@ -1124,17 +1125,17 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.DOMAIN);}
 		@Override public Property<Integer> getContractProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.CONTRACT);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.START_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.END_DATE);}
+		@Override public Property<java.util.Date> getStartDateProperty() {return new FilterDAO.LocalDatePropertyDAO(IRPF_DATA.START_DATE);}
+		@Override public Property<java.util.Date> getEndDateProperty() {return new FilterDAO.LocalDatePropertyDAO(IRPF_DATA.END_DATE);}
 		@Override public Property<Byte> getFamilySituationProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.FAMILY_SITUATION);}
 		@Override public Property<String> getSpouseDocumentProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.SPOUSE_DOCUMENT);}
 		@Override public Property<Byte> getDisabiltyLevelProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.DISABILITY_LEVEL);}
 		@Override public Property<Byte> getDependenceProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.DEPENDENCE);}
-		@Override public Property<Date> getMovingDateProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.MOVING_DATE);}
+		@Override public Property<java.util.Date> getMovingDateProperty() {return new FilterDAO.LocalDatePropertyDAO(IRPF_DATA.MOVING_DATE);}
 		@Override public Property<Byte> getLabourProlongationProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.LABOUR_PROLONGATION);}
 		@Override public Property<Byte> getDescendientCountProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.DESCENDIENT_COUNT);}
 		@Override public Property<Byte> getFiscalExclusionProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.FISCAL_EXCLUSION);}
-		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.ISSUE_DATE);}
+		@Override public Property<java.util.Date> getIssueDateProperty() {return new FilterDAO.LocalDatePropertyDAO(IRPF_DATA.ISSUE_DATE);}
 		@Override public Property<Double> getAnnualRemunerationProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.ANNUAL_REMUNERATION);}
 		@Override public Property<Double> getIrregular182ReductionProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.IRREGULAR_18_2_REDUCTION);}
 		@Override public Property<Double> getIrregular183ReductionProperty() {return new FilterDAO.PropertyDAO<>(IRPF_DATA.IRREGULAR_18_3_REDUCTION);}
@@ -1185,7 +1186,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.DOMAIN);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.DESCRIPTION);}
-		@Override public Property<Date> getInventoryDateProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.INVENTORY_DATE);}
+		@Override public Property<java.util.Date> getInventoryDateProperty() {return new FilterDAO.LocalDatePropertyDAO(INVENTORY.INVENTORY_DATE);}
 		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.WAREHOUSE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVENTORY.STATUS);}
 	}
@@ -1232,8 +1233,8 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.DOMAIN);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.NAME);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.START_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.END_DATE);}
+		@Override public Property<java.util.Date> getStartDateProperty() {return new FilterDAO.LocalDatePropertyDAO(COMMISSION.START_DATE);}
+		@Override public Property<java.util.Date> getEndDateProperty() {return new FilterDAO.LocalDatePropertyDAO(COMMISSION.END_DATE);}
 	}
 	
 	protected static class CommissionTypePropertiesDAO implements CommissionTypeProperties{
@@ -1276,8 +1277,8 @@ public class PropertiesDAO {
 		@Override public Property<Double> getCommissionProperty() {return new FilterDAO.PropertyDAO<>(OFFER_DETAIL_COMMISSION.COMMISSION);}
 		@Override public Property<Integer> getOfferDetailProperty() {return new FilterDAO.PropertyDAO<>(OFFER_DETAIL_COMMISSION.OFFER_DETAIL);}
 		@Override public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<>(OFFER_DETAIL_COMMISSION.AMOUNT);}
-		@Override public Property<Date> getPayDateProperty() {return new FilterDAO.PropertyDAO<>(OFFER_DETAIL_COMMISSION.PAY_DATE);}
-		@Override public Property<Date> getDateProperty() {return new FilterDAO.PropertyDAO<>(OFFER.ISSUE_DATE);}
+		@Override public Property<java.util.Date> getPayDateProperty() {return new FilterDAO.LocalDatePropertyDAO(OFFER_DETAIL_COMMISSION.PAY_DATE);}
+		@Override public Property<java.util.Date> getDateProperty() {return new FilterDAO.LocalDatePropertyDAO(OFFER.ISSUE_DATE);}
 		@Override public Property<String> getSerieProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SERIES);}
 		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(OFFER.NUMBER);}
 		@Override public Property<Integer> getTargetProperty() {return new FilterDAO.PropertyDAO<>(OFFER.TARGET);}
@@ -1307,8 +1308,8 @@ public class PropertiesDAO {
 		@Override public Property<Double> getCommissionProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL_COMMISSION.COMMISSION);}
 		@Override public Property<Integer> getInvoiceDetailProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL_COMMISSION.INVOICE_DETAIL);}
 		@Override public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL_COMMISSION.AMOUNT);}
-		@Override public Property<Date> getPayDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_DETAIL_COMMISSION.PAY_DATE);}
-		@Override public Property<Date> getDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.ISSUE_DATE);}
+		@Override public Property<java.util.Date> getPayDateProperty() {return new FilterDAO.LocalDatePropertyDAO(INVOICE_DETAIL_COMMISSION.PAY_DATE);}
+		@Override public Property<java.util.Date> getDateProperty() {return new FilterDAO.LocalDatePropertyDAO(INVOICE.ISSUE_DATE);}
 		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.SERIES);}
 		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.NUMBER);}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.REGISTRY);}
@@ -1335,8 +1336,8 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_TYPE_COMMISSION.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_TYPE_COMMISSION.DOMAIN);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.NAME);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.START_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.END_DATE);}
+		@Override public Property<java.util.Date> getStartDateProperty() {return new FilterDAO.LocalDatePropertyDAO(COMMISSION.START_DATE);}
+		@Override public Property<java.util.Date> getEndDateProperty() {return new FilterDAO.LocalDatePropertyDAO(COMMISSION.END_DATE);}
 		@Override public Property<Integer> getCommissionProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_TYPE_COMMISSION.COMMISSION);}
 		@Override public Property<Integer> getCommissionTypeProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_TYPE_COMMISSION.COMMISSION_TYPE);}
 	}
@@ -1358,8 +1359,8 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_ITEM.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_ITEM.DOMAIN);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.NAME);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.START_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.END_DATE);}
+		@Override public Property<java.util.Date> getStartDateProperty() {return new FilterDAO.LocalDatePropertyDAO(COMMISSION.START_DATE);}
+		@Override public Property<java.util.Date> getEndDateProperty() {return new FilterDAO.LocalDatePropertyDAO(COMMISSION.END_DATE);}
 		@Override public Property<Integer> getCommissionProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_ITEM.COMMISSION);}
 		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_ITEM.ITEM);}
 		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_ITEM.QUANTITY);}
@@ -1384,8 +1385,8 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_CATEGORY.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_CATEGORY.DOMAIN);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.NAME);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.START_DATE);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION.END_DATE);}
+		@Override public Property<java.util.Date> getStartDateProperty() {return new FilterDAO.LocalDatePropertyDAO(COMMISSION.START_DATE);}
+		@Override public Property<java.util.Date> getEndDateProperty() {return new FilterDAO.LocalDatePropertyDAO(COMMISSION.END_DATE);}
 		@Override public Property<Integer> getCommissionProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_CATEGORY.COMMISSION);}
 		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_CATEGORY.CATEGORY);}
 		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(COMMISSION_CATEGORY.QUANTITY);}
@@ -1430,7 +1431,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.SCOPE);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.NAME);}
 		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.ACTIVE);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.CREATIONDATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(MK_TEMPLATE.CREATIONDATE);}
  		@Override public Property<String> getSubjectProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.SUBJECT);} 
 		@Override public Property<String> getWidthProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.WIDTH);}
 		@Override public Property<String> getTitleColorProperty() {return new FilterDAO.PropertyDAO<>(MK_TEMPLATE.TITLE_COLOR);}
@@ -1459,7 +1460,7 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.ITEM);} 
 		@Override public Property<String> getAttributeProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.ATTRIBUTE);}
 		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.VALUE);}
-		@Override public Property<Date> getValueDate() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.VALUE_DATE);}
+		@Override public Property<java.util.Date> getValueDate() {return new FilterDAO.LocalDatePropertyDAO(ITEM_ADDINFO.VALUE_DATE);}
 	}
 	
 	protected static class UserPropertiesDAO implements UserProperties {
@@ -1568,7 +1569,7 @@ public class PropertiesDAO {
 
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.DOMAIN);}
-		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.DATE);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TIMECONTROL.DATE);}
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TIMECONTROL.TASK_HOLDER);}		
 	}
 	
@@ -1608,17 +1609,17 @@ public class PropertiesDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.DOMAIN);}
-		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(NOTIFICATION.DATE);}
-		@Override public Property<String> getTitleProperty() {return new FilterDAO.PropertyDAO<String>(NOTIFICATION.TITLE);}
-		@Override public Property<String> getBodyProperty() {return new FilterDAO.PropertyDAO<String>(NOTIFICATION.BODY);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION.SOURCE);}
-		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(NOTIFICATION.SOURCE_ID);}
-		@Override public Property<byte[]> getSenderProperty() {return new FilterDAO.PropertyDAO<byte[]>(NOTIFICATION.SENDER);}
-		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION.PRIORITY);}
-		@Override public Property<byte[]> getAuthProperty() {return new FilterDAO.PropertyDAO<byte[]>(NOTIFICATION_RECEIVER.AUTH);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(NOTIFICATION_RECEIVER.STATUS);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.DOMAIN);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(NOTIFICATION.DATE);}
+		@Override public Property<String> getTitleProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.TITLE);}
+		@Override public Property<String> getBodyProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.BODY);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.SOURCE_ID);}
+		@Override public Property<byte[]> getSenderProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.SENDER);}
+		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION.PRIORITY);}
+		@Override public Property<byte[]> getAuthProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION_RECEIVER.AUTH);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(NOTIFICATION_RECEIVER.STATUS);}
 	}
 	
 	
@@ -1661,13 +1662,13 @@ public class PropertiesDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TARIFF.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TARIFF.DOMAIN);}
-		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<String>(TARIFF.CODE);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(TARIFF.NAME);}
-		@Override public Property<Byte> getPurchaseProperty() {return new FilterDAO.PropertyDAO<Byte>(TARIFF.PURCHASE);}
-		@Override public Property<Double> getDiscountProperty() {return new FilterDAO.PropertyDAO<Double>(TARIFF.DISCOUNT);}
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(TARIFF.ACTIVE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TARIFF.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TARIFF.DOMAIN);}
+		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<>(TARIFF.CODE);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(TARIFF.NAME);}
+		@Override public Property<Byte> getPurchaseProperty() {return new FilterDAO.PropertyDAO<>(TARIFF.PURCHASE);}
+		@Override public Property<Double> getDiscountProperty() {return new FilterDAO.PropertyDAO<>(TARIFF.DISCOUNT);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(TARIFF.ACTIVE);}
 	}
 
 }

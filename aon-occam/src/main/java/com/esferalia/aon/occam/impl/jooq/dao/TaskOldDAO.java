@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.function.Function;
@@ -72,6 +73,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -136,14 +138,14 @@ public class TaskOldDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_EVENT.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_EVENT.DOMAIN);}
-		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_EVENT.TASK);}
-		@Override public Property<String> getEventProperty() {return new FilterDAO.PropertyDAO<String>(TASK_EVENT.EVENT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_EVENT.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_EVENT.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_EVENT.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_EVENT.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TASK_EVENT.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TASK_EVENT.DOMAIN);}
+		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<>(TASK_EVENT.TASK);}
+		@Override public Property<String> getEventProperty() {return new FilterDAO.PropertyDAO<>(TASK_EVENT.EVENT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_EVENT.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK_EVENT.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_EVENT.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK_EVENT.MODIFICATION_DATE);}
 	}
 	
 	protected static class TaskCommentPropertiesDAO implements TaskCommentProperties {
@@ -152,16 +154,16 @@ public class TaskOldDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_COMMENT.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_COMMENT.DOMAIN);}
-		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_COMMENT.TASK);}
-		@Override public Property<String> getCommentProperty() {return new FilterDAO.PropertyDAO<String>(TASK_COMMENT.COMMENT);}
-		@Override public Property<Integer> getSourceProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_COMMENT.SOURCE);}
-		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_COMMENT.SOURCE_ID);}		
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_COMMENT.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_COMMENT.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_COMMENT.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_COMMENT.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TASK_COMMENT.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TASK_COMMENT.DOMAIN);}
+		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<>(TASK_COMMENT.TASK);}
+		@Override public Property<String> getCommentProperty() {return new FilterDAO.PropertyDAO<>(TASK_COMMENT.COMMENT);}
+		@Override public Property<Integer> getSourceProperty() {return new FilterDAO.PropertyDAO<>(TASK_COMMENT.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(TASK_COMMENT.SOURCE_ID);}		
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_COMMENT.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK_COMMENT.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_COMMENT.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK_COMMENT.MODIFICATION_DATE);}
 	}
 	
 	protected static class TaskPropertiesDAO implements TaskProperties {
@@ -175,33 +177,33 @@ public class TaskOldDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.DOMAIN);}
-		@Override public Property<Integer> getActivityTypeProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.ACTIVITY_TYPE);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(TASK.COMMENTS);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(TASK.DESCRIPTION);}
-		@Override public Property<Timestamp> getDueDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.DUE_DATE);}
-		@Override public Property<Timestamp> getEndDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.END_DATE);}
-		@Override public Property<String> getGtaskIdProperty() {return new FilterDAO.PropertyDAO<String>(TASK.GTASK_ID);}
-		@Override public Property<String> getGtasklisIdProperty() {return new FilterDAO.PropertyDAO<String>(TASK.GTASKLIST_ID);}
-		@Override public Property<Byte> getPercentProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.PERCENT);}
-		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.PRIORITY);}
-		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.PROJECT);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.REGISTRY);}
-		@Override public Property<Byte> getRepeatPeriodProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.REPEAT_PERIOD);}
-		@Override public Property<Integer> getSenderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.SENDER);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.SOURCE);}
-		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.SOURCE_ID);}
-		@Override public Property<Timestamp> getStartDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.START_DATE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.STATUS);}
-		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.TASK_HOLDER);}
-		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.WORKGROUP);}
-		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.NUMBER);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.MODIFICATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK.CREATION_DATE);}
-		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.PARENT);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TASK.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TASK.DOMAIN);}
+		@Override public Property<Integer> getActivityTypeProperty() {return new FilterDAO.PropertyDAO<>(TASK.ACTIVITY_TYPE);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(TASK.COMMENTS);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(TASK.DESCRIPTION);}
+		@Override public Property<Timestamp> getDueDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK.DUE_DATE);}
+		@Override public Property<Timestamp> getEndDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK.END_DATE);}
+		@Override public Property<String> getGtaskIdProperty() {return new FilterDAO.PropertyDAO<>(TASK.GTASK_ID);}
+		@Override public Property<String> getGtasklisIdProperty() {return new FilterDAO.PropertyDAO<>(TASK.GTASKLIST_ID);}
+		@Override public Property<Byte> getPercentProperty() {return new FilterDAO.PropertyDAO<>(TASK.PERCENT);}
+		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<>(TASK.PRIORITY);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(TASK.PROJECT);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(TASK.REGISTRY);}
+		@Override public Property<Byte> getRepeatPeriodProperty() {return new FilterDAO.PropertyDAO<>(TASK.REPEAT_PERIOD);}
+		@Override public Property<Integer> getSenderProperty() {return new FilterDAO.PropertyDAO<>(TASK.SENDER);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(TASK.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(TASK.SOURCE_ID);}
+		@Override public Property<Timestamp> getStartDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK.START_DATE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(TASK.STATUS);}
+		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TASK.TASK_HOLDER);}
+		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<>(TASK.WORKGROUP);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(TASK.NUMBER);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK.MODIFICATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK.CREATION_DATE);}
+		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(TASK.PARENT);}
 	}
 	
 	public static OldTask getTask(AONContext ctx, TaskFilter filter){
@@ -374,20 +376,20 @@ public class TaskOldDAO {
 			System.out.println(new Timestamp(cal.getTimeInMillis()));
 			cal.add(Calendar.DAY_OF_WEEK, - (Integer.parseInt(issueFilter.getDateDiff())));
 			System.out.println(new Timestamp(cal.getTimeInMillis()));
-			Timestamp as = new Timestamp(cal.getTimeInMillis());
+			LocalDateTime as = new Timestamp(cal.getTimeInMillis()).toLocalDateTime();
 			c = c.and(TASK.START_DATE.greaterOrEqual(as));
 		}
 		return c;
 	}
 	
-	private static SortField<Timestamp> getIssueFilterSortField(IssueFilter issueFilter) {
+	private static SortField<LocalDateTime> getIssueFilterSortField(IssueFilter issueFilter) {
 		// sort    created | updated | comments
-		TableField<TaskRecord, Timestamp> sort = TASK.START_DATE; 
+		TableField<TaskRecord, LocalDateTime> sort = TASK.START_DATE; 
 		if(issueFilter.getSort() != null && issueFilter.getSort().equals("updated"))
 			sort = TASK.MODIFICATION_DATE;
 		 		
 		// direction
-		SortField<Timestamp> sortDir = sort.desc();
+		SortField<LocalDateTime> sortDir = sort.desc();
 		if(issueFilter.getDirection() != null && issueFilter.getDirection().equals("asc"))
 			sortDir = sort.asc();
 		return sortDir;
@@ -541,7 +543,7 @@ public class TaskOldDAO {
 		}
 		
 		Condition condition = getIssueFilterCondition(ctx, issueFilter); 
-		SortField<Timestamp> sort = getIssueFilterSortField(issueFilter);
+		SortField<LocalDateTime> sort = getIssueFilterSortField(issueFilter);
 		
 		Condition extra = TASK.PARENT.isNull();		 
 		if(!issueFilter.getState().equals("faq")) extra = extra.or(TASK.PARENT.eq(TASK.ID))
@@ -610,9 +612,9 @@ public class TaskOldDAO {
 	public static OldTask updateTask(AONContext ctx, OldTask task) {
 		ctx.getDslContext().update(TASK)
 			.set(TASK.DESCRIPTION, task.getDescription())
-			.set(TASK.START_DATE, task.toTimestamp(task.getStartDate()))
-			.set(TASK.END_DATE,task.toTimestamp(task.getEndDate()))
-			.set(TASK.DUE_DATE, task.toTimestamp(task.getDueDate()))
+			.set(TASK.START_DATE, AonDateUtils.toLocalDateTime(task.getStartDate()))
+			.set(TASK.END_DATE,AonDateUtils.toLocalDateTime(task.getEndDate()))
+			.set(TASK.DUE_DATE, AonDateUtils.toLocalDateTime(task.getDueDate()))
 			.set(TASK.PRIORITY, task.getPriority())
 			.set(TASK.STATUS, task.getStatus())
 			.set(TASK.PERCENT, task.getPercent())
@@ -630,7 +632,7 @@ public class TaskOldDAO {
 			.set(TASK.GTASKLIST_ID, task.getGtasklistId())
 			.set(TASK.PARENT, task.getParent())
 			.set(TASK.MODIFICATION_USER, task.getModificationUser())
-			.set(TASK.MODIFICATION_DATE, task.toTimestamp(task.getModificationDate()))
+			.set(TASK.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(task.getModificationDate()))
 			.where(TASK.ID.eq(task.getId())).execute();
 		return task;
 	}
@@ -645,7 +647,7 @@ public class TaskOldDAO {
 	public static TaskComment createTaskComment(AONContext ctx, TaskComment taskComment, Integer taskId) {
 		Integer id = ctx.getDslContext().insertInto(TASK_COMMENT, TASK_COMMENT.COMMENT, TASK_COMMENT.CREATION_DATE, TASK_COMMENT.DOMAIN, TASK_COMMENT.TASK, TASK_COMMENT.MODIFICATION_DATE,
 				TASK_COMMENT.CREATION_USER, TASK_COMMENT.MODIFICATION_USER)
-			.values(taskComment.getComment(), taskComment.toTimestamp(taskComment.getCreationDate()), taskComment.getDomain(), taskComment.getTask(), taskComment.toTimestamp(taskComment.getModificationDate()),
+			.values(taskComment.getComment(), AonDateUtils.toLocalDateTime(taskComment.getCreationDate()), taskComment.getDomain(), taskComment.getTask(), AonDateUtils.toLocalDateTime(taskComment.getModificationDate()),
 					taskComment.getCreationUser(), taskComment.getModificationUser())
 			.returning(TASK_COMMENT.ID).fetchOne().getId();
 		return taskComment.setId(id);	
@@ -655,7 +657,7 @@ public class TaskOldDAO {
 		return ctx.getDslContext().update(TASK_COMMENT)
 			.set(TASK_COMMENT.COMMENT, taskComment.getComment())
 			.set(TASK_COMMENT.MODIFICATION_USER, taskComment.getModificationUser())
-			.set(TASK_COMMENT.MODIFICATION_DATE, taskComment.toTimestamp(taskComment.getModificationDate()))
+			.set(TASK_COMMENT.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(taskComment.getModificationDate()))
 		.where(TASK_COMMENT.ID.eq(taskComment.getId()))
 		.returning().fetch().stream().map(new FullTaskCommentFiller()).findFirst().orElse(new TaskComment());
 	}
@@ -684,8 +686,8 @@ public class TaskOldDAO {
 	public static TaskEvent createTaskEvent(AONContext ctx, TaskEvent taskEvent, Integer taskId) {
 		Integer id = ctx.getDslContext().insertInto(TASK_EVENT, TASK_EVENT.EVENT, TASK_EVENT.CREATION_DATE, TASK_EVENT.DOMAIN, TASK_EVENT.TASK,
 				TASK_EVENT.CREATION_USER, TASK_EVENT.MODIFICATION_USER, TASK_EVENT.MODIFICATION_DATE)
-				.values(taskEvent.getEvent(), taskEvent.toTimestamp(taskEvent.getCreationDate()), taskEvent.getDomain(), taskEvent.getTask(),
-						taskEvent.getCreationUser(), taskEvent.getModificationUser(), taskEvent.toTimestamp(taskEvent.getModificationDate()))
+				.values(taskEvent.getEvent(), AonDateUtils.toLocalDateTime(taskEvent.getCreationDate()), taskEvent.getDomain(), taskEvent.getTask(),
+						taskEvent.getCreationUser(), taskEvent.getModificationUser(), AonDateUtils.toLocalDateTime(taskEvent.getModificationDate()))
 				.returning(TASK_EVENT.ID).fetchOne().getId();
 		return taskEvent.setId(id);
 	}
@@ -694,7 +696,7 @@ public class TaskOldDAO {
 		ctx.getDslContext().update(TASK_EVENT)
 			.set(TASK_EVENT.EVENT, taskEvent.getEvent())
 			.set(TASK_EVENT.MODIFICATION_USER, taskEvent.getModificationUser())
-			.set(TASK_EVENT.MODIFICATION_DATE, taskEvent.toTimestamp(taskEvent.getModificationDate()))
+			.set(TASK_EVENT.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(taskEvent.getModificationDate()))
 			.where(TASK_EVENT.ID.eq(taskEventId))
 		.execute();
 		return taskEvent;
@@ -892,8 +894,8 @@ public class TaskOldDAO {
 					.setActivityType(r.getActivityType())
 					.setComments(r.getComments())
 					.setDescription(r.getDescription())
-					.setDueDate(r.getDueDate())
-					.setEndDate(r.getEndDate())
+					.setDueDate(AonDateUtils.toDate(r.getDueDate()))
+					.setEndDate(AonDateUtils.toDate(r.getEndDate()))
 					.setGtaskId(r.getGtaskId())
 					.setGtasklistId(r.getGtasklistId())
 					.setPercent(r.getPercent())
@@ -904,15 +906,15 @@ public class TaskOldDAO {
 					.setSender(r.getSender())
 					.setSource(r.getSource())
 					.setSourceId(r.getSourceId())
-					.setStartDate(r.getStartDate())
+					.setStartDate(AonDateUtils.toDate(r.getStartDate()))
 					.setStatus(r.getStatus())
 					.setTaskHolder(r.getTaskHolder())
 					.setWorkgroup(r.getWorkgroup())
 					.setNumber(r.getNumber())
 					.setCreationUser(r.getCreationUser())
-					.setCreationDate(r.getCreationDate())
+					.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 					.setModificationUser(r.getModificationUser())
-					.setModificationDate(r.getModificationDate())
+					.setModificationDate(AonDateUtils.toDate(r.getModificationDate()))
 					.setParent(r.getParent());
 		}
 	}
@@ -985,9 +987,9 @@ public class TaskOldDAO {
 					.setSource(TaskSource.valueOf(r.getSource()))
 					.setSourceId(r.getSourceId())
 					.setCreationUser(r.getCreationUser())
-					.setCreationDate(r.getCreationDate())
+					.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 					.setModificationUser(r.getModificationUser())
-					.setModificationDate(r.getModificationDate());		
+					.setModificationDate(AonDateUtils.toDate(r.getModificationDate()));		
 		}
 	}
 	
@@ -999,9 +1001,9 @@ public class TaskOldDAO {
 					.setEvent(r.getEvent())
 					.setTask(r.getTask())
 					.setCreationUser(r.getCreationUser())
-					.setCreationDate(r.getCreationDate())
+					.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 					.setModificationUser(r.getModificationUser())
-					.setModificationDate(r.getModificationDate());
+					.setModificationDate(AonDateUtils.toDate(r.getModificationDate()));
 		}
 	}
 }

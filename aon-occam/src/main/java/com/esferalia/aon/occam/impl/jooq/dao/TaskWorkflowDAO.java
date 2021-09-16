@@ -14,6 +14,8 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
@@ -37,16 +39,16 @@ public class TaskWorkflowDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_WORKFLOW.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_WORKFLOW.DOMAIN);}
-		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_WORKFLOW.TASK);}
-		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_WORKFLOW.TASK_HOLDER);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK_WORKFLOW.TYPE);}
-		@Override public Property<String> getCommentProperty() {return new FilterDAO.PropertyDAO<String>(TASK_WORKFLOW.COMMENT);}		
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_WORKFLOW.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_WORKFLOW.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_WORKFLOW.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_WORKFLOW.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.DOMAIN);}
+		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.TASK);}
+		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.TASK_HOLDER);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.TYPE);}
+		@Override public Property<String> getCommentProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.COMMENT);}		
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK_WORKFLOW.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK_WORKFLOW.MODIFICATION_DATE);}
 
 	}
 	
@@ -93,21 +95,20 @@ public class TaskWorkflowDAO {
 	
 	public static void updateTaskWorkflowBetween(AONContext ctx, TaskWorkflowFilter filter) {
 		ctx.getDslContext().update(TASK_WORKFLOW)
-			.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.set(TASK_WORKFLOW.MODIFICATION_DATE, DSL.currentLocalDateTime())
 			.where(TASK_WORKFLOW_PROPERTIES.getConditions(filter))
 			.execute();
 	}
 	
 	
 	public static TaskWorkflow update(AONContext ctx, TaskWorkflow taskWorkflow) {
-		taskWorkflow.setModificationDate(AonDateUtils.toTimestamp(new Date()));
 		ctx.getDslContext().update(TASK_WORKFLOW)
 			.set(TASK_WORKFLOW.DOMAIN, taskWorkflow.getDomain())
 			.set(TASK_WORKFLOW.TASK, taskWorkflow.getTask())
 			.set(TASK_WORKFLOW.TASK_HOLDER, taskWorkflow.getTaskHolder().getId())
 			.set(TASK_WORKFLOW.TYPE, taskWorkflow.getType().value())	
 			.set(TASK_WORKFLOW.COMMENT, taskWorkflow.getComment())
-			.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
+			.set(TASK_WORKFLOW.MODIFICATION_DATE, DSL.currentLocalDateTime())
 			.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
 			.where(TASK_WORKFLOW.ID.eq(taskWorkflow.getId()))
 			.execute();
@@ -121,7 +122,7 @@ public class TaskWorkflowDAO {
 				.set(TASK_WORKFLOW.TASK_HOLDER, taskWorkflow.getTaskHolder().getId())
 				.set(TASK_WORKFLOW.TYPE, taskWorkflow.getType().value())	
 				.set(TASK_WORKFLOW.COMMENT, taskWorkflow.getComment())
-				.set(TASK_WORKFLOW.CREATION_DATE, AonDateUtils.toTimestamp(new Date()))
+				.set(TASK_WORKFLOW.CREATION_DATE, DSL.currentLocalDateTime())
 //				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
 				.set(TASK_WORKFLOW.CREATION_USER, ctx.getUser())
 				.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
@@ -155,9 +156,9 @@ public class TaskWorkflowDAO {
 				.setTaskHolder(TaskHolderFiller.build(r, REGISTRY))
 				.setType(TaskWorkflowType.safeValueOf(r.getValue(TASK_WORKFLOW.TYPE)))
 				.setComment(r.getValue(TASK_WORKFLOW.COMMENT))
-				.setCreationDate(r.getValue(TASK_WORKFLOW.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(r.getValue(TASK_WORKFLOW.CREATION_DATE)))
 				.setCreationUser(r.getValue(TASK_WORKFLOW.CREATION_USER))
-				.setModificationDate(r.getValue(TASK_WORKFLOW.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(r.getValue(TASK_WORKFLOW.MODIFICATION_DATE)))
 				.setModificationUser(r.getValue(TASK_WORKFLOW.MODIFICATION_USER));
 		}
 	}

@@ -16,6 +16,7 @@ import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -190,7 +191,7 @@ public class AttachmentDAO {
 	}
 	
 	public static Attach getRattachWithoutData(AONContext ctx, Condition condition){
-		Record7< Byte, Byte, String, Integer, String, java.sql.Date, Byte> record = ctx.getDslContext()
+		Record7< Byte, Byte, String, Integer, String, LocalDate, Byte> record = ctx.getDslContext()
 			.select(RATTACH.MIMETYPE, RATTACH.TYPE, RATTACH.DRIVE_ID,
 					RATTACH.ID, RATTACH.DESCRIPTION, RATTACH.ATTACH_DATE,
 					RATTACH.SECURITY_LEVEL)
@@ -205,8 +206,8 @@ public class AttachmentDAO {
 		if(record.value3() != null) rattach.setDriveId(record.value3());
 		if(record.value4() != null) rattach.setId(record.value4());
 		if(record.value5() != null) rattach.setDescription(record.value5());
-		if(record.value6() != null) rattach.setDate(record.value6());
-		if(record.value7() != null) rattach.setConfidential(record.value7().equals(1)?true:false);
+		if(record.value6() != null) rattach.setDate(AonDateUtils.toDate(record.value6()));
+		if(record.value7() != null) rattach.setConfidential(record.value7().equals(1));
 
 		return rattach;
 	}	 
@@ -248,7 +249,7 @@ public class AttachmentDAO {
 				CONTRACT_ATTACH.CONTRACT, CONTRACT_ATTACH.DATA, CONTRACT_ATTACH.DESCRIPTION,
 				CONTRACT_ATTACH.DOMAIN, CONTRACT_ATTACH.DRIVEID, CONTRACT_ATTACH.MIMETYPE,
 				CONTRACT_ATTACH.SCOPE, CONTRACT_ATTACH.SECURITY_LEVEL, CONTRACT_ATTACH.TYPE)
-		.values(new Timestamp(attach.getDate().getTime()), attach.getAttachModule(),
+		.values(new Timestamp(attach.getDate().getTime()).toLocalDateTime(), attach.getAttachModule(),
 				attach.getData(), attach.getDescription(), attach.getDomain().getId(),
 				attach.getDriveId(), (byte) attach.getMimeType().ordinal(),attach.getScope(),
 				attach.getConfidential()?(byte)1:(byte)0, (byte) attach.getType())
@@ -272,7 +273,7 @@ public class AttachmentDAO {
 				INVOICE_ATTACH.DATA, INVOICE_ATTACH.DESCRIPTION, INVOICE_ATTACH.DOMAIN,
 				INVOICE_ATTACH.DRIVEID, INVOICE_ATTACH.INVOICE, INVOICE_ATTACH.MIMETYPE,
 				INVOICE_ATTACH.TYPE)
-		.values(new Date(attach.getDate().getTime()), attach.getData(), attach.getDescription(),
+		.values(new Date(attach.getDate().getTime()).toLocalDate(), attach.getData(), attach.getDescription(),
 				attach.getDomain().getId(), attach.getDriveId(), attach.getAttachModule(),
 				(byte) attach.getMimeType().ordinal(), (byte) attach.getType())
 		.returning(INVOICE_ATTACH.ID).fetchOne().getId();
@@ -297,7 +298,7 @@ public class AttachmentDAO {
 				PAYROLL_BATCH_ATTACH.MIMETYPE, PAYROLL_BATCH_ATTACH.SCOPE,
 				PAYROLL_BATCH_ATTACH.SOURCE_BATCH, PAYROLL_BATCH_ATTACH.SOURCE_TYPE,
 				PAYROLL_BATCH_ATTACH.TYPE)
-		.values(new Date(attach.getDate().getTime()), attach.getData(), attach.getDescription(),
+		.values(AonDateUtils.toLocalDate(attach.getDate()), attach.getData(), attach.getDescription(),
 				attach.getDomain().getId(), attach.getDriveId(), (byte) attach.getMimeType().ordinal(),
 				attach.getScope(), attach.getSourceBatch(), (byte) attach.getSourceType(),
 				(byte) attach.getType())
@@ -313,13 +314,13 @@ public class AttachmentDAO {
 				PROJECT_ATTACH.SECURITY_LEVEL, PROJECT_ATTACH.ATTACH_TYPE,
 				PROJECT_ATTACH.CREATION_DATE, PROJECT_ATTACH.CREATION_USER,
 				PROJECT_ATTACH.MODIFICATION_DATE, PROJECT_ATTACH.MODIFICATION_USER)
-		.values(new Date(attach.getDate().getTime()), attach.getData(), 
+		.values(AonDateUtils.toLocalDate(attach.getDate()), attach.getData(), 
 				attach.getDescription(), attach.getDomain().getId(), 
 				attach.getDriveId(), (byte)attach.getMimeType().ordinal(),
 				attach.getAttachModule(), attach.getConfidential()?(byte)1:(byte)0,
 				attach.getType() != null ? attach.getType() : 0,
-				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser(),
-				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser())
+				AonDateUtils.toLocalDateTime(new java.util.Date()), ctx.getUser(),
+				AonDateUtils.toLocalDateTime(new java.util.Date()), ctx.getUser())
 		.returning(PROJECT_ATTACH.ID).fetchOne().getId();
 	}
 	
@@ -333,13 +334,13 @@ public class AttachmentDAO {
 				RATTACH.CREATION_DATE, RATTACH.CREATION_USER,
 				RATTACH.MODIFICATION_DATE, RATTACH.MODIFICATION_USER
 				)
-		.values(new Date(attach.getDate().getTime()), attach.getCategory(), 
+		.values(AonDateUtils.toLocalDate(attach.getDate()), attach.getCategory(), 
 				attach.getData(), attach.getDescription(), attach.getDomain().getId(), 
 				attach.getDparentId(), attach.getDriveId(), (byte)attach.getMimeType().ordinal(),
 				attach.getAttachModule(), attach.getScope(),
 				attach.getConfidential()?(byte)1:(byte)0, (byte) attach.getType(),
-				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser(),
-				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser())
+				AonDateUtils.toLocalDateTime(new java.util.Date()), ctx.getUser(),
+				AonDateUtils.toLocalDateTime(new java.util.Date()), ctx.getUser())
 		.returning(RATTACH.ID).fetchOne().getId();
 	}
 	
@@ -350,7 +351,7 @@ public class AttachmentDAO {
 				SEPE_BATCH_ATTACH.DRIVEID, SEPE_BATCH_ATTACH.MIMETYPE,SEPE_BATCH_ATTACH.SCOPE,
 				SEPE_BATCH_ATTACH.SOURCE_BATCH, SEPE_BATCH_ATTACH.SOURCE_TYPE,
 				SEPE_BATCH_ATTACH.TYPE)
-		.values(new Date(attach.getDate().getTime()), attach.getData(), attach.getDescription(),
+		.values(AonDateUtils.toLocalDate(attach.getDate()), attach.getData(), attach.getDescription(),
 				attach.getDomain().getId(), attach.getDriveId(), (byte) attach.getMimeType().ordinal(),
 				attach.getScope(), attach.getSourceBatch(), (byte) attach.getSourceType(),
 				(byte) attach.getType())
@@ -368,8 +369,8 @@ public class AttachmentDAO {
 			.values(attach.getDomain().getId(), attach.getData(), attach.getDriveId(),
 				(byte) attach.getMimeType().ordinal(), attach.getSourceBatch(), 
 				(byte) attach.getSourceType(), (byte) attach.getType(), attach.getDescription(),
-				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser(),
-				AonDateUtils.toTimestamp(new java.util.Date()), ctx.getUser())
+				AonDateUtils.toLocalDateTime(new java.util.Date()), ctx.getUser(),
+				AonDateUtils.toLocalDateTime(new java.util.Date()), ctx.getUser())
 		.returning(DATA_ATTACH.ID).fetchOne().getId();
 	}
 	
@@ -419,7 +420,7 @@ public class AttachmentDAO {
 	
 	public static void updateContractAttach(AONContext ctx, Attach attach){
 		ctx.getDslContext().update(CONTRACT_ATTACH)
-			.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(attach.getDate().getTime()))
+			.set(CONTRACT_ATTACH.ATTACH_DATE, AonDateUtils.toLocalDateTime(attach.getDate()))
 			.set(CONTRACT_ATTACH.CONTRACT, attach.getAttachModule())
 			.set(CONTRACT_ATTACH.DATA, attach.getData())
 			.set(CONTRACT_ATTACH.DESCRIPTION, attach.getDescription())
@@ -448,7 +449,7 @@ public class AttachmentDAO {
 
 	public static void updateInvoiceAttach(AONContext ctx, Attach attach){
 		ctx.getDslContext().update(INVOICE_ATTACH)
-			.set(INVOICE_ATTACH.ATTACH_DATE, new Date(attach.getDate().getTime()))
+			.set(INVOICE_ATTACH.ATTACH_DATE, AonDateUtils.toLocalDate(attach.getDate()))
 			.set(INVOICE_ATTACH.DATA, attach.getData())
 			.set(INVOICE_ATTACH.DESCRIPTION, attach.getDescription())
 			.set(INVOICE_ATTACH.DOMAIN, attach.getDomain().getId())
@@ -474,7 +475,7 @@ public class AttachmentDAO {
 
 	public static void updatePayrollAttach(AONContext ctx, Attach attach){
 		ctx.getDslContext().update(PAYROLL_BATCH_ATTACH)
-			.set(PAYROLL_BATCH_ATTACH.ATTACH_DATE,  new Date(attach.getDate().getTime()))
+			.set(PAYROLL_BATCH_ATTACH.ATTACH_DATE, AonDateUtils.toLocalDate(attach.getDate()))
 			.set(PAYROLL_BATCH_ATTACH.DATA, attach.getData())
 			.set(PAYROLL_BATCH_ATTACH.DESCRIPTION, attach.getDescription())
 			.set(PAYROLL_BATCH_ATTACH.DOMAIN, attach.getDomain().getId())
@@ -490,7 +491,7 @@ public class AttachmentDAO {
 
 	public static void updateProjectAttach(AONContext ctx, Attach attach){
 		ctx.getDslContext().update(PROJECT_ATTACH)
-				.set(PROJECT_ATTACH.ATTACH_DATE, new Date(attach.getDate().getTime()))
+				.set(PROJECT_ATTACH.ATTACH_DATE, AonDateUtils.toLocalDate(attach.getDate()))
 				.set(PROJECT_ATTACH.DATA, attach.getData())
 				.set(PROJECT_ATTACH.DESCRIPTION, attach.getDescription())
 				.set(PROJECT_ATTACH.DOMAIN, attach.getDomain().getId())
@@ -498,7 +499,7 @@ public class AttachmentDAO {
 				.set(PROJECT_ATTACH.MIMETYPE, (byte)attach.getMimeType().ordinal())
 				.set(PROJECT_ATTACH.PROJECT, attach.getAttachModule())
 				.set(PROJECT_ATTACH.SECURITY_LEVEL, attach.getConfidential()?(byte)1:(byte)0)
-				.set(PROJECT_ATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+				.set(PROJECT_ATTACH.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new java.util.Date()))
 				.set(PROJECT_ATTACH.MODIFICATION_USER, ctx.getUser())
 		.where(PROJECT_ATTACH.ID.eq(attach.getId()))
 		.execute();
@@ -506,7 +507,7 @@ public class AttachmentDAO {
 
 	public static void updateRegistryAttach(AONContext ctx, Attach attach){
 		ctx.getDslContext().update(RATTACH)
-			.set(RATTACH.ATTACH_DATE, new Date(attach.getDate()!= null ? attach.getDate().getTime() : new java.util.Date().getTime()))
+			.set(RATTACH.ATTACH_DATE, AonDateUtils.toLocalDate(attach.getDate()!= null ? attach.getDate() : new java.util.Date()))
 			.set(RATTACH.CATEGORY,attach.getCategory())
 			.set(RATTACH.DATA, attach.getData())
 			.set(RATTACH.DESCRIPTION, attach.getDescription())
@@ -518,7 +519,7 @@ public class AttachmentDAO {
 			.set(RATTACH.SCOPE, attach.getScope())
 			.set(RATTACH.SECURITY_LEVEL,attach.getConfidential()?(byte)1:(byte)0)
 			.set(RATTACH.TYPE, (byte) attach.getType())
-			.set(RATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+			.set(RATTACH.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new java.util.Date()))
 			.set(RATTACH.MODIFICATION_USER, ctx.getUser())
 		.where(RATTACH.ID.eq(attach.getId()))
 		.execute();
@@ -526,7 +527,7 @@ public class AttachmentDAO {
 
 	public static void updateSepeAttach(AONContext ctx, Attach attach){
 		ctx.getDslContext().update(SEPE_BATCH_ATTACH)
-			.set(SEPE_BATCH_ATTACH.ATTACH_DATE, new Date(attach.getDate().getTime()))
+			.set(SEPE_BATCH_ATTACH.ATTACH_DATE, AonDateUtils.toLocalDate(attach.getDate()))
 			.set(SEPE_BATCH_ATTACH.DATA, attach.getData())
 			.set(SEPE_BATCH_ATTACH.DESCRIPTION, attach.getDescription())
 			.set(SEPE_BATCH_ATTACH.DOMAIN, attach.getDomain().getId())
@@ -594,7 +595,7 @@ public class AttachmentDAO {
 		public static void updateProjectAttachData(AONContext ctx, Attach attach){
 			ctx.getDslContext().update(PROJECT_ATTACH)
 					.set(PROJECT_ATTACH.DATA, attach.getData())
-					.set(PROJECT_ATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+					.set(PROJECT_ATTACH.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new java.util.Date()))
 					.set(PROJECT_ATTACH.MODIFICATION_USER, ctx.getUser())
 			.where(PROJECT_ATTACH.ID.eq(attach.getId()))
 			.execute();
@@ -661,7 +662,7 @@ public class AttachmentDAO {
 			public static void updateProjectAttachDriveId(AONContext ctx, Integer attachId, String driveId){
 				ctx.getDslContext().update(PROJECT_ATTACH)
 						.set(PROJECT_ATTACH.DRIVEID, driveId)
-						.set(PROJECT_ATTACH.MODIFICATION_DATE, AonDateUtils.toTimestamp(new java.util.Date()))
+						.set(PROJECT_ATTACH.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new java.util.Date()))
 						.set(PROJECT_ATTACH.MODIFICATION_USER, ctx.getUser())
 				.where(PROJECT_ATTACH.ID.eq(attachId))
 				.execute();
@@ -826,22 +827,21 @@ public class AttachmentDAO {
 							.setCategory(r.getCategory())
 							.setFullCategory(AON.getCategory(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getCategory()))
 							.setConfidential(r.getSecurityLevel() == 1)
-							.setCreationDate(r.getCreationDate())
+							.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 							.setCreationUser(r.getCreationUser())
 							.setData(r.getData())
-							.setDate(r.getAttachDate())
+							.setDate(AonDateUtils.toDate(r.getAttachDate()))
 							.setDescription(r.getDescription())
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDparentId(r.getDparentId())
 							.setDriveId(r.getDriveId())
 							.setId(r.getId())
 							.setMimeType(r.getMimetype()!= null ? MimeType.values()[r.getMimetype()] : MimeType.OCTECT_STREAM)
-							.setModificationDate(r.getModificationDate())
+							.setModificationDate(AonDateUtils.toDate(r.getModificationDate()))
 							.setModificationUser(r.getModificationUser())
 							.setScope(r.getScope())
 							.setFullScope(AON.getScope(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getScope()))
-							.setType(r.getType())
-							;			
+							.setType(r.getType());			
 		}
 	}
 	
@@ -859,17 +859,17 @@ public class AttachmentDAO {
 							.setCategory(r.getCategory())
 						//	.setFullCategory(AON.getCategory(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getCategory()))
 							.setConfidential(r.getSecurityLevel() == 1)
-							.setCreationDate(r.getCreationDate())
+							.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 							.setCreationUser(r.getCreationUser())
 							.setData(r.getData())
-							.setDate(r.getAttachDate())
+							.setDate(AonDateUtils.toDate(r.getAttachDate()))
 							.setDescription(r.getDescription())
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDparentId(r.getDparentId())
 							.setDriveId(r.getDriveId())
 							.setId(r.getId())
 							.setMimeType(r.getMimetype()!= null ? MimeType.values()[r.getMimetype()] : MimeType.OCTECT_STREAM)
-							.setModificationDate(r.getModificationDate())
+							.setModificationDate(AonDateUtils.toDate(r.getModificationDate()))
 							.setModificationUser(r.getModificationUser())
 							.setScope(r.getScope())
 						//	.setFullScope(AON.getScope(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getScope()))
@@ -889,7 +889,7 @@ public class AttachmentDAO {
 							.setAttachType(AttachType.CONTRACT)
 							.setConfidential(r.getSecurityLevel() == 1)
 							.setData(r.getData())
-							.setDate(r.getAttachDate())
+							.setDate(AonDateUtils.toDate(r.getAttachDate()))
 							.setDescription(r.getDescription())
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
@@ -911,7 +911,7 @@ public class AttachmentDAO {
 			return new Attach().setAttachModule(r.getInvoice())
 							.setAttachType(AttachType.INVOICE)
 							.setData(r.getData())
-							.setDate(r.getAttachDate())
+							.setDate(AonDateUtils.toDate(r.getAttachDate()))
 							.setDescription(r.getDescription())
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
@@ -970,7 +970,7 @@ public class AttachmentDAO {
 		public Attach apply(PayrollBatchAttachRecord r) {
 			return new Attach().setAttachType(AttachType.PAYROLL)
 							.setData(r.getData())
-							.setDate(r.getAttachDate())
+							.setDate(AonDateUtils.toDate(r.getAttachDate()))
 							.setDescription(r.getDescription())
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
@@ -994,16 +994,16 @@ public class AttachmentDAO {
 							.setAttachType(AttachType.PROJECT)
 							.setConfidential(r.getSecurityLevel() == 1)
 							.setData(r.getData())
-							.setDate(r.getAttachDate())
+							.setDate(AonDateUtils.toDate(r.getAttachDate()))
 							.setDescription(r.getDescription())
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
 							.setId(r.getId())
 							.setMimeType(r.getMimetype() != null ? MimeType.values()[r.getMimetype()] :  MimeType.OCTECT_STREAM)
 							.setType(r.getAttachType())
-							.setCreationDate(r.getCreationDate())
+							.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 							.setCreationUser(r.getCreationUser())
-							.setModificationDate(r.getModificationDate())
+							.setModificationDate(AonDateUtils.toDate(r.getModificationDate()))
 							.setModificationUser(r.getModificationUser())
 							;	
 		}
@@ -1019,7 +1019,7 @@ public class AttachmentDAO {
 		public Attach apply(SepeBatchAttachRecord r) {
 			return new Attach().setAttachType(AttachType.SEPE)
 							.setData(r.getData())
-							.setDate(r.getAttachDate())
+							.setDate(AonDateUtils.toDate(r.getAttachDate()))
 							.setDescription(r.getDescription())
 							.setDomain(AON.getDomain(ctx.getDomainName(), r.getDomain(), ctx.getUser()))
 							.setDriveId(r.getDriveid())
@@ -1045,9 +1045,9 @@ public class AttachmentDAO {
 							.setSourceType(r.getValue(DATA_ATTACH.SOURCE))
 							.setType(r.getValue(DATA_ATTACH.TYPE))
 							.setDescription(r.getValue(DATA_ATTACH.DESCRIPTION))
-							.setCreationDate(r.getValue(DATA_ATTACH.CREATION_DATE))
+							.setCreationDate(AonDateUtils.toDate(r.getValue(DATA_ATTACH.CREATION_DATE)))
 							.setCreationUser(r.getValue(DATA_ATTACH.CREATION_USER))
-							.setModificationDate(r.getValue(DATA_ATTACH.MODIFICATION_DATE))
+							.setModificationDate(AonDateUtils.toDate(r.getValue(DATA_ATTACH.MODIFICATION_DATE)))
 							.setModificationUser(r.getValue(DATA_ATTACH.MODIFICATION_USER));
 		}
 	}

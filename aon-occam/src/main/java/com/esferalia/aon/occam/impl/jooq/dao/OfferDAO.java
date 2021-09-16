@@ -20,6 +20,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -55,6 +56,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO.SupplierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO.TargetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class OfferDAO {
 	
@@ -69,13 +71,13 @@ public class OfferDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 		
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(OFFER.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(OFFER.DOMAIN);}
-		@Override public Property<Date> getStartIssueDateProperty() {return new FilterDAO.DatePropertyDAO(OFFER.ISSUE_DATE);}
-		@Override public Property<Date> getEndIssueDateProperty() {return new FilterDAO.DatePropertyDAO(OFFER.ISSUE_DATE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(OFFER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(OFFER.SCOPE);}
-		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(OFFER.SECURITY_LEVEL);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(OFFER.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(OFFER.DOMAIN);}
+		@Override public Property<Date> getStartIssueDateProperty() {return new FilterDAO.LocalDatePropertyDAO(OFFER.ISSUE_DATE);}
+		@Override public Property<Date> getEndIssueDateProperty() {return new FilterDAO.LocalDatePropertyDAO(OFFER.ISSUE_DATE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(OFFER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SCOPE);}
+		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SECURITY_LEVEL);}
 
 		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SELLER);}
 		@Override public Property<Integer> getWorkplaceProperty() {return new FilterDAO.PropertyDAO<>(OFFER.WORKPLACE);}
@@ -86,7 +88,7 @@ public class OfferDAO {
 		@Override public Property<Integer> getSupplierProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SUPPLIER);}
 		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(OFFER.PROJECT);}
 
-		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.DatePropertyDAO(OFFER.ISSUE_DATE);}
+		@Override public Property<Date> getIssueDateProperty() {return new FilterDAO.LocalDatePropertyDAO(OFFER.ISSUE_DATE);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(OFFER.TYPE);}
 
 		@Override public Property<Byte> getSignedProperty() {return new FilterDAO.PropertyDAO<>(OFFER.SIGNED);}
@@ -154,8 +156,7 @@ public class OfferDAO {
 	
 	public static Offer updateOffer(AONContext ctx, Offer offer) {
 		ctx.checkWrite();
-		Timestamp modificationDate = null;
-		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		LocalDateTime modificationDate = AonDateUtils.toLocalDateTime(new java.util.Date());
 		
 		ctx.getDslContext()
 				.update(OFFER)
@@ -172,8 +173,7 @@ public class OfferDAO {
 	
 	public static Offer insertOffer(AONContext ctx, Offer offer) {
 		ctx.checkWrite();
-		Timestamp modificationDate = null;
-		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		LocalDateTime modificationDate = AonDateUtils.toLocalDateTime(new java.util.Date());
 		Byte signed = (byte)(offer.getSigned() != null && offer.getSigned() ? 1 : 0);
 		java.sql.Date issueDate = new java.sql.Date(offer.getIssueDate().getTime());
 		Integer id = ctx.getDslContext()
@@ -195,8 +195,7 @@ public class OfferDAO {
 	
 	public static OfferDetail insertOfferDetail(AONContext ctx, OfferDetail offerDetail) {
 		ctx.checkWrite();
-		Timestamp modificationDate = null;
-		modificationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		LocalDateTime modificationDate = AonDateUtils.toLocalDateTime(new java.util.Date());
 		Integer id = ctx.getDslContext().insertInto(OFFER_DETAIL, OFFER_DETAIL.DESCRIPTION, OFFER_DETAIL.DISCOUNT_EXPR, OFFER_DETAIL.DOMAIN,
 				OFFER_DETAIL.ITEM, OFFER_DETAIL.LINE, OFFER_DETAIL.OFFER, OFFER_DETAIL.PRICE, OFFER_DETAIL.QUANTITY, OFFER_DETAIL.STATUS,
 				OFFER_DETAIL.CREATION_DATE, OFFER_DETAIL.CREATION_USER, OFFER_DETAIL.MODIFICATION_DATE, OFFER_DETAIL.MODIFICATION_USER)
@@ -252,7 +251,7 @@ public class OfferDAO {
 					.setStatus(OfferStatus.safeValueOf(r.getValue(OFFER.STATUS)))
 					.setSeries(r.getValue(OFFER.SERIES))
 					.setNumber(r.getValue(OFFER.NUMBER))
-					.setIssueDate(r.getValue(OFFER.ISSUE_DATE))
+					.setIssueDate(AonDateUtils.toDate(r.getValue(OFFER.ISSUE_DATE)))
 					.setTarget(checkField(r, TARGET.REGISTRY)
 							? TargetFiller.build(r, TARGET_ALIAS)
 							: new Target().copy(new Registry().setId(r.getValue(OFFER.TARGET))))
@@ -283,9 +282,9 @@ public class OfferDAO {
 					.setDaysToFirstPayment(r.getValue(OFFER.DAYS_TO_FIRST_PYMNT).intValue())
 					.setDaysBetweenPayments(r.getValue(OFFER.DAYS_BETWEEN_PYMNTS).intValue())
 					.setPaymentDays(r.getValue(OFFER.PYMNT_DAYS))
-					.setCreationDate(r.getValue(OFFER.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(OFFER.CREATION_DATE)))
 					.setCreationUser(r.getValue(OFFER.CREATION_USER))
-					.setModificationDate(r.getValue(OFFER.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(OFFER.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(OFFER.MODIFICATION_USER));
 		}
 		

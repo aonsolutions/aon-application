@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -65,8 +66,8 @@ public class TaskDAO {
 		@Override public Property<Integer> getActivityTypeProperty() {return new FilterDAO.PropertyDAO<>(TASK.ACTIVITY_TYPE);}
 		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(TASK.COMMENTS);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(TASK.DESCRIPTION);}
-		@Override public Property<Timestamp> getDueDateProperty() {return new FilterDAO.PropertyDAO<>(TASK.DUE_DATE);}
-		@Override public Property<Timestamp> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(TASK.END_DATE);}
+		@Override public Property<Timestamp> getDueDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK.DUE_DATE);}
+		@Override public Property<Timestamp> getEndDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK.END_DATE);}
 		@Override public Property<String> getGtaskIdProperty() {return new FilterDAO.PropertyDAO<>(TASK.GTASK_ID);}
 		@Override public Property<String> getGtasklisIdProperty() {return new FilterDAO.PropertyDAO<>(TASK.GTASKLIST_ID);}
 		@Override public Property<Byte> getPercentProperty() {return new FilterDAO.PropertyDAO<>(TASK.PERCENT);}
@@ -77,19 +78,19 @@ public class TaskDAO {
 		@Override public Property<Integer> getSenderProperty() {return new FilterDAO.PropertyDAO<>(TASK.SENDER);}
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(TASK.SOURCE);}
 		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(TASK.SOURCE_ID);}
-		@Override public Property<Timestamp> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(TASK.START_DATE);}
+		@Override public Property<Timestamp> getStartDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK.START_DATE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(TASK.STATUS);}
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TASK.TASK_HOLDER);}
 		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<>(TASK.WORKGROUP);}
 		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(TASK.NUMBER);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK.MODIFICATION_DATE);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(TASK.CREATION_DATE);}
 		@Override public Property<Integer> getParentProperty() {return new FilterDAO.PropertyDAO<>(TASK.PARENT);}
 	}
 	
-	public static SelectSeekStep1<Record, Timestamp> select(AONContext ctx, TaskFilter filter){	
+	public static SelectSeekStep1<Record, LocalDateTime> select(AONContext ctx, TaskFilter filter){	
 		return ctx.getDslContext()
 				.select()
 				.from(TASK)
@@ -142,8 +143,8 @@ public class TaskDAO {
 		ctx.getDslContext().update(TASK)
 			.set(TASK.DESCRIPTION, task.getTitle())
 //			.set(TASK.START_DATE, AonDateUtils.toTimestamp(task.getStartDate()))
-			.set(TASK.END_DATE, AonDateUtils.toTimestamp(task.getEndDate()))
-			.set(TASK.DUE_DATE, AonDateUtils.toTimestamp(task.getDueDate()))
+			.set(TASK.END_DATE, AonDateUtils.toLocalDateTime(task.getEndDate()))
+			.set(TASK.DUE_DATE, AonDateUtils.toLocalDateTime(task.getDueDate()))
 			.set(TASK.PRIORITY, task.getPriority().value())
 			.set(TASK.STATUS, task.getStatus().value())
 			.set(TASK.PERCENT, task.getPercent())
@@ -161,7 +162,7 @@ public class TaskDAO {
 			.set(TASK.GTASKLIST_ID, task.getGtasklistId())
 			.set(TASK.PARENT, task.getParent())
 			.set(TASK.MODIFICATION_USER, ctx.getUser())
-			.set(TASK.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.set(TASK.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 			.where(TASK.ID.eq(task.getId())).execute();
 		ctx.log().debug("UPDATE TASK id: " + task.getId());		
 		return task;
@@ -291,8 +292,8 @@ public class TaskDAO {
 				.setActivityType(r.getValue(TASK.ACTIVITY_TYPE))
 				.setDescription(r.getValue(TASK.COMMENTS))
 				.setTitle(r.getValue(TASK.DESCRIPTION))
-				.setDueDate(r.getValue(TASK.DUE_DATE))
-				.setEndDate(r.getValue(TASK.END_DATE))
+				.setDueDate(AonDateUtils.toDate(r.getValue(TASK.DUE_DATE)))
+				.setEndDate(AonDateUtils.toDate(r.getValue(TASK.END_DATE)))
 				.setGtaskId(r.getValue(TASK.GTASK_ID))
 				.setGtasklistId(r.getValue(TASK.GTASKLIST_ID))
 				.setPercent(r.getValue(TASK.PERCENT))
@@ -302,16 +303,16 @@ public class TaskDAO {
 				.setSender((TaskHolder) new TaskHolder().setId(r.getValue(TASK.SENDER)))
 				.setSource(TaskSource.safeValueOf(r.getValue(TASK.SOURCE)))
 				.setSourceId(r.getValue(TASK.SOURCE_ID))
-				.setStartDate(r.getValue(TASK.START_DATE))
+				.setStartDate(AonDateUtils.toDate(r.getValue(TASK.START_DATE)))
 				.setStatus(TaskStatus.safeValueOf(r.getValue(TASK.STATUS)))
 				.setTaskHolder(r.getValue(TASK.TASK_HOLDER)!=null ?TaskHolderFiller.build(r, TH_REGISTRY) : new TaskHolder() )
 				.setRegistry(RegistryFiller.build(r, REGISTRY))
 				.setWorkgroup(WorkgroupFiller.build(r))
 				.setNumber(r.getValue(TASK.NUMBER))
 				.setCreationUser(r.getValue(TASK.CREATION_USER))
-				.setCreationDate(r.getValue(TASK.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(r.getValue(TASK.CREATION_DATE)))
 				.setModificationUser(r.getValue(TASK.MODIFICATION_USER))
-				.setModificationDate(r.getValue(TASK.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(r.getValue(TASK.MODIFICATION_DATE)))
 				.setParent(r.getValue(TASK.PARENT));
 		}
 	}

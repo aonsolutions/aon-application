@@ -4,6 +4,8 @@ import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
@@ -50,13 +52,13 @@ public class AccountPeriodDAO {
 
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_PERIOD.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT_PERIOD.DOMAIN);}
-		@Override public Property<Date> getInitiationDateProperty() {return new FilterDAO.DatePropertyDAO(ACCOUNT_PERIOD.INITIATION_DATE);}
-		@Override public Property<Date> getDeadlineProperty() {return new FilterDAO.DatePropertyDAO(ACCOUNT_PERIOD.DEADLINE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_PERIOD.STATUS);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_PERIOD.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_PERIOD.DOMAIN);}
+		@Override public Property<Date> getInitiationDateProperty() {return new FilterDAO.LocalDatePropertyDAO(ACCOUNT_PERIOD.INITIATION_DATE);}
+		@Override public Property<Date> getDeadlineProperty() {return new FilterDAO.LocalDatePropertyDAO(ACCOUNT_PERIOD.DEADLINE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT_PERIOD.STATUS);}
 	}
-	public static SelectConditionStep<Record10<Integer,Integer,String,java.sql.Date,java.sql.Date,Byte,String,Timestamp,String,Timestamp>> select(AONContext ctx, AccountPeriodFilter filter) {
+	public static SelectConditionStep<Record10<Integer,Integer,String, LocalDate, LocalDate, Byte,String,LocalDateTime,String, LocalDateTime>> select(AONContext ctx, AccountPeriodFilter filter) {
 		return ctx.getDslContext()
 			.select(ACCOUNT_PERIOD.ID,ACCOUNT_PERIOD.DOMAIN,ACCOUNT_PERIOD.NAME,ACCOUNT_PERIOD.INITIATION_DATE
 					,ACCOUNT_PERIOD.DEADLINE,ACCOUNT_PERIOD.STATUS,ACCOUNT_PERIOD.CREATION_USER
@@ -140,11 +142,11 @@ public class AccountPeriodDAO {
 		Integer id = ctx.getDslContext().insertInto(ACCOUNT_PERIOD)
 			.set(ACCOUNT_PERIOD.DOMAIN, ap.getDomain())
 			.set(ACCOUNT_PERIOD.NAME, ap.getName())
-			.set(ACCOUNT_PERIOD.INITIATION_DATE,AonDateUtils.toSql(ap.getInitiationDate()))
-			.set(ACCOUNT_PERIOD.DEADLINE,AonDateUtils.toSql(ap.getDeadline()))
+			.set(ACCOUNT_PERIOD.INITIATION_DATE,AonDateUtils.toLocalDate(ap.getInitiationDate()))
+			.set(ACCOUNT_PERIOD.DEADLINE,AonDateUtils.toLocalDate(ap.getDeadline()))
 			.set(ACCOUNT_PERIOD.STATUS,AonEnumUtils.getByte(ap.getStatus()))
 			.set(ACCOUNT_PERIOD.CREATION_USER,ctx.getUser())
-			.set(ACCOUNT_PERIOD.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(ACCOUNT_PERIOD.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.returning(ACCOUNT_PERIOD.ID)
 			.fetchOne()
 			.getValue(ACCOUNT_PERIOD.ID);
@@ -158,11 +160,11 @@ public class AccountPeriodDAO {
 		ctx.getDslContext().update(ACCOUNT_PERIOD)
 			.set(ACCOUNT_PERIOD.DOMAIN, ap.getDomain())
 			.set(ACCOUNT_PERIOD.NAME, ap.getName())
-			.set(ACCOUNT_PERIOD.INITIATION_DATE,AonDateUtils.toSql(ap.getInitiationDate()))
-			.set(ACCOUNT_PERIOD.DEADLINE,AonDateUtils.toSql(ap.getDeadline()))
+			.set(ACCOUNT_PERIOD.INITIATION_DATE,AonDateUtils.toLocalDate(ap.getInitiationDate()))
+			.set(ACCOUNT_PERIOD.DEADLINE,AonDateUtils.toLocalDate(ap.getDeadline()))
 			.set(ACCOUNT_PERIOD.STATUS,AonEnumUtils.getByte(ap.getStatus()))
 			.set(ACCOUNT_PERIOD.MODIFICATION_USER,ctx.getUser())
-			.set(ACCOUNT_PERIOD.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(ACCOUNT_PERIOD.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.where(ACCOUNT_PERIOD.ID.equal(ap.getId()))
 			.execute();
 		return ap; 
@@ -185,14 +187,13 @@ public class AccountPeriodDAO {
 				.setId( record.getValue(ACCOUNT_PERIOD.ID) )
 				.setDomain(record.getValue(ACCOUNT_PERIOD.DOMAIN) )
 				.setName(record.getValue(ACCOUNT_PERIOD.NAME) )
-				.setInitiationDate(record.getValue(ACCOUNT_PERIOD.INITIATION_DATE) )
-				.setDeadline(record.getValue(ACCOUNT_PERIOD.DEADLINE) )
+				.setInitiationDate(AonDateUtils.toDate(record.getValue(ACCOUNT_PERIOD.INITIATION_DATE)))
+				.setDeadline(AonDateUtils.toDate(record.getValue(ACCOUNT_PERIOD.DEADLINE)))
 				.setStatus(AccountPeriodStatus.safeValueOf(record.getValue(ACCOUNT_PERIOD.STATUS)))
 				.setCreationUser(record.getValue(ACCOUNT_PERIOD.CREATION_USER) )
-				.setCreationDate(record.getValue(ACCOUNT_PERIOD.CREATION_DATE) )
+				.setCreationDate(AonDateUtils.toDate(record.getValue(ACCOUNT_PERIOD.CREATION_DATE)))
 				.setModificationUser(record.getValue(ACCOUNT_PERIOD.MODIFICATION_USER) )
-				.setModificationDate(record.getValue(ACCOUNT_PERIOD.MODIFICATION_DATE) )
-				;
+				.setModificationDate(AonDateUtils.toDate(record.getValue(ACCOUNT_PERIOD.MODIFICATION_DATE)));
 		}
 	}
 	public static Date getMinDate(AONContext ctx) {
@@ -202,7 +203,7 @@ public class AccountPeriodDAO {
 			.where(ACCOUNT_PERIOD.DOMAIN.eq(ctx.getDomainId()))
 			.fetch()
 			.stream()
-			.map( rec -> rec.getValue(DSL.min(ACCOUNT_PERIOD.INITIATION_DATE)))
+			.map( rec -> AonDateUtils.toDate(rec.getValue(DSL.min(ACCOUNT_PERIOD.INITIATION_DATE))))
 			.findFirst()
 			.orElse( AonDateUtils.toSql(AonDateUtils.getYearFirstDay(new Date())));
 	}
@@ -213,7 +214,7 @@ public class AccountPeriodDAO {
 			.where(ACCOUNT_PERIOD.DOMAIN.eq(ctx.getDomainId()))
 			.fetch()
 			.stream()
-			.map( rec -> rec.getValue(DSL.max(ACCOUNT_PERIOD.DEADLINE)))
+			.map( rec -> AonDateUtils.toDate(rec.getValue(DSL.max(ACCOUNT_PERIOD.DEADLINE))))
 			.findFirst()
 			.orElse( AonDateUtils.toSql(AonDateUtils.getYearLastDay(new Date())));
 	}
@@ -222,7 +223,7 @@ public class AccountPeriodDAO {
 		ctx.getDslContext().update(ACCOUNT_PERIOD)
 			.set(ACCOUNT_PERIOD.STATUS, status.getValue() )
 			.set(ACCOUNT_PERIOD.MODIFICATION_USER,ctx.getUser())
-			.set(ACCOUNT_PERIOD.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(ACCOUNT_PERIOD.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime())
 			.where(ACCOUNT_PERIOD.ID.equal(period))
 			.execute();
 	}
@@ -302,7 +303,7 @@ public class AccountPeriodDAO {
 		 * No debe haber solapes entre las fechas de los diferentes periodos definidos.
 		 */
 		private static BiConsumer<AccountPeriod,AONContext> OVERLAP = (ap,ctx) -> {
-			SelectConditionStep<Record3<String, java.sql.Date, java.sql.Date>> select = 
+			SelectConditionStep<Record3<String, LocalDate, LocalDate>> select = 
 					ctx.getDslContext()
 					.select(ACCOUNT_PERIOD.NAME, ACCOUNT_PERIOD.INITIATION_DATE,
 							ACCOUNT_PERIOD.DEADLINE).from(ACCOUNT_PERIOD)
@@ -311,11 +312,11 @@ public class AccountPeriodDAO {
 			if (ap.getId() != null) {
 				select = select.and(ACCOUNT_PERIOD.ID.notEqual(ap.getId()));
 			}
-			Result<Record3<String, java.sql.Date, java.sql.Date>> result = select
+			Result<Record3<String, LocalDate, LocalDate>> result = select
 					.fetch();
-			for (Record3<String, java.sql.Date, java.sql.Date> record : result) {
-				Date pFrom = record.getValue(ACCOUNT_PERIOD.INITIATION_DATE);
-				Date pTo = record.getValue(ACCOUNT_PERIOD.DEADLINE);
+			for (Record3<String, LocalDate, LocalDate> record : result) {
+				Date pFrom = AonDateUtils.toDate(record.getValue(ACCOUNT_PERIOD.INITIATION_DATE));
+				Date pTo = AonDateUtils.toDate(record.getValue(ACCOUNT_PERIOD.DEADLINE));
 				if (ap.getInitiationDate().compareTo(pFrom) >= 0 
 					&& ap.getInitiationDate().compareTo(pTo) <= 0) {
 					throw new AonCoreException(

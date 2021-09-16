@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -150,7 +152,7 @@ public class DBConsults {
 					.on(REGISTRY.ID.eq(RATTACH.REGISTRY))
 					.where(RATTACH.TYPE.eq(RegistryAttachmentType.D2_DEPOSIT.value()))
 					.and(RATTACH.DOMAIN.eq(domainId))
-					.and(RATTACH.ATTACH_DATE.eq(AonDateUtils.toSql(calendar.getTime()))).
+					.and(RATTACH.ATTACH_DATE.eq(AonDateUtils.toSql(calendar.getTime()).toLocalDate())).
 					orderBy(RATTACH.ID).limit(1).fetchOne();
 			
 			byte[] data;
@@ -254,7 +256,7 @@ public class DBConsults {
 	public static Integer insertDeposit(AONContext ctx, String domain,
 			byte[] b, Integer domainId, String name, String document,
 			Integer registry, Integer year, String login) {
-
+		LocalDateTime now = AonDateUtils.toLocalDateTime(new java.util.Date());
 		return ctx
 				.getDslContext()
 				.insertInto(RATTACH, RATTACH.REGISTRY, RATTACH.DOMAIN,
@@ -268,12 +270,14 @@ public class DBConsults {
 						null,
 						(byte) com.esferalia.aon.occam.api.model.type.MimeType.XML
 								.ordinal(), name, (byte) 17, null, (byte) 0,
-						newAttachDate(year), b, null, null,login, new Timestamp(new java.util.Date().getTime())).returning(RATTACH.ID).fetchOne()
+						newAttachLocalDate(year), b, null, null,login, now).returning(RATTACH.ID).fetchOne()
 				.getId();
 
 	}
 
 	public static Integer insertDeposit(String domain, byte[] b, Integer domainId, Integer year, String login) {
+		LocalDateTime now = AonDateUtils.toLocalDateTime(new java.util.Date());
+
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
@@ -291,7 +295,7 @@ public class DBConsults {
 			ctx.getDslContext().delete(RATTACH)
 					.where(RATTACH.DOMAIN.eq(domainId))
 					.and(RATTACH.TYPE.eq((byte) 17))
-					.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year))).execute();
+					.and(RATTACH.ATTACH_DATE.eq(newAttachLocalDate(year))).execute();
 			return ctx
 					.getDslContext()
 					.insertInto(RATTACH, RATTACH.REGISTRY, RATTACH.DOMAIN,
@@ -306,8 +310,8 @@ public class DBConsults {
 							null,
 							(byte) com.esferalia.aon.occam.api.model.type.MimeType.XML
 									.ordinal(), name, (byte) 17, null,
-							(byte) 0, newAttachDate(year), b, null, null,
-							null, null, login, new Timestamp(new java.util.Date().getTime()))
+							(byte) 0, newAttachLocalDate(year), b, null, null,
+							null, null, login, now)
 					.returning(RATTACH.ID).fetchOne().getId();
 
 		} finally {
@@ -320,13 +324,14 @@ public class DBConsults {
 	public static void insertDeposit(String domain, byte[] b, Integer domainId,
 			String idstr, String login) {
 		Integer id = Integer.parseInt(idstr);
+		LocalDateTime now = AonDateUtils.toLocalDateTime(new java.util.Date());
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain, domainId);
 
 			ctx.getDslContext().update(RATTACH).set(RATTACH.DATA, b)
 					.set(RATTACH.MODIFICATION_USER, login)
-					.set(RATTACH.MODIFICATION_DATE, new Timestamp(new java.util.Date().getTime()))
+					.set(RATTACH.MODIFICATION_DATE, now)
 					.where(RATTACH.ID.eq(id)).execute();
 
 		} finally {
@@ -343,7 +348,7 @@ public class DBConsults {
 		
 			ctx.getDslContext().delete(RATTACH).where(RATTACH.DOMAIN.eq(domainId))
 			.and(RATTACH.TYPE.eq((byte)17))
-			.and(RATTACH.ATTACH_DATE.eq(newAttachDate(year))).execute();
+			.and(RATTACH.ATTACH_DATE.eq(newAttachLocalDate(year))).execute();
 			
 		}finally {
 			if (ctx != null) ctx.close();
@@ -377,6 +382,7 @@ public class DBConsults {
 					.where(ENTERPRISE.DOMAIN.eq(domainId))
 					.limit(1).fetchOne();
 			Integer registry = reg.value1();
+			LocalDateTime now = AonDateUtils.toLocalDateTime(new java.util.Date());
 
 			return ctx
 					.getDslContext()
@@ -393,8 +399,7 @@ public class DBConsults {
 							(byte) com.esferalia.aon.occam.api.model.type.MimeType.XML
 									.ordinal(), name, (byte) 17, null,
 							(byte) 0, null, b, null, null,
-							login, new Timestamp(new java.util.Date().getTime()),
-							login, new Timestamp(new java.util.Date().getTime()))
+							login, now, login, now)
 					.returning(RATTACH.ID).fetchOne().getId();
 
 		} finally {
@@ -563,7 +568,7 @@ public class DBConsults {
 							REGISTRY.ID.eq(ENTERPRISE.REGISTRY)))
 					.where(ENTERPRISE.DOMAIN.eq(domainId)).limit(1).fetchOne();
 			Integer registry = reg.value1();
-
+			LocalDateTime now = AonDateUtils.toLocalDateTime(new java.util.Date());
 			return ctx.getDslContext()
 					.insertInto(RATTACH, RATTACH.REGISTRY, RATTACH.DOMAIN,
 							RATTACH.CATEGORY, RATTACH.MIMETYPE,
@@ -574,7 +579,7 @@ public class DBConsults {
 					.values(registry, domainId,null,
 							mimetype, name, (byte) 7, null,
 							(byte) 0, null, data, null, null
-							, login, new Timestamp(new java.util.Date().getTime()))
+							, login, now)
 					.returning(RATTACH.ID).fetchOne().getId();
 
 		} finally {
@@ -599,6 +604,13 @@ public class DBConsults {
 		}
 	}
 	
+	public static LocalDate newAttachLocalDate(Integer year){
+		if(year != null){
+			return AonDateUtils.toLocalDate(AonDateUtils.getDate(year, 11, 31));
+		}
+		return AonDateUtils.toLocalDate(AonDateUtils.getDate(2015, 11, 31));
+	}
+	
 	public static Date newAttachDate(Integer year){
 		if(year != null){
 			return AonDateUtils.toSql(AonDateUtils.getDate(year, 11, 31));
@@ -615,7 +627,7 @@ public class DBConsults {
 						.where(RATTACH.DOMAIN.eq(domainId))
 						.and(RATTACH.TYPE.eq(RegistryAttachmentType.D2_DEPOSIT.value()))
 						.fetch().stream()
-						.map(r -> Integer.toString(AonDateUtils.getYear(r.getValue(RATTACH.ATTACH_DATE))))
+						.map(r -> Integer.toString(AonDateUtils.getYear(AonDateUtils.toDate(r.getValue(RATTACH.ATTACH_DATE)))))
 						.toArray();
 			return Arrays.copyOf(array, array.length, String[].class);
 		} finally{

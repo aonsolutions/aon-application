@@ -121,6 +121,7 @@ import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO.OfferDetailFiller;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -176,15 +177,15 @@ public class FillerDAO {
 			return new CarrierPacking()
 					.setCarrier(r.getValue(CARRIER_PACKING.CARRIER))
 					.setCarrierReference(r.getValue(CARRIER_PACKING.CARRIER_REFERENCE))
-					.setCreationDate(r.getValue(CARRIER_PACKING.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(CARRIER_PACKING.CREATION_DATE)))
 					.setCreationUser(r.getValue(CARRIER_PACKING.CREATION_USER))
-					.setDeliveryDate(r.getValue(CARRIER_PACKING.DELIVERY_DATE))
+					.setDeliveryDate(AonDateUtils.toDate(r.getValue(CARRIER_PACKING.DELIVERY_DATE)))
 					.setDomain(r.getValue(CARRIER_PACKING.DOMAIN))
 					.setDriverDocument(r.getValue(CARRIER_PACKING.DRIVER_DOCUMENT))
 					.setDriverName(r.getValue(CARRIER_PACKING.DRIVER_NAME))
 					.setId(r.getValue(CARRIER_PACKING.ID))
-					.setIssueDate(r.getValue(CARRIER_PACKING.ISSUE_DATE))
-					.setModificationDate(r.getValue(CARRIER_PACKING.MODIFICATION_DATE))
+					.setIssueDate(AonDateUtils.toDate(r.getValue(CARRIER_PACKING.ISSUE_DATE)))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(CARRIER_PACKING.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(CARRIER_PACKING.MODIFICATION_USER))
 					.setNumber(r.getValue(CARRIER_PACKING.NUMBER))
 					.setNumberPlate(r.getValue(CARRIER_PACKING.NUMBER_PLATE))
@@ -199,9 +200,8 @@ public class FillerDAO {
 					.setTare(r.getValue(CARRIER_PACKING.TARE))
 					.setAdditionalTare(r.getValue(CARRIER_PACKING.ADDITIONAL_TARE))
 					.setNet(r.getValue(CARRIER_PACKING.NET))						
-					.setReceptionStartDate(r.getValue(CARRIER_PACKING.RECEPTION_START_DATE))
-					.setReceptionEndDate(r.getValue(CARRIER_PACKING.RECEPTION_END_DATE))
-					;
+					.setReceptionStartDate(AonDateUtils.toDate(r.getValue(CARRIER_PACKING.RECEPTION_START_DATE)))
+					.setReceptionEndDate(AonDateUtils.toDate(r.getValue(CARRIER_PACKING.RECEPTION_END_DATE)));
 		}
 	}
 	
@@ -270,9 +270,9 @@ public class FillerDAO {
 					.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(SUPPLIER.TRANSACTION).intValue()))
 					.setStatus(RegistryStatus.safeValueOf(r.getValue(SUPPLIER.STATUS)))
 					.setPurchaseValuated(r.getValue(SUPPLIER.PURCHASE_VALUATED).shortValue() == 1)
-					.setCreationDate(r.getValue(SUPPLIER.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(SUPPLIER.CREATION_DATE)))
 					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
-					.setModificationDate(r.getValue(SUPPLIER.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(SUPPLIER.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(SUPPLIER.MODIFICATION_USER));				
 		}
 	}
@@ -295,9 +295,9 @@ public class FillerDAO {
 					.setVatAccrualPayment(r.getValue(CREDITOR.VAT_ACCRUAL_PAYMENT).shortValue() == 1)
 					.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(CREDITOR.TRANSACTION).intValue()))
 					.setStatus(RegistryStatus.safeValueOf(r.getValue(CREDITOR.STATUS)))
-					.setCreationDate(r.getValue(CREDITOR.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(CREDITOR.CREATION_DATE)))
 					.setCreationUser(r.getValue(CREDITOR.CREATION_USER))
-					.setModificationDate(r.getValue(CREDITOR.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(CREDITOR.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(CREDITOR.MODIFICATION_USER));				
 		}
 	}
@@ -317,7 +317,7 @@ public class FillerDAO {
 			person.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			person.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));
 			person.setDomain(new Domain().setId(r.getValue(PERSON.DOMAIN)));
-			return person.setBirthDate(r.getValue(PERSON.BIRTH_DATE))
+			return person.setBirthDate(AonDateUtils.toDate(r.getValue(PERSON.BIRTH_DATE)))
 					.setFirstName(r.getValue(PERSON.NAME))
 					.setFirstSurname(r.getValue(PERSON.FIRST_SURNAME))
 					.setSecondSurname(r.getValue(PERSON.SECOND_SURNAME))
@@ -347,13 +347,13 @@ public class FillerDAO {
 			customer.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			customer.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)));
 			return customer.setAccount(r.getValue(CUSTOMER.ACCOUNT))
-					.setCreationDate(r.getValue(CUSTOMER.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate((r.getValue(CUSTOMER.CREATION_DATE))))
 					.setCreationUser(r.getValue(CUSTOMER.CREATION_USER))
 					.setDeliveryGrouped(r.getValue(CUSTOMER.DELIVERY_GROUPED) == 1)
 					.setDeliveryValuated(r.getValue(CUSTOMER.DELIVERY_VALUATED) == 1)
 					.setEInvoice(r.getValue(CUSTOMER.E_INVOICE) == 1)
 					.setInvoicingGroup(r.getValue(CUSTOMER.INVOICING_GROUP))
-					.setModificationDate(r.getValue(CUSTOMER.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(CUSTOMER.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(CUSTOMER.MODIFICATION_USER))
 					.setProjectGrouped(r.getValue(CUSTOMER.PROJECT_GROUPED) == 1)
 					.setScope(r.getValue(CUSTOMER.SCOPE))
@@ -375,7 +375,7 @@ public class FillerDAO {
 					.setDomain(r.getValue(RNOTE.DOMAIN))
 					.setComments(r.getValue(RNOTE.COMMENTS))
 					.setDescription(r.getValue(RNOTE.DESCRIPTION))
-					.setNoteDate(r.getValue(RNOTE.NOTE_DATE))
+					.setNoteDate(AonDateUtils.toDate(r.getValue(RNOTE.NOTE_DATE)))
 					.setNoteType(r.getValue(RNOTE.NOTE_TYPE))
 					.setRegistry(r.getValue(RNOTE.REGISTRY))
 					.setSecurityLevel(r.getValue(RNOTE.SECURITY_LEVEL));
@@ -465,7 +465,7 @@ public class FillerDAO {
 			detail.setProductName(r.getValue(PRODUCT.NAME));
 			detail.setItem2(new OldItem().setId(r.getValue(ITEM.ID))
 				.setBarcode(r.getValue(ITEM.BARCODE))
-				.setCreationDate(r.getValue(ITEM.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(ITEM.CREATION_DATE))))
 				.setCreationUser(r.getValue(ITEM.CREATION_USER))
 				.setDescription(r.getValue(ITEM.DESCRIPTION))
 				.setDetail(r.getValue(ITEM.DETAIL))
@@ -475,7 +475,7 @@ public class FillerDAO {
 				.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
 				.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
 				.setInternet(r.getValue(ITEM.INTERNET) == 1)
-				.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(ITEM.MODIFICATION_DATE))))
 				.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
 				.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
 				.setPackUnits(r.getValue(ITEM.PACK_UNITS).doubleValue())
@@ -484,7 +484,7 @@ public class FillerDAO {
 				.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
 				.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
 				.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
-				.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
+				.setSerialDate(AonDateUtils.toSql(AonDateUtils.toDate(r.getValue(ITEM.SERIAL_DATE))))
 				.setStatus(r.getValue(ITEM.STATUS))
 				.setProduct(new OldProduct().setId(r.getValue(PRODUCT.ID))
 					.setName(r.getValue(PRODUCT.NAME))
@@ -492,13 +492,13 @@ public class FillerDAO {
 					.setCode(r.getValue(PRODUCT.CODE))
 					.setComposition(r.getValue(PRODUCT.COMPOSITION) == 1)
 					.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE) == 1)
-					.setCreationDate(r.getValue(PRODUCT.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(PRODUCT.CREATION_DATE)))
 					.setCreationUser(r.getValue(PRODUCT.CREATION_USER))
 					.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE) == 1)
 					.setKind(r.getValue(PRODUCT.KIND))
 					.setLotable(r.getValue(PRODUCT.LOTABLE) == 1)
 					.setManufactured(r.getValue(PRODUCT.MANUFACTURED))
-					.setModificationDate(r.getValue(PRODUCT.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(PRODUCT.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(PRODUCT.MODIFICATION_USER))
 					.setPackaged(r.getValue(PRODUCT.PACKAGED) == 1)
 					.setPurchaseAccount(r.getValue(PRODUCT.PURCHASE_ACCOUNT))
@@ -520,7 +520,8 @@ public class FillerDAO {
 							.setId(r.getValue(DELIVERY.PROJECT)))
 					.setSeries(r.getValue(DELIVERY.SERIES)).setNumber(r.getValue(DELIVERY.NUMBER))
 					.setCustomer(r.getValue(DELIVERY.CUSTOMER)).setAddress(r.getValue(DELIVERY.ADDRESS))
-					.setIssueTime(r.getValue(DELIVERY.ISSUE_TIME)).setPayMethod(r.getValue(DELIVERY.PAY_METHOD))
+					.setIssueTime(AonDateUtils.toDate(r.getValue(DELIVERY.ISSUE_TIME)))
+					.setPayMethod(r.getValue(DELIVERY.PAY_METHOD))
 					.setSecurityLevel(r.getValue(DELIVERY.SECURITY_LEVEL))
 					.setStatus(DeliveryStatus.safeValueOf(r.getValue(DELIVERY.STATUS)))
 					.setComments(r.getValue(DELIVERY.COMMENTS)).setRemarks(r.getValue(DELIVERY.REMARKS))
@@ -547,10 +548,10 @@ public class FillerDAO {
 					.setShippingPeriod(r.getValue(DELIVERY.SHIPPING_PERIOD))
 					.setTrackingNumber(r.getValue(DELIVERY.TRACKING_NUMBER))
 					.setShippingStatus(r.getValue(DELIVERY.SHIPPING_STATUS))
-					.setStatusModificationDate(r.getValue(DELIVERY.STATUS_MODIFICATION_DATE))
-					.setCreationDate(r.getValue(DELIVERY.CREATION_DATE))
+					.setStatusModificationDate(AonDateUtils.toDate(r.getValue(DELIVERY.STATUS_MODIFICATION_DATE)))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(DELIVERY.CREATION_DATE)))
 					.setCreationUser(r.getValue(DELIVERY.CREATION_USER))
-					.setModificationDate(r.getValue(DELIVERY.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(DELIVERY.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(DELIVERY.MODIFICATION_USER));
 		}
 	}
@@ -578,9 +579,9 @@ public class FillerDAO {
 					.setPrice(r.getValue(DELIVERY_DETAIL.PRICE))
 					.setDiscountExpression(r.getValue(DELIVERY_DETAIL.DISCOUNT_EXPR))
 					.setSalesDetail(r.getValue(DELIVERY_DETAIL.SALES_DETAIL))
-					.setCreationDate(r.getValue(DELIVERY_DETAIL.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(DELIVERY_DETAIL.CREATION_DATE)))
 					.setCreationUser(r.getValue(DELIVERY_DETAIL.CREATION_USER))
-					.setModificationDate(r.getValue(DELIVERY_DETAIL.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(DELIVERY_DETAIL.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(DELIVERY_DETAIL.MODIFICATION_USER));
 		}
 	}
@@ -600,14 +601,14 @@ public class FillerDAO {
 		public RecordData apply(Record r) {
 			return new RecordData()
 					.setAttach(r.getValue(RECORD_DATA.ATTACH))
-					.setCreationDate(r.getValue(RECORD_DATA.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(RECORD_DATA.CREATION_DATE)))
 					.setDescription(r.getValue(RECORD_DATA.DESCRIPTION))
 					.setDomain(r.getValue(RECORD_DATA.DOMAIN))
 					.setId(r.getValue(RECORD_DATA.ID))
 					.setNotary(r.getValue(RECORD_DATA.NOTARY))
 					.setNumber(r.getValue(RECORD_DATA.NUMBER))
 					.setPage(r.getValue(RECORD_DATA.PAGE))
-					.setRecordDate(r.getValue(RECORD_DATA.RECORD_DATE))
+					.setRecordDate(AonDateUtils.toDate(r.getValue(RECORD_DATA.RECORD_DATE)))
 					.setRegistration(r.getValue(RECORD_DATA.REGISTRATION))
 					.setRegistry(r.getValue(RECORD_DATA.REGISTRY))
 					.setSection(r.getValue(RECORD_DATA.SECTION))
@@ -673,9 +674,9 @@ public class FillerDAO {
 		@Override
 		public Income apply(Record r) {
 			Income income = new Income();
-			income.setCreationDate(r.getValue(INCOME.CREATION_DATE));
+			income.setCreationDate(AonDateUtils.toDate(r.getValue(INCOME.CREATION_DATE)));
 			income.setCreationUser(r.getValue(INCOME.CREATION_USER));
-			income.setModificationDate(r.getValue(INCOME.MODIFICATION_DATE));
+			income.setModificationDate(AonDateUtils.toDate(r.getValue(INCOME.MODIFICATION_DATE)));
 			income.setModificationUser(r.getValue(INCOME.MODIFICATION_USER));
 			return income
 					.setAddress(r.getValue(INCOME.ADDRESS))
@@ -688,7 +689,7 @@ public class FillerDAO {
 					.setDaysToFirstPymnt(r.getValue(INCOME.DAYS_TO_FIRST_PYMNT) != null ? r.getValue(INCOME.DAYS_TO_FIRST_PYMNT).intValue() : null)
 					.setDomain(r.getValue(INCOME.DOMAIN))
 					.setId(r.getValue(INCOME.ID))
-					.setIssueDate(r.getValue(INCOME.ISSUE_TIME))
+					.setIssueDate(AonDateUtils.toDate(r.getValue(INCOME.ISSUE_TIME)))
 					.setNumberOfPymnts(r.getValue(INCOME.NUMBER_OF_PYMNTS) != null ? r.getValue(INCOME.NUMBER_OF_PYMNTS).intValue() : null)
 					.setPayMethod(r.getValue(INCOME.PAY_METHOD))
 					.setProject(new Project().setId(r.getValue(INCOME.PROJECT)))
@@ -707,9 +708,9 @@ public class FillerDAO {
 		@Override
 		public Income apply(Record r) {
 			Income income = new Income();
-			income.setCreationDate(r.getValue(INCOME.CREATION_DATE));
+			income.setCreationDate(AonDateUtils.toDate(r.getValue(INCOME.CREATION_DATE)));
 			income.setCreationUser(r.getValue(INCOME.CREATION_USER));
-			income.setModificationDate(r.getValue(INCOME.MODIFICATION_DATE));
+			income.setModificationDate(AonDateUtils.toDate(r.getValue(INCOME.MODIFICATION_DATE)));
 			income.setModificationUser(r.getValue(INCOME.MODIFICATION_USER));
 			return income
 					.setAddress(r.getValue(INCOME.ADDRESS))
@@ -722,7 +723,7 @@ public class FillerDAO {
 					.setDaysToFirstPymnt(r.getValue(INCOME.DAYS_TO_FIRST_PYMNT) != null ? r.getValue(INCOME.DAYS_TO_FIRST_PYMNT).intValue() : null)
 					.setDomain(r.getValue(INCOME.DOMAIN))
 					.setId(r.getValue(INCOME.ID))
-					.setIssueDate(r.getValue(INCOME.ISSUE_TIME))
+					.setIssueDate(AonDateUtils.toDate(r.getValue(INCOME.ISSUE_TIME)))
 					.setNumberOfPymnts(r.getValue(INCOME.NUMBER_OF_PYMNTS) != null ? r.getValue(INCOME.NUMBER_OF_PYMNTS).intValue() : null)
 					.setPayMethod(r.getValue(INCOME.PAY_METHOD))
 					.setProject(new Project().setId(r.getValue(INCOME.PROJECT)))
@@ -743,9 +744,9 @@ public class FillerDAO {
 		@Override
 		public IncomeDetail apply(Record r) {
 			IncomeDetail incomeDetail = new IncomeDetail();
-			incomeDetail.setCreationDate(r.getValue(INCOME_DETAIL.CREATION_DATE));
+			incomeDetail.setCreationDate(AonDateUtils.toDate(r.getValue(INCOME_DETAIL.CREATION_DATE)));
 			incomeDetail.setCreationUser(r.getValue(INCOME_DETAIL.CREATION_USER));
-			incomeDetail.setModificationDate(r.getValue(INCOME_DETAIL.MODIFICATION_DATE));
+			incomeDetail.setModificationDate(AonDateUtils.toDate(r.getValue(INCOME_DETAIL.MODIFICATION_DATE)));
 			incomeDetail.setModificationUser(r.getValue(INCOME_DETAIL.MODIFICATION_USER));
 			return incomeDetail
 					.setDescription(r.getValue(INCOME_DETAIL.DESCRIPTION))
@@ -772,13 +773,13 @@ public class FillerDAO {
 		public DataResponse apply(Record r) {
 			return new DataResponse().setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
 					.setId(r.getValue(DATA_RESPONSE.ID))
-					.setResponseDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
+					.setResponseDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE)))
 					.setCode(r.getValue(DATA_RESPONSE.CODE))
 					.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
 					.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
-					.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE.CREATION_DATE)))
 					.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER))
-					.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER));
 		}
 	}
@@ -788,9 +789,9 @@ public class FillerDAO {
 		@Override
 		public DataResponseDetail apply(Record r) {
 			DataResponseDetail dataResponseDetail = new DataResponseDetail();
-			dataResponseDetail.setCreationDate(r.getValue(DATA_RESPONSE_DETAIL.CREATION_DATE));
+			dataResponseDetail.setCreationDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE_DETAIL.CREATION_DATE)));
 			dataResponseDetail.setCreationUser(r.getValue(DATA_RESPONSE_DETAIL.CREATION_USER));
-			dataResponseDetail.setModificationDate(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_DATE));
+			dataResponseDetail.setModificationDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_DATE)));
 			dataResponseDetail.setModificationUser(r.getValue(DATA_RESPONSE_DETAIL.MODIFICATION_USER));
 			return dataResponseDetail.setDomain(r.getValue(DATA_RESPONSE_DETAIL.DOMAIN))
 					.setId(r.getValue(DATA_RESPONSE_DETAIL.ID))
@@ -809,13 +810,13 @@ public class FillerDAO {
 					.setDomain(r.getValue(CONTRACT.DOMAIN))
 					.setPerson(r.getValue(CONTRACT.PERSON))
 					.setWorkplace(r.getValue(CONTRACT.WORKPLACE))
-					.setStartDate(r.getValue(CONTRACT.START_DATE))
-					.setEndDate(r.getValue(CONTRACT.END_DATE))
+					.setStartDate(AonDateUtils.toDate(r.getValue(CONTRACT.START_DATE)))
+					.setEndDate(AonDateUtils.toDate(r.getValue(CONTRACT.END_DATE)))
 					.setCalendar(r.getValue(CONTRACT.CALENDAR))
 					.setDescription(r.getValue(CONTRACT.DESCRIPTION))
 				//TODO	.setSepeStatus(ContractStatus.values()[r.getValue(CONTRACT.SEPE_STATUS)])
 					.setRegistration(r.getValue(CONTRACT.REGISTRATION))
-					.setSeniorityDate(r.getValue(CONTRACT.SENIORITY_DATE))
+					.setSeniorityDate(AonDateUtils.toDate(r.getValue(CONTRACT.SENIORITY_DATE)))
 					.setEnterpriseActivity(r.getValue(CONTRACT.ENTERPRISE_ACTIVITY))
 					.setSsRegime(SSRegimeType.safeValueOf(r.getValue(CONTRACT.SS_REGIME)))
 					.setAgreementLevel(r.getValue(CONTRACT.AGREEMENT_LEVEL))
@@ -840,8 +841,8 @@ public class FillerDAO {
 					.setName(r.getValue(CONTRACT_DATA.NAME))
 					.setContract(r.getValue(CONTRACT_DATA.CONTRACT))
 					.setExpression(r.getValue(CONTRACT_DATA.EXPRESSION))
-					.setStartDate(r.getValue(CONTRACT_DATA.START_DATE))
-					.setEndDate(r.getValue(CONTRACT_DATA.END_DATE));
+					.setStartDate(AonDateUtils.toDate(r.getValue(CONTRACT_DATA.START_DATE)))
+					.setEndDate(AonDateUtils.toDate(r.getValue(CONTRACT_DATA.END_DATE)));
 		}
 	}
 	
@@ -878,13 +879,13 @@ public class FillerDAO {
 					.setInventory(new Inventory().setId(r.getValue(INVENTORY_DETAIL.INVENTORY)).setDomain(r.getValue(INVENTORY_DETAIL.DOMAIN)))
 					.setCost(r.getValue(INVENTORY_DETAIL.COST))
 					.setActualQuantity(r.getValue(INVENTORY_DETAIL.ACTUAL_QUANTITY))
-					.setCreationDate(r.getValue(INVENTORY_DETAIL.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(INVENTORY_DETAIL.CREATION_DATE)))
 					.setCreationUser(r.getValue(INVENTORY_DETAIL.CREATION_USER))
 					.setDomain(r.getValue(INVENTORY_DETAIL.DOMAIN))
 					.setItem(
 						new OldItem().setId(r.getValue(ITEM.ID))
 							.setBarcode(r.getValue(ITEM.BARCODE))
-							.setCreationDate(r.getValue(ITEM.CREATION_DATE))
+							.setCreationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(ITEM.CREATION_DATE))))
 							.setCreationUser(r.getValue(ITEM.CREATION_USER))
 							.setDescription(r.getValue(ITEM.DESCRIPTION))
 							.setDetail(r.getValue(ITEM.DETAIL))
@@ -894,7 +895,7 @@ public class FillerDAO {
 							.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
 							.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
 							.setInternet(r.getValue(ITEM.INTERNET) == 1)
-							.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
+							.setModificationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(ITEM.MODIFICATION_DATE))))
 							.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
 							.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
 							.setPackUnits(r.getValue(ITEM.PACK_UNITS).doubleValue())
@@ -928,10 +929,10 @@ public class FillerDAO {
 							.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
 							.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
 							.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
-							.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
+							.setSerialDate(AonDateUtils.toSql(AonDateUtils.toDate(r.getValue(ITEM.SERIAL_DATE))))
 							.setStatus(r.getValue(ITEM.STATUS))
 					)
-					.setModificationDate(r.getValue(INVENTORY_DETAIL.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(r.getValue(INVENTORY_DETAIL.MODIFICATION_DATE)))
 					.setModificationUser(r.getValue(INVENTORY_DETAIL.MODIFICATION_USER))
 					.setRealQuantity(r.getValue(INVENTORY_DETAIL.REAL_QUANTITY));
 		}
@@ -951,7 +952,7 @@ public class FillerDAO {
 							? OfferDetailFiller.build(r)
 							: new OfferDetail().setId(r.getValue(OFFER_DETAIL_COMMISSION.OFFER_DETAIL)))
 					.setStatus(OfferDetailCommissionStatus.safeValueOf(r.getValue(OFFER_DETAIL_COMMISSION.STATUS)))
-					.setPayDate(r.getValue(OFFER_DETAIL_COMMISSION.PAY_DATE))
+					.setPayDate(AonDateUtils.toDate(r.getValue(OFFER_DETAIL_COMMISSION.PAY_DATE)))
 					.setCommission(r.getValue(OFFER_DETAIL_COMMISSION.COMMISSION))
 					.setAmount(r.getValue(OFFER_DETAIL_COMMISSION.AMOUNT));
 			
@@ -969,8 +970,8 @@ public class FillerDAO {
 				.setSeries(r.getValue(INVOICE.SERIES))
 				.setNumber(r.getValue(INVOICE.NUMBER))
 				.setReferenceCode(r.getValue(INVOICE.REFERENCE_CODE))
-				.setIssueDate(r.getValue(INVOICE.ISSUE_DATE))
-				.setTaxDate(r.getValue(INVOICE.TAX_DATE))
+				.setIssueDate(AonDateUtils.toDate(r.getValue(INVOICE.ISSUE_DATE)))
+				.setTaxDate(AonDateUtils.toDate(r.getValue(INVOICE.TAX_DATE)))
 				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,r.getValue(INVOICE.SECURITY_LEVEL)))
 				.setRegistry(r.getValue(INVOICE.REGISTRY))
 				.setRegistryDocument(r.getValue(INVOICE.RDOCUMENT))
@@ -1017,7 +1018,7 @@ public class FillerDAO {
 					.setDomain(r.getValue(INVOICE_DETAIL_COMMISSION.DOMAIN))
 					.setInvoiceDetail(id)
 					.setStatus(InvoiceDetailCommissionStatus.safeValueOf(r.getValue(INVOICE_DETAIL_COMMISSION.STATUS)))
-					.setPayDate(r.getValue(INVOICE_DETAIL_COMMISSION.PAY_DATE))
+					.setPayDate(AonDateUtils.toDate(r.getValue(INVOICE_DETAIL_COMMISSION.PAY_DATE)))
 					.setCommission(r.getValue(INVOICE_DETAIL_COMMISSION.COMMISSION))
 					.setAmount(r.getValue(INVOICE_DETAIL_COMMISSION.AMOUNT));
 		}
@@ -1072,8 +1073,8 @@ public class FillerDAO {
 					.setId(r.getValue(COMMISSION.ID))
 					.setDomain(r.getValue(COMMISSION.DOMAIN))
 					.setName(r.getValue(COMMISSION.NAME))
-					.setStartDate(r.getValue(COMMISSION.START_DATE))
-					.setEndDate(r.getValue(COMMISSION.END_DATE));
+					.setStartDate(AonDateUtils.toDate(r.getValue(COMMISSION.START_DATE)))
+					.setEndDate(AonDateUtils.toDate(r.getValue(COMMISSION.END_DATE)));
 		}
 	}
 	
@@ -1099,7 +1100,7 @@ public class FillerDAO {
 					.setName(r.getValue(MK_TEMPLATE.NAME))
 					.setActive(r.getValue(MK_TEMPLATE.ACTIVE) == 1)
 					.setBackgroundColor(r.getValue(MK_TEMPLATE.BACKGROUND_COLOR))
-					.setCreationDate(r.getValue(MK_TEMPLATE.CREATIONDATE))
+					.setCreationDate(AonDateUtils.toDate((r.getValue(MK_TEMPLATE.CREATIONDATE))))
 					.setFooterTemplate(r.getValue(MK_TEMPLATE.FOOTER_TEMPLATE))
 					.setHeaderTemplate(r.getValue(MK_TEMPLATE.HEADER_TEMPLATE))
 					.setScope(r.getValue(MK_TEMPLATE.SCOPE))
@@ -1127,13 +1128,13 @@ public class FillerDAO {
 					.setDataResponse(new DataResponse()
 							.setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
 							.setId(r.getValue(DATA_RESPONSE.ID))
-							.setResponseDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
+							.setResponseDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE)))
 							.setCode(r.getValue(DATA_RESPONSE.CODE))
 							.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
 							.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
-							.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
+							.setCreationDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE.CREATION_DATE)))
 							.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER))
-							.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE))
+							.setModificationDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE)))
 							.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER)))
 					.setSupplier(supplier)
 					.setProduct(r.getValue(INCOME_DETAIL.DESCRIPTION));
@@ -1150,13 +1151,13 @@ public class FillerDAO {
 				.setDataResponse(new DataResponse()
 							.setDomain(r.getValue(DATA_RESPONSE.DOMAIN))
 							.setId(r.getValue(DATA_RESPONSE.ID))
-							.setResponseDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE))
+							.setResponseDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE.RESPONSE_DATE)))
 							.setCode(r.getValue(DATA_RESPONSE.CODE))
 							.setSource(DataResponseSource.safeValueOf(r.getValue(DATA_RESPONSE.SOURCE)))
 							.setSourceId(r.getValue(DATA_RESPONSE.SOURCE_ID))
-							.setCreationDate(r.getValue(DATA_RESPONSE.CREATION_DATE))
+							.setCreationDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE.CREATION_DATE)))
 							.setCreationUser(r.getValue(DATA_RESPONSE.CREATION_USER))
-							.setModificationDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE))
+							.setModificationDate(AonDateUtils.toDate(r.getValue(DATA_RESPONSE.MODIFICATION_DATE)))
 							.setModificationUser(r.getValue(DATA_RESPONSE.MODIFICATION_USER)))
 				.setProduct(r.getValue(PRODUCT.NAME) + " #" + r.getValue(ITEM.SERIAL_NUMBER));
 			
@@ -1175,10 +1176,7 @@ public class FillerDAO {
 				.setItem(r.getValue(ITEM_ADDINFO.ITEM))
 				.setAttribute(r.getValue(ITEM_ADDINFO.ATTRIBUTE))
 				.setValue(r.getValue(ITEM_ADDINFO.VALUE))
-				.setDate(r.getValue(ITEM_ADDINFO.VALUE_DATE));
+				.setDate(AonDateUtils.toDate((r.getValue(ITEM_ADDINFO.VALUE_DATE))));
 		}
-	}
-
-	
-	
+	}	
 }

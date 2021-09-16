@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class ItemDAO {
@@ -56,7 +58,7 @@ public class ItemDAO {
 		@Override public Property<String> getDetail3Property() {return new FilterDAO.PropertyDAO<>(ITEM.DETAIL3);}
 		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(ITEM.DESCRIPTION);}
 		@Override public Property<String> getSerialNumberProperty() {return new FilterDAO.PropertyDAO<>(ITEM.SERIAL_NUMBER);}
-		@Override public Property<Date> getSerialDateProperty() {return new FilterDAO.PropertyDAO<>(ITEM.SERIAL_DATE);}
+		@Override public Property<java.util.Date> getSerialDateProperty() {return new FilterDAO.LocalDatePropertyDAO(ITEM.SERIAL_DATE);}
 		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PRICE);}
 		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(ITEM.STATUS);}
 		@Override public Property<Double> getExpensesPercentProperty() {return new FilterDAO.PropertyDAO<>(ITEM.EXPENSES_PERCENT);}
@@ -66,9 +68,9 @@ public class ItemDAO {
 		@Override public Property<Byte> getInternetProperty() {return new FilterDAO.PropertyDAO<>(ITEM.INTERNET);}
 		@Override public Property<String> getBarcodeProperty() {return new FilterDAO.PropertyDAO<>(ITEM.BARCODE);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(ITEM.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(ITEM.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ITEM.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(ITEM.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(ITEM.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ITEM.MODIFICATION_DATE);}
 		
 		@Override public Property<Integer> getPackFormatTagProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PACK_FORMAT_TAG);}
 		@Override public Property<Integer> getPackUnitsProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PACK_UNITS);}
@@ -118,7 +120,7 @@ public class ItemDAO {
 	}
 
 	public static Item insert(AONContext ctx, Item item) {
-		Timestamp now = new Timestamp(new java.util.Date().getTime());
+		LocalDateTime now = AonDateUtils.toLocalDateTime(new java.util.Date());
 		ctx.checkWrite();
 
 		//ProductValidation.validateItem(ctx, item);
@@ -132,7 +134,7 @@ public class ItemDAO {
 		.set(ITEM.DESCRIPTION, item.getDescription())
 		.set(ITEM.SERIAL_NUMBER, item.getSerialNumber())
 		.set(ITEM.SERIAL_DATE, item.getSerialDate() != null 
-				? new Date(item.getSerialDate().getTime()) : null)
+				? AonDateUtils.toLocalDate(item.getSerialDate()) : null)
 		.set(ITEM.PRICE, item.getPrice())
 		.set(ITEM.STATUS, item.getStatus() != null ? item.getStatus().value() : ProductStatus.ACTIVE.value())
 		.set(ITEM.EXPENSES_PERCENT, item.getExpensesPercent())
@@ -159,7 +161,7 @@ public class ItemDAO {
 	}
 	
 	public static Item update(AONContext ctx, Item item) {
-		Timestamp now = new Timestamp(new java.util.Date().getTime());
+		LocalDateTime now = AonDateUtils.toLocalDateTime(new java.util.Date());
 		ctx.checkWrite();
 
 		//ProductValidation.validateItem(ctx, item);
@@ -172,7 +174,7 @@ public class ItemDAO {
 		.set(ITEM.DETAIL3, item.getDetail3())
 		.set(ITEM.DESCRIPTION, item.getDescription())
 		.set(ITEM.SERIAL_NUMBER, item.getSerialNumber())
-		.set(ITEM.SERIAL_DATE, new Date(item.getSerialDate().getTime()))
+		.set(ITEM.SERIAL_DATE, AonDateUtils.toLocalDate(item.getSerialDate()))
 		.set(ITEM.PRICE, item.getPrice())
 		.set(ITEM.STATUS, item.getStatus().value())
 		.set(ITEM.EXPENSES_PERCENT, item.getExpensesPercent())
@@ -231,9 +233,9 @@ public class ItemDAO {
 				.setPackUnits(getInteger(r, ITEM.PACK_UNITS))
 				.setPackUnitsTag(new Tag().setId(getValue(r, ITEM.PACK_UNITS_TAG)))
 				.setPrice(getDouble(r, ITEM.PRICE))
-				.setCreationDate(getValue(r, PRODUCT.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(getValue(r, PRODUCT.CREATION_DATE)))
 				.setCreationUser(getValue(r, PRODUCT.CREATION_USER))
-				.setModificationDate(getValue(r, PRODUCT.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toDate(getValue(r, PRODUCT.MODIFICATION_DATE)))
 				.setModificationUser(getValue(r, PRODUCT.MODIFICATION_USER));
 		}
 	}

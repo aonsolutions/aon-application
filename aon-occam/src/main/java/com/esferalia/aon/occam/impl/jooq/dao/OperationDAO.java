@@ -130,8 +130,8 @@ public class OperationDAO extends FiscalModelDAO {
 		// Condicion de la fecha:
 		// Listado IRPF: Fecha del apunte
 		// Listado IVA: Fecha de IVA
-		Condition dateCondition = irpf ? ACCOUNT_ENTRY.ENTRY_DATE.between(AonDateUtils.toSql(dateFrom),AonDateUtils.toSql(dateTo)) :  // IRPF 
-    				              		 INVOICE.TAX_DATE.between(AonDateUtils.toSql(dateFrom),AonDateUtils.toSql(dateTo));    // IVA
+		Condition dateCondition = irpf ? ACCOUNT_ENTRY.ENTRY_DATE.between(AonDateUtils.toLocalDate(dateFrom),AonDateUtils.toLocalDate(dateTo)) :  // IRPF 
+    				              		 INVOICE.TAX_DATE.between(AonDateUtils.toLocalDate(dateFrom),AonDateUtils.toLocalDate(dateTo));    // IVA
 		
 		// Condicion de la tabla INVOICE_DETAIL_ACCOUNT
 		// Se pone de esta forma porque se ha detectado que esta tabla, por algunos fallos de grabacion de las
@@ -262,9 +262,9 @@ public class OperationDAO extends FiscalModelDAO {
 							}
 							
 							// Fecha IVA (se pone siempre, aunque sean apuntes sin factura, porque se usa en los Libros Registro AEAT)
-							Date taxDate = rec.getValue(INVOICE.TAX_DATE);
+							Date taxDate = AonDateUtils.toDate(rec.getValue(INVOICE.TAX_DATE));
 							if (taxDate == null)
-								taxDate = rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE);
+								taxDate = AonDateUtils.toDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE));
 							
 							// Tipo de Factura (Libros Registro AEAT)
 							String invoiceType = "SF";  // Apuntes sin factura
@@ -327,7 +327,7 @@ public class OperationDAO extends FiscalModelDAO {
 							
 							// Completar todos los datos
 							return new OperationBreakdown()
-									.setEntryDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+									.setEntryDate(AonDateUtils.toDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE)))
 									.setAccount(cuenta)
 									.setAccountDescription(rec.getValue(ACCOUNT.DESCRIPTION))
 									.setConcept(rec.getValue(ACCOUNT_ENTRY_DETAIL.CONCEPT))

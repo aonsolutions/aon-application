@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -34,6 +36,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.BrandDAO.BrandFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO.ProductCategoryFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class ProductDAO {
@@ -51,29 +54,29 @@ public class ProductDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.DOMAIN);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
-		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}
-		@Override public Property<Byte> getKindProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.KIND);}
-		@Override public Property<Integer> getBrandProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.BRAND);}
-		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.CATEGORY);}
-		@Override public Property<Byte> getInventoriableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.INVENTORIABLE);}
-		@Override public Property<Byte> getSerializableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.SERIALIZABLE);}
-		@Override public Property<Byte> getLotableProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.LOTABLE);}
-		@Override public Property<Byte> getStatusProperty() { return new FilterDAO.PropertyDAO<Byte>(PRODUCT.STATUS);}
-		@Override public Property<Integer> getVatProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.VAT);}
-		@Override public Property<Integer> getRetentionProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.RETENTION);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.TYPE);}
-		@Override public Property<Byte> getManufacturedProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.MANUFACTURED);}
-		@Override public Property<Byte> getCompositionProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.COMPOSITION);}
-		@Override public Property<Byte> getCompositionPriceProperty() {return new FilterDAO.PropertyDAO<Byte>(PRODUCT.COMPOSITION_PRICE);}
-		@Override public Property<Integer> getSalesAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.SALES_ACCOUNT);}
-		@Override public Property<Integer> getPurchaseAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.PURCHASE_ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.NAME);}
+		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CODE);}
+		@Override public Property<Byte> getKindProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.KIND);}
+		@Override public Property<Integer> getBrandProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.BRAND);}
+		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CATEGORY);}
+		@Override public Property<Byte> getInventoriableProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.INVENTORIABLE);}
+		@Override public Property<Byte> getSerializableProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.SERIALIZABLE);}
+		@Override public Property<Byte> getLotableProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.LOTABLE);}
+		@Override public Property<Byte> getStatusProperty() { return new FilterDAO.PropertyDAO<>(PRODUCT.STATUS);}
+		@Override public Property<Integer> getVatProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.VAT);}
+		@Override public Property<Integer> getRetentionProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.RETENTION);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.TYPE);}
+		@Override public Property<Byte> getManufacturedProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.MANUFACTURED);}
+		@Override public Property<Byte> getCompositionProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.COMPOSITION);}
+		@Override public Property<Byte> getCompositionPriceProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.COMPOSITION_PRICE);}
+		@Override public Property<Integer> getSalesAccountProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.SALES_ACCOUNT);}
+		@Override public Property<Integer> getPurchaseAccountProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.PURCHASE_ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PRODUCT.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.NAME);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PRODUCT.MODIFICATION_DATE);}
 	}
 
 	private static SelectConditionStep<Record> select(AONContext ctx, ProductFilter filter) {		
@@ -116,7 +119,6 @@ public class ProductDAO {
 	public static Product insert(AONContext ctx, Product product) {
 		ctx.checkWrite();
 		ProductValidation.insertValidate(ctx, product);
-		Timestamp now = new java.sql.Timestamp(new java.util.Date().getTime());
 		Integer id = ctx.getDslContext().insertInto(PRODUCT)
 		.set(PRODUCT.DOMAIN, product.getDomain().getId())
 		.set(PRODUCT.NAME, product.getName())
@@ -138,9 +140,9 @@ public class ProductDAO {
 		.set(PRODUCT.KIND, product.getKind().value())
 		.set(PRODUCT.PACKAGED, product.isPackaged() ? (byte) 1: 0)
 		.set(PRODUCT.CREATION_USER, ctx.getUser())
-		.set(PRODUCT.CREATION_DATE, now) 
+		.set(PRODUCT.CREATION_DATE, DSL.currentLocalDateTime()) 
 		.set(PRODUCT.MODIFICATION_USER, ctx.getUser())
-		.set(PRODUCT.MODIFICATION_DATE, now)
+		.set(PRODUCT.MODIFICATION_DATE, DSL.currentLocalDateTime())
 		.returning(PRODUCT.ID).fetchOne().getValue(PRODUCT.ID);
 		return product.setId(id);	
 	}
@@ -148,7 +150,6 @@ public class ProductDAO {
 	public static Product update(AONContext ctx, Product product) {
 		ctx.checkWrite();
 		//ProductValidation.validate(ctx, product);
-		Timestamp now = new java.sql.Timestamp(new java.util.Date().getTime());
 		
 		ctx.getDslContext().update(PRODUCT)
 		.set(PRODUCT.DOMAIN, product.getDomain().getId())
@@ -171,7 +172,7 @@ public class ProductDAO {
 		.set(PRODUCT.KIND, product.getKind().value())
 		.set(PRODUCT.PACKAGED, product.isPackaged() ? (byte) 1: 0)
 		.set(PRODUCT.MODIFICATION_USER, ctx.getUser())
-		.set(PRODUCT.MODIFICATION_DATE, now)
+		.set(PRODUCT.MODIFICATION_DATE, DSL.currentLocalDateTime())
 		.where(PRODUCT.ID.eq(product.getId()))
 		.execute();
 	
@@ -219,9 +220,9 @@ public class ProductDAO {
 					.setStatus(ProductStatus.safeValueOf(getValue(r, PRODUCT.STATUS)))
 					.setType(ProductType.safeValueOf(getValue(r, PRODUCT.TYPE)))
 					.setVat(new Tax().setType(TaxType.VAT).setId(getValue(r, PRODUCT.VAT)))
-					.setCreationDate(getValue(r, PRODUCT.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(getValue(r, PRODUCT.CREATION_DATE)))
 					.setCreationUser(getValue(r, PRODUCT.CREATION_USER))
-					.setModificationDate(getValue(r, PRODUCT.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(getValue(r, PRODUCT.MODIFICATION_DATE)))
 					.setModificationUser(getValue(r, PRODUCT.MODIFICATION_USER));
 		}		
 		

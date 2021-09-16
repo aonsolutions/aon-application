@@ -1,12 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.Tables.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Inventory.INVENTORY;
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
-import static com.esferalia.aon.jooq.Tables.PRODUCT;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
 import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.InventoryDetailPropertiesDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class InventoryDAO {
 	public static final InventoryDetailPropertiesDAO INVENTORY_DETAIL_PROPERTIES = new InventoryDetailPropertiesDAO();
@@ -49,7 +49,7 @@ public class InventoryDAO {
 		return ctx.getDslContext()
 			.select()
 			.from(INVENTORY)
-			.where(INVENTORY.INVENTORY_DATE.between(startDate, endDate))
+			.where(INVENTORY.INVENTORY_DATE.between(AonDateUtils.toLocalDate(startDate), AonDateUtils.toLocalDate(endDate)))
 			.and(INVENTORY.DOMAIN.eq(ctx.getDomainId()))
 			.fetchInto(INVENTORY)
 			.stream().map(new FullInventoryFiller())
@@ -72,12 +72,12 @@ public class InventoryDAO {
 		ctx.getDslContext().update(INVENTORY_DETAIL)
 		.set(INVENTORY_DETAIL.ACTUAL_QUANTITY, inventoryDetail.getActualQuantity())
 		.set(INVENTORY_DETAIL.COST, inventoryDetail.getCost())
-		.set(INVENTORY_DETAIL.CREATION_DATE, inventoryDetail.getCreationDate() != null ? new Timestamp(inventoryDetail.getCreationDate().getTime()) : null)
+		.set(INVENTORY_DETAIL.CREATION_DATE, inventoryDetail.getCreationDate() != null ? AonDateUtils.toLocalDateTime(inventoryDetail.getCreationDate()) : null)
 		.set(INVENTORY_DETAIL.CREATION_USER, inventoryDetail.getCreationUser())
 		.set(INVENTORY_DETAIL.DOMAIN, inventoryDetail.getDomain())
 		.set(INVENTORY_DETAIL.INVENTORY, inventoryDetail.getInventory().getId())
 		.set(INVENTORY_DETAIL.ITEM, inventoryDetail.getItem().getId())
-		.set(INVENTORY_DETAIL.MODIFICATION_DATE, inventoryDetail.getModificationDate() != null ? new Timestamp(inventoryDetail.getModificationDate().getTime()) : null)
+		.set(INVENTORY_DETAIL.MODIFICATION_DATE, inventoryDetail.getModificationDate() != null ? AonDateUtils.toLocalDateTime(inventoryDetail.getModificationDate()) : null)
 		.set(INVENTORY_DETAIL.MODIFICATION_USER, inventoryDetail.getModificationUser())
 		.set(INVENTORY_DETAIL.REAL_QUANTITY, inventoryDetail.getRealQuantity())
 		.where(INVENTORY_DETAIL.ID.eq(inventoryDetail.getId()))
@@ -94,14 +94,14 @@ public class InventoryDAO {
 	public static void updateInventory(AONContext ctx, Inventory inventory){
 		ctx.getDslContext().update(INVENTORY)
 		.set(INVENTORY.CREATION_DATE, inventory.getCreationDate() != null ?
-				new Timestamp(inventory.getCreationDate().getTime()) : null)
+				AonDateUtils.toLocalDateTime(inventory.getCreationDate()) : null)
 		.set(INVENTORY.CREATION_USER, inventory.getCreationUser())
 		.set(INVENTORY.DESCRIPTION, inventory.getDescription())
 		.set(INVENTORY.DOMAIN, inventory.getDomain())
 		.set(INVENTORY.INVENTORY_DATE, inventory.getInventoryDate() != null ?
-				new Date(inventory.getInventoryDate().getTime()) : null)
+				AonDateUtils.toLocalDate(inventory.getInventoryDate()) : null)
 		.set(INVENTORY.MODIFICATION_DATE, inventory.getModificationDate() != null ? 
-				new Timestamp(inventory.getModificationDate().getTime()) : null)
+				AonDateUtils.toLocalDateTime(inventory.getModificationDate()) : null)
 		.set(INVENTORY.MODIFICATION_USER, inventory.getModificationUser())
 		.set(INVENTORY.STATUS, inventory.getStatus().byteValue())
 		.set(INVENTORY.WAREHOUSE, inventory.getWarehouse())
@@ -130,11 +130,11 @@ public class InventoryDAO {
 					.setInventory(new Inventory().setId(r.getInventory()).setDomain(r.getDomain()))
 					.setCost(r.getCost())
 					.setActualQuantity(r.getActualQuantity())
-					.setCreationDate(r.getCreationDate())
+					.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 					.setCreationUser(r.getCreationUser())
 					.setDomain(r.getDomain())
 					.setItem(AON.getItem(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), r.getItem()))
-					.setModificationDate(r.getModificationDate())
+					.setModificationDate(AonDateUtils.toDate(r.getModificationDate()))
 					.setModificationUser(r.getModificationUser())
 					.setRealQuantity(r.getRealQuantity());
 		}
@@ -146,12 +146,12 @@ public class InventoryDAO {
 		@Override
 		public Inventory apply(InventoryRecord r) {
 			return new Inventory().setId(r.getId())
-					.setCreationDate(r.getCreationDate())
+					.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 					.setCreationUser(r.getCreationUser())
 					.setDescription(r.getDescription())
 					.setDomain(r.getDomain())
-					.setInventoryDate(r.getInventoryDate())
-					.setModificationDate(r.getModificationDate())
+					.setInventoryDate(AonDateUtils.toDate(r.getInventoryDate()))
+					.setModificationDate(AonDateUtils.toDate(r.getModificationDate()))
 					.setModificationUser(r.getModificationUser())
 					.setStatus(r.getStatus().intValue())
 					.setWarehouse(r.getWarehouse());

@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -155,7 +156,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180.RECEIPT_TOTAL,mod180.getReceiptTotal())
 			.set(FS_MODEL180.RETENTION_TOTAL,mod180.getRetentionTotal())
 			.set(FS_MODEL180.CREATION_USER,ctx.getUser())
-			.set(FS_MODEL180.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(FS_MODEL180.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 		.returning(FS_MODEL180.ID)
 		.fetchOne();
 		mod180.setId(record.getId());
@@ -185,7 +186,7 @@ public class Mod180DAO {
 			.set(FS_MODEL180.RECEIPT_TOTAL,mod180.getReceiptTotal())
 			.set(FS_MODEL180.RETENTION_TOTAL,mod180.getRetentionTotal())
 			.set(FS_MODEL180.MODIFICATION_USER,ctx.getUser())
-			.set(FS_MODEL180.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(FS_MODEL180.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 			.where(FS_MODEL180.ID.equal(mod180.getId()))
 		.execute();
 		return mod180;
@@ -351,8 +352,8 @@ public class Mod180DAO {
 	}
 
 	private static void insertDetailsFromInvoice(AONContext ctx , final Mod180 mod180) {
-		java.sql.Date firstDay = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(mod180.getYear()));
-		java.sql.Date lastDay = AonDateUtils.toSql(AonDateUtils.getYearLastDay(mod180.getYear()));
+		LocalDate firstDay = AonDateUtils.toLocalDate(AonDateUtils.getYearFirstDay(mod180.getYear()));
+		LocalDate lastDay = AonDateUtils.toLocalDate(AonDateUtils.getYearLastDay(mod180.getYear()));
 
 		Field<Integer> minRegistry = DSL.min(INVOICE.REGISTRY).as(INVOICE.REGISTRY.getName());
 		Field<BigDecimal> sumBase = DSL.sum(INVOICE_TAX.BASE).as(INVOICE_TAX.BASE.getName());
@@ -440,10 +441,9 @@ public class Mod180DAO {
 				.setRetentionTotal(record.getValue(FS_MODEL180.RETENTION_TOTAL))
 				.setComments(record.getValue(FS_MODEL180.COMMENTS))
 				.setCreationUser(record.getValue(FS_MODEL180.CREATION_USER))
-				.setCreationDate(record.getValue(FS_MODEL180.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(FS_MODEL180.CREATION_DATE)))
 				.setModificationUser(record.getValue(FS_MODEL180.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FS_MODEL180.MODIFICATION_DATE))
-				;
+				.setModificationDate(AonDateUtils.toDate(record.getValue(FS_MODEL180.MODIFICATION_DATE)));
 		}
 	}
 

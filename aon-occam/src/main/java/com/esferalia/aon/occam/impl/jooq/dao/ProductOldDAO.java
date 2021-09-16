@@ -8,8 +8,9 @@ import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.ProductTag.PRODUCT_TAG;
 import static com.esferalia.aon.jooq.tables.Tag.TAG;
 
-import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -94,9 +95,9 @@ public class ProductOldDAO {
 		@Override public Property<Integer> getSalesAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.SALES_ACCOUNT);}
 		@Override public Property<Integer> getPurchaseAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.PURCHASE_ACCOUNT);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PRODUCT.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PRODUCT.MODIFICATION_DATE);}
 	}
 	
 	protected static class ItemPropertiesDAO implements ItemProperties {
@@ -110,37 +111,37 @@ public class ProductOldDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.DOMAIN);}
-		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PRODUCT);}
-		@Override public Property<String> getDetailProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.DETAIL);}
-		@Override public Property<String> getDetail2Property() {return new FilterDAO.PropertyDAO<String>(ITEM.DETAIL2);}
-		@Override public Property<String> getDetail3Property() {return new FilterDAO.PropertyDAO<String>(ITEM.DETAIL3);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.DESCRIPTION);}
-		@Override public Property<String> getSerialNumberProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.SERIAL_NUMBER);}
-		@Override public Property<Date> getSerialDateProperty() {return new FilterDAO.PropertyDAO<Date>(ITEM.SERIAL_DATE);}
-		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.PRICE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(ITEM.STATUS);}
-		@Override public Property<Double> getExpensesPercentProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.EXPENSES_PERCENT);}
-		@Override public Property<Double> getExpensesFixedProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.EXPENSES_FIXED);}
-		@Override public Property<Double> getProfitPercentProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.PROFIT_PERCENT);}
-		@Override public Property<Double> getPurchasePriceProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.PURCHASE_PRICE);}
-		@Override public Property<Byte> getInternetProperty() {return new FilterDAO.PropertyDAO<Byte>(ITEM.INTERNET);}
-		@Override public Property<String> getBarcodeProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.BARCODE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ITEM.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ITEM.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ITEM.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ITEM.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ITEM.DOMAIN);}
+		@Override public Property<Integer> getProductProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PRODUCT);}
+		@Override public Property<String> getDetailProperty() {return new FilterDAO.PropertyDAO<>(ITEM.DETAIL);}
+		@Override public Property<String> getDetail2Property() {return new FilterDAO.PropertyDAO<>(ITEM.DETAIL2);}
+		@Override public Property<String> getDetail3Property() {return new FilterDAO.PropertyDAO<>(ITEM.DETAIL3);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(ITEM.DESCRIPTION);}
+		@Override public Property<String> getSerialNumberProperty() {return new FilterDAO.PropertyDAO<>(ITEM.SERIAL_NUMBER);}
+		@Override public Property<java.util.Date> getSerialDateProperty() {return new FilterDAO.LocalDatePropertyDAO(ITEM.SERIAL_DATE);}
+		@Override public Property<Double> getPriceProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PRICE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(ITEM.STATUS);}
+		@Override public Property<Double> getExpensesPercentProperty() {return new FilterDAO.PropertyDAO<>(ITEM.EXPENSES_PERCENT);}
+		@Override public Property<Double> getExpensesFixedProperty() {return new FilterDAO.PropertyDAO<>(ITEM.EXPENSES_FIXED);}
+		@Override public Property<Double> getProfitPercentProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PROFIT_PERCENT);}
+		@Override public Property<Double> getPurchasePriceProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PURCHASE_PRICE);}
+		@Override public Property<Byte> getInternetProperty() {return new FilterDAO.PropertyDAO<>(ITEM.INTERNET);}
+		@Override public Property<String> getBarcodeProperty() {return new FilterDAO.PropertyDAO<>(ITEM.BARCODE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(ITEM.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ITEM.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(ITEM.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ITEM.MODIFICATION_DATE);}
 		
-		@Override public Property<Integer> getPackFormatTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PACK_FORMAT_TAG);}
-		@Override public Property<Integer> getPackUnitsProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PACK_UNITS);}
-		@Override public Property<Integer> getPackUnitsTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PACK_UNITS_TAG);}
-		@Override public Property<Double> getPackMeasurementProperty() {return new FilterDAO.PropertyDAO<Double>(ITEM.PACK_MEASUREMENT);}
-		@Override public Property<Integer> getPackMeasurementTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.PACK_MEASUREMENT_TAG);}
-		@Override public Property<Integer> getStockUnitTagProperty() {return new FilterDAO.PropertyDAO<Integer>(ITEM.STOCK_UNIT_TAG);}
+		@Override public Property<Integer> getPackFormatTagProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PACK_FORMAT_TAG);}
+		@Override public Property<Integer> getPackUnitsProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PACK_UNITS);}
+		@Override public Property<Integer> getPackUnitsTagProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PACK_UNITS_TAG);}
+		@Override public Property<Double> getPackMeasurementProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PACK_MEASUREMENT);}
+		@Override public Property<Integer> getPackMeasurementTagProperty() {return new FilterDAO.PropertyDAO<>(ITEM.PACK_MEASUREMENT_TAG);}
+		@Override public Property<Integer> getStockUnitTagProperty() {return new FilterDAO.PropertyDAO<>(ITEM.STOCK_UNIT_TAG);}
 		
-		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}
-		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
+		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CODE);}
+		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.NAME);}
 	}
 	
 	protected static class ProductTagPropertiesDAO implements ProductTagProperties {
@@ -263,7 +264,7 @@ public class ProductOldDAO {
 	@Deprecated
 	public static OldProduct getProduct2(AONContext ctx, Integer id){
 		ctx.checkRead();
-		Record21<Integer, String, String, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, String, Timestamp, String, Timestamp> record = ctx.getDslContext()
+		Record21<Integer, String, String, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, Byte, Byte, Byte, Byte, Integer, Integer, String, LocalDateTime, String, LocalDateTime> record = ctx.getDslContext()
 				.select(PRODUCT.DOMAIN, PRODUCT.NAME, PRODUCT.CODE, PRODUCT.BRAND,
 						PRODUCT.CATEGORY, PRODUCT.INVENTORIABLE, PRODUCT.SERIALIZABLE,
 						PRODUCT.LOTABLE, PRODUCT.STATUS, PRODUCT.VAT, PRODUCT.RETENTION,
@@ -295,9 +296,9 @@ public class ProductOldDAO {
 			if(record.value16() != null) p.setSalesAccount(record.value16());
 			if(record.value17() != null) p.setPurchaseAccount(record.value17());
 			if(record.value18() != null) p.setCreationUser(record.value18());
-			if(record.value19() != null) p.setCreationDate(record.value19());
+			if(record.value19() != null) p.setCreationDate(AonDateUtils.toDate(record.value19()));
 			if(record.value20() != null) p.setModificationUser(record.value20());
-			if(record.value21() != null) p.setModificationDate(record.value21());
+			if(record.value21() != null) p.setModificationDate(AonDateUtils.toDate(record.value21()));
 			
 			return p;
 		}
@@ -441,9 +442,9 @@ public class ProductOldDAO {
 					.set(PRODUCT.PURCHASE_ACCOUNT, p.getPurchaseAccount())
 					.set(PRODUCT.CREATION_USER, p.getCreationUser())
 					.set(PRODUCT.CREATION_DATE,p.getCreationDate() != null ?
-							new java.sql.Timestamp(p.getCreationDate().getTime()) : null)
+							AonDateUtils.toLocalDateTime(p.getCreationDate()) : null)
 					.set(PRODUCT.MODIFICATION_USER, p.getModificationUser())
-					.set(PRODUCT.MODIFICATION_DATE, new java.sql.Timestamp(p.getModificationDate().getTime()))
+					.set(PRODUCT.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(p.getModificationDate()))
 					.set(PRODUCT.KIND, p.getKind() != null ? p.getKind() : 0)
 					.set(PRODUCT.PACKAGED, p.getPackagedValue())
 					.where(PRODUCT.ID.equal(p.getId()))
@@ -573,7 +574,7 @@ public class ProductOldDAO {
 	public static OldItem getItemOld(AONContext ctx, Integer id){
 		ctx.checkRead();
 		
-		Record20<Integer, Integer, String, String, String, String, String, Date, Double, Byte, Double, Double, Double, Double, Byte, String, String, Timestamp, String, Timestamp> record = ctx.getDslContext()
+		Record20<Integer, Integer, String, String, String, String, String, LocalDate, Double, Byte, Double, Double, Double, Double, Byte, String, String, LocalDateTime, String, LocalDateTime> record = ctx.getDslContext()
 			.select(ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3,
 					ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE,
 					ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT,
@@ -769,7 +770,7 @@ public class ProductOldDAO {
 			ProductOldValidation.validateItem(ctx, i);
 			ctx.getDslContext()
 				.insertInto(ITEM,ITEM.ID, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE)
-				.values(i.getId(), i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), null, null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate())
+				.values(i.getId(), i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), null, null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), AonDateUtils.toLocalDateTime(i.getCreationDate()), i.getModificationUser(), AonDateUtils.toLocalDateTime(i.getModificationDate()))
 				.execute();
 		});		
 	}
@@ -777,10 +778,10 @@ public class ProductOldDAO {
 	public static void insertItemWithId(AONContext ctx, Stream<OldItem> is) {
 		ctx.checkWrite();
 		ctx.getDslContext().transaction(configuration -> {
-			InsertValuesStep21<ItemRecord,Integer, Integer, Integer, String, String, String, String, String, Date, Double, Byte, Double, Double, Double, Double, Byte, String, String, Timestamp, String, Timestamp> insertQuery = ctx.getDslContext().insertInto(ITEM,ITEM.ID, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE);
+			InsertValuesStep21<ItemRecord,Integer, Integer, Integer, String, String, String, String, String, LocalDate, Double, Byte, Double, Double, Double, Double, Byte, String, String, LocalDateTime, String, LocalDateTime> insertQuery = ctx.getDslContext().insertInto(ITEM,ITEM.ID, ITEM.DOMAIN, ITEM.PRODUCT, ITEM.DETAIL, ITEM.DETAIL2, ITEM.DETAIL3, ITEM.DESCRIPTION, ITEM.SERIAL_NUMBER, ITEM.SERIAL_DATE, ITEM.PRICE, ITEM.STATUS, ITEM.EXPENSES_PERCENT, ITEM.EXPENSES_FIXED, ITEM.PROFIT_PERCENT, ITEM.PURCHASE_PRICE, ITEM.INTERNET, ITEM.BARCODE, ITEM.CREATION_USER, ITEM.CREATION_DATE, ITEM.MODIFICATION_USER, ITEM.MODIFICATION_DATE);
 			is.forEach(i ->{
 				ProductOldValidation.validateItem(ctx, i);
-				insertQuery.values(i.getId(), i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), null, null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), i.getCreationDate(), i.getModificationUser(), i.getModificationDate());
+				insertQuery.values(i.getId(), i.getDomain(), i.getProductId(), i.getDetail(), i.getDetail2(), i.getDetail3(), i.getDescription(), null, null, i.getPrice(), i.getStatus(), i.getExpensesPercent(),i.getExpensesFixed(), i.getProfitPercent(), i.getPurchasePrice(), (byte)0, i.getBarcode(), i.getCreationUser(), AonDateUtils.toLocalDateTime(i.getCreationDate()), i.getModificationUser(), AonDateUtils.toLocalDateTime(i.getModificationDate()));
 			});
 			insertQuery.execute();
 		});		
@@ -838,13 +839,13 @@ public class ProductOldDAO {
 	
 	public static void insertItemAddInfo(AONContext ctx, ItemAddInfo i) {
 		ctx.getDslContext().insertInto(ITEM_ADDINFO, ITEM_ADDINFO.DOMAIN, ITEM_ADDINFO.PRODUCT, ITEM_ADDINFO.ITEM, ITEM_ADDINFO.ATTRIBUTE, ITEM_ADDINFO.VALUE, ITEM_ADDINFO.VALUE_DATE)
-				.values(i.getDomain(), i.getProduct(), i.getItem(), i.getAttribute(), i.getValue(), AonDateUtils.toSql(i.getDate())).execute();
+				.values(i.getDomain(), i.getProduct(), i.getItem(), i.getAttribute(), i.getValue(), AonDateUtils.toLocalDate(i.getDate())).execute();
 	}
 	
 	public static void updateItemAddInfo(AONContext ctx, ItemAddInfo i) {
 		ctx.getDslContext().update(ITEM_ADDINFO)
 			.set(ITEM_ADDINFO.VALUE, i.getValue())
-			.set(ITEM_ADDINFO.VALUE_DATE, AonDateUtils.toSql(i.getDate()))
+			.set(ITEM_ADDINFO.VALUE_DATE, AonDateUtils.toLocalDate(i.getDate()))
 			.where(ITEM_ADDINFO.ID.eq(i.getId()))
 		.execute();
 	}
@@ -874,7 +875,7 @@ public class ProductOldDAO {
 					.setComposition(r.getComposition())
 					.setCompositionPrice(r.getCompositionPrice() == 1)
 					.setCompositionPrice(r.getCompositionPrice())
-					.setCreationDate(r.getCreationDate())
+					.setCreationDate(AonDateUtils.toDate(r.getCreationDate()))
 					.setCreationUser(r.getCreationUser())
 					.setInventoriable(r.getInventoriable() != null && r.getInventoriable() == 1)
 					.setInventoriable(r.getInventoriable())
@@ -882,7 +883,7 @@ public class ProductOldDAO {
 					.setLotable(r.getLotable() == 1)
 					.setLotable(r.getLotable())
 					.setManufactured(r.getManufactured())
-					.setModificationDate(r.getModificationDate())
+					.setModificationDate(AonDateUtils.toDate(r.getModificationDate()))
 					.setModificationUser(r.getModificationUser())
 					.setPackaged(r.getPackaged() == 1)
 					.setPurchaseAccount(r.getPurchaseAccount())
@@ -902,7 +903,7 @@ public class ProductOldDAO {
 		public OldItem apply(Record r) {
 			return new OldItem().setId(r.getValue(ITEM.ID))
 					.setBarcode(r.getValue(ITEM.BARCODE))
-					.setCreationDate(r.getValue(ITEM.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(ITEM.CREATION_DATE))))
 					.setCreationUser(r.getValue(ITEM.CREATION_USER))
 					.setDescription(r.getValue(ITEM.DESCRIPTION))
 					.setDetail(r.getValue(ITEM.DETAIL))
@@ -912,7 +913,7 @@ public class ProductOldDAO {
 					.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
 					.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
 					.setInternet(r.getValue(ITEM.INTERNET) == 1)
-					.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(ITEM.MODIFICATION_DATE))))
 					.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
 					.setPackFormatTag(new Tag().setId(r.getValue(ITEM.PACK_FORMAT_TAG)))
 					.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
@@ -926,7 +927,7 @@ public class ProductOldDAO {
 					.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
 					.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
 					.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
-					.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
+					.setSerialDate(AonDateUtils.toSql(AonDateUtils.toDate(r.getValue(ITEM.SERIAL_DATE))))
 					.setStatus(r.getValue(ITEM.STATUS));
 		}
 	}
@@ -941,7 +942,7 @@ public class ProductOldDAO {
 		public OldItem apply(Record r) {
 			return new OldItem().setId(r.getValue(ITEM.ID))
 					.setBarcode(r.getValue(ITEM.BARCODE))
-					.setCreationDate(r.getValue(ITEM.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(ITEM.CREATION_DATE))))
 					.setCreationUser(r.getValue(ITEM.CREATION_USER))
 					.setDescription(r.getValue(ITEM.DESCRIPTION))
 					.setDetail(r.getValue(ITEM.DETAIL))
@@ -951,7 +952,7 @@ public class ProductOldDAO {
 					.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
 					.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
 					.setInternet(r.getValue(ITEM.INTERNET) == 1)
-					.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(ITEM.MODIFICATION_DATE))))
 					.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
 					.setPackFormatTag(TagDAO.getTag(ctx, r.getValue(ITEM.PACK_FORMAT_TAG)))
 					.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
@@ -965,7 +966,7 @@ public class ProductOldDAO {
 					.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
 					.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
 					.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
-					.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
+					.setSerialDate(AonDateUtils.toSql(AonDateUtils.toDate(r.getValue(ITEM.SERIAL_DATE))))
 					.setStatus(r.getValue(ITEM.STATUS));
 		}
 	}
@@ -1007,7 +1008,7 @@ public class ProductOldDAO {
 			return new OldItem()
 				.setId(r.getValue(ITEM.ID))
 				.setBarcode(r.getValue(ITEM.BARCODE))
-				.setCreationDate(r.getValue(ITEM.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(ITEM.CREATION_DATE))))
 				.setCreationUser(r.getValue(ITEM.CREATION_USER))
 				.setDescription(r.getValue(ITEM.DESCRIPTION))
 				.setDetail(r.getValue(ITEM.DETAIL))
@@ -1017,7 +1018,7 @@ public class ProductOldDAO {
 				.setExpensesFixed(r.getValue(ITEM.EXPENSES_FIXED))
 				.setExpensesPercent(r.getValue(ITEM.EXPENSES_PERCENT))
 				.setInternet(r.getValue(ITEM.INTERNET) == 1)
-				.setModificationDate(r.getValue(ITEM.MODIFICATION_DATE))
+				.setModificationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(ITEM.MODIFICATION_DATE))))
 				.setModificationUser(r.getValue(ITEM.MODIFICATION_USER))
 				.setPackFormatTag(new Tag().setId(r.getValue(ITEM.PACK_FORMAT_TAG)))
 				.setPackMeasurement(r.getValue(ITEM.PACK_MEASUREMENT))
@@ -1033,7 +1034,7 @@ public class ProductOldDAO {
 				.setProfitPercent(r.getValue(ITEM.PROFIT_PERCENT))
 				.setPurchasePrice(r.getValue(ITEM.PURCHASE_PRICE))
 				.setSerialNumber(r.getValue(ITEM.SERIAL_NUMBER))
-				.setSerialDate(r.getValue(ITEM.SERIAL_DATE))
+				.setSerialDate(AonDateUtils.toSql(AonDateUtils.toDate(r.getValue(ITEM.SERIAL_DATE))))
 				.setStatus(r.getValue(ITEM.STATUS));
 		}	
 	}
@@ -1053,13 +1054,13 @@ public class ProductOldDAO {
 					.setCode(r.getValue(PRODUCT.CODE))
 					.setComposition(r.getValue(PRODUCT.COMPOSITION))
 					.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE))
-					.setCreationDate(r.getValue(PRODUCT.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(PRODUCT.CREATION_DATE))))
 					.setCreationUser(r.getValue(PRODUCT.CREATION_USER))
 					.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE))
 					.setKind(r.getValue(PRODUCT.KIND))
 					.setLotable(r.getValue(PRODUCT.LOTABLE))
 					.setManufactured(r.getValue(PRODUCT.MANUFACTURED))
-					.setModificationDate(r.getValue(PRODUCT.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toTimestamp(AonDateUtils.toDate(r.getValue(PRODUCT.MODIFICATION_DATE))))
 					.setModificationUser(r.getValue(PRODUCT.MODIFICATION_USER))
 					.setPackaged(r.getValue(PRODUCT.PACKAGED) == 1)
 					.setPurchaseAccount(r.getValue(PRODUCT.PURCHASE_ACCOUNT))

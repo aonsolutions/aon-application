@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.ElaborationDetailComposition.ELABORA
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ElaborationDAO {
 	
@@ -49,24 +51,24 @@ public class ElaborationDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.DOMAIN);}
-		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.SERIES);}
-		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.NUMBER);}
-		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION.DATE);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.ITEM);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.DESCRIPTION);}
-		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.WAREHOUSE);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(ELABORATION.QUANTITY);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(ELABORATION.STATUS);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.COMMENTS);}
-		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.REMARKS);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(ELABORATION.SOURCE);}
-		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION.SOURCE_ID);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.DOMAIN);}
+		@Override public Property<String> getSeriesProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.SERIES);}
+		@Override public Property<Integer> getNumberProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.NUMBER);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ELABORATION.DATE);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.ITEM);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.DESCRIPTION);}
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.WAREHOUSE);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.QUANTITY);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.STATUS);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.COMMENTS);}
+		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.REMARKS);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.SOURCE);}
+		@Override public Property<Integer> getSourceIdProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.SOURCE_ID);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ELABORATION.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ELABORATION.MODIFICATION_DATE);}
 	}
 
 	protected static class ElaborationDetailPropertiesDAO implements ElaborationDetailProperties {
@@ -75,18 +77,18 @@ public class ElaborationDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL.DOMAIN);}
-		@Override public Property<Integer> getElaborationProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL.ELABORATION);}
-		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION_DETAIL.DATE);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL.ITEM);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(ELABORATION_DETAIL.QUANTITY);}
-		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL.WAREHOUSE);}
-		@Override public Property<String> getAddInfoProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL.ADD_INFO);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION_DETAIL.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION_DETAIL.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.DOMAIN);}
+		@Override public Property<Integer> getElaborationProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ELABORATION);}
+		@Override public Property<Timestamp> getDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ELABORATION_DETAIL.DATE);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ITEM);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.QUANTITY);}
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.WAREHOUSE);}
+		@Override public Property<String> getAddInfoProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.ADD_INFO);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ELABORATION_DETAIL.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ELABORATION_DETAIL.MODIFICATION_DATE);}
 	}
 
 	protected static class ElaborationDetailCompositionPropertiesDAO implements ElaborationDetailCompositionProperties {
@@ -95,17 +97,17 @@ public class ElaborationDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL_COMPOSITION.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL_COMPOSITION.DOMAIN);}
-		@Override public Property<Integer> getElaborationDetailProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL);}
-		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL_COMPOSITION.ITEM);}
-		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<Double>(ELABORATION_DETAIL_COMPOSITION.QUANTITY);}
-		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<Integer>(ELABORATION_DETAIL_COMPOSITION.WAREHOUSE);}
-		@Override public Property<String> getAddInfoProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL_COMPOSITION.ADD_INFO);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL_COMPOSITION.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION_DETAIL_COMPOSITION.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.DOMAIN);}
+		@Override public Property<Integer> getElaborationDetailProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.ELABORATION_DETAIL);}
+		@Override public Property<Integer> getItemProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.ITEM);}
+		@Override public Property<Double> getQuantityProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.QUANTITY);}
+		@Override public Property<Integer> getWarehouseProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.WAREHOUSE);}
+		@Override public Property<String> getAddInfoProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.ADD_INFO);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ELABORATION_DETAIL_COMPOSITION.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.LocalDateTimePropertyDAO(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_DATE);}
 	}
 	
 
@@ -156,10 +158,10 @@ public class ElaborationDAO {
 	
 	public static int insertElaboration(AONContext ctx, Elaboration elaboration) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		LocalDateTime creationDate = null, modificationDate = null;
+		creationDate = new java.sql.Timestamp(new java.util.Date().getTime()).toLocalDateTime();
 		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+				new java.util.Date().getTime()).toLocalDateTime();
 		String series = elaboration.getSeries();
 		int number = elaboration.getNumber() > 0 ? elaboration.getNumber()
 				: getSerieMaxNumber(ctx, series) + 1;
@@ -178,7 +180,7 @@ public class ElaborationDAO {
 				.values(ctx.getDomainId(),
 						series,
 						number,
-						new Timestamp(elaboration.getDate().getTime()),
+						new Timestamp(elaboration.getDate().getTime()).toLocalDateTime(),
 						elaboration.getItem().getId(),
 						elaboration.getDescription(),
 						elaboration.getWarehouse() != null ? elaboration
@@ -194,8 +196,8 @@ public class ElaborationDAO {
 	public static Elaboration updateElaboration(AONContext ctx,
 			Elaboration elaboration) {
 		ctx.checkWrite();
-		Timestamp modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+		LocalDateTime modificationDate = new java.sql.Timestamp(
+				new java.util.Date().getTime()).toLocalDateTime();
 		return ctx
 				.getDslContext()
 				.update(ELABORATION)
@@ -203,7 +205,7 @@ public class ElaborationDAO {
 				.set(ELABORATION.SERIES, elaboration.getSeries())
 				.set(ELABORATION.NUMBER, elaboration.getNumber())
 				.set(ELABORATION.DATE,
-						new Timestamp(elaboration.getDate().getTime()))
+						new Timestamp(elaboration.getDate().getTime()).toLocalDateTime())
 				.set(ELABORATION.ITEM, elaboration.getItem().getId())
 				.set(ELABORATION.DESCRIPTION, elaboration.getDescription())
 				.set(ELABORATION.WAREHOUSE,
@@ -275,10 +277,10 @@ public class ElaborationDAO {
 	public static int insertElaborationDetail(AONContext ctx,
 			ElaborationDetail elaborationDetail) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		LocalDateTime creationDate = null, modificationDate = null;
+		creationDate = new java.sql.Timestamp(new java.util.Date().getTime()).toLocalDateTime();
 		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+				new java.util.Date().getTime()).toLocalDateTime();
 		return ctx
 				.getDslContext()
 				.insertInto(ELABORATION_DETAIL, ELABORATION_DETAIL.DOMAIN,
@@ -293,7 +295,7 @@ public class ElaborationDAO {
 						ELABORATION_DETAIL.MODIFICATION_DATE)
 				.values(ctx.getDomainId(),
 						elaborationDetail.getElaboration().getId(),
-						new Timestamp(elaborationDetail.getDate().getTime()),
+						new Timestamp(elaborationDetail.getDate().getTime()).toLocalDateTime(),
 						elaborationDetail.getItem().getId(),
 						elaborationDetail.getQuantity(),
 						elaborationDetail.getWarehouse()!=null?elaborationDetail.getWarehouse().getId():null,
@@ -305,8 +307,8 @@ public class ElaborationDAO {
 	public static ElaborationDetail updateElaborationDetail(AONContext ctx,
 			ElaborationDetail elaborationDetail) {
 		ctx.checkWrite();
-		Timestamp modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+		LocalDateTime modificationDate = new java.sql.Timestamp(
+				new java.util.Date().getTime()).toLocalDateTime();
 		return ctx
 				.getDslContext()
 				.update(ELABORATION_DETAIL)
@@ -314,7 +316,7 @@ public class ElaborationDAO {
 				.set(ELABORATION_DETAIL.ELABORATION,
 						elaborationDetail.getElaboration().getId())
 				.set(ELABORATION_DETAIL.DATE,
-						new Timestamp(elaborationDetail.getDate().getTime()))
+						new Timestamp(elaborationDetail.getDate().getTime()).toLocalDateTime())
 				.set(ELABORATION_DETAIL.ITEM,
 						elaborationDetail.getItem().getId())
 				.set(ELABORATION_DETAIL.QUANTITY,
@@ -401,10 +403,10 @@ public class ElaborationDAO {
 	public static int insertElaborationDetailComposition(AONContext ctx,
 			ElaborationDetailComposition elaborationDetailComposition) {
 		ctx.checkWrite();
-		Timestamp creationDate = null, modificationDate = null;
-		creationDate = new java.sql.Timestamp(new java.util.Date().getTime());
+		LocalDateTime creationDate = null, modificationDate = null;
+		creationDate = new java.sql.Timestamp(new java.util.Date().getTime()).toLocalDateTime();
 		modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+				new java.util.Date().getTime()).toLocalDateTime();
 		return ctx
 				.getDslContext()
 				.insertInto(ELABORATION_DETAIL_COMPOSITION,
@@ -435,8 +437,8 @@ public class ElaborationDAO {
 	public static ElaborationDetailComposition updateElaborationDetailComposition(AONContext ctx,
 			ElaborationDetailComposition elaborationDetailComposition) {
 		ctx.checkWrite();
-		Timestamp modificationDate = new java.sql.Timestamp(
-				new java.util.Date().getTime());
+		LocalDateTime modificationDate = new java.sql.Timestamp(
+				new java.util.Date().getTime()).toLocalDateTime();
 		return ctx
 				.getDslContext()
 				.update(ELABORATION_DETAIL_COMPOSITION)
@@ -516,7 +518,7 @@ public class ElaborationDAO {
 					.setDomain(r.getValue(ELABORATION.DOMAIN))
 					.setSeries(r.getValue(ELABORATION.SERIES))
 					.setNumber(r.getValue(ELABORATION.NUMBER))
-					.setDate(r.getValue(ELABORATION.DATE))
+					.setDate(AonDateUtils.toDate(r.getValue(ELABORATION.DATE)))
 					.setItem(new OldItem().setId(r.getValue(ELABORATION.ITEM)))
 					.setDescription(r.getValue(ELABORATION.DESCRIPTION))
 					.setWarehouse(
@@ -528,10 +530,10 @@ public class ElaborationDAO {
 					.setRemarks(r.getValue(ELABORATION.REMARKS))
 					.setSource(r.getValue(ELABORATION.SOURCE))
 					.setSourceId(r.getValue(ELABORATION.SOURCE_ID))
-					.setCreationDate(r.getValue(ELABORATION.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(ELABORATION.CREATION_DATE)))
 					.setCreationUser(r.getValue(ELABORATION.CREATION_USER))
-					.setModificationDate(
-							r.getValue(ELABORATION.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(
+							r.getValue(ELABORATION.MODIFICATION_DATE)))
 					.setModificationUser(
 							r.getValue(ELABORATION.MODIFICATION_USER));
 		}
@@ -546,7 +548,7 @@ public class ElaborationDAO {
 					.setDomain(r.getValue(ELABORATION.DOMAIN))
 					.setSeries(r.getValue(ELABORATION.SERIES))
 					.setNumber(r.getValue(ELABORATION.NUMBER))
-					.setDate(r.getValue(ELABORATION.DATE))
+					.setDate(AonDateUtils.toDate(r.getValue(ELABORATION.DATE)))
 					.setItem(new OldItem().setId(r.getValue(ELABORATION.ITEM)))
 					.setDescription(r.getValue(ELABORATION.DESCRIPTION))
 					.setWarehouse(
@@ -559,10 +561,10 @@ public class ElaborationDAO {
 					.setRemarks(r.getValue(ELABORATION.REMARKS))
 					.setSource(r.getValue(ELABORATION.SOURCE))
 					.setSourceId(r.getValue(ELABORATION.SOURCE_ID))
-					.setCreationDate(r.getValue(ELABORATION.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(r.getValue(ELABORATION.CREATION_DATE)))
 					.setCreationUser(r.getValue(ELABORATION.CREATION_USER))
-					.setModificationDate(
-							r.getValue(ELABORATION.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(
+							r.getValue(ELABORATION.MODIFICATION_DATE)))
 					.setModificationUser(
 							r.getValue(ELABORATION.MODIFICATION_USER));
 		}
@@ -578,7 +580,7 @@ public class ElaborationDAO {
 					.setElaboration(
 							new Elaboration().setId(r
 									.getValue(ELABORATION_DETAIL.ELABORATION)))
-					.setDate(r.getValue(ELABORATION_DETAIL.DATE))
+					.setDate(AonDateUtils.toDate(r.getValue(ELABORATION_DETAIL.DATE)))
 					.setItem(
 							new OldItem().setId(r
 									.getValue(ELABORATION_DETAIL.ITEM)))
@@ -587,12 +589,12 @@ public class ElaborationDAO {
 							new Warehouse().setId(r
 									.getValue(ELABORATION_DETAIL.WAREHOUSE)))
 					.setAddInfo(r.getValue(ELABORATION_DETAIL.ADD_INFO))
-					.setCreationDate(
-							r.getValue(ELABORATION_DETAIL.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(
+							r.getValue(ELABORATION_DETAIL.CREATION_DATE)))
 					.setCreationUser(
 							r.getValue(ELABORATION_DETAIL.CREATION_USER))
-					.setModificationDate(
-							r.getValue(ELABORATION_DETAIL.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(
+							r.getValue(ELABORATION_DETAIL.MODIFICATION_DATE)))
 					.setModificationUser(
 							r.getValue(ELABORATION_DETAIL.MODIFICATION_USER));
 		}
@@ -619,12 +621,12 @@ public class ElaborationDAO {
 									.getValue(ELABORATION_DETAIL_COMPOSITION.WAREHOUSE)))
 					.setAddInfo(
 							r.getValue(ELABORATION_DETAIL_COMPOSITION.ADD_INFO))
-					.setCreationDate(
-							r.getValue(ELABORATION_DETAIL_COMPOSITION.CREATION_DATE))
+					.setCreationDate(AonDateUtils.toDate(
+							r.getValue(ELABORATION_DETAIL_COMPOSITION.CREATION_DATE)))
 					.setCreationUser(
 							r.getValue(ELABORATION_DETAIL_COMPOSITION.CREATION_USER))
-					.setModificationDate(
-							r.getValue(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_DATE))
+					.setModificationDate(AonDateUtils.toDate(
+							r.getValue(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_DATE)))
 					.setModificationUser(
 							r.getValue(ELABORATION_DETAIL_COMPOSITION.MODIFICATION_USER));
 		}

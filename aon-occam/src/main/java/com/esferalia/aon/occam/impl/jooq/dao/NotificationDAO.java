@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Notification.NOTIFICATION;
 import static com.esferalia.aon.jooq.tables.NotificationReceiver.NOTIFICATION_RECEIVER;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.NotificationPropertiesDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 
 public class NotificationDAO {
@@ -73,7 +75,7 @@ public class NotificationDAO {
 	
 	private static Notification insert(AONContext ctx, Notification nt) {
 		ctx.checkWrite();
-		Timestamp dt = Timestamp.from(Instant.now());
+		LocalDateTime dt = Timestamp.from(Instant.now()).toLocalDateTime();
 		Integer id = ctx.getDslContext()
 			.insertInto(NOTIFICATION, NOTIFICATION.DOMAIN, NOTIFICATION.DATE, 
 					NOTIFICATION.TITLE, NOTIFICATION.BODY, NOTIFICATION.SOURCE, 
@@ -88,7 +90,7 @@ public class NotificationDAO {
 					Priority.value(nt.getPriority())
 					)
 			.returning(NOTIFICATION.ID).fetchOne().getValue(NOTIFICATION.ID);
-		nt.setDate(dt);
+		nt.setDate(AonDateUtils.toDate(dt));
 		nt.setId(id);
 		insertNotificationReceiver(ctx, nt);
 		return nt;
@@ -120,7 +122,7 @@ public class NotificationDAO {
 		ctx.checkWrite();
 		ctx.getDslContext()
 			.update(NOTIFICATION)
-			.set(NOTIFICATION.DATE, new Timestamp(nt.getDate().getTime()))
+			.set(NOTIFICATION.DATE, AonDateUtils.toLocalDateTime(nt.getDate()))
 			.set(NOTIFICATION.TITLE, nt.getTitle())
 			.set(NOTIFICATION.BODY, nt.getBody())
 			.set(NOTIFICATION.SOURCE, nt.getSource().value())
@@ -154,7 +156,7 @@ public class NotificationDAO {
 			return new Notification()
 					.setId(r.getValue(NOTIFICATION_RECEIVER.ID))
 					.setDomain(new Domain().setId(r.getValue(NOTIFICATION.DOMAIN)))
-					.setDate(r.getValue(NOTIFICATION.DATE))
+					.setDate(AonDateUtils.toDate(r.getValue(NOTIFICATION.DATE)))
 					.setTitle(r.getValue(NOTIFICATION.TITLE))
 					.setBody(r.getValue(NOTIFICATION.BODY))
 					.setSource(NotificationSource.safeValueOf(r.getValue(NOTIFICATION.SOURCE)))

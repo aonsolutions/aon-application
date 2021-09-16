@@ -1,7 +1,9 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 
+import static com.esferalia.aon.jooq.tables.AuthAttach.AUTH_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
+import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
 import static com.esferalia.aon.jooq.tables.Iattach.IATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.OfferAttach.OFFER_ATTACH;
@@ -10,10 +12,7 @@ import static com.esferalia.aon.jooq.tables.ProjectAttach.PROJECT_ATTACH;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.SepeBatchAttach.SEPE_BATCH_ATTACH;
-import static com.esferalia.aon.jooq.tables.DataAttach.DATA_ATTACH;
-import static com.esferalia.aon.jooq.tables.AuthAttach.AUTH_ATTACH;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 import org.jooq.Condition;
@@ -60,27 +59,27 @@ public class AttachPropertiesDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.DOMAIN);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DESCRIPTION);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DOMAIN);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DESCRIPTION);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RATTACH.TYPE);}
-		@Override public Property<Date> getAttachDateProperty() {return new FilterDAO.PropertyDAO<Date>(RATTACH.ATTACH_DATE);}
-		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.CATEGORY);}
-		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<Timestamp>(RATTACH.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.CREATION_USER);}
-		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<byte[]>(RATTACH.DATA);}
-		@Override public Property<String> getDparentIdProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DPARENT_ID);}
-		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.DRIVE_ID);}
-		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RATTACH.MIMETYPE);}
-		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<Timestamp>(RATTACH.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(RATTACH.MODIFICATION_USER);}
-		@Override public Property<Integer> getAttachModuleProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.REGISTRY);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(RATTACH.SCOPE);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(RATTACH.SECURITY_LEVEL);}
+		@Override public Property<java.util.Date> getAttachDateProperty() {return new FilterDAO.LocalDatePropertyDAO(RATTACH.ATTACH_DATE);}
+		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.CATEGORY);}
+		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return new FilterDAO.LocalDateTimePropertyDAO(RATTACH.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.CREATION_USER);}
+		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DATA);}
+		@Override public Property<String> getDparentIdProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DPARENT_ID);}
+		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DRIVE_ID);}
+		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.MIMETYPE);}
+		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return new FilterDAO.LocalDateTimePropertyDAO(RATTACH.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.MODIFICATION_USER);}
+		@Override public Property<Integer> getAttachModuleProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.REGISTRY);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.SCOPE);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.SECURITY_LEVEL);}
 		
 		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return null;}
-		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
-		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachCreationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachModificationDateProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 
@@ -98,24 +97,24 @@ public class AttachPropertiesDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTRACT_ATTACH.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTRACT_ATTACH.DOMAIN);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(CONTRACT_ATTACH.DESCRIPTION);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(CONTRACT_ATTACH.TYPE);}
-		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CONTRACT_ATTACH.ATTACH_DATE);}
-		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<byte[]>(CONTRACT_ATTACH.DATA);}
-		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<String>(CONTRACT_ATTACH.DRIVEID);}
-		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(CONTRACT_ATTACH.MIMETYPE);}
-		@Override public Property<Integer> getAttachModuleProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTRACT_ATTACH.CONTRACT);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(CONTRACT_ATTACH.SCOPE);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(CONTRACT_ATTACH.SECURITY_LEVEL);}
-		@Override public Property<Date> getAttachDateProperty() {return null;}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_ATTACH.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_ATTACH.DOMAIN);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_ATTACH.DESCRIPTION);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_ATTACH.TYPE);}
+		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CONTRACT_ATTACH.ATTACH_DATE);}
+		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_ATTACH.DATA);}
+		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_ATTACH.DRIVEID);}
+		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_ATTACH.MIMETYPE);}
+		@Override public Property<Integer> getAttachModuleProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_ATTACH.CONTRACT);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_ATTACH.SCOPE);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_ATTACH.SECURITY_LEVEL);}
+		@Override public Property<java.util.Date> getAttachDateProperty() {return null;}
 		@Override public Property<Integer> getCategoryProperty() {return null;}
-		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachCreationDateProperty() {return null;}
 		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getCreationUserProperty() {return null;}
 		@Override public Property<String> getDparentIdProperty() {return null;}
-		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachModificationDateProperty() {return null;}
 		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getModificationUserProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
@@ -145,13 +144,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getAttachModuleProperty() {return new FilterDAO.PropertyDAO<Integer>(IATTACH.ITEM);}
 		@Override public Property<Integer> getScopeProperty() {return null;}
 		@Override public Property<Byte> getSecurityLevelProperty() {return null;}
-		@Override public Property<Date> getAttachDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachDateProperty() {return null;}
 		@Override public Property<Integer> getCategoryProperty() {return null;}
-		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachCreationDateProperty() {return null;}
 		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getCreationUserProperty() {return null;}
 		@Override public Property<String> getDparentIdProperty() {return null;}
-		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachModificationDateProperty() {return null;}
 		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getModificationUserProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
@@ -170,25 +169,25 @@ public class AttachPropertiesDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_ATTACH.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_ATTACH.DOMAIN);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(INVOICE_ATTACH.DESCRIPTION);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE_ATTACH.TYPE);}
-		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CONTRACT_ATTACH.ATTACH_DATE);}
-		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<byte[]>(INVOICE_ATTACH.DATA);}
-		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<String>(INVOICE_ATTACH.DRIVEID);}
-		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(INVOICE_ATTACH.MIMETYPE);}
-		@Override public Property<Integer> getAttachModuleProperty() {return new FilterDAO.PropertyDAO<Integer>(INVOICE_ATTACH.INVOICE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_ATTACH.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_ATTACH.DOMAIN);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_ATTACH.DESCRIPTION);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_ATTACH.TYPE);}
+		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return new FilterDAO.LocalDateTimePropertyDAO(CONTRACT_ATTACH.ATTACH_DATE);}
+		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_ATTACH.DATA);}
+		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_ATTACH.DRIVEID);}
+		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_ATTACH.MIMETYPE);}
+		@Override public Property<Integer> getAttachModuleProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_ATTACH.INVOICE);}
 		@Override public Property<Integer> getScopeProperty() {return null;}
 		@Override public Property<Byte> getSecurityLevelProperty() {return null;}
 		
-		@Override public Property<Date> getAttachDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachDateProperty() {return null;}
 		@Override public Property<Integer> getCategoryProperty() {return null;}
-		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachCreationDateProperty() {return null;}
 		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getCreationUserProperty() {return null;}
 		@Override public Property<String> getDparentIdProperty() {return null;}
-		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachModificationDateProperty() {return null;}
 		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getModificationUserProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
@@ -218,13 +217,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getAttachModuleProperty() {return new FilterDAO.PropertyDAO<Integer>(OFFER_ATTACH.OFFER);}
 		@Override public Property<Integer> getScopeProperty() {return null;}
 		@Override public Property<Byte> getSecurityLevelProperty() {return null;}
-		@Override public Property<Date> getAttachDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachDateProperty() {return null;}
 		@Override public Property<Integer> getCategoryProperty() {return null;}
-		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachCreationDateProperty() {return null;}
 		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getCreationUserProperty() {return null;}
 		@Override public Property<String> getDparentIdProperty() {return null;}
-		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachModificationDateProperty() {return null;}
 		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getModificationUserProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
@@ -254,13 +253,13 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getAttachModuleProperty() {return null;}
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(PAYROLL_BATCH_ATTACH.SCOPE);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return null;}
-		@Override public Property<Date> getAttachDateProperty() {return  new FilterDAO.PropertyDAO<Date>(PAYROLL_BATCH_ATTACH.ATTACH_DATE);}
+		@Override public Property<java.util.Date> getAttachDateProperty() {return  new FilterDAO.LocalDatePropertyDAO(PAYROLL_BATCH_ATTACH.ATTACH_DATE);}
 		@Override public Property<Integer> getCategoryProperty() {return null;}
-		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachCreationDateProperty() {return null;}
 		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getCreationUserProperty() {return null;}
 		@Override public Property<String> getDparentIdProperty() {return null;}
-		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachModificationDateProperty() {return null;}
 		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getModificationUserProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
@@ -291,17 +290,17 @@ public class AttachPropertiesDAO {
 		@Override public Property<Integer> getScopeProperty() {return null;}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_ATTACH.SECURITY_LEVEL);}
 		
-		@Override public Property<Date> getAttachDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.ATTACH_DATE);}
+		@Override public Property<java.util.Date> getAttachDateProperty() {return new FilterDAO.LocalDatePropertyDAO(PROJECT_ATTACH.ATTACH_DATE);}
 		@Override public Property<Integer> getCategoryProperty() {return null;}
-		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachCreationDateProperty() {return null;}
 		@Override public Property<String> getDparentIdProperty() {return null;}
-		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachModificationDateProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return null;}
 		@Override public Property<Byte> getSourceTypeProperty() {return null;}
 		
-		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.CREATION_DATE);}
+		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PROJECT_ATTACH.CREATION_DATE);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.CREATION_USER);}
-		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.MODIFICATION_DATE);}
+		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return new FilterDAO.LocalDateTimePropertyDAO(PROJECT_ATTACH.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_ATTACH.MODIFICATION_USER);}
 		@Override public Property<Integer> getTagProperty() {return null;}
 	}
@@ -317,28 +316,28 @@ public class AttachPropertiesDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(SEPE_BATCH_ATTACH.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(SEPE_BATCH_ATTACH.DOMAIN);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(SEPE_BATCH_ATTACH.DESCRIPTION);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(SEPE_BATCH_ATTACH.TYPE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SEPE_BATCH_ATTACH.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(SEPE_BATCH_ATTACH.DOMAIN);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(SEPE_BATCH_ATTACH.DESCRIPTION);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(SEPE_BATCH_ATTACH.TYPE);}
 		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return null;}
-		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<byte[]>(SEPE_BATCH_ATTACH.DATA);}
-		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<String>(SEPE_BATCH_ATTACH.DRIVEID);}
-		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(SEPE_BATCH_ATTACH.MIMETYPE);}
+		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<>(SEPE_BATCH_ATTACH.DATA);}
+		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<>(SEPE_BATCH_ATTACH.DRIVEID);}
+		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<>(SEPE_BATCH_ATTACH.MIMETYPE);}
 		@Override public Property<Integer> getAttachModuleProperty() {return null;}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(SEPE_BATCH_ATTACH.SCOPE);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(SEPE_BATCH_ATTACH.SCOPE);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return null;}
-		@Override public Property<Date> getAttachDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachDateProperty() {return null;}
 		@Override public Property<Integer> getCategoryProperty() {return null;}
-		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachCreationDateProperty() {return null;}
 		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getCreationUserProperty() {return null;}
 		@Override public Property<String> getDparentIdProperty() {return null;}
-		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachModificationDateProperty() {return null;}
 		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getModificationUserProperty() {return null;}
-		@Override public Property<Integer> getSourceBatchProperty() {return new FilterDAO.PropertyDAO<Integer>(SEPE_BATCH_ATTACH.SOURCE_BATCH);}
-		@Override public Property<Byte> getSourceTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(SEPE_BATCH_ATTACH.SOURCE_TYPE);}
+		@Override public Property<Integer> getSourceBatchProperty() {return new FilterDAO.PropertyDAO<>(SEPE_BATCH_ATTACH.SOURCE_BATCH);}
+		@Override public Property<Byte> getSourceTypeProperty() {return new FilterDAO.PropertyDAO<>(SEPE_BATCH_ATTACH.SOURCE_TYPE);}
 		@Override public Property<Integer> getTagProperty() {return null;}
 	}
 	
@@ -353,23 +352,23 @@ public class AttachPropertiesDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(DATA_ATTACH.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(DATA_ATTACH.DOMAIN);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DATA_ATTACH.TYPE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DATA_ATTACH.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DATA_ATTACH.DOMAIN);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(DATA_ATTACH.TYPE);}
 		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return null;}
-		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<byte[]>(DATA_ATTACH.DATA);}
-		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<String>(DATA_ATTACH.DRIVE_ID);}
-		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(DATA_ATTACH.MIMETYPE);}
+		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<>(DATA_ATTACH.DATA);}
+		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<>(DATA_ATTACH.DRIVE_ID);}
+		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<>(DATA_ATTACH.MIMETYPE);}
 		@Override public Property<Integer> getAttachModuleProperty() {return null;}
 		@Override public Property<Integer> getScopeProperty() {return null;}
 		@Override public Property<Byte> getSecurityLevelProperty() {return null;}
-		@Override public Property<Date> getAttachDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachDateProperty() {return null;}
 		@Override public Property<Integer> getCategoryProperty() {return null;}
-		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
-		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<Timestamp>(DATA_ATTACH.CREATION_DATE);}
+		@Override public Property<java.util.Date> getAttachCreationDateProperty() {return null;}
+		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return new FilterDAO.LocalDateTimePropertyDAO(DATA_ATTACH.CREATION_DATE);}
 		@Override public Property<String> getCreationUserProperty() {return null;}
 		@Override public Property<String> getDparentIdProperty() {return null;}
-		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
+		@Override public Property<java.util.Date> getAttachModificationDateProperty() {return null;}
 		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return null;}
 		@Override public Property<String> getModificationUserProperty() {return null;}
 		@Override public Property<Integer> getSourceBatchProperty() {return new FilterDAO.PropertyDAO<Integer>(DATA_ATTACH.SOURCE_ID);}

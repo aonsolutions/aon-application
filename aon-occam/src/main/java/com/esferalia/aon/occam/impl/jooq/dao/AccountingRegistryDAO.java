@@ -5,7 +5,6 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
@@ -282,7 +281,7 @@ public class AccountingRegistryDAO {
 					.set(SUPPLIER.SCOPE, reg.getScope() )
 					.set(SUPPLIER.ACCOUNT, reg.getAccountId() )
 					.set(SUPPLIER.CREATION_USER, ctx.getUser() )
-					.set(SUPPLIER.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+					.set(SUPPLIER.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 					.execute();
 			}
 			
@@ -300,7 +299,7 @@ public class AccountingRegistryDAO {
 					.set(CUSTOMER.SCOPE, reg.getScope() )
 					.set(CUSTOMER.ACCOUNT, reg.getAccountId() )
 					.set(CUSTOMER.CREATION_USER, ctx.getUser() )
-					.set(CUSTOMER.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+					.set(CUSTOMER.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 					.execute();
 			}
 			
@@ -318,7 +317,7 @@ public class AccountingRegistryDAO {
 				.set(CREDITOR.SCOPE, reg.getScope() )
 				.set(CREDITOR.ACCOUNT, reg.getAccountId() )
 				.set(CREDITOR.CREATION_USER, ctx.getUser() )
-				.set(CREDITOR.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(CREDITOR.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 				.execute();
 			}
 			
@@ -476,7 +475,7 @@ public class AccountingRegistryDAO {
 						.set(SUPPLIER.SCOPE, reg.getScope() )
 						.set(SUPPLIER.ACCOUNT, reg.getAccountId() )
 						.set(SUPPLIER.CREATION_USER, ctx.getUser() )
-						.set(SUPPLIER.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.set(SUPPLIER.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 						.execute();
 				}
 			
@@ -494,7 +493,7 @@ public class AccountingRegistryDAO {
 						.set(CUSTOMER.SCOPE, reg.getScope() )
 						.set(CUSTOMER.ACCOUNT, reg.getAccountId() )
 						.set(CUSTOMER.CREATION_USER, ctx.getUser() )
-						.set(CUSTOMER.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.set(CUSTOMER.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 						.execute();
 				}
 			
@@ -512,7 +511,7 @@ public class AccountingRegistryDAO {
 						.set(CREDITOR.SCOPE, reg.getScope() )
 						.set(CREDITOR.ACCOUNT, reg.getAccountId() )
 						.set(CREDITOR.CREATION_USER, ctx.getUser() )
-						.set(CREDITOR.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+						.set(CREDITOR.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 						.execute();
 				}
 			

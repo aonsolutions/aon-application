@@ -111,7 +111,7 @@ public class FinanceTrackingDAO {
 			.insertInto(FINANCE_TRACKING)
 				.set(FINANCE_TRACKING.DOMAIN,ft.getDomain())
 				.set(FINANCE_TRACKING.FINANCE,ft.getFinance().getId())
-				.set(FINANCE_TRACKING.TRACKING_DATE,AonDateUtils.toSql(ft.getTrackingDate()))
+				.set(FINANCE_TRACKING.TRACKING_DATE,AonDateUtils.toLocalDate(ft.getTrackingDate()))
 				.set(FINANCE_TRACKING.TYPE,ft.getType().value())
 				.set(FINANCE_TRACKING.DESCRIPTION,ft.getDescription())
 				.set(FINANCE_TRACKING.PM_TYPE_DETAIL,ft.getPayMethodTypeDetail()==null?null:ft.getPayMethodTypeDetail().getId())
@@ -120,7 +120,7 @@ public class FinanceTrackingDAO {
 				.set(FINANCE_TRACKING.AMOUNT,ft.getAmount())
 				.set(FINANCE_TRACKING.RECORDED, AonEnumUtils.getByte(ft.isRecorded()))
 				.set(FINANCE_TRACKING.CREATION_USER,ctx.getUser())
-				.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(FINANCE_TRACKING.CREATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 				.returning(FINANCE_TRACKING.ID)
 				.fetchOne();
 		ctx.log().info("INSERT FINANCE_TRACKING id: " + record.getValue(FINANCE_TRACKING.ID) + " finance: " + ft.getFinance().getId());
@@ -131,7 +131,7 @@ public class FinanceTrackingDAO {
 		int i = ctx.getDslContext().update(FINANCE)
 				.set(FINANCE.STATUS,financeStatus.value())
 				.set(FINANCE.MODIFICATION_USER,ctx.getUser())
-				.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+				.set(FINANCE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()).toLocalDateTime() )
 				.where(FINANCE.ID.equal( financeId))
 				.execute();
 		ctx.log().info("UPDATE FINANCE  ("+i+") id: " + financeId + " status: " + financeStatus.getDescription());
@@ -409,17 +409,16 @@ public class FinanceTrackingDAO {
 				.setBankStatementLink(record.getValue(FINANCE_TRACKING.BANK_STATEMENT_LINK))
 				.setFinance(new FullFinanceFiller().apply(record))
 				.setPayMethodTypeDetail(new PayMethodTypeDetail().setId( record.getValue(FINANCE_TRACKING.PM_TYPE_DETAIL)))
-				.setTrackingDate(record.getValue(FINANCE_TRACKING.TRACKING_DATE))
+				.setTrackingDate(AonDateUtils.toDate(record.getValue(FINANCE_TRACKING.TRACKING_DATE)))
 				.setType( FinanceTrackingType.safeValueOf(record.getValue(FINANCE_TRACKING.TYPE)))
 				.setDescription(record.getValue(FINANCE_TRACKING.DESCRIPTION))
 				.setAmount(record.getValue(FINANCE_TRACKING.AMOUNT))
 				.setRecorded(AonEnumUtils.getBoolean( record.getValue(FINANCE_TRACKING.RECORDED)))
 				.setAccountEntry(record.getValue(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY))
 				.setCreationUser(record.getValue(FINANCE_TRACKING.CREATION_USER))
-				.setCreationDate(record.getValue(FINANCE_TRACKING.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(FINANCE_TRACKING.CREATION_DATE)))
 				.setModificationUser(record.getValue(FINANCE_TRACKING.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FINANCE_TRACKING.MODIFICATION_DATE))
-				;
+				.setModificationDate(AonDateUtils.toDate(record.getValue(FINANCE_TRACKING.MODIFICATION_DATE)));
 		}
 	}
 
@@ -452,7 +451,7 @@ public class FinanceTrackingDAO {
 							.setDescription(record.getValue(PM_TYPE_DETAIL_ACCOUNT.DESCRIPTION))))
 				.setBankStatementLink(record.getValue(FINANCE_TRACKING.BANK_STATEMENT_LINK))
 				.setFinance(new Finance().setId(record.getValue(FINANCE_TRACKING.FINANCE)))
-				.setTrackingDate(record.getValue(FINANCE_TRACKING.TRACKING_DATE))
+				.setTrackingDate(AonDateUtils.toDate(record.getValue(FINANCE_TRACKING.TRACKING_DATE)))
 				.setType( FinanceTrackingType.safeValueOf(record.getValue(FINANCE_TRACKING.TYPE)))
 				.setDescription(record.getValue(FINANCE_TRACKING.DESCRIPTION))
 				.setAmount(record.getValue(FINANCE_TRACKING.AMOUNT))
@@ -460,10 +459,9 @@ public class FinanceTrackingDAO {
 				.setAccountEntry(record.getValue(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY))
 				
 				.setCreationUser(record.getValue(FINANCE_TRACKING.CREATION_USER))
-				.setCreationDate(record.getValue(FINANCE_TRACKING.CREATION_DATE))
+				.setCreationDate(AonDateUtils.toDate(record.getValue(FINANCE_TRACKING.CREATION_DATE)))
 				.setModificationUser(record.getValue(FINANCE_TRACKING.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FINANCE_TRACKING.MODIFICATION_DATE))
-				;
+				.setModificationDate(AonDateUtils.toDate(record.getValue(FINANCE_TRACKING.MODIFICATION_DATE)));
 		}
 	}
 }
