@@ -343,7 +343,7 @@ public abstract class Enterprise extends ResizeComposite {
 	
 	// ------------------------------------------------- Auxiliar Methods	
 	
-	public void checkDocument() {
+	public void checkDocument(boolean fireMessage) {
 		Map<String, String> infoMap = new HashMap<>();
 		infoMap.put("Formato documento", "El documento no est\u00E1 definido o tiene un formato err\u00F3neo");
 		
@@ -356,7 +356,8 @@ public abstract class Enterprise extends ResizeComposite {
 			if(checkDocumentValidation()) {
 				documentStatus.removeStyleName(AON.CSS.aonIconValid());
 				documentStatus.addStyleName(AON.CSS.aonIconInvalid());
-				fireInfoMessage(infoMap);
+				if(Boolean.TRUE.equals(fireMessage))
+					fireInfoMessage(infoMap);
 			}else {
 				documentStatus.removeStyleName(AON.CSS.aonIconInvalid());
 				documentStatus.addStyleName(AON.CSS.aonIconValid());
@@ -364,7 +365,8 @@ public abstract class Enterprise extends ResizeComposite {
 		}else {
 			documentStatus.removeStyleName(AON.CSS.aonIconValid());
 			documentStatus.addStyleName(AON.CSS.aonIconInvalid());
-			fireInfoMessage(infoMap);
+			if(Boolean.TRUE.equals(fireMessage))
+				fireInfoMessage(infoMap);
 		}
 	}
 	
