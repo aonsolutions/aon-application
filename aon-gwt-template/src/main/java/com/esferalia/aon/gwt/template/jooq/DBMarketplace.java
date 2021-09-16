@@ -10,6 +10,8 @@ import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -53,8 +55,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
-
-
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBMarketplace {
 
@@ -76,17 +77,17 @@ public class DBMarketplace {
 		return list;
 	}
 	
-	private static class OrderFiller implements Function<Record7<Integer, String, Integer, String, java.sql.Date, Object, Object>, Order> {
+	private static class OrderFiller implements Function<Record7<Integer, String, Integer, String, LocalDate, Object, Object>, Order> {
 		@Override
-		public Order apply(Record7<Integer, String, Integer, String, java.sql.Date, Object, Object> r) {
+		public Order apply(Record7<Integer, String, Integer, String, LocalDate, Object, Object> r) {
 			return new Order()
 					.setId(r.getValue(SALES.ID))
 					.setSerie(r.getValue(SALES.SERIES))
 					.setNumber(r.getValue(SALES.NUMBER))
 					.setOrderId(r.getValue(SALES.PURCHASE_REFERENCE))
 					.setCustomerName(r.value6() != null ? r.value6().toString() : "") 
-					.setDate(r.getValue(SALES.ISSUE_DATE))
-					.setDateStr(Utils.getDateStr(r.getValue(SALES.ISSUE_DATE)))
+					.setDate(AonDateUtils.toDate(r.getValue(SALES.ISSUE_DATE)))
+					.setDateStr(Utils.getDateStr(AonDateUtils.toDate(r.getValue(SALES.ISSUE_DATE))))
 					.setSellerName(r.value7() != null ? r.value7().toString() : "");
 		}
 	}
@@ -123,7 +124,7 @@ public class DBMarketplace {
 		AONContext ctx = null;
 		try{
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			Result<Record9<Integer, String, Integer, String, Double, Timestamp, String, Integer, Integer>> result = 
+			Result<Record9<Integer, String, Integer, String, Double, LocalDateTime, String, Integer, Integer>> result = 
 								ctx.getDslContext().select(SALES.ID, SALES.SERIES, SALES.NUMBER, SALES.PURCHASE_REFERENCE,
 												DELIVERY.TOTAL_PACKAGES, DELIVERY.STATUS_MODIFICATION_DATE, DELIVERY.TRACKING_NUMBER,
 												DELIVERY.CARRIER, DELIVERY.ID)
@@ -133,29 +134,29 @@ public class DBMarketplace {
 									.and(DELIVERY.SHIPPING_STATUS.eq(ShipmentStatus.IN_AGENCY.value()))
 								.fetch();
 
-			List<Order> orderList = new ArrayList<Order>();
-			result.stream().forEach(record ->{
+			List<Order> orderList = new ArrayList<>();
+			result.stream().forEach(r ->{
 				Order order = new Order();
 				AmazonDelivery ad = new AmazonDelivery();
-				order.setId(record.value1() != null?record.value1():0);
-				order.setSerie(record.value2() != null?record.value2():"");
-				order.setNumber(record.value3() != null?record.value3():0);
-				order.setOrderId(record.value4() != null?record.value4():"");
-				ad.setOrderId(record.value4() != null?record.value4():"");
+				order.setId(r.value1() != null?r.value1():0);
+				order.setSerie(r.value2() != null?r.value2():"");
+				order.setNumber(r.value3() != null?r.value3():0);
+				order.setOrderId(r.value4() != null?r.value4():"");
+				ad.setOrderId(r.value4() != null?r.value4():"");
 				ad.setOrderItemId("");
-				ad.setShipDate(record.value6() != null?record.value6():new Date()); 
+				ad.setShipDate(r.value6() != null? AonDateUtils.toDate(r.value6()) :new Date()); 
 				AONContext sctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-				if(record.value8() != null){
-					Result<RegistryRecord> registryRecord = sctx.getDslContext().select().from(REGISTRY).where(REGISTRY.ID.eq(record.value8())).fetchInto(REGISTRY);
+				if(r.value8() != null){
+					Result<RegistryRecord> registryRecord = sctx.getDslContext().select().from(REGISTRY).where(REGISTRY.ID.eq(r.value8())).fetchInto(REGISTRY);
 					CarrierCode cc = CarrierCode.getValue(registryRecord.get(0).getName());
 					ad.setCarrierCode(cc);
 					if(cc.equals(CarrierCode.OTRO)) ad.setCarrierName(registryRecord.get(0).getName());
 				}
-				ad.setTrackingNumber(record.value7() != null?record.value7():"");
+				ad.setTrackingNumber(r.value7() != null?r.value7():"");
 				ad.setShipMethod("Estándar");
 				order.setAmazonDelivery(ad);
 				orderList.add(order);
-				updateConfirmDelivery(sctx, record.getValue(DELIVERY.ID));
+				updateConfirmDelivery(sctx, r.getValue(DELIVERY.ID));
 			});
 			return orderList;
 			
@@ -168,7 +169,7 @@ public class DBMarketplace {
 	public static void updateConfirmDelivery(AONContext ctx, Integer id){
 		ctx.getDslContext().update(DELIVERY)
 			.set(DELIVERY.SHIPPING_STATUS, ShipmentStatus.SHIPPING.value())
-			.set(DELIVERY.STATUS_MODIFICATION_DATE, new Timestamp(new Date().getTime()))
+			.set(DELIVERY.STATUS_MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new Date()))
 			.where(DELIVERY.ID.eq(id)).execute();
 	}
 	

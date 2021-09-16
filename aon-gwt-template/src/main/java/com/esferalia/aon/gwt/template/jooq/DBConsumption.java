@@ -11,14 +11,14 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.WarehouseTransfer.WAREHOUSE_TRANSFER;
 import static com.esferalia.aon.jooq.tables.WarehouseTransferDetail.WAREHOUSE_TRANSFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.Stock.STOCK;
 
 import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.warehouse.Inventory;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DBConsumption {
@@ -123,8 +124,8 @@ public class DBConsumption {
 					.select(INCOME_DETAIL.ITEM, INCOME_DETAIL.QUANTITY, INCOME_DETAIL.PRICE)
 					.from(INCOME).join(INCOME_DETAIL).on(INCOME.ID.equal(INCOME_DETAIL.INCOME))
 					.where(INCOME_DETAIL.WAREHOUSE.equal(warehouseId))
-					.and(INCOME.ISSUE_TIME.greaterOrEqual(initialDate))
-					.and(INCOME.ISSUE_TIME.lessOrEqual(finalDate))
+					.and(INCOME.ISSUE_TIME.greaterOrEqual(AonDateUtils.toLocalDate(initialDate)))
+					.and(INCOME.ISSUE_TIME.lessOrEqual(AonDateUtils.toLocalDate(finalDate)))
 					.fetch();
 			
 			for (Record3<Integer, Double, Double> record : data3) {
@@ -159,8 +160,8 @@ public class DBConsumption {
 					.where(INVOICE_DETAIL.WAREHOUSE.equal(warehouseId))
 					.and(INVOICE.TYPE.equal((byte)0))
 					.and(INVOICE_DETAIL.SOURCE.notEqual((byte)3))
-					.and(INVOICE.ISSUE_DATE.greaterOrEqual(initialDate))
-					.and(INVOICE.ISSUE_DATE.lessOrEqual(finalDate))
+					.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toLocalDate(initialDate)))
+					.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toLocalDate(finalDate)))
 					.fetch();
 
 			for (Record3<Integer, Double, Double> record : data4) {
@@ -193,8 +194,8 @@ public class DBConsumption {
 					.select(DELIVERY_DETAIL.ITEM, DELIVERY_DETAIL.QUANTITY, DELIVERY_DETAIL.PRICE)
 					.from(DELIVERY).join(DELIVERY_DETAIL).on(DELIVERY.ID.equal(DELIVERY_DETAIL.DELIVERY))
 					.where(DELIVERY_DETAIL.WAREHOUSE.equal(warehouseId))
-					.and(DELIVERY.ISSUE_TIME.greaterOrEqual(new Timestamp(initialDate.getTime())))
-					.and(DELIVERY.ISSUE_TIME.lessOrEqual(new Timestamp(finalDate.getTime())))
+					.and(DELIVERY.ISSUE_TIME.greaterOrEqual(AonDateUtils.toLocalDateTime(initialDate)))
+					.and(DELIVERY.ISSUE_TIME.lessOrEqual(AonDateUtils.toLocalDateTime(finalDate)))
 					.fetch();
 
 			for (Record3<Integer, Double, Double> record : data5) {
@@ -229,8 +230,8 @@ public class DBConsumption {
 					.where(INVOICE_DETAIL.WAREHOUSE.equal(warehouseId))
 					.and(INVOICE.TYPE.equal((byte)1))
 					.and(INVOICE_DETAIL.SOURCE.notEqual((byte)3))
-					.and(INVOICE.ISSUE_DATE.greaterOrEqual(initialDate))
-					.and(INVOICE.ISSUE_DATE.lessOrEqual(finalDate))
+					.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toLocalDate(initialDate)))
+					.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toLocalDate(finalDate)))
 					.fetch();
 			
 			for (Record3<Integer, Double, Double> record : data6) {
@@ -263,8 +264,8 @@ public class DBConsumption {
 					.select(WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.QUANTITY)
 					.from(WAREHOUSE_TRANSFER).join(WAREHOUSE_TRANSFER_DETAIL).on(WAREHOUSE_TRANSFER.ID.equal(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER))
 					.where(WAREHOUSE_TRANSFER.SOURCE_WAREHOUSE.equal(warehouseId))
-					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.greaterOrEqual(new Timestamp(initialDate.getTime())))
-					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.lessOrEqual(new Timestamp(finalDate.getTime())))
+					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.greaterOrEqual(AonDateUtils.toLocalDateTime(initialDate)))
+					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.lessOrEqual(AonDateUtils.toLocalDateTime(finalDate)))
 					.and(WAREHOUSE_TRANSFER.INVENTORY.isNull())
 					.fetch();
 
@@ -293,8 +294,8 @@ public class DBConsumption {
 					.select(WAREHOUSE_TRANSFER_DETAIL.ITEM, WAREHOUSE_TRANSFER_DETAIL.QUANTITY)
 					.from(WAREHOUSE_TRANSFER).join(WAREHOUSE_TRANSFER_DETAIL).on(WAREHOUSE_TRANSFER.ID.equal(WAREHOUSE_TRANSFER_DETAIL.WAREHOUSE_TRANSFER))
 					.where(WAREHOUSE_TRANSFER.TARGET_WAREHOUSE.equal(warehouseId))
-					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.greaterOrEqual(new Timestamp(initialDate.getTime())))
-					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.lessOrEqual(new Timestamp(finalDate.getTime())))
+					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.greaterOrEqual(AonDateUtils.toLocalDateTime(initialDate)))
+					.and(WAREHOUSE_TRANSFER.ISSUE_TIME.lessOrEqual(AonDateUtils.toLocalDateTime(finalDate)))
 					.and(WAREHOUSE_TRANSFER.INVENTORY.isNull())
 					.fetch();
 
@@ -737,7 +738,7 @@ public class DBConsumption {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
-			Result<Record3<Integer, String, Date>> data = ctx.getDslContext().select(INVENTORY.ID,INVENTORY.DESCRIPTION, INVENTORY.INVENTORY_DATE)
+			Result<Record3<Integer, String, LocalDate>> data = ctx.getDslContext().select(INVENTORY.ID,INVENTORY.DESCRIPTION, INVENTORY.INVENTORY_DATE)
 				.from(INVENTORY)
 				.where(INVENTORY.DOMAIN.eq(domain.getId()))
 				.and(INVENTORY.WAREHOUSE.eq(warehouseId))
@@ -746,11 +747,11 @@ public class DBConsumption {
 			
 			Integer cont = 0;
 			ConsumptionItem ci = new ConsumptionItem();
-			for (Record3<Integer, String, Date> i : data) {
+			for (Record3<Integer, String, LocalDate> i : data) {
 				if(i.value1() != null && cont == 0) ci.setFinalId(i.value1());
-				if(i.value2() != null && cont == 0) ci.setFinalDate(i.value3());
+				if(i.value2() != null && cont == 0) ci.setFinalDate(AonDateUtils.toDate(i.value3()));
 				if(i.value1() != null && cont == 1) ci.setInitialId(i.value1());
-				if(i.value2() != null && cont == 1) ci.setInitialDate(i.value3());
+				if(i.value2() != null && cont == 1) ci.setInitialDate(AonDateUtils.toDate(i.value3()));
 				cont++;
 			}
 			
@@ -768,8 +769,8 @@ public class DBConsumption {
 			return ctx.getDslContext().select().from(INVENTORY)
 				.where(INVENTORY.DOMAIN.eq(domain.getId()))
 				.and(INVENTORY.WAREHOUSE.eq(warehouseId))
-				.and(INVENTORY.INVENTORY_DATE.greaterOrEqual(startDate))
-				.and(INVENTORY.INVENTORY_DATE.lessThan(endDate))
+				.and(INVENTORY.INVENTORY_DATE.greaterOrEqual(AonDateUtils.toLocalDate(startDate)))
+				.and(INVENTORY.INVENTORY_DATE.lessThan(AonDateUtils.toLocalDate(endDate)))
 				.orderBy(INVENTORY.INVENTORY_DATE.asc()).limit(1).fetchInto(INVENTORY)
 				.stream().map(new InventoryFiller()).findFirst().orElse(new Inventory());
 		} finally{
@@ -782,8 +783,8 @@ public class DBConsumption {
 		@Override
 		public Inventory apply(InventoryRecord r) {
 			return new Inventory().setId(r.getId())
-					.setInventoryDate(r.getInventoryDate())
-					.setDescription(r.getDescription());		
+					.setInventoryDate(AonDateUtils.toDate(r.getInventoryDate()))
+					.setDescription(r.getDescription());
 		}
 	}
 	
@@ -795,8 +796,8 @@ public class DBConsumption {
 			return ctx.getDslContext().select().from(INVENTORY)
 				.where(INVENTORY.DOMAIN.eq(domain.getId()))
 				.and(INVENTORY.WAREHOUSE.eq(warehouseId))
-				.and(INVENTORY.INVENTORY_DATE.lessOrEqual(endDate))
-				.and(INVENTORY.INVENTORY_DATE.greaterThan(startDate))
+				.and(INVENTORY.INVENTORY_DATE.lessOrEqual(AonDateUtils.toLocalDate(endDate)))
+				.and(INVENTORY.INVENTORY_DATE.greaterThan(AonDateUtils.toLocalDate(startDate)))
 				.orderBy(INVENTORY.INVENTORY_DATE.desc()).limit(1).fetchInto(INVENTORY)
 				.stream().map(new InventoryFiller()).findFirst().orElse(new Inventory());
 		} finally{

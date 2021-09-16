@@ -5,10 +5,9 @@ import static com.esferalia.aon.jooq.tables.CustomerFee.CUSTOMER_FEE;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -35,6 +34,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SellerStatus;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBFee {
 
@@ -54,7 +54,7 @@ public class DBFee {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
 			LinkedList<String> v = new LinkedList<String>();
-			InsertValuesStep17<CustomerFeeRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, java.sql.Date, java.sql.Date, java.sql.Date, Short, Byte, Integer, Integer, Integer> customerFeeInsertQuery = ctx.getDslContext().insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
+			InsertValuesStep17<CustomerFeeRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, LocalDate, LocalDate, LocalDate, Short, Byte, Integer, Integer, Integer> customerFeeInsertQuery = ctx.getDslContext().insertInto(CUSTOMER_FEE, CUSTOMER_FEE.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
 			
 			AONContext sctx = ctx;
 			HashMap<Integer, Short> lineMap = new HashMap<>();
@@ -120,10 +120,10 @@ public class DBFee {
 						if(s.getWorkplaceId() == null) s.setWorkplaceId(w);
 						Short period = s.getPeriod().shortValue();
 						
-						Date endDate = null;
-						if(s.getEndDate() != null) endDate =  new java.sql.Date(s.getEndDate().getTime());
+						LocalDate endDate = null;
+						if(s.getEndDate() != null) endDate =  AonDateUtils.toLocalDate(s.getEndDate());
 						
-						customerFeeInsertQuery.values(domain.getId(), s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), new java.sql.Date(s.getStartDate().getTime()), endDate, new java.sql.Date(s.getBillingDate().getTime()),period, confidential.byteValue(), s.getBillingGroup(), s.getSellerId(),s.getWorkplaceId());
+						customerFeeInsertQuery.values(domain.getId(), s.getProjectId(), s.getClientId(),line, itemId, s.getDescription(), s.getQuantity(), s.getPrice(), s.getDiscount().toString(), AonDateUtils.toLocalDate(s.getStartDate()), endDate, AonDateUtils.toLocalDate(s.getBillingDate()), period, confidential.byteValue(), s.getBillingGroup(), s.getSellerId(),s.getWorkplaceId());
 					}
 					else{
 						v.add("*Fila " +(s.getRow()+1) + " : El producto no existe o los detalles no coincide.");

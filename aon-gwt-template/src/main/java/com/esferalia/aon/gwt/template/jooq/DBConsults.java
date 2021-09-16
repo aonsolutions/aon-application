@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ShipmentStatus;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
@@ -392,7 +393,7 @@ public class DBConsults {
 				ad.setOrderId("");
 				ad.setOrderItemId("");
 				ad.setQuantity(dr.getTotalPackages().intValue());
-				ad.setShipDate(dr.getStatusModificationDate());
+				ad.setShipDate(AonDateUtils.toDate(dr.getStatusModificationDate()));
 				ad.setTrackingNumber(dr.getTrackingNumber());
 				ad.setShipMethod("");
 				list.add(ad);

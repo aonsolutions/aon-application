@@ -20,6 +20,8 @@ import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPART
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -67,6 +69,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DBStock {
 	
@@ -76,7 +79,7 @@ public class DBStock {
 
 	private CaseConditionStep<Double> caseA;
 	private CaseConditionStep<Double> caseB;
-	private InsertValuesStep10<InventoryDetailRecord, Double, Double, Double, Integer, Integer, Integer, Timestamp, String, Timestamp, String> insert;
+	private InsertValuesStep10<InventoryDetailRecord, Double, Double, Double, Integer, Integer, Integer, LocalDateTime, String, LocalDateTime, String> insert;
 	
 	public Error insertStock(String domain, Integer domainId, String login, LinkedList<StockInfo> stock, TransferInfo ti, Integer inventoryId){
 		Error error = new Error();
@@ -97,13 +100,13 @@ public class DBStock {
 			
 			AONContext sctx = ctx;
 			
-			Record3<Integer,Integer, Date> data3 = ctx.getDslContext().select(WAREHOUSE.ID, WAREHOUSE.WORKPLACE, INVENTORY.INVENTORY_DATE)
+			Record3<Integer,Integer, LocalDate> data3 = ctx.getDslContext().select(WAREHOUSE.ID, WAREHOUSE.WORKPLACE, INVENTORY.INVENTORY_DATE)
 					.from(INVENTORY).join(WAREHOUSE).on(WAREHOUSE.ID.eq(INVENTORY.WAREHOUSE))
 					.where(INVENTORY.ID.eq(inventoryId))
 					.limit(1).fetchOne();
 			Integer warehouseId = data3.getValue(WAREHOUSE.ID);
 			Integer workplaceId = data3.getValue(WAREHOUSE.WORKPLACE); 
-			java.util.Date inventoryDate = data3.getValue(INVENTORY.INVENTORY_DATE);
+			java.util.Date inventoryDate = AonDateUtils.toDate(data3.getValue(INVENTORY.INVENTORY_DATE));
 			ApplicationParameter ap = AON.getApplicationParameter(domain, domainId, login, AppParam.AON_PRODUCT_VALUATION_METHOD);
 
 			
@@ -178,7 +181,7 @@ public class DBStock {
 								first = false;
 							}
 						}else{
-							insert = insert.values(0.0, cost, s.getQuantity(), s.getDomainId(), inventoryId, itemId, new Timestamp(new java.util.Date().getTime()), "system", new Timestamp(new java.util.Date().getTime()), "system");
+							insert = insert.values(0.0, cost, s.getQuantity(), s.getDomainId(), inventoryId, itemId, AonDateUtils.toLocalDateTime(new java.util.Date()), "system", AonDateUtils.toLocalDateTime(new java.util.Date()), "system");
 						}
 					}
 				}
@@ -201,7 +204,7 @@ public class DBStock {
 					.and(INVENTORY_DETAIL.ITEM.in(idList.toArray(new Integer[idList.size()]))).execute();
 				}
 				ctx.getDslContext().update(INVENTORY_DETAIL)
-				.set(INVENTORY_DETAIL.MODIFICATION_DATE, new Timestamp(new java.util.Date().getTime()))
+				.set(INVENTORY_DETAIL.MODIFICATION_DATE, AonDateUtils.toLocalDateTime(new java.util.Date()))
 				.set(INVENTORY_DETAIL.MODIFICATION_USER, "system")
 				.where(INVENTORY_DETAIL.INVENTORY.eq(inventoryId)).and(INVENTORY_DETAIL.DOMAIN.eq(domainId))
 				.and(INVENTORY_DETAIL.ITEM.in(idList.toArray(new Integer[idList.size()]))).execute();
@@ -237,7 +240,7 @@ public class DBStock {
 	}
 	
 	public Error insertProposal(Domain domain, String login, LinkedList<StockInfo> stock,Integer proposal, Integer workplace){
-		Timestamp timestamp = new Timestamp(new java.util.Date().getTime());
+		LocalDateTime timestamp = AonDateUtils.toLocalDateTime(new java.util.Date());
 		Error error = new Error();
 		error.setError(true);
 		LinkedList<String> verror = new LinkedList<String>();
@@ -249,11 +252,11 @@ public class DBStock {
 			System.out.println("GWT TEMPLATES - (Solicitud de compra) - dentro de la funcion de insertar!!");
 
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			InsertValuesStep13<ProposalDetailRecord, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> proposalInsertQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
-			 InsertValuesStep12<ProposalDetailRecord, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
+			InsertValuesStep13<ProposalDetailRecord, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, LocalDateTime, String, LocalDateTime> proposalInsertQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
+			InsertValuesStep12<ProposalDetailRecord, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, LocalDateTime> proposalUpdateQuery = ctx.getDslContext().insertInto(PROPOSAL_DETAIL, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE);
 			
 			AONContext sctx = ctx;
-			LinkedList<Integer> updateIds = new LinkedList<Integer>();
+			LinkedList<Integer> updateIds = new LinkedList<>();
 			
 			stock.stream().forEach(s ->{
 				String code = s.getProduct();
@@ -1012,18 +1015,17 @@ public class DBStock {
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
 			
-			Result<Record16<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp>> data = ctx.getDslContext().select( PROPOSAL.WORKPLACE, PROPOSAL.DEPARTMENT, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE)
+			Result<Record16<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, LocalDateTime, String, LocalDateTime>> data = ctx.getDslContext().select( PROPOSAL.WORKPLACE, PROPOSAL.DEPARTMENT, PROPOSAL_DETAIL.ID, PROPOSAL_DETAIL.DOMAIN, PROPOSAL_DETAIL.PROPOSAL, PROPOSAL_DETAIL.ITEM, PROPOSAL_DETAIL.DESCRIPTION,  PROPOSAL_DETAIL.QUANTITY, PROPOSAL_DETAIL.PRICE, PROPOSAL_DETAIL.DISCOUNT_EXPR, PROPOSAL_DETAIL.STATUS, PROPOSAL_DETAIL.SUPPLIER, PROPOSAL_DETAIL.CREATION_USER, PROPOSAL_DETAIL.CREATION_DATE, PROPOSAL_DETAIL.MODIFICATION_USER, PROPOSAL_DETAIL.MODIFICATION_DATE)
 								.from(PROPOSAL_DETAIL).join(PROPOSAL).on(PROPOSAL.ID.eq(PROPOSAL_DETAIL.PROPOSAL))
 								.join(ITEM).on(PROPOSAL_DETAIL.ITEM.eq(ITEM.ID)).join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 								.where(PROPOSAL_DETAIL.PROPOSAL.eq(proposalId))
 								.and(PROPOSAL_DETAIL.DOMAIN.eq(domain.getId()))
-								
 								.orderBy(PRODUCT.NAME)
 								.fetch();
 			
 			LinkedList<StockInfo> v = new LinkedList<StockInfo>();
 			
-			for(Record16<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, Timestamp, String, Timestamp> r : data){
+			for(Record16<Integer, Integer, Integer, Integer, Integer, Integer, String, Double, Double, String, Byte, Integer, String, LocalDateTime, String, LocalDateTime> r : data){
 				StockInfo si  = new StockInfo();
 				Workplace wp = DBCatalogue.getWorkplace(domain, new User().setLogin(login), r.value1());
 				Department d = DBCatalogue.getDepartment(domain, wp, r.value2(), login);

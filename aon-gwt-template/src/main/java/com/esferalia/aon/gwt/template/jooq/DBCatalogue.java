@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.WorkplaceDepartment.WORKPLACE_DEPARTMENT;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.LinkedList;
 
 import org.jooq.Record2;
@@ -95,7 +96,7 @@ public class DBCatalogue {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-			Date today = new Date(new java.util.Date().getTime());
+			LocalDate today = new Date(new java.util.Date().getTime()).toLocalDate();
 			Result<Record7<Integer, String, Integer, Integer, String, String, String>> record = null;
 			if(wp != null && dt != null){
 				record = ctx.getDslContext().selectDistinct(ITEM.PRODUCT, PRODUCT.NAME, WORKPLACE_DEPARTMENT.WORKPLACE,

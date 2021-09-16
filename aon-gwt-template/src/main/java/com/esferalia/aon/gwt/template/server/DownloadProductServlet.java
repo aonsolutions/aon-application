@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -318,7 +320,7 @@ public class DownloadProductServlet extends HttpServlet {
         	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         	try {
 				Date d1 = formatter.parse(itemSerialDate1);
-	        	java.sql.Date date = new java.sql.Date(d1.getTime());
+				LocalDate date = AonDateUtils.toLocalDate(d1);
 	        	c = c.and(ITEM.SERIAL_DATE.greaterOrEqual(date));
 			} catch (ParseException e) {
 				e.printStackTrace();
@@ -329,7 +331,7 @@ public class DownloadProductServlet extends HttpServlet {
         	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         	try {
 				Date d1 = formatter.parse(itemSerialDate2);
-	        	java.sql.Date date = new java.sql.Date(d1.getTime());
+				LocalDate date = AonDateUtils.toLocalDate(d1);
 	        	c = c.and(ITEM.SERIAL_DATE.lessOrEqual(date));
         	} catch (ParseException e) {
         		e.printStackTrace();
@@ -383,7 +385,7 @@ public class DownloadProductServlet extends HttpServlet {
         	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         	try {
 				Date d1 = formatter.parse(creationDate1);
-				Timestamp t = new Timestamp(d1.getTime());
+				LocalDateTime t = AonDateUtils.toLocalDateTime(d1);
 	        	c = c.and(PRODUCT.CREATION_DATE.greaterOrEqual(t));
 			} catch (ParseException e) {
 				e.printStackTrace();
@@ -393,8 +395,8 @@ public class DownloadProductServlet extends HttpServlet {
         	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         	try {
 				Date d1 = formatter.parse(creationDate2);
-				Timestamp t = new Timestamp(d1.getTime());
-	        	c = c.and(PRODUCT.CREATION_DATE.lessOrEqual(t));
+				LocalDateTime t = AonDateUtils.toLocalDateTime(d1);
+				c = c.and(PRODUCT.CREATION_DATE.lessOrEqual(t));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -406,8 +408,8 @@ public class DownloadProductServlet extends HttpServlet {
         	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         	try {
 				Date d1 = formatter.parse(modificationDate1);
-				Timestamp t = new Timestamp(d1.getTime());
-	        	c = c.and(PRODUCT.MODIFICATION_DATE.greaterOrEqual(t));
+				LocalDateTime t = AonDateUtils.toLocalDateTime(d1);
+				c = c.and(PRODUCT.MODIFICATION_DATE.greaterOrEqual(t));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -416,7 +418,7 @@ public class DownloadProductServlet extends HttpServlet {
         	SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         	try {
 				Date d1 = formatter.parse(modificationDate2);
-	        	Timestamp t = new Timestamp(d1.getTime());
+				LocalDateTime t = AonDateUtils.toLocalDateTime(d1);
 	        	c = c.and(PRODUCT.MODIFICATION_DATE.lessOrEqual(t));
 			} catch (ParseException e) {
 				e.printStackTrace();
