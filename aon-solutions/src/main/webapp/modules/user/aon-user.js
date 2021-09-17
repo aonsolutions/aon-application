@@ -370,13 +370,13 @@ export class AonUser extends AonElement {
 		d.addAcceptAction(() => {
 			let oldPassword = this.getElement('aonConfigurationUserCardOldPassword').value;
 			let newPassword = this.getElement('aonConfigurationUserCardNewPassword').value;
-			if(newPassword && newPassword.length>5){
+			// if(newPassword && newPassword.length>5){
 				changePassword({oldPassword, newPassword}).then(()=>{
 					this.showToast({message:MSG.SAVED_DATA, type:CONSTANT.SUCCESS});
 				}).catch(e=>this.showError(e))
-			} else {
-				this.showToast({message:"La contraseña debe tener al menos 6 carácter", type:CONSTANT.ERROR});
-			}
+			// } else {
+			// 	this.showToast({message:"La contraseña debe tener al menos 6 carácter", type:CONSTANT.ERROR});
+			// }
 
 		});
 		d.open();

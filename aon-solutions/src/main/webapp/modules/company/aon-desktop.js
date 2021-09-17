@@ -154,7 +154,7 @@ export class AonDesktop extends AonElement {
 						} 
 					}
 				},{
-					name: 'Solicitudes Recibidas',
+					name: MSG.REQUESTS_RECEIVED,
 					icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 					fn: () =>{
 						if(this.isBeta()){
@@ -169,7 +169,7 @@ export class AonDesktop extends AonElement {
 					}
 				},
 				{
-					name: 'Solicitudes Enviadas',
+					name: MSG.REQUESTS_SENT,
 					icon: MATERIAL_ICONS.OUTBOX,
 					fn: () =>{
 						if(this.isBeta()){

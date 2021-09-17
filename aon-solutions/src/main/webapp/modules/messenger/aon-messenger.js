@@ -65,8 +65,8 @@ export class AonMessenger extends AonElement {
 		this.applicationParentEl = this.getApplicationParent();
 		this.buildToolbar();
 		
-		await getTaskHolder({reload:false}).then(task=>{
-			this.TASK_HOLDER = task;
+		await getTaskHolder({reload:false}).then(th=>{
+			this.TASK_HOLDER = th;
 			this.updateCount();
 		});
 		if(this.data){

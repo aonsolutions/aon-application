@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { CONSTANT, EVENT, MSG } from "../../environments/environments.js";
+import { CONSTANT, MSG } from "../../environments/environments.js";
 import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
 import {
   saveTask,
@@ -8,12 +8,14 @@ import {
   saveTaskAttach,
   deleteTask
 } from "../../services/taskService.js";
+import * as LS from "../../services/localStorageService.js";
 import { Task } from "./Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
-import { checkFilesAddEventDescription, fillChat, sendMessage } from "./shared/utils.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
+import { checkFilesAddEventDescription, sendMessage } from "./shared/utils.js";
 import * as ACTIONS from "../actions.js";
 import { getFormVacationJson } from "./forms/vacation.js";
+import { fillChat } from "./shared/fill.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -66,8 +68,9 @@ export class AonMessengerChat extends AonElement {
     this.applicationParentEl = this.getApplicationParent();
     this.deleteToolbar();
     this.task = new Task();
+    this.company = LS.getCompany();
 
-    if(this.data.id) this.setData(this.data);
+    if(this.data.id) this.setData(this.data); 
 
     const sender = this.applicationParentEl.TASK_HOLDER;
     if(sender){
@@ -127,7 +130,7 @@ export class AonMessengerChat extends AonElement {
 
   async saveTaskWorkflow() {
     let aonTextArea = this.getElement(MESSENGER_IDS.COMMENT_TASK);
-    const [comment, messengeEl] = await sendMessage(aonTextArea); 
+    const [comment, messengeEl] = await sendMessage(aonTextArea, this); 
     try {
       if(comment){
         const workflow = await saveTaskWorkflow({
@@ -171,7 +174,7 @@ export class AonMessengerChat extends AonElement {
     try {
       let workflow = await getTaskWorkflow({ taskId:this.task.id });
       this.task.setWorkflow(workflow);
-      fillChat(workflow);
+      fillChat(workflow, this);
       if(workflow.length>0) this.addButtonDelete();
     } catch (error) {}
     this.applicationEl.stopLoading();
@@ -204,7 +207,7 @@ export class AonMessengerChat extends AonElement {
           this.task.editTask(data);
           if(this.getData().id){
             this.setData(data);
-            if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow());
+            if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow(), this);
           } else {
             this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
           }
@@ -222,7 +225,7 @@ export class AonMessengerChat extends AonElement {
 
       if(this.getData().id){
         this.setData(data);
-        if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow());
+        if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow(), this);
       } else {
         this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
       }

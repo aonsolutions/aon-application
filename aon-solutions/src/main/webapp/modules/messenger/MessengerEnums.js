@@ -53,6 +53,7 @@ export const MESSENGER_COMPONENTS = {
 
 export const MESSENGER_IDS = {
     FORM_DIV : "formDiv",
+    ICON_SEND_WORKFLOW:'iconSendWorkflow',
     MAIN_WRAPPER : "mainWrapper",
     MESSENGER_CHAT: "messengerChat",
     MAIN_DIV: "mainDiv",
@@ -68,12 +69,13 @@ export const MESSENGER_IDS = {
     TASKTAG: "taskTag",
     COMMENT_TASK: "commentTask",
     CUSTOMER_TASK: "customerTask",
+    PROJECT_TASK: "projectTask",
     DESCRIPTION_TASK: "descriptionTask",
     GTASK_ID_TASK: "GTaskIdTask",
     TITLE_TASK: "titleTask",
     SOURCE_TASK: "sourceTask",
     INTERNAL_TASK: "internalTask",
-    BUTTON_SEND: "buttonSend"
+    BUTTON_SEND: "buttonSend",
 }
 
 export const WORKFLOW_TYPES = {

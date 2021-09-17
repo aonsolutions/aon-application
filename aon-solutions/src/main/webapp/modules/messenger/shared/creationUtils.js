@@ -463,6 +463,15 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
   readonly: "false"
 });
 
+ //-----------------PROJECT
+ export const createProject = () => setAttributes( new AonSelect(),{
+  id: MESSENGER_IDS.PROJECT_TASK,
+  name: MESSENGER_IDS.PROJECT_TASK,
+  title: MSG.PROJECT,
+  autocomplete: "off",
+  readonly: "false"
+});
+
 
 //-------------TEXT AREA COMMENT
 export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea(),{
@@ -512,7 +521,7 @@ export const createChatMessage = (properties, chat) => {
     if(messageSend || me){
       const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
       iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date(messageSend)) : MSG.SEND;
-
+      iconSendWorkflow.id = MESSENGER_IDS.ICON_SEND_WORKFLOW;
       let color = COLORS.AON_BLUE;
 
       if(messageSend){
@@ -525,6 +534,16 @@ export const createChatMessage = (properties, chat) => {
       if(me){
         setStyles(iconSendWorkflow, { right: "17px", cursor: "pointer" });
         iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(message.dataset.id));
+
+        //-------------------icon share
+        const textShare = "Compartir entre ramas (En desarrollo)";
+        const iconShare = createOutlinedMaterialIcon({name:MATERIAL_ICONS.IOS_SHARE}).element;
+        iconShare.title = textShare;
+        setStyles(iconShare, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "12px", zIndex: 1 , right: "39px", cursor: "pointer" });
+        iconShare.addEventListener(EVENT.CLICK, ()=> alert(textShare));
+        message.appendChild(iconShare);
+
+         //-------------------icon delete
       } else {
         properties.marginLeft = "20px";
       }
@@ -668,14 +687,21 @@ export const createLabelFileText = () => {
 export const createAonSwitch = () => {
   let btn = new AonSwitch();
   btn.id = MESSENGER_IDS.INTERNAL_TASK;
-  btn.title = MSG.INTERNAL;
-  btn.style.width = "23%";
-  btn.style.margin = "auto";
-  btn.addEventListener(EVENT.CHANGE, ({target}) => {
-    btn.title = target.checked ? MSG.ASESOR : MSG.INTERNAL;
-  });
+  btn.title = "Para tu Gestor";
+  btn.style.width = "100%";
+  btn.style.marginLeft = "13px";
   return btn;
 }
+
+export const createNoMessage = ()=>  newComponent({
+  type : MESSENGER_COMPONENTS.ADVICE,
+  id : MESSENGER_IDS.NO_MESSAGES,
+  text : 'No hay mensajes en esta solicitud',
+  styles : {
+    fontSize : '1em',
+    color : CSS.variable(COLORS.GRAYSON),
+  }
+});
 
 /**
  * 
@@ -690,7 +716,7 @@ const sendHistoric = async (workflowId) => {
       if(message){
         //CHANGE STYLE IF SEND MESSAGE
         message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
-        const iconSendWorkflow = message.querySelector("i");
+        const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
         if(iconSendWorkflow){
           iconSendWorkflow.title = "Enviado "+setDateTimestampDay(workflow.modification_date || workflow.creation_date)
           iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
@@ -699,5 +725,4 @@ const sendHistoric = async (workflowId) => {
       }
     }
   }
-
 }

@@ -11,7 +11,7 @@ import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
 import { getIconJson } from "./shared/utils.js";
 import { getCustomers } from "../../services/registryService.js";
-import { getTastHolders } from "../../services/taskHolderService.js";
+import { getTaskHolder, getTastHolders } from "../../services/taskHolderService.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
@@ -65,12 +65,12 @@ export class AonMessengerList extends AonElement {
     this.buildToolbar();
   }
 
-  paintTable(divNotification) {
+  async paintTable(divNotification) {
     this.TABLE_ID = this.id + "Table";
     let aonTable = this.isMobile() ?  new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
     if (divNotification) {
-      divNotification.appendChild(aonTable);
+      await this.isFromNotification(aonTable, divNotification);
     } else {
       this.appendChild(aonTable);
     }
@@ -95,17 +95,27 @@ export class AonMessengerList extends AonElement {
     setTasks([]);
 
     this.loadMore();
-  
+  }
+
+  async isFromNotification(aonTable, divNotification){
+    divNotification.appendChild(aonTable);
+		const th = await getTaskHolder({reload:false}).catch(()=>null);
+    if(th){
+      this.TASK_HOLDER = th;
+      let filter = this.getFilter();    
+      filter.task_holder = th.id;
+      this.setFilter(filter);
+    }
   }
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
     if(this.isBeta()){
       if(this.isMobile()){
-        this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.REQUEST}));
+        this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY}));
       } else {
         this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>{
-          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.REQUEST});
+          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY});
         });
       }
     }
@@ -199,7 +209,7 @@ export class AonMessengerList extends AonElement {
     try {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
-      if(this.applicationParentEl.cauData && this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email){
+      if(this.applicationParentEl && this.applicationParentEl.cauData && this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email){
         filter.email = this.applicationParentEl.cauData.auth.email;
       }
       this.setFilter(filter);
@@ -217,6 +227,7 @@ export class AonMessengerList extends AonElement {
         });
       }
     } catch (error) {
+      console.log("error>>",error);
       this.showError(error);
     }
     return data;

@@ -25,9 +25,9 @@ export class Task {
       this.title       = undefined;
       this.gtask_id    = undefined;
       this.description = undefined;
-      this.source      = TASK_SOURCE.REQUEST;
+      this.source      = TASK_SOURCE.QUERY;
       this.source_id   = undefined;
-      this.start_date   = undefined;
+      this.start_date  = undefined;
       this.workgroup   = {};
       this.registry    = {};
       this.task_holder = {};
@@ -52,7 +52,7 @@ export class Task {
       this.title       = task.title || "";
       this.description = task.description || "";
       this.gtask_id    = task.gtask_id || "";
-      this.source      = task.source || TASK_SOURCE.REQUEST;
+      this.source      = task.source || TASK_SOURCE.QUERY;
       this.source_id   = task.source_id || undefined;
       this.start_date  = task.start_date || undefined;
       this.workflow    = task.workflow || [];

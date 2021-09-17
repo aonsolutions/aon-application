@@ -149,7 +149,7 @@ export const EDIT_WORKGROUP = "Editar grupo de trabajo"; //TODO
 export const EMAIL = MSG.EMAIL;
 export const EMPLOYEE = MSG.EMPLOYEE;
 export const ENTERPRISE = MSG.ENTERPRISE;
-export const ENVIRONMENT = 'Entorno';
+export const ENVIRONMENT = 'Entorno';//TODO
 export const EQUIVALENCE_SURCHARGE = MSG.EQUIVALENCE_SURCHARGE;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
 export const END_DATE = "Fecha fin";//TODO
@@ -159,10 +159,11 @@ export const END_DATE = "Fecha fin";//TODO
 export const FAX = MSG.FAX;
 export const FILE = MSG.FILE;
 export const FILE_DATA = MSG.FILE_DATA;
-export const FILTER = "Filtro";
-export const FILTERS = "Filtros";
-export const FISCAL = 'Fiscal';
+export const FILTER = "Filtro";//TODO
+export const FILTERS = "Filtros";//TODO
+export const FISCAL = 'Fiscal';//TODO
 export const FOOTER = MSG.FOOTER;
+export const FORMALITIES = 'Trámites';//TODO
 
 // ----- G
 
@@ -268,6 +269,7 @@ export const PRODUCTS = MSG.PRODUCTS;
 export const PROVINCE = MSG.PROVINCE;
 export const PROCESS_TYPE = "Tipo de trámite"; //TODO
 export const PROCESS = "Trámite"; //TODO
+export const PROJECT = "Proyecto"; //TODO
 // ----- Q
 
 export const QUANTITY = MSG.QUANTITY;
@@ -295,7 +297,8 @@ export const REJECTED_INVOICES = MSG.REJECTED_INVOICES;
 export const REJECTEDS = MSG.REJECTEDS;
 export const REQUEST = MSG.REQUEST;
 export const REQUESTS = MSG.REQUESTS;
-export const REQUESTS_FOR_YOU = 'Solicitudes para ti';//TODO
+export const REQUESTS_SENT = 'Solicitudes Enviadas';//TODO
+export const REQUESTS_RECEIVED = 'Solicitudes Recibidas';//TODO
 export const RESTORE = MSG.RESTORE;
 export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;

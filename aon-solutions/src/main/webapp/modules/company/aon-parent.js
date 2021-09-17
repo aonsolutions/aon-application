@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
-import { EVENT, MSG, TAG } from '../../environments/environments.js';
+import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import '../../components/aon-application.js';
 import {AonSign} from '../signin/aon-sign.js';
 import './aon-desktop.js';
@@ -53,12 +53,12 @@ export class AonParent extends AonElement {
 					}
 				}
 			}, {
-				name: MSG.OPEN_REQUESTS,
-				icon: 'assignment',
+				name: MSG.REQUESTS_RECEIVED,
+				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 				fn: () => {}
 			}, {
-				name: MSG.REQUESTS_FOR_YOU,
-				icon: 'assignment_ind',
+				name: MSG.REQUESTS_SENT,
+				icon: MATERIAL_ICONS.OUTBOX,
 				fn: () => {}
 			}
 		];
@@ -235,10 +235,11 @@ export class AonParent extends AonElement {
 		let i = this.createElement('i');
 		i.className = 'material-icons aonAvatar';
 
-		if(company.parent) i.innerHTML = 'apartment';
+		
+		if(company.type === 'OFFICE') i.innerHTML = 'work';
+		else if(company.parent) i.innerHTML = 'apartment';
 		else if(company.shared) i.innerHTML = 'share';
 		else if(!company.active) i.innerHTML = 'domain_disabled';
-		else if(company.type === 'OFFICE') i.innerHTML = 'work';
 		else i.innerHTML = 'business';
 		let span2 = this.createElement(TAG.SPAN);
 		span2.innerHTML = company.name;

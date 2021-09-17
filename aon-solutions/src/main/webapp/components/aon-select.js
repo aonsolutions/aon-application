@@ -6,7 +6,7 @@ export class AonSelect extends AonElement {
 
   INPUT;
   OPTIONS;
-
+  detail;
   _selected;
 
   static get observedAttributes() {
@@ -81,7 +81,7 @@ export class AonSelect extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if(CONSTANT.VALUE === name) {
       let options = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-      let detail = {};
+      this.detail = {};
       options.forEach((item, i) => {
         if(item.value == newValue) {
           let input = this.getElement(this.INPUT);
@@ -90,8 +90,8 @@ export class AonSelect extends AonElement {
       });
 
       if(options.length > 0)
-        detail =  options.find(v=>  v.value == newValue);
-      this.dispatchEvent(new CustomEvent(EVENT.CHANGE,{detail: detail || {} }));
+        this.detail =  options.find(v=>  v.value == newValue);
+      this.dispatchEvent(new CustomEvent(EVENT.CHANGE,{detail: this.detail || {} }));
     } else if(CONSTANT.DISABLED === name){
       if(CONSTANT.TRUE == this.disabled){
         let input = this.getElement(this.INPUT);
@@ -262,6 +262,10 @@ export class AonSelect extends AonElement {
     const input = this.getElement(this.INPUT);
     if(!input) return null;
   	return input.value;
+  }
+
+  getDetail(){
+    return this.detail || {};
   }
 }
 if(!window.customElements.get('aon-select')){
