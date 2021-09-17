@@ -413,7 +413,7 @@
 										</aon:commandLink>
 									</aon:div>
 								</aon:if>
-								<aon:if test="#{domainSwitcher.comunica}">
+								<aon:if test="#{domainSwitcher.comunica and domainSwitcher.childDomain}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_main_config_comunica" 
 											action="gwt_main_config_comunica"

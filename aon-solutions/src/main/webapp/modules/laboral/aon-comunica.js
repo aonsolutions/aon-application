@@ -74,7 +74,7 @@ export class AonComunica extends AonElement {
 
     let options = [];
 
-    let movements = PayrollOptions.MOVEMENTS;
+    let movements = PayrollOptions.AON_COMUNICA;
     movements.fn = () => this.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
     options.push(movements);
 
