@@ -350,10 +350,10 @@ export class Invoice {
     this.taxes.forEach((tax, i) => {
       this.taxes[i] = this.calculateTax(tax);
     });
-    this.calculateTotalFromTax();
     if(this.isWithholdingFarmer()) {
       this.calculateWithholdingFromTax();
     }
+    this.calculateTotalFromTax();
   }
 
   isWithholding() {
@@ -363,6 +363,7 @@ export class Invoice {
   setWithholding(withholding) {
     this.withholding = withholding;
     this.calculateWithholdingFromTax();
+    this.calculateTotalFromTax();
   }
 
   isWithholdingFarmer() {
@@ -372,6 +373,7 @@ export class Invoice {
   setWithholdingFarmer(withholding_farmer) {
     this.withholding_farmer = withholding_farmer;
     this.calculateWithholdingFromTax();
+    this.calculateTotalFromTax();
   }
 
   getTransaction() {
@@ -444,16 +446,16 @@ export class Invoice {
 
   setTax(tax, i) {
     this.taxes[i] = this.calculateTax(tax);
-    this.calculateTotalFromTax();
     this.calculateWithholdingFromTax();
+    this.calculateTotalFromTax();
   }
 
   deleteTax(tax, i) {
     if(TaxType.IRPF === tax.type) 
       this.withholding = false;
     this.taxes.splice(i, 1);
-    this.calculateTotalFromTax();
     this.calculateWithholdingFromTax();
+    this.calculateTotalFromTax();
   }
 
   calculateWithholdingFromTax() {
@@ -507,6 +509,11 @@ export class Invoice {
     this.taxes.filter(f => TaxType.IVA === f.tax).forEach(tax => {
       total = total + round(Number(tax.base) + Number(tax.quota) + Number(tax.surcharge_quota));
     });
+
+    this.taxes.filter(f => TaxType.IRPF === f.tax).forEach(tax => {
+      total = total - Number(tax.quota);
+    });
+    
     this.total = round(Number(total));
     this.calculateFinances();
   }
@@ -639,6 +646,9 @@ export class Invoice {
     });  
     this.calculateTotalFromDetail();
     this.calculateWithholdingFromTax();
+    this.taxes.filter(f => TaxType.IRPF === f.tax).forEach(tax => {
+      this.total = this.total - Number(tax.quota);
+    });
   }
   
   calculateTotalFromDetail() {
