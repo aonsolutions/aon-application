@@ -11,8 +11,10 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class WorkplaceDialogObject {
+	
+	// ------------------------------------------------- Variables
 
-	private DomainEnterprisesServiceAsync enterprisesService;
+	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	
 	private Enterprise enterprise;
 	
@@ -22,17 +24,15 @@ public class WorkplaceDialogObject {
 	
 	private WorkplaceInfo workplaceInfo;
 		
-	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
+	// ------------------------------------------------- Constructor	
 	
-	public WorkplaceDialogObject(Enterprise enterprise, DomainEnterprisesServiceAsync enterprisesService) {
-		this.enterprisesService = enterprisesService;
-		
+	public WorkplaceDialogObject(Enterprise enterprise) {
 		this.enterprise = enterprise;
 		this.workplaceInfo = new WorkplaceInfo();
 		this.agreements = new ArrayList<>();
 	}
 	
-	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
+	// ------------------------------------------------- DataBase Methods
 	
 	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
 		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
@@ -42,23 +42,23 @@ public class WorkplaceDialogObject {
 				agreements = getActiveAgreements(result);
 				
 				getEnterpriseAddresses(
-						s -> {success.accept(result);},
+						s -> success.accept(result),
 						f ->{}
 				);	
 			}
 			
 			private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
 				List<Agreement> activeAgreements = new ArrayList<>();
-				for(Agreement agreement : agreements){
+				for(Agreement agreement : agreements)
 					if(agreement.getId() > 0)
 						activeAgreements.add(agreement);
-				}
+				
 				return activeAgreements;
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				failure.accept(caught);
 			}
 		});	
 	}
@@ -68,7 +68,7 @@ public class WorkplaceDialogObject {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				failure.accept(caught);
 			}
 
 			@Override
@@ -76,7 +76,7 @@ public class WorkplaceDialogObject {
 				addresses = result;
 				
 				getEnterpriseActivities(
-						s -> {success.accept(result);},
+						s -> success.accept(result),
 						f -> {}
 					);
 			}
@@ -88,7 +88,7 @@ public class WorkplaceDialogObject {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				failure.accept(caught);
 			}
 
 			@Override
@@ -116,7 +116,7 @@ public class WorkplaceDialogObject {
 		
 	}
 	
-	// ---------------------------------------------- GETTERS / SETTERS  -------------------------------------------------
+	// ------------------------------------------------- Getters / Setters
 	
 	public Map<Integer, String> getWorkplaceAddresses(){
 		return this.addresses;

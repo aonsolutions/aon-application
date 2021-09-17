@@ -221,16 +221,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	class NewWorkplaceCommand implements ScheduledCommand {
-		private DomainEnterprisesServiceAsync enterprisesService;
 
 		@Override
 		public void execute() {
-			// Create a remote service proxy to talk to the server-side Employees
-			// service.
-			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-
 			WorkplaceDialog workplaceDialog = new WorkplaceDialog();
-			WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(enterprise, enterprisesService);
+			WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(enterprise);
 			workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
 			enterpriseContextMenu.hide();
 			workplaceDialog.center();
@@ -2300,11 +2295,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@Override
 	public void onWorkplaceSelected(Workplace workplace) {
 
-		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
-		DomainEmployeesServiceAsync domainEmployeeServiceAsync = DomainEmployeesServiceAsync.newInstance();
-
-		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(enterprise, workplace,
-				domainEnterprisesServiceAsync, domainEmployeeServiceAsync);
+		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(enterprise, workplace);
 
 		employeeDetail.setWidget(getWorkplaceDraft());
 		getWorkplaceDraft().setWorkplaceDraftObject(employeeNewDraftObject);
@@ -3400,11 +3391,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	protected static void showNewWorkplace() {
-		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-
 		WorkplaceDialog workplaceDialog = new WorkplaceDialog();
-		WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(getEmployeeTree().enterprise,
-				enterprisesService);
+		WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(getEmployeeTree().enterprise);
 		workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
 		workplaceDialog.center();
 		workplaceDialog.show();

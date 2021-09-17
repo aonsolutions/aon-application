@@ -1,11 +1,10 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -27,14 +26,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Workplace extends ResizeComposite{
 	
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// -------------------------------------------------- UiBinder
 
 	private static WorkplaceUiBinder uiBinder = GWT.create(WorkplaceUiBinder.class);
 
 	interface WorkplaceUiBinder extends UiBinder<Widget, Workplace> {
 	}
 
-	// -------------------------------------------------- UiFields --------------------------------------------------
+	// -------------------------------------------------- UiFields
 
 	@UiField
 	MyStyle style;
@@ -74,24 +73,30 @@ public abstract class Workplace extends ResizeComposite{
 
 	@UiField
 	HTMLPanel workplaceActivityPanel;
+	
+	// ------------------------------------------------ Variables
+	
+	private static final String STYLESELECT = "aon-selectOneMenu";
 
-	// ------------------------------------------------ CONSTRUCTOR ------------------------------------------------------
+	// ------------------------------------------------ Constructor
 
-	public Workplace() {
-		// Inicializamos la vista del empleado
+	protected Workplace() {
 		initWidget(uiBinder.createAndBindUi(this));
 		initializeView();
 	}
 
-	// ------------------------------------------------- UiHandlers ------------------------------------------------------
+	// ------------------------------------------------- UiHandlers
 	
 	@UiHandler("workplaceDescription")
 	void onWorkplaceDescriptionChangeValue(ChangeEvent event) {
 		if(AonStringUtils.isNotBlank(workplaceDescription.getValue())) {
-			removeWarningIcon(workplaceDescriptionPanel, workplaceDescription);
-			onWorkplaceDescriptionChange();
+			removeWarningIcon(workplaceDescription);
+			onWorkplaceDescriptionChange();		
 		} else {
-			addWarningIcon(workplaceDescriptionPanel, workplaceDescription, null);
+			addWarningIcon(workplaceDescription);
+			Map<String, String> warningMap = new HashMap<>();
+			warningMap.put("Descripci\u00F3n obligatoria", "Este campo es obligatorio");
+			fireWarningMessage(warningMap);
 		}
 	}
 
@@ -100,9 +105,7 @@ public abstract class Workplace extends ResizeComposite{
 		onWorkplaceEconomicConcertChange();
 	}
 	
-	// ------------------------------------------------------------------------
-	//							Abstraact Methods
-	// ------------------------------------------------------------------------
+	// ------------------------------------------------- AbstractMethods
 	
 	// TABLA DATOS CENTRO DE TRABAJO
 	
@@ -114,8 +117,10 @@ public abstract class Workplace extends ResizeComposite{
 	
 	public abstract void onWorkplaceAgreementChange(Integer agreementId);
 	public abstract void onWorkplaceActivityChange(Integer activityId);
+	
+	public abstract void fireWarningMessage(Map<String, String> warningMap);
 
-	// ------------------------------------------------------ METODOS DE LA CLASE --------------------------------------------------
+	// ------------------------------------------------- Initialize View
 
 	public void initializeView() {
 		resetElements();
@@ -141,8 +146,10 @@ public abstract class Workplace extends ResizeComposite{
 		this.workplaceEconomicConcert.addItem("Bizkaia", "1");
 		this.workplaceEconomicConcert.addItem("Gipuzkoa", "2");
 		this.workplaceEconomicConcert.addItem("Navarra", "3");
-		this.workplaceEconomicConcert.addItem("Territorio Com"+ String.valueOf("\u00FA") +"n", "4");
+		this.workplaceEconomicConcert.addItem("Territorio Com\u00FAn", "4");
 	}
+	
+	// ------------------------------------------------- Initialize Cells
 
 	public void initializeAddressCell(Map<Integer, String> workplaceAddresses) {
 		Widget workplaceAddressWidget;
@@ -152,7 +159,7 @@ public abstract class Workplace extends ResizeComposite{
 			workplaceAddressWidget = createEmptyLabel();
 		else{
 			ListBox addressListBox = new ListBox();
-			addressListBox.setStyleName("aon-selectOneMenu");
+			addressListBox.setStyleName(STYLESELECT);
 			addressListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
 			
 			addressListBox.addItem("-", "-1");
@@ -163,9 +170,12 @@ public abstract class Workplace extends ResizeComposite{
 			addressListBox.addChangeHandler(e -> {
 				Integer addressId = Integer.valueOf(addressListBox.getSelectedValue());
 				if(addressId == -1) {
-					addWarningIcon(workplaceAddressParentPanel, addressListBox, "La direcci\u00F3n es obligatoria");
+					addWarningIcon(addressListBox);
+					Map<String, String> warningMap = new HashMap<>();
+					warningMap.put("Direcci\u00F3n obligatoria", "Este campo es obligatorio");
+					fireWarningMessage(warningMap);
 				} else {
-					removeWarningIcon(workplaceAddressParentPanel, addressListBox);
+					removeWarningIcon(addressListBox);
 					onWorkplaceAddressChange(addressId);
 				}
 			});
@@ -197,9 +207,7 @@ public abstract class Workplace extends ResizeComposite{
 			
 			Button calendarButton = new Button();
 			calendarButton.setStyleName("aon-editDataTable-button aon-icon-calendar");
-			calendarButton.addClickHandler(e -> {
-				EmployeeTree.showWorkplaceCalendar(calendarDraftObjectData);
-			});
+			calendarButton.addClickHandler(e -> EmployeeTree.showWorkplaceCalendar(calendarDraftObjectData));
 			
 			hPanel.add(calendarLabel);
 			hPanel.add(calendarButton);
@@ -213,11 +221,11 @@ public abstract class Workplace extends ResizeComposite{
 		Widget workplaceAgreementWidget;
 		workplaceAgreementPanel.clear();
 		
-		if(workplacesAgreements.size() == 0)
+		if(workplacesAgreements.isEmpty())
 			workplaceAgreementWidget = createEmptyLabel();
 		else{
 			ListBox agreementListBox = new ListBox();
-			agreementListBox.setStyleName("aon-selectOneMenu");
+			agreementListBox.setStyleName(STYLESELECT);
 			agreementListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
 			
 			agreementListBox.addItem("-", "-1");
@@ -229,13 +237,6 @@ public abstract class Workplace extends ResizeComposite{
 				Integer agreementId = Integer.valueOf(agreementListBox.getSelectedValue());
 				onWorkplaceAgreementChange(agreementId);
 			});
-			
-			// If only one activity, selected it and fire event
-//			if(agreementListBox.getItemCount() == 2){
-//				agreementListBox.setSelectedIndex(1);
-//				Integer agreementId = Integer.valueOf(agreementListBox.getSelectedValue());
-//				onWorkplaceAgreementChange(agreementId);
-//			}
 			
 			workplaceAgreementWidget = agreementListBox;
 		}
@@ -250,7 +251,7 @@ public abstract class Workplace extends ResizeComposite{
 			workplaceActivityWidget = createEmptyLabel();
 		else{
 			ListBox activityListBox = new ListBox();
-			activityListBox.setStyleName("aon-selectOneMenu");
+			activityListBox.setStyleName(STYLESELECT);
 			activityListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
 			
 			activityListBox.addItem("-", "-1");
@@ -276,6 +277,8 @@ public abstract class Workplace extends ResizeComposite{
 		workplaceActivityPanel.add(workplaceActivityWidget);
 	}
 	
+	// ------------------------------------------------- Auxiliar Methods
+	
 	private Label createEmptyLabel() {
 		Label label = new Label();
 		
@@ -290,19 +293,11 @@ public abstract class Workplace extends ResizeComposite{
 		workplaceCalendarHTMLPanel.setVisible(false);
 	}
 	
-	private void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
-		if(panel.getWidgetCount() == 2) {
-			message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
-			panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
-			widget.addStyleName(style.warningTB());
-			widget.addStyleName(style.flexGrow());
-		}
+	private void addWarningIcon(Widget widget) {
+		widget.addStyleName(style.warningTB());
 	}
 	
-	private void removeWarningIcon(HTMLPanel panel, Widget widget) {
-		if(panel.getWidgetCount() > 2)
-			panel.remove(panel.getWidgetCount() - 1);
-		
+	private void removeWarningIcon(Widget widget) {
 		widget.removeStyleName(style.warningTB());
 	}
 
