@@ -6,12 +6,15 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -22,14 +25,17 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItParams;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAccount;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CheckItAPI implements IParamNames{
@@ -119,17 +125,13 @@ public class CheckItAPI implements IParamNames{
 	/**
 	 * Función encargada de devolver el listado de los bancos que continen robots
 	 * 
-	 * @param claveApi <em>required (string)</em>
-	 *                 <p>
-	 *                 Token que identifica el despacho
-	 *                 </p>
 	 * @return JSONArray
 	 * @throws CheckItException exception containing the error JSON as String as
 	 *                          message
 	 */
-	public static JSONArray getBanks(String claveApi) throws CheckItException {
+	public static JSONArray getBanks() throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, claveApi);
+		params.put(API_KEY_PARAM, API_KEY);
 		return getBanks(params);
 	}
 
@@ -258,11 +260,6 @@ public class CheckItAPI implements IParamNames{
 	/**
 	 * Función encargada de devolver las credenciales y el tipo de login al que
 	 * pertenecen.
-	 * 
-	 * @param claveApi         <em>required (string)</em>
-	 *                         <p>
-	 *                         Token que identifica el despacho
-	 *                         </p>
 	 * @param empresaId        <em>required (integer)</em>
 	 *                         <p>
 	 *                         Campo único que identifica la empresa. Se obtiene de
@@ -273,14 +270,15 @@ public class CheckItAPI implements IParamNames{
 	 *                         Campo único que identifica el tipo del login del
 	 *                         banco. Se obtiene de /bancos/logins
 	 *                         </p>
+	 * 
 	 * @return JSONObject
 	 * @throws CheckItException exception containing the error JSON as String as
 	 *                          message
 	 */
-	public static JSONObject getCredentials(String claveApi, Integer empresaId, Integer tipoLoginBancoId)
+	public static JSONObject getCredentials(Integer empresaId, Integer tipoLoginBancoId)
 			throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, claveApi);
+		params.put(API_KEY_PARAM, API_KEY);
 		params.put(ENTERPRISE_ID_PARAM, empresaId);
 		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
 		return getCredentials(params);
@@ -341,11 +339,6 @@ public class CheckItAPI implements IParamNames{
 	/**
 	 * Función que inserta o modifca credenciales para la empresa y
 	 * tipo_login_banco_id
-	 * 
-	 * @param claveApi         <em>required (string)</em>
-	 *                         <p>
-	 *                         Token que identifica el despacho
-	 *                         </p>
 	 * @param empresaId        <em>required (integer)</em>
 	 *                         <p>
 	 *                         Campo único que identifica la empresa. Se obtiene de
@@ -368,14 +361,15 @@ public class CheckItAPI implements IParamNames{
 	 *                         <p>
 	 *                         Campo del login del tipo_login_banco_id
 	 *                         </p>
+	 * 
 	 * @return JSONObject
 	 * @throws CheckItException exception containing the error JSON as String as
 	 *                          message
 	 */
-	public static JSONObject addCredentials(String claveApi, Integer empresaId, Integer tipoLoginBancoId, String userID,
-			String userPassword, String userPIN) throws CheckItException {
+	public static JSONObject addCredentials(Integer empresaId, Integer tipoLoginBancoId, String userID, String userPassword,
+			String userPIN) throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, claveApi);
+		params.put(API_KEY_PARAM, API_KEY);
 		params.put(ENTERPRISE_ID_PARAM, empresaId);
 		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
 		params.put(USER_ID_PARAM, userID);
@@ -426,11 +420,6 @@ public class CheckItAPI implements IParamNames{
 
 	/**
 	 * Función encargada de mostrar todas las cuentas bancarias de una empresa.
-	 * 
-	 * @param claveApi             <em>required (string)</em>
-	 *                             <p>
-	 *                             Token que identifica el despacho
-	 *                             </p>
 	 * @param empresaId            <em>required (integer)</em>
 	 *                             <p>
 	 *                             Campo único que identifica la empresa. Se obtiene
@@ -445,14 +434,15 @@ public class CheckItAPI implements IParamNames{
 	 *                             Si se envia tipo_cuenta_bancaria_id e iban, Se
 	 *                             buscara la cuenta por el Iban
 	 *                             </p>
+	 * 
 	 * @return JSONArray
 	 * @throws CheckItException exception containing the error JSON as String as
 	 *                          message
 	 */
-	public static JSONArray getAccounts(String claveApi, Integer empresaId, Integer tipocuentaBancariaId, String iban)
+	public static JSONArray getAccounts(Integer empresaId, Integer tipocuentaBancariaId, String iban)
 			throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, claveApi);
+		params.put(API_KEY_PARAM, API_KEY);
 		params.put(ENTERPRISE_ID_PARAM, empresaId);
 		params.put(ACCOUNT_TYPE_ID_PARAM, tipocuentaBancariaId);
 		params.put(IBAN_PARAM, iban);
@@ -511,11 +501,6 @@ public class CheckItAPI implements IParamNames{
 
 	/**
 	 * Funcion encargada de añadir nuevas cuentas.
-	 * 
-	 * @param claveApi             <em>required (string)</em>
-	 *                             <p>
-	 *                             Token que identifica el despacho
-	 *                             </p>
 	 * @param empresaId            <em>required (integer)</em>
 	 *                             <p>
 	 *                             Campo único que identifica la empresa. Se obtiene
@@ -540,14 +525,15 @@ public class CheckItAPI implements IParamNames{
 	 *                             <p>
 	 *                             Si es cuenta corriente '1', si es tarjeta '2'
 	 *                             </p>
+	 * 
 	 * @return JSONObject
 	 * @throws CheckItException Exception exception containing the error JSON as
 	 *                          String as message
 	 */
-	public static JSONObject addAccount(String claveApi, Integer empresaId, Integer bancoId, Integer tipoLoginBancoId,
-			String iban, Integer tipoCuentaBancariaId) throws CheckItException {
+	public static JSONObject addAccount(Integer empresaId, Integer bancoId, Integer tipoLoginBancoId, String iban,
+			Integer tipoCuentaBancariaId) throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, claveApi);
+		params.put(API_KEY_PARAM, API_KEY);
 		params.put(ENTERPRISE_ID_PARAM, empresaId);
 		params.put(BANK_ID_PARAM, bancoId);
 		params.put(LOGIN_TYPE_ID_PARAM, tipoLoginBancoId);
@@ -624,11 +610,6 @@ public class CheckItAPI implements IParamNames{
 
 	/**
 	 * Funcion encargada de añadir nuevas cuentas desde Api Servicios.
-	 * 
-	 * @param claveApi      <em>required (string)</em>
-	 *                      <p>
-	 *                      Token que identifica el despacho
-	 *                      </p>
 	 * @param empresaId     <em>required (integer)</em>
 	 *                      <p>
 	 *                      Campo único que identifica la empresa. Se obtiene de
@@ -665,15 +646,16 @@ public class CheckItAPI implements IParamNames{
 	 *                      <p>
 	 *                      La id del servicio (#Id tabla apiServicios)
 	 *                      </p>
+	 * 
 	 * @return JSONObject
 	 * @throws CheckItException Exception exception containing the error JSON as
 	 *                          String as message
 	 */
-	public static JSONObject addAccountApi(String claveApi, Integer empresaId, Integer bancoId, String iban,
-			Double saldo, Double disponible, Date fechaSaldo, String identificador, Integer apiServicioId)
+	public static JSONObject addAccountApi(Integer empresaId, Integer bancoId, String iban, Double saldo,
+			Double disponible, Date fechaSaldo, String identificador, Integer apiServicioId)
 			throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, claveApi);
+		params.put(API_KEY_PARAM, API_KEY);
 		params.put(ENTERPRISE_ID_PARAM, empresaId);
 		params.put(BANK_ID_PARAM, bancoId);
 		params.put(IBAN_PARAM, iban);
@@ -744,24 +726,6 @@ public class CheckItAPI implements IParamNames{
 	 * @throws BankException
 	 */
 	public static JSONObject addEnterprise(JSONObject params) throws CheckItException {
-		String emailField = "email";
-		if (params.optString(emailField) == null || params.optString(emailField).isEmpty()) {
-			if (params.optString("url") == null || params.optString("url").isEmpty()) {
-				throw new CheckItException(
-						"If email is null, the domain must be sent as <<url>> parameter in order to create a fake one");
-			} else {
-				String domain = params.optString("url");
-				String emailDomain = domain.lastIndexOf('-') != -1 ? domain.substring(domain.lastIndexOf('-') + 1)
-						: domain;
-				String emailUser = domain.lastIndexOf('-') != -1 ? domain.substring(0, domain.lastIndexOf('-'))
-						: "checkit";
-
-				String email = emailUser + "@" + emailDomain;
-				params.put(emailField, email);
-				
-			}
-		}
-
 		Object json = post(API_URL + "empresas/add", params);
 		return parseJSONObject(json);
 	}
@@ -810,10 +774,10 @@ public class CheckItAPI implements IParamNames{
 	 * @return JSONObject
 	 * @throws BankException 
 	 */
-	public static JSONObject addEnterprise(String claveApi, String nombre, String cif, String email, String nombrecorto,
+	public static JSONObject addEnterprise(String nombre, String cif, String email, String nombrecorto,
 			String url, String telefono, String direccion) throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, claveApi);
+		params.put(API_KEY_PARAM, API_KEY);
 		params.put(NAME_PARAM, nombre);
 		params.put(CIF_PARAM, cif);
 		params.put(EMAIL_PARAM, email);
@@ -869,11 +833,6 @@ public class CheckItAPI implements IParamNames{
 
 	/**
 	 * Funcion que devuleve movimientos de un rango de fechas y cuenta bancaria
-	 * 
-	 * @param claveApi         <em>required (string)</em>
-	 *                         <p>
-	 *                         ClaveApi del despacho
-	 *                         </p>
 	 * @param empresaId        <em>required (integer)</em>
 	 *                         <p>
 	 *                         Campo único que identifica la empresa. Se obtiene de
@@ -891,14 +850,14 @@ public class CheckItAPI implements IParamNames{
 	 *                         <p>
 	 *                         Id de la cuenta bancaria. Se obtiene de /cuentas
 	 *                         </p>
+	 * 
 	 * @return JSONArray
 	 * @throws CheckItException Exception exception containing the error JSON as
 	 *                          String as message
 	 */
-	public static JSONArray getTransactions(String claveApi, Integer empresaId, Date fechaDesde, Date fechaHasta,
-			String cuentaBancariaId) throws CheckItException {
+	public static JSONArray getTransactions(Integer empresaId, Date fechaDesde, Date fechaHasta, String cuentaBancariaId) throws CheckItException {
 		JSONObject params = new JSONObject();
-		params.put(API_KEY_PARAM, claveApi);
+		params.put(API_KEY_PARAM, API_KEY);
 		params.put(ENTERPRISE_ID_PARAM, empresaId);
 		params.put(DATE_FROM_PARAM, formatDateForTransactions(fechaDesde));
 		params.put(DATE_TO_PARAM, formatDateForTransactions(fechaHasta));
@@ -907,9 +866,9 @@ public class CheckItAPI implements IParamNames{
 	}
 //------------------------------------------------------------------------------------------
 	
-	public static String getAccountIdByIBAN(String claveApi, Integer empresaId, String iban) throws CheckItException {
+	public static Integer getAccountIdByIBAN(Integer empresaId, String iban) throws CheckItException {
 		String errMsg = "The requested account could not be found";
-		JSONArray accountsJson = CheckItAPI.getAccounts(claveApi, empresaId, null, iban);
+		JSONArray accountsJson = CheckItAPI.getAccounts(empresaId, null, iban);
 		if (accountsJson == null) {
 			throw new CheckItException(errMsg);
 		}
@@ -917,13 +876,15 @@ public class CheckItAPI implements IParamNames{
 		if (accountJson == null)
 			throw new CheckItException(errMsg);
 
-		String accountId = accountJson.optString("id_cuentabancaria");
-		if (accountId == null || accountId.isEmpty())
+		Integer accountId = accountJson.optInt("id_cuentabancaria");
+		if (accountId == null)
 			throw new CheckItException(errMsg);
 		return accountId;
 	}
 	
-	public static List<BankStatement> getBankStatements(Integer empresaId, String accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
+//	public static Integer
+	
+	public static List<BankStatement> getBankStatements(Integer empresaId, Integer accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
 		Date today = new Date();
 
 		JSONObject requestParams = new JSONObject();
@@ -998,13 +959,8 @@ public class CheckItAPI implements IParamNames{
 
 		String iban = params.getIban();
 		Integer empresaId = params.getCheckitEmpresaId();
+		List<BankStatement> bankStatements = getNewMovements(domainName, domainId, user, empresaId, iban);
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
-					RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
-					Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
-					Map<String, Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
-					Integer movId = Integer.valueOf(idAndDate.keySet().stream().findFirst().orElse("0"));
-					List<BankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(API_KEY, empresaId, iban), lastDate, movId);
-					CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
 					return 	aonContext.getDslContext().transactionResult( 
 						confi -> CheckItDAO.insertStatements(aonContext, bankStatements)
 					);		
@@ -1039,6 +995,27 @@ public class CheckItAPI implements IParamNames{
 		return insertTransactions(params);
 	}
 	
+	
+	public static List<BankStatement> getNewMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
+			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
+			Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
+			Map<String, Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
+			Integer movId = Integer.valueOf(idAndDate.keySet().stream().findFirst().orElse("0"));
+			List<BankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban), lastDate, movId);
+			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
+			return bankStatements;
+		}
+	}
+	
+	public static int getNewMovementsNumber(String domainName, Integer domainId, String user, Integer empresaId, String iban) {
+		try {
+			return getNewMovements(domainName, domainId, user, empresaId, iban).size();
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+	
 	private static String formatDateForTransactions(Date date) {
 		try {
 			return DF.format(date);
@@ -1069,10 +1046,37 @@ public class CheckItAPI implements IParamNames{
 	}
 
 	
-	public static LinkedList<CheckItBankAccount> getAccounts( Integer empresaId ) throws CheckItException {
-		JSONArray accounts = getAccounts(API_KEY, empresaId, 1, null);
-		LinkedList<CheckItBankAccount> acc = new LinkedList<CheckItBankAccount>();
-		for (int i = 0; i < accounts.length() ; i++)  {
+	
+	
+	public static LinkedList<CheckItBankAccount> getLinkedAccountsToDisplay(String domainName, Integer domainId, String user, Integer empresaId ) throws CheckItException {
+		List<String> activeIbans= CheckItDAO.getActiveIbans(domainName, domainId, user);
+		return getAccounts(empresaId, activeIbans);
+	}
+	
+//	public static LinkedList<CheckItBankAccount> getAccountsFromDB(String domainName, Integer domainId, String user) throws CheckItException {
+//		LinkedList<RegistryBank> activeAccounts = CheckItDAO.getActiveAccounts(domainName, domainId, user);
+//		activeAccounts.stream().map(acc -> {
+//			
+//			Aon.
+//			
+//			return null;
+//		}
+//		).forEach(System.out::println);
+//	}
+	
+	public static LinkedList<CheckItBankAccount> getAccounts( Integer empresaId, List<String> activeIbans ) throws CheckItException {
+		JSONArray accounts = getAccounts(empresaId, 1, null);
+		
+		for (int i=0; i<accounts.length(); i++) {
+			String iban = accounts.optJSONObject(i).optString(CCC);
+			if (!activeIbans.contains(iban))
+				accounts.remove(i--);
+			if(i+1 >= accounts.length())
+				break;
+		}
+		
+		LinkedList<CheckItBankAccount> acc = new LinkedList<>();
+		for (int i = 0; i < (accounts != null ? accounts.length() : 0) ; i++)  {
 			JSONObject obj = accounts.getJSONObject(i);
 			String fecha = obj.optString( BALANCE_DATE_PARAM );
 			acc.add( new CheckItBankAccount()
@@ -1089,6 +1093,33 @@ public class CheckItAPI implements IParamNames{
 		}
 		return acc;
 	}
+	
+	public static  List<CheckitUnlinkedBankAccount> getUnlinkedActive(String domainName, Integer domainId, String user, Integer empresaId) throws CheckItException {
+		
+		JSONArray accounts = getAccounts(empresaId, 1, null);
+		List<String> unlinkedIbans = new LinkedList<>();
+		if (accounts != null) {
+			for (int i=0; i<accounts.length(); i++) {
+				unlinkedIbans.add(accounts.optJSONObject(i).optString(CCC));
+			}
+			
+			LinkedList<RegistryBank> activeBanks = AON.getRBankList(domainName
+					, domainId
+					, user
+					, f -> f.getDomainProperty().eq(domainId)
+					.and(f.getActiveProperty().eq(AonEnumUtils.getByte(true)))
+					.and(f.getBankAccountProperty().notIn(unlinkedIbans.toArray(new String[unlinkedIbans.size()]))));
+			
+			
+			return activeBanks
+			.stream()
+			.map(b -> new CheckitUnlinkedBankAccount().setIban(b.getBankAccount().getIban()).setBank(b.getAlias()))
+			.collect(Collectors.toList());
+		}
+		return Collections.emptyList();
+		
+	}
+	
 
 	private static Date parseDateFromJSON(String date) {
 		try {
@@ -1097,5 +1128,25 @@ public class CheckItAPI implements IParamNames{
 			return null;
 		}
 	}
+	
+	public static Map<String, Integer> getBanksMap() {
+		try {
+			JSONArray banksJson = getBanks();
+			LinkedHashMap<String, Integer> bankMap = new LinkedHashMap<String, Integer>();
+			if (banksJson != null) {
+				for(int i=0; i<banksJson.length(); i++) {
+					JSONObject bank = banksJson.getJSONObject(i);
+					int bankId = bank.optInt(BANK_ID);
+					String bankName = bank.optString(BANK_NAME_PARAM);
+					bankMap.put(bankName, bankId);
+				}
+			}
+			return bankMap;
+		} catch (CheckItException e) {
+			return Collections.emptyMap();
+		}
+		
+	}
+	
 
 }

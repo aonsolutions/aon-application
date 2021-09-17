@@ -17,7 +17,7 @@ public class CheckItTestCase {
 	@Test
 	public void testGetAccounts() {
 		try {
-			JSONArray banks = CheckItAPI.getAccounts(API_KEY, AON_ID, 1, null);
+			JSONArray banks = CheckItAPI.getAccounts(AON_ID, 1, null);
 			System.out.println( banks == null?"NULL":banks.toString(1) );
 		} catch (Exception e) {
 			fail(e.getMessage());

@@ -1,25 +1,39 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jooq.AggregateFunction;
+import org.jooq.Field;
 import org.jooq.InsertValuesStep11;
 import org.jooq.Record2;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.AppParam;
+import com.esferalia.aon.jooq.tables.Domain;
+import com.esferalia.aon.jooq.tables.Rbank;
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
+import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class CheckItDAO {
 	
@@ -27,6 +41,49 @@ public class CheckItDAO {
 	
 	private CheckItDAO() {
 	    throw new IllegalStateException("Utility class");
+	}
+	
+	private static Integer getEnterpriseId(AONContext aonContext, Integer domainId) {
+			return aonContext.getDslContext()
+			.select(ENTERPRISE.REGISTRY)
+			.from(ENTERPRISE)
+			.where(ENTERPRISE.DOMAIN.eq(domainId))
+			.fetchAnyInto(ENTERPRISE).getRegistry();
+	}
+	
+	public static com.esferalia.aon.occam.api.model.Enterprise getEnterprise(Integer domainId, String domainName, String user) {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
+			Integer enterpriseId = getEnterpriseId(aonContext, domainId);
+			return AON.getEnterprise(domainName, domainId, user, enterpriseId);
+		}
+	}
+	
+	public static Integer getParentDomain(String domainName, Integer domainId, String user) {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
+			return aonContext.getDslContext()
+			.select(DOMAIN.PARENT)
+			.from(DOMAIN)
+			.where(DOMAIN.ID.eq(domainId))
+			.fetchAnyInto(DOMAIN)
+			.getParent();
+		}
+	}
+	
+	public static boolean saveCheckItEnterpriseId(String domainName, Integer domainId, String user, Integer checkItEnterpriseid) {
+		
+		if (checkItEnterpriseid == null)
+			return false;
+		
+		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
+			return aonContext.getDslContext().transactionResult(confi ->
+				aonContext.getDslContext()
+				.insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
+				.values(domainId
+						, com.esferalia.aon.occam.api.model.type.AppParam.CHECK_IT_ENTERPRISE_ID.toString()
+						, AonNumberUtils.toString(checkItEnterpriseid))
+				.execute()
+			) > 0;
+		}
 	}
 	
 	public static void completeBankStatements(AONContext aonContext, Integer domainId, String iban, List<BankStatement> bankStatements) {
@@ -153,6 +210,19 @@ public class CheckItDAO {
 		} else
 			return Collections.singletonMap(id, utilDate);
 	}
+	
+	public static List<String> getActiveIbans(String domainName, Integer domainId, String user) {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
+			return aonContext.getDslContext()
+			.select(RBANK.BANK_ACCOUNT)
+			.from(RBANK)
+			.where(RBANK.DOMAIN.eq(domainId))
+			.fetchStreamInto(RBANK)
+			.map(RbankRecord::getBankAccount)
+			.collect(Collectors.toList());
+		}
+	}
+	
 	
 	private static Date cleanDate(int day, int month, int year) {
 		try {
