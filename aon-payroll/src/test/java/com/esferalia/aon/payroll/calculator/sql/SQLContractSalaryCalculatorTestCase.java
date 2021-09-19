@@ -1244,6 +1244,62 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 
 	}	
 
+	@Test
+	public void testDeferred()
+			throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(
+		aonContext,
+		new String[] { "DEFERRED"}
+		,new String[] {});
+
+		cleanSystemData(aonContext);
+		addSSRegimeData(aonContext,
+				SSRegimeType.values()[contract.getSsRegime()],
+				getFirstDayOfYear(getToday()), null,
+				new HashMap<String, String>() {
+					{
+						put("DEFERRED", "SALARIO");
+					}
+				});
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		addData(aonContext, 
+				contract, 
+				add(start, Calendar.DAY_OF_MONTH, 20), 
+				null,
+				new HashMap<String, String>() {
+					{
+						put("SALARIO", "666.66");
+					}
+				});
+		
+		contract.setEndDate(add(start, Calendar.DAY_OF_MONTH, 25));
+		contract.update();
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println(description +" = " + amount +" (" + startDate +"..." + endDate  + ")");
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		}).calculate(ctx);
+		
+		
+		org.junit.Assert.assertEquals(666.66, salary.getTotalPayment(), 0.0001);
+	}
 	
 	private static void load(Map<String, ITimedVariable<?>> context,
 			Map<String, Object> data) {
