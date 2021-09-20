@@ -618,11 +618,12 @@ public interface CretaService {
 		// ----------------------------------- JSNI (Native JavaScript Methods)
 
 		public final native JsError[] getErrors() /*-{
-			return this.errors;
+			return this.errors ?  this.errors : [];
 		}-*/;
 
 		public static native JsRespuesta createEmptyRespuesta() /*-{
 			return {
+				errors: [],
 				errores: [],
 				employees: []
 			};
