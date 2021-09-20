@@ -27,8 +27,6 @@ export const getNextTask =() =>{
       index = 0;
     else 
       index++;
-
-    console.log(tasks.length,tasks[index]);
     return tasks[index];
 }
 

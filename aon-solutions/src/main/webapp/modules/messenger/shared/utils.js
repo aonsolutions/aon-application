@@ -369,7 +369,7 @@ export const buildForm = (div, aonMessengerChat) => {
         });
     }
  
-    requestTypeSelect.addEventListener(EVENT.CHANGE, ()=>changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess));
+    requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess));
     fillRequestType(task, aonMessengerChat);
 }
 
@@ -390,7 +390,7 @@ export const buildForm = (div, aonMessengerChat) => {
         columnsDivTwo.innerHTML = "";
         divProcess.innerHTML = "";
         const aonTextArea = document.getElementById(MESSENGER_IDS.DESCRIPTION_TASK);
-        if(aonTextArea)  aonTextArea.remove();
+        if(aonTextArea) aonTextArea.remove();
         //------------------HTML CLEAN UP
         
         if(detail.value){

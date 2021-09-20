@@ -21,6 +21,46 @@ export const buildDesktop = (aonMessengerChat)=> {
 
   const firstDiv = createFirstDiv(mainView); //-------------------------DIV LEFT
 
+  // const div = document.createElement("div");
+  // div.innerHTML = /*html*/`
+  // <div style="display: flex;flex-wrap: wrap;">
+  //   <div id="tag2542" style="
+  //       font-weight: 400;
+  //       white-space: nowrap;
+  //       letter-spacing: .3px;
+  //       border-radius: 4px;
+  //       padding: 0 4px;
+  //       background-color: rgb(221, 221, 221);
+  //       color: rgb(102, 102, 102);
+  //       margin: 0 5px; 
+  //     "
+  //     >
+  //       <div style="display: inline-block;">TEST1</div>
+  //       <div style="display: inline-block;vertical-align:bottom;cursor:pointer;" title="Eliminar etiqueta">
+  //         <i style="font-size: 15px;" class="material-icons">close</i>
+  //       </div>
+  //   </div>
+  //   <div id="tag25422" style="
+  //       font-weight: 400;
+  //       white-space: nowrap;
+  //       letter-spacing: .3px;
+  //       border-radius: 4px;
+  //       padding: 0 4px;
+  //       background-color: rgb(221, 221, 221);
+  //       color: rgb(102, 102, 102);
+  //       margin: 0 5px; 
+  //     "
+  //     >
+  //       <div style="display: inline-block;">TEST2</div>
+  //       <div style="display: inline-block;vertical-align:bottom;cursor:pointer;" title="Eliminar etiqueta">
+  //         <i style="font-size: 15px;" class="material-icons">close</i>
+  //       </div>
+  //   </div>
+
+  // </div>
+  // `;
+  // firstDiv.appendChild(div);
+
   buildForm(firstDiv, aonMessengerChat);
 
   if(aonMessengerChat.task.id){
@@ -43,9 +83,16 @@ const buildToolbar = (aonMessengerChat) => {
     });
 
     aonMessengerChat.appendChild(toolbar);
+    
+    // toolbar.addButton2({
+    //     id: 'Labels',
+    //     name: 'Labels',
+    //     icon: MATERIAL_ICONS.LABEL
+    // }, () =>  {} );
 
     toolbar.addButton2(ACTIONS.NEXT, () => aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getNextTask()) );
 		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
+
 
     if(task.id){
       if(task.status == TASK_STATUS.PENDING || task.status == TASK_STATUS.IN_PROGRESS){

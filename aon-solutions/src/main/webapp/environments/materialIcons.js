@@ -142,6 +142,7 @@ export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
 
 export const LOCAL_MALL = 'local_mall';
 export const LINK = "link";
+export const LABEL = "label";
 
 // ----- M
 

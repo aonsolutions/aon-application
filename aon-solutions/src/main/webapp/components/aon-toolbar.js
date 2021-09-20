@@ -252,7 +252,6 @@ export class AonToolbar extends AonElement {
 		const id = this.TITLE_SECTION + action.id + 'Button';
 		if(this.getElement(id) == null) {
 			let span = this.createElement(TAG.SPAN);
-			// span.style.marginRight = '20px';
 			let aib = new AonIconButton();
 			aib.id = id;
 			aib.icon  = action.icon;
