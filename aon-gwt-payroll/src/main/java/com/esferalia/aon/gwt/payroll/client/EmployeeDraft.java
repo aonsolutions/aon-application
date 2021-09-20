@@ -32,15 +32,14 @@ import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public abstract class EmployeeDraft extends Composite {
 	
@@ -407,27 +406,30 @@ public abstract class EmployeeDraft extends Composite {
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField (provided = true)
+	AonToolbar toolbar;
+	
+	@UiField (provided = true)
 	Employee employee;
 	
 	@UiField
-	DeckPanel deckPanel;
+	DeckLayoutPanel deckPanel;
 
 	@UiField
-	Viewer pdfViewer;
+	FullViewer pdfViewer;
+	
+	private static final int EMPLOYEE_INDEX = 0;
+	private static final int PDF_VIEWER_INDEX = 1;
 	
 	// ------------------------------------------------- Class variables
 	
 	private EmployeeDraftObject employeeDraftObject;
 	
-	private AonToolbar toolbar;
 	private AonToolbarButton saveContract;
 	private AonToolbarButton undoAll;
 	private AonToolbarButton undo;
 	private AonToolbarButton redo;
 	private AonExpandButton tgss;
 	private AonToolbarButton closePDF;
-	private AonToolbarButton downloadPDF;
-	private ListBox zoomListBox;
 	private DateListBox idcDateListBox;
 	private MonthListBox idcMonthListBox;
 	private int zoom;
@@ -441,20 +443,17 @@ public abstract class EmployeeDraft extends Composite {
 	public EmployeeDraft() {
 		this.zoom = Constants.DEFAULT_ZOOM;
 		
+		toolbar = getToolbarPanel();
 		employee = new EmployeeImplementation();
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		contextMenu = new NewContextMenu();
 		
-		toolbar = getToolbarPanel();
-		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
-		
 		employee.hideClearEmployee();
 		
 		onSaved = this::onSavedNoop;
 				
-		initZoomList();
 	}
 		
 	// ------------------------------------------------- setEmployeeDraft
@@ -765,18 +764,6 @@ public abstract class EmployeeDraft extends Composite {
 	    lBox.setSelectedIndex(indexToFind);
 	}
 	
-	private void initZoomList() {
-		zoomListBox = new ListBox();
-		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		int selectedIndex = zoomListBox.getItemCount();
-		for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
-		zoomListBox.setSelectedIndex(selectedIndex);
-		
-	}
-	
 	// ------------------------------------------------- Toolbar panel
 	
 	private AonToolbar getToolbarPanel() {
@@ -846,17 +833,7 @@ public abstract class EmployeeDraft extends Composite {
 			}
 		});
 		toolbar.add(closePDF);
-		
-		initZoomList();
-		zoomListBox.addChangeHandler(e -> {
-			int index =zoomListBox.getSelectedIndex();
-			String text = zoomListBox.getItemText(index);
-			zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
-			pdfViewer.scale(zoom / 100.00);
-		});
-		toolbar.add(zoomListBox);
-		zoomListBox.setVisible(false);
-		
+
 		idcMonthListBox = new MonthListBox();
 		idcMonthListBox.addChangeHandler(e -> {
 			showIdcPlNss(idcMonthListBox.getSelectedMonth());
@@ -869,16 +846,6 @@ public abstract class EmployeeDraft extends Composite {
 		});
 		toolbar.add(idcDateListBox);
 
-		downloadPDF = new AonToolbarButton( AON.MSG.download(), AON.CSS.aonIconPdf() );
-		downloadPDF.setAccessKey('D');
-		downloadPDF.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onDownloadPDF(event);
-			}
-		});
-		toolbar.add(downloadPDF);
-		
 		return toolbar;
 	}
 
@@ -953,18 +920,13 @@ public abstract class EmployeeDraft extends Composite {
 		showEmployee();
 	}
 	
-	private void onDownloadPDF(ClickEvent event) {
-		String fileName = employeeDraftObject.getEmployeeFullName() + " IDC.pdf";
-		pdfViewer.download(fileName);
-	}
-	
 	// ------------------------------------------------- Toolbar panel auxiliar methods
 	
 	private void showTa() {
 		employeeDraftObject.downloadTa(
 		(dataURI) -> {
 				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, 
 		(trowable)-> {
 			
@@ -987,7 +949,7 @@ public abstract class EmployeeDraft extends Composite {
 				showPdf();
 				idcDateListBox.setVisible(true);
 				idcDateListBox.setSelected(date, true);
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, 
 		(trowable) -> {}
 		);
@@ -1000,7 +962,7 @@ public abstract class EmployeeDraft extends Composite {
 				showPdf();
 				idcMonthListBox.setVisible(true);
 				idcMonthListBox.setSelected(month, true);
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, 
 		(trowable) -> {}
 		);
@@ -1016,13 +978,11 @@ public abstract class EmployeeDraft extends Composite {
 		redo.setVisible(false);
 		undoAll.setVisible(false);
 
-		zoomListBox.setVisible(true);
 		closePDF.setVisible(true);
-		downloadPDF.setVisible(true);
-		
-		showWidget(pdfViewer);
-	}
 
+		deckPanel.showWidget(PDF_VIEWER_INDEX);		
+	}
+	
 	private void showEmployee() {
 		contextMenu.getAfi().setVisible(true);
 		tgss.setVisible(true);
@@ -1033,17 +993,12 @@ public abstract class EmployeeDraft extends Composite {
 		contextMenu.getIdcPlNss().setVisible(true);
 		contextMenu.getIdc().setVisible(contextMenu.getIdc().isEnabled());
 		
-		zoomListBox.setVisible(false);
 		closePDF.setVisible(false);
-		downloadPDF.setVisible(false);
+		
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
 		
-		showWidget(employee);
-	}
-	
-	private void showWidget(Widget widget) {
-		deckPanel.showWidget(deckPanel.getWidgetIndex(widget));
+		deckPanel.showWidget(EMPLOYEE_INDEX);		
 	}
 	
 	// ------------------------------------------------- Callback saved for check status

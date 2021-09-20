@@ -1,12 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.client.Constants.DEFAULT_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
-import static com.esferalia.aon.gwt.payroll.client.Constants.MAX_ZOOM;
-import static com.esferalia.aon.gwt.payroll.client.Constants.MIN_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.PERCENT_FORMAT;
-import static com.esferalia.aon.gwt.payroll.client.Constants.ZOOM_STEP;
 import static com.esferalia.aon.gwt.payroll.shared.Event.Type.ERROR;
 import static com.esferalia.aon.gwt.payroll.shared.Event.Type.WARNING;
 
@@ -145,7 +141,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class AgreementDraft extends ResizeComposite implements CalculateCallback {
 
@@ -1338,13 +1334,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiField
 	DockLayoutPanel printPreviewPanel;
 	@UiField
-	Viewer printPreviewViewer;
+	FullViewer printPreviewViewer;
 	@UiField
 	ListBox typeListBox;
 	@UiField
 	ListBox levelListBox;
-	@UiField
-	ListBox zoomListBox;
 	@UiField
 	MonthListBox previewMonthListBox;
 
@@ -2245,7 +2239,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		calculate();
 	}
 
-	@UiHandler({ "zoomListBox", "typeListBox", "levelListBox", })
+	@UiHandler({ "typeListBox", "levelListBox", })
 	void onChangePreview(ChangeEvent event) {
 		printPreview();
 	}
@@ -4442,26 +4436,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	}
 
-	private int getZoom() {
-		int index = zoomListBox.getSelectedIndex();
-		String value = zoomListBox.getValue(index);
-		return Integer.valueOf(value);
-	}
-
-	private void initZoomListBox() {
-		if (zoomListBox.getItemCount() > 0)
-			return;
-
-		for (int zoom = MIN_ZOOM; zoom < DEFAULT_ZOOM; zoom += ZOOM_STEP)
-			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100), Integer.toString(zoom));
-
-		zoomListBox.addItem(PERCENT_FORMAT.format((double) DEFAULT_ZOOM / 100), Integer.toString(DEFAULT_ZOOM));
-		zoomListBox.setSelectedIndex(zoomListBox.getItemCount() - 1);
-
-		for (int zoom = DEFAULT_ZOOM + ZOOM_STEP; zoom <= MAX_ZOOM; zoom += ZOOM_STEP)
-			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100), Integer.toString(zoom));
-	}
-
 	private void initPreviewMonthListBox() {
 			
 		Date startDate = DateUtils.copyDateOnly(agreementDraftObject.getStartDate());
@@ -4493,15 +4467,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private void printPreview() {
-		int zoom = getZoom();
 		Type type = getType();
 		int levelId = getLevelId();
 
-		agreementDraftObject.preview(levelId, type, zoom, new AsyncCallback<String>() {
+		agreementDraftObject.preview(levelId, type, 0, new AsyncCallback<String>() {
 
 			@Override
 			public void onSuccess(String html) {
-				printPreviewViewer.setDocument(html, zoom / 100.00);
+				printPreviewViewer.open(html);
 			}
 
 			@Override
@@ -4858,7 +4831,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			public void onClick(ClickEvent event) {
 				showPreview();
 
-				initZoomListBox();
 				initTypeListBox();
 				initLevelListBox();
 				initPreviewMonthListBox();

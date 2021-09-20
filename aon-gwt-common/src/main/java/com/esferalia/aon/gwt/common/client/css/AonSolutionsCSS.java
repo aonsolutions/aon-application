@@ -1008,5 +1008,8 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_toast_content")
 	String aonToastContent();
+	
+	@ClassName("aon_context_menu_item")
+	String aonContextMenuItem();
 }
 

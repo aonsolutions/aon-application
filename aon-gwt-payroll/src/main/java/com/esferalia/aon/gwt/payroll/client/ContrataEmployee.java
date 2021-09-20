@@ -569,7 +569,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton printPreviewButton;
 	private AonToolbarButton irpfPreviewButton;
 	private SalarySelect salarySelect;
-	private ListBox zoomSalaryListBox;
 	private AonToolbarButton saveSalaryButton;
 	private AonToolbarButton closePreviewButton;
 	private AonToolbarButton fxButton;
@@ -1688,11 +1687,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		salarySelect = new SalarySelect();
 		salaryDraft.setSalarySelect(salarySelect);
 		hPanel.add(salarySelect);
-		
-		zoomSalaryListBox = new ListBox();
-		salaryDraft.initPrintPreview(zoomSalaryListBox);
-		zoomSalaryListBox.setVisible(false);
-		hPanel.add(zoomSalaryListBox);
 		
 		saveSalaryButton = new AonToolbarButton( "Descargar", AON.CSS.aonIconPdf() );
 		saveSalaryButton.addClickHandler(e -> {

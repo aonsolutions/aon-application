@@ -1681,3 +1681,10 @@
 	padding: 10px;
 }
 
+.aon_context_menu_item {
+	white-space: nowrap;
+	background-position: center left;
+	background-repeat: no-repeat;
+	padding-left: 25px !important;
+	background-size: contain;
+}

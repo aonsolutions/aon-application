@@ -475,7 +475,6 @@
 										
 									<g:ListBox debugId='levelListBox' ui:field='levelListBox' />
 
-									<g:ListBox debugId='zoomListBox' ui:field='zoomListBox' />
 									<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
 										styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
 
@@ -487,12 +486,7 @@
 
 			</g:north>
 			<g:center>
-				<g:ScrollPanel styleName="{style.editor}">
-					<g:VerticalPanel styleName="{style.document}">
-						<p:Viewer styleName="reset" ui:field='printPreviewViewer' debugId='printPreviewViewer' />
-						<!--  g:HTML styleName="reset" debugId='printPreviewHTML' ui:field='printPreviewHTML'wordWrap='true' / -->
-					</g:VerticalPanel>
-				</g:ScrollPanel>
+				<p:FullViewer styleName="reset" ui:field='printPreviewViewer' debugId='printPreviewViewer' />
 			</g:center>
 		</g:DockLayoutPanel>
 	</g:DeckLayoutPanel>

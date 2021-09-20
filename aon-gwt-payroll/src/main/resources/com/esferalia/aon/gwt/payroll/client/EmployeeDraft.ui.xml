@@ -2,13 +2,10 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:s='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'
 	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client" >
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeDraft.MyStyle">
-		
-		.mt-50{
-			margin-top: 50px;
-		}
 		
 		.document {
 			margin-top: 5px;
@@ -27,15 +24,19 @@
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
+		<g:north size="50">
+			<s:AonToolbar ui:field="toolbar" /> 
+		</g:north> 
+	
 		<g:center> 
-		    <g:ScrollPanel styleName="{style.mt-50}">
-		    	<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
-		    		<g:DeckPanel ui:field="deckPanel">
-		    			<e:Employee ui:field="employee"/>
-		    			<p:Viewer styleName="reset" ui:field='pdfViewer' /> 
-		    		</g:DeckPanel>
-		    	</g:VerticalPanel>
-		    </g:ScrollPanel>
+    		<g:DeckLayoutPanel ui:field="deckPanel">
+		    	<g:ScrollPanel>
+    				<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
+	    				<e:Employee ui:field="employee"/>
+			    	</g:VerticalPanel>
+			    </g:ScrollPanel>
+    			<p:FullViewer styleName="reset" ui:field='pdfViewer' /> 
+    		</g:DeckLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 	
