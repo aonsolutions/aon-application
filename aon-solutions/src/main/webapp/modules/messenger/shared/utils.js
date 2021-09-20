@@ -358,15 +358,14 @@ export const buildForm = (div, aonMessengerChat) => {
     rowsDiv.appendChild(requestTypeSelect);
     if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
     //-----------------END TYPE REQUEST
-
     if(isClient){
-        const aonSwitch = createAonSwitch();
-        rowsDiv.appendChild(aonSwitch);
-        if(task.id) aonSwitch.disabled =  true;
-        aonSwitch.checked = task.getDescriptionJson().external ? true : false;
-        aonSwitch.addEventListener(EVENT.CHANGE, () => {
+        const btnInternal = createAonSwitch();
+        rowsDiv.appendChild(btnInternal);
+        if(task.id) btnInternal.disabled =  true;
+        btnInternal.checked = task.getDescriptionJson().external ? true : false;
+        btnInternal.addEventListener(EVENT.CHANGE, () => {
             changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess);
-            task.setDescriptionJson({external:aonSwitch.isChecked()});
+            task.setDescriptionJson({external:btnInternal.isChecked()});
         });
     }
  
@@ -398,9 +397,9 @@ export const buildForm = (div, aonMessengerChat) => {
             task.setSource(detail.value);
             task.setTitle(detail.name);
             if(detail.value === TASK_SOURCE.REQUEST){
-                formRequest(columnsDivTwo, aonMessengerChat, btnInternal.isChecked());
+                formRequest(columnsDivTwo, aonMessengerChat, btnInternal ? btnInternal.isChecked() : false);
             } else {
-                formQuery(columnsDivTwo, aonMessengerChat, btnInternal.isChecked());
+                formQuery(columnsDivTwo, aonMessengerChat, btnInternal ? btnInternal.isChecked() : false);
             }
         }
     }

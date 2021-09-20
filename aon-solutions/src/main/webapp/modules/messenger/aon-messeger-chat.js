@@ -8,7 +8,6 @@ import {
   saveTaskAttach,
   deleteTask
 } from "../../services/taskService.js";
-import * as LS from "../../services/localStorageService.js";
 import { Task } from "./Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
@@ -68,7 +67,6 @@ export class AonMessengerChat extends AonElement {
     this.applicationParentEl = this.getApplicationParent();
     this.deleteToolbar();
     this.task = new Task();
-    this.company = LS.getCompany();
 
     if(this.data.id) this.setData(this.data); 
 
