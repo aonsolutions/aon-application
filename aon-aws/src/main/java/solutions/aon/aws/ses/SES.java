@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -18,7 +17,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
@@ -127,22 +125,17 @@ public class SES {
 
             // Instantiate an Amazon SES client, which will make the service 
             // call with the supplied AWS credentials.
-            AmazonSimpleEmailService client = 
-                    AmazonSimpleEmailServiceClientBuilder.standard()
-                    // Replace US_WEST_2 with the AWS Region you're using for
-                    // Amazon SES.
-                    .withRegion(Regions.EU_WEST_1).build();
+            AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.standard()
+                    .withCredentials(AWS.getProvider())
+                    .withRegion(Regions.EU_WEST_1)
+                    .build();
            
             // Send the email.
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             message.writeTo(outputStream);
-            RawMessage rawMessage = 
-            		new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
+            RawMessage rawMessage = new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
 
-            SendRawEmailRequest rawEmailRequest = 
-	            		new SendRawEmailRequest(rawMessage).
-	            		withConfigurationSetName(CONFIGURATION_SET);
-            
+            SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
             client.sendRawEmail(rawEmailRequest);
             LOGGER.info(EMAIL_SENT);
             return "ok";
