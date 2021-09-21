@@ -66,6 +66,7 @@ public class Model190 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew(Model190ModuleOptions options);
+		void onDuplicate(Model190ModuleOptions options, int id);
 	}
 	protected class Model190Callback implements IModel190Callback {
 		
@@ -84,6 +85,10 @@ public class Model190 extends MainEntryPoint {
 		@Override
 		public void onNew(Model190ModuleOptions options) {
 			newModel(options);
+		}
+		@Override
+		public void onDuplicate(Model190ModuleOptions options, int id) {
+			duplicateModel(options, id);
 		}
 		@Override
 		public void cleanErrorPanel() {
@@ -251,6 +256,25 @@ public class Model190 extends MainEntryPoint {
 					}
 				});
 	}
+	
+	private void duplicateModel(Model190ModuleOptions options, int id) {
+		cleanErrorPanel();
+		SERVICE.getMod190(options.getDomainName(),options.getUser(),options.getDomain(), id,
+				new AsyncCallback<Mod190>() {
+					@Override
+					public void onSuccess(Mod190 m190) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+						showDuplicateDeclarationPopup(options, m190);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
+	}
 
 	private void cancel() {
 		cleanErrorPanel();
@@ -360,4 +384,44 @@ public class Model190 extends MainEntryPoint {
 			newDialog.center();
 			newDialog.show();
 	}
+	
+	private void showDuplicateDeclarationPopup(Model190ModuleOptions options, Mod190 model) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, 
+			new Model190Callback() {
+
+					@Override
+					public void onAccept(Mod190 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+
+						SERVICE.duplicateMod190(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), model,
+								new AsyncCallback<Mod190>() {
+									@Override
+									public void onSuccess(Mod190 model) {
+										popup.hide();
+										select(options, model, null);
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+									}
+								});
+					}
+					
+					@Override
+					public void onCancel() {}
+
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 }
