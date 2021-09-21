@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.ProjectJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
@@ -50,7 +51,11 @@ public class ProjectServlet extends AonApiHttpServlet{
 		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDocumentProperty().eq(company.getDocument()));
 			AON.getProjectStream(domain, "", f -> f.getRegistryProperty().eq(customer.getId()).and(f.getProjectTypeProperty().isNotNull()))
-				.forEach(project -> arr.put(ProjectJSON.toJSON(project)));
+				.forEach(project -> {
+					ProjectHolder holder = AON.getProjectHolder(project.getDomain(), "", f -> f.getProjectProperty().eq(project.getId()).and(f.getEndDateProperty().isNull()));
+					project.setProjectHolder(holder);
+					arr.put(ProjectJSON.toJSON(project));	
+				});
 		});
 		return arr;
 	}

@@ -27,7 +27,7 @@ public class ProjectJSON {
 	public static Project fromJSON(JSONObject json) {
 		return new Project()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN));
+				.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)));
 	}
 	
 	public static JSONArray toJSON(List<Project> projects) {
@@ -40,17 +40,17 @@ public class ProjectJSON {
 		return array;
 	}
 	
-	
 	public static JSONObject toJSON(Project project) {
-		;
 		return new JSONObject()
 				.put(IJsonNames.ID, project.getId())
-				.put(IJsonNames.DOMAIN, project.getDomain())
+				.put(IJsonNames.DOMAIN, DomainJSON.toJSON(project.getDomain()))
 				.put(IJsonNames.TYPE, ProjectTypeJSON.toJSON(project.getType()))
+				.put(IJsonNames.REGISTRY, RegistryJSON.toJSON(project.getRegistry()))
 				.put(IJsonNames.NAME, project.getName())
 				.put(IJsonNames.ALIAS, project.getAlias())
 				.put(IJsonNames.DATE, JsonUtils.getDateJSON(project.getDate()))
 				.put(IJsonNames.ACTIVE, project.isActive())
+				.put("project_holder", ProjectHolderJSON.toJSON(project.getProjectHolder()))
 				.put("tas", project.isTas())
 				.put("commercial", project.isCommercial())
 				.put("reservation", project.isReservation());
