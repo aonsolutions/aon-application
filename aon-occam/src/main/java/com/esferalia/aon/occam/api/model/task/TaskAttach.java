@@ -1,21 +1,25 @@
 package com.esferalia.aon.occam.api.model.task;
 
+import java.io.Serializable;
+
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
-public class TaskAttach {
+public class TaskAttach implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private Integer domain;
 	private Integer task;
-	private Integer task_workflow;
+	private Integer taskWorkflow;
 	private MimeType mimetype;	
 	private byte[] data;
 	
-	@Deprecated
-	private Integer task_workgroup;
-
 	public TaskAttach() {
-	
+		// Do Nothing.
 	}
 
 	public Integer getId() {
@@ -46,11 +50,11 @@ public class TaskAttach {
 	}	
 	
 	public Integer getTaskWorkflow() {
-		return task_workflow;
+		return taskWorkflow;
 	}
 
-	public TaskAttach setTaskWorkflow(Integer task_workflow) {
-		this.task_workflow = task_workflow;
+	public TaskAttach setTaskWorkflow(Integer taskWorkflow) {
+		this.taskWorkflow = taskWorkflow;
 		return this;
 	}
 	
@@ -70,16 +74,6 @@ public class TaskAttach {
 
 	public TaskAttach setData(byte[] data) {
 		this.data = data;
-		return this;
-	}
-	
-	@Deprecated
-	public Integer getTask_workgroup() {
-		return task_workgroup;
-	}
-	@Deprecated
-	public TaskAttach setTask_workgroup(Integer task_workflow) {
-		this.task_workflow = task_workflow;
 		return this;
 	}
 	

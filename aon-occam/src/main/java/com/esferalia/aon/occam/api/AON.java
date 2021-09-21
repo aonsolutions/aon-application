@@ -76,6 +76,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
@@ -181,6 +182,7 @@ import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
@@ -3414,15 +3416,17 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Project> getProjectStream(Domain domain, User user, ProjectFilter filter){
+		return getProjectStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static Stream<Project> getProjectStream(Domain domain, String login, ProjectFilter filter){
+		return getProjectStream(domain.getName(), domain.getId(), login, filter);
+	}
 
 	public static Stream<Project> getProjectStream(String domainName, Integer domainId, String login, ProjectFilter filter){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getProject().getProjectStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -3447,6 +3451,52 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	// ---------- PROJECT HOLDER
+	
+	public static ProjectHolder getProjectHolder(Domain domain, User user, ProjectHolderFilter filter) {
+		return getProjectHolder(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static ProjectHolder getProjectHolder(Domain domain, String login, ProjectHolderFilter filter) {
+		return getProjectHolder(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static ProjectHolder getProjectHolder(String domainName, Integer domainId, String login, ProjectHolderFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectHolder(ctx, filter);
+		}
+	}
+	
+	public static Stream<ProjectHolder> getProjectHolderStream(Domain domain, User user, ProjectHolderFilter filter) {
+		return getProjectHolderStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static Stream<ProjectHolder> getProjectHolderStream(Domain domain, String login, ProjectHolderFilter filter) {
+		return getProjectHolderStream(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static Stream<ProjectHolder> getProjectHolderStream(String domainName, Integer domainId, String login, ProjectHolderFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectHolderStream(ctx, filter);
+		}
+	}
+	
+	public static List<ProjectHolder> getProjectHolderList(Domain domain, User user, ProjectHolderFilter filter) {
+		return getProjectHolderList(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static List<ProjectHolder> getProjectHolderList(Domain domain, String login, ProjectHolderFilter filter) {
+		return getProjectHolderList(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static List<ProjectHolder> getProjectHolderList(String domainName, Integer domainId, String login, ProjectHolderFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectHolderList(ctx, filter);
+		}
+	}
+	
+	// ---------- PROJECT COMMERCIAL
 	
 	public static Integer insertProjectCommercial(String domainName, Integer domainId,
 			String login, ProjectCommercial projectCommercial) {
@@ -6411,6 +6461,21 @@ public class AON {
 			if (ctx != null)
 				ctx.close();
 		}
+	}	
+	
+	public static List<Domain> getDomainOfficeLinked(Domain domain, String login) {
+		LinkedList<Domain> list = new LinkedList<>();
+		Company company = getCompanyForDomain(domain.getName(), domain.getId(), login);
+		for(String schema: AONContext.getSchemas()) {
+			String domainName = AONContext.getSchemaFirstDomain(schema);
+			try (AONContext ctx = AONContext.getAONContext(domainName, 0, "")){
+				List<Domain> offices = getRegistry().getDomainOfficeLinked(ctx, company.getDocument());
+				list.addAll(offices);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
 	}
 
 	// **************************************************

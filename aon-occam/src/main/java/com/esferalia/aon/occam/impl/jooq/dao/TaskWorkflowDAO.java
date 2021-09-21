@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.TaskWorkflow.TASK_WORKFLOW;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,6 +25,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class TaskWorkflowDAO {
+	
+	private TaskWorkflowDAO() {
+		
+	}
 
 	private static final TaskWorkflowPropertiesDAO TASK_WORKFLOW_PROPERTIES = new TaskWorkflowPropertiesDAO();
 	protected static class TaskWorkflowPropertiesDAO implements TaskWorkflowProperties {
@@ -37,16 +42,16 @@ public class TaskWorkflowDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_WORKFLOW.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_WORKFLOW.DOMAIN);}
-		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_WORKFLOW.TASK);}
-		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_WORKFLOW.TASK_HOLDER);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK_WORKFLOW.TYPE);}
-		@Override public Property<String> getCommentProperty() {return new FilterDAO.PropertyDAO<String>(TASK_WORKFLOW.COMMENT);}		
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_WORKFLOW.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_WORKFLOW.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(TASK_WORKFLOW.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(TASK_WORKFLOW.MODIFICATION_DATE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.DOMAIN);}
+		@Override public Property<Integer> getTaskProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.TASK);}
+		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.TASK_HOLDER);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.TYPE);}
+		@Override public Property<String> getCommentProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.COMMENT);}		
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.MODIFICATION_DATE);}
 
 	}
 	
@@ -70,11 +75,11 @@ public class TaskWorkflowDAO {
 			.fetch().stream().map(new TaskWorkflowFiller());
 	}
 	
-	public static LinkedList<TaskWorkflow> getList(AONContext ctx, TaskWorkflowFilter filter){	
+	public static List<TaskWorkflow> getList(AONContext ctx, TaskWorkflowFilter filter){	
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static LinkedList<TaskWorkflow> getList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage){	
+	public static List<TaskWorkflow> getList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage){	
 		return getStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
 	}
 	

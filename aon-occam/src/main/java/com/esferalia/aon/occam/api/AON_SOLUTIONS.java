@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -762,13 +764,13 @@ public class AON_SOLUTIONS {
 		}
 	}
 
-	public static LinkedList<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter) {
+	public static List<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskWorkflowList(ctx, filter);
 		}
 	}
 	
-	public static LinkedList<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter, Integer page, Integer perPage) {
+	public static List<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter, Integer page, Integer perPage) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskWorkflowList(ctx, filter, page, perPage);
 		}

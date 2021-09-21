@@ -1,6 +1,8 @@
 package net.aonsolutions.aon.api.model.mail;
 
 import java.util.LinkedList;
+import java.util.List;
+
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import java.util.Date;
@@ -11,7 +13,7 @@ public class TaskMail {
 	String url; 
 	String title;
 	String logo;
-	LinkedList<TaskWorkflow> workflows;
+	List<TaskWorkflow> workflows;
 	
 	public TaskMail() {}
 
@@ -65,7 +67,7 @@ public class TaskMail {
 		return workflowsList;
 	}
 
-	public TaskMail setWorkflows(LinkedList<TaskWorkflow> workflows) {
+	public TaskMail setWorkflows(List<TaskWorkflow> workflows) {
 		this.workflows = workflows;
 		return this;
 	}

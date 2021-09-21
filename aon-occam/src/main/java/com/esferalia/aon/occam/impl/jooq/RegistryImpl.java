@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -454,6 +455,13 @@ public class RegistryImpl implements IRegistry{
 		return ctx.getDslContext().transactionResult(
 				configuration -> CustomerDAO.getDomainLinked(ctx, customerId));
 	}
+	
+	@Override
+	public List<Domain> getDomainOfficeLinked(AONContext ctx, String document) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getDomainOfficeLinked(ctx, document));
+	}
+	
 	// **************************************************
 	// *************************************** [CREDITOR]
 	// **************************************************

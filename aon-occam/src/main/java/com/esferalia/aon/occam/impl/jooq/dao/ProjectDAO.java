@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -34,6 +35,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ProjectDAO {
+	
+	private ProjectDAO() {
+
+	}
+	
 	private static final ProjectPropertiesDAO PROJECT_PROPERTIES = new ProjectPropertiesDAO();
 	private static final ProjectReservationPropertiesDAO PROJECT_RESERVATION_PROPERTIES = new ProjectReservationPropertiesDAO();
 	private static final ProjectCommercialPropertiesDAO PROJECT_COMMERCIAL_PROPERTIES = new ProjectCommercialPropertiesDAO();
@@ -133,6 +139,19 @@ public class ProjectDAO {
 		@Override public Property<String> getCreditCardTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CREDIT_CARD_TYPE);}
 	}
 
+	private static SelectConditionStep<Record> select(AONContext ctx, ProjectFilter filter) {
+		return ctx.getDslContext().select()
+			.from(PROJECT)
+			.join(PROJECT_TYPE).on(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE.ID))
+			.join(REGISTRY).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+			.where(PROJECT_PROPERTIES.getConditions(filter));
+	}
+	
+	public static Stream<Project> getStream(AONContext ctx, ProjectFilter filter){
+		return select(ctx, filter).fetch().stream().map(new ProjectFiller());
+	}
+	
+	@Deprecated
 	public static Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter){
 		return ctx.getDslContext()
 				.select().from(PROJECT).where(PROJECT_PROPERTIES.getConditions(filter))

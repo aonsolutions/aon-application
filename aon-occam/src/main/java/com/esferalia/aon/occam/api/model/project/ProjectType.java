@@ -45,6 +45,10 @@ public class ProjectType  implements Serializable{
 		return this;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+	
 	public boolean getActive() {
 		return active;
 	}

@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.task;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class TaskWorkflow implements Serializable{
@@ -10,10 +10,11 @@ public class TaskWorkflow implements Serializable{
 	private Integer id;
 	private Integer domain;
 	private Integer task;
+	private String email;
 	private TaskHolder taskHolder;
 	private TaskWorkflowType type;
 	private String comment;
-	private LinkedList<TaskAttach> taskAttachList;
+	private List<TaskAttach> taskAttachList;
 
 	// AUDITORIA
 	
@@ -21,8 +22,12 @@ public class TaskWorkflow implements Serializable{
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
+	private String notificationUser;
+	private Date notificationDate;
 	
-	public TaskWorkflow() {}
+	public TaskWorkflow() {
+		// Do nothing.
+	}
 
 	public Integer getId() {
 		return id;
@@ -59,6 +64,15 @@ public class TaskWorkflow implements Serializable{
 		this.taskHolder = taskHolder;
 		return this;
 	}
+	
+	public String getEmail() {
+		return email;
+	}
+	
+	public TaskWorkflow setEmail(String email) {
+		this.email = email;
+		return this;
+	}
 
 	public TaskWorkflowType getType() {
 		return type;
@@ -78,11 +92,11 @@ public class TaskWorkflow implements Serializable{
 		return this;
 	}
 
-	public LinkedList<TaskAttach> getTaskAttachList() {
+	public List<TaskAttach> getTaskAttachList() {
 		return taskAttachList;
 	}
 
-	public TaskWorkflow setTaskAttachList(LinkedList<TaskAttach> taskAttachList) {
+	public TaskWorkflow setTaskAttachList(List<TaskAttach> taskAttachList) {
 		this.taskAttachList = taskAttachList;
 		return this;
 	}
@@ -121,5 +135,31 @@ public class TaskWorkflow implements Serializable{
 	public TaskWorkflow setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 		return this;
+	}
+	
+	public String getNotificationUser() {
+		return notificationUser;
+	}
+	
+	public TaskWorkflow setNotificationUser(String notificationUser) {
+		this.notificationUser = notificationUser;
+		return this;
+	}
+	
+	public Date getNotificationDate() {
+		return notificationDate;
+	}
+	
+	public TaskWorkflow setNotificationDate(Date notificationDate) {
+		this.notificationDate = notificationDate;
+		return this;
+	}
+	
+	public boolean isPublic() {
+		return getNotificationDate() != null;
+	}
+	
+	public boolean isPrivate() {
+		return !isPublic();
 	}
 }

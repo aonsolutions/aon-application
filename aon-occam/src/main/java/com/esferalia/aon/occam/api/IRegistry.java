@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AonCompany;
@@ -171,6 +172,7 @@ public interface IRegistry {
 	public CustomerFull getCustomerFull(AONContext ctx, Integer id);
 	public CustomerFull save(AONContext ctx, CustomerFull customerFull);
 	public Domain getDomainLinked(AONContext ctx, Integer customerId);
+	public List<Domain> getDomainOfficeLinked(AONContext ctx, String document);
 	
 	// **************************************************
 	// *************************************** [CREDITOR]
