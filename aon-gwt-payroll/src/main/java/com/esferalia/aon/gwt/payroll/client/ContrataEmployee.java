@@ -42,6 +42,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -584,6 +585,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private AonToolbarButton previusContract;
 	private AonToolbarButton nextContract;
+	private Label employeeCounter;
 	
 	private boolean hasCertificateSEPE = false;;
 	
@@ -765,9 +767,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showSalariesButtons();
 					employeeSalary.setEmployeeSalaryObject(employeeSalaryObject);
+					employeeSalary.removeMainMT();
 				}, f -> {});
 				break;
 			case 7:
+//				Window.alert("Calendar Selected -> " + contrataEmployeeObject.getEmployeeFullName());
 				contrataEmployeeObject.getEmployeeCalendarObject(employeeCalendarObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showCalendarButtons();
@@ -808,6 +812,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		deleteContract.setVisible(true);
 		listEmployees.setVisible(true);
 		previusContract.setVisible(true);
+		employeeCounter.setVisible(true);
 		nextContract.setVisible(true);
 		tgss.setVisible(true);
 		sepe.setVisible(true);
@@ -829,6 +834,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		deleteContract.setVisible(false);
 		listEmployees.setVisible(false);
 		previusContract.setVisible(false);
+		employeeCounter.setVisible(false);
 		nextContract.setVisible(false);
 
 		zoomListBox.setVisible(true);
@@ -849,15 +855,27 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	// ------------------------------------------------- setContrataEmployeeObject
 	
-	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId, Consumer<String> success) {
+	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId, Integer selectedEmployeeIdx, int employeesSize, Consumer<String> success) {
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
     	contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
 				s -> {
+					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 					showContractButtons();
 					checkStatus(this.contrataEmployeeObject);
 					checkCertificateSEPE();
 					checkTGSSStatus();
+					success.accept("");
+				});
+	}
+	
+	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId, Integer selectedEmployeeIdx, int employeesSize, int selectedTab, Consumer<String> success) {
+		this.contractId = contractId;
+		this.contrataEmployeeObject = contrataEmployeeDialogObject;
+		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId, selectedTab,
+				s -> {
+					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
+					tabLayOutPanel.selectTab(selectedTab, true);
 					success.accept("");
 				});
 	}
@@ -968,6 +986,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		previusContract = new AonToolbarButton("Contrato anterior", AON.CSS.aonIconLeft());
 		previusContract.addClickHandler(e -> onPreviusContract(contractId));
 		toolbar.add(previusContract);
+		
+		employeeCounter = new Label();
+		toolbar.add(employeeCounter);
 		
 		nextContract = new AonToolbarButton("Contrato siguiente", AON.CSS.aonIconRight());
 		nextContract.addClickHandler(e -> onNextContract(contractId));
