@@ -160,7 +160,7 @@ public interface EnterprisesService extends RemoteService {
 
 	List<SSBonusData> setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses);
 
-	String setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap);
+	void setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap);
 
 	AFIChanges getEmployeeAFIChanges(String currentDomainName, Integer contractId);
 
