@@ -10,6 +10,7 @@ public class CheckitUnlinkedBankAccount implements Serializable {
 	private String iban;
 	private CheckItLoginFields login;
 	private Integer bankId;
+	private boolean credentials;
 	
 	public String getBank() {
 		return bank;
@@ -37,6 +38,13 @@ public class CheckitUnlinkedBankAccount implements Serializable {
 	}
 	public CheckitUnlinkedBankAccount setBankId(Integer bankId) {
 		this.bankId = bankId;
+		return this;
+	}
+	public boolean isCredentials() {
+		return credentials;
+	}
+	public CheckitUnlinkedBankAccount setCredentials(boolean credentials) {
+		this.credentials = credentials;
 		return this;
 	}
 	

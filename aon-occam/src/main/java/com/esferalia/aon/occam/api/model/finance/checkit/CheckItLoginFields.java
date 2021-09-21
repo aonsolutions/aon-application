@@ -74,8 +74,24 @@ public class CheckItLoginFields implements Serializable{
 		.setType(null)
 		.setUserID(null)
 		.setUserPassword(null)
-		.setUserPIN(null);	
+		.setUserPIN(null)
+		.setUserIDInput(null)
+		.setUserPasswordInput(null)
+		.setUserPINInput(null);	
 	}
+	
+	public boolean isEmpty() {
+		return (   this.getId() == null
+				&& this.getType() == null
+				&& this.getUserID() == null
+				&& this.getUserPassword() == null
+				&& this.getUserPIN() == null
+				&& this.getUserIDInput() == null
+				&& this.getUserPasswordInput() == null
+				&& this.getUserPINInput() == null
+		);
+	}
+	
 	public String getUserIDInput() {
 		return userIDInput;
 	}

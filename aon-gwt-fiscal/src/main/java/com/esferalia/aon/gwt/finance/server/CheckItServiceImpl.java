@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
+import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -23,6 +24,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.ui.FlexTable;
 
 import net.aonsolutions.aon.api.checkit.CheckItAPI;
 import net.aonsolutions.aon.api.checkit.CheckItException;
@@ -149,7 +151,7 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 							.setUserID(fields.optString("userID"))
 							.setUserPassword(fields.optString("userPassword"))
 							.setUserPIN(fields.optString("userPIN"));
-					fieldList.add(checkItLoginFields);	
+					fieldList.add(checkItLoginFields);
 				}
 				
 			}
@@ -168,19 +170,20 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		if (checkitUnlinkedBankAccount != null) {
 			String error = null;
 			
+			boolean credentials = checkitUnlinkedBankAccount.isCredentials();
 			CheckItLoginFields login = checkitUnlinkedBankAccount.getLogin();
 			Integer bankId = checkitUnlinkedBankAccount.getBankId();
 			String iban = checkitUnlinkedBankAccount.getIban();
 			
 			if (enterpriseId == null) {
 				error = "No hay ninguna empresa seleccionada";
-			} else if (login == null) {
+			} else if (credentials && (login == null || login.isEmpty())) {
 				error = "No hay ningún tipo de login seleccionado";				
 			} else if (bankId == null) {
 				error = "No hay ningún banco seleccionado";
 			} else if (iban == null || iban.isEmpty()) {
 				error = "No hay ningún IBAN";
-			} else {
+			} else if (credentials){
 				if (login.getUserID() != null && !login.getUserID().isEmpty() && (userID == null || userID.isEmpty())) {
 					error = "Debe rellenar el campo '" + login.getUserID() + "'";
 				} else if (login.getUserPassword() != null && !login.getUserPassword().isEmpty() && (userPassword == null || userPassword.isEmpty())) {
@@ -194,9 +197,9 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 				throw new IllegalArgumentException(error);
 			} else {	
 				try {
-					System.out.println("ok");
-//					CheckItAPI.addCredentials(enterpriseId, login.getId(), userID, userPassword, userPIN);
-//					CheckItAPI.addAccount(enterpriseId, bankId, login.getId(), iban, 1);
+					if (credentials)
+						CheckItAPI.addCredentials(enterpriseId, login.getId(), userID, userPassword, userPIN);
+					CheckItAPI.addAccount(enterpriseId, bankId, login.getId(), iban, 1);
 					return true;
 				} catch (Exception e) {
 					throwException(e);

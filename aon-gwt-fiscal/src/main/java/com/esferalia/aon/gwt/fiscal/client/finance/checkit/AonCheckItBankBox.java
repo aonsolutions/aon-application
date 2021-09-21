@@ -1,25 +1,16 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.checkit;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountPanel.AonAccountPanelCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBank;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonValidationUtil;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
@@ -28,10 +19,8 @@ import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -40,8 +29,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
@@ -50,7 +37,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -74,8 +60,6 @@ public class AonCheckItBankBox extends ResizeComposite implements HasValue<Strin
 	private static final int MAX_CHARACTERS = 50;
 	protected static final int KEY_PLUS = 171;
 
-	private CheckItServiceAsync CHECKIT_SERVICE;
-
 	private Integer id;
 	private String description;
 	
@@ -84,9 +68,6 @@ public class AonCheckItBankBox extends ResizeComposite implements HasValue<Strin
 	private TextBox accountTextBox;
 	private InlineLabel descriptionLabel;
 	private boolean required = true;
-	private String domainName;
-	private int domain;
-	private String user;
 	private List<CheckItBank> banks;
 	
 	
@@ -160,13 +141,7 @@ public class AonCheckItBankBox extends ResizeComposite implements HasValue<Strin
 	}
 	
 	public AonCheckItBankBox(final String domainName, final int domain, final String user, List<CheckItBank> banks, boolean showDescription) {
-		this.domainName = domainName;
-		this.domain = domain;
-		this.user = user;
 		this.banks = banks;
-			
-		CheckItServiceAsync serviceRaw = GWT.create(CheckItService.class);
-		CHECKIT_SERVICE = new CheckItServiceAsyncDecorator(serviceRaw);
 		
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override

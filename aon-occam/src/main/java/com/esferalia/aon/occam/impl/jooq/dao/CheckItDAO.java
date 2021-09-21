@@ -9,31 +9,27 @@ import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jooq.AggregateFunction;
-import org.jooq.Field;
 import org.jooq.InsertValuesStep11;
 import org.jooq.Record2;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.AppParam;
-import com.esferalia.aon.jooq.tables.Domain;
-import com.esferalia.aon.jooq.tables.Rbank;
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.impl.jooq.validation.BankStatementValidator;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class CheckItDAO {
 	
@@ -98,7 +94,7 @@ public class CheckItDAO {
 		});
 	}
 	
-	public static Integer insertStatements(AONContext aonContext, List<BankStatement> bankStatements) {
+	public static Integer insertStatements(AONContext aonContext, List<BankStatement> bankStatements) throws AonCoreException {
 		
 		InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query =
 				aonContext.getDslContext()
@@ -117,7 +113,9 @@ public class CheckItDAO {
 						, BANK_STATEMENT.REFERENCE2
 					);
 		for (BankStatement bankStatement : bankStatements) {
-			// BankStatemetn Validation
+			// BankStatement Validation
+			BankStatementValidator.validate(aonContext, bankStatement);
+			
 			query = query.values(
 					  bankStatement.getDomain()
 					, bankStatement.getRegistryBank() != null ? bankStatement.getRegistryBank().getId() : null
@@ -145,25 +143,24 @@ public class CheckItDAO {
 	}
 
 	private static int getNextLotNumber(AONContext aonContext, Integer domainId, RegistryBank rbank) {
-		AggregateFunction<Integer> LOT = DSL.max(BANK_STATEMENT.LOT_NUMBER);
-		return aonContext.getDslContext().select( LOT )
+		AggregateFunction<Integer> lot = DSL.max(BANK_STATEMENT.LOT_NUMBER);
+		return aonContext.getDslContext().select( lot )
 			.from(BANK_STATEMENT)
 			.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
 			.and(BANK_STATEMENT.DOMAIN.eq(domainId))
 			.fetch()
 			.stream()
-			.map( r -> r.get(LOT))
+			.map( r -> r.get(lot))
 			.findFirst()
 			.orElse(1);
 	}
 
 	public static Date getLastOperationDateDB(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		
-		Map<String, Date> max = getMaxMovementIdAndDate(aonContext, domainId, rbank);
+		Pair<String, Date> max = getMaxMovementIdAndDate(aonContext, domainId, rbank);
 		String maxId = null;
 		Date lastOperationDate = null;
-
-		if (max.isEmpty()) {
+		if (max == null) {
 			java.sql.Date date = (java.sql.Date) aonContext.getDslContext()
 					.select(DSL.max(BANK_STATEMENT.OPERATION_DATE).as("date"))
 					.from(BANK_STATEMENT)
@@ -175,9 +172,9 @@ public class CheckItDAO {
 					else
 						lastOperationDate = new Date(date.getTime());
 		} else {
-			maxId = max.keySet().stream().findFirst().orElse(null);
+			maxId = max.getKey();
 			if (maxId != null) {				
-				lastOperationDate = max.get(maxId);
+				lastOperationDate = max.getValue();
 				// AÑADIR 1 DÍA MÁS PARA QUE NO HAYA DUPLICADOS
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(lastOperationDate);
@@ -192,7 +189,7 @@ public class CheckItDAO {
 		return lastOperationDate;
 	}
 	
-	public static Map<String, Date> getMaxMovementIdAndDate(AONContext aonContext, Integer domainId, RegistryBank rbank) {
+	public static Pair<String, Date> getMaxMovementIdAndDate(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		Record2<String, java.sql.Date> result = aonContext.getDslContext()
 		.select(DSL.max(BANK_STATEMENT.REFERENCE2).as("maximum"), BANK_STATEMENT.OPERATION_DATE)
 		.from(BANK_STATEMENT)
@@ -206,9 +203,9 @@ public class CheckItDAO {
 		Date utilDate = date != null ? new Date(date.getTime()) : null;
 		
 		if (id == null || id.isEmpty()) {
-			return Collections.emptyMap();
+			return null;
 		} else
-			return Collections.singletonMap(id, utilDate);
+			return new Pair<String, Date>(id, utilDate);
 	}
 	
 	public static List<String> getActiveIbans(String domainName, Integer domainId, String user) {

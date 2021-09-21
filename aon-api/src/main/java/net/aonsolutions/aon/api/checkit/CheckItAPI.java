@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 public class CheckItAPI implements IParamNames{
 	
@@ -47,7 +48,7 @@ public class CheckItAPI implements IParamNames{
 	private static final DateFormat DF_TIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", new Locale("es", "ES") );
 
 	private static final String API_URL = "https://www.checkitbancario.com/openapi/";
-	protected static final String API_KEY = "84d9ee44e457ddef7f2c4f25dc8fa865";
+	private static final String API_KEY = "84d9ee44e457ddef7f2c4f25dc8fa865";
 	private static final DateFormat DF = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "ES"));
 
 	private static Object post(String url, JSONObject params) {
@@ -1000,8 +1001,8 @@ public class CheckItAPI implements IParamNames{
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
 			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
 			Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
-			Map<String, Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
-			Integer movId = Integer.valueOf(idAndDate.keySet().stream().findFirst().orElse("0"));
+			Pair<String, Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
+			Integer movId = Integer.valueOf(idAndDate != null ? idAndDate.getKey() : "0");
 			List<BankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban), lastDate, movId);
 			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
 			return bankStatements;
@@ -1113,7 +1114,7 @@ public class CheckItAPI implements IParamNames{
 			
 			return activeBanks
 			.stream()
-			.map(b -> new CheckitUnlinkedBankAccount().setIban(b.getBankAccount().getIban()).setBank(b.getAlias()))
+			.map(b -> new CheckitUnlinkedBankAccount().setIban(b.getBankAccount().getIban()).setBank(b.getAlias()).setCredentials(true))
 			.collect(Collectors.toList());
 		}
 		return Collections.emptyList();
@@ -1147,6 +1148,5 @@ public class CheckItAPI implements IParamNames{
 		}
 		
 	}
-	
 
 }
