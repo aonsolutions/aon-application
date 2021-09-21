@@ -235,7 +235,9 @@ public class DocumentParser  {
 
 	public static void main(String[] args) {
 		Collection<Document> documents = DocumentParser.getNifs(
-				"asdfsd V01130111 :	eee" 
+"La erupción volcánica de la isla de La Palma ha emitido ya entre 7.997 y 10.665 toneladas diarias de dióxido de azufre (SO2) a la atmósfera, según los datos del Instituto Volcanológico de Canarias (Involcan)."
++"Además, el volcán en La Palma cuenta desde este lunes por la noche con una nueva B-01-487271 boca eruptiva en las cercanías del pueblo de Tacande, en El Paso, lo que ha obligado a ampliar las evacuaciones. La erupción del volcán en la Cumbre Vieja de La Palma ha obligado a desalojar en total a casi 6.000 personas hasta el momento."
++"Por el momento, las autoridades contabilizan un centenar de viviendas afectadas, de las que buena parte han quedado sepultadas bajo la lava, y piden a los vecinos no acercarse a la zona."
 		);
 		for (Document doc : documents) {
 			System.out.println( doc.getType() + " --- " + doc.getData() );

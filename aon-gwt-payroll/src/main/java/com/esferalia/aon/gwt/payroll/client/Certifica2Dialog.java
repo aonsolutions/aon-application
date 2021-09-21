@@ -38,7 +38,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class Certifica2Dialog extends AonCustomDialog {
 	
@@ -140,7 +140,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 	private Integer contractId;
 	private Certifica2Info certifica2Info;
 	
-	private Viewer pdfViewer;
+	private FullViewer pdfViewer;
 	private FormPanel formPanel;
 	private Hidden documentHidden;
 	
@@ -157,7 +157,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 		setWidget(binder.createAndBindUi(this));
 		
 		this.contractId = contractId;
-		this.pdfViewer = new Viewer();
+		this.pdfViewer = new FullViewer();
 		this.cnoMap = new HashMap<String, CNO>();
 		
 		getToolbarPanel();
@@ -482,9 +482,9 @@ public class Certifica2Dialog extends AonCustomDialog {
 				@Override
 				public void onSuccess(String dataURI) {
 					messagesPanel.setVisible(false);
-					pdfViewer.setDocument(dataURI, 135/ 100.00);
-					String fileName = "Certifica2_" + certifica2Info.getDocument() + ".pdf";
-					pdfViewer.download(fileName);
+					pdfViewer.open(dataURI);
+//					String fileName = "Certifica2_" + certifica2Info.getDocument() + ".pdf";
+//					pdfViewer.download(fileName);
 				}
 				
 				@Override

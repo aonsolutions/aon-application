@@ -42,6 +42,7 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel ui:field="toolBarPanel" styleName="aon-finding-toolbar" >
+<!-- 							
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:ListBox debugId='zoomListBox' ui:field="zoomListBox" />
 							</g:HTMLPanel>
@@ -49,6 +50,7 @@
 								<g:Button debugId='downloadButton' ui:field='downloadButton'
 									styleName='aon-finding-toolbar-item aon-icon-mail-save' text="Descargar" />	
 							</g:HTMLPanel>
+ -->
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" ui:field="customToolBarPanel">
 							</g:HTMLPanel>
 							
@@ -60,11 +62,7 @@
 
 		</g:north>
 		<g:center>
-		    <g:ScrollPanel>
-				<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
-					<p:Viewer styleName="reset" ui:field='pdfViewer' /> 
-				</g:VerticalPanel>
-			</g:ScrollPanel>
+			<p:FullViewer styleName="reset" ui:field='pdfViewer' /> 
 		</g:center>
 	</g:DockLayoutPanel>
 

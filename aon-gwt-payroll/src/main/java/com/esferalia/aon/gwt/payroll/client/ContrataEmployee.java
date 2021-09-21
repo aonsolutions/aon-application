@@ -46,11 +46,12 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public abstract class ContrataEmployee extends ResizeComposite {
 
@@ -489,10 +490,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	ScrollPanel scrolledPanelBonus;
 	
 	@UiField
-	ScrollPanel scrolledPDFPanel;
+	SimpleLayoutPanel scrolledPDFPanel;
 	
 	@UiField
-	Viewer pdfViewer;
+	FullViewer pdfViewer;
 	
 	@UiField
 	MinimizePanel footPanel;
@@ -520,11 +521,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonExpandButton tgss;
 	private AonExpandButton sepe;
 	private AonToolbarButton closePDF;
-	private AonToolbarButton downloadPDF;
 	private DateListBox idcDateListBox;
 	private MonthListBox idcMonthListBox;
-	private ListBox zoomListBox;
-	private int zoom = Constants.DEFAULT_ZOOM;
 	
 	private NewTGSSContextMenu tgssContextMenu;
 	private NewSEPEContextMenu sepeContextMenu;
@@ -627,7 +625,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		// Init view
 		setScrollPanelsHeight();
-		initZoomList();
 		initFootPanel();
 		initResultsPanel();
 		initTabLayOutPanel();
@@ -647,17 +644,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		scrolledPanelBonus.setHeight(scrollHeight+"em");
 		scrolledPanelContractSpecificData.setHeight(scrollHeight+"em");
 		scrolledPDFPanel.setHeight(scrollHeight+"em");
-	}
-	
-	private void initZoomList() {
-		zoomListBox = new ListBox();
-		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		int selectedIndex = zoomListBox.getItemCount();
-		for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
-		zoomListBox.setSelectedIndex(selectedIndex);	
 	}
 	
 	private void initFootPanel() {
@@ -811,9 +797,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tgss.setVisible(true);
 		sepe.setVisible(true);
 		
-		zoomListBox.setVisible(false);
 		closePDF.setVisible(false);
-		downloadPDF.setVisible(false);
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
 		
@@ -830,9 +814,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		previusContract.setVisible(false);
 		nextContract.setVisible(false);
 
-		zoomListBox.setVisible(true);
 		closePDF.setVisible(true);
-		downloadPDF.setVisible(true);
 		idcDateListBox.setVisible(true);
 		idcMonthListBox.setVisible(true);
 
@@ -1056,22 +1038,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 		hPanel.add(closePDF);
 		
-		initZoomList();
-		zoomListBox.addChangeHandler(e -> {
-			int index = zoomListBox.getSelectedIndex();
-			String text = zoomListBox.getItemText(index);
-			zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
-			pdfViewer.scale(zoom / 100.00);
-		});
-		zoomListBox.setVisible(false);
-		hPanel.add(zoomListBox);
-		
-		downloadPDF = new AonToolbarButton( AON.MSG.download(), AON.CSS.aonIconPdf() );
-		downloadPDF.addClickHandler(e -> {
-			onDownloadPDF();
-		});
-		hPanel.add(downloadPDF);
-		
 		return hPanel;
 	}
 	
@@ -1294,7 +1260,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showTa() {
 		contrataEmployeeObject.downloadTa((dataURI) -> {
 				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, (trowable)-> {});
 	}
 	
@@ -1308,7 +1274,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				showPdf();
 				idcDateListBox.setVisible(true);
 				idcDateListBox.setSelected(date, true);
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, (trowable) -> {});
 	}
 
@@ -1322,7 +1288,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				showPdf();
 				idcMonthListBox.setVisible(true);
 				idcMonthListBox.setSelected(month, true);
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, (trowable) -> {});
 	}
 
@@ -1333,7 +1299,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showCto() {
 		contrataEmployeeObject.downloadCto((dataURI) -> {
 				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, (trowable)-> {});
 	}
 
@@ -1344,14 +1310,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showCbc() {
 		contrataEmployeeObject.downloadCbc((dataURI) -> {
 				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, (trowable)-> {});
 	}
 	
 	private void showCertifica2PDF() {
 		contrataEmployeeObject.getCertifica2PDF((dataURI) -> {
 			showPdf();
-			pdfViewer.setDocument(dataURI, zoom / 100.00);
+			pdfViewer.open(dataURI);
 	}, (trowable)-> {});
 	}
 	
@@ -1359,11 +1325,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		showEmployee();
 	}
 	
-	private void onDownloadPDF() {
-		String fileName = contrataEmployeeObject.getEmployeeFullName() + " IDC.pdf";
-		pdfViewer.download(fileName);
-	}
-
 	private void sendBasicCopy() {
 		contrataEmployeeObject.sendBasicCopy(
 				s -> {

@@ -84,7 +84,7 @@ public class FullViewer extends Frame {
 	}-*/;
 	
 	private native void nativeOpen(FrameElement el, String dataURI) /*-{
-		if (el.contentWindow.PDFViewerApplication.pdfDocument) {
+		if (el.contentWindow.PDFViewerApplication && el.contentWindow.PDFViewerApplication.pdfDocument) {
 			console.log("Destroing previous document");
 			el.contentWindow.PDFViewerApplication.pdfDocument.destroy();
 		}  

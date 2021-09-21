@@ -212,9 +212,9 @@
 							  	</g:tab>
 							 </g:TabLayoutPanel>
 	
-							<g:ScrollPanel ui:field="scrolledPDFPanel" styleName="{style.p5} {style.center}">
-							 	<p:Viewer styleName="reset" ui:field='pdfViewer' />
-							</g:ScrollPanel> 
+							<g:SimpleLayoutPanel ui:field="scrolledPDFPanel" styleName="{style.p5} {style.center}">
+							 	<p:FullViewer styleName="reset" ui:field='pdfViewer' />
+							</g:SimpleLayoutPanel> 
 						 </g:HTMLPanel>
 					</g:center>
 					<g:south size="15">
