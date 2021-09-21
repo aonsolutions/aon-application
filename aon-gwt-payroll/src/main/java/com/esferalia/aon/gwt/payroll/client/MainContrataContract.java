@@ -112,43 +112,55 @@ public class MainContrataContract extends MainEntryPoint {
 		@Override
 		protected void onPreviusContract(Integer currentContractId) {
 			EmployeeContractInfo newSelectectedEmployee = null;
+			Integer selectedEmployeeIdx = null;
 			
 			for(int i=0; i<employeesList.size(); i++) {
 				EmployeeContractInfo employeeContractInfo = employeesList.get(i);
 				Integer contractId = employeeContractInfo.getContractInfo().getContractId();
 				if(currentContractId.equals(contractId)) {
-					if(i == 0)
+					if(i == 0) {
 						newSelectectedEmployee = employeesList.get(employeesList.size()-1);
-					else
+						selectedEmployeeIdx = employeesList.size()-1;
+					} else {
 						newSelectectedEmployee = employeesList.get(i-1);
+						selectedEmployeeIdx = i-1;
+					}
+					
+					selectedEmployeeIdx++;
 					break;
 				}
 			}
 			
-			loadEmployee(newSelectectedEmployee);
+			loadEmployee(newSelectectedEmployee, selectedEmployeeIdx, employeesList.size(), tabLayOutPanel.getSelectedIndex());
 			
 		}
 
 		@Override
 		protected void onNextContract(Integer currentContractId) {
 			EmployeeContractInfo newSelectectedEmployee = null;
+			Integer selectedEmployeeIdx = null;
 			
 			for(int i=0; i<employeesList.size(); i++) {
 				EmployeeContractInfo employeeContractInfo = employeesList.get(i);
 				Integer contractId = employeeContractInfo.getContractInfo().getContractId();
 				if(currentContractId.equals(contractId)) {
-					if(i == (employeesList.size()-1))
+					if(i == (employeesList.size()-1)) {
 						newSelectectedEmployee = employeesList.get(0);
-					else
+						selectedEmployeeIdx = 0;
+					} else {
 						newSelectectedEmployee = employeesList.get(i+1);
+						selectedEmployeeIdx = i+1;
+					}
+					
+					selectedEmployeeIdx++;
 					break;
 				}
 			}
 			
-			loadEmployee(newSelectectedEmployee);
+			loadEmployee(newSelectectedEmployee, selectedEmployeeIdx, employeesList.size(), tabLayOutPanel.getSelectedIndex());
 		}
 		
-		private void loadEmployee(EmployeeContractInfo employee) {
+		private void loadEmployee(EmployeeContractInfo employee, Integer selectedEmployeeIdx, int employeesSize, int selectedTab) {
 			if(null != employee) {
 				Integer contractId = employee.getContractInfo().getContractId();
 	        	contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
@@ -157,7 +169,7 @@ public class MainContrataContract extends MainEntryPoint {
 	    		contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getWorkplacesContext());
 	    		contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getAgreementsContext());
 	    		contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getPayMethodsMapContext());
-	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
+	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId, selectedEmployeeIdx, employeesSize, selectedTab,
 	    				s -> deckPanel.showWidget(1));
 			}
 		}
@@ -366,13 +378,15 @@ public class MainContrataContract extends MainEntryPoint {
 	        	EmployeeContractInfo employeeContractInfoSelected = selectionCCCInfoModel.getLastSelectedObject();
 	        	Integer contractId = employeeContractInfoSelected.getContractInfo().getContractId();
 	        	
+	        	Integer selectedEmployeeIdx = getSelectedEmployeeIdx(contractId);
+	        	
 	        	contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
         		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
         		contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getActivitiesCCCContex());
 	    		contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getWorkplacesContext());
 	    		contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getAgreementsContext());
 	    		contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getPayMethodsMapContext());
-	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
+	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId, selectedEmployeeIdx, employeesList.size(),
 	    				s -> deckPanel.showWidget(1));
 	        	
 	        }
@@ -1307,12 +1321,15 @@ public class MainContrataContract extends MainEntryPoint {
 			@Override
 			protected void onAccept(Integer contractId) {
 				contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+				
+				Integer selectedEmployeeIdx = getSelectedEmployeeIdx(contractId);
+				
         		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
         		contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getActivitiesCCCContex());
 	    		contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getWorkplacesContext());
 	    		contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getAgreementsContext());
 	    		contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getPayMethodsMapContext());
-	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
+	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId, selectedEmployeeIdx, employeesList.size(),
 	    				s -> deckPanel.showWidget(1));
 			}
 		};
@@ -1323,6 +1340,19 @@ public class MainContrataContract extends MainEntryPoint {
 		employeeDialog.setAnimationEnabled(true);
 		employeeDialog.center();
 		employeeDialog.show();
+	}
+	
+	private Integer getSelectedEmployeeIdx(Integer currentContractId) {
+		Integer selectedEmployee = null;
+		for(int i=0; i<employeesList.size(); i++) {
+			EmployeeContractInfo employeeContractInfo = employeesList.get(i);
+			Integer contractId = employeeContractInfo.getContractInfo().getContractId();
+			if(currentContractId.equals(contractId)) {
+				selectedEmployee = i+1;
+				break;
+			}
+		}
+		return selectedEmployee;
 	}
 
 	private void onTrashListBtn(ClickEvent event) {

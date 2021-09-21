@@ -630,5 +630,9 @@ public class EmployeeSalary extends Composite {
 		dockLayoutPanel.remove(toolbar);
 		filterSalaryPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
+
+	public void removeMainMT() {
+		mainContainer.getElement().getStyle().setMarginTop(0, Unit.PX);
+	}
 	
 }

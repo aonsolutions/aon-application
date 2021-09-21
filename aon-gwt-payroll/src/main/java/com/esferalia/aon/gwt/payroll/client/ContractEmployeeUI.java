@@ -376,6 +376,35 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		
 	}
 	
+	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeObject, Integer contractId, int selectedTab, Consumer<EmployeeContractInfo> success) {
+		// Set variables
+		this.contrataEmployeeObject = contrataEmployeeObject;		
+		
+		// Select first tab and init view 
+		getTabLayoutPanel().selectTab(0, false);
+		employee.initializeView();
+		employee.cleanErrorStyles();
+		
+		// Init footPanel
+		getFootTabPanel().clear();
+		getSplitLayoutPanel().setWidgetSize(getFootPanel(), 25);
+		
+		// Load info and fill fields
+		this.contrataEmployeeObject.initializeEmployee(contractId,
+				r -> {
+					// Init toolbar
+					getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());
+					getExportContract().getElement().getStyle().setDisplay(Display.NONE);
+					employee.initializeView();
+					initLogicWindow();
+					initializeIdcMonthListBox();
+					initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
+					success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
+				}, t -> {}
+		);
+		
+	}
+	
 	// ------------------------------------------------- Initialize view
 
 	private void initLogicWindow() {
