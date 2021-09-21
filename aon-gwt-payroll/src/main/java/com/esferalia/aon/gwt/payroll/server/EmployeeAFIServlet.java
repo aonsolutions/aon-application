@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -14,58 +14,64 @@ import javax.servlet.http.HttpServletResponse;
 import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Employee-AFI", urlPatterns = { "/aon_gwt_payroll/employee_afi/*" })
 public class EmployeeAFIServlet extends HttpServlet {
 	
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("ddMMyyyy");
 	
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		//Get Request Parametrers
-		String _domainId = request.getParameter("domainId");
-		String _contractId = request.getParameter("contractId");
-		String _workplaceId = request.getParameter("workplaceId");
-		Boolean _isStartContract = request.getParameter("isStartContract").equals("1") ? true : false;
-		Boolean _isEndContract = request.getParameter("isEndContract").equals("1") ? true : false;
-		Boolean _isChangeContract = request.getParameter("isChangeContract").equals("1") ? true : false;
-		Boolean _isQuoteContract = request.getParameter("isQuoteContract").equals("1") ? true : false;
-		Boolean _isOcupationContract = request.getParameter("isOcupationContract").equals("1") ? true : false;
-		Boolean _isPartialityCoefContract = request.getParameter("isPartialityCoefContract").equals("1") ? true : false;
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		//Get domain Name
-		String _domainName = request.getServerName();
+		String domainName = request.getServerName();		
+		
+		//Get Request Parametrers
+		String domainId = request.getParameter("domainId");
+		String contractId = request.getParameter("contractId");
+		Boolean isStartContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isStartContract"), "1");
+		Boolean isEndContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isEndContract"), "1");
+		Boolean isChangeContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isChangeContract"), "1");
+		Boolean isQuoteContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isQuoteContract"), "1");
+		Boolean isOcupationContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isOcupationContract"), "1");
+		Boolean isPartialityCoefContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isPartialityCoefContract"), "1");
 		
 		//Este JSON lo deberia obtener del Request cuando me llaman al Servlet
 		JSONObject employeeJSON = null;
 		
 		try {
-			Date currentDate = new Date();
-			String day = currentDate.getDate() < 10 ? "0"+currentDate.getDate() : currentDate.getDate()+"";
-			String month = (currentDate.getMonth()+1) < 10 ? "0"+(currentDate.getMonth()+1) : (currentDate.getMonth()+1)+"";
-			String hour = currentDate.getHours() < 10 ? "0"+currentDate.getHours() : currentDate.getHours()+"";
-			String minutes = currentDate.getMinutes() < 10 ? "0"+currentDate.getMinutes() : currentDate.getMinutes()+"";
-			String fileName = day + month + hour + minutes;
-			dateFormatter.applyPattern("yyyy/MM/dd");
-			response.setContentType("text/html;charset=utf-8"/*MimeType.MIME_RTF.getName()*/);
-			response.setHeader("Content-disposition", "attachment; filename=\""
-					+ fileName + ".AFI\"");
+			Calendar currentDate = Calendar.getInstance();
+			
+			String hour = AonStringUtils.leftPad(currentDate.get(Calendar.HOUR_OF_DAY)+"", 2, '0');
+			String minutes = AonStringUtils.leftPad(currentDate.get(Calendar.MINUTE)+"", 2, '0');
+			String fileName = dateFormatter.format(currentDate.getTime()) + hour + minutes;
+			
+			response.setContentType("text/html;charset=utf-8");
+			response.setHeader("Content-disposition", "attachment; filename=\""+ fileName + ".AFI\"");
 			
 			ServletOutputStream output = response.getOutputStream();
 			
-//			output.write("Generando AFI Employee".getBytes());
+			employeeJSON = JooqEmployeeAFI.getEmployeeAFIInfo(
+					domainId,
+					domainName, 
+					contractId,
+					isStartContract, 
+					isEndContract, 
+					isChangeContract, 
+					isQuoteContract, 
+					isOcupationContract, 
+					isPartialityCoefContract);
 			
-			employeeJSON = JooqEmployeeAFI.getEmployeeAFIInfo(_domainId, _domainName, _contractId, _workplaceId, _isStartContract, _isEndContract, _isChangeContract, _isQuoteContract, _isOcupationContract, _isPartialityCoefContract);
+			
 			String employeeAFI = EmployeeAFIGeneration.generateEmployeeAFI(employeeJSON);
-			output.write(employeeAFI.getBytes());
 			
+			output.write(employeeAFI.getBytes());
 			response.flushBuffer();
 		
-		}catch (IOException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
+		} catch (IOException e) {
+			// Catch Exception
 		}
 		
 	}
