@@ -22,19 +22,19 @@ public class Filler {
 	}
 
 	protected static int getInteger(Record r, Field<Integer> field) {
-		return checkField(r, field) 
+		return checkField(r, field) && r.getValue(field) != null
 			? r.getValue(field)
 			: 0;
 	}
 	
 	protected static double getDouble(Record r, Field<Double> field) {
-		return checkField(r, field) 
-			? r.getValue(field)
+		return checkField(r, field) && r.getValue(field) != null
+			? r.getValue(field) 
 			: 0.0;
 	}
 	
 	protected static boolean getBoolean(Record r, Field<Byte> field) {
-		if(checkField(r, field)) {
+		if(checkField(r, field) && r.getValue(field) != null) {
 			return r.getValue(field) == 1;
 		}
 		return false;
