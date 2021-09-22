@@ -5450,8 +5450,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public EmployeeContractInfo getEmployeeInfoDataBase(String domainName, String userLogin, Integer employeeContract, Workplace workplace) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			// Get EmployeeContractInfo
-			EmployeeContractInfo employeeContractInfo = JooqEmployee.getEmployeeInfo(connection, employeeContract);
-			return employeeContractInfo;
+			return JooqEmployee.getEmployeeInfo(connection, employeeContract);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -5459,38 +5458,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public EmployeeContractInfo setEmployeeInfoDataBase(String domain, EmployeeContractInfo newEmployeeInfo) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
+	public EmployeeContractInfo setEmployeeInfoDataBase(String domainName, EmployeeContractInfo newEmployeeInfo) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqEmployee.setEmployeeInfo(connection, newEmployeeInfo);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
 		}
 	}
 
 	@Override
-	public EmployeeContractInfo createEmployeeContract(String domain, EmployeeContractInfo employeeContractData) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
+	public EmployeeContractInfo createEmployeeContract(String domainName, EmployeeContractInfo employeeContractData) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqEmployee.createEmployeeContract(connection, employeeContractData);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
 		}
 	}
 

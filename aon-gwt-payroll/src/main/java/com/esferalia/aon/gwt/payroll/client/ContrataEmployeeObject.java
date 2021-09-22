@@ -55,7 +55,7 @@ public class ContrataEmployeeObject {
 		this.contractData = new ContractInfo();
 		
 		this.workplaces = new ArrayList<>();
-		this.payMethodsMap = new HashMap<String, String>();
+		this.payMethodsMap = new HashMap<>();
 	}
 	
 	// ------------------------------------------------- Database Methods
@@ -69,7 +69,9 @@ public class ContrataEmployeeObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 			
 		});	
 	}
@@ -116,7 +118,9 @@ public class ContrataEmployeeObject {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 			
 		});
 	}
@@ -150,7 +154,7 @@ public class ContrataEmployeeObject {
 		Employee employeeAux = new Employee();
 		employeeAux.setId(getContractData().getContractId());
 		
-		if(getContractData().hasPayroll()) {
+		if(Boolean.TRUE.equals(getContractData().hasPayroll())) {
 			
 			employeesService.moveContractId(employeeAux, new AsyncCallback<Void>() {
 
@@ -175,7 +179,9 @@ public class ContrataEmployeeObject {
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					failure.accept(caught);
+				}
 			});
 			
 		}	
@@ -358,28 +364,28 @@ public class ContrataEmployeeObject {
 	
 	// ------------------------------------------------- Database Methods (Salaries)
 	
-	public void getEmployeeSalaryObject(Consumer<EmployeeSalaryObject> success, Consumer<Throwable> failure) {
+	public void getEmployeeSalaryObject(Consumer<EmployeeSalaryObject> success) {
 		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(contractData.getContractId(), employeeData.getFullName());
 		success.accept(employeeSalaryObject);
 	}
 	
 	// ------------------------------------------------- Database Methods (Calendar)
 	
-	public void getEmployeeCalendarObject(Consumer<EmployeeCalendarDraftObject> success, Consumer<Throwable> failure) {
+	public void getEmployeeCalendarObject(Consumer<EmployeeCalendarDraftObject> success) {
 		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(contractData.getContractId(), employeesService);
 		success.accept(employeeCalendarDraftObject);
 	}
 	
 	// ------------------------------------------------- Database Methods (Events)
 	
-	public void getEmployeeEventsObject(Consumer<EmployeeEventsDraftObject> success, Consumer<Throwable> failure) {
+	public void getEmployeeEventsObject(Consumer<EmployeeEventsDraftObject> success) {
 		EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(contractData.getContractId());
 		success.accept(employeeEventsDraftObject);
 	}
 	
 	// ------------------------------------------------- Database Methods (Events)
 	
-	public void getEmployeeContractPaymentsObject(Consumer<EmployeeContractPaymentsObject> success, Consumer<Throwable> failure) {
+	public void getEmployeeContractPaymentsObject(Consumer<EmployeeContractPaymentsObject> success) {
 		EmployeeContractPaymentsObject employeeContractPaymentsObject = new EmployeeContractPaymentsObject(contractData.getContractId());
 		success.accept(employeeContractPaymentsObject);
 	}
@@ -408,6 +414,7 @@ public class ContrataEmployeeObject {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				failure.accept(caught);
 			}
 		});
 	}
@@ -717,7 +724,7 @@ public class ContrataEmployeeObject {
 	
 	// ------------------------------------------------- Database Methods (TGSS Get files)
 	
-	public void downloadTA_IDC(Consumer<Void> success, Consumer<Throwable> failure) {
+	public void downloadTAAndIDC(Consumer<Void> success, Consumer<Throwable> failure) {
 		employeesService.downloadTA_IDC(contractData.getContractId(), new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
@@ -874,12 +881,12 @@ public class ContrataEmployeeObject {
 	
 	// CONTRACT TABLE
 	
-	public void setEmployeeDocumentType(String document_type) {
-		if(document_type == "DNI")
+	public void setEmployeeDocumentType(String documentType) {
+		if(documentType.equals("DNI"))
 			employeeData.setDocumentType((byte) 0);
-		else if(document_type == "CIF")
+		else if(documentType.equals("CIF"))
 			employeeData.setDocumentType((byte) 1);
-		else if(document_type == "Pasaporte")
+		else if(documentType.equals("Pasaporte"))
 			employeeData.setDocumentType((byte) 3);
 	}
 	
@@ -891,20 +898,20 @@ public class ContrataEmployeeObject {
 		employeeData.setNationality(nationality);	
 	}
 
-	public void setEmployeeSocialSecurityNum(String social_security_num) {
-		employeeData.setSsNumber(social_security_num);
+	public void setEmployeeSocialSecurityNum(String socialSecurityNum) {
+		employeeData.setSsNumber(socialSecurityNum);
 	}
 	
 	public void setEmployeeName(String name) {
 		employeeData.setName(name);
 	}
 
-	public void setEmployeeFirstSurname(String first_surname) {
-		employeeData.setSurName(first_surname);
+	public void setEmployeeFirstSurname(String firstSurname) {
+		employeeData.setSurName(firstSurname);
 	}
 
-	public void setEmployeeSecondSurname(String second_surname) {
-		employeeData.setSecondSurName(second_surname);
+	public void setEmployeeSecondSurname(String secondSurname) {
+		employeeData.setSecondSurName(secondSurname);
 	}
 	
 	public void setSSRegime(byte ssRegime) {
@@ -923,8 +930,8 @@ public class ContrataEmployeeObject {
 		contractData.setCccType(cccType);
 	}
 	
-	public void setContractMdCtz(String md_ctz) {
-		contractData.setMdctz(md_ctz);
+	public void setContractMdCtz(String mdCtz) {
+		contractData.setMdctz(mdCtz);
 	}
 	
 	public void setContractWorkplaceId(Integer workplaceId) {
@@ -947,40 +954,40 @@ public class ContrataEmployeeObject {
 		setContractCCCType(cccType);
 	}
 	
-	public void setContractType(String contract_type) {
-		contractData.setContractType(contract_type);
+	public void setContractType(String contractType) {
+		contractData.setContractType(contractType);
 	}
 	
 	public void setContractModel(Integer ordinal) {
 		contractData.setContractModel(ordinal); //ModelOption.values()[ordinal].toString());	
 	}
 	
-	public void setContractStartDate(Date start_date) {
-		contractData.setStartDate(start_date);		
+	public void setContractStartDate(Date startDate) {
+		contractData.setStartDate(startDate);		
 	}
 	
-	public void setContractEndDate(Date end_date) {
-		contractData.setEndDate(end_date);		
+	public void setContractEndDate(Date endDate) {
+		contractData.setEndDate(endDate);		
 	}
 	
-	public void setContractSeniorityDate(Date seniority_date) {
-		contractData.setSeniorityDate(seniority_date);		
+	public void setContractSeniorityDate(Date seniorityDate) {
+		contractData.setSeniorityDate(seniorityDate);		
 	}
 	
-	public void setContractAgreementId(Integer agreement_table_id) {
-		contractData.setAgreementId(agreement_table_id);
+	public void setContractAgreementId(Integer agreementTableId) {
+		contractData.setAgreementId(agreementTableId);
 	}
 	
 	public void setAgreementSSNumber(String colectiveAgreement) {
 		contractData.setAgreementColective(colectiveAgreement);
 	}
 	
-	public void setContractAgreementLevelId(Integer agreement_level_table_id) {
-		contractData.setAgreementLevelId(agreement_level_table_id);
+	public void setContractAgreementLevelId(Integer agreementLevelTableId) {
+		contractData.setAgreementLevelId(agreementLevelTableId);
 	}
 	
-	public void setContractCategory(String category_description) {
-		contractData.setAgreementCategory(category_description);		
+	public void setContractCategory(String categoryDescription) {
+		contractData.setAgreementCategory(categoryDescription);		
 	}
 	
 	public void setContractQuoteGroup(String quoteGroup) {
@@ -991,12 +998,16 @@ public class ContrataEmployeeObject {
 		contractData.setOcupation(occupation);		
 	}
 	
+	public void setContractRlce(String rlce) {
+		contractData.setRlce(rlce);
+	}
+	
 	public void setPartialityCoef(Double partialityCoef) {
 		contractData.setPartialityCoef(partialityCoef);
 	}
 
-	public void setContractJourneyType(Boolean journey_type) {
-		contractData.setJourneyType(journey_type ? (byte) 1 : (byte) 0);
+	public void setContractJourneyType(Boolean journeyType) {
+		contractData.setJourneyType(Boolean.TRUE.equals(journeyType) ? (byte) 1 : (byte) 0);
 	}
 	
 	public void setContractJourneyDuration(TreeMap<Date, ArrayList<JourneyDuration>> contractJourneyDuration) {
@@ -1005,8 +1016,8 @@ public class ContrataEmployeeObject {
 	
 	// EMPLOYEE TABLE
 		
-	public void setEmployeeBirthDate(Date birth_date) {
-		employeeData.setBirthdate(birth_date);
+	public void setEmployeeBirthDate(Date birthDate) {
+		employeeData.setBirthdate(birthDate);
 	}
 
 	public void setEmployeeGender(byte gender) {
@@ -1025,16 +1036,16 @@ public class ContrataEmployeeObject {
 		employeeData.setAddress(address);
 	}
 
-	public void setEmployeeAddressNumber(String address_number) {
-		employeeData.setAddresNum(address_number);
+	public void setEmployeeAddressNumber(String addressNumber) {
+		employeeData.setAddresNum(addressNumber);
 	}
 	
 	public void setEmployeeAddressInfo(String adressInfo) {
 		employeeData.setAddressInfo(adressInfo);
 	}
 
-	public void setEmployeeAddressZip(String zip_code) {
-		employeeData.setAddressZip(zip_code);
+	public void setEmployeeAddressZip(String zipCode) {
+		employeeData.setAddressZip(zipCode);
 	}
 	
 	public void setEmployeeAddressProvince(String province) {

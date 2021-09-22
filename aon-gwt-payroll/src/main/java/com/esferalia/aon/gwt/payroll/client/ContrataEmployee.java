@@ -768,7 +768,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					showSalariesButtons();
 					employeeSalary.setEmployeeSalaryObject(employeeSalaryObject);
 					employeeSalary.removeMainMT();
-				}, f -> {});
+				});
 				break;
 			case 7:
 //				Window.alert("Calendar Selected -> " + contrataEmployeeObject.getEmployeeFullName());
@@ -776,21 +776,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showCalendarButtons();
 					employeeCalendar.setEmployeeCalendarDraftObject(employeeCalendarObject);
-				}, f -> {});
+				});
 				break;
 			case 8:
 				contrataEmployeeObject.getEmployeeEventsObject(employeeEventsObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showEventsButtons();
 					employeeEvents.setEmployeeEventsDraftObject(employeeEventsObject);
-				}, f -> {});
+				});
 				break;
 			case 9:
 				contrataEmployeeObject.getEmployeeContractPaymentsObject(employeeContractPaymentsObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showContractPaymentsButtons();
 					employeeContractPayments.setEmployeeContractPaymentsObject(employeeContractPaymentsObject);
-				}, f -> {});
+				});
 				break;
 			case 10:
 				contrataEmployeeObject.getSalaryDraftObject(salaryDraftObject -> {
@@ -872,7 +872,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId, Integer selectedEmployeeIdx, int employeesSize, int selectedTab, Consumer<String> success) {
 		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
-		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId, selectedTab,
+		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
 				s -> {
 					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 					tabLayOutPanel.selectTab(selectedTab, true);
@@ -1301,7 +1301,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void downloadTA_IDC() {
-		contrataEmployeeObject.downloadTA_IDC(
+		contrataEmployeeObject.downloadTAAndIDC(
 				s -> {
 					AonDialog dialog = new AonDialog("IDC y TA", new HTML("Se han descargado el IDC y el TA del trabajador. Ambos documentos se encuentran en el apartado de <b>Adjuntos</b>"));
 					dialog.info();
