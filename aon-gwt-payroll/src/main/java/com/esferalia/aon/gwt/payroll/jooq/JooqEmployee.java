@@ -404,6 +404,16 @@ public class JooqEmployee {
 					.set(CONTRACT_DATA.START_DATE, contractStartDate)
 					.set(CONTRACT_DATA.END_DATE, contractEndDate)
 					.execute();	
+			
+			if(AonStringUtils.isNotBlank(contractData.getRlce()))
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.NAME, "RLCE")
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getRlce()))
+					.set(CONTRACT_DATA.START_DATE, contractStartDate)
+					.set(CONTRACT_DATA.END_DATE, contractEndDate)
+					.execute();	
 				
 		} else { //ES RETA
 		
@@ -862,6 +872,9 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "MODELO_COTIZACION_AGRARIO")) {
 				contractData.setMdctzId(r.get(CONTRACT_DATA.ID));
 				contractData.setMdctz(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "RLCE")) {
+				contractData.setRlceId(r.get(CONTRACT_DATA.ID));
+				contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
 			}
 			
 		}
@@ -1473,6 +1486,34 @@ public class JooqEmployee {
 						.set(CONTRACT_DATA.START_DATE, startDate)
 						.set(CONTRACT_DATA.END_DATE, endDate)
 						.where(CONTRACT_DATA.ID.eq(contractData.getOcupationId()))
+						.execute();
+					}
+				}
+				
+				if(null == contractData.getRlceId()){
+					if(AonStringUtils.isNotBlank(contractData.getRlce())){
+						ContractDataRecord rlceRecord = null;
+						
+						rlceRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+							.values(contractData.getRlceId(), domain, "RLCE", contractData.getContractId(), "\""+ contractData.getRlce()+"\"", 
+									startDate, endDate)
+							.returning(CONTRACT_DATA.ID)
+							.fetchOne();
+						
+						contractData.setRlceId(rlceRecord.getId());
+					}
+				}else{
+					if(AonStringUtils.isBlank(contractData.getRlce())){
+						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getRlceId())).execute();
+						contractData.setRlceId(null);
+						contractData.setRlce(null);
+					}else{
+						dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getRlce()+"\"")
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.where(CONTRACT_DATA.ID.eq(contractData.getRlceId()))
 						.execute();
 					}
 				}
