@@ -31,6 +31,7 @@ import solutions.aon.sepe.Sepe;
 public class ComunicaPdfServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(ComunicaPdfServlet.class.getName());
+	private static final String FORMAT_DATE = "yyyy-MM-dd"; 
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
@@ -99,7 +100,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		String regimen = api.getParams().optString("regime");
 		String ccc = api.getParams().getString("ctaCti");
 		String nss = api.getParams().getString("nss");
-		Date fecha = AonDateUtils.parse(api.getParams().getString("fra"), "yyyy-MM-dd");
+		Date fecha = AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
 		
 	    return SistemaRED.getTA(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);		
 	}
@@ -110,7 +111,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		String regimen = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ctaCti");
 		String nss = api.getParams().getString("nss");
-		Date fecha =AonDateUtils.parse(api.getParams().getString("fra"), "yyyy-MM-dd");
+		Date fecha =AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
 		
 	    return SistemaRED.getIDC(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);	
 	}
@@ -127,7 +128,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		Certificate certificate = getCert(api, "SEPE");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String ipf = api.getParams().getString("ipf");
-		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), "yyyy-MM-dd"); 
+		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
 		
 		return Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, fecha, fecha);
 
@@ -137,7 +138,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		Certificate certificate = getCert(api, "SEPE");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String ipf = api.getParams().getString("ipf");
-		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), "yyyy-MM-dd"); 
+		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
 		
 		return Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, fecha, fecha);	
 	}
@@ -164,7 +165,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String regimen = api.getParams().getString("regimen");
 		String ccc = api.getParams().getString("ccc");
-		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), "yyyy-MM-dd"); 
+		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
 		
 	    return SistemaRED.getIDCCCC(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, fecha);	
 	}

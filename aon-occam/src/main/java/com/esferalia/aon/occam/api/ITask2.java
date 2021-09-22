@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
@@ -27,8 +28,8 @@ public interface ITask2 {
 	public TaskWorkflow getTaskWorkflow(AONContext ctx, TaskWorkflowFilter filter);
 	public Stream<TaskWorkflow> getTaskWorkflowStream(AONContext ctx, TaskWorkflowFilter filter);
 	public Stream<TaskWorkflow> getTaskWorkflowStream(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage);
-	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter);
-	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage);
+	public List<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter);
+	public List<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage);
 	public TaskWorkflow saveTaskWorkflow(AONContext ctx, TaskWorkflow task);
 	public void updateTaskWorkflowBetween(AONContext ctx, TaskWorkflowFilter filter);
 	

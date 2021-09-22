@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.finance.checkit;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 
@@ -12,6 +13,8 @@ public class CheckItConfiguration implements Serializable {
 	private AonConfiguration configuration;
 	private Integer enterpriseId;
 	private LinkedList<CheckItBankAccount> cheItBanks;
+	private List<CheckitUnlinkedBankAccount> checkItUnlinkedBanks;
+	private List<CheckItBank> bankIds;
 
 	public AonConfiguration getConfiguration() {
 		return configuration;
@@ -37,4 +40,18 @@ public class CheckItConfiguration implements Serializable {
 		return this;
 	}
 
+	public List<CheckitUnlinkedBankAccount> getCheckItUnlinkedBanks() {
+		return checkItUnlinkedBanks;
+	}
+	public CheckItConfiguration setCheckItUnlinkedBanks(List<CheckitUnlinkedBankAccount> checkItUnlinkedBanks) {
+		this.checkItUnlinkedBanks = checkItUnlinkedBanks;
+		return this;
+	}
+	public List<CheckItBank> getBankIds() {
+		return bankIds;
+	}
+	public CheckItConfiguration setBankIds(List<CheckItBank> bankIds) {
+		this.bankIds = bankIds;
+		return this;
+	}
 }

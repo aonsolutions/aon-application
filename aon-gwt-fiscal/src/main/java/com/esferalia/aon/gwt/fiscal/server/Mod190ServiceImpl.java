@@ -62,7 +62,7 @@ public class Mod190ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 
 	@Override
-	public Mod190 duplicateNextYear(String domainName, String user, Integer domain, Integer id) throws AonCoreException {
-		return FISCAL.duplicateNextYearMod190(domainName, domain, user, id);
+	public Mod190 duplicateMod190(String domainName, String user, Integer domain, Mod190 mod190) throws AonCoreException {
+		return FISCAL.duplicateMod190(domainName, domain, user, mod190);
 	}
 }

@@ -274,6 +274,11 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface ProjectHolderFilter{
+		Filter filter(ProjectHolderProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ProjectReservationFilter{
 		Filter filter(ProjectReservationProperties properties);
 	}

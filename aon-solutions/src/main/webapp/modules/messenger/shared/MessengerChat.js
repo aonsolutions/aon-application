@@ -5,7 +5,7 @@ import { newComponent, setAttributes, setClasses, setStyles } from "../../../ser
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
 import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils";
-import { buildForm, buildTextareaToolbar, downChat, getIconJson, upChat } from "./utils";
+import { buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, upChat } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
 
@@ -20,46 +20,6 @@ export const buildDesktop = (aonMessengerChat)=> {
   const mainView = createMainView(aonMessengerChat); //DIV MAIN
 
   const firstDiv = createFirstDiv(mainView); //-------------------------DIV LEFT
-
-  // const div = document.createElement("div");
-  // div.innerHTML = /*html*/`
-  // <div style="display: flex;flex-wrap: wrap;">
-  //   <div id="tag2542" style="
-  //       font-weight: 400;
-  //       white-space: nowrap;
-  //       letter-spacing: .3px;
-  //       border-radius: 4px;
-  //       padding: 0 4px;
-  //       background-color: rgb(221, 221, 221);
-  //       color: rgb(102, 102, 102);
-  //       margin: 0 5px; 
-  //     "
-  //     >
-  //       <div style="display: inline-block;">TEST1</div>
-  //       <div style="display: inline-block;vertical-align:bottom;cursor:pointer;" title="Eliminar etiqueta">
-  //         <i style="font-size: 15px;" class="material-icons">close</i>
-  //       </div>
-  //   </div>
-  //   <div id="tag25422" style="
-  //       font-weight: 400;
-  //       white-space: nowrap;
-  //       letter-spacing: .3px;
-  //       border-radius: 4px;
-  //       padding: 0 4px;
-  //       background-color: rgb(221, 221, 221);
-  //       color: rgb(102, 102, 102);
-  //       margin: 0 5px; 
-  //     "
-  //     >
-  //       <div style="display: inline-block;">TEST2</div>
-  //       <div style="display: inline-block;vertical-align:bottom;cursor:pointer;" title="Eliminar etiqueta">
-  //         <i style="font-size: 15px;" class="material-icons">close</i>
-  //       </div>
-  //   </div>
-
-  // </div>
-  // `;
-  // firstDiv.appendChild(div);
 
   buildForm(firstDiv, aonMessengerChat);
 
@@ -83,33 +43,33 @@ const buildToolbar = (aonMessengerChat) => {
     });
 
     aonMessengerChat.appendChild(toolbar);
-    
-    // toolbar.addButton2({
-    //     id: 'Labels',
-    //     name: 'Labels',
-    //     icon: MATERIAL_ICONS.LABEL
-    // }, () =>  {} );
 
     toolbar.addButton2(ACTIONS.NEXT, () => aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getNextTask()) );
 		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
 
+    toolbar.addButton2({
+      id: 'Labels',
+      name: 'Labels',
+      icon: MATERIAL_ICONS.LABEL
+  }, (ev) =>  dialogTaskTags(ev, aonMessengerChat));
+
 
     if(task.id){
-      if(task.status == TASK_STATUS.PENDING || task.status == TASK_STATUS.IN_PROGRESS){
+      if( [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
         toolbar.addButton2({
           ...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
           name: MSG.CLOSE,
           icon:MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE
         }, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED));
       }
-      if(task.status == TASK_STATUS.DELETED || task.status == TASK_STATUS.FINISHED)
+      if([TASK_STATUS.DELETED, TASK_STATUS.FINISHED].includes(task.status))
         toolbar.addButton2({...ACTIONS.RESTORE, name:MSG.REOPEN}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.PENDING));
 
       if(task.status != TASK_STATUS.DELETED) 
         toolbar.addButton2({...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE, name:MSG.STORE,  icon: MATERIAL_ICONS.ARCHIVE}, () => aonMessengerChat.updateTaskStatus(TASK_STATUS.DELETED));
     }
 
-    if(task.status == TASK_STATUS.PENDING || task.status == TASK_STATUS.IN_PROGRESS)
+    if( [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) )
       toolbar.addButton2(ACTIONS.SAVE, () => aonMessengerChat.save());
 
     toolbar.addButton2(ACTIONS.BACK, () => aonMessengerChat.back());
@@ -172,28 +132,30 @@ const buildSectionHistoric = (secondDiv) => {
 
 const addTextAreaChat = (wrapper) => {
   const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+  const task = aonMessengerChat.task;
 
-  const divs = createSectionComment(wrapper);
-  setStyles(divs.divWrite,{
-    borderRadius:"8px",
-    border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
-  });
+  if( [TASK_STATUS.IN_PROGRESS, TASK_STATUS.PENDING].includes(task.status) ){
+    const divs = createSectionComment(wrapper);
+    setStyles(divs.divWrite,{
+      borderRadius:"5px",
+      border: `1px solid ${CSS.variable(COLORS.AON_BLUE)}`
+    });
 
-  const label = createLabelFileText();
-  label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
-  divs.divWrite.appendChild(label);
+    const label = createLabelFileText();
+    label.addEventListener(EVENT.CLICK, ()=>divs.aonTextArea.clickFile());
+    divs.divWrite.appendChild(label);
 
-  divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
-    if (ev.ctrlKey && ev.keyCode == 13) {
-      aonMessengerChat.saveTaskWorkflow();
-    } else if(ev.ctrlKey && ev.keyCode == 88){
-      openFullComment(aonMessengerChat, divs.aonTextArea);
-    }
-  });
+    divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
+      if (ev.ctrlKey && ev.keyCode == 13) {
+        aonMessengerChat.saveTaskWorkflow();
+      } else if(ev.ctrlKey && ev.keyCode == 88){
+        openFullComment(aonMessengerChat, divs.aonTextArea);
+      }
+    });
 
-  divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
- 
-  divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
+    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
+    divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
+  }
 }
 
 const openFullComment = (aonMessengerChat, aonTextArea) => {
@@ -289,28 +251,3 @@ const addChatButtonsUpDown = (secondDiv) => {
   downIcon.addEventListener(EVENT.CLICK, ()=>downChat())
   leftButtonBar.appendChild(downIcon);
 }
-
-
-const addTaskDescription = () =>{
-  const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
-  const task = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT).task;
-  const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`), {
-      minHeight: '150x',
-      maxHeight: '300px',
-      position: 'relative'
-  });
-  processDiv.id = MESSENGER_IDS.DESCRIPTION_TASK;
-  div.appendChild(aonTextArea);
-  
-  const label = aonTextArea.addLabelTextEnd();
-  label.addEventListener(EVENT.CLICK, ()=> aonTextArea.clickFile());
-
-  aonTextArea.addEventListener(EVENT.INPUT, ({target})=>{
-    task.setFiles(target.FILES);
-    if(target.value) task.setDescriptionJson({observation:target.value})
-  });
-  if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
-  checkFilesAddEventDescription(task);//check files description
-  
-  buildTextareaToolbar(aonTextArea, task, false);
-} 

@@ -52,17 +52,18 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 public class ComunicaServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(ComunicaServlet.class.getName());
-	
+	private static final String FORMAT_DATE = "yyyy-MM-dd"; 
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON COMUNICA SERVLET");
 		try {		
 			AonApiData api = initialize(req, resp);
-		    Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		    Gson gjson = new GsonBuilder().setDateFormat(FORMAT_DATE).create();
 		    String jsonInString = null;
 		    Domain domain = api.getDomain();
 			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
-			final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
+			final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			switch (api.getPath()) {
 				case "/get-employee":
 					LOGGER.info("GET-EMPLOYEE SERVLET - GET METHOD");
@@ -96,7 +97,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		LOGGER.info("AON COMUNICA SERVLET POST");
 		try {		
 			AonApiData api = initialize(req, resp);
-		    Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+		    Gson gjson = new GsonBuilder().setDateFormat(FORMAT_DATE).create();
 		    String jsonInString = null;
 		    Domain domain = api.getDomain();
 			User user = AON_SOLUTIONS.getUser(domain, api.getToken());
@@ -181,7 +182,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String ipf = api.getData().optString("ipf");
 		
 		//second screen
-		Date fecha = Toolkit.parseDate(api.getData().optString("fecha"), "yyyy-MM-dd");
+		Date fecha = Toolkit.parseDate(api.getData().optString("fecha"), FORMAT_DATE);
 
 		String grup_ctz = api.getData().optString("grup_ctz");
 		String type_cto = api.getData().optString("type_cto");	
@@ -227,7 +228,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String ipf = api.getData().optString("ipf");
 		String name = api.getData().optString("name");
 		String situation = api.getData().optString("situation");
-		Date fecha = Toolkit.parseDate(api.getData().optString("fechaBaja"), "yyyy-MM-dd");
+		Date fecha = Toolkit.parseDate(api.getData().optString("fechaBaja"), FORMAT_DATE);
 
 		EmployeeBuilder builder = new EmployeeBuilder();
 		Employee employee = builder
@@ -259,10 +260,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String nss = api.getData().getString("nss");
 		Boolean prev = api.getData().getBoolean("prev"); //true prev, false consolidado
 		String name =  api.getData().getString("name");
-		Date fecha = Toolkit.parseDate(api.getData().getString("fra"), "yyyy-MM-dd");
+		Date fecha = Toolkit.parseDate(api.getData().getString("fra"), FORMAT_DATE);
 		
 		if(!api.getData().isNull("frb")) {
-			fecha = Toolkit.parseDate(api.getData().getString("frb"), "yyyy-MM-dd");
+			fecha = Toolkit.parseDate(api.getData().getString("frb"), FORMAT_DATE);
 		}
 
 		if(prev) {
@@ -305,7 +306,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		map.put("grup_ctz_edit", false);
 		map.put("ocupacion_edit", false);
 		if(api.getData().isNull("fecha")) {
-			throw new Exception("fecha requerida");
+			throw new Exception("Fecha requerida");
 		}
 		
 		updateOccupation(api, new ByteArrayInputStream(certificateInputStream.readAllBytes()), certificatePassword, certificateType, map, errors);
@@ -324,7 +325,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String nss = data.optString("nss");
 		String ipf = data.optString("ipf");
 		String name = data.optString("name");
-		Date fecha = Toolkit.parseDate(data.optString("fecha"), "yyyy-MM-dd");
+		Date fecha = Toolkit.parseDate(data.optString("fecha"), FORMAT_DATE);
 		
 		if(!ocup.isEmpty() && !data.optString("ocupacion_edit").isEmpty() && data.getBoolean("ocupacion_edit")) {
             try {
@@ -353,7 +354,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String ipf = data.optString("ipf");
 		String name = data.optString("name");
 		String grup_ctz = data.optString("grup_ctz");
-		Date fecha = Toolkit.parseDate(data.optString("fecha"), "yyyy-MM-dd");
+		Date fecha = Toolkit.parseDate(data.optString("fecha"), FORMAT_DATE);
 		if(!grup_ctz.isEmpty() && !data.optString("grup_ctz_edit").isEmpty() && data.getBoolean("grup_ctz_edit")) {
 			 try{
 				 SistemaRED.cambioGrupCtz( new ByteArrayInputStream(certificateInputStream.readAllBytes()), certificatePassword, certificateType, ipf, regimen, ctaCti, nss, grup_ctz, fecha);
@@ -500,7 +501,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	}
 	
 	// predicate to filter the duplicates by the given key extractor.
-	public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+	private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
 		Map<Object, Boolean> uniqueMap = new ConcurrentHashMap<>();
 		return t -> uniqueMap.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
 	}

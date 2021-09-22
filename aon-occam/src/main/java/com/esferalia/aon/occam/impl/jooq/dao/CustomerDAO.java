@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -256,6 +257,19 @@ public class CustomerDAO {
 		return null;
 	}
 
+	public static List<Domain> getDomainOfficeLinked(AONContext ctx, String document) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+		.select(DOMAIN.fields())
+		.from(DOMAIN)
+		.join(CUSTOMER).on(DOMAIN.ID.eq(CUSTOMER.DOMAIN))
+		.join(REGISTRY).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
+		.where(DOMAIN.TYPE.eq(DomainType.OFFICE.value())
+		.and(REGISTRY.DOCUMENT.eq(document)))
+		.fetch().stream().map(new DomainFiller())
+		.collect( Collectors.toCollection(LinkedList::new));
+	}
+	
 	// ******************************************
 	// ********** FULL CUSTOMER *****************
 	// ******************************************

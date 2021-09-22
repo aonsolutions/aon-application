@@ -6,13 +6,8 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT } from "../../../environments/environments.js";
 import { taskHistoricSend } from "../../../services/taskService.js";
 import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
-import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
+import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
-
-const fontColor = CSS.variable(COLORS.GRAYSON);
-
-export const RIGHT = "RIGHT";
-export const LEFT = "LEFT";
 
 // ----------------------------------------------------
 // MAIN VIEW
@@ -24,7 +19,6 @@ export const createMainView = (aonMessengerChat) =>{
   aonMessengerChat.appendChild(div);
   const mainView = newComponent({
     type: TAG.DIV,
-    id: MESSENGER_IDS.MAIN_DIV,
     classes: [CSS.FLEX_JUSTIFY_BETWEEN, CSS.NO_COPY],
     styles: {
       transition: ".5s",
@@ -46,7 +40,6 @@ export const createMainView = (aonMessengerChat) =>{
 
 export const createMobileMainView = () => newComponent({
   type: TAG.DIV,
-  id: MESSENGER_IDS.MAIN_DIV,
   classes: [CSS.FLEX_COLUMN, CSS.NO_COPY],
   styles: {
     transition: ".5s",
@@ -59,19 +52,6 @@ export const createMobileMainView = () => newComponent({
   },
 }).element;
 
-// ----------------------------------------------------
-// TITLE AND INPUTS IN WRITTER SECTION IN DESKTOP VIEW
-// ----------------------------------------------------
-export const createTitleDiv = () => newComponent({
-  type: TAG.DIV,
-  classes : [CSS.FLEX_ROW,CSS.FLEX_ALIGN_CENTER],
-  styles: {
-    paddingTop: "10px",
-    paddingBottom: "10px",
-    width: "100%",
-    // maxWidth: "600px",
-  },
-});
 
 export const createDivEditable = (title, id, placeholder) => newComponent({
   type: "text",
@@ -106,16 +86,6 @@ export const createTitle = (title) => newComponent({
   }
 }).element;
 
-export const createEditIcon = () => newComponent({
-  type: "i",
-  text: "edit",
-  classes: [ICON_TYPES.MATERIAL_ICONS],
-  styles: {
-    fontSize: "1.5em",
-    color: fontColor,
-    cursor: "pointer",
-  },
-});
 
 export const createReceiverDiv = () => newComponent({
   type: TAG.DIV,
@@ -125,63 +95,7 @@ export const createReceiverDiv = () => newComponent({
     CSS.FLEX_JUSTIFY_START
   ],
   styles: {
-    width: "100%",
-    // maxWidth: "600px"
-  },
-});
-
-// ----------------------------------------------------
-// ALL ATTACHMENTS SECTION IN DESKTOP VIEW
-// ----------------------------------------------------
-
-export const createAttachHistory = () => newComponent({
-  type: 'attachHistory',
-  classes: [CSS.FLEX_COLUMN],
-  styles: {
-    width: "100%",
-    // maxWidth: "600px",
-    marginTop: "25px",
-    boxShadow: "0px 0px 2px rgba(0,0,0,.15)",
-    border: "1px solid #E0E0E0",
-    padding: "20px",
-    paddingTop: "15px",
-    paddingBottom: "15px"
-  }
-});
-
-export const createAttachTitle = () => newComponent({
-  type: TAG.DIV,
-  classes:[
-    CSS.FLEX_ROW,
-    CSS.FLEX_JUSTIFY_BETWEEN,
-    CSS.FLEX_ALIGN_CENTER  
-  ],
-  styles: {
-    color: CSS.variable(COLORS.AON_GRAY),
-    fontSize: "1.3em",
-    fontWeight: "400",
-  }
-});
-
-export const createAttachTitleText = () => newComponent({
-  type: 'text',
-  text: 'Archivos adjuntos',
-  styles : {
-    marginLeft : "10px"
-  }
-});
-
-
-export const createExpandIcon = () => newComponent({
-  type: "i",
-  text: "expand_more",
-  classes: [ICON_TYPES.MATERIAL_ICONS_OUTLINED],
-  styles: {
-    fontSize: "1.2em",
-    color: "#c5c5c5",
-    justifySelf: "flex-end",
-    cursor: "pointer",
-    paddingLeft: "15%",
+    width: "100%"
   },
 });
 
@@ -197,7 +111,7 @@ const createMessageBox = (properties) =>{
     styles: {
         margin:"5px",
         padding: '15px',
-        background : properties.direction == RIGHT ? "#f0fff0" : CSS.variable(COLORS.AON_WHITE),
+        background : properties.direction == MESSENGER_DIRECTION.RIGHT ? "#f0fff0" : CSS.variable(COLORS.AON_WHITE),
         boxShadow : '0px 2px 6px rgba(0,0,0,.1)',
         borderRadius : '5px',
         position: "relative",
@@ -208,7 +122,7 @@ const createMessageBox = (properties) =>{
       me: properties.direction  ? true : false
     }
   }).element;
-  if(properties.direction == RIGHT)
+  if(properties.direction == MESSENGER_DIRECTION.RIGHT)
     component.style.marginLeft = "auto";
   else 
     component.style.marginRight = "auto";
@@ -221,8 +135,8 @@ const createMessageAuthor = (properties) =>{
   let author = newComponent({
     classes :[CSS.FLEX_ROW,CSS.FLEX_JUSTIFY_BETWEEN,CSS.FLEX_ALIGN_CENTER],
     styles: {
-      textAlign : properties.direction == RIGHT ? "right" : "left",
-      flexDirection : properties.direction == RIGHT ? "row-reverse" : "reverse",
+      textAlign : properties.direction == MESSENGER_DIRECTION.RIGHT ? MESSENGER_DIRECTION.RIGHT : MESSENGER_DIRECTION.LEFT,
+      flexDirection : properties.direction == MESSENGER_DIRECTION.RIGHT ? "row-reverse" : "reverse",
     }
   });
 
@@ -260,8 +174,6 @@ export const createAction = (icon, message) => {
   const comp = createStartJustifiedRow();
   setStyles(comp.element,{
     width :"100%",
-    // padding:"10px",
-    // paddingLeft :"calc(35px - .9em)",
     padding:"5px 0",
     textAlign: "justify"
   })
@@ -288,7 +200,7 @@ export const createAction = (icon, message) => {
     text : message,
     fontSize : "1.1em",
     fontWeight:400,
-    color : fontColor
+    color : CSS.variable(COLORS.GRAYSON)
   });
   
   image.appendTo(wrapper.element);
@@ -297,16 +209,6 @@ export const createAction = (icon, message) => {
 
   return comp;
 }
-
-/**
- * Create a row with elements inside aligned to the end 
- * @param {object} styles 
- * @returns 
- */
- export const createEndJustifiedRow = (styles) => newComponent({
-    classes: [CSS.FLEX_ROW, CSS.FLEX_JUSTIFY_END, CSS.FLEX_ALIGN_CENTER],
-    styles: styles
-});
 
 /**
  * Create a row with elements inside aligned to the start 
@@ -404,8 +306,8 @@ const checkProperties = (properties) => {
     if (!properties.name)
         properties.name = ""
 
-    if (!properties.direction || (properties.direction != RIGHT && properties.direction != LEFT))
-        properties.direction = LEFT;
+    if (!properties.direction || (properties.direction != MESSENGER_DIRECTION.RIGHT && properties.direction != MESSENGER_DIRECTION.LEFT))
+        properties.direction = MESSENGER_DIRECTION.LEFT;
 
     if (!properties.comment)
         properties.comment = ""
@@ -479,7 +381,7 @@ export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea
     placeholder: placeholder || MSG.COMMENT+"..."
 });
 
-const iconComment = (icon) => {
+const iconComment = (icon_name) => {
     const a = setStyles(document.createElement("a"),{
         boxShadow: "none",
         margin: "5px",
@@ -491,14 +393,14 @@ const iconComment = (icon) => {
         cursor: "pointer"
     });
 
-    let iconSend = setStyles(document.createElement("i"),{
+    let icon = setStyles(document.createElement("i"),{
         fontSize: "1.8em",
         lineHeight: "44px",
         color: CSS.variable(COLORS.AON_BLUE)
     });
-    iconSend.className   = ICON_TYPES.MATERIAL_ICONS;
-    iconSend.textContent = icon;
-    a.appendChild(iconSend);
+    icon.className   = ICON_TYPES.MATERIAL_ICONS;
+    icon.textContent = icon_name;
+    a.appendChild(icon);
 
     return a;
 }
@@ -511,7 +413,7 @@ const iconComment = (icon) => {
 export const createChatMessage = (properties, chat) => {
     properties = checkProperties(properties);
 
-    let me = properties.direction === RIGHT;
+    let me = properties.direction === MESSENGER_DIRECTION.RIGHT;
 
     let messageSend = properties.modification_date; // si el mensaje fue enviado
 
@@ -600,6 +502,7 @@ export const createSectionComment = (div) => {
     divComment.appendChild(divMain);
   
     const iconSend = iconComment(MATERIAL_ICONS.SEND);
+    iconSend.id = MESSENGER_IDS.BTN_SEND_MESSAGE;
     iconSend.title = `Ctrl+Enter (${MSG.SEND})`;
     divComment.appendChild(iconSend);
   
@@ -725,4 +628,41 @@ const sendHistoric = async (workflowId) => {
       }
     }
   }
+}
+
+/**
+ * 
+ * @param {Tag} tag 
+ * @param {HTMLElement} parent div for append 
+ * @param {Function} fn click
+ * @returns 
+ */
+export const appendTaskTag = ( tag, parent, fn) =>{
+  const divOne = setStyles(document.createElement(TAG.DIV),{ 
+    whiteSpace: "nowrap",
+    borderRadius: "4px",
+    padding: "0 4px",
+    backgroundColor: "rgb(221, 221, 221)",
+    color: "rgb(102, 102, 102)",
+    margin: "0 5px 5px 5px",
+    fontWeight: "450" 
+  });
+  divOne.dataset.taskTag = tag.id;
+  parent.appendChild(divOne);
+
+  const divTwo = setStyles(document.createElement(TAG.DIV),{ display: "inline-block"});
+  divTwo.innerText = tag.name;
+  divOne.appendChild(divTwo);
+
+  const divThree = setStyles(document.createElement(TAG.DIV),{  display: "inline-block", verticalAlign:"bottom", cursor:"pointer"});
+  divThree.title = MSG.DELETE_TAG;
+  divThree.addEventListener(EVENT.CLICK,()=> fn(tag.id));
+  divOne.appendChild(divThree);
+
+  const i = setStyles(document.createElement("i"),{fontSize: "15px" });
+  i.className = ICON_TYPES.MATERIAL_ICONS;
+  i.innerText = MATERIAL_ICONS.CLOSE;
+  divThree.appendChild(i);
+
+  return divThree;
 }

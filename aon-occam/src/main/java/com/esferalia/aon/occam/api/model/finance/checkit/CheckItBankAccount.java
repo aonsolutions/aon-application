@@ -16,6 +16,7 @@ public class CheckItBankAccount implements Serializable {
 	private double remainder; // "disponible"
 	private Integer bankAccountType; // "tipo_cuenta_bancaria_id"
 	private Integer bankLoginType; // "tipo_login_banco_id"
+	private int pendingMovements;
 
 	public String getCcc() {
 		return ccc;
@@ -86,6 +87,13 @@ public class CheckItBankAccount implements Serializable {
 	}
 	public CheckItBankAccount setBankLoginType(Integer bankLoginType) {
 		this.bankLoginType = bankLoginType;
+		return this;
+	}
+	public int getPendingMovements() {
+		return pendingMovements;
+	}
+	public CheckItBankAccount setPendingMovements(int pendingMovements) {
+		this.pendingMovements = pendingMovements;
 		return this;
 	}
 

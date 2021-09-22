@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.ITask2;
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
@@ -94,13 +96,13 @@ public class Task2Impl implements ITask2 {
 	}
 
 	@Override
-	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter) {
+	public List<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		TaskWorkflowDAO.getList(ctx, filter));
 	}
 	
 	@Override
-	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage) {
+	public List<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		TaskWorkflowDAO.getList(ctx, filter, page, perPage));
 	}

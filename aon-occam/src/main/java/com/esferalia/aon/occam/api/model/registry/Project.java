@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model.registry;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 
 public class Project implements Serializable {
@@ -10,7 +12,7 @@ public class Project implements Serializable {
 	private static final long serialVersionUID = -5945149996376642583L;
 	
 	private Integer id;
-	private int domain;
+	private Domain domain;
 	private ProjectType type;
 	
 	private Registry registry;
@@ -22,6 +24,8 @@ public class Project implements Serializable {
 	private boolean reservation;
 	private boolean active;
 	
+	private ProjectHolder projectHolder;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -31,11 +35,14 @@ public class Project implements Serializable {
 		return this;
 	}
 	
-	public int getDomain() {
+	public Domain getDomain() {
+		if(this.domain == null) {
+			this.domain = new Domain();
+		}
 		return domain;
 	}
 	
-	public Project setDomain(int domain) {
+	public Project setDomain(Domain domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -146,6 +153,18 @@ public class Project implements Serializable {
 	
 	public Project setType(ProjectType type) {
 		this.type = type;
+		return this;
+	}
+	
+	public ProjectHolder getProjectHolder() {
+		if(this.projectHolder == null) {
+			this.projectHolder = new ProjectHolder();
+		}
+		return projectHolder;
+ 	}
+	
+	public Project setProjectHolder(ProjectHolder projectHolder) {
+		this.projectHolder = projectHolder;
 		return this;
 	}
 }

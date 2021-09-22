@@ -1,11 +1,14 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -22,5 +25,11 @@ public interface IProject {
 	public ProjectReservation getProjectReservation(AONContext ctx, ProjectReservationFilter filter);
 	public Stream<ProjectReservation> getProjectReservationStream(AONContext ctx, ProjectReservationFilter filter);
 	public void fixProjectCommercial(AONContext ctx);
+	
+	// ---------- PROJECT HOLDER
+	
+	public ProjectHolder getProjectHolder(AONContext ctx, ProjectHolderFilter filter);
+	public Stream<ProjectHolder> getProjectHolderStream(AONContext ctx, ProjectHolderFilter filter);
+	public List<ProjectHolder> getProjectHolderList(AONContext ctx, ProjectHolderFilter filter);
 
 }

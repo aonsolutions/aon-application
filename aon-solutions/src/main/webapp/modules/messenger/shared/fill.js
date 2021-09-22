@@ -1,9 +1,10 @@
 import { EVENT, MSG } from "../../../environments/environments";
+import { getOfficeProjects } from "../../../services/projectService";
 import { getCustomers } from "../../../services/registryService";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
 import { waitEl } from "../../../services/utils";
-import { MESSENGER_IDS, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums";
-import { createAction, createChatMessage, createNoMessage, LEFT, RIGHT } from "./creationUtils";
+import { MESSENGER_DIRECTION, MESSENGER_IDS, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums";
+import { createAction, createChatMessage, createNoMessage} from "./creationUtils";
 import { chooseIconMessage } from "./utils";
 
 /**
@@ -13,8 +14,7 @@ import { chooseIconMessage } from "./utils";
  */
 export const fillRequestType = ({source}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.SOURCE_TASK);
-
- 
+    
     let sources = [
         {value: TASK_SOURCE.QUERY, name: MSG[TASK_SOURCE.QUERY.toUpperCase()] },
         {value: TASK_SOURCE.REQUEST, name: MSG.FORMALITIES },
@@ -37,24 +37,27 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
  * fill typeRequest (Tipo de solicitud)
  * @param {Task} Class task
  */
- export const fillProject = (task) => {
+ export const fillProject = async (task) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
-    const {project} = task.getDescriptionJson();
-    
-    let projects = [
-        {value: 1, name: 'LABORAL' },
-        {value: 2, name: 'FISCAL' },
-        {value: 3, name: 'CONTABILIDAD' },
-    ];
+    if(aonSelect){
+        const project = task.getProject();
+        try {
+            let projects = await getOfficeProjects();
 
-    aonSelect.options = JSON.stringify(projects);
-    
-    if(project){  aonSelect.value = project; } 
-
-    aonSelect.addEventListener(EVENT.CHANGE,({detail})=>{
-        if(detail && detail.value)
-            task.setDescriptionJson({project:detail.value});
-    })
+            aonSelect.options = JSON.stringify(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
+            
+            if(project && project.id){ aonSelect.value = project.id; } 
+        
+            aonSelect.addEventListener(EVENT.CHANGE,({detail})=>{
+                if(detail && detail.id)
+                    task.setProject(detail);
+                else 
+                    task.setProject({});
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 
 
@@ -77,10 +80,9 @@ export const fillWorkGroup = async (task, aonMessengerChat) => {
         } 
 
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-            if(detail){
+            if(detail)
                 task.setWorkgroup(detail);
-                fillTaskHolder(aonMessengerChat, detail.value);
-            }
+            fillTaskHolder(aonMessengerChat, detail.value);
         });
     } catch (error) { console.log(error);}
 }
@@ -91,7 +93,7 @@ export const fillWorkGroup = async (task, aonMessengerChat) => {
  * @param {Integer} workgroupId 
  * @param {Integer} taskHolderId
  */
-const fillTaskHolder = async (aonMessengerChat, workgroupId, taskHolderId=undefined) => {
+export const fillTaskHolder = async (aonMessengerChat, workgroupId=0, taskHolderId=undefined) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKHOLDER}`).catch(e=>null);
     if(aonSelect){
         aonSelect.clear();
@@ -139,22 +141,22 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
  * @param {Task} Class task 
  * @param {HTMLElement} aon-messenger-chat component
  */
-export const fillTag = async (task, aonMessengerChat) => {
-    const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKTAG}`).catch(e=>null);
-    const applicationParent = aonMessengerChat.getApplicationParent();
-    if(aonSelect){
-        aonSelect.clear();
-        const tags = applicationParent._tags;
-        if(tags){
-            aonSelect.options = JSON.stringify( tags.map( c=> ({...c, value: c.id}) ) );
-        }
-        if(task.getDescriptionJson().tag) aonSelect.value = task.getDescriptionJson().tag;
+// export const fillTag = async (task, aonMessengerChat) => {
+//     const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKTAG}`).catch(e=>null);
+//     const applicationParent = aonMessengerChat.getApplicationParent();
+//     if(aonSelect){
+//         aonSelect.clear();
+//         const tags = applicationParent._tags;
+//         if(tags){
+//             aonSelect.options = JSON.stringify( tags.map( c=> ({...c, value: c.id}) ) );
+//         }
+//         if(task.getDescriptionJson().tag) aonSelect.value = task.getDescriptionJson().tag;
 
-        aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-            task.setDescriptionJson({tag:detail.id});
-        })
-    }
-}
+//         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+//             task.setDescriptionJson({tag:detail.id});
+//         })
+//     }
+// }
 
 /**
  * fill processType (Titular de la tarea)
@@ -201,7 +203,7 @@ export const fillChat = (workflows=[], aonMessengerChat)=>{
                     id,
                     type,
                     comment,
-                    direction: me ? RIGHT: LEFT,
+                    direction: me ? MESSENGER_DIRECTION.RIGHT : MESSENGER_DIRECTION.LEFT,
                     date: creation_date,
                     modification_date,
                 }

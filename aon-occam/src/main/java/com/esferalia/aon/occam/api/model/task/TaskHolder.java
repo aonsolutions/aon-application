@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 @SuppressWarnings("serial")
 public class TaskHolder extends Registry implements Serializable{
 	
+	private Integer registry;
 	private TaskHolderType type;
 	private Boolean active;
 	private Integer userId;
@@ -16,6 +17,16 @@ public class TaskHolder extends Registry implements Serializable{
 	
 	public TaskHolder copy(Registry registry) {
 		return super.copy( registry, this);
+	}
+	
+	public Integer getRegistry() {
+		return registry;
+	}
+	
+	public TaskHolder setRegistry(Integer registry) {
+		setId(registry);
+		this.registry = registry;
+		return this;
 	}
 	
 	public TaskHolderType getType() {

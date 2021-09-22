@@ -297,6 +297,8 @@
 .aon_icon_toggle_off { background-image: iconToggleOff;}
 @url iconRegister aonIconRegister;
 .aon_icon_register { background-image: iconRegister;}
+@url iconLink aonIconLink;
+.aon_icon_link { background-image: iconLink;}
 
 
 /* BASICS */

@@ -3636,8 +3636,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private double getQuoteDays(ExpressionContext ctx, Period p, double factor) {
 		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
 		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
-		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
-
+		double ctxMonthDays = getFirstContexVariable(ctx, p, MONTH_DAYS);
 		double prevAdjustDays = getActiveDays(p) ;
 		
 		return (( availableDays + prevAdjustDays ) == monthDays ? (ctxMonthDays - prevAdjustDays) : availableDays);
@@ -5227,6 +5226,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		try {
 			return ctx.eval(var.getName(), p.getStart(), p.getEnd(), Double.class).stream()
 					.collect(Collectors.summingDouble(r -> r.getValue()));
+		} catch (ExpressionException e) {
+			throw new ExpressionExceptionWrapper(e);
+		}
+	}
+
+	private double getFirstContexVariable(ExpressionContext ctx, Period p, ContextVariable var) {
+		ITimedVariable<?> timedVariable = ctx.getVariable(var, p.getStart(), p.getEnd());
+		if (timedVariable == null)
+			throw new ExpressionExceptionWrapper(new UndefinedContextVariablesException(var));
+		try {
+			return ((Number) timedVariable.getValue(p)).doubleValue();
+		} catch (ExpressionExceptionWrapper e) {
+		}
+
+		try {
+			return ctx.eval(var.getName(), p.getStart(), p.getEnd(), Double.class).stream()
+					.findFirst().get().getValue();
 		} catch (ExpressionException e) {
 			throw new ExpressionExceptionWrapper(e);
 		}

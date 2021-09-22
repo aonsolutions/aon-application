@@ -269,7 +269,7 @@ public class DBFee {
 	
 	public Integer insertProject(Domain domain, User user, String name, Integer customer){
 		Project project = getProjectDefault()
-				.setDomain(domain.getId())
+				.setDomain(domain)
 				.setName(name)
 				.setRegistry(new Registry().setId(customer));
 		return AON.insertProject(domain.getName(), domain.getId(), user.getLogin(), project);
@@ -292,7 +292,7 @@ public class DBFee {
 				.setAlias("")
 				.setCommercial(false)
 				.setDate(new java.util.Date())
-				.setDomain(0)
+				.setDomain(new Domain().setId(0))
 				.setName("")
 				.setRegistry(new Registry())
 				.setReservation(false)
