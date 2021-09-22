@@ -136,8 +136,9 @@ export class AonDesktop extends AonElement {
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 
-			let taskOptions = [
-				{
+			let taskOptions = [];
+			if(this.getDur().isInvoice()){
+				taskOptions.push({
 					name: 'Facturas Pendientes',
 					icon: 'inbox',
 					fn: (count) => {
@@ -145,7 +146,9 @@ export class AonDesktop extends AonElement {
 							this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
 						}
 					}
-				}, {
+				});
+
+				taskOptions.push({
 					name: 'Facturas Rechazadas',
 					icon: MATERIAL_ICONS.REPORT,
 					fn: (count) => {
@@ -153,37 +156,38 @@ export class AonDesktop extends AonElement {
 							this.rootPanelHtml('<aon-invoice-panel status="refused"></aon-invoice-panel>');
 						} 
 					}
-				},{
-					name: MSG.REQUESTS_RECEIVED,
-					icon: MATERIAL_ICONS.MOVE_TO_INBOX,
-					fn: () =>{
-						if(this.isBeta()){
-							getTaskHolder().then(th=>{
-								let aonMessenger = new AonMessenger();
-								aonMessenger._filter.task_holder = th.id;
-								this.rootPanel(aonMessenger);
-							});
-						} else {
-							this.development('Solicitud')
-						}
+				});
+			}
+			taskOptions.push({
+				name: MSG.REQUESTS_RECEIVED,
+				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
+				fn: () =>{
+					if(this.isBeta()){
+						getTaskHolder().then(th=>{
+							let aonMessenger = new AonMessenger();
+							aonMessenger._filter.task_holder = th.id;
+							this.rootPanel(aonMessenger);
+						});
+					} else {
+						this.development('Solicitud')
 					}
-				},
-				{
-					name: MSG.REQUESTS_SENT,
-					icon: MATERIAL_ICONS.OUTBOX,
-					fn: () =>{
-						if(this.isBeta()){
-							getTaskHolder().then(th=>{
-								let aonMessenger = new AonMessenger();
-								aonMessenger._filter.sender = th.id;
-								this.rootPanel(aonMessenger);
-							});
-						} else {
-							this.development('Solicitud')
-						}
-					} 
 				}
-			];
+			});
+			taskOptions.push({
+				name: MSG.REQUESTS_SENT,
+				icon: MATERIAL_ICONS.OUTBOX,
+				fn: () =>{
+					if(this.isBeta()){
+						getTaskHolder().then(th=>{
+							let aonMessenger = new AonMessenger();
+							aonMessenger._filter.sender = th.id;
+							this.rootPanel(aonMessenger);
+						});
+					} else {
+						this.development('Solicitud')
+					}
+				} 
+			});
 			aonDesktop.addSidenavOptions('RESUMEN ACTIVIDADES', taskOptions);
 		}
 
