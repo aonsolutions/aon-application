@@ -6,8 +6,10 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
 
+import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
@@ -19,6 +21,21 @@ import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TramoBuilder;
 
 public class CretaListener implements IdcListener {
 	
+	private static final class SetTramoBuilder extends TramoBuilder {
+		HashSet<String> added = new HashSet();
+
+		@Override
+		public void addDato(DatoSolicitado dato) {
+			if ( add(dato) ) {
+				super.addDato(dato);
+			}
+		}
+
+		private boolean add(DatoSolicitado dato) {
+			return added.add(dato.getTipoDato()+dato.getCodigo());
+		}
+	}
+
 	Optional<String> cnae = Optional.empty();
 	Optional<TramoBuilder> tramoBuilder = Optional.empty();
 	Optional<TrabajadorBuilder> trabajadorBuilder = Optional.empty();
@@ -68,7 +85,7 @@ public class CretaListener implements IdcListener {
 	@Override
 	public void onEnterprise(String socialReason, String ccc, String nif, String economicActivityCode,
 			String economicActivityDescription, String regime, String fullCCC) {
-		trabajadoresTramosBuilder.setTipo("L0");
+		trabajadoresTramosBuilder.setTipo("L00");
 		trabajadoresTramosBuilder.setCCC(getRegime(regime) + ccc);
 		cnae = Optional.ofNullable(economicActivityCode);
 	}
@@ -99,13 +116,17 @@ public class CretaListener implements IdcListener {
 	@Override
 	public void onEmployeeQuoteGroup(String group) {
 		tramoBuilder.ifPresent(b -> b.setGrupoCotizacion(group));
+		if ( isDaily(group )) {
+			tramoBuilder.ifPresent(b -> addModalidadSalario(b));
+		}
 	}
 	
 	@Override
 	public void onEmployeePerido(String ssNum, String ccc, Date startDate, Date endDate) {
 		tramoBuilder.ifPresent(b -> trabajadorBuilder.get().addTramo(b.create()));
 
-		TramoBuilder builder = new TramoBuilder();
+		TramoBuilder builder = new SetTramoBuilder();
+		
 		setDesdeHasta(startDate, endDate, builder);
 		
 		tramoBuilder = Optional.of(builder);
@@ -130,7 +151,6 @@ public class CretaListener implements IdcListener {
 	@Override
 	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) {
-		System.out.println(code + " " + description );
 		tramoBuilder.ifPresent( b -> {
 			switch (code) {
 			case "23": //IT.AT.PAGO DELEGADO
@@ -181,6 +201,10 @@ public class CretaListener implements IdcListener {
 		return "0111";	
 	}
 	
+	private static boolean isDaily(String quoteGroup) {
+		return Integer.parseInt(quoteGroup) >= 8; 
+	}
+	
 	private static void setDesdeHasta(Date start, Date end, TramoBuilder tramoBuilder) {
 		int startYear = get(start, Calendar.YEAR);
 		int endYear = get(end, Calendar.YEAR);
@@ -198,6 +222,14 @@ public class CretaListener implements IdcListener {
 	}
 	
 
+	private static void addModalidadSalario(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// Modalidad de salario
+		dataSolicitadoBuilder.setTipo("I");
+		dataSolicitadoBuilder.setCodigo("51");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
 	
 	private static void addTiempoCompletoNormal(TramoBuilder tramoBuilder) {
 		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
@@ -327,5 +359,6 @@ public class CretaListener implements IdcListener {
 		dataSolicitadoBuilder.setObligatorio(true);
 		tramoBuilder.addDato(dataSolicitadoBuilder.create());
 	}
+	
 	
 }

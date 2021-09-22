@@ -13,8 +13,10 @@ import static java.lang.String.format;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringBufferInputStream;
 import java.io.UnsupportedEncodingException;
@@ -22,6 +24,7 @@ import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Month;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,7 +36,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -66,15 +68,24 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Province;
+import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.in.payroll.tgss.idc.Idcplnss;
+import com.esferalia.aon.in.payroll.tgss.idc.TrabajadoresTramosCallback;
 import com.esferalia.aon.jooq.Keys;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
@@ -98,8 +109,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Dato;
 import net.aonsolutions.core.tgss.creta.jaxb.DatoSolicitado;
+import net.aonsolutions.core.tgss.creta.jaxb.DatosLiquidacion;
 import net.aonsolutions.core.tgss.creta.jaxb.Fecha;
 import net.aonsolutions.core.tgss.creta.jaxb.Liquidacion;
+import net.aonsolutions.core.tgss.creta.jaxb.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.Periodo;
 import net.aonsolutions.core.tgss.creta.jaxb.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.Tramo;
@@ -112,6 +125,9 @@ import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Error;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Errores;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.FechaHoraRecaudacion;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder.TipoIpf;
+import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.exception.SegSocialException;
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -214,10 +230,17 @@ public class CretaServlet extends HttpServlet
 				for (Part part : req.getParts()) {
 					try {
 						CretaService.File file = CretaService.File.valueOf(part.getName());
-						if (file == CretaService.File.TRABAJADORES_TRAMOS)
+						if (file == CretaService.File.TRABAJADORES_TRAMOS) {
 							trabajadoresYTramosIss.add(part.getInputStream());
-						else if (file == CretaService.File.RESPUESTA)
-							trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, part.getInputStream()));//respuestasIss.add(part.getInputStream());
+						}else if (file == CretaService.File.RESPUESTA) {
+							try {
+								// Try with IDC first
+								trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req, part));
+							} catch ( Throwable t ) {
+								t.printStackTrace();
+								trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, part.getInputStream()));//respuestasIss.add(part.getInputStream());
+							}
+						}
 					} catch (IllegalArgumentException e) {
 		
 					}
@@ -225,7 +248,14 @@ public class CretaServlet extends HttpServlet
 			}
 			catch ( ServletException e ) { 
 				//if this request is not of type multipart/form-data
-				trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
+				try {
+					// Try with IDC first
+					trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
+				} catch ( Throwable t ) {
+					t.printStackTrace();
+					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
+				}
+				
 			}
 			
 			String bases ;
@@ -251,7 +281,7 @@ public class CretaServlet extends HttpServlet
 						else if (file == CretaService.File.RESPUESTA)
 							trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, part.getInputStream()));//respuestasIss.add(part.getInputStream());
 					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 				}
 			}
@@ -566,6 +596,7 @@ public class CretaServlet extends HttpServlet
 		
 	}
 
+
 	private static InputStream generateTrabajadoresYTramos(Connection connection, HttpServletRequest req ) throws JAXBException, IOException {
 		
 		String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
@@ -632,6 +663,165 @@ public class CretaServlet extends HttpServlet
 		return new StringBufferInputStream(String.format("%s", os.toString(), "UTF-8"));
 		//return new ByteArrayInputStream(os.toByteArray());
 	
+	}
+
+	private static List<InputStream> generateIDCTrabajadoresYTramos(HttpServletRequest req, Part part ) throws JAXBException, IOException {
+		
+		try ( AONContext ctx = getAONAonContext(req) ) {
+
+			Certificate certificate = getCertificate(ctx);
+			
+			Respuesta respuesta = Utils.unmarshal(Respuesta.class, part.getInputStream());
+			
+			List<InputStream> trabajaresYTramosIsList = new LinkedList<>();
+
+			String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS .name());
+			
+			String autorizado = respuesta.getAutorizado();
+			
+			for ( Liquidacion<?,?,?,?,?> l : respuesta.getLiquidacion() ) {
+				Date date = toDate(l.getPeriodoDesde());
+				String ccc = l.getCcc().getRegimen()+l.getCcc().getProvincia()+l.getCcc().getNumero();
+				try {
+					net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresYTramos = 
+					getTrabajadoresTramos(ctx, certificate, date, ccc, nafs);
+					
+					trabajadoresYTramos.setAutorizado(autorizado);
+					
+					trabajaresYTramosIsList.add(toInputStream(trabajadoresYTramos));
+				} catch (SegSocialException | JAXBException e) {
+				}
+				
+			}
+			
+			return trabajaresYTramosIsList;
+		}
+	
+	}
+	
+	private static List<InputStream> generateIDCTrabajadoresYTramos(HttpServletRequest req ) throws JAXBException, IOException {
+		
+		try ( AONContext ctx = getAONAonContext(req) ) {
+
+			Certificate certificate = getCertificate(ctx);
+			
+			String tipo = req.getParameter(CretaService.Parameter.TIPO.name());
+			String cccs[] = req.getParameterValues(CretaService.Parameter.CCC.name());
+			String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS .name());
+			String desdeMes = req.getParameter(CretaService.Parameter.DESDE_MES.name());
+			String desdeAnho = req.getParameter(CretaService.Parameter.DESDE_ANHO.name());
+			String hastaMes = req.getParameter(CretaService.Parameter.HASTA_MES.name());
+			String hastaAnho = req.getParameter(CretaService.Parameter.HASTA_ANHO.name());
+			String ctrlMes = req.getParameter(CretaService.Parameter.CTRL_MES.name());
+			String ctrlAnho = req.getParameter(CretaService.Parameter.CTRL_ANHO.name());
+			String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
+			
+			Date desdeDate = toDate(desdeMes, desdeAnho); 
+			
+			List<InputStream> trabajaresYTramosIsList = new LinkedList<>();  
+			
+			for ( String ccc : cccs ) {
+				
+				try {
+					trabajaresYTramosIsList.add(toInputStream(getTrabajadoresTramos(ctx, certificate, desdeDate, ccc, nafs)));
+				} catch (SegSocialException | JAXBException e) {
+				}
+			}
+			
+			return trabajaresYTramosIsList;
+		}
+	
+	}
+	
+	private static <T> InputStream toInputStream(T t) throws JAXBException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		Utils.marshal(t, os);
+		System.out.println(String.format("%s", os.toString(), "UTF-8"));
+		InputStream is = new StringBufferInputStream(String.format("%s", os.toString(), "UTF-8"));
+		return is;
+	}
+	
+	private static Stream<byte[]> getIdcplnss(Certificate certificate, Date date, String ccc, String [] nafs) throws SegSocialException {
+
+		String regime = ccc.substring(0,4);
+		String number = ccc.substring(4);
+		
+		List<byte[]> list = new LinkedList<>();
+		for ( String naf: nafs ) {
+			byte [] idc = SistemaRED.getIDCNSS(
+				certificate.getCertificate(), 
+				certificate.getPassword(), 
+				certificate.getType(), 
+				regime, 
+				number, 
+				naf, 
+				date);
+			
+//			try ( OutputStream os = new FileOutputStream(java.io.File.createTempFile("idcplnss", "pdf")) ) {
+//				os.write(idc);
+//			} catch ( IOException e ) {
+//				
+//			}
+			
+			list.add(idc);
+		}
+		
+		return list.stream();
+	}
+
+	private static net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos(AONContext ctx, byte[] idcplnss) {
+		try {
+			TrabajadoresTramosCallback cb = new TrabajadoresTramosCallback() {
+				@Override
+				public String getIpf(String naf) {
+					// TODO Auto-generated method stub
+					return TrabajadoresTramosCallback.super.getIpf(naf);
+				}
+				
+				@Override
+				public TipoIpf getTipoIpf(String naf) {
+					// TODO Auto-generated method stub
+					return TrabajadoresTramosCallback.super.getTipoIpf(naf);
+				}
+				
+				@Override
+				public boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
+					// TODO Auto-generated method stub
+					return TrabajadoresTramosCallback.super.isPartTimeEmployee(ssNum, ccc, start, end);
+				}
+				
+				@Override
+				public boolean isScholarEmployee(String ssNum, String ccc, Date start, Date end) {
+					// TODO Auto-generated method stub
+					return TrabajadoresTramosCallback.super.isScholarEmployee(ssNum, ccc, start, end);
+				}
+				
+				@Override
+				public boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
+					// TODO Auto-generated method stub
+					return TrabajadoresTramosCallback.super.isTraining421Employee(ssNum, ccc, start, end);
+				}
+			};
+			return Idcplnss.getTrabajadoresTramos(idcplnss, cb);
+		} catch (Exception e) {
+		//catch (IOException | UnknownPDFException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+
+	private static net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos(AONContext ctx, Certificate certificate, Date date, String ccc, String [] nafs) throws SegSocialException{
+		return getIdcplnss(certificate, date, ccc, nafs)
+		.map(idcplnss -> getTrabajadoresTramos(ctx, idcplnss))
+		.reduce((tyt1,tyt2) -> {
+			List<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador> trabajadores1 = tyt1.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador();
+			List<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador> trabajadores2 = tyt2.getLiquidacion().getLiquidacionMes().get(0).getTrabajadores().getTrabajador();
+			trabajadores1.addAll(trabajadores2);
+			return tyt1;
+		})
+		.orElseThrow(SegSocialException::new);
+		
 	}
 	
 	private static String generateBases(Connection connection, boolean comments, boolean skipExisting,
@@ -2014,6 +2204,29 @@ public class CretaServlet extends HttpServlet
 		
 	}
 	
+	private static AONContext getAONAonContext(HttpServletRequest req) {
+		String user = req.getParameter(CretaService.Parameter.USER.name());
+		String domain = req.getParameter(CretaService.Parameter.DOMAIN.name());
+		return AONContext.getAONContext(domain, user);
+	}
+	
+	private static Certificate getCertificate(AONContext ctx) {
+		User user = AON.getUser(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser());
+		return AON.getCertificate(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), user.getId());
+	}
+
+	private static Optional<Employee> getEmployee(AONContext ctx, String ccc, String naf, Date startDate, Date endDate) {
+		return
+		PAYROLL.getEmployees(
+				ctx.getDomainName(), 
+				ctx.getDomainId(), 
+				ctx.getUser(), 
+				p -> p.getCCCProperty().eq(ccc)
+				.and(p.getNafProperty().eq(naf)))
+		.findAny()
+		;
+	}
+
 	private static boolean checkData(Attach attach, String login){
 		if ( attach.getDriveId() != null  ){
 			Domain domain = attach.getDomain() ;
@@ -2035,7 +2248,45 @@ public class CretaServlet extends HttpServlet
 		
 	}
 	
+	private static Date toDate(String mes, String anho){
+		
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		//Hora hora = fechaHoraRecaudacion.getHoraRecaudacion();
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+		calendar.set(Calendar.DATE, 1);
+		calendar.set(Calendar.MONTH, Integer.parseInt(mes)-1);
+		calendar.set(Calendar.YEAR, Integer.parseInt(anho));
+
+		return calendar.getTime();
+		
+	}
+
 	private static Date toDate(net.aonsolutions.core.tgss.creta.jaxb.bases.Periodo periodo){
+		
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		//Hora hora = fechaHoraRecaudacion.getHoraRecaudacion();
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+		calendar.set(Calendar.DATE, 1);
+		calendar.set(Calendar.MONTH, Integer.parseInt(periodo.getMes())-1);
+		calendar.set(Calendar.YEAR, Integer.parseInt(periodo.getAnho()));
+
+		return calendar.getTime();
+		
+	}
+
+	private static Date toDate(Periodo periodo){
 		
 		
 		Calendar calendar = Calendar.getInstance();

@@ -16,7 +16,7 @@ public interface CretaService {
 
 	public static enum Parameter {
 		CCC, 
-		TIPO, 
+		TIPO,
 		NAFS, 
 		FILE, 
 		COMMENTS, 
@@ -39,7 +39,9 @@ public interface CretaService {
 		CALCULOS_DESGLOSADOS,
 		INDICADOR_RECTIFICACION,
 		I54,
-		SOLICITUD_RECEPCION_RNT
+		SOLICITUD_RECEPCION_RNT,
+		USER,
+		DOMAIN
 	}
 
 	public static enum File {
