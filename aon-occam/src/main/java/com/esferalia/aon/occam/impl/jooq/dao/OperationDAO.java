@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
+import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -161,6 +162,7 @@ public class OperationDAO extends FiscalModelDAO {
 		                , ACCOUNT_ENTRY_DETAIL.DOCUMENT_NUMBER
 		                , sumDebit
 						, sumCredit
+						, ACCOUNT.ID
 						, ACCOUNT.CODE
 						, ACCOUNT.DESCRIPTION
 						, INVOICE.ID
@@ -192,6 +194,7 @@ public class OperationDAO extends FiscalModelDAO {
 						, INVOICE.TRANSACTION
 						, conceptType
 						, INVOICE_DUA.ID
+						, INVOICE_TAX_ACCOUNT.ACCOUNT
 		                )				
 		                .from(ACCOUNT_ENTRY_DETAIL)
 						.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
@@ -200,6 +203,7 @@ public class OperationDAO extends FiscalModelDAO {
 		                .leftOuterJoin(INVOICE).on(ACCOUNT_ENTRY_INVOICE.INVOICE.equal(INVOICE.ID)) 
 		                .leftOuterJoin(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 		                .leftOuterJoin(invoice_tax1).on(invoice_tax1.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(invoice_tax1.TAX_TYPE.equal((byte)1)))  // Importes IVA y REq
+		                .leftOuterJoin(INVOICE_TAX_ACCOUNT).on(INVOICE_TAX_ACCOUNT.INVOICE_TAX.equal(invoice_tax1.ID))
 		                .leftOuterJoin(invoice_tax2).on(invoice_tax2.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID).and(invoice_tax2.TAX_TYPE.equal((byte)2)))  // Retención IRPF
 		                .leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(params.getActivity()))
 		                .leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
@@ -231,11 +235,11 @@ public class OperationDAO extends FiscalModelDAO {
 							double retentionQuota = rec.getValue(sumRetentionQuota)==null?0.0:rec.getValue(sumRetentionQuota).doubleValue();
 
 							// El total es la suma de base + impuestos en facturas y el importe debe o haber en el resto de apuntes
-							double total = 0;							
+							double total = 0;
+							// Apuntes que no son facturas (base y total coinciden)
+							double debit = rec.getValue(sumDebit) == null ? 0.0 : rec.getValue(sumDebit).doubleValue();
+							double credit = rec.getValue(sumCredit) == null ? 0.0 : rec.getValue(sumCredit).doubleValue();
 							if (invoice == null) {
-								// Apuntes que no son facturas (base y total coinciden)
-								double debit = rec.getValue(sumDebit) == null ? 0.0 : rec.getValue(sumDebit).doubleValue();
-								double credit = rec.getValue(sumCredit) == null ? 0.0 : rec.getValue(sumCredit).doubleValue();
 								if (cuenta.startsWith("6"))
 									base = debit - credit;  // Compras y Gastos
 								else base =  credit - debit; // Ventas e Ingresos
@@ -243,7 +247,19 @@ public class OperationDAO extends FiscalModelDAO {
 							}
 							else {
 								// Apuntes que son facturas (total es base + iva + recargo_equivalencia (no se tiene en cuenta la retencion)
-								total = AonMathUtils.round(base + deductibleQuota + surchargeQuota);								
+								total = AonMathUtils.round(base + deductibleQuota + surchargeQuota);
+								
+								// En facturas no nos podemos fiar de lo que viene en deductibleQuota, porque parece ser que ese dato no es 
+								// posible grabarlo en la factura en estos momentos en determinados asientos de facturas, cuando es un gasto 
+								// por ejemplo con IVA no deducible, incluso en las facturas de gestión, no está grabada ni siquiera la cuota 
+								// de IVA, asi que se hace por ahora que si no hay cuenta de IVA o si la cuenta de IVA es la misma que la de gasto
+								// se asume que el IVA no es deducible
+								if (rec.getValue(INVOICE.TYPE) == InvoiceType.PURCHASE.value() || rec.getValue(INVOICE.TYPE) == InvoiceType.EXPENSES.value()) {
+									Integer idTaxAccount = rec.getValue(INVOICE_TAX_ACCOUNT.ACCOUNT);
+									if (idTaxAccount == null || idTaxAccount.intValue() == rec.getValue(ACCOUNT.ID).intValue()) {
+										deductibleQuota = 0;
+									}									
+								}								
 							}
 							
 							Integer act = rec.getValue(ACCOUNT_ENTRY.ACTIVITY);
