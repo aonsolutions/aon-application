@@ -1872,6 +1872,228 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcplnssTrabajadoresTramosI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssI.pdf") ){
+			TrabajadoresTramos trabajadoresTramos = Idcplnss.getTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
+			
+			marshal(trabajadoresTramos, System.out);
+			
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+			
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("01", liquidacion.getCcc().getProvincia());
+			assertEquals("105360062", liquidacion.getCcc().getNumero());
+			
+			assertEquals("12", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2020", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("12", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2020", liquidacion.getPeriodoHasta().getAnho());
+			
+			assertEquals(1,liquidacion.getLiquidacionMes().size());
+			
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("12", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2020", liquidacionesMes.getMesLiquidativo().getAnho());
+			
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size() );
+			
+			for ( Trabajador trabajador : trabajadores.getTrabajador() ) {
+
+				assertEquals("011005185924", trabajador.getNaf());
+
+				assertEquals(1, trabajador.getTramos().getTramo().size() );			
+				for ( Tramo tramo : trabajador.getTramos().getTramo() ) {
+
+					assertEquals("01", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+					
+					assertEquals("01", tramo.getFechaDesde().getDia());
+					assertEquals("12", tramo.getFechaDesde().getMes());
+					assertEquals("2020", tramo.getFechaDesde().getAnho());
+					assertEquals("31", tramo.getFechaHasta().getDia());
+					assertEquals("12", tramo.getFechaHasta().getMes());
+					assertEquals("2020", tramo.getFechaHasta().getAnho());
+					
+					assertTramoActivoNormal(tramo);
+				}
+			}
+			
+		}
+	}
+
+	@Test
+	public void testIdcplnssTrabajadoresTramosII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssII.pdf") ){
+			TrabajadoresTramos trabajadoresTramos = Idcplnss.getTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
+			
+			marshal(trabajadoresTramos, System.out);
+			
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+			
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("01", liquidacion.getCcc().getProvincia());
+			assertEquals("105577910", liquidacion.getCcc().getNumero());
+			
+			assertEquals("12", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2020", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("12", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2020", liquidacion.getPeriodoHasta().getAnho());
+			
+			assertEquals(1,liquidacion.getLiquidacionMes().size());
+			
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("12", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2020", liquidacionesMes.getMesLiquidativo().getAnho());
+			
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size() );
+			
+			for ( Trabajador trabajador : trabajadores.getTrabajador() ) {
+
+				assertEquals("011006286569", trabajador.getNaf());
+
+				assertEquals(1, trabajador.getTramos().getTramo().size() );			
+				for ( Tramo tramo : trabajador.getTramos().getTramo() ) {
+
+					assertEquals("07", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+					
+					assertEquals("01", tramo.getFechaDesde().getDia());
+					assertEquals("12", tramo.getFechaDesde().getMes());
+					assertEquals("2020", tramo.getFechaDesde().getAnho());
+					assertEquals("31", tramo.getFechaHasta().getDia());
+					assertEquals("12", tramo.getFechaHasta().getMes());
+					assertEquals("2020", tramo.getFechaHasta().getAnho());
+					
+					assertTramoActivoNormal(tramo);
+				}
+			}
+			
+		}
+	}
+
+	@Test
+	public void testIdcplnssTrabajadoresTramosIV() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssIV.pdf") ){
+			TrabajadoresTramos trabajadoresTramos = Idcplnss.getTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
+			
+			marshal(trabajadoresTramos, System.out);
+			
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+			
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("09", liquidacion.getCcc().getProvincia());
+			assertEquals("106571578", liquidacion.getCcc().getNumero());
+			
+			assertEquals("12", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2020", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("12", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2020", liquidacion.getPeriodoHasta().getAnho());
+			
+			assertEquals(1,liquidacion.getLiquidacionMes().size());
+			
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("12", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2020", liquidacionesMes.getMesLiquidativo().getAnho());
+			
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size() );
+			
+			for ( Trabajador trabajador : trabajadores.getTrabajador() ) {
+
+				assertEquals("091019740438", trabajador.getNaf());
+
+				assertEquals(2, trabajador.getTramos().getTramo().size() );
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("08", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("12", tramo.getFechaDesde().getMes());
+				assertEquals("2020", tramo.getFechaDesde().getAnho());
+				assertEquals("10", tramo.getFechaHasta().getDia());
+				assertEquals("12", tramo.getFechaHasta().getMes());
+				assertEquals("2020", tramo.getFechaHasta().getAnho());
+				assertTramoActivoNormal(tramo);
+				assertDatosSolicitado(tramo, "I", "51", "P");
+				
+				tramo = trabajador.getTramos().getTramo().get(1);
+				assertEquals("08", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("11", tramo.getFechaDesde().getDia());
+				assertEquals("12", tramo.getFechaDesde().getMes());
+				assertEquals("2020", tramo.getFechaDesde().getAnho());
+				assertEquals("31", tramo.getFechaHasta().getDia());
+				assertEquals("12", tramo.getFechaHasta().getMes());
+				assertEquals("2020", tramo.getFechaHasta().getAnho());
+				assertDatosSolicitado(tramo, "I", "51", "P");
+			}
+			
+		}
+	}
+
+	@Test
+	public void testIdcplnssTrabajadoresTramosVI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssVI.pdf") ){
+			TrabajadoresTramos trabajadoresTramos = Idcplnss.getTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
+			
+			marshal(trabajadoresTramos, System.out);
+			
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+			
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("11", liquidacion.getCcc().getProvincia());
+			assertEquals("122534302", liquidacion.getCcc().getNumero());
+			
+			assertEquals("01", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2021", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("01", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2021", liquidacion.getPeriodoHasta().getAnho());
+			
+			assertEquals(1,liquidacion.getLiquidacionMes().size());
+			
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("01", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2021", liquidacionesMes.getMesLiquidativo().getAnho());
+			
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size() );
+			
+			for ( Trabajador trabajador : trabajadores.getTrabajador() ) {
+
+				assertEquals("111016467058", trabajador.getNaf());
+
+				assertEquals(3, trabajador.getTramos().getTramo().size() );
+				
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("07", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("01", tramo.getFechaDesde().getMes());
+				assertEquals("2021", tramo.getFechaDesde().getAnho());
+				assertEquals("05", tramo.getFechaHasta().getDia());
+				assertEquals("01", tramo.getFechaHasta().getMes());
+				assertEquals("2021", tramo.getFechaHasta().getAnho());
+				assertTramoActivoNormal(tramo);
+				
+				tramo = trabajador.getTramos().getTramo().get(1);
+				assertEquals("07", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("06", tramo.getFechaDesde().getDia());
+				assertEquals("01", tramo.getFechaDesde().getMes());
+				assertEquals("2021", tramo.getFechaDesde().getAnho());
+				assertEquals("22", tramo.getFechaHasta().getDia());
+				assertEquals("01", tramo.getFechaHasta().getMes());
+				assertEquals("2021", tramo.getFechaHasta().getAnho());
+
+				tramo = trabajador.getTramos().getTramo().get(2);
+				assertEquals("07", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("25", tramo.getFechaDesde().getDia());
+				assertEquals("01", tramo.getFechaDesde().getMes());
+				assertEquals("2021", tramo.getFechaDesde().getAnho());
+				assertEquals("31", tramo.getFechaHasta().getDia());
+				assertEquals("01", tramo.getFechaHasta().getMes());
+				assertEquals("2021", tramo.getFechaHasta().getAnho());
+			}
+			
+		}
+	}
+
 	private static class IdcPEC {
 		private String pec;
 		private Date startDate;
@@ -1999,6 +2221,10 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 	
+	private static void assertDatosSolicitado( Tramo tramo, String tipoDato, String codigo, String  indicadorObligatoriedad) {
+		assertDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), tipoDato, codigo, indicadorObligatoriedad);
+	}
+
 	private static void assertDatosSolicitado( List<DatoSolicitado> datoSolicitados, String tipoDato, String codigo, String  indicadorObligatoriedad) {
 		for ( DatoSolicitado datoSolicitado: datoSolicitados ){
 			if ( datoSolicitado.getCodigo().equals(codigo) ) {
