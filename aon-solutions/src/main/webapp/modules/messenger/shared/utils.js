@@ -3,10 +3,11 @@ import { openFileUrl } from "../../../services/fileService";
 import { domainName } from "../../../services/request";
 import {  setAttributes, setFullDate, setStyles, setTime } from "../../../services/utils";
 import { createFormVacation } from "../forms/vacation";
-import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
-import { createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createTaskTag, createWorkgroup, RIGHT } from "./creationUtils";
-import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillTag, fillWorkGroup } from "./fill";
+import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
+import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils";
+import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillTaskHolder, fillWorkGroup } from "./fill";
 import * as LS from  "../../../services/localStorageService";
+import { AonCheckbox } from "../../../components/aon-checkbox";
 
 /**
  * Build standard toolbar options 
@@ -184,7 +185,7 @@ export const sendMessage = async (aonTextArea, aonMessengerChat) => {
         name: message.sender,
         comment:message.comment,
         date: message.creation_date,
-        direction : RIGHT
+        direction : MESSENGER_DIRECTION.RIGHT
     });
     
     aonMessengerChat.data = task;
@@ -198,8 +199,8 @@ export const sendMessage = async (aonTextArea, aonMessengerChat) => {
  * check files and send uploadFile(taskAttach) 
  */
 const checkFilesAndSend = async (textArea)=>{
-    const btnSend = document.getElementById(MESSENGER_IDS.BUTTON_SEND);
-    if(btnSend)btnSend.disabled = true;
+    const btnSend = document.getElementById(MESSENGER_IDS.BTN_SEND_MESSAGE);
+    if(btnSend)btnSend.style.pointerEvents = "none";
     try {
         const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
         const textAreaDiv = textArea.getTextAreaDiv();
@@ -230,7 +231,7 @@ const checkFilesAndSend = async (textArea)=>{
             }
         }
     } catch (error) { console.log(error); }
-    if(btnSend)btnSend.disabled = false;
+    if(btnSend)btnSend.style.pointerEvents = "auto";
 }
 
 /**
@@ -320,6 +321,10 @@ export const buildForm = (div, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const applicationParent = aonMessengerChat.applicationParentEl;
     const isClient = "OFFICE" !== LS.getCompany().type;
+
+    //-----------------------APPEND DIV TAGS
+    createTagsDiv(div, task);
+
     //-----------------------CREATE FIRST CARD
     const aonCard = createCardMessenger(MSG.DATA, "");
     div.appendChild(aonCard);
@@ -339,7 +344,6 @@ export const buildForm = (div, aonMessengerChat) => {
     divProcess.id = MESSENGER_IDS.PROCESS_DIV;
     div.appendChild(divProcess);
     //---------------------END CREATE DIV PROCESS
-
 
     const columnsDiv = createStartJustifiedColumn();
     aonCard.setContent(columnsDiv.element);
@@ -452,10 +456,13 @@ export const upChat = () => {
 /**
  * 
  * @param {HTMLElement} chat add line element html
- * @returns null
  */
 const addLine = (chat) => chat.style.setProperty("--height", chat.scrollHeight + "px");
 
+/**
+ * 
+ * @param {HTMLElement} aonMessengerChat aon-messenger-chat
+ */
 const addTaskDescription = (aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const aonTextArea = createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`);
@@ -464,7 +471,7 @@ const addTaskDescription = (aonMessengerChat) => {
     if(!aonMessengerChat.isMobile()){ //-------------------------------------------------------DESKTOP
         const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
   
-        setStyles(aonTextArea, { minHeight: '150x', maxHeight: '300px', position: 'relative'});
+        setStyles(aonTextArea, { minHeight: '150x', maxHeight: '300px', position: 'relative', borderRadius:"5px"});
         processDiv.appendChild(aonTextArea);
         
         const label = aonTextArea.addLabelTextEnd();
@@ -532,12 +539,12 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
             fillProject(task);
         } else {
             // -------------------------------------TAG
-            const tagSelect = createTaskTag();
-            tagSelect.default = true;
-            tagSelect.style.width = "100%";
-            tagSelect.style.marginLeft = "5px";
-            rowsDivThree.appendChild(tagSelect);
-            fillTag(task, aonMessengerChat);
+            // const tagSelect = createTaskTag();
+            // tagSelect.default = true;
+            // tagSelect.style.width = "100%";
+            // tagSelect.style.marginLeft = "5px";
+            // rowsDivThree.appendChild(tagSelect);
+            // fillTag(task, aonMessengerChat);
         }
     } 
 
@@ -596,12 +603,19 @@ const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
     }
 }
 
-const addTaskHolderAndWorkgroup = (task, aonMessengerChat, columnsDiv) => {
+/**
+ * 
+ * @param {Task} task class Task
+ * @param {HTMLElement} aonMessengerChat aon-messenger-chat
+ * @param {HTMLElement} parent 
+ */
+const addTaskHolderAndWorkgroup = (task, aonMessengerChat, parent) => {
     const rowDiv = createStartJustifiedRow().element;
     rowDiv.style.width = "100%";
-    columnsDiv.appendChild(rowDiv);
+    parent.appendChild(rowDiv);
     //-----------------WORKGROUP
     const workgroupSelect = createWorkgroup();
+    workgroupSelect.default = true;
     workgroupSelect.style.width = "100%";
     rowDiv.appendChild(workgroupSelect);
     fillWorkGroup(task, aonMessengerChat);
@@ -612,12 +626,19 @@ const addTaskHolderAndWorkgroup = (task, aonMessengerChat, columnsDiv) => {
     taskHolderSelect.style.width = "100%";
     taskHolderSelect.style.marginLeft = "5px";
     rowDiv.appendChild(taskHolderSelect);
+    fillTaskHolder(aonMessengerChat, undefined, undefined)
 }
 
-const addCustomerAndContact = (task, aonMessengerChat, columnsDiv) => {
+/**
+ * 
+ * @param {Task} task class Task
+ * @param {HTMLElement} aonMessengerChat aon-messenger-chat
+ * @param {HTMLElement} parent 
+ */
+const addCustomerAndContact = (task, aonMessengerChat, parent) => {
     const rowsDivTwo = createStartJustifiedColumn().element;
     rowsDivTwo.style.width = "100%";
-    columnsDiv.appendChild(rowsDivTwo);
+    parent.appendChild(rowsDivTwo);
     // CUSTOMER
     const customerSelect = createCustomer();
     customerSelect.default = true;
@@ -627,7 +648,7 @@ const addCustomerAndContact = (task, aonMessengerChat, columnsDiv) => {
     // DIV CONTACT
     const rowsDivThree = createStartJustifiedRow().element;
     rowsDivThree.style.width = "100%";
-    columnsDiv.appendChild(rowsDivThree);
+    parent.appendChild(rowsDivThree);
     //-----------------CONTACT
     const contact = createInputContact();
     contact.style.width = "100%";
@@ -638,4 +659,90 @@ const addCustomerAndContact = (task, aonMessengerChat, columnsDiv) => {
     if(task.gtask_id) contact.value  = task.gtask_id;
 
     return rowsDivThree;
+}
+
+/**
+ * create div tags
+ * @param {HTMLElement} parent insertBefore
+ */
+const createTagsDiv = (parent, task) => {
+    const div = createReceiverDiv().element;
+    div.style.flexWrap     = "wrap";
+    div.id = MESSENGER_IDS.DIV_TASK_TAGS;
+    parent.insertBefore(div, parent.firstChild);
+
+    let tags = task.getDescriptionJson().tags || [];
+    for (let tag of tags) 
+        addTaskTag(tag, div);
+}
+
+export const dialogTaskTags = (ev, aonMessengerChat) => {
+    const rect = ev.target.getBoundingClientRect();
+    const x = ev.clientX - rect.left + 180;
+    const y = ev.clientY - rect.top;
+    const top  = rect.top + y;
+    let left = rect.left + x;
+    const dialog = aonMessengerChat.getApplication().getOptionDialog();
+    dialog.clear();
+    dialog.setContentTitle(MSG.TAGS);
+
+    const div = document.createElement("div");
+    div.style.margin = "5px";
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+
+    const divTaskTags = document.getElementById(MESSENGER_IDS.DIV_TASK_TAGS);
+
+    const tags = aonMessengerChat.getApplicationParent()._tags;
+    
+    const taskTags = aonMessengerChat.task.getDescriptionJson().tags || [];
+    
+    for (let tag of tags) {
+        let aonCheckbox = new AonCheckbox();
+        aonCheckbox.description = tag.name;
+        aonCheckbox.checked = taskTags.find(t=>t.id ===tag.id) ? true : false;
+        aonCheckbox.addEventListener(EVENT.CHANGE, ({target})=>{
+          if(target.checked){
+            addTaskTag(tag, divTaskTags);
+          } else {
+            removeTaskTag(tag.id);
+          }
+        })
+        div.appendChild(aonCheckbox);
+    }
+
+    dialog.setContent(div);
+    dialog.openPosition({top, left});
+}
+/**
+ * 
+ * @param {Object} tag 
+ * @param {HTMLElement} parent div appendChild
+ */
+const addTaskTag = ( tag, parent) =>{
+    appendTaskTag(tag, parent, (id)=> removeTaskTag(id));
+    setTaskTags();
+}
+
+/**
+ * 
+ * @param {Number} id id tag
+ */
+const removeTaskTag = (id) => {
+    let divOne = document.querySelector( `[data-task-tag='${id}']`);
+    if(divOne) 
+        divOne.remove();
+
+    setTaskTags();
+}
+
+const setTaskTags = () => {
+    const arrayTags = [];
+    [...document.querySelectorAll("[data-task-tag]")].map(el => arrayTags.push(parseInt(el.dataset.taskTag)));
+
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    const task = aonMessengerChat.task;
+    let tags = task.getDescriptionJson().tags || [];
+    tags = aonMessengerChat.getApplicationParent()._tags.filter(tag=> arrayTags.includes(tag.id));
+    task.setDescriptionJson({tags});
 }

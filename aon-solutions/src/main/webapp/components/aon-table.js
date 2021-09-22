@@ -68,14 +68,14 @@ export class AonTable extends AonElement {
       }
     }
 
-    tbody.addEventListener("scroll", () => {
-      let scrollTop = tbody.scrollTop;
+    tbody.addEventListener("scroll", ({target}) => {
+      const scrollTop = target.scrollTop;
+      const offsetHeight = target.offsetHeight;
+      const physicalSize = target.scrollHeight;
+      const maxScrollPosition = physicalSize - offsetHeight;
 
-      let offsetHeight = tbody.offsetHeight;
-      let physicalSize = tbody.scrollHeight;
-      let maxScrollPosition = physicalSize - offsetHeight;
       if (scrollTop >= maxScrollPosition) {
-        this.dispatchEvent(new CustomEvent("more"));
+        this.dispatchEvent(new CustomEvent(EVENT.MORE));
       }
     });
   }

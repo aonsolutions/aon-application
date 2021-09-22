@@ -59,6 +59,7 @@ export const CUSTOMER = 'customer';
 
 export const DATE = 'date';
 export const DATA = 'data';
+export const DEFAULT = 'default';
 export const DELETE = 'delete';
 export const DELETE_FILE = 'deleteFile';
 export const DELETE_FOREVER = 'deleteForever';

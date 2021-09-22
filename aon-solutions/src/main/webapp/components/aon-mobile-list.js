@@ -60,7 +60,7 @@ export class AonMobileList extends AonElement {
           let physicalSize = content.scrollHeight;
           let maxScrollPosition = physicalSize - offsetHeight;
           if (scrollTop >= maxScrollPosition) {
-            this.dispatchEvent(new CustomEvent("more"));
+            this.dispatchEvent(new CustomEvent(EVENT.MORE));
           }
         });
     }

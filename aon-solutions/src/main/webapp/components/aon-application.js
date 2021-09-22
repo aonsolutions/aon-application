@@ -415,10 +415,13 @@ export class AonApplication extends AonElement {
       const ul = div.querySelector("ul");
       if(ul){
         ul.classList.toggle(CSS.ELEMENT_HIDDEN);
-        if(ul.classList.contains(CSS.ELEMENT_HIDDEN))
+        if(ul.classList.contains(CSS.ELEMENT_HIDDEN)){
           arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
-        else 
+          sidenavTitle.style.marginBottom = "0";
+        } else {
           arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+          sidenavTitle.style.marginBottom = "10px";
+        }
       }
     });  
 

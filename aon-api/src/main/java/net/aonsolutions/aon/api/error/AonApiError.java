@@ -2,7 +2,8 @@ package net.aonsolutions.aon.api.error;
 
 public enum AonApiError {
 
-	ROUTE_ERROR("La ruta introducida es incorrecta.");
+	ROUTE_ERROR("La ruta introducida es incorrecta."),
+	EMPTY_DATA("No existen datos para la consulta");
 	
 	String message;
 	

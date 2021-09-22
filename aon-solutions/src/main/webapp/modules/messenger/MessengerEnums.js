@@ -51,12 +51,15 @@ export const MESSENGER_COMPONENTS = {
     ADVICE : 'advice',
 }
 
+export const MESSENGER_DIRECTION = {
+    RIGHT:"right",
+    LEFT:"left"
+}
+
 export const MESSENGER_IDS = {
-    FORM_DIV : "formDiv",
     ICON_SEND_WORKFLOW:'iconSendWorkflow',
     MAIN_WRAPPER : "mainWrapper",
     MESSENGER_CHAT: "messengerChat",
-    MAIN_DIV: "mainDiv",
     FORM_DINAMIC:"formDinamic",
     PROCESS_DIV: "processDiv",
     FIRST_DIV: "firstDiv",
@@ -75,7 +78,8 @@ export const MESSENGER_IDS = {
     TITLE_TASK: "titleTask",
     SOURCE_TASK: "sourceTask",
     INTERNAL_TASK: "internalTask",
-    BUTTON_SEND: "buttonSend",
+    BTN_SEND_MESSAGE: "btnSendMessage",
+    DIV_TASK_TAGS:"divTaskTags"
 }
 
 export const WORKFLOW_TYPES = {
