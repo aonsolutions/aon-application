@@ -73,6 +73,9 @@ public class ProjectHolder implements Serializable {
 	}
 
 	public Workgroup getWorkgroup() {
+		if(workgroup == null) {
+			workgroup = new Workgroup();
+		}
 		return workgroup;
 	}
 
@@ -82,12 +85,22 @@ public class ProjectHolder implements Serializable {
 	}
 
 	public TaskHolder getTaskHolder() {
+		if(taskHolder == null) {
+			taskHolder = new TaskHolder();
+		}
 		return taskHolder;
 	}
 
 	public ProjectHolder setTaskHolder(TaskHolder taskHolder) {
 		this.taskHolder = taskHolder;
 		return this;
+	}
+	
+	public boolean isEmpty() {
+		return getId() == null && getEndDate() == null
+				&& getStartDate() == null && getTaskHolder().isEmpty()
+				&& getWorkgroup().isEmpty();
+				//|| getProject().isEmpty() 
 	}
 	
 }

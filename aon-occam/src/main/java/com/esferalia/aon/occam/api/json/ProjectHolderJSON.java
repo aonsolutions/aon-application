@@ -45,6 +45,7 @@ public class ProjectHolderJSON {
 	}
 	
 	public static JSONObject toJSON(ProjectHolder projectHolder) {
+		if(projectHolder.isEmpty()) return new JSONObject();
 		return new JSONObject()
 				.put(IJsonNames.ID, projectHolder.getId())
 				.put(IJsonNames.DOMAIN, projectHolder.getDomain())
