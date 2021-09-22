@@ -623,11 +623,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	}
 
 	public static PopupPanel showjsRespuestaToolTip(final JsRespuesta respuesta, final int x, final int y) {
+		
+		if ( respuesta == null )
+			return null;
 
 		final DecoratedPopupPanel popupPanel = new DecoratedPopupPanel();
 		popupPanel.setAutoHideEnabled(true);
 		popupPanel.getElement().getStyle().setZIndex(70);
-
 		JsError errors[] = respuesta.getErrors();
 
 		Grid grid = new Grid(errors.length + 1, 4);
