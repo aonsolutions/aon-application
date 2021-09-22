@@ -27,12 +27,10 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -49,15 +47,19 @@ public abstract class EmployeeDraft extends Composite {
 		// TABLA DATOS CONTRATO
 		
 		@Override
-		public void onClearEmployeeClick() {}
+		public void onClearEmployeeClick() {
+			// Not user in this case
+		}
 
 		@Override
-		public void onEmployeeDocumentSuggestionChange(String document) {}
+		public void onEmployeeDocumentSuggestionChange(String document) {
+			// Not user in this case
+		}
 
 		@Override
-		public void onEmployeeDocumentChange(String document, String document_type) {
+		public void onEmployeeDocumentChange(String document, String documentType) {
 			employeeDraftObject.setEmployeeDocument(document);
-			employeeDraftObject.setEmployeeDocumentType(document_type);
+			employeeDraftObject.setEmployeeDocumentType(documentType);
 		}
 
 		@Override
@@ -66,7 +68,9 @@ public abstract class EmployeeDraft extends Composite {
 		}
 
 		@Override
-		public void onEmployeeSSNumSuggestionChange(String ssNumber) {}
+		public void onEmployeeSSNumSuggestionChange(String ssNumber) {
+			// Not user in this case
+		}
 
 		@Override
 		public void onEmployeeSSNumChange(String ssNumber) {
@@ -74,7 +78,9 @@ public abstract class EmployeeDraft extends Composite {
 		}
 
 		@Override
-		public void onEmployeeNameSuggestionChange(String nameSurname) {}
+		public void onEmployeeNameSuggestionChange(String nameSurname) {
+			// Not user in this case
+		}
 
 		@Override
 		public void onEmployeeNameChange(String name) {
@@ -82,7 +88,9 @@ public abstract class EmployeeDraft extends Composite {
 		}
 
 		@Override
-		public void onEmployeeFirstSurnameSuggestionChange(String nameSurname) {}
+		public void onEmployeeFirstSurnameSuggestionChange(String nameSurname) {
+			// Not user in this case
+		}
 
 		@Override
 		public void onEmployeeFirstSurnameChange(String surname) {
@@ -122,7 +130,7 @@ public abstract class EmployeeDraft extends Composite {
 
 		@Override
 		public void onContractModalityChange(Integer contractModel) {
-			employeeDraftObject.setContractModel(contractModel); // GET String of enum in JooqEmployee.java
+			employeeDraftObject.setContractModel(contractModel);
 		}
 
 		@Override
@@ -170,10 +178,15 @@ public abstract class EmployeeDraft extends Composite {
 		public void onContractOccupationChange(String occupation) {
 			employeeDraftObject.setContractOccupation(occupation);
 		}
+		
+		@Override
+		public void onContractRLCEChange(String rlce) {
+			employeeDraftObject.setContractRlce(rlce);
+		}
 
 		@Override
-		public void onContractJourneyTypeChange(Boolean journey_type) {
-			 employeeDraftObject.setContractJourneyType(journey_type);
+		public void onContractJourneyTypeChange(Boolean journeyType) {
+			 employeeDraftObject.setContractJourneyType(journeyType);
 		}
 		
 		@Override
@@ -294,6 +307,7 @@ public abstract class EmployeeDraft extends Composite {
 		public void execute() {
 			showIdc();
 		}
+				
 	}
 	
 	class IDCPlNssCommand implements ScheduledCommand {
@@ -309,6 +323,15 @@ public abstract class EmployeeDraft extends Composite {
 		@Override
 		public void execute() {
 			showTa();
+		}
+		
+		private void showTa() {
+			employeeDraftObject.downloadTa(
+			dataURI -> {
+					showPdf();
+					pdfViewer.setDocument(dataURI, zoom / 100.00);
+			}, 
+			trowable -> {});
 		}
 	}
 	
@@ -343,27 +366,27 @@ public abstract class EmployeeDraft extends Composite {
 		public NewContextMenu() {
 			
 			afi = addItem("Cambios AFI", new AFICommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			afi.ensureDebugId("afi");
 			
 			pecs = addItem("Peculiaridades de Cotizaci\u00F3n (Manual)", new PeculiaritiesCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			pecs.ensureDebugId("peculiarities");
 			
 			pecsSS = addItem("Peculiaridades de Cotizaci\u00F3n (SISTEMA RED)", new BonificationsCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			pecsSS.ensureDebugId("bonifications");
 			
 			ta = addItem("Duplicados de Documentos TA", new TACommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			ta.ensureDebugId("ta");
 			
 			idc = addItem("Informe de Cotizaci\u00F3n-Trab Cuenta Ajena", new IDCCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idc.ensureDebugId("idc");
 			
 			idcPlNss = addItem("Informe de Cotizaci\u00F3n/Periodo iquidaci\u00F3n-NSS", new IDCPlNssCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idcPlNss.ensureDebugId("idcPlNss");
 			
 		}
@@ -400,7 +423,7 @@ public abstract class EmployeeDraft extends Composite {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String cmd_btn();
+		String cmdBtn();
 	}
 	
 	@UiField
@@ -420,7 +443,6 @@ public abstract class EmployeeDraft extends Composite {
 	private EmployeeDraftObject employeeDraftObject;
 	
 	private AonToolbar toolbar;
-	private AonToolbarButton saveContract;
 	private AonToolbarButton undoAll;
 	private AonToolbarButton undo;
 	private AonToolbarButton redo;
@@ -438,7 +460,7 @@ public abstract class EmployeeDraft extends Composite {
 
 	// ------------------------------------------------- Constructor
 
-	public EmployeeDraft() {
+	protected EmployeeDraft() {
 		this.zoom = Constants.DEFAULT_ZOOM;
 		
 		employee = new EmployeeImplementation();
@@ -447,7 +469,7 @@ public abstract class EmployeeDraft extends Composite {
 		
 		contextMenu = new NewContextMenu();
 		
-		toolbar = getToolbarPanel();
+		getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
 		employee.hideClearEmployee();
@@ -493,10 +515,8 @@ public abstract class EmployeeDraft extends Composite {
 	}
 	
 	private void initializeIdcDateListBox() {
-		//contextMenu.getIdc().setEnabled(false);
-		//contextMenu.getIdc().setVisible(false);
 		employeeDraftObject.getIdcDates(
-		(dates) -> {
+		dates -> {
 			// filter out 'Baja' dates
 			dates = filterEven(dates);
 			int count = dates.size();
@@ -505,11 +525,8 @@ public abstract class EmployeeDraft extends Composite {
 			idcDateListBox.setVisibleRange(0, count+1);
 			idcDateListBox.setSelected(count-1, true);
 			idcDateListBox.onResizeDropDownPopup();
-			//contextMenu.getIdc().setEnabled(true);
-			//contextMenu.getIdc().setVisible(true);
 		}, 
-		(error) -> {
-		} );
+		error -> {} );
 	}
 
 	private void initializeUndoRedo() {
@@ -518,7 +535,7 @@ public abstract class EmployeeDraft extends Composite {
 		undoAll.setEnabled(employeeDraftObject.canUndo());
 		redo.setEnabled(employeeDraftObject.canRedo());
 
-		employeeDraftObject.addUndoManagerListener( (undoManager) -> {
+		employeeDraftObject.addUndoManagerListener( undoManager -> {
 			undo.setEnabled(undoManager.canUndo());
 			undoAll.setEnabled(undoManager.canUndo());
 			redo.setEnabled(undoManager.canRedo());
@@ -563,11 +580,7 @@ public abstract class EmployeeDraft extends Composite {
 	
 	private void initFocus() {
 		//FOCUS DOCUMENT
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-	        public void execute () {
-	        	employee.document.setFocus(true);
-	        }
-		});
+		Scheduler.get().scheduleDeferred(() -> employee.document.setFocus(true));
 	}
 	
 	// ------------------------------------------------- Initialize existing employee
@@ -589,17 +602,17 @@ public abstract class EmployeeDraft extends Composite {
 		
 		employee.document.setValue(employeeData.getDocument(), true);
 		employee.nationality.setValue(employeeData.getNationality());
-		employee.security_social_num.setValue(employeeData.getSsNumber(), true);
+		employee.securitySocialNum.setValue(employeeData.getSsNumber(), true);
 		
 		employee.name.setValue(employeeData.getName());
-		employee.first_surname.setValue(employeeData.getSurName());
-		employee.second_surname.setValue(employeeData.getSecondSurName());
+		employee.firstSurname.setValue(employeeData.getSurName());
+		employee.secondSurname.setValue(employeeData.getSecondSurName());
 		
-		employee.birth_date.setValue(employeeData.getBirthdate(), true);
+		employee.birthDate.setValue(employeeData.getBirthdate(), true);
 		setSelectedValueLB(employee.gender, String.valueOf(employeeData.getGender()));
 		setSelectedValueLB(employee.civilStatus, employeeData.getCivilStatus()+"");
 		
-		setSelectedValueLB(employee.street_type, employeeData.getStreetType());
+		setSelectedValueLB(employee.streetType, employeeData.getStreetType());
 		employee.address.setValue(employeeData.getAddress());
 		employee.addressNum.setValue(employeeData.getAddresNum());
 		employee.addressZip.setValue(employeeData.getAddressZip());
@@ -638,9 +651,9 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
-		employee.start_date.setValue(contractData.getStartDate());
-		employee.seniority_date.setValue(contractData.getSeniorityDate());
-		employee.end_date.setValue(contractData.getEndDate());
+		employee.startDate.setValue(contractData.getStartDate());
+		employee.seniorityDate.setValue(contractData.getSeniorityDate());
+		employee.endDate.setValue(contractData.getEndDate());
 		
 		Integer agreementId = contractData.getAgreementId();
 		setSelectedValueLB(employee.agreement, agreementId+"/"+contractData.getAgreementColective());
@@ -673,7 +686,7 @@ public abstract class EmployeeDraft extends Composite {
 		Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
 		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
 			employee.showPartialTimeContract();
-			if(employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().size() == 0) {
+			if(employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
 				employee.createJourneyDurationWarning();
 			} else {
 				employee.createJourneyDurationInfo(employeeDraftObject.getContractData().getContractJourneyDuration().getJourneyText());
@@ -684,9 +697,9 @@ public abstract class EmployeeDraft extends Composite {
 		employee.updateModality(contractTypeInt);
 		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
 		
-		employee.start_date.setValue(contractData.getStartDate());
-		employee.seniority_date.setValue(contractData.getSeniorityDate());
-		employee.end_date.setValue(contractData.getEndDate());
+		employee.startDate.setValue(contractData.getStartDate());
+		employee.seniorityDate.setValue(contractData.getSeniorityDate());
+		employee.endDate.setValue(contractData.getEndDate());
 		
 		Integer agreementId = contractData.getAgreementId();
 		setSelectedValueLB(employee.agreement, agreementId+"/"+contractData.getAgreementColective());
@@ -697,8 +710,9 @@ public abstract class EmployeeDraft extends Composite {
 			}, f -> {});
 		}
 		
-		setSelectedValueLB(employee.quote_group, contractData.getQuoteGroup());
+		setSelectedValueLB(employee.quoteGroup, contractData.getQuoteGroup());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
+		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		
 		Double partialityCoef = contractData.getPartialityCoef();
 		if(null == partialityCoef || partialityCoef == 0.00) {
@@ -707,7 +721,7 @@ public abstract class EmployeeDraft extends Composite {
 		}
 		
 		if(null != contractData.getPartialityCoef())
-			employee.partiality_coef.setValue(contractData.getPartialityCoef());	
+			employee.partialityCoef.setValue(contractData.getPartialityCoef());	
 	}
 	
 	private Double calculatePartialityCoef() {
@@ -734,7 +748,7 @@ public abstract class EmployeeDraft extends Composite {
 		employee.level.addItem("-", "-1");
 		
 		employeeDraftObject.getAgreement(agreementId,  
-		(agreement) -> {
+		agreement -> {
 			for (Level levelRecord : agreement.getLevels()) {
 				employee.level.addItem(levelRecord.getDescription(), String.valueOf(levelRecord.getId()));
 				for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
@@ -743,7 +757,7 @@ public abstract class EmployeeDraft extends Composite {
 
 			success.accept(agreement);
 		},
-		(throwable) -> {
+		throwable -> {
 			employeeDraftObject.setContractAgreementId(null);
 			employeeDraftObject.setContractAgreementLevelId(null);
 			employee.category.setEnabled(false);
@@ -767,11 +781,11 @@ public abstract class EmployeeDraft extends Composite {
 	
 	private void initZoomList() {
 		zoomListBox = new ListBox();
-		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
+		for (int zoomAux = Constants.MIN_ZOOM; zoomAux < Constants.DEFAULT_ZOOM; zoomAux += Constants.ZOOM_STEP)
+			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoomAux / 100));
 		int selectedIndex = zoomListBox.getItemCount();
-		for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
+		for (int zoomAux = Constants.DEFAULT_ZOOM; zoomAux < Constants.MAX_ZOOM; zoomAux += Constants.ZOOM_STEP)
+			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoomAux / 100));
 		zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
 		zoomListBox.setSelectedIndex(selectedIndex);
 		
@@ -779,44 +793,24 @@ public abstract class EmployeeDraft extends Composite {
 	
 	// ------------------------------------------------- Toolbar panel
 	
-	private AonToolbar getToolbarPanel() {
+	private void getToolbarPanel() {
 		
-		AonToolbar toolbar = new AonToolbar("Contrato");
+		toolbar = new AonToolbar("Contrato");
 		
-		saveContract = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		saveContract.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onSaveContract(event);
-			}
-		});
+		AonToolbarButton saveContract = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveContract.addClickHandler(e -> onSaveContract());
 		toolbar.add(saveContract);
 		
 		undoAll = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
-		undoAll.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onUndoAll(event);
-			}
-		});
+		undoAll.addClickHandler(e -> onUndoAll());
 		toolbar.add(undoAll);
 		
 		undo = new AonToolbarButton( AON.MSG.undo(), AON.CSS.aonIconUndo() );
-		undo.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onUndo(event);
-			}
-		});
+		undo.addClickHandler(e -> onUndo());
 		toolbar.add(undo);
 		
 		redo = new AonToolbarButton( "Rehacer", AON.CSS.aonIconRedo() );
-		redo.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onRedo(event);
-			}
-		});
+		redo.addClickHandler(e -> onRedo());
 		toolbar.add(redo);
 		
 		tgss = new AonExpandButton("TGSS", AON.CSS.aonIconTgss()) {
@@ -838,13 +832,7 @@ public abstract class EmployeeDraft extends Composite {
 		toolbar.add(tgss);
 		
 		closePDF = new AonToolbarButton( AON.MSG.closed(), AON.CSS.aonIconClose() );
-		closePDF.setAccessKey('I');
-		closePDF.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onClosePDF(event);
-			}
-		});
+		closePDF.addClickHandler(e -> onClosePDF());
 		toolbar.add(closePDF);
 		
 		initZoomList();
@@ -858,64 +846,50 @@ public abstract class EmployeeDraft extends Composite {
 		zoomListBox.setVisible(false);
 		
 		idcMonthListBox = new MonthListBox();
-		idcMonthListBox.addChangeHandler(e -> {
-			showIdcPlNss(idcMonthListBox.getSelectedMonth());
-		});
+		idcMonthListBox.addChangeHandler(e -> showIdcPlNss(idcMonthListBox.getSelectedMonth()));
 		toolbar.add(idcMonthListBox);
 		
 		idcDateListBox = new DateListBox();
-		idcDateListBox.addChangeHandler(e -> {
-			showIdc(idcDateListBox.getSelectedDate());
-		});
+		idcDateListBox.addChangeHandler(e -> showIdc(idcDateListBox.getSelectedDate()));
 		toolbar.add(idcDateListBox);
 
 		downloadPDF = new AonToolbarButton( AON.MSG.download(), AON.CSS.aonIconPdf() );
-		downloadPDF.setAccessKey('D');
-		downloadPDF.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onDownloadPDF(event);
-			}
-		});
+		downloadPDF.addClickHandler(e -> onDownloadPDF());
 		toolbar.add(downloadPDF);
-		
-		return toolbar;
 	}
 
-	private void onSaveContract(ClickEvent event) {
+	private void onSaveContract() {
 		if(employee.checkIfSaveEmployeeIsPossible())
 			employeeDraftObject.updateEmployee(
-					r -> { 
-						saved();
-					}, 
+					r -> saved(), 
 					t -> {}
 			);
 	}
 
-	private void onUndoAll(ClickEvent event) {
+	private void onUndoAll() {
 		while ( employeeDraftObject.canUndo() )
 			employeeDraftObject.undo();
 		initializeView();
 	}
 	
-	private void onUndo(ClickEvent event) {
+	private void onUndo() {
 		employeeDraftObject.undo();
 		initializeView();
 	}
 	
-	private void onRedo(ClickEvent event) {
+	private void onRedo() {
 		employeeDraftObject.redo();
 		initializeView();
 	}
 	
 	private void onAFIChanges() {
 		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
-				employee.start_date.getValue(),
-				employee.end_date.getValue(),
+				employee.startDate.getValue(),
+				employee.endDate.getValue(),
 				employee.contractTypeLB.getSelectedValue(),
-				employee.quote_group.getSelectedValue(),
+				employee.quoteGroup.getSelectedValue(),
 				employee.occupation.getSelectedValue(),
-				employee.partiality_coef.getValue(),
+				employee.partialityCoef.getValue(),
 				employeeDraftObject.getPayrollDate(),
 				employeeDraftObject.getContractId(),
 				employeeDraftObject.getDomainId(),
@@ -923,89 +897,91 @@ public abstract class EmployeeDraft extends Composite {
 				){
 
 					@Override
-					protected void onAcceptCB() {}
+					protected void onAcceptCB() {
+						// Not use in this case
+					}
 
 					@Override
-					protected void onPartialityCoefContract(String partialityCoef, Date date) {}
+					protected void onPartialityCoefContract(String partialityCoef, Date date) {
+						// Not use in this case}
+					}
 
 					@Override
-					protected void onOcupationContract(String ocupation, Date date) {}
+					protected void onOcupationContract(String ocupation, Date date) {
+						// Not use in this case}
+					}
 
 					@Override
-					protected void onQuoteContract(String quoteGroup, Date date) {}
+					protected void onQuoteContract(String quoteGroup, Date date) {
+						// Not use in this case}
+					}
 
 					@Override
-					protected void onChangeContract(String contract, Date date) {}
+					protected void onChangeContract(String contract, Date date) {
+						// Not use in this case}
+					}
 
 					@Override
-					protected void onEndContract(String settleReason) {}
+					protected void onEndContract(String settleReason) {
+						// Not use in this case}
+					}
 
 					@Override
-					protected void onStartContract() {}
+					protected void onStartContract() {
+						// Not use in this case}
+					}
 		
 		};
 			
 		dialog.center();
 		dialog.show();
 	}
-
-	private void onClosePDF(ClickEvent event) {
-		showEmployee();
+	
+	private void showIdcPlNss() {
+		showIdcPlNss(DateUtils.getFirstDayOfMonth());
 	}
 	
-	private void onDownloadPDF(ClickEvent event) {
-		String fileName = employeeDraftObject.getEmployeeFullName() + " IDC.pdf";
-		pdfViewer.download(fileName);
-	}
-	
-	// ------------------------------------------------- Toolbar panel auxiliar methods
-	
-	private void showTa() {
-		employeeDraftObject.downloadTa(
-		(dataURI) -> {
+	private void showIdcPlNss( Date month) {
+		employeeDraftObject.downloadIdcPlNss( 
+		month,
+		dataURI -> {
 				showPdf();
+				idcMonthListBox.setVisible(true);
+				idcMonthListBox.setSelected(month, true);
 				pdfViewer.setDocument(dataURI, zoom / 100.00);
 		}, 
-		(trowable)-> {
-			
-		}
+		trowable -> {}
 		);
 	}
 	
 	private void showIdc() {
 		showIdc(idcDateListBox.getSelected());
 	}
-
-	private void showIdcPlNss() {
-		showIdcPlNss(DateUtils.getFirstDayOfMonth());
-	}
-
+	
 	private void showIdc( Date date) {
 		employeeDraftObject.downloadIdc( 
-		date,
-		(dataURI) -> {
-				showPdf();
-				idcDateListBox.setVisible(true);
-				idcDateListBox.setSelected(date, true);
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
-		}, 
-		(trowable) -> {}
-		);
+			date,
+			dataURI -> {
+					showPdf();
+					idcDateListBox.setVisible(true);
+					idcDateListBox.setSelected(date, true);
+					pdfViewer.setDocument(dataURI, zoom / 100.00);
+			}, 
+			trowable -> {}
+			);
 	}
 
-	private void showIdcPlNss( Date month) {
-		employeeDraftObject.downloadIdcPlNss( 
-		month,
-		(dataURI) -> {
-				showPdf();
-				idcMonthListBox.setVisible(true);
-				idcMonthListBox.setSelected(month, true);
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
-		}, 
-		(trowable) -> {}
-		);
+	private void onClosePDF() {
+		showEmployee();
 	}
-
+	
+	private void onDownloadPDF() {
+		String fileName = employeeDraftObject.getEmployeeFullName() + " IDC.pdf";
+		pdfViewer.download(fileName);
+	}
+	
+	// ------------------------------------------------- Toolbar panel auxiliar methods
+	
 	private void showPdf() {
 		contextMenu.getAfi().setVisible(false);
 		tgss.setVisible(false);
@@ -1073,20 +1049,28 @@ public abstract class EmployeeDraft extends Composite {
 		switch (occupation) {
 		case "a":
 			employee.occupation.setSelectedIndex(1);
+			break;
 		case "b":
 			employee.occupation.setSelectedIndex(2);
+			break;
 		case "d":
 			employee.occupation.setSelectedIndex(3);
+			break;
 		case "e":
 			employee.occupation.setSelectedIndex(4);
+			break;
 		case "f":
 			employee.occupation.setSelectedIndex(5);
+			break;
 		case "g":
 			employee.occupation.setSelectedIndex(6);
+			break;
 		case "h":
 			employee.occupation.setSelectedIndex(7);
+			break;
 		default:
 			employee.occupation.setSelectedIndex(0);
+			break;
 		}
 		
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.occupation);
