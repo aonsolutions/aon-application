@@ -65,7 +65,7 @@ public class RegistryDAO {
 			return new Registry() 
 					.setId(r.getValue(registry.ID))
 					.setDomain(checkField(r, DOMAIN.ID) 
-						? DomainFiller.buildDomain(r)
+						? DomainFiller.build(r)
 						: new Domain().setId(r.getValue(registry.DOMAIN)))
 					.setDocument(r.getValue(registry.DOCUMENT))
 					.setDocumentType(DocumentType.safeValueOf(r.getValue(registry.DOCUMENT_TYPE)))

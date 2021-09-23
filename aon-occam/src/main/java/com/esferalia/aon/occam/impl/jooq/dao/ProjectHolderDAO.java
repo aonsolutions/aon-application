@@ -147,7 +147,7 @@ public class ProjectHolderDAO {
 			return new ProjectHolder()
 					.setId(r.getValue(PROJECT_HOLDER.ID))
 					.setDomain(checkField(r, DOMAIN.ID)
-						? DomainFiller.buildDomain(r)
+						? DomainFiller.build(r)
 						: new Domain().setId(r.getValue(PROJECT_HOLDER.DOMAIN)))
 					.setProject(checkField(r, PROJECT.ID)
 						? ProjectFiller.build(r)

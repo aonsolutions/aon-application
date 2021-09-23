@@ -286,7 +286,7 @@ public class ProjectDAO {
 			return new Project()
 				.setId(r.getValue(PROJECT.ID))
 				.setDomain(checkField(r, DOMAIN.ID)
-					? DomainFiller.buildDomain(r)
+					? DomainFiller.build(r)
 					: new Domain().setId(r.getValue(PROJECT.DOMAIN)))
 				.setName(r.getValue(PROJECT.NAME))
 				.setRegistry(checkField(r, REGISTRY.ID)
@@ -315,7 +315,7 @@ public class ProjectDAO {
 			pc.setCommercial(r.getValue(PROJECT.COMMERCIAL).equals(0));
 			pc.setDate(r.getValue(PROJECT.DATE));
 			pc.setDomain(checkField(r, DOMAIN.ID)
-				? DomainFiller.buildDomain(r)
+				? DomainFiller.build(r)
 				: new Domain().setId(r.getValue(PROJECT.DOMAIN)));
 			pc.setId(r.getValue(PROJECT.ID));
 			pc.setName(r.getValue(PROJECT.NAME));

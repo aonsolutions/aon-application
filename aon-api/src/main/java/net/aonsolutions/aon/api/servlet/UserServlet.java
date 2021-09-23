@@ -675,7 +675,7 @@ public class UserServlet extends AonApiHttpServlet {
 				if(user == null || user.getId() == null) {
 					user = createUser(api, api.getDomain(), api.getData(), login, auth);
 				} else {
-					Boolean portal = api.getData().optBoolean("portal");
+					boolean portal = api.getData().optBoolean("portal");
 					Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), login, f -> f.getDomainProperty().eq(api.getDomain().getId()));
 					user.setEnterprise(portal ? cp.getId() : null);
 					AON.save(api.getDomain().getName(), api.getDomain().getId(), login, user);
@@ -776,6 +776,12 @@ public class UserServlet extends AonApiHttpServlet {
 			AON.insertUserScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), new UserScope()
 					.setDomain(api.getDomain().getId())
 					.setScope(s.getId())
+					.setUserId(user.getId()));
+		}
+		if(api.getDomain().getScope() != null) {
+			AON.insertUserScope(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), new UserScope()
+					.setDomain(api.getDomain().getId())
+					.setScope(api.getDomain().getScope())
 					.setUserId(user.getId()));
 		}
 		

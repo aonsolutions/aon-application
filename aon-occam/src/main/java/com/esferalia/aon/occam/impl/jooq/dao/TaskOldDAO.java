@@ -867,7 +867,7 @@ public class TaskOldDAO {
 					.copy( new Registry() 
 						.setId(r.getValue(REGISTRY.ID))
 						.setDomain(r.get(DOMAIN.ID) != null 
-							? DomainFiller.buildDomain(r) 
+							? DomainFiller.build(r) 
 							: new Domain().setId(r.getValue(REGISTRY.DOMAIN)))
 						.setDocument(r.getValue(REGISTRY.DOCUMENT))
 						.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
