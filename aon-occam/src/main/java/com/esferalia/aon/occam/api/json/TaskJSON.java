@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
@@ -37,7 +36,7 @@ public class TaskJSON {
 			.setPriority(Priority.safeValueOf(json.optString(IJsonNames.PRIORITY)))
 			.setSender(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SENDER)))
 			.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)))
-			.setProject(new Project().setId(JsonUtils.getInteger(json, IJsonNames.PROJECT)))
+			.setProject(ProjectJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PROJECT)))
 			.setRepeatPeriod(TaskPeriod.NONE) // TODO
 			.setSource(TaskSource.safeValueOf(JsonUtils.optString(json, IJsonNames.SOURCE)))
 			.setSourceId(JsonUtils.getInteger(json, "source_id"))
@@ -77,7 +76,7 @@ public class TaskJSON {
 			.put(IJsonNames.WORKGROUP, WorkgroupJSON.toJSON(task.getWorkgroup()))
 			.put(IJsonNames.SOURCE, task.getSource()!=null ? task.getSource().getName() : null )
 			.put(IJsonNames.SOURCE_ID, task.getSourceId())
-			.put(IJsonNames.PROJECT,  task.getProject()!=null ? task.getProject().getId(): null)
+			.put(IJsonNames.PROJECT,  task.getProject()!=null ?  ProjectJSON.toJSON(task.getProject()): null)
 			.put(IJsonNames.PERIOD, task.getRepeatPeriod()!=null ? task.getRepeatPeriod().getValue(): null)
 			.put(IJsonNames.DUE_DATE, task.getDueDate()!=null ?  task.getDueDate().getTime() : null)
 			.put(IJsonNames.START_DATE, task.getStartDate()!=null ?  task.getStartDate().getTime() : null)
