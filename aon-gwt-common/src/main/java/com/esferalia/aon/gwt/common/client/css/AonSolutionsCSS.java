@@ -446,6 +446,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_register")
 	String aonIconRegister();
+	
+	@ClassName("aon_icon_link")
+	String aonIconLink();
 
 	/* BASICS */
 	@ClassName("aon_selector")

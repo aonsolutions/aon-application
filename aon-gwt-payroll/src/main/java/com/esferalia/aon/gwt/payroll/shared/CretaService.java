@@ -16,7 +16,7 @@ public interface CretaService {
 
 	public static enum Parameter {
 		CCC, 
-		TIPO, 
+		TIPO,
 		NAFS, 
 		FILE, 
 		COMMENTS, 
@@ -39,7 +39,9 @@ public interface CretaService {
 		CALCULOS_DESGLOSADOS,
 		INDICADOR_RECTIFICACION,
 		I54,
-		SOLICITUD_RECEPCION_RNT
+		SOLICITUD_RECEPCION_RNT,
+		USER,
+		DOMAIN
 	}
 
 	public static enum File {
@@ -618,11 +620,12 @@ public interface CretaService {
 		// ----------------------------------- JSNI (Native JavaScript Methods)
 
 		public final native JsError[] getErrors() /*-{
-			return this.errors;
+			return this.errors ?  this.errors : [];
 		}-*/;
 
 		public static native JsRespuesta createEmptyRespuesta() /*-{
 			return {
+				errors: [],
 				errores: [],
 				employees: []
 			};

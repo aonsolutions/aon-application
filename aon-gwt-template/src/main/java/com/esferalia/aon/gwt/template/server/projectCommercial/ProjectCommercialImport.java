@@ -61,7 +61,7 @@ public class ProjectCommercialImport {
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				pc = new ProjectCommercial();
-				pc.setDomain(domain.getId());
+				pc.setDomain(domain);
 				pc.setCommercial(true);
 				pc.setActive(true);
 				
@@ -116,7 +116,7 @@ public class ProjectCommercialImport {
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				pc = new ProjectCommercial();
-				pc.setDomain(domain.getId());
+				pc.setDomain(domain);
 				pc.setCommercial(true);
 				pc.setActive(true);
 				

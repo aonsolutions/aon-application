@@ -107,7 +107,7 @@ public interface EnterprisesServiceAsync {
 	void setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap,
-			AsyncCallback<String> asyncCallback);
+			AsyncCallback<Void> asyncCallback);
 	void getEmployeeAFIChanges(String currentDomainName, Integer contractId, AsyncCallback<AFIChanges> asyncCallback);
 	void getDomainMailAccounts(String currentDomainName, String currentUser, AsyncCallback<List<MailAccount>> asyncCallback);
 	void getPayrollEmailSendTo(String currentDomainName, Type type, Integer enterpriseID, AsyncCallback<String> asyncCallback);

@@ -24,6 +24,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDraftObject extends AbstractDraftObject{
 	
+	// ------------------------------------------------- Variables
+	
 	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 	
@@ -55,7 +57,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		
 		this.agreements = new ArrayList<>();
 		this.workplaces = new ArrayList<>();
-		this.payMethodsMap = new HashMap<String, String>();
+		this.payMethodsMap = new HashMap<>();
 		
 		this.undoManager = new UndoManager<Undoable>();
 	}
@@ -165,7 +167,9 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {}
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 			
 		});	
 	}
@@ -306,7 +310,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 	
 	public ArrayList<String> getExistingIban(){
-		ArrayList<String> ibans = new ArrayList<String>();
+		ArrayList<String> ibans = new ArrayList<>();
 		for(Rbank rbank : employeeData.getRbanks())
 			ibans.add(rbank.getIban());
 		
@@ -364,13 +368,13 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	// CONTRACT TABLE
 	
-	public void setEmployeeDocumentType(String document_type) {
+	public void setEmployeeDocumentType(String documentTypeIn) {
 		Byte documentType = null;
-		if(document_type == "DNI")
+		if(documentTypeIn.equals("DNI"))
 			documentType = (byte) 0;
-		else if(document_type == "CIF")
+		else if(documentTypeIn.equals("CIF"))
 			documentType = (byte) 1;
-		else if(document_type == "Pasaporte")
+		else if(documentTypeIn.equals("Pasaporte"))
 			documentType = (byte) 3;
 		else
 			documentType = (byte) 0;
@@ -398,12 +402,12 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setNationality(nationality);	
 	}
 	
-	public void setEmployeeSocialSecurityNum(String social_security_num) {
+	public void setEmployeeSocialSecurityNum(String socialSecurityNum) {
 		add(employeeData::setSsNumber, 
 				employeeData.getSsNumber(), 
-				social_security_num );
+				socialSecurityNum );
 		
-		employeeData.setSsNumber(social_security_num);
+		employeeData.setSsNumber(socialSecurityNum);
 	}
 	
 	public void setEmployeeName(String name) {
@@ -414,20 +418,20 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setName(name);
 	}
 	
-	public void setEmployeeFirstSurname(String first_surname) {
+	public void setEmployeeFirstSurname(String firstSurname) {
 		add(employeeData::setSurName, 
 				employeeData.getSurName(), 
-				first_surname );
+				firstSurname );
 		
-		employeeData.setSurName(first_surname);
+		employeeData.setSurName(firstSurname);
 	}
 
-	public void setEmployeeSecondSurname(String second_surname) {
+	public void setEmployeeSecondSurname(String secondSurname) {
 		add(employeeData::setSecondSurName, 
 				employeeData.getSecondSurName(), 
-				second_surname );
+				secondSurname );
 		
-		employeeData.setSecondSurName(second_surname);
+		employeeData.setSecondSurName(secondSurname);
 	}
 	
 	public void setSSRegime(byte ssRegime) {
@@ -494,16 +498,15 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setWorkplaceId(workplaceId);
 	}
 	
-	public void setContractType(String contract_type) {
+	public void setContractType(String contractType) {
 		add(contractData::setContractType, 
 				contractData.getContractType(), 
-				contract_type );
+				contractType );
 		
-		contractData.setContractType(contract_type);
+		contractData.setContractType(contractType);
 	}
 	
 	public void setContractModel(Integer contractModelId) {
-		//ModelOption.values()[ordinal].toString());
 		add(contractData::setContractModel, 
 				contractData.getContractModel(), 
 				contractModelId );
@@ -511,36 +514,36 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setContractModel(contractModelId);	
 	}
 	
-	public void setContractStartDate(Date start_date) {
+	public void setContractStartDate(Date startDate) {
 		add(contractData::setStartDate, 
 				contractData.getStartDate(), 
-				start_date );
+				startDate );
 		
-		contractData.setStartDate(start_date);		
+		contractData.setStartDate(startDate);		
 	}
 	
-	public void setContractEndDate(Date end_date) {
+	public void setContractEndDate(Date endDate) {
 		add(contractData::setEndDate, 
 				contractData.getEndDate(), 
-				end_date );
+				endDate );
 		
-		contractData.setEndDate(end_date);		
+		contractData.setEndDate(endDate);		
 	}
 	
-	public void setContractSeniorityDate(Date seniority_date) {
+	public void setContractSeniorityDate(Date seniorityDate) {
 		add(contractData::setSeniorityDate, 
 				contractData.getSeniorityDate(), 
-				seniority_date );
+				seniorityDate );
 		
-		contractData.setSeniorityDate(seniority_date);		
+		contractData.setSeniorityDate(seniorityDate);		
 	}
 	
-	public void setContractAgreementId(Integer agreement_table_id) {
+	public void setContractAgreementId(Integer agreementTableId) {
 		add(contractData::setAgreementId, 
 				contractData.getAgreementId(), 
-				agreement_table_id );
+				agreementTableId );
 		
-		contractData.setAgreementId(agreement_table_id);
+		contractData.setAgreementId(agreementTableId);
 	}
 	
 	public void setAgreementSSNumber(String colectiveAgreement) {
@@ -551,20 +554,20 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setAgreementColective(colectiveAgreement);
 	}
 	
-	public void setContractAgreementLevelId(Integer agreement_level_table_id) {
+	public void setContractAgreementLevelId(Integer agreementLevelTableId) {
 		add(contractData::setAgreementLevelId, 
 				contractData.getAgreementLevelId(), 
-				agreement_level_table_id );
+				agreementLevelTableId );
 		
-		contractData.setAgreementLevelId(agreement_level_table_id);
+		contractData.setAgreementLevelId(agreementLevelTableId);
 	}
 	
-	public void setContractCategory(String category_description) {
+	public void setContractCategory(String categoryDescription) {
 		add(contractData::setAgreementCategory, 
 				contractData.getAgreementCategory(), 
-				category_description );
+				categoryDescription );
 		
-		contractData.setAgreementCategory(category_description);		
+		contractData.setAgreementCategory(categoryDescription);		
 	}
 	
 	public void setContractQuoteGroup(String quoteGroup) {
@@ -583,8 +586,16 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setOcupation(occupation);		
 	}
 	
-	public void setContractJourneyType(Boolean journey_type) {
-		Byte journey = journey_type ? (byte) 1 : (byte) 0;
+	public void setContractRlce(String rlce) {
+		add(contractData::setRlce, 
+				contractData.getRlce(), 
+				rlce );
+		
+		contractData.setRlce(rlce);		
+	}
+	
+	public void setContractJourneyType(Boolean journeyType) {
+		Byte journey = Boolean.TRUE.equals(journeyType) ? (byte) 1 : (byte) 0;
 		add(contractData::setJourneyType, 
 				contractData.getJourneyType(), 
 				journey );
@@ -606,12 +617,12 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	// EMPLOYEE
 	
-	public void setEmployeeBirthDate(Date birth_date) {
+	public void setEmployeeBirthDate(Date birthDate) {
 		add(employeeData::setBirthdate, 
 				employeeData.getBirthdate(), 
-				birth_date );
+				birthDate );
 		
-		employeeData.setBirthdate(birth_date);
+		employeeData.setBirthdate(birthDate);
 	}
 
 	public void setEmployeeGender(byte gender) {
@@ -646,12 +657,12 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setAddress(address);
 	}
 
-	public void setEmployeeAddressNumber(String address_number) {
+	public void setEmployeeAddressNumber(String addressNumber) {
 		add(employeeData::setAddresNum, 
 				employeeData.getAddresNum(), 
-				address_number );
+				addressNumber );
 		
-		employeeData.setAddresNum(address_number);
+		employeeData.setAddresNum(addressNumber);
 	}
 	
 	public void setEmployeeAddressInfo(String addressInfo) {
@@ -662,12 +673,12 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setAddressInfo(addressInfo);
 	}
 
-	public void setEmployeeAddressZip(String zip_code) {
+	public void setEmployeeAddressZip(String zipCode) {
 		add(employeeData::setAddressZip, 
 				employeeData.getAddressZip(), 
-				zip_code );
+				zipCode );
 		
-		employeeData.setAddressZip(zip_code);
+		employeeData.setAddressZip(zipCode);
 	}
 
 	public void setEmployeeAddressProvince(String province) {

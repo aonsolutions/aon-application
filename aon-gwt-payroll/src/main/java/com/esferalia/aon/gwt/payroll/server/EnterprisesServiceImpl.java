@@ -2010,38 +2010,20 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			return JooqEmployeeAFI.setEmployeeAFI(connection, contractId, afiChangesMap);
+	public void setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap) {
+		try(Connection connection = AonServletUtils.getConnection(currentDomainName)) {
+			JooqEmployeeAFI.setEmployeeAFI(connection, contractId, afiChangesMap);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
 		}
 	}
 
 	@Override
 	public AFIChanges getEmployeeAFIChanges(String currentDomainName, Integer contractId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
+		try(Connection connection = AonServletUtils.getConnection(currentDomainName)) {
 			return JooqEmployeeAFI.getEmployeeAFI(connection, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
 		}
 	}
 	

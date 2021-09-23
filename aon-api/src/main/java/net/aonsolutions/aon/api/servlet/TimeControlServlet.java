@@ -40,6 +40,7 @@ import net.aonsolutions.aon.api.excel.TimeControlExcel;
 public class TimeControlServlet extends AonApiHttpServlet{
 
 	private static final Logger LOGGER  = Logger.getLogger(TimeControlServlet.class.getName());
+	private static final String FORMAT_DATE = "yyyy-MM-dd"; 
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -177,8 +178,8 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		Boolean active = !api.getParams().optString("active").isEmpty() ?  api.getParams().getBoolean("active") : true;
-		if(!api.getParams().optString("startDate").isEmpty()) startDate =  AonDateUtils.parse(api.getParams().optString("startDate"), "yyyy-MM-dd");
-		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("startDate").isEmpty()) startDate =  AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE);
+		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), FORMAT_DATE);
 		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getTimeControlStream(api.getDomain(), "", startDate, endDate)
 		.filter(f-> f.getTaskHolder()!=null && f.getTaskHolder().isActive().equals(active))
@@ -194,8 +195,8 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		Date endDate = AonDateUtils.addDays(startDate, 1);
 		endDate = AonDateUtils.addSeconds(endDate, -1);
 		
-		if(!api.getParams().optString("startDate").isEmpty()) startDate = AonDateUtils.parse(api.getParams().optString("startDate"), "yyyy-MM-dd");
-		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("startDate").isEmpty()) startDate = AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE);
+		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), FORMAT_DATE);
 
 		JSONArray array = new JSONArray();
 		TimeControlGroup timeCG = TimeControlGroup.safeValueOf(api.getParams().optString("group"));
@@ -210,8 +211,8 @@ public class TimeControlServlet extends AonApiHttpServlet{
 	private Object getTimeControlDetailStream(AonApiData api) {		
 		Date startDate = null;
 		Date endDate = null;
-		if(!api.getParams().optString("startDate").isEmpty()) startDate = AonDateUtils.parse(api.getParams().optString("startDate"), "yyyy-MM-dd");
-		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), "yyyy-MM-dd");
+		if(!api.getParams().optString("startDate").isEmpty()) startDate = AonDateUtils.parse(api.getParams().optString("startDate"), FORMAT_DATE);
+		if(!api.getParams().optString("endDate").isEmpty()) endDate = AonDateUtils.parse(api.getParams().optString("endDate"), FORMAT_DATE);
 		
 		startDate = AonDateUtils.getDateWithoutTime(startDate);
 		endDate = AonDateUtils.getDateWithoutTime(endDate);

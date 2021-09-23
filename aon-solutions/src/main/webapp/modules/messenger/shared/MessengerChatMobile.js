@@ -3,7 +3,7 @@ import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utils.js";
 import * as ACTIONS from "../../actions.js";
-import {  MESSENGER_COMPONENTS, MESSENGER_IDS } from "../MessengerEnums.js";
+import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";
 import { buildForm, buildTextareaToolbar } from "./utils.js";
 
@@ -66,22 +66,28 @@ const buildSectionHistoric = (aonMessengerChat, wrapper)=>{
 
 const addTextAreaChat = (aonMessengerChat) => {
     const firstDiv = document.getElementById(MESSENGER_IDS.FIRST_DIV);
-    const div = newComponent({
-        classes: [CSS.FLEX_ROW],
-        styles: {
-            width: "100%",
-            position: "absolute",
-            bottom: 0
-        },
-    });
-    div.appendTo(firstDiv);
+    const task = aonMessengerChat.task;
 
-    const divs = createSectionComment(div);
-    divs.iconOpenFull.addEventListener(EVENT.CLICK, ()=>showFullComment(true));
-    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
-    changeStyleSectionComment(divs);
-
-    buildFullComment(aonMessengerChat, divs.aonTextArea);
+    if( [TASK_STATUS.IN_PROGRESS, TASK_STATUS.PENDING].includes(task.status) ){
+        const div = newComponent({
+            classes: [CSS.FLEX_ROW],
+            styles: {
+                width: "100%",
+                position: "absolute",
+                bottom: 0
+            },
+        });
+        div.appendTo(firstDiv);
+    
+        const divs = createSectionComment(div);
+        divs.iconOpenFull.addEventListener(EVENT.CLICK, ()=>showFullComment(true));
+        divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
+        changeStyleSectionComment(divs);
+    
+        buildFullComment(aonMessengerChat, divs.aonTextArea);
+    } else {
+        firstDiv.style.height="100%";
+    }
 }
 
 /**
@@ -172,7 +178,8 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
     div.appendChild(toolbar);
 
     if(create){
-        toolbar.addButton2(ACTIONS.SAVE,() => aonMessengerChat.save())
+        if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status))
+            toolbar.addButton2(ACTIONS.SAVE,() => aonMessengerChat.save())
     } else {
         toolbar.addButton2(ACTIONS.EDIT,() => showForm(true));
     }
@@ -191,12 +198,12 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
  * @param {Boolean} b true or false 
  */
 const showForm = (b) => {
-    const  divMainTwo = document.getElementById(MESSENGER_IDS.DIV_MAIN_MOBILE);
+    const divMainTwo = document.getElementById(MESSENGER_IDS.DIV_MAIN_MOBILE);
+    let styles = {zIndex : -9, opacity : 0};
     if(b)
-        setTimeout(() => setStyles(divMainTwo, {zIndex: 9, opacity: 1, left: 0}), 100);
-    else 
-        setTimeout(() => setStyles(divMainTwo, {zIndex : -9, opacity : 0}), 100);
-    
+        styles = {zIndex: 9, opacity: 1, left: 0};
+
+    setTimeout(() => setStyles(divMainTwo, styles), 100);
 }
 
 /**

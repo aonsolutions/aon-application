@@ -1076,6 +1076,9 @@ public class JooqContrataContract {
 				}else if(r.get(CONTRACT_DATA.NAME).equals("OCUPACION")) {
 					contractData.setOcupationId(r.get(CONTRACT_DATA.ID));
 					contractData.setOcupation(r.get(CONTRACT_DATA.EXPRESSION));
+				}else if(r.get(CONTRACT_DATA.NAME).equals("RLCE")) {
+					contractData.setRlceId(r.get(CONTRACT_DATA.ID));
+					contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
 				}else if(r.get(CONTRACT_DATA.NAME).equals("TIEMPO_COMPLETO")) {
 					contractData.setJourneytypeId(r.get(CONTRACT_DATA.ID));
 					contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("TRUE") ? (byte) 0 : (byte) 1);
@@ -1699,6 +1702,9 @@ public class JooqContrataContract {
 			}else if(r.get(CONTRACT_DATA.NAME).equals("OCUPACION")) {
 				contractData.setOcupationId(r.get(CONTRACT_DATA.ID));
 				contractData.setOcupation(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(r.get(CONTRACT_DATA.NAME).equals("RLCE")) {
+				contractData.setRlceId(r.get(CONTRACT_DATA.ID));
+				contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(r.get(CONTRACT_DATA.NAME).equals("TIEMPO_COMPLETO")) {
 				contractData.setJourneytypeId(r.get(CONTRACT_DATA.ID));
 				contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("true") ? (byte) 1 : (byte) 0);

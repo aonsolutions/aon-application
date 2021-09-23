@@ -25,6 +25,41 @@ public class Idcplnss {
 		return ssBonusListener.getSSBonuses();
 	}
 
+	public static TrabajadoresTramos getTrabajadoresTramos (InputStream is, TrabajadoresTramosCallback cb) throws IOException, UnknownPDFException {	
+		CretaListener  cretaListener = new CretaListener() {
+			@Override
+			protected String getIpf(String naf) {
+				return cb.getIpf(naf);
+			}
+			@Override
+			protected TipoIpf getTipoIpf(String naf) {
+				return cb.getTipoIpf(naf);
+			}
+			
+			@Override
+			protected boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
+				return cb.isPartTimeEmployee(ssNum, ccc, start, end);
+			}
+			
+			@Override
+			protected boolean isScholarEmployee(String ssNum, String ccc, Date start, Date end) {
+				return cb.isScholarEmployee(ssNum, ccc, start, end);
+			}
+			
+			@Override
+			protected boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
+				return cb.isTraining421Employee(ssNum, ccc, start, end);
+			}
+		};
+		IdcplnssParser.parse(is, cretaListener );
+		return cretaListener.getTrabajadoresTramos();
+		
+	}
 
+	public static TrabajadoresTramos getTrabajadoresTramos (byte idcplnss [], TrabajadoresTramosCallback cb) throws IOException, UnknownPDFException {
+		try ( ByteArrayInputStream is = new ByteArrayInputStream(idcplnss) ) {
+			return getTrabajadoresTramos(is, cb);
+		}  
+	}
 
 }

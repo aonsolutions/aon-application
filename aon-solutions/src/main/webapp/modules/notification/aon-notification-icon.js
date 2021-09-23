@@ -84,7 +84,7 @@ export class AonNotificationIcon extends AonElement {
 						(payload) => firebaseSrv.pushNotification(payload),
 						(err) => console.log(err)
 					);
-					saveAuthDevice({token});
+					saveAuthDevice({tokenFCM:token});
 				}
 			} 
 		} catch(e){

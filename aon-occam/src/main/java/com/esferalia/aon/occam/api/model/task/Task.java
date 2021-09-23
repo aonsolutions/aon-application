@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.task;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -40,7 +40,7 @@ public class Task  implements Serializable{
 	
 	// TASK WORKFLOW
 	
-	private LinkedList<TaskWorkflow> workflows; 
+	private List<TaskWorkflow> workflows; 
 	
 	// GOOGLE TASK IDS
 	
@@ -222,11 +222,11 @@ public class Task  implements Serializable{
 		return this;
 	}
 
-	public LinkedList<TaskWorkflow> getWorkflows() {
+	public List<TaskWorkflow> getWorkflows() {
 		return workflows;
 	}
 	
-	public Task setWorkflows(LinkedList<TaskWorkflow> workflows) {
+	public Task setWorkflows(List<TaskWorkflow> workflows) {
 		this.workflows = workflows;
 		return this;
 	}

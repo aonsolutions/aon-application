@@ -50,15 +50,19 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		// TABLA DATOS CONTRATO
 		
 		@Override
-		public void onClearEmployeeClick() {}
+		public void onClearEmployeeClick() {
+			// Not use in this case
+		}
 		
 		@Override
-		public void onEmployeeDocumentSuggestionChange(String document) {}
+		public void onEmployeeDocumentSuggestionChange(String document) {
+			// Not use in this case
+		}
 		
 		@Override
-		public void onEmployeeDocumentChange(String document, String document_type) {
+		public void onEmployeeDocumentChange(String document, String documentType) {
 			contrataEmployeeObject.setEmployeeDocument(document);
-			contrataEmployeeObject.setEmployeeDocumentType(document_type);
+			contrataEmployeeObject.setEmployeeDocumentType(documentType);
 		}
 		
 		@Override
@@ -67,7 +71,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		}
 		
 		@Override
-		public void onEmployeeSSNumSuggestionChange(String ssNumber) {}
+		public void onEmployeeSSNumSuggestionChange(String ssNumber) {
+			// Not use in this case
+		}
 
 		@Override
 		public void onEmployeeSSNumChange(String ssNumber) {
@@ -75,7 +81,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		}
 		
 		@Override
-		public void onEmployeeNameSuggestionChange(String nameSurname) {}
+		public void onEmployeeNameSuggestionChange(String nameSurname) {
+			// Not use in this case
+		}
 		
 		@Override
 		public void onEmployeeNameChange(String name) {
@@ -83,7 +91,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		}
 
 		@Override
-		public void onEmployeeFirstSurnameSuggestionChange(String nameSurname) {}
+		public void onEmployeeFirstSurnameSuggestionChange(String nameSurname) {
+			// Not use in this case
+		}
 		
 		@Override
 		public void onEmployeeFirstSurnameChange(String surname) {
@@ -171,10 +181,15 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		public void onContractOccupationChange(String occupation) {
 			contrataEmployeeObject.setContractOccupation(occupation);
 		}
+		
+		@Override
+		public void onContractRLCEChange(String rlce) {
+			contrataEmployeeObject.setContractRlce(rlce);
+		}
 
 		@Override
-		public void onContractJourneyTypeChange(Boolean journey_type) {
-			contrataEmployeeObject.setContractJourneyType(journey_type);
+		public void onContractJourneyTypeChange(Boolean journeyType) {
+			contrataEmployeeObject.setContractJourneyType(journeyType);
 		}
 		
 		@Override
@@ -210,7 +225,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 						employee.createJourneyDurationWarning();
 					}
 					contrataEmployeeObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
-					employee.partiality_coef.setValue(partialityCoef);
+					employee.partialityCoef.setValue(partialityCoef);
 					contrataEmployeeObject.setPartialityCoef(partialityCoef);
 				}	
 			};
@@ -319,7 +334,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	
 	// ------------------------------------------------- Constructor
 
-	public ContractEmployeeUI() {
+	protected ContractEmployeeUI() {
 		employee = new EmployeeImplementation();
 		initWidget(uiBinder.createAndBindUi(this));
 		setDefaultEmployeeView();
@@ -409,11 +424,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	
 	private void initFocus() {
 		//FOCUS DOCUMENT
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-	        public void execute () {
-	        	employee.document.setFocus(true);
-	        }
-		});
+		Scheduler.get().scheduleDeferred(() -> employee.document.setFocus(true));
 	}
 	
 	private void initializeIdcMonthListBox() {
@@ -445,17 +456,17 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		
 		employee.document.setValue(employeeData.getDocument(), true);
 		employee.nationality.setValue(employeeData.getNationality());
-		employee.security_social_num.setValue(employeeData.getSsNumber(), true);
+		employee.securitySocialNum.setValue(employeeData.getSsNumber(), true);
 		
 		employee.name.setValue(employeeData.getName());
-		employee.first_surname.setValue(employeeData.getSurName());
-		employee.second_surname.setValue(employeeData.getSecondSurName());
+		employee.firstSurname.setValue(employeeData.getSurName());
+		employee.secondSurname.setValue(employeeData.getSecondSurName());
 		
-		employee.birth_date.setValue(employeeData.getBirthdate(), true);
+		employee.birthDate.setValue(employeeData.getBirthdate(), true);
 		setSelectedValueLB(employee.gender, String.valueOf(employeeData.getGender()));
 		setSelectedValueLB(employee.civilStatus, employeeData.getCivilStatus()+"");
 		
-		setSelectedValueLB(employee.street_type, employeeData.getStreetType());
+		setSelectedValueLB(employee.streetType, employeeData.getStreetType());
 		employee.address.setValue(employeeData.getAddress());
 		employee.addressNum.setValue(employeeData.getAddresNum());
 		employee.addressZip.setValue(employeeData.getAddressZip());
@@ -494,9 +505,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
-		employee.start_date.setValue(contractData.getStartDate());
-		employee.seniority_date.setValue(contractData.getSeniorityDate());
-		employee.end_date.setValue(contractData.getEndDate());
+		employee.startDate.setValue(contractData.getStartDate());
+		employee.seniorityDate.setValue(contractData.getSeniorityDate());
+		employee.endDate.setValue(contractData.getEndDate());
 		
 		Integer agreementId = contractData.getAgreementId();
 		setSelectedValueLB(employee.agreement, agreementId+"/"+contractData.getAgreementColective());
@@ -529,7 +540,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
 		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
 			employee.showPartialTimeContract();
-			if(contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().size() == 0) {
+			if(contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
 				employee.createJourneyDurationWarning();
 			} else {
 				employee.createJourneyDurationInfo(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
@@ -540,9 +551,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.updateModality(contractTypeInt);
 		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
 		
-		employee.start_date.setValue(contractData.getStartDate());
-		employee.seniority_date.setValue(contractData.getSeniorityDate());
-		employee.end_date.setValue(contractData.getEndDate());
+		employee.startDate.setValue(contractData.getStartDate());
+		employee.seniorityDate.setValue(contractData.getSeniorityDate());
+		employee.endDate.setValue(contractData.getEndDate());
 		
 		Integer agreementId = contractData.getAgreementId();
 		setSelectedValueLB(employee.agreement, agreementId+"/"+contractData.getAgreementColective());
@@ -553,8 +564,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			}, f -> {});
 		}
 		
-		setSelectedValueLB(employee.quote_group, contractData.getQuoteGroup());
+		setSelectedValueLB(employee.quoteGroup, contractData.getQuoteGroup());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
+		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		
 		Double partialityCoef = contractData.getPartialityCoef();
 		if( (null == partialityCoef || partialityCoef == 0.00) && 
@@ -563,7 +575,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			partialityCoef = calculatePartialityCoef();
 			contractData.setPartialityCoef(partialityCoef);
 		}
-		employee.partiality_coef.setValue(contractData.getPartialityCoef());	
+		employee.partialityCoef.setValue(contractData.getPartialityCoef());	
 	}
 	
 	private Double calculatePartialityCoef() {
@@ -591,7 +603,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.level.addItem("-", "-1");
 		
 		contrataEmployeeObject.getAgreement(agreementId,  
-		(agreement) -> {
+		agreement -> {
 			for (Level levelRecord : agreement.getLevels()) {
 				employee.level.addItem(levelRecord.getDescription(), String.valueOf(levelRecord.getId()));
 				for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
@@ -601,7 +613,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			contrataEmployeeObject.setContractAgreementId(agreement.getId());
 			success.accept(agreement);
 		},
-		(throwable) -> {
+		throwable -> {
 			contrataEmployeeObject.setContractAgreementId(null);
 			contrataEmployeeObject.setContractAgreementLevelId(null);
 			employee.category.setEnabled(false);
@@ -624,10 +636,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	}
 	
 	private void showHideContractOtherData(Integer contractType) {
-		if(-1 == contractType)
-			getTabLayoutPanel().getTabWidget(1).setVisible(false);
-		else
-			getTabLayoutPanel().getTabWidget(1).setVisible(true);
+		getTabLayoutPanel().getTabWidget(1).setVisible(-1 != contractType);
 	}
 
 	public boolean checkIfSaveEmployeeIsPossible() {
@@ -641,11 +650,11 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	// ------------------------------------------------- Getters
 	
 	public Date getStartDate() {
-		return this.employee.start_date.getValue();
+		return this.employee.startDate.getValue();
 	}
 
 	public Date getEndDate() {
-		return this.employee.end_date.getValue();
+		return this.employee.endDate.getValue();
 	}
 
 	public String getContractType() {
@@ -653,7 +662,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	}
 
 	public String getQuoteGroup() {
-		return this.employee.quote_group.getSelectedValue();
+		return this.employee.quoteGroup.getSelectedValue();
 	}
 
 	public String getOccupation() {
@@ -661,7 +670,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	}
 
 	public Double getPartialityCoef() {
-		return this.employee.partiality_coef.getValue();
+		return this.employee.partialityCoef.getValue();
 	}
 	
 	// ------------------------------------------------- Abstract Methods

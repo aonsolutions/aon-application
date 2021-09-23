@@ -79,7 +79,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 	private Object getWorkgroups(AonApiData api) {
 		Domain domain = api.getDomain();
 		return WorkgroupJSON.toJSON(AON.getWorkgroupStream(domain.getName(), domain.getId(), api.getUser().getLogin(), 
-				f->WorkgroupFilter(api,f) ));
+				f->workgroupFilter(api,f) ));
 	}
 	
 	private JSONObject saveWorkgroup(AonApiData api) {
@@ -96,7 +96,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
-	private Filter WorkgroupFilter(AonApiData api, WorkgroupProperties f) {
+	private Filter workgroupFilter(AonApiData api, WorkgroupProperties f) {
 		Domain domain = api.getDomain();
 		String status  = api.getParams().optString("status");
 		Filter filter = f.getDomainProperty().eq(domain.getId());

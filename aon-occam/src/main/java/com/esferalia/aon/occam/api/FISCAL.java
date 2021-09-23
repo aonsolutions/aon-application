@@ -1396,11 +1396,11 @@ public class FISCAL {
 		}
 	}
 	
-	public static Mod190 duplicateNextYearMod190(String domainName, Integer domain, String userLogin, Integer id) {
+	public static Mod190 duplicateMod190(String domainName, Integer domain, String userLogin, Mod190 mod190) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,userLogin);
-			return getFiscal().duplicateNextYearMod190(ctx, id);
+			return getFiscal().duplicateMod190(ctx, mod190);
 		} finally {
 			if (ctx != null)
 				ctx.close();

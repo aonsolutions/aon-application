@@ -26,6 +26,10 @@
 			width: 100%
 		}
 		
+		.heightAll{
+			height: 100%;
+		}
+		
 		.mt10{
 			margin-top: 10px;
 		}
@@ -175,7 +179,9 @@
 							      		<g:Label>Nóminas</g:Label>
 							    	</g:customHeader>
 							    	<g:HTMLPanel styleName="{style.mt10}">
-							    		<a:EmployeeSalary ui:field="employeeSalary"/>
+							    		<g:SimpleLayoutPanel styleName="{style.widthAll} {style.heightAll}">
+							    			<a:EmployeeSalary ui:field="employeeSalary"/>
+							    		</g:SimpleLayoutPanel>
 							    	</g:HTMLPanel>
 							  	</g:tab>
 							  	<g:tab>

@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL
 import static com.esferalia.aon.jooq.tables.ProjectReservation.PROJECT_RESERVATION;
 import static com.esferalia.aon.jooq.tables.ProjectType.PROJECT_TYPE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -13,6 +14,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -30,10 +32,16 @@ import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ProjectDAO {
+	
+	private ProjectDAO() {
+
+	}
+	
 	private static final ProjectPropertiesDAO PROJECT_PROPERTIES = new ProjectPropertiesDAO();
 	private static final ProjectReservationPropertiesDAO PROJECT_RESERVATION_PROPERTIES = new ProjectReservationPropertiesDAO();
 	private static final ProjectCommercialPropertiesDAO PROJECT_COMMERCIAL_PROPERTIES = new ProjectCommercialPropertiesDAO();
@@ -133,6 +141,20 @@ public class ProjectDAO {
 		@Override public Property<String> getCreditCardTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CREDIT_CARD_TYPE);}
 	}
 
+	private static SelectConditionStep<Record> select(AONContext ctx, ProjectFilter filter) {
+		return ctx.getDslContext().select()
+			.from(PROJECT)
+			.join(DOMAIN).on(PROJECT.DOMAIN.eq(DOMAIN.ID))
+			.join(PROJECT_TYPE).on(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE.ID))
+			.join(REGISTRY).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+			.where(PROJECT_PROPERTIES.getConditions(filter));
+	}
+	
+	public static Stream<Project> getStream(AONContext ctx, ProjectFilter filter){
+		return select(ctx, filter).fetch().stream().map(new ProjectFiller());
+	}
+	
+	@Deprecated
 	public static Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter){
 		return ctx.getDslContext()
 				.select().from(PROJECT).where(PROJECT_PROPERTIES.getConditions(filter))
@@ -170,7 +192,7 @@ public class ProjectDAO {
 					PROJECT.COMMERCIAL, PROJECT.DATE, PROJECT.DOMAIN, PROJECT.NAME, PROJECT.PROJECT_TYPE,
 					PROJECT.REGISTRY, PROJECT.RESERVATION, PROJECT.TAS)
 				.values(project.isActive()?(byte)1:(byte)0, project.getAlias(), project.isCommercial()?(byte)1:(byte)0,
-						new Date(project.getDate().getTime()), project.getDomain(), project.getName(), project.getProjectTypeId(),
+						new Date(project.getDate().getTime()), project.getDomain().getId(), project.getName(), project.getProjectTypeId(),
 						project.getRegistry().getId(), project.isReservation()?(byte)1:(byte)0, project.isTas()?(byte)1:(byte)0)
 				.returning(PROJECT.ID).fetchOne().getId();
 	}
@@ -263,7 +285,9 @@ public class ProjectDAO {
 		public static Project build(Record r) {
 			return new Project()
 				.setId(r.getValue(PROJECT.ID))
-				.setDomain(r.getValue(PROJECT.DOMAIN))
+				.setDomain(checkField(r, DOMAIN.ID)
+					? DomainFiller.buildDomain(r)
+					: new Domain().setId(r.getValue(PROJECT.DOMAIN)))
 				.setName(r.getValue(PROJECT.NAME))
 				.setRegistry(checkField(r, REGISTRY.ID)
 					? RegistryFiller.build(r, REGISTRY)
@@ -281,7 +305,7 @@ public class ProjectDAO {
 
 	}
 	
-	private static class FullProjectCommercialFiller implements Function<Record, ProjectCommercial> {
+	private static class FullProjectCommercialFiller extends Filler implements Function<Record, ProjectCommercial> {
 		
 		@Override
 		public ProjectCommercial apply(Record r) {
@@ -290,7 +314,9 @@ public class ProjectDAO {
 			pc.setAlias(r.getValue(PROJECT.ALIAS));
 			pc.setCommercial(r.getValue(PROJECT.COMMERCIAL).equals(0));
 			pc.setDate(r.getValue(PROJECT.DATE));
-			pc.setDomain(r.getValue(PROJECT.DOMAIN));
+			pc.setDomain(checkField(r, DOMAIN.ID)
+				? DomainFiller.buildDomain(r)
+				: new Domain().setId(r.getValue(PROJECT.DOMAIN)));
 			pc.setId(r.getValue(PROJECT.ID));
 			pc.setName(r.getValue(PROJECT.NAME));
 			pc.setProjectTypeId(r.getValue(PROJECT.PROJECT_TYPE));

@@ -1047,8 +1047,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		}, f -> {});
 	}
 	
-	private void saveAFIChanges(Consumer<String> success, Consumer<Throwable> failure) {
-		impl.setEmployeeAFIChanges(contractId, afiChangesMap, new AsyncCallback<String>() {
+	private void saveAFIChanges(Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.setEmployeeAFIChanges(contractId, afiChangesMap, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -1056,7 +1056,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			}
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(Void result) {
 				success.accept(result);
 			}
 

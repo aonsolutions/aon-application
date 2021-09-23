@@ -622,6 +622,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			requestDataBuffer.append("&" + Parameter.CTRL_ANHO + "=" + ctrlYear);
 			requestDataBuffer.append("&" + Parameter.AUTORIZADO + "=" + autorizado);
 
+			requestDataBuffer.append("&" + Parameter.USER + "=" + Wnd.getCurrentUser());
+			requestDataBuffer.append("&" + Parameter.DOMAIN + "=" + Wnd.getCurrentDomainNameURL());
+
 			for (CCC ccc : cccs)
 				requestDataBuffer.append("&" + Parameter.CCC + "=" + ccc.getRegime() + ccc.getCode());
 

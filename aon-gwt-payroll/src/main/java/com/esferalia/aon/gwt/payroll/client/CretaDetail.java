@@ -879,7 +879,7 @@ public abstract class CretaDetail extends Composite {
 						if ( !exist(jsRespuesta, jsFiles)  && !isAON(jsRespuesta) )
 							jsFiles.add(jsRespuesta);
 					
-					for ( JsFile old: MainCreta.getOld(File.RESPUESTA, jsRespuesta) )
+					for ( JsRespuesta old: MainCreta.getOld(File.RESPUESTA, jsRespuesta) )
 						if ( !isSolicitudTrabajdoresYTramosRespuesta(old, jsFile))
 							if ( !exist(old, jsFiles) && !isAON(old))
 								jsFiles.add(old);
@@ -1130,6 +1130,9 @@ public abstract class CretaDetail extends Composite {
 		}catch ( Exception e ) {
 		}
 		
+		datas.put(CretaService.Parameter.USER.name(), Collections.singleton(Wnd.getCurrentUser()));
+		datas.put(CretaService.Parameter.DOMAIN.name(), Collections.singleton(Wnd.getCurrentDomainNameURL()));
+		
 		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
 				datas,
 				jsFileSelectionModel.getSelectedSet(),
@@ -1231,7 +1234,13 @@ public abstract class CretaDetail extends Composite {
 			trabajadoresSelectionModel.put(id, selectionModel = new MultiSelectionModel<String>());
 		selectionModel.setSelected(naf, selected);
 		
-		jsFileSelectionModel.setSelected(trabajadoresYTramosMap.get(id), selectionModel.getSelectedSet().size() > 0);
+		JsTrabajadoresYTramos jsTrabajadoresYTramos = trabajadoresYTramosMap.get(id);
+		if ( jsTrabajadoresYTramos != null ) {
+			jsFileSelectionModel.setSelected(jsTrabajadoresYTramos, selectionModel.getSelectedSet().size() > 0);
+		} else {
+			JsRespuesta jsRespuesta = respuestasMap.get(id);
+			jsFileSelectionModel.setSelected(jsRespuesta, selectionModel.getSelectedSet().size() > 0);
+		}
 	}
 	
 	private <T extends CretaService.JsFile> Collection<T> filterVisible(Collection<T> jsFiles) {

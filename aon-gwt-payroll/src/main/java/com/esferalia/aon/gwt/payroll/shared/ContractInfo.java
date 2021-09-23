@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class ContractInfo implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+	
 	//Contract Table
 	private Integer contractId;
 	private Integer workplaceId;
@@ -38,6 +40,8 @@ public class ContractInfo implements Serializable{
 	private String quoteGroup;
 	private Integer ocupationId;
 	private String ocupation;
+	private Integer rlceId;
+	private String rlce;
 	private Integer journeytypeId;
 	private Byte journeyType;
 	
@@ -59,8 +63,8 @@ public class ContractInfo implements Serializable{
 	// Comunic@ Fields
 	private String colectiveAgreement;
 	
-	private Integer md_ctzId;
-	private String md_ctz;
+	private Integer mdCtzId;
+	private String mdCtz;
 	
 	private Integer partialityCoefId;
 	private Double partialityCoef;
@@ -100,6 +104,8 @@ public class ContractInfo implements Serializable{
 		this.quoteGroup = null;
 		this.ocupationId = null;
 		this.ocupation = null;
+		this.rlceId = null;
+		this.rlce = null;
 		this.journeytypeId = null;
 		this.journeyType = null;
 		this.contractmodelId = null;
@@ -112,11 +118,11 @@ public class ContractInfo implements Serializable{
 		this.payrollDate = null;
 		
 		this.colectiveAgreement = null;
-		this.md_ctz = null;
+		this.mdCtz = null;
 		this.partialityCoef = null;
 		
 		this.salariesCount = null;
-		this.contractSalariesInfo = new ArrayList<ContractSalaryInfo>();
+		this.contractSalariesInfo = new ArrayList<>();
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -285,6 +291,17 @@ public class ContractInfo implements Serializable{
 		else
 			this.ocupation = ocupation;
 	}
+	
+	public String getRlce() {
+		return rlce;
+	}
+
+	public void setRlce(String rlce) {
+		if(null != rlce && rlce.contains("\""))
+			this.rlce = rlce.split("\"")[1];
+		else
+			this.rlce = rlce;
+	}
 
 	public Byte getJourneyType() {
 		return journeyType;
@@ -332,6 +349,14 @@ public class ContractInfo implements Serializable{
 
 	public void setOcupationId(Integer ocupationId) {
 		this.ocupationId = ocupationId;
+	}
+	
+	public Integer getRlceId() {
+		return rlceId;
+	}
+
+	public void setRlceId(Integer rlceId) {
+		this.rlceId = rlceId;
 	}
 
 	public Integer getJourneytypeId() {
@@ -407,19 +432,19 @@ public class ContractInfo implements Serializable{
 	}
 
 	public Integer getMdctzId() {
-		return md_ctzId;
+		return mdCtzId;
 	}
 
-	public void setMdctzId(Integer md_ctzId) {
-		this.md_ctzId = md_ctzId;
+	public void setMdctzId(Integer mdCtzId) {
+		this.mdCtzId = mdCtzId;
 	}
 	
 	public String getMdctz() {
-		return md_ctz;
+		return mdCtz;
 	}
 
-	public void setMdctz(String md_ctz) {
-		this.md_ctz = md_ctz;
+	public void setMdctz(String mdCtz) {
+		this.mdCtz = mdCtz;
 	}
 
 	public Double getPartialityCoef() {
@@ -535,7 +560,7 @@ public class ContractInfo implements Serializable{
 		result += "CCC Id : " + cccId + "\n";
 		result += "CCC Type : " + cccType + "\n";
 		
-		if(cccType == (byte) 7) result += "MdCTZ : " + md_ctz + "\n";
+		if(cccType == (byte) 7) result += "MdCTZ : " + mdCtz + "\n";
 		
 		result += "Workplace Id : " + workplaceId + "\n";
 		result += "ContractType : " + contractType + "\n";

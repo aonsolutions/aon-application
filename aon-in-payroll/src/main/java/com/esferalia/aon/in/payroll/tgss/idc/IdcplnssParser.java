@@ -106,6 +106,9 @@ public class IdcplnssParser {
 				Date endDate = simpleDateFormat.parse(matcher.group("end"));				
 				onEmployeePeriod(listener, enterpriseCCC, employeeNss, startDate, endDate);
 				
+				String group = matcher.group("group");
+				onEmployeeQuoteGroup(listener, group);
+				
 				matcher = tryy(reader, EMPLOYEE_PEC);
 				while ( matcher != null ) {
 					String code = matcher.group("code");
@@ -121,6 +124,11 @@ public class IdcplnssParser {
 					matcher = tryy(reader, EMPLOYEE_PEC);
 				}
 				
+				matcher = tryy(reader, WITHOUT_PEC);
+				if ( matcher != null )
+					onNoEmployeeQuotePEC(listener, employeeNss, enterpriseCCC, startDate, endDate);
+				
+				
 				matcher = ateempt(reader, EMPLOYEE_PERIOD);
 			}
 			
@@ -130,6 +138,9 @@ public class IdcplnssParser {
 		}
 	}
 
+	private static void onNoEmployeeQuotePEC(IdcListener listener, String ssNum, String ccc, Date start, Date end) {
+		listener.onNoEmployeeQuotePEC(ssNum, ccc, start, end);
+	}
 
 
 	private static void onEmployeeQuotePEC(IdcListener listener, String enterpriseCCC, String employeeeNss,
@@ -222,30 +233,40 @@ public class IdcplnssParser {
 		return null;
 				
 	}	
+	
+	//NOMBRE Y APELLIDOS: RAUL TREPIANA ZARATE	NÚMERO SEGURIDAD SOCIAL: 01 1005185924 DOC.IDENTIFICATIVO: 1 NÚMERO: 044679529M SEXO: VARON NACIMIENTO: 03/05/1975
 	private static final Pattern EMPLOYEE_NAME_NSS_NIF = 
 	Pattern.compile(
 			"^NOMBRE\\s*Y\\s*APELLIDOS\\s*:\\s*(?<name>.+)NÚMERO\\s*SEGURIDAD\\s*SOCIAL\\s*:\\s*(?<province>[0-9]{2})\\s*(?<nss>[0-9]+)\\s*DOC.IDENTIFICATIVO\\s*:\\s*([0-9])\\s*NÚMERO\\s*:\\s*(?<cif>.+)SEXO.*$"
 			, Pattern.CASE_INSENSITIVE);
 	
+	//RAZÓN SOCIAL: AON SOLUTIONS S.L.
 	private static final Pattern ENTERPRISE_NAME_CCC_CIF_REGIME = 
 	Pattern.compile(
 	"^RAZÓN\\s*SOCIAL\\s*:\\s*(?<name>.+)C\\.C\\.C\\.\\s*:\\s*(?<province>[0-9]{2})\\s*(?<ccc>[0-9]+)\\s*DNI/NIE/CIF\\s*:\\s*(?<cif>.+)RÉGIMEN\\s*:\\s*(?<regime>.*)$"
 	, Pattern.CASE_INSENSITIVE);
 	
+	//PERIODO DE LIQUIDACIÓN: DICIEMBRE 2020
 	private static final Pattern LIQUIDATION_PERIOD = 
 	Pattern.compile(
 	"^PERIODO\\s*DE\\s*LIQUIDACIÓN:\\s*(?<month>[A-Z]+\\s*[0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
 	
-		
+	//1   01-12-2020        31-12-2020	
 	private static final Pattern EMPLOYEE_PERIOD = 
 	Pattern.compile(
 	"^\\s*(?<index>[0-9]+)\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s+(?<group>[0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
 
+	//03-07-2020 31-07-2020   37 EXONE.ERE.F.MAY.COMP 60,00  01 CUOTA EMPRESARIAL 4608 EX.FM37CV<50.789R 0222 RDL 24/2020      H1B
 	private static final Pattern EMPLOYEE_PEC = 
 	Pattern.compile(
 	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<colective>[0-9]{4})(.*)\\s+(?<law>[0-9]{4}.*).*$"
 	, Pattern.CASE_INSENSITIVE);
-	//        03-07-2020 31-07-2020   37 EXONE.ERE.F.MAY.COMP 60,00  01 CUOTA EMPRESARIAL 4608 EX.FM37CV<50.789R 0222 RDL 24/2020      H1B
+	
+	//SIN PECULIARIDADES DE COTIZACION
+	private static final Pattern WITHOUT_PEC = 
+	Pattern.compile(
+	"^.*SIN\\s*PECULIARIDADES\\s*DE\\s*COTIZACION.*$"
+	, Pattern.CASE_INSENSITIVE);
 }

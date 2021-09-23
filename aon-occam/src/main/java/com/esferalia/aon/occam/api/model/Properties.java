@@ -52,7 +52,6 @@ public interface Properties {
 	}
 	
 	public interface ProjectProperties {
-		
 		Property<Integer> getIdProperty();
 		Property<Byte> getActiveProperty();
 		Property<String> getAliasProperty();
@@ -64,6 +63,16 @@ public interface Properties {
 		Property<Integer> getRegistryProperty();
 		Property<Byte> getReservationProperty();
 		Property<Byte> getTasProperty();
+	}
+	
+	public interface ProjectHolderProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProjectProperty();
+		Property<Timestamp> getStartDateProperty();
+		Property<Timestamp> getEndDateProperty();
+		Property<Integer> getWorkgroupProperty();
+		Property<Integer> getTaskHolderProperty();
 	}
 	
 	public interface AttachProperties {

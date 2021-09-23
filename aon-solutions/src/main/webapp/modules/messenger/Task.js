@@ -1,5 +1,5 @@
 import { TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES } from "./MessengerEnums";
-
+import * as LS from "../../services/localStorageService.js";
 export class Task {
   id;
   number;
@@ -10,7 +10,6 @@ export class Task {
   title;
   registry;
   workflow;
-  workflowTmp;
   description;
   status;
   source;
@@ -18,6 +17,12 @@ export class Task {
   gtask_id;
   files;
   start_date;
+  parent;
+  project;
+
+  domainTmp;
+  workflowTmp;
+
   constructor() {
       this.id          = undefined;
       this.status      = undefined;
@@ -28,8 +33,11 @@ export class Task {
       this.source      = TASK_SOURCE.QUERY;
       this.source_id   = undefined;
       this.start_date  = undefined;
+      this.parent      = undefined;
+      this.sender      = {};
       this.workgroup   = {};
       this.registry    = {};
+      this.project     = {};
       this.task_holder = {};
       this.workflow    = [];
       this.workflowTmp = {};
@@ -48,20 +56,26 @@ export class Task {
       this.number      = task.number || undefined;
       this.workgroup   = task.workgroup || {};
       this.registry    = task.registry || {};
+      this.project     = task.project || {};
+      this.sender      = task.sender || {};
       this.task_holder = task.task_holder || {};
       this.title       = task.title || "";
       this.description = task.description || "";
-      this.gtask_id    = task.gtask_id || "";
+      this.gtask_id    = task.gtask_id || undefined;
       this.source      = task.source || TASK_SOURCE.QUERY;
       this.source_id   = task.source_id || undefined;
       this.start_date  = task.start_date || undefined;
+      this.parent      = task.parent || undefined;
+      this.domain      = task.domain || LS.getDomainId(); 
+      this.domainTmp   = this.domain;
       this.workflow    = task.workflow || [];
       this.workflowTmp = {
-        domain:this.domain,
         comment:"",
+        domain:this.domain,
         task_holder: this.sender,
+        task: this.id,
         type: WORKFLOW_TYPES.COMMENT,
-        task: this.id
+        email: !this.sender.id && this.gtask_id ? this.gtask_id : undefined
       }
     }   
   }
@@ -76,8 +90,10 @@ export class Task {
       if(task.status)                             this.status      = task.status;
       if(task.source_id)                          this.source_id   = task.source_id;
       if(task.registry && task.registry.id)       this.registry    = task.registry;
+      if(task.project && task.project.id)         this.project     = task.project;
       if(task.description)                        this.description = task.description;
       if(task.start_date)                         this.start_date  = task.start_date;
+      if(task.parent)                             this.parent      = task.parent;
       this.setFiles([]);
     }
   }
@@ -127,12 +143,29 @@ export class Task {
     this.domain = domain;
   }
 
+  getDomainTmp() {
+    return this.domainTmp;
+  }
+
+  setDomainTmp(domainTmp) {
+    this.domainTmp = domainTmp;
+  }
+
   getSender() {
     return this.sender;
   }
 
   setSender(sender) {
     this.sender = sender;
+  }
+
+  getProject() {
+    return this.project;
+  }
+
+  setProject(project) {
+    this.project = project;
+    this.changeProject();
   }
 
   getSource() {
@@ -240,6 +273,29 @@ export class Task {
 
   setFiles(files) {
     this.files = files;
+  }
+
+  /**
+   * CHANGE VALUES WHEN PROJECT CHANGE 
+   */
+  changeProject(){
+    let domain = this.project.domain && this.project.domain.id ? this.project.domain.id : this.domainTmp;
+    this.setDomain(domain);
+
+    let workgroup = this.project.workgroup && this.project.workgroup.id ?  this.project.workgroup : {};
+    this.setWorkgroup(workgroup);
+
+    let task_holder = this.project.task_holder && this.project.task_holder.id ? this.project.task_holder : {};
+    this.setTaskHolder(task_holder);
+
+    this.workflowTmp = {
+      comment:"",
+      domain:this.domain,
+      task_holder: this.sender,
+      task: this.id,
+      type: WORKFLOW_TYPES.COMMENT,
+      email: !this.sender && this.gtask_id ? this.gtask_id : undefined
+    }
   }
 }
 

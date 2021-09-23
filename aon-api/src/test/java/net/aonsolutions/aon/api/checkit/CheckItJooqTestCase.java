@@ -5,8 +5,6 @@ import static org.junit.Assert.fail;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import net.aonsolutions.aon.api.checkit.CheckItAPI;
-
 public class CheckItJooqTestCase {
 
 	private static final Integer AON_ID = 11413;
@@ -16,6 +14,7 @@ public class CheckItJooqTestCase {
 	@Test
 	public void InsertTransactionsTest() {
 //		ES6830581804332720027870 -> de muestra en la BD
+//		ES0614650100936000306237 -> El de Rayson
 		try {
 			int insertedRows = CheckItAPI.insertTransactions(
 					"b72384936-ayudat.aonsolutions.net"

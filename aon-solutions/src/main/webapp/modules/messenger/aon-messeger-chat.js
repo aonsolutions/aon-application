@@ -8,6 +8,7 @@ import {
   saveTaskAttach,
   deleteTask
 } from "../../services/taskService.js";
+
 import { Task } from "./Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
@@ -66,16 +67,21 @@ export class AonMessengerChat extends AonElement {
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.deleteToolbar();
+    this.setTask();
+  }
+
+  setTask(){
     this.task = new Task();
-
-    if(this.data.id) this.setData(this.data); 
-
-    const sender = this.applicationParentEl.TASK_HOLDER;
-    if(sender){
-      this.task.setSender(sender);
-      this.task.setDomain(sender.domain.id);
+    let data = {...this.data};
+    if(!data.id) {
+      const sender = this.applicationParentEl.TASK_HOLDER;
+      if(sender && sender.id)
+        data.sender = sender;
+      else if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email) 
+        data.gtask_id = this.applicationParentEl.cauData.auth.email;
     }
-    this.task.createTask(this.data);
+    this.setData(data); 
+    this.task.createTask(this.getData());
   }
 
   build() {

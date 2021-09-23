@@ -1227,17 +1227,36 @@ public class Mod190DAO {
 		mod190.getDetails().addAll(map.values());
 	}
 	
-	public static Mod190 duplicateNextYear(AONContext ctx, int id) {
-		Mod190 mod190 = getById(ctx, id);
-		mod190.setYear( mod190.getYear() + 1 );
+//	public static Mod190 duplicateNextYear(AONContext ctx, int id) {
+//		Mod190 mod190 = getById(ctx, id);
+//		mod190.setYear( mod190.getYear() + 1 );
+//		mod190.setId(null);
+//		mod190 = insert(ctx, mod190, false);
+//		Mod190 original = getById(ctx, id);
+//		for (Mod190Detail detail : original.getDetails()) {
+//			detail.setId(null);
+//			detail.setMod190(mod190.getId());
+//			saveDetail(ctx,mod190,detail);
+//		}
+//		return getById(ctx, mod190 .getId());
+//	}
+	
+	public static Mod190 duplicate(AONContext ctx, Mod190 mod190) {
+		
+		int id = mod190.getId();
 		mod190.setId(null);
 		mod190 = insert(ctx, mod190, false);
-		Mod190 original = getById(ctx, id);
-		for (Mod190Detail detail : original.getDetails()) {
-			detail.setId(null);
-			detail.setMod190(mod190.getId());
-			saveDetail(ctx,mod190,detail);
+		
+		if (!mod190.isComplementary()) {
+			Mod190 original = getById(ctx, id);
+			for (Mod190Detail detail : original.getDetails()) {
+				detail.setId(null);
+				detail.setMod190(mod190.getId());
+				saveDetail(ctx,mod190,detail);
+			}
 		}
 		return getById(ctx, mod190 .getId());
 	}
+	
+	
 }

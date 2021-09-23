@@ -1042,6 +1042,29 @@ CREATE TABLE `project` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Proyectos';
 
 #
+# Structure for the `project_holder` table : 
+#
+
+CREATE TABLE `project_holder` (
+	`id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
+	`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+	`project` int(4) NOT NULL COMMENT 'Identificador del Proyecto',
+	`start_date` datetime DEFAULT NULL COMMENT 'Fecha Inicio',
+	`end_date` datetime DEFAULT NULL COMMENT 'Fecha Fin',
+	`workgroup` int(4) DEFAULT NULL COMMENT 'Identificador del Grupo de Trabajo',
+	`task_holder` int(4) DEFAULT NULL COMMENT 'Identificador del Operario',
+	PRIMARY KEY (`id`),
+	KEY `IDX_PROJECT_HOLDER_DOMAIN` (`domain`),
+	KEY `IDX_PROJECT_HOLDER_PROJECT` (`project`),
+	KEY `IDX_PROJECT_HOLDER_WORKGROUP` (`workgroup`),
+	KEY `IDX_PROJECT_HOLDER_TASK_HOLDER` (`task_holder`),
+	CONSTRAINT `FK_PROJECT_HOLDER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+	CONSTRAINT `FK_PROJECT_HOLDER_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`),
+	CONSTRAINT `FK_PROJECT_HOLDER_WORKGROUP` FOREIGN KEY (`workgroup`) REFERENCES `workgroup` (`id`),
+	CONSTRAINT `FK_PROJECT_HOLDER_TASK_HOLDER` FOREIGN KEY (`task_holder`) REFERENCES `task_holder` (`registry`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Project y Project Holder';
+
+#
 # Structure for the `commission_type` table : 
 #
 
@@ -8376,12 +8399,15 @@ CREATE TABLE `task_workflow` (
   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
   `task` int(4) NOT NULL COMMENT 'Identificador de la tarea',
   `task_holder` int(4) DEFAULT NULL COMMENT 'Identificador del Operario',
+  `email` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Email del Emisor',
   `type` tinyint(2) DEFAULT NULL COMMENT 'Tipo del flujo de Tareas',
   `comment` text COLLATE latin1_spanish_ci COMMENT 'Comentario de la Tarea',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
-  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de notificacion',
+  `notification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de notificacion',
+  `notification_date` datetime DEFAULT NULL COMMENT 'Fecha de notificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_TASK_WORKFLOW_DOMAIN` (`domain`),
   KEY `IDX_TASK_WORKFLOW_TASK` (`task`),

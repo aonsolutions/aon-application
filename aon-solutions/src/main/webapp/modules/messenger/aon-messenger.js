@@ -72,8 +72,9 @@ export class AonMessenger extends AonElement {
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
 		} else if(this.value){
-			const task = await getTaskOne({id:this.value});
-			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task);
+			getTaskOne({id:this.value})
+			.then(task=>this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task))
+			.catch(e=>this.showError(e));
 		} else {
 			if(!this._filter.sender){
 				this._filter.task_holder = this.TASK_HOLDER.id;
@@ -210,10 +211,11 @@ export class AonMessenger extends AonElement {
 
     tagNavBar() {
 		let application = this.applicationEl;
+		const fnTag = () =>this.dialogTag(); 
 		application.addSidenavOptions2({
 			id: 'Tag',
 			name: MSG.TAG
-		}, [],() =>this.dialogTag());
+		}, [], fnTag);
 		this.loadTag();
 	}
 
@@ -225,22 +227,16 @@ export class AonMessenger extends AonElement {
 		  this._tags.forEach(item => {
 			let option = {
 				name: item.description,
-				icon: 'label',
-				fn: () => {},
-				actions:[
-					{
-						id: 'Delete',
-						icon: MATERIAL_ICONS.DELETE,
-						action: () => this.deleteTag(item)
-					},
-					{
-						id: 'Edit',
-						icon: MATERIAL_ICONS.EDIT,
-						action: () => this.dialogTag(item)
-					}
-				]
+				icon: MATERIAL_ICONS.LABEL,
+				actions:[]
 			};
 
+			option.actions.push(
+				{ id: 'Delete', icon: MATERIAL_ICONS.DELETE, action: () => this.deleteTag(item) },
+				{ id: 'Edit', icon: MATERIAL_ICONS.EDIT, action: () => this.dialogTag(item) }
+			);
+		
+	
 			application.addSidenavOptionsListValue({
 				id: 'Tag',
 				name: MSG.TAG.toUpperCase()
@@ -291,7 +287,7 @@ export class AonMessenger extends AonElement {
 	updateCount(){
 		let application = this.applicationEl;
 		let filterCount= {};
-		if(this.cau && this.cauData)
+		if((!this.TASK_HOLDER.id || this.cau) && this.cauData)
 			filterCount.email = this.cauData.auth.email;
 		else 
 			filterCount.task_holder = this.TASK_HOLDER.id;
@@ -304,10 +300,10 @@ export class AonMessenger extends AonElement {
 		});
 
 		let filter = {};
-		if(this.cau && this.cauData){
+		if((!this.TASK_HOLDER.id || this.cau) && this.cauData)
 			filter.email = this.cauData.auth.email;
-		}
-		if(this._filter.source) filter.source = this._filter.source;
+		if(this._filter.source) 
+			filter.source = this._filter.source;
 
 		getTaskStatusCount(filter).then(resp=>{
 			let openCount = resp[TASK_STATUS.PENDING];

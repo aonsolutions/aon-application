@@ -445,9 +445,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void setEmployeeAFIChanges(String domain, Integer contractId, AFIChanges afiChangesMap, AsyncCallback<String> callback) {
+	public void setEmployeeAFIChanges(String domain, Integer contractId, AFIChanges afiChangesMap, AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.setEmployeeAFIChanges(domain, contractId, afiChangesMap, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.setEmployeeAFIChanges(domain, contractId, afiChangesMap, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
