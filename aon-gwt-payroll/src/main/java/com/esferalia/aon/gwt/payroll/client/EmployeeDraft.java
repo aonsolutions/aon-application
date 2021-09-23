@@ -448,7 +448,6 @@ public abstract class EmployeeDraft extends Composite {
 	
 	private EmployeeDraftObject employeeDraftObject;
 	
-	private AonToolbar toolbar;
 	private AonToolbarButton undoAll;
 	private AonToolbarButton undo;
 	private AonToolbarButton redo;
@@ -456,7 +455,6 @@ public abstract class EmployeeDraft extends Composite {
 	private AonToolbarButton closePDF;
 	private DateListBox idcDateListBox;
 	private MonthListBox idcMonthListBox;
-	private int zoom;
 	
 	private NewContextMenu contextMenu;
 	
@@ -465,9 +463,7 @@ public abstract class EmployeeDraft extends Composite {
 	// ------------------------------------------------- Constructor
 
 	protected EmployeeDraft() {
-		this.zoom = Constants.DEFAULT_ZOOM;
-		
-		toolbar = getToolbarPanel();
+
 		employee = new EmployeeImplementation();
 		
 		initWidget(uiBinder.createAndBindUi(this));
@@ -835,9 +831,6 @@ public abstract class EmployeeDraft extends Composite {
 		idcDateListBox.addChangeHandler(e -> showIdc(idcDateListBox.getSelectedDate()));
 		toolbar.add(idcDateListBox);
 
-		downloadPDF = new AonToolbarButton( AON.MSG.download(), AON.CSS.aonIconPdf() );
-		downloadPDF.addClickHandler(e -> onDownloadPDF());
-		toolbar.add(downloadPDF);
 	}
 
 	private void onSaveContract() {
@@ -955,11 +948,6 @@ public abstract class EmployeeDraft extends Composite {
 
 	private void onClosePDF() {
 		showEmployee();
-	}
-	
-	private void onDownloadPDF() {
-		String fileName = employeeDraftObject.getEmployeeFullName() + " IDC.pdf";
-		pdfViewer.download(fileName);
 	}
 	
 	// ------------------------------------------------- Toolbar panel auxiliar methods
