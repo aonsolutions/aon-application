@@ -22,6 +22,8 @@ export class Task {
 
   domainTmp;
   workflowTmp;
+  senderTmp;
+  auth;
 
   constructor() {
       this.id          = undefined;
@@ -34,6 +36,7 @@ export class Task {
       this.source_id   = undefined;
       this.start_date  = undefined;
       this.parent      = undefined;
+      this.auth        = undefined;
       this.sender      = {};
       this.workgroup   = {};
       this.registry    = {};
@@ -58,14 +61,16 @@ export class Task {
       this.registry    = task.registry || {};
       this.project     = task.project || {};
       this.sender      = task.sender || {};
+      this.senderTmp   = this.sender || {};
       this.task_holder = task.task_holder || {};
       this.title       = task.title || "";
       this.description = task.description || "";
-      this.gtask_id    = task.gtask_id || undefined;
+      this.auth        = task.auth || {};
       this.source      = task.source || TASK_SOURCE.QUERY;
       this.source_id   = task.source_id || undefined;
       this.start_date  = task.start_date || undefined;
       this.parent      = task.parent || undefined;
+      this.gtask_id    = !this.id && this.auth.email ? this.auth.email : undefined;
       this.domain      = task.domain || LS.getDomainId(); 
       this.domainTmp   = this.domain;
       this.workflow    = task.workflow || [];
@@ -75,7 +80,7 @@ export class Task {
         task_holder: this.sender,
         task: this.id,
         type: WORKFLOW_TYPES.COMMENT,
-        email: !this.sender.id && this.gtask_id ? this.gtask_id : undefined
+        email: this.auth.email ? this.auth.email : undefined
       }
     }   
   }
@@ -107,6 +112,7 @@ export class Task {
       this.description = "";
       this.source_id   = undefined;
       this.workflow    = [];
+      this.setProject({});
       this.setFiles([]);
     }
   }
@@ -275,18 +281,36 @@ export class Task {
     this.files = files;
   }
 
+  getAuth() {
+    return this.auth;
+  }
+
+  setAuth(auth) {
+    this.auth = auth;
+  }
+
+  isExternal(){
+    return this.project && this.project.id ? true : false;
+  }
+
   /**
    * CHANGE VALUES WHEN PROJECT CHANGE 
    */
   changeProject(){
-    let domain = this.project.domain && this.project.domain.id ? this.project.domain.id : this.domainTmp;
+    const domain = this.project.domain && this.project.domain.id ? this.project.domain.id : this.domainTmp;
     this.setDomain(domain);
 
-    let workgroup = this.project.workgroup && this.project.workgroup.id ?  this.project.workgroup : {};
+    const workgroup = this.project.workgroup && this.project.workgroup.id ?  this.project.workgroup : {};
     this.setWorkgroup(workgroup);
 
-    let task_holder = this.project.task_holder && this.project.task_holder.id ? this.project.task_holder : {};
+    const task_holder = this.project.task_holder && this.project.task_holder.id ? this.project.task_holder : {};
     this.setTaskHolder(task_holder);
+
+    const registry = this.project.registry && this.project.registry.id ? this.project.registry : {};
+    this.setRegistry(registry);
+    
+    const sender = !this.project.id  ? this.senderTmp  : {};
+    this.setSender(sender);
 
     this.workflowTmp = {
       comment:"",
@@ -294,7 +318,7 @@ export class Task {
       task_holder: this.sender,
       task: this.id,
       type: WORKFLOW_TYPES.COMMENT,
-      email: !this.sender && this.gtask_id ? this.gtask_id : undefined
+      email: this.auth.email ? this.auth.email : undefined
     }
   }
 }

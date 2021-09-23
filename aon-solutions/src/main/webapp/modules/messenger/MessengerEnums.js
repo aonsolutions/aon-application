@@ -77,7 +77,7 @@ export const MESSENGER_IDS = {
     GTASK_ID_TASK: "GTaskIdTask",
     TITLE_TASK: "titleTask",
     SOURCE_TASK: "sourceTask",
-    INTERNAL_TASK: "internalTask",
+    EXTERNAL_TASK: "externalTask",
     BTN_SEND_MESSAGE: "btnSendMessage",
     DIV_TASK_TAGS:"divTaskTags"
 }

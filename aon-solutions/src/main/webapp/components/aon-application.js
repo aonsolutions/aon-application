@@ -647,6 +647,16 @@ export class AonApplication extends AonElement {
     this.addSidenavOptionsList(data, options);
   }
 
+  removeBackgroundSidenav(id){
+    const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    const ul =  this.getElement(sidenavId + id + "List");
+    ul.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
+      if (el.id !== sidenavId)
+        el.style.backgroundColor = "transparent";
+    });
+  
+  }
+
   /**
    * 
    * @param {String} id  

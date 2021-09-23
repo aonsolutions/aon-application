@@ -72,6 +72,9 @@ public class TaskServlet extends AonApiHttpServlet{
 				case "/":
 					response(req, resp,  getTasks(api));
 					break;
+				case "/office":
+					response(req, resp,  getTasksOffice(api));
+					break;
 				case "/notice":
 					response(req, resp, new JSONObject());
 					break;
@@ -85,7 +88,7 @@ public class TaskServlet extends AonApiHttpServlet{
 					response(req, resp,  getTaskTags(api));
 					break;
 				case "/attach":
-					response(req, resp,  getTasksAttach(api));
+					response(req, resp,  getTaskAttach(api));
 					break;
 				case "/count":
 					response(req, resp,  getTaskCount(api));
@@ -155,7 +158,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		}
 	}
 	
-	private Object getTasks(AonApiData api) {
+	private JSONArray getTasks(AonApiData api) {
 		Integer page = api.getParams().optInt(IJsonNames.PAGE);
 		Integer perPage = api.getParams().optInt(IJsonNames.PER_PAGE);
 		return TaskJSON.toJSON(
@@ -163,12 +166,12 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private Filter taskFilter(AonApiData api, TaskProperties f) {
-		Integer workgroup = api.getParams().optInt("workgroup");
-		Integer taskHolder = api.getParams().optInt("task_holder");
-		Integer sender = api.getParams().optInt("sender");
-		Integer registry = api.getParams().optInt("registry");
+		Integer workgroup = api.getParams().optInt(IJsonNames.WORKGROUP);
+		Integer taskHolder = api.getParams().optInt(IJsonNames.TASK_HOLDER);
+		Integer sender = api.getParams().optInt(IJsonNames.SENDER);
+		Integer registry = api.getParams().optInt(IJsonNames.REGISTRY);
 		String status = api.getParams().optString("status");
-		String source = api.getParams().optString("source");
+		String source = api.getParams().optString(IJsonNames.SOURCE);
 		String search = api.getParams().optString("search");
 		String email = api.getParams().optString(IJsonNames.EMAIL);
 
@@ -216,19 +219,18 @@ public class TaskServlet extends AonApiHttpServlet{
 			Date startDate = AonDateUtils.parse(api.getParams().optString("startDate"), "yyyy-MM-dd");
 			filter = filter.and(f.getStartDateProperty().eq(AonDateUtils.toTimestamp(startDate)));
 		}
-			
 		
 		return filter;
 	}
 	
-	private Object getTask(AonApiData api) {
+	private JSONObject getTask(AonApiData api) {
 		Integer taskId = api.getParams().optInt("id");
 		Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(taskId) );
 		if(task.getId()==null) throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
 		return TaskJSON.toJSON(task);
 	}
 	
-	private Object saveTask(AonApiData api) {
+	private JSONObject saveTask(AonApiData api) {
 		Task task = TaskJSON.fromJSON(api.getData());
 		boolean edit = task.getId() != null;
 		setCauData(api, task);
@@ -248,15 +250,21 @@ public class TaskServlet extends AonApiHttpServlet{
 		return TaskJSON.toJSON(task);
 	}
 	
-	private Object getTaskWorkflow(AonApiData api) {
-		Integer taskId = api.getParams().optInt("taskId");
+	private JSONArray getTaskWorkflow(AonApiData api) {
+		Integer task = api.getParams().optInt(IJsonNames.TASK);
+		Domain domain = api.getDomain();
+		domain.setId(api.getParams().optInt(IJsonNames.DOMAIN));
+		AON_SOLUTIONS.getTaskWorkflowStream(domain, new User(), f->f.getTaskProperty().eq(task))
+		.forEach(t->{
+			System.out.println(t.getEmail());	
+		});
 		return TaskWorkflowJSON.toJSON(
-				AON_SOLUTIONS.getTaskWorkflowStream(api.getDomain(), api.getUser(), 
-				f->f.getTaskProperty().eq(taskId)) 
+				AON_SOLUTIONS.getTaskWorkflowStream(domain, new User(), 
+				f->f.getTaskProperty().eq(task)) 
 		);
 	}
 	
-	private Object getTaskTags(AonApiData api) {
+	private JSONArray getTaskTags(AonApiData api) {
 		String type = api.getParams().optString("type");
 		Domain domain = api.getDomain();
 		return TagJSON.toJSON( AON.getTagList(
@@ -289,14 +297,14 @@ public class TaskServlet extends AonApiHttpServlet{
 		return TagJSON.toJSON(tag);
 	}
 	
-	private Object getTasksAttach(AonApiData api) {
-		Integer taskId = api.getParams().optInt("taskId");
-		return TaskAttachJSON.toJSON( AON_SOLUTIONS.getTaskAttachList(api.getDomain(), api.getUser(), f-> f.getTaskProperty().eq(taskId)));
+	private JSONArray getTaskAttach(AonApiData api) {
+		Integer task = api.getParams().optInt(IJsonNames.TASK);
+		return TaskAttachJSON.toJSON( AON_SOLUTIONS.getTaskAttachList(api.getDomain(), api.getUser(), f-> f.getTaskProperty().eq(task)));
 	}
 	
 	private JSONObject saveTaskAttach(AonApiData api) {
 		Domain domain = api.getDomain();
-		Integer taskId = api.getData().optInt("taskId");
+		Integer task = api.getData().optInt(IJsonNames.TASK);
 		if(api.getData().opt("file")!= null) { 
 			
 			JSONObject file  = api.getData().optJSONObject("file");
@@ -305,7 +313,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			byte[] fileData = Base64.getDecoder().decode(base64);
 			TaskAttach taskAttach = new TaskAttach()
 			.setDomain(domain.getId())
-			.setTask(taskId)
+			.setTask(task)
 			.setData(fileData)
 			.setMimetype(MimeType.get(contentType));
 			
@@ -329,7 +337,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 		if(taskHolder==null) {
 			taskHolder = 0;
-			email = Optional.of(api.getParams().optString("email"));
+			email = Optional.of(api.getParams().optString(IJsonNames.EMAIL));
 		}
 	
 		AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(),  
@@ -363,10 +371,10 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private Filter taskFilterCount(AonApiData api, TaskProperties f) {
 		String source = api.getParams().optString("source");
-		Integer workgroup = api.getParams().optInt("workgroup");
-		Integer taskHolder = api.getParams().optInt("task_holder");
-		Integer sender = api.getParams().optInt("sender");
-
+		Integer workgroup = api.getParams().optInt(IJsonNames.WORKGROUP);
+		Integer taskHolder = api.getParams().optInt(IJsonNames.TASK_HOLDER);
+		Integer sender = api.getParams().optInt(IJsonNames.SENDER);
+		
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 
 		if(workgroup != null && workgroup!= 0) 
@@ -391,8 +399,8 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject deleteTask(AonApiData api) {
-		Integer taskId = api.getData().optInt("taskId");
-		AON_SOLUTIONS.deleteTask(api.getDomain(), api.getUser(), taskId);
+		Integer task = api.getData().optInt(IJsonNames.TASK);
+		AON_SOLUTIONS.deleteTask(api.getDomain(), api.getUser(), task);
 		return new JSONObject();
 	}
 	
@@ -674,5 +682,55 @@ public class TaskServlet extends AonApiHttpServlet{
 	    	notification.setAuths(auths);
 	    	notification.send();
 		}
+	}
+	
+	private JSONArray getTasksOffice(AonApiData api) {
+		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		JSONArray arr = new JSONArray();
+		String email = api.getParams().optString(IJsonNames.EMAIL);
+		Integer page = api.getParams().optInt(IJsonNames.PAGE);
+		Integer perPage = api.getParams().optInt(IJsonNames.PER_PAGE);
+		
+		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
+			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
+			
+			if(email.isEmpty()) // LAS DE LA EMPRESA
+				AON_SOLUTIONS.getTaskStream(domain, new User(), f -> taskOfficeFilter(api, f, customer, domain), page, perPage
+						).forEach(t -> arr.put(TaskJSON.toJSON(t)));
+			else // SOLO LAS TUYAS
+				AON_SOLUTIONS.getTaskStream(domain, new User(), f -> taskOfficeFilter(api, f, customer, domain).and(f.getGtaskIdProperty().eq(email)),
+						page, perPage
+						).forEach(t -> arr.put(TaskJSON.toJSON(t)));
+				
+		});
+		return arr;
+	}
+	
+	private Filter taskOfficeFilter(AonApiData api, TaskProperties f, Customer customer, Domain domain) {
+		String search = api.getParams().optString("search");
+		String status = api.getParams().optString("status");
+		
+		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq(customer.getId()));
+		
+		if("pending".equalsIgnoreCase(status)) {
+			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
+		} else 
+			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
+		
+		if(!search.isEmpty()) {
+			Filter filter1 = filter.and(f.getDescriptionProperty().like("%" + search + "%"));
+			Integer numberSearch = 0;
+			try { 
+				numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", ""));} 
+			catch(NumberFormatException e){
+				e.printStackTrace();
+			}
+			if(numberSearch!=0)
+				filter1 = filter1.or(f.getNumberProperty().like(numberSearch));
+			
+			filter = filter.and(filter1);
+		}
+		
+		return filter;
 	}
 }

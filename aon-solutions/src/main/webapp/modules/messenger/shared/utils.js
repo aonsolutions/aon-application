@@ -211,7 +211,7 @@ const checkFilesAndSend = async (textArea)=>{
             const fileId = el.dataset.id;
             const file = files.find(({id})=> id == fileId);
             if(file){
-                const taskAttach = await aonMessengerChat.uploadFile({ file, taskId });
+                const taskAttach = await aonMessengerChat.uploadFile({ file, task:taskId });
                 if(taskAttach){
                     const json = {
                         domain_name: domainName(),
@@ -363,13 +363,12 @@ export const buildForm = (div, aonMessengerChat) => {
     if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
     //-----------------END TYPE REQUEST
     if(isClient){
-        const btnInternal = createAonSwitch();
-        rowsDiv.appendChild(btnInternal);
-        if(task.id) btnInternal.disabled =  true;
-        btnInternal.checked = task.getDescriptionJson().external ? true : false;
-        btnInternal.addEventListener(EVENT.CHANGE, () => {
+        const btnExternal = createAonSwitch();
+        rowsDiv.appendChild(btnExternal);
+        if(task.id) btnExternal.disabled =  true;
+        btnExternal.checked = task.isExternal();
+        btnExternal.addEventListener(EVENT.CHANGE, () => {
             changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess);
-            task.setDescriptionJson({external:btnInternal.isChecked()});
         });
     }
  
@@ -387,7 +386,7 @@ export const buildForm = (div, aonMessengerChat) => {
  */
  const changeRequestType = (aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess) =>{
     task.cleanTask();
-    const btnInternal = document.getElementById(MESSENGER_IDS.INTERNAL_TASK);
+    const btnExternal = document.getElementById(MESSENGER_IDS.EXTERNAL_TASK);
     const detail = requestTypeSelect.getDetail();
     if(detail){
         //------------------HTML CLEAN UP
@@ -401,9 +400,9 @@ export const buildForm = (div, aonMessengerChat) => {
             task.setSource(detail.value);
             task.setTitle(detail.name);
             if(detail.value === TASK_SOURCE.REQUEST){
-                formRequest(columnsDivTwo, aonMessengerChat, btnInternal ? btnInternal.isChecked() : false);
+                formRequest(columnsDivTwo, aonMessengerChat, btnExternal ? btnExternal.isChecked() : false);
             } else {
-                formQuery(columnsDivTwo, aonMessengerChat, btnInternal ? btnInternal.isChecked() : false);
+                formQuery(columnsDivTwo, aonMessengerChat, btnExternal ? btnExternal.isChecked() : false);
             }
         }
     }
@@ -529,12 +528,11 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
             rowsDivThree.style.width = "100%";
             columnsDiv.appendChild(rowsDivThree);
         }
-        if(forManager || isClient){
+        if(forManager && isClient){
             // ------------------PROJECT
             const projectSelect = createProject();
             projectSelect.default = true;
             projectSelect.style.width = "100%";
-            if(!isClient) projectSelect.style.marginLeft = "5px";
             rowsDivThree.appendChild(projectSelect);
             fillProject(task);
         } else {
@@ -564,7 +562,7 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
  * 
  * @param {HTMLElement} columnsDiv columns div append html
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
- * @param {Boolean} internal btn by gestor(internal)
+ * @param {Boolean} external btn by gestor(external)
  */
 const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
     const task = aonMessengerChat.task;

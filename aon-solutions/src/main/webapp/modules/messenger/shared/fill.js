@@ -194,26 +194,28 @@ export const fillChat = (workflows=[], aonMessengerChat)=>{
             let noMessage = createNoMessage();
             noMessage.appendTo(chat);
         } else {
+            const task = aonMessengerChat.task;
             const meId = aonMessengerChat.getApplicationParent().TASK_HOLDER.id;
-    
+
             workflows.forEach(workflow => {
-                const {id, comment, type, creation_date, modification_date, task_holder:{name, alias, id:taskHolderId}} = workflow;
-                const me = taskHolderId == meId; // if taskHolder id is me
+                const {id, comment, type, creation_date,notification_user, notification_date, email, task_holder:{name, alias, id:taskHolderId}} = workflow;
+                const me = (taskHolderId == meId) || (email ===task.auth.email); // if taskHolder id is me
                 let message = {
                     id,
                     type,
                     comment,
                     direction: me ? MESSENGER_DIRECTION.RIGHT : MESSENGER_DIRECTION.LEFT,
                     date: creation_date,
-                    modification_date,
+                    notification_date,
+                    notification_user
                 }
 
-                if(!me) message.name = alias || name;
+                if(!me) message.name = alias || name || email;
 
                 if (type == WORKFLOW_TYPES.COMMENT) {
                     createChatMessage(message, chat);
                 } else{
-                    message.name = name;
+                    message.name = name|| email;
                     const actionJson = chooseIconMessage(message);
                     const action = createAction(actionJson, actionJson.comment);
                     action.appendTo(chat);

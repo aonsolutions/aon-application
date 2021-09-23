@@ -75,11 +75,10 @@ export class AonMessengerChat extends AonElement {
     let data = {...this.data};
     if(!data.id) {
       const sender = this.applicationParentEl.TASK_HOLDER;
-      if(sender && sender.id)
-        data.sender = sender;
-      else if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email) 
-        data.gtask_id = this.applicationParentEl.cauData.auth.email;
+      if(sender && sender.id) data.sender = sender;
     }
+    if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email) 
+      data.auth = this.applicationParentEl.cauData.auth;
     this.setData(data); 
     this.task.createTask(this.getData());
   }
@@ -116,6 +115,7 @@ export class AonMessengerChat extends AonElement {
           modification_date:new Date().getTime(),
           task_holder: this.task.getSender(),
           type: WORKFLOW_TYPES.ASSIGN,
+          email:this.task.auth.email
         });
       }
       if( this.getData().task_holder && this.task.getTaskHolder().id && this.getData().task_holder.id!= this.task.getTaskHolder().id){
@@ -125,6 +125,7 @@ export class AonMessengerChat extends AonElement {
           modification_date:new Date().getTime(),
           task_holder: this.task.getSender(),
           type: WORKFLOW_TYPES.ASSIGN,
+          email:this.task.auth.email
         });
       }
     } else {
@@ -176,7 +177,7 @@ export class AonMessengerChat extends AonElement {
   async getTaskWorkflow() {
     this.applicationEl.startLoading();
     try {
-      let workflow = await getTaskWorkflow({ taskId:this.task.id });
+      let workflow = await getTaskWorkflow({ task:this.task.id, domain:this.task.domain });
       this.task.setWorkflow(workflow);
       fillChat(workflow, this);
       if(workflow.length>0) this.addButtonDelete();
@@ -191,13 +192,17 @@ export class AonMessengerChat extends AonElement {
 
   async save() {
     this.applicationEl.startLoading();
-    
     this.buildTaskWorkflow();
-    if(this.task.source === TASK_SOURCE.REQUEST)
-      await this.saveSourceRequest();
-    else 
-      await this.saveSourceQuery();
 
+    let btnInternal = this.getElement(MESSENGER_IDS.EXTERNAL_TASK);
+    if(btnInternal && btnInternal.isChecked() && !this.task.project.id){
+      this.showError({message:"Proyecto requerido", type:CONSTANT.ERROR});
+    } else {
+      if(this.task.source === TASK_SOURCE.REQUEST)
+        await this.saveSourceRequest();
+      else 
+        await this.saveSourceQuery();
+    }
     this.applicationEl.stopLoading();    
   }
 
@@ -238,15 +243,15 @@ export class AonMessengerChat extends AonElement {
     }
   }
 
-  async uploadFile({file, taskId}) {
-    let result = await saveTaskAttach({file, taskId}).catch(e=>null);
+  async uploadFile({file, task}) {
+    let result = await saveTaskAttach({file, task}).catch(e=>null);
     return result;
   }
 
   deleteTask(){
     this.applicationEl.confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
       try {
-        await deleteTask({taskId:this.task.id});
+        await deleteTask({task:this.task.id});
         this.showToast({message:MSG.DELETED_DATA});
         this.applicationParentEl.updateCount();
         this.back();

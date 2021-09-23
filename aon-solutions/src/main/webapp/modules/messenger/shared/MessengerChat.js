@@ -2,12 +2,13 @@ import { AonToolbar } from "../../../components/aon-toolbar";
 import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments";
 import { ToolbarType } from "../../../models/enums";
 import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
-import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_STATUS } from "../MessengerEnums";
+import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
 import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils";
 import { buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, upChat } from "./utils";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { getNextTask, getPreviousTask } from "../TaskCache";
+import { SigninSidenav } from "../../signin/signinEnums";
 
 /**
  * 
@@ -35,6 +36,10 @@ export const buildDesktop = (aonMessengerChat)=> {
  */
 const buildToolbar = (aonMessengerChat) => {
     const task = aonMessengerChat.task;
+    let application = aonMessengerChat.getApplication();
+    if(application)
+      application.addToolbarOption2(SigninSidenav.ADD, () =>application.getParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY}));
+
     const sourceText =  MSG[task.source.toString().toUpperCase()] || task.source;
     const toolbar = setAttributes(new AonToolbar(), {
       id:aonMessengerChat.TOOLBAR,

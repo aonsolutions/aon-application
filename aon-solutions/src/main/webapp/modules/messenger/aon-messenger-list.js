@@ -2,7 +2,7 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../environments/environments.js";
-import { getTasks } from "../../services/taskService.js";
+import { getTasks, getTasksOffice } from "../../services/taskService.js";
 import { setFullDate, setTime } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
@@ -27,7 +27,7 @@ export class AonMessengerList extends AonElement {
 	}
 
   getFilter() {
-		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:30, status: TASK_STATUS.PENDING};
+		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:30, by_gestor: false, status: TASK_STATUS.PENDING};
 	}
   
   constructor() {
@@ -51,11 +51,11 @@ export class AonMessengerList extends AonElement {
   initialize() {
     this.id = this.id || MESSENGER_VIEWS.AON_MESSENGER_LIST;
     this.TOOLBAR = this.id + "Toolbar";
+    this.INDEX = 0;
+    this.MORE = true;
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.TASK_HOLDER = this.applicationParentEl.TASK_HOLDER;
-    this.INDEX = 0;
-    this.MORE = true;
     this.KEY_VIEW = Math.random();
     this.applicationEl.setKeyView(this.KEY_VIEW);
   }
@@ -209,11 +209,8 @@ export class AonMessengerList extends AonElement {
     try {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
-      if(this.applicationParentEl && this.applicationParentEl.cauData && this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email){
-        filter.email = this.applicationParentEl.cauData.auth.email;
-      }
       this.setFilter(filter);
-      const tasks = await getTasks(filter);
+      const tasks = await (this.getFilter().by_gestor ? getTasksOffice(filter) : getTasks(filter));
       if(tasks.length == 0)
         this.MORE = false;
       else {
@@ -263,15 +260,15 @@ export class AonMessengerList extends AonElement {
     return span.outerHTML;
   }
 
-  createIcon(icon, marginTop="11px"){
-    let i = this.createElement("i");
-    i.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
-    i.textContent = icon;
-    i.style.marginTop = marginTop;
-    i.style.position = "fixed";
-    i.style.marginLeft = "-11px";
-    return i;
-  }
+  // createIcon(icon, marginTop="11px"){
+  //   let i = this.createElement("i");
+  //   i.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
+  //   i.textContent = icon;
+  //   i.style.marginTop = marginTop;
+  //   i.style.position = "fixed";
+  //   i.style.marginLeft = "-11px";
+  //   return i;
+  // }
 
   goMessengerChat(res, idx){
     setIndexTask(idx);

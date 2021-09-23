@@ -49,6 +49,8 @@ export class AonMessenger extends AonElement {
 			sender: this._filter.sender || undefined,
 			source: this._filter.source || undefined,
 			status: TASK_STATUS.PENDING,
+			by_gestor: false,
+			email: undefined,
 			page:0, 
 			perPage:30
 		};
@@ -59,6 +61,9 @@ export class AonMessenger extends AonElement {
 		this.cauData = await getCauInfo();
 			
 		localStorage.setItem("taskCau", this.cau ? 1 : 0);
+		if(this.cau && this.cauData && this.cauData.auth.email){
+			this._filter.email =  this.cauData.auth.email;
+		}
 
 		this.paintView();
 		this.applicationEl = this.getApplication();
@@ -95,13 +100,45 @@ export class AonMessenger extends AonElement {
 			this.applicationEl.addMobileSidenavHeader(Apps.MESSENGER);
 		}
 
+		this.taskOfficeNavBar();		
 		this.taskNavBar();
 		this.statusNavBar();
+
 		if(!this.cau){
 			this.groupNavBar();
 			this.tagNavBar();
 		}
 	}
+
+	taskOfficeNavBar(){
+		let messengerOpts = [
+			{
+				name: 'Enviadas por mi',
+				icon: MATERIAL_ICONS.OUTBOX,
+				id: Math.random(),
+				fn: () =>{
+					this._filter.by_gestor = true;
+					this._filter.email     =  this.cauData.auth.email;
+					this.removeBg(MSG.REQUESTS);
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+				}
+			},
+			{
+				name: "Todas",
+				icon: MATERIAL_ICONS.ALL_INBOX,
+				id: Math.random(),
+				fn: () =>{
+					this._filter.by_gestor = true;
+					this._filter.email     = undefined;
+					this.removeBg(MSG.REQUESTS);
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
+				}
+			}
+		];
+		
+		this.applicationEl.addSidenavOptions("Tu Gestor", messengerOpts);
+	}
+
 
 	taskNavBar(){
 		let messengerOpts = [
@@ -112,6 +149,10 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = this.TASK_HOLDER.id;
 					this._filter.sender = undefined;
+					this._filter.by_gestor = false;
+					this._filter.email = undefined;
+					if(this.cau && this.cauData && this.cauData.auth.email)	this._filter.email =  this.cauData.auth.email;
+					this.removeBg("Tu Gestor");
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
@@ -122,6 +163,10 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = this.TASK_HOLDER.id;
+					this._filter.by_gestor = false;
+					this._filter.email = undefined;
+					if(this.cau && this.cauData && this.cauData.auth.email)	this._filter.email =  this.cauData.auth.email;
+					this.removeBg("Tu Gestor");
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
@@ -132,6 +177,10 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = undefined;
+					this._filter.by_gestor = false;
+					this._filter.email = undefined;
+					if(this.cau && this.cauData && this.cauData.auth.email)	this._filter.email =  this.cauData.auth.email;
+					this.removeBg("Tu Gestor");
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
@@ -325,6 +374,10 @@ export class AonMessenger extends AonElement {
 		});
 		
 
+	}
+
+	removeBg(id){
+		this.applicationEl.removeBackgroundSidenav(id);
 	}
 
 	showView(view, data = undefined, filter = undefined){

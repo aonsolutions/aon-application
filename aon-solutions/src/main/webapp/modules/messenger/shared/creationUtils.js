@@ -119,7 +119,7 @@ const createMessageBox = (properties) =>{
     },
     dataset:{
       id: properties.id,
-      me: properties.direction  ? true : false
+      me: properties.direction == MESSENGER_DIRECTION.RIGHT ? true : false
     }
   }).element;
   if(properties.direction == MESSENGER_DIRECTION.RIGHT)
@@ -415,14 +415,14 @@ export const createChatMessage = (properties, chat) => {
 
     let me = properties.direction === MESSENGER_DIRECTION.RIGHT;
 
-    let messageSend = properties.modification_date; // si el mensaje fue enviado
+    let messageSend = properties.notification_user; // si el mensaje fue enviado
 
     const message = createMessageBox(properties);
     chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
 
     if(messageSend || me){
       const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
-      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date(messageSend)) : MSG.SEND;
+      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date(properties.notification_date)) : MSG.SEND;
       iconSendWorkflow.id = MESSENGER_IDS.ICON_SEND_WORKFLOW;
       let color = COLORS.AON_BLUE;
 
@@ -452,8 +452,6 @@ export const createChatMessage = (properties, chat) => {
       
       message.appendChild(iconSendWorkflow);
     }
-
-    messageSend = !messageSend;
 
     const name = createMessageAuthor(properties);
     name.appendTo(message);
@@ -589,7 +587,7 @@ export const createLabelFileText = () => {
 
 export const createAonSwitch = () => {
   let btn = new AonSwitch();
-  btn.id = MESSENGER_IDS.INTERNAL_TASK;
+  btn.id = MESSENGER_IDS.EXTERNAL_TASK;
   btn.title = "Para tu Gestor";
   btn.style.width = "100%";
   btn.style.marginLeft = "13px";
@@ -621,7 +619,7 @@ const sendHistoric = async (workflowId) => {
         message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
         const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
         if(iconSendWorkflow){
-          iconSendWorkflow.title = "Enviado "+setDateTimestampDay(workflow.modification_date || workflow.creation_date)
+          iconSendWorkflow.title = "Enviado "+setDateTimestampDay(workflow.notification_date)
           iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
           iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
         }
