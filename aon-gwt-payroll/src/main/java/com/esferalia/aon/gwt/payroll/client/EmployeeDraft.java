@@ -465,13 +465,13 @@ public abstract class EmployeeDraft extends Composite {
 	protected EmployeeDraft() {
 
 		employee = new EmployeeImplementation();
+		toolbar = new AonToolbar("Contrato");
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		contextMenu = new NewContextMenu();
 		
-		getToolbarPanel();
-		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		fillToolbarPanel();
 		
 		employee.hideClearEmployee();
 		
@@ -781,9 +781,7 @@ public abstract class EmployeeDraft extends Composite {
 	
 	// ------------------------------------------------- Toolbar panel
 	
-	private void getToolbarPanel() {
-		
-		toolbar = new AonToolbar("Contrato");
+	private void fillToolbarPanel() {
 		
 		AonToolbarButton saveContract = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		saveContract.addClickHandler(e -> onSaveContract());
