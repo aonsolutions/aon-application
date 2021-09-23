@@ -106,6 +106,11 @@ public class AonResourceGWTServlet extends HttpServlet {
 	 */
 	private void _initDebug(ServletConfig config) {
 		String debug = config.getInitParameter(DEBUG_INIT_PARAM);
+		// --------------------------------
+		// Este parametro estaba definido en el web.xml con valor a true.
+		// Se define aquí despuñes de haber eliminado la definición del WEB.xml
+		debug = "true"; 
+		// --------------------------------
 		if (debug == null) {
 			// Check for a context init parameter if servlet init
 			// parameter isn't set
