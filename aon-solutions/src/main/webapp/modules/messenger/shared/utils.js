@@ -334,9 +334,9 @@ export const buildForm = (div, aonMessengerChat) => {
         aonCard.setTitleSection1(registryName)
     }
 
-    if(applicationParent.cauData && applicationParent.cauData.auth && applicationParent.cauData.auth.email){
-        task.setGTaskId(applicationParent.cauData.auth.email);
-    }
+    // if(applicationParent.cauData && applicationParent.cauData.auth && applicationParent.cauData.auth.email){
+    //     task.setGTaskId(applicationParent.cauData.auth.email);
+    // }
    //-----------------------END CREATE FIRST CARD
 
     //-----------------------CREATE DIV PROCESS

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -687,9 +688,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static HashMap<String, Integer> getTaskCount(Domain domain, User user, TaskFilter filter, Integer taskHolderId) {
+	public static HashMap<String, Integer> getTaskCount(Domain domain, User user, TaskFilter filter, Integer taskHolderId, Optional<String> email) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskCount(ctx, filter, taskHolderId);
+			return getTask2().getTaskCount(ctx, filter, taskHolderId, email);
 		}
 	}
 	

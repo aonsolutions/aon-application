@@ -287,7 +287,7 @@ export class AonMessenger extends AonElement {
 	updateCount(){
 		let application = this.applicationEl;
 		let filterCount= {};
-		if(this.cau && this.cauData)
+		if((!this.TASK_HOLDER.id || this.cau) && this.cauData)
 			filterCount.email = this.cauData.auth.email;
 		else 
 			filterCount.task_holder = this.TASK_HOLDER.id;
@@ -300,10 +300,10 @@ export class AonMessenger extends AonElement {
 		});
 
 		let filter = {};
-		if(this.cau && this.cauData){
+		if((!this.TASK_HOLDER.id || this.cau) && this.cauData)
 			filter.email = this.cauData.auth.email;
-		}
-		if(this._filter.source) filter.source = this._filter.source;
+		if(this._filter.source) 
+			filter.source = this._filter.source;
 
 		getTaskStatusCount(filter).then(resp=>{
 			let openCount = resp[TASK_STATUS.PENDING];

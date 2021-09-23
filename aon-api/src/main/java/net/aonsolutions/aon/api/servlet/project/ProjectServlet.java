@@ -49,7 +49,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		JSONArray arr = new JSONArray();
 		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
-			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDocumentProperty().eq(company.getDocument()));
+			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
 			AON.getProjectStream(domain, "", f -> f.getRegistryProperty().eq(customer.getId()).and(f.getProjectTypeProperty().isNotNull()))
 				.forEach(project -> {
 					ProjectHolder holder = AON.getProjectHolder(project.getDomain(), "", f -> f.getProjectProperty().eq(project.getId()).and(f.getEndDateProperty().isNull()));

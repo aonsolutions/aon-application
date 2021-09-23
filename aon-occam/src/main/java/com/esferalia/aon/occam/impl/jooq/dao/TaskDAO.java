@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,9 +20,11 @@ import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectSeekStep1;
+import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
+import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
@@ -223,23 +226,27 @@ public class TaskDAO {
 		return map;
 	}
 	
-	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId){
+	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId, Optional<String> email){
+		Integer sender = 0;
+		Integer taskHolder = 0;
 		HashMap<String, Integer> map = new HashMap<>();
-		Integer sender = ctx.getDslContext().select(DSL.count(TASK.SENDER), TASK.SENDER).from(TASK)
-				.where(TASK_PROPERTIES.getConditions(filter))
-				.and(TASK.SENDER.eq(taskHolderId))
-				.groupBy(TASK.SENDER)
-				.fetchOne(0, Integer.class);
-		if(sender==null) 	
-			sender = 0;
 		
-		Integer taskHolder = ctx.getDslContext().select(DSL.count(TASK.TASK_HOLDER), TASK.TASK_HOLDER).from(TASK)
+		sender = ctx.getDslContext().select(DSL.count(TASK.SENDER), TASK.SENDER).from(TASK)
 				.where(TASK_PROPERTIES.getConditions(filter))
-				.and(TASK.TASK_HOLDER.eq(taskHolderId))
-				.groupBy(TASK.TASK_HOLDER)
+				.and(email.isPresent() ? TASK.GTASK_ID.eq(email.get()) :  TASK.SENDER.eq(taskHolderId))
+				.groupBy(email.isPresent() ? TASK.GTASK_ID : TASK.SENDER)
 				.fetchOne(0, Integer.class);
-		if(taskHolder==null) 	
-			taskHolder = 0;
+		
+		if(!email.isPresent()) {
+			taskHolder = ctx.getDslContext().select(DSL.count(TASK.TASK_HOLDER), TASK.TASK_HOLDER).from(TASK)
+					.where(TASK_PROPERTIES.getConditions(filter))
+					.and(TASK.TASK_HOLDER.eq(taskHolderId))
+					.groupBy(TASK.TASK_HOLDER)
+					.fetchOne(0, Integer.class);
+		}
+				
+		if(sender==null)     sender = 0;
+		if(taskHolder==null) taskHolder = 0;
 	
 		map.put("sender", sender);
 		map.put("task_holder", taskHolder);

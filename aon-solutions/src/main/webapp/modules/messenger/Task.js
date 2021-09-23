@@ -1,5 +1,5 @@
 import { TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES } from "./MessengerEnums";
-
+import * as LS from "../../services/localStorageService.js";
 export class Task {
   id;
   number;
@@ -34,6 +34,7 @@ export class Task {
       this.source_id   = undefined;
       this.start_date  = undefined;
       this.parent      = undefined;
+      this.sender      = {};
       this.workgroup   = {};
       this.registry    = {};
       this.project     = {};
@@ -56,14 +57,16 @@ export class Task {
       this.workgroup   = task.workgroup || {};
       this.registry    = task.registry || {};
       this.project     = task.project || {};
+      this.sender      = task.sender || {};
       this.task_holder = task.task_holder || {};
       this.title       = task.title || "";
       this.description = task.description || "";
-      this.gtask_id    = task.gtask_id || "";
+      this.gtask_id    = task.gtask_id || undefined;
       this.source      = task.source || TASK_SOURCE.QUERY;
       this.source_id   = task.source_id || undefined;
       this.start_date  = task.start_date || undefined;
       this.parent      = task.parent || undefined;
+      this.domain      = task.domain || LS.getDomainId(); 
       this.domainTmp   = this.domain;
       this.workflow    = task.workflow || [];
       this.workflowTmp = {
@@ -71,7 +74,8 @@ export class Task {
         domain:this.domain,
         task_holder: this.sender,
         task: this.id,
-        type: WORKFLOW_TYPES.COMMENT
+        type: WORKFLOW_TYPES.COMMENT,
+        email: !this.sender.id && this.gtask_id ? this.gtask_id : undefined
       }
     }   
   }
@@ -289,7 +293,8 @@ export class Task {
       domain:this.domain,
       task_holder: this.sender,
       task: this.id,
-      type: WORKFLOW_TYPES.COMMENT
+      type: WORKFLOW_TYPES.COMMENT,
+      email: !this.sender && this.gtask_id ? this.gtask_id : undefined
     }
   }
 }

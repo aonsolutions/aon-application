@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
@@ -22,7 +23,7 @@ public interface ITask2 {
 	public Task saveTask(AONContext ctx, Task task);
 	public void deleteTask(AONContext ctx, Integer id);
 	public HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter);
-	public HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId);
+	public HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId, Optional<String> email);
 	
 	//TASKWORKFLOW
 	public TaskWorkflow getTaskWorkflow(AONContext ctx, TaskWorkflowFilter filter);

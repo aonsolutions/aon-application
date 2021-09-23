@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -169,6 +170,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		String status = api.getParams().optString("status");
 		String source = api.getParams().optString("source");
 		String search = api.getParams().optString("search");
+		String email = api.getParams().optString(IJsonNames.EMAIL);
 
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
@@ -206,10 +208,8 @@ public class TaskServlet extends AonApiHttpServlet{
 			filter = filter.and(filter1);
 		}
 		
-		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) {
-			String email = api.getParams().optString(IJsonNames.EMAIL);
-			if(!email.isEmpty())
-				filter = filter.and(f.getGtaskIdProperty().eq(email));
+		if(!email.isEmpty() && (!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) ) {
+			filter = filter.and(f.getGtaskIdProperty().eq(email));
 		}
 		
 		if(!api.getParams().optString("startDate").isEmpty()) {
@@ -289,7 +289,6 @@ public class TaskServlet extends AonApiHttpServlet{
 		return TagJSON.toJSON(tag);
 	}
 	
-	
 	private Object getTasksAttach(AonApiData api) {
 		Integer taskId = api.getParams().optInt("taskId");
 		return TaskAttachJSON.toJSON( AON_SOLUTIONS.getTaskAttachList(api.getDomain(), api.getUser(), f-> f.getTaskProperty().eq(taskId)));
@@ -325,11 +324,19 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject getTaskCount(AonApiData api) {
 		JSONObject json = new JSONObject();
 		Domain domain = api.getDomain();
-		Integer taskHolder = api.getParams().getInt("task_holder");
+		Integer taskHolder = JsonUtils.getInteger(api.getParams(), "task_holder");
+		Optional<String> email = Optional.ofNullable(null);
+	
+		if(taskHolder==null) {
+			taskHolder = 0;
+			email = Optional.of(api.getParams().optString("email"));
+		}
+	
 		AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(),  
 				f -> f.getDomainProperty().eq(domain.getId())
 				.and(f.getStatusProperty().eq(TaskStatus.PENDING.value())), 
-				taskHolder
+				taskHolder,
+				email
 		)
 		.forEach((k,v) -> json.put(k, v));
 		return json;
