@@ -24,15 +24,9 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class Salary extends ResizeComposite {
-
-	private static final int ZOOM_STEP = 20;
-	private static final int MIN_ZOOM = 25;
-	private static final int MAX_ZOOM = 500;
-
-	private static final int DEFAULT_ZOOM = 135;
 
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.YEAR_MONTH_DAY);
@@ -108,10 +102,8 @@ public class Salary extends ResizeComposite {
 	+"ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgCjw/eHBhY2tldCBlbmQ9InciPz4NCmVuZHN0cmVhbQ1lbmRvYmoNMTEgMCBvYmoNPDwvTWV0YWRhdGEgMiAwIFIvUGFnZUxhYmVscyA2IDAgUi9QYWdlcyA4IDAgUi9UeXBlL0NhdGFsb2c+Pg1lbmRvYmoNMjMgMCBvYmoNPDwvRmlsdGVyL0ZsYXRlRGVjb2RlL0xlbmd0aCAxMD4+c3RyZWFtDQpIiQIIMAAAAAABDQplbmRzdHJlYW0NZW5kb2JqDTI4IDAgb2JqDTw8L0RlY29kZVBhcm1zPDwvQ29sdW1ucyA0L1ByZWRpY3RvciAxMj4+L0ZpbHRlci9GbGF0ZURlY29kZS9JRFs8REI3Nzc1Q0NFMjI3RjZCMzBDNDQwREY0MjIxREMzOTA+PEJGQ0NDRjNGNTdGNjEzNEFCRDNDMDRBOUU0Q0ExMDZFPl0vSW5mbyA5IDAgUi9MZW5ndGggODAvUm9vdCAxMSAwIFIvU2l6ZSAyOS9UeXBlL1hSZWYvV1sxIDIgMV0+PnN0cmVhbQ0KaN5iYgACJjDByGzIwPT/73koF0wwMUiBWYxA4v9/EMHA9I/hBVCxoDOQeH8DxH2KrIMIglFwIpD1vh5IMJqBxPpArHYgwd/KABBgAP8bEC0NCmVuZHN0cmVhbQ1lbmRvYmoNc3RhcnR4cmVmDQo0NTc2DQolJUVPRg0K";
 
 	@UiField
-	Viewer pdfViewer;
+	FullViewer pdfViewer;
 
-	@UiField
-	Button saveButton;
 	@UiField
 	Button deleteButton;
 
@@ -139,8 +131,6 @@ public class Salary extends ResizeComposite {
 
 	@UiField
 	Button bidoqPublishButton;
-
-	private int zoom = DEFAULT_ZOOM;
 
 	private SalaryDocuments salaryDocuments;
 
@@ -175,7 +165,6 @@ public class Salary extends ResizeComposite {
 
 			@Override
 			public void execute() {
-				zoom = Math.max(MIN_ZOOM, zoom - ZOOM_STEP);
 				viewPDF();
 			}
 		});
@@ -184,7 +173,6 @@ public class Salary extends ResizeComposite {
 
 			@Override
 			public void execute() {
-				zoom = Math.min(MAX_ZOOM, zoom + ZOOM_STEP);
 				viewPDF();
 			}
 		});
@@ -222,12 +210,6 @@ public class Salary extends ResizeComposite {
 	@UiHandler("deleteButton")
 	void onDeleteButton(ClickEvent e) {
 		delete();
-	}
-
-	@UiHandler("saveButton")
-	void onSaveButton(ClickEvent e) {
-		String fileName = getFileName();
-		pdfViewer.download(fileName);
 	}
 
 
@@ -289,7 +271,7 @@ public class Salary extends ResizeComposite {
 
 	private void viewPDF() {
 		String url = salaryDocuments.getDownloadURL("pdf");
-		pdfViewer.setDocument(url, zoom/100.00);
+		pdfViewer.open(url);
 		
 	}
 
@@ -298,13 +280,11 @@ public class Salary extends ResizeComposite {
 			viewPDF();
 			syncSalaryTypeListBox();
 			syncReportTypeListBox();
-			saveButton.setEnabled(true);
 			deleteButton.setEnabled(true);
 		} else {
-			pdfViewer.setDocument(BLANK_PDF_URL, zoom/100.00);
+			pdfViewer.open(BLANK_PDF_URL);
 			dateListBox.clear();
 			salaryTypeListBox.clear();
-			saveButton.setEnabled(false);
 			deleteButton.setEnabled(false);
 		} // end : No salaries
 

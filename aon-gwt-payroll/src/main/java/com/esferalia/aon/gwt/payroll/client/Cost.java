@@ -28,15 +28,13 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -47,33 +45,18 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer.ViewerDefaultScale;
 
 public class Cost extends ResizeComposite {
 	
 	// ----------------------------------------------- Static Variables 
 
-	private static final int ZOOM_STEP = 20;
-	private static final int MIN_ZOOM = 25;
-	private static final int MAX_ZOOM = 500;
-
-	private static final int DEFAULT_ZOOM = 115;
-	
 	private static final String STYLENAME_CHECKED_ITEM = "aon-MenuItemCheckYes";
 
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH);
 
-	// ----------------------------------------------- UiBinder 
-
-	interface Binder extends UiBinder<Widget, Cost> {}
-	
-	private static final Binder binder = GWT.create(Binder.class);
-	
 	// ----------------------------------------------- Listener 
 	
 	static interface Listener {
@@ -124,21 +107,21 @@ public class Cost extends ResizeComposite {
 			
 			
 			excel = addItem("Microsoft Excel (.xls)", new ExcelCommand(), 
-					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 			excel.ensureDebugId("excel");
 			
 			excelComplete = addItem("Microsoft Excel (.xls, detallado)", new ExcelCompleteCommand(), 
-					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 			excelComplete.ensureDebugId("excelComplete");
 			
 			csv = addItem("Valores separados por comas (.csv)", new CSVCCommand(), 
-					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconExcel(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 			csv.ensureDebugId("csv");
 			
 			addSeparator();
 			
 				MenuItem summaryItem = addItem("Resumen Anual Agregado (.xsl, mensual)", () -> {},
-						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 				summaryItem.setScheduledCommand(() -> {
 					availableYears.clear();
 					if (costDocuments != null && costDocuments.getCosts() != null) {
@@ -154,7 +137,7 @@ public class Cost extends ResizeComposite {
 						aggregatedAnnualSummary = new ContextMenu();
 						for (Integer year : availableYears) {
 							aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year, AggregatedAnnualSummaryService.SummaryType.MONTHLY),
-									AON.CSS.aonIconExcel(), style.cmd_btn());
+									AON.CSS.aonIconExcel(), AON.CSS.aonContextMenuItem());
 						}
 						aggregatedAnnualSummary.ensureDebugId("aggregatedAnnualSummary");
 						
@@ -170,7 +153,7 @@ public class Cost extends ResizeComposite {
 				
 				
 				MenuItem summaryQuarterlyItem = addItem("Resumen Anual Agregado (.xsl, trimestral)", () -> {},
-						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 				summaryQuarterlyItem.setScheduledCommand(() -> {
 					availableYears.clear();
 					if (costDocuments != null && costDocuments.getCosts() != null) {
@@ -186,7 +169,7 @@ public class Cost extends ResizeComposite {
 						aggregatedAnnualSummary = new ContextMenu();
 						for (Integer year : availableYears) {
 							aggregatedAnnualSummary.addItem(String.valueOf(year), () -> printAggregatedAnnualSummary(year, AggregatedAnnualSummaryService.SummaryType.QUARTERLY),
-									AON.CSS.aonIconExcel(), style.cmd_btn());
+									AON.CSS.aonIconExcel(), AON.CSS.aonContextMenuItem());
 						}
 						aggregatedAnnualSummary.ensureDebugId("aggregatedAnnualSummary");
 						
@@ -201,7 +184,7 @@ public class Cost extends ResizeComposite {
 				
 				
 				MenuItem recordItem = addItem("Registro Retributivo (.xsl)", () -> {},
-						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 				recordItem.setScheduledCommand(() -> {
 					availableYears.clear();
 					if (costDocuments != null && costDocuments.getCosts() != null) {
@@ -217,7 +200,7 @@ public class Cost extends ResizeComposite {
 						remunerationRecord = new ContextMenu();
 						for (Integer year : availableYears) {
 							remunerationRecord.addItem(String.valueOf(year), () -> printRemunerationRecord(year),
-									AON.CSS.aonIconExcel(), style.cmd_btn());
+									AON.CSS.aonIconExcel(), AON.CSS.aonContextMenuItem());
 						}
 						remunerationRecord.ensureDebugId("aggregatedAnnualSummary");
 						
@@ -286,33 +269,34 @@ public class Cost extends ResizeComposite {
 		public SeeMenu() {
 			
 			salary = addItem(Salary.Type.SALARY.getDescription(), new SalaryCommand(), 
-					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					"", AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 			salary.ensureDebugId("salary");
 			
 			extra = addItem(Salary.Type.EXTRA.getDescription(), new ExtraCommand(), 
-					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					"", AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 			extra.ensureDebugId("extra");
 			
 			settle = addItem(Salary.Type.SETTLE.getDescription(), new SettleCommand(), 
-					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					"", AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 			settle.ensureDebugId("settle");
 			
 			delay = addItem(Salary.Type.DELAY.getDescription(), new DelayCommand(), 
-					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					"", AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 			delay.ensureDebugId("delay");
 			
 			addSeparator();
 			
 			l00 = addItem(Salary.Type.L00.getDescription(), new L00Command(), 
-					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					"", AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 			l00.ensureDebugId("l00");
 			
 			l13 = addItem(Salary.Type.L13.getDescription(), new L13Command(), 
-					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					"", AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
 			l13.ensureDebugId("l13");
 
 			l03 = addItem(Salary.Type.L03.getDescription(), new L03Command(), 
-					"", AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					"", AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
+			
 			l03.ensureDebugId("l03");
 }
 
@@ -378,32 +362,11 @@ public class Cost extends ResizeComposite {
 	
 	// ----------------------------------------------- UiFields
 	
-	@UiField
-	static
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String cmd_btn();
-	}
-	
-	@UiField
 	DockLayoutPanel dockLayoutPanel;
-	
-	@UiField
 	FlowPanel mainPanel;
-	
-	@UiField
-	ScrollPanel scrollPanel;
-	
-	@UiField
-	SplitLayoutPanel containerSplitLayoutPanel;
-	
-	@UiField
-	Viewer pdfViewer;
+	FullViewer fullPdfViewer;
 	
 	// ----------------------------------------------- Variables
-
-	private int zoom = DEFAULT_ZOOM;
 
 	private CostDocuments costDocuments;
 	
@@ -415,8 +378,8 @@ public class Cost extends ResizeComposite {
 	private AonToolbarButton publishBtn;
 	private AonToolbarButton bidoqBtn;
 	private ListBox dateListBox = new ListBox();
-	private AonToolbarButton zoomInBtn;
-	private AonToolbarButton zoomOutBtn;
+//	private AonToolbarButton zoomInBtn;
+//	private AonToolbarButton zoomOutBtn;
 	private AonToolbarButton seeBtn;
 	private AonToolbarButton tgssBtn;
 	
@@ -426,11 +389,15 @@ public class Cost extends ResizeComposite {
 	
 	// ----------------------------------------------- Constructor
 	public Cost() {
-		toolbar = getToolbarPanel();
 
-		initWidget(binder.createAndBindUi(this));
-		
+		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
+		toolbar = getToolbarPanel();
+		mainPanel = new FlowPanel();
+		toolbar.add(mainPanel);
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		fullPdfViewer = new FullViewer( ViewerDefaultScale.PAGE_WIDTH );
+		dockLayoutPanel.add(fullPdfViewer);
+		initWidget(dockLayoutPanel);
 		
 		seeMenu = new SeeMenu();
 		
@@ -502,10 +469,11 @@ public class Cost extends ResizeComposite {
 	// ----------------------------------------------- Cost.Auxiliar Methods
 	
 	private void getAsHTML() {
-		costDocuments.getAsHTML(zoom, new AsyncCallback<String>() {
+		costDocuments.getAsHTML(0, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String html) {
-				pdfViewer.setDocument(html, zoom/100d);
+				fullPdfViewer.open(html);
+				//pdfViewer.setDocument(html, zoom/100d);
 				syncTypeMenuItems();
 			}
 
@@ -860,17 +828,17 @@ public class Cost extends ResizeComposite {
 		
 		toolbar.add(dateListBox);
 		
-		zoomOutBtn = new AonToolbarButton( "Reducir", AON.CSS.aonIconZoomOut() );
-		zoomOutBtn.addClickHandler(e -> {
-			onZoomOut(e);
-		});
-		toolbar.add(zoomOutBtn);
+//		zoomOutBtn = new AonToolbarButton( "Reducir", AON.CSS.aonIconZoomOut() );
+//		zoomOutBtn.addClickHandler(e -> {
+//			onZoomOut(e);
+//		});
+//		toolbar.add(zoomOutBtn);
 		
-		zoomInBtn = new AonToolbarButton( "Ampliar", AON.CSS.aonIconZoomIn() );
-		zoomInBtn.addClickHandler(e -> {
-			onZoomIn(e);
-		});
-		toolbar.add(zoomInBtn);
+//		zoomInBtn = new AonToolbarButton( "Ampliar", AON.CSS.aonIconZoomIn() );
+//		zoomInBtn.addClickHandler(e -> {
+//			onZoomIn(e);
+//		});
+//		toolbar.add(zoomInBtn);
 		
 		tgssBtn = new AonToolbarButton( "TGSS", AON.CSS.aonIconTgss() );
 		tgssBtn.addClickHandler(e -> {
@@ -902,15 +870,15 @@ public class Cost extends ResizeComposite {
 		onPublish(costDocuments, "bidoq");
 	}
 
-	private void onZoomIn(ClickEvent e) {
-		zoom = Math.max(MIN_ZOOM, zoom + ZOOM_STEP);
-		getAsHTML();
-	}
-
-	private void onZoomOut(ClickEvent e) {
-		zoom = Math.min(MAX_ZOOM, zoom - ZOOM_STEP);
-		getAsHTML();
-	}
+//	private void onZoomIn(ClickEvent e) {
+//		zoom = Math.max(MIN_ZOOM, zoom + ZOOM_STEP);
+//		getAsHTML();
+//	}
+//
+//	private void onZoomOut(ClickEvent e) {
+//		zoom = Math.min(MAX_ZOOM, zoom - ZOOM_STEP);
+//		getAsHTML();
+//	}
 	
 	private void onView(ClickEvent e) {
 		NativeEvent nativeEvent = e.getNativeEvent();

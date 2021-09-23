@@ -51,7 +51,7 @@
 		<url-pattern>/login</url-pattern>
 	</servlet-mapping>
 
-	<!-- Resource Servlet -->
+	<!-- NEW DOMAIN -->
 	<servlet>
 		<servlet-name>NewDomain</servlet-name>
 		<servlet-class>com.code.aon.aio.servlet.NewDomain</servlet-class>
@@ -61,7 +61,7 @@
 		<url-pattern>/newDomain/*</url-pattern>
 	</servlet-mapping>
 
-	<!-- Resource Servlet -->
+	<!-- ResourceServlet -->
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>
 		<servlet-class>com.code.aon.ui.resources.servlet.ResourceServlet</servlet-class>
@@ -101,57 +101,7 @@
 		<servlet-name>Jasper Image Servlet</servlet-name>
 		<url-pattern>/jasper_image/*</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<servlet-name>Resource Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.payroll.server.ResourceServlet</servlet-class>
-		<init-param>
-			<param-name>debug</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_payroll/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_fiscal/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_stat/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_dump/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_connect/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_document/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_template/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_issues/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_aio/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>Resource Servlet</servlet-name>
-		<url-pattern>/aon_gwt_commercial/*</url-pattern>
-	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Employees Servlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.payroll.server.EmployeesServiceImpl</servlet-class>

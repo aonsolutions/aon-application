@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Date;
 
 import javax.servlet.ServletOutputStream;
@@ -49,13 +50,13 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 		// Enterprise CCC
 		String regime = request.getParameter("regime");
 		String ccc = request.getParameter("ccc");
-		
+		Connection connection = null;
 		try {
 			// Domian and User
 			String userLogin = request.getParameter("userLogin");
 			String domainName = request.getParameter("domainName");
 			
-			Connection connection = AonServletUtils.getConnection(domainName);
+			connection = AonServletUtils.getConnection(domainName);
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
@@ -92,7 +93,15 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 		
 		} catch (Exception e) {
 			error(request, response, e);
-		} 
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		
 	}
 	

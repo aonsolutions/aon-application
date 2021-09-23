@@ -4,14 +4,17 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.FrameElement;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Frame;
 
 public class FullViewer extends Frame {
 	
 	private static final Logger LOGGER = Logger.getLogger(FullViewer.class.getName());
 	private static final String URL_TO_AVOID_CORS = GWT.getModuleBaseURL() + "ms/AonPDFBridgeServlet?URL=";
-	private static final String VIEWER_PATH = GWT.getModuleName() + "/pdfjs/web/FullViewer.html";
+	private static final String VIEWER_PATH = GWT.getModuleName() + "/pdfjs/web/viewer.html";
 	
 	public static enum ViewerDefaultScale {
 		PAGE_WIDTH("page-width"), 
@@ -41,8 +44,13 @@ public class FullViewer extends Frame {
 		if (scale == null) {
 			scale = ViewerDefaultScale.AUTO;
 		}
-		setWidth("100%");
+		setWidth("98%");
 		setHeight("100%");
+		
+		getElement().getStyle().setProperty("margin-left", "auto");;	
+		getElement().getStyle().setProperty("margin-right", "auto");;
+		getElement().getStyle().setBorderWidth(0, Unit.PX);
+
 		String fileURL = null;
 		if (url != null) {
 			if (isURLocal(url)) {
@@ -76,10 +84,30 @@ public class FullViewer extends Frame {
 	}-*/;
 	
 	private native void nativeOpen(FrameElement el, String dataURI) /*-{
-		if (el.contentWindow.PDFViewerApplication.pdfDocument) {
+		if (el.contentWindow.PDFViewerApplication && el.contentWindow.PDFViewerApplication.pdfDocument) {
 			console.log("Destroing previous document");
 			el.contentWindow.PDFViewerApplication.pdfDocument.destroy();
 		}  
     	el.contentWindow.PDFViewerApplication.open(dataURI);
 	}-*/;
+	
+	private native void download(JavaScriptObject pdf, String filename, Element a) /*-{
+	// Loaded via <script> tag, create shortcut to access PDF.js exports.
+	var pdfjsLib = window['pdfjs-dist/build/pdf'];
+
+    pdf.getData().then(function (data) {
+		var blob = (0, pdfjsLib.createBlob)(data, 'application/pdf');
+		var blobUrl = URL.createObjectURL(blob);
+      
+		a.href = blobUrl;
+		a.target = '_parent';
+		if ('download' in a) {
+		  a.download = filename;
+		}
+		a.click();
+	  
+    });
+    //.catch(downloadByUrl);
+}-*/;
+	
 }

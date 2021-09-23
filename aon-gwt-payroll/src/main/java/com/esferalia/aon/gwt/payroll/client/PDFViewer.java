@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class PDFViewer extends Composite {
 	
@@ -29,13 +29,7 @@ public class PDFViewer extends Composite {
 	Label titleLabel;
 	
 	@UiField
-	Viewer pdfViewer;
-	
-	@UiField
-	ListBox zoomListBox;
-	
-	@UiField
-	Button downloadButton;
+	FullViewer pdfViewer;
 	
 	@UiField
 	Panel customToolBarPanel;
@@ -44,8 +38,6 @@ public class PDFViewer extends Composite {
 	public PDFViewer() {
 		
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		initZoomList();
 	}
 	
 	
@@ -59,7 +51,7 @@ public class PDFViewer extends Composite {
 	
 	
 	public void setDocument(String url, double scale) {
-		pdfViewer.setDocument(url, scale);
+		pdfViewer.open(url);
 	}
 	
 	public void addCustomToolBarButton(Button button) {
@@ -71,38 +63,7 @@ public class PDFViewer extends Composite {
 		customToolBarPanel.add(widget);
 	}
 	
-	// -------------------------------------------------- UiHandlers --------------------------------------------------
-	
-
-	@UiHandler("zoomListBox")
-	void onZoomListBoxChange(ChangeEvent event) {
-		int index =zoomListBox.getSelectedIndex();
-		String text = zoomListBox.getItemText(index);
-		int zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
-		pdfViewer.scale(zoom / 100.00);
-	}	
-	
-	@UiHandler("downloadButton")
-	void onDownloadClick(ClickEvent event) {
-		pdfViewer.download(getFileName());
-	}
-	
 	// -----------------------------------------------------------------------------------------------------------------
-	
-		
-	
-	
-	private void initZoomList() {
-
-		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		int selectedIndex = zoomListBox.getItemCount();
-		for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
-		zoomListBox.setSelectedIndex(selectedIndex);
-		
-	}
 
 	
 }
