@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.ProjectJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -36,6 +38,9 @@ public class ProjectServlet extends AonApiHttpServlet{
 				case "/office":
 					response(req, resp, getOfficeProjects(api));
 					break;
+				case "/registry":
+					response(req, resp, getProjectsByRegistry(api));
+					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -56,6 +61,22 @@ public class ProjectServlet extends AonApiHttpServlet{
 					project.setProjectHolder(holder);
 					arr.put(ProjectJSON.toJSON(project));	
 				});
+		});
+		return arr;
+	}
+	
+	private JSONArray getProjectsByRegistry(AonApiData api) {
+		JSONArray arr = new JSONArray();
+		Integer registry = api.getParams().optInt(IJsonNames.REGISTRY_ID);
+		Domain domain = new Domain()
+				.setId(api.getParams().optInt(IJsonNames.DOMAIN_ID))
+				.setName(api.getParams().optString(IJsonNames.DOMAIN_NAME));
+
+		AON.getProjectStream(domain, "", f -> f.getRegistryProperty().eq(registry).and(f.getProjectTypeProperty().isNotNull()))
+		.forEach(project -> {
+			ProjectHolder holder = AON.getProjectHolder(project.getDomain(), "", f -> f.getProjectProperty().eq(project.getId()).and(f.getEndDateProperty().isNull()));
+			project.setProjectHolder(holder);
+			arr.put(ProjectJSON.toJSON(project));	
 		});
 		return arr;
 	}

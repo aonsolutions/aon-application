@@ -370,8 +370,7 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
   title: MSG.PROJECT,
-  autocomplete: "off",
-  readonly: "false"
+  autocomplete: "off"
 });
 
 
@@ -585,10 +584,10 @@ export const createLabelFileText = () => {
   return label;
 }
 
-export const createAonSwitch = () => {
+export const createAonSwitch = (title) => {
   let btn = new AonSwitch();
   btn.id = MESSENGER_IDS.EXTERNAL_TASK;
-  btn.title = "Para tu Gestor";
+  btn.title = title;
   btn.style.width = "100%";
   btn.style.marginLeft = "13px";
   return btn;

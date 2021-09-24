@@ -118,7 +118,7 @@ export class AonElement extends HTMLElement{
   }
 
   getApplication() {
-    return document.querySelector(TAG.AON_APPLICATION);
+    return document.querySelector(TAG.AON_APPLICATION) || {};
   }
 
   getModule() {

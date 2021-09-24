@@ -31,12 +31,7 @@ export class AonParent extends AonElement {
 	buildSidenav() {
 		let aonParent = this.getElement('aonParentMain');
 		
-		let taskOptions = [
-			{
-				name: MSG.NOTIFICATIONS,
-				icon: 'notifications',
-				fn: () => {}
-			},{
+		let taskOptions = [{
 				name: MSG.PENDING_INVOICES,
 				icon: 'inbox',
 				fn: (count) => {

@@ -70,13 +70,13 @@ export class Task {
       this.source_id   = task.source_id || undefined;
       this.start_date  = task.start_date || undefined;
       this.parent      = task.parent || undefined;
-      this.gtask_id    = !this.id && this.auth.email ? this.auth.email : undefined;
-      this.domain      = task.domain || LS.getDomainId(); 
+      this.gtask_id    = task.gtask_id || (!this.id && this.auth.email ? this.auth.email : undefined);
+      this.domain      = task.domain || {id:parseInt(LS.getDomainId()), name: LS.getDomainName()}; 
       this.domainTmp   = this.domain;
       this.workflow    = task.workflow || [];
       this.workflowTmp = {
         comment:"",
-        domain:this.domain,
+        domain:this.domain.id,
         task_holder: this.sender,
         task: this.id,
         type: WORKFLOW_TYPES.COMMENT,
@@ -297,7 +297,7 @@ export class Task {
    * CHANGE VALUES WHEN PROJECT CHANGE 
    */
   changeProject(){
-    const domain = this.project.domain && this.project.domain.id ? this.project.domain.id : this.domainTmp;
+    const domain = this.project.domain && this.project.domain.id ? this.project.domain : this.domainTmp;
     this.setDomain(domain);
 
     const workgroup = this.project.workgroup && this.project.workgroup.id ?  this.project.workgroup : {};
@@ -309,12 +309,20 @@ export class Task {
     const registry = this.project.registry && this.project.registry.id ? this.project.registry : {};
     this.setRegistry(registry);
     
-    const sender = !this.project.id  ? this.senderTmp  : {};
+    let sender = !this.project.id  ? this.senderTmp  : {};
+
+    const isGestor = "OFFICE" === LS.getCompany().type;
+    if(isGestor){
+      if(TASK_SOURCE.QUERY === this.source)
+        sender = this.senderTmp;
+      else 
+        sender = {};
+    }
     this.setSender(sender);
 
     this.workflowTmp = {
       comment:"",
-      domain:this.domain,
+      domain:this.domain.id,
       task_holder: this.sender,
       task: this.id,
       type: WORKFLOW_TYPES.COMMENT,

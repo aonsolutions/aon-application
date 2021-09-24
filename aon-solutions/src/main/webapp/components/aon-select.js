@@ -148,7 +148,13 @@ export class AonSelect extends AonElement {
             input.value = option.name;
         } 
       })
-  
+
+      if(this.disabled)
+        input.disabled = true;
+      
+      if(this.readonly)
+       input.readonly = true;
+
       let div = this.getElement(input.DIV);
       let span = this.createElement(TAG.SPAN);
       span.id = input.SPAN;

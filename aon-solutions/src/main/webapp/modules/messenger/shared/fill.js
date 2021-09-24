@@ -1,5 +1,5 @@
 import { EVENT, MSG } from "../../../environments/environments";
-import { getOfficeProjects } from "../../../services/projectService";
+import { getOfficeProjects, getProjectsByRegistry } from "../../../services/projectService";
 import { getCustomers } from "../../../services/registryService";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
 import { waitEl } from "../../../services/utils";
@@ -20,9 +20,8 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
         {value: TASK_SOURCE.REQUEST, name: MSG.FORMALITIES },
     ];
 
-    if(TASK_SOURCE.MANUAL === source){ 
+    if(TASK_SOURCE.MANUAL === source)
         sources.unshift({value: TASK_SOURCE.MANUAL, name: "MANUAL" }); 
-    } 
 
     if(aonMessengerChat.getApplicationParent().dur.hasCallCenter())
         sources.push({value: TASK_SOURCE.CAU, name: "Soporte" });
@@ -42,7 +41,19 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
     if(aonSelect){
         const project = task.getProject();
         try {
-            let projects = await getOfficeProjects();
+            let projects = [];
+            let registry = task.getRegistry();
+            if(registry.id){
+                let filter = {
+                    registryId:registry.id,
+                    domainId:registry.domain.id,
+                    domainName:registry.domain.name
+                };
+                projects = await getProjectsByRegistry(filter);
+            } else {
+                projects = await getOfficeProjects();
+            }
+
 
             aonSelect.options = JSON.stringify(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
             
@@ -131,8 +142,15 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
             if(detail){
                 aonMessengerChat.task.setRegistry(detail);
+                fillProject(aonMessengerChat.task);
             } 
         });
+
+        // aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+        //     if(detail)
+        //         task.setWorkgroup(detail);
+        //     fillTaskHolder(aonMessengerChat, detail.value);
+        // });
     }
 }
 
@@ -198,7 +216,7 @@ export const fillChat = (workflows=[], aonMessengerChat)=>{
             const meId = aonMessengerChat.getApplicationParent().TASK_HOLDER.id;
 
             workflows.forEach(workflow => {
-                const {id, comment, type, creation_date,notification_user, notification_date, email, task_holder:{name, alias, id:taskHolderId}} = workflow;
+                const {id, comment, type, creation_date, notification_user, notification_date, email, task_holder:{name, alias, id:taskHolderId}} = workflow;
                 const me = (taskHolderId == meId) || (email ===task.auth.email); // if taskHolder id is me
                 let message = {
                     id,
@@ -215,7 +233,7 @@ export const fillChat = (workflows=[], aonMessengerChat)=>{
                 if (type == WORKFLOW_TYPES.COMMENT) {
                     createChatMessage(message, chat);
                 } else{
-                    message.name = name|| email;
+                    message.name = name || email;
                     const actionJson = chooseIconMessage(message);
                     const action = createAction(actionJson, actionJson.comment);
                     action.appendTo(chat);

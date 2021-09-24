@@ -359,18 +359,17 @@ export const buildForm = (div, aonMessengerChat) => {
     //-----------------TYPE REQUEST
     const requestTypeSelect = createRequestType();
     requestTypeSelect.style.width = "100%";
-    rowsDiv.appendChild(requestTypeSelect);
     if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
+    rowsDiv.appendChild(requestTypeSelect);
     //-----------------END TYPE REQUEST
-    if(isClient){
-        const btnExternal = createAonSwitch();
-        rowsDiv.appendChild(btnExternal);
-        if(task.id) btnExternal.disabled =  true;
-        btnExternal.checked = task.isExternal();
-        btnExternal.addEventListener(EVENT.CHANGE, () => {
-            changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess);
-        });
-    }
+    const btnExternal = createAonSwitch( isClient ? "Para tu Gestor": "Para tu Cliente");
+    rowsDiv.appendChild(btnExternal);
+    if(task.id) btnExternal.disabled =  true;
+    btnExternal.checked = task.isExternal();
+    btnExternal.addEventListener(EVENT.CHANGE, () => {
+        changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess);
+    });
+
  
     requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess));
     fillRequestType(task, aonMessengerChat);
@@ -528,12 +527,14 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
             rowsDivThree.style.width = "100%";
             columnsDiv.appendChild(rowsDivThree);
         }
-        if(forManager && isClient){
+        if(forManager){
             // ------------------PROJECT
             const projectSelect = createProject();
             projectSelect.default = true;
             projectSelect.style.width = "100%";
+            if(task.id) projectSelect.disabled = projectSelect.readonly = true;
             rowsDivThree.appendChild(projectSelect);
+
             fillProject(task);
         } else {
             // -------------------------------------TAG
