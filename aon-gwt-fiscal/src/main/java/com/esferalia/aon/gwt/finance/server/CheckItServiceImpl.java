@@ -52,12 +52,12 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 //			checkitAccounts =  CheckItAPI.getAccounts( enterpriseId );
 			checkitAccounts =  CheckItAPI.getLinkedAccountsToDisplay(domainName, domain, user, enterpriseId);
 		} catch (CheckItException e) {
-			e.printStackTrace();
+			throw new AonCoreException(e.getMessage());
 		}
 		try {
 			checkitUnlinkedAccounts = CheckItAPI.getUnlinkedActive(domainName, domain, user, enterpriseId);
 		} catch (CheckItException e) {
-			e.printStackTrace();
+			throw new AonCoreException(e.getMessage());
 		}
 
 		CheckItAPI.getBanksMap().forEach((k, v) -> bankIds.add(new CheckItBank(v, k)));
@@ -104,19 +104,19 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 				return null;
 			}
 		} catch (CheckItException e) {
-			return null;
+			throw new AonCoreException(e.getMessage());
 		}
 	}
 
 
 	@Override
 	public Integer insertTransactions(String currentDomainName, int currentDomain, String user,
-			Integer checkitEnterpriseId, CheckItBankAccount checkItBankAccount) {
+			Integer checkitEnterpriseId, CheckItBankAccount checkItBankAccount) throws AonCoreException {
 		String iban = checkItBankAccount.getCcc();
 		try {
 			return CheckItAPI.insertTransactions(currentDomainName, currentDomain, user, checkitEnterpriseId, iban);
 		} catch (CheckItException e) {
-			return null;
+			throw new AonCoreException(e.getMessage());
 		}
 	}
 

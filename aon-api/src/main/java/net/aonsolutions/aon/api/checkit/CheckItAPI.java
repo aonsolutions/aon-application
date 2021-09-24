@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -27,6 +28,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItParams;
@@ -51,13 +53,15 @@ public class CheckItAPI implements IParamNames{
 	private static final String API_KEY = "84d9ee44e457ddef7f2c4f25dc8fa865";
 	private static final DateFormat DF = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "ES"));
 
-	private static Object post(String url, JSONObject params) {
+	private static Object post(String url, JSONObject params) throws CheckItException {
 		try (CloseableHttpClient client = HttpClients.createDefault()) {
 			HttpPost post = new HttpPost(url);
 			StringEntity entity = new StringEntity(params.toString());
 			post.addHeader("Content-Type", "application/json");
 			post.setEntity(entity);
 			try (CloseableHttpResponse resp = client.execute(post)) {
+				if (resp.getStatusLine().getStatusCode() != 200)
+					throw new CheckItException("No se pudo establecer la conexi\u00F3n con CheckIt");
 				if (resp.getEntity() != null) {
 					String str = EntityUtils.toString(resp.getEntity());
 					if (str != null && str.charAt(0) == '[') {
@@ -887,7 +891,14 @@ public class CheckItAPI implements IParamNames{
 	
 	public static List<BankStatement> getBankStatements(Integer empresaId, Integer accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
 		Date today = new Date();
-
+		
+		
+		Calendar nextOperationCalendar= Calendar.getInstance();
+		nextOperationCalendar.setTime(lastOperationDate);
+		nextOperationCalendar.add(Calendar.DATE, 1);
+		Date nextOperationDate = nextOperationCalendar.getTime();
+		
+		
 		JSONObject requestParams = new JSONObject();
 		
 		requestParams.put(API_KEY_PARAM, API_KEY);
@@ -906,33 +917,11 @@ public class CheckItAPI implements IParamNames{
 
 			int movementId = transactionJson.optInt("id_movimiento");
 			
-			if (maximumId == null)
-				maximumId = 0;
+			Date operationDate = parseTZDate(transactionJson.optString("fecha_operacion"));
 			
-			if (movementId > maximumId) {
-				Date operationDate = parseTZDate(transactionJson.optString("fecha_operacion"));
-
-				String description = transactionJson.optString("descripcion");
-
-				if (description != null)
-					description = description.length() > 80 ? description.substring(0, 80) : description;
-
-				Double amount = transactionJson.optDouble("importe");
-				amount = amount.isNaN() ? 0.00 : amount;
-
-				boolean bpayment = amount < 0;
-				
-				
-				BankStatement bankStatement = new BankStatement();
-				bankStatement.setOperationDate(operationDate);
-				bankStatement.setCommonConcept(StatementConcept.UNKNOWN);
-				bankStatement.setPayment(bpayment);
-				bankStatement.setAmount(Math.abs(amount));
-				bankStatement.setDescription(description);
-				bankStatement.setStatus(StatementStatus.PENDING);
-				bankStatement.setReference1(CHECKIT_R1);
-				bankStatement.setReference2(leadingZeros(movementId, 16));
-				
+			if ((maximumId == null && (operationDate.after(nextOperationDate) || operationDate.equals(nextOperationDate))) 
+					|| (maximumId != null && movementId > maximumId)) {
+				BankStatement bankStatement = bankStatementFromJson(transactionJson);
 				bankStatements.add(bankStatement);
 			}
 
@@ -940,6 +929,32 @@ public class CheckItAPI implements IParamNames{
 		bankStatements.sort((b1, b2) -> b1.getReference2().compareTo(b2.getReference2()));
 		return bankStatements;
 
+	}
+
+	private static BankStatement bankStatementFromJson(JSONObject transactionJson) throws CheckItException {
+		Date operationDate = parseTZDate(transactionJson.optString("fecha_operacion"));
+
+		String description = transactionJson.optString("descripcion");
+
+		if (description != null)
+			description = description.length() > 80 ? description.substring(0, 80) : description;
+
+		Double amount = transactionJson.optDouble("importe");
+		amount = amount.isNaN() ? 0.00 : amount;
+
+		boolean bpayment = amount < 0;
+		
+		
+		BankStatement bankStatement = new BankStatement();
+		bankStatement.setOperationDate(operationDate);
+		bankStatement.setCommonConcept(StatementConcept.UNKNOWN);
+		bankStatement.setPayment(bpayment);
+		bankStatement.setAmount(Math.abs(amount));
+		bankStatement.setDescription(description);
+		bankStatement.setStatus(StatementStatus.PENDING);
+		bankStatement.setReference1(CHECKIT_R1);
+		bankStatement.setReference2(leadingZeros(transactionJson.optInt("id_movimiento"), 16));
+		return bankStatement;
 	}
 	
 	/**
@@ -1104,10 +1119,14 @@ public class CheckItAPI implements IParamNames{
 				unlinkedIbans.add(accounts.optJSONObject(i).optString(CCC));
 			}
 			
+			AON.getCompanyBanks(domainName, domainId, user);
+			
+			Company company = AON.getCompany(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId));
 			LinkedList<RegistryBank> activeBanks = AON.getRBankList(domainName
 					, domainId
 					, user
 					, f -> f.getDomainProperty().eq(domainId)
+					.and(f.getRegistryProperty().eq(company.getId()))
 					.and(f.getActiveProperty().eq(AonEnumUtils.getByte(true)))
 					.and(f.getBankAccountProperty().notIn(unlinkedIbans.toArray(new String[unlinkedIbans.size()]))));
 			

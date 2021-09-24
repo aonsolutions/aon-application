@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLoginFields;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAccount;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.api.services.calendar.model.Event.Reminders;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -315,38 +316,53 @@ public class CheckItModule extends MainEntryPoint {
 			panel.addStyleName(AON.CSS.aonBlockCenter());
 			panel.addStyleName(AON.CSS.aonPadding());
 			
-			InlineLabel accumLabel = new InlineLabel("Acumulados ");
+			Label accumLabel = new Label("Acumulados ");
 			accumLabel.setStyleName(AON.CSS.aonTableLabel());
 			accumLabel.addStyleName(AON.CSS.aonFontMedium());
+			accumLabel.addStyleName(AON.CSS.aonTextLeft());
 
-			InlineLabel balanceLabel = new InlineLabel("Saldo: ");
+			Label balanceLabel = new Label("Saldo: ");
 			balanceLabel.setStyleName(AON.CSS.aonMarginLeft());
 			balanceLabel.addStyleName(AON.CSS.aonTableLabel());
+//			balanceLabel.addStyleName(AON.CSS.aonTextLeft());
 			
 			InlineLabel balanceBox = new InlineLabel();
-			balanceBox.setText( AON.FMT.format( balanceTotal ));
+			balanceBox.setText( AON.FMT.format( balanceTotal ) + " \u20AC");
 			balanceBox.setStyleName(AON.CSS.aonMarginLeft());
 			balanceBox.addStyleName(AON.CSS.aonFontMedium());
+			balanceBox.addStyleName(AON.CSS.aonTextRight());
 			if (AonMathUtils.isLessThanZero( balanceTotal )) {
 				balanceBox.addStyleName(AON.CSS.aonColorRed());	
 			}
 			
-			InlineLabel remainderLabel = new InlineLabel("Disponible: ");
+			Label remainderLabel = new Label("Disponible: ");
 			remainderLabel.setStyleName(AON.CSS.aonTableLabel());
 			remainderLabel.addStyleName(AON.CSS.aonMarginLeft());
+//			remainderLabel.addStyleName(AON.CSS.aonTextLeft());
 			
 			InlineLabel remainderBox = new InlineLabel();
-			remainderBox.setText( AON.FMT.format( remainderTotal ));
+			remainderBox.setText( AON.FMT.format( remainderTotal ) + " \u20AC");
 			remainderBox.setStyleName(AON.CSS.aonMarginLeft());
 			remainderBox.addStyleName(AON.CSS.aonFontMedium());
+			remainderBox.addStyleName(AON.CSS.aonTextRight());
 			if (AonMathUtils.isLessThanZero( remainderTotal )) {
-				remainderBox.addStyleName(AON.CSS.aonColorRed());	
+				remainderBox.addStyleName(AON.CSS.aonColorRed());
 			}
+			
+			FlexTable table = new FlexTable();
+			table.setStyleName(AON.CSS.aonTextRight());
+			table.setWidget(0, 0, balanceLabel);
+			table.setWidget(0, 1, balanceBox);
+			table.setWidget(1, 0, remainderLabel);
+			table.setWidget(1, 1, remainderBox);
+			
 			totals.add(accumLabel);
-			totals.add(balanceLabel);
-			totals.add(balanceBox);
-			totals.add(remainderLabel);
-			totals.add(remainderBox);
+//			totals.add(balanceLabel);
+//			totals.add(balanceBox);
+//			totals.add(new Label());
+//			totals.add(remainderLabel);
+//			totals.add(remainderBox);
+			totals.add(table);
 			panel.add(totals);
 		}
 		return panel;
@@ -359,12 +375,14 @@ public class CheckItModule extends MainEntryPoint {
 		panel.addStyleName(AON.CSS.aonMarginTop());
 		panel.addStyleName(AON.CSS.aonBlockCenter());
 		panel.addStyleName(AON.CSS.aonPadding());
-		Label unlinkedTitle = new Label("Cuentas no vinculadas");
-		unlinkedTitle.addStyleName(AON.CSS.aonTextLeft());
-		unlinkedTitle.addStyleName(AON.CSS.aonFontMedium());
-		unlinkedTitle.addStyleName(AON.CSS.aonBold());
-		panel.add(unlinkedTitle);
 		if (opt.getConfiguration().getCheItBanks() != null && !opt.getConfiguration().getCheckItUnlinkedBanks().isEmpty()) {
+			
+			Label unlinkedTitle = new Label("Cuentas no vinculadas");
+			unlinkedTitle.addStyleName(AON.CSS.aonTextLeft());
+			unlinkedTitle.addStyleName(AON.CSS.aonFontMedium());
+			unlinkedTitle.addStyleName(AON.CSS.aonBold());
+			panel.add(unlinkedTitle);
+			
 			AonCards cards = new AonCards();
 			for (CheckitUnlinkedBankAccount unlinkedBankAccount : opt.getConfiguration().getCheckItUnlinkedBanks()) {
 				cards.addCard( new AonCheckItUnlinkedBankCard(opt, unlinkedBankAccount) );
@@ -387,11 +405,12 @@ public class CheckItModule extends MainEntryPoint {
 			
 			FlowPanel ibanPanel = new FlowPanel();
 			InlineLabel ibanBox = new InlineLabel();
-			ibanBox.setText(checkItBankAccount.getCcc());
+			ibanBox.setText(formatIban(checkItBankAccount.getCcc()));
+			ibanPanel.addStyleName(AON.CSS.aonMarginBottom());
 			ibanPanel.add(ibanBox);
 			
 			FlowPanel atDateLabelPanel = new FlowPanel();
-			InlineLabel atDateLabel = new InlineLabel("Fecha del saldo ");
+			InlineLabel atDateLabel = new InlineLabel("\u00DAltima actualizaci\u00F3n ");
 			atDateLabel.setStyleName(AON.CSS.aonTableLabel());
 			atDateLabelPanel.add(atDateLabel);
 			
@@ -399,6 +418,7 @@ public class CheckItModule extends MainEntryPoint {
 			InlineLabel atDateBox = new InlineLabel();
 			atDateBox.addStyleName(AON.CSS.aonFontMedium());
 			atDateBox.setText( checkItBankAccount.getAtDate() == null ? "----" : AON.TIME_FORMAT.format( checkItBankAccount.getAtDate()));
+			atDatePanel.addStyleName(AON.CSS.aonMarginBottom());
 			atDatePanel.add(atDateBox);
 			
 			FlowPanel balanceLabelPanel = new FlowPanel();
@@ -412,7 +432,8 @@ public class CheckItModule extends MainEntryPoint {
 			if (AonMathUtils.isLessThanZero( checkItBankAccount.getBalance())) {
 				balanceBox.addStyleName(AON.CSS.aonColorRed());	
 			}
-			balanceBox.setText( AON.FMT.format( checkItBankAccount.getBalance()));
+			balanceBox.setText( AON.FMT.format( checkItBankAccount.getBalance()) + " \u20AC");
+			balancePanel.addStyleName(AON.CSS.aonMarginBottom());
 			balancePanel.add(balanceBox);
 
 			FlowPanel remainderLabelPanel = new FlowPanel();
@@ -425,7 +446,8 @@ public class CheckItModule extends MainEntryPoint {
 			if (AonMathUtils.isLessThanZero( checkItBankAccount.getRemainder())) {
 				balanceBox.addStyleName(AON.CSS.aonColorRed());	
 			}
-			remainderBox.setText( AON.FMT.format( checkItBankAccount.getRemainder()));
+			remainderBox.setText( AON.FMT.format( checkItBankAccount.getRemainder()) + " \u20AC");
+			remainderPanel.addStyleName(AON.CSS.aonMarginBottom());
 			remainderPanel.add(remainderBox);
 
 			body.add(ibanPanel);
@@ -474,7 +496,7 @@ public class CheckItModule extends MainEntryPoint {
 							public void onSuccess(Integer result) {
 								String singPlur = (result != 1) ? " nuevos movimientos insertados en " : " nuevo movimiento insertado en ";
 								
-								Label label = new Label(result + singPlur + checkItBankAccount.getBank() + " - " + checkItBankAccount.getCcc());
+								Label label = new Label(result + singPlur + checkItBankAccount.getBank() + " - " + formatIban(checkItBankAccount.getCcc()));
 								label.addStyleName(AON.CSS.aonColorGreen());
 								sessionLog.add(label);
 								
@@ -487,6 +509,7 @@ public class CheckItModule extends MainEntryPoint {
 							
 							@Override
 							public void onFailure(Throwable caught) {
+								LOGGER.info("petó");
 								Label errLabel = new Label(caught.getMessage());
 								errLabel.setStyleName(AON.CSS.aonColorRed());
 								sessionLog.add(errLabel);
@@ -771,7 +794,7 @@ public class CheckItModule extends MainEntryPoint {
 			
 			FlowPanel ibanPanel = new FlowPanel();
 			InlineLabel ibanBox = new InlineLabel();
-			ibanBox.setText(checkItUnlinkedBankAccount.getIban());
+			ibanBox.setText(formatIban(checkItUnlinkedBankAccount.getIban()));
 			ibanPanel.add(ibanBox);
 			
 			
@@ -807,7 +830,7 @@ public class CheckItModule extends MainEntryPoint {
 			bankLabel.addStyleName(AON.AON_NO_MARGIN);
 			registrationTable.setWidget(0, 0, bankLabel);
 			
-			Label ibanLabel = new Label(checkItUnlinkedBankAccount.getIban());
+			Label ibanLabel = new Label(formatIban(checkItUnlinkedBankAccount.getIban()));
 			ibanLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 			ibanLabel.getElement().getStyle().setFontSize(1.75, Unit.EM);
 			registrationTable.setWidget(1, 0, ibanLabel);
@@ -1044,6 +1067,16 @@ public class CheckItModule extends MainEntryPoint {
 		int effectiveHeigth = 3;
 		centerLayoutPanel.setWidgetSize(footPanel, (double)Window.getClientHeight() / effectiveHeigth);
 		centerLayoutPanel.animate(500);
+	}
+	
+	private String formatIban(String iban) {
+		if (iban != null && iban.length() == 24) {
+			return iban.substring(0, 4) + " " 
+					+ iban.substring(4, 8) + " " 
+					+ iban.substring(8, 10) + " "
+					+iban.substring(10);
+		}
+		return iban;
 	}
 	
 

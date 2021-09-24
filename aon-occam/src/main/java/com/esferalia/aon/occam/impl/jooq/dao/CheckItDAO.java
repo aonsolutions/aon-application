@@ -184,7 +184,7 @@ public class CheckItDAO {
 		}
 
 		if (maxId == null && lastOperationDate == null) {
-			lastOperationDate = cleanDate(1, Calendar.JANUARY, Calendar.getInstance().get(Calendar.YEAR));
+			lastOperationDate = cleanDate(31, Calendar.DECEMBER, Calendar.getInstance().get(Calendar.YEAR) - 1);
 		}
 		return lastOperationDate;
 	}
