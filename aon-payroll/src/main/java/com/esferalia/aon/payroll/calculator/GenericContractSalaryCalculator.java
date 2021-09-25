@@ -2136,6 +2136,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			@Override
 			public void visitInkind(DeductionType deductionType) {
+				add(); // ATEP_E & ECSS_E
 			}	
 			
 			@Override
