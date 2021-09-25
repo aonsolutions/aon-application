@@ -178,7 +178,7 @@ public class Up2Date {
     		//OvertimeCostsFix.OVERTIMECOSTSFIX
     		//ReduccionCgcE02Fix.REDUCCIONCGCE02FIX,
     		//AgriculturalATEPEFix.AGRICULTURALATEPEFIX
-    		AdditionalHoursKiss.ADDITIONALHOURSKISS
+    		AdditionalHoursKiss.ADDITIONALHOURSKISS,
     		TaskWorkflowUpdate.TASK_WORKFLOW_UPDATE,
     		ProjectHolderCreation.PROJECT_HOLDER_CREATION
     };
