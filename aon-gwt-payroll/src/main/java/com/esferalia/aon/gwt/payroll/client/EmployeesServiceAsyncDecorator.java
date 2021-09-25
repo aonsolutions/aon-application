@@ -16,6 +16,8 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
+import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -599,9 +601,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void getEmployeeInfoDataBase(String domain, String user, Integer contractId, AsyncCallback<EmployeeContractInfo> callback) throws IllegalArgumentException {
+	public void getEmployeeInfoDataBase(String domain, String user, Integer contractId, Workplace workplace, AsyncCallback<EmployeeContractInfo> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeInfoDataBase(domain, user, contractId, 
+		employeesServiceAsync.getEmployeeInfoDataBase(domain, user, contractId, workplace,
 				new AsyncCallbackWrapper<EmployeeContractInfo>(callback));
 
 	}
@@ -625,7 +627,7 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 
 	@Override
 	public void getWorkplaceEmployeesEvents(String domain, Integer workplaceId,
-			AsyncCallback<WorkplaceEmployees> callback) {
+			AsyncCallback<WorkplaceEmployees> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getWorkplaceEmployeesEvents(domain, workplaceId,
 				new AsyncCallbackWrapper<WorkplaceEmployees>(callback));
@@ -638,6 +640,16 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.getEmployeeEventsByContract(domain, contractId, employeeContractVariablesDB,
 				new AsyncCallbackWrapper<EmployeeEventsData>(callback));
 	}
+	
+
+	@Override
+	public void setEmployeeEventsByContract(String domain, Integer contractId,
+			EmployeeEventsData employeeContractVariablesDB, AsyncCallback<EmployeeEventsData> callback) {
+		AON.start();
+		employeesServiceAsync.setEmployeeEventsByContract(domain, contractId, employeeContractVariablesDB,
+				new AsyncCallbackWrapper<EmployeeEventsData>(callback));
+	}
+
 
 	@Override
 	public void setEmployeeAFIChanges(String currentDomainName, Integer contractId, Date newDate, boolean isChangeContract, String tc2,
@@ -888,6 +900,27 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	public void getCertifica2Info(String currentDomainName, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getCertifica2Info(currentDomainName, contractId, new AsyncCallbackWrapper<Certifica2Info>(callback));
+	}
+	
+	// ------------------------------------------------- EmployeeContractPayments
+
+
+	@Override
+	public void getContractPayements(String currentDomainName, Integer contractId, AsyncCallback<ContractPaymentData> callback) {
+		AON.start();
+		employeesServiceAsync.getContractPayements(currentDomainName, contractId, new AsyncCallbackWrapper<ContractPaymentData>(callback));
+	}
+
+	@Override
+	public void updateContractPayments(String currentDomainName, Integer contractId, ContractPaymentData contractPaymentData, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.updateContractPayments(currentDomainName, contractId, contractPaymentData, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void createContractPayment(String currentDomainName, Integer contractId, ContractConceptCalc contractConceptCalc, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.createContractPayment(currentDomainName, contractId, contractConceptCalc, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 }

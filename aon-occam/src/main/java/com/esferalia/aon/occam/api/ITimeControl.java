@@ -21,16 +21,16 @@ public interface ITimeControl {
 	public Stream<TimeControlDetail> getTimeControlDetailStream(AONContext ctx, TimeControlFilter filter);
 	public LinkedList<TimeControlDetail> getTimeControlDetailList(AONContext ctx, TimeControlFilter filter);
 	public TimeControlDetail saveTimeControlDetail(AONContext ctx, TimeControlDetail tcd);
-	public void deleteTimeControlDetail(AONContext ctx, TimeControlFilter filter);
+	public void deleteTimeControlDetail(AONContext ctx, Integer id);
 	
 	//LOCATION
 	public Location saveLocation(AONContext ctx, Location lc);
 	public Stream<Location> getLocationStream(AONContext ctx, LocationFilter filter);
 	
-	public void deleteLocation(AONContext ctx, Location lc);
+	public void deleteLocation(AONContext ctx, Integer id);
 	
 	public Location getLocation(AONContext ctx, LocationFilter filter);
 	
-	public Location getLocation(AONContext ctx, Coordinates c);
+	public Location getLocationByCoordinates(AONContext ctx, Coordinates c);
 	
 }

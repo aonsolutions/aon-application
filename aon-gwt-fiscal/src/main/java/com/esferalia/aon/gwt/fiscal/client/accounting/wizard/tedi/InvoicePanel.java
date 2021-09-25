@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog.AonMessageDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonScalableImage;
@@ -36,6 +35,10 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -48,8 +51,10 @@ import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -72,6 +77,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private FlowPanel attachPanelTableRow;
 	private FlowPanel attachPanelTableCell1;
 	private VerticalPanel buttons;
+	
 	private FlowPanel attachPanelTableCell2;
 	private AonTableButton attachCloseButton;
 	private AonTableButton attachOpenButton;
@@ -79,6 +85,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private AccountingRegistry lastRegistry;
 	private Focusable focusableWidget;
 	
+	private FormPanel fileSelectForm;
+	private FileUpload fileSelect;
+	private AsyncCallback<IAccountEntryWrapper> attachmentCallback; 
+
 	public InvoicePanel(final IAccountEntryModuleCallback callback) {
 		TediServiceAsync serviceRaw = GWT.create(TediService.class);
 		TEDI_SERVICE = new TediServiceAsyncDecorator(serviceRaw);
@@ -118,7 +128,6 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private void editInvoice() {
 		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
-		LOGGER.info("editInvoice " + (invoiceCallback.getInvoice() != null && invoiceCallback.getInvoice().getInvoice() != null && invoiceCallback.getInvoice().getInvoice().getId() != null));
 		LOGGER.info("Editing invoice as account source");
 		editInvoice(invoiceCallback);
 	}
@@ -295,6 +304,45 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 	
 	@Override
+	public boolean isAttachmentManagementEnabled() {
+		return true;
+	}
+	@Override
+	public boolean hasAttachment() {
+		return (getWrapper() != null 
+			&& getWrapper().getAccountEntry() != null
+			&& getWrapper().getAccountEntry().getId() != null
+			&& getWrapper().isDocumentAttached());
+	}
+	
+	@Override
+	public void removeAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+		Integer invoiceId = getWrapper().getInvoice().getId();
+		getAccountEntryService().removeInvoiceAttach(getCallback().getCurrentDomainName()
+				, getCallback().getCurrentDomainId()
+				, getCallback().getCurrentUser()
+				, invoiceId , new AsyncCallback<AccountingInvoice>() {
+
+			@Override
+			public void onSuccess(AccountingInvoice result) {
+				setWrapper(result);
+				cbk.onSuccess(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				cbk.onFailure(caught);
+			}
+
+		});
+	}
+	@Override
+	public void addAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+		this.attachmentCallback = cbk;
+		fileSelect.click();
+	}
+
+	@Override
 	public boolean isStatusMsgEnabled() {
 		return getWrapper() != null && getWrapper().isAccountSource();
 	}
@@ -442,9 +490,62 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			attachPanelTableCell1.setWidth("1px");
 			attachPanelTableCell1.clear();
 			attachPanelTableCell2.clear();
+
+			fileSelectForm = new FormPanel();
+			fileSelect = new FileUpload();
+			fileSelectForm.add(fileSelect);
+			attachPanelTableCell1.add(fileSelectForm);
+			fileSelect.ensureDebugId("fileSelect");
+			fileSelect.getElement().getStyle().setDisplay(Style.Display.NONE);
+			fileSelect.addChangeHandler(new ChangeHandler() {
+				public void onChange(ChangeEvent event) {
+					event.preventDefault();
+					fileSelectHandler(fileSelect.getElement());
+				}
+			});
+			
+
 			rootPanel.setWidgetSize(attachPanelTable,0);
 		}
 	}
+	
+	private native void fileSelectHandler(Element fileSelect) /*-{
+		var self = this;		
+		var file = fileSelect.files[0];
+		var reader = new FileReader();
+		reader.addEventListener("load", function () {
+			self.@com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel::addAttach(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(reader.result,file.name,file.type); 
+			}, false);
+		reader.readAsDataURL( file );
+	}-*/;
+	
+	protected void addAttach(final String doc, final String name, String type) {
+		InvoicePanelCallback invoiceCallback = new InvoicePanelCallback();
+		setDocument(invoiceCallback, doc, name, type,false);
+		AccountingInvoice ai = getWrapper();
+		if (ai.isDocumentAttached()) {
+			getAccountEntryService().addInvoiceAttach(getCallback().getCurrentDomainName()
+					, getCallback().getCurrentDomainId()
+					, getCallback().getCurrentUser()
+					, getWrapper() , new AsyncCallback<AccountingInvoice>() {
+
+				@Override
+				public void onSuccess(AccountingInvoice result) {
+					setWrapper(result);
+					InvoicePanel.this.attachmentCallback.onSuccess(result);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					InvoicePanel.this.attachmentCallback.onFailure(caught);
+				}
+
+			});
+		} else {
+			AonMessageDialog.error("Documento no adjuntado, se admiten PDF y archivos de imagen");
+		}
+	}
+	
 	
 	private void paintButtons() {
 		attachPanelTableCell1.setWidth("20px");
@@ -494,8 +595,11 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			attachPanelTableCell2.add(invoiceAttachPanel);
 		}
 	}
-
 	private void setDocument(InvoicePanelCallback invoiceCallback,final String doc, final String name, String type) {
+		setDocument(invoiceCallback, doc, name, type, true);
+	}
+
+	private void setDocument(InvoicePanelCallback invoiceCallback,final String doc, final String name, String type, boolean allowParse) {
 		attachPanelTableCell2.clear();
 		MimeType mimeType = MimeType.safeValueFromContenType(type);
 		if (mimeType == null) {
@@ -530,7 +634,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				}});
 			}
 			
-			if ( invoiceCallback.getConfiguration().isOCRActive() ) {
+			if ( allowParse && invoiceCallback.getConfiguration().isOCRActive() ) {
 				final MimeType attachMimeType = mimeType;
 				TEDI_SERVICE.parseInvoice(invoiceCallback.getCurrentDomainName(), invoiceCallback.getCurrentUser(), 
 					invoiceCallback.getCurrentDomainId(), name, doc, new AsyncCallback<TediResult>() {
@@ -598,7 +702,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		    
 		    @Override
 		    public void onError(Throwable caught) {
-		      MessageDialog.error(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
+		      AonMessageDialog.error(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
 		    }
 		    
 		    @Override
@@ -614,99 +718,5 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	  contentPanel.setWidget(scrollPanel);
 	}
 
-/*	
-	private void spaintProblemsWidget(SimpleLayoutPanel contentPanel, TediResult result) {
-		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
-		FlowPanel mainPanel = new FlowPanel();
-		scrollPanel.setWidget(mainPanel);
-		if (result.getMessages() != null && result.getMessages().size() > 0) {
-			mainPanel.setStyleName(AON.CSS.aonMarginTopSep());
-			mainPanel.addStyleName(AON.CSS.aonMarginLeft());
-			mainPanel.addStyleName(AON.CSS.aonBorder());
-			mainPanel.addStyleName(AON.CSS.aonFixedFont());
-			for (TediError error : result.getMessages()) {
-				FlowPanel flowPanel = new FlowPanel();
-				InlineLabel colorLabel = new InlineLabel("");
-				colorLabel.setStyleName(AON.CSS.aonPaddingLeft());
-				colorLabel.addStyleName(AON.CSS.aonPaddingRight());
-				colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(error.getLevel()));
-				flowPanel.add(colorLabel);
-
-				InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
-				errLabel.setStyleName(AON.CSS.aonClickable());
-				errLabel.addStyleName(AON.CSS.aonPaddingLeft());
-				errLabel.addStyleName(AON.CSS.aonPaddingRight());
-				errLabel.addStyleName(AON.CSS.aonBold());
-				flowPanel.add(errLabel);
-
-				InlineLabel msgLabel = new InlineLabel(error.getMessage());
-				msgLabel.setStyleName(AON.CSS.aonMarginLeft());
-				msgLabel.addStyleName(AON.CSS.aonBorderBottom());
-				flowPanel.add(msgLabel);
-
-				if (error.canBeFixed()) {
-					SimplePanel container = new SimplePanel();
-					container.setStyleName(AON.CSS.aonMarginTop());
-					container.addStyleName(AON.CSS.aonMarginBottom());
-					flowPanel.add(container);
-					TediContextVisitor tediContextVisitor = new TediContextVisitor(getCallback().getCurrentDomainName(),
-							getCallback().getCurrentDomainId(),getCallback().getCurrentUser(), getCallback().getConfiguration(), container);
-					error.getContext().getKey().visit(tediContextVisitor, new ICallback() {
-
-						@Override
-						public TediResult getResult() {
-							return result;
-						}
-
-						@Override
-						public AonConfiguration getConfiguration() {
-							return getCallback().getConfiguration();
-						}
-
-						@Override
-						public void onCancel() {
-
-						}
-
-						@Override
-						public void onAccept(TediResult result) {
-							TEDI_SERVICE.validateInvoice(getCallback().getCurrentDomainName(),
-									getCallback().getCurrentUser(), getCallback().getCurrentDomainId(), result, new AsyncCallback<TediResult>() {
-
-										@Override
-										public void onSuccess(TediResult result) {
-											afterTediParse( result );
-										}
-
-										@Override
-										public void onFailure(Throwable caught) {
-											MessageDialog.error(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
-										}
-									});
-						}
-					});
-				}
-				mainPanel.add(flowPanel);
-			}
-		}
-		contentPanel.setWidget(scrollPanel);
-	}
-
-	private String getBackgroundColor(TediLevel curLevel) {
-		String color = null;
-		if (curLevel == null) {
-			color = "#e6ffe6";
-		} else if (curLevel == TediLevel.INF) {
-			color = "#e7f5fe";
-		} else if (curLevel == TediLevel.WRN) {
-			color = "#ffbf80";
-		} else if (curLevel == TediLevel.ERR) {
-			color = "#ffc2b3";
-		}
-		return color;
-	}
-
-*/
 }
 

@@ -66,7 +66,7 @@ public class ProjectServlet extends HttpServlet{
     	JSONArray array = new JSONArray();
 		AON.getProjectCommercialStream(domain.getName(), domain.getId(), login, f -> f.getTargetProperty().eq(registryId)
 			.and(f.getDomainProperty().eq(domain.getId()))).forEach(pc -> {
-				Registry registry = new Registry().setId(pc.getRegistryId()).setName(pc.getRegistryName());
+				Registry registry = new Registry().setId(pc.getRegistry().getId()).setName(pc.getRegistry().getName());
 				Registry seller = AON.getRegistry(domain.getName(), domain.getId(), login, pc.getSeller());
 				JSONObject json = ToJSON.projectCommercialToJSON(pc, registry, seller);
 		    	JSONArray ar = new JSONArray();

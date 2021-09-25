@@ -1,9 +1,11 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
@@ -24,7 +26,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EnterpriseDraft extends Composite {
+public abstract class EnterpriseDraft extends Composite {
 	
 	private class EnterpriseImplementation extends Enterprise {
 
@@ -43,7 +45,7 @@ public class EnterpriseDraft extends Composite {
 		@Override
 		public void onEnterpriseDocumentChange() {
 			String value = this.document.getValue();
-			enterprise.checkDocument();
+			enterprise.checkDocument(true);
 			enterpriseDraftObject.setDocument(value);
 		}
 
@@ -156,16 +158,26 @@ public class EnterpriseDraft extends Composite {
 		public void onEnterpriseScopeChange(Integer scopeId) {
 			enterpriseDraftObject.setScope(scopeId);
 		}
+
+		@Override
+		public void fireErrorMessage(Map<String, String> errorMap) {
+			AonMessagePanel.showError(messageContainer, errorMap);
+		}
+		
+		@Override
+		public void fireInfoMessage(Map<String, String> errorMap) {
+			AonMessagePanel.showInfo(messageContainer, errorMap);
+		}
 		
 	}
 	
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// -------------------------------------------------- UiBinder
 
 	private static EnterpriseDraftUiBinder uiBinder = GWT.create(EnterpriseDraftUiBinder.class);
 
 	interface EnterpriseDraftUiBinder extends UiBinder<Widget, EnterpriseDraft> {}
 
-	// ----------------------------------------------- ScheduledCommand ---------------------------------------------
+	// -------------------------------------------------- NewContextMenu
 	
 	class NewWorkplaceCommand implements ScheduledCommand {
 
@@ -191,32 +203,35 @@ public class EnterpriseDraft extends Composite {
 		public NewContextMenu() {
 			
 			newWorkplace = addItem("Centro trabajo", new NewWorkplaceCommand(), 
-					AON.CSS.aonIconHome(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconHome(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			newWorkplace.ensureDebugId("newWorkplace");
 			
 			newActivity = addItem("Actividad", new NewActivityCommand(), 
-					AON.CSS.aonIconCopy(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconCopy(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			newActivity.ensureDebugId("newActivity");
 		}
 	}
 	
-	// -------------------------------------------------- UiFields --------------------------------------------------
+	// -------------------------------------------------- UiFields
 	
 	@UiField
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
 		String container();
-		String cmd_btn();
+		String cmdBtn();
 	}
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
+	HTMLPanel messageContainer;
+	
+	@UiField
 	HTMLPanel centerContainer;
 
-	// ------------------------------------------------------ VARIABLES DE LA CLASE --------------------------------------------------
+	// -------------------------------------------------- Variables
 
 	private EnterpriseDraftObject enterpriseDraftObject;
 	
@@ -229,18 +244,16 @@ public class EnterpriseDraft extends Composite {
 	private Enterprise enterprise;
 	
 	private AonToolbar toolbar;
-	private AonToolbarButton acceptButton;
-	private AonToolbarButton newButton;
 	private AonToolbarButton undoAllButton;
 	private AonToolbarButton undoButton;
 	private AonToolbarButton redoButton;
 
-	// ------------------------------------------------ CONSTRUCTOR ------------------------------------------------------
+	// -------------------------------------------------- Constructor
 
-	public EnterpriseDraft() {
+	protected EnterpriseDraft() {
 		enterprise = new EnterpriseImplementation();
-		toolbar = getToolbarPanel();
-		
+		getToolbarPanel();
+
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -253,7 +266,7 @@ public class EnterpriseDraft extends Composite {
 		centerContainer.add(enterprise);
 	}
 
-	// ------------------------------------------------------ METODOS DE LA CLASE --------------------------------------------------
+	// -------------------------------------------------- setEnterpriseDraftObject
 
 	public void setEnterpriseDraftObject(EnterpriseDraftObject enterpriseDraftObject) {
 		this.enterpriseDraftObject = enterpriseDraftObject;
@@ -261,17 +274,18 @@ public class EnterpriseDraft extends Composite {
 				s -> {
 					initializeUndoRedo();
 					initilizeView();
+					onCheckStatus(getEnterpriseDraftObject());
 				},
 				f -> {}
 		);
 	}
-
+	
 	private void initializeUndoRedo() {
 		undoButton.setEnabled(enterpriseDraftObject.canUndo());
 		undoAllButton.setEnabled(enterpriseDraftObject.canUndo());
 		redoButton.setEnabled(enterpriseDraftObject.canRedo());
 
-		enterpriseDraftObject.addUndoManagerListener( (undoManager) -> {
+		enterpriseDraftObject.addUndoManagerListener( undoManager -> {
 			undoButton.setEnabled(undoManager.canUndo());
 			undoAllButton.setEnabled(undoManager.canUndo());
 			redoButton.setEnabled(undoManager.canRedo());
@@ -290,7 +304,7 @@ public class EnterpriseDraft extends Composite {
 		enterprise.enterpriseName.setValue(enterpriseDraftObject.getName());
 		enterprise.enterpriseAlias.setValue(enterpriseDraftObject.getAlias());
 		enterprise.document.setValue(enterpriseDraftObject.getDocument());
-		enterprise.checkDocument();
+		enterprise.checkDocument(false);
 		enterprise.nationality.setValue(enterpriseDraftObject.getDocumentCountry());
 		setSelectedValueLB(enterprise.streetType, enterpriseDraftObject.getSteetType());
 		enterprise.address.setValue(enterpriseDraftObject.getAddress());
@@ -319,10 +333,13 @@ public class EnterpriseDraft extends Composite {
 		enterprise.checkPaysheetSendType(enterpriseDraftObject.getPaysheetSendEmail());
 		
 		setSelectedValueLB(enterprise.enterpriseAgreement, enterpriseDraftObject.getAgreement());
-
 	}
 	
-	// ------------------------------------------------- AUX METHODS --------------------------------------------------
+	public EnterpriseDraftObject getEnterpriseDraftObject() {
+		return this.enterpriseDraftObject;
+	}
+	
+	// -------------------------------------------------- Auxiliar Methods
 
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
@@ -341,72 +358,70 @@ public class EnterpriseDraft extends Composite {
 		enterprise.addressCity.clear();
 		enterprise.addressCity.addItem("-", "-1");
 		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
-		municipalitiesOfProvince.entrySet().forEach(e -> {enterprise.addressCity.addItem(e.getValue(), e.getKey());});
+		municipalitiesOfProvince.entrySet().forEach(e -> enterprise.addressCity.addItem(e.getValue(), e.getKey()));
 	}
 	
-	// ----------------------------------------------- TOOLBAR ------------------------------------------------
+	// -------------------------------------------------- Toolbar
 	
-	private AonToolbar getToolbarPanel() {
+	private void getToolbarPanel() {
+		toolbar = new AonToolbar("Empresa");
 		
-		AonToolbar toolbar = new AonToolbar("Empresa");
-		
-		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		acceptButton.addClickHandler(e -> {
-			onAccept(e);
-		});
+		AonToolbarButton acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		acceptButton.addClickHandler(e -> onAccept());
 		toolbar.add(acceptButton);
 		
-		newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		newButton.addClickHandler(e -> {
-			onNew(e);
-		});
+		AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+		newButton.addClickHandler(this::onNew);
 		toolbar.add(newButton);
 		
 		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
-		undoAllButton.addClickHandler(e -> {
-			onUndoAll(e);
-		});
+		undoAllButton.addClickHandler(e -> onUndoAll());
 		toolbar.add(undoAllButton);
 		
 		undoButton = new AonToolbarButton( AON.MSG.undo(), AON.CSS.aonIconUndo() );
-		undoButton.addClickHandler(e -> {
-			onUndo(e);
-		});
+		undoButton.addClickHandler(e -> onUndo());
 		toolbar.add(undoButton);
 		
 		redoButton = new AonToolbarButton( "Rehacer", AON.CSS.aonIconRedo() );
-		redoButton.addClickHandler(e -> {
-			onRedo(e);
-		});
+		redoButton.addClickHandler(e -> onRedo());
 		toolbar.add(redoButton);
-		
-		return toolbar;
-
 	}
 	
-	private void onAccept(ClickEvent event) {
+	private void onAccept() {
 		enterpriseDraftObject.updateEnterprise(
 				r -> {
+					Map<String, String> messageMap = new HashMap<>();
+					messageMap.put("Guardado", "La empresa " + enterpriseDraftObject.getEnterpriseInfo().getName() + " ha sido actualizada correctamente");
+					AonMessagePanel.showSuccess(messageContainer, messageMap);
 					onSaved.accept(enterpriseDraftObject.getEnterpriseInfo());
 				}, 
 				t -> {}
 		);
 	}
 	
-	private void onUndoAll(ClickEvent e) {
+	private void onUndoAll() {
 		while ( enterpriseDraftObject.canUndo() )
 			enterpriseDraftObject.undo();
 		initilizeView();
+		Map<String, String> messageMap = new HashMap<>();
+		messageMap.put("Deshacer", "Se han deshecho todos lo cambios realizados");
+		AonMessagePanel.showInfo(messageContainer, messageMap);
 	}
 	
-	private void onUndo(ClickEvent e) {
+	private void onUndo() {
 		enterpriseDraftObject.undo();
 		initilizeView();
+		Map<String, String> messageMap = new HashMap<>();
+		messageMap.put("Deshacer", "Se han deshecho el \u00FAltimo cambio realizado");
+		AonMessagePanel.showInfo(messageContainer, messageMap);
 	}
 
-	private void onRedo(ClickEvent e) {
+	private void onRedo() {
 		enterpriseDraftObject.redo();
 		initilizeView();
+		Map<String, String> messageMap = new HashMap<>();
+		messageMap.put("Rehacer", "Se han rehecho el \u00FAltimo cambio deshecho");
+		AonMessagePanel.showInfo(messageContainer, messageMap);
 	}
 	
 	private void onNew(ClickEvent event) {
@@ -415,11 +430,17 @@ public class EnterpriseDraft extends Composite {
 		contextMenu.show();
 	}
 	
+	// -------------------------------------------------- Saved Methods
+	
 	public EnterpriseDraft setOnSaved(Consumer<EnterpriseInfo> onSaved) {
 		this.onSaved = onSaved;
 		return this;
 	}
 	
 	protected void onSavedNoop(EnterpriseInfo enterpriseInfo) {}
+	
+	// -------------------------------------------------- Abstract Methods
+	
+	protected abstract void onCheckStatus(EnterpriseDraftObject enterpriseDraftObject);
 
 }

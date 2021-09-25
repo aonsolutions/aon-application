@@ -1,21 +1,19 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
-
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
-
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Properties.WorkgroupProperties;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 
 public class WorkgroupDAO {
 	
@@ -50,18 +48,19 @@ public class WorkgroupDAO {
 	}
 	
 	public static Workgroup save(AONContext ctx, Workgroup workgroup) {
-		workgroup.setStatus(workgroup.getStatus()!=null ? workgroup.getStatus() : 0 );
-		return workgroup.getId() != 0
+		workgroup.setStatus(workgroup.getStatus() !=null ? workgroup.getStatus() : WorkgroupStatus.ACTIVE);
+		return workgroup.getId() != null
 				? update(ctx, workgroup)
 				: insert(ctx, workgroup);
 	}
 	
 	public static Workgroup insert(AONContext ctx, Workgroup workgroup) {
-		Integer id =  ctx.getDslContext().insertInto(WORKGROUP)
+		Integer id = ctx.getDslContext().insertInto(WORKGROUP)
 				.set(WORKGROUP.DOMAIN, workgroup.getDomain())
 				.set(WORKGROUP.DESCRIPTION, workgroup.getDescription())
-				.set(WORKGROUP.STATUS, workgroup.getStatus())
+				.set(WORKGROUP.STATUS, workgroup.getStatus().value())
 				.returning(WORKGROUP.ID).fetchOne().getValue(WORKGROUP.ID);
+		ctx.log().debug("INSERT WORKGROUP id: " +id);	
 		return workgroup.setId(id);
 	}
 	
@@ -69,22 +68,19 @@ public class WorkgroupDAO {
 		ctx.getDslContext().update(WORKGROUP)
 				.set(WORKGROUP.DOMAIN, workgroup.getDomain())
 				.set(WORKGROUP.DESCRIPTION, workgroup.getDescription())
-				.set(WORKGROUP.STATUS, workgroup.getStatus())
+				.set(WORKGROUP.STATUS, workgroup.getStatus().value())
 				.where(WORKGROUP.ID.eq(workgroup.getId())).execute();
+		ctx.log().debug("UPDATE WORKGROUP id:" + workgroup.getId());
 		return workgroup;
 	}
 
-	public static void delete(AONContext ctx, WorkgroupFilter filter) {
-		ctx.getDslContext().delete(WORKGROUP)
-				.where(WORKGROUP_PROPERTIES.getConditions(filter)).execute();
-	}
-
 	public static void delete(AONContext ctx, Integer id) {
-		delete(ctx, f->f.getIdProperty().eq(id));
+		ctx.getDslContext().delete(WORKGROUP).where(WORKGROUP.ID.eq(id)).execute();
+		ctx.log().debug("DELETE WORKGROUP id:" + id);
 	}
-
 
 	public static class WorkgroupFiller implements Function<Record, Workgroup> {
+
 		@Override
 		public Workgroup apply(Record r) {
 			return build(r);
@@ -95,7 +91,7 @@ public class WorkgroupDAO {
 					.setId(r.getValue(WORKGROUP.ID))
 					.setDomain(r.getValue(WORKGROUP.DOMAIN))
 					.setDescription(r.getValue(WORKGROUP.DESCRIPTION))
-					.setStatus(r.getValue(WORKGROUP.STATUS));
+					.setStatus(WorkgroupStatus.safeValueOf(r.getValue(WORKGROUP.STATUS)));
 					
 		}
 	}

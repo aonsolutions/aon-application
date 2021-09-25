@@ -15,9 +15,9 @@ import net.aonsolutions.core.pool.AonConnectionException;
 public class AbstractTediTest {
 
 	protected static AONContext ctx;
-	protected static String DOMAIN_NAME = "macayc-mac.ecastellano.euk";
-	protected static Integer DOMAIN_ID = 536;
-	protected static String USER = "mac";
+	protected static String DOMAIN_NAME = "occamtest.aonsolutions.test";
+	protected static Integer DOMAIN_ID = 1;
+	protected static String USER = "admin";
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {

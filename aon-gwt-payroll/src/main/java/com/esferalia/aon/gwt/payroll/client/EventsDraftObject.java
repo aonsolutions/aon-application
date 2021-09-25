@@ -120,32 +120,37 @@ public class EventsDraftObject {
 			}
 
 			@Override
-			public void onSuccess(WorkplaceEmployees result) {
+			public void onSuccess(WorkplaceEmployees workplaceEmployeesDB) {
 				eventEmployees.clear();
 				mapEventsVar.clear();
 				workplaceContracts.clear();
 				
-				for(EmployeeInfo employeeDB : result.getWorkplaceEmployees()){
+				initWorkplaceEmployee(workplaceEmployeesDB);
+					
+				getAgreementVars(year,
+					r -> {
+							success.accept(workplaceEmployeesDB);
+						}, 
+					f -> {});
+				
+			}
+
+			private void initWorkplaceEmployee(WorkplaceEmployees workplaceEmployeesDB) {
+				for(EmployeeInfo employeeDB : workplaceEmployeesDB.getWorkplaceEmployees()){
+					
 					//Crear empleado e inicializar mapEventsObject
 					EventEmployee eventEmployee = new EventEmployee();
 					eventEmployee.setContractId(employeeDB.getContractId());
 					eventEmployee.setName(employeeDB.getName());
 					eventEmployee.setSurName(employeeDB.getSurName());
 					eventEmployee.setFullName(employeeDB.getName() + " " + employeeDB.getSurName());
+					eventEmployee.setAgreementId(employeeDB.getAgreementId());
 					
 					eventEmployees.add(eventEmployee);
-					
-					mapEventsVar.put(employeeDB.getContractId(), new HashMap<String, ArrayList<EmployeeEventsVariable>>());
-					
 					workplaceContracts.add(employeeDB.getContractId());
+					mapEventsVar.put(employeeDB.getContractId(), new HashMap<String, ArrayList<EmployeeEventsVariable>>());
+				
 				}
-				
-				getAgreementVars(year,
-					r -> {
-							success.accept(result);
-						}, 
-					f -> {});
-				
 			}
 			
 		});

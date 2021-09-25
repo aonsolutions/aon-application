@@ -1,16 +1,16 @@
 import { AonAvatar } from '../../components/aon-avatar.js';
-import { AonDialog } from '../../components/aon-dialog.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
-import { closeSession, getAuth, insertAvatar } from '../../services/authService.js';
+import { getAuth, insertAvatar } from '../../services/authService.js';
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
+// import { AonDialog } from '../../components/aon-dialog.js';
 
 export class AonMobileProfile extends AonElement {
 
     INPUT_FILE;
-
+    AVATAR;
     get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -33,16 +33,25 @@ export class AonMobileProfile extends AonElement {
     initialize() {
         this.id = this.id || CONSTANT.AON_MOBILE_PROFILE;
         this.INPUT_FILE = this.id + 'InputFile';
+        this.AVATAR = "aonAvatar";
     }
 
     build(user) {
-        this.innerHTML = `<input id='${this.INPUT_FILE}' style='display:none;' type='file' name='file' multiple>`; 
-		this.getElement(this.INPUT_FILE).addEventListener('change', ({target}) => this.uploadAvatarFile(target.files[0]));
+        let input = document.createElement(TAG.INPUT);
+        input.id = this.INPUT_FILE;
+        input.multiple = true;
+        input.type = "file";
+        input.style.display = "none";
+        input.name = "file";
+        input.addEventListener(EVENT.CHANGE, ({target}) => this.uploadAvatarFile(target.files[0]));
+        this.appendChild(input);
+		
         let div = this.createElement(TAG.DIV);
         div.style.margin = '20px';
         this.appendChild(div);  
 
         let avatar = new AonAvatar();
+        avatar.id = this.AVATAR;
         avatar.src = user.avatar;
         avatar.addEventListener(EVENT.CLICK, () => this.uploadAvatar());
         div.appendChild(avatar);
@@ -67,7 +76,7 @@ export class AonMobileProfile extends AonElement {
         this.buildOption('fingerprint', user.document);
         this.buildOption('smartphone', user.phone);
         this.buildOption('password', 'Cambiar Contraseña');
-        this.addCloseSessionButton();
+        // this.addCloseSessionButton();
     }
 
     buildOption(icon, value) {
@@ -89,56 +98,60 @@ export class AonMobileProfile extends AonElement {
         div.appendChild(val);
     }
 
-    addCloseSessionButton() {
-        let span = this.getElement(this.id + "FloatSpan") || this.createElement(TAG.SPAN);
-        span.id = this.id + "FloatSpan";
-        span.style.position = "fixed";
-        let n = (window.innerWidth / 5 - 40) / 2;
-        span.style.right = n + 'px';
-        span.style.bottom = this.isSab() ? "80px" : "70px";
-        let aonIconButton = new AonIconButton();
+    // addCloseSessionButton() {
+    //     let span = this.getElement(this.id + "FloatSpan") || this.createElement(TAG.SPAN);
+    //     span.id = this.id + "FloatSpan";
+    //     span.style.position = "fixed";
+    //     let n = (window.innerWidth / 5 - 40) / 2;
+    //     span.style.right = n + 'px';
+    //     span.style.bottom = this.isSab() ? "80px" : "70px";
+    //     let aonIconButton = new AonIconButton();
 
-        aonIconButton.icon = 'input';
-        aonIconButton.id = this.id + "CloseSessionButton";
-        aonIconButton.title = 'Cerrar Sesión';
-        aonIconButton.color = 'white'
-        aonIconButton.background = 'red';
-        aonIconButton.style.opacity = '0.5';
-        aonIconButton.noHover = true;
-        span.appendChild(aonIconButton);
-        this.appendChild(span);
-        aonIconButton.addEventListener(EVENT.CLICK, () => this.closeSession());
-    }
+    //     aonIconButton.icon = 'input';
+    //     aonIconButton.id = this.id + "CloseSessionButton";
+    //     aonIconButton.title = 'Cerrar Sesión';
+    //     aonIconButton.color = 'white'
+    //     aonIconButton.background = 'red';
+    //     aonIconButton.style.opacity = '0.5';
+    //     aonIconButton.noHover = true;
+    //     span.appendChild(aonIconButton);
+    //     this.appendChild(span);
+    //     aonIconButton.addEventListener(EVENT.CLICK, () => this.closeSession());
+    // }
 
-    closeSession() {
-        let d = new AonDialog();
-        this.appendChild(d);
-        d.clear();
-    	if(!this.isMobile()) d.width = '400px';
-    	d.setTitle('Cerrar Sesión');
-   	 	d.setContentHTML(`Estás seguro de cerrar sesión`);
-    	d.addAcceptAction(() => {
-            closeSession();
-    	});
-    	d.open();
-    }
+    // closeSession() {
+    //     let d = new AonDialog();
+    //     this.appendChild(d);
+    //     d.clear();
+    // 	if(!this.isMobile()) d.width = '400px';
+    // 	d.setTitle('Cerrar Sesión');
+   	//  	d.setContentHTML(`Estás seguro de cerrar sesión`);
+    // 	d.addAcceptAction(() => {
+    //         closeSession();
+    // 	});
+    // 	d.open();
+    // }
 
     uploadAvatar() {
         this.getElement(this.INPUT_FILE).click();
     }
 
-    uploadAvatarFile(file) {
-        getReader(file).then(f => {
-            if (f) {
-                if (f.contentType.indexOf("image") >= 0) {
+    async uploadAvatarFile(file) {
+        try {
+            let reader = await getReader(file);
+            if (reader) {
+                if (reader.contentType.indexOf("image") >= 0) {
                     //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
-                    downscaleImage(f, undefined, undefined, undefined).then(file => {
-                        f = file;
-                        return insertAvatar(f);
-                    });
-                } else return insertAvatar(f);
+                    reader = await downscaleImage(reader, undefined, undefined, undefined);
+                } 
+                await insertAvatar(reader);
+                const aonAvatar = this.getElement(this.AVATAR);
+                if(aonAvatar){
+                    const auth = await getAuth();
+                    aonAvatar.src = auth.avatar;
+                }
             }
-        });
+        } catch (error) { console.log(error); }
     }
 }
 

@@ -1,12 +1,14 @@
 import { AonElement } from "./AonElement.js";
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";3
 import { AonIconButton } from "./aon-icon-button.js";
+import { AonIcon } from "./aon-icon.js";
 import "./aon-toolbar.js";
 import "./aon-loader.js";
 import "./aon-icon.js";
 import "./aon-dialog.js";
 import "./aon-dialog-menu.js";
 import "./aon-toast.js";
+
 // import { DIV } from "../environments/aonTag.js";
 
 export class AonApplication extends AonElement {
@@ -19,9 +21,9 @@ export class AonApplication extends AonElement {
   TOAST;
   MOBILE_SIDENAV;
   MOBILE_SIDENAV_CONTENT;
-
   selected;
   VIEWS;
+  KEY_VIEW="keyView";
   static get observedAttributes() {
     return [CONSTANT.TITLE];
   }
@@ -379,8 +381,9 @@ export class AonApplication extends AonElement {
       : this.getElement(this.SIDENAV);
     let div = this.createElement(TAG.DIV);
     div.id = sidenav.id + data.id;
-    div.style.paddingBottom = "25px";
+    div.style.paddingBottom = "10px";
     div.style.borderBottom = "1px solid #ebebeb";
+    div.style.backgroundColor = "#fff";
     sidenav.appendChild(div);
 
     if (newButton && !this.isMobile()) {
@@ -398,10 +401,35 @@ export class AonApplication extends AonElement {
 
     let sidenavTitle = this.createElement(TAG.DIV);
     sidenavTitle.className = "aonSidenavTitle";
-    sidenavTitle.innerHTML = data.name;
+    sidenavTitle.id = "aonSidenavTitle"+data.id;
     sidenavTitle.title = data.name;
-    div.appendChild(sidenavTitle);
+    sidenavTitle.style.cursor = "pointer";
+    sidenavTitle.style.userSelect = "none";
+    sidenavTitle.style.marginLeft = "2px";
+    let arrowTitle = this.createElement("i");
+    arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+    arrowTitle.className = "material-icons aonVerticalMiddle";
+    sidenavTitle.appendChild(arrowTitle);
 
+    sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
+      const ul = div.querySelector("ul");
+      if(ul){
+        ul.classList.toggle(CSS.ELEMENT_HIDDEN);
+        if(ul.classList.contains(CSS.ELEMENT_HIDDEN)){
+          arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
+          sidenavTitle.style.marginBottom = "0";
+        } else {
+          arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+          sidenavTitle.style.marginBottom = "10px";
+        }
+      }
+    });  
+
+    let span = this.createElement(TAG.SPAN);
+    span.innerHTML = data.name;
+    sidenavTitle.appendChild(span);
+
+    div.appendChild(sidenavTitle);
     return div;
   }
 
@@ -431,13 +459,14 @@ export class AonApplication extends AonElement {
   }
 
   addSidenavOptionsListValue(data, option, ul) {
-    ul = ul || this.getElement(this.SIDENAV + data.id + "List");
+    let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    ul = ul || this.getElement(sidenavId + data.id + "List");
     if (!option.hidden) {
-      let id = this.SIDENAV + option.name;
+      let id = sidenavId + option.name;
       let li = this.createElement(TAG.LI);
       li.id = id;
       li.title = option.name;
-      li.className = "aonAppMenuSidenavList aonOpacity";
+      li.className = "aonAppMenuSidenavList aonOpacity sidenavHover";
       ul.appendChild(li);
       if(option.options) {
         li.style.paddingLeft = '6px';
@@ -448,20 +477,19 @@ export class AonApplication extends AonElement {
         let newLi =  this.createElement(TAG.LI);
         newLi.id = id + 'Options';
         newLi.appendChild(this.buildSidenavSubOptions(data, option.options));
-        newLi.style.display = 'none';
+        newLi.style.transition = "opacity 1s ease-out";
+        this.hiddenElement(newLi, true);
         ul.appendChild(newLi);
         arrow.addEventListener(EVENT.CLICK, (e => {
           e.preventDefault();
-          arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT
-            ? MATERIAL_ICONS.ARROW_DROP_DOWN
-            : MATERIAL_ICONS.ARROW_RIGHT;
-          newLi.style.display = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT
-            ? 'none' : 'block';
+          arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT ? MATERIAL_ICONS.ARROW_DROP_DOWN : MATERIAL_ICONS.ARROW_RIGHT;
+          this.hiddenElement(newLi, arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT);
         }));
       }
 
       let span = this.createElement(TAG.SPAN);
       span.className = "aonMenuItemSpan";
+      span.title =  option.name;
       if (option.count && option.count > 0) {
         span.innerHTML = option.name + " (" + option.count + ")";
         span.style.fontWeight = "bold";
@@ -469,14 +497,18 @@ export class AonApplication extends AonElement {
 
       if (option.icon) {
         let i = this.createElement(TAG.I);
-        i.className = "material-icons aonVerticalMiddle";
+        let iconClass = "material-icons";
+        if(option.icon_color) i.style.color = option.icon_color;
+        if(option.icon_class) iconClass = option.icon_class;
+        i.className = `${iconClass} aonVerticalMiddle`;
         i.innerHTML = option.icon;
         li.appendChild(i);
       } else if (option.aonIcon) {
-        li.innerHTML = `<aon-icon id="${id + "AonIcon"}" icon="${
-          option.aonIcon.icon
-        }" size="18px"></aon-icon>`;
-
+        let ai = new AonIcon();
+        ai.id    = id + "AonIcon";
+        ai.icon  = option.aonIcon.icon;
+        ai.size  = "18px";
+        li.appendChild(ai);
         li.addEventListener(EVENT.MOUSEOVER, () => {
           this.getElement(id + "AonIcon").color = option.aonIcon.color;
         });
@@ -494,27 +526,23 @@ export class AonApplication extends AonElement {
       }
       li.appendChild(span);
 
-      li.addEventListener(EVENT.MOUSEOVER, () => {
-        if (!this.selected || this.selected !== id)
-          li.style.backgroundColor = "#f1f1f1";
-      });
+      // li.addEventListener(EVENT.MOUSEOVER, () => {
+      //   if (!this.selected || this.selected !== id)
+      //     li.style.backgroundColor = "#f1f1f1";
+      // });
 
-      li.addEventListener(EVENT.MOUSELEAVE, () => {
-        if (!this.selected || this.selected !== id)
-          li.style.backgroundColor = "white";
-      });
+      // li.addEventListener(EVENT.MOUSELEAVE, () => {
+      //   if (!this.selected || this.selected !== id)
+      //     li.style.backgroundColor = "white";
+      // });
 
       if (option.actions) {
         let actionDiv = this.createElement(TAG.SPAN);
         actionDiv.style.display = "none";
         li.appendChild(actionDiv);
-        li.addEventListener(EVENT.MOUSEOVER, () => {
-          actionDiv.style.display = "contents";
-        });
+        li.addEventListener(EVENT.MOUSEOVER, () =>  actionDiv.style.display = "contents");
 
-        li.addEventListener(EVENT.MOUSELEAVE, () => {
-          actionDiv.style.display = "none";
-        });
+        li.addEventListener(EVENT.MOUSELEAVE, () =>  actionDiv.style.display = "none");
 
         option.actions.forEach((item, i) => {
           let button = this.createElement(TAG.SPAN);
@@ -537,18 +565,26 @@ export class AonApplication extends AonElement {
       }
 
       li.addEventListener(EVENT.CLICK, () => {
-        const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
-        document
-          .querySelectorAll(`[id^='${sidenavId}'] li`)
-          .forEach((el, i) => {
+        let backgroundEl = li.style.backgroundColor;
+        
+        ul.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId)
               el.style.backgroundColor = "transparent";
-          });
+            else {
+              // console.log(el.style.backgroundColor);
+            }
+        });
+        
+        li.style.backgroundColor = (!backgroundEl || backgroundEl.indexOf("transparent")>=0) ? "#ddd" : "transparent";
+
         this.selected = id;
-        li.style.backgroundColor = "#ddd";
         let toolbar = this.getElement(this.TOOLBAR);
         toolbar.setAttribute("option", option.name);
-        if(option.fn) option.fn();
+        if(option.fn){
+          let count = 0;
+          if(li.querySelector("span")) count = li.querySelector("span").dataset.count;
+          option.fn(count);
+        } 
         this.dispatchEvent(new CustomEvent(EVENT.SELECT_OPTION, { detail: option }));
         if (this.isMobile()) {
           this.closeMobileSidenav();
@@ -576,11 +612,73 @@ export class AonApplication extends AonElement {
     }
   }
 
+  // addSidenavTitleExpandIcon(id){
+  //   let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
+  //   const div = this.getElement(sidenavId+id);
+  //   if(div){
+  //     const sidenavTitle = div.querySelector( "#aonSidenavTitle"+id);
+  //     if(sidenavTitle){
+  //       sidenavTitle.style.cursor = "pointer";
+  //       sidenavTitle.style.userSelect = "none";
+  //       sidenavTitle.style.marginLeft = "2px";
+        
+  //       let arrowTitle = this.createElement("i");
+  //       arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+  //       arrowTitle.className = "material-icons aonVerticalMiddle";
+  //       sidenavTitle.insertBefore(arrowTitle, sidenavTitle.firstChild);
+
+  //       sidenavTitle.addEventListener(EVENT.CLICK, ()=>{
+  //         const ul = div.querySelector("ul");
+  //         if(ul){
+  //           ul.classList.toggle(CSS.ELEMENT_HIDDEN);
+  //           if(ul.classList.contains(CSS.ELEMENT_HIDDEN))
+  //             arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_MORE;
+  //           else 
+  //             arrowTitle.innerHTML = MATERIAL_ICONS.EXPAND_LESS;
+  //         }
+  //       });  
+  //     }
+  //   }
+  // }
 
   addSidenavOptions2(data, options, newButton) {
     this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
     this.addSidenavOptionsTitle(data, newButton);
     this.addSidenavOptionsList(data, options);
+  }
+
+  removeBackgroundSidenav(id){
+    const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
+    const ul =  this.getElement(sidenavId + id + "List");
+    ul.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
+      if (el.id !== sidenavId)
+        el.style.backgroundColor = "transparent";
+    });
+  
+  }
+
+  /**
+   * 
+   * @param {String} id  
+   * @param {Number} count 
+   */
+  updateSidenavCount(id, count){
+    let li = this.getElement(this.SIDENAV+id);
+    if(li){
+      let span = li.querySelector("span");
+      if(span){
+        let name = span.title;
+        let fontWeight = "normal";
+        let text = name;
+        span.dataset.count = count;
+        if(count) {
+          text = name + " (" + count + ")";
+          fontWeight = "bold";
+        } 
+        span.innerHTML = text;
+        span.style.fontWeight = fontWeight;
+      }
+    }
   }
 
   addOption(name, icon, fn) {
@@ -593,13 +691,17 @@ export class AonApplication extends AonElement {
 
   addSearchOption() {
     let toolbar = this.getElement(this.TOOLBAR);
-    const btnSearch = toolbar.addSearchButton();
-    return btnSearch;
+    return toolbar.addSearchButton();
   }
 
   addToolbarTitle(title) {
     let toolbar = this.getElement(this.TOOLBAR);
-    if (toolbar) toolbar.setAttribute("option", title);
+    if (toolbar) {
+      toolbar.setAttribute("option", title);
+      //----------ADD COLOR SIDENAV SELECTED---------
+      let li = this.getElement(this.SIDENAV+title);
+      if(li) li.style.backgroundColor = "#ddd";  
+    } 
   }
 
   addTitleToolSection(title) {
@@ -625,6 +727,13 @@ export class AonApplication extends AonElement {
     this.clearElementById(this.CONTENT);
     let content = this.getElement(this.CONTENT);
     if(content) content.appendChild(element);
+  }
+
+  getKeyView(){
+    return parseFloat(localStorage.getItem(this.KEY_VIEW));
+  }
+  setKeyView(value){
+    localStorage.setItem(this.KEY_VIEW, value);
   }
 
   addFloatOption(action, fn) {
@@ -703,23 +812,32 @@ export class AonApplication extends AonElement {
 	}
 
   confirmDialog(title, subtitle, fn, buttonTitle = undefined){
-      let d = this.getDialog();
-      if(d){
-        d.clear();
-        d.setContentHTML(subtitle);
-        if (!this.isMobile()) d.width = '400px';
-        d.setTitle(title);
-        d.open();
-        if(buttonTitle) {
-          d.addSendAction(() => {
-            d.close();
-            return fn();
-          }, buttonTitle);
-        }
-        else d.addAcceptAction(() => fn());
+    let d = this.getDialog();
+    if(d){
+      d.clear();
+      d.setContentHTML(subtitle);
+      if (!this.isMobile()) d.width = '400px';
+      d.setTitle(title);
+      d.open();
+      if(buttonTitle) {
+        d.addSendAction(() => {
+          d.close();
+          return fn();
+        }, buttonTitle);
       }
+      else d.addAcceptAction(() => fn());
+    }
   }
 
+  hiddenElement(element, condition = false){
+    if(element){
+      if(condition){
+        element.classList.add(CSS.ELEMENT_HIDDEN);
+      } else {
+        element.classList.remove(CSS.ELEMENT_HIDDEN);
+      }
+    }
+  }
 }
 if(!window.customElements.get('aon-application')){
   window.customElements.define("aon-application", AonApplication);

@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 
@@ -217,6 +218,7 @@ public class Certifica2 {
 				.where(ENTERPRISE_CCC.ID.eq(enterpriseCCCId))
 				.fetchOne();
 		
+		String ccc = enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
 		String completeCCC = parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
 		
 		Record enterpriseRegistryRecord = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(
@@ -231,11 +233,18 @@ public class Certifica2 {
 		
 		List<Certifica2Info> certifica2List = new ArrayList<Certifica2Info>();
 		Integer maxDays = 0;
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(endDate.getTime());
+		cal.add(Calendar.DATE, -180);
+		Date filterDate = parseDateToSQL(cal.getTime());
 		
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
-				.where(SALARY.CONTRACT.eq(contractId))
+				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
+				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)0))
-				.orderBy(SALARY.ID.desc())
+				.and(SALARY.END_DATE.ge(filterDate))
+				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
 		for(Record salary : salariesRecords) {
@@ -305,9 +314,11 @@ public class Certifica2 {
 		
 		// Check Settle for unEnjoy Holidays
 		Result<Record> settlementRecords = dslContext.select().from(SALARY)
-				.where(SALARY.CONTRACT.eq(contractId))
+				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
+				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)2))
-				.orderBy(SALARY.ID.desc())
+				.and(SALARY.END_DATE.ge(filterDate))
+				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
 		Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
@@ -321,8 +332,13 @@ public class Certifica2 {
 				.and(SALARY_PAYMENT.TYPE.eq((byte)6))
 				.fetchOne();
 		
-		Double baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
-		Double baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
+		Double baseCGC = 0.00;
+		Double baseCGP = 0.00;
+		
+		if(null != holidaysRecord) {
+			baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
+			baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
+		} 
 		
 		Certifica2Info settlementCertifica2Info = new Certifica2Info(
 				null,
@@ -395,6 +411,26 @@ public class Certifica2 {
 		}
 		
 		return "";
+	}
+	
+	private static Date parseDateToSQL(java.util.Date dateJava) {
+		if(null == dateJava)
+			return null;
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dateJava);
+		
+		return new Date(cal.getTimeInMillis());
+	}
+
+	private static java.util.Date parseDateToJava(Date dateSQL) {
+		if(null == dateSQL)
+			return null;
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(dateSQL.getTime());
+		
+		return cal.getTime();
 	}
 	
 	private static JSONObject getCertifica2JSON(DSLContext dslContext, Integer contractId, String suspensionReasonCode) {

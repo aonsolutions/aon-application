@@ -114,7 +114,7 @@ public class JooqContrataContract {
 			Map<String, String> contractOtherInfo = getContractOtherInfoDB(dslContext, domainId, parentDomainId, contractId, contractType+"");
 			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, domainId, contractId);
 			
-			Map<String, String> contractClauses = parseClausesToMap(getContractClausesDB(dslContext, domainId, parentDomainId, contractId));
+			Map<String, String> contractClauses = parseClausesToMap(getContractClausesDB(dslContext, contractId));
 			
 			FormativeLevel formativeLevel = new FormativeLevel();
 			contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
@@ -135,7 +135,7 @@ public class JooqContrataContract {
 			Map<String, String> contractOtherInfo = getContractOtherInfoDB(dslContext, domainId, parentDomainId, contractId, contractTypeStr);
 			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, domainId, contractId);
 			
-			Map<String, String> contractClauses = parseClausesToMap(getContractClausesDB(dslContext, domainId, parentDomainId, contractId));
+			Map<String, String> contractClauses = parseClausesToMap(getContractClausesDB(dslContext, contractId));
 			
 			FormativeLevel formativeLevel = new FormativeLevel();
 			contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
@@ -432,31 +432,27 @@ public class JooqContrataContract {
 	// ------------------------------------------------ CONTRACT CLAUSE -------------------------------------------------------
 	// ------------------------------------------------------------------------------------------------------------------------
 
-	public static List<ContractClause> getContractClauses(Connection conn, Integer domainId, Integer parentDomainId, Integer contractId) {
-		return getContractClausesDB(DSL.using(conn, getDefaultSettings()), domainId, parentDomainId, contractId);
+	public static List<ContractClause> getContractClauses(Connection conn, Integer contractId) {
+		return getContractClausesDB(DSL.using(conn, getDefaultSettings()), contractId);
 	}
 	
-	private static List<ContractClause> getContractClausesDB(DSLContext dslContext, Integer domainId, Integer parentDomainId, Integer contractId) {
-		List<ContractClause> contractClauses = new ArrayList<ContractClause>();
+	private static List<ContractClause> getContractClausesDB(DSLContext dslContext, Integer contractId) {
+		List<ContractClause> contractClauses = new ArrayList<>();
 		
-		Result<Record> contractClauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
-			.where(CONTRACT_CLAUSE.CONTRACT.eq(contractId)
-					.or(CONTRACT_CLAUSE.CONTRACT.isNull()))
-			.and(CONTRACT_CLAUSE.DOMAIN.eq(domainId).or(CONTRACT_CLAUSE.DOMAIN.eq(parentDomainId)))
+		Result<Record> clauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
+			.where(CONTRACT_CLAUSE.CONTRACT.eq(contractId))
 			.fetch();
 		
-		for(Record record : contractClauseRecords) {
-//			if(record.get(CONTRACT_CLAUSE.GENERAL) == (byte) 1)
-//				continue;
+		for(Record clauseRecord : clauseRecords) {
 			
 			ContractClause contractClause =  new ContractClause();
-			contractClause.setId(record.get(CONTRACT_CLAUSE.ID));
-			contractClause.setDomain(record.get(CONTRACT_CLAUSE.DOMAIN));
-			contractClause.setContract(record.get(CONTRACT_CLAUSE.CONTRACT));
-			contractClause.setLineNumber(record.get(CONTRACT_CLAUSE.LINE));
-			contractClause.setName(record.get(CONTRACT_CLAUSE.NAME));
-			contractClause.setDescription(record.get(CONTRACT_CLAUSE.DESCRIPTION));
-			contractClause.setGeneral(record.get(CONTRACT_CLAUSE.GENERAL));
+			contractClause.setId(clauseRecord.get(CONTRACT_CLAUSE.ID));
+			contractClause.setDomain(clauseRecord.get(CONTRACT_CLAUSE.DOMAIN));
+			contractClause.setContract(clauseRecord.get(CONTRACT_CLAUSE.CONTRACT));
+			contractClause.setLineNumber(clauseRecord.get(CONTRACT_CLAUSE.LINE));
+			contractClause.setName(clauseRecord.get(CONTRACT_CLAUSE.NAME));
+			contractClause.setDescription(clauseRecord.get(CONTRACT_CLAUSE.DESCRIPTION));
+			contractClause.setGeneral(clauseRecord.get(CONTRACT_CLAUSE.GENERAL));
 			
 			contractClauses.add(contractClause);
 		}
@@ -477,18 +473,18 @@ public class JooqContrataContract {
 			.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
 			.execute();
 		 
-		return getContractClausesDB(dslContext, domainId, parentDomainId, contractClause.getContract());
+		return getContractClausesDB(dslContext, contractClause.getContract());
 	}
 
-	public static List<ContractClause> deleteContractClause(Connection conn, Integer domainId, Integer parentDomainId, ContractClause contractClause) {
-		return deleteContractClauseDB(DSL.using(conn, getDefaultSettings()), domainId, parentDomainId, contractClause);
+	public static List<ContractClause> deleteContractClause(Connection conn, ContractClause contractClause) {
+		return deleteContractClauseDB(DSL.using(conn, getDefaultSettings()), contractClause);
 	}
 	
-	private static List<ContractClause> deleteContractClauseDB(DSLContext dslContext, Integer domainId, Integer parentDomainId, ContractClause contractClause) {
+	private static List<ContractClause> deleteContractClauseDB(DSLContext dslContext, ContractClause contractClause) {
 		// Delete contract_attach
 		dslContext.delete(CONTRACT_CLAUSE).where(CONTRACT_CLAUSE.ID.eq(contractClause.getId())).execute();
 		
-		return getContractClausesDB(dslContext, domainId, parentDomainId, contractClause.getContract());
+		return getContractClausesDB(dslContext, contractClause.getContract());
 	}
 	
 	public static List<ContractClause> setContractClauses(Connection conn, Integer domainId, Integer contractId, List<ContractClause> contractClauses) {
@@ -1076,6 +1072,9 @@ public class JooqContrataContract {
 				}else if(r.get(CONTRACT_DATA.NAME).equals("OCUPACION")) {
 					contractData.setOcupationId(r.get(CONTRACT_DATA.ID));
 					contractData.setOcupation(r.get(CONTRACT_DATA.EXPRESSION));
+				}else if(r.get(CONTRACT_DATA.NAME).equals("RLCE")) {
+					contractData.setRlceId(r.get(CONTRACT_DATA.ID));
+					contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
 				}else if(r.get(CONTRACT_DATA.NAME).equals("TIEMPO_COMPLETO")) {
 					contractData.setJourneytypeId(r.get(CONTRACT_DATA.ID));
 					contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("TRUE") ? (byte) 0 : (byte) 1);
@@ -1699,6 +1698,9 @@ public class JooqContrataContract {
 			}else if(r.get(CONTRACT_DATA.NAME).equals("OCUPACION")) {
 				contractData.setOcupationId(r.get(CONTRACT_DATA.ID));
 				contractData.setOcupation(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(r.get(CONTRACT_DATA.NAME).equals("RLCE")) {
+				contractData.setRlceId(r.get(CONTRACT_DATA.ID));
+				contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(r.get(CONTRACT_DATA.NAME).equals("TIEMPO_COMPLETO")) {
 				contractData.setJourneytypeId(r.get(CONTRACT_DATA.ID));
 				contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("true") ? (byte) 1 : (byte) 0);
@@ -2626,14 +2628,20 @@ public class JooqContrataContract {
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
-			dslContext.insertInto(CONTRACT_DATA)
-				.set(CONTRACT_DATA.DOMAIN, domainId)
-				.set(CONTRACT_DATA.NAME, "SEPE_ID")
-				.set(CONTRACT_DATA.EXPRESSION, ide)
-				.set(CONTRACT_DATA.START_DATE, new Date(new java.util.Date().getTime()))
-				.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
-				.set(CONTRACT_DATA.CONTRACT, contractId)
-				.execute();
+			Result<Record> sepeIdRecords = dslContext.select().from(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.and(CONTRACT_DATA.NAME.eq("SEPE_ID"))
+					.fetch();
+			
+			if(sepeIdRecords.isEmpty())
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+					.set(CONTRACT_DATA.NAME, "SEPE_ID")
+					.set(CONTRACT_DATA.EXPRESSION, ide)
+					.set(CONTRACT_DATA.START_DATE, new Date(new java.util.Date().getTime()))
+					.set(CONTRACT_DATA.END_DATE, DSL.castNull(CONTRACT_DATA.END_DATE))
+					.set(CONTRACT_DATA.CONTRACT, contractId)
+					.execute();
 			
 		}catch (SQLException e) {
 			throw new RuntimeException(e);

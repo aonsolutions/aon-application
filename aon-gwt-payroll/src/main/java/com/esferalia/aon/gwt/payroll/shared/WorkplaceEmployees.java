@@ -2,11 +2,18 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 public class WorkplaceEmployees implements Serializable {
 	
 	ArrayList<EmployeeInfo> workplaceEmployees = new ArrayList<>();
+	
+	private List<Agreement> agreements;
+	private ActivitiesCCC activitiesCCC;
+	private List<Workplace> workplaces;
+	private Map<String, String> payMethods;
 	
 	public WorkplaceEmployees() {
 		super();
@@ -67,5 +74,36 @@ public class WorkplaceEmployees implements Serializable {
 		return ssNumbers;
 	}
 
-	
+	public List<Agreement> getAgreements() {
+		return agreements;
+	}
+
+	public void setAgreements(List<Agreement> agreements) {
+		this.agreements = agreements;
+	}
+
+	public ActivitiesCCC getActivitiesCCC() {
+		return activitiesCCC;
+	}
+
+	public void setActivitiesCCC(ActivitiesCCC activitiesCCC) {
+		this.activitiesCCC = activitiesCCC;
+	}
+
+	public List<Workplace> getWorkplaces() {
+		return workplaces;
+	}
+
+	public void setWorkplaces(List<Workplace> workplaces) {
+		this.workplaces = workplaces;
+	}
+
+	public Map<String, String> getPayMethods() {
+		return payMethods;
+	}
+
+	public void setPayMethods(Map<String, String> payMethods) {
+		this.payMethods = payMethods;
+	}
+
 }

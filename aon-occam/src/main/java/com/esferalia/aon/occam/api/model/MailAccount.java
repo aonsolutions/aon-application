@@ -30,7 +30,7 @@ public class MailAccount implements Serializable{
 	private String sentFolder;
 	private String spamFolder;
 	private String trashFolder;
-	private Byte type;
+	private MailAccountType type;
 	private Integer userId;
 	
 	public Integer getId() {
@@ -196,10 +196,10 @@ public class MailAccount implements Serializable{
 		this.trashFolder = trashFolder;
 		return this;
 	}
-	public Byte getType() {
+	public MailAccountType getType() {
 		return type;
 	}
-	public MailAccount setType(Byte type) {
+	public MailAccount setType(MailAccountType type) {
 		this.type = type;
 		return this;
 	}
@@ -209,5 +209,9 @@ public class MailAccount implements Serializable{
 	public MailAccount setUserId(Integer userId) {
 		this.userId = userId;
 		return this;
+	}
+	
+	public Boolean isProtocolAon() {
+		return getProtocol() != null && "aon".equalsIgnoreCase(getProtocol());
 	}
 }

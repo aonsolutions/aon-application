@@ -15,6 +15,6 @@ public interface Model184ServiceAsync {
 	void initializeMod184(String domainName, String user, Integer domain, Integer year,AsyncCallback<Mod184> callback);
 	void saveCommentsMod184(String domainName, String user, Mod184 mod184,AsyncCallback<Mod184> asyncCallback);
 	void changeStatusMod184(String domainName, String user, Mod184 mod184, FiscalStatus newStatus, AsyncCallback<Mod184> callback);
-	void duplicateNextYear(String domainName, String user, Integer domain, Integer id, AsyncCallback<Mod184> callback);
+	void duplicateMod184(String domainName, String user, Integer domain, Mod184 mod184, AsyncCallback<Mod184> callback);
 
 }

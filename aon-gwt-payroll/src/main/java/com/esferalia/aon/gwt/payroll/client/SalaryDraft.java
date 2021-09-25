@@ -107,6 +107,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -146,12 +147,15 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class SalaryDraft extends ResizeComposite
 		implements CalculateCallback, SalarySelect.Listener, UndoManager.Listener{
 
 	private static Logger LOGGER = Logger.getLogger("");
+
+	private static final int DRAFT_PANEL_INDEX = 0;
+	private static final int PDF_VIEWER_INDEX = 1;
 
 	public static final String CUSTOM = "CUSTOM";
 	public static final String ONLY_THIS_MONTH = "ONLY_THIS_MONTH";
@@ -2448,14 +2452,12 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	VerticalPanel scrolledPanel;
 	@UiField
-	DeckPanel deckPanel;
+	DeckLayoutPanel deckPanel;
 	@UiField
 	Panel draftPanel;
 	@UiField
-	Viewer pdfViewer;
+	FullViewer pdfViewer;
 
-	@UiField
-	ListBox zoomListBox;
 	@UiField
 	SalarySelect salarySelect;
 	@UiField
@@ -2574,6 +2576,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	CheckBox eventsCheck;
 	@UiField
+	CheckBox notDefinedVarsCheck;
+	@UiField
 	CheckBox dbSalaryCheck;
 
 	@UiField
@@ -2647,6 +2651,7 @@ public class SalaryDraft extends ResizeComposite
 
 		zoom = Constants.DEFAULT_ZOOM;
 		initEvents();
+		initNotDefinedVarsCheck();
 		initEventsStyles(style);
 		initSalaryDb();
 		initSalarySs();
@@ -2968,10 +2973,10 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private void showDraft() {
-		showWidget(draftPanel);
+		deckPanel.showWidget(DRAFT_PANEL_INDEX);
 
 		saveButton.setVisible(false);
-		zoomListBox.setVisible(false);
+		
 		closePreviewButton.setVisible(false);
 		settlePreviewListBox.setVisible(false);
 		
@@ -2993,12 +2998,11 @@ public class SalaryDraft extends ResizeComposite
 		salaryButton.setVisible(!isSettle() && !isExtra());
 	}
 
-
 	private void showPreview() {
-		showWidget(pdfViewer);
+		deckPanel.showWidget(PDF_VIEWER_INDEX);
 
 		saveButton.setVisible(true);
-		zoomListBox.setVisible(true);
+		
 		closePreviewButton.setVisible(true);
 		settlePreviewListBox.setVisible(isSettle());
 
@@ -3014,10 +3018,10 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private void showIrpfPreview() {
-		showWidget(pdfViewer);
+		deckPanel.showWidget(PDF_VIEWER_INDEX);
 
 		saveButton.setVisible(true);
-		zoomListBox.setVisible(true);
+		
 		closePreviewButton.setVisible(true);
 		
 		fxButton.setVisible(false);
@@ -3038,17 +3042,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	boolean isPreviewVisible() {
-		return isWidgetVisible(pdfViewer);
-	}
-
-	private void showWidget(Widget widget) {
-		deckPanel.showWidget(deckPanel.getWidgetIndex(widget));
-	}
-
-	private boolean isWidgetVisible(Widget w) {
-		int index = deckPanel.getVisibleWidget();
-		Widget visibleWidget = deckPanel.getWidget(index);
-		return visibleWidget == w;
+		return deckPanel.getVisibleWidgetIndex() == PDF_VIEWER_INDEX;
 	}
 
 	protected boolean isSettle() {
@@ -3244,7 +3238,30 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
-	
+	private void onHideShowNotDefinedVars() {
+		contextTable.clear();
+		contextTable.removeAllRows();
+		
+		Scope nextScope = null;
+		boolean show = false; 
+		
+		List<Variable> context = getContext(salaryDraftObject);
+		List<Variable> variables = context.stream()
+				.filter(v->!skipVariable(v))
+//				.filter(v->!isPaymentVariable(v))
+				.collect(Collectors.toList());
+		List<Variable> constants = getConstants(context);
+		
+		List<Variable> visibleContext  = new ArrayList<Variable>();
+		visibleContext.addAll(constants);
+		visibleContext.addAll(variables);
+		
+		for (Scope step : SCOPE_STEPS) {
+			nextScope = dumpContext(visibleContext, step, show, nextScope);
+			if (step.compareTo(scope) <= 0)
+				break;
+		}
+	}
 
 	private void initTgssCheck(){
 		// clean old styles 
@@ -3508,6 +3525,10 @@ public class SalaryDraft extends ResizeComposite
 			}
 		});
 	}
+	
+	private void initNotDefinedVarsCheck() {
+		notDefinedVarsCheck.addValueChangeHandler(e -> onHideShowNotDefinedVars());
+	}
 
 	private void initPaymentsTable() {
 
@@ -3573,7 +3594,11 @@ public class SalaryDraft extends ResizeComposite
 				salaryDraftObject.getEmployeeName() + " " 
 				+ DateTimeFormat.getFormat(PredefinedFormat.MONTH).format(salaryDraftObject.getChargeDate())
 				+".pdf";
-		pdfViewer.download(fileName);
+		// ***************************
+		// ***************************
+//		pdfViewer.download(fileName);
+		// ***************************
+		// ***************************
 	}
 
 	// -------------------------------------------------------------------------
@@ -3592,24 +3617,6 @@ public class SalaryDraft extends ResizeComposite
 			@Override
 			public void onClick(ClickEvent event) {
 				showDraft();
-			}
-		});
-
-		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		int selectedIndex = zoomListBox.getItemCount();
-		for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
-		zoomListBox.setSelectedIndex(selectedIndex);
-		zoomListBox.addChangeHandler(new ChangeHandler() {
-
-			@Override
-			public void onChange(ChangeEvent event) {
-				int index = SalaryDraft.this.zoomListBox.getSelectedIndex();
-				String text = SalaryDraft.this.zoomListBox.getItemText(index);
-				SalaryDraft.this.zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
-				pdfViewer.scale(zoom / 100.00);
 			}
 		});
 		
@@ -4617,6 +4624,10 @@ public class SalaryDraft extends ResizeComposite
 					continue;
 				}
 			}
+			
+			// Check agreement variables whit empty value
+			if(!notDefinedVarsCheck.getValue() && AonStringUtils.isBlank(variable.getExpression()) && scope.equals(Scope.AGREEMENT))
+				continue;
 
 			Widget variableWidget ; 
 			try {
@@ -4798,6 +4809,7 @@ public class SalaryDraft extends ResizeComposite
 			}
 
 			private void expand() {
+				notDefinedVarsCheck.setValue(true);
 				List<Variable> contextCopy = new ArrayList<Variable>(context);
 				dumpContext(contextCopy, expandScope, false, null);
 				expandButton.removeStyleName(AON.AON_ICON_EXPANDALL);
@@ -4807,6 +4819,8 @@ public class SalaryDraft extends ResizeComposite
 			}
 
 			private void collapse() {
+				notDefinedVarsCheck.setValue(false);
+				
 				for (int i = contextTable.getRowCount() - 1; i > row; i--)
 					contextTable.removeRow(i);
 				for (int i = contextTable.getCellCount(row) - 1; i > col; i--)
@@ -4837,7 +4851,7 @@ public class SalaryDraft extends ResizeComposite
 			@Override
 			public void onSuccess(String dataURI) {
 				showPreview();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 			}
 
 		});
@@ -4854,7 +4868,7 @@ public class SalaryDraft extends ResizeComposite
 			@Override
 			public void onSuccess(String dataURI) {
 				showPreview();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 			}
 
 		});
@@ -4891,7 +4905,7 @@ public class SalaryDraft extends ResizeComposite
 			@Override
 			public void onSuccess(String dataURI) {
 				showIrpfPreview();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 			}
 
 		});
@@ -6761,28 +6775,6 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	// -------------------------------------------------- ContrataEmployee.Init & Setters
-
-	public void initPrintPreview(ListBox zoomListBox) {
-        this.zoomListBox = zoomListBox;
-        for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
-                zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-        int selectedIndex = zoomListBox.getItemCount();
-        for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
-                zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-        zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
-        zoomListBox.setSelectedIndex(selectedIndex);
-        zoomListBox.addChangeHandler(new ChangeHandler() {
-
-                @Override
-                public void onChange(ChangeEvent event) {
-                        int index = SalaryDraft.this.zoomListBox.getSelectedIndex();
-                        String text = SalaryDraft.this.zoomListBox.getItemText(index);
-                        SalaryDraft.this.zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
-                        pdfViewer.scale(zoom / 100.00);
-                }
-        });
-        
-	}
 	
 	public void setUndoAllButton(AonToolbarButton undoSalaryAllButton) {
 		this.undoAllButton = undoSalaryAllButton;
@@ -6963,7 +6955,11 @@ public class SalaryDraft extends ResizeComposite
 				salaryDraftObject.getEmployeeName() + " " 
 				+ DateTimeFormat.getFormat(PredefinedFormat.MONTH).format(salaryDraftObject.getChargeDate())
 				+".pdf";
-		pdfViewer.download(fileName);
+		// ***************************
+		// ***************************
+//		pdfViewer.download(fileName);
+		// ***************************
+		// ***************************
 	}
 	
 	public void onClosePreview(ClickEvent e) {

@@ -103,6 +103,8 @@
 .aon_icon_cancel { background-image: iconCancel;}
 @url iconClose aonIconClose;
 .aon_icon_close { background-image: iconClose;}
+@url iconCloseWhite aonIconCloseWhite;
+.aon_icon_close_white { background-image: iconCloseWhite;}
 @url iconCheck aonIconCheck;
 .aon_icon_check { background-image: iconCheck;}
 @url iconChecked aonIconChecked;
@@ -183,6 +185,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconReceipt aonIconReceipt;
+.aon_icon_receipt { background-image: iconReceipt;}
 @url iconMoveTo aonIconMoveTo;
 .aon_icon_move_to { background-image: iconMoveTo;}
 @url iconUpgrade aonIconUpgrade;
@@ -193,6 +197,8 @@
 .aon_icon_send_cancel { background-image: iconSendCancel;}
 @url iconAttach aonIconAttach;
 .aon_icon_attach { background-image: iconAttach;}
+@url iconNoAttach aonIconNoAttach;
+.aon_icon_no_attach { background-image: iconNoAttach;}
 @url iconShowPass aonIconShowPass;
 .aon_icon_show_pass { background-image: iconShowPass;}
 @url iconLock aonIconLock;
@@ -283,6 +289,17 @@
 .aon_icon_letter-r { background-image: iconLetterR;}
 @url iconLetterS aonIconLetterS;
 .aon_icon_letter-s { background-image: iconLetterS;}
+@url iconWrench aonIconWrench;
+.aon_icon_wrench { background-image: iconWrench;}
+@url iconToggleOn aonIconToggleOn;
+.aon_icon_toggle_on { background-image: iconToggleOn;}
+@url iconToggleOff aonIconToggleOff;
+.aon_icon_toggle_off { background-image: iconToggleOff;}
+@url iconRegister aonIconRegister;
+.aon_icon_register { background-image: iconRegister;}
+@url iconLink aonIconLink;
+.aon_icon_link { background-image: iconLink;}
+
 
 /* BASICS */
 .aon_selector {
@@ -769,6 +786,66 @@
 	margin-left: 5px;
 }
 
+/* MESSAGE PANEL */
+
+.aon_message_close_panel{
+    padding: 1em 1em 0 0;
+}
+
+.aon_message_close{
+	min-height: 15px;
+}
+
+.aon_message_close:hover{
+	background-color: transparent !important;
+}
+
+.aon_message_panel{
+	border-radius: 0.5em;
+    display: flex;
+    margin: 0 1em;
+    width: auto;
+    justify-content: space-between;
+}
+
+.aon_message_container{
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	padding: 1em;
+}
+
+.aon_message_row{
+	display: flex;
+	gap: 1em;
+	padding: 0 1em;
+	font-size: 13px;
+}
+
+.aon_message_title{
+	font-weight: bold;
+}
+
+.aon_message_error{
+	background-color: #fd4d4d;
+	color: white;
+}
+
+.aon_message_info{
+	background-color: #8888ff;
+	color: white;
+}
+
+.aon_message_warning{
+	background-color: #fba21c;
+	color: white;
+}
+
+.aon_message_success{
+	background-color: #0ac30a;
+	color: white;
+}
+
 /* TOOLBAR */
 .aon_toolbar {
 	width: 100%;
@@ -976,22 +1053,23 @@
 }
 .aon_custom_dialog_header {
 	margin: 0px;
-	padding: 1px;
+	padding: .2em .9em;
 	/*height: 22px;*/
 	width: auto;
 	display: flex;
 	align-items: center;
+	border-bottom: solid #c4c4c4 1px;
 }
 
 .aon_custom_dialog_title {
 	font-weight: bold;
-	padding: 5px 1em;
+	/*padding: 5px 1em;*/
 	text-transform: uppercase;
 	width: auto;
 	font-size: 1.2em;
 	flex-grow: 1;
 	cursor: grab;
-	border-bottom: solid #c4c4c4 1px;
+	/*border-bottom: solid #c4c4c4 1px;*/
 }
 
 .aon_custom_dialog_close {
@@ -1605,3 +1683,10 @@
 	padding: 10px;
 }
 
+.aon_context_menu_item {
+	white-space: nowrap;
+	background-position: center left;
+	background-repeat: no-repeat;
+	padding-left: 25px !important;
+	background-size: contain;
+}

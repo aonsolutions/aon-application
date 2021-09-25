@@ -28,6 +28,7 @@ public interface IJsonNames {
 	String ADMINISTRATIVE = "administrative";
 	String ALIAS = "alias"; 
 	String AMOUNT = "amount";
+	String AUTH = "auth";
 	// ---------------------------------------------------------------------------------------------	[B] 
 	String BACKGROUND = "background";
 	String BALANCE_TYPE = "balanceType";
@@ -167,6 +168,7 @@ public interface IJsonNames {
 	String LEGAL_PERSON = "legalPerson";
 	String LEVEL = "level";
 	String LIMIT = "limit";
+	String LOGIN = "login";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
 	// ---------------------------------------------------------------------------------------------	[M] 
 	String MAIN = "main";
@@ -206,6 +208,7 @@ public interface IJsonNames {
 	String ORDER_STATUS_SERVED = "orderStatusServed";
 	String OUTPUT = "output";
 	// ---------------------------------------------------------------------------------------------	[P] 
+	String PAGE = "page";
 	String PAGE_OFFSET = "pageOffset";
 	String PAGE_OFFSET_TEXT = "pageOffsetText";
 	String PAID = "paid";
@@ -216,12 +219,14 @@ public interface IJsonNames {
 	String PAY_METHOD = "payMethod";
 	String PAYMETHOD = "paymethod";
 	String PENDING = "pending";
+	String PER_PAGE = "perPage";
 	String PERCENTAGE = "percentage";
 	String PERCENT = "percent";
 	String PERCENTS_ENABLED = "percentsEnabled";
 	String PERIOD = "period";
 	String PHONE = "phone";
 	String PLAN = "plan";
+	String PORTAL = "portal";
 	String POSTAL_CODE = "postal_code";
 	String PREPAYMENT = "prepayment";
 	String PREVIOUS_PERIODS = "previousPeriods";
@@ -255,6 +260,7 @@ public interface IJsonNames {
 	String RETURNED = "returned";
 	String REVERSE_ORDER = "reverseOrder";
 	String RNAME = "rname";
+	String ROLES = "roles";
 	String ROOT_BAR = "/";
 	// ---------------------------------------------------------------------------------------------	[S] 
 	String SALES_RATIO = "salesRatio";
@@ -270,6 +276,7 @@ public interface IJsonNames {
 	String SERVICE = "service";
 	String SESSION_ID = "session_id";
 	String SETTLED = "settled";
+	String SHARED = "shared";
 	String SHOW_COVER = "showCover";
 	String SOURCE = "source";
 	String SOURCE_ID = "source_id";
@@ -289,6 +296,7 @@ public interface IJsonNames {
 	String TECHNICAL = "technical";
 	String THUMB_URL = "thumbUrl";
 	String TITLE = "title";
+	String TO = "to";
 	String TO_DATE = "toDate";
 	String TO_DUE_DATE = "toDueDate";
 	String TOTAL = "total";
@@ -314,6 +322,7 @@ public interface IJsonNames {
 	String WITHHOLDING_TYPE = "withholding_type";
 	String WORKFLOW = "workflow";
 	String WORKGROUP = "workgroup";
+	String WORKGROUPS = "workgroups";
 	String WORKPLACE = "workplace";
 	String WORKPLACE_IDS = "workplaceIds";
 	// ---------------------------------------------------------------------------------------------	[Y]

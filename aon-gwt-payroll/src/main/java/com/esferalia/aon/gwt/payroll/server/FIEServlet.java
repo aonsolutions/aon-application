@@ -15,11 +15,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -31,10 +29,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
 
@@ -43,7 +42,6 @@ import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.in.payroll.tgss.fie.FieListener;
 import com.esferalia.aon.in.payroll.tgss.fie.FieParser;
-import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -52,8 +50,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.payroll.EmployeeNotFoundexception;
 import com.esferalia.aon.occam.api.model.payroll.TooManyEmployeesException;
 import com.esferalia.aon.occam.api.model.payroll.TooManyITsException;
-import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 
@@ -129,6 +125,15 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				public void endITD() {
 				}
 				
+				@Override
+				public void endCIT() {
+					try {
+						addConfirmationPartIT(ctx, domainId, getIt());
+					} catch ( Exception e) {
+						
+					}
+				}
+				
 			};
 			FieParser.parse(is, fie2AON);
 			return ids;
@@ -154,7 +159,8 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		private Date directPayStartDate;
 		private Double directPayBase;
 		
-		
+		private Date confirmationDate;
+		private String confirmationPartNumber;
 		
 		public String getCcc() {
 			return ccc;
@@ -243,8 +249,22 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		public void setDirectPayBase(Double directPayBase) {
 			this.directPayBase = directPayBase;
 		}
-		
-		
+
+		public Date getConfirmationDate() {
+			return confirmationDate;
+		}
+
+		public void setConfirmationDate(Date confirmationDate) {
+			this.confirmationDate = confirmationDate;
+		}
+
+		public String getConfirmationPartNumber() {
+			return confirmationPartNumber;
+		}
+
+		public void setConfirmationPartNumber(String confirmationPartNumber) {
+			this.confirmationPartNumber = confirmationPartNumber;
+		}
 		
 	}
 	
@@ -419,6 +439,16 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		public void onItdRegulatoryBase(Float regulatoryBase) {
 			it.setDirectPayBase(regulatoryBase.doubleValue());
 		}
+		
+		@Override
+		public void onCitConfirmationStartDate(Date confirmationDate) {
+			it.setConfirmationDate(confirmationDate);
+		}
+		
+		@Override
+		public void onCitConfirmationNumberPart(String confirmationNumberPart) {
+			it.setConfirmationPartNumber(confirmationNumberPart);
+		}
 
 	
 	}
@@ -490,41 +520,68 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		
 				contractLeaveRecord.store();
 				
-				// Create Contract Leave Detail
+				// Create Contract Leave Detail (LOW)
 				
-				ContractLeaveDetailRecord lowContractLeaveDetail = ctx.insertInto(CONTRACT_LEAVE_DETAIL)
-					.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractRecord.getDomain())
-					.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)0)
-					.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
-					.set(CONTRACT_LEAVE_DETAIL.DATE,itStartDate)
-					.returning(CONTRACT_LEAVE_DETAIL.ID)
-					.fetchOne();
+				Result<Record> lowContractLeaveDetails = ctx.select().from(CONTRACT_LEAVE_DETAIL)
+						.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(contractLeaveRecord.getId()))
+						.and(CONTRACT_LEAVE_DETAIL.TYPE.eq((byte)0))
+						.fetch();
 				
-				if(null != contractLeaveRecord.getEndDate())
-					ctx.insertInto(CONTRACT_LEAVE_DETAIL)
+				ContractLeaveDetailRecord lowContractLeaveDetail = null;
+				
+				if (lowContractLeaveDetails.isEmpty())
+					lowContractLeaveDetail = ctx.insertInto(CONTRACT_LEAVE_DETAIL)
 						.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractRecord.getDomain())
-						.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)2)
+						.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)0)
 						.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
-						.set(CONTRACT_LEAVE_DETAIL.DATE, contractLeaveRecord.getEndDate())
-						.execute();
+						.set(CONTRACT_LEAVE_DETAIL.DATE,itStartDate)
+						.returning(CONTRACT_LEAVE_DETAIL.ID)
+						.fetchOne();
+				else
+					lowContractLeaveDetail = (ContractLeaveDetailRecord) lowContractLeaveDetails.get(0);
+				
+				// Create Contract Leave Detail (HIGH)
+				
+				if(null != contractLeaveRecord.getEndDate()) {
+					
+					Result<Record> highContractLeaveDetails  = ctx.select().from(CONTRACT_LEAVE_DETAIL)
+							.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(contractLeaveRecord.getId()))
+							.and(CONTRACT_LEAVE_DETAIL.TYPE.eq((byte)2))
+							.fetch();
+					
+					if(highContractLeaveDetails.isEmpty())
+						ctx.insertInto(CONTRACT_LEAVE_DETAIL)
+							.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractRecord.getDomain())
+							.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)2)
+							.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
+							.set(CONTRACT_LEAVE_DETAIL.DATE, contractLeaveRecord.getEndDate())
+							.execute();
+					
+				}
 				
 				// Create Leave Detail
 				
-				LeaveBatchRecord leaveBatchRecord = ctx.insertInto(LEAVE_BATCH)
-					.set(LEAVE_BATCH.DOMAIN, contractRecord.getDomain())
-					.set(LEAVE_BATCH.DATE, new Timestamp(new java.util.Date().getTime()))
-					.set(LEAVE_BATCH.STATUS, (byte)1)
-					.set(LEAVE_BATCH.COMMUNICATION_ID, "COMUNICA")
-					.set(LEAVE_BATCH.INCOME_FILE, (byte[]) null)
-					.set(LEAVE_BATCH.OUTCOME_FILE, (byte[]) null)
-					.returning(LEAVE_BATCH.ID).fetchOne();
+				Result<Record> leaveBatchDetails = ctx.select().from(LEAVE_BATCH_DETAIL)
+						.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.eq(lowContractLeaveDetail.getId()))
+						.fetch();
 				
-				ctx.insertInto(LEAVE_BATCH_DETAIL)
-					.set(LEAVE_BATCH_DETAIL.DOMAIN, contractRecord.getDomain())
-					.set(LEAVE_BATCH_DETAIL.LEAVE_BATCH, leaveBatchRecord.getId())
-					.set(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL, lowContractLeaveDetail.getId())
-					.execute();
+				if(leaveBatchDetails.isEmpty()) {
+					LeaveBatchRecord leaveBatchRecord = ctx.insertInto(LEAVE_BATCH)
+							.set(LEAVE_BATCH.DOMAIN, contractRecord.getDomain())
+							.set(LEAVE_BATCH.DATE, new Timestamp(new java.util.Date().getTime()))
+							.set(LEAVE_BATCH.STATUS, (byte)1)
+							.set(LEAVE_BATCH.COMMUNICATION_ID, "COMUNICA")
+							.set(LEAVE_BATCH.INCOME_FILE, (byte[]) null)
+							.set(LEAVE_BATCH.OUTCOME_FILE, (byte[]) null)
+							.returning(LEAVE_BATCH.ID).fetchOne();
 						
+					ctx.insertInto(LEAVE_BATCH_DETAIL)
+						.set(LEAVE_BATCH_DETAIL.DOMAIN, contractRecord.getDomain())
+						.set(LEAVE_BATCH_DETAIL.LEAVE_BATCH, leaveBatchRecord.getId())
+						.set(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL, lowContractLeaveDetail.getId())
+						.execute();
+				}
+					
 				return contractLeaveRecord.getId();
 				
 			} catch ( TooManyRowsException e) {
@@ -534,6 +591,78 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			throw new TooManyEmployeesException(e);
 		}
 		
+	}
+	
+	public static void addConfirmationPartIT(DSLContext ctx, Integer domainId, IT it) {
+		java.sql.Date itStartDate = new java.sql.Date(it.getStartDate().getTime());
+		java.sql.Date itEndDate = it.getEndDate().map( d -> new java.sql.Date(d.getTime())).orElse(null);
+		java.sql.Date itConfirmationDate = new java.sql.Date(it.getConfirmationDate().getTime());
+		
+		try {
+			
+			ContractRecord contractRecord = 
+			ctx
+			.select()
+			.from(REGISTRY)
+			.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+			.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+			.innerJoin(ENTERPRISE_CCC).onKey()
+			.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
+			.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
+			.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
+			.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+			.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
+			.fetchOptionalInto(CONTRACT)
+			.orElseGet(() -> 			
+					ctx
+					.select()
+					.from(REGISTRY)
+					.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+					.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+					.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+					.innerJoin(DOMAIN).on(DOMAIN.ID.eq(ENTERPRISE_CCC.DOMAIN))
+					.where(DOMAIN.PARENT.eq(domainId))
+					.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
+					.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
+					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+					.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
+					.fetchOptionalInto(CONTRACT)
+					.orElseThrow(() -> new EmployeeNotFoundexception() ) 
+			);
+			
+			
+			try {
+				ContractLeaveRecord contractLeaveRecord = 
+				ctx
+				.select()
+				.from(CONTRACT_LEAVE)
+				.where(CONTRACT_LEAVE.CONTRACT.eq(contractRecord.getId()))
+				.and(CONTRACT_LEAVE.START_DATE.eq(itStartDate))
+				.fetchOptionalInto(CONTRACT_LEAVE)
+				.orElseGet(() -> {
+					ContractLeaveRecord r = ctx.newRecord(CONTRACT_LEAVE);
+					r.setContract(contractRecord.getId());
+					r.setDomain(contractRecord.getDomain());
+					return r;
+				});
+				;
+				
+				// Create Contract Leave Detail
+				
+				ctx.insertInto(CONTRACT_LEAVE_DETAIL)
+					.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractRecord.getDomain())
+					.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)1)
+					.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
+					.set(CONTRACT_LEAVE_DETAIL.DATE, itConfirmationDate)
+					.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, Byte.parseByte(it.getConfirmationPartNumber()))
+					.execute();
+				
+			} catch ( TooManyRowsException e) {
+				throw new TooManyITsException(e);
+			}
+		} catch ( TooManyRowsException e) {
+			throw new TooManyEmployeesException(e);
+		}
 	}
 	
 

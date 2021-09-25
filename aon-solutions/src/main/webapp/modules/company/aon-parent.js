@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
-import { EVENT, MSG, TAG } from '../../environments/environments.js';
+import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import '../../components/aon-application.js';
 import {AonSign} from '../signin/aon-sign.js';
 import './aon-desktop.js';
@@ -9,7 +9,7 @@ export class AonParent extends AonElement {
 
 	companies;
 	selected;
-
+	notice;
 	constructor () {
 		super();
 		this.id = 'aonParent';
@@ -20,60 +20,40 @@ export class AonParent extends AonElement {
 			<aon-application id="aonParentMain" title="Parent" main="true"></aon-application>
 		`;
 
-		getUserNotice().then(r => {
-			this.buildSidenav(r);
-			this.init();
-		});
-
+		this.buildSidenav();
+		this.init();
 		let searchBox = this.getElement('aonHeaderSearchBox');
 		searchBox.addEventListener(EVENT.KEYUP, () => {
 			this.init({value: searchBox.value});
 		});
 	}
 
-	buildSidenav(notice) {
+	buildSidenav() {
 		let aonParent = this.getElement('aonParentMain');
-
-		let inboxCount = 0;
-		if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
-			inboxCount = notice.invoice.inbox.count;
-		}
-
-		let rejectedCount = 0;
-		if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
-			rejectedCount = notice.invoice.rejected.count;
-		}
 		
-		let taskOptions = [
-			{
-				name: MSG.NOTIFICATIONS,
-				icon: 'notifications',
-				fn: () => {}
-			},{
+		let taskOptions = [{
 				name: MSG.PENDING_INVOICES,
-				count: inboxCount,
 				icon: 'inbox',
-				fn: () => {
-					if(inboxCount > 0) {
-						this.init({ids: notice.invoice.inbox.domains})
+				fn: (count) => {
+					if(this.notice &&count > 0) {
+						this.init({ids: this.notice.invoice.inbox.domains})
 					}
 				}
 			}, {
 				name: MSG.REJECTED_INVOICES,
-				count: rejectedCount,
 				icon: 'report',
-				fn: () => {
-					if(rejectedCount > 0) {
-						this.init({ids: notice.invoice.rejected.domains})
+				fn: (count) => {
+					if(this.notice && count > 0) {
+						this.init({ids: this.notice.invoice.rejected.domains})
 					}
 				}
 			}, {
-				name: MSG.OPEN_REQUESTS,
-				icon: 'assignment',
+				name: MSG.REQUESTS_RECEIVED,
+				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 				fn: () => {}
 			}, {
-				name: MSG.REQUESTS_FOR_YOU,
-				icon: 'assignment_ind',
+				name: MSG.REQUESTS_SENT,
+				icon: MATERIAL_ICONS.OUTBOX,
 				fn: () => {}
 			}
 		];
@@ -112,21 +92,23 @@ export class AonParent extends AonElement {
 			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});
+
+		this.getNotices();
 	}
 
 	init(filter) {
 		let aonParent = this.getElement('aonParentMain');
 		if(aonParent){
 			aonParent.startLoader();
+			this.build();
 			getCompanies()
 			.then( companies => {
-					aonParent.stopLoader();
-					if(companies.length ===1){
-						this.companySelection(companies[0], true);
-					} else {
-				  this.build(companies.filter(f => this.companyFilter(f, filter)));
-					}
-	
+				aonParent.stopLoader();
+				if(companies.length ===1){
+					this.companySelection(companies[0], true);
+				} else {
+					this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)));
+				}
 		  	}, () => closeSession());
 		}
    }
@@ -175,7 +157,29 @@ export class AonParent extends AonElement {
 		return value;
 	}
 
- 	build(companies) {
+	getNotices(){
+		getUserNotice().then(notice =>{
+			this.notice = notice;
+			this.updateCount();
+		});
+	}
+
+	updateCount(){
+		let application = this.getApplication();
+		let inboxCount = 0;
+		let rejectedCount = 0;
+		
+		if(this.notice.invoice && this.notice.invoice.inbox && this.notice.invoice.inbox.count && this.notice.invoice.inbox.count > 0) 
+			inboxCount = this.notice.invoice.inbox.count;
+
+		if(this.notice.invoice && this.notice.invoice.rejected && this.notice.invoice.rejected.count && this.notice.invoice.rejected.count > 0) 
+			rejectedCount = this.notice.invoice.rejected.count;
+
+		application.updateSidenavCount(MSG.PENDING_INVOICES, inboxCount);
+		application.updateSidenavCount(MSG.REJECTED_INVOICES, rejectedCount);
+	}
+
+ 	build() {
 		let aonParent = this.getElement('aonParentMain');
 		let content = this.createElement(TAG.DIV);
 		let div = this.createElement(TAG.DIV);
@@ -189,15 +193,19 @@ export class AonParent extends AonElement {
 		content.appendChild(div);
 
 		let ul = this.createElement('ul');
+		ul.id = "UlCompanies";
 		ul.className = 'list-group';
-		ul.style.marginLeft= '20px';
-		ul.style.marginRight= '20px';
-
-		for(let i = 0; i < companies.length; i++){
-			ul.appendChild(this.buildLi(companies[i], 'transparent'));
-		}
+		ul.style.marginLeft = '20px';
+		ul.style.marginRight = '20px';
 		content.appendChild(ul);
 		aonParent.setContent(content);
+	}
+
+	buildCompanies(companies){
+		let ul = this.getElement("UlCompanies");
+		companies.map(company=>{
+			ul.appendChild(this.buildLi(company, 'transparent'));
+		})
 	}
 
 	buildLi(company, color) {
@@ -222,7 +230,9 @@ export class AonParent extends AonElement {
 		let i = this.createElement('i');
 		i.className = 'material-icons aonAvatar';
 
-		if(company.parent) i.innerHTML = 'apartment';
+		
+		if(company.type === 'OFFICE') i.innerHTML = 'work';
+		else if(company.parent) i.innerHTML = 'apartment';
 		else if(company.shared) i.innerHTML = 'share';
 		else if(!company.active) i.innerHTML = 'domain_disabled';
 		else i.innerHTML = 'business';

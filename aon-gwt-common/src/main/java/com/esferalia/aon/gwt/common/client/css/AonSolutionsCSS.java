@@ -156,6 +156,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_close")
 	String aonIconClose();
 	
+	@ClassName("aon_icon_close_white")
+	String aonIconCloseWhite();
+	
 	@ClassName("aon_icon_check")
 	String aonIconCheck();
 
@@ -276,6 +279,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_paste")
 	String aonIconPaste();
 	
+	@ClassName("aon_icon_receipt")
+	String aonIconReceipt();
+	
 	@ClassName("aon_icon_move_to")
 	String aonIconMoveTo();
 	
@@ -291,6 +297,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_attach")
 	String aonIconAttach();
 	
+	@ClassName("aon_icon_no_attach")
+	String aonIconNoAttach();
+
 	@ClassName("aon_icon_show_pass")
 	String aonIconShowPass();
 	
@@ -425,6 +434,21 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_letter-s")
 	String aonIconLetterS();
+
+	@ClassName("aon_icon_wrench")
+	String aonIconWrench();
+	
+	@ClassName("aon_icon_toggle_on")
+	String aonIconToggleOn();
+	
+	@ClassName("aon_icon_toggle_off")
+	String aonIconToggleOff();
+
+	@ClassName("aon_icon_register")
+	String aonIconRegister();
+	
+	@ClassName("aon_icon_link")
+	String aonIconLink();
 
 	/* BASICS */
 	@ClassName("aon_selector")
@@ -776,7 +800,39 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_tab_button")
 	String aonTabButton();
+	
+	/* MESSAGE PANEL */
+	
+	@ClassName("aon_message_close_panel")
+	String aonMessageClosePanel();
+	
+	@ClassName("aon_message_close")
+	String aonMessageClose();
+	
+	@ClassName("aon_message_panel")
+	String aonMessagePanel();
+	
+	@ClassName("aon_message_container")
+	String aonMessageContainer();
+	
+	@ClassName("aon_message_row")
+	String aonMessageRow();
+	
+	@ClassName("aon_message_title")
+	String aonMessageTitle();
+	
+	@ClassName("aon_message_error")
+	String aonMessageError();
 		
+	@ClassName("aon_message_info")
+	String aonMessageInfo();
+	
+	@ClassName("aon_message_warning")
+	String aonMessageWarning();
+	
+	@ClassName("aon_message_success")
+	String aonMessageSuccess();
+	
 	/* TOOLBAR */
 
 	@ClassName("aon_toolbar")
@@ -955,5 +1011,8 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_toast_content")
 	String aonToastContent();
+	
+	@ClassName("aon_context_menu_item")
+	String aonContextMenuItem();
 }
 

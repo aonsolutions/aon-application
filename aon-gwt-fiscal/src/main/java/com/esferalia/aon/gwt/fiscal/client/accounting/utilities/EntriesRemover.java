@@ -15,13 +15,14 @@ import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
@@ -713,9 +714,7 @@ class EntriesRemover extends OptionBase {
 	public void run(boolean check) {
 		AccountEntryParams params = getWidgetParams();
 		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		popup.add(label);
+		popup.add(getSplashWidget());
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
@@ -779,20 +778,25 @@ class EntriesRemover extends OptionBase {
 	}
 
 	private void showEntry(int domain,Integer entryId) {
-		CustomPopup entryDialog = new CustomPopup();
+		AonCustomPopup entryDialog = new AonCustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
 		entryDialog.setAnimationEnabled(true);
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
+		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
 		module.onModuleLoad( new AccountEntryModuleOptions()
 			.setParentWidget( entryDialog)
 			.setDomainName( domainName)
 			.setUser( user ) 
 			.setDomain( domain )
 			.setAccountEntryId( entryId )
+			.setSessionLogTabVisible(false)
+			.setJournalTabVisible(false)
+			.setExtraInfoTabVisible(false)
+			.setPreviewTabVisible(true)
+			.setTrialBalanceFromPreviewEnabled(false)
 			.setExternalCallback( new ModuleCallback() {
 			
 				@Override public void onRemove(IAccountEntryWrapper removed) {

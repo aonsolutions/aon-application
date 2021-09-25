@@ -10,8 +10,6 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceComunicaInfo;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -27,13 +25,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class WorkplaceComunica extends ResizeComposite {
 
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// -------------------------------------------------- UiBinder
 
 	private static WorkplaceComunicaUiBinder uiBinder = GWT.create(WorkplaceComunicaUiBinder.class);
 
 	interface WorkplaceComunicaUiBinder extends UiBinder<Widget, WorkplaceComunica> {}
 
-	// -------------------------------------------------- UiFields --------------------------------------------------
+	// -------------------------------------------------- UiFields
 
 	@UiField
 	MyStyle style;
@@ -62,16 +60,16 @@ public abstract class WorkplaceComunica extends ResizeComposite {
 	
 	private Map<Integer, String> addresses;
 	
-	// --------------------------------------------------	 CONSTRUCTOR	--------------------------------------------------------
+	// -------------------------------------------------- Constructor
 
-	public WorkplaceComunica() {
+	protected WorkplaceComunica() {
 		initWidget(uiBinder.createAndBindUi(this));
 		initFooterOptionsToolbar();
 		initPreview();
-		this.addresses = new HashMap<Integer, String>();
+		this.addresses = new HashMap<>();
 	}
 	
-	// --------------------------------------------------	   PREVIEW		--------------------------------------------------------
+	// -------------------------------------------------- Preview
 	
 	public void setAddresses(Map<Integer, String> addresses) {
 		this.addresses = addresses;
@@ -123,7 +121,7 @@ public abstract class WorkplaceComunica extends ResizeComposite {
 		workplaceDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(5, Unit.PCT);
 	}
 	
-	// --------------------------------------------------	   INSERT ROWS		--------------------------------------------------------
+	// -------------------------------------------------- Insert Row
 	
 	public void insertRow(WorkplaceComunicaInfo workplaceComunicaInfo) {
 		int row = workplaceDataTable.insertRow(workplaceDataTable.getRowCount());
@@ -150,13 +148,10 @@ public abstract class WorkplaceComunica extends ResizeComposite {
 		buttonsPanel.addStyleName(style.flexEvenly());
 		
 		AonTableButton delete = new AonTableButton("Eliminar Centro de trabajo", AON.CSS.aonIconDelete());
-		delete.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onDeleteWorkplace(workplaceComunicaInfo.getId());
-				initPreview();
-				onInsertRows();
-			}
+		delete.addClickHandler(e -> {
+			onDeleteWorkplace(workplaceComunicaInfo.getId());
+			initPreview();
+			onInsertRows();
 		});
 		buttonsPanel.add(delete);
 			
@@ -193,8 +188,7 @@ public abstract class WorkplaceComunica extends ResizeComposite {
 			if(AonStringUtils.isNotBlank(newDescription)) {
 				Integer addressId = Integer.valueOf(addressLB.getSelectedValue());
 				onInsertWorkplace(newId, newDescription.trim(),addressId);
-			}
-			
+			}	
 		});
 		
 		addressLB.addChangeHandler(e -> {
@@ -206,13 +200,10 @@ public abstract class WorkplaceComunica extends ResizeComposite {
 		buttonsPanel.addStyleName(style.flexEvenly());
 		
 		AonTableButton delete = new AonTableButton("Eliminar Centro de trabajo", AON.CSS.aonIconDelete());
-		delete.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onDeleteWorkplace(newId);
-				initPreview();
-				onInsertRows();
-			}
+		delete.addClickHandler(e -> {
+			onDeleteWorkplace(newId);
+			initPreview();
+			onInsertRows();
 		});
 		buttonsPanel.add(delete);
 			
@@ -225,7 +216,7 @@ public abstract class WorkplaceComunica extends ResizeComposite {
 		return newId;
 	}
 	
-	// --------------------------------------------------	   AUX METHODS		--------------------------------------------------------
+	// -------------------------------------------------- Auxiliar Methods
 	
 	public int getRowCount() {
 		return workplaceDataTable.getRowCount();
@@ -263,22 +254,20 @@ public abstract class WorkplaceComunica extends ResizeComposite {
 		footerOptionsToolbar.clear();
 		
 		AonTableButton newCCCBtn = new AonTableButton("Nuevo Centro de trabajo",  AON.CSS.aonIconAdd());
-		newCCCBtn.addClickHandler(e -> {
-			onAddNewWorkplace(e);
-		});
+		newCCCBtn.addClickHandler(e -> onAddNewWorkplace());
 		
 		footerOptionsToolbar.add(newCCCBtn);
 	}
 
-	private void onAddNewWorkplace(ClickEvent e) {
+	private void onAddNewWorkplace() {
 		if(0 != workplaceDataTable.getRowCount()) {
 			TextBox description = (TextBox) workplaceDataTable.getWidget(0, 0);
 			ListBox addressLB = (ListBox) workplaceDataTable.getWidget(0, 1);
 			Integer addressId = Integer.parseInt(addressLB.getSelectedValue());
-			if(AonStringUtils.isNotBlank(description.getValue()) && addressId > 0) {
+			if(AonStringUtils.isNotBlank(description.getValue()) && addressId > 0)
 				this.newId = insertNewRow(this.newId);
-			}
-		}else
+			
+		} else
 			this.newId = insertNewRow(this.newId);
 	}
 

@@ -1,6 +1,6 @@
 import {AonMobileList} from '../../components/aon-mobile-list.js';
 import { MATERIAL_ICONS } from '../../environments/environments.js';
-import {getUsers} from '../../services/service.js';
+import {getUserList} from '../../services/service.js';
 
 export class AonMobileUserList extends AonMobileList {
 
@@ -28,7 +28,7 @@ export class AonMobileUserList extends AonMobileList {
         if(filter.page) {
             filter.page = filter.page + 1;
             this.setFilter(filter);
-            getUsers(filter).then(users => {
+            getUserList(filter).then(users => {
                 if(users.length == 0)
                     this.more = false;
                 users.forEach((user, i) => this.addRow(user, i));
@@ -38,7 +38,7 @@ export class AonMobileUserList extends AonMobileList {
 
     init() {
         this.build();
-        getUsers(this.getFilter()).then(users => {
+        getUserList(this.getFilter()).then(users => {
             users.forEach((user, i) => this.addRow(user, i));
         });
     }
@@ -53,14 +53,20 @@ export class AonMobileUserList extends AonMobileList {
     }
 
     aonUser(user, i) {
-        this.getApplication().setContentHTML('<aon-user id="aonUser-' + user.id + '" showApps="true" showInfo="true" showToolbar="true"><aon-user>');
-		let aonUser = document.getElementById('aonUser-' + user.id);
-		aonUser.style.width = "100%";
-		aonUser.setAttribute('user', JSON.stringify(user));
+        setIndex(index);
+    
+        let aonUser = new AonUser();
+        aonUser.id = 'aonUser-' + user.id;
+        aonUser.setShowApps(true);
+        aonUser.setShowToolbar(true);
+        aonUser.setUser(user);
+        aonUser.style.width = "100%";
+    
+        this.getApplication().setContent(aonUser);	
 	}
 
     setValue(value) {
-        getUsers(this.getFilter()).then(users => {
+        getUserList(this.getFilter()).then(users => {
             this.build();
             users.filter(f => 
                 f.name.toLowerCase().includes(value.toLowerCase()) || f.surname.toLowerCase().includes(value.toLowerCase()) 

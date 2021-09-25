@@ -444,6 +444,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Cancelar")
 	String cancelAction();
 	
+	@DefaultMessage("Cerrar")
+	String close();
+
 	@DefaultMessage("Envio a cliente")
 	String customerCheckAction();
 
@@ -3632,6 +3635,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha factura rectificativa")
 	String rectifyInvoiceDate();
 
+	@DefaultMessage("Modificaci\u00F3n especial")
+	String specialUpdate();
+
 	@DefaultMessage("Motivo")
 	String reason();
 
@@ -3909,6 +3915,16 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Adjunto")
 	String attach();
 
+	@DefaultMessage("Adjuntar documento")
+	String attachDocument();
+	
+	@DefaultMessage("\u00BFDesea elimiar el documento adjunto?")
+	String removeAttachConfirmation();
+
+
+	@DefaultMessage("Eliminar documento adjunto")
+	String attachRemoveDocument();
+
 	@DefaultMessage("Rechazar")
 	String reject();
 
@@ -4019,6 +4035,12 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Configuraci\u00F3n")
 	String settings();
+	
+	@DefaultMessage("Agregador bancario")
+	String chekItModule();
+
+	@DefaultMessage("Registro")
+	String register();
 
 }
 

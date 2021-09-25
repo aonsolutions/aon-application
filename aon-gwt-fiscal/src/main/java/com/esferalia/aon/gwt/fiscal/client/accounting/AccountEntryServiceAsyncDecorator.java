@@ -9,9 +9,11 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsync {
@@ -56,6 +58,18 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	public void initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData, AsyncCallback<AccountingInvoice> callback) {
 		AON.start();
 		fsa.initializeInvoice(domainName, domain, user, registry, ai, preserveData, new AsyncCallbackWrapper<AccountingInvoice>(callback));
+	}
+
+	@Override
+	public void removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId, AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.removeInvoiceAttach(domainName, domain, user, invoiceId, new AsyncCallbackWrapper<AccountingInvoice>(callback));
+	}
+	
+	@Override
+	public void addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai, AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.addInvoiceAttach(domainName, domain, user, ai, new AsyncCallbackWrapper<AccountingInvoice>(callback));
 	}
 
 	@Override
@@ -116,5 +130,17 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 	public void save(String domainName, int domain, String user, FinanceEntry financeEntry, AsyncCallback<FinanceEntry> asyncCallback) {
 		AON.start();
 		fsa.save(domainName, domain, user, financeEntry, new AsyncCallbackWrapper<FinanceEntry>(asyncCallback));
+	}
+
+	@Override
+	public void updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper, AsyncCallback<IAccountEntryWrapper> callback) {
+		AON.start();
+		fsa.updateSpecial(domainName, domain, user, operation, wrapper, new AsyncCallbackWrapper<IAccountEntryWrapper>(callback));
+	}
+
+	@Override
+	public void getAvailableAccountEntryUpdates(String domainName, int domain, String user, IAccountEntryWrapper wrapper, AsyncCallback<LinkedList<AccountEntryUpdate>> callback) {
+		AON.start();
+		fsa.getAvailableAccountEntryUpdates(domainName, domain, user, wrapper, new AsyncCallbackWrapper<LinkedList<AccountEntryUpdate>>(callback));
 	}
 }

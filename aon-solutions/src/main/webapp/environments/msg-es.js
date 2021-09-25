@@ -19,6 +19,7 @@ export const ALL_FILES = 'Todos los Ficheros';
 export const AMOUNT = 'Importe';
 export const API_DOCUMENTATION = 'Documentación API';
 export const ASESOR = 'Asesor';
+export const AVAILABLE = 'Disponible';
 
 // ----- B
 
@@ -52,6 +53,7 @@ export const CONCEPTS = 'Conceptos';
 export const CONFIDENTIAL = 'Confidencial';
 export const CONFIGURATION = 'Configuración';
 export const CONTACT = 'Contacto';
+export const CONTACT_DATA = 'Datos Contacto';
 export const CONTACTS = 'Contactos';
 export const CONTRACT = 'Contratar';
 export const COUNTRY = 'País';
@@ -111,6 +113,9 @@ export const FOOTER = 'Pie';
 // ----- G
 
 export const GENERAL_INFORMATION = 'Información General';
+export const GROUP_DATA = 'Datos del Grupo';
+export const GROUP = 'Grupo';
+export const GROUPS = 'Grupos';
 
 // ----- H
 
@@ -155,12 +160,16 @@ export const MY_USER = 'Mi Usuario';
 // ----- N
 
 export const NAME = 'Nombre';
+export const NEW = 'Nuevo';
 export const NEW_COMPANY = 'Nueva Empresa';
 export const NEXT = 'Siguiente';
 export const NUMBER = 'Número';
 
 // ----- O
 
+export const ONLY_PORTAL = 'Solo Portal';
+export const OPEN = 'Abrir';
+export const OPEN_MENU = 'Abrir Menú';
 export const OPTIONS = 'Opciones';
 
 // ----- P
@@ -234,6 +243,7 @@ export const SHOW_FILE = 'Mostrar Fichero';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Tamaño';
+export const STATISTICS = 'Estadísticas';
 export const STATUS = "Estado";
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Proveedor';
@@ -278,7 +288,6 @@ export const USERS = 'Usuarios';
 export const VAT = 'IVA';
 export const VIEW_PAYROLL = "Ver nómina";
 export const VIEW_PAYROLLS = "Ver nóminas";
-
 // ----- W
 
 export const WEB = 'Web';

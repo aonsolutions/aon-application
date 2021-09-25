@@ -66,9 +66,9 @@ public class Model180ServiceAsyncDecorator implements Model180ServiceAsync {
 	}
 
 	@Override
-	public void duplicateNextYear(String domainName, String user, Integer domain, Integer id, AsyncCallback<Mod180> callback) {
+	public void duplicateMod180(String domainName, String user, Integer domain, Mod180 mod180, AsyncCallback<Mod180> callback) {
 		AON.start();
-		fsa.duplicateNextYear(domainName, user, domain, id, new AsyncCallbackWrapper<Mod180>(callback));
+		fsa.duplicateMod180(domainName, user, domain, mod180, new AsyncCallbackWrapper<Mod180>(callback));
 	}
 
 }

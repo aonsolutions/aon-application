@@ -5,10 +5,11 @@ import '../components/aon-dialog-menu.js';
 import './configuration/aon-configuration.js';
 import './company/aon-mobile-desktop.js';
 import './notification/aon-notification-icon.js';
-import { CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonDialogMenu } from '../components/aon-dialog-menu.js';
 import * as LS from '../services/localStorageService.js';
+import { AonMobileProfile } from './user/aon-mobile-profile.js';
 
 export class AonNewMobileHeader extends AonElement {
 
@@ -195,6 +196,17 @@ export class AonNewMobileHeader extends AonElement {
 	
 		let userButton = this.getElement(this.USER_BUTTON);
 		userButton.color = 'white';
+		userButton.addEventListener(EVENT.CLICK, ()=>{
+			if(!this.getElement(CONSTANT.AON_MOBILE_PROFILE)){
+				if(LS.getCompany()) {
+					let aonHeader = this.getElement("aonHeader");
+					aonHeader.companyIn();
+				}
+				const aonMobileProfile = new AonMobileProfile();
+				aonMobileProfile.id = CONSTANT.AON_MOBILE_PROFILE;
+				this.rootPanel(aonMobileProfile);
+			}
+		})
 
 		// let notificationButton = this.getElement(this.NOTIFICATION_BUTTON); //'aonHeaderNotificationButton');
 		// notificationButton.color = 'white';

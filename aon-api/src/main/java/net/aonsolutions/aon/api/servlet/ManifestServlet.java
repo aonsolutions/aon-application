@@ -43,7 +43,6 @@ public class ManifestServlet extends HttpServlet{
 	    	resp.addHeader("Access-Control-Allow-Origin", origin);
 			Utils.giveBack(req, resp, json, new JSONObject());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

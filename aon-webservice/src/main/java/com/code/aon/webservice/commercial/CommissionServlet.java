@@ -123,7 +123,7 @@ public class CommissionServlet extends HttpServlet{
 			JSONObject json = new JSONObject();
 			json.put("id", r.getId());
 			json.put("date", r.getOfferDetail().getOffer().getIssueDate());
-			json.put("seller", r.getOfferDetail().getOffer().getSeller().getRegistryName());	
+			json.put("seller", r.getOfferDetail().getOffer().getSeller().getName());	
 			Double p = r.getOfferDetail().getPrice()* r.getOfferDetail().getQuantity();
 			Double discount = Double.parseDouble(r.getOfferDetail().getDiscountExpression());
 			json.put("base", AonMathUtils.round(p - (p*discount/100)));
@@ -162,7 +162,7 @@ public class CommissionServlet extends HttpServlet{
 		JSONObject odcJson = new JSONObject();
 		odcJson.put("id", odc.getId());
 		odcJson.put("date", odc.getOfferDetail().getOffer().getIssueDate());
-		odcJson.put("seller", odc.getOfferDetail().getOffer().getSeller().getRegistryName());	
+		odcJson.put("seller", odc.getOfferDetail().getOffer().getSeller().getName());	
 		Double p = odc.getOfferDetail().getPrice()* odc.getOfferDetail().getQuantity();
 		Double discount = Double.parseDouble(odc.getOfferDetail().getDiscountExpression());
 		odcJson.put("base", AonMathUtils.round(p - (p*discount/100)));

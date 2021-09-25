@@ -6,8 +6,7 @@
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
 	xmlns:d='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
-	<ui:with field='res'
-		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainContrataContract.MyStyle">
 		/*UI Style*/
@@ -185,10 +184,7 @@
 			</g:center>
 		</g:DockLayoutPanel>
 
-		<d:ContrataEmployee ui:field="contrataEmployee"></d:ContrataEmployee>
- 		<d:PDFViewer styleName="reset" ui:field='pdfViewer' /> 
- 		
- 		<g:DockLayoutPanel ui:field="trashDockLayoutPanel" >
+		<g:DockLayoutPanel ui:field="trashDockLayoutPanel" >
 			<g:center>
 				<g:SplitLayoutPanel ui:field="trashSplitLayoutPanel">
 					<g:center>
@@ -209,6 +205,10 @@
 				</g:SplitLayoutPanel>
 			</g:center>
 		</g:DockLayoutPanel>
+		
+		<d:ContrataEmployee ui:field="contrataEmployee" />
+ 		<d:PDFViewer styleName="reset" ui:field='pdfViewer' /> 
+		<d:EnterpriseSalary ui:field="enterpriseSalary"></d:EnterpriseSalary>
 		
 	</g:DeckPanel>
 </ui:UiBinder> 

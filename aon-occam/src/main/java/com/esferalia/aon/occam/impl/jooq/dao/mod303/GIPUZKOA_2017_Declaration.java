@@ -29,8 +29,10 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 	public static final double SURCHARGE_PERCENT3 = 0.5;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isGipuzkoa() && mod.getYear() >= 2010;
+		return mod.isGipuzkoa() && 
+				(mod.getYear() < 2021 || (mod.getYear() == 2021 && !mod.getPeriod().isLastSemester()));
 	}
+	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		  Mod303Key.GP_C018
 		 ,Mod303Key.GP_C020

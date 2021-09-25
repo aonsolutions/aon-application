@@ -1,7 +1,7 @@
 import { AonNumber } from "../../components/aon-number.js";
 import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { CSS, TAG } from "../../environments/environments.js";
+import { CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { formatDateOrigin, setAttributes } from "../../services/utils.js";
 import { createCard, createDate, createDiv, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
 
@@ -92,7 +92,7 @@ export const createCardEnterprise = (parent) => {
         title:"Convenio (opcional)",
         name:"convenio"
     });
-    aonConvenio.addEventListener("keyup", ({target}) =>  target.value = target.value.replace(/[^0-9]/g,''));
+    aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/[^0-9]/g,''));
     divC.appendChild(aonConvenio);
 
     createInput({
@@ -302,9 +302,9 @@ export const createCardEmployee = (parent, id) => {
     divT.appendTo(parent);
     createInput({
         attributes:{
-            name:"nombre",
-            id:"nombre",
-            description:"Nombre",
+            name:"name",
+            id:"name",
+            description:MSG.NAME,
             type:"text",
             disabled: "true"
         }
@@ -332,7 +332,6 @@ const addSpanDecimal = () =>  {
         span.innerHTML = '0,';
         span.style.position = "absolute";
         span.style.top = "50%";
-        span.style.zIndex = "9";
         coefInput.parentNode.insertBefore(span, coefInput);
     }
 }

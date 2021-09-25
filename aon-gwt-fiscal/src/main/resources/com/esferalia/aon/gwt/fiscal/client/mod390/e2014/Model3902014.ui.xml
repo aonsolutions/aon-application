@@ -58,7 +58,6 @@
 								<g:Label text="{msg.deponentData}" />
 							</td>
 							<td class="{aonResources.css.aonPanelGridEven}">
-								<fiscal:EnterpriseSuggestBox ui:field="enterpriseSuggest" />
 							</td>  
 							<td class="{aonResources.css.aonPanelGridEven}" 
 								style="text-align: center; color: red; font-weight: bold;">

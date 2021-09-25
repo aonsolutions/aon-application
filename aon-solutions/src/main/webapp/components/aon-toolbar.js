@@ -126,7 +126,7 @@ export class AonToolbar extends AonElement {
 			option.id = this.TITLE_SECTION_OPTION;
 			option.style.color = 'gray';
 			option.style.fontSize = '14px';
-			option.innerHTML = this.option ? '/ ' + this.option : '';
+			option.innerHTML = this.option ? ' / ' + this.option : '';
 			titleSection.appendChild(option);
 
 			header.appendChild(titleSection);
@@ -227,11 +227,31 @@ export class AonToolbar extends AonElement {
 		return aib;
 	}
 
+	addButtonAfter(action, fn) {
+		const id = this.TOOL_SECTION + action.id + 'Button';
+		let span = this.createElement(TAG.SPAN);
+		let aib = new AonIconButton();
+		aib.id = id;
+		aib.title = action.name;
+		aib.addEventListener(EVENT.CLICK, fn);
+		if(action.aonIcon){
+			aib.aonIcon = action.aonIcon;
+		} else 
+			aib.icon = action.icon;
+		
+		span.appendChild(aib);
+
+		let aonMenu = this.getElement('aonMenu');
+		let toolSection = this.getElement(this.TOOL_SECTION);
+		toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+		toolSection.appendChild(span);
+		return aib;
+	}
+
 	addButtonTitle(action, fn) {
 		const id = this.TITLE_SECTION + action.id + 'Button';
 		if(this.getElement(id) == null) {
 			let span = this.createElement(TAG.SPAN);
-			// span.style.marginRight = '20px';
 			let aib = new AonIconButton();
 			aib.id = id;
 			aib.icon  = action.icon;

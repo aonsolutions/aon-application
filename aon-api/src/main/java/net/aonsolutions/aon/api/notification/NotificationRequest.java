@@ -25,7 +25,7 @@ public class NotificationRequest extends Notification {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String path_image;
+	private String pathName;
 	private String url;
 	private JSONObject data;
 	private User user;
@@ -43,14 +43,14 @@ public class NotificationRequest extends Notification {
 	}
 	
 	public String getPathImage() {
-		return path_image;
+		return pathName;
 	}
 	
 	public User getUser() {
 		return user;
 	}
 	public NotificationRequest setPathImage(String path_image) {
-		this.path_image = path_image;
+		this.pathName = path_image;
 		return this;
 	}
 	public NotificationRequest setAuths(LinkedList<Auth> auths) {
@@ -92,7 +92,6 @@ public class NotificationRequest extends Notification {
 		    payload.put("registration_ids", getAuthDevices());
 		    payload.put("notification", notification);
 		    payload.put("data", getData());
-
 			StringEntity params = new StringEntity(payload.toString());
 		    httpPost.setEntity(params);
 	
@@ -117,7 +116,7 @@ public class NotificationRequest extends Notification {
 	
 	
 	private String[] getAuthDevices(){
-	  LinkedList<AuthDevice> authDevices = new LinkedList<AuthDevice>();
+	  LinkedList<AuthDevice> authDevices = new LinkedList<>();
 	  getAuths().stream().forEach(auth->{
 		 try {
 			  LinkedList<AuthDevice> aths = SECURITY.getAuthDevices(getDomain(), getUser().getLogin(), f-> f.getAuthProperty().eq(auth.getAuth()));
@@ -130,9 +129,9 @@ public class NotificationRequest extends Notification {
 	private void saveNotification(){
 		try {
 			LinkedList<NotificationReceiver> receiver = getReceiver();
-			getAuths().stream().forEach(auth->{
-				receiver.add(new NotificationReceiver().setAuth(auth.getAuth()));
-			});
+			getAuths().stream().forEach(auth->
+				receiver.add(new NotificationReceiver().setAuth(auth.getAuth()))
+			);
 			setReceiver(receiver);
 			AON_SOLUTIONS.saveNotification(getDomain(), getUser().getLogin(), this);
 		} catch (Exception e) {

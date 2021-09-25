@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 public class EnterpriseInfo implements Serializable {
@@ -51,6 +53,9 @@ public class EnterpriseInfo implements Serializable {
 	private Integer paysheetEmailId;
 	private String paysheetEmail;
 	private String enterpriseAgreementId;
+	
+	private List<Agreement> agreements;
+	private Map<Integer, String> scopes;
 	
 	public EnterpriseInfo() {
 		super();
@@ -334,6 +339,22 @@ public class EnterpriseInfo implements Serializable {
 
 	public void setEnterpriseAgreementId(String enterpriseAgreementId) {
 		this.enterpriseAgreementId = enterpriseAgreementId;
+	}
+
+	public List<Agreement> getAgreements() {
+		return agreements;
+	}
+
+	public void setAgreements(List<Agreement> agreements) {
+		this.agreements = agreements;
+	}
+
+	public Map<Integer, String> getScopes() {
+		return scopes;
+	}
+
+	public void setScopes(Map<Integer, String> scopes) {
+		this.scopes = scopes;
 	}
 
 }

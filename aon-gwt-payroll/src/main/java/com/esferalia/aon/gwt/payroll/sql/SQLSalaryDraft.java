@@ -9,6 +9,7 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -41,14 +42,23 @@ public class SQLSalaryDraft {
 	public static void save(Connection conn, SalaryDraft draft, Integer domain,
 			Integer parentDomain) throws SQLException {
 		Integer contract = draft.getEmployee().getId();
+		Date contractStartDate = draft.getEmployee().getStartDate();
 
 		for (Variable variable : draft.getDraftContext()) {
+			
+			if(AonStringUtils.equalsIgnoreCase(variable.getName(), "DIAS_VACACIONES_NO_DISFRUTADOS"))
+				continue;
+			
 			makeRoom(conn, variable, contract);
 			String expression = variable.getExpression();
+			
 			if (!"REMOVE_VARIABLE()".equals(expression)
 					|| inAgreement(conn, variable, contract)
 					|| inSystem(conn, variable, domain, parentDomain)) {
-				insertData(conn, variable, contract, domain);
+				
+				
+				insertData(conn, variable, contract, domain, contractStartDate);
+				
 			} // end-if : If it's not REMOVE() or is at agreement or system.
 		}
 
@@ -295,7 +305,7 @@ public class SQLSalaryDraft {
 	}
 
 	private static void insertData(Connection conn, Variable variable,
-			Integer contract, Integer domain) throws SQLException {
+			Integer contract, Integer domain, Date contractStartDate) throws SQLException {
 		PreparedStatement insertStmt = null;
 		try {
 
@@ -305,7 +315,11 @@ public class SQLSalaryDraft {
 			SQLUtils.setInt(insertStmt, 2, contract);
 			SQLUtils.setString(insertStmt, 3, variable.getName());
 			SQLUtils.setString(insertStmt, 4, variable.getExpression());
-			SQLUtils.setDate(insertStmt, 5, SQLUtils.date2sql(variable.getStartDate()));
+			if(DateUtils.isBeforeOrEquals(variable.getStartDate(), contractStartDate))
+				SQLUtils.setDate(insertStmt, 5, SQLUtils.date2sql(contractStartDate));
+			else
+				SQLUtils.setDate(insertStmt, 5, SQLUtils.date2sql(variable.getStartDate()));
+			
 			SQLUtils.setDate(insertStmt, 6, SQLUtils.date2sql(variable.getEndDate()));
 
 			insertStmt.execute();

@@ -37,6 +37,10 @@ export const getNextUser = () => {
   return users[index];
 }
 
+export const updateUser = (user) => {
+  users[index] = user;
+}
+
 export const getIndex = () => {
   return index;
 }

@@ -1,5 +1,5 @@
 import { AonElement } from './AonElement.js';
-import { CONSTANT, MSG } from '../environments/environments.js';
+import { CONSTANT, EVENT, MSG } from '../environments/environments.js';
 import './aon-icon.js';
 
 
@@ -79,9 +79,12 @@ export class AonDialog extends AonElement {
 	}
 
 	clear() {
-		this.getElement(this.TITLE).innerHTML = '';
-		this.getElement(this.CONTENT).innerHTML = '';
-		this.getElement(this.ACTION).innerHTML = '';
+		const title = this.getElement(this.TITLE);
+		const content = this.getElement(this.CONTENT);
+		const action = this.getElement(this.ACTION)
+		if(title) title.innerHTML = '';
+		if(content) content.innerHTML = '';
+		if(action) action.innerHTML = '';
 	}
 
 	buildBlank() {
@@ -137,7 +140,7 @@ export class AonDialog extends AonElement {
 		this.innerHTML = /*html*/`
 		<div id="${this.DIALOG}" class="aonDialog">
 			<div id="${this.MAIN}" class="aonDialogContent">
-				<label class="btn-close" id="${this.DIALOG}Click">×</label>
+				<label class="btn-close" id="${this.DIALOG}Click" title="${MSG.CLOSE}">×</label>
 				<h2 id="${this.TITLE}"></h2>
 				<div id="${this.CONTENT}"></div>
 				<div id="${this.ACTION}"></div>
@@ -194,7 +197,8 @@ export class AonDialog extends AonElement {
 
 	close() {
 		let dialog = document.getElementById(this.getAttribute(CONSTANT.ID) + 'Dialog');
-		dialog.style.display = 'none';
+		if(dialog) dialog.style.display = 'none';
+		this.dispatchEvent(new CustomEvent(EVENT.CLOSE));
 	}
 
 	getContent() {
@@ -231,7 +235,6 @@ export class AonDialog extends AonElement {
 		let ul = document.createElement('ul');
 		content.appendChild(ul);
 		options.forEach((item, i) => {
-			console.log(item);
 			let li = document.createElement('li');
 			li.style.padding = '10px';
 			li.style.cursor = 'pointer';
@@ -288,26 +291,30 @@ export class AonDialog extends AonElement {
 	}
 	
 	buttonAccept(title=undefined){
-		let accept = this.getElement(this.ACCEPT) || this.createElement('button');
-		accept.id = this.ACCEPT;
-		accept.className = 'aonButton';
-		accept.innerHTML = title || MSG.ACCEPT;
-		accept.style.marginLeft= "auto";
+		let btn = this.getElement(this.ACCEPT) || this.createElement('button');
+		btn.id = this.ACCEPT;
+		btn.className = 'aonButton';
+		btn.innerHTML = title || MSG.ACCEPT;
+		btn.title = title || MSG.ACCEPT;
+		btn.style.marginLeft= "auto";
 		let divAction = this.getElement(this.ACTION);
 		divAction.style.display = "flex";
 		divAction.style.justifyContent= "space-between";
-		divAction.appendChild(accept);
-		return accept;
+		divAction.appendChild(btn);
+		return btn;
 	}
 
 	getButtonAccept(){
 		return this.getElement(this.ACCEPT);
 	}
+	
+	getMain(){
+		return this.getElement(this.MAIN);
+	}
 
 	addSendAction(fn, title) {
 		let button = this.buttonAccept(title);
 		button.classList.add('buttonload')
-		// accept.innerHTML =  `<span class="button__text">${MSG.ACCEPT}</span>`;
 		button.addEventListener('click', (ev) => {
 			ev.stopPropagation();
 			ev.preventDefault();

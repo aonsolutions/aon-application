@@ -10,7 +10,14 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceTax;
@@ -71,10 +78,10 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 	}
 	
 	@Test
-	public void testAON_2021_02_01_RCR() throws IOException, UnknownInvoiceException, ClassNotFoundException {
-		testTemplate(TestTemplates.AON_2021_02_01_RCR );
+	public void testAON_2019_01_02_UDAPA() throws IOException, UnknownInvoiceException, ClassNotFoundException {
+		testTemplate(TestTemplates.AON_2019_01_02_UDAPA);
 	}
-	
+
 	private void testTemplate(TestTemplates template) throws IOException, UnknownInvoiceException, ClassNotFoundException {
 		testTemplate(template, false);
 	}
@@ -93,11 +100,37 @@ public class TediInvoicePDFParserAonDemoTestCase extends AbstractTediTest {
 				.setDomainName(DOMAIN_NAME)
 				.setAONContext ( ctx )
 				;
-		tctx.setAonConfiguration(ConfigurationDAO.getConfiguration(tctx.getAONContext()));
-		tctx.getAonConfiguration().getCompany().setDocument(sales?template.getReceiverDocument():template.getReceiverDocument());
+		AonConfiguration configuration = ConfigurationDAO.getConfiguration(tctx.getAONContext()); 
+		tctx.setAonConfiguration(configuration);
+		//tctx.getAonConfiguration().getCompany().setDocument(sales?template.getReceiverDocument():template.getReceiverDocument());
 		
 		Date start = new Date();
 		try (InputStream is = TediInvoicePDFParserAonDemoTestCase.class.getResourceAsStream(template.getFile())) {
+			if (template.getInvoiceType() == InvoiceType.EXPENSES || template.getInvoiceType() == InvoiceType.UNDEDUCTIBLE) {
+				Creditor creditor = CreditorDAO.getStream(ctx, p-> p.getDocumentProperty().eq(template.getSenderDocument()))
+						.findFirst().orElse(null);
+				if (creditor == null) {
+					creditor = new Creditor();
+					creditor.setDomain(new Domain().setId(DOMAIN_ID));
+					creditor.setDocument(template.getSenderDocument());
+					creditor.setName(template.getSenderName());
+					creditor.setScope(configuration.getAvailableScopes().get(0).getId());
+					CreditorDAO.save(ctx, creditor);	
+				}
+			} else if (template.getInvoiceType() == InvoiceType.SALES) {
+				Customer customer  = CustomerDAO.getStream(ctx, p-> p.getDocumentProperty().eq(template.getReceiverDocument()))
+						.findFirst().orElse(null);
+				if (customer == null) {
+					customer = new Customer();
+					customer.setDomain(new Domain().setId(DOMAIN_ID));
+					customer.setDocument(template.getReceiverDocument());
+					customer.setName(template.getReceiverName());
+					customer.setScope(configuration.getAvailableScopes().get(0).getId());
+					CustomerDAO.save(ctx, customer);	
+				}
+			}
+
+			
 			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tctx );
 			InvoicePDFParser.parse(is , tediInvoiceBuilder);
 			String file = "["+ template.getFile() +"]. ";

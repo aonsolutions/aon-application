@@ -14,6 +14,15 @@ public class Carrier extends Registry implements Serializable{
 	private Integer scope;
 	private CarrierStatus status;
 
+	public Carrier copy(Registry registry) {
+		return super.copy( registry, this);
+	}
+
+	public Carrier setId(Integer id) {
+		super.setId(id);
+		return this;
+	}
+	
 	public Integer getScope() {
 		return scope;
 	}

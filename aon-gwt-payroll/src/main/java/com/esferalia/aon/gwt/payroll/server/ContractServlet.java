@@ -3,9 +3,7 @@ package com.esferalia.aon.gwt.payroll.server;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,12 +14,15 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jooq.tools.json.JSONArray;
 import org.richfaces.json.JSONException;
 import org.richfaces.json.JSONObject;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqMainCCC;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
@@ -52,7 +53,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
-import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
@@ -96,6 +97,9 @@ public class ContractServlet extends AonApiHttpServlet {
 				case "/employee/workplace":
 					response(req, resp, getAllEmployeesWorkplace(api));
 					break;
+				case "/agreements":
+					response(req, resp, getAgreements(api));
+					break;
 				case "/employee/salaries":
 					response(req, resp, getEmployeeSalaries(api));
 					break;
@@ -120,48 +124,74 @@ public class ContractServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private Object getAllEmployeesInfo(AonApiData api) throws SQLException, JSONException {
+	private Object getAllEmployeesInfo(AonApiData api) throws Exception {
 		LOGGER.info("[GET] EMPLOYEE INFO");
-		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
-		boolean allEmployees = api.getParams().optBoolean("allEmployees");  
-		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		List<Object> list = new ArrayList<>();
-		List<EmployeeContractInfo> employees = JooqContrataContract.getEmployeesInfo(conn, api.getDomain().getId(), allEmployees);
+		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
+			boolean allEmployees = api.getParams().optBoolean("allEmployees");  
+			Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+			List<Object> list = new ArrayList<>();
+			List<EmployeeContractInfo> employees = JooqContrataContract.getEmployeesInfo(conn, api.getDomain().getId(), allEmployees);
+			
+			for(EmployeeContractInfo info: employees) {
+				JSONObject json = new JSONObject();
+				json.put("document", info.getEmployeeInfo().getDocument());
+				json.put("domain", info.getEmployeeInfo().getDomain());
+				json.put("employeeId", info.getEmployeeInfo().getEmployeeId());
+				json.put("name", info.getEmployeeInfo().getName());
+				json.put("secondSurName", info.getEmployeeInfo().getSecondSurName());
+				json.put("ssNumber", info.getEmployeeInfo().getSsNumber());
+				json.put("surName", info.getEmployeeInfo().getSurName());
+				json.put("startDate", info.getContractInfo().getStartDate().getTime());
+				json.put("contractType", info.getContractInfo().getContractType());
+				json.put("completeCCC", info.getContractInfo().getCompleteCCC());
+				json.put("agreementCategory", info.getContractInfo().getAgreementCategory());
+				json.put("workplaceName", info.getContractInfo().getWorkplaceName());
+				list.add( new JsonParser().parse(json.toString()));
+			}
 		
-		for(EmployeeContractInfo info: employees) {
-			JSONObject json = new JSONObject();
-			json.put("document", info.getEmployeeInfo().getDocument());
-			json.put("domain", info.getEmployeeInfo().getDomain());
-			json.put("employeeId", info.getEmployeeInfo().getEmployeeId());
-			json.put("name", info.getEmployeeInfo().getName());
-			json.put("secondSurName", info.getEmployeeInfo().getSecondSurName());
-			json.put("ssNumber", info.getEmployeeInfo().getSsNumber());
-			json.put("surName", info.getEmployeeInfo().getSurName());
-			json.put("startDate", info.getContractInfo().getStartDate().getTime());
-			json.put("contractType", info.getContractInfo().getContractType());
-			json.put("completeCCC", info.getContractInfo().getCompleteCCC());
-			json.put("agreementCategory", info.getContractInfo().getAgreementCategory());
-			json.put("workplaceName", info.getContractInfo().getWorkplaceName());
-			list.add( new JsonParser().parse(json.toString()));
+			String jsonInString = gjson.toJson(list);
+			if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		}
-	
-		String jsonInString = gjson.toJson(list);
-		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
 	
-	private Object getAllEmployeesWorkplace(AonApiData api) throws SQLException {
+	private Object getAllEmployeesWorkplace(AonApiData api) throws Exception {
 		LOGGER.info("[GET] EMPLOYEE WORKPLACE");
-		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
-		boolean allEmployees = api.getParams().optBoolean("allEmployees");  
-		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		Integer workplaceId =  api.getParams().optInt("workplace");  
-		String jsonInString = gjson.toJson(JooqContrataContract.getEmployeesByWorkplace(conn, workplaceId, allEmployees));
-		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
+			boolean allEmployees = api.getParams().optBoolean("allEmployees");  
+			Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+			Integer workplaceId =  api.getParams().optInt("workplace");  
+			String jsonInString = gjson.toJson(JooqContrataContract.getEmployeesByWorkplace(conn, workplaceId, allEmployees));
+			if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		}
 		return new JSONObject();
 	}
+
+	private Object getAgreements(AonApiData api) throws Exception {
+		LOGGER.info("[GET] AGREEMENTS");
+		String domainName = api.getDomain().getName();
+		try(Connection connection = AonServletUtils.getConnection(domainName)){
+			List<Object> list = new ArrayList<>();
+			Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+			Integer domainID = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainID = AonServletUtils.getParentDomainID(domainName);
+			List<Agreement> agreements = JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE,domainID, parentDomainID);
+			for(Agreement agreement: agreements) {
+				if(agreement.getId()>0 && agreement.getSSNumber()!=null) {
+					JSONObject json = new JSONObject();
+					json.put("description", agreement.getDescription());
+					json.put("ssNumber", agreement.getSSNumber());
+					list.add( new JsonParser().parse(json.toString()));
+				}
+			}
+			String jsonInString = gjson.toJson(list);
+			if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		}
+		return new JSONArray();
+	}
 	
-	private Object getEmployeeSalaries(AonApiData api) throws SQLException {
+	
+	private Object getEmployeeSalaries(AonApiData api) throws Exception {
 		LOGGER.info("[GET]  EMPLOYEE SALARIES");
 		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		AonToken aonToken = SECURITY.getAonToken(api.getToken());
@@ -172,34 +202,37 @@ public class ContractServlet extends AonApiHttpServlet {
 			document = AON.getRegistry(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getIdProperty().eq(api.getUser().getRegistry())).getDocument();
 		}
 
-		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
-		SalaryInfoFilter filter = getFilter(api);
-		filter.setWorkplaceId(api.getDomain().getId());
-		List<SalaryInfo> salaries = JooqPayrollSalaries.getSalariesByDocument(conn, filter, document);
+		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
+			SalaryInfoFilter filter = getFilter(api);
+			filter.setWorkplaceId(api.getDomain().getId());
+			List<SalaryInfo> salaries = JooqPayrollSalaries.getSalariesByDocument(conn, filter, document);
+	
+			List<Object> list = new ArrayList<>();
+			salaries.stream().forEach(lt -> list.add(toJSONSalaryInfo(lt)) );
+			String jsonInString = gjson.toJson(list);
+			if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		} 
 
-		List<Object> list = new ArrayList<>();
-		salaries.stream().forEach(lt -> list.add(toJSONSalaryInfo(lt)) );
-		String jsonInString = gjson.toJson(list);
-		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
 	
-	private Object getEnterpriseSalaries(AonApiData api) throws SQLException {
+	private Object getEnterpriseSalaries(AonApiData api) throws Exception {
 		LOGGER.info("[GET] ENTERPRISE SALARIES");
 		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
-		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getDomainProperty().eq(api.getDomain().getId()));
-		
-		List<SalaryInfo> salaries = getSalaries(api, conn, Optional.ofNullable(company.getId()));
-		
-		List<Object> list = new ArrayList<>();
-		salaries.stream().forEach(lt -> list.add(toJSONSalaryInfo(lt)) );
-		String jsonInString = gjson.toJson(list);
-		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
+			Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getDomainProperty().eq(api.getDomain().getId()));
+			
+			List<SalaryInfo> salaries = getSalaries(api, conn, Optional.ofNullable(company.getId()));
+			
+			List<Object> list = new ArrayList<>();
+			salaries.stream().forEach(lt -> list.add(toJSONSalaryInfo(lt)) );
+			String jsonInString = gjson.toJson(list);
+			if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		}
 		return new JSONObject();
 	}
 	
-	private Object getCompanyCosts(AonApiData api) throws SQLException, IOException, JSONException{
+	private Object getCompanyCosts(AonApiData api) throws Exception{
 		LOGGER.info("[GET] COMPANY COSTS");
 
 		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
@@ -273,7 +306,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		return JooqPayrollSalaries.getSalaries(conn, filter);
 	}
 	
-	private File getSalaryPdf(AonApiData api) throws JSONException, IOException {
+	private File getSalaryPdf(AonApiData api) throws Exception {
 		LOGGER.info("[GET] SALARY PDF");
 
 		Integer salaryId = api.getParams().optInt("salaryId");
@@ -283,7 +316,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		return file;
 	}
 
-	private File getCompanyCostsExcel(AonApiData api) throws JSONException, IOException {
+	private File getCompanyCostsExcel(AonApiData api) throws Exception {
 		LOGGER.info("[GET] COMPANY COSTS EXCEL");
 		Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), "", f->f.getDomainProperty().eq(api.getDomain().getId()));
 		ExcelType excelType = ExcelType.COMPLETE;
@@ -310,23 +343,27 @@ public class ContractServlet extends AonApiHttpServlet {
 		return file;
 	}
 	
-	private Date getEndDateSalary(AonApiData api, Optional<Integer> companyId) throws SQLException {
-		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
-		SalaryInfoFilter filter = getFilter(api);
-		if(companyId.isPresent()) filter.setEnterpriseId(companyId.get().intValue());
-		SalaryInfo salaryInfo = JooqPayrollSalaries.getSalariesDateEnd(conn, filter);
-		Date date = salaryInfo.getEndDate();
-		if(date == null) date = new Date();
+	private Date getEndDateSalary(AonApiData api, Optional<Integer> companyId) throws Exception {
+		Date date = null;
+		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
+			SalaryInfoFilter filter = getFilter(api);
+			if(companyId.isPresent()) filter.setEnterpriseId(companyId.get().intValue());
+			SalaryInfo salaryInfo = JooqPayrollSalaries.getSalariesDateEnd(conn, filter);
+			date = salaryInfo.getEndDate();
+			if(date == null) date = new Date();
+		}
+
 		return date;
 	}
 	
-	private Object getCccForActivity(AonApiData api) throws SQLException {
-		Connection conn = AonServletUtils.getConnection(api.getDomain().getName());
-		MainCCCInfo mainCccInfo = JooqMainCCC.getMainCCCInfo(conn, api.getDomain().getId(), api.getUser().getId());
+	private Object getCccForActivity(AonApiData api) throws Exception {
+		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
+			MainCCCInfo mainCccInfo = JooqMainCCC.getMainCCCInfo(conn, api.getDomain().getId(), api.getUser().getId());
+			Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+			String jsonInString = gjson.toJson(mainCccInfo);
+			if(jsonInString!=null) return new JsonParser().parse(jsonInString);
+		}
 
-		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-		String jsonInString = gjson.toJson(mainCccInfo);
-		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
 	}
 	
@@ -348,7 +385,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		JSONObject json = new JSONObject();
 
 		try {
-			 json.put("contract", salaryInfo.getContract())
+			json.put("contract", salaryInfo.getContract())
 			.put("domain", salaryInfo.getDomain())
 			.put("employeeName", salaryInfo.getEmployeeName())
 			.put("enterpriseId",salaryInfo.getEnterpriseId())
@@ -375,7 +412,6 @@ public class ContractServlet extends AonApiHttpServlet {
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 		List<String> errors = new ArrayList<String>();
 	
-		
 		Date startDate = !api.getParams().optString("startDate").isEmpty() ?Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd") : new Date();
 		Date endDate = !api.getParams().optString("endDate").isEmpty() ?Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd") : new Date();
 		
@@ -383,10 +419,15 @@ public class ContractServlet extends AonApiHttpServlet {
 		  String cti     = ccc.getCccAccount();
 		  String regimen = ccc.getCccRegimeCode();
 		  try {
-			byte[] pdf = SistemaRED.getCccLaboralLife(
-						new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), 
-						certificate.getType(), regimen, cti, startDate, endDate
-					);
+			  byte[] pdf = ServicioRED.getCccLaboralLife(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					regimen, 
+					cti, 
+					startDate, 
+					endDate
+			  );
 		      employees.addAll(CCCLaboralLife.parse(new ByteArrayInputStream(pdf), new EmployeeBuilder()));
 		  } catch(InvalidCertificateException e) {
 		      e.printStackTrace();

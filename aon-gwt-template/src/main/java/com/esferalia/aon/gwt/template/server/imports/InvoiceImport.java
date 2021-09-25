@@ -571,6 +571,15 @@ public class InvoiceImport {
 					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
 					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
 					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+				if(invoice.isUndeductible()) {
+					vat.setBase(ivs.get(j).getTotal());
+					vat.setPercentage(0.0);
+					vat.setQuota(0.0);
+					vat.setDeductibleQuota(0.0);
+					vat.setSurcharge(0.0);
+					vat.setSurchargeQuota(0.0);
+				}
+
 				ai.addVat(vat);
 				total = total + (invoice.mustApplyISP() ? ivs.get(j).getBase() : ivs.get(j).getTotal());
 				base = base + ivs.get(j).getBase();
@@ -821,8 +830,16 @@ public class InvoiceImport {
 					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
 					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
 					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+				if(invoice.isUndeductible()) {
+					vat.setBase(aux.getTotal());
+					vat.setPercentage(0.0);
+					vat.setQuota(0.0);
+					vat.setDeductibleQuota(0.0);
+					vat.setSurcharge(0.0);
+					vat.setSurchargeQuota(0.0);
+				}
 				ai.addVat(vat);
-				total = total + (invoice.mustApplyISP() ? aux.getBase() : aux.getTotal());
+				total = total + (invoice.isIsp() ? aux.getBase() : aux.getTotal());
 				base = base + aux.getBase();
 				checkCuotas(domain, aux);
 			}
@@ -907,7 +924,7 @@ public class InvoiceImport {
 			Double cuota = AonMathUtils.round(iic.getBase()*iic.getPercentage() / 100);
 			Double iicQuota = AonMathUtils.round(iic.getQuota());
 			Double dif = iicQuota - cuota;
-			if(!iicQuota.equals(cuota) && (dif < -0.01 || dif > 0.01)) {
+			if(!iicQuota.equals(cuota) && (dif < -0.015 || dif > 0.015)) {
 				throw new Exception("% IVA y Cuota IVA no coinciden.");
 			}
 		}

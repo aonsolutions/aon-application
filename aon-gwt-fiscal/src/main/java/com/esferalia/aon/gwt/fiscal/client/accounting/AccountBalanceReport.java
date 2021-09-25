@@ -182,18 +182,17 @@ public class AccountBalanceReport extends MainEntryPoint {
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
-		module.onModuleLoad(new AccountEntryModuleOptions()
-			.setParentWidget(entryDialog)
-			.setDomainName(options.getDomainName())
-			.setUser(options.getUser())
-			.setDomain(options.getDomain())
-			.setAccountEntryId(entryId)
-			.setSessionLogTabVisible(false)
-			.setJournalTabVisible(false)
-			.setExtraInfoTabVisible(false)
-			.setBalancesSectionVisible(false)
-			.setStatementTabVisible(false)
+		AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
+		module.onModuleLoad(
+				new AccountEntryModuleOptions()
+					.setParentWidget(entryDialog)
+					.setDomainName(options.getDomainName())
+					.setUser(options.getUser())
+					.setDomain(options.getDomain())
+					.setAccountEntryId(entryId)
+					.setSessionLogTabVisible(false)
+					.setJournalTabVisible(false)
+					.setExtraInfoTabVisible(false)
 			.setExternalCallback( new ModuleCallback() {
 				
 				@Override

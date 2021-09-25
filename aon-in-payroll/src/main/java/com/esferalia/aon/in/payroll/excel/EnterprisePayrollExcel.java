@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.Bonus;
 import com.esferalia.aon.occam.api.model.Salary.Cost;
+import com.esferalia.aon.occam.api.model.Salary.Deduction;
 import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
@@ -1659,7 +1660,7 @@ public class EnterprisePayrollExcel {
 
 		Stream<Salary> salaries = AON.getSalaries(aonContext,
 				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()])));
-		return salaries.map(s -> {
+		return salaries.filter(s -> s.getSalaryType() != null && s.getSalaryType().ordinal() <= SalaryType.DELAY.ordinal()).map(s -> {
 			EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
 			enterprisePayroll.employee = s.getEmployeeName();
 			enterprisePayroll.workplace = workplaces.get(s.getId());
@@ -1679,7 +1680,7 @@ public class EnterprisePayrollExcel {
 			
 			Double dedBonus = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType() == null && d.getAmount() < 0)
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 					
 			
 			enterprisePayroll.employeeSS = s.getTotalSSContributions();
@@ -1702,55 +1703,55 @@ public class EnterprisePayrollExcel {
 			// PICKING UP DEDUCTIONS
 			Double cgc = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double cgp = s.getDeductions().stream()
 					.filter(d -> (d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.IT.ordinal())
 							|| (d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.IMS.ordinal()))
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double unemployment = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.UNEMPLOYMENT.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double jobTraining = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.JOB_TRAINING.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double advancedPayment = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.ADVANCE_PAYMENT.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double otherDeductions = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.OTHER.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double estruc = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.STRUCTURAL_OVERTIME.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double noEstruct = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType() != null && d.getDeductionType().ordinal() == DeductionType.NON_STRUCTURAL_OVERTIME.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double embargos = s.getEmbargos().stream()
 					.mapToDouble(Embargo::getAmount).sum();
 			// PICKING UP COSTS
 			Double cgcEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			Double cgpEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.IT.ordinal()
 					|| c.getCostType().ordinal() == DeductionType.IMS.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			
 			Double unemploymentEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.UNEMPLOYMENT.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			Double jobTrainingEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.JOB_TRAINING.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			Double fogasaEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.FOGASA.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			Double estrucEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.STRUCTURAL_OVERTIME.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			Double noEstrucEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.NON_STRUCTURAL_OVERTIME.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 
 			// DEDUCTIONS
 			enterprisePayroll.cgc = cgc;
@@ -1812,7 +1813,7 @@ public class EnterprisePayrollExcel {
 						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT),
 								s.get(SALARY_DEDUCTION.AMOUNT));
 					} else {
-						Map<String, Double> map = new HashMap<String, Double>();
+						Map<String, Double> map = new HashMap<>();
 						map.put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT), s.get(SALARY_DEDUCTION.AMOUNT));
 						deductions.put(s.get(SALARY.ID), map);
 
@@ -1820,30 +1821,30 @@ public class EnterprisePayrollExcel {
 				});
 
 		return ctx.select().from(SALARY).innerJoin(CONTRACT).onKey()
-				.innerJoin(WORKPLACE).onKey().where(condition).fetchStream().map(record -> {
+				.innerJoin(WORKPLACE).onKey().where(condition).fetchStream().map(r -> {
 					EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
-					enterprisePayroll.employee = record.get(SALARY.EMPLOYEE_NAME);
-					enterprisePayroll.workplace = record.get(WORKPLACE.DESCRIPTION);
+					enterprisePayroll.employee = r.get(SALARY.EMPLOYEE_NAME);
+					enterprisePayroll.workplace = r.get(WORKPLACE.DESCRIPTION);
 
-					enterprisePayroll.irpf = record.get(SALARY.TOTAL_IRPF);
+					enterprisePayroll.irpf = r.get(SALARY.TOTAL_IRPF);
 
-					enterprisePayroll.cgcBase = record.get(SALARY.CGC_BASE);
-					enterprisePayroll.irpfBase = record.get(SALARY.IRPF_BASE);
+					enterprisePayroll.cgcBase = r.get(SALARY.CGC_BASE);
+					enterprisePayroll.irpfBase = r.get(SALARY.IRPF_BASE);
 
-					enterprisePayroll.raw = record.get(SALARY.TOTAL_PAYMENT);
-					enterprisePayroll.liquid = record.get(SALARY.TOTAL_LIQUID);
-					enterprisePayroll.employeeSS = record.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
+					enterprisePayroll.raw = r.get(SALARY.TOTAL_PAYMENT);
+					enterprisePayroll.liquid = r.get(SALARY.TOTAL_LIQUID);
+					enterprisePayroll.employeeSS = r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
 
 					enterprisePayroll.enterpriseSS = ctx.select().from(SALARY_COST)
-							.where(SALARY_COST.SALARY.eq(record.get(SALARY.ID))).fetchStreamInto(SALARY_COST)
+							.where(SALARY_COST.SALARY.eq(r.get(SALARY.ID))).fetchStreamInto(SALARY_COST)
 							.mapToDouble(SalaryCostRecord::getAmount).sum();
 
 					enterprisePayroll.totalSS = enterprisePayroll.employeeSS + enterprisePayroll.enterpriseSS;
 					enterprisePayroll.totalCost = enterprisePayroll.enterpriseSS + enterprisePayroll.raw;
 
-					enterprisePayroll.bonuses = bonusesMap.get(record.get(SALARY.ID));
+					enterprisePayroll.bonuses = bonusesMap.get(r.get(SALARY.ID));
 
-					Map<String, Double> map = deductions.get(record.get(SALARY.ID));
+					Map<String, Double> map = deductions.get(r.get(SALARY.ID));
 					if (map != null) {
 
 						enterprisePayroll.cgc = map.get("CGC");

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -12,6 +13,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayTypeVisitor;
+import com.esferalia.aon.gwt.payroll.shared.IT;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
@@ -22,6 +25,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -643,6 +647,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	Button holidayDayButton;
 	
 	@UiField
+	Button leaveDayButton;
+	
+	@UiField
 	Button partialityDayButton;
 	
 	@UiField
@@ -667,6 +674,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	private int totalCols = 38;
 	private int totalRows = 37;
+	
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private EmployeeCalendarDraftObject employeeCalendarDraftObject;
 	
@@ -767,7 +776,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					int rowIdx = calculatePositionRow(initialPosition);
 					int colIdx = calculatePositionCol(initialPosition);
 					
-					cellsType[rowIdx][colIdx].select(rowIdx, colIdx);
+					DayType dayType = employeeCalendarDraftObject.getDayTypeByDate(cellsDates[rowIdx][colIdx]);
+					if(null != dayType && dayType != DayType.BAJAIT)
+						cellsType[rowIdx][colIdx].select(rowIdx, colIdx);
+					
 					initialPosition++;	
 				}
 			}
@@ -779,11 +791,18 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			
 			if (isMonthSelected(row, col)){
 				for(int i = 1; i<totalCols; i++) {
-					if(null != cellsType[row][i])
-						cellsType[row][i].select(row, i);
+					if(null != cellsType[row][i] && null != cellsDates[row][i]) {
+						DayType dayType = employeeCalendarDraftObject.getDayTypeByDate(cellsDates[row][i]);
+						if(null != dayType && dayType != DayType.BAJAIT)
+							cellsType[row][i].select(row, i);
+					}
 				}
 			}else {
-				cellsType[row][col].select(row, col);
+				DayType dayType = employeeCalendarDraftObject.getDayTypeByDate(cellsDates[row][col]);
+				if(null != dayType && dayType != DayType.BAJAIT)
+					cellsType[row][col].select(row, col);
+				else
+					openITDialogDate(cellsDates[row][col]);
 			}
 			
 		}
@@ -822,6 +841,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		initDatesDialog(DayType.HOLIDAY);
 	}
 	
+	@UiHandler("leaveDayButton")
+	public void onLeaveDayButtonClick(ClickEvent event) {
+		openITDialog();
+	}
+	
 	@UiHandler("partialityDayButton")
 	public void onPartialityDayButtonClick(ClickEvent event) {
 		initPartialityDialog(DayType.PARTIALITY);
@@ -853,7 +877,14 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 	@UiHandler("leyendButton")
 	public void onLeyendButtonClick(ClickEvent event) {
-		EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog();
+		EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog() {
+
+			@Override
+			protected Integer getTotalYearDays(DayType realDays) {
+				return employeeCalendarDraftObject.getTotalYearDays(realDays);
+			}
+		};
+			
 		leyendDialog.center();
 		leyendDialog.show();
 	}
@@ -1440,6 +1471,97 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		partialityDialog.show();
 	}
 	
+	private void openITDialog() {
+		employeeCalendarDraftObject.getEmployeeITInfo(
+				s -> {
+					ITEmployee itEmployee = employeeCalendarDraftObject.getITEmployee();
+			    	ITDialog itDialog = newITDialog();
+			    	itDialog.setITEmployee(itEmployee);
+				}, f -> {});
+	}
+	
+	private ITDialog newITDialog() {
+		ITDialog itDialog = new ITDialog("Creaci\u00F3n") {
+
+    		@Override
+			protected void onAccept() {
+    			accept(getITEmployee());
+			}
+    		
+    		@Override
+			protected void onDelete(IT it) {
+    			deleteLeave(getITEmployee(), it);
+			}
+			
+			@Override
+			protected void onShowCertitificateIT(IT it) {
+				getITCertificatePDF(getITEmployee(), it);
+			}
+
+			@Override
+			protected void onComunicateIT(IT it) {}
+    		
+    	};
+    	
+    	itDialog.setEmployeesList(employeeCalendarDraftObject.getActiveEmployeesList());
+    	itDialog.initConfirmationsTable();
+		itDialog.setModal(true);
+    	itDialog.setAnimationEnabled(true);
+		itDialog.center();
+		itDialog.show();
+		
+		return itDialog;
+	}
+	
+	private void openITDialogDate(Date itDate) {
+		employeeCalendarDraftObject.getEmployeeITInfo(
+				s -> {
+					openITDialog(itDate);
+				}, f -> {});
+	}
+	
+	private void openITDialog(Date itDate) {
+		IT itInfo = employeeCalendarDraftObject.getITByDate(itDate);
+    	ITEmployee itEmployee = employeeCalendarDraftObject.getITEmployee();
+
+    	ITDialog itDialog = new ITDialog("Edici\u00F3n") {
+    		
+    		@Override
+			protected void onAccept() {
+				accept(itEmployee);
+			}
+
+			@Override
+			protected void onDelete(IT it) {
+				deleteLeave(itEmployee, it);
+			}
+
+			@Override
+			protected void onShowCertitificateIT(IT it) {
+				getITCertificatePDF(itEmployee, it);
+			}
+
+			@Override
+			protected void onComunicateIT(IT it) {
+				// Paternity / Maternity
+				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3)
+					comunicatePaternityIT(itEmployee, it);
+				else
+					comunicateIT(itEmployee, it);
+			}
+			
+    	};
+    	
+    	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
+    	itDialog.setITDialogObject(itDialogObject, itInfo, true);
+    	itDialog.setIsUserComunica(employeeCalendarDraftObject.isUserComunica());
+    	
+    	itDialog.setModal(true);
+    	itDialog.setAnimationEnabled(true);
+    	itDialog.show();
+    	itDialog.center();
+	}	
+	
 	private void initHourDialog() {
 		EmployeeCalendarHoursDialog hourDialog = new EmployeeCalendarHoursDialog(
 				this.selectedDates.getSelectedList(),
@@ -1476,6 +1598,92 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		
 		hourDialog.center();
 		hourDialog.show();
+	}
+	
+	// ----------------------------------------------------------------------------------------------------
+	//									IT DIALOG AUX METHODS
+	// ----------------------------------------------------------------------------------------------------
+
+	private void accept(ITEmployee itEmployee) {
+		employeeCalendarDraftObject.createUpdateITEmployee(itEmployee,
+				message -> {
+					reloadCalendar();
+				},
+				f -> {});
+	}
+	
+	private void deleteLeave(ITEmployee itEmployee, IT it) {
+		if(ITDialog.isPartenityPart(it)) {
+			employeeCalendarDraftObject.deleteIT(it,
+					s -> {
+						if(it.isComunicate() && employeeCalendarDraftObject.isUserComunica())
+							employeeCalendarDraftObject.deleteComunicateIT(itEmployee, it, 
+									t -> {
+										reloadCalendar();
+									}, d -> {});
+						else
+							reloadCalendar();
+					},
+					f -> {});
+		} else {
+			employeeCalendarDraftObject.removeIT(itEmployee, it,
+					s -> {
+						if(it.isComunicate() && employeeCalendarDraftObject.isUserComunica())
+							employeeCalendarDraftObject.deleteComunicateIT(itEmployee, it, 
+									t -> {
+										reloadCalendar();
+									}, d -> {});
+						else
+							reloadCalendar();
+					},
+					f -> {});
+		}
+	}
+	
+	private void reloadCalendar() {
+		employeeCalendarDraftObject.initCalendarInfo(t -> {
+			// Init save and undo all
+			onSaved();
+			changeYear();
+		}, f -> {});
+	}
+	
+	private void comunicateIT(ITEmployee itEmployee, IT it) {
+		employeeCalendarDraftObject.comunicateITBaja(itEmployee, it, t -> {
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+		}, d -> {});
+	}
+
+	private void comunicatePaternityIT(ITEmployee itEmployee, IT it) {
+		employeeCalendarDraftObject.comunicatePaternityIT(itEmployee, it, t -> {
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
+		}, d -> {});
+	}
+	
+	private void getITCertificatePDF(ITEmployee itEmployee, IT it) {
+		employeeCalendarDraftObject.getNafxIpf(itEmployee, s -> {
+			String affiliationNumber = s.getNss();
+			String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
+			String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
+			String dateFromStr = formatFullDate.format(new Date());
+			String dateToStr = formatFullDate.format(new Date());
+			String startDateStr = formatFullDate.format(it.getStartDate());
+			
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "it_export/";
+			String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
+			 		+ "&userLogin=" + Wnd.getCurrentUser()
+		            + "&affiliationNumber=" + affiliationNumber
+		            + "&regime=" + regime
+		            + "&contributionAccount=" + contributionAccount
+		            + "&dateFromStr=" + dateFromStr
+					+ "&dateToStr=" + dateToStr
+					+ "&startDateStr=" + startDateStr
+					+ "&itType=" + it.getTypeLowPart();
+			
+			Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
+		}, f -> {});
 	}
 	
 	// ----------------------------------------------------------------------------------------------------
@@ -1637,6 +1845,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 	
 	private void setTittleOfDayType(DayType dayType, Date currentDay, Label labelDay) {
+		// Si es un dia de baja IT
+		if(dayType == DayType.BAJAIT) {
+			labelDay.setTitle("Baja IT");
+		}
+		
 		// Si es un dia sin tipo y es un dia con parcialidad
 		if(dayType == DayType.PARTIALITY) {
 			labelDay.setTitle("Parcialidad : " + this.employeeCalendarDraftObject.getPartialityCoefficientByDate(currentDay));
@@ -1881,8 +2094,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	public void onSave(ClickEvent e) {
 		this.employeeCalendarDraftObject.saveCalendarInfo(
 				s -> {
-					onSaved();
-					changeYear();
+					this.employeeCalendarDraftObject.initCalendarInfo(t -> {
+						// Init save and undo all
+						onSaved();
+						changeYear();
+					}, f -> {});
 				},
 				f -> {}
 		);

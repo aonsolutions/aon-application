@@ -73,6 +73,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.MailAccountType;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
@@ -88,7 +89,6 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
-import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AonRole;
@@ -100,14 +100,20 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserAppRolePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserScopePropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserWorkgroupPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.TaskOldDAO.WorkgroupFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.UserDAO.UserFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SecurityDAO {
+
+	private SecurityDAO() {
+		throw new IllegalStateException("Utility class");
+	}
+	
 	private static final String DIGITAL_CERTIFICATE_PASSWORD = "DIGITAL_CERTIFICATE_PASSWORD";
 	private static final UserPropertiesDAO USER_PROPERTIES = new UserPropertiesDAO();
 	private static final UserScopePropertiesDAO USER_SCOPE_PROPERTIES = new UserScopePropertiesDAO();
@@ -123,11 +129,11 @@ public class SecurityDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(SIGNATURE.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(SIGNATURE.DOMAIN);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(SIGNATURE.NAME);}
-		@Override public Property<String> getSignatureProperty() {return new FilterDAO.PropertyDAO<String>(SIGNATURE.SIGNATURE_);}
-		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(SIGNATURE.USER_ID);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.NAME);}
+		@Override public Property<String> getSignatureProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.SIGNATURE_);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.USER_ID);}
 	}
 
 	public static Auth getAuth(AONContext ctx, byte[] auth) {
@@ -332,7 +338,7 @@ public class SecurityDAO {
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
 			.set(USER.DOMAIN, user.getDomain())
-			.set(USER.AUTH, user.getAuth())
+			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
 			.set(USER.TOOLBAR, user.getToolbar().value())
@@ -347,7 +353,7 @@ public class SecurityDAO {
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
 			.set(USER.DOMAIN, user.getDomain())
-			.set(USER.AUTH, user.getAuth())
+			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
 			.set(USER.TOOLBAR, user.getToolbar().value())
@@ -361,7 +367,7 @@ public class SecurityDAO {
 		deleteUserTaskHolder(ctx, user);
 		deleteUserAppRoles(ctx, user);
 		deleteUserScopes(ctx, user);
-		deleteUserWorkgroups(ctx, user);
+		UserWorkgroupDAO.delete(ctx, user);
 		deleteApplicationUser(ctx, user);
 		deleteMailAccount(ctx, user);
 		deleteActionDenied(ctx, user);
@@ -406,26 +412,17 @@ public class SecurityDAO {
 	}
 	
 	private static void deleteUserTaskHolder(AONContext ctx, User user) {
-		TaskHolder taskHolder = TaskOldDAO.getTaskHolder(ctx, f -> f.getUserIdProperty().eq(user.getId()));
-		if(taskHolder.getId() != null) {
-			taskHolder.setActive(false);
-			taskHolder.setUserId(null);
-			TaskOldDAO.save(ctx, taskHolder);
+		TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+		if(th.getId() != null) {
+			th.setActive(false);
+			th.setUserId(null);
+			TaskHolderDAO.save(ctx, th);
 		}
 	}
 	private static void deleteUserAppRoles(AONContext ctx, User user) {
 		deleteUserAppRole(ctx, f -> f.getUserIdProperty().eq(user.getId()));
 	}
 	
-	private static void deleteUserWorkgroups(AONContext ctx, User user) {
-		deleteUserWorkgroup(ctx, f -> f.getUserIdProperty().eq(user.getId()));
-	}
-	
-	private static void deleteUserWorkgroup(AONContext ctx, UserWorkgroupFilter filter) {
-		ctx.getDslContext().delete(USER_WORKGROUP)
-			.where(USER_WORKGROUP_PROPERTIES.getConditions(filter))
-			.execute();
-	}
 	
 	public static LinkedList<User> getUsersByEmail(AONContext ctx, String email){
 		return ctx.getDslContext().select()
@@ -451,43 +448,27 @@ public class SecurityDAO {
 		.fetch().stream().map(new DomainFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static class AuthFiller  implements Function<Record8<byte[], String, String, String, String, String, String, String>,Auth> {
+	public static class AuthFiller extends Filler implements Function<Record8<byte[], String, String, String, String, String, String, String>,Auth> {
 
 		@Override
-		public Auth apply(Record8<byte[], String, String, String, String, String, String, String> record) {
+		public Auth apply(Record8<byte[], String, String, String, String, String, String, String> r) {
+			return build(r)
+					.setUuid(r.value2());
+		}
+		
+		public static Auth build(Record r) {
 			return new Auth()
-				.setAuth(record.getValue(AUTH.ID))
-				.setUuid(record.value2())
-				.setEmail(record.getValue(AUTH.EMAIL))
-				.setName(record.getValue(AUTH.NAME))
-				.setSurname(record.getValue(AUTH.SURNAME))
-				.setDocument(record.getValue(AUTH.DOCUMENT))
-				.setPhone(record.getValue(AUTH.PHONE))
-				.setPassword(record.getValue(AUTH.PASSWORD));
+				.setAuth(r.getValue(AUTH.ID))
+				.setEmail(r.getValue(AUTH.EMAIL))
+				.setName(r.getValue(AUTH.NAME))
+				.setSurname(r.getValue(AUTH.SURNAME))
+				.setDocument(r.getValue(AUTH.DOCUMENT))
+				.setPhone(r.getValue(AUTH.PHONE))
+				.setPassword(r.getValue(AUTH.PASSWORD));
 		}
 		
 	}
 	
-	public static class UserFiller  implements Function<Record,User> {
-
-		@Override
-		public User apply(Record record) {
-			return new User()
-				.setId(record.getValue(USER.ID))
-				.setDomain(record.getValue(USER.DOMAIN))
-				.setName(record.getValue(USER.NAME))
-				.setLogin(record.getValue(USER.LOGIN))
-				.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)))
-				.setRegistry(record.getValue(USER.REGISTRY))
-				.setAuth(record.getValue(USER.AUTH))
-				.setShared(AonEnumUtils.getBoolean(record.getValue(USER.SHARED)))
-				.setToolbar(UserToolbar.safeValueOf(record.getValue(USER.TOOLBAR)))
-				.setEnterprise(record.getValue(USER.ENTERPRISE));
-				//.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
-		}
-		
-	}
-
 	private static Field<?>[] USER_FIELDS = new Field[]{
 			USER.ID, USER.DOMAIN, USER.NAME, USER.LOGIN, USER.ENTERPRISE, USER.REGISTRY, USER.ACTIVE,
 			USER.ALLOWCONCURRENT, USER.PASSWORDEXPIRATION, USER.TOOLBAR, USER.LOCALE, USER.PAGELIMIT,
@@ -515,6 +496,7 @@ public class SecurityDAO {
 				.from(USER)
 				.join(DOMAIN).on(USER.DOMAIN.eq(DOMAIN.ID).or(USER.DOMAIN.eq(DOMAIN.PARENT)))
 				.leftOuterJoin(USER_SCOPE).on(USER_SCOPE.USER_ID.eq(USER.ID))
+				.leftOuterJoin(USER_WORKGROUP).on(USER_WORKGROUP.USER_ID.eq(USER.ID))
 				.where(USER_PROPERTIES.getConditions(filter))
 				.and(DOMAIN.ID.eq(ctx.getDomainId()).and( 
 							DOMAIN.SCOPE.isNull().or(USER.DOMAIN.eq(ctx.getDomainId())).or( 
@@ -765,6 +747,9 @@ public class SecurityDAO {
 				.fetch().stream().map(new ScopeFiller());
 	}
 	
+	/**
+	 * @deprecated replaced by UserWorkgroupDAO.getStream
+	 */
 	public static Stream<UserWorkgroup> getUserWorkgroupStream(AONContext ctx, UserWorkgroupFilter filter){
 		return ctx.getDslContext().select()
 				.from(USER_WORKGROUP).join(WORKGROUP).on(WORKGROUP.ID.eq(USER_WORKGROUP.WORKGROUP))
@@ -810,17 +795,6 @@ public class SecurityDAO {
 		}
 	}
 	
-	private static class UserWorkgroupFiller implements Function<Record, UserWorkgroup> {
-		@Override
-		public UserWorkgroup apply(Record r) {
-			return new UserWorkgroup()
-				.setId(r.getValue(USER_WORKGROUP.ID))
-				.setDomain(r.getValue(USER_WORKGROUP.DOMAIN))
-				.setUserId(r.getValue(USER_WORKGROUP.USER_ID))
-				.setWorkgroup(WorkgroupFiller.buildWorkgroup(r));
-		}
-	}
-
 	public static Signature getSignature(AONContext ctx, Integer signatureId){
 		return ctx.getDslContext().select().from(SIGNATURE)
 				.where(SIGNATURE.ID.eq(signatureId)).limit(1).fetchInto(SIGNATURE)
@@ -945,7 +919,7 @@ public class SecurityDAO {
 					.setSignatureId(r.getSignature())
 					.setSpamFolder(r.getSpamFolder())
 					.setTrashFolder(r.getTrashFolder())
-					.setType(r.getType())
+					.setType(MailAccountType.safeValueOf(r.getType()))
 					.setUserId(r.getUserId());
 		}
 	}
@@ -1367,8 +1341,10 @@ public class SecurityDAO {
 		
 		Long userNum = getDomainUserStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getEnterpriseProperty().isNull()).and(f.getSharedProperty().eq((byte)0))).count();
 		domain.setDefinedUsers(userNum.intValue());
+		
 
 		return new DomainUserRoles()
+				.setOldDomainModules(getDomainModules(ctx).collect(Collectors.toCollection(LinkedList::new)))
 				.setDomain(domain)
 				.setUser(user)
 				.setDomainApps(domainApps)

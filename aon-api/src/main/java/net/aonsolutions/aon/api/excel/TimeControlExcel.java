@@ -1,36 +1,33 @@
 package net.aonsolutions.aon.api.excel;
 
-import java.io.FileOutputStream;
-//import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-//import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-//import java.util.GregorianCalendar;
 import java.util.HashMap;
-//import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
@@ -39,11 +36,6 @@ import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlGroup;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
-
-import org.apache.poi.ss.usermodel.CellType;
-//import org.apache.poi.ss.usermodel.Color;
-import org.apache.poi.common.usermodel.HyperlinkType;
-import org.apache.poi.hssf.util.CellReference;
 
 public class TimeControlExcel {
 	
@@ -331,7 +323,9 @@ public class TimeControlExcel {
 //			    createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
 		
 		for (TimeControl tc : tcList) {
-			Sheet sheet = workbook.createSheet(tc.getTaskHolder().getName());
+			Sheet sheet = workbook.getSheet(tc.getTaskHolder().getName());
+			if(sheet == null)
+			    sheet = workbook.createSheet(tc.getTaskHolder().getName());
 			
 			Row rowFirst = sheet.createRow(0);
 			Cell cellFirst = rowFirst.createCell(0);

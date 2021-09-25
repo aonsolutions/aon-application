@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMAIL</title>
+
+  <style>
+    .space{
+      margin:25px;
+    }
+    .marginDocument {
+      margin: 5px 25px;
+    }
+
+    .diva {
+      background-color: #f1f1f1;
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+
+    .divb {
+      margin: 0px auto;
+      max-width: 600px;
+      background-color: white;
+      border-radius: 5px;
+    }
+
+    .tableA {
+      width: 100%;
+      padding-top: 10px;
+    }
+
+    .divMain {
+      width: 565px;
+      display: flex;
+      justify-content: center !important;
+    }
+
+    .divMain a {
+      margin: 0 5px;
+    }
+
+    .label {
+      font-size: 12px;
+      margin-bottom: 0px;
+      color: rgba(0, 0, 0, .54);
+    }
+
+    .grey, .ii a[href] {
+      color: #808080;
+    }
+
+    a:hover{
+      color: #002469;
+    }
+
+    a:hover img{
+      filter: invert(14%) sepia(58%) saturate(2574%) hue-rotate(207deg) brightness(91%) contrast(40%);
+    }
+
+    .styleCircle {
+      text-decoration: none;
+      width: 14.28%;
+      border-right: 2px #fff solid;
+      text-align: center;
+      padding: 16px 0px;
+      flex-direction: column;
+      margin: 0 5px;
+    }
+
+    .faces>span {
+      font-size: 30px;
+    }
+
+    .faceText {
+      font-size: 14px;
+    }
+    .textCenter{
+      text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="diva">
+    <div class="divb">
+      <table class="tableA">
+        <tr>
+          <td>
+            <a href="$task.getUrl()" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;">
+              <img alt="icon" src="$task.getLogo()" style="cursor: pointer;" width="300px">
+            </a>
+          </td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>
+            <div class="space"></div>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <div class="marginDocument grey">
+              Se ha cerrado la solicitud Nº $task.getNumber()
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <div class="marginDocument grey">
+              <div>
+                <strong>Asunto: </strong>  $task.getTitle()
+              </div>
+
+              <div>
+                <strong>Fecha: </strong> $task.getDate()
+              </div>
+
+            </div>
+          </td>
+        </tr>
+
+
+        <tr>
+          <td>
+            <hr>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span style="font-weight: 550;" class="marginDocument grey">¿ Cómo calificaría la atención recibida ?</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <div class="divMain" style="justify-content: center !important;">
+              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
+                <div class="faces">
+                  <img alt="Mala" src="https://aonsolutions.org/assets/img/sentiment_dissatisfied_black_36dp.png">
+                </div>
+                <div class="faceText">
+                  <span>Mala</span>
+                </div>
+              </a>
+
+              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
+                <div class="faces">
+                  <img alt="Regular" src="https://aonsolutions.org/assets/img/sentiment_neutral_black_36dp.png">
+                </div>
+                <div class="faceText">
+                  <span>Regular</span>
+                </div>
+              </a>
+
+              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
+                <div class="faces">
+                  <img alt="Buena" src="https://aonsolutions.org/assets/img/sentiment_satisfied_black_36dp.png">
+                </div>
+                <div class="faceText">
+                  <span>Buena</span>
+                </div>
+              </a>
+
+              <a href="$task.getUrl()" class="grey styleCircle" target="_blank">
+                <div class="faces">
+                  <img alt="Excelente" src="https://aonsolutions.org/assets/img/insert_emoticon_black_36dp.png">
+                </div>
+                <div class="faceText">
+                  <span>Muy buena</span>
+                </div>
+              </a>
+            </div>
+
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <hr>
+          </td>
+        </tr>
+
+        <tr class="label">
+          <td>
+            <div style="text-align:center">Este es un mensaje generado autom&aacute;ticamente. Por favor, no conteste a
+              este correo.</div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

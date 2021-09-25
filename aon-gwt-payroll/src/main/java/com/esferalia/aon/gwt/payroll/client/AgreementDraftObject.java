@@ -423,6 +423,18 @@ public class AgreementDraftObject {
 	public Set<Level> getLevels() {
 		return agreementDraft.getLevels();
 	}
+	
+	public Set<String> getAllVariables(){
+		Set<String> vars = new HashSet<String>();
+		vars.addAll(agreementDraft.getVariables());
+		vars.addAll(getImplicitVariables());
+		
+		return vars;
+	}
+	
+	public Set<String> getShownVariables(){
+		return shownVariables;
+	}
 
 	public Set<String> getVariables() {
 		Set<String> vars = new HashSet<String>();
@@ -432,6 +444,20 @@ public class AgreementDraftObject {
 		for (String var : getImplicitVariables())
 			if (shownVariables.contains(var))
 				vars.add(var);
+		return vars;
+	}
+	
+	public Set<String> getValueVariables() {
+		Set<String> vars = new HashSet<String>();
+		
+		for (String var : agreementDraft.getVariables())
+			if(variableHasValue(var))
+				vars.add(var);
+		
+		for (String var : getImplicitVariables())
+			if(variableHasValue(var))
+				vars.add(var);
+		
 		return vars;
 	}
 
@@ -454,6 +480,46 @@ public class AgreementDraftObject {
 
 	public void showVariable(String variable) {
 		shownVariables.add(variable);
+	}
+	
+	public void showAllVariables() {
+		shownVariables.clear();
+		for (String var : agreementDraft.getVariables())
+			shownVariables.add(var);
+		
+		for (String var : getImplicitVariables())
+			shownVariables.add(var);
+	}
+	
+	public void showValueVariables() {
+		shownVariables.clear();
+		
+		Set<String> variablesDefaultNotShown = getVariablesNotToShowDefault();
+		
+		for (String var : agreementDraft.getVariables())
+			if(!variablesDefaultNotShown.contains(var) && variableHasValue(var))
+				shownVariables.add(var);
+		
+		for (String var : getImplicitVariables())
+			if(!variablesDefaultNotShown.contains(var) && variableHasValue(var))
+				shownVariables.add(var);
+	}
+	
+	public void showNoValueVariables() {
+		shownVariables.clear();
+		
+		for (String var : agreementDraft.getVariables())
+			if(variableHasNoValue(var))
+				shownVariables.add(var);
+		
+		for (String var : getImplicitVariables())
+			if(variableHasNoValue(var))
+				shownVariables.add(var);
+	}
+	
+	public void showVariables(Set<String> variables) {
+		shownVariables.clear();
+		shownVariables.addAll(variables);
 	}
 
 	public Variable getVariable(String var) {
@@ -795,8 +861,37 @@ public class AgreementDraftObject {
 			if (isHiddenByDefault(var))
 				continue;
 			if (salaryTable.contains(var) || !systemVars.contains(var))
-				shownVariables.add(var);
+				if(variableHasValue(var))
+					shownVariables.add(var);
 		}
+	}
+
+	private boolean variableHasValue(String var) {
+		Variable variableData = getVariable(var);
+		if(null != variableData && (AonStringUtils.isNotBlank(variableData.getExpression()) || null != variableData.getValue())) 
+			return true;
+		
+		for(Level level : getLevels()) {
+			Variable variableLevelData = getVariable(level, var);
+			if(null != variableLevelData && (AonStringUtils.isNotBlank(variableLevelData.getExpression()) || null != variableLevelData.getValue()))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	private boolean variableHasNoValue(String var) {
+		Variable variableData = getVariable(var);
+		if(null != variableData && (AonStringUtils.isNotBlank(variableData.getExpression()) || null != variableData.getValue())) 
+			return false;
+		
+		for(Level level : getLevels()) {
+			Variable variableLevelData = getVariable(level, var);
+			if(null != variableLevelData && (AonStringUtils.isNotBlank(variableLevelData.getExpression()) || null != variableLevelData.getValue()))
+				return false;
+		}
+		
+		return true;
 	}
 
 	private void syncSalaryTable(AgreementDraft agreementDraft,
@@ -1174,6 +1269,20 @@ public class AgreementDraftObject {
 				// HORAS
 				add("HORAS_CONVENIO");
 				add("INICIO_ANTIGUEDAD");
+			}
+		};
+	}
+
+	@SuppressWarnings("serial")
+	private static Set<String> getVariablesNotToShowDefault() {
+		return new HashSet<String>() {
+			{
+				add("DIAS_MES");
+				add("DIAS_TRABAJADOS");
+				add("DIAS_EFECTIVOS");
+				add("HORAS_CONVENIO");
+				add("INICIO_ANTIGUEDAD");
+				add("SMI");
 			}
 		};
 	}

@@ -12,6 +12,7 @@ export const ACCOUNT_BALANCE_WALLET = 'account_balance_wallet';
 export const ACCOUNT_BOX = 'account_box';
 export const ACCOUNT_CIRCLE = 'account_circle';
 export const ADD = 'add';
+export const ADD_CIRCLE_OUTLINE = 'add_circle_outline';
 export const ADD_SHOPPING_CART = 'add_shopping_cart';
 export const ADD_TASK = 'add_task';
 export const ADDCHART = 'addchart';
@@ -33,6 +34,7 @@ export const ARROW_BACK = 'arrow_back';
 export const ARROW_CIRCLE_DOWN = 'arrow_circle_down';
 export const ARROW_CIRCLE_UP = 'arrow_circle_up';
 export const ARROW_DROP_DOWN = 'arrow_drop_down';
+export const ARROW_DROP_UP = 'arrow_drop_up';
 export const ARROW_RIGHT = 'arrow_right';
 export const ARROW_RIGHT_ALT = 'arrow_right_alt';
 export const ARTICLE = 'article';
@@ -117,6 +119,7 @@ export const FORWARD_TO_INBOX = "forward_to_inbox";
 export const FORMAT_UNDERLINED = "format_underlined"; 
 export const FORMAT_CLEAR = "format_clear"; 
 export const FORMAT_QUOTE = "format_quote"; 
+export const FIBER_MANUAL_RECORD = "fiber_manual_record";
 
 // ----- G
 
@@ -126,7 +129,9 @@ export const FORMAT_QUOTE = "format_quote";
 
 export const INBOX = 'inbox';
 export const INFO = 'info';
+export const INFO_OUTLINE = 'info_outline';
 export const INSERT_DRIVE_FILE = "insert_drive_file";
+export const IOS_SHARE = 'ios_share';
 
 // ----- K
 
@@ -137,17 +142,25 @@ export const KEYBOARD_ARROW_RIGHT = 'keyboard_arrow_right';
 
 export const LOCAL_MALL = 'local_mall';
 export const LINK = "link";
+export const LABEL = "label";
 
 // ----- M
 
 export const MAIL = 'mail';
 export const MORE_VERT = 'more_vert';
+export const MOVE_TO_INBOX = "move_to_inbox";
+export const MARK_EMAIL_READ = "mark_email_read";
 
+export const NOTIFICATIONS = "notifications";
 // ----- P
 
 export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
+export const PERSON_ADD = 'person_add';
+export const PERSON_ADD_ALT = 'person_add_alt';
+export const PHONE = 'phone';
 export const PRINT = 'print';
+export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 
 // ----- R
 
@@ -163,6 +176,7 @@ export const SEARCH = 'search';
 export const SEND = 'send';
 export const SETTING = 'setting';
 export const SWAP_CALLS = 'swap_calls';
+export const SUPPORT_AGENT = "support_agent";
 
 // ----- T
 
@@ -176,3 +190,8 @@ export const UNARCHIVE = 'unarchive';
 
 export const VISIBILITY = 'visibility';
 export const VISIBILITY_OFF = 'visibility_off';
+
+
+export const OPEN_IN_FULL = "open_in_full";
+
+export const OUTBOX = "outbox";

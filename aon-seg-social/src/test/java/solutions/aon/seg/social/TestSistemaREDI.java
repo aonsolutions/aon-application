@@ -1,6 +1,5 @@
 package solutions.aon.seg.social;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -17,7 +16,6 @@ import java.util.Optional;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.Ignore;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
@@ -36,9 +34,9 @@ import solutions.aon.seg.social.exception.invalid.invalidCccException;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.SituacionEmpresa;
 
-@Ignore
+//@Ignore
 public class TestSistemaREDI extends SegSocialTest{
-	
+
 	@Test
 	public void testSituacionEmpresaOk() {
 		testDisponibility("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR69&E=I&AP=AFIR");

@@ -23,6 +23,8 @@ import net.aonsolutions.db.up2date.payroll.AdditionalHoursKiss;
 import net.aonsolutions.db.up2date.payroll.OvertimeCostsFix;
 import net.aonsolutions.db.up2date.tgss.AgriculturalATEPEFix;
 import net.aonsolutions.db.up2date.tgss.ReduccionCgcE02Fix;
+import net.aonsolutions.db.up2date.project.ProjectHolderCreation;
+import net.aonsolutions.db.up2date.task.TaskWorkflowUpdate;
 
 public class Up2Date {
 
@@ -177,6 +179,8 @@ public class Up2Date {
     		//ReduccionCgcE02Fix.REDUCCIONCGCE02FIX,
     		//AgriculturalATEPEFix.AGRICULTURALATEPEFIX
     		AdditionalHoursKiss.ADDITIONALHOURSKISS
+    		TaskWorkflowUpdate.TASK_WORKFLOW_UPDATE,
+    		ProjectHolderCreation.PROJECT_HOLDER_CREATION
     };
 
 

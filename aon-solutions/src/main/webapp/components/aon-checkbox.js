@@ -94,6 +94,10 @@ export class AonCheckbox extends AonElement {
 		if(this.hasAttribute(CONSTANT.VALUE) && "true" === this.getAttribute(CONSTANT.VALUE)){
 			input.setAttribute('checked', 'checked');
 		}
+		
+		if(this.checked) 	
+			input.checked = 'checked';
+
 		if(this.hasAttribute(CONSTANT.DISABLED)){
 			input.setAttribute(CONSTANT.DISABLED, CONSTANT.DISABLED);
 		}

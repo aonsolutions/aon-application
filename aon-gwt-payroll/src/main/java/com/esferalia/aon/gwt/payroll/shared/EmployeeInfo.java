@@ -67,6 +67,9 @@ public class EmployeeInfo implements Serializable{
 	//Rbanks 
 	private ArrayList<Rbank> rbanks;
 	
+	//AgreementId
+	private Integer agreementId;
+	
 	public EmployeeInfo() {
 		super();
 		this.domain = null;
@@ -106,6 +109,7 @@ public class EmployeeInfo implements Serializable{
 		this.bic = null;
 		this.bankAlias = null;
 		this.rbanks = new ArrayList<Rbank>();
+		this.agreementId = null;
 	}
 
 	public EmployeeInfo(Integer employeeId, String name, String surName, String document, String ssNumber) {
@@ -442,6 +446,14 @@ public class EmployeeInfo implements Serializable{
 
 	public void setIsFullTime(Boolean isFullTime) {
 		this.isFullTime = isFullTime;
+	}
+	
+	public Integer getAgreementId() {
+		return this.agreementId;
+	}
+	
+	public void setAgreementId(Integer agreementId) {
+		this.agreementId = agreementId;
 	}
 
 	public String toString(){

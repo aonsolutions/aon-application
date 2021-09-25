@@ -211,7 +211,7 @@ public class InvoiceDetailDAO {
 							? ItemFiller.build(r)
 							: new Item().setId(r.getValue(INVOICE_DETAIL.ITEM)))
 					.setSeller(checkField(r, SELLER.REGISTRY) 
-							? SellerFiller.buildSeller(r, null)
+							? SellerFiller.build(r)
 							: new Seller().setId(r.getValue(INVOICE_DETAIL.SELLER)))
 					.setWorkplace(checkField(r, WORKPLACE.ID) 
 							? WorkplaceFiller.buildWorkplace(r)

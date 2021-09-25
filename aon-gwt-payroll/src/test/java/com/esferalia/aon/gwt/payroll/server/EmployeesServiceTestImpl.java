@@ -16,6 +16,8 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDraft;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
+import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -600,7 +602,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public EmployeeContractInfo getEmployeeInfoDataBase(String domain, String user, Integer contractId) throws IllegalArgumentException {
+	public EmployeeContractInfo getEmployeeInfoDataBase(String domain, String user, Integer contractId, Workplace workplace) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
@@ -621,7 +623,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public WorkplaceEmployees getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId) {
+	public WorkplaceEmployees getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
@@ -906,6 +908,33 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	@Override
 	public void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId)
 			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public EmployeeEventsData setEmployeeEventsByContract(String currentDomainName, Integer contractId,
+			EmployeeEventsData employeeEventsData) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ContractPaymentData getContractPayements(String currentDomainName, Integer contractId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateContractPayments(String currentDomainName, Integer contractId,
+			ContractPaymentData contractPaymentData) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void createContractPayment(String currentDomainName, Integer contractId,
+			ContractConceptCalc contractConceptCalc) {
 		// TODO Auto-generated method stub
 		
 	}

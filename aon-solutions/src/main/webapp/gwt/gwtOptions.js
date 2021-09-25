@@ -164,3 +164,11 @@ export const MODEL_190 = {
   module: GWT_FISCAL,
   entryPoint: 'Model90'
 };
+
+export const INVOICE_STAT = {
+  title: 'estadisticas',
+  name: 'estadisticas',
+  module: GWT_AIO,
+  entryPoint: 'stat',
+  subEntryPoint: 'StatControlPanel'
+}

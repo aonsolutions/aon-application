@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -60,7 +61,7 @@ public class ProjectCommercialImport {
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				pc = new ProjectCommercial();
-				pc.setDomain(domain.getId());
+				pc.setDomain(domain);
 				pc.setCommercial(true);
 				pc.setActive(true);
 				
@@ -115,7 +116,7 @@ public class ProjectCommercialImport {
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				pc = new ProjectCommercial();
-				pc.setDomain(domain.getId());
+				pc.setDomain(domain);
 				pc.setCommercial(true);
 				pc.setActive(true);
 				
@@ -226,13 +227,13 @@ public class ProjectCommercialImport {
 		if("Cliente Potencial".equalsIgnoreCase(title)) {
 			Target target = AON.getTarget(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(o.toString()))).get();
 			pc.setTarget(target.getId());
-			pc.setRegistryId(target.getId());
+			pc.setRegistry(new Registry().setId(target.getId()));
 			return ;
 		}
 		
 		if("comercial".equalsIgnoreCase(title)) {
 			for (Seller seller : sellers) {
-				if(o.toString().equals(seller.getRegistryName())) {
+				if(o.toString().equals(seller.getName())) {
 					pc.setSeller(seller.getId());
 					return ;
 				}

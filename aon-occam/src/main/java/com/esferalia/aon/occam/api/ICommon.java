@@ -64,7 +64,6 @@ public interface ICommon {
 	// ENTERPRISE
 	// --------------------------------------------
 	public Enterprise getEnterprise(AONContext ctx, int id);
-	public LinkedList<Enterprise> getParentEnterprises(AONContext ctx,String query);
 	public LinkedList<CompanyBank> getCompanyBanks(AONContext ctx, int enterprise);
 	public Company getCompany(AONContext ctx, int domain);
 	public LinkedList<CompanyBank> getCompanyBanks(AONContext ctx);
@@ -123,7 +122,7 @@ public interface ICommon {
 	// TAG
 	public Stream<Tag> getTagStream(AONContext ctx, TagFilter filter);
 	public Tag insertTag(AONContext ctx, Tag tag);
-	public void updateTag(AONContext ctx, Tag tag);
+	public Tag updateTag(AONContext ctx, Tag tag);
 	public void deleteTag(AONContext ctx, TagFilter filter);
 	
 	//TAX

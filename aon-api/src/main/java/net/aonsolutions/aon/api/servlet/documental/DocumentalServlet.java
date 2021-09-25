@@ -1,10 +1,8 @@
 package net.aonsolutions.aon.api.servlet.documental;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +25,8 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
@@ -51,7 +51,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 				response(req, resp, getFiles(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -69,7 +69,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 				//response(req, resp, getResponseObject());
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -87,7 +87,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 				//response(req, resp, getResponseObject());
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);

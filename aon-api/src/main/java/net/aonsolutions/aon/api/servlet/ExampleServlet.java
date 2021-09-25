@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -26,10 +28,8 @@ public class ExampleServlet extends AonApiHttpServlet {
 				response(req, resp, getResponseObject());
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
-		
-			
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -45,9 +45,8 @@ public class ExampleServlet extends AonApiHttpServlet {
 				response(req, resp, getResponseObject());
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
-			
 		} catch (Exception e) {
 			error(req, resp, e);
 		}

@@ -6,7 +6,7 @@ import { getReader } from "../../services/utils.js";
 import { ASESOR_TYPE_OPTION,
     ENTERPRISE_TYPE_OPTION, EMPLOYEE_TYPE_OPTION } from './DocumentalEnums.js';
 
-export const uploadDocuments = (files, dur) => {
+export const uploadDocuments = (el, files, dur) => {
     let d = new AonDialog();
     document.getElementById('rootPanel').appendChild(d);
     d.clear();
@@ -26,6 +26,7 @@ export const uploadDocuments = (files, dur) => {
             attach(reader, data).catch(e=>null);
         });
       }
+      el.value = null;
     });
     d.open();
 }

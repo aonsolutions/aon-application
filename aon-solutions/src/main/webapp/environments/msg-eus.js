@@ -19,6 +19,7 @@ export const ALL_FILES = 'Fitxategi Guztiak';
 export const AMOUNT = 'Zenbatekoa';
 export const API_DOCUMENTATION = 'APIren Dokumentazioa';
 export const ASESOR = 'Aholkulari';
+export const AVAILABLE = 'Eskuragai';
 
 // ----- B
 
@@ -52,6 +53,7 @@ export const CONCEPTS = 'Kontzeptuak';
 export const CONFIDENTIAL = 'Konfidentziala';
 export const CONFIGURATION = 'Konfigurazioa';
 export const CONTACT = 'Kontaktua';
+export const CONTACT_DATA = 'Kontaktuaren Datuak';
 export const CONTACTS = 'Kontaktuak';
 export const CONTRACT = 'Kontratatu';
 export const COUNTRY = 'Herrialde';
@@ -111,6 +113,9 @@ export const FOOTER = 'Oina';
 // ----- G
 
 export const GENERAL_INFORMATION = 'Informazio Generala';
+export const GROUP_DATA = 'Taldeko Datuak';
+export const GROUP = 'Taldea';
+export const GROUPS = 'Taldeak';
 
 // ----- H
 
@@ -155,12 +160,16 @@ export const MY_USER = 'Nire Erabiltzailea';
 // ----- N
 
 export const NAME = 'Izena';
+export const NEW = 'Berria';
 export const NEW_COMPANY = 'Enpresa Berria';
 export const NEXT = 'Hurrengoa';
 export const NUMBER = 'Zenbakia';
 
 // ----- O
 
+export const ONLY_PORTAL = 'Portala Soilik';
+export const OPEN = 'Ireki';
+export const OPEN_MENU = 'Ireki Menua';
 export const OPTIONS = 'Aukerak';
 
 // ----- P
@@ -234,6 +243,7 @@ export const SHOW_FILE = 'Fitxategia Erakutsi';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Neurria';
+export const STATISTICS = 'Estatistikak';
 export const STATUS = "Estado";
 export const SUPPLIED = 'Ordezkatuak';
 export const SUPPLIER = 'Hornitzaile';

@@ -38,6 +38,9 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @WebServlet(name = "AonFiscalServlet", urlPatterns = {"/ms/api/fiscal/*"})
@@ -58,7 +61,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			} else if ( AonStringUtils.endsWith(api.getPath(), "/matrix") ) {
 				response(req, resp, getFiscalMatrix(api));
 			} else {
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -73,7 +76,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			if ( AonStringUtils.endsWith(api.getPath(), "/markAsFinished") ) {
 				response(req, resp, markAsFinished(api));
 			} else {
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -97,7 +100,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-			LinkedList<FiscalModel> models = new LinkedList<FiscalModel>();
+			LinkedList<FiscalModel> models = new LinkedList<>();
 			models.addAll( Mod303DAO.getMod303s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod111DAO.getMod111s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));
 			models.addAll( Mod115DAO.getMod115s(ctx, api.getDomain().getId()).collect(Collectors.toCollection(LinkedList::new)));

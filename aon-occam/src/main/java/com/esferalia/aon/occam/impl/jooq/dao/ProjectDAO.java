@@ -5,19 +5,18 @@ import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL
 import static com.esferalia.aon.jooq.tables.ProjectReservation.PROJECT_RESERVATION;
 import static com.esferalia.aon.jooq.tables.ProjectType.PROJECT_TYPE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 
-import com.esferalia.aon.jooq.tables.records.ProjectRecord;
 import com.esferalia.aon.jooq.tables.records.ProjectReservationRecord;
-import com.esferalia.aon.jooq.tables.records.ProjectTypeRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
@@ -31,10 +30,18 @@ import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ProjectDAO {
+	
+	private ProjectDAO() {
+
+	}
+	
 	private static final ProjectPropertiesDAO PROJECT_PROPERTIES = new ProjectPropertiesDAO();
 	private static final ProjectReservationPropertiesDAO PROJECT_RESERVATION_PROPERTIES = new ProjectReservationPropertiesDAO();
 	private static final ProjectCommercialPropertiesDAO PROJECT_COMMERCIAL_PROPERTIES = new ProjectCommercialPropertiesDAO();
@@ -134,10 +141,24 @@ public class ProjectDAO {
 		@Override public Property<String> getCreditCardTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CREDIT_CARD_TYPE);}
 	}
 
+	private static SelectConditionStep<Record> select(AONContext ctx, ProjectFilter filter) {
+		return ctx.getDslContext().select()
+			.from(PROJECT)
+			.join(DOMAIN).on(PROJECT.DOMAIN.eq(DOMAIN.ID))
+			.join(PROJECT_TYPE).on(PROJECT.PROJECT_TYPE.eq(PROJECT_TYPE.ID))
+			.join(REGISTRY).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+			.where(PROJECT_PROPERTIES.getConditions(filter));
+	}
+	
+	public static Stream<Project> getStream(AONContext ctx, ProjectFilter filter){
+		return select(ctx, filter).fetch().stream().map(new ProjectFiller());
+	}
+	
+	@Deprecated
 	public static Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter){
 		return ctx.getDslContext()
 				.select().from(PROJECT).where(PROJECT_PROPERTIES.getConditions(filter))
-				.fetchInto(PROJECT).stream().map(new FullProjectFiller());
+				.fetchInto(PROJECT).stream().map(new ProjectFiller());
 	}
 
 	public static ProjectType getProjectType(AONContext ctx, String description){
@@ -171,8 +192,8 @@ public class ProjectDAO {
 					PROJECT.COMMERCIAL, PROJECT.DATE, PROJECT.DOMAIN, PROJECT.NAME, PROJECT.PROJECT_TYPE,
 					PROJECT.REGISTRY, PROJECT.RESERVATION, PROJECT.TAS)
 				.values(project.isActive()?(byte)1:(byte)0, project.getAlias(), project.isCommercial()?(byte)1:(byte)0,
-						new Date(project.getDate().getTime()), project.getDomain(), project.getName(), project.getProjectTypeId(),
-						project.getRegistryId(), project.isReservation()?(byte)1:(byte)0, project.isTas()?(byte)1:(byte)0)
+						new Date(project.getDate().getTime()), project.getDomain().getId(), project.getName(), project.getProjectTypeId(),
+						project.getRegistry().getId(), project.isReservation()?(byte)1:(byte)0, project.isTas()?(byte)1:(byte)0)
 				.returning(PROJECT.ID).fetchOne().getId();
 	}
 	
@@ -238,39 +259,53 @@ public class ProjectDAO {
 
 	}
 	
-	private static class ProjectTypeFiller implements Function<ProjectTypeRecord, ProjectType> {
+	public static class ProjectTypeFiller extends Filler implements Function<Record, ProjectType> {
 		
 		@Override
-		public ProjectType apply(ProjectTypeRecord r) {
+		public ProjectType apply(Record r) {
+			return build(r);
+		}
+		
+		public static ProjectType build(Record r) {
 			return new ProjectType()
-					.setActive(r.getActive().equals(0))
-					.setDomain(r.getDomain())
-					.setId(r.getId())
-					.setDescription(r.getDescription());
+				.setId(r.getValue(PROJECT_TYPE.ID))
+				.setDomain(r.getValue(PROJECT_TYPE.DOMAIN))
+				.setDescription(r.getValue(PROJECT_TYPE.DESCRIPTION))
+				.setActive(getBoolean(r, PROJECT_TYPE.ACTIVE));
 		}
-
 	}
 	
-	private static class FullProjectFiller implements Function<ProjectRecord, Project> {
+	public static class ProjectFiller extends Filler implements Function<Record, Project> {
 		
 		@Override
-		public Project apply(ProjectRecord r) {
+		public Project apply(Record r) {
+			return build(r);
+		}
+		
+		public static Project build(Record r) {
 			return new Project()
-					.setActive(r.getActive().equals(0))
-					.setAlias(r.getAlias())
-					.setCommercial(r.getCommercial().equals(0))
-					.setDate(r.getDate())
-					.setDomain(r.getDomain())
-					.setId(r.getId())
-					.setName(r.getName())
-					.setProjectTypeId(r.getProjectType())
-					.setReservation(r.getReservation().equals(0))
-					.setTas(r.getTas().equals(0));
+				.setId(r.getValue(PROJECT.ID))
+				.setDomain(checkField(r, DOMAIN.ID)
+					? DomainFiller.build(r)
+					: new Domain().setId(r.getValue(PROJECT.DOMAIN)))
+				.setName(r.getValue(PROJECT.NAME))
+				.setRegistry(checkField(r, REGISTRY.ID)
+					? RegistryFiller.build(r, REGISTRY)
+					: new Registry().setId(r.getValue(PROJECT.REGISTRY)))
+				.setAlias(r.getValue(PROJECT.ALIAS))
+				.setDate(r.getValue(PROJECT.DATE))
+				.setType(checkField(r, PROJECT_TYPE.ID)
+					? ProjectTypeFiller.build(r)
+					: new ProjectType().setId(r.getValue(PROJECT.PROJECT_TYPE)))
+				.setActive(getBoolean(r, PROJECT.ACTIVE))
+				.setCommercial(getBoolean(r, PROJECT.COMMERCIAL))
+				.setReservation(getBoolean(r, PROJECT.RESERVATION))
+				.setTas(getBoolean(r, PROJECT.TAS));
 		}
 
 	}
 	
-	private static class FullProjectCommercialFiller implements Function<Record, ProjectCommercial> {
+	private static class FullProjectCommercialFiller extends Filler implements Function<Record, ProjectCommercial> {
 		
 		@Override
 		public ProjectCommercial apply(Record r) {
@@ -279,7 +314,9 @@ public class ProjectDAO {
 			pc.setAlias(r.getValue(PROJECT.ALIAS));
 			pc.setCommercial(r.getValue(PROJECT.COMMERCIAL).equals(0));
 			pc.setDate(r.getValue(PROJECT.DATE));
-			pc.setDomain(r.getValue(PROJECT.DOMAIN));
+			pc.setDomain(checkField(r, DOMAIN.ID)
+				? DomainFiller.build(r)
+				: new Domain().setId(r.getValue(PROJECT.DOMAIN)));
 			pc.setId(r.getValue(PROJECT.ID));
 			pc.setName(r.getValue(PROJECT.NAME));
 			pc.setProjectTypeId(r.getValue(PROJECT.PROJECT_TYPE));
@@ -329,11 +366,8 @@ public class ProjectDAO {
 					.setProject(r.getValue(PROJECT_COMMERCIAL.PROJECT))
 					.setDocument(r.getValue(REGISTRY.DOCUMENT));	
 		}
-
 	}
 	
-	
-
 	public static void fixProjectCommercial(AONContext ctx) {
 		ctx.getDslContext().select(PROJECT_COMMERCIAL.PROJECT, REGISTRY.DOCUMENT)
 		.from(PROJECT_COMMERCIAL).join(REGISTRY).on(PROJECT_COMMERCIAL.TARGET.eq(REGISTRY.ID))
@@ -341,11 +375,12 @@ public class ProjectDAO {
 		.and(PROJECT_COMMERCIAL.DOMAIN.ne(REGISTRY.DOMAIN))
 		.fetch().stream().map(new FixProjectCommercialFiller())
 		.forEach(r -> {
-			Optional<Target> target = RegistryOldDAO.getTargetStream(ctx, f-> f.getDomainProperty().eq(ctx.getDomainId())
-					.and(f.getDocumentProperty().eq(r.getDocument()))).findFirst();
-			if(target.isPresent()) {
-				ctx.getDslContext().update(PROJECT).set(PROJECT.REGISTRY, target.get().getId()).where(PROJECT.ID.eq(r.getProject())).execute();
-				ctx.getDslContext().update(PROJECT_COMMERCIAL).set(PROJECT_COMMERCIAL.TARGET, target.get().getId()).where(PROJECT_COMMERCIAL.PROJECT.eq(r.getProject())).execute();
+			Target target = TargetDAO.get(ctx,  f-> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getDocumentProperty().eq(r.getDocument())));
+			
+			if(target.isEmpty()) {
+				ctx.getDslContext().update(PROJECT).set(PROJECT.REGISTRY, target.getId()).where(PROJECT.ID.eq(r.getProject())).execute();
+				ctx.getDslContext().update(PROJECT_COMMERCIAL).set(PROJECT_COMMERCIAL.TARGET, target.getId()).where(PROJECT_COMMERCIAL.PROJECT.eq(r.getProject())).execute();
 			}
 		});
 	}

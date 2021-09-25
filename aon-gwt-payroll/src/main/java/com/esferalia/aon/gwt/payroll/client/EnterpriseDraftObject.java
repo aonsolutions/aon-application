@@ -52,64 +52,26 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				failure.accept(caught);		
 			}
 
 			@Override
-			public void onSuccess(EnterpriseInfo result) {
-				enterpriseInfo = result;
-				
-				getAgreements(
-						r ->{success.accept(result);},
-						f->{}
-				);
+			public void onSuccess(EnterpriseInfo enterpriseInfoIn) {
+				enterpriseInfo = enterpriseInfoIn;
+				agreements = getActiveAgreements(enterpriseInfo.getAgreements());
+				scopes = enterpriseInfo.getScopes();
+				success.accept(enterpriseInfoIn);
 			}
 		});	
 	}
 	
-	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
-		enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
-			
-			@Override
-			public void onSuccess(List<Agreement> result) {
-				agreements = getActiveAgreements(result);
-				
-				getEnterpriseScopes(
-						s -> {success.accept(result);},
-						f -> {}
-					);
-			}
-			
-			private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
-				List<Agreement> activeAgreements = new ArrayList<>();
-				for(Agreement agreement : agreements){
-					if(agreement.getId() > 0)
-						activeAgreements.add(agreement);
-				}
-				return activeAgreements;
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
-			}
-		});	
-	}
-	
-	private void getEnterpriseScopes(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
-		enterprisesService.getEnterpiseScopes(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onSuccess(Map<Integer, String> result) {
-				scopes = result;	
-				success.accept(result);
-			}
-		});
+	private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
+		List<Agreement> activeAgreements = new ArrayList<>();
+		for(Agreement agreement : agreements){
+			if(agreement.getId() > 0)
+				activeAgreements.add(agreement);
+		}
+		return activeAgreements;
 	}
 	
 	public void updateEnterprise(Consumer<EnterpriseInfo> success, Consumer<Throwable> failure) {
@@ -118,7 +80,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub	
+				failure.accept(caught);	
 			}
 
 			@Override
@@ -164,7 +126,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	
 	private String getNationality(String iso2) {
 		for (int i = 0; i < Country.values().length; i++) {
-			if (Country.values()[i].getIso2() == iso2)
+			if (Country.values()[i].getIso2().equals(iso2))
 				return Country.values()[i].getName();
 		}
 		return null;
@@ -193,10 +155,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	public String getAddressProvince() {
 		return this.enterpriseInfo.getAddressProvince();
 	}
-	
-//	public Integer getAddressProvinceIndex() {
-//		return ProvinceContract.getProvinceIndex(getAddressProvince());
-//	}
 	
 	public String getPhone() {
 		return this.enterpriseInfo.getPhone();

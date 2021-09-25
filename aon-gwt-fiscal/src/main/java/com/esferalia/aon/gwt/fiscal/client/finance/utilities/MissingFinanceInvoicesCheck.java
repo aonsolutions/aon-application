@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.finance.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceViewer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;

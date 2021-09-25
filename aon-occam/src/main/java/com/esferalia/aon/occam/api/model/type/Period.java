@@ -116,6 +116,28 @@ public enum Period implements Serializable {
 		return (this == Period.T4 || this == Period.M12);
 	}
 	
+	public boolean isFirstSemester() {
+		return (this == Period.M01
+			|| this == Period.M02
+			|| this == Period.M03
+			|| this == Period.M04
+			|| this == Period.M05
+			|| this == Period.M06
+			|| this == Period.T1
+			|| this == Period.T2);
+	}
+
+	public boolean isLastSemester() {
+		return (this == Period.M07
+			|| this == Period.M08
+			|| this == Period.M09
+			|| this == Period.M10
+			|| this == Period.M11
+			|| this == Period.M12
+			|| this == Period.T3
+			|| this == Period.T4);
+	}
+
 	public static Period safeValueOf( Byte i ) {
 		if (i == null) return null;
 		if (i < 0 || i >= Period.values().length) return null;
@@ -129,4 +151,6 @@ public enum Period implements Serializable {
 		}
 		return null;
 	}
+	
+	
 }

@@ -160,9 +160,9 @@ public class FiscalImpl implements IFiscal {
 				configuration -> Mod180DAO.changeStatusMod180(ctx, mod180, newStatus));		
 	}
 	@Override
-	public Mod180 duplicateNextYearMod180(AONContext ctx, Integer id) {
+	public Mod180 duplicateMod180(AONContext ctx, Mod180 mod180) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod180DAO.duplicateNextYear(ctx, id));		
+				configuration -> Mod180DAO.duplicate(ctx, mod180));		
 	}
 
 	// ----------------------------------------------------------- [MODELO 190]
@@ -208,9 +208,9 @@ public class FiscalImpl implements IFiscal {
 				configuration -> Mod190DAO.changeStatus(ctx, mod190, newStatus));		
 	}
 	@Override
-	public Mod190 duplicateNextYearMod190(AONContext ctx, Integer id) {
+	public Mod190 duplicateMod190(AONContext ctx, Mod190 mod190) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod190DAO.duplicateNextYear(ctx, id));		
+				configuration -> Mod190DAO.duplicate(ctx, mod190));		
 	}
 
 	// ----------------------------------------------------------- [MODELO 193]
@@ -293,9 +293,9 @@ public class FiscalImpl implements IFiscal {
 				configuration -> Mod184DAO.changeStatusMod184(ctx, mod184, newStatus));		
 	}
 	@Override
-	public Mod184 duplicateNextYearMod184(AONContext ctx, Integer id) {
+	public Mod184 duplicateMod184(AONContext ctx, Mod184 mod184) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod184DAO.duplicateNextYear(ctx, id));		
+				configuration -> Mod184DAO.duplicate(ctx, mod184));		
 	}
 	// ----------------------------------------------------------- [MODELO 390]
 	@Override

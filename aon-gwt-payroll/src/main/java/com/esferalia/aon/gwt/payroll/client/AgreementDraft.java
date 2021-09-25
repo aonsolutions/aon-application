@@ -1,12 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.client.Constants.DEFAULT_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
-import static com.esferalia.aon.gwt.payroll.client.Constants.MAX_ZOOM;
-import static com.esferalia.aon.gwt.payroll.client.Constants.MIN_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.PERCENT_FORMAT;
-import static com.esferalia.aon.gwt.payroll.client.Constants.ZOOM_STEP;
 import static com.esferalia.aon.gwt.payroll.shared.Event.Type.ERROR;
 import static com.esferalia.aon.gwt.payroll.shared.Event.Type.WARNING;
 
@@ -27,10 +23,11 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.DateTimeFormatException;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.EmptyStringException;
@@ -144,7 +141,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class AgreementDraft extends ResizeComposite implements CalculateCallback {
 
@@ -261,6 +258,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		String popUpLine();
 		
 		String cmd_btn();
+		
+		String bg_newPaeriod();
+		
+		String showExtra();
 
 	}
 
@@ -1278,10 +1279,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	HorizontalPanel salaryToggleButtonsPanel;
 	
 	@UiField
-	HorizontalPanel moreToggleButtonsPanel;
+	HTMLPanel moreToggleButtonsPanel;
 	
 	@UiField
-	HorizontalPanel periodTypePanel;
+	HTMLPanel periodTypePanel;
 	
 	@UiField
 	DeckPanel deckPanelExtras;
@@ -1333,13 +1334,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiField
 	DockLayoutPanel printPreviewPanel;
 	@UiField
-	Viewer printPreviewViewer;
+	FullViewer printPreviewViewer;
 	@UiField
 	ListBox typeListBox;
 	@UiField
 	ListBox levelListBox;
-	@UiField
-	ListBox zoomListBox;
 	@UiField
 	MonthListBox previewMonthListBox;
 
@@ -1382,6 +1381,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private String filterPattern;
 	private FilterPatternTimer filterPatternTimer;
 	private boolean isOnCategoryTab = false;
+	private boolean showExtrasTable = false;
+	private boolean showAllVariables = false;
 	
 	private AddPaymentContextMenu contextMenu;
 	
@@ -1424,12 +1425,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
-				if(event.isAltKeyDown()) {
-					if(event.getNativeKeyCode() == 79)
-						deckPanelExtras.showWidget(0);
-	                else if(event.getNativeKeyCode() == 77) 
-	                	deckPanelExtras.showWidget(1);
-				}	
+				if(event.isAltKeyDown() && event.isUpArrow()) {
+					deckPanelExtras.showWidget(0);	
+					showExtrasTable = false;
+				}
 			}
 		};
 		
@@ -1438,6 +1437,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		//Show new payPeriod
 		deckPanelExtras.showWidget(0);
 		periodTypePanel.getElement().getStyle().clearWidth();
+		AonToolbarSmallButton showExtras = new AonToolbarSmallButton("Mostrar tabla extras");
+		showExtras.addClickHandler(e -> {
+			showExtrasTable = !showExtrasTable;
+			if(showExtrasTable) deckPanelExtras.showWidget(1);
+			else deckPanelExtras.showWidget(0);
+		});
+		showExtras.addStyleName(style.showExtra());
+		periodTypePanel.add(showExtras);
 		
 		//Add options to payPeriod ListBox
 		this.payPeriod.addItem("ANUALES");
@@ -1597,8 +1604,36 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		//addMoreButton
 		if(!readOnly){
 			Button moreButton = addMoreButton();
+			moreButton.addStyleName(style.bg_newPaeriod());
 			moreToggleButtonsPanel.add(moreButton);
 		}
+		
+		// Visibility Variables
+		AonToolbarSmallButton variablesVisivility = new AonToolbarSmallButton("Mostrar/Ocultar variables", AON.CSS.aonIconVisibility());
+		variablesVisivility.addClickHandler(click -> {
+			new AgreementVariablesDialog(agreementDraftObject.getAllVariables(), agreementDraftObject.getShownVariables()) {
+				
+				@Override
+				protected void onAccept(String variablesType, Set<String> variables) {
+					switch (variablesType) {
+						case "VALUES":
+							agreementDraftObject.showValueVariables();
+							break;
+						case "NO_VALUES":
+							agreementDraftObject.showNoValueVariables();
+							break;
+						case "ALL":
+							agreementDraftObject.showAllVariables();
+							break;
+						default:
+							agreementDraftObject.showVariables(variables);
+							break;
+					}
+					reloadSalaryTable();
+				}
+			};
+		});
+		moreToggleButtonsPanel.add(variablesVisivility);
 		
 		// Initialize toggleButtonsPanel
 		inicializeToggleButtons(datesList, readOnly, tabPos);
@@ -2009,7 +2044,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		return popup;
 	}
 	
-	
 	private Date getNextDateWithChanges(Date newDate) {
 		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
 		Date endDate = null;
@@ -2094,8 +2128,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		if ( agreementDraftObject.getDatesWithChanges().isEmpty() /*&& isOnCategoryTab*/ )
 			categoryButton.click();
-		else
+		else {
 			createSalaryTable();
+			agreementDraftObject.showValueVariables();
+			reloadSalaryTable();
+		}
 		
 		clearPaymentsTable();
 		paymentEditors.clear();
@@ -2202,7 +2239,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		calculate();
 	}
 
-	@UiHandler({ "zoomListBox", "typeListBox", "levelListBox", })
+	@UiHandler({ "typeListBox", "levelListBox", })
 	void onChangePreview(ChangeEvent event) {
 		printPreview();
 	}
@@ -2346,6 +2383,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			boolean isCategorySelected = isCategorySelected();
 			
 			createSalaryTable();
+			agreementDraftObject.showValueVariables();
+			reloadSalaryTable();
 			
 			if(isCategorySelected)
 				categoryButton.click();
@@ -2494,8 +2533,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		col++;
 		
 		//cellFormatter.addStyleName(0, col-1, "aon-width-all"); // fill remain
-		// salaryTable.setHTML(0, col, "&nbsp;");
-		salaryTable.setWidget(0, col, getViewButton());
+		salaryTable.setWidget(0, col, new Label());
+//		salaryTable.setWidget(0, col, getViewButton());
 
 		SortedSet<Level> levels = new TreeSet<Level>(new LevelComparator());
 		levels.addAll(agreementDraftObject.getLevels());
@@ -4397,26 +4436,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	}
 
-	private int getZoom() {
-		int index = zoomListBox.getSelectedIndex();
-		String value = zoomListBox.getValue(index);
-		return Integer.valueOf(value);
-	}
-
-	private void initZoomListBox() {
-		if (zoomListBox.getItemCount() > 0)
-			return;
-
-		for (int zoom = MIN_ZOOM; zoom < DEFAULT_ZOOM; zoom += ZOOM_STEP)
-			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100), Integer.toString(zoom));
-
-		zoomListBox.addItem(PERCENT_FORMAT.format((double) DEFAULT_ZOOM / 100), Integer.toString(DEFAULT_ZOOM));
-		zoomListBox.setSelectedIndex(zoomListBox.getItemCount() - 1);
-
-		for (int zoom = DEFAULT_ZOOM + ZOOM_STEP; zoom <= MAX_ZOOM; zoom += ZOOM_STEP)
-			zoomListBox.addItem(PERCENT_FORMAT.format((double) zoom / 100), Integer.toString(zoom));
-	}
-
 	private void initPreviewMonthListBox() {
 			
 		Date startDate = DateUtils.copyDateOnly(agreementDraftObject.getStartDate());
@@ -4448,15 +4467,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private void printPreview() {
-		int zoom = getZoom();
 		Type type = getType();
 		int levelId = getLevelId();
 
-		agreementDraftObject.preview(levelId, type, zoom, new AsyncCallback<String>() {
+		agreementDraftObject.preview(levelId, type, 0, new AsyncCallback<String>() {
 
 			@Override
 			public void onSuccess(String html) {
-				printPreviewViewer.setDocument(html, zoom / 100.00);
+				printPreviewViewer.open(html);
 			}
 
 			@Override
@@ -4813,7 +4831,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			public void onClick(ClickEvent event) {
 				showPreview();
 
-				initZoomListBox();
 				initTypeListBox();
 				initLevelListBox();
 				initPreviewMonthListBox();

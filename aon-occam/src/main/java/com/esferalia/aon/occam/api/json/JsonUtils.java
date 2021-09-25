@@ -2,7 +2,9 @@ package com.esferalia.aon.occam.api.json;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.json.JSONArray;
@@ -89,6 +91,16 @@ public class JsonUtils {
 		try {
 			String date = json.optString(key, null);
 			return date == null ? null : FORMATTER.parse(date);
+		} catch (Exception e) {
+			System.out.println( json.optString(key, null));
+			throw new AonCoreException("Formato incorrecto de fecha");
+		} 
+	}
+	
+	public static Date getDateTime(JSONObject json, String key ) {
+		try {
+			 long date = json.optLong(key);
+			 return date >0 ? new Date(date) : null;
 		} catch (Exception e) {
 			System.out.println( json.optString(key, null));
 			throw new AonCoreException("Formato incorrecto de fecha");

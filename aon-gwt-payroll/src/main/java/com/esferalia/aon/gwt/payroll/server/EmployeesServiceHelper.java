@@ -42,6 +42,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
@@ -240,15 +241,15 @@ public class EmployeesServiceHelper {
 			});
 			
 			// check fecha_alta == start_date
-			{
-				Date ssStartDate = employee.getFra();
-				if ( AonUtils.notEquals(ssStartDate, startDate)) {
-					employeeStatus.and(
-							new EmployeeStatus.MismatchedStartDate()
-							.setAonStartDate(startDate)
-							.setSsStartDate(ssStartDate));
-				}
-			}
+//			{
+//				Date ssStartDate = employee.getFra();
+//				if ( AonUtils.notEquals(ssStartDate, startDate)) {
+//					employeeStatus.and(
+//							new EmployeeStatus.MismatchedStartDate()
+//							.setAonStartDate(startDate)
+//							.setSsStartDate(ssStartDate));
+//				}
+//			}
 			
 			// check fecha_baja == end_date
 //			employee.getFrb().ifPresentOrElse(ssEndDate -> {
@@ -264,8 +265,11 @@ public class EmployeesServiceHelper {
 //					employeeStatus.and(new EmployeeStatus.EndDateNotFound());
 //				}
 //			});
+			
+			Date currentDate = new Date();
+			
 			employee.getFrb().ifPresent(ssEndDate -> {
-				if ( AonUtils.notEquals(ssEndDate, endDate)) {
+				if ( AonUtils.notEquals(ssEndDate, endDate) && DateUtils.getDaysBetween(currentDate, ssEndDate) < 30) {
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedStartDate()
 							.setAonStartDate(startDate)
@@ -591,7 +595,7 @@ public class EmployeesServiceHelper {
 		Map<Integer, Set<String>> dbCategories = SQLAgreementDraft
 				.getCategories(connection, draft.getId(), domainId, parentDomainId);
 
-		Map<Integer, Set<String>> allCategories = new HashMap<Integer, Set<String>>(
+		Map<Integer, Set<String>> allCategories = new TreeMap<Integer, Set<String>>(
 				dbCategories);
 
 		Map<Integer, Set<String>> draftCategories = draft.getDraftCategories();
@@ -626,7 +630,7 @@ public class EmployeesServiceHelper {
 
 		draft.setLevels(allLevels);
 		draft.setExtras(allExtras);
-		draft.setVariables(variables); // * No draft
+		draft.setVariables(filterVariables(variables)); // * No draft
 		draft.setPayments(allPayments);
 		draft.setSalaryTable(allSalaryTable);
 		draft.setCategoriesMap(allCategories);
@@ -662,6 +666,41 @@ public class EmployeesServiceHelper {
 			// TODO: 
 		}
 		
+	}
+
+	private static Set<String> filterVariables(Set<String> variables) {
+		if(variables.isEmpty())
+			return Collections.emptySet();
+		
+		Set<String> filteredVariables = new HashSet<String>();
+		
+		// Filter variables list
+		List<String> filterVars = new ArrayList<String>();
+		filterVars.add("TRUE");
+		filterVars.add("FALSE");
+		filterVars.add("AÑOS_TRABAJADOS");
+		filterVars.add("DIAS_COTIZADOS");
+		filterVars.add("COEFICIENTE_PARCIALIDAD");
+		filterVars.add("DIAS_LABORALES");
+		filterVars.add("DIAS_LUNES");
+		filterVars.add("DIAS_MARTES");
+		filterVars.add("DIAS_MIERCOLES");
+		filterVars.add("DIAS_JUEVES");
+		filterVars.add("DIAS_VIERNES");
+		filterVars.add("DIAS_SABADO");
+		filterVars.add("DIAS_DOMINGO");
+		filterVars.add("BASE_REGULADORA");
+		filterVars.add("DIAS_TRABAJADOS");
+		filterVars.add("AÑOS_ANTIGUEDAD");
+		
+		for(String var : variables)
+			if(	!filterVars.contains(var) && 
+				!AonStringUtils.containsIgnoreCase(var, "HIDE") && 
+				!AonStringUtils.containsIgnoreCase(var, "DIAS_ENFERMEDAD"))
+				
+				filteredVariables.add(var);
+		
+		return filteredVariables;
 	}
 
 //	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(

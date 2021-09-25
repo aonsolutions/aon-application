@@ -8,9 +8,13 @@ import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -40,26 +44,42 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountEntryTypeVisitorAdapter;
+import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AutoConcept;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.AccountEntryProperties;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IAccountEntryUpdateVisitor;
+import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.fiscal.AccountingBreakdown;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountEntryValidation;
+import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
 import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class AccountEntryDAO {
 	
@@ -865,4 +885,407 @@ public class AccountEntryDAO {
 		@Override public Property<String> getBalancingAccountCodeProperty() {return new FilterDAO.PropertyDAO<String>(BAL_ACCOUNT.CODE);}
 		@Override public Property<String> getBalancingAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(BAL_ACCOUNT.DESCRIPTION);}
 	}
+	
+	
+	public static IAccountEntryWrapper  updateSpecial(AONContext ctx, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) {
+		IAccountEntryUpdateVisitor visitor = new IAccountEntryUpdateVisitor() {
+
+			@Override
+			public IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper) {
+				AccountEntry ae = wrapper.getAccountEntry();
+				if (ae != null && ae.getId() != null) {
+					ctx.checkWrite();
+					ae.setEntryType(AccountEntryType.OPENING);
+					int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
+							.set(ACCOUNT_ENTRY.ENTRY_TYPE, ae.getEntryType().getValue()) 
+							.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
+							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
+							.execute();
+					ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: [OpeningType] " + ae.getId());
+					return new AccountEntryWrapper( getAccountEntry(ctx, ae.getId()) );
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitSecurityLevel(IAccountEntryWrapper wrapper) {
+				AccountEntry ae = wrapper.getAccountEntry();
+				if (ae != null && ae.getId() != null) {
+					ctx.checkWrite();
+					ae.setConfidential(!ae.isConfidential());
+					int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
+							.set(ACCOUNT_ENTRY.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
+ 							.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
+							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
+							.execute();
+					ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: [Security Level] " + ae.getId());
+					if (wrapper instanceof AccountingInvoice) {
+						AccountingInvoice ai = (AccountingInvoice) wrapper;
+						Invoice inv = ai.getInvoice();
+						InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+						ctx.getDslContext()
+							.update(INVOICE)
+								.set(INVOICE.SECURITY_LEVEL, AonEnumUtils.getByte(ae.getSecurityLevel()))
+								.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+								.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+								.where(INVOICE.ID.equal( inv.getId()))
+								.execute();
+						return AccountingInvoiceDAO.getAccountingInvoice(ctx, ae.getId());
+					} else {
+						return new AccountEntryWrapper( getAccountEntry(ctx, ae.getId()) );
+					}
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitActivity(IAccountEntryWrapper wrapper) {
+				AccountEntry ae = wrapper.getAccountEntry();
+				if (ae != null && ae.getId() != null) {
+					ctx.checkWrite();
+					int i = ctx.getDslContext().update(ACCOUNT_ENTRY)
+							.set(ACCOUNT_ENTRY.ACTIVITY, ae.getActivity())
+ 							.set(ACCOUNT_ENTRY.MODIFICATION_USER,ctx.getUser())
+							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
+							.execute();
+					ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: [Activity] " + ae.getId());
+					if (wrapper instanceof AccountingInvoice) {
+						AccountingInvoice ai = (AccountingInvoice) wrapper;
+						Invoice inv = ai.getInvoice();
+						InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+						ctx.getDslContext()
+							.update(INVOICE)
+								.set(INVOICE.ACTIVITY, ae.getActivity() )
+								.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+								.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+								.where(INVOICE.ID.equal( inv.getId()))
+								.execute();
+						return AccountingInvoiceDAO.getAccountingInvoice(ctx, ae.getId());
+					} else {
+						return new AccountEntryWrapper( getAccountEntry(ctx, ae.getId()) );
+					}
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					ctx.checkWrite();
+					AccountingInvoice ai = (AccountingInvoice) wrapper;
+					Invoice inv = ai.getInvoice();
+					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+					inv.setInvestment(!inv.isInvestment());
+					ctx.getDslContext()
+						.update(INVOICE)
+							.set(INVOICE.INVESTMENT, AonEnumUtils.getByte( inv.isInvestment() ) )
+							.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.where(INVOICE.ID.equal( inv.getId()))
+							.execute();
+					return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId());
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitTaxDate(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					ctx.checkWrite();
+					AccountingInvoice ai = (AccountingInvoice) wrapper;
+					Invoice inv = ai.getInvoice();
+					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+					ctx.getDslContext()
+						.update(INVOICE)
+							.set(INVOICE.TAX_DATE, AonDateUtils.toSql(inv.getTaxDate()) )
+							.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.where(INVOICE.ID.equal( inv.getId()))
+							.execute();
+					return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId());
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitService(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					ctx.checkWrite();
+					AccountingInvoice ai = (AccountingInvoice) wrapper;
+					Invoice inv = ai.getInvoice();
+					inv.setService(!inv.isService());
+					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+					ctx.getDslContext()
+						.update(INVOICE)
+							.set(INVOICE.SERVICE, AonEnumUtils.getByte( inv.isService() ) )
+							.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.where(INVOICE.ID.equal( inv.getId()))
+							.execute();
+					return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId());
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitVatAccrualPayment(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					ctx.checkWrite();
+					AccountingInvoice ai = (AccountingInvoice) wrapper;
+					Invoice inv = ai.getInvoice();
+					inv.setVatAccrualPayment(!inv.isVatAccrualPayment());
+					InvoiceValidation.validateUpdateSpecialInvoice(ctx, ConfigurationDAO.getConfiguration(ctx), inv);
+					ctx.getDslContext()
+						.update(INVOICE)
+							.set(INVOICE.VAT_ACCRUAL_PAYMENT, AonEnumUtils.getByte( inv.isVatAccrualPayment() ) )
+							.set(INVOICE.MODIFICATION_USER,ctx.getUser())
+							.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
+							.where(INVOICE.ID.equal( inv.getId()))
+							.execute();
+					return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId());
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitWithholdingType(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					ctx.checkWrite();
+					AccountingInvoice ai = (AccountingInvoice) wrapper;
+					Invoice inv = InvoiceDAO.getFullInvoice(ctx, ai.getInvoice().getId());
+					for ( InvoiceDetail detail : inv.getDetails() ) {
+						for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
+							if (tax.getTaxType() == TaxType.RETENTION) {
+								int i = ctx.getDslContext()
+									.update(INVOICE_TAX)
+									.set(INVOICE_TAX.WITHHOLDING_TYPE,tax.getWithholdingType() == null 
+										? WithholdingType.PROFESSIONAL.value() 
+										: ai.getWithholdingData().getWithholdingType().value())
+									.where(INVOICE_TAX.ID.equal( tax.getId()))
+									.execute();
+								ctx.log().info("UPDATE INVOICE_TAX invoice: " + tax.getId() + " count("+ i +")");
+							}
+						}
+					}
+					
+					return AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId());
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					AccountingInvoice ai = (AccountingInvoice) wrapper;
+					Integer oldAccountId = null;
+					if (ai.getVats() != null && ai.getVats().size() > 0) {
+						oldAccountId = ai.getVats().get(0).getExpAccountId();
+					}
+					Integer newAccountId = null;
+					if (ai.getSuggestedAccounts() != null && ai.getSuggestedAccounts().size() > 1) {
+						newAccountId = ai.getSuggestedAccounts().get(1).getId();
+					}
+					if (oldAccountId != null && newAccountId != null) {
+						AccountEntry ae = wrapper.getAccountEntry();
+						for (AccountEntryDetail detail : ae.getDetails()) {
+							if (AonNumberUtils.equals( detail.getAccount(), oldAccountId)) {
+								int i = ctx.getDslContext()
+									.update(ACCOUNT_ENTRY_DETAIL)
+									.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT, newAccountId)
+									.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
+									.execute();
+								ctx.log().info("UPDATE ACCOUNT ENTRY DETAIL ACCOUNT id: " + detail.getId() + " count("+ i +")");
+							}
+							if (AonNumberUtils.equals( detail.getBalancingAccount(), oldAccountId)) {
+								int i = ctx.getDslContext()
+									.update(ACCOUNT_ENTRY_DETAIL)
+									.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT, newAccountId)
+									.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
+									.execute();
+								ctx.log().info("UPDATE ACCOUNT ENTRY DETAIL BALANCING ACCOUNT id: " + detail.getId() + " count("+ i +")");
+							}
+						}
+						for (InvoiceVAT vat : ai.getVats() ) {
+							int i = ctx.getDslContext()
+								.delete(INVOICE_DETAIL_ACCOUNT)
+								.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal( vat.getInvoiceDetailId()))
+								.and(INVOICE_DETAIL_ACCOUNT.DOMAIN.equal( ae.getDomain()))
+								.execute();
+							ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT count("+ i +")");
+							ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
+								.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, ae.getDomain())
+								.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, vat.getInvoiceDetailId())
+								.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, newAccountId)
+								.execute();
+							ctx.log().info("INSERT INVOICE_DETAIL_ACCOUNT");
+						}
+					}
+				}
+				return wrapper;
+			}
+		};
+		return operation.visit(visitor, wrapper);
+	}
+	
+	public static LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(final AONContext ctx, IAccountEntryWrapper wrp) {
+		final  LinkedList<AccountEntryUpdate> list = new LinkedList<AccountEntryUpdate>();
+		IAccountEntryUpdateVisitor visitor = new IAccountEntryUpdateVisitor() {
+			
+			@Override
+			public IAccountEntryWrapper visitOpeningType(IAccountEntryWrapper wrapper) {
+				AccountEntry ae = wrapper.getAccountEntry();
+				if (ae != null && ae.getPeriod() != null && ae.isPeriodActive() && ae.getEntryType() == AccountEntryType.MANUAL) {
+					boolean hasOpeningEntry = ctx.getDslContext().fetchExists(
+						ctx.getDslContext().select()
+							.from(ACCOUNT_ENTRY)
+							.where(ACCOUNT_ENTRY.DOMAIN.eq(ae.getDomain()))
+							.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ae.getPeriod()))
+							.and(ACCOUNT_ENTRY.ENTRY_TYPE.eq(AccountEntryType.OPENING.getValue())));
+					if (!hasOpeningEntry) {
+						list.add(AccountEntryUpdate.OPENING_TYPE);			
+					}
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitSecurityLevel(IAccountEntryWrapper wrapper) {
+				AccountEntry ae = wrapper.getAccountEntry();
+				if (ae != null && ae.getPeriod() != null && ae.isPeriodActive()) {
+					User user = SecurityDAO.getUser(ctx);
+					if (user != null && user.hasConfidentialityRole()) {
+						list.add(AccountEntryUpdate.SECURITY_LEVEL);			
+					}
+				}
+				return wrapper;
+			}
+			
+			@Override
+			public IAccountEntryWrapper visitInvestment(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					AccountingInvoice ai = (AccountingInvoice) wrapper; 
+					AccountEntry ae = wrapper.getAccountEntry();
+					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
+						list.add(AccountEntryUpdate.INVESTMENT);
+					}
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitTaxDate(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					AccountingInvoice ai = (AccountingInvoice) wrapper; 
+					AccountEntry ae = wrapper.getAccountEntry();
+					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
+						list.add(AccountEntryUpdate.TAX_DATE);
+					}
+				}
+				return wrapper;
+			}
+			
+			@Override
+			public IAccountEntryWrapper visitActivity(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					AccountingInvoice ai = (AccountingInvoice) wrapper; 
+					AccountEntry ae = wrapper.getAccountEntry();
+					Collection<EnterpriseActivity> activities = CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(),ae.getEntryDate())
+							.collect(Collectors.toCollection(LinkedList::new));
+					if (activities != null && activities.size() > 1) {
+						if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
+							list.add(AccountEntryUpdate.ACTIVITY);
+						}
+					}
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitService(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					AccountingInvoice ai = (AccountingInvoice) wrapper;
+					AccountEntry ae = wrapper.getAccountEntry();
+					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
+						if (ai.isSales() || ai.isPurchase()) {
+							list.add(AccountEntryUpdate.SERVICE);
+						}
+					}
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitVatAccrualPayment(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					AccountingInvoice ai = (AccountingInvoice) wrapper; 
+					AccountEntry ae = wrapper.getAccountEntry();
+					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
+						list.add(AccountEntryUpdate.VAT_ACCRUAL_PAYMENT);
+					}
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitWithholdingType(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					AccountingInvoice ai = (AccountingInvoice) wrapper; 
+					AccountEntry ae = wrapper.getAccountEntry();
+					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
+						if (ai.getInvoice().isWithholding()) {
+							list.add(AccountEntryUpdate.WITHHOLDING_TYPE);
+						}
+					}
+				}
+				return wrapper;
+			}
+
+			@Override
+			public IAccountEntryWrapper visitOperatingAccount(IAccountEntryWrapper wrapper) {
+				if (wrapper instanceof AccountingInvoice) {
+					AccountingInvoice ai = (AccountingInvoice) wrapper; 
+					AccountEntry ae = wrapper.getAccountEntry();
+					if (ae != null && ae.getPeriod() != null && (!ae.isPeriodActive() || !hasPendingFinances(ai.getInvoice()))) {
+						boolean add = false;
+						Integer account = null;
+						for (InvoiceVAT vat : ai.getVats() ) {
+							if ( account == null) {
+								account = vat.getExpAccountId();
+								add = true;
+							}
+							if ( !AonNumberUtils.equals(account,vat.getExpAccountId())) {
+								add = false;
+								break;
+							}
+						}
+						if ( add ) {
+							list.add(AccountEntryUpdate.OPERATING_ACCOUNT);
+						}
+					}
+				}
+				return wrapper;
+			}
+			
+			private boolean hasPendingFinances( Invoice invoice) {
+				if (invoice.getFinances() != null && !invoice.getFinances().isEmpty()) {
+					boolean pendingFinances = false;
+					for (Finance finance : invoice.getFinances()) {
+						pendingFinances = pendingFinances || finance.isFullPending();
+					}
+					return pendingFinances;
+				}
+				return true;
+			}
+			
+		};
+		for (AccountEntryUpdate operation : AccountEntryUpdate.values()) {
+			operation.visit(visitor, wrp);
+		}
+		return list;
+	}
+
+	
 }

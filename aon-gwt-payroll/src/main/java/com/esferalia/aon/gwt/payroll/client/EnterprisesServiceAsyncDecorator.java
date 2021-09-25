@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -263,19 +264,21 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getWorkplaces(Workplace workplace, String doamin, AsyncCallback<List<Workplace>> callback) {
+	public void getWorkplaces(String domain, AsyncCallback<List<Workplace>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getWorkplaces(workplace, doamin,
-				new AsyncCallbackWrapper<List<Workplace>>(callback));	
-		
+		enterprisesServiceAsync.getWorkplaces(domain, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getActivitiesCCC(Workplace workplace, String domain,
-			AsyncCallback<ActivitiesCCC> callback) {
+	public void getPayMethods(String domain, AsyncCallback<Map<String, String>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getActivitiesCCC(workplace, domain,
-				new AsyncCallbackWrapper<ActivitiesCCC>(callback));
+		enterprisesServiceAsync.getPayMethods(domain, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getActivityCCC(String domain, AsyncCallback<ActivitiesCCC> callback) {
+		AON.start();
+		enterprisesServiceAsync.getActivityCCC(domain, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
@@ -442,9 +445,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void setEmployeeAFIChanges(String domain, Integer contractId, AFIChanges afiChangesMap, AsyncCallback<String> callback) {
+	public void setEmployeeAFIChanges(String domain, Integer contractId, AFIChanges afiChangesMap, AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.setEmployeeAFIChanges(domain, contractId, afiChangesMap, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.setEmployeeAFIChanges(domain, contractId, afiChangesMap, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -518,6 +521,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getWorkplaceEmployeeITInfo(String currentDomainName, Boolean allEmployees, Integer workplaceId, AsyncCallback<List<ITEmployee>> callback) {
 		AON.start();
 		enterprisesServiceAsync.getWorkplaceEmployeeITInfo(currentDomainName, allEmployees, workplaceId, new AsyncCallbackWrapper<List<ITEmployee>>(callback));
+	}
+	
+	@Override
+	public void getEmployeeITInfo(String currentDomainName, Integer contractId, AsyncCallback<List<ITEmployee>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEmployeeITInfo(currentDomainName, contractId, new AsyncCallbackWrapper<List<ITEmployee>>(callback));
 	}
 
 	@Override
@@ -650,12 +659,6 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.setContractBonus(currentDomainName, employeeContractData, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void getPayMethods(String currentDomainName, AsyncCallback<Map<String, String>> callback) {
-		AON.start();
-		enterprisesServiceAsync.getPayMethods(currentDomainName, new AsyncCallbackWrapper<Map<String, String>>(callback));
 	}
 
 	@Override
@@ -838,6 +841,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void verifyCertificate(String domainName, String currentUser, CertificateType certificateType, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.verifyCertificate(domainName, currentUser, certificateType, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getAllConcepts(String domainName, String currentUser, AsyncCallback<ContractConcepts> callback) {
+		AON.start();
+		enterprisesServiceAsync.getAllConcepts(domainName, currentUser, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

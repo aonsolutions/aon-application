@@ -23,5 +23,24 @@ public enum OfferType implements Serializable {
 	public Byte value() {
 		return (byte) ordinal();
 	}
+	
+	public static OfferType safeValueOf( Byte i ) {
+		if (i == null) return NORMAL;
+		return safeValueOf( i.intValue() ); 
+	}
 
+	public static OfferType safeValueOf( Integer i ) {
+		if (i == null) return NORMAL;
+		if (i < 0 || i >= OfferType.values().length) return null;
+		return OfferType.values()[i];
+	}
+	
+	public static OfferType safeValueOf( String i ) {
+		for (OfferType rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getDescription()))
+				return rs;
+		}
+		return NORMAL;
+	}
+	
 }

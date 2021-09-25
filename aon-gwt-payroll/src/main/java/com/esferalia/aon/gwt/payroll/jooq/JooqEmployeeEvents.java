@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -16,12 +18,14 @@ import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+import org.mvel2.MVEL;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Quartet;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployeeEvents {
 
@@ -234,7 +238,7 @@ public class JooqEmployeeEvents {
 					.setStartDate(parseDateToJava(startDate))
 					.setEndDate(parseDateToJava(endDate))
 					.setName(name)
-					.setExpression(expression);
+					.setExpression(MVEL.eval(expression).toString());
 					
 					varibaleList.add(quarterVariableEmployeeInfo);
 				}
@@ -243,8 +247,8 @@ public class JooqEmployeeEvents {
 			employeeVariablesEvents.put(name, varibaleList);
 			
 			employeeFilterContractVariables.add(name);
-		}		
-
+		}
+		
 		// ------------------------------------------------- SOLUCION ---------------------------------------------------------		
 		
 		employeeInfoVariablesEvents.setContractEventsList(employeeVariablesEvents);
@@ -253,9 +257,20 @@ public class JooqEmployeeEvents {
 		return employeeInfoVariablesEvents;
 	}
 	
-	private static void checkVariableIfComplexExpression(Result<Record> variableEmployeeInfo) {
-		for(Record record : variableEmployeeInfo)
-			Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION));
+	private static void checkVariableIfComplexExpression(Result<Record> variableEmployeeInfo) throws Exception {
+		for(Record record : variableEmployeeInfo) {
+			try {
+				Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION));
+			} catch (Exception e) {
+				try {
+				    Object res = MVEL.eval(record.get(CONTRACT_DATA.EXPRESSION));
+				    System.err.println("EVAL EXPRESSION " + record.get(CONTRACT_DATA.EXPRESSION) + " -> " + res);
+				} catch (Exception ex) {
+					throw new RuntimeException();
+				}
+			}
+			
+		}
 	}
 
 	private static String getCoefficientVariable(String name) {
@@ -325,12 +340,26 @@ public class JooqEmployeeEvents {
 		for (Quartet<Date, Date, String, String> quartet : updateList){
 			
 			if(!varNotToUpdate.contains(quartet.getName()))
-				if(null != quartet.getExpression())
-					dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
-							CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(domain, quartet.getName(), contract, quartet.getExpression(), 
-									quartet.getStartDate(), quartet.getEndDate())
+				if(AonStringUtils.equalsIgnoreCase(quartet.getName(), "DIAS_VACACIONES_NO_DISFRUTADOS")) {
+					Integer settleId = dslContext.select(SALARY.ID).from(SALARY).where(SALARY.CONTRACT.eq(contract)).and(SALARY.TYPE.eq((byte)2)).fetchOne(SALARY.ID);
+					Record holidyasRecord = dslContext.select().from(SALARY_DATA).where(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS")).and(SALARY_DATA.SALARY.eq(settleId)).fetchOne();
+					
+					if(null == quartet.getExpression() || AonStringUtils.equalsIgnoreCase(quartet.getExpression(), "0.0"))
+						dslContext.delete(SALARY_DATA).where(SALARY_DATA.ID.eq(holidyasRecord.get(SALARY_DATA.ID))).execute();
+					else
+						dslContext.update(SALARY_DATA)
+							.set(SALARY_DATA.EXPRESSION, quartet.getExpression())
+							.set(SALARY_DATA.START_DATE, quartet.getStartDate())
+							.set(SALARY_DATA.END_DATE, quartet.getEndDate())
+							.where(SALARY_DATA.ID.eq(holidyasRecord.get(SALARY_DATA.ID)))
 							.execute();
+				} else
+					if(null != quartet.getExpression())
+						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
+								CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+								.values(domain, quartet.getName(), contract, quartet.getExpression(), 
+										quartet.getStartDate(), quartet.getEndDate())
+								.execute();
 		}
 		
 	}
@@ -353,7 +382,7 @@ public class JooqEmployeeEvents {
 		for(Entry<String, ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>> entry : employeeEventsData.getContractEventsList().entrySet()){
 			if(varsToUpdate.contains(entry.getKey())) {
 				for(Quartet<java.util.Date, java.util.Date, String, String> quartet : entry.getValue()) {
-					if(null != quartet.getExpression())
+					if(null != quartet.getExpression() && !AonStringUtils.equalsIgnoreCase(quartet.getExpression(), "0"))
 						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
 								CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
 								.values(domain, quartet.getName(), idEmployee, quartet.getExpression(), 

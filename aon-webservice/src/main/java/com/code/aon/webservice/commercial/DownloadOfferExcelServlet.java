@@ -266,7 +266,7 @@ public class DownloadOfferExcelServlet extends HttpServlet {
 //    			ct3.setCellStyle(style3);
  	    	
     			Cell ct4 = row.createCell(4);
-    			ct4.setCellValue(offer.getSeller() != null ? offer.getSeller().getRegistryName() : "");	
+    			ct4.setCellValue(offer.getSeller() != null ? offer.getSeller().getName() : "");	
 //    			ct4.setCellStyle(style3);
     			
     			Cell ct5 = row.createCell(5);
@@ -290,8 +290,8 @@ public class DownloadOfferExcelServlet extends HttpServlet {
     		b = b - (b * (discount / 100));
     		
     		Double vat = 0.0;
-    		if (result!=null &&  result.getItem() != null &&  result.getItem().getVat() != null) {
-    			vat = result.getItem().getVat().getPercentage();
+    		if (result!=null &&  result.getItem() != null &&  result.getItem().getProduct().getVat() != null) {
+    			vat = result.getItem().getProduct().getVat().getPercentage();
     		}
     		quota = quota + (b * (vat/100));
     		base = base + b;

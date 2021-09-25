@@ -10,6 +10,8 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
+import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -180,7 +182,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	EventsWorkplace setEventsWorkplace(String domain, 
 			com.esferalia.aon.gwt.payroll.shared.EventsWorkplace updateEventsWorkplace);
 
-	EmployeeContractInfo getEmployeeInfoDataBase(String domain, String user, Integer contractId) throws IllegalArgumentException;
+	EmployeeContractInfo getEmployeeInfoDataBase(String domain, String user, Integer contractId, Workplace workplace);
 
 	EmployeeContractInfo setEmployeeInfoDataBase(String domain, EmployeeContractInfo new_employeeContractData);
 
@@ -191,6 +193,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	EmployeeEventsData getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			ArrayList<String> employeeContractVariablesDB);
 
+	EmployeeEventsData setEmployeeEventsByContract(String currentDomainName, Integer contractId,
+			EmployeeEventsData employeeEventsData);
+	
+	
 	String setEmployeeAFIChanges(String currentDomainName, Integer contractId, Date newDate, boolean isChangeContract,
 			String tc2, boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation);
 
@@ -288,5 +294,13 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	// ------------------------------------------------- SEPE Methods
 	
 	Certifica2Info getCertifica2Info(String currentDomainName, Integer contractId) throws IllegalArgumentException;
-	
+
+	// ------------------------------------------------- EmployeeContractPayments
+
+	ContractPaymentData getContractPayements(String currentDomainName, Integer contractId);
+
+	void updateContractPayments(String currentDomainName, Integer contractId, ContractPaymentData contractPaymentData);
+
+	void createContractPayment(String currentDomainName, Integer contractId, ContractConceptCalc contractConceptCalc);
+
 }

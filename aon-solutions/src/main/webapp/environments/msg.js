@@ -48,12 +48,14 @@ export const ADD_TAX = MSG.ADD_TAX;
 export const ADD_WORKGROUP = "Añadir grupo de trabajo"; //TODO
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
 export const ADDRESS = MSG.ADDRESS;
+export const ALIAS = 'Alias';
 export const ALL_FILES = MSG.ALL_FILES;
 export const AMOUNT = MSG.AMOUNT;
 export const API_DOCUMENTATION = MSG.API_DOCUMENTATION;
 export const ASESOR = MSG.ASESOR;
+export const AVAILABLE = MSG.AVAILABLE;
 export const AVERAGE = "Media";// TODO
-
+export const ATTACH_FILES_DRAGGING_DROPPING = "Adjunte archivos arrastrándolos y soltándolos"; //TODO
 // ----- B
 
 export const BACK = MSG.BACK;
@@ -92,6 +94,7 @@ export const CONCEPTS = MSG.CONCEPTS;
 export const CONFIDENTIAL = MSG.CONFIDENTIAL;
 export const CONFIGURATION = MSG.CONFIGURATION;
 export const CONTACT = MSG.CONTACT;
+export const CONTACT_DATA = MSG.CONTACT_DATA;
 export const CONTACTS = MSG.CONTACTS;
 export const CONTRACT = MSG.CONTRACT;
 export const COUNTRY = MSG.COUNTRY;
@@ -99,10 +102,13 @@ export const CREDITOR = MSG.CREDITOR;
 export const CREDITORS = MSG.CREDITORS;
 export const CUSTOMER = MSG.CUSTOMER;
 export const CUSTOMERS = MSG.CUSTOMERS;
+export const CLOSE = "Cerrar";// TODO
+export const CAU = "Cau";// TODO
 
 // ----- D
 
 export const DATE = MSG.DATE;
+export const DATA = "Datos";//TODO
 export const DEACTIVATE = MSG.DEACTIVATE;
 export const DELETE = MSG.DELETE;
 export const DELETE_CATEGORY = MSG.DELETE_CATEGORY;
@@ -129,6 +135,8 @@ export const DUPLICATE = MSG.DUPLICATE;
 export const DUPLICATE_INVOICE = MSG.DUPLICATE_INVOICE;
 export const DURATION = "Duración";
 export const DESCRIPTION = "Descripción";// TODO
+export const DROP_FILE = "Suelta el archivo";//TODO
+
 
 // ----- E
 
@@ -141,34 +149,39 @@ export const EDIT_WORKGROUP = "Editar grupo de trabajo"; //TODO
 export const EMAIL = MSG.EMAIL;
 export const EMPLOYEE = MSG.EMPLOYEE;
 export const ENTERPRISE = MSG.ENTERPRISE;
-export const ENVIRONMENT = 'Entorno';
+export const ENVIRONMENT = 'Entorno';//TODO
 export const EQUIVALENCE_SURCHARGE = MSG.EQUIVALENCE_SURCHARGE;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
+export const END_DATE = "Fecha fin";//TODO
 
 // ----- F
 
 export const FAX = MSG.FAX;
 export const FILE = MSG.FILE;
 export const FILE_DATA = MSG.FILE_DATA;
-export const FILTER = "Filtro";
-export const FILTERS = "Filtros";
-export const FISCAL = 'Fiscal';
+export const FILTER = "Filtro";//TODO
+export const FILTERS = "Filtros";//TODO
+export const FISCAL = 'Fiscal';//TODO
 export const FOOTER = MSG.FOOTER;
+export const FORMALITIES = 'Trámites';//TODO
 
 // ----- G
 
 export const GENERAL_INFORMATION = MSG.GENERAL_INFORMATION;
+export const GROUP_DATA = MSG.GROUP_DATA;
+export const GROUP = MSG.GROUP;
+export const GROUPS = MSG.GROUPS;
 
 // ----- H
 
 export const HEADER = MSG.HEADER;
 export const HOLDER = MSG.HOLDER;
 export const HOLDERS = MSG.HOLDERS;
-export const HOURS = "Horas";
-
+export const HOURS = "Horas";//TODO
+export const HISTORIC = "Historial"; //TODO
 // ----- I
 
-export const INACTIVE = 'Inactivas';
+export const INACTIVE = 'Inactivas';//TODO
 export const INBOX = MSG.INBOX;
 export const INVESTMENT = MSG.INVESTMENT;
 export const INVOICE = MSG.INVOICE;
@@ -182,7 +195,7 @@ export const IRPF = MSG.IRPF;
 export const ISSUED = MSG.ISSUED;
 export const ISSUEDS = MSG.ISSUEDS;
 export const ISSUE = "Asunto"; //TODO
-
+export const INTERNAL = "Interno"; //TODO
 // ----- J
 
 // ----- K
@@ -202,10 +215,16 @@ export const MODEL_190_DESCRIPTION = MSG.MODEL_190_DESCRIPTION;
 export const MY_DATA = MSG.MY_DATA;
 export const MY_USER = MSG.MY_USER;
 export const MSG_SENT = "Mensaje enviado";//TODO
+export const MAXIMIZE = "Maximizar";//TODO
+export const MINIMIZE = "Minimizar";//TODO
+export const MESSENGER_SERVICE = "Mensajería";//TODO
+export const MONTH = "Mes"; //TODO
+export const MAILBOX = "Buzón";//TODO
 
 // ----- N
 
 export const NAME = MSG.NAME;
+export const NEW = MSG.NEW;
 export const NEW_COMPANY = MSG.NEW_COMPANY;
 export const NEW_REQUEST = "Nueva solicitud"; //TODO
 export const NEXT = MSG.NEXT;
@@ -217,9 +236,13 @@ export const NUMBER = MSG.NUMBER;
 // ----- O
 
 export const OFFICE = 'Despacho';//TODO
+export const ONLY_PORTAL = MSG.ONLY_PORTAL;
+export const OPEN = MSG.OPEN;
+export const OPEN_MENU = MSG.OPEN_MENU;
 export const OPEN_REQUESTS = 'Solicitudes Abiertas';//TODO
 export const OPTIONS = MSG.OPTIONS;
-
+export const OPTIONAL = "Opcional"; //TODO
+export const OBSERVATION = "Observación"; //TODO
 // ----- P
 
 export const PAYMETHOD = MSG.PAYMETHOD;
@@ -233,6 +256,7 @@ export const PENDING_TASKS = 'Tareas Pendientes';//TODO
 export const PENDINGS = MSG.PENDINGS;
 export const PERMISSIONS = MSG.PERMISSIONS;
 export const PHONE = MSG.PHONE;
+export const PORTAL = 'Portal';
 export const POSTAL_CODE = MSG.POSTAL_CODE;
 export const PREVIOUS = MSG.PREVIOUS;
 export const PRICE = MSG.PRICE;
@@ -243,12 +267,14 @@ export const PROCESSED_MOVEMENT_BJ = "La baja se ha procesado correctamente";//T
 export const PRODUCT = MSG.PRODUCT;
 export const PRODUCTS = MSG.PRODUCTS;
 export const PROVINCE = MSG.PROVINCE;
-
+export const PROCESS_TYPE = "Tipo de trámite"; //TODO
+export const PROCESS = "Trámite"; //TODO
+export const PROJECT = "Proyecto"; //TODO
 // ----- Q
 
 export const QUANTITY = MSG.QUANTITY;
 export const QUOTA = MSG.QUOTA;
-
+export const QUERY = "Consulta"; //TODO
 // ----- R
 
 export const RADIO = "Radio"; // TODO
@@ -271,13 +297,14 @@ export const REJECTED_INVOICES = MSG.REJECTED_INVOICES;
 export const REJECTEDS = MSG.REJECTEDS;
 export const REQUEST = MSG.REQUEST;
 export const REQUESTS = MSG.REQUESTS;
-export const REQUESTS_FOR_YOU = 'Solicitudes para ti';//TODO
+export const REQUESTS_SENT = 'Solicitudes Enviadas';//TODO
+export const REQUESTS_RECEIVED = 'Solicitudes Recibidas';//TODO
 export const RESTORE = MSG.RESTORE;
 export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;
 export const RESUME_COSTS = "Resumen de costes"; // TODO
 export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
-
+export const REOPEN = "Reabrir"; // TODO
 // ----- S
 
 export const SAVE = MSG.SAVE;
@@ -285,6 +312,7 @@ export const SAVED_DATA = MSG.SAVED_DATA;
 export const SCOPE = MSG.SCOPE;
 export const SEARCH = MSG.SEARCH;
 export const SEND = MSG.SEND;
+export const SENT = "Enviadas";//Todo
 export const SEND_FILE = MSG.SEND_FILE;
 export const SEND_FILES = MSG.SEND_FILES;
 export const SEND_INVOICE = MSG.SEND_INVOICE;
@@ -298,6 +326,7 @@ export const SHOW_FILE = MSG.SHOW_FILE;
 export const SII = MSG.SII;
 export const SII_TICKETBAI = MSG.SII_TICKETBAI;
 export const SIZE = MSG.SIZE;
+export const STATISTICS = MSG.STATISTICS;
 export const STATUS = "Estado"; // TODO
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
@@ -306,10 +335,15 @@ export const SURCHARGE = MSG.SURCHARGE;
 export const SURCHARGE_RE = 'R.E.'; // TODO
 export const SURNAME = MSG.SURNAME;
 export const SYSTEM_MESSAGES = MSG.SYSTEM_MESSAGES;
+export const STORE = "Archivar"; //TODO
+export const START_DATE = "Fecha inicio";//TODO
+export const SENDER = "Remitente";//TODO
 
 // ----- T
 
 export const TAG = MSG.TAG;
+export const TASK = "Tarea"; //TODO
+export const TASKS = "Tareas"; //TODO
 export const TAGS = MSG.TAGS;
 export const TAX = MSG.TAX;
 export const TAX_BASE = MSG.TAX_BASE;
@@ -327,6 +361,12 @@ export const TRANSACTION_TYPE = MSG.TRANSACTION_TYPE;
 export const TRASH = MSG.TRASH;
 export const TYPE = MSG.TYPE;
 export const TYPES = MSG.TYPES;
+export const TASK_TRAY = "Bandeja Tareas";//TODO
+export const TITLE = "Título" //TODO
+export const TRAY = "Bandeja";//TODO
+export const TYPE_HERE = "Escriba aquí"; //TODO
+export const TYPE_REQUEST = "Tipo solicitud";//TODO
+
 
 // ----- U
 
@@ -344,9 +384,9 @@ export const VAT = MSG.VAT;
 export const VAT_ACCRUAL_PAYMENT = 'Criterio de Caja'; // TODO
 export const VIEW_PAYROLL = "Ver nómina"; // TODO
 export const VIEW_PAYROLLS = "Ver nóminas"; // TODO
+export const VIEW = "Ver"; // TODO
 
 // ----- W
-
 export const WEB = MSG.WEB;
 export const WITHHOLDING = MSG.WITHHOLDING;
 export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca'; // TODO
@@ -360,6 +400,7 @@ export const WRITE_A_DESCRIPTION = "Escribe una descripción"; //TODO
 // ----- X
 
 // ----- Y
+export const YEAR = "Año";//TODO
 
 // ----- Z
 

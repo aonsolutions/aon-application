@@ -11,6 +11,7 @@ import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FilterDAO implements Filter {
 	
@@ -73,6 +74,8 @@ public class FilterDAO implements Filter {
 				return new FilterDAO(field.like( (String) t));
 			} else if ( t instanceof byte[]) {
 				return new FilterDAO(field.like(new String((byte[])t)));
+			} else if ( t instanceof Integer) {
+				return new FilterDAO(field.like("%"+ AonNumberUtils.toString((Integer) t) +"%"));
 			} else {
 				throw new UnsupportedOperationException();				
 			}

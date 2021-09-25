@@ -2,12 +2,17 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -18,21 +23,28 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.CustomerValidation;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CustomerDAO {
 	
+	public static final com.esferalia.aon.jooq.tables.Registry CUSTOMER_ALIAS = REGISTRY.as("registry_customer");
+
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
 	public static class CustomerPropertiesDAO extends RegistryPropertiesDAO implements CustomerProperties {
 		
@@ -215,7 +227,49 @@ public class CustomerDAO {
 		.execute();
 	ctx.log().info("ACCOUNT " + account + " LINKED TO CUSTOMER " + customerId);
 	}
+	
+	public static Domain getDomainLinked(AONContext ctx, Integer id) {
+		ctx.checkRead();
+		Customer customer = get(ctx, id);
+		if (customer == null) throw new AonCoreException("Id suministrado incorrecto. Cliente no encontrado");
+		if (AonStringUtils.isBlank(customer.getDocument())) throw new AonCoreException("Cliente sin NIF / CIF / DNI");
+		if (customer.getDomain() == null || customer.getDomain().getId() == null) throw new AonCoreException("Cliente sin valor en el campo dominio"); 
+		Domain domain = DomainDAO.getDomain(ctx, customer.getDomain().getId());
+		if (domain.getDomainType() != DomainType.OFFICE) {
+			throw new AonCoreException("El tipo de dominio no es \"DESPACHO\"");	
+		}
+		LinkedList<Domain> domains =  ctx.getDslContext()
+			.select( DOMAIN.fields() )
+			.from(COMPANY)
+			.join(REGISTRY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
+			.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
+			.where(REGISTRY.DOCUMENT.eq(customer.getDocument()))
+			.fetch()
+			.stream()
+			.map(new DomainFiller())
+			.collect( Collectors.toCollection(LinkedList::new));
+		if (domains != null && domains.size() > 0) {
+			if (domains.size() > 1) {
+				throw new AonCoreException("Mas de un dominio encontrado para el cliente");			
+			}
+			return domains.getFirst(); 
+		}
+		return null;
+	}
 
+	public static List<Domain> getDomainOfficeLinked(AONContext ctx, String document) {
+		ctx.checkRead();
+		return ctx.getDslContext()
+		.select(DOMAIN.fields())
+		.from(DOMAIN)
+		.join(CUSTOMER).on(DOMAIN.ID.eq(CUSTOMER.DOMAIN))
+		.join(REGISTRY).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
+		.where(DOMAIN.TYPE.eq(DomainType.OFFICE.value())
+		.and(REGISTRY.DOCUMENT.eq(document)))
+		.fetch().stream().map(new DomainFiller())
+		.collect( Collectors.toCollection(LinkedList::new));
+	}
+	
 	// ******************************************
 	// ********** FULL CUSTOMER *****************
 	// ******************************************

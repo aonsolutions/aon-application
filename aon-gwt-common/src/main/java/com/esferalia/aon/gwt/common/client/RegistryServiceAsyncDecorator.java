@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.client;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
@@ -39,6 +40,11 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.save(domainName, domain, user, customerFull, new AsyncCallbackWrapper<CustomerFull>(callback));
 	}
 
+	@Override
+	public void getDomainLinked(String domainName, int domain, String user, Integer customerId, AsyncCallback<Domain> callback) {
+		AON.start();
+		serviceAsync.getDomainLinked(domainName, domain, user, customerId, new AsyncCallbackWrapper<Domain>(callback));
+	}
 	// **************************************************
 	// *************************************** [CREDITOR]
 	// **************************************************

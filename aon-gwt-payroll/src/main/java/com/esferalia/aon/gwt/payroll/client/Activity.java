@@ -1,12 +1,12 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -27,6 +27,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Activity extends ResizeComposite {
+	
+	// ------------------------------------------- CCC
 
 	private class CCCWidgetImpl extends CCC {
 		
@@ -54,17 +56,21 @@ public abstract class Activity extends ResizeComposite {
 		protected Set<Entry<Integer, String>> getActivities() {
 			return Activity.this.getActivities();
 		}
+
+		@Override
+		protected void fireWarningMessage(Map<String, String> warningMap) {
+			Activity.this.fireWarningMessage(warningMap);
+		}
 		
 	}
 	
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// ------------------------------------------- UiBinder
 
 	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
 
-	interface EmployeeDraftUiBinder extends UiBinder<Widget, Activity> {
-	}
-
-	// -------------------------------------------------- UiFields --------------------------------------------------
+	interface EmployeeDraftUiBinder extends UiBinder<Widget, Activity> {}
+	
+	// ------------------------------------------- UiFields
 
 	@UiField
 	MyStyle style;
@@ -108,27 +114,27 @@ public abstract class Activity extends ResizeComposite {
 	@UiField (provided = true)
 	CCC cccWidget;
 
-	// --------------------------------------------------------- CONSTRUCTOR --------------------------------------------------------
+	// ------------------------------------------- Constructor
 
-	public Activity() {
+	protected Activity() {
 		cccWidget = new CCCWidgetImpl();
-		// Inicializamos la vista
 		initWidget(uiBinder.createAndBindUi(this));
 		initializeView();
 	}
 	
-	// ------------------------------------------------------------------------
-	//								UiHandlers
-	// ------------------------------------------------------------------------
+	// ------------------------------------------- UiHandlers
 	
 	// TABLA DATOS ACTIVIDAD
 	
 	@UiHandler("activityDescription")
 	void onDescriptionChangeValue(ChangeEvent event) {
-		if(AonStringUtils.isBlank(activityDescription.getValue()))
-			addWarningIcon(activityDescriptionPanel, activityDescription, null);
-		else {
-			removeWarningIcon(activityDescriptionPanel, activityDescription);
+		if(AonStringUtils.isBlank(activityDescription.getValue())) {
+			addWarningIcon(activityDescription);
+			Map<String, String> warningMap = new HashMap<>();
+			warningMap.put("Descripco\u00F3n obligatoria", "El campo descripci\u00F3n es obligatorio");
+			fireWarningMessage(warningMap);
+		} else {
+			removeWarningIcon(activityDescription);
 			onActivityDescriptionChange();
 		}
 	}
@@ -140,10 +146,13 @@ public abstract class Activity extends ResizeComposite {
 	
 	@UiHandler("activityCNAE2009")
 	void onCNAE2009ChangeValue(ValueChangeEvent<String> event) {
-		if(AonStringUtils.isBlank(activityCNAE2009.getValue()) || AonStringUtils.equalsIgnoreCase(activityCNAE2009.getValue(), "-"))
-			addWarningIcon(activityCNAE2009Panel, activityCNAE2009, null);
-		else
-			removeWarningIcon(activityCNAE2009Panel, activityCNAE2009);
+		if(AonStringUtils.isBlank(activityCNAE2009.getValue()) || AonStringUtils.equalsIgnoreCase(activityCNAE2009.getValue(), "-")) {
+			addWarningIcon(activityCNAE2009);
+			Map<String, String> warningMap = new HashMap<>();
+			warningMap.put("CNAE obligatorio", "El campo CNAE es obligatorio");
+			fireWarningMessage(warningMap);
+		} else
+			removeWarningIcon(activityCNAE2009);
 	}
 	
 	@UiHandler("startDate")
@@ -161,9 +170,7 @@ public abstract class Activity extends ResizeComposite {
 		onActivityActiveChange(); 
 	}
 	
-	// ------------------------------------------------------------------------
-	//							Abstraact Methods
-	// ------------------------------------------------------------------------
+	// ------------------------------------------- Abstract Methods
 	
 	// TABLA DATOS ACTIVIDAD
 	
@@ -179,9 +186,9 @@ public abstract class Activity extends ResizeComposite {
 	public abstract void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode);
 	public abstract Set<Entry<Integer, String>> getActivities();
 
-	// ------------------------------------------------------------------------
-	//							Class Methods
-	// ------------------------------------------------------------------------
+	public abstract void fireWarningMessage(Map<String, String> warningMap);
+
+	// ------------------------------------------- Auxiliar Methods
 
 	private void initializeView() {
 		cccWidget.resetPreview();
@@ -199,19 +206,11 @@ public abstract class Activity extends ResizeComposite {
 		cccWidget.setActivityDraftCCCHeight();
 	}
 	
-	public void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
-		if(panel.getWidgetCount() == 2) {
-			message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
-			panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
-			widget.addStyleName(style.warningTB());
-			widget.addStyleName(style.flexGrow());
-		}
+	public void addWarningIcon(Widget widget) {
+		widget.addStyleName(style.warningTB());
 	}
 	
-	public void removeWarningIcon(HTMLPanel panel, Widget widget) {
-		if(panel.getWidgetCount() > 2)
-			panel.remove(panel.getWidgetCount() - 1);
-		
+	public void removeWarningIcon(Widget widget) {
 		widget.removeStyleName(style.warningTB());
 	}
 

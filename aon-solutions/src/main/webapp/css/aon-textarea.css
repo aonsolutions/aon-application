@@ -4,13 +4,13 @@
 
 
 aon-textarea{
-    --fontColor: 787878;
     display: flex;
     flex-direction: column;
     transition: .75s;
     width : 100%;
     box-shadow : 0px 0px 2px rgba(0,0,0,.5);
     margin-top : 20px;
+    border-radius: "5px";
 }
 
 aon-textarea .bar{
@@ -37,7 +37,6 @@ aon-textarea .bar .right{
 
 aon-textarea .bar .icon{
     transition: .25s;
-    /* width: 30px; */
     display: block; 
     padding: 5px;
     border-radius: 8px;
@@ -50,18 +49,6 @@ aon-textarea .bar .icon:hover{
     background: #f0f0f0;
 }
 
-aon-textarea textarea{
-    font-size: 1em;
-    font-family: Arial, Helvetica, sans-serif;
-    border: none;
-    padding: 10px;
-    min-height: calc(50px);
-    width: 100%;
-    height: 100%;
-    color: var(--fontColor);
-    border-radius : 3px;
-   
-}
 
 aon-textarea pre{
     font-size: 1em;
@@ -76,16 +63,17 @@ aon-textarea pre{
     border-radius : 3px;
 }
 
-/* .divDragOver{ */
-    /* border: 2px dashed rgba(3,88,216,.3);
-    content: "Arrastre el archivo"; */
-/* } */
-
-/* .divDragOver:hover{
-    background-color: rgba(3,88,216,.1);
-} */
-
 .divDragOver.highlight {
-    content: "Arrastre el archivo";
     border: 2px dashed rgba(3,88,216,.3);
+}
+
+.divDragOver.highlight::after {
+    content: attr(data-drag-over);
+    opacity:  1;
+    position: absolute;
+    color: #808080;
+    font-size: 20px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

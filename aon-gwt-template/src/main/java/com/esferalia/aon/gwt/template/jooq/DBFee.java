@@ -22,7 +22,6 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.FeeInfo;
-import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.jooq.tables.records.CustomerFeeRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -32,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SellerStatus;
@@ -250,29 +250,9 @@ public class DBFee {
 	
 	
 	public LinkedList<Seller> getSellers(Domain domain,  String login){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login);
-
-			Result<Record4<Integer, String, String, String>> data = ctx.getDslContext().select(REGISTRY.ID,REGISTRY.ALIAS,REGISTRY.NAME, REGISTRY.DOCUMENT)
-					.from(REGISTRY).join(SELLER).on(REGISTRY.ID.eq(SELLER.REGISTRY))
-					.where(SELLER.DOMAIN.eq(domain.getId()))
-					.and(SELLER.STATUS.eq(SellerStatus.ACTIVE.value()))
-					.orderBy(REGISTRY.NAME)
-					.fetch();
-			LinkedList<Seller> v = new LinkedList<Seller>();
-			for (Record4<Integer, String, String, String> r : data) {
-				Seller seller = new Seller();
-				seller.setId(r.value1());
-				seller.setRegistryAlias(r.value2());
-				seller.setRegistryName(r.value3());
-				seller.setRegistryDocument(r.value4());
-				v.add(seller);
-			}
-			return v;
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+		return AON.getSellerList(domain.getName(), domain.getId(), login, f -> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(f.getStatusProperty().eq(SellerStatus.ACTIVE.value())));
 	}
 
 	public LinkedList<Project> getProjectList(Domain domain, String login){
@@ -289,9 +269,9 @@ public class DBFee {
 	
 	public Integer insertProject(Domain domain, User user, String name, Integer customer){
 		Project project = getProjectDefault()
-				.setDomain(domain.getId())
+				.setDomain(domain)
 				.setName(name)
-				.setRegistryId(customer);
+				.setRegistry(new Registry().setId(customer));
 		return AON.insertProject(domain.getName(), domain.getId(), user.getLogin(), project);
 	}
 	
@@ -312,9 +292,9 @@ public class DBFee {
 				.setAlias("")
 				.setCommercial(false)
 				.setDate(new java.util.Date())
-				.setDomain(0)
+				.setDomain(new Domain().setId(0))
 				.setName("")
-				.setRegistryId(0)
+				.setRegistry(new Registry())
 				.setReservation(false)
 				.setTas(false);
 	}

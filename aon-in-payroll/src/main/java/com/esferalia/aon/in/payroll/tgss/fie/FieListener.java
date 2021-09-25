@@ -84,6 +84,15 @@ public interface FieListener {
 
 	default public void onOitMedicalCertificateDate(Date MedicalCertificateDate) {};
 	
+	
+	
+
+	// CIT Continuacion Situacion en IT
+	
+	default public void onCitConfirmationStartDate(Date confirmationStartDate) {};
+	
+	default public void onCitConfirmationNumberPart(String confirmationNumberPart) {};
+	
 
 	// ------------------------------------------------------------------------
 
@@ -127,6 +136,9 @@ public interface FieListener {
 	default public void startOIT() {};
 
 	default public void endOIT() {};
+	
+	default public void startCIT() {};
 
+	default public void endCIT() {};
 
 }

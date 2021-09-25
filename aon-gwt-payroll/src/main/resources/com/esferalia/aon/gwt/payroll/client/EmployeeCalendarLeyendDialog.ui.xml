@@ -73,106 +73,145 @@
 		<table class="aon-width-all aon-height-all" style="padding: 5px;">
 			<tr>
 				<td>
+					<g:Label styleName="{style.colorButton} {style.noWorkingColor}"/>
+				</td>
+				<td>
 					<g:Label>No Laborables</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.noWorkingColor}"/>
+					<g:Label ui:field="nonWorkingDays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.effectiveColor}"/>
+				</td>
 				<td>
 					<g:Label>Efectivos</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.effectiveColor}"/>
+					<g:Label ui:field="effectiveDays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.inactivityColor}"/>
+				</td>
 				<td>
 					<g:Label>Inactividad</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.inactivityColor}"/>
+					<g:Label ui:field="inactivityDays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.strikeColor}"/>
+				</td>
 				<td>
 					<g:Label>Huelga</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.strikeColor}"/>
+					<g:Label ui:field="strikeDays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.ereColor}"/>
+				</td>
 				<td>
 					<g:Label>ERE</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.ereColor}"/>
+					<g:Label ui:field="ereDays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.ereFzaColor}"/>
+				</td>
 				<td>
 					<g:Label>ERE Fuerza Mayor</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.ereFzaColor}"/>
+					<g:Label ui:field="ereFZADays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.ereFzaExonColor}"/>
+				</td>
 				<td>
 					<g:Label>ERE Fuerza Mayor (Exoneración de cuotas)</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.ereFzaExonColor}"/>
+					<g:Label ui:field="ereFZAExonDays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.dropColor}"/>
+				</td>
 				<td>
 					<g:Label>Ausencia</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.dropColor}"/>
+					<g:Label ui:field="dropDays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.holidayColor}"/>
+				</td>
 				<td>
 					<g:Label>Vacaciones</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.holidayColor}"/>
+					<g:Label ui:field="holidayDays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.sundayColor}"/>
+				</td>
 				<td>
 					<g:Label>Festivos</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.sundayColor}"/>
+					<g:Label ui:field="festiveDays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.itColor}"/>
+				</td>
 				<td>
 					<g:Label>Baja IT</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.itColor}"/>
+					<g:Label ui:field="leaveDays"/>
 				</td>
 			</tr>
 			<tr>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.partialityColor}"/>
+				</td>
 				<td>
 					<g:Label>Parcialidad</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.partialityColor}"/>
+					<g:Label ui:field="partialityDays"/>
 				</td>
 			</tr>
 			<tr>
 				<td>
+					<g:Label styleName="{style.colorButton} {style.peonadasColor}"/>
+				</td>
+				<td>
 					<g:Label>Peonadas</g:Label>
 				</td>
 				<td>
-					<g:Label styleName="{style.colorButton} {style.peonadasColor}"/>
+					<g:Label ui:field="peonadasDays"/>
 				</td>
 			</tr>
 		</table>

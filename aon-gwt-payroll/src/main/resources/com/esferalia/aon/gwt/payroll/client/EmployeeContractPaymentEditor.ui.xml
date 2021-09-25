@@ -1,0 +1,90 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'>
+
+    <ui:style>
+
+		.form{
+			width: 400px;
+			height: 100%;
+			padding: 1em;
+		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			gap: 1em;
+		}
+		
+		.buttonsPanel{
+			width: 100%;
+			display: flex;
+			justify-content: flex-end;
+			gap: 3em;
+		}
+		
+		.inputPanel{
+			display: flex;
+			flex-direction: column;
+			gap: .2em;
+		}
+		
+		.title{
+			font-weight: bold;
+		}
+		
+		.widthAll{
+			width: 100%;
+		}
+		
+		.datesPanel{
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+		}
+		
+		.date{
+			width: 180px !important;
+			text-align: center;
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form} {style.flexColumn}">
+	
+		<g:HTMLPanel ui:field="container" styleName="{style.flexColumn}">
+			<g:HTMLPanel styleName="{style.inputPanel}">
+				<g:Label styleName="{style.title}">Tipo</g:Label>
+				<g:ListBox ui:field="paymentTypeLB" styleName="{style.widthAll}"/>
+			</g:HTMLPanel>
+			<g:HTMLPanel ui:field="paymentConceptPanel" styleName="{style.inputPanel}">
+				<g:Label styleName="{style.title}">Concepto</g:Label>
+				<g:SuggestBox ui:field="paymentConceptSB"/>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.inputPanel}">
+				<g:Label styleName="{style.title}">Descripción</g:Label>
+				<g:TextBox ui:field="paymentDescriptionTB"/>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.inputPanel}">
+				<g:Label styleName="{style.title}">Expresión</g:Label>
+				<a:ExpressionArea ui:field="paymentExpressionTB"/>
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.datesPanel}">
+				<g:HTMLPanel styleName="{style.inputPanel}">
+					<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
+					<c:DateBoxEx ui:field="startDateBx" styleName="{style.date}"/>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.inputPanel}">
+					<g:Label styleName="{style.title}">Fecha Fin</g:Label>
+					<c:DateBoxEx ui:field="endDateBx" styleName="{style.date}"/>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+		</g:HTMLPanel>
+			
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"/>
+		
+	</g:HTMLPanel>
+
+</ui:UiBinder>

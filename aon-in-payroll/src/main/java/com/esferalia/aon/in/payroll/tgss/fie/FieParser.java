@@ -230,6 +230,20 @@ public class FieParser {
 						
 						listener.endOIT();	
 					}
+					
+				//CIT
+					Optional<String> cit =  attemp(reader,"CIT");
+					if(!cit.isEmpty()) {
+						listener.startCIT();
+						
+						Date confirmationStartDate = parseDateFromFie(substring(cit.get(),3,11));			
+						listener.onCitConfirmationStartDate(confirmationStartDate);
+						
+						String confirmationNumberPart = substring(cit.get(),11,13);
+						listener.onCitConfirmationNumberPart(confirmationNumberPart);
+						
+						listener.endCIT();	
+					}
 		
 				listener.endEnterprise();
 			} while ( true );
@@ -294,6 +308,8 @@ public class FieParser {
 			public void startEmployee() {System.out.println("TRA: \n{");}
 			@Override
 			public void startDIT() {System.out.println("DIT: \n{");}
+			@Override
+			public void startCIT() {System.out.println("CIT: \n{");}
 			@Override
 			public void onSecondSurname(String secondSurname) {System.out.println("\t SecondSurname : '" + secondSurname + "'");}
 			@Override
@@ -373,6 +389,10 @@ public class FieParser {
 			@Override
 			public void onDitAcumulatedDays(Integer acumulatedDays) {System.out.println("\t AcumulatedDays: '" + acumulatedDays + "'");}
 			@Override
+			public void onCitConfirmationStartDate(Date confirmationStartDate) {System.out.println("\t ConfirmationStartDate: '" + confirmationStartDate + "'");}
+			@Override
+			public void onCitConfirmationNumberPart(String confirmationNumberPart) {System.out.println("\t ConfirmationNumberPart: '" + confirmationNumberPart + "'");}
+			@Override
 			public void onCCC(String ccc) {System.out.println("\t Ccc: '" + ccc + "'");}
 			@Override
 			public void endRZS() {System.out.println("}");}
@@ -382,6 +402,8 @@ public class FieParser {
 			public void endNameData() {System.out.println("}");}
 			@Override
 			public void endITD() {System.out.println("}");}
+			@Override
+			public void endCIT() {System.out.println("}");}
 			@Override
 			public void endEnterprise() {System.out.println("}");}
 			@Override

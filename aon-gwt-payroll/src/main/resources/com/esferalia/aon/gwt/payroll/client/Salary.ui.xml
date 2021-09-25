@@ -63,7 +63,6 @@
 								<g:Button ui:field='deleteButton'
 									styleName='aon-finding-toolbar-item aon-icon-delete' text="Borrar"/>
 								<!--  g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /-->
-								<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-mail-save' text="DESCARGAR" />
 								<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="Publicar" />
 								<g:Button ui:field='bidoqPublishButton' styleName='aon-finding-toolbar-item aon-icon-bidoq' text=" Publicar" />
 								<g:ListBox ui:field='salaryTypeListBox' styleName=''  />
@@ -79,13 +78,7 @@
 
 		</g:north>
 		<g:center>
-			<g:ScrollPanel styleName="{style.editor}" >
-				<g:VerticalPanel styleName="{style.document}">
-					<!--  g:HTML styleName="reset" ui:field='container' wordWrap='true' /-->
-					<p:Viewer styleName="reset" ui:field='pdfViewer' />
-					
-				</g:VerticalPanel>
-			</g:ScrollPanel>
+			<p:FullViewer styleName="reset" ui:field='pdfViewer' />
 		</g:center>
 	</g:DockLayoutPanel>
 

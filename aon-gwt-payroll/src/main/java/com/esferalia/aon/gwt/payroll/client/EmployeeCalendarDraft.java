@@ -888,7 +888,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("leyendButton")
 	public void onLeyendButtonPanelClick(ClickEvent event) {
-		EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog();
+		EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog() {
+			@Override
+			protected Integer getTotalYearDays(com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType realDays) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
 		leyendDialog.show();
 		leyendDialog.center();
 	}

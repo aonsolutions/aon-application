@@ -5,7 +5,7 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.FinanceSearchPanel.IFinancePanelCallback;
@@ -392,7 +392,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 
 	private void _paintEntry() {
 		AccountEntry[] entries = FinanceRecorder.recordFinanceEntry(getWrapper());
-		getCallback().getModule().onPreview(AccountEntryModule.getWrapperArray (entries));
+		getCallback().getModule().onPreview(AccountEntryModuleTEDI.getWrapperArray (entries));
 	}
 	
 	@Override
@@ -408,6 +408,21 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		return null;
 	}
 	
+	@Override
+	public boolean isAttachmentManagementEnabled() {
+		return false;
+	}
+	@Override
+	public boolean hasAttachment() {
+		return false;
+	}
+	@Override
+	public void removeAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+	}
+	@Override
+	public void addAttach(final AsyncCallback<IAccountEntryWrapper> cbk) {
+	}
+
 	@Override
 	public void manageWidgets(boolean canRemove, boolean canEdit) {
 	}

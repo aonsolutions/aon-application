@@ -152,8 +152,8 @@ public class OfferExcelAction extends AbsExcelAction implements Consumer<OfferDe
 		addCell( detail.getOffer().getTarget().getMainAddress().getZip() );
 		addCell( detail.getOffer().getTarget().getMainAddress().getGeozoneName() );
 		 
-		addCell( detail.getItem()!= null ? detail.getItem().getCode() : null );
-		addCell( detail.getItem()!= null ? detail.getItem().getCategory()  : null );
+		addCell( detail.getItem()!= null ? detail.getItem().getProduct().getCode() : null );
+		addCell( detail.getItem()!= null ? detail.getItem().getProduct().getCategory().getName()  : null );
 		addCell( AonStringUtils.abbreviate(detail.getDescription(), 60) ) ;
 		addCell( detail.getQuantity() );
 		addCell( detail.getPrice() );
@@ -161,10 +161,10 @@ public class OfferExcelAction extends AbsExcelAction implements Consumer<OfferDe
 		addCell( detail.getOffer().getScope().getDescription());
 //		addCell( detail.getOffer().getWorkPlace() );
 		addCell( detail.getOffer().getProject().getName() );
-		addCell( detail.getOffer().getSeller()!=null?detail.getOffer().getSeller().getRegistryName():null );
+		addCell( detail.getOffer().getSeller()!=null? detail.getOffer().getSeller().getName():null );
 
 		Integer productId = detail.getItem()!= null 
-				? detail.getItem().getProductId() : null;
+				? detail.getItem().getProduct().getId() : null;
 		if (tags != null && productTags != null && productId != null)  {
 			String[] tagArray = productTags.get(productId);
 			for (String tag : tags) {

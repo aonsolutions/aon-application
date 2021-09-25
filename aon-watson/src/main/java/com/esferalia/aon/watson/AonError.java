@@ -53,6 +53,11 @@ public enum AonError implements Serializable{
 	,REGISTRY_OVERFLOW_DOCUMENT("El documento no puede tener m\u00E1s de 16 caracteres.")
 	
 	// -----------------------------------------------------------
+	// --------------------- COMPANY ----------------------------
+	// -----------------------------------------------------------
+	,DUPLICATED_COMPANY_ROW("Ya existe el deto de la compa\u00F1ia para el dominio.")
+
+	// -----------------------------------------------------------
 	// --------------------- ACCOUNTING --------------------------
 	// -----------------------------------------------------------
 	
@@ -194,13 +199,19 @@ public enum AonError implements Serializable{
 	,FINANCE_TRACKING_NO_BANK_ACCOUNT("No se puede pagar el vencimiento, no se ha indicado la cuenta contable del banco o caja.")
 	,FINANCE_TRACKING_NO_REGISTRY_ACCOUNT("No se puede pagar el vencimiento, no se ha indicado la cuenta contable del titular del vencimiento.")
 	,FINANCE_TRACKING_RECORDED("No se puede borrar el movimiento, est\u00E1 contabilizado y no tiene permisos de borrado.")
+	,FINANCE_NEGATIVE_AMOUNT("La cantidad es un valor absoluto, no puede ser negativa")
+	,FINANCE_EMPTY_COMMON_CONCEPT("El concepto com\u00FAn es obligatorio, no puede estar vac\u00EDo")
+	,FINANCE_EMPTY_LOT_NUMBER("El n\u00FAmero de lote es obligatorio, no puede estar vac\u00EDo")
+	,FINANCE_EMPTY_OPERATION_DATE("La fecha de operaci\u00F3n es obligatoria, no puede estar vac\u00EDa")
+	,FINANCE_EMPTY_RBANK("La cuenta bancaria asociada es obligatorio, no puede estar vac\u00EDa")
 	,FINANCE_ENTRY_LATER_TRACKINGS("No se puede borrar el asiento, alguno de los vencimientos tiene movimientos posteriores.")
 	,FINANCE_ENTRY_FROM_FBATCH("No se puede borrar el asiento. Procede de remesa, deshaga el apunte desde la pantalla de remesas.")
 	,INVOICE_FINANCES_AMOUNT("La suma de los importes de los vencimientos no coincide con el total factura")
 	// --------------------------------------------- RAWDOC
 	,EMPTY_RAWDOC_NATURE("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo")
-	,EMPTY_RAWDOC_TYPE("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo")
-	,EMPTY_RAWDOC_STATUS("La naturaleza del documento es un dato obligatorio, no puede estar vac\u00EDo") 
+	,EMPTY_RAWDOC_TYPE("El tipo del documento es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_RAWDOC_STATUS("El estado del documento es un dato obligatorio, no puede estar vac\u00EDo") 
+	,EXIST_USER_WORKGROUP("El usuario ya pertenece al grupo.")
 	;
 	
 	

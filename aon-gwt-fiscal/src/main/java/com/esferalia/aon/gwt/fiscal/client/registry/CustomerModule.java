@@ -234,7 +234,7 @@ public class CustomerModule extends MainEntryPoint {
 		, DOC("N\u00BA Documento"		, 130,AON.CSS.aonTextLeft())
 		, AUTO(AON.MSG.name()			, 0  ,AON.CSS.aonTextLeft())
 		, ALS(AON.MSG.alias()			, 200,AON.CSS.aonTextLeft())
-	    , ACT(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
+    //, ACT(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
@@ -313,7 +313,7 @@ public class CustomerModule extends MainEntryPoint {
 				dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
 				dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
 				dialog.setCaption(AON.MSG.customer());
-				AonCustomerFullPanel creditorPanel = new AonCustomerFullPanel(opt, CustomerFull.initialize(opt.getDomain()), new AonRegistryFullPanelCallback<CustomerFull>() {
+				AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, CustomerFull.initialize(opt.getDomain()), new AonRegistryFullPanelCallback<CustomerFull>() {
 					
 					@Override
 					public void setFocus(boolean b) {
@@ -339,13 +339,13 @@ public class CustomerModule extends MainEntryPoint {
 					public void onDocumenthanged(CustomerFull registryFull) {
 					}
 				});
-				dialog.add( creditorPanel );
+				dialog.add( customerPanel );
 				dialog.center();
 				dialog.show();
 				
 				Scheduler.get().scheduleDeferred(new Command() {
 			        public void execute() {
-			        	creditorPanel.setFocus(true);
+			        	customerPanel.setFocus(true);
 			        }
 			    });		
 				
@@ -627,67 +627,77 @@ public class CustomerModule extends MainEntryPoint {
 			}
 		});
 
-		AonTableButton detailsButton = new AonTableButton(AON.MSG.seeDetail(),AON.CSS.aonIconMoreVertical() );
-		detailsButton.addStyleName(AON.CSS.aonClickable());
-		detailsButton.addClickHandler( new ClickHandler() {
-			
+//		AonTableButton detailsButton = new AonTableButton(AON.MSG.seeDetail(),AON.CSS.aonIconMoreVertical() );
+//		detailsButton.addStyleName(AON.CSS.aonClickable());
+//		detailsButton.addClickHandler( new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				selectCustomer(opt, customer);
+///*				
+//				SERVICE.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {
+//					
+//					@Override
+//					public void onSuccess(CustomerFull result) {
+//						final AonSimpleDialog dialog = new AonSimpleDialog();
+//						dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+//						dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+//						dialog.setCaption(AON.MSG.customer());
+//						AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, result, new AonRegistryFullPanelCallback<CustomerFull>() {
+//							
+//							@Override
+//							public void setFocus(boolean b) {
+//								// callback.setFocus(b);
+//							}
+//							
+//							@Override
+//							public void onError(Throwable caught) {
+//								showError(caught.getMessage());
+//							};
+//							
+//							@Override
+//							public void onCancel() {
+//								dialog.hide();		
+//							}
+//							
+//							@Override
+//							public void onAccept(CustomerFull rf) {
+//								dialog.hide();
+//							}
+//							@Override
+//							public void onDocumenthanged(CustomerFull registryFull) {
+//							}
+//
+//						});
+//						dialog.add( customerPanel );
+//						dialog.center();
+//						dialog.show();
+//						
+//						Scheduler.get().scheduleDeferred(new Command() {
+//					        public void execute() {
+//					        	customerPanel.setFocus(true);
+//					        }
+//					    });		
+//						
+//					}
+//					
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						showError(caught.getMessage());	
+//					}
+//				});					
+// */
+//			}
+//		});
+		
+		AonDisplayGridRow customerRow = tab.addRow();
+		customerRow.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				SERVICE.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {
-					
-					@Override
-					public void onSuccess(CustomerFull result) {
-						final AonSimpleDialog dialog = new AonSimpleDialog();
-						dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
-						dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-						dialog.setCaption(AON.MSG.customer());
-						AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, result, new AonRegistryFullPanelCallback<CustomerFull>() {
-							
-							@Override
-							public void setFocus(boolean b) {
-								// callback.setFocus(b);
-							}
-							
-							@Override
-							public void onError(Throwable caught) {
-								showError(caught.getMessage());
-							};
-							
-							@Override
-							public void onCancel() {
-								dialog.hide();		
-							}
-							
-							@Override
-							public void onAccept(CustomerFull rf) {
-								dialog.hide();
-							}
-							@Override
-							public void onDocumenthanged(CustomerFull registryFull) {
-							}
-
-						});
-						dialog.add( customerPanel );
-						dialog.center();
-						dialog.show();
-						
-						Scheduler.get().scheduleDeferred(new Command() {
-					        public void execute() {
-					        	customerPanel.setFocus(true);
-					        }
-					    });		
-						
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						showError(caught.getMessage());	
-					}
-				});					
+				selectCustomer(opt, customer);
 			}
 		});
-		
-		tab.addRow().addCell(checkButton)
+		customerRow.addCell(checkButton)
 			.addCell(status)
 			.addCell(confidential)
 			.addCell(documentTypeLabel)
@@ -695,7 +705,8 @@ public class CustomerModule extends MainEntryPoint {
 			.addCell(documentLabel)
 			.addCell(nameLabel)
 			.addCell(aliasLabel)
-			.addCell(detailsButton);
+//			.addCell(detailsButton)
+			;
 	}
 	
 
@@ -713,5 +724,59 @@ public class CustomerModule extends MainEntryPoint {
 	
 	private void refreshIcons() {
 		selectedCount.setText( (selectedItems.size() > 0)?  AonNumberUtils.toString(selectedItems.size()) :""); 
+	}
+	
+	private void selectCustomer(RegistryModuleOptions opt, Customer customer) {
+		SERVICE.getCustomerFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), customer.getId(), new AsyncCallback<CustomerFull>() {
+			
+			@Override
+			public void onSuccess(CustomerFull result) {
+				final AonSimpleDialog dialog = new AonSimpleDialog();
+				dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+				dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+				dialog.setCaption(AON.MSG.customer());
+				AonCustomerFullPanel customerPanel = new AonCustomerFullPanel(opt, result, new AonRegistryFullPanelCallback<CustomerFull>() {
+					
+					@Override
+					public void setFocus(boolean b) {
+						// callback.setFocus(b);
+					}
+					
+					@Override
+					public void onError(Throwable caught) {
+						showError(caught.getMessage());
+					};
+					
+					@Override
+					public void onCancel() {
+						dialog.hide();		
+					}
+					
+					@Override
+					public void onAccept(CustomerFull rf) {
+						dialog.hide();
+					}
+					@Override
+					public void onDocumenthanged(CustomerFull registryFull) {
+					}
+
+				});
+				dialog.add( customerPanel );
+				dialog.center();
+				dialog.show();
+				
+				Scheduler.get().scheduleDeferred(new Command() {
+			        public void execute() {
+			        	customerPanel.setFocus(true);
+			        }
+			    });		
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				showError(caught.getMessage());	
+			}
+		});					
 	}
 }		

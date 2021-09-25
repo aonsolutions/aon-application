@@ -100,7 +100,6 @@ export class AonEventList extends AonElement {
     }
 
     this.buildToolbarSearch();
-    this.searchValueDefault();
   }
 
   buildToolbarSearch(){
@@ -111,6 +110,7 @@ export class AonEventList extends AonElement {
     }
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, searchValueFn);
     btnSearch.buildOptionsFilter(EVENT_LIST_FILTER);//INPUTS
+    this.searchValueDefault();
   }
 
   async searchValueDefault(){
@@ -139,8 +139,9 @@ export class AonEventList extends AonElement {
       aonTable.removeColumns();
       const iconBack = !this.applicationParentEl.isEmployee() ? "arrow_back" : "";
       aonTable.addColumnIcon(iconBack, "string", "lettersHtml", "6%", ()=>this.back());
-      aonTable.addColumn(MSG.DATE, "date", "dateParse", "40%");
-      aonTable.addColumn(MSG.DURATION, "", "durationParse", "30%");
+      aonTable.addColumn(MSG.DATE, "date", "dateParse", "30%");
+      aonTable.addColumn(MSG.DURATION, "string", "durationParse", "10%");
+      aonTable.addColumn(MSG.LAST_LOCATION, "string", "nameLocation", "20%");
       try {
         const resp = await this.getData();
         aonTable.removeRows();
@@ -214,7 +215,9 @@ export class AonEventList extends AonElement {
               const textStatus = getStatus(newStatus);
               const numbDate   = this.getTimeNumber(group.value, r.start_date);
               const lettersHtml = `<div class="profile-letters ${ numbDate ? "font": ""} out">${group.name.substr(0,1)+numbDate}</div>`;
-        
+
+              const nameLocation = r.last_location && r.last_location.name ? r.last_location.name : "";
+
               let dateParse = r.dateParse = firstLetters(setFullDate(r.start_date));
               if(isMobile){
                 const groupV  = r.group;
@@ -225,6 +228,7 @@ export class AonEventList extends AonElement {
                 ...r,
                 lettersHtml,
                 dateParse,
+                nameLocation,
                 textStatus: textStatus.name,
                 status: newStatus,
                 durationParse: timeHour(Number(r.time))

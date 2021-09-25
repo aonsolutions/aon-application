@@ -203,6 +203,7 @@ public class AON {
 	public static final NumberFormat CURRENCY_FORMAT = NumberFormat.getFormat("#,##0.00");
 	public static final DateTimeFormat MONTH_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH_NUM);
 	public static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
+	public static final DateTimeFormat TIME_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy hh:mm:ss");
 
 	public static double round(Double number) {
 		return (double) Math.round(number * 1000.00) / 1000.00;

@@ -177,21 +177,51 @@
 			margin-top: 50px;
 		}
 		
+		.message{
+			height: 100px !important;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-top: 20px;
+		}
+		
+		.loadingPanel{
+			display: flex;
+			align-items: center;
+			animation-name: spin;
+			animation-duration: 2500ms;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+		
+		@keyframes spin {
+		    from {
+		        transform:rotate(0deg);
+		    }
+		    to {
+		        transform:rotate(360deg);
+		    }
+		}
+		
 	</ui:style>
 
 	<ui:import field="com.esferalia.aon.gwt.payroll.client.EventsDraft.*" />
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
-			<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.container}  {style.mt50}">
-
-				<g:ScrollPanel>
-					<g:FlexTable ui:field="eventsGrid" styleName="{style.tableStyle} {style.noselect}">
-						<!-- AQUI SE CONSTRUYE LA TABLA VACIA. -->
-					</g:FlexTable>
-				</g:ScrollPanel>
-				
+			<g:DeckPanel ui:field="deckPanel">
+			
+				<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}"></g:HTMLPanel>
+			
+				<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.container}  {style.mt50}">
+					<g:ScrollPanel ui:field="scrollPanel">
+						<g:FlexTable ui:field="eventsGrid" styleName="{style.tableStyle} {style.noselect}">
+							<!-- AQUI SE CONSTRUYE LA TABLA VACIA. -->
+						</g:FlexTable>
+					</g:ScrollPanel>
 			</g:HTMLPanel>
+			
+			</g:DeckPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 	

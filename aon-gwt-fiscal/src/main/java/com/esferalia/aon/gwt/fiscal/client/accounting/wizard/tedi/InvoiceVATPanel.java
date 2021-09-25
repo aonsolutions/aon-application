@@ -15,6 +15,8 @@ import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -22,6 +24,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -576,7 +579,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			prepaymentCell.addStyleName(AON.CSS.aonTextCenter());
 			add(getCell(prepaymentCell,prepayment));
 
-			removeButton.setTabIndex(Integer.MAX_VALUE);
+			// removeButton.setTabIndex(Integer.MAX_VALUE);
 			removeButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -611,9 +614,26 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			cell.addStyleName(AON.CSS.aonWidthAll());
 			cell.add(l);
 			add(cell);
+			HasBlurHandlers lastWidget = removeButton;
+			
+			lastWidget.addBlurHandler(new BlurHandler() {
+				
+				@Override
+				public void onBlur(BlurEvent event) {
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						public void execute() {
+							addButton.setFocus(true);
+						}
+					});
+				}
+			});
 
 			if (focus) {
-				expAccount.setFocus(true);
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					public void execute() {
+						expAccount.setFocus(true);
+					}
+				});
 			}
 		}
 		

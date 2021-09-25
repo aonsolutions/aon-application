@@ -76,6 +76,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
@@ -171,14 +172,17 @@ import com.esferalia.aon.occam.api.model.office.Notice;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Brand;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.ItemAddInfo;
 import com.esferalia.aon.occam.api.model.product.ItemComposition;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
@@ -248,6 +252,7 @@ import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
+import com.esferalia.aon.occam.impl.jooq.Product2Impl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
@@ -265,6 +270,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON {
 
+	private AON() {
+		throw new IllegalStateException("Utility class");
+	}
+	
 	private static ISecurity getSecurity() {
 		return new SecurityImpl();
 	}
@@ -300,7 +309,12 @@ public class AON {
 	private static IProduct getProduct() {
 		return new ProductImpl();
 	}
+	
+	private static IProduct2 getNewProduct() {
+		return new Product2Impl();
+	}
 
+	@Deprecated
 	private static IOffice getOffice() {
 		return new OfficeImpl();
 	}
@@ -424,14 +438,21 @@ public class AON {
 		} 
 	}
 	
+	public static void saveUserWorkgroups(Domain domain, String login, User user) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			getSecurity().saveUserWorkgroups(ctx, user);
+		} 
+	}
+	
+	public static void deleteUserWorkgroup(Domain domain, String login, User user, Workgroup workgroup) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			getSecurity().deleteUserWorkgroup(ctx, user, workgroup);
+		} 
+	}
+	
 	public static User insertUser(String domainName, int domainId, String login, User user) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getSecurity().insertUser(ctx, user);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -941,18 +962,6 @@ public class AON {
 		}
 	}
 	// --------------------------------- ENTERPRISE
-	public static LinkedList<Enterprise> getParentEnterprises(String domainName,
-			int domain, String login, String query) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, login);
-			return getCommon().getParentEnterprises(ctx, query);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
 	public static Enterprise getEnterprise(String domainName, int domain,
 			String login, int id) {
 		AONContext ctx = null;
@@ -1265,8 +1274,74 @@ public class AON {
 		getProduct().deleteProductTag(ctx, pts);
 	}
 
+	// ------------------------------------ NEW PRODUCT
+	
+	public static Product getProduct(Domain domain, String login, ProductFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProduct(ctx, filter);
+		}
+	}
+	
+	public static Stream<Product> getProductStream(Domain domain, String login, ProductFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProductStream(ctx, filter);
+		}
+	}
+	
+	public static LinkedList<Product> getProductList(Domain domain, String login, ProductFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getProductList(ctx, filter);
+		}
+	}
+	
+	public static Product saveProduct(Domain domain, String login, Product product) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().saveProduct(ctx, product);
+		}
+	}
+	
+	public static void deleteProduct(Domain domain, String login, Integer productId) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			getNewProduct().deleteItem(ctx, productId);
+		}
+	}
+	
+	// ------------------------------------ NEW ITEM
+	
+	public static Item getItem(Domain domain, String login, ItemFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getItem(ctx, filter);
+		}
+	}
+	
+	public static Stream<Item> getItemStream(Domain domain, String login, ItemFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getItemStream(ctx, filter);
+		}
+	}
+	
+	public static LinkedList<Item> getItemList(Domain domain, String login, ItemFilter filter) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().getItemList(ctx, filter);
+		}
+	}
+	
+	public static Item saveItem(Domain domain, String login, Item item) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			return getNewProduct().saveItem(ctx, item);
+		}
+	}
+	
+	public static void deleteItem(Domain domain, String login, Integer itemId) {
+		try (AONContext ctx =  AONContext.getAONContext(domain, login)){
+			getNewProduct().deleteItem(ctx, itemId);
+		}
+	}
+	
+	
 	// ------------------------------------ ITEM
 	
+	@Deprecated
 	public static LinkedList<OldItem> getItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -1278,7 +1353,8 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
+	@Deprecated
 	public static LinkedList<OldItem> getFullItemList(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -1291,6 +1367,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static OldItem getItem(String domainName, Integer domainId, String login, Integer itemId) {
 		AONContext ctx = null;
 		try {
@@ -1303,6 +1380,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static OldItem getItem(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -1315,6 +1393,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static Optional<OldItem> getItemOptional(String domainName, Integer domainId, String login, ItemFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -1337,6 +1416,7 @@ public class AON {
 		}
 	}
 
+	@Deprecated
 	public static OldItem insertItem(String domainName, Integer domainId, String login, OldItem i) {
 		AONContext ctx = null;
 		try {
@@ -1348,12 +1428,7 @@ public class AON {
 		}
 	}
 	
-//	public static Item save(String domainName, Integer domainId, String login, Item item) {
-//		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login);){
-//			return getProduct().save(ctx, item);
-//		}
-//	}
-
+	@Deprecated
 	public static void deleteItem(String domainName, Integer domainId, String login, OldItem item) {
 		AONContext ctx = null;
 		try {
@@ -1364,31 +1439,37 @@ public class AON {
 				ctx.close();
 		}	}
 
-	
+	@Deprecated
 	public static void insertItem(AONContext ctx, OldItem i) {
 		getProduct().insertItem(ctx, i);
 	}
 
+	@Deprecated
 	public static void insertItemWithId(AONContext ctx, OldItem i) {
 		getProduct().insertItemWithId(ctx, i);
 	}
 
+	@Deprecated
 	public static void insertItem(AONContext ctx, Stream<OldItem> is) {
 		getProduct().insertItem(ctx, is);
 	}
 
+	@Deprecated
 	public static void insertItemWithId(AONContext ctx, Stream<OldItem> is) {
 		getProduct().insertItemWithId(ctx, is);
 	}
 
+	@Deprecated
 	public static void updateItem(AONContext ctx, OldItem i) {
 		getProduct().updateItem(ctx, i);
 	}
-
+	
+	@Deprecated
 	public static void deleteItem(AONContext ctx, OldItem i) {
 		getProduct().deleteItem(ctx, i);
 	}
 
+	@Deprecated
 	public static void deleteItem(AONContext ctx, Stream<OldItem> is) {
 		getProduct().deleteItem(ctx, is);
 	}
@@ -2362,6 +2443,12 @@ public class AON {
 	// ********************************************
 	// ****************************** GWT-OFFICE **
 	// ********************************************
+
+	public static User getUser(Domain domain, String login, UserFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)){
+			return getSecurity().getUser(ctx, filter);
+		} 
+	}
 	
 	public static User getUser(String domainName, Integer domainId, String userName, UserFilter filter) {
 		return getUserStream(domainName, domainId, userName, filter).findFirst().orElse(new User());
@@ -2391,71 +2478,15 @@ public class AON {
 	}
 	
 	
+	/**
+	 * @deprecated  Replaced by AON.getUserStream
+	 */
+	@Deprecated(forRemoval = true )
 	public static List<User> getUsers(Integer domainId, String domainName, String userName) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, userName);			
 			return getOffice().getUsers(ctx);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Tag editTag(Integer domainId, String domainName,
-			String userName, String labelName, Tag tag) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().editTag(ctx, labelName, tag);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static List<Tag> getTags(Integer domainId, String domainName,
-			String userName) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getTags(ctx);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static boolean deleteTag(Integer domainId, String domainName,
-			String userName, String labelName) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().deleteTag(ctx, labelName);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Tag getTag(Integer domainId, String domainName,
-			String userName, String name) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getTag(ctx, name);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static List<Registry> getRegistries(Integer domainId,
-			String domainName, String userName) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getRegistries(ctx);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -2493,6 +2524,7 @@ public class AON {
 		return getRegistry(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
+	@Deprecated
 	public static NotificationInfo getNotificationInfo(String domainName, Integer domainId, String login){
 		AONContext ctx = null;
 		try{
@@ -2502,7 +2534,8 @@ public class AON {
 			if(ctx != null) ctx.close();
 		}
 	}
-	
+
+	@Deprecated
 	public static void insertNotificationInfo(String domainName, Integer domainId, String login,
 			NotificationInfo notificationInfo){
 		AONContext ctx = null;
@@ -2514,6 +2547,7 @@ public class AON {
 		}
 	}
 	
+	@Deprecated
 	public static void insertNotificationInfo(String domainName, Integer domainId, String login,
 			String data, AppParam appParam){
 		AONContext ctx = null;
@@ -3382,15 +3416,17 @@ public class AON {
 		}
 	}
 	
+	public static Stream<Project> getProjectStream(Domain domain, User user, ProjectFilter filter){
+		return getProjectStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static Stream<Project> getProjectStream(Domain domain, String login, ProjectFilter filter){
+		return getProjectStream(domain.getName(), domain.getId(), login, filter);
+	}
 
 	public static Stream<Project> getProjectStream(String domainName, Integer domainId, String login, ProjectFilter filter){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getProject().getProjectStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -3415,6 +3451,52 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	// ---------- PROJECT HOLDER
+	
+	public static ProjectHolder getProjectHolder(Domain domain, User user, ProjectHolderFilter filter) {
+		return getProjectHolder(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static ProjectHolder getProjectHolder(Domain domain, String login, ProjectHolderFilter filter) {
+		return getProjectHolder(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static ProjectHolder getProjectHolder(String domainName, Integer domainId, String login, ProjectHolderFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectHolder(ctx, filter);
+		}
+	}
+	
+	public static Stream<ProjectHolder> getProjectHolderStream(Domain domain, User user, ProjectHolderFilter filter) {
+		return getProjectHolderStream(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static Stream<ProjectHolder> getProjectHolderStream(Domain domain, String login, ProjectHolderFilter filter) {
+		return getProjectHolderStream(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static Stream<ProjectHolder> getProjectHolderStream(String domainName, Integer domainId, String login, ProjectHolderFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectHolderStream(ctx, filter);
+		}
+	}
+	
+	public static List<ProjectHolder> getProjectHolderList(Domain domain, User user, ProjectHolderFilter filter) {
+		return getProjectHolderList(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static List<ProjectHolder> getProjectHolderList(Domain domain, String login, ProjectHolderFilter filter) {
+		return getProjectHolderList(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static List<ProjectHolder> getProjectHolderList(String domainName, Integer domainId, String login, ProjectHolderFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectHolderList(ctx, filter);
+		}
+	}
+	
+	// ---------- PROJECT COMMERCIAL
 	
 	public static Integer insertProjectCommercial(String domainName, Integer domainId,
 			String login, ProjectCommercial projectCommercial) {
@@ -3759,12 +3841,8 @@ public class AON {
 	// ------------------ TARGET 
 	
 	public static Stream<Target> getTargetStream(String domainName, Integer domainId, String login, TargetFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getTargetStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
 		}
 	}
 	
@@ -5091,38 +5169,19 @@ public class AON {
 		}
 	}
 
-	public static void updateTag(String domainName, Integer domainId, String login,
-			Tag tag) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getCommon().updateTag(ctx, tag);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Tag updateTag(String domainName, Integer domainId, String login, Tag tag) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().updateTag(ctx, tag);
 		}
 	}
 
-	public static void deleteTag(String domainName, Integer domainId, String login,
-			Tag tag) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			getCommon().deleteTag(ctx, f -> f.getIdProperty().eq(tag.getId()));
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+	public static void deleteTag(String domainName, Integer domainId, String login, Tag tag) {
+		deleteTag(domainName, domainId, login, f -> f.getIdProperty().eq(tag.getId()));
 	}
 	
 	public static void deleteTag(String domainName, Integer domainId, String login, TagFilter filter){
-		AONContext ctx = null;
-		try{
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			getCommon().deleteTag(ctx, filter);
-		} finally {
-			if(ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -6393,6 +6452,32 @@ public class AON {
 		}
 	}
 	
+	public static Domain getDomainLinked(String domainName, int domain, String user, Integer customerId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getRegistry().getDomainLinked(ctx, customerId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}	
+	
+	public static List<Domain> getDomainOfficeLinked(Domain domain, String login) {
+		LinkedList<Domain> list = new LinkedList<>();
+		Company company = getCompanyForDomain(domain.getName(), domain.getId(), login);
+		for(String schema: AONContext.getSchemas()) {
+			String domainName = AONContext.getSchemaFirstDomain(schema);
+			try (AONContext ctx = AONContext.getAONContext(domainName, 0, "")){
+				List<Domain> offices = getRegistry().getDomainOfficeLinked(ctx, company.getDocument());
+				list.addAll(offices);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+
 	// **************************************************
 	// *************************************** [CREDITOR]
 	// **************************************************

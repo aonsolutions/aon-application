@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -37,11 +38,14 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
+import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
 
@@ -89,7 +93,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				response(req, resp, getActivities(api));
 				break;	
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -107,8 +111,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				response(req, resp, setDomainApp(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
-			}
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());			}
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -124,7 +127,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				response(req, resp, saveCompany(api));
 				break;
 			default:
-				throw new Exception("La ruta introducida es incorrecta.");
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -203,7 +206,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		if(user.getId() == null) {
 			String pass = Utils.createPasswordHash(auth.getEmail(), company.getDocument());
 			user = new User()
-				.setAuth(auth.getAuth())
+				.setAuth(auth)
 				.setActive(true)
 				.setDomain(domain.getId())
 				.setLogin(company.getDocument())
@@ -272,7 +275,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		});
 	}
 	
-	private void createUserRoles(AonApiData api, Domain domain, User user, Boolean bidoq) {
+	private void createUserRoles(AonApiData api, Domain domain, User user, boolean bidoq) {
 		createUserRole(api, domain, user, AonRole.ENTERPRISE);
 		createUserRole(api, domain, user, AonRole.ACCOUNTING);
 		createUserRole(api, domain, user, AonRole.FISCAL);
@@ -290,10 +293,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		createUserRole(api, domain, user, AonRole.OCR);
 		createUserRole(api, domain, user, AonRole.AIO);
 		
-		if(bidoq) {
-			createUserRole(api, domain, user, AonRole.BIDOQ);
-		}
-		
+		if(bidoq) createUserRole(api, domain, user, AonRole.BIDOQ);
 	}
 	
 	private void createUserRole(AonApiData api, Domain domain, User user, AonRole role) {
@@ -301,7 +301,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				.setDomain(domain.getId())
 				.setRole(role)
 				.setUser(user.getId());
-		uar = AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), user.getLogin(), uar);
+		AON_SOLUTIONS.insertUserAppRole(api.getDomain().getName(), api.getDomain().getId(), user.getLogin(), uar);
 	}
 	
 		
@@ -368,7 +368,14 @@ public class CompanyServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getNotices(AonApiData api) {
-		return AON.getRawdocUserData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin()).toJSON();
+		JSONObject jsonG = AON.getRawdocUserData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin()).toJSON();
+		HashMap<Byte, Integer> map = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId()));
+		JSONObject request = new JSONObject();
+		map.forEach((k,v)->{
+			request.put(TaskStatus.safeValueOf(k).getName(), v);
+		});
+		jsonG.put("solicitudes",request);
+		return jsonG;
 	}
 	
 	private JSONObject getMedia(AonApiData api) {
@@ -443,7 +450,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 				apps.add(AonApp.safeValueOf(array.optString(i)));
 			}
 		}
-		LinkedList<DomainApp> activeDomainApps = new LinkedList<DomainApp>();
+		LinkedList<DomainApp> activeDomainApps = new LinkedList<>();
 		
 		for (AonApp aonApp : AonApp.values()) {
 			DomainApp domainApp = AON_SOLUTIONS.getDomainApp(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 

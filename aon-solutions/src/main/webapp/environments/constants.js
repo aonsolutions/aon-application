@@ -48,6 +48,9 @@ export const COMUNICA = 'comunica';
 export const CONFIGURATION = 'configuration';
 export const CONFIGURATION_PRINT = 'configurationPrint';
 export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
+export const CREATE_INVOICE_ISSUED = 'createInvoiceIssued';
+export const CREATE_INVOICE_RECEIVED = 'createInvoiceReceived';
+export const CREATE_INVOICE_TICKET = 'createInvoiceTicket';
 export const CREDITOR = 'creditor';
 export const CUSTOMER = 'customer';
 
@@ -56,12 +59,14 @@ export const CUSTOMER = 'customer';
 
 export const DATE = 'date';
 export const DATA = 'data';
+export const DEFAULT = 'default';
 export const DELETE = 'delete';
 export const DELETE_FILE = 'deleteFile';
 export const DELETE_FOREVER = 'deleteForever';
 export const DESCRIPTION = 'description';
 export const DISCOUNT = 'discount';
 export const DISABLED = 'disabled';
+export const DIV = 'div';
 export const DRAFT = 'draft';
 export const DOCUMENTAL = 'documental';
 export const DOWNLOAD = 'download';
@@ -110,6 +115,8 @@ export const INVOICE_TICKET = 'invoiceTicket';
 
 // ----- L
 
+export const LIST = 'list';
+
 // ----- M
 
 export const MAX = 'max';
@@ -126,6 +133,7 @@ export const NUMBER = 'number';
 // ----- O
 
 export const OFFER = 'offer';
+export const ONLY_AUTH = 'onlyAuth';
 export const OPENED = 'opened';
 export const OPTION = 'option';
 export const OPTIONS = 'options';
@@ -191,7 +199,11 @@ export const SEND_FILE = 'sendFile';
 export const SEND_INVOICE = 'sendInvoice';
 export const SERIE = 'serie';
 export const SERVICE = 'service';
+export const SHARE = 'share';
+export const SHOW_APPS = 'showApps';
 export const SHOW_FILE = 'showFile';
+export const SHOW_PASSWORD = 'showPassword';
+export const SHOW_TOOLBAR = 'showToolbar';
 export const SPAN = 'span';
 export const STATUS = 'status';
 export const STRING = 'string';
@@ -216,6 +228,8 @@ export const TYPE = 'type';
 
 export const UPLOAD = 'upload';
 export const UPLOAD_FILE = 'uploadFile';
+export const USER = 'user';
+export const USERS = 'users';
 
 // ----- V
 

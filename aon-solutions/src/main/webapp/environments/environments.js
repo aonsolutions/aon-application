@@ -2,6 +2,10 @@
 export const API_URL = "ms/api";
 export const API_URL_BIDOQ = "https://mispapeles.es/api/v2/index.php";
 
+export const SIG_URL = "https://aonsolutions.org/ms/api";
+export const SIG_DOMAIN_NAME = "sig.aonsolutions.org";
+export const SIG_DOMAIN_ID = 5;
+
 //FB
 export const VAPIDKEY_FB = "BCH91WxACVIpylkYRMj3xSpIfrzjz7Ixnctcj25BPMBZKSbGeKjJFIdaRsJGQ3F-SXVFGD0cr4outWLCFwemIkE";
 export const CONFIG_FB   = {

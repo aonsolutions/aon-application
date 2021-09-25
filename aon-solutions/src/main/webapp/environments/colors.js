@@ -22,3 +22,5 @@ export const GRAYSON  = "--grayson";
 export const ONLINE_GREEN = "--onlineGreen";
 
 export const AON_COLOR_INK_MEDIUM_CONTRANST = "--aon-color-ink-medium-contrast";
+
+export const ORANGE = "orange";

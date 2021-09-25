@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesNoLowLevelAccountItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
@@ -12,9 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -44,7 +44,7 @@ class NoLowLevelAccountFinder extends OptionBase {
 
 		content = new SimpleLayoutPanel();
 		container = new ScrollPanel();
-		container.setStyleName(AON.AON_CSS.aonScrollArea());
+		container.setStyleName(AON.CSS.aonScrollArea());
 		content.add(container);
 		setContent(content);
 	}
@@ -55,32 +55,8 @@ class NoLowLevelAccountFinder extends OptionBase {
 	}
 
 	protected Widget getToolbarPanel() {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label(getOptionDescription()));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-		
-		final Button refresh = new Button();
-		refresh.setText(AON.MSG.refresh());
-		refresh.setTitle(AON.MSG.refresh());
-		refresh.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		refresh.addStyleName(AON.AON_CSS.aonIconRedo());
+		AonToolbar toolbarPanel = new AonToolbar(getOptionDescription());
+		final AonToolbarButton refresh = new AonToolbarButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh());
 		refresh.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -88,17 +64,13 @@ class NoLowLevelAccountFinder extends OptionBase {
 				run();
 			}
 		});
-		buttonContainer.add(refresh);
-		toolbarPanel.add(toolbar);
+		toolbarPanel.add(refresh);
 		return toolbarPanel;
 	}
 	
-	
 	public void run() {
 		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		popup.add(label);
+		popup.add(getSplashWidget());
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
@@ -124,13 +96,13 @@ class NoLowLevelAccountFinder extends OptionBase {
 	@Override
 	protected Widget paintResults(AccUtilitiesResult result) {
 		FlowPanel log = new FlowPanel();
-		log.setStyleName(AON.AON_CSS.aonWidth98Percent());
-		log.addStyleName(AON.AON_CSS.aonBlockCenter());
-		log.addStyleName(AON.AON_CSS.aonMarginTop());
-		log.addStyleName(AON.AON_CSS.aonMarginBottom());
-		log.addStyleName(AON.AON_CSS.aonFixedFont());
-		log.addStyleName(AON.AON_CSS.aonFontMedium());
-		log.addStyleName(AON.AON_CSS.aonNowrap());
+		log.setStyleName(AON.CSS.aonWidthAlmostAll());
+		log.addStyleName(AON.CSS.aonBlockCenter());
+		log.addStyleName(AON.CSS.aonMarginTop());
+		log.addStyleName(AON.CSS.aonMarginBottom());
+		log.addStyleName(AON.CSS.aonFixedFont());
+		log.addStyleName(AON.CSS.aonFontMedium());
+		log.addStyleName(AON.CSS.aonNowrap());
 		if (result != null && !result.isEmpty()) {
 			String lastDomain = null;
 			DisclosurePanel disclosurePanel = null;
@@ -140,8 +112,8 @@ class NoLowLevelAccountFinder extends OptionBase {
 					if (disclosurePanel != null) {
 						String header = lastDomain + " (" + domainPanel.getWidgetCount() + ")";
 						disclosurePanel.getHeaderTextAccessor().setText(header);
-						disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFixedFont());
-						disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFontMedium());
+						disclosurePanel.getHeader().addStyleName(AON.CSS.aonFixedFont());
+						disclosurePanel.getHeader().addStyleName(AON.CSS.aonFontMedium());
 						log.add(disclosurePanel);
 					}
 					
@@ -150,18 +122,18 @@ class NoLowLevelAccountFinder extends OptionBase {
 					lastDomain = item.getDomainName();
 					domainPanel = new FlowPanel();
 					disclosurePanel.add(domainPanel);
-					disclosurePanel.addStyleName(AON.AON_CSS.aonMarginTop());
-					disclosurePanel.addStyleName(AON.AON_CSS.aonFixedFont());
-					disclosurePanel.addStyleName(AON.AON_CSS.aonFontMedium());
-					disclosurePanel.addStyleName(AON.AON_CSS.aonNowrap());
+					disclosurePanel.addStyleName(AON.CSS.aonMarginTop());
+					disclosurePanel.addStyleName(AON.CSS.aonFixedFont());
+					disclosurePanel.addStyleName(AON.CSS.aonFontMedium());
+					disclosurePanel.addStyleName(AON.CSS.aonNowrap());
 				}
 				item.getType().visit( new NoLowLevelAccountVisitor(domainPanel,(AccUtilitiesNoLowLevelAccountItem) item) );
 			}
 			if (disclosurePanel != null) {
 				String header = lastDomain + " (" + domainPanel.getWidgetCount() + ")";
 				disclosurePanel.getHeaderTextAccessor().setText(header);
-				disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFixedFont());
-				disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFontMedium());
+				disclosurePanel.getHeader().addStyleName(AON.CSS.aonFixedFont());
+				disclosurePanel.getHeader().addStyleName(AON.CSS.aonFontMedium());
 				log.add(disclosurePanel);
 			}
 		} else {

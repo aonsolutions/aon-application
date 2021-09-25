@@ -1,13 +1,14 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -18,6 +19,8 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class WorkplaceDraft extends Composite {
+	
+	// ------------------------------------------------- Workpalce
 	
 	private class WorkplaceImplementation extends Workplace{
 
@@ -47,16 +50,21 @@ public class WorkplaceDraft extends Composite {
 		public void onWorkplaceActivityChange(Integer activityId) {
 			workplaceDraftObject.setWorkplaceActivity(AonNumberUtils.equals(-1, activityId) ? null : activityId);
 		}
+
+		@Override
+		public void fireWarningMessage(Map<String, String> warningMap) {
+			AonMessagePanel.showWarning(messagePanel, warningMap);
+		}
 		
 	}
 	
-	// -------------------------------------------------- UiBinder --------------------------------------------------
+	// ------------------------------------------------- UiBinder
 
 	private static EmployeeDraftUiBinder uiBinder = GWT.create(EmployeeDraftUiBinder.class);
 
 	interface EmployeeDraftUiBinder extends UiBinder<Widget, WorkplaceDraft> {}
 
-	// -------------------------------------------------- UiFields --------------------------------------------------
+	// ------------------------------------------------- UiFields
 
 	@UiField
 	MyStyle style;
@@ -71,24 +79,25 @@ public class WorkplaceDraft extends Composite {
 	@UiField
 	HTMLPanel centerContainer;
 	
-	// ------------------------------------------------------ VARIABLES DE LA CLASE --------------------------------------------------
+	@UiField
+	HTMLPanel messagePanel;
+	
+	// ------------------------------------------------- Variables
 
 	private WorkplaceDraftObject workplaceDraftObject;
 	
 	private Workplace workplace;
 
 	private AonToolbar toolbar;
-	private AonToolbarButton accept;
-	private AonToolbarButton newContract;
 	private AonToolbarButton undoAll;
 	private AonToolbarButton undo;
 	private AonToolbarButton redo;
 	
-	// ------------------------------------------------ CONSTRUCTOR ------------------------------------------------------
+	// ------------------------------------------------- Constructor
 
 	public WorkplaceDraft() {
 		workplace = new WorkplaceImplementation();
-		toolbar = getToolbarPanel();
+		getToolbarPanel();
 		
 		// Inicializamos la vista del empleado
 		initWidget(uiBinder.createAndBindUi(this));
@@ -99,7 +108,7 @@ public class WorkplaceDraft extends Composite {
 		centerContainer.add(workplace);
 	}
 
-	// ------------------------------------------------------ METODOS DE LA CLASE --------------------------------------------------
+	// ------------------------------------------------- setWorkplaceDraftObject
 
 	public void setWorkplaceDraftObject(WorkplaceDraftObject workplaceDraftObject) {
 		this.workplaceDraftObject = workplaceDraftObject;
@@ -123,7 +132,7 @@ public class WorkplaceDraft extends Composite {
 		undoAll.setEnabled(workplaceDraftObject.canUndo());
 		redo.setEnabled(workplaceDraftObject.canRedo());
 
-		workplaceDraftObject.addUndoManagerListener( (undoManager) -> {
+		workplaceDraftObject.addUndoManagerListener( undoManager -> {
 			undo.setEnabled(undoManager.canUndo());
 			undoAll.setEnabled(undoManager.canUndo());
 			redo.setEnabled(undoManager.canRedo());
@@ -167,88 +176,72 @@ public class WorkplaceDraft extends Composite {
 	    lBox.setSelectedIndex(indexToFind);
 	}
 	
-	// ----------------------------------------------- TOOLBAR ------------------------------------------------
+	// ------------------------------------------------- Toolbar
 	
-	private AonToolbar getToolbarPanel() {
-		
-		AonToolbar toolbar = new AonToolbar("Centro de trabajo");
+	private void getToolbarPanel() {
+		toolbar = new AonToolbar("Centro de trabajo");
 
-		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		accept.setAccessKey('G');
-		accept.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAccept(event);
-			}
-		});
+		AonToolbarButton accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		accept.addClickHandler(e -> onAccept());
 		toolbar.add(accept);
 		
-		newContract = new AonToolbarButton( "Nuevo contrato", AON.CSS.aonIconAdd() );
-		newContract.setAccessKey('N');
-		newContract.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onNewContract(event);
-			}
-		});
+		AonToolbarButton newContract = new AonToolbarButton( "Nuevo contrato", AON.CSS.aonIconAdd() );
+		newContract.addClickHandler(e -> onNewContract());
 		toolbar.add(newContract);
 		
 		undoAll = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll() );
-		undoAll.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onUndoAll(event);
-			}
-		});
+		undoAll.addClickHandler(e -> onUndoAll());
 		toolbar.add(undoAll);
 		
 		undo = new AonToolbarButton( AON.MSG.undo(), AON.CSS.aonIconUndo() );
-		undo.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onUndo(event);
-			}
-		});
+		undo.addClickHandler(e -> onUndo());
 		toolbar.add(undo);
 		
 		redo = new AonToolbarButton( "Rehacer", AON.CSS.aonIconRedo() );
-		redo.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onRedo(event);
-			}
-		});
+		redo.addClickHandler(e -> onRedo());
 		toolbar.add(redo);
-
-		return toolbar;
-
 	}
 	
-	private void onAccept(ClickEvent event) {
+	// ------------------------------------------------- Toolbar.Methods
+	
+	private void onAccept() {
 		workplaceDraftObject.updateWorkplace(
-				r -> {}, 
+				r -> {
+					Map<String, String> successMap = new HashMap<>();
+					successMap.put("Centro trabajo guardado", "Todos los cambios han sido guardados correctamente");
+					AonMessagePanel.showSuccess(messagePanel, successMap);
+				}, 
 				t -> {}
 		);
 	}
 	
-	private void onNewContract(ClickEvent event) {
+	private void onNewContract() {
 		EmployeeTree.showNewContract();
 	}
 
-	private void onUndoAll(ClickEvent event) {
+	private void onUndoAll() {
 		while ( workplaceDraftObject.canUndo() )
 			workplaceDraftObject.undo();
 		initializeView();
+		Map<String, String> infoMap = new HashMap<>();
+		infoMap.put("Cambios deshechos", "Todos los cambios han sido deshechos");
+		AonMessagePanel.showInfo(messagePanel, infoMap);
 	}
 
-	private void onUndo(ClickEvent event) {
+	private void onUndo() {
 		workplaceDraftObject.undo();
 		initializeView();
+		Map<String, String> infoMap = new HashMap<>();
+		infoMap.put("Cambio deshecho", "El \u00FAltimo cambio ha sido deshecho");
+		AonMessagePanel.showInfo(messagePanel, infoMap);
 	}
 	
-	private void onRedo(ClickEvent event) {
+	private void onRedo() {
 		workplaceDraftObject.redo();
 		initializeView();
+		Map<String, String> infoMap = new HashMap<>();
+		infoMap.put("Cambio rehecho", "El \u00FAltimo cambio ha sido rehecho");
+		AonMessagePanel.showInfo(messagePanel, infoMap);
 	}
 	
 }

@@ -52,7 +52,6 @@ public interface Properties {
 	}
 	
 	public interface ProjectProperties {
-		
 		Property<Integer> getIdProperty();
 		Property<Byte> getActiveProperty();
 		Property<String> getAliasProperty();
@@ -64,6 +63,16 @@ public interface Properties {
 		Property<Integer> getRegistryProperty();
 		Property<Byte> getReservationProperty();
 		Property<Byte> getTasProperty();
+	}
+	
+	public interface ProjectHolderProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProjectProperty();
+		Property<Timestamp> getStartDateProperty();
+		Property<Timestamp> getEndDateProperty();
+		Property<Integer> getWorkgroupProperty();
+		Property<Integer> getTaskHolderProperty();
 	}
 	
 	public interface AttachProperties {
@@ -929,8 +938,6 @@ public interface Properties {
 		Property<Byte> getWithholdingProperty();
 		Property<Byte> getVatAccrualPaymentProperty();
 		Property<Byte> getEInvoiceProperty();
-		Property<Integer> getScopeIdProperty();
-		Property<String> getScopeDescriptionProperty();	
 	}
 	
 	public interface PersonProperties extends RegistryProperties{
@@ -1326,6 +1333,7 @@ public interface Properties {
 		Property<Integer> getRegistryProperty();
 		Property<byte[]> getAuthProperty();
 		Property<Byte> getSharedProperty();
+		Property<Integer> getWorkgroupProperty();
 	}
 
 	public interface TimeControlProperties {

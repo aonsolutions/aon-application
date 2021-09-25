@@ -46,10 +46,6 @@ export const getGrupoCotizacion = () => requestJsonAsset("group_ctz.json");
 
 export const getOcupacion = () => requestJsonAsset("occupation.json");
 
-export const getConvenios = () => Promise.resolve([
-  { id: "1", name: "- Sin convenio definido", value: "60888888888888" },
-]);
-
 export const getAllTipoCtz = () => requestJsonAsset("type_ctz.json"); 
 
 export const getTipoCtz = (data) =>

@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryPrinter;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceViewer;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -19,7 +22,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -50,7 +52,7 @@ class WrongRecordedInvoices extends OptionBase {
 		
 		content = new SimpleLayoutPanel();
 		container = new ScrollPanel();
-		container.setStyleName(AON.AON_CSS.aonScrollArea());
+		container.setStyleName(AON.CSS.aonScrollArea());
 		
 		content.add(container);
 		setContent(content);
@@ -63,9 +65,7 @@ class WrongRecordedInvoices extends OptionBase {
 
 	public void run() {
 		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		popup.add(label);
+		popup.add(getSplashWidget());
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
@@ -90,13 +90,13 @@ class WrongRecordedInvoices extends OptionBase {
 	@Override
 	protected Widget paintResults(AccUtilitiesResult result) {
 		FlowPanel log = new FlowPanel();
-		log.setStyleName(AON.AON_CSS.aonWidth98Percent());
-		log.addStyleName(AON.AON_CSS.aonBlockCenter());
-		log.addStyleName(AON.AON_CSS.aonMarginTop());
-		log.addStyleName(AON.AON_CSS.aonMarginBottom());
-		log.addStyleName(AON.AON_CSS.aonFixedFont());
-		log.addStyleName(AON.AON_CSS.aonFontMedium());
-		log.addStyleName(AON.AON_CSS.aonNowrap());
+		log.setStyleName(AON.CSS.aonWidthAlmostAll());
+		log.addStyleName(AON.CSS.aonBlockCenter());
+		log.addStyleName(AON.CSS.aonMarginTop());
+		log.addStyleName(AON.CSS.aonMarginBottom());
+		log.addStyleName(AON.CSS.aonFixedFont());
+		log.addStyleName(AON.CSS.aonFontMedium());
+		log.addStyleName(AON.CSS.aonNowrap());
 		if (result != null && !result.isEmpty()) {
 			String lastDomain = null;
 			DisclosurePanel disclosurePanel = null;
@@ -106,8 +106,8 @@ class WrongRecordedInvoices extends OptionBase {
 					if (disclosurePanel != null) {
 						String header = lastDomain + " (" + domainPanel.getWidgetCount() + ")";
 						disclosurePanel.getHeaderTextAccessor().setText(header);
-						disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFixedFont());
-						disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFontMedium());
+						disclosurePanel.getHeader().addStyleName(AON.CSS.aonFixedFont());
+						disclosurePanel.getHeader().addStyleName(AON.CSS.aonFontMedium());
 						log.add(disclosurePanel);
 					}
 					disclosurePanel = new DisclosurePanel(item.getDomainName());
@@ -115,18 +115,18 @@ class WrongRecordedInvoices extends OptionBase {
 					lastDomain = item.getDomainName();
 					domainPanel = new FlowPanel();
 					disclosurePanel.add(domainPanel);
-					disclosurePanel.addStyleName(AON.AON_CSS.aonMarginTop());
-					disclosurePanel.addStyleName(AON.AON_CSS.aonFixedFont());
-					disclosurePanel.addStyleName(AON.AON_CSS.aonFontMedium());
-					disclosurePanel.addStyleName(AON.AON_CSS.aonNowrap());
+					disclosurePanel.addStyleName(AON.CSS.aonMarginTop());
+					disclosurePanel.addStyleName(AON.CSS.aonFixedFont());
+					disclosurePanel.addStyleName(AON.CSS.aonFontMedium());
+					disclosurePanel.addStyleName(AON.CSS.aonNowrap());
 				}
 				item.getType().visit( new WrongRecordedInvoicesVisitor(domainPanel,(AccUtilitiesWrongRecordedInvoicesItem) item) );
 			}
 			if (disclosurePanel != null) {
 				String header = lastDomain + " (" + domainPanel.getWidgetCount() + ")";
 				disclosurePanel.getHeaderTextAccessor().setText(header);
-				disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFixedFont());
-				disclosurePanel.getHeader().addStyleName(AON.AON_CSS.aonFontMedium());
+				disclosurePanel.getHeader().addStyleName(AON.CSS.aonFixedFont());
+				disclosurePanel.getHeader().addStyleName(AON.CSS.aonFontMedium());
 				log.add(disclosurePanel);
 			}
 			
@@ -138,7 +138,7 @@ class WrongRecordedInvoices extends OptionBase {
 	}
 
 	private void showInvoice(int domain,Invoice invoice) {
-		CustomPopup entryDialog = new CustomPopup();
+		AonCustomPopup entryDialog = new AonCustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
 		entryDialog.setAnimationEnabled(true);
@@ -146,39 +146,15 @@ class WrongRecordedInvoices extends OptionBase {
 		entryDialog.setModal(true);
 		entryDialog.setCaption(AON.MSG.invoice());
 		InvoiceViewer viewer = new InvoiceViewer(invoice);
-		viewer.addStyleName(AON.AON_CSS.aonMarginTop());
+		viewer.addStyleName(AON.CSS.aonMarginTop());
 		entryDialog.add(viewer);
 		entryDialog.center();
 		entryDialog.show();
 	}
 	
 	protected Widget getToolbarPanel() {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label(getOptionDescription()));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-		
-		final Button refresh = new Button();
-		refresh.setText(AON.MSG.refresh());
-		refresh.setTitle(AON.MSG.refresh());
-		refresh.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		refresh.addStyleName(AON.AON_CSS.aonIconRedo());
+		AonToolbar toolbarPanel = new AonToolbar(getOptionDescription());
+		final AonToolbarButton refresh = new AonToolbarButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
 		refresh.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -186,8 +162,7 @@ class WrongRecordedInvoices extends OptionBase {
 				run();
 			}
 		});
-		buttonContainer.add(refresh);
-		toolbarPanel.add(toolbar);
+		toolbarPanel.add(refresh);
 		return toolbarPanel;
 	}
 
@@ -204,17 +179,15 @@ class WrongRecordedInvoices extends OptionBase {
 		public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
 			InlineLabel msgLabel = new InlineLabel(item.getMessage());
-			msgLabel.setStyleName(AON.AON_CSS.aonIconRowSelector());
-			msgLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			msgLabel.addStyleName(AON.AON_CSS.aonBold());
+			msgLabel.addStyleName(AON.CSS.aonBold());
 			itemPanel.add(msgLabel);
 			
 			InlineLabel clickLabel = new InlineLabel("[Ver Factura]");
 			clickLabel.setTitle("Click para Ver Factura");
-			clickLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			clickLabel.addStyleName(AON.AON_CSS.aonIconLoupe());
-			clickLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
-			clickLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
+			clickLabel.setStyleName(AON.CSS.aonMarginLeft());;
+			clickLabel.addStyleName(AON.CSS.aonButton());
+			clickLabel.addStyleName(AON.CSS.aonIconSearch());
+			clickLabel.addStyleName(AON.CSS.aonTextButton());
 			itemPanel.add(clickLabel);
 			clickLabel.addClickHandler( new ClickHandler() {
 				@Override
@@ -225,10 +198,10 @@ class WrongRecordedInvoices extends OptionBase {
 			if (item.isOnlyMarked()) {
 				InlineLabel fixLabel = new InlineLabel("[Arreglar]");
 				fixLabel.setTitle("Click para arreglar el problema");
-				fixLabel.setStyleName(AON.AON_CSS.aonIconSettings());
-				fixLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-				fixLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
-				fixLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
+				fixLabel.setStyleName(AON.CSS.aonMarginLeft());;
+				fixLabel.addStyleName(AON.CSS.aonButton());
+				fixLabel.addStyleName(AON.CSS.aonIconFix());
+				fixLabel.addStyleName(AON.CSS.aonTextButton());
 				itemPanel.add(fixLabel);
 				fixLabel.addClickHandler( new ClickHandler() {
 					@Override
@@ -252,16 +225,16 @@ class WrongRecordedInvoices extends OptionBase {
 			if (item.getEntries() != null) {
 				for ( AccountEntry entry : item.getEntries() ) {
 					FlowPanel entryPanel = new FlowPanel();
-					entryPanel.addStyleName(AON.AON_CSS.aonMarginLeft());
-					entryPanel.addStyleName(AON.AON_CSS.aonMarginBottom());
-					entryPanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-					entryPanel.addStyleName(AON.AON_CSS.aonSimpleBorder());
+					entryPanel.addStyleName(AON.CSS.aonMarginLeft());
+					entryPanel.addStyleName(AON.CSS.aonMarginBottom());
+					entryPanel.addStyleName(AON.CSS.aonPaddingLeft());
+					entryPanel.addStyleName(AON.CSS.aonBorder());
 					FlowPanel buttonsPanel = new FlowPanel();
 					if (entry.getPeriodStatus().isActive()) {
 						Button deleteButton = new Button(AON.MSG.deleteAction());
-						deleteButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-						deleteButton.addStyleName(AON.AON_CSS.aonIconDelete());
-						deleteButton.addStyleName(AON.AON_CSS.aonMarginTop());
+						deleteButton.addStyleName(AON.CSS.aonButton());
+						deleteButton.addStyleName(AON.CSS.aonIconDelete());
+						deleteButton.addStyleName(AON.CSS.aonTextButton());
 						deleteButton.addClickHandler(new ClickHandler() {
 							
 							@Override
@@ -283,10 +256,10 @@ class WrongRecordedInvoices extends OptionBase {
 						});
 						buttonsPanel.add(deleteButton);
 					} else {
-						Label warningLabel = new Label("Ejercicio cerrado. La correcci\u00F3n debe realizarse de forma manual.");
-						warningLabel.setStyleName(AON.AON_CSS.aonIconWarn());
-						warningLabel.addStyleName(AON.AON_CSS.aonColorRed());
-						warningLabel.addStyleName(AON.AON_CSS.aonMarginTop());
+						Label warningLabel = new Label("Ejercicio cerrado o inactivo. La correcci\u00F3n debe realizarse de forma manual.");
+						warningLabel.setStyleName(AON.CSS.aonBlockMessage());
+						warningLabel.addStyleName(AON.CSS.aonBlockWarningMessage());
+						warningLabel.addStyleName(AON.CSS.aonMarginTop());
 						buttonsPanel.add(warningLabel);
 					}
 					entryPanel.add(buttonsPanel);

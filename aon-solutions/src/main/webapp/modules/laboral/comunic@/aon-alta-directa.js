@@ -138,7 +138,7 @@ export class AonAltaDirecta extends AonElement {
 
     async initLists() {
         await Promise.all([
-            this.listCentroTrabajo(),
+            this.listWorkPlace(),
             this.listTipoContrato(),
             this.listTipoJornada(),
             this.listGrupoCotizacion(),
@@ -202,7 +202,7 @@ export class AonAltaDirecta extends AonElement {
         let obj = {
             ...data,
             regimen: data.regime,
-            nombre: data.name,
+            name: data.name,
             fecha: data.fra,
             grup_ctz: data.gc,
         }
@@ -218,8 +218,8 @@ export class AonAltaDirecta extends AonElement {
         //seleccionar workplace;
         const centro_trabajo = this.getElement('centro_trabajo');
         const workplaceInput = centro_trabajo.querySelector('aon-input');
-        if (centro_trabajo && workplaceInput && centro_trabajo.options) {
-            const options = JSON.parse(centro_trabajo.options);
+        const options = centro_trabajo.getOptions();
+        if (centro_trabajo && workplaceInput && options) {
             const {name:nameWp} = options.find((r) => r.cccs.some(rs => rs.cccRegimeCode === obj.regimen && rs.ccc === obj.ctaCti) === true);
             if (nameWp) workplaceInput.value = nameWp;
         }
@@ -303,7 +303,7 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-    async listCentroTrabajo() {
+    async listWorkPlace() {
         try {
             const resp = await getCccForActivity();
             if(resp && resp.cccs){
@@ -342,7 +342,10 @@ export class AonAltaDirecta extends AonElement {
             try {
                 const { cccs } = detail;
                 let ctaCti = this.getElement('ctaCti');
-                ctaCti.options = JSON.stringify(cccs.map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc })));
+                let options = cccs
+                .filter( (value,index, self)=>self.findIndex((m) => m.ccc === value.ccc) === index )
+                .map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
+                ctaCti.options = JSON.stringify(options);
             } catch (error) { }
         }
     }
@@ -366,12 +369,15 @@ export class AonAltaDirecta extends AonElement {
     }
 
     async suggestionConvenio() {
+        const convenios = await getConvenios();
+
         const suggestion = this.getElement(`convenio`);
         suggestion.querySelector("input").autocomplete = "on";
-        suggestion.addEventListener(EVENT.AON_KEYUP, async ({ target: { value } }) => {
+        
+        suggestion.addEventListener(EVENT.AON_KEYUP, ({ target: { value } }) => {
             let newValue = value.toString().toUpperCase();
             if (newValue.length > 2) {
-                const resp = await getConvenios(newValue);
+                const resp = convenios.filter(c=> (c.name && c.name.indexOf(newValue)>=0) );
                 suggestion.buildOptions(resp);
             } else {
                 suggestion.closeOptions();
@@ -420,9 +426,9 @@ export class AonAltaDirecta extends AonElement {
         if (value) {
             const last_nss = value.toString().slice(-2);
             let mod = (parseInt(last_nss) % 97).toString();
-            let nombre = this.getElement('nombre');
+            let name = this.getElement('name');
             let dni = this.getElement(`${this.id}Dni`);
-            dni.value = nombre.value = "";
+            dni.value = name.value = "";
             if (mod < 10) mod = '0' + mod;
             if (value.length > 11 && mod == last_nss) {
                 nss_sugges.removeIcon();
@@ -438,7 +444,7 @@ export class AonAltaDirecta extends AonElement {
     async getIpf(nss) {
         const resp = await getIpfxnaf({ nss }).then(r => r.length ? r[0] : null).catch(e => null);
         if (resp) {
-            setValueName('nombre', resp.name);
+            setValueName('name', resp.name);
             setValueName('ipf', resp.ipf.toString().substring(1));
             setValueName('nss', resp.nss);
             this.disabledCardTrabajor(true);
@@ -449,13 +455,13 @@ export class AonAltaDirecta extends AonElement {
         this.applicationEl.confirmDialog(MSG.COMMUNICATE, MSG.COMMUNICATE_CONFIRM, () => {
             switch (this.ACTION) {
                 case "CREATE":
-                    this.save();
-                    break;
-                case "UPDATE":
-                    this.update();
+                    this.alta();
                     break;
                 case "BAJA":
                     this.baja();
+                    break;
+                case "UPDATE":
+                    this.update();
                     break;
                 default:
                     break;
@@ -463,11 +469,27 @@ export class AonAltaDirecta extends AonElement {
         }, MSG.COMMUNICATE);
     }
 
-    async save() {
+    async alta() {
         this.applicationEl.startLoading();
         try {
             await sendAlta(this.getContrato());
             this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
+            this.applicationParentEl._movements = [];
+            this.back();
+        } catch (error) {
+            this.showToast(error);
+        }
+        this.applicationEl.stopLoading();
+    }
+
+    async baja(){
+        this.applicationEl.startLoading();
+        try {
+            const fechaBajaEl = this.getElement("fechaBaja");
+            const codBajaEl = this.getElement("codBaja");
+            await sendBaja({...this.data, fechaBaja: fechaBajaEl.value, situation: codBajaEl.value});
+            this.applicationEl.getOptionDialog().close();
+            this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
             this.applicationParentEl._movements = [];
             this.back();
         } catch (error) {
@@ -511,7 +533,7 @@ export class AonAltaDirecta extends AonElement {
                 const resp = await getNafxipf(contrato);
                 if (resp) {
                     nss_sugges.value = resp.nss;
-                    setValueName('nombre', resp.name);
+                    setValueName('name', resp.name);
                     this.disabledCardTrabajor(true);
                 }
             } catch (error) {
@@ -534,7 +556,7 @@ export class AonAltaDirecta extends AonElement {
         this.getElement('div_apellidos').hidden = true;
         if (!vl) {
             this.getElement(`${this.id}Dni`).disabled = true;
-            this.getElement(`nombre`).disabled = true;
+            this.getElement(`name`).disabled = true;
         }
     }
 
@@ -592,22 +614,6 @@ export class AonAltaDirecta extends AonElement {
             if(icon) 
                 icon.size = "20px";
         }
-    }
-
-    async baja(){
-        this.applicationEl.startLoading();
-        try {
-            const fechaBajaEl = this.getElement("fechaBaja");
-            const codBajaEl = this.getElement("codBaja");
-            await sendBaja({...this.data, fechaBaja: fechaBajaEl.value, situation: codBajaEl.value});
-            this.applicationEl.getOptionDialog().close();
-            this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
-            this.applicationParentEl._movements = [];
-            this.back();
-        } catch (error) {
-            this.showToast(error);
-        }
-        this.applicationEl.stopLoading();
     }
 
     isAlta(){

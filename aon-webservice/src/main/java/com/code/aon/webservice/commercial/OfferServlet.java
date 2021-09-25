@@ -19,8 +19,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
-import com.esferalia.aon.occam.api.model.product.OldItem;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Target;
@@ -92,12 +91,7 @@ public class OfferServlet extends HttpServlet{
 				
 				Target tar = new Target();
 				tar.setDomain(domain);
-				tar.setAdvertising((short) 0);
-				tar.setWithholding((short) 0);
-				tar.setTransaction((short) 0);
-				tar.setSurcharge((short) 0);	
-				tar.setScope(scope.getId());
-				tar.setStatus(TargetStatus.ACTIVE);
+				tar.setScope(scope);
 				tar.setId(registry.getId());
 					
 				target = AON.insertTarget(domain.getName(), domain.getId(), "", tar);
@@ -131,13 +125,14 @@ public class OfferServlet extends HttpServlet{
 
 			Boolean isAnual = tc.getPlan().getPeriod().equals("A");
 			String plan = tc.getPlan().getPlan();
-			OldItem item = AON.getItem(domain.getName(), domain.getId(), "", f -> 
+			
+			Item item = AON.getItem(domain, "",  f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDetailProperty().eq("Plan " + plan))
 				.and(f.getDetail2Property().eq(isAnual ? "Anual" : "Mensual")));
-			OldProduct p = AON.getProduct(domain.getName(), domain.getId(), "", f-> f.getIdProperty().eq(item.getProductId()));
+			
 			OfferDetail offerDetail = new OfferDetail()
-					.setDescription(p.getName() + "[" + item.getDetail() + " " + item.getDetail2() + "]")
+					.setDescription(item.getProduct().getName() + "[" + item.getDetail() + " " + item.getDetail2() + "]")
 					.setOffer(offer)
 					.setItem(item)
 					.setDiscountExpression("0.0")

@@ -2,120 +2,81 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
-import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.SellerStatus;
 
-public class Seller implements Serializable {
+public class Seller extends Registry implements Serializable {
 
 	private static final long serialVersionUID = -4021529272657422784L;
 	
-	private Integer id;
-	private int domain;
 	private CommissionType commissionType;
+	private Scope scope;
+	private SellerStatus status;
 	
-	private DocumentType registryDocumentType;
-	private Country registryDocumentCountry;
-	private String registryDocument;
-	private String registryName;
-	private String registryAlias;
-	private boolean registryNaturalPerson;
-	private Country registryNationality;
-	private boolean registryConfidential;
-	
-	private String scope;
-	private boolean active;
-	
-	public Integer getId() {
-		return id;
+	public Seller copy(Registry registry) {
+		return super.copy( registry, this);
 	}
+
 	public Seller setId(Integer id) {
-		this.id = id;
+		super.setId(id);
 		return this;
 	}
-	public int getDomain() {
-		return domain;
-	}
-	public Seller setDomain(int domain) {
-		this.domain = domain;
+	
+	public Seller setDomain(Integer id) {
+		super.setDomain(new Domain().setId(id));
 		return this;
 	}
+	
 	public CommissionType getCommissionType() {
+		if(commissionType == null) {
+			commissionType = new CommissionType();
+		}
 		return commissionType;
 	}
+	
 	public Seller setCommissionType(CommissionType commissionType) {
 		this.commissionType = commissionType;
 		return this;
 	}
-	public DocumentType getRegistryDocumentType() {
-		return registryDocumentType;
-	}
-	public Seller setRegistryDocumentType(DocumentType registryDocumentType) {
-		this.registryDocumentType = registryDocumentType;
-		return this;
-	}
-	public Country getRegistryDocumentCountry() {
-		return registryDocumentCountry;
-	}
-	public Seller setRegistryDocumentCountry(Country registryDocumentCountry) {
-		this.registryDocumentCountry = registryDocumentCountry;
-		return this;
-	}
-	public String getRegistryDocument() {
-		return registryDocument;
-	}
-	public Seller setRegistryDocument(String registryDocument) {
-		this.registryDocument = registryDocument;
-		return this;
-	}
-	public String getRegistryName() {
-		return registryName;
-	}
-	public Seller setRegistryName(String registryName) {
-		this.registryName = registryName;
-		return this;
-	}
-	public String getRegistryAlias() {
-		return registryAlias;
-	}
-	public Seller setRegistryAlias(String registryAlias) {
-		this.registryAlias = registryAlias;
-		return this;
-	}
-	public boolean isRegistryNaturalPerson() {
-		return registryNaturalPerson;
-	}
-	public Seller setRegistryNaturalPerson(boolean registryNaturalPerson) {
-		this.registryNaturalPerson = registryNaturalPerson;
-		return this;
-	}
-	public Country getRegistryNationality() {
-		return registryNationality;
-	}
-	public Seller setRegistryNationality(Country registryNationality) {
-		this.registryNationality = registryNationality;
-		return this;
-	}
-	public boolean isRegistryConfidential() {
-		return registryConfidential;
-	}
-	public Seller setRegistryConfidential(boolean registryConfidential) {
-		this.registryConfidential = registryConfidential;
-		return this;
-	}
-	public String getScope() {
+
+	public Scope getScope() {
+		if(scope == null) {
+			scope = new Scope();
+		}
 		return scope;
 	}
-	public Seller setScope(String scope) {
+	
+	public Seller setScope(Scope scope) {
 		this.scope = scope;
 		return this;
 	}
-	public boolean isActive() {
-		return active;
+	
+	public SellerStatus getStatus() {
+		return status;
 	}
-	public Seller setActive(boolean active) {
-		this.active = active;
+	
+	public Seller setStatus(SellerStatus status) {
+		this.status = status;
 		return this;
+	}
+	
+	public boolean isActive() {
+		return SellerStatus.ACTIVE == getStatus();
+	}
+	
+	public Seller setActive(boolean active) {
+		this.status = active ? SellerStatus.ACTIVE : SellerStatus.INACTIVE;
+		return this;
+	}
+	
+	@Override
+	public boolean isEmpty() {
+		return super.isEmpty() 
+			&& (getScope() == null || getScope().isEmpty())
+			&& getStatus() == null
+			&& (getCommissionType() == null || getCommissionType().isEmpty());
 	}
 	
 }

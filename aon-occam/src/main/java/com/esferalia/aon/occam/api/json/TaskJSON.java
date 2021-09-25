@@ -2,16 +2,14 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.stream.Stream;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.esferalia.aon.occam.api.model.project.Project;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.api.model.Domain;
 
 public class TaskJSON {
 	
@@ -26,12 +24,12 @@ public class TaskJSON {
 	public static Task fromJSON(JSONObject json) {
 		return new Task()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
+			.setDomain(domainFromJSON(json))
 //			.setActivityType(JsonUtils.getInteger(json, IJsonNames.ACTIVITY_TYPE))
 			.setTitle(JsonUtils.getString(json, IJsonNames.TITLE))
 			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
 			.setDueDate(JsonUtils.getDate(json, IJsonNames.DUE_DATE))
-			.setStartDate(JsonUtils.getDate(json, IJsonNames.START_DATE))
+			.setStartDate(JsonUtils.getDateTime(json, IJsonNames.START_DATE))
 			.setEndDate(JsonUtils.getDate(json, IJsonNames.END_DATE))
 			.setNumber(JsonUtils.getInteger(json, IJsonNames.NUMBER))
 			.setParent(JsonUtils.getInteger(json, IJsonNames.PARENT))
@@ -39,16 +37,15 @@ public class TaskJSON {
 			.setPriority(Priority.safeValueOf(json.optString(IJsonNames.PRIORITY)))
 			.setSender(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SENDER)))
 			.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)))
-			.setProject(new Project().setId(JsonUtils.getInteger(json, IJsonNames.PROJECT)))
+			.setProject(ProjectJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PROJECT)))
 			.setRepeatPeriod(TaskPeriod.NONE) // TODO
-			.setRegistry(RegistryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.REGISTRY)))
 			.setSource(TaskSource.safeValueOf(JsonUtils.optString(json, IJsonNames.SOURCE)))
-			//.setSourceId(sourceId)
+			.setSourceId(JsonUtils.getInteger(json, "source_id"))
 			.setStatus( TaskStatus.safeValueOf(JsonUtils.optString(json, "status"))) 
+			.setRegistry(RegistryJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.REGISTRY)))
 			.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
 			.setWorkflows(TaskWorkflowJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKFLOW)))
-//			.setGtaskId(gtaskId)
-//			.setGtasklistId(gtasklistId)
+			.setGtaskId(JsonUtils.getString(json, "gtask_id"))
 			;
 	}
 	
@@ -65,7 +62,7 @@ public class TaskJSON {
 	public static JSONObject toJSON(Task task) {
 		return new JSONObject()
 			.put(IJsonNames.ID, task.getId())
-			.put(IJsonNames.DOMAIN, task.getDomain())
+			.put(IJsonNames.DOMAIN, domainToJSON(task.getDomain()))
 			.put(IJsonNames.DESCRIPTION, task.getDescription())
 			.put(IJsonNames.TITLE, task.getTitle())
 			.put(IJsonNames.NUMBER, task.getNumber())
@@ -75,23 +72,36 @@ public class TaskJSON {
 			.put(IJsonNames.PERCENT, task.getPercent())
 			.put(IJsonNames.SENDER, TaskHolderJSON.toJSON(task.getSender()))
 			.put(IJsonNames.TASK_HOLDER, TaskHolderJSON.toJSON(task.getTaskHolder()))
-			.put(IJsonNames.REGISTRY, RegistryJSON.toJSON(task.getRegistry()))
+			.put(IJsonNames.REGISTRY, task.getRegistry()!=null  ? RegistryJSON.toJSON(task.getRegistry()) : null)
 			.put(IJsonNames.WORKGROUP, WorkgroupJSON.toJSON(task.getWorkgroup()))
 			.put(IJsonNames.SOURCE, task.getSource()!=null ? task.getSource().getName() : null )
 			.put(IJsonNames.SOURCE_ID, task.getSourceId())
-			.put(IJsonNames.PROJECT,  task.getProject()!=null ? task.getProject().getId(): null)
+			.put(IJsonNames.PROJECT,  task.getProject()!=null ?  ProjectJSON.toJSON(task.getProject()): null)
 			.put(IJsonNames.PERIOD, task.getRepeatPeriod()!=null ? task.getRepeatPeriod().getValue(): null)
 			.put(IJsonNames.DUE_DATE, task.getDueDate()!=null ?  task.getDueDate().getTime() : null)
 			.put(IJsonNames.START_DATE, task.getStartDate()!=null ?  task.getStartDate().getTime() : null)
 			.put(IJsonNames.END_DATE, task.getEndDate()!=null ?  task.getEndDate().getTime() : null)
-			//.put(IJsonNames, GTASK_ID)
-			//.put(IJsonNames, GTASKLIST_ID)
+			.put("gtask_id", task.getGtaskId())
 			.put(IJsonNames.PARENT, task.getParent())
 //			.put(IJsonNames.CREATION_USER, task.getCreationUser())
 //			.put(IJsonNames.CREATION_DATE, task.getCreationDate())
 //			.put(IJsonNames.MODIFICATION_USER, task.getModificationUser())
 //			.put(IJsonNames.MODIFICATION_DATE, task.getModificationDate())
 			;
+	}
+	
+	private static Domain domainFromJSON(JSONObject json) {
+		JSONObject domainJson = json.getJSONObject(IJsonNames.DOMAIN);
+		return new Domain()
+			.setId(JsonUtils.getInteger(domainJson, IJsonNames.ID))
+			.setName(JsonUtils.optString(domainJson, IJsonNames.DOMAIN_NAME));
+	}
+	
+	private static JSONObject domainToJSON(Domain domain) {
+		JSONObject json = new JSONObject();
+		json.put(IJsonNames.ID, domain.getId());
+		json.put(IJsonNames.NAME, domain.getName());
+		return json;
 	}
 
 }

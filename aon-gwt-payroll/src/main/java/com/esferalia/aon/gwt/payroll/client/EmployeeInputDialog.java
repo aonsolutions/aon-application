@@ -6,7 +6,7 @@ import java.util.Date;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -115,7 +115,7 @@ public abstract class EmployeeInputDialog extends CustomDialog {
 			@Override
 			public void onBlur(BlurEvent event) {
 				try {
-					if(null != valueTextBox.getValue() && !StringUtils.isEmpty(valueTextBox.getValue()))
+					if(null != valueTextBox.getValue() && !AonStringUtils.isBlank(valueTextBox.getValue()))
 						value = Double.parseDouble(valueTextBox.getValue());
 					else
 						value = null;
@@ -159,11 +159,11 @@ public abstract class EmployeeInputDialog extends CustomDialog {
 		if(null != date) {
 			if(date.before(contractStartDate))
 				startDate.setValue(contractStartDate);
-			else {
-				Date firstDayOfMoth = DateUtils.getFirstDayOfMonth(date);
-				DateUtils.resetTime(firstDayOfMoth);
-				startDate.setValue(firstDayOfMoth);
-			}
+//			else {
+//				Date firstDayOfMoth = DateUtils.getFirstDayOfMonth(date);
+//				DateUtils.resetTime(firstDayOfMoth);
+//				startDate.setValue(firstDayOfMoth);
+//			}
 		}
 	}
 	
@@ -174,11 +174,12 @@ public abstract class EmployeeInputDialog extends CustomDialog {
 			if(null != contractEndDate) {
 				if(date.after(contractEndDate))
 					endDate.setValue(contractEndDate);
-			} else {
-				Date lastDayOfMoth = DateUtils.getLastDayOfMonth(date);
-				DateUtils.resetTime(lastDayOfMoth);
-				endDate.setValue(lastDayOfMoth);
-			}
+			} 
+//			else if (!AonStringUtils.equalsIgnoreCase(variablesList.getSelectedValue(), "DIAS_VACACIONES_NO_DISFRUTADOS")) {
+//				Date lastDayOfMoth = DateUtils.getLastDayOfMonth(date);
+//				DateUtils.resetTime(lastDayOfMoth);
+//				endDate.setValue(lastDayOfMoth);
+//			}
 		}
 	}
 	

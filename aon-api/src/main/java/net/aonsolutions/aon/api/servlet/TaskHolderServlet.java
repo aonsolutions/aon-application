@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 @SuppressWarnings("serial")
 @WebServlet(name = "AonTaskHolderServlet", urlPatterns = {"/ms/api/taskholder/*"})
@@ -32,20 +34,20 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/":
-					response(req, resp, getTaskHolder(api));
-					break;
-				case "/enterprise":
-					response(req, resp, getTaskHoldersEnterprise(api));
-					break;
-				case "/workgroup":
-					response(req, resp, getTaskHoldersWorkGroup(api));
-					break;
-				case "/user":
-					response(req, resp, getTaskHoldersUser(api));
-					break;
-				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+			case "/":
+				response(req, resp, getTaskHolder(api));
+				break;
+			case "/enterprise":
+				response(req, resp, getTaskHoldersEnterprise(api));
+				break;
+			case "/workgroup":
+				response(req, resp, getTaskHoldersWorkGroup(api));
+				break;
+			case "/user":
+				response(req, resp, getTaskHoldersUser(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -58,11 +60,11 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/":
-					response(req, resp, setTaskHolder(api));
-					break;
-				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+			case "/":
+				response(req, resp, setTaskHolder(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -113,19 +115,11 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	
 	private JSONArray getTaskHoldersWorkGroup(AonApiData api) {
 		Domain domain = api.getDomain();
-		JSONArray array = new JSONArray();
 		Integer workgroupId = api.getParams().optInt("workgroupId");
-		AON.getTaskHolderWorkgroupStream(domain, api.getUser(), f->f.getDomainProperty().eq(domain.getId()), workgroupId)
-		.forEach(th->{
-			JSONObject json = new JSONObject();
-			json.put("id", th.getId());
-			json.put("name", th.getName());
-			json.put("company", th.getDomain().getDescription());
-			json.put("domain_id", th.getDomain().getId());
-			json.put("domain_name", th.getDomain().getName());
-			array.put(json);
-		});
-		return array;
+		return TaskHolderJSON.toJSON(AON.getTaskHolderWorkgroupStream(domain, api.getUser(), 
+				f->f.getDomainProperty().eq(domain.getId())
+				.or(f.getDomainProperty().eq(domain.getParentId())), 
+			workgroupId));
 	}
 	
 	private JSONObject setTaskHolder(AonApiData api) {

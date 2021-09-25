@@ -38,7 +38,6 @@ import com.esferalia.aon.jooq.tables.records.WorkgroupRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskCommentFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskEventFilter;
@@ -46,13 +45,13 @@ import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
+import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Properties.TaskCommentProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskEventProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskHolderWorkgroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
-import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -71,6 +70,7 @@ import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -747,14 +747,14 @@ public class TaskOldDAO {
 
 	public static Workgroup insertWorkgroup(AONContext ctx, Workgroup workgroup ){
 		return ctx.getDslContext().insertInto(WORKGROUP, WORKGROUP.DESCRIPTION, WORKGROUP.DOMAIN, WORKGROUP.STATUS)
-				.values(workgroup.getDescription(), workgroup.getDomain(), workgroup.getStatus())
+				.values(workgroup.getDescription(), workgroup.getDomain(), workgroup.getStatus().value())
 			.returning().fetch().stream().map(new FullWorkgroupFiller()).findFirst().orElse(new Workgroup());	
 	}
 	
 	public static Workgroup updateWorkgroup(AONContext ctx, Workgroup workgroup ){
 		return ctx.getDslContext().update(WORKGROUP)
 				.set(WORKGROUP.DESCRIPTION, workgroup.getDescription())
-				.set(WORKGROUP.STATUS, workgroup.getStatus())		
+				.set(WORKGROUP.STATUS, workgroup.getStatus().value())		
 				.where(WORKGROUP.ID.eq(workgroup.getId()))
 			.returning().fetch().stream().map(new FullWorkgroupFiller()).findFirst().orElse(new Workgroup());	
 	}
@@ -867,7 +867,7 @@ public class TaskOldDAO {
 					.copy( new Registry() 
 						.setId(r.getValue(REGISTRY.ID))
 						.setDomain(r.get(DOMAIN.ID) != null 
-							? DomainFiller.buildDomain(r) 
+							? DomainFiller.build(r) 
 							: new Domain().setId(r.getValue(REGISTRY.DOMAIN)))
 						.setDocument(r.getValue(REGISTRY.DOCUMENT))
 						.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
@@ -945,7 +945,7 @@ public class TaskOldDAO {
 			return new Workgroup().setId(r.getId())
 					.setDomain(r.getDomain())
 					.setDescription(r.getDescription())
-					.setStatus(r.getStatus());
+					.setStatus(WorkgroupStatus.safeValueOf(r.getStatus()));
 		}
 	}
 	
@@ -959,8 +959,7 @@ public class TaskOldDAO {
 			return new Workgroup().setId(r.getValue(WORKGROUP.ID))
 					.setDomain(r.getValue(WORKGROUP.DOMAIN))
 					.setDescription(r.getValue(WORKGROUP.DESCRIPTION))
-					.setStatus(r.getValue(WORKGROUP.STATUS));
-
+					.setStatus(WorkgroupStatus.safeValueOf(r.getValue(WORKGROUP.STATUS)));
 		}
 	}
 	

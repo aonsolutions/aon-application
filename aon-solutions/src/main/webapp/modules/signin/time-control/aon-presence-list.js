@@ -1,8 +1,8 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel } from "../../../services/service.js";
+import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel, getTimeControlPdf } from "../../../services/service.js";
 import { isEmptyObject, setAttributes, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
 import { iconAddLocation, PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
-import { dateCustomDayHour, StringTwoLetters, timeHour } from "./utils.js";
+import { dateCustomDayHour, modalReport, StringTwoLetters, timeHour } from "./utils.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
@@ -65,9 +65,8 @@ export class AonPresenceList extends AonElement {
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
-    if(!this.isMobile()) this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () => this.getTimeControlExcel());
+    if(!this.isMobile()) this.applicationEl.addToolbarOption2(SigninSidenav.MORE, ({target}) => this.dialogReport(target));
     this.buildToolbarSearch();
-    this.searchValueDefault();
   }
 
   buildToolbarSearch(){
@@ -93,6 +92,7 @@ export class AonPresenceList extends AonElement {
     })
     
     btnSearch.buildOptionsFilter(arrayNewFilter);//INPUTS
+    this.searchValueDefault();
   }
 
   searchValueDefault(){
@@ -167,6 +167,26 @@ export class AonPresenceList extends AonElement {
     }
   }
 
+  dialogReport(button){
+		const left = button.getBoundingClientRect().left;
+    let top  = button.getBoundingClientRect().top;
+    if(this.isMobile()) top = top - 50;
+
+    let options = [{
+      name: "Registro de jornada",
+      aonIcon: 'aon_excel',
+      fn: () => modalReport(this.applicationEl, this, "excel")
+    }, {
+      name: "Plantilla fichajes",
+      aonIcon: 'aon_pdf',
+      fn: () => modalReport(this.applicationEl, this, "pdf")
+    }];
+
+    const d = this.applicationEl.getOptionDialog();
+    d.setMenuOptions(options, top, left);
+    d.open();
+  }
+
   async getData() {
     let data = [];
     try {
@@ -223,13 +243,21 @@ export class AonPresenceList extends AonElement {
     return data;
   }
 
-	async getTimeControlExcel() {
+	async getTimeControlExcel(startYear) {
 		this.applicationEl.startLoading();
 		try {
-      let startYear = new Date().getFullYear();
-      let {startDate, active} = this.applicationParentEl._filter;
-			if(startDate) {startYear = new Date(startDate).getFullYear();} 
+      let {active} = this.applicationParentEl._filter;
 			await getTimeControlExcel({startDate:startYear+"-01-01", endDate:startYear+"-12-31", active}); 
+		} catch (error) {
+      this.showToast(error);
+		}
+		this.applicationEl.stopLoading();
+	}
+
+	async getTimeControlPdf(startDate) {
+		this.applicationEl.startLoading();
+		try {
+			await getTimeControlPdf({startDate:startDate}); 
 		} catch (error) {
       this.showToast(error);
 		}

@@ -9,13 +9,13 @@ import './configuration/aon-configuration.js';
 import './company/aon-desktop.js';
 import './company/aon-mobile-desktop.js';
 import './company/aon-parent.js';
-import './user/aon-user.js';
-import './messenger/aon-messenger.js';
 import './notification/aon-notification-icon.js';
 import { MATERIAL_ICONS, MSG } from '../environments/environments.js';
 import { AonApiDoc } from './dev/aon-api-doc.js';
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
+import { AonMessenger } from './messenger/aon-messenger.js';
+import { TASK_SOURCE } from './messenger/MessengerEnums.js';
 
 export class AonHeader extends AonElement {
 
@@ -128,13 +128,27 @@ export class AonHeader extends AonElement {
 					this.dur = new DomainUserRoles(r);
 					let d = this.getElement('aonHeaderDialogHelpOption');
 					let options = [{
-						name: 'Solicitudes',
-						icon: 'assignment',
-						fn: () =>this.isBeta() ? this.rootPanelHtml(`<aon-messenger></aon-messenger>`) :  alert('en desarrollo')
+						name: 'Soporte / CAU',
+						icon: MATERIAL_ICONS.SUPPORT_AGENT,
+						fn: () =>{
+							if(this.isBeta()){
+								let aonMessenger = new AonMessenger();
+								aonMessenger.cau = true;
+								aonMessenger._filter.source = TASK_SOURCE.CAU;
+								this.rootPanel(aonMessenger);
+							}  else 
+								alert('en desarrollo');
+						}
 					}, {
 						name: 'Ayuda',
 						icon: 'help_outline',
-						fn: () => this.rootPanelHtml('<iframe height="100%" width="100%" src="https://faqs.aonsolutions.es/"></iframe>')
+						fn: () =>{
+							let iframe = document.createElement("iframe");
+							iframe.height = "100%";
+							iframe.width = "100%";
+							iframe.src = "http://faqs.aonsolutions.es";
+							this.rootPanel(iframe);
+						} 
 					}];
 					if(this.dur.isDev()) {
 						options.push({
@@ -195,11 +209,12 @@ export class AonHeader extends AonElement {
 		}
 		let aonHeaderUserButton = this.getElement('aonHeaderUserButton');
 		aonHeaderUserButton.addEventListener('click', () => {
+			const top  = aonHeaderUserButton.getBoundingClientRect().top;
+			const left = aonHeaderUserButton.getBoundingClientRect().left;
 			if(this.activeTimecontrol) {
 				getTimeControl().then(r => {
 					this.timeControlStatus(r);
-					const top  = aonHeaderUserButton.getBoundingClientRect().top;
-					const left = aonHeaderUserButton.getBoundingClientRect().left;
+
 					let d = this.getElement('aonHeaderDialogUserOption');
 
 					let fichajeText = r.status === 'in' ? 'Marcar Salida': 'Marcar Entrada';
@@ -225,12 +240,24 @@ export class AonHeader extends AonElement {
 						}];
 						d.setMenuOptions(options, top, left);
 						d.open();
+					}).catch(e => {
+						let d = this.getElement('aonHeaderDialogUserOption');
+						let options = [{
+							name: 'Configuración',
+							icon: 'settings',
+							id: 'dialogSettings',
+							fn: () => this.aonConfiguration()
+						}, {
+							name: 'Cerrar Sesión',
+							icon: 'input',
+							id: 'dialogLogout',
+							fn: () => closeSession()
+						}];
+						d.setMenuOptions(options, top, left);
+						d.open();
 					});
 				} else {
-					const top  = aonHeaderUserButton.getBoundingClientRect().top;
-					const left = aonHeaderUserButton.getBoundingClientRect().left;
 					let d = this.getElement('aonHeaderDialogUserOption');
-
 					let options = [{
 							name: 'Configuración',
 							icon: 'settings',

@@ -224,7 +224,10 @@ export class AonMovementsList extends AonElement {
     const fechaParse = setDate(fra);
     const date_now = new Date();
     const prev = new Date(fra).getTime() > date_now.getTime();
-    const dni = ipf.toString().substring(1);
+    let dni = ipf.toString();
+    if(dni.length>10) {
+      dni = dni.substring(1);
+    }
     let color = "#000";
     let tipo_mov = situation.indexOf("AL")>=0 ? "Alta" : "Baja";
     if (prev) {
@@ -244,6 +247,7 @@ export class AonMovementsList extends AonElement {
       ...res,
       fra,
       dni,
+      ipf:dni,
       fechaParse,
       prev,
       status: span.outerHTML,

@@ -1,30 +1,33 @@
 import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
-import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS } from "../../environments/environments.js";
-import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { getDomainUserRoles } from "../../services/companyService.js";
+import { CONSTANT, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { getTasks } from "../../services/taskService.js";
-import { setFullDate, setTime } from "../../services/utils.js";
+import { setFullDate, setTime, sortBy } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
-import { ICON_TYPES, MESSENGER_VIEWS, TASK_STATUS } from "./MessengerEnums.js";
+import { ICON_TYPES, MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
+import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
+import { getIconJson } from "./shared/utils.js";
+import { getCustomers } from "../../services/registryService.js";
+import { getTaskHolder } from "../../services/taskHolderService.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
-  _list;
   MORE;
+  KEY_VIEW;
+  TASK_HOLDER;
   static get observedAttributes() {
-    return [""];
+    return [];
   }
-
+  
   setFilter(filter) {
 		return this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
 	}
 
   getFilter() {
-		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, peerPage:30, status: TASK_STATUS.PENDING};
+		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:30, by_gestor: false, status: TASK_STATUS.PENDING};
 	}
   
   constructor() {
@@ -35,10 +38,7 @@ export class AonMessengerList extends AonElement {
 
   connectedCallback() {
     this.initialize();
-    getDomainUserRoles({}).then(r => {
-      this.dur = new DomainUserRoles(r);
-      this.build();
-    });
+    this.build();
   }
 
   disconnectedCallback() {
@@ -51,10 +51,13 @@ export class AonMessengerList extends AonElement {
   initialize() {
     this.id = this.id || MESSENGER_VIEWS.AON_MESSENGER_LIST;
     this.TOOLBAR = this.id + "Toolbar";
+    this.INDEX = 0;
+    this.MORE = true;
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
-    this._list = [];
-    this.MORE = true;
+    this.TASK_HOLDER = this.applicationParentEl.TASK_HOLDER;
+    this.KEY_VIEW = Math.random();
+    this.applicationEl.setKeyView(this.KEY_VIEW);
   }
 
   async build() {
@@ -62,12 +65,12 @@ export class AonMessengerList extends AonElement {
     this.buildToolbar();
   }
 
-  paintTable(divNotification) {
+  async paintTable(divNotification) {
     this.TABLE_ID = this.id + "Table";
     let aonTable = this.isMobile() ?  new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
     if (divNotification) {
-      divNotification.appendChild(aonTable);
+      await this.isFromNotification(aonTable, divNotification);
     } else {
       this.appendChild(aonTable);
     }
@@ -76,23 +79,44 @@ export class AonMessengerList extends AonElement {
       aonTable.removeAllLi();
     } else {
       aonTable.removeColumns();
-      aonTable.addColumn("", "icon", "icon", "2%");
-      aonTable.addColumn("Titulo", "string", "titleDescription", "30%");
-      aonTable.addColumn("Fecha", "string", "dateParse", "20%");
+      aonTable.addColumn("", "string", "lettersHtml", "2%");
+      aonTable.addColumn(MSG.NUMBER, "string", "newNumber", "5%");
+      aonTable.addColumn(MSG.ISSUE, "string", "newTitle", "30%");
+      aonTable.addColumn("Asignado", "string", "assigned", "20%");
+      aonTable.addColumn(MSG.DATE, "string", "dateParse", "20%");
     } 
-    aonTable.addEventListener(EVENT.MORE, ()=>{ if(this.MORE) this.loadMore(); })
+
+    aonTable.addEventListener(EVENT.MORE, ()=>{ 
+      if(this.KEY_VIEW === this.applicationEl.getKeyView()){
+        if(this.MORE) this.loadMore(); 
+      }
+    });
+
+    setTasks([]);
 
     this.loadMore();
-  
+  }
+
+  async isFromNotification(aonTable, divNotification){
+    divNotification.appendChild(aonTable);
+		const th = await getTaskHolder({reload:false}).catch(()=>null);
+    if(th){
+      this.TASK_HOLDER = th;
+      let filter = this.getFilter();    
+      filter.task_holder = th.id;
+      this.setFilter(filter);
+    }
   }
 
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
     if(this.isBeta()){
       if(this.isMobile()){
-        this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT));
+        this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY}));
       } else {
-        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT));
+        this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>{
+          this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY});
+        });
       }
     }
     this.buildToolbarSearch();
@@ -100,16 +124,94 @@ export class AonMessengerList extends AonElement {
 
   buildToolbarSearch(){
     let btnSearch = this.applicationEl.addSearchOption();
-    
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
-      console.log(detail);
+      this.setFilter({...this.getFilter(), page:0, perPage:30, search:detail});
+      this.loadMoreSearch();
     });
+
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
-      this._list = [];
-      console.log(detail);
+      if(detail) {
+        this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate});
+        this.loadMoreSearch();
+      } 
     });
-    
-    // btnSearch.buildOptionsFilter(INPUTS);//INPUTS
+
+    btnSearch.buildOptionsFilter(TASK_FILTER);//INPUTS
+    this.searchValueDefault();
+  }
+
+  searchValueDefault(){
+    let registryEl = this.getElement("registry");
+    let taskHolderEl = this.getElement("task_holder");
+    let statusEl = this.getElement("status");
+    getCustomers().then(customers=>{
+      registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
+    })
+
+    if(this.applicationParentEl)
+      this.applicationParentEl.getTaskHoldersEnterprise().then(ths=>
+        taskHolderEl.setOptions(ths)
+      );
+
+    statusEl.setOptions(TASK_STATUS_VALUE);
+  }
+
+  async loadMoreSearch(){
+    let aonTable = this.getElement(this.TABLE_ID);
+    if(this.isMobile()){
+      aonTable.removeAllLi();
+    } else {
+      aonTable.removeRows();
+    }
+
+    await this.loadMore();
+  }
+
+  async loadMore() {
+    this.getApplication().startLoader();
+    const datos = await this.getData();
+    addTasks(datos);
+    if(this.isMobile())
+      this.getDataMobile(datos);
+    else 
+      this.getDataDesktop(datos);
+
+    this.getApplication().stopLoader();    
+	}
+
+  getDataDesktop(datos){
+    let aonTable = this.getElement(this.TABLE_ID);
+    datos.map((res, idx) => {
+      const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+      let newTitle  =  res.title;
+      if(res.registry && res.registry.name) newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+
+      let assigned = "";
+      if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
+      else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
+
+      const newData = { 
+        ...res, 
+        newTitle,
+        assigned,
+        dateParse,
+        lettersHtml: this.getIcon(res),
+      };
+      aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
+    });
+  }
+  getDataMobile(datos){
+    let aonTable = this.getElement(this.TABLE_ID);
+    datos.map((res, idx) => {
+      const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+      const newTitle  = `#${res.newNumber} ${res.title}`;
+      const options = {
+        title: newTitle,
+        subtitle: dateParse,
+        ...this.getIconList(res)
+      };
+      aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
+    });
   }
 
   async getData(){
@@ -118,57 +220,69 @@ export class AonMessengerList extends AonElement {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
       this.setFilter(filter);
-
       const tasks = await getTasks(filter);
       if(tasks.length == 0)
         this.MORE = false;
       else {
         data = tasks.map(task=>{
           const newNumber = (task.number ? task.number : 0).toString().padStart(5,0);
-          const newTitle  = `#${newNumber} ${task.title}`;
-          const titleDescription = `<span style="font-size:14px;font-weight: 500;">${newTitle}</span>`;
           return {
             ...task,
             date:task.start_date,
-            newTitle,
-            titleDescription
+            newNumber
           };
         });
       }
+      data = sortBy(data, 'id','desc');
     } catch (error) {
+      console.log("error>>",error);
       this.showError(error);
     }
     return data;
   }
 
-  async loadMore() {
-		let aonTable = this.getElement(this.TABLE_ID);
-    const datos = await this.getData();
-    if(this.isMobile()){
-      datos.map((res, idx) => {
-        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-        const options = {
-          icon: MATERIAL_ICONS.INFO,
-          icon_color: CSS.variable(res.status == TASK_STATUS.PENDING || res.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON),
-          icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED,
-          title: res.newTitle,
-          subtitle: dateParse, 
-        };
-        aonTable.addLi(options, idx, () => this.goMessengerChat(res));
-      });
-    } else {
-      datos.map((res) => {
-        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-        res.icon = MATERIAL_ICONS.INFO;
-        res.icon_title = "status";
-        res.icon_color = CSS.variable(res.status == TASK_STATUS.PENDING || res.status == TASK_STATUS.IN_PROGRESS ? COLORS.ONLINE_GREEN : COLORS.GRAYSON);
-        res.icon_class = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
-        aonTable.addRow({...res, dateParse}, () =>  this.goMessengerChat(res));
-      });
+  getIconList(res){      
+    return {
+      ...getIconJson(res),
+      icon_class:ICON_TYPES.MATERIAL_ICONS_OUTLINED,
+      icon_title:res.source,
     }
-	}
+  }
 
-  goMessengerChat(res){
+  getIcon(res){
+    let icon = getIconJson(res);
+
+    let span = this.createElement(TAG.SPAN);
+    span.style.color = icon.icon_color;
+    span.title = res.source;
+
+    let iOne = this.createElement("i");
+    iOne.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
+    iOne.textContent = icon.icon;
+    span.appendChild(iOne);
+
+    //ICON WAY (IN OR OUT)
+    // if(res.task_holder && res.task_holder.id === this.TASK_HOLDER.id) {
+    //   span.appendChild(this.createIcon(MATERIAL_ICONS.ARROW_DROP_DOWN));
+    // } else if(res.sender && res.sender.id === this.TASK_HOLDER.id){
+    //   span.appendChild(this.createIcon(MATERIAL_ICONS.ARROW_DROP_UP)); // ,"-12px"
+    // }
+
+    return span.outerHTML;
+  }
+
+  // createIcon(icon, marginTop="11px"){
+  //   let i = this.createElement("i");
+  //   i.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
+  //   i.textContent = icon;
+  //   i.style.marginTop = marginTop;
+  //   i.style.position = "fixed";
+  //   i.style.marginLeft = "-11px";
+  //   return i;
+  // }
+
+  goMessengerChat(res, idx){
+    setIndexTask(idx);
     if(!this.applicationParentEl){
       let aonMessenger = new AonMessenger();
       aonMessenger.data = res;

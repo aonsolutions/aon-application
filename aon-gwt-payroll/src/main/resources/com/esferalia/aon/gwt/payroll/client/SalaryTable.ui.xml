@@ -4,10 +4,6 @@
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client'>
 
 	<ui:style>
-
-		.widthAll{
-			width: 100%;
-		}
 		
 		.heightAll{
 			height: 100%;
@@ -18,10 +14,8 @@
 		}
 		
 	</ui:style>
-
-	<g:ScrollPanel ui:field="scrollPanel" styleName="{style.widthAll}">
-		<c:DataGrid ui:field="salaryDG" styleName="{style.margin} {style.heightAll}"></c:DataGrid>
-	</g:ScrollPanel>
+	
+	<c:DataGrid ui:field="salaryDG" styleName="{style.margin} {style.heightAll}"></c:DataGrid>
 			
 </ui:UiBinder> 
 

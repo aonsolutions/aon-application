@@ -24,6 +24,7 @@ public class TaskWorkflowJSON {
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 			.setTask(JsonUtils.getInteger(json, IJsonNames.TASK))
+			.setEmail(JsonUtils.optString(json, IJsonNames.EMAIL))
 			.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)))
 			.setType(TaskWorkflowType.safeValueOf(JsonUtils.getString(json, IJsonNames.TYPE)))
 			.setComment(JsonUtils.getString(json, IJsonNames.COMMENT));
@@ -39,16 +40,19 @@ public class TaskWorkflowJSON {
 		return array;
 	}
 	
-	public static JSONObject toJSON(TaskWorkflow taskWorkflow) {
+	public static JSONObject toJSON(TaskWorkflow workflow) {
 		return new JSONObject()
-			.put(IJsonNames.ID, taskWorkflow.getId())
-			.put(IJsonNames.DOMAIN, taskWorkflow.getDomain())
-			.put(IJsonNames.TASK_HOLDER, TaskHolderJSON.toJSON(taskWorkflow.getTaskHolder()))
-			.put(IJsonNames.TYPE, taskWorkflow.getType().getName())
-			.put(IJsonNames.COMMENT, taskWorkflow.getComment())
-			.put(IJsonNames.CREATION_DATE,  taskWorkflow.getCreationDate()!=null ? taskWorkflow.getCreationDate().getTime() : null)
-			.put(IJsonNames.CREATION_USER, taskWorkflow.getCreationUser())
-			.put(IJsonNames.MODIFICATION_DATE, taskWorkflow.getModificationDate()!=null ? taskWorkflow.getModificationDate().getTime(): null)
-			.put(IJsonNames.MODIFICATION_USER, taskWorkflow.getModificationUser());	
+			.put(IJsonNames.ID, workflow.getId())
+			.put(IJsonNames.DOMAIN, workflow.getDomain())
+			.put(IJsonNames.TASK_HOLDER, TaskHolderJSON.toJSON(workflow.getTaskHolder()))
+			.put(IJsonNames.TYPE, workflow.getType().getName())
+			.put(IJsonNames.COMMENT, workflow.getComment())
+			.put(IJsonNames.EMAIL, workflow.getEmail())
+			.put(IJsonNames.CREATION_DATE,  workflow.getCreationDate()!=null ? workflow.getCreationDate().getTime() : null)
+			.put(IJsonNames.CREATION_USER, workflow.getCreationUser())
+			.put(IJsonNames.MODIFICATION_DATE, workflow.getModificationDate()!=null ? workflow.getModificationDate().getTime(): null)
+			.put(IJsonNames.MODIFICATION_USER, workflow.getModificationUser())
+			.put("notification_date", workflow.getNotificationDate()!=null ? workflow.getNotificationDate().getTime(): null)
+			.put("notification_user", workflow.getNotificationUser());	
 	}
 }

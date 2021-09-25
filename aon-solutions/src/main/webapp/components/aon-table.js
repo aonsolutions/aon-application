@@ -1,5 +1,5 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT, EVENT, TAG } from "../environments/environments.js";
+import { CONSTANT, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonCheckbox } from "./aon-checkbox.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
@@ -68,14 +68,14 @@ export class AonTable extends AonElement {
       }
     }
 
-    tbody.addEventListener("scroll", () => {
-      let scrollTop = tbody.scrollTop;
+    tbody.addEventListener("scroll", ({target}) => {
+      const scrollTop = target.scrollTop;
+      const offsetHeight = target.offsetHeight;
+      const physicalSize = target.scrollHeight;
+      const maxScrollPosition = physicalSize - offsetHeight;
 
-      let offsetHeight = tbody.offsetHeight;
-      let physicalSize = tbody.scrollHeight;
-      let maxScrollPosition = physicalSize - offsetHeight;
       if (scrollTop >= maxScrollPosition) {
-        this.dispatchEvent(new CustomEvent("more"));
+        this.dispatchEvent(new CustomEvent(EVENT.MORE));
       }
     });
   }
@@ -193,7 +193,7 @@ export class AonTable extends AonElement {
       if ("option" === id && value[id]) {
         let aonIconB = new AonIconButton();
         aonIconB.id = this.getId()+"IconOption";
-        aonIconB.icon = "more_vert";
+        aonIconB.icon = MATERIAL_ICONS.MORE_VERT;
         td.appendChild(aonIconB);
         td.addEventListener(EVENT.CLICK, () => this.getOptions(tr, td, value[id]));
       } else if("icon" === id && value[id]) {

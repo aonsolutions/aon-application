@@ -1,8 +1,10 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -14,7 +16,6 @@ import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
-import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
@@ -452,9 +453,9 @@ public class AON_SOLUTIONS {
 			return getTimeControl().saveTimeControlDetail(ctx, tcd);
 		}
 	}
-	public static void deleteTimeControlDetail(Domain domain, String login, TimeControlFilter filter) {
+	public static void deleteTimeControlDetail(Domain domain, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			getTimeControl().deleteTimeControlDetail(ctx, filter);
+			getTimeControl().deleteTimeControlDetail(ctx, id);
 		}
 	}
 	
@@ -469,9 +470,9 @@ public class AON_SOLUTIONS {
 			return getTimeControl().getLocation(ctx, filter);
 		}
 	}
-	public static Location getLocation(Domain domain, String login, Coordinates c) {
+	public static Location getLocationByCoordinates(Domain domain, String login, Coordinates c) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			return getTimeControl().getLocation(ctx, c);
+			return getTimeControl().getLocationByCoordinates(ctx, c);
 		}
 	}
 	
@@ -481,9 +482,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static void deleteLocation(Domain domain, String login, Location lc) {
+	public static void deleteLocation(Domain domain, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			getTimeControl().deleteLocation(ctx, lc);
+			getTimeControl().deleteLocation(ctx, id);
 		}
 	}
 	
@@ -681,12 +682,46 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static HashMap<Byte, Integer> getTaskStatusCount(Domain domain, User user, TaskFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskStatusCount(ctx, filter);
+		}
+	}
+	
+	public static HashMap<String, Integer> getTaskCount(Domain domain, User user, TaskFilter filter, Integer taskHolderId, Optional<String> email) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskCount(ctx, filter, taskHolderId, email);
+		}
+	}
+	
+//	public static HashMap<String, Integer> getTaskCountSchemas(AonToken aonToken, TaskFilter filter) {
+//		List<String> schemas = AONContext.getSchemas();
+//		Integer total = 0;
+//		for(String schema: schemas) {
+//			String domain = AONContext.getSchemaFirstDomain(schema);
+//			if(!AonStringUtils.isBlank(domain)) {
+//				try(AONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+//					 TaskHolder taskHolder = getTask().getTaskHolderStream(ctx, aonToken.getAuth()).findFirst().orElse(null);
+//					 if(taskHolder!=null) {
+//						 getTask2().getTaskCount(ctx, filter, taskHolder.getId());
+//					 }
+//				} 
+//			}
+//		}
+//	}
+	
 	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskStream(ctx, filter);
 		}
 	}
-
+	
+	public static Stream<Task> getTaskStream(Domain domain, User user, TaskFilter filter, Integer page, Integer perPage) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getTask2().getTaskStream(ctx, filter, page, perPage);
+		}
+	}
+	
 	public static LinkedList<Task> getTaskList(Domain domain, User user, TaskFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskList(ctx, filter);
@@ -705,6 +740,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static void deleteTask(Domain domain, User user, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			getTask2().deleteTask(ctx, id);
+		}
+	}
+	
 	// TASKWORKFLOW
 	public static TaskWorkflow getTaskWorkflow(Domain domain, User user, TaskWorkflowFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
@@ -717,14 +758,20 @@ public class AON_SOLUTIONS {
 			return getTask2().getTaskWorkflowStream(ctx, filter);
 		}
 	}
+	
+	public static void updateTaskWorkflowBetween(Domain domain, User user, TaskWorkflowFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			getTask2().updateTaskWorkflowBetween(ctx, filter);
+		}
+	}
 
-	public static LinkedList<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter) {
+	public static List<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskWorkflowList(ctx, filter);
 		}
 	}
 	
-	public static LinkedList<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter, Integer page, Integer perPage) {
+	public static List<TaskWorkflow> getTaskWorkflowList(Domain domain, User user, TaskWorkflowFilter filter, Integer page, Integer perPage) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask2().getTaskWorkflowList(ctx, filter, page, perPage);
 		}
@@ -761,9 +808,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static void deleteTaskAttach(Domain domain, User user, TaskAttachFilter filter) {
+	public static void deleteTaskAttach(Domain domain, User user, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){		
-			getTask2().deleteTaskAttach(ctx, filter);
+			getTask2().deleteTaskAttach(ctx, id);
 		}
 	}
 	

@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -87,14 +85,14 @@ public interface IMod200<K extends IMod200Key> {
 	public List<LegalRepresentative> getRepresentatives();
 	public void setRepresentatives(List<LegalRepresentative> representatives);
 	
-	public List<CompanyAdministrator> getAdministrators();
-	public void setAdministrators(List<CompanyAdministrator> administrators);
+	public List<Mod200CompanyAdministrator> getAdministrators();
+	public void setAdministrators(List<Mod200CompanyAdministrator> administrators);
 	
-	public List<CompanyParticipation> getParticipationsIn();
-	public void setParticipationsIn(List<CompanyParticipation> participationsIn);
+	public List<Mod200CompanyParticipation> getParticipationsIn();
+	public void setParticipationsIn(List<Mod200CompanyParticipation> participationsIn);
 	
-	public List<CompanyParticipation> getParticipationsOut();
-	public void setParticipationsOut(List<CompanyParticipation> participationsOut);
+	public List<Mod200CompanyParticipation> getParticipationsOut();
+	public void setParticipationsOut(List<Mod200CompanyParticipation> participationsOut);
 	
 	public Map<K, DoubleVariable<K>> getKeysMap();
 	public void setKeysMap(Map<K, DoubleVariable<K>> keysMap);

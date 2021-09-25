@@ -6,7 +6,7 @@ import java.util.Date;
 public abstract class EnterpriseStatus implements Serializable {
 
 	public static interface Visitor  {
-		void up2Date();
+		void up2DateEnterprise();
 		void forbidden();
 		void notAuthorizedCCC();
 		void unknownError(String message);
@@ -62,7 +62,7 @@ public abstract class EnterpriseStatus implements Serializable {
 	public static class Up2Date extends AndEnterpriseStatus{
 		@Override
 		public void visit(Visitor visitor) {
-			visitor.up2Date();
+			visitor.up2DateEnterprise();
 			super.visit(visitor);
 		}
 	}		
@@ -191,7 +191,7 @@ public abstract class EnterpriseStatus implements Serializable {
 		enterpriseStatus.visit(new Visitor() {
 	
 			@Override
-			public void up2Date() {
+			public void up2DateEnterprise() {
 				saltraEnable.run();
 			}
 	
@@ -234,7 +234,7 @@ public abstract class EnterpriseStatus implements Serializable {
 		enterpriseStatus.visit(new Visitor() {
 	
 			@Override
-			public void up2Date() {
+			public void up2DateEnterprise() {
 				onSuccess.run();
 			}
 	
@@ -276,8 +276,8 @@ public abstract class EnterpriseStatus implements Serializable {
 		status.visit(new Visitor() {
 			
 			@Override
-			public void up2Date() {
-				System.out.println("up2Date");
+			public void up2DateEnterprise() {
+				System.out.println("up2Date Enterprise");
 			}
 			
 			@Override
@@ -318,7 +318,7 @@ public abstract class EnterpriseStatus implements Serializable {
 		status.visit(new Visitor() {
 			
 			@Override
-			public void up2Date() {
+			public void up2DateEnterprise() {
 			}
 			
 			@Override

@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
+import com.esferalia.aon.gwt.payroll.shared.RLCE;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
@@ -41,7 +42,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
@@ -76,6 +76,7 @@ public abstract class Employee extends ResizeComposite {
 		String journeyDurationWarning();
 		String warningTB();
 		String flexGrow();
+		String errorBorder();
 	}
 
 	// TABLA DATOS CONTRATO
@@ -86,7 +87,7 @@ public abstract class Employee extends ResizeComposite {
 	TableElement contractDataTable;
 	
 	@UiField
-	Label document_type;
+	Label documentType;
 	
 	@UiField
 	HTMLPanel documentPanel;
@@ -104,10 +105,7 @@ public abstract class Employee extends ResizeComposite {
 	SuggestBox nationality;
 	
 	@UiField
-	HTMLPanel ssNumberPanel;
-	
-	@UiField
-	SuggestBox security_social_num;
+	SuggestBox securitySocialNum;
 	
 	@UiField
 	HTMLPanel namePanel;
@@ -119,17 +117,14 @@ public abstract class Employee extends ResizeComposite {
 	Label firstSurnameLabel;
 
 	@UiField
-	SuggestBox first_surname;
+	SuggestBox firstSurname;
 
 	@UiField
-	TextBox second_surname;
+	TextBox secondSurname;
 	
 	@UiField
 	ListBox ssRegimeType;
 	
-	@UiField
-	HTMLPanel activityCCCPanel;
-
 	@UiField
 	ListBox activityCCC;
 	
@@ -137,13 +132,7 @@ public abstract class Employee extends ResizeComposite {
 	ListBox mdCTZLB;
 	
 	@UiField
-	HTMLPanel workplacePanel;
-	
-	@UiField
 	ListBox workplace;
-	
-	@UiField
-	HTMLPanel contractTypePanel;
 	
 	@UiField
 	TableCellElement contractTypeNode;
@@ -161,22 +150,19 @@ public abstract class Employee extends ResizeComposite {
 	ListBox modality;
 	
 	@UiField
-	HTMLPanel startDatePanel;
+	DateBoxEx startDate;
 
 	@UiField
-	DateBoxEx start_date;
+	DateBoxEx endDate;
 
 	@UiField
-	DateBoxEx end_date;
-
-	@UiField
-	Label seniority_date_label;
+	Label seniorityDateLabel;
 	
 	@UiField
 	HTMLPanel seniorityDatePanel;
 
 	@UiField
-	DateBoxEx seniority_date;
+	DateBoxEx seniorityDate;
 	
 	@UiField
 	ListBox agreement;
@@ -188,16 +174,19 @@ public abstract class Employee extends ResizeComposite {
 	TextBox category;
 
 	@UiField
-	ListBox quote_group;
+	ListBox quoteGroup;
 
 	@UiField
 	ListBox occupation;
+	
+	@UiField
+	ListBox rlce;
 
 	@UiField
 	ListBox journeyType;
 	
 	@UiField
-	DoubleBox partiality_coef;
+	DoubleBox partialityCoef;
 
 	// TABLA DATOS EMPLEADO
 	
@@ -208,7 +197,7 @@ public abstract class Employee extends ResizeComposite {
 	TableElement employeeDataTable;
 
 	@UiField
-	DateBoxEx birth_date;
+	DateBoxEx birthDate;
 
 	@UiField
 	Label age;
@@ -220,7 +209,7 @@ public abstract class Employee extends ResizeComposite {
 	ListBox civilStatus;
 	
 	@UiField
-	ListBox street_type;
+	ListBox streetType;
 
 	@UiField
 	SuggestBox address;
@@ -230,9 +219,6 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiField
 	TextBox addressInfo;
-	
-	@UiField
-	HTMLPanel addressZipPanel;
 
 	@UiField
 	TextBox addressZip;
@@ -259,9 +245,6 @@ public abstract class Employee extends ResizeComposite {
 	TextBox bic;
 	
 	@UiField
-	HTMLPanel accountPanel;
-	
-	@UiField
 	SuggestBox account;
 	
 	@UiField
@@ -276,7 +259,7 @@ public abstract class Employee extends ResizeComposite {
 
 	// ------------------------------------------------- Constructor
 
-	public Employee() {
+	protected Employee() {
 		//Initialize Nationality SuggestBox
 		MultiWordSuggestOracle oracleCountries = new MultiWordSuggestOracle();
 		ArrayList<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
@@ -295,12 +278,10 @@ public abstract class Employee extends ResizeComposite {
 		addReformatAccount();
 		
 		clearEmployee = new AonToolbarSmallButton("Limpiar empleado", AON.CSS.aonIconRefresh());
-		clearEmployee.addClickHandler(e -> {
-			onClearEmployeeClick();
-		});
+		clearEmployee.addClickHandler(e -> onClearEmployeeClick());
 		horizontalPanel.clear();
 		horizontalPanel.add(clearEmployee);
-		horizontalPanel.add(document_type);	
+		horizontalPanel.add(documentType);	
 	}
 	
 	// ------------------------------------------------- UiHandlers
@@ -309,30 +290,30 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiHandler("document")
 	void onDocumentChangeValue(SelectionEvent<Suggestion> event) {
-		String document = this.document.getValue().trim();
-		if(AonStringUtils.isNotBlank(document))
-			onEmployeeDocumentSuggestionChange(document);
+		String documentStr = this.document.getValue().trim();
+		if(AonStringUtils.isNotBlank(documentStr))
+			onEmployeeDocumentSuggestionChange(documentStr);
 	}
 	
 	@UiHandler("document")
 	void onDocumentChangeValue(ValueChangeEvent<String> event) {
-		String document = this.document.getValue().trim();
+		String documentStr = this.document.getValue().trim();
 		
-		if(AonStringUtils.isNotBlank(document)) {
+		if(AonStringUtils.isNotBlank(documentStr)) {
 			
-			String document_type = checkDocumentType(document);
-			this.document_type.setText(document_type);
+			String documentTypeStr = checkDocumentType(documentStr);
+			this.documentType.setText(documentTypeStr);
 			
-			if(checkDocumentValidation(document_type, document))
-				addSuccessIconTB(documentPanel, this.document);
+			if(checkDocumentValidation(documentTypeStr, documentStr))
+				removeErrorBorder(this.document);
 			else
-				addWarningIcon(documentPanel, this.document, "El documento de identidad es err\u00F3neo");
+				addErrorBorder(this.document);
 				
-			showNationality(document_type);	
+			showNationality(documentTypeStr);	
 			
-			onEmployeeDocumentChange(document, document_type);
+			onEmployeeDocumentChange(documentStr, documentTypeStr);
 		} else {
-			removeWarningIconTB(documentPanel, this.document);
+			removeErrorBorder(this.document);
 		}	
 	}
 	
@@ -342,25 +323,29 @@ public abstract class Employee extends ResizeComposite {
 		onEmployeeNationalityChange(countryIso2);
 	}
 	
-	@UiHandler("security_social_num")
+	@UiHandler("securitySocialNum")
 	void onSocialSecurityNumChangeValue(SelectionEvent<Suggestion> event) {
-		String ssNum = this.security_social_num.getValue().trim();
+		String ssNum = this.securitySocialNum.getValue().trim();
 		if(AonStringUtils.isNotBlank(ssNum))
 			onEmployeeSSNumSuggestionChange(ssNum); 
 	}
 	
-	@UiHandler("security_social_num")
+	@UiHandler("securitySocialNum")
 	void onSocialSecurityNumChangeValue(ValueChangeEvent<String> event) {
-		String ssNum = this.security_social_num.getValue().trim();
+		String ssNum = this.securitySocialNum.getValue().trim();
 		if(AonStringUtils.isNotBlank(ssNum)) {
-			if(checkSSNumValidation(ssNum))
-				addSuccessIconTB(ssNumberPanel, this.security_social_num);
-			else
-				addWarningIcon(ssNumberPanel, this.security_social_num, "El numero es err\u00F3neo");
+			if(checkSSNumValidation(ssNum)) {
+				removeErrorBorder(this.securitySocialNum);
+				this.securitySocialNum.setTitle(null);
+			} else {
+				addErrorBorder(this.securitySocialNum);
+				this.securitySocialNum.setTitle("El numero es err\u00F3neo");
+			}
 			
 			onEmployeeSSNumChange(ssNum); 
 		} else {
-			removeWarningIconTB(ssNumberPanel, this.security_social_num);
+			removeErrorBorder(this.securitySocialNum);
+			this.securitySocialNum.setTitle(null);
 		}
 	}
 	
@@ -373,35 +358,35 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiHandler("name")
 	void onNameChangeValue(ValueChangeEvent<String> event) {
-		String name = this.name.getValue().trim();
-		if(AonStringUtils.isNotBlank(name))
-			onEmployeeNameChange(name);
+		String nameStr = this.name.getValue().trim();
+		if(AonStringUtils.isNotBlank(nameStr))
+			onEmployeeNameChange(nameStr);
 	}
 	
-	@UiHandler("first_surname")
+	@UiHandler("firstSurname")
 	void onFirstSurnameChangeValue(SelectionEvent<Suggestion> event) {
-		String nameSurname = this.first_surname.getValue().trim();
+		String nameSurname = this.firstSurname.getValue().trim();
 		if(AonStringUtils.isNotBlank(nameSurname))
 			onEmployeeFirstSurnameSuggestionChange(nameSurname);
 	}
 	
-	@UiHandler("first_surname")
+	@UiHandler("firstSurname")
 	void onFirstSurnameChangeValue(ValueChangeEvent<String> event) {
-		String surname = this.first_surname.getValue().trim();
+		String surname = this.firstSurname.getValue().trim();
 		if(AonStringUtils.isNotBlank(surname))
 			onEmployeeFirstSurnameChange(surname);
 	}
 	
-	@UiHandler("second_surname")
+	@UiHandler("secondSurname")
 	void onSecondSurnameChangeValue(ChangeEvent event) {
-		String secondSurname = this.second_surname.getValue().trim();
-		if(AonStringUtils.isNotBlank(secondSurname))
-			onEmployeeSecondSurnameChange(secondSurname);
+		String secondSurnameStr = this.secondSurname.getValue().trim();
+		if(AonStringUtils.isNotBlank(secondSurnameStr))
+			onEmployeeSecondSurnameChange(secondSurnameStr);
 	}
 	
 	@UiHandler("ssRegimeType")
 	void onContractSSRegimenChangeValue(ChangeEvent event) {
-		byte ssRegime = Byte.valueOf(this.ssRegimeType.getSelectedValue()).byteValue();
+		byte ssRegime = Byte.parseByte(this.ssRegimeType.getSelectedValue());
 		
 		if(ssRegime == (byte)3){
 			showElementsFreelancerTable();
@@ -414,14 +399,14 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiHandler("activityCCC")
 	void onContractActivityCCCChangeValue(ChangeEvent event) {
-		String activityCCC = String.valueOf(this.activityCCC.getSelectedValue());
+		String activityCCCStr = String.valueOf(this.activityCCC.getSelectedValue());
 		
-		if(AonStringUtils.equalsIgnoreCase(activityCCC, "-1"))
+		if(AonStringUtils.equalsIgnoreCase(activityCCCStr, "-1"))
 			onContractActiviesCCCChange(null);
 		else {
-			onContractActiviesCCCChange(activityCCC);
+			onContractActiviesCCCChange(activityCCCStr);
 			
-			Byte cccType = Byte.parseByte(activityCCC.split("/")[2]);
+			Byte cccType = Byte.parseByte(activityCCCStr.split("/")[2]);
 			if(cccType == (byte)7)
 				showMdCtzContract();
 			else
@@ -443,12 +428,12 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiHandler("contractTypeLB")
 	void onContractTypeChangeValue(ChangeEvent event) {
-		String contractType = String.valueOf(this.contractTypeLB.getSelectedValue());
+		String contractTypeStr = String.valueOf(this.contractTypeLB.getSelectedValue());
 		
-		if(AonStringUtils.equalsIgnoreCase(contractType, "-1"))
+		if(AonStringUtils.equalsIgnoreCase(contractTypeStr, "-1"))
 			onContractTypeChange(null);
 		else {
-			Integer contractTypeInt = Integer.parseInt(contractType);
+			Integer contractTypeInt = Integer.parseInt(contractTypeStr);
 			if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0))
 				showPartialTimeContract();
 			else
@@ -456,7 +441,7 @@ public abstract class Employee extends ResizeComposite {
 			
 			updateModality(contractTypeInt);
 			
-			onContractTypeChange(contractType);
+			onContractTypeChange(contractTypeStr);
 		}
 	}
 
@@ -470,41 +455,41 @@ public abstract class Employee extends ResizeComposite {
 			onContractModalityChange(contractModel);
 	}
 
-	@UiHandler("start_date")
+	@UiHandler("startDate")
 	void onStartDateChangeValue(ValueChangeEvent<Date> event) {
-		Date startDate = this.start_date.getValue();
-		onContractStartDateChange(startDate);
+		Date startDateStr = this.startDate.getValue();
+		onContractStartDateChange(startDateStr);
 		
 		if(null != startDate)
-			this.seniority_date.setValue(startDate, true);
+			this.seniorityDate.setValue(startDateStr, true);
 		
 	}
 
-	@UiHandler("end_date")
+	@UiHandler("endDate")
 	void onEndDateChangeValue(ValueChangeEvent<Date> event) {
-		Date endDate = this.end_date.getValue();
-		onContractEndDateChange(endDate);
+		Date endDateStr = this.endDate.getValue();
+		onContractEndDateChange(endDateStr);
 	}
 
-	@UiHandler("seniority_date")
+	@UiHandler("seniorityDate")
 	void onSeniorityDateChangeValue(ValueChangeEvent<Date> event) {
-		Date startDate = this.start_date.getValue();
-		Date seniorityDate = this.seniority_date.getValue();
+		Date startDateStr = this.startDate.getValue();
+		Date seniorityDateStr = this.seniorityDate.getValue();
 		
-		if(null == startDate)
-			addInfoIcon(seniorityDatePanel, this.seniority_date, "La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
-		else if(null != seniorityDate) {
-			DateUtils.resetTime(startDate);
-			DateUtils.resetTime(seniorityDate);
+		if(null == startDateStr)
+			addInfoIcon(seniorityDatePanel, this.seniorityDate, "La fecha de inicio no coincide con la de antig\u00FCedad.");
+		else if(null != seniorityDateStr) {
+			DateUtils.resetTime(startDateStr);
+			DateUtils.resetTime(seniorityDateStr);
 			
-			if(DateUtils.equals(startDate, seniorityDate))
-				removeInfoIcon(seniorityDatePanel, this.seniority_date);
+			if(DateUtils.equals(startDateStr, seniorityDateStr))
+				removeInfoIcon(seniorityDatePanel, this.seniorityDate);
 			else
-				addInfoIcon(seniorityDatePanel, this.seniority_date, "La fecha de inicio no coincide con la de antig" + String.valueOf("\u00FC") + "edad.");
+				addInfoIcon(seniorityDatePanel, this.seniorityDate, "La fecha de inicio no coincide con la de antig\u00FCedad.");
 		} else
-			removeInfoIcon(seniorityDatePanel, this.seniority_date);
+			removeInfoIcon(seniorityDatePanel, this.seniorityDate);
 		
-		onContractSeniorityDateChange(seniorityDate);
+		onContractSeniorityDateChange(seniorityDateStr);
 	}
 
 	@UiHandler("agreement")
@@ -533,104 +518,109 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiHandler("category")
 	void onCategoryChangeValue(ChangeEvent event) {
-		String category = this.category.getValue();
-		if(AonStringUtils.isNotBlank(category))
-			onContractCategoryChange(category);
+		String categoryStr = this.category.getValue();
+		if(AonStringUtils.isNotBlank(categoryStr))
+			onContractCategoryChange(categoryStr);
 	}
 
-	@UiHandler("quote_group")
+	@UiHandler("quoteGroup")
 	void onQuoteGroupChangeValue(ChangeEvent event) {
-		String quoteGroup = String.valueOf(this.quote_group.getSelectedValue());
-		if(AonStringUtils.equalsIgnoreCase(quoteGroup, "-1"))
+		String quoteGroupStr = String.valueOf(this.quoteGroup.getSelectedValue());
+		if(AonStringUtils.equalsIgnoreCase(quoteGroupStr, "-1"))
 			onContractQuoteGroupChange(null);
 		else
-			onContractQuoteGroupChange(quoteGroup);
+			onContractQuoteGroupChange(quoteGroupStr);
 	}
 
 	@UiHandler("occupation")
 	void onContractOccupationChangeValue(ChangeEvent event) {
-		String occupation = String.valueOf(this.occupation.getSelectedValue());
-		if(AonStringUtils.equalsIgnoreCase(occupation, "-1"))
+		String occupationStr = String.valueOf(this.occupation.getSelectedValue());
+		if(AonStringUtils.equalsIgnoreCase(occupationStr, "-1"))
 			onContractOccupationChange(null);
 		else
-			onContractOccupationChange(occupation);
+			onContractOccupationChange(occupationStr);
+	}
+	
+	@UiHandler("rlce")
+	void onContractRLCEChangeValue(ChangeEvent event) {
+		onContractRLCEChange(this.rlce.getSelectedValue());
 	}
 	
 	@UiHandler("journeyType")
 	void onContractJourneyTypeChangeValue(ChangeEvent event) {
-		Boolean journey_type = Boolean.valueOf(this.journeyType.getSelectedValue());
-		if(journey_type)
+		Boolean journeyTypeStr = Boolean.valueOf(this.journeyType.getSelectedValue());
+		if(Boolean.TRUE.equals(journeyTypeStr))
 			showElementsFullTimeContract();
 		else
 			showPartialTimeContract();
 		
-		onContractJourneyTypeChange(journey_type);
+		onContractJourneyTypeChange(journeyTypeStr);
 	}
 	
-	@UiHandler("partiality_coef")
+	@UiHandler("partialityCoef")
 	void onContractPartialityCoefChangeValue(ValueChangeEvent<Double> event) {
-		Double partialityCoef = this.partiality_coef.getValue();
-		onContractPartialityChange(partialityCoef);
+		Double partialityCoefStr = this.partialityCoef.getValue();
+		onContractPartialityChange(partialityCoefStr);
 	}
 	
 	// TABLA DATOS EMPLEADO
 	
-	@UiHandler("birth_date")
+	@UiHandler("birthDate")
 	void onBithDateChangeValue(ValueChangeEvent<Date> event) {
-		Date birthDate = this.birth_date.getValue();
+		Date birthDateStr = this.birthDate.getValue();
 		
-		if(null != birthDate) {
+		if(null != birthDateStr) {
 			Date actualDay = new Date();
-			Integer age = getYears(actualDay, birthDate);
-			this.age.setText("( " + (age) + " a" + String.valueOf("\u00F1") + "os )");
+			Integer ageStr = getYears(actualDay, birthDateStr);
+			this.age.setText("( " + (ageStr) + " a\u00F1os )");
 		} else
 			this.age.setText("");
 		
-		onEmployeeBirthDateChange(birthDate);
+		onEmployeeBirthDateChange(birthDateStr);
 	}
 
 	@UiHandler("gender")
 	void onGenderChangeValue(ChangeEvent event) {
-		byte gender = Byte.valueOf(this.gender.getSelectedValue()).byteValue();
-		onEmployeeGenderChange(gender);
+		byte genderStr = Byte.parseByte(this.gender.getSelectedValue());
+		onEmployeeGenderChange(genderStr);
 	}
 	
 	@UiHandler("civilStatus")
 	void onCivilStatusChangeValue(ChangeEvent event) {
-		byte civilStatus = Byte.valueOf(this.civilStatus.getSelectedValue()).byteValue();
-		onEmployeeCivilStatusChange(civilStatus);
+		byte civilStatusStr = Byte.parseByte(this.civilStatus.getSelectedValue());
+		onEmployeeCivilStatusChange(civilStatusStr);
 	}
 	
-	@UiHandler("street_type")
+	@UiHandler("streetType")
 	void onStreetTypeChangeValue(ChangeEvent event) {
-		String streetType = String.valueOf(this.street_type.getSelectedValue());
-		onEmployeeStreetTypeChange(streetType);
+		String streetTypeStr = String.valueOf(this.streetType.getSelectedValue());
+		onEmployeeStreetTypeChange(streetTypeStr);
 	}
 
 	@UiHandler("address")
 	void onAddressChangeValue(ValueChangeEvent<String> event) {
-		String address = this.address.getValue();
-		onEmployeeAddressChange(address);
+		String addressStr = this.address.getValue();
+		onEmployeeAddressChange(addressStr);
 	}
 
 	@UiHandler("addressNum")
 	void onAddressNumChangeValue(ChangeEvent event) {
-		String addressNum = this.addressNum.getValue();
-		onEmployeeAddressNumChange(addressNum);
+		String addressNumStr = this.addressNum.getValue();
+		onEmployeeAddressNumChange(addressNumStr);
 	}
 	
 	@UiHandler("addressInfo")
 	void onAddressInfoChangeValue(ChangeEvent event) {
-		String addressInfo = this.addressInfo.getValue();
-		onEmployeeAddressInfoChange(addressInfo);
+		String addressInfoStr = this.addressInfo.getValue();
+		onEmployeeAddressInfoChange(addressInfoStr);
 	}
 
 	@UiHandler("addressZip")
 	void onAddressZipChangeValue(ChangeEvent event) {
-		String addressZip = this.addressZip.getValue();
-		onEmployeeAddressZipChange(addressZip);
+		String addressZipStr = this.addressZip.getValue();
+		onEmployeeAddressZipChange(addressZipStr);
 		
-		if(addressZip.length() >= 2) {
+		if(addressZipStr.length() >= 2) {
 			String zip = this.addressZip.getValue().substring(0, 2);
 			setSelectedValueLB(addressProvince, zip); 
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince);
@@ -646,26 +636,26 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiHandler("addressMunicipality")
 	void onAddressMunicipalityChangeValue(ChangeEvent event) {
-		String addressMunicipality = municipalities.getZipByMunicipalityName(this.addressMunicipality.getSelectedItemText()).toString();
-		onEmployeeAddressMunicipalityChange(addressMunicipality);
+		String addressMunicipalityStr = municipalities.getZipByMunicipalityName(this.addressMunicipality.getSelectedItemText()).toString();
+		onEmployeeAddressMunicipalityChange(addressMunicipalityStr);
 	}
 
 	@UiHandler("mobile")
 	void onMobileChangeValue(ChangeEvent event) {
-		String mobile = this.mobile.getValue();
-		onEmployeeMobileChange(mobile);
+		String mobileStr = this.mobile.getValue();
+		onEmployeeMobileChange(mobileStr);
 	}
 	
 	@UiHandler("phone")
 	void onPhoneChangeValue(ChangeEvent event) {
-		String phone = this.phone.getValue();
-		onEmployeePhoneChange(phone);
+		String phoneStr = this.phone.getValue();
+		onEmployeePhoneChange(phoneStr);
 	}
 
 	@UiHandler("email")
 	void onEmailChangeValue(ChangeEvent event) {
-		String email = this.email.getValue();
-		onEmployeeEmailChange(email);
+		String emailStr = this.email.getValue();
+		onEmployeeEmailChange(emailStr);
 	}
 
 	@UiHandler("payMethod")
@@ -679,25 +669,29 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiHandler("bic")
 	void onBIClChangeValue(ChangeEvent event) {
-		String bic = this.bic.getValue();
-		onEmployeeBICChange(bic);
+		String bicStr = this.bic.getValue();
+		onEmployeeBICChange(bicStr);
 	}
 	
 	@UiHandler("account")
 	void onAccountChangeValue(ValueChangeEvent<String> event) {
-		String account = this.account.getValue();
-		account = account.replaceAll("\\W+", "");
+		String accountStr = this.account.getValue();
+		accountStr = accountStr.replaceAll("\\W+", "");
 		
-		if(account.length() > 0)
-			if(Iban.validateIBAN(account))
-				addSuccessIconTB(accountPanel, this.account);
-			else
-				addWarningIcon(accountPanel, this.account, "IBAN no valido");
+		if(accountStr.length() > 0) {
+			if(Iban.validateIBAN(accountStr)) {
+				removeErrorBorder(this.account);
+				this.account.setTitle(null);
+			} else {
+				addErrorBorder(this.account);
+				this.account.setTitle("IBAN no valido");
+			}
+		}
 		
-		String bankAlias = getBankAlias(account);
-		String bankSwift = getBankSwift(account);
+		String bankAlias = getBankAlias(accountStr);
+		String bankSwift = getBankSwift(accountStr);
 		this.bic.setValue(bankSwift);
-		onEmployeeAccountChange(account, bankAlias, bankSwift);
+		onEmployeeAccountChange(accountStr, bankAlias, bankSwift);
 	}
 
 	// ------------------------------------------------- Abstract methods
@@ -706,7 +700,7 @@ public abstract class Employee extends ResizeComposite {
 	
 	public abstract void onClearEmployeeClick();
 	public abstract void onEmployeeDocumentSuggestionChange(String document);
-	public abstract void onEmployeeDocumentChange(String document, String document_type);
+	public abstract void onEmployeeDocumentChange(String document, String documentType);
 	public abstract void onEmployeeNationalityChange(String countryIso2);
 	public abstract void onEmployeeSSNumSuggestionChange(String ssNumber);
 	public abstract void onEmployeeSSNumChange(String ssNumber);
@@ -729,7 +723,8 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onContractCategoryChange(String category);
 	public abstract void onContractQuoteGroupChange(String quoteGroup);
 	public abstract void onContractOccupationChange(String occupation);
-	public abstract void onContractJourneyTypeChange(Boolean journey_type);
+	public abstract void onContractRLCEChange(String rlce);
+	public abstract void onContractJourneyTypeChange(Boolean journeyType);
 	public abstract void onContractPartialityChange(Double partialityCoef);
 	public abstract void onContractJourneyDurationClick();
 	
@@ -766,34 +761,35 @@ public abstract class Employee extends ResizeComposite {
 		
 		this.document.setValue("");
 		this.nationality.setValue("");
-		this.security_social_num.setValue("");
+		this.securitySocialNum.setValue("");
 		this.name.setValue("");
-		this.first_surname.setValue("");
-		this.second_surname.setValue("");
+		this.firstSurname.setValue("");
+		this.secondSurname.setValue("");
 		this.ssRegimeType.clear();
 		this.activityCCC.clear();
 		this.mdCTZLB.clear();
 		this.workplace.clear();
 		this.contractTypeLB.clear();
 		this.modality.clear();
-		this.start_date.setValue(null);
-		this.end_date.setValue(null);
-		this.seniority_date.setValue(null);
+		this.startDate.setValue(null);
+		this.endDate.setValue(null);
+		this.seniorityDate.setValue(null);
 		this.agreement.clear();
 		this.level.clear();
 		this.category.setValue("");
-		this.quote_group.clear();
+		this.quoteGroup.clear();
 		this.occupation.clear();
+		this.rlce.clear();
 		this.journeyType.clear();
-		this.partiality_coef.setValue(null);
+		this.partialityCoef.setValue(null);
 		this.journeyDuration.clear();
 
 		// TABLA DATOS EMPLEADO
 		
-		this.birth_date.setValue(null);
+		this.birthDate.setValue(null);
 		this.gender.clear();
 		this.civilStatus.clear();
-		this.street_type.clear();
+		this.streetType.clear();
 		this.address.setValue("");
 		this.addressNum.setValue("");
 		this.addressInfo.setValue("");
@@ -820,36 +816,39 @@ public abstract class Employee extends ResizeComposite {
 		
 		// MODALIDAD DE COTIZACION
 		this.mdCTZLB.addItem("-", "-1");
-		this.mdCTZLB.addItem("Cotizaci" + String.valueOf("\u00F3") + "n mensual", "1");
+		this.mdCTZLB.addItem("Cotizaci\u00F3n mensual", "1");
 		this.mdCTZLB.addItem("Jornadas reales", "2");
 		
 		// MODALIDAD
 		this.modality.addItem("-", "-1");
 
 		// GRUPO DE COTIZACION
-		this.quote_group.addItem("-", "-1");
-		this.quote_group.addItem("01. Alta direcci" + String.valueOf("\u00F3") + "n y personal no incluido en el E.T.", "01");
-		this.quote_group.addItem("02. Ingenieros t" + String.valueOf("\u00E9") + "cnicos, peritos y ayudantes titulados", "02");
-		this.quote_group.addItem("03. Jefes administrativos y de taller", "03");
-		this.quote_group.addItem("04. Ayudantes no titulados", "04");
-		this.quote_group.addItem("05. Oficiales administrativos", "05");
-		this.quote_group.addItem("06. Subalternos", "06");
-		this.quote_group.addItem("07. Axiliares administrativos", "07");
-		this.quote_group.addItem("08. Oficiales de primera y segunda", "08");
-		this.quote_group.addItem("09. Oficiales de tercera y especialista", "09");
-		this.quote_group.addItem("10. Peones", "10");
-		this.quote_group.addItem("11. Trabajadores menos de dieciocho a" + String.valueOf("\u00F1") + "os", "11");
+		this.quoteGroup.addItem("-", "-1");
+		this.quoteGroup.addItem("01. Alta direcci\u00F3n y personal no incluido en el E.T.", "01");
+		this.quoteGroup.addItem("02. Ingenieros t\u00E9cnicos, peritos y ayudantes titulados", "02");
+		this.quoteGroup.addItem("03. Jefes administrativos y de taller", "03");
+		this.quoteGroup.addItem("04. Ayudantes no titulados", "04");
+		this.quoteGroup.addItem("05. Oficiales administrativos", "05");
+		this.quoteGroup.addItem("06. Subalternos", "06");
+		this.quoteGroup.addItem("07. Axiliares administrativos", "07");
+		this.quoteGroup.addItem("08. Oficiales de primera y segunda", "08");
+		this.quoteGroup.addItem("09. Oficiales de tercera y especialista", "09");
+		this.quoteGroup.addItem("10. Peones", "10");
+		this.quoteGroup.addItem("11. Trabajadores menos de dieciocho a\u00F1os", "11");
 
 		// OCUPACION
 		this.occupation.addItem("-", "-1");
 		this.occupation.addItem("a. Personal en trabajos exclusivos de oficina", "a");
-		this.occupation.addItem("b. Tipo de cotizaci" + String.valueOf("\u00F3") + "n para todos los trabajadores que deban desplazarse habitalmente", "b");
-		this.occupation.addItem("d. Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcci" + String.valueOf("\u00F3") + "n en general", "d");
-		this.occupation.addItem("e. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de pasajeros en general (taxis, autom" + String.valueOf("\u00F3") + "viles, autobuses, etc)", "e");
-		this.occupation.addItem("f. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de mercanc" + String.valueOf("\u00ED") + "as que tengan una capacidad de carga " + String.valueOf("\u00FA") + "til superior a 3,5 Tm.", "f");
+		this.occupation.addItem("b. Tipo de cotizaci\u00F3n para todos los trabajadores que deban desplazarse habitalmente", "b");
+		this.occupation.addItem("d. Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcci\u00F3n en general", "d");
+		this.occupation.addItem("e. Conductores de veh\u00EDculo autom\u00F3vil de transporte de pasajeros en general (taxis, autom\u00F3viles, autobuses, etc)", "e");
+		this.occupation.addItem("f. Conductores de veh\u00EDculo autom\u00F3vil de transporte de mercanc\u00EDas que tengan una capacidad de carga \u00FAtil superior a 3,5 Tm.", "f");
 		this.occupation.addItem("g. Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles", "g");
 		this.occupation.addItem("h. Vigilantes, guardas, guardas jurados y personal de seguridad", "h");
 
+		// RLCE
+		RLCE.getRLCE().entrySet().forEach(entry -> rlce.addItem(entry.getKey() + " - " + entry.getValue(), entry.getKey()));
+		
 		// TIPO DE JORNADA
 		this.journeyType.addItem("Tiempo Completo", "true");
 		this.journeyType.addItem("Tiempo Parcial", "false");
@@ -870,9 +869,8 @@ public abstract class Employee extends ResizeComposite {
 		this.civilStatus.addItem("DESCONOCIDO", "5");
 		
 		//TIPO DE VIA
-		for(int i=0; i<StreetType.values().length; i++){
-			this.street_type.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getShortCode());
-		}
+		for(int i=0; i<StreetType.values().length; i++)
+			this.streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getShortCode());
 		
 		//PROVINCIA
 		this.addressProvince.addItem("-", "-1");
@@ -893,8 +891,8 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- Fill default fields
@@ -913,8 +911,8 @@ public abstract class Employee extends ResizeComposite {
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), civilStatus);
 		
 		//STREET_TYPE
-		street_type.setSelectedIndex(14); //Calle
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), street_type);
+		streetType.setSelectedIndex(14); //Calle
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), streetType);
 	}
 	
 	// ------------------------------------------------- Initialize SuggestBox
@@ -922,49 +920,45 @@ public abstract class Employee extends ResizeComposite {
 	public void initSuggestBox(WorkplaceEmployees workplaceEmployees) {
 		//DOCUMENT
 		List<String> employeesDocuments = workplaceEmployees.getWorkplaceEmployeesDocument();
-		List<String> employeesDocumentsSuggest = new ArrayList<String>();
-		for(String document : employeesDocuments)
-			employeesDocumentsSuggest.add(document+"");
+		List<String> employeesDocumentsSuggest = new ArrayList<>();
+		employeesDocuments.forEach(document -> employeesDocumentsSuggest.add(document+""));
 		MultiWordSuggestOracle orclDocuments = (MultiWordSuggestOracle) document.getSuggestOracle();
 		orclDocuments.addAll(employeesDocumentsSuggest);
 		document.setAutoSelectEnabled(false);
 		
 		//SS_NUMBER
 		List<String> employeesSSNumbers = workplaceEmployees.getWorkplaceEmployeesSSNumber();
-		List<String> employeesSSNumbersSuggest = new ArrayList<String>();
-		for(String ssNumber : employeesSSNumbers)
-			employeesSSNumbersSuggest.add(ssNumber+"");
-		MultiWordSuggestOracle orclSSNumbers = (MultiWordSuggestOracle) security_social_num.getSuggestOracle();
+		List<String> employeesSSNumbersSuggest = new ArrayList<>();
+		employeesSSNumbers.forEach(ssNum -> employeesSSNumbersSuggest.add(ssNum+""));
+		MultiWordSuggestOracle orclSSNumbers = (MultiWordSuggestOracle) securitySocialNum.getSuggestOracle();
 		orclSSNumbers.addAll(employeesSSNumbersSuggest);
-		security_social_num.setAutoSelectEnabled(false);
+		securitySocialNum.setAutoSelectEnabled(false);
 		
 		//NAMES
 		List<String> employeesNames = workplaceEmployees.getWorkplaceEmployeesName();
-		List<String> employeesNamesSuggest = new ArrayList<String>();
-		for(String name : employeesNames)
-			employeesNamesSuggest.add(name+"");
+		List<String> employeesNamesSuggest = new ArrayList<>();
+		employeesNames.forEach(name -> employeesNamesSuggest.add(name+""));
 		MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) name.getSuggestOracle();
 		orclNames.addAll(employeesNamesSuggest);
 		name.setAutoSelectEnabled(false);
 		
 		//SURNAME
 		List<String> employeesSurNames = workplaceEmployees.getWorkplaceEmployeesSurName();
-		List<String> employeesSurNamesSuggest = new ArrayList<String>();
-		for(String surName : employeesSurNames)
-			employeesSurNamesSuggest.add(surName+"");
-		MultiWordSuggestOracle orclSurNames = (MultiWordSuggestOracle) first_surname.getSuggestOracle();
+		List<String> employeesSurNamesSuggest = new ArrayList<>();
+		employeesSurNames.forEach(surName -> employeesSurNamesSuggest.add(surName+""));
+		MultiWordSuggestOracle orclSurNames = (MultiWordSuggestOracle) firstSurname.getSuggestOracle();
 		orclSurNames.addAll(employeesSurNamesSuggest);
-		first_surname.setAutoSelectEnabled(false);
+		firstSurname.setAutoSelectEnabled(false);
 	}
 
 	public void initActivitiesCCC(Map<Integer, String> activities, Map<Integer, CCCInfo> cccs) {
 		//ACTIVITY - CCC
 		activityCCC.addItem("-", "-1");
 		if(null != activities)
-		for(Entry<Integer,String> entry : activities.entrySet())
-			for(CCCInfo cccInfo :  cccs.values())
-				if(cccInfo.getActivityId() == entry.getKey())
-					activityCCC.addItem(entry.getValue() + " - " + getCCCType(cccInfo.getType()) + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
+			for(Entry<Integer,String> entry : activities.entrySet())
+				for(CCCInfo cccInfo :  cccs.values())
+					if(cccInfo.getActivityId().equals(entry.getKey()))
+						activityCCC.addItem(entry.getValue() + " - " + getCCCType(cccInfo.getType()) + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
 	}
 	
 	public void initWorkplaces(List<Workplace> workplaces) {
@@ -1051,9 +1045,9 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		
-		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void hideElementsFreelancerTable() {
@@ -1068,14 +1062,14 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- Show/hide methods partial/full time
 	
 	public void showElementsFullTimeContract() {
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showPartialTimeContract() {
@@ -1087,13 +1081,8 @@ public abstract class Employee extends ResizeComposite {
 		journeyDuration.add(message);
 		journeyDuration.setTitle("Las horas se deben definir en el calendario del empleado.");
 		
-		calendarBtn.addClickHandler(e -> {
-			onContractJourneyDurationClick();
-		});
-		
-		message.addClickHandler(e -> {
-			onContractJourneyDurationClick();
-		});
+		calendarBtn.addClickHandler(e -> onContractJourneyDurationClick());
+		message.addClickHandler(e -> onContractJourneyDurationClick());
 	}
 	
 	private void showElementsPartialTimeContract() {
@@ -1115,34 +1104,42 @@ public abstract class Employee extends ResizeComposite {
 	
 	// ------------------------------------------------- CheckStatus(EmployeeDraftObject) - EmployeeTree
 
-	public void setEndDate(Date endDate) {
-		end_date.setValue(endDate, false);
-		onContractEndDateChange(endDate);
+	public void setEndDate(Date endDateValue) {
+		endDate.setValue(endDateValue, false);
+		onContractEndDateChange(endDateValue);
 	}
 	
-	public void setStartDate(Date endDate) {
-		start_date.setValue(endDate, false);
-		onContractStartDateChange(endDate);
+	public void setStartDate(Date startDateValeu) {
+		startDate.setValue(startDateValeu, false);
+		onContractStartDateChange(startDateValeu);
 	}
 
 	public void setOcupation(String str) {
 		switch (str) {
-		case "a":
-			occupation.setSelectedIndex(1);
-		case "b":
-			occupation.setSelectedIndex(2);
-		case "d":
-			occupation.setSelectedIndex(3);
-		case "e":
-			occupation.setSelectedIndex(4);
-		case "f":
-			occupation.setSelectedIndex(5);
-		case "g":
-			occupation.setSelectedIndex(6);
-		case "h":
-			occupation.setSelectedIndex(7);
-		default:
-			occupation.setSelectedIndex(0);
+			case "a":
+				occupation.setSelectedIndex(1);
+				break;
+			case "b":
+				occupation.setSelectedIndex(2);
+				break;
+			case "d":
+				occupation.setSelectedIndex(3);
+				break;
+			case "e":
+				occupation.setSelectedIndex(4);
+				break;
+			case "f":
+				occupation.setSelectedIndex(5);
+				break;
+			case "g":
+				occupation.setSelectedIndex(6);
+				break;
+			case "h":
+				occupation.setSelectedIndex(7);
+				break;
+			default:
+				occupation.setSelectedIndex(0);
+				break;
 		}
 		onContractOccupationChange(str);
 		
@@ -1151,12 +1148,7 @@ public abstract class Employee extends ResizeComposite {
 	// ------------------------------------------------- Account methods
 
 	private void addReformatAccount() {
-		account.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				reformatAccount(account);
-			}
-		});
+		account.addValueChangeHandler(e -> reformatAccount(account));
 	}
 	
 	public void reformatAccount(SuggestBox accountField) {
@@ -1169,9 +1161,8 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	public void initIbans(ArrayList<String> employeeIbans) {
-		List<String> employeesIbanSuggest = new ArrayList<String>();
-		for(String iban : employeeIbans)
-			employeesIbanSuggest.add(iban);
+		List<String> employeesIbanSuggest = new ArrayList<>();
+		employeeIbans.forEach(employeesIbanSuggest::add);
 		MultiWordSuggestOracle orclIbans = (MultiWordSuggestOracle) account.getSuggestOracle();
 		orclIbans.addAll(employeesIbanSuggest);
 		account.setAutoSelectEnabled(false);
@@ -1198,15 +1189,15 @@ public abstract class Employee extends ResizeComposite {
 	public void resetEmployeeInfo() {
 		document.setValue(null);
 		nationality.setValue(null);
-		security_social_num.setValue(null);
+		securitySocialNum.setValue(null);
 		name.setValue(null);
-		first_surname.setValue(null);
-		second_surname.setValue(null);
+		firstSurname.setValue(null);
+		secondSurname.setValue(null);
 		
-		birth_date.setValue(null);
+		birthDate.setValue(null);
 		gender.setSelectedIndex(0);
 		
-		setSelectedValueLB(street_type, "CL");
+		setSelectedValueLB(streetType, "CL");
 		address.setValue(null);
 		addressNum.setValue(null);
 		addressZip.setValue(null);
@@ -1225,38 +1216,38 @@ public abstract class Employee extends ResizeComposite {
 	public void blockVariablesExistingContract(){
 		String documentStr = this.document.getValue().trim();
 		if(AonStringUtils.isNotBlank(documentStr)) {
-			String document_type = checkDocumentType(documentStr);
-			document.setEnabled(!checkDocumentValidation(document_type, documentStr));
+			String documentTypeValue = checkDocumentType(documentStr);
+			document.setEnabled(!checkDocumentValidation(documentTypeValue, documentStr));
 		} else
 			document.setEnabled(true);
 		
 		nationality.setEnabled(false);
 		
-		String ssNum = this.security_social_num.getValue().trim();
+		String ssNum = this.securitySocialNum.getValue().trim();
 		if(AonStringUtils.isNotBlank(ssNum))
-			security_social_num.setEnabled(!checkSSNumValidation(ssNum));
+			securitySocialNum.setEnabled(!checkSSNumValidation(ssNum));
 		else
-			security_social_num.setEnabled(false);
+			securitySocialNum.setEnabled(false);
 	}
 	
 	public void unblockVariablesExistingContract(){
 		document.setEnabled(true);
 		nationality.setEnabled(true);
-		security_social_num.setEnabled(true);
+		securitySocialNum.setEnabled(true);
 	}
 	
 	public void blockFieldsExistingPayroll(){
 		this.contractTypeLB.setEnabled(false);
-		this.quote_group.setEnabled(false);
+		this.quoteGroup.setEnabled(false);
 		this.occupation.setEnabled(false);
-		this.partiality_coef.setEnabled(false);
+		this.partialityCoef.setEnabled(false);
 	}
 	
 	public void unblockFieldsExistingPayroll(){
 		this.contractTypeLB.setEnabled(true);
-		this.quote_group.setEnabled(true);
+		this.quoteGroup.setEnabled(true);
 		this.occupation.setEnabled(true);
-		this.partiality_coef.setEnabled(true);
+		this.partialityCoef.setEnabled(true);
 	}
 	
 	// ------------------------------------------------- Auxiliar methods
@@ -1292,40 +1283,31 @@ public abstract class Employee extends ResizeComposite {
 			return "Pasaporte";
 	}
 	
-	public boolean checkDocumentValidation(String document_type_string, String document_string) {
-		if("DNI".equals(document_type_string)){
-			Dni dni = new Dni(document_string);
-			if(dni.checkDNI())
-				return true;
-			else
-				return false;
-		}else if("" == document_string) {
-			return true;
-		}else
-			return true;
+	public boolean checkDocumentValidation(String documentTypeStr, String document) {
+		if("DNI".equals(documentTypeStr))
+			return Dni.checkDNI(document);
+		else
+			return AonStringUtils.isBlank(document);
 	}
 	
-	public void showNationality(String document_type_str) {
-		if (document_type_str == "CIF" || document_type_str == "Pasaporte" || document_type_str == "NIE") {
+	public void showNationality(String documentTypeStr) {
+		if (documentTypeStr.equals("CIF") || documentTypeStr.equals("Pasaporte") || documentTypeStr.equals("NIE")) {
 			nationalityLabelCell.getStyle().clearDisplay();
 			nationalityCell.getStyle().clearDisplay();
 		} else {
 			nationalityLabelCell.getStyle().setDisplay(Display.NONE);
 			nationalityCell.getStyle().setDisplay(Display.NONE);
-			nationality.setValue("ESPA" + String.valueOf("\u00D1") + "A");
+			nationality.setValue("ESPA\u00D1A");
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), nationality);
 		}
 	}
 	
-	public boolean checkSSNumValidation(String ssNum_string) {
-		if(null == ssNum_string)
+	public boolean checkSSNumValidation(String ssNumStr) {
+		if(null == ssNumStr)
 			return false;
 		
-		SocialSecurity ss = new SocialSecurity(ssNum_string);
-		if(ss.checkSS())
-			return true;
-		else
-			return false;
+		SocialSecurity ss = new SocialSecurity(ssNumStr);
+		return ss.checkSS();
 	}
 	
 	public void updateModality(Integer contractTypeInt) {
@@ -1339,7 +1321,7 @@ public abstract class Employee extends ResizeComposite {
 	
 	private String getIso2(String country) {
 		for (int i = 0; i < Country.values().length; i++)
-			if (Country.values()[i].getName() == country)
+			if (Country.values()[i].getName().equals(country))
 				return Country.values()[i].getIso2();
 		
 		return null;
@@ -1348,9 +1330,9 @@ public abstract class Employee extends ResizeComposite {
 	public void updateMunicipalities() {
 		String provinceCode = addressProvince.getSelectedValue();
 		addressMunicipality.clear();
-		addressMunicipality.addItem("-" , "-1");;
+		addressMunicipality.addItem("-" , "-1");
 		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
-		municipalitiesOfProvince.entrySet().forEach(e -> {addressMunicipality.addItem(e.getValue(), e.getKey());});
+		municipalitiesOfProvince.entrySet().forEach(e -> addressMunicipality.addItem(e.getValue(), e.getKey()));
 	}
 	
 	private Integer getYears(Date actualDay, Date birthDate) {
@@ -1360,8 +1342,7 @@ public abstract class Employee extends ResizeComposite {
 		DateTimeFormat formatter = DateTimeFormat.getFormat("yyyyMMdd");                         
 	    int d1 = Integer.parseInt(formatter.format(birthDate));                            
 	    int d2 = Integer.parseInt(formatter.format(actualDay));                          
-	    int age = (d2 - d1) / 10000;                                                       
-	    return age;                   
+	    return (d2 - d1) / 10000;                   
 	}
 	
 	// ------------------------------------------------- Save methods
@@ -1370,17 +1351,45 @@ public abstract class Employee extends ResizeComposite {
 		return checkIfNewEmployeeIsPossible() && checkAddress();
 	}
 	
+	public Map<String, String> checkSaveAndGetErrors() {
+		cleanErrorStyles();
+		Map<String, String> messageMap = new HashMap<>();
+		Byte ssRegime = Byte.valueOf(this.ssRegimeType.getSelectedValue());
+		
+		if(ssRegime == (byte) 3) { // RETA
+			if(!isNotNameBlank()) messageMap.put("Nombre", "Campo obligatorio");
+			if(!isWokplaceSelected()) messageMap.put("Centro de trabajo", "Campo obligatorio");
+		} else {
+			if(!isNotNameBlank()) messageMap.put("Nombre", "Campo obligatorio");
+			if(!isWokplaceSelected()) messageMap.put("Centro de trabajo", "Campo obligatorio");
+			if(!isActivityCCCSelected()) messageMap.put("Actividad", "Campo obligatorio");
+			if(!isContractTypeSelected()) messageMap.put("Tipo de contrato", "Campo obligatorio");
+		}
+		
+		Date startDateValue = null == startDate.getValue() ? null : DateUtils.copyDateOnly(startDate.getValue());
+		Date endDateValue = null == endDate.getValue() ? null : DateUtils.copyDateOnly(endDate.getValue());
+		
+		if(null == startDateValue) messageMap.put("Fecha inicio", "La fecha debe estar definida");
+		if(null != endDateValue && endDateValue.before(startDateValue)) messageMap.put("Fecha fin", "La fecha de inicio no puede ser posterior a la fecha de fin");
+		
+		String addressZipValue = addressZip.getValue();
+		String addressProvinceValue = addressProvince.getSelectedValue();
+		String addressMunicipalityValue = addressMunicipality.getSelectedValue();
+		
+		if((AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")) &&
+			(AonStringUtils.isBlank(addressZipValue) || AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")))
+				messageMap.put("Direcci\u00F3n", "Si rellena la direccion del trabajador, debera rellenar los campos azules correcta y obligatoriamente");
+	
+		return messageMap;
+	}
+	
 	public boolean checkIfNewEmployeeIsPossible() {
-		cleanWarningIcons();
+		cleanErrorStyles();
 		
 		if(checkIfSaveIsPossible())
-			if(checkDates())
-				return true;	
-			else 
-				return false;
+			return checkDates();	
 		else 	
 			return false;
-		
 	}
 	
 	private boolean checkIfSaveIsPossible() {
@@ -1406,7 +1415,7 @@ public abstract class Employee extends ResizeComposite {
 	private boolean isNotNameBlank() {
 		String nameValue = name.getValue();
 		if(AonStringUtils.isBlank(nameValue)) {
-			addWarningIcon(namePanel, name, null);
+			addErrorBorder(name);
 			return false;
 		} else
 			return true;
@@ -1415,7 +1424,7 @@ public abstract class Employee extends ResizeComposite {
 	private boolean isWokplaceSelected() {
 		String workplaceValue = workplace.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(workplaceValue, "-1")) {
-			addWarningIcon(workplacePanel, workplace, null);
+			addErrorBorder(workplace);
 			return false;
 		} else
 			return true;
@@ -1424,36 +1433,34 @@ public abstract class Employee extends ResizeComposite {
 	private boolean isActivityCCCSelected() {
 		String activityValue = activityCCC.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(activityValue, "-1")) {
-			addWarningIcon(activityCCCPanel, activityCCC, null);
+			addErrorBorder(activityCCC);
 			return false;
 		} else
 			return true;
 	}
 	
 	private boolean isContractTypeSelected() {
-		removeWarningIconLB(contractTypePanel, contractTypeLB);
-		
 		String contractTypeValue = contractTypeLB.getSelectedValue();
 		if(AonStringUtils.equalsIgnoreCase(contractTypeValue, "-1")) {
-			addWarningIcon(contractTypePanel, contractTypeLB, null);
+			addErrorBorder(contractTypeLB);
 			return false;
 		} else
 			return true;
 	}
 	
 	private boolean checkDates() {
-		Date startDate = null == start_date.getValue() ? null : DateUtils.copyDateOnly(start_date.getValue());
-		Date endDate = null == end_date.getValue() ? null : DateUtils.copyDateOnly(end_date.getValue());
+		Date startDateValue = null == startDate.getValue() ? null : DateUtils.copyDateOnly(startDate.getValue());
+		Date endDateValue = null == endDate.getValue() ? null : DateUtils.copyDateOnly(endDate.getValue());
 		
-		if(null == startDate) {
-			addWarningIcon(startDatePanel, start_date, "La fecha de inicio no puede estar sin definir.");
+		if(null == startDateValue) {
+			addErrorBorder(startDate);
 			return false;
 		}
 		
-		if(null == endDate || endDate.after(startDate) || endDate.equals(startDate))
+		if(null == endDateValue || endDateValue.after(startDateValue) || endDateValue.equals(startDateValue))
 			return true;
 		else {
-			addWarningIcon(startDatePanel, start_date, "La fecha de inicio no puede ser posterior a la fecha de fin.");
+			addErrorBorder(startDate);
 			return false;
 		}
 
@@ -1469,8 +1476,10 @@ public abstract class Employee extends ResizeComposite {
 		if(AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")) {
 			if(AonStringUtils.isNotBlank(addressZipValue) && !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") && !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1"))
 				return true;
-			else {	
-				addWarningIcon(addressZipPanel, addressZip, "Si rellena la direccion del trabajador, debera rellenar los campos azules correcta y obligatoriamente.");
+			else {
+				if(AonStringUtils.isBlank(addressZipValue)) addErrorBorder(addressZip);
+				if(AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1")) addErrorBorder(addressProvince);
+				if(AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")) addErrorBorder(addressMunicipality);
 				return false;
 			}
 		} else
@@ -1487,13 +1496,8 @@ public abstract class Employee extends ResizeComposite {
 		journeyDuration.add(message);
 		journeyDuration.setTitle("Las horas se deben definir en el calendario del empleado.");
 		
-		calendarBtn.addClickHandler(e -> {
-			onContractJourneyDurationClick();
-		});
-		
-		message.addClickHandler(e -> {
-			onContractJourneyDurationClick();
-		});
+		calendarBtn.addClickHandler(e -> onContractJourneyDurationClick());
+		message.addClickHandler(e -> onContractJourneyDurationClick());
 	}
 	
 	public void createJourneyDurationInfo(String messageStr){
@@ -1501,52 +1505,17 @@ public abstract class Employee extends ResizeComposite {
 		Label message = new Label(messageStr);
 		journeyDuration.add(message);
 		
-		message.addClickHandler(e -> {
-			onContractJourneyDurationClick();
-		});
+		message.addClickHandler(e -> onContractJourneyDurationClick());
 	}
 	
 	// ------------------------------------------------- Add and remove styles
 	
-	private void addWarningIcon(HTMLPanel panel, Widget widget, String message) {
-		panel.clear();
-		panel.add(widget);
-		message = AonStringUtils.isBlank(message) ? "Este campo es obligatorio" : message;
-		panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconWarning()));
-		widget.addStyleName(style.warningTB());
-		widget.addStyleName(style.flexGrow());
-	}
-
-	private void removeWarningIconTB(HTMLPanel panel, Widget widget) {
-		panel.clear();
-		panel.add(widget);
-		widget.addStyleName("aon-inputText");
-		widget.getElement().getStyle().setWidth(99, Unit.PCT);
-		widget.removeStyleName(style.warningTB());
+	private void addErrorBorder(Widget widget) {
+		widget.addStyleName(style.errorBorder());
 	}
 	
-	private void removeWarningIconLB(HTMLPanel panel, Widget widget) {
-		panel.clear();
-		panel.add(widget);
-		widget.addStyleName("aon-selectOneMenu");
-		widget.getElement().getStyle().setWidth(100, Unit.PCT);
-		widget.removeStyleName(style.warningTB());
-	}
-	
-	private void removeWarningIconAddressTB(HTMLPanel panel, Widget widget) {
-		panel.clear();
-		panel.add(widget);
-		widget.addStyleName("aon-inputText");
-		widget.getElement().getStyle().setWidth(97, Unit.PCT);
-		widget.removeStyleName(style.warningTB());
-	}
-	
-	private void addSuccessIconTB(HTMLPanel panel, Widget widget) {
-		panel.clear();
-		panel.add(widget);
-		panel.add(new AonToolbarSmallButton("", AON.CSS.aonIconAccept()));
-		widget.addStyleName(style.flexGrow());
-		widget.removeStyleName(style.warningTB());
+	private void removeErrorBorder(Widget widget) {
+		widget.removeStyleName(style.errorBorder());
 	}
 	
 	private void addInfoIcon(HTMLPanel panel, Widget widget, String message) {
@@ -1565,16 +1534,18 @@ public abstract class Employee extends ResizeComposite {
 		widget.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		widget.removeStyleName(style.warningTB());
 	}
-
+	
 	// ------------------------------------------------- cleanWarningIcons
 	
-	public void cleanWarningIcons() {
-		removeWarningIconTB(namePanel, name);
-		removeWarningIconLB(workplacePanel, workplace);
-		removeWarningIconLB(activityCCCPanel, activityCCC);
-		removeWarningIconLB(contractTypePanel, contractTypeLB);
-		removeWarningIconTB(startDatePanel, start_date);
-		removeWarningIconAddressTB(addressZipPanel, addressZip);
+	public void cleanErrorStyles() {
+		removeErrorBorder(name);
+		removeErrorBorder(activityCCC);
+		removeErrorBorder(workplace);
+		removeErrorBorder(contractTypeLB);
+		removeErrorBorder(startDate);
+		removeErrorBorder(addressZip);
+		removeErrorBorder(addressProvince);
+		removeErrorBorder(addressMunicipality);
 	}
 	
 }

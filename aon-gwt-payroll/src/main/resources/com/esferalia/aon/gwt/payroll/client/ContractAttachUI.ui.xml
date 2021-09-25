@@ -7,12 +7,6 @@
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.ContractAttachUI.MyStyle">
 
-		.headerStyle{
-			top: -0.5em;
-			font-size: 12px;
-			margin-left: 10px;
-		}
-		
 		.headerLabelStyle{
 			font-weight: bold;
 		}
@@ -23,10 +17,6 @@
 		
 		.maxWidthLB{
 			width: 100%;
-		}
-
-		.firstColumnTextStyle{
-			padding:5px !important;
 		}
 		
 		.styleBorder{
@@ -41,49 +31,15 @@
 			width: 950px;
 		}
 		
-		.footerStyle{
-			background-color: #eaeaea;
-			padding-top: 5px;
-		}
-		
-		.footerElement{
-			margin-left: 10px;
-			border: none;
-		}
-		
 		.scrollStyle {
 			margin-left: 10px;
 			width: 950px;
 			margin-bottom: 10px;
 		}
 		
-		.columnWidth{
-			width: 80px;
-		}
-		
-		.columnWidth2{
-			width: 150px;
-		}
-		
-		.columnWidth3{
-			width: 200px;
-		}
-		
-		.columnWidth4{
-			width: 515px;
-		}
-		
-		.columnWidth5{
-			width: 515px;
-		}
-		
 		.clauseTD{
 			vertical-align: top;
 			text-align: center;
-		}
-		
-		.clauseTD2{
-			vertical-align: top;
 		}
 		
 		.footerToolbar{
@@ -98,13 +54,6 @@
 		    align-items: center;
 		}
 		
-		.styleBorder{
-			border-style: solid; 
-			width: 975px; 
-			border-width: 1px; 
-			margin: 10px;
-		}
-		
 		.tittle{
 			top: -1.2em;
 			font-size: 12px;
@@ -116,9 +65,14 @@
 			text-align: center;
 		}
 		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+		}
 	</ui:style>
 
-   	<g:HTMLPanel> 
+   	<g:HTMLPanel styleName="{style.flexColumn}">
+   		<g:HTMLPanel ui:field="messageContainer"/> 
         <g:VerticalPanel ui:field="attachmentsTable" styleName="{style.styleBorder}"> 
 	    	<g:Label styleName='{style.tittle}'>Documentos</g:Label>
 	    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">

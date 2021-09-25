@@ -3,12 +3,12 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.RegistryService;
-import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
-import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -18,29 +18,28 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 
 public class AonCustomerFullPanel extends AonRegistryFullPanel<CustomerFull> implements Focusable {
 	
-	private RegistryServiceAsync SERVICE;
-
 	private static final Logger LOGGER = Logger.getLogger(AonCustomerFullPanel.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
+	
+	
 	public AonCustomerFullPanel(AonModuleOptions<?> options, CustomerFull customerFull, AonRegistryFullPanelCallback<CustomerFull> callback) {
 		super( options, customerFull, callback);
-		
-		RegistryServiceAsync serviceRaw = GWT.create(RegistryService.class);
-		SERVICE = new RegistryServiceAsyncDecorator(serviceRaw);
 
 		getRootPanel().add(addButtons(options,customerFull,callback));
 	}
-
+	
 	@Override
 	protected void addExtended(AonModuleOptions<?> options, CustomerFull  customerFull, AonRegistryFullPanelCallback<CustomerFull> callback) {
 		addCustomerInfo( options, customerFull);
 		addFiscalInfo(options, customerFull);
+		addDomainInfo(options, customerFull);
 	}
 	
 	private void addCustomerInfo(AonModuleOptions<?> options, CustomerFull customerFull) {
@@ -55,6 +54,19 @@ public class AonCustomerFullPanel extends AonRegistryFullPanel<CustomerFull> imp
 		getRootPanel().add(displayTab);
 		
 		Customer customer = customerFull.ensureCustomer();
+		
+		final InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
+		transactionBox.setValue(customer.getTransaction());
+		transactionBox.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				customer.setTransaction(transactionBox.getValue());
+			}
+		});
+		
+		addBasicRow(displayTab,new InlineLabel(AON.MSG.transactionType()), transactionBox);
+
 		final CheckBox surcharge = new CheckBox(AON.MSG.surcharge());
 		final CheckBox withholding = new CheckBox(AON.MSG.withholding());
 		
@@ -87,6 +99,34 @@ public class AonCustomerFullPanel extends AonRegistryFullPanel<CustomerFull> imp
 		addBasicRow(displayTab,new InlineLabel(AON.MSG.fiscalInformation()), taxPanel);				
 	}
 
+	private void addDomainInfo(AonModuleOptions<?> options, CustomerFull customerFull) {
+		if (customerFull != null && customerFull.getId() != null) {
+			AonDisplayTable displayTab = getNewTab();
+			getRootPanel().add(displayTab);
+			FlowPanel domainPanel = new  FlowPanel();
+			Label domainLabel = new Label();
+			domainPanel.add(domainLabel);
+			addBasicRow(displayTab,new InlineLabel("Dominio vinculado"), domainPanel);				
+
+			getService().getDomainLinked(options.getDomainName(), options.getDomain(), options.getUser(), customerFull.getId(), new AsyncCallback<Domain>() {
+				
+				@Override
+				public void onSuccess(Domain domain) {
+					if (domain != null) {
+						domainLabel.setText( domain.getId() + " - " + domain.getName()); 
+					} else {
+						domainLabel.setText( "Sin dominio vinculado");
+					}
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					domainLabel.setText( caught.getMessage() );
+				}
+			});
+		}
+	}
+
 	private FlowPanel addButtons(AonModuleOptions<?> options, CustomerFull customerFull, AonRegistryFullPanelCallback<CustomerFull> callback) {
     	FlowPanel buttons = new FlowPanel();
     	final Button okButton = new Button();
@@ -101,7 +141,7 @@ public class AonCustomerFullPanel extends AonRegistryFullPanel<CustomerFull> imp
 			@Override
 			public void onClick(ClickEvent event) {
 				okButton.setEnabled(false);
-				SERVICE.save(options.getDomainName(), options.getDomain(), options.getUser(), customerFull, new AsyncCallback<CustomerFull>() {
+				getService().save(options.getDomainName(), options.getDomain(), options.getUser(), customerFull, new AsyncCallback<CustomerFull>() {
 
 					@Override
 					public void onSuccess(CustomerFull result) {

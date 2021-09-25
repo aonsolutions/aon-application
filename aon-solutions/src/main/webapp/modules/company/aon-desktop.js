@@ -1,24 +1,31 @@
 import {AonElement} from '../../components/AonElement.js';
+import {AonAvatar} from '../../components/aon-avatar.js';
 import { Apps} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTimeControl} from  '../../services/service.js';
+import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { EVENT, MSG, TAG } from '../../environments/environments.js';
+import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../signin/aon-sign.js';
+import { AonSignin } from '../signin/aon-signin.js';
+import { uploadInvoices } from "../invoice/InvoiceUtils.js";
+import { uploadDocuments } from "../documental/DocumentalUtils.js";
+import { AonMessenger } from '../messenger/aon-messenger.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
+import { AonInvoicePanel } from '../invoice/aon-invoice-panel.js';
+import * as OPTION from '../invoice/InvoiceOptions.js';
+import * as GWT from "../../gwt/gwt.js";
+import { TASK_SOURCE } from '../messenger/MessengerEnums.js';
+import { AonFiscal } from '../fiscal/aon-fiscal.js';
+import { AonLaboral } from '../laboral/aon-laboral.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 import '../marketplace/aon-marketplace.js';
 import '../invoice/aon-invoice-panel.js';
-import '../laboral/aon-laboral.js';
-import '../messenger/aon-messenger.js';
-import '../fiscal/aon-fiscal.js';
 import '../accounting/aon-accounting.js';
-
 import './aon-stat.js';
-import { uploadInvoices } from "../invoice/InvoiceUtils.js";
-import { uploadDocuments } from "../documental/DocumentalUtils.js";
+
 
 export class AonDesktop extends AonElement {
 
@@ -26,6 +33,8 @@ export class AonDesktop extends AonElement {
 	AON_DESKTOP;
 	INPUT_INVOICE_FILE;
 	INPUT_DOCUMENT_FILE;
+
+	appOption;
 
 	static get observedAttributes() {
 		return [];
@@ -48,7 +57,7 @@ export class AonDesktop extends AonElement {
 		this.AON_DESKTOP = 'aonDesktopMain';
 		this.INPUT_INVOICE_FILE = this.id + 'InputInvoiceFile';
 		this.INPUT_DOCUMENT_FILE = this.id + 'InputDocumentFile';
-	}
+	}	
 
 	getDur() {
 		return this.dur;
@@ -56,88 +65,132 @@ export class AonDesktop extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-		let company = JSON.parse(localStorage.getItem("company"));
 		getDomainUserRoles({}).then(r => {
 			this.dur = new DomainUserRoles(r);
-			if(company.parentId || company.type !== 'CONSULTANCY'){
-				getDomainNotice().then(notice => {
-					this.build(notice);
-				});
-			} else this.build();
+			this.build();
 		});
   	}
 
-	build(notice) {
+	build() {
 		let company = JSON.parse(localStorage.getItem("company"));
 		this.innerHTML = /*html*/`
 			<input id='${this.INPUT_INVOICE_FILE}' style='display:none;' type='file' name='file' multiple>
 			<input id='${this.INPUT_DOCUMENT_FILE}' style='display:none;' type='file' name='file' multiple>
 			<aon-application id="${this.AON_DESKTOP}" title="Desktop" main="true"></aon-application>`;
 		let aonDesktop = this.getElement(this.AON_DESKTOP);
+
+		let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
+		inputInvoiceFile.addEventListener(EVENT.CHANGE, ({target}) => uploadInvoices(inputInvoiceFile, target.files));
 		
-		this.getElement(this.INPUT_INVOICE_FILE).addEventListener('change', ({target}) => uploadInvoices(target.files));
-	    this.getElement(this.INPUT_DOCUMENT_FILE).addEventListener('change', ({target}) => uploadDocuments(target.files, this.getDur()));
+		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
+		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
 
-		let sidenav = this.getElement(this.getApplication().SIDENAV);
-		sidenav.innerHTML = `
-		<div>
-		 	<button id="aonNew" class="aonButton" style="padding: 1rem;width: 140px;background-color: white;margin: 15px;border-radius: 50px;color: #002469;display: flex;">
-		 		<i id="aonNewIcon" class="material-icons-outlined" style="">add</i>
-		 		<span style="
-		 				margin-top: 5px;
-		 				margin-left: 10px;
-		 				position: relative;
-		 				">
-		 			NUEVO
-		 		</span>
-			</button>
-		</div>
-		`;
 
-		let aonNew = this.getElement('aonNew');
-		aonNew.addEventListener(EVENT.CLICK, (e) => this.addNewOptions(e));
+		let domainName = localStorage.getItem('aon_domain_name');
+		if(domainName.includes('aonsolutions.org')) {
+			let gestor = this.createElement(TAG.DIV);
+		
+			let aonAvatar = new AonAvatar();
+			gestor.appendChild(aonAvatar);
+			let spanGestor = this.createElement(TAG.SPAN);
+			spanGestor.className = 'aonSidenavTitle';
+			spanGestor.innerHTML = 'Gestor no asignado.';
+			gestor.appendChild(spanGestor);
+
+			let contacta = this.createElement(TAG.DIV);
+				contacta.style.marginTop = '10px';
+			let cicon = this.createElement(TAG.I);
+			cicon.className = 'material-icons';
+			cicon.style.color = 'gray';
+			cicon.style.verticalAlign = 'middle';
+			cicon.style.fontSize = '1.3rem';
+			cicon.innerHTML = 'chat';
+			contacta.appendChild(cicon);
+
+			let cspan = this.createElement(TAG.SPAN);
+			cspan.innerHTML = 'Contactar';
+			cspan.style.color = 'gray';
+			cspan.style.marginTop = '10px';
+			contacta.appendChild(cspan);
+			gestor.appendChild(contacta);
+
+			let val = this.createElement(TAG.DIV);
+			val.innerHTML = 'Valora a tu Gestor';
+			val.style.color = 'gray';
+			val.style.marginTop = '10px';
+			gestor.appendChild(val);
+
+			let starsDiv = this.createElement(TAG.DIV);
+			starsDiv.style.marginTop = '10px';
+			for(let i = 0; i < 5; i++) {
+				let icon = this.createElement(TAG.I);
+				icon.className = 'material-icons';
+				icon.style.color = 'gray';
+				icon.innerHTML = 'star_border';
+				starsDiv.appendChild(icon);
+			}
+			gestor.appendChild(starsDiv);
+
+			aonDesktop.addSidenavWidget('MI GESTOR', gestor);
+		}
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
-			let inboxCount = 0;
-			if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
-				inboxCount = notice.invoice.inbox.count;
-			}
 
-			let rejectedCount = 0;
-			if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
-				rejectedCount = notice.invoice.rejected.count;
-			}
-
-			let taskOptions = [{
-					name: 'Notificaciones',
-					icon: 'notifications',
-					fn: () => {}
-				},{
+			let taskOptions = [];
+			if(this.getDur().isInvoice()){
+				taskOptions.push({
 					name: 'Facturas Pendientes',
-					count: inboxCount,
 					icon: 'inbox',
-					fn: () => {
-						if(inboxCount > 0) {
+					fn: (count) => {
+						if(count>0){
 							this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
 						}
 					}
-				}, {
+				});
+
+				taskOptions.push({
 					name: 'Facturas Rechazadas',
-					count: rejectedCount,
-					icon: 'report',
-					fn: () => {
-						if(rejectedCount > 0) {
+					icon: MATERIAL_ICONS.REPORT,
+					fn: (count) => {
+						if(count>0){
 							this.rootPanelHtml('<aon-invoice-panel status="refused"></aon-invoice-panel>');
-						}
+						} 
 					}
-				}, {
-					name: 'Solicitudes',
-					icon: 'assignment',
-					fn: () => this.isBeta() ? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud')
+				});
+			}
+			taskOptions.push({
+				name: MSG.REQUESTS_RECEIVED,
+				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
+				fn: () =>{
+					if(this.isBeta()){
+						getTaskHolder().then(th=>{
+							let aonMessenger = new AonMessenger();
+							aonMessenger._filter.task_holder = th.id;
+							this.rootPanel(aonMessenger);
+						});
+					} else {
+						this.development('Solicitud')
+					}
 				}
-			];
-			aonDesktop.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
+			});
+			taskOptions.push({
+				name: MSG.REQUESTS_SENT,
+				icon: MATERIAL_ICONS.OUTBOX,
+				fn: () =>{
+					if(this.isBeta()){
+						getTaskHolder().then(th=>{
+							let aonMessenger = new AonMessenger();
+							aonMessenger._filter.sender = th.id;
+							this.rootPanel(aonMessenger);
+						});
+					} else {
+						this.development('Solicitud')
+					}
+				} 
+			});
+			aonDesktop.addSidenavOptions('RESUMEN ACTIVIDADES', taskOptions);
 		}
+
 		let classicOptions = [];
 
 		// if(!localStorage.getItem('aon_jsf') && this.getDur().isAon()){
@@ -217,7 +270,7 @@ export class AonDesktop extends AonElement {
 		divSlide.innerHTML = '<aon-stat></aon-stat>'
 		div.appendChild(divSlide);
 
-		div.appendChild(this.buildTitle('DISPONIBLES'));
+		div.appendChild(this.buildTitle(MSG.AVAILABLE.toUpperCase()));
 
 		let ul = this.createElement(TAG.UL);
 		ul.className = 'list-group';
@@ -226,12 +279,15 @@ export class AonDesktop extends AonElement {
 			for (let key in Apps){
 				if(this.isApp(Apps[key])) {
 					let li = this.createElement(TAG.LI);
+					li.id = this.AON_DESKTOP + Apps[key].app.initCap();
 					li.className = 'list-group-item aonAppLi';
 					li.style.borderRight = '0px';
 					li.style.borderLeft = '0px';
 					li.style.cursor = 'pointer';
-					li.addEventListener('click', () => {
+					li.title = Apps[key].title;
+					li.addEventListener(EVENT.CLICK, () => {
 						this.appSelection(Apps[key].app);
+						this.appOption = false
 					});
 					let span = this.createElement(TAG.SPAN);
 					span.style.margin = '20px';
@@ -250,17 +306,131 @@ export class AonDesktop extends AonElement {
 					span.appendChild(span2);
 
 					let buttons = this.createElement(TAG.SPAN);
+					buttons.id = li.id + 'Buttons'
 					buttons.style.position = 'absolute';
 					buttons.style.right = '10px';
+					buttons.style.top = '8px';
 
-					let i = this.createElement('i');
-					i.className = 'material-icons';
-					i.innerHTML = 'keyboard_arrow_right';
-					buttons.appendChild(i);
+					if(Apps[key].options && Apps[key].options.stat) {
+						let stat = new AonIconButton();
+						stat.id = li.id + 'Stat';
+						stat.icon = "bar_chart";
+						stat.title = MSG.STATISTICS;
+						stat.addEventListener(EVENT.CLICK, (event) => {
+							this.appOption = true;
+							event.preventDefault();
+							this.statOption(Apps[key].app);
+						});
+						buttons.appendChild(stat);
+					}
+
+					if(Apps[key].options && Apps[key].options.upload) {
+						let upload = new AonIconButton();
+						upload.id = li.id + 'Upload';
+						upload.icon = "file_upload";
+						upload.title = MSG.UPLOAD_FILE;
+						upload.addEventListener(EVENT.CLICK, (event) => {
+							this.appOption = true;
+							event.preventDefault();
+							this.uploadOption(Apps[key].app);
+						});
+						buttons.appendChild(upload);
+					}
+
+					if(Apps[key].options && Apps[key].options.add) {
+						let add = new AonIconButton();
+						add.id = li.id + 'Add';
+						add.icon = "add";
+						add.title = MSG.NEW;
+						add.addEventListener(EVENT.CLICK, (event) => {
+							this.appOption = true;
+							event.preventDefault();
+							this.addOption(Apps[key].app, add);
+						});
+						buttons.appendChild(add);
+					}
+
+					// if(Apps[key].options && Apps[key].options.menu) {
+						let menu = new AonIconButton();
+
+						menu.id = li.id + 'Menu';
+						menu.icon = Apps[key].options && Apps[key].options.menu
+							&& this.isOpenMenu(Apps[key])
+							? "menu_open" : "keyboard_arrow_right";
+
+						
+						menu.title = Apps[key].options && Apps[key].options.menu
+							&& this.isOpenMenu(Apps[key])
+							? MSG.OPEN_MENU : MSG.OPEN;
+						
+						menu.addEventListener(EVENT.CLICK, (event) => {
+							if(Apps[key].options && Apps[key].options.menu
+								&& this.isOpenMenu(Apps[key])){
+								this.appOption = true;
+								event.preventDefault();
+								this.menuOption(Apps[key]);
+							}
+						});
+						buttons.appendChild(menu);
+					// }
 
 					span.appendChild(buttons);
 					li.appendChild(span);
 					ul.appendChild(li);
+
+					if (Apps[key].options && Apps[key].options.upload) {
+						li.addEventListener(EVENT.DRAGOVER, (event) => {
+							event.preventDefault();
+							console.log(EVENT.DRAGOVER);
+							li.classList.add('dragAndDrop');
+						});
+					
+						li.addEventListener(EVENT.DRAGENTER, (event) => {
+						  event.preventDefault();
+						  li.classList.add('dragAndDrop');
+						});
+					
+						li.addEventListener(EVENT.MOUSELEAVE, () => {
+							li.classList.remove('dragAndDrop');
+						});
+					
+						li.addEventListener(EVENT.MOUSEOVER, () => {
+							li.classList.remove('dragAndDrop');	
+						});
+					
+						document.addEventListener(EVENT.DRAGLEAVE, (event) => {
+						  event.preventDefault();
+						  let isClickInside = li.contains(event.target) || li === event.target;
+						  if (!isClickInside) {
+							li.classList.remove('dragAndDrop');
+						  }
+						});
+					
+						li.addEventListener(EVENT.DROP, (event) => {
+						  	event.preventDefault();
+						  	console.log(EVENT.DROP);
+						  	li.style.borderRight = "0px";
+						  	li.style.borderLeft = "0px";
+						  	li.style.borderTop = "0px";
+						  	li.style.borderBottom = "1px solid rgba(0,0,0,.125)";
+						  	li.style.opacity = "1";
+						  	if(event && event.dataTransfer && event.dataTransfer.files){
+								let files = event.dataTransfer.files;
+
+								switch(Apps[key].app){
+								case Apps.DOCUMENTAL.app:
+									let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
+									uploadDocuments(inputDocumentFile, files);
+									break;
+								case Apps.INVOICE.app:
+									let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
+									uploadInvoices(inputInvoiceFile, files);
+									break;								
+						  		}
+							}
+						});
+					}
+
 				}
 			}
   	} else {
@@ -269,7 +439,7 @@ export class AonDesktop extends AonElement {
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';
-			li.addEventListener('click', () => {
+			li.addEventListener(EVENT.CLICK, () => {
 				this.rootPanelHtml('<aon-configuration></aon-configuration>');
 			});
 			let span = this.createElement(TAG.SPAN);
@@ -296,6 +466,8 @@ export class AonDesktop extends AonElement {
 			ul.appendChild(li);
 		}
 		div.appendChild(ul);
+
+		this.updateCount();
 	}
 
 	buildTitle(title) {
@@ -308,7 +480,8 @@ export class AonDesktop extends AonElement {
 	}
 
 	appSelection(app) {
-		switch(app){
+		if(!this.appOption)
+			switch(app){
 			case Apps.DOCUMENTAL.app:
 				this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
 				break;
@@ -316,24 +489,28 @@ export class AonDesktop extends AonElement {
 				this.rootPanelHtml('<aon-accounting></aon-accounting>');
 				break;
 			case Apps.FISCAL.app:
-				this.rootPanelHtml('<aon-fiscal></aon-fiscal>');
+				this.rootPanel(new AonFiscal());
 				break;
 			case Apps.COMUNICA.app:
-				this.rootPanelHtml(`<aon-laboral title="${MSG.COMUNICA}"></aon-laboral>`);
+				const comunica = new AonLaboral();
+				comunica.title = MSG.COMUNICA;
+				this.rootPanel(comunica);
 				break;
 			case Apps.PAYROLL.app:
-				this.rootPanelHtml(`<aon-laboral title="${MSG.PAYROLL}"></aon-laboral>`);
+				const payroll = new AonLaboral();
+				payroll.title = MSG.PAYROLL;
+				this.rootPanel(payroll);
 				break;
 			case Apps.INVOICE.app:
 				this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
 				break;
 			case Apps.TIMECONTROL.app:
-				this.rootPanelHtml('<aon-signin></aon-signin>');
+				this.rootPanel(new AonSignin());
 				break;
 			case Apps.MESSENGER.app:
-				this.isBeta() ? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud');
+				this.isBeta() ? this.rootPanel(new AonMessenger()) : this.development('Solicitud');
 				break;
-		}
+			}
 	}
 
 	development(title) {
@@ -361,6 +538,124 @@ export class AonDesktop extends AonElement {
 		else return false;
 	}
 
+	isOpenMenu(app) {
+		if(Apps.ACCOUNTING.app === app.app)
+			return this.getDur().isAccountingManager();
+		else if(Apps.FISCAL.app === app.app)
+			return this.getDur().isFiscalManager();
+		else if(Apps.PAYROLL.app === app.app)
+			return this.getDur().isPayrollManager();
+		else return false;
+	}
+
+	updateCount(){
+		let application = this.getApplication();
+			
+		getDomainNotice().then(notice => {
+			let inboxCount = 0;
+			let rejectedCount = 0;
+			if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
+				inboxCount = notice.invoice.inbox.count;
+			}
+			if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
+				rejectedCount = notice.invoice.rejected.count;
+			}
+
+			application.updateSidenavCount('Facturas Pendientes', inboxCount);
+			application.updateSidenavCount('Facturas Rechazadas', rejectedCount);
+		});
+
+
+		getTaskHolder().then(th=>{
+			getTaskCount({task_holder:th.id}).then(count=>{
+				application.updateSidenavCount("Solicitudes Enviadas", count.sender);
+				application.updateSidenavCount("Solicitudes Recibidas", count.task_holder);
+			});
+		});
+		
+	}
+
+	statOption(app) {
+		switch(app){
+			case Apps.DOCUMENTAL.app:
+				break;
+			case Apps.ACCOUNTING.app:
+				this.rootPanelHtml('<aon-accounting></aon-accounting>');
+				break;
+			case Apps.FISCAL.app:
+				break;
+			case Apps.COMUNICA.app:
+				break;
+			case Apps.PAYROLL.app:
+				const payroll = new AonLaboral();
+				payroll.title = MSG.PAYROLL;
+				this.rootPanel(payroll);
+				break;
+			case Apps.INVOICE.app:
+				GWT.load(GWT.INVOICE_STAT);
+				break;
+			case Apps.TIMECONTROL.app:
+				break;
+			case Apps.MESSENGER.app:
+				break;
+			}
+
+	}
+
+	addOption(app, button) {
+		switch(app){
+			case Apps.DOCUMENTAL.app:
+				this.getElement(this.INPUT_DOCUMENT_FILE).click();
+				break;
+			case Apps.ACCOUNTING.app:
+				break;
+			case Apps.FISCAL.app:
+				break;
+			case Apps.COMUNICA.app:
+				break;
+			case Apps.PAYROLL.app:
+				break;
+			case Apps.INVOICE.app:
+				this.addInvoice(button);
+				break;
+			case Apps.TIMECONTROL.app:
+				break;
+			case Apps.MESSENGER.app:
+				let aonMessengerChat = new AonMessenger();	
+				aonMessengerChat.data = {source:TASK_SOURCE.QUERY};
+				this.rootPanel(aonMessengerChat);
+				break;
+			}
+	}
+
+	menuOption(app) {
+		let aonMenu = this.getElement('aonMenu');
+		aonMenu.buildAppMenu(app);
+	}
+	
+	uploadOption(app) {
+		switch(app){
+			case Apps.DOCUMENTAL.app:
+				this.getElement(this.INPUT_DOCUMENT_FILE).click();
+				break;
+			case Apps.ACCOUNTING.app:
+				break;
+			case Apps.FISCAL.app:
+				break;
+			case Apps.COMUNICA.app:
+				break;
+			case Apps.PAYROLL.app:
+				break;
+			case Apps.INVOICE.app:
+				this.getElement(this.INPUT_INVOICE_FILE).click();
+				break;
+			case Apps.TIMECONTROL.app:
+				break;
+			case Apps.MESSENGER.app:
+				break;
+			}
+	}
+
 	addNewOptions(e) {
 		let rect = e.target.getBoundingClientRect();
     	let x = e.clientX - rect.left;
@@ -374,7 +669,7 @@ export class AonDesktop extends AonElement {
 		const NEW_INVOICE = {
 			id: 'invoice',
 			name: 'Nueva Factura',
-			icon: 'receipt',
+			icon: MATERIAL_ICONS.RECEIPT,
 			fn: () => this.getElement(this.INPUT_INVOICE_FILE).click()
 		};
 
@@ -396,6 +691,37 @@ export class AonDesktop extends AonElement {
 	  
 	  	d.setMenuOptions(actions, top, left);
 	  	d.open();
+	}
+
+	addInvoice(button) {		
+		let invoicePanel = new AonInvoicePanel();	
+		let top  = button.getBoundingClientRect().top;
+		const left = button.getBoundingClientRect().left;
+		let d = this.getApplication().getOptionDialog();
+		let options = [{
+			name: 'Emitidas',
+			icon: MATERIAL_ICONS.UNARCHIVE,
+			fn: () => {
+				invoicePanel.option = OPTION.CREATE_INVOICE_ISSUED;
+				this.rootPanel(invoicePanel);
+			}
+		}, {
+			name: 'Recibidas',
+			icon: MATERIAL_ICONS.ARCHIVE,
+			fn: () => {
+				invoicePanel.option = OPTION.CREATE_INVOICE_RECEIVED;
+				this.rootPanel(invoicePanel);
+			}
+		}, {
+			name: 'Tickets/Justificantes',
+			icon: MATERIAL_ICONS.RECEIPT,
+			fn: () => {
+				invoicePanel.option = OPTION.CREATE_INVOICE_TICKET;
+				this.rootPanel(invoicePanel);
+			}
+		}];
+		d.setMenuOptions(options, top, left);
+		d.open();
 	}
 }
 

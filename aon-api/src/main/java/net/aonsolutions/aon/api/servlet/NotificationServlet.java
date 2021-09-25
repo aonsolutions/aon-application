@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.notification.NotificationRequest;
 
@@ -36,14 +38,14 @@ public class NotificationServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/":
-					response(req, resp, getNotification(api));
+			case "/":
+				response(req, resp, getNotification(api));
 				break;
-				case "/total-notification":
-					response(req, resp, getTotalNotification(api));
+			case "/total-notification":
+				response(req, resp, getTotalNotification(api));
 				break;
-				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -56,17 +58,17 @@ public class NotificationServlet extends AonApiHttpServlet{
 		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/mark-read-notification":
-					response(req, resp, markReadNotification(api));
-					break;
-				case "/send":
-					response(req, resp, sendNotification(api));
-					break;
-				case "/save-test":
-					response(req, resp, saveNotificationTest(api));
-					break;
-				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+			case "/mark-read-notification":
+				response(req, resp, markReadNotification(api));
+				break;
+			case "/send":
+				response(req, resp, sendNotification(api));
+				break;
+			case "/save-test":
+				response(req, resp, saveNotificationTest(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -84,11 +86,11 @@ public class NotificationServlet extends AonApiHttpServlet{
 			if(api.getData().opt("task_holder") != null) {
 				TaskHolder th = AON.getTaskHolder(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(api.getData().optInt("task_holder")));
 				User user = AON.getUser(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(th.getUserId()));
-				Auth auth = new Auth().setAuth(user.getAuth());
+				Auth auth = user.getAuth();
 				if(auth.getAuth()!=null) auths.add(auth);
 			} else {
 				AON.getDomainUserStream(domain.getName(), domain.getId(), login, f -> f.getAuthProperty().isNotNull()).forEach(user -> {
-					Auth auth = new Auth().setAuth(user.getAuth());
+					Auth auth = user.getAuth();
 					if(auth.getAuth()!=null) auths.add(auth);
 				});
 			}
@@ -101,7 +103,7 @@ public class NotificationServlet extends AonApiHttpServlet{
 			}
 		} 
 		
-		if(auths.size()>0) {
+		if(!auths.isEmpty()) {
 	    	NotificationRequest notification = new NotificationRequest();
 	    	notification.setTitle(api.getData().optString("title"));
 	    	notification.setBody(api.getData().optString("body"));
@@ -119,17 +121,17 @@ public class NotificationServlet extends AonApiHttpServlet{
 		JSONArray array = new JSONArray();
 		AonToken at = SECURITY.getAonToken(api.getToken());
 		Integer page = api.getParams().optInt("page");
-		Integer peerPage = api.getParams().optInt("peerPage");
+		Integer perPage = api.getParams().optInt("perPage");
 		AON_SOLUTIONS.getNotificationStream(f -> 
 			f.getStatusProperty().eq(NotificationStatus.UNREAD.value())
-			.and(f.getAuthProperty().eq(at.getAuth())), page, peerPage)
+			.and(f.getAuthProperty().eq(at.getAuth())), page, perPage)
 		.forEach(nt -> array.put(nt.toJSON()));
 		return array;
 	}
 
 	private JSONObject saveNotificationTest(AonApiData api) {
 		AonToken authToken = SECURITY.getAonToken(api.getToken());
-		LinkedList<Auth> auths = new LinkedList<Auth>();
+		LinkedList<Auth> auths = new LinkedList<>();
 		auths.add(new Auth().setAuth(authToken.getAuth()));
     	NotificationRequest notification = new NotificationRequest();
     	notification.setTitle("TITULO DE PRUEBA");

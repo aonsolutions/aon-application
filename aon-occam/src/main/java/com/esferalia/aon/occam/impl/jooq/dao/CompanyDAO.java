@@ -11,7 +11,6 @@ import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
@@ -19,26 +18,31 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.Record;
+import org.jooq.Select;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.EnterpriseFilter;
-import com.esferalia.aon.occam.api.model.EnterpriseProperties;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -46,95 +50,177 @@ import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AonCompanyFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CompanyFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CompanyPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class CompanyDAO {
-
-	private static final EnterprisePropertiesDAO ENTERPRISE_PROPERTIES = new EnterprisePropertiesDAO();
-	private static final CompanyPropertiesDAO COMPANY_PROPERTIES = new CompanyPropertiesDAO();
 	
-	private static class EnterprisePropertiesDAO implements EnterpriseProperties {
+	private CompanyDAO() {
+	}
 
-		private Condition[] getConditions(EnterpriseFilter filter) {
+	private static final CompanyPropertiesDAO COMPANY_PROPERTIES = new CompanyPropertiesDAO();
+	protected static class CompanyPropertiesDAO extends RegistryPropertiesDAO implements CompanyProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, CompanyFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null)
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(CompanyFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
 				return new Condition[0];
-
+			}
 			return new Condition[] { filterDAO.getCondition() };
 		}
 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.DOMAIN);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.ACTIVE);}
+		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.SURCHARGE);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.WITHHOLDING);}
+		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.VAT_ACCRUAL_PAYMENT);}
+		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.E_INVOICE);}
+ 		@Override public Property<Integer> getDomainParentProperty() {return new FilterDAO.PropertyDAO<>(Domain.DOMAIN.PARENT);}
+	}
+	
+	public static class CompanyFiller implements Function<Record, Company> {
 		@Override
-		public Property<Integer> getIdProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(ENTERPRISE.REGISTRY);
+		public Company apply(Record r) {
+			return buildCompany(r, REGISTRY);
 		}
-
-		@Override
-		public Property<Integer> getDomainProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(ENTERPRISE.DOMAIN);
+		
+		public static Company buildCompany(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
+			return new Company()
+					.copy(RegistryFiller.build(r, registry))
+					.setActive(AonEnumUtils.getBoolean(r.getValue(COMPANY.ACTIVE)))
+					.seteInvoice(AonEnumUtils.getBoolean(r.getValue(COMPANY.E_INVOICE)))
+					.setSurcharge(AonEnumUtils.getBoolean(r.getValue(COMPANY.SURCHARGE)))
+					.setVatAccrualPayment(AonEnumUtils.getBoolean(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT)))
+					.setWithholding(AonEnumUtils.getBoolean(r.getValue(COMPANY.WITHHOLDING)));
 		}
-
-		@Override
-		public Property<Integer> getParentDomainProperty() {
-			return new FilterDAO.PropertyDAO<Integer>(DOMAIN.PARENT);
+	}
+	
+	public static class CompanyValidation {
+		
+		private CompanyValidation() {
 		}
+		
+		public static final BiConsumer<Company,AONContext> EMPTY_DOMAIN = (company,ctx) -> {
+			if (company.getDomain() == null || company.getDomain().getId() == null) 
+				throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		};
+		
+		public static final BiConsumer<Company,AONContext> DUPLICATED_ROW = (company,ctx) -> {
+			Company c = getCompany(ctx, company.getDomain().getId());
+			if (c != null) 
+				throw new AonCoreException(AonError.DUPLICATED_COMPANY_ROW.getMessage());
+		};
 
-		@Override
-		public Property<String> getNameProperty() {
-			return new FilterDAO.PropertyDAO<String>(REGISTRY.NAME);
-		}
-
-		@Override
-		public Property<String> getAliasProperty() {
-			return new FilterDAO.PropertyDAO<String>(REGISTRY.ALIAS);
-		}
-
-		@Override
-		public Property<String> getDocumentProperty() {
-			return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT);
+		public static void validateInsert(AONContext ctx, Company company) throws AonCoreException{
+			EMPTY_DOMAIN
+				.andThen(DUPLICATED_ROW)
+				.accept(company, ctx);
 		}
 
 	}
-	
-	private static Rmedia PHONE = RMEDIA.as("rmedia_phone"); 
-	private static Rmedia FAX = RMEDIA.as("rmedia_fax");
-	private static Rmedia EMAIL = RMEDIA.as("rmedia_email");
-	private static Rmedia WEB = RMEDIA.as("rmedia_web");
-	
-	public static LinkedList<Enterprise> getParentEnterprises(AONContext ctx,EnterpriseFilter filter) {
-		LinkedList<Enterprise> list = new LinkedList<Enterprise>();
-		ctx.getDslContext().select(
-				ENTERPRISE.REGISTRY
-				,ENTERPRISE.DOMAIN
-				,REGISTRY.DOCUMENT_TYPE
-				,REGISTRY.DOCUMENT_COUNTRY
-				,REGISTRY.DOCUMENT
-				,REGISTRY.NAME
-				,REGISTRY.ALIAS
-			)
-			.from(ENTERPRISE)
-			.join(REGISTRY).on(ENTERPRISE.REGISTRY.equal(REGISTRY.ID))
-			.join(DOMAIN).on(
-						 DOMAIN.ID.equal(ENTERPRISE.DOMAIN)
-					.and(DOMAIN.DOMAINMANAGEMENT.equal((byte) 0))
-					.and(DOMAIN.ACTIVE.equal((byte) 1))
-							)
-			.leftOuterJoin(SCOPE).on(SCOPE.ID.equal(ENTERPRISE.SCOPE))
-			.where(ENTERPRISE_PROPERTIES.getConditions(filter))
+
+	private static SelectConditionStep<Record> select(AONContext ctx, CompanyFilter filter) {
+		return ctx.getDslContext().select()
+				.from(COMPANY)
+				.join(REGISTRY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
+				.where(COMPANY_PROPERTIES.getConditions(filter));
+	}
+	public static Stream<Company> getStream(AONContext ctx, CompanyFilter filter){
+		return select(ctx,filter)
 			.fetch()
-			.forEach( record -> list.add( new Enterprise()
-						.setId(record.getValue(ENTERPRISE.REGISTRY))
-						.setDomain(record.getValue(ENTERPRISE.DOMAIN))
-						.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(REGISTRY.DOCUMENT_TYPE)))
-						.setDocumentCountry(Country.safeValueOf(record.getValue(REGISTRY.DOCUMENT_COUNTRY)))
-						.setDocument(record.getValue(REGISTRY.DOCUMENT))
-						.setName(record.getValue(REGISTRY.NAME))
-					)
-				);
-		return list;
+			.stream()
+			.map(new CompanyFiller());
 	}
+	
+	public static Company getByDomain(AONContext ctx, Integer domain){
+		return getStream(ctx, p -> p.getDomainProperty().eq(domain))
+			.findFirst()
+			.orElse(null);
+	}
+
+	public static Company getCompany(AONContext ctx,int domain) {
+		return getByDomain(ctx, domain);
+	}
+	
+	public static Company save(AONContext ctx, Company company) {
+		ctx.checkWrite();
+		boolean nullId = (company.getId() == null); 
+		company = RegistryDAO.save(ctx, company);
+		if (nullId) {
+			CompanyValidation.validateInsert(ctx, company);
+			insert(ctx, company);
+		} else {
+			update(ctx, company);			
+		}
+		return company;
+	}
+	
+	private static Company insert(AONContext ctx, Company company){
+		ctx.getDslContext().insertInto(COMPANY)
+			.set(COMPANY.REGISTRY,company.getId())
+			.set(COMPANY.DOMAIN,company.getDomain().getId())
+			.set(COMPANY.ACTIVE,AonEnumUtils.getByte(company.isActive()))
+			.set(COMPANY.SURCHARGE,AonEnumUtils.getByte(company.isSurcharge()))
+			.set(COMPANY.WITHHOLDING,AonEnumUtils.getByte(company.isWithholding()))
+			.set(COMPANY.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(company.isVatAccrualPayment()))
+			.set(COMPANY.E_INVOICE,AonEnumUtils.getByte(company.iseInvoice()))
+			.execute();
+		ctx.log().info("INSERT COMPANY id: " + company.getId());		
+		return company;
+	}
+	private static Company update(AONContext ctx, Company company){
+		int count = ctx.getDslContext().update(COMPANY)
+			.set(COMPANY.DOMAIN,company.getDomain().getId())
+			.set(COMPANY.ACTIVE,AonEnumUtils.getByte(company.isActive()))
+			.set(COMPANY.SURCHARGE,AonEnumUtils.getByte(company.isSurcharge()))
+			.set(COMPANY.WITHHOLDING,AonEnumUtils.getByte(company.isWithholding()))
+			.set(COMPANY.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(company.isVatAccrualPayment()))
+			.set(COMPANY.E_INVOICE,AonEnumUtils.getByte(company.iseInvoice()))
+			.where(COMPANY.REGISTRY.eq(company.getId()))
+			.execute();
+		ctx.log().info("UPDATE COMPANY id: " + company.getId() + ". (" + count + " rows)");		
+		return company;
+	}
+
+	// ******************************************
+	// ********** FULL COMPANY *****************
+	// ******************************************
+	public static CompanyFull getFull(AONContext ctx, Integer domain){
+		CompanyFull full = new CompanyFull();
+		full.setRegistry(CompanyDAO.getByDomain(ctx, domain));  
+		RegistryDAO.fillChilds(ctx, full);
+		return full;
+	}
+	public static CompanyFull fillChilds(AONContext ctx, CompanyFull full){
+		full.setDirStaff(RDirStaffDAO.getStreamByRegistry(ctx, full.getId()).collect(Collectors.toCollection(LinkedList::new)));
+		return full;
+	}
+	
+	public static CompanyFull save(AONContext ctx, CompanyFull companyFull) {
+		ctx.checkWrite();
+		companyFull.setRegistry(CompanyDAO.save(ctx, companyFull.getRegistry()));
+		RegistryDAO.saveChilds(ctx, companyFull);
+		companyFull = getFull(ctx, companyFull.getId());
+		return companyFull;
+	}
+
+	/* **********************************************
+	 *					ANTIGUOS MÉTODOS
+	 * **********************************************
+	 */
+	
+	private static final Rmedia PHONE = RMEDIA.as("rmedia_phone"); 
+	private static final Rmedia FAX = RMEDIA.as("rmedia_fax");
+	private static final Rmedia EMAIL = RMEDIA.as("rmedia_email");
+	private static final Rmedia WEB = RMEDIA.as("rmedia_web");
 
 	public static Enterprise getEnterprise(AONContext ctx,int id) {
 		return ctx.getDslContext().select(
@@ -175,26 +261,26 @@ public class CompanyDAO {
 			.where(ENTERPRISE.REGISTRY.equal(id))
 			.fetch()
 			.stream()
-			.map( record -> new Enterprise().setId(record.getValue(ENTERPRISE.REGISTRY))
-				.setDomain(record.getValue(ENTERPRISE.DOMAIN))
-				.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(REGISTRY.DOCUMENT_TYPE)))
-				.setDocumentCountry(Country.safeValueOf(record.getValue(REGISTRY.DOCUMENT_COUNTRY)))
-				.setDocument(record.getValue(REGISTRY.DOCUMENT))
-				.setName(record.getValue(REGISTRY.NAME))
-				.setAlias(record.getValue(REGISTRY.ALIAS))
-				.setStreetType(StreetType.safeValueOf(record.getValue(RADDRESS.STREET_TYPE)))
-				.setAddress(record.getValue(RADDRESS.ADDRESS))
-				.setNumber(record.getValue(RADDRESS.NUMBER))
-				.setAddress2(record.getValue(RADDRESS.ADDRESS2))
-				.setAddress3(record.getValue(RADDRESS.ADDRESS3))
-				.setProvince(Province.safeValueOf(record.getValue(GEOZONE.CODE)))
-				.setZip(record.getValue(RADDRESS.ZIP))
-				.setTown(record.getValue(RADDRESS.MUNICIPALITY_CODE))
-				.setCity(record.getValue(RADDRESS.CITY))
-				.setPhone(record.getValue(PHONE.VALUE))
-				.setFax(record.getValue(FAX.VALUE))
-				.setEmail(record.getValue(EMAIL.VALUE))
-				.setWeb(record.getValue(WEB.VALUE))
+			.map( rec -> new Enterprise().setId(rec.getValue(ENTERPRISE.REGISTRY))
+				.setDomain(rec.getValue(ENTERPRISE.DOMAIN))
+				.setDocumentType(AonEnumUtils.enumValue(DocumentType.class,rec.getValue(REGISTRY.DOCUMENT_TYPE)))
+				.setDocumentCountry(Country.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_COUNTRY)))
+				.setDocument(rec.getValue(REGISTRY.DOCUMENT))
+				.setName(rec.getValue(REGISTRY.NAME))
+				.setAlias(rec.getValue(REGISTRY.ALIAS))
+				.setStreetType(StreetType.safeValueOf(rec.getValue(RADDRESS.STREET_TYPE)))
+				.setAddress(rec.getValue(RADDRESS.ADDRESS))
+				.setNumber(rec.getValue(RADDRESS.NUMBER))
+				.setAddress2(rec.getValue(RADDRESS.ADDRESS2))
+				.setAddress3(rec.getValue(RADDRESS.ADDRESS3))
+				.setProvince(Province.safeValueOf(rec.getValue(GEOZONE.CODE)))
+				.setZip(rec.getValue(RADDRESS.ZIP))
+				.setTown(rec.getValue(RADDRESS.MUNICIPALITY_CODE))
+				.setCity(rec.getValue(RADDRESS.CITY))
+				.setPhone(rec.getValue(PHONE.VALUE))
+				.setFax(rec.getValue(FAX.VALUE))
+				.setEmail(rec.getValue(EMAIL.VALUE))
+				.setWeb(rec.getValue(WEB.VALUE))
 				)
 		.findFirst()
 		.orElse(null);
@@ -249,71 +335,11 @@ public class CompanyDAO {
 					.or(domain.PARENT.in(domains)
 						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes))))))
 			.orderBy(REGISTRY.NAME)
-//			.limit(perPage)
-//			.offset(perPage * (page -1))
 			.fetch().stream().map(new AonCompanyFiller());
 	}
 
-	public static Company getCompany(AONContext ctx,int domain) {
-		return ctx.getDslContext()
-			.select(COMPANY.REGISTRY,REGISTRY.DOCUMENT,REGISTRY.NAME
-				,COMPANY.SURCHARGE,COMPANY.WITHHOLDING,COMPANY.VAT_ACCRUAL_PAYMENT)
-			.from(COMPANY)
-			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
-			.where(COMPANY.DOMAIN.equal(domain))
-			.fetch()
-			.stream()
-			.map(rec -> {
-				Company c = new Company()
-						.setId(rec.getValue(COMPANY.REGISTRY))
-						.setDocument(rec.getValue(REGISTRY.DOCUMENT))
-						.setName(rec.getValue(REGISTRY.NAME))
-						.setSurcharge(rec.getValue(COMPANY.SURCHARGE)==1)
-						.setWithholding(rec.getValue(COMPANY.WITHHOLDING)==1)
-						.setVatAccrualPayment(rec.getValue(COMPANY.VAT_ACCRUAL_PAYMENT)==1);
-				c.setDomain(new Domain().setId(domain));
-				return c;
-			})
-			.findFirst()
-			.orElse(null);
-	}
-/*
-	public static Company getCompany(AONContext ctx,int domain) {
-		return ctx.getDslContext()
-			.select()
-			.from(COMPANY)
-			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
-			.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
-			.where(COMPANY.DOMAIN.equal(domain))
-			.fetch()
-			.stream()
-			.map(new CompanyFiller())
-			.findFirst()
-			.orElse(null);
-	}
-*/
-	public static LinkedList<CompanyAdministrator> getDirStaff(AONContext ctx,int domain) {
-		return ctx.getDslContext()
-				.select(RDIR_STAFF.DOCUMENT,RDIR_STAFF.NAME,RDIR_STAFF.DIRECTOR,RDIR_STAFF.SHAREHOLDER,RDIR_STAFF.PERCENT_SHARE,RDIR_STAFF.NOMINAL_VALUE,RDIR_STAFF.REPRESENTATIVE)
-				.from(COMPANY)
-				.join(RDIR_STAFF).on( COMPANY.REGISTRY.equal(RDIR_STAFF.REGISTRY) )
-				.where(COMPANY.DOMAIN.equal(domain))
-				.fetch()
-				.stream()
-				.map( rec -> new CompanyAdministrator()
-						.setDocument(rec.getValue(RDIR_STAFF.DOCUMENT) )
-						.setName(rec.getValue(RDIR_STAFF.NAME) )
-						.setShareholder( rec.getValue(RDIR_STAFF.SHAREHOLDER) == 1 )
-						.setAdministrator( rec.getValue(RDIR_STAFF.DIRECTOR) == 1 )
-						.setPercent(rec.getValue(RDIR_STAFF.PERCENT_SHARE) )
-						.setNominalValue(rec.getValue(RDIR_STAFF.NOMINAL_VALUE)) 
-						.setRepresentative( rec.getValue(RDIR_STAFF.REPRESENTATIVE) == 1 )
-					)
-				.collect(Collectors.toCollection(LinkedList::new ));
-	}
-		
 	public static LinkedList<CompanyBank> getBanks(AONContext ctx,int enterprise) {
-		LinkedList<CompanyBank> list = new LinkedList<CompanyBank>();
+		LinkedList<CompanyBank> list = new LinkedList<>();
 		list.addAll(
 			ctx.getDslContext().select(RBANK.ID,RBANK.BANK_ACCOUNT,RBANK.BIC,RBANK.ALIAS)
 			.from(COMPANY)
@@ -322,11 +348,11 @@ public class CompanyDAO {
 			.and(RBANK.ACTIVE.equal((byte) 1))
 			.fetch()
 			.stream()
-			.map(record -> new CompanyBank()
-				.setId(record.getValue(RBANK.ID) )
-				.setBankAccount(record.getValue(RBANK.BANK_ACCOUNT) )
-				.setBic(record.getValue(RBANK.BIC) )
-				.setAlias(record.getValue(RBANK.ALIAS) ) 
+			.map(rec -> new CompanyBank()
+				.setId(rec.getValue(RBANK.ID) )
+				.setBankAccount(rec.getValue(RBANK.BANK_ACCOUNT) )
+				.setBic(rec.getValue(RBANK.BIC) )
+				.setAlias(rec.getValue(RBANK.ALIAS) ) 
 				)
 			.collect(Collectors.toList()));
 		return list;

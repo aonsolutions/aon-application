@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
+import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -46,7 +48,7 @@ public class JooqEvents {
 		return setWorkplaceEmployeesInformation(DSL.using(conn, getDefaultSettings()), updateEventsWorkplace);
 	}
 	
-	public static WorkplaceEmployees getWorkplaceEmployeesEvents(Connection conn, Integer workplaceId) {
+	public static WorkplaceEmployees getWorkplaceEmployeesEvents(Connection conn, Integer workplaceId) throws IllegalArgumentException {
 		return getWorkplaceEmployeesEventsInformation(DSL.using(conn, getDefaultSettings()), workplaceId);
 	}
 	
@@ -62,37 +64,58 @@ public class JooqEvents {
 		return SETTINGS;
 	}
 	
-	private static WorkplaceEmployees getWorkplaceEmployeesEventsInformation(DSLContext dslContext, Integer workplaceId) {
+	private static WorkplaceEmployees getWorkplaceEmployeesEventsInformation(DSLContext dslContext, Integer workplaceId) throws IllegalArgumentException {
+		
 		WorkplaceEmployees workplaceEmployees = new WorkplaceEmployees();
+		
 		System.out.println("Workplace :"+workplaceId);
 		
-		java.util.Date newDate = new java.util.Date();
-		java.util.Date newDatePreviusMonth = DateUtils.getFirstDayOfMonth(newDate);
-		System.out.println(newDatePreviusMonth);
+		java.util.Date newDatePreviusMonth = DateUtils.getFirstDayOfMonth(new java.util.Date());
 		Date actualDate = new Date(newDatePreviusMonth.getTime());
 		
 		Result<Record> activeContractsRecords = dslContext.select().from(CONTRACT)
-					.where(CONTRACT.WORKPLACE.eq(workplaceId))
-					.and(CONTRACT.END_DATE.isNull()
-							.or(CONTRACT.END_DATE.ge(actualDate)))
-//					.and(CONTRACT.SS_REGIME.ne((byte)3))
-					.orderBy(CONTRACT.ID.desc())
-					.fetch();
+				.where(CONTRACT.WORKPLACE.eq(workplaceId))
+				.and(CONTRACT.END_DATE.isNull()
+						.or(CONTRACT.END_DATE.ge(actualDate)))
+				.orderBy(CONTRACT.ID.desc())
+				.fetch();
 		
-		ArrayList<Integer> existingPerson = new ArrayList<>(); 
+//		if(null == agreementId)
+//			activeContractsRecords = dslContext.select().from(CONTRACT)
+//						.where(CONTRACT.WORKPLACE.eq(workplaceId))
+//						.and(CONTRACT.END_DATE.isNull()
+//								.or(CONTRACT.END_DATE.ge(actualDate)))
+//						.orderBy(CONTRACT.ID.desc())
+//						.fetch();
+//		else
+//			activeContractsRecords = dslContext.select().from(CONTRACT)
+//				.where(CONTRACT.WORKPLACE.eq(workplaceId))
+//				.and(CONTRACT.END_DATE.isNull()
+//						.or(CONTRACT.END_DATE.ge(actualDate)))
+//				.and(CONTRACT.AGREEMENT_LEVEL.in(
+//						dslContext.select(AGREEMENT_LEVEL.ID).from(AGREEMENT_LEVEL)
+//							.where(AGREEMENT_LEVEL.AGREEMENT.eq(agreementId))
+//							.fetch(AGREEMENT_LEVEL.ID)
+//				))
+//				.orderBy(CONTRACT.ID.desc())
+//				.fetch();
+		
+		ArrayList<Integer> existingPerson = new ArrayList<Integer>(); 
 		
 		for(Record c : activeContractsRecords) {
+			
 			if(existingPerson.isEmpty() || !existingPerson.contains(c.get(CONTRACT.PERSON))) {
+				
 				existingPerson.add(c.get(CONTRACT.PERSON));
 				
-				Record p = dslContext.select().from(PERSON)
+				Record personRecord = dslContext.select().from(PERSON)
 						.where(PERSON.REGISTRY.eq(c.get(CONTRACT.PERSON)))
 						.fetchOne();
 				
 				EmployeeInfo employee = new EmployeeInfo();
 				
 				Result<Record> contractRecords = dslContext.select().from(CONTRACT)
-					.where(CONTRACT.PERSON.eq(p.get(PERSON.REGISTRY)))
+					.where(CONTRACT.PERSON.eq(personRecord.get(PERSON.REGISTRY)))
 					.orderBy(CONTRACT.START_DATE.desc())
 					.fetch();
 				
@@ -134,119 +157,128 @@ public class JooqEvents {
 				
 				Record registryRecord = dslContext.select()
 						.from(REGISTRY)
-						.where(REGISTRY.ID.eq(p.get(PERSON.REGISTRY)))
+						.where(REGISTRY.ID.eq(personRecord.get(PERSON.REGISTRY)))
 						.fetchOne();
 				
+				Integer agreementId = null;
+				Integer agreementLevelId = c.get(CONTRACT.AGREEMENT_LEVEL);
+				
+				if(null != agreementLevelId)
+					agreementId = dslContext.select(AGREEMENT_LEVEL.AGREEMENT).from(AGREEMENT_LEVEL)
+						.where(AGREEMENT_LEVEL.ID.eq(agreementLevelId))
+						.fetchOne(AGREEMENT_LEVEL.AGREEMENT);
+				
+				
 				//PERSON TABLE
-				Integer id = p.get(PERSON.REGISTRY);
-				String name = p.get(PERSON.NAME);
-				String surName = p.get(PERSON.FIRST_SURNAME);
-				String secondSurName = p.get(PERSON.SECOND_SURNAME);
-				Date bithDate = p.get(PERSON.BIRTH_DATE);
-				Byte gender = p.get(PERSON.GENDER);
-				String ssNumber = p.get(PERSON.SOCIAL_SECURITY_NUM);
+				Integer id = personRecord.get(PERSON.REGISTRY);
+				String name = personRecord.get(PERSON.NAME);
+				String surName = personRecord.get(PERSON.FIRST_SURNAME);
+				String secondSurName = personRecord.get(PERSON.SECOND_SURNAME);
+				Date bithDate = personRecord.get(PERSON.BIRTH_DATE);
+				Byte gender = personRecord.get(PERSON.GENDER);
+				String ssNumber = personRecord.get(PERSON.SOCIAL_SECURITY_NUM);
 				
 				//REGISTRY TABLE
 				String document = registryRecord.get(REGISTRY.DOCUMENT);
 				Byte documentType = registryRecord.get(REGISTRY.DOCUMENT_TYPE);
 				String nationality = registryRecord.get(REGISTRY.NATIONALITY);
 				
-				Result<Record> raddressRecords = dslContext.select()
-						.from(RADDRESS)
-						.where(RADDRESS.REGISTRY.eq(p.get(PERSON.REGISTRY)))
-						.fetch();
-				
-				//RADDRESS TABLE
-				Integer raddressId = null;
-				String streetType = null;
-				String address = null;
-				String addressNum = null;
-				String addressZip = null;
-				String addressCity = null;
-				Integer geozoneId = null;
-				String addressProvince = null;
-				
-				if(null != raddressRecords && !raddressRecords.isEmpty()) {
-					if(null != raddressRecords.get(0).get(RADDRESS.GEOZONE)) {
-						Record geozoneRecord = dslContext.select()
-								.from(GEOZONE)
-								.where(GEOZONE.ID.eq(raddressRecords.get(0).get(RADDRESS.GEOZONE)))
-								.fetchOne();
-						
-						geozoneId = geozoneRecord.get(GEOZONE.ID);
-						addressProvince = geozoneRecord.get(GEOZONE.NAME);
-					}
-					
-					raddressId = raddressRecords.get(0).get(RADDRESS.ID);
-					streetType = raddressRecords.get(0).get(RADDRESS.STREET_TYPE);
-					address = raddressRecords.get(0).get(RADDRESS.ADDRESS);
-					addressNum = raddressRecords.get(0).get(RADDRESS.NUMBER);
-					addressZip = raddressRecords.get(0).get(RADDRESS.ZIP);
-					addressCity = raddressRecords.get(0).get(RADDRESS.CITY);
-				}
+//				Result<Record> raddressRecords = dslContext.select()
+//						.from(RADDRESS)
+//						.where(RADDRESS.REGISTRY.eq(personRecord.get(PERSON.REGISTRY)))
+//						.fetch();
+//				
+//				//RADDRESS TABLE
+//				Integer raddressId = null;
+//				String streetType = null;
+//				String address = null;
+//				String addressNum = null;
+//				String addressZip = null;
+//				String addressCity = null;
+//				Integer geozoneId = null;
+//				String addressProvince = null;
+//				
+//				if(null != raddressRecords && !raddressRecords.isEmpty()) {
+//					if(null != raddressRecords.get(0).get(RADDRESS.GEOZONE)) {
+//						Record geozoneRecord = dslContext.select()
+//								.from(GEOZONE)
+//								.where(GEOZONE.ID.eq(raddressRecords.get(0).get(RADDRESS.GEOZONE)))
+//								.fetchOne();
+//						
+//						geozoneId = geozoneRecord.get(GEOZONE.ID);
+//						addressProvince = geozoneRecord.get(GEOZONE.NAME);
+//					}
+//					
+//					raddressId = raddressRecords.get(0).get(RADDRESS.ID);
+//					streetType = raddressRecords.get(0).get(RADDRESS.STREET_TYPE);
+//					address = raddressRecords.get(0).get(RADDRESS.ADDRESS);
+//					addressNum = raddressRecords.get(0).get(RADDRESS.NUMBER);
+//					addressZip = raddressRecords.get(0).get(RADDRESS.ZIP);
+//					addressCity = raddressRecords.get(0).get(RADDRESS.CITY);
+//				}
 				
 				//RMEDIA TABLE
-				Result<Record> rmediaRecords = dslContext.select()
-						.from(RMEDIA)
-						.where(RMEDIA.REGISTRY.eq(p.get(PERSON.REGISTRY)))
-						.fetch();
-				
-				Integer mobileId = null;
-				String mobile = null;
-				Integer phoneId = null;
-				String phone = null;
-				Integer emailId = null;
-				String email = null;
-				
-				for(Record record : rmediaRecords) {
-					if(1 == record.get(RMEDIA.MEDIA)) {
-						phoneId = record.get(RMEDIA.ID);
-						phone = record.get(RMEDIA.VALUE);
-					}else if(2 == record.get(RMEDIA.MEDIA)) {
-						mobileId = record.get(RMEDIA.ID);
-						mobile = record.get(RMEDIA.VALUE);
-					}else if(4 == record.get(RMEDIA.MEDIA)) {
-						emailId = record.get(RMEDIA.ID);
-						email = record.get(RMEDIA.VALUE);
-					}
-				}
-				
-				//PAY METHOD
-				Result<Record> rpaymethodRecords = dslContext.select()
-						.from(RPAYMETHOD)
-						.where(RPAYMETHOD.REGISTRY.eq(p.get(PERSON.REGISTRY)))
-						.fetch();
-				
-				Integer rpaymethodId = null;
-				Integer paymethodId = null;
-				String payMethod = null;
-				Integer rbankId = null;
-				String account = null;
-				String bic = null;
-				
-				if(null != rpaymethodRecords && !rpaymethodRecords.isEmpty()) {
-					rpaymethodId = rpaymethodRecords.get(0).get(RPAYMETHOD.ID);
-					Record paymethodRecord = dslContext.select()
-							.from(PAY_METHOD)
-							.where(PAY_METHOD.ID.eq(rpaymethodRecords.get(0).get(RPAYMETHOD.PAY_METHOD)))
-							.fetchOne();
-					
-					if(null != paymethodRecord) {
-						paymethodId = paymethodRecord.get(PAY_METHOD.ID);
-						payMethod = paymethodRecord.get(PAY_METHOD.NAME);
-					}
-					
-					if(null != rpaymethodRecords.get(0).get(RPAYMETHOD.RBANK)) {
-						Record rbankRecord = dslContext.select()
-								.from(RBANK)
-								.where(RBANK.ID.eq(rpaymethodRecords.get(0).get(RPAYMETHOD.RBANK)))
-								.fetchOne();
-						
-						rbankId = rbankRecord.get(RBANK.ID);
-						account = rbankRecord.get(RBANK.BANK_ACCOUNT);
-						bic = rbankRecord.get(RBANK.BIC);
-					}
-				}
+//				Result<Record> rmediaRecords = dslContext.select()
+//						.from(RMEDIA)
+//						.where(RMEDIA.REGISTRY.eq(personRecord.get(PERSON.REGISTRY)))
+//						.fetch();
+//				
+//				Integer mobileId = null;
+//				String mobile = null;
+//				Integer phoneId = null;
+//				String phone = null;
+//				Integer emailId = null;
+//				String email = null;
+//				
+//				for(Record record : rmediaRecords) {
+//					if(1 == record.get(RMEDIA.MEDIA)) {
+//						phoneId = record.get(RMEDIA.ID);
+//						phone = record.get(RMEDIA.VALUE);
+//					}else if(2 == record.get(RMEDIA.MEDIA)) {
+//						mobileId = record.get(RMEDIA.ID);
+//						mobile = record.get(RMEDIA.VALUE);
+//					}else if(4 == record.get(RMEDIA.MEDIA)) {
+//						emailId = record.get(RMEDIA.ID);
+//						email = record.get(RMEDIA.VALUE);
+//					}
+//				}
+//				
+//				//PAY METHOD
+//				Result<Record> rpaymethodRecords = dslContext.select()
+//						.from(RPAYMETHOD)
+//						.where(RPAYMETHOD.REGISTRY.eq(personRecord.get(PERSON.REGISTRY)))
+//						.fetch();
+//				
+//				Integer rpaymethodId = null;
+//				Integer paymethodId = null;
+//				String payMethod = null;
+//				Integer rbankId = null;
+//				String account = null;
+//				String bic = null;
+//				
+//				if(null != rpaymethodRecords && !rpaymethodRecords.isEmpty()) {
+//					rpaymethodId = rpaymethodRecords.get(0).get(RPAYMETHOD.ID);
+//					Record paymethodRecord = dslContext.select()
+//							.from(PAY_METHOD)
+//							.where(PAY_METHOD.ID.eq(rpaymethodRecords.get(0).get(RPAYMETHOD.PAY_METHOD)))
+//							.fetchOne();
+//					
+//					if(null != paymethodRecord) {
+//						paymethodId = paymethodRecord.get(PAY_METHOD.ID);
+//						payMethod = paymethodRecord.get(PAY_METHOD.NAME);
+//					}
+//					
+//					if(null != rpaymethodRecords.get(0).get(RPAYMETHOD.RBANK)) {
+//						Record rbankRecord = dslContext.select()
+//								.from(RBANK)
+//								.where(RBANK.ID.eq(rpaymethodRecords.get(0).get(RPAYMETHOD.RBANK)))
+//								.fetchOne();
+//						
+//						rbankId = rbankRecord.get(RBANK.ID);
+//						account = rbankRecord.get(RBANK.BANK_ACCOUNT);
+//						bic = rbankRecord.get(RBANK.BIC);
+//					}
+//				}
 				
 				//SET EMPLOYEE INFO
 				employee.setContractId(contractId);
@@ -263,28 +295,30 @@ public class JooqEvents {
 				employee.setDocumentType(documentType);
 				employee.setNationality(nationality);
 				
-				employee.setRaddressId(raddressId);
-				employee.setStreetType(streetType);
-				employee.setAddress(address);
-				employee.setAddresNum(addressNum);
-				employee.setAddressZip(addressZip);
-				employee.setAddressCity(addressCity);
-				employee.setGeozoneId(geozoneId);
-				employee.setAddressProvinces(addressProvince);
+				employee.setAgreementId(agreementId);
 				
-				employee.setMobileId(mobileId);
-				employee.setMobile(mobile);
-				employee.setPhoneId(phoneId);
-				employee.setPhone(phone);
-				employee.setEmailId(emailId);
-				employee.setEmail(email);
-				
-				employee.setRpaymethodId(rpaymethodId);
-				employee.setPaymethodId(paymethodId);
-				employee.setPayMethodType(payMethod);
-				employee.setRbankId(rbankId);
-				employee.setAccount(account);
-				employee.setBic(bic);
+//				employee.setRaddressId(raddressId);
+//				employee.setStreetType(streetType);
+//				employee.setAddress(address);
+//				employee.setAddresNum(addressNum);
+//				employee.setAddressZip(addressZip);
+//				employee.setAddressCity(addressCity);
+//				employee.setGeozoneId(geozoneId);
+//				employee.setAddressProvinces(addressProvince);
+//				
+//				employee.setMobileId(mobileId);
+//				employee.setMobile(mobile);
+//				employee.setPhoneId(phoneId);
+//				employee.setPhone(phone);
+//				employee.setEmailId(emailId);
+//				employee.setEmail(email);
+//				
+//				employee.setRpaymethodId(rpaymethodId);
+//				employee.setPaymethodId(paymethodId);
+//				employee.setPayMethodType(payMethod);
+//				employee.setRbankId(rbankId);
+//				employee.setAccount(account);
+//				employee.setBic(bic);
 				
 				workplaceEmployees.addEmployee(employee);
 			}

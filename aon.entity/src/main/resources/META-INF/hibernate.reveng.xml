@@ -55,6 +55,8 @@
 	<table-filter match-name="auth_attach" exclude="true" />
 	<table-filter match-name="task_workflow" exclude="true" />
 	<table-filter match-name="task_attach" exclude="true" />
+	<table-filter match-name="project_holder" exclude="true" />
+
 
 	<!--  ***************** -->
 	<!--  MAPPING DE TABLAS -->

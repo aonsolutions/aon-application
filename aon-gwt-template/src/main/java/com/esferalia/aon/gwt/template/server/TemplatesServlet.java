@@ -70,7 +70,6 @@ import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.InvoiceImportClass;
 import com.esferalia.aon.gwt.template.shared.RegistryImportClass;
-import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
@@ -93,6 +92,7 @@ import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
@@ -678,7 +678,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
 				Boolean b = true;
 				for(Seller s : sellers){
-					if(toString(value).equalsIgnoreCase(s.getRegistryDocument()) || toString(value).equalsIgnoreCase(s.getRegistryAlias()) || toString(value).equalsIgnoreCase(s.getRegistryName())){
+					if(toString(value).equalsIgnoreCase(s.getDocument()) || toString(value).equalsIgnoreCase(s.getAlias()) || toString(value).equalsIgnoreCase(s.getName())){
 						fee.setSeller(cell.getStringCellValue());
 						fee.setSellerId(s.getId());
 						b= false;
@@ -2062,13 +2062,13 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		byte[] xml = null;
 
     	if(getMimetype().equals(MimeType.CSV.getName()) && (ecommerce.equals(Ecommerce.EBAY) || ecommerce.equals(Ecommerce.GENERIC))){
-    		xml = csvToXmlEbay(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
+    		xml = csvToXmlEbay(data, ecommerce.getName(), type, tag.getName(), seller.getName());
     	}
 
 		if(xml == null && ecommerce.equals(Ecommerce.AMAZON))
-			xml = excelToXmlAmazonXXX(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
+			xml = excelToXmlAmazonXXX(data, ecommerce.getName(), type, tag.getName(), seller.getName());
 		else if(xml == null && (ecommerce.equals(Ecommerce.EBAY) || ecommerce.equals(Ecommerce.GENERIC)))
-			xml = excelToXmlEbayXXX(data, ecommerce.getName(), type, tag.getName(), seller.getRegistryName());
+			xml = excelToXmlEbayXXX(data, ecommerce.getName(), type, tag.getName(), seller.getName());
 
 		if(xml != null){
 			Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),
@@ -2100,7 +2100,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				attach.setDomain(domain);
 				attach.setMimeType(MimeType.XML);
 
-				if(seller.getRegistryName().equals("-"))
+				if(seller.getName().equals("-"))
 					attach.setAttachModule(getCompany(domain, user).getId());
 				else attach.setAttachModule(seller.getId());
 

@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getPeriod, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl} from '../../services/service.js';
+import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
 import { timePaser, setDateTimestampDay } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
@@ -43,6 +43,7 @@ export class AonSign extends AonElement {
     this.applicationEl = this.getApplication();
     this.parent = this.parent || false;
     console.log("PARENT -> " + this.parent);
+    getTaskHolder({reload:true});
     if(this.parent) {
       getTaskHoldersUser().then(r => {
         if(r.length > 0) {

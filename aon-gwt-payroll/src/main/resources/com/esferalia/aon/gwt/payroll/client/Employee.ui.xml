@@ -176,6 +176,10 @@
 			width: 50px;
 			text-align: center;
 		}
+		
+		.errorBorder{
+			border: 1px solid red;
+		}
 	</ui:style>
 
    	<g:HTMLPanel> 
@@ -200,7 +204,7 @@
 							</td>
 							<td ui:field="documentTypeCell" debugId="documentTypeCell">
 								<g:HTMLPanel ui:field="horizontalPanel" styleName="{style.flex}">
-							        <g:Label styleName='{style.alignTextCenter}' ui:field="document_type" debugId="document_type"></g:Label>
+							        <g:Label styleName='{style.alignTextCenter}' ui:field="documentType" debugId="document_type"></g:Label>
 							   </g:HTMLPanel>
 							</td>
 							<td>
@@ -222,7 +226,7 @@
 							<td >
 								<g:HorizontalPanel>
 									<g:HTMLPanel ui:field="ssNumberPanel" styleName="{style.flex}">
-										<g:SuggestBox ui:field="security_social_num" debugId="security_social_num" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
+										<g:SuggestBox ui:field="securitySocialNum" debugId="security_social_num" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
 									</g:HTMLPanel>
 								</g:HorizontalPanel>
 							</td>
@@ -241,13 +245,13 @@
 									styleName='{style.alignTextCenter}'>1er Apellido</g:Label>
 							</td>
 							<td >
-								<g:SuggestBox ui:field="first_surname" debugId="first_surname" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
+								<g:SuggestBox ui:field="firstSurname" debugId="first_surname" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>
 							</td>
 							<td style="width: 10%;">
 								<g:Label styleName='{style.alignTextCenter}'>2º Apellido</g:Label>
 							</td>
 							<td >
-								<g:TextBox ui:field="second_surname" debugId="second_surname" styleName='aon-inputText {style.maxWidthTextBox4} {style.heightTB}'></g:TextBox>
+								<g:TextBox ui:field="secondSurname" debugId="second_surname" styleName='aon-inputText {style.maxWidthTextBox4} {style.heightTB}'></g:TextBox>
 							</td>
 						</tr>
 						<tr>
@@ -319,21 +323,21 @@
 							</td>
 							<td>
 								<g:HTMLPanel ui:field="startDatePanel" styleName="{style.flex}">
-									<a:DateBoxEx ui:field="start_date" debugId="start_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
+									<a:DateBoxEx ui:field="startDate" debugId="start_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
 								</g:HTMLPanel>
 							</td>
 							<td>
 								<g:Label styleName='{style.alignTextCenter}'>Fecha fin</g:Label>
 							</td>
 							<td>
-								<a:DateBoxEx ui:field="end_date" debugId="end_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
+								<a:DateBoxEx ui:field="endDate" debugId="end_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
 							</td>
 							<td style="width: 12%;">
-								<g:Label ui:field="seniority_date_label" debugId="seniority_date_label" styleName='{style.alignTextCenter}'>Fecha antigüedad</g:Label>
+								<g:Label ui:field="seniorityDateLabel" debugId="seniority_date_label" styleName='{style.alignTextCenter}'>Fecha antigüedad</g:Label>
 							</td>
 							<td>
 								<g:HTMLPanel ui:field="seniorityDatePanel" styleName="{style.flex}">
-									<a:DateBoxEx ui:field="seniority_date" debugId="seniority_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle2} {style.heightTB}'></a:DateBoxEx>
+									<a:DateBoxEx ui:field="seniorityDate" debugId="seniority_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle2} {style.heightTB}'></a:DateBoxEx>
 								</g:HTMLPanel>
 							</td>
 						</tr>
@@ -367,7 +371,7 @@
 								<g:Label styleName="{style.firstColumnTextStyle}">Grupo de cotización</g:Label>
 							</td>
 							<td colspan="6">
-								<g:ListBox ui:field="quote_group" debugId="quote_group" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+								<g:ListBox ui:field="quoteGroup" debugId="quote_group" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -376,6 +380,14 @@
 							</td>
 							<td colspan="6">
 								<g:ListBox ui:field="occupation" debugId="occupation" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #f6f6f6; width: 200px;">
+								<g:Label styleName="{style.firstColumnTextStyle}">RLCE</g:Label>
+							</td>
+							<td colspan="6">
+								<g:ListBox ui:field="rlce" debugId="rlce" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<tr>
@@ -395,7 +407,7 @@
 									<g:HTMLPanel ui:field="journeyDuration" debugId="journeyDuration" styleName="{style.flex}" />
 									<g:HTMLPanel styleName="{style.flex}">
 										<g:Label styleName="{style.mr-10}">Coef. Parcialidad: </g:Label>
-										<a:DoubleBox ui:field="partiality_coef" debugId="journeyDuration" styleName="{style.partialityTB} {style.heightTB}"></a:DoubleBox>
+										<a:DoubleBox ui:field="partialityCoef" debugId="journeyDuration" styleName="{style.partialityTB} {style.heightTB}"></a:DoubleBox>
 									</g:HTMLPanel>
 								</g:HTMLPanel>
 							</td>
@@ -426,7 +438,7 @@
 								<g:Label styleName="{style.firstColumnTextStyle}">Fecha de nacimiento</g:Label>
 							</td>
 							<td colspan="2">
-								<a:DateBoxEx ui:field="birth_date" debugId="birth_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
+								<a:DateBoxEx ui:field="birthDate" debugId="birth_date" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle} {style.heightTB}'></a:DateBoxEx>
 							</td>
 							<td style="width: 100px;">
 								<g:HorizontalPanel styleName="{style.paddingLeft} {style.labelsWidth}">
@@ -449,7 +461,7 @@
 								<g:Label styleName='{style.firstColumnTextStyle}'>Dirección</g:Label>
 							</td>
 							<td>
-							    <g:ListBox ui:field="street_type" debugId="street_type" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+							    <g:ListBox ui:field="streetType" debugId="street_type" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 							<td colspan="3">
 								<g:SuggestBox ui:field="address" debugId="address" styleName='aon-inputText {style.maxWidthTextBox} {style.heightTB}'></g:SuggestBox>

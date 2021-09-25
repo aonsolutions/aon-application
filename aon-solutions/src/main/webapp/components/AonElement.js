@@ -91,13 +91,13 @@ export class AonElement extends HTMLElement{
   }
 
 
-  rootPanel(element) {
-    let rp = this.getRootPanel();
-    if(rp) {
-      this.clearElement(rp);
-      rp.appendChild(element);
-    }
-  }
+  // rootPanel(element) {
+  //   let rp = this.getRootPanel();
+  //   if(rp) {
+  //     this.clearElement(rp);
+  //     rp.appendChild(element);
+  //   }
+  // }
 
   rootPanelHtml(html) {
     let rp = this.getRootPanel();
@@ -118,7 +118,7 @@ export class AonElement extends HTMLElement{
   }
 
   getApplication() {
-    return document.querySelector(TAG.AON_APPLICATION);
+    return document.querySelector(TAG.AON_APPLICATION) || {};
   }
 
   getModule() {
@@ -135,7 +135,7 @@ export class AonElement extends HTMLElement{
 
 	isBeta(){
     const href = window.location.href;
-		return href.includes('aonsolutions.org') || href.includes('localhost');
+		return href.includes('aonsolutions.org') || href.includes('localhost') || href.includes('8080');
 	}
 
   showError(e) {

@@ -39,12 +39,26 @@
 					value="#{bundle.aon_displayName}" />
 				<aon:inputText id="MailAccount_displayName"
 					size="60" maxlength="256" value="#{controller.to.displayName}" />
-								
-				<aon:outputLabel for="MailAccount_replyToMail"
-					value="#{bundle.webmail_mailAccount_replyToMail}" />
-				<aon:inputText id="MailAccount_replyToMail"
-					size="60" value="#{controller.to.replyToMail}" />
+					
+				<aon:outputLabel for="MailAccount_Auto"
+					value="Envío Automático" />
 
+				<aon:div>
+	                <aon:selectBooleanCheckbox id="MailAccount_Auto"
+    	            	actionListener="#{controller.onProtocolAonChanged}"
+    	            	reRender="MailAccountDiv" ajaxSingle="false"
+    	            	value="#{controller.protocolAon}"/>
+					<aon:outputText value=" (Envío a través de no-reply@aon.solutions)"/>
+				</aon:div>
+
+				<aon:if test="#{!controller.protocolAon}" >
+	
+					<aon:outputLabel for="MailAccount_replyToMail"
+						value="#{bundle.webmail_mailAccount_replyToMail}" />
+					<aon:inputText id="MailAccount_replyToMail"
+						size="60" value="#{controller.to.replyToMail}" />
+
+				</aon:if>
 				<aon:if test="#{!mailConfig.skipTypeColumn}">
 					<aon:outputLabel for="MailAccount_type"
 						value="#{bundle.aon_type}" />
@@ -63,18 +77,23 @@
 					<f:selectItems value="#{mailConfig.signatures}" />
 				</aon:selectOneMenu>
 
-				<aon:outputLabel for="MailAccount_protocol"
-					value="#{bundle.webmail_mailAccount_protocol}" />
-				<aon:selectOneMenu id="MailAccount_protocol"
-					actionListener="#{controller.onProtocolChanged}"
-					reRender="MailAccountDiv" ajaxSingle="false"
-					value="#{controller.to.protocol}">
-					<f:selectItem itemLabel="-" value="#{null}" />
-					<f:selectItem itemLabel="IMAP" itemValue="imap" />
-					<f:selectItem itemLabel="POP3" itemValue="pop3" />
-				</aon:selectOneMenu>
-			</aon:panelGrid>
+				<aon:if test="#{!controller.protocolAon}" >
+	
+					<aon:outputLabel for="MailAccount_protocol"
+						value="#{bundle.webmail_mailAccount_protocol}" />
+					<aon:selectOneMenu id="MailAccount_protocol"
+						actionListener="#{controller.onProtocolChanged}"
+						reRender="MailAccountDiv" ajaxSingle="false"
+						value="#{controller.to.protocol}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItem itemLabel="IMAP" itemValue="imap" />
+						<f:selectItem itemLabel="POP3" itemValue="pop3" />
+					</aon:selectOneMenu>
+				</aon:if>
+			</aon:panelGrid>		
 		</aon:div>
+		<aon:if test="#{!controller.protocolAon}" >
+		
 		<aon:if test="#{controller.protocolDefinied}" >
 			<aon:div styleClass="aon-margin-top aon-margin-bottom">
 				<aon:div styleClass="aon-form-group-title">
@@ -240,6 +259,7 @@
 				<ui:param name="folderModel" value="#{mailConfig.treeNode}" />
 			</ui:include>
 			
+		</aon:if>
 		</aon:if>
 	</aon:div>
 	

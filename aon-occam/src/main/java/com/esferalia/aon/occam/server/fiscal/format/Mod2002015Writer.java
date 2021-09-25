@@ -5,7 +5,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015Key;
@@ -112,7 +112,7 @@ public class Mod2002015Writer {
 	
 	// Devuelve el codigo de provincia (por defecto) o el pais, según este cumplimentado 
 	// uno u otro campo (province o country) de participaciones
-	private static String getProvinceCountry(CompanyParticipation cp) {
+	private static String getProvinceCountry(Mod200CompanyParticipation cp) {
 		
 		int province = cp.getProvince();
 		if (province==0)

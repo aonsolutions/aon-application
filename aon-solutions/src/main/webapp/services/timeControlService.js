@@ -7,8 +7,8 @@ export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
 export const saveTimeControlDetail = (data) => post(`${API_URL}/timecontrol/save`, data);
 export const deleteTimeControl = (data) => remove(`${API_URL}/timecontrol`, data);
 export const getTimeControlDetail = (data) => get(`${API_URL}/timecontrol/list-holder-detail`, data);
-
 export const getTimeControlExcel = (data) => openFile(`${API_URL}/timecontrol/excel`, data);
+export const getTimeControlPdf = (data) => openFile(`${API_URL}/timecontrol/pdf`, data);
 
 export const getStatus = (data) => {
   let jsonValues = [

@@ -7,9 +7,9 @@ public class CommissionType implements Serializable {
 	private static final long serialVersionUID = -4021529272657422784L;
 	
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	private String name;
-	private double rate;
+	private Double rate;
 	
 	public Integer getId() {
 		return id;
@@ -18,10 +18,10 @@ public class CommissionType implements Serializable {
 		this.id = id;
 		return this;
 	}
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
-	public CommissionType setDomain(int domain) {
+	public CommissionType setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -32,12 +32,19 @@ public class CommissionType implements Serializable {
 		this.name = name;
 		return this;
 	}
-	public double getRate() {
+	public Double getRate() {
 		return rate;
 	}
-	public CommissionType setRate(double rate) {
+	public CommissionType setRate(Double rate) {
 		this.rate = rate;
 		return this;
+	}
+	
+	public Boolean isEmpty() {
+		return getId() == null
+			&& getDomain() == null
+			&& getName() == null
+			&& getRate() == null;
 	}
 	
 }

@@ -1,9 +1,9 @@
-import {  post, get, remove } from "./request.js";
+import {  post, get, remove, put } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
-export const getUsers = (data) => get(`${API_URL}/user`, data);
+export const getUserList = (data) => get(`${API_URL}/user`, data);
 
-export const setUser = (data) => post(`${API_URL}/user`, data);
+export const saveUser = (data) => post(`${API_URL}/user`, data);
 
 export const getUser = (data) => get(`${API_URL}/user/info`, data);
 
@@ -12,3 +12,6 @@ export const getUserNotice = (data) => get(`${API_URL}/user/notice`, data);
 export const deleteUser = (data) => remove(`${API_URL}/user`, data);
 
 export const sendUserInfoEmail = (data) => post(`${API_URL}/user/email`, data);
+
+export const assignUserWorkgroup = (data) => put(`${API_URL}/user/workgroup`, data)
+export const removeUserWorkgroup = (data) => remove(`${API_URL}/user/workgroup`, data)

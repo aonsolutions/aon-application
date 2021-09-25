@@ -26,11 +26,10 @@
 		</aon:form>
 	</aon:if>
 
-
 	<style>
-	body {
-		margin: 0;
-	}
+		body {
+			margin: 0;
+		}
 	</style>
 
 	<ui:include
@@ -45,6 +44,7 @@
 
 	<script type="text/javascript">
         //<![CDATA[
+		localStorage.removeItem('rootPanel');
         var search = "/aon_gwt_payroll.nocache.js";
         var scripts = document.getElementsByTagName("script");
         for (var i = 0; i < scripts.length; ++i) {

@@ -76,7 +76,6 @@
 
 .contentEditable:hover { 
     border-radius: 2px;
-    background : var(--aon-color-interaction-minus-two) !important; 
 }
 
 .contentEditable:focus { 
@@ -86,17 +85,34 @@
     -ms-user-select: text;     
     user-select: text;
     border-radius: 2px;
-    background : var(--aon-color-interaction-minus-two) !important; 
 }
 
 .contentEditable:empty:before{ 
     content: attr(placeholder);
     color: #555; 
 }
+
 .contentEditable:empty:focus::before {
     content: "";
 }
 
+.elementHidden{
+    opacity : 0;
+    height  : 0;
+    overflow: hidden;
+}
+
+.focusColorMinus:hover, .focusColorMinus:focus-within {
+    background : var(--aon-color-interaction-minus-two) !important; 
+}
+
 .firstLetterUpper:first-letter {
     text-transform: uppercase;
+}
+
+@media screen and (min-width: 800px) {
+    .resizeVertical{
+      overflow: auto;
+      resize:vertical;
+    }
 }

@@ -17,8 +17,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -54,9 +52,9 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		}
 
 		@Override
-		public void onEmployeeDocumentChange(String document, String document_type) {
+		public void onEmployeeDocumentChange(String document, String documentType) {
 			employeeDialogObject.setEmployeeDocument(document);
-			employeeDialogObject.setEmployeeDocumentType(document_type);
+			employeeDialogObject.setEmployeeDocumentType(documentType);
 		}
 		
 		@Override
@@ -193,10 +191,15 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		public void onContractOccupationChange(String occupation) {
 			employeeDialogObject.setContractOccupation(occupation);
 		}
+		
+		@Override
+		public void onContractRLCEChange(String rlce) {
+			employeeDialogObject.setContractRlce(rlce);
+		}
 
 		@Override
-		public void onContractJourneyTypeChange(Boolean journey_type) {
-			 employeeDialogObject.setContractJourneyType(journey_type);
+		public void onContractJourneyTypeChange(Boolean journeyType) {
+			 employeeDialogObject.setContractJourneyType(journeyType);
 		}
 		
 		@Override
@@ -231,7 +234,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 						employee.createJourneyDurationWarning();
 					}
 					employeeDialogObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
-					employee.partiality_coef.setValue(partialityCoef);
+					employee.partialityCoef.setValue(partialityCoef);
 					employeeDialogObject.setPartialityCoef(partialityCoef);
 				}	
 			};
@@ -324,6 +327,13 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			employeeDialogObject.setEmployeeBIC(bankSwift);
 		}
 		
+		private void initializeExistingEmployee(Integer contractId, boolean contractActive) {
+			employeeDialogObject.initializeEmployee(contractId,
+					s -> fillExistingEmployee(contractActive), 
+					f -> {}
+			);	
+		}
+		
 	}	
 
 	// ------------------------------------------------- UiBinder
@@ -346,12 +356,9 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	
 	private EmployeeDialogObject employeeDialogObject;
 	
-	private Button closeBtnDialog;
-	private Button acceptBtnDialog;
-	
 	// ------------------------------------------------- Constructor
 	
-	public EmployeeDialog(Boolean hideEmployeePanel) {
+	protected EmployeeDialog(Boolean hideEmployeePanel) {
 		employee = new EmployeeImplementation();
 		
 		setCaption("Trabajador");
@@ -361,7 +368,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 		employee.hideClearEmployee();
 		
-		if(hideEmployeePanel)
+		if(Boolean.TRUE.equals(hideEmployeePanel))
 			employee.hideEmployeeTable();
 	}
 	
@@ -374,9 +381,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	public void setEmployeeDialogObject(EmployeeDialogObject employeeDialogObject) {
 		this.employeeDialogObject = employeeDialogObject;
 		this.employeeDialogObject.getWorkplaceEmployees(
-				r -> {
-					initLogicWindow();
-				}, 
+				r -> initLogicWindow(), 
 				t -> {}
 		);
 	}
@@ -433,23 +438,12 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	
 	private void initFocus() {
 		//FOCUS DOCUMENT
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-	        public void execute () {
-	        	employee.document.setFocus(true);
-	        }
-		});
+		Scheduler.get().scheduleDeferred(() -> employee.document.setFocus(true));
 	}
 	
 	// ------------------------------------------------- Initialize existing employee
 	
-	private void initializeExistingEmployee(Integer contractId, boolean contractActive) {
-		employeeDialogObject.initializeEmployee(contractId,
-				s -> { 
-					fillExistingEmployee(contractActive);
-				}, 
-				f -> {}
-		);	
-	}
+	
 	
 	public void fillExistingEmployee( boolean isContractActive){
 		fillExistingEmployee();
@@ -464,17 +458,17 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 		employee.document.setValue(employeeData.getDocument(), true);
 		employee.nationality.setValue(employeeData.getNationality());
-		employee.security_social_num.setValue(employeeData.getSsNumber(), true);
+		employee.securitySocialNum.setValue(employeeData.getSsNumber(), true);
 		
 		employee.name.setValue(employeeData.getName());
-		employee.first_surname.setValue(employeeData.getSurName());
-		employee.second_surname.setValue(employeeData.getSecondSurName());
+		employee.firstSurname.setValue(employeeData.getSurName());
+		employee.secondSurname.setValue(employeeData.getSecondSurName());
 		
-		employee.birth_date.setValue(employeeData.getBirthdate());
+		employee.birthDate.setValue(employeeData.getBirthdate());
 		setSelectedValueLB(employee.gender, String.valueOf(employeeData.getGender()));
 		setSelectedValueLB(employee.civilStatus, employeeData.getCivilStatus()+"");
 		
-		setSelectedValueLB(employee.street_type, employeeData.getStreetType());
+		setSelectedValueLB(employee.streetType, employeeData.getStreetType());
 		employee.address.setValue(employeeData.getAddress());
 		employee.addressNum.setValue(employeeData.getAddresNum());
 		employee.addressZip.setValue(employeeData.getAddressZip());
@@ -510,7 +504,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
-		employee.seniority_date.setValue(contractData.getSeniorityDate());
+		employee.seniorityDate.setValue(contractData.getSeniorityDate());
 		
 		Integer agreementId = contractData.getAgreementId();
 		setSelectedValueLB(employee.agreement, agreementId+"");
@@ -541,7 +535,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 		Integer contractTypeInt =  Integer.parseInt(contractData.getContractType());
 		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
-			if(employeeDialogObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().size() == 0) {
+			if(employeeDialogObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
 				employee.createJourneyDurationWarning();
 			} else {
 				employee.createJourneyDurationInfo(employeeDialogObject.getContractData().getContractJourneyDuration().getJourneyText());
@@ -551,7 +545,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.updateModality(contractTypeInt);
 		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
 		
-		employee.seniority_date.setValue(contractData.getSeniorityDate());
+		employee.seniorityDate.setValue(contractData.getSeniorityDate());
 		
 		Integer agreementId = contractData.getAgreementId();
 		setSelectedValueLB(employee.agreement, agreementId+"");
@@ -562,9 +556,10 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			}, f -> {});
 		}
 		
-		setSelectedValueLB(employee.quote_group, contractData.getQuoteGroup());
+		setSelectedValueLB(employee.quoteGroup, contractData.getQuoteGroup());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
-		employee.partiality_coef.setValue(contractData.getPartialityCoef());
+		setSelectedValueLB(employee.rlce, contractData.getRlce());
+		employee.partialityCoef.setValue(contractData.getPartialityCoef());
 	}
 	
 	// ------------------------------------------------- Auxiliar Methods
@@ -574,7 +569,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.level.addItem("-", "-1");
 		
 		employeeDialogObject.getAgreement(agreementId,  
-		(agreement) -> {
+		agreement -> {
 			for (Level levelRecord : agreement.getLevels())
 				for (String categoryRecord : agreement.getCategoriesMap().get(levelRecord.getId()))
 					employee.level.addItem(levelRecord.getDescription() + " - " + categoryRecord, String.valueOf(levelRecord.getId()));
@@ -582,7 +577,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			employeeDialogObject.setContractAgreementId(agreement.getId());
 			success.accept(agreement);
 		},
-		(throwable) -> {
+		throwable -> {
 			employeeDialogObject.setContractAgreementId(null);
 			employeeDialogObject.setContractAgreementLevelId(null);
 			employee.category.setEnabled(false);
@@ -607,40 +602,28 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	// ------------------------------------------------- Buttons panel
 		
 	private void getButtonsPanel() {
-		closeBtnDialog = new Button();
+		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText( AON.MSG.cancelAction());
-		closeBtnDialog.setAccessKey('C');
-		closeBtnDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onCloseDialog(event);
-			}
-		});
+		closeBtnDialog.addClickHandler(e -> onCloseDialog());
 		
 		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
 		
 		buttonsPanel.add(closeBtnDialog);
 		
-		acceptBtnDialog = new Button();
+		Button acceptBtnDialog = new Button();
 		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
 		acceptBtnDialog.setText( AON.MSG.accept());
-		acceptBtnDialog.setAccessKey('A');
-		acceptBtnDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAcceptDialog(event);
-			}
-		});
+		acceptBtnDialog.addClickHandler(e -> onAcceptDialog());
 		
 		buttonsPanel.add(acceptBtnDialog);
 	}
 	
-	private void onCloseDialog(ClickEvent event) {
+	private void onCloseDialog() {
 		hide();
 	}
 	
-	private void onAcceptDialog(ClickEvent event) {
+	private void onAcceptDialog() {
 		if(employee.checkIfNewEmployeeIsPossible()) {
 			this.employeeDialogObject.createEmployeeContract(
 					contractId -> { 

@@ -9,6 +9,7 @@ public class EventEmployee implements Serializable{
 	private String name;
 	private String surName;
 	private String fullName;
+	private Integer agreementId;
 	
 	private EmployeeEventsData employeeEventsData;
 	
@@ -32,6 +33,15 @@ public class EventEmployee implements Serializable{
 
 	public EventEmployee setContractId(Integer contractId) {
 		this.contractId = contractId;
+		return this;
+	}
+	
+	public Integer getAgreementId() {
+		return agreementId;
+	}
+
+	public EventEmployee setAgreementId(Integer agreementId) {
+		this.agreementId = agreementId;
 		return this;
 	}
 

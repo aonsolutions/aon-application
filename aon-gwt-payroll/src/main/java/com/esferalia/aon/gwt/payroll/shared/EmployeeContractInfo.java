@@ -20,6 +20,11 @@ public class EmployeeContractInfo implements Serializable{
 	private List<SSBonusData> contractBonus;
 	private Map<String, String> scopeMap;
 	
+	private List<Agreement> agreements;
+	private ActivitiesCCC activitiesCCC;
+	private List<Workplace> workplaces;
+	private Map<String, String> payMethods;
+	
 	/**
      * The key provider that provides the unique ID of a contact.
      */
@@ -120,6 +125,38 @@ public class EmployeeContractInfo implements Serializable{
 
 	public void setContractSpecificData(ContractSpecificData contractSpecificData) {
 		this.contractSpecificData = contractSpecificData;
+	}
+
+	public List<Agreement> getAgreements() {
+		return agreements;
+	}
+
+	public void setAgreements(List<Agreement> agreements) {
+		this.agreements = agreements;
+	}
+
+	public ActivitiesCCC getActivitiesCCC() {
+		return activitiesCCC;
+	}
+
+	public void setActivitiesCCC(ActivitiesCCC activitiesCCC) {
+		this.activitiesCCC = activitiesCCC;
+	}
+
+	public List<Workplace> getWorkplaces() {
+		return workplaces;
+	}
+
+	public void setWorkplaces(List<Workplace> workplaces) {
+		this.workplaces = workplaces;
+	}
+
+	public Map<String, String> getPayMethods() {
+		return payMethods;
+	}
+
+	public void setPayMethods(Map<String, String> payMethods) {
+		this.payMethods = payMethods;
 	}
 
 }

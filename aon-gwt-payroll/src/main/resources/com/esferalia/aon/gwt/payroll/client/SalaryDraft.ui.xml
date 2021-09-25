@@ -313,7 +313,6 @@
 									text="IRPF" />
 								<e:SalarySelect ui:field="salarySelect" />
 
-								<g:ListBox ui:field="zoomListBox" />
 								<!--  g:Button debugId='printButton' ui:field='printButton'
 									styleName='aon-finding-toolbar-item aon-icon-printer' text="IMPRIMIR" /-->
 								<g:Button debugId='saveButton' ui:field='saveButton'
@@ -360,6 +359,9 @@
 								<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
 									styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
 									text="AVISOS Y NOTIFICACIONES" checked="false" />
+								<g:CheckBox debugId='notDefinedVarsCheck' ui:field='notDefinedVarsCheck'
+									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+									text="MOSTRAR VARIABLES NO DEFINIDAS" checked="false" />
 								
 								<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" >
 									<g:item value="{JASPER}">EST&Aacute;NDAR</g:item>
@@ -375,9 +377,9 @@
 
 		</g:north>
 		<g:center>
-			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.editor} {style.container}">
-				<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
-					<g:DeckPanel ui:field="deckPanel">
+			<g:DeckLayoutPanel ui:field="deckPanel">
+				<g:ScrollPanel ui:field="scrollPanel" styleName="{style.editor} {style.container}">
+					<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
 						<g:VerticalPanel ui:field="draftPanel" width="auto">
 							
 							<g:HorizontalPanel ui:field='timeRulePanel'  debugId='timeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin}" />
@@ -683,21 +685,21 @@
 								</g:Grid>
 							</g:HorizontalPanel>
 						</g:VerticalPanel>
+					</g:VerticalPanel>
+				</g:ScrollPanel>
 						
-						<!--  g:HTML styleName="reset" ui:field='printPreviewHTML'
-						wordWrap='true' /-->
-							
-						<!--  g:HTML styleName="reset" ui:field='irpfPreviewHTML'
-						wordWrap='true' /-->
+				<!--  g:HTML styleName="reset" ui:field='printPreviewHTML'
+				wordWrap='true' /-->
+					
+				<!--  g:HTML styleName="reset" ui:field='irpfPreviewHTML'
+				wordWrap='true' /-->
 
-						<!--  g:Frame styleName="reset" ui:field='pdfPreviewHTML'
-						/-->
-						
-						<p:Viewer styleName="reset" ui:field='pdfViewer' />
+				<!--  g:Frame styleName="reset" ui:field='pdfPreviewHTML'
+				/-->
+				
+				<p:FullViewer styleName="reset" ui:field='pdfViewer' />
 
-					</g:DeckPanel>
-				</g:VerticalPanel>
-			</g:ScrollPanel>
+			</g:DeckLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 

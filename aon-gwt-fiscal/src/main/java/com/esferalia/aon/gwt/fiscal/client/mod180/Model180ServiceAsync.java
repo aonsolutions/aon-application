@@ -17,6 +17,6 @@ public interface Model180ServiceAsync {
 	void initializeMod180(String domainName, String user, Integer domain, Integer year,AsyncCallback<Mod180> callback);
 	void saveCommentsMod180(String domainName, String user, Mod180 mod180,AsyncCallback<Mod180> asyncCallback);
 	void changeStatusMod180(String domainName, String user, Mod180 mod180, FiscalStatus newStatus, AsyncCallback<Mod180> callback);
-	void duplicateNextYear(String domainName, String user, Integer domain, Integer id, AsyncCallback<Mod180> callback);
+	void duplicateMod180(String domainName, String user, Integer domain, Mod180 mod180, AsyncCallback<Mod180> callback);
 
 }

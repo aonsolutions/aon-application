@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -169,12 +170,16 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setWorkplaceInfo(getCurrentDomainName(), workplaceInfo, asyncCallback);
 	}
 	
-	public void getWorkplaces(Workplace workplace, AsyncCallback<List<Workplace>> asyncCallback) {
-		enterprisesServiceAsync.getWorkplaces(workplace, getCurrentDomainName(), asyncCallback);
+	public void getWorkplaces(AsyncCallback<List<Workplace>> asyncCallback) {
+		enterprisesServiceAsync.getWorkplaces(getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void getActivitiesCCC(Workplace workplace, AsyncCallback<ActivitiesCCC> asyncCallback) {
-		enterprisesServiceAsync.getActivitiesCCC(workplace, getCurrentDomainName(), asyncCallback);
+	public void getPayMethods(AsyncCallback<Map<String, String>> asyncCallback) {
+		enterprisesServiceAsync.getPayMethods(getCurrentDomainName(), asyncCallback);
+	}
+
+	public void getActivityCCC(AsyncCallback<ActivitiesCCC> asyncCallback) {
+		enterprisesServiceAsync.getActivityCCC(getCurrentDomainName(), asyncCallback);
 	}
 	
 	public void getActivityInfoDataBase(Integer activityId, AsyncCallback<ActivityInfo> asyncCallback) {
@@ -213,10 +218,6 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.createWorkplaceInfo(workplaceInfo, enterpriseId, getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void getEnterpiseScopes(Integer enterpriseId, AsyncCallback<Map<Integer, String>> asyncCallback) {
-		enterprisesServiceAsync.getEnterpiseScopes(enterpriseId, getCurrentDomainName(), asyncCallback);
-	}
-
 	public void getEnterpriseInfo(Integer enterpriseId, AsyncCallback<EnterpriseInfo> asyncCallback) {
 		enterprisesServiceAsync.getEnterpriseInfo(enterpriseId, getCurrentDomainName(), asyncCallback);
 	}
@@ -269,7 +270,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setEmployeeSSBonuses(getCurrentDomainName(),  contractId, ssBonuses, asyncCallback);
 	}
 	
-	public void setEmployeeAFIChanges(Integer contractId, AFIChanges afiChangesMap, AsyncCallback<String> asyncCallback) {
+	public void setEmployeeAFIChanges(Integer contractId, AFIChanges afiChangesMap, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.setEmployeeAFIChanges(getCurrentDomainName(), contractId, afiChangesMap, asyncCallback);
 	}
 	
@@ -315,6 +316,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getWorkplaceEmployeeITInfo(Boolean allEmployees, Integer workplaceId, AsyncCallback<List<ITEmployee>> asyncCallback) {
 		enterprisesServiceAsync.getWorkplaceEmployeeITInfo(getCurrentDomainName(), allEmployees, workplaceId, asyncCallback);
+	}
+	
+	public void getEmployeeITInfo(Integer contractId, AsyncCallback<List<ITEmployee>> asyncCallback) {
+		enterprisesServiceAsync.getEmployeeITInfo(getCurrentDomainName(), contractId, asyncCallback);
 	}
 
 	public void getEmployeesITInfo(Integer ids [], AsyncCallback<List<ITEmployee>> asyncCallback) {
@@ -410,10 +415,6 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void setMainCCCInfoDataBase(MainCCCInfo mainCCCInfo, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.setMainCCCInfoDataBase(getCurrentDomainName(), getCurrentUser(), mainCCCInfo, asyncCallback);
-	}
-	
-	public void getPayMethods(AsyncCallback<Map<String, String>> asyncCallback) {
-		enterprisesServiceAsync.getPayMethods(getCurrentDomainName(), asyncCallback);
 	}
 	
 	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException {
@@ -528,6 +529,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void verifyCertificate(CertificateType certificateType, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.verifyCertificate(getCurrentDomainName(), getCurrentUser(), certificateType, asyncCallback);
+	}
+	
+	public void getAllConcepts(AsyncCallback<ContractConcepts> asyncCallback) {
+		enterprisesServiceAsync.getAllConcepts(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

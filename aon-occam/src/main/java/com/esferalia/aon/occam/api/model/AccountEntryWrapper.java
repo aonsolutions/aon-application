@@ -9,6 +9,10 @@ public class AccountEntryWrapper implements IAccountEntryWrapper, Serializable {
 	
 	private AccountEntry ae;
 	
+	public AccountEntryWrapper() {
+		
+	}
+		
 	public AccountEntryWrapper(AccountEntry ae) {
 		this.ae = ae;
 	}

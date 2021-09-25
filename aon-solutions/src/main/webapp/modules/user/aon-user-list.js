@@ -1,9 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getUsers} from  '../../services/service.js';
+import {getUserList} from  '../../services/service.js';
 import {setUsers, setIndex} from './UserCache.js';
 
-
-import './aon-user.js'
 import '../../components/aon-table.js';
 import { AonUser } from './aon-user.js';
 import { EVENT } from '../../environments/environments.js';
@@ -48,7 +46,7 @@ export class AonUserList extends AonElement {
 
 
 	setFilter(filter) {
-		this.filter = filter;
+		this.filter = {filter};
 	}
 
 	search(value) {
@@ -64,12 +62,10 @@ export class AonUserList extends AonElement {
 	}
 
 	init() {
-		let filter = {
-			filter: this.hasAttribute('filter') ? this.getAttribute('filter') : 'company'
-		};
+		let filter = this.filter.filter || 'company';
 		let table = document.getElementById('aonUserTable');
 		if(table) {
-			getUsers(filter).then(users => {
+			getUserList({filter}).then(users => {
 				setUsers(users);
 				this.users = users;
 				table.removeRows();

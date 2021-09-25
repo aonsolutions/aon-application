@@ -12,6 +12,10 @@ public enum DomainType {
 	GENERIC;   
 	
 	
+	public byte value() {
+		return (byte) this.ordinal();
+	}
+	
 	public String getValue() {
 		return toString();
 	}

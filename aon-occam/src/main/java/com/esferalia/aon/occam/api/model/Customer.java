@@ -40,7 +40,12 @@ public class Customer extends Registry implements Serializable, HasAudit, IScopa
 	public Customer copy(Registry registry) {
 		return super.copy( registry, this);
 	}
-	
+
+	public Customer setId(Integer id) {
+		super.setId(id);
+		return this;
+	}
+
 	public Integer getTariff() {
 		return tariff;
 	}

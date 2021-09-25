@@ -16,6 +16,8 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarDraft.DayType;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
+import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -402,8 +404,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setEventsWorkplace(getCurrentDomainName(),  updateEventsWorkplace, asyncCallback);
 	}
 
-	public void getEmployeeInfoDataBase(Integer contractId, AsyncCallback<EmployeeContractInfo> asyncCallback) throws IllegalArgumentException  {
-		employeesServiceAsync.getEmployeeInfoDataBase(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
+	public void getEmployeeInfoDataBase(Integer contractId, Workplace workplace, AsyncCallback<EmployeeContractInfo> asyncCallback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeInfoDataBase(getCurrentDomainName(), getCurrentUser(), contractId, workplace, asyncCallback);
 	}
 
 	public void setEmployeeInfoDataBase(EmployeeContractInfo new_employeeContractData,
@@ -421,14 +423,17 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeEvents(getCurrentDomainName(), contract, employeeContractVariables, callback);
 	}
 	
-	public void getWorkplaceEmployeesEvents(Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) {
+	public void getWorkplaceEmployeesEvents(Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getWorkplaceEmployeesEvents(getCurrentDomainName(), workplaceId, callback);
 	}
 	
 	public void getEmployeeEventsByContract(Integer contractId, ArrayList<String> employeeContractVariablesDB,
 			AsyncCallback<EmployeeEventsData> callback) {
 		employeesServiceAsync.getEmployeeEventsByContract(getCurrentDomainName(), contractId, employeeContractVariablesDB, callback);
-		
+	}
+	
+	public void setEmployeeEventsByContract(Integer contractId, EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback) {
+		employeesServiceAsync.setEmployeeEventsByContract(getCurrentDomainName(), contractId, employeeEventsData, callback);
 	}
 	
 	public void setEmployeeAFIChanges(Integer contractId, Date newDate, boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
@@ -594,13 +599,26 @@ public class DomainEmployeesServiceAsync {
 	public void getCertifica2Info(Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getCertifica2Info(getCurrentDomainName(), contractId, callback);
 	}
+	
+	// ------------------------------------------------- EmployeeContractPayments
+
+	public void getContractPayements(Integer contractId, AsyncCallback<ContractPaymentData> callback) {
+		employeesServiceAsync.getContractPayements(getCurrentDomainName(), contractId, callback);
+	}
+
+	public void updateContractPayments(Integer contractId, ContractPaymentData contractPaymentData, AsyncCallback<Void> callback) {
+		employeesServiceAsync.updateContractPayments(getCurrentDomainName(), contractId, contractPaymentData, callback);
+	}
+	
+	public void createContractPayment(Integer contractId, ContractConceptCalc contractConceptCalc, AsyncCallback<Void> callback) {
+		employeesServiceAsync.createContractPayment(getCurrentDomainName(), contractId, contractConceptCalc, callback);
+	}
 
 	// ------------------------------------------------------------------------
 	
 	public AgreementServiceAsync asAgreementServiceAsync() {
 		return employeesServiceAsync;
 	}
-	
 	
 	// ----------------------------------------------------------------- static
 	

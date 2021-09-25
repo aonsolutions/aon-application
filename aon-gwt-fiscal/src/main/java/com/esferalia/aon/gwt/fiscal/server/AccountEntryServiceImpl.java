@@ -12,9 +12,11 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Account Entry Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/AccountEntry" })
@@ -61,6 +63,16 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	public AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) {
 		return ACCOUNTING.initializeInvoice(domainName, domain, user, registry, ai, preserveData);
 	}
+	
+	@Override
+	public AccountingInvoice removeInvoiceAttach(String domainName, int domain, String user, Integer invoiceId) throws AonCoreException {
+		return ACCOUNTING.removeInvoiceAttach(domainName, domain, user, invoiceId);
+	}
+
+	@Override
+	public AccountingInvoice addInvoiceAttach(String domainName, int domain, String user, AccountingInvoice ai) throws AonCoreException {
+		return ACCOUNTING.addInvoiceAttach(domainName, domain, user, ai);
+	}
 
 	@Override
 	public AccountingInvoice getAccountingInvoice(String domainName, int domain, String user, Integer accountEntry) throws AonCoreException {
@@ -100,6 +112,16 @@ public class AccountEntryServiceImpl extends AonStatelessRemoteServiceServlet im
 	@Override
 	public FinanceEntry getFinanceEntry(String domainName, int domain, String user, Integer accountEntry) {
 		return ACCOUNTING.getFinanceEntry(domainName, domain, user, accountEntry);
+	}
+
+	@Override
+	public IAccountEntryWrapper updateSpecial(String domainName, int domain, String user, AccountEntryUpdate operation, IAccountEntryWrapper wrapper) throws AonCoreException {
+		return ACCOUNTING.updateSpecial(domainName, domain, user, operation, wrapper);
+	}
+
+	@Override
+	public LinkedList<AccountEntryUpdate> getAvailableAccountEntryUpdates(String domainName, int domain, String user, IAccountEntryWrapper wrapper) throws AonCoreException {
+		return ACCOUNTING.getAvailableAccountEntryUpdates(domainName, domain, user, wrapper);
 	};
 
 }

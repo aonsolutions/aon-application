@@ -30,7 +30,6 @@ import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.ItemAddinfo.ITEM_ADDINFO;
 import static com.esferalia.aon.jooq.tables.MkTemplate.MK_TEMPLATE;
-import static com.esferalia.aon.jooq.tables.Offer.OFFER;
 import static com.esferalia.aon.jooq.tables.OfferDetail.OFFER_DETAIL;
 import static com.esferalia.aon.jooq.tables.OfferDetailCommission.OFFER_DETAIL_COMMISSION;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
@@ -41,9 +40,7 @@ import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
-import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
-import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.function.Function;
@@ -72,7 +69,6 @@ import com.esferalia.aon.occam.api.model.commission.OfferDetailCommissionStatus;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
-import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.Purchase;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
@@ -92,9 +88,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
-import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
-import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -107,7 +101,6 @@ import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
-import com.esferalia.aon.occam.api.model.type.OfferDetailStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
@@ -115,7 +108,6 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
@@ -128,28 +120,47 @@ import com.esferalia.aon.occam.api.model.warehouse.InventoryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
+import com.esferalia.aon.occam.impl.jooq.dao.OfferDAO.OfferDetailFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FillerDAO {
 	
-	public static class DomainFiller implements Function<Record, Domain> {
+	private FillerDAO() {
+	
+	}
+	
+	public static class DomainFiller extends Filler implements Function<Record, Domain> {
 		@Override
 		public Domain apply(Record r) {
-			return buildDomain(r);
+			return build(r);
 		}
 		
-		public static Domain buildDomain(Record r) {
+		public static Domain build(Record r) {
 			return new Domain()
-					.setActive(r.getValue(DOMAIN.ACTIVE) == 1)
-					.setDescription(r.getValue(DOMAIN.DESCRIPTION))
-					.setDomainType(DomainType.values()[r.getValue(DOMAIN.TYPE)])
-					.setEnableHeredity(r.getValue(DOMAIN.ENABLEHEREDITY) == 1)
 					.setId(r.getValue(DOMAIN.ID))
-					.setOwner(r.getValue(DOMAIN.OWNER))
 					.setName(r.getValue(DOMAIN.NAME))
+					.setDescription(r.getValue(DOMAIN.DESCRIPTION))
 					.setParentId(r.getValue(DOMAIN.PARENT))
-					.setDomainManagement(r.getValue(DOMAIN.DOMAINMANAGEMENT) == 1);	
+					.setDomainType(DomainType.safeValueOf(r.getValue(DOMAIN.TYPE)))
+					.setScope(r.getValue(DOMAIN.SCOPE))
+					//.setSubDomainSuffix(r.getValue(DOMAIN.SUBDOMAINSUFFIX));
+					.setEnableHeredity(getBoolean(r, DOMAIN.ENABLEHEREDITY))
+					.setDomainManagement(getBoolean(r, DOMAIN.DOMAINMANAGEMENT))
+					//.setDisableDomainManagement(r.getValue(DOMAIN.DISABLEDOMAINMANAGEMENT))
+					//.setMaxDocumentSize(r.getValue(DOMAIN.MAXDOCUMENTSIZE))
+					//.setMaxTotalDocumentSize(r.getValue(DOMAIN.MAXTOTALDOCUMENTSIZE))
+					.setMaxDefinedUsers(r.getValue(DOMAIN.MAXDEFINEDUSERS))
+					.setActive(getBoolean(r, DOMAIN.ACTIVE))
+					.setOwner(r.getValue(DOMAIN.OWNER))
+					//.setCreationUser(r.getValue(DOMAIN.CREATION_USER))
+					//.setCreationDate(r.getValue(DOMAIN.CREATION_DATE))
+					//.setModifitionUser(r.getValue(DOMAIN.MODIFICATION_USER))
+					//.setModificationDate(r.getValue(DOMAIN.MODIFICATION_DATE))
+					//.setLastAccessUser(r.getValue(DOMAIN.LASTACCESS_USER))
+					//.setLastAccessDate(r.getValue(DOMAIN.LASTACCESS_DATE))
+					//.setExpirationDate(r.getValue(DOMAIN.EXPIRATIONDATE))
+					;	
 		}
 	}
 
@@ -306,35 +317,6 @@ public class FillerDAO {
 					.setCreationUser(r.getValue(CREDITOR.CREATION_USER))
 					.setModificationDate(r.getValue(CREDITOR.MODIFICATION_DATE))
 					.setModificationUser(r.getValue(CREDITOR.MODIFICATION_USER));				
-		}
-	}
-	
-	public static class TargetFiller implements Function<Record, Target> {
-		@Override
-		public Target apply(Record r) {
-			return new Target()
-					.setRegistryData( new Registry() 
-							.setId(r.getValue(REGISTRY.ID))
-							.setDomain(new Domain().setId(r.getValue(CUSTOMER.DOMAIN)))
-							.setDocument(r.getValue(REGISTRY.DOCUMENT))
-							.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)))
-							.setDocumentCountry(Country.safeValueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)) )
-							.setName(r.getValue(REGISTRY.NAME))
-							.setAlias(r.getValue(REGISTRY.ALIAS))
-							.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)))
-							.setNationality(Country.safeValueOf(r.getValue(REGISTRY.NATIONALITY)) )
-							.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL))))
-					.setScope(r.getValue(TARGET.SCOPE))
-					.setAdvertising(r.getValue(TARGET.ADVERTISING).shortValue())
-					.setSurcharge(r.getValue(TARGET.SURCHARGE).shortValue())
-					.setTariff(r.getValue(TARGET.TARIFF))
-					.setWithholding(r.getValue(TARGET.WITHHOLDING).shortValue())
-					.setTransaction(r.getValue(TARGET.TRANSACTION).shortValue())
-					.setStatus(TargetStatus.safeValueOf(r.getValue(TARGET.STATUS)))
-					.setCreationDate(r.getValue(TARGET.CREATION_DATE))
-					.setCreationUser(r.getValue(TARGET.CREATION_USER))
-					.setModificationDate(r.getValue(TARGET.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(TARGET.MODIFICATION_USER));				
 		}
 	}
 	
@@ -668,21 +650,18 @@ public class FillerDAO {
 			company.setDomain(d);
 			company.setAlias(r.getValue(REGISTRY.ALIAS));
 			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
+			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)));
 			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
+			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null);
 			company.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			company.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));	
-			company.setScope(new Scope()
-					.setId(r.getValue(SCOPE.ID))
-					.setDomain(r.getValue(SCOPE.DOMAIN))
-					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
+			company
+				.setDocument(r.getValue(REGISTRY.DOCUMENT))
+				.setId(r.getValue(REGISTRY.ID))
+				.setName(r.getValue(REGISTRY.NAME));
 			company
 				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
 				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
-				.setDocument(r.getValue(REGISTRY.DOCUMENT))
-				.setId(r.getValue(REGISTRY.ID))
-				.setName(r.getValue(REGISTRY.NAME))
 				.setSurcharge(r.getValue(COMPANY.SURCHARGE) == 1)
 				.setVatAccrualPayment(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
 				.setWithholding(r.getValue(COMPANY.WITHHOLDING) == 1);
@@ -705,32 +684,6 @@ public class FillerDAO {
 				.setShared(r.getValue(USER.SHARED) == 1)
 				.setCompany(company)
 				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(r.getValue(APP_PARAM.VALUE))));
-		}
-	}
-	public static class CompanyFiller implements Function<Record, Company> {
-		@Override
-		public Company apply(Record r) {
-			Company company = new Company();
-			company.setDomain(DomainFiller.buildDomain(r));
-			company.setAlias(r.getValue(REGISTRY.ALIAS));
-			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
-			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
-			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
-			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
-			company.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(REGISTRY.TYPE)));	
-			company.setScope(new Scope()
-					.setId(r.getValue(SCOPE.ID))
-					.setDomain(r.getValue(SCOPE.DOMAIN))
-					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
-			return company
-				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
-				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
-				.setDocument(r.getValue(REGISTRY.DOCUMENT))
-				.setId(r.getValue(REGISTRY.ID))
-				.setName(r.getValue(REGISTRY.NAME))
-				.setSurcharge(r.getValue(COMPANY.SURCHARGE) == 1)
-				.setVatAccrualPayment(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
-				.setWithholding(r.getValue(COMPANY.WITHHOLDING) == 1);
 		}
 	}
 	
@@ -1005,37 +958,16 @@ public class FillerDAO {
 
 	// ---------- COMMISSION
 
-	public static class OfferDetailCommissionFiller implements Function<Record, OfferDetailCommission> {
+	public static class OfferDetailCommissionFiller extends Filler implements Function<Record, OfferDetailCommission> {
 		
 		@Override
 		public OfferDetailCommission apply(Record r) {
-			Offer o = new Offer()
-					.setId(r.getValue(OFFER.ID))
-					.setDomain(r.getValue(OFFER.DOMAIN))
-					.setIssueDate(r.getValue(OFFER.ISSUE_DATE))
-					.setSeries(r.getValue(OFFER.SERIES))
-					.setNumber(r.getValue(OFFER.NUMBER))
-					.setVersion(r.getValue(OFFER.VERSION))
-					.setSeller(new Seller()
-							.setId(r.getValue(REGISTRY.ID))
-							.setRegistryName(r.getValue(REGISTRY.NAME)));
-			
-			
-			OfferDetail od = new OfferDetail()
-					.setDescription(r.getValue(OFFER_DETAIL.DESCRIPTION))
-					.setDiscountExpression(r.getValue(OFFER_DETAIL.DISCOUNT_EXPR))
-					.setDomain(r.getValue(OFFER_DETAIL.DOMAIN))
-					.setId(r.getValue(OFFER_DETAIL.ID))
-					.setItem(new OldItem().setId(r.getValue(OFFER_DETAIL.ITEM)))
-					.setOffer(o)
-					.setPrice(r.getValue(OFFER_DETAIL.PRICE))
-					.setQuantity(r.getValue(OFFER_DETAIL.QUANTITY))
-					.setStatus(OfferDetailStatus.safeValueOf(r.getValue(OFFER_DETAIL.STATUS)));
-			
 			return new OfferDetailCommission()
 					.setId(r.getValue(OFFER_DETAIL_COMMISSION.ID))
 					.setDomain(r.getValue(OFFER_DETAIL_COMMISSION.DOMAIN))
-					.setOfferDetail(od)
+					.setOfferDetail(checkField(r, OFFER_DETAIL.ID)
+							? OfferDetailFiller.build(r)
+							: new OfferDetail().setId(r.getValue(OFFER_DETAIL_COMMISSION.OFFER_DETAIL)))
 					.setStatus(OfferDetailCommissionStatus.safeValueOf(r.getValue(OFFER_DETAIL_COMMISSION.STATUS)))
 					.setPayDate(r.getValue(OFFER_DETAIL_COMMISSION.PAY_DATE))
 					.setCommission(r.getValue(OFFER_DETAIL_COMMISSION.COMMISSION))

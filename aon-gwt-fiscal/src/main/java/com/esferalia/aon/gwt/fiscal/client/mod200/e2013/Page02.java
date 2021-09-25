@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabCheckboxCell;
 import com.esferalia.aon.gwt.common.client.widget.cell.TabSelectionCell;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200Table;
-import com.esferalia.aon.occam.api.model.CompanyParticipation;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013Key;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
@@ -44,17 +44,17 @@ public class Page02 extends PageAbs {
 
 	private static final Page2Binder page2Binder = GWT.create(Page2Binder.class);
 
-	private ListDataProvider<CompanyParticipation> dataProviderIn;
-	private ListDataProvider<CompanyParticipation> dataProviderOut;
-	private NoSelectionModel<CompanyParticipation> modelOut;
+	private ListDataProvider<Mod200CompanyParticipation> dataProviderIn;
+	private ListDataProvider<Mod200CompanyParticipation> dataProviderOut;
+	private NoSelectionModel<Mod200CompanyParticipation> modelOut;
 	
 	ParticipationPanel participationPanel;
 	
 	@UiField(provided = true)
-	CellTable<CompanyParticipation> tableIn;
+	CellTable<Mod200CompanyParticipation> tableIn;
 
 	@UiField(provided = true)
-	CellTable<CompanyParticipation> tableOut;
+	CellTable<Mod200CompanyParticipation> tableOut;
 	
 	DoubleBox cPor51;
 	DoubleBox cPorES;
@@ -67,13 +67,13 @@ public class Page02 extends PageAbs {
 	public Page02() {
 		participationPanel = new ParticipationPanel();
 		
-		tableIn = new CellTable<CompanyParticipation>(25, Model200Table.TABLE_STYLE);
+		tableIn = new CellTable<Mod200CompanyParticipation>(25, Model200Table.TABLE_STYLE);
 		
 		tableIn.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
 		tableIn.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 
 		tableIn.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-		dataProviderIn = new ListDataProvider<CompanyParticipation>();
+		dataProviderIn = new ListDataProvider<Mod200CompanyParticipation>();
 		dataProviderIn.addDataDisplay(tableIn);
 
 		addInDocumentColumn();
@@ -84,11 +84,11 @@ public class Page02 extends PageAbs {
 		addInNominalValueColumn();
 		addInRemoveColumn();
 		
-		tableOut = new CellTable<CompanyParticipation>(25, Model200Table.TABLE_STYLE);
+		tableOut = new CellTable<Mod200CompanyParticipation>(25, Model200Table.TABLE_STYLE);
 		
 		tableOut.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE); 
 		tableOut.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
-		modelOut = new NoSelectionModel<CompanyParticipation>();
+		modelOut = new NoSelectionModel<Mod200CompanyParticipation>();
 		modelOut.addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
@@ -100,7 +100,7 @@ public class Page02 extends PageAbs {
 		tableOut.setSelectionModel(modelOut);		
 		
 		tableOut.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-		dataProviderOut = new ListDataProvider<CompanyParticipation>();
+		dataProviderOut = new ListDataProvider<Mod200CompanyParticipation>();
 		dataProviderOut.addDataDisplay(tableOut);
 
 		addOutDocumentColumn();
@@ -117,15 +117,15 @@ public class Page02 extends PageAbs {
 	public void dump(Mod2002013Object mod200Object) {
 		this.mod200Object = mod200Object;
 		dataProviderIn = this.mod200Object.getMod200().getParticipationsIn() == null
-			?new ListDataProvider<CompanyParticipation>()
-			:new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsIn());
+			?new ListDataProvider<Mod200CompanyParticipation>()
+			:new ListDataProvider<Mod200CompanyParticipation>(this.mod200Object.getMod200().getParticipationsIn());
 
 		dataProviderIn.addDataDisplay(tableIn);
 		tableIn.redraw();
 
 		dataProviderOut = this.mod200Object.getMod200().getParticipationsOut() == null
-			?new ListDataProvider<CompanyParticipation>()
-			:new ListDataProvider<CompanyParticipation>(this.mod200Object.getMod200().getParticipationsOut());
+			?new ListDataProvider<Mod200CompanyParticipation>()
+			:new ListDataProvider<Mod200CompanyParticipation>(this.mod200Object.getMod200().getParticipationsOut());
 		dataProviderOut.addDataDisplay(tableOut);
 		tableOut.redraw();
 		initializeTable();
@@ -133,15 +133,15 @@ public class Page02 extends PageAbs {
 
 	private void addInDocumentColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(8);
-		Column<CompanyParticipation, String> documentColumn = new Column<CompanyParticipation, String>(
+		Column<Mod200CompanyParticipation, String> documentColumn = new Column<Mod200CompanyParticipation, String>(
 				input) {
 			@Override
-			public String getValue(CompanyParticipation object) {
+			public String getValue(Mod200CompanyParticipation object) {
 				return object.getDocument();
 			}
 		};
-		documentColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
+		documentColumn.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation cp, String value) {
 		    	dataProviderIn.getList().get(index).setDocument(value);
 		    }
 		});		
@@ -152,15 +152,15 @@ public class Page02 extends PageAbs {
 
 	private void addInDescriptionColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(30);
-		Column<CompanyParticipation, String> descriptionColumn = new Column<CompanyParticipation, String>(
+		Column<Mod200CompanyParticipation, String> descriptionColumn = new Column<Mod200CompanyParticipation, String>(
 				input) {
 			@Override
-			public String getValue(CompanyParticipation ca) {
+			public String getValue(Mod200CompanyParticipation ca) {
 				return ca.getName();
 			}
 		};
-		descriptionColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
+		descriptionColumn.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation cp, String value) {
 		    	dataProviderIn.getList().get(index).setName(value);
 		    }
 		});		
@@ -169,15 +169,15 @@ public class Page02 extends PageAbs {
 	}
 
 	private void addInRepresentativeColumn() {
-		Column<CompanyParticipation, Boolean> representativeColumn = new Column<CompanyParticipation, Boolean>(
+		Column<Mod200CompanyParticipation, Boolean> representativeColumn = new Column<Mod200CompanyParticipation, Boolean>(
 				new TabCheckboxCell()) {
 			@Override
-			public Boolean getValue(CompanyParticipation ca) {
+			public Boolean getValue(Mod200CompanyParticipation ca) {
 				return ca.isRepresentative();
 			}
 		};
-		representativeColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, Boolean>() {
-		    public void update(int index, CompanyParticipation cp, Boolean value) {
+		representativeColumn.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, Boolean>() {
+		    public void update(int index, Mod200CompanyParticipation cp, Boolean value) {
 		    	dataProviderIn.getList().get(index).setRepresentative(value);
 		    }
 		});		
@@ -195,11 +195,11 @@ public class Page02 extends PageAbs {
 			options.add( c.getName() );
 		}
 		TabSelectionCell provinceCell = new TabSelectionCell(options);
-		Column<CompanyParticipation, String> provinceColumn = new Column<CompanyParticipation, String>(
+		Column<Mod200CompanyParticipation, String> provinceColumn = new Column<Mod200CompanyParticipation, String>(
 				provinceCell) {
 			
 			@Override
-			public String getValue(CompanyParticipation ca) {
+			public String getValue(Mod200CompanyParticipation ca) {
 				int idx = ca.getProvince();
 				String country = ca.getCountry();
 				String name = null; 
@@ -212,8 +212,8 @@ public class Page02 extends PageAbs {
 				return name;
 			}
 		};
-		provinceColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
+		provinceColumn.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation cp, String value) {
 		    	Province p = null;
 		    	Country c = null;
 		    	if (AonStringUtils.isNotEmpty(value)) {
@@ -235,15 +235,15 @@ public class Page02 extends PageAbs {
 
 	private void addInPercentColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(5);
-		Column<CompanyParticipation, String> percentColumn = new Column<CompanyParticipation, String>(
+		Column<Mod200CompanyParticipation, String> percentColumn = new Column<Mod200CompanyParticipation, String>(
 				input) {
 			@Override
-			public String getValue(CompanyParticipation ca) {
+			public String getValue(Mod200CompanyParticipation ca) {
 				return Double.toString( ca.getPercent() );
 			}
 		};
-		percentColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
+		percentColumn.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation cp, String value) {
 		    	try {
 		    		double p = Double.parseDouble(value);
 		    		dataProviderIn.getList().get(index).setPercent(p);
@@ -259,15 +259,15 @@ public class Page02 extends PageAbs {
 
 	private void addInNominalValueColumn() {
 		SizableTextInputCell input = new SizableTextInputCell(8);
-		Column<CompanyParticipation, String> nominalValueColumn = new Column<CompanyParticipation, String>(
+		Column<Mod200CompanyParticipation, String> nominalValueColumn = new Column<Mod200CompanyParticipation, String>(
 				input) {
 			@Override
-			public String getValue(CompanyParticipation ca) {
+			public String getValue(Mod200CompanyParticipation ca) {
 				return Double.toString( ca.getNominalValue() );
 			}
 		};
-		nominalValueColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
+		nominalValueColumn.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation cp, String value) {
 		    	try {
 		    		double p = Double.parseDouble(value);
 		    		dataProviderIn.getList().get(index).setNominalValue(p);
@@ -290,13 +290,13 @@ public class Page02 extends PageAbs {
 			    }
 			  }
 		};
-		Column<CompanyParticipation,String> col = new Column<CompanyParticipation,String>(removeButton) {
-		  public String getValue(CompanyParticipation object) {
+		Column<Mod200CompanyParticipation,String> col = new Column<Mod200CompanyParticipation,String>(removeButton) {
+		  public String getValue(Mod200CompanyParticipation object) {
 		    return AON.MSG.deleteAction();
 		  }
 		};
-		col.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation ca, String value) {
+		col.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation ca, String value) {
 		    	if (Window.confirm(AON.MSG.confirmDeleteAction())) {
 		    		dataProviderIn.getList().remove(index);
 		    		tableIn.redraw();
@@ -311,7 +311,7 @@ public class Page02 extends PageAbs {
 	@UiHandler("newParticipationIn")
 	void onNewParticipationIn(ClickEvent event) {
 		if (dataProviderIn.getList().size() < 6) {
-			dataProviderIn.getList().add(new CompanyParticipation());
+			dataProviderIn.getList().add(new Mod200CompanyParticipation());
 			tableIn.redraw();		    		
 		} else {
 			Window.alert("La aplicaci\u00F3n no permite m\u00E1s de seis participaciones");
@@ -319,15 +319,15 @@ public class Page02 extends PageAbs {
 	}
 	
 	private void addOutDocumentColumn() {
-		Column<CompanyParticipation, String> documentColumn = new Column<CompanyParticipation, String>(
+		Column<Mod200CompanyParticipation, String> documentColumn = new Column<Mod200CompanyParticipation, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(CompanyParticipation object) {
+			public String getValue(Mod200CompanyParticipation object) {
 				return object.getDocument();
 			}
 		};
-		documentColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
+		documentColumn.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation cp, String value) {
 		    	dataProviderOut.getList().get(index).setDocument(value);
 		    }
 		});		
@@ -337,15 +337,15 @@ public class Page02 extends PageAbs {
 	}
 
 	private void addOutDescriptionColumn() {
-		Column<CompanyParticipation, String> descriptionColumn = new Column<CompanyParticipation, String>(
+		Column<Mod200CompanyParticipation, String> descriptionColumn = new Column<Mod200CompanyParticipation, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(CompanyParticipation ca) {
+			public String getValue(Mod200CompanyParticipation ca) {
 				return ca.getName();
 			}
 		};
-		descriptionColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
+		descriptionColumn.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation cp, String value) {
 		    	dataProviderOut.getList().get(index).setName(value);
 		    }
 		});		
@@ -354,15 +354,15 @@ public class Page02 extends PageAbs {
 	}
 	
 	private void addOutPercentColumn() {
-		Column<CompanyParticipation, String> percentColumn = new Column<CompanyParticipation, String>(
+		Column<Mod200CompanyParticipation, String> percentColumn = new Column<Mod200CompanyParticipation, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(CompanyParticipation ca) {
+			public String getValue(Mod200CompanyParticipation ca) {
 				return Double.toString( ca.getPercent() );
 			}
 		};
-		percentColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
+		percentColumn.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation cp, String value) {
 		    	try {
 		    		double p = Double.parseDouble(value);
 		    		dataProviderOut.getList().get(index).setPercent(p);
@@ -377,15 +377,15 @@ public class Page02 extends PageAbs {
 	}
 
 	private void addOutNominalValueColumn() {
-		Column<CompanyParticipation, String> nominalValueColumn = new Column<CompanyParticipation, String>(
+		Column<Mod200CompanyParticipation, String> nominalValueColumn = new Column<Mod200CompanyParticipation, String>(
 				new TextCell()) {
 			@Override
-			public String getValue(CompanyParticipation ca) {
+			public String getValue(Mod200CompanyParticipation ca) {
 				return Double.toString( ca.getNominalValue() );
 			}
 		};
-		nominalValueColumn.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation cp, String value) {
+		nominalValueColumn.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation cp, String value) {
 		    	try {
 		    		double p = Double.parseDouble(value);
 		    		dataProviderOut.getList().get(index).setNominalValue(p);
@@ -408,13 +408,13 @@ public class Page02 extends PageAbs {
 			    }
 			  }
 		};
-		Column<CompanyParticipation,String> col = new Column<CompanyParticipation,String>(removeButton) {
-		  public String getValue(CompanyParticipation object) {
+		Column<Mod200CompanyParticipation,String> col = new Column<Mod200CompanyParticipation,String>(removeButton) {
+		  public String getValue(Mod200CompanyParticipation object) {
 		    return AON.MSG.deleteAction();
 		  }
 		};
-		col.setFieldUpdater(new FieldUpdater<CompanyParticipation, String>() {
-		    public void update(int index, CompanyParticipation ca, String value) {
+		col.setFieldUpdater(new FieldUpdater<Mod200CompanyParticipation, String>() {
+		    public void update(int index, Mod200CompanyParticipation ca, String value) {
 		    	if (Window.confirm(AON.MSG.confirmDeleteAction())) {
 		    		dataProviderOut.getList().remove(index);
 		    		tableOut.redraw();
@@ -429,7 +429,7 @@ public class Page02 extends PageAbs {
 	@UiHandler("newParticipationOut")
 	void onNewParticipationOut(ClickEvent event) {
 		if (dataProviderOut.getList().size() < 4) {
-			CompanyParticipation cp = new CompanyParticipation();
+			Mod200CompanyParticipation cp = new Mod200CompanyParticipation();
 			dataProviderOut.getList().add(cp);
 			participationPanel.dump(cp);
 			participationPanel.center();
@@ -451,14 +451,14 @@ public class Page02 extends PageAbs {
 	}
 
 	public void populate(Mod2002013Object obj) {
-		List<CompanyParticipation> listIn = new LinkedList<CompanyParticipation>();
-		for (CompanyParticipation cp : dataProviderIn.getList()) {
+		List<Mod200CompanyParticipation> listIn = new LinkedList<Mod200CompanyParticipation>();
+		for (Mod200CompanyParticipation cp : dataProviderIn.getList()) {
 			listIn.add(cp);
 		}
 		this.mod200Object.getMod200().setParticipationsIn(listIn);
 		
-		List<CompanyParticipation> listOut = new LinkedList<CompanyParticipation>();
-		for (CompanyParticipation cp : dataProviderOut.getList()) {
+		List<Mod200CompanyParticipation> listOut = new LinkedList<Mod200CompanyParticipation>();
+		for (Mod200CompanyParticipation cp : dataProviderOut.getList()) {
 			listOut.add(cp);
 		}
 		this.mod200Object.getMod200().setParticipationsOut(listOut);

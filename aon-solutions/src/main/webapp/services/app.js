@@ -20,7 +20,13 @@ export const TIMECONTROL = {
       name: 'Empleado'
     }],
   price: ' ', //'-',
-  disabled: true
+  disabled: true,
+  options: {
+    menu: false,
+    add: false,
+    upload: false,
+    stat: false
+  }
 }
 
 export const ACCOUNTING = {
@@ -36,7 +42,13 @@ export const ACCOUNTING = {
       value: 'Empresa',
       name: 'Empresa'
     }],
-  price: ' ' // '75€/mes'
+  price: ' ', // '75€/mes'
+  options: {
+    menu: true,
+    add: false,
+    upload: false,
+    stat: true
+  }
 };
 
 export const FISCAL = {
@@ -52,7 +64,13 @@ export const FISCAL = {
       value: 'Empresa',
       name: 'Empresa'
     }],
-  price: ' ' // '75€/mes'
+  price: ' ', // '75€/mes'
+  options: {
+    menu: true,
+    add: false,
+    upload: false,
+    stat: false
+  }
 };
 
 export const PAYROLL = {
@@ -71,7 +89,13 @@ export const PAYROLL = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: ' ' // '90€/mes'
+  price: ' ', // '90€/mes'
+  options: {
+    menu: true,
+    add: false,
+    upload: false,
+    stat: true
+  }
 };
 
 export const COMUNICA = {
@@ -111,7 +135,13 @@ export const DOCUMENTAL = {
       name: 'Empleado'
     }],
   price: ' ', // '-',
-  disabled: true
+  disabled: true,
+  options: {
+    menu: false,
+    add: false,
+    upload: true,
+    stat: false
+  }
 };
 
 export const INVOICE = {
@@ -130,8 +160,14 @@ export const INVOICE = {
       value: 'Empleado',
       name: 'Empleado'
     }],
-  price: ' ' //'-'
-  ,disabled: true
+  price: ' ', //'-'
+  disabled: true,
+  options: {
+    menu: false,
+    add: true,
+    upload: true,
+    stat: true
+  }
 };
 
 export const CONFIGURATION = {
@@ -156,7 +192,13 @@ export const MESSENGER = {
       name: 'Empresa'
     }],
   price: ' ', //'-',
-  disabled: true
+  disabled: true,
+  options: {
+    menu: false,
+    add: true,
+    upload: false,
+    stat: false
+  }
 };
 
 export const TOOLS = {
@@ -258,7 +300,7 @@ export const OUTSOURCING = {
   disabled: true
 };
 
-export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, TOOLS};
+export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, MESSENGER, TOOLS};
 
 export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, INVOICE, MESSENGER, PAYROLL, COMUNICA, FISCAL, ACCOUNTING];
 
@@ -391,10 +433,6 @@ export const PayrollMenu =[
       title:'Creación de Empresas.',
       initAction: 'newDomain_form-enterprise',
       parent: true
-    },{
-      title:'Gestion de Seguridad.',
-      module: 'aon_gwt_aio',
-      entryPoint: 'scope'
     },{
       title: 'Carga de datos desde ficheros Excel (Predefinidos)',
       module: 'aon_gwt_aio',

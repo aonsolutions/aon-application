@@ -5,7 +5,9 @@ import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -87,6 +89,10 @@ public class ProductDAO {
 	public static Stream<Product> getStream(AONContext ctx, ProductFilter filter) {
 		return select(ctx, filter)
 		.fetch().stream().map(new ProductFiller());
+	}
+	
+	public static LinkedList<Product> getList(AONContext ctx, ProductFilter filter) {
+		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	public static Product get(AONContext ctx, ProductFilter filter) {
@@ -194,29 +200,29 @@ public class ProductDAO {
 					.setDomain(new Domain().setId(r.getValue(PRODUCT.DOMAIN)))
 					.setBrand(checkField(r, BRAND.ID)
 						? BrandFiller.build(r)
-						: new Brand().setId(r.getValue(PRODUCT.BRAND)))
+						: new Brand().setId(getValue(r, PRODUCT.BRAND)))
 					.setCategory(checkField(r, PCATEGORY.ID)
 							? ProductCategoryFiller.build(r)
 							: new ProductCategory().setId(r.getValue(PRODUCT.CATEGORY)))
 					.setCode(r.getValue(PRODUCT.CODE))
-					.setComposition(r.getValue(PRODUCT.COMPOSITION) == 1)
-					.setCompositionPrice(r.getValue(PRODUCT.COMPOSITION_PRICE) == 1)
-					.setInventoriable(r.getValue(PRODUCT.INVENTORIABLE) == 1)
-					.setKind(ProductKind.safeValueOf(r.getValue(PRODUCT.KIND)))
-					.setLotable(r.getValue(PRODUCT.LOTABLE) == 1)
-					.setManufactured(r.getValue(PRODUCT.MANUFACTURED) == 1)
-					.setPackaged(r.getValue(PRODUCT.PACKAGED) == 1)
-					.setPurchaseAccount(new Account().setId(r.getValue(PRODUCT.PURCHASE_ACCOUNT)))
-					.setRetention(new Tax().setType(TaxType.RETENTION).setId(r.getValue(PRODUCT.RETENTION)))
-					.setSalesAccount(new Account().setId(r.getValue(PRODUCT.SALES_ACCOUNT)))
-					.setSerializable(r.getValue(PRODUCT.SERIALIZABLE) == 1)
-					.setStatus(ProductStatus.safeValueOf(r.getValue(PRODUCT.STATUS)))
-					.setType(ProductType.safeValueOf(r.getValue(PRODUCT.TYPE)))
-					.setVat(new Tax().setType(TaxType.VAT).setId(r.getValue(PRODUCT.VAT)))
-					.setCreationDate(r.getValue(PRODUCT.CREATION_DATE))
-					.setCreationUser(r.getValue(PRODUCT.CREATION_USER))
-					.setModificationDate(r.getValue(PRODUCT.MODIFICATION_DATE))
-					.setModificationUser(r.getValue(PRODUCT.MODIFICATION_USER));
+					.setComposition(getBoolean(r, PRODUCT.COMPOSITION))
+					.setCompositionPrice(getBoolean(r, PRODUCT.COMPOSITION_PRICE))
+					.setInventoriable(getBoolean(r, PRODUCT.INVENTORIABLE))
+					.setKind(ProductKind.safeValueOf(getValue(r, PRODUCT.KIND)))
+					.setLotable(getBoolean(r, PRODUCT.LOTABLE))
+					.setManufactured(getBoolean(r, PRODUCT.MANUFACTURED))
+					.setPackaged(getBoolean(r, PRODUCT.PACKAGED))
+					.setPurchaseAccount(new Account().setId(getValue(r, PRODUCT.PURCHASE_ACCOUNT)))
+					.setRetention(new Tax().setType(TaxType.RETENTION).setId(getValue(r, PRODUCT.RETENTION)))
+					.setSalesAccount(new Account().setId(getValue(r, PRODUCT.SALES_ACCOUNT)))
+					.setSerializable(getBoolean(r, PRODUCT.SERIALIZABLE))
+					.setStatus(ProductStatus.safeValueOf(getValue(r, PRODUCT.STATUS)))
+					.setType(ProductType.safeValueOf(getValue(r, PRODUCT.TYPE)))
+					.setVat(new Tax().setType(TaxType.VAT).setId(getValue(r, PRODUCT.VAT)))
+					.setCreationDate(getValue(r, PRODUCT.CREATION_DATE))
+					.setCreationUser(getValue(r, PRODUCT.CREATION_USER))
+					.setModificationDate(getValue(r, PRODUCT.MODIFICATION_DATE))
+					.setModificationUser(getValue(r, PRODUCT.MODIFICATION_USER));
 		}		
 		
 	}

@@ -27,18 +27,14 @@ public class GlobalRegistryServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API GLOBAL REGISTRY SERVLET - GET METHOD");
-		Object object = new JSONObject();
-		object = getRegistries(req);
 		Utils.addCorsHeader(resp);
-		Utils.giveBack(req, resp, object, new JSONObject());
+		Utils.giveBack(req, resp, getRegistries(req), new JSONObject());
 	}
 	
 	public JSONArray getRegistries(HttpServletRequest req) {
 		JSONArray array = new JSONArray();
 		AON.getAonRegistryStream(DOMAIN_NAME, DOMAIN_ID, USER, f -> registryFilter(f, req))
-		.forEach(r -> {
-			array.put(RegistryJSON.toJSON(r));
-		});
+		.forEach(r -> array.put(RegistryJSON.toJSON(r)));
 		return array;
 	}
 	

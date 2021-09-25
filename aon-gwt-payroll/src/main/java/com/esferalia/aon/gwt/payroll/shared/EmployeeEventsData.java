@@ -28,7 +28,7 @@ public class EmployeeEventsData implements Serializable {
 
 	}
 	
-	public class EmployeeEventsVariable implements EVENTimedVariable<Double>{
+	public static class EmployeeEventsVariable implements EVENTimedVariable<Double>, Comparator<EmployeeEventsVariable>{
 
 		private String startDate;
 		private String endDate;
@@ -59,6 +59,23 @@ public class EmployeeEventsData implements Serializable {
 		@Override
 		public Double getValue() {
 			return this.value;
+		}
+
+		public void setStartDate(Date startDate) {
+			this.startDate = Shared.format(startDate);
+		}
+
+		public void setEndDate(Date endDate) {
+			this.endDate = format(endDate);
+		}
+
+		public void setValue(Double value) {
+			this.value = value;
+		}
+
+		@Override
+		public int compare(EmployeeEventsVariable o1, EmployeeEventsVariable o2) {
+			return o1.getStartDate().compareTo(o2.getStartDate());
 		}
 		
 	}
@@ -349,6 +366,17 @@ public class EmployeeEventsData implements Serializable {
 			String varName = entry.getKey();
 			ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
 			
+//			if(AonStringUtils.equalsIgnoreCase(varName, "DIAS_VACACIONES_NO_DISFRUTADOS")) {
+//				if(null == entry.getValue() || entry.getValue().isEmpty())
+//					continue;
+//				
+//				Quartet<Date, Date, String, String> settleHolidaysQuarter = entry.getValue().get(0);
+//				EmployeeEventsVariable eVar = new EmployeeEventsVariable(settleHolidaysQuarter.getStartDate(), settleHolidaysQuarter.getEndDate(), Double.parseDouble(settleHolidaysQuarter.getExpression()));
+//				varList.add(eVar);
+//				mapEventsVar.put(varName, varList);
+//				continue;
+//			}
+			
 			if(!entry.getValue().isEmpty()){
 				for(Quartet<Date, Date, String, String> quarter : entry.getValue()){
 					if(null != quarter.getExpression()) {
@@ -357,35 +385,45 @@ public class EmployeeEventsData implements Serializable {
 						
 						// EndDate
 						Date endDate = null;
-						if(null != quarter.getEndDate())
-							endDate = DateUtils.copyDateOnly(quarter.getEndDate());
-						else {
-							Date currentDate = new Date();
-							DateUtils.addYears2Date(currentDate, 1);
-							
-							Date newEndDate = DateUtils.getLastDayOfYear(currentDate);
-							DateUtils.resetTime(newEndDate);
-							
-							endDate = DateUtils.copyDateOnly(newEndDate);
-						}
-							
+						
 						// Value
 						Double value = Double.parseDouble(quarter.getExpression());
 						
+						if(null != quarter.getEndDate())
+							endDate = DateUtils.copyDateOnly(quarter.getEndDate());
+						else {
+//							Date currentDate = new Date();
+//							DateUtils.addYears2Date(currentDate, 1);
+//							
+//							Date newEndDate = DateUtils.getLastDayOfYear(currentDate);
+//							DateUtils.resetTime(newEndDate);
+//							
+//							endDate = DateUtils.copyDateOnly(newEndDate);
+							
+							EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
+							varList.add(eVar);
+							continue;
+						}
+						
 						// Add to var list
 						if(null != endDate) {
-							Date itDate = DateUtils.copyDateOnly(startDate);
-							while(itDate.before(endDate)) {
-								Date actualDate = DateUtils.copyDateOnly(itDate);
-								DateUtils.resetTime(actualDate);
-								
-								Date auxStartDate = DateUtils.getFirstDayOfMonth(actualDate);
-								Date auxEndDate = DateUtils.getLastDayOfMonth(actualDate);
-								
-								EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
+							if(DateUtils.getMonth(startDate) == DateUtils.getMonth(endDate)) {
+								EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
 								varList.add(eVar);
-								
-								DateUtils.addMonths2Date(itDate, 1);
+							} else {
+								Date itDate = DateUtils.copyDateOnly(startDate);
+								while(DateUtils.isBeforeOrEquals(itDate, endDate)) {
+									Date actualDate = DateUtils.copyDateOnly(itDate);
+									DateUtils.resetTime(actualDate);
+									
+									Date auxStartDate = DateUtils.getFirstDayOfMonth(actualDate);
+									Date auxEndDate = DateUtils.getLastDayOfMonth(actualDate);
+									
+									EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
+									varList.add(eVar);
+									
+									DateUtils.addMonths2Date(itDate, 1);
+								}
 							}
 						}
 					}
@@ -543,6 +581,24 @@ public class EmployeeEventsData implements Serializable {
 		//TODO: GET FIXED MAP FOR CONTINUES MONTHS WIHT SAME VALUE
 		
 		return fixedMap;
+	}
+
+	public void removeEventData(String variableName) {
+		ArrayList<Quartet<Date, Date, String, String>> emptyList = new ArrayList<Quartet<Date,Date,String,String>>();
+		this.contractEventsList.put(variableName, emptyList);
+	}
+
+	public void setEventData(String varName, ArrayList<EmployeeEventsVariable> employeeEventsVariables) {
+		removeEventData(varName);
+		
+		ArrayList<Quartet<Date, Date, String, String>> newVarList = new ArrayList<Quartet<Date,Date,String,String>>();
+		
+		employeeEventsVariables.forEach(employeeEventsVariable -> {
+			newVarList.add(new Quartet<Date, Date, String, String>(employeeEventsVariable.getStartDate(), employeeEventsVariable.getEndDate(), varName, employeeEventsVariable.getValue()+""));
+		});
+		
+		contractEventsList.put(varName, newVarList);
+		
 	}
 	
 }

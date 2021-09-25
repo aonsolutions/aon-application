@@ -254,7 +254,7 @@ public class FinanceTrackingDAO {
 		ctx.log().info(" ----- START FINANCE PAY ----- ");
 		try {
 			ctx.checkWrite();
-			Finance finance = tracking.getFinance(); 
+			Finance finance = tracking.getFinance();
 			FinanceValidation.validatePay(ctx, finance);
 			AccountEntry entry = null;
 			if (tracking.getPayAccount() != null && tracking.getPayAccount().getId() != null) {
@@ -353,7 +353,8 @@ public class FinanceTrackingDAO {
 	
 	private static FinanceTracking returnFinance(AONContext ctx,FinanceTracking ft,AccountEntry entry) {
 		ft.setTrackingDate(entry.getEntryDate())
-		  .setRecorded(true)
+			.setType(FinanceTrackingType.RETURNED)
+			.setRecorded(true)
 		;
 		updateFinanceStatus(ctx,ft.getFinance().getId(),FinanceStatus.RETURNED);
 		Integer trackingId = insert(ctx, ft);

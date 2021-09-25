@@ -10,6 +10,8 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
+import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -199,7 +201,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void setEventsWorkplace(String domain, EventsWorkplace updateEventsWorkplace, AsyncCallback<EventsWorkplace> asyncCallback);
 
-	void getEmployeeInfoDataBase(String domain, String user, Integer contractId, AsyncCallback<EmployeeContractInfo> asyncCallback) throws IllegalArgumentException;
+	void getEmployeeInfoDataBase(String domain, String user, Integer contractId, Workplace workplace, AsyncCallback<EmployeeContractInfo> asyncCallback) throws IllegalArgumentException;
 
 	void setEmployeeInfoDataBase(String domain, EmployeeContractInfo new_employeeContractData,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
@@ -207,12 +209,14 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void createEmployeeContract(String domain, EmployeeContractInfo employeeContractData,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
 
-	void getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId,
-			AsyncCallback<WorkplaceEmployees> callback);
+	void getWorkplaceEmployeesEvents(String currentDomainName, Integer workplaceId, AsyncCallback<WorkplaceEmployees> callback) throws IllegalArgumentException;
 
 	void getEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			ArrayList<String> employeeContractVariablesDB, AsyncCallback<EmployeeEventsData> callback);
 
+	void setEmployeeEventsByContract(String currentDomainName, Integer contractId,
+			EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback);
+	
 	void setEmployeeAFIChanges(String currentDomainName, Integer contractId, Date newDate, boolean isChangeContract, String tc2,
 			boolean isQuoteContract, Integer quoteGroup, boolean isOcupationContract, String ocupation,
 			AsyncCallback<String> callback);
@@ -310,5 +314,13 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	// ------------------------------------------------- SEPE Methods
 	
 	void getCertifica2Info(String currentDomainName, Integer contractId, AsyncCallback<Certifica2Info> callback) throws IllegalArgumentException;
+	
+	// ------------------------------------------------- EmployeeContractPayments
+	
+	void getContractPayements(String currentDomainName, Integer contractId, AsyncCallback<ContractPaymentData> callback);
+
+	void updateContractPayments(String currentDomainName, Integer contractId, ContractPaymentData contractPaymentData, AsyncCallback<Void> callback);
+
+	void createContractPayment(String currentDomainName, Integer contractId, ContractConceptCalc contractConceptCalc, AsyncCallback<Void> callback);
 
 }

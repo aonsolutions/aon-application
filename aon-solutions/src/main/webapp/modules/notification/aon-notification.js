@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonCard } from "../../components/aon-card.js";
-import { scrollInfinite, serializeForm, setFullDate, setStyles, setTime, timePaser } from "../../services/utils.js";
+import { scrollInfinite, serializeForm, setFullDate, setStyles, setTime } from "../../services/utils.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { AonTabs } from "../../components/aon-tabs.js";
 import { Swipe } from "../../components/swipe.js";
@@ -13,6 +13,8 @@ import { CONSTANT, EVENT, MSG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { TYPE_USER, NOTIFICATION_TABS, badgeUpdate } from "./NotificationEnums.js";
 import { AonToast } from "../../components/aon-toast.js";
+import { AonMessenger } from "../messenger/aon-messenger.js";
+import { App } from "../../models/enums.js";
 
 export class AonNotification extends AonElement {
   AON_NOTIFICATION;
@@ -35,7 +37,7 @@ export class AonNotification extends AonElement {
   }
 
   getFilter() {
-		return this.hasAttribute(CONSTANT.FILTER)? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, peerPage:10};
+		return this.hasAttribute(CONSTANT.FILTER)? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:10};
 	}
 
 	setFilter(filter) {
@@ -178,8 +180,12 @@ export class AonNotification extends AonElement {
     if(source && source_id){
       let aonComponent = null;
       switch(source){
-        case "DOCUMENTAL":
+        case App.DOCUMENTAL:
           aonComponent =  new AonDocumental();
+          aonComponent.value = source_id;
+          break;
+        case App.MESSENGER:
+          aonComponent =  new AonMessenger();
           aonComponent.value = source_id;
           break;
       }

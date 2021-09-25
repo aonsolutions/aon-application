@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -156,10 +157,10 @@ public class EventsDraft extends ResizeComposite {
 		
 		public SeeMenu() {
 			
-			calendarVariablesMenuItem = addItem("Variables del calendario", new CalendarVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			calendarVariablesMenuItem = addItem("Consultar variables calendario", new CalendarVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
 			calendarVariablesMenuItem.ensureDebugId("calendarVariablesMenuItem");
 			
-			editableVariablesMenuItem = addItem("Variables editables", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
+			editableVariablesMenuItem = addItem("Editar variables convenio", new EditableVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
 			editableVariablesMenuItem.ensureDebugId("editableVariablesMenuItem");
 			
 			allVariablesMenuItem = addItem("Todas las variables", new AllVariablesCommand(), AON.AON_ICON_CMD_BUTTON, style.widthMenuItem(), style.cmd_btn());
@@ -322,6 +323,8 @@ public class EventsDraft extends ResizeComposite {
 			this.variablesToShow = 2;
 			seeMenu.getCalendarVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
 			seeMenu.getCalendarVariablesMenuItem().addStyleName(style.aonCheck());
+			seeMenu.getEditableVariablesMenuItem().setEnabled(false);
+			seeMenu.getEditableVariablesMenuItem().setTitle("Deshabilitado: no existe convenio asociado al CT");
 		}else {
 			this.variablesToShow = 1;
 			seeMenu.getEditableVariablesMenuItem().addStyleName("aon-MenuItemCheckYes");
@@ -485,6 +488,12 @@ public class EventsDraft extends ResizeComposite {
 	private void initializeTableByMonth(ArrayList<EventEmployee> employeeList, ArrayList<String> variableList) {
 		int columns = this.getColCount();
 		for(int row=1; row<employeeList.size()+1; row++){
+			
+			// Check AgreementId
+			Integer agreementIdEmployee = employeeList.get(row-1).getAgreementId();
+			if((this.variablesToShow == 1 || this.variablesToShow == 0)  && null != this.eventsDraftObject.getAgreementId() && !AonNumberUtils.equals(agreementIdEmployee, this.eventsDraftObject.getAgreementId()))
+				continue;
+			
 			//Rellenamos primera colunma con los nombres de los empleados
 			eventsTable.setText(row+1, 0, employeeList.get(row-1).getFullName());
 			eventsTable.getCellFormatter().addStyleName(row+1, 0, style.headerCell());
@@ -642,6 +651,12 @@ public class EventsDraft extends ResizeComposite {
 			eventsTable.getCellFormatter().addStyleName(row+1, 0, style.headerCell());
 			
 			for(int column=0; column<columns; column++){
+				
+				// Check AgreementId
+				Integer agreementIdEmployee = employeeList.get(row-1).getAgreementId();
+				if((this.variablesToShow == 1 || this.variablesToShow == 0) && null != this.eventsDraftObject.getAgreementId() && !AonNumberUtils.equals(agreementIdEmployee, this.eventsDraftObject.getAgreementId()))
+					continue;
+				
 				
 				//Rellenamos el resto de columnas con la informacion de cada empleado
 				Date findingDate = DateUtils.getDate(column, this.actualYear);

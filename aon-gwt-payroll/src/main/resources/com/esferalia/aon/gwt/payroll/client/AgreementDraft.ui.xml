@@ -351,6 +351,7 @@
 		.flex{
 			display: flex;
 			align-items: center;
+			gap: 5px;
 		}
 		
 		.cmd_btn{
@@ -358,6 +359,16 @@
 			background-repeat: no-repeat;
 			padding-left: 25px !important;
 			background-size: contain;
+		}
+		
+		.bg_newPaeriod{
+			background-color: white !important;
+			border: 1px solid #ababab !important;
+			background: white !important;
+		}
+		
+		.showExtra:hover{
+			background-color: transparent !important;
 		}
 
 	</ui:style>
@@ -402,7 +413,7 @@
 							<g:HorizontalPanel> 
 								<g:HorizontalPanel debugId='categoryButtonPanel' ui:field='categoryButtonPanel'/>
 								<g:HorizontalPanel debugId='salaryToggleButtonsPanel' ui:field='salaryToggleButtonsPanel'/>
-								<g:HorizontalPanel debugId='moreToggleButtonsPanel' ui:field='moreToggleButtonsPanel'/> 
+								<g:HTMLPanel debugId='moreToggleButtonsPanel' styleName="{style.flex}" ui:field='moreToggleButtonsPanel'/> 
 							</g:HorizontalPanel>
 							
 							<g:HTML styleName="{style.vertical-space2}" />
@@ -421,13 +432,13 @@
 								styleName="aon-dataTable {style.edit-rows}" />
 							<g:HTML styleName="{style.vertical-space}" />
 							<g:DeckPanel ui:field="deckPanelExtras">
-								<g:HorizontalPanel ui:field="periodTypePanel">
+								<g:HTMLPanel ui:field="periodTypePanel" styleName="{style.flex}">
 									<g:Label styleName="{style.payPeriodLabel}">Pagas extras:</g:Label>
 									<g:DeckPanel ui:field="deckPanelPayPeriod">
 										<g:ListBox ui:field="payPeriod"></g:ListBox>
 										<g:Label ui:field="payPeriodLabel"></g:Label>
 									</g:DeckPanel>
-								</g:HorizontalPanel>
+								</g:HTMLPanel>
 								<g:FlexTable debugId='extrasTable' ui:field='extrasTable'
 								styleName="aon-dataTable {style.edit-rows}" />
 								<g:HTML styleName="{style.vertical-space}" />
@@ -464,7 +475,6 @@
 										
 									<g:ListBox debugId='levelListBox' ui:field='levelListBox' />
 
-									<g:ListBox debugId='zoomListBox' ui:field='zoomListBox' />
 									<g:Button debugId='closePreviewButton' ui:field='closePreviewButton'
 										styleName='aon-finding-toolbar-item aon-icon-cancel' text="CERRAR PRELIMINAR" />
 
@@ -476,12 +486,7 @@
 
 			</g:north>
 			<g:center>
-				<g:ScrollPanel styleName="{style.editor}">
-					<g:VerticalPanel styleName="{style.document}">
-						<p:Viewer styleName="reset" ui:field='printPreviewViewer' debugId='printPreviewViewer' />
-						<!--  g:HTML styleName="reset" debugId='printPreviewHTML' ui:field='printPreviewHTML'wordWrap='true' / -->
-					</g:VerticalPanel>
-				</g:ScrollPanel>
+				<p:FullViewer styleName="reset" ui:field='printPreviewViewer' debugId='printPreviewViewer' />
 			</g:center>
 		</g:DockLayoutPanel>
 	</g:DeckLayoutPanel>

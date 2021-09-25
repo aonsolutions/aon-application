@@ -7,12 +7,13 @@
 		.container{
 			width: 100%;
 			min-width: 600px;
+			margin-top: 50px;
 		}
 		
 		.flexColumn{
 			display: flex;
 			flex-direction: column;
-			margin-top: 50px;
+			margin-top: 10px;
 		}
 		
 		.flex{
@@ -35,7 +36,7 @@
 			width: 200px;
 		}
 		
-		.cmd_btn{
+		.cmdBtn{
 			background-position: center left;
 			background-repeat: no-repeat;
 			padding-left: 25px !important;
@@ -47,6 +48,7 @@
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
 			<g:VerticalPanel ui:field="mainContainer" styleName="{style.container}">
+				<g:HTMLPanel ui:field="messagePanel" />
 				<g:HTMLPanel ui:field="filterSalaryPanel" styleName="{style.flexColumn}">
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName="{style.label}">Empleado</g:Label>

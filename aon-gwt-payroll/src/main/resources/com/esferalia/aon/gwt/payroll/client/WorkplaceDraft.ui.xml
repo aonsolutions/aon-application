@@ -14,13 +14,20 @@
 		
 		.flexCenter	{
 			width: 100%;
+			margin-top: 50px;
+		}
+		
+		.messagePanel {
+			margin: 10px 0;
 		}
 
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:HTMLPanel ui:field="centerContainer" styleName="{style.flexCenter}"></g:HTMLPanel>
+			<g:HTMLPanel ui:field="centerContainer" styleName="{style.flexCenter}">
+				<g:HTMLPanel ui:field="messagePanel" styleName="{style.messagePanel}" />
+			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 	

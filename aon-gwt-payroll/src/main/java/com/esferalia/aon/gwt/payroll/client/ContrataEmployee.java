@@ -4,7 +4,9 @@ import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDEn
 import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDError;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -16,15 +18,13 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.Messages;
-import com.esferalia.aon.gwt.payroll.shared.Messages.Message;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -47,12 +47,12 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public abstract class ContrataEmployee extends ResizeComposite {
 
@@ -113,11 +113,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	public class ContractAttachUIImpl extends ContractAttachUI {
 		
 		@Override
-		protected void fireMessagesResults(Messages messages) {
-			paintMessagesResult(messages);
-		}
-
-		@Override
 		protected void onExportPDF() {
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
@@ -147,13 +142,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
-	// ------------------------------------------------- ContractAttachUIImpl
+	// ------------------------------------------------- EmployeeEventsImpl
 	
-	public class ContractBonusUIImpl extends ContractBonusUI {
-		
+	public class EmployeeEventsImpl extends EmployeeEventsDraft {
+
 		@Override
-		protected void fireMessagesResults(Messages messages) {
-			paintMessagesResult(messages);
+		protected void onShowCalendar() {
+			tabLayOutPanel.selectTab(7, true);
 		}
 		
 	}
@@ -432,6 +427,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		String cmd_btn();
 	}
 	
+	@UiField
+	HTMLPanel messageContainer;
+	
 	@UiField (provided = true)
 	ContractEmployeeUI contractEmployeeUI;
 	
@@ -458,6 +456,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	@UiField (provided = true)
 	EmployeeEventsDraft employeeEvents;
+	
+	@UiField (provided = true)
+	EmployeeContractPayments employeeContractPayments;
 	
 	@UiField (provided = true)
 	SalaryDraft salaryDraft;
@@ -490,10 +491,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	ScrollPanel scrolledPanelBonus;
 	
 	@UiField
-	ScrollPanel scrolledPDFPanel;
+	SimpleLayoutPanel scrolledPDFPanel;
 	
 	@UiField
-	Viewer pdfViewer;
+	FullViewer pdfViewer;
 	
 	@UiField
 	MinimizePanel footPanel;
@@ -508,8 +509,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	private ContrataEmployeeObject contrataEmployeeObject;
+	private Integer contractId;
 	
 	private AonToolbar toolbar;
+//	private AonMessagePanel messagePanel;
 
 	private AonToolbarButton listEmployees;
 	private HTMLPanel employeeContractButtons;
@@ -519,11 +522,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonExpandButton tgss;
 	private AonExpandButton sepe;
 	private AonToolbarButton closePDF;
-	private AonToolbarButton downloadPDF;
 	private DateListBox idcDateListBox;
 	private MonthListBox idcMonthListBox;
-	private ListBox zoomListBox;
-	private int zoom = Constants.DEFAULT_ZOOM;
 	
 	private NewTGSSContextMenu tgssContextMenu;
 	private NewSEPEContextMenu sepeContextMenu;
@@ -553,6 +553,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton visibilityButton;
 	private ListBox yearLBEvents;
 	
+	// EmployeeContractPayments
+	private HTMLPanel employeeContractPaymentsButtons;
+	private AonToolbarButton saveContractPaymentsButton;
+	private AonToolbarButton addContractPaymentsButton;
+	private ListBox yearLBContractPayments;
+	
 	// SalaryDraft
 	private HTMLPanel salaryDraftButtos;
 	private AonToolbarButton acceptButton;
@@ -562,7 +568,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton printPreviewButton;
 	private AonToolbarButton irpfPreviewButton;
 	private SalarySelect salarySelect;
-	private ListBox zoomSalaryListBox;
 	private AonToolbarButton saveSalaryButton;
 	private AonToolbarButton closePreviewButton;
 	private AonToolbarButton fxButton;
@@ -575,6 +580,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private CheckBox eventsCheck;
 	private ListBox settlePreviewListBox; 
 	
+	private AonToolbarButton previusContract;
+	private AonToolbarButton nextContract;
+	private Label employeeCounter;
+	
 	private boolean hasCertificateSEPE = false;;
 	
 	// ------------------------------------------------- Constructor
@@ -586,7 +595,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contractOtherData = new ContractOtherData();
 		contractClauseUI = new ContractClauseUI();
 		contractAttachUI = new ContractAttachUIImpl();
-		contractBonusUI = new ContractBonusUIImpl();
+		contractBonusUI = new ContractBonusUI();
 		
 		employeeSalary = new EmployeeSalary();
 		employeeSalary.hideToolbar();
@@ -595,8 +604,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeCalendar.hideToolbar();
 		employeeCalendar.setContrataEmployeeCalendarHeight();
 		
-		employeeEvents = new EmployeeEventsDraft();
+		employeeEvents = new EmployeeEventsImpl();
 		employeeEvents.hideToolbar();
+		
+		employeeContractPayments = new EmployeeContractPayments();
+		employeeContractPayments.hideToolbar();
 		
 		salaryDraft = new SalaryDraft();
 		salaryDraft.hideToolbar();
@@ -615,7 +627,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		// Init view
 		setScrollPanelsHeight();
-		initZoomList();
 		initFootPanel();
 		initResultsPanel();
 		initTabLayOutPanel();
@@ -635,17 +646,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		scrolledPanelBonus.setHeight(scrollHeight+"em");
 		scrolledPanelContractSpecificData.setHeight(scrollHeight+"em");
 		scrolledPDFPanel.setHeight(scrollHeight+"em");
-	}
-	
-	private void initZoomList() {
-		zoomListBox = new ListBox();
-		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		int selectedIndex = zoomListBox.getItemCount();
-		for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
-			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
-		zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
-		zoomListBox.setSelectedIndex(selectedIndex);	
 	}
 	
 	private void initFootPanel() {
@@ -696,10 +696,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			case 0:
 				contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 					showContractButtons();
-					contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, employeeContractInfoIn);
-					checkStatus(this.contrataEmployeeObject);
-					checkCertificateSEPE();
-					checkTGSSStatus();
+					contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+							success -> {
+								checkStatus(this.contrataEmployeeObject);
+								checkCertificateSEPE();
+								checkTGSSStatus();
+							});
 				}, f -> {});
 				break;
 			case 1:
@@ -750,23 +752,32 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showSalariesButtons();
 					employeeSalary.setEmployeeSalaryObject(employeeSalaryObject);
-				}, f -> {});
+					employeeSalary.removeMainMT();
+				});
 				break;
 			case 7:
+//				Window.alert("Calendar Selected -> " + contrataEmployeeObject.getEmployeeFullName());
 				contrataEmployeeObject.getEmployeeCalendarObject(employeeCalendarObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showCalendarButtons();
 					employeeCalendar.setEmployeeCalendarDraftObject(employeeCalendarObject);
-				}, f -> {});
+				});
 				break;
 			case 8:
 				contrataEmployeeObject.getEmployeeEventsObject(employeeEventsObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showEventsButtons();
 					employeeEvents.setEmployeeEventsDraftObject(employeeEventsObject);
-				}, f -> {});
+				});
 				break;
 			case 9:
+				contrataEmployeeObject.getEmployeeContractPaymentsObject(employeeContractPaymentsObject -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showContractPaymentsButtons();
+					employeeContractPayments.setEmployeeContractPaymentsObject(employeeContractPaymentsObject);
+				});
+				break;
+			case 10:
 				contrataEmployeeObject.getSalaryDraftObject(salaryDraftObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showSalaryDraftButtons();
@@ -785,12 +796,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		saveContract.setVisible(true);
 		deleteContract.setVisible(true);
 		listEmployees.setVisible(true);
+		previusContract.setVisible(true);
+		employeeCounter.setVisible(true);
+		nextContract.setVisible(true);
 		tgss.setVisible(true);
 		sepe.setVisible(true);
 		
-		zoomListBox.setVisible(false);
 		closePDF.setVisible(false);
-		downloadPDF.setVisible(false);
 		idcDateListBox.setVisible(false);
 		idcMonthListBox.setVisible(false);
 		
@@ -804,10 +816,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		saveContract.setVisible(false);
 		deleteContract.setVisible(false);
 		listEmployees.setVisible(false);
+		previusContract.setVisible(false);
+		employeeCounter.setVisible(false);
+		nextContract.setVisible(false);
 
-		zoomListBox.setVisible(true);
 		closePDF.setVisible(true);
-		downloadPDF.setVisible(true);
 		idcDateListBox.setVisible(true);
 		idcMonthListBox.setVisible(true);
 
@@ -823,13 +836,29 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	// ------------------------------------------------- setContrataEmployeeObject
 	
-	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, EmployeeContractInfo employeeContractInfo) {
+	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId, Integer selectedEmployeeIdx, int employeesSize, Consumer<String> success) {
+		this.contractId = contractId;
 		this.contrataEmployeeObject = contrataEmployeeDialogObject;
-		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
-		showContractButtons();
-		checkStatus(this.contrataEmployeeObject);
-		checkCertificateSEPE();
-		checkTGSSStatus();
+    	contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
+				s -> {
+					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
+					showContractButtons();
+					checkStatus(this.contrataEmployeeObject);
+					checkCertificateSEPE();
+					checkTGSSStatus();
+					success.accept("");
+				});
+	}
+	
+	public void setContrataEmployeeObject(ContrataEmployeeObject contrataEmployeeDialogObject, Integer contractId, Integer selectedEmployeeIdx, int employeesSize, int selectedTab, Consumer<String> success) {
+		this.contractId = contractId;
+		this.contrataEmployeeObject = contrataEmployeeDialogObject;
+		contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
+				s -> {
+					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
+					tabLayOutPanel.selectTab(selectedTab, true);
+					success.accept("");
+				});
 	}
 	
 	// ------------------------------------------------- Show/Hide Toolbar methods
@@ -839,6 +868,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeEventsButtons.setVisible(false);
+		employeeContractPaymentsButtons.setVisible(false);
 		salaryDraftButtos.setVisible(false);
 	}
 	
@@ -847,6 +877,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeSalaryButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeEventsButtons.setVisible(false);
+		employeeContractPaymentsButtons.setVisible(false);
 		salaryDraftButtos.setVisible(false);
 	}
 	
@@ -855,11 +886,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 		employeeEventsButtons.setVisible(false);
+		employeeContractPaymentsButtons.setVisible(false);
 		salaryDraftButtos.setVisible(false);
 	}
 	
 	private void showEventsButtons() {
 		employeeEventsButtons.setVisible(true);
+		employeeContractPaymentsButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(false);
+		salaryDraftButtos.setVisible(false);
+	}
+	
+	private void showContractPaymentsButtons() {
+		employeeContractPaymentsButtons.setVisible(true);
+		employeeEventsButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
@@ -869,6 +911,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showSalaryDraftButtons() {
 		salaryDraftButtos.setVisible(true);
 		employeeEventsButtons.setVisible(false);
+		employeeContractPaymentsButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
@@ -877,6 +920,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- Abstract methods
 	
 	protected abstract void onListShow(boolean reloadEmployees);
+	protected abstract void onPreviusContract(Integer contractId);
+	protected abstract void onNextContract(Integer contractId);
 	
 	// ------------------------------------------------- Toolbar panel
 	
@@ -909,10 +954,26 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeEventsButtons = initEmployeeEventsButtons();
 		toolbar.add(employeeEventsButtons);
 		
+		// EmployeeEvents
+		
+		employeeContractPaymentsButtons = initEmployeeContractPaymentsButtons();
+		toolbar.add(employeeContractPaymentsButtons);
+		
 		// SalaryDrat
 		
 		salaryDraftButtos = initSalaryDraftButtons();
 		toolbar.add(salaryDraftButtos);
+		
+		previusContract = new AonToolbarButton("Contrato anterior", AON.CSS.aonIconLeft());
+		previusContract.addClickHandler(e -> onPreviusContract(contractId));
+		toolbar.add(previusContract);
+		
+		employeeCounter = new Label();
+		toolbar.add(employeeCounter);
+		
+		nextContract = new AonToolbarButton("Contrato siguiente", AON.CSS.aonIconRight());
+		nextContract.addClickHandler(e -> onNextContract(contractId));
+		toolbar.add(nextContract);
 		
 		return toolbar;
 
@@ -998,22 +1059,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 		hPanel.add(closePDF);
 		
-		initZoomList();
-		zoomListBox.addChangeHandler(e -> {
-			int index = zoomListBox.getSelectedIndex();
-			String text = zoomListBox.getItemText(index);
-			zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
-			pdfViewer.scale(zoom / 100.00);
-		});
-		zoomListBox.setVisible(false);
-		hPanel.add(zoomListBox);
-		
-		downloadPDF = new AonToolbarButton( AON.MSG.download(), AON.CSS.aonIconPdf() );
-		downloadPDF.addClickHandler(e -> {
-			onDownloadPDF();
-		});
-		hPanel.add(downloadPDF);
-		
 		return hPanel;
 	}
 	
@@ -1022,10 +1067,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void onSaveContract() {
 		
 		Integer itemIdx = tabLayOutPanel.getSelectedIndex();
+
 		switch (itemIdx) {
 		case 0:
-			if(contractEmployeeUI.checkIfSaveEmployeeIsPossible())
-				contrataEmployeeObject.setEmployeeContract(s -> {}, f -> {});
+			Map<String, String> messageMap = contractEmployeeUI.checkSaveAndGetErrors();
+			if(messageMap.isEmpty())
+				contrataEmployeeObject.setEmployeeContract(s -> {
+					Map<String, String> messageSuccessMap = new HashMap<>();
+					messageSuccessMap.put("Guardado", "El contrato " + contrataEmployeeObject.getEmployeeFullName() + " ha sido actualizado correctamente");
+					AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
+				}, f -> {});
+			else
+				AonMessagePanel.showError(messageContainer, messageMap);
 			break;
 		case 1:
 			contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
@@ -1044,7 +1097,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			break;
 		}
 	}
-	
+
 	private void onDeleteContract() {
 		AonDialog dialog = new AonDialog("BORRADO", getMessageWidget());
 		dialog.confirm(new AonAcceptDialogCallback() {
@@ -1079,10 +1132,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.movPrevDelete(
 				s -> {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-						checkStatus(contrataEmployeeObject);
-						checkCertificateSEPE();
-						checkTGSSStatus();
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+								success -> {
+									checkStatus(contrataEmployeeObject);
+									checkCertificateSEPE();
+									checkTGSSStatus();
+								});
 					}, f -> {});
 				}, 
 				f -> {
@@ -1096,10 +1151,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.altaConsolidadaDelete(
 				s -> {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-						checkStatus(contrataEmployeeObject);
-						checkCertificateSEPE();
-						checkTGSSStatus();
+						contractEmployeeUI.setContrataEmployeeObject(
+								contrataEmployeeObject, 
+								this.contrataEmployeeObject.getContractId(),
+								success -> {
+									checkStatus(contrataEmployeeObject);
+									checkCertificateSEPE();
+									checkTGSSStatus();
+								});
+						
 					}, f -> {});
 				}, 
 				f -> {
@@ -1126,10 +1186,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					@Override
 					protected void onAcceptCB() {
 						contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-							contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-							checkStatus(contrataEmployeeObject);
-							checkCertificateSEPE();
-							checkTGSSStatus();
+							contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
+									success -> {
+										checkStatus(contrataEmployeeObject);
+										checkCertificateSEPE();
+										checkTGSSStatus();
+									});
 						}, f -> {});
 					}
 			
@@ -1203,10 +1265,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				};
 	}
 	
-
-
 	private void downloadTA_IDC() {
-		contrataEmployeeObject.downloadTA_IDC(
+		contrataEmployeeObject.downloadTAAndIDC(
 				s -> {
 					AonDialog dialog = new AonDialog("IDC y TA", new HTML("Se han descargado el IDC y el TA del trabajador. Ambos documentos se encuentran en el apartado de <b>Adjuntos</b>"));
 					dialog.info();
@@ -1221,7 +1281,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showTa() {
 		contrataEmployeeObject.downloadTa((dataURI) -> {
 				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, (trowable)-> {});
 	}
 	
@@ -1235,7 +1295,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				showPdf();
 				idcDateListBox.setVisible(true);
 				idcDateListBox.setSelected(date, true);
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, (trowable) -> {});
 	}
 
@@ -1249,7 +1309,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				showPdf();
 				idcMonthListBox.setVisible(true);
 				idcMonthListBox.setSelected(month, true);
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, (trowable) -> {});
 	}
 
@@ -1260,7 +1320,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showCto() {
 		contrataEmployeeObject.downloadCto((dataURI) -> {
 				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, (trowable)-> {});
 	}
 
@@ -1271,14 +1331,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showCbc() {
 		contrataEmployeeObject.downloadCbc((dataURI) -> {
 				showPdf();
-				pdfViewer.setDocument(dataURI, zoom / 100.00);
+				pdfViewer.open(dataURI);
 		}, (trowable)-> {});
 	}
 	
 	private void showCertifica2PDF() {
 		contrataEmployeeObject.getCertifica2PDF((dataURI) -> {
 			showPdf();
-			pdfViewer.setDocument(dataURI, zoom / 100.00);
+			pdfViewer.open(dataURI);
 	}, (trowable)-> {});
 	}
 	
@@ -1286,19 +1346,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		showEmployee();
 	}
 	
-	private void onDownloadPDF() {
-		String fileName = contrataEmployeeObject.getEmployeeFullName() + " IDC.pdf";
-		pdfViewer.download(fileName);
-	}
-
 	private void sendBasicCopy() {
 		contrataEmployeeObject.sendBasicCopy(
 				s -> {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-						checkStatus(contrataEmployeeObject);
-						checkCertificateSEPE();
-						checkTGSSStatus();
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+								success -> {
+									checkStatus(contrataEmployeeObject);
+									checkCertificateSEPE();
+									checkTGSSStatus();
+								});
 					}, f -> {});
 				}, 
 				f -> {});
@@ -1308,22 +1365,27 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contrataEmployeeObject.sendContract(
 				s -> {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-						checkStatus(contrataEmployeeObject);
-						checkCertificateSEPE();
-						checkTGSSStatus();
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+								success -> {
+									checkStatus(contrataEmployeeObject);
+									checkCertificateSEPE();
+									checkTGSSStatus();
+								});
 					}, f -> {});
 				}, 
 				f -> {});
 	}
+	
 	private void removeContract() {
 		contrataEmployeeObject.removeContract(
 				s -> {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, employeeContractInfoIn);
-						checkStatus(contrataEmployeeObject);
-						checkCertificateSEPE();
-						checkTGSSStatus();
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+								success -> {
+									checkStatus(contrataEmployeeObject);
+									checkCertificateSEPE();
+									checkTGSSStatus();
+								});
 					}, f -> {});
 				}, 
 				f -> {});
@@ -1337,32 +1399,32 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		deleteButton = new AonToolbarButton( "Borrar N\u00F3mina", AON.CSS.aonIconDeleteList() );
 		deleteButton.addClickHandler(e -> {
-			employeeSalary.onDelete(e);
+			employeeSalary.onDelete();
 		});
 		hPanel.add(deleteButton);
 		
 		pdfButton = new AonToolbarButton( AON.MSG.printPDF() + " N\u00F3mina", AON.CSS.aonIconPdf());
 		pdfButton.addClickHandler(e -> {
-			employeeSalary.onPDF(e);
+			employeeSalary.onPDF();
 		});	
 		hPanel.add(pdfButton);
 		
 		pdfSettleButton = new AonToolbarButton( "Carta Finiquito", AON.CSS.aonIconPdf());
 		pdfSettleButton.addClickHandler(e -> {
-			employeeSalary.onPDFSettle(e);
+			employeeSalary.onPDFSettle();
 		});	
 		pdfSettleButton.setVisible(false);
 		hPanel.add(pdfSettleButton);
 		
 		publishButton = new AonToolbarButton( "Drive", AON.CSS.aonIconDrive());
 		publishButton.addClickHandler(e -> {
-			employeeSalary.onPublish(e);
+			employeeSalary.onPublish();
 		});	
 		hPanel.add(publishButton);
 		
 		bidoqPublishButton = new AonToolbarButton( "Bidow", "aon-icon-bidoq");
 		bidoqPublishButton.addClickHandler(e -> {
-			employeeSalary.onBidoqPublish(e);
+			employeeSalary.onBidoqPublish();
 		});	
 		bidoqPublishButton.setVisible(false);
 		hPanel.add(bidoqPublishButton);
@@ -1448,6 +1510,32 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeEvents.initializeYearLB(yearLBEvents);
 		employeeEvents.setYearLB(yearLBEvents);
 		hPanel.add(yearLBEvents);
+		
+		return hPanel;
+	}
+	
+	// ------------------------------------------------- EmployeeContractPaymentsButtons
+	
+	private HTMLPanel initEmployeeContractPaymentsButtons() {
+		HTMLPanel hPanel = new HTMLPanel("");
+		hPanel.addStyleName(style.flex());
+		
+		saveContractPaymentsButton = new AonToolbarButton( AON.MSG.saveAction() + " Conceptos Calculo", AON.CSS.aonIconSave() );
+		saveContractPaymentsButton.addClickHandler(e -> {
+			employeeContractPayments.onSave();
+		});
+		hPanel.add(saveContractPaymentsButton);
+		
+		addContractPaymentsButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+		addContractPaymentsButton.addClickHandler(e -> {
+			employeeContractPayments.openEditor();
+		});
+		hPanel.add(addContractPaymentsButton);
+		
+		yearLBContractPayments = new ListBox();
+		employeeContractPayments.initializeYearLB(yearLBContractPayments);
+		employeeContractPayments.setYearLB(yearLBContractPayments);
+		hPanel.add(yearLBContractPayments);
 		
 		return hPanel;
 	}
@@ -1581,11 +1669,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		salarySelect = new SalarySelect();
 		salaryDraft.setSalarySelect(salarySelect);
 		hPanel.add(salarySelect);
-		
-		zoomSalaryListBox = new ListBox();
-		salaryDraft.initPrintPreview(zoomSalaryListBox);
-		zoomSalaryListBox.setVisible(false);
-		hPanel.add(zoomSalaryListBox);
 		
 		saveSalaryButton = new AonToolbarButton( "Descargar", AON.CSS.aonIconPdf() );
 		saveSalaryButton.addClickHandler(e -> {
@@ -1755,7 +1838,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void checkTGSSStatus() {
 		boolean isTGSSActive = contrataEmployeeObject.getContractData().isTGSSActive();
 		Date startDate = contrataEmployeeObject.getContractData().getStartDate();
-		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
 		
 		if(isTGSSActive && DateUtils.isAfterOrEquals(new Date(), startDate))
 			setVisible(tgssContextMenu.getAltaConsolidadaDelete().getElement(), true);
@@ -1764,21 +1846,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	// ------------------------------------------------- Messages panel
-	
-	private void paintMessagesResult(Messages messages) {
-		Tree treeErrorMessages = new Tree();
-		treeErrorMessages.setAnimationEnabled(true);
-		
-		//Errors
-		for(Message errorMessage : messages.getErrorMessages()) {
-			Label errorLabel =  new Label();
-			errorLabel.setText(errorMessage.getDescription() + " -> " + errorMessage.getMessage());
-			treeErrorMessages.add(errorLabel);
-		}
-		
-		footTabPanel.add(treeErrorMessages, "Errores");
-		splitLayoutPanel.setWidgetSize(footPanel, 200);
-	}
 	
 	private Widget getMessageWidget() {
 		ContractInfo contractData = contrataEmployeeObject.getContractData();

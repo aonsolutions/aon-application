@@ -114,8 +114,11 @@ abstract class Model184Base extends DockLayoutPanel {
 		public void onNew(Model184ModuleOptions options) {
 			cbk.onNew( options );
 		}
-	}
-	
+		@Override
+		public void onDuplicate(Model184ModuleOptions options, int id) {
+			cbk.onDuplicate( options, id );
+		}
+	}	
 	
 	private Mod184 mod184;
 	private Model184BaseCallback callback;
@@ -429,30 +432,32 @@ abstract class Model184Base extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				duplicateButton.setEnabled(false);
-				ConfirmDialog cd = new ConfirmDialog();
-				String msg = "Desea duplicar el modelo para el ejercicio " + (mod184.getYear() + 1 ) + "?";
-				cd.confirm(msg, new ConfirmDialogCallback() {
-					
-					@Override
-					public void onCancel() {}
-							
-					@Override
-					public void onAccept() {
-						Model184.SERVICE.duplicateNextYear(options.getDomainName(), options.getUser(), options.getDomain(), 
-								mod184.getId(), new AsyncCallback<Mod184>() {
-							@Override
-							public void onSuccess(Mod184 result) {
-								callback.onCancel();
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								duplicateButton.setEnabled(true);
-								callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-							}
-						});
-					}
-				}); 
+				callback.onDuplicate(options, mod184.getId());
+				duplicateButton.setEnabled(true);
+//				ConfirmDialog cd = new ConfirmDialog();
+//				String msg = "Desea duplicar el modelo para el ejercicio " + (mod184.getYear() + 1 ) + "?";
+//				cd.confirm(msg, new ConfirmDialogCallback() {
+//					
+//					@Override
+//					public void onCancel() {}
+//							
+//					@Override
+//					public void onAccept() {
+//						Model184.SERVICE.duplicateNextYear(options.getDomainName(), options.getUser(), options.getDomain(), 
+//								mod184.getId(), new AsyncCallback<Mod184>() {
+//							@Override
+//							public void onSuccess(Mod184 result) {
+//								callback.onCancel();
+//							}
+//
+//							@Override
+//							public void onFailure(Throwable caught) {
+//								duplicateButton.setEnabled(true);
+//								callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+//							}
+//						});
+//					}
+//				}); 
 			}
 		});
 		buttonContainer.add(duplicateButton);
@@ -1000,7 +1005,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		int row = 1;
 		for (Pair<String, String> pair : getInformationLinks()) {
 			Label icon = new Label();
-			icon.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod184().getAdministration()));
+			icon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getMod184().getAdministration()));
 			tab.setWidget(row, 0, icon );
 			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 
@@ -1043,7 +1048,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		int row = 1;
 
 		Label icon1 = new Label();
-		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod184().getAdministration()));
+		icon1.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getMod184().getAdministration()));
 		tab.setWidget(row, 0, icon1 );
 		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		FlowPanel p1 = new FlowPanel();
@@ -1069,7 +1074,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		row++;
 		
 		Label icon3 = new Label();
-		icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod184().getAdministration()));
+		icon3.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getMod184().getAdministration()));
 		tab.setWidget(row, 0, icon3 );
 		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		FlowPanel p3 = new FlowPanel();

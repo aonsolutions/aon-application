@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
@@ -24,9 +23,10 @@ public class MainContrataIT extends MainEntryPoint {
 		
 		@Override
 		protected void getITEmployeeListDB(Consumer<List<ITEmployee>> success, Consumer<Throwable> failure) {
-			mainContrataITObject.getEmployeesInfo(true, itEmployeeList -> {
-				success.accept(itEmployeeList);
-			}, f -> {});
+			mainContrataITObject.getEmployeesInfo(true, 
+				success::accept,  
+				f -> {}
+			);
 		}
 
 		@Override
@@ -62,9 +62,7 @@ public class MainContrataIT extends MainEntryPoint {
 		@Override
 		protected void setITEmployeeList(List<ITEmployee> itEmployees, Consumer<List<ITEmployee>> success, Consumer<Throwable> failure) {
 			mainContrataITObject.setEmployeesInfo(itEmployees,
-				itEmployeeList -> {
-					success.accept(itEmployeeList);
-				},
+				success::accept, 
 				f -> {}
 			);
 		}
@@ -72,20 +70,20 @@ public class MainContrataIT extends MainEntryPoint {
 		@Override
 		protected void setITEmployee(ITEmployee itEmployee, Consumer<String> success, Consumer<Throwable> failure) {
 			mainContrataITObject.createUpdateITEmployee(itEmployee,
-				message -> {
-					success.accept(message);
-				},
-				f -> {});
+				success::accept, 
+				f -> {}
+			);
 		}
 
 		@Override
 		protected void deleteIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
 			mainContrataITObject.removeIT(itEmployee, it,
 					s -> {
-						if(it.isComunicate() && mainContrataITObject.isUserComunica())
-							mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
-								success.accept(t);
-							}, d -> {});
+						if(Boolean.TRUE.equals(it.isComunicate()) && mainContrataITObject.isUserComunica())
+							mainContrataITObject.deleteComunicateIT(itEmployee, it, 
+								success::accept,  
+								d -> {}
+							);
 						else
 							success.accept(s);
 					},
@@ -96,10 +94,11 @@ public class MainContrataIT extends MainEntryPoint {
 		protected void deletePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
 			mainContrataITObject.deleteIT(it,
 					s -> {
-						if(it.isComunicate() && mainContrataITObject.isUserComunica())
-							mainContrataITObject.deleteComunicateIT(itEmployee, it, t -> {
-								success.accept(t);
-							}, d -> {});
+						if(Boolean.TRUE.equals(it.isComunicate()) && mainContrataITObject.isUserComunica())
+							mainContrataITObject.deleteComunicateIT(itEmployee, it, 
+								success::accept, 
+								d -> {}
+							);
 						else
 							success.accept(s);
 					},
@@ -108,28 +107,26 @@ public class MainContrataIT extends MainEntryPoint {
 
 		@Override
 		protected void comunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-			mainContrataITObject.comunicateITBaja(itEmployee, it, t -> {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-				success.accept(t);
-			}, d -> {});
+			mainContrataITObject.comunicateITBaja(itEmployee, it, 
+				success::accept, 
+				d -> {}
+			);
 		}
 
 		@Override
-		protected void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success,
-				Consumer<Throwable> failure) {
-			mainContrataITObject.comunicatePaternityIT(itEmployee, it, t -> {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: COMUNICA", "El parte IT ha sido comunicado correctamente");
-				success.accept(t);
-			}, d -> {});
+		protected void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
+			mainContrataITObject.comunicatePaternityIT(itEmployee, it, 
+				success::accept, 
+				d -> {}
+			);
 		}
 
 		@Override
 		protected void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure) {
-			mainContrataITObject.getNafxIpf(itEmployee, employeeSegSocial -> {
-				success.accept(employeeSegSocial);
-			}, f -> {});
+			mainContrataITObject.getNafxIpf(itEmployee, 
+				success::accept,  
+				f -> {}
+			);
 		}
 
 	}

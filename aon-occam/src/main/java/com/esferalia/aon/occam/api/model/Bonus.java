@@ -1,16 +1,14 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
-import java.time.Month;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.BonusType;
-import com.esferalia.aon.occam.api.model.type.PaymentType;
-
-import jdk.internal.module.ModuleHashes.HashSupplier;
 
 public class Bonus implements Serializable, HasId, HasDomain  , HasStartDate, HasEndDate {
 
+	private static final long serialVersionUID = 3824440651805682374L;
+	
 	private Integer id;
 	private Integer domain;
 	private Date startDate;

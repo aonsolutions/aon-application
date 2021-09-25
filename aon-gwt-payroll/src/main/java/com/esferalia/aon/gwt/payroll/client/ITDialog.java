@@ -118,6 +118,12 @@ public abstract class ITDialog extends AonCustomDialog {
 	ListBox raggedList;
 	
 	@UiField
+	Label baseRDBxNL;
+	
+	@UiField
+	DoubleBox baseRDBxN;
+	
+	@UiField
 	TextBox ciasITPart;
 	
 	@UiField
@@ -346,6 +352,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		deckPanel.setWidth("620px");
 		confirmationsDataTable.getElement().getStyle().setDisplay(Display.NONE);
 		maternityDataTable.getElement().getStyle().setDisplay(Display.NONE);
+		showBaseCGC();
 	}
 	
 	// --------------------------------------------------- onModuleLoad.Methods
@@ -513,7 +520,8 @@ public abstract class ITDialog extends AonCustomDialog {
 			setSelectedValueLB(applicantReasonList, null == it.getMaternityReason() ? "-1" : it.getMaternityReason().toString());
 			this.baseRDBx.setValue(it.getRegulationBase());
 			this.partialityCoefDBx.setValue(it.getPartialityCoef());
-		}
+		} else 
+			this.baseRDBxN.setValue(it.getRegulationBase());
 		
 		if(showAll) {
 			informationDataTable.getElement().getStyle().clearDisplay();
@@ -811,6 +819,13 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	@UiHandler("baseRDBx")
 	public void onBaseRDBxChange(ValueChangeEvent<Double> event) {
+		this.it.setRegulationBase(event.getValue());
+		this.it.setDailyCGCBase(event.getValue());
+		this.it.setDailyCGPBase(event.getValue());
+	}
+	
+	@UiHandler("baseRDBxN")
+	public void onBaseRDBxNChange(ValueChangeEvent<Double> event) {
 		this.it.setRegulationBase(event.getValue());
 		this.it.setDailyCGCBase(event.getValue());
 		this.it.setDailyCGPBase(event.getValue());
@@ -1229,10 +1244,12 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private void showMaternityTable() {
 		this.maternityDataTable.getElement().getStyle().clearDisplay();
+		hideBaseCGC();
 	}
 	
 	private void hideMaternityTable() {
 		this.maternityDataTable.getElement().getStyle().setDisplay(Display.NONE);
+		showBaseCGC();
 	}
 	
 	// --------------------------------------------------- ITDIalog.Auxiliar_Methods
@@ -1552,7 +1569,15 @@ public abstract class ITDialog extends AonCustomDialog {
 		return (byte) newConfirmOrder;
 	}
 	
-
+	private void showBaseCGC() {
+		baseRDBxNL.getElement().getStyle().clearDisplay();
+		baseRDBxN.getElement().getStyle().clearDisplay();
+	}
+	
+	private void hideBaseCGC() {
+		baseRDBxNL.getElement().getStyle().setDisplay(Display.NONE);
+		baseRDBxN.getElement().getStyle().setDisplay(Display.NONE);
+	}
 	
 	// --------------------------------------------------- NormalizeIT.Methods
 	

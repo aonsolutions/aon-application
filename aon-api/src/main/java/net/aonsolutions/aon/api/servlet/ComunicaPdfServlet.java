@@ -7,21 +7,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.sepe.Sepe;
 
 
@@ -31,6 +31,7 @@ import solutions.aon.sepe.Sepe;
 public class ComunicaPdfServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(ComunicaPdfServlet.class.getName());
+	private static final String FORMAT_DATE = "yyyy-MM-dd"; 
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)  {
@@ -73,8 +74,8 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 					PDF = getIdcCcc(api);
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
-			} 
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+				} 
 			
 			File file = File.createTempFile("informe", "");
 			try(OutputStream os = new FileOutputStream(file)){
@@ -99,7 +100,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		String regimen = api.getParams().optString("regime");
 		String ccc = api.getParams().getString("ctaCti");
 		String nss = api.getParams().getString("nss");
-		Date fecha = Toolkit.parseDate(api.getParams().getString("fra"), "yyyy-MM-dd");
+		Date fecha = AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
 		
 	    return SistemaRED.getTA(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);		
 	}
@@ -110,7 +111,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		String regimen = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ctaCti");
 		String nss = api.getParams().getString("nss");
-		Date fecha = Toolkit.parseDate(api.getParams().getString("fra"), "yyyy-MM-dd");
+		Date fecha =AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
 		
 	    return SistemaRED.getIDC(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);	
 	}
@@ -127,7 +128,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		Certificate certificate = getCert(api, "SEPE");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String ipf = api.getParams().getString("ipf");
-		Date fecha = Toolkit.parseDate(api.getParams().getString("fecha"), "yyyy-MM-dd");
+		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
 		
 		return Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, fecha, fecha);
 
@@ -137,7 +138,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		Certificate certificate = getCert(api, "SEPE");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String ipf = api.getParams().getString("ipf");
-		Date fecha = Toolkit.parseDate(api.getParams().getString("fecha"), "yyyy-MM-dd");
+		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
 		
 		return Sepe.getCopyBasicPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, fecha, fecha);	
 	}
@@ -164,7 +165,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String regimen = api.getParams().getString("regimen");
 		String ccc = api.getParams().getString("ccc");
-		Date fecha = Toolkit.parseDate(api.getParams().getString("fecha"), "yyyy-MM-dd");
+		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
 		
 	    return SistemaRED.getIDCCCC(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, fecha);	
 	}

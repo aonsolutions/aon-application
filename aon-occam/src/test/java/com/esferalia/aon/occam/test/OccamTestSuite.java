@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.test.product.ProductTestSuite;
 import com.esferalia.aon.occam.test.product.TariffTestSuite;
 import com.esferalia.aon.occam.test.registry.RegistryTestSuite;
 import com.esferalia.aon.occam.test.registry.address.RegistryAddressTestSuite;
+import com.esferalia.aon.occam.test.registry.company.CompanyTestSuite;
 import com.esferalia.aon.occam.test.registry.creditor.CreditorTestSuite;
 import com.esferalia.aon.occam.test.registry.customer.CustomerTestSuite;
 import com.esferalia.aon.occam.test.registry.media.RegistryMediaTestSuite;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.test.workgroup.WorkgroupTestSuite;
 
 @RunWith(Suite.class)
 @SuiteClasses({
+	CompanyTestSuite.class,
 	AccountTestSuite.class,
 	TariffTestSuite.class,
 	ProductTestSuite.class,

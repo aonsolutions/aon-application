@@ -19,6 +19,7 @@ export const ALL_FILES = 'Tots els Fitxers';
 export const AMOUNT = 'Import';
 export const API_DOCUMENTATION = 'Documentació API';
 export const ASESOR = 'Assessor';
+export const AVAILABLE = 'Disponible';
 
 // ----- B
 
@@ -52,6 +53,7 @@ export const CONCEPTS = 'Conceptes';
 export const CONFIDENTIAL = 'Confidencial';
 export const CONFIGURATION = 'Configuració';
 export const CONTACT = 'Contacte';
+export const CONTACT_DATA = 'Dades de Contacte';
 export const CONTACTS = 'Contactes';
 export const CONTRACT = 'Contractar';;
 export const COUNTRY = 'País';
@@ -111,6 +113,9 @@ export const FOOTER = 'Peu';
 // ----- G
 
 export const GENERAL_INFORMATION = 'Informació General';
+export const GROUP_DATA = 'Dades de el Grup';
+export const GROUP = 'Grup';
+export const GROUPS = 'Grups';
 
 // ----- H
 
@@ -155,12 +160,16 @@ export const MY_USER = 'Mi Usuari';
 // ----- N
 
 export const NAME = 'Nom';
+export const NEW = 'Nou';
 export const NEW_COMPANY = 'Nova Empresa';
 export const NEXT = 'Següent';
 export const NUMBER = 'Nombre';
 
 // ----- O
 
+export const ONLY_PORTAL = 'Sol Portal';
+export const OPEN = 'Obrir';
+export const OPEN_MENU = 'Obrir Menú';
 export const OPTIONS = 'Opcions';
 
 // ----- P
@@ -234,6 +243,7 @@ export const SHOW_FILE = 'Mostrar Fitxer';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Mida';
+export const STATISTICS = 'Estadístiques';
 export const STATUS = "Estado";
 export const SUPPLIED = 'Bestretes';
 export const SUPPLIER = 'Proveïdor';

@@ -44,7 +44,7 @@ public class AEAT_2021_Declaration extends Mod303Declaration {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 
 	public static boolean accept(Mod303 mod) {
-		return mod.isAEAT() && mod.getYear() >= 2021;
+		return mod.isAEAT() && (mod.getYear() == 2021 && mod.getPeriod().isFirstSemester()); 
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[] { Mod303Key.CT_C29, Mod303Key.CT_C31,

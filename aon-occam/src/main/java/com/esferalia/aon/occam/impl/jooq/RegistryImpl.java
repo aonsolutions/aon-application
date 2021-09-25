@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -8,6 +9,7 @@ import com.esferalia.aon.occam.api.IRegistry;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
@@ -57,12 +59,13 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.GlobalDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TargetDAO;
 
@@ -247,7 +250,7 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getSellerStream(ctx, filter));
+				configuration -> SellerDAO.getStream(ctx, filter));
 	}
 	
 	// -------------------- CARRIER
@@ -325,7 +328,7 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getTargetStream(ctx, filter));
+				configuration -> TargetDAO.getStream(ctx, filter));
 	}
 	
 	@Override
@@ -418,13 +421,13 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getRDirStaffStream(ctx, filter));
+				configuration -> RDirStaffDAO.getStream(ctx, filter));
 	}
 	
 	@Override
 	public RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.insertRDirStaff(ctx, rdirstaff));
+				configuration -> RDirStaffDAO.save(ctx, rdirstaff));
 	}
 
 	// **************************************************
@@ -447,6 +450,18 @@ public class RegistryImpl implements IRegistry{
 				configuration -> CustomerDAO.save(ctx, customerFull));
 	}
 
+	@Override
+	public Domain getDomainLinked(AONContext ctx, Integer customerId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getDomainLinked(ctx, customerId));
+	}
+	
+	@Override
+	public List<Domain> getDomainOfficeLinked(AONContext ctx, String document) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.getDomainOfficeLinked(ctx, document));
+	}
+	
 	// **************************************************
 	// *************************************** [CREDITOR]
 	// **************************************************

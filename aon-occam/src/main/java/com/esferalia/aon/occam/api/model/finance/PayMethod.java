@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PayMethod implements Serializable {
 
@@ -43,5 +44,9 @@ public class PayMethod implements Serializable {
 	public PayMethod setType(PayMethodType type) {
 		this.type = type;
 		return this;
+	}
+	
+	public Boolean isEmpty() {
+		return id == null && domain == null && AonStringUtils.isBlank(name) && type == null;
 	}
 }

@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import org.hamcrest.MatcherAssert;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,14 +42,15 @@ public class TediValidationTest {
 	@Test
 	public void test_001_NullInvoiceType() throws Exception {
 		System.out.print("\t-test Tedi null invoice type validation");
-		TediInvoice tedi = TediInvoiceJSON.fromJSON(TediEwokFaker.getTediInvoice());
+		JSONObject tediInvoice = TediEwokFaker.getTediInvoice();
+		TediInvoice tedi = TediInvoiceJSON.fromJSON(tediInvoice);
 		tedi.setType(null);
 		TediResult result = TediParser.toFullInvoice(null,null,tedi);
 		Assert.assertNotNull(result.getMessages());
 		printMessages(result.getMessages());
 		MatcherAssert.assertThat(result.getMessages(), hasItem(hasProperty("code", equalTo(TediErrorMessages.C001.toString()))));
 	}
-
+	
 	@Test
 	public void test_002_OverflowSeries() throws Exception {
 		System.out.print("\t-test Tedi overflow series validation");

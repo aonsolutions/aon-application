@@ -1,4 +1,4 @@
-import {App, Role} from './enums.js';
+import {App, OldModule, Role} from './enums.js';
 import * as LS from '../services/localStorageService.js';
 
 export class DomainUserRoles {
@@ -119,7 +119,7 @@ export class DomainUserRoles {
 	}
 
   hasOldModule(mod) {
-  	return (getOldDomainModules() && getOldDomainModules().includes(mod)) || (getOldParentDomainModules() && getOldParentDomainModules().includes(mod));
+  	return (this.getOldDomainModules() && this.getOldDomainModules().includes(mod)) || (this.getOldParentDomainModules() && this.getOldParentDomainModules().includes(mod));
   }
 
   hasOldRole(oldRole) {
@@ -325,6 +325,12 @@ export class DomainUserRoles {
 	isMessengerManager() {
 		return this.hasMessenger() && (this.isAdmin() || this.hasRole(Role.MESSENGER_MANAGER));
 	}
+
+  // CALL CENTER
+
+  hasCallCenter() {
+    return this.hasOldModule(OldModule.CALL_CENTER);
+  }
 
   // INVOICES - FACTURAS
 

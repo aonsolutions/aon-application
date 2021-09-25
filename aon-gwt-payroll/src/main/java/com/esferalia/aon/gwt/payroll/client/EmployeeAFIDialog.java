@@ -26,7 +26,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -39,6 +38,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -70,7 +70,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 	
 	@UiField
-	TableElement datesTable;
+	DeckPanel deckPanel;
 	
 	@UiField
 	Label startContractLabel;
@@ -85,16 +85,16 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	Button endContractTB;
 	
 	@UiField
-	ListBox settleReasonLB;
+	Label settleReasonL;
 	
 	@UiField
-	TableElement dataTable;
+	ListBox settleReasonLB;
 	
 	@UiField
 	DateBoxEx newDate;
 	
 	@UiField
-	HorizontalPanel tabsPanel;
+	HTMLPanel tabsPanel;
 	
 	@UiField
 	ListBox tc2;
@@ -104,6 +104,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	
 	@UiField
 	ListBox ocupation;
+	
+	@UiField
+	Label partialityCoefL;
 	
 	@UiField
 	DoubleBox partialityCoef;
@@ -154,6 +157,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 	private DomainUserRoles userRoles;
 	
+	private boolean isAlta = false;
+	private boolean isBaja = false;
+	
 	// ------------------------------------------------- Constructor
 	
 	public EmployeeAFIDialog(
@@ -190,7 +196,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		
 		this.userRoles = new DomainUserRoles();
 		
-		checkStartEndContractAFI(startDate, endDate);	
+		checkStartEndContractAFI(startDate, endDate);
 		
 		impl.getEmployeeAFIChanges(contractId, new AsyncCallback<AFIChanges>() {
 
@@ -212,6 +218,10 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 						
 						acceptBtnDialog.setEnabled(true);
 						generationAFITB.setEnabled(true);
+						
+						if(isAlta) showAlta();
+						else if(isBaja) showBaja();
+						else showMovs();
 						
 						showDialog();
 						
@@ -263,45 +273,48 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		}
 		
 		if(null == startDate) {
-			setWidgetVisible(startContractTB, false);
-			setWidgetVisible(startContractLabel, false);
+			isAlta = false;
+//			setWidgetVisible(startContractTB, false);
+//			setWidgetVisible(startContractLabel, false);
 		}else if( (currentDate.before(startDate) || currentDate.equals(startDate)) &&
 			(currentDate.after(currentStartDateM60) || currentDate.equals(currentStartDateM60)) ) {
-			
-			setWidgetVisible(startContractTB, true);
-			setWidgetVisible(startContractLabel, true);
-			
+			isAlta = true;
+//			setWidgetVisible(startContractTB, true);
+//			setWidgetVisible(startContractLabel, true);
 		}else {
-			setWidgetVisible(startContractTB, false);
-			setWidgetVisible(startContractLabel, false);
+			isAlta = false;
+//			setWidgetVisible(startContractTB, false);
+//			setWidgetVisible(startContractLabel, false);
 		}
 		
 		
 		if(null == endDate) {
-			setWidgetVisible(endContractTB, false);
-			setWidgetVisible(endContractLabel, false);
+			isBaja = false;
+//			setWidgetVisible(endContractTB, false);
+//			setWidgetVisible(endContractLabel, false);
 			hideSettleReason();
 		} else if( (currentDate.before(currentEndDateP3) || currentDate.equals(currentEndDateP3)) &&
 			(currentDate.after(currentEndDateM60) || currentDate.equals(currentEndDateM60)) ) {
-			
-			setWidgetVisible(endContractTB, true);
-			setWidgetVisible(endContractLabel, true);
-			hideSettleReason();
+			isBaja = true;
+//			setWidgetVisible(endContractTB, true);
+//			setWidgetVisible(endContractLabel, true);
+			showSettleReason();
 		}else {
-			setWidgetVisible(endContractTB, false);
-			setWidgetVisible(endContractLabel, false);
+			isBaja = false;
+//			setWidgetVisible(endContractTB, false);
+//			setWidgetVisible(endContractLabel, false);
 			hideSettleReason();
 		}
 	}
 	
 	private void hideSettleReason() {
-		datesTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
-		datesTable.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		settleReasonL.getElement().getStyle().setDisplay(Display.NONE);
+		settleReasonLB.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void showSettleReason() {
-		datesTable.getRows().getItem(2).getStyle().clearDisplay();
-		datesTable.getRows().getItem(3).getStyle().clearDisplay();
+		settleReasonL.getElement().getStyle().clearDisplay();
+		settleReasonLB.getElement().getStyle().clearDisplay();
 	}
 
 	private void initView() {
@@ -492,11 +505,16 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	// ------------------------------------------------- Peculariaties Table
 	
 	private void initPeculiaritiesTable(Date date) {
-		if(null != payrollDate && date.before(payrollDate)) {
-			blockListbox();
-		}else {
-			unblockListbox();
-		}
+		
+		// Comment payrollDate check
+		
+//		if(null != payrollDate && date.before(payrollDate)) {
+//			blockListbox();
+//		}else {
+//			unblockListbox();
+//		}
+		
+		unblockListbox();
 		
 		if(this.dateList.size() != 0) {
 			ArrayList<AFIChange> afiChangeList = afiChangesMap.getAFIChangessByDate(date);
@@ -528,12 +546,12 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				}
 			}
 			
-			if(contractType == 0 || (contractType >= 200 && contractType<300) || (contractType >= 500 && contractType<600)) {
-				dataTable.getRows().getItem(9).getStyle().clearDisplay();
-				dataTable.getRows().getItem(10).getStyle().clearDisplay();
+			if(null != contractType && (contractType == 0 || (contractType >= 200 && contractType<300) || (contractType >= 500 && contractType<600))) {
+				partialityCoefL.getElement().getStyle().clearDisplay();
+				partialityCoef.getElement().getStyle().clearDisplay();
 			} else {
-				dataTable.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
-				dataTable.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+				partialityCoefL.getElement().getStyle().setDisplay(Display.NONE);
+				partialityCoef.getElement().getStyle().setDisplay(Display.NONE);
 			}
 				
 		}
@@ -583,13 +601,16 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	@UiHandler("newDate")
 	void onDateChange(ValueChangeEvent<Date> event) {
 		if(null != event.getValue()) {
-			Date payroll = null;
-			if(null == payrollDate)
-				payroll = DateUtils.copyDateOnly(contractStartDate);
-			else
-				payroll = DateUtils.copyDateOnly(payrollDate);
 			
-			if((event.getValue().after(contractStartDate) || event.getValue().equals(contractStartDate)) && event.getValue().after(payroll)) {
+			// Comment payrollDate check
+			
+//			Date payroll = null;
+//			if(null == payrollDate)
+//				payroll = DateUtils.copyDateOnly(contractStartDate);
+//			else
+//				payroll = DateUtils.copyDateOnly(payrollDate);
+			
+			if((event.getValue().after(contractStartDate) || event.getValue().equals(contractStartDate))/* && event.getValue().after(payroll)*/) {
 				if(!dateList.contains(event.getValue())) {
 					dateList.add(event.getValue());
 					afiChangesMap.addAFIChange(event.getValue());
@@ -598,7 +619,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 					newDate.setValue(null);
 				}
 			}else {
-				AonDialog dialog = new AonDialog("AVISO: Error fecha", new HTML("La fecha seleccionada es anterior a la fecha de inicio de contrato (" + formatFullDate.format(contractStartDate) + ") o anterior a la ultima nomina (" + formatFullDate.format(payroll) + ")"));
+				AonDialog dialog = new AonDialog("AVISO: Error fecha", new HTML("La fecha seleccionada es anterior a la fecha de inicio de contrato (" + formatFullDate.format(contractStartDate) + ")"/* + "o anterior a la ultima nomina (" + formatFullDate.format(payroll) + ")"*/));
 				dialog.warning();
 			}
 		}
@@ -663,11 +684,11 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			afiChangesMap.addAFIChangeByDate(newDate.getValue(), "TC2", tc2.getSelectedItemText().split(" -")[0]);
 			Integer contractType = Integer.parseInt(tc2.getSelectedValue());
 			if((contractType >= 200 && contractType<300) || (contractType >= 500 && contractType<600)) {
-				dataTable.getRows().getItem(9).getStyle().clearDisplay();
-				dataTable.getRows().getItem(10).getStyle().clearDisplay();
+				partialityCoefL.getElement().getStyle().clearDisplay();
+				partialityCoef.getElement().getStyle().clearDisplay();
 			} else {
-				dataTable.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
-				dataTable.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+				partialityCoefL.getElement().getStyle().setDisplay(Display.NONE);
+				partialityCoef.getElement().getStyle().setDisplay(Display.NONE);
 			}
 		}
 	}
@@ -929,6 +950,18 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		});
 	}
 	
+	private void showAlta() {
+		deckPanel.showWidget(0);
+	}
+	
+	private void showBaja() {
+		deckPanel.showWidget(1);
+	}
+
+	private void showMovs() {
+		deckPanel.showWidget(2);
+	}
+	
 	public Date getNewDate() {
 		return this.newDate.getValue();
 	}
@@ -1014,8 +1047,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		}, f -> {});
 	}
 	
-	private void saveAFIChanges(Consumer<String> success, Consumer<Throwable> failure) {
-		impl.setEmployeeAFIChanges(contractId, afiChangesMap, new AsyncCallback<String>() {
+	private void saveAFIChanges(Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.setEmployeeAFIChanges(contractId, afiChangesMap, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -1023,7 +1056,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			}
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(Void result) {
 				success.accept(result);
 			}
 

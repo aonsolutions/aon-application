@@ -10,10 +10,10 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountPeriodBox;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountingReportModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -433,7 +433,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				CustomPopup selectDialog = new CustomPopup();
+				AonCustomPopup selectDialog = new AonCustomPopup();
 				selectDialog.setWidth("400px");
 				selectDialog.setHeight("300px");
 				selectDialog.setAnimationEnabled(true);

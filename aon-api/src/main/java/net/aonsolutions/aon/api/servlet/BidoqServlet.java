@@ -137,7 +137,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 	
 	private User createUser(Company cp, Auth auth) {
 		User user = new User()
-			.setAuth(auth.getAuth())
+			.setAuth(auth)
 			.setActive(true)
 			.setDomain(cp.getDomain().getId())
 			.setLogin(auth.getDocument())

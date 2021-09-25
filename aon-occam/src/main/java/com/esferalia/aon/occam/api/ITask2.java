@@ -1,6 +1,9 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.TaskAttachFilter;
@@ -18,19 +21,23 @@ public interface ITask2 {
 	public LinkedList<Task> getTaskList(AONContext ctx, TaskFilter filter);
 	public LinkedList<Task> getTaskList(AONContext ctx, TaskFilter filter, Integer page, Integer perPage);
 	public Task saveTask(AONContext ctx, Task task);
+	public void deleteTask(AONContext ctx, Integer id);
+	public HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter);
+	public HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId, Optional<String> email);
 	
 	//TASKWORKFLOW
 	public TaskWorkflow getTaskWorkflow(AONContext ctx, TaskWorkflowFilter filter);
 	public Stream<TaskWorkflow> getTaskWorkflowStream(AONContext ctx, TaskWorkflowFilter filter);
 	public Stream<TaskWorkflow> getTaskWorkflowStream(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage);
-	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter);
-	public LinkedList<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage);
+	public List<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter);
+	public List<TaskWorkflow> getTaskWorkflowList(AONContext ctx, TaskWorkflowFilter filter, Integer page, Integer perPage);
 	public TaskWorkflow saveTaskWorkflow(AONContext ctx, TaskWorkflow task);
+	public void updateTaskWorkflowBetween(AONContext ctx, TaskWorkflowFilter filter);
 	
 	//TASKATTACH
 	public TaskAttach getTaskAttach(AONContext ctx, TaskAttachFilter filter);
 	public Stream<TaskAttach> getTaskAttachStream(AONContext ctx, TaskAttachFilter filter);
 	public LinkedList<TaskAttach> getTaskAttachList(AONContext ctx, TaskAttachFilter filter);
 	public TaskAttach saveTaskAttach(AONContext ctx, TaskAttach task);
-	public void deleteTaskAttach(AONContext ctx, TaskAttachFilter filter);
+	public void deleteTaskAttach(AONContext ctx, Integer id);
 }

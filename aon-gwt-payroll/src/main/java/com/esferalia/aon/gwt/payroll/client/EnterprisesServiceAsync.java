@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -76,8 +77,9 @@ public interface EnterprisesServiceAsync {
 	void getParentDomain(String domain, AsyncCallback<Integer> callback);
 	void getWorkplaceInfo(String domain, Integer workplaceId, AsyncCallback<WorkplaceInfo> asyncCallback);
 	void setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> asyncCallback);
-	void getWorkplaces(Workplace workplace, String domain, AsyncCallback<List<Workplace>> asyncCallback);
-	void getActivitiesCCC(Workplace workplaceId, String currentDomainName, AsyncCallback<ActivitiesCCC> asyncCallback);
+	void getWorkplaces(String domain, AsyncCallback<List<Workplace>> asyncCallback);
+	void getPayMethods(String domain, AsyncCallback<Map<String, String>> asyncCallback);
+	void getActivityCCC(String domain, AsyncCallback<ActivitiesCCC> asyncCallback);
 	void getActivityInfoDataBase(Integer activityId, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void updateActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void createActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
@@ -105,7 +107,7 @@ public interface EnterprisesServiceAsync {
 	void setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap,
-			AsyncCallback<String> asyncCallback);
+			AsyncCallback<Void> asyncCallback);
 	void getEmployeeAFIChanges(String currentDomainName, Integer contractId, AsyncCallback<AFIChanges> asyncCallback);
 	void getDomainMailAccounts(String currentDomainName, String currentUser, AsyncCallback<List<MailAccount>> asyncCallback);
 	void getPayrollEmailSendTo(String currentDomainName, Type type, Integer enterpriseID, AsyncCallback<String> asyncCallback);
@@ -148,7 +150,6 @@ public interface EnterprisesServiceAsync {
 	void setMainCCCInfoDataBase(String currentDomainName, String currentUser, MainCCCInfo mainCCCInfo, AsyncCallback<Void> asyncCallback);
 	void getContractBonus(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
-	void getPayMethods(String currentDomainName, AsyncCallback<Map<String, String>> asyncCallback);
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate, AsyncCallback<Void> asyncCallback);
 	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
 	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> asyncCallback);
@@ -193,5 +194,7 @@ public interface EnterprisesServiceAsync {
 	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser, ComunicaEnterpriseSettings comunicaEnterpriseSettings, AsyncCallback<Void> asyncCallback);
 	void getEnterpriseId(String currentDomainName, AsyncCallback<Integer> asyncCallback);
 	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType,AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void getEmployeeITInfo(String currentDomainName, Integer contractId, AsyncCallback<List<ITEmployee>> asyncCallback);
+	void getAllConcepts(String currentDomainName, String currentUser, AsyncCallback<ContractConcepts> asyncCallback);
 	
 }

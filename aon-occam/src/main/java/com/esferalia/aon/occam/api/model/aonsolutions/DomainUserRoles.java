@@ -101,8 +101,9 @@ public class DomainUserRoles implements Serializable {
 		return oldDomainModules;
 	}
 
-	public void setOldDomainModules(LinkedList<Module> oldDomainModules) {
+	public DomainUserRoles setOldDomainModules(LinkedList<Module> oldDomainModules) {
 		this.oldDomainModules = oldDomainModules;
+		return this;
 	}
 
 	public LinkedList<Module> getOldParentDomainModules() {
@@ -203,17 +204,17 @@ public class DomainUserRoles implements Serializable {
 		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.DOCUMENTAL);
 	}
 	
-	public Boolean isDocumental() {
+	public boolean isDocumental() {
 		return hasDocumental() && (isAdmin() || hasRole(AonRole.DOCUMENTAL));
 	}
 	
-	public Boolean isDocumentalPortal() {
+	public boolean isDocumentalPortal() {
 		return (hasDocumental() && (isAdmin() || hasRole(AonRole.DOCUMENTAL_PORTAL))) 
 				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN)
 				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT);
 	}
 	
-	public Boolean isDocumentalManager() {
+	public boolean isDocumentalManager() {
 		return ((hasOldModule(Module.DOCUMENT) || hasDocumental())
 			&& ( isAdmin() || hasRole(AonRole.DOCUMENTAL_MANAGER)))
 				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN) 

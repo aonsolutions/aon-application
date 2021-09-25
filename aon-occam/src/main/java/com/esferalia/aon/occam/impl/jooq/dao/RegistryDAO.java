@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.util.LinkedList;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryValidation;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -39,38 +41,40 @@ public class RegistryDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(REGISTRY.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(REGISTRY.DOMAIN);}
-		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT);}
-		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.DOCUMENT_TYPE);}
-		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT_COUNTRY);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NAME);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.ALIAS);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.TYPE);}
-		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.NATIONALITY);}
-		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.SECURITY_LEVEL);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOMAIN);}
+		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
+		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_TYPE);}
+		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT_COUNTRY);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.ALIAS);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.TYPE);}
+		@Override public Property<String> getNationalityProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NATIONALITY);}
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.SECURITY_LEVEL);}
 	}
 	
-	public static class RegistryFiller  implements Function<Record,Registry> {
+	public static class RegistryFiller extends Filler implements Function<Record,Registry> {
 		@Override
-		public Registry apply(Record record) {
-			return build(record, null);
+		public Registry apply(Record r) {
+			return build(r, null);
 		}
 		
-		public static Registry build(Record record, com.esferalia.aon.jooq.tables.Registry registry) {
+		public static Registry build(Record r, com.esferalia.aon.jooq.tables.Registry registry) {
 			if(registry == null) 
 				registry = REGISTRY;
 			return new Registry() 
-					.setId(record.getValue(registry.ID))
-					.setDomain(new Domain().setId(record.getValue(registry.DOMAIN)))
-					.setDocument(record.getValue(registry.DOCUMENT))
-					.setDocumentType(DocumentType.safeValueOf(record.getValue(registry.DOCUMENT_TYPE)))
-					.setDocumentCountry(Country.safeValueOf(record.getValue(registry.DOCUMENT_COUNTRY)) )
-					.setName(record.getValue(registry.NAME))
-					.setAlias(record.getValue(registry.ALIAS))
-					.setLegalPerson(AonEnumUtils.getBoolean(record.getValue(registry.TYPE)))
-					.setNationality(Country.safeValueOf(record.getValue(registry.NATIONALITY)) )
-					.setSecurityLevel(SecurityLevel.safeValueOf(record.getValue(registry.SECURITY_LEVEL)))
+					.setId(r.getValue(registry.ID))
+					.setDomain(checkField(r, DOMAIN.ID) 
+						? DomainFiller.build(r)
+						: new Domain().setId(r.getValue(registry.DOMAIN)))
+					.setDocument(r.getValue(registry.DOCUMENT))
+					.setDocumentType(DocumentType.safeValueOf(r.getValue(registry.DOCUMENT_TYPE)))
+					.setDocumentCountry(Country.safeValueOf(r.getValue(registry.DOCUMENT_COUNTRY)) )
+					.setName(r.getValue(registry.NAME))
+					.setAlias(r.getValue(registry.ALIAS))
+					.setLegalPerson(AonEnumUtils.getBoolean(r.getValue(registry.TYPE)))
+					.setNationality(Country.safeValueOf(r.getValue(registry.NATIONALITY)) )
+					.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(registry.SECURITY_LEVEL)))
 					.setDirty(false)
 					;
 		}

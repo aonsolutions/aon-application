@@ -69,6 +69,10 @@ public class JooqIT {
 		return getWorkplaceEmployeeITInfoDB(DSL.using(conn, getDefaultSettings()), workplaceId, allEmployees);
 	}
 	
+	public static List<ITEmployee> getEmployeeITInfo(Connection conn, Integer contractId) {
+		return getEmployeeITInfoDB(DSL.using(conn, getDefaultSettings()), contractId);
+	}
+	
 	public static String deleteIT(Connection conn, Integer domainId, Integer itId) {
 		return deleteITDB(DSL.using(conn, getDefaultSettings()), domainId, itId);
 	}
@@ -179,6 +183,17 @@ public class JooqIT {
 								it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
 						}
 							
+					} else {
+						Result<Record> baseCGCRecords = dslContext.select().from(CONTRACT_DATA)
+								.where(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+								.and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+								.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+								.fetch();
+						
+						for(Record record : baseCGCRecords) {
+							if(record.get(CONTRACT_DATA.NAME) == "BASE_REGULADORA" || record.get(CONTRACT_DATA.NAME).equals("BASE_REGULADORA"))
+								it.setRegulationBase(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+						}
 					}
 					
 					// Is parent?
@@ -349,6 +364,17 @@ public class JooqIT {
 								it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
 						}
 							
+					} else {
+						Result<Record> contractDataMaternityRecords = dslContext.select().from(CONTRACT_DATA)
+								.where(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+								.and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+								.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+								.fetch();
+							
+						for(Record record : contractDataMaternityRecords) {
+							if(record.get(CONTRACT_DATA.NAME) == "BASE_REGULADORA" || record.get(CONTRACT_DATA.NAME).equals("BASE_REGULADORA"))
+								it.setRegulationBase(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+						}
 					}
 					
 					// Is parent?
@@ -418,6 +444,157 @@ public class JooqIT {
 
 		}
 		
+		return itEmployees;
+	}
+	
+	private static List<ITEmployee> getEmployeeITInfoDB(DSLContext dslContext, Integer contractId) {
+		List<ITEmployee> itEmployees = new ArrayList<ITEmployee>();
+		
+		ITEmployee itEmployee = new ITEmployee();
+		setEmployeeInfo(itEmployee, contractId, dslContext);
+		
+		Result<Record> contractLeaveRecords = dslContext.select().from(CONTRACT_LEAVE)
+				.where(CONTRACT_LEAVE.CONTRACT.eq(contractId))
+				.orderBy(CONTRACT_LEAVE.START_DATE.asc())
+				.fetch();
+		
+		if(contractLeaveRecords.isEmpty())
+			itEmployee.setStatus((byte)0);
+		else {
+			for(Record contractLeaveRecord : contractLeaveRecords) {
+				IT it = new IT();
+				
+				Integer contractLeaveId = contractLeaveRecord.get(CONTRACT_LEAVE.ID);
+				
+				it.setId(contractLeaveId);
+				it.setDomain(contractLeaveRecord.get(CONTRACT_LEAVE.DOMAIN));
+				it.setTypeLowPart(contractLeaveRecord.get(CONTRACT_LEAVE.TYPE));
+				it.setContract(contractLeaveRecord.get(CONTRACT_LEAVE.CONTRACT));
+				it.setDescription(contractLeaveRecord.get(CONTRACT_LEAVE.DESCRIPTION));
+				it.setStartDate(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE));
+				it.setEndDate(contractLeaveRecord.get(CONTRACT_LEAVE.END_DATE));
+				it.setDailyCGCBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_CGC_BASE));
+				it.setDailyCGPBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_CGP_BASE));
+				it.setParent(contractLeaveRecord.get(CONTRACT_LEAVE.PARENT));
+				it.setDailyREGBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_REG_BASE));
+				it.setTypeHighPart(contractLeaveRecord.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
+				
+				List<Record> contractDataDatePayRecords = dslContext.select().from(CONTRACT_DATA)
+						.where(
+								CONTRACT_DATA.NAME.eq("INICIO_PAGO_DIRECTO")
+						).and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+						.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+						.fetch();
+				
+				if(!contractDataDatePayRecords.isEmpty()) {
+					java.util.Date directDayPay = getDirectPayDateByExpression(contractDataDatePayRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+					it.setDirectPayDate(directDayPay);
+				}
+				
+				// Matenity
+				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {
+					Result<Record> contractDataMaternityRecords = dslContext.select().from(CONTRACT_DATA)
+						.where(
+								CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT")
+							.or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT"))
+							.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+							.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD"))
+							.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
+						).and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+						.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+						.fetch();
+					
+					for(Record record : contractDataMaternityRecords) {
+						if(record.get(CONTRACT_DATA.NAME) == "TIPO_SOLICITANTE_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("TIPO_SOLICITANTE_MAT_PAT"))
+							it.setMaternityType(Byte.parseByte(record.get(CONTRACT_DATA.EXPRESSION)));
+						else if(record.get(CONTRACT_DATA.NAME) == "MOTIVO_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("MOTIVO_MAT_PAT"))
+							it.setMaternityReason(Byte.parseByte(record.get(CONTRACT_DATA.EXPRESSION)));
+						else if(record.get(CONTRACT_DATA.NAME) == "BASE_REGULADORA" || record.get(CONTRACT_DATA.NAME).equals("BASE_REGULADORA"))
+							it.setRegulationBase(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+						else if(record.get(CONTRACT_DATA.NAME) == "COEFICIENTE_PATERNIDAD" || record.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_PATERNIDAD"))
+							it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+						else if(record.get(CONTRACT_DATA.NAME) == "COEFICIENTE_MATERNIDAD" || record.get(CONTRACT_DATA.NAME).equals("COEFICIENTE_MATERNIDAD"))
+							it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+					}
+						
+				} else {
+					Result<Record> contractDataMaternityRecords = dslContext.select().from(CONTRACT_DATA)
+							.where(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+							.and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+							.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+							.fetch();
+						
+					for(Record record : contractDataMaternityRecords) {
+						if(record.get(CONTRACT_DATA.NAME) == "BASE_REGULADORA" || record.get(CONTRACT_DATA.NAME).equals("BASE_REGULADORA"))
+							it.setRegulationBase(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+					}
+				}
+				
+				// Is parent?
+				Result<Record> contractLeaveParentRecords = dslContext.select().from(CONTRACT_LEAVE)
+						.where(CONTRACT_LEAVE.PARENT.eq(contractLeaveId))
+						.fetch();
+				
+				if(contractLeaveParentRecords.isEmpty())
+					it.setIsParent(false);
+				else
+					it.setIsParent(true);
+				
+				Result<Record> contractLeaveDetailRecords = dslContext.select().from(CONTRACT_LEAVE_DETAIL)
+						.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(contractLeaveId))
+						.orderBy(CONTRACT_LEAVE_DETAIL.DATE.desc())
+						.fetch();
+				
+				for(Record contractLeaveDetailRecord : contractLeaveDetailRecords) {
+					ITPart itPart = new ITPart();
+					
+					Integer contractLeaveDetailId = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.ID);
+					Byte typePart = contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.TYPE);
+					
+					itPart.setDomain(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DOMAIN));
+					itPart.setType(typePart);
+					itPart.setIt(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE));
+					itPart.setCollegeNumber(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER));
+					itPart.setConfirmOrderNumber(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER));
+					itPart.setCias(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CIAS));
+					itPart.setDate(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DATE));
+					itPart.setStatus(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.STATUS));
+					
+					it.addITPart(itPart);
+					
+					if(typePart == (byte) 0) { // Parte de Baja -> Check communicationStatus
+						Record leaveBatchRecord = dslContext.select().from(LEAVE_BATCH).where(LEAVE_BATCH.ID.in(
+								dslContext.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+									.from(LEAVE_BATCH_DETAIL)
+									.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.eq(contractLeaveDetailId))
+									.fetch(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+						)).and(LEAVE_BATCH.COMMUNICATION_ID.eq("COMUNICA")).fetchOne();
+						
+						if(null != leaveBatchRecord) {
+							it.setIsComunicate(leaveBatchRecord.get(LEAVE_BATCH.STATUS) == (byte)0 ? false : true);
+							it.setComunicationDate(leaveBatchRecord.get(LEAVE_BATCH.DATE));
+						} else
+							it.setIsComunicate(false);
+						
+//							it.setIsComunicate(false);
+					}
+					
+				}
+				
+				// Check status
+				if(null == contractLeaveRecord.get(CONTRACT_LEAVE.END_DATE))
+					itEmployee.setStatus((byte)1);
+				else
+					itEmployee.setStatus((byte)0);
+				
+				itEmployee.addIT(it);
+				
+			}
+			
+		}
+			
+		itEmployees.add(itEmployee);
+
 		return itEmployees;
 	}
 	
@@ -509,6 +686,17 @@ public class JooqIT {
 								it.setPartialityCoef(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
 						}
 							
+					} else {
+						Result<Record> contractDataMaternityRecords = dslContext.select().from(CONTRACT_DATA)
+								.where(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+								.and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+								.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+								.fetch();
+							
+						for(Record record : contractDataMaternityRecords) {
+							if(record.get(CONTRACT_DATA.NAME) == "BASE_REGULADORA" || record.get(CONTRACT_DATA.NAME).equals("BASE_REGULADORA"))
+								it.setRegulationBase(Double.parseDouble(record.get(CONTRACT_DATA.EXPRESSION)));
+						}
 					}
 					
 					// Is parent?
@@ -818,6 +1006,18 @@ public class JooqIT {
 //					}
 				}
 				
+				Double baseReg = it.getRegulationBase();
+				if(null != baseReg && 0.00 != baseReg) {
+					dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+						.set(CONTRACT_DATA.NAME, "BASE_REGULADORA")
+						.set(CONTRACT_DATA.CONTRACT, contractId)
+						.set(CONTRACT_DATA.EXPRESSION, baseReg.toString())
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.execute();
+				}
+				
 				if(null != it.getDirectPayDate()) {
 					dslContext.insertInto(CONTRACT_DATA)
 						.set(CONTRACT_DATA.DOMAIN, domainId)
@@ -847,18 +1047,6 @@ public class JooqIT {
 						.set(CONTRACT_DATA.START_DATE, startDate)
 						.set(CONTRACT_DATA.END_DATE, endDate)
 						.execute();
-					
-					Double baseReg = it.getRegulationBase();
-					if(null != baseReg && 0.00 != baseReg) {
-						dslContext.insertInto(CONTRACT_DATA)
-						.set(CONTRACT_DATA.DOMAIN, domainId)
-							.set(CONTRACT_DATA.NAME, "BASE_REGULADORA")
-							.set(CONTRACT_DATA.CONTRACT, contractId)
-							.set(CONTRACT_DATA.EXPRESSION, baseReg.toString())
-							.set(CONTRACT_DATA.START_DATE, startDate)
-							.set(CONTRACT_DATA.END_DATE, endDate)
-							.execute();
-					}
 					
 					Double partialityCoef = it.getPartialityCoef();
 					if(null != partialityCoef && 0.00 != partialityCoef) {
@@ -956,6 +1144,18 @@ public class JooqIT {
 						.execute();
 				}
 				
+				Double baseReg = it.getRegulationBase();
+				if(null != baseReg && 0.00 != baseReg) {
+					dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domainId)
+						.set(CONTRACT_DATA.NAME, "BASE_REGULADORA")
+						.set(CONTRACT_DATA.CONTRACT, contractId)
+						.set(CONTRACT_DATA.EXPRESSION, baseReg.toString())
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.execute();
+				}
+				
 				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {	// MATERNIDAD || PATERNIDAD
 					
 					if(null != it.getMaternityType())
@@ -977,18 +1177,6 @@ public class JooqIT {
 						.set(CONTRACT_DATA.START_DATE, startDate)
 						.set(CONTRACT_DATA.END_DATE, endDate)
 						.execute();
-					
-					Double baseReg = it.getRegulationBase();
-					if(null != baseReg && 0.00 != baseReg) {
-						dslContext.insertInto(CONTRACT_DATA)
-						.set(CONTRACT_DATA.DOMAIN, domainId)
-							.set(CONTRACT_DATA.NAME, "BASE_REGULADORA")
-							.set(CONTRACT_DATA.CONTRACT, contractId)
-							.set(CONTRACT_DATA.EXPRESSION, baseReg.toString())
-							.set(CONTRACT_DATA.START_DATE, startDate)
-							.set(CONTRACT_DATA.END_DATE, endDate)
-							.execute();
-					}
 					
 					Double partialityCoef = it.getPartialityCoef();
 					if(null != partialityCoef && 0.00 != partialityCoef) {
@@ -1090,29 +1278,21 @@ public class JooqIT {
 		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 		
 		Record contractLeaveRecord = dslContext.select().from(CONTRACT_LEAVE).where(CONTRACT_LEAVE.ID.eq(itId)).fetchOne();
-		Byte type = contractLeaveRecord.get(CONTRACT_LEAVE.TYPE);
 		
 		Date startDate = contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE);
 		Integer contractId = contractLeaveRecord.get(CONTRACT_LEAVE.CONTRACT);
+		
 		dslContext.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 			.and(
 					CONTRACT_DATA.NAME.eq("INICIO_PAGO_DIRECTO")
-			).and(CONTRACT_DATA.START_DATE.eq(startDate))
+				.or(CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT"))
+				.or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT"))
+				.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
+				.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
+				.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD")))
+			.and(CONTRACT_DATA.START_DATE.eq(startDate))
 			.execute();
-		
-		if(type == (byte)2 || type == (byte)3) {
-			dslContext.delete(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
-				.and(
-						CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT")
-					.or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT"))
-					.or(CONTRACT_DATA.NAME.eq("BASE_REGULADORA"))
-					.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_MATERNIDAD"))
-					.or(CONTRACT_DATA.NAME.eq("COEFICIENTE_PATERNIDAD"))
-				).and(CONTRACT_DATA.START_DATE.eq(startDate))
-				.execute();
-		}
 		
 		dslContext.delete(LEAVE_BATCH)
 			.where(LEAVE_BATCH.ID.in(

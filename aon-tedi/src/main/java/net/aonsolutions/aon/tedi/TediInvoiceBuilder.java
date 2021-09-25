@@ -3,12 +3,17 @@ package net.aonsolutions.aon.tedi;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingRegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OCRDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -38,9 +43,10 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 		super.addInsightNifs(nifs);
 		if (get().getInsight() != null) {
 			TICKET_TYPE
-			.andThen(RECIBIDA_TYPE)
-			.andThen(RECEIVER)
-			.andThen(SENDER)
+			.andThen(GUESS_TYPE)
+//			.andThen(RECEIVER)
+//			.andThen(SENDER)
+//			.andThen(CHECK_SENDER_RECEIVER)
 			.accept(ctx, get());
 		}
 	}
@@ -64,15 +70,66 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 		if (inv.getInsight().getNifs() != null 
 			&& inv.getInsight().getNifs().length == 1 
 			&& !AonStringUtils.equals(ctx.getCompanyDocument(), inv.getInsight().getNifs()[0].getStr() )) {
-			inv.setType(TediInvoiceType.TICKET);	
+			inv.setType(TediInvoiceType.TICKET);
+			fillCompanyData( ctx, inv , inv.ensureReceiver());
+			inv.ensureSender().setDocument( inv.getInsight().getNifs()[0].getStr() );
 		}
 	};
 	
-	private static BiConsumer<TediContext,TediInvoice> RECIBIDA_TYPE = (ctx,inv) -> {
+	private static void fillCompanyData(TediContext ctx, TediInvoice inv, TediRegistry tediRegistry) {
+		Company company = ctx.getAonConfiguration().getCompany();
+		tediRegistry
+			.setDocument(company.getDocument())
+			.setDocumentCountry(getCountryCode(company.getDocumentCountry()))
+			.setName(company.getName())
+			.setAddress(getTediAddress( company.getMainAddress()));
+	}
+	
+	private static BiConsumer<TediContext,TediInvoice> GUESS_TYPE = (ctx,inv) -> {
 		if (inv.getType() == null) {
-			if (inv.getInsight().getNifs() != null 
-				&& inv.getInsight().getNifs().length > 1) {
-				inv.setType(TediInvoiceType.RECIBIDA);	
+			if (inv.getInsight().getNifs() != null && inv.getInsight().getNifs().length > 1) {
+				boolean hasCompanyDocument = false;
+				for (TediNif nif : inv.getInsight().getNifs()) {
+					if (AonStringUtils.equals(ctx.getCompanyDocument(), nif.getStr()) ) {
+						hasCompanyDocument = true;
+					}
+				}
+				if (hasCompanyDocument) {
+					for (TediNif nif : inv.getInsight().getNifs()) {
+						if (!AonStringUtils.equals(ctx.getCompanyDocument(), nif.getStr()) ) {
+							LinkedList<AccountingRegistry> registries = AccountingRegistryDAO
+									.getAccountingRegistries(ctx.getAONContext(), f -> f.getDocumentProperty().eq(nif.getStr()))
+									.collect(Collectors.toCollection(LinkedList::new));
+							if (registries != null && registries.size() == 1) {
+								AccountingRegistry ar = registries.get(0);
+								IAccountingRegistryTypeVisitor visitor = new IAccountingRegistryTypeVisitor() {
+									
+									@Override
+									public void visitCustomer(AccountingRegistry reg) {
+										inv.setType(TediInvoiceType.EMITIDA);	
+										fillCompanyData( ctx, inv , inv.ensureSender());
+										inv.ensureReceiver()
+										.setDocument(ar.getDocument())
+										.setDocumentCountry(getCountryCode(ar.getDocumentCountry()))
+										.setName(ar.getName());
+										
+									}
+									
+									@Override public void visitCreditor(AccountingRegistry reg) {visitRecibida( reg );}
+									@Override public void visitSupplier(AccountingRegistry reg) {visitRecibida( reg );}
+									@Override public void visitUndedCreditor(AccountingRegistry reg) {visitRecibida( reg );}
+									
+									private void visitRecibida(AccountingRegistry reg) {
+										inv.setType(TediInvoiceType.RECIBIDA);	
+										fillCompanyData( ctx, inv , inv.ensureReceiver());
+										inv.ensureSender().setDocument( nif.getStr() );
+									}
+								};
+								ar.getType().visit(ar, visitor);
+							}
+						}
+					}
+				}
 			}
 		}
 	};
@@ -83,6 +140,7 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 	private static BiConsumer<TediContext,TediInvoice> TOTAL = (ctx,inv) -> {
 		inv.setTotal( inv.getInsight().getTotal() );
 	};
+/*	
 	private static BiConsumer<TediContext,TediInvoice> RECEIVER = (ctx,inv) -> {
 		Company company = ctx.getAonConfiguration().getCompany();
 		inv.ensureReceiver()
@@ -90,7 +148,6 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 			.setDocumentCountry(getCountryCode(company.getDocumentCountry()))
 			.setName(company.getName())
 			.setAddress(getTediAddress( company.getMainAddress()));
-		
 	};
 	private static BiConsumer<TediContext,TediInvoice> SENDER = (ctx,inv) -> {
 		if ( inv.getReceiver() != null && inv.getReceiver().getDocument() != null) {
@@ -99,7 +156,7 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 				for (TediNif nif : inv.getInsight().getNifs()) {
 					if (!companyDoc.equals(nif.getStr())) {
 						TediRegistry reg = getRegistryData(ctx, nif.getStr() );
-						if (reg == null) {
+ar						if (reg == null) {
 							reg = new TediRegistry()
 								.setDocument(nif.getStr());
 						}
@@ -111,6 +168,14 @@ public class TediInvoiceBuilder extends TediInsightInvoiceBuilder {
 		}
 	};
 	
+	private static BiConsumer<TediContext,TediInvoice> CHECK_SENDER_RECEIVER = (ctx,inv) -> {
+		
+		if (inv.getInsight().getNifs() != null && inv.getInsight().getNifs().length > 0) {
+			
+		}
+		
+	};
+*/
 	private static String getCountryCode( Country country ) {
 		return country==null?null:country .getIso2();  
 	}

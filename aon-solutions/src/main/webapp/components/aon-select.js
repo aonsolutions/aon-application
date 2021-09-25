@@ -6,7 +6,7 @@ export class AonSelect extends AonElement {
 
   INPUT;
   OPTIONS;
-
+  detail;
   _selected;
 
   static get observedAttributes() {
@@ -81,7 +81,7 @@ export class AonSelect extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if(CONSTANT.VALUE === name) {
       let options = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-      let detail = {};
+      this.detail = {};
       options.forEach((item, i) => {
         if(item.value == newValue) {
           let input = this.getElement(this.INPUT);
@@ -90,9 +90,8 @@ export class AonSelect extends AonElement {
       });
 
       if(options.length > 0)
-        detail =  options.find(v=>  v.value == newValue);
-
-      this.dispatchEvent(new CustomEvent(EVENT.CHANGE,{detail}));
+        this.detail =  options.find(v=>  v.value == newValue);
+      this.dispatchEvent(new CustomEvent(EVENT.CHANGE,{detail: this.detail || {} }));
     } else if(CONSTANT.DISABLED === name){
       if(CONSTANT.TRUE == this.disabled){
         let input = this.getElement(this.INPUT);
@@ -111,7 +110,7 @@ export class AonSelect extends AonElement {
     let aonInput = new AonInput();
     aonInput.id = this.INPUT;
     aonInput.description = this.title;
-    if(this.autocomplete) aonInput.autocomplete = this.autocomplete;
+    aonInput.autocomplete = "off";
     this.appendChild(aonInput);
     this.build();
 	}
@@ -149,7 +148,13 @@ export class AonSelect extends AonElement {
             input.value = option.name;
         } 
       })
-  
+
+      if(this.disabled)
+        input.disabled = true;
+      
+      if(this.readonly)
+       input.readonly = true;
+
       let div = this.getElement(input.DIV);
       let span = this.createElement(TAG.SPAN);
       span.id = input.SPAN;
@@ -170,12 +175,14 @@ export class AonSelect extends AonElement {
   }
 
   buildOptions(options) {
+    if(options.length === 0) return null;
     this.clearElementById(this.OPTIONS);
     let input = this.getElement(this.INPUT);
     let div = this.getElement(this.OPTIONS);
     div.classList.add('is-visible');
-
-    if(options.length === 0) return div;
+  
+    if(this.default ||  this.hasAttribute(CONSTANT.DEFAULT)) 
+      options.unshift({ name:"-", value:"" }); //EMPTY
 
     let ul = this.createElement(TAG.UL);
     ul.className = 'aonInputListOptionsUl';
@@ -184,12 +191,12 @@ export class AonSelect extends AonElement {
       let li = this.createElement(TAG.LI);
       li.className = 'aonInputListOptionsItem'
       li.innerHTML = option.name;
-      li.addEventListener(EVENT.CLICK, (e) => {
+      li.addEventListener(EVENT.CLICK, () => {
         div.classList.remove('is-visible');
         this.value = option.value;
         input.value = option.name;
         this._selected = option;
-        this.dispatchEvent(new CustomEvent('select', {detail: option}));
+        this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: option}));
       });
       ul.appendChild(li);
     }
@@ -262,6 +269,10 @@ export class AonSelect extends AonElement {
     const input = this.getElement(this.INPUT);
     if(!input) return null;
   	return input.value;
+  }
+
+  getDetail(){
+    return this.detail || {};
   }
 }
 if(!window.customElements.get('aon-select')){

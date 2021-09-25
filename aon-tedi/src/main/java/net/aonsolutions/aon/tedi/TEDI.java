@@ -75,7 +75,6 @@ public class TEDI {
 			else
 				throw new TediException( String.format("Formato, '%s' no soportado", mimeType.getName() ) ); 
 			
-			TediResultBuilder.build( tediInvoiceBuilder.get() );
 			TediResult result = TediParser.toFullInvoice(tctx.getAONContext(), tctx.getAonConfiguration(), tediInvoiceBuilder.get()); 
 			return result;
 		} catch (InvoicePDFException e) {

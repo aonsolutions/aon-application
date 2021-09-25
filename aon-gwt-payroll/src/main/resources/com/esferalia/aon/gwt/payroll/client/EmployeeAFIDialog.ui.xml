@@ -1,13 +1,10 @@
 <ui:UiBinder 
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
-    <ui:with field='res'
-		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
-    
+    <ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeAFIDialog.MyStyle">
 	
@@ -17,7 +14,7 @@
 		@external .gwt-ToggleButton-up-hovering;
 
 		.form {
-			padding: 10px;
+			padding: 15px 20px;
 		}
 		
 		.tabSelected{
@@ -174,6 +171,8 @@
 		
 		.tabsPanel{
 			margin-left: 10px;
+			display: flex;
+			gap: 5px;
 		}
 		
 		.tabSelectedStyle{
@@ -202,124 +201,75 @@
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
+			margin-top: 20px;
+		}
+		
+		.flexToggle{
+			display: flex;
+			align-items: center;
+			gap: 5px;
+		}
+		
+		.mt10{
 			margin-top: 10px;
 		}
 		
-		.flexEndPanel{
+		.flexColumn{
 			display: flex;
-			align-items: center;
-			margin: 10px 0 0 10px;
+			flex-direction: column;
+			gap: 5px;
 		}
 		
-		.ml10{
-			margin-left: 10px;
+		.flex{
+			display: flex;
+			gap: 5px;
 		}
 		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
-
-	    <table ui:field="datesTable" style="width: 24.1rem;">
-	        <tbody>
-	            <tr>
-	            	<td style="width: 30px;">
-	                    <g:Button ui:field="startContractTB"></g:Button>
-	                </td>
-	                <td>
-	                    <g:Label styleName="{style.bold}" ui:field="startContractLabel">Notificar Alta Contrato</g:Label>
-	                </td>
-	            </tr>
-	            <tr>
-	            	<td style="width: 30px;">
-	                    <g:Button ui:field="endContractTB"></g:Button>
-	                </td>
-	                <td>
-	                    <g:Label styleName="{style.bold}" ui:field="endContractLabel">Notificar Baja Contrato</g:Label>
-	                </td>
-	            </tr>
-	            <tr>
-	            	<td colspan="2">
-	                    <g:Label styleName="{style.bold} {style.marginLft5}">Código de baja</g:Label>
-	                </td>
-	            </tr>
-	             <tr>
-	                <td colspan="2">
-	                    <g:ListBox ui:field="settleReasonLB" styleName="{style.width100} {style.marginLft5}"></g:ListBox>
-	                </td>
-	            </tr>
-	        </tbody>
-	    </table>
+	
+		<g:DeckPanel ui:field="deckPanel">
+		
+			<g:HTMLPanel styleName="{style.flexToggle}">
+				<g:Button ui:field="startContractTB" />
+				<g:Label styleName="{style.bold}" ui:field="startContractLabel">Alta Contrato</g:Label>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flexColumn}">
+				<g:HTMLPanel styleName="{style.flexToggle}">
+					<g:Button ui:field="endContractTB" />
+					<g:Label styleName="{style.bold}" ui:field="endContractLabel">Baja Contrato</g:Label>
+				</g:HTMLPanel>
+				<g:Label ui:field="settleReasonL" styleName="{style.bold}">Código de baja</g:Label>
+				<g:ListBox ui:field="settleReasonLB" styleName="{style.width100}" />
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.flexColumn}">
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:Label styleName="{style.bold}">Modificar datos de afiliación con fecha: </g:Label>
+					<a:DateBoxEx ui:field="newDate" styleName="{style.dateStyle}"></a:DateBoxEx>
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="tabsPanel" styleName="{style.tabsPanel}"></g:HTMLPanel>
+				<g:Label styleName="{style.bold}">Tipo contrato</g:Label>
+				<g:ListBox ui:field="tc2" styleName="{style.width100}" />
+				<g:Label styleName="{style.bold}">Grupo cotización</g:Label>
+				<g:ListBox ui:field="quoteGroup" styleName="{style.width100}" />
+				<g:Label styleName="{style.bold}">Ocupación</g:Label>
+				<g:ListBox ui:field="ocupation" styleName="{style.width100}" />
+				<g:Label ui:field="partialityCoefL" styleName="{style.bold}">Coeficiente Parcialidad</g:Label>
+				<a:DoubleBox ui:field="partialityCoef" styleName="{style.width99}" />
+			</g:HTMLPanel>
+		
+		</g:DeckPanel>
 	    
-	    <table style="margin-top: 5px;" ui:field="dataTable">
-	        <tbody>
-	            <tr>
-	            	<td style="width: 230px;">
-	                    <g:Label styleName="{style.bold} {style.marginLft5}">Modificar datos de afiliación con fecha: </g:Label>
-	                </td>
-	                <td>
-	                    <a:DateBoxEx ui:field="newDate" styleName="{style.dateStyle} {style.marginLft5}"></a:DateBoxEx>
-	                </td>
-	            </tr>
-	            <tr>
-	            	<td colspan="2" style="border: none;">
-	                    <g:Label styleName="{style.marginLft5} {style.pb-15}">*Debera rellanar los tres campos para cada tramo. </g:Label>
-	                </td>
-	            </tr>
-	            <tr>
-	            	<td colspan="2"  style="border-bottom: 1px solid #e2e2e2;">
-	            		<g:HorizontalPanel ui:field="tabsPanel" styleName="{style.tabsPanel}"></g:HorizontalPanel>
-	            	</td>
-	            </tr>
-	            <tr>
-	                <td colspan="2">
-	                    <g:Label styleName="{style.bold} {style.marginLft5}">Tipo contrato</g:Label>
-	                </td>
-	            </tr>
-	            <tr>
-	                <td colspan="2">
-	                    <g:ListBox ui:field="tc2" styleName="{style.width100} {style.marginLft5}"></g:ListBox>
-	                </td>
-	            </tr>
-	            <tr>
-	                <td colspan="2">
-	                    <g:Label styleName="{style.bold} {style.marginLft5}">Grupo cotización</g:Label>
-	                </td>
-	            </tr>
-	            <tr>
-	                <td colspan="2">
-	                    <g:ListBox ui:field="quoteGroup" styleName="{style.width100} {style.marginLft5}"></g:ListBox>
-	                </td>
-	            </tr>
-	            <tr>
-	                <td colspan="2">
-	                    <g:Label styleName="{style.bold} {style.marginLft5}">Ocupación</g:Label>
-	                </td>
-	            </tr>
-	            <tr>
-	                <td colspan="2">
-	                    <g:ListBox ui:field="ocupation" styleName="{style.width100} {style.marginLft5}"></g:ListBox>
-	                </td>
-	            </tr>
-	            <tr>
-	                <td colspan="2">
-	                    <g:Label styleName="{style.bold} {style.marginLft5}">Coeficiente Parcialidad</g:Label>
-	                </td>
-	            </tr>
-	            <tr>
-	                <td colspan="2">
-	                	<a:DoubleBox ui:field="partialityCoef" styleName="{style.width99} {style.marginLft5}"></a:DoubleBox>
-	                </td>
-	            </tr>
-	        </tbody>
-	    </table>
-	    
-	   	<g:HTMLPanel styleName="{style.flexEndPanel}">
+	   	<g:HTMLPanel styleName="{style.flexToggle}  {style.mt10}">
 	   		<g:Button ui:field="generationAFITB"></g:Button>
-    		<g:Label styleName="{style.bold} {style.ml10}">Generar fichero AFI</g:Label>	
+    		<g:Label styleName="{style.bold}">Generar fichero AFI</g:Label>	
     	</g:HTMLPanel>
-    	<g:HTMLPanel ui:field="notifyPanel" styleName="{style.flexEndPanel}">
+    	<g:HTMLPanel ui:field="notifyPanel" styleName="{style.flexToggle}  {style.mt10}">
     		<g:Button ui:field="notifyMovTB"></g:Button>
-    		<g:Label styleName="{style.bold} {style.ml10}">Notificar movimiento (TGSS)</g:Label>
+    		<g:Label styleName="{style.bold}">Notificar movimiento (TGSS)</g:Label>
     	</g:HTMLPanel>
 		
 		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>

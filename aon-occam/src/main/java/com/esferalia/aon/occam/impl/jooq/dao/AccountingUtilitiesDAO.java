@@ -201,7 +201,7 @@ public class AccountingUtilitiesDAO {
 	public static AccUtilitiesResult noLowLevelAccounts(AONContext ctx) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
 		Domain domain = DomainDAO.getDomain(ctx, p-> p.getIdProperty().eq(ctx.getDomainId()));
-		if (domain.isChild() ) {
+		if (domain.isChild() || domain.isStandalone()) {
 			noLowLevelAccounts(ctx,domain,result);
 		} else {
 			LinkedList<Domain> domains = DomainDAO.getDomainList(ctx
@@ -279,7 +279,7 @@ public class AccountingUtilitiesDAO {
 	public static AccUtilitiesResult accountIntegrity(AONContext ctx) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
 		Domain domain = DomainDAO.getDomain(ctx, p-> p.getIdProperty().eq(ctx.getDomainId()));
-		if (domain.isChild() ) {
+		if (domain.isChild() || domain.isStandalone()) {
 			accountIntegrity(ctx,domain,result);
 		} else {
 			LinkedList<Domain> domains = DomainDAO.getDomainList(ctx
@@ -422,8 +422,10 @@ public class AccountingUtilitiesDAO {
 					AccUtilitiesAccountChangeParams params = new AccUtilitiesAccountChangeParams()
 						.setDomain(ctx.getDomainId())
 						.setOldAccount(wrongAccount)
-						.setNewAccount(rightAccount); 
-//					changeAccount(ctx, ctx.getDomainId(), wrongAccount, rightAccount, result  );
+						.setNewAccount(rightAccount)
+						.setChangeInEntriesEnabled(true)
+						.setChangeInMastersEnabled(true)
+						; 
 					LinkedList<String> msgs = AccountChangeDAO.changeAccount(ctx, params);
 					for (String msg :  msgs) {
 						result.add(new AccUtilitiesInfoItem().setMessage(msg));	
@@ -438,7 +440,7 @@ public class AccountingUtilitiesDAO {
 	public static AccUtilitiesResult emptyEntries(AONContext ctx) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
 		Domain domain = DomainDAO.getDomain(ctx, p-> p.getIdProperty().eq(ctx.getDomainId()));
-		if (domain.isChild() ) {
+		if (domain.isChild() || domain.isStandalone()) {
 			emptyEntries(ctx,domain,result);
 		} else {
 			LinkedList<Domain> domains = DomainDAO.getDomainList(ctx
@@ -805,23 +807,28 @@ public class AccountingUtilitiesDAO {
 	}
 	
 	private static Field<Integer> INVOICE_COUNT_FIELD = DSL.count(INVOICE.ID);
-	private static Field<Integer> INVOICE_YEAR_FIELD = DSL.year(INVOICE.ISSUE_DATE);
+//	private static Field<Integer> INVOICE_YEAR_FIELD = DSL.year(INVOICE.SERIES);
 	private static Field<Integer> INVOICE_MAX_NUMBER = DSL.max(INVOICE.NUMBER);
 	
 	public static AccUtilitiesResult getInputVatRegenerationInfo(AONContext ctx) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
 		ctx.getDslContext()
-			.select( INVOICE_COUNT_FIELD, INVOICE_YEAR_FIELD , INVOICE_MAX_NUMBER)
+			.select( INVOICE_COUNT_FIELD, INVOICE.SERIES , INVOICE_MAX_NUMBER)
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
 			.and(INVOICE.TYPE.in( InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()))
-			.groupBy(INVOICE_YEAR_FIELD)
-			.orderBy(INVOICE_YEAR_FIELD)
+//			.groupBy(INVOICE_YEAR_FIELD)
+//			.orderBy(INVOICE_YEAR_FIELD)
+			.groupBy(INVOICE.SERIES)
+			.orderBy(INVOICE.SERIES)
+			
 			.fetch()
 			.stream()
 			.forEach( rec -> {
-				Date from = AonDateUtils.getYearFirstDay( rec.get(INVOICE_YEAR_FIELD) );
-				Date to = AonDateUtils.getYearLastDay( rec.get(INVOICE_YEAR_FIELD) );
+				String seriesValue = rec.get(INVOICE.SERIES);
+				Integer year = AonNumberUtils.toInteger(seriesValue);
+				Date from = AonDateUtils.getYearFirstDay( year );
+				Date to = AonDateUtils.getYearLastDay( year );
 				LinkedList<InvoiceSeries> series = InvoiceDAO.getInvoiceSeries(ctx, from, to, false);
 				StringBuffer msg = new StringBuffer();
 				boolean regenerable = false;
@@ -840,7 +847,7 @@ public class AccountingUtilitiesDAO {
 				}
 				result.add( new  AccUtilitiesRegenerateInputVatItem()
 						.setDomain(ctx.getDomainId())
-						.setYear(rec.get(INVOICE_YEAR_FIELD)) 
+						.setYear(year) 
 						.setMessage(msg.toString())
 						.setRegenerable( regenerable )
 						);

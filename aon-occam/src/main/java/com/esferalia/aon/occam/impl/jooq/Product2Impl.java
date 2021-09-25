@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -13,6 +14,12 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
 
 public class Product2Impl implements IProduct2{
 	// ------------------------------------- PRODUCT
+
+	@Override
+	public Product getProduct(AONContext ctx, ProductFilter filter) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ProductDAO.get(ctx, filter));
+	}
 	
 	@Override
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter) {
@@ -20,13 +27,54 @@ public class Product2Impl implements IProduct2{
 			ProductDAO.getStream(ctx, filter));
 	}
 	
+	@Override
+	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ProductDAO.getList(ctx, filter));
+	}
+	
+	@Override
+	public Product saveProduct(AONContext ctx, Product product) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ProductDAO.save(ctx, product));
+	}
+	
+	@Override
+	public void deleteProduct(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction( configuration -> 
+			ProductDAO.delete(ctx, id));
+	}
 
 	// ------------------------------------- ITEM
+	
+	@Override
+	public Item getItem(AONContext ctx, ItemFilter filter) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ItemDAO.get(ctx, filter));
+	}
 	
 	@Override
 	public Stream<Item> getItemStream(AONContext ctx, ItemFilter filter) {
 		return ctx.getDslContext().transactionResult( configuration -> 
 			ItemDAO.getStream(ctx, filter));
+	}
+	
+	@Override
+	public LinkedList<Item> getItemList(AONContext ctx, ItemFilter filter) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ItemDAO.getList(ctx, filter));
+	}
+	
+	@Override
+	public Item saveItem(AONContext ctx, Item item) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ItemDAO.save(ctx, item));
+	}
+
+	@Override
+	public void deleteItem(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction( configuration -> 
+			ItemDAO.delete(ctx, id));
 	}
 
 }

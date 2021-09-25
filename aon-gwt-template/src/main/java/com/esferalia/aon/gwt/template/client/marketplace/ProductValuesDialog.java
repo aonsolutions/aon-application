@@ -12,10 +12,10 @@ import com.esferalia.aon.gwt.template.client.ITemplateAsync;
 import com.esferalia.aon.gwt.template.client.ProgressBarDialog;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData.Ecommerce;
-import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -141,7 +141,7 @@ public class ProductValuesDialog extends CustomDialogB {
 			@Override
 			public void onSuccess(LinkedList<Seller> result) {				
 				for(Seller seller: result){
-					sellerList.addItem(seller.getRegistryName(), seller.getId().toString());
+					sellerList.addItem(seller.getName(), seller.getId().toString());
 				}
 			}
 			@Override

@@ -27,7 +27,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Segment.SEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
-import static com.esferalia.aon.jooq.tables.Target.TARGET;
+import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -64,9 +64,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
-import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
-import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
@@ -91,7 +89,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
-import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
@@ -106,13 +103,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RNoteFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.RecordDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.SupplierFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.TargetFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PersonPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RBankPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RDirStaffPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RNotePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RPayMethodPropertiesDAO;
@@ -123,6 +118,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistrySellerPropert
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
@@ -136,7 +132,6 @@ public class RegistryOldDAO {
 	private static final RBankPropertiesDAO RBANK_PROPERTIES = new RBankPropertiesDAO();
 	private static final RPayMethodPropertiesDAO RPAYMETHOD_PROPERTIES = new RPayMethodPropertiesDAO();
 	private static final RegistryAddInfoPropertiesDAO RADDINFO_PROPERTIES = new RegistryAddInfoPropertiesDAO();
-	private static final RDirStaffPropertiesDAO RDIRSTAFF_PROPERTIES = new RDirStaffPropertiesDAO();
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
 
 	private static final TargetPropertiesDAO TARGET_PROPERTIES = new TargetPropertiesDAO();
@@ -593,9 +588,9 @@ public class RegistryOldDAO {
 	public static Stream<Seller> getRSellerStream(AONContext ctx, RegistrySellerFilter filter){
 		return ctx.getDslContext().select().from(RSELLER)
 				.join(SELLER).on(RSELLER.SELLER.eq(SELLER.REGISTRY))
-				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
+				.join(SELLER_ALIAS).on(SELLER_ALIAS.ID.eq(SELLER.REGISTRY))
 				.where(RSELLER_PROPERTIES.getConditions(filter))
-				.fetchInto(REGISTRY).stream().map(new SellerFiller());
+				.fetch().stream().map(new SellerFiller());
 	}
 	
 	/**
@@ -807,20 +802,14 @@ public class RegistryOldDAO {
 			.execute();
 		return customer;
 	}
-	// ------------------- SELLER
-
-	public static Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter){
-		return ctx.getDslContext().select()
-				.from(SELLER).join(SCOPE).on(SELLER.SCOPE.eq(SCOPE.ID))
-				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
-				.where(SELLER_PROPERTIES.getConditions(filter))
-				.fetch().stream().map(new FullSellerFiller());
-	}
 	
+	// ------------------- SELLER
+	
+	@Deprecated
 	public static Stream<Seller> getSellers(AONContext ctx){
 		return ctx.getDslContext().select(SELLER.REGISTRY, SELLER.DOMAIN, SELLER.COMMISSION_TYPE, SELLER.SCOPE, SELLER.STATUS,
 				SCOPE.DESCRIPTION, REGISTRY.DOCUMENT, REGISTRY.NAME, REGISTRY.ALIAS, REGISTRY.DOCUMENT_COUNTRY, REGISTRY.DOCUMENT_TYPE,
-				REGISTRY.NATIONALITY, REGISTRY.SECURITY_LEVEL)
+				REGISTRY.NATIONALITY, REGISTRY.SECURITY_LEVEL, SCOPE.ID)
 				.from(SELLER).join(SCOPE).on(SELLER.SCOPE.eq(SCOPE.ID))
 				.join(REGISTRY).on(REGISTRY.ID.eq(SELLER.REGISTRY))
 				.where(SELLER.DOMAIN.eq(ctx.getDomainId()))
@@ -832,6 +821,7 @@ public class RegistryOldDAO {
 				.map(new FullSellerFiller());
 	}
 	
+	@Deprecated
 	private static class FullSellerFiller implements Function<Record, Seller> {
 		@Override
 		public Seller apply(Record r) {
@@ -840,16 +830,7 @@ public class RegistryOldDAO {
 					.setId(r.getValue(SELLER.REGISTRY))
 					.setActive(r.getValue(SELLER.STATUS) == 1)
 					.setCommissionType(new CommissionType().setId(r.getValue(SELLER.COMMISSION_TYPE)))
-					.setScope(r.getValue(SCOPE.DESCRIPTION))
-					
-					.setRegistryAlias(r.getValue(REGISTRY.ALIAS))
-					.setRegistryConfidential(r.getValue(REGISTRY.SECURITY_LEVEL) == 1)
-					.setRegistryDocument(r.getValue(REGISTRY.DOCUMENT))
-					.setRegistryDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY)))
-					.setRegistryName(r.getValue(REGISTRY.NAME))
-					.setRegistryDocumentType(DocumentType.values()[r.getValue(REGISTRY.DOCUMENT_TYPE)])
-					.setRegistryNationality(Country.valueOf(r.getValue(REGISTRY.NATIONALITY)))
-					;			
+					.setScope(ScopeFiller.buildScope(r));			
 		}
 	}
 	
@@ -933,25 +914,6 @@ public class RegistryOldDAO {
 					supplier.getAccount(), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser(),
 					new Timestamp(new Date().getTime())).execute();
 		return supplier;
-	}
-	
-	// ------------------- TARGET
-
-	public static Stream<Target> getTargetStream(AONContext ctx, TargetFilter filter){
-		return TARGET_PROPERTIES.build(ctx.getDslContext().select()
-					.from(TARGET).join(SCOPE).on(TARGET.SCOPE.eq(SCOPE.ID))
-					.join(REGISTRY).on(REGISTRY.ID.eq(TARGET.REGISTRY))
-			,filter).fetch().stream().map(new TargetFiller());
-	}
-	
-	public static Target insertTarget(AONContext ctx, Target target){
-		ctx.getDslContext().insertInto(TARGET, TARGET.ADVERTISING, TARGET.DOMAIN, TARGET.REGISTRY, TARGET.SCOPE,
-				TARGET.STATUS, TARGET.SURCHARGE, TARGET.TARIFF, TARGET.TRANSACTION, TARGET.WITHHOLDING,
-				TARGET.CREATION_DATE, TARGET.CREATION_USER, TARGET.MODIFICATION_DATE, TARGET.MODIFICATION_USER)
-			.values(target.getAdvertising().byteValue(), target.getDomain().getId(), target.getId(), target.getScope(), target.getStatus().value(),
-					target.getSurcharge().byteValue(), target.getTariff(),target.getTransaction().byteValue(), target.getWithholding().byteValue(),
-					new Timestamp(new Date().getTime()), ctx.getUser(), new Timestamp(new Date().getTime()), ctx.getUser()).execute();
-		return target;
 	}
 	
 	// ------------------- PERSON
@@ -1084,19 +1046,19 @@ public class RegistryOldDAO {
 	
 	// ------------------- RDIRSTAFF
 	
-	public static Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter){
-		return ctx.getDslContext().select()
-				.from(RDIR_STAFF)
-				.where(RDIRSTAFF_PROPERTIES.getConditions(filter))
-				.fetch().stream().map(new RDirStaffFiller());
-	}
-	
-	public static RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff){
-		return ctx.getDslContext().insertInto(RDIR_STAFF,RDIR_STAFF.DOMAIN, RDIR_STAFF.REGISTRY, RDIR_STAFF.NAME, RDIR_STAFF.DOCUMENT)
-			.values(rdirstaff.getDomain(), rdirstaff.getRegistry(), rdirstaff.getName(), rdirstaff.getDocument())
-			.returning()
-			.fetch().stream().map(new RDirStaffFiller()).findFirst().orElse(new RDirStaff());
-	}
+//	public static Stream<RDirStaff> getRDirStaffStream(AONContext ctx, RDirStaffFilter filter){
+//		return ctx.getDslContext().select()
+//				.from(RDIR_STAFF)
+//				.where(RDIRSTAFF_PROPERTIES.getConditions(filter))
+//				.fetch().stream().map(new RDirStaffFiller());
+//	}
+//	
+//	public static RDirStaff insertRDirStaff(AONContext ctx, RDirStaff rdirstaff){
+//		return ctx.getDslContext().insertInto(RDIR_STAFF,RDIR_STAFF.DOMAIN, RDIR_STAFF.REGISTRY, RDIR_STAFF.NAME, RDIR_STAFF.DOCUMENT)
+//			.values(rdirstaff.getDomain(), rdirstaff.getRegistry(), rdirstaff.getName(), rdirstaff.getDocument())
+//			.returning()
+//			.fetch().stream().map(new RDirStaffFiller()).findFirst().orElse(new RDirStaff());
+//	}
 	
 	
 	// ------------------- REGISTRY PROFILE
@@ -1196,27 +1158,6 @@ public class RegistryOldDAO {
 					.setAttribute(r.getValue(RADDINFO.ATTRIBUTE))
 					.setValue(r.getValue(RADDINFO.VALUE))
 					.setDate(r.getValue(RADDINFO.VALUE_DATE));
-		}
-	}
-	
-	public static class RDirStaffFiller  implements Function<Record, RDirStaff> {
-
-		@Override
-		public RDirStaff apply(Record r) {
-			return new RDirStaff()
-					.setId(r.getValue(RDIR_STAFF.ID))
-					.setRegistry(r.getValue(RDIR_STAFF.REGISTRY))
-					.setDomain(r.getValue(RDIR_STAFF.DOMAIN))
-					.setChargeDescription(r.getValue(RDIR_STAFF.CHARGE_DESCRIPTION))
-					.setDirector(r.getValue(RDIR_STAFF.DIRECTOR) == 1)
-					.setDocument(r.getValue(RDIR_STAFF.DOCUMENT))
-					.setName(r.getValue(RDIR_STAFF.NAME))
-					.setDueDate(r.getValue(RDIR_STAFF.DUE_DATE))
-					.setNominalValue(r.getValue(RDIR_STAFF.NOMINAL_VALUE))
-					.setPercentShare(r.getValue(RDIR_STAFF.PERCENT_SHARE))
-					.setRepresentative(r.getValue(RDIR_STAFF.REPRESENTATIVE) == 1)
-					.setRepresentativeLabor(r.getValue(RDIR_STAFF.REPRESENTATIVE_LABOR) == 1)
-					.setShareHolder(r.getValue(RDIR_STAFF.SHAREHOLDER) == 1);
 		}
 	}
 

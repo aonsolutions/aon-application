@@ -232,7 +232,7 @@ public class WorkServlet extends HttpServlet{
 	
 	private JSONObject addWorkgroup(Domain domain, String userName, JSONObject json){
 		Workgroup workgroup = new Workgroup().setDomain(domain.getId())
-				.setDescription(json.getString("name")).setStatus((byte) 0);
+				.setDescription(json.getString("name")).setStatus(WorkgroupStatus.ACTIVE);
 		AON.insertWorkgroup(domain.getName(), domain.getId(), userName, workgroup);
 		return new JSONObject(); // TODO
 	}
@@ -240,7 +240,7 @@ public class WorkServlet extends HttpServlet{
 	private JSONObject updateWorkgroup(Domain domain, String userName, Integer id, JSONObject json){
 		Workgroup workgroup = AON.getWorkgroup(domain.getName(), domain.getId(), userName, id)
 			.setDescription(json.getString("name"))
-			.setStatus(json.getString("active").equalsIgnoreCase("true") ? WorkgroupStatus.ACTIVE.value() : WorkgroupStatus.INACTIVE.value());
+			.setStatus(json.getString("active").equalsIgnoreCase("true") ? WorkgroupStatus.ACTIVE : WorkgroupStatus.INACTIVE);
 		
 		AON.updateWorkgroup(domain.getName(), domain.getId(), userName, workgroup);
 		return new JSONObject(); // TODO
@@ -251,7 +251,6 @@ public class WorkServlet extends HttpServlet{
 		AON.deleteWorkgroup(domain.getName(), domain.getId(), userName, id);
 		return new JSONObject(); // TODO
 	}
-
 	
 	private static class RegistryToUserFiller implements Function<TaskHolder, User> {
 		
@@ -271,7 +270,7 @@ public class WorkServlet extends HttpServlet{
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getDescription())
-					.setStatus(RegistryStatus.values()[r.getStatus()]);  
+					.setStatus(RegistryStatus.values()[r.getStatus().value()]);  
 		}
 	}
 }

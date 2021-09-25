@@ -4,7 +4,6 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountAnalyticalReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountConsolidatedBalanceReport;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountJournalReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountLedgerReport;
@@ -15,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountTrialBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.period.AccountingPeriodModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilities;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
+import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.paymethod.PayMethodModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilities;
 import com.esferalia.aon.gwt.fiscal.client.invoice.IRPFReport;
@@ -114,6 +114,10 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== RAWDOC
 	//
 	private static final String RAWDOC_ENTRY_POINT = "RawdocModule";
+	//
+	//    ================================================================== CHECKIT
+	//
+	private static final String CHECKIT_ENTRY_POINT = "CheckItModule";
 
 	private static AonData aonData;
 	
@@ -557,21 +561,6 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if ( entryPoint.equalsIgnoreCase(ACC_ACCOUNT_ENTRY_ENTRY_POINT)) {
-			GWT.runAsync(AccountEntryModule.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					AccountEntryModule accountEntryModule = new AccountEntryModule();
-					accountEntryModule.onModuleLoad();
-				}
-				
-			});
 		} else if ( entryPoint.equalsIgnoreCase(ACC_ACCOUNT_ENTRY_ENTRY_POINT_TEDI)) {
 			GWT.runAsync(AccountEntryModuleTEDI.class, new RunAsyncCallback() {
 
@@ -778,6 +767,21 @@ public class MainEntryPoint implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					RawdocModule rawdoc  = new RawdocModule();
+					rawdoc.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(CHECKIT_ENTRY_POINT)) {
+			GWT.runAsync(CheckItModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					CheckItModule rawdoc  = new CheckItModule();
 					rawdoc.onModuleLoad();
 				}
 				

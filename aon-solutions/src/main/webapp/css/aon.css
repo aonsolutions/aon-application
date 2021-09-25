@@ -5,14 +5,12 @@
   --aonDarkGray : #5F6368;
   --aonBlack : #212529;
   --aonWhite : #ffffff;
-
   --onlineGreen : #5cb85c;
   --grayson : #787878;
   --materialBlue : #007bff;
   --materialBlack : #404040;
   --materialRed : #f44336;
   --materialSoftBlack : #202020;
-
   --sat: env(safe-area-inset-top);
   --sar: env(safe-area-inset-right);
   --sab: env(safe-area-inset-bottom); /* THIS ONE GETS US THE HOME BAR HEIGHT */
@@ -22,6 +20,24 @@
 *, ::after, ::before {
   box-sizing: border-box;
 }
+
+
+.dragAndDrop {
+  border: 1px dashed #002469 !important;
+  opacity: 0.6;
+}
+
+.dragAndDrop::after {
+  content: "Suelte los archivos aquí";
+  opacity:  1;
+  position: absolute;
+  color: #808080;
+  font-size: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 
 body {
   padding: 0px !important;
@@ -39,7 +55,7 @@ ul {
 }
 
 .aonAppLi:hover {
-  background-color: #f1f1f1;
+  background-color: var(--aonLightGray);
 }
 
 a {
@@ -78,7 +94,7 @@ a {
   position: relative;
   display: block;
   padding: .75rem 1.25rem;
-  background-color: #fff;
+  background-color: var(--aonWhite);
   border-bottom: 1px solid rgba(0,0,0,.125);
   border-left: 1px solid rgba(0,0,0,.125);
   border-right: 1px solid rgba(0,0,0,.125);
@@ -316,6 +332,10 @@ button:disabled, button[disabled]{
   overflow: hidden;
 }
 
+.sidenavHover:hover{
+  background-color: var(--aonLightGray);
+}
+
 .aonMenuLink {
   height: 30px;
   color: #000;
@@ -323,7 +343,7 @@ button:disabled, button[disabled]{
 }
 
 .aonHeader {
-  background-color: #fff;
+  background-color: var(--aonWhite);
   padding: 0 !important;
   margin: 0 !important;
   border-bottom: 1px solid #ddd;
@@ -511,7 +531,7 @@ button:disabled, button[disabled]{
 }
 
 .aonTable tbody tr:hover {
-  background-color: #f1f1f1;
+  background-color: var(--aonLightGray);
 }
 
 .aonTable tbody tr:active {
@@ -528,7 +548,7 @@ button:disabled, button[disabled]{
   position: fixed;
   top: 60px;
   right: 0;
-  background-color: #fff;
+  background-color: var(--aonWhite);
   border-left: 1px solid #ddd;
   overflow-x: hidden;
   z-index: 2;
@@ -579,7 +599,7 @@ button:disabled, button[disabled]{
   flex-grow: 0;
   flex-shrink: 0;
   left: 0;
-  background-color: #fff;
+  background-color: var(--aonWhite);
   border-right: 1px solid #ddd;
   transition-duration: 500ms;
   overflow-x: hidden;
@@ -592,7 +612,7 @@ button:disabled, button[disabled]{
   position: fixed;
   z-index: 1;
   left: 0;
-  background-color: #fff;
+  background-color: var(--aonWhite);
   border-right: 1px solid #ddd;
   transition-duration: 500ms;
   overflow-x: hidden;
@@ -723,7 +743,7 @@ button:disabled, button[disabled]{
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
+  background-color: var(--aonWhite);
   background-clip: border-box;
   border: 1px solid rgba(0,0,0,.125);
   border-radius: .25rem;
@@ -765,6 +785,7 @@ button:disabled, button[disabled]{
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
+  user-select: none;
 }
 
 .aonDialogContent {
@@ -846,7 +867,7 @@ button:disabled, button[disabled]{
 
 .aonDatepicker {
   display: block;
-  background: #fff;
+  background: var(--aonWhite);
   margin: 0;
   padding: 0;
   border: none;
@@ -864,6 +885,17 @@ button:disabled, button[disabled]{
   padding: 1px;
   border: 1px solid #ddd;
   border-radius: 2px;
+}
+
+.aonDatepicker.is-visible.is-mobile {
+  width:250px;
+  height: 300px;
+  position: fixed;
+  margin: auto;
+  left :0;
+  right:0;
+  top  :0;
+  bottom:0;
 }
 
 .aonSeparator {
@@ -964,7 +996,7 @@ button:disabled, button[disabled]{
 
 .aonCheckbox > input:checked + span::after,
 .aonCheckbox > input:indeterminate + span::after {
-    border-color: #fff;
+    border-color: var(--aonWhite);
 }
 
 .aonCheckbox > input:indeterminate + span::after {
@@ -1167,7 +1199,7 @@ button:disabled, button[disabled]{
   display:none;
   top:60px;
   opacity:0.7;
-  background-color:#f1f1f1;
+  background-color:var(--aonLightGray);
   border-radius: 100px 0 0 100px;
   right: 0;
 }
@@ -1199,13 +1231,12 @@ button:disabled, button[disabled]{
 /*NEW*/
 
 .continueLined{--height : 100%}
-.continueLined:before{
-    content: ".";
+.continueLined::after{
+    content: "";
     position: absolute;
     border-left:  2px solid #f0f0f0;
     height: var(--height);
-    width: calc(100% - 50px);
-    left: 50px;
+    left: 25px;
     top: 0px;
     z-index: -10;
 }
@@ -1253,7 +1284,26 @@ button:disabled, button[disabled]{
 }
 
 .aonImgComment{
-  max-width: 100%;
-  max-height:  100%;
+  max-width: 50%;
+  max-height:  50%;
   cursor: pointer;
+}
+
+.messageAfter:after{
+  background: rgba(128, 128, 128, 0.1);
+  content: '';
+  display: block;
+  position: absolute;
+  top: 9px;
+  left: 8px;
+  right: 7px;
+  bottom: 9px;
+  border-radius: 7.5px;
+}
+
+.colorMe.messageAfter:after{
+  border-right: 5px solid var(--onlineGreen);
+}
+.colorOther.messageAfter:after{
+  border-left: 5px solid var(--aonBlack);
 }

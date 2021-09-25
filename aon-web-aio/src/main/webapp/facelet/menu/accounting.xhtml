@@ -29,20 +29,18 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountEntryTEDI"
 										action="gwt_accountEntryTEDI-deposit"
-										title="#{bundle.accounting_entry_module}">
-										<aon:outputText
-											styleClass="aon-fiscal-link-label aon-icon-new-text"
-											style="margin-left: 5px; padding-left: 20px;"
-											value="#{bundle.accounting_entry_module}" />
+										title="#{bundle.accounting_entry_module}"
+										value="#{bundle.accounting_entry_module}" >
 									</aon:commandLink>
 								</aon:div>
-
+<!-- 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_accountEntry"
 										action="gwt_accountEntry-deposit"
 										title="#{bundle.accounting_entry_module}"
 										value="#{bundle.accounting_entry_module}" />
 								</aon:div>
+ -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="periodAmortization"
 										action="periodAmortization_search"
@@ -347,6 +345,19 @@
 												value="#{bundle.finance_bank_statement_module}" />
 										</aon:div>
 									</aon:div>
+ 									<aon:if test="#{domainSwitcher.alphaUser}">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_checkIt-accounting"
+												action="gwt_checkIt-accounting"
+												title="Agregador bancario">
+												<aon:outputText
+													styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;"
+													value="Agregador bancario" />
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>
+									
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_finance-accounting"
 											action="gwt_finance-accounting"
@@ -521,7 +532,7 @@
 												<aon:commandLink id="accountEntry"
 													action="accountEntry_search"
 													actionListener="#{accountEntry.onEditSearch}"
-													value="#{bundle.accounting_entry_module} [Antiguo - HASTA 01/08/2020]" />
+													value="#{bundle.accounting_entry_module} [Antiguo]" />
 											</aon:div>
 										</aon:div>
 									</aon:panelGrid>

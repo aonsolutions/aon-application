@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -12,6 +14,9 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
@@ -30,6 +35,9 @@ public class EmployeeEventsDraftObject {
 	private ArrayList<String> employeeContractVariables;
 	
 	private ArrayList<String> calendarVariables;
+	private ArrayList<String> agreementVariables;
+	private Map<String, String> agreementVariablesValue;
+	private ArrayList<String> contractVariables;
 	
 	// ----------------------------------------------- Constructor 
 	
@@ -38,6 +46,9 @@ public class EmployeeEventsDraftObject {
 		this.idEmployee = idEmployee;
 		this.employeeContractVariables = new ArrayList<String>();
 		this.calendarVariables = new ArrayList<String>();
+		this.agreementVariables = new ArrayList<String>();
+		this.contractVariables = new ArrayList<String>();
+		this.agreementVariablesValue = new HashMap<String, String>();
 	}
 	
 	// ----------------------------------------------- initCalendarVariables 
@@ -60,8 +71,31 @@ public class EmployeeEventsDraftObject {
 		return this.calendarVariables;
 	}
 	
+	public ArrayList<String> getAgreementOnlyVariables() {
+		return this.agreementVariables;
+	}
+	
+	public ArrayList<String> getContractVariables() {
+		return this.contractVariables;
+	}
+	
 	public ArrayList<String> getAllVariables() {
-		return this.employeeContractVariables;
+		LinkedHashSet<String> allVariablesListAux = new LinkedHashSet<String>();
+		
+		allVariablesListAux.addAll(calendarVariables);
+		allVariablesListAux.addAll(agreementVariables);
+		allVariablesListAux.addAll(contractVariables);
+		allVariablesListAux.addAll(employeeContractVariables);
+		
+		ArrayList<String> allVariablesList = new ArrayList<String>(allVariablesListAux);
+		allVariablesList.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		
+		return allVariablesList;
 	}
 
 	public ArrayList<String> getAgreementVariables() {
@@ -69,6 +103,13 @@ public class EmployeeEventsDraftObject {
 		for(String var : employeeContractVariables)
 			if(!isCalendarVariable(var))
 				agreementVars.add(var);
+		
+		agreementVars.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
 		
 		return agreementVars;
 	}
@@ -115,6 +156,13 @@ public class EmployeeEventsDraftObject {
 			result.add(var);
 		}
 		
+		result.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		
 		return result;
 	}
 	
@@ -145,15 +193,71 @@ public class EmployeeEventsDraftObject {
 			result.add(var);
 		}
 		
+		result.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		
 		return result;
+	}
+	
+	public Double getAcumulateYear(String var) {
+		ArrayList<EmployeeEventsVariable> employeeEventsVariables = this.mapEventsVar.get(var);
+		Date startDate = DateUtils.getFirstDayOfYear();
+		Date endDate = DateUtils.getLastDayOfYear(DateUtils.getFirstDayOfMonth());
+		Double accumulateYear = 0.0;
+		
+		if(null == employeeEventsVariables)
+			return accumulateYear;
+		
+		for(EmployeeEventsVariable employeeEventsVariable : employeeEventsVariables) {
+			if(null == employeeEventsVariable.getEndDate()) {
+				accumulateYear = getAccumulateYearForNullEndPeriod(accumulateYear, employeeEventsVariable);
+				break;
+			}
+			
+			if(DateUtils.isAfterOrEquals(employeeEventsVariable.getStartDate(), startDate) &&
+				(null == employeeEventsVariable.getEndDate() || DateUtils.isBeforeOrEquals(employeeEventsVariable.getEndDate(), endDate))) {
+				
+				Double value = employeeEventsVariable.getValue();
+				accumulateYear += value;
+			}
+		}
+		
+		return accumulateYear;
+	}
+	
+	private Double getAccumulateYearForNullEndPeriod(Double accumulateYear, EmployeeEventsVariable employeeEventsVariable) {
+		Date endDate = DateUtils.getLastDayOfYear(DateUtils.getFirstDayOfMonth());
+		int monthsBetween = DateUtils.getMonths(employeeEventsVariable.getStartDate(), endDate);
+		Double accumulate = employeeEventsVariable.getValue() * monthsBetween;
+		
+		return accumulateYear + accumulate;
+	}
+
+	public EmployeeEventsVariable getEmployeeEventsVariable(String variableName) {
+		ArrayList<EmployeeEventsVariable> employeeEventsVariables = this.mapEventsVar.get(variableName);
+		if(employeeEventsVariables.isEmpty())
+			return null;
+		return employeeEventsVariables.get(0);
 	}
 	
 	public Boolean isCalendarVariable(String var) {
 		return calendarVariables.contains(var);
 	}
 	
+	public Boolean isAgreementVariable(String var) {
+		return agreementVariables.contains(var);
+	}
+	
 	public boolean isContractVariable(String var){
 		return this.employeeContractVariables.contains(var);
+	}
+	
+	public String getAgreementVariablesValue(String var) {
+		return agreementVariablesValue.get(var);
 	}
 	
 	public Map<String, ArrayList<EmployeeEventsVariable>> getMapEventsVar() {
@@ -212,6 +316,24 @@ public class EmployeeEventsDraftObject {
 					employeeContractVariables.add(varName);
 				}
 				
+				// Check agreement only variables
+				for(Entry<String, ArrayList<VariableDescriptor>> entry : context.getVariableDescriptors().entrySet()) {
+					String variableName = entry.getKey();
+					ArrayList<VariableDescriptor> variables = entry.getValue();
+					if(null == variables || variables.isEmpty())
+						continue;
+					
+					for(VariableDescriptor variableDescriptor : variables) {
+						if(variableDescriptor.getScope() == Scope.AGREEMENT && !agreementVariables.contains(variableName)) {
+							agreementVariables.add(variableName);
+							agreementVariablesValue.put(variableName, variableDescriptor.getExpression());
+						}
+						
+						if(variableDescriptor.getScope() == Scope.CONTRACT && !contractVariables.contains(variableName) && !continueVariable(variableName))
+							contractVariables.add(variableName);
+					}
+				}
+				
 				initializeDBCalendar(
 						s -> { success.accept(context);}, 
 						f -> {}
@@ -240,14 +362,49 @@ public class EmployeeEventsDraftObject {
 				employeeEventsData = resultEmployeeEventsData;
 				employeeContractVariables = employeeEventsData.getEmployeeContractVariables();
 				mapEventsVar = employeeEventsData.getEventDateVarList();
+				
+				for(String agreementVariable : agreementVariables)
+					employeeContractVariables.remove(agreementVariable);
+				
+				for(String contractVariable : contractVariables)
+					employeeContractVariables.remove(contractVariable);
+				
+				sortVariablesList();
+				
 				success.accept(resultEmployeeEventsData);
+			}
+		});
+	}
+
+	private void sortVariablesList() {
+		calendarVariables.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		agreementVariables.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		contractVariables.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
+			}
+		});
+		employeeContractVariables.sort(new Comparator<String>() {
+			@Override
+			public int compare(String var1, String var2) {
+				return var1.compareTo(var2);
 			}
 		});
 	}
 	
 	public void updateDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
-		
-		employeesService.setEmployeeEvents(this.idEmployee, employeeEventsData, new AsyncCallback<EmployeeEventsData>() {
+		employeesService.setEmployeeEventsByContract(this.idEmployee, employeeEventsData, new AsyncCallback<EmployeeEventsData>() {
 
 			@Override
 			public void onFailure(Throwable caught) {}
@@ -273,6 +430,14 @@ public class EmployeeEventsDraftObject {
 		filterSet.add("GRUPO_COTIZACION");
 		filterSet.add("ANTIGUEDAD_HELP");
 		filterSet.add("GET_VARIABLE");
+		filterSet.add("LABORABLE");
+		filterSet.add("OS_TRABAJADOS");
+		filterSet.add("DIAS_");
+		filterSet.add("OCUPACI");
+		filterSet.add("COEFICIENTE_PARCIALIDAD");
+		filterSet.add("SMI");
+		filterSet.add("HIDE");
+		filterSet.add("TODO");
 		
 		filterSet.addAll(allStaticVariables);
 		
@@ -286,9 +451,33 @@ public class EmployeeEventsDraftObject {
 		return resultSet;
 	}
 	
+	private boolean continueVariable(String variableName) {
+		// Filter set
+		Set<String> filterSet = new LinkedHashSet<String>();
+		filterSet.add("PAGA_EXTRA_HELP");
+		filterSet.add("TC2");
+		filterSet.add("SALARIO_VARIABLE_DIA");
+		filterSet.add("AÑOS_TRABAJADOS");
+		filterSet.add("GRUPO_COTIZACION");
+		filterSet.add("ANTIGUEDAD_HELP");
+		filterSet.add("GET_VARIABLE");
+		filterSet.add("LABORABLE");
+		filterSet.add("OS_TRABAJADOS");
+		filterSet.add("DIAS_");
+		filterSet.add("OCUPACI");
+		filterSet.add("COEFICIENTE_PARCIALIDAD");
+		
+		for(String filterVar : filterSet){
+			if(AonStringUtils.equalsIgnoreCase(filterVar, variableName) || AonStringUtils.containsIgnoreCase(variableName, filterVar))
+				return true;
+		}
+		
+		return false;
+	}
+	
 	private boolean contains(Set<String> filterSet, String var) {
 		for(String filterVar : filterSet) {
-			if(filterVar.equals(var) || filterVar == var || var.contains("OS_TRABAJADOS")) // AÑOS_TRABAJADOS
+			if(AonStringUtils.equalsIgnoreCase(filterVar, var) || AonStringUtils.containsIgnoreCase(var, filterVar))
 				return true;
 		}
 		return false;
@@ -299,23 +488,72 @@ public class EmployeeEventsDraftObject {
 	public ArrayList<EmployeeEventsVariable> getListEmployeeEventsVaribales (String varName){
 		return this.mapEventsVar.getOrDefault(varName, null);
 	}
+
+	public void setListEmployeeEventsVaribales (String varName, ArrayList<EmployeeEventsVariable> employeeEventsVariables){
+		//TODO: REVISAR ESTO PARA QUE NO SE GUARDE POR MESES
+		employeeEventsData.setEventData(varName, employeeEventsVariables);
+		mapEventsVar.put(varName, employeeEventsVariables);
+//		mapEventsVar = employeeEventsData.getEventDateVarList();
+	}
 	
-	public EmployeeEventsVariable getEmployeeEventsVariableByMonth (String varName, int month, Integer year){
+	public Double getAcumulateVariableByMonth (String varName, int month, Integer year){
 		ArrayList<EmployeeEventsVariable> varList = this.mapEventsVar.getOrDefault(varName, null);
+		Date firstDayMonth = DateUtils.getFirstDayOfMonth(DateUtils.getDate(month, year));
+		Date lastDayMonth = DateUtils.getLastDayOfMonth(DateUtils.getDate(month, year));
+		Double acumulateMonth = 0.0;
 		
 		if(null != varList) {
-			for (EmployeeEventsVariable e : this.mapEventsVar.get(varName)){
+			for (EmployeeEventsVariable e : varList){
+				if(null == e.getEndDate() && DateUtils.isBeforeOrEquals(e.getStartDate(), firstDayMonth)) {
+					acumulateMonth = e.getValue();
+					break;
+				}
+				
 				if(year != DateUtils.getYear(e.getStartDate()))
 					continue;
-				if (month == DateUtils.getMonth(e.getStartDate()))
-					return e;
+				if ((DateUtils.isAfterOrEquals(e.getStartDate(), firstDayMonth) && DateUtils.isBeforeOrEquals(e.getStartDate(), lastDayMonth)) &&
+						null != e.getValue()) {
+					Double value = e.getValue();
+					acumulateMonth += value;
+				}	
 			}
 		}
 		
-		return null;
+		return acumulateMonth;
+	}
+
+	public boolean hasMoreThanOneValue (String varName, int month, Integer year){
+		ArrayList<EmployeeEventsVariable> varList = this.mapEventsVar.getOrDefault(varName, null);
+		Date firstDayMonth = DateUtils.getFirstDayOfMonth(DateUtils.getDate(month, year));
+		Date lastDayMonth = DateUtils.getLastDayOfMonth(DateUtils.getDate(month, year));
+		Integer values = 0;
+		
+		if(null != varList) {
+			for (EmployeeEventsVariable e : varList){
+				if(null == e.getEndDate() && DateUtils.isBeforeOrEquals(e.getStartDate(), firstDayMonth)) {
+					values = 1;
+					break;
+				}
+				
+				if(year != DateUtils.getYear(e.getStartDate()))
+					continue;
+				
+				if ((DateUtils.isAfterOrEquals(e.getStartDate(), firstDayMonth) && DateUtils.isBeforeOrEquals(e.getStartDate(), lastDayMonth)) 
+						&& null != e.getValue())
+					values++;	
+			}
+		}
+		
+		return values > 1;
 	}
 
 	public void setValueByMonth(String variableName, String value, Date startDate, Date endDate) {
+		employeeEventsData.addEventData(variableName, startDate, endDate, value);
+		mapEventsVar = employeeEventsData.getEventDateVarList();
+	}
+	
+	public void setSettleHolidayValueByMonth(String variableName, String value, Date startDate, Date endDate) {
+		employeeEventsData.removeEventData(variableName);
 		employeeEventsData.addEventData(variableName, startDate, endDate, value);
 		mapEventsVar = employeeEventsData.getEventDateVarList();
 	}

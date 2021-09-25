@@ -34,6 +34,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Key;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020Key;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
@@ -43,6 +45,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod200_2016.Mod2002016DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2017.Mod2002017DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2018.Mod2002018DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2019.Mod2002019DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2020.Mod2002020DAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -391,17 +394,17 @@ public class Mod202DAO extends FiscalModelDAO {
 				}
 			} else if (mod.getYear() == 2021) {
 				if (mod.getPeriod() == Period.T1) {
-					// SOCIEDADES 2018
+					// SOCIEDADES 2019
 					Mod2002019 soci2019 = Mod2002019DAO.getByYear(ctx, 2019);
 					if (soci2019 != null) {
 						return soci2019.getVariable(Mod2002019Key.BN599).getValue();
 					}						
 				} else {
 //					// SOCIEDADES 2020
-//					Mod2002020 soci2020 = Mod2002019DAO.getByYear(ctx, 2020);
-//					if (soci2020 != null) {
-//						return soci2020.getVariable(Mod2002020Key.BN599).getValue();
-//					}						
+					Mod2002020 soci2020 = Mod2002020DAO.getByYear(ctx, 2020);
+					if (soci2020 != null) {
+						return soci2020.getVariable(Mod2002020Key.BN599).getValue();
+					}						
 				}
 			}
 		}

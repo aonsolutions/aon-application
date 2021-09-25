@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.logging.Logger;
-
+import com.esferalia.aon.occam.api.model.Filter;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +11,11 @@ import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.WorkgroupJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.Properties.WorkgroupProperties;
+import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
+
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -30,7 +35,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 					response(req, resp, getWorkgroups(api));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -47,7 +52,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 					response(req, resp, saveWorkgroup(api));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -64,7 +69,7 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 					response(req, resp, deleteWorkgroup(api));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -74,17 +79,12 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 	private Object getWorkgroups(AonApiData api) {
 		Domain domain = api.getDomain();
 		return WorkgroupJSON.toJSON(AON.getWorkgroupStream(domain.getName(), domain.getId(), api.getUser().getLogin(), 
-				f->f.getDomainProperty().eq(domain.getId())));
+				f->workgroupFilter(api,f) ));
 	}
-
 	
 	private JSONObject saveWorkgroup(AonApiData api) {
 		Domain domain = api.getDomain();
-		Workgroup workgroup = new Workgroup()
-		.setDomain(domain.getId())
-		.setDescription(api.getData().optString("description"))
-		.setStatus((byte)(api.getData().optBoolean("status") ? 1 : 0))
-		.setId(api.getData().optInt("id"));
+		Workgroup workgroup = WorkgroupJSON.fromJSON(api.getData());
 		workgroup = AON.saveWorkgroup(domain.getName(), domain.getId(), api.getUser().getLogin(), workgroup);
 		return WorkgroupJSON.toJSON(workgroup);
 	}
@@ -94,6 +94,16 @@ public class WorkgroupServlet extends AonApiHttpServlet{
 		AON.deleteWorkgroup(domain.getName(), domain.getId(), api.getUser().getLogin(), 
 				api.getData().optInt(IJsonNames.ID));
 		return new JSONObject();
+	}
+	
+	private Filter workgroupFilter(AonApiData api, WorkgroupProperties f) {
+		Domain domain = api.getDomain();
+		String status  = api.getParams().optString("status");
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+		if(!status.isEmpty()) 
+			filter = filter.and( f.getStatusProperty().eq( WorkgroupStatus.safeValueOf(status).value() ) );
+
+		return filter;
 	}
 	
 }

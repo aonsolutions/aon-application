@@ -144,6 +144,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconPaste();
 	
+	@Source("icons/aon-icon-receipt.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconReceipt();
+	
 	@Source("icons/aon-icon-move-to.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconMoveTo();
@@ -164,6 +168,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconAttach();
 	
+	@Source("icons/aon-icon-no-attach.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconNoAttach();
+
 	@Source("icons/aon-icon-show-pass.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconShowPass();
@@ -315,6 +323,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-close.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconClose();
+	
+	@Source("icons/aon-icon-close-white.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCloseWhite();
 
 	@Source("icons/aon-icon-check.svg")
 	@MimeType("image/svg+xml")
@@ -564,5 +576,24 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconLetterS();
 
+	@Source("icons/aon-icon-wrench.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconWrench();
+	
+	@Source("icons/aon-icon-toggle-on.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconToggleOn();
+	
+	@Source("icons/aon-icon-toggle-off.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconToggleOff();
+
+	@Source("icons/aon-icon-register.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconRegister();
+	
+	@Source("icons/aon-icon-link.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLink();
 }
 

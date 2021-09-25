@@ -62,53 +62,59 @@ export class AonMobileDesktop extends AonElement {
 		return this.dur;
 	}
 
-	build() {
-		this.innerHTML = '';
-		let divParent = this.createElement(TAG.DIV);
-		divParent.id = this.DIV_PARENT;
-		divParent.style.height = '100%';
-		divParent.style.maxWidth = '100%';
-		divParent.style.overflowX = 'hidden';
-		divParent.style.display = "flex";
-		divParent.style.flexDirection = "column";
-		this.appendChild(divParent);
-
-		if(localStorage.getItem('company')) {
-			let company = JSON.parse(localStorage.getItem('company'));
-			localStorage.setItem('aon_domain_id', company.id);
-			localStorage.setItem('aon_domain_name', company.domain);
-			getUser().then(user => {
+	async build() {
+		try {
+			this.innerHTML = '';
+			let divParent = this.createElement(TAG.DIV);
+			divParent.id = this.DIV_PARENT;
+			divParent.style.height = '100%';
+			divParent.style.maxWidth = '100%';
+			divParent.style.overflowX = 'hidden';
+			divParent.style.display = "flex";
+			divParent.style.flexDirection = "column";
+			this.appendChild(divParent);
+			let notice = undefined;
+			if(localStorage.getItem('company')) {
+				let company = JSON.parse(localStorage.getItem('company'));
+				localStorage.setItem('aon_domain_id', company.id);
+				localStorage.setItem('aon_domain_name', company.domain);
+				const user = await getUser();
 				localStorage.setItem('aon_domain_login', user.login);
-			});
-			this.buildCompany();
-			if(!this.getDur().isEmployee()){
-				getDomainNotice().then(notice => {
-					this.buildNotifications(notice);
-				});
+				await this.buildCompany();
+				if(!this.getDur().isEmployee()){
+					notice = await getDomainNotice();
+				}
+			} else {
+				await this.buildCompany();
+				if(!this.getDur().isEmployee()) {
+					notice = await getUserNotice();
+				}
 			}
-		} else {
-			this.buildCompany();
-			if(!this.getDur().isEmployee()) {
-				getUserNotice().then(notice => {
-					this.buildNotifications(notice);
-				});
+			
+			if(notice){
+				this.buildNotifications(notice);
 			}
+
+			await this.buildTimeControl();
+		} catch (error) {
+			console.log(error);
 		}
-		this.buildTimeControl();
+
 	}
 
-	buildCompany() {
-		let companyDiv = this.getElement(this.COMPANY_DIV) || this.createElement(TAG.DIV);
-		companyDiv.id = this.COMPANY_DIV;
-		companyDiv.style.margin = '10px';
-		companyDiv.style.marginLeft = '50px';
-		companyDiv.style.marginRight = '50px';
-		companyDiv.style.textAlign = 'center';
-		this.getElement(this.DIV_PARENT).appendChild(companyDiv);
-
-		getCompanyHeaderInfo().then((pi) =>{
+	async buildCompany() {
+		try {
+			let companyDiv = this.getElement(this.COMPANY_DIV) || this.createElement(TAG.DIV);
+			companyDiv.id = this.COMPANY_DIV;
+			companyDiv.style.margin = '10px';
+			companyDiv.style.marginLeft = '50px';
+			companyDiv.style.marginRight = '50px';
+			companyDiv.style.textAlign = 'center';
+			this.getElement(this.DIV_PARENT).appendChild(companyDiv);
+	
+			const pi = await getCompanyHeaderInfo();
 			let url = pi.logo || 'https://sig.aonsolutions.org/aonDocuments/company.logo';
-			let img = this.createElement('img');
+			let img = this.createElement(TAG.IMG);
 			img.style.maxWidth = '200px';
 			img.style.maxHeight = '100px';
 			img.style.position = 'relative';
@@ -120,26 +126,25 @@ export class AonMobileDesktop extends AonElement {
 			this.clearElement(companyDiv);
 			companyDiv.appendChild(img);
 			//companyDiv.innerHTML = `<img style="position: relative;width: 100%;" src="${url}">`;
-		});
-
-		if(localStorage.getItem('company')) {
-			// let menu = document.querySelector('aon-mobile-menu');
-			// menu.reload();
-		} else {
-			getCompanies()
-			.then( companies => {
+	
+			if(localStorage.getItem('company')) {
+				// let menu = document.querySelector('aon-mobile-menu');
+				// menu.reload();
+			} else {
+				const companies = await getCompanies();
 				if(companies.length > 0) {
 					let company = companies[0];
 					localStorage.setItem('company', JSON.stringify(company));
 					localStorage.setItem("aon_domain_id", company.id);
 					localStorage.setItem("aon_domain_name", company.domain);
-					getUser().then(user => {
-						localStorage.setItem('aon_domain_login', user.login);
-					});
+					const user = await getUser();
+					localStorage.setItem('aon_domain_login', user.login);
 					// let menu = document.querySelector('aon-mobile-menu');
 					// menu.reload();
 				}
-			});
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	}
 
@@ -185,36 +190,35 @@ export class AonMobileDesktop extends AonElement {
 			? this.rootPanel(new AonMessenger()) : this.development('Solicitud')));
 	}
 
-	buildTimeControl() {
+	async buildTimeControl() {
 		if(this.getDur().isTimecontrol()) {
-			getTimeControl().then(r => {
-				let div2 = this.getElement(this.TIMECONTROL_TITLE) || this.createElement(TAG.DIV);
-				div2.id = this.TIMECONTROL_TITLE;
-				if(!this.isMobile()){
-					this.clearElement(div2);
-					div2.appendChild(this.createTitleTime());
-				}
-				this.getElement(this.DIV_PARENT).appendChild(div2);
-	
-				let div3 = this.getElement(this.TIMECONTROL_SIGN) || this.createElement(TAG.DIV);
-				div3.id = this.TIMECONTROL_SIGN;
-				div3.style.marginLeft = '25px';
-				if(this.isMobile()){
-					// div3.style.marginTop = "auto";
-					div3.style.marginBottom = "10px";
-					div3.style.borderTop = '1px solid #ddd';
-					this.clearElement(div3);
-					div3.appendChild(this.createTitleTime());
-				}
-				div3.appendChild(new AonStatistics());
-				let aonSign = new AonSign();
-				aonSign.setTimeControl(r);
-				div3.appendChild(aonSign);
-				this.getElement(this.DIV_PARENT).appendChild(div3);
-				
-				let aonHeader = this.getElement('aonHeader');
-				aonHeader.timeControlStatus(r);
-			});	
+			const r = await getTimeControl();
+			let div2 = this.getElement(this.TIMECONTROL_TITLE) || this.createElement(TAG.DIV);
+			div2.id = this.TIMECONTROL_TITLE;
+			if(!this.isMobile()){
+				this.clearElement(div2);
+				div2.appendChild(this.createTitleTime());
+			}
+			this.getElement(this.DIV_PARENT).appendChild(div2);
+
+			let div3 = this.getElement(this.TIMECONTROL_SIGN) || this.createElement(TAG.DIV);
+			div3.id = this.TIMECONTROL_SIGN;
+			div3.style.marginLeft = '25px';
+			if(this.isMobile()){
+				// div3.style.marginTop = "auto";
+				div3.style.marginBottom = "10px";
+				div3.style.borderTop = '1px solid #ddd';
+				this.clearElement(div3);
+				div3.appendChild(this.createTitleTime());
+			}
+			div3.appendChild(new AonStatistics());
+			let aonSign = new AonSign();
+			aonSign.setTimeControl(r);
+			div3.appendChild(aonSign);
+			this.getElement(this.DIV_PARENT).appendChild(div3);
+			
+			let aonHeader = this.getElement('aonHeader');
+			aonHeader.timeControlStatus(r);
 		}
 	}
 

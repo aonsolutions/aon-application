@@ -27,6 +27,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
@@ -68,6 +69,7 @@ import com.esferalia.aon.occam.api.model.type.MailProcessType;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import solutions.aon.aws.ses.SES;
 
 public class MessageController implements IWebMailConstants, Serializable {
 	
@@ -177,23 +179,38 @@ public class MessageController implements IWebMailConstants, Serializable {
 		}
 	}
 	
+	
+	public boolean isProtocolAon() {
+		return this.senderMailAccount.getProtocol() != null && "aon".equalsIgnoreCase(this.senderMailAccount.getProtocol());
+	}
+	
     public void onSend(ActionEvent event) {
-    	AonServer server = new AonServer(this.senderMailAccount);
-    	try {
-    		send(server);
-		} catch (Throwable th) {
-			AonUtil.addErrorMessage(th.getMessage());
-			throw new AbortProcessingException(th);
-		} finally {
-	    	finishMessage();
-		}
+       	AonServer server = new AonServer(this.senderMailAccount);
+       	try {
+       		send(server);
+   		} catch (Throwable th) {
+   			AonUtil.addErrorMessage(th.getMessage());
+   			throw new AbortProcessingException(th);
+   		} finally {
+   	    	finishMessage();
+   		}
     }
 
 	public void send(AonServer server) throws WebmailException {
     	AonMessage sentMessage = null;
     	try {
 	    	sentMessage = compoundMessage(server);
-    		server.sendMessage(sentMessage);
+	    	if(isProtocolAon()) {
+	    		String from = this.senderMailAccount.getDisplayName() + "<no-reply@aon.solutions>";
+	    		MimeMessage message = (MimeMessage) sentMessage.getMessage();
+	            message.setFrom(new InternetAddress(from));
+	            Address replyTo = new InternetAddress(this.senderMailAccount.getEmail());
+	            Address[] addresses = {replyTo};
+	            message.setReplyTo(addresses);
+	            SES.sendEmail(message);
+	    	} else {
+	    		server.sendMessage(sentMessage);
+	    	}
     		this.sentAddressList = sentMessage.getAllRecipients();
 		} catch (Throwable th) {
 			if ( sentMessage != null ) {

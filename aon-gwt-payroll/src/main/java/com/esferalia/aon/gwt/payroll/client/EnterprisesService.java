@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -110,9 +111,11 @@ public interface EnterprisesService extends RemoteService {
 
 	WorkplaceInfo setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo);
 
-	List<Workplace> getWorkplaces(Workplace workplace, String domain);
+	List<Workplace> getWorkplaces(String domain);
+	
+	Map<String, String> getPayMethods(String domain);
 
-	ActivitiesCCC getActivitiesCCC(Workplace workplaceId, String currentDomainName);
+	ActivitiesCCC getActivityCCC(String domain);
 
 	ActivityInfo getActivityInfoDataBase(Integer activityId, String domain);
 
@@ -157,7 +160,7 @@ public interface EnterprisesService extends RemoteService {
 
 	List<SSBonusData> setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses);
 
-	String setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap);
+	void setEmployeeAFIChanges(String currentDomainName, Integer contractId, AFIChanges afiChangesMap);
 
 	AFIChanges getEmployeeAFIChanges(String currentDomainName, Integer contractId);
 
@@ -229,8 +232,6 @@ public interface EnterprisesService extends RemoteService {
 
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData);
 
-	Map<String, String> getPayMethods(String currentDomainName);
-
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate);
 
 	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser) throws IllegalArgumentException;
@@ -300,6 +301,8 @@ public interface EnterprisesService extends RemoteService {
 
 	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType) throws IllegalArgumentException;
 
-	
+	List<ITEmployee> getEmployeeITInfo(String currentDomainName, Integer contractId);
+
+	ContractConcepts getAllConcepts(String currentDomainName, String currentUser);	
 	
 }

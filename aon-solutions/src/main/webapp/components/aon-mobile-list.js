@@ -4,7 +4,6 @@ import { AonIconButton } from "./aon-icon-button.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonIcon } from "./aon-icon.js";
 
-
 export class AonMobileList extends AonElement {
   UL;
 
@@ -61,7 +60,7 @@ export class AonMobileList extends AonElement {
           let physicalSize = content.scrollHeight;
           let maxScrollPosition = physicalSize - offsetHeight;
           if (scrollTop >= maxScrollPosition) {
-            this.dispatchEvent(new CustomEvent("more"));
+            this.dispatchEvent(new CustomEvent(EVENT.MORE));
           }
         });
     }

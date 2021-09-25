@@ -33,6 +33,12 @@ public class Scope implements Serializable {
 		this.description = description;
 		return this;
 	}
+	
+	public Boolean isEmpty() {
+		return getId() == null 
+			&& getDomain() == null 
+			&& getDescription() == null;
+	}
 
 
 }

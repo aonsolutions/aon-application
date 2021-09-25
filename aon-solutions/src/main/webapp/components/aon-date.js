@@ -148,7 +148,7 @@ export class AonDate extends AonElement {
     
     date.addEventListener(EVENT.BLUR, ({target}) =>{
       const input = target.value;
-      const values = input.split('/').map((v)  => v.replace(/\D/g, ''));
+      const values = input ? input.split('/').map((v)  => v.replace(/\D/g, '')) : [];
       let output = '';
       if (values.length === 3) {
         let year = parseInt(values[2]);
@@ -394,10 +394,34 @@ export class AonDate extends AonElement {
   }
 
   openDatepicker() {
+    const datePicker = this.getElement(this.DATEPICKER);
     if(!this.isReadonly()) {
-      this.getElement(this.DATEPICKER).classList.add('is-visible');
+      datePicker.classList.add('is-visible');
+    }
+    if(this.isMobile()){
+      datePicker.classList.add('is-mobile');
     }
   }
+
+  // datePickerMobile(){
+  //   new Rolldate({
+  //     el: '#'+this.INPUT,
+  //     format: 'DD/MM/YYYY',
+  //     beginYear: 1950,
+  //     endYear: new Date().getFullYear(),
+  //     lang: { 
+  //       title: 'Elige una fecha', 
+  //       cancel: 'Cancelar', 
+  //       confirm: 'Confirmar'
+  //     },
+  //     confirm: (date)=> {
+  //       console.log('confirm', date);
+  //     },
+  //     cancel: () => {
+  //       console.log('cancel');
+  //     }
+  //   })
+  // }
 
   closeDatepicker() {
     let div = this.getElement(this.DATEPICKER);

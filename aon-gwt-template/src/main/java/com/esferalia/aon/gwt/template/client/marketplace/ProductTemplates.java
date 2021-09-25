@@ -18,9 +18,9 @@ import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct;
 import com.esferalia.aon.gwt.template.shared.Error;
-import com.esferalia.aon.gwt.template.shared.Seller;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
@@ -323,7 +323,7 @@ public class ProductTemplates  extends ResizeComposite{
 						
 						ListBox sellerListBox = (ListBox) flex_table.getWidget(1, 1);
 						Seller seller = new Seller();
-						seller.setRegistryName(sellerListBox.getSelectedItemText());
+						seller.setName(sellerListBox.getSelectedItemText());
 						seller.setId(Integer.parseInt(sellerListBox.getSelectedValue()));
 
 						TextBox typeTextBox = (TextBox) flex_table.getWidget(2, 1);

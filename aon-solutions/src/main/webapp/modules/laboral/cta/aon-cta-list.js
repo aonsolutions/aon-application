@@ -109,7 +109,7 @@ export class AonCtaList extends AonElement {
   getOptions(res) {
     return [
       {
-        name: "Certificado TGSS",
+        name: "Cert. Estar al corriente S.S",
         aonIcon: "aon_seg_social",
         fn: () => this.getCertCorriente(res),
       },

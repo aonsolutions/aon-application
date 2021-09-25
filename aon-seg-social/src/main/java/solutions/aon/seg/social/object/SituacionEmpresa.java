@@ -172,6 +172,8 @@ public class SituacionEmpresa {
 			visitor.visitNifEmpresa(this.nifEmpresa);
 		if(nss!=null)
 			visitor.visitNss(this.nss);
+		if(regimen!=null)
+			visitor.visitRegimen(this.regimen);
 		if(cccp!=null)
 			visitor.visitCccp(this.cccp);
 		if(ugtgss!=null)

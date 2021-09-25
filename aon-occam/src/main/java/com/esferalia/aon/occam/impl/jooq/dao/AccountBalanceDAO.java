@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.server.accounting.BalanceScript;
 import com.esferalia.aon.occam.server.accounting.IBalanceKey;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -171,8 +172,41 @@ public class AccountBalanceDAO {
 					if (tokens != null && tokens.length > 0) {
 						Condition c = null;
 						for (String token : tokens ) {
-							Condition c1 = ACCOUNT.CODE.like(token + "%");
-							c = c==null?c1:c.or(c1);
+							boolean add = true;
+							if (isSaPositivo(token, key.getInitialExpression() )) {
+								AccountBalance sum = new AccountBalance();
+								for (String accountKey : accounts.keySet()) {
+									if ( AonStringUtils.startsWith(accountKey, token)) {
+										AccountBalance bal0 = accounts.get(accountKey);		
+										sum.add(-1, bal0.getDebitSum(), bal0.getCreditSum());
+									}
+								}
+								add = AonMathUtils.isGreatherThanZero( sum.getCreditBalance() );
+								if (!add) {
+									expressionParsed = AonStringUtils.replace(expressionParsed, token, "");
+									expressionParsed = AonStringUtils.replace(expressionParsed, "||", "|");
+									report.getBalances().get(key.getCode()).setAccounts(expressionParsed);
+								}
+							}
+							if (isSdPositivo(token, key.getInitialExpression() )) {
+								AccountBalance sum = new AccountBalance();
+								for (String accountKey : accounts.keySet()) {
+									if ( AonStringUtils.startsWith(accountKey, token)) {
+										AccountBalance bal0 = accounts.get(accountKey);		
+										sum.add(-1, bal0.getDebitSum(), bal0.getCreditSum());
+									}
+								}
+								add = AonMathUtils.isGreatherThanZero( sum.getDebitBalance() );
+								if (!add) {
+									expressionParsed = AonStringUtils.replace(expressionParsed, token, "");
+									expressionParsed = AonStringUtils.replace(expressionParsed, "||", "|");
+									report.getBalances().get(key.getCode()).setAccounts(expressionParsed);
+								}
+							}
+							if (add) {
+								Condition c1 = ACCOUNT.CODE.like(token + "%");
+								c = c==null?c1:c.or(c1);
+							}
 						}
 						c = c.and(DSL.length(ACCOUNT.CODE).eq(4));
 						AccountDAO.getAccounts(ctx, c)
@@ -262,5 +296,16 @@ public class AccountBalanceDAO {
 			buf.append(m.group());
 		}
 		return buf.toString();
+	}
+	
+	private static boolean isSaPositivo( String account, String expression ) {
+		String pat = ".sa[b|p]Positivo\\(\\[?."+ account +".\\]?\\).";
+		Pattern pattern = Pattern.compile( pat, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		return pattern.matcher(expression).find();
+	}
+	private static boolean isSdPositivo( String account, String expression ) {
+		String pat = ".sd[b|p]Positivo\\(\\[?."+ account +".\\]?\\).";
+		Pattern pattern = Pattern.compile( pat, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		return pattern.matcher(expression).find();
 	}
 }

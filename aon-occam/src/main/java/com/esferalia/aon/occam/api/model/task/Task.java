@@ -2,10 +2,11 @@ package com.esferalia.aon.occam.api.model.task;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.List;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.project.Project;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Priority;
 
@@ -17,7 +18,7 @@ public class Task  implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
-	private Integer domain; 
+	private Domain domain; 
 	private String title; // description in DB
 	private String description; // comments in DB
 	private Date startDate; 
@@ -40,7 +41,7 @@ public class Task  implements Serializable{
 	
 	// TASK WORKFLOW
 	
-	private LinkedList<TaskWorkflow> workflows; 
+	private List<TaskWorkflow> workflows; 
 	
 	// GOOGLE TASK IDS
 	
@@ -67,11 +68,11 @@ public class Task  implements Serializable{
 		return this;
 	}
 
-	public Integer getDomain() {
+	public Domain getDomain() {
 		return domain;
 	}
 
-	public Task setDomain(Integer domain) {
+	public Task setDomain(Domain domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -222,11 +223,11 @@ public class Task  implements Serializable{
 		return this;
 	}
 
-	public LinkedList<TaskWorkflow> getWorkflows() {
+	public List<TaskWorkflow> getWorkflows() {
 		return workflows;
 	}
 	
-	public Task setWorkflows(LinkedList<TaskWorkflow> workflows) {
+	public Task setWorkflows(List<TaskWorkflow> workflows) {
 		this.workflows = workflows;
 		return this;
 	}

@@ -3,6 +3,9 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.RegistryService;
+import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
+import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.MediaTypeListBox;
 import com.esferalia.aon.gwt.common.client.widget.StreetTypeListBox;
@@ -21,6 +24,7 @@ import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -42,6 +46,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel implements Focusable {
 	public static final int MIN_WIDTH = 850;
 	public static final int MIN_HEIGHT = 650;
+	private RegistryServiceAsync SERVICE;
 
 	private static final Logger LOGGER = Logger.getLogger(AonRegistryFullPanel.class.getName());
 	static {
@@ -653,6 +658,15 @@ public class AonRegistryFullPanel<R extends RegistryFull<?>> extends ScrollPanel
 
 	protected void addExtended(AonModuleOptions<?> options, R registryFull, AonRegistryFullPanelCallback<R> callback) {
 	}
+
+	protected RegistryServiceAsync getService() {
+		if (SERVICE == null) {
+			RegistryServiceAsync serviceRaw = GWT.create(RegistryService.class);
+			SERVICE = new RegistryServiceAsyncDecorator(serviceRaw);
+		}
+		return SERVICE;
+	}
+	
 	
 }
 
