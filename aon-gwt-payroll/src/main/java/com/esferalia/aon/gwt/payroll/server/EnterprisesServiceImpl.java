@@ -2317,9 +2317,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<ContractClause> getContractClauses(String domainName, Integer contractId) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			return JooqContrataContract.getContractClauses(connection, domainId, parentDomainId, contractId);
+			return JooqContrataContract.getContractClauses(connection, contractId);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2349,9 +2347,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public List<ContractClause> deleteContractClause(String domainName, ContractClause contractClause) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
-			return JooqContrataContract.deleteContractClause(connection, domainId, parentDomainId, contractClause);
+			return JooqContrataContract.deleteContractClause(connection, contractClause);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
