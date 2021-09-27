@@ -81,7 +81,8 @@ export class Task {
         type: WORKFLOW_TYPES.COMMENT,
         email: this.auth.email ? this.auth.email : undefined
       }
-      this.project     = task.project ? this.setProject(task.project) : {};
+  
+      this.setProject(task.project && task.project.id ? task.project : {});
     }   
   }
 
@@ -89,7 +90,7 @@ export class Task {
     if(task) {
       if(task.id)                                 this.setId(task.id);
       if(task.number)                             this.setNumber(task.number);
-      if(task.gtask_id)                           this.setGTaskId(gtask_id);
+      if(task.gtask_id)                           this.setGTaskId(task.gtask_id);
       if(task.workgroup && task.workgroup.id)     this.setWorkgroup(task.workgroup);
       if(task.task_holder && task.task_holder.id) this.setTaskHolder(task.task_holder);
       if(task.status)                             this.setStatus(task.status);
@@ -99,6 +100,7 @@ export class Task {
       if(task.description)                        this.setDescription(task.description);
       if(task.start_date)                         this.setStartDate(task.start_date);
       if(task.parent)                             this.setParent(task.parent);
+      if(task.project)                            this.setProject(task.project);
       this.setFiles([]);
     }
   }
@@ -324,7 +326,6 @@ export class Task {
       const task_holder = project_holder.task_holder && project_holder.task_holder.id ? project_holder.task_holder : {};
       this.setTaskHolder(task_holder);
     }
-
     const registry = this.project.registry && this.project.registry.id ? this.project.registry : {};
     this.setRegistry(registry);
 

@@ -626,7 +626,7 @@ const addTaskHolderAndWorkgroup = (task, aonMessengerChat, parent) => {
     taskHolderSelect.style.width = "100%";
     taskHolderSelect.style.marginLeft = "5px";
     rowDiv.appendChild(taskHolderSelect);
-    fillTaskHolder(aonMessengerChat, undefined, undefined)
+    fillTaskHolder(aonMessengerChat);
 }
 
 /**
