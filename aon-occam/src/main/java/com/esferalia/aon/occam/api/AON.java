@@ -5695,6 +5695,12 @@ public class AON {
 		} 
 	}
 	
+	public static Stream<Workgroup> getWorkgroupByTaskHolderStream(String domainName, Integer domainId, String login, WorkgroupFilter filter, Integer taskHolder){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getWorkgroupByTaskHolderStream(ctx, filter, taskHolder);
+		} 
+	}
+	
 	public static LinkedList<Workgroup> getWorkgroupList(String domainName, Integer domainId, String login, WorkgroupFilter filter){
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getCommon().getWorkgroupList(ctx, filter);

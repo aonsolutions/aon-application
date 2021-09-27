@@ -55,6 +55,8 @@ public class UtilsTask {
 		String source = api.getParams().optString(IJsonNames.SOURCE);
 		String search = api.getParams().optString("search");
 		String email = api.getParams().optString(IJsonNames.EMAIL);
+		String workgroupStr = api.getParams().optString(IJsonNames.WORKGROUPS);
+		
 
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
@@ -94,6 +96,13 @@ public class UtilsTask {
 		
 		if(!email.isEmpty() && (!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) ) {
 			filter = filter.and(f.getGtaskIdProperty().eq(email));
+		}
+		
+		if(!workgroupStr.isEmpty()) {
+			String[]  str = workgroupStr.split(",");
+			Integer[] arr = new Integer[str.length];
+			for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
+			filter = filter.and(f.getWorkgroupProperty().in(arr));
 		}
 		
 		if(!api.getParams().optString("startDate").isEmpty()) {
