@@ -301,12 +301,12 @@ public class UtilsTask {
 						AonToken aonToken = SECURITY.getAonToken(api.getToken());
 						Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 						if(!auth.getEmail().isEmpty()) {
-							UtilsTask.sendNotification(api, task, auth);
-							UtilsTask.sendEmail(api, task, auth);
+							sendNotification(api, task, auth);
+							sendEmail(api, task, auth);
 						}
 //					}
 				} else if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.COMMENT.getName())) {
-					UtilsTask.sendNotificationComment(api, task, workflow);
+					sendNotificationComment(api, task, workflow);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -322,7 +322,7 @@ public class UtilsTask {
 			try {
 			    JSONObject file = files.getJSONObject(i);
 			    String     dataId =  file.optString("id");
-			    Matcher    matcher = UtilsTask.regexFile(task, dataId);
+			    Matcher    matcher = regexFile(task, dataId);
 			    if(matcher!=null) {
 					String base64 = file.optString("content");
 					String contentType = file.optString("contentType");

@@ -108,6 +108,7 @@ public class CustomerDAO {
 		return ctx.getDslContext().select()
 				.from(CUSTOMER)
 				.join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
+				.join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
 				.where(CUSTOMER_PROPERTIES.getConditions(filter));
 		
 	}

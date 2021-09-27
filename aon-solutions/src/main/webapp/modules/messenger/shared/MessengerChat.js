@@ -173,7 +173,7 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
   });
   dialog.setContent(textarea);
 
-  buildTextareaToolbar(textarea, aonMessengerChat.task, true);
+  buildTextareaToolbar(textarea);
 
   if(aonTextArea.value) textarea.value = aonTextArea.value;
   textarea.addEventListener(EVENT.INPUT, ({target})=>{

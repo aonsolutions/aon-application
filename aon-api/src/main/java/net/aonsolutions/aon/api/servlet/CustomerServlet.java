@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -59,8 +60,14 @@ public class CustomerServlet extends AonApiHttpServlet {
 	
 	private JSONArray getCustomers(AonApiData api) {
 		JSONArray array = new JSONArray();
+		String search = api.getParams().optString("search");
+		Integer page = api.getParams().optInt(IJsonNames.PAGE);
+		Integer perPage = api.getParams().optInt(IJsonNames.PER_PAGE);
+
 		AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-			f -> f.getDomainProperty().eq(api.getDomain().getId()))
+			f -> f.getDomainProperty().eq(api.getDomain().getId())
+			.and(search.isEmpty() ?  f.getDomainProperty().eq(api.getDomain().getId()) : f.getNameProperty().like("%" + search + "%"))
+			, perPage * (page -1), perPage)
 		.forEach(c -> array.put(RegistryJSON.toJSON(c)));
 		return array;
 	}

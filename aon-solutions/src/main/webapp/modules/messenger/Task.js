@@ -59,7 +59,6 @@ export class Task {
       this.number      = task.number || undefined;
       this.workgroup   = task.workgroup || {};
       this.registry    = task.registry || {};
-      this.project     = task.project || {};
       this.sender      = task.sender || {};
       this.senderTmp   = this.sender || {};
       this.task_holder = task.task_holder || {};
@@ -82,23 +81,24 @@ export class Task {
         type: WORKFLOW_TYPES.COMMENT,
         email: this.auth.email ? this.auth.email : undefined
       }
+      this.project     = task.project ? this.setProject(task.project) : {};
     }   
   }
 
   editTask(task){
     if(task) {
-      if(task.id)                                 this.id          = task.id;
-      if(task.number)                             this.number      = task.number;
-      if(task.gtask_id)                           this.gtask_id    = task.gtask_id;
-      if(task.workgroup && task.workgroup.id)     this.workgroup   = task.workgroup;
-      if(task.task_holder && task.task_holder.id) this.task_holder = task.task_holder;
-      if(task.status)                             this.status      = task.status;
-      if(task.source_id)                          this.source_id   = task.source_id;
-      if(task.registry && task.registry.id)       this.registry    = task.registry;
-      if(task.project && task.project.id)         this.project     = task.project;
-      if(task.description)                        this.description = task.description;
-      if(task.start_date)                         this.start_date  = task.start_date;
-      if(task.parent)                             this.parent      = task.parent;
+      if(task.id)                                 this.setId(task.id);
+      if(task.number)                             this.setNumber(task.number);
+      if(task.gtask_id)                           this.setGTaskId(gtask_id);
+      if(task.workgroup && task.workgroup.id)     this.setWorkgroup(task.workgroup);
+      if(task.task_holder && task.task_holder.id) this.setTaskHolder(task.task_holder);
+      if(task.status)                             this.setStatus(task.status);
+      if(task.source_id)                          this.setSourceId(task.source_id);
+      if(task.registry && task.registry.id)       this.setRegistry(task.registry);
+      if(task.project && task.project.id)         this.setProject(task.project);
+      if(task.description)                        this.setDescription(task.description);
+      if(task.start_date)                         this.setStartDate(task.start_date);
+      if(task.parent)                             this.setParent(task.parent);
       this.setFiles([]);
     }
   }
@@ -288,6 +288,22 @@ export class Task {
   setAuth(auth) {
     this.auth = auth;
   }
+  
+  getStartDate() {
+    return this.start_date;
+  }
+
+  setStartDate(start_date) {
+    this.start_date = start_date;
+  }
+
+  getParent() {
+    return this.parent;
+  }
+
+  setParent(parent) {
+    this.parent = parent;
+  }
 
   isExternal(){
     return this.project && this.project.id ? true : false;
@@ -300,23 +316,26 @@ export class Task {
     const domain = this.project.domain && this.project.domain.id ? this.project.domain : this.domainTmp;
     this.setDomain(domain);
 
-    const workgroup = this.project.workgroup && this.project.workgroup.id ?  this.project.workgroup : {};
-    this.setWorkgroup(workgroup);
+    const {project_holder} = this.project;
 
-    const task_holder = this.project.task_holder && this.project.task_holder.id ? this.project.task_holder : {};
-    this.setTaskHolder(task_holder);
+    if(project_holder && project_holder.id){
+      const workgroup = project_holder.workgroup && project_holder.workgroup.id ?  project_holder.workgroup : {};
+      this.setWorkgroup(workgroup);
+      const task_holder = project_holder.task_holder && project_holder.task_holder.id ? project_holder.task_holder : {};
+      this.setTaskHolder(task_holder);
+    }
 
     const registry = this.project.registry && this.project.registry.id ? this.project.registry : {};
     this.setRegistry(registry);
-    
-    let sender = !this.project.id  ? this.senderTmp  : {};
 
+    let sender = {};
     const isGestor = "OFFICE" === LS.getCompany().type;
     if(isGestor){
       if(TASK_SOURCE.QUERY === this.source)
         sender = this.senderTmp;
-      else 
-        sender = {};
+      // if(TASK_SOURCE.REQUEST === this.source)
+    } else if(!this.project.id){
+      sender = this.senderTmp;
     }
     this.setSender(sender);
 

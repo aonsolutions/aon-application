@@ -135,7 +135,7 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = this.TASK_HOLDER.id;
-					tthis._filter.workgroups = undefined;
+					this._filter.workgroups = undefined;
 					if(this.cau && this.cauData && this.cauData.auth.email)	this._filter.email =  this.cauData.auth.email;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
@@ -253,7 +253,7 @@ export class AonMessenger extends AonElement {
 				icon: MATERIAL_ICONS.LABEL,
 				actions:[]
 			};
-			
+
 			if(manager)
 				option.actions.push(
 					{ id: 'Delete', icon: MATERIAL_ICONS.DELETE, action: () => this.deleteTag(item) },

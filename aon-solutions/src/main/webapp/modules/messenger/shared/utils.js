@@ -12,9 +12,9 @@ import { AonCheckbox } from "../../../components/aon-checkbox";
 
 /**
  * Build standard toolbar options 
- * @param {*} aonTextArea setFullDate
+ * @param {HTMLElement} aonTextArea aon-text-area
  */
-export const buildTextareaToolbar =  (aonTextArea, task, file= false) => {
+export const buildTextareaToolbar =  (aonTextArea) => {
     const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);
     if(textAreaText) setStyles(textAreaText, {resize: "none"});
     /**
@@ -505,7 +505,7 @@ const addTaskDescription = (aonMessengerChat) => {
         }
     }
 
-    buildTextareaToolbar(aonTextArea, task, false);
+    buildTextareaToolbar(aonTextArea);
 }
 
 /**
@@ -533,9 +533,9 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
             const projectSelect = createProject();
             projectSelect.default = true;
             projectSelect.style.width = "100%";
+            if(!isClient)  projectSelect.style.marginLeft = "5px";
             if(task.id) projectSelect.disabled = projectSelect.readonly = true;
             rowsDivThree.appendChild(projectSelect);
-
             fillProject(task);
         } else {
             // -------------------------------------TAG

@@ -144,8 +144,16 @@ export class AonMessengerList extends AonElement {
     let registryEl = this.getElement("registry");
     let taskHolderEl = this.getElement("task_holder");
     let statusEl = this.getElement("status");
-    getCustomers().then(customers=>{
+    getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
       registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
+    })
+
+    registryEl.addEventListener(EVENT.INPUT,async({target})=>{
+        const value = target.value;
+        if(value.length > 2){
+          const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
+          registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+        }
     })
 
     if(this.applicationParentEl)

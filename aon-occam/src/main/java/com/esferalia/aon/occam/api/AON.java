@@ -4354,6 +4354,15 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
+	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getCustomers(ctx, filter, ofs, limit);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
 	
 	public static LinkedList<Customer> getCustomerList(String domainName, Integer domainId, String login, CustomerFilter filter){
 		return getCustomerStream(domainName, domainId, login, filter)

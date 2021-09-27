@@ -136,7 +136,7 @@ const buildFullComment = (aonMessengerChat, aonTextArea) => {
         margin: 0,
     });
     writter.appendChild(textarea);
-    buildTextareaToolbar(textarea, aonMessengerChat.task, true);
+    buildTextareaToolbar(textarea);
 
     const textAreaToolbar = textarea.querySelector("toolbar");
     if(textAreaToolbar){
@@ -246,7 +246,7 @@ const showFullComment  = (b) => {
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
     div.appendChild(aonTextArea);
     if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
-    buildTextareaToolbar(aonTextArea, aonMessengerChat.task, false);
+    buildTextareaToolbar(aonTextArea);
 
    /**
     * CHANGE STYLE AONTEXTAAREA

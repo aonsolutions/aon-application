@@ -26,7 +26,7 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
     if(aonMessengerChat.getApplicationParent().dur.hasCallCenter())
         sources.push({value: TASK_SOURCE.CAU, name: "Soporte" });
 
-    aonSelect.options = JSON.stringify(sources);
+    aonSelect.setOptions(sources);
     
     if(source){  aonSelect.value = source; } 
 }
@@ -43,28 +43,25 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
         try {
             let projects = [];
             let registry = task.getRegistry();
-            if(registry.id){
-                let filter = {
-                    registryId:registry.id,
-                    domainId:registry.domain.id,
-                    domainName:registry.domain.name
-                };
-                projects = await getProjectsByRegistry(filter);
-            } else {
+            if(registry.id)
+                projects = await getProjectsByRegistry({registryId: registry.id});
+            else 
                 projects = await getOfficeProjects();
-            }
 
 
-            aonSelect.options = JSON.stringify(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
+            aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
             
             if(project && project.id){ aonSelect.value = project.id; } 
         
-            aonSelect.addEventListener(EVENT.CHANGE,({detail})=>{
+            const fnProject = ({detail})=>{
                 if(detail && detail.id)
                     task.setProject(detail);
                 else 
                     task.setProject({});
-            })
+            };
+
+            aonSelect.removeEventListener(EVENT.CHANGE, fnProject)
+            aonSelect.addEventListener(EVENT.CHANGE, fnProject)
         } catch (error) {
             console.log(error);
         }
@@ -82,7 +79,7 @@ export const fillWorkGroup = async (task, aonMessengerChat) => {
         const aonSelect = await waitEl(`#${MESSENGER_IDS.WORKGROUP}`);
         const workgroups = aonMessengerChat.getApplicationParent()._workgroups;
         if(workgroups && workgroups.length>0){
-            aonSelect.options = JSON.stringify( workgroups.map( wg=> ({...wg, id: wg.value}) ) );
+            aonSelect.setOptions( workgroups.map( wg=> ({...wg, id: wg.value}) ) );
         }
         if(task.workgroup && task.workgroup.id){
             aonSelect.value = task.workgroup.id;
@@ -110,9 +107,7 @@ export const fillTaskHolder = async (aonMessengerChat, workgroupId=0, taskHolder
         aonSelect.clear();
         const taskHolders = await getTastHoldersWorkGroup({workgroupId});
         if(taskHolders){
-            aonSelect.options = JSON.stringify(
-                taskHolders.map( th=> ({...th, value: th.id}) )
-            );
+            aonSelect.setOptions( taskHolders.map( th=> ({...th, value: th.id}) ) );
         }
         if(taskHolderId) aonSelect.value = taskHolderId;
 
@@ -133,10 +128,19 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
     if(aonSelect){
         aonSelect.clear();
-        const customers = await getCustomers();
+        const customers = await getCustomers({reload:false, page:1, perPage:50});
         if(customers){
-            aonSelect.options = JSON.stringify( customers.map( c=> ({...c, value: c.id}) ) );
+            aonSelect.setOptions( customers.map( c=> ({...c, value: c.id}) ) );
         }
+
+        aonSelect.addEventListener(EVENT.INPUT, async({target})=>{
+            const value = target.value;
+            if(value.length > 2){
+                const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
+                aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+            }
+        });
+
         if(registry && registry.id) aonSelect.value = registry.id;
 
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
@@ -145,12 +149,6 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
                 fillProject(aonMessengerChat.task);
             } 
         });
-
-        // aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-        //     if(detail)
-        //         task.setWorkgroup(detail);
-        //     fillTaskHolder(aonMessengerChat, detail.value);
-        // });
     }
 }
 
@@ -166,7 +164,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
 //         aonSelect.clear();
 //         const tags = applicationParent._tags;
 //         if(tags){
-//             aonSelect.options = JSON.stringify( tags.map( c=> ({...c, value: c.id}) ) );
+//             aonSelect.setOptions( tags.map( c=> ({...c, value: c.id}) ) );
 //         }
 //         if(task.getDescriptionJson().tag) aonSelect.value = task.getDescriptionJson().tag;
 
@@ -188,7 +186,7 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
         { value:1, name:"Solicitud de vacaciones"},
     ];
     if(typeProcess){
-        aonSelect.options = JSON.stringify( typeProcess.map(tp=> tp) );
+        aonSelect.setOptions( typeProcess.map(tp=> tp) );
     }
     if(source_id) aonSelect.value = source_id;
 
