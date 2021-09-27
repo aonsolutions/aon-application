@@ -59,6 +59,7 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class QuoteCalculator {
@@ -457,13 +458,14 @@ public abstract class QuoteCalculator {
 				
 				double cgcBaseMin  = 0;
 				try {
-					cgcBaseMin = getLimit(
-					CGC_BASE_MIN,
-					context, 
-					start, 
-					end)
-					.stream()
-					.collect(Collectors.summingDouble(r->r.getValue()));
+					if ( eval(ContextVariable.SALARY_DAYS, start,end, context ) > 0)
+						cgcBaseMin = getLimit(
+						CGC_BASE_MIN,
+						context, 
+						start, 
+						end)
+						.stream()
+						.collect(Collectors.summingDouble(r->r.getValue()));
 					
 				} catch (ExpressionException e) {
 				}
@@ -475,13 +477,14 @@ public abstract class QuoteCalculator {
 				
 				double cgpBaseMin  = 0;
 				try {
-					cgpBaseMin = getLimit(
-					CGP_BASE_MIN,
-					context, 
-					start, 
-					end)
-					.stream()
-					.collect(Collectors.summingDouble(r->r.getValue()));
+					if ( eval(ContextVariable.SALARY_DAYS, start,end, context ) > 0)
+						cgpBaseMin = getLimit(
+						CGP_BASE_MIN,
+						context, 
+						start, 
+						end)
+						.stream()
+						.collect(Collectors.summingDouble(r->r.getValue()));
 					
 				} catch (ExpressionException e) {
 				}
@@ -1066,6 +1069,17 @@ public abstract class QuoteCalculator {
 		}
 
 		return sum;
+	}
+
+	private static Double eval(ContextVariable ctxVar, Date start, Date end, ExpressionContext ctx) {
+
+		try {
+			return ctx.eval(ctxVar.getName(), start, end, Number.class).stream()
+					.collect(Collectors.summingDouble( r -> AonNumberUtils.todouble(r.getValue()) ));
+		} catch (ExpressionException e) {
+			return 0.00;
+		}
+
 	}
 
 	private static long days(Period p) {

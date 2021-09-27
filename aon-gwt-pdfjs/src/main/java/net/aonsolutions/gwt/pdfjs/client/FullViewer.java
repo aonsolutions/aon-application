@@ -88,7 +88,27 @@ public class FullViewer extends Frame {
 			console.log("Destroing previous document");
 			el.contentWindow.PDFViewerApplication.pdfDocument.destroy();
 		}  
-    	el.contentWindow.PDFViewerApplication.open(dataURI);
+
+		if (el.contentWindow.PDFViewerApplication ) {
+    		el.contentWindow.PDFViewerApplication.open(dataURI);
+		} else {
+			function openDataURI(e) {
+				switch(el.contentDocument.readyState) {
+					case "loading":
+					    console.log("The document is still loading.");
+					    break;
+					case "interactive":
+					    console.log("The document has finished loading. We can now access the DOM elements.");
+					    break;
+					case "complete":
+					    console.log("The page is fully loaded.");
+					    el.contentWindow.PDFViewerApplication.open(dataURI)
+					    break;
+    			}
+			} 
+			el.contentDocument.addEventListener('readystatechange', openDataURI);
+		}
+		
 	}-*/;
 	
 	private native void download(JavaScriptObject pdf, String filename, Element a) /*-{
