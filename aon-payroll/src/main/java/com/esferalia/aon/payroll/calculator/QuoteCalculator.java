@@ -405,9 +405,6 @@ public abstract class QuoteCalculator {
 				context.containsVariable("BASE_" + PREST_IT, start,end))
 				return quotesImpl;
 			
-			if ( quote == 0 && eval(ContextVariable.SALARY_DAYS, start,end, context ) == 0)
-				return quotesImpl;
-			
 			String name = payment.getName();
 
 			if (!StringUtils.isBlank(name)) {
@@ -461,13 +458,14 @@ public abstract class QuoteCalculator {
 				
 				double cgcBaseMin  = 0;
 				try {
-					cgcBaseMin = getLimit(
-					CGC_BASE_MIN,
-					context, 
-					start, 
-					end)
-					.stream()
-					.collect(Collectors.summingDouble(r->r.getValue()));
+					if ( eval(ContextVariable.SALARY_DAYS, start,end, context ) > 0)
+						cgcBaseMin = getLimit(
+						CGC_BASE_MIN,
+						context, 
+						start, 
+						end)
+						.stream()
+						.collect(Collectors.summingDouble(r->r.getValue()));
 					
 				} catch (ExpressionException e) {
 				}
@@ -479,13 +477,14 @@ public abstract class QuoteCalculator {
 				
 				double cgpBaseMin  = 0;
 				try {
-					cgpBaseMin = getLimit(
-					CGP_BASE_MIN,
-					context, 
-					start, 
-					end)
-					.stream()
-					.collect(Collectors.summingDouble(r->r.getValue()));
+					if ( eval(ContextVariable.SALARY_DAYS, start,end, context ) > 0)
+						cgpBaseMin = getLimit(
+						CGP_BASE_MIN,
+						context, 
+						start, 
+						end)
+						.stream()
+						.collect(Collectors.summingDouble(r->r.getValue()));
 					
 				} catch (ExpressionException e) {
 				}
