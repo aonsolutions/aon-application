@@ -2,6 +2,10 @@ package com.esferalia.aon.occam.api.model.finance.checkit;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 
 public class CheckItBankAccount implements Serializable {
 
@@ -16,7 +20,7 @@ public class CheckItBankAccount implements Serializable {
 	private double remainder; // "disponible"
 	private Integer bankAccountType; // "tipo_cuenta_bancaria_id"
 	private Integer bankLoginType; // "tipo_login_banco_id"
-	private int pendingMovements;
+	private List<BankStatement> pending;
 
 	public String getCcc() {
 		return ccc;
@@ -89,11 +93,11 @@ public class CheckItBankAccount implements Serializable {
 		this.bankLoginType = bankLoginType;
 		return this;
 	}
-	public int getPendingMovements() {
-		return pendingMovements;
+	public List<BankStatement> getPending() {
+		return pending;
 	}
-	public CheckItBankAccount setPendingMovements(int pendingMovements) {
-		this.pendingMovements = pendingMovements;
+	public CheckItBankAccount setPending(List<BankStatement> pending) {
+		this.pending = pending;
 		return this;
 	}
 
