@@ -152,7 +152,7 @@ export class AonSelect extends AonElement {
       if(this.disabled)
         input.disabled = true;
       
-      if(this.readonly)
+      if(this.readonly && this.readonly == "true")
        input.readonly = true;
 
       let div = this.getElement(input.DIV);

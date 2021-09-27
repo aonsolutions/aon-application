@@ -328,6 +328,7 @@ export const SII_TICKETBAI = MSG.SII_TICKETBAI;
 export const SIZE = MSG.SIZE;
 export const STATISTICS = MSG.STATISTICS;
 export const STATUS = "Estado"; // TODO
+export const SITUATION = "Situación"; // TODO
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
 export const SUPPLIERS = MSG.SUPPLIERS;

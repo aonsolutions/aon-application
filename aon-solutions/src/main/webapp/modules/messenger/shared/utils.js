@@ -1,7 +1,8 @@
 import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments";
 import { openFileUrl } from "../../../services/fileService";
 import { domainName } from "../../../services/request";
-import {  setAttributes, setFullDate, setStyles, setTime } from "../../../services/utils";
+import {  setAttributes, setStyles } from "../../../services/utilsComponents";
+import {  setTime, setFullDate } from "../../../services/utils";
 import { createFormVacation } from "../forms/vacation";
 import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
 import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils";
@@ -11,7 +12,7 @@ import { AonCheckbox } from "../../../components/aon-checkbox";
 
 /**
  * Build standard toolbar options 
- * @param {*} aonTextArea 
+ * @param {*} aonTextArea setFullDate
  */
 export const buildTextareaToolbar =  (aonTextArea, task, file= false) => {
     const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);

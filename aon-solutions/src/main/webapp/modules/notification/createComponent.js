@@ -5,7 +5,7 @@ import { AonInput } from "../../components/aon-input.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { CSS, TAG } from "../../environments/environments.js";
-import { newComponent, setAttributes, setClasses, setEvents } from "../../services/utils.js";
+import { newComponent, setAttributes, setClasses, setEvents } from "../../services/utilsComponents";
 
 export const createDiv = (properties)=> newComponent({
   type: TAG.DIV,

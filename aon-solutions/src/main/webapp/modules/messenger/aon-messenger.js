@@ -47,6 +47,7 @@ export class AonMessenger extends AonElement {
 		this.TASK_HOLDER_ENTERPRISE = [];
 		this._filter = {
 			workgroup: undefined,
+			workgroups: undefined,
 			task_holder: this._filter.task_holder || undefined,
 			sender: this._filter.sender || undefined,
 			source: this._filter.source || undefined,
@@ -91,6 +92,8 @@ export class AonMessenger extends AonElement {
 			}
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 		}
+
+		this.loadWorkgroup();
 	}
 
 	paintView(){
@@ -120,6 +123,7 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = this.TASK_HOLDER.id;
 					this._filter.sender = undefined;
+					this._filter.workgroups = undefined;
 					if(this.cau && this.cauData && this.cauData.auth.email)	this._filter.email =  this.cauData.auth.email;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
@@ -131,6 +135,7 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = this.TASK_HOLDER.id;
+					tthis._filter.workgroups = undefined;
 					if(this.cau && this.cauData && this.cauData.auth.email)	this._filter.email =  this.cauData.auth.email;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
@@ -142,7 +147,10 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = undefined;
+					let wps = this._workgroups.map(({id})=> id)
+					let workgroupStr = wps.length ? wps.join(","): undefined;
 					if(this.cau && this.cauData && this.cauData.auth.email)	this._filter.email =  this.cauData.auth.email;
+					this._filter.workgroups = workgroupStr;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
@@ -191,13 +199,16 @@ export class AonMessenger extends AonElement {
 			id: 'Workgroup',
 			name: MSG.WORKGROUP
 		}, []);
-		this.loadWorkgroup();
 	}
 
 	loadWorkgroup() {
 		let application = this.applicationEl;
-		getWorkgroups({status:"ACTIVE"}).then( workgroup => {
-		  this._workgroups = workgroup.map(t => ({value: t.id, description: t.description, name:t.description}));
+		let isManager = this.dur.isMessengerManager();
+		let filter = {status:"ACTIVE"};
+		if(!isManager && this.TASK_HOLDER.id) 
+			filter.task_holder = this.TASK_HOLDER.id;
+		getWorkgroups(filter).then( workgroup => {
+		  this._workgroups = workgroup.map(t => ({...t, value: t.id, description: t.description, name:t.description}));
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  this._workgroups.forEach(item => {
 			let option = {
@@ -222,7 +233,7 @@ export class AonMessenger extends AonElement {
 
     tagNavBar() {
 		let application = this.applicationEl;
-		const fnTag = () =>this.dialogTag(); 
+		const fnTag = () => this.dur.isMessengerManager() ? this.dialogTag() : false; 
 		application.addSidenavOptions2({
 			id: 'Tag',
 			name: MSG.TAG
@@ -232,6 +243,7 @@ export class AonMessenger extends AonElement {
 
 	loadTag() {
 		let application = this.applicationEl;
+		const manager =  this.dur.isMessengerManager();
 		getTaskTags({type:"task_label"}).then(tags => {
 		  this._tags =  tags.map(t => ({...t,value: t.id, description: t.name, name:t.name}));
 		  this.clearElementById(application.SIDENAV+'TagList');
@@ -241,11 +253,12 @@ export class AonMessenger extends AonElement {
 				icon: MATERIAL_ICONS.LABEL,
 				actions:[]
 			};
-
-			option.actions.push(
-				{ id: 'Delete', icon: MATERIAL_ICONS.DELETE, action: () => this.deleteTag(item) },
-				{ id: 'Edit', icon: MATERIAL_ICONS.EDIT, action: () => this.dialogTag(item) }
-			);
+			
+			if(manager)
+				option.actions.push(
+					{ id: 'Delete', icon: MATERIAL_ICONS.DELETE, action: () => this.deleteTag(item) },
+					{ id: 'Edit', icon: MATERIAL_ICONS.EDIT, action: () => this.dialogTag(item) }
+				);
 		
 	
 			application.addSidenavOptionsListValue({

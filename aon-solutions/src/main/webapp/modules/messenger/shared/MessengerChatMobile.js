@@ -1,7 +1,7 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { newComponent, setAttributes, setStyles} from "../../../services/utils.js";
+import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents";
 import * as ACTIONS from "../../actions.js";
 import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";

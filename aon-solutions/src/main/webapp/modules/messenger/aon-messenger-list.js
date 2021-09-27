@@ -27,7 +27,7 @@ export class AonMessengerList extends AonElement {
 	}
 
   getFilter() {
-		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:30, by_gestor: false, status: TASK_STATUS.PENDING};
+		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:30, status: TASK_STATUS.PENDING};
 	}
   
   constructor() {
@@ -168,7 +168,8 @@ export class AonMessengerList extends AonElement {
   }
 
   async loadMore() {
-    this.getApplication().startLoader();
+    let application = this.getApplication();
+    if(application) application.startLoader();
     const datos = await this.getData();
     addTasks(datos);
     if(this.isMobile())
@@ -176,7 +177,7 @@ export class AonMessengerList extends AonElement {
     else 
       this.getDataDesktop(datos);
 
-    this.getApplication().stopLoader();    
+    if(application) application.stopLoader();    
 	}
 
   getDataDesktop(datos){

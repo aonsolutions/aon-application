@@ -1,6 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel, getTimeControlPdf } from "../../../services/service.js";
-import { isEmptyObject, setAttributes, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
+import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
+import {  setAttributes } from "../../../services/utilsComponents";
 import { iconAddLocation, PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
 import { dateCustomDayHour, modalReport, StringTwoLetters, timeHour } from "./utils.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";

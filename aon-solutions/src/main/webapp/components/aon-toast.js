@@ -1,5 +1,5 @@
 import { CONSTANT, TAG } from '../environments/environments.js';
-import { newComponent, setStyles } from '../services/utils.js';
+import { newComponent, setStyles } from '../services/utilsComponents.js';
 import { AonElement } from './AonElement.js';
 
 export class AonToast extends AonElement {

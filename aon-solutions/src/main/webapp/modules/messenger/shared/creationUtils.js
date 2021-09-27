@@ -3,9 +3,10 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
-import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT } from "../../../environments/environments.js";
+import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { taskHistoricSend } from "../../../services/taskService.js";
-import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
+import { setDateTimestampDay } from "../../../services/utils.js";
+import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 
@@ -361,8 +362,8 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.CUSTOMER_TASK,
   name: MESSENGER_IDS.CUSTOMER_TASK,
   title: MSG.ENTERPRISE,
-  autocomplete: "off",
-  readonly: "false"
+  autocomplete: CONSTANT.OFF,
+  readonly: CONSTANT.FALSE
 });
 
  //-----------------PROJECT
@@ -370,7 +371,7 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
   title: MSG.PROJECT,
-  autocomplete: "off"
+  autocomplete: CONSTANT.OFF
 });
 
 
