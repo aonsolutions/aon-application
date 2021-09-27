@@ -152,7 +152,7 @@ public class CheckItDAO {
 			.stream()
 			.map( r -> r.get(lot))
 			.findFirst()
-			.orElse(1);
+			.orElse(0) + 1;
 	}
 
 	public static Date getLastOperationDateDB(AONContext aonContext, Integer domainId, RegistryBank rbank) {
