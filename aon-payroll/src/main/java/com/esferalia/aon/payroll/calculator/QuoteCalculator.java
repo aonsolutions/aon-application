@@ -59,6 +59,7 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class QuoteCalculator {
@@ -402,6 +403,9 @@ public abstract class QuoteCalculator {
 			if (quote == 0 &&
 				payment.getType() == PaymentType.CRA_0055 &&
 				context.containsVariable("BASE_" + PREST_IT, start,end))
+				return quotesImpl;
+			
+			if ( quote == 0 && eval(ContextVariable.SALARY_DAYS, start,end, context ) == 0)
 				return quotesImpl;
 			
 			String name = payment.getName();
@@ -1066,6 +1070,17 @@ public abstract class QuoteCalculator {
 		}
 
 		return sum;
+	}
+
+	private static Double eval(ContextVariable ctxVar, Date start, Date end, ExpressionContext ctx) {
+
+		try {
+			return ctx.eval(ctxVar.getName(), start, end, Number.class).stream()
+					.collect(Collectors.summingDouble( r -> AonNumberUtils.todouble(r.getValue()) ));
+		} catch (ExpressionException e) {
+			return 0.00;
+		}
+
 	}
 
 	private static long days(Period p) {
