@@ -52,12 +52,10 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		try {
 			checkitAccounts =  CheckItAPI.getLinkedAccountsToDisplay(domainName, domain, user, enterpriseId);
 		} catch (CheckItException e) {
-			throw new AonCoreException(e.getMessage());
 		}
 		try {
 			checkitUnlinkedAccounts = CheckItAPI.getUnlinkedActive(domainName, domain, user, enterpriseId);
 		} catch (CheckItException e) {
-			throw new AonCoreException(e.getMessage());
 		}
 
 		CheckItAPI.getBanksMap().forEach((k, v) -> bankIds.add(new CheckItBank(v, k)));
