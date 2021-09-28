@@ -1,6 +1,6 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import { serializeForm } from '../services/utils.js';
-import { setAttributes } from '../services/utilsComponents';
+import { setAttributes } from '../services/utilsComponents.js';
 import { AonIconButton } from './aon-icon-button.js';
 import {AonElement} from './AonElement.js';
 
