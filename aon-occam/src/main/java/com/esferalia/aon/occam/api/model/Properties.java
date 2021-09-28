@@ -627,6 +627,8 @@ public interface Properties {
 		Property<Integer> getTaskHolderProperty();
 		Property<Byte> getTypeProperty();
 		Property<String> getCommentProperty();
+		Property<String> getNotificationUserProperty();
+		Property<Timestamp> getNotificationDateProperty();
 	}
 	
 	public interface TaskAttachProperties {
