@@ -97,6 +97,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractAttach;
+import com.esferalia.aon.gwt.payroll.jooq.JooqContractExtension;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
@@ -128,6 +129,7 @@ import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
+import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -201,6 +203,7 @@ import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryCostsFactory;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryDeductionsFactory;
 import com.esferalia.aon.payroll.SalaryEmbargo;
@@ -1218,10 +1221,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 				// Salary
 				try {
-					com.esferalia.aon.payroll.Salary salary = smartContractSalaryCalculator.calculate(context);
-					// // TODO: salary.getSalaryDatas() filter...
-					// for(SalaryData salaryData : salary.getSalaryDatas())
-					// System.out.println(salaryData.getName());
+					smartContractSalaryCalculator.calculate(context);
 				} catch (SalaryException e) {
 					e.printStackTrace();
 				}
@@ -1238,7 +1238,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 //					System.out.println("CTX PAYMENTS  : " + key + " == " + contextDescriptorPayments.getList(key).isEmpty());
 					if (!contextDescriptorPayments.getList(key).isEmpty()) {
 						for (VariableDescriptor variable : contextDescriptorPayments.getList(key)) {
-
 //							System.out.println("CHECK VARIABLES  : " + key + " = " + variable.getExpression() + ", Type : " 
 //									+ variable.getType() + ", Scope : " + variable.getScope());
 
@@ -1254,7 +1253,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 								continue;
 //							if (Scope.CONTRACT == variable.getScope())
 //								continue;
-
 //							System.out.println("ADDED VARIABLE : " + key);
 							contextResult.add(key, variable);
 						}
@@ -6565,8 +6563,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	}
 	
-
-	
 	// ------------------------------------------------- EmployeeContractPayments
 
 	@Override
@@ -6599,6 +6595,32 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	// ------------------------------------------------- ContractExtension
+	
+	@Override
+	public void contractExtension(String domainName, ContractExtension contractExtension) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			contractExtension.setDomainId(domainId);
+			JooqContractExtension.createContractExtension(connection, contractExtension);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void deleteContractExtension(String domainName, Integer contractId) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqContractExtension.deleteContractExtension(connection, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+
+
+	// ------------------------------------------------- Auxiliar Methods
 
 	private solutions.aon.seg.social.object.Employee createEmployee(EmployeeContractInfo employeeContractInfo,
 			String ipf) {
