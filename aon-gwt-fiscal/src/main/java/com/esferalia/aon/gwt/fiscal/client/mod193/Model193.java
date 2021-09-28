@@ -66,6 +66,7 @@ public class Model193 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew(Model193ModuleOptions options);
+		void onDuplicate(Model193ModuleOptions options, int id);
 	}
 	
 	protected class Model193Callback implements IModel193Callback {
@@ -85,6 +86,10 @@ public class Model193 extends MainEntryPoint {
 		@Override
 		public void onNew(Model193ModuleOptions options) {
 			newModel(options);
+		}
+		@Override
+		public void onDuplicate(Model193ModuleOptions options, int id) {
+			duplicateModel(options, id);
 		}
 		@Override
 		public void cleanErrorPanel() {
@@ -247,6 +252,25 @@ public class Model193 extends MainEntryPoint {
 					}
 				});
 	}
+	
+	private void duplicateModel(Model193ModuleOptions options, int id) {
+		cleanErrorPanel();
+		SERVICE.getMod193(options.getDomainName(),options.getUser(),options.getDomain(), id,
+				new AsyncCallback<Mod193>() {
+					@Override
+					public void onSuccess(Mod193 m193) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+						showDuplicateDeclarationPopup(options, m193);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
+	}
 
 	private void cancel() {
 		cleanErrorPanel();
@@ -356,4 +380,44 @@ public class Model193 extends MainEntryPoint {
 			newDialog.center();
 			newDialog.show();
 	}
+	
+	private void showDuplicateDeclarationPopup(Model193ModuleOptions options, Mod193 model) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, 
+			new Model193Callback() {
+
+					@Override
+					public void onAccept(Mod193 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+
+						SERVICE.duplicateMod193(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), model,
+								new AsyncCallback<Mod193>() {
+									@Override
+									public void onSuccess(Mod193 model) {
+										popup.hide();
+										select(options, model, null);
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+									}
+								});
+					}
+					
+					@Override
+					public void onCancel() {}
+
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 }

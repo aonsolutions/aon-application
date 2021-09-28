@@ -107,7 +107,7 @@ public interface IFiscal {
 	public void deleteMod193(AONContext ctx,Mod193 mod193);
 	public Mod193 saveCommentsMod193(AONContext ctx, Mod193 mod193);
 	public Mod193 changeStatusMod193(AONContext ctx, Mod193 mod193, FiscalStatus newStatus);
-	public Mod193 duplicateNextYearMod193(AONContext ctx, Integer id);
+	public Mod193 duplicateMod193(AONContext ctx, Mod193 mod193);
 	
 	// 				   		  MOD184
 	public LinkedList<Mod184> getMod184s(AONContext ctx,int domain);
