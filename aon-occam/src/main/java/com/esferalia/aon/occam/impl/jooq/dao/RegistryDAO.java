@@ -32,8 +32,12 @@ import com.esferalia.aon.occam.impl.jooq.validation.RegistryValidation;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class RegistryDAO {
-	private static final RegistryPropertiesDAO REGISTRY_PROPERTIES = new RegistryPropertiesDAO();
-	public static class RegistryPropertiesDAO implements RegistryProperties {
+
+	private RegistryDAO() {
+	}
+	
+	protected static final RegistryPropertiesDAO REGISTRY_PROPERTIES = new RegistryPropertiesDAO();
+	protected static class RegistryPropertiesDAO implements RegistryProperties {
 		
 		protected Condition[] getConditions(RegistryFilter filter) {
 			if (filter == null) return new Condition[0];

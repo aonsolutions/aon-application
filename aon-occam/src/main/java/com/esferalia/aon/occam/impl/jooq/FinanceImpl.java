@@ -49,6 +49,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
 public class FinanceImpl implements IFinance {
 
 	// ------------------------------------- INVOICE
+	@Override
+	public Invoice getInvoice(AONContext ctx, Integer id) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDAO.getInvoice(ctx, id));
+	}
 	
 	@Override
 	public Invoice getFullInvoice(AONContext ctx, Integer id){

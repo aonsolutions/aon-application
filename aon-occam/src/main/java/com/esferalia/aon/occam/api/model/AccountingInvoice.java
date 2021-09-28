@@ -242,10 +242,6 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	public boolean isOutputVatEnabled() {
 		return invoice != null && invoice.isOutputVatEnabled();
 	}
-	public boolean isVatEnabled() {
-		return (isInputVatEnabled() != isOutputVatEnabled());
-	}
-	
 	public void setWithholdingAccount(Account acc) {
 		ensureWithholdingData();
 		getWithholdingData().setAccountId(acc.getId())
@@ -372,6 +368,13 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	public void clearMessages() {
 		this.messages = new LinkedList<TediError>();		
+	}
+	
+	public boolean isVatImportationAvailable() {
+		return invoice != null && invoice.isVatImportationAvailable();
+	}
+	public boolean isVatImportation() {
+		return invoice != null && invoice.isVatImportation();
 	}
 	
 }

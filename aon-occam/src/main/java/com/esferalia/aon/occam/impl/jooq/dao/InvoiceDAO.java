@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
+import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
@@ -68,6 +69,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -262,6 +264,7 @@ public class InvoiceDAO {
 				.select()
 				.from(INVOICE)
 				.join(SCOPE).on(SCOPE.ID.equal(INVOICE.SCOPE))
+				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
 				.where(INVOICE.ID.eq(id))
 				.fetch()
 				.stream()
@@ -589,6 +592,9 @@ public class InvoiceDAO {
 				.setTotal(r.getValue(INVOICE.TOTAL))	
 				.setComments(r.getValue(INVOICE.COMMENTS))
 				.setStatus(r.getValue(INVOICE.STATUS))
+				.setFiscal(checkField(r, INVOICE_FISCAL.ID)
+						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
+						: new InvoiceFiscal())
 				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
 				.setCreationUser(r.getValue(INVOICE.CREATION_USER))
 				.setModificationDate(r.getValue(INVOICE.MODIFICATION_DATE))
@@ -1119,6 +1125,7 @@ public class InvoiceDAO {
 		invoice.setId(record.getValue(INVOICE.ID));
 //		ctx.log().info("INSERT INVOICE invoice: " + invoice.getId() + " Act: " + invoice.getActivity());
 		insertDetails(ctx, config, invoice);
+		InvoiceFiscalDAO.insertInvoiceFiscal(ctx, config, invoice);
 		return invoice; 
 	}
 	

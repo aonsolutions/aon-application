@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class AonConfiguration implements Serializable {
 
@@ -145,6 +146,14 @@ public class AonConfiguration implements Serializable {
 		if (hasActivities()) {
 			for (EnterpriseActivity act : this.enterpriseActivities) {
 				if (act.isPrincipal()) return act;
+			}
+		}
+		return null;
+	}
+	public EnterpriseActivity getActivity( Integer id ) {
+		if (hasActivities()) {
+			for (EnterpriseActivity act : this.enterpriseActivities) {
+				if (AonNumberUtils.equals(act.getId(),id)) return act;
 			}
 		}
 		return null;

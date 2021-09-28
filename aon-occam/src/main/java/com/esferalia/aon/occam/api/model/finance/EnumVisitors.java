@@ -113,5 +113,20 @@ public class EnumVisitors {
 		T visitTaxSales();
 	}
 
+	public static interface IVATTaxRegimeVisitor {
+		void visitVatGeneral();
+		void visitVatSurcharge();
+		void visitVatSimplified();
+		void visitVatAccrualPayment();
+		void visitVatRebuOperation();
+		void visitVatRebuProfit();
+		void visitVatTravelAgency();
+		void visitVatAgriculture();
+		void visitVatGold();
+		void visitVatUnionExternal();
+		void visitVatUnion();
+		void visitVatImportation();
+	}
+	
 		
 }

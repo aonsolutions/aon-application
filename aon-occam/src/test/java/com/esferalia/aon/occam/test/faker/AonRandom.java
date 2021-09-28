@@ -120,6 +120,9 @@ public class AonRandom {
         		?truncate( faker.date().past(100, TimeUnit.DAYS, new Date()))
         		:null;
     }
+    public static Date today( ) {
+    	return truncate( new Date());
+    }
     
     public static Date getFutureDate( int threshold ) {
     	return ( gt(threshold) )
@@ -148,7 +151,7 @@ public class AonRandom {
     }	
     public static <T extends Enum<?>> T randomEnum(Class<T> clazz, int nullThreshold){
     	return gt(nullThreshold)
-    			?clazz.getEnumConstants()[faker.random().nextInt(clazz.getEnumConstants().length)]
+    			?clazz.getEnumConstants()[faker.random().nextInt(clazz.getEnumConstants().length-1)]
 				:null;
     }	
 

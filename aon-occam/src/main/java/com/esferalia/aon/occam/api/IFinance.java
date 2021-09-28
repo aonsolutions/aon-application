@@ -47,6 +47,8 @@ public interface IFinance {
 	// 	****************************************
 	// 	**************************** INVOICE ***
 	// 	****************************************
+	Invoice getInvoice(AONContext ctx, Integer id);
+	
 	Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
 	Invoice getFullInvoice(AONContext ctx, Integer id);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
@@ -145,6 +147,7 @@ public interface IFinance {
 
 	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Boolean withData);
 	public PrintInvoiceConfiguration savePrintInvoiceConfiguration(AONContext ctx, PrintInvoiceConfiguration pic);
+
 	
 }
 	

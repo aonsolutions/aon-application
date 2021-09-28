@@ -25,7 +25,10 @@ import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Workgroup;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.finance.VATTaxRegime;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -41,6 +44,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 public class Asserts {
@@ -48,7 +52,6 @@ public class Asserts {
 	private static final double DELTA = 1e-15;
 	
 	public static void assertEqualsNulls(String msg,Object expected, Object actual) {
-		
 		if ( expected == null) assertNull(msg,actual);
 		if ( expected != null) assertNotNull(msg,actual);
 	}
@@ -111,6 +114,22 @@ public class Asserts {
 			assertEquals("InitiationDate",expected.getInitiationDate(), actual.getInitiationDate());
 			assertEquals("Deadline",expected.getDeadline(), actual.getDeadline());
 			assertEquals("Status",expected.getStatus(), actual.getStatus());
+		}
+	}
+
+	public static void assertEqualsScope(Scope expected, Scope actual) {
+		assertEqualsNulls( "Scope", expected, actual);
+		if (expected != null ) {
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEquals("Description",expected.getDescription(), actual.getDescription());
+		}
+	}
+	
+	public static void assertEqualsScopeId(Scope expected, Scope actual) {
+		assertEqualsNulls( "Scope", expected, actual);
+		if (expected != null ) {
+			assertEquals("Id", expected.getId(), actual.getId());
 		}
 	}
 
@@ -220,16 +239,18 @@ public class Asserts {
 
 	public static void assertEqualsRegistry (Registry expected, Registry actual) {
 		assertEqualsNulls( "Registry", expected, actual);
-		assertEquals("Id", expected.getId(), actual.getId());
-		assertEquals("Domain", expected.getDomain().getId(), actual.getDomain().getId());
-		assertEquals("Document",expected.getDocument(), actual.getDocument());
-		assertEquals("DocumentType",expected.getDocumentType(), actual.getDocumentType());
-		assertEquals("DocumentCountry",expected.getDocumentCountry(), actual.getDocumentCountry());
-		assertEquals("Name",expected.getName(), actual.getName());
-		assertEquals("Alias",expected.getAlias(), actual.getAlias());
-		assertEquals("LegalPerson",expected.isLegalPerson(), actual.isLegalPerson());
-		assertEquals("Nationality",expected.getNationality(), actual.getNationality());
-		assertEquals("SecurityLevel",expected.getSecurityLevel() , actual.getSecurityLevel());
+		if (expected != null ) {
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Domain", expected.getDomain().getId(), actual.getDomain().getId());
+			assertEquals("Document",expected.getDocument(), actual.getDocument());
+			assertEquals("DocumentType",expected.getDocumentType(), actual.getDocumentType());
+			assertEquals("DocumentCountry",expected.getDocumentCountry(), actual.getDocumentCountry());
+			assertEquals("Name",expected.getName(), actual.getName());
+			assertEquals("Alias",expected.getAlias(), actual.getAlias());
+			assertEquals("LegalPerson",expected.isLegalPerson(), actual.isLegalPerson());
+			assertEquals("Nationality",expected.getNationality(), actual.getNationality());
+			assertEquals("SecurityLevel",expected.getSecurityLevel() , actual.getSecurityLevel());
+		}
 	}
 	
 	public static void assertEqualsRegistryFull (RegistryFull<?> expected, RegistryFull<?> actual) {
@@ -541,5 +562,84 @@ public class Asserts {
 		assertEquals("VatAccrualPayment",expected.isVatAccrualPayment(),actual.isVatAccrualPayment());
 		assertEquals("eInvoice",expected.iseInvoice(),actual.iseInvoice());
 	}
+	
+	public static void assertEqualsInvoice(Invoice expected, Invoice actual) {
+		assertEqualsNulls( "Invoice", expected, actual);
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Activity", expected.getActivity(), actual.getActivity());
+		assertEquals("Epigraph", expected.getEpigraph(), actual.getEpigraph());
+		assertEquals("InvestAsset", expected.getInvestAsset(), actual.getInvestAsset());
+		assertEquals("Project", expected.getProject(), actual.getProject());
+		assertEquals("Series", expected.getSeries(), actual.getSeries());
+		assertEquals("Number", expected.getNumber(), actual.getNumber());
+		assertEquals("ReferenceCode", expected.getReferenceCode(), actual.getReferenceCode());
+		assertEquals("IssueDate", expected.getIssueDate(), actual.getIssueDate());
+		assertEquals("TaxDate", expected.getTaxDate(), actual.getTaxDate());
+		assertEquals("RectificationType", expected.getRectificationType(), actual.getRectificationType());
+		assertEquals("SecurityLevel", expected.getSecurityLevel(), actual.getSecurityLevel());
+		assertEquals("RectificationInvoice", expected.getRectificationInvoice(), actual.getRectificationInvoice());
+		// assertEqualsRegistry(expected.getRegistryData(), actual.getRegistryData());
+		assertEquals("Registry", expected.getRegistry(), actual.getRegistry());
+		assertEquals("RegistryDocument", expected.getRegistryDocument(), actual.getRegistryDocument());
+		assertEquals("RegistryDocumentType", expected.getRegistryDocumentType(), actual.getRegistryDocumentType());
+		assertEquals("RegistryDocumentCountry", expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry());
+		assertEquals("RegistryName", expected.getRegistryName(), actual.getRegistryName());
+		assertEqualsScopeId(expected.getScope(), actual.getScope());
+		assertEquals("Type", expected.getType(), actual.getType());
+		assertEquals("Transaction", expected.getTransaction(), actual.getTransaction());
+		assertEquals("Recorded", expected.isRecorded(), actual.isRecorded());
+		assertEquals("Surcharge", expected.isSurcharge(), actual.isSurcharge());
+		assertEquals("Withholding", expected.isWithholding(), actual.isWithholding());
+		assertEquals("WithholdingFarmer", expected.isWithholdingFarmer(), actual.isWithholdingFarmer());
+		assertEquals("VatAccrualPayment", expected.isVatAccrualPayment(), actual.isVatAccrualPayment());
+		assertEquals("Investment", expected.isInvestment(), actual.isInvestment());
+		assertEquals("Service", expected.isService(), actual.isService());
+		assertEquals("Advance", expected.isAdvance(), actual.isAdvance());
+		assertEquals("Signed", expected.isSigned(), actual.isSigned());
+		assertEquals("TaxableBase", expected.getTaxableBase(), actual.getTaxableBase(), DELTA);
+		assertEquals("VatQuota", expected.getVatQuota(), actual.getVatQuota(), DELTA);
+		assertEquals("RetentionQuota", expected.getRetentionQuota(), actual.getRetentionQuota(), DELTA);
+		assertEquals("Total", expected.getTotal(), actual.getTotal(), DELTA);
+		assertEquals("PosShift", expected.getPosShift(), actual.getPosShift());
+		assertEquals("Seller", expected.getSeller(), actual.getSeller());
+		assertEquals("SellerName", expected.getSellerName(), actual.getSellerName());
+		assertEquals("Comments", expected.getComments(), actual.getComments());
+		assertEquals("Remarks", expected.getRemarks(), actual.getRemarks());
+		assertEqualsInvoiceFiscal(expected.getFiscal(), actual.getFiscal());
+/*
+	private Byte status;
+	private String siiStatus;
+	private LinkedList<InvoiceDetail> details;
+	private LinkedList<InvoiceBreakdown> breakdown;
+	private LinkedList<Finance> finances;
+	private String tediCategory;
+	
+	private Integer registryAddress;		//**
+	private RegistryAddress registryAddressData;
+	private StreetType addressStreetType;	//**
+	private String address;					//**
+	private String addressNumber;			//**
+	private String addressTown;
+	private String addressZIP;
+	private Integer addressGeozone;			//**
+	private String addressProvinceCode;
+	private String addressProvince;
+ 		
+ */
+	}
+
+	public static void assertEqualsInvoiceFiscal(InvoiceFiscal expected, InvoiceFiscal actual) {
+		if (expected != null) {
+			assertEqualsNulls( "InvoiceFiscal", expected, actual);
+			assertEquals("Id", expected.getId(), actual.getId());
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
+			assertEquals("Invoice", expected.getInvoice(), actual.getInvoice());
+			for (VATTaxRegime vatRegime : VATTaxRegime.values()) {
+				assertEquals("InvoiceFiscal " + vatRegime.getName(),expected.isVatRegimeEnabled(vatRegime),actual.isVatRegimeEnabled(vatRegime));	
+			}
+		}
+	}
+		
 	
 }
