@@ -75,6 +75,13 @@ public interface Properties {
 		Property<Integer> getTaskHolderProperty();
 	}
 	
+	public interface ProjectTypeProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getActiveProperty();
+	}
+	
 	public interface AttachProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

@@ -27,7 +27,13 @@ public class ProjectJSON {
 	public static Project fromJSON(JSONObject json) {
 		return new Project()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-				.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)));
+				.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)))
+				.setAlias(JsonUtils.getString(json, IJsonNames.ALIAS))
+				.setType(ProjectTypeJSON.fromJSON(json.optJSONObject(IJsonNames.TYPE)))
+				.setName(JsonUtils.getString(json, IJsonNames.NAME))
+				.setDate(JsonUtils.getDateTime(json, IJsonNames.DATE))
+				.setRegistry(RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.REGISTRY)))
+				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE));
 	}
 	
 	public static JSONArray toJSON(List<Project> projects) {

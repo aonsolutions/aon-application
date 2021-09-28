@@ -1,5 +1,5 @@
 import { EVENT, MSG } from "../../../environments/environments";
-import { getOfficeProjects, getProjectsByRegistry } from "../../../services/projectService";
+import { getOfficeProjects, getProjects} from "../../../services/projectService";
 import { getCustomers } from "../../../services/registryService";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
 import { waitEl } from "../../../services/utils";
@@ -44,8 +44,8 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
             let projects = [];
             let registry = task.getRegistry();
             if(registry.id)
-                projects = await getProjectsByRegistry({registryId: registry.id});
-            else 
+                projects = await getProjects({ registry: registry.id });
+            else
                 projects = await getOfficeProjects();
 
 

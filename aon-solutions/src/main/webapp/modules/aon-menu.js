@@ -12,6 +12,7 @@ import './laboral/aon-laboral.js';
 import './example/aon-example.js';
 import './imports/aon-imports.js';
 import './invoice/aon-invoice-panel.js';
+import './project/aon-project-panel.js';
 import * as GWT from "../gwt/gwt.js";
 import { AonMessenger } from './messenger/aon-messenger.js';
 import { AonIconButton } from '../components/aon-icon-button.js';

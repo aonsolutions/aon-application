@@ -28,8 +28,8 @@ public enum DomainJSON {
 			(domain, json) -> json.put(IJsonNames.OWNER, domain.getOwner())
 	),
 	PARENT_ID(
-		(domain, json) -> domain.setId( JsonUtils.getInteger(json,IJsonNames.PARENT_ID)),
-		(domain, json) -> json.put(IJsonNames.PARENT_ID, domain.getId())
+		(domain, json) -> domain.setParentId( JsonUtils.getInteger(json,IJsonNames.PARENT_ID)),
+		(domain, json) -> json.put(IJsonNames.PARENT_ID, domain.getParentId())
 	),
 	DOMAIN_TYPE(
 		(params, json) -> params.setDomainType( DomainType.safeValueOf( JsonUtils.getInteger(json,IJsonNames.DOMAIN_TYPE) )),

@@ -77,6 +77,10 @@ public class JsonUtils {
 		return AonNumberUtils.toInteger(json.optNumber(key, null)); 
 	}
 	
+	public static Integer optInteger(JSONObject json, String key ) {
+		return json != null ? AonNumberUtils.toInteger(json.optNumber(key, null)) : null; 
+	}
+	
 	public static Integer getInt(JSONObject json, String key ) {
 		Number n = AonNumberUtils.toInteger(  json.optNumber(key, null)); 
 		return n==null?0:n.intValue();

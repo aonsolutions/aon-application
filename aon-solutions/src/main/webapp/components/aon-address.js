@@ -67,7 +67,7 @@ export class AonAddress extends AonElement {
             province: "",
           };
       let aonInput = this.getElement(this.INPUT);
-      aonInput.value = `${value.address}, ${value.zip} ${value.city}, ${value.province}, ${value.country}`;
+      if(aonInput) aonInput.value = `${value.address}, ${value.zip} ${value.city}, ${value.province}, ${value.country}`;
     }
   }
 

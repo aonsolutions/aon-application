@@ -444,6 +444,9 @@ export const PayrollMenu =[
     },{
       title: 'Carga de datos',
       content:'<aon-imports></aon-imports>',
+    },{
+      title: 'Proyectos',
+      content:'<aon-project-panel></aon-project-panel>',
     }];
 
 export const ArabaFiscalMenu =
