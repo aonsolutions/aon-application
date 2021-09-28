@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import net.aonsolutions.aon.api.checkit.CheckItAPI;
 
+@Ignore
 public class CheckItTestCase {
 	
 	private static final Integer AON_ID = 11413;
