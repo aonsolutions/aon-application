@@ -409,7 +409,7 @@ public interface IFiscal {
 	public Mod347 saveCommentsMod347(AONContext ctx, Mod347 mod347);
 	public Mod347 changeStatusMod347(AONContext ctx, Mod347 mod347, FiscalStatus newStatus);
 	public String getMod347Info(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey);
-	public Mod347 duplicateNextYearMod347(AONContext ctx, Integer id);
+	public Mod347 duplicateMod347(AONContext ctx, Mod347 mod347);
 	
 	
 }

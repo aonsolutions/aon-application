@@ -1607,9 +1607,9 @@ public class FiscalImpl implements IFiscal {
 			return Mod347DAO.getMod347Info(ctx, mod347, declared, infoKey);
 		}
 		@Override
-		public Mod347 duplicateNextYearMod347(AONContext ctx, Integer id) {
+		public Mod347 duplicateMod347(AONContext ctx, Mod347 mod347) {
 			return ctx.getDslContext().transactionResult(
-					configuration -> Mod347DAO.duplicateNextYear(ctx, id));		
+					configuration -> Mod347DAO.duplicate(ctx, mod347));		
 		}		
 		
 		// ---------------------------------------------------- [IRPF]
