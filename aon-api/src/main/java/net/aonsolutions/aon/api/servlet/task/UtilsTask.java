@@ -67,7 +67,10 @@ public class UtilsTask {
 		
 		if(workgroup != null && workgroup !=0) 
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
-
+		else if(api.getParams().optBoolean(IJsonNames.WORKGROUP))  //TRUE = ALL
+			filter = filter.and(f.getWorkgroupProperty().isNull());
+		
+		
 		if(taskHolder != null && taskHolder!=0) 
 			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
 
@@ -115,28 +118,28 @@ public class UtilsTask {
 	  
 	public static Filter taskFilterCount(AonApiData api, TaskProperties f) {
 		String source = api.getParams().optString("source");
-		Integer workgroup = api.getParams().optInt(IJsonNames.WORKGROUP);
 		Integer taskHolder = api.getParams().optInt(IJsonNames.TASK_HOLDER);
-		Integer sender = api.getParams().optInt(IJsonNames.SENDER);
+		String workgroupStr = api.getParams().optString(IJsonNames.WORKGROUPS);
+		String email = api.getParams().optString(IJsonNames.EMAIL);
 		
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 
-		if(workgroup != null && workgroup!= 0) 
-			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
-
-		if(taskHolder != null && taskHolder!=0) 
-			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder));
-
-		if(sender != null && sender!=0) 
-			filter = filter.and(f.getSenderProperty().eq(sender));
-
+		if(taskHolder != null && taskHolder!=0) {
+			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder)).or(f.getSenderProperty().eq(taskHolder));
+		}
+		
 		if(!source.isEmpty()) 
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
 		
-		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0) {
-			String email = api.getParams().optString(IJsonNames.EMAIL);
-			if(!email.isEmpty())
-				filter = filter.and(f.getGtaskIdProperty().eq(email));
+		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0 && !email.isEmpty()) {
+			filter = filter.and(f.getGtaskIdProperty().eq(email));
+		}
+		
+		if(!workgroupStr.isEmpty()) {
+			String[]  str = workgroupStr.split(",");
+			Integer[] arr = new Integer[str.length];
+			for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
+			filter = filter.or(f.getWorkgroupProperty().in(arr));
 		}
 		
 		return filter;
@@ -144,21 +147,34 @@ public class UtilsTask {
 
 	public static Filter taskOfficeFilter(AonApiData api, TaskProperties f, Customer customer, Domain domain) {
 		String search = api.getParams().optString("search");
-
+		Integer workgroup = api.getParams().optInt(IJsonNames.WORKGROUP);
+		String workgroupStr = api.getParams().optString(IJsonNames.WORKGROUPS);
+		
 		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq(customer.getId())).and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
+		
+		if(workgroup != null && workgroup !=0) 
+			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
+		else if(api.getParams().optBoolean(IJsonNames.WORKGROUP))  //TRUE = ALL
+			filter = filter.and(f.getWorkgroupProperty().isNull());
 		
 		if(!search.isEmpty()) {
 			Filter filter1 = filter.and(f.getDescriptionProperty().like("%" + search + "%"));
 			Integer numberSearch = 0;
 			try { 
 				numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", ""));} 
-			catch(NumberFormatException e){
-				e.printStackTrace();
-			}
+			catch(NumberFormatException e){}
 			if(numberSearch!=0)
 				filter1 = filter1.or(f.getNumberProperty().like(numberSearch));
 			
 			filter = filter.and(filter1);
+		}
+		
+		
+		if(!workgroupStr.isEmpty()) {
+			String[]  str = workgroupStr.split(",");
+			Integer[] arr = new Integer[str.length];
+			for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
+			filter = filter.and(f.getWorkgroupProperty().in(arr));
 		}
 		
 		return filter;

@@ -48,19 +48,8 @@ export class AonHome extends AonElement {
 		aonShowMenu.id = this.AON_SHOW_MENU;
 		aonShowMenu.className = CSS.AON_SHOW_MENU;
 		aonShowMenu.addEventListener(EVENT.CLICK, () => {
-			if(localStorage.getItem('aon_domain_id')){
+			if(localStorage.getItem('aon_domain_id'))
 				aonMenu.toogle();
-
-				// let aonMenuSidenav = document.getElementById('aonMenuSidenav');
-				// aonMenuSidenav.style.transitionDuration = '0ms';
-				// aonMenuSidenav.style.width = '150px';
-				// document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
-				// 	item.style.display = 'inline-block';
-				// 	item.style.fontSize = '12px';
-				// 	item.style.fontFamily = 'Roboto,sans-serif';
-				// 	item.style.color = 'black';
-				// });
-			}
 		});
 
 		let aonShowMenuButton = new AonIconButton();

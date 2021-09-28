@@ -209,6 +209,7 @@ export class AonMessengerList extends AonElement {
       aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
     });
   }
+  
   getDataMobile(datos){
     let aonTable = this.getElement(this.TABLE_ID);
     datos.map((res, idx) => {

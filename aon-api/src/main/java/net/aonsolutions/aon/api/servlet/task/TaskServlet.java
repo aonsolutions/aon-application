@@ -1,7 +1,11 @@
 package net.aonsolutions.aon.api.servlet.task;
 
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -153,7 +157,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 
 	private JSONObject getTask(AonApiData api) {
-		Integer taskId = api.getParams().optInt("id");
+		Integer taskId = api.getParams().optInt(IJsonNames.ID);
 		Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(taskId) );
 		if(task.getId()==null) throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
 		return TaskJSON.toJSON(task);
@@ -229,9 +233,9 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONObject saveTaskAttach(AonApiData api) {
 		Domain domain = api.getDomain();
 		Integer task = api.getData().optInt(IJsonNames.TASK);
-		if(api.getData().opt("file")!= null) { 
+		if(api.getData().opt(IJsonNames.FILE)!= null) { 
 			
-			JSONObject file  = api.getData().optJSONObject("file");
+			JSONObject file  = api.getData().optJSONObject(IJsonNames.FILE);
 			String base64 = file.optString("content");
 			String contentType = file.optString("contentType");
 			byte[] fileData = Base64.getDecoder().decode(base64);
@@ -255,22 +259,35 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskCount(AonApiData api) {
 		JSONObject json = new JSONObject();
-		Domain domain = api.getDomain();
-		Integer taskHolder = JsonUtils.getInteger(api.getParams(), "task_holder");
+
+		Integer taskHolder = JsonUtils.getInteger(api.getParams(), IJsonNames.TASK_HOLDER);
 		Optional<String> email = Optional.ofNullable(null);
 	
 		if(taskHolder==null) {
 			taskHolder = 0;
 			email = Optional.of(api.getParams().optString(IJsonNames.EMAIL));
 		}
-	
-		AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(),  
-				f -> f.getDomainProperty().eq(domain.getId())
+		
+		HashMap<String, Integer> counts = AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(),  
+				f -> f.getDomainProperty().eq(api.getDomain().getId())
 				.and(f.getStatusProperty().eq(TaskStatus.PENDING.value())), 
 				taskHolder,
 				email
-		)
-		.forEach((k,v) -> json.put(k, v));
+		);
+		
+		Integer countTH = 0;
+		Integer countSE = 0;
+		
+		for(Entry<String, Integer> count: counts.entrySet()) {
+			if(count.getKey().equalsIgnoreCase(IJsonNames.TASK_HOLDER))
+				countTH += count.getValue();
+			else if(count.getKey().equalsIgnoreCase(IJsonNames.SENDER))
+				countSE += count.getValue();
+		}
+		
+		json.put(IJsonNames.TASK_HOLDER, countTH);
+		json.put(IJsonNames.SENDER, countSE);
+		
 		return json;
 	}
 	
@@ -313,10 +330,9 @@ public class TaskServlet extends AonApiHttpServlet{
 			LinkedList<TaskWorkflow> taskWorkflow = AON_SOLUTIONS.getTaskWorkflowStream(api.getDomain(), api.getUser(), 
 					 f->f.getTaskProperty().eq(task.getId())
 					 .and(f.getTypeProperty().eq(TaskWorkflowType.COMMENT.value()))
-					 .and(f.getModificationDateProperty().isNotNull())
+					 .and(f.getNotificationUserProperty().isNotNull())
 					 .or(f.getIdProperty().eq(workflowId))
 			 ).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())) .collect(Collectors.toCollection(LinkedList::new));
-			
 			task.setWorkflows(taskWorkflow);
 			
 			sendHistoricWorkflow(api, task);
@@ -338,14 +354,14 @@ public class TaskServlet extends AonApiHttpServlet{
 			try {
 				JSONObject description = new JSONObject(task.getDescription());
 				JSONObject cauData = description.optJSONObject("cauData");
-				JSONObject company = cauData.optJSONObject("company");
-				JSONObject auth = cauData.optJSONObject("auth");
+				JSONObject company = cauData.optJSONObject(IJsonNames.COMPANY);
+				JSONObject auth = cauData.optJSONObject(IJsonNames.AUTH);
 				if(!auth.optString("email").isEmpty()) {
-					task.setGtaskId(auth.optString("email"));
+					task.setGtaskId(auth.optString(IJsonNames.EMAIL));
 				}
-				if(!company.optString("document").isEmpty()) {
+				if(!company.optString(IJsonNames.DOCUMENT).isEmpty()) {
 					Customer customer = AON.getCustomer(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
-							f->f.getDocumentProperty().eq(company.optString("document")));
+							f->f.getDocumentProperty().eq(company.optString(IJsonNames.DOCUMENT)));
 					if(!customer.getDocument().isEmpty()){
 						task.setRegistry(customer.get());
 					}
@@ -394,12 +410,11 @@ public class TaskServlet extends AonApiHttpServlet{
 		String status = api.getParams().optString("status");
 		String sender = api.getParams().optString(IJsonNames.SENDER);
 		String taskHolder = api.getParams().optString(IJsonNames.TASK_HOLDER);
-		if("pending".equalsIgnoreCase(status)) {			//-------SOLO LAS ABIERTA Y ENVIADAS
+		if(status.isEmpty() || "pending".equalsIgnoreCase(status)) {
 			Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 			String email = api.getParams().optString(IJsonNames.EMAIL);
 			AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 				Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
-				
 				
 				if(!taskHolder.isEmpty()) {//----------RECIBIDAS
 					AON_SOLUTIONS.getTaskStream(domain, new User(), 

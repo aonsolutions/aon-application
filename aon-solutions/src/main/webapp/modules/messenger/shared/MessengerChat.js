@@ -217,11 +217,10 @@ const createSecondDiv = (mainView) => {
     classes: [CSS.FLEX_ROW],
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
-        width: "50%",
-        // minWidth: "400px",
-        paddingTop: "4px",
-        paddingBottom: "30px",
-        paddingRight: "44px"
+      width: "50%",
+      paddingTop: "4px",
+      paddingBottom: "30px",
+      paddingRight: "10px"
     },
   }).element;
 

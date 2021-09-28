@@ -326,7 +326,8 @@ export class Task {
       const task_holder = project_holder.task_holder && project_holder.task_holder.id ? project_holder.task_holder : {};
       this.setTaskHolder(task_holder);
     }
-    const registry = this.project.registry && this.project.registry.id ? this.project.registry : {};
+
+    const registry = this.project.registry && this.project.registry.id ? this.project.registry : this.registry;
     this.setRegistry(registry);
 
     let sender = {};

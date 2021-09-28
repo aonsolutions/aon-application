@@ -2,11 +2,10 @@ import {AonElement} from '../components/AonElement.js';
 import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu} from  '../services/app.js';
 import {getDomainUserRoles} from  '../services/service.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import {AonDocumental} from './documental/aon-documental.js';
 import {AonDocumentalAyudat} from './documental/ayudat/aon-documental-ayudat.js';
 import '../components/aon-icon.js';
-// import '../components/aon-icon-button.js';
 import './signin/aon-signin.js';
 import './faqs/aon-faqs.js';
 import './laboral/aon-laboral.js';
@@ -16,7 +15,7 @@ import './invoice/aon-invoice-panel.js';
 import * as GWT from "../gwt/gwt.js";
 import { AonMessenger } from './messenger/aon-messenger.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
-
+import { AonFiscal } from './fiscal/aon-fiscal.js';
 const ID = 'id';
 const OPENED = 'opened';
 const APP = 'app';
@@ -94,7 +93,7 @@ export class AonMenu extends AonElement {
 
 	toogle() {
 		let aonMenuSidenav = this.getElement('aonMenuSidenav');
-		this.getAttribute('opened') ? 'keyboard_arrow_right' : 'keyboard_arrow_left';
+		this.getAttribute('opened') ? MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT : MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
 
 		if(this.getAttribute('opened')) {
 			this.close();
@@ -107,11 +106,7 @@ export class AonMenu extends AonElement {
 			this.setAttribute('opened', true);
 		}
 
-		const aonMenuShowButton = this.getElement("aonMenuShowButton");
-		if(aonMenuShowButton){
-			const icon = this.getAttribute('opened') ? 'keyboard_arrow_right' : 'keyboard_arrow_left';
-			aonMenuShowButton.setAttribute('icon', icon);
-		}
+		this.changeAonMenuShowButton();
 	}
 
 	appSelection(app) {
@@ -127,7 +122,7 @@ export class AonMenu extends AonElement {
 			case Apps.FISCAL.app:
 				if(this.getDur().isFiscalManager()) {
 					this.buildAppMenu(Apps.FISCAL);
-				} else this.rootPanelHtml('<aon-fiscal></aon-fiscal>');
+				} else this.rootPanel(new AonFiscal());
 				break;
 			case Apps.PAYROLL.app:
 				if(this.getDur().isPayrollManager()) {
@@ -179,8 +174,18 @@ export class AonMenu extends AonElement {
 		}
 		this.buildMenu();
 	}
+
+	changeAonMenuShowButton(){
+		const aonMenuShowButton = this.getElement("aonMenuShowButton");
+		if(aonMenuShowButton){
+			const icon = this.getAttribute('opened') ? MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT : MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
+			aonMenuShowButton.setAttribute('icon', icon);
+			aonMenuShowButton.title = icon ===  MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT ? `Ocultar Menu` : `Mostrar Menu`;
+		}
+	}
 	
 	buildMenu() {
+		let aonMenuSidenav = this.getElement('aonMenuSidenav');
 		let ul = this.createElement(TAG.UL);
 		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
@@ -191,12 +196,19 @@ export class AonMenu extends AonElement {
 		li.style.textAlign =  'right';
 		li.style.paddingRight = '12px';
 		li.style.backgroundColor = 'transparent';
-		
+		li.style.cursor = 'pointer';
 		ul.appendChild(li);
-		const icon = this.getAttribute('opened') ? 'keyboard_arrow_right' : 'keyboard_arrow_left';
+		const icon = this.getAttribute('opened') ? MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT : MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
 		let aib = new AonIconButton();
 		aib.id   = "aonMenuShowButton";
+		aib.title = icon ===  MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT ? `Ocultar Menu`: `Mostrar Menu`;
 		aib.icon = icon;
+		li.addEventListener(EVENT.MOUSEMOVE, (ev)=> {
+			ev.preventDefault();
+			aonMenuSidenav.style.transitionDuration = '300ms';
+			aonMenuSidenav.style.width = '60px';
+			this.getRootPanel().style.marginRight = '60px';
+		});
 		li.appendChild(aib);
 
 		if(localStorage.getItem('aon_domain_id') && localStorage.getItem('company')){
@@ -230,8 +242,7 @@ export class AonMenu extends AonElement {
 				if(toolSection) {
 					toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
 				}
-				const icon = this.getAttribute('opened') ? 'keyboard_arrow_right' : 'keyboard_arrow_left';
-				aonMenuShowButton.setAttribute('icon', icon);
+				this.changeAonMenuShowButton();
 			});
 
 			if(this.getDur().isAdmin()) {
@@ -257,23 +268,23 @@ export class AonMenu extends AonElement {
 			li.id = 'aonMenuList' + app.app;
 	    li.style.backgroundColor = 'transparent';
 	    li.addEventListener(EVENT.MOUSEOVER, () => {
-	      let img = this.getElement('aonMenuListAppImg-' + app.app);
-	      img.size = '40px';
-		  let aonMenuSidenav = this.getElement('aonMenuSidenav');
-		  if(aonMenuSidenav && aonMenuSidenav.style.width !== '250px' && aonMenuSidenav.style.width !== '0px' && localStorage.getItem('aon_domain_id')){
-			  aonMenuSidenav.style.transitionDuration = '0ms';
-			  aonMenuSidenav.style.width = '175px';
-			  document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
-				  item.style.display = 'inline-block';
-				  item.style.fontSize = '12px';
-				  item.style.fontFamily = 'Roboto,sans-serif';
-				  item.style.color = 'black';
-				  item.style.position = 'absolute';
-				  item.style.right = '50px';
-				  item.style.margin = '10px';
-			  });
-		  }
-	    });
+			let img = this.getElement('aonMenuListAppImg-' + app.app);
+			img.size = '40px';
+			let aonMenuSidenav = this.getElement('aonMenuSidenav');
+			if(aonMenuSidenav && aonMenuSidenav.style.width !== '250px' && aonMenuSidenav.style.width !== '0px' && localStorage.getItem('aon_domain_id')){
+				aonMenuSidenav.style.transitionDuration = '0ms';
+				aonMenuSidenav.style.width = '175px';
+				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+					item.style.display = 'inline-block';
+					item.style.fontSize = '12px';
+					item.style.fontFamily = 'Roboto,sans-serif';
+					item.style.color = 'black';
+					item.style.position = 'absolute';
+					item.style.right = '50px';
+					item.style.margin = '10px';
+				});
+			}
+		});
 
 	    li.addEventListener(EVENT.MOUSELEAVE, () => {
 	      let img = this.getElement('aonMenuListAppImg-' + app.app);
@@ -377,7 +388,7 @@ export class AonMenu extends AonElement {
 			if(Apps.ACCOUNTING.app === app.app) {
 				this.rootPanelHtml('<aon-accounting></aon-accounting>');
 			} else if(Apps.FISCAL.app === app.app) {
-				this.rootPanelHtml('<aon-fiscal></aon-fiscal>');
+				this.rootPanel(new AonFiscal());
 			} else if(Apps.PAYROLL.app === app.app) {
 				this.rootPanelHtml('<aon-laboral></aon-laboral>');
 			}

@@ -142,7 +142,7 @@ const createMessageAuthor = (properties) =>{
   });
 
   let span = setStyles(document.createElement(TAG.SPAN),{
-    fontSize: "14px",
+    fontSize: "12px",
     fontWeight:" 600",
     color : CSS.variable(COLORS.GRAYSON),
     textOverflow: "ellipsis",
@@ -435,7 +435,7 @@ export const createChatMessage = (properties, chat) => {
 
       if(me){
         setStyles(iconSendWorkflow, { right: "17px", cursor: "pointer" });
-        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(message.dataset.id));
+        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(parseInt(message.dataset.id)));
 
         //-------------------icon share
         const textShare = "Compartir entre ramas (En desarrollo)";
@@ -462,7 +462,7 @@ export const createChatMessage = (properties, chat) => {
     const date = createText({
         text: setDateTimestampDay(new Date(properties.date)),
         color: CSS.variable(COLORS.AON_GRAY),
-        fontSize : "12px",//'0.6em',
+        fontSize : "11px",//'0.6em',
         classes: [CSS.FIRST_LETTER_UPPER]
     });
     date.appendTo(name.element);

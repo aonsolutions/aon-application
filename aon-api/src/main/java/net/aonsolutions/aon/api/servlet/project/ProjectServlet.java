@@ -68,11 +68,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 	private JSONArray getProjectsByRegistry(AonApiData api) {
 		JSONArray arr = new JSONArray();
 		Integer registry = api.getParams().optInt(IJsonNames.REGISTRY_ID);
-		Domain domain = new Domain()
-				.setId(api.getParams().optInt(IJsonNames.DOMAIN_ID))
-				.setName(api.getParams().optString(IJsonNames.DOMAIN_NAME));
-
-		AON.getProjectStream(domain, "", f -> f.getRegistryProperty().eq(registry).and(f.getProjectTypeProperty().isNotNull()))
+		AON.getProjectStream(api.getDomain(), "", f -> f.getRegistryProperty().eq(registry).and(f.getProjectTypeProperty().isNotNull()))
 		.forEach(project -> {
 			ProjectHolder holder = AON.getProjectHolder(project.getDomain(), "", f -> f.getProjectProperty().eq(project.getId()).and(f.getEndDateProperty().isNull()));
 			project.setProjectHolder(holder);

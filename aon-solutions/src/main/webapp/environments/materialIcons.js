@@ -122,6 +122,7 @@ export const FORMAT_QUOTE = "format_quote";
 export const FIBER_MANUAL_RECORD = "fiber_manual_record";
 
 // ----- G
+export const GROUP_OFF = 'group_off';
 
 // ----- H
 
@@ -161,6 +162,7 @@ export const PERSON_ADD_ALT = 'person_add_alt';
 export const PHONE = 'phone';
 export const PRINT = 'print';
 export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
+export const PEOPLE_ALT = 'people_alt';
 
 // ----- R
 

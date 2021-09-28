@@ -45,6 +45,7 @@ export class AonMessenger extends AonElement {
 		this._tags = [];
 		this.TASK_HOLDER = {};
 		this.TASK_HOLDER_ENTERPRISE = [];
+		this.cau = 0;
 		this._filter = {
 			workgroup: undefined,
 			workgroups: undefined,
@@ -90,6 +91,7 @@ export class AonMessenger extends AonElement {
 			} else {
 				this.applicationEl.addToolbarTitle(MSG.SENT);
 			}
+			this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_OPEN.name);
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 		}
 
@@ -147,10 +149,8 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = undefined;
-					let wps = this._workgroups.map(({id})=> id)
-					let workgroupStr = wps.length ? wps.join(","): undefined;
 					if(this.cau && this.cauData && this.cauData.auth.email)	this._filter.email =  this.cauData.auth.email;
-					this._filter.workgroups = workgroupStr;
+					this._filter.workgroups = this.getWorkgroupsStr();
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
@@ -210,23 +210,37 @@ export class AonMessenger extends AonElement {
 		getWorkgroups(filter).then( workgroup => {
 		  this._workgroups = workgroup.map(t => ({...t, value: t.id, description: t.description, name:t.description}));
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
-		  this._workgroups.forEach(item => {
-			let option = {
+		  let options = [];
+		 if(this._workgroups.length){
+			options.push({
+				name: "SIN GRUPO",
+				icon: MATERIAL_ICONS.GROUP_OFF,
+				fn: () => {
+					let b = true;
+					if(this._filter.workgroup) b = undefined;
+					this._filter.workgroup = b;
+					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
+				}
+			});
+		 }
+		 
+		  this._workgroups.forEach(item => 
+			options.push({
 				name: item.description,
-				icon: 'people_alt',
+				icon: MATERIAL_ICONS.PEOPLE_ALT,
 				fn: () => {
 					let id = item.id;
 					if(this._filter.workgroup && this._filter.workgroup === item.id) id = undefined;
 					this._filter.workgroup = id;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
-			};
+			})
+		  );
 
-			application.addSidenavOptionsListValue({
+			application.addSidenavOptionsList({
 				id: 'Workgroup',
 				name: MSG.WORKGROUP.toUpperCase()
-			}, option);
-		  });
+			}, options);
 		});
 	}
 
@@ -311,9 +325,9 @@ export class AonMessenger extends AonElement {
 	updateCount(){
 		let application = this.applicationEl;
 		let filterCount= {};
-		if((!this.TASK_HOLDER.id || this.cau) && this.cauData)
+		if(this.cauData && this.cauData.auth)
 			filterCount.email = this.cauData.auth.email;
-		else 
+		if(this.TASK_HOLDER.id)
 			filterCount.task_holder = this.TASK_HOLDER.id;
 			
 		getTaskCount(filterCount).then(count=>{
@@ -323,32 +337,44 @@ export class AonMessenger extends AonElement {
 			application.updateSidenavCount("Recibidas", task_holder);
 		});
 
-		let filter = {};
-		if((!this.TASK_HOLDER.id || this.cau) && this.cauData)
-			filter.email = this.cauData.auth.email;
-		if(this._filter.source) 
-			filter.source = this._filter.source;
+		// let filter = {};
+		// const workgroupStr = this.getWorkgroupsStr();
+		// if(workgroupStr)
+		// 	filter.workgroups = workgroupStr;
 
-		getTaskStatusCount(filter).then(resp=>{
-			let openCount = resp[TASK_STATUS.PENDING];
-			let archiveCount = resp[TASK_STATUS.DELETED];
-			let closeCount = resp[TASK_STATUS.FINISHED];
+		// if(this._filter.source) 
+		// 	filter.source = this._filter.source;
+
+		// if((!this.TASK_HOLDER.id || this.cau) && this.cauData)
+		// 	filter.email = this.cauData.auth.email;
+		// else if(this.TASK_HOLDER.id && !this.dur.isMessengerManager())
+		// 	filter.task_holder = this.TASK_HOLDER.id;
+
+		// getTaskStatusCount(filter).then(resp=>{
+		// 	let openCount = resp[TASK_STATUS.PENDING];
+		// 	let archiveCount = resp[TASK_STATUS.DELETED];
+		// 	let closeCount = resp[TASK_STATUS.FINISHED];
 			
-			if(resp[TASK_STATUS.IN_PROGRESS]) 
-				openCount = openCount + resp[TASK_STATUS.IN_PROGRESS];
+		// 	if(resp[TASK_STATUS.IN_PROGRESS]) 
+		// 		openCount = openCount + resp[TASK_STATUS.IN_PROGRESS];
 	
-			//----------------------- UPDATE COUNT---------------
-			let listOpen = MessengerOptions.AON_MESSENGER_LIST_OPEN;
-			application.updateSidenavCount(listOpen.id, openCount);
+		// 	//----------------------- UPDATE COUNT---------------
+		// 	let listOpen = MessengerOptions.AON_MESSENGER_LIST_OPEN;
+		// 	application.updateSidenavCount(listOpen.id, openCount);
 
-			let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
-			application.updateSidenavCount(listClose.id, closeCount);
+		// 	let listClose = MessengerOptions.AON_MESSENGER_LIST_CLOSE;
+		// 	application.updateSidenavCount(listClose.id, closeCount);
 			
-			let listTrash = MessengerOptions.AON_MESSENGER_LIST_ARCHIVE;
-			application.updateSidenavCount(listTrash.id, archiveCount);
-		});
-		
-
+		// 	let listTrash = MessengerOptions.AON_MESSENGER_LIST_ARCHIVE;
+		// 	application.updateSidenavCount(listTrash.id, archiveCount);
+		// });
+	}
+	
+	getWorkgroupsStr(){
+		let isManager = this.dur.isMessengerManager();
+		if(isManager) return undefined;
+		const wps = this._workgroups.map(({id})=> id)
+		return wps.length ? wps.join(",") : 0;
 	}
 
 	showView(view, data = undefined, filter = undefined){
