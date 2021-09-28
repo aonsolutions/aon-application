@@ -183,9 +183,14 @@ public class ProjectDAO {
 	}
 
 	public static Project save(AONContext ctx, Project project){
-		return project.getId() != null
+		project = project.getId() != null
 			? update(ctx, project)
 			: insert(ctx, project);
+		if(!project.getProjectHolder().isEmpty()) {
+			project.getProjectHolder().setProject(new Project().setId(project.getId()));
+			project.setProjectHolder(ProjectHolderDAO.save(ctx, project.getProjectHolder()));
+		}
+		return project;
 	}
 	
 	public static Project update(AONContext ctx, Project project){

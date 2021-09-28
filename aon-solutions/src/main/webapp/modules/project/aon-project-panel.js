@@ -2,12 +2,10 @@ import {AonElement} from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
 import { AonProjectList } from './aon-project-list.js';
-import { triggerModuleStart } from '../../gwt/gwtLoader.js';
 import { AonProject } from './aon-project.js';
 import { DocumentalSidenav } from '../documental/DocumentalEnums.js';
 import { getProjectTypes, saveProjectType } from '../../services/projectService.js';
 import { AonInput } from '../../components/aon-input.js';
-import { createProject } from '../messenger/shared/creationUtils.js';
 import * as LS from '../../services/localStorageService.js';
 
 export class AonProjectPanel extends AonElement {

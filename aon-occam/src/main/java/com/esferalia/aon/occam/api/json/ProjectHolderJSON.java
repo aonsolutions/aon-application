@@ -12,42 +12,42 @@ import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 public class ProjectHolderJSON {
 
 	private ProjectHolderJSON() {
-	
+
 	}
-	
+
 	public static List<ProjectHolder> fromJSON(JSONArray json) {
 		LinkedList<ProjectHolder> list = new LinkedList<>();
-		for(Integer i = 0; i < json.length(); i++) {
+		for (Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)));
 		}
- 		return list;
+		return list;
 	}
-	
+
 	public static ProjectHolder fromJSON(JSONObject json) {
-		return new ProjectHolder()
-				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+		if(json == null) return new ProjectHolder();
+		return new ProjectHolder().setId(JsonUtils.optInteger(json, IJsonNames.ID))
 				.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)))
-				.setStartDate(JsonUtils.getDate(json, IJsonNames.START_DATE))
+				.setStartDate(JsonUtils.getDateTime(json, IJsonNames.START_DATE))
 				.setEndDate(JsonUtils.getDate(json, IJsonNames.END_DATE))
 				.setProject(ProjectJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PROJECT)))
 				.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
 				.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)));
 	}
-	
+
 	public static JSONArray toJSON(List<ProjectHolder> projectHolders) {
 		return toJSON(projectHolders.stream());
 	}
-	
+
 	public static JSONArray toJSON(Stream<ProjectHolder> projectHolders) {
 		JSONArray array = new JSONArray();
 		projectHolders.forEach(projectHolder -> array.put(toJSON(projectHolder)));
 		return array;
 	}
-	
+
 	public static JSONObject toJSON(ProjectHolder projectHolder) {
-		if(projectHolder.isEmpty()) return new JSONObject();
-		return new JSONObject()
-				.put(IJsonNames.ID, projectHolder.getId())
+		if (projectHolder.isEmpty())
+			return new JSONObject();
+		return new JSONObject().put(IJsonNames.ID, projectHolder.getId())
 				.put(IJsonNames.DOMAIN, projectHolder.getDomain())
 				.put(IJsonNames.PROJECT, ProjectJSON.toJSON(projectHolder.getProject()))
 				.put(IJsonNames.START_DATE, projectHolder.getStartDate())

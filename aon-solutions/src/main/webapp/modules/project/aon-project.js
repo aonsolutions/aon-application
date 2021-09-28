@@ -18,6 +18,7 @@ import { getProjectTypes, saveProject } from '../../services/projectService.js';
 
 import * as LS from '../../services/localStorageService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
+import { getTastHolders } from '../../services/taskHolderService.js';
 
 export class AonProject extends AonElement {
     PROJECT_TOOLBAR;
@@ -65,7 +66,11 @@ export class AonProject extends AonElement {
             registry: {},
             alias: '',
             date: new Date().getTime(),
-			active: true
+			active: true,
+			project_holder: {
+				domain: {id: LS.getDomainId(), name: LS.getDomainName()},
+				start_date: new Date().getTime()
+			}
 		}
 	}
 
@@ -161,14 +166,29 @@ export class AonProject extends AonElement {
          		t.name = t.description;
 				return t;
 			}));
-			//workgroupSelect.value = this.project.type.id;
+			if(this.project.project_holder && this.project.project_holder.workgroup)
+				workgroupSelect.value = this.project.project_holder.workgroup.id;
 		});
+		workgroupSelect.addEventListener(EVENT.CHANGE, (e) => this.project.project_holder.workgroup = workgroupSelect.getDetail());
+
 		table.addCell(workgroupSelect);
 		
 		let taskHolderSelect = new AonSelect();
 		taskHolderSelect.id = this.PROJECT_TASK_HOLDER;
 		taskHolderSelect.title = 'Asignar a';
-		
+		let data = 	this.project.project_holder && this.project.project_holder.workgroup
+			? {workgroup: this.project.project_holder.workgroup.id} : {};
+		getTastHolders(data).then(taskHolders => {
+			taskHolderSelect.options =  JSON.stringify(taskHolders
+			.map(t => {
+         		t.value = t.id;
+				return t;
+			}));
+			if(this.project.project_holder && this.project.project_holder.task_holder)
+				taskHolderSelect.value = this.project.project_holder.task_holder.id;
+		});
+		taskHolderSelect.addEventListener(EVENT.CHANGE, (e) => this.project.project_holder.task_holder = taskHolderSelect.getDetail());
+
 		table.addCell(taskHolderSelect);
 
 	}

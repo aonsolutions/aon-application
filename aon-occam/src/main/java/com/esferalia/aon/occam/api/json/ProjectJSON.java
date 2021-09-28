@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.registry.Project;
 
 public class ProjectJSON {
@@ -33,7 +34,8 @@ public class ProjectJSON {
 				.setName(JsonUtils.getString(json, IJsonNames.NAME))
 				.setDate(JsonUtils.getDateTime(json, IJsonNames.DATE))
 				.setRegistry(RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.REGISTRY)))
-				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE));
+				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
+				.setProjectHolder(ProjectHolderJSON.fromJSON(json.optJSONObject("project_holder")));
 	}
 	
 	public static JSONArray toJSON(List<Project> projects) {
