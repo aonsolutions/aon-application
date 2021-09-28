@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
+import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -322,5 +323,11 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void updateContractPayments(String currentDomainName, Integer contractId, ContractPaymentData contractPaymentData, AsyncCallback<Void> callback);
 
 	void createContractPayment(String currentDomainName, Integer contractId, ContractConceptCalc contractConceptCalc, AsyncCallback<Void> callback);
+
+	// ------------------------------------------------- ContractExtension
+	
+	void contractExtension(String currentDomainName, ContractExtension contractExtension, AsyncCallback<Void> callback);
+
+	void deleteContractExtension(String currentDomainName, Integer contractId, AsyncCallback<Void> callback);
 
 }

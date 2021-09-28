@@ -79,6 +79,8 @@ public class ContractInfo implements Serializable{
 	private boolean isTGSSActive;
 	private String sepeId;
 	
+	private boolean hasExtension;
+	
 	public ContractInfo() {
 		super();
 		this.contractId = null;
@@ -123,6 +125,8 @@ public class ContractInfo implements Serializable{
 		
 		this.salariesCount = null;
 		this.contractSalariesInfo = new ArrayList<>();
+		
+		this.hasExtension = false;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -519,6 +523,14 @@ public class ContractInfo implements Serializable{
 		this.sepeId = sepeId;
 	}
 	
+	public boolean isHasExtension() {
+		return hasExtension;
+	}
+
+	public void setHasExtension(boolean hasExtension) {
+		this.hasExtension = hasExtension;
+	}
+
 	public String toString(){
 		String result = "";
 		

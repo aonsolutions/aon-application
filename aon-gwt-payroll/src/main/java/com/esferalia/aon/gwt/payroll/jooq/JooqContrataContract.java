@@ -1825,6 +1825,16 @@ public class JooqContrataContract {
 			contractData.setHasCertifica2(sepeBatchAttachRecord != null);
 		}
 		
+		// ---------------------------------------------- Contract Extension
+		
+		Integer contractTypeValue = Integer.parseInt(contractData.getContractType());
+		Boolean hasExtension = false;
+		if(contractTypeValue >= 400) {
+			Result<Record> extensionRecords = dslContext.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_ATTACH.TYPE.eq((byte)13)).fetch();
+			if(extensionRecords.isNotEmpty()) hasExtension = true;
+		}
+		contractData.setHasExtension(hasExtension);
+		
 		employeeContractInfo.setEmployeeInfo(employeeData);
 		employeeContractInfo.setContractInfo(contractData);
 		
