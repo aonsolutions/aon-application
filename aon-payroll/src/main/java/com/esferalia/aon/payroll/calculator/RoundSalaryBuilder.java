@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_4_15;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -23,11 +25,13 @@ import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.DeductionTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
+import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
@@ -105,6 +109,14 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 		private void addCost(String code, DeductionType type, Date startDate, Date endDate, double amount) {
 			super.addDeduction(code, type, startDate, endDate, amount);
+		}
+		
+		private Map<Period, BigDecimal> getCostsMap( Predicate<? super Deductions.Deduction> predicate ) {
+			return 
+			super.deductions.stream()
+			.filter( predicate )
+			.collect(Collectors.toMap(d -> new Period(d.startDate, d.endDate), d -> d.amount, RoundSalaryBuilder::add ))
+			;
 		}
 	}
 	
@@ -544,8 +556,30 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		amount = doubleValue(f.apply(f.apply( add(deduction,bigDecimalValue(amount)) ).subtract(f.apply(deduction))));
 		costs.addCost(cost.getName(), cost.getType(), startDate, endDate, amount);
 		salaryBuilder.addCost(amount, description, startDate, endDate, cost, context);
+
+//		Not work properly 		
+//		round(ContextVariable.ENTERPRISE_QUOTA);
+//		if ( AonStringUtils.isNotEmpty(cost.getName()) ) {
+//			round(cost.getName());
+//		}
 		
-		round(ContextVariable.ENTERPRISE_QUOTA);
+		// fix ENTERPRISE_QUOTA 
+		expressionContext.removeVariable(ContextVariable.ENTERPRISE_QUOTA);
+		costs.getCostsMap(RoundSalaryBuilder::isEnterpriseQuota)
+		.forEach((p,v) -> {
+//			System.out.println( ContextVariable.ENTERPRISE_QUOTA + "[" + p.getStart()+ "..."+ p.getEnd() + "]:" + v );
+			expressionContext.setVariable(ContextVariable.ENTERPRISE_QUOTA, doubleValue(v), p.getStart(), p.getEnd());
+		} );
+		
+		// fix Cost Variable
+		if ( AonStringUtils.isNotEmpty(cost.getName()) ) {
+			expressionContext.removeVariable(cost.getName());
+			costs.getCostsMap(d -> AonStringUtils.equals(cost.getName(), d.code))
+			.forEach((p,v) -> { 
+//				System.out.println( cost.getName() + "[" + p.getStart()+ "..."+ p.getEnd() + "]:" + v );
+				expressionContext.setVariable(cost.getName(), doubleValue(v), p.getStart(), p.getEnd());
+			} );
+		}
 	}
 
 	@Override
@@ -659,27 +693,32 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 		totalEnterprise = f.apply(totalEnterprise);
 		salaryBuilder.setTotalEnterprise(doubleValue(totalEnterprise));
-
+		
 	}
 	
 	protected double round(double d) {
 		return doubleValue(f.apply(bigDecimalValue(d)));
 	}
 	
-	private BigDecimal round(ContextVariable contextVariable ) {
+	private BigDecimal round(ContextVariable contextVariable) {
+		return round(contextVariable.getName());
+	}
+
+	private BigDecimal round(String name) { 
 		BigDecimal sum = ZERO;
-		for (ITimedVariable<Object> v : /*expressionContext.*/getVariables(contextVariable)) {
+		for (ITimedVariable<Object> v : /*expressionContext.*/getVariables(name)) {
 			RoundVarible roundVarible = new RoundVarible(v, d -> f.apply(bigDecimalValue(d)));
 			sum = add( sum, roundVarible.getValue(roundVarible.getPeriod()));
-			expressionContext.putVariable(contextVariable.getName(), roundVarible);
+			expressionContext.putVariable(name, roundVarible);
 		}
 		return sum;
 	}
 	
-	private List<ITimedVariable<Object>> getVariables(ContextVariable contextVariable){
+
+	private List<ITimedVariable<Object>> getVariables(String name){
 		LinkedList<ITimedVariable<Object>> variables = new LinkedList<>();
 		
-		List<ITimedVariable<Object>> expanded = expressionContext.getVariables(contextVariable.getName());
+		List<ITimedVariable<Object>> expanded = expressionContext.getVariables(name);
 		Collections.sort(expanded, (v1,v2) -> Period.compare(v1.getPeriod().getStart(), v2.getPeriod().getStart()));
 		
 		for (ITimedVariable<Object> variable : expanded) {
@@ -761,6 +800,45 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		return doubleValue(add(decimals));
 	}
 	
+	private static boolean isEnterpriseQuota(com.esferalia.aon.payroll.calculator.RoundSalaryBuilder.Deductions.Deduction d) {
+		
+		DeductionType type = d.type;
+		
+		if ( type == null ) 
+			return false;
+		
+		switch (type) {
+		case BONUS:
+			return true;
+		case FOGASA:
+			return true;
+		case IN_KIND: // ATEP_E & ECSS_E	
+			return true;
+		case UNEMPLOYMENT:
+			return true;
+		case JOB_TRAINING:
+			return true;
+		case COMMON_CONTINGENCY:
+			return true;
+		case STRUCTURAL_OVERTIME:
+			return true;
+		case NON_STRUCTURAL_OVERTIME:
+			return true;
+		case PROFESSIONAL_CONTINGENCY:
+			return true;
+		case IRPF:
+			return false;
+		case OTHER:
+			return false;
+		case EMBARGO:
+			return false;
+		case ADVANCE_PAYMENT:
+			return false;
+		default:
+			return false;
+		}
+		
+	}
 	
 
 }
