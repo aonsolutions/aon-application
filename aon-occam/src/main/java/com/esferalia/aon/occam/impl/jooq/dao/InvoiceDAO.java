@@ -7,7 +7,6 @@ import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DET
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
-import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
@@ -76,8 +75,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.product.Item;
-import com.esferalia.aon.occam.api.model.product.OldItem;
-import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -707,159 +704,6 @@ public class InvoiceDAO {
 		
 	}
 	
-	public static InvoiceDetail getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId){
-		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
-		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
-		return ctx.getDslContext()
-				.select()
-				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
-				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
-				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(workplaceCondition)
-				.orderBy(INVOICE.ISSUE_DATE.desc())
-				.limit(1).fetch().stream().map(new InvoiceDetailFiller())
-				.findFirst().orElse(new InvoiceDetail());
-	}
-	
-	public static InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date){
-		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
-		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
-
-		return ctx.getDslContext()
-				.select()
-				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-				.where(INVOICE_DETAIL.ITEM.eq(item.getId()))
-				.and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
-				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(workplaceCondition)
-				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
-				.orderBy(INVOICE.ISSUE_DATE.desc())
-				.limit(1).fetch().stream().map(new InvoiceDetailFiller())
-				.findFirst().orElse(new InvoiceDetail());
-	}
-	
-	public static LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId) {
-		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
-		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
-		return ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
-						INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
-				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
-				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(workplaceCondition)
-				.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate)))
-				
-				.union(ctx.getDslContext()
-						.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
-								INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
-						.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-							.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(INVOICE_DETAIL.SOURCE_ID))
-						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
-						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
-						.and(workplaceCondition)
-						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
-						.and(INVOICE_DETAIL.WAREHOUSE.isNull())
-						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate))))
-				
-				.orderBy(INVOICE.ISSUE_DATE.desc())// ,INVOICE_DETAIL.ID.desc())
-				.fetch().stream().map(new InvoiceDetailFiller())
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date) {
-		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
-		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
-		return ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
-						INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
-				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
-				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(workplaceCondition)
-				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
-				.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate)))
-				
-				.union(ctx.getDslContext()
-						.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
-								INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
-						.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-							.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(INVOICE_DETAIL.SOURCE_ID))
-						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
-						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
-						.and(workplaceCondition)
-						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
-						.and(INVOICE_DETAIL.WAREHOUSE.isNull())
-						.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
-						.and(INVOICE.ISSUE_DATE.greaterOrEqual(AonDateUtils.toSql(startDate))))
-						
-				
-				.orderBy(INVOICE.ISSUE_DATE.desc())//,INVOICE_DETAIL.ID.desc())
-				.fetch().stream().map(new InvoiceDetailFiller())
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	public static LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId) {
-		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
-		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
-
-		return ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
-						INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
-				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
-				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(workplaceCondition)
-				
-				.union(ctx.getDslContext()
-						.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
-								INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
-						.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-							.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(INVOICE_DETAIL.SOURCE_ID))
-						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
-						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
-						.and(workplaceCondition)
-						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
-						.and(INVOICE_DETAIL.WAREHOUSE.isNull()))
-				
-				
-				.orderBy(INVOICE.ISSUE_DATE.desc())//,INVOICE_DETAIL.ID.desc())
-				.fetch().stream().map(new InvoiceDetailFiller())
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-
-	public static LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date) {
-		Condition workplaceCondition = INVOICE_DETAIL.WORKPLACE.isNull();
-		if(workplaceId != null) workplaceCondition = INVOICE_DETAIL.WORKPLACE.eq(workplaceId);
-
-		return ctx.getDslContext()
-				.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
-						INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
-				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-				.where(INVOICE_DETAIL.ITEM.eq(item.getId())).and(INVOICE.TYPE.eq(InvoiceType.PURCHASE.value()))
-				.and(INVOICE_DETAIL.WAREHOUSE.eq(warehouseId))
-				.and(workplaceCondition)
-				.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
-				.union(ctx.getDslContext()
-						.select(INVOICE.ISSUE_DATE, INVOICE.REFERENCE_CODE, INVOICE.SERIES, INVOICE.NUMBER, INVOICE.REGISTRY, INVOICE.RNAME,
-								INVOICE_DETAIL.PRICE, INVOICE_DETAIL.ID, INVOICE_DETAIL.DISCOUNT_EXPR, INVOICE_DETAIL.ITEM, INVOICE_DETAIL.QUANTITY)
-						.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.equal(INVOICE_DETAIL.INVOICE))
-							.join(INCOME_DETAIL).on(INCOME_DETAIL.ID.eq(INVOICE_DETAIL.SOURCE_ID))
-						.where(INVOICE_DETAIL.SOURCE.eq((byte) 4))
-						.and(INVOICE_DETAIL.ITEM.eq(item.getId()))
-						.and(workplaceCondition)
-						.and(INVOICE.ISSUE_DATE.lessOrEqual(AonDateUtils.toSql(date)))
-						.and(INCOME_DETAIL.WAREHOUSE.eq(warehouseId))
-						.and(INVOICE_DETAIL.WAREHOUSE.isNull()))
-				
-				
-				.orderBy(INVOICE.ISSUE_DATE.desc()) //,INVOICE_DETAIL.ID.desc())
-				.fetch().stream().map(new InvoiceDetailFiller())
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-
-	
 	public static LinkedList<InvoicingGroup> getInvoicingGroupList(AONContext ctx, InvoicingGroupFilter filter){
 		return ctx.getDslContext().select(INVOICING_GROUP.ID,INVOICING_GROUP.DESCRIPTION)
 				.from(INVOICING_GROUP).where(INVOICING_GROUP_PROPERTIES.getConditions(filter))
@@ -1123,7 +967,7 @@ public class InvoiceDAO {
 			.returning(INVOICE.ID)
 			.fetchOne();
 		invoice.setId(record.getValue(INVOICE.ID));
-//		ctx.log().info("INSERT INVOICE invoice: " + invoice.getId() + " Act: " + invoice.getActivity());
+		ctx.log().debug("INSERT INVOICE invoice: {0} Act: {1}",invoice.getId(),invoice.getActivity());
 		insertDetails(ctx, config, invoice);
 		InvoiceFiscalDAO.insertInvoiceFiscal(ctx, config, invoice);
 		return invoice; 
@@ -1168,7 +1012,7 @@ public class InvoiceDAO {
 			.fetchOne();
 		detail.setId(record.getValue(INVOICE_DETAIL.ID));
 		detail.setInvoice(invoice);
-//		ctx.log().info("\tINSERT INVOICE_DETAIL detalles invoice: " + detail.getId());
+		ctx.log().debug("\tINSERT INVOICE_DETAIL detalles invoice: {0}",detail.getId());
 		afterInsertDetail(ctx, config, invoice, detail);
 	}
 	
@@ -1195,7 +1039,7 @@ public class InvoiceDAO {
 				.returning(INVOICE_TAX.ID)
 				.fetchOne();
 			tax.setId(record.getValue(INVOICE_TAX.ID));
-//			ctx.log().info("\t\tINSERT INVOICE_TAX tax: " + tax.getTaxType());
+			ctx.log().debug("\t\tINSERT INVOICE_TAX tax: {0}",tax.getTaxType());
 		}
 	}
 	
@@ -1251,7 +1095,7 @@ public class InvoiceDAO {
 			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(INVOICE.ID.equal( invoice.getId()))
 			.execute();
-//		ctx.log().info("UPDATE INVOICE invoice: " + invoice.getId() + "("+i+" rows)");
+		ctx.log().debug("UPDATE INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
 		updateDetails(ctx, config, invoice);
 		return invoice; 
 	}
@@ -1275,14 +1119,14 @@ public class InvoiceDAO {
 			.delete(INVOICE_TAX)
 			.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))
 			.execute();
-//		ctx.log().info("DELETE INVOICE_TAX detalles de la factura: " + detail.getId() + " ("+count+" filas)");
+		ctx.log().debug("DELETE INVOICE_TAX detalles de la factura: {0} ({1} filas)",detail.getId(),count);
 		
 		// Se borran la linea
 		count = ctx.getDslContext()
 			.delete(INVOICE_DETAIL)
 			.where(INVOICE_DETAIL.ID.equal(detail.getId()))
 			.execute();
-//		ctx.log().info("DELETE INVOICE_DETAIL detalle de la factura: " + detail.getId() + " ("+count+" filas)");
+		ctx.log().debug("DELETE INVOICE_DETAIL detalle de la factura: {0} ({1} filas)",detail.getId(),count);
 	}
 
 	public static void delete(AONContext ctx, Integer id) {
@@ -1311,7 +1155,7 @@ public class InvoiceDAO {
 						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 						.where(INVOICE.ID.equal( rectified.getId() ))
 						.execute();
-//					ctx.log().info("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - SOLO UNA): " + rectified.getId());
+					ctx.log().debug("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - SOLO UNA): {0}",rectified.getId());
 				} else {
 					// En la factura rectificada no hay constancia de cual es la factura que la 
 					// rectifica, por lo tanto puede haber mas de una.
@@ -1340,8 +1184,7 @@ public class InvoiceDAO {
 						.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 						.where(INVOICE.ID.equal( rectified.getId() ))
 						.execute();
-//				ctx.log().info("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - MAS DE UNA): " + rectified.getId());
-					
+					ctx.log().debug("UPDATE INVOICE (factura rectificada, se marca como NO RECTIFICADA - MAS DE UNA): {0}",rectified.getId());
 				}
 			}
 		}
@@ -1373,7 +1216,7 @@ public class InvoiceDAO {
 				.findFirst()
 				.orElse(null);
 			if (importInvoice != null) {
-//				ctx.log().info("\tDUA LINKED");
+				ctx.log().debug("\tDUA LINKED");
 				ctx.getDslContext()
 					.select(INVOICE_DETAIL.TAXABLE_BASE, INVOICE_TAX.ID,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.SURCHARGE)
 					.from(INVOICE_DETAIL)
@@ -1397,13 +1240,13 @@ public class InvoiceDAO {
 								.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, quota)
 								.where(INVOICE_TAX.ID.equal( taxId ))
 								.execute();
-//						ctx.log().info("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): " + id + " ("+count+" filas)");	
+						ctx.log().debug("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): {0} ({1} filas)",id,count);	
 					});
 				int count = ctx.getDslContext()
 						.delete(INVOICE_DUA)
 						.where(INVOICE_DUA.INVOICE_NATIONAL.equal(id))
 						.execute();
-//				ctx.log().info("\tDELETE INVOICE_DUA: " + id + " ("+count+" filas)");
+				ctx.log().debug("\tDELETE INVOICE_DUA: {0} ({1} filas)",id,count);
 			}
 		}
 
@@ -1411,7 +1254,7 @@ public class InvoiceDAO {
 			.delete(INVOICE_ATTACH)
 			.where(INVOICE_ATTACH.INVOICE.equal(id))
 			.execute();
-//		ctx.log().info("DELETE INVOICE_ATTACH adjuntos de la factura: " + id + " ("+count+" filas)");
+		ctx.log().debug("DELETE INVOICE_ATTACH adjuntos de la factura: {0} ({1} filas)",id,count);
 		
 		FinanceDAO.deleteInvoiceFinances(ctx,id);
 
@@ -1419,7 +1262,7 @@ public class InvoiceDAO {
 			.delete(INVOICE)
 			.where(INVOICE.ID.equal(id))
 			.execute();
-//		ctx.log().info("DELETE INVOICE factura: " + id + " ("+count+" filas)");
+		ctx.log().debug("DELETE INVOICE factura: {0} ({1} filas)",id,count);
 	}
 
 	private static void deleteDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
@@ -1539,7 +1382,7 @@ public class InvoiceDAO {
 		if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
 			insertInvoiceTaxes(ctx,detail);
 		} else {
-//			ctx.log().info("\t\tSKIPPING INVOICE TAX CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
+			ctx.log().debug("\t\tSKIPPING INVOICE TAX CREATION ({0})",(detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));
 		}
 		detail.getSource().visit(detail, new IInvoiceSourceVisitor() {
 			
@@ -1564,19 +1407,17 @@ public class InvoiceDAO {
 					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
 					.execute();
 				if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
-//					ctx.log().info("\tINSERT INVOICE_DETAIL_ACCOUNT");
+					ctx.log().debug("\tINSERT INVOICE_DETAIL_ACCOUNT");
 					for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
-//					if (tax.getAccount() == null) 
-//						throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_TAX_ACCOUNT.getMessage());
 						ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
 						.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
 						.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
 						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
 						.execute();
-//						ctx.log().info("\t\tINSERT INVOICE_TAX_ACCOUNT");
+						ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
 					}
 				} else {
-//					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
+					ctx.log().debug("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ({0})",(detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));
 				}
 			}
 			
@@ -1588,19 +1429,17 @@ public class InvoiceDAO {
 						.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
 						.execute();
 					if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
-//						ctx.log().info("\tINSERT INVOICE_DETAIL_ACCOUNT");
+						ctx.log().debug("\tINSERT INVOICE_DETAIL_ACCOUNT");
 						for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
-//						if (tax.getAccount() == null) 
-//							throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_TAX_ACCOUNT.getMessage());
 						ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
 							.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
 							.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
 							.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
 							.execute();
-//						ctx.log().info("\t\tINSERT INVOICE_TAX_ACCOUNT");
+						ctx.log().debug("\t\tINSERT INVOICE_TAX_ACCOUNT");
 						}
 					} else {
-//						ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
+						ctx.log().debug("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ({0})",(detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));
 					}
 				}
 			}
@@ -1626,7 +1465,7 @@ public class InvoiceDAO {
 					.delete(INVOICE_DETAIL_ACCOUNT)
 					.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
 					.execute();
-//				ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
+				ctx.log().debug("DELETE INVOICE_DETAIL_ACCOUNT ({0} filas.)",count);
 				
 				ctx.getDslContext().select(INVOICE_TAX.ID)
 					.from(INVOICE_TAX)
@@ -1639,7 +1478,7 @@ public class InvoiceDAO {
 								.delete(INVOICE_TAX_ACCOUNT)
 								.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(id))
 								.execute();
-//						ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+x+" filas.)");
+						ctx.log().debug("DELETE INVOICE_TAX_ACCOUNT ({0} filas.)",x);
 					});
 			}
 			
@@ -1648,8 +1487,7 @@ public class InvoiceDAO {
 						.delete(INVOICE_DETAIL_ACCOUNT)
 						.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
 						.execute();
-//					ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
-					
+					ctx.log().debug("DELETE INVOICE_DETAIL_ACCOUNT ({0} filas.)",count);
 					ctx.getDslContext().select(INVOICE_TAX.ID)
 						.from(INVOICE_TAX)
 						.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))
@@ -1661,7 +1499,7 @@ public class InvoiceDAO {
 									.delete(INVOICE_TAX_ACCOUNT)
 									.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(id))
 									.execute();
-//							ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+x+" filas.)");
+							ctx.log().debug("DELETE INVOICE_TAX_ACCOUNT ({0} filas.)",x);
 						});
 			}
 			
@@ -1701,28 +1539,6 @@ public class InvoiceDAO {
 					.setDocumentCountry(Country.safeValueOf(rec.getValue(REGISTRY.DOCUMENT_COUNTRY)))
 					.setName(rec.getValue(REGISTRY.NAME))
 					.setType( AccountingRegistryType.getFor(InvoiceType.safeValueOf( rec.getValue(INVOICE.TYPE) )))
-					);			
-	}
-	
-	public static Stream<OldProduct> getInvoiceProducts(AONContext ctx, ProductFilter filter) {
-		return 	ctx.getDslContext().select(PRODUCT.ID,PRODUCT.NAME,PRODUCT.CODE)
-			.from(INVOICE)
-			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.eq(INVOICE.ID))
-			.join(ITEM).on(ITEM.ID.equal(INVOICE_DETAIL.ITEM))
-			.join(PRODUCT).on(PRODUCT.ID.equal(ITEM.PRODUCT))
-			.where(PRODUCT_PROPERTIES.getConditions(filter))
-			.and(INVOICE.DOMAIN.eq(ctx.getDomainId())
-			.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),INVOICE.SCOPE)))
-			.and(SecurityDAO.getSecurityLevelCondition(ctx, ctx.getUser(), INVOICE.SECURITY_LEVEL))
-			.groupBy(INVOICE.TYPE,PRODUCT.ID)
-			.orderBy(PRODUCT.NAME)
-			.limit(30)
-			.fetch()
-			.stream()
-			.map(rec -> new OldProduct()
-					.setId( rec.getValue(PRODUCT.ID) )
-					.setCode( rec.getValue(PRODUCT.CODE) )
-					.setName(rec.getValue(PRODUCT.NAME))
 					);			
 	}
 	

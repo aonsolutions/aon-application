@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
@@ -94,34 +95,34 @@ public class FinanceImpl implements IFinance {
 
 	@Override
 	public InvoiceDetail getLastInvoiceDetail(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId) {
-		return InvoiceDAO.getLastInvoiceDetail(ctx, item, workplaceId, warehouseId);
+		return InvoiceOLDDAO.getLastInvoiceDetail(ctx, item, workplaceId, warehouseId);
 	}
 	
 	@Override
 	public InvoiceDetail getLastInvoiceDetailUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date) {
-		return InvoiceDAO.getLastInvoiceDetailUntilDate(ctx, item, workplaceId, warehouseId, date);
+		return InvoiceOLDDAO.getLastInvoiceDetailUntilDate(ctx, item, workplaceId, warehouseId, date);
 	}
 	
 	@Override
 	public LinkedList<InvoiceDetail> getLastInvoiceDetailList(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId) {
-		return InvoiceDAO.getLastInvoiceDetailList(ctx, item, startDate, workplaceId, warehouseId);
+		return InvoiceOLDDAO.getLastInvoiceDetailList(ctx, item, startDate, workplaceId, warehouseId);
 	}
 
 	@Override
 	public LinkedList<InvoiceDetail> getLastInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Date startDate, Integer workplaceId, Integer warehouseId, Date date) {
-		return InvoiceDAO.getLastInvoiceDetailListUntilDate(ctx, item, startDate, workplaceId, warehouseId, date);
+		return InvoiceOLDDAO.getLastInvoiceDetailListUntilDate(ctx, item, startDate, workplaceId, warehouseId, date);
 	}
 	
 	@Override
 	public LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId,
 			Integer warehouseId) {
-		return InvoiceDAO.getInvoiceDetailList(ctx, item, workplaceId, warehouseId);
+		return InvoiceOLDDAO.getInvoiceDetailList(ctx, item, workplaceId, warehouseId);
 	}
 	
 	@Override
 	public LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId,
 			Integer warehouseId, Date date) {
-		return InvoiceDAO.getInvoiceDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
+		return InvoiceOLDDAO.getInvoiceDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
 	}
 	
 	@Override
@@ -211,7 +212,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Stream<OldProduct> getInvoiceProducts(AONContext ctx, ProductFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> InvoiceDAO.getInvoiceProducts(ctx, filter));
+				configuration -> InvoiceOLDDAO.getInvoiceProducts(ctx, filter));
 	}
 
 	@Override
