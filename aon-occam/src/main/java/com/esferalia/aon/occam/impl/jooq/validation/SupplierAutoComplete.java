@@ -9,17 +9,19 @@ import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class SupplierAutoComplete {
-	
-	public static BiConsumer<AONContext,Supplier> COMPLETE_TRANSACTION = (ctx,supplier) -> {
+	private SupplierAutoComplete() {
+		
+	}
+	public static final BiConsumer<AONContext,Supplier> COMPLETE_TRANSACTION = (ctx,supplier) -> {
 		if (supplier.getTransaction() == null) {
-			ctx.log().info("\t saving supplier: autocomplete transaction: " + InvoiceTransactionType.NATIONAL);
+			ctx.log().debug("\t saving supplier: autocomplete transaction: {0}",InvoiceTransactionType.NATIONAL);
 			supplier.setTransaction(InvoiceTransactionType.NATIONAL);
 		}
 	};
 
-	public static BiConsumer<AONContext,Supplier> COMPLETE_STATUS = (ctx,supplier) -> {
+	public static final BiConsumer<AONContext,Supplier> COMPLETE_STATUS = (ctx,supplier) -> {
 		if (supplier.getStatus() == null) {
-			ctx.log().info("\t saving supplier: autocomplete status: " + RegistryStatus.ACTIVE);
+			ctx.log().debug("\t saving supplier: autocomplete status: {0}", RegistryStatus.ACTIVE);
 			supplier.setStatus(RegistryStatus.ACTIVE);
 		}
 	};

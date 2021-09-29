@@ -257,7 +257,7 @@ public class AonRandom {
 	}
 	public static Administration getRandomAdministration(int nullThreshold) {
     	return gt(nullThreshold)
-    			?Administration.values()[faker.random().nextInt(Administration.values().length-1)]
+    			?Administration.values()[faker.random().nextInt(Administration.values().length)]
     			:null;
 	}
 
@@ -266,7 +266,7 @@ public class AonRandom {
 	}
 	public static BalanceType getRandomBalanceType(int nullThreshold) {
     	return gt(nullThreshold)
-    			?BalanceType.values()[faker.random().nextInt(BalanceType.values().length-1)]
+    			?BalanceType.values()[faker.random().nextInt(BalanceType.values().length)]
     			:null;
 	}
 	
@@ -275,7 +275,7 @@ public class AonRandom {
 	}
 	public static Country getRandomCountry(int nullThreshold) {
     	return gt(nullThreshold)
-    			?Country.values()[faker.random().nextInt(Country.values().length-1)]
+    			?Country.values()[faker.random().nextInt(Country.values().length)]
     			:null;
 	}
 	
@@ -284,7 +284,7 @@ public class AonRandom {
 	}
 	public static DocumentType getRandomDocumentType(int nullThreshold) {
 		return gt(nullThreshold)
-			?DocumentType.values()[faker.random().nextInt(DocumentType.values().length-1)]
+			?DocumentType.values()[faker.random().nextInt(DocumentType.values().length)]
 			:null;
 	}
 	
@@ -293,7 +293,7 @@ public class AonRandom {
 	}
 	public static InvoiceTransactionType getRandomInvoiceTransactionType(int nullThreshold) {
 		return gt(nullThreshold)
-			?InvoiceTransactionType.values()[faker.random().nextInt(InvoiceTransactionType.values().length-1)]
+			?InvoiceTransactionType.values()[faker.random().nextInt(InvoiceTransactionType.values().length)]
 			:null;
 	} 
 	public static MediaType getRandomMediaType() {
@@ -301,7 +301,7 @@ public class AonRandom {
 	}
 	public static MediaType getRandomMediaType(int nullThreshold) {
 		return gt(nullThreshold)
-			?MediaType.values()[faker.random().nextInt(MediaType.values().length-1)]
+			?MediaType.values()[faker.random().nextInt(MediaType.values().length)]
 			:null;
 	}
 	public static PayMethodType getRandomPayMethodType() {
@@ -309,7 +309,7 @@ public class AonRandom {
 	}
 	public static PayMethodType getRandomPayMethodType(int nullThreshold) {
 		return gt(nullThreshold)
-			?PayMethodType.values()[faker.random().nextInt(PayMethodType.values().length-1)]
+			?PayMethodType.values()[faker.random().nextInt(PayMethodType.values().length)]
 			:null;
 	}
 	public static RectificationType getRandomRectificationType() {
@@ -317,7 +317,7 @@ public class AonRandom {
 	}
 	public static RectificationType getRandomRectificationType(int nullThreshold) {
 		return gt(nullThreshold)
-			?RectificationType.values()[faker.random().nextInt(RectificationType.values().length-1)]
+			?RectificationType.values()[faker.random().nextInt(RectificationType.values().length)]
 			:null;
 	}
 	
@@ -326,7 +326,7 @@ public class AonRandom {
 	}
 	public static VatSummaryType getRandomVatSummaryType(int nullThreshold) {
 		return gt(nullThreshold)
-			?VatSummaryType.values()[faker.random().nextInt(VatSummaryType.values().length-1)]
+			?VatSummaryType.values()[faker.random().nextInt(VatSummaryType.values().length)]
 			:null;
 	}
 	
@@ -335,7 +335,7 @@ public class AonRandom {
 	}
 	public static RegistryStatus getRandomRegistryStatus(int nullThreshold) {
 		return gt(nullThreshold)
-			?RegistryStatus.values()[faker.random().nextInt(RegistryStatus.values().length-1)]
+			?RegistryStatus.values()[faker.random().nextInt(RegistryStatus.values().length)]
 			:null;
 	}
 	
@@ -344,7 +344,7 @@ public class AonRandom {
 	}
 	public static SecurityLevel getRandomSecurityLevel(int nullThreshold) {
 		return gt(nullThreshold)
-			?SecurityLevel.values()[faker.random().nextInt(SecurityLevel.values().length-1)]
+			?SecurityLevel.values()[faker.random().nextInt(SecurityLevel.values().length)]
 			:null;
 	} 
 	public static StreetType getRandomStreetType() {
@@ -352,7 +352,7 @@ public class AonRandom {
 	}
 	public static StreetType getRandomStreetType(int nullThreshold) {
 		return gt(nullThreshold)
-			?StreetType.values()[faker.random().nextInt(StreetType.values().length-1)]
+			?StreetType.values()[faker.random().nextInt(StreetType.values().length)]
 			:null;
 	} 
 }

@@ -395,8 +395,6 @@ public class Asserts {
 		assertEquals("Domain",expected.getDomain().getId(), actual.getDomain().getId());
 		assertEquals("Code",expected.getCode(), actual.getCode());
 		assertEquals("Name",expected.getName(), actual.getName());
-		System.out.println(expected.getBrand().getName());
-		System.out.println(actual.getBrand().getName());
 		assertEquals("Brand", expected.getBrand().getId(), actual.getBrand().getId());
 		assertEquals("Category", expected.getCategory().getId(), actual.getCategory().getId());
 		assertEquals("Status", expected.getStatus().value(), actual.getStatus().value());

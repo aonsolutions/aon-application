@@ -127,7 +127,9 @@ public class AbstractOccamTest {
 			if (rs.getString(1).startsWith(dbName)) {
 				String schemaName = rs.getString(1); 
 				connection.createStatement().execute("use " + schemaName);
+				System.out.println("*******************************");
 				System.out.println("USING  [" + schemaName+ "] schema.");
+				System.out.println("*******************************");
 				return connection;
 			}
 		}

@@ -15,17 +15,20 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TaskHolderAutoComplete {
+	private TaskHolderAutoComplete() {
+		
+	}
 	
-	public static BiConsumer<AONContext, TaskHolder> COMPLETE_TYPE = (ctx, taskHolder) -> {
+	public static final BiConsumer<AONContext, TaskHolder> COMPLETE_TYPE = (ctx, taskHolder) -> {
 		if (taskHolder.getType() == null) {
-			ctx.log().info("\t saving task holder: autocomplete type: " + TaskHolderType.INTERNAL);
+			ctx.log().debug("\t saving task holder: autocomplete type: {0}",TaskHolderType.INTERNAL);
 			taskHolder.setType(TaskHolderType.INTERNAL);
 		}
 	};
 
-	public static BiConsumer<AONContext, TaskHolder> COMPLETE_ATIVE = (ctx, taskHolder) -> {
+	public static final BiConsumer<AONContext, TaskHolder> COMPLETE_ATIVE = (ctx, taskHolder) -> {
 		if (taskHolder.isActive() == null) {
-			ctx.log().info("\t saving task holder: autocomplete active: 1");
+			ctx.log().debug("\t saving task holder: autocomplete active: 1");
 			taskHolder.setActive(true);
 		}
 	};

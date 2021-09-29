@@ -174,7 +174,7 @@ public class CompanyDAO {
 			.set(COMPANY.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(company.isVatAccrualPayment()))
 			.set(COMPANY.E_INVOICE,AonEnumUtils.getByte(company.iseInvoice()))
 			.execute();
-		ctx.log().info("INSERT COMPANY id: " + company.getId());		
+		ctx.log().debug("INSERT COMPANY id: {0}",company.getId());		
 		return company;
 	}
 	private static Company update(AONContext ctx, Company company){
@@ -187,7 +187,7 @@ public class CompanyDAO {
 			.set(COMPANY.E_INVOICE,AonEnumUtils.getByte(company.iseInvoice()))
 			.where(COMPANY.REGISTRY.eq(company.getId()))
 			.execute();
-		ctx.log().info("UPDATE COMPANY id: " + company.getId() + ". (" + count + " rows)");		
+		ctx.log().debug("UPDATE COMPANY id: {0}. ({1} rows)",company.getId(),count);		
 		return company;
 	}
 

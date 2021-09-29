@@ -111,7 +111,7 @@ public class RegistryDAO {
 		if (registry.isDirty()) {
 			registry = (registry.getId() == null)?insert(ctx, registry):update(ctx, registry);
 		} else {
-			ctx.log().info("NOT SAVED REGISTRY (not dirty) id: " + registry.getId());
+			ctx.log().debug("NOT SAVED REGISTRY (not dirty) id: {0}",registry.getId());
 		}
 		return registry;
 	}
@@ -133,7 +133,7 @@ public class RegistryDAO {
 			.fetchOne()
 			.getValue(REGISTRY.ID);
 		registry.setId(id);
-		ctx.log().info("INSERT REGISTRY id: " + registry.getId());
+		ctx.log().debug("INSERT REGISTRY id: {0}",registry.getId());
 		return registry; 
 	}
 
@@ -151,7 +151,7 @@ public class RegistryDAO {
 					:SecurityLevel.OFFICIAL.value()))
 			.where(REGISTRY.ID.eq(registry.getId()))
 			.execute();
-		ctx.log().info("UPDATE REGISTRY id: " + registry.getId() + ". (" + count + " rows)");
+		ctx.log().debug("UPDATE REGISTRY id: {0}. ({1} rows)", registry.getId(),count);
 		return registry; 
 	}
 	
@@ -161,7 +161,7 @@ public class RegistryDAO {
 		int count = ctx.getDslContext().delete(REGISTRY)
 			.where(REGISTRY.ID.eq(id))
 			.execute();
-		ctx.log().info("DELETE REGISTRY id:" + id + " ("+count+" rows)");
+		ctx.log().debug("DELETE REGISTRY id: {0} ({1} rows)",id,count);
 	}
 	
 	// *************************************************

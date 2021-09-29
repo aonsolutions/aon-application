@@ -27,7 +27,9 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PayMethodDAO {
-
+	private PayMethodDAO() {
+		
+	}
 	private static final PayMethodPropertiesDAO PAYMETHOD_PROPERTIES = new PayMethodPropertiesDAO();
 	private static class PayMethodPropertiesDAO implements PayMethodProperties {
 		private Condition[] getConditions(PayMethodFilter filter) {
@@ -90,7 +92,7 @@ public class PayMethodDAO {
 		
 		public static BiConsumer<AONContext,PayMethod> COMPLETE_TYPE = (ctx,payMethod) -> {
 			if (payMethod.getType() == null) {
-				ctx.log().info("\t saving pay method: autocomplete type: " + PayMethodType.CASH_BASIS);
+				ctx.log().debug("\t saving pay method: autocomplete type: {0}",PayMethodType.CASH_BASIS);
 				payMethod.setType(PayMethodType.CASH_BASIS);
 			}
 		};
@@ -183,7 +185,7 @@ public class PayMethodDAO {
 			.fetchOne()
 			.getValue(PAY_METHOD.ID);
 		payMethod.setId(id);
-		ctx.log().info("INSERT PAY METHOD id: " + payMethod.getId());
+		ctx.log().debug("INSERT PAY METHOD id: {0}",payMethod.getId());
 		return payMethod; 
 	}
 	
@@ -193,7 +195,7 @@ public class PayMethodDAO {
 			.set(PAY_METHOD.TYPE, payMethod.getType().value())
 			.where(PAY_METHOD.ID.eq(payMethod.getId()))
 			.execute();
-		ctx.log().info("UPDATE PAY METHOD id: " + payMethod.getId() + ". (" + count + " rows)");
+		ctx.log().debug("UPDATE PAY METHOD id: {0} ({1} rows)",payMethod.getId(),count);
 		return payMethod; 
 	}
 	
@@ -203,7 +205,7 @@ public class PayMethodDAO {
 		int count = ctx.getDslContext().delete(PAY_METHOD)
 			.where(PAY_METHOD.ID.eq(id))
 			.execute();
-		ctx.log().info("DELETE PAY METHOD id:" + id + " ("+count+" rows)");
+		ctx.log().debug("DELETE PAY METHOD id: {0} ({1} rows)",id,count);
 	}
 	
 

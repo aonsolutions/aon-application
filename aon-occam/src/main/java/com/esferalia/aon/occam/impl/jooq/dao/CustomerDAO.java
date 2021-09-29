@@ -42,7 +42,9 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CustomerDAO {
-	
+	private CustomerDAO() {
+		
+	}
 	public static final com.esferalia.aon.jooq.tables.Registry CUSTOMER_ALIAS = REGISTRY.as("registry_customer");
 
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
@@ -54,24 +56,24 @@ public class CustomerDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.REGISTRY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.DOMAIN);}
-		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.TARIFF);}
-		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.SURCHARGE);}
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.WITHHOLDING);}
-		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.TRANSACTION);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.SCOPE);}
-		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.E_INVOICE);}
-		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.INVOICING_GROUP);}
-		@Override public Property<Byte> getProjectGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.PROJECT_GROUPED);}
-		@Override public Property<Byte> getDeliveryGroupedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.DELIVERY_GROUPED);}
-		@Override public Property<Byte> getDeliveryValuatedProperty() {return new FilterDAO.PropertyDAO<Byte>(CUSTOMER.DELIVERY_VALUATED);}
-		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<Integer>(CUSTOMER.ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CUSTOMER.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(CUSTOMER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CUSTOMER.MODIFICATION_DATE);}	
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.DOMAIN);}
+		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.TARIFF);}
+		@Override public Property<Byte> getSurchargeProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.SURCHARGE);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.WITHHOLDING);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.SCOPE);}
+		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.E_INVOICE);}
+		@Override public Property<Integer> getInvoicingGroupProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.INVOICING_GROUP);}
+		@Override public Property<Byte> getProjectGroupedProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.PROJECT_GROUPED);}
+		@Override public Property<Byte> getDeliveryGroupedProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.DELIVERY_GROUPED);}
+		@Override public Property<Byte> getDeliveryValuatedProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.DELIVERY_VALUATED);}
+		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_DATE);}	
 	}
 
 	protected static class CustomerFiller  implements Function<Record, Customer> {
@@ -169,7 +171,7 @@ public class CustomerDAO {
 			.set(CUSTOMER.CREATION_USER,ctx.getUser())
 			.set(CUSTOMER.CREATION_DATE,new Timestamp(new Date().getTime()))
 			.execute();
-		ctx.log().info("INSERT CUSTOMER id: " + customer.getId());		
+		ctx.log().debug("INSERT CUSTOMER id: {0}", customer.getId());		
 		return customer;
 	}
 
@@ -192,7 +194,7 @@ public class CustomerDAO {
 			.set(CUSTOMER.MODIFICATION_DATE,new Timestamp(new Date().getTime()))
 			.where(CUSTOMER.REGISTRY.eq(customer.getId()))
 			.execute();
-		ctx.log().info("UPDATE CUSTOMER id: " + customer.getId() + ". (" + count + " rows)");		
+		ctx.log().debug("UPDATE CUSTOMER id: {0} ({1} rows)",customer.getId(),count);		
 		return customer;
 	}
 
@@ -202,7 +204,7 @@ public class CustomerDAO {
 		int count = ctx.getDslContext().delete(CUSTOMER)
 			.where(CUSTOMER.REGISTRY.eq(id))
 			.execute();
-		ctx.log().info("DELETE CUSTOMER id:" + id + " ("+count+" rows)");
+		ctx.log().debug("DELETE CUSTOMER id: {0} ({1} rows)",id,count);
 	}
 
 	public static Account getCustomerAccount(AONContext ctx, Integer customerId) {
@@ -225,7 +227,7 @@ public class CustomerDAO {
 		.set(CUSTOMER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 		.where(CUSTOMER.REGISTRY.eq(customerId))
 		.execute();
-	ctx.log().info("ACCOUNT " + account + " LINKED TO CUSTOMER " + customerId);
+	ctx.log().debug("ACCOUNT {0} LINKED TO CUSTOMER {1}",account,customerId);
 	}
 	
 	public static Domain getDomainLinked(AONContext ctx, Integer id) {
