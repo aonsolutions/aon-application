@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
@@ -12,8 +11,8 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -24,13 +23,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -61,8 +57,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public class MainCRANew extends MainEntryPoint {
 
@@ -77,6 +71,9 @@ public class MainCRANew extends MainEntryPoint {
 	interface MyStyle extends CssResource {
 		String suggestBox();
 	}
+	
+	@UiField(provided = true)
+	AonToolbar toolbar;
 
 	@UiField
 	DeckPanel deckPanel;
@@ -141,7 +138,6 @@ public class MainCRANew extends MainEntryPoint {
 	@UiField(provided = true)
 	DataGrid<CRA> crasDataGrid;
 
-	private AonToolbar toolbar;
 	private AonToolbarButton exportButton;
 	private AonToolbarButton listButton;
 	private AonToolbarButton newCRAButton;
@@ -157,6 +153,9 @@ public class MainCRANew extends MainEntryPoint {
 
 		// Add style to table header
 		addStyleToHeader();
+		
+		// Create toolbar
+		getToolbarPanel();
 
 		// Inject Styles
 		GWT.<AonResources>create(AonResources.class).css().ensureInjected();
@@ -167,17 +166,29 @@ public class MainCRANew extends MainEntryPoint {
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 
-		// Create toolbar
-		getToolbarPanel();
-		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
-
 		// Init view and listboxes
 		initPreView();
 		initListBoxes();
+		setCRAHeightNotCollapsePanel();
+		setCCCsHeight();
+	}
+
+	private void setCCCsHeight() {
+		cccDataGrid.setHeight((Window.getClientHeight() - 300) + "px");
+	}
+
+	private void setCRAHeightCollapsePanel() {
+		crasDataGrid.setHeight((Window.getClientHeight() - 300) + "px");
+	}
+	
+	private void setCRAHeightNotCollapsePanel() {
+		crasDataGrid.setHeight((Window.getClientHeight() - 380) + "px");
 	}
 
 	private void initPreView() {
 		collapsePanel.setOpen(true);
+		collapsePanel.addOpenHandler(e -> setCRAHeightNotCollapsePanel());
+		collapsePanel.addCloseHandler(e -> setCRAHeightCollapsePanel());
 		enterprisesSelected.setText(enterprisesSelectedCount.toString());
 	}
 
@@ -622,16 +633,9 @@ public class MainCRANew extends MainEntryPoint {
 
 		// Create findPeriod, first day of previus month
 		createInitialDate();
-
-		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(), s -> {
-			exportButton.setVisible(false);
-			initEnterpriseSB();
-			setInitialLBAndCBSelected();
-			peddingCCCsCB.setValue(true, true);
-			setTableHeights();
-			onListCras();
-		}, f -> {
-		});
+		setInitialLBAndCBSelected();
+		peddingCCCsCB.setValue(true, true);
+		onListCras();
 
 		selectionCCCInfoModel.addSelectionChangeHandler(
 				selectionEvent -> exportButton.setVisible(!selectionCCCInfoModel.getSelectedSet().isEmpty()));
@@ -684,14 +688,6 @@ public class MainCRANew extends MainEntryPoint {
 		this.allCCCsCB.setValue(false);
 		this.emitCCCsCB.setValue(false);
 		this.peddingCCCsCB.setValue(true);
-	}
-
-	private void setTableHeights() {
-		cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
-
-		crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-		crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -881,12 +877,9 @@ public class MainCRANew extends MainEntryPoint {
 		findingDate = DateUtils.getDate(Integer.parseInt(month.getSelectedValue()), Integer.parseInt(year.getSelectedValue()));
 		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(), 
 				s -> {
+					setInitialLBAndCBSelected();
 					clearSelectionModel();
 					initCCCsTable();
-		
-					setInitialLBAndCBSelected();
-					setTableHeights();
-		
 				},
 				f -> {});
 	}
@@ -1050,14 +1043,23 @@ public class MainCRANew extends MainEntryPoint {
 	}
 
 	private void onListCras() {
-		showCRAS();
-		initCRATable();
+		this.mainCRAObjectNew.getCRAs(
+				mainCRAObjectNew.getDefaultLiquidDate().getTime(), 
+				s -> {
+					showCRAS();
+					initCRATable();
+				}, 
+				f -> {});
 	}
 
 	private void onNewCRA() {
-		showCCCs();
-		initCCCsTable();
-		clearSelectionModel();
+		this.mainCRAObjectNew.getEnterprisesCCCInfo(findingDate.getTime(), s -> {
+			initEnterpriseSB();
+			showCCCs();
+			initCCCsTable();
+			clearSelectionModel();
+		}, f -> {
+		});
 	}
 
 	private void onExportButton() {
