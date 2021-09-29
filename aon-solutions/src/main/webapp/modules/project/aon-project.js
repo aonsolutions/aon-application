@@ -70,7 +70,7 @@ export class AonProject extends AonElement {
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = this.project.id 
             ? (this.project.name + ' - ' + this.project.type.description)
-            : 'NUEVO PROYECTO';
+            : 'NUEVO EXPEDIENTE';
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
