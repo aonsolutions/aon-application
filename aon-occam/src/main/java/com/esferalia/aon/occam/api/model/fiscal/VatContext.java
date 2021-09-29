@@ -47,6 +47,8 @@ public class VatContext implements Serializable {
 	private VatDeductionType vatDeductionType;
 	private boolean farmerRegime;
 	
+	private boolean vatImportation;
+	
 	private double base;
 	private double percentage;
 	private double quota;
@@ -276,6 +278,14 @@ public class VatContext implements Serializable {
 	}
 	public VatContext setFarmerRegime(boolean farmerRegime) {
 		this.farmerRegime = farmerRegime;
+		return this;
+	}
+	
+	public boolean isVatImportation() {
+		return vatImportation;
+	}
+	public VatContext setVatImportation(boolean vatImportation) {
+		this.vatImportation = vatImportation;
 		return this;
 	}
 	

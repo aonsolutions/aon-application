@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
+import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -206,12 +207,15 @@ public class VATDAO  {
 				,INVOICE_TAX.DEDUCTIBLE_QUOTA
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
 				
+				,INVOICE_FISCAL.VAT_IMPORTATION
+				
 				,INVOICE.RETENTION_QUOTA
 				,INVOICE.REGISTRY
 				)
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
 				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
 				.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 				.where(VAT_PROPERTIES.getConditions(filter))
@@ -271,12 +275,15 @@ public class VATDAO  {
 				,INVOICE_TAX.DEDUCTIBLE_QUOTA
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
 				
+				,INVOICE_FISCAL.VAT_IMPORTATION
+
 				,INVOICE.RETENTION_QUOTA
 				,INVOICE.REGISTRY
 				)
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
 				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
 				.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 				.where(VAT_PROPERTIES.getConditions(filter))
@@ -334,6 +341,8 @@ public class VATDAO  {
 			,INVOICE_TAX.DEDUCTIBLE_QUOTA
 			,INVOICE_TAX.VAT_DEDUCTION_TYPE
 			
+			,INVOICE_FISCAL.VAT_IMPORTATION
+
 			,INVOICE.TOTAL
 			,FINANCE_TRACKING.TYPE
 			,FINANCE_TRACKING.AMOUNT
@@ -344,6 +353,7 @@ public class VATDAO  {
 			.from(FINANCE_TRACKING)
 			.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
 			.join(INVOICE).on(INVOICE.ID.equal(FINANCE.INVOICE))
+			.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -403,6 +413,8 @@ public class VATDAO  {
 			,INVOICE_TAX.DEDUCTIBLE_QUOTA
 			,INVOICE_TAX.VAT_DEDUCTION_TYPE
 			
+			,INVOICE_FISCAL.VAT_IMPORTATION
+			
 			,INVOICE.TOTAL
 			,FINANCE.AMOUNT
 			
@@ -411,6 +423,7 @@ public class VATDAO  {
 			)
 			.from(FINANCE)
 			.join(INVOICE).on(INVOICE.ID.equal(FINANCE.INVOICE))
+			.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -469,6 +482,8 @@ public class VATDAO  {
 			,INVOICE_TAX.DEDUCTIBLE_QUOTA
 			,INVOICE_TAX.VAT_DEDUCTION_TYPE
 			
+			,INVOICE_FISCAL.VAT_IMPORTATION
+			
 			,INVOICE.TOTAL
 			,FINANCE.AMOUNT
 			
@@ -478,6 +493,7 @@ public class VATDAO  {
 			.from(FINANCE)
 			.join(INVOICE).on(INVOICE.ID.equal(FINANCE.INVOICE))
 			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
+			.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
 			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
@@ -729,6 +745,8 @@ public class VATDAO  {
 				.setFarmerRegime(rec.getValue(INVOICE.WITHHOLDING_FARMER) == 1)
 				.setVatDeductionType(VatDeductionType.safeValueOf(rec.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
 				.setInvestAsset(rec.getValue(INVOICE_DETAIL.INVEST_ASSET))
+				
+				.setVatImportation(AonEnumUtils.getBoolean(rec.getValue(INVOICE_FISCAL.VAT_IMPORTATION)))
 				
 				.setBase( rec.getValue(INVOICE_TAX.BASE) )
 				.setPercentage(rec.getValue(INVOICE_TAX.PERCENTAGE))
