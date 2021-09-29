@@ -52,6 +52,9 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		try {
 			checkitAccounts =  CheckItAPI.getLinkedAccountsToDisplay(domainName, domain, user, enterpriseId);
 		} catch (CheckItException e) {
+			if (AonStringUtils.equalsIgnoreCase(e.getMessage(), CheckItException.NO_CONNECTION_MSG)) {
+				throw new AonCoreException(e.getMessage());
+			}
 		}
 		try {
 			checkitUnlinkedAccounts = CheckItAPI.getUnlinkedActive(domainName, domain, user, enterpriseId);
@@ -98,13 +101,22 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		String address = enterprise.getAddress();
 		String phone = enterprise.getPhone();
 		
-		try {			
-			JSONObject json = CheckItAPI.addEnterprise(name, cif, email, shortName, url, phone, address);
-			Integer id =  json.optInt("id_empresa");
+		try {
+			Integer id = null;
+			JSONArray enterpriseArr = CheckItAPI.getEnterprise(cif);
+			if (enterpriseArr.isEmpty()) {
+				JSONObject json = CheckItAPI.addEnterprise(name, cif, email, shortName, url, phone, address);
+				id =  json.optInt("id_empresa");				
+			} else {
+				JSONObject enterpriseJson = enterpriseArr.optJSONObject(0);
+				id =  enterpriseJson.optInt("id_empresa");				
+			}
+			
+			
 			if (CheckItDAO.saveCheckItEnterpriseId(currentDomainName, currentDomain, user, id)) {
 				return id;
 			} else {
-				return null;
+				throw new AonCoreException("Se produjo un error y no se pudo registrar la empresa");
 			}
 		} catch (CheckItException e) {
 			throw new AonCoreException(e.getMessage());

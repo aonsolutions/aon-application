@@ -61,7 +61,7 @@ public class CheckItAPI implements IParamNames{
 			post.setEntity(entity);
 			try (CloseableHttpResponse resp = client.execute(post)) {
 				if (resp.getStatusLine().getStatusCode() != 200)
-					throw new CheckItException("No se pudo establecer la conexi\u00F3n con CheckIt");
+					throw new CheckItException(CheckItException.NO_CONNECTION_MSG);
 				if (resp.getEntity() != null) {
 					String str = EntityUtils.toString(resp.getEntity());
 					if (str != null && str.charAt(0) == '[') {
@@ -672,6 +672,22 @@ public class CheckItAPI implements IParamNames{
 		return addAccountApi(params);
 	}
 
+//------------------------------------------------------------------------------------------
+	
+//------------------------------------GET ENTERPRISE----------------------------------------
+	
+	public static JSONArray getEnterprise(JSONObject params) throws CheckItException {
+		Object json = post(API_URL + "empresas", params);
+		return parseJSONArray(json);
+	}
+	
+	public static JSONArray getEnterprise(String cif) throws CheckItException {
+		JSONObject params = new JSONObject();
+		params.put(API_KEY_PARAM, API_KEY);
+		params.put(CIF_PARAM, cif);
+		return getEnterprise(params);
+	}
+	
 //------------------------------------------------------------------------------------------
 
 //------------------------------------ADD ENTERPRISE----------------------------------------

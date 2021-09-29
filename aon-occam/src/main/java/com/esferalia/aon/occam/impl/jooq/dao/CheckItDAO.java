@@ -67,7 +67,7 @@ public class CheckItDAO {
 	
 	public static boolean saveCheckItEnterpriseId(String domainName, Integer domainId, String user, Integer checkItEnterpriseid) {
 		
-		if (checkItEnterpriseid == null)
+		if (checkItEnterpriseid == null || checkItEnterpriseid == 0)
 			return false;
 		
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {

@@ -82,6 +82,7 @@ public class CheckItModule extends MainEntryPoint {
 	private Widget linkedBanks;
 	private Widget unlinkedBanks;
 	FlowPanel enterpriseData;
+	private boolean firstTime;
 	
 	@Override
 	public void onModuleLoad() {
@@ -112,7 +113,8 @@ public class CheckItModule extends MainEntryPoint {
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage()+ "]"));
+					opt.setConfiguration(new CheckItConfiguration().setDown(true));
+					loadModule( opt );	
 				}
 			});
 		} else {
@@ -134,6 +136,13 @@ public class CheckItModule extends MainEntryPoint {
 		dockLayoutPanel.add(centerLayoutPanel);
 		enterpriseData = paintEnterpiseData( opt );
 		container.add( enterpriseData );
+		
+		if (firstTime) {
+			Label loadingLabel = new Label("El agregador bancario ha sido inicializado con \u00E9xito");
+			loadingLabel.setStyleName(AON.CSS.aonColorGreen());
+			sessionLog.add(loadingLabel);
+			openFootPanel();
+		}
 	}
 
 	private FlowPanel paintEnterpiseData(CheckItModuleOptions opt) {
@@ -151,53 +160,53 @@ public class CheckItModule extends MainEntryPoint {
 		return panel;
 	}
 	
-	private void paintRegistrationConfirmation(CheckItModuleOptions opt) {
-		FlexTable registrationTable = new FlexTable();
-		AonDialog dialog = new AonDialog("Confirmaci\u00F3n de registro", registrationTable);
-		dialog.setAutoHideEnabled(true);
-		Label confirmLabel = new Label("\u00BFDesea registrar esta empresa en CheckIt?");
-		confirmLabel.getElement().getStyle().setProperty("margin-bottom", "1.5em");
-		confirmLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		registrationTable.setWidget(0, 0, confirmLabel);
-		HorizontalPanel hp = new HorizontalPanel();
-		Button hai = new Button("S\u00CD");
-		Button iie = new Button(AON.MSG.no());
-		hp.setWidth("100%");
-		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		hp.add(hai);
-		hp.add(iie);
-		registrationTable.setWidget(1, 0, hp);
-		
-		hai.addClickHandler(handler -> {
-			dialog.hide();
-			CHECKIT_SERVICE.saveEnterpriseData(
-			opt.getDomainName()
-			, opt.getDomain()
-			, opt.getUser()
-			, new AsyncCallback<Integer>() {
-				@Override
-				public void onSuccess(Integer result) {
-					opt.getConfiguration().setEnterpriseId(result);
-				}
-				
-				@Override
-				public void onFailure(Throwable caught) {
-					toolbar.showErrorMessage(caught.getMessage());
-				}	
-		});
-			dockLayoutPanel.clear();
-			onModuleLoad();
-			
-		});
-		
-		iie.addClickHandler(handler -> {
-			dialog.hide();
-			container.remove(dialog);
-		});
-		dialog.center();
-		container.add(dialog);
-		dialog.show();
-	}
+//	private void paintRegistrationConfirmation(CheckItModuleOptions opt) {
+//		FlexTable registrationTable = new FlexTable();
+//		AonDialog dialog = new AonDialog("Confirmaci\u00F3n de registro", registrationTable);
+//		dialog.setAutoHideEnabled(true);
+//		Label confirmLabel = new Label("\u00BFDesea registrar esta empresa en CheckIt?");
+//		confirmLabel.getElement().getStyle().setProperty("margin-bottom", "1.5em");
+//		confirmLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+//		registrationTable.setWidget(0, 0, confirmLabel);
+//		HorizontalPanel hp = new HorizontalPanel();
+//		Button hai = new Button("S\u00CD");
+//		Button iie = new Button(AON.MSG.no());
+//		hp.setWidth("100%");
+//		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+//		hp.add(hai);
+//		hp.add(iie);
+//		registrationTable.setWidget(1, 0, hp);
+//		
+//		hai.addClickHandler(handler -> {
+//			dialog.hide();
+//			CHECKIT_SERVICE.saveEnterpriseData(
+//			opt.getDomainName()
+//			, opt.getDomain()
+//			, opt.getUser()
+//			, new AsyncCallback<Integer>() {
+//				@Override
+//				public void onSuccess(Integer result) {
+//					opt.getConfiguration().setEnterpriseId(result);
+//				}
+//				
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					toolbar.showErrorMessage(caught.getMessage());
+//				}	
+//		});
+//			dockLayoutPanel.clear();
+//			onModuleLoad();
+//			
+//		});
+//		
+//		iie.addClickHandler(handler -> {
+//			dialog.hide();
+//			container.remove(dialog);
+//		});
+//		dialog.center();
+//		container.add(dialog);
+//		dialog.show();
+//	}
 
 	private Widget paintRegistration(CheckItModuleOptions opt) {
 		FlowPanel panel = new FlowPanel();
@@ -207,12 +216,38 @@ public class CheckItModule extends MainEntryPoint {
 		panel.addStyleName(AON.CSS.aonBlockCenter());
 		panel.addStyleName(AON.CSS.aonBorder());
 		panel.addStyleName(AON.CSS.aonPadding());
-		InlineLabel label = new InlineLabel("No se ha encontrado informaci\u00F3n sobre el registro en Check It");
-		AonTextButton registerButton = new AonTextButton( AON.MSG.register(), AON.CSS.aonIconRegister() );
-		registerButton.addClickHandler(event -> paintRegistrationConfirmation(opt));
-		registerButton.addStyleName(AON.CSS.aonMarginLeft());
-		panel.add( label );
-		panel.add( registerButton );
+		if (!opt.getConfiguration().isDown() && !opt.getConfiguration().isRegistrationFailed()) {
+			/*InlineLabel label = new InlineLabel("No se ha encontrado informaci\u00F3n sobre el registro en Check It");
+			AonTextButton registerButton = new AonTextButton( AON.MSG.register(), AON.CSS.aonIconRegister() );
+			registerButton.addClickHandler(event -> paintRegistrationConfirmation(opt));
+			registerButton.addStyleName(AON.CSS.aonMarginLeft());
+			panel.add( label );
+			panel.add( registerButton );*/
+			CHECKIT_SERVICE.saveEnterpriseData(
+					opt.getDomainName()
+					, opt.getDomain()
+					, opt.getUser()
+					, new AsyncCallback<Integer>() {
+						@Override
+						public void onSuccess(Integer result) {
+							opt.getConfiguration().setEnterpriseId(result);
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							opt.getConfiguration().setRegistrationFailed(true);
+						}	
+				});
+					dockLayoutPanel.clear();
+					onModuleLoad();
+					firstTime = true;
+		} else if (opt.getConfiguration().isRegistrationFailed()){
+			InlineLabel label = new InlineLabel("Servicio temporalmente no disponible. Disculpe las molestias.");
+			panel.add( label );
+		} else {
+			InlineLabel label = new InlineLabel("Se produjo un error al registrar la empresa en el servicio de agregador bancario.");
+			panel.add( label );			
+		}
 		return panel;
 	}
 
