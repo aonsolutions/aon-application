@@ -4,13 +4,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -258,7 +256,7 @@ public class InvoiceFaker {
 
 	private static LinkedList<InvoiceDetail> getInvoiceDetails(InvoiceFakerParams params, Invoice invoice) {
 		LinkedList<InvoiceDetail> details = new LinkedList<InvoiceDetail>();
-		int times = AonRandom.number(1, 25);
+		int times = AonRandom.number(1, 15);
 		for (int i = 0; i < times; i++) {
 			details.add(getInvoiceDetail( params, invoice));
 		}
@@ -276,7 +274,7 @@ public class InvoiceFaker {
 			.setDiscountExpression( AonRandom.gt(10)
 					?null 
 					:AonNumberUtils.toString( AonRandom.getDouble(0, 100)))
-			.setPrice(AonRandom.getDouble(0, 10000))
+			.setPrice(AonRandom.getDouble(0, 100))
 			.setSource(InvoiceSource.DIRECT_INVOICE) // Todo. Alternative.
 			.setInvoiceTaxes( getInvoiceTaxes(params,invoice, detail ))
 			.setPrepayment(AonRandom.gt(98))
