@@ -7,19 +7,16 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
-import com.esferalia.aon.gwt.payroll.shared.Activity;
-import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
-import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseCCCFilter;
-import com.google.gwt.user.client.Window;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainCRAObjectNew {
 	
-	//Starting Service
+	// ------------------------------------------- Variables
+	
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
 	private List<CCCInfo> allEnterpriseCCCs;
@@ -36,18 +33,20 @@ public class MainCRAObjectNew {
 	
 	private Date defaultLiquidDate;
 	
+	// ------------------------------------------- Constructor
+	
 	public MainCRAObjectNew() {
 		super();
 		
-		this.allEnterpriseCCCs = new ArrayList<CCCInfo>();
-		this.enterpriseCCCs = new ArrayList<CCCInfo>();
+		this.allEnterpriseCCCs = new ArrayList<>();
+		this.enterpriseCCCs = new ArrayList<>();
 		this.enterpriseCCCFilter = new EnterpriseCCCFilter();
-		this.enterprisesMap = new HashMap<Integer, String>();
+		this.enterprisesMap = new HashMap<>();
 		
-		this.allCRAs = new ArrayList<CRA>();
-		this.filterCRAs = new ArrayList<CRA>();
-		this.cras = new ArrayList<CRA>();
-		this.crasRectif = new ArrayList<CRA>();
+		this.allCRAs = new ArrayList<>();
+		this.filterCRAs = new ArrayList<>();
+		this.cras = new ArrayList<>();
+		this.crasRectif = new ArrayList<>();
 		
 		this.domainId = -1;
 		
@@ -57,24 +56,7 @@ public class MainCRAObjectNew {
 		
 	}
 	
-//	public void getEnterprises(Consumer<List<Enterprise>> success, Consumer<Throwable> failure){
-//		
-//		impl.getEnterprises(new AsyncCallback<List<Enterprise>>() {
-//			
-//			@Override
-//			public void onSuccess(List<Enterprise> enterprises) {
-//				initEnterpriseMap(enterprises);
-//				getEnterprisesCCCInfo(s -> {
-//					success.accept(enterprises);
-//				}, 
-//				f -> {});
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) { }
-//		});
-//		
-//	}
+	// ------------------------------------------- DataBase Methods
 	
 	public void getEnterprisesCCCInfo(long findPeriodTime, Consumer<List<CCCInfo>> success, Consumer<Throwable> failure){
 		
@@ -88,40 +70,16 @@ public class MainCRAObjectNew {
 				enterpriseCCCs.addAll(enterprisesCCCInfo);
 				allEnterpriseCCCs.addAll(enterprisesCCCInfo);
 				
-				getCRAs(defaultLiquidDate.getTime(),
-					s -> {
-						success.accept(enterprisesCCCInfo);
-					}, 
-					f -> {});	
+				success.accept(enterprisesCCCInfo);
 			}
 	
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 		
 	}
-
-	
-//	public void getEnterpriseCCCs(Consumer<List<Enterprise>> success, Consumer<Throwable> failure){
-//		
-//		impl.getEnterprises(0, Integer.MAX_VALUE, new AsyncCallback<List<Enterprise>>() {
-//			
-//			@Override
-//			public void onSuccess(List<Enterprise> enterprises) {
-//				initEnterpriseMap(enterprises);
-//				initEnterpriseCCCs(enterprises);
-//				getCRAs(
-//					s -> {
-//						success.accept(enterprises);
-//					}, 
-//					f -> {});	
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) { }
-//		});
-//		
-//	}
 	
 	public void getCRAs(long liquidDateTime ,Consumer<List<CRA>> success, Consumer<Throwable> failure){
 		
@@ -130,13 +88,16 @@ public class MainCRAObjectNew {
 			@Override
 			public void onSuccess(List<CRA> dbCRAs) {
 				initCRAs(dbCRAs);
-				getDomainId(s-> {
-					success.accept(dbCRAs);
-				}, f -> {});
+				getDomainId(
+					s-> success.accept(dbCRAs), 
+					f -> {}
+				);
 			}
 
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 		
 	}
@@ -152,16 +113,20 @@ public class MainCRAObjectNew {
 			}
 	
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 		
 	}
+	
+	// ------------------------------------------- DataBase Methods (CRAs)
 	
 	public void createNewCRA (Date startDate, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, Consumer<String> success, Consumer<Throwable> failure){
 		impl.createNewCRA(startDate.getTime(), cccList, cccIdList, cccId, type, new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());	
+				failure.accept(caught);	
 			}
 
 			@Override
@@ -169,9 +134,10 @@ public class MainCRAObjectNew {
 				if(null != result)
 					success.accept(result);
 				
-				getCRAs(defaultLiquidDate.getTime(), s -> {
-					success.accept(result);
-				}, f -> {});
+				getCRAs(defaultLiquidDate.getTime(), 
+					s -> success.accept(result), 
+					f -> {}
+				);
 			}
 		});
 	}
@@ -180,7 +146,7 @@ public class MainCRAObjectNew {
 		impl.checkCreateNewCRA(startDate.getTime(), cccList, new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(caught.getMessage());	
+				failure.accept(caught);	
 			}
 
 			@Override
@@ -190,25 +156,29 @@ public class MainCRAObjectNew {
 		});
 	}
 	
-	public void deteleCRA (Integer code, Consumer<String> success, Consumer<Throwable> failure){
-		impl.deleteCRA(code, new AsyncCallback<String>() {
+	public void deteleCRA (Integer code, Consumer<Void> success, Consumer<Throwable> failure){
+		impl.deleteCRA(code, new AsyncCallback<Void>() {
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 
 			@Override
-			public void onSuccess(String result) {
-				getCRAs(defaultLiquidDate.getTime(), s -> {
-					success.accept(result);
-				}, f -> {});
+			public void onSuccess(Void result) {
+				getCRAs(defaultLiquidDate.getTime(), 
+					s -> success.accept(result), 
+					f -> {}
+				);
 			}
 		});
 	}
 	
-	public void checkIfRectificative(Date findingDate, ArrayList<Integer> selectedCCCList, Consumer<Boolean> success,
-			Consumer<Throwable> failure) {
+	public void checkIfRectificative(Date findingDate, ArrayList<Integer> selectedCCCList, Consumer<Boolean> success, Consumer<Throwable> failure) {
 		impl.checkIfRectificative(findingDate, selectedCCCList, new AsyncCallback<Boolean>() {
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 
 			@Override
 			public void onSuccess(Boolean result) {
@@ -217,49 +187,16 @@ public class MainCRAObjectNew {
 		});
 	}
 	
+	// ------------------------------------------- Auxiliar Methods
+	
 	private void initEnterpriseMap(List<CCCInfo> enterprisesCCCInfo) {
 		this.enterprisesMap.clear();
 		
-		for(CCCInfo enterpriseCCCInfo: enterprisesCCCInfo) {
+		for(CCCInfo enterpriseCCCInfo: enterprisesCCCInfo)
 			this.enterprisesMap.put(enterpriseCCCInfo.getEnterpriseId(), enterpriseCCCInfo.getEnterpriseDesciption());
-		}
+		
 	}
 	
-	private void initEnterpriseCCCs(List<Enterprise> enterprises) {
-		enterpriseCCCs.clear();
-		
-		for(Enterprise enterprise: enterprises) {
-			String enterpriseName = enterprise.getName();
-			Integer enterpriseId = enterprise.getId();
-			for(Activity activity : enterprise.getActivities()) {
-				Integer activityId = activity.getId();
-				String activityDescription = activity.getDescription();
-				for(CCC ccc : activity.getCccs()) {
-					if(ccc.getEmployees().isEmpty())
-						continue;
-					
-					CCCInfo cccInfo = new CCCInfo();
-					cccInfo.setCccId(ccc.getId());
-					cccInfo.setCcc(ccc.getCode());
-					cccInfo.setCccAccount(ccc.getCode());
-					cccInfo.setCccRegimeCode(ccc.getRegime());
-					cccInfo.setTypeStr(ccc.getRegime());
-					cccInfo.setGeozone(ccc.getGeozone());
-					cccInfo.setType(ccc.getType());
-					cccInfo.setActivityId(activityId);
-					cccInfo.setActivityDescription(activityDescription);
-					cccInfo.setUseByContracts(ccc.getEmployees().isEmpty() ? false : true);
-					cccInfo.setEnterpriseDesciption(enterpriseName);
-					cccInfo.setEnterpriseId(enterpriseId);
-					
-					enterpriseCCCs.add(cccInfo);
-					allEnterpriseCCCs.add(cccInfo);
-				}
-			}
-		}
-		
-	}
-
 	public List<CCCInfo> getEnterpriseCCCs() {
 		return enterpriseCCCs;
 	}
@@ -285,8 +222,8 @@ public class MainCRAObjectNew {
 	}
 
 	public void filterEnterpriseCCCListByEnterprise(Integer enterpriseId) {
-		List<CCCInfo> newEnterpriseCCCs = new ArrayList<CCCInfo>();
-		for(CCCInfo cccInfo :  getEnterpriseCCCs().size() != 0 ? getEnterpriseCCCs() : this.allEnterpriseCCCs) {
+		List<CCCInfo> newEnterpriseCCCs = new ArrayList<>();
+		for(CCCInfo cccInfo :  !getEnterpriseCCCs().isEmpty() ? getEnterpriseCCCs() : this.allEnterpriseCCCs) {
 			if(cccInfo.getEnterpriseId() == enterpriseId || cccInfo.getEnterpriseId().equals(enterpriseId)) {
 				newEnterpriseCCCs.add(cccInfo);
 			}
@@ -297,7 +234,7 @@ public class MainCRAObjectNew {
 	}
 	
 	public void filterEnterpriseCCCListByEnterprise(List<Integer> enterprisesIds) {
-		List<CCCInfo> newEnterpriseCCCs = new ArrayList<CCCInfo>();
+		List<CCCInfo> newEnterpriseCCCs = new ArrayList<>();
 		for(CCCInfo cccInfo :  allEnterpriseCCCs) {
 			if(enterprisesIds.contains(cccInfo.getEnterpriseId())) {
 				newEnterpriseCCCs.add(cccInfo);
@@ -309,9 +246,9 @@ public class MainCRAObjectNew {
 	}
 
 	public void filterCRAsListByType(Byte type) {
-		List<CRA> newCRAs = new ArrayList<CRA>();
+		List<CRA> newCRAs = new ArrayList<>();
 		
-		for(CRA cra : filterCRAs.size() != 0 ? filterCRAs : allCRAs) {
+		for(CRA cra : !filterCRAs.isEmpty() ? filterCRAs : allCRAs) {
 			if(cra.getCccType() == type || cra.getCccType().equals(type)) {
 				newCRAs.add(cra);
 			}
@@ -321,9 +258,9 @@ public class MainCRAObjectNew {
 	}
 	
 	public void filterCRAListByGeozone(String geozone) {
-		List<CRA> newCRAs = new ArrayList<CRA>();
+		List<CRA> newCRAs = new ArrayList<>();
 		
-		for(CRA cra : filterCRAs.size() != 0 ? filterCRAs : allCRAs) {
+		for(CRA cra : !filterCRAs.isEmpty() ? filterCRAs : allCRAs) {
 			if(cra.getCccProvince() == geozone || cra.getCccProvince().equals(geozone)) {
 				newCRAs.add(cra);
 			}
@@ -375,8 +312,8 @@ public class MainCRAObjectNew {
 	}
 	
 	public void filterCrasByDates(Date startDate, Date endDate) {
-		List<CRA> newCRAs = new ArrayList<CRA>();
-		for(CRA cra : filterCRAs.size() != 0 ? filterCRAs : allCRAs) {
+		List<CRA> newCRAs = new ArrayList<>();
+		for(CRA cra : !filterCRAs.isEmpty() ? filterCRAs : allCRAs) {
 			if( (cra.getDate().after(startDate) || cra.getDate().equals(startDate)) &&
 				(cra.getDate().before(endDate) || cra.getDate().equals(endDate)) ) {
 				newCRAs.add(cra);
@@ -390,7 +327,7 @@ public class MainCRAObjectNew {
 		List<Integer> ids = new ArrayList<Integer>();
 		
 		for(CCCInfo cccInfo : this.allEnterpriseCCCs) {
-			if(StringUtils.containsIgnoreCase(cccInfo.getEnterpriseDesciption(), pattern))
+			if(AonStringUtils.containsIgnoreCase(cccInfo.getEnterpriseDesciption(), pattern))
 				ids.add(cccInfo.getEnterpriseId());
 		}
 		return ids;
@@ -401,8 +338,8 @@ public class MainCRAObjectNew {
 	}
 
 	public void filterCras(String geozoneName, Byte cccType) {
-		List<CRA> newCRAs = new ArrayList<CRA>();
-		List<CRA> auxListCRAs = new ArrayList<CRA>();
+		List<CRA> newCRAs = new ArrayList<>();
+		List<CRA> auxListCRAs = new ArrayList<>();
 		
 		// NOT FILTER BY DATE CAUSE THE TABLE CAN BE ORDERED BY PERIOD
 		
@@ -432,7 +369,7 @@ public class MainCRAObjectNew {
 	}
 	
 	public void filterEmitedCCC(Date date) {
-		List<CCCInfo> emitedCCCs = new ArrayList<CCCInfo>();
+		List<CCCInfo> emitedCCCs = new ArrayList<>();
 		DateUtils.resetTime(date);
 		
 		for(CCCInfo cccInfo : allEnterpriseCCCs) {
@@ -444,7 +381,7 @@ public class MainCRAObjectNew {
 	}
 	
 	public void filterPenddingCCC(Date date) {
-		List<CCCInfo> peddingCCCs = new ArrayList<CCCInfo>();
+		List<CCCInfo> peddingCCCs = new ArrayList<>();
 		DateUtils.resetTime(date);
 		
 		for(CCCInfo cccInfo : allEnterpriseCCCs) {
@@ -471,6 +408,10 @@ public class MainCRAObjectNew {
 				}
 			}
 		}
+	}
+	
+	public Date getDefaultLiquidDate() {
+		return defaultLiquidDate;
 	}
 	
 	public void setDefaultLiquidDate(Date date) {

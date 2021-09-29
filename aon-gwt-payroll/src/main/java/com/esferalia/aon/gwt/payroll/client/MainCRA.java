@@ -412,12 +412,12 @@ public class MainCRA extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				impl.deleteCRA(cra.getCode(), new AsyncCallback<String>() {
+				impl.deleteCRA(cra.getCode(), new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) { }
 
 					@Override
-					public void onSuccess(String result) {
+					public void onSuccess(Void result) {
 						mainCRAsTable.clear();
 						mainRectificativoCRAsTable.clear();
 						//Hide CRAPanel
