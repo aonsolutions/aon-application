@@ -23,7 +23,7 @@ public class InsertInvoiceTest extends AbstractOccamTest {
 	}
 	
 	@Test
-	@Repeat( 100 )
+	@Repeat(10)
 	public void testRandomInvoiceInsert() {
 		AonConfiguration config = AON.getConfiguration(ctx,null);
 		InvoiceFakerParams params = new InvoiceFakerParams(ctx, config).setIssueDate(AonRandom.today());
@@ -57,4 +57,5 @@ public class InsertInvoiceTest extends AbstractOccamTest {
 		InvoiceFakerParams params = new InvoiceFakerParams(ctx, config).setIssueDate(AonRandom.today());
 		testInsert( InvoiceFaker.getPurchaseCanCeuVatImport(params) );
 	}
+
 }

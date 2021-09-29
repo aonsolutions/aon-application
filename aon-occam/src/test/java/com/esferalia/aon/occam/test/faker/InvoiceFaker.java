@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -202,8 +203,7 @@ public class InvoiceFaker {
 			public void visitPurchase(Invoice invoice) {
 				Supplier supplier = AonRandom.getSupplier( params.getCtx() );
 				fillRegistryData(invoice, supplier);
-				invoice.setReferenceCode(AonRandom.string(0,1,15));	
-				
+				invoice.setReferenceCode(AonRandom.string(-1,1,15));	
 				invoice.setScope(new Scope().setId( supplier.getScope() ));
 				invoice.setTransaction(supplier.getTransaction());
 				
@@ -218,7 +218,10 @@ public class InvoiceFaker {
 			public void visitExpenses(Invoice invoice) {
 				Creditor creditor = AonRandom.getCreditor( params.getCtx() );
 				fillRegistryData(invoice, creditor);
-				invoice.setReferenceCode(AonRandom.string(0,1,15));	
+				invoice.setReferenceCode(AonRandom.string(-1,1,15));	
+				if (AonStringUtils.isBlank(invoice.getReferenceCode())) {
+					System.out.println("NULL");
+				}
 
 				invoice.setScope(new Scope().setId( creditor.getScope() ));
 				invoice.setTransaction( creditor.getTransaction() );
@@ -243,9 +246,6 @@ public class InvoiceFaker {
 		EnterpriseActivity activity = AonRandom.getRandomActivity(params.getCtx());
 		invoice.setActivity(activity==null?null:activity.getId());
 		InvoiceFaker.fillHeader(invoice, params);
-		if (!invoice.isSales() && AonStringUtils.isBlank(invoice.getReferenceCode())) {
-			System.out.println("NULL");
-		}
 		return invoice;
 	}
 	
@@ -424,7 +424,8 @@ public class InvoiceFaker {
 	}
 
 	public static Invoice getRandom(InvoiceFakerParams params) {
-		return AonRandom.randomEnum(InvoiceFakerTypes.class).get(params);
+		InvoiceFakerTypes type = InvoiceFakerTypes.values()[faker.random().nextInt(InvoiceFakerTypes.values().length-1)];
+		return type.get(params);
 	}
 	public static Invoice getSalesNational(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.SALES_NATIONAL.get(params);
@@ -453,6 +454,5 @@ public class InvoiceFaker {
 	public static Invoice getPurchaseCanCeuVatImport(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.PURCHASE_CAN_CEU_MEL_VAT_IMPORT.get(params);
 	}
-
 }
 

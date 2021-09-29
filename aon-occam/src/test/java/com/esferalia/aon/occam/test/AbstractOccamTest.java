@@ -287,7 +287,7 @@ public class AbstractOccamTest {
 		.set(WORKPLACE.ADDRESS, address.getId())
 		.set(WORKPLACE.ENTERPRISE, companyFull.getRegistry().getId())
 		.set(WORKPLACE.SCOPE, newScopeId)
-		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonRandom.randomEnum( Administration.class, 10) ))
+		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonRandom.getRandomAdministration(10) ))
 		.execute();
 		ctx.log().info("Workplace insertada correctamente");
 		
