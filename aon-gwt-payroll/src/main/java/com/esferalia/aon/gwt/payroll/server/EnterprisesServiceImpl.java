@@ -1824,72 +1824,44 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public List<CRA> getCRAs(String domain, String user, long liquidDateTime) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
+		try (Connection connection = AonServletUtils.getConnection(domain)) {
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
-			return JooqCRA.getDomainCRAs(domainId, parentDomainId, userId, liquidDateTime, connection);
-//			return JooqCRA.getDomainCRAs(getDomain(domainStr), connection);
+			return JooqCRA.getDomainCRAs(domainId, userId, liquidDateTime, connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
 		}
 	}
 
 	@Override
 	public String createNewCRA(String domainName, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) {
-		Connection connection = null;
-		
-		try {
-			connection = AonServletUtils.getConnection(domainName);
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			
 			Boolean existAnySalary = Cra.existAnySalary(cccList, findingDate, connection);
 			
-			if(!existAnySalary) {
-				return "No existe n" + String.valueOf("\u00F3") + "minas con valores para notificar en el CRA.";
+			if(Boolean.FALSE.equals(existAnySalary)) {
+				return "No existe n\u00F3minas con valores para notificar en el CRA";
 			}
 			
 			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(cccList, findingDate, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
-			return JooqCRA.setMainCra(domainName, cccId.toString(), cccList, cccIdList, agrarianAFI, findingDate, craType, connection);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			return JooqCRA.setMainCra(domainId, cccList, cccIdList, agrarianAFI, findingDate, craType, connection);
 			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
 		}
 	}
 
 	@Override
-	public String deleteCRA(String domainName, Integer craBatchId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domainName);
-			return JooqCRA.deleteMainCRA(craBatchId, connection);
-			
+	public void deleteCRA(String domainName, Integer craBatchId) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqCRA.deleteMainCRA(craBatchId, connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
 		}
 	}
 
@@ -2094,7 +2066,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
-			return JooqEnterprise.getEnterprisesCCCInfo(connection, userId, domainId, parentDomainId, findPeriodTime);
+			return JooqEnterprise.getEnterprisesCCCInfo(connection, userId, domainId, findPeriodTime);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
