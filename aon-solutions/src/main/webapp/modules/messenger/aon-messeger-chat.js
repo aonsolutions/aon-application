@@ -9,7 +9,7 @@ import {
   deleteTask
 } from "../../services/taskService.js";
 
-import { Task } from "./Task.js";
+import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
 import { checkFilesAddEventDescription, sendMessage } from "./shared/utils.js";
@@ -71,16 +71,17 @@ export class AonMessengerChat extends AonElement {
   }
 
   setTask(){
-    this.task = new Task();
     let data = {...this.data};
-    if(!data.id) {
-      const sender = this.applicationParentEl.TASK_HOLDER;
-      if(sender && sender.id) data.sender = sender;
-    }
-    if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email) 
+
+    const myTaskHolder = this.applicationParentEl.TASK_HOLDER;
+    if(myTaskHolder && myTaskHolder.id) 
+      data.myTaskHolder = myTaskHolder;
+      
+    if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email)  
       data.auth = this.applicationParentEl.cauData.auth;
+
     this.setData(data); 
-    this.task.createTask(this.getData());
+    this.task = new Task(this.getData());
   }
 
   build() {

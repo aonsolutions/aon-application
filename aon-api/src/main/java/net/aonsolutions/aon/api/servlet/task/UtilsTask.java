@@ -149,6 +149,9 @@ public class UtilsTask {
 		String search = api.getParams().optString("search");
 		Integer workgroup = api.getParams().optInt(IJsonNames.WORKGROUP);
 		String workgroupStr = api.getParams().optString(IJsonNames.WORKGROUPS);
+		String sender = api.getParams().optString(IJsonNames.SENDER);
+		String taskHolder = api.getParams().optString(IJsonNames.TASK_HOLDER);
+		String email = api.getParams().optString(IJsonNames.EMAIL);
 		
 		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq(customer.getId())).and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
 		
@@ -167,6 +170,16 @@ public class UtilsTask {
 				filter1 = filter1.or(f.getNumberProperty().like(numberSearch));
 			
 			filter = filter.and(filter1);
+		}
+		
+		if(!api.getDur().isMessengerManager()) {
+			filter = filter.and(f.getGtaskIdProperty().eq(email));
+		}
+		
+		if(!taskHolder.isEmpty()) {//----------RECIBIDAS
+			filter = filter.and(f.getSenderProperty().isNotNull());
+		} else if(!sender.isEmpty()) {//----------ENVIADAS
+			filter = filter.and(f.getSenderProperty().isNull());
 		}
 		
 		

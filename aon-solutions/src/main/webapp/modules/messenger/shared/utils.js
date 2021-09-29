@@ -7,7 +7,6 @@ import { createFormVacation } from "../forms/vacation";
 import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
 import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils";
 import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillTaskHolder, fillWorkGroup } from "./fill";
-import * as LS from  "../../../services/localStorageService";
 import { AonCheckbox } from "../../../components/aon-checkbox";
 
 /**
@@ -321,7 +320,7 @@ const jsonDiv = ()=> {
 export const buildForm = (div, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const applicationParent = aonMessengerChat.applicationParentEl;
-    const isClient = "OFFICE" !== LS.getCompany().type;
+    const isGestor = task.isGestor();
 
     //-----------------------APPEND DIV TAGS
     createTagsDiv(div, task);
@@ -362,15 +361,21 @@ export const buildForm = (div, aonMessengerChat) => {
     requestTypeSelect.style.width = "100%";
     if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
     rowsDiv.appendChild(requestTypeSelect);
+    
     //-----------------END TYPE REQUEST
-    const btnExternal = createAonSwitch( isClient ? "Para tu Gestor": "Para tu Cliente");
+    let initText = isReceived(task) ? 'De' : 'Para';
+    let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
+    const btnExternal = createAonSwitch(titleBtn);
     rowsDiv.appendChild(btnExternal);
     if(task.id) btnExternal.disabled =  true;
     btnExternal.checked = task.isExternal();
-    btnExternal.addEventListener(EVENT.CHANGE, () => {
+    btnExternal.addEventListener(EVENT.CHANGE, ({target}) => {
         changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess);
+        if(!isGestor && target.checked) 
+            showTags(false);
+        else 
+            showTags(true);
     });
-
  
     requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess));
     fillRequestType(task, aonMessengerChat);
@@ -517,12 +522,12 @@ const addTaskDescription = (aonMessengerChat) => {
 const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
     const task = aonMessengerChat.task;
     const applicationParent = aonMessengerChat.applicationParentEl;
-    const isClient = "OFFICE" !== LS.getCompany().type;
+    const isGestor = task.isGestor();
     //-------------------------CAU--------------------------
     if((task.source === TASK_SOURCE.CAU && !applicationParent.cau) || forManager){
         //-------------------------- DIV ADD CUSTOMER AND CONTACT
         let rowsDivThree =  createStartJustifiedRow().element;
-        if(!isClient){
+        if(isGestor){
             rowsDivThree = addCustomerAndContact(task, aonMessengerChat, columnsDiv);
         } else {
             rowsDivThree.style.width = "100%";
@@ -533,28 +538,16 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
             const projectSelect = createProject();
             projectSelect.default = true;
             projectSelect.style.width = "100%";
-            if(!isClient)  projectSelect.style.marginLeft = "5px";
+            if(isGestor)  projectSelect.style.marginLeft = "5px";
             if(task.id) projectSelect.disabled = projectSelect.readonly = true;
             rowsDivThree.appendChild(projectSelect);
             fillProject(task);
-        } else {
-            // -------------------------------------TAG
-            // const tagSelect = createTaskTag();
-            // tagSelect.default = true;
-            // tagSelect.style.width = "100%";
-            // tagSelect.style.marginLeft = "5px";
-            // rowsDivThree.appendChild(tagSelect);
-            // fillTag(task, aonMessengerChat);
-        }
+        } 
     } 
 
-    if(!isClient || !forManager){
-        if(!applicationParent.cau){
-            //--------------------------DIV WORKGROUP AND TASKHOLDER
-            addTaskHolderAndWorkgroup(task, aonMessengerChat, columnsDiv);
-        } else {   // addInfoCau
-            task.setDescriptionJson({cauData:applicationParent.cauData});
-        }
+    if((isGestor || !forManager) && !applicationParent.cau){
+        //--------------------------DIV WORKGROUP AND TASKHOLDER
+        addTaskHolderAndWorkgroup(task, aonMessengerChat, columnsDiv);
     }
 
     addTaskDescription(aonMessengerChat);
@@ -568,7 +561,7 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
  */
 const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
     const task = aonMessengerChat.task;
-    const isClient = "OFFICE" !== LS.getCompany().type;
+    const isGestor = task.isGestor();
 
     const divTwo = createReceiverDiv().element;
     columnsDiv.appendChild(divTwo);
@@ -597,7 +590,7 @@ const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
         fillProject(task);
     }
 
-    if(!isClient) {
+    if(isGestor) {
         //--------------------------DIV WORKGROUP AND TASKHOLDER
         addTaskHolderAndWorkgroup(task, aonMessengerChat, columnsDiv);
     }
@@ -745,4 +738,46 @@ const setTaskTags = () => {
     let tags = task.getDescriptionJson().tags || [];
     tags = aonMessengerChat.getApplicationParent()._tags.filter(tag=> arrayTags.includes(tag.id));
     task.setDescriptionJson({tags});
+}
+
+/**
+ * 
+ * @param {Boolean} b 
+ */
+const showTags = (b) => {
+    const iconBtn = document.getElementById("aonMessengerChatToolbarHeaderToolSectionLabelsButton");
+    if(iconBtn){
+        const buttonToolbar = iconBtn.parentNode;
+        let display = "block";
+        if(!b) {
+            display = "none";
+            [...document.querySelectorAll("[data-task-tag]")].map(el => el.remove());
+        }
+        buttonToolbar.style.display = display;
+        setTaskTags();
+    }
+}
+
+/**
+ * 
+ * @param {Task} task class task 
+ * @returns 
+ */
+const isReceived = (task) => {
+    let condition = false;
+    try {
+        if(task.id){
+            const aonMessenger = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER).getParent();
+            const workgroups = aonMessenger ? aonMessenger._workgroups: [];
+            const isWorkgroup = workgroups.some(({id})=> id === task.workgroup.id );
+
+            condition = task.isGestor() 
+            ? 
+                (task.task_holder.id === task.myTaskHolder.id) || isWorkgroup 
+            : 
+                task.sender.id && task.gtask_id === task.auth.email;
+        }
+    } catch (error) {console.log(error);}
+    // condition = false;
+    return condition;
 }

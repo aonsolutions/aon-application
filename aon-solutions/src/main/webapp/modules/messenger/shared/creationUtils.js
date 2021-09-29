@@ -370,7 +370,7 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
  export const createProject = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
-  title: MSG.PROJECT,
+  title: MSG.TYPE,
   autocomplete: CONSTANT.OFF
 });
 

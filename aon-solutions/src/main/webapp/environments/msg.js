@@ -398,8 +398,6 @@ export const WRITE_YOUR_TITLE = "Escribe tu título aquí" //TODO
 export const WRITE_A_COMMENT =  "Escribe un comentario"; //TODO
 export const WRITE_A_DESCRIPTION = "Escribe una descripción"; //TODO
 
-
-
 // ----- X
 
 // ----- Y

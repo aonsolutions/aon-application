@@ -12,6 +12,7 @@ import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
 import { getIconJson } from "./shared/utils.js";
 import { getCustomers } from "../../services/registryService.js";
 import { getTaskHolder } from "../../services/taskHolderService.js";
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
@@ -189,39 +190,46 @@ export class AonMessengerList extends AonElement {
 	}
 
   getDataDesktop(datos){
-    let aonTable = this.getElement(this.TABLE_ID);
-    datos.map((res, idx) => {
-      const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-      let newTitle  =  res.title;
-      if(res.registry && res.registry.name) newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
-
-      let assigned = "";
-      if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
-      else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
-
-      const newData = { 
-        ...res, 
-        newTitle,
-        assigned,
-        dateParse,
-        lettersHtml: this.getIcon(res),
-      };
-      aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
-    });
+    try {
+      let aonTable = this.getElement(this.TABLE_ID);
+      const company = LS.getCompany();
+      const document = company ? company.document: undefined;
+      datos.map((res, idx) => {
+        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+        let newTitle  =  res.title;
+        if(res.registry && res.registry.name && document !== res.registry.document) 
+          newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+  
+        let assigned = "";
+        if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
+        else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
+  
+        const newData = { 
+          ...res, 
+          newTitle,
+          assigned,
+          dateParse,
+          lettersHtml: this.getIcon(res),
+        };
+        aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
+      });
+    } catch (e) {}
   }
   
   getDataMobile(datos){
-    let aonTable = this.getElement(this.TABLE_ID);
-    datos.map((res, idx) => {
-      const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-      const newTitle  = `#${res.newNumber} ${res.title}`;
-      const options = {
-        title: newTitle,
-        subtitle: dateParse,
-        ...this.getIconList(res)
-      };
-      aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
-    });
+    try{
+      let aonTable = this.getElement(this.TABLE_ID);
+      datos.map((res, idx) => {
+        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+        const newTitle  = `#${res.newNumber} ${res.title}`;
+        const options = {
+          title: newTitle,
+          subtitle: dateParse,
+          ...this.getIconList(res)
+        };
+        aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
+      });
+    } catch (e) {}
   }
 
   async getData(){

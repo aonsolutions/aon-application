@@ -5,11 +5,6 @@ import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import {AonDocumental} from './documental/aon-documental.js';
 import {AonDocumentalAyudat} from './documental/ayudat/aon-documental-ayudat.js';
-import '../components/aon-icon.js';
-import './signin/aon-signin.js';
-import './faqs/aon-faqs.js';
-import './laboral/aon-laboral.js';
-import './example/aon-example.js';
 import './imports/aon-imports.js';
 import './invoice/aon-invoice-panel.js';
 import './project/aon-project-panel.js';
@@ -17,14 +12,20 @@ import * as GWT from "../gwt/gwt.js";
 import { AonMessenger } from './messenger/aon-messenger.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonFiscal } from './fiscal/aon-fiscal.js';
+import { AonSignin } from './signin/aon-signin.js';
+import { AonLaboral } from './laboral/aon-laboral.js';
+import { AonIcon } from '../components/aon-icon.js';
+// import './example/aon-example.js';
+// import './faqs/aon-faqs.js';
 const ID = 'id';
 const OPENED = 'opened';
 const APP = 'app';
 
+
 export class AonMenu extends AonElement {
 
 	dur;
-
+	AON_MENU_SIDENAV;
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -72,10 +73,11 @@ export class AonMenu extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.init();
-  }
+    }
 
 	initialize() {
 		this.dur = [];
+		this.AON_MENU_SIDENAV = 'aonMenuSidenav';
 	}
 
 	init() {
@@ -93,10 +95,11 @@ export class AonMenu extends AonElement {
 	}
 
 	toogle() {
-		let aonMenuSidenav = this.getElement('aonMenuSidenav');
-		this.getAttribute('opened') ? MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT : MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
+		const aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
+		
+		let open = this.getAttribute('opened');
 
-		if(this.getAttribute('opened')) {
+		if(open) {
 			this.close();
 		} else if(this.getAttribute('app')){
 			aonMenuSidenav.style.width = '250px';
@@ -106,8 +109,6 @@ export class AonMenu extends AonElement {
 			this.getRootPanel().style.marginRight = '60px';
 			this.setAttribute('opened', true);
 		}
-
-		this.changeAonMenuShowButton();
 	}
 
 	appSelection(app) {
@@ -128,13 +129,13 @@ export class AonMenu extends AonElement {
 			case Apps.PAYROLL.app:
 				if(this.getDur().isPayrollManager()) {
 					this.buildAppMenu(Apps.PAYROLL);
-				} else this.rootPanelHtml('<aon-laboral></aon-laboral>');
+				} else this.rootPanel(new AonLaboral());
 				break;
 			case Apps.INVOICE.app:
 				this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
 				break;
 			case Apps.TIMECONTROL.app:
-				this.rootPanelHtml('<aon-signin></aon-signin>');
+				this.rootPanel(new AonSignin());
 				break;
 			case Apps.MESSENGER.app:
 				this.rootPanel(new AonMessenger());
@@ -146,10 +147,10 @@ export class AonMenu extends AonElement {
 	}
 
 	build() {
-		this.innerHTML = `
-			<div id="aonMenuSidenav" class="aonMenuSidenav"></div>
-		`;
-		let aonMenuSidenav = this.getElement('aonMenuSidenav');
+		let aonMenuSidenav = this.createElement(TAG.DIV);
+		aonMenuSidenav.id = "aonMenuSidenav";
+		aonMenuSidenav.className = "aonMenuSidenav";
+		this.appendChild(aonMenuSidenav);
 
 		aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {
 			aonMenuSidenav.style.transitionDuration = '500ms';
@@ -175,18 +176,9 @@ export class AonMenu extends AonElement {
 		}
 		this.buildMenu();
 	}
-
-	changeAonMenuShowButton(){
-		const aonMenuShowButton = this.getElement("aonMenuShowButton");
-		if(aonMenuShowButton){
-			const icon = this.getAttribute('opened') ? MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT : MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
-			aonMenuShowButton.setAttribute('icon', icon);
-			aonMenuShowButton.title = icon ===  MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT ? `Ocultar Menu` : `Mostrar Menu`;
-		}
-	}
 	
 	buildMenu() {
-		let aonMenuSidenav = this.getElement('aonMenuSidenav');
+		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let ul = this.createElement(TAG.UL);
 		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
@@ -199,10 +191,10 @@ export class AonMenu extends AonElement {
 		li.style.backgroundColor = 'transparent';
 		li.style.cursor = 'pointer';
 		ul.appendChild(li);
-		const icon = this.getAttribute('opened') ? MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT : MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
-		let aib = new AonIconButton();
-		aib.id   = "aonMenuShowButton";
-		aib.title = icon ===  MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT ? `Ocultar Menu`: `Mostrar Menu`;
+		const icon = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
+		let aib   = new AonIconButton();
+		aib.id    = "aonMenuShowButton";
+		aib.title = `Ocultar Menu`;
 		aib.icon = icon;
 		li.addEventListener(EVENT.MOUSEMOVE, (ev)=> {
 			ev.preventDefault();
@@ -233,18 +225,7 @@ export class AonMenu extends AonElement {
 			aonMenuSidenav.innerHTML = '';
 			aonMenuSidenav.appendChild(ul);
 
-			let aonMenuShowButton = this.getElement('aonMenuShowButton');
-			aonMenuShowButton.addEventListener(EVENT.CLICK, () => {
-				if(this.getAttribute('opened'))
-					this.removeAttribute('opened');
-				else this.setAttribute('opened', true);
-				let toolSection = this.getElement(this.getApplication().getToolbar().TOOL_SECTION);
-				// let toolSection = document.querySelector("[id*='aonToolbarToolSection']");
-				if(toolSection) {
-					toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
-				}
-				this.changeAonMenuShowButton();
-			});
+			aib.addEventListener(EVENT.CLICK, () => this.close());
 
 			if(this.getDur().isAdmin()) {
 				let aonMenuAddButton = this.getElement('aonMenuAddButton');
@@ -256,7 +237,7 @@ export class AonMenu extends AonElement {
 	}
 
 	showMenuButton(){
-		let aonMenuSidenav = this.getElement('aonMenuSidenav');
+		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		if(this.getAttribute('opened')) {
 			aonMenuSidenav.style.width = '60px';
 			this.getRootPanel().style.marginRight = '60px';
@@ -271,7 +252,7 @@ export class AonMenu extends AonElement {
 	    li.addEventListener(EVENT.MOUSEOVER, () => {
 			let img = this.getElement('aonMenuListAppImg-' + app.app);
 			img.size = '40px';
-			let aonMenuSidenav = this.getElement('aonMenuSidenav');
+			let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 			if(aonMenuSidenav && aonMenuSidenav.style.width !== '250px' && aonMenuSidenav.style.width !== '0px' && localStorage.getItem('aon_domain_id')){
 				aonMenuSidenav.style.transitionDuration = '0ms';
 				aonMenuSidenav.style.width = '175px';
@@ -303,11 +284,19 @@ export class AonMenu extends AonElement {
 	    div.style.padding = '8px 0px';
 
 	    if (app.icon) {
-	      div.innerHTML = `
-				<span id="aonMenuListApp-${app.app}" style="display:none;"> ${app.title} </span>
-				<aon-icon id="aonMenuListAppImg-${app.app}" icon="${app.icon}" color="${app.color}" size="30px" style="margin-right: 15px;"></aon-icon>
-		  `;
+			const span = this.createElement(TAG.SPAN);
+			span.id = `aonMenuListApp-${app.app}`;
+			span.style.display = "none";
+			span.innerHTML = app.title;
+			div.appendChild(span);
 
+			const aonIcon = new AonIcon();
+			aonIcon.id    = `aonMenuListAppImg-${app.app}`;
+			aonIcon.icon  = app.icon;
+			aonIcon.color = app.color;
+			aonIcon.size  = "30px";
+			aonIcon.style.marginRight = "15px";
+			div.appendChild(aonIcon);
 	    } else {
 	      let span = this.createElement(TAG.SPAN);
 	      span.id = 'aonMenuListApp-' + app.app;
@@ -337,7 +326,7 @@ export class AonMenu extends AonElement {
 			company = JSON.parse(this.getAttribute('company'));
 		}
 
-		let aonMenuSidenav = this.getElement('aonMenuSidenav');
+		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		aonMenuSidenav.style.width = '250';
 
 		let div = this.createElement(TAG.DIV);
@@ -391,7 +380,7 @@ export class AonMenu extends AonElement {
 			} else if(Apps.FISCAL.app === app.app) {
 				this.rootPanel(new AonFiscal());
 			} else if(Apps.PAYROLL.app === app.app) {
-				this.rootPanelHtml('<aon-laboral></aon-laboral>');
+				this.rootPanel(new AonLaboral());
 			}
 		});
 		let closeButton = this.getElement('aon-menu-sidenav-app-close-button');
@@ -446,7 +435,7 @@ export class AonMenu extends AonElement {
 				open('https://' + localStorage.getItem('aon_domain_name') + '/login?initAction='+subapp.initAction+'&token=' + localStorage.getItem('aon_session_id'));
 			} else GWT.startModule(subapp.module, subapp.entryPoint);
 
-			let aonMenuSidenav = this.getElement('aonMenuSidenav');
+			let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 			if(this.getAttribute('opened')) {
 				aonMenuSidenav.style.width = '60px';
 				this.getRootPanel().style.marginRight = '60px';
@@ -490,7 +479,8 @@ export class AonMenu extends AonElement {
 	}
 
 	close() {
-		let aonMenuSidenav = this.getElement('aonMenuSidenav');
+		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
+		aonMenuSidenav.style.transitionDuration = '0ms';
 		aonMenuSidenav.style.width = '0px';
 		this.getRootPanel().style.marginRight = '0px';
 		this.removeAttribute('opened');

@@ -3,8 +3,6 @@ package net.aonsolutions.aon.api.servlet.task;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -408,31 +406,12 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONArray getTasksOffice(AonApiData api, JSONArray arr) {
 		String status = api.getParams().optString("status");
-		String sender = api.getParams().optString(IJsonNames.SENDER);
-		String taskHolder = api.getParams().optString(IJsonNames.TASK_HOLDER);
 		if(status.isEmpty() || "pending".equalsIgnoreCase(status)) {
 			Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-			String email = api.getParams().optString(IJsonNames.EMAIL);
 			AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 				Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
-				
-				if(!taskHolder.isEmpty()) {//----------RECIBIDAS
-					AON_SOLUTIONS.getTaskStream(domain, new User(), 
-							f -> UtilsTask.taskOfficeFilter(api, f, customer, domain)
-							.and(f.getGtaskIdProperty().eq(email))
-							.and(f.getSenderProperty().isNotNull())
-							)
-					.forEach(t -> arr.put(TaskJSON.toJSON(t)));
-				} else if(!sender.isEmpty()) //----------ENVIADAS
-					AON_SOLUTIONS.getTaskStream(domain, new User(), 
-							f -> UtilsTask.taskOfficeFilter(api, f, customer, domain)
-							.and(f.getGtaskIdProperty().eq(email))
-							.and(f.getSenderProperty().isNull())
-							)
-					.forEach(t -> arr.put(TaskJSON.toJSON(t)));
-				else // ----------------TODAS
-					AON_SOLUTIONS.getTaskStream(domain, new User(), f -> UtilsTask.taskOfficeFilter(api, f, customer, domain))
-					.forEach(t -> arr.put(TaskJSON.toJSON(t)));
+				AON_SOLUTIONS.getTaskStream(domain, new User(), f -> UtilsTask.taskOfficeFilter(api, f, customer, domain))
+				.forEach(t -> arr.put(TaskJSON.toJSON(t)));
 			});
 		}
 		return arr;

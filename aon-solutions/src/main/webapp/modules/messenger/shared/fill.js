@@ -39,20 +39,18 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
  export const fillProject = async (task) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
     if(aonSelect){
+        aonSelect.loading(true);
         const project = task.getProject();
         try {
             let projects = [];
             let registry = task.getRegistry();
-            if(registry.id)
+            if(registry.id && task.isGestor())
                 projects = await getProjects({ registry: registry.id });
             else
                 projects = await getOfficeProjects();
 
-
             aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
-            
-            if(project && project.id){ aonSelect.value = project.id; } 
-        
+
             const fnProject = ({detail})=>{
                 if(detail && detail.id)
                     task.setProject(detail);
@@ -60,11 +58,15 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
                     task.setProject({});
             };
 
-            aonSelect.removeEventListener(EVENT.CHANGE, fnProject)
-            aonSelect.addEventListener(EVENT.CHANGE, fnProject)
+            aonSelect.removeEventListener(EVENT.CHANGE, fnProject);
+            aonSelect.addEventListener(EVENT.CHANGE, fnProject);
+            
+            if(project && project.id){ aonSelect.value = project.id; } 
+        
         } catch (error) {
             console.log(error);
         }
+        aonSelect.loading(false);
     }
 }
 
@@ -113,10 +115,12 @@ export const fillTaskHolder = async (aonMessengerChat, workgroupId=0) => {
 
         let options = [];
         if(taskHolders && taskHolders.length>0){
-            options = taskHolders.map( th=> ({...th, value: th.id}) );
+            options = taskHolders.map( th=> ({...th, value: th.id}) )
+            .filter( (v,i,s)=>s.findIndex((m) => m.id === v.id) === i )
         } else if(task.task_holder.id && task.task_holder.name) {
             options = [{...task.task_holder, value:task.task_holder.id}];
         }
+
         aonSelect.setOptions(options);
         
         if(task.task_holder && task.task_holder.id) 
@@ -139,27 +143,42 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
     if(aonSelect){
         aonSelect.clear();
-        const customers = await getCustomers({reload:false, page:1, perPage:50});
-        if(customers){
-            aonSelect.setOptions( customers.map( c=> ({...c, value: c.id}) ) );
-        }
+        aonSelect.loading(true);
+        try {
 
-        aonSelect.addEventListener(EVENT.INPUT, async({target})=>{
-            const value = target.value;
-            if(value.length > 2){
-                const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
-                aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+            const customers = await getCustomers({reload:false, page:1, perPage:50});
+
+            let options = [];
+            if(customers && customers.length>0){
+                options = customers.map( c=> ({...c, value: c.id}) ) ;
             }
-        });
+            
+            const exist = options.some(({id})=> id  ===registry.id );
+            if( !exist && registry.id && registry.name){
+                options.push({...registry, value:registry.id});
+            }
 
-        if(registry && registry.id) aonSelect.value = registry.id;
+            aonSelect.setOptions( options );
 
-        aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-            if(detail){
-                aonMessengerChat.task.setRegistry(detail);
-                fillProject(aonMessengerChat.task);
-            } 
-        });
+            aonSelect.addEventListener(EVENT.INPUT, async({target})=>{
+                const value = target.value;
+                if(value.length > 2){
+                    const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
+                    aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+                }
+            });
+    
+
+            if(registry && registry.id) aonSelect.value = registry.id;
+    
+            aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+                if(detail){
+                    aonMessengerChat.task.setRegistry(detail);
+                    fillProject(aonMessengerChat.task);
+                } 
+            });
+        } catch (error) { }
+        aonSelect.loading(false);
     }
 }
 

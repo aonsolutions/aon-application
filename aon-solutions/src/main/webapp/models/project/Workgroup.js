@@ -9,8 +9,8 @@ export class Workgroup {
 
     constructor(workgroup) {
         if(workgroup) {
-           this.id = workgroup.id;
-           this.domain = workgroup.domain;
+           this.id = workgroup.id; 
+           this.domain = workgroup.domain || LS.getDomainId();
            this.description = workgroup.description;
            this.active = workgroup.active;
            this.dirty = workgroup.dirty;

@@ -211,19 +211,18 @@ export class AonMessenger extends AonElement {
 		  this._workgroups = workgroup.map(t => ({...t, value: t.id, description: t.description, name:t.description}));
 		  this.clearElementById(application.SIDENAV+'WorkgroupList');
 		  let options = [];
-		 if(this._workgroups.length){
+		//   if(this._workgroups.length)
 			options.push({
 				name: "SIN GRUPO",
 				icon: MATERIAL_ICONS.GROUP_OFF,
 				fn: () => {
-					let b = true;
-					if(this._filter.workgroup) b = undefined;
+				let b = true;
+				if(this._filter.workgroup) b = undefined;
 					this._filter.workgroup = b;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
 			});
-		 }
-		 
+	
 		  this._workgroups.forEach(item => 
 			options.push({
 				name: item.description,

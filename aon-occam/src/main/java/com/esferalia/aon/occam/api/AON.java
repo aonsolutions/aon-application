@@ -6542,7 +6542,7 @@ public class AON {
 				List<Domain> offices = getRegistry().getDomainOfficeLinked(ctx, company.getDocument());
 				list.addAll(offices);
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 		return list;
