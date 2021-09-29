@@ -2,20 +2,22 @@ package com.esferalia.aon.occam.api.json;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JsonUtils {
-	private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+
+	private JsonUtils() {
+	
+	}
+	
 	private static final String ENCODING = "utf-8";
 	
 	public static String decode(JSONObject json, String key ) {
@@ -90,15 +92,13 @@ public class JsonUtils {
 		Number n = AonNumberUtils.toInteger(json.optNumber(key, null)); 
 		return n == null ? 0 : n.byteValue();
 	}
-
+	
 	public static Date getDate(JSONObject json, String key ) {
-		try {
-			String date = json.optString(key, null);
-			return date == null ? null : FORMATTER.parse(date);
-		} catch (Exception e) {
-			System.out.println( json.optString(key, null));
-			throw new AonCoreException("Formato incorrecto de fecha");
-		} 
+		if(json == null) return null;
+		String date = json.optString(key, null);
+		Date d = AonDateUtils.parse(date);
+		if(d == null) d = getDateTime(json, key);
+		return d;
 	}
 	
 	public static Date getDateTime(JSONObject json, String key ) {
@@ -106,21 +106,20 @@ public class JsonUtils {
 			 long date = json.optLong(key);
 			 return date >0 ? new Date(date) : null;
 		} catch (Exception e) {
-			System.out.println( json.optString(key, null));
-			throw new AonCoreException("Formato incorrecto de fecha");
+			return null;
 		} 
 	}
 	
 	public static String getDateJSON(Date date) {
 		if (date != null) {
-			return FORMATTER.format(date);
+			return AonDateUtils.simpleFormat(date);
 		}
 		return null;
 	}
 	
 	public static JSONObject putDate(JSONObject json, String key , Date date) {
 		if (date != null) {
-			String value = FORMATTER.format(date);
+			String value = getDateJSON(date);
 			json.put(key, value);
 		}
 		return json;

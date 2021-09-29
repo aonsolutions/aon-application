@@ -9,6 +9,9 @@ export class AonSelect extends AonElement {
   detail;
   _selected;
 
+  valueAlias;
+  nameAlias;
+
   static get observedAttributes() {
     return [CONSTANT.VALUE, CONSTANT.OPTIONS, CONSTANT.DISABLED];
   }
@@ -83,14 +86,14 @@ export class AonSelect extends AonElement {
       let options = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
       this.detail = {};
       options.forEach((item, i) => {
-        if(item.value == newValue) {
+        if(item[this.valueAlias] == newValue) {
           let input = this.getElement(this.INPUT);
-          if(input) input.value = item.name;
+          if(input) input.value = item[this.nameAlias];
         }
       });
 
       if(options.length > 0)
-        this.detail =  options.find(v=>  v.value == newValue);
+        this.detail =  options.find(v => v[this.valueAlias] == newValue);
       this.dispatchEvent(new CustomEvent(EVENT.CHANGE,{detail: this.detail || {} }));
     } else if(CONSTANT.DISABLED === name){
       if(CONSTANT.TRUE == this.disabled){
@@ -105,6 +108,7 @@ export class AonSelect extends AonElement {
   }
 
 	connectedCallback () {
+    this.initialize();
     this.INPUT = this.id + 'Input';
     this.OPTIONS = this.id + CONSTANT.OPTIONS;
     let aonInput = new AonInput();
@@ -115,6 +119,11 @@ export class AonSelect extends AonElement {
     this.build();
 	}
 
+  initialize() {
+    this.valueAlias = this.valueAlias || 'value';
+    this.nameAlias = this.nameAlias || 'name';
+  }
+
   build() {
     let input = this.getElement(this.INPUT);
     if(input){
@@ -124,7 +133,7 @@ export class AonSelect extends AonElement {
       }
       input.addEventListener(EVENT.KEYUP, () => {
         const optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
-        this.buildOptions(optios.filter(opt => opt.name.toUpperCase().includes(input.value.toUpperCase())));
+        this.buildOptions(optios.filter(opt => opt[this.nameAlias].toUpperCase().includes(input.value.toUpperCase())));
       });
       input.addIconButton('arrow_drop_down', () => {
         if(!this.isReadonly()) {
@@ -141,11 +150,11 @@ export class AonSelect extends AonElement {
       });
 
       input.addEventListener(EVENT.BLUR, ()=>{
-        const exists = this.getOptions().some(({name})=> name == input.value);
+        const exists = this.getOptions().some(opt => opt[this.nameAlias] == input.value);
         if(!exists){
-          const option = this.getOptions().find(f => f.value == this.value);
+          const option = this.getOptions().find(f => f[this.valueAlias] == this.value);
           if(option)
-            input.value = option.name;
+            input.value = option[this.nameAlias];
         } 
       })
 
@@ -167,8 +176,8 @@ export class AonSelect extends AonElement {
   
       let opts = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
       opts.forEach((item, i) => {
-        if(item.value == this.value) {
-          this.getElement(this.INPUT).value = item.name;
+        if(item[this.valueAlias] == this.value) {
+          this.getElement(this.INPUT).value = item[this.nameAlias];
         }
       });
     }
@@ -181,8 +190,12 @@ export class AonSelect extends AonElement {
     let div = this.getElement(this.OPTIONS);
     div.classList.add('is-visible');
   
-    if(this.default ||  this.hasAttribute(CONSTANT.DEFAULT)) 
-      options.unshift({ name:"-", value:"" }); //EMPTY
+    if(this.default ||  this.hasAttribute(CONSTANT.DEFAULT)) {
+      let empty = {};
+      empty[this.nameAlias] = '-';
+      empty[this.valueAlias] = '';
+      options.unshift(empty); //EMPTY
+    }
 
     let ul = this.createElement(TAG.UL);
     ul.className = 'aonInputListOptionsUl';
@@ -190,11 +203,11 @@ export class AonSelect extends AonElement {
     for (const option of options) {
       let li = this.createElement(TAG.LI);
       li.className = 'aonInputListOptionsItem'
-      li.innerHTML = option.name;
+      li.innerHTML = option[this.nameAlias];
       li.addEventListener(EVENT.CLICK, () => {
         div.classList.remove('is-visible');
-        this.value = option.value;
-        input.value = option.name;
+        this.value = option[this.valueAlias];
+        input.value = option[this.nameAlias];
         this._selected = option;
         this.dispatchEvent(new CustomEvent(EVENT.SELECT, {detail: option}));
       });
@@ -203,7 +216,7 @@ export class AonSelect extends AonElement {
     div.appendChild(ul);
     
     document.addEventListener(EVENT.CLICK, function(event) {
-      this.value = this._selected ? this._selected.name : '';
+      this.value = this._selected ? this._selected[this.nameAlias] : '';
       let isClickInside = input.contains(event.target);
       if(!isClickInside){
         if(div.classList.contains('is-visible')){
@@ -273,6 +286,19 @@ export class AonSelect extends AonElement {
 
   getDetail(){
     return this.detail || {};
+  }
+
+  setAlias(valueAlias, nameAlias) {
+    this.valueAlias = valueAlias;
+    this.nameAlias = nameAlias;
+  }
+
+  setValueAlias(valueAlias) {
+    this.valueAlias = valueAlias;
+  }
+
+  setNameAlias(valueAlias) {
+    this.valueAlias = valueAlias;
   }
 }
 if(!window.customElements.get('aon-select')){

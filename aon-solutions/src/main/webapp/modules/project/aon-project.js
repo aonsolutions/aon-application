@@ -19,6 +19,8 @@ import { getProjectTypes, saveProject } from '../../services/projectService.js';
 import * as LS from '../../services/localStorageService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { getTastHolders } from '../../services/taskHolderService.js';
+import { Project } from '../../models/project/Project.js';
+import { TaskHolder } from '../../models/project/TaskHolder.js';
 
 export class AonProject extends AonElement {
     PROJECT_TOOLBAR;
@@ -59,19 +61,7 @@ export class AonProject extends AonElement {
         this.PROJECT_REGISTRY = this.id + 'Registry';
 		this.PROJECT_WORKGROUP = this.id + 'Workgroup';
 		this.PROJECT_TASK_HOLDER = this.id + 'TaskHolder';
-        this.project = this.project || {
-			name: '',
-			domain: {id: LS.getDomainId(), name: LS.getDomainName()},
-            type: {},
-            registry: {},
-            alias: '',
-            date: new Date().getTime(),
-			active: true,
-			project_holder: {
-				domain: {id: LS.getDomainId(), name: LS.getDomainName()},
-				start_date: new Date().getTime()
-			}
-		}
+		this.project = new Project(this.project);
 	}
 
 	build() {
@@ -93,11 +83,11 @@ export class AonProject extends AonElement {
 		this.buildGeneralCard(div);
 	}
 
+	
+
+
 	buildGeneralCard(parent){
-		let card = new AonCard();
-		card.id = this.PROJECT_CARD;
-		card.title = MSG.GENERAL_INFORMATION;
-		card.style.width = '50%';
+		let card = this.createCard(this.PROJECT_CARD, MSG.GENERAL_INFORMATION);
 		parent.appendChild(card);
 
 		let div = this.createElement(TAG.DIV);
@@ -109,30 +99,23 @@ export class AonProject extends AonElement {
 
 		table.addRow();
 
-		let typeInput = new AonSelect();
-		typeInput.id = this.PROJECT_TYPE;
-		typeInput.title = MSG.TYPE;
+		let typeSelect = this.createSelect(this.PROJECT_TYPE, MSG.TYPE);
+		typeSelect.setAlias('id', 'description');
         getProjectTypes({}).then( types => {
-            typeInput.options =  JSON.stringify(types.map(t => {
-                t.value = t.id;
-                t.name = t.description;
-                return t;
-            }));
-			typeInput.value = this.project.type.id;
+            typeSelect.setOptions(types);
+			typeSelect.value = this.project.type.id;
 		});
-		typeInput.addEventListener(EVENT.CHANGE, (e) => this.project.type = typeInput.getDetail());
-        table.addCell(typeInput, 2);
-		
-        table.addRow();
-		let nameInput = new AonInput();
-		nameInput.id = this.PROJECT_NAME;
-		nameInput.description = MSG.NAME;
-		nameInput.value = this.project.name;
-		nameInput.addEventListener(EVENT.CHANGE, () => this.project.name = nameInput.value);
-        table.addCell(nameInput, 2);
+		typeSelect.addEventListener(EVENT.CHANGE, (e) => this.project.setType(typeSelect.getDetail()));
+        table.addCell(typeSelect, 2);
 		
         table.addRow();
 
+		let nameInput = this.createInput(this.PROJECT_NAME, MSG.NAME);
+		nameInput.value = this.project.name;
+		nameInput.addEventListener(EVENT.CHANGE, () => this.project.setName(nameInput.value));
+        table.addCell(nameInput, 2);
+		
+        table.addRow();
 
         // ----- REGISTRY
 
@@ -143,11 +126,11 @@ export class AonProject extends AonElement {
 		registry.value = this.project.registry;
 		registry.setRegistry(this.project.registry);
 		registry.addEventListener(EVENT.CHANGE, () => {
-			this.project.registry = registry.getRegistry();
+			this.project.setRegistry(registry.getRegistry());
 			if(this.autosave) this.save();
 		});
 		registry.addEventListener(EVENT.SELECT, () => {
-			this.project.registry = registry.getRegistry();
+			this.project.setRegistry(registry.getRegistry());
 			if(this.autosave) this.save();
 		});
 		table.addCell(registry,2);
@@ -156,41 +139,26 @@ export class AonProject extends AonElement {
 	    // ----- PROJECT HOLDER
 
 		table.addRow();
-		let workgroupSelect = new AonSelect();
-		workgroupSelect.id = this.PROJECT_WORKGROUP;
-		workgroupSelect.title = MSG.WORKGROUP;
+		let workgroupSelect = this.createSelect(this.PROJECT_WORKGROUP, MSG.WORKGROUP);
+		workgroupSelect.setAlias('id', 'description');
 		getWorkgroups({}).then(workgroups => {
-			workgroupSelect.options =  JSON.stringify(workgroups
-			.map(t => {
-         		t.value = t.id;
-         		t.name = t.description;
-				return t;
-			}));
-			if(this.project.project_holder && this.project.project_holder.workgroup)
-				workgroupSelect.value = this.project.project_holder.workgroup.id;
+			workgroupSelect.setOptions(workgroups);
+			workgroupSelect.value = this.project.getProjectHolder().getWorkgroup().getId();
 		});
-		workgroupSelect.addEventListener(EVENT.CHANGE, (e) => this.project.project_holder.workgroup = workgroupSelect.getDetail());
+		workgroupSelect.addEventListener(EVENT.CHANGE, (e) => this.project.getProjectHolder().setWorkgroup(workgroupSelect.getDetail()));
 
 		table.addCell(workgroupSelect);
 		
-		let taskHolderSelect = new AonSelect();
-		taskHolderSelect.id = this.PROJECT_TASK_HOLDER;
-		taskHolderSelect.title = 'Asignar a';
-		let data = 	this.project.project_holder && this.project.project_holder.workgroup
-			? {workgroup: this.project.project_holder.workgroup.id} : {};
+		let taskHolderSelect = this.createSelect(this.PROJECT_TASK_HOLDER, 'Asignar a');
+		taskHolderSelect.setValueAlias('id');
+		let data = {workgroup: this.project.getProjectHolder().getWorkgroup().getId()};
 		getTastHolders(data).then(taskHolders => {
-			taskHolderSelect.options =  JSON.stringify(taskHolders
-			.map(t => {
-         		t.value = t.id;
-				return t;
-			}));
-			if(this.project.project_holder && this.project.project_holder.task_holder)
-				taskHolderSelect.value = this.project.project_holder.task_holder.id;
+			taskHolderSelect.setOptions(taskHolders);
+			taskHolderSelect.value = this.project.getProjectHolder().getTaskHolder().getId();
 		});
-		taskHolderSelect.addEventListener(EVENT.CHANGE, (e) => this.project.project_holder.task_holder = taskHolderSelect.getDetail());
+		taskHolderSelect.addEventListener(EVENT.CHANGE, (e) => this.project.getProjectHolder().setTaskHolder(taskHolderSelect.getDetail()));
 
 		table.addCell(taskHolderSelect);
-
 	}
 	
 	// ACTIONS
@@ -200,7 +168,35 @@ export class AonProject extends AonElement {
 	}
 
 	save() {
-		saveProject(this.project).then(project => this.project = project);
+		saveProject(this.project).then(project => this.setProject(project));
+	}
+
+	setProject(project) {
+		this.project = new Project(project);
+	}
+
+	// Create Components
+
+	createCard(id, title) {
+		let card = new AonCard();
+		card.id = id;
+		card.title = title;
+		card.style.width = '50%';
+		return card;
+	}
+
+	createSelect(id, title) {
+		let select = new AonSelect();
+		select.id = id;
+		select.title = title;
+		return select;
+	}
+
+	createInput(id, title) {
+		let select = new AonInput();
+		select.id = id;
+		select.description = title;
+		return select;
 	}
 }
 

@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.registry.Project;
 
 public class ProjectJSON {
@@ -32,10 +31,10 @@ public class ProjectJSON {
 				.setAlias(JsonUtils.getString(json, IJsonNames.ALIAS))
 				.setType(ProjectTypeJSON.fromJSON(json.optJSONObject(IJsonNames.TYPE)))
 				.setName(JsonUtils.getString(json, IJsonNames.NAME))
-				.setDate(JsonUtils.getDateTime(json, IJsonNames.DATE))
+				.setDate(JsonUtils.getDate(json, IJsonNames.DATE))
 				.setRegistry(RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.REGISTRY)))
 				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
-				.setProjectHolder(ProjectHolderJSON.fromJSON(json.optJSONObject("project_holder")));
+				.setProjectHolder(ProjectHolderJSON.fromJSON(json.optJSONObject(IJsonNames.PROJECT_HOLDER)));
 	}
 	
 	public static JSONArray toJSON(List<Project> projects) {
@@ -58,9 +57,9 @@ public class ProjectJSON {
 				.put(IJsonNames.ALIAS, project.getAlias())
 				.put(IJsonNames.DATE, JsonUtils.getDateJSON(project.getDate()))
 				.put(IJsonNames.ACTIVE, project.isActive())
-				.put("project_holder", ProjectHolderJSON.toJSON(project.getProjectHolder()))
-				.put("tas", project.isTas())
-				.put("commercial", project.isCommercial())
-				.put("reservation", project.isReservation());
+				.put(IJsonNames.PROJECT_HOLDER, ProjectHolderJSON.toJSON(project.getProjectHolder()))
+				.put(IJsonNames.TAS, project.isTas())
+				.put(IJsonNames.COMMERCIAL, project.isCommercial())
+				.put(IJsonNames.RESERVATION, project.isReservation());
 	}
 }

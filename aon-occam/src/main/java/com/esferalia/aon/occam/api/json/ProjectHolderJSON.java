@@ -26,12 +26,12 @@ public class ProjectHolderJSON {
 	public static ProjectHolder fromJSON(JSONObject json) {
 		if(json == null) return new ProjectHolder();
 		return new ProjectHolder().setId(JsonUtils.optInteger(json, IJsonNames.ID))
-				.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)))
+				.setDomain(JsonUtils.optInteger(json, IJsonNames.DOMAIN))
 				.setStartDate(JsonUtils.getDateTime(json, IJsonNames.START_DATE))
 				.setEndDate(JsonUtils.getDate(json, IJsonNames.END_DATE))
-				.setProject(ProjectJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PROJECT)))
+				.setProject(JsonUtils.optInteger(json, IJsonNames.PROJECT))
 				.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
-				.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)));
+				.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, "taskHolder")));
 	}
 
 	public static JSONArray toJSON(List<ProjectHolder> projectHolders) {
@@ -49,10 +49,12 @@ public class ProjectHolderJSON {
 			return new JSONObject();
 		return new JSONObject().put(IJsonNames.ID, projectHolder.getId())
 				.put(IJsonNames.DOMAIN, projectHolder.getDomain())
-				.put(IJsonNames.PROJECT, ProjectJSON.toJSON(projectHolder.getProject()))
+				.put(IJsonNames.PROJECT, projectHolder.getProject())
 				.put(IJsonNames.START_DATE, projectHolder.getStartDate())
 				.put(IJsonNames.END_DATE, projectHolder.getEndDate())
 				.put(IJsonNames.WORKGROUP, WorkgroupJSON.toJSON(projectHolder.getWorkgroup()))
-				.put(IJsonNames.TASK_HOLDER, TaskHolderJSON.toJSON(projectHolder.getTaskHolder()));
+				//.put(IJsonNames.TASK_HOLDER, TaskHolderJSON.toJSON(projectHolder.getTaskHolder()));
+				.put("taskHolder", TaskHolderJSON.toJSON(projectHolder.getTaskHolder()));
+
 	}
 }

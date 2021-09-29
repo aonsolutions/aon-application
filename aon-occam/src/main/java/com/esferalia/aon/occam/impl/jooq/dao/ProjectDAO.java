@@ -187,7 +187,7 @@ public class ProjectDAO {
 			? update(ctx, project)
 			: insert(ctx, project);
 		if(!project.getProjectHolder().isEmpty()) {
-			project.getProjectHolder().setProject(new Project().setId(project.getId()));
+			project.getProjectHolder().setProject(project.getId());
 			project.setProjectHolder(ProjectHolderDAO.save(ctx, project.getProjectHolder()));
 		}
 		return project;

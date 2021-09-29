@@ -318,12 +318,12 @@ export class Task {
     const domain = this.project.domain && this.project.domain.id ? this.project.domain : this.domainTmp;
     this.setDomain(domain);
 
-    const {project_holder} = this.project;
+    const {projectHolder} = this.project;
 
-    if(project_holder && project_holder.id){
-      const workgroup = project_holder.workgroup && project_holder.workgroup.id ?  project_holder.workgroup : {};
+    if(projectHolder && projectHolder.id){
+      const workgroup = projectHolder.workgroup && projectHolder.workgroup.id ?  projectHolder.workgroup : {};
       this.setWorkgroup(workgroup);
-      const task_holder = project_holder.task_holder && project_holder.task_holder.id ? project_holder.task_holder : {};
+      const task_holder = projectHolder.task_holder && projectHolder.task_holder.id ? projectHolder.task_holder : {};
       this.setTaskHolder(task_holder);
     }
 

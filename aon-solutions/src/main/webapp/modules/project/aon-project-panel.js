@@ -7,6 +7,7 @@ import { DocumentalSidenav } from '../documental/DocumentalEnums.js';
 import { getProjectTypes, saveProjectType } from '../../services/projectService.js';
 import { AonInput } from '../../components/aon-input.js';
 import * as LS from '../../services/localStorageService.js';
+import { ProjectType } from '../../models/project/ProjectType.js';
 
 export class AonProjectPanel extends AonElement {
 
@@ -89,7 +90,7 @@ export class AonProjectPanel extends AonElement {
     createType() {
         let d = document.getElementById(this.getApplication().DIALOG);
         d.clear();
-        if(!this.isMobile()) d.width = '400px';
+        d.width = '400px';
         d.setTitle(MSG.ADD_TYPE);
         let aonInput = new AonInput();
         aonInput.id = this.id + 'AddType';
@@ -97,11 +98,7 @@ export class AonProjectPanel extends AonElement {
         d.setContent(aonInput);
         d.addAcceptAction(() => {
             if(!aonInput.value.isEmpty()){
-                let data = {
-                    domain: LS.getDomainId(),
-                    description: aonInput.value,
-                    active: true
-                };
+                let data = new ProjectType().setDescription(description);
                 saveProjectType(data).then(() => {
                     this.loadTypes();
                 });
