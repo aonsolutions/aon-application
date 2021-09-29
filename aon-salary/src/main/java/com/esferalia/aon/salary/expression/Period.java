@@ -131,6 +131,10 @@ public class Period implements Comparable<Period> {
 		
 	}
 
+	public long getDays() {
+		return daysStream().count();
+	}
+
 	public Stream<Calendar> daysStream() {
 		Stream.Builder<Calendar> builder = Stream.builder();
 		forEachDay(builder);

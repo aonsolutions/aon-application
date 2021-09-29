@@ -557,28 +557,17 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		costs.addCost(cost.getName(), cost.getType(), startDate, endDate, amount);
 		salaryBuilder.addCost(amount, description, startDate, endDate, cost, context);
 
-//		Not work properly 		
-//		round(ContextVariable.ENTERPRISE_QUOTA);
-//		if ( AonStringUtils.isNotEmpty(cost.getName()) ) {
-//			round(cost.getName());
-//		}
 		
 		// fix ENTERPRISE_QUOTA 
 		expressionContext.removeVariable(ContextVariable.ENTERPRISE_QUOTA);
 		costs.getCostsMap(RoundSalaryBuilder::isEnterpriseQuota)
-		.forEach((p,v) -> {
-//			System.out.println( ContextVariable.ENTERPRISE_QUOTA + "[" + p.getStart()+ "..."+ p.getEnd() + "]:" + v );
-			expressionContext.setVariable(ContextVariable.ENTERPRISE_QUOTA, doubleValue(v), p.getStart(), p.getEnd());
-		} );
+		.forEach((p,v) -> expressionContext.setVariable(ContextVariable.ENTERPRISE_QUOTA, doubleValue(v), p.getStart(), p.getEnd()));
 		
 		// fix Cost Variable
 		if ( AonStringUtils.isNotEmpty(cost.getName()) ) {
 			expressionContext.removeVariable(cost.getName());
 			costs.getCostsMap(d -> AonStringUtils.equals(cost.getName(), d.code))
-			.forEach((p,v) -> { 
-//				System.out.println( cost.getName() + "[" + p.getStart()+ "..."+ p.getEnd() + "]:" + v );
-				expressionContext.setVariable(cost.getName(), doubleValue(v), p.getStart(), p.getEnd());
-			} );
+			.forEach((p,v) -> expressionContext.setVariable(cost.getName(), doubleValue(v), p.getStart(), p.getEnd()));
 		}
 	}
 
