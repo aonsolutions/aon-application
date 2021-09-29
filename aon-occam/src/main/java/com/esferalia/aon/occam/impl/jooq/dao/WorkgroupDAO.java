@@ -1,6 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
+
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -52,6 +54,14 @@ public class WorkgroupDAO {
 		return workgroup.getId() != null
 				? update(ctx, workgroup)
 				: insert(ctx, workgroup);
+	}
+	
+	
+	public static Stream<Workgroup> getWorkgroupByTaskHolderStream(AONContext ctx, WorkgroupFilter filter, Integer taskHolder){
+		return ctx.getDslContext().select().from(WORKGROUP).join(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(WORKGROUP.ID))
+				.where(WORKGROUP_PROPERTIES.getConditions(filter))
+				.and(TASK_HOLDER_WORKGROUP.TASK_HOLDER.eq(taskHolder))
+				.fetch().stream().map(new WorkgroupFiller());
 	}
 	
 	public static Workgroup insert(AONContext ctx, Workgroup workgroup) {

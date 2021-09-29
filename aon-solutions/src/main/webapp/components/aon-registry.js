@@ -16,6 +16,8 @@ export class AonRegistry extends AonElement {
   options;
   selected;
 
+  showAddress;
+
   types;
 
 	get id() {
@@ -60,6 +62,9 @@ export class AonRegistry extends AonElement {
     this.NAME = this.id + 'Name';
     this.ADDRESS= this.id + 'Address';
     this.selected = -1;
+
+    this.showAddress = this.showAddress === undefined
+      ? true : this.showAddress;
   }
 
   build() {
@@ -194,19 +199,20 @@ export class AonRegistry extends AonElement {
     options.style.width = div.clientWidth;
     options.style.marginTop = "-16px";
 		this.appendChild(options);
-
-    let div2 = this.createElement(TAG.DIV);
-    this.appendChild(div2);
-    let address = new AonAddress();
-    address.id = this.ADDRESS;
-    address.title = MSG.ADDRESS;
-    address.readonly = this.isReadonly();
-    div2.appendChild(address);
-    address.buildAddressValue(this.registry.address)
-    address.addEventListener(EVENT.CHANGE, () => {
-      this.registry.address = JSON.parse(address.value);
-      this.dispatchEvent(new Event(EVENT.CHANGE));
-    });
+    if(this.showAddress) {
+      let div2 = this.createElement(TAG.DIV);
+      this.appendChild(div2);
+      let address = new AonAddress();
+      address.id = this.ADDRESS;
+      address.title = MSG.ADDRESS;
+      address.readonly = this.isReadonly();
+      div2.appendChild(address);
+      address.buildAddressValue(this.registry.address)
+      address.addEventListener(EVENT.CHANGE, () => {
+        this.registry.address = JSON.parse(address.value);
+        this.dispatchEvent(new Event(EVENT.CHANGE));
+      });
+    }
   }
 
 	buildOptions(options) {

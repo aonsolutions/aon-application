@@ -59,7 +59,6 @@ export class Task {
       this.number      = task.number || undefined;
       this.workgroup   = task.workgroup || {};
       this.registry    = task.registry || {};
-      this.project     = task.project || {};
       this.sender      = task.sender || {};
       this.senderTmp   = this.sender || {};
       this.task_holder = task.task_holder || {};
@@ -70,35 +69,38 @@ export class Task {
       this.source_id   = task.source_id || undefined;
       this.start_date  = task.start_date || undefined;
       this.parent      = task.parent || undefined;
-      this.gtask_id    = !this.id && this.auth.email ? this.auth.email : undefined;
-      this.domain      = task.domain || LS.getDomainId(); 
+      this.gtask_id    = task.gtask_id || (!this.id && this.auth.email ? this.auth.email : undefined);
+      this.domain      = task.domain || {id:parseInt(LS.getDomainId()), name: LS.getDomainName()}; 
       this.domainTmp   = this.domain;
       this.workflow    = task.workflow || [];
       this.workflowTmp = {
         comment:"",
-        domain:this.domain,
+        domain:this.domain.id,
         task_holder: this.sender,
         task: this.id,
         type: WORKFLOW_TYPES.COMMENT,
         email: this.auth.email ? this.auth.email : undefined
       }
+  
+      this.setProject(task.project && task.project.id ? task.project : {});
     }   
   }
 
   editTask(task){
     if(task) {
-      if(task.id)                                 this.id          = task.id;
-      if(task.number)                             this.number      = task.number;
-      if(task.gtask_id)                           this.gtask_id    = task.gtask_id;
-      if(task.workgroup && task.workgroup.id)     this.workgroup   = task.workgroup;
-      if(task.task_holder && task.task_holder.id) this.task_holder = task.task_holder;
-      if(task.status)                             this.status      = task.status;
-      if(task.source_id)                          this.source_id   = task.source_id;
-      if(task.registry && task.registry.id)       this.registry    = task.registry;
-      if(task.project && task.project.id)         this.project     = task.project;
-      if(task.description)                        this.description = task.description;
-      if(task.start_date)                         this.start_date  = task.start_date;
-      if(task.parent)                             this.parent      = task.parent;
+      if(task.id)                                 this.setId(task.id);
+      if(task.number)                             this.setNumber(task.number);
+      if(task.gtask_id)                           this.setGTaskId(task.gtask_id);
+      if(task.workgroup && task.workgroup.id)     this.setWorkgroup(task.workgroup);
+      if(task.task_holder && task.task_holder.id) this.setTaskHolder(task.task_holder);
+      if(task.status)                             this.setStatus(task.status);
+      if(task.source_id)                          this.setSourceId(task.source_id);
+      if(task.registry && task.registry.id)       this.setRegistry(task.registry);
+      if(task.project && task.project.id)         this.setProject(task.project);
+      if(task.description)                        this.setDescription(task.description);
+      if(task.start_date)                         this.setStartDate(task.start_date);
+      if(task.parent)                             this.setParent(task.parent);
+      if(task.project)                            this.setProject(task.project);
       this.setFiles([]);
     }
   }
@@ -288,6 +290,22 @@ export class Task {
   setAuth(auth) {
     this.auth = auth;
   }
+  
+  getStartDate() {
+    return this.start_date;
+  }
+
+  setStartDate(start_date) {
+    this.start_date = start_date;
+  }
+
+  getParent() {
+    return this.parent;
+  }
+
+  setParent(parent) {
+    this.parent = parent;
+  }
 
   isExternal(){
     return this.project && this.project.id ? true : false;
@@ -297,24 +315,35 @@ export class Task {
    * CHANGE VALUES WHEN PROJECT CHANGE 
    */
   changeProject(){
-    const domain = this.project.domain && this.project.domain.id ? this.project.domain.id : this.domainTmp;
+    const domain = this.project.domain && this.project.domain.id ? this.project.domain : this.domainTmp;
     this.setDomain(domain);
 
-    const workgroup = this.project.workgroup && this.project.workgroup.id ?  this.project.workgroup : {};
-    this.setWorkgroup(workgroup);
+    const {projectHolder} = this.project;
 
-    const task_holder = this.project.task_holder && this.project.task_holder.id ? this.project.task_holder : {};
-    this.setTaskHolder(task_holder);
+    if(projectHolder && projectHolder.id){
+      const workgroup = projectHolder.workgroup && projectHolder.workgroup.id ?  projectHolder.workgroup : {};
+      this.setWorkgroup(workgroup);
+      const task_holder = projectHolder.task_holder && projectHolder.task_holder.id ? projectHolder.task_holder : {};
+      this.setTaskHolder(task_holder);
+    }
 
-    const registry = this.project.registry && this.project.registry.id ? this.project.registry : {};
+    const registry = this.project.registry && this.project.registry.id ? this.project.registry : this.registry;
     this.setRegistry(registry);
-    
-    const sender = !this.project.id  ? this.senderTmp  : {};
+
+    let sender = {};
+    const isGestor = "OFFICE" === LS.getCompany().type;
+    if(isGestor){
+      if(TASK_SOURCE.QUERY === this.source)
+        sender = this.senderTmp;
+      // if(TASK_SOURCE.REQUEST === this.source)
+    } else if(!this.project.id){
+      sender = this.senderTmp;
+    }
     this.setSender(sender);
 
     this.workflowTmp = {
       comment:"",
-      domain:this.domain,
+      domain:this.domain.id,
       task_holder: this.sender,
       task: this.id,
       type: WORKFLOW_TYPES.COMMENT,

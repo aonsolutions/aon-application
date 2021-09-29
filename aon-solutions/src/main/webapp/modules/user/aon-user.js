@@ -382,8 +382,9 @@ export class AonUser extends AonElement {
 		d.open();
 	}
 
-	save() {
-		updateUser(this.user);
+	save() {	
+		if(!this.isOnlyAuth())
+			updateUser(this.user);
 		if(!this.user.portal && (!this.user.roles || this.user.roles.length == 0)) {
 			this.user.portal = true;
 			this.user.roles = [Role.ENTERPRISE];

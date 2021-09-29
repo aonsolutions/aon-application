@@ -1,7 +1,7 @@
 import { AonToolbar } from "../../../components/aon-toolbar";
 import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments";
 import { ToolbarType } from "../../../models/enums";
-import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
+import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utilsComponents";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
 import * as ACTIONS from "../../actions.js";
 import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils";
@@ -173,7 +173,7 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
   });
   dialog.setContent(textarea);
 
-  buildTextareaToolbar(textarea, aonMessengerChat.task, true);
+  buildTextareaToolbar(textarea);
 
   if(aonTextArea.value) textarea.value = aonTextArea.value;
   textarea.addEventListener(EVENT.INPUT, ({target})=>{
@@ -217,11 +217,10 @@ const createSecondDiv = (mainView) => {
     classes: [CSS.FLEX_ROW],
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
-        width: "50%",
-        // minWidth: "400px",
-        paddingTop: "4px",
-        paddingBottom: "30px",
-        paddingRight: "44px"
+      width: "50%",
+      paddingTop: "4px",
+      paddingBottom: "30px",
+      paddingRight: "10px"
     },
   }).element;
 

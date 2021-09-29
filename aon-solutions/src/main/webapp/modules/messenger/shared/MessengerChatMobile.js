@@ -1,7 +1,7 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { newComponent, setAttributes, setStyles} from "../../../services/utils.js";
+import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents";
 import * as ACTIONS from "../../actions.js";
 import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";
@@ -136,7 +136,7 @@ const buildFullComment = (aonMessengerChat, aonTextArea) => {
         margin: 0,
     });
     writter.appendChild(textarea);
-    buildTextareaToolbar(textarea, aonMessengerChat.task, true);
+    buildTextareaToolbar(textarea);
 
     const textAreaToolbar = textarea.querySelector("toolbar");
     if(textAreaToolbar){
@@ -246,7 +246,7 @@ const showFullComment  = (b) => {
     aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
     div.appendChild(aonTextArea);
     if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
-    buildTextareaToolbar(aonTextArea, aonMessengerChat.task, false);
+    buildTextareaToolbar(aonTextArea);
 
    /**
     * CHANGE STYLE AONTEXTAAREA

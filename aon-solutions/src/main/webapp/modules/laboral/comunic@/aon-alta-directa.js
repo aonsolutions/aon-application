@@ -317,7 +317,7 @@ export class AonAltaDirecta extends AonElement {
                     });
                 })
                 let centro_trabajo = this.getElement('centro_trabajo');
-                centro_trabajo.options = JSON.stringify(geozones);
+                centro_trabajo.setOptions(geozones);
             }
         } catch (error) { }
     }
@@ -345,7 +345,7 @@ export class AonAltaDirecta extends AonElement {
                 let options = cccs
                 .filter( (value,index, self)=>self.findIndex((m) => m.ccc === value.ccc) === index )
                 .map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
-                ctaCti.options = JSON.stringify(options);
+                ctaCti.setOptions(options);
             } catch (error) { }
         }
     }
@@ -354,7 +354,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             const resp = await getTipoContrato();
             let type_cto = this.getElement('type_cto');
-            type_cto.options = JSON.stringify(resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})));
+            type_cto.setOptions(resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})));
         } catch (error) { }
     }
 
@@ -363,7 +363,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             const resp = await getTipoJornada();
             const options = resp.map(r => ({ ...r, name: `${r.name}`, value: r.value }) );
-            tipo_jornada.options = JSON.stringify(options);
+            tipo_jornada.setOptions(options);
             tipo_jornada.value = options[0].value;
         } catch (error) { }
     }
@@ -389,7 +389,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             const resp = await getGrupoCotizacion();
             let grup_ctz = this.getElement('grup_ctz');
-            grup_ctz.options = JSON.stringify(resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})));
+            grup_ctz.setOptions(resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})));
         } catch (error){}
     }
 
@@ -397,7 +397,7 @@ export class AonAltaDirecta extends AonElement {
         try {
             const resp = await getOcupacion();
             let ocupacion = this.getElement('ocupacion');
-            ocupacion.options = JSON.stringify(resp.map(r => ({ name: `${r.value} - ${r.name}`, value: r.value})));
+            ocupacion.setOptions(resp.map(r => ({ name: `${r.value} - ${r.name}`, value: r.value})));
         } catch (error){}
     }
 
@@ -593,7 +593,7 @@ export class AonAltaDirecta extends AonElement {
         //list cod de baja
         const codBajaEl = this.getElement("codBaja");
         getCodBaja().then(cods => {
-            codBajaEl.options = JSON.stringify(
+            codBajaEl.setOptions(
                 cods.map(r=>({value:r.value, name:r.value+" - "+r.name }))
             );
             codBajaEl.value = "93";

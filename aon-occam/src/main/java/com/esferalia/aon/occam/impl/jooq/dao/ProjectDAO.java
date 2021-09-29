@@ -1,11 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL;
 import static com.esferalia.aon.jooq.tables.ProjectReservation.PROJECT_RESERVATION;
 import static com.esferalia.aon.jooq.tables.ProjectType.PROJECT_TYPE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO.ProjectTypeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -161,12 +162,6 @@ public class ProjectDAO {
 				.fetchInto(PROJECT).stream().map(new ProjectFiller());
 	}
 
-	public static ProjectType getProjectType(AONContext ctx, String description){
-		return ctx.getDslContext()
-				.select().from(PROJECT_TYPE).where(PROJECT_TYPE.DOMAIN.eq(ctx.getDomainId())).and(PROJECT_TYPE.DESCRIPTION.eq(description))
-				.fetchInto(PROJECT_TYPE).stream().map(new ProjectTypeFiller()).findFirst().orElse(null);
-	}
-	
 	public static ProjectReservation getProjectReservation(AONContext ctx, ProjectReservationFilter filter){	
 		return ctx.getDslContext()
 				.select().from(PROJECT_RESERVATION).where(PROJECT_RESERVATION_PROPERTIES.getConditions(filter))
@@ -186,7 +181,60 @@ public class ProjectDAO {
 				.where(PROJECT_COMMERCIAL_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new FullProjectCommercialFiller());
 	}
+
+	public static Project save(AONContext ctx, Project project){
+		project = project.getId() != null
+			? update(ctx, project)
+			: insert(ctx, project);
+		if(!project.getProjectHolder().isEmpty()) {
+			project.getProjectHolder().setProject(project.getId());
+			project.setProjectHolder(ProjectHolderDAO.save(ctx, project.getProjectHolder()));
+		}
+		return project;
+	}
 	
+	public static Project update(AONContext ctx, Project project){
+		ctx.getDslContext().update(PROJECT)
+				.set(PROJECT.ACTIVE, project.isActive() ? (byte) 1: (byte)0)
+				.set(PROJECT.ALIAS, project.getAlias())
+				.set(PROJECT.COMMERCIAL, project.isCommercial() ? (byte) 1: (byte)0)
+				.set(PROJECT.DATE, new Date(project.getDate().getTime()))
+				.set(PROJECT.DOMAIN, project.getDomain().getId())
+				.set(PROJECT.NAME, project.getName())
+				.set(PROJECT.PROJECT_TYPE, project.getType().getId())
+				.set(PROJECT.REGISTRY, project.getRegistry().getId())
+				.set(PROJECT.RESERVATION, project.isReservation() ? (byte) 1: (byte) 0)
+				.set(PROJECT.TAS, project.isTas() ? (byte) 1 :  (byte) 0)
+				.where(PROJECT.ID.eq(project.getId())).execute();
+		return project;
+	}
+	
+	public static Project insert(AONContext ctx, Project project){
+		Integer id =  ctx.getDslContext().insertInto(PROJECT)
+				.set(PROJECT.ACTIVE, project.isActive() ? (byte) 1: (byte)0)
+				.set(PROJECT.ALIAS, project.getAlias())
+				.set(PROJECT.COMMERCIAL, project.isCommercial() ? (byte) 1: (byte)0)
+				.set(PROJECT.DATE, new Date(project.getDate().getTime()))
+				.set(PROJECT.DOMAIN, project.getDomain().getId())
+				.set(PROJECT.NAME, project.getName())
+				.set(PROJECT.PROJECT_TYPE, project.getType().getId())
+				.set(PROJECT.REGISTRY, project.getRegistry().getId())
+				.set(PROJECT.RESERVATION, project.isReservation() ? (byte) 1: (byte) 0)
+				.set(PROJECT.TAS, project.isTas() ? (byte) 1 :  (byte) 0)
+				.returning(PROJECT.ID).fetchOne().getValue(PROJECT.ID);
+		return project.setId(id);
+	}
+	
+	public static void delete(AONContext ctx, ProjectFilter filter) {
+		ctx.getDslContext().delete(PROJECT)
+		.where(PROJECT_PROPERTIES.getConditions(filter))
+		.execute();
+	}
+	
+	/**
+	 * @deprecated  Replaced by insert(AONContext ctx, Project project)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Integer insertProject(AONContext ctx, Project project){
 		return ctx.getDslContext().insertInto(PROJECT, PROJECT.ACTIVE, PROJECT.ALIAS,
 					PROJECT.COMMERCIAL, PROJECT.DATE, PROJECT.DOMAIN, PROJECT.NAME, PROJECT.PROJECT_TYPE,
@@ -257,22 +305,6 @@ public class ProjectDAO {
 					.setPenaltyDate(r.getPenaltyDate());
 		}
 
-	}
-	
-	public static class ProjectTypeFiller extends Filler implements Function<Record, ProjectType> {
-		
-		@Override
-		public ProjectType apply(Record r) {
-			return build(r);
-		}
-		
-		public static ProjectType build(Record r) {
-			return new ProjectType()
-				.setId(r.getValue(PROJECT_TYPE.ID))
-				.setDomain(r.getValue(PROJECT_TYPE.DOMAIN))
-				.setDescription(r.getValue(PROJECT_TYPE.DESCRIPTION))
-				.setActive(getBoolean(r, PROJECT_TYPE.ACTIVE));
-		}
 	}
 	
 	public static class ProjectFiller extends Filler implements Function<Record, Project> {

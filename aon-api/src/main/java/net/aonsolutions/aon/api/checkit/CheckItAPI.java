@@ -61,7 +61,7 @@ public class CheckItAPI implements IParamNames{
 			post.setEntity(entity);
 			try (CloseableHttpResponse resp = client.execute(post)) {
 				if (resp.getStatusLine().getStatusCode() != 200)
-					throw new CheckItException("No se pudo establecer la conexi\u00F3n con CheckIt");
+					throw new CheckItException(CheckItException.NO_CONNECTION_MSG);
 				if (resp.getEntity() != null) {
 					String str = EntityUtils.toString(resp.getEntity());
 					if (str != null && str.charAt(0) == '[') {
@@ -673,6 +673,22 @@ public class CheckItAPI implements IParamNames{
 	}
 
 //------------------------------------------------------------------------------------------
+	
+//------------------------------------GET ENTERPRISE----------------------------------------
+	
+	public static JSONArray getEnterprise(JSONObject params) throws CheckItException {
+		Object json = post(API_URL + "empresas", params);
+		return parseJSONArray(json);
+	}
+	
+	public static JSONArray getEnterprise(String cif) throws CheckItException {
+		JSONObject params = new JSONObject();
+		params.put(API_KEY_PARAM, API_KEY);
+		params.put(CIF_PARAM, cif);
+		return getEnterprise(params);
+	}
+	
+//------------------------------------------------------------------------------------------
 
 //------------------------------------ADD ENTERPRISE----------------------------------------
 	/**
@@ -896,7 +912,7 @@ public class CheckItAPI implements IParamNames{
 		Calendar nextOperationCalendar= Calendar.getInstance();
 		nextOperationCalendar.setTime(lastOperationDate);
 		nextOperationCalendar.add(Calendar.DATE, 1);
-		Date nextOperationDate = nextOperationCalendar.getTime();
+		Date nextOperationDate = clearDate(nextOperationCalendar.getTime());
 		
 		
 		JSONObject requestParams = new JSONObject();
@@ -917,10 +933,10 @@ public class CheckItAPI implements IParamNames{
 
 			int movementId = transactionJson.optInt("id_movimiento");
 			
-			Date operationDate = parseTZDate(transactionJson.optString("fecha_operacion"));
+			Date operationDate = clearDate(parseTZDate(transactionJson.optString("fecha_operacion")));
 			
-			if ((maximumId == null && (operationDate.after(nextOperationDate) || operationDate.equals(nextOperationDate))) 
-					|| (maximumId != null && movementId > maximumId)) {
+			if ((maximumId == null && operationDate.after(nextOperationDate)) 
+					|| (maximumId != null && maximumId != 0 && movementId > maximumId)) {
 				BankStatement bankStatement = bankStatementFromJson(transactionJson);
 				bankStatements.add(bankStatement);
 			}
@@ -1017,7 +1033,7 @@ public class CheckItAPI implements IParamNames{
 			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
 			Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
 			Pair<String, Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
-			Integer movId = Integer.valueOf(idAndDate != null ? idAndDate.getKey() : "0");
+			Integer movId = idAndDate != null ? Integer.valueOf(idAndDate.getKey()) : null;
 			List<BankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban), lastDate, movId);
 			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
 			return bankStatements;
@@ -1166,6 +1182,18 @@ public class CheckItAPI implements IParamNames{
 			return Collections.emptyMap();
 		}
 		
+	}
+	
+	public static Date clearDate(Date date) {
+		if (date == null)
+			return null;
+		Calendar calendar = Calendar.getInstance(new Locale("es", "ES"));
+		calendar.setTime(date);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR, 0);
+		return calendar.getTime();
 	}
 
 }

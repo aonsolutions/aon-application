@@ -2,10 +2,8 @@ import {  get } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 import { isSigGet, isSigPost, isSigRemove } from "./sigService.js";
 
-
 //---------------------------TASK
 export const getTasks = (data) =>  isSigGet("task", data);
-export const getTasksOffice = (data) =>  isSigGet("task/office", data);
 export const getTaskOne = (data) => isSigGet("task/one",data);
 export const saveTask = (data) =>  isSigPost("task",data); 
 export const deleteTask = (data) => isSigRemove("task",data); 
@@ -22,7 +20,6 @@ export const saveTaskWorkflow = (data) => isSigPost("task/workflow" ,data);
 //----------------TASK ATTACH
 export const saveTaskAttach = (data) => isSigPost("task/attach",data);
 export const getTaskAttach = (data) =>  isSigGet("task/attach",data);
-
 
 //----------------TASK TAG
 export const getTaskTag = (data) => isSigGet("task/tag",data);

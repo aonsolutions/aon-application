@@ -3,9 +3,7 @@ package com.esferalia.aon.occam.api.model.project;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 public class ProjectHolder implements Serializable {
@@ -16,8 +14,8 @@ public class ProjectHolder implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
-	private Domain domain;
-	private Project project;
+	private Integer domain;
+	private Integer project;
 	private Date startDate;
 	private Date endDate;
 	private Workgroup workgroup;
@@ -36,20 +34,20 @@ public class ProjectHolder implements Serializable {
 		return this;
 	}
 
-	public Domain getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
 
-	public ProjectHolder setDomain(Domain domain) {
+	public ProjectHolder setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
 
-	public Project getProject() {
+	public Integer getProject() {
 		return project;
 	}
 
-	public ProjectHolder setProject(Project project) {
+	public ProjectHolder setProject(Integer project) {
 		this.project = project;
 		return this;
 	}

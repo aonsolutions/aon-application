@@ -395,6 +395,12 @@ public class CommonImpl implements ICommon {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		WorkgroupDAO.getStream(ctx, filter));
 	}
+	
+	@Override
+	public Stream<Workgroup> getWorkgroupByTaskHolderStream(AONContext ctx, WorkgroupFilter filter, Integer taskHolder) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+		WorkgroupDAO.getWorkgroupByTaskHolderStream(ctx, filter, taskHolder));
+	}
 
 	@Override
 	public LinkedList<Workgroup> getWorkgroupList(AONContext ctx, WorkgroupFilter filter) {
@@ -408,6 +414,7 @@ public class CommonImpl implements ICommon {
 		WorkgroupDAO.save(ctx, workgroup));
 	}
 
+	
 	@Override
 	public void deleteWorkgroup(AONContext ctx, Integer id) {
 		 ctx.getDslContext().transaction(configuration -> 

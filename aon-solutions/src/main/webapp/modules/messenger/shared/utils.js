@@ -1,7 +1,8 @@
 import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments";
 import { openFileUrl } from "../../../services/fileService";
 import { domainName } from "../../../services/request";
-import {  setAttributes, setFullDate, setStyles, setTime } from "../../../services/utils";
+import {  setAttributes, setStyles } from "../../../services/utilsComponents";
+import {  setTime, setFullDate } from "../../../services/utils";
 import { createFormVacation } from "../forms/vacation";
 import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";
 import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils";
@@ -11,9 +12,9 @@ import { AonCheckbox } from "../../../components/aon-checkbox";
 
 /**
  * Build standard toolbar options 
- * @param {*} aonTextArea 
+ * @param {HTMLElement} aonTextArea aon-text-area
  */
-export const buildTextareaToolbar =  (aonTextArea, task, file= false) => {
+export const buildTextareaToolbar =  (aonTextArea) => {
     const textAreaText = aonTextArea.querySelector("#" + aonTextArea.TEXTAREA);
     if(textAreaText) setStyles(textAreaText, {resize: "none"});
     /**
@@ -359,18 +360,17 @@ export const buildForm = (div, aonMessengerChat) => {
     //-----------------TYPE REQUEST
     const requestTypeSelect = createRequestType();
     requestTypeSelect.style.width = "100%";
-    rowsDiv.appendChild(requestTypeSelect);
     if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
+    rowsDiv.appendChild(requestTypeSelect);
     //-----------------END TYPE REQUEST
-    if(isClient){
-        const btnExternal = createAonSwitch();
-        rowsDiv.appendChild(btnExternal);
-        if(task.id) btnExternal.disabled =  true;
-        btnExternal.checked = task.isExternal();
-        btnExternal.addEventListener(EVENT.CHANGE, () => {
-            changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess);
-        });
-    }
+    const btnExternal = createAonSwitch( isClient ? "Para tu Gestor": "Para tu Cliente");
+    rowsDiv.appendChild(btnExternal);
+    if(task.id) btnExternal.disabled =  true;
+    btnExternal.checked = task.isExternal();
+    btnExternal.addEventListener(EVENT.CHANGE, () => {
+        changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess);
+    });
+
  
     requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess));
     fillRequestType(task, aonMessengerChat);
@@ -505,7 +505,7 @@ const addTaskDescription = (aonMessengerChat) => {
         }
     }
 
-    buildTextareaToolbar(aonTextArea, task, false);
+    buildTextareaToolbar(aonTextArea);
 }
 
 /**
@@ -528,11 +528,13 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
             rowsDivThree.style.width = "100%";
             columnsDiv.appendChild(rowsDivThree);
         }
-        if(forManager && isClient){
+        if(forManager){
             // ------------------PROJECT
             const projectSelect = createProject();
             projectSelect.default = true;
             projectSelect.style.width = "100%";
+            if(!isClient)  projectSelect.style.marginLeft = "5px";
+            if(task.id) projectSelect.disabled = projectSelect.readonly = true;
             rowsDivThree.appendChild(projectSelect);
             fillProject(task);
         } else {
@@ -624,7 +626,7 @@ const addTaskHolderAndWorkgroup = (task, aonMessengerChat, parent) => {
     taskHolderSelect.style.width = "100%";
     taskHolderSelect.style.marginLeft = "5px";
     rowDiv.appendChild(taskHolderSelect);
-    fillTaskHolder(aonMessengerChat, undefined, undefined)
+    fillTaskHolder(aonMessengerChat);
 }
 
 /**

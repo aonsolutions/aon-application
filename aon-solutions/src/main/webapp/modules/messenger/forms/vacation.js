@@ -4,7 +4,8 @@ import { AonDate } from "../../../components/aon-date";
 import { AonIconButton } from "../../../components/aon-icon-button";
 import { AonSelect } from "../../../components/aon-select";
 import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments";
-import { formatDateOrigin, serializeForm, setAttributes } from "../../../services/utils";
+import { formatDateOrigin, serializeForm } from "../../../services/utils";
+import { setAttributes } from "../../../services/utilsComponents";
 import { MESSENGER_IDS } from "../MessengerEnums";
 import { createDivEditable, titleFirstDiv } from "../shared/creationUtils";
 

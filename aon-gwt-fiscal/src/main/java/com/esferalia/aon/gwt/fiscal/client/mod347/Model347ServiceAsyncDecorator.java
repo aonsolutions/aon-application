@@ -83,9 +83,9 @@ public class Model347ServiceAsyncDecorator implements Model347ServiceAsync {
 	}
 	
 	@Override
-	public void duplicateNextYear(String domainName, String user,Integer domain, Integer id, AsyncCallback<Mod347> callback) {
+	public void duplicateMod347(String domainName, String user,Integer domain, Mod347 mod347, AsyncCallback<Mod347> callback) {
 		AON.start();
-		fsa.duplicateNextYear(domainName, user, domain, id, new AsyncCallbackWrapper<Mod347>(callback));
+		fsa.duplicateMod347(domainName, user, domain, mod347, new AsyncCallbackWrapper<Mod347>(callback));
 	}
 
 }

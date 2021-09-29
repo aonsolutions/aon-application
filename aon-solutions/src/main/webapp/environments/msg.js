@@ -45,6 +45,7 @@ export const ADD_FINANCE = MSG.ADD; // TODO
 export const ADD_INVOICE = MSG.ADD_INVOICE;
 export const ADD_TAG = MSG.ADD_TAG;
 export const ADD_TAX = MSG.ADD_TAX;
+export const ADD_TYPE = "Añadir Tipo"; // TODO
 export const ADD_WORKGROUP = "Añadir grupo de trabajo"; //TODO
 export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
 export const ADDRESS = MSG.ADDRESS;
@@ -270,6 +271,7 @@ export const PROVINCE = MSG.PROVINCE;
 export const PROCESS_TYPE = "Tipo de trámite"; //TODO
 export const PROCESS = "Trámite"; //TODO
 export const PROJECT = "Proyecto"; //TODO
+export const PROJECTS = "Proyectos"; //TODO
 // ----- Q
 
 export const QUANTITY = MSG.QUANTITY;
@@ -328,6 +330,7 @@ export const SII_TICKETBAI = MSG.SII_TICKETBAI;
 export const SIZE = MSG.SIZE;
 export const STATISTICS = MSG.STATISTICS;
 export const STATUS = "Estado"; // TODO
+export const SITUATION = "Situación"; // TODO
 export const SUPPLIED = MSG.SUPPLIED;
 export const SUPPLIER = MSG.SUPPLIER;
 export const SUPPLIERS = MSG.SUPPLIERS;

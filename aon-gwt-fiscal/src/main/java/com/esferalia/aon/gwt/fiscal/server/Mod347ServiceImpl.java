@@ -66,8 +66,8 @@ public class Mod347ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public Mod347 duplicateNextYear(String domainName, String user, Integer domain, Integer id) {
-		return FISCAL.duplicateNextYearMod347(domainName, domain, user, id);
+	public Mod347 duplicateMod347(String domainName, String user, Integer domain, Mod347 mod347) {
+		return FISCAL.duplicateMod347(domainName, domain, user, mod347);
 	}
 
 }

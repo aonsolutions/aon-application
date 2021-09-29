@@ -3,9 +3,10 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
-import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT } from "../../../environments/environments.js";
+import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { taskHistoricSend } from "../../../services/taskService.js";
-import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
+import { setDateTimestampDay } from "../../../services/utils.js";
+import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 
@@ -141,7 +142,7 @@ const createMessageAuthor = (properties) =>{
   });
 
   let span = setStyles(document.createElement(TAG.SPAN),{
-    fontSize: "14px",
+    fontSize: "12px",
     fontWeight:" 600",
     color : CSS.variable(COLORS.GRAYSON),
     textOverflow: "ellipsis",
@@ -361,8 +362,8 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.CUSTOMER_TASK,
   name: MESSENGER_IDS.CUSTOMER_TASK,
   title: MSG.ENTERPRISE,
-  autocomplete: "off",
-  readonly: "false"
+  autocomplete: CONSTANT.OFF,
+  readonly: CONSTANT.FALSE
 });
 
  //-----------------PROJECT
@@ -370,8 +371,7 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
   title: MSG.PROJECT,
-  autocomplete: "off",
-  readonly: "false"
+  autocomplete: CONSTANT.OFF
 });
 
 
@@ -435,7 +435,7 @@ export const createChatMessage = (properties, chat) => {
 
       if(me){
         setStyles(iconSendWorkflow, { right: "17px", cursor: "pointer" });
-        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(message.dataset.id));
+        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(parseInt(message.dataset.id)));
 
         //-------------------icon share
         const textShare = "Compartir entre ramas (En desarrollo)";
@@ -462,7 +462,7 @@ export const createChatMessage = (properties, chat) => {
     const date = createText({
         text: setDateTimestampDay(new Date(properties.date)),
         color: CSS.variable(COLORS.AON_GRAY),
-        fontSize : "12px",//'0.6em',
+        fontSize : "11px",//'0.6em',
         classes: [CSS.FIRST_LETTER_UPPER]
     });
     date.appendTo(name.element);
@@ -585,10 +585,10 @@ export const createLabelFileText = () => {
   return label;
 }
 
-export const createAonSwitch = () => {
+export const createAonSwitch = (title) => {
   let btn = new AonSwitch();
   btn.id = MESSENGER_IDS.EXTERNAL_TASK;
-  btn.title = "Para tu Gestor";
+  btn.title = title;
   btn.style.width = "100%";
   btn.style.marginLeft = "13px";
   return btn;

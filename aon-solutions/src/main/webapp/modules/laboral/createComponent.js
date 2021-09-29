@@ -1,8 +1,9 @@
 import { AonNumber } from "../../components/aon-number.js";
 import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
-import { formatDateOrigin, setAttributes } from "../../services/utils.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
+import { formatDateOrigin } from "../../services/utils.js";
+import { setAttributes } from "../../services/utilsComponents";
 import { createCard, createDate, createDiv, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
 
 export const createBajaDialogContent = () =>{
@@ -99,8 +100,8 @@ export const createCardEnterprise = (parent) => {
         attributes:{
             name:"regimen",
             id:"regimen",
-            description:"regimen",
-            visible:"false",
+            description:"Regimen",
+            visible:CONSTANT.FALSE,
         }
     }, parent);
 }
@@ -114,11 +115,7 @@ export const createCardContract = (parent) => {
             name:"type_cto",
             id:"type_cto",
             title:"Tipo de contrato",
-            autocomplete: "off",
-            readonly: "false"
-        },
-        events:{
-            
+            autocomplete: CONSTANT.OFF
         }
     }, divC.element);
  
@@ -176,7 +173,7 @@ export const createCardContract = (parent) => {
         id:"horas_convenio", 
         name:"horas_convenio", 
         description:"Horas convenio",
-        format:"true",
+        format:CONSTANT.TRUE,
         decimals:"2"
     })
     divC.appendChild(numberC);
@@ -186,8 +183,8 @@ export const createCardContract = (parent) => {
     divC.appendTo(divH.element);
     numberC = setAttributes(new AonNumber(),{
         id:"horas", 
-        description:"Horas",
-        format:"true",
+        description:MSG.HOURS,
+        format:CONSTANT.TRUE,
         decimals:"2"
     })
     divC.appendChild(numberC);
@@ -205,9 +202,9 @@ export const createCardContract = (parent) => {
         attributes:{
             name:"situation",
             id:"situation",
-            description:"situation",
+            description:MSG.SITUATION,
             value:"AL",
-            visible:"false"
+            visible:CONSTANT.FALSE
         }
     }, parent);
 
@@ -234,7 +231,7 @@ export const createCardEmployee = (parent, id) => {
     let divReiniciar = createDiv({
         attributes:{
             id:id+"Reiniciar",
-            hidden: true,
+            hidden: CONSTANT.TRUE,
         },
         styles:{
             marginTop:"-15px" 
@@ -242,7 +239,7 @@ export const createCardEmployee = (parent, id) => {
     });
     divReiniciar.appendTo(divT);
     let span = document.createElement(TAG.SPAN);
-    span.textContent = "Reiniciar";
+    span.textContent =  MSG.RESTORE;
     divReiniciar.appendChild(span);
     createIconButton({attributes:{ id: id+"IconReset", icon:"cached"}}, divReiniciar);
 
@@ -306,7 +303,7 @@ export const createCardEmployee = (parent, id) => {
             id:"name",
             description:MSG.NAME,
             type:"text",
-            disabled: "true"
+            disabled: CONSTANT.TRUE
         }
     }, divT.element);
 

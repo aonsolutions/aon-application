@@ -1,11 +1,6 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import {
-  removeEmpty,
-  setAttributes,
-  setDateTimestamp,
-  setValueName,
-  sortBy,
-} from "../../../../services/utils.js";
+import { removeEmpty, setDateTimestamp, setValueName, sortBy} from "../../../../services/utils.js";
+import { setAttributes} from "../../../../services/utilsComponents";
 import {
   getStatus,
   getPeriod,

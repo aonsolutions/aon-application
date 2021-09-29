@@ -7,11 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProjectJSON;
+import com.esferalia.aon.occam.api.json.ProjectTypeJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -24,17 +30,66 @@ import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 public class ProjectServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(ProjectServlet.class.getName());
-		
+	private static final String ROOT = "/";
+	private static final String OFFICE = "/office";
+	private static final String TYPE = "/type";
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[GET /ms/api/project] AON API PROJECT SERVLET");
-		try {		
+		try {
 			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
-				case "/":
+				case ROOT:
+					response(req, resp, getProjects(api));
 					break;
-				case "/office":
+				case OFFICE:
 					response(req, resp, getOfficeProjects(api));
+					break;
+				case TYPE:
+					response(req, resp, getProjectTypes(api));
+					break;
+				default:
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(req, resp, e);
+		}
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[POST /ms/api/project] AON API PROJECT SERVLET");
+		try {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
+				case ROOT:
+					response(req, resp, saveProject(api));
+					break;
+				case TYPE:
+					response(req, resp, saveProjectType(api));
+					break;
+				default:
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(req, resp, e);
+		}
+	}
+	
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("[DELETE /ms/api/project] AON API PROJECT SERVLET");
+		try {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
+				case ROOT:
+					response(req, resp, deleteProject(api));
+					break;
+				case TYPE:
+					response(req, resp, deleteProjectType(api));
 					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -59,4 +114,59 @@ public class ProjectServlet extends AonApiHttpServlet{
 		});
 		return arr;
 	}
+
+	private JSONArray getProjects(AonApiData api) {
+		JSONArray arr = new JSONArray();
+		AON.getProjectStream(api.getDomain(), "", f -> projectFilter(api, f))
+		.forEach(project -> {
+			ProjectHolder holder = AON.getProjectHolder(project.getDomain(), "", f -> f.getProjectProperty().eq(project.getId()).and(f.getEndDateProperty().isNull()));
+			project.setProjectHolder(holder);
+			arr.put(ProjectJSON.toJSON(project));	
+		});
+		return arr;
+	}
+	
+    private Filter projectFilter(AonApiData api, ProjectProperties f) {
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getProjectTypeProperty().isNotNull());
+		
+		if(api.getParams().opt(IJsonNames.REGISTRY) != null) {
+			Integer registry = JsonUtils.getInteger(api.getParams(), IJsonNames.REGISTRY);
+			filter = filter.and(f.getRegistryProperty().eq(registry));
+		}
+
+		return filter;
+    }
+    
+    private JSONObject saveProject(AonApiData api) {
+    	return ProjectJSON.toJSON(
+    		AON.saveProject(api.getDomain(), api.getUser(), 
+    			ProjectJSON.fromJSON(api.getData())));
+    }
+    
+    private JSONObject deleteProject(AonApiData api) {
+    	AON.deleteProject(api.getDomain(), api.getUser(), 
+    			JsonUtils.getInteger(api.getData(), IJsonNames.ID)); 
+    	return new JSONObject();
+    }
+    
+    // ---------- PROJECT TYPE
+    
+    private JSONArray getProjectTypes(AonApiData api) {
+    	return ProjectTypeJSON.toJSON(
+    			AON.getProjectTypeStream(api.getDomain(), api.getUser(), f -> 
+    			f.getDomainProperty().eq(api.getDomain().getId())));
+	}
+    
+    private JSONObject saveProjectType(AonApiData api) {
+    	return ProjectTypeJSON.toJSON(
+    		AON.saveProjectType(api.getDomain(), api.getUser(), 
+    			ProjectTypeJSON.fromJSON(api.getData())));
+    }
+    
+    private JSONObject deleteProjectType(AonApiData api) {
+    	AON.deleteProjectType(api.getDomain(), api.getUser(), 
+    			JsonUtils.getInteger(api.getData(), IJsonNames.ID)); 
+    	return new JSONObject();
+    }
 }

@@ -678,6 +678,7 @@ public class UserServlet extends AonApiHttpServlet {
 					boolean portal = api.getData().optBoolean("portal");
 					Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), login, f -> f.getDomainProperty().eq(api.getDomain().getId()));
 					user.setEnterprise(portal ? cp.getId() : null);
+					user.setAuth(auth);
 					AON.save(api.getDomain().getName(), api.getDomain().getId(), login, user);
 					AON_SOLUTIONS.assignAuthToUser(api.getDomain().getName(), api.getDomain().getId(), user, auth.getAuth());
 				}

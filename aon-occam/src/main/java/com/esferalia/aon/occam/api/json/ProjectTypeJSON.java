@@ -15,7 +15,6 @@ public class ProjectTypeJSON {
 	
 	}
 	
-	
 	public static List<ProjectType> fromJSON(JSONArray json) {
 		LinkedList<ProjectType> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
@@ -25,11 +24,12 @@ public class ProjectTypeJSON {
 	}
 	
 	public static ProjectType fromJSON(JSONObject json) {
+		if(json == null) return new ProjectType();
 		return new ProjectType()
-				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
-				.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
-				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE));
+				.setId(JsonUtils.optInteger(json, IJsonNames.ID))
+				.setDomain(JsonUtils.optInteger(json, IJsonNames.DOMAIN))
+				.setDescription(JsonUtils.optString(json, IJsonNames.DESCRIPTION))
+				.setActive(json.optBoolean(IJsonNames.ACTIVE));
 	}
 	
 	public static JSONArray toJSON(List<ProjectType> projects) {

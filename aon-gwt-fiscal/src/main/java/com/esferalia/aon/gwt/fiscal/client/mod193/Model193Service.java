@@ -18,6 +18,6 @@ public interface Model193Service extends RemoteService {
 	Mod193 initialize(String domainName, String user, Integer domain, Integer year);
 	Mod193 saveComments(String domainName, String user, Mod193 mod193) throws AonCoreException;
 	Mod193 changeStatus(String domainName, String user, Mod193 mod193, FiscalStatus newStatus) throws AonCoreException;
-	Mod193 duplicateNextYear(String domainName, String user, Integer domain,Integer id) throws AonCoreException;
+	Mod193 duplicateMod193(String domainName, String user, Integer domain, Mod193 mod193) throws AonCoreException;
 
 }

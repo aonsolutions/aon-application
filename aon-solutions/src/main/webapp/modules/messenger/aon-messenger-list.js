@@ -2,8 +2,8 @@ import { AonMobileList } from "../../components/aon-mobile-list.js";
 import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../environments/environments.js";
-import { getTasks, getTasksOffice } from "../../services/taskService.js";
-import { setFullDate, setTime } from "../../services/utils.js";
+import { getTasks } from "../../services/taskService.js";
+import { setFullDate, setTime, sortBy } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { ICON_TYPES, MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from "./MessengerEnums.js";
@@ -11,7 +11,7 @@ import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
 import { getIconJson } from "./shared/utils.js";
 import { getCustomers } from "../../services/registryService.js";
-import { getTaskHolder, getTastHolders } from "../../services/taskHolderService.js";
+import { getTaskHolder } from "../../services/taskHolderService.js";
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
@@ -27,7 +27,7 @@ export class AonMessengerList extends AonElement {
 	}
 
   getFilter() {
-		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:30, by_gestor: false, status: TASK_STATUS.PENDING};
+		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:30, status: TASK_STATUS.PENDING};
 	}
   
   constructor() {
@@ -144,16 +144,24 @@ export class AonMessengerList extends AonElement {
     let registryEl = this.getElement("registry");
     let taskHolderEl = this.getElement("task_holder");
     let statusEl = this.getElement("status");
-    getCustomers().then(customers=>{
-      registryEl.options = JSON.stringify( customers.map(c=> ({...c, value: c.id})) );
+    getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
+      registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
     })
 
-    getTastHolders().then(ths=>{
-      taskHolderEl.options = JSON.stringify( ths.map(th=> ({...th, value: th.id})) );
+    registryEl.addEventListener(EVENT.INPUT,async({target})=>{
+        const value = target.value;
+        if(value.length > 2){
+          const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
+          registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+        }
     })
 
-    statusEl.options = JSON.stringify( TASK_STATUS_VALUE );
+    if(this.applicationParentEl)
+      this.applicationParentEl.getTaskHoldersEnterprise().then(ths=>
+        taskHolderEl.setOptions(ths)
+      );
 
+    statusEl.setOptions(TASK_STATUS_VALUE);
   }
 
   async loadMoreSearch(){
@@ -168,41 +176,53 @@ export class AonMessengerList extends AonElement {
   }
 
   async loadMore() {
-		let aonTable = this.getElement(this.TABLE_ID);
+    let application = this.getApplication();
+    if(application) application.startLoader();
     const datos = await this.getData();
     addTasks(datos);
-    if(this.isMobile()){
-      datos.map((res, idx) => {
-        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-        const newTitle  = `#${res.newNumber} ${res.title}`;
-        const options = {
-          title: newTitle,
-          subtitle: dateParse,
-          ...this.getIconList(res)
-        };
-        aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
-      });
-    } else {
-      datos.map((res, idx) => {
-        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-        let newTitle  =  res.title;
-        if(res.registry && res.registry.name) newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+    if(this.isMobile())
+      this.getDataMobile(datos);
+    else 
+      this.getDataDesktop(datos);
 
-        let assigned = "";
-        if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
-        else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
-
-        const newData = { 
-          ...res, 
-          newTitle,
-          assigned,
-          dateParse,
-          lettersHtml: this.getIcon(res),
-        };
-        aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
-      });
-    }
+    if(application) application.stopLoader();    
 	}
+
+  getDataDesktop(datos){
+    let aonTable = this.getElement(this.TABLE_ID);
+    datos.map((res, idx) => {
+      const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+      let newTitle  =  res.title;
+      if(res.registry && res.registry.name) newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+
+      let assigned = "";
+      if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
+      else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
+
+      const newData = { 
+        ...res, 
+        newTitle,
+        assigned,
+        dateParse,
+        lettersHtml: this.getIcon(res),
+      };
+      aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
+    });
+  }
+  
+  getDataMobile(datos){
+    let aonTable = this.getElement(this.TABLE_ID);
+    datos.map((res, idx) => {
+      const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+      const newTitle  = `#${res.newNumber} ${res.title}`;
+      const options = {
+        title: newTitle,
+        subtitle: dateParse,
+        ...this.getIconList(res)
+      };
+      aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
+    });
+  }
 
   async getData(){
     let data = []
@@ -210,7 +230,7 @@ export class AonMessengerList extends AonElement {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
       this.setFilter(filter);
-      const tasks = await (this.getFilter().by_gestor ? getTasksOffice(filter) : getTasks(filter));
+      const tasks = await getTasks(filter);
       if(tasks.length == 0)
         this.MORE = false;
       else {
@@ -223,6 +243,7 @@ export class AonMessengerList extends AonElement {
           };
         });
       }
+      data = sortBy(data, 'id','desc');
     } catch (error) {
       console.log("error>>",error);
       this.showError(error);

@@ -1489,11 +1489,11 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
-	public static Mod193 duplicateNextYearMod193(String domainName, Integer domain, String userLogin, Integer id) {
+	public static Mod193 duplicateMod193(String domainName, Integer domain, String userLogin, Mod193 mod193) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,userLogin);
-			return getFiscal().duplicateNextYearMod193(ctx, id);
+			return getFiscal().duplicateMod193(ctx, mod193);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -3123,11 +3123,11 @@ public class FISCAL {
 			}
 		}
 		
-		public static Mod347 duplicateNextYearMod347(String domainName, Integer domain, String userLogin, Integer id) {
+		public static Mod347 duplicateMod347(String domainName, Integer domain, String userLogin, Mod347 mod347) {
 			AONContext ctx = null;
 			try {
 				ctx = AONContext.getAONContext(domainName, domain,userLogin);
-				return getFiscal().duplicateNextYearMod347(ctx, id);
+				return getFiscal().duplicateMod347(ctx, mod347);
 			} finally {
 				if (ctx != null)
 					ctx.close();

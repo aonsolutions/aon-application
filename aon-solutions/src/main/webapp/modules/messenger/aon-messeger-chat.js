@@ -111,8 +111,8 @@ export class AonMessengerChat extends AonElement {
       if( this.getData().workgroup && this.task.getWorkgroup().id && this.getData().workgroup.id!= this.task.getWorkgroup().id){
         this.task.addWorkflow({
           comment: this.task.getWorkgroup().description,
-          domain:this.task.getDomain(),
-          modification_date:new Date().getTime(),
+          domain:this.task.getWorkflowTmp().domain,
+          creation_date:new Date().getTime(),
           task_holder: this.task.getSender(),
           type: WORKFLOW_TYPES.ASSIGN,
           email:this.task.auth.email
@@ -121,8 +121,8 @@ export class AonMessengerChat extends AonElement {
       if( this.getData().task_holder && this.task.getTaskHolder().id && this.getData().task_holder.id!= this.task.getTaskHolder().id){
         this.task.addWorkflow({
           comment: this.task.getTaskHolder().name,
-          domain:this.task.getDomain(),
-          modification_date:new Date().getTime(),
+          domain:this.task.getWorkflowTmp().domain,
+          creation_date:new Date().getTime(),
           task_holder: this.task.getSender(),
           type: WORKFLOW_TYPES.ASSIGN,
           email:this.task.auth.email
@@ -177,7 +177,7 @@ export class AonMessengerChat extends AonElement {
   async getTaskWorkflow() {
     this.applicationEl.startLoading();
     try {
-      let workflow = await getTaskWorkflow({ task:this.task.id, domain:this.task.domain });
+      let workflow = await getTaskWorkflow({ task:this.task.id, domainId:this.task.domain.id, domainName:this.task.domain.name });
       this.task.setWorkflow(workflow);
       fillChat(workflow, this);
       if(workflow.length>0) this.addButtonDelete();

@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.IProject;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProjectTypeFilter;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectHolderDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO;
 
 public class ProjectImpl implements IProject{
 	
@@ -25,6 +27,18 @@ public class ProjectImpl implements IProject{
 	public Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> ProjectDAO.getStream(ctx, filter));
+	}
+	
+	@Override
+	public Project saveProject(AONContext ctx, Project project) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> ProjectDAO.save(ctx, project));
+	}
+	
+	@Override
+	public void deleteProject(AONContext ctx, Integer projectId) {
+		ctx.getDslContext().transaction(
+				configuration -> ProjectDAO.delete(ctx, f -> f.getIdProperty().eq(projectId)));
 	}
 
 	@Override
@@ -56,12 +70,6 @@ public class ProjectImpl implements IProject{
 	}
 
 	@Override
-	public ProjectType getProjectType(AONContext ctx, String description) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> ProjectDAO.getProjectType(ctx, description));
-	}
-
-	@Override
 	public Integer insertProjectCommercial(AONContext ctx, ProjectCommercial pc) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> ProjectDAO.insertProjectCommercial(ctx, pc));
@@ -72,6 +80,35 @@ public class ProjectImpl implements IProject{
 		ctx.getDslContext().transaction(configuration -> ProjectDAO.fixProjectCommercial(ctx));
 	}
 
+	// --------- PROJECT TYPE	
+
+	@Override
+	public Stream<ProjectType> getProjectTypeStream(AONContext ctx, ProjectTypeFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> ProjectTypeDAO.getStream(ctx, filter));
+	}
+	
+	@Override
+	public ProjectType getProjectType(AONContext ctx, ProjectTypeFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> ProjectTypeDAO.get(ctx, filter));
+	}
+	
+	@Override
+	public ProjectType saveProjectType(AONContext ctx, ProjectType projectType) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> ProjectTypeDAO.save(ctx, projectType));
+	}
+	
+	@Override
+	public void deleteProjectType(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> ProjectTypeDAO.delete(ctx, f ->
+					f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getIdProperty().eq(id))));
+	}
+	
+	
 	// --------- PROJECT HOLDER
 	
 	@Override

@@ -1,7 +1,12 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 
@@ -15,11 +20,21 @@ public class RegistryMediaJSON {
 			.setValue(json.optString(IJsonNames.VALUE))
 			.setComment(json.optString(IJsonNames.COMMENT))
 			.setAdministrative(json.optBoolean(IJsonNames.ADMINISTRATIVE))
-			.setAdministrative(json.optBoolean(IJsonNames.COMMERCIAL))
-			.setAdministrative(json.optBoolean(IJsonNames.TECHNICAL))
+			.setCommercial(json.optBoolean(IJsonNames.COMMERCIAL))
+			.setTechnical(json.optBoolean(IJsonNames.TECHNICAL))
 			.setRegistry(JsonUtils.getInteger(json, IJsonNames.REGISTRY));
 	
 			// TODO .setRaddress();
+	}
+	
+	public static JSONArray toJSON(List<RegistryMedia> rmedias) {
+		return toJSON(rmedias.stream());
+	}
+	
+	public static JSONArray toJSON(Stream<RegistryMedia> rmedias) {
+		JSONArray array = new JSONArray();
+		rmedias.forEach(rmedia -> array.put(toJSON(rmedia)));
+		return array;
 	}
 	
 	public static JSONObject toJSON(RegistryMedia media) {
