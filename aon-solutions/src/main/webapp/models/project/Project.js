@@ -29,12 +29,12 @@ export class Project {
             this.name = project.name;
             this.alias = project.alias;
             this.date = project.date;
-            this.tas = project.tas;
-            this.commercial = project.commercial;
-            this.reservation = project.reservation;
-            this.active = project.active;
+            this.tas = project.tas || false;
+            this.commercial = project.commercial || false;
+            this.reservation = project.reservation || false;
+            this.active = project.active || true;
             this.projectHolder = new ProjectHolder(project.projectHolder);
-            this.dirty = project.dirty;
+            this.dirty = project.dirty || false;
         } else {
             this.domain = new Domain();
             this.type = new ProjectType();
@@ -74,6 +74,7 @@ export class Project {
     }
 
     setType(type) { 
+        this.setDirty(true);
         this.type = new ProjectType(type);
         return this;
     }
@@ -83,6 +84,7 @@ export class Project {
     }
 
     setRegistry(registry) {
+        this.setDirty(true);
         this.registry = registry;
         return this;
     }
@@ -92,6 +94,7 @@ export class Project {
     }
 
     setProjectHolder(projectHolder) {
+        this.setDirty(true);
         this.ProjectHolder = new ProjectHolder(projectHolder);
         return this;
     }
@@ -101,6 +104,7 @@ export class Project {
     }
 
     setName(name) {
+        this.setDirty(true);
         this.name = name;
         return this;
     }
@@ -110,6 +114,7 @@ export class Project {
     }
 
     setAlias(alias) {
+        this.setDirty(true);
         this.alias = alias;
         return this;
     }
@@ -119,6 +124,7 @@ export class Project {
     }
 
     setDate(date) {
+        this.setDirty(true);
         this.date = date;
         return this;
     }
@@ -128,6 +134,7 @@ export class Project {
     }
 
     setTas(tas){
+        this.setDirty(true);
         this.tas = tas;
         return this;
     }
@@ -137,6 +144,7 @@ export class Project {
     }
 
     setCommercial(commercial){
+        this.setDirty(true);
         this.commercial = commercial;
         return this;
     }
@@ -146,6 +154,7 @@ export class Project {
     }
 
     setReservation(reservation){
+        this.setDirty(true);
         this.reservation = reservation;
         return this;
     }
@@ -155,7 +164,17 @@ export class Project {
     }
 
     setActive(active){
+        this.setDirty(true);
         this.active = active;
+        return this;
+    }
+
+    isDirty() {
+        return this.dirty || this.getProjectHolder().isDirty();
+    }
+
+    setDirty(dirty) {
+        this.dirty = dirty;
         return this;
     }
 }

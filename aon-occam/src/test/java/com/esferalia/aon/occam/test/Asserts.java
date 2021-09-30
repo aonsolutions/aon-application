@@ -30,9 +30,12 @@ import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -42,6 +45,7 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class Asserts {
 	
@@ -400,6 +404,39 @@ public class Asserts {
 		assertEquals("Domain",expected.getDomain(), actual.getDomain());
 		assertEquals("Description",expected.getDescription(), actual.getDescription());
 		assertEquals("status",expected.getStatus(), actual.getStatus());
+	}
+	
+	public static void assertEqualsProjectType(ProjectType expected, ProjectType actual) {
+		assertEquals("Id",expected.getId(), actual.getId());
+		assertEquals("Domain",expected.getDomain(), actual.getDomain());
+		assertEquals("Description",expected.getDescription(), actual.getDescription());
+		assertEquals("Active",expected.isActive(), actual.isActive());
+	}
+	
+	public static void assertEqualsProject(Project expected, Project actual) {
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain",expected.getDomain().getId(), actual.getDomain().getId());
+		assertEquals("Name", expected.getName(), actual.getName());
+		assertEquals("Alias", expected.getAlias(), actual.getAlias());
+		assertEquals("Date", AonDateUtils.getDateWithoutTime(expected.getDate()),
+				AonDateUtils.getDateWithoutTime(actual.getDate()));
+		assertEquals("Type", expected.getType().getId(), actual.getType().getId());
+		assertEquals("Tas", expected.isTas(), actual.isTas());
+		assertEquals("Commercial", expected.isCommercial(), actual.isCommercial());
+		assertEquals("Reservation", expected.isReservation(), actual.isReservation());
+		assertEquals("Active", expected.isActive(), actual.isActive());
+	}
+	
+	public static void assertEqualsProjectHolder(ProjectHolder expected, ProjectHolder actual) {
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("Project", expected.getProject(), actual.getProject());
+		assertEquals("Start Date", AonDateUtils.getDateWithoutTime(expected.getStartDate()), AonDateUtils.getDateWithoutTime(actual.getStartDate()));
+		assertEquals("Start Date", AonDateUtils.getHour(expected.getStartDate()), AonDateUtils.getHour(actual.getStartDate()));
+		assertEquals("End Date",  AonDateUtils.getDateWithoutTime(expected.getEndDate()),  AonDateUtils.getDateWithoutTime(actual.getEndDate()));
+		assertEquals("End Date",  AonDateUtils.getHour(expected.getEndDate()),  AonDateUtils.getHour(actual.getEndDate()));
+		assertEquals("Workgroup", expected.getWorkgroup().getId(), actual.getWorkgroup().getId());
+		assertEquals("Task Holder", expected.getTaskHolder().getId(), actual.getTaskHolder().getId());
 	}
 	
 	public static void assertEqualsBrand(Brand expected, Brand actual) {

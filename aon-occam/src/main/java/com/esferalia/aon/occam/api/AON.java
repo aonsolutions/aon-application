@@ -3406,6 +3406,11 @@ public class AON {
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************
+
+	public static Stream<Project> getProjectStream(Domain domain, User user, ProjectFilter filter, Integer page, Integer perPage){
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProject().getProjectStream(ctx, filter, page, perPage);
+		}	}
 	
 	public static Stream<Project> getProjectStream(Domain domain, User user, ProjectFilter filter){
 		return getProjectStream(domain.getName(), domain.getId(), user.getLogin(), filter);

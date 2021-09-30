@@ -34,7 +34,8 @@ public class ProjectJSON {
 				.setDate(JsonUtils.getDate(json, IJsonNames.DATE))
 				.setRegistry(RegistryJSON.fromJSON(json.optJSONObject(IJsonNames.REGISTRY)))
 				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
-				.setProjectHolder(ProjectHolderJSON.fromJSON(json.optJSONObject(IJsonNames.PROJECT_HOLDER)));
+				.setProjectHolder(ProjectHolderJSON.fromJSON(json.optJSONObject(IJsonNames.PROJECT_HOLDER)))
+				.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY));
 	}
 	
 	public static JSONArray toJSON(List<Project> projects) {
@@ -60,6 +61,7 @@ public class ProjectJSON {
 				.put(IJsonNames.PROJECT_HOLDER, ProjectHolderJSON.toJSON(project.getProjectHolder()))
 				.put(IJsonNames.TAS, project.isTas())
 				.put(IJsonNames.COMMERCIAL, project.isCommercial())
-				.put(IJsonNames.RESERVATION, project.isReservation());
+				.put(IJsonNames.RESERVATION, project.isReservation())
+				.put(IJsonNames.DIRTY, project.isDirty());
 	}
 }

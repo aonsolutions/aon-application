@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.test.finance.FinanceTestSuite;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.occam.test.product.ProductTestSuite;
 import com.esferalia.aon.occam.test.product.TariffTestSuite;
+import com.esferalia.aon.occam.test.project.ProjectTestSuite;
 import com.esferalia.aon.occam.test.registry.RegistryTestSuite;
 import com.esferalia.aon.occam.test.registry.address.RegistryAddressTestSuite;
 import com.esferalia.aon.occam.test.registry.company.CompanyTestSuite;
@@ -37,7 +38,8 @@ import com.esferalia.aon.occam.test.workgroup.WorkgroupTestSuite;
 	FinanceTestSuite.class,
 	AccountingTestSuite.class,
 	FiscalTestSuite.class,
-	WorkgroupTestSuite.class
+	WorkgroupTestSuite.class,
+	ProjectTestSuite.class
 //	JsonTestSuite.class,
 //	AnalyticalAccountingTestSuite.class,
 })

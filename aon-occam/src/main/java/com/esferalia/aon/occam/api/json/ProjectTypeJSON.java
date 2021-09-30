@@ -29,7 +29,8 @@ public class ProjectTypeJSON {
 				.setId(JsonUtils.optInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.optInteger(json, IJsonNames.DOMAIN))
 				.setDescription(JsonUtils.optString(json, IJsonNames.DESCRIPTION))
-				.setActive(json.optBoolean(IJsonNames.ACTIVE));
+				.setActive(json.optBoolean(IJsonNames.ACTIVE))
+				.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY));
 	}
 	
 	public static JSONArray toJSON(List<ProjectType> projects) {
@@ -42,12 +43,12 @@ public class ProjectTypeJSON {
 		return array;
 	}
 	
-	
 	public static JSONObject toJSON(ProjectType projectType) {
 		return new JSONObject()
 				.put(IJsonNames.ID, projectType.getId())
 				.put(IJsonNames.DOMAIN, projectType.getDomain())
 				.put(IJsonNames.DESCRIPTION, projectType.getDescription())
-				.put(IJsonNames.ACTIVE, projectType.isActive());
+				.put(IJsonNames.ACTIVE, projectType.isActive())
+				.put(IJsonNames.DIRTY, projectType.isDirty());
 	}
 }

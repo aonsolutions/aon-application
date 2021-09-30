@@ -27,6 +27,8 @@ import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.ProjectHolderAutoComplete;
+import com.esferalia.aon.occam.impl.jooq.validation.ProjectHolderValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ProjectHolderDAO {
@@ -92,7 +94,9 @@ public class ProjectHolderDAO {
 	}
 	
 	public static ProjectHolder save(AONContext ctx, ProjectHolder projectHolder) {
-		// TODO AUTOCOMPLETE && VALIDATE.
+		if(!projectHolder.isDirty()) return projectHolder;
+		ProjectHolderAutoComplete.autoComplete(ctx, projectHolder);
+		ProjectHolderValidation.validate(ctx, projectHolder);
 		return projectHolder.getId() != null 
 			? update(ctx, projectHolder)
 			: insert(ctx, projectHolder);
@@ -108,7 +112,7 @@ public class ProjectHolderDAO {
 			.set(PROJECT_HOLDER.WORKGROUP, projectHolder.getWorkgroup().getId())
 			.where(PROJECT_HOLDER.ID.eq(projectHolder.getId()))
 			.execute();
-		return projectHolder;
+		return projectHolder.setDirty(false);
 	}
 	
 	public static ProjectHolder insert(AONContext ctx, ProjectHolder projectHolder) {
@@ -120,7 +124,7 @@ public class ProjectHolderDAO {
 				.set(PROJECT_HOLDER.END_DATE, AonDateUtils.toTimestamp(projectHolder.getEndDate()))
 				.set(PROJECT_HOLDER.WORKGROUP, projectHolder.getWorkgroup().getId())
 			.returning(PROJECT_HOLDER.ID).fetchOne().getId();
-		return projectHolder.setId(id);
+		return projectHolder.setId(id).setDirty(false);
 	}	
 	
 	public static void delete(AONContext ctx, Integer id){
@@ -140,7 +144,7 @@ public class ProjectHolderDAO {
 			return new ProjectHolder()
 					.setId(r.getValue(PROJECT_HOLDER.ID))
 					.setDomain(r.getValue(PROJECT_HOLDER.DOMAIN))
-					.setProject(r.getValue(PROJECT_HOLDER.ID))
+					.setProject(r.getValue(PROJECT_HOLDER.PROJECT))
 					.setStartDate(r.getValue(PROJECT_HOLDER.START_DATE))
 					.setEndDate(r.getValue(PROJECT_HOLDER.END_DATE))
 					.setWorkgroup(checkField(r, WORKGROUP.ID)
@@ -148,7 +152,8 @@ public class ProjectHolderDAO {
 						: new Workgroup().setId(r.getValue(PROJECT_HOLDER.WORKGROUP)))
 					.setTaskHolder(checkField(r, TASK_HOLDER.REGISTRY)
 						? TaskHolderFiller.build(r, null)
-						: new TaskHolder().setRegistry(r.getValue(PROJECT_HOLDER.TASK_HOLDER)));
+						: new TaskHolder().setRegistry(r.getValue(PROJECT_HOLDER.TASK_HOLDER)))
+					.setDirty(false);
 		}
 	}
 }

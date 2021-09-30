@@ -94,6 +94,11 @@ public class RegistryDAO {
 			.map(new RegistryFiller());
 	}
 	
+	public static Registry get(AONContext ctx, RegistryFilter filter){
+		return getStream(ctx, filter).limit(1)
+			.findFirst().orElse(new Registry());
+	}
+	
 	public static Registry get(AONContext ctx, Integer id){
 		return getStream(ctx, p -> p.getIdProperty().eq(id))
 			.findFirst()

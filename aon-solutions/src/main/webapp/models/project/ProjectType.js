@@ -10,14 +10,15 @@ export class ProjectType {
     constructor(projectType) {
         if(projectType) {
            this.id = projectType.id;
-           this.domain = projectType.domain;
-           this.description = projectType.description;
-           this.active = projectType.active;
-           this.dirty = projectType.dirty;
+           this.domain = projectType.domain || LS.getDomainId();
+           this.description = projectType.description || '';
+           this.active = projectType.active || true;
+           this.dirty = projectType.dirty || false;
         } else {
             this.domain = LS.getDomainId();
             this.description = '';
             this.active = true;
+            this.dirty = false;
         }
     }
 
@@ -44,7 +45,7 @@ export class ProjectType {
     }
 
     setDescription(description) {
-        this.setDirty(this.description !== description);
+        this.setDirty(true);
         this.description = description;
         return this;
     }
@@ -54,7 +55,7 @@ export class ProjectType {
     }
 
     setActive(active){
-        this.setDirty(this.active !== active);
+        this.setDirty(true);
         this.active = active;
         return this;
     }

@@ -1,10 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
@@ -20,6 +22,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
+
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -209,9 +212,19 @@ public class TaskDAO {
 
 	public static void delete(AONContext ctx, Integer id){
 		TaskAttachDAO.deleteByTask(ctx, id);
-		TaskWorkflowDAO.deleteByTask(ctx, id);
-		ctx.getDslContext().delete(TASK).where(TASK.ID.eq(id)).execute();
+		TaskWorkflowDAO.deleteByTask(ctx, id);	
+		TaskOldDAO.deleteTaskEvent(ctx, f -> f.getTaskProperty().eq(id));
+		TaskOldDAO.deleteTaskComment(ctx, f -> f.getTaskProperty().eq(id));
+		TaskOldDAO.deleteTaskTag(ctx, f -> f.getTaskProperty().eq(id));
+		delete(ctx, f -> f.getIdProperty().eq(id));
 		ctx.log().debug("DELETE TASK id:" + id);
+	}
+	
+	private static void delete(AONContext ctx, TaskFilter filter) {
+		ctx.getDslContext()
+			.delete(TASK)
+			.where(TASK_PROPERTIES.getConditions(filter))
+			.execute();
 	}
 	
 	public static HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter){
