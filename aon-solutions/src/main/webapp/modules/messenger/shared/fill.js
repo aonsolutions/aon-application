@@ -14,7 +14,6 @@ import { chooseIconMessage } from "./utils";
  */
 export const fillRequestType = ({source}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.SOURCE_TASK);
-    
     let sources = [
         {value: TASK_SOURCE.QUERY, name: MSG[TASK_SOURCE.QUERY.toUpperCase()] },
         {value: TASK_SOURCE.REQUEST, name: MSG.FORMALITIES },
@@ -38,6 +37,7 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
  */
  export const fillProject = async (task) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
+    // console.log(task.project);
     if(aonSelect){
         aonSelect.loading(true);
         const project = task.getProject();

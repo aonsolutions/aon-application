@@ -91,9 +91,8 @@ export class Task {
         type: WORKFLOW_TYPES.COMMENT,
         email: this.auth.email ? this.auth.email : undefined
       }
-  
       this.setProject(new Project(task.project));
-      this.sender      = new TaskHolder( task.id ? task.sender : this.senderCondition() );
+      this.sender = new TaskHolder( task.id ? task.sender : this.senderCondition() );
     }   
   }
 
@@ -115,10 +114,14 @@ export class Task {
     }
   }
 
-  cleanTask(){
+  /**
+   * 
+   * @param {Boolean} projectDefault default project, false clean, true not clean
+   */
+  cleanTask(projectDefault=false){
     if(!this.id){
       this.workgroup   = new Workgroup();
-      this.setProject(new Project());
+      if(!projectDefault)this.setProject(new Project());
       this.registry    = new Registry();
       this.task_holder = new TaskHolder();
       this.title       = "";
@@ -337,9 +340,9 @@ export class Task {
 
     if(this.isExternal()){
       const {projectHolder} = this.project;
-      const workgroup = projectHolder.workgroup && projectHolder.workgroup.id ?  projectHolder.workgroup : {};
+      const workgroup = projectHolder.workgroup && projectHolder.workgroup.id ?  projectHolder.workgroup : this.workgroup;
       this.setWorkgroup(new Workgroup(workgroup));
-      const taskHolder = projectHolder.taskHolder && projectHolder.taskHolder.id ? projectHolder.taskHolder : {};
+      const taskHolder = projectHolder.taskHolder && projectHolder.taskHolder.id ? projectHolder.taskHolder : this.task_holder;
       this.setTaskHolder(taskHolder);
     }
 

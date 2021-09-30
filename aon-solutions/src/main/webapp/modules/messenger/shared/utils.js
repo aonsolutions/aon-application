@@ -9,6 +9,8 @@ import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger,
 import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillTaskHolder, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 
+
+let isDefault = false;
 /**
  * Build standard toolbar options 
  * @param {HTMLElement} aonTextArea aon-text-area
@@ -322,6 +324,8 @@ export const buildForm = (div, aonMessengerChat) => {
     const applicationParent = aonMessengerChat.applicationParentEl;
     const isGestor = task.isGestor();
 
+    isDefault = aonMessengerChat.getData().project && aonMessengerChat.getData().project.id;
+
     //-----------------------APPEND DIV TAGS
     createTagsDiv(div, task);
 
@@ -334,9 +338,6 @@ export const buildForm = (div, aonMessengerChat) => {
         aonCard.setTitleSection1(registryName)
     }
 
-    // if(applicationParent.cauData && applicationParent.cauData.auth && applicationParent.cauData.auth.email){
-    //     task.setGTaskId(applicationParent.cauData.auth.email);
-    // }
    //-----------------------END CREATE FIRST CARD
 
     //-----------------------CREATE DIV PROCESS
@@ -352,7 +353,6 @@ export const buildForm = (div, aonMessengerChat) => {
     rowsDiv.element.style.width = "100%";
     columnsDiv.appendChild(rowsDiv.element);
 
-
     const columnsDivTwo = createStartJustifiedColumn().element;
     columnsDiv.appendChild(columnsDivTwo);
 
@@ -367,31 +367,36 @@ export const buildForm = (div, aonMessengerChat) => {
     let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
     const btnExternal = createAonSwitch(titleBtn);
     rowsDiv.appendChild(btnExternal);
-    if(task.id) btnExternal.disabled =  true;
+    if(task.id || isDefault) btnExternal.disabled =  true;
     btnExternal.checked = task.isExternal();
     btnExternal.addEventListener(EVENT.CHANGE, ({target}) => {
-        changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess);
+        changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess);
         if(!isGestor && target.checked) 
             showTags(false);
         else 
             showTags(true);
     });
  
-    requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> changeRequestType(aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess));
+    requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess));
+
+    ///AL CAMBIAR DE TIPO DE SOLICITUD SE LIMPIAN LOS DATOS DE PROJECT (ERROR)
+
     fillRequestType(task, aonMessengerChat);
 }
 
 /**
  * 
  * @param {HTMLElement} aonMessengerChat aon-messenger-chat
- * @param {Task} task Class task
  * @param {Select} requestTypeSelect aon select type request
  * @param {HTMLElement} columnsDivTwo appendChild
  * @param {HTMLElement} divProcess div process
  */
- const changeRequestType = (aonMessengerChat, task, requestTypeSelect, columnsDivTwo, divProcess) =>{
-    task.cleanTask();
+ const changeRequestType = (aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess) =>{
+    const task = aonMessengerChat.task;
     const btnExternal = document.getElementById(MESSENGER_IDS.EXTERNAL_TASK);
+    if(btnExternal && btnExternal.disabled == "true")
+        task.cleanTask(true);
+
     const detail = requestTypeSelect.getDetail();
     if(detail){
         //------------------HTML CLEAN UP
@@ -545,10 +550,9 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
         } 
     } 
 
-    if((isGestor || !forManager) && !applicationParent.cau){
-        //--------------------------DIV WORKGROUP AND TASKHOLDER
+    //--------------------------DIV WORKGROUP AND TASKHOLDER
+    if((isGestor || !forManager) && !applicationParent.cau)
         addTaskHolderAndWorkgroup(task, aonMessengerChat, columnsDiv);
-    }
 
     addTaskDescription(aonMessengerChat);
 }
@@ -770,7 +774,6 @@ const isReceived = (task) => {
             const aonMessenger = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER).getParent();
             const workgroups = aonMessenger ? aonMessenger._workgroups: [];
             const isWorkgroup = workgroups.some(({id})=> id === task.workgroup.id );
-
             condition = task.isGestor() 
             ? 
                 (task.task_holder.id === task.myTaskHolder.id) || isWorkgroup 
@@ -778,6 +781,5 @@ const isReceived = (task) => {
                 task.sender.id && task.gtask_id === task.auth.email;
         }
     } catch (error) {console.log(error);}
-    // condition = false;
     return condition;
 }

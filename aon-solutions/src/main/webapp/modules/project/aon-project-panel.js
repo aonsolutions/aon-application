@@ -98,7 +98,7 @@ export class AonProjectPanel extends AonElement {
         d.setContent(aonInput);
         d.addAcceptAction(() => {
             if(!aonInput.value.isEmpty()){
-                let data = new ProjectType().setDescription(description);
+                let data = new ProjectType().setDescription(aonInput.value);
                 saveProjectType(data).then(() => {
                     this.loadTypes();
                 });

@@ -581,7 +581,7 @@ export class AonApplication extends AonElement {
 
         this.selected = id;
         let toolbar = this.getElement(this.TOOLBAR);
-        toolbar.setAttribute("option", option.name);
+        if(toolbar) toolbar.setAttribute("option", option.name);
         if(option.fn){
           let count = 0;
           if(li.querySelector("span")) count = li.querySelector("span").dataset.count;
