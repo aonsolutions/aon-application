@@ -17,9 +17,8 @@ public class InvoiceFiscalCreation implements Update {
 //	#
 //
 //	CREATE TABLE `invoice_fiscal` (
-//	 `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-//	 `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
 //	 `invoice` int(4) DEFAULT NULL COMMENT 'Identificador de la Factura',
+//	 `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
 //	 `issue_date` date DEFAULT NULL COMMENT 'Fecha de emision de la Factura',
 //	 `tax_date` date DEFAULT NULL COMMENT 'Fecha de Impuestos de la Factura',
 //	 `vat_general` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Regimen General',
@@ -34,8 +33,7 @@ public class InvoiceFiscalCreation implements Update {
 //	 `vat_union_external` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Regimen exterior a la Union',
 //	 `vat_union` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Regimen de la Union',
 //	 `vat_importation` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Regimen de importacion',
-//	  PRIMARY KEY (`id`),
-//	  KEY `IDX_INVOICE_FISCAL_INVOICE` (`invoice`),
+//	  PRIMARY KEY (`invoice`),
 //	  KEY `IDX_INVOICE_FISCAL_DOMAIN` (`domain`),
 //	  CONSTRAINT `FK_INVOICE_FISCAL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
 //	  CONSTRAINT `FK_INVOICE_FISCAL_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
@@ -61,9 +59,8 @@ public class InvoiceFiscalCreation implements Update {
 
 		String SQL =
 				"CREATE TABLE IF NOT EXISTS `invoice_fiscal` ("
-				+"   `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',"
-				+"   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',"
 				+"   `invoice` int(4) DEFAULT NULL COMMENT 'Identificador de la Factura',"
+				+"   `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',"
 				+"   `issue_date` date DEFAULT NULL COMMENT 'Fecha de emision de la Factura',"
 				+"   `tax_date` date DEFAULT NULL COMMENT 'Fecha de Impuestos de la Factura',"
 				+"   `vat_general` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Regimen General',"
@@ -78,8 +75,7 @@ public class InvoiceFiscalCreation implements Update {
 				+"   `vat_union_external` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Regimen exterior a la Union',"
 				+"   `vat_union` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Regimen de la Union',"
 				+"   `vat_importation` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Regimen de importacion',"
-				+"    PRIMARY KEY (`id`),"
-				+"    KEY `IDX_INVOICE_FISCAL_INVOICE` (`invoice`),"
+				+"    PRIMARY KEY (`invoice`),"
 				+"    KEY `IDX_INVOICE_FISCAL_DOMAIN` (`domain`),"
 				+"    CONSTRAINT `FK_INVOICE_FISCAL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),"
 				+"    CONSTRAINT `FK_INVOICE_FISCAL_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)"

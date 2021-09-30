@@ -827,6 +827,12 @@
 		<column name="withholding_type" type="com.code.aon.config.enumeration.WithholdingType"/>
 	</table>
 
+	<table name="invoice_fiscal">
+		<primary-key>
+			<key-column name="invoice" property="id" type="java.lang.Integer"/>
+		</primary-key>
+	</table>
+
 	<table name="irpf_data">
 		<column name="deduct_home_loan" type="com.esferalia.aon.payroll.enumeration.DeductHomeLoan"/>
 		<column name="disability_level" type="com.esferalia.aon.payroll.enumeration.DisabilityLevel"/>
