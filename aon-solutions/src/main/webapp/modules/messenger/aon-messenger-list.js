@@ -127,13 +127,13 @@ export class AonMessengerList extends AonElement {
     let btnSearch = this.applicationEl.addSearchOption();
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
       this.setFilter({...this.getFilter(), page:0, perPage:30, search:detail});
-      this.loadMoreSearch();
+      this.loadMore(true);
     });
 
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
       if(detail) {
         this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate});
-        this.loadMoreSearch();
+        this.loadMore(true);
       } 
     });
 
@@ -165,26 +165,24 @@ export class AonMessengerList extends AonElement {
     statusEl.setOptions(TASK_STATUS_VALUE);
   }
 
-  async loadMoreSearch(){
-    let aonTable = this.getElement(this.TABLE_ID);
-    if(this.isMobile()){
-      aonTable.removeAllLi();
-    } else {
-      aonTable.removeRows();
-    }
+  async loadMore(search = false) {
 
-    await this.loadMore();
-  }
+    const application = this.getApplication();
 
-  async loadMore() {
-    let application = this.getApplication();
+    const aonTable = this.getElement(this.TABLE_ID);
+
     if(application) application.startLoader();
+
     const datos = await this.getData();
+
     addTasks(datos);
-    if(this.isMobile())
+    if(this.isMobile()){
+      if(search)aonTable.removeAllLi();
       this.getDataMobile(datos);
-    else 
+    } else {
+      if(search)aonTable.removeRows();
       this.getDataDesktop(datos);
+    }
 
     if(application) application.stopLoader();    
 	}

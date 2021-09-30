@@ -88,9 +88,7 @@ public class UtilsTask {
 			Integer numberSearch = 0;
 			try { 
 				numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", ""));} 
-			catch(NumberFormatException e){
-				e.printStackTrace();
-			}
+			catch(NumberFormatException e){}
 			if(numberSearch!=0)
 				filter1 = filter1.or(f.getNumberProperty().like(numberSearch));
 			
@@ -182,7 +180,6 @@ public class UtilsTask {
 			filter = filter.and(f.getSenderProperty().isNull());
 		}
 		
-		
 		if(!workgroupStr.isEmpty()) {
 			String[]  str = workgroupStr.split(",");
 			Integer[] arr = new Integer[str.length];
@@ -194,7 +191,7 @@ public class UtilsTask {
 	}
 	
 	public static void sendNotificationComment(AonApiData api, Task task, TaskWorkflow workflow) {
-		LinkedList<Auth> auths = new LinkedList<Auth>();
+		LinkedList<Auth> auths = new LinkedList<>();
 		Domain domain = api.getDomain();
 		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
 
