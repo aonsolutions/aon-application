@@ -21,6 +21,7 @@ public class CheckItBankAccount implements Serializable {
 	private Integer bankAccountType; // "tipo_cuenta_bancaria_id"
 	private Integer bankLoginType; // "tipo_login_banco_id"
 	private List<BankStatement> pending;
+	private List<CheckItLog> logs;
 
 	public String getCcc() {
 		return ccc;
@@ -98,6 +99,13 @@ public class CheckItBankAccount implements Serializable {
 	}
 	public CheckItBankAccount setPending(List<BankStatement> pending) {
 		this.pending = pending;
+		return this;
+	}
+	public List<CheckItLog> getLogs() {
+		return logs;
+	}
+	public CheckItBankAccount setLogs(List<CheckItLog> logs) {
+		this.logs = logs;
 		return this;
 	}
 
