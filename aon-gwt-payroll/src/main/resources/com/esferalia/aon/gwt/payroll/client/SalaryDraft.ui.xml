@@ -65,7 +65,7 @@
 		.edit-rows tr:hover,
 		.edit-cells td:hover{
 			cursor: pointer;
-			background-color: #E2F1F5 !important;
+			background-color: #F6F6F6 !important;
 	
 		}
 
@@ -250,6 +250,10 @@
 		.aon-icon-rowSelector-C[disabled] {
 			display:inherit  !important;
 			visibility:inherit !important;
+		}
+		
+		.aon-dataTable-row-even {
+    		background-color: none; 
 		}
 
 		@external gwt-ListBox;

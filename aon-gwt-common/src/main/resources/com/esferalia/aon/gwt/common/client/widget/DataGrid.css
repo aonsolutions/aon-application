@@ -99,13 +99,13 @@
 }
 
 .dataGridSelectedRow {
-  background: #FFFADC;
+  background: #F6F6F6;
   height: auto;
   overflow: auto;
 }
 
 .dataGridSelectedRowCell {
-  border: selectionBorderWidth solid #FFFADC;
+  border: selectionBorderWidth solid #F6F6F6;
 }
 
 .dataGridKeyboardSelectedCell {

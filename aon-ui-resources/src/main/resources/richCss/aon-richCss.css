@@ -33,9 +33,13 @@ padding:0;
 display:inline;
 }
 
+
 input:focus, select:focus, textarea:focus{
-background-color: #FBEDB6;
+        outline: none;
+        border: 1px solid blue !important;
+        box-shadow: inset 0 0 0 1px blue !important;
 }
+
 input, select, textarea {
 font: 1em "arial","lucida Grande","Trebuchet MS",sans-serif;
 }
@@ -1244,8 +1248,8 @@ color:#000;
 
 /**********  TREE **************/
 .aon-tree-node-active{
-	background-color:#fffadc;
-	border:#d3c061 1px solid;
+	background-color:#f6f6f6;
+	border:#ddd 1px solid;
 	font-weight:bold;
 	}
 .aon-tree-node-active:hover{
