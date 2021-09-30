@@ -10,7 +10,7 @@ import { AonMessengerList } from "../messenger/aon-messenger-list.js";
 import { AonDocumental } from "../documental/aon-documental.js";
 import { createButtonClose, createContent, createLi, createTitle, createDivFooter, createDivFooter1, createAonNotification, createUl, createForm, createSpanFloat, createSelect, createInput, createIconButton } from "./createComponent.js";
 import { AonDialog } from "../../components/aon-dialog.js";
-import { CONSTANT, EVENT, MSG } from "../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG } from "../../environments/environments.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { TYPE_USER, NOTIFICATION_TABS, badgeUpdate } from "./NotificationEnums.js";
 import { AonToast } from "../../components/aon-toast.js";
@@ -83,8 +83,9 @@ export class AonNotification extends AonElement {
       this.paintDesk();
       
     this.changeTabs(0);
-
-    let elementScroll = this.isMobile() ? this.getElement(this.ROOT_PANEL) : undefined;
+    
+    let elementScroll = this.getElement(this.ROOT_PANEL);
+    elementScroll.classList.add(CSS.MATERIAL_SCROLL);
     scrollInfinite(elementScroll , async()=>{
       await this.loadMore();
     })

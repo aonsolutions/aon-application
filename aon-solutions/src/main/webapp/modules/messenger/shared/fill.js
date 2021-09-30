@@ -1,10 +1,10 @@
-import { EVENT, MSG } from "../../../environments/environments";
-import { getOfficeProjects, getProjects} from "../../../services/projectService";
-import { getCustomers } from "../../../services/registryService";
-import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
-import { waitEl } from "../../../services/utils";
-import { MESSENGER_DIRECTION, MESSENGER_IDS, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums";
-import { createAction, createChatMessage, createNoMessage} from "./creationUtils";
+import { EVENT, MSG } from "../../../environments/environments.js";
+import { getOfficeProjects, getProjects} from "../../../services/projectService.js";
+import { getCustomers } from "../../../services/registryService.js";
+import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
+import { waitEl } from "../../../services/utils.js";
+import { MESSENGER_DIRECTION, MESSENGER_IDS, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
+import { createAction, createChatMessage, createNoMessage} from "./creationUtils.js";
 import { chooseIconMessage } from "./utils";
 
 /**

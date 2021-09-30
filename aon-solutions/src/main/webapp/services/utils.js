@@ -1,4 +1,5 @@
 import { AON_TAGS } from "../environments/aonTag.js";
+import { EVENT } from "../environments/environments.js";
 import { DAYS, MONTHS } from "../models/enums.js";
 
 export const getReader = (file) =>  new Promise((resolve) => {
@@ -240,12 +241,12 @@ export const disabledForm = (formId, elems) => {
  */
 export const scrollInfinite = (element, fn) => {
     if(element){
-      element.addEventListener("scroll", async ({target:{scrollTop, scrollHeight, offsetHeight}}) => {
+      element.addEventListener(EVENT.SCROLL, async ({target:{scrollTop, scrollHeight, offsetHeight}}) => {
         if (scrollTop >= (scrollHeight - offsetHeight)) fn();
       });
     } else {
       element = document.body;
-      window.addEventListener('scroll', ()=>{
+      window.addEventListener(EVENT.SCROLL, ()=>{
         if ( (element.scrollTop + element.clientHeight) >= element.scrollHeight) fn();
      }) 
     }

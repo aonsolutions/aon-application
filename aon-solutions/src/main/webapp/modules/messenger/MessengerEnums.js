@@ -1,4 +1,4 @@
-import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../environments/environments";
+import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
 export const ICON_TYPES = {
     MATERIAL : "material",

@@ -23,4 +23,4 @@ export const APPLY_FILTER = 'applyFilter';
 export const RESIZE = 'resize';
 export const SEARCH_VALUE = 'searchValue';
 export const MORE = 'more';
-
+export const SCROLL = 'scroll';
