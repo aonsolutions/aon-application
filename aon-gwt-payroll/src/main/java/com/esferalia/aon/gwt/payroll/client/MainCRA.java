@@ -58,9 +58,9 @@ import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 
-public class MainCRANew extends MainEntryPoint {
+public class MainCRA extends MainEntryPoint {
 
-	interface Binder extends UiBinder<Widget, MainCRANew> {
+	interface Binder extends UiBinder<Widget, MainCRA> {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
@@ -146,7 +146,7 @@ public class MainCRANew extends MainEntryPoint {
 	private List<CRA> cras = Collections.emptyList();
 	private Integer enterprisesSelectedCount = 0;
 
-	public MainCRANew() {
+	public MainCRA() {
 		// Provide DataGrid
 		provideCCCDataGrid();
 		provideCRAsDataGrid();
@@ -616,7 +616,7 @@ public class MainCRANew extends MainEntryPoint {
 	// VARIABLES
 	// --------------------------------------------------------------------------------------------
 
-	private MainCRAObjectNew mainCRAObjectNew;
+	private MainCRAObject mainCRAObjectNew;
 	private MultiSelectionModel<CCCInfo> selectionCCCInfoModel;
 	private MultiSelectionModel<CRA> selectionCraModel;
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("MM/yyyy");
@@ -628,7 +628,7 @@ public class MainCRANew extends MainEntryPoint {
 	// ON MODULE LOAD
 	// --------------------------------------------------------------------------------------------
 
-	public void onModuleLoad(MainCRAObjectNew mainCRAObjectNew) {
+	public void onModuleLoad(MainCRAObject mainCRAObjectNew) {
 		this.mainCRAObjectNew = mainCRAObjectNew;
 
 		// Create findPeriod, first day of previus month
