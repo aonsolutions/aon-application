@@ -1,7 +1,7 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../environments/environments.js';
 import { openFileUrl } from '../services/fileService.js';
 import { convertBase64Url, getReader, waitEl } from '../services/utils.js';
-import { newComponent, setAttributes} from '../services/utilsComponents';
+import { newComponent, setAttributes} from '../services/utilsComponents.js';
 import { AonElement } from './AonElement.js';
 
 export class AonTextArea extends AonElement {

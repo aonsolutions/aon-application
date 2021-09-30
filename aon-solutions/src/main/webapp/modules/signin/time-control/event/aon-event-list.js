@@ -1,6 +1,6 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { setFullDate, setValueName, sortBy, setDateTpDay, formatDateOrigin, formatDate, isEmptyObject } from "../../../../services/utils.js";
-import { setAttributes } from "../../../../services/utilsComponents";
+import { setAttributes } from "../../../../services/utilsComponents.js";
 import {
   getGroups,
   getPeriod,

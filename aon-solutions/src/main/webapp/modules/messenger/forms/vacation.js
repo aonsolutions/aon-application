@@ -5,7 +5,7 @@ import { AonIconButton } from "../../../components/aon-icon-button";
 import { AonSelect } from "../../../components/aon-select";
 import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments";
 import { formatDateOrigin, serializeForm } from "../../../services/utils";
-import { setAttributes } from "../../../services/utilsComponents";
+import { setAttributes } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS } from "../MessengerEnums";
 import { createDivEditable, titleFirstDiv } from "../shared/creationUtils";
 

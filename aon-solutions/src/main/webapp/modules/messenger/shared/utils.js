@@ -1,7 +1,7 @@
 import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments";
 import { openFileUrl } from "../../../services/fileService";
 import { domainName } from "../../../services/request";
-import {  setAttributes, setStyles } from "../../../services/utilsComponents";
+import {  setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import {  setTime, setFullDate } from "../../../services/utils";
 import { createFormVacation } from "../forms/vacation";
 import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums";

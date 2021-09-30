@@ -7,7 +7,7 @@ import { getTaskHoldersUser } from "../../../../services/taskHolderService.js";
 import { getTaskHolderTimeControl,
 } from "../../../../services/timeControlService.js";
 import { formatDateOrigin } from "../../../../services/utils.js";
-import {  setStyles } from "../../../../services/utilsComponents";
+import {  setStyles } from "../../../../services/utilsComponents.js";
 import { DAYS } from "../../../../models/enums.js";
 
 export class AonStatistics extends AonElement {
