@@ -42,7 +42,6 @@ public class Mod349ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return FISCAL.saveMod349(domainName, domain, user, mod349);
 	}
 
-
 	@Override
 	public Mod349 getMod349(String domainName, String user, int domain, Integer id) {
 		return FISCAL.getMod349(domainName, domain, user, id);
@@ -66,6 +65,11 @@ public class Mod349ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public String getInfo(String domainName, String user, int domain, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) throws AonCoreException {
 		return FISCAL.getMod349Info(domainName, domain, user, mod349, detail, infoKey);
+	}
+	
+	@Override
+	public Mod349 duplicateMod349(String domainName, String user, int domain, Mod349 mod349) {
+		return FISCAL.duplicateMod349(domainName, domain, user, mod349);
 	}
 
 }

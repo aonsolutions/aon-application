@@ -4,12 +4,12 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.api.model.Domain;
 
 public class TaskJSON {
 	
@@ -24,7 +24,7 @@ public class TaskJSON {
 	public static Task fromJSON(JSONObject json) {
 		return new Task()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-			.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
+			.setDomain(domainFromJSON(json))
 //			.setActivityType(JsonUtils.getInteger(json, IJsonNames.ACTIVITY_TYPE))
 			.setTitle(JsonUtils.getString(json, IJsonNames.TITLE))
 			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
@@ -37,7 +37,7 @@ public class TaskJSON {
 			.setPriority(Priority.safeValueOf(json.optString(IJsonNames.PRIORITY)))
 			.setSender(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.SENDER)))
 			.setTaskHolder(TaskHolderJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.TASK_HOLDER)))
-			.setProject(new Project().setId(JsonUtils.getInteger(json, IJsonNames.PROJECT)))
+			.setProject(ProjectJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PROJECT)))
 			.setRepeatPeriod(TaskPeriod.NONE) // TODO
 			.setSource(TaskSource.safeValueOf(JsonUtils.optString(json, IJsonNames.SOURCE)))
 			.setSourceId(JsonUtils.getInteger(json, "source_id"))
@@ -46,7 +46,6 @@ public class TaskJSON {
 			.setWorkgroup(WorkgroupJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.WORKGROUP)))
 			.setWorkflows(TaskWorkflowJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.WORKFLOW)))
 			.setGtaskId(JsonUtils.getString(json, "gtask_id"))
-//			.setGtasklistId(gtasklistId)
 			;
 	}
 	
@@ -63,7 +62,7 @@ public class TaskJSON {
 	public static JSONObject toJSON(Task task) {
 		return new JSONObject()
 			.put(IJsonNames.ID, task.getId())
-			.put(IJsonNames.DOMAIN, task.getDomain())
+			.put(IJsonNames.DOMAIN, domainToJSON(task.getDomain()))
 			.put(IJsonNames.DESCRIPTION, task.getDescription())
 			.put(IJsonNames.TITLE, task.getTitle())
 			.put(IJsonNames.NUMBER, task.getNumber())
@@ -77,7 +76,7 @@ public class TaskJSON {
 			.put(IJsonNames.WORKGROUP, WorkgroupJSON.toJSON(task.getWorkgroup()))
 			.put(IJsonNames.SOURCE, task.getSource()!=null ? task.getSource().getName() : null )
 			.put(IJsonNames.SOURCE_ID, task.getSourceId())
-			.put(IJsonNames.PROJECT,  task.getProject()!=null ? task.getProject().getId(): null)
+			.put(IJsonNames.PROJECT,  task.getProject()!=null ?  ProjectJSON.toJSON(task.getProject()): null)
 			.put(IJsonNames.PERIOD, task.getRepeatPeriod()!=null ? task.getRepeatPeriod().getValue(): null)
 			.put(IJsonNames.DUE_DATE, task.getDueDate()!=null ?  task.getDueDate().getTime() : null)
 			.put(IJsonNames.START_DATE, task.getStartDate()!=null ?  task.getStartDate().getTime() : null)
@@ -89,6 +88,20 @@ public class TaskJSON {
 //			.put(IJsonNames.MODIFICATION_USER, task.getModificationUser())
 //			.put(IJsonNames.MODIFICATION_DATE, task.getModificationDate())
 			;
+	}
+	
+	private static Domain domainFromJSON(JSONObject json) {
+		JSONObject domainJson = json.getJSONObject(IJsonNames.DOMAIN);
+		return new Domain()
+			.setId(JsonUtils.getInteger(domainJson, IJsonNames.ID))
+			.setName(JsonUtils.optString(domainJson, IJsonNames.DOMAIN_NAME));
+	}
+	
+	private static JSONObject domainToJSON(Domain domain) {
+		JSONObject json = new JSONObject();
+		json.put(IJsonNames.ID, domain.getId());
+		json.put(IJsonNames.NAME, domain.getName());
+		return json;
 	}
 
 }

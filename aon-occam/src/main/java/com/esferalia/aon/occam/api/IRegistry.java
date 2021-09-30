@@ -133,6 +133,7 @@ public interface IRegistry {
 	public Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] scopes);
 	public Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] scopes, CompanyFilter filter);
 	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter);
+	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter, Integer page, Integer perPage);
 	public Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage);
 	
 	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter);

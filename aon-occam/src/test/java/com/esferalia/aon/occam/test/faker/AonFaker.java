@@ -31,7 +31,10 @@ import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -48,7 +51,12 @@ import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -418,6 +426,51 @@ public class AonFaker {
 			.setDomain(ctx.getDomainId())
 			.setDescription(faker.beer().name())
 			.setStatus(WorkgroupStatus.ACTIVE);
+	}
+	
+	public static Project getProject( AONContext ctx ) {
+		ProjectType type = ProjectTypeDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(type.isEmpty()) type = ProjectTypeDAO.save(ctx, getProjectType(ctx));
+		
+		Registry registry = RegistryDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(registry.isEmpty()) registry = RegistryDAO.save(ctx, getRegistry(ctx));
+		
+		return new Project()
+			.setDomain(new Domain().setId(ctx.getDomainId()))
+			.setName(faker.gameOfThrones().dragon())
+			.setAlias(faker.gameOfThrones().house())
+			.setRegistry(registry)
+			.setType(type)
+			.setDate(new Date())
+			.setTas(false)
+			.setCommercial(false)
+			.setReservation(false)
+			.setActive(true);
+	}
+	
+	public static ProjectType getProjectType( AONContext ctx ) {
+		return new ProjectType()
+			.setDomain(ctx.getDomainId())
+			.setDescription(faker.gameOfThrones().dragon())
+			.setActive(true);
+	}
+	
+	public static ProjectHolder getProjectHolder(AONContext ctx) {
+		TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(th.isEmpty()) th = TaskHolderDAO.save(ctx, getTaskHolder(ctx));
+		
+		Workgroup wg = WorkgroupDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(wg.isEmpty()) wg = WorkgroupDAO.save(ctx, getWorkgroup(ctx));
+		
+		Project p = ProjectDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(p.isEmpty()) p = ProjectDAO.save(ctx, getProject(ctx));
+		
+		return new ProjectHolder()
+			.setDomain(ctx.getDomainId())
+			.setProject(p.getId())
+			.setStartDate(new Date())
+			.setWorkgroup(wg)
+			.setTaskHolder(th);
 	}
 	
 	public static ProductCategory getProductCategory( AONContext ctx ) {

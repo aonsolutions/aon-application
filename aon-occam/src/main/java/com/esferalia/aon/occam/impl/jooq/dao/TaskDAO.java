@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
@@ -20,12 +21,11 @@ import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectSeekStep1;
-import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Registry;
-import com.esferalia.aon.jooq.tables.records.TaskRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO.WorkgroupFiller;
@@ -76,6 +77,7 @@ public class TaskDAO {
 		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<>(TASK.PRIORITY);}
 		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(TASK.PROJECT);}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(TASK.REGISTRY);}
+		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<Byte> getRepeatPeriodProperty() {return new FilterDAO.PropertyDAO<>(TASK.REPEAT_PERIOD);}
 		@Override public Property<Integer> getSenderProperty() {return new FilterDAO.PropertyDAO<>(TASK.SENDER);}
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(TASK.SOURCE);}
@@ -96,6 +98,7 @@ public class TaskDAO {
 		return ctx.getDslContext()
 				.select()
 				.from(TASK)
+				.innerJoin(DOMAIN).on(DOMAIN.ID.eq(TASK.DOMAIN))
 				.leftOuterJoin(WORKGROUP).on(WORKGROUP.ID.eq(TASK.WORKGROUP))
 				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
@@ -210,9 +213,19 @@ public class TaskDAO {
 
 	public static void delete(AONContext ctx, Integer id){
 		TaskAttachDAO.deleteByTask(ctx, id);
-		TaskWorkflowDAO.deleteByTask(ctx, id);
-		ctx.getDslContext().delete(TASK).where(TASK.ID.eq(id)).execute();
+		TaskWorkflowDAO.deleteByTask(ctx, id);	
+		TaskOldDAO.deleteTaskEvent(ctx, f -> f.getTaskProperty().eq(id));
+		TaskOldDAO.deleteTaskComment(ctx, f -> f.getTaskProperty().eq(id));
+		TaskOldDAO.deleteTaskTag(ctx, f -> f.getTaskProperty().eq(id));
+		delete(ctx, f -> f.getIdProperty().eq(id));
 		ctx.log().debug("DELETE TASK id:" + id);
+	}
+	
+	private static void delete(AONContext ctx, TaskFilter filter) {
+		ctx.getDslContext()
+			.delete(TASK)
+			.where(TASK_PROPERTIES.getConditions(filter))
+			.execute();
 	}
 	
 	public static HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter){
@@ -253,13 +266,15 @@ public class TaskDAO {
 		
 		return map;
 	}
+	
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
+		System.out.println(task.getDomain().getId());
 		 return 
 				 DSL.select( 
 						DSL.val(task.getActivityType()),
 						DSL.val(task.getDescription()),
 						DSL.val(task.getTitle()),
-						DSL.val(task.getDomain()),
+						DSL.val(task.getDomain().getId()),
 						DSL.val(AonDateUtils.toTimestamp(new Date())),
 						DSL.val(AonDateUtils.toTimestamp(new Date())),
 						DSL.val(task.getGtaskId()),
@@ -285,16 +300,18 @@ public class TaskDAO {
 						).plus(DSL.inline(1))
 				  )
 				 .from(TASK)
-				 .where(TASK.DOMAIN.eq(task.getDomain()));
+				 .where(TASK.DOMAIN.eq(task.getDomain().getId()));
 	}
 	
-	public static class TaskFiller implements Function<Record, Task> {
+	public static class TaskFiller extends Filler implements Function<Record, Task> {
 
 		@Override
 		public Task apply(Record r) {
 			return new Task()
 				.setId(r.getValue(TASK.ID))
-				.setDomain(r.getValue(TASK.DOMAIN))
+				.setDomain(checkField(r, DOMAIN.ID)
+						? DomainFiller.build(r)
+						: new Domain().setId(r.getValue(TASK.DOMAIN)))
 				.setActivityType(r.getValue(TASK.ACTIVITY_TYPE))
 				.setDescription(r.getValue(TASK.COMMENTS))
 				.setTitle(r.getValue(TASK.DESCRIPTION))

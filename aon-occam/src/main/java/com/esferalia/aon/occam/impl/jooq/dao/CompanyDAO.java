@@ -132,10 +132,22 @@ public class CompanyDAO {
 		return ctx.getDslContext().select()
 				.from(COMPANY)
 				.join(REGISTRY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
+				.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
+				.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
 				.where(COMPANY_PROPERTIES.getConditions(filter));
 	}
+	
 	public static Stream<Company> getStream(AONContext ctx, CompanyFilter filter){
 		return select(ctx,filter)
+			.fetch()
+			.stream()
+			.map(new CompanyFiller());
+	}
+	
+	public static Stream<Company> getStream(AONContext ctx, CompanyFilter filter, Integer page, Integer perPage){
+		return select(ctx,filter)
+			.limit(perPage)
+			.offset(perPage * (page -1))
 			.fetch()
 			.stream()
 			.map(new CompanyFiller());

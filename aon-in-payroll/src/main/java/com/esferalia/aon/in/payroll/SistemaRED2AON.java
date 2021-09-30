@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -557,14 +558,38 @@ public class SistemaRED2AON {
 	
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		try {
-			Collection<solutions.aon.seg.social.object.Idc> idcDates = 
+			Collection<solutions.aon.seg.social.object.Idc> idcs = 
 			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 			
-			idcDates.stream()
+			Date idcDates [] = 
+			idcs.stream()
 			.filter(idc -> AonStringUtils.equals("ALTA", idc.getDescripcion()))
 			.filter(idc -> endDate == null || idc.getFecha().compareTo(endDate) <= 0 )
-			.map(idc ->idc.getFecha()).sorted().reduce( (d1,d2) -> d2 )
-			.ifPresent( date -> addPECs(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
+			.map(idc ->idc.getFecha()).sorted()
+			.toArray(Date[]::new);
+			
+			if ( idcDates.length == 0 )
+				return;
+			
+			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(endDate == null ? new Date() : endDate);
+			Date ssStartDate = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
+
+			for ( int i = 1; i < idcDates.length ; i++ ) {
+				Date start = idcDates[i-1];
+				Date end = AonDateUtils.add(idcDates[i], Calendar.DAY_OF_MONTH,-1);
+				if ( end.before(ssStartDate)) 
+					continue;
+				addPECs(userLogin, domainName, domainId, userId, start, regime, ccc, naf);
+			}
+			
+			Date last = idcDates[idcDates.length-1];
+			System.out.println("IDC : " + last );
+			addPECs(userLogin, domainName, domainId, userId, last, regime, ccc, naf);
+			
+			//.peek( d -> System.out.println("IDC : " + d ))
+			//.reduce( (d1,d2) -> d2 )
+			//.filter( d -> true )
+			//.ifPresent( date -> addPECs(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
 
 			System.out.println("\tSUCCESS: " + naf );
 		

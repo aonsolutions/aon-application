@@ -13,11 +13,18 @@
 		.widthAll{
 			width: 100%;
 		}
+		
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+		}
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:HTMLPanel ui:field="centerContainer"></g:HTMLPanel>
+			<g:HTMLPanel ui:field="centerContainer" styleName="{style.flexColumn}">
+				<g:HTMLPanel ui:field="messagePanel" />
+			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 	

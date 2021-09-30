@@ -106,7 +106,7 @@ public class FeeDAO {
 			return new Fee()
 				.setId(r.getValue(CUSTOMER_FEE.ID))
 				.setDomain(checkField(r, DOMAIN.ID) 
-					? DomainFiller.buildDomain(r) 
+					? DomainFiller.build(r) 
 					: new Domain().setId(r.getValue(CUSTOMER_FEE.DOMAIN)) )
 				.setCustomer(checkField(r, CUSTOMER.REGISTRY)
 					? CustomerFiller.buildCustomer(r, CUSTOMER_ALIAS)

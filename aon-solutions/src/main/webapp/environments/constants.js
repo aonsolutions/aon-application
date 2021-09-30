@@ -133,6 +133,7 @@ export const NUMBER = 'number';
 // ----- O
 
 export const OFFER = 'offer';
+export const OFF = 'off';
 export const ONLY_AUTH = 'onlyAuth';
 export const OPENED = 'opened';
 export const OPTION = 'option';

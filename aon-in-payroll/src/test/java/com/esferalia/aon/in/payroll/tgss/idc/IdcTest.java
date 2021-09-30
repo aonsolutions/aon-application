@@ -79,11 +79,15 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
+import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.bonus.IBonus;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mchange.util.AssertException;
@@ -661,9 +665,9 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
 			
-			assertEquals(totalCost * 10 / 30, totalBonus, DELTA);
+			assertEquals(totalCost * 10 / 31, totalBonus, DELTA);
 
-			assertEquals(totalCost * 20 / 30, salary.getTotalEnterprise(), DELTA);
+			assertEquals(totalCost * 21 / 31, salary.getTotalEnterprise(), DELTA);
 		}
 	}
 
@@ -800,6 +804,10 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	protected Salary calculate(Collection<PEC> ssPECs,Collection<Data> datas, Date date) throws ExpressionException, SQLException, SalaryException {
+		return calculate(ssPECs, datas, date, new SalaryBuilder());
+	}
+
+	protected Salary calculate(Collection<PEC> ssPECs,Collection<Data> datas, Date date, ISalaryBuilder<Salary> salaryBuilder) throws ExpressionException, SQLException, SalaryException {
 		java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(date));
 		java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(date));
 
@@ -811,7 +819,7 @@ public class IdcTest extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = 
 		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
 		SmartContractSalaryCalculator<Salary> builder = 
-		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		new SmartContractSalaryCalculator<Salary>(salaryBuilder);
 		Salary salary = builder.calculate(ctx);
 		return salary;
 	}
@@ -838,7 +846,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			Salary salary = calculate(ssBonuses, Collections.emptyList(), march);
 			double totalCost = salary.getSalaryCosts().stream()
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
-			assertEquals(totalCost/30.00 * 14, salary.getTotalEnterprise(), DELTA);
+			assertEquals(totalCost/31.00 * 14, salary.getTotalEnterprise(), DELTA);
 			
 			calendar.set(Calendar.MONTH,Calendar.APRIL);
 			Date april = calendar.getTime();
@@ -850,7 +858,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			salary = calculate(ssBonuses, Collections.emptyList(), may);
 			totalCost = salary.getSalaryCosts().stream()
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
-			assertEquals(totalCost/30.00 * 18.00 * 0.40, salary.getTotalEnterprise(), DELTA);
+			assertEquals(totalCost/31.00 * 19.00 * 0.40, salary.getTotalEnterprise(), DELTA);
 			
 			calendar.set(Calendar.MONTH,Calendar.JUNE);
 			Date june = calendar.getTime();
@@ -901,7 +909,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			Salary salary = calculate(ssBonuses, Collections.emptyList(), january);
 			double totalCost = salary.getSalaryCosts().stream()
 			.collect(Collectors.summingDouble(c -> c.getAmount()));
-			assertEquals(totalCost/30*17, salary.getTotalEnterprise(), DELTA);
+			assertEquals(totalCost/31*17, salary.getTotalEnterprise(), DELTA);
 			
 		}
 	}
@@ -999,7 +1007,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			salary.getSalaryDeductions().forEach(d -> System.out.println(d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
 			
-			assertEquals(totalCost / 30 * 27, salary.getTotalEnterprise(), DELTA);
+			assertEquals(totalCost / 31 * 27, salary.getTotalEnterprise(), DELTA);
 			//assertEquals(totalDeduction, salary.getSocialSecurityContributions(), DELTA);
 			
 		}
@@ -1383,9 +1391,9 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 			System.out.println("CUOTA EMPRESARIAL :" + totalCost );
 			
-			assertEquals(totalCost * 17 / 30, totalBonus, DELTA);
+			assertEquals(totalCost * 17 / 31, totalBonus, DELTA);
+			assertEquals(totalCost * 14 / 31, salary.getTotalEnterprise(), DELTA);
 
-			assertEquals(totalCost * 13 / 30, salary.getTotalEnterprise(), DELTA);
 		}
 	}
 
@@ -1626,23 +1634,40 @@ public class IdcTest extends AbstractSQLTestCase {
 			calendar.set(Calendar.DAY_OF_MONTH,9);
 			calendar.set(Calendar.MONTH,Calendar.DECEMBER);
 
-			Date december2022 = calendar.getTime();
+			Date _9december2022 = calendar.getTime();
 
 			PEC bonus = ssBonuses.stream().findFirst().get();
 			
 			Assert.assertEquals( october2020 , bonus.getStartDate());
-			Assert.assertEquals( december2022, bonus.getEndDate());
+			Assert.assertEquals( _9december2022, bonus.getEndDate());
 			
 			
 			calendar.set(Calendar.DAY_OF_MONTH,1);
-			Date may = calendar.getTime();
-			
-			Salary salary = calculate(ssBonuses, Collections.emptyList(), may);
+			Date december2022 = calendar.getTime();
 
-			double totalCost = salary.getSalaryCosts().stream()
-			.collect(Collectors.summingDouble(c -> c.getAmount()));
+			double totalCosts [] = {0.00, 0.00};
+			Salary salary = calculate(ssBonuses, Collections.emptyList(), december2022, new SalaryBuilder() {
+				@Override
+				public void addCost(Double amount, String description, Date start, Date end, IDeduction cost,
+						Map<String, ITimedVariable<?>> context) {
+					if ( start.equals(december2022))
+						totalCosts[0] += amount;
+					else 
+						totalCosts[1] += amount;
+					super.addCost(amount, description, start, end, cost, context);
+				}
+				
+				@Override
+				public void addBonus(Double amount, String description, Date startDate, Date endDate, IBonus bonus,
+						Map<String, ITimedVariable<?>> context) {
+					super.addBonus(amount, description, startDate, endDate, bonus, context);
+				}
+				
+			});
+
+			
 						
-			assertEquals(totalCost - 150.00, salary.getTotalEnterprise(), DELTA);
+			assertEquals(Math.max(totalCosts[0] - 150.00, 0.00) + totalCosts[1], salary.getTotalEnterprise(), DELTA);
 			
 		}
 	}

@@ -996,27 +996,52 @@ public class Mod347DAO {
 	
 	// --------------- DUPLICAR MODELO ---------------
 	
-	public static Mod347 duplicateNextYear(AONContext ctx, int id) {
+//	public static Mod347 duplicateNextYear(AONContext ctx, int id) {
+//		
+//		Mod347 mod347 = getById(ctx, id);
+//		mod347.setYear( mod347.getYear() + 1 );
+//		mod347.setId(null);
+//		// mod347 = save(ctx, mod347);
+//		mod347 = insert(ctx, mod347,false);
+//		Mod347 original = getById(ctx, id);
+//		for (Mod347Declared declared : original.getDeclared()) {
+//			declared.setId(null);
+//			declared.setMod347(mod347.getId());
+//			mod347.getDeclared().add(declared);
+//		}
+//		for (Mod347Asset asset : original.getAssets()) {
+//			asset.setId(null);
+//			asset.setMod347(mod347.getId());
+//			mod347.getAssets().add(asset);
+//		}
+//		return save(ctx, mod347);		
+//	
+//	}
+
+	public static Mod347 duplicate(AONContext ctx, Mod347 mod347) {
 		
-		Mod347 mod347 = getById(ctx, id);
-		mod347.setYear( mod347.getYear() + 1 );
+		int id = mod347.getId();
 		mod347.setId(null);
-		// mod347 = save(ctx, mod347);
-		mod347 = insert(ctx, mod347,false);
-		Mod347 original = getById(ctx, id);
-		for (Mod347Declared declared : original.getDeclared()) {
-			declared.setId(null);
-			declared.setMod347(mod347.getId());
-			mod347.getDeclared().add(declared);
-		}
-		for (Mod347Asset asset : original.getAssets()) {
-			asset.setId(null);
-			asset.setMod347(mod347.getId());
-			mod347.getAssets().add(asset);
+		mod347 = insert(ctx, mod347, false);
+		
+		if (!mod347.isComplementary()) {
+			Mod347 original = getById(ctx, id);
+			for (Mod347Declared declared : original.getDeclared()) {
+				declared.setId(null);
+				declared.setMod347(mod347.getId());
+				mod347.getDeclared().add(declared);
+			}
+			for (Mod347Asset asset : original.getAssets()) {
+				asset.setId(null);
+				asset.setMod347(mod347.getId());
+				mod347.getAssets().add(asset);
+			}
 		}
 		return save(ctx, mod347);		
 	
 	}
+	
+	
 	
 //	private static boolean excludeIfPresentInMod180(AONContext ctx, Mod347 mod347,VatContext vat) {
 //		if (vat.hasRetention() && mod347.isExcludeMod180Declared()) { 

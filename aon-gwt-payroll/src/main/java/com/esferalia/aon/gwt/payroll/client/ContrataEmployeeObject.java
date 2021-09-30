@@ -802,6 +802,21 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	// ------------------------------------------------- Database Methods (Delete Extension)
+	
+	public void deleteContractExtension(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.deleteContractExtension(contractData.getContractId(), new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	// ------------------------------------------------- Auxiliar Methods
 	
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfo) {

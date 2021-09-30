@@ -25,6 +25,8 @@ import '../marketplace/aon-marketplace.js';
 import '../invoice/aon-invoice-panel.js';
 import '../accounting/aon-accounting.js';
 import './aon-stat.js';
+import { getOfficeProjects } from '../../services/projectService.js';
+import { Project } from '../../models/project/Project.js';
 
 
 export class AonDesktop extends AonElement {
@@ -88,54 +90,36 @@ export class AonDesktop extends AonElement {
 
 		let domainName = localStorage.getItem('aon_domain_name');
 		if(domainName.includes('aonsolutions.org')) {
-			let gestor = this.createElement(TAG.DIV);
-		
-			let aonAvatar = new AonAvatar();
-			gestor.appendChild(aonAvatar);
-			let spanGestor = this.createElement(TAG.SPAN);
-			spanGestor.className = 'aonSidenavTitle';
-			spanGestor.innerHTML = 'Gestor no asignado.';
-			gestor.appendChild(spanGestor);
-
-			let contacta = this.createElement(TAG.DIV);
-				contacta.style.marginTop = '10px';
-			let cicon = this.createElement(TAG.I);
-			cicon.className = 'material-icons';
-			cicon.style.color = 'gray';
-			cicon.style.verticalAlign = 'middle';
-			cicon.style.fontSize = '1.3rem';
-			cicon.innerHTML = 'chat';
-			contacta.appendChild(cicon);
-
-			let cspan = this.createElement(TAG.SPAN);
-			cspan.innerHTML = 'Contactar';
-			cspan.style.color = 'gray';
-			cspan.style.marginTop = '10px';
-			contacta.appendChild(cspan);
-			gestor.appendChild(contacta);
-
-			let val = this.createElement(TAG.DIV);
-			val.innerHTML = 'Valora a tu Gestor';
-			val.style.color = 'gray';
-			val.style.marginTop = '10px';
-			gestor.appendChild(val);
-
-			let starsDiv = this.createElement(TAG.DIV);
-			starsDiv.style.marginTop = '10px';
-			for(let i = 0; i < 5; i++) {
-				let icon = this.createElement(TAG.I);
-				icon.className = 'material-icons';
-				icon.style.color = 'gray';
-				icon.innerHTML = 'star_border';
-				starsDiv.appendChild(icon);
-			}
-			gestor.appendChild(starsDiv);
-
-			aonDesktop.addSidenavWidget('MI GESTOR', gestor);
+			let myGestor = {
+				id: 'Gestor',
+				name: 'MI GESTOR'
+			};
+			this.getApplication().addSidenavOptions2(myGestor, []);
+			getOfficeProjects({}).then(projects => {
+				this.clearElementById(this.getApplication().SIDENAV + myGestor.id + 'List');
+           		projects.forEach(item => {
+					let p = new Project(item);
+					let h =  p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
+					let option = {
+                    	name: p.getType().getDescription() + (h ? ' - ' + h : '') ,
+                    	icon: 'support_agent',
+	                    fn: () => {}, 
+    	                actions: [{
+        	              id: 'Contact',
+            	          icon: 'chat',
+                	      action: () => {
+							let aonMessengerChat = new AonMessenger();	
+							aonMessengerChat.data = {source:TASK_SOURCE.QUERY, project: item};
+							this.rootPanel(aonMessengerChat);
+						  }
+                    	}]
+                	};
+                	this.getApplication().addSidenavOptionsListValue(myGestor, option);
+           		});
+			}); 
 		}
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
-
 			let taskOptions = [];
 			if(this.getDur().isInvoice()){
 				taskOptions.push({

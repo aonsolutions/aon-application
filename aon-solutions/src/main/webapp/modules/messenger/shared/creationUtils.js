@@ -3,9 +3,10 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
-import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT } from "../../../environments/environments.js";
+import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { taskHistoricSend } from "../../../services/taskService.js";
-import { newComponent, setAttributes, setDateTimestampDay, setStyles } from "../../../services/utils.js";
+import { setDateTimestampDay } from "../../../services/utils.js";
+import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 
@@ -119,7 +120,7 @@ const createMessageBox = (properties) =>{
     },
     dataset:{
       id: properties.id,
-      me: properties.direction  ? true : false
+      me: properties.direction == MESSENGER_DIRECTION.RIGHT ? true : false
     }
   }).element;
   if(properties.direction == MESSENGER_DIRECTION.RIGHT)
@@ -141,7 +142,7 @@ const createMessageAuthor = (properties) =>{
   });
 
   let span = setStyles(document.createElement(TAG.SPAN),{
-    fontSize: "14px",
+    fontSize: "12px",
     fontWeight:" 600",
     color : CSS.variable(COLORS.GRAYSON),
     textOverflow: "ellipsis",
@@ -361,17 +362,16 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.CUSTOMER_TASK,
   name: MESSENGER_IDS.CUSTOMER_TASK,
   title: MSG.ENTERPRISE,
-  autocomplete: "off",
-  readonly: "false"
+  autocomplete: CONSTANT.OFF,
+  readonly: CONSTANT.FALSE
 });
 
  //-----------------PROJECT
  export const createProject = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
-  title: MSG.PROJECT,
-  autocomplete: "off",
-  readonly: "false"
+  title: MSG.TYPE,
+  autocomplete: CONSTANT.OFF
 });
 
 
@@ -415,14 +415,14 @@ export const createChatMessage = (properties, chat) => {
 
     let me = properties.direction === MESSENGER_DIRECTION.RIGHT;
 
-    let messageSend = properties.modification_date; // si el mensaje fue enviado
+    let messageSend = properties.notification_user; // si el mensaje fue enviado
 
     const message = createMessageBox(properties);
     chat.appendChild(message); //ADD MESSAGE IN DIV CHAT
 
     if(messageSend || me){
       const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
-      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date(messageSend)) : MSG.SEND;
+      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date(properties.notification_date)) : MSG.SEND;
       iconSendWorkflow.id = MESSENGER_IDS.ICON_SEND_WORKFLOW;
       let color = COLORS.AON_BLUE;
 
@@ -435,7 +435,7 @@ export const createChatMessage = (properties, chat) => {
 
       if(me){
         setStyles(iconSendWorkflow, { right: "17px", cursor: "pointer" });
-        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(message.dataset.id));
+        iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(parseInt(message.dataset.id)));
 
         //-------------------icon share
         const textShare = "Compartir entre ramas (En desarrollo)";
@@ -453,8 +453,6 @@ export const createChatMessage = (properties, chat) => {
       message.appendChild(iconSendWorkflow);
     }
 
-    messageSend = !messageSend;
-
     const name = createMessageAuthor(properties);
     name.appendTo(message);
 
@@ -464,7 +462,7 @@ export const createChatMessage = (properties, chat) => {
     const date = createText({
         text: setDateTimestampDay(new Date(properties.date)),
         color: CSS.variable(COLORS.AON_GRAY),
-        fontSize : "12px",//'0.6em',
+        fontSize : "11px",//'0.6em',
         classes: [CSS.FIRST_LETTER_UPPER]
     });
     date.appendTo(name.element);
@@ -587,10 +585,10 @@ export const createLabelFileText = () => {
   return label;
 }
 
-export const createAonSwitch = () => {
+export const createAonSwitch = (title) => {
   let btn = new AonSwitch();
-  btn.id = MESSENGER_IDS.INTERNAL_TASK;
-  btn.title = "Para tu Gestor";
+  btn.id = MESSENGER_IDS.EXTERNAL_TASK;
+  btn.title = title;
   btn.style.width = "100%";
   btn.style.marginLeft = "13px";
   return btn;
@@ -621,7 +619,7 @@ const sendHistoric = async (workflowId) => {
         message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
         const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
         if(iconSendWorkflow){
-          iconSendWorkflow.title = "Enviado "+setDateTimestampDay(workflow.modification_date || workflow.creation_date)
+          iconSendWorkflow.title = "Enviado "+setDateTimestampDay(workflow.notification_date)
           iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
           iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
         }

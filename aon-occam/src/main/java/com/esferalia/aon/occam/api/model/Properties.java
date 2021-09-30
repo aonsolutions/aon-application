@@ -75,6 +75,13 @@ public interface Properties {
 		Property<Integer> getTaskHolderProperty();
 	}
 	
+	public interface ProjectTypeProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getActiveProperty();
+	}
+	
 	public interface AttachProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -592,6 +599,7 @@ public interface Properties {
 		Property<Byte> getPriorityProperty();
 		Property<Integer> getProjectProperty();
 		Property<Integer> getRegistryProperty();
+		Property<String> getRegistryNameProperty();
 		Property<Byte> getRepeatPeriodProperty();
 		Property<Integer> getSenderProperty();
 		Property<Byte> getSourceProperty();
@@ -627,6 +635,8 @@ public interface Properties {
 		Property<Integer> getTaskHolderProperty();
 		Property<Byte> getTypeProperty();
 		Property<String> getCommentProperty();
+		Property<String> getNotificationUserProperty();
+		Property<Timestamp> getNotificationDateProperty();
 	}
 	
 	public interface TaskAttachProperties {

@@ -49,17 +49,21 @@ public class AccountDAO {
 	
 	public static class FullAccountFiller  implements Function<Record,Account> {
 		@Override
-		public Account apply(Record rec) {
+		public Account apply(Record r) {
+			return build(r);
+		}
+		
+		public static Account build(Record r) {
 			return new Account()
-			.setId(rec.getValue(ACCOUNT.ID))
-			.setDomain(rec.getValue(ACCOUNT.DOMAIN))
-			.setCode(rec.getValue(ACCOUNT.CODE))
-			.setDescription(rec.getValue(ACCOUNT.DESCRIPTION))
-			.setAlias(rec.getValue(ACCOUNT.ALIAS))
-			.setEntryEnabled( AonEnumUtils.getBoolean(rec.getValue(ACCOUNT.ENTRYENABLED)))
-			.setLevel(rec.getValue(ACCOUNT.LEVEL))
-			.setActive(AonEnumUtils.getBoolean(rec.getValue(ACCOUNT.ACTIVE)))
-			.setCostCenter(rec.getValue(ACCOUNT.COST_CENTER));
+				.setId(r.getValue(ACCOUNT.ID))
+				.setDomain(r.getValue(ACCOUNT.DOMAIN))
+				.setCode(r.getValue(ACCOUNT.CODE))
+				.setDescription(r.getValue(ACCOUNT.DESCRIPTION))
+				.setAlias(r.getValue(ACCOUNT.ALIAS))
+				.setEntryEnabled( AonEnumUtils.getBoolean(r.getValue(ACCOUNT.ENTRYENABLED)))
+				.setLevel(r.getValue(ACCOUNT.LEVEL))
+				.setActive(AonEnumUtils.getBoolean(r.getValue(ACCOUNT.ACTIVE)))
+				.setCostCenter(r.getValue(ACCOUNT.COST_CENTER));
 		}
 	}
 	private static SelectConditionStep<AccountRecord> select(AONContext ctx, AccountFilter filter) {

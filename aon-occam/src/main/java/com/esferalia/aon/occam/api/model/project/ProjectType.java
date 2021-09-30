@@ -13,11 +13,8 @@ public class ProjectType  implements Serializable{
 	private Integer domain;
 	private String description;
 	private boolean active;
+	private boolean dirty;
 	
-	public ProjectType() {
-	
-	}
-
 	public Integer getId() {
 		return id;
 	}
@@ -41,6 +38,7 @@ public class ProjectType  implements Serializable{
 	}
 
 	public ProjectType setDescription(String description) {
+		setDirty(true);
 		this.description = description;
 		return this;
 	}
@@ -49,11 +47,8 @@ public class ProjectType  implements Serializable{
 		return active;
 	}
 	
-	public boolean getActive() {
-		return active;
-	}
-
 	public ProjectType setActive(boolean active) {
+		setDirty(true);
 		this.active = active;
 		return this;
 	}
@@ -63,4 +58,12 @@ public class ProjectType  implements Serializable{
 			&& getDescription() == null;
 	}
 
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	public ProjectType setDirty(boolean dirty) {
+		this.dirty = dirty;
+		return this;
+	}
 }

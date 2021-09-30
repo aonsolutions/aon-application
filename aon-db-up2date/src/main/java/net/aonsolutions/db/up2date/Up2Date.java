@@ -18,10 +18,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
 import net.aonsolutions.db.up2date.finance.InvoiceFiscalCreation;
-import net.aonsolutions.db.up2date.project.ProjectHolderCreation;
-import net.aonsolutions.db.up2date.task.TaskWorkflowUpdate;
 
 public class Up2Date {
 
@@ -174,10 +171,12 @@ public class Up2Date {
     		//BaseCgcMin2019Fix.BASECGCMIN2019FIX
     		//OvertimeCostsFix.OVERTIMECOSTSFIX
     		//ReduccionCgcE02Fix.REDUCCIONCGCE02FIX,
-    		//AgriculturalATEPEFix.AGRICULTURALATEPEFIX,
-    		TaskWorkflowUpdate.TASK_WORKFLOW_UPDATE,
-    		ProjectHolderCreation.PROJECT_HOLDER_CREATION,
-    		InvoiceFiscalCreation.INVOICE_FISCAL_CREATION
+    		//AgriculturalATEPEFix.AGRICULTURALATEPEFIX
+    		//AdditionalHoursKiss.ADDITIONALHOURSKISS,
+    		//TaskWorkflowUpdate.TASK_WORKFLOW_UPDATE,
+    		//ProjectHolderCreation.PROJECT_HOLDER_CREATION,
+    		//SMI2021Update.SMI2020UPDATE
+        InvoiceFiscalCreation.INVOICE_FISCAL_CREATION
     };
 
 

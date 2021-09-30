@@ -4,7 +4,9 @@ import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
+import static com.esferalia.aon.jooq.tables.ContractClause.CONTRACT_CLAUSE;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
@@ -524,11 +526,34 @@ public class JooqEmployee {
 		contractData.setContractId(contractId);
 		employeeContractData.setContractInfo(contractData);
 		
+		downloadClausesToContract(dslContext, contractId, domain);
+		
 		System.out.println("GUARDADO -> CONTRACT : " + contractId);
 		
 		return employeeContractData;
 	}
 	
+	private static void downloadClausesToContract(DSLContext dslContext, Integer contractId, Integer domainId) {
+		Integer parentDomainId = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(domainId)).fetchOne(DOMAIN.PARENT);
+	
+		Result<Record> clauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
+				.where(CONTRACT_CLAUSE.CONTRACT.isNull())
+				.and(CONTRACT_CLAUSE.DOMAIN.eq(domainId)
+					.or(CONTRACT_CLAUSE.DOMAIN.eq(parentDomainId))
+				).fetch();
+		
+		for(Record clauseRecord : clauseRecords) {
+			dslContext.insertInto(CONTRACT_CLAUSE)
+				.set(CONTRACT_CLAUSE.DOMAIN, domainId)
+				.set(CONTRACT_CLAUSE.CONTRACT, contractId)
+				.set(CONTRACT_CLAUSE.LINE, clauseRecord.get(CONTRACT_CLAUSE.LINE))
+				.set(CONTRACT_CLAUSE.NAME, clauseRecord.get(CONTRACT_CLAUSE.NAME))
+				.set(CONTRACT_CLAUSE.DESCRIPTION, clauseRecord.get(CONTRACT_CLAUSE.DESCRIPTION))
+				.set(CONTRACT_CLAUSE.GENERAL, clauseRecord.get(CONTRACT_CLAUSE.GENERAL))
+				.execute();
+		}
+	}
+
 	private static Record getEmployeeRecord(DSLContext dslContext, Integer contractId) {
 		return 
 		dslContext
@@ -733,16 +758,6 @@ public class JooqEmployee {
 			//ENTERPRISE ACTIVITY TABLE
 			Integer enterpriseActivityId = contractTable.get(CONTRACT.ENTERPRISE_ACTIVITY);
 			contractData.setActivityId(enterpriseActivityId);
-			
-//			if(null == enterpriseActivityId) {
-//				contractData.setActivityId(null);
-//			}else {
-//				Record enterpriseActivityTable = dslContext.select().from(ENTERPRISE_ACTIVITY)
-//						.where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseActivityId))
-//						.fetchOne();
-//				
-//				contractData.setActivityId(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
-//			}
 			
 			//ENTERPRISE CCC TABLE
 			Integer enterpriseCCCId = contractTable.get(CONTRACT.ENTERPRISE_CCC);
@@ -995,6 +1010,16 @@ public class JooqEmployee {
 		
 		if(sepeIdRecords.isNotEmpty())
 			contractData.setSepeId(sepeIdRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+		
+		// ---------------------------------------------- Contract Extension
+		
+		Integer contractTypeValue = Integer.parseInt(contractData.getContractType());
+		Boolean hasExtension = false;
+		if(contractTypeValue >= 400) {
+			Result<Record> extensionRecords = dslContext.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_ATTACH.TYPE.eq((byte)13)).fetch();
+			if(extensionRecords.isNotEmpty()) hasExtension = true;
+		}
+		contractData.setHasExtension(hasExtension);
 		
 		employeeContractInfo.setEmployeeInfo(employeeData);
 		employeeContractInfo.setContractInfo(contractData);

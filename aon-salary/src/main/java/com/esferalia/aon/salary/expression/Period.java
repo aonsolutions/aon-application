@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -130,6 +131,10 @@ public class Period implements Comparable<Period> {
 		
 	}
 
+	public long getDays() {
+		return daysStream().count();
+	}
+
 	public Stream<Calendar> daysStream() {
 		Stream.Builder<Calendar> builder = Stream.builder();
 		forEachDay(builder);
@@ -146,6 +151,11 @@ public class Period implements Comparable<Period> {
 	public boolean equals(Object obj) {
 		Period other = (Period) obj;
 		return compare(start, other.start) == 0 && compare(end, other.end) == 0;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(start,end);
 	}
 
 	public static boolean intersects(Iterator<Period> aIterator, Iterator<Period> bIterator) {

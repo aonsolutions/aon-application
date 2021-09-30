@@ -105,7 +105,9 @@ public class SendMailServlet extends HttpServlet{
 			InvoiceMail im = new InvoiceMail();
 			im.setReference(inv.opt("reference") != null ? inv.getString("reference"): "");
 			im.setTotal(inv.opt("total") != null ? Double.toString(inv.getDouble("total")) : "");
-			im.setUrl(inv.opt("file") != null ? inv.optJSONObject("file").optString("url") : getInvoiceUrl(domain, login, inv));
+			im.setUrl(inv.opt("file") != null 
+					? ("https://" + domain.getName() + "/" + inv.optJSONObject("file").optString("url")) 
+					: getInvoiceUrl(domain, login, inv));
 			list.add(im);
 		}
 		

@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskWorkflowFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaskWorkflowProperties;
+import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO.TaskHolderFiller;
@@ -52,7 +53,8 @@ public class TaskWorkflowDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.MODIFICATION_DATE);}
-
+		@Override public Property<String> getNotificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.NOTIFICATION_USER);}
+		@Override public Property<Timestamp> getNotificationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.NOTIFICATION_DATE);}
 	}
 	
 	public static SelectConditionStep<Record> select(AONContext ctx, TaskWorkflowFilter filter){	
@@ -98,7 +100,8 @@ public class TaskWorkflowDAO {
 	
 	public static void updateTaskWorkflowBetween(AONContext ctx, TaskWorkflowFilter filter) {
 		ctx.getDslContext().update(TASK_WORKFLOW)
-			.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
+			.set(TASK_WORKFLOW.NOTIFICATION_DATE,AonDateUtils.toTimestamp(new Date()))
+			.set(TASK_WORKFLOW.NOTIFICATION_USER, ctx.getUser())
 			.where(TASK_WORKFLOW_PROPERTIES.getConditions(filter))
 			.execute();
 	}
@@ -116,23 +119,25 @@ public class TaskWorkflowDAO {
 			.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
 			.where(TASK_WORKFLOW.ID.eq(taskWorkflow.getId()))
 			.execute();
+		ctx.log().info("UPDATE TASK_WORKFLOW id: " + taskWorkflow.getId());		
 		return taskWorkflow;
 	}
 	
-	public static TaskWorkflow insert(AONContext ctx, TaskWorkflow taskWorkflow) {
+	public static TaskWorkflow insert(AONContext ctx, TaskWorkflow workflow) {
 		Integer id = ctx.getDslContext().insertInto(TASK_WORKFLOW)
-				.set(TASK_WORKFLOW.DOMAIN, taskWorkflow.getDomain())
-				.set(TASK_WORKFLOW.TASK, taskWorkflow.getTask())
-				.set(TASK_WORKFLOW.TASK_HOLDER, taskWorkflow.getTaskHolder().getId())
-				.set(TASK_WORKFLOW.TYPE, taskWorkflow.getType().value())	
-				.set(TASK_WORKFLOW.COMMENT, taskWorkflow.getComment())
+				.set(TASK_WORKFLOW.DOMAIN, workflow.getDomain())
+				.set(TASK_WORKFLOW.TASK, workflow.getTask())
+				.set(TASK_WORKFLOW.TASK_HOLDER, workflow.getTaskHolder().getId())
+				.set(TASK_WORKFLOW.TYPE, workflow.getType().value())	
+				.set(TASK_WORKFLOW.COMMENT, workflow.getComment())
+				.set(TASK_WORKFLOW.EMAIL, workflow.getEmail())
 				.set(TASK_WORKFLOW.CREATION_DATE, AonDateUtils.toTimestamp(new Date()))
-//				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(taskWorkflow.getModificationDate()))
 				.set(TASK_WORKFLOW.CREATION_USER, ctx.getUser())
+				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 				.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
 			.returning(TASK_WORKFLOW.ID).fetchOne().getId();
 		ctx.log().debug("INSERT TASK_WORKFLOW id: " + id);			
-		return taskWorkflow.setId(id);
+		return workflow.setId(id);
 	}	
 	
 	public static void delete(AONContext ctx, Integer id){
@@ -157,13 +162,16 @@ public class TaskWorkflowDAO {
 				.setId(r.getValue(TASK_WORKFLOW.ID))
 				.setDomain(r.getValue(TASK_WORKFLOW.DOMAIN))
 				.setTask(r.getValue(TASK_WORKFLOW.TASK))
-				.setTaskHolder(TaskHolderFiller.build(r, REGISTRY))
+				.setTaskHolder( r.getValue(TASK_WORKFLOW.TASK_HOLDER)!=null ? TaskHolderFiller.build(r, REGISTRY) : new TaskHolder())
 				.setType(TaskWorkflowType.safeValueOf(r.getValue(TASK_WORKFLOW.TYPE)))
 				.setComment(r.getValue(TASK_WORKFLOW.COMMENT))
 				.setCreationDate(r.getValue(TASK_WORKFLOW.CREATION_DATE))
 				.setCreationUser(r.getValue(TASK_WORKFLOW.CREATION_USER))
+				.setEmail(r.getValue(TASK_WORKFLOW.EMAIL))
 				.setModificationDate(r.getValue(TASK_WORKFLOW.MODIFICATION_DATE))
-				.setModificationUser(r.getValue(TASK_WORKFLOW.MODIFICATION_USER));
+				.setModificationUser(r.getValue(TASK_WORKFLOW.MODIFICATION_USER))
+				.setNotificationDate(r.getValue(TASK_WORKFLOW.NOTIFICATION_DATE))
+				.setNotificationUser(r.getValue(TASK_WORKFLOW.NOTIFICATION_USER));
 		}
 	}
 }

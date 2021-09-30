@@ -78,6 +78,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProjectTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
@@ -1002,15 +1003,15 @@ public class AON {
 		}
 	}
 
-	
 	public static Stream<Company> getCompanyStream(String domainName, Integer domainId, String login, CompanyFilter filter){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getCompanyStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static Stream<Company> getCompanyStream(String domainName, Integer domainId, String login, CompanyFilter filter, Integer page, Integer perPage){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCompanyStream(ctx, filter, page, perPage);
 		}
 	}
 	
@@ -3427,16 +3428,11 @@ public class AON {
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************
-	public static ProjectType getProjectType(String domainName, Integer domainId, String login, String description){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getProject().getProjectType(ctx, description);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
+
+	public static Stream<Project> getProjectStream(Domain domain, User user, ProjectFilter filter, Integer page, Integer perPage){
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProject().getProjectStream(ctx, filter, page, perPage);
+		}	}
 	
 	public static Stream<Project> getProjectStream(Domain domain, User user, ProjectFilter filter){
 		return getProjectStream(domain.getName(), domain.getId(), user.getLogin(), filter);
@@ -3462,6 +3458,22 @@ public class AON {
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 
+	public static Project saveProject(Domain domain, User user, Project project) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProject().saveProject(ctx, project);
+		}
+	}
+	
+	public static void deleteProject(Domain domain, User user, Integer projectId) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			getProject().deleteProject(ctx, projectId);
+		}
+	}
+	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.api.AON.saveProject(Domain domain0, User user, Project project)
+	 */
+	@Deprecated(forRemoval = true )
 	public static Integer insertProject(String domainName, Integer domainId,
 			String login, Project project) {
 		AONContext ctx = null;
@@ -3471,6 +3483,54 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	// ---------- PROJECT TYPE
+	
+	public static Stream<ProjectType> getProjectTypeStream(Domain domain, User user, ProjectTypeFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProject().getProjectTypeStream(ctx, filter);
+		}
+	}
+	
+	/**
+	 * @deprecated  Replaced by com.esferalia.aon.occam.api.AON.getProjectType(String domainName, Integer domainId, String login, ProjectTypeFilter filter)
+	 */
+	@Deprecated(forRemoval = true )
+	public static ProjectType getProjectType(String domainName, Integer domainId, String login, String description){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectType(ctx, f-> f.getDomainProperty().eq(domainId).and(f.getDescriptionProperty().eq(description)));
+		}
+	}
+	
+	public static ProjectType getProjectType(String domainName, Integer domainId, String login, ProjectTypeFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProjectType(ctx, filter);
+		}
+	}
+
+	public static ProjectType saveProjectType(Domain domain, User user, ProjectType projectType){
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProject().saveProjectType(ctx, projectType);
+		}
+	}
+	
+	public static ProjectType saveProjectType(String domainName, Integer domainId, String login, ProjectType projectType){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().saveProjectType(ctx, projectType);
+		}
+	}
+
+	public static void deleteProjectType(Domain domain, User user, Integer projectTypeId){
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			getProject().deleteProjectType(ctx, projectTypeId);
+		}
+	}
+	
+	public static void deleteProjectType(String domainName, Integer domainId, String login, Integer projectTypeId){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getProject().deleteProjectType(ctx, projectTypeId);
 		}
 	}
 	
@@ -4372,6 +4432,15 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getRegistry().getCustomerStream(ctx, filter);
+		} finally {
+			if (ctx != null) ctx.close();
+		}
+	}
+	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getRegistry().getCustomers(ctx, filter, ofs, limit);
 		} finally {
 			if (ctx != null) ctx.close();
 		}
@@ -5717,6 +5786,12 @@ public class AON {
 		} 
 	}
 	
+	public static Stream<Workgroup> getWorkgroupByTaskHolderStream(String domainName, Integer domainId, String login, WorkgroupFilter filter, Integer taskHolder){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getWorkgroupByTaskHolderStream(ctx, filter, taskHolder);
+		} 
+	}
+	
 	public static LinkedList<Workgroup> getWorkgroupList(String domainName, Integer domainId, String login, WorkgroupFilter filter){
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getCommon().getWorkgroupList(ctx, filter);
@@ -6494,7 +6569,7 @@ public class AON {
 				List<Domain> offices = getRegistry().getDomainOfficeLinked(ctx, company.getDocument());
 				list.addAll(offices);
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 		return list;

@@ -84,6 +84,7 @@ public interface IJsonNames {
 	String DESCRIPTION = "description";
 	String DETAILED = "detailed";
 	String DETAILS = "details";
+	String DIRTY = "dirty";
 	String DISCOUNT = "discount";
 	String DOCUMENT_COUNTRY = "documentCountry";
 	String DOCUMENT = "document";
@@ -235,6 +236,7 @@ public interface IJsonNames {
 	String PRIORITY = "priority";
 	String PRODUCT_ID = "productId";
 	String PROJECT = "project";
+	String PROJECT_HOLDER = "projectHolder";
 	String PROMO = "promo";
 	String PROVINCE = "province";
 	String PURCHASES_RATIO = "purchasesRatio";
@@ -255,6 +257,7 @@ public interface IJsonNames {
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
 	String REPLACEMENT = "replacement";
+	String RESERVATION = "reservation";
 	String RESULT = "result";
 	String RETENTION = "retention";
 	String RETURNED = "returned";
@@ -289,6 +292,7 @@ public interface IJsonNames {
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";
 	// ---------------------------------------------------------------------------------------------	[T] 
+	String TAS = "tas";
 	String TASK = "task";
 	String TASK_HOLDER = "task_holder";
 	String TAXES = "taxes";

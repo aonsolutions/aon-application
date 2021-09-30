@@ -52,6 +52,7 @@ import com.esferalia.aon.jooq.tables.records.InvoiceDetailRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceTaxRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -92,6 +93,7 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
@@ -363,9 +365,6 @@ public class InvoiceDAO {
 				,SCOPE.DESCRIPTION
 				, INVOICE_DETAIL.ID
 				,PRODUCT.CATEGORY
-				,ACCOUNT.ID
-				,ACCOUNT.CODE
-				,ACCOUNT.DESCRIPTION
 				,ITEM.ID
 			)
 			.from(INVOICE)
@@ -385,8 +384,6 @@ public class InvoiceDAO {
 			.leftOuterJoin(SELLER_ALIAS).on(SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
 			.leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
 			.leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
-			.leftOuterJoin(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL.ID.eq(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL))
-			.leftOuterJoin(ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
 			.where(INVOICE_PROPERTIES.getConditions(filter))
 			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE,INVOICE.REFERENCE_CODE,INVOICE_DETAIL.LINE)
 			.fetch();
@@ -455,6 +452,11 @@ public class InvoiceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));
 				
 				invoice.getDetails().get(i).setInvoiceTaxes(taxes);
+
+				Account acc = getInvoiceDetailAccount(ctx, invoice.getDetails().get(i).getId());
+				invoice.getDetails().get(i).setAccount(acc.getId());
+				invoice.getDetails().get(i).setAccountCode(acc.getCode());
+				invoice.getDetails().get(i).setAccountDescription(acc.getDescription());
 			}
 			
 			invoice.setFinances( FinanceDAO.getFinanceStream(ctx, prop -> prop.getInvoiceProperty().eq(id))
@@ -463,6 +465,13 @@ public class InvoiceDAO {
 			AccountingInvoiceDAO.fillBreakdown(ctx, invoice);
 		}
 		return invoice;
+	}
+
+	private static Account getInvoiceDetailAccount(AONContext ctx, Integer invoiceDetailId) {
+		return ctx.getDslContext().select().from(ACCOUNT)
+		.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
+		.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(invoiceDetailId)).limit(1)
+		.fetch().stream().map(new FullAccountFiller()).findFirst().orElse(new Account());
 	}
 	
 	public static Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId) {
@@ -696,9 +705,6 @@ public class InvoiceDAO {
 				.setWorkPlaceName(record.getValue(WORKPLACE.DESCRIPTION))
 				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))
 				.setWarehouseName(record.getValue(WAREHOUSE.NAME))
-				.setAccount(record.getValue(ACCOUNT.ID))
-				.setAccountCode(record.getValue(ACCOUNT.CODE))
-				.setAccountDescription(record.getValue(ACCOUNT.DESCRIPTION))
 				;
 		}
 		

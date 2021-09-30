@@ -59,8 +59,8 @@ public class Model193ServiceAsyncDecorator implements Model193ServiceAsync {
 	}
 
 	@Override
-	public void duplicateNextYear(String domainName, String user, Integer domain, Integer id, AsyncCallback<Mod193> callback) {
+	public void duplicateMod193(String domainName, String user, Integer domain, Mod193 mod193, AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.duplicateNextYear(domainName, user, domain, id, new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.duplicateMod193(domainName, user, domain, mod193, new AsyncCallbackWrapper<Mod193>(callback));
 	}
 }

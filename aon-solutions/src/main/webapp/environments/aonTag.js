@@ -63,6 +63,10 @@ export const AON_REG = 'aon-reg';
 export const AON_REGISTRY_LIST = 'aon-registry-list';
 export const AON_CUSTOMER = 'aon-customer';
 
+export const AON_PROJECT_PANEL = 'aon-project-panel';
+export const AON_PROJECT_LIST = 'aon-project-list';
+export const AON_PROJECT = 'aon-project';
+
 // DEV DOC
 export const AON_API_DOC = 'aon-api-doc';
 export const AON_COMPONENTS_DOC = 'aon-components-doc';

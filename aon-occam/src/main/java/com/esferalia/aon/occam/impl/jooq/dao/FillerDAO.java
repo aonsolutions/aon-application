@@ -126,23 +126,41 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FillerDAO {
 	
-	public static class DomainFiller implements Function<Record, Domain> {
+	private FillerDAO() {
+	
+	}
+	
+	public static class DomainFiller extends Filler implements Function<Record, Domain> {
 		@Override
 		public Domain apply(Record r) {
-			return buildDomain(r);
+			return build(r);
 		}
 		
-		public static Domain buildDomain(Record r) {
+		public static Domain build(Record r) {
 			return new Domain()
-					.setActive(r.getValue(DOMAIN.ACTIVE) == 1)
-					.setDescription(r.getValue(DOMAIN.DESCRIPTION))
-					.setDomainType(DomainType.values()[r.getValue(DOMAIN.TYPE)])
-					.setEnableHeredity(r.getValue(DOMAIN.ENABLEHEREDITY) == 1)
 					.setId(r.getValue(DOMAIN.ID))
-					.setOwner(r.getValue(DOMAIN.OWNER))
 					.setName(r.getValue(DOMAIN.NAME))
+					.setDescription(r.getValue(DOMAIN.DESCRIPTION))
 					.setParentId(r.getValue(DOMAIN.PARENT))
-					.setDomainManagement(r.getValue(DOMAIN.DOMAINMANAGEMENT) == 1);	
+					.setDomainType(DomainType.safeValueOf(r.getValue(DOMAIN.TYPE)))
+					.setScope(r.getValue(DOMAIN.SCOPE))
+					//.setSubDomainSuffix(r.getValue(DOMAIN.SUBDOMAINSUFFIX));
+					.setEnableHeredity(getBoolean(r, DOMAIN.ENABLEHEREDITY))
+					.setDomainManagement(getBoolean(r, DOMAIN.DOMAINMANAGEMENT))
+					//.setDisableDomainManagement(r.getValue(DOMAIN.DISABLEDOMAINMANAGEMENT))
+					//.setMaxDocumentSize(r.getValue(DOMAIN.MAXDOCUMENTSIZE))
+					//.setMaxTotalDocumentSize(r.getValue(DOMAIN.MAXTOTALDOCUMENTSIZE))
+					.setMaxDefinedUsers(r.getValue(DOMAIN.MAXDEFINEDUSERS))
+					.setActive(getBoolean(r, DOMAIN.ACTIVE))
+					.setOwner(r.getValue(DOMAIN.OWNER))
+					//.setCreationUser(r.getValue(DOMAIN.CREATION_USER))
+					//.setCreationDate(r.getValue(DOMAIN.CREATION_DATE))
+					//.setModifitionUser(r.getValue(DOMAIN.MODIFICATION_USER))
+					//.setModificationDate(r.getValue(DOMAIN.MODIFICATION_DATE))
+					//.setLastAccessUser(r.getValue(DOMAIN.LASTACCESS_USER))
+					//.setLastAccessDate(r.getValue(DOMAIN.LASTACCESS_DATE))
+					//.setExpirationDate(r.getValue(DOMAIN.EXPIRATIONDATE))
+					;	
 		}
 	}
 

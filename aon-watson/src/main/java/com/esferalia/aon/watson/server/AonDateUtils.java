@@ -33,15 +33,17 @@ public class AonDateUtils {
      */
     public static final long MILLIS_PER_DAY = 24 * MILLIS_PER_HOUR;
 
-    private final static SimpleDateFormat ORDER_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd"); 
-	private final static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy"); 
-	private final static SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-	private final static SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
+    private static final SimpleDateFormat ORDER_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd"); 
+	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy"); 
+	private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	private static final SimpleDateFormat DATE_TIME_FORMAT_AUX = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
 	
-	private final static int MODIFY_ROUND = 1;
-	private final static int MODIFY_CEILING = 2;
-	private final static int MODIFY_TRUNCATE = 0;
-	private final static int SEMI_MONTH = 1001;
+	private static final int MODIFY_ROUND = 1;
+	private static final int MODIFY_CEILING = 2;
+	private static final int MODIFY_TRUNCATE = 0;
+	private static final int SEMI_MONTH = 1001;
 	private static final int[][] fields = { { Calendar.MILLISECOND },
 			{ Calendar.SECOND }, { Calendar.MINUTE },
 			{ Calendar.HOUR_OF_DAY, Calendar.HOUR },
@@ -163,6 +165,7 @@ public class AonDateUtils {
 	 * @return
 	 */
 	public static Date getDateWithoutTime(Date date) {
+		if(date == null) return null;
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.YEAR, getYear(date));
 		c.set(Calendar.MONTH, getMonth(date));
@@ -534,6 +537,7 @@ public class AonDateUtils {
 	 * @return La hora del dia.
 	 */
     public static Integer getHour(Date date){
+    	if(date == null) return null;
     	Calendar c = Calendar.getInstance();
     	c.setTime(date);
     	return c.get(Calendar.HOUR_OF_DAY);
@@ -1029,6 +1033,10 @@ public class AonDateUtils {
 	
 	public static Date parse(String date, String pattern) {
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
+		return parse(date, format);
+	}
+	
+	public static Date parse(String date, SimpleDateFormat format) {
 		try {
 			return date == null ? null : format.parse(date);
 		} catch (ParseException e) {
@@ -1039,6 +1047,14 @@ public class AonDateUtils {
 	public static String simpleFormat(Date date) {
 		return date == null ? null : SIMPLE_DATE_FORMAT.format(date);
 	}
+	
+	public static Date parse(String date) {
+		if(date == null) return null;
+		Date d = dateTimeParse(date);
+		if(d == null) d = simpleParse(date);
+		return d;
+	}
+	
 	public static Date simpleParse(String date) {
 		try {
 			return date == null ? null : SIMPLE_DATE_FORMAT.parse(date);
@@ -1061,11 +1077,12 @@ public class AonDateUtils {
 	public static String dateTimeFormat(Date date) {
 		return date == null ? null : DATE_TIME_FORMAT.format(date);
 	}
+	
 	public static Date dateTimeParse(String date) {
 		try {
 			return date == null ? null : DATE_TIME_FORMAT.parse(date);
 		} catch (ParseException e) {
-			return null;
+			return parse(date, DATE_TIME_FORMAT_AUX);
 		}
 	}
 	

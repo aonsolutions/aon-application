@@ -251,9 +251,9 @@ public class FiscalImpl implements IFiscal {
 				configuration -> Mod193DAO.changeStatus(ctx, mod193, newStatus));		
 	}
 	@Override
-	public Mod193 duplicateNextYearMod193(AONContext ctx, Integer id) {
+	public Mod193 duplicateMod193(AONContext ctx, Mod193 mod193) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> Mod193DAO.duplicateNextYear(ctx, id));		
+				configuration -> Mod193DAO.duplicate(ctx, mod193));		
 	}
 	// ----------------------------------------------------------- [MODELO 184]
 	@Override
@@ -1563,6 +1563,11 @@ public class FiscalImpl implements IFiscal {
 	public String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) {
 		return Mod349DAO.getMod349Info(ctx, mod349, detail, infoKey);
 	}
+	@Override
+	public Mod349 duplicateMod349(AONContext ctx, Mod349 mod349) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod349DAO.duplicate(ctx, mod349));
+	}
 	
 	// ---------------------------------------------------- [MODELO 347]
 		@Override
@@ -1607,9 +1612,9 @@ public class FiscalImpl implements IFiscal {
 			return Mod347DAO.getMod347Info(ctx, mod347, declared, infoKey);
 		}
 		@Override
-		public Mod347 duplicateNextYearMod347(AONContext ctx, Integer id) {
+		public Mod347 duplicateMod347(AONContext ctx, Mod347 mod347) {
 			return ctx.getDslContext().transactionResult(
-					configuration -> Mod347DAO.duplicateNextYear(ctx, id));		
+					configuration -> Mod347DAO.duplicate(ctx, mod347));		
 		}		
 		
 		// ---------------------------------------------------- [IRPF]

@@ -4,7 +4,7 @@ import { MSG, TAG } from '../../../environments/environments.js';
 import { DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import { AonToolbar } from '../../../components/aon-toolbar.js';
 import { AonCard } from '../../../components/aon-card.js';
-import { setAttributes } from '../../../services/utils.js';
+import { setAttributes } from '../../../services/utilsComponents.js';
 import { AonViewer } from '../../../components/aon-viewer.js';
 
 export class AonMobileDocumentAyudat extends AonDocumentAyudat {

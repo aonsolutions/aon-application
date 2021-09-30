@@ -4,10 +4,7 @@ import { firstLetters } from "../../signin/time-control/utils.js";
 import { getEmployeeSalaries, getEnterpriseSalaries, getPeriodLaboral, getWorkplaceCCCs, getAllEmployeesWorkplace } from "../../../services/service.js";
 import {  PRESENCE_FILTER } from "../../signin/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
-import { AonToolbar } from "../../../components/aon-toolbar.js";
-import { ToolbarType } from "../../../models/enums.js";
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
-import * as ACTION from '../../actions.js';
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 

@@ -412,11 +412,11 @@ public class SecurityDAO {
 	}
 	
 	private static void deleteUserTaskHolder(AONContext ctx, User user) {
-		TaskHolder taskHolder = TaskOldDAO.getTaskHolder(ctx, f -> f.getUserIdProperty().eq(user.getId()));
-		if(taskHolder.getId() != null) {
-			taskHolder.setActive(false);
-			taskHolder.setUserId(null);
-			TaskOldDAO.save(ctx, taskHolder);
+		TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getUserIdProperty().eq(user.getId()));
+		if(th.getId() != null) {
+			th.setActive(false);
+			th.setUserId(null);
+			TaskHolderDAO.save(ctx, th);
 		}
 	}
 	private static void deleteUserAppRoles(AONContext ctx, User user) {

@@ -25,6 +25,10 @@ public class ProjectCommercial extends Project implements Serializable{
 	
 	}
 
+	public ProjectCommercial copy(Project project) {
+		return super.copy( project, this);
+	}
+	
 	public Integer getTarget() {
 		return target;
 	}

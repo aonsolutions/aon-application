@@ -5203,7 +5203,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		assertEquals(2, tramosBases.size());
 		
-		int monthDays = 30; //get(endDate, Calendar.DAY_OF_MONTH);
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 
 		Dato _2 = 
 		tramosBases.get(0).getDatosTramo().
@@ -5216,7 +5216,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		getDato().stream().filter(d -> d.getCodigo().equals("537"))
 		.findFirst().orElseThrow( () -> new AssertionFailedError("") );
 		;
-		Assert.assertEquals(Integer.toString(( int ) (6900 * (int) ( 10.00 / monthDays * 12 )) )    ,_537.getValor() );
+		
+		Assert.assertEquals(Long.toString(Math.round( 6900.00 * 10.00 / monthDays * 12 ))    ,_537.getValor() );
 		
 	}
 

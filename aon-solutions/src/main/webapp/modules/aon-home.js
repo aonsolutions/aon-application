@@ -5,7 +5,7 @@ import { AonMenu } from './aon-menu.js';
 import { AonNewMobileHeader } from './aon-new-mobile-header.js';
 import { AonNewMobileMenu } from './aon-new-mobile-menu.js';
 
-import { CSS, MATERIAL_ICONS, TAG } from '../environments/environments.js'; 
+import { CSS, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js'; 
 
 
 export class AonHome extends AonElement {
@@ -40,27 +40,23 @@ export class AonHome extends AonElement {
 	}
 
 	build() {
+		let aonMenu = new AonMenu();
+		aonMenu.id = this.AON_MENU;
+		aonMenu.className = CSS.AON_MENU;
+
 		let aonShowMenu = this.createElement(TAG.SPAN);
 		aonShowMenu.id = this.AON_SHOW_MENU;
 		aonShowMenu.className = CSS.AON_SHOW_MENU;
-		aonShowMenu.addEventListener('mouseover', () => {
-			if(localStorage.getItem('aon_domain_id')){
-				let aonMenuSidenav = document.getElementById('aonMenuSidenav');
-				aonMenuSidenav.style.transitionDuration = '0ms';
-				aonMenuSidenav.style.width = '150px';
-				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
-					item.style.display = 'inline-block';
-					item.style.fontSize = '12px';
-					item.style.fontFamily = 'Roboto,sans-serif';
-					item.style.color = 'black';
-				});
-			}
+		aonShowMenu.addEventListener(EVENT.CLICK, () => {
+			if(localStorage.getItem('aon_domain_id'))
+				aonMenu.toogle();
 		});
 
 		let aonShowMenuButton = new AonIconButton();
 		aonShowMenuButton.id = this.AON_SHOW_MENU_BUTTON
 		aonShowMenuButton.icon = MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
 		aonShowMenuButton.noHover = true;
+		aonShowMenuButton.title = "Mostrar Menu";
 		aonShowMenu.appendChild(aonShowMenuButton);
 		this.appendChild(aonShowMenu);
 
@@ -68,9 +64,7 @@ export class AonHome extends AonElement {
 		aonHeader.id = this.AON_HEADER;
 		this.appendChild(aonHeader);
 
-		let aonMenu = new AonMenu();
-		aonMenu.id = this.AON_MENU;
-		aonMenu.className = CSS.AON_MENU;
+
 		this.appendChild(aonMenu);
 
 		let rootPanel = this.createElement(TAG.DIV);

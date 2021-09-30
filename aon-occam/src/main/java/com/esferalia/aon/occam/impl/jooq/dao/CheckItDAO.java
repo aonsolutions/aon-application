@@ -67,7 +67,7 @@ public class CheckItDAO {
 	
 	public static boolean saveCheckItEnterpriseId(String domainName, Integer domainId, String user, Integer checkItEnterpriseid) {
 		
-		if (checkItEnterpriseid == null)
+		if (checkItEnterpriseid == null || checkItEnterpriseid == 0)
 			return false;
 		
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
@@ -152,7 +152,7 @@ public class CheckItDAO {
 			.stream()
 			.map( r -> r.get(lot))
 			.findFirst()
-			.orElse(1);
+			.orElse(0) + 1;
 	}
 
 	public static Date getLastOperationDateDB(AONContext aonContext, Integer domainId, RegistryBank rbank) {
@@ -184,7 +184,7 @@ public class CheckItDAO {
 		}
 
 		if (maxId == null && lastOperationDate == null) {
-			lastOperationDate = cleanDate(1, Calendar.JANUARY, Calendar.getInstance().get(Calendar.YEAR));
+			lastOperationDate = cleanDate(31, Calendar.DECEMBER, Calendar.getInstance().get(Calendar.YEAR) - 1);
 		}
 		return lastOperationDate;
 	}

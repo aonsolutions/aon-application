@@ -38,7 +38,7 @@ public class TaskHolderDAO {
 	}
 
 	
-	public static class TaskHolderFiller implements Function<Record, TaskHolder> {
+	public static class TaskHolderFiller extends Filler implements Function<Record, TaskHolder> {
 
 		@Override
 		public TaskHolder apply(Record r) {
@@ -49,7 +49,7 @@ public class TaskHolderDAO {
 			if(registry == null) registry = REGISTRY;
 			return new TaskHolder()
 					.copy(RegistryFiller.build(r, registry))
-					.setActive(r.getValue(TASK_HOLDER.ACTIVE) == (byte) 1)
+					.setActive(getBoolean(r, TASK_HOLDER.ACTIVE))
 					.setCostProfile(r.getValue(TASK_HOLDER.COST_PROFILE))
 					.setType(TaskHolderType.safeValueOf(r.getValue(TASK_HOLDER.TYPE)))
 					.setUserId(r.getValue(TASK_HOLDER.USER_ID));

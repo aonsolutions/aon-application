@@ -1,11 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.ProjectCommercial.PROJECT_COMMERCIAL;
 import static com.esferalia.aon.jooq.tables.ProjectReservation.PROJECT_RESERVATION;
 import static com.esferalia.aon.jooq.tables.ProjectType.PROJECT_TYPE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -33,7 +33,10 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO.ProjectTypeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.ProjectAutoComplete;
+import com.esferalia.aon.occam.impl.jooq.validation.ProjectValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class ProjectDAO {
@@ -52,17 +55,17 @@ public class ProjectDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT.ID);} 
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.ACTIVE);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT.ALIAS);}
-		@Override public Property<Byte> getCommercialProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.COMMERCIAL);}
-		@Override public Property<Date> getDateProperty() {return new FilterDAO.PropertyDAO<Date>(PROJECT.DATE);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT.DOMAIN);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT.NAME);}
-		@Override public Property<Integer> getProjectTypeProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT.PROJECT_TYPE);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT.REGISTRY);}
-		@Override public Property<Byte> getReservationProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.RESERVATION);}
-		@Override public Property<Byte> getTasProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT.TAS);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.ID);} 
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.ACTIVE);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.ALIAS);}
+		@Override public Property<Byte> getCommercialProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.COMMERCIAL);}
+		@Override public Property<Date> getDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.DATE);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.NAME);}
+		@Override public Property<Integer> getProjectTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.PROJECT_TYPE);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.REGISTRY);}
+		@Override public Property<Byte> getReservationProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.RESERVATION);}
+		@Override public Property<Byte> getTasProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.TAS);}
 	}
 	
 	protected static class ProjectCommercialPropertiesDAO implements ProjectCommercialProperties {
@@ -72,17 +75,17 @@ public class ProjectDAO {
 			return new Condition[] { filterDAO.getCondition() };
 		}
 		
-		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_COMMERCIAL.PROJECT);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_COMMERCIAL.DOMAIN);}
-		@Override public Property<Integer> getTargetProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_COMMERCIAL.TARGET);}
-		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_COMMERCIAL.SELLER);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_COMMERCIAL.COMMENTS);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_COMMERCIAL.SOURCE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_COMMERCIAL.STATUS);}
-		@Override public Property<Date> getStatusDateProperty() {return new FilterDAO.PropertyDAO<Date>(PROJECT_COMMERCIAL.STATUS_DATE);}
-		@Override public Property<Integer> getProbabilityProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_COMMERCIAL.PROBABILITY);}
-		@Override public Property<Date> getDateProperty() {return new FilterDAO.PropertyDAO<Date>(PROJECT.DATE);}
-		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT.NAME);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_COMMERCIAL.PROJECT);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_COMMERCIAL.DOMAIN);}
+		@Override public Property<Integer> getTargetProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_COMMERCIAL.TARGET);}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_COMMERCIAL.SELLER);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_COMMERCIAL.COMMENTS);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_COMMERCIAL.SOURCE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_COMMERCIAL.STATUS);}
+		@Override public Property<Date> getStatusDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_COMMERCIAL.STATUS_DATE);}
+		@Override public Property<Integer> getProbabilityProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_COMMERCIAL.PROBABILITY);}
+		@Override public Property<Date> getDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.DATE);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.NAME);}
 	}
 	
 	protected static class ProjectReservationPropertiesDAO implements ProjectReservationProperties {
@@ -91,52 +94,52 @@ public class ProjectDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_RESERVATION.PROJECT);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_RESERVATION.DOMAIN);}
-		@Override public Property<Integer> getHotelProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_RESERVATION.HOTEL);}
-		@Override public Property<Integer> getHotelReservationProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_RESERVATION.HOTEL_RESERVATION);}
-		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CODE);}
-		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<Date>(PROJECT_RESERVATION.START_DATE);}
-		@Override public Property<Timestamp> getStartTimeProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PROJECT_RESERVATION.START_TIME);}
-		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<Date>(PROJECT_RESERVATION.END_DATE);}
-		@Override public Property<Timestamp> getEndTimeProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PROJECT_RESERVATION.END_TIME);}
-		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_RESERVATION.SELLER);}
-		@Override public Property<Integer> getAgencyProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_RESERVATION.AGENCY);}
-		@Override public Property<Double> getAgencyCommissionPercentProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.AGENCY_COMMISSION_PERCENT);}
-		@Override public Property<Double> getAgencyCommissionAmountProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.AGENCY_COMMISSION_AMOUNT);}
-		@Override public Property<Byte> getAgencyRebateProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.AGENCY_REBATE);}
-		@Override public Property<Integer> getCompanyProperty() {return new FilterDAO.PropertyDAO<Integer>(PROJECT_RESERVATION.COMPANY);}
-		@Override public Property<Double> getDiscountPercentProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.DISCOUNT_PERCENT);}
-		@Override public Property<Double> getDiscountAmountProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.DISCOUNT_AMOUNT);}
-		@Override public Property<Byte> getBookingHolderProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.BOOKING_HOLDER);}
-		@Override public Property<Double> getTaxableBaseProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.TAXABLE_BASE);}
-		@Override public Property<Double> getVatQuotaProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.VAT_QUOTA);}
-		@Override public Property<Double> getOtherTaxQuotaProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.OTHER_TAX_QUOTA);}
-		@Override public Property<Double> getTotalProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.TOTAL);}
-		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.COMMENTS);}
-		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.REMARKS);}
-		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.SOURCE);}
-		@Override public Property<String> getCrsCodeProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CRS_CODE);}
-		@Override public Property<Double> getAdvanceProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.ADVANCE);}
-		@Override public Property<Byte> getAdvanceInvoicedProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.ADVANCE_INVOICED);}
-		@Override public Property<Byte> getEarlyCheckOutProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.EARLY_CHECK_OUT);}
-		@Override public Property<Byte> getPrepayProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.PREPAY);}
-		@Override public Property<String> getBankTransactionProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.BANK_TRANSACTION);}
-		@Override public Property<String> getCreditCardNumberProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_NUMBER);}
-		@Override public Property<String> getCreditCardExpirationMonthProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_EXPIRATION_MONTH);}
-		@Override public Property<String> getCreditCardExpirationYearProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREDIT_CARD_EXPIRATION_YEAR);}
-		@Override public Property<String> getPenaltyValueProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.PENALTY_VALUE);}
-		@Override public Property<Byte> getTouristTaxFreeProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.TOURIST_TAX_FREE);}
-		@Override public Property<Byte> getCheckStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.CHECK_STATUS);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PROJECT_RESERVATION.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PROJECT_RESERVATION.MODIFICATION_DATE);}
-		@Override public Property<String> getCancellationUserProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.CANCELLATION_USER);}
-		@Override public Property<Timestamp> getCancellationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PROJECT_RESERVATION.CANCELLATION_DATE);}
-		@Override public Property<String> getTokenProperty() {return new FilterDAO.PropertyDAO<String>(PROJECT_RESERVATION.TOKEN);}
-		@Override public Property<Double> getPenaltyAmountProperty() {return new FilterDAO.PropertyDAO<Double>(PROJECT_RESERVATION.PENALTY_AMOUNT);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(PROJECT_RESERVATION.STATUS);}
+		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.PROJECT);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.DOMAIN);}
+		@Override public Property<Integer> getHotelProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.HOTEL);}
+		@Override public Property<Integer> getHotelReservationProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.HOTEL_RESERVATION);}
+		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CODE);}
+		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.START_DATE);}
+		@Override public Property<Timestamp> getStartTimeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.START_TIME);}
+		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.END_DATE);}
+		@Override public Property<Timestamp> getEndTimeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.END_TIME);}
+		@Override public Property<Integer> getSellerProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.SELLER);}
+		@Override public Property<Integer> getAgencyProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.AGENCY);}
+		@Override public Property<Double> getAgencyCommissionPercentProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.AGENCY_COMMISSION_PERCENT);}
+		@Override public Property<Double> getAgencyCommissionAmountProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.AGENCY_COMMISSION_AMOUNT);}
+		@Override public Property<Byte> getAgencyRebateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.AGENCY_REBATE);}
+		@Override public Property<Integer> getCompanyProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.COMPANY);}
+		@Override public Property<Double> getDiscountPercentProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.DISCOUNT_PERCENT);}
+		@Override public Property<Double> getDiscountAmountProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.DISCOUNT_AMOUNT);}
+		@Override public Property<Byte> getBookingHolderProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.BOOKING_HOLDER);}
+		@Override public Property<Double> getTaxableBaseProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.TAXABLE_BASE);}
+		@Override public Property<Double> getVatQuotaProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.VAT_QUOTA);}
+		@Override public Property<Double> getOtherTaxQuotaProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.OTHER_TAX_QUOTA);}
+		@Override public Property<Double> getTotalProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.TOTAL);}
+		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.COMMENTS);}
+		@Override public Property<String> getRemarksProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.REMARKS);}
+		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.SOURCE);}
+		@Override public Property<String> getCrsCodeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CRS_CODE);}
+		@Override public Property<Double> getAdvanceProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.ADVANCE);}
+		@Override public Property<Byte> getAdvanceInvoicedProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.ADVANCE_INVOICED);}
+		@Override public Property<Byte> getEarlyCheckOutProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.EARLY_CHECK_OUT);}
+		@Override public Property<Byte> getPrepayProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.PREPAY);}
+		@Override public Property<String> getBankTransactionProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.BANK_TRANSACTION);}
+		@Override public Property<String> getCreditCardNumberProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CREDIT_CARD_NUMBER);}
+		@Override public Property<String> getCreditCardExpirationMonthProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CREDIT_CARD_EXPIRATION_MONTH);}
+		@Override public Property<String> getCreditCardExpirationYearProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CREDIT_CARD_EXPIRATION_YEAR);}
+		@Override public Property<String> getPenaltyValueProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.PENALTY_VALUE);}
+		@Override public Property<Byte> getTouristTaxFreeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.TOURIST_TAX_FREE);}
+		@Override public Property<Byte> getCheckStatusProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CHECK_STATUS);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.MODIFICATION_DATE);}
+		@Override public Property<String> getCancellationUserProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CANCELLATION_USER);}
+		@Override public Property<Timestamp> getCancellationDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CANCELLATION_DATE);}
+		@Override public Property<String> getTokenProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.TOKEN);}
+		@Override public Property<Double> getPenaltyAmountProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.PENALTY_AMOUNT);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.STATUS);}
 		@Override public Property<Timestamp> getPenaltyDateProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.PENALTY_DATE);}
 		@Override public Property<String> getCreditCardTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT_RESERVATION.CREDIT_CARD_TYPE);}
 	}
@@ -150,23 +153,32 @@ public class ProjectDAO {
 			.where(PROJECT_PROPERTIES.getConditions(filter));
 	}
 	
+	public static Project get(AONContext ctx, ProjectFilter filter){
+		return select(ctx, filter).limit(1).fetch().stream().map(new ProjectFiller())
+				.findFirst().orElse(new Project());
+	}
+	
 	public static Stream<Project> getStream(AONContext ctx, ProjectFilter filter){
 		return select(ctx, filter).fetch().stream().map(new ProjectFiller());
 	}
 	
-	@Deprecated
+	public static Stream<Project> getStream(AONContext ctx, ProjectFilter filter, Integer page, Integer perPage){
+		return select(ctx, filter)
+			.limit(perPage).offset(perPage * (page -1))
+			.fetch().stream().map(new ProjectFiller());
+	}
+	
+	/**
+	 * @deprecated  Replaced by getStream(AONContext ctx, ProjectFilter filter) 
+	 * 	or getStream(AONContext ctx, ProjectFilter filter, Integer page, Integer perPage) 
+	 */
+	@Deprecated(forRemoval = true )
 	public static Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter){
 		return ctx.getDslContext()
 				.select().from(PROJECT).where(PROJECT_PROPERTIES.getConditions(filter))
 				.fetchInto(PROJECT).stream().map(new ProjectFiller());
 	}
 
-	public static ProjectType getProjectType(AONContext ctx, String description){
-		return ctx.getDslContext()
-				.select().from(PROJECT_TYPE).where(PROJECT_TYPE.DOMAIN.eq(ctx.getDomainId())).and(PROJECT_TYPE.DESCRIPTION.eq(description))
-				.fetchInto(PROJECT_TYPE).stream().map(new ProjectTypeFiller()).findFirst().orElse(null);
-	}
-	
 	public static ProjectReservation getProjectReservation(AONContext ctx, ProjectReservationFilter filter){	
 		return ctx.getDslContext()
 				.select().from(PROJECT_RESERVATION).where(PROJECT_RESERVATION_PROPERTIES.getConditions(filter))
@@ -186,7 +198,69 @@ public class ProjectDAO {
 				.where(PROJECT_COMMERCIAL_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new FullProjectCommercialFiller());
 	}
+
+	public static Project save(AONContext ctx, Project project){
+		if(project.isDirty()) {
+			ProjectAutoComplete.autoComplete(ctx, project);
+			ProjectValidation.validate(ctx, project);
+			
+			project = project.getId() != null
+				? update(ctx, project)
+				: insert(ctx, project);
+		}
+		if(!project.getProjectHolder().isEmpty()) {
+			project.getProjectHolder().setProject(project.getId());
+			project.setProjectHolder(ProjectHolderDAO.save(ctx, project.getProjectHolder()));
+		}
+		return project.setDirty(false);
+	}
 	
+	public static Project update(AONContext ctx, Project project){
+		ctx.getDslContext().update(PROJECT)
+				.set(PROJECT.ACTIVE, project.isActive() ? (byte) 1: (byte)0)
+				.set(PROJECT.ALIAS, project.getAlias())
+				.set(PROJECT.COMMERCIAL, project.isCommercial() ? (byte) 1: (byte)0)
+				.set(PROJECT.DATE, new Date(project.getDate().getTime()))
+				.set(PROJECT.DOMAIN, project.getDomain().getId())
+				.set(PROJECT.NAME, project.getName())
+				.set(PROJECT.PROJECT_TYPE, project.getType().getId())
+				.set(PROJECT.REGISTRY, project.getRegistry().getId())
+				.set(PROJECT.RESERVATION, project.isReservation() ? (byte) 1: (byte) 0)
+				.set(PROJECT.TAS, project.isTas() ? (byte) 1 :  (byte) 0)
+				.where(PROJECT.ID.eq(project.getId())).execute();
+		return project;
+	}
+	
+	public static Project insert(AONContext ctx, Project project){
+		Integer id =  ctx.getDslContext().insertInto(PROJECT)
+				.set(PROJECT.ACTIVE, project.isActive() ? (byte) 1: (byte)0)
+				.set(PROJECT.ALIAS, project.getAlias())
+				.set(PROJECT.COMMERCIAL, project.isCommercial() ? (byte) 1: (byte)0)
+				.set(PROJECT.DATE, new Date(project.getDate().getTime()))
+				.set(PROJECT.DOMAIN, project.getDomain().getId())
+				.set(PROJECT.NAME, project.getName())
+				.set(PROJECT.PROJECT_TYPE, project.getType().getId())
+				.set(PROJECT.REGISTRY, project.getRegistry().getId())
+				.set(PROJECT.RESERVATION, project.isReservation() ? (byte) 1: (byte) 0)
+				.set(PROJECT.TAS, project.isTas() ? (byte) 1 :  (byte) 0)
+				.returning(PROJECT.ID).fetchOne().getValue(PROJECT.ID);
+		return project.setId(id);
+	}
+	
+	public static void delete(AONContext ctx, Integer id) {
+		delete(ctx, f -> f.getIdProperty().eq(id));
+	}
+	
+	private static void delete(AONContext ctx, ProjectFilter filter) {
+		ctx.getDslContext().delete(PROJECT)
+		.where(PROJECT_PROPERTIES.getConditions(filter))
+		.execute();
+	}
+	
+	/**
+	 * @deprecated  Replaced by save(AONContext ctx, Project project) or insert(AONContext ctx, Project project) 
+	 */
+	@Deprecated(forRemoval = true )
 	public static Integer insertProject(AONContext ctx, Project project){
 		return ctx.getDslContext().insertInto(PROJECT, PROJECT.ACTIVE, PROJECT.ALIAS,
 					PROJECT.COMMERCIAL, PROJECT.DATE, PROJECT.DOMAIN, PROJECT.NAME, PROJECT.PROJECT_TYPE,
@@ -259,22 +333,6 @@ public class ProjectDAO {
 
 	}
 	
-	public static class ProjectTypeFiller extends Filler implements Function<Record, ProjectType> {
-		
-		@Override
-		public ProjectType apply(Record r) {
-			return build(r);
-		}
-		
-		public static ProjectType build(Record r) {
-			return new ProjectType()
-				.setId(r.getValue(PROJECT_TYPE.ID))
-				.setDomain(r.getValue(PROJECT_TYPE.DOMAIN))
-				.setDescription(r.getValue(PROJECT_TYPE.DESCRIPTION))
-				.setActive(getBoolean(r, PROJECT_TYPE.ACTIVE));
-		}
-	}
-	
 	public static class ProjectFiller extends Filler implements Function<Record, Project> {
 		
 		@Override
@@ -286,7 +344,7 @@ public class ProjectDAO {
 			return new Project()
 				.setId(r.getValue(PROJECT.ID))
 				.setDomain(checkField(r, DOMAIN.ID)
-					? DomainFiller.buildDomain(r)
+					? DomainFiller.build(r)
 					: new Domain().setId(r.getValue(PROJECT.DOMAIN)))
 				.setName(r.getValue(PROJECT.NAME))
 				.setRegistry(checkField(r, REGISTRY.ID)
@@ -300,7 +358,8 @@ public class ProjectDAO {
 				.setActive(getBoolean(r, PROJECT.ACTIVE))
 				.setCommercial(getBoolean(r, PROJECT.COMMERCIAL))
 				.setReservation(getBoolean(r, PROJECT.RESERVATION))
-				.setTas(getBoolean(r, PROJECT.TAS));
+				.setTas(getBoolean(r, PROJECT.TAS))
+				.setDirty(false);
 		}
 
 	}
@@ -309,26 +368,14 @@ public class ProjectDAO {
 		
 		@Override
 		public ProjectCommercial apply(Record r) {
-			ProjectCommercial pc = new ProjectCommercial();
-			pc.setActive(r.getValue(PROJECT.ACTIVE).equals(0));
-			pc.setAlias(r.getValue(PROJECT.ALIAS));
-			pc.setCommercial(r.getValue(PROJECT.COMMERCIAL).equals(0));
-			pc.setDate(r.getValue(PROJECT.DATE));
-			pc.setDomain(checkField(r, DOMAIN.ID)
-				? DomainFiller.buildDomain(r)
-				: new Domain().setId(r.getValue(PROJECT.DOMAIN)));
-			pc.setId(r.getValue(PROJECT.ID));
-			pc.setName(r.getValue(PROJECT.NAME));
-			pc.setProjectTypeId(r.getValue(PROJECT.PROJECT_TYPE));
-			pc.setProjectTypeName(r.getValue(PROJECT_TYPE.DESCRIPTION));
-			pc.setReservation(r.getValue(PROJECT.RESERVATION).equals(0));
-			pc.setTas(r.getValue(PROJECT.TAS).equals(0));
-			return pc.setTarget(r.getValue(PROJECT_COMMERCIAL.TARGET))
-					.setSeller(r.getValue(PROJECT_COMMERCIAL.SELLER))
-					.setComments(r.getValue(PROJECT_COMMERCIAL.COMMENTS))
-					.setSource(r.getValue(PROJECT_COMMERCIAL.SOURCE))
-					.setStatus(r.getValue(PROJECT_COMMERCIAL.STATUS))
-					.setStatusDate(r.getValue(PROJECT_COMMERCIAL.STATUS_DATE));	
+			return  new ProjectCommercial()
+				.copy(ProjectFiller.build(r))
+				.setTarget(r.getValue(PROJECT_COMMERCIAL.TARGET))
+				.setSeller(r.getValue(PROJECT_COMMERCIAL.SELLER))
+				.setComments(r.getValue(PROJECT_COMMERCIAL.COMMENTS))
+				.setSource(r.getValue(PROJECT_COMMERCIAL.SOURCE))
+				.setStatus(r.getValue(PROJECT_COMMERCIAL.STATUS))
+				.setStatusDate(r.getValue(PROJECT_COMMERCIAL.STATUS_DATE));	
 		}
 
 	}
@@ -337,7 +384,7 @@ public class ProjectDAO {
 		Integer project;
 		String document;
 		
-		public FixProjectCommercial() {}
+		private FixProjectCommercial() {}
 
 		public Integer getProject() {
 			return project;

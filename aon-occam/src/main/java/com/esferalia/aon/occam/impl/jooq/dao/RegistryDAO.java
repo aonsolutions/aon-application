@@ -69,7 +69,7 @@ public class RegistryDAO {
 			return new Registry() 
 					.setId(r.getValue(registry.ID))
 					.setDomain(checkField(r, DOMAIN.ID) 
-						? DomainFiller.buildDomain(r)
+						? DomainFiller.build(r)
 						: new Domain().setId(r.getValue(registry.DOMAIN)))
 					.setDocument(r.getValue(registry.DOCUMENT))
 					.setDocumentType(DocumentType.safeValueOf(r.getValue(registry.DOCUMENT_TYPE)))
@@ -96,6 +96,11 @@ public class RegistryDAO {
 			.fetch()
 			.stream()
 			.map(new RegistryFiller());
+	}
+	
+	public static Registry get(AONContext ctx, RegistryFilter filter){
+		return getStream(ctx, filter).limit(1)
+			.findFirst().orElse(new Registry());
 	}
 	
 	public static Registry get(AONContext ctx, Integer id){

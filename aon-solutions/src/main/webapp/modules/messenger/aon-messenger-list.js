@@ -3,7 +3,7 @@ import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { getTasks } from "../../services/taskService.js";
-import { setFullDate, setTime } from "../../services/utils.js";
+import { setFullDate, setTime, sortBy } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { ICON_TYPES, MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from "./MessengerEnums.js";
@@ -11,7 +11,8 @@ import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
 import { getIconJson } from "./shared/utils.js";
 import { getCustomers } from "../../services/registryService.js";
-import { getTaskHolder, getTastHolders } from "../../services/taskHolderService.js";
+import { getTaskHolder } from "../../services/taskHolderService.js";
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
@@ -51,11 +52,11 @@ export class AonMessengerList extends AonElement {
   initialize() {
     this.id = this.id || MESSENGER_VIEWS.AON_MESSENGER_LIST;
     this.TOOLBAR = this.id + "Toolbar";
+    this.INDEX = 0;
+    this.MORE = true;
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.TASK_HOLDER = this.applicationParentEl.TASK_HOLDER;
-    this.INDEX = 0;
-    this.MORE = true;
     this.KEY_VIEW = Math.random();
     this.applicationEl.setKeyView(this.KEY_VIEW);
   }
@@ -126,13 +127,13 @@ export class AonMessengerList extends AonElement {
     let btnSearch = this.applicationEl.addSearchOption();
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
       this.setFilter({...this.getFilter(), page:0, perPage:30, search:detail});
-      this.loadMoreSearch();
+      this.loadMore(true);
     });
 
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
       if(detail) {
         this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate});
-        this.loadMoreSearch();
+        this.loadMore(true);
       } 
     });
 
@@ -144,34 +145,78 @@ export class AonMessengerList extends AonElement {
     let registryEl = this.getElement("registry");
     let taskHolderEl = this.getElement("task_holder");
     let statusEl = this.getElement("status");
-    getCustomers().then(customers=>{
-      registryEl.options = JSON.stringify( customers.map(c=> ({...c, value: c.id})) );
+    getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
+      registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
     })
 
-    getTastHolders().then(ths=>{
-      taskHolderEl.options = JSON.stringify( ths.map(th=> ({...th, value: th.id})) );
+    registryEl.addEventListener(EVENT.INPUT,async({target})=>{
+        const value = target.value;
+        if(value.length > 2){
+          const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
+          registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+        }
     })
 
-    statusEl.options = JSON.stringify( TASK_STATUS_VALUE );
+    if(this.applicationParentEl)
+      this.applicationParentEl.getTaskHoldersEnterprise().then(ths=>
+        taskHolderEl.setOptions(ths)
+      );
 
+    statusEl.setOptions(TASK_STATUS_VALUE);
   }
 
-  async loadMoreSearch(){
-    let aonTable = this.getElement(this.TABLE_ID);
-    if(this.isMobile()){
-      aonTable.removeAllLi();
-    } else {
-      aonTable.removeRows();
-    }
+  async loadMore(search = false) {
 
-    await this.loadMore();
-  }
+    const application = this.getApplication();
 
-  async loadMore() {
-		let aonTable = this.getElement(this.TABLE_ID);
+    const aonTable = this.getElement(this.TABLE_ID);
+
+    if(application) application.startLoader();
+
     const datos = await this.getData();
+
     addTasks(datos);
     if(this.isMobile()){
+      if(search)aonTable.removeAllLi();
+      this.getDataMobile(datos);
+    } else {
+      if(search)aonTable.removeRows();
+      this.getDataDesktop(datos);
+    }
+
+    if(application) application.stopLoader();    
+	}
+
+  getDataDesktop(datos){
+    try {
+      let aonTable = this.getElement(this.TABLE_ID);
+      const company = LS.getCompany();
+      const document = company ? company.document: undefined;
+      datos.map((res, idx) => {
+        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+        let newTitle  =  res.title;
+        if(res.registry && res.registry.name && document !== res.registry.document) 
+          newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+  
+        let assigned = "";
+        if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
+        else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
+  
+        const newData = { 
+          ...res, 
+          newTitle,
+          assigned,
+          dateParse,
+          lettersHtml: this.getIcon(res),
+        };
+        aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
+      });
+    } catch (e) {}
+  }
+  
+  getDataMobile(datos){
+    try{
+      let aonTable = this.getElement(this.TABLE_ID);
       datos.map((res, idx) => {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
         const newTitle  = `#${res.newNumber} ${res.title}`;
@@ -182,36 +227,14 @@ export class AonMessengerList extends AonElement {
         };
         aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
       });
-    } else {
-      datos.map((res, idx) => {
-        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-        let newTitle  =  res.title;
-        if(res.registry && res.registry.name) newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
-
-        let assigned = "";
-        if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
-        else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
-
-        const newData = { 
-          ...res, 
-          newTitle,
-          assigned,
-          dateParse,
-          lettersHtml: this.getIcon(res),
-        };
-        aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
-      });
-    }
-	}
+    } catch (e) {}
+  }
 
   async getData(){
     let data = []
     try {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
-      if(this.applicationParentEl && this.applicationParentEl.cauData && this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email){
-        filter.email = this.applicationParentEl.cauData.auth.email;
-      }
       this.setFilter(filter);
       const tasks = await getTasks(filter);
       if(tasks.length == 0)
@@ -226,6 +249,7 @@ export class AonMessengerList extends AonElement {
           };
         });
       }
+      data = sortBy(data, 'id','desc');
     } catch (error) {
       console.log("error>>",error);
       this.showError(error);
@@ -263,15 +287,15 @@ export class AonMessengerList extends AonElement {
     return span.outerHTML;
   }
 
-  createIcon(icon, marginTop="11px"){
-    let i = this.createElement("i");
-    i.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
-    i.textContent = icon;
-    i.style.marginTop = marginTop;
-    i.style.position = "fixed";
-    i.style.marginLeft = "-11px";
-    return i;
-  }
+  // createIcon(icon, marginTop="11px"){
+  //   let i = this.createElement("i");
+  //   i.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
+  //   i.textContent = icon;
+  //   i.style.marginTop = marginTop;
+  //   i.style.position = "fixed";
+  //   i.style.marginLeft = "-11px";
+  //   return i;
+  // }
 
   goMessengerChat(res, idx){
     setIndexTask(idx);
