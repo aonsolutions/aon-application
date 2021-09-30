@@ -405,15 +405,15 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getTasksOffice(AonApiData api, JSONArray arr) {
-		String status = api.getParams().optString("status");
-		if(status.isEmpty() || "pending".equalsIgnoreCase(status)) {
+//		String status = api.getParams().optString("status");
+//		if(status.isEmpty() || "pending".equalsIgnoreCase(status)) {
 			Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 			AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 				Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
 				AON_SOLUTIONS.getTaskStream(domain, new User(), f -> UtilsTask.taskOfficeFilter(api, f, customer, domain))
 				.forEach(t -> arr.put(TaskJSON.toJSON(t)));
 			});
-		}
+//		}
 		return arr;
 	}
 }

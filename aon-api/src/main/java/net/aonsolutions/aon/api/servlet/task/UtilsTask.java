@@ -60,11 +60,13 @@ public class UtilsTask {
 
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
-		if("pending".equalsIgnoreCase(status)) {
-			filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
-		} else 
-			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
-		
+		if(!status.isEmpty()) {
+			if("pending".equalsIgnoreCase(status)) {
+				filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
+			} else 
+				filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
+		}
+
 		if(workgroup != null && workgroup !=0) 
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
 		else if(api.getParams().optBoolean(IJsonNames.WORKGROUP))  //TRUE = ALL
@@ -84,7 +86,7 @@ public class UtilsTask {
 			filter = filter.and(f.getRegistryProperty().eq(registry));
 		
 		if(!search.isEmpty()) {
-			Filter filter1 = filter.and(f.getDescriptionProperty().like("%" + search + "%"));
+			Filter filter1 = filter.and(f.getDescriptionProperty().like("%" + search + "%")).or(f.getRegistryNameProperty().like("%" + search + "%"));
 			Integer numberSearch = 0;
 			try { 
 				numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", ""));} 
@@ -150,8 +152,18 @@ public class UtilsTask {
 		String sender = api.getParams().optString(IJsonNames.SENDER);
 		String taskHolder = api.getParams().optString(IJsonNames.TASK_HOLDER);
 		String email = api.getParams().optString(IJsonNames.EMAIL);
+		String status = api.getParams().optString("status");
 		
-		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq(customer.getId())).and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
+		Filter filter = f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq(customer.getId()));
+//				.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
+		
+		if(!status.isEmpty()) {
+			if("pending".equalsIgnoreCase(status)) {
+				filter = filter.and(f.getStatusProperty().eq(TaskStatus.IN_PROGRESS.value()).or(f.getStatusProperty().eq(TaskStatus.PENDING.value())));
+			} else 
+				filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
+		}
+
 		
 		if(workgroup != null && workgroup !=0) 
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
@@ -159,7 +171,7 @@ public class UtilsTask {
 			filter = filter.and(f.getWorkgroupProperty().isNull());
 		
 		if(!search.isEmpty()) {
-			Filter filter1 = filter.and(f.getDescriptionProperty().like("%" + search + "%"));
+			Filter filter1 = filter.and(f.getDescriptionProperty().like("%" + search + "%")).or(f.getRegistryNameProperty().like("%" + search + "%"));
 			Integer numberSearch = 0;
 			try { 
 				numberSearch = Integer.parseInt(search.replaceAll("[^\\d]", ""));} 

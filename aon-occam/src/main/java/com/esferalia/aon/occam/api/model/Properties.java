@@ -599,6 +599,7 @@ public interface Properties {
 		Property<Byte> getPriorityProperty();
 		Property<Integer> getProjectProperty();
 		Property<Integer> getRegistryProperty();
+		Property<String> getRegistryNameProperty();
 		Property<Byte> getRepeatPeriodProperty();
 		Property<Integer> getSenderProperty();
 		Property<Byte> getSourceProperty();

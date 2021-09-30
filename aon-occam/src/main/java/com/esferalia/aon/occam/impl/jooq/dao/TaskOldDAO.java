@@ -188,6 +188,7 @@ public class TaskOldDAO {
 		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.PRIORITY);}
 		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.PROJECT);}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.REGISTRY);}
+		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<Byte> getRepeatPeriodProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.REPEAT_PERIOD);}
 		@Override public Property<Integer> getSenderProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK.SENDER);}
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK.SOURCE);}
