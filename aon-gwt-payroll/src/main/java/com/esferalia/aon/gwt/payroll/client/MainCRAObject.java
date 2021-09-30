@@ -13,7 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseCCCFilter;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class MainCRAObjectNew {
+public class MainCRAObject {
 	
 	// ------------------------------------------- Variables
 	
@@ -35,7 +35,7 @@ public class MainCRAObjectNew {
 	
 	// ------------------------------------------- Constructor
 	
-	public MainCRAObjectNew() {
+	public MainCRAObject() {
 		super();
 		
 		this.allEnterpriseCCCs = new ArrayList<>();

@@ -105,8 +105,8 @@ public class MainEntryPoint implements EntryPoint {
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRA_ENTRY_POINT)) {
 			
-			MainCRAObjectNew mainCRAObject = new MainCRAObjectNew();
-			MainCRANew mainCRA = new MainCRANew();
+			MainCRAObject mainCRAObject = new MainCRAObject();
+			MainCRA mainCRA = new MainCRA();
 			mainCRA.onModuleLoad(mainCRAObject);
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CONTRATA_ENTRY_POINT)) {
