@@ -630,9 +630,8 @@ public class Asserts {
 	public static void assertEqualsInvoiceFiscal(InvoiceFiscal expected, InvoiceFiscal actual) {
 		if (expected != null) {
 			assertEqualsNulls( "InvoiceFiscal", expected, actual);
-			assertEquals("Id", expected.getId(), actual.getId());
-			assertEquals("Domain", expected.getDomain(), actual.getDomain());
 			assertEquals("Invoice", expected.getInvoice(), actual.getInvoice());
+			assertEquals("Domain", expected.getDomain(), actual.getDomain());
 			for (VATTaxRegime vatRegime : VATTaxRegime.values()) {
 				assertEquals("InvoiceFiscal " + vatRegime.getName(),expected.isVatRegimeEnabled(vatRegime),actual.isVatRegimeEnabled(vatRegime));	
 			}

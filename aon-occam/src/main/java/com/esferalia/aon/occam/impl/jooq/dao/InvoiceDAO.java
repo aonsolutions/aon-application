@@ -589,7 +589,7 @@ public class InvoiceDAO {
 				.setTotal(r.getValue(INVOICE.TOTAL))	
 				.setComments(r.getValue(INVOICE.COMMENTS))
 				.setStatus(r.getValue(INVOICE.STATUS))
-				.setFiscal(checkField(r, INVOICE_FISCAL.ID)
+				.setFiscal(checkField(r, INVOICE_FISCAL.INVOICE)
 						? InvoiceFiscalDAO.InvoiceFiscalFiller.buildInvoiceFiscal(r)
 						: new InvoiceFiscal())
 				.setCreationDate(r.getValue(INVOICE.CREATION_DATE))
@@ -969,7 +969,7 @@ public class InvoiceDAO {
 		invoice.setId(record.getValue(INVOICE.ID));
 		ctx.log().debug("INSERT INVOICE invoice: {0} Act: {1}",invoice.getId(),invoice.getActivity());
 		insertDetails(ctx, config, invoice);
-		InvoiceFiscalDAO.insertInvoiceFiscal(ctx, config, invoice);
+		InvoiceFiscalDAO.save(ctx, config, invoice);
 		return invoice; 
 	}
 	
@@ -1096,18 +1096,21 @@ public class InvoiceDAO {
 			.where(INVOICE.ID.equal( invoice.getId()))
 			.execute();
 		ctx.log().debug("UPDATE INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
+		InvoiceFiscalDAO.save(ctx, config, invoice);
 		updateDetails(ctx, config, invoice);
 		return invoice; 
 	}
 	
 	private static void updateDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {
-		for (InvoiceDetail detail : invoice.getDetails()) {
-			if (detail.isDeleted()) {
-				Integer id = detail.getId() * -1;
-				detail.setId(id);
-				deleteDetail(ctx,config,invoice,detail);
-			} else {
-				insertDetail(ctx, config, invoice, detail);
+		if (invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				if (detail.isDeleted()) {
+					Integer id = detail.getId() * -1;
+					detail.setId(id);
+					deleteDetail(ctx,config,invoice,detail);
+				} else {
+					insertDetail(ctx, config, invoice, detail);
+				}
 			}
 		}
 	}

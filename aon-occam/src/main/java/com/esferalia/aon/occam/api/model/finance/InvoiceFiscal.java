@@ -1,25 +1,19 @@
 package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 
 public class InvoiceFiscal implements Serializable {
 	
 	private static final long serialVersionUID = -1911682283856222146L;
 	
-	private Integer id;
-	private Integer domain;
 	private Integer invoice;
+	private Integer domain;
+	private Date issueDate;
+	private Date taxDate;
 	private HashMap<VATTaxRegime,Boolean> vatRegimes;
 	
-	
-	public Integer getId() {
-		return id;
-	}
-	public InvoiceFiscal setId(Integer id) {
-		this.id = id;
-		return this;
-	}
 	
 	public Integer getInvoice() {
 		return invoice;
@@ -34,6 +28,22 @@ public class InvoiceFiscal implements Serializable {
 	}
 	public InvoiceFiscal setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
+	}
+	
+	public Date getIssueDate() {
+		return issueDate;
+	}
+	public InvoiceFiscal setIssueDate(Date issueDate) {
+		this.issueDate = issueDate;
+		return this;
+	}
+	
+	public Date getTaxDate() {
+		return taxDate;
+	}
+	public InvoiceFiscal setTaxDate(Date taxDate) {
+		this.taxDate = taxDate;
 		return this;
 	}
 	

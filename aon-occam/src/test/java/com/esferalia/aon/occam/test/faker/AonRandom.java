@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.test.faker;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -133,7 +134,13 @@ public class AonRandom {
         		:null;
     }
     public static Date today( ) {
-    	return truncate( new Date());
+    	return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    public static Date yesterday( ) {
+    	return Date.from(LocalDate.now().plusDays(-1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    public static Date tomorrow( ) {
+    	return Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
     
     public static Date getFutureDate( int threshold ) {

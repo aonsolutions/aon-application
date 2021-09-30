@@ -1647,6 +1647,17 @@ public class AON {
 		}
 	}
 	
+	public static Invoice updateInvoice(String domainName, Integer domainId, String login, Invoice invoice){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().updateInvoice(ctx, invoice);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static InvoiceDetail insertInvoiceDetail(String domainName, Integer domainId, String login, InvoiceDetail invoiceDetail){
 		AONContext ctx = null;
 		try {
