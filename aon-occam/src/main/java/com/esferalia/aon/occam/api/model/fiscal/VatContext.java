@@ -48,6 +48,7 @@ public class VatContext implements Serializable {
 	private boolean farmerRegime;
 	
 	private boolean vatImportation;
+	private boolean duaLinked;
 	
 	private double base;
 	private double percentage;
@@ -286,6 +287,14 @@ public class VatContext implements Serializable {
 	}
 	public VatContext setVatImportation(boolean vatImportation) {
 		this.vatImportation = vatImportation;
+		return this;
+	}
+	
+	public boolean hasDuaLinked() {
+		return duaLinked;
+	}
+	public VatContext setDuaLinked(boolean duaLinked) {
+		this.duaLinked = duaLinked;
 		return this;
 	}
 	

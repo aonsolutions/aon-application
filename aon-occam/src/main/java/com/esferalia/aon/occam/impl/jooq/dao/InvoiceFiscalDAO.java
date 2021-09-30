@@ -19,6 +19,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceFiscalDAO {
 	
@@ -181,7 +182,11 @@ public class InvoiceFiscalDAO {
 				
 				@Override
 				public void visitVatImportation() {
-					invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, invoice.isVatImportation());
+					if (invoice.isVatImportationAvailable() && AonMathUtils.isLessThan(invoice.getTotal(), 150.00 )) {
+						invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, invoice.isVatImportation());
+					} else {
+						invoice.ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, false);
+					}
 				}
 			};
 			for (VATTaxRegime vatTaxRegime : VATTaxRegime.values()) {

@@ -640,8 +640,7 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isVatImportationAvailable() {
 		return (isExtracommunity() || isCanCeuMel()) 
 				&& (isPurchase() || isExpenses()) 	 
-				&& !isService() 
-				&& !isInvestment()
+				&& !isService()
 			;
 	}
 	
