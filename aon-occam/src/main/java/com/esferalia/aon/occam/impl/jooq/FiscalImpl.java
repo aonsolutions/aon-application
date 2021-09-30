@@ -1563,6 +1563,11 @@ public class FiscalImpl implements IFiscal {
 	public String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) {
 		return Mod349DAO.getMod349Info(ctx, mod349, detail, infoKey);
 	}
+	@Override
+	public Mod349 duplicateMod349(AONContext ctx, Mod349 mod349) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod349DAO.duplicate(ctx, mod349));
+	}
 	
 	// ---------------------------------------------------- [MODELO 347]
 		@Override

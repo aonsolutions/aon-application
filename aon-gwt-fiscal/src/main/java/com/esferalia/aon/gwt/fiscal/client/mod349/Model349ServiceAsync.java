@@ -20,5 +20,6 @@ public interface Model349ServiceAsync {
 	void saveCommentsMod349(String domainName, String user, Mod349 mod349,AsyncCallback<Mod349> asyncCallback);
 	void changeStatusMod349(String domainName, String user, Mod349 mod349, FiscalStatus newStatus, AsyncCallback<Mod349> callback);
 	void getInfo(String domainName, String user, int domain, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback);
+	void duplicateMod349(String domainName, String user, int domain, Mod349 mod349,AsyncCallback<Mod349> callback);
 
 }

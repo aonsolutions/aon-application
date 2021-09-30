@@ -396,6 +396,7 @@ public interface IFiscal {
 	public Mod349 saveCommentsMod349(AONContext ctx, Mod349 mod349);
 	public Mod349 changeStatusMod349(AONContext ctx, Mod349 mod349, FiscalStatus newStatus);
 	public String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey);
+	public Mod349 duplicateMod349(AONContext ctx,Mod349 mod349);
 
 	// 						SII
 	Stream<VatContext> getSiiVatContext(AONContext ctx, AccountingReportParams params, String sii);

@@ -3029,6 +3029,18 @@ public class FISCAL {
 		}
 	}
 	
+	public static Mod349 duplicateMod349(String domainName, int domainId,
+			String user, Mod349 mod349) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFiscal().duplicateMod349(ctx, mod349);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	// ----------------------------------MODELO 347
 		public static LinkedList<Mod347> getMod347s(String domainName, int domainId,
 				String user) {

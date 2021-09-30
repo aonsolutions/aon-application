@@ -138,8 +138,12 @@ public class Mod349DAO {
 			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
 		}
 	}
-
+	
 	private static Mod349 insert(AONContext ctx, Mod349 mod349) {
+		return insert(ctx, mod349, true);
+	}
+
+	private static Mod349 insert(AONContext ctx, Mod349 mod349, boolean generateDetails) {
 		validate(ctx,mod349);
 		FsMod349Record record = ctx.getDslContext().insertInto(FS_MOD349)
 			.set(FS_MOD349.DOMAIN,mod349.getDomain())
@@ -166,8 +170,10 @@ public class Mod349DAO {
 		.returning(FS_MOD349.ID)
 		.fetchOne();
 		mod349.setId(record.getId());
-		// Se rellena el modelo leyendo de las facturas intracomunitarias
-		insertDetailsFromInvoice(ctx, mod349);
+		if (generateDetails) {
+			// Se rellena el modelo leyendo de las facturas intracomunitarias
+			insertDetailsFromInvoice(ctx, mod349);
+		}
 		return mod349;
 	}
 
@@ -770,5 +776,25 @@ public class Mod349DAO {
 		
 	}
 	
+	public static Mod349 duplicate(AONContext ctx, Mod349 mod349) {
+		
+		int id = mod349.getId();
+		mod349.setId(null);
+		mod349.setDiffEnabled(false);
+		mod349 = insert(ctx, mod349, false);
+		
+		if (!mod349.isComplementary()) {
+			Mod349 original = getById(ctx, id);
+			for (Mod349Detail detail : original.getDetails()) {
+				detail.setId(null);
+				detail.setMod349(mod349.getId());
+				detail.setDeclared(0.0);
+				detail.setAccumulated(0.0);				
+				mod349.getDetails().add(detail);
+			}
+		}
+		return save(ctx, mod349);		
+	
+	}
 	
 }
