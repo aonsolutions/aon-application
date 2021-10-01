@@ -1441,8 +1441,13 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 
 		if (getOptions().isJournalTabVisible()) {
 			SimpleLayoutPanel journalPanelContainer = new SimpleLayoutPanel();
-			journalPanel = new JournalPanelReport(getOptions().getDomainName(), getOptions().getUser()
-					, getOptions().getDomain(), getOptions().getConfiguration());
+			AccountingReportModuleOptions reportOptions = new AccountingReportModuleOptions()
+					.setDomainName(getOptions().getDomainName())
+					.setDomain(getOptions().getDomain())
+					.setUser(getOptions().getUser())
+					.setConfiguration(getOptions().getConfiguration())
+					.setDontRunOnOpen(true);
+			journalPanel = new JournalPanelReport(reportOptions);
 			journalPanel.addSelectionHandler(new AccountEntrySelectionHandler() {
 				@Override
 				public void onSelection(AccountEntrySelectionEvent event) {
@@ -1470,6 +1475,9 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			public void onSelection(SelectionEvent<Integer> event) {
 				minimizedByUser = false;
 				openFootPanelIfNeeded();
+				if (AonNumberUtils.equals( event.getSelectedItem(),journalTabIndex)) {
+					journalPanel.run();
+				}
 			}
 		});
 		return footPanel; 
@@ -1526,7 +1534,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		});
 		toolbar.add(remove);
 		
-		specialUpdate  = new AonToolbarButton( AON.MSG.specialUpdate(), AON.CSS.aonIconWrench() );
+		specialUpdate  = new AonToolbarButton( AON.MSG.specialUpdate(), AON.CSS.aonIconDataSettings() );
 		specialUpdate.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

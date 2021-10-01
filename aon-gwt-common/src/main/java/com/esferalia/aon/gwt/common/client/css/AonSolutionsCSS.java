@@ -39,6 +39,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_settings")
 	String aonIconSettings();
 	
+	@ClassName("aon_icon_data_settings")
+	String aonIconDataSettings();
+
 	@ClassName("aon_icon_filter")
 	String aonIconFilter();
 	
