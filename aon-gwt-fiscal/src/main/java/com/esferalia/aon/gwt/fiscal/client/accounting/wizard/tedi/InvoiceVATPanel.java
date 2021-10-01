@@ -24,7 +24,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -63,6 +62,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	private FlowPanel withholdingLabelCell;
 	private FlowPanel prepaymentLabelCell;
 	
+	private FlowPanel buttonsRow;
 	private AonTableButton addButton;
 	
 	private class InvestAssetListBox extends ListBox {
@@ -123,8 +123,9 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		tab.getElement().getStyle().setBackgroundColor(EditableInvoicePanel.INNER_BACKGROUND_COLOR);
 		this.setWidget(tab);
 		paintHeader();
+		paintButtonsRow();
 		paintRows();
-		paintButtons();
+		// paintButtons();
 	}
 
 	private void paintHeader() {
@@ -176,13 +177,14 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		cell.add(widget);
 		return cell;
 	}
-
-	private void paintButtons() {
-		
-		FlowPanel buttonsRow = new FlowPanel();
+	private void paintButtonsRow() {
+		buttonsRow = new FlowPanel();
 		buttonsRow.setStyleName(AON.CSS.aonDisplayGridFooterRow());
 		tab.add(buttonsRow);
-		
+	}
+	
+	private void paintButtons() {
+		buttonsRow.clear();
 		addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd() );
 		addButton.setAccessKey( 'L' );
 		addButton.addClickHandler(new ClickHandler() {
@@ -234,6 +236,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		InvoicePanelRow invoiceRow = new InvoicePanelRow(vat, focus);
 		tab.add(invoiceRow);
 		rows.add(invoiceRow);
+		paintButtons();
 		if (rows.size() > 1) {
 			callback.enableInvoiceTotal( false );
 		}
@@ -614,19 +617,23 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			cell.addStyleName(AON.CSS.aonWidthAll());
 			cell.add(l);
 			add(cell);
-			HasBlurHandlers lastWidget = removeButton;
-			
-			lastWidget.addBlurHandler(new BlurHandler() {
-				
-				@Override
-				public void onBlur(BlurEvent event) {
-					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-						public void execute() {
-							addButton.setFocus(true);
-						}
-					});
-				}
-			});
+//			Focusable lastWidget = removeButton;
+//			if (addButton != null) {
+//				addButton.setTabIndex(lastWidget.getTabIndex() + 1);
+//			}
+//			HasFoBlurHandlers lastWidget = removeButton;
+//			
+//			lastWidget.addBlurHandler(new BlurHandler() {
+//				
+//				@Override
+//				public void onBlur(BlurEvent event) {
+//					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+//						public void execute() {
+//							addButton.setFocus(true);
+//						}
+//					});
+//				}
+//			});
 
 			if (focus) {
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
