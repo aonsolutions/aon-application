@@ -67,6 +67,13 @@ export const AON_PROJECT_PANEL = 'aon-project-panel';
 export const AON_PROJECT_LIST = 'aon-project-list';
 export const AON_PROJECT = 'aon-project';
 
+export const AON_GROUP_LIST = 'aon-group-list';
+export const AON_WORKGROUP = 'aon-workgroup';
+
+
+export const AON_INVOICE = 'aon-invoice';
+export const AON_MOBILE_INVOICE = 'aon-mobile-invoice';
+
 // DEV DOC
 export const AON_API_DOC = 'aon-api-doc';
 export const AON_COMPONENTS_DOC = 'aon-components-doc';

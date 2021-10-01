@@ -17,11 +17,11 @@ import { getCompanyActivities } from '../../services/companyService.js';
 import { getInvoiceAccounts, getPaymethods } from '../../services/invoiceService.js';
 import { getItems } from '../../services/productService.js';
 import * as ACTION from '../actions.js';
-import { AonNewInvoice } from './aon-new-invoice.js';
+import { AonInvoice } from './aon-invoice.js';
 import { TaxIVAPercentage, TaxType, Transactions } from './invoiceEnums.js';
 import * as LS from '../../services/localStorageService.js';
 
-export class AonMobileNewInvoice extends AonNewInvoice {
+export class AonMobileInvoice extends AonInvoice {
 
   	constructor () {
     	super();
@@ -1100,5 +1100,7 @@ export class AonMobileNewInvoice extends AonNewInvoice {
 	  }
 
 }
+if(!window.customElements.get(TAG.AON_MOBILE_INVOICE)){
+	window.customElements.define(TAG.AON_MOBILE_INVOICE, AonMobileInvoice);
+}
 
-window.customElements.define('aon-mobile-new-invoice',  AonMobileNewInvoice);
