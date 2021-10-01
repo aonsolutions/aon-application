@@ -363,12 +363,14 @@ export const buildForm = (div, aonMessengerChat) => {
     rowsDiv.appendChild(requestTypeSelect);
     
     //-----------------END TYPE REQUEST
-    let initText = isReceived(task) ? 'De' : 'Para';
+    const aonMessenger = aonMessengerChat.applicationParentEl;
+    const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
+    let initText = isReceived(task, myWorkgroups) ? 'De' : 'Para';
     let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
     const btnExternal = createAonSwitch(titleBtn);
     rowsDiv.appendChild(btnExternal);
     if(task.id || isDefault) btnExternal.disabled =  true;
-    btnExternal.checked = task.isExternal();
+    btnExternal.checked = task.isProject();
     btnExternal.addEventListener(EVENT.CHANGE, ({target}) => {
         changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess);
         if(!isGestor && target.checked) 
@@ -765,14 +767,13 @@ const showTags = (b) => {
 /**
  * 
  * @param {Task} task class task 
+ * @param {Array} workgroups my workgrouprs
  * @returns 
  */
-const isReceived = (task) => {
+const isReceived = (task, workgroups) => {
     let condition = false;
     try {
         if(task.id){
-            const aonMessenger = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER).getParent();
-            const workgroups = aonMessenger ? aonMessenger._workgroups: [];
             const isWorkgroup = workgroups.some(({id})=> id === task.workgroup.id );
             condition = task.isGestor() 
             ? 

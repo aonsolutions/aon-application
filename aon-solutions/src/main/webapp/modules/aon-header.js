@@ -133,7 +133,7 @@ export class AonHeader extends AonElement {
 						fn: () =>{
 							if(this.isBeta()){
 								let aonMessenger = new AonMessenger();
-								aonMessenger.cau = true;
+								aonMessenger.cau = 1;
 								aonMessenger._filter.source = TASK_SOURCE.CAU;
 								this.rootPanel(aonMessenger);
 							}  else 

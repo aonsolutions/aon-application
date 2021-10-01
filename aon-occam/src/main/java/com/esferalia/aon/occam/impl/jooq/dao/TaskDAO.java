@@ -10,13 +10,13 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
@@ -243,24 +243,18 @@ public class TaskDAO {
 		return map;
 	}
 	
-	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId, Optional<String> email){
+	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId){
 		Integer sender = 0;
 		Integer taskHolder = 0;
 		HashMap<String, Integer> map = new HashMap<>();
 		
-		sender = ctx.getDslContext().select(DSL.count(TASK.SENDER), TASK.SENDER).from(TASK)
-				.where(TASK_PROPERTIES.getConditions(filter))
-				.and(email.isPresent() ? TASK.GTASK_ID.eq(email.get()) :  TASK.SENDER.eq(taskHolderId))
-				.groupBy(email.isPresent() ? TASK.GTASK_ID : TASK.SENDER)
-				.fetchOne(0, Integer.class);
+		//SENDER
+		Condition c = taskHolderId!=null && taskHolderId > 0 ? TASK.SENDER.eq(taskHolderId) : TASK.SENDER.isNull();
+		sender = selectCount(ctx,filter).and(c).fetchOne(0, Integer.class);
 		
-		if(!email.isPresent()) {
-			taskHolder = ctx.getDslContext().select(DSL.count(TASK.TASK_HOLDER), TASK.TASK_HOLDER).from(TASK)
-					.where(TASK_PROPERTIES.getConditions(filter))
-					.and(TASK.TASK_HOLDER.eq(taskHolderId))
-					.groupBy(TASK.TASK_HOLDER)
-					.fetchOne(0, Integer.class);
-		}
+		//RECEIVED
+		Condition c2 = taskHolderId!=null && taskHolderId>0 ? TASK.TASK_HOLDER.eq(taskHolderId) : TASK.SENDER.isNotNull();
+		taskHolder = selectCount(ctx,filter).and(c2).fetchOne(0, Integer.class);
 				
 		if(sender==null)     sender = 0;
 		if(taskHolder==null) taskHolder = 0;
@@ -271,8 +265,13 @@ public class TaskDAO {
 		return map;
 	}
 	
+	private static SelectConditionStep<Record1<Integer>> selectCount(AONContext ctx, TaskFilter filter) {
+		return ctx.getDslContext().selectCount().from(TASK).where(TASK_PROPERTIES.getConditions(filter));
+	}
+	
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
-		 return DSL.select( 
+		 return 
+				 DSL.select( 
 						DSL.val(task.getActivityType()),
 						DSL.val(task.getDescription()),
 						DSL.val(task.getTitle()),

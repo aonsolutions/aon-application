@@ -51,7 +51,11 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
 
             aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
 
+            
+            if(project && project.id){ aonSelect.value = project.id; } 
+
             const fnProject = ({detail})=>{
+                console.log(detail);
                 if(detail && detail.id)
                     task.setProject(detail);
                 else 
@@ -60,8 +64,6 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
 
             aonSelect.removeEventListener(EVENT.CHANGE, fnProject);
             aonSelect.addEventListener(EVENT.CHANGE, fnProject);
-            
-            if(project && project.id){ aonSelect.value = project.id; } 
         
         } catch (error) {
             console.log(error);
@@ -79,13 +81,15 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
 export const fillWorkGroup = async (task, aonMessengerChat) => {
     try {
         const aonSelect = await waitEl(`#${MESSENGER_IDS.WORKGROUP}`);
-        const workgroups = aonMessengerChat.getApplicationParent()._workgroups;
+        aonSelect.loading(true);
+        const workgroups = await aonMessengerChat.getWorkGroups();
         let options = [];
         if(workgroups && workgroups.length>0){
             options = workgroups.map( wg=> ({...wg, id: wg.value}) );
         } else if(task.workgroup.id && task.workgroup.description) {
             options = [{...task.workgroup, value:task.workgroup.id, name:task.workgroup.description}];
         }
+        
         aonSelect.setOptions(options);
         
         if(task.workgroup && task.workgroup.id){
@@ -98,6 +102,8 @@ export const fillWorkGroup = async (task, aonMessengerChat) => {
             }
             fillTaskHolder(aonMessengerChat, detail.value);
         });
+
+        aonSelect.loading(false);
     } catch (error) { console.log(error);}
 }
 

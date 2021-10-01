@@ -197,6 +197,7 @@ export class AonMessengerList extends AonElement {
         let newTitle  =  res.title;
         if(res.registry && res.registry.name && document !== res.registry.document) 
           newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+        // else if()
   
         let assigned = "";
         if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 

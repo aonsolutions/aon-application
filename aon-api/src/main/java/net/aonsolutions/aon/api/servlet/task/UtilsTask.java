@@ -116,13 +116,13 @@ public class UtilsTask {
 		return filter;
 	}
 	  
-	public static Filter taskFilterCount(AonApiData api, TaskProperties f) {
+	public static Filter taskFilterStatusCount(TaskProperties f, AonApiData api, Domain domain, Customer customer) {
 		String source = api.getParams().optString("source");
 		Integer taskHolder = api.getParams().optInt(IJsonNames.TASK_HOLDER);
 		String workgroupStr = api.getParams().optString(IJsonNames.WORKGROUPS);
 		String email = api.getParams().optString(IJsonNames.EMAIL);
 		
-		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+		Filter filter = f.getDomainProperty().eq(domain.getId());
 
 		if(taskHolder != null && taskHolder!=0) {
 			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder)).or(f.getSenderProperty().eq(taskHolder));
@@ -130,6 +130,9 @@ public class UtilsTask {
 		
 		if(!source.isEmpty()) 
 			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
+		
+		if(customer.getId()!=null) 
+			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
 		
 		if(!api.getParams().optString("cau").isEmpty() && api.getParams().optInt("cau")>0 && !email.isEmpty()) {
 			filter = filter.and(f.getGtaskIdProperty().eq(email));
@@ -144,6 +147,23 @@ public class UtilsTask {
 		
 		return filter;
 	}
+	
+	public static Filter taskFilterCount(AonApiData api, Domain domain,  TaskProperties f, Customer customer) {
+		
+		Integer taskHolder = api.getParams().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getParams(), IJsonNames.TASK_HOLDER);
+
+		Filter filter  = f.getDomainProperty().eq(domain.getId()).and(f.getStatusProperty().eq(TaskStatus.PENDING.value()));
+		
+		if(customer.getId()!=null) 
+			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
+		
+		if( taskHolder==0 || (customer.getId()!=null && !api.getDur().isMessengerManager()) ) {
+			filter = filter.and( f.getGtaskIdProperty().eq(api.getParams().optString(IJsonNames.EMAIL)) );
+		}
+			
+		return filter;
+	}
+
 
 	public static Filter taskOfficeFilter(AonApiData api, TaskProperties f, Customer customer, Domain domain) {
 		String search = api.getParams().optString("search");

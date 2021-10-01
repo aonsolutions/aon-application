@@ -154,14 +154,15 @@ public class TaskHolderDAO {
 	}
 	
 	public static Stream<TaskHolder> getTaskHolderWorkgroup(AONContext ctx, TaskHolderFilter filter, Integer workgroupId){
-		Condition condition = workgroupId>0 ? TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId) : TASK_HOLDER_WORKGROUP.WORKGROUP.isNotNull();
-		return ctx.getDslContext().select()
+		SelectConditionStep<Record> record = ctx.getDslContext().select()
 				.from(TASK_HOLDER)
-				.join(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
 				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
-				.and(condition).orderBy(REGISTRY.NAME)
-			.fetch().stream().map(new TaskHolderFiller());
+				.leftOuterJoin(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
+				.where(TASK_HOLDER_PROPERTIES.getConditions(filter));
+		if(workgroupId != null && workgroupId>0)
+			record.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId));
+	
+		return record.orderBy(REGISTRY.NAME).fetch().stream().map(new TaskHolderFiller());
 	}
 
 	// *************************************************

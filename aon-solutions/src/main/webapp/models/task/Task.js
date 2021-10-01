@@ -320,8 +320,12 @@ export class Task {
     this.parent = parent;
   }
 
-  isExternal(){
+  isProject(){
     return this.project && this.project.id ? true : false;
+  }
+
+  isExternal(){
+    return this.id && parseInt(LS.getDomainId()) !== parseInt(this.domain.id);
   }
 
   isGestor(){
@@ -329,16 +333,17 @@ export class Task {
   }
 
   senderCondition(){
-    return !this.isGestor() && this.project.id ? undefined : this.myTaskHolder;
+    return !this.isGestor() && this.isProject() ? undefined : this.myTaskHolder;
   }
 
   /**
    * CHANGE VALUES WHEN PROJECT CHANGE 
    */
   changeProject(){
-    this.setDomain(new Domain(this.project.domain && this.project.domain.id ? this.project.domain : this.domainTmp));
+    if(this.isProject() && !this.isExternal())
+      this.setDomain(new Domain(this.project.domain));
 
-    if(this.isExternal()){
+    if(this.isProject()){
       const {projectHolder} = this.project;
       const workgroup = projectHolder.workgroup && projectHolder.workgroup.id ?  projectHolder.workgroup : this.workgroup;
       this.setWorkgroup(new Workgroup(workgroup));
