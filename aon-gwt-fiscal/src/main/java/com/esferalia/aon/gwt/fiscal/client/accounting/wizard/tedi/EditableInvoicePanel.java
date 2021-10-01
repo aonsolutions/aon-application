@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
@@ -119,6 +120,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private TextBox referenceCode;
 	private AonDoubleBox invoiceTotal;
 	private AonDateBox taxDate;
+	
+	private ListBox workplaces;
 	
 	private FlowPanel checksLabel;
 	private FlowPanel checksTable;
@@ -922,6 +925,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		AonFullDocument fullDocument = new AonFullDocument();
 		TextBox rName = new TextBox();
 		taxDate = new AonDateBox();
+		workplaces = new ListBox();
 		InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
 		AonIntegerBox number = new AonIntegerBox();
 		
@@ -1153,9 +1157,83 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 		transactionBox.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(transactionBox);
+
+		// -------------------------------
+		// --------- WORKPLACE ---------
+		// -------------------------------
+		if (invoiceCallback.getConfiguration().getWorkplaces() != null && invoiceCallback.getConfiguration().getWorkplaces().size() > 1) {
+			workplaces.addChangeHandler( new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					Integer wp = AonNumberUtils.toInteger(workplaces.getSelectedValue());
+					invoiceCallback.getInvoice().setWorkplace(wp);
+				}
+			});
+			int i = 0;
+			for (Workplace ea : invoiceCallback.getConfiguration().getWorkplaces()) {
+				workplaces.addItem(ea.getDescription(), AonNumberUtils.toString( ea.getId()));
+				if ( AonNumberUtils.equals(ea.getId(), invoiceCallback.getInvoice().getWorkplace())) {
+					workplaces.setSelectedIndex(i);		
+				}
+				i++;
+			}
+			
+			InlineLabel workPlaceLabel = new InlineLabel(AON.MSG.workplace());
+			workPlaceLabel.setStyleName(AON.CSS.aonFlexLabel());
+			workPlaceLabel.getElement().getStyle().setWidth(80, Unit.PX);
+			headerPanel2.add(workPlaceLabel);
+			
+			headerPanel2.add(workplaces);
+		}
+		
+		
+		// -------------------------------
+		// --------- CHECK LABELS ---------
+		// -------------------------------
 		
 		checksLabel.setStyleName(AON.CSS.aonFlexBlockInline());
 		headerPanel2.add(checksLabel);
+		
+		
+		// *************************************************************************
+		// ***************** PANEL ( Centro de Trabajo) *******************
+		// *************************************************************************
+//		if (invoiceCallback.getConfiguration().getWorkplaces() != null && invoiceCallback.getConfiguration().getWorkplaces().size() > 1) {
+//			workplaces.addChangeHandler( new ChangeHandler() {
+//				
+//				@Override
+//				public void onChange(ChangeEvent event) {
+//					Integer wp = AonNumberUtils.toInteger(workplaces.getSelectedValue());
+//					invoiceCallback.getInvoice().setWorkplace(wp);
+//				}
+//			});
+//			workplaces.addItem("-- Todos --", "");
+//			workplaces.setSelectedIndex(0);
+//			int i = 1;
+//			for (Workplace ea : invoiceCallback.getConfiguration().getWorkplaces()) {
+//				workplaces.addItem(ea.getDescription(), AonNumberUtils.toStrtring( ea.getId()));
+//				if ( AonNumberUtils.equals(ea.getId(), invoiceCallback.getInvoice().getWorkplace())) {
+//					workplaces.setSelectedIndex(i);		
+//				}
+//				i++;
+//			}
+//			
+//			FlowPanel invoiceDataInnerTableRowDiv21 = new FlowPanel();
+//			invoiceDataInnerTableRowDiv21.setStyleName(AON.CSS.aonDisplayTableRow());
+//			invoiceDataInnerTableDiv.add(invoiceDataInnerTableRowDiv21);
+//			
+//			FlowPanel headerPanel21 = new FlowPanel();
+//			headerPanel21.setStyleName(AON.CSS.aonDisplayTableCell());
+//			invoiceDataInnerTableRowDiv21.add(headerPanel21);
+//			
+//			InlineLabel workPlaceLabel = new InlineLabel(AON.MSG.workplace());
+//			workPlaceLabel.setStyleName(AON.CSS.aonFlexLabel());
+//			workPlaceLabel.getElement().getStyle().setWidth(80, Unit.PX);
+//			headerPanel21.add(workPlaceLabel);
+//			
+//			headerPanel21.add(workplaces);
+//		}
 
 		// *************************************************************************
 		// ***************** PANEL ( set de checks 1) *****************
