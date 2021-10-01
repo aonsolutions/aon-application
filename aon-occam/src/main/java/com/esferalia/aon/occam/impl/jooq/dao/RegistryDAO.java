@@ -32,8 +32,12 @@ import com.esferalia.aon.occam.impl.jooq.validation.RegistryValidation;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class RegistryDAO {
-	private static final RegistryPropertiesDAO REGISTRY_PROPERTIES = new RegistryPropertiesDAO();
-	public static class RegistryPropertiesDAO implements RegistryProperties {
+
+	private RegistryDAO() {
+	}
+	
+	protected static final RegistryPropertiesDAO REGISTRY_PROPERTIES = new RegistryPropertiesDAO();
+	protected static class RegistryPropertiesDAO implements RegistryProperties {
 		
 		protected Condition[] getConditions(RegistryFilter filter) {
 			if (filter == null) return new Condition[0];
@@ -112,7 +116,7 @@ public class RegistryDAO {
 		if (registry.isDirty()) {
 			registry = (registry.getId() == null)?insert(ctx, registry):update(ctx, registry);
 		} else {
-			ctx.log().info("NOT SAVED REGISTRY (not dirty) id: " + registry.getId());
+			ctx.log().debug("NOT SAVED REGISTRY (not dirty) id: {0}",registry.getId());
 		}
 		return registry;
 	}
@@ -134,7 +138,7 @@ public class RegistryDAO {
 			.fetchOne()
 			.getValue(REGISTRY.ID);
 		registry.setId(id);
-		ctx.log().info("INSERT REGISTRY id: " + registry.getId());
+		ctx.log().debug("INSERT REGISTRY id: {0}",registry.getId());
 		return registry; 
 	}
 
@@ -152,7 +156,7 @@ public class RegistryDAO {
 					:SecurityLevel.OFFICIAL.value()))
 			.where(REGISTRY.ID.eq(registry.getId()))
 			.execute();
-		ctx.log().info("UPDATE REGISTRY id: " + registry.getId() + ". (" + count + " rows)");
+		ctx.log().debug("UPDATE REGISTRY id: {0}. ({1} rows)", registry.getId(),count);
 		return registry; 
 	}
 	
@@ -162,7 +166,7 @@ public class RegistryDAO {
 		int count = ctx.getDslContext().delete(REGISTRY)
 			.where(REGISTRY.ID.eq(id))
 			.execute();
-		ctx.log().info("DELETE REGISTRY id:" + id + " ("+count+" rows)");
+		ctx.log().debug("DELETE REGISTRY id: {0} ({1} rows)",id,count);
 	}
 	
 	// *************************************************

@@ -25,6 +25,9 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class RegistryMediaDAO {
+	private RegistryMediaDAO() {
+		
+	}
 	public static final String MEDIA_TYPE_LABEL = "Tipo de contacto";
 	public static final String MEDIA_REGISTRY_LABEL = "Registry";
 	public static final String MEDIA_VALUE_LABEL = "Valor";
@@ -72,9 +75,9 @@ public class RegistryMediaDAO {
 	
 	private static class RegistryMediaComplete {
 		
-		public static BiConsumer<AONContext,RegistryMedia> COMPLETE_MEDIA_TYPE = (ctx,media) -> {
+		public static final BiConsumer<AONContext,RegistryMedia> COMPLETE_MEDIA_TYPE = (ctx,media) -> {
 			if (media.getMedia() == null) {
-				ctx.log().info("\t saving registry media: autocomplete media: " + MediaType.UNKNOWN);
+				ctx.log().debug("\t saving registry media: autocomplete media: {0}",MediaType.UNKNOWN);
 				media.setMedia(MediaType.UNKNOWN);
 			}
 		};
@@ -189,7 +192,7 @@ public class RegistryMediaDAO {
 			.fetchOne()
 			.getValue(RMEDIA.ID);
 		media.setId(id).setDirty(false);
-		ctx.log().info("INSERT REGISTRY MEDIA ( registry: "+ media.getRegistry() +") id: " + media.getId());
+		ctx.log().debug("INSERT REGISTRY MEDIA ( registry: {0}) id: {1}",media.getRegistry(),media.getId());
 		return media; 
 	}
 	
@@ -209,7 +212,7 @@ public class RegistryMediaDAO {
 			.set(RMEDIA.RADDRESS,media.getRaddress())
 			.where(RMEDIA.ID.eq(media.getId()))
 			.execute();
-		ctx.log().info("UPDATE MEDIA ( registry: "+ media.getRegistry() +") id: " + media.getId() + ". (" + count + " rows)");
+		ctx.log().debug("UPDATE MEDIA ( registry: {0}) id: {1}. ({2} rows)",media.getRegistry(),media.getId(),count);
 		media.setDirty(false);
 		return media; 
 	}
@@ -220,7 +223,7 @@ public class RegistryMediaDAO {
 		int count = ctx.getDslContext().delete(RMEDIA)
 			.where(RMEDIA.ID.eq(id))
 			.execute();
-		ctx.log().info("DELETE REGISTRY MEDIA id:" + id + " ("+count+" rows)");
+		ctx.log().debug("DELETE REGISTRY MEDIA id: {0} ({1} rows)",id,count);
 	}
 	
 	public static int deleteByRegistry(AONContext ctx, Integer registry){
@@ -229,7 +232,7 @@ public class RegistryMediaDAO {
 		int count = ctx.getDslContext().delete(RMEDIA)
 			.where(RMEDIA.REGISTRY.eq(registry))
 			.execute();
-		ctx.log().info("DELETE REGISTRY MEDIA registry:" + registry + " ("+count+" rows)");
+		ctx.log().debug("DELETE REGISTRY MEDIA registry: {0} ({1} rows)",registry,count);
 		return count;
 	}
 	

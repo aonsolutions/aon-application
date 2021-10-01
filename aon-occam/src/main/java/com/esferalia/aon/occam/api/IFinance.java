@@ -47,10 +47,13 @@ public interface IFinance {
 	// 	****************************************
 	// 	**************************** INVOICE ***
 	// 	****************************************
+	Invoice getInvoice(AONContext ctx, Integer id);
+	
 	Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
 	Invoice getFullInvoice(AONContext ctx, Integer id);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
 	Invoice insertInvoice(AONContext ctx, Invoice invoice);
+	Invoice updateInvoice(AONContext ctx, Invoice invoice);
 	InvoiceDetail insertInvoiceDetail(AONContext ctx, InvoiceDetail invoiceDetail);
 	Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii);
 	Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter,
@@ -145,6 +148,7 @@ public interface IFinance {
 
 	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Boolean withData);
 	public PrintInvoiceConfiguration savePrintInvoiceConfiguration(AONContext ctx, PrintInvoiceConfiguration pic);
+
 	
 }
 	

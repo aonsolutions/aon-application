@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -64,37 +65,97 @@ public class InvoiceFaker {
 		
 	}
 	
+	private static void fillHeader( Invoice invoice, InvoiceFakerParams params) {
+		if (params.getIssueDate() != null) {
+			invoice.setIssueDate(params.getIssueDate());
+			invoice.setTaxDate(params.getIssueDate());
+		}
+		invoice.setSurcharge(false);
+		invoice.setWithholding(false);
+		invoice.setService(false);
+	}
+	
 	private static enum InvoiceFakerTypes {
+		// Venta Nacional
+		SALES_NATIONAL {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Venta Canarias, Ceuta y Melilla
 		SALES_CAN_CEU_MEL {
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
-				if (params.getIssueDate() != null) {
-					invoice.setIssueDate(params.getIssueDate());
-					invoice.setTaxDate(params.getIssueDate());
-				}
 				invoice.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
-				invoice.setSurcharge(false);
-				invoice.setWithholding(false);
-				invoice.setService(false);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Prestacion de servicio Canarias, Ceuta y Melilla
+		SALES_CAN_CEU_MEL_SERVICE {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
+				invoice.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
+				invoice.setService(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Nacional
+		PURCHASE_NATIONAL {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Nacional
+		PURCHASE_EXTRACOMMUNITY {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+				invoice.setVatImportation(false);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Nacional Reg Importacion
+		PURCHASE_EXTRACOMMUNITY_VAT_IMPORT {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+				invoice.setVatImportation(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Canarias, Ceuta, Melilla
+		PURCHASE_CAN_CEU_MEL {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+				invoice.setVatImportation(false);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Compra Canarias, Ceuta, Melilla Reg Importacion
+		PURCHASE_CAN_CEU_MEL_VAT_IMPORT {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
+				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
+				invoice.setVatImportation(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		
+		// Gasto Nacional
+		EXPENSES_NATIONAL {
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
 				InvoiceFaker.fill(params, invoice);
 				return invoice;
 			}
 		},
-		SALES_CAN_CEU_MEL_SERVICE {
-			public Invoice get( InvoiceFakerParams params ) {
-				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
-				if (params.getIssueDate() != null) {
-					invoice.setIssueDate(params.getIssueDate());
-					invoice.setTaxDate(params.getIssueDate());
-				}
-				invoice.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
-				invoice.setSurcharge(false);
-				invoice.setWithholding(false);
-				invoice.setService(true);
-				InvoiceFaker.fill(params, invoice);
-				return invoice;
-			}
-		}
+		
 		;
 		public abstract Invoice get( InvoiceFakerParams params );
 		
@@ -108,13 +169,7 @@ public class InvoiceFaker {
 		invoice.setIssueDate( issueDate );
 		invoice.setTaxDate( issueDate );
 		invoice.setType( invoiceType );
-		if (invoiceType == InvoiceType.SALES) {
-			String series = AonRandom.string(4); 
-			invoice.setSeries(series);
-			invoice.setNumber(InvoiceDAO.getNextNumber(params.getCtx(), InvoiceType.SALES , series));
-		} else {
-			invoice.setReferenceCode(AonRandom.string(15));	
-		}
+		
 		invoice.getType().visit(invoice, new IInvoiceTypeVisitor() {
 			
 			private void fillRegistryData(Invoice invoice, Registry reg) {
@@ -129,12 +184,14 @@ public class InvoiceFaker {
 			public void visitSales(Invoice invoice) {
 				Customer customer = AonRandom.getCustomer( params.getCtx() );
 				fillRegistryData(invoice, customer);
-				invoice.setScope(new Scope().setId( customer.getScope() ));
-				invoice.setTransaction( customer.getTransaction() );
-				invoice.setService( AonRandom.gt(80) );
-				invoice.setVatAccrualPayment(invoice.isNational() && params.getConfig().getCompany().isVatAccrualPayment());
 				invoice.setSeries(params.getConfig().getDefaultInvoiceSeries());
 				invoice.setNumber( InvoiceDAO.getNextNumber(params.getCtx(), new Byte[]{invoice.getType().value()}, invoice.getSeries()));
+				
+				invoice.setScope(new Scope().setId( customer.getScope() ));
+				invoice.setTransaction( customer.getTransaction() );
+				
+				invoice.setService( AonRandom.gt(80) );
+				invoice.setVatAccrualPayment(invoice.isNational() && params.getConfig().getCompany().isVatAccrualPayment());
 				invoice.setSurcharge(customer.isSurcharge());
 				invoice.setWithholding(customer.isWithholding() && params.getConfig().getCompany().isWithholding());
 				invoice.setWithholdingFarmer(false);
@@ -144,8 +201,10 @@ public class InvoiceFaker {
 			public void visitPurchase(Invoice invoice) {
 				Supplier supplier = AonRandom.getSupplier( params.getCtx() );
 				fillRegistryData(invoice, supplier);
+				invoice.setReferenceCode(AonRandom.string(-1,1,15));	
 				invoice.setScope(new Scope().setId( supplier.getScope() ));
 				invoice.setTransaction(supplier.getTransaction());
+				
 				invoice.setService( AonRandom.gt(40) );
 				invoice.setVatAccrualPayment(invoice.isNational() && supplier.isVatAccrualPayment());
 				invoice.setSurcharge(params.getConfig().getCompany().isSurcharge());
@@ -156,9 +215,15 @@ public class InvoiceFaker {
 			@Override
 			public void visitExpenses(Invoice invoice) {
 				Creditor creditor = AonRandom.getCreditor( params.getCtx() );
-				invoice.setScope(new Scope().setId( creditor.getScope() ));
 				fillRegistryData(invoice, creditor);
+				invoice.setReferenceCode(AonRandom.string(-1,1,15));	
+				if (AonStringUtils.isBlank(invoice.getReferenceCode())) {
+					System.out.println("NULL");
+				}
+
+				invoice.setScope(new Scope().setId( creditor.getScope() ));
 				invoice.setTransaction( creditor.getTransaction() );
+				
 				invoice.setService( AonRandom.gt(50) );
 				invoice.setVatAccrualPayment(invoice.isNational() && creditor.isVatAccrualPayment());
 				invoice.setSurcharge(false);
@@ -168,6 +233,7 @@ public class InvoiceFaker {
 			@Override
 			public void visitUndeductible(Invoice invoice) {
 				visitExpenses(invoice);
+				
 				invoice.setSurcharge(false);
 				invoice.setWithholding(false);
 				invoice.setWithholdingFarmer(false);
@@ -177,17 +243,20 @@ public class InvoiceFaker {
 		});
 		EnterpriseActivity activity = AonRandom.getRandomActivity(params.getCtx());
 		invoice.setActivity(activity==null?null:activity.getId());
+		InvoiceFaker.fillHeader(invoice, params);
 		return invoice;
 	}
 	
 	public static Invoice fill( InvoiceFakerParams params , Invoice invoice) {
 		invoice.setDetails( getInvoiceDetails(params, invoice ));
+		calculate(invoice);
+		invoice.setFinances(FinanceDAO.getFinancesForInvoice(params.getCtx(), invoice));
 		return invoice;
 	}
 
 	private static LinkedList<InvoiceDetail> getInvoiceDetails(InvoiceFakerParams params, Invoice invoice) {
 		LinkedList<InvoiceDetail> details = new LinkedList<InvoiceDetail>();
-		int times = AonRandom.number(1, 25);
+		int times = AonRandom.number(1, 15);
 		for (int i = 0; i < times; i++) {
 			details.add(getInvoiceDetail( params, invoice));
 		}
@@ -205,7 +274,7 @@ public class InvoiceFaker {
 			.setDiscountExpression( AonRandom.gt(10)
 					?null 
 					:AonNumberUtils.toString( AonRandom.getDouble(0, 100)))
-			.setPrice(AonRandom.getDouble(0, 10000))
+			.setPrice(AonRandom.getDouble(0, 100))
 			.setSource(InvoiceSource.DIRECT_INVOICE) // Todo. Alternative.
 			.setInvoiceTaxes( getInvoiceTaxes(params,invoice, detail ))
 			.setPrepayment(AonRandom.gt(98))
@@ -271,6 +340,36 @@ public class InvoiceFaker {
 		return 0.0;
 	}
 
+	private static void calculate(Invoice invoice) {
+		if (invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
+			double total = 0;
+			double taxableBase = 0;
+			double vatQuota = 0;
+			double retentionQuota = 0;
+			for (InvoiceDetail detail : invoice.getDetails()) {
+				if (!detail.isPrepayment()) {
+					taxableBase = AonMathUtils.round( taxableBase + detail.getTaxableBase(), 4);
+					if (detail.getInvoiceTaxes() != null && !detail.getInvoiceTaxes().isEmpty()) {		
+						for (InvoiceTax tax  : detail.getInvoiceTaxes()) {
+							if (tax.getTaxType() ==TaxType.VAT) {
+								vatQuota = AonMathUtils.round( vatQuota + tax.getQuota(), 2);			
+							}
+							if (tax.getTaxType() ==TaxType.RETENTION) {
+								retentionQuota = AonMathUtils.round( retentionQuota + tax.getQuota(), 2);
+							}
+						}
+					}
+				}
+			}
+			total = AonMathUtils.round( taxableBase + vatQuota - retentionQuota );
+			invoice.setTotal(total);
+			invoice.setTaxableBase(taxableBase);
+			invoice.setVatQuota(vatQuota);
+			invoice.setRetentionQuota(retentionQuota);
+		}
+	
+	}
+
 	private static InvoiceDetail calculate(InvoiceDetail detail) {
 		double taxableBase = (detail.getPrice() + detail.getTaxes()) * detail.getQuantity();
 		double[] discounts = getDiscounts(detail.getDiscountExpression());
@@ -323,7 +422,11 @@ public class InvoiceFaker {
 	}
 
 	public static Invoice getRandom(InvoiceFakerParams params) {
-		return AonRandom.randomEnum(InvoiceFakerTypes.class).get(params);
+		InvoiceFakerTypes type = InvoiceFakerTypes.values()[faker.random().nextInt(InvoiceFakerTypes.values().length-1)];
+		return type.get(params);
+	}
+	public static Invoice getSalesNational(InvoiceFakerParams params) {
+		return InvoiceFakerTypes.SALES_NATIONAL.get(params);
 	}
 	public static Invoice getSalesCanCeuService(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.SALES_CAN_CEU_MEL_SERVICE.get(params);
@@ -331,6 +434,23 @@ public class InvoiceFaker {
 	public static Invoice getSalesCanCeu(InvoiceFakerParams params) {
 		return InvoiceFakerTypes.SALES_CAN_CEU_MEL.get(params);
 	}
-
+	public static Invoice getExpensesNational(InvoiceFakerParams params) {
+		return InvoiceFakerTypes.EXPENSES_NATIONAL.get(params);
+	}
+	public static Invoice getPurchaseNational(InvoiceFakerParams params) {
+		return InvoiceFakerTypes.PURCHASE_NATIONAL.get(params);
+	}
+	public static Invoice getPurchaseExtracommunity(InvoiceFakerParams params) {
+		return InvoiceFakerTypes.PURCHASE_EXTRACOMMUNITY.get(params);
+	}
+	public static Invoice getPurchaseExtracommunityVatImport(InvoiceFakerParams params) {
+		return InvoiceFakerTypes.PURCHASE_EXTRACOMMUNITY_VAT_IMPORT.get(params);
+	}
+	public static Invoice getPurchaseCanCeu(InvoiceFakerParams params) {
+		return InvoiceFakerTypes.PURCHASE_CAN_CEU_MEL.get(params);
+	}
+	public static Invoice getPurchaseCanCeuVatImport(InvoiceFakerParams params) {
+		return InvoiceFakerTypes.PURCHASE_CAN_CEU_MEL_VAT_IMPORT.get(params);
+	}
 }
 

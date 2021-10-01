@@ -9,6 +9,13 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 public class InvoiceCalculator {
 	private static final Logger LOGGER = Logger.getLogger(InvoiceCalculator.class.getName());
 	
+
+	private static boolean mustAddVatToTotal(AccountingInvoice ai) {
+		return isVatEnabled(ai);
+	}
+	private static boolean isVatEnabled(AccountingInvoice ai) {
+		return (ai.isInputVatEnabled() != ai.isOutputVatEnabled());
+	}
 	public static void calculate(AccountingInvoice ai) {
 		double vt = 0.0;
 		double tb = 0.0;
@@ -16,7 +23,7 @@ public class InvoiceCalculator {
 		if (ai.getVats() != null) {
 			for (InvoiceVAT vat : ai.getVats()) {
 				tb = tb + vat.getBase();
-				if (ai.isVatEnabled()) {
+				if (mustAddVatToTotal(ai)) {
 					vt = vt + (vat.getQuota() + vat.getSurchargeQuota());
 				}
 				if (ai.isWithholding() && vat.isWithholding()) {
@@ -84,7 +91,7 @@ public class InvoiceCalculator {
 		if (ai.isWithholding()) {
 			withholdingPerc = ai.getWithholdingData().getPercentage();
 		}
-		double tb = (ai.isVatEnabled() || ai.isWithholding()) 
+		double tb = (isVatEnabled( ai ) || ai.isWithholding()) 
 				? reverseCalculate(vatPerc, surchargePerc, withholdingPerc, total)
 				: total;
 		vat.setBase(tb);

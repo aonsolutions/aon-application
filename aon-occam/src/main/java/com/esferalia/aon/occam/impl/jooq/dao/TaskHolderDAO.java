@@ -115,7 +115,7 @@ public class TaskHolderDAO {
 			.set(TASK_HOLDER.COST_PROFILE, taskHolder.getCostProfile())
 			.set(TASK_HOLDER.ACTIVE, taskHolder.getActiveValue())
 			.execute();
-		ctx.log().info("INSERT TASK HOLDER id: " + taskHolder.getId());		
+		ctx.log().debug("INSERT TASK HOLDER id: {0}",taskHolder.getId());		
 		return taskHolder;
 	}
 	
@@ -129,7 +129,7 @@ public class TaskHolderDAO {
 			.set(TASK_HOLDER.ACTIVE, taskHolder.getActiveValue())
 			.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
 			.execute();
-		ctx.log().info("UPDATE TASK HOLDER id: " + taskHolder.getId() + ". (" + count + " rows)");		
+		ctx.log().debug("UPDATE TASK HOLDER id: {0}. ({1} rows)",taskHolder.getId(),count);		
 		return taskHolder;
 	}
 
@@ -138,7 +138,7 @@ public class TaskHolderDAO {
 		int count = ctx.getDslContext().delete(TASK_HOLDER)
 			.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
 			.execute();
-		ctx.log().info("DELETE TASK HOLDER id:" + taskHolder.getId() + " ("+count+" rows)");
+		ctx.log().debug("DELETE TASK HOLDER id: {0} ({1} rows)",taskHolder.getId(),count);
 		return taskHolder;
 	}
 	

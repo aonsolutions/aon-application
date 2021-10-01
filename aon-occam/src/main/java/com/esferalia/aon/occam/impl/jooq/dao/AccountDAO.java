@@ -24,6 +24,10 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountDAO {
+	
+	private AccountDAO() {
+	}
+	
 	private static final AccountPropertiesDAO ACCOUNT_PROPERTIES = new AccountPropertiesDAO();
 	private static class AccountPropertiesDAO implements AccountProperties {
 		private Condition[] getConditions(AccountFilter filter) {
@@ -170,7 +174,7 @@ public class AccountDAO {
 			.returning(ACCOUNT.ID)
 			.fetchOne()
 			.getValue(ACCOUNT.ID);
-		ctx.log().info("INSERT ACCOUNT id: " + id + " code: " + account.getCode());
+		ctx.log().debug("INSERT ACCOUNT id: {0} code: {1}",account.getId(),account.getCode());
 		return get(ctx, id);
 	}
 	
@@ -190,7 +194,7 @@ public class AccountDAO {
 			.set(ACCOUNT.COST_CENTER,account.getCostCenter())
 			.where(ACCOUNT.ID.eq(account.getId()))
 			.execute();
-		ctx.log().info("UPDATE ACCOUNT id: " + account.getId() + " code: " + account.getCode());
+		ctx.log().debug("UPDATE ACCOUNT id: {0} code: {1}",account.getId(),account.getCode());
 		return account;
 	}
 
@@ -201,7 +205,7 @@ public class AccountDAO {
 			.delete(ACCOUNT)
 			.where(ACCOUNT.ID.eq(account.getId()))
 			.execute();
-		ctx.log().info("DELETE ACCOUNT id: " + account.getId() + " code: " + account.getCode());
+		ctx.log().debug("DELETE ACCOUNT id: {0} code: {1}",account.getId(),account.getCode());
 		return account;
 	}
 	

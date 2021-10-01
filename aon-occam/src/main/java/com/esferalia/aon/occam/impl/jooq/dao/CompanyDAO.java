@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AonCompanyFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryPropertiesDAO;
@@ -185,7 +186,7 @@ public class CompanyDAO {
 			.set(COMPANY.VAT_ACCRUAL_PAYMENT,AonEnumUtils.getByte(company.isVatAccrualPayment()))
 			.set(COMPANY.E_INVOICE,AonEnumUtils.getByte(company.iseInvoice()))
 			.execute();
-		ctx.log().info("INSERT COMPANY id: " + company.getId());		
+		ctx.log().debug("INSERT COMPANY id: {0}",company.getId());		
 		return company;
 	}
 	private static Company update(AONContext ctx, Company company){
@@ -198,7 +199,7 @@ public class CompanyDAO {
 			.set(COMPANY.E_INVOICE,AonEnumUtils.getByte(company.iseInvoice()))
 			.where(COMPANY.REGISTRY.eq(company.getId()))
 			.execute();
-		ctx.log().info("UPDATE COMPANY id: " + company.getId() + ". (" + count + " rows)");		
+		ctx.log().debug("UPDATE COMPANY id: {0}. ({1} rows)",company.getId(),count);		
 		return company;
 	}
 
@@ -372,7 +373,7 @@ public class CompanyDAO {
 
 	public static Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx,int domain, Date atDate) {
 		return ctx.getDslContext()
-				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,
+				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,ENTERPRISE_ACTIVITY.VAT_REGIME,
 						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID,IAE.EPIGRAPH)
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
@@ -403,13 +404,14 @@ public class CompanyDAO {
 						.setCnae( rec.getValue(CNAE2009.ID) )
 						.setCnaeCode( rec.getValue(CNAE2009.CODE) )
 						.setCnaeDescription( rec.getValue(CNAE2009.TITLE) )
+						.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)))
 					);
 	}
 
 	public static EnterpriseActivity getEnterpriseActivity(AONContext ctx,Integer id) {
 		if (id == null) return null;
 		return ctx.getDslContext()
-				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,
+				.select(ENTERPRISE_ACTIVITY.ID,ENTERPRISE_ACTIVITY.DESCRIPTION,ENTERPRISE_ACTIVITY.PRINCIPAL,ENTERPRISE_ACTIVITY.VAT_REGIME,
 						CNAE2009.ID,CNAE2009.CODE,CNAE2009.TITLE,IAE.ID,IAE.EPIGRAPH)
 				.from(ENTERPRISE_ACTIVITY)
 				.leftOuterJoin(CNAE2009).on(CNAE2009.ID.eq(ENTERPRISE_ACTIVITY.CNAE2009))
@@ -427,6 +429,7 @@ public class CompanyDAO {
 						.setCnae( rec.getValue(CNAE2009.ID) )
 						.setCnaeCode( rec.getValue(CNAE2009.CODE) )
 						.setCnaeDescription( rec.getValue(CNAE2009.TITLE) )
+						.setVatRegime(AonEnumUtils.enumValue(VATRegime.class, rec.getValue(ENTERPRISE_ACTIVITY.VAT_REGIME)))
 						)
 				.findFirst()
 				.orElse(null);

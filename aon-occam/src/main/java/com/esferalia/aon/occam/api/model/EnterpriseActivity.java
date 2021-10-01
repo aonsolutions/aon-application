@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.VATRegime;
+
 public class EnterpriseActivity implements Serializable {
 
 	private static final long serialVersionUID = 1603402672575353203L;
@@ -14,6 +16,7 @@ public class EnterpriseActivity implements Serializable {
 	private Integer cnae;
 	private String cnaeCode;
 	private String cnaeDescription;
+	private VATRegime vatRegime; 
 
 	public Integer getId() {
 		return id;
@@ -79,5 +82,12 @@ public class EnterpriseActivity implements Serializable {
 		return this;		
 	}
 
+	public VATRegime getVatRegime() {
+		return vatRegime;
+	}
+	public EnterpriseActivity setVatRegime(VATRegime vatRegime) {
+		this.vatRegime = vatRegime;
+		return this;
+	}
 
 }

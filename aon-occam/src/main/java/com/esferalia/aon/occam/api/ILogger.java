@@ -8,7 +8,11 @@ public interface ILogger {
 	String DEB = "{0,time,dd/MM/yyyy HH:mm} DEB: DOMAIN: {1,number,integer}, MSG: {2}";
 	
 	void error(String msg);
+	void error(String msg, Object ... params);
 	void warn(String msg);
+	void warn(String msg, Object ... params);
 	void info(String msg);
+	void info(String msg, Object ... params);
 	void debug(String msg);
+	void debug(String msg, Object ... params);
 }

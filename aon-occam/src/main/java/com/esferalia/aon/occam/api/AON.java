@@ -1648,6 +1648,17 @@ public class AON {
 		}
 	}
 	
+	public static Invoice updateInvoice(String domainName, Integer domainId, String login, Invoice invoice){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().updateInvoice(ctx, invoice);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static InvoiceDetail insertInvoiceDetail(String domainName, Integer domainId, String login, InvoiceDetail invoiceDetail){
 		AONContext ctx = null;
 		try {
@@ -1681,6 +1692,17 @@ public class AON {
 			.findFirst().orElse(new Invoice());
 	}
 	
+	public static Invoice getInvoice(String domainName, Integer domainId, String login, Integer id){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getInvoice(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName,
 			Integer domainId, String login, InvoiceFilter filter) {
 		AONContext ctx = null;

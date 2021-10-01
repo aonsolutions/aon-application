@@ -20,8 +20,6 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Account;
-import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -29,7 +27,6 @@ import com.esferalia.aon.occam.api.model.accounting.AccountPeriodFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccountPeriodProperties;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -243,9 +240,9 @@ public class AccountPeriodDAO {
 	}
 	
 	private static class AccountPeriodAutoComplete {
-		private static BiConsumer<AONContext,AccountPeriod> COMPLETE_STATUS  = (ctx,accountPeriod) -> {
+		private static final BiConsumer<AONContext,AccountPeriod> COMPLETE_STATUS  = (ctx,accountPeriod) -> {
 			if (accountPeriod.getStatus() == null) {
-				ctx.log().info("\t saving accounting period: autocomplete status: " + AccountPeriodStatus.ACTIVE);
+				ctx.log().debug("\t saving accounting period: autocomplete status: {0}",AccountPeriodStatus.ACTIVE);
 				accountPeriod.setStatus(AccountPeriodStatus.ACTIVE);
 			}
 		};

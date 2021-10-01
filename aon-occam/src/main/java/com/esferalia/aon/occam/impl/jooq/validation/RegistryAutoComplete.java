@@ -14,7 +14,7 @@ public class RegistryAutoComplete {
 	
 	public static BiConsumer<AONContext,Registry> COMPLETE_DOCUMENT_COUNTRY = (ctx,reg) -> {
 		if (reg.getDocumentCountry() == null) {
-			ctx.log().info("\t saving registry: autocomplete document country: " + Country.ES.getIso2());
+			ctx.log().debug("\t saving registry: autocomplete document country: {0}",Country.ES.getIso2());
 			reg.setDocumentCountry(Country.ES);
 		}
 	};
@@ -27,17 +27,17 @@ public class RegistryAutoComplete {
 				if ( AonDocumentUtil.isValidDNI( reg.getDocument() )) {
 					if (reg.getDocumentType() != DocumentType.NIF) {
 						reg.setDocumentType(DocumentType.NIF);
-						ctx.log().info("\t saving registry: autocomplete document type: " + DocumentType.NIF.getDescription());			
+						ctx.log().debug("\t saving registry: autocomplete document type: {0}",DocumentType.NIF.getDescription());			
 					}
 				} else if ( AonDocumentUtil.isValidCIF( reg.getDocument() )) {
 					if (reg.getDocumentType() != DocumentType.CIF) {
 						reg.setDocumentType(DocumentType.CIF);
-						ctx.log().info("\t saving registry: autocomplete document type: " + DocumentType.CIF.getDescription());			
+						ctx.log().debug("\t saving registry: autocomplete document type: {0}",DocumentType.CIF.getDescription());			
 					}
 				} else if ( AonDocumentUtil.isValidNIE( reg.getDocument() )) {
 					if (reg.getDocumentType() != DocumentType.NIE) {
 						reg.setDocumentType(DocumentType.NIE);
-						ctx.log().info("\t saving registry: autocomplete document type: " + DocumentType.NIE.getDescription());			
+						ctx.log().debug("\t saving registry: autocomplete document type: {0}",DocumentType.NIE.getDescription());			
 					}
 				} 
 			}
@@ -46,7 +46,7 @@ public class RegistryAutoComplete {
 
 	public static BiConsumer<AONContext,Registry> COMPLETE_NATIONALITY = (ctx,reg) -> {
 		if (reg.getNationality() == null) {
-			ctx.log().info("\t saving registry: autocomplete nationality: " + Country.ES.getIso2());
+			ctx.log().debug("\t saving registry: autocomplete nationality: {0}",Country.ES.getIso2());
 			reg.setNationality(Country.ES);
 		}
 	};
@@ -55,7 +55,7 @@ public class RegistryAutoComplete {
 		if (reg.getDocumentCountry()  == Country.ES) {
 			boolean legalPerson = AonDocumentUtil.isEntity(reg.getDocument());
 			if (legalPerson != reg.isLegalPerson()) {
-				ctx.log().info("\t saving registry: autocomplete legal person: " + legalPerson + " ["+reg.getDocument()+"]");
+				ctx.log().debug("\t saving registry: autocomplete legal person: {0} [{1}]",legalPerson,reg.getDocument());
 				reg.setLegalPerson( legalPerson );
 			}
 		}

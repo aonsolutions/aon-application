@@ -1,5 +1,8 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -36,7 +39,10 @@ public class AEAT_2021_2_Declaration extends Mod303Declaration {
 	protected AEAT_2021_2_Declaration() {
 
 	}
-
+	
+	// 1 de Julio del 2012		
+	private static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
+	
 	public static final double PERCENT1 = 4.0;
 	public static final double PERCENT2 = 10.0;
 	public static final double PERCENT3 = 21.0;
@@ -1878,15 +1884,29 @@ public class AEAT_2021_2_Declaration extends Mod303Declaration {
 	}
 
 	private static boolean importacionesCorrientesFilter(VatContext vat, Mod303 mod) {
-		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && !vat.isInvestment()
-				&& !vat.isRectification() && !vat.isService()
-				&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
+		return commonImportacionesInversionFilter(vat, mod) 
+				&& !vat.isInvestment();
 	}
 
 	private static boolean importacionesInversionFilter(VatContext vat, Mod303 mod) {
-		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isInvestment()
-				&& !vat.isRectification() && !vat.isService()
-				&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
+		return commonImportacionesInversionFilter(vat, mod) 
+				&& vat.isInvestment();
+	}
+
+	private static boolean commonImportacionesInversionFilter(VatContext vat, Mod303 mod) {
+		boolean basicFilter = vat.isVatGeneralRegime(mod.getDefaultVATRegime()) 
+				&& !vat.isVatSurchargeRegime() 
+				&& !vat.isRectification() 
+				&& !vat.isService();
+		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
+			if (vat.getTaxDate().before( IVA_2021_CHANGE_DATE )) {
+				basicFilter = true;
+			} else {
+				basicFilter = vat.hasDuaLinked() || vat.isVatImportation();
+			}
+			return basicFilter; 
+		}
+		return false;
 	}
 
 	private static boolean adqIntracomunitariasCorrientesFilter(VatContext vat, Mod303 mod) {
