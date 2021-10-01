@@ -25,12 +25,12 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	get filter() {
-    return this.getAttribute(CONSTANT.FILTER);
-  }
+    	return this.getAttribute(CONSTANT.FILTER);
+  	}
 
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, filter);
-  }
+  	set filter(filter) {
+  		this.setAttribute(CONSTANT.FILTER, filter);
+  	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if(CONSTANT.FILTER === name) {
@@ -127,6 +127,7 @@ export class AonInvoiceList extends AonElement {
 				if(this.getFilter().status === CONSTANT.INBOX && this.getFilter().type) {
 					invoices = invoices.filter(f => f.type === this.getFilter().type);
 				}
+				invoices = invoices.sort((a, b) => new Date(b.date) - new Date(a.date));
 
 				setInvoices(invoices);
 				
