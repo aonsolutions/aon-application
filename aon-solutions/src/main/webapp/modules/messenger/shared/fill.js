@@ -5,7 +5,7 @@ import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js"
 import { waitEl } from "../../../services/utils.js";
 import { MESSENGER_DIRECTION, MESSENGER_IDS, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { createAction, createChatMessage, createNoMessage} from "./creationUtils.js";
-import { chooseIconMessage } from "./utils";
+import { chooseIconMessage } from "./utils.js";
 
 /**
  * fill typeRequest (Tipo de solicitud)

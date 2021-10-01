@@ -365,7 +365,7 @@ export const buildForm = (div, aonMessengerChat) => {
     //-----------------END TYPE REQUEST
     const aonMessenger = aonMessengerChat.applicationParentEl;
     const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
-    let initText = isReceived(task, myWorkgroups) ? 'De' : 'Para';
+    let initText = isReceived(task, myWorkgroups, task.isGestor(),  task.auth.email) ? 'De' : 'Para';
     let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
     const btnExternal = createAonSwitch(titleBtn);
     rowsDiv.appendChild(btnExternal);
@@ -770,16 +770,16 @@ const showTags = (b) => {
  * @param {Array} workgroups my workgrouprs
  * @returns 
  */
-const isReceived = (task, workgroups) => {
+export const isReceived = (task, workgroups, isGestor, email) => {
     let condition = false;
     try {
         if(task.id){
             const isWorkgroup = workgroups.some(({id})=> id === task.workgroup.id );
-            condition = task.isGestor() 
+            condition = isGestor
             ? 
                 (task.task_holder.id === task.myTaskHolder.id) || isWorkgroup 
             : 
-                task.sender.id && task.gtask_id === task.auth.email;
+                task.sender.id && task.gtask_id ===email;
         }
     } catch (error) {console.log(error);}
     return condition;

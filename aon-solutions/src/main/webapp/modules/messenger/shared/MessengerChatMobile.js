@@ -41,6 +41,8 @@ const buildSectionHistoric = (aonMessengerChat, wrapper)=>{
     let titleText = task.title;
     if(task.registry && task.registry.name)
         titleText = `<b>[${task.registry.name}]</b> ${task.title}`;
+    else if(task.sender && task.sender.name)
+        titleText = `<b>[${task.sender.name}]</b> ${task.title}`;
 
     const title = setStyles(createTitle(titleText),{
         display : 'block',

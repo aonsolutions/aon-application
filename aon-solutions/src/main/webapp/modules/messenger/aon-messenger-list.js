@@ -192,11 +192,14 @@ export class AonMessengerList extends AonElement {
       let aonTable = this.getElement(this.TABLE_ID);
       const company = LS.getCompany();
       const document = company ? company.document: undefined;
+      const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
       datos.map((res, idx) => {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
         let newTitle  =  res.title;
         if(res.registry && res.registry.name && document !== res.registry.document) 
           newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+        else if(res.sender && res.sender.name && documentTh !== res.sender.document) 
+          newTitle = `<b>[${res.sender.name}]</b> ${newTitle}`;
         // else if()
   
         let assigned = "";

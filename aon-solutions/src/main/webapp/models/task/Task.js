@@ -325,6 +325,7 @@ export class Task {
   }
 
   isExternal(){
+    if(this.isGestor()) return false;
     return this.id && parseInt(LS.getDomainId()) !== parseInt(this.domain.id);
   }
 
