@@ -1534,7 +1534,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		});
 		toolbar.add(remove);
 		
-		specialUpdate  = new AonToolbarButton( AON.MSG.specialUpdate(), AON.CSS.aonIconWrench() );
+		specialUpdate  = new AonToolbarButton( AON.MSG.specialUpdate(), AON.CSS.aonIconDataSettings() );
 		specialUpdate.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
