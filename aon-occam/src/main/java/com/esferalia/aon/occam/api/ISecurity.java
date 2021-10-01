@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthDeviceFilter;
+import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -30,6 +31,7 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 
 public interface ISecurity {
+	public Stream<Auth> getAuthStream(AONContext ctx, AuthFilter filter);
 	public Auth getAuth(AONContext ctx, String email);
 	public Auth getAuthByDocument(AONContext ctx, String document);
 	public Auth getAuth(AONContext ctx, byte[] auth);

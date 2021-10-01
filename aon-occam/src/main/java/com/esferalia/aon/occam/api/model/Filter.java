@@ -510,6 +510,11 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface AuthFilter {
+		Filter filter(AuthProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface AuthAttachFilter{
 		Filter filter(AuthAttachProperties properties);
 	}

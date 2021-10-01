@@ -62,6 +62,7 @@ import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -75,6 +76,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailAccountType;
 import com.esferalia.aon.occam.api.model.Module;
+import com.esferalia.aon.occam.api.model.Properties.AuthProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
@@ -135,6 +137,22 @@ public class SecurityDAO {
 		@Override public Property<String> getSignatureProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.SIGNATURE_);}
 		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.USER_ID);}
 	}
+	
+	private static final AuthPropertiesDAO AUTH_PROPERTIES = new AuthPropertiesDAO();
+	protected static class AuthPropertiesDAO implements AuthProperties {
+		protected Condition[] getConditions(AuthFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<byte[]> getIdProperty() {return new FilterDAO.PropertyDAO<>(AUTH.ID);}
+		@Override public Property<String> getEmailProperty() {return new FilterDAO.PropertyDAO<>(AUTH.EMAIL);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(AUTH.NAME);}
+		@Override public Property<String> getSurnameProperty() {return new FilterDAO.PropertyDAO<>(AUTH.SURNAME);}
+		@Override public Property<String> getDocumentProperty() {return new FilterDAO.PropertyDAO<>(AUTH.DOCUMENT);}
+		@Override public Property<String> getPhoneProperty() {return new FilterDAO.PropertyDAO<>(AUTH.PHONE);}
+	}
 
 	public static Auth getAuth(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext()
@@ -142,6 +160,14 @@ public class SecurityDAO {
 			.from(AUTH)
 			.where(AUTH.ID.eq(auth))
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
+	}
+
+	public static Stream<Auth> getAuthStream(AONContext ctx, AuthFilter filter) {
+		return ctx.getDslContext()
+			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
+			.from(AUTH)
+			.where(AUTH_PROPERTIES.getConditions(filter))
+			.fetch().stream().map(new AuthFiller());
 	}
 	
 	public static Auth getAuth(AONContext ctx, String email) {

@@ -392,13 +392,7 @@ export class AonUser extends AonElement {
 		saveUser(this.user).then(r => {
 			this.user = r;
 			this.init();
-		}).catch(e => {
-			if(!this.isOnlyAuth()) {
-				let aonApplication = document.querySelector('aon-application');
-				let toast = this.getElement(aonApplication.TOAST);
-				toast.start(JSON.parse(e));
-			}
-		});
+		}).catch(e => this.showError(e));
 	}
 
 	delete() {

@@ -1368,6 +1368,15 @@ public interface Properties {
 		Property<Byte> getDeviceTypeProperty();
 		Property<String> getDeviceTokenProperty();
 	}
+
+	public interface AuthProperties {
+		Property<byte[]> getIdProperty();
+		Property<String> getEmailProperty();
+		Property<String> getNameProperty();
+		Property<String> getSurnameProperty();
+		Property<String> getDocumentProperty();
+		Property<String> getPhoneProperty();
+	}
 	
 	public interface AuthAttachProperties {
 		Property<Integer> getIdProperty();

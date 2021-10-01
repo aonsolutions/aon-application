@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.WorkgroupJSON;
@@ -650,6 +651,20 @@ public class UserServlet extends AonApiHttpServlet {
 //				pass = AON_SOLUTIONS.getUserPassword(getDomain().getName(), getDomain().getId(), usr.getId());
 			}
 			
+			Auth  authx = AuthJSON.fromJSON(api.getData());
+			if(!AonStringUtils.isBlank(authx.getDocument())) {
+				for (Auth r : AON_SOLUTIONS.getAuths(f -> f.getDocumentProperty().eq(authx.getDocument()))) {
+					User user = AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+					f.getAuthProperty().eq(r.getAuth())).findFirst().orElse(new User());
+					
+					if((user == null || user.getId() == null) && api.getData().opt("id") != null) {
+						user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getIdProperty().eq(api.getData().getInt("id")));
+					} 
+					if(user != null && user.getId() != null && !user.getId().equals(api.getData().optInt("id"))){
+						throw new Exception("El documento introducido ya está asociado a otro usuario.");
+					}
+				}
+			}
 			Auth auth = AON_SOLUTIONS.getAuth(email);
 			if(auth.getUuid() == null) {
 				auth = createAuth(api.getDomain(), api.getData(), login, pass);
@@ -668,9 +683,6 @@ public class UserServlet extends AonApiHttpServlet {
 				throw new Exception("El mail introducido ya está asociado a otro usuario.");
 			}
 			
-			if(user != null && user.getId() != null && !user.getId().equals(api.getData().getInt("id"))){
-				throw new Exception("El mail pertenece a un usuario del entorno.");
-			}
 			if(auth.getAuth() != null) {
 				if(user == null || user.getId() == null) {
 					user = createUser(api, api.getDomain(), api.getData(), login, auth);
@@ -716,7 +728,6 @@ public class UserServlet extends AonApiHttpServlet {
 		if(pass == null) {
 			pass = Utils.createPasswordHash(json.optString("email"), login);
 		}
-
 		Auth auth = new Auth()
 			.setEmail(json.optString("email"))
 			.setPassword(pass)
