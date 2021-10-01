@@ -51,6 +51,8 @@ public class TaskDAO {
 	}
 	
 	private static final Registry TH_REGISTRY = REGISTRY.as("registry_task_holder");
+	private static final com.esferalia.aon.jooq.tables.TaskHolder SENDER = TASK_HOLDER.as("sender");
+	private static final Registry SENDER_REGISTRY = REGISTRY.as("registry_sender");
 	
 	private static final TaskPropertiesDAO TASK_PROPERTIES = new TaskPropertiesDAO();
 	protected static class TaskPropertiesDAO implements TaskProperties {
@@ -103,6 +105,8 @@ public class TaskDAO {
 				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
 				.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
+				.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
 				.where(TASK_PROPERTIES.getConditions(filter))
 				.orderBy(TASK.CREATION_DATE.desc());
 	}
@@ -268,9 +272,7 @@ public class TaskDAO {
 	}
 	
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
-		System.out.println(task.getDomain().getId());
-		 return 
-				 DSL.select( 
+		 return DSL.select( 
 						DSL.val(task.getActivityType()),
 						DSL.val(task.getDescription()),
 						DSL.val(task.getTitle()),
@@ -323,7 +325,9 @@ public class TaskDAO {
 				.setPriority(Priority.safeValueOf(r.getValue(TASK.PRIORITY)))
 				.setProject(new Project().setId(r.getValue(TASK.PROJECT)))
 				.setRepeatPeriod(TaskPeriod.safeValueOf(r.getValue(TASK.REPEAT_PERIOD)))
-				.setSender((TaskHolder) new TaskHolder().setId(r.getValue(TASK.SENDER)))
+				.setSender(checkField(r, SENDER.REGISTRY)
+						? TaskHolderFiller.build(r, SENDER, SENDER_REGISTRY)
+						: new TaskHolder().setRegistry(r.getValue(TASK.SENDER)))
 				.setSource(TaskSource.safeValueOf(r.getValue(TASK.SOURCE)))
 				.setSourceId(r.getValue(TASK.SOURCE_ID))
 				.setStartDate(r.getValue(TASK.START_DATE))

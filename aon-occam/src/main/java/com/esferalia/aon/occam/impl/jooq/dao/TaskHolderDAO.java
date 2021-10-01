@@ -54,6 +54,17 @@ public class TaskHolderDAO {
 					.setType(TaskHolderType.safeValueOf(r.getValue(TASK_HOLDER.TYPE)))
 					.setUserId(r.getValue(TASK_HOLDER.USER_ID));
 		}
+		
+		public static TaskHolder build(Record r, com.esferalia.aon.jooq.tables.TaskHolder th, com.esferalia.aon.jooq.tables.Registry registry) {
+			if(th == null) th = TASK_HOLDER;
+			if(registry == null) registry = REGISTRY;
+			return new TaskHolder()
+					.copy(RegistryFiller.build(r, registry))
+					.setActive(getBoolean(r, th.ACTIVE))
+					.setCostProfile(r.getValue(th.COST_PROFILE))
+					.setType(TaskHolderType.safeValueOf(r.getValue(th.TYPE)))
+					.setUserId(r.getValue(th.USER_ID));
+		}
 	}
 	
 	private static SelectConditionStep<Record> select(AONContext ctx, TaskHolderFilter filter) {
