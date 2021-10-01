@@ -6,6 +6,8 @@ export const ACCOUNTED = 'Accounted';
 export const ACCOUNTEDS = 'Accounted';
 export const ACCOUNTING = 'Accounting';
 export const ACTIVATE = 'Activate';
+export const ACTIVE = 'Active';
+export const ACTIVES = 'Active';
 export const ADD = 'Add';
 export const ADD_CATEGORY = 'Add Category';
 export const ADD_COMMENT = 'Add Comment';
@@ -125,6 +127,8 @@ export const HOLDERS = 'Holders';
 
 // ----- I
 
+export const INACTIVE = 'Inactive';
+export const INACTIVES ='Inactive';
 export const INBOX = 'Inbox';
 export const INVESTMENT = 'Investment';
 export const INVOICE = 'Invoice';
@@ -154,6 +158,7 @@ export const MODEL_111 = 'Form 111';
 export const MODEL_111_DESCRIPTION = 'Form 111. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Self-assessment.';
 export const MODEL_190 = 'Form 190';
 export const MODEL_190_DESCRIPTION = 'Form 190. Information Return. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Annual summary.';
+export const MOVED_TO_TRASH = 'It has been moved to the trash';
 export const MY_DATA = 'My Data';
 export const MY_USER = 'My User';
 
@@ -220,6 +225,7 @@ export const REJECTEDS = 'Rejected';
 export const REQUEST = 'Request';
 export const REQUESTS = 'Requests';
 export const RESTORE = 'Restore';
+export const RESTORED_DATA = 'The data has been restored successfully';
 export const RESTORE_INVOICE = 'Restore Invoice';
 export const RESTORE_INVOICES = 'Restore Invoices';
 export const RESUME_COSTS = "Resumen de costes";

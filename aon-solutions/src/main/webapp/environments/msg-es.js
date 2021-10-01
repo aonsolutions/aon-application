@@ -6,6 +6,8 @@ export const ACCOUNTED = 'Contabilizada';
 export const ACCOUNTEDS = 'Contabilizadas';
 export const ACCOUNTING = 'Contabilidad';
 export const ACTIVATE = 'Activar';
+export const ACTIVE = 'Activo';
+export const ACTIVES = 'Activas'
 export const ADD = 'Añadir';
 export const ADD_CATEGORY = 'Añadir Categoría';
 export const ADD_COMMENT = 'Añadir Comentario';
@@ -125,6 +127,8 @@ export const HOLDERS = 'Titulares';
 
 // ----- I
 
+export const INACTIVE = 'Inactivo';
+export const INACTIVES = 'Inactivas';
 export const INBOX = 'Bandeja de Entrada';
 export const INVESTMENT = 'Inversión';
 export const INVOICE = 'Factura';
@@ -154,6 +158,7 @@ export const MODEL_111 = 'Modelo 111';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
 export const MODEL_190 = 'Modelo 190';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
+export const MOVED_TO_TRASH = 'Se ha movido a la papelera';
 export const MY_DATA = 'Mis Datos';
 export const MY_USER = 'Mi Usuario';
 
@@ -220,6 +225,7 @@ export const REJECTEDS = 'Rechazadas';
 export const REQUEST = 'Solicitud';
 export const REQUESTS = 'Solicitudes';
 export const RESTORE = 'Restaurar';
+export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Facturas';
 export const RESUME_COSTS = "Resumen de costes";

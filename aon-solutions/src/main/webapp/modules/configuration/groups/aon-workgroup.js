@@ -174,6 +174,6 @@ export class AonWorkgroup extends AonElement {
         return userList;
     }
 }
-if(!window.customElements.get('aon-workgroup')){
-	window.customElements.define('aon-workgroup', AonWorkgroup);
+if(!window.customElements.get(TAG.AON_WORKGROUP)){
+	window.customElements.define(TAG.AON_WORKGROUP, AonWorkgroup);
 }

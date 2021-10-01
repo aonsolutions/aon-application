@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORK
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,6 +20,10 @@ import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 
 public class WorkgroupDAO {
 	
+	private WorkgroupDAO() {
+		
+	}
+	
 	private static final WorkgroupPropertiesDAO WORKGROUP_PROPERTIES = new WorkgroupPropertiesDAO();
 
 	protected static class WorkgroupPropertiesDAO implements WorkgroupProperties {
@@ -27,10 +32,10 @@ public class WorkgroupDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(WORKGROUP.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(WORKGROUP.DOMAIN);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(WORKGROUP.DESCRIPTION);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(WORKGROUP.STATUS);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(WORKGROUP.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(WORKGROUP.DOMAIN);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(WORKGROUP.DESCRIPTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(WORKGROUP.STATUS);}
 	}
 	
 	public static SelectConditionStep<Record> select(AONContext ctx, WorkgroupFilter filter) {
@@ -41,7 +46,7 @@ public class WorkgroupDAO {
 		return select(ctx, filter).fetch().stream().map(new WorkgroupFiller());
 	}
 
-	public static LinkedList<Workgroup> getList(AONContext ctx, WorkgroupFilter filter) {
+	public static List<Workgroup> getList(AONContext ctx, WorkgroupFilter filter) {
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -98,11 +103,11 @@ public class WorkgroupDAO {
 
 		public static Workgroup build(Record r) {
 			return new Workgroup()
-					.setId(r.getValue(WORKGROUP.ID))
-					.setDomain(r.getValue(WORKGROUP.DOMAIN))
-					.setDescription(r.getValue(WORKGROUP.DESCRIPTION))
-					.setStatus(WorkgroupStatus.safeValueOf(r.getValue(WORKGROUP.STATUS)));
-					
+				.setId(r.getValue(WORKGROUP.ID))
+				.setDomain(r.getValue(WORKGROUP.DOMAIN))
+				.setDescription(r.getValue(WORKGROUP.DESCRIPTION))
+				.setStatus(WorkgroupStatus.safeValueOf(r.getValue(WORKGROUP.STATUS)))
+				.setDirty(false);
 		}
 	}
 	

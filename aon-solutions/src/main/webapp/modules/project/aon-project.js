@@ -169,7 +169,13 @@ export class AonProject extends AonElement {
 
 	save() {
 		if(this.project.isDirty())
-			saveProject(this.project).then(project => this.setProject(project));
+			saveProject(this.project).then(project =>{
+				this.getApplication().getToast().start({
+					type: CONSTANT.SUCCESS,
+					message: MSG.SAVED_DATA
+				});
+				this.setProject(project)
+			}).catch(e => this.showError(e));;
 	}
 
 	setProject(project) {

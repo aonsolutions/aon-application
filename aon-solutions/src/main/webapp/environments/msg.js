@@ -34,7 +34,8 @@ export const ACCOUNTED = MSG.ACCOUNTED;
 export const ACCOUNTEDS = MSG.ACCOUNTEDS;
 export const ACCOUNTING = MSG.ACCOUNTING;
 export const ACTIVATE = MSG.ACTIVATE;
-export const ACTIVE = 'Activas';//TODO
+export const ACTIVE = MSG.ACTIVE;
+export const ACTIVES= MSG.ACTIVES;
 export const ACTIVITY = 'Actividad';//TODO
 export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
@@ -182,7 +183,8 @@ export const HOURS = "Horas";//TODO
 export const HISTORIC = "Historial"; //TODO
 // ----- I
 
-export const INACTIVE = 'Inactivas';//TODO
+export const INACTIVE = MSG.INACTIVE;
+export const INACTIVES = MSG.INACTIVES;
 export const INBOX = MSG.INBOX;
 export const INVESTMENT = MSG.INVESTMENT;
 export const INVOICE = MSG.INVOICE;
@@ -213,6 +215,7 @@ export const MODEL_111 = MSG.MODEL_111;
 export const MODEL_111_DESCRIPTION = MSG.MODEL_111_DESCRIPTION;
 export const MODEL_190 = MSG.MODEL_190;
 export const MODEL_190_DESCRIPTION = MSG.MODEL_190_DESCRIPTION;
+export const MOVED_TO_TRASH = MSG.MOVED_TO_TRASH;
 export const MY_DATA = MSG.MY_DATA;
 export const MY_USER = MSG.MY_USER;
 export const MSG_SENT = "Mensaje enviado";//TODO
@@ -304,9 +307,11 @@ export const REQUESTS_RECEIVED = 'Solicitudes Recibidas';//TODO
 export const RESTORE = MSG.RESTORE;
 export const RESTORE_INVOICE = MSG.RESTORE_INVOICE;
 export const RESTORE_INVOICES = MSG.RESTORE_INVOICES;
+export const RESTORED_DATA = MSG.RESTORED_DATA;
 export const RESUME_COSTS = "Resumen de costes"; // TODO
 export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
 export const REOPEN = "Reabrir"; // TODO
+
 // ----- S
 
 export const SAVE = MSG.SAVE;

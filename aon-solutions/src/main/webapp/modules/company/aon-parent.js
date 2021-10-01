@@ -60,11 +60,11 @@ export class AonParent extends AonElement {
 		aonParent.addSidenavOptions(MSG.PENDING_TASKS.toUpperCase(), taskOptions);
 		
 		let filterOptions = [{
-				name: MSG.ACTIVE,
+				name: MSG.ACTIVES,
 				icon: 'domain',
 				fn: () => this.init({active: true})
 			}, {
-				name: MSG.INACTIVE,
+				name: MSG.INACTIVES,
 				icon: 'domain_disabled',
 				fn: () => this.init({inactive: true})
 			}, {

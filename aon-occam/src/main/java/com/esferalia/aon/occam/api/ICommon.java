@@ -153,7 +153,7 @@ public interface ICommon {
 	public Workgroup getWorkgroup(AONContext ctx, WorkgroupFilter filter);
 	public Stream<Workgroup> getWorkgroupStream(AONContext ctx, WorkgroupFilter filter);
 	public Stream<Workgroup> getWorkgroupByTaskHolderStream(AONContext ctx, WorkgroupFilter filter, Integer taskHolder);
-	public LinkedList<Workgroup> getWorkgroupList(AONContext ctx, WorkgroupFilter filter);
+	public List<Workgroup> getWorkgroupList(AONContext ctx, WorkgroupFilter filter);
 	public Workgroup saveWorkgroup(AONContext ctx, Workgroup workgroup);
 	public void deleteWorkgroup(AONContext ctx, Integer id);
 }

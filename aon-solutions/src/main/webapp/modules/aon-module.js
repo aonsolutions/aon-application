@@ -1,5 +1,5 @@
 import { AonElement } from '../components/AonElement.js';
-import { getToken , getCompanies, getUser} from '../services/service.js';
+import { getToken , getCompanies, getUser, login} from '../services/service.js';
 import { AonLogin } from './login/aon-login.js';
 import { AonHome } from './aon-home.js';
 import { TAG } from '../environments/environments.js'; 
@@ -40,7 +40,8 @@ export class AonModule extends AonElement {
 		this.orientationLocked();
 	}
 
-	load() {
+	async load() {
+		await this.checkLogin();
 		if(getToken()){
 			LS.removeDomain();
 			this.buildHome();
@@ -60,7 +61,23 @@ export class AonModule extends AonElement {
 		}
 	}
 
-	
+	async checkLogin() {
+		const urlParams = new URLSearchParams(location.search);
+		let user = urlParams.get('user');
+		let password = urlParams.get('password');
+		let token = urlParams.get('token');
+		if(user && password) {
+			const data = {
+				username: user,
+				password: password,
+			};
+			await login(data);
+		}
+
+		if(token) {
+			LS.setToken(token);
+		}
+	} 
 
 	companySelection(company, onlyOne) {
 		LS.setCompany(JSON.stringify(company));

@@ -1,5 +1,5 @@
 import {webkitRequestMobile} from '../services/service.js';
-import { TAG } from "../environments/environments.js";
+import { CONSTANT, MSG, TAG } from "../environments/environments.js";
 
 export class AonElement extends HTMLElement{
   ROOT_PANEL = 'rootPanel';
@@ -137,6 +137,14 @@ export class AonElement extends HTMLElement{
     const href = window.location.href;
 		return href.includes('aonsolutions.org') || href.includes('localhost') || href.includes('8080');
 	}
+
+  showMessage(msg) {
+    msg = {
+      type: CONSTANT.SUCCESS,
+      message: msg || MSG.SAVED_DATA
+    }
+    this.showToast(msg);
+  }
 
   showError(e) {
     this.showToast(e);
