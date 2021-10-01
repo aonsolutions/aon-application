@@ -978,6 +978,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
 		Date prevBonus = add(startBonus, DAY_OF_MONTH, -1);
 		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		int monthDays = get(lastDayOfMonth, DAY_OF_MONTH);
 		AON.getSalaryData(aonContext,
 				props -> props.getContractProperty().eq(contract.getId()))
 				.forEach(salary -> {
@@ -988,12 +989,12 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 					Assert.assertEquals(2, datas.size());
 					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
 					Assert.assertEquals(prevBonus, datas.get(0).getEndDate());
-					Assert.assertEquals(1500.00 * 10.00 / 30.00,
+					Assert.assertEquals(1500.00 * 10.00 / monthDays,
 							Double.parseDouble(datas.get(0).getExpression())
 							, DELTA);
 					Assert.assertEquals(startBonus, datas.get(1).getStartDate());
 					Assert.assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
-					Assert.assertEquals(1500.00 *20.00 / 30.00,
+					Assert.assertEquals(1500.00 *(monthDays-10)/ monthDays,
 							Double.parseDouble(datas.get(1).getExpression())
 							,DELTA);
 
@@ -1024,12 +1025,12 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 					Assert.assertEquals(2, datas.size());
 					Assert.assertEquals(firstDayOfMonth, datas.get(0).getStartDate());
 					Assert.assertEquals(prevBonus, datas.get(0).getEndDate());
-					Assert.assertEquals(1500.00 * 10.00 / 30.00,
+					Assert.assertEquals(1500.00 * 10.00 / monthDays,
 							Double.parseDouble(datas.get(0).getExpression())
 							, DELTA);
 					Assert.assertEquals(startBonus, datas.get(1).getStartDate());
 					Assert.assertEquals(lastDayOfMonth, datas.get(1).getEndDate());
-					Assert.assertEquals(1500.00 *20.00 / 30.00,
+					Assert.assertEquals(1500.00 *(monthDays-10) / monthDays,
 							Double.parseDouble(datas.get(1).getExpression())
 							,DELTA);
 
