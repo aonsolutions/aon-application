@@ -11,8 +11,8 @@ public class PrintInvoiceConfiguration {
 	
 	private Integer header;
 	private Integer footer;
-	private boolean detailed;
-	private boolean adjustImage;
+	private Boolean detailed;
+	private Boolean adjustImage;
 	private Attach background;
 	
 
@@ -70,12 +70,12 @@ public class PrintInvoiceConfiguration {
 		return detailed;
 	}
 
-	public PrintInvoiceConfiguration setDetailed(boolean detailed) {
+	public PrintInvoiceConfiguration setDetailed(Boolean detailed) {
 		this.detailed = detailed;
 		return this;
 	}
 
-	public boolean getAdjustImage() {
+	public Boolean getAdjustImage() {
 		return adjustImage;
 	}
 
