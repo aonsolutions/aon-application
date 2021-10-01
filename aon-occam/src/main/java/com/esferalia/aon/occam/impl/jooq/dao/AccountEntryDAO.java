@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
@@ -69,6 +70,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -1087,9 +1089,12 @@ public class AccountEntryDAO {
 						oldAccountId = ai.getVats().get(0).getExpAccountId();
 					}
 					Integer newAccountId = null;
+					String description = null;
 					if (ai.getSuggestedAccounts() != null && ai.getSuggestedAccounts().size() > 1) {
 						newAccountId = ai.getSuggestedAccounts().get(1).getId();
+						description = ai.getSuggestedAccounts().get(1).getDescription();
 					}
+					final String newAccountDescription = description;
 					if (oldAccountId != null && newAccountId != null) {
 						AccountEntry ae = wrapper.getAccountEntry();
 						for (AccountEntryDetail detail : ae.getDetails()) {
@@ -1111,6 +1116,26 @@ public class AccountEntryDAO {
 							}
 						}
 						for (InvoiceVAT vat : ai.getVats() ) {
+							
+							// Si el origen de la factura es contam también se cambia la description de la linea de factura,.
+							ctx.getDslContext()
+								.select(INVOICE_DETAIL.SOURCE)
+								.from(INVOICE_DETAIL)
+								.where(INVOICE_DETAIL.ID.eq(vat.getInvoiceDetailId()))
+								.fetch()
+								.stream()
+								.map(rec -> rec.getValue(INVOICE_DETAIL.SOURCE))
+								.map(sourceIndex ->  sourceIndex==null?null:InvoiceSource.values()[sourceIndex])
+								.filter( s -> (s == InvoiceSource.ACCOUNT) )
+								.forEach( source -> {
+									int i = ctx.getDslContext()
+											.update(INVOICE_DETAIL)
+											.set(INVOICE_DETAIL.DESCRIPTION, newAccountDescription)
+											.where(INVOICE_DETAIL.ID.equal( vat.getInvoiceDetailId()))
+											.execute();
+										ctx.log().debug("UPDATE INVOICE DETAIL DESCRIPTION id: {0} count({1})",vat.getInvoiceDetailId(),i);
+								});
+							
 							int i = ctx.getDslContext()
 								.delete(INVOICE_DETAIL_ACCOUNT)
 								.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal( vat.getInvoiceDetailId()))

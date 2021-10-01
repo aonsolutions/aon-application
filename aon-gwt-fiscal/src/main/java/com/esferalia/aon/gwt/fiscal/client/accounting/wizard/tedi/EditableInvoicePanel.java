@@ -1770,7 +1770,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		FlowPanel financeDataTableCellDiv1 = new FlowPanel();
 		financeDataTableCellDiv1.setStyleName(AON.CSS.aonDisplayTableCell());
-		financePanel.setTabIndex(vatPanel.getTabIndex() + 5000000);
 		financeDataTableRowDiv.add(financePanel);
 		invoicePanel.add(financeDataTableDiv);
 		

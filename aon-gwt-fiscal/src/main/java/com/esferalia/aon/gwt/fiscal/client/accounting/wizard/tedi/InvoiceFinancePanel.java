@@ -56,7 +56,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHandlers<Finance>,HasAccountEntrySelectionHandlers, Focusable {
+public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHandlers<Finance>,HasAccountEntrySelectionHandlers {
 	
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	
@@ -697,25 +697,4 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				});			
 	}
 
-	@Override
-	public int getTabIndex() {
-		return authFinanceCalculation.getTabIndex();
-	}
-
-	@Override
-	public void setAccessKey(char key) {
-		authFinanceCalculation.setAccessKey(key);
-		
-	}
-
-	@Override
-	public void setFocus(boolean focused) {
-		authFinanceCalculation.setFocus(focused);
-	}
-
-	@Override
-	public void setTabIndex(int index) {
-		authFinanceCalculation.setTabIndex(index);
-		
-	}
 }
