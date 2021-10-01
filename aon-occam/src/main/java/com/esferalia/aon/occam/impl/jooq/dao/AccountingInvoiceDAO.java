@@ -183,7 +183,6 @@ public class AccountingInvoiceDAO {
 						ai.setAccountSource(ai.isAccountSource() || (source == InvoiceSource.ACCOUNT));
 						// ¿Más de uno? --> No se soporta
 						ai.setWorkplace(det.getValue(INVOICE_DETAIL.WORKPLACE));
-						System.out.println( ai.getWorkplace() );
 						// -----------------
 						
 						ctx.getDslContext()

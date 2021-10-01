@@ -234,7 +234,7 @@ public class SupplierModule extends MainEntryPoint {
 		, DOC("N\u00BA Documento"		, 130,AON.CSS.aonTextLeft())
 		, AUTO(AON.MSG.name()			, 0  ,AON.CSS.aonTextLeft())
 		, ALS(AON.MSG.alias()			, 200,AON.CSS.aonTextLeft())
-	    , ACT(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
+//	    , ACT(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
@@ -627,67 +627,74 @@ public class SupplierModule extends MainEntryPoint {
 			}
 		});
 
-		AonTableButton detailsButton = new AonTableButton(AON.MSG.seeDetail(),AON.CSS.aonIconMoreVertical() );
-		detailsButton.addStyleName(AON.CSS.aonClickable());
-		detailsButton.addClickHandler( new ClickHandler() {
-			
+//		AonTableButton detailsButton = new AonTableButton(AON.MSG.seeDetail(),AON.CSS.aonIconMoreVertical() );
+//		detailsButton.addStyleName(AON.CSS.aonClickable());
+//		detailsButton.addClickHandler( new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				SERVICE.getSupplierFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), supplier.getId(), new AsyncCallback<SupplierFull>() {
+//					
+//					@Override
+//					public void onSuccess(SupplierFull result) {
+//						final AonSimpleDialog dialog = new AonSimpleDialog();
+//						dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+//						dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+//						dialog.setCaption(AON.MSG.supplier());
+//						AonSupplierFullPanel supplierPanel = new AonSupplierFullPanel(opt, result, new AonRegistryFullPanelCallback<SupplierFull>() {
+//							
+//							@Override
+//							public void setFocus(boolean b) {
+//								// callback.setFocus(b);
+//							}
+//							
+//							@Override
+//							public void onError(Throwable caught) {
+//								showError(caught.getMessage());
+//							};
+//							
+//							@Override
+//							public void onCancel() {
+//								dialog.hide();		
+//							}
+//							
+//							@Override
+//							public void onAccept(SupplierFull rf) {
+//								dialog.hide();
+//							}
+//							@Override
+//							public void onDocumenthanged(SupplierFull registryFull) {
+//							}
+//							
+//						});
+//						dialog.add( supplierPanel );
+//						dialog.center();
+//						dialog.show();
+//						
+//						Scheduler.get().scheduleDeferred(new Command() {
+//					        public void execute() {
+//					        	supplierPanel.setFocus(true);
+//					        }
+//					    });		
+//						
+//					}
+//					
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						showError(caught.getMessage());	
+//					}
+//				});					
+//			}
+//		});
+		
+		AonDisplayGridRow supplierRow = tab.addRow();
+		supplierRow.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				SERVICE.getSupplierFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), supplier.getId(), new AsyncCallback<SupplierFull>() {
-					
-					@Override
-					public void onSuccess(SupplierFull result) {
-						final AonSimpleDialog dialog = new AonSimpleDialog();
-						dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
-						dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-						dialog.setCaption(AON.MSG.supplier());
-						AonSupplierFullPanel supplierPanel = new AonSupplierFullPanel(opt, result, new AonRegistryFullPanelCallback<SupplierFull>() {
-							
-							@Override
-							public void setFocus(boolean b) {
-								// callback.setFocus(b);
-							}
-							
-							@Override
-							public void onError(Throwable caught) {
-								showError(caught.getMessage());
-							};
-							
-							@Override
-							public void onCancel() {
-								dialog.hide();		
-							}
-							
-							@Override
-							public void onAccept(SupplierFull rf) {
-								dialog.hide();
-							}
-							@Override
-							public void onDocumenthanged(SupplierFull registryFull) {
-							}
-							
-						});
-						dialog.add( supplierPanel );
-						dialog.center();
-						dialog.show();
-						
-						Scheduler.get().scheduleDeferred(new Command() {
-					        public void execute() {
-					        	supplierPanel.setFocus(true);
-					        }
-					    });		
-						
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						showError(caught.getMessage());	
-					}
-				});					
+				selectSupplier(opt, supplier);
 			}
 		});
-		
-		tab.addRow().addCell(checkButton)
+		supplierRow.addCell(checkButton)
 			.addCell(status)
 			.addCell(confidential)
 			.addCell(documentTypeLabel)
@@ -695,7 +702,8 @@ public class SupplierModule extends MainEntryPoint {
 			.addCell(documentLabel)
 			.addCell(nameLabel)
 			.addCell(aliasLabel)
-			.addCell(detailsButton);
+//			.addCell(detailsButton)
+			;
 	}
 	
 
@@ -714,4 +722,59 @@ public class SupplierModule extends MainEntryPoint {
 	private void refreshIcons() {
 		selectedCount.setText( (selectedItems.size() > 0)?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
+	
+	private void selectSupplier(RegistryModuleOptions opt, Supplier supplier) {
+		SERVICE.getSupplierFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), supplier.getId(), new AsyncCallback<SupplierFull>() {
+			
+			@Override
+			public void onSuccess(SupplierFull result) {
+				final AonSimpleDialog dialog = new AonSimpleDialog();
+				dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+				dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+				dialog.setCaption(AON.MSG.supplier());
+				AonSupplierFullPanel supplierPanel = new AonSupplierFullPanel(opt, result, new AonRegistryFullPanelCallback<SupplierFull>() {
+					
+					@Override
+					public void setFocus(boolean b) {
+						// callback.setFocus(b);
+					}
+					
+					@Override
+					public void onError(Throwable caught) {
+						showError(caught.getMessage());
+					};
+					
+					@Override
+					public void onCancel() {
+						dialog.hide();		
+					}
+					
+					@Override
+					public void onAccept(SupplierFull rf) {
+						dialog.hide();
+					}
+					@Override
+					public void onDocumenthanged(SupplierFull registryFull) {
+					}
+
+				});
+				dialog.add( supplierPanel );
+				dialog.center();
+				dialog.show();
+				
+				Scheduler.get().scheduleDeferred(new Command() {
+			        public void execute() {
+			        	supplierPanel.setFocus(true);
+			        }
+			    });		
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				showError(caught.getMessage());	
+			}
+		});					
+	}
+	
 }		
