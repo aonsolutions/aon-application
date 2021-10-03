@@ -64,63 +64,65 @@ public class RawdocDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RAWDOC.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RAWDOC.DOMAIN);}
-		@Override public Property<Byte> getNatureProperty() {return new FilterDAO.PropertyDAO<Byte>(RAWDOC.NATURE);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RAWDOC.TYPE);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(RAWDOC.STATUS);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.DOMAIN);}
+		@Override public Property<Byte> getNatureProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.NATURE);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.TYPE);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.STATUS);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.TimestampPropertyDAO(RAWDOC.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(RAWDOC.CREATION_USER);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.TimestampPropertyDAO(RAWDOC.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(RAWDOC.MODIFICATION_USER);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(RAWDOC.MODIFICATION_USER);}
 	}
 	
 	private static class RawdocFiller  implements Function<Record,Rawdoc> {
 		@Override
-		public Rawdoc apply(Record record) {
+		public Rawdoc apply(Record r) {
+			return build(r);
+		}
+		
+		public static Rawdoc build(Record r) {
 			return new Rawdoc()
-				.setId(record.getValue(RAWDOC.ID))
-				.setDomain(record.getValue(RAWDOC.DOMAIN))
-				.setNature(RawdocNature.safeValueOf( record.getValue(RAWDOC.NATURE)))
-				.setType(RawdocType.safeValueOf( record.getValue(RAWDOC.TYPE)))
-				.setStatus(RawdocStatus.safeValueOf( record.getValue(RAWDOC.STATUS)))
-				.setJson(record.getValue(RAWDOC.JSON))
-				.setTediInvoice( AonStringUtils.isBlank(record.getValue(RAWDOC.JSON)) 
-						? null 
-						: TediInvoiceJSON.fromJSON( new JSONObject(record.getValue(RAWDOC.JSON) ) ) )
-				.setLog(record.getValue(RAWDOC.LOG))
-				.setMimeType(MimeType.safeValueOf( record.getValue(RAWDOC.MIME_TYPE)))
-				.setCreationUser(record.getValue(RAWDOC.CREATION_USER))
-				.setCreationDate(record.getValue(RAWDOC.CREATION_DATE))
-				.setModificationUser(record.getValue(RAWDOC.MODIFICATION_USER))
-				.setModificationDate(record.getValue(RAWDOC.MODIFICATION_DATE))
-				;
+					.setId(r.getValue(RAWDOC.ID))
+					.setDomain(r.getValue(RAWDOC.DOMAIN))
+					.setNature(RawdocNature.safeValueOf( r.getValue(RAWDOC.NATURE)))
+					.setType(RawdocType.safeValueOf( r.getValue(RAWDOC.TYPE)))
+					.setStatus(RawdocStatus.safeValueOf( r.getValue(RAWDOC.STATUS)))
+					.setJson(r.getValue(RAWDOC.JSON))
+					.setTediInvoice( AonStringUtils.isBlank(r.getValue(RAWDOC.JSON)) 
+							? null 
+							: TediInvoiceJSON.fromJSON( new JSONObject(r.getValue(RAWDOC.JSON) ) ) )
+					.setLog(r.getValue(RAWDOC.LOG))
+					.setMimeType(MimeType.safeValueOf( r.getValue(RAWDOC.MIME_TYPE)))
+					.setCreationUser(r.getValue(RAWDOC.CREATION_USER))
+					.setCreationDate(r.getValue(RAWDOC.CREATION_DATE))
+					.setModificationUser(r.getValue(RAWDOC.MODIFICATION_USER))
+					.setModificationDate(r.getValue(RAWDOC.MODIFICATION_DATE));
 		}
 	}
 	
 	private static class FullRawdocFiller  extends RawdocFiller {
 		@Override
-		public Rawdoc apply(Record record) {
-			return super.apply(record)
-				.setData(record.getValue(RAWDOC.DATA));
+		public Rawdoc apply(Record r) {
+			return super.apply(r)
+				.setData(r.getValue(RAWDOC.DATA));
 		}
 	}
 	
 	private static class RawdocAttachFiller  implements Function<Record,Attach> {
 		@Override
-		public Attach apply(Record record) {
+		public Attach apply(Record r) {
 			return new Attach()
-				.setId(record.getValue(RAWDOC.ID))
-				.setDomain(new com.esferalia.aon.occam.api.model.Domain().setId(record.getValue(RAWDOC.DOMAIN)))
+				.setId(r.getValue(RAWDOC.ID))
+				.setDomain(new com.esferalia.aon.occam.api.model.Domain().setId(r.getValue(RAWDOC.DOMAIN)))
 				.setAttachType(AttachType.RAWDOC)
-				.setData(record.getValue(RAWDOC.DATA))
-				.setDescription(RawdocNature.safeValueOf( record.getValue(RAWDOC.NATURE)).getDescription())
-				.setMimeType(MimeType.safeValueOf( record.getValue(RAWDOC.MIME_TYPE)))
-				.setCreationUser(record.getValue(RAWDOC.CREATION_USER))
-				.setCreationDate(record.getValue(RAWDOC.CREATION_DATE))
-				.setModificationUser(record.getValue(RAWDOC.MODIFICATION_USER))
-				.setModificationDate(record.getValue(RAWDOC.MODIFICATION_DATE))
-				;
+				.setData(r.getValue(RAWDOC.DATA))
+				.setDescription(RawdocNature.safeValueOf( r.getValue(RAWDOC.NATURE)).getDescription())
+				.setMimeType(MimeType.safeValueOf( r.getValue(RAWDOC.MIME_TYPE)))
+				.setCreationUser(r.getValue(RAWDOC.CREATION_USER))
+				.setCreationDate(r.getValue(RAWDOC.CREATION_DATE))
+				.setModificationUser(r.getValue(RAWDOC.MODIFICATION_USER))
+				.setModificationDate(r.getValue(RAWDOC.MODIFICATION_DATE));
 		}
 	}
 

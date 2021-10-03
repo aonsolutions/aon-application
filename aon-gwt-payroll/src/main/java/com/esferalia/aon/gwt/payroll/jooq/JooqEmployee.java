@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractClause.CONTRACT_CLAUSE;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
@@ -758,16 +759,6 @@ public class JooqEmployee {
 			Integer enterpriseActivityId = contractTable.get(CONTRACT.ENTERPRISE_ACTIVITY);
 			contractData.setActivityId(enterpriseActivityId);
 			
-//			if(null == enterpriseActivityId) {
-//				contractData.setActivityId(null);
-//			}else {
-//				Record enterpriseActivityTable = dslContext.select().from(ENTERPRISE_ACTIVITY)
-//						.where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseActivityId))
-//						.fetchOne();
-//				
-//				contractData.setActivityId(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
-//			}
-			
 			//ENTERPRISE CCC TABLE
 			Integer enterpriseCCCId = contractTable.get(CONTRACT.ENTERPRISE_CCC);
 			
@@ -1019,6 +1010,16 @@ public class JooqEmployee {
 		
 		if(sepeIdRecords.isNotEmpty())
 			contractData.setSepeId(sepeIdRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+		
+		// ---------------------------------------------- Contract Extension
+		
+		Integer contractTypeValue = Integer.parseInt(contractData.getContractType());
+		Boolean hasExtension = false;
+		if(contractTypeValue >= 400) {
+			Result<Record> extensionRecords = dslContext.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_ATTACH.TYPE.eq((byte)13)).fetch();
+			if(extensionRecords.isNotEmpty()) hasExtension = true;
+		}
+		contractData.setHasExtension(hasExtension);
 		
 		employeeContractInfo.setEmployeeInfo(employeeData);
 		employeeContractInfo.setContractInfo(contractData);

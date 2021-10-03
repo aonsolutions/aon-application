@@ -10,11 +10,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
-import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBank;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItConfiguration;
@@ -24,10 +24,10 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.client.ui.FlexTable;
 
 import net.aonsolutions.aon.api.checkit.CheckItAPI;
 import net.aonsolutions.aon.api.checkit.CheckItException;
+import net.aonsolutions.aon.api.checkit.IParamNames;
 
 @WebServlet(name = "CheckIt Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/CheckIt" })
 public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet implements CheckItService {
@@ -36,7 +36,7 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 
 	@Override
 	public CheckItConfiguration getConfiguration(String domainName, int domain, String user) throws AonCoreException {
-		List<CheckItBank> bankIds = new LinkedList<CheckItBank>();
+		List<CheckItBank> bankIds = new LinkedList<>();
 		ApplicationParameter appParam = AON.getApplicationParameter(domainName, domain, user, AppParam.CHECK_IT_ENTERPRISE_ID);
 		Integer enterpriseId = null;
 		if (appParam != null) {
@@ -44,20 +44,21 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 			try {
 				enterpriseId = Integer.parseInt(value);
 			} catch (NumberFormatException e) {
+				enterpriseId = null;
 			}
 		}
 		LinkedList<CheckItBankAccount> checkitAccounts = null;
 		List<CheckitUnlinkedBankAccount> checkitUnlinkedAccounts = null;
 		try {
-//			checkitAccounts =  CheckItAPI.getAccounts( enterpriseId );
 			checkitAccounts =  CheckItAPI.getLinkedAccountsToDisplay(domainName, domain, user, enterpriseId);
 		} catch (CheckItException e) {
-			throw new AonCoreException(e.getMessage());
+			if (AonStringUtils.equalsIgnoreCase(e.getMessage(), CheckItException.NO_CONNECTION_MSG)) {
+				throw new AonCoreException(e.getMessage());
+			}
 		}
 		try {
 			checkitUnlinkedAccounts = CheckItAPI.getUnlinkedActive(domainName, domain, user, enterpriseId);
 		} catch (CheckItException e) {
-			throw new AonCoreException(e.getMessage());
 		}
 
 		CheckItAPI.getBanksMap().forEach((k, v) -> bankIds.add(new CheckItBank(v, k)));
@@ -65,8 +66,13 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		Integer empresaId = enterpriseId;
 		if (checkitAccounts != null) {
 			checkitAccounts.forEach(acc -> {
-				int newMovements = CheckItAPI.getNewMovementsNumber(domainName, domain, user, empresaId, acc.getCcc());
-				acc.setPendingMovements(newMovements);
+				try {
+					List<BankStatement> movs = CheckItAPI.getNewMovements(domainName, domain, user, empresaId, acc.getCcc());
+					acc.setPending(movs);
+				} catch (CheckItException e) {
+					throw new AonCoreException(e.getMessage());
+				}
+				
 			});
 		}
 		
@@ -95,13 +101,22 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		String address = enterprise.getAddress();
 		String phone = enterprise.getPhone();
 		
-		try {			
-			JSONObject json = CheckItAPI.addEnterprise(name, cif, email, shortName, url, phone, address);
-			Integer id =  json.optInt("id_empresa");
+		try {
+			Integer id = null;
+			JSONArray enterpriseArr = CheckItAPI.getEnterprise(cif);
+			if (enterpriseArr.isEmpty()) {
+				JSONObject json = CheckItAPI.addEnterprise(name, cif, email, shortName, url, phone, address);
+				id =  json.optInt("id_empresa");				
+			} else {
+				JSONObject enterpriseJson = enterpriseArr.optJSONObject(0);
+				id =  enterpriseJson.optInt("id_empresa");				
+			}
+			
+			
 			if (CheckItDAO.saveCheckItEnterpriseId(currentDomainName, currentDomain, user, id)) {
 				return id;
 			} else {
-				return null;
+				throw new AonCoreException("Se produjo un error y no se pudo registrar la empresa");
 			}
 		} catch (CheckItException e) {
 			throw new AonCoreException(e.getMessage());
@@ -148,9 +163,9 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 					CheckItLoginFields checkItLoginFields = new CheckItLoginFields()
 							.setId(loginId)
 							.setType(loginName)
-							.setUserID(fields.optString("userID"))
-							.setUserPassword(fields.optString("userPassword"))
-							.setUserPIN(fields.optString("userPIN"));
+							.setUserID(fields.optString(IParamNames.USER_ID_PARAM))
+							.setUserPassword(fields.optString(IParamNames.USER_PASSWORD_PARAM))
+							.setUserPIN(fields.optString(IParamNames.USER_PIN_PARAM));
 					fieldList.add(checkItLoginFields);
 				}
 				
@@ -219,7 +234,7 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 			JSONObject entJson = credentialsJson.optJSONObject("CredencialesEmpresa");
 			JSONObject bankLoginJson = credentialsJson.optJSONObject("TipoLoginBanco");
 			
-			String userId = entJson != null ? entJson.optString("userID") : null;
+			String userId = entJson != null ? entJson.optString(IParamNames.USER_ID_PARAM) : null;
 			String loginName = bankLoginJson != null ? bankLoginJson.optString("tipo_login_tipo") : null;
 			
 			

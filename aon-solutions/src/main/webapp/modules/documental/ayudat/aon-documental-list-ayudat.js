@@ -3,7 +3,8 @@ import { AonTable } from '../../../components/aon-table.js';
 import { AonElement } from '../../../components/AonElement.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import { postBidoq } from  '../../../services/bidoqService.js';
-import {  formatBytes, formatDate, getReader, newComponent } from '../../../services/utils.js';
+import {  formatBytes, formatDate, getReader } from '../../../services/utils.js';
+import {  newComponent } from '../../../services/utilsComponents.js';
 import { DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import * as ACTION from '../../actions.js';
 

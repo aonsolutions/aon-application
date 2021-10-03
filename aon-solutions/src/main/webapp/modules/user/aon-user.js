@@ -382,8 +382,9 @@ export class AonUser extends AonElement {
 		d.open();
 	}
 
-	save() {
-		updateUser(this.user);
+	save() {	
+		if(!this.isOnlyAuth())
+			updateUser(this.user);
 		if(!this.user.portal && (!this.user.roles || this.user.roles.length == 0)) {
 			this.user.portal = true;
 			this.user.roles = [Role.ENTERPRISE];
@@ -391,13 +392,7 @@ export class AonUser extends AonElement {
 		saveUser(this.user).then(r => {
 			this.user = r;
 			this.init();
-		}).catch(e => {
-			if(!this.isOnlyAuth()) {
-				let aonApplication = document.querySelector('aon-application');
-				let toast = this.getElement(aonApplication.TOAST);
-				toast.start(JSON.parse(e));
-			}
-		});
+		}).catch(e => this.showError(e));
 	}
 
 	delete() {

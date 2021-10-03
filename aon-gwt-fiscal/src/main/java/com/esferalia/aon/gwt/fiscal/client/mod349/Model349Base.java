@@ -95,6 +95,10 @@ abstract class Model349Base extends DockLayoutPanel {
 			cbk.onNew(options);
 		}
 		@Override
+		public void onDuplicate(Model349ModuleOptions options, int id) {
+			cbk.onDuplicate( options, id );
+		}
+		@Override
 		public void showBreakdownPanel(String htmlText) {
 			cbk.showBreakdownPanel(htmlText);
 		}
@@ -122,6 +126,7 @@ abstract class Model349Base extends DockLayoutPanel {
 	protected final Button markAsPendingButton = new Button();
 	protected final Button markAsFinishedButton = new Button();
 	protected final Button markAsSentButton = new Button();
+	protected final Button duplicateButton = new Button();
 	protected final Button auditButton = new Button();
 	protected final Button draftButton = new Button();
 	
@@ -410,6 +415,22 @@ abstract class Model349Base extends DockLayoutPanel {
 		});
 		buttonContainer.add(markAsPendingButton);
 		
+		// Botón Duplicar
+		duplicateButton.setText(AON.MSG.duplicate());
+		duplicateButton.setTitle(duplicateButton.getText());
+		duplicateButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		duplicateButton.addStyleName(AON.AON_CSS.aonIconDuplicate());
+		duplicateButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				duplicateButton.setEnabled(false);
+				callback.onDuplicate(options,mod349.getId());
+				duplicateButton.setEnabled(true);
+			}
+		});
+		buttonContainer.add(duplicateButton);
+		
 		// Botón Auditoría
 		auditButton.setText(AON.MSG.audit());
 		auditButton.setTitle(auditButton.getText());
@@ -556,7 +577,7 @@ abstract class Model349Base extends DockLayoutPanel {
 			|| getMod349().getStatus() == FiscalStatus.MISSING));
 		markAsSentButton.setVisible(!getMod349().isNew() &&
 			(getMod349().getStatus() == FiscalStatus.FINISHED));
-		
+		duplicateButton.setVisible(!getMod349().isNew());	
 		auditButton.setVisible(!getMod349().isNew());
 	}
 
@@ -848,7 +869,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		int row = 1;
 		for (Pair<String, String> pair : getInformationLinks()) {
 			Label icon = new Label();
-			icon.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod349().getAdministration()));
+			icon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getMod349().getAdministration()));
 			tab.setWidget(row, 0, icon );
 			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 
@@ -890,7 +911,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		int row = 1;
 
 		Label icon1 = new Label();
-		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod349().getAdministration()));
+		icon1.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getMod349().getAdministration()));
 		tab.setWidget(row, 0, icon1 );
 		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		FlowPanel p1 = new FlowPanel();
@@ -918,7 +939,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		if (getMod349().getAdministration() == Administration.COMMON_TERRITORY) {
 			row++;
 			Label icon3 = new Label();
-			icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod349().getAdministration()));
+			icon3.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getMod349().getAdministration()));
 			tab.setWidget(row, 0, icon3 );
 			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 			FlowPanel p3 = new FlowPanel();

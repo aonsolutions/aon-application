@@ -53,6 +53,8 @@ public class TaskWorkflowDAO {
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.MODIFICATION_DATE);}
+		@Override public Property<String> getNotificationUserProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.NOTIFICATION_USER);}
+		@Override public Property<Timestamp> getNotificationDateProperty() {return new FilterDAO.PropertyDAO<>(TASK_WORKFLOW.NOTIFICATION_DATE);}
 	}
 	
 	public static SelectConditionStep<Record> select(AONContext ctx, TaskWorkflowFilter filter){	
@@ -117,6 +119,7 @@ public class TaskWorkflowDAO {
 			.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
 			.where(TASK_WORKFLOW.ID.eq(taskWorkflow.getId()))
 			.execute();
+		ctx.log().info("UPDATE TASK_WORKFLOW id: " + taskWorkflow.getId());		
 		return taskWorkflow;
 	}
 	
@@ -130,7 +133,7 @@ public class TaskWorkflowDAO {
 				.set(TASK_WORKFLOW.EMAIL, workflow.getEmail())
 				.set(TASK_WORKFLOW.CREATION_DATE, AonDateUtils.toTimestamp(new Date()))
 				.set(TASK_WORKFLOW.CREATION_USER, ctx.getUser())
-				.set(TASK_WORKFLOW.MODIFICATION_DATE,AonDateUtils.toTimestamp(new Date()))
+				.set(TASK_WORKFLOW.MODIFICATION_DATE, AonDateUtils.toTimestamp(new Date()))
 				.set(TASK_WORKFLOW.MODIFICATION_USER, ctx.getUser())
 			.returning(TASK_WORKFLOW.ID).fetchOne().getId();
 		ctx.log().debug("INSERT TASK_WORKFLOW id: " + id);			

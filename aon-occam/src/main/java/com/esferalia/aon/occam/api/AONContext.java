@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -274,20 +275,36 @@ public class AONContext implements AutoCloseable{
 				public void error(String msg) {
 					log.log(Level.SEVERE, ERR, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
 				}
+				@Override
+				public void error(String msg, Object ... params) {
+					this.error(MessageFormat.format(msg,params));
+				}
 
 				@Override
 				public void warn(String msg) {
 					log.log(Level.WARNING, WAR, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
+				}
+				@Override
+				public void warn(String msg, Object ... params) {
+					this.warn(MessageFormat.format(msg,params));
 				}
 
 				@Override
 				public void info(String msg) {
 					log.log(Level.INFO, INF, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
 				}
+				@Override
+				public void info(String msg, Object ... params) {
+					this.info(MessageFormat.format(msg,params));
+				}
 
 				@Override
 				public void debug(String msg) {
 					log.log(Level.FINE, DEB, new Object[]{new Date(), Integer.valueOf( AONContext.this.domainId) ,msg});
+				}
+				@Override
+				public void debug(String msg, Object ... params) {
+					this.debug(MessageFormat.format(msg,params));
 				}
 				
 			};

@@ -19,11 +19,27 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class NewDeclarationPopup extends CustomDialog {
 	
-	public NewDeclarationPopup(final Mod347 mod347 ,final Model347Callback callback) {
-		setCaption(AON.MSG.newDeclaration());
+	public NewDeclarationPopup(final Mod347 mod347, final Model347Callback callback) {
+		this(mod347, false, callback);		
+	}
+	
+	public NewDeclarationPopup(final Mod347 mod347, final boolean duplicate, final Model347Callback callback) {
+		
+		// Cuando se duplica, por defecto el ejercicio es el siguiente y 
+		// complementaria y sustitutiva están desmarcados
+		int oldYear = mod347.getYear();
+		if (duplicate) {
+			mod347.setYear(oldYear+1);
+			mod347.setComplementary(false);
+			mod347.setReplacement(false);
+			mod347.setReplacedNumber("");
+		}		
+		
+		setCaption(duplicate?AON.MSG.duplicate():AON.MSG.newDeclaration());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
@@ -32,7 +48,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		IntegerBox yearBox = new IntegerBox();
 		CheckBox replacement = new CheckBox();
 		CheckBox complementary = new CheckBox();
-		
+		TextBox replacedReceiptBox = new TextBox();		
 		CheckBox excludeOutputNationalZero = new CheckBox();
 		CheckBox excludeInputNationalZero = new CheckBox();
 //		CheckBox excludeMod180Declared = new CheckBox();
@@ -63,6 +79,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		admonList.setEnabled(!duplicate);
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -79,6 +96,9 @@ public class NewDeclarationPopup extends CustomDialog {
 					replacement.setEnabled(false);
 					replacement.setValue(false);
 					mod347.setReplacement(false);
+					replacedReceiptBox.setEnabled(false);
+					replacedReceiptBox.setValue("");
+					mod347.setReplacedNumber("");
 				}
 				
 				// Bizkaia, no hay complementarias
@@ -105,6 +125,18 @@ public class NewDeclarationPopup extends CustomDialog {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
 				mod347.setYear(yearBox.getValue());
+				
+				// Cuando se duplica el modelo, solo se puede marcar complementaria o sustitutiva
+				// si el ejercicio es el mismo que el modelo que se quiere duplicar
+				if (duplicate) {
+					complementary.setEnabled(yearBox.getValue()==oldYear && mod347.getAdministration() != Administration.GIPUZKOA && mod347.getAdministration() != Administration.BIZKAIA);
+					replacement.setEnabled(yearBox.getValue()==oldYear && mod347.getAdministration() != Administration.GIPUZKOA);
+					if (yearBox.getValue()!=oldYear) {
+						complementary.setValue(false,true);
+						replacement.setValue(false,true);					
+					}
+				}
+
 			}
 		});
 		tab.setWidget(row, 1,yearBox);
@@ -112,16 +144,21 @@ public class NewDeclarationPopup extends CustomDialog {
 		// COMPLEMENTARIA		
 		row++;
 		complementary.setText(AON.MSG.complementary());
-		complementary.setEnabled(mod347.getAdministration()!=Administration.BIZKAIA && mod347.getAdministration()!=Administration.GIPUZKOA);  // Complementaria solo si no es Bizkaia, ni Gipuzkoa
-		complementary.addClickHandler(new ClickHandler() {
+		complementary.setEnabled(!duplicate && mod347.getAdministration()!=Administration.BIZKAIA && mod347.getAdministration()!=Administration.GIPUZKOA);  // Complementaria solo si no es Bizkaia, ni Gipuzkoa, ni es duplicar
+		complementary.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				mod347.setComplementary(complementary.getValue());
-				replacement.setEnabled(!complementary.getValue());
+				
 				if (complementary.getValue()) {
-					replacement.setValue(false);
+					replacement.setValue(false,true);
 				}
+				
+				replacedReceiptBox.setEnabled(complementary.getValue() || replacement.getValue());
+				if (!complementary.getValue() && !replacement.getValue()) {
+					replacedReceiptBox.setValue("",true);
+				}				
 			}
 		});
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
@@ -132,129 +169,153 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		// SUSTITUTIVA
 		replacement.setText(AON.MSG.replacement());
-		replacement.setEnabled(mod347.getAdministration()!=Administration.GIPUZKOA);  // Sustitutiva solo si no es Gipuzkoa
-		replacement.addClickHandler(new ClickHandler() {
+		replacement.setEnabled(!duplicate && mod347.getAdministration()!=Administration.GIPUZKOA);  // Sustitutiva solo si no es Gipuzkoa, ni duplicar
+		replacement.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
-				mod347.setReplacement(replacement.getValue());
-				complementary.setEnabled(!replacement.getValue());
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				mod347.setReplacement(replacement.getValue());				
 				if (replacement.getValue()) {
-					complementary.setValue(false);
-				}
+					complementary.setValue(false,true);
+				}				
+				replacedReceiptBox.setEnabled(complementary.getValue() || replacement.getValue());
+				if (!complementary.getValue() && !replacement.getValue()) {
+					replacedReceiptBox.setValue("",true);					
+				}			
 			}
+			
 		});
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, replacement);
 		row++;
 		
-		// info
-		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		// NUMERO DE DECLARACION ANTERIOR
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		tab.setWidget(row, 0, new Label("Informaci\u00F3n para el c\u00E1lculo"));
-		row++;
-
-		// excludeOutputNationalZero
-		excludeOutputNationalZero.setText("Excluir bases de facturas EMITIDAS con IVA al 0%.");
-		excludeOutputNationalZero.setValue(mod347.isExcludeOutputNationalZero());
-		excludeOutputNationalZero.addClickHandler(new ClickHandler() {
-			
+		tab.setWidget(row, 0, new Label(AON.MSG.previousDeclaration()));
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		
+		replacedReceiptBox.setMaxLength(13);
+		replacedReceiptBox.setVisibleLength(13);
+		replacedReceiptBox.setEnabled(false);  // Por defecto deshabilitado porque complementaria y sustitutiva están desmarcados
+		replacedReceiptBox.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
-			public void onClick(ClickEvent event) {
-				mod347.setExcludeOutputNationalZero(excludeOutputNationalZero.getValue());
+			public void onValueChange(ValueChangeEvent<String> event) {
+				mod347.setReplacedNumber(replacedReceiptBox.getValue());
 			}
 		});
-		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.setWidget(row, 0, excludeOutputNationalZero);
+		tab.setWidget(row, 1, replacedReceiptBox);
 		row++;
 		
-		// excludeInputNationalZero
-		excludeInputNationalZero.setText("Excluir bases de facturas RECIBIDAS con IVA al 0%.");
-		excludeInputNationalZero.setValue(mod347.isExcludeInputNationalZero());
-		excludeInputNationalZero.addClickHandler(new ClickHandler() {
+		// Los checks inferiores solo aparecen cuando se crea uno nuevo
+		if (!duplicate) {		
+			// info
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+			tab.setWidget(row, 0, new Label("Informaci\u00F3n para el c\u00E1lculo"));
+			row++;
+	
+			// excludeOutputNationalZero
+			excludeOutputNationalZero.setText("Excluir bases de facturas EMITIDAS con IVA al 0%.");
+			excludeOutputNationalZero.setValue(mod347.isExcludeOutputNationalZero());
+			excludeOutputNationalZero.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					mod347.setExcludeOutputNationalZero(excludeOutputNationalZero.getValue());
+				}
+			});
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+			tab.setWidget(row, 0, excludeOutputNationalZero);
+			row++;
 			
-			@Override
-			public void onClick(ClickEvent event) {
-				mod347.setExcludeInputNationalZero(excludeInputNationalZero.getValue());
-			}
-		});
-		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.setWidget(row, 0, excludeInputNationalZero);
-		row++;
-		
-//		// excludeMod180Declared
-//		excludeMod180Declared.setText("Excluir facturas con retenci\u00F3n de perceptores declarados en el modelo 180.");
-//		excludeMod180Declared.setValue(mod347.isExcludeMod180Declared());
-//		excludeMod180Declared.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				mod347.setExcludeMod180Declared(excludeMod180Declared.getValue());
-//				retentionLabel.setVisible(!mod347.isExcludeMod180Declared() && !mod347.isExcludeMod190Declared() );
-//			}
-//		});
-//		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-//		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-//		tab.setWidget(row, 0, excludeMod180Declared);
-//		row++;
-		
-		// excludeRetention
-		excludeRetention.setText("Excluir facturas con retenci\u00F3n.");
-		excludeRetention.setValue(mod347.isExcludeRetention());
-		excludeRetention.addClickHandler(new ClickHandler() {
+			// excludeInputNationalZero
+			excludeInputNationalZero.setText("Excluir bases de facturas RECIBIDAS con IVA al 0%.");
+			excludeInputNationalZero.setValue(mod347.isExcludeInputNationalZero());
+			excludeInputNationalZero.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					mod347.setExcludeInputNationalZero(excludeInputNationalZero.getValue());
+				}
+			});
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+			tab.setWidget(row, 0, excludeInputNationalZero);
+			row++;
 			
-			@Override
-			public void onClick(ClickEvent event) {
-				mod347.setExcludeRetention(excludeRetention.getValue());				
-			}
-		});
-		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.setWidget(row, 0, excludeRetention);
-		row++;
-
-//		// excludeMod190Declared
-//		excludeMod190Declared.setText("Excluir facturas con retenci\u00F3n de perceptores declarados en el modelo 190.");
-//		excludeMod190Declared.setValue(mod347.isExcludeMod190Declared());
-//		excludeMod190Declared.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				mod347.setExcludeMod190Declared(excludeMod190Declared.getValue());
-//				retentionLabel.setVisible(!mod347.isExcludeMod180Declared() && !mod347.isExcludeMod190Declared() );
-//			}
-//		});
-//		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-//		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-//		tab.setWidget(row, 0, excludeMod190Declared);
-//		row++;
-		
-		// excludeIntracommunity
-		excludeIntracommunity.setText("Excluir facturas intracomunitarias.");
-		excludeIntracommunity.setValue(mod347.isExcludeIntracommunity());
-		excludeIntracommunity.addClickHandler(new ClickHandler() {
+	//		// excludeMod180Declared
+	//		excludeMod180Declared.setText("Excluir facturas con retenci\u00F3n de perceptores declarados en el modelo 180.");
+	//		excludeMod180Declared.setValue(mod347.isExcludeMod180Declared());
+	//		excludeMod180Declared.addClickHandler(new ClickHandler() {
+	//			
+	//			@Override
+	//			public void onClick(ClickEvent event) {
+	//				mod347.setExcludeMod180Declared(excludeMod180Declared.getValue());
+	//				retentionLabel.setVisible(!mod347.isExcludeMod180Declared() && !mod347.isExcludeMod190Declared() );
+	//			}
+	//		});
+	//		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+	//		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+	//		tab.setWidget(row, 0, excludeMod180Declared);
+	//		row++;
 			
-			@Override
-			public void onClick(ClickEvent event) {
-				mod347.setExcludeIntracommunity(excludeIntracommunity.getValue());
-			}
-		});
-		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.setWidget(row, 0, excludeIntracommunity);
-		row++;
-
-//		// info
-//		retentionLabel.setVisible(!mod347.isExcludeMod180Declared() && !mod347.isExcludeMod190Declared() );
-//		retentionLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
-//		retentionLabel.addStyleName(AON.AON_CSS.aonBold());
-//		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-//		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-//		tab.setWidget(row, 0, retentionLabel);
-//		row++;
+			// excludeRetention
+			excludeRetention.setText("Excluir facturas con retenci\u00F3n.");
+			excludeRetention.setValue(mod347.isExcludeRetention());
+			excludeRetention.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					mod347.setExcludeRetention(excludeRetention.getValue());				
+				}
+			});
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+			tab.setWidget(row, 0, excludeRetention);
+			row++;
+	
+	//		// excludeMod190Declared
+	//		excludeMod190Declared.setText("Excluir facturas con retenci\u00F3n de perceptores declarados en el modelo 190.");
+	//		excludeMod190Declared.setValue(mod347.isExcludeMod190Declared());
+	//		excludeMod190Declared.addClickHandler(new ClickHandler() {
+	//			
+	//			@Override
+	//			public void onClick(ClickEvent event) {
+	//				mod347.setExcludeMod190Declared(excludeMod190Declared.getValue());
+	//				retentionLabel.setVisible(!mod347.isExcludeMod180Declared() && !mod347.isExcludeMod190Declared() );
+	//			}
+	//		});
+	//		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+	//		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+	//		tab.setWidget(row, 0, excludeMod190Declared);
+	//		row++;
+			
+			// excludeIntracommunity
+			excludeIntracommunity.setText("Excluir facturas intracomunitarias.");
+			excludeIntracommunity.setValue(mod347.isExcludeIntracommunity());
+			excludeIntracommunity.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					mod347.setExcludeIntracommunity(excludeIntracommunity.getValue());
+				}
+			});
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+			tab.setWidget(row, 0, excludeIntracommunity);
+			row++;
+	
+	//		// info
+	//		retentionLabel.setVisible(!mod347.isExcludeMod180Declared() && !mod347.isExcludeMod190Declared() );
+	//		retentionLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
+	//		retentionLabel.addStyleName(AON.AON_CSS.aonBold());
+	//		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+	//		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+	//		tab.setWidget(row, 0, retentionLabel);
+	//		row++;
+		}
 
 		rootPanel.add(tab);
 		

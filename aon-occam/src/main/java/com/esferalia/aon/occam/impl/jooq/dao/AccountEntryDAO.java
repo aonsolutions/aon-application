@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.AutoConcept.AUTO_CONCEPT;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
@@ -69,6 +70,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryUpdate;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -82,9 +84,11 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class AccountEntryDAO {
-	
+	private AccountEntryDAO() {
+		
+	}
 	// --------------------------------------------------------------- LECTURA
-	public static enum AccountEntryOrder {
+	public enum AccountEntryOrder {
 		 ORDER_PERIOD_JOURNAL( ACCOUNT_ENTRY.ACCOUNT_PERIOD.asc(),ACCOUNT_ENTRY.JOURNAL.asc(),ACCOUNT_ENTRY.ENTRY_DATE.asc())
 		,ORDER_CREATION_DATE_DESC ( ACCOUNT_ENTRY.ID.desc())
 		,ORDER_MODIFICATION_DATE_DESC ( ACCOUNT_ENTRY.MODIFICATION_DATE.desc(),ACCOUNT_ENTRY.CREATION_DATE.desc())
@@ -105,7 +109,7 @@ public class AccountEntryDAO {
 		}
 	}
 	
-	public static enum AccountEntryFlatOrder {
+	public enum AccountEntryFlatOrder {
 		 ORDER_PERIOD_JOURNAL( ACCOUNT_ENTRY.ACCOUNT_PERIOD.asc(),ACCOUNT_ENTRY.JOURNAL.asc(),ACCOUNT_ENTRY.ENTRY_DATE.asc(),ACCOUNT_ENTRY.ID.asc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
 		,ORDER_CREATION_DATE_DESC ( ACCOUNT_ENTRY.ID.desc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
 		,ORDER_MODIFICATION_DATE_DESC ( ACCOUNT_ENTRY.MODIFICATION_DATE.desc(),ACCOUNT_ENTRY.CREATION_DATE.desc(),ACCOUNT_ENTRY.ID.asc(),ACCOUNT_ENTRY_DETAIL.ID.asc())
@@ -126,7 +130,7 @@ public class AccountEntryDAO {
 		}
 	}
 
-	private static final Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
+	private static final Account DET_ACCOUNT = ACCOUNT.as("detAcc");
 	private static final Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
 
 	public static AccountEntry getAccountEntry(AONContext ctx,Integer id) {
@@ -378,7 +382,7 @@ public class AccountEntryDAO {
 				.returning(ACCOUNT_ENTRY.ID)
 				.fetchOne();
 		ae.setId(record.getValue(ACCOUNT_ENTRY.ID));
-		ctx.log().info("INSERT ACCOUNT_ENTRY asiento: " + ae.getId());
+		ctx.log().debug("INSERT ACCOUNT_ENTRY asiento: {0}",ae.getId());
 		batchInsert(ctx, ae);
 		return record.getValue(ACCOUNT_ENTRY.ID); 
 	}
@@ -408,7 +412,7 @@ public class AccountEntryDAO {
 		}
 		if (insertMore != null) {
 			int count = insertMore.execute();
-			ctx.log().info("\tINSERT ACCOUNT_ENTRY detalles asiento: " + ae.getId() + " ("+count+" filas)");			
+			ctx.log().debug("\tINSERT ACCOUNT_ENTRY detalles asiento: {0} ( {1} filas)",ae.getId(),count);			
 		}
 	}
 
@@ -428,7 +432,7 @@ public class AccountEntryDAO {
 			.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 			.execute();
-		ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: " + ae.getId());
+		ctx.log().debug("UPDATE ACCOUNT_ENTRY  ({0}) asiento: {1}",i, ae.getId());
 		updateDetails(ctx, ae);
 	}
 
@@ -457,7 +461,7 @@ public class AccountEntryDAO {
 							.set(ACCOUNT_ENTRY_DETAIL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 							.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
 							.execute();
-						ctx.log().info("UPDATE ACCOUNT_ENTRY_DETAIL  ("+i+" rows) ("+line+") " + detail.getId());
+						ctx.log().debug("UPDATE ACCOUNT_ENTRY_DETAIL  ({0} rows) ({1}) {2}",i,line,detail.getId());
 					}
 				} else {
 					ctx.getDslContext().insertInto(ACCOUNT_ENTRY_DETAIL)
@@ -473,7 +477,7 @@ public class AccountEntryDAO {
 						.set(ACCOUNT_ENTRY_DETAIL.CREATION_USER,ctx.getUser())
 						.set(ACCOUNT_ENTRY_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 						.execute();
-					ctx.log().info("INSERT ACCOUNT_ENTRY_DETAIL ("+line+")");
+					ctx.log().debug("INSERT ACCOUNT_ENTRY_DETAIL ({0})",line);
 				}
 			} else {
 				Integer id = detail.getId() * -1;
@@ -481,7 +485,7 @@ public class AccountEntryDAO {
 					.delete(ACCOUNT_ENTRY_DETAIL)
 					.where(ACCOUNT_ENTRY_DETAIL.ID.equal(id))
 					.execute();
-				ctx.log().info("DELETE ACCOUNT_ENTRY_DETAIL  ("+i+" rows ) ("+line+") " + id);
+				ctx.log().debug("DELETE ACCOUNT_ENTRY_DETAIL ({0} rows ) ({1}) {2}",i,line,id);
 			}
 		}
 	}
@@ -567,13 +571,13 @@ public class AccountEntryDAO {
 			.delete(ACCOUNT_ENTRY_DETAIL)
 			.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(id))
 			.execute();
-		ctx.log().info("DELETE ACCOUNT_ENTRY detalles del asiento: " + id + " ("+count+" filas)");
+		ctx.log().debug("DELETE ACCOUNT_ENTRY detalles del asiento: {0} ({1} filas)",id,count);
 		// Se borra la cabecera
 		count = ctx.getDslContext()
 			.delete(ACCOUNT_ENTRY)
 			.where(ACCOUNT_ENTRY.ID.equal(id))
 			.execute();
-		ctx.log().info("DELETE ACCOUNT_ENTRY asiento: " + id + " ("+count+" filas)");
+		ctx.log().debug("DELETE ACCOUNT_ENTRY asiento: {0} ({1} filas)",id,count);
 		afterRemove(ctx, entry);
 	}
 
@@ -658,7 +662,7 @@ public class AccountEntryDAO {
 						.delete(ACCOUNT_ENTRY_INVOICE)
 						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(entry.getId()))
 						.execute();
-					ctx.log().info("DELETE ACCOUNT_ENTRY_INVOICE ("+count+" filas.)");
+					ctx.log().debug("DELETE ACCOUNT_ENTRY_INVOICE ({0} filas.)",count);
 					InvoiceDAO.delete(ctx, invoiceId);
 				}
 			}
@@ -902,7 +906,7 @@ public class AccountEntryDAO {
 							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 							.execute();
-					ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: [OpeningType] " + ae.getId());
+					ctx.log().debug("UPDATE ACCOUNT_ENTRY  ({0}) asiento: [OpeningType] {1}",i,ae.getId());
 					return new AccountEntryWrapper( getAccountEntry(ctx, ae.getId()) );
 				}
 				return wrapper;
@@ -920,7 +924,7 @@ public class AccountEntryDAO {
 							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 							.execute();
-					ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: [Security Level] " + ae.getId());
+					ctx.log().debug("UPDATE ACCOUNT_ENTRY  ({0}) asiento: [Security Level] {1}",i,ae.getId());
 					if (wrapper instanceof AccountingInvoice) {
 						AccountingInvoice ai = (AccountingInvoice) wrapper;
 						Invoice inv = ai.getInvoice();
@@ -951,7 +955,7 @@ public class AccountEntryDAO {
 							.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 							.where(ACCOUNT_ENTRY.ID.equal( ae.getId()))
 							.execute();
-					ctx.log().info("UPDATE ACCOUNT_ENTRY  ("+i+") asiento: [Activity] " + ae.getId());
+					ctx.log().debug("UPDATE ACCOUNT_ENTRY  ({0}) asiento: [Activity] {1}",i,ae.getId());
 					if (wrapper instanceof AccountingInvoice) {
 						AccountingInvoice ai = (AccountingInvoice) wrapper;
 						Invoice inv = ai.getInvoice();
@@ -1066,7 +1070,7 @@ public class AccountEntryDAO {
 										: ai.getWithholdingData().getWithholdingType().value())
 									.where(INVOICE_TAX.ID.equal( tax.getId()))
 									.execute();
-								ctx.log().info("UPDATE INVOICE_TAX invoice: " + tax.getId() + " count("+ i +")");
+								ctx.log().debug("UPDATE INVOICE_TAX invoice: {0} count({1})",tax.getId(),i);
 							}
 						}
 					}
@@ -1085,9 +1089,12 @@ public class AccountEntryDAO {
 						oldAccountId = ai.getVats().get(0).getExpAccountId();
 					}
 					Integer newAccountId = null;
+					String description = null;
 					if (ai.getSuggestedAccounts() != null && ai.getSuggestedAccounts().size() > 1) {
 						newAccountId = ai.getSuggestedAccounts().get(1).getId();
+						description = ai.getSuggestedAccounts().get(1).getDescription();
 					}
+					final String newAccountDescription = description;
 					if (oldAccountId != null && newAccountId != null) {
 						AccountEntry ae = wrapper.getAccountEntry();
 						for (AccountEntryDetail detail : ae.getDetails()) {
@@ -1097,7 +1104,7 @@ public class AccountEntryDAO {
 									.set(ACCOUNT_ENTRY_DETAIL.ACCOUNT, newAccountId)
 									.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
 									.execute();
-								ctx.log().info("UPDATE ACCOUNT ENTRY DETAIL ACCOUNT id: " + detail.getId() + " count("+ i +")");
+								ctx.log().debug("UPDATE ACCOUNT ENTRY DETAIL ACCOUNT id: {0} count({1})",detail.getId(),i);
 							}
 							if (AonNumberUtils.equals( detail.getBalancingAccount(), oldAccountId)) {
 								int i = ctx.getDslContext()
@@ -1105,22 +1112,42 @@ public class AccountEntryDAO {
 									.set(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT, newAccountId)
 									.where(ACCOUNT_ENTRY_DETAIL.ID.equal( detail.getId()))
 									.execute();
-								ctx.log().info("UPDATE ACCOUNT ENTRY DETAIL BALANCING ACCOUNT id: " + detail.getId() + " count("+ i +")");
+								ctx.log().debug("UPDATE ACCOUNT ENTRY DETAIL BALANCING ACCOUNT id: {0} count({1})",detail.getId(),i);
 							}
 						}
 						for (InvoiceVAT vat : ai.getVats() ) {
+							
+							// Si el origen de la factura es contam también se cambia la description de la linea de factura,.
+							ctx.getDslContext()
+								.select(INVOICE_DETAIL.SOURCE)
+								.from(INVOICE_DETAIL)
+								.where(INVOICE_DETAIL.ID.eq(vat.getInvoiceDetailId()))
+								.fetch()
+								.stream()
+								.map(rec -> rec.getValue(INVOICE_DETAIL.SOURCE))
+								.map(sourceIndex ->  sourceIndex==null?null:InvoiceSource.values()[sourceIndex])
+								.filter( s -> (s == InvoiceSource.ACCOUNT) )
+								.forEach( source -> {
+									int i = ctx.getDslContext()
+											.update(INVOICE_DETAIL)
+											.set(INVOICE_DETAIL.DESCRIPTION, newAccountDescription)
+											.where(INVOICE_DETAIL.ID.equal( vat.getInvoiceDetailId()))
+											.execute();
+										ctx.log().debug("UPDATE INVOICE DETAIL DESCRIPTION id: {0} count({1})",vat.getInvoiceDetailId(),i);
+								});
+							
 							int i = ctx.getDslContext()
 								.delete(INVOICE_DETAIL_ACCOUNT)
 								.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.equal( vat.getInvoiceDetailId()))
 								.and(INVOICE_DETAIL_ACCOUNT.DOMAIN.equal( ae.getDomain()))
 								.execute();
-							ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT count("+ i +")");
+							ctx.log().debug("DELETE INVOICE_DETAIL_ACCOUNT count({0})",i);
 							ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
 								.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, ae.getDomain())
 								.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, vat.getInvoiceDetailId())
 								.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, newAccountId)
 								.execute();
-							ctx.log().info("INSERT INVOICE_DETAIL_ACCOUNT");
+							ctx.log().debug("INSERT INVOICE_DETAIL_ACCOUNT");
 						}
 					}
 				}

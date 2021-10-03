@@ -1,25 +1,28 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Task.TASK;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.Workgroup.WORKGROUP;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
+
 import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -48,6 +51,8 @@ public class TaskDAO {
 	}
 	
 	private static final Registry TH_REGISTRY = REGISTRY.as("registry_task_holder");
+	private static final com.esferalia.aon.jooq.tables.TaskHolder SENDER = TASK_HOLDER.as("sender");
+	private static final Registry SENDER_REGISTRY = REGISTRY.as("registry_sender");
 	
 	private static final TaskPropertiesDAO TASK_PROPERTIES = new TaskPropertiesDAO();
 	protected static class TaskPropertiesDAO implements TaskProperties {
@@ -74,6 +79,7 @@ public class TaskDAO {
 		@Override public Property<Byte> getPriorityProperty() {return new FilterDAO.PropertyDAO<>(TASK.PRIORITY);}
 		@Override public Property<Integer> getProjectProperty() {return new FilterDAO.PropertyDAO<>(TASK.PROJECT);}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(TASK.REGISTRY);}
+		@Override public Property<String> getRegistryNameProperty() {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
 		@Override public Property<Byte> getRepeatPeriodProperty() {return new FilterDAO.PropertyDAO<>(TASK.REPEAT_PERIOD);}
 		@Override public Property<Integer> getSenderProperty() {return new FilterDAO.PropertyDAO<>(TASK.SENDER);}
 		@Override public Property<Byte> getSourceProperty() {return new FilterDAO.PropertyDAO<>(TASK.SOURCE);}
@@ -99,6 +105,8 @@ public class TaskDAO {
 				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.eq(TASK.REGISTRY))
 				.leftOuterJoin(TASK_HOLDER).on(TASK_HOLDER.REGISTRY.eq(TASK.TASK_HOLDER))
 				.leftOuterJoin(TH_REGISTRY).on(TH_REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
+				.leftOuterJoin(SENDER).on(SENDER.REGISTRY.eq(TASK.SENDER))
+				.leftOuterJoin(SENDER_REGISTRY).on(SENDER_REGISTRY.ID.eq(SENDER.REGISTRY))
 				.where(TASK_PROPERTIES.getConditions(filter))
 				.orderBy(TASK.CREATION_DATE.desc());
 	}
@@ -209,9 +217,19 @@ public class TaskDAO {
 
 	public static void delete(AONContext ctx, Integer id){
 		TaskAttachDAO.deleteByTask(ctx, id);
-		TaskWorkflowDAO.deleteByTask(ctx, id);
-		ctx.getDslContext().delete(TASK).where(TASK.ID.eq(id)).execute();
+		TaskWorkflowDAO.deleteByTask(ctx, id);	
+		TaskOldDAO.deleteTaskEvent(ctx, f -> f.getTaskProperty().eq(id));
+		TaskOldDAO.deleteTaskComment(ctx, f -> f.getTaskProperty().eq(id));
+		TaskOldDAO.deleteTaskTag(ctx, f -> f.getTaskProperty().eq(id));
+		delete(ctx, f -> f.getIdProperty().eq(id));
 		ctx.log().debug("DELETE TASK id:" + id);
+	}
+	
+	private static void delete(AONContext ctx, TaskFilter filter) {
+		ctx.getDslContext()
+			.delete(TASK)
+			.where(TASK_PROPERTIES.getConditions(filter))
+			.execute();
 	}
 	
 	public static HashMap<Byte, Integer> getTaskStatusCount(AONContext ctx, TaskFilter filter){
@@ -225,24 +243,18 @@ public class TaskDAO {
 		return map;
 	}
 	
-	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId, Optional<String> email){
+	public static HashMap<String, Integer> getTaskCount(AONContext ctx, TaskFilter filter, Integer taskHolderId){
 		Integer sender = 0;
 		Integer taskHolder = 0;
 		HashMap<String, Integer> map = new HashMap<>();
 		
-		sender = ctx.getDslContext().select(DSL.count(TASK.SENDER), TASK.SENDER).from(TASK)
-				.where(TASK_PROPERTIES.getConditions(filter))
-				.and(email.isPresent() ? TASK.GTASK_ID.eq(email.get()) :  TASK.SENDER.eq(taskHolderId))
-				.groupBy(email.isPresent() ? TASK.GTASK_ID : TASK.SENDER)
-				.fetchOne(0, Integer.class);
+		//SENDER
+		Condition c = taskHolderId!=null && taskHolderId > 0 ? TASK.SENDER.eq(taskHolderId) : TASK.SENDER.isNull();
+		sender = selectCount(ctx,filter).and(c).fetchOne(0, Integer.class);
 		
-		if(!email.isPresent()) {
-			taskHolder = ctx.getDslContext().select(DSL.count(TASK.TASK_HOLDER), TASK.TASK_HOLDER).from(TASK)
-					.where(TASK_PROPERTIES.getConditions(filter))
-					.and(TASK.TASK_HOLDER.eq(taskHolderId))
-					.groupBy(TASK.TASK_HOLDER)
-					.fetchOne(0, Integer.class);
-		}
+		//RECEIVED
+		Condition c2 = taskHolderId!=null && taskHolderId>0 ? TASK.TASK_HOLDER.eq(taskHolderId) : TASK.SENDER.isNotNull();
+		taskHolder = selectCount(ctx,filter).and(c2).fetchOne(0, Integer.class);
 				
 		if(sender==null)     sender = 0;
 		if(taskHolder==null) taskHolder = 0;
@@ -253,8 +265,11 @@ public class TaskDAO {
 		return map;
 	}
 	
+	private static SelectConditionStep<Record1<Integer>> selectCount(AONContext ctx, TaskFilter filter) {
+		return ctx.getDslContext().selectCount().from(TASK).where(TASK_PROPERTIES.getConditions(filter));
+	}
+	
 	private static SelectConditionStep<Record> getLastTaskNumber(Task task, AONContext ctx) {
-		System.out.println(task.getDomain().getId());
 		 return 
 				 DSL.select( 
 						DSL.val(task.getActivityType()),
@@ -309,7 +324,9 @@ public class TaskDAO {
 				.setPriority(Priority.safeValueOf(r.getValue(TASK.PRIORITY)))
 				.setProject(new Project().setId(r.getValue(TASK.PROJECT)))
 				.setRepeatPeriod(TaskPeriod.safeValueOf(r.getValue(TASK.REPEAT_PERIOD)))
-				.setSender((TaskHolder) new TaskHolder().setId(r.getValue(TASK.SENDER)))
+				.setSender(checkField(r, SENDER.REGISTRY)
+						? TaskHolderFiller.build(r, SENDER, SENDER_REGISTRY)
+						: new TaskHolder().setRegistry(r.getValue(TASK.SENDER)))
 				.setSource(TaskSource.safeValueOf(r.getValue(TASK.SOURCE)))
 				.setSourceId(r.getValue(TASK.SOURCE_ID))
 				.setStartDate(r.getValue(TASK.START_DATE))

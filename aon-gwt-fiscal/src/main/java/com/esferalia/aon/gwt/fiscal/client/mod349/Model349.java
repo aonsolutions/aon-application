@@ -68,6 +68,7 @@ public class Model349 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew(Model349ModuleOptions options);
+		void onDuplicate(Model349ModuleOptions options, int id);
 		void showBreakdownPanel(String htmlText);
 		void cleanBreakdownPanel();
 	}
@@ -93,7 +94,10 @@ public class Model349 extends MainEntryPoint {
 		public void onNew(Model349ModuleOptions options) {
 			newModel(options);
 		}
-		
+		@Override
+		public void onDuplicate(Model349ModuleOptions options, int id) {
+			duplicateModel(options, id);
+		}
 		@Override
 		public void cleanErrorPanel() {
 			Model349.this.cleanErrorPanel();
@@ -267,6 +271,25 @@ public class Model349 extends MainEntryPoint {
 					}
 				});
 	}
+	
+	private void duplicateModel(Model349ModuleOptions options, int id) {
+		cleanErrorPanel();
+		SERVICE.getMod349(options.getDomainName(),options.getUser(),options.getDomain(), id,
+				new AsyncCallback<Mod349>() {
+					@Override
+					public void onSuccess(Mod349 m349) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+						showDuplicateDeclarationPopup(options, m349);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
+	}
 
 	private void cancel() {
 		cleanErrorPanel();
@@ -386,4 +409,44 @@ public class Model349 extends MainEntryPoint {
 			newDialog.center();
 			newDialog.show();
 	}
+	
+	private void showDuplicateDeclarationPopup(Model349ModuleOptions options, Mod349 model) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, 
+			new Model349Callback() {
+
+					@Override
+					public void onAccept(Mod349 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+
+						SERVICE.duplicateMod349(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), model,
+								new AsyncCallback<Mod349>() {
+									@Override
+									public void onSuccess(Mod349 model) {
+										popup.hide();
+										select(options, model, null);
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+									}
+								});
+					}
+					
+					@Override
+					public void onCancel() {}
+
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 }

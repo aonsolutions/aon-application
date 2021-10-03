@@ -4,25 +4,24 @@ import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Customer;
-import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class CustomerAutoComplete {
-	
-	public static BiConsumer<AONContext,Customer> COMPLETE_TRANSACTION = (ctx,customer) -> {
+	private CustomerAutoComplete() {
+		
+	}
+	public static final BiConsumer<AONContext,Customer> COMPLETE_TRANSACTION = (ctx,customer) -> {
 		if (customer.getTransaction() == null) {
-			ctx.log().info("\t saving customer: autocomplete transaction: " + InvoiceTransactionType.NATIONAL);
+			ctx.log().debug("\t saving customer: autocomplete transaction: {0}",InvoiceTransactionType.NATIONAL);
 			customer.setTransaction(InvoiceTransactionType.NATIONAL);
 		}
 	};
 
-	public static BiConsumer<AONContext,Customer> COMPLETE_STATUS = (ctx,customer) -> {
+	public static final BiConsumer<AONContext,Customer> COMPLETE_STATUS = (ctx,customer) -> {
 		if (customer.getStatus() == null) {
-			ctx.log().info("\t saving customer: autocomplete status: " + RegistryStatus.ACTIVE);
+			ctx.log().debug("\t saving customer: autocomplete status: {0}",RegistryStatus.ACTIVE);
 			customer.setStatus(RegistryStatus.ACTIVE);
 		}
 	};

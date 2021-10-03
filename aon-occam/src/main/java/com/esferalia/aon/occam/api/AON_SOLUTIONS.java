@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
@@ -175,6 +177,24 @@ public class AON_SOLUTIONS {
 			if(ctx != null) {
 				ctx.close();
 			}
+		}
+	}
+	
+	public static List<Auth> getAuths(AuthFilter filter) {
+		LinkedList<Auth> auth = new LinkedList<>();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(!AonStringUtils.isBlank(domain)) {
+				auth.addAll(getAuthStream(domain, 0, filter).collect(Collectors.toCollection(LinkedList::new)));
+		   	}	    		
+		}
+		return auth;
+	}
+	
+	public static Stream<Auth> getAuthStream(String domainName, Integer domainId, AuthFilter filter) { 
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
+			return getSecurity().getAuthStream(ctx, filter);
 		}
 	}
 	
@@ -688,9 +708,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static HashMap<String, Integer> getTaskCount(Domain domain, User user, TaskFilter filter, Integer taskHolderId, Optional<String> email) {
+	public static HashMap<String, Integer> getTaskCount(Domain domain, User user, TaskFilter filter, Integer taskHolderId) {
 		try (AONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskCount(ctx, filter, taskHolderId, email);
+			return getTask2().getTaskCount(ctx, filter, taskHolderId);
 		}
 	}
 	

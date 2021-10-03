@@ -24,6 +24,10 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountDAO {
+	
+	private AccountDAO() {
+	}
+	
 	private static final AccountPropertiesDAO ACCOUNT_PROPERTIES = new AccountPropertiesDAO();
 	private static class AccountPropertiesDAO implements AccountProperties {
 		private Condition[] getConditions(AccountFilter filter) {
@@ -32,30 +36,34 @@ public class AccountDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(ACCOUNT.DOMAIN);}
-		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.CODE);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.DESCRIPTION);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.ALIAS);}
-		@Override public Property<Byte> getEntryEnabledProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT.ENTRYENABLED);}
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT.ACTIVE);}
-		@Override public Property<Byte> getLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT.LEVEL);}
-		@Override public Property<String> getCostCenterProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.COST_CENTER);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.DOMAIN);}
+		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.CODE);}
+		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.DESCRIPTION);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.ALIAS);}
+		@Override public Property<Byte> getEntryEnabledProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.ENTRYENABLED);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.ACTIVE);}
+		@Override public Property<Byte> getLevelProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.LEVEL);}
+		@Override public Property<String> getCostCenterProperty() {return new FilterDAO.PropertyDAO<>(ACCOUNT.COST_CENTER);}
 	}
 	
 	public static class FullAccountFiller  implements Function<Record,Account> {
 		@Override
-		public Account apply(Record record) {
+		public Account apply(Record r) {
+			return build(r);
+		}
+		
+		public static Account build(Record r) {
 			return new Account()
-			.setId(record.getValue(ACCOUNT.ID))
-			.setDomain(record.getValue(ACCOUNT.DOMAIN))
-			.setCode(record.getValue(ACCOUNT.CODE))
-			.setDescription(record.getValue(ACCOUNT.DESCRIPTION))
-			.setAlias(record.getValue(ACCOUNT.ALIAS))
-			.setEntryEnabled( AonEnumUtils.getBoolean(record.getValue(ACCOUNT.ENTRYENABLED)))
-			.setLevel(record.getValue(ACCOUNT.LEVEL))
-			.setActive(AonEnumUtils.getBoolean(record.getValue(ACCOUNT.ACTIVE)))
-			.setCostCenter(record.getValue(ACCOUNT.COST_CENTER));
+				.setId(r.getValue(ACCOUNT.ID))
+				.setDomain(r.getValue(ACCOUNT.DOMAIN))
+				.setCode(r.getValue(ACCOUNT.CODE))
+				.setDescription(r.getValue(ACCOUNT.DESCRIPTION))
+				.setAlias(r.getValue(ACCOUNT.ALIAS))
+				.setEntryEnabled( AonEnumUtils.getBoolean(r.getValue(ACCOUNT.ENTRYENABLED)))
+				.setLevel(r.getValue(ACCOUNT.LEVEL))
+				.setActive(AonEnumUtils.getBoolean(r.getValue(ACCOUNT.ACTIVE)))
+				.setCostCenter(r.getValue(ACCOUNT.COST_CENTER));
 		}
 	}
 	private static SelectConditionStep<AccountRecord> select(AONContext ctx, AccountFilter filter) {
@@ -166,7 +174,7 @@ public class AccountDAO {
 			.returning(ACCOUNT.ID)
 			.fetchOne()
 			.getValue(ACCOUNT.ID);
-		ctx.log().info("INSERT ACCOUNT id: " + id + " code: " + account.getCode());
+		ctx.log().debug("INSERT ACCOUNT id: {0} code: {1}",account.getId(),account.getCode());
 		return get(ctx, id);
 	}
 	
@@ -186,7 +194,7 @@ public class AccountDAO {
 			.set(ACCOUNT.COST_CENTER,account.getCostCenter())
 			.where(ACCOUNT.ID.eq(account.getId()))
 			.execute();
-		ctx.log().info("UPDATE ACCOUNT id: " + account.getId() + " code: " + account.getCode());
+		ctx.log().debug("UPDATE ACCOUNT id: {0} code: {1}",account.getId(),account.getCode());
 		return account;
 	}
 
@@ -197,7 +205,7 @@ public class AccountDAO {
 			.delete(ACCOUNT)
 			.where(ACCOUNT.ID.eq(account.getId()))
 			.execute();
-		ctx.log().info("DELETE ACCOUNT id: " + account.getId() + " code: " + account.getCode());
+		ctx.log().debug("DELETE ACCOUNT id: {0} code: {1}",account.getId(),account.getCode());
 		return account;
 	}
 	

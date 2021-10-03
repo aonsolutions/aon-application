@@ -4,6 +4,7 @@ public class CheckItException extends Exception {
 
 	private static final long serialVersionUID = -5640775455927597322L;
 	
+	public static final String NO_CONNECTION_MSG = "No se pudo establecer la conexi\u00F3n con el servicio de agregador bancario";
 
 	public CheckItException() {
 		super();

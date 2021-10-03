@@ -1,4 +1,5 @@
 import { AON_TAGS } from "../environments/aonTag.js";
+import { EVENT } from "../environments/environments.js";
 import { DAYS, MONTHS } from "../models/enums.js";
 
 export const getReader = (file) =>  new Promise((resolve) => {
@@ -240,123 +241,14 @@ export const disabledForm = (formId, elems) => {
  */
 export const scrollInfinite = (element, fn) => {
     if(element){
-      element.addEventListener("scroll", async ({target:{scrollTop, scrollHeight, offsetHeight}}) => {
+      element.addEventListener(EVENT.SCROLL, async ({target:{scrollTop, scrollHeight, offsetHeight}}) => {
         if (scrollTop >= (scrollHeight - offsetHeight)) fn();
       });
     } else {
       element = document.body;
-      window.addEventListener('scroll', ()=>{
+      window.addEventListener(EVENT.SCROLL, ()=>{
         if ( (element.scrollTop + element.clientHeight) >= element.scrollHeight) fn();
      }) 
     }
 }
 
-/** 
- * Creates a new component
- * @param {*} properties - json with properties
- *  
- *  EXAMPLE
- * {
- *    type : tag-type,
- *    id :  id,
- *    classes : [class1,class2],
- *    styles : {
- *        style : value 
- *    },
- *    data : {
- *       name : value
- *    }
- *    events : {
- *        event : function 
- *    },
- * }
- * 
- * @returns Object of the component
- */
- export const newComponent = (properties) =>{
-  if(properties == undefined) properties = {};
-  properties.element  =  properties.element || document.createElement('div');
-
-  //Internal functions
-  properties.appendTo =  (e) => e.appendChild(properties.element);
-  properties.appendChild =  (e) => properties.element.appendChild(e);
-  properties.clean = () => properties.element.innerHTML = '';
-
-  //Check information
-  if(properties.type)   
-      properties.element = document.createElement(properties.type);
-
-  if(properties.id)    
-      properties.element.id  = properties.id;
-
-  if(properties.text)   
-      properties.element.innerHTML = properties.text;
-
-  //Set data to element
-  setAttributes(properties.element,properties.attributes);
-  setDataset(properties.element,properties.dataset);
-  setEvents(properties.element,properties.events);
-  setStyles(properties.element,properties.styles);
-  setClasses(properties.element,properties.classes);
-
-  return properties;
-} 
-
-/**
- * Set attributes to element
- * @param {*} element 
- * @param {*} attributes 
- */
-export const setAttributes = (element, attributes) =>{
-  if(element && attributes) 
-      for (const key in attributes)  
-        element.setAttribute(key,attributes[key]);
-  return element;
-}
-
-/**
- * Set dataset to an element
- * @param {*} element 
- * @param {*} dataset 
- */
-export const setDataset = (element,dataset) => {
-  if(element && dataset) 
-      for (const key in dataset) 
-        element.dataset[key] = dataset[key];
-  return element;
-}
-
-/**
- * Set events to an element
- * @param {*} element 
- * @param {*} events 
- */
-export const setEvents =(element,events) => {
-  if(element && events) 
-      for (const key in events)  
-        element.addEventListener(key,events[key]);
-  return element;
-}
-
-/**
- * Set styles to an element
- * @param {*} element 
- * @param {*} styles 
- */
-export const setStyles = (element,styles) => {
-  if(element && styles) 
-    for (const key in styles)  
-      element.style[key] = styles[key];  
-  return element;
-}
-
-/**
- * Set classes 
- * @param {*} element 
- * @param {*} classes 
- */
-export const setClasses = (element,classes) => {
-  if(element && classes) 
-    classes.forEach(cl => element.classList.add(cl));
-  return element;
-}

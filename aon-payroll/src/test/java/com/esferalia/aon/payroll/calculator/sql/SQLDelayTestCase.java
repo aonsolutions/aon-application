@@ -1002,7 +1002,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				);
 		//@formatter:on
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		Date startDate = add(firstDayOfYear, MONTH, 8 ); //getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 
 		Date startEREDate = 
@@ -2182,7 +2183,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		//@formatter:on
 
 		
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		Date startDate = add(firstDayOfYear, MONTH, 8 ); //getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
 
 		Date startITDate = add(startDate, DAY_OF_MONTH,8);

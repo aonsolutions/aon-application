@@ -338,6 +338,24 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class ContractExtensionCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractExtension();
+		}
+
+	}
+	
+	class DeleteContractExtensionCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			deleteContractExtension();
+		}
+
+	}
+	
 	class RemoveContractCommand implements ScheduledCommand {
 
 		@Override
@@ -353,6 +371,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem cbc;
 		private MenuItem cetifica2;
 		private MenuItem cetifica2PDF;
+		
+		private MenuItem contractExtension;
+		private MenuItem removeContractExtension;
 		
 		private MenuItem sendBasicCopy;
 		private MenuItem sendContract;
@@ -378,6 +399,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			cetifica2PDF = addItem("Cetifica2 PDF", new Certifica2PDFCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			cetifica2PDF.ensureDebugId("cetifica2PDF");
+			
+			addSeparator();
+			
+			contractExtension = addItem("Pr\u00F3rroga Contrato", new ContractExtensionCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			contractExtension.ensureDebugId("contractExtension");
+			
+			removeContractExtension = addItem("Eliminar Pr\u00F3rroga Contrato", new DeleteContractExtensionCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			removeContractExtension.ensureDebugId("removeContractExtension");
 			
 			addSeparator();
 			
@@ -413,6 +444,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public MenuItem getRemoveContract() {
 			return removeContract;
+		}
+		
+		public MenuItem getContractExtension() {
+			return contractExtension;
+		}
+		
+		public MenuItem getRemoveContractExtension() {
+			return removeContractExtension;
 		}
 		
 	}
@@ -701,6 +740,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 								checkStatus(this.contrataEmployeeObject);
 								checkCertificateSEPE();
 								checkTGSSStatus();
+								checkContractExtension();
 							});
 				}, f -> {});
 				break;
@@ -846,6 +886,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					checkStatus(this.contrataEmployeeObject);
 					checkCertificateSEPE();
 					checkTGSSStatus();
+					checkContractExtension();
 					success.accept("");
 				});
 	}
@@ -1137,6 +1178,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkStatus(contrataEmployeeObject);
 									checkCertificateSEPE();
 									checkTGSSStatus();
+									checkContractExtension();
 								});
 					}, f -> {});
 				}, 
@@ -1158,6 +1200,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkStatus(contrataEmployeeObject);
 									checkCertificateSEPE();
 									checkTGSSStatus();
+									checkContractExtension();
 								});
 						
 					}, f -> {});
@@ -1191,6 +1234,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 										checkStatus(contrataEmployeeObject);
 										checkCertificateSEPE();
 										checkTGSSStatus();
+										checkContractExtension();
 									});
 						}, f -> {});
 					}
@@ -1355,6 +1399,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkStatus(contrataEmployeeObject);
 									checkCertificateSEPE();
 									checkTGSSStatus();
+									checkContractExtension();
 								});
 					}, f -> {});
 				}, 
@@ -1370,6 +1415,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkStatus(contrataEmployeeObject);
 									checkCertificateSEPE();
 									checkTGSSStatus();
+									checkContractExtension();
 								});
 					}, f -> {});
 				}, 
@@ -1385,10 +1431,53 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkStatus(contrataEmployeeObject);
 									checkCertificateSEPE();
 									checkTGSSStatus();
+									checkContractExtension();
 								});
 					}, f -> {});
 				}, 
 				f -> {});
+	}
+	
+	private void contractExtension() {
+		new ContractExtensionDialog(this.contrataEmployeeObject.getContractEmployeeInfo()) {
+			@Override
+			protected void onExtensionDone() {
+				Map<String, String> successMap = new HashMap<>();
+				successMap.put("Pr\u00F3rroga", "La pr\u00F3rroga del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
+				AonMessagePanel.showSuccess(messageContainer, successMap);
+				contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
+						success -> {
+							checkStatus(contrataEmployeeObject);
+							checkCertificateSEPE();
+							checkTGSSStatus();
+							checkContractExtension();
+						});
+			}
+
+			@Override
+			protected void fireError(Map<String, String> errorMap) {
+				AonMessagePanel.showError(messageContainer, errorMap);
+			}
+		};
+	}
+	
+	private void deleteContractExtension() {
+		contrataEmployeeObject.deleteContractExtension(
+				s -> {
+					Map<String, String> successMap = new HashMap<>();
+					successMap.put("Borrado Pr\u00F3rroga", "La pr\u00F3rroga del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido eliminada correctamente");
+					AonMessagePanel.showSuccess(messageContainer, successMap);
+					
+					contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
+							success -> {
+								checkStatus(contrataEmployeeObject);
+								checkCertificateSEPE();
+								checkTGSSStatus();
+								checkContractExtension();
+							});
+				},
+				f -> {}
+		);
 	}
 	
 	// ------------------------------------------------- EmployeeSalaryButtons
@@ -1829,8 +1918,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		setVisible(sepeContextMenu.getSendBasicCopy().getElement(), hasCertificateSEPE && AonStringUtils.isBlank(sepeId));
 		setVisible(sepeContextMenu.getSendContract().getElement(), hasCertificateSEPE && AonStringUtils.isBlank(sepeId));
 		setVisible(sepeContextMenu.getRemoveContract().getElement(), hasCertificateSEPE && AonStringUtils.isNotBlank(sepeId));
-		
-		
+	}
+	
+	private void checkContractExtension() {
+		 String contractTypeStr = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType();
+		 Date endDate =  contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getEndDate();
+		 boolean hasExtension = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasExtension();
+		 
+		 if(AonStringUtils.isNotBlank(contractTypeStr)) {
+			 Integer contractTypeValue = Integer.parseInt(contractTypeStr);
+			 setVisible(sepeContextMenu.getContractExtension().getElement(), !hasExtension && contractTypeValue >= 400 && null != endDate);
+			 setVisible(sepeContextMenu.getRemoveContractExtension().getElement(), hasExtension);
+		 }
 	}
 	
 	// ------------------------------------------------- TGSS status

@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
+import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -935,6 +936,18 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	@Override
 	public void createContractPayment(String currentDomainName, Integer contractId,
 			ContractConceptCalc contractConceptCalc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void contractExtension(String currentDomainName, ContractExtension contractExtension) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteContractExtension(String currentDomainName, Integer contractId) {
 		// TODO Auto-generated method stub
 		
 	}

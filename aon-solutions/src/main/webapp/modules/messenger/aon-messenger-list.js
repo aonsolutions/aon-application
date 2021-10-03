@@ -12,6 +12,7 @@ import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
 import { getIconJson } from "./shared/utils.js";
 import { getCustomers } from "../../services/registryService.js";
 import { getTaskHolder } from "../../services/taskHolderService.js";
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMessengerList extends AonElement {
   TABLE_ID;
@@ -27,7 +28,7 @@ export class AonMessengerList extends AonElement {
 	}
 
   getFilter() {
-		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:30, by_gestor: false, status: TASK_STATUS.PENDING};
+		return this.hasAttribute(CONSTANT.FILTER) ? JSON.parse(this.getAttribute(CONSTANT.FILTER))	: {page:0, perPage:30, status: TASK_STATUS.PENDING};
 	}
   
   constructor() {
@@ -126,13 +127,13 @@ export class AonMessengerList extends AonElement {
     let btnSearch = this.applicationEl.addSearchOption();
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
       this.setFilter({...this.getFilter(), page:0, perPage:30, search:detail});
-      this.loadMoreSearch();
+      this.loadMore(true);
     });
 
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
       if(detail) {
         this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate});
-        this.loadMoreSearch();
+        this.loadMore(true);
       } 
     });
 
@@ -144,8 +145,16 @@ export class AonMessengerList extends AonElement {
     let registryEl = this.getElement("registry");
     let taskHolderEl = this.getElement("task_holder");
     let statusEl = this.getElement("status");
-    getCustomers().then(customers=>{
+    getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
       registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
+    })
+
+    registryEl.addEventListener(EVENT.INPUT,async({target})=>{
+        const value = target.value;
+        if(value.length > 2){
+          const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
+          registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+        }
     })
 
     if(this.applicationParentEl)
@@ -156,62 +165,73 @@ export class AonMessengerList extends AonElement {
     statusEl.setOptions(TASK_STATUS_VALUE);
   }
 
-  async loadMoreSearch(){
-    let aonTable = this.getElement(this.TABLE_ID);
+  async loadMore(search = false) {
+
+    const application = this.getApplication();
+
+    const aonTable = this.getElement(this.TABLE_ID);
+
+    if(application) application.startLoader();
+
+    const datos = await this.getData();
+
+    addTasks(datos);
     if(this.isMobile()){
-      aonTable.removeAllLi();
+      if(search)aonTable.removeAllLi();
+      this.getDataMobile(datos);
     } else {
-      aonTable.removeRows();
+      if(search)aonTable.removeRows();
+      this.getDataDesktop(datos);
     }
 
-    await this.loadMore();
-  }
-
-  async loadMore() {
-    this.getApplication().startLoader();
-    const datos = await this.getData();
-    addTasks(datos);
-    if(this.isMobile())
-      this.getDataMobile(datos);
-    else 
-      this.getDataDesktop(datos);
-
-    this.getApplication().stopLoader();    
+    if(application) application.stopLoader();    
 	}
 
   getDataDesktop(datos){
-    let aonTable = this.getElement(this.TABLE_ID);
-    datos.map((res, idx) => {
-      const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-      let newTitle  =  res.title;
-      if(res.registry && res.registry.name) newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
-
-      let assigned = "";
-      if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
-      else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
-
-      const newData = { 
-        ...res, 
-        newTitle,
-        assigned,
-        dateParse,
-        lettersHtml: this.getIcon(res),
-      };
-      aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
-    });
+    try {
+      let aonTable = this.getElement(this.TABLE_ID);
+      const company = LS.getCompany();
+      const document = company ? company.document: undefined;
+      const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
+      datos.map((res, idx) => {
+        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+        let newTitle  =  res.title;
+        if(res.registry && res.registry.name && document !== res.registry.document) 
+          newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+        else if(res.sender && res.sender.name && documentTh !== res.sender.document) 
+          newTitle = `<b>[${res.sender.name}]</b> ${newTitle}`;
+        // else if()
+  
+        let assigned = "";
+        if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
+        else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
+  
+        const newData = { 
+          ...res, 
+          newTitle,
+          assigned,
+          dateParse,
+          lettersHtml: this.getIcon(res),
+        };
+        aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
+      });
+    } catch (e) {}
   }
+  
   getDataMobile(datos){
-    let aonTable = this.getElement(this.TABLE_ID);
-    datos.map((res, idx) => {
-      const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-      const newTitle  = `#${res.newNumber} ${res.title}`;
-      const options = {
-        title: newTitle,
-        subtitle: dateParse,
-        ...this.getIconList(res)
-      };
-      aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
-    });
+    try{
+      let aonTable = this.getElement(this.TABLE_ID);
+      datos.map((res, idx) => {
+        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+        const newTitle  = `#${res.newNumber} ${res.title}`;
+        const options = {
+          title: newTitle,
+          subtitle: dateParse,
+          ...this.getIconList(res)
+        };
+        aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
+      });
+    } catch (e) {}
   }
 
   async getData(){

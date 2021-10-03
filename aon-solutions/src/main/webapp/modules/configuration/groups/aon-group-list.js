@@ -1,13 +1,11 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
+import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import {getWorkgroups, saveWorkgroup} from '../../../services/workgroupService.js';
 import * as ACTION from '../../actions.js';
-import { AonGroupAdd } from "./aon-group-add.js";
 import { AonInput } from "../../../components/aon-input.js";
-import * as LS from '../../../services/localStorageService.js';
-
+import { Workgroup } from "../../../models/project/Workgroup.js";
 
 export class AonGroupList extends AonElement {
   TABLE_ID;
@@ -129,14 +127,15 @@ export class AonGroupList extends AonElement {
   async getData() {
     this.applicationEl.startLoader();
     let data = [];
+
     try {
       let resp = await getWorkgroups();
       data = resp.map(res =>{
         return {
           ...res,
-          statusText: "ACTIVE" === res.status ? "Activo":"Inactivo" 
+          statusText: res.active ? MSG.ACTIVE : MSG.INACTIVE 
         };
-      })
+      });
     } catch (e) {
       console.log(e);
     }
@@ -155,19 +154,13 @@ export class AonGroupList extends AonElement {
 		d.setTitle(MSG.ADD_WORKGROUP);
     d.setContent(input);
 		d.addAcceptAction(() => {
-      let data = {
-        domain: LS.getDomainId(),
-        description: input.value,
-        status: 0
-      }
-      this.save(data);
+      this.save(new Workgroup().setDescription(input.value));
 		});
 		d.open();
   }
 
   save(data) {
-    saveWorkgroup(data)
-    .then(r => {
+    saveWorkgroup(data).then(r => {
 			this.getApplication().getToast().start({
 				type: CONSTANT.SUCCESS,
 				message: MSG.SAVED_DATA
@@ -176,4 +169,6 @@ export class AonGroupList extends AonElement {
 		}).catch(e => this.showError(e));
   }
 }
-window.customElements.define("aon-group-list", AonGroupList);
+if(!window.customElements.get(TAG.AON_GROUP_LIST)){
+  window.customElements.define(TAG.AON_GROUP_LIST, AonGroupList);
+}

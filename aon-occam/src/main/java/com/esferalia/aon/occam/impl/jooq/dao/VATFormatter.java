@@ -54,13 +54,13 @@ public class VATFormatter {
 	protected static final String SPAN_MSG_GRAY= "<span style=\"color: gray;\">{0}</span>";
 	protected static final String SPAN_MSG_RED= "<span style=\"color: red;\">{0}</span>";
 
-	protected static final String LEGEND = "S (Servicio); I (Inversi\u00F3n); A (R\u00E9gimen agrario); R (Rectificativa); C (Criterio de caja)";
+	protected static final String LEGEND = "S (Servicio); I (Inversi\u00F3n); A (R\u00E9gimen agrario); R (Rectificativa); C (Criterio de caja); M (Reg. Importaci\u00F3n); D (DUA Vinculado)";
 	
 	private static final String getHeader( Mod303 mod303) {
 		String header = AonStringUtils.repeat(" ", 2)
 			+ AonStringUtils.rightPad("TIPO",6)
 			+ AonStringUtils.rightPad("TRAN.",6)
-			+ "S I A R C "
+			+ "S I A R C M D "
 			+ AonStringUtils.rightPad("EPIGR.",8)
 			+ AonStringUtils.rightPad("N\u00BA DOCUMENTO",15)
 			+ AonStringUtils.rightPad("TITULAR FACTURA",45)
@@ -143,6 +143,10 @@ public class VATFormatter {
 			buf.append((vat.isRectification()?'R':' '));
 			buf.append(' ');
 			buf.append((vat.isVatAccrualRegime()? MessageFormat.format(SPAN_MSG_RED ,'C'):' '));
+			buf.append(' ');
+			buf.append((vat.isVatImportation()?'M':' '));
+			buf.append(' ');
+			buf.append((vat.hasDuaLinked()?'D':' '));
 			buf.append(' ');
 			buf.append(AonStringUtils.rightPad(AonStringUtils.defaultIfBlank(vat.getEpigraph(), AonStringUtils.SPACE),8));
 			buf.append(AonStringUtils.rightPad(vat.getDocumentNumber(),15));

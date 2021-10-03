@@ -22,6 +22,6 @@ public interface Model347Service extends RemoteService {
 	Mod347 saveCommentsMod347(String domainName,String user, Mod347 mod347) throws AonCoreException;
 	Mod347 changeStatusMod347(String domainName,String user, Mod347 mod347, FiscalStatus newStatus) throws AonCoreException;
 	String getInfo(String domainName, String user,int domain,Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey) throws AonCoreException;
-	Mod347 duplicateNextYear(String domainName,String user, Integer domain,Integer id) throws AonCoreException;
+	Mod347 duplicateMod347(String domainName,String user, Integer domain, Mod347 mod347) throws AonCoreException;
 	
 }

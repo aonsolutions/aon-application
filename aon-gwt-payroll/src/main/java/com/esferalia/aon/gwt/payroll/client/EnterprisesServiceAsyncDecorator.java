@@ -399,10 +399,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void deleteCRA(String domainName, Integer code,
-			AsyncCallback<String> callback) {
+	public void deleteCRA(String domainName, Integer code, AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.deleteCRA(domainName, code, new AsyncCallbackWrapper<String>(callback));
+		enterprisesServiceAsync.deleteCRA(domainName, code, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override

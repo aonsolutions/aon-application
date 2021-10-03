@@ -15,9 +15,6 @@ public class PrintInvoiceConfiguration {
 	private Boolean adjustImage;
 	private Attach background;
 	
-	public PrintInvoiceConfiguration() {
-	
-	}
 
 	@Deprecated
 	public InputStream getBackgroundImage() {
@@ -46,6 +43,7 @@ public class PrintInvoiceConfiguration {
 	}
 	
 	public Integer getHeader() {
+		if(header == null) header = 100;
 		return header;
 	}
 
@@ -55,6 +53,7 @@ public class PrintInvoiceConfiguration {
 	}
 
 	public Integer getFooter() {
+		if(footer == null) footer = 100;
 		return footer;
 	}
 

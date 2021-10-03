@@ -58,6 +58,19 @@ public class RegistryMedia implements Serializable {
 		this.media = media;
 		return this;
 	}
+		
+	public boolean isEmail() {
+		return MediaType.EMAIL == getMedia();
+	}
+	
+	public boolean isWeb() {
+		return MediaType.WEB == getMedia();
+	}
+	
+	public boolean isPhone() {
+		return MediaType.CELLULAR == getMedia()
+			|| MediaType.FIXED_PHONE == getMedia();
+	}
 	
 	public String getValue() {
 		return value;

@@ -6,6 +6,8 @@ export const ACCOUNTED = 'Comptabilitzada';
 export const ACCOUNTEDS = 'Comptabilitzades';
 export const ACCOUNTING = 'Comptabilitat';
 export const ACTIVATE = 'Activar';
+export const ACTIVE = 'Activo';
+export const ACTIVES = 'Actives';
 export const ADD = 'Afegir';
 export const ADD_CATEGORY = 'Afegir Categoria';
 export const ADD_COMMENT = 'Afegir Comentari';
@@ -124,7 +126,8 @@ export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulars';
 
 // ----- I
-
+export const INACTIVE = 'Inactivo';
+export const INACTIVES = 'Inactives';
 export const INBOX = `Safata d'Entrada`;
 export const INVESTMENT = 'Inversió';
 export const INVOICE = 'Factura';
@@ -154,6 +157,7 @@ export const MODEL_111 = 'Model 111';
 export const MODEL_111_DESCRIPTION = `Model 111. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de renda. Autoliquidació.`;
 export const MODEL_190 = 'Model 190';
 export const MODEL_190_DESCRIPTION = `Model 190. Declaració Informativa. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de rendes. Resum anual.`;
+export const MOVED_TO_TRASH = `S'ha moguda a la paperera`;
 export const MY_DATA = 'Les Meves Dades';
 export const MY_USER = 'Mi Usuari';
 
@@ -220,6 +224,7 @@ export const REJECTEDS = 'Rebutjades';
 export const REQUEST = 'Sol·licitud';
 export const REQUESTS = 'Sol·licituds';
 export const RESTORE = 'Restaurar';
+export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Factures';
 export const RESUME_COSTS = "Resumen de costes";

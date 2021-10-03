@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLog;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItParams;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAccount;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -38,6 +39,7 @@ import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
@@ -61,7 +63,7 @@ public class CheckItAPI implements IParamNames{
 			post.setEntity(entity);
 			try (CloseableHttpResponse resp = client.execute(post)) {
 				if (resp.getStatusLine().getStatusCode() != 200)
-					throw new CheckItException("No se pudo establecer la conexi\u00F3n con CheckIt");
+					throw new CheckItException(CheckItException.NO_CONNECTION_MSG);
 				if (resp.getEntity() != null) {
 					String str = EntityUtils.toString(resp.getEntity());
 					if (str != null && str.charAt(0) == '[') {
@@ -673,6 +675,39 @@ public class CheckItAPI implements IParamNames{
 	}
 
 //------------------------------------------------------------------------------------------
+	
+//---------------------------------------GET LOGS-------------------------------------------
+	
+	public static JSONArray getLogs(JSONObject params) throws CheckItException {
+		Object json = post(API_URL + "logs/robot/list", params);
+		return parseJSONArray(json);
+	}
+	
+	public static JSONArray getLogs(Integer empresaId, Integer cuentabancariaId) throws CheckItException {
+		JSONObject params = new JSONObject();
+		params.put(API_KEY_PARAM, API_KEY);
+		params.put(ENTERPRISE_ID_PARAM, empresaId);
+		params.put("cuentabancaria_id", cuentabancariaId);
+		return getLogs(params);
+	}
+	
+//------------------------------------------------------------------------------------------
+	
+//------------------------------------GET ENTERPRISE----------------------------------------
+	
+	public static JSONArray getEnterprise(JSONObject params) throws CheckItException {
+		Object json = post(API_URL + "empresas", params);
+		return parseJSONArray(json);
+	}
+	
+	public static JSONArray getEnterprise(String cif) throws CheckItException {
+		JSONObject params = new JSONObject();
+		params.put(API_KEY_PARAM, API_KEY);
+		params.put(CIF_PARAM, cif);
+		return getEnterprise(params);
+	}
+	
+//------------------------------------------------------------------------------------------
 
 //------------------------------------ADD ENTERPRISE----------------------------------------
 	/**
@@ -881,13 +916,45 @@ public class CheckItAPI implements IParamNames{
 		if (accountJson == null)
 			throw new CheckItException(errMsg);
 
-		Integer accountId = accountJson.optInt("id_cuentabancaria");
-		if (accountId == null)
+		Integer accountId = accountJson.optInt("id_cuentabancaria", 0);
+		if (accountId == 0)
 			throw new CheckItException(errMsg);
 		return accountId;
 	}
 	
-//	public static Integer
+	public static List<CheckItLog> getCheckItLogs(Integer empresaId, Integer cuentabancariaId) throws CheckItException {
+		JSONArray logsJson = getLogs(empresaId, cuentabancariaId);
+		List<CheckItLog> logsList = new LinkedList<>();
+		if (logsJson != null) {
+			for (int i=0; i<logsJson.length(); i++) {
+				CheckItLog log = logFromJsonToObject(logsJson.optJSONObject(i));
+				if (log != null) {
+					logsList.add(log);
+				}
+			}
+			return logsList;
+		} else
+			return Collections.emptyList();
+	}
+	
+	private static CheckItLog logFromJsonToObject(JSONObject json) {
+		if (json == null)
+			return null;
+		Date created;
+		try {		
+			created = parseTZDate(json.optString("created", ""));
+		} catch (CheckItException e) {
+			created = null;
+		}
+		
+		return new CheckItLog()
+				.setBankAccountId(json.optInt("cuentabancaria_id"))
+				.setErrorMessage(json.optString("error_message"))
+				.setUserError(json.optInt("is_user_error", 0) == 1)
+				.setPending(json.optInt("is_pending", 0) == 1)
+				.setCreated(created);
+				
+	}
 	
 	public static List<BankStatement> getBankStatements(Integer empresaId, Integer accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
 		Date today = new Date();
@@ -896,7 +963,7 @@ public class CheckItAPI implements IParamNames{
 		Calendar nextOperationCalendar= Calendar.getInstance();
 		nextOperationCalendar.setTime(lastOperationDate);
 		nextOperationCalendar.add(Calendar.DATE, 1);
-		Date nextOperationDate = nextOperationCalendar.getTime();
+		Date nextOperationDate = clearDate(nextOperationCalendar.getTime());
 		
 		
 		JSONObject requestParams = new JSONObject();
@@ -917,10 +984,10 @@ public class CheckItAPI implements IParamNames{
 
 			int movementId = transactionJson.optInt("id_movimiento");
 			
-			Date operationDate = parseTZDate(transactionJson.optString("fecha_operacion"));
+			Date operationDate = clearDate(parseTZDate(transactionJson.optString("fecha_operacion")));
 			
-			if ((maximumId == null && (operationDate.after(nextOperationDate) || operationDate.equals(nextOperationDate))) 
-					|| (maximumId != null && movementId > maximumId)) {
+			if ((maximumId == null && operationDate.after(nextOperationDate)) 
+					|| (maximumId != null && maximumId != 0 && movementId > maximumId)) {
 				BankStatement bankStatement = bankStatementFromJson(transactionJson);
 				bankStatements.add(bankStatement);
 			}
@@ -1017,7 +1084,7 @@ public class CheckItAPI implements IParamNames{
 			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
 			Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
 			Pair<String, Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
-			Integer movId = Integer.valueOf(idAndDate != null ? idAndDate.getKey() : "0");
+			Integer movId = idAndDate != null ? Integer.valueOf(idAndDate.getKey()) : null;
 			List<BankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban), lastDate, movId);
 			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
 			return bankStatements;
@@ -1105,6 +1172,7 @@ public class CheckItAPI implements IParamNames{
 				.setRemainder(obj.optDouble("disponible", 0))
 				.setBankAccountType(obj.optInt("tipo_cuenta_bancaria_id", 0))
 				.setBankLoginType(obj.optInt("tipo_login_banco_id", 0))
+				.setLogs(getCheckItLogs(empresaId, obj.optInt(BANK_ID_PARAM, 0)))
 			);
 		}
 		return acc;
@@ -1166,6 +1234,18 @@ public class CheckItAPI implements IParamNames{
 			return Collections.emptyMap();
 		}
 		
+	}
+	
+	public static Date clearDate(Date date) {
+		if (date == null)
+			return null;
+		Calendar calendar = Calendar.getInstance(new Locale("es", "ES"));
+		calendar.setTime(date);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR, 0);
+		return calendar.getTime();
 	}
 
 }

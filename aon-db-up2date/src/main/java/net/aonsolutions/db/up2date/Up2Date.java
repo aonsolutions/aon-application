@@ -18,8 +18,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
-import net.aonsolutions.db.up2date.tgss.SMI2021Update;
+import net.aonsolutions.db.up2date.finance.InvoiceFiscalCreation;
 
 public class Up2Date {
 
@@ -176,7 +175,8 @@ public class Up2Date {
     		//AdditionalHoursKiss.ADDITIONALHOURSKISS,
     		//TaskWorkflowUpdate.TASK_WORKFLOW_UPDATE,
     		//ProjectHolderCreation.PROJECT_HOLDER_CREATION,
-    		SMI2021Update.SMI2020UPDATE
+    		//SMI2021Update.SMI2020UPDATE
+        InvoiceFiscalCreation.INVOICE_FISCAL_CREATION
     };
 
 

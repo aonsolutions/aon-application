@@ -146,7 +146,7 @@ public interface EnterprisesService extends RemoteService {
 	String createNewCRA(String domainName, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList,
 			Integer cccId, String type);
 
-	String deleteCRA(String currentDomainName, Integer code);
+	void deleteCRA(String currentDomainName, Integer code);
 
 	Peculiarities getEmployeePeculiarities(String currentDomainName, Integer contractId);
 

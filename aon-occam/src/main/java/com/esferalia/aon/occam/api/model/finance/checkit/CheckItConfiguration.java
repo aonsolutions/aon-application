@@ -15,6 +15,8 @@ public class CheckItConfiguration implements Serializable {
 	private LinkedList<CheckItBankAccount> cheItBanks;
 	private List<CheckitUnlinkedBankAccount> checkItUnlinkedBanks;
 	private List<CheckItBank> bankIds;
+	private boolean isDown;
+	private boolean registrationFailed;
 
 	public AonConfiguration getConfiguration() {
 		return configuration;
@@ -53,5 +55,20 @@ public class CheckItConfiguration implements Serializable {
 	public CheckItConfiguration setBankIds(List<CheckItBank> bankIds) {
 		this.bankIds = bankIds;
 		return this;
+	}
+	public boolean isDown() {
+		return isDown;
+	}
+	public CheckItConfiguration setDown(boolean isDown) {
+		this.isDown = isDown;
+		return this;
+	}
+	public boolean isRegistrationFailed() {
+		return registrationFailed;
+	}
+	public CheckItConfiguration setRegistrationFailed(boolean registrationFailed) {
+		this.registrationFailed = registrationFailed;
+		return this;
+
 	}
 }

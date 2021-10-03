@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
+import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
@@ -921,6 +922,20 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	public void createContractPayment(String currentDomainName, Integer contractId, ContractConceptCalc contractConceptCalc, AsyncCallback<Void> callback) {
 		AON.start();
 		employeesServiceAsync.createContractPayment(currentDomainName, contractId, contractConceptCalc, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	// ------------------------------------------------- Contract Extension
+
+	@Override
+	public void contractExtension(String currentDomainName, ContractExtension contractExtension, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.contractExtension(currentDomainName, contractExtension, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void deleteContractExtension(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.deleteContractExtension(currentDomainName, contractId, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 }

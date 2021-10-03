@@ -38,7 +38,7 @@ public class TaskHolderDAO {
 	}
 
 	
-	public static class TaskHolderFiller implements Function<Record, TaskHolder> {
+	public static class TaskHolderFiller extends Filler implements Function<Record, TaskHolder> {
 
 		@Override
 		public TaskHolder apply(Record r) {
@@ -49,10 +49,21 @@ public class TaskHolderDAO {
 			if(registry == null) registry = REGISTRY;
 			return new TaskHolder()
 					.copy(RegistryFiller.build(r, registry))
-					.setActive(r.getValue(TASK_HOLDER.ACTIVE) == (byte) 1)
+					.setActive(getBoolean(r, TASK_HOLDER.ACTIVE))
 					.setCostProfile(r.getValue(TASK_HOLDER.COST_PROFILE))
 					.setType(TaskHolderType.safeValueOf(r.getValue(TASK_HOLDER.TYPE)))
 					.setUserId(r.getValue(TASK_HOLDER.USER_ID));
+		}
+		
+		public static TaskHolder build(Record r, com.esferalia.aon.jooq.tables.TaskHolder th, com.esferalia.aon.jooq.tables.Registry registry) {
+			if(th == null) th = TASK_HOLDER;
+			if(registry == null) registry = REGISTRY;
+			return new TaskHolder()
+					.copy(RegistryFiller.build(r, registry))
+					.setActive(getBoolean(r, th.ACTIVE))
+					.setCostProfile(r.getValue(th.COST_PROFILE))
+					.setType(TaskHolderType.safeValueOf(r.getValue(th.TYPE)))
+					.setUserId(r.getValue(th.USER_ID));
 		}
 	}
 	
@@ -115,7 +126,7 @@ public class TaskHolderDAO {
 			.set(TASK_HOLDER.COST_PROFILE, taskHolder.getCostProfile())
 			.set(TASK_HOLDER.ACTIVE, taskHolder.getActiveValue())
 			.execute();
-		ctx.log().info("INSERT TASK HOLDER id: " + taskHolder.getId());		
+		ctx.log().debug("INSERT TASK HOLDER id: {0}",taskHolder.getId());		
 		return taskHolder;
 	}
 	
@@ -129,7 +140,7 @@ public class TaskHolderDAO {
 			.set(TASK_HOLDER.ACTIVE, taskHolder.getActiveValue())
 			.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
 			.execute();
-		ctx.log().info("UPDATE TASK HOLDER id: " + taskHolder.getId() + ". (" + count + " rows)");		
+		ctx.log().debug("UPDATE TASK HOLDER id: {0}. ({1} rows)",taskHolder.getId(),count);		
 		return taskHolder;
 	}
 
@@ -138,19 +149,20 @@ public class TaskHolderDAO {
 		int count = ctx.getDslContext().delete(TASK_HOLDER)
 			.where(TASK_HOLDER.REGISTRY.eq(taskHolder.getId()))
 			.execute();
-		ctx.log().info("DELETE TASK HOLDER id:" + taskHolder.getId() + " ("+count+" rows)");
+		ctx.log().debug("DELETE TASK HOLDER id: {0} ({1} rows)",taskHolder.getId(),count);
 		return taskHolder;
 	}
 	
 	public static Stream<TaskHolder> getTaskHolderWorkgroup(AONContext ctx, TaskHolderFilter filter, Integer workgroupId){
-		Condition condition = workgroupId>0 ? TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId) : TASK_HOLDER_WORKGROUP.WORKGROUP.isNotNull();
-		return ctx.getDslContext().select()
+		SelectConditionStep<Record> record = ctx.getDslContext().select()
 				.from(TASK_HOLDER)
-				.join(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
 				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
-				.where(TASK_HOLDER_PROPERTIES.getConditions(filter))
-				.and(condition).orderBy(REGISTRY.NAME)
-			.fetch().stream().map(new TaskHolderFiller());
+				.leftOuterJoin(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
+				.where(TASK_HOLDER_PROPERTIES.getConditions(filter));
+		if(workgroupId != null && workgroupId>0)
+			record.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId));
+	
+		return record.orderBy(REGISTRY.NAME).fetch().stream().map(new TaskHolderFiller());
 	}
 
 	// *************************************************

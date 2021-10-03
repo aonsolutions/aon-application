@@ -242,7 +242,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.checkCreateNewCRA(getCurrentDomainName(), findingDate, cccList, asyncCallback);
 	}
 	
-	public void deleteCRA(Integer code, AsyncCallback<String> asyncCallback) {
+	public void deleteCRA(Integer code, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.deleteCRA(getCurrentDomainName(), code, asyncCallback);
 	}
 	

@@ -97,8 +97,10 @@ export class AonComunica extends AonElement {
     this.applicationEl.addSidenavOptions(MSG.COMUNICA, options);
 
     let movButton = this.getElement('aonComunicaSidenavMovimientosAonIcon');
-    movButton.style.position = 'relative';
-    movButton.style.top = '3px';
+    if(movButton){
+      movButton.style.position = 'relative';
+      movButton.style.top = '3px';
+    }
   }
 
   async setDataFilter(data){

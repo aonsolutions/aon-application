@@ -279,6 +279,11 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface ProjectTypeFilter{
+		Filter filter(ProjectTypeProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ProjectReservationFilter{
 		Filter filter(ProjectReservationProperties properties);
 	}
@@ -502,6 +507,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface NotificationFilter{
 		Filter filter(NotificationProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface AuthFilter {
+		Filter filter(AuthProperties properties);
 	}
 	
 	@FunctionalInterface

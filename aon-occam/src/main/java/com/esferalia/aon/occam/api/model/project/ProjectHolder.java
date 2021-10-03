@@ -3,9 +3,7 @@ package com.esferalia.aon.occam.api.model.project;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 
 public class ProjectHolder implements Serializable {
@@ -16,12 +14,13 @@ public class ProjectHolder implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;
-	private Domain domain;
-	private Project project;
+	private Integer domain;
+	private Integer project;
 	private Date startDate;
 	private Date endDate;
 	private Workgroup workgroup;
 	private TaskHolder taskHolder;
+	private boolean dirty;
 	
 	public ProjectHolder() {
 		// Nothing to do.
@@ -36,20 +35,20 @@ public class ProjectHolder implements Serializable {
 		return this;
 	}
 
-	public Domain getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
 
-	public ProjectHolder setDomain(Domain domain) {
+	public ProjectHolder setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}
 
-	public Project getProject() {
+	public Integer getProject() {
 		return project;
 	}
 
-	public ProjectHolder setProject(Project project) {
+	public ProjectHolder setProject(Integer project) {
 		this.project = project;
 		return this;
 	}
@@ -59,6 +58,7 @@ public class ProjectHolder implements Serializable {
 	}
 
 	public ProjectHolder setStartDate(Date startDate) {
+		setDirty(true);
 		this.startDate = startDate;
 		return this;
 	}
@@ -68,6 +68,7 @@ public class ProjectHolder implements Serializable {
 	}
 
 	public ProjectHolder setEndDate(Date endDate) {
+		setDirty(true);
 		this.endDate = endDate;
 		return this;
 	}
@@ -80,6 +81,7 @@ public class ProjectHolder implements Serializable {
 	}
 
 	public ProjectHolder setWorkgroup(Workgroup workgroup) {
+		setDirty(true);
 		this.workgroup = workgroup;
 		return this;
 	}
@@ -92,6 +94,7 @@ public class ProjectHolder implements Serializable {
 	}
 
 	public ProjectHolder setTaskHolder(TaskHolder taskHolder) {
+		setDirty(true);
 		this.taskHolder = taskHolder;
 		return this;
 	}
@@ -101,6 +104,15 @@ public class ProjectHolder implements Serializable {
 				&& getStartDate() == null && getTaskHolder().isEmpty()
 				&& getWorkgroup().isEmpty();
 				//|| getProject().isEmpty() 
+	}
+	
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	public ProjectHolder setDirty(boolean dirty) {
+		this.dirty = dirty;
+		return this;
 	}
 	
 }

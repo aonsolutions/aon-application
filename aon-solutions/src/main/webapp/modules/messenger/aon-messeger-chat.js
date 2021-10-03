@@ -1,15 +1,9 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, MSG } from "../../environments/environments.js";
 import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
-import {
-  saveTask,
-  getTaskWorkflow,
-  saveTaskWorkflow,
-  saveTaskAttach,
-  deleteTask
-} from "../../services/taskService.js";
-
-import { Task } from "./Task.js";
+import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask} from "../../services/taskService.js";
+import {getWorkgroups} from '../../services/workgroupService.js';
+import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
 import { checkFilesAddEventDescription, sendMessage } from "./shared/utils.js";
@@ -21,6 +15,7 @@ export class AonMessengerChat extends AonElement {
   task;
   _data;
   TOOLBAR;
+  WORKGROUPS;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -66,21 +61,23 @@ export class AonMessengerChat extends AonElement {
     this.TOOLBAR = this.id+"Toolbar";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
+    this.WORKGROUPS = [];
     this.deleteToolbar();
     this.setTask();
   }
 
   setTask(){
-    this.task = new Task();
     let data = {...this.data};
-    if(!data.id) {
-      const sender = this.applicationParentEl.TASK_HOLDER;
-      if(sender && sender.id) data.sender = sender;
-    }
-    if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email) 
+
+    const myTaskHolder = this.applicationParentEl.TASK_HOLDER;
+    if(myTaskHolder && myTaskHolder.id) 
+      data.myTaskHolder = myTaskHolder;
+      
+    if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email)  
       data.auth = this.applicationParentEl.cauData.auth;
+
     this.setData(data); 
-    this.task.createTask(this.getData());
+    this.task = new Task(this.getData());
   }
 
   build() {
@@ -259,6 +256,15 @@ export class AonMessengerChat extends AonElement {
         this.showError(error);
       }
     });
+  }
+
+  async getWorkGroups(){
+    if(!this.WORKGROUPS.length){
+      await getWorkgroups({status:"ACTIVE"}).then(wgs=>{
+        this.WORKGROUPS =  wgs.map(t => ({...t, value: t.id, description: t.description, name:t.description}));
+      })
+    }
+    return this.WORKGROUPS;
   }
 
   back(){

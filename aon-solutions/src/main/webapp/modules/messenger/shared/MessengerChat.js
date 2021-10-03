@@ -1,14 +1,14 @@
-import { AonToolbar } from "../../../components/aon-toolbar";
-import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments";
-import { ToolbarType } from "../../../models/enums";
-import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utils";
-import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums";
+import { AonToolbar } from "../../../components/aon-toolbar.js";
+import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments.js";
+import { ToolbarType } from "../../../models/enums.js";
+import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
+import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
 import * as ACTIONS from "../../actions.js";
-import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils";
-import { buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, upChat } from "./utils";
-import { AonIconButton } from "../../../components/aon-icon-button";
-import { getNextTask, getPreviousTask } from "../TaskCache";
-import { SigninSidenav } from "../../signin/signinEnums";
+import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils.js";
+import { buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, upChat } from "./utils.js";
+import { AonIconButton } from "../../../components/aon-icon-button.js";
+import { getNextTask, getPreviousTask } from "../TaskCache.js";
+import { SigninSidenav } from "../../signin/signinEnums.js";
 
 /**
  * 
@@ -173,7 +173,7 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
   });
   dialog.setContent(textarea);
 
-  buildTextareaToolbar(textarea, aonMessengerChat.task, true);
+  buildTextareaToolbar(textarea);
 
   if(aonTextArea.value) textarea.value = aonTextArea.value;
   textarea.addEventListener(EVENT.INPUT, ({target})=>{
@@ -217,11 +217,10 @@ const createSecondDiv = (mainView) => {
     classes: [CSS.FLEX_ROW],
     id: MESSENGER_IDS.SECOND_DIV,
     styles: {
-        width: "50%",
-        // minWidth: "400px",
-        paddingTop: "4px",
-        paddingBottom: "30px",
-        paddingRight: "44px"
+      width: "50%",
+      paddingTop: "4px",
+      paddingBottom: "30px",
+      paddingRight: "10px"
     },
   }).element;
 

@@ -234,7 +234,7 @@ public class CreditorModule extends MainEntryPoint {
 		, DOC("N\u00BA Documento"		, 130,AON.CSS.aonTextLeft())
 		, AUTO(AON.MSG.name()			, 0  ,AON.CSS.aonTextLeft())
 		, ALS(AON.MSG.alias()			, 200,AON.CSS.aonTextLeft())
-	    , ACT(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
+//	    , ACT(AonStringUtils.EMPTY		, 20 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
@@ -627,67 +627,75 @@ public class CreditorModule extends MainEntryPoint {
 			}
 		});
 
-		AonTableButton detailsButton = new AonTableButton(AON.MSG.seeDetail(),AON.CSS.aonIconMoreVertical() );
-		detailsButton.addStyleName(AON.CSS.aonClickable());
-		detailsButton.addClickHandler( new ClickHandler() {
-			
+//		AonTableButton detailsButton = new AonTableButton(AON.MSG.seeDetail(),AON.CSS.aonIconMoreVertical() );
+//		detailsButton.addStyleName(AON.CSS.aonClickable());
+//		detailsButton.addClickHandler( new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+///*				
+//				SERVICE.getCreditorFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), creditor.getId(), new AsyncCallback<CreditorFull>() {
+//					
+//					@Override
+//					public void onSuccess(CreditorFull result) {
+//						final AonSimpleDialog dialog = new AonSimpleDialog();
+//						dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+//						dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+//						dialog.setCaption(AON.MSG.creditor());
+//						AonCreditorFullPanel creditorPanel = new AonCreditorFullPanel(opt, result, new AonRegistryFullPanelCallback<CreditorFull>() {
+//							
+//							@Override
+//							public void setFocus(boolean b) {
+//								// callback.setFocus(b);
+//							}
+//							
+//							@Override
+//							public void onError(Throwable caught) {
+//								showError(caught.getMessage());
+//							};
+//							
+//							@Override
+//							public void onCancel() {
+//								dialog.hide();		
+//							}
+//							
+//							@Override
+//							public void onAccept(CreditorFull rf) {
+//								dialog.hide();
+//							}
+//
+//							@Override
+//							public void onDocumenthanged(CreditorFull registryFull) {
+//							}
+//						});
+//						dialog.add( creditorPanel );
+//						dialog.center();
+//						dialog.show();
+//						
+//						Scheduler.get().scheduleDeferred(new Command() {
+//					        public void execute() {
+//					        	creditorPanel.setFocus(true);
+//					        }
+//					    });		
+//						
+//					}
+//					
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						showError(caught.getMessage());	
+//					}
+//				});					
+//			}
+//		});
+		
+		AonDisplayGridRow creditorRow = tab.addRow();
+		creditorRow.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				SERVICE.getCreditorFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), creditor.getId(), new AsyncCallback<CreditorFull>() {
-					
-					@Override
-					public void onSuccess(CreditorFull result) {
-						final AonSimpleDialog dialog = new AonSimpleDialog();
-						dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
-						dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
-						dialog.setCaption(AON.MSG.creditor());
-						AonCreditorFullPanel creditorPanel = new AonCreditorFullPanel(opt, result, new AonRegistryFullPanelCallback<CreditorFull>() {
-							
-							@Override
-							public void setFocus(boolean b) {
-								// callback.setFocus(b);
-							}
-							
-							@Override
-							public void onError(Throwable caught) {
-								showError(caught.getMessage());
-							};
-							
-							@Override
-							public void onCancel() {
-								dialog.hide();		
-							}
-							
-							@Override
-							public void onAccept(CreditorFull rf) {
-								dialog.hide();
-							}
-
-							@Override
-							public void onDocumenthanged(CreditorFull registryFull) {
-							}
-						});
-						dialog.add( creditorPanel );
-						dialog.center();
-						dialog.show();
-						
-						Scheduler.get().scheduleDeferred(new Command() {
-					        public void execute() {
-					        	creditorPanel.setFocus(true);
-					        }
-					    });		
-						
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						showError(caught.getMessage());	
-					}
-				});					
+				selectCreditor(opt, creditor);
 			}
 		});
-		
-		tab.addRow().addCell(checkButton)
+		creditorRow.addCell(checkButton)
 			.addCell(status)
 			.addCell(confidential)
 			.addCell(documentTypeLabel)
@@ -695,7 +703,8 @@ public class CreditorModule extends MainEntryPoint {
 			.addCell(documentLabel)
 			.addCell(nameLabel)
 			.addCell(aliasLabel)
-			.addCell(detailsButton);
+//			.addCell(detailsButton)
+			;
 	}
 	
 
@@ -715,4 +724,57 @@ public class CreditorModule extends MainEntryPoint {
 		selectedCount.setText( (selectedItems.size() > 0)?  AonNumberUtils.toString(selectedItems.size()) :""); 
 	}
 	
+	private void selectCreditor(RegistryModuleOptions opt, Creditor creditor) {
+		SERVICE.getCreditorFull(opt.getDomainName(), opt.getDomain(), opt.getUser(), creditor.getId(), new AsyncCallback<CreditorFull>() {
+			
+			@Override
+			public void onSuccess(CreditorFull result) {
+				final AonSimpleDialog dialog = new AonSimpleDialog();
+				dialog.setWidth(AonRegistryFullPanel.MIN_WIDTH +  "px");
+				dialog.setHeight(AonRegistryFullPanel.MIN_HEIGHT +  "px");
+				dialog.setCaption(AON.MSG.creditor());
+				AonCreditorFullPanel creditorPanel = new AonCreditorFullPanel(opt, result, new AonRegistryFullPanelCallback<CreditorFull>() {
+					
+					@Override
+					public void setFocus(boolean b) {
+						// callback.setFocus(b);
+					}
+					
+					@Override
+					public void onError(Throwable caught) {
+						showError(caught.getMessage());
+					};
+					
+					@Override
+					public void onCancel() {
+						dialog.hide();		
+					}
+					
+					@Override
+					public void onAccept(CreditorFull rf) {
+						dialog.hide();
+					}
+					@Override
+					public void onDocumenthanged(CreditorFull registryFull) {
+					}
+
+				});
+				dialog.add( creditorPanel );
+				dialog.center();
+				dialog.show();
+				
+				Scheduler.get().scheduleDeferred(new Command() {
+			        public void execute() {
+			        	creditorPanel.setFocus(true);
+			        }
+			    });		
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				showError(caught.getMessage());	
+			}
+		});					
+	}
 }		
