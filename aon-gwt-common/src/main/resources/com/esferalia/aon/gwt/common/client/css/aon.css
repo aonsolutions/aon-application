@@ -1,4 +1,7 @@
 @external .*;
+
+
+
 body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 	background-color: rgba(255, 255, 255, 0);
 }
@@ -10,7 +13,6 @@ body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
 }
 
 input[type="checkbox"]:focus + label {
-	background-color: #FBEDB6;
 }
 
 .aon-Selector {
@@ -1399,8 +1401,8 @@ input[type="checkbox"]:focus + label {
 }
 
 .aon-dataTable-cell-highlight {
-	background: #fffadc;
-	border-color: #d3c061 !important;
+	background: #f6f6f6;
+	border-color: #ddd !important;
 }
 
 .aon-dataTable-cell-highlight-top {
@@ -1417,7 +1419,7 @@ input[type="checkbox"]:focus + label {
 }
 
 .aon-dataTable-row-highlight {
-	background: #fffadc;
+	background: #f6f6f6;
 }
 
 .aon-dataTable-row-highlight td {
@@ -1542,8 +1544,8 @@ input:disabled+label {
 .aon-comboBoxPopup {
 	z-index: 70;
 	padding: 0px;
-	background-color: #FBEDB6;
 	border-top: 0px;
+	background-color: white;
 	border: solid #808080 1px;
 	box-shadow: 2px 2px 2px #888888;
 }
@@ -1565,8 +1567,8 @@ input:disabled+label {
 }
 
 .aon-dataTable .selected {
-	border: 1px solid #D3C061;
-	background: none repeat scroll 0 0 #FFFADC;
+	border: 1px solid #DDD;
+	background: none repeat scroll 0 0 #F6F6F6;
 }
 
 .aon-finding-title-toolbar {
@@ -2410,8 +2412,8 @@ input:disabled+label {
 }
 
 .aon-Selector .gwt-Tree .gwt-TreeItem-selected {
-	background: #FFFADC;
-	border: 1px solid #D3C061;
+	background: #F6F6F6;
+	border: 1px solid #DDD;
 }
 
 .aon-Selector .gwt-Tree .gwt-TreeItem-highlight {
@@ -2825,7 +2827,7 @@ input:disabled+label {
 
 .aon-confirm-dialog-ok-button:hover, .aon-confirm-dialog-ok-button:focus
 	{
-	background-color: #FBEDB6;
+	background-color: #F6F6F6;
 }
 
 @sprite .aon-confirm-dialog-customer-check-button {
@@ -2849,7 +2851,7 @@ input:disabled+label {
 
 .aon-confirm-dialog-customer-check-button:hover, .aon-confirm-dialog-customer-check-button:focus
 	{
-	background-color: #FBEDB6;
+	background-color: #F6F6F6;
 }
 
 @sprite .aon-confirm-dialog-cancel-button {
@@ -2873,7 +2875,7 @@ input:disabled+label {
 
 .aon-confirm-dialog-cancel-button:hover,
 	.aon-confirm-dialog-cancel-button:focus {
-	background-color: #FBEDB6;
+	background-color: #F6F6F6;
 }
 
 .aon-postit {

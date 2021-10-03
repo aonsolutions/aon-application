@@ -310,11 +310,9 @@
 	font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 }
 .aon_selector input:focus, .aon_selector select:focus, .aon_selector textarea:focus{
-	background-color: #FBEDB6;
 	border: solid black 1px;
 }
 .aon_selector input[type="checkbox"]:focus + label {
-	background-color: #FBEDB6;	
 }
 .aon_selector [type="checkbox"]{
     vertical-align:middle;
@@ -1259,7 +1257,7 @@
 }
 
 .aon_ok_button:hover, .aon_ok_button:focus	{
-	background-color: #FBEDB6;
+	background-color: #F6F6F6;
 }
 
 .aon_ok_button_small {
@@ -1281,7 +1279,7 @@
 }
 
 .aon_ok_button_small:hover, .aon_ok_button_small:focus	{
-	background-color: #FBEDB6;
+	background-color: #F6F6F6;
 }
 
 .aon_cancel_button {
@@ -1302,7 +1300,7 @@
 	width: auto;
 }
 .aon_cancel_button:hover, .aon_cancel_button:focus	{
-	background-color: #FBEDB6;
+	background-color: #F6F6F6;
 }
 
 .aon_cancel_button_small {
@@ -1342,7 +1340,7 @@
 }
 
 .aon_check_button:hover, .aon_check_button:focus	{
-	background-color: #FBEDB6;
+	background-color: #F6F6F6;
 }
 
 
@@ -1365,7 +1363,7 @@
 }
 
 .aon-confirm-dialog-cancel-button:hover,	.aon-confirm-dialog-cancel-button:focus {
-	background-color: #FBEDB6;
+	background-color: #F6F6F6;
 }
 
 .aon_accounting_invoice_panel {
