@@ -169,6 +169,7 @@ public class FiscalModelUtils {
 		headerPanel.setWidget(headerTable);
 	}
 
+	@Deprecated
 	public static String getAdministrationBG(Administration admon) {
 		if (admon == Administration.ALAVA) {
 			return AON.AON_CSS.aonFiscalArabaBg();

@@ -19,7 +19,7 @@ public class AonFiscalModelHeader extends SimpleLayoutPanel {
 	public AonFiscalModelHeader( IFiscalModel m) {
 		AonDisplayTable header = new AonDisplayTable();
 		header.addStyleName(AON.CSS.aonBlockCenter());
-		header.getElement().getStyle().setWidth(95, Unit.PCT);
+		header.getElement().getStyle().setWidth(98, Unit.PCT);
 		header.getElement().getStyle().setHeight(HEIGTH-12, Unit.PX);
 		header.getElement().getStyle().setBorderColor("white");
 		header.getElement().getStyle().setBorderWidth(1, Unit.PX);
