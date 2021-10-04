@@ -9,8 +9,6 @@ import "./aon-dialog.js";
 import "./aon-dialog-menu.js";
 import "./aon-toast.js";
 
-// import { DIV } from "../environments/aonTag.js";
-
 export class AonApplication extends AonElement {
   SIDENAV;
   TOOLBAR;
@@ -436,18 +434,21 @@ export class AonApplication extends AonElement {
   addSidenavOptionsList(data, options) {
     let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
     let div = this.getElement(sidenav.id + data.id);
-    const idUl = div.id + "List";
-    let ul =  this.getElement(idUl); 
-    if(!ul){
-      ul = this.createElement(TAG.UL);
-      ul.id =idUl;
-      ul.className = "aonClip";
-      div.appendChild(ul);
+    if(div){
+      const idUl = div.id + "List";
+      let ul =  this.getElement(idUl); 
+      if(!ul){
+        ul = this.createElement(TAG.UL);
+        ul.id =idUl;
+        ul.className = "aonClip";
+        div.appendChild(ul);
+      }
+      options.forEach((option, i) => {
+        this.addSidenavOptionsListValue(data, option, ul);
+      });
+      return ul;
     }
-    options.forEach((option, i) => {
-      this.addSidenavOptionsListValue(data, option, ul);
-    });
-    return ul;
+    return null;
   }
 
   buildSidenavSubOptions(data, options) {

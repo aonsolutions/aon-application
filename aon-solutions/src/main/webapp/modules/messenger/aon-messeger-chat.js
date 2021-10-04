@@ -266,6 +266,14 @@ export class AonMessengerChat extends AonElement {
     }
     return this.WORKGROUPS;
   }
+  
+  getDur(){
+		return this.applicationParentEl.getDur();
+	}
+
+  isCau(){     //IS CAU
+    return parseInt(localStorage.getItem("taskCau") || 0);
+  }
 
   back(){
    this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter);

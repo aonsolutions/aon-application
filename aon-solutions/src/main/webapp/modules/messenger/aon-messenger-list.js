@@ -82,9 +82,9 @@ export class AonMessengerList extends AonElement {
       aonTable.removeColumns();
       aonTable.addColumn("", "string", "lettersHtml", "2%");
       aonTable.addColumn(MSG.NUMBER, "string", "newNumber", "5%");
-      aonTable.addColumn(MSG.ISSUE, "string", "newTitle", "30%");
+      aonTable.addColumn(MSG.ISSUE, "string", "newTitle", "35%");
       aonTable.addColumn("Asignado", "string", "assigned", "20%");
-      aonTable.addColumn(MSG.DATE, "string", "dateParse", "20%");
+      aonTable.addColumn(MSG.DATE, "string", "dateParse", "15%");
     } 
 
     aonTable.addEventListener(EVENT.MORE, ()=>{ 
@@ -171,7 +171,7 @@ export class AonMessengerList extends AonElement {
 
     const aonTable = this.getElement(this.TABLE_ID);
 
-    if(application) application.startLoader();
+    if(application && !search) application.startLoader();
 
     const datos = await this.getData();
 
@@ -184,7 +184,7 @@ export class AonMessengerList extends AonElement {
       this.getDataDesktop(datos);
     }
 
-    if(application) application.stopLoader();    
+    if(application && !search) application.stopLoader();    
 	}
 
   getDataDesktop(datos){
@@ -195,17 +195,12 @@ export class AonMessengerList extends AonElement {
       const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
       datos.map((res, idx) => {
         const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-        let newTitle  =  res.title;
-        if(res.registry && res.registry.name && document !== res.registry.document) 
-          newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
-        else if(res.sender && res.sender.name && documentTh !== res.sender.document) 
-          newTitle = `<b>[${res.sender.name}]</b> ${newTitle}`;
-        // else if()
-  
         let assigned = "";
         if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
         else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
   
+        const newTitle = this.getNewTitle(res, document, documentTh);
+
         const newData = { 
           ...res, 
           newTitle,
@@ -289,6 +284,27 @@ export class AonMessengerList extends AonElement {
     // }
 
     return span.outerHTML;
+  }
+
+  getNewTitle(res, document, documentTh){
+       
+    let newTitle  = res.title;
+    if(res.registry && res.registry.name && document !== res.registry.document) 
+      newTitle = `[${res.registry.name}] ${newTitle}`;
+    else if(res.sender && res.sender.name && documentTh !== res.sender.document) 
+      newTitle = `[${res.sender.name}] ${newTitle}`;
+
+    let description = res.description;
+    try { description = JSON.parse(res.description).observation;  } catch (e) {}
+
+    if(description)
+      newTitle = /*html*/`
+        <div style="position:relative;">
+          <span style="font-weight: 550;bottom:1px;position:absolute;">${newTitle}</span>
+          <div style="color:grey;overflow: hidden;position:absolute; left:0; right:0; white-space:nowrap; text-overflow:Ellipsis;top:3px;">${description}</div> 
+        </div>`;
+
+    return newTitle;
   }
 
   // createIcon(icon, marginTop="11px"){

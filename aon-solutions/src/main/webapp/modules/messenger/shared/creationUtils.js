@@ -322,12 +322,20 @@ const checkProperties = (properties) => {
     return properties;
 }
 
+//----------------TYPE REQUEST CAU 
+export const createSelectCau = (name, id, title) => setAttributes( new AonSelect(),{
+  name,
+  id,
+  title,
+});
+
 //----------------TYPE REQUEST   
 export const createRequestType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.SOURCE_TASK,
   name: MESSENGER_IDS.SOURCE_TASK,
   title: MSG.TYPE_REQUEST
 });
+
 
 //----------------WORKGROUP   
 export const createWorkgroup = () =>setAttributes( new AonSelect(),{
