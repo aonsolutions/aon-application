@@ -110,14 +110,14 @@ export const fillWorkGroup = async (task, aonMessengerChat) => {
 /**
  * fill taskHolder (Titular de la tarea)
  * @param {HTMLElement} aon-messenger-chat component
- * @param {Integer} workgroupId 
+ * @param {Integer} workgroup 
  */
-export const fillTaskHolder = async (aonMessengerChat, workgroupId=0) => {
+export const fillTaskHolder = async (aonMessengerChat, workgroup=0) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKHOLDER}`).catch(e=>null);
     const task = aonMessengerChat.task;
     if(aonSelect){
         aonSelect.clear();
-        const taskHolders = await getTastHoldersWorkGroup({workgroupId});
+        const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
 
         let options = [];
         if(taskHolders && taskHolders.length>0){

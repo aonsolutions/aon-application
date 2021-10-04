@@ -109,6 +109,7 @@ export class AonMenu extends AonElement {
 			this.getRootPanel().style.marginRight = '60px';
 			this.setAttribute('opened', true);
 		}
+		this.toolbarClose();
 	}
 
 	appSelection(app) {
@@ -484,6 +485,19 @@ export class AonMenu extends AonElement {
 		aonMenuSidenav.style.width = '0px';
 		this.getRootPanel().style.marginRight = '0px';
 		this.removeAttribute('opened');
+		this.toolbarClose();
+	}
+
+	toolbarClose(){
+		let application = this.getApplication();
+		if(application){
+			let toolbar = application.getToolbar();
+			if(toolbar){
+				let toolSection = toolbar.getToolSection();
+				if(toolSection) 
+					toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
+			}
+		}
 	}
 
 	isApp(app) {
