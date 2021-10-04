@@ -19,7 +19,7 @@
 								styleName="{aonResources.css.aonIconJournalLog} {aonResources.css.aonPaddingRight}"  
 								text="{msg.notifications}" />
 						</g:customHeader>
-						<aon:ResultsPanel ui:field="resultsPanel" />
+						<g:SimpleLayoutPanel ui:field="resultsPanel" />
 					</g:tab>
 					<g:tab>
 						<g:customHeader>

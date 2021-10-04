@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
@@ -16,16 +15,14 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -41,9 +38,9 @@ public class Model303 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	private final static int NOTIFICATIONS_TAB = 0;
-	private final static int INFORMATION_TAB = 1;
-	private final static int AEAT_TAB = 2;
+	private static final int NOTIFICATIONS_TAB = 0;
+	private static final int INFORMATION_TAB = 1;
+	private static final int AEAT_TAB = 2;
 
 	protected static Mod303ServiceAsync SERVICE;
 	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
@@ -62,7 +59,7 @@ public class Model303 extends MainEntryPoint {
 	TabLayoutPanel tabLayout;
 	
 	@UiField
-	ResultsPanel resultsPanel;
+	SimpleLayoutPanel resultsPanel;
 	
 	@UiField
 	MinimizePanel footPanel;
@@ -89,7 +86,7 @@ public class Model303 extends MainEntryPoint {
 		public void cleanBreakdownPanel();
 		public void cleanErrorPanel();
 		public void showError(String msg);
-	};
+	}
 
 	protected class Model303Callback implements IModel303Callback{
 
@@ -145,7 +142,7 @@ public class Model303 extends MainEntryPoint {
 			return getCurrentDomain();
 		}
 
-	};
+	}
 	
 	@Override
 	public void onModuleLoad() {
@@ -154,13 +151,13 @@ public class Model303 extends MainEntryPoint {
 			@Override
 			public void onSuccess(AonData aonData) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-				Model303ModuleOptions options = new Model303ModuleOptions();
-				options.setParentWidget(root);
-				options.setDomainName(getCurrentDomainName());
-				options.setDomain(getCurrentDomain());
-				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
-				onModuleLoad( options );
+				Model303ModuleOptions opts = new Model303ModuleOptions();
+				opts.setParentWidget(root);
+				opts.setDomainName(getCurrentDomainName());
+				opts.setDomain(getCurrentDomain());
+				opts.setUser(getCurrentUser());
+				opts.setAonData(aonData);
+				onModuleLoad( opts );
 			}
 			
 			@Override public void onFailure(Throwable caught) {
@@ -191,14 +188,7 @@ public class Model303 extends MainEntryPoint {
 		
 		Model303Callback callback = new Model303Callback();
 		model303Table = new Model303Table(callback);
-		model303Table.addSelectionHandler(new SelectionHandler<Mod303>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Mod303> event) {
-				onSelectionChange(event);
-			}
-		});
-		
+		model303Table.addSelectionHandler( event -> onSelectionChange(event));
 		declarationContainer.setWidget(model303Table);
 		
 		getOptions().getParentWidget().add(ui);
@@ -209,18 +199,12 @@ public class Model303 extends MainEntryPoint {
 			LOGGER.info("Access to Model303 new Model");
 			newModel(getOptions().getNewModel()); 
 		} else {
-			model303Table.refresh( callback );;
+			model303Table.refresh( callback );
 			LOGGER.info("Model303 setting NOTIFICATIONS_TAB");
 			tabLayout.selectTab(NOTIFICATIONS_TAB);
 		}
 		tabLayout.setAnimationDuration(300);
-		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Integer> event) {
-				openFootPanelIfNeeded();
-			}
-		});
+		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
 	}
 
 	private void newModel(Mod303 newModel) {
@@ -344,7 +328,7 @@ public class Model303 extends MainEntryPoint {
 				});
 	}
 	private void showNewDeclarationPopup(Mod303 m303) {
-		NewDeclarationPopup<Mod303> newDialog = new NewDeclarationPopup<Mod303>( m303,
+		NewDeclarationPopup<Mod303> newDialog = new NewDeclarationPopup<>( m303,
 			new Model303Callback() {
 
 					@Override
@@ -426,27 +410,13 @@ public class Model303 extends MainEntryPoint {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
 		ScrollPanel panel = new ScrollPanel();
-		FlexTable tab = new FlexTable();
-		tab.setWidth("95%");
-		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab.getColumnFormatter().setWidth(0, "20px");
-		tab.getColumnFormatter().setWidth(1, "auto");
-		
-		InlineLabel icon = new InlineLabel("");
-		icon.setStyleName(AON.AON_CSS.aonIconPointRed());
-		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		tab.setWidget(0, 0, icon);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		
-		InlineLabel label = new InlineLabel(msg);
-		label.addStyleName(AON.AON_CSS.aonColorRed());
-		label.addStyleName(AON.AON_CSS.aonBold());
-		tab.setWidget(0, 1, label);
-		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		
-		panel.add(tab);
+		FlowPanel list = new  FlowPanel();
+		Label label = new Label(msg);
+		label.setStyleName(AON.CSS.aonMarginTop());
+		label.addStyleName(AON.CSS.aonBlockMessage());
+		label.addStyleName(AON.CSS.aonBlockErrorMessage());
+		list.add(label);
+		panel.add(list);
 		resultsPanel.setWidget(panel);
 	}
 	
