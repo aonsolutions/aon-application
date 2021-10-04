@@ -6,7 +6,13 @@ import java.util.Date;
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class MainCRAGenerator {
+	
+	private MainCRAGenerator() {
+		super();
+	}
 	
 	public static class ETI{
 		String etiHeader;
@@ -105,7 +111,7 @@ public class MainCRAGenerator {
 		
 		public CCCs() {
 			super();
-			this.cccs = new ArrayList<CCC>();			
+			this.cccs = new ArrayList<>();			
 		}
 		
 		public void addCCC(CCC ccc) {
@@ -163,7 +169,7 @@ public class MainCRAGenerator {
 			this.cccRegimeConcert = StringUtils.leftPad("", 4, '0');
 			this.cccConcert = StringUtils.leftPad("", 11, '0');
 			this.reserved31 = StringUtils.leftPad("", 31, ' ');
-			this.trbs = new ArrayList<TRB>();
+			this.trbs = new ArrayList<>();
 		}
 		
 		public String getEmpHeader() {
@@ -212,9 +218,9 @@ public class MainCRAGenerator {
 		public TRB(String numAfilicion) {
 			super();
 			this.trbHeader = "TRB";
-			this.numAfilicion = numAfilicion;
-			this.reserved55 = StringUtils.leftPad("", 55, ' ');
-			this.cres = new ArrayList<CRE>();
+			this.numAfilicion = AonStringUtils.leftPad(numAfilicion, 12, ' ');
+			this.reserved55 = AonStringUtils.leftPad("", 55, ' ');
+			this.cres = new ArrayList<>();
 		}
 		
 		public String getTrbHeader() {
@@ -242,16 +248,16 @@ public class MainCRAGenerator {
 		
 		String creHeader;
 		String concept;
-		String include_exclude;
+		String includeExclude;
 		String amount;
 		String action; // M, B, C
 		String reserved52;
 		
-		public CRE(String concept, String include_exclude, String amount, String action) {
+		public CRE(String concept, String includeExclude, String amount, String action) {
 			super();
 			this.creHeader = "CRE";
 			this.concept = concept;
-			this.include_exclude = include_exclude;
+			this.includeExclude = includeExclude;
 			this.amount = StringUtils.leftPad(amount, 9, '0');
 			this.action = action;
 			this.reserved52 = StringUtils.leftPad("", 52, ' ');
@@ -263,8 +269,8 @@ public class MainCRAGenerator {
 		public String getConcept() {
 			return concept;
 		}
-		public String getInclude_exclude() {
-			return include_exclude;
+		public String getIncludeExclude() {
+			return includeExclude;
 		}
 		public String getAmount() {
 			return amount;
@@ -299,7 +305,7 @@ public class MainCRAGenerator {
 			this.cccRegimeConcert = StringUtils.leftPad("", 4, '0');
 			this.cccConcert = StringUtils.leftPad("", 11, '0');
 			this.reserved31 = StringUtils.leftPad("", 31, ' ');
-			this.trbs = new ArrayList<TRB>();
+			this.trbs = new ArrayList<>();
 		}
 		
 		public String getEmpHeader() {
@@ -343,7 +349,7 @@ public class MainCRAGenerator {
 		
 		public DDEAS() {
 			super();
-			this.ddeas = new ArrayList<DDEA>();
+			this.ddeas = new ArrayList<>();
 		}
 		
 		public ArrayList<DDEA> getDdeas() {
@@ -379,7 +385,7 @@ public class MainCRAGenerator {
 			this.cccRegimeConcert = StringUtils.leftPad("", 4, '0');
 			this.cccConcert = StringUtils.leftPad("", 11, '0');
 			this.reserved31 = StringUtils.leftPad("", 31, ' ');
-			this.trbs = new ArrayList<TRB>();
+			this.trbs = new ArrayList<>();
 		}
 		
 		public String getEmpHeader() {
@@ -426,14 +432,8 @@ public class MainCRAGenerator {
 		//ERROR
 		JSONArray cccsArr = (JSONArray) mainCRAData.get("CCCs");
 		if(cccsArr.isEmpty()) {
-			mainCRA = ((JSONObject)((JSONArray)((JSONObject)cccsArr.get(0)).get("ERRS")).get(0)).get("ERR").toString();
-			return mainCRA;
+			return ((JSONObject)((JSONArray)((JSONObject)cccsArr.get(0)).get("ERRS")).get(0)).get("ERR").toString();
 		}
-		
-//		if(null == mainCRAData.get("DDE") && null == mainCRAData.get("DDEAS") && null == mainCRAData.get("FINIQ") ){
-//			mainCRA = ((JSONObject)((JSONArray)mainCRAData.get("ERRS")).get(0)).get("ERR").toString();
-//			return mainCRA;
-//		}
 		
 		//ETI
 		JSONObject etiJson = (JSONObject) mainCRAData.get("ETI");
@@ -528,7 +528,7 @@ public class MainCRAGenerator {
 			}
 			
 			//FINIQ
-			JSONObject finiqJson = (JSONObject) (JSONObject) ((JSONObject)cccsArr.get(h)).get("FINIQ");
+			JSONObject finiqJson = (JSONObject) ((JSONObject)cccsArr.get(h)).get("FINIQ");
 			FINIQ finiq = null;
 			if(null != finiqJson){
 				finiq = new FINIQ(
@@ -578,9 +578,9 @@ public class MainCRAGenerator {
 
 	private static String createMainCRA(ETI eti, CCCs cccs) {
 		
-		String mainCRA = "";
+		StringBuilder builder = new StringBuilder();
 		
-		mainCRA +=
+		builder.append(
 				eti.getEtiHeader() +
 				eti.getSintaxIndent() +
 				eti.getAuthKey() +
@@ -597,14 +597,15 @@ public class MainCRAGenerator {
 				eti.getRegistryIdent() +
 				eti.getReservedTGSS() +
 				eti.getReserved1() +
-				"\r\n";
+				"\r\n"
+			);
 		
 			for(CCC ccc: cccs.getCccs()) {
 			
 			DDE dde = ccc.getDde();
 				
 			if(null != dde) {
-				mainCRA +=
+				builder.append(
 						dde.getEmpHeader() +
 						dde.getCccRegime() +
 						dde.getCcc() +
@@ -613,24 +614,27 @@ public class MainCRAGenerator {
 						dde.getCccRegimeConcert() +
 						dde.getCccConcert() +
 						dde.getReserved31() +
-						"\r\n";
+						"\r\n"
+				);
 				
 				for(TRB trb : dde.getTrbs()) {
-					mainCRA +=
+					builder.append(
 							trb.getTrbHeader() +
 							trb.getNumAfilicion() +
 							trb.getReserved55() +
-							"\r\n";
+							"\r\n"
+					);
 					
 					for( CRE cre : trb.getCres()) {
-						mainCRA +=
+						builder.append(
 								cre.getCreHeader() +
 								cre.getConcept() +
-								cre.getInclude_exclude() +
+								cre.getIncludeExclude() +
 								cre.getAmount() +
 								cre.getAction() +
 								cre.getReserved52() +
-								"\r\n";
+								"\r\n"
+						);
 					}
 				}
 			}
@@ -638,7 +642,7 @@ public class MainCRAGenerator {
 			FINIQ finiq = ccc.getFiniq();
 			
 			if(null != finiq){
-				mainCRA +=
+				builder.append(
 						finiq.getEmpHeader() +
 						finiq.getCccRegime() +
 						finiq.getCcc() +
@@ -647,24 +651,27 @@ public class MainCRAGenerator {
 						finiq.getCccRegimeConcert() +
 						finiq.getCccConcert() +
 						finiq.getReserved31() +
-						"\r\n";
+						"\r\n"
+				);
 				
 				for(TRB trb : finiq.getTrbs()) {
-					mainCRA +=
+					builder.append(
 							trb.getTrbHeader() +
 							trb.getNumAfilicion() +
 							trb.getReserved55() +
-							"\r\n";
+							"\r\n"
+					);
 					
 					for( CRE cre : trb.getCres()) {
-						mainCRA +=
+						builder.append(
 								cre.getCreHeader() +
 								cre.getConcept() +
-								cre.getInclude_exclude() +
+								cre.getIncludeExclude() +
 								cre.getAmount() +
 								cre.getAction() +
 								cre.getReserved52() +
-								"\r\n";
+								"\r\n"
+						);
 					}
 				}
 			}
@@ -673,7 +680,7 @@ public class MainCRAGenerator {
 			
 			if(null != ddeas){
 				for(DDEA ddea: ddeas.getDdeas()){
-					mainCRA +=
+					builder.append(
 							ddea.getEmpHeader() +
 							ddea.getCccRegime() +
 							ddea.getCcc() +
@@ -682,30 +689,33 @@ public class MainCRAGenerator {
 							ddea.getCccRegimeConcert() +
 							ddea.getCccConcert() +
 							ddea.getReserved31() +
-							"\r\n";
+							"\r\n"
+					);
 					
 					for(TRB trb : ddea.getTrbs()) {
-						mainCRA +=
+						builder.append(
 								trb.getTrbHeader() +
 								trb.getNumAfilicion() +
 								trb.getReserved55() +
-								"\r\n";
+								"\r\n"
+						);
 						
 						for( CRE cre : trb.getCres()) {
-							mainCRA +=
+							builder.append(
 									cre.getCreHeader() +
 									cre.getConcept() +
-									cre.getInclude_exclude() +
+									cre.getIncludeExclude() +
 									cre.getAmount() +
 									cre.getAction() +
 									cre.getReserved52() +
-									"\r\n";
+									"\r\n"
+							);
 						}
 					}
 				}
 			}
 		}
 		
-		return mainCRA;
+		return builder.toString();
 	}
 }
