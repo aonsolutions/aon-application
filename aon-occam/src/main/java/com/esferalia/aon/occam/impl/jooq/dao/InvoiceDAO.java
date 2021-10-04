@@ -1266,7 +1266,9 @@ public class InvoiceDAO {
 		ctx.log().debug("DELETE INVOICE_ATTACH adjuntos de la factura: {0} ({1} filas)",id,count);
 		
 		FinanceDAO.deleteInvoiceFinances(ctx,id);
-
+		
+		InvoiceFiscalDAO.delete(ctx, id);
+		
 		count = ctx.getDslContext()
 			.delete(INVOICE)
 			.where(INVOICE.ID.equal(id))

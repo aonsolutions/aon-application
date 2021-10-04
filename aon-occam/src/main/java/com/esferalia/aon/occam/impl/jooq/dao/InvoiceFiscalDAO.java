@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 
 import java.util.function.BiConsumer;
@@ -244,5 +245,15 @@ public class InvoiceFiscalDAO {
 		ctx.log().debug("\tINSERT INVOICE_FISCAL invoice: {0,number,integer}",invFiscal.getInvoice());
 		return invFiscal;
 	}
+	
+	public static void delete(AONContext ctx, Integer invoice) {
+		int count = ctx.getDslContext()
+			.delete(INVOICE_FISCAL)
+			.where(INVOICE_FISCAL.INVOICE.equal(invoice))
+			.execute();
+		ctx.log().debug("DELETE INVOICE_FISCAL factura: {0} ({1} filas)",invoice,count);
+	}
+
+		
 
 }
