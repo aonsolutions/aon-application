@@ -43,13 +43,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedContent;
 import org.junit.Before;
 import org.junit.Rule;
@@ -58,6 +58,7 @@ import org.junit.rules.TestName;
 
 import com.esferalia.aon.in.payroll.pdf.maker.Logger;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -65,7 +66,12 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 
 
@@ -217,7 +223,7 @@ public class InvoiceTest {
 		  + " In the Land of Mordor where the Shadows lie."
 		  + " One Ring to rule them all, One Ring to find them,"
 		  + " One Ring to bring them all and in the darkness bind them"
-		  + " In the Land of Mordor where the Shadows lie."
+		  + " In the Land of Mordor where the Shadows lie. Obcecación, camión, esdrújula..."
 		);
 		detailOne.setPrice(1239675601.12);
 		detailOne.setDiscountExpression("97.19");
@@ -232,9 +238,245 @@ public class InvoiceTest {
 		detailTwo.setQuantity(1);
 		detailTwo.setTaxableBase(712382113);
 		
+		InvoiceDetail detailThree = new InvoiceDetail();
+		detailThree.setAccountCode("0192831010");
+		detailThree.setDescription
+		(
+		    "Volverán las oscuras golondrinas\n" + 
+		    "en tu balcón sus nidos a colgar,\n" + 
+		    "y otra vez con el ala a sus cristales\n" + 
+		    "jugando llamarán.\n" + 
+		    "\n" + 
+		    "Pero aquellas que el  vuelo refrenaban\n" + 
+		    "tu hermosura y mi dicha a contemplar,\n" + 
+		    "aquellas que aprendieron nuestros nombres...\n" + 
+		    "¡esas... no volverán!\n" + 
+		    "\n" + 
+		    "Volverán las tupidas madreselvas\n" + 
+		    "de tu jardín las tapias a escalar,\n" + 
+		    "y otra vez a la tarde aún más hermosas\n" + 
+		    "sus flores se abrirán.\n" + 
+		    "\n" + 
+		    "Pero aquellas, cuajadas de rocío\n" + 
+		    "cuyas gotas mirábamos temblar\n" + 
+		    "y caer como lágrimas del día...\n" + 
+		    "¡esas... no volverán!\n" + 
+		    "\n" + 
+		    "Volverán del amor en tus oídos\n" + 
+		    "las palabras ardientes a sonar;\n" + 
+		    "tu corazón de su profundo sueño\n" + 
+		    "tal vez despertará.\n" + 
+		    "\n" + 
+		    "Pero mudo y absorto y de rodillas\n" + 
+		    "como se adora a Dios ante su altar,\n" + 
+		    "como yo te he querido...; desengáñate,\n" + 
+		    "¡así... no te querrán!"
+		);
+		detailThree.setPrice(1239675601.12);
+		detailThree.setDiscountExpression("288");
+		detailThree.setQuantity(781212783);
+		detailThree.setTaxableBase(712382113);
+		
+		InvoiceDetail detailThreeAndAHalf = new InvoiceDetail();
+		detailThreeAndAHalf.setAccountCode("0192831010");
+		detailThreeAndAHalf.setDescription
+		(
+				"Volverán las oscuras golondrinas\n" + 
+						"en tu balcón sus nidos a colgar,\n" + 
+						"y otra vez con el ala a sus cristales\n" + 
+						"jugando llamarán.\n" + 
+						"\n" + 
+						"Pero aquellas que el  vuelo refrenaban\n" + 
+						"tu hermosura y mi dicha a contemplar,\n" + 
+						"aquellas que aprendieron nuestros nombres...\n" + 
+						"¡esas... no volverán!\n" + 
+						"\n" + 
+						"Volverán las tupidas madreselvas\n" + 
+						"de tu jardín las tapias a escalar,\n" + 
+						"y otra vez a la tarde aún más hermosas\n" + 
+						"sus flores se abrirán.\n" + 
+						"\n" + 
+						"Pero aquellas, cuajadas de rocío\n" + 
+						"cuyas gotas mirábamos temblar\n" + 
+						"y caer como lágrimas del día...\n" + 
+						"¡esas... no volverán!\n" + 
+						"\n" + 
+						"Volverán del amor en tus oídos\n" + 
+						"las palabras ardientes a sonar;\n" + 
+						"tu corazón de su profundo sueño\n" + 
+						"tal vez despertará.\n" + 
+						"\n" + 
+						"Pero mudo y absorto y de rodillas\n" + 
+						"como se adora a Dios ante su altar,\n" + 
+						"como yo te he querido...; desengáñate,\n" + 
+						"¡así... no te querrán!"
+				);
+		detailThreeAndAHalf.setPrice(1239675601.12);
+		detailThreeAndAHalf.setDiscountExpression("288");
+		detailThreeAndAHalf.setQuantity(781212783);
+		detailThreeAndAHalf.setTaxableBase(712382113);
+		
+		InvoiceDetail detailFour = new InvoiceDetail();
+		detailFour.setAccountCode("0192831010");
+		detailFour.setDescription
+		(
+		    "Con diez cañones por banda,\n" + 
+		    "viento en popa a toda vela,\n" + 
+		    "no corta el mar, sino vuela\n" + 
+		    "un velero bergantín;\n" + 
+		    "\n" + 
+		    "bajel pirata que llaman,\n" + 
+		    "por su bravura, el Temido,\n" + 
+		    "en todo mar conocido\n" + 
+		    "del uno al otro confín.\n" + 
+		    "\n" + 
+		    "La luna en el mar riela,\n" + 
+		    "en la lona gime el viento\n" + 
+		    "y alza en blando movimiento\n" + 
+		    "olas de plata y azul;\n" + 
+		    "\n" + 
+		    "y va el capitán pirata,\n" + 
+		    "cantando alegre en la popa,\n" + 
+		    "Asia a un lado, al otro Europa,\n" + 
+		    "y allá a su frente Estambul.\n" + 
+		    "\n" + 
+		    "«Navega velero mío,\n" + 
+		    "sin temor,\n" + 
+		    "que ni enemigo navío,\n" + 
+		    "ni tormenta, ni bonanza,\n" + 
+		    "tu rumbo a torcer alcanza,\n" + 
+		    "ni a sujetar tu valor.\n" + 
+		    "\n" + 
+		    "Veinte presas\n" + 
+		    "hemos hecho\n" + 
+		    "a despecho,\n" + 
+		    "del inglés,\n" + 
+		    "\n" + 
+		    "y han rendido\n" + 
+		    "sus pendones\n" + 
+		    "cien naciones\n" + 
+		    "a mis pies.\n" + 
+		    "\n" + 
+		    "Que es mi barco mi tesoro,\n" + 
+		    "que es mi dios la libertad,\n" + 
+		    "mi ley, la fuerza y el viento,\n" + 
+		    "mi única patria la mar.\n" + 
+		    "\n" + 
+		    "Allá muevan feroz guerra\n" + 
+		    "ciegos reyes\n" + 
+		    "por un palmo más de tierra,\n" + 
+		    "que yo tengo aquí por mío\n" + 
+		    "cuanto abarca el mar bravío,\n" + 
+		    "a quien nadie impuso leyes.\n" + 
+		    "\n" + 
+		    "Y no hay playa,\n" + 
+		    "\n" + 
+		    "sea cualquiera,\n" + 
+		    "ni bandera\n" + 
+		    "de esplendor,\n" + 
+		    "\n" + 
+		    "que no sienta\n" + 
+		    "mi derecho\n" + 
+		    "y dé pecho\n" + 
+		    "a mi valor.\n" + 
+		    "\n" + 
+		    "Que es mi barco mi tesoro,\n" + 
+		    "que es mi dios la libertad,\n" + 
+		    "mi ley, la fuerza y el viento,\n" + 
+		    "mi única patria la mar.\n" + 
+		    "\n" + 
+		    "A la voz de ¡barco viene!\n" + 
+		    "es de ver\n" + 
+		    "cómo vira y se previene\n" + 
+		    "a todo trapo a escapar:\n" + 
+		    "que yo soy el rey del mar,\n" + 
+		    "y mi furia es de temer.\n" + 
+		    "\n" + 
+		    "En las presas\n" + 
+		    "yo divido\n" + 
+		    "lo cogido\n" + 
+		    "por igual:\n" + 
+		    "\n" + 
+		    "sólo quiero\n" + 
+		    "por riqueza\n" + 
+		    "la belleza\n" + 
+		    "sin rival.\n" + 
+		    "\n" + 
+		    "Que es mi barco mi tesoro,\n" + 
+		    "que es mi dios la libertad,\n" + 
+		    "mi ley, la fuerza y el viento,\n" + 
+		    "mi única patria la mar.\n" + 
+		    "\n" + 
+		    "¡Sentenciado estoy a muerte!;\n" + 
+		    "yo me río;\n" + 
+		    "no me abandone la suerte,\n" + 
+		    "y al mismo que me condena,\n" + 
+		    "colgaré de alguna antena\n" + 
+		    "quizá en su propio navío.\n" + 
+		    "\n" + 
+		    "Y si caigo\n" + 
+		    "¿qué es la vida?\n" + 
+		    "Por perdida\n" + 
+		    "ya la di,\n" + 
+		    "\n" + 
+		    "cuando el yugo\n" + 
+		    "de un esclavo\n" + 
+		    "como un bravo\n" + 
+		    "sacudí.\n" + 
+		    "\n" + 
+		    "Que es mi barco mi tesoro,\n" + 
+		    "que es mi dios la libertad,\n" + 
+		    "mi ley, la fuerza y el viento,\n" + 
+		    "mi única patria la mar.\n" + 
+		    "\n" + 
+		    "Son mi música mejor\n" + 
+		    "aquilones,\n" + 
+		    "el estrépito y temblor\n" + 
+		    "de los cables sacudidos,\n" + 
+		    "del negro mar los bramidos\n" + 
+		    "y el rugir de mis cañones.\n" + 
+		    "\n" + 
+		    "Y del trueno\n" + 
+		    "al son violento,\n" + 
+		    "y del viento\n" + 
+		    "al rebramar,\n" + 
+		    "\n" + 
+		    "yo me duermo\n" + 
+		    "sosegado\n" + 
+		    "arrullado\n" + 
+		    "por el mar.\n" + 
+		    "\n" + 
+		    "Que es mi barco mi tesoro,\n" + 
+		    "que es mi dios la libertad,\n" + 
+		    "mi ley, la fuerza y el viento,\n" + 
+		    "mi única patria la mar»."
+		);
+		detailFour.setPrice(0);
+		detailFour.setDiscountExpression("30");
+		detailFour.setQuantity(0);
+		detailFour.setTaxableBase(0);
+		
+		InvoiceDetail detailFive= new InvoiceDetail();
+		detailFive.setAccountCode("0192831010");
+		
+		String largeDesc = "";
+		for (int i=1; i<=200; i++) {
+			largeDesc += "abcdefghijklmnño Hola, ¿Qué tal? Esta línea es la línea " + i + "\n";
+		}
+		
+		detailFive.setDescription(largeDesc);
+		detailFive.setPrice(0);
+		detailFive.setDiscountExpression("30");
+		detailFive.setQuantity(0);
+		detailFive.setTaxableBase(0);
+		
 		
 		details.add(detailOne);
 		details.add(detailTwo);
+		details.add(detailThree);
+		details.add(detailThreeAndAHalf);
+		details.add(detailFour);
+		details.add(detailFive);
 		invoice.setDetails(details);
 		
 		/** PRINT CONFIGURATIONS */
@@ -255,15 +497,52 @@ public class InvoiceTest {
 			config.setDetailed(true);
 			config.setAdjustImage(true);
 			config.setHeader(50);
-			config.setFooter(50);
+			config.setFooter(0);
 			
-
-			InvoiceTemplate.create(os, invoice, config, qrCode);
-			InvoiceTemplate.create(dos, invoice, config, qrCode);
+			CompanyFull company = new CompanyFull();
+			LinkedList<RegistryMedia> rmediaList = new LinkedList<RegistryMedia>();
+			rmediaList.add(new RegistryMedia()
+					.setMedia(com.esferalia.aon.occam.api.model.type.MediaType.FIXED_PHONE)
+					.setValue("699969633"));
+			rmediaList.add(new RegistryMedia()
+					.setMedia(com.esferalia.aon.occam.api.model.type.MediaType.EMAIL)
+					.setValue("karyuu_no_tekken@fairytail.jp"));
+			rmediaList.add(new RegistryMedia()
+					.setMedia(com.esferalia.aon.occam.api.model.type.MediaType.WEB)
+					.setValue("https://www.mazda.com/"));
+			
+			Company registry = new Company();
+			registry.setName("COMPAÑÍA FALSA S.L.").setDocument("L012345678");
+			
+			LinkedList<RegistryAddress> addressList = new LinkedList<>();
+			addressList.add(new RegistryAddress().setAddress("Rey Don Sancho, Rey Don Sancho, no digas que no te aviso, pero, de dentro de Zamora un alevoso ha salido"));
+			addressList.add(new RegistryAddress()
+					.setStreetType(StreetType.AV).setAddress("ISAAC NEWTON")
+					.setNumber("287")
+					.setAddress2("EDIFICIO AYUDA-T, P.I. LAS SALINAS DE PONIENTE")
+					.setProvince("CÁDIZ")
+					.setCity("PUERTO DE SANTA MARÍA, EL")
+					.setCountry(Country.KP)
+					.setMain(true));
+			
+			company.setAddresses(addressList);
+			company.setMedias(rmediaList);
+			company.setRegistry(registry);
+			
+			
+			InputStream logoStream = InvoiceTest.class.getResourceAsStream("matsuda.png");
+			byte[] logo = logoStream.readAllBytes();
+			
+			
+			
+//			company = null;
+//			logo = null;
+			
+			InvoiceTemplate.create(os, company, invoice, config, qrCode, logo);
+			InvoiceTemplate.create(dos, company, invoice, config, qrCode, logo);
 			ByteArrayInputStream bis = new ByteArrayInputStream(os.toByteArray());
 			
 			PDDocument document = PDDocument.load(bis);
-			PDPageTree pages = document.getPages();
 			
 			
 			/** CHECKING PDF DATA **/
@@ -334,7 +613,7 @@ public class InvoiceTest {
 			assertPdfData("Address", croppedString(address, 230, HELVETICA, 9), PDFaddress);
 			assertPdfData("Address line two", addressZIP + " " +  addressTown + " " + addressProvince, PDFaddressLineTwo);
 			assertPdfData("Name", croppedString(registryName, 230, HELVETICA_BOLD, 12), PDFregistryName);
-			assertPdfData("code", referenceCode, PDFreferenceCode);
+//			assertPdfData("code", referenceCode, PDFreferenceCode);
 			assertPdfData("NIF", registryDocument, PDFregistryDocument);
 			assertPdfData("TOTAL", toLatinNumber(total), PDFtotal);
 			assertPdfData("DATE", formatDate(issueDate, "dd/MM/yyyy").get(), PDFissueDate);

@@ -72,7 +72,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 				invoice = AON_SOLUTIONS.getInvoice(domainName, domainId, login, id);
 			}
 			
-			PdfMaker.printInvoice(resp.getOutputStream(), invoice, config, null);
+			PdfMaker.printInvoice(resp.getOutputStream(), null, invoice, config, null, null);
 			
 			responseFile(req, resp, "factura", MimeType.PDF);
 		} catch (IOException e) {
