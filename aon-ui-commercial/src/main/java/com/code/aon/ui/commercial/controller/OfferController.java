@@ -1117,5 +1117,39 @@ public class OfferController extends HeaderObjectController implements ISignatur
 		ConfigCollectionsController ccc = (ConfigCollectionsController) AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 		return ccc.getOfferSeriesIds();
 	}
+	
+	// ------------------------------------------------------------------------
+	// synchronized
+	// ------------------------------------------------------------------------
+	
+	@Override
+	public synchronized ITransferObject getTo() {
+		return super.getTo();
+	}
+	
+	@Override
+	protected synchronized void accept() {
+		super.accept();
+	}
+	
+	@Override
+	public synchronized void accept(ActionEvent event) {
+		super.accept(event);
+	}
+	
+	@Override
+	protected synchronized void resetTo() {
+		super.resetTo();
+	}
+	
+	@Override
+	protected synchronized void setTo(ITransferObject value) {
+		super.setTo(value);
+	}
+	
+	@Override
+	protected synchronized  void synchronizeAddedPojo() throws ManagerBeanException {
+		super.synchronizeAddedPojo();
+	}
 
 }

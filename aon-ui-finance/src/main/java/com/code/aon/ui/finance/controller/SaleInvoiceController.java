@@ -153,13 +153,6 @@ public class SaleInvoiceController extends InvoiceController {
 		return ftpEdiUploader;
 	}
 
-	@Override
-	public void accept(ActionEvent event) {
-		String series = getInvoice().getSeries();
-		super.accept(event);
-		getInvoice().setSeries(series);
-	}
-
 	public boolean isSeriesValid() throws ManagerBeanException {
 		String seriesCode = getInvoice().getSeries();
 		return (StringUtils.isEmpty(seriesCode)) ? true : seriesCode.equals(SeriesUtil.ensureInvoiceSeries(seriesCode));
@@ -442,6 +435,38 @@ public class SaleInvoiceController extends InvoiceController {
 		} finally {
 			DownloadUtil.finishDownload(response, out);
 		}
+	}
+
+	@Override
+	public synchronized ITransferObject getTo() {
+		return super.getTo();
+	}
+	
+	@Override
+	protected synchronized void accept() {
+		super.accept();
+	}
+	
+	@Override
+	public synchronized void accept(ActionEvent event) {
+		String series = getInvoice().getSeries();
+		super.accept(event);
+		getInvoice().setSeries(series);
+	}
+
+	@Override
+	protected synchronized void resetTo() {
+		super.resetTo();
+	}
+	
+	@Override
+	protected synchronized void setTo(ITransferObject value) {
+		super.setTo(value);
+	}
+	
+	@Override
+	protected synchronized  void synchronizeAddedPojo() throws ManagerBeanException {
+		super.synchronizeAddedPojo();
 	}
 
 }

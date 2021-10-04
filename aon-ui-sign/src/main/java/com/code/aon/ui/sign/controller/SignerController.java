@@ -140,18 +140,21 @@ public class SignerController implements ISignConstants, Serializable {
 	}		
 	
 	public String onReport() {
+		
 		try {
-			ITransferObject to = signatureController.getTo();
-			IAttachment attach = null;
-			if ( signatureController.isSigned(to) ) {
-				Serializable id = signatureController.getManagerBean().getId(to);
-				attach = getSignedAttachment( id );
-			}
-			if ( attach == null) {
-				attach = signatureController.getUnsignedAttachment(to, MimeType.MIME_PDF);
-			}
-			if ( attach != null ) {
-				DownloadUtil.downloadAttachment(attach);
+			synchronized (signatureController) {
+				ITransferObject to = signatureController.getTo();
+				IAttachment attach = null;
+				if ( signatureController.isSigned(to) ) {
+					Serializable id = signatureController.getManagerBean().getId(to);
+					attach = getSignedAttachment( id );
+				}
+				if ( attach == null) {
+					attach = signatureController.getUnsignedAttachment(to, MimeType.MIME_PDF);
+				}
+				if ( attach != null ) {
+					DownloadUtil.downloadAttachment(attach);
+				}
 			}
 		} catch (Throwable e) {
 			LOGGER.error(">>>> onReport " + e.getMessage());
