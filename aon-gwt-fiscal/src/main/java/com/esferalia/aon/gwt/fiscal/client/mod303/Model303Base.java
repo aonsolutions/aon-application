@@ -1116,7 +1116,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			public void onClick(ClickEvent event) {
 				final AonToast toast = new AonToast();
 				FlowPanel commentPanel = new FlowPanel();
-				commentPanel.setStyleName( FiscalModelUtils.getAdministrationBG(mod303.getAdministration()) );
+				commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(mod303.getAdministration()) );
 				commentPanel.setStyleName(AON.CSS.aonHeightAll());
 				commentPanel.addStyleName(AON.CSS.aonTextCenter());
 				TextArea comment = new TextArea();

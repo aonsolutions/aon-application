@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.common.client.widget;
+package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import java.util.LinkedList;
 
@@ -41,15 +41,9 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-/**
- * @deprecated com.esferalia.aon.gwt.common.client.widget.solutions.AonCreditorBox
- *
- */
-@Deprecated
-public class CreditorBox extends ResizeComposite implements HasValue<String>
+public class AonCreditorBox extends ResizeComposite implements HasValue<String>
 	, HasDescription, Focusable, HasSelectionHandlers<Creditor>, HasAllFocusHandlers
 	,HasAllKeyHandlers, HasEnabled {
 	
@@ -66,7 +60,7 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 	
 	private FlowPanel rooPanel; 
 	private SuggestBox creditor;
-	private TextBox creditorTextBox;
+	private AonTextBox creditorTextBox;
 	private InlineLabel descriptionLabel;
 	private boolean required = true;
 	
@@ -120,11 +114,11 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 		
 	}
 	
-	public CreditorBox(final String domainName, final int domain, final String user) {
+	public AonCreditorBox(final String domainName, final int domain, final String user) {
 		this(domainName,domain,user,true);
 	}
 	
-	public CreditorBox(final String domainName, final int domain, final String user, boolean showDescription) {
+	public AonCreditorBox(final String domainName, final int domain, final String user, boolean showDescription) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
@@ -139,7 +133,7 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 		
 								public void onFailure(Throwable caught) {
 									descriptionLabel.setText(AON.MSG.creditorNotFound());
-									descriptionLabel.addStyleName(AON.AON_CSS.aonColorRed());
+									descriptionLabel.addStyleName(AON.CSS.aonColorRed());
 									callback.onSuggestionsReady(request, new Response());
 								}
 		
@@ -159,15 +153,15 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 				}
 			}
 		};
-		creditorTextBox = new TextBox();
+		creditorTextBox = new AonTextBox();
 		suggestionDisplay =  new CreditorSuggestionDisplay();
 		creditor = new SuggestBox(oracle,creditorTextBox,suggestionDisplay);
-		creditorTextBox.setStyleName(AON.AON_CSS.aonInputText());
+		creditorTextBox.setStyleName(AON.CSS.aonInputText());
 		creditorTextBox.setVisibleLength(15);
 		creditorTextBox.setMaxLength(15);
 		descriptionLabel = new InlineLabel();
-		descriptionLabel.addStyleName(AON.AON_CSS.aonMarginLeft() );
-		descriptionLabel.addStyleName(AON.AON_CSS.aonFontSmall());
+		descriptionLabel.addStyleName(AON.CSS.aonMarginLeft() );
+		descriptionLabel.addStyleName(AON.CSS.aonFontSmall());
 		descriptionLabel.setVisible(showDescription);
 		
 		creditor.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
@@ -179,44 +173,44 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 		});
 		
 		rooPanel = new FlowPanel();
-		rooPanel.addStyleName(AON.AON_CSS.aonNowrap() );
+		rooPanel.addStyleName(AON.CSS.aonNowrap() );
 		rooPanel.add(creditor);
 		rooPanel.add(descriptionLabel);
 		initWidget(rooPanel);
 	}
 	
 	private void select(Creditor creditor) {
-		creditorTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+		creditorTextBox.decorateAsValid();
 		id = creditor.getId();
 		description = creditor.getName();
 		descriptionLabel.setText(description);
-		descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
-		SelectionEvent.fire(CreditorBox.this, creditor );
+		descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
+		SelectionEvent.fire(AonCreditorBox.this, creditor );
 	}
 	
 	public void setValue(Creditor creditor) {
 		if (creditor != null && creditor.getId() != null) {
 			id = creditor.getId();	
-			creditorTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+			creditorTextBox.decorateAsValid();
 			creditorTextBox.setValue(creditor.getDocument());
 			description = creditor.getName();
 			descriptionLabel.setText(description);
-			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
 		} else {
 			id = null;	
-			creditorTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+			creditorTextBox.decorateAsError();
 			creditorTextBox.setValue(null);
 			descriptionLabel.setText(null);
-			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
 		}
 	}
 
 	private void reset() {
-		creditorTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+		creditorTextBox.decorateAsValid();
 		id = null;
 		description = null;
 		descriptionLabel.setText(null);
-		descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+		descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
 	}
 
 	public boolean isRequired() {
@@ -249,9 +243,9 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 			reset();
 		}
 		if (AonStringUtils.isEmpty(value) || AonValidationUtil.isValidRequired(value, required)) {
-			creditorTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );	
+			creditorTextBox.decorateAsValid();
 		} else {
-			creditorTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );	
+			creditorTextBox.decorateAsError();
 		}
 	}
 
@@ -325,10 +319,10 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 	private static String decorate(String text, String query) {
 		int i = AonStringUtils.indexOfIgnoreCase(text, query);
 		SafeHtmlBuilder bld = new SafeHtmlBuilder();
-		bld.appendHtmlConstant("<span class=\"" 
-				+ AON.AON_CSS.aonIconPointLightGreen() 
+		bld.appendHtmlConstant("<span style=\"white-space: pre;\" class=\""
+				+ AON.CSS.aonTabIcon()		
 				+ AonStringUtils.SPACE
-				+ AON.AON_CSS.aonPaddingLeft20()
+				+ AON.CSS.aonIconCreditor()
 				+ "\" >");
 		bld.appendEscaped(AonStringUtils.substring(text, 0, i));
 		bld.appendHtmlConstant(BEGIN_STRONG);

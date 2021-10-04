@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.common.client.widget;
+package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -15,61 +15,52 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
-import com.google.gwt.user.client.ui.TextBox;
 
-/**
- * @deprecated Use com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox
- *
- */
-@Deprecated
-public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Suggestion>, HasEnabled {
+public class AonIbanTextBox extends SimplePanel implements HasSelectionHandlers<Suggestion>, HasEnabled {
 	
-	SuggestBox iban1;
-	TextBox iban2 = new TextBox();
-	TextBox iban3 = new TextBox();
-	TextBox iban4 = new TextBox();
-	TextBox iban5 = new TextBox();
-	TextBox iban6 = new TextBox();
-	TextBox bic = new TextBox();
+	private SuggestBox iban1;
+	private AonTextBox iban2 = new AonTextBox();
+	private AonTextBox iban3 = new AonTextBox();
+	private AonTextBox iban4 = new AonTextBox();
+	private AonTextBox iban5 = new AonTextBox();
+	private AonTextBox iban6 = new AonTextBox();
+	private AonTextBox bic = new AonTextBox();
 	
-	private TextBox[] textBoxes = new TextBox[]{
-			iban2,iban3,iban4,iban5,iban6};
+	private AonTextBox[] textBoxes = new AonTextBox[]{iban2,iban3,iban4,iban5,iban6};
 	
-	public IbanTextBox(SuggestOracle suggestOracle) {
+	public AonIbanTextBox(SuggestOracle suggestOracle) {
 		this(suggestOracle, false);
 	}
-	public IbanTextBox(SuggestOracle suggestOracle, boolean showbic) {
+	public AonIbanTextBox(SuggestOracle suggestOracle, boolean showbic) {
 		super( DOM.createSpan());
 		FlowPanel panel = new FlowPanel();
-		panel.addStyleName(AON.AON_CSS.aonNowrap());
-		panel.addStyleName(AON.AON_CSS.aonInline());
+		panel.addStyleName(AON.CSS.aonNowrap());
+		panel.addStyleName(AON.CSS.aonInline());
 		this.add(panel);
 		iban1 = new SuggestBox(suggestOracle);
-		iban1.setStyleName(AON.AON_CSS.aonInputText());
+		iban1.setStyleName(AON.CSS.aonInputText());
 		iban1.setWidth("100px");
 		panel.add(iban1);
-		for (TextBox textBox : textBoxes ) {
-			textBox.setStyleName(AON.AON_CSS.aonInputText());
-			textBox.addStyleName(AON.AON_CSS.aonMarginLeft());
+		for (AonTextBox textBox : textBoxes ) {
+			textBox.addStyleName(AON.CSS.aonMarginLeft());
 			textBox.setMaxLength(4);
 			textBox.setVisibleLength(5);
 			panel.add(textBox);
 		}
 		if (showbic) {
 			InlineLabel bicLabel = new InlineLabel("BIC");
-			bicLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
-			bicLabel.addStyleName(AON.AON_CSS.aonMarginRight());
+			bicLabel.setStyleName(AON.CSS.aonMarginLeft());
+			bicLabel.addStyleName(AON.CSS.aonMarginRight());
 			panel.add(bicLabel);
-			bic.setStyleName(AON.AON_CSS.aonInputText());
-			bic.addStyleName(AON.AON_CSS.aonMarginLeft());
+			bic.addStyleName(AON.CSS.aonMarginLeft());
 			bic.setMaxLength(11);
 			bic.setVisibleLength(10);
 			panel.add(bic);
 		}
 		FlowPanel panel2 = new FlowPanel();
 		InlineLabel label = new InlineLabel("Comience a escribir para recuperar algun banco de la empresa");
-		label.addStyleName(AON.AON_CSS.aonFontSmall());
-		label.addStyleName(AON.AON_CSS.aonItalic());
+		label.addStyleName(AON.CSS.aonFontSmall());
+		label.addStyleName(AON.CSS.aonItalic());
 		panel2.add(label);
 		panel.add(panel2);
 	}
