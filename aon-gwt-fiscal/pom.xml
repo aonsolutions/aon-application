@@ -143,6 +143,12 @@
 		<artifactId>aon.api</artifactId>
 		<version>${project.version}</version>
 		<scope>compile</scope>
+      	<exclusions>
+        	<exclusion>
+				<groupId>com.esferalia.aon</groupId>
+				<artifactId>aon.in.payroll</artifactId>
+        	</exclusion>
+        </exclusions>
 	</dependency>
 	
 	<dependency>
