@@ -4,9 +4,7 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
@@ -14,11 +12,11 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -33,6 +31,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model303 extends MainEntryPoint {
 
+	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
+		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
+		SafeHtml tab(String title, String icon);
+	}
+	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
+
 	private static final Logger LOGGER = Logger.getLogger(Model303.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
@@ -45,33 +49,15 @@ public class Model303 extends MainEntryPoint {
 	protected static Mod303ServiceAsync SERVICE;
 	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
 	
-	interface Model303Binder extends UiBinder<Widget, Model303> {
-	}
-	private static final Model303Binder MODEL_303_BINDER = GWT.create(Model303Binder.class);
-	
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
-
-	@UiField
-	SimpleLayoutPanel declarationContainer;
-	
-	@UiField
-	TabLayoutPanel tabLayout;
-	
-	@UiField
-	SimpleLayoutPanel resultsPanel;
-	
-	@UiField
-	MinimizePanel footPanel;
-	
-	@UiField
-	ScrollPanel breakdownPanel;
-	
-	@UiField
-	SimpleLayoutPanel aeatPanel;
-	
+	private SplitLayoutPanel splitLayoutPanel;
+	private SimpleLayoutPanel declarationContainer;
+	private TabLayoutPanel tabLayout;
+	private SimpleLayoutPanel resultsPanel;
+	private AonMinimizePanel footPanel;
+	private ScrollPanel breakdownPanel;
+	private SimpleLayoutPanel aeatPanel;
 	private Model303ModuleOptions options;
-	Model303Table model303Table;
+	private  Model303Table model303Table;
 
 	protected interface IModel303Callback {
 		public String getDomainName();
@@ -179,7 +165,12 @@ public class Model303 extends MainEntryPoint {
 		Mod303ServiceAsync mod303ServiceRaw = GWT.create(Mod303Service.class);
 		SERVICE = new Mod303ServiceAsyncDecorator(mod303ServiceRaw);
 
-		Widget ui = MODEL_303_BINDER.createAndBindUi(this);
+		splitLayoutPanel = new SplitLayoutPanel();
+		declarationContainer = new SimpleLayoutPanel();
+		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
+		
+		splitLayoutPanel.add(declarationContainer);
+		
 		
 		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");
 		html.setWidth("100%");
@@ -191,7 +182,7 @@ public class Model303 extends MainEntryPoint {
 		model303Table.addSelectionHandler( event -> onSelectionChange(event));
 		declarationContainer.setWidget(model303Table);
 		
-		getOptions().getParentWidget().add(ui);
+		getOptions().getParentWidget().add(splitLayoutPanel);
 		if (getOptions().getFiscalModelId() != null ) {
 			LOGGER.info("Access to Model303 with a ID: " + getOptions().getFiscalModelId());
 			onSelect(getOptions().getFiscalModelId());
@@ -203,8 +194,6 @@ public class Model303 extends MainEntryPoint {
 			LOGGER.info("Model303 setting NOTIFICATIONS_TAB");
 			tabLayout.selectTab(NOTIFICATIONS_TAB);
 		}
-		tabLayout.setAnimationDuration(300);
-		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
 	}
 
 	private void newModel(Mod303 newModel) {
@@ -369,16 +358,16 @@ public class Model303 extends MainEntryPoint {
 		closeFootPanel();
 	}
 
-	@UiHandler("footPanel")
-	void onFootMinimize(MinimizeEvent event) {
-		closeFootPanel();
-	}
+//	@UiHandler("footPanel")
+//	void onFootMinimize(MinimizeEvent event) {
+//		closeFootPanel();
+//	}
 
-	@UiHandler("footPanel")
-	void onFootMaximize(MaximizeEvent event) {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
-		splitLayoutPanel.animate(500);
-	}
+//	@UiHandler("footPanel")
+//	void onFootMaximize(MaximizeEvent event) {
+//		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+//		splitLayoutPanel.animate(500);
+//	}
 
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
@@ -433,6 +422,33 @@ public class Model303 extends MainEntryPoint {
 		HTMLPanel panel = new HTMLPanel(htmlText);
 		breakdownPanel.setWidget(panel);
 		breakdownPanel.scrollToTop();
+	}
+
+	
+	private AonMinimizePanel getMinimizePanel() {
+		footPanel = new AonMinimizePanel();
+		footPanel.addMinimizeHandler( event -> closeFootPanel() );
+		footPanel.addMaximizeHandler( event -> {
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+			splitLayoutPanel.animate(500);
+		});
+		footPanel.setStyleName(AON.CSS.aonSelector());
+		tabLayout = new TabLayoutPanel(26, Unit.PX);
+		tabLayout.setWidth("100%");
+		footPanel.add(tabLayout);
+		
+		resultsPanel = new SimpleLayoutPanel();
+		tabLayout.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.notifications(), AON.CSS.aonIconNotification()));
+		
+		breakdownPanel = new ScrollPanel();
+		tabLayout.add(breakdownPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.informationBreakdown(), AON.CSS.aonIconInfo()));
+
+		aeatPanel = new SimpleLayoutPanel(); 
+		tabLayout.add(aeatPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.communicationAeat(), AON.CSS.aonIconAeatBw()));
+		
+		tabLayout.setAnimationDuration(300);
+		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
+		return footPanel; 
 	}
 	
 }

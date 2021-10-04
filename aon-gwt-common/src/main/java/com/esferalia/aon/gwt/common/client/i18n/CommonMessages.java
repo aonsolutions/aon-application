@@ -514,6 +514,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ver detalle")
 	String seeDetail();
 
+	@DefaultMessage("Comunicaci\u00F3n AEAT")
+	String communicationAeat();
+
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
 
