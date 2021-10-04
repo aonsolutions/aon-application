@@ -15,11 +15,9 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class FiscalModelUtils {
 	
@@ -125,6 +123,10 @@ public class FiscalModelUtils {
 		return description;
 	}
 	
+	/**
+	 * @deprecated Use com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader
+	 */
+	@Deprecated
 	public static void paintHeaderTable(SimplePanel headerPanel, IFiscalModel fm) {
 		Administration admon = (fm == null?Administration.COMMON_TERRITORY:fm.getAdministration());
 		headerPanel.clear();
@@ -433,22 +435,6 @@ public class FiscalModelUtils {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BACKGROUND_STYLE);
 	}
 
-	
-	public static Widget getSplashWidget() {
-		HorizontalPanel hp = new HorizontalPanel();
-		hp.setStyleName(AON.CSS.aonBlockCenter());
-		hp.addStyleName(AON.CSS.aonMarginTop() );
-		Label iconWaitLabel = new Label();
-		iconWaitLabel.setStyleName(AON.CSS.aonLoader());
-		iconWaitLabel.addStyleName(AON.CSS.aonMargin());
-		hp.add(iconWaitLabel);
-		Label textWaitLabel = new Label("Procesando la extracci\u00F3n de datos del documento.");
-		textWaitLabel.setStyleName(AON.CSS.aonMargin());
-		textWaitLabel.addStyleName(AON.CSS.aonBold());
-		hp.add(textWaitLabel);
-		return hp;
-	}
-	
 }
 
 
