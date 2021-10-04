@@ -171,8 +171,6 @@ public class UserServlet extends AonApiHttpServlet {
 		JSONArray jsArray = new JSONArray();
 		AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> userFilter(api, f))
 		.map(user -> {
-			AON.getWorkgroupList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					f-> f.getDomainProperty().eq(api.getDomain().getId()));
 			user.setWorkgroups(AON.getUserWorkgroupStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getUserIdProperty().eq(user.getId()))
 					.map(uw -> uw.getWorkgroup()).collect(Collectors.toCollection(LinkedList::new)));
 			return user;
