@@ -399,14 +399,26 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_araba")
 	String aonIconAraba();
 
+	@ClassName("aon_icon_araba_bw")
+	String aonIconArabaBw();
+	
 	@ClassName("aon_icon_bizkaia")
 	String aonIconBizkaia();
+
+	@ClassName("aon_icon_bizkaia_bw")
+	String aonIconBizkaiaBw();
 
 	@ClassName("aon_icon_gipuzkoa")
 	String aonIconGipuzkoa();
 
+	@ClassName("aon_icon_gipuzkoa_bw")
+	String aonIconGipuzkoaBw();
+
 	@ClassName("aon_icon_navarra")
 	String aonIconNavarra();
+
+	@ClassName("aon_icon_navarra_bw")
+	String aonIconNavarraBw();
 
 	@ClassName("aon_icon_model_finish")
 	String aonIconModelFinish();

@@ -35,8 +35,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -1007,7 +1005,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			anchorPanel.addStyleName(AON.CSS.aonMarginTop());
 			Anchor a = new Anchor(pair.getLeft(),pair.getRight(), "_blank");
 			a.setStyleName(AON.CSS.aonLabelWithIcon());
-			a.addStyleName(FiscalModelUtils.getAdministrationIconStyle(mod303.getAdministration()));
+			a.addStyleName(FiscalModelUtils.getAdministrationBWIconStyle(mod303.getAdministration()));
 			a.addStyleName(AON.CSS.aonPaddingLeft());
 			anchorPanel.add(a);
 			panel.add(anchorPanel);
@@ -1110,44 +1108,40 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		
 		FlowPanel commentsPanel = new FlowPanel();
 		commentsPanel.setStyleName(AON.CSS.aonMarginLeft());
-		commentsButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				final AonToast toast = new AonToast();
-				FlowPanel commentPanel = new FlowPanel();
-				commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(mod303.getAdministration()) );
-				commentPanel.setStyleName(AON.CSS.aonHeightAll());
-				commentPanel.addStyleName(AON.CSS.aonTextCenter());
-				TextArea comment = new TextArea();
-				comment.addValueChangeHandler(new ValueChangeHandler<String>() {
-					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						mod303.setComments(event.getValue());
-						styleCommentsButton();
-						Model303.SERVICE.saveComments( callback.getOptions().getDomainName(), callback.getOptions().getUser(), mod303, new AsyncCallback<Mod303>() {
-							@Override
-							public void onSuccess(Mod303 result) {
-								toast.hide();
-							}
+		commentsButton.addClickHandler( event -> {
+			final AonToast toast = new AonToast();
+			FlowPanel commentPanel = new FlowPanel();
+			commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(mod303.getAdministration()) );
+			commentPanel.setStyleName(AON.CSS.aonHeightAll());
+			commentPanel.addStyleName(AON.CSS.aonTextCenter());
+			TextArea comment = new TextArea();
+			comment.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					mod303.setComments(event.getValue());
+					styleCommentsButton();
+					Model303.SERVICE.saveComments( callback.getOptions().getDomainName(), callback.getOptions().getUser(), mod303, new AsyncCallback<Mod303>() {
+						@Override
+						public void onSuccess(Mod303 result) {
+							toast.hide();
+						}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								toast.hide();
-								callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-							}
-						});
-						
-						
-						
-					}
-				});
-				comment.setText(mod303.getComments());
-				comment.setWidth("90%");
-				comment.setHeight("5em");
-				commentPanel.add(comment);
-				toast.show(AON.MSG.comments(), commentPanel);
-			}
+						@Override
+						public void onFailure(Throwable caught) {
+							toast.hide();
+							callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						}
+					});
+					
+					
+					
+				}
+			});
+			comment.setText(mod303.getComments());
+			comment.setWidth("90%");
+			comment.setHeight("5em");
+			commentPanel.add(comment);
+			toast.show(AON.MSG.comments(), commentPanel);
 		});
 		commentsPanel.add(commentsButton);
 		infoPanel.add( commentsPanel );
@@ -1157,8 +1151,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	private void styleStatusLabel(Mod303 mod) {
 		statusLabel.setText(mod.getStatus().getName());
-		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.gettStatusBckColorRGB( mod.getStatus() ));
-		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.gettStatusFrgColorRGB( mod.getStatus() ));
+		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( mod.getStatus() ));
+		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( mod.getStatus() ));
 		statusLabel.setStyleName(AON.CSS.aonMarginLeft());
 		statusLabel.addStyleName(AON.CSS.aonPaddingLeft());
 		statusLabel.addStyleName(AON.CSS.aonPaddingRight());

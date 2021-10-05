@@ -182,7 +182,8 @@ public class FiscalModelUtils {
 		} 
 		return AON.AON_CSS.aonFiscalAeatBg();
 	}
-
+	
+	@Deprecated
 	public static String getAdministrationImage(Administration adm) {
 		if (adm == Administration.ALAVA) {
 			return AON.AON_CSS.aonArabaHeaderImage();
@@ -216,7 +217,7 @@ public class FiscalModelUtils {
 		} 
 		return AON.AON_CSS.aonIconAeat();
 	}
-
+	@Deprecated
 	public static String getAdministrationIconBW(Administration adm) {
 		if (adm == Administration.ALAVA) {
 			return AON.AON_CSS.aonIconArabaBW();
@@ -284,6 +285,7 @@ public class FiscalModelUtils {
 		}
 	}
 	
+	@Deprecated
 	public static FlowPanel getAnchorPanel(IFiscalModel model, String label, String href) {
 		FlowPanel p = new FlowPanel();
 		p.setStyleName(AON.AON_CSS.aonPadding2());
@@ -293,7 +295,7 @@ public class FiscalModelUtils {
 		p.add(a);
 		return p;
 	}
-	
+	@Deprecated
 	public static ImageResource getStatusImage(FiscalStatus status) {
 		if (status == FiscalStatus.FINISHED) return AON.AON_RESOURCES.aonIconPointLightGreen();
 		if (status == FiscalStatus.BATCHED) return AON.AON_RESOURCES.aonIconPointLightGreen();
@@ -303,7 +305,7 @@ public class FiscalModelUtils {
 		if (status  == FiscalStatus.MISSING)	return AON.AON_RESOURCES.aonIconQuestion();
 		return AON.AON_RESOURCES.aonIconPointOrange();
 	}
-	
+	@Deprecated
 	public static String getStatusIconStyle(FiscalStatus status) {
 		if (status == FiscalStatus.FINISHED)	return AON.AON_CSS.aonIconPointLightGreen();
 		if (status == FiscalStatus.BATCHED)		return AON.AON_CSS.aonIconPointLightGreen();
@@ -321,7 +323,7 @@ public class FiscalModelUtils {
 //		if (status  == FiscalStatus.SENT )		return AON.AON_CSS.aonIconPointGreen();
 //		return AON.AON_CSS.aonIconPointOrange();
 //	}
-	
+	@Deprecated
 	public static String gettStatusBckColor(FiscalStatus status) {
 		if (status == FiscalStatus.FINISHED)	return AON.AON_CSS.aonBgFinished();
 		if (status == FiscalStatus.BATCHED)		return AON.AON_CSS.aonBgFinished();
@@ -374,8 +376,7 @@ public class FiscalModelUtils {
 		@Override public String visitCustomerCheck() {return "LightYellow";}
 	}
 	private static final IFiscalStatusVisitor<String> FISCAL_STATUS_BACKGROUND_RGB = new FiscalStatusBackgroundRGB();
-
-	public static String gettStatusBckColorRGB(FiscalStatus status) {
+	public static String getStatusBckColorRGB(FiscalStatus status) {
 		return ((status != null) ? status : FiscalStatus.MISSING).visit(FISCAL_STATUS_BACKGROUND_RGB);
 	}
 
@@ -389,8 +390,7 @@ public class FiscalModelUtils {
 		@Override public String visitCustomerCheck() {return "black";}
 	}
 	private static final IFiscalStatusVisitor<String> FISCAL_STATUS_FOREGROUND_RGB = new FiscalStatusForegroundRGB();
-
-	public static String gettStatusFrgColorRGB(FiscalStatus status) {
+	public static String getStatusFrgColorRGB(FiscalStatus status) {
 		return ((status != null) ? status : FiscalStatus.MISSING).visit(FISCAL_STATUS_FOREGROUND_RGB);
 	}
 	
@@ -403,11 +403,23 @@ public class FiscalModelUtils {
 		@Override public String visitUnknown() 	{return AON.CSS.aonIconUnknown();}
 	}
 	private static final IAdministrationVisitor<String> ADMINISTRATION_ICON_STYLE = new AdministrationIconStyle();
-
 	public static String getAdministrationIconStyle(Administration adm) {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_ICON_STYLE);
 	}
 	
+	private static class AdministrationBWIconStyle implements IAdministrationVisitor<String> {
+		@Override public String visitAlava() 	{return AON.CSS.aonIconArabaBw();}
+		@Override public String visitBizkaia() 	{return AON.CSS.aonIconBizkaiaBw();}
+		@Override public String visitGipuzkoa() {return AON.CSS.aonIconGipuzkoaBw();}
+		@Override public String visitNavarra() 	{return AON.CSS.aonIconNavarraBw();}
+		@Override public String visitCommonTerritory() 	{return AON.CSS.aonIconAeatBw();}
+		@Override public String visitUnknown() 	{return AON.CSS.aonIconUnknown();}
+	}
+	private static final IAdministrationVisitor<String> ADMINISTRATION_BW_ICON_STYLE = new AdministrationBWIconStyle();
+	public static String getAdministrationBWIconStyle(Administration adm) {
+		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BW_ICON_STYLE);
+	}
+
 	private static class AdministrationIconResource implements IAdministrationVisitor<DataResource> {
 		@Override public DataResource visitAlava() 		{return AON.AON_SOLUTIONS_RESOURCES.aonIconAraba();}
 		@Override public DataResource visitBizkaia() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconBizkaia();}
@@ -417,11 +429,23 @@ public class FiscalModelUtils {
 		@Override public DataResource visitUnknown() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconUnknown();}
 	}
 	private static final IAdministrationVisitor<DataResource> ADMINISTRATION_ICON_RESOURCE = new AdministrationIconResource();
-
 	public static DataResource getAdministrationIconDataResource(Administration adm) {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_ICON_RESOURCE);
 	}
 
+	private static class AdministrationBWIconResource implements IAdministrationVisitor<DataResource> {
+		@Override public DataResource visitAlava() 		{return AON.AON_SOLUTIONS_RESOURCES.aonIconArabaBw();}
+		@Override public DataResource visitBizkaia() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconBizkaiaBw();}
+		@Override public DataResource visitGipuzkoa() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconGipuzkoaBw();}
+		@Override public DataResource visitNavarra() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconNavarraBw();}
+		@Override public DataResource visitCommonTerritory() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconAeatBw();}
+		@Override public DataResource visitUnknown() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconUnknown();}
+	}
+	private static final IAdministrationVisitor<DataResource> ADMINISTRATION_BW_ICON_RESOURCE = new AdministrationBWIconResource();
+	public static DataResource getAdministrationBWIconDataResource(Administration adm) {
+		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BW_ICON_RESOURCE);
+	}
+	
 	private static class AdministrationBackgroundStyle implements IAdministrationVisitor<String> {
 		@Override public String visitAlava() 	{return AON.CSS.aonArabaBackgroundColor();}
 		@Override public String visitBizkaia() 	{return AON.CSS.aonBizkaiaBackgroundColor();}
@@ -431,11 +455,10 @@ public class FiscalModelUtils {
 		@Override public String visitUnknown() 	{return AON.CSS.aonAeatBackgroundColor();}
 	}
 	private static final IAdministrationVisitor<String> ADMINISTRATION_BACKGROUND_STYLE = new AdministrationBackgroundStyle();
-
 	public static String getAdministrationBackgroundStyle(Administration adm) {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BACKGROUND_STYLE);
 	}
-
+	
 }
 
 

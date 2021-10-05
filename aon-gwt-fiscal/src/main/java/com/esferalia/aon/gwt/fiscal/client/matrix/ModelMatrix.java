@@ -267,7 +267,7 @@ public class ModelMatrix extends MainEntryPoint {
 					AonDisplayTableCell cell = legendRow.addCell();
 					cell.addStyleName(AON.CSS.aonBorder());
 					cell.setWidth("20px");
-					cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.gettStatusBckColorRGB( st ));
+					cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( st ));
 					cell.add(new InlineLabel());
 				}
 				tabContainer.add( statusLegendTab );
@@ -408,7 +408,7 @@ public class ModelMatrix extends MainEntryPoint {
 								});
 								tab.setWidget(row, c, addButton);
 //								tab.setWidget(row, c, new InlineLabel());
-								tab.getWidget(row, c ).getElement().getParentElement().getStyle().setBackgroundColor(FiscalModelUtils.gettStatusBckColorRGB( FiscalStatus.MISSING));
+								tab.getWidget(row, c ).getElement().getParentElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING));
 								
 							}
 							
@@ -470,7 +470,7 @@ public class ModelMatrix extends MainEntryPoint {
 									}
 									focusPanel.add(mod);
 									tab.setWidget(row, col, focusPanel);
-									tab.getWidget(row, col ).getElement().getParentElement().getStyle().setBackgroundColor(FiscalModelUtils.gettStatusBckColorRGB( status ));
+									tab.getWidget(row, col ).getElement().getParentElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( status ));
 								}
 							}
 						}

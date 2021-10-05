@@ -194,8 +194,8 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 			AonDisplayGridCell statusCell = new AonDisplayGridCell();
 			statusCell.add(new InlineLabel(mod303.getStatus().getName()));
 			statusCell.addStyleName(AON.CSS.aonTextCenter());
-			statusCell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.gettStatusBckColorRGB(mod303.getStatus()) );
-			statusCell.getElement().getStyle().setColor(FiscalModelUtils.gettStatusFrgColorRGB(mod303.getStatus()) );
+			statusCell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB(mod303.getStatus()) );
+			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod303.getStatus()) );
 			row.add( statusCell );
 			
 			row.addCell( comp , AON.CSS.aonTextCenter())
