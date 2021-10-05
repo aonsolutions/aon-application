@@ -4044,6 +4044,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Registro")
 	String register();
+	
+	@DefaultMessage("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.")
+	String mustFinishModel();
 
 }
 

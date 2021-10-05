@@ -574,6 +574,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_nowrap")
 	String aonNowrap();
 		
+	@ClassName("aon_wrap")
+	String aonWrap();
+	
 	@ClassName("aon_ellipsis")
 	String aonEllipsis();
 

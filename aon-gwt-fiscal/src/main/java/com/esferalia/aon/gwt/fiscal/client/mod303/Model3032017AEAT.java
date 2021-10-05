@@ -3,11 +3,10 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
-import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel.SelectionCallBack;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity2016.IMod303ActivityCallback;
@@ -22,7 +21,6 @@ import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATSimplifiedRegi
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
-import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -843,14 +841,11 @@ public class Model3032017AEAT extends Model303Base {
 		});
 		tab.setWidget(row, 0, cnae);
 
-		Cnae2009Panel panel = new Cnae2009Panel( new SelectionCallBack() {
-			@Override public void onClose() {}
-			@Override
-			public void onSelect(CNAE2009 selected) {
-				cnae.setValue(selected.getCodeWithoutPoint(),false);
-				getCallback().getMod303().putDescription(cnaeKey, selected.getCodeWithoutPoint());
-				markAsDirty();
-			}
+		AonCnae2009Panel panel = new AonCnae2009Panel();
+		panel.addSelectionHandler( event -> {
+			cnae.setValue(event.getSelectedItem().getCodeWithoutPoint(),false);
+			getCallback().getMod303().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
+			markAsDirty();
 		});
 		Button button = new Button();
 		button.setStyleName(AON.AON_CSS.aonIconLoupe());

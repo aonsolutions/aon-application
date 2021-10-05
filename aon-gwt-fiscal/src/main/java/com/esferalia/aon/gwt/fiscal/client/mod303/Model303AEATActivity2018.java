@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -19,6 +20,8 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -247,10 +250,12 @@ public class Model303AEATActivity2018 extends DockLayoutPanel implements HasValu
 		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonWidthAuto());
 		tab.setWidget(0, 2, epigraphLabel);
 		
-		final Model303AEATActivity2018Panel epigraphPanel = new Model303AEATActivity2018Panel(new Model303AEATActivity2018Panel.SelectionCallBack() {
+		final Model303AEATActivity2018Panel epigraphPanel = new Model303AEATActivity2018Panel();
+		epigraphPanel.addSelectionHandler( new SelectionHandler<Modules2018.Epigraph>() {
 			
 			@Override
-			public void onSelect(Epigraph selected) {
+			public void onSelection(SelectionEvent<Epigraph> event) {
+				Epigraph selected = event.getSelectedItem();
 				if (AonStringUtils.isNotBlank( callback.getActivity().getEpigraph())) {
 					ConfirmDialog dialog = new ConfirmDialog();
 					dialog.confirm(AON.MSG.newEpigrapSelected(), new ConfirmDialogCallback() {
@@ -267,9 +272,6 @@ public class Model303AEATActivity2018 extends DockLayoutPanel implements HasValu
 					accept(selected);
 				}
 			}
-			
-			@Override
-			public void onClose() {}
 			
 			private void accept(final Epigraph selected) {
 				callback.getActivity().initialize();
@@ -290,6 +292,7 @@ public class Model303AEATActivity2018 extends DockLayoutPanel implements HasValu
 				}
 				ValueChangeEvent.<Mod303Activity>fire(Model303AEATActivity2018.this, callback.getActivity());
 			}
+			
 		});
 		
 		showEpigraphs.addClickHandler(new ClickHandler() {

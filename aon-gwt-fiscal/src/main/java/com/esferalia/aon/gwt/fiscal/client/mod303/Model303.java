@@ -358,17 +358,6 @@ public class Model303 extends MainEntryPoint {
 		closeFootPanel();
 	}
 
-//	@UiHandler("footPanel")
-//	void onFootMinimize(MinimizeEvent event) {
-//		closeFootPanel();
-//	}
-
-//	@UiHandler("footPanel")
-//	void onFootMaximize(MaximizeEvent event) {
-//		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
-//		splitLayoutPanel.animate(500);
-//	}
-
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);

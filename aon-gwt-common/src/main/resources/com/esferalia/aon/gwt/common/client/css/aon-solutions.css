@@ -490,6 +490,9 @@
 	white-space: nowrap;
 }
 
+.aon_wrap {
+	white-space: normal;
+}
 .aon_truncate {
   white-space: nowrap;
   overflow: hidden !important;

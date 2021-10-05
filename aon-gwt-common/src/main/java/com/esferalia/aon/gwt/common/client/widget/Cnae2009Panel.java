@@ -18,6 +18,11 @@ import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
+/**
+ * @deprecated Use com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel
+ *
+ */
+@Deprecated
 public class Cnae2009Panel extends CustomDialog {
 
 	public interface SelectionCallBack {

@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.FinishDeclarationPopup.FinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.IModel303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.TabLayoutFolderSafeTemplate;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303IdentificationData.IModel303IdentificationDataCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -38,6 +39,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -175,12 +177,11 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected Hidden testHidden = new Hidden("test");
 
 	interface TabLabelTemplate extends SafeHtmlTemplates {
-		@Template("<span class=\"{1} aon-padding-right aon-padding-left-20\" style=\"width: auto !important\">{0}</span>")
+		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
 		SafeHtml render(String label, String iconStyle);
 	}
 	protected static final TabLabelTemplate TAB_TEMPLATE = GWT.create(TabLabelTemplate.class);
 
-	
 	protected Model303Base(Mod303 mod303,Model303Callback cbk, Model303ModuleOptions options) {
 		super(Unit.PX);
 		select( mod303 , options);

@@ -3,11 +3,10 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
-import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel.SelectionCallBack;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
 import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
@@ -984,14 +983,11 @@ public class Model3032020AEAT extends Model303Base {
 		});
 		tab.setWidget(row, 0, cnae);
 
-		Cnae2009Panel panel = new Cnae2009Panel( new SelectionCallBack() {
-			@Override public void onClose() {}
-			@Override
-			public void onSelect(CNAE2009 selected) {
-				cnae.setValue(selected.getCodeWithoutPoint(),false);
-				getCallback().getMod303().putDescription(cnaeKey, selected.getCodeWithoutPoint());
-				markAsDirty();
-			}
+		AonCnae2009Panel panel = new AonCnae2009Panel();
+		panel.addSelectionHandler( event -> {
+			cnae.setValue(event.getSelectedItem().getCodeWithoutPoint(),false);
+			getCallback().getMod303().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
+			markAsDirty();
 		});
 		Button button = new Button();
 		button.setStyleName(AON.AON_CSS.aonIconLoupe());
