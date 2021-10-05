@@ -84,7 +84,7 @@ public class JRReport {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	public JRReport(ReportConfig config) throws ReportException {
+	public JRReport(ReportConfig config) {
 		this.config = config;
 	}
 
