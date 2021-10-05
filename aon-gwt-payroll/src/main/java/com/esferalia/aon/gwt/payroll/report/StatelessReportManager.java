@@ -48,7 +48,7 @@ public class StatelessReportManager extends ReportManager {
 				.getInstance();
 		ReportConfigurationManager rcm = parser.getConfigurationManager();
 		ReportConfig config = rcm.getReport(reportKey);
-		JRReportFactory.register(reportKey, new StatelessJRReport(config, params));
+		JRReportFactory.register(reportKey, () -> new StatelessJRReport(config, params) );
 		
 		return executeImpl(os, reportKey, params);
 	}
@@ -142,7 +142,7 @@ public class StatelessReportManager extends ReportManager {
 	private static class StatelessJRReport extends JRReport {
 
 		
-		public StatelessJRReport(ReportConfig reportConfig, Map<Object,Object> params []) throws ReportException {
+		public StatelessJRReport(ReportConfig reportConfig, Map<Object,Object> params []) {
 			super(reportConfig);
 			setupCustomParams(params);
 		}
