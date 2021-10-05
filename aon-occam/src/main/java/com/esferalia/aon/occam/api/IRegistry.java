@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -132,6 +133,7 @@ public interface IRegistry {
 	// ------------------- COMPANY
 	public Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] scopes);
 	public Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] scopes, CompanyFilter filter);
+	public CompanyFull getCompanyFull(AONContext ctx, Integer domain);
 	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter);
 	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter, Integer page, Integer perPage);
 	public Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage);

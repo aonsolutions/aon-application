@@ -16,7 +16,6 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.PayrollTemplate;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguration;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlementTemplate;
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;

@@ -42,12 +42,10 @@ export class AonViewer extends AonElement {
 
 	constructor() {
 		super();
-		this._scale = 1;
-		this.AON_VIEWER_DIV  = "aonViewerButtonsDiv";
-		this.AON_CANVAS_DIV  = "aonViewerCanvasDiv";
 	}
 
 	connectedCallback() {
+		this.initialize();
 		let divCanvas = this.createElement(TAG.DIV);
 		divCanvas.id = this.AON_CANVAS_DIV;
 		divCanvas.style.width = '100%';
@@ -78,6 +76,11 @@ export class AonViewer extends AonElement {
 			this.buildButtons();
 	}
 
+	initialize(){
+		this._scale = 1;
+		this.AON_VIEWER_DIV  = "aonViewerButtonsDiv";
+		this.AON_CANVAS_DIV  = "aonViewerCanvasDiv";	
+	}
 	removeButtons() {
 		let div = this.getElement(this.AON_VIEWER_DIV);
 		div.innerHTML = '';
@@ -215,6 +218,8 @@ export class AonViewer extends AonElement {
 	}
 
 	printPdf(scalation) {
+		document.querySelectorAll(TAG.CANVAS).forEach((item, i) => item.remove());
+
 		const div = this.getElement(this.AON_CANVAS_DIV);
 		const width = this.getAttribute('width');
 
@@ -241,11 +246,13 @@ export class AonViewer extends AonElement {
 			// Fetch the first page
 			// let pageNumber = 1;
 			for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+				let c = this.getElement('canvas' + pageNumber);
+				if(c) c.parentElement.removeChild(c);
 				const canvas = this.createElement(TAG.CANVAS);
 				canvas.id = 'canvas' + pageNumber;
 				div.appendChild(canvas);
 
-				pdf.getPage(pageNumber).then( (page) =>  {
+				pdf.getPage(pageNumber).then((page) =>  {
 					console.log('Page loaded');
 
 					let scale = scalation || 1;
@@ -257,11 +264,12 @@ export class AonViewer extends AonElement {
 
 					// Prepare canvas using PDF page dimensions
 					//var canvas = document.getElementById('the-canvas');
-					const canvasPage = this.getElement('canvas' + pageNumber);
+					// const canvasPage = this.getElement('canvas' + pageNumber) || this.createElement(TAG.CANVAS);
+					// canvasPage.id = 'canvas' + pageNumber;
 
-					const context = canvasPage.getContext('2d');
-					canvasPage.height = viewport.height;
-					canvasPage.width = viewport.width;
+					const context = canvas.getContext('2d');
+					canvas.height = viewport.height;
+					canvas.width = viewport.width;
 
 					// Render PDF page into canvas context
 					const renderContext = {

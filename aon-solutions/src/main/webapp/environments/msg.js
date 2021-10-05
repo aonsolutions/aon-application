@@ -55,9 +55,12 @@ export const ALL_FILES = MSG.ALL_FILES;
 export const AMOUNT = MSG.AMOUNT;
 export const API_DOCUMENTATION = MSG.API_DOCUMENTATION;
 export const ASESOR = MSG.ASESOR;
+export const ATTACH_FILES_DRAGGING_DROPPING = MSG.ATTACH_FILES_DRAGGING_DROPPING;
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = MSG.ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND;
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = MSG.ATTACH_FILES_DRAGGING_DROPPING_LOGO;
 export const AVAILABLE = MSG.AVAILABLE;
 export const AVERAGE = "Media";// TODO
-export const ATTACH_FILES_DRAGGING_DROPPING = "Adjunte archivos arrastrándolos y soltándolos"; //TODO
+
 // ----- B
 
 export const BACK = MSG.BACK;
@@ -186,6 +189,8 @@ export const HISTORIC = "Historial"; //TODO
 export const INACTIVE = MSG.INACTIVE;
 export const INACTIVES = MSG.INACTIVES;
 export const INBOX = MSG.INBOX;
+export const INCLUDE_COMPANY_DATA = 'Incluir Datos Empresa';
+export const INCLUDE_LOGO = 'Incluir Logo';
 export const INVESTMENT = MSG.INVESTMENT;
 export const INVOICE = MSG.INVOICE;
 export const INVOICE_CONCEPTS = MSG.INVOICE_CONCEPTS;

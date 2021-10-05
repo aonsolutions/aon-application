@@ -21,6 +21,9 @@ export const ALL_FILES = 'Tots els Fitxers';
 export const AMOUNT = 'Import';
 export const API_DOCUMENTATION = 'Documentació API';
 export const ASESOR = 'Assessor';
+export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrossega o selecciona el fitxer';
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrossega o selecciona el fons';
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Arrossega o selecciona el logo';
 export const AVAILABLE = 'Disponible';
 
 // ----- B

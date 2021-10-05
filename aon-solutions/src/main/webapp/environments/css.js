@@ -1,3 +1,5 @@
+// MATERIAL 
+export const MATERIAL_ICONS = 'material-icons';
 // aon.css
 
 export const AON_APP_LI = 'aonAppLi';
@@ -98,6 +100,9 @@ export const AON_COMPANY_LOGO_IMG = 'aonCompanyLogoImg';
 export const CONTINUE_LINED = 'continueLined';
 export const MATERIAL_SCROLL = 'materialScroll';
 export const AON_IMG_COMMENT = 'aonImgComment';
+export const AON_UPLOAD = 'aonUpload';
+export const AON_UPLOAD_LABEL = 'aonUploadLabel';
+
 // aon-toast.css
 
 export const AON_TOAST = 'aonToast';

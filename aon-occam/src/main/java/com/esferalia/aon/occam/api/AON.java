@@ -188,6 +188,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -1013,6 +1014,13 @@ public class AON {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getCompanyStream(ctx, filter, page, perPage);
 		}
+	}
+
+	public static CompanyFull getCompanyFull(String domainName, Integer domainId, String login){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCompanyFull(ctx, domainId);
+		}
+
 	}
 	
 	public static Company getCompany(String domainName, Integer domainId, String login, CompanyFilter filter){

@@ -31,6 +31,7 @@ public interface IJsonNames {
 	String AUTH = "auth";
 	// ---------------------------------------------------------------------------------------------	[B] 
 	String BACKGROUND = "background";
+	String BACKGROUND_ATTACH = "backgroundAttach";
 	String BALANCE_TYPE = "balanceType";
 	String BALANCE = "balance";
 	String BALANCES = "balances";
@@ -170,6 +171,7 @@ public interface IJsonNames {
 	String LEVEL = "level";
 	String LIMIT = "limit";
 	String LOGIN = "login";
+	String LOGO = "logo";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
 	// ---------------------------------------------------------------------------------------------	[M] 
 	String MAIN = "main";

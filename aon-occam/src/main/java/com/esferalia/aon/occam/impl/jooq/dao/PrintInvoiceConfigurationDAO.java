@@ -11,6 +11,10 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class PrintInvoiceConfigurationDAO {
 	
+	private PrintInvoiceConfigurationDAO() {
+
+	}
+	
 	public static PrintInvoiceConfiguration get(AONContext ctx, Boolean withData) {
 		ctx.checkRead();
 		ApplicationParameter adjust = AppParamDAO.getApplicationParameterStream(ctx, f -> 
@@ -34,6 +38,16 @@ public class PrintInvoiceConfigurationDAO {
 			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_FOOTER.toString())))
 			.findFirst().orElse(new ApplicationParameter());
 
+		ApplicationParameter logo = AppParamDAO.getApplicationParameterStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())	
+			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_LOGO.toString())))
+			.findFirst().orElse(new ApplicationParameter());
+
+		ApplicationParameter company = AppParamDAO.getApplicationParameterStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())	
+			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_COMPANY.toString())))
+			.findFirst().orElse(new ApplicationParameter());
+		
 		Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), withData)
 				.findFirst().orElse(new Attach());
 			
@@ -44,6 +58,8 @@ public class PrintInvoiceConfigurationDAO {
 				.setDetailed(detailed.getValue() != null && (detailed.getValue().equalsIgnoreCase("true") || detailed.getValue().equals("1")))
 				.setHeader(AonNumberUtils.toInteger(header.getValue()))
 				.setFooter(AonNumberUtils.toInteger(footer.getValue()))
+				.setLogo(logo.getValue() != null && (logo.getValue().equalsIgnoreCase("true") || logo.getValue().equals("1")))
+				.setCompany(company.getValue() != null && (company.getValue().equalsIgnoreCase("true") || company.getValue().equals("1")))
 				.setBackground(attach);
 		
 	}
@@ -57,7 +73,7 @@ public class PrintInvoiceConfigurationDAO {
 		
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.INVOICE_PRINT_CONFIG_DETAILED.toString(),
-				pic.getDetailed().toString());
+				pic.isDetailed().toString());
 		
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.INVOICE_PRINT_CONFIG_HEADER.toString(),
@@ -66,6 +82,15 @@ public class PrintInvoiceConfigurationDAO {
 		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOICE_PRINT_CONFIG_FOOTER.toString(),
 				pic.getFooter().toString());
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOICE_PRINT_CONFIG_LOGO.toString(),
+				pic.isLogo().toString());
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOICE_PRINT_CONFIG_COMPANY.toString(),
+				pic.isCompany().toString());
+		
 		
 		if(pic.getBackground() != null && pic.getBackground().getData() != null) {
 			Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), false)

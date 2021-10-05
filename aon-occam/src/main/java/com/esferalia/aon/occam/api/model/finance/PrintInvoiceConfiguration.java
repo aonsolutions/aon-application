@@ -13,6 +13,8 @@ public class PrintInvoiceConfiguration {
 	private Integer footer;
 	private Boolean detailed;
 	private Boolean adjustImage;
+	private Boolean logo;
+	private Boolean company;
 	private Attach background;
 	
 
@@ -33,6 +35,10 @@ public class PrintInvoiceConfiguration {
 		return this;
 	}
 
+	public boolean isBackground() {
+		return getBackground() != null && !getBackground().isEmpty();
+	}
+	
 	public Attach getBackground() {
 		return background;
 	}
@@ -66,10 +72,6 @@ public class PrintInvoiceConfiguration {
 		return detailed;
 	}
 	
-	public Boolean getDetailed() {
-		return detailed;
-	}
-
 	public PrintInvoiceConfiguration setDetailed(Boolean detailed) {
 		this.detailed = detailed;
 		return this;
@@ -83,4 +85,23 @@ public class PrintInvoiceConfiguration {
 		this.adjustImage = adjustImage;
 		return this;
 	}
+	
+	public Boolean isLogo() {
+		return logo;
+	}
+	
+	public PrintInvoiceConfiguration setLogo(boolean logo) {
+		this.logo = logo;
+		return this;
+	}
+	
+	public Boolean isCompany() {
+		return company;
+	}
+	
+	public PrintInvoiceConfiguration setCompany(boolean company) {
+		this.company = company;
+		return this;
+	}
+	
 }
