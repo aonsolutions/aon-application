@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
+import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -623,6 +624,12 @@ public class DomainEmployeesServiceAsync {
 	
 	public void deleteContractExtension(Integer contractId, AsyncCallback<Void> callback) {
 		employeesServiceAsync.deleteContractExtension(getCurrentDomainName(), contractId, callback);
+	}
+	
+	// ------------------------------------------------- ContractTransform
+	
+	public void contractTransform(ContractTransform contractTransform, AsyncCallback<Integer> callback) {
+		employeesServiceAsync.contractTransform(getCurrentDomainName(), contractTransform, callback);
 	}
 
 	// ------------------------------------------------------------------------
