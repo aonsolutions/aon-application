@@ -95,6 +95,10 @@ abstract class Model349Base extends DockLayoutPanel {
 			cbk.onNew(options);
 		}
 		@Override
+		public void onReset(Model349ModuleOptions options, Mod349 mod349) {
+			cbk.onReset(options, mod349);
+		}
+		@Override
 		public void onDuplicate(Model349ModuleOptions options, int id) {
 			cbk.onDuplicate( options, id );
 		}
@@ -123,6 +127,7 @@ abstract class Model349Base extends DockLayoutPanel {
 	protected final Button saveButton = new Button();
 	protected final Button cancelButton = new Button();		
 	protected final Button deleteButton = new Button();
+	protected final Button resetButton = new Button();
 	protected final Button markAsPendingButton = new Button();
 	protected final Button markAsFinishedButton = new Button();
 	protected final Button markAsSentButton = new Button();
@@ -336,6 +341,20 @@ abstract class Model349Base extends DockLayoutPanel {
 			}
 		});
 		buttonContainer.add(deleteButton);
+		
+		// Botón Inicializar
+		resetButton.setText(AON.MSG.resetAction());
+		resetButton.setTitle(resetButton.getText());
+		resetButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		resetButton.addStyleName(AON.AON_CSS.aonIconReset());
+		resetButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.onReset(options, getMod349());
+			}
+		});
+		buttonContainer.add(resetButton);
 		
 		// Botón Marcar Finalizado
 		markAsFinishedButton.setText(AON.MSG.finish());
@@ -566,6 +585,7 @@ abstract class Model349Base extends DockLayoutPanel {
 		newButton.setVisible(!getMod349().isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
 		saveButton.setVisible(!getMod349().isFinished() && !getMod349().isSent());
 		deleteButton.setVisible(!getMod349().isNew() && !getMod349().isFinished() && !getMod349().isSent());
+		resetButton.setVisible(!getMod349().isNew() && !getMod349().isFinished() && !getMod349().isSent());
 		cancelButton.setVisible(true);
 		markAsPendingButton.setVisible(!getMod349().isNew() &&
 			(getMod349().getStatus() == FiscalStatus.FINISHED 
