@@ -295,7 +295,7 @@ class SistemaREDMov {
 			String[] fvac = formatDate(employee.getFrb().get()); // fecha de vacaciones
 			jacadaForm1.getInputByName("txt_SDFFFINVDD").setValueAttribute(fvac[0]); 
 			jacadaForm1.getInputByName("txt_SDFFFINVMM").setValueAttribute(fvac[1]);
-			jacadaForm1.getInputByName("txt_SDFFFINVA").setValueAttribute(fvac[2]); 
+			jacadaForm1.getInputByName("txt_SDFFFINVAA").setValueAttribute(fvac[2]); 
 		}
 		
 		HtmlInput btnSubmit1 = htmlPage.querySelector("#Sub2207401004");
