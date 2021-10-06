@@ -3,11 +3,12 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
-import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity2020.IMod303ActivityCallback;
@@ -22,27 +23,13 @@ import com.esferalia.aon.gwt.fiscal.shared.mod303.Model3032017AEATSimplifiedRegi
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
-import com.esferalia.aon.occam.api.model.type.CNAE2009;
-import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
-import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -51,51 +38,29 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.gwt.view.client.RangeChangeEvent.Handler;
 
 public class Model3032020AEAT extends Model303Base {
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
 	
-	private static class Mod303ActivityProvidesKey implements ProvidesKey<Mod303Activity> {
-		@Override
-		public Object getKey(Mod303Activity model) {
-			return AonStringUtils.isBlank(model.getEpigraph()) ? null : model.getEpigraph();
-		}
-	}
-	private static class Mod303ActivityFarmerProvidesKey implements ProvidesKey<Mod303ActivityFarmer> {
-		@Override
-		public Object getKey(Mod303ActivityFarmer model) {
-			return AonStringUtils.isBlank(model.getCode()) ? null : model.getCode();
-		}
-	}
-	private final Mod303ActivityFarmerProvidesKey providesFarmerKey = new Mod303ActivityFarmerProvidesKey();
 	private final Model303AEATActivityFarmerTable farmerTable;
-	
-	private final Mod303ActivityProvidesKey providesKey = new Mod303ActivityProvidesKey();
 	private final Model303AEATActivityTable activityTable;
-	private ScrollPanel LastPeriodInformationScrollPanel; 
+	private ScrollPanel lastPeriodInformationScrollPanel; 
 	
-	private final static int GENERAL_REGIME_TAB = 2;
-	private final static int SIMPLIFIED_REGIME_TAB = 3;
-	private final static int RESULT_TAB = 4;
-	private final static int LAST_PERIOD_INFORMATION_TAB = 6;
+	private static final int GENERAL_REGIME_TAB = 2;
+	private static final int SIMPLIFIED_REGIME_TAB = 3;
+	private static final int RESULT_TAB = 4;
+	private static final int LAST_PERIOD_INFORMATION_TAB = 6;
 
-	final Mod303ServiceAsync MOD303Service = GWT.create(Mod303Service.class);
-
-	
 	public Model3032020AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
 		super(mod303,callback, options);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
-		centerPanel.addStyleName(AON.AON_CSS.aonScrollArea());
+		centerPanel.addStyleName(AON.CSS.aonScrollArea());
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
-		farmerTable = new Model303AEATActivityFarmerTable( providesFarmerKey, mod303.isLastPeriod());
+		farmerTable = new Model303AEATActivityFarmerTable( mod303.isLastPeriod());
 		activityTable = new Model303AEATActivityTable( mod303.isLastPeriod());
 		
 		paintIdentificationTab(tabPanel);
@@ -107,7 +72,7 @@ public class Model3032020AEAT extends Model303Base {
 		if (getCallback().getMod303().isLastPeriod()) {
 			paintLastPeriodInformationTab(tabPanel);
 		}
-		paintAdministrationTab(tabPanel,options);
+		paintAdministrationTab(tabPanel);
 		
 		if (mod303.isFinished() || mod303.isSent()) {
 			tabPanel.selectTab(RESULT_TAB);
@@ -119,26 +84,22 @@ public class Model3032020AEAT extends Model303Base {
 			}
 		}
 		
-		tabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
-			@Override
-			public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-				double a02 = getCallback().getMod303().getAmount(Mod303Key.CT_A02);
-				if (event.getItem() == GENERAL_REGIME_TAB && a02 == 0) {
+		tabPanel.addBeforeSelectionHandler(event ->  {
+			double a02 = getCallback().getMod303().getAmount(Mod303Key.CT_A02);
+			if (event.getItem() == GENERAL_REGIME_TAB && a02 == 0) {
+				event.cancel();
+				AonMessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
+			}
+			if (event.getItem() == SIMPLIFIED_REGIME_TAB && a02 == 2) {
+				event.cancel();
+				AonMessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
+			}
+			if (getCallback().getMod303().isLastPeriod()) {
+				double a11 = getCallback().getMod303().getAmount(Mod303Key.CT_A11);
+				if (event.getItem() == LAST_PERIOD_INFORMATION_TAB && a11 == 0) {
 					event.cancel();
-					MessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
+					AonMessageDialog.warning("Para rellenar estos datos, debe rellenar la casilla \""+Mod303Key.CT_A11.getDescription()+ "\" en la solapa \"Declaraci\u00F3n\"");
 				}
-				if (event.getItem() == SIMPLIFIED_REGIME_TAB && a02 == 2) {
-					event.cancel();
-					MessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
-				}
-				if (getCallback().getMod303().isLastPeriod()) {
-					double a11 = getCallback().getMod303().getAmount(Mod303Key.CT_A11);
-					if (event.getItem() == LAST_PERIOD_INFORMATION_TAB && a11 == 0) {
-						event.cancel();
-						MessageDialog.warning("Para rellenar estos datos, debe rellenar la casilla \""+Mod303Key.CT_A11.getDescription()+ "\" en la solapa \"Declaraci\u00F3n\"");
-					}
-				}
-				
 			}
 		});
 	}
@@ -146,7 +107,7 @@ public class Model3032020AEAT extends Model303Base {
 	
 	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
 		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.AON_CSS.aonIconIdentification()));
+		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.CSS.aonIconEmployee()));
 	}
 	
 	private void paintGeneralRegimeTab(TabLayoutPanel tabPanel) {
@@ -154,18 +115,18 @@ public class Model3032020AEAT extends Model303Base {
 		FlowPanel container = new FlowPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 		table.getColumnFormatter().setWidth(1, "40px");
-		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		table.getColumnFormatter().setWidth(3, "40px");
-		table.getColumnFormatter().setStyleName(3, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(3, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(4, "60px");
 		table.getColumnFormatter().setWidth(5, "40px");
-		table.getColumnFormatter().setStyleName(5, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, "140px");
 		table.getColumnFormatter().setWidth(7, "50px");
 		paintDeclaration(table,Model3032017AEATGeneralRegimeScript1.values(),8);
@@ -173,46 +134,46 @@ public class Model3032020AEAT extends Model303Base {
 		
 		table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 		table.getColumnFormatter().setWidth(1, "40px");
-		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		
 		table.getColumnFormatter().setWidth(3, "40px");
-		table.getColumnFormatter().setStyleName(3, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(3, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(4, "140px");
 		table.getColumnFormatter().setWidth(5, "50px");
 		paintDeclaration(table,Model3032017AEATGeneralRegimeScript2.values(),6);
 		container.add(table);
 		
 		generalRegimeScrollPanel.setWidget(container);
-		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.generalRegime(), AON.AON_CSS.aonIconModel()));
+		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.generalRegime(), AON.CSS.aonIconLetterG()));
 	}
 	
 	private void paintSimplifiedRegimeTab(TabLayoutPanel tabPanel) {
 		ScrollPanel simplifiedRegimeScrollPanel = new ScrollPanel();
 		simplifiedRegimeScrollPanel.setWidget(getSimplifiedRegimePanel());
-		tabPanel.add(simplifiedRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.simplifiedRegime(), AON.AON_CSS.aonIconModel()));
+		tabPanel.add(simplifiedRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.simplifiedRegime(), AON.CSS.aonIconLetterS()));
 	}
 
 	private void paintResultTab(TabLayoutPanel tabPanel) {
 		ScrollPanel resultScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 		table.getColumnFormatter().setWidth(1, "40px");
-		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
-		tabPanel.add(resultScrollPanel, TAB_TEMPLATE.render(AON.MSG.result(), AON.AON_CSS.aonIconModel()));
+		tabPanel.add(resultScrollPanel, TAB_TEMPLATE.render(AON.MSG.result(), AON.CSS.aonIconLetterR()));
 		paintDeclaration(table,Model3032017AEATResultScript.values(),3);
 	}
 
@@ -220,27 +181,27 @@ public class Model3032020AEAT extends Model303Base {
 		ScrollPanel additionalDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 
 		table.getColumnFormatter().setWidth(1, "40px");
-		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		
 		table.getColumnFormatter().setWidth(3, "40px");
-		table.getColumnFormatter().setStyleName(3, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(3, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(4, "140px");
 		
 		table.getColumnFormatter().setWidth(5, "50px");
 		additionalDataScrollPanel.setWidget(table);
-		tabPanel.add(additionalDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.additionalData(), AON.AON_CSS.aonIconCompanyData()));
+		tabPanel.add(additionalDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.additionalData(), AON.CSS.aonIconLetterD()));
 		paintDeclaration(table,Model3032017AEATAdditionalDataScript.values(),3);
 	}
 
-	private void paintAdministrationTab(TabLayoutPanel tabPanel,Model303ModuleOptions options) {	
+	private void paintAdministrationTab(TabLayoutPanel tabPanel) {	
 		FlowPanel panel = new FlowPanel();
 				
 		FlowPanel formContainer = new FlowPanel();
@@ -272,194 +233,72 @@ public class Model3032020AEAT extends Model303Base {
 
 		panel.add(formContainer);
 	
-		FlowPanel administrationPanel = getAdministrationPanel(options); 
+		FlowPanel administrationPanel = getAdministrationPanel(); 
 		panel.add(administrationPanel);
 		FlowPanel informationPanel = getInformationPanel();
 		panel.add(informationPanel);
-		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
+		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration())));
 	}
 		
-	protected FlowPanel getAdministrationPanel(Model303ModuleOptions options) {
+	protected FlowPanel getAdministrationPanel() {
 		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.addStyleName(AON.AON_CSS.aonWidthAll());
-		panel.addStyleName(AON.AON_CSS.aonMarginTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-		 
-		FlexTable tab = new FlexTable();
-		tab.getColumnFormatter().setWidth(0, "30px");
-		tab.getColumnFormatter().setWidth(1, "auto");
-		tab.getColumnFormatter().setWidth(2, "30px");
-		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
-		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
+		panel.setStyleName(AON.CSS.aonScrollArea());
+		panel.addStyleName(AON.CSS.aonWidthAll());
+		panel.addStyleName(AON.CSS.aonMarginTop());
+		panel.addStyleName(AON.CSS.aonPaddingTop());
+		panel.addStyleName(AON.CSS.aonPaddingLeft());
+
 		Label title = new Label("Presentaci\u00F3n del modelo");
-		tab.getFlexCellFormatter().setColSpan(0, 0, 3);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getMod303().getAdministration()));
-		tab.setWidget(0, 0, title);
-		
-		int row = 1;
+		title.setStyleName(AON.CSS.aonMarginTop());
+		title.addStyleName(AON.CSS.aonBold());
+		title.addStyleName(AON.CSS.aonTextUnderline());
+		panel.add(title);
 
-		Label icon1 = new Label();
-		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod303().getAdministration()));
-		tab.setWidget(row, 0, icon1 );
-		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		
 		FlowPanel p1 = new FlowPanel();
-		p1.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button1 = new Button("Descargar fichero para su presentaci\u00F3n");
-		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button1.addStyleName(AON.AON_CSS.aonBorderNone());
-		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button1.addStyleName(AON.AON_CSS.aonClickable());
-		button1.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (getMod303().isFinished() || getMod303().isSent()) {
-					submitForm(DOWNLOAD_FILE_ACTION);
-				} else {
-					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-				}
+		p1.addStyleName(AON.CSS.aonMarginTop());
+		Anchor a1 = new Anchor("Descargar fichero para su presentaci\u00F3n");
+		a1.setStyleName(AON.CSS.aonLabelWithIcon());
+		a1.addStyleName(FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration()));
+		a1.addStyleName(AON.CSS.aonPaddingLeft());
+		a1.addClickHandler( event -> {
+			if (getMod303().isFinished() || getMod303().isSent()) {
+				submitForm(DOWNLOAD_FILE_ACTION);
+			} else {
+				getCallback().showBreakdownPanel(AON.MSG.mustFinishModel());
 			}
 		});
-		p1.add(button1);
-		tab.setWidget(row, 1, p1 );
-		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		tab.getFlexCellFormatter().setColSpan(row, 1, 2);
-		row++;
+		p1.add(a1);
+		panel.add(p1);
 		
-		Label icon2 = new Label();
-		icon2.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod303().getAdministration()));
-		tab.setWidget(row, 0, icon2 );
-		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		FlowPanel p2 = new FlowPanel();
-		p2.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button2 = new Button("Validar e imprimir (PDF) via Agencia Tributaria (a partir de los datos guardados).");
-		button2.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button2.addStyleName(AON.AON_CSS.aonBorderNone());
-		button2.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button2.addStyleName(AON.AON_CSS.aonClickable());
-		button2.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (getMod303().isFinished() || getMod303().isSent()) {
-					submitAEAT(VALIDATE_PRINT_ACTION);
-					getCallback().showVisorAEAT();
-				} else {
-					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-				}
+		p2.addStyleName(AON.CSS.aonMarginTop());
+		Anchor a2 = new Anchor("Validar e imprimir (PDF) via Agencia Tributaria (a partir de los datos guardados).");
+		a2.setStyleName(AON.CSS.aonLabelWithIcon());
+		a2.addStyleName(FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration()));
+		a2.addClickHandler( event -> {
+			if (getMod303().isFinished() || getMod303().isSent()) {
+				submitAEAT(VALIDATE_PRINT_ACTION);
+				getCallback().showVisorAEAT();
+			} else {
+				getCallback().showBreakdownPanel(AON.MSG.mustFinishModel());
 			}
 		});
-		p2.add(button2);
-		tab.setWidget(row, 1, p2 );
-		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		tab.getFlexCellFormatter().setColSpan(2, 1, 2);
-		
-		row++;
-		
-		// CON FIRMA NO CRIPTOGRAFICA
-		Label icon3 = new Label();
-		icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod303().getAdministration()));
-		tab.setWidget(row, 0, icon3 );
-		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		FlowPanel p3 = new FlowPanel();
-		p3.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button3 = new Button("Presentaci\u00F3n via Agencia Tributaria con firma no criptogr\u00e1fica (a partir de los datos guardados).");
-		button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button3.addStyleName(AON.AON_CSS.aonBorderNone());
-		button3.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button3.addStyleName(AON.AON_CSS.aonClickable());
-		button3.addStyleName("aon-icon-beta-text");
-		button3.getElement().getStyle().setPaddingLeft(20, Unit.PX);
-		button3.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {		
-				Boolean showNRC = FiscalModelDeclarationType.DEPOSIT.equals(getMod303().getDeclarationType()); 
-				CertificationPopup certPopup = new CertificationPopup(getAPI(), getMod303().getName(), getMod303().getDocument(), showNRC) {
-							
-					@Override
-					protected void onCancel() {
-					
-					}
-							
-					@Override
-					protected void onAccept() {
-						if(getMod303().isSent()) {
-							getCallback().showBreakdownPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
-						} else if (getMod303().isFinished() || getMod303().isSent()) {
-							submitAEAT(VALIDATE_PRINT_ACTION, getCert(), getPass(), getDocument(), getName(), showNRC ? getNRC() : null);
-							getCallback().showVisorAEAT();
-						} else {
-							getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-						}	
-					}
-				};
-				certPopup.center();
-			}
-		});
-		p3.add(button3);
-		
-		if(options.getAonData().isBetaEnabled()) {
-			CheckBox testMode = new CheckBox();
-			testMode.setValue(false);
-			testMode.setStyleName(AON.AON_CSS.aonMarginRight());
-			testMode.setText("Modo Pruebas");
-			testMode.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					setTest(event.getValue());
-				}
-			});
-			p3.add(testMode);
-		}
-		
-		tab.setWidget(row, 1, p3 );
-		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		p2.add(a2);
+		panel.add(p2);
 
-		MOD303Service.presentationFile(getCallback().getDomainName(), getCallback().getDomain(), getCallback().getUser(), getMod303().getId(), new AsyncCallback<Integer>() {
-
-			@Override public void onFailure(Throwable caught) {}
-
-			@Override
-			public void onSuccess(Integer result) {
-				if(result > 0) {
-					Button download2 = new Button();
-					download2.setStyleName("aon-icon-mail-save");
-					download2.addStyleName(AON.AON_CSS.aonIconCommandButton());
-					download2.getElement().getStyle().setPaddingTop(16, Unit.PX);
-					download2.addClickHandler(new ClickHandler() {
-						
-						@Override
-						public void onClick(ClickEvent event) {
-							getAPI().getFiscal().download(result +"");
-						}
-					});
-					tab.setWidget(3, 2, download2 );
-					tab.getCellFormatter().setStyleName(3, 2, AON.AON_CSS.aonPanelGridEven());
-				} else tab.getFlexCellFormatter().setColSpan(3, 1, 2);
-			}
-		});
-		row++;
-
-		panel.add(tab);
 		return panel;
 	}
 
 	@Override
 	protected LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
-		list.add(new Pair<String, String>("Tr\u00E1mites."
+		LinkedList<Pair<String, String>> list = new LinkedList<>();
+		list.add(new Pair<>("Tr\u00E1mites."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/G414.shtml"));
-		list.add(new Pair<String, String>("Informaci\u00F3n general." 
+		list.add(new Pair<>("Informaci\u00F3n general." 
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/G414.shtml"));
-		list.add(new Pair<String, String>("Ficha."
+		list.add(new Pair<>("Ficha."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G414.shtml"));
-		list.add(new Pair<String, String>("Predeclaraci\u00F3n via AEAT (Papel)"
+		list.add(new Pair<>("Predeclaraci\u00F3n via AEAT (Papel)"
 				,"https://www2.agenciatributaria.gob.es/wlpl/A303-PW18/index.zul?EDFI"));
 		return list;
 	}
@@ -480,7 +319,7 @@ public class Model3032020AEAT extends Model303Base {
 		a12.addItem("(2) NO", "2");
 		paintListBox(a12, Mod303Key.CT_A12, table);
 
-		paintA02(Mod303Key.CT_A02,table,tabPanel);	// ¿Tributa exclusivamente en régimen simplificado?
+		paintA02(Mod303Key.CT_A02,table);	// ¿Tributa exclusivamente en régimen simplificado?
 		
 		paintCheck(Mod303Key.CT_A03,table);	// ¿Es autoliquidación conjunta?
 		
@@ -496,53 +335,49 @@ public class Model3032020AEAT extends Model303Base {
 		paintListBox(a11, Mod303Key.CT_A11, table);
 		a11.setEnabled(getCallback().getMod303().isLastPeriod());
 		if (getCallback().getMod303().isLastPeriod()) {
-			a11.addChangeHandler( new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					if (a11.getSelectedIndex() != 0) {
-						if (AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U1D))
-						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U2D))								
-						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U3D))								
-						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U4D))
-						 || AonMathUtils.isNotZero( getCallback().getMod303().getAmount(Mod303Key.CT_C88))
-						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P1C))
-						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P2C))
-						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P3C))
-						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P4C))
-						 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P5C))) {
+			a11.addChangeHandler( event ->  {
+				if (a11.getSelectedIndex() != 0) {
+					if (AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U1D))
+					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U2D))								
+					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U3D))								
+					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U4D))
+					 || AonMathUtils.isNotZero( getCallback().getMod303().getAmount(Mod303Key.CT_C88))
+					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P1C))
+					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P2C))
+					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P3C))
+					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P4C))
+					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P5C))) {
 
-							Mod303Key[] keys = new Mod303Key[]{
-									 Mod303Key.CT_U1D,Mod303Key.CT_U1C,Mod303Key.CT_U1E
-									,Mod303Key.CT_U2D,Mod303Key.CT_U2C,Mod303Key.CT_U2E
-									,Mod303Key.CT_U3D,Mod303Key.CT_U3C,Mod303Key.CT_U3E
-									,Mod303Key.CT_U4D,Mod303Key.CT_U4C,Mod303Key.CT_U4E
-									,Mod303Key.CT_U5D,Mod303Key.CT_U5C,Mod303Key.CT_U5E
-									
-									,Mod303Key.CT_U13,Mod303Key.CT_C89,Mod303Key.CT_C90,Mod303Key.CT_C91,Mod303Key.CT_C92
-									,Mod303Key.CT_C107
-									,Mod303Key.CT_C80,Mod303Key.CT_C81,Mod303Key.CT_C82,Mod303Key.CT_C93,Mod303Key.CT_C94
-									,Mod303Key.CT_C83,Mod303Key.CT_C84,Mod303Key.CT_C85,Mod303Key.CT_C86,Mod303Key.CT_C95
-									,Mod303Key.CT_C96,Mod303Key.CT_C97,Mod303Key.CT_C98,Mod303Key.CT_C79,Mod303Key.CT_C99 
-									,Mod303Key.CT_C87,Mod303Key.CT_C88
-									
-									,Mod303Key.CT_P1C,Mod303Key.CT_P1I,Mod303Key.CT_P1D,Mod303Key.CT_P1T,Mod303Key.CT_P1P
-									,Mod303Key.CT_P2C,Mod303Key.CT_P2I,Mod303Key.CT_P2D,Mod303Key.CT_P2T,Mod303Key.CT_P2P
-									,Mod303Key.CT_P3C,Mod303Key.CT_P3I,Mod303Key.CT_P3D,Mod303Key.CT_P3T,Mod303Key.CT_P3P
-									,Mod303Key.CT_P4C,Mod303Key.CT_P4I,Mod303Key.CT_P4D,Mod303Key.CT_P4T,Mod303Key.CT_P4P
-									,Mod303Key.CT_P5C,Mod303Key.CT_P5I,Mod303Key.CT_P5D,Mod303Key.CT_P5T,Mod303Key.CT_P5P
-							};
-							for (Mod303Key key : keys) {
-								getCallback().getMod303().ensureDetail(key).clear();
-							}
-							LastPeriodInformationScrollPanel.clear();
-							fillLastPeriodInformationScrollPanel();
-							MessageDialog.warning("Se han inicializado los datos de la solapa \"Inf. Exonerados 390\"");
+						Mod303Key[] keys = new Mod303Key[]{
+								 Mod303Key.CT_U1D,Mod303Key.CT_U1C,Mod303Key.CT_U1E
+								,Mod303Key.CT_U2D,Mod303Key.CT_U2C,Mod303Key.CT_U2E
+								,Mod303Key.CT_U3D,Mod303Key.CT_U3C,Mod303Key.CT_U3E
+								,Mod303Key.CT_U4D,Mod303Key.CT_U4C,Mod303Key.CT_U4E
+								,Mod303Key.CT_U5D,Mod303Key.CT_U5C,Mod303Key.CT_U5E
+								
+								,Mod303Key.CT_U13,Mod303Key.CT_C89,Mod303Key.CT_C90,Mod303Key.CT_C91,Mod303Key.CT_C92
+								,Mod303Key.CT_C107
+								,Mod303Key.CT_C80,Mod303Key.CT_C81,Mod303Key.CT_C82,Mod303Key.CT_C93,Mod303Key.CT_C94
+								,Mod303Key.CT_C83,Mod303Key.CT_C84,Mod303Key.CT_C85,Mod303Key.CT_C86,Mod303Key.CT_C95
+								,Mod303Key.CT_C96,Mod303Key.CT_C97,Mod303Key.CT_C98,Mod303Key.CT_C79,Mod303Key.CT_C99 
+								,Mod303Key.CT_C87,Mod303Key.CT_C88
+								
+								,Mod303Key.CT_P1C,Mod303Key.CT_P1I,Mod303Key.CT_P1D,Mod303Key.CT_P1T,Mod303Key.CT_P1P
+								,Mod303Key.CT_P2C,Mod303Key.CT_P2I,Mod303Key.CT_P2D,Mod303Key.CT_P2T,Mod303Key.CT_P2P
+								,Mod303Key.CT_P3C,Mod303Key.CT_P3I,Mod303Key.CT_P3D,Mod303Key.CT_P3T,Mod303Key.CT_P3P
+								,Mod303Key.CT_P4C,Mod303Key.CT_P4I,Mod303Key.CT_P4D,Mod303Key.CT_P4T,Mod303Key.CT_P4P
+								,Mod303Key.CT_P5C,Mod303Key.CT_P5I,Mod303Key.CT_P5D,Mod303Key.CT_P5T,Mod303Key.CT_P5P
+						};
+						for (Mod303Key key : keys) {
+							getCallback().getMod303().ensureDetail(key).clear();
 						}
+						lastPeriodInformationScrollPanel.clear();
+						fillLastPeriodInformationScrollPanel();
+						AonMessageDialog.warning("Se han inicializado los datos de la solapa \"Inf. Exonerados 390\"");
 					}
-					if (a11.getSelectedIndex() != 0) {
-						MessageDialog.warning("Debe rellenar los datos de la solapa \"Inf. Exonerados 390\"");
-					}
+				}
+				if (a11.getSelectedIndex() != 0) {
+					AonMessageDialog.warning("Debe rellenar los datos de la solapa \"Inf. Exonerados 390\"");
 				}
 			});
 		}
@@ -561,19 +396,15 @@ public class Model3032020AEAT extends Model303Base {
 			int row = table.getRowCount();
 			paintLabel(table, row, AON.MSG.previousReceipt());
 			
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-			final TextBox receiptBox = new TextBox();
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+			final AonTextBox receiptBox = new AonTextBox();
 			receiptBox.setVisibleLength(15);
 			receiptBox.setMaxLength(13);
-			receiptBox.setStyleName(AON.AON_CSS.aonInputText());
 			receiptBox.setValue( getCallback().getMod303().getReplacedNumber() );
-			receiptBox.addValueChangeHandler( new ValueChangeHandler<String>() {
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					getCallback().getMod303().setReplacedNumber(receiptBox.getValue());
-					markAsDirty();
-				}
+			receiptBox.addValueChangeHandler( event ->  {
+				getCallback().getMod303().setReplacedNumber(receiptBox.getValue());
+				markAsDirty();
 			});
 			table.setWidget(row, 1, receiptBox);
 		}
@@ -600,10 +431,10 @@ public class Model3032020AEAT extends Model303Base {
 		container.add(addGroupPanel("", table));
 		
 		declarationScrollPanel.setWidget(container);
-		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
+		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.CSS.aonIconData()));
 	}
 	
-	private void paintA02(Mod303Key key, FlexTable table,final TabLayoutPanel tabPanel) {
+	private void paintA02(Mod303Key key, FlexTable table) {
 		final ListBox a02 = new ListBox();
 		a02.addItem("S\u00F3lo Reg. Simplificado");
 		a02.addItem("Reg. General y Reg. Simpl.");
@@ -614,12 +445,12 @@ public class Model3032020AEAT extends Model303Base {
 	private FlexTable createTable() {
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
 		table.getColumnFormatter().setWidth(1, "300px");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 		return table;
 	}
 	
@@ -634,172 +465,147 @@ public class Model3032020AEAT extends Model303Base {
 	}
 
 	private Model303AEATActivityFarmerTable getActivityFarmerTable() {
-		farmerTable.addRangeChangeHandler(new Handler() {
-			
-			@Override
-			public void onRangeChange(RangeChangeEvent event) {
-				farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
-			}
-		});
-		
-		farmerTable.addSelectionHandler(new SelectionHandler<Mod303ActivityFarmer>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Mod303ActivityFarmer> event) {
-				final Mod303ActivityFarmer original = Mod303ActivityFarmer.clone(event.getSelectedItem()); 
-				int idx = 0;
-				for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
-					if (getCallback().getMod303().getActivityFarmerList().get(i) == event.getSelectedItem()) {
-						idx = i;
-					}
+		farmerTable.paint(getCallback().getMod303().getActivityFarmerList());		
+		farmerTable.addSelectionHandler(event -> {
+			final Mod303ActivityFarmer original = Mod303ActivityFarmer.clone(event.getSelectedItem()); 
+			int idx = 0;
+			for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
+				if (getCallback().getMod303().getActivityFarmerList().get(i) == event.getSelectedItem()) {
+					idx = i;
 				}
-				final int currentIndex = idx;
-				
-				final CustomDialog dialog = new CustomDialog();
-				IMod303ActivityFarmerCallback activityCallback = new IMod303ActivityFarmerCallback() {
-					
-					@Override
-					public void onCancel() {
-						dialog.hide();
-						getCallback().getMod303().getActivityFarmerList().set(currentIndex, original);
-						calculateAndRefresh();
-						farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
-						farmerTable.redraw();
-					}
-					
-					@Override
-					public void onAccept(Mod303ActivityFarmer act) {
-						getCallback().getMod303().getActivityFarmerList().set(currentIndex, act);
-						dialog.hide();
-						farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
-						farmerTable.redraw();
-					}
-					
-					@Override
-					public void onRemove() {
-						dialog.hide();
-						for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
-							if (getCallback().getMod303().getActivityFarmerList().get(i) == event.getSelectedItem()) {
-								getCallback().getMod303().getActivityFarmerList().get(i).initialize();
-							}
-						}
-						calculateAndRefresh();
-						farmerTable.redraw();
-					}
-
-					@Override
-					public Mod303ActivityFarmer getActivity() {
-						return event.getSelectedItem();
-					}
-				};
-				Model303AEATActivityFarmer actPanel = new Model303AEATActivityFarmer(activityCallback, getCallback().getMod303().isLastPeriod());
-				actPanel.addValueChangeHandler(new ValueChangeHandler<Mod303ActivityFarmer>() {
-					
-					@Override
-					public void onValueChange(ValueChangeEvent<Mod303ActivityFarmer> event) {
-						calculateAndRefresh( new AsyncCallback<Mod303>() {
-
-							@Override public void onFailure(Throwable caught) {}
-
-							@Override
-							public void onSuccess(Mod303 result) {
-								
-								actPanel.populateActivity(result.getActivityFarmerList().get(currentIndex));
-							}
-						});
-						
-					}
-				});
-				dialog.setCaption(AON.MSG.farmerActivity());
-				dialog.setGlassEnabled(true);
-				dialog.setAnimationEnabled(true);
-				dialog.add(actPanel);
-				dialog.setWidth("700px");
-				dialog.setHeight("280px");
-				dialog.show();
-				dialog.center();
 			}
+			final int currentIndex = idx;
+			
+			final AonCustomDialog dialog = new AonCustomDialog();
+			IMod303ActivityFarmerCallback activityCallback = new IMod303ActivityFarmerCallback() {
+				
+				@Override
+				public void onCancel() {
+					dialog.hide();
+					getCallback().getMod303().getActivityFarmerList().set(currentIndex, original);
+					calculateAndRefresh();
+					farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
+				}
+				
+				@Override
+				public void onAccept(Mod303ActivityFarmer act) {
+					getCallback().getMod303().getActivityFarmerList().set(currentIndex, act);
+					dialog.hide();
+					farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
+				}
+				
+				@Override
+				public void onRemove() {
+					dialog.hide();
+					for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
+						if (getCallback().getMod303().getActivityFarmerList().get(i) == event.getSelectedItem()) {
+							getCallback().getMod303().getActivityFarmerList().get(i).initialize();
+						}
+					}
+					calculateAndRefresh();
+					farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
+				}
+
+				@Override
+				public Mod303ActivityFarmer getActivity() {
+					return event.getSelectedItem();
+				}
+			};
+			Model303AEATActivityFarmer actPanel = new Model303AEATActivityFarmer(activityCallback, getCallback().getMod303().isLastPeriod());
+			actPanel.addValueChangeHandler(event1 ->  calculateAndRefresh( new AsyncCallback<Mod303>() {
+
+				@Override 
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
+
+				@Override
+				public void onSuccess(Mod303 result) {
+					
+					actPanel.populateActivity(result.getActivityFarmerList().get(currentIndex));
+				}
+			}));
+			dialog.setCaption(AON.MSG.farmerActivity());
+			dialog.setGlassEnabled(true);
+			dialog.setAnimationEnabled(true);
+			dialog.add(actPanel);
+			dialog.setWidth("700px");
+			dialog.setHeight("280px");
+			dialog.show();
+			dialog.center();
 		});
-		farmerTable.setVisibleRangeAndClearData(farmerTable.getVisibleRange(), true);
+		farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
 		return farmerTable;
 	}
 	
 	private Model303AEATActivityTable getActivityTable() {
 		activityTable.paint(getCallback().getMod303().getActivityList());
-		activityTable.addSelectionHandler(new SelectionHandler<Mod303Activity>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Mod303Activity> event) {
-				final Mod303Activity original = Mod303Activity.clone(event.getSelectedItem()); 
-				int idx = 0;
-				for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
-					if (getCallback().getMod303().getActivityList().get(i) == event.getSelectedItem()) {
-						idx = i;
-					}
+		activityTable.addSelectionHandler(event -> {
+			final Mod303Activity original = Mod303Activity.clone(event.getSelectedItem()); 
+			int idx = 0;
+			for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
+				if (getCallback().getMod303().getActivityList().get(i) == event.getSelectedItem()) {
+					idx = i;
 				}
-				final int currentIndex = idx;
-				final CustomDialog dialog = new CustomDialog();
-				IMod303ActivityCallback activityCallback = new IMod303ActivityCallback() {
-					
-					@Override
-					public void onCancel() {
-						dialog.hide();
-						getCallback().getMod303().getActivityList().set(currentIndex, original);
-						calculateAndRefresh();
-						activityTable.paint(getCallback().getMod303().getActivityList());
-					}
-					
-					@Override
-					public void onAccept(Mod303Activity act) {
-						dialog.hide();
-						getCallback().getMod303().getActivityList().set(currentIndex, act);
-						calculateAndRefresh();
-						activityTable.paint(getCallback().getMod303().getActivityList());
-					}
-					
-					@Override
-					public void onRemove() {
-						dialog.hide();
-						for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
-							if (getCallback().getMod303().getActivityList().get(i) == event.getSelectedItem()) {
-								getCallback().getMod303().getActivityList().get(i).initialize();
-							}
-						}
-						calculateAndRefresh();
-						activityTable.paint(getCallback().getMod303().getActivityList());
-					}
-
-					@Override
-					public Mod303Activity getActivity() {
-						return event.getSelectedItem();
-					}
-				};
-				Model303AEATActivity2020 actPanel = new Model303AEATActivity2020(activityCallback, getCallback().getMod303().isLastPeriod());
-				actPanel.addValueChangeHandler(new ValueChangeHandler<Mod303Activity>() {
-					
-					@Override
-					public void onValueChange(ValueChangeEvent<Mod303Activity> event) {
-						calculateAndRefresh( new AsyncCallback<Mod303>() {
-
-							@Override public void onFailure(Throwable caught) {}
-
-							@Override
-							public void onSuccess(Mod303 result) {
-								actPanel.populateActivity(result.getActivityList().get(currentIndex));
-							}
-						});
-						
-					}
-				});
-				dialog.setCaption(AON.MSG.simplifieedActivities());
-				dialog.setGlassEnabled(true);
-				dialog.setAnimationEnabled(true);
-				dialog.add(actPanel);
-				dialog.setWidth("700px");
-				dialog.setHeight("620px");
-				dialog.show();
-				dialog.center();
 			}
+			final int currentIndex = idx;
+			final AonCustomDialog dialog = new AonCustomDialog();
+			IMod303ActivityCallback activityCallback = new IMod303ActivityCallback() {
+				
+				@Override
+				public void onCancel() {
+					dialog.hide();
+					getCallback().getMod303().getActivityList().set(currentIndex, original);
+					calculateAndRefresh();
+					activityTable.paint(getCallback().getMod303().getActivityList());
+				}
+				
+				@Override
+				public void onAccept(Mod303Activity act) {
+					dialog.hide();
+					getCallback().getMod303().getActivityList().set(currentIndex, act);
+					calculateAndRefresh();
+					activityTable.paint(getCallback().getMod303().getActivityList());
+				}
+				
+				@Override
+				public void onRemove() {
+					dialog.hide();
+					for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
+						if (getCallback().getMod303().getActivityList().get(i) == event.getSelectedItem()) {
+							getCallback().getMod303().getActivityList().get(i).initialize();
+						}
+					}
+					calculateAndRefresh();
+					activityTable.paint(getCallback().getMod303().getActivityList());
+				}
+
+				@Override
+				public Mod303Activity getActivity() {
+					return event.getSelectedItem();
+				}
+			};
+			Model303AEATActivity2020 actPanel = new Model303AEATActivity2020(activityCallback, getCallback().getMod303().isLastPeriod());
+			actPanel.addValueChangeHandler(event1 -> calculateAndRefresh( new AsyncCallback<Mod303>() {
+
+				@Override 
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
+
+				@Override
+				public void onSuccess(Mod303 result) {
+					actPanel.populateActivity(result.getActivityList().get(currentIndex));
+				}
+			}));
+			dialog.setCaption(AON.MSG.simplifieedActivities());
+			dialog.setGlassEnabled(true);
+			dialog.setAnimationEnabled(true);
+			dialog.add(actPanel);
+			dialog.setWidth("700px");
+			dialog.setHeight("620px");
+			dialog.show();
+			dialog.center();
 		});
 		return activityTable;
 	}
@@ -807,13 +613,13 @@ public class Model3032020AEAT extends Model303Base {
 	private FlexTable getSimplifiedTable() {
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 		table.getColumnFormatter().setWidth(1, "40px");
-		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		table.getColumnFormatter().setWidth(3, "50px");
 		if (getCallback().getMod303().isLastPeriod()) {
@@ -827,50 +633,54 @@ public class Model3032020AEAT extends Model303Base {
 	@Override
 	protected void populate(Mod303 mod303) {
 		super.populate(mod303);
-		farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
+		farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
 		activityTable.paint(getCallback().getMod303().getActivityList());
 	}
 	
 	protected void save(Model303ModuleOptions options) {
 		save(new AsyncCallback<Mod303>() {
-			@Override public void onFailure(Throwable caught) {}
+			@Override 
+			public void onFailure(Throwable caught) {
+				// Nothing
+			}
+			
 			@Override
 			public void onSuccess(Mod303 result) {
-				farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
+				farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
 				activityTable.paint(getCallback().getMod303().getActivityList());
 			}
 		},options);
 	}
 
 	private void paintLastPeriodInformationTab(TabLayoutPanel tabPanel) {
-		LastPeriodInformationScrollPanel = new ScrollPanel();
+		lastPeriodInformationScrollPanel = new ScrollPanel();
 		fillLastPeriodInformationScrollPanel();
-		tabPanel.add(LastPeriodInformationScrollPanel, TAB_TEMPLATE.render("Inf. Exonerados 390.", AON.AON_CSS.aonIconModel()));
+		tabPanel.add(lastPeriodInformationScrollPanel, TAB_TEMPLATE.render("Inf. Exonerados 390.", AON.CSS.aonIconData()));
 	}
 
 
 	private void fillLastPeriodInformationScrollPanel() {
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 		table.getColumnFormatter().setWidth(1, "40px");
-		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		table.getColumnFormatter().setWidth(3, "50px");
 
 		paintLabel(table, 0, AON.MSG.activities(),true);
 
 		FlowPanel actContainer = new FlowPanel();
-		actContainer.setStyleName(AON.AON_CSS.aonBlockCenter());
-		actContainer.addStyleName(AON.AON_CSS.aonWidth90Percent());
+		actContainer.setStyleName(AON.CSS.aonBlockCenter());
+		actContainer.addStyleName(AON.CSS.aonWidthAlmostAll());
 
 		FlexTable tab = new FlexTable();
-		tab.addStyleName(AON.AON_CSS.aonDataTable());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tab.addStyleName(AON.CSS.aonTable());
+		tab.addStyleName(AON.CSS.aonMarginBottom());
 		
 		tab.getColumnFormatter().setWidth(0, "40px");
 		tab.getColumnFormatter().setWidth(1, "80px");
@@ -880,14 +690,17 @@ public class Model3032020AEAT extends Model303Base {
 		
 		tab.setWidget(1, 0, new Label() );
 		tab.setWidget(1, 1, new Label( AON.MSG.epigraph()) );
-		tab.getFlexCellFormatter().addStyleName(1,1,AON.AON_CSS.aonDataTableHeader());
+		tab.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonBorderBottom());
 		tab.setWidget(1, 2, new Label( AON.MSG.key()) );
-		tab.getFlexCellFormatter().addStyleName(1,2,AON.AON_CSS.aonDataTableHeader());
+		tab.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonBorderBottom());
 		tab.setWidget(1, 3, new Label( AON.MSG.description()) );
-		tab.getFlexCellFormatter().addStyleName(1,3,AON.AON_CSS.aonDataTableHeader());
+		tab.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonBorderBottom());
 		tab.setWidget(1, 4, new Label() );
-		tab.getFlexCellFormatter().addStyleName(1,4,AON.AON_CSS.aonDataTableHeader());
-		
+		tab.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonBold());
+		tab.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonBorderBottom());
 		
 		paintActivityRow(tab,Mod303Key.CT_U1D,Mod303Key.CT_U1C,Mod303Key.CT_U1E);
 		paintActivityRow(tab,Mod303Key.CT_U2D,Mod303Key.CT_U2C,Mod303Key.CT_U2E);
@@ -906,12 +719,12 @@ public class Model3032020AEAT extends Model303Base {
 		paintLabel(table, table.getRowCount() , AON.MSG.prorrata(),true);
 		
 		FlowPanel actContainer2 = new FlowPanel();
-		actContainer2.setStyleName(AON.AON_CSS.aonBlockCenter());
-		actContainer2.addStyleName(AON.AON_CSS.aonWidth90Percent());
+		actContainer2.setStyleName(AON.CSS.aonBlockCenter());
+		actContainer2.addStyleName(AON.CSS.aonWidthAlmostAll());
 
 		FlexTable tab2 = new FlexTable();
-		tab2.addStyleName(AON.AON_CSS.aonDataTable());
-		tab2.addStyleName(AON.AON_CSS.aonMarginBottom());
+		tab2.addStyleName(AON.CSS.aonTable());
+		tab2.addStyleName(AON.CSS.aonMarginBottom());
 		
 		tab2.getColumnFormatter().setWidth(0, "80px");
 		tab2.getColumnFormatter().setWidth(1, "20px");
@@ -922,19 +735,26 @@ public class Model3032020AEAT extends Model303Base {
 		tab2.getColumnFormatter().setWidth(6, "auto");
 		
 		tab2.setWidget(1, 0, new Label( "C.N.A.E.") ); 
-		tab2.getFlexCellFormatter().addStyleName(1,0,AON.AON_CSS.aonDataTableHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonBold());
+		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonBorderBottom());
 		tab2.setWidget(1, 1, new Label() ); 
-		tab2.getFlexCellFormatter().addStyleName(1,1,AON.AON_CSS.aonDataTableHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonBold());
+		tab2.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonBorderBottom());
 		tab2.setWidget(1, 2, new Label( AON.MSG.operationsAmount()) );
-		tab2.getFlexCellFormatter().addStyleName(1,2,AON.AON_CSS.aonDataTableHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonBold());
+		tab2.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonBorderBottom());
 		tab2.setWidget(1, 3, new Label( AON.MSG.operationsAmountWithRight()) );
-		tab2.getFlexCellFormatter().addStyleName(1,3,AON.AON_CSS.aonDataTableHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonBold());
+		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonBorderBottom());
 		tab2.setWidget(1, 4, new Label( AON.MSG.type()) );
-		tab2.getFlexCellFormatter().addStyleName(1,4,AON.AON_CSS.aonDataTableHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonBold());
+		tab2.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonBorderBottom());
 		tab2.setWidget(1, 5, new Label( AON.MSG.prorrataPercent()) );
-		tab2.getFlexCellFormatter().addStyleName(1,5,AON.AON_CSS.aonDataTableHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,5,AON.CSS.aonBold());
+		tab2.getFlexCellFormatter().addStyleName(1,5,AON.CSS.aonBorderBottom());
 		tab2.setWidget(1, 6, new Label() ); 
-		tab2.getFlexCellFormatter().addStyleName(1,6,AON.AON_CSS.aonDataTableHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,6,AON.CSS.aonBold());
+		tab2.getFlexCellFormatter().addStyleName(1,6,AON.CSS.aonBorderBottom());
 		
 		paintProrrateRow(tab2,Mod303Key.CT_P1C,Mod303Key.CT_P1I,Mod303Key.CT_P1D,Mod303Key.CT_P1T,Mod303Key.CT_P1P);
 		paintProrrateRow(tab2,Mod303Key.CT_P2C,Mod303Key.CT_P2I,Mod303Key.CT_P2D,Mod303Key.CT_P2T,Mod303Key.CT_P2P);
@@ -948,26 +768,20 @@ public class Model3032020AEAT extends Model303Base {
 		table.setWidget(row, 0, actContainer2);
 		table.getFlexCellFormatter().setColSpan(row, 0, 4);
 		
-		LastPeriodInformationScrollPanel.setWidget(table);
+		lastPeriodInformationScrollPanel.setWidget(table);
 	}
 
 
 	private void paintProrrateRow(FlexTable tab, Mod303Key cnaeKey, Mod303Key amountKey, Mod303Key amountRightKey, Mod303Key typeKey, Mod303Key percentKey) {
 		int row = tab.getRowCount();
 		
-		TextBox cnae = new TextBox();
+		AonTextBox cnae = new AonTextBox();
 		cnae.setVisibleLength(4);
 		cnae.setMaxLength(4);
-		cnae.setStyleName(AON.AON_CSS.aonInputText());
 		cnae.setValue(getCallback().getMod303().getDescription(cnaeKey));
-		cnae.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getCallback().getMod303().putDescription(cnaeKey, cnae.getValue() );
-				markAsDirty();
-			}
-			
+		cnae.addValueChangeHandler(event ->  {
+			getCallback().getMod303().putDescription(cnaeKey, cnae.getValue() );
+			markAsDirty();
 		});
 		tab.setWidget(row, 0, cnae);
 
@@ -977,40 +791,24 @@ public class Model3032020AEAT extends Model303Base {
 			getCallback().getMod303().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
 			markAsDirty();
 		});
-		Button button = new Button();
-		button.setStyleName(AON.AON_CSS.aonIconLoupe());
-		button.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		button.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				panel.onShow();
-			}
-		});
+		
+		AonTableButton button = new AonTableButton("CNAE",AON.CSS.aonIconSearch());
+		button.addClickHandler(event -> panel.onShow());
 		tab.setWidget(row, 1, button);
 		
-		DoubleBox amount = new DoubleBox();
+		AonDoubleBox amount = new AonDoubleBox();
 		amount.setValue(getCallback().getMod303().getAmount(amountKey));
-		amount.addValueChangeHandler(new ValueChangeHandler<Double>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getCallback().getMod303().putAmount(amountKey, amount.getValue() );
-				markAsDirty();
-			}
-			
+		amount.addValueChangeHandler(event -> {
+			getCallback().getMod303().putAmount(amountKey, amount.getValue() );
+			markAsDirty();
 		});
 		tab.setWidget(row, 2, amount);
 		
-		DoubleBox amountRight = new DoubleBox();
+		AonDoubleBox amountRight = new AonDoubleBox();
 		amountRight.setValue(getCallback().getMod303().getAmount(amountRightKey));
-		amountRight.addValueChangeHandler(new ValueChangeHandler<Double>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getCallback().getMod303().putAmount(amountRightKey, amountRight.getValue() );
-				markAsDirty();
-			}
-			
+		amountRight.addValueChangeHandler(event ->  {
+			getCallback().getMod303().putAmount(amountRightKey, amountRight.getValue() );
+			markAsDirty();
 		});
 		tab.setWidget(row, 3, amountRight);
 		
@@ -1023,27 +821,18 @@ public class Model3032020AEAT extends Model303Base {
 		if (AonStringUtils.equals(type, "G")) typeBox.setSelectedIndex(1);
 		else if (AonStringUtils.equals(type, "E")) typeBox.setSelectedIndex(2);
 		else typeBox.setSelectedIndex(0); 
-		typeBox.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				getCallback().getMod303().putDescription(typeKey,typeBox.getSelectedValue());
-				markAsDirty();
-			}
+		typeBox.addChangeHandler(event -> {
+			getCallback().getMod303().putDescription(typeKey,typeBox.getSelectedValue());
+			markAsDirty();
 		});
 		tab.setWidget(row, 4, typeBox);
 		
 		
-		DoubleBox percent = new DoubleBox();
+		AonDoubleBox percent = new AonDoubleBox();
 		percent.setValue(getCallback().getMod303().getAmount(percentKey));
-		percent.addValueChangeHandler(new ValueChangeHandler<Double>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getCallback().getMod303().putAmount(percentKey, percent.getValue() );
-				markAsDirty();
-			}
-			
+		percent.addValueChangeHandler(event -> {
+			getCallback().getMod303().putAmount(percentKey, percent.getValue() );
+			markAsDirty();
 		});
 		tab.setWidget(row, 5, percent);
 	}
@@ -1054,48 +843,33 @@ public class Model3032020AEAT extends Model303Base {
 
 		tab.setWidget(row, 0, new Label( row == 2 ? "Principal" : "Otras" ) );
 
-		TextBox epi = new TextBox();
+		AonTextBox epi = new AonTextBox();
 		epi.setVisibleLength(5);
 		epi.setMaxLength(4);
-		epi.setStyleName(AON.AON_CSS.aonInputText());
 		epi.setValue(getCallback().getMod303().getDescription(epiKey));
-		epi.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getCallback().getMod303().putDescription(epiKey,epi.getValue());
-				markAsDirty();
-			}
+		epi.addValueChangeHandler(event -> {
+			getCallback().getMod303().putDescription(epiKey,epi.getValue());
+			markAsDirty();
 		});
 		tab.setWidget(row, 1, epi);
 
-		TextBox key = new TextBox();
+		AonTextBox key = new AonTextBox();
 		key.setVisibleLength(2);
 		key.setMaxLength(1);
-		key.setStyleName(AON.AON_CSS.aonInputText());
 		key.setValue(getCallback().getMod303().getDescription(keyKey));
-		key.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getCallback().getMod303().putDescription(keyKey,key.getValue());
-				markAsDirty();
-			}
+		key.addValueChangeHandler(event -> {
+			getCallback().getMod303().putDescription(keyKey,key.getValue());
+			markAsDirty();
 		});
 		tab.setWidget(row, 2, key);
 
-		TextBox description = new TextBox();
+		AonTextBox description = new AonTextBox();
 		description.setVisibleLength(40);
 		description.setMaxLength(40);
-		description.setStyleName(AON.AON_CSS.aonInputText());
 		description.setValue(getCallback().getMod303().getDescription(desKey));
-		description.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getCallback().getMod303().putDescription(desKey,description.getValue());
-				markAsDirty();
-			}
+		description.addValueChangeHandler(event -> {
+			getCallback().getMod303().putDescription(desKey,description.getValue());
+			markAsDirty();
 		});
 		tab.setWidget(row, 3, description);
 		

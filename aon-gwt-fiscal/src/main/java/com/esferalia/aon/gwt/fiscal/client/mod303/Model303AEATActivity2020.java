@@ -185,7 +185,7 @@ public class Model303AEATActivity2020 extends DockLayoutPanel implements HasValu
 		final AonToolbarButton cancel = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconCancel());
 		cancel.addClickHandler(event ->  callback.onCancel());
 		toolbarPanel.add(cancel);
-		
+		 
 		final AonToolbarButton remove = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
 		remove.addClickHandler( event -> {
 				AonConfirmDialog dialog = new AonConfirmDialog();
@@ -201,6 +201,7 @@ public class Model303AEATActivity2020 extends DockLayoutPanel implements HasValu
 					}
 				});
 		});
+		toolbarPanel.add(remove);
 				
 		FlowPanel epigraphContainerPanel = new FlowPanel();
 		epigraphContainerPanel.setStyleName(AON.CSS.aonPadding());
@@ -225,6 +226,8 @@ public class Model303AEATActivity2020 extends DockLayoutPanel implements HasValu
 		epigraphLabel.addStyleName(AON.CSS.aonMarginLeft());
 		epigraphContainerPanel.add(epigraphLabel);
 		
+		addNorth(epigraphContainerPanel, 40);
+
 		final Model303AEATActivity2018Panel epigraphPanel = new Model303AEATActivity2018Panel();
 		epigraphPanel.addSelectionHandler( new SelectionHandler<Modules2018.Epigraph>() {
 			

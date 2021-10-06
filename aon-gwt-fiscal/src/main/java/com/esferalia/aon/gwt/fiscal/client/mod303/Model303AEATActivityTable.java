@@ -14,12 +14,12 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-public class Model303AEATActivityTable extends FlowPanel implements HasSelectionHandlers<Mod303Activity> {
+class Model303AEATActivityTable extends FlowPanel implements HasSelectionHandlers<Mod303Activity> {
 	
 	private boolean lastPeriod;
 	private AonDisplayGrid grid;
 	
-	public Model303AEATActivityTable(boolean lastPeriod) {
+	protected Model303AEATActivityTable(boolean lastPeriod) {
 		setStyleName(AON.CSS.aonWidthAll());
 		
 		this.lastPeriod = lastPeriod;
@@ -54,7 +54,7 @@ public class Model303AEATActivityTable extends FlowPanel implements HasSelection
 			AonDisplayGridRow actRow = grid.addRow();
 			actRow
 				.addCell( new Label( AonStringUtils.abbreviate(act.getFullDescription(), 100) ), AON.CSS.aonFlexGrow1() )
-				.addCell( new Label( AON.FMT.format(act.getDev()) ), AON.CSS.aonTextRight() , AON.CSS.aonTextRight())
+				.addCell( new Label( AON.FMT.format(act.getDev()) ), AON.CSS.aonTextRight())
 				.addCellIf( !lastPeriod, new Label( AON.FMT.format(act.getPor()) ), AON.CSS.aonTextRight())
 				.addCellIf( !lastPeriod, new Label( AON.FMT.format(act.getIng()) ), AON.CSS.aonTextRight())
 				.addCellIf( lastPeriod, new Label( AON.FMT.format(act.getRes()) ), AON.CSS.aonTextRight())

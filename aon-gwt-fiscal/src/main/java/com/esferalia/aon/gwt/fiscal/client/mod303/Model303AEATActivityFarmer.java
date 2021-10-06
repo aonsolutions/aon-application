@@ -1,20 +1,22 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
-import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.FarmerIVA;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.FarmerIVA;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -27,14 +29,14 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 	private final Label epigraphLabel = new Label();
 	
 	private boolean lastPeriod;
-	private DoubleBox vol = new DoubleBox();
-	private DoubleBox ind = new DoubleBox(DoubleBox.VISIBLE_LENGTH,5);
-	private DoubleBox cuo = new DoubleBox();
-	private DoubleBox por = new DoubleBox();
-	private DoubleBox ing = new DoubleBox();
+	private AonDoubleBox vol = new AonDoubleBox();
+	private AonDoubleBox ind = new AonDoubleBox(AonDoubleBox.VISIBLE_LENGTH,5);
+	private AonDoubleBox cuo = new AonDoubleBox();
+	private AonDoubleBox por = new AonDoubleBox();
+	private AonDoubleBox ing = new AonDoubleBox();
 	
-	private DoubleBox sop = new DoubleBox();
-	private DoubleBox cad = new DoubleBox();
+	private AonDoubleBox sop = new AonDoubleBox();
+	private AonDoubleBox cad = new AonDoubleBox();
 	
 	public static interface IMod303ActivityFarmerCallback {
 		Mod303ActivityFarmer getActivity();
@@ -46,124 +48,86 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 	public Model303AEATActivityFarmer(final IMod303ActivityFarmerCallback cbk, boolean lastPeriod) {
 		super(Unit.PX);
 		this.lastPeriod = lastPeriod;
-		setStyleName(AON.AON_CSS.aonSelector());
+		setStyleName(AON.CSS.aonSelector());
 		setWidth("700px");
 		setHeight("280px");
 
-		FlowPanel headerPanel = new FlowPanel();
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label(AON.MSG.activity()));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.setWidget(0, 1, new Label(AON.MSG.additionalData()));
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
+		AonToolbar toolbarPanel = new AonToolbar("");
+		addNorth(toolbarPanel, AonToolbar.HEIGTH);
+		
+		final AonToolbarButton accept = new AonToolbarButton(AON.MSG.saveAction(),AON.CSS.aonIconAccept());
+		accept.addClickHandler(event -> cbk.onAccept(
+				new Mod303ActivityFarmer()
+					.setCode(epigraph.getText())
+					.setDescription(epigraphLabel.getText())
+					.setVol(vol.getValue())
+					.setInd(ind.getValue())
+					.setCuo(cuo.getValue())
+					.setPor(por.getValue())
+					.setIng(ing.getValue())
+					.setSop(sop.getValue())
+					.setCad(cad.getValue())
+					)
+		);
+		toolbarPanel.add(accept);
+		
+		final AonToolbarButton cancel = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconCancel());
+		cancel.addClickHandler(event -> cbk.onCancel());
+		toolbarPanel.add(cancel);
+		
+		final AonToolbarButton remove = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+		remove.addClickHandler(event -> {
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.confirm(AON.MSG.confirmDeleteAction(), new AonConfirmDialogCallback() {
+				@Override
+				public void onCancel() {
+					// Nothing
+				}
+				
+				@Override
+				public void onAccept() {
+					cbk.onRemove();
+				}
+			});
+		});
+		toolbarPanel.add(remove);
+		
+		FlowPanel epigraphContainerPanel = new FlowPanel();
+		epigraphContainerPanel.setStyleName(AON.CSS.aonPadding());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonWidthAlmostAll());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonBlockCenter());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonBorder());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonFlexBlock());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonMarginBottom());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonBackgroundLigthGray());
 
-		final Button accept = new Button();
-		accept.setText(AON.MSG.saveAction());
-		accept.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		accept.addStyleName(AON.AON_CSS.aonIconSave());
-		accept.addClickHandler(new ClickHandler() {
-			
+		epigraph.setStyleName(AON.CSS.aonBold());
+		epigraph.setStyleName(AON.CSS.aonFontLarger());
+		epigraph.getElement().getStyle().setWidth(60, Unit.PX);
+		epigraphContainerPanel.add(epigraph);
+
+		AonTableButton showEpigraphs = new AonTableButton(AON.MSG.epigraph() ,AON.CSS.aonIconSearch());
+		epigraphContainerPanel.add(showEpigraphs);
+
+		epigraphLabel.setStyleName(AON.CSS.aonFontLarger());
+		epigraphLabel.addStyleName(AON.CSS.aonNowrap());
+		epigraphLabel.addStyleName(AON.CSS.aonFlexGrow1());
+		epigraphLabel.addStyleName(AON.CSS.aonMarginLeft());
+		epigraphContainerPanel.add(epigraphLabel);
+
+		final Model303AEATActivityFarmer2018 activityFarmer2016 = new Model303AEATActivityFarmer2018();
+		activityFarmer2016.addSelectionHandler( new SelectionHandler<FarmerIVA>() {
 			@Override
-			public void onClick(ClickEvent event) {
-				cbk.onAccept(
-					new Mod303ActivityFarmer()
-						.setCode(epigraph.getText())
-						.setDescription(epigraphLabel.getText())
-						.setVol(vol.getValue())
-						.setInd(ind.getValue())
-						.setCuo(cuo.getValue())
-						.setPor(por.getValue())
-						.setIng(ing.getValue())
-						.setSop(sop.getValue())
-						.setCad(cad.getValue())
-						);
-			}
-		});
-		buttonContainer.add(accept);
-		
-		final Button cancel = new Button();
-		cancel.setText(AON.MSG.cancelAction());
-		cancel.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		cancel.addStyleName(AON.AON_CSS.aonIconCancel());
-		cancel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				cbk.onCancel();
-			}
-		});
-		buttonContainer.add(cancel);
-		
-		final Button remove = new Button();
-		remove.setText(AON.MSG.deleteAction());
-		remove.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		remove.addStyleName(AON.AON_CSS.aonIconDelete());
-		remove.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				ConfirmDialog dialog = new ConfirmDialog();
-				dialog.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
-					@Override
-					public void onCancel() {
-					}
-					
-					@Override
-					public void onAccept() {
-						cbk.onRemove();
-					}
-				});
-			}
-		});
-		buttonContainer.add(remove);
-		
-		toolbarPanel.add(toolbar);
-		headerPanel.add(toolbarPanel);
-		
-		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.setStyleName(AON.AON_CSS.aonPadding());
-		FlexTable tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab.addStyleName(AON.AON_CSS.aonDataTable());
-		tab.addStyleName(AON.AON_CSS.aonBorderBottom());
-		epigraph.setStyleName(AON.AON_CSS.aonBold());
-		epigraph.setStyleName(AON.AON_CSS.aonFontBig());
-		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonWidth80());
-		tab.setWidget(0, 0, epigraph);
-		Button activitiesButton = new Button();
-		activitiesButton.setStyleName(AON.AON_CSS.aonIconLoupe());
-		activitiesButton.addStyleName(AON.AON_CSS.aonBorderNone());
-		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonWidth20());
-		tab.setWidget(0, 1, activitiesButton);
-		
-		epigraphLabel.setStyleName(AON.AON_CSS.aonFontBig());
-		epigraphLabel.setStyleName(AON.AON_CSS.aonNowrap());
-		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonWidthAuto());
-		tab.setWidget(0, 2, epigraphLabel);
-		
-		final Model303AEATActivityFarmer2016 activityFarmer2016 = new Model303AEATActivityFarmer2016(new Model303AEATActivityFarmer2016.SelectionCallBack() {
-			
-			@Override
-			public void onSelect(FarmerIVA selected) {
+			public void onSelection(SelectionEvent<FarmerIVA> event) {
+				FarmerIVA selected = event.getSelectedItem();
 				if (AonStringUtils.isNotBlank( cbk.getActivity().getCode())) {
-					ConfirmDialog dialog = new ConfirmDialog();
-					dialog.confirm(AON.MSG.epigrapChanged(), new ConfirmDialogCallback() {
+					AonConfirmDialog dialog = new AonConfirmDialog();
+					dialog.confirm(AON.MSG.epigrapChanged(), new AonConfirmDialogCallback() {
 						
 						@Override
-						public void onCancel() {}
+						public void onCancel() {
+							// Nothing
+						}
 						
 						@Override
 						public void onAccept() {
@@ -175,9 +139,6 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 				}
 			}
 			
-			@Override
-			public void onClose() {}
-			
 			private void accept(final FarmerIVA selected) {
 				cbk.getActivity().initialize();
 				cbk.getActivity().setCode(selected.getCode());
@@ -187,96 +148,79 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 				ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEATActivityFarmer.this, cbk.getActivity());
 			}
 		});
+		showEpigraphs.addClickHandler(event -> activityFarmer2016.onShow());
 		
-		activitiesButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				activityFarmer2016.onShow();
-			}
-		});
-		flowPanel.add(tab);
-		headerPanel.add(flowPanel);
+		addNorth(epigraphContainerPanel, 40);
 		
 		populateActivity(cbk.getActivity());
-		addNorth(headerPanel, 80);
 		
 		ScrollPanel container = new ScrollPanel();
-
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 		
 		table.getColumnFormatter().setWidth(1, "140px");
 		int row = 0;
 		
-		vol.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				if (vol.getValue() == null) vol.setValue(0.0,false);
-				cbk.getActivity().setVol(vol.getValue());
-				ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEATActivityFarmer.this, cbk.getActivity());
-			}
+		vol.addValueChangeHandler(event -> {
+			if (vol.getValue() == null) vol.setValue(0.0,false);
+			cbk.getActivity().setVol(vol.getValue());
+			ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEATActivityFarmer.this, cbk.getActivity());
 		});
 		table.setWidget(row, 0, new Label(AON.MSG.operationsVolume()));
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		table.setWidget(row, 1, vol);
 		++row;
 		
 		ind.setEnabled(false);
 		table.setWidget(row, 0, new Label(AON.MSG.page6E()));
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		table.setWidget(row, 1, ind);
 		++row;
 		
 		cuo.setEnabled(false);
 		table.setWidget(row, 0, new Label(AON.MSG.f04Msg()));
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		table.setWidget(row, 1, cuo);
 		++row;
 		
 		if (!this.lastPeriod) {
 			por.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.incomePercent()));
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 			table.setWidget(row, 1, por);
 			++row;
 			
 			ing.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.income()));
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 			table.setWidget(row, 1, ing);
 			++row;
 		} else {
-			sop.addValueChangeHandler(new ValueChangeHandler<Double>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Double> event) {
-					if (sop.getValue() == null) sop.setValue(0.0,false);
-					cbk.getActivity().setSop(sop.getValue());
-					ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEATActivityFarmer.this, cbk.getActivity());
-				}
+			sop.addValueChangeHandler(event -> {
+				if (sop.getValue() == null) sop.setValue(0.0,false);
+				cbk.getActivity().setSop(sop.getValue());
+				ValueChangeEvent.<Mod303ActivityFarmer>fire(Model303AEATActivityFarmer.this, cbk.getActivity());
 			});
 			table.setWidget(row, 0, new Label(AON.MSG.page6D()));
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 			table.setWidget(row, 1, sop);
 			++row;
 			
 			cad.setEnabled(false);
 			table.setWidget(row, 0, new Label(AON.MSG.page6J()));
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-			table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+			table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 			table.setWidget(row, 1, cad);
 			++row;
 		}
@@ -289,7 +233,7 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 	
 	public void populateActivity(Mod303ActivityFarmer act) {
 		epigraph.setText(act.getCode());
-		epigraphLabel.setText(AonStringUtils.abbreviate(act.getDescription(),100));
+		epigraphLabel.setText(AonStringUtils.abbreviate(act.getDescription(),80));
 		epigraphLabel.setTitle(act.getDescription());
 		vol.setValue(act.getVol());
 		ind.setValue(act.getInd());

@@ -42,18 +42,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ProvidesKey;
 
 public class Model3032021_2AEAT extends Model303Base {
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
 	
-	private static class Mod303ActivityFarmerProvidesKey implements ProvidesKey<Mod303ActivityFarmer> {
-		@Override
-		public Object getKey(Mod303ActivityFarmer model) {
-			return AonStringUtils.isBlank(model.getCode()) ? null : model.getCode();
-		}
-	}
-	private final Mod303ActivityFarmerProvidesKey providesFarmerKey = new Mod303ActivityFarmerProvidesKey();
 	private final Model303AEATActivityFarmerTable farmerTable;
 	
 	private final Model303AEATActivityTable activityTable;
@@ -72,7 +64,7 @@ public class Model3032021_2AEAT extends Model303Base {
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
-		farmerTable = new Model303AEATActivityFarmerTable( providesFarmerKey, mod303.isLastPeriod());
+		farmerTable = new Model303AEATActivityFarmerTable( mod303.isLastPeriod());
 		activityTable = new Model303AEATActivityTable( mod303.isLastPeriod());
 		
 		paintIdentificationTab(tabPanel);
@@ -271,7 +263,7 @@ public class Model3032021_2AEAT extends Model303Base {
 		panel.addStyleName(AON.CSS.aonPaddingTop());
 		panel.addStyleName(AON.CSS.aonPaddingLeft());
 
-		Label title = new Label("Informaci\u00F3n \u00FAtil para la confecci\u00F3n del modelo");
+		Label title = new Label("Presentaci\u00F3n del modelo");
 		title.setStyleName(AON.CSS.aonMarginTop());
 		title.addStyleName(AON.CSS.aonBold());
 		title.addStyleName(AON.CSS.aonTextUnderline());
@@ -339,31 +331,7 @@ public class Model3032021_2AEAT extends Model303Base {
 		});
 		p3.add(a3);
 		panel.add(p3);
-/*
-		MOD303Service.presentationFile(getCallback().getDomainName(), getCallback().getDomain(), getCallback().getUser(), getMod303().getId(), new AsyncCallback<Integer>() {
-
-			@Override public void onFailure(Throwable caught) {}
-
-			@Override
-			public void onSuccess(Integer result) {
-				if(result > 0) {
-					Button download2 = new Button();
-					download2.setStyleName("aon-icon-mail-save");
-					download2.addStyleName(AON.AON_CSS.aonIconCommandButton());
-					download2.getElement().getStyle().setPaddingTop(16, Unit.PX);
-					download2.addClickHandler(new ClickHandler() {
-						
-						@Override
-						public void onClick(ClickEvent event) {
-							getAPI().getFiscal().download(result +"");
-						}
-					});
-					tab.setWidget(3, 2, download2 );
-					tab.getCellFormatter().setStyleName(3, 2, AON.AON_CSS.aonPanelGridEven());
-				} else tab.getFlexCellFormatter().setColSpan(3, 1, 2);
-			}
-		});
-*/
+		
 		return panel;
 	}
 
@@ -543,7 +511,7 @@ public class Model3032021_2AEAT extends Model303Base {
 	}
 
 	private Model303AEATActivityFarmerTable getActivityFarmerTable() {
-		farmerTable.addRangeChangeHandler( event -> farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList()));
+		farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
 		farmerTable.addSelectionHandler(event -> {
 			final Mod303ActivityFarmer original = Mod303ActivityFarmer.clone(event.getSelectedItem()); 
 			int idx = 0;
@@ -562,16 +530,14 @@ public class Model3032021_2AEAT extends Model303Base {
 					dialog.hide();
 					getCallback().getMod303().getActivityFarmerList().set(currentIndex, original);
 					calculateAndRefresh();
-					farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
-					farmerTable.redraw();
+					farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
 				}
 				
 				@Override
 				public void onAccept(Mod303ActivityFarmer act) {
 					getCallback().getMod303().getActivityFarmerList().set(currentIndex, act);
 					dialog.hide();
-					farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
-					farmerTable.redraw();
+					farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
 				}
 				
 				@Override
@@ -583,7 +549,7 @@ public class Model3032021_2AEAT extends Model303Base {
 						}
 					}
 					calculateAndRefresh();
-					farmerTable.redraw();
+					farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
 				}
 
 				@Override
@@ -614,7 +580,7 @@ public class Model3032021_2AEAT extends Model303Base {
 			dialog.show();
 			dialog.center();
 		});
-		farmerTable.setVisibleRangeAndClearData(farmerTable.getVisibleRange(), true);
+		farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
 		return farmerTable;
 	}
 	
@@ -715,7 +681,7 @@ public class Model3032021_2AEAT extends Model303Base {
 	@Override
 	protected void populate(Mod303 mod303) {
 		super.populate(mod303);
-		farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
+		farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
 		activityTable.paint(getCallback().getMod303().getActivityList());
 	}
 	
@@ -726,7 +692,7 @@ public class Model3032021_2AEAT extends Model303Base {
 			}
 			@Override
 			public void onSuccess(Mod303 result) {
-				farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
+				farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
 				activityTable.paint(getCallback().getMod303().getActivityList());
 			}
 		},options);
