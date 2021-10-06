@@ -543,6 +543,15 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_width_auto_important")
 	String aonWidthAutoImportant();
+	
+	@ClassName("aon_width_80")
+	String aonWidth80();
+	
+	@ClassName("aon_width_100")
+	String aonWidth100();
+	
+	@ClassName("aon_width_150")
+	String aonWidth150();
 
 	@ClassName("aon_height_all")
 	String aonHeightAll();

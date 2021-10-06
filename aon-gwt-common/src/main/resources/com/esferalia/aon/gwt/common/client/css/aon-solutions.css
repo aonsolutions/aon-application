@@ -448,6 +448,10 @@
 .aon_width_almost_all {
 	width: 98%;
 }
+.aon_width_80 { width: 80px; }
+.aon_width_100 { width: 80px; }
+.aon_width_150 { width: 80px; }
+
 .aon_fixed_font {
 	font-family: Fixed, monospace;
 }

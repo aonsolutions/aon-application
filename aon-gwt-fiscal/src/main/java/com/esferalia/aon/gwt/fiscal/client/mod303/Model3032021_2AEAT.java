@@ -47,12 +47,6 @@ import com.google.gwt.view.client.ProvidesKey;
 public class Model3032021_2AEAT extends Model303Base {
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
 	
-	private static class Mod303ActivityProvidesKey implements ProvidesKey<Mod303Activity> {
-		@Override
-		public Object getKey(Mod303Activity model) {
-			return AonStringUtils.isBlank(model.getEpigraph()) ? null : model.getEpigraph();
-		}
-	}
 	private static class Mod303ActivityFarmerProvidesKey implements ProvidesKey<Mod303ActivityFarmer> {
 		@Override
 		public Object getKey(Mod303ActivityFarmer model) {
@@ -62,7 +56,6 @@ public class Model3032021_2AEAT extends Model303Base {
 	private final Mod303ActivityFarmerProvidesKey providesFarmerKey = new Mod303ActivityFarmerProvidesKey();
 	private final Model303AEATActivityFarmerTable farmerTable;
 	
-	private final Mod303ActivityProvidesKey providesKey = new Mod303ActivityProvidesKey();
 	private final Model303AEATActivityTable activityTable;
 	private ScrollPanel lastPeriodPanel; 
 	
@@ -80,7 +73,7 @@ public class Model3032021_2AEAT extends Model303Base {
 		add(centerPanel);
 		
 		farmerTable = new Model303AEATActivityFarmerTable( providesFarmerKey, mod303.isLastPeriod());
-		activityTable = new Model303AEATActivityTable( providesKey, mod303.isLastPeriod());
+		activityTable = new Model303AEATActivityTable( mod303.isLastPeriod());
 		
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
@@ -626,7 +619,7 @@ public class Model3032021_2AEAT extends Model303Base {
 	}
 	
 	private Model303AEATActivityTable getActivityTable() {
-		activityTable.addRangeChangeHandler(event -> activityTable.setRowData(getCallback().getMod303().getActivityList()));
+		activityTable.paint(getCallback().getMod303().getActivityList());
 		activityTable.addSelectionHandler( event -> {
 			final Mod303Activity original = Mod303Activity.clone(event.getSelectedItem()); 
 			int idx = 0;
@@ -644,8 +637,7 @@ public class Model3032021_2AEAT extends Model303Base {
 					dialog.hide();
 					getCallback().getMod303().getActivityList().set(currentIndex, original);
 					calculateAndRefresh();
-					activityTable.setRowData(getCallback().getMod303().getActivityList());
-					activityTable.redraw();
+					activityTable.paint(getCallback().getMod303().getActivityList());
 				}
 				
 				@Override
@@ -653,8 +645,7 @@ public class Model3032021_2AEAT extends Model303Base {
 					dialog.hide();
 					getCallback().getMod303().getActivityList().set(currentIndex, act);
 					calculateAndRefresh();
-					activityTable.setRowData(getCallback().getMod303().getActivityList());
-					activityTable.redraw();
+					activityTable.paint(getCallback().getMod303().getActivityList());
 				}
 				
 				@Override
@@ -666,7 +657,7 @@ public class Model3032021_2AEAT extends Model303Base {
 						}
 					}
 					calculateAndRefresh();
-					activityTable.redraw();
+					activityTable.paint(getCallback().getMod303().getActivityList());
 				}
 
 				@Override
@@ -698,7 +689,6 @@ public class Model3032021_2AEAT extends Model303Base {
 			dialog.show();
 			dialog.center();
 		});
-		activityTable.setVisibleRangeAndClearData(activityTable.getVisibleRange(), true);
 		return activityTable;
 	}
 
@@ -726,7 +716,7 @@ public class Model3032021_2AEAT extends Model303Base {
 	protected void populate(Mod303 mod303) {
 		super.populate(mod303);
 		farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
-		activityTable.setRowData(getCallback().getMod303().getActivityList());
+		activityTable.paint(getCallback().getMod303().getActivityList());
 	}
 	
 	protected void save(Model303ModuleOptions options) {
@@ -737,7 +727,7 @@ public class Model3032021_2AEAT extends Model303Base {
 			@Override
 			public void onSuccess(Mod303 result) {
 				farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
-				activityTable.setRowData(getCallback().getMod303().getActivityList());
+				activityTable.paint(getCallback().getMod303().getActivityList());
 			}
 		},options);
 	}

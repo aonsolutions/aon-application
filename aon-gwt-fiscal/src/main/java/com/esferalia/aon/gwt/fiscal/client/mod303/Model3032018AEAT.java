@@ -95,7 +95,7 @@ public class Model3032018AEAT extends Model303Base {
 		add(centerPanel);
 		
 		farmerTable = new Model303AEATActivityFarmerTable( providesFarmerKey, mod303.isLastPeriod());
-		activityTable = new Model303AEATActivityTable( providesKey, mod303.isLastPeriod());
+		activityTable = new Model303AEATActivityTable(  mod303.isLastPeriod());
 		
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
@@ -724,14 +724,7 @@ public class Model3032018AEAT extends Model303Base {
 	}
 	
 	private Model303AEATActivityTable getActivityTable() {
-		activityTable.addRangeChangeHandler(new Handler() {
-			
-			@Override
-			public void onRangeChange(RangeChangeEvent event) {
-				activityTable.setRowData(getCallback().getMod303().getActivityList());
-			}
-		});
-		
+		activityTable.paint(getCallback().getMod303().getActivityList());
 		activityTable.addSelectionHandler(new SelectionHandler<Mod303Activity>() {
 			
 			@Override
@@ -752,8 +745,7 @@ public class Model3032018AEAT extends Model303Base {
 						dialog.hide();
 						getCallback().getMod303().getActivityList().set(currentIndex, original);
 						calculateAndRefresh();
-						activityTable.setRowData(getCallback().getMod303().getActivityList());
-						activityTable.redraw();
+						activityTable.paint(getCallback().getMod303().getActivityList());
 					}
 					
 					@Override
@@ -761,8 +753,7 @@ public class Model3032018AEAT extends Model303Base {
 						dialog.hide();
 						getCallback().getMod303().getActivityList().set(currentIndex, act);
 						calculateAndRefresh();
-						activityTable.setRowData(getCallback().getMod303().getActivityList());
-						activityTable.redraw();
+						activityTable.paint(getCallback().getMod303().getActivityList());
 					}
 					
 					@Override
@@ -774,7 +765,7 @@ public class Model3032018AEAT extends Model303Base {
 							}
 						}
 						calculateAndRefresh();
-						activityTable.redraw();
+						activityTable.paint(getCallback().getMod303().getActivityList());
 					}
 
 					@Override
@@ -809,7 +800,6 @@ public class Model3032018AEAT extends Model303Base {
 				dialog.center();
 			}
 		});
-		activityTable.setVisibleRangeAndClearData(activityTable.getVisibleRange(), true);
 		return activityTable;
 	}
 
@@ -836,10 +826,8 @@ public class Model3032018AEAT extends Model303Base {
 	@Override
 	protected void populate(Mod303 mod303) {
 		super.populate(mod303);
-//		farmerTable.setRowData(mod303.getActivityFarmerList());
-//		activityTable.setRowData(mod303.getActivityList());
 		farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
-		activityTable.setRowData(getCallback().getMod303().getActivityList());
+		activityTable.paint(getCallback().getMod303().getActivityList());
 	}
 	
 	protected void save(Model303ModuleOptions options) {
@@ -848,7 +836,7 @@ public class Model3032018AEAT extends Model303Base {
 			@Override
 			public void onSuccess(Mod303 result) {
 				farmerTable.setRowData(getCallback().getMod303().getActivityFarmerList());
-				activityTable.setRowData(getCallback().getMod303().getActivityList());
+				activityTable.paint(getCallback().getMod303().getActivityList());
 			}
 		},options);
 	}

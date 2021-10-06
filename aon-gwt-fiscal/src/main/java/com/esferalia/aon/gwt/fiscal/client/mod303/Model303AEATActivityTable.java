@@ -1,152 +1,70 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.css.AonCellTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.cell.client.ImageResourceCell;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.view.client.NoSelectionModel;
-import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 
-public class Model303AEATActivityTable extends CellTable<Mod303Activity> implements HasSelectionHandlers<Mod303Activity> {
-	private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
-
-	public Model303AEATActivityTable(ProvidesKey<Mod303Activity> providesKey, boolean lastPeriod) {
-		super(1,TABLE_STYLE, providesKey);
-		this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
-		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-
-		NoSelectionModel<Mod303Activity> model = new NoSelectionModel<Mod303Activity>(providesKey);		
-		setSelectionModel(model);
-		model.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				SelectionEvent.<Mod303Activity>fire(Model303AEATActivityTable.this, model.getLastSelectedObject());
-			}
-			
-		});
+public class Model303AEATActivityTable extends FlowPanel implements HasSelectionHandlers<Mod303Activity> {
+	
+	private boolean lastPeriod;
+	private AonDisplayGrid grid;
+	
+	public Model303AEATActivityTable(boolean lastPeriod) {
+		setStyleName(AON.CSS.aonWidthAll());
 		
-		addSelectorColumn();
-		addEpigraphColumn();
+		this.lastPeriod = lastPeriod;
+		grid = new AonDisplayGrid();
+		grid.addStyleName(AON.CSS.aonNoPadding());
+		grid.addStyleName(AON.CSS.aonBlockCenter());
+		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
+
+		add(grid);
+	}
+	
+	protected void paint( LinkedList<Mod303Activity> activities ) {
+		grid.clear();
+		Label actLabel = new Label( AON.MSG.activity() );
+		Label labelC = new Label( AON.MSG.quota() + " [C]");
+		Label labelE = new Label( AON.MSG.percentAbbr() + " [E]");
+		Label labelF = new Label( AON.MSG.incomeAbbr() + " [F]");
+		Label labelI = new Label( AON.MSG.result() + " [I]");
+		Label labelL = new Label( AON.MSG.page6I() + " [L]");
+		Label labelM = new Label( AON.MSG.derQuota() + " [M]");
+		grid.addHeaderRow()
+			.addCell( actLabel )
+			.addCell( labelC , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCellIf( !lastPeriod, labelE , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCellIf( !lastPeriod, labelF , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCellIf( lastPeriod , labelI , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCellIf( lastPeriod , labelL , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCellIf( lastPeriod , labelM , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+		;
 		
-		addDevColumn();
-		if (!lastPeriod) {
-			addPorColumn();
-			addIngColumn();
-		} else {
-			addResColumn();
-			addCmnColumn();
-			addCadColumn();
+		for (Mod303Activity act : activities) {
+			AonDisplayGridRow actRow = grid.addRow();
+			actRow
+				.addCell( new Label( AonStringUtils.abbreviate(act.getFullDescription(), 100) ), AON.CSS.aonFlexGrow1() )
+				.addCell( new Label( AON.FMT.format(act.getDev()) ), AON.CSS.aonTextRight() , AON.CSS.aonTextRight())
+				.addCellIf( !lastPeriod, new Label( AON.FMT.format(act.getPor()) ), AON.CSS.aonTextRight())
+				.addCellIf( !lastPeriod, new Label( AON.FMT.format(act.getIng()) ), AON.CSS.aonTextRight())
+				.addCellIf( lastPeriod, new Label( AON.FMT.format(act.getRes()) ), AON.CSS.aonTextRight())
+				.addCellIf( lastPeriod, new Label( AON.FMT.format(act.getCmn()) ), AON.CSS.aonTextRight())
+				.addCellIf( lastPeriod, new Label( AON.FMT.format(act.getCad()) ), AON.CSS.aonTextRight())
+			;
+			actRow.addClickHandler(event -> SelectionEvent.<Mod303Activity>fire(Model303AEATActivityTable.this, act) );
 		}
 		
-		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
 	}
-
-	private void addSelectorColumn() {
-		final Column<Mod303Activity, ImageResource> selectorColumn = new Column<Mod303Activity, ImageResource>(
-				new ImageResourceCell()) {
-			@Override
-			public ImageResource getValue(Mod303Activity model) {
-				return AON.AON_RESOURCES.aonIconRowSelector();
-			}
-		};
-		this.addColumn(selectorColumn);
-		this.setColumnWidth(selectorColumn, 20, Unit.PX);
-	}
-
-	private void addEpigraphColumn() {
-		final TextColumn<Mod303Activity> epigraphColumn = new TextColumn<Mod303Activity>() {
-			@Override
-			public String getValue(Mod303Activity model) {
-				return AonStringUtils.abbreviate(model.getFullDescription(), 100);
-			}
-		};
-		this.addColumn(epigraphColumn, AON.MSG.activity());
-		this.setColumnWidth(epigraphColumn, "auto");
-	}
-
-	private void addDevColumn() {
-		final TextColumn<Mod303Activity> netYieldColumn = new TextColumn<Mod303Activity>() {
-			@Override
-			public String getValue(Mod303Activity model) {
-				return AON.FMT.format(model.getDev());
-			}
-		};
-		this.addColumn(netYieldColumn, AON.MSG.quota() + " [C]");
-		netYieldColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(netYieldColumn, 125, Unit.PX);
-	}	
-
-	private void addPorColumn() {
-		final TextColumn<Mod303Activity> percentColumn = new TextColumn<Mod303Activity>() {
-			@Override
-			public String getValue(Mod303Activity model) {
-				return AON.FMT.format(model.getPor());
-			}
-		};
-		this.addColumn(percentColumn, AON.MSG.percentAbbr() + " [E]");
-		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(percentColumn, 100, Unit.PX);
-	}	
-
-	private void addIngColumn() {
-		final TextColumn<Mod303Activity> amountColumn = new TextColumn<Mod303Activity>() {
-			@Override
-			public String getValue(Mod303Activity model) {
-				return AON.FMT.format(model.getIng());
-			}
-		};
-		this.addColumn(amountColumn, AON.MSG.income() + " [F]");
-		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 140, Unit.PX);
-	}	
-
-	private void addResColumn() {
-		final TextColumn<Mod303Activity> amountColumn = new TextColumn<Mod303Activity>() {
-			@Override
-			public String getValue(Mod303Activity model) {
-				return AON.FMT.format(model.getRes());
-			}
-		};
-		this.addColumn(amountColumn, AON.MSG.result() + " [I]");
-		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 120, Unit.PX);
-	}	
-	private void addCmnColumn() {
-		final TextColumn<Mod303Activity> amountColumn = new TextColumn<Mod303Activity>() {
-			@Override
-			public String getValue(Mod303Activity model) {
-				return AON.FMT.format(model.getCmn());
-			}
-		};
-		this.addColumn(amountColumn, AON.MSG.page6I() + " [L]");
-		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 140, Unit.PX);
-	}	
-	private void addCadColumn() {
-		final TextColumn<Mod303Activity> amountColumn = new TextColumn<Mod303Activity>() {
-			@Override
-			public String getValue(Mod303Activity model) {
-				return AON.FMT.format(model.getCad());
-			}
-		};
-		this.addColumn(amountColumn, AON.MSG.derQuota() + " [M]");
-		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 140, Unit.PX);
-	}	
 
 	@Override
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Mod303Activity> handler) {

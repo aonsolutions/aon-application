@@ -71,7 +71,6 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.sun.org.apache.bcel.internal.generic.IFNULL;
 
 public class SalaryDAO {
 

@@ -1269,6 +1269,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ingreso a cuenta")
 	String income();
 
+	@DefaultMessage("Ing. a cta.")
+	String incomeAbbr();
+
 	@DefaultMessage("RESULTADO")
 	String page6F();
 
