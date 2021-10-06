@@ -356,6 +356,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	}
 	
+	class ContractTransformCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractTransform();
+		}
+
+	}
+	
 	class RemoveContractCommand implements ScheduledCommand {
 
 		@Override
@@ -373,6 +382,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem cetifica2PDF;
 		
 		private MenuItem contractExtension;
+		private MenuItem contractTransform;
 		private MenuItem removeContractExtension;
 		
 		private MenuItem sendBasicCopy;
@@ -405,6 +415,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			contractExtension = addItem("Pr\u00F3rroga Contrato", new ContractExtensionCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			contractExtension.ensureDebugId("contractExtension");
+			
+			contractTransform = addItem("Transformaci\u00F3n Contrato", new ContractTransformCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			contractTransform.ensureDebugId("contractTransform");
 			
 			removeContractExtension = addItem("Eliminar Pr\u00F3rroga Contrato", new DeleteContractExtensionCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
@@ -448,6 +462,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public MenuItem getContractExtension() {
 			return contractExtension;
+		}
+		
+		public MenuItem getContractTransform() {
+			return contractTransform;
 		}
 		
 		public MenuItem getRemoveContractExtension() {
@@ -741,6 +759,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 								checkCertificateSEPE();
 								checkTGSSStatus();
 								checkContractExtension();
+								checkContractTransform();
 							});
 				}, f -> {});
 				break;
@@ -887,6 +906,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					checkCertificateSEPE();
 					checkTGSSStatus();
 					checkContractExtension();
+					checkContractTransform();
 					success.accept("");
 				});
 	}
@@ -963,6 +983,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	protected abstract void onListShow(boolean reloadEmployees);
 	protected abstract void onPreviusContract(Integer contractId);
 	protected abstract void onNextContract(Integer contractId);
+	protected abstract void onTransformContract(Integer newContractId);
 	
 	// ------------------------------------------------- Toolbar panel
 	
@@ -1179,6 +1200,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
+									checkContractTransform();
 								});
 					}, f -> {});
 				}, 
@@ -1201,6 +1223,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
+									checkContractTransform();
 								});
 						
 					}, f -> {});
@@ -1235,6 +1258,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 										checkCertificateSEPE();
 										checkTGSSStatus();
 										checkContractExtension();
+										checkContractTransform();
 									});
 						}, f -> {});
 					}
@@ -1400,6 +1424,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
+									checkContractTransform();
 								});
 					}, f -> {});
 				}, 
@@ -1416,6 +1441,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
+									checkContractTransform();
 								});
 					}, f -> {});
 				}, 
@@ -1432,6 +1458,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
+									checkContractTransform();
 								});
 					}, f -> {});
 				}, 
@@ -1451,7 +1478,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
+							checkContractTransform();
 						});
+			}
+
+			@Override
+			protected void fireError(Map<String, String> errorMap) {
+				AonMessagePanel.showError(messageContainer, errorMap);
+			}
+		};
+	}
+	
+	private void contractTransform() {
+		new ContractTransformDialog(this.contrataEmployeeObject.getContractEmployeeInfo()) {
+			@Override
+			protected void onTransformDone(Integer newContractId) {
+				Map<String, String> successMap = new HashMap<>();
+				successMap.put("Pr\u00F3rroga", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
+				AonMessagePanel.showSuccess(messageContainer, successMap);
+				onTransformContract(newContractId);
 			}
 
 			@Override
@@ -1474,6 +1519,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 								checkCertificateSEPE();
 								checkTGSSStatus();
 								checkContractExtension();
+								checkContractTransform();
 							});
 				},
 				f -> {}
@@ -1929,6 +1975,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			 Integer contractTypeValue = Integer.parseInt(contractTypeStr);
 			 setVisible(sepeContextMenu.getContractExtension().getElement(), !hasExtension && contractTypeValue >= 400 && null != endDate);
 			 setVisible(sepeContextMenu.getRemoveContractExtension().getElement(), hasExtension);
+		 }
+	}
+	
+	private void checkContractTransform() {
+		 String contractTypeStr = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType();
+		 
+		 if(AonStringUtils.isNotBlank(contractTypeStr)) {
+			 Integer contractTypeValue = Integer.parseInt(contractTypeStr);
+			 setVisible(sepeContextMenu.getContractExtension().getElement(), contractTypeValue >= 400);
 		 }
 	}
 	
