@@ -280,6 +280,51 @@
     	padding-bottom: 0.25em;
 	}	
 
+	.gwt-Selector .gwt-PopupPanel {
+    	z-index: 69;
+    	padding: 5px;
+    	border: 1px solid #c4c0b9;
+    	box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.4);
+	}
+	
+	.gwt-Selector .gwt-PopupPanel .custom-dialog-close{
+		background-size: cover;
+		background: transparent url(#{aonResource.resolve['/images/aon-cancel.svg']}) scroll center center no-repeat;
+	}
+	
+	
+	.gwt-Selector .gwt-PopupPanel .gwt-Button {
+		width: auto;
+    	color: #4b4b4b;
+    	background: none;
+    	border-radius: 0px;
+    	border: 1px solid #aaa;
+    	font-weight: normal;
+    	text-transform: uppercase;
+	}
+
+	.gwt-Selector .gwt-PopupPanel .gwt-Button:last-child,
+	.gwt-Selector .gwt-PopupPanel .gwt-Button:nth-child(2) {
+		padding-left: 25px;
+		background: transparent url(#{aonResource.resolve['/images/aon-accept.svg']}) scroll left center no-repeat;
+	}
+
+	.gwt-Selector .gwt-PopupPanel .gwt-Button:first-child  {
+		padding-left: 25px;
+		background: transparent url(#{aonResource.resolve['/images/aon-cancel.svg']}) scroll left center no-repeat;
+	}
+
+	.gwt-Selector .gwt-PopupPanel .custom-dialog-header {
+		background: none;
+	}
+	
+	.gwt-Selector .gwt-PopupPanel .custom-dialog-header .custom-dialog-title {
+		color: #4b4b4b;
+		background-image: none;
+		background-color: #fff;
+		border-bottom: 1px solid #ddd;	
+	}
+
 	.aon-dataTable-header {
 		text-align: left;
     	background: none;
