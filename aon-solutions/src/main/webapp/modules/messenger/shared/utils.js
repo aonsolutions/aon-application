@@ -8,6 +8,7 @@ import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION
 import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
 import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
+import { createFormMov } from "../forms/mov-ss.js";
 
 
 let isDefault = false;
@@ -294,7 +295,9 @@ const changeFormProcess = ({value,name}, aonMessengerChat) => {
 
     if(value===1){ //FORM VACATION
         createFormVacation(aonCard, aonMessengerChat);
-    } 
+    } else if(value ===2) {
+        createFormMov(aonCard, aonMessengerChat);
+    }
 }
 
 const jsonDiv = ()=> {
@@ -379,7 +382,7 @@ export const buildForm = (div, aonMessengerChat) => {
         selectApp.style.marginLeft = "5px";
         rowsDiv.appendChild(selectApp);
         fillSelectAppCau(aonMessengerChat);
-    } else {
+    } else if( !task.id || task.isExternal() ){
         const aonMessenger = aonMessengerChat.applicationParentEl;
         const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
         let initText = isReceived(task, myWorkgroups, task.isGestor(),  task.auth.email) ? 'De' : 'Para';

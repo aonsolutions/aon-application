@@ -220,11 +220,14 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
 export const fillProcessType =  ({source_id}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROCESS_TYPE);
     aonSelect.clear();
-    const options = [
+    let options = [
         { value:1, name:"Solicitud de vacaciones"},
     ];
+    // if(isGestor){
+        options.push({ value:2, name:"Alta de empleado"});
+    // }
     if(options){
-        aonSelect.setOptions( options.map(tp=> tp) );
+        aonSelect.setOptions( options );
     }
     if(source_id) aonSelect.value = source_id;
 

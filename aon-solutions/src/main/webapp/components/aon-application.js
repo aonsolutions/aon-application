@@ -21,7 +21,6 @@ export class AonApplication extends AonElement {
   MOBILE_SIDENAV_CONTENT;
   selected;
   VIEWS;
-  KEY_VIEW="keyView";
 
   content; 
 
@@ -664,13 +663,6 @@ export class AonApplication extends AonElement {
     this.clearElementById(this.CONTENT);
     let content = this.getElement(this.CONTENT);
     if(content) content.appendChild(element);
-  }
-
-  getKeyView(){
-    return parseFloat(localStorage.getItem(this.KEY_VIEW));
-  }
-  setKeyView(value){
-    localStorage.setItem(this.KEY_VIEW, value);
   }
 
   addFloatOption(action, fn) {
