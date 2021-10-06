@@ -1,0 +1,84 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+ 
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.ContractTransformDialog.MyStyle">
+	
+		.form {
+			display: flex;
+			flex-direction: column;
+			max-width: 550px;
+			width: 100%;
+			gap: 5px;
+		}
+		
+		.container {
+			padding: 1.5em 1.5em 1em 1.5em;
+			display: flex;
+			flex-direction: column;
+			gap: 1em;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+		
+		.subTitle {
+			font-style: italic;
+			color: gray;
+			min-width: 140px;
+		}
+		
+		.footerPanel{
+			display: flex;
+			justify-content: flex-end;
+			margin-top: 15px;
+		}
+		
+		.field{
+			height: 1.1rem;
+		}
+		
+		.widthAll{
+			width: 100%;
+		}
+		
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.form}">
+	
+		<g:HTMLPanel styleName="{style.container}">
+			
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:Label styleName="{style.subTitle}">IDE Contrato:</g:Label>
+				<g:TextBox ui:field="contractIde" styleName="aon-inputText {style.field}" />
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:Label styleName="{style.subTitle}">Tipo contrato:</g:Label>
+				<g:ListBox ui:field="tc2" styleName="aon-inputText {style.widthAll}" />
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:Label styleName="{style.subTitle}">Fecha inicio:</g:Label>
+				<a:DateBoxEx ui:field="startDateBx" styleName="aon-inputText {style.field}" />
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:Label styleName="{style.subTitle}">Indicador discontinuidad:</g:Label>
+				<g:Button ui:field="discontinuosInd" styleName="aon-inputText {style.field}" />
+			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.flex}">
+				<g:Label styleName="{style.subTitle}">CNO:</g:Label>
+				<g:SuggestBox ui:field="cno" styleName="aon-inputText {style.field} {style.widthAll}" />
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel ui:field="footerPanel" styleName="{style.footerPanel}">
+				<g:HTMLPanel ui:field="buttonsPanel"></g:HTMLPanel>
+			</g:HTMLPanel>
+		
+		</g:HTMLPanel>
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>
