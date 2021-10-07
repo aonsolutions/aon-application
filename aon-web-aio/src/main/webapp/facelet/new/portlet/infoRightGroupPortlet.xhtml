@@ -84,6 +84,11 @@
 			<ui:include src="/facelet/new/portlet/menuPortlet.xhtml" />	
 			
 			<aon:div id="infoGroupRightSupportDiv" style="display:none" >				
+				<aon:if test="#{desktop.showGraphicsPortlet}">
+					<aon:div style="padding-top:16px;padding-bottom:16px;">
+						<ui:include src="/facelet/homepage/portlet/infoGroupPortlet.xhtml" />
+					</aon:div>
+				</aon:if>
 				<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
 				<ui:include src="/facelet/homepage/portlet/emailVerifyPortlet.xhtml" />
 				<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" />
