@@ -415,10 +415,6 @@
 		line-height:32px;
 		text-align: right;
 	}
-	.aon-portlets-column3,
-	.aon-portlets-column3 * {
-		transition: all 0.2s linear;
-	}
 
 	.aon-rigth-bar{
 		font-size: 0px;
@@ -437,13 +433,17 @@
 	}
 	
 	.aon-button-fiscal {
+		padding-top:4px;
+		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
 		background: url(#{aonResource.resolve['/images/aon-fiscal.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
-
+	
 	.aon-button-payroll {
+		padding-top:4px;
+		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
 		background: url(#{aonResource.resolve['/images/aon-payroll.svg']}) scroll right center no-repeat;
@@ -451,6 +451,8 @@
 	}
 
 	.aon-button-account {
+		padding-top:4px;
+		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
 		background: url(#{aonResource.resolve['/images/aon-account.svg']}) scroll right center no-repeat;
@@ -458,6 +460,8 @@
 	}
 
 	.aon-button-document {
+		padding-top:4px;
+		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
 		background: url(#{aonResource.resolve['/images/aon-document.svg']}) scroll right center no-repeat;
@@ -465,6 +469,8 @@
 	}
 
 	.aon-button-tools {
+		padding-top:4px;
+		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
 		background: url(#{aonResource.resolve['/images/aon-tools.svg']}) scroll right center no-repeat;
@@ -472,11 +478,25 @@
 	}
 
 	.aon-button {
+		padding-top:4px;
+		padding-bottom: 4px;
 		padding-right:36px;
 		display:inline-block;
 		background: url(#{aonResource.resolve['/images/aon-icon-logo.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
+
+	.aon-button:hover,
+	.aon-button-tools:hover,
+	.aon-button-fiscal:hover,
+	.aon-button-payroll:hover,
+	.aon-button-account:hover,
+	.aon-button-document:hover
+	{
+		padding-right:44px;
+		background-size:40px;
+	}
+
 
 	</style>
 
