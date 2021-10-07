@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jooq.AggregateFunction;
@@ -144,15 +146,11 @@ public class CheckItDAO {
 
 	private static int getNextLotNumber(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		AggregateFunction<Integer> lot = DSL.max(BANK_STATEMENT.LOT_NUMBER);
-		return aonContext.getDslContext().select( lot )
-			.from(BANK_STATEMENT)
-			.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-			.and(BANK_STATEMENT.DOMAIN.eq(domainId))
-			.fetch()
-			.stream()
-			.map( r -> r.get(lot))
-			.findFirst()
-			.orElse(0) + 1;
+		return AonNumberUtils.zeroIfNull(aonContext.getDslContext().select( lot )
+				.from(BANK_STATEMENT)
+				.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+				.and(BANK_STATEMENT.DOMAIN.eq(domainId))
+				.fetchSingle().get(lot)) + 1;
 	}
 
 	public static Date getLastOperationDateDB(AONContext aonContext, Integer domainId, RegistryBank rbank) {

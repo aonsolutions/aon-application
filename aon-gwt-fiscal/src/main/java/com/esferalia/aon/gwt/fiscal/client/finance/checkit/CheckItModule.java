@@ -18,7 +18,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
@@ -244,10 +243,10 @@ public class CheckItModule extends MainEntryPoint {
 					onModuleLoad();
 					firstTime = true;
 		} else if (opt.getConfiguration().isRegistrationFailed()){
-			InlineLabel label = new InlineLabel("Servicio temporalmente no disponible. Disculpe las molestias.");
+			InlineLabel label = new InlineLabel("Se produjo un error al registrar la empresa en el servicio de agregador bancario.");
 			panel.add( label );
 		} else {
-			InlineLabel label = new InlineLabel("Se produjo un error al registrar la empresa en el servicio de agregador bancario.");
+			InlineLabel label = new InlineLabel("Servicio temporalmente no disponible. Disculpe las molestias.");
 			panel.add( label );			
 		}
 		return panel;
@@ -712,7 +711,7 @@ public class CheckItModule extends MainEntryPoint {
 
 							@Override
 							public void onFailure(Throwable caught) {
-								Label errLabel = new Label("Error: se produjo un error inexperado al obtener las credenciales");
+								Label errLabel = new Label("Error: se produjo un error inesperado al obtener las credenciales");
 								errLabel.addStyleName(AON.CSS.aonColorRed());
 								sessionLog.add(errLabel);
 								openFootPanel();
