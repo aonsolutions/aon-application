@@ -184,7 +184,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT);
 
-	@UiField
+	@UiField(provided = true)
 	Tree tree;
 	@UiField
 	ScrollPanel scrollPanel;
@@ -239,6 +239,24 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 		
+		tree = new Tree(new Tree.Resources() {
+			
+			@Override
+			public ImageResource treeOpen() {
+				return images.aon_icon_tree_open();
+			}
+			
+			@Override
+			public ImageResource treeLeaf() {
+				return images.aon_icon_tree_closed();
+			}
+			
+			@Override
+			public ImageResource treeClosed() {
+				return images.aon_icon_tree_closed();
+			}
+		}, false);
+		
 		initWidget(binder.createAndBindUi(this));
 
 
@@ -246,8 +264,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		tree.addSelectionHandler(this);
 		tree.addDomHandler(this, ContextMenuEvent.getType());
 		tree.addKeyDownHandler(this);
-
+		
 		toolbar.addListener(this);
+		toolbar.setVisibleNewButton(false);
+		toolbar.setVisibleCopyButton(false);
+		toolbar.setVisiblePasteButton(false);
+		toolbar.setVisibleDraftButton(false);
 		// employeesService.getEnterprise(this);
 
 
