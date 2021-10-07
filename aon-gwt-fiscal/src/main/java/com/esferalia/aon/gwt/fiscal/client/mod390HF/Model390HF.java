@@ -75,6 +75,7 @@ public class Model390HF extends MainEntryPoint {
 		public void onAccept(Mod390HF mod390);
 		public void onCancel();
 		public void onNew(Model390HFModuleOptions options);
+		public void onReset(Model390HFModuleOptions options, Mod390HF mod390);
 		public void showBreakdownPanel(String htmlText);
 		public void cleanBreakdownPanel();
 		public void cleanErrorPanel();
@@ -92,6 +93,9 @@ public class Model390HF extends MainEntryPoint {
 		}
 		public void onNew(Model390HFModuleOptions options) {
 			Model390HF.this.onNew(options);
+		}
+		public void onReset(Model390HFModuleOptions options, Mod390HF mod390) {
+			Model390HF.this.onReset(options, mod390);
 		}
 		public void showBreakdownPanel(String htmlText) {
 			Model390HF.this.showBreakdownPanel(htmlText);
@@ -301,6 +305,85 @@ public class Model390HF extends MainEntryPoint {
 			newDialog.center();
 			newDialog.show();
 	}
+	
+	private void onReset(Model390HFModuleOptions options, Mod390HF oldMod390) {
+		cleanErrorPanel();
+		MOD_SERVICE.initialize(options.getDomainName(),options.getDomain(),options.getUser(),null,
+				new AsyncCallback<Mod390HF>() {
+					@Override
+					public void onSuccess(Mod390HF newMod390) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
+						// Valores de la declaración actual
+						newMod390.setAdministration(oldMod390.getAdministration());
+						newMod390.setYear(oldMod390.getYear());
+						newMod390.setComplementary(oldMod390.isComplementary());
+						newMod390.setReplacement(oldMod390.isReplacement());
+						newMod390.setReplacedNumber(oldMod390.getReplacedNumber());
+						showResetDeclarationPopup(options, newMod390, oldMod390);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					}
+				});
+	}
+	
+	private void showResetDeclarationPopup(Model390HFModuleOptions options, Mod390HF newMod390, Mod390HF oldMod390) {
+		NewDeclarationPopup<Mod390HF> newDialog = new NewDeclarationPopup<Mod390HF>( options, newMod390, true, 
+			new Model390HFCallback() {
+
+					@Override
+					public void onAccept(Mod390HF mod390) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+						
+						MOD_SERVICE.delete(options.getDomainName(), options.getUser(), oldMod390, 
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										MOD_SERVICE.create(options.getDomainName(),options.getDomain(),options.getUser(),mod390,
+												new AsyncCallback<Mod390HF>() {
+													@Override
+													public void onSuccess(Mod390HF m390) {
+														popup.hide();
+														select(m390,options);
+													}
+
+													@Override
+													public void onFailure(Throwable caught) {
+														popup.hide();
+														showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+													}
+												});										
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));										
+									}
+								});
+
+					}
+
+					@Override
+					public void onCancel() {
+					}
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 
 	private void cancel() {
 		cleanErrorPanel();

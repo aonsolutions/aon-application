@@ -34,7 +34,11 @@ public class NewDeclarationPopup extends CustomDialog {
 	private ListBox oldStyle = new ListBox();
 	
 	public NewDeclarationPopup(final Mod390 mod390 ,final Model390Callback callback) {
-		setCaption(AON.MSG.newDeclaration());
+		this(mod390, false, callback);
+	}
+	
+	public NewDeclarationPopup(final Mod390 mod390, boolean reset, final Model390Callback callback) {
+		setCaption(reset?AON.MSG.resetDeclaration():AON.MSG.newDeclaration());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
@@ -59,6 +63,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		admonList.setEnabled(!reset);
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -81,6 +86,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
+		yearBox.setEnabled(!reset);
 		yearBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
@@ -97,6 +103,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		// COMPLEMENTARIA
 		complementary.setText(AON.MSG.complementary());
+		complementary.setEnabled(!reset);
 		complementary.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -116,6 +123,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		// SUSTITUTIVA
 		replacement.setText(AON.MSG.replacement());
+		replacement.setEnabled(!reset);
 		replacement.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -168,6 +176,15 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
 		tab.setWidget(row, 0, oldStyle);
 		row++;
+		
+		// MENSAJE DE AVISO PARA INICIALIZAR EL MODELO
+		if (reset) {
+			Label labelReset = new Label(AON.MSG.resetWarning());
+			labelReset.addStyleName(AON.CSS.aonMarginTop());
+			labelReset.addStyleName(AON.CSS.aonColorRed());
+			tab.setWidget(row, 0, labelReset);
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		}
 
 		rootPanel.add(tab);
 		
@@ -210,5 +227,7 @@ public class NewDeclarationPopup extends CustomDialog {
 	private void populate(Mod390 mod390) {
 		admonList.setSelectedIndex( mod390.getAdministration().ordinal());
 		yearBox.setValue(mod390.getYear());
+		complementary.setValue(mod390.isComplementary());
+		replacement.setValue(mod390.isReplacement());		
 	}
 }

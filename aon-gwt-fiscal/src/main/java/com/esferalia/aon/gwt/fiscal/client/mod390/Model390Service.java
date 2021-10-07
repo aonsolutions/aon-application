@@ -15,5 +15,6 @@ public interface Model390Service extends RemoteService {
 	Mod390 create(String domainName, int domain, String user, Mod390 mod390) throws AonCoreException;
 	Mod390 initialize(String domainName, int domain, String user, int year);
 	Mod390 saveComments(String currentDomainName, String user, Mod390 mod390);
+	void delete(String domainName, Integer domain, String user, Mod390 mod390) throws AonCoreException;
 	
 }

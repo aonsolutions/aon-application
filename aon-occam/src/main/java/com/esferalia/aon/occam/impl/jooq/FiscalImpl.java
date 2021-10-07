@@ -345,7 +345,13 @@ public class FiscalImpl implements IFiscal {
 			t.printStackTrace();
 			throw t;
 		}
-	}	
+	}
+	
+	@Override
+	public void deleteMod390(AONContext ctx, Mod390 mod390) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod390DAO.delete(ctx, mod390));
+	}
 
 	// ----------------------------------------------------------- [MODELO 390 - 2014]
 	@Override
