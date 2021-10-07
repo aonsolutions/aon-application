@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -9,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity2020.IMod303ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivityFarmer.IMod303ActivityFarmerCallback;
@@ -25,15 +22,11 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -41,8 +34,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model3032021AEAT extends Model303Base {
-	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
+public class Model3032021AEAT extends Model303AEAT {
 	
 	private final Model303AEATActivityFarmerTable farmerTable;
 	private final Model303AEATActivityTable activityTable;
@@ -103,12 +95,6 @@ public class Model3032021AEAT extends Model303Base {
 				}
 			}
 		});
-	}
-	
-	
-	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.CSS.aonIconEmployee()));
 	}
 	
 	private void paintGeneralRegimeTab(TabLayoutPanel tabPanel) {
@@ -202,108 +188,6 @@ public class Model3032021AEAT extends Model303Base {
 		paintDeclaration(table,Model3032017AEATAdditionalDataScript.values(),3);
 	}
 
-	private void paintAdministrationTab(TabLayoutPanel tabPanel) {	
-		FlowPanel panel = new FlowPanel();
-				
-		FlowPanel formContainer = new FlowPanel();
-		aeatForm.setMethod(FormPanel.METHOD_POST);
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		FlowPanel formFlowPanel = new FlowPanel();
-		FlowPanel aeatFormFlowPanel = new FlowPanel();
-		diskForm.add(formFlowPanel);
-		aeatForm.add(aeatFormFlowPanel);
-				
-		formFlowPanel.add(mod303Hidden);
-		formFlowPanel.add(domainIdHidden);
-		formFlowPanel.add(domainNameHidden);
-		formFlowPanel.add(userHidden);
-				
-		aeatFormFlowPanel.add(modAeatHidden);
-		aeatFormFlowPanel.add(domainIdAeatHidden);
-		aeatFormFlowPanel.add(domainNameAeatHidden);
-		aeatFormFlowPanel.add(userAeatHidden);
-		aeatFormFlowPanel.add(nameAeatHidden);
-		aeatFormFlowPanel.add(documentAeatHidden);
-		aeatFormFlowPanel.add(certAeatHidden);
-		aeatFormFlowPanel.add(passAeatHidden);
-		aeatFormFlowPanel.add(nrcAeatHidden);
-		aeatFormFlowPanel.add(testHidden);
-			
-		formContainer.add(diskForm);
-		formContainer.add(aeatForm);
-
-		panel.add(formContainer);
-	
-		FlowPanel administrationPanel = getAdministrationPanel(); 
-		panel.add(administrationPanel);
-		FlowPanel informationPanel = getInformationPanel();
-		panel.add(informationPanel);
-		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration())));
-	}
-		
-	protected FlowPanel getAdministrationPanel() {
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.CSS.aonScrollArea());
-		panel.addStyleName(AON.CSS.aonWidthAll());
-		panel.addStyleName(AON.CSS.aonMarginTop());
-		panel.addStyleName(AON.CSS.aonPaddingTop());
-		panel.addStyleName(AON.CSS.aonPaddingLeft());
-
-		Label title = new Label("Presentaci\u00F3n del modelo");
-		title.setStyleName(AON.CSS.aonMarginTop());
-		title.addStyleName(AON.CSS.aonBold());
-		title.addStyleName(AON.CSS.aonTextUnderline());
-		panel.add(title);
-
-		FlowPanel p1 = new FlowPanel();
-		p1.addStyleName(AON.CSS.aonMarginTop());
-		Anchor a1 = new Anchor("Descargar fichero para su presentaci\u00F3n");
-		a1.setStyleName(AON.CSS.aonLabelWithIcon());
-		a1.addStyleName(FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration()));
-		a1.addStyleName(AON.CSS.aonPaddingLeft());
-		a1.addClickHandler( event -> {
-			if (getMod303().isFinished() || getMod303().isSent()) {
-				submitForm(DOWNLOAD_FILE_ACTION);
-			} else {
-				getCallback().showBreakdownPanel(AON.MSG.mustFinishModel());
-			}
-		});
-		p1.add(a1);
-		panel.add(p1);
-		
-		FlowPanel p2 = new FlowPanel();
-		p2.addStyleName(AON.CSS.aonMarginTop());
-		Anchor a2 = new Anchor("Validar e imprimir (PDF) via Agencia Tributaria (a partir de los datos guardados).");
-		a2.setStyleName(AON.CSS.aonLabelWithIcon());
-		a2.addStyleName(FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration()));
-		a2.addClickHandler( event -> {
-			if (getMod303().isFinished() || getMod303().isSent()) {
-				submitAEAT(VALIDATE_PRINT_ACTION);
-				getCallback().showVisorAEAT();
-			} else {
-				getCallback().showBreakdownPanel(AON.MSG.mustFinishModel());
-			}
-		});
-		p2.add(a2);
-		panel.add(p2);
-
-		return panel;
-	}
-
-	@Override
-	protected LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<>();
-		list.add(new Pair<>("Tr\u00E1mites."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/G414.shtml"));
-		list.add(new Pair<>("Informaci\u00F3n general." 
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/G414.shtml"));
-		list.add(new Pair<>("Ficha."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G414.shtml"));
-		list.add(new Pair<>("Predeclaraci\u00F3n via AEAT (Papel)"
-				,"https://www2.agenciatributaria.gob.es/wlpl/A303-PW"+AonStringUtils.right(AonNumberUtils.toString(getMod303().getYear()),2)+"/CONT/index.zul?EDFI"));
-		return list;
-	}
-	
 	private void paintDeclarationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
@@ -313,10 +197,10 @@ public class Model3032021AEAT extends Model303Base {
 		
 		// Tributacion exclusivamente foral
 		final ListBox a12 = new ListBox();
-		a12.setWidth("150px");
+		a12.setWidth(WIDTH_150PX);
 		a12.addItem("(0) Para el mes de enero (01)", "0");
-		a12.addItem("(1) SI", "1");
-		a12.addItem("(2) NO", "2");
+		a12.addItem(SI_1, "1");
+		a12.addItem(NO_2, "2");
 		paintListBox(a12, Mod303Key.CT_A12, table);
 		
 		paintCheck(Mod303Key.CM_002,table);	// Inscrito en el Registro de devolución mensual (Art. 30 RIVA)
@@ -341,18 +225,18 @@ public class Model3032021AEAT extends Model303Base {
 		
 		// Acogido voluntariamente al SII
 		final ListBox a13 = new ListBox();
-		a13.setWidth("150px");
+		a13.setWidth(WIDTH_150PX);
 		a13.addItem("(0) Para el mes de enero (01)", "0");
-		a13.addItem("(1) SI", "1");
-		a13.addItem("(2) NO", "2");
+		a13.addItem(SI_1, "1");
+		a13.addItem(NO_2, "2");
 		paintListBox(a13, Mod303Key.CT_A13, table);
 		
 		// Exonerado de la declaracion resumen anual del IVA (modelo 390)
 		final ListBox a14 = new ListBox();
-		a14.setWidth("150px");
+		a14.setWidth(WIDTH_150PX);
 		a14.addItem("(0) Para todos los periodos distintos del \u00FAltimo (12 y 4T)", "0");   
-		a14.addItem("(1) SI", "1");
-		a14.addItem("(2) NO", "2");
+		a14.addItem(SI_1, "1");
+		a14.addItem(NO_2, "2");
 		paintListBox(a14, Mod303Key.CT_A14, table);
 		
 		// Volumen anual de operaciones distinto de cero
@@ -727,10 +611,10 @@ public class Model3032021AEAT extends Model303Base {
 		
 		tab2.getColumnFormatter().setWidth(0, "80px");
 		tab2.getColumnFormatter().setWidth(1, "20px");
-		tab2.getColumnFormatter().setWidth(2, "150px");
-		tab2.getColumnFormatter().setWidth(3, "150px");
+		tab2.getColumnFormatter().setWidth(2, WIDTH_150PX);
+		tab2.getColumnFormatter().setWidth(3, WIDTH_150PX);
 		tab2.getColumnFormatter().setWidth(4, "80px");
-		tab2.getColumnFormatter().setWidth(5, "150px");
+		tab2.getColumnFormatter().setWidth(5, WIDTH_150PX);
 		tab2.getColumnFormatter().setWidth(6, "auto");
 		
 		tab2.setWidget(1, 0, new Label( "C.N.A.E.") ); 

@@ -87,10 +87,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			this.callback.showBreakdownPanel(htmlText);
 		}
 		@Override
-		public void showVisorAEAT() {
-			this.callback.showVisorAEAT();
-		}
-		@Override
 		public void cleanBreakdownPanel() {
 			this.callback.cleanBreakdownPanel();
 		}
@@ -159,24 +155,12 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
 	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
 	protected FormPanel diskForm = new FormPanel("_blank");
-	protected FormPanel aeatForm = new FormPanel("aeatForm");
 
 	protected Hidden mod303Hidden = new Hidden("mod303");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
 	
-	protected Hidden domainIdAeatHidden = new Hidden("domainId");
-	protected Hidden domainNameAeatHidden = new Hidden("domainName");
-	protected Hidden userAeatHidden = new Hidden("user");
-	protected Hidden modAeatHidden = new Hidden("mod");
-	protected Hidden certAeatHidden = new Hidden("cert");
-	protected Hidden passAeatHidden = new Hidden("pass");
-	protected Hidden nameAeatHidden = new Hidden("name");
-	protected Hidden documentAeatHidden = new Hidden("document");
-	protected Hidden nrcAeatHidden = new Hidden("nrc");
-	protected Hidden testHidden = new Hidden("test");
-
 	interface TabLabelTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
 		SafeHtml render(String label, String iconStyle);
@@ -647,12 +631,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		calculateAndRefresh(null);
 	}
 	
-	private void identificationLabelChanged() {
-		documentLabel.setText(mod303.getDocument());
-		nameLabel.setText(mod303.getName());
-		surnameLabel.setText(mod303.getSurname());
-	}
-
 	protected void markAsDirty() {
 		setDirty(true);
 	}
@@ -984,6 +962,13 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			getMod303().setContactEmail(value);
 			markAsDirty();			
 		}
+		
+		private void identificationLabelChanged() {
+			documentLabel.setText(mod303.getDocument());
+			nameLabel.setText(mod303.getName());
+			surnameLabel.setText(mod303.getSurname());
+		}
+		
 	}
 	
 	protected FlowPanel getInformationPanel() {
@@ -1020,26 +1005,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		domainNameHidden.setValue(callback.getDomainName());
 		userHidden.setValue(callback.getUser());
 		diskForm.submit();
-	}
-	
-	protected void submitAEAT(String action) {
-		submitAEAT(action, "null", "null", "null", "null", "null");
-	}
-	
-	protected void submitAEAT(String action, String cert, String pass, String document, String name, String nrc) {
-		aeatForm.setAction(GWT.getHostPageBaseURL() + action);
-		modAeatHidden.setValue(String.valueOf(getMod303().getId()));
-		domainIdAeatHidden.setValue(String.valueOf(callback.getDomain()));
-		domainNameAeatHidden.setValue(callback.getDomainName());
-		userAeatHidden.setValue(callback.getUser());
-		certAeatHidden.setValue(cert);
-		passAeatHidden.setValue(pass);
-		nameAeatHidden.setValue(name);
-		documentAeatHidden.setValue(document);
-		nrcAeatHidden.setValue(nrc != null ? nrc : "null");
-		testHidden.setValue(getTest() ? "1" : "0");
-
-		aeatForm.submit();
 	}
 	
 	private void paintDeclarationHeaderTable(SimplePanel panel) {

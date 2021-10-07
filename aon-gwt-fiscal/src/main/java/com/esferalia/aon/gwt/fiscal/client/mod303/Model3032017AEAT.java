@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -9,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity2016.IMod303ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivityFarmer.IMod303ActivityFarmerCallback;
@@ -26,13 +23,10 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -40,9 +34,8 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-class Model3032017AEAT extends Model303Base {
-	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
-	
+class Model3032017AEAT extends Model303AEAT {
+
 	private final Model303AEATActivityFarmerTable farmerTable;
 	private final Model303AEATActivityTable activityTable;
 	private ScrollPanel lastPeriodInformationScrollPanel; 
@@ -102,12 +95,6 @@ class Model3032017AEAT extends Model303Base {
 				}
 			}
 		});
-	}
-	
-	
-	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.CSS.aonIconEmployee()));
 	}
 	
 	private void paintGeneralRegimeTab(TabLayoutPanel tabPanel) {
@@ -201,89 +188,6 @@ class Model3032017AEAT extends Model303Base {
 		paintDeclaration(table,Model3032017AEATAdditionalDataScript.values(),3);
 	}
 
-	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
-		FlowPanel panel = new FlowPanel();
-		
-		FlowPanel formContainer = new FlowPanel();
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		FlowPanel formFlowPanel = new FlowPanel();
-		diskForm.add(formFlowPanel);
-		formFlowPanel.add(mod303Hidden);
-		formFlowPanel.add(domainIdHidden);
-		formFlowPanel.add(domainNameHidden);
-		formFlowPanel.add(userHidden);
-		formContainer.add(diskForm);
-		panel.add(formContainer);
-		
-		FlowPanel administrationPanel = getAdministrationPanel(); 
-		panel.add(administrationPanel);
-		FlowPanel informationPanel = getInformationPanel();
-		panel.add(informationPanel);
-		tabPanel.add(panel,TAB_TEMPLATE.render("Agencia Tributaria", FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration())));
-	}
-	
-	protected FlowPanel getAdministrationPanel() {
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.CSS.aonScrollArea());
-		panel.addStyleName(AON.CSS.aonWidthAll());
-		panel.addStyleName(AON.CSS.aonMarginTop());
-		panel.addStyleName(AON.CSS.aonPaddingTop());
-		panel.addStyleName(AON.CSS.aonPaddingLeft());
-
-		Label title = new Label("Presentaci\u00F3n del modelo");
-		title.setStyleName(AON.CSS.aonMarginTop());
-		title.addStyleName(AON.CSS.aonBold());
-		title.addStyleName(AON.CSS.aonTextUnderline());
-		panel.add(title);
-		
-		FlowPanel p1 = new FlowPanel();
-		p1.addStyleName(AON.CSS.aonMarginTop());
-		Anchor a1 = new Anchor("Descargar fichero para su presentaci\u00F3n");
-		a1.setStyleName(AON.CSS.aonLabelWithIcon());
-		a1.addStyleName(FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration()));
-		a1.addStyleName(AON.CSS.aonPaddingLeft());
-		a1.addClickHandler( event -> {
-			if (getMod303().isFinished() || getMod303().isSent()) {
-				submitForm(DOWNLOAD_FILE_ACTION);
-			} else {
-				getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-			}
-		});
-		p1.add(a1);
-		panel.add(p1);
-
-		FlowPanel p2 = new FlowPanel();
-		p2.addStyleName(AON.CSS.aonMarginTop());
-		Anchor a2 = new Anchor("Validar e imprimir (PDF) via Agencia Tributaria (a partir de los datos guardados).");
-		a2.setStyleName(AON.CSS.aonLabelWithIcon());
-		a2.addStyleName(FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration()));
-		a2.addClickHandler( event -> {
-			if (getMod303().isFinished() || getMod303().isSent()) {
-				submitForm(VALIDATE_PRINT_ACTION);
-				getCallback().showVisorAEAT();
-			} else {
-				getCallback().showBreakdownPanel(AON.MSG.mustFinishModel());
-			}
-		});
-		p2.add(a2);
-		panel.add(p2);
-		return panel;
-	}
-
-	@Override
-	protected LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<>();
-		list.add(new Pair<>("Tr\u00E1mites."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/G414.shtml"));
-		list.add(new Pair<>("Informaci\u00F3n general." 
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/G414.shtml"));
-		list.add(new Pair<>("Ficha."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G414.shtml"));
-		list.add(new Pair<>("Predeclaraci\u00F3n via AEAT (Papel)"
-				,"https://www2.agenciatributaria.gob.es/wlpl/A303-PW17/index.zul?EDFI"));
-		return list;
-	}
-	
 	private void paintDeclarationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();

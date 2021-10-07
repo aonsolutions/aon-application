@@ -45,7 +45,6 @@ public class Model303 extends MainEntryPoint {
 
 	private static final int NOTIFICATIONS_TAB = 0;
 	private static final int INFORMATION_TAB = 1;
-	private static final int AEAT_TAB = 2;
 
 	protected static Mod303ServiceAsync service;
 	protected static FiscalMSServiceAsync fiscalMsService;
@@ -63,7 +62,6 @@ public class Model303 extends MainEntryPoint {
 	private SimpleLayoutPanel resultsPanel;
 	private AonMinimizePanel footPanel;
 	private ScrollPanel breakdownPanel;
-	private SimpleLayoutPanel aeatPanel;
 	private Model303ModuleOptions options;
 	private  Model303Table model303Table;
 
@@ -77,7 +75,6 @@ public class Model303 extends MainEntryPoint {
 		public void onNew();
 		public void onReset(Mod303 oldMod303);
 		public void showBreakdownPanel(String htmlText);
-		public void showVisorAEAT();
 		public void cleanBreakdownPanel();
 		public void cleanErrorPanel();
 		public void showError(String msg);
@@ -148,11 +145,6 @@ public class Model303 extends MainEntryPoint {
 					});
 		}
 		
-		@Override
-		public void showVisorAEAT() {
-			openFootPanelIfNeeded();
-			tabLayout.selectTab(AEAT_TAB);		
-		}
 		@Override
 		public void showBreakdownPanel(String htmlText) {
 			openFootPanelIfNeeded();
@@ -289,12 +281,6 @@ public class Model303 extends MainEntryPoint {
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		
 		splitLayoutPanel.add(declarationContainer);
-		
-		
-		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");
-		html.setWidth("100%");
-		html.setHeight("100%");
-		aeatPanel.setWidget(html);
 		
 		Model303Callback callback = new Model303Callback();
 		model303Table = new Model303Table(callback);
@@ -462,9 +448,6 @@ public class Model303 extends MainEntryPoint {
 		breakdownPanel = new ScrollPanel();
 		tabLayout.add(breakdownPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.informationBreakdown(), AON.CSS.aonIconInfo()));
 
-		aeatPanel = new SimpleLayoutPanel(); 
-		tabLayout.add(aeatPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.communicationAeat(), AON.CSS.aonIconAeatBw()));
-		
 		tabLayout.setAnimationDuration(300);
 		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
 		return footPanel; 
