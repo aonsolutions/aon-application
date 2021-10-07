@@ -54,25 +54,41 @@ export const createMobileMainView = () => newComponent({
 }).element;
 
 
-export const createDivEditable = (title, id, placeholder) => newComponent({
-  type: "text",
-  id,
-  text: title ? title : null,
-  classes : [CSS.TRANSITION_QUICK, CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.FOCUS_COLOR_MINUS],
-  styles: {
-    fontSize: "15px",
-    fontWeight: "400",
-    padding : "10px",
-    background: "transparent",
-    borderBottom: `1px solid ${CSS.variable(COLORS.GRAYSON)}`,
-    width: "100%",
-    color: CSS.variable(COLORS.AON_BLUE),
-  },
-  attributes: {
-    contentEditable : "",
-    placeholder: placeholder || "...",
-  }
-}).element;
+export const createDivEditable = (parent, title, value, id, placeholder) => {
+  const div = createStartJustifiedColumn();
+  if(parent) parent.appendChild(div.element);
+  let span = setStyles(document.createElement(TAG.SPAN),{
+      fontSize: "0.9375rem",
+      width:"100%",
+      color:CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST)
+  });
+  span.textContent = title +` (${MSG.OPTIONAL})`;
+  div.appendChild(span);
+
+  const divTwo =  newComponent({
+    type: "text",
+    id,
+    text: value ? value : null,
+    classes : [CSS.TRANSITION_QUICK, CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.FOCUS_COLOR_MINUS],
+    styles: {
+      fontSize: "15px",
+      fontWeight: "400",
+      padding : "10px",
+      background: "transparent",
+      borderBottom: `1px solid ${CSS.variable(COLORS.GRAYSON)}`,
+      width: "100%",
+      color: CSS.variable(COLORS.AON_BLUE),
+    },
+    attributes: {
+      contentEditable : "",
+      placeholder: placeholder || "...",
+    }
+  }).element;
+
+  div.appendChild(divTwo);  
+
+  return div.element;
+}
 
 export const createTitle = (title) => newComponent({
   type: "text",
@@ -229,17 +245,6 @@ export const createStartJustifiedColumn = () =>newComponent({
     }
 });
 
-export const titleFirstDiv  = (title="") => {
-    const div = createStartJustifiedColumn();
-    let span = setStyles(document.createElement(TAG.SPAN),{
-        fontSize: "0.9375rem",
-        width:"100%",
-        color:CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST)
-    });
-    span.textContent = title;
-    div.appendChild(span);
-    return div.element;
-}
 
 /**
  * Create a text 

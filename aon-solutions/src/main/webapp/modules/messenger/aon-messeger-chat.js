@@ -11,6 +11,7 @@ import * as ACTIONS from "../actions.js";
 import { getFormVacationJson } from "./forms/vacation.js";
 import { fillChat } from "./shared/fill.js";
 import { getFormMovJson } from "./forms/mov-ss.js";
+import { getFormTimeJson } from "./forms/time-control.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -212,6 +213,8 @@ export class AonMessengerChat extends AonElement {
           description = getFormVacationJson();
         else if("2" === processType.value )
           description = getFormMovJson();
+        else if("3" === processType.value )
+          description = getFormTimeJson();
 
         if(description){
           this.task.title = processType.getText();

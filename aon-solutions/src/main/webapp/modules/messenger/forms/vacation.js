@@ -7,7 +7,7 @@ import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environme
 import { formatDateOrigin, serializeForm } from "../../../services/utils.js";
 import { setAttributes } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS } from "../MessengerEnums.js";
-import { createDivEditable, titleFirstDiv } from "../shared/creationUtils.js";
+import { createDivEditable } from "../shared/creationUtils.js";
 
 /**
  * 
@@ -33,11 +33,6 @@ import { createDivEditable, titleFirstDiv } from "../shared/creationUtils.js";
         if(data.status) aonSelect.value = data.status;
     }
 
-    //DIV TITLE
-    const titleDiv = titleFirstDiv(MSG.OBSERVATION);
-    form.appendChild(titleDiv);
-    const observation = createDivEditable( data.observation || "" , "observation" ,  MSG.TYPE_HERE);
-    titleDiv.appendChild(observation);
 
     let table = setAttributes(new AonBasicTable(),{ id:"tableVacation" });
     form.appendChild(table);
@@ -60,13 +55,16 @@ import { createDivEditable, titleFirstDiv } from "../shared/creationUtils.js";
     });
     addButton.addEventListener(EVENT.CLICK, () => addDates(table, undefined, i++) );
     div.appendChild(addButton);
+
+    //OBSERVATION
+    createDivEditable(form, MSG.OBSERVATION,  data.observatio0n || "" , "observation" ,  MSG.TYPE_HERE);
 }
 
 /**
  * 
  * @param {HTMLElement} table html table
  * @param {Object} data data object default
- * @param {Number} i row numeric
+ * @param {Number} i row numericw
  */
 const addDates = (table, data={}, i) =>{
     const rowIndex = table.addRow(); // ----- RETURN ROW INDEX

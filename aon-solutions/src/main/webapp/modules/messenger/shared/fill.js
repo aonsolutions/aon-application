@@ -223,9 +223,13 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
     let options = [
         { value:1, name:"Solicitud de vacaciones"},
     ];
-    // if(isGestor){
+    
+    if( aonMessengerChat.getDur().isMessengerManager() ){
         options.push({ value:2, name:"Alta de empleado"});
-    // }
+    }
+
+    options.push({ value:3, name: `Error ${MSG.TIMECONTROL}`});
+
     if(options){
         aonSelect.setOptions( options );
     }

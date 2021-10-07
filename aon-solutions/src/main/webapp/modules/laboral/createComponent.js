@@ -29,7 +29,7 @@ export const createBajaDialogContent = () =>{
 
     const btnSubmit = document.createElement(TAG.BUTTON);
     btnSubmit.id = "btnSubmitBaja";
-    btnSubmit.className = "aonButton";
+    btnSubmit.className =  CSS.AON_BUTTON;
     btnSubmit.textContent = "Aceptar";
     btnSubmit.style.padding ="0.5rem 1rem";
     btnSubmit.style.marginBottom ="5px";

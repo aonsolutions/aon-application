@@ -9,6 +9,7 @@ import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger,
 import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { createFormMov } from "../forms/mov-ss.js";
+import { createFormTimeControl } from "../forms/time-control.js";
 
 
 let isDefault = false;
@@ -279,7 +280,7 @@ const changeFormProcess = ({value,name}, aonMessengerChat) => {
     processDiv.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
     aonCard.getCard().style.marginTop = "10px";
-    if(task.id){ //BUTTON SHOW JSON
+    if(task.id && aonMessengerChat.getDur().isMessengerManager()){ //BUTTON SHOW JSON
         aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
             let d = aonMessengerChat.applicationEl.getDialog();
              if(d){
@@ -297,6 +298,9 @@ const changeFormProcess = ({value,name}, aonMessengerChat) => {
         createFormVacation(aonCard, aonMessengerChat);
     } else if(value ===2) {
         createFormMov(aonCard, aonMessengerChat);
+    }
+    else if(value ===3) {
+        createFormTimeControl(aonCard, aonMessengerChat);
     }
 }
 
@@ -324,8 +328,9 @@ const jsonDiv = ()=> {
  */
 export const buildForm = (div, aonMessengerChat) => {
     const task = aonMessengerChat.task;
-    const applicationParent = aonMessengerChat.applicationParentEl;
+    const aonMessenger = aonMessengerChat.applicationParentEl;
     const isGestor = task.isGestor();
+    const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
 
     isDefault = aonMessengerChat.getData().project && aonMessengerChat.getData().project.id;
 
@@ -336,12 +341,12 @@ export const buildForm = (div, aonMessengerChat) => {
     const aonCard = createCardMessenger(MSG.DATA, "");
     div.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
-    if(task.source !== TASK_SOURCE.CAU && applicationParent.cau && task.registry && task.registry.name){ // CARD TITLE REGISTRY
+    // if(task.source !== TASK_SOURCE.CAU && applicationParent.cau && task.registry && task.registry.name){ // CARD TITLE REGISTRY
+    if( task.registry && task.registry.name && isReceived(task, myWorkgroups) ){
         const registryName = `[${task.registry.name}]`;
         aonCard.setTitleSection1(registryName)
     }
-
-   //-----------------------END CREATE FIRST CARD
+    //-----------------------END CREATE FIRST CARD
 
     //-----------------------CREATE DIV PROCESS
     const divProcess = createStartJustifiedColumn().element;
@@ -382,10 +387,9 @@ export const buildForm = (div, aonMessengerChat) => {
         selectApp.style.marginLeft = "5px";
         rowsDiv.appendChild(selectApp);
         fillSelectAppCau(aonMessengerChat);
-    } else if( !task.id || task.isExternal() ){
-        const aonMessenger = aonMessengerChat.applicationParentEl;
-        const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
-        let initText = isReceived(task, myWorkgroups, task.isGestor(),  task.auth.email) ? 'De' : 'Para';
+    } else if( !task.id || task.isExternal() && aonMessengerChat.getDur().isMessengerManager() ){
+
+        let initText = isReceived(task, myWorkgroups) ? 'De' : 'Para';
         let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
         const btnExternal = createAonSwitch(titleBtn);
         rowsDiv.appendChild(btnExternal);
@@ -601,6 +605,7 @@ const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
             changeFormProcess(detail, aonMessengerChat);
     })
     fillProcessType(task, aonMessengerChat);
+    if(task.id) typeProcess.setDisabled(CONSTANT.TRUE);
         
     if(forManager){
         //--------- DIV PROJECT
@@ -789,16 +794,16 @@ const showTags = (b) => {
  * @param {Array} workgroups my workgrouprs
  * @returns 
  */
-export const isReceived = (task, workgroups, isGestor, email) => {
+const isReceived = (task, workgroups) => {
     let condition = false;
     try {
         if(task.id){
             const isWorkgroup = workgroups.some(({id})=> id === task.workgroup.id );
-            condition = isGestor
+            condition = task.isGestor()
             ? 
                 (task.task_holder.id === task.myTaskHolder.id) || isWorkgroup 
             : 
-                task.sender.id && task.gtask_id ===email;
+                task.sender.id && task.gtask_id === task.auth.email;
         }
     } catch (error) {console.log(error);}
     return condition;

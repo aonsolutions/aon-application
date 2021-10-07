@@ -1,16 +1,15 @@
-
-import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { AonDate } from "../../../components/aon-date.js";
-import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
-import { TAG, EVENT, MSG, MATERIAL_ICONS, CONSTANT, CSS, COLORS } from "../../../environments/environments.js";
-import { getGrupoCotizacion, getOcupacion, getTipoContrato } from "../../../services/comunicaService.js";
+import { AonNumber } from "../../../components/aon-number.js";
+import { TAG, EVENT, MSG, CONSTANT, CSS, COLORS } from "../../../environments/environments.js";
+import { getCccForActivity } from "../../../services/contractService.js";
 import {  serializeForm } from "../../../services/utils.js";
-import { setAttributes, setStyles } from "../../../services/utilsComponents.js";
-import { partTime } from "../../laboral/createComponent.js";
+import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS } from "../MessengerEnums.js";
+import { createDivEditable } from "../shared/creationUtils.js";
+
 
 /**
  * 
@@ -18,6 +17,8 @@ import { MESSENGER_IDS } from "../MessengerEnums.js";
  */
  export const createFormMov = (card, aonMessengerChat) =>{
     const task = aonMessengerChat.task;
+    card.flex = "true";
+    card.getCardTitle().style.marginBottom = 0;
     
     let data = task.id ? JSON.parse(task.description) : {};
 
@@ -49,18 +50,13 @@ import { MESSENGER_IDS } from "../MessengerEnums.js";
  * @param {Object} data 
  */
 const createDataEnterprise = (form, data) => {
-    const row =setStyles(document.createElement(TAG.DIV),{ display:"flex" });
-    form.appendChild(row);
-
-    const columnOne = setStyles(document.createElement(TAG.DIV),{ width:"100%" });
-    row.appendChild(columnOne);
 
     let ctaCti = setAttributes(new AonSelect(),{ title: "Cuenta de cotización", id:"ctaCti", name:"ctaCti"});
-    columnOne.appendChild(ctaCti);
-    fillCtaCti(ctaCti, data.ctaCti);
+    createDiv(form, ctaCti, {classes:[CSS.AON_COL_XS_12]})
+    fillCtaCti(ctaCti, data);
 
     let regime = setAttributes(new AonInput(),{ id:"regime", name:"regime", visible:CONSTANT.FALSE });
-    columnOne.appendChild(regime);
+    form.appendChild(regime);
 
     ctaCti.addEventListener(EVENT.CHANGE, ({ detail }) => regime.value = detail.cccRegimeCode);
 
@@ -73,16 +69,14 @@ const createDataEnterprise = (form, data) => {
  */
  const createDataEmployee = (form, data) => {
     createTitle(form, "Datos del empleado");
-
-    const [,column1, column2] = createRowColumns(form, 2);
-
+    
     let nss = setAttributes(new AonInput(),{
         id:"nss",
         name:"nss",
         description:"NSS/NAF (Opcional)",
         value: data.nss ? data.nss : ""
     });
-    column1.appendChild(nss);
+    createDiv(form, nss, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     let ipf = setAttributes(new AonInput(),{
         id: "ipf",
@@ -90,9 +84,7 @@ const createDataEnterprise = (form, data) => {
         description: "DNI/NIE",
         value: data.ipf ? data.ipf : ""
     });
-    column2.appendChild(ipf);
-
-    const [,column3, column4] = createRowColumns(form, 2);
+    createDiv(form, ipf, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     let surname = setAttributes(new AonInput(),{
         id:"surname",
@@ -100,7 +92,7 @@ const createDataEnterprise = (form, data) => {
         description:"Apellido 1",
         value: data.surname ? data.surname : ""
     });
-    column3.appendChild(surname);
+    createDiv(form, surname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     let lastSurname = setAttributes(new AonInput(),{
         id: "lastSurname",
@@ -108,9 +100,7 @@ const createDataEnterprise = (form, data) => {
         description: "Apellido 2",
         value: data.lastSurname ? data.lastSurname : ""
     });
-    column4.appendChild(lastSurname);
-
-    const [,column5] = createRowColumns(form, 1);
+    createDiv(form, lastSurname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     let name = setAttributes(new AonInput(),{
         id: "name",
@@ -118,7 +108,7 @@ const createDataEnterprise = (form, data) => {
         description: "Nombre",
         value: data.name ? data.name : ""
     });
-    column5.appendChild(name);
+    createDiv(form, name, {classes:[CSS.AON_COL_XS_12]})
 
 }
 
@@ -131,10 +121,8 @@ const createDataEnterprise = (form, data) => {
      
     createTitle(form, "Datos del Contrato");
 
-    const [,column0, column] = createRowColumns(form, 2);
-
     let fra = setAttributes(new AonDate(),{ title: MSG.START_DATE, id:"fra", name:"fra"});
-    column0.appendChild(fra);
+    createDiv(form, fra, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
     if(data.fra) fra.setDate(new Date(data.fra))
 
     let category = setAttributes(new AonInput(),{
@@ -143,76 +131,128 @@ const createDataEnterprise = (form, data) => {
         description:"Categoria profesional",
         value: data.category ? data.category : "",
     });
-    column.appendChild(category);
+    createDiv(form, category, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
-    const [row1, column2, column3] = createRowColumns(form, 2);
-    row1.style.margin = "10px 0";
+    let salaryCheck = setAttributes(new AonSwitch(),{ title: "Salario s/convenio", id:"salaryCheck", name:"salaryCheck", checked: data.salaryCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
+    createDiv(form, salaryCheck, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_5], styles:{ marginBottom: "8px"} });
 
-    let duration = setAttributes(new AonSwitch(),{ title: "Duración indefinida", id:"duration", name:"duration", checked: data.duration == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
-    column2.appendChild(duration);
+    let salaryType = setAttributes(new AonSelect(),{ title: "Tipo", id:"salaryType", name:"salaryType"});
+    createDiv(form, salaryType, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_3]});
+    salaryType.setDisabled(salaryCheck.isChecked());
+    fillSalaryType(salaryType, data.salaryType);
 
-    let frb = setAttributes(new AonDate(),{ title: MSG.END_DATE, id:"frb", name:"frb"});
-    frb.style.display =  data.duration == CONSTANT.FALSE ? "block" : "none";
-    column3.appendChild(frb);
-    if(data.frb) frb.setDate(new Date(data.frb))
+    let salary = setAttributes(new AonNumber(),{
+        id:"salary", 
+        name:"salary", 
+        description:"Salario mensual",
+        decimals:"2",
+        format:CONSTANT.TRUE,
+        value: data.salary ? data.salary : "",
+    })
+    createDiv(form, salary, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_4]});
+    if(salaryCheck.isChecked()) salary.disabled = CONSTANT.TRUE;
 
-    duration.addEventListener(EVENT.CHANGE,({target})=>{
-        frb.value = "";
-        frb.style.display = target.checked ? "none": "block";
+    salaryCheck.addEventListener(EVENT.CHANGE,({target})=>{
+        salary.value = "";
+        salaryType.clear();
+        salary.disabled = target.checked;
+        salaryType.setDisabled(target.checked);
     });
-
-
-    const [row2,column4, column5] = createRowColumns(form, 2);
-    row2.style.margin = "10px 0";
 
     let fullTimeCheck = setAttributes(new AonSwitch(),{ title: "Jornada completa", id:"fullTimeCheck", name:"fullTimeCheck", checked: data.fullTimeCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
-    column4.appendChild(fullTimeCheck);
+    createDiv(form, fullTimeCheck, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_5], styles:{ marginBottom: "8px"} });
 
-    let fullTime = setAttributes(new AonInput(),{
-        id:"fullTime",
-        name:"fullTime",
-        description:"Tiempo",
-        value: data.fullTime ? data.fullTime : "",
-        visible: data.fullTimeCheck == CONSTANT.FALSE ? CONSTANT.TRUE : CONSTANT.FALSE
-    });
-    column5.appendChild(fullTime);
+    let jornadaType = setAttributes(new AonSelect(),{ title: "Tipo", id:"jornadaType", name:"jornadaType"});
+    createDiv(form, jornadaType, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_3]});
+    jornadaType.setDisabled(fullTimeCheck.isChecked());
+    fillJornadaType(jornadaType, data.jornadaType);
+
+    let hour = setAttributes(new AonNumber(),{
+        id:"hour", 
+        name:"hour", 
+        description:"Horas",
+        decimals:"2",
+        format:CONSTANT.TRUE,
+        value: data.hour ? data.hour : "",
+    })
+    createDiv(form, hour, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_4]});
+    if(fullTimeCheck.isChecked()) hour.disabled = CONSTANT.TRUE;
 
     fullTimeCheck.addEventListener(EVENT.CHANGE,({target})=>{
-        fullTime.value = "";
-        fullTime.visible = target.checked ? CONSTANT.FALSE:  CONSTANT.TRUE;
+        hour.value = "";
+        hour.disabled = target.checked;
+        jornadaType.clear();
+        jornadaType.setDisabled(target.checked);
     });
 
 
-    const [row3, column6, column7] = createRowColumns(form, 2);
-    row3.style.margin = "10px 0";
+    let durationCheck = setAttributes(new AonSwitch(),{ title: "Duración indefinida", id:"durationCheck", name:"durationCheck", checked: data.durationCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
+    createDiv(form, durationCheck, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_5]});
 
-    let salatyType = setAttributes(new AonSwitch(),{ title: "Salario s/convenio", id:"salatyType", name:"salatyType", checked: data.salatyType==CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
-    column6.appendChild(salatyType);
+    let frb = setAttributes(new AonDate(),{ title: MSG.END_DATE, id:"frb", name:"frb"});
+    createDiv(form, frb, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_7]});
+    frb.disabledDate(durationCheck.isChecked());
+    if(data.frb) frb.setDate(new Date(data.frb))
 
-    let salary = setAttributes(new AonInput(),{
-        id:"salary",
-        name:"salary",
-        description:"Salario",
-        value: data.salary ? data.salary : "",
-        visible: data.salatyType == CONSTANT.FALSE ? CONSTANT.TRUE : CONSTANT.FALSE
+    durationCheck.addEventListener(EVENT.CHANGE,({target})=>{
+        frb.value = "";
+        frb.disabledDate(target.checked);
     });
-    column7.appendChild(salary);
 
-    salatyType.addEventListener(EVENT.CHANGE,({target})=>{
-        salary.value = "";
-        salary.visible = target.checked ? CONSTANT.FALSE : CONSTANT.TRUE;
+    // //OBSERVATION
+    const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
+    createDiv(form, observation, {classes:[CSS.AON_COL_XS_12]});
+}
+
+//-----------FILL
+const fillCtaCti = (aonSelect, data) => {
+
+    getCccForActivity().then(({cccs})=>{
+        
+        let options = [];
+        for (const key in cccs) {
+            const ccc = cccs[key];
+            options.push(ccc);
+        }
+
+        options = options.filter( (v,index, self)=>self.findIndex((m) => m.ccc === v.ccc) === index ).map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
+
+        if(data.ctaCti &&  data.regime){
+            const exists = options.some(v => v.ccc === data.ctaCti);
+            if(!exists)  options.push({ccc: data.ctaCti, cccRegimeCode: data.regime});
+        }
+
+        aonSelect.setOptions( options );
+
+        if(data.ctaCti) aonSelect.value = data.ctaCti;
     });
 }
 
 //-----------FILL
-const fillCtaCti = (aonSelect, value) => {
+const fillSalaryType = (aonSelect, salaryType) => {
     let options = [
-        {value: "99999999999", name:"0111 - 99999999999", cccRegimeCode:'0111' }
+        {name: 'Bruto', value:1},
+        {name: 'Neto', value: 2}
     ];
 
     aonSelect.setOptions( options );
-    if(value) aonSelect.value = value;
+
+    if(salaryType) aonSelect.value = salaryType;
 }
+
+//-----------FILL
+const fillJornadaType = (aonSelect, jornadaType) => {
+    let options = [
+        {name: 'Semanal', value:1},
+        {name: 'Diaria', value: 2}
+    ];
+
+    aonSelect.setOptions( options );
+
+    if(jornadaType) aonSelect.value = jornadaType;
+}
+
+
 
 /**
  * 
@@ -222,7 +262,8 @@ const fillCtaCti = (aonSelect, value) => {
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
     if(form){
         const formSerialize = serializeForm(form);
-        return { ...formSerialize };
+        let observation = form.querySelector("#observation").innerText;
+        return { ...formSerialize, observation };
     }
     return null;
 }
@@ -234,54 +275,30 @@ const fillCtaCti = (aonSelect, value) => {
  * @param {String} text 
  */
 const createTitle = (parent, text) => {
-    const [row,column] = createRowColumns(parent, 1);
-    row.style.margin = "10px 0";
     let title = setStyles(document.createElement(TAG.SPAN),{ fontSize: "16px", fontWeight:750, color:CSS.variable(COLORS.AON_DARK_GRAY) });
     title.innerHTML = text;
-    column.appendChild(title);
+    createDiv(parent, title, {
+        classes:[CSS.AON_COL_XS_12],
+        styles:{
+            padding: "5px 0"
+        }
+    });
 } 
 
 /**
  * 
- * @param {HTMLElement} parent appendchild 
- * @param {Number} columns totals columns
- * @returns Arrays{HMLElement} row and columns
+ * @param {HTMLElement} parent appenchild
+ * @param {HTMLElement} child element add
+ * @param {Object} properties 
+ * @returns 
  */
-const createRowColumns = (parent, columns) => {
-    const [row] = createRows(parent, 1);
-    return [row, ...createColumns(row, columns)];
+const createDiv = (parent, child, properties)=> {
+
+    const div = newComponent({ type: TAG.DIV, ...properties }).element;
+
+    parent.appendChild(div);
+
+    div.appendChild(child);
+
+    return div;
 }
-
-
-/**
- * 
- * @param {HTMLElement} parent appendchild 
- * @param {Number} columns totals rows
- * @returns Arrays{HMLElement} rows
- */
- const createRows = (parent, rows) => {
-    let arr = [];
-    for (let index = 0; index < rows; index++) {
-        const row = setStyles(document.createElement(TAG.DIV),{ display:"flex" });
-        parent.appendChild(row);
-        arr.push(row);
-    }
-    return arr;
-}
-
-/**
- * 
- * @param {HTMLElement} parent appendchild 
- * @param {Number} columns totals columns
- * @returns Arrays{HMLElement} columns
- */
-const createColumns = (parent, columns) => {
-    let arr = [];
-    for (let index = 0; index < columns; index++) {
-        const column = setStyles(document.createElement(TAG.DIV),{ width:"100%"});
-        if(index>0) column.style.paddingLeft = "5px";
-        parent.appendChild(column);
-        arr.push(column);
-    }
-    return arr;
-} 

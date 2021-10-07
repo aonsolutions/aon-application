@@ -52,6 +52,9 @@ export class AonCard extends AonElement {
 			} else {
 				this.style.display = 'block';
 			}
+		} else if("flex" === name){
+			let div = this.getElement(this.CARD);
+			if(div) div.classList.add("aonCardFlex");
 		}
 	}
 
