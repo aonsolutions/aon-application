@@ -12,9 +12,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -30,7 +28,7 @@ public class Model3032017GIPUZKOA extends Model303Base {
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
-		centerPanel.addStyleName(AON.AON_CSS.aonScrollArea());
+		centerPanel.addStyleName(AON.CSS.aonScrollArea());
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
@@ -45,7 +43,7 @@ public class Model3032017GIPUZKOA extends Model303Base {
 
 	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
 		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.AON_CSS.aonIconIdentification()));
+		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.CSS.aonIconEmployee()));
 	}
 
 	private void paintDeclarationTab(TabLayoutPanel tabPanel) {
@@ -54,12 +52,12 @@ public class Model3032017GIPUZKOA extends Model303Base {
 		
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
 		table.getColumnFormatter().setWidth(1, "300px");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 
 		paintTextBox(table, Mod303Key.GP_I000, 9, true);
 		paintWithoutActivityCheck(table);	// Sin actividad
@@ -69,7 +67,7 @@ public class Model3032017GIPUZKOA extends Model303Base {
 		
 		container.add(addGroupPanel("", table));
 		declarationScrollPanel.setWidget(container);
-		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
+		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.CSS.aonIconData()));
 	}
 	
 	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
@@ -77,41 +75,41 @@ public class Model3032017GIPUZKOA extends Model303Base {
 		FlowPanel container = new FlowPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 		table.getColumnFormatter().setWidth(1, "40px");
-		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		table.getColumnFormatter().setWidth(3, "40px");
-		table.getColumnFormatter().setStyleName(3, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(3, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(4, "60px");
 		table.getColumnFormatter().setWidth(5, "40px");
-		table.getColumnFormatter().setStyleName(5, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, "140px");
 		table.getColumnFormatter().setWidth(7, "50px");
 		paintDeclaration(table,Model3032017GIPUZKOARScript1.values(),8);
 		container.add(table);
 		generalRegimeScrollPanel.setWidget(container);
-		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.generalRegime(), AON.AON_CSS.aonIconModel()));
+		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.generalRegime(), AON.CSS.aonIconLetterG()));
 	}
 	
 	private void paintResultTab(TabLayoutPanel tabPanel) {
 		ScrollPanel resultScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 		table.getColumnFormatter().setWidth(1, "40px");
-		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
-		tabPanel.add(resultScrollPanel, TAB_TEMPLATE.render(AON.MSG.result(), AON.AON_CSS.aonIconModel()));
+		tabPanel.add(resultScrollPanel, TAB_TEMPLATE.render(AON.MSG.result(), AON.CSS.aonIconLetterR()));
 		paintDeclaration(table,Model3032017GipuzkoaResultScript.values(),3);
 	}
 
@@ -119,30 +117,27 @@ public class Model3032017GIPUZKOA extends Model303Base {
 		ScrollPanel additionalDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
-		table.addStyleName(AON.AON_CSS.aonMarginBottom());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		
 		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
-		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
 		table.getColumnFormatter().setWidth(1, "40px");
-		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		
 		table.getColumnFormatter().setWidth(3, "40px");
-		table.getColumnFormatter().setStyleName(3, AON.AON_CSS.aonTextCenter());
+		table.getColumnFormatter().setStyleName(3, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(4, "140px");
 
 		table.getColumnFormatter().setWidth(5, "50px");
 		
 		additionalDataScrollPanel.setWidget(table);
-		tabPanel.add(additionalDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.additionalData(), AON.AON_CSS.aonIconCompanyData()));
+		tabPanel.add(additionalDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.additionalData(), AON.CSS.aonIconLetterD()));
 		paintDeclaration(table,Model3032017GIPUZKOAAdditionalDataScript.values(),3);
 	}
 	
 	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
-		//FlowPanel panel = getInformationPanel();
-		//tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));
-		
 		FlowPanel panel = new FlowPanel();
 		
 		FlowPanel formContainer = new FlowPanel();
@@ -162,71 +157,49 @@ public class Model3032017GIPUZKOA extends Model303Base {
 		FlowPanel informationPanel = getInformationPanel();
 		panel.add(informationPanel);
 		
-		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationIconBW(getMod303().getAdministration())));		
+		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration())));		
 		
 	}
 	
 	protected FlowPanel getAdministrationPanel() {
 		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.addStyleName(AON.AON_CSS.aonWidthAll());
-		panel.addStyleName(AON.AON_CSS.aonMarginTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-		 
-		FlexTable tab = new FlexTable();
-		tab.getColumnFormatter().setWidth(0, "30px");
-		tab.getColumnFormatter().setWidth(1
-				, "auto");
-		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
-		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
-		Label title = new Label("Presentaci\u00F3n del modelo");
-		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getMod303().getAdministration()));
-		tab.setWidget(0, 0, title);
-		
-		int row = 1;
+		panel.setStyleName(AON.CSS.aonScrollArea());
+		panel.addStyleName(AON.CSS.aonWidthAll());
+		panel.addStyleName(AON.CSS.aonMarginTop());
+		panel.addStyleName(AON.CSS.aonPaddingTop());
+		panel.addStyleName(AON.CSS.aonPaddingLeft());
 
-		Label icon1 = new Label();
-		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getMod303().getAdministration()));
-		tab.setWidget(row, 0, icon1 );
-		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		Label title = new Label("Presentaci\u00F3n del modelo");
+		title.setStyleName(AON.CSS.aonMarginTop());
+		title.addStyleName(AON.CSS.aonBold());
+		title.addStyleName(AON.CSS.aonTextUnderline());
+		panel.add(title);
+
 		FlowPanel p1 = new FlowPanel();
-		p1.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button1 = new Button("Descargar fichero para presentaci\u00F3n telem\u00E1tica.");
-		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button1.addStyleName(AON.AON_CSS.aonBorderNone());
-		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button1.addStyleName(AON.AON_CSS.aonClickable());
-		button1.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (getMod303().isFinished() || getMod303().isSent()) {
-					submitForm(DOWNLOAD_FILE_ACTION);
-				} else {
-					getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-				}
+		p1.addStyleName(AON.CSS.aonMarginTop());
+		Anchor a1 = new Anchor("Descargar fichero para su presentaci\u00F3n");
+		a1.setStyleName(AON.CSS.aonLabelWithIcon());
+		a1.addStyleName(FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration()));
+		a1.addStyleName(AON.CSS.aonPaddingLeft());
+		a1.addClickHandler( event -> {
+			if (getMod303().isFinished() || getMod303().isSent()) {
+				submitForm(DOWNLOAD_FILE_ACTION);
+			} else {
+				getCallback().showBreakdownPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 			}
 		});
-		p1.add(button1);
-		tab.setWidget(row, 1, p1 );
-		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		row++;
+		p1.add(a1);
+		panel.add(p1);
 		
-		panel.add(tab);
 		return panel;
 	}
 
 	@Override
 	protected LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
-		list.add(new Pair<String, String>("Informaci\u00F3n general."
+		LinkedList<Pair<String, String>> list = new LinkedList<>();
+		list.add(new Pair<>("Informaci\u00F3n general."
 				,"https://egoitza.gipuzkoa.eus/es/listado-tramites/-/tramiteak/xehetasuna/740"));
-		list.add(new Pair<String, String>("Formulario PDF." 
+		list.add(new Pair<>("Formulario PDF." 
 				,"http://www2.gipuzkoa.eus/wps/wcm/connect/990ddb4f-eb8d-471c-a61e-df793f4d44b9/Impreso_300_Inprimakia_v2_2011_01_19.pdf?MOD=AJPERES&CACHEID=990ddb4f-eb8d-471c-a61e-df793f4d44b9&useDefaultText=0&useDefaultDesc=0"));
 		return list;
 	}
