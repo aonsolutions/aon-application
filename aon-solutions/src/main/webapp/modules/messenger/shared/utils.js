@@ -5,9 +5,10 @@ import {  setAttributes, setStyles } from "../../../services/utilsComponents.js"
 import {  setTime, setFullDate } from "../../../services/utils.js";
 import { createFormVacation } from "../forms/vacation.js";
 import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
-import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillTaskHolder, fillWorkGroup } from "./fill.js";
+import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
+import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
+import { createFormMov } from "../forms/mov-ss.js";
 
 
 let isDefault = false;
@@ -294,7 +295,9 @@ const changeFormProcess = ({value,name}, aonMessengerChat) => {
 
     if(value===1){ //FORM VACATION
         createFormVacation(aonCard, aonMessengerChat);
-    } 
+    } else if(value ===2) {
+        createFormMov(aonCard, aonMessengerChat);
+    }
 }
 
 const jsonDiv = ()=> {
@@ -361,27 +364,43 @@ export const buildForm = (div, aonMessengerChat) => {
     requestTypeSelect.style.width = "100%";
     if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
     rowsDiv.appendChild(requestTypeSelect);
-    
     //-----------------END TYPE REQUEST
-    const aonMessenger = aonMessengerChat.applicationParentEl;
-    const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
-    let initText = isReceived(task, myWorkgroups, task.isGestor(),  task.auth.email) ? 'De' : 'Para';
-    let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
-    const btnExternal = createAonSwitch(titleBtn);
-    rowsDiv.appendChild(btnExternal);
-    if(task.id || isDefault) btnExternal.disabled =  true;
-    btnExternal.checked = task.isProject();
-    btnExternal.addEventListener(EVENT.CHANGE, ({target}) => {
-        changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess);
-        if(!isGestor && target.checked) 
-            showTags(false);
-        else 
-            showTags(true);
-    });
- 
-    requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess));
 
-    ///AL CAMBIAR DE TIPO DE SOLICITUD SE LIMPIAN LOS DATOS DE PROJECT (ERROR)
+    //---------------------IS CAU
+    if(aonMessengerChat.isCau()){
+        showTags(false);
+        task.setSource(TASK_SOURCE.CAU);
+        requestTypeSelect.style.display = "none";
+
+        const selectTypeRequestCau = createSelectCau('typeCau', MESSENGER_IDS.TYPE_REQUEST_CAU, MSG.TYPE_REQUEST);
+        selectTypeRequestCau.style.width = "100%";
+        rowsDiv.appendChild(selectTypeRequestCau);
+        fillTypeRequestCau(aonMessengerChat);
+
+        const selectApp = createSelectCau('selectApp', MESSENGER_IDS.SELECT_APP, 'Aplicación');
+        selectApp.style.width = "100%";
+        selectApp.style.marginLeft = "5px";
+        rowsDiv.appendChild(selectApp);
+        fillSelectAppCau(aonMessengerChat);
+    } else if( !task.id || task.isExternal() ){
+        const aonMessenger = aonMessengerChat.applicationParentEl;
+        const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
+        let initText = isReceived(task, myWorkgroups, task.isGestor(),  task.auth.email) ? 'De' : 'Para';
+        let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
+        const btnExternal = createAonSwitch(titleBtn);
+        rowsDiv.appendChild(btnExternal);
+        if(task.id || isDefault) btnExternal.disabled =  true;
+        btnExternal.checked = task.isProject();
+        btnExternal.addEventListener(EVENT.CHANGE, ({target}) => {
+            changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess);
+            if(!isGestor && target.checked) 
+                showTags(false);
+            else 
+                showTags(true);
+        });
+    }
+
+    requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess));
 
     fillRequestType(task, aonMessengerChat);
 }
@@ -407,10 +426,10 @@ export const buildForm = (div, aonMessengerChat) => {
         const aonTextArea = document.getElementById(MESSENGER_IDS.DESCRIPTION_TASK);
         if(aonTextArea) aonTextArea.remove();
         //------------------HTML CLEAN UP
-        
         if(detail.value){
             task.setSource(detail.value);
-            task.setTitle(detail.name);
+            if(!task.id)
+                task.setTitle(detail.name);
             if(detail.value === TASK_SOURCE.REQUEST){
                 formRequest(columnsDivTwo, aonMessengerChat, btnExternal ? btnExternal.isChecked() : false);
             } else {
@@ -482,7 +501,7 @@ const addTaskDescription = (aonMessengerChat) => {
     if(!aonMessengerChat.isMobile()){ //-------------------------------------------------------DESKTOP
         const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
   
-        setStyles(aonTextArea, { minHeight: '150x', maxHeight: '300px', position: 'relative', borderRadius:"5px"});
+        setStyles(aonTextArea, { minHeight: '150px', maxHeight: '300px', position: 'relative', borderRadius:"5px"});
         processDiv.appendChild(aonTextArea);
         
         const label = aonTextArea.addLabelTextEnd();

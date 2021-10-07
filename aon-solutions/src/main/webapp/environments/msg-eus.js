@@ -21,6 +21,9 @@ export const ALL_FILES = 'Fitxategi Guztiak';
 export const AMOUNT = 'Zenbatekoa';
 export const API_DOCUMENTATION = 'APIren Dokumentazioa';
 export const ASESOR = 'Aholkulari';
+export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrastatu edo hautatu fitxategia';
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrastatu edo hautatu hondoa';
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Arrastatu edo hautatu logoa';
 export const AVAILABLE = 'Eskuragai';
 
 // ----- B

@@ -153,6 +153,30 @@ public class MainContrataContract extends MainEntryPoint {
 			loadEmployee(newSelectectedEmployee, selectedEmployeeIdx, employeesList.size(),
 					tabLayOutPanel.getSelectedIndex());
 		}
+		
+		@Override
+		protected void onTransformContract(Integer newContractId) {
+			employeeSB.setValue("");
+			inactiveContractsCB.setValue(false);
+			workplaceLB.setSelectedIndex(0);
+			mainContrataContractObject.getEmployeesInfo(false, 
+				s -> {
+					Integer selectedEmployeeIdx = getSelectedEmployeeIdx(newContractId);
+					
+					contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
+					ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
+					contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getActivitiesCCCContex());
+					contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getWorkplacesContext());
+					contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getAgreementsContext());
+					contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getPayMethodsMapContext());
+					contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, newContractId, selectedEmployeeIdx,
+							employeesList.size(), su -> deckPanel.showWidget(2));
+				}, 
+				f -> {}
+			);
+			
+			
+		}
 
 		private void loadEmployee(EmployeeContractInfo employee, Integer selectedEmployeeIdx, int employeesSize,
 				int selectedTab) {

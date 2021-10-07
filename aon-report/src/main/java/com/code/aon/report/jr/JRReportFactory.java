@@ -2,6 +2,7 @@ package com.code.aon.report.jr;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +29,8 @@ public class JRReportFactory {
 	/**
 	 * Map of the registered reports.
 	 */
-	private static Map<String,JRReport> map = new HashMap<String,JRReport>();
-
+	private static Map<String,Supplier<JRReport>> map = new HashMap<String,Supplier<JRReport>>();
+	
 	/**
 	 * Gets the report declared with this identifier.
 	 * 
@@ -43,17 +44,16 @@ public class JRReportFactory {
 		LOGGER.debug("Searching Report ..: {}",id);
 		if (map.containsKey(id)) {
 			LOGGER.debug("Report found in cache.");
-			return map.get(id);
+			return map.get(id).get();
 		}
 		LOGGER.debug("Report not found in cache.");
 		ReportConfigurationParser parser = ReportConfigurationParser
 				.getInstance();
 		ReportConfigurationManager rcm = parser.getConfigurationManager();
 		ReportConfig config = rcm.getReport(id);
-		JRReport report = getReport(config);
-		if (report != null) {
-			JRReportFactory.register(id, report);
-			return report;
+		if (config != null) {
+			JRReportFactory.register(id, () -> getReport(config) );
+			return getReport(config);
 		}
 		throw new ReportException("No Report found for key " + id);
 	}
@@ -67,8 +67,7 @@ public class JRReportFactory {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	private static JRReport getReport(ReportConfig config)
-			throws ReportException {
+	private static JRReport getReport(ReportConfig config){
 		JRReport report = new JRReport(config);
 		return report;
 	}
@@ -78,11 +77,11 @@ public class JRReportFactory {
 	 * 
 	 * @param id
 	 *            Identifier of the report.
-	 * @param report
+	 * @param supplier
 	 *            The report object.
 	 */
-	public static void register(String id, JRReport report) {
-		LOGGER.info("Registering Report: {}", report.getReportConfig());
-		map.put(id, report);
+	public static void register(String id, Supplier<JRReport> supplier) {
+		LOGGER.info("Registering Report: {}", id);
+		map.put(id, supplier);
 	}
 }

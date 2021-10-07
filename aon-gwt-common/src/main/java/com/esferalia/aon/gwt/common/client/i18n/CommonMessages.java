@@ -9,15 +9,15 @@ import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// ¡ --> \u00C1 · --> \u00E1 
-	// … --> \u00C9 È --> \u00E9 
-	// Õ --> \u00CD Ì --> \u00ED 
-	// ” --> \u00D3 Û --> \u00F3 
-	// ⁄ --> \u00DA ˙ --> \u00FA ... acento
-	// ‹ --> \u00DC ¸ --> \u00fc ... diÈresis
-	// — --> \u00D1 Ò --> \u00F1
-	// ∫ --> \u00BA ™ --> \u00AA 
-	// ø --> \u00BF 
+	// √Å --> \u00C1 √° --> \u00E1 
+	// √â --> \u00C9 √© --> \u00E9 
+	// √ç --> \u00CD √≠ --> \u00ED 
+	// √ì --> \u00D3 √≥ --> \u00F3 
+	// √ö --> \u00DA √∫ --> \u00FA ... acento
+	// √ú --> \u00DC √º --> \u00fc ... di√©resis
+	// √ë --> \u00D1 √± --> \u00F1
+	// ¬∫ --> \u00BA ¬™ --> \u00AA 
+	// ¬ø --> \u00BF 
 	// EUR-> \u20AC
 	
 	// ----------------------------------------------------------------- Format
@@ -1450,7 +1450,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia")
 	String box102Msg();
 
-	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antig√ºedades y objetos de colecci\u00F3n")
+	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antig√É¬ºedades y objetos de colecci\u00F3n")
 	String box227Msg();
 
 	@DefaultMessage("Operaciones en r\u00E9gimen especial de Agencias de Viajes")
@@ -4050,6 +4050,15 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.")
 	String mustFinishModel();
+
+  @DefaultMessage("Inicializar declaraci\u00F3n")
+	String resetDeclaration();
+	
+	@DefaultMessage("ATENCION: Esta opci\u00F3n borra todos los datos del modelo y lo vuelve a crear. Se perder\u00E1n todos los datos introducidos en el modelo.")
+	String resetWarning();
+	
+	@DefaultMessage("Inicializar")
+	String resetAction();
 
 }
 

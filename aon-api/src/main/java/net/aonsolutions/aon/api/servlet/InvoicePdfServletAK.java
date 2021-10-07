@@ -11,9 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 
@@ -40,10 +45,18 @@ public class InvoicePdfServletAK extends AonApiHttpServlet {
 			String domainName = json.optString("domain_name");
 			Integer domainId = json.optInt("domain_id");
 			String login = json.optString("login");
-			
+
 			PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domainName, domainId, login, true);
+			CompanyFull company = AON.getCompanyFull(domainName, domainId, login);
+			Attach logo = new Attach();
 			
-			PdfMaker.printInvoice(resp.getOutputStream(), null, new Invoice(), config, null, null);
+			if(config.isLogo()) {
+				Integer id = company.getRegistry().getId();
+				logo = AON.getAttach(domainName, domainId, login, f-> f.getAttachModuleProperty().eq(id)
+					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+			}
+		
+			PdfMaker.printInvoice(resp.getOutputStream(), config.isCompany() ? company : null, new Invoice(), config, null, logo.getData());
 			
 			responseFile(req, resp, "factura", MimeType.PDF);
 		} catch (IOException e) {

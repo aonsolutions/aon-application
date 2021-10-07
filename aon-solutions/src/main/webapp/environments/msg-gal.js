@@ -21,6 +21,9 @@ export const ALL_FILES = 'Todos os Ficheiros';
 export const AMOUNT = 'Importe';
 export const API_DOCUMENTATION = 'Documentación API';
 export const ASESOR = 'Asesor';
+export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrastre ou seleccione o ficheiro';
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrastre ou seleccione o fondo';
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Arrastre ou seleccione o logo';
 export const AVAILABLE = 'Dispoñible';
 
 // ----- B

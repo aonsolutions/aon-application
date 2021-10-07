@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -289,6 +290,13 @@ public class RegistryImpl implements IRegistry{
 				configuration -> CompanyDAO.getUserCompanyStream(ctx, scopes, filter));
 	}
 
+
+	@Override
+	public CompanyFull getCompanyFull(AONContext ctx, Integer domain) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CompanyDAO.getFull(ctx, domain));
+	}
+	
 	@Override
 	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter) {
 		return ctx.getDslContext().transactionResult(

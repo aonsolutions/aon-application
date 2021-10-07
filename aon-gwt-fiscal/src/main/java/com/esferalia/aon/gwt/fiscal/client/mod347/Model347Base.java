@@ -114,6 +114,10 @@ abstract class Model347Base extends DockLayoutPanel {
 			cbk.onNew(options);
 		}
 		@Override
+		public void onReset(Model347ModuleOptions options, Mod347 mod347) {
+			cbk.onReset(options, mod347);
+		}
+		@Override
 		public void onDuplicate(Model347ModuleOptions options, int id) {
 			cbk.onDuplicate( options, id );
 		}
@@ -142,6 +146,7 @@ abstract class Model347Base extends DockLayoutPanel {
 	protected final Button saveButton = new Button();
 	protected final Button cancelButton = new Button();		
 	protected final Button deleteButton = new Button();
+	protected final Button resetButton = new Button();
 	protected final Button markAsPendingButton = new Button();
 	protected final Button markAsFinishedButton = new Button();
 	protected final Button markAsSentButton = new Button();
@@ -353,6 +358,19 @@ abstract class Model347Base extends DockLayoutPanel {
 			}
 		});
 		buttonContainer.add(deleteButton);
+		
+		resetButton.setText(AON.MSG.resetAction());
+		resetButton.setTitle(resetButton.getText());
+		resetButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		resetButton.addStyleName(AON.AON_CSS.aonIconReset());
+		resetButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.onReset(options,getMod347());				
+			}
+		});
+		buttonContainer.add(resetButton);
 		
 		markAsFinishedButton.setText(AON.MSG.finish());
 		markAsFinishedButton.setTitle(markAsFinishedButton.getText());
@@ -608,6 +626,7 @@ abstract class Model347Base extends DockLayoutPanel {
 		newButton.setVisible(!getMod347().isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
 		saveButton.setVisible(!getMod347().isFinished() && !getMod347().isSent());
 		deleteButton.setVisible(!getMod347().isNew() && !getMod347().isFinished() && !getMod347().isSent());
+		resetButton.setVisible(!getMod347().isNew() && !getMod347().isFinished() && !getMod347().isSent());
 		cancelButton.setVisible(true);
 		markAsPendingButton.setVisible(!getMod347().isNew() &&
 			(getMod347().getStatus() == FiscalStatus.FINISHED 

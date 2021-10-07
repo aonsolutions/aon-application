@@ -48,4 +48,13 @@ public class Model390ServiceAsyncDecorator implements Model390ServiceAsync {
 		AON.start();
 		fsa.saveComments(domainName, user, mod390, new AsyncCallbackWrapper<Mod390>(callback));
 	}
+	
+	@Override
+	public void delete(String domainName, Integer domain, String user, Mod390 mod390,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.delete(domainName, domain, user, mod390,
+				new AsyncCallbackWrapper<Void>(callback));
+	}	
+	
 }

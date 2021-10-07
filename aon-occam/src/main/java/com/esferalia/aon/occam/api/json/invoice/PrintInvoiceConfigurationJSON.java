@@ -14,10 +14,14 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 
 public class PrintInvoiceConfigurationJSON {
 
+	private PrintInvoiceConfigurationJSON() {
+
+	}
+	
 	public static PrintInvoiceConfiguration fromJSON(JSONObject json) {
 		Attach attach = null;
-		if(json.opt(IJsonNames.BACKGROUND) != null) {
-			JSONObject file = json.optJSONObject(IJsonNames.BACKGROUND);
+		if(json.opt(IJsonNames.BACKGROUND_ATTACH) != null) {
+			JSONObject file = json.optJSONObject(IJsonNames.BACKGROUND_ATTACH);
 			String base64 = file.optString("content");
 			String contentType = file.optString("contentType");
 			byte[] fileData = Base64.getDecoder().decode(base64);
@@ -33,15 +37,20 @@ public class PrintInvoiceConfigurationJSON {
 				.setAdjustImage(json.optBoolean(IJsonNames.ADJUST))
 				.setFooter(json.opt(IJsonNames.FOOTER) != null ? json.optInt(IJsonNames.FOOTER) : 100)
 				.setHeader(json.opt(IJsonNames.HEADER) != null ? json.optInt(IJsonNames.HEADER) : 100)
+				.setLogo(json.optBoolean(IJsonNames.LOGO))
+				.setCompany(json.optBoolean(IJsonNames.COMPANY))
 				.setBackground(attach);
 	}
 	
 	public static JSONObject toJSON(PrintInvoiceConfiguration pic) {
 		return new JSONObject()
-				.put(IJsonNames.DETAILED, pic.getDetailed())
+				.put(IJsonNames.DETAILED, pic.isDetailed())
 				.put(IJsonNames.ADJUST, pic.getAdjustImage())
 				.put(IJsonNames.FOOTER, pic.getFooter())
-				.put(IJsonNames.HEADER, pic.getHeader());
+				.put(IJsonNames.HEADER, pic.getHeader())
+				.put(IJsonNames.LOGO, pic.isLogo())
+				.put(IJsonNames.COMPANY, pic.isCompany())
+				.put(IJsonNames.BACKGROUND, pic.isBackground());
 	}
 	
 }

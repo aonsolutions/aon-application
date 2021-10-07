@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
+import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -519,6 +520,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			@Override
 			public void deleteContractExtension(String currentDomainName, Integer contractId,
 					AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void contractTransform(String currentDomainName, ContractTransform contractTransform,
+					AsyncCallback<Integer> callback) {
 				// TODO Auto-generated method stub
 				
 			}

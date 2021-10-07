@@ -88,8 +88,8 @@ export class AonDesktop extends AonElement {
 		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
 
 
-		let domainName = localStorage.getItem('aon_domain_name');
-		if(domainName.includes('aonsolutions.org')) {
+		// let domainName = localStorage.getItem('aon_domain_name');
+		if(this.isBeta()) {
 			let myGestor = {
 				id: 'Gestor',
 				name: 'MI GESTOR'

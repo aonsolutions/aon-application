@@ -125,6 +125,7 @@ public interface IFiscal {
 	public Mod390 initialize(AONContext ctx, int year);
 	public Mod390 create(AONContext ctx, Mod390 mod390);
 	public Mod390 saveComments(AONContext ctx, Mod390 mod390);
+	public void deleteMod390(AONContext ctx, Mod390 mod390);
 
 	// 							MOD390 -- 2014
 	public Mod3902014 getMod3902014(AONContext ctx,Mod390 mod390);
@@ -411,6 +412,7 @@ public interface IFiscal {
 	public Mod347 changeStatusMod347(AONContext ctx, Mod347 mod347, FiscalStatus newStatus);
 	public String getMod347Info(AONContext ctx, Mod347 mod347, Mod347Declared declared, FiscalModelKeyInfo infoKey);
 	public Mod347 duplicateMod347(AONContext ctx, Mod347 mod347);
+	
 	
 	
 }

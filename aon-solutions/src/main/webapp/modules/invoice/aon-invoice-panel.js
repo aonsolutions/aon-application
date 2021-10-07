@@ -102,11 +102,7 @@ export class AonInvoicePanel extends AonElement {
 
 		this.getElement(this.INPUT_CAMERA).addEventListener('change',  ({target}) => this.preview(target.files));
 
-		aonInvoice.addEventListener('drop', (event) => {
-			if(event && event.dataTransfer && event.dataTransfer.files){
-				this.preview(event.dataTransfer.files);
-			}
-		});
+		aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.preview(e.detail));
 
 		if(this.isMobile()) {
 			aonInvoice.addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());

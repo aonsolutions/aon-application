@@ -67,6 +67,7 @@ public class Model303 extends MainEntryPoint {
 		public void onAccept(Mod303 mod303);
 		public void onCancel();
 		public void onNew();
+		public void onReset(Mod303 mod303);
 		public void showBreakdownPanel(String htmlText);
 		public void showVisorAEAT();
 		public void cleanBreakdownPanel();
@@ -87,6 +88,10 @@ public class Model303 extends MainEntryPoint {
 		@Override
 		public void onNew() {
 			Model303.this.onNew();
+		}
+		@Override
+		public void onReset(Mod303 mod303) {
+			Model303.this.onReset(mod303);
 		}
 		@Override
 		public void showVisorAEAT() {
@@ -316,6 +321,34 @@ public class Model303 extends MainEntryPoint {
 					}
 				});
 	}
+
+	private void onReset(Mod303 oldMod303) {
+		cleanErrorPanel();
+		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),null,
+				new AsyncCallback<Mod303>() {
+					@Override
+					public void onSuccess(Mod303 newMod303) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
+						// Asignamos determinadas propiedades del modelo 
+						// que queremos reinicializar
+						newMod303.setAdministration(oldMod303.getAdministration());
+						newMod303.setYear(oldMod303.getYear());
+						newMod303.setPeriod(oldMod303.getPeriod());
+						newMod303.setComplementary(oldMod303.isComplementary());
+						newMod303.setReplacement(oldMod303.isReplacement());
+						newMod303.setReplacedNumber(oldMod303.getReplacedNumber());
+						showResetDeclarationPopup(newMod303,oldMod303);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					}
+				});
+	}
+	
 	private void showNewDeclarationPopup(Mod303 m303) {
 		NewDeclarationPopup<Mod303> newDialog = new NewDeclarationPopup<>( m303,
 			new Model303Callback() {
@@ -328,6 +361,7 @@ public class Model303 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
+						// Crear el modelo nuevo
 						SERVICE.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),mod303,
 								new AsyncCallback<Mod303>() {
 									@Override
@@ -342,7 +376,62 @@ public class Model303 extends MainEntryPoint {
 										showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 									}
 								});
+
 					}
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
+	private void showResetDeclarationPopup(Mod303 newMod303, Mod303 oldMod303) {
+		NewDeclarationPopup<Mod303> newDialog = new NewDeclarationPopup<Mod303>( newMod303, true,
+			new Model303Callback() {
+
+					@Override
+					public void onAccept(Mod303 mod303) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+						
+						// Primero borrar el modelo actual
+						SERVICE.delete(getCurrentDomainName(), getCurrentUser(), oldMod303,
+								new AsyncCallback<Void>() {
+							@Override
+							public void onSuccess(Void m303) {
+								// Si todo ha ido bien, entonces crear el nuevo modelo
+								SERVICE.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),mod303,
+										new AsyncCallback<Mod303>() {
+											@Override
+											public void onSuccess(Mod303 m303) {
+												popup.hide();
+												select(m303);
+											}
+
+											@Override
+											public void onFailure(Throwable caught) {
+												popup.hide();
+												showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+											}
+										});
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								popup.hide();									
+								showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+							}
+						});
+					}
+					
+					@Override
+					public void onCancel() {				
+					}
+					
 				}
 			); 
 			newDialog.center();

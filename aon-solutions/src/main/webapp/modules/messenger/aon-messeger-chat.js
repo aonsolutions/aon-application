@@ -10,6 +10,7 @@ import { checkFilesAddEventDescription, sendMessage } from "./shared/utils.js";
 import * as ACTIONS from "../actions.js";
 import { getFormVacationJson } from "./forms/vacation.js";
 import { fillChat } from "./shared/fill.js";
+import { getFormMovJson } from "./forms/mov-ss.js";
 
 export class AonMessengerChat extends AonElement {
   task;
@@ -205,9 +206,16 @@ export class AonMessengerChat extends AonElement {
 
   async saveSourceRequest(){
     try {
-        const description = getFormVacationJson();
+        const processType = this.getElement(MESSENGER_IDS.PROCESS_TYPE);
+        let description = null;
+        if("1" === processType.value )
+          description = getFormVacationJson();
+        else if("2" === processType.value )
+          description = getFormMovJson();
+
         if(description){
-          this.task.title = document.getElementById(MESSENGER_IDS.PROCESS_TYPE).getText();
+          this.task.title = processType.getText();
+          this.task.description = "";
           this.task.setDescriptionJson(description);
           const data = await saveTask(this.task);
           this.task.editTask(data);
@@ -219,6 +227,7 @@ export class AonMessengerChat extends AonElement {
           }
         }
     } catch (error) {
+      console.log(error);
       this.showError(error);
     }
   }
@@ -236,6 +245,7 @@ export class AonMessengerChat extends AonElement {
         this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
       }
     } catch (error) {
+      console.log(error);
       this.showError(error);
     }
   }
@@ -265,6 +275,14 @@ export class AonMessengerChat extends AonElement {
       })
     }
     return this.WORKGROUPS;
+  }
+  
+  getDur(){
+		return this.applicationParentEl.getDur();
+	}
+
+  isCau(){     //IS CAU
+    return parseInt(localStorage.getItem("taskCau") || 0);
   }
 
   back(){
