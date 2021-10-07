@@ -25,6 +25,8 @@ public class Project implements Serializable {
 	private boolean active;
 	
 	private ProjectHolder projectHolder;
+
+	private boolean dirty;
 	
 	public Integer getId() {
 		return id;
@@ -74,6 +76,7 @@ public class Project implements Serializable {
 	}
 	
 	public Project setName(String name) {
+		setDirty(true);
 		this.name = name;
 		return this;
 	}
@@ -83,6 +86,7 @@ public class Project implements Serializable {
 	}
 	
 	public Project setAlias(String alias) {
+		setDirty(true);
 		this.alias = alias;
 		return this;
 	}
@@ -92,6 +96,7 @@ public class Project implements Serializable {
 	}
 	
 	public Project setDate(Date date) {
+		setDirty(true);
 		this.date = date;
 		return this;
 	}
@@ -101,6 +106,7 @@ public class Project implements Serializable {
 	}
 	
 	public Project setTas(boolean tas) {
+		setDirty(true);
 		this.tas = tas;
 		return this;
 	}
@@ -110,6 +116,7 @@ public class Project implements Serializable {
 	}
 	
 	public Project setCommercial(boolean commercial) {
+		setDirty(true);
 		this.commercial = commercial;
 		return this;
 	}
@@ -119,6 +126,7 @@ public class Project implements Serializable {
 	}
 	
 	public Project setReservation(boolean reservation) {
+		setDirty(true);
 		this.reservation = reservation;
 		return this;
 	}
@@ -128,6 +136,7 @@ public class Project implements Serializable {
 	}
 	
 	public Project setActive(boolean active) {
+		setDirty(true);
 		this.active = active;
 		return this;
 	}
@@ -140,6 +149,7 @@ public class Project implements Serializable {
 	}
 	
 	public Project setRegistry(Registry registry) {
+		setDirty(true);
 		this.registry = registry;
 		return this;
 	}
@@ -152,6 +162,7 @@ public class Project implements Serializable {
 	}
 	
 	public Project setType(ProjectType type) {
+		setDirty(true);
 		this.type = type;
 		return this;
 	}
@@ -164,7 +175,43 @@ public class Project implements Serializable {
  	}
 	
 	public Project setProjectHolder(ProjectHolder projectHolder) {
+		setDirty(true);
 		this.projectHolder = projectHolder;
 		return this;
 	}
+	
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	public Project setDirty(boolean dirty) {
+		this.dirty = dirty;
+		return this;
+	}
+	
+	protected <T extends Project> T copy(Project project, T child) {
+		if (registry != null) {
+			child.setId(project.getId());
+			child.setDomain(project.getDomain());
+			child.setName(project.getName());
+			child.setAlias(project.getAlias());
+			child.setRegistry(project.getRegistry());
+			child.setDate(project.getDate());
+			child.setType(project.getType());
+			child.setActive(project.isActive());
+			child.setCommercial(project.isCommercial());
+			child.setReservation(project.isReservation());
+			child.setTas(project.isTas());
+			child.setDirty(project.isDirty());
+		}
+		return child;
+	}
+	
+	public boolean isEmpty() {
+		return getId() == null && getDomain().getId() == null
+			&& getType().isEmpty() && getRegistry().isEmpty()
+			&& getName() == null && getAlias() == null
+			&& getDate() == null;
+	}
+	
 }

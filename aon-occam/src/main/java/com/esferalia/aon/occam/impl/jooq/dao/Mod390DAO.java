@@ -210,4 +210,10 @@ public class Mod390DAO {
 		}
 	}
 	
+	public static void delete(AONContext ctx, Mod390 mod390) {
+		ctx.checkWrite();
+		ctx.getDslContext().delete(FS_MODEL390)
+				.where(FS_MODEL390.ID.equal(mod390.getId())).execute();
+	}
+	
 }

@@ -484,6 +484,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		fillEmployeeData(contractSalaryCalculatorContext);
 		fillSalaryData(contractSalaryCalculatorContext);
 		Double totalPayment = fillPayments(contractSalaryCalculatorContext);
+		sectionByBonus(contractSalaryCalculatorContext);
 		Double totalDeduction = fillDeductions(contractSalaryCalculatorContext);
 
 		expressionContext.setVariable(TOTAL_LIQUID, totalPayment - totalDeduction, start, end);
@@ -1072,6 +1073,38 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return total;
 	}
 
+	protected void sectionByBonus(IContractSalaryCalculatorContext ctx) throws SalaryException {
+		try {
+
+			Date start = ctx.getStartDate();
+			Date end = ctx.getEndDate();
+
+			ExpressionContext expressionContext = ctx.getExpressionContext();
+
+			Collection<IContractBonus> contractBonuses = ctx.getContractBonus();
+
+			for (IContractBonus contractBonus : contractBonuses) {
+
+				Date bonusStart = Period.max(contractBonus.getStartDate(), start);
+				Date bonusEnd = Period.min(contractBonus.getEndDate(), end);
+
+				if (bonusEnd.before(bonusStart)) {
+					continue; // TODO : must be done in context ?
+				}
+				
+				if ( bonusStart.after(start))
+					ContextFunctions.section(expressionContext, AonDateUtils.add(bonusStart, Calendar.DAY_OF_MONTH,-1));
+				if ( bonusEnd.before(end))
+					ContextFunctions.section(expressionContext, bonusEnd);
+					
+			}
+
+		} catch (AonException e) {
+			throw new SalaryException(e.getMessage(), e);
+		}
+
+	}
+
 	protected Double fillBonus(IContractSalaryCalculatorContext ctx) throws SalaryException {
 		double total = 0.00; // TODO; mejor null ???
 		try {
@@ -1092,12 +1125,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					continue; // TODO : must be done in context ?
 				}
 				
-				if ( bonusStart.after(start))
-					ContextFunctions.section(ctx.getExpressionContext(), AonDateUtils.add(bonusStart, Calendar.DAY_OF_MONTH,-1));
-				if ( bonusEnd.before(end))
-					ContextFunctions.section(ctx.getExpressionContext(), bonusEnd);
-					
-					
 				total += resolveBonus(bonusStart, bonusEnd, contractBonus, expressionContext);
 			}
 

@@ -37,13 +37,16 @@ import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags
 import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags.TAX_QUOTE;
 import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags.TAX_TYPE;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -57,14 +60,24 @@ import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceTemplate {
-
+	
+	public static final int MIN_HEADER_FOR_LOGO = 80;
+	public static final int MAX_LOGO_HEIGHT = 55;
+	public static final int MIN_FOOTER = 15;
+	
 	OutputStream filename;
 	float		 height;
 	float		 top;
@@ -80,13 +93,14 @@ public class InvoiceTemplate {
 
 	boolean				adapt;
 	PDPageContentStream	contents;
+	int pageNumber;
 
 	// THE PDF DOCUMENT
-	public static void create(OutputStream os, Invoice invoice, PrintInvoiceConfiguration config, byte[] qrCode) throws IOException, CanNotCreatePdfException {
+	public static void create(OutputStream os, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] qrCode, byte[] logo) throws IOException, CanNotCreatePdfException {
 		try (PDDocument doc = new PDDocument())
 		{
-			
 			InvoiceTemplate template = new InvoiceTemplate();
+			template.pageNumber = 0;
 
 			if (os != null)
 				template.filename = os;
@@ -94,56 +108,75 @@ public class InvoiceTemplate {
 				throw new CanNotCreatePdfException("No invoice found.");
 
 			template.adapt	= config.getAdjustImage();
-			template.top	= (float) config.getHeader();
-			template.bottom	= (float) config.getFooter();
+			
+			if ((logo != null || company != null) && (config.getHeader() != null && config.getHeader() < MIN_HEADER_FOR_LOGO))
+				template.top = MIN_HEADER_FOR_LOGO;
+			else
+				template.top	= config.getHeader();
+			
+			if (config.getFooter() == null || (config.getFooter() != null && config.getFooter() < MIN_FOOTER))
+				template.bottom	= MIN_FOOTER;
+			else
+				template.bottom = config.getFooter();
 
 			if (config.getBackground() != null)
 				template.background = config.getBackground().getData();
 			template.qrCode = qrCode;
 
-			template.contents = template.drawPage(doc, invoice, config);
+			template.contents = template.drawPage(doc, company, invoice, config, logo);
 			template.y		  = template.height - template.top - template.topInfoHeight - 5;
 
-			if (config.isDetailed())
-				template.drawDetailedEntries(doc, invoice, config);
+			if (config.isDetailed() != null && config.isDetailed())
+				template.drawDetailedEntries(doc, company, invoice, config, logo);
 			else
-				template.draw_simplified_entries(doc, invoice, config);
+				template.drawSimplifiedEntries(doc, company, invoice, config, logo);
 
 			template.drawBottomInfo(doc, invoice);
+			
 			template.contents.close();
+			template.drawPageNums(doc);				
 			doc.save(template.filename);
-			new OutputStreamWriter(os,"ISO-8859-1");
+			new OutputStreamWriter(os,StandardCharsets.ISO_8859_1);
 		} catch (Exception e)
 		{
 			throw new CanNotCreatePdfException(e);
 		}
 	}
+	
+	private void drawPageNums(PDDocument doc) throws IOException {
+		for (int i=0; i<this.pageNumber; i++) {
+			contents = new PDPageContentStream(doc, doc.getPage(i), PDPageContentStream.AppendMode.APPEND, true);
+			drawPageNumber(i+1);
+			contents.close();
+		}
+	}
 
 	// DRAW PAGE
-	private PDPageContentStream drawPage(PDDocument doc, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
+	private PDPageContentStream drawPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] logo) throws IOException {
 		PDPage page = createVerticalPage();
+		
 		doc.addPage(page);
-
+		this.pageNumber++;
 		contents = new PDPageContentStream(doc, page);
 		height = page.getMediaBox().getHeight();
-		if (background != null)
-			if (adapt)
+		if (background != null) {
+			if (adapt) {
 				drawImage(doc, contents, background, 0, 0, page.getMediaBox().getWidth(), page.getMediaBox().getHeight());
-			else {
+			} else {
 				BufferedImage image = ImageIO.read(new ByteArrayInputStream(background));
-			    int height = image.getHeight();
-				drawImage(doc, contents, background, 0, this.height - height);
+			    int imgHeight = image.getHeight();
+				drawImage(doc, contents, background, 0, this.height - imgHeight);
 			}
-
+		}
 		
 		limit  = bottomInfoHeight + bottom;
 
 		x = 50f;
 		y = height - top - 20;
 
-		drawTopInfo(invoice);
+		drawTopInfo(doc, invoice, company, logo);
 
-		if (config.isDetailed())
+		if (config.isDetailed() != null && config.isDetailed())
 			drawDetailedHeader();
 		else
 			drawSimpleHeader();
@@ -152,47 +185,72 @@ public class InvoiceTemplate {
 	}
 
 	// DRAW DETAILED ENTRIES
-	public void drawDetailedEntries(PDDocument doc, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
+	public void drawDetailedEntries(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] logo) throws IOException {
 		if (invoice.getDetails() != null){
 			int i = 0;
+			int detailNum = invoice.getDetails().size();
 			for (InvoiceDetail detail : invoice.getDetails()) {
 				x = 50;
-				if (y <= limit) {
-					contents.close();
-					contents = drawPage(doc, invoice, config);
-					y		 = height - top - topInfoHeight - 5;
-					x		 = 50;
-				}
 				String description = 
-					new String(
 						safeString(detail.getDescription())
-							.replaceAll("\t", " ")
-							.getBytes(Charset.forName("ASCII")),
-						Charset.forName("UTF-8") 
-					);
-				
+							.replace("\t", " ");
+//							.getBytes(Charset.forName("ASCII")),
+//						Charset.forName("UTF-8") ;
+
 				ArrayList<String> divided = (ArrayList<String>) getLines(description, 240,PdfFonts.HELVETICA, 8);				
-				float dy = y;
-
-				for (String str : divided)
-				{
-					drawText(contents, str.trim(), x + 5, dy, PdfColors.BLACK, PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
-					dy -= 10;
+				float lineDiff = 10;
+				
+				int maxLinesLast = Math.round((height - top - topInfoHeight - limit) / lineDiff);
+				int maxLinesNoLast = Math.round((height - top - topInfoHeight - bottom) / lineDiff);
+				float stringHeight = lineDiff * divided.size();
+				
+				float relativeLimit = (i < detailNum -1) ? bottom : limit;
+				
+				if (y <= relativeLimit) {
+					jumpToNewPage(doc, company, invoice, config, logo);
 				}
-
-				x += 250;
-
-				drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getQuantity()) + "", BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_AMOUNT);
-				x += 70;
-
-				drawTextRight(contents, new PDRectangle(x, y, 69, 15),toLatinNumber(detail.getPrice()), BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_PRICE);
-				x += 70;
-
-				drawTextRight(contents, new PDRectangle(x, y, 39, 15), safeString(detail.getDiscountExpression()), BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_DISCOUNT);
-				x += 40;
-
-				drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getTaxableBase()), BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_TOTAL);
-				y = dy - 3;
+				
+				if ( y - stringHeight <= relativeLimit) {
+					
+					
+					StringBuilder extraBuilder = new StringBuilder("");
+					while ( y - stringHeight <= bottom) {
+						extraBuilder.insert(0, divided.get(divided.size() - 1) + " ");
+						divided.remove(divided.size() - 1);
+						stringHeight = lineDiff * divided.size();
+					}
+					drawDetail(i, detail, divided, lineDiff);
+					jumpToNewPage(doc, company, invoice, config, logo);
+					List<String> extraLines = getLines(AonStringUtils.trimToEmpty(extraBuilder.toString()), 240,PdfFonts.HELVETICA, 8);
+					int extraLineNum = extraLines.size();
+					
+					List<String> xtra = new LinkedList<>();
+					while (extraLineNum > maxLinesNoLast) {
+						xtra.clear();
+						for (int j=0;j<maxLinesNoLast && !extraLines.isEmpty();j++) {
+							xtra.add(extraLines.get(0));
+							extraLines.remove(0);
+						}
+						drawExtraLines(i, xtra, lineDiff);
+						extraLineNum = extraLines.size();
+						jumpToNewPage(doc, company, invoice, config, logo);
+						
+					}
+					
+					if (extraLineNum > maxLinesLast) {
+						xtra.clear();
+						for (int j=0;j<maxLinesNoLast && !extraLines.isEmpty();j++) {
+							xtra.add(extraLines.get(0));
+							extraLines.remove(0);
+						}
+						drawExtraLines(i, xtra, lineDiff);
+						jumpToNewPage(doc, company, invoice, config, logo);
+					}
+					
+					drawExtraLines(i, extraLines, lineDiff);
+				} else {
+					drawDetail(i, detail, divided, lineDiff);
+				}
 				
 				i++;
 
@@ -200,8 +258,51 @@ public class InvoiceTemplate {
 		}
 	}
 
+	private void jumpToNewPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config,
+			byte[] logo) throws IOException {
+		contents.close();
+		contents = drawPage(doc, company, invoice, config, logo);
+		y		 = height - top - topInfoHeight - 5;
+		x		 = 50;
+	}
+
+	private void drawDetail(int i, InvoiceDetail detail, List<String> divided, float lineDiff) throws IOException {
+		float dy = y;
+
+		for (String str : divided)
+		{
+			drawText(contents, str.trim(), x + 5, dy, PdfColors.BLACK, PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
+			dy -= lineDiff;
+		}
+
+		x += 250;
+
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getQuantity()) + "", BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_AMOUNT);
+		x += 70;
+
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15),toLatinNumber(detail.getPrice()), BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_PRICE);
+		x += 70;
+
+		drawTextRight(contents, new PDRectangle(x, y, 39, 15), safeString(detail.getDiscountExpression()), BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_DISCOUNT);
+		x += 40;
+
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getTaxableBase()), BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_TOTAL);
+		y = dy - 3;
+	}
+	
+	private void drawExtraLines(int i, List<String> divided, float lineDiff) throws IOException {
+		float dy = y;
+
+		for (String str : divided)
+		{
+			drawText(contents, str.trim(), x + 5, dy, PdfColors.BLACK, PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
+			dy -= lineDiff;
+		}
+		y = dy - 3;
+	}
+
 	// DRAW SIMPLIFIED ENTRIES
-	public void draw_simplified_entries(PDDocument doc, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
+	public void drawSimplifiedEntries(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] logo) throws IOException {
 		if (invoice.getDetails() != null)
 		{
 			for (InvoiceDetail detail : invoice.getDetails())
@@ -210,14 +311,17 @@ public class InvoiceTemplate {
 				if (y <= limit)
 				{
 					contents.close();
-					contents = drawPage(doc, invoice, config);
+					contents = drawPage(doc, company, invoice, config, logo);
 					y		 = height - top - topInfoHeight - 5;
 					x		 = 50;
 				}
-				String description = new String(detail.getDescription().replaceAll("\t", " ").getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8") );
+				String description = detail.getDescription().replace("\t", " ");
+//						.getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8");
+//				croppedString(description, 420, PdfFonts.HELVETICA, 8), x + 5, y,
+				
 				drawText(
 					contents,
-					croppedString(description, 420, PdfFonts.HELVETICA, 8), x + 5, y,
+					PDFToolkit.croppedStringWholeWord(description, 420, PdfFonts.HELVETICA, 8), x + 5, y,
 					PdfColors.BLACK,
 					PdfFonts.HELVETICA,
 					8,
@@ -232,11 +336,112 @@ public class InvoiceTemplate {
 	}
 
 	// DRAW UPPER INFO
-	private void drawTopInfo(Invoice invoice) throws IOException {
+	private void drawTopInfo(PDDocument doc, Invoice invoice, CompanyFull company, byte[] logo) throws IOException {
+		
+		float maxHeight = MAX_LOGO_HEIGHT;
+		float maxWidth = 297 - x - 20;
+//		float logoHeight = PDFToolkit.getLogoFinalHeight(logo, maxHeight, maxWidth);
+		
+		
+		float tempY = height - MIN_HEADER_FOR_LOGO + 20;
+		float logoX = x;
+		float logoY = tempY - 10;
+		String web = null;
+		
+		if (company != null) {
+			Company registry = company.getRegistry();
+			String companyName = registry != null ? AonStringUtils.trimToEmpty(registry.getName()) : "";
+			companyName = croppedString(companyName, 240, HELVETICA, 9);
+			String nif = registry != null ? AonStringUtils.trimToEmpty(registry.getDocument()) : "";
+			String address;
+			String zip = "";
+			
+			if (company.getAddresses() != null && !company.getAddresses().isEmpty()) {
+				RegistryAddress addr = company.getAddresses().stream().filter(RegistryAddress::isMain).findFirst().orElse(company.getAddresses().getFirst());
+				address = addr.getFullAddress();
+				String cp = AonStringUtils.trimToEmpty(addr.getZip());
+				String city = AonStringUtils.trimToEmpty(addr.getCity());
+				String province = AonStringUtils.trimToEmpty(addr.getProvince());
+				String country = AonStringUtils.trimToEmpty(addr.getCountry() != null ? addr.getCountry().getName() : "");
+				
+				String location = "";
+				
+				if (!city.isEmpty()) {
+					location += city;
+				}
+				if (!province.isEmpty()) {
+					location += ", " + province;
+				}
+				if (!country.isEmpty()) {
+					location += ", " + country;
+				}
+				
+				if (cp.isEmpty())
+					zip = location;
+				else {
+					zip = cp + ", " + location;
+				}
+			} else {
+				address = "";
+				zip = "";
+			}
+			
+			web = "";
+			if (company.getMedias() != null && !company.getMedias().isEmpty()) {
+				web = company.getMedias().stream().filter(m -> m.getMedia() == MediaType.WEB).map(RegistryMedia::getValue).findFirst().orElse("");			
+			}
+			
+			tempY -= 10;
+			
+			logoX = x;
+			logoY = tempY;
+
+			drawText(contents, companyName, x + 260, tempY + 35, Color.BLACK, HELVETICA_BOLD, 10);		
+			
+			drawText(contents, "NIF:", x + 260, tempY + 22, Color.BLACK, HELVETICA, 8);		
+			drawText(contents, nif, x + 280, tempY + 22, Color.BLACK, HELVETICA, 8);
+
+			List<String> addressLines = getLines(address, 235, HELVETICA, 8);
+			float addrPlus = 11;
+			
+			if (!addressLines.isEmpty()) {
+				drawText(contents, AonStringUtils.trimToEmpty(addressLines.get(0)), x + 260, tempY + addrPlus, Color.BLACK, HELVETICA, 8);
+				addrPlus -= 9;
+				if (addressLines.size() > 1) {
+					StringBuilder addressBuilder = new StringBuilder("");
+					for(int i=1; i<addressLines.size(); i++) {
+						addressBuilder.append(addressLines.get(i));
+					}
+					drawText(contents, croppedString(AonStringUtils.trimToEmpty(addressBuilder.toString()), 235, HELVETICA, 8), x + 260, tempY + addrPlus, Color.BLACK, HELVETICA, 8);
+					addrPlus -= 9;
+				}
+			}
+			addrPlus -= 1;
+			
+				List<String> zipLines = getLines(zip, 235, HELVETICA, 8);
+				if (!zipLines.isEmpty()) {
+					drawText(contents, AonStringUtils.trimToEmpty(zipLines.get(0)), x + 260, tempY + addrPlus, Color.BLACK, HELVETICA, 8);
+					addrPlus -= 9;
+					if (zipLines.size() > 1) {
+						StringBuilder zipBuilder = new StringBuilder("");
+						for(int i=1; i<zipLines.size(); i++) {
+							zipBuilder.append(zipLines.get(i));
+						}
+						drawText(contents, croppedString(AonStringUtils.trimToEmpty(zipBuilder.toString()), 235, HELVETICA, 8), x + 260, tempY + addrPlus, Color.BLACK, HELVETICA, 8);
+					}
+				}
+
+//				y -= 30;
+		}
+				
+		if (logo != null) {				
+			PDFToolkit.drawResizedLogo(doc, doc.getPage(pageNumber - 1), contents, logo, logoX, logoY, maxHeight, maxWidth, web);
+		}
+		
 		drawText(contents, "FACTURA", x, y, BLACK, HELVETICA_BOLD, 16);
 		y -= 30;
 
-		drawText(contents, "Numero: " + safeString(invoice.getReferenceCode()), x, y, BLACK, HELVETICA, 11,REFERENCE_NUMBER);
+		drawText(contents, "Número: " + safeString(invoice.getReferenceCode()), x, y, BLACK, HELVETICA, 11,REFERENCE_NUMBER);
 		y -= 4;
 
 		drawBox(contents, x, y, 200, .5f, BLACK);
@@ -258,8 +463,10 @@ public class InvoiceTemplate {
 
 		drawBox(contents, x, y, 250, 80, LIGHT_GRAY);
 		x += 10;
-		y  = height - top - 45;
-		String str = new String(safeString(invoice.getRegistryName()).replaceAll("\t", " ").getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8") );
+		y  = height - top - 45 /*- (company != null ? 30 : 0)*/;
+		String str = safeString(invoice.getRegistryName())
+				.replace("\t", " ")
+				/*.getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8")*/;
 		
 		str = croppedString(str, 230, HELVETICA_BOLD, 12);
 		drawText(contents, str, x, y, BLACK, HELVETICA_BOLD, 12, REGISTRY_NAME);
@@ -322,6 +529,18 @@ public class InvoiceTemplate {
 		drawTaxes(invoice);
 		drawFinances(invoice);
 	}
+	
+	//DRAW PAGE NUMBER
+	private void drawPageNumber(int num) throws IOException {
+		drawTextRight(contents
+				, new PDRectangle(570, 5, 15, 15)
+				, "Pag. " + num + " de " + pageNumber
+				, BLACK
+				, HELVETICA
+				, 9
+				, 0
+				, 0);
+	}
 
 	// DRAW TAXES
 	private void drawTaxes(Invoice invoice) throws IOException {
@@ -348,7 +567,7 @@ public class InvoiceTemplate {
 		drawTextCenter(contents, new PDRectangle(x, y, 99, 15), "Total factura", WHITE, HELVETICA_BOLD, 9, 4.5f);
 
 		if (invoice.getBreakdown() != null){
-			double sum = 0;
+//			double sum = 0;
 			int i = 0;
 			for (InvoiceBreakdown tax : invoice.getBreakdown()) {
 				
@@ -376,7 +595,7 @@ public class InvoiceTemplate {
 				drawTextRight(contents, new PDRectangle(x, y, 49, 15), toLatinNumber(tax.getQuota() + tax.getSurchargeQuota()), BLACK, HELVETICA, 7, 5, -12, i + TAX_QUOTE);
 				x += 50;
 				
-				sum	+= tax.getQuota() + tax.getSurchargeQuota() + tax.getBase();
+//				sum	+= tax.getQuota() + tax.getSurchargeQuota() + tax.getBase();
 				y	-= 10;
 				
 				i++;

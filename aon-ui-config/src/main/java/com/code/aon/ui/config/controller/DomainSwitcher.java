@@ -94,7 +94,7 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	
 	public DomainSwitcher() {
 		try {
-			setPageLimit(15);
+			setPageLimit(10);
 			super.setDomainId(initializeDomain());
 		} catch (Throwable th) {
 			super.setDomainId(1);

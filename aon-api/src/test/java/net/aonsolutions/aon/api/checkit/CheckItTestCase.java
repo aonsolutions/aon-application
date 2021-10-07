@@ -96,6 +96,17 @@ public class CheckItTestCase {
 		}
 	}
 	
+	@Test
+	public void testGetLogs() {
+		try {
+			System.out.println(CheckItAPI.getLogs(11413, 33631));
+		} catch (Exception e) {
+			if (!e.getMessage().equals(CheckItException.NO_CONNECTION_MSG))
+				fail(e.getMessage());
+		}
+	}
+	
+	
 	@Ignore("Ignored because it inserts a new account each time is called and they cannot be deleted for now")
 	@Test
 	public void testAddAccount() {

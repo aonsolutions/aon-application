@@ -2676,6 +2676,19 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
+	public static void deleteMod390(String domainName, int domainId,
+			String login, Mod390 mod390) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			getFiscal().deleteMod390(ctx, mod390);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	// ----------------------------------MODELO 390 - 2014
 	public static Mod3902014 getMod3902014(String domainName, int domainId,
 			String login, Mod390 mod390) {
@@ -2868,6 +2881,7 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
+	
 	public static Mod3902018 changeStatusMod3902018(String domainName, String userLogin, Mod3902018 mod390, FiscalStatus status) {
 		AONContext ctx = null;
 		try {
@@ -3023,6 +3037,18 @@ public class FISCAL {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,user);
 			return getFiscal().getMod349Info(ctx, mod349, detail, infoKey);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Mod349 duplicateMod349(String domainName, int domainId,
+			String user, Mod349 mod349) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFiscal().duplicateMod349(ctx, mod349);
 		} finally {
 			if (ctx != null)
 				ctx.close();

@@ -3,7 +3,7 @@ import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { formatDateOrigin } from "../../services/utils.js";
-import { setAttributes } from "../../services/utilsComponents";
+import { setAttributes } from "../../services/utilsComponents.js";
 import { createCard, createDate, createDiv, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
 
 export const createBajaDialogContent = () =>{
@@ -63,7 +63,7 @@ export const createFormComunica = (id, parent) => {
     return form.element;
 }
 
-export const createCardEnterprise = (parent) => {
+export const createEnterpriseData = (parent) => {
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
     divC.appendTo(parent);
@@ -93,7 +93,7 @@ export const createCardEnterprise = (parent) => {
         title:"Convenio (opcional)",
         name:"convenio"
     });
-    aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/[^0-9]/g,''));
+    aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/\D/g,''));
     divC.appendChild(aonConvenio);
 
     createInput({
@@ -106,7 +106,7 @@ export const createCardEnterprise = (parent) => {
     }, parent);
 }
 
-export const createCardContract = (parent) => {
+export const createContractData = (parent) => {
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
@@ -157,46 +157,7 @@ export const createCardContract = (parent) => {
     })
     divH.appendTo(parent);
 
-    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
-    divC.appendTo(divH.element);
-    createSelect({
-        attributes:{
-            name:"tipo_jornada",
-            id:"tipo_jornada",
-            title:"Jornada"
-        }
-    }, divC.element);
-
-    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
-    divC.appendTo(divH.element);
-    let numberC = setAttributes(new AonNumber(),{
-        id:"horas_convenio", 
-        name:"horas_convenio", 
-        description:"Horas convenio",
-        format:CONSTANT.TRUE,
-        decimals:"2"
-    })
-    divC.appendChild(numberC);
-
-
-    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
-    divC.appendTo(divH.element);
-    numberC = setAttributes(new AonNumber(),{
-        id:"horas", 
-        description:MSG.HOURS,
-        format:CONSTANT.TRUE,
-        decimals:"2"
-    })
-    divC.appendChild(numberC);
-
-    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
-    divC.appendTo(divH.element);
-    numberC = setAttributes(new AonNumber(),{
-        id:"coefparcial", 
-        name:"coefparcial",
-        description:"Coef. Parcial"
-    })
-    divC.appendChild(numberC);
+    partTime(divH.element)
 
     createInput({
         attributes:{
@@ -209,10 +170,10 @@ export const createCardContract = (parent) => {
     }, parent);
 
     dateContract.value = formatDateOrigin(new Date());
-    addSpanDecimal();
+
 }
 
-export const createCardEmployee = (parent, id) => {
+export const createEmployeeData = (parent, id) => {
     let divT;
     divT = createDiv({
         classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4],
@@ -320,6 +281,56 @@ const addIconSurname = () => {
                 iass.size = "18px";
         }
     }
+}
+
+
+/**
+ * 
+ * @param {HTMLElement} divH parent 
+ */
+const partTime = (divH) => {
+    let divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
+    divC.appendTo(divH);
+    createSelect({
+        attributes:{
+            name:"tipo_jornada",
+            id:"tipo_jornada",
+            title:"Jornada"
+        }
+    }, divC.element);
+
+    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
+    divC.appendTo(divH);
+    let numberC = setAttributes(new AonNumber(),{
+        id:"horas_convenio", 
+        name:"horas_convenio", 
+        description:"Horas convenio",
+        format:CONSTANT.TRUE,
+        decimals:"2"
+    })
+    divC.appendChild(numberC);
+
+
+    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
+    divC.appendTo(divH);
+    numberC = setAttributes(new AonNumber(),{
+        id:"horas", 
+        description:MSG.HOURS,
+        format:CONSTANT.TRUE,
+        decimals:"2"
+    })
+    divC.appendChild(numberC);
+
+    divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
+    divC.appendTo(divH);
+    numberC = setAttributes(new AonNumber(),{
+        id:"coefparcial", 
+        name:"coefparcial",
+        description:"Coef. Parcial"
+    })
+    divC.appendChild(numberC);
+    addSpanDecimal();
+    return divC;
 }
 
 const addSpanDecimal = () =>  {

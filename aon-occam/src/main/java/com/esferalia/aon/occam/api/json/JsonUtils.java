@@ -7,7 +7,6 @@ import java.util.Date;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;

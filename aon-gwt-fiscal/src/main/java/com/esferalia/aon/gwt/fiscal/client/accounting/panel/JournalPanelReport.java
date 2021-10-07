@@ -77,6 +77,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	private AonSearchPanelButton refreshButton;
 
 	private boolean activitiesListBoxEnabled;
+	private AccountingReportModuleOptions options;
 	
 	public JournalPanelReport(String domainName,String user, int domainId) {
 		this(domainName,user,domainId,null);
@@ -92,6 +93,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	
 	public JournalPanelReport(AccountingReportModuleOptions options) {
 		super(Unit.PX);
+		this.options = options;
 		if (options.getConfiguration() == null) {
 			CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 			commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
@@ -112,6 +114,10 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		}
 	}
 	
+	public void run() {
+		onSearch(this.options);
+	}
+	
 	private void fill(final AccountingReportModuleOptions options) {
 		activitiesListBoxEnabled = (options.getConfiguration() != null && options.getConfiguration().hasActivities());
 		addStyleName(AON.CSS.aonScrollArea());
@@ -121,7 +127,9 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		addNorth(northPanel, 100);
 		centerPanel = new SimpleLayoutPanel();
 		add(centerPanel);
-		onSearch(options);
+		if (!options.isDontRunOnOpen()) {
+			onSearch(options);
+		}
 	}
 	
 	private void fillNorthPanel(final AccountingReportModuleOptions options) {

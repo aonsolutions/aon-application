@@ -2,25 +2,23 @@ package net.aonsolutions.aon.api.servlet;
 
 import java.util.LinkedList;
 import java.util.logging.Logger;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.TaskHolderJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+
 @SuppressWarnings("serial")
 @WebServlet(name = "AonTaskHolderServlet", urlPatterns = {"/ms/api/taskholder/*"})
 public class TaskHolderServlet extends AonApiHttpServlet{
@@ -114,12 +112,14 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getTaskHoldersWorkGroup(AonApiData api) {
-		Domain domain = api.getDomain();
-		Integer workgroupId = api.getParams().optInt("workgroupId");
+		Domain domain     = api.getDomain();
+		Integer workgroup = api.getParams().optInt(IJsonNames.WORKGROUP);
+		Integer active    = api.getParams().optInt(IJsonNames.ACTIVE);
 		return TaskHolderJSON.toJSON(AON.getTaskHolderWorkgroupStream(domain, api.getUser(), 
-				f->f.getDomainProperty().eq(domain.getId())
-				.or(f.getDomainProperty().eq(domain.getParentId())), 
-			workgroupId));
+				f->f.getUserIdProperty().isNotNull()
+				.and(f.getActiveProperty().eq(active.byteValue()))
+				.and(f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))), 
+				workgroup));
 	}
 	
 	private JSONObject setTaskHolder(AonApiData api) {

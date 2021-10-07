@@ -137,6 +137,8 @@ public class Model111 extends MainEntryPoint {
 	@UiField
 	Button deleteButton;
 	@UiField
+	Button resetButton;
+	@UiField
 	Button newButton;
 	@UiField
 	Button cancelButton;
@@ -389,6 +391,7 @@ public class Model111 extends MainEntryPoint {
 		saveButton.setVisible(!currentMod.isFinished() && !currentMod.isSent());
 		cancelButton.setVisible(true);
 		deleteButton.setVisible(!currentMod.isNew() && !currentMod.isFinished() && !currentMod.isSent());
+		resetButton.setVisible(!currentMod.isNew() && !currentMod.isFinished() && !currentMod.isSent());
 		printButton.setVisible(!currentMod.isNew());
 		markAsPendingButton.setVisible(!currentMod.isNew() &&
 				(currentMod.getStatus() == FiscalStatus.FINISHED 
@@ -412,6 +415,7 @@ public class Model111 extends MainEntryPoint {
 	
 	private void hideToolbarButtons() {
 		deleteButton.setVisible(false);
+		resetButton.setVisible(false);
 		auditButton.setVisible(false);
 		newButton.setVisible(true);
 		cancelButton.setVisible(true);
@@ -1027,7 +1031,90 @@ public class Model111 extends MainEntryPoint {
 		finalizeDialog.show();
 	}
 	
+	@UiHandler("resetButton")
+	void onResetButtonClick(ClickEvent event) {
+		resetButton.setEnabled(false);
+		cleanErrorMessage();
+		resetModel(currentMod);
+	}		
+		
+	private void resetModel(Mod111 oldMod111) {
+		SERVICE.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(), null,
+				new AsyncCallback<Mod111>() {
+					@Override
+					public void onSuccess(Mod111 newMod111) {
+//						currentMod = newMod111;
+						cleanInfo();
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
+						// Valores de la declaración actual
+						newMod111.setAdministration(oldMod111.getAdministration());
+						newMod111.setYear(oldMod111.getYear());
+						newMod111.setPeriod(oldMod111.getPeriod());
+						newMod111.setComplementary(oldMod111.isComplementary());
+						newMod111.setReplacement(oldMod111.isReplacement());
+						newMod111.setReplacedNumber(oldMod111.getReplacedNumber());
+						showResetDeclarationPopup(newMod111, oldMod111);
+						resetButton.setEnabled(true);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						resetButton.setEnabled(true);
+					}
+				});
+	}
 	
-	
+	private void showResetDeclarationPopup(Mod111 newMod111, Mod111 oldMod111) {
+		NewDeclarationPopup<Mod111> newDialog = new NewDeclarationPopup<Mod111>(true,
+			new FiscalModelCallback() {
+
+					@Override
+					public void onAccept() {
+						
+						SERVICE.delete(getCurrentDomainName(), getCurrentUser(), oldMod111, new AsyncCallback<Void>() {
+							
+							@Override
+							public void onSuccess(Void result) {
+								SERVICE.create(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(), newMod111,
+										new AsyncCallback<Mod111>() {
+											@Override
+											public void onSuccess(Mod111 m111) {
+												int i = deckPanel.getWidgetIndex(formPanel);
+												deckPanel.showWidget(i);
+												tabPanel.selectTab(IDENTIFICATION_TAB);
+												select(m111);
+											}
+
+											@Override
+											public void onFailure(Throwable caught) {
+												showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+											}
+										});
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));								
+							}
+						});
+					}
+
+					@Override
+					public void onCancel() {
+						
+					}
+
+					@Override
+					public Mod111 getFiscalModel() {
+						return newMod111;
+					}
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+
 	
 }

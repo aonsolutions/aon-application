@@ -12,6 +12,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	ValidationSaveEmptyTaxDateTest.class,
 	ValidationSaveEmptyInvoiceTypeTest.class,
 	ValidationSaveEmptyRegistryTest.class,
+	InsertInvoiceTest.class,
 })
 public class InvoiceTestSuite {
 

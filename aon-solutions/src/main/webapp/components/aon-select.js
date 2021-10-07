@@ -284,6 +284,16 @@ export class AonSelect extends AonElement {
   	return input.value;
   }
 
+  /**
+   * 
+   * @param {Boolean} load
+   */
+  loading(load){
+    const input = this.getElement(this.INPUT);
+    if(input)
+      input.loading(load);
+  }
+
   getDetail(){
     return this.detail || {};
   }

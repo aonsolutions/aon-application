@@ -29,7 +29,7 @@ export class AonProjectPanel extends AonElement {
 	}
 
  	build() {
-        this.createApplication(this.AON_PROJECT_PANEL, MSG.PROJECTS, new AonApplication());
+        this.createApplication(this.AON_PROJECT_PANEL, 'EXPENDIENTES', new AonApplication());
         this.buildToolbar();
         this.buildSidenav();
         this.buildContent();
@@ -98,7 +98,7 @@ export class AonProjectPanel extends AonElement {
         d.setContent(aonInput);
         d.addAcceptAction(() => {
             if(!aonInput.value.isEmpty()){
-                let data = new ProjectType().setDescription(description);
+                let data = new ProjectType().setDescription(aonInput.value);
                 saveProjectType(data).then(() => {
                     this.loadTypes();
                 });

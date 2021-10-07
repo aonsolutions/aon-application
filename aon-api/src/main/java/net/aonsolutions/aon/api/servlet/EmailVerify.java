@@ -1,25 +1,16 @@
 package net.aonsolutions.aon.api.servlet;
 
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.util.Base64;
-import java.util.Properties;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
-import com.code.aon.google.apis.GmailUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.google.api.services.gmail.Gmail;
+
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 
 public class EmailVerify implements Serializable {
@@ -30,14 +21,12 @@ public class EmailVerify implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static void sendGmail(Domain domain, User user, String email) {
-		try {
-			DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");		
-			Gmail gmail = GmailUtils.serviceInitialize(g);
-			MimeMessage mail = createEmail(email, g.getGoogleAccount(), "VERIFICAR EMAIL" , getContent(domain.getName(), domain.getId(), user, email), "AON SOLUTIONS | VERIFICAR EMAIL");
-			GmailUtils.sendMessage(gmail, "me", mail); 
-		} catch (MessagingException | IOException | GeneralSecurityException e) {
-			e.printStackTrace();
-		}
+		SESMessage msg = new SESMessage()
+			.setTo(email)
+			.setAlias("AON SOLUTIONS | VERIFICAR EMAIL")
+			.setSubject("VERIFICAR EMAIL")
+			.setBody(getContent(domain.getName(), domain.getId(), user, email));
+		SES.sendEmail(msg);
 	}
 	
 	private static String getContent(String domainName, Integer domainId, User user, String to) {
@@ -59,26 +48,6 @@ public class EmailVerify implements Serializable {
 	public static String getUrl(String domainName, Integer domainId, User user, String to){	
 		String str ="domain=" + domainName + "&email=" + to + "&user=" + user.getId();
 		String base64 = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
-		domainName = "udapa.aonsolutions.net";
 		return "https://" + domainName + "/ms/api/verify/" + base64 ;
-	}
-	
-	public static MimeMessage createEmail(String to, String from, String subject,
-			  String bodyText, String fromName) throws MessagingException {
-	    Properties props = new Properties();
-	    Session session = Session.getDefaultInstance(props, null);
-
-	    MimeMessage email = new MimeMessage(session);
-	    try {
-			email.setFrom(new 	InternetAddress(from, fromName));
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
-
-    	email.addRecipient(javax.mail.Message.RecipientType.BCC, new InternetAddress(to));	
-
-	    email.setSubject(subject);
-	    email.setContent(bodyText, "text/html");
-	    return email;
 	}
 }

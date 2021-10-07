@@ -4041,6 +4041,15 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Registro")
 	String register();
+	
+	@DefaultMessage("Inicializar declaraci\u00F3n")
+	String resetDeclaration();
+	
+	@DefaultMessage("ATENCION: Esta opci\u00F3n borra todos los datos del modelo y lo vuelve a crear. Se perder\u00E1n todos los datos introducidos en el modelo.")
+	String resetWarning();
+	
+	@DefaultMessage("Inicializar")
+	String resetAction();
 
 }
 

@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProjectTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.ProjectTypeProperties;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
+import com.esferalia.aon.occam.impl.jooq.validation.ProjectTypeValidation;
 
 public class ProjectTypeDAO {
 	
@@ -49,6 +50,8 @@ public class ProjectTypeDAO {
 	}
 	
 	public static ProjectType save(AONContext ctx, ProjectType projectType){
+		if(!projectType.isDirty())return projectType;
+		ProjectTypeValidation.validate(ctx, projectType);
 		return projectType.getId() != null 
 			? update(ctx, projectType) 
 			: insert(ctx, projectType);
@@ -61,7 +64,7 @@ public class ProjectTypeDAO {
 			.set(PROJECT_TYPE.ACTIVE, projectType.isActive() ? (byte) 1 : (byte) 0)
 			.returning(PROJECT_TYPE.ID).fetchOne().getValue(PROJECT_TYPE.ID);
 		ctx.log().debug("INSERT PROJECT TYPE id: " +id);	
-		return projectType.setId(id);
+		return projectType.setId(id).setDirty(false);
 	}
 	
 	public static ProjectType update(AONContext ctx, ProjectType projectType){
@@ -71,12 +74,17 @@ public class ProjectTypeDAO {
 			.set(PROJECT_TYPE.ACTIVE, projectType.isActive() ? (byte) 1 : (byte) 0)
 			.where(PROJECT_TYPE.ID.eq(projectType.getId())).execute();
 		ctx.log().debug("UPDATE PROJECT TYPE id:" + projectType.getId());
-		return projectType;
+		return projectType.setDirty(false);
+	}
+
+	public static void delete(AONContext ctx, Integer id) {
+		delete(ctx, f -> f.getIdProperty().eq(id));
 	}
 	
 	public static void delete(AONContext ctx, ProjectTypeFilter filter) {
 		ctx.getDslContext().delete(PROJECT_TYPE)
-		.where(PROJECT_TYPE_PROPERTIES.getConditions(filter));
+		.where(PROJECT_TYPE_PROPERTIES.getConditions(filter))
+		.execute();
 	}
 	
 	public static class ProjectTypeFiller extends Filler implements Function<Record, ProjectType> {
@@ -91,7 +99,8 @@ public class ProjectTypeDAO {
 				.setId(r.getValue(PROJECT_TYPE.ID))
 				.setDomain(r.getValue(PROJECT_TYPE.DOMAIN))
 				.setDescription(r.getValue(PROJECT_TYPE.DESCRIPTION))
-				.setActive(getBoolean(r, PROJECT_TYPE.ACTIVE));
+				.setActive(getBoolean(r, PROJECT_TYPE.ACTIVE))
+				.setDirty(false);
 		}
 	}
 	

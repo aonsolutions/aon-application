@@ -1,4 +1,4 @@
-import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../environments/environments";
+import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
 export const ICON_TYPES = {
     MATERIAL : "material",
@@ -79,7 +79,10 @@ export const MESSENGER_IDS = {
     SOURCE_TASK: "sourceTask",
     EXTERNAL_TASK: "externalTask",
     BTN_SEND_MESSAGE: "btnSendMessage",
-    DIV_TASK_TAGS:"divTaskTags"
+    DIV_TASK_TAGS:"divTaskTags",
+    createSelectCau:"divTaskTags",
+    TYPE_REQUEST_CAU: "typeRequestCau",
+    SELECT_APP: "selectApp",
 }
 
 export const WORKFLOW_TYPES = {

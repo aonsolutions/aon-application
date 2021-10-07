@@ -1,11 +1,12 @@
-import { EVENT, MSG } from "../../../environments/environments";
-import { getOfficeProjects, getProjects} from "../../../services/projectService";
-import { getCustomers } from "../../../services/registryService";
-import { getTastHoldersWorkGroup } from "../../../services/taskHolderService";
-import { waitEl } from "../../../services/utils";
-import { MESSENGER_DIRECTION, MESSENGER_IDS, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums";
-import { createAction, createChatMessage, createNoMessage} from "./creationUtils";
-import { chooseIconMessage } from "./utils";
+import { EVENT, MSG } from "../../../environments/environments.js";
+import {Apps} from "../../../services/app.js";
+import { getOfficeProjects, getProjects} from "../../../services/projectService.js";
+import { getCustomers } from "../../../services/registryService.js";
+import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
+import { waitEl } from "../../../services/utils.js";
+import { MESSENGER_DIRECTION, MESSENGER_IDS, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
+import { createAction, createChatMessage, createNoMessage} from "./creationUtils.js";
+import { chooseIconMessage } from "./utils.js";
 
 /**
  * fill typeRequest (Tipo de solicitud)
@@ -14,11 +15,12 @@ import { chooseIconMessage } from "./utils";
  */
 export const fillRequestType = ({source}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.SOURCE_TASK);
-    
     let sources = [
-        {value: TASK_SOURCE.QUERY, name: MSG[TASK_SOURCE.QUERY.toUpperCase()] },
-        {value: TASK_SOURCE.REQUEST, name: MSG.FORMALITIES },
+        {value: TASK_SOURCE.QUERY, name: MSG[TASK_SOURCE.QUERY.toUpperCase()] }
     ];
+
+    if(!aonMessengerChat.isCau())
+     sources.push({value: TASK_SOURCE.REQUEST, name: MSG.FORMALITIES });
 
     if(TASK_SOURCE.MANUAL === source)
         sources.unshift({value: TASK_SOURCE.MANUAL, name: "MANUAL" }); 
@@ -38,21 +40,23 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
  */
  export const fillProject = async (task) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
+    // console.log(task.project);
     if(aonSelect){
+        aonSelect.loading(true);
         const project = task.getProject();
         try {
             let projects = [];
             let registry = task.getRegistry();
-            if(registry.id)
+            if(registry.id && task.isGestor())
                 projects = await getProjects({ registry: registry.id });
             else
                 projects = await getOfficeProjects();
 
-
             aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
+
             
             if(project && project.id){ aonSelect.value = project.id; } 
-        
+
             const fnProject = ({detail})=>{
                 if(detail && detail.id)
                     task.setProject(detail);
@@ -60,11 +64,13 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
                     task.setProject({});
             };
 
-            aonSelect.removeEventListener(EVENT.CHANGE, fnProject)
-            aonSelect.addEventListener(EVENT.CHANGE, fnProject)
+            aonSelect.removeEventListener(EVENT.CHANGE, fnProject);
+            aonSelect.addEventListener(EVENT.CHANGE, fnProject);
+        
         } catch (error) {
             console.log(error);
         }
+        aonSelect.loading(false);
     }
 }
 
@@ -77,13 +83,15 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
 export const fillWorkGroup = async (task, aonMessengerChat) => {
     try {
         const aonSelect = await waitEl(`#${MESSENGER_IDS.WORKGROUP}`);
-        const workgroups = aonMessengerChat.getApplicationParent()._workgroups;
+        aonSelect.loading(true);
+        const workgroups = await aonMessengerChat.getWorkGroups();
         let options = [];
         if(workgroups && workgroups.length>0){
             options = workgroups.map( wg=> ({...wg, id: wg.value}) );
         } else if(task.workgroup.id && task.workgroup.description) {
             options = [{...task.workgroup, value:task.workgroup.id, name:task.workgroup.description}];
         }
+        
         aonSelect.setOptions(options);
         
         if(task.workgroup && task.workgroup.id){
@@ -91,32 +99,36 @@ export const fillWorkGroup = async (task, aonMessengerChat) => {
         } 
 
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-            if(detail){
+            if(detail)
                 task.setWorkgroup(detail);
-            }
-            fillTaskHolder(aonMessengerChat, detail.value);
+            fillTaskHolder(aonMessengerChat);
         });
+
+        aonSelect.loading(false);
     } catch (error) { console.log(error);}
 }
 
 /**
  * fill taskHolder (Titular de la tarea)
  * @param {HTMLElement} aon-messenger-chat component
- * @param {Integer} workgroupId 
+ * @param {Integer} workgroup 
  */
-export const fillTaskHolder = async (aonMessengerChat, workgroupId=0) => {
+export const fillTaskHolder = async (aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKHOLDER}`).catch(e=>null);
     const task = aonMessengerChat.task;
     if(aonSelect){
         aonSelect.clear();
-        const taskHolders = await getTastHoldersWorkGroup({workgroupId});
+        const workgroup = task.getWorkgroup().id;
+        const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
 
         let options = [];
         if(taskHolders && taskHolders.length>0){
-            options = taskHolders.map( th=> ({...th, value: th.id}) );
+            options = taskHolders.map( th=> ({...th, value: th.id}) )
+            .filter( (v,i,s)=>s.findIndex((m) => m.id === v.id) === i )
         } else if(task.task_holder.id && task.task_holder.name) {
             options = [{...task.task_holder, value:task.task_holder.id}];
         }
+
         aonSelect.setOptions(options);
         
         if(task.task_holder && task.task_holder.id) 
@@ -139,27 +151,42 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
     if(aonSelect){
         aonSelect.clear();
-        const customers = await getCustomers({reload:false, page:1, perPage:50});
-        if(customers){
-            aonSelect.setOptions( customers.map( c=> ({...c, value: c.id}) ) );
-        }
+        aonSelect.loading(true);
+        try {
 
-        aonSelect.addEventListener(EVENT.INPUT, async({target})=>{
-            const value = target.value;
-            if(value.length > 2){
-                const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
-                aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+            const customers = await getCustomers({reload:false, page:1, perPage:50});
+
+            let options = [];
+            if(customers && customers.length>0){
+                options = customers.map( c=> ({...c, value: c.id}) ) ;
             }
-        });
+            
+            const exist = options.some(({id})=> id  ===registry.id );
+            if( !exist && registry.id && registry.name){
+                options.push({...registry, value:registry.id});
+            }
 
-        if(registry && registry.id) aonSelect.value = registry.id;
+            aonSelect.setOptions( options );
 
-        aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-            if(detail){
-                aonMessengerChat.task.setRegistry(detail);
-                fillProject(aonMessengerChat.task);
-            } 
-        });
+            aonSelect.addEventListener(EVENT.INPUT, async({target})=>{
+                const value = target.value;
+                if(value.length > 2){
+                    const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
+                    aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
+                }
+            });
+    
+
+            if(registry && registry.id) aonSelect.value = registry.id;
+    
+            aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+                if(detail){
+                    aonMessengerChat.task.setRegistry(detail);
+                    fillProject(aonMessengerChat.task);
+                } 
+            });
+        } catch (error) { }
+        aonSelect.loading(false);
     }
 }
 
@@ -193,11 +220,14 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
 export const fillProcessType =  ({source_id}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROCESS_TYPE);
     aonSelect.clear();
-    const typeProcess = [
+    let options = [
         { value:1, name:"Solicitud de vacaciones"},
     ];
-    if(typeProcess){
-        aonSelect.setOptions( typeProcess.map(tp=> tp) );
+    // if(isGestor){
+        options.push({ value:2, name:"Alta de empleado"});
+    // }
+    if(options){
+        aonSelect.setOptions( options );
     }
     if(source_id) aonSelect.value = source_id;
 
@@ -250,4 +280,105 @@ export const fillChat = (workflows=[], aonMessengerChat)=>{
             });
         }
    })
+}
+
+
+/**
+ * fill processType (Titular de la tarea)
+ * @param {Task} Class task 
+ */
+ export const fillTypeRequestCau =  (aonMessengerChat) => {
+    const task = aonMessengerChat.task;
+    const aonSelect = document.getElementById(MESSENGER_IDS.TYPE_REQUEST_CAU);
+    aonSelect.clear();
+
+    let value = task.getDescriptionJson().type;
+
+    const options = [
+        { value:1, name:"CONSULTA"},
+        { value:2, name:"ERROR"},
+        { value:3, name:"SERVICIOS"},
+        { value:4, name:"SUGERENCIAS"},
+        { value:5, name:"eMail"},
+    ];
+
+    if(options)
+        aonSelect.setOptions( options );
+
+    aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+      let title = "";
+      if(detail && detail.value) {
+        title = detail.name;
+        task.setDescriptionJson({type:detail.value});
+        const selectApp = document.getElementById(MESSENGER_IDS.SELECT_APP);
+        if(selectApp) title = detail.name+ " / "+ selectApp.getText();
+        
+        task.setTitle(title);
+      }
+    });
+
+    if(value) aonSelect.value = value;
+}
+
+
+/**
+ * fill processType (Titular de la tarea)
+ * @param {Task} Class task 
+ */
+ export const fillSelectAppCau =  (aonMessengerChat) => {
+    const task = aonMessengerChat.task;
+    const aonSelect = document.getElementById(MESSENGER_IDS.SELECT_APP);
+    aonSelect.clear();
+
+    try {
+        let value = task.getDescriptionJson().app;
+
+        const apps = getAppPermission(aonMessengerChat.getDur());
+        let options = apps.map(app => ({value:app.app, name:app.title}));
+
+        if(options)
+            aonSelect.setOptions( options );
+
+        aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+            let title = "";
+            if(detail && detail.value) {
+                task.setDescriptionJson({app:detail.value});
+                const selectTypeRequest = document.getElementById(MESSENGER_IDS.TYPE_REQUEST_CAU);
+                if(selectTypeRequest) title = selectTypeRequest.getText() +" / "+detail.name;
+            }
+            task.setTitle(title);
+        });
+        
+        if(value) aonSelect.value = value;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
+const getAppPermission = (dur) => {
+  let apps = [];
+  if( dur.isAccounting())
+    apps.push(Apps.ACCOUNTING);
+
+  if(dur.isFiscal())
+    apps.push(Apps.FISCAL);
+
+  if((dur.isComunicaManager() || dur.isComunicaPortal() ) && !dur.isPayroll())
+   apps.push(Apps.COMUNICA);
+
+  if(dur.isPayroll())
+    apps.push(Apps.PAYROLL);
+
+  if(dur.isDocumental())
+    apps.push(Apps.DOCUMENTAL);
+
+  if(dur.isTimecontrol())
+    apps.push(Apps.TIMECONTROL);
+
+  if(dur.isInvoice())
+    apps.push(Apps.INVOICE);
+
+  return apps;
 }

@@ -6,7 +6,7 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { taskHistoricSend } from "../../../services/taskService.js";
 import { setDateTimestampDay } from "../../../services/utils.js";
-import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents";
+import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 
@@ -322,12 +322,20 @@ const checkProperties = (properties) => {
     return properties;
 }
 
+//----------------TYPE REQUEST CAU 
+export const createSelectCau = (name, id, title) => setAttributes( new AonSelect(),{
+  name,
+  id,
+  title,
+});
+
 //----------------TYPE REQUEST   
 export const createRequestType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.SOURCE_TASK,
   name: MESSENGER_IDS.SOURCE_TASK,
   title: MSG.TYPE_REQUEST
 });
+
 
 //----------------WORKGROUP   
 export const createWorkgroup = () =>setAttributes( new AonSelect(),{
@@ -370,7 +378,7 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
  export const createProject = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
-  title: MSG.PROJECT,
+  title: MSG.TYPE,
   autocomplete: CONSTANT.OFF
 });
 

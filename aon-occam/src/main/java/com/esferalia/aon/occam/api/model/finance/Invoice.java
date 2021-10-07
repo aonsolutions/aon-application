@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Invoice implements Serializable, HasAudit {
 	
@@ -35,12 +36,12 @@ public class Invoice implements Serializable, HasAudit {
 	private SecurityLevel securityLevel;
 	private Integer rectificationInvoice;
 
-	private Registry registryData;
 	private Integer registry;
 	private String registryDocument;
 	private DocumentType registryDocumentType;
 	private Country registryDocumentCountry;
 	private String registryName;
+	
 	private Integer registryAddress;		//**
 	private RegistryAddress registryAddressData;
 	private StreetType addressStreetType;	//**
@@ -79,15 +80,23 @@ public class Invoice implements Serializable, HasAudit {
 	private String modificationUser;
 	private Date modificationDate;
 
-	private Byte status;
-	
 	private String siiStatus;
 
 	private LinkedList<InvoiceDetail> details;
 	private LinkedList<InvoiceBreakdown> breakdown;
 	private LinkedList<Finance> finances;
 
+	private InvoiceFiscal fiscal;
+	
 	private String tediCategory;
+	
+	// ***************************
+	// ATRIBUTOS CON DUDOSO FUTURO
+	// ***************************
+	private Registry registryData;
+	private Byte status;
+	// ***************************
+	
 	
 	public Integer getId() {
 		return id;
@@ -548,6 +557,20 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public InvoiceFiscal getFiscal() {
+		return fiscal;
+	}
+	public InvoiceFiscal ensureFiscal() {
+		if (getFiscal() == null) {
+			setFiscal(new InvoiceFiscal());
+		}
+		return getFiscal();
+	}
+	public Invoice setFiscal(InvoiceFiscal fiscal) {
+		this.fiscal = fiscal;
+		return this;
+	}
+	
 	// TEDI CATEGORY - ACCOUNT CODE
 	
 	public String getTediCategory() {
@@ -614,17 +637,36 @@ public class Invoice implements Serializable, HasAudit {
 			(isSales() && isNational())		// Venta Nacional
 			|| mustApplyISP());					// Aplicar la inversión de sujeto pasivo.	
 	}
+	public boolean isVatImportationAvailable() {
+		return (isExtracommunity() || isCanCeuMel()) 
+				&& (isPurchase() || isExpenses()) 	 
+				&& !isService()
+			;
+	}
+	
 	public boolean isInputVatEnabled() {
 		return !isUndeductible() && (
-			  (isPurchase() && isNational())	// Compra nacional 
-			|| (isExpenses() && isNational())	// Gasto nacional
-			|| mustApplyISP());					// Aplicar la inversión de sujeto pasivo.	
+			  (isPurchase() && isNational())						// Compra nacional 
+			|| (isExpenses() && isNational())						// Gasto nacional
+			|| (isVatImportationAvailable() && isVatImportation()	// Regimen importacioon 
+				&& AonMathUtils.isLessThan(getTotal(), 150.00 ))	
+			|| mustApplyISP());										// Aplicar la inversión de sujeto pasivo.	
 	}
 	public String getSiiStatus() {
 		return siiStatus;
 	}
 	public Invoice setSiiStatus(String siiStatus) {
 		this.siiStatus = siiStatus;
+		return this;
+	}
+	
+	// ----------- VAT REGIMES
+	
+	public boolean isVatImportation() {
+		return getFiscal() != null && getFiscal().isVatRegimeEnabled(VATTaxRegime.VAT_IMPORTATION);
+	}
+	public Invoice setVatImportation( boolean value) {
+		ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, value);
 		return this;
 	}
 	

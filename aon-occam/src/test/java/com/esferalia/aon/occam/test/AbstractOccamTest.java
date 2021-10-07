@@ -127,7 +127,9 @@ public class AbstractOccamTest {
 			if (rs.getString(1).startsWith(dbName)) {
 				String schemaName = rs.getString(1); 
 				connection.createStatement().execute("use " + schemaName);
+				System.out.println("*******************************");
 				System.out.println("USING  [" + schemaName+ "] schema.");
+				System.out.println("*******************************");
 				return connection;
 			}
 		}
@@ -287,7 +289,7 @@ public class AbstractOccamTest {
 		.set(WORKPLACE.ADDRESS, address.getId())
 		.set(WORKPLACE.ENTERPRISE, companyFull.getRegistry().getId())
 		.set(WORKPLACE.SCOPE, newScopeId)
-		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonRandom.randomEnum( Administration.class, 10) ))
+		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonRandom.getRandomAdministration(10) ))
 		.execute();
 		ctx.log().info("Workplace insertada correctamente");
 		

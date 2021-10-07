@@ -26,14 +26,15 @@ import com.esferalia.aon.occam.api.model.DateInterval;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workgroup;
-import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.Tariff;
+import com.esferalia.aon.occam.api.model.project.ProjectHolder;
+import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -45,17 +46,17 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.MediaType.IMediaTypeVisitor;
-import com.esferalia.aon.occam.api.model.type.PayMethodType;
-import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TaskHolderDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.WorkgroupDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -69,11 +70,11 @@ public class AonFaker {
 		return  new Registry()
 			.setDomain(new Domain().setId(ctx.getDomainId()))
 			.setDocument(faker.regexify(documentRegexp))
-			.setDocumentType( AonRandom.randomEnum(DocumentType.class) )
-			.setDocumentCountry( AonRandom.gt(5) ? Country.ES: AonRandom.randomEnum(Country.class))
+			.setDocumentType( AonRandom.getRandomDocumentType() )
+			.setDocumentCountry( AonRandom.gt(5) ? Country.ES: AonRandom.getRandomCountry())
 			.setName( faker.company().name() )
 			.setAlias( faker.company().profession() )
-			.setNationality( AonRandom.gt(5) ? Country.ES: AonRandom.randomEnum(Country.class))
+			.setNationality( AonRandom.gt(5) ? Country.ES: AonRandom.getRandomCountry())
 			.setConfidential( !AonRandom.gt(3) );
 	}
 
@@ -103,8 +104,8 @@ public class AonFaker {
 			.setTariff( tariff == null? null : tariff.getId() )
 			.setSurcharge( AonRandom.gt(95) )
 			.setWithholding( AonRandom.gt(85) )
-			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
-			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
+			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.getRandomInvoiceTransactionType())
+			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.getRandomRegistryStatus())
 			.setScope( scope == null ? null : scope.getId() )
 			.setEInvoice( AonRandom.gt(40) )
 			// TODO
@@ -129,8 +130,8 @@ public class AonFaker {
 			.copy(registry)
 			.setWithholding( AonRandom.gt(85) )
 			.setVatAccrualPayment( AonRandom.gt(98) )
-			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
-			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
+			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.getRandomInvoiceTransactionType())
+			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.getRandomRegistryStatus())
 			.setScope( scope == null ? null : scope.getId() )
 			.setAccount( account == null? null : account.getId() );
 	}
@@ -164,8 +165,8 @@ public class AonFaker {
 			.setWithholding( AonRandom.gt(95) )
 			.setWithholdingFarmer( AonRandom.gt(90) )
 			.setVatAccrualPayment( AonRandom.gt(92) )
-			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.randomEnum(InvoiceTransactionType.class))
-			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.randomEnum(RegistryStatus.class))
+			.setTransaction( AonRandom.gt(10) ? InvoiceTransactionType.NATIONAL : AonRandom.getRandomInvoiceTransactionType())
+			.setStatus( AonRandom.gt(2) ? RegistryStatus.ACTIVE: AonRandom.getRandomRegistryStatus())
 			.setScope( scope == null ? null : scope.getId() )
 			.setPurchaseValuated(AonRandom.gt(50) )
 			.setAccount( account == null? null : account.getId() );
@@ -197,7 +198,7 @@ public class AonFaker {
 			.setDomain(ctx.getDomainId())
 			.setRegistry(registry.getId())
 			.setMain(AonRandom.gt(50))
-			.setStreetType(AonRandom.randomEnum(StreetType.class,75))
+			.setStreetType(AonRandom.getRandomStreetType(75))
 			.setRecipient( AonRandom.name(20, RADDRESS.RECIPIENT.getDataType().length()) )
 			.setAddress( AonRandom.gt(10)?faker.address().streetName():null )
 			.setNumber( AonRandom.gt(12)?faker.address().streetAddressNumber():null)
@@ -223,7 +224,7 @@ public class AonFaker {
 		RegistryMedia media = new RegistryMedia();
 		media.setDomain(ctx.getDomainId());
 		media.setRegistry(registry.getId());
-		MediaType mediaType = AonRandom.randomEnum(MediaType.class, 5); 
+		MediaType mediaType = AonRandom.getRandomMediaType(5); 
 		media.setMedia(mediaType);
 		if (mediaType != null) {
 			mediaType.visit(new IMediaTypeVisitor() {
@@ -296,7 +297,7 @@ public class AonFaker {
 		return new PayMethod()
 			.setDomain(ctx.getDomainId())
 			.setName( faker.lorem().characters(1, 10))
-			.setType( AonRandom.randomEnum(PayMethodType.class, 5));
+			.setType( AonRandom.getRandomPayMethodType(5));
 	}
 	
 	public static AccountPeriod getTodayActiveAccountPeriod(AONContext ctx) {
@@ -324,7 +325,7 @@ public class AonFaker {
 			.setAccount( AonRandom.getAccount(ctx,80))
 			.setLevel( AonRandom.getInt(0, 9) )
 			.setActivity( AonRandom.integer(75, 1000) )
-			.setSecurityLevel( AonRandom.randomEnum(SecurityLevel.class))
+			.setSecurityLevel( AonRandom.getRandomSecurityLevel())
 			.setDocumentNumber( AonRandom.string(5, 15 ))
 			.setPreviousPeriods( AonRandom.getInt(0, 9) )
 			.setLowLevelAccountVisible(AonRandom.gt( 50 ))
@@ -336,7 +337,7 @@ public class AonFaker {
 			.setOperatingEntriesExcluded(AonRandom.gt( 50 ))
 			.setClosingEntriesExcluded(AonRandom.gt( 50 ))
 			.setReverseOrder(AonRandom.gt( 50 ))
-			.setBalanceType(AonRandom.randomEnum(BalanceType.class))
+			.setBalanceType(AonRandom.getRandomBalanceType())
 			.setSelectedPeriod(AonRandom.getAccountPeriod(ctx, 85))
 			.setSelectedActivity(AonRandom.getRandomActivity(ctx))
 			.setSelectedAccount( AonRandom.getAccount(ctx,80))
@@ -347,9 +348,9 @@ public class AonFaker {
 			.setConsolidation(AonRandom.gt( 50 ))
 			.setRegistry( AonRandom.integer(75, 1000) )
 			.setOutput(AonRandom.gt( 50 ))
-			.setVatSummaryType(AonRandom.randomEnum(VatSummaryType.class))
-			.setPercent( AonRandom.getDouble(0, 100, 2))
-			.setRectificationType(AonRandom.randomEnum(RectificationType.class))
+			.setVatSummaryType(AonRandom.getRandomVatSummaryType())
+			.setPercent( AonRandom.getDouble(0, 100, 2)) 
+			.setRectificationType(AonRandom.getRandomRectificationType())
 			.setSurcharge(AonRandom.gt( 50 ))
 			.setFarmerRegime(AonRandom.gt( 50 ))
 			.setAccrualRegime(AonRandom.gt( 50 ))
@@ -425,6 +426,51 @@ public class AonFaker {
 			.setDomain(ctx.getDomainId())
 			.setDescription(faker.beer().name())
 			.setStatus(WorkgroupStatus.ACTIVE);
+	}
+	
+	public static Project getProject( AONContext ctx ) {
+		ProjectType type = ProjectTypeDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(type.isEmpty()) type = ProjectTypeDAO.save(ctx, getProjectType(ctx));
+		
+		Registry registry = RegistryDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(registry.isEmpty()) registry = RegistryDAO.save(ctx, getRegistry(ctx));
+		
+		return new Project()
+			.setDomain(new Domain().setId(ctx.getDomainId()))
+			.setName(faker.gameOfThrones().dragon())
+			.setAlias(faker.gameOfThrones().house())
+			.setRegistry(registry)
+			.setType(type)
+			.setDate(new Date())
+			.setTas(false)
+			.setCommercial(false)
+			.setReservation(false)
+			.setActive(true);
+	}
+	
+	public static ProjectType getProjectType( AONContext ctx ) {
+		return new ProjectType()
+			.setDomain(ctx.getDomainId())
+			.setDescription(faker.gameOfThrones().dragon())
+			.setActive(true);
+	}
+	
+	public static ProjectHolder getProjectHolder(AONContext ctx) {
+		TaskHolder th = TaskHolderDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(th.isEmpty()) th = TaskHolderDAO.save(ctx, getTaskHolder(ctx));
+		
+		Workgroup wg = WorkgroupDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(wg.isEmpty()) wg = WorkgroupDAO.save(ctx, getWorkgroup(ctx));
+		
+		Project p = ProjectDAO.get(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()));
+		if(p.isEmpty()) p = ProjectDAO.save(ctx, getProject(ctx));
+		
+		return new ProjectHolder()
+			.setDomain(ctx.getDomainId())
+			.setProject(p.getId())
+			.setStartDate(new Date())
+			.setWorkgroup(wg)
+			.setTaskHolder(th);
 	}
 	
 	public static ProductCategory getProductCategory( AONContext ctx ) {

@@ -221,19 +221,23 @@ public class ContextFunctions {
 	// SECTION
 	// ------------------------------------------------------------------------
 
-	public static void section(ExpressionContext context, Date date) {
+	public static void section(ExpressionContext context, Date sectionDate) {
 		
 		long monthDays = Long.MAX_VALUE;
 		
-		try {
-			monthDays = context.getVariable(ContextVariable.MONTH_DAYS.getName(), 
-					date, 
-					date,
-					Number.class)
-					.longValue();
-		} catch ( Throwable t) {
-			
-		}
+//		try {
+//			monthDays = context.getVariable(ContextVariable.MONTH_DAYS.getName(), 
+//					sectionDate, 
+//					sectionDate,
+//					Number.class)
+//					.longValue();
+//		} catch ( Throwable t) {
+//		}
+		
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(sectionDate);
+		Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(sectionDate);
+		monthDays= new Period(firstDayOfMonth, lastDayOfMonth).getDays();
+		
 		for ( String name : new String[ ]{
 				ContextVariable.PREST_IT,
 				ContextVariable.CGC_BASE.getName(),
@@ -248,6 +252,8 @@ public class ContextFunctions {
 				ContextVariable.WORKED_HOURS.getName(),
 				ContextVariable.ADDITIONAL_HOURS.getName(),
 				ContextVariable.ADDITIONAL_BASE.getName(),
+				ContextVariable.CGC_BASE_ENTERPRISE.getName(),
+				ContextVariable.CGP_BASE_ENTERPRISE.getName(),
 				
 				// Cuotas
 //				ContextVariable.CGC_EMPLOYEE.getName(), 
@@ -263,33 +269,28 @@ public class ContextFunctions {
 //				ContextVariable.EMPLOYEE_QUOTA.getName(),				
 				})
 		{
-			for ( ITimedVariable<Object> var : context.getVariables(name) ) {
-				if ( var.getPeriod().contains(date)) {
+			for ( ITimedVariable<Object> variable : context.getVariables(name) ) {
+				if ( variable.getPeriod().contains(sectionDate)) {
 					
-					if ( "CUOTA_EMPRESARIAL".equals(name))
-						System.out.println();
-
-					Period varPeriod = var.getPeriod();
-					Double varDoubleValue = 0.00;
+					Period varPeriod = variable.getPeriod();
+					Double varValue = 0.00;
 					try {	
-						varDoubleValue = ((Number)var.getValue(varPeriod)).doubleValue();
+						varValue = ((Number)variable.getValue(varPeriod)).doubleValue();
 					} catch ( Throwable t) {
 						try {
 							for (ITimedVariable<Number> data :context.eval(name, varPeriod.getStart(), varPeriod.getEnd(), Number.class)){
-								if ( data.getPeriod().contains(date)) {
+								if ( data.getPeriod().contains(sectionDate)) {
 									varPeriod = data.getPeriod();
-									varDoubleValue += data.getValue(data.getPeriod()).doubleValue();
+									varValue += data.getValue(data.getPeriod()).doubleValue();
 								}
 							}
 						} catch (Throwable t1) {
 							continue;
 						}
-						if ( varDoubleValue == 0.00)
+						if ( varValue == 0.00)
 							continue;
 					}
 					
-					Double varValue = varDoubleValue;
-					Period valuePeriod  = varPeriod;
 					
 					abstract class DaysTimedVariable<T> implements ITimedVariable<T>  {
 						public abstract long getDays(Period period);
@@ -301,55 +302,58 @@ public class ContextFunctions {
 					long varDays ; 
 					if ( wholeMonth )
 						varDays = monthDays; 
-					else if ( var instanceof DaysTimedVariable )
-						varDays = ((DaysTimedVariable<?>)var).getDays(varPeriod);
+					else if ( variable instanceof DaysTimedVariable )
+						varDays = ((DaysTimedVariable<?>)variable).getDays(varPeriod);
 					else
-						varDays = Math.min(getDaysBetweenDates(varPeriod.getStart(), varPeriod.getEnd())+ 1, monthDays);
+						varDays = Math.min(varPeriod.getDays(), monthDays);
 					
 					
+					Date varStartDate = varPeriod.getStart();
+					double varDailyValue = varValue / varDays;
 					
 					ITimedVariable<Object> firstVariable = new ITimedVariable<Object>() {
 						
 						@Override
 						public Period getPeriod() {
-							return new Period(valuePeriod.getStart(), date);
+							return new Period(varStartDate, sectionDate);
 						}
 						
 						@Override
 						public Object getValue(Period period) {
-							long days = getDaysBetweenDates(period.getStart(), period.getEnd()) +1;
-							return varValue * days / varDays;
+							long valueDays = period.getDays();
+							return varDailyValue * valueDays;
 						}
 					};
 					
 					context.putVariable(name, firstVariable);
 					
-					long firstDays = getDaysBetweenDates(
-							firstVariable.getPeriod().getStart(), 
-							firstVariable.getPeriod().getEnd() ) +1;
+					long firstVarDays = firstVariable.getPeriod().getDays();
 					
-					if ( date.compareTo(varPeriod.getEnd()) == 0 )
+					if ( sectionDate.compareTo(varPeriod.getEnd()) == 0 )
 						continue;
 					
+					Date varEndDate = varPeriod.getEnd();
+					Date afterSectionDate = AonDateUtils.addDays(sectionDate, 1);
+
 					class LastTimedVariable extends DaysTimedVariable<Object> {
 						@Override
 						public Period getPeriod() {
-							return new Period( AonDateUtils.addDays(date, 1), valuePeriod.getEnd());
+							return new Period( afterSectionDate, varEndDate);
 						}
 						
 						@Override
 						public Object getValue(Period period) {
-							long days = getDaysBetweenDates(period.getStart(), period.getEnd()) +1;
-							long secondDays = varDays - firstDays;
-							days = wholeMonth  ? secondDays : Math.min(secondDays , days);
-							return varValue * days / varDays;
+							long valueDays = period.getDays();
+							long lastVarDays = varDays - firstVarDays;
+							valueDays = wholeMonth  ? lastVarDays : Math.min(lastVarDays , valueDays);
+							return varDailyValue * valueDays ;
 						}
 						
 						@Override
 						public long getDays(Period period) {
-							long days = getDaysBetweenDates(period.getStart(), period.getEnd()) +1;
-							long secondDays = varDays - firstDays;
-							return wholeMonth  ? secondDays : Math.min(secondDays , days);						
+							long days = period.getDays();
+							long lastVarDays = varDays - firstVarDays;
+							return wholeMonth  ? lastVarDays : Math.min(lastVarDays , days);						
 						}
 					};
 					

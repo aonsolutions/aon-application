@@ -269,6 +269,22 @@ public class Model3902018 extends DockLayoutPanel  {
 			}
 		});
 		buttonContainer.add(deleteButton);
+
+		// Botón Inicializar
+		Button resetButton = new Button();
+		resetButton.setVisible(!m390.isNew() && !m390.isFinished() && !m390.isSent());
+		resetButton.setText(AON.MSG.resetAction());
+		resetButton.setTitle(resetButton.getText());
+		resetButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		resetButton.addStyleName(AON.AON_CSS.aonIconReset());
+		resetButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				cbk.onReset(options, m390);
+			}
+		});
+		buttonContainer.add(resetButton);
 		
 		Button markAsFinishedButton = new Button();
 		markAsFinishedButton.setVisible(!m390.isNew() &&

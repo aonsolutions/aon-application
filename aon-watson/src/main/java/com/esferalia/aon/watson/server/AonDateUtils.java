@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -166,6 +165,7 @@ public class AonDateUtils {
 	 * @return
 	 */
 	public static Date getDateWithoutTime(Date date) {
+		if(date == null) return null;
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.YEAR, getYear(date));
 		c.set(Calendar.MONTH, getMonth(date));
@@ -537,6 +537,7 @@ public class AonDateUtils {
 	 * @return La hora del dia.
 	 */
     public static Integer getHour(Date date){
+    	if(date == null) return null;
     	Calendar c = Calendar.getInstance();
     	c.setTime(date);
     	return c.get(Calendar.HOUR_OF_DAY);

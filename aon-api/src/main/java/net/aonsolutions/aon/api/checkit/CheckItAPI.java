@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLog;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItParams;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAccount;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -38,6 +39,7 @@ import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
@@ -674,6 +676,23 @@ public class CheckItAPI implements IParamNames{
 
 //------------------------------------------------------------------------------------------
 	
+//---------------------------------------GET LOGS-------------------------------------------
+	
+	public static JSONArray getLogs(JSONObject params) throws CheckItException {
+		Object json = post(API_URL + "logs/robot/list", params);
+		return parseJSONArray(json);
+	}
+	
+	public static JSONArray getLogs(Integer empresaId, Integer cuentabancariaId) throws CheckItException {
+		JSONObject params = new JSONObject();
+		params.put(API_KEY_PARAM, API_KEY);
+		params.put(ENTERPRISE_ID_PARAM, empresaId);
+		params.put("cuentabancaria_id", cuentabancariaId);
+		return getLogs(params);
+	}
+	
+//------------------------------------------------------------------------------------------
+	
 //------------------------------------GET ENTERPRISE----------------------------------------
 	
 	public static JSONArray getEnterprise(JSONObject params) throws CheckItException {
@@ -897,13 +916,45 @@ public class CheckItAPI implements IParamNames{
 		if (accountJson == null)
 			throw new CheckItException(errMsg);
 
-		Integer accountId = accountJson.optInt("id_cuentabancaria");
-		if (accountId == null)
+		Integer accountId = accountJson.optInt("id_cuentabancaria", 0);
+		if (accountId == 0)
 			throw new CheckItException(errMsg);
 		return accountId;
 	}
 	
-//	public static Integer
+	public static List<CheckItLog> getCheckItLogs(Integer empresaId, Integer cuentabancariaId) throws CheckItException {
+		JSONArray logsJson = getLogs(empresaId, cuentabancariaId);
+		List<CheckItLog> logsList = new LinkedList<>();
+		if (logsJson != null) {
+			for (int i=0; i<logsJson.length(); i++) {
+				CheckItLog log = logFromJsonToObject(logsJson.optJSONObject(i));
+				if (log != null) {
+					logsList.add(log);
+				}
+			}
+			return logsList;
+		} else
+			return Collections.emptyList();
+	}
+	
+	private static CheckItLog logFromJsonToObject(JSONObject json) {
+		if (json == null)
+			return null;
+		Date created;
+		try {		
+			created = parseTZDate(json.optString("created", ""));
+		} catch (CheckItException e) {
+			created = null;
+		}
+		
+		return new CheckItLog()
+				.setBankAccountId(json.optInt("cuentabancaria_id"))
+				.setErrorMessage(json.optString("error_message"))
+				.setUserError(json.optInt("is_user_error", 0) == 1)
+				.setPending(json.optInt("is_pending", 0) == 1)
+				.setCreated(created);
+				
+	}
 	
 	public static List<BankStatement> getBankStatements(Integer empresaId, Integer accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
 		Date today = new Date();
@@ -1121,6 +1172,7 @@ public class CheckItAPI implements IParamNames{
 				.setRemainder(obj.optDouble("disponible", 0))
 				.setBankAccountType(obj.optInt("tipo_cuenta_bancaria_id", 0))
 				.setBankLoginType(obj.optInt("tipo_login_banco_id", 0))
+				.setLogs(getCheckItLogs(empresaId, obj.optInt(BANK_ID_PARAM, 0)))
 			);
 		}
 		return acc;

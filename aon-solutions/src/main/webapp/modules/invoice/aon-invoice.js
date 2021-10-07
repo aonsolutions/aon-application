@@ -28,7 +28,7 @@ import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, T
 import { getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 
-export class AonNewInvoice extends AonElement {
+export class AonInvoice extends AonElement {
 
 	invoice;
 	dur;
@@ -1354,16 +1354,12 @@ export class AonNewInvoice extends AonElement {
 		} else return MSG.INVOICE_RECEIVED;
 	}
 
-	save() {
-		insertInvoice(this.getInvoice())
-			.then(r => {
-				this.getInvoice().id = r.id;
-				this.getApplication().getToast().start({
-					type: CONSTANT.SUCCESS,
-					message: MSG.SAVED_DATA
-				});
-			})
-			.catch(e => this.showError(e));
+	save(msg) {
+		msg = msg || MSG.SAVED_DATA;
+		insertInvoice(this.getInvoice()).then(r => {
+			this.getInvoice().id = r.id;
+			this.showMessage(msg);
+		}).catch(e => this.showError(e));
 	}
 
 	back() {
@@ -1682,13 +1678,13 @@ export class AonNewInvoice extends AonElement {
 
 	trashInvoice() {
 		this.getInvoice().status = CONSTANT.TRASH;
-		this.save();
+		this.save(MSG.MOVED_TO_TRASH);
 		this.reload();
 	}
 
 	restoreInvoice() {
 		this.getInvoice().status = CONSTANT.INBOX;
-		this.save();
+		this.save(MSG.RESTORED_DATA);
 		this.reload();
 	}
 
@@ -1704,5 +1700,6 @@ export class AonNewInvoice extends AonElement {
 		});
 	}
 }
-
-window.customElements.define('aon-new-invoice',  AonNewInvoice);
+if(!window.customElements.get(TAG.AON_INVOICE)){
+	window.customElements.define(TAG.AON_INVOICE, AonInvoice);
+}

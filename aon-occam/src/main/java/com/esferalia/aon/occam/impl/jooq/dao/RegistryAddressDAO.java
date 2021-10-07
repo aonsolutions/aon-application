@@ -29,7 +29,9 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class RegistryAddressDAO {
-	
+	private RegistryAddressDAO() {
+		
+	}
 	private static final Byte MAIN_ADDRESS = 0;
 	private static final Byte DELEGATION_ADDRESS = 1;
 	
@@ -112,7 +114,7 @@ public class RegistryAddressDAO {
 							.set(RADDRESS.TYPE, DELEGATION_ADDRESS)
 							.where(RADDRESS.ID.eq(adr.getId()))
 							.execute();
-						ctx.log().info("\t saving registry address: Setting new Main address, updating olders: " + adr.getId() + ". (" + count + " rows)");				
+						ctx.log().debug("\t saving registry address: Setting new Main address, updating olders: {0}. ({1} rows)",adr.getId(),count);				
 					});
 			} else {
 				int count = ctx.getDslContext().fetchCount(
@@ -126,7 +128,7 @@ public class RegistryAddressDAO {
 					);
 				if (count == 0) {
 					address.setMain(true);
-					ctx.log().info("\t saving registry address: autocomplete main flag: " + address.isMain());
+					ctx.log().debug("\t saving registry address: autocomplete main flag: {0}",address.isMain());
 				}
 				
 			}
@@ -268,7 +270,7 @@ public class RegistryAddressDAO {
 			.fetchOne()
 			.getValue(RADDRESS.ID);
 		address.setId(id).setDirty(false);
-		ctx.log().info("INSERT REGISTRY ADDRESS ( registry: "+ address.getRegistry() +") id: " + address.getId());
+		ctx.log().debug("INSERT REGISTRY ADDRESS ( registry: {0}) id: {1}",address.getRegistry(),address.getId());
 		return address;
 	}
 	private static RegistryAddress update(AONContext ctx, RegistryAddress address){
@@ -289,7 +291,7 @@ public class RegistryAddressDAO {
 			.set(RADDRESS.MUNICIPALITY_CODE,address.getMunicipalityCode())
 			.where(RADDRESS.ID.eq(address.getId()))
 			.execute();
-		ctx.log().info("UPDATE REGISTRY ADDRESS ( registry: "+ address.getRegistry() +") id: " + address.getId() + ". (" + count + " rows)");
+		ctx.log().debug("UPDATE REGISTRY ADDRESS ( registry: {0}) id: {1}. ({2} rows)",address.getRegistry(),address.getId(),count);
 		address.setDirty(false);
 		return address;
 	}
@@ -300,7 +302,7 @@ public class RegistryAddressDAO {
 		int count = ctx.getDslContext().delete(RADDRESS)
 			.where(RADDRESS.ID.eq(id))
 			.execute();
-		ctx.log().info("DELETE REGISTRY ADDRESS id:" + id + " ("+count+" rows)");
+		ctx.log().debug("DELETE REGISTRY ADDRESS id: {0} ({1} rows)",id,count);
 	}
 	
 	public static int deleteByRegistry(AONContext ctx, Integer registry){
@@ -309,7 +311,7 @@ public class RegistryAddressDAO {
 		int count = ctx.getDslContext().delete(RADDRESS)
 			.where(RADDRESS.REGISTRY.eq(registry))
 			.execute();
-		ctx.log().info("DELETE REGISTRY ADDRESS registry:" + registry + " ("+count+" rows)");
+		ctx.log().debug("DELETE REGISTRY ADDRESS registry: {0} ({1} rows)",registry,count);
 		return count;
 	}
 	// *************************************************

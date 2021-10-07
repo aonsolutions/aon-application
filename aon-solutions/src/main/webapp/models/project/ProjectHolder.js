@@ -21,7 +21,7 @@ export class ProjectHolder {
             this.endDate = projectHolder.endDate;
             this.workgroup = new Workgroup(projectHolder.workgroup);
             this.taskHolder = new TaskHolder(projectHolder.taskHolder);
-            this.dirty = projectHolder.dirty;
+            this.dirty = projectHolder.dirty || false;
         } else {
             this.domain = LS.getDomainId();
             this.startDate = new Date();
@@ -63,6 +63,7 @@ export class ProjectHolder {
     }
  
     setStartDate(startDate) {
+        this.setDirty(true);
         this.startDate = startDate;
         return this;
     }
@@ -72,6 +73,7 @@ export class ProjectHolder {
     }
 
     setEndDate(endDate) {
+        this.setDirty(true);
         this.endDate = endDate()
         return this;
     }
@@ -81,6 +83,7 @@ export class ProjectHolder {
     }
 
     setWorkgroup(workgroup){
+        this.setDirty(true);
         this.workgroup = new Workgroup(workgroup);
         return this;
     }
@@ -90,6 +93,7 @@ export class ProjectHolder {
     }
 
     setTaskHolder(taskHolder) {
+        this.setDirty(true);
         this.taskHolder = new TaskHolder(taskHolder);
         return this;
     }

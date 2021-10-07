@@ -6,6 +6,8 @@ export const ACCOUNTED = 'Contabilizada';
 export const ACCOUNTEDS = 'Contabilizadas';
 export const ACCOUNTING = 'Contabilidade';
 export const ACTIVATE = 'Activar';
+export const ACTIVE = 'Activo';
+export const ACTIVES = 'Activas';
 export const ADD = 'Engadir';
 export const ADD_CATEGORY = 'Engadir Categoría';
 export const ADD_COMMENT = 'Engadir Comentario';
@@ -19,6 +21,9 @@ export const ALL_FILES = 'Todos os Ficheiros';
 export const AMOUNT = 'Importe';
 export const API_DOCUMENTATION = 'Documentación API';
 export const ASESOR = 'Asesor';
+export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrastre ou seleccione o ficheiro';
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrastre ou seleccione o fondo';
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Arrastre ou seleccione o logo';
 export const AVAILABLE = 'Dispoñible';
 
 // ----- B
@@ -125,6 +130,8 @@ export const HOLDERS = 'Titulares';
 
 // ----- I
 
+export const INACTIVE = 'Inactivo';
+export const INACTIVES = 'Inactivas';
 export const INBOX = `Caixa de Entrada`;
 export const INVESTMENT = 'Investimento';
 export const INVOICE = 'Factura';
@@ -154,6 +161,7 @@ export const MODEL_111 = 'Modelo 111';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retencións e ingresos á conta. Rendementos do traballo e de actividades económicas, premios e determinadas ganancias patrimoniais e imputacións de Renda. Autoliquidación.';
 export const MODEL_190 = 'Modelo 190';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retencións e ingresos á conta. Rendementos do traballo e de actividades económicas, premios e determinadas ganancias patrimoniais e imputacións de rendas. Resumo anual.';
+export const MOVED_TO_TRASH = 'Trasladouse ao papeleira';
 export const MY_DATA = 'Os Meus Datos';
 export const MY_USER = 'O Meu Usuario';
 
@@ -220,6 +228,7 @@ export const REJECTEDS = 'Rexeitadas';
 export const REQUEST = 'Solicitude';
 export const REQUESTS = 'Solicitudes';
 export const RESTORE = 'Restaurar';
+export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
 export const RESTORE_INVOICES = 'Restaurar Factures';
 export const RESUME_COSTS = "Resumen de costes";

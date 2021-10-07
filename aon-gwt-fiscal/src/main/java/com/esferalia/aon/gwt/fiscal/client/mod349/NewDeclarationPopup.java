@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class NewDeclarationPopup extends CustomDialog {
 	
@@ -30,10 +31,28 @@ public class NewDeclarationPopup extends CustomDialog {
 	private PeriodListBox periodList = new PeriodListBox();
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
+	private TextBox replacedReceiptBox = new TextBox();
 	private CheckBox diffCalculation = new CheckBox();
 	
-	public NewDeclarationPopup(final Mod349 mod349 ,final Model349Callback callback) {
-		setCaption(AON.MSG.newDeclaration());
+	public NewDeclarationPopup(final Mod349 mod349, final Model349Callback callback) {
+		this(mod349, false, false, callback);		
+	}
+	
+	public NewDeclarationPopup(final Mod349 mod349, final boolean duplicate, final boolean reset, final Model349Callback callback) {
+		
+		// Cuando se duplica, por defecto el ejercicio es el siguiente y 
+		// complementaria y sustitutiva están desmarcados
+		int oldYear = mod349.getYear();
+		Period oldPeriod = mod349.getPeriod();
+		if (duplicate) {
+			mod349.setYear(oldYear+1);
+			mod349.setPeriod(null);
+			mod349.setComplementary(false);
+			mod349.setReplacement(false);
+			mod349.setReplacedNumber("");
+		}		
+				
+		setCaption(reset?AON.MSG.resetDeclaration():duplicate?AON.MSG.duplicate():AON.MSG.newDeclaration());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
@@ -41,8 +60,13 @@ public class NewDeclarationPopup extends CustomDialog {
 		periodList.addItem(Period.YEAR.getDescription(), Integer.toString(Period.YEAR.ordinal()));
 		
 		FlexTable tab = new FlexTable();
+		
 		admonList.setSelectedIndex( mod349.getAdministration().ordinal());
 		yearBox.setValue(mod349.getYear());
+		periodList.setValue(mod349.getPeriod());
+		complementary.setValue(mod349.isComplementary());
+		replacement.setValue(mod349.isReplacement());
+		replacedReceiptBox.setValue(mod349.getReplacedNumber());		
 
 		FlowPanel rootPanel = new FlowPanel(); 
 		tab.setCellPadding(0);
@@ -62,6 +86,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		admonList.setEnabled(!reset && !duplicate);
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -79,6 +104,9 @@ public class NewDeclarationPopup extends CustomDialog {
 					replacement.setEnabled(false);
 					replacement.setValue(false);
 					mod349.setReplacement(false);
+					replacedReceiptBox.setEnabled(false);
+					replacedReceiptBox.setValue("");
+					mod349.setReplacedNumber("");
 				}
 				
 				// Bizkaia, no hay complementarias
@@ -101,10 +129,22 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
+		yearBox.setEnabled(!reset);
 		yearBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
 				mod349.setYear(yearBox.getValue());
+				
+				// Cuando se duplica el modelo, solo se puede marcar complementaria o sustitutiva
+				// si el ejercicio y periodo es el mismo que el modelo que se quiere duplicar
+				if (duplicate) {
+					complementary.setEnabled(yearBox.getValue() == oldYear && periodList.getValue() == oldPeriod && mod349.getAdministration() != Administration.GIPUZKOA && mod349.getAdministration() != Administration.BIZKAIA);
+					replacement.setEnabled(yearBox.getValue() == oldYear && periodList.getValue() == oldPeriod && mod349.getAdministration() != Administration.GIPUZKOA);
+					if (yearBox.getValue() != oldYear || periodList.getValue() != oldPeriod) {
+						complementary.setValue(false,true);
+						replacement.setValue(false,true);					
+					}
+				}
 			}
 		});
 		tab.setWidget(row, 1,yearBox);
@@ -114,10 +154,22 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.period()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		periodList.setEnabled(!reset);
 		periodList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
 				mod349.setPeriod( periodList.getValue() );
+				
+				// Cuando se duplica el modelo, solo se puede marcar complementaria o sustitutiva
+				// si el ejercicio y periodo es el mismo que el modelo que se quiere duplicar
+				if (duplicate) {
+					complementary.setEnabled(yearBox.getValue() == oldYear && periodList.getValue() == oldPeriod && mod349.getAdministration() != Administration.GIPUZKOA && mod349.getAdministration() != Administration.BIZKAIA);
+					replacement.setEnabled(yearBox.getValue() == oldYear && periodList.getValue() == oldPeriod && mod349.getAdministration() != Administration.GIPUZKOA);
+					if (yearBox.getValue() != oldYear || periodList.getValue() != oldPeriod) {
+						complementary.setValue(false,true);
+						replacement.setValue(false,true);					
+					}
+				}
 			}
 		});
 		tab.setWidget(row, 1, periodList);
@@ -125,16 +177,21 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		// COMPLEMENTARIA 		
 		complementary.setText(AON.MSG.complementary());
-		complementary.setEnabled(mod349.getAdministration()!=Administration.BIZKAIA && mod349.getAdministration()!=Administration.GIPUZKOA);  // Complementaria solo si no es Bizkaia, ni Gipuzkoa
-		complementary.addClickHandler(new ClickHandler() {
+		complementary.setEnabled(!reset && !duplicate && mod349.getAdministration()!=Administration.BIZKAIA && mod349.getAdministration()!=Administration.GIPUZKOA);  // Complementaria solo si no es Bizkaia, ni Gipuzkoa
+		complementary.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
-				mod349.setComplementary(complementary.getValue());				
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				mod349.setComplementary(complementary.getValue());
+				
 				if (complementary.getValue()) {
-					replacement.setValue(false);
-					mod349.setReplacement(false);
+					replacement.setValue(false,true);
 				}
+				
+				replacedReceiptBox.setEnabled(complementary.getValue() || replacement.getValue());
+				if (!complementary.getValue() && !replacement.getValue()) {
+					replacedReceiptBox.setValue("",true);
+				}				
 			}
 		});
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
@@ -144,41 +201,75 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		// SUSTITUTIVA
 		replacement.setText(AON.MSG.replacement());
-		replacement.setEnabled(mod349.getAdministration()!=Administration.GIPUZKOA);  // Sustitutiva solo si no es Gipuzkoa
-		replacement.addClickHandler(new ClickHandler() {
+		replacement.setEnabled(!reset && !duplicate && mod349.getAdministration()!=Administration.GIPUZKOA);  // Sustitutiva solo si no es Gipuzkoa
+		replacement.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
-				mod349.setReplacement(replacement.getValue());
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				mod349.setReplacement(replacement.getValue());				
 				if (replacement.getValue()) {
-					complementary.setValue(false);
-					mod349.setComplementary(false);
-				}
+					complementary.setValue(false,true);
+				}				
+				replacedReceiptBox.setEnabled(complementary.getValue() || replacement.getValue());
+				if (!complementary.getValue() && !replacement.getValue()) {
+					replacedReceiptBox.setValue("",true);					
+				}			
 			}
+			
 		});
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, replacement);
 		row++;
 		
-		// CALCULO POR DIFERENCIA (Solo si no está deshabilitado en la parametrización)
-		if (mod349.isDiffEnabled()) {
-			diffCalculation.setText(AON.MSG.diffCalculation());
-			diffCalculation.setValue(mod349.isDiffEnabled());
-			diffCalculation.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					mod349.setDiffEnabled(diffCalculation.getValue());
-				}
-				
-			});			
-			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-			tab.setWidget(row, 0, diffCalculation);		
-		}
+		// NUMERO DE DECLARACION ANTERIOR
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(row, 0, new Label(AON.MSG.previousDeclaration()));
+		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		
+		replacedReceiptBox.setMaxLength(13);
+		replacedReceiptBox.setVisibleLength(13);
+		replacedReceiptBox.setEnabled(mod349.isComplementary() || mod349.isReplacement());  
+		replacedReceiptBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				mod349.setReplacedNumber(replacedReceiptBox.getValue());
+			}
+		});
+		tab.setWidget(row, 1, replacedReceiptBox);
+		row++;
+		
+		// El check inferior solo aparece cuando se crea uno nuevo
+		if (!duplicate) {
+			
+			// CALCULO POR DIFERENCIA (Solo si no está deshabilitado en la parametrización)
+			if (mod349.isDiffEnabled()) {
+				diffCalculation.setText(AON.MSG.diffCalculation());
+				diffCalculation.setValue(mod349.isDiffEnabled());
+				diffCalculation.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						mod349.setDiffEnabled(diffCalculation.getValue());
+					}
+					
+				});			
+				tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+				tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+				tab.setWidget(row, 0, diffCalculation);		
+			}
+		
+		}
 		rootPanel.add(tab);
+		
+		// MENSAJE DE AVISO PARA INICIALIZAR EL MODELO
+		if (reset) {
+			Label labelReset = new Label(AON.MSG.resetWarning());
+			labelReset.addStyleName(AON.CSS.aonMarginTop());
+			labelReset.addStyleName(AON.CSS.aonColorRed());
+			tab.setWidget(row, 0, labelReset);
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		}
 		
 		FlowPanel buttonsPanel = new FlowPanel();
 		buttonsPanel.setStyleName(AON.AON_CSS.aonPadding());

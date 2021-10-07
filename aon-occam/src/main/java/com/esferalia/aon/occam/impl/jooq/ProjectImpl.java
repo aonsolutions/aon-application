@@ -30,6 +30,12 @@ public class ProjectImpl implements IProject{
 	}
 	
 	@Override
+	public Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter, Integer page, Integer perPage) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> ProjectDAO.getStream(ctx, filter, page, perPage));
+	}
+	
+	@Override
 	public Project saveProject(AONContext ctx, Project project) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> ProjectDAO.save(ctx, project));
@@ -38,7 +44,7 @@ public class ProjectImpl implements IProject{
 	@Override
 	public void deleteProject(AONContext ctx, Integer projectId) {
 		ctx.getDslContext().transaction(
-				configuration -> ProjectDAO.delete(ctx, f -> f.getIdProperty().eq(projectId)));
+				configuration -> ProjectDAO.delete(ctx, projectId));
 	}
 
 	@Override

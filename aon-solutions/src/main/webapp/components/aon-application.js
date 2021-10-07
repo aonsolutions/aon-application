@@ -9,8 +9,6 @@ import "./aon-dialog.js";
 import "./aon-dialog-menu.js";
 import "./aon-toast.js";
 
-// import { DIV } from "../environments/aonTag.js";
-
 export class AonApplication extends AonElement {
   SIDENAV;
   TOOLBAR;
@@ -23,7 +21,9 @@ export class AonApplication extends AonElement {
   MOBILE_SIDENAV_CONTENT;
   selected;
   VIEWS;
-  KEY_VIEW="keyView";
+
+  content; 
+
   static get observedAttributes() {
     return [CONSTANT.TITLE];
   }
@@ -141,6 +141,7 @@ export class AonApplication extends AonElement {
 			<aon-toast id="${this.TOAST}"> </aon-toast>
 		`;
 
+    this.content = this.getContent();
     if(this.isMobile()) {
       this.buildMobileSidenav();
     }
@@ -165,45 +166,7 @@ export class AonApplication extends AonElement {
     }
 
     if (this.hasAttribute("drag_and_drop")) {
-      content.addEventListener(EVENT.DRAGOVER, (event) => {
-        event.preventDefault();
-        console.log(EVENT.DRAGOVER);
-        content.style.border = "2px solid #002469";
-        content.style.opacity = "0.6";
-      });
-  
-      content.addEventListener(EVENT.DRAGENTER, (event) => {
-        event.preventDefault();
-        content.style.border = "2px solid #002469";
-        content.style.opacity = "0.6";
-      });
-  
-      content.addEventListener(EVENT.MOUSELEAVE, (event) => {
-        content.style.border = "0px";
-        content.style.opacity = "1";
-      });
-  
-      content.addEventListener(EVENT.MOUSEOVER, (event) => {
-        content.style.border = "0px";
-        content.style.opacity = "1";
-      });
-  
-      document.addEventListener(EVENT.DRAGLEAVE, (event) => {
-        event.preventDefault();
-        let isClickInside = content.contains(event.target) || content === event.target;
-        if (!isClickInside) {
-          content.style.border = "0px";
-          content.style.opacity = "1";
-        }
-      });
-  
-      content.addEventListener(EVENT.DROP, (event) => {
-        event.preventDefault();
-        console.log(EVENT.DROP);
-        content.style.border = "0px";
-        content.style.opacity = "1";
-        this.dispatchEvent(new CustomEvent(EVENT.DROP));
-      });
+      this.buildDragAndDrop(true);
     }
 
     if (this.hasAttribute("main")) {
@@ -436,18 +399,21 @@ export class AonApplication extends AonElement {
   addSidenavOptionsList(data, options) {
     let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
     let div = this.getElement(sidenav.id + data.id);
-    const idUl = div.id + "List";
-    let ul =  this.getElement(idUl); 
-    if(!ul){
-      ul = this.createElement(TAG.UL);
-      ul.id =idUl;
-      ul.className = "aonClip";
-      div.appendChild(ul);
+    if(div){
+      const idUl = div.id + "List";
+      let ul =  this.getElement(idUl); 
+      if(!ul){
+        ul = this.createElement(TAG.UL);
+        ul.id =idUl;
+        ul.className = "aonClip";
+        div.appendChild(ul);
+      }
+      options.forEach((option, i) => {
+        this.addSidenavOptionsListValue(data, option, ul);
+      });
+      return ul;
     }
-    options.forEach((option, i) => {
-      this.addSidenavOptionsListValue(data, option, ul);
-    });
-    return ul;
+    return null;
   }
 
   buildSidenavSubOptions(data, options) {
@@ -581,7 +547,7 @@ export class AonApplication extends AonElement {
 
         this.selected = id;
         let toolbar = this.getElement(this.TOOLBAR);
-        toolbar.setAttribute("option", option.name);
+        if(toolbar) toolbar.setAttribute("option", option.name);
         if(option.fn){
           let count = 0;
           if(li.querySelector("span")) count = li.querySelector("span").dataset.count;
@@ -699,13 +665,6 @@ export class AonApplication extends AonElement {
     if(content) content.appendChild(element);
   }
 
-  getKeyView(){
-    return parseFloat(localStorage.getItem(this.KEY_VIEW));
-  }
-  setKeyView(value){
-    localStorage.setItem(this.KEY_VIEW, value);
-  }
-
   addFloatOption(action, fn) {
     let span =
       this.getElement(this.id + "FloatSpan") || this.createElement(TAG.SPAN);
@@ -806,6 +765,78 @@ export class AonApplication extends AonElement {
       } else {
         element.classList.remove(CSS.ELEMENT_HIDDEN);
       }
+    }
+  }
+
+  dragoverFn = (event) => {
+    event.preventDefault();
+    console.log(EVENT.DRAGOVER);
+    this.content.style.border = "2px solid #002469";
+    this.content.style.opacity = "0.6";
+  };
+
+  dragenterFn = (event) => {
+    event.preventDefault();
+    this.content.style.border = "2px solid #002469";
+    this.content.style.opacity = "0.6";
+  };
+
+  mouseleaveFn = (event) => {
+    this.content.style.border = "0px";
+    this.content.style.opacity = "1";
+  };
+
+  mouseoverFn = (event) => {
+    this.content.style.border = "0px";
+    this.content.style.opacity = "1";
+  };
+
+  dragleaveFn = (event) => {
+    event.preventDefault();
+    let isClickInside = this.content.contains(event.target) || this.content === event.target;
+    if (!isClickInside) {
+      this.content.style.border = "0px";
+      this.content.style.opacity = "1";
+    }
+  }
+
+  dropFn = (event) => {
+    event.preventDefault();
+    console.log(EVENT.DROP + " aon application");
+    this.content.style.border = "0px";
+    this.content.style.opacity = "1";
+    if(event && event.dataTransfer && event.dataTransfer.files){
+      this.dispatchEvent(new CustomEvent(EVENT.AON_APPLICATION_DROP, { detail: event.dataTransfer.files }));
+    }
+  };
+
+  
+
+  buildDragAndDrop(bool) {
+    if (bool) {
+      this.content.addEventListener(EVENT.DRAGOVER, this.dragoverFn);
+      this.content.addEventListener(EVENT.DRAGENTER, this.dragenterFn);
+      this.content.addEventListener(EVENT.MOUSELEAVE, this.mouseleaveFn);
+      this.content.addEventListener(EVENT.MOUSEOVER, this.mouseoverFn);
+      document.addEventListener(EVENT.DRAGLEAVE, this.dragleaveFn);
+      this.content.addEventListener(EVENT.DROP, this.dropFn);
+    } else {
+      this.content.removeEventListener(EVENT.DRAGOVER, this.dragoverFn);
+      this.content.removeEventListener(EVENT.DRAGENTER, this.dragenterFn);
+      this.content.removeEventListener(EVENT.MOUSELEAVE, this.mouseleaveFn);
+      this.content.removeEventListener(EVENT.MOUSEOVER, this.mouseoverFn);
+      document.removeEventListener(EVENT.DRAGLEAVE, this.dragleaveFn);
+      this.content.removeEventListener(EVENT.DROP, this.dropFn);      
+    }
+  }
+
+  setDragAndDrop(bool) {
+    if(bool) {
+      this.drag_and_drop = true;
+      this.buildDragAndDrop(true);
+    } else {
+      this.drag_and_drop = undefined;
+      this.buildDragAndDrop(false);
     }
   }
 }

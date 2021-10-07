@@ -345,7 +345,13 @@ public class FiscalImpl implements IFiscal {
 			t.printStackTrace();
 			throw t;
 		}
-	}	
+	}
+	
+	@Override
+	public void deleteMod390(AONContext ctx, Mod390 mod390) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod390DAO.delete(ctx, mod390));
+	}
 
 	// ----------------------------------------------------------- [MODELO 390 - 2014]
 	@Override
@@ -1562,6 +1568,11 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey) {
 		return Mod349DAO.getMod349Info(ctx, mod349, detail, infoKey);
+	}
+	@Override
+	public Mod349 duplicateMod349(AONContext ctx, Mod349 mod349) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod349DAO.duplicate(ctx, mod349));
 	}
 	
 	// ---------------------------------------------------- [MODELO 347]

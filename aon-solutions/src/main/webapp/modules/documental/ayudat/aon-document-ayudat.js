@@ -8,7 +8,7 @@ import { extensionsType } from '../../../services/extensionsEnums.js';
 import { DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import { postBidoq } from '../../../services/bidoqService.js';
 import { setDateTimestamp } from '../../../services/utils.js';
-import { setAttributes } from '../../../services/utilsComponents';
+import { setAttributes } from '../../../services/utilsComponents.js';
 import { AonViewer } from '../../../components/aon-viewer.js';
 import { AonToolbar } from '../../../components/aon-toolbar.js';
 import { AonCard } from '../../../components/aon-card.js';

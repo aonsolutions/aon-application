@@ -68,6 +68,8 @@ public class Model349 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew(Model349ModuleOptions options);
+		void onReset(Model349ModuleOptions options, Mod349 mod349);
+		void onDuplicate(Model349ModuleOptions options, int id);
 		void showBreakdownPanel(String htmlText);
 		void cleanBreakdownPanel();
 	}
@@ -92,6 +94,16 @@ public class Model349 extends MainEntryPoint {
 		@Override
 		public void onNew(Model349ModuleOptions options) {
 			newModel(options);
+		}
+		
+		@Override
+		public void onReset(Model349ModuleOptions options, Mod349 mod349) {
+			resetModel(options, mod349);
+		}
+		
+		@Override
+		public void onDuplicate(Model349ModuleOptions options, int id) {
+			duplicateModel(options, id);
 		}
 		
 		@Override
@@ -267,6 +279,51 @@ public class Model349 extends MainEntryPoint {
 					}
 				});
 	}
+	
+	private void resetModel(Model349ModuleOptions options, Mod349 oldMod349) {
+		cleanErrorPanel();
+		SERVICE.initializeMod349(options.getDomainName(), options.getUser(), options.getDomain(),
+				new AsyncCallback<Mod349>() {
+					@Override
+					public void onSuccess(Mod349 newMod349) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+					    // Determinados valores son los de la declaración actual
+						newMod349.setAdministration(oldMod349.getAdministration());
+						newMod349.setYear(oldMod349.getYear());
+						newMod349.setPeriod(oldMod349.getPeriod());
+						newMod349.setComplementary(oldMod349.isComplementary());
+						newMod349.setReplacement(oldMod349.isReplacement());
+						newMod349.setReplacedNumber(oldMod349.getReplacedNumber());						
+						showResetDeclarationPopup(options, newMod349, oldMod349);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					}
+				});
+	}
+	
+	private void duplicateModel(Model349ModuleOptions options, int id) {
+		cleanErrorPanel();
+		SERVICE.getMod349(options.getDomainName(),options.getUser(),options.getDomain(), id,
+				new AsyncCallback<Mod349>() {
+					@Override
+					public void onSuccess(Mod349 m349) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+						showDuplicateDeclarationPopup(options, m349);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
+	}
 
 	private void cancel() {
 		cleanErrorPanel();
@@ -386,4 +443,99 @@ public class Model349 extends MainEntryPoint {
 			newDialog.center();
 			newDialog.show();
 	}
+	
+	private void showResetDeclarationPopup(Model349ModuleOptions options, Mod349 newMod349, Mod349 oldMod349) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup( newMod349, false, true,
+			new Model349Callback() {
+
+					@Override
+					public void onAccept(Mod349 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+						
+						// Primero se borra la declaración actual
+						SERVICE.deleteMod349(options.getDomainName(), options.getUser(), options.getDomain(), oldMod349,
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										// Si todo ha ido bien, se añade la declaración nueva
+										SERVICE.saveMod349(options.getDomainName(), options.getUser(), options.getDomain(), model,
+												new AsyncCallback<Mod349>() {
+													@Override
+													public void onSuccess(Mod349 model) {
+														popup.hide();
+														select(options, model,null);
+													}
+
+													@Override
+													public void onFailure(Throwable caught) {
+														popup.hide();
+														showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+													}
+												});
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));										
+									}
+								});
+
+					}
+
+					@Override
+					public void onCancel() {
+					}
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
+	private void showDuplicateDeclarationPopup(Model349ModuleOptions options, Mod349 model) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, false, 
+			new Model349Callback() {
+
+					@Override
+					public void onAccept(Mod349 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+
+						SERVICE.duplicateMod349(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), model,
+								new AsyncCallback<Mod349>() {
+									@Override
+									public void onSuccess(Mod349 model) {
+										popup.hide();
+										select(options, model, null);
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+									}
+								});
+					}
+					
+					@Override
+					public void onCancel() {}
+
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 }

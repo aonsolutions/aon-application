@@ -188,6 +188,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -1014,6 +1015,13 @@ public class AON {
 			return getRegistry().getCompanyStream(ctx, filter, page, perPage);
 		}
 	}
+
+	public static CompanyFull getCompanyFull(String domainName, Integer domainId, String login){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCompanyFull(ctx, domainId);
+		}
+
+	}
 	
 	public static Company getCompany(String domainName, Integer domainId, String login, CompanyFilter filter){
 		return getCompanyStream(domainName, domainId, login, filter)
@@ -1648,6 +1656,17 @@ public class AON {
 		}
 	}
 	
+	public static Invoice updateInvoice(String domainName, Integer domainId, String login, Invoice invoice){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().updateInvoice(ctx, invoice);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static InvoiceDetail insertInvoiceDetail(String domainName, Integer domainId, String login, InvoiceDetail invoiceDetail){
 		AONContext ctx = null;
 		try {
@@ -1681,6 +1700,17 @@ public class AON {
 			.findFirst().orElse(new Invoice());
 	}
 	
+	public static Invoice getInvoice(String domainName, Integer domainId, String login, Integer id){
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getFinance().getInvoice(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName,
 			Integer domainId, String login, InvoiceFilter filter) {
 		AONContext ctx = null;
@@ -3406,6 +3436,11 @@ public class AON {
 	// ********************************************
 	// ********************************* Project **
 	// ********************************************
+
+	public static Stream<Project> getProjectStream(Domain domain, User user, ProjectFilter filter, Integer page, Integer perPage){
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProject().getProjectStream(ctx, filter, page, perPage);
+		}	}
 	
 	public static Stream<Project> getProjectStream(Domain domain, User user, ProjectFilter filter){
 		return getProjectStream(domain.getName(), domain.getId(), user.getLogin(), filter);
@@ -5765,7 +5800,7 @@ public class AON {
 		} 
 	}
 	
-	public static LinkedList<Workgroup> getWorkgroupList(String domainName, Integer domainId, String login, WorkgroupFilter filter){
+	public static List<Workgroup> getWorkgroupList(String domainName, Integer domainId, String login, WorkgroupFilter filter){
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getCommon().getWorkgroupList(ctx, filter);
 		} 
@@ -6542,7 +6577,7 @@ public class AON {
 				List<Domain> offices = getRegistry().getDomainOfficeLinked(ctx, company.getDocument());
 				list.addAll(offices);
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 		return list;

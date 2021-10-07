@@ -6,6 +6,8 @@ export const ACCOUNTED = 'Kontabilizatuta';
 export const ACCOUNTEDS = 'Kontabilizatutak';
 export const ACCOUNTING = 'Kontabilitatea';
 export const ACTIVATE = 'Aktibatu';
+export const ACTIVE = 'Aktibo';
+export const ACTIVES = 'Aktibo';
 export const ADD = 'Gehitu';
 export const ADD_CATEGORY = 'Kategoria Gehitu';
 export const ADD_COMMENT = 'Iruzkina Gehitu';
@@ -19,6 +21,9 @@ export const ALL_FILES = 'Fitxategi Guztiak';
 export const AMOUNT = 'Zenbatekoa';
 export const API_DOCUMENTATION = 'APIren Dokumentazioa';
 export const ASESOR = 'Aholkulari';
+export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrastatu edo hautatu fitxategia';
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrastatu edo hautatu hondoa';
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Arrastatu edo hautatu logoa';
 export const AVAILABLE = 'Eskuragai';
 
 // ----- B
@@ -125,6 +130,8 @@ export const HOLDERS = 'Titularrak';
 
 // ----- I
 
+export const INACTIVE = 'Ez-Aktibo';
+export const INACTIVES = 'Ez-Aktibo';
 export const INBOX = 'Sarrera-Ontzia';
 export const INVESTMENT = 'Inbertsioa';
 export const INVOICE = 'Faktura';
@@ -154,6 +161,7 @@ export const MODEL_111 = '111 Eredua';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
 export const MODEL_190 = '190 Eredua';
 export const MODEL_190_DESCRIPTION = 'Modelo 190. Declaración Informativa. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de rentas. Resumen anual.';
+export const MOVED_TO_TRASH = 'Paperontzira mugitu da.';
 export const MY_DATA = 'Nire Datuak';
 export const MY_USER = 'Nire Erabiltzailea';
 
@@ -220,6 +228,7 @@ export const REJECTEDS = 'Baztertua';
 export const REQUEST = 'Eskaera';
 export const REQUESTS = 'Eskaerak';
 export const RESTORE = 'Berreskuratu';
+export const RESTORED_DATA = 'Datuak zuzen berreskuratu dira';
 export const RESTORE_INVOICE = 'Faktura Berreskuratu';
 export const RESTORE_INVOICES = 'Fakturak Berreskuratu';
 export const RESUME_COSTS = "Resumen de costes";

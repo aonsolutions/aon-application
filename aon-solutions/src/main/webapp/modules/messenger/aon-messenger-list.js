@@ -12,12 +12,12 @@ import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
 import { getIconJson } from "./shared/utils.js";
 import { getCustomers } from "../../services/registryService.js";
 import { getTaskHolder } from "../../services/taskHolderService.js";
+import * as LS from '../../services/localStorageService.js';
 
 export class AonMessengerList extends AonElement {
-  TABLE_ID;
   MORE;
-  KEY_VIEW;
   TASK_HOLDER;
+  AON_TABLE;
   static get observedAttributes() {
     return [];
   }
@@ -42,6 +42,7 @@ export class AonMessengerList extends AonElement {
   }
 
   disconnectedCallback() {
+    if(this.AON_TABLE) this.AON_TABLE.removeEventListener(EVENT.MORE, this.fnMore);
     if (this.getApplication()){
       this.getApplication().removeFloatOption();
       this.getApplication().removeToolbarOptions();
@@ -56,8 +57,7 @@ export class AonMessengerList extends AonElement {
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this.TASK_HOLDER = this.applicationParentEl.TASK_HOLDER;
-    this.KEY_VIEW = Math.random();
-    this.applicationEl.setKeyView(this.KEY_VIEW);
+    this.AON_TABLE = null;
   }
 
   async build() {
@@ -66,36 +66,34 @@ export class AonMessengerList extends AonElement {
   }
 
   async paintTable(divNotification) {
-    this.TABLE_ID = this.id + "Table";
-    let aonTable = this.isMobile() ?  new AonMobileList() : new AonTable();
-    aonTable.id = this.TABLE_ID;
+    this.AON_TABLE = this.isMobile() ?  new AonMobileList() : new AonTable();
+    this.AON_TABLE.id = this.id + "Table";
     if (divNotification) {
-      await this.isFromNotification(aonTable, divNotification);
+      await this.isFromNotification(this.AON_TABLE, divNotification);
     } else {
-      this.appendChild(aonTable);
+      this.appendChild(this.AON_TABLE);
     }
 
     if (this.isMobile()){
-      aonTable.removeAllLi();
+      this.AON_TABLE.removeAllLi();
     } else {
-      aonTable.removeColumns();
-      aonTable.addColumn("", "string", "lettersHtml", "2%");
-      aonTable.addColumn(MSG.NUMBER, "string", "newNumber", "5%");
-      aonTable.addColumn(MSG.ISSUE, "string", "newTitle", "30%");
-      aonTable.addColumn("Asignado", "string", "assigned", "20%");
-      aonTable.addColumn(MSG.DATE, "string", "dateParse", "20%");
+      this.AON_TABLE.removeColumns();
+      this.AON_TABLE.addColumn("", "string", "lettersHtml", "2%");
+      this.AON_TABLE.addColumn(MSG.NUMBER, "string", "newNumber", "5%");
+      this.AON_TABLE.addColumn(MSG.ISSUE, "string", "newTitle", "35%");
+      this.AON_TABLE.addColumn("Asignado", "string", "assigned", "20%");
+      this.AON_TABLE.addColumn(MSG.DATE, "string", "dateParse", "15%");
     } 
 
-    aonTable.addEventListener(EVENT.MORE, ()=>{ 
-      if(this.KEY_VIEW === this.applicationEl.getKeyView()){
-        if(this.MORE) this.loadMore(); 
-      }
-    });
+    this.fnMore = () => { if(this.MORE) this.loadMore()}; 
+
+    this.AON_TABLE.addEventListener(EVENT.MORE, this.fnMore);
 
     setTasks([]);
 
     this.loadMore();
   }
+  
 
   async isFromNotification(aonTable, divNotification){
     divNotification.appendChild(aonTable);
@@ -126,13 +124,13 @@ export class AonMessengerList extends AonElement {
     let btnSearch = this.applicationEl.addSearchOption();
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
       this.setFilter({...this.getFilter(), page:0, perPage:30, search:detail});
-      this.loadMoreSearch();
+      this.loadMore(true);
     });
 
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
       if(detail) {
         this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate});
-        this.loadMoreSearch();
+        this.loadMore(true);
       } 
     });
 
@@ -164,64 +162,64 @@ export class AonMessengerList extends AonElement {
     statusEl.setOptions(TASK_STATUS_VALUE);
   }
 
-  async loadMoreSearch(){
-    let aonTable = this.getElement(this.TABLE_ID);
+  async loadMore(search = false) {
+
+    const application = this.getApplication();
+
+    if(application && !search) application.startLoader();
+
+    const datos = await this.getData();
+
+    addTasks(datos);
     if(this.isMobile()){
-      aonTable.removeAllLi();
+      if(search)this.AON_TABLE.removeAllLi();
+      this.getDataMobile(datos);
     } else {
-      aonTable.removeRows();
+      if(search)this.AON_TABLE.removeRows();
+      this.getDataDesktop(datos);
     }
 
-    await this.loadMore();
-  }
-
-  async loadMore() {
-    let application = this.getApplication();
-    if(application) application.startLoader();
-    const datos = await this.getData();
-    addTasks(datos);
-    if(this.isMobile())
-      this.getDataMobile(datos);
-    else 
-      this.getDataDesktop(datos);
-
-    if(application) application.stopLoader();    
+    if(application && !search) application.stopLoader();    
 	}
 
   getDataDesktop(datos){
-    let aonTable = this.getElement(this.TABLE_ID);
-    datos.map((res, idx) => {
-      const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-      let newTitle  =  res.title;
-      if(res.registry && res.registry.name) newTitle = `<b>[${res.registry.name}]</b> ${newTitle}`;
+    try {
+      const company = LS.getCompany();
+      const document = company ? company.document: undefined;
+      const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
+      datos.map((res, idx) => {
+        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+        let assigned = "";
+        if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
+        else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
+  
+        const newTitle = this.getNewTitle(res, document, documentTh);
 
-      let assigned = "";
-      if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
-      else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
-
-      const newData = { 
-        ...res, 
-        newTitle,
-        assigned,
-        dateParse,
-        lettersHtml: this.getIcon(res),
-      };
-      aonTable.addRow(newData, () =>  this.goMessengerChat(res, idx));
-    });
+        const newData = { 
+          ...res, 
+          newTitle,
+          assigned,
+          dateParse,
+          lettersHtml: this.getIcon(res),
+        };
+        this.AON_TABLE.addRow(newData, () =>  this.goMessengerChat(res, idx));
+      });
+    } catch (e) {}
   }
   
   getDataMobile(datos){
-    let aonTable = this.getElement(this.TABLE_ID);
-    datos.map((res, idx) => {
-      const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-      const newTitle  = `#${res.newNumber} ${res.title}`;
-      const options = {
-        title: newTitle,
-        subtitle: dateParse,
-        ...this.getIconList(res)
-      };
-      aonTable.addLi(options, idx, () => this.goMessengerChat(res, idx));
-    });
+    try{
+      datos.map((res, idx) => {
+        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+        const newTitle  = `#${res.newNumber} ${res.title}`;
+        const options = {
+          title: newTitle,
+          subtitle: dateParse,
+          ...this.getIconList(res)
+        };
+        this.AON_TABLE.addLi(options, idx, () => this.goMessengerChat(res, idx));
+      });
+    } catch (e) {}
   }
 
   async getData(){
@@ -279,6 +277,27 @@ export class AonMessengerList extends AonElement {
     // }
 
     return span.outerHTML;
+  }
+
+  getNewTitle(res, document, documentTh){
+       
+    let newTitle  = res.title;
+    if(res.registry && res.registry.name && document !== res.registry.document) 
+      newTitle = `[${res.registry.name}] ${newTitle}`;
+    else if(res.sender && res.sender.name && documentTh !== res.sender.document) 
+      newTitle = `[${res.sender.name}] ${newTitle}`;
+
+    let description = res.description;
+    try { description = JSON.parse(res.description).observation;  } catch (e) {}
+
+    if(description)
+      newTitle = /*html*/`
+        <div style="position:relative;">
+          <span style="font-weight: 550;bottom:1px;position:absolute;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;">${newTitle}</span>
+          <div style="color:grey;position:absolute;top:3px;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;">${description}</div> 
+        </div>`;
+
+    return newTitle;
   }
 
   // createIcon(icon, marginTop="11px"){

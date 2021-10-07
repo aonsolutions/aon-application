@@ -20,6 +20,7 @@ public class ProjectHolder implements Serializable {
 	private Date endDate;
 	private Workgroup workgroup;
 	private TaskHolder taskHolder;
+	private boolean dirty;
 	
 	public ProjectHolder() {
 		// Nothing to do.
@@ -57,6 +58,7 @@ public class ProjectHolder implements Serializable {
 	}
 
 	public ProjectHolder setStartDate(Date startDate) {
+		setDirty(true);
 		this.startDate = startDate;
 		return this;
 	}
@@ -66,6 +68,7 @@ public class ProjectHolder implements Serializable {
 	}
 
 	public ProjectHolder setEndDate(Date endDate) {
+		setDirty(true);
 		this.endDate = endDate;
 		return this;
 	}
@@ -78,6 +81,7 @@ public class ProjectHolder implements Serializable {
 	}
 
 	public ProjectHolder setWorkgroup(Workgroup workgroup) {
+		setDirty(true);
 		this.workgroup = workgroup;
 		return this;
 	}
@@ -90,6 +94,7 @@ public class ProjectHolder implements Serializable {
 	}
 
 	public ProjectHolder setTaskHolder(TaskHolder taskHolder) {
+		setDirty(true);
 		this.taskHolder = taskHolder;
 		return this;
 	}
@@ -99,6 +104,15 @@ public class ProjectHolder implements Serializable {
 				&& getStartDate() == null && getTaskHolder().isEmpty()
 				&& getWorkgroup().isEmpty();
 				//|| getProject().isEmpty() 
+	}
+	
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	public ProjectHolder setDirty(boolean dirty) {
+		this.dirty = dirty;
+		return this;
 	}
 	
 }

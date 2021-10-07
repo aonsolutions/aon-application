@@ -67,16 +67,7 @@
 			<ui:param name="controller" value="#{domainSwitcher}" />
 			<ui:param name="skipFocusFirst" value="true" />
 			<ui:define name="columns">
-				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
-					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_name}" />
-					</f:facet>							
-					<aon:outputText value="#{to.description}"
-						title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
-						style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>					
-				</aon:column>
-
-				<aon:column styleClass="aon-width-40">
+				<aon:column styleClass="aon-width-30">
 					<aon:outputText 
 						rendered="#{to.enableHeredity}"
 						title="#{bundle.aon_domian_enableHeredity}"
@@ -85,13 +76,29 @@
 						rendered="#{!to.enableHeredity}"
 						title="#{bundle.aon_domian_disableHeredity}"
 						styleClass="aon-icon2 aon-icon-disableHeredity" />
+				</aon:column>
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_name}" />
+					</f:facet>							
+					<aon:outputText value="#{to.description}"
+						title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
+						style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>
+					<br/>
+					<aon:outputText value="#{( empty to.document)? 'SIN IDENTIFCACIÓN':to.document }"
+						title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
+						style="#{(!to.active or to.expired)?'color:red;font-style:italic;':'color:gray'}"/>
+										
+				</aon:column>
+
+				<aon:column styleClass="aon-width-40">
 					<aon:div onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
 						onmouseout="enableRowSelector();" layout="inline" >										
 						<h:outputLink 
 							value="https://#{domainSwitcher.currentDomainURL}" target="_blank"
 							title="https://#{to.name}"
 							styleClass="aon-icon"
-							style="background: url('#{to.logo}') no-repeat scroll left center transparent; display: inline-block; height: 21px;vertical-align: middle;}" >
+							style="background: url(#{aonResource.resolve['/images/aon-right-arrow.png']}) no-repeat scroll left center transparent; display: inline-block; height: 21px;vertical-align: middle;}" >
 						</h:outputLink>
 					</aon:div>
 				</aon:column>

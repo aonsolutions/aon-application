@@ -276,6 +276,10 @@ export class AonToolbar extends AonElement {
 		}
 	}
 
+	getToolSection(){
+		return this.getElement(this.TOOL_SECTION);
+	}
+
 	removeButton(name) {
 		let button = this.getElement(this.TOOL_SECTION + name + 'Button');
 		if(button) button.remove();

@@ -82,5 +82,13 @@ public class Model349ServiceAsyncDecorator implements Model349ServiceAsync {
 		AON.start();
 		fsa.getInfo(domainName,user, domain, mod349, detail, infoKey, new AsyncCallbackWrapper<String>(callback));		
 	}
+	
+	@Override
+	public void duplicateMod349(String domainName, String user, int domainId, Mod349 mod349,
+			AsyncCallback<Mod349> callback) {
+		AON.start();
+		fsa.duplicateMod349(domainName,user, domainId, mod349,new AsyncCallbackWrapper<Mod349>(callback));
+	}
+	
 
 }

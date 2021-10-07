@@ -74,6 +74,7 @@ public class Model347 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew(Model347ModuleOptions options);
+		void onReset(Model347ModuleOptions options, Mod347 mod347);
 		void onDuplicate(Model347ModuleOptions options, int id);
 		void showBreakdownPanel(String htmlText);
 		void cleanBreakdownPanel();
@@ -96,6 +97,10 @@ public class Model347 extends MainEntryPoint {
 		@Override
 		public void onNew(Model347ModuleOptions options) {
 			newModel(options);
+		}
+		@Override
+		public void onReset(Model347ModuleOptions options, Mod347 mod347) {
+			resetModel(options, mod347);
 		}
 		@Override
 		public void onDuplicate(Model347ModuleOptions options, int id) {
@@ -274,6 +279,31 @@ public class Model347 extends MainEntryPoint {
 				});
 	}
 	
+	private void resetModel(Model347ModuleOptions options, Mod347 oldMod347) {
+		cleanErrorPanel();
+		SERVICE.initializeMod347(options.getDomainName(), options.getUser(), options.getDomain(), 
+				new AsyncCallback<Mod347>() {
+					@Override
+					public void onSuccess(Mod347 newMod347) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+						// Determinados valores son los mismos que la declaración actual
+						newMod347.setAdministration(oldMod347.getAdministration());
+						newMod347.setYear(oldMod347.getYear());
+						newMod347.setComplementary(oldMod347.isComplementary());
+						newMod347.setReplacement(oldMod347.isReplacement());
+						newMod347.setReplacedNumber(oldMod347.getReplacedNumber());
+						showResetDeclarationPopup(options, newMod347, oldMod347);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					}
+				});
+	}
+	
 	private void duplicateModel(Model347ModuleOptions options, int id) {
 		cleanErrorPanel();
 		SERVICE.getMod347(options.getDomainName(),options.getUser(),options.getDomain(), id,
@@ -413,8 +443,62 @@ public class Model347 extends MainEntryPoint {
 			newDialog.show();
 	}
 	
+	private void showResetDeclarationPopup(Model347ModuleOptions options, Mod347 newMod347, Mod347 oldMod347) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup( newMod347, false, true,
+			new Model347Callback() {
+
+					@Override
+					public void onAccept(Mod347 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+						
+						// Primero se borra la declaración actual
+						SERVICE.deleteMod347(options.getDomainName(), options.getUser(), options.getDomain(), oldMod347, 
+								new AsyncCallback<Void>() {
+
+									@Override									
+									public void onSuccess(Void result) {
+										// Si todo ha ido bien, se añade la declaración nueva
+										SERVICE.saveMod347(options.getDomainName(),options.getUser(),options.getDomain(),model,
+												new AsyncCallback<Mod347>() {
+													@Override
+													public void onSuccess(Mod347 model) {
+														popup.hide();
+														select(options, model, null, null, 0);
+													}
+
+													@Override
+													public void onFailure(Throwable caught) {
+														popup.hide();
+														showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+													}
+												});										
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));										
+									}
+								});
+					}
+					
+					@Override
+					public void onCancel() {}
+					
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 	private void showDuplicateDeclarationPopup(Model347ModuleOptions options, Mod347 model) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, 
+		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, false, 
 			new Model347Callback() {
 
 					@Override

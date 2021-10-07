@@ -1,3 +1,4 @@
+
 body,table td,button {
 	margin: 0px;
 	color: #4B4B4B;
@@ -74,9 +75,15 @@ select {
 	border: 1px solid #FFFFFF;
 }
 
+.gwt-Selector .gwt-Tree .gwt-TreeItem:hover {
+	background: #F6F6F6;
+    	border: 1px solid #DDD;
+}
+
+
 .gwt-Selector .gwt-Tree .gwt-TreeItem-selected {
-	background: #FFFADC;
-    border: 1px solid #D3C061;
+	background: #F6F6F6;
+    	border: 1px solid #DDD;
 }
 
 .gwt-Selector .gwt-Tree .gwt-TreeItem-highlight {
@@ -402,8 +409,9 @@ td.datePickerMonth,
 .gwt-Selector .gwt-TextBox:focus,
 .gwt-Selector .gwt-TextArea:focus,
 .gwt-Selector .gwt-DateBox:focus {
-	background-color: #FBEDB6
-	
+        outline: none;
+        border: 1px solid blue !important;
+        box-shadow: inset 0 0 0 1px blue !important;
 }
 
 

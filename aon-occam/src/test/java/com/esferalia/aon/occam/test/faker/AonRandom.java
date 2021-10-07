@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.test.faker;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -19,12 +20,24 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
+import com.esferalia.aon.occam.api.model.accounting.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.Tariff;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
@@ -120,6 +133,15 @@ public class AonRandom {
         		?truncate( faker.date().past(100, TimeUnit.DAYS, new Date()))
         		:null;
     }
+    public static Date today( ) {
+    	return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    public static Date yesterday( ) {
+    	return Date.from(LocalDate.now().plusDays(-1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    public static Date tomorrow( ) {
+    	return Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
     
     public static Date getFutureDate( int threshold ) {
     	return ( gt(threshold) )
@@ -143,14 +165,20 @@ public class AonRandom {
         return list.get(faker.random().nextInt(0, (list.size() - 1)));
     }	
 
-    public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
-    	return randomEnum(clazz,0);
-    }	
-    public static <T extends Enum<?>> T randomEnum(Class<T> clazz, int nullThreshold){
-    	return gt(nullThreshold)
-    			?clazz.getEnumConstants()[faker.random().nextInt(clazz.getEnumConstants().length)]
-				:null;
-    }	
+//    public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
+//    	return randomEnum(clazz,0);
+//    }	
+//    public static <T extends Enum<?>> T randomEnum(Class<T> clazz, int nullThreshold){
+//    	// ******
+//    	// ¡¡En algún caso puede devolver NULL!!
+//    	// Sobre todo si el item del enumerado tienen implementación
+//    	// VER --> https://stackoverflow.com/questions/33358616/reflection-on-enums
+//    	// *****
+//    	
+//    	return gt(nullThreshold)
+//    			?clazz.getEnumConstants()[faker.random().nextInt(clazz.getEnumConstants().length-1)]
+//				:null;
+//    }	
 
 	public static Tariff getTariff(AONContext ctx) {
 		return getTariff(ctx, 0);
@@ -230,6 +258,109 @@ public class AonRandom {
 			.findFirst()
 			.orElse(null);
 	}
+	
+	public static Administration getRandomAdministration() {
+		return getRandomAdministration(0);
+	}
+	public static Administration getRandomAdministration(int nullThreshold) {
+    	return gt(nullThreshold)
+    			?Administration.values()[faker.random().nextInt(Administration.values().length)]
+    			:null;
+	}
 
+	public static BalanceType getRandomBalanceType() {
+		return getRandomBalanceType(0);
+	}
+	public static BalanceType getRandomBalanceType(int nullThreshold) {
+    	return gt(nullThreshold)
+    			?BalanceType.values()[faker.random().nextInt(BalanceType.values().length)]
+    			:null;
+	}
+	
+	public static Country getRandomCountry() {
+		return getRandomCountry(0);
+	}
+	public static Country getRandomCountry(int nullThreshold) {
+    	return gt(nullThreshold)
+    			?Country.values()[faker.random().nextInt(Country.values().length)]
+    			:null;
+	}
+	
+	public static DocumentType getRandomDocumentType() {
+		return getRandomDocumentType (0);
+	}
+	public static DocumentType getRandomDocumentType(int nullThreshold) {
+		return gt(nullThreshold)
+			?DocumentType.values()[faker.random().nextInt(DocumentType.values().length)]
+			:null;
+	}
+	
+	public static InvoiceTransactionType getRandomInvoiceTransactionType() {
+		return getRandomInvoiceTransactionType (0);
+	}
+	public static InvoiceTransactionType getRandomInvoiceTransactionType(int nullThreshold) {
+		return gt(nullThreshold)
+			?InvoiceTransactionType.values()[faker.random().nextInt(InvoiceTransactionType.values().length)]
+			:null;
+	} 
+	public static MediaType getRandomMediaType() {
+		return getRandomMediaType (0);
+	}
+	public static MediaType getRandomMediaType(int nullThreshold) {
+		return gt(nullThreshold)
+			?MediaType.values()[faker.random().nextInt(MediaType.values().length)]
+			:null;
+	}
+	public static PayMethodType getRandomPayMethodType() {
+		return getRandomPayMethodType (0);
+	}
+	public static PayMethodType getRandomPayMethodType(int nullThreshold) {
+		return gt(nullThreshold)
+			?PayMethodType.values()[faker.random().nextInt(PayMethodType.values().length)]
+			:null;
+	}
+	public static RectificationType getRandomRectificationType() {
+		return getRandomRectificationType (0);
+	}
+	public static RectificationType getRandomRectificationType(int nullThreshold) {
+		return gt(nullThreshold)
+			?RectificationType.values()[faker.random().nextInt(RectificationType.values().length)]
+			:null;
+	}
+	
+	public static VatSummaryType getRandomVatSummaryType() {
+		return getRandomVatSummaryType (0);
+	}
+	public static VatSummaryType getRandomVatSummaryType(int nullThreshold) {
+		return gt(nullThreshold)
+			?VatSummaryType.values()[faker.random().nextInt(VatSummaryType.values().length)]
+			:null;
+	}
+	
+	public static RegistryStatus getRandomRegistryStatus() {
+		return getRandomRegistryStatus (0);
+	}
+	public static RegistryStatus getRandomRegistryStatus(int nullThreshold) {
+		return gt(nullThreshold)
+			?RegistryStatus.values()[faker.random().nextInt(RegistryStatus.values().length)]
+			:null;
+	}
+	
+	public static SecurityLevel getRandomSecurityLevel() {
+		return getRandomSecurityLevel (0);
+	}
+	public static SecurityLevel getRandomSecurityLevel(int nullThreshold) {
+		return gt(nullThreshold)
+			?SecurityLevel.values()[faker.random().nextInt(SecurityLevel.values().length)]
+			:null;
+	} 
+	public static StreetType getRandomStreetType() {
+		return getRandomStreetType (0);
+	}
+	public static StreetType getRandomStreetType(int nullThreshold) {
+		return gt(nullThreshold)
+			?StreetType.values()[faker.random().nextInt(StreetType.values().length)]
+			:null;
+	} 
 }
 

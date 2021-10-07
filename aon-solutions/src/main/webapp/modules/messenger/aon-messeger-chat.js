@@ -1,26 +1,22 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, MSG } from "../../environments/environments.js";
 import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
-import {
-  saveTask,
-  getTaskWorkflow,
-  saveTaskWorkflow,
-  saveTaskAttach,
-  deleteTask
-} from "../../services/taskService.js";
-
-import { Task } from "./Task.js";
+import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask} from "../../services/taskService.js";
+import {getWorkgroups} from '../../services/workgroupService.js';
+import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
 import { buildMobile } from "./shared/MessengerChatMobile.js";
 import { checkFilesAddEventDescription, sendMessage } from "./shared/utils.js";
 import * as ACTIONS from "../actions.js";
 import { getFormVacationJson } from "./forms/vacation.js";
 import { fillChat } from "./shared/fill.js";
+import { getFormMovJson } from "./forms/mov-ss.js";
 
 export class AonMessengerChat extends AonElement {
   task;
   _data;
   TOOLBAR;
+  WORKGROUPS;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -66,21 +62,23 @@ export class AonMessengerChat extends AonElement {
     this.TOOLBAR = this.id+"Toolbar";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
+    this.WORKGROUPS = [];
     this.deleteToolbar();
     this.setTask();
   }
 
   setTask(){
-    this.task = new Task();
     let data = {...this.data};
-    if(!data.id) {
-      const sender = this.applicationParentEl.TASK_HOLDER;
-      if(sender && sender.id) data.sender = sender;
-    }
-    if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email) 
+
+    const myTaskHolder = this.applicationParentEl.TASK_HOLDER;
+    if(myTaskHolder && myTaskHolder.id) 
+      data.myTaskHolder = myTaskHolder;
+      
+    if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email)  
       data.auth = this.applicationParentEl.cauData.auth;
+
     this.setData(data); 
-    this.task.createTask(this.getData());
+    this.task = new Task(this.getData());
   }
 
   build() {
@@ -208,9 +206,16 @@ export class AonMessengerChat extends AonElement {
 
   async saveSourceRequest(){
     try {
-        const description = getFormVacationJson();
+        const processType = this.getElement(MESSENGER_IDS.PROCESS_TYPE);
+        let description = null;
+        if("1" === processType.value )
+          description = getFormVacationJson();
+        else if("2" === processType.value )
+          description = getFormMovJson();
+
         if(description){
-          this.task.title = document.getElementById(MESSENGER_IDS.PROCESS_TYPE).getText();
+          this.task.title = processType.getText();
+          this.task.description = "";
           this.task.setDescriptionJson(description);
           const data = await saveTask(this.task);
           this.task.editTask(data);
@@ -222,6 +227,7 @@ export class AonMessengerChat extends AonElement {
           }
         }
     } catch (error) {
+      console.log(error);
       this.showError(error);
     }
   }
@@ -239,6 +245,7 @@ export class AonMessengerChat extends AonElement {
         this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
       }
     } catch (error) {
+      console.log(error);
       this.showError(error);
     }
   }
@@ -259,6 +266,23 @@ export class AonMessengerChat extends AonElement {
         this.showError(error);
       }
     });
+  }
+
+  async getWorkGroups(){
+    if(!this.WORKGROUPS.length){
+      await getWorkgroups({status:"ACTIVE"}).then(wgs=>{
+        this.WORKGROUPS =  wgs.map(t => ({...t, value: t.id, description: t.description, name:t.description}));
+      })
+    }
+    return this.WORKGROUPS;
+  }
+  
+  getDur(){
+		return this.applicationParentEl.getDur();
+	}
+
+  isCau(){     //IS CAU
+    return parseInt(localStorage.getItem("taskCau") || 0);
   }
 
   back(){

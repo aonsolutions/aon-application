@@ -7,6 +7,7 @@ export const DRAGOVER = 'dragover';
 export const DRAGENTER = 'dragenter';
 export const DRAGLEAVE = 'dragleave';
 export const DROP = 'drop';
+export const AON_APPLICATION_DROP = 'apDrop';
 export const FOCUS = 'focus';
 export const KEYPRESS = 'keypress';
 export const KEYUP = 'keyup';
@@ -23,4 +24,6 @@ export const APPLY_FILTER = 'applyFilter';
 export const RESIZE = 'resize';
 export const SEARCH_VALUE = 'searchValue';
 export const MORE = 'more';
-
+export const SCROLL = 'scroll';
+export const UPLOAD = 'upload';
+export const DELETE = 'delete';

@@ -1,7 +1,7 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents";
+import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents.js";
 import * as ACTIONS from "../../actions.js";
 import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";
@@ -41,6 +41,8 @@ const buildSectionHistoric = (aonMessengerChat, wrapper)=>{
     let titleText = task.title;
     if(task.registry && task.registry.name)
         titleText = `<b>[${task.registry.name}]</b> ${task.title}`;
+    else if(task.sender && task.sender.name)
+        titleText = `<b>[${task.sender.name}]</b> ${task.title}`;
 
     const title = setStyles(createTitle(titleText),{
         display : 'block',

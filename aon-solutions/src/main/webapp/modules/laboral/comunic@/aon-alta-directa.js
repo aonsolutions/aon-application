@@ -4,7 +4,7 @@ import { getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, sendAl
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
-import { createBajaDialogContent, createFormComunica, createCardEnterprise, createCardEmployee, createCardContract } from '../createComponent.js';
+import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData } from '../createComponent.js';
 import { createToolbar } from '../../notification/createComponent.js';
 
 export class AonAltaDirecta extends AonElement {
@@ -72,13 +72,13 @@ export class AonAltaDirecta extends AonElement {
         createFormComunica(this.id, this);
 
         let aonEnterpriseCard = this.getElement(`${this.id}EmpresaCard`);
-        createCardEnterprise(aonEnterpriseCard.getContent());
+        createEnterpriseData(aonEnterpriseCard.getContent());
 
         let aonEmployeeCard = this.getElement(`${this.id}TrabajadorCard`);
-        createCardEmployee(aonEmployeeCard.getContent(),  this.id);
+        createEmployeeData(aonEmployeeCard.getContent(),  this.id);
  
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
-        createCardContract(aonContratoCard.getContent());
+        createContractData(aonContratoCard.getContent());
 
         if(!this.isMobile() && this.data && this.data.status) {
             const titleRight = aonContratoCard.getCardTitle2();
@@ -619,21 +619,6 @@ export class AonAltaDirecta extends AonElement {
     isAlta(){
         return this.data && this.data.situation && this.data.situation.indexOf("AL")>=0;
     }
-
-    /**
-     * 
-     * @param {0,1}  tipo_jornada 0 completo, 1 parcial
-     */
-    // btnBajaShow(tipo_jornada){
-    //     if(this.data && tipo_jornada){
-    //         const toolbar = this.getElement(this.TOOLBAR);
-    //         if(toolbar){
-    //             const btnBaja = this.getElement(toolbar.TOOL_SECTION+ACTION_COMUNICA.BAJA.id+"Button");
-    //             if(btnBaja)
-    //                 btnBaja.style.display = "none";
-    //         }
-    //     }
-    // }
 }
 
 window.customElements.define('aon-alta-directa', AonAltaDirecta);

@@ -80,6 +80,9 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountingInvoiceDAO {
+	private AccountingInvoiceDAO() {
+		
+	}
 	
 	private static final com.esferalia.aon.jooq.tables.Account DUT_ACCOUNT = ACCOUNT.as("DUT_ACCOUNT");
 	private static final com.esferalia.aon.jooq.tables.Account EXP_ACCOUNT = ACCOUNT.as("EXP_ACCOUNT");
@@ -178,7 +181,7 @@ public class AccountingInvoiceDAO {
 							;
 						ai.getInvoice().getDetails().add( invoiceDetail );
 						ai.setAccountSource(ai.isAccountSource() || (source == InvoiceSource.ACCOUNT));
-						// TODO ¿Más de uno?
+						// ¿Más de uno? --> No se soporta
 						ai.setWorkplace(det.getValue(INVOICE_DETAIL.WORKPLACE));
 						// -----------------
 						
@@ -195,7 +198,7 @@ public class AccountingInvoiceDAO {
 						.forEach( accDet -> {
 							ai.setPrepayments(ai.hasPrepayments() || invoiceDetail.isPrepayment());
 							if (ai.isUndeductible() || invoiceDetail.isPrepayment()) {
-								fillNoInvoiceTax(ctx, accDet, det, ai, config);
+								fillNoInvoiceTax(accDet, det, ai);
 							} else {
 								fillInvoiceTax(ctx, invoideDetailId, accDet, det, ai, config);
 							}
@@ -248,7 +251,7 @@ public class AccountingInvoiceDAO {
 	}
 	
 	private static void fillInvoiceTax(AONContext ctx, Integer invoideDetailId, Record accDet, Record det, AccountingInvoice ai, AonConfiguration config) {
-		final LinkedList<InvoiceVAT> vats = new LinkedList<InvoiceVAT>();
+		final LinkedList<InvoiceVAT> vats = new LinkedList<>();
 		final InvoiceVAT vat = new InvoiceVAT();
 		ctx.getDslContext()
 			.select(
@@ -338,7 +341,7 @@ public class AccountingInvoiceDAO {
 		}
 	}
 
-	private static void fillNoInvoiceTax(AONContext ctx, Record accDet, Record det, AccountingInvoice ai, AonConfiguration config) {
+	private static void fillNoInvoiceTax(Record accDet, Record det, AccountingInvoice ai) {
 		ai.addVat(new InvoiceVAT()
 			.setBase(det.get( INVOICE_DETAIL.TAXABLE_BASE ))
 			.setExpAccountId(accDet.getValue(EXP_ACCOUNT.ID))
@@ -353,7 +356,7 @@ public class AccountingInvoiceDAO {
 
 	public static void fillBreakdown(AONContext ctx, Invoice invoice) {
 		if (invoice.getBreakdown() == null) {
-			invoice.setBreakdown(new LinkedList<InvoiceBreakdown>());
+			invoice.setBreakdown(new LinkedList<>());
 		}
 		
 		boolean vatExempt = 
@@ -430,7 +433,7 @@ public class AccountingInvoiceDAO {
 		ai.getInvoice()
 			.setRegistry(registry);
 		
-		LinkedList<Finance> newFinances = new LinkedList<Finance>();
+		LinkedList<Finance> newFinances = new LinkedList<>();
 		newFinances.addAll(FinanceDAO.getFinancesForInvoice(ctx, ai.getInvoice()));
 		for (Finance finance : ai.getInvoice().getFinances()) {
 			finance.setRemoved(true);
@@ -482,7 +485,7 @@ public class AccountingInvoiceDAO {
 					.setSeries(null)
 					.setNumber(0)
 					.setReferenceCode(null)
-					.setFinances(new LinkedList<Finance>())
+					.setFinances(new LinkedList<>())
 				);
 		ai.setAuthFinanceCalculation(true)
 		  .getInvoice().getFinances().add(new Finance()
@@ -646,7 +649,7 @@ public class AccountingInvoiceDAO {
 			invoice.setWithholding(false);
 			invoice.setWithholdingFarmer(false);
 			invoice.setVatAccrualPayment(false);
-		};
+		}
 	}
 
 	private static class InvoiceDuplicator implements IAccountingRegistryTypeVisitor {
@@ -658,7 +661,7 @@ public class AccountingInvoiceDAO {
 			this.invoice = invoice;
 		}
 		
-		private void visitCommon(AccountingRegistry reg) {
+		private void visitCommon() {
 			invoice.setId( null );
 			if (invoice.getDetails() != null) {
 				for (InvoiceDetail detail : invoice.getDetails() ) {
@@ -673,7 +676,7 @@ public class AccountingInvoiceDAO {
 
 		@Override
 		public void visitCustomer(AccountingRegistry reg) {
-			visitCommon(reg);
+			visitCommon();
 			invoice.setReferenceCode(null);
 			invoice.setNumber( InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
 		}
@@ -683,20 +686,17 @@ public class AccountingInvoiceDAO {
 			invoice.setSeries(null);
 			invoice.setNumber(0);
 			invoice.setReferenceCode(null);
-			visitCommon(reg);
+			visitCommon();
 		}
 
 		@Override
 		public void visitCreditor(AccountingRegistry reg) {
-			invoice.setSeries(null);
-			invoice.setNumber(0);
-			invoice.setReferenceCode(null);
-			visitCommon(reg);
+			visitSupplier( reg );
 		}
 		
 		@Override
 		public void visitUndedCreditor(AccountingRegistry reg) {
-			visitCreditor(reg);
+			visitSupplier(reg);
 		}
 	}
 
@@ -712,9 +712,9 @@ public class AccountingInvoiceDAO {
 	
 	private static LinkedList<AccountEntry> update(final AONContext ctx, AonConfiguration config, final AccountingInvoice accInvoice) {
 		try {
-//			ctx.log().info("------ [START] UPDATE INVOICE");
-			LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
-			LinkedList<InvoiceDetail> details = generateDetails(ctx,config,accInvoice);
+			ctx.log().debug("------ [START] UPDATE INVOICE");
+			LinkedList<AccountEntry> entries = new LinkedList<>();
+			LinkedList<InvoiceDetail> details = generateDetails(accInvoice);
 			for (InvoiceDetail detail : accInvoice.getInvoice().getDetails()) {
 				detail.setId(detail.getId() * -1);
 			}
@@ -745,22 +745,22 @@ public class AccountingInvoiceDAO {
 			accInvoice.setAccountEntry(newEntry);
 			entries.add(newEntry);
 			saveFinances(ctx, accInvoice);
-//			ctx.log().info("------ [END OK] UPDATE INVOICE");
+			ctx.log().debug("------ [END OK] UPDATE INVOICE");
 			return entries;
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			t.printStackTrace();
-//			ctx.log().info("------ [END FAIL] UPDATE INVOICE [" + t.getMessage() + "]");
+			ctx.log().debug("------ [END FAIL] UPDATE INVOICE [{0}]",t.getMessage());
 			throw t;
 		}
 	}
 	
 	private static LinkedList<AccountEntry> insert(final AONContext ctx, AonConfiguration config, final AccountingInvoice accInvoice) {
 		try {
-//			ctx.log().info("------ [START] INSERT INVOICE");
-			LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
+			ctx.log().debug("------ [START] INSERT INVOICE");
+			LinkedList<AccountEntry> entries = new LinkedList<>();
 			
 			if(accInvoice.getInvoice().getId() == null) {
-				LinkedList<InvoiceDetail> details = generateDetails(ctx,config,accInvoice);
+				LinkedList<InvoiceDetail> details = generateDetails(accInvoice);
 				accInvoice.getInvoice().setDetails(details);
 				accInvoice.getInvoice().setRecorded(true);
 				InvoiceDAO.insert(ctx, config, accInvoice.getInvoice());
@@ -790,29 +790,26 @@ public class AccountingInvoiceDAO {
 			}
 			if ( accInvoice.isTediParsed() ) {
 				try {
-					new Thread( new Runnable() {
-						@Override
-						public void run() {
-							System.out.println(" OPENING Thread");		
+					new Thread( () -> {
+							ctx.log().info("OPENING Thread");		
 							OCRDAO.teachReferenceCode(ctx.getUser(), accInvoice.getInvoice().getRegistryDocument(), accInvoice.getInvoice().getReferenceCode());
-						}
-					}).start();
-				} catch (Throwable t) {
-					System.out.println(" ERROR!");
+						}).start();
+				} catch (Exception t) {
 					t.printStackTrace();
+					ctx.log().info("ERROR");
 				}
 			}
 
 			
-//			ctx.log().info("------ [END OK] INSERT INVOICE");
+			ctx.log().debug("------ [END OK] INSERT INVOICE");
 			return entries;
 		} catch (IOException t) {
 			t.printStackTrace();
-//			ctx.log().info("------ [END FAIL] INSERT INVOICE [" + t.getMessage() + "]");
+			ctx.log().debug("------ [END FAIL] INSERT INVOICE [{0}]",t.getMessage());
 			throw new AonCoreException( t );
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			t.printStackTrace();
-//			ctx.log().info("------ [END FAIL] INSERT INVOICE [" + t.getMessage() + "]");
+			ctx.log().debug("------ [END FAIL] INSERT INVOICE [{0}]",t.getMessage());
 			throw t;
 		}
 	}
@@ -860,9 +857,9 @@ public class AccountingInvoiceDAO {
 		}
 		if (attach.getData() != null) {
 			Integer attachId = AttachmentDAO.insertInvoiceAttach(ctx, accInvoice.getAttach());
-//			ctx.log().info("INSERT INVOICE ATTACH (invoice: "+ accInvoice.getAttach().getAttachModule() + " id : " +  attachId + ")");
+			ctx.log().debug("INSERT INVOICE ATTACH (invoice: {0} id : {1})",accInvoice.getAttach().getAttachModule(),attachId);
 		} else {
-//			ctx.log().info("INSERT INVOICE ATTACH (NO NEEDED - NO DATA)");
+			ctx.log().debug("INSERT INVOICE ATTACH (NO NEEDED - NO DATA)");
 		}
 	}
 
@@ -890,48 +887,48 @@ public class AccountingInvoiceDAO {
 			.and(INVOICE_DUA.DOMAIN.eq(ai.getInvoice().getDomain()))
 			.fetch()
 			.stream()
-			.map( record ->  new AccountingDUAInvoice()
+			.map( rec ->  new AccountingDUAInvoice()
 				.setInfo( new AccountingDUAInfo()
-					.setId(record.getValue(INVOICE_DUA.ID))
-					.setDomain(record.getValue(INVOICE_DUA.DOMAIN))
-					.setCode(record.getValue(INVOICE_DUA.CODE))
-					.setPrice(record.getValue(INVOICE_DUA.PRICE))
-					.setAdjust(record.getValue(INVOICE_DUA.ADJUST))
-					.setStatisticalValue(record.getValue(INVOICE_DUA.STATISTICAL_VALUE))
+					.setId(rec.getValue(INVOICE_DUA.ID))
+					.setDomain(rec.getValue(INVOICE_DUA.DOMAIN))
+					.setCode(rec.getValue(INVOICE_DUA.CODE))
+					.setPrice(rec.getValue(INVOICE_DUA.PRICE))
+					.setAdjust(rec.getValue(INVOICE_DUA.ADJUST))
+					.setStatisticalValue(rec.getValue(INVOICE_DUA.STATISTICAL_VALUE))
 					.setDutyAccount(new Account()
-						.setId(record.getValue(DUT_ACCOUNT.ID))
-						.setDomain(record.getValue(DUT_ACCOUNT.DOMAIN))
-						.setCode(record.getValue(DUT_ACCOUNT.CODE))
-						.setDescription(record.getValue(DUT_ACCOUNT.DESCRIPTION))
-						.setAlias(record.getValue(DUT_ACCOUNT.ALIAS))
-						.setEntryEnabled( AonEnumUtils.getBoolean(record.getValue(DUT_ACCOUNT.ENTRYENABLED)))
-						.setLevel(record.getValue(DUT_ACCOUNT.LEVEL))
-						.setActive(AonEnumUtils.getBoolean(record.getValue(DUT_ACCOUNT.ACTIVE)))
-						.setCostCenter(record.getValue(DUT_ACCOUNT.COST_CENTER))
+						.setId(rec.getValue(DUT_ACCOUNT.ID))
+						.setDomain(rec.getValue(DUT_ACCOUNT.DOMAIN))
+						.setCode(rec.getValue(DUT_ACCOUNT.CODE))
+						.setDescription(rec.getValue(DUT_ACCOUNT.DESCRIPTION))
+						.setAlias(rec.getValue(DUT_ACCOUNT.ALIAS))
+						.setEntryEnabled( AonEnumUtils.getBoolean(rec.getValue(DUT_ACCOUNT.ENTRYENABLED)))
+						.setLevel(rec.getValue(DUT_ACCOUNT.LEVEL))
+						.setActive(AonEnumUtils.getBoolean(rec.getValue(DUT_ACCOUNT.ACTIVE)))
+						.setCostCenter(rec.getValue(DUT_ACCOUNT.COST_CENTER))
 					)
-					.setDutyBase(record.getValue(INVOICE_DUA.DUTY_BASE))
-					.setDutyPercent(record.getValue(INVOICE_DUA.DUTY_PERCENT))
-					.setDutyTotal(record.getValue(INVOICE_DUA.DUTY_TOTAL))
+					.setDutyBase(rec.getValue(INVOICE_DUA.DUTY_BASE))
+					.setDutyPercent(rec.getValue(INVOICE_DUA.DUTY_PERCENT))
+					.setDutyTotal(rec.getValue(INVOICE_DUA.DUTY_TOTAL))
 					.setVatAccount(new Account()
-						.setId(record.getValue(VAT_ACCOUNT.ID))
-						.setDomain(record.getValue(VAT_ACCOUNT.DOMAIN))
-						.setCode(record.getValue(VAT_ACCOUNT.CODE))
-						.setDescription(record.getValue(VAT_ACCOUNT.DESCRIPTION))
-						.setAlias(record.getValue(VAT_ACCOUNT.ALIAS))
-						.setEntryEnabled( AonEnumUtils.getBoolean(record.getValue(VAT_ACCOUNT.ENTRYENABLED)))
-						.setLevel(record.getValue(VAT_ACCOUNT.LEVEL))
-						.setActive(AonEnumUtils.getBoolean(record.getValue(VAT_ACCOUNT.ACTIVE)))
-						.setCostCenter(record.getValue(VAT_ACCOUNT.COST_CENTER))
+						.setId(rec.getValue(VAT_ACCOUNT.ID))
+						.setDomain(rec.getValue(VAT_ACCOUNT.DOMAIN))
+						.setCode(rec.getValue(VAT_ACCOUNT.CODE))
+						.setDescription(rec.getValue(VAT_ACCOUNT.DESCRIPTION))
+						.setAlias(rec.getValue(VAT_ACCOUNT.ALIAS))
+						.setEntryEnabled( AonEnumUtils.getBoolean(rec.getValue(VAT_ACCOUNT.ENTRYENABLED)))
+						.setLevel(rec.getValue(VAT_ACCOUNT.LEVEL))
+						.setActive(AonEnumUtils.getBoolean(rec.getValue(VAT_ACCOUNT.ACTIVE)))
+						.setCostCenter(rec.getValue(VAT_ACCOUNT.COST_CENTER))
 					)
 				)
-				.setAccountingInvoice( getAccountingInvoiceFromInvoice(ctx, record.getValue(INVOICE_DUA.INVOICE_IMPORT)))
+				.setAccountingInvoice( getAccountingInvoiceFromInvoice(ctx, rec.getValue(INVOICE_DUA.INVOICE_IMPORT)))
 			)
 			.findFirst()
 			.orElse(null);
 		if (accountingDUAInvoice != null ) {
 			ai.setDuaLinked(true);
 			if (accountingDUAInvoice.getAccountingInvoice() != null) {
-				LinkedList<InvoiceVAT> duaVats = new LinkedList<InvoiceVAT>();
+				LinkedList<InvoiceVAT> duaVats = new LinkedList<>();
 				for (InvoiceVAT ori : accountingDUAInvoice.getAccountingInvoice().getVats()) {
 					InvoiceVAT vat = ori.clone();
 					vat.setAutoGenerated(true);
@@ -941,13 +938,12 @@ public class AccountingInvoiceDAO {
 			}
 			ai.setDuaInvoice(accountingDUAInvoice);
 			
-			// TODO
 			accountingDUAInvoice.getInfo().setAuthCalcEnabled(false);
 		}
 	}
 
 	private static void insertInvoiceDUA(AONContext ctx, AonConfiguration config, AccountingInvoice accInvoice)  {
-//		ctx.log().info("\t--- START INVOICE_DUA INSERT");
+		ctx.log().debug("\t--- START INVOICE_DUA INSERT");
 		AccountingInvoiceValidation.validateDUAInvoice(ctx, config, accInvoice);
 		AccountingInvoice importInvoice = accInvoice.getDuaInvoice().getAccountingInvoice();
 		AccountingDUAInfo duaInfo = accInvoice.getDuaInvoice().getInfo();
@@ -977,14 +973,14 @@ public class AccountingInvoiceDAO {
 				.where(INVOICE_TAX.ID.equal( vat.getId()))
 				.and(INVOICE_TAX.DOMAIN.equal( accInvoice.getInvoice().getDomain()))
 				.execute();
-//			ctx.log().info("\tUPDATE INVOICE_TAX (via DUA): " + vat.getId() + "("+i+" rows)");
+			ctx.log().debug("\tUPDATE INVOICE_TAX (via DUA): {0} ({1} rows)",vat.getId(),i);
 		}
-//		ctx.log().info("\tINSERT INVOICE_DUA (nat.invoice: "+ accInvoice.getInvoice().getId() + ", imp.invoice: "+ importInvoice.getInvoice().getId() + ", id : " +  id + ")");
-//		ctx.log().info("\t--- END INVOICE_DUA INSERT");
+		ctx.log().debug("\tINSERT INVOICE_DUA (nat.invoice: {0}, imp.invoice: {1}, id : {2})",accInvoice.getInvoice().getId(),importInvoice.getInvoice().getId(),id);
+		ctx.log().debug("\t--- END INVOICE_DUA INSERT");
 	}
 
 	private static void updateInvoiceDUA(AONContext ctx, AonConfiguration config, AccountingInvoice accInvoice) {
-//		ctx.log().info("\t--- START INVOICE_DUA UPDATE");
+		ctx.log().info("\t--- START INVOICE_DUA UPDATE");
 		AccountingInvoiceValidation.validateDUAInvoice(ctx, config, accInvoice);
 		AccountingInvoice importInvoice = accInvoice.getDuaInvoice().getAccountingInvoice();
 		AccountingDUAInfo duaInfo = accInvoice.getDuaInvoice().getInfo();
@@ -1014,10 +1010,10 @@ public class AccountingInvoiceDAO {
 				.where(INVOICE_TAX.ID.equal( vat.getId()))
 				.and(INVOICE_TAX.DOMAIN.equal( accInvoice.getInvoice().getDomain()))
 				.execute();
-//			ctx.log().info("\tUPDATE INVOICE_TAX (via DUA): " + vat.getId() + "("+i+" rows)");
+			ctx.log().info("\tUPDATE INVOICE_TAX (via DUA): {0} ({1} rows)",vat.getId(),i);
 		}
-//		ctx.log().info("\tUPDATE INVOICE_DUA (nat.invoice: "+ accInvoice.getInvoice().getId() + ", imp.invoice: "+ importInvoice.getInvoice().getId() + ", id : " +  id + ")");
-//		ctx.log().info("\t--- END INVOICE_DUA UPDATE");
+		ctx.log().debug("\tUPDATE INVOICE_DUA (nat.invoice: {0}, imp.invoice: {1}, id: {2})",accInvoice.getInvoice().getId(),importInvoice.getInvoice().getId(),id);
+		ctx.log().debug("\t--- END INVOICE_DUA UPDATE");
 	}
 
 	private static void saveFinances(AONContext ctx, AccountingInvoice accInvoice) {
@@ -1029,19 +1025,19 @@ public class AccountingInvoiceDAO {
 	
 	private static void saveFinance(AONContext ctx, Invoice invoice, Finance finance) {
 		if ( !finance.isFullPending()) {
-//			ctx.log().info("** FINANCE NOT SAVED [NOT PENDING]");
+			ctx.log().debug("** FINANCE NOT SAVED [NOT PENDING]");
 			return;
 		}
 		if (!finance.isDirty() ) {
-//			ctx.log().info("** FINANCE NOT SAVED [NOT DIRTY]");
+			ctx.log().debug("** FINANCE NOT SAVED [NOT DIRTY]");
 			return;
 		}
 		if ( finance.getId() == null && finance.isRemoved()) {
-//			ctx.log().info("** FINANCE NOT SAVED [MARKED TO DELETE BUT NOT SAVED]");
+			ctx.log().debug("** FINANCE NOT SAVED [MARKED TO DELETE BUT NOT SAVED]");
 			return;
 		}
 		if ( finance.getId() != null && finance.isRemoved()) {
-//			ctx.log().info("** FINANCE MARKED TO DELETE");
+			ctx.log().debug("** FINANCE MARKED TO DELETE");
 			FinanceDAO.delete(ctx, finance.getId());
 			return;
 		} 
@@ -1067,22 +1063,22 @@ public class AccountingInvoiceDAO {
 				;
 		}
 		if ( AonMathUtils.isNotZero(finance.getAmount()) ) {
-//			ctx.log().info("** FINANCE READY TO SAVE");
+			ctx.log().debug("** FINANCE READY TO SAVE");
 			Integer financeId = FinanceDAO.save(ctx, finance);
 			finance.setId(financeId);
 		} else {
-//			ctx.log().info("** FINANCE NOT SAVED [AMOUNT 0]");
+			ctx.log().debug("** FINANCE NOT SAVED [AMOUNT 0]");
 		}
 	}
 
 	private static LinkedList<AccountEntry> recordFinances(AONContext ctx, AccountingInvoice accInvoice) {
-		LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
+		LinkedList<AccountEntry> entries = new LinkedList<>();
 		for (Finance finance : accInvoice.getInvoice().getFinances() ) {
 			if (finance.isPending() && accInvoice.getPayAccountId() != null) {
 				if (finance.getId() == null) {
-//					ctx.log().info("** FINANCE NOT SAVED, NO ENTRY WILL BE RECORDED.");
+					ctx.log().debug("** FINANCE NOT SAVED, NO ENTRY WILL BE RECORDED.");
 				} else {
-//					ctx.log().info("** READY TO RECORD FINANCE.");
+					ctx.log().debug("** READY TO RECORD FINANCE.");
 					AccountEntry ae = InvoiceRecorder.getFinanceEntry(accInvoice, finance);
 					Integer entryId = AccountEntryDAO.insert(ctx, ae);
 					AccountEntry newEntry = AccountEntryDAO.getAccountEntry(ctx, entryId);
@@ -1100,20 +1096,20 @@ public class AccountingInvoiceDAO {
 							.returning(FINANCE_TRACKING.ID)
 							.fetchOne()
 							.getValue(FINANCE_TRACKING.ID);
-//					ctx.log().info("\tINSERT FINANCE_TRACKING (finance.id: "+ finance.getId()+") finance_tracking.id:" + financeTrackingId);
+					ctx.log().debug("\tINSERT FINANCE_TRACKING (finance.id: {0}) finance_tracking.id: {1}",finance.getId(),financeTrackingId);
 					
 					Integer accountEntryFinanceTrackingId = ctx.getDslContext().insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
 						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.DOMAIN,ctx.getDomainId())
 						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY, entryId )
 						.set(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING, financeTrackingId )
 						.execute();
-//					ctx.log().info("\tINSERT ACCOUNT_ENTRY_FINANCE_TRACKING (account_entry_finance_tracking.id: "+ accountEntryFinanceTrackingId+") account_entry.id: " + entryId);
+					ctx.log().debug("\tINSERT ACCOUNT_ENTRY_FINANCE_TRACKING (account_entry_finance_tracking.id: {0}) account_entry.id: {1}",accountEntryFinanceTrackingId,entryId);
 					ctx.getDslContext().update(FINANCE)
 						.set(FINANCE.STATUS,FinanceStatus.PAID.value())
 						.where(FINANCE.ID.eq(finance.getId()))
 						.and(FINANCE.DOMAIN.eq(ctx.getDomainId()))
 						.execute();
-//					ctx.log().info("UPDATE FINANCE STATUS - PAID (finance.id: "+ finance.getId());
+					ctx.log().info("UPDATE FINANCE STATUS - PAID (finance.id: {0}",finance.getId());
 				}
 			}
 		}
@@ -1143,8 +1139,7 @@ public class AccountingInvoiceDAO {
 				
 				@Override
 				public void visitUndedCreditor(AccountingRegistry reg) {
-					Account account = createAccountAndFill(reg);
-					CreditorDAO.updateCreditorAccount(ctx, reg.getId(),account.getId());
+					visitCreditor(reg);
 				}
 				
 				private Account createAccountAndFill(AccountingRegistry reg) {
@@ -1167,9 +1162,9 @@ public class AccountingInvoiceDAO {
 		}
 	}
 
-	private static LinkedList<InvoiceDetail> generateDetails(AONContext ctx, AonConfiguration config, AccountingInvoice accInvoice) {
+	private static LinkedList<InvoiceDetail> generateDetails(AccountingInvoice accInvoice) {
 		short line = 1;
-		LinkedList<InvoiceDetail> details = new LinkedList<InvoiceDetail>();
+		LinkedList<InvoiceDetail> details = new LinkedList<>();
 		for (InvoiceVAT vat :  accInvoice.getVats()) {
 			
 			InvoiceDetail detail = vat.getInvoiceDetail() != null
@@ -1198,7 +1193,10 @@ public class AccountingInvoiceDAO {
 					.setVatDeductionType(vat.getVatDeductionType())
 					.setDeductiblePercent(vat.getDeductiblePercent())
 					.setDeductibleQuota(vat.getDeductibleQuota())
-					// TODO Se deben grabar las dos cuentas!!
+					// Se deben grabar las dos cuentas!!
+					// Issue: #2414
+					// "Guardar cuenta iva repercutido o soportado al modificar facturas de venta o gasto desde el menú Gestión"  
+					// https://github.com/aonsolutions/aon-application/issues/2414
 					.setAccount(accInvoice.isSales() ? vat.getOutputAccountId() : vat.getInputAccountId() )
 					// --------------------------------------
 					);
@@ -1217,7 +1215,7 @@ public class AccountingInvoiceDAO {
 						.setQuota(quota)
 						.setWithholdingType(accInvoice.getWithholdingData().getWithholdingType())
 						.setAccount(accInvoice.getWithholdingData().getAccountId()));
-				};
+				}
 			}
 			details.add( detail );
 			line++;
@@ -1231,7 +1229,7 @@ public class AccountingInvoiceDAO {
 			.set(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY, entryId)
 			.set(ACCOUNT_ENTRY_INVOICE.INVOICE, invoiceId)
 			.execute();
-//		ctx.log().info("INSERT ACCOUNT_ENTRY_INVOICE");
+		ctx.log().debug("INSERT ACCOUNT_ENTRY_INVOICE");
 	}
 
 	public static AccountingInvoice duplicateLastAccountingInvoice(AONContext ctx, Integer registryId) {

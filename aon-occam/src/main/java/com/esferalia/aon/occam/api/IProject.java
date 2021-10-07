@@ -19,6 +19,7 @@ public interface IProject {
 	// ---------- PROJECT
 	
 	public Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter);
+	public Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter, Integer page, Integer perPage);
 	public Integer insertProject(AONContext ctx, Project project);
 	public Project saveProject(AONContext ctx, Project project);
 	public void deleteProject(AONContext ctx, Integer id);

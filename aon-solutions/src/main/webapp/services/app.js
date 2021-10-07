@@ -445,7 +445,7 @@ export const PayrollMenu =[
       title: 'Carga de datos',
       content:'<aon-imports></aon-imports>',
     },{
-      title: 'Proyectos',
+      title: 'Expedientes',
       content:'<aon-project-panel></aon-project-panel>',
     }];
 

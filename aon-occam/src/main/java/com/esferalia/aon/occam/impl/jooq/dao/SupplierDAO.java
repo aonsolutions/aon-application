@@ -45,21 +45,21 @@ public class SupplierDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(SUPPLIER.REGISTRY);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(SUPPLIER.DOMAIN);}
-		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<Integer>(SUPPLIER.TARIFF);}
-		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.WITHHOLDING);}
-		@Override public Property<Byte> getWithholdingFarmerProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.WITHHOLDING_FARMER);}
-		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.VAT_ACCRUAL_PAYMENT);}
-		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.TRANSACTION);}
-		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.STATUS);}
-		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<Integer>(SUPPLIER.SCOPE);}
-		@Override public Property<Byte> getPurchaseValuatedProperty() {return new FilterDAO.PropertyDAO<Byte>(SUPPLIER.PURCHASE_VALUATED);}
-		@Override public Property<Integer> getAccountProperty() { return new FilterDAO.PropertyDAO<Integer>(SUPPLIER.ACCOUNT);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(SUPPLIER.CREATION_USER);}
-		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(SUPPLIER.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(SUPPLIER.MODIFICATION_USER);}
-		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(SUPPLIER.MODIFICATION_DATE);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.REGISTRY);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.DOMAIN);}
+		@Override public Property<Integer> getTariffProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.TARIFF);}
+		@Override public Property<Byte> getWithholdingProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.WITHHOLDING);}
+		@Override public Property<Byte> getWithholdingFarmerProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.WITHHOLDING_FARMER);}
+		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.VAT_ACCRUAL_PAYMENT);}
+		@Override public Property<Byte> getTransactionProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.TRANSACTION);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.STATUS);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.SCOPE);}
+		@Override public Property<Byte> getPurchaseValuatedProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.PURCHASE_VALUATED);}
+		@Override public Property<Integer> getAccountProperty() { return new FilterDAO.PropertyDAO<>(SUPPLIER.ACCOUNT);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(SUPPLIER.MODIFICATION_DATE);}
 	}
 
 	
@@ -163,7 +163,7 @@ public class SupplierDAO {
 			.set(SUPPLIER.CREATION_USER,ctx.getUser())
 			.set(SUPPLIER.CREATION_DATE,new Timestamp(new Date().getTime()))
 			.execute();
-		ctx.log().info("INSERT SUPPLIER id: " + supplier.getId());		
+		ctx.log().debug("INSERT SUPPLIER id: ",supplier.getId());		
 		return supplier;
 	}
 	
@@ -183,7 +183,7 @@ public class SupplierDAO {
 			.set(SUPPLIER.MODIFICATION_DATE,new Timestamp(new Date().getTime()))
 			.where(SUPPLIER.REGISTRY.eq(supplier.getId()))
 			.execute();
-		ctx.log().info("UPDATE SUPPLIER id: " + supplier.getId() + ". (" + count + " rows)");		
+		ctx.log().debug("UPDATE SUPPLIER id: {0}. ({1} rows)",supplier.getId(),count);		
 		return supplier;
 	}
 
@@ -193,7 +193,7 @@ public class SupplierDAO {
 		int count = ctx.getDslContext().delete(SUPPLIER)
 			.where(SUPPLIER.REGISTRY.eq(id))
 			.execute();
-		ctx.log().info("DELETE SUPPLIER id:" + id + " ("+count+" rows)");
+		ctx.log().debug("DELETE SUPPLIER id: {0} ({1} rows)",id,count);
 	}
 
 	// *************************************************
@@ -218,7 +218,7 @@ public class SupplierDAO {
 			.set(SUPPLIER.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(SUPPLIER.REGISTRY.eq(registry))
 			.execute();
-		ctx.log().info("ACCOUNT " + account + " LINKED TO SUPPLIER " + registry);
+		ctx.log().debug("ACCOUNT {0} LINKED TO SUPPLIER {1}",account,registry);
 	}
 
 	// ******************************************

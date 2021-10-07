@@ -1,7 +1,7 @@
 .aonIconContainer{
   position: absolute;
   right: 10px;
-  top: calc(50% - 10px);
+  top: calc(50% - 5px);
 }
 .aonLoader {
   position: relative;
@@ -22,7 +22,7 @@
 
 .aonLoader::after, .aonLoader::before {
   content: "";
-  background: white;
+  background: transparent;
   position: absolute;
   display: inline-block;
   width: 100%;

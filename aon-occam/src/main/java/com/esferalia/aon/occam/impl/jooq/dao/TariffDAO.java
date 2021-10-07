@@ -20,7 +20,9 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TariffDAO {
-	
+	private TariffDAO() {
+		
+	}
 	private static final TariffPropertiesDAO TARIFF_PROPERTIES = new TariffPropertiesDAO();
 
 	public static class TariffFiller extends Filler implements Function<Record, Tariff> {
@@ -77,7 +79,7 @@ public class TariffDAO {
 			.fetchOne()
 			.getValue(TARIFF.ID);
 		tariff.setId(id);
-		ctx.log().info("INSERT TARIFF id: " + tariff.getId());		
+		ctx.log().debug("INSERT TARIFF id: {0}", tariff.getId());		
 		return tariff;
 	}
 
@@ -92,7 +94,7 @@ public class TariffDAO {
 			.set(TARIFF.ACTIVE, AonEnumUtils.getByte( tariff.isActive()))
 			.where(TARIFF.ID.eq(tariff.getId()))
 			.execute();
-		ctx.log().info("UPDATE TARIFF id: " + tariff.getId() + ". (" + count + " rows)");
+		ctx.log().debug("UPDATE TARIFF id: {0}. ({1} rows)",tariff.getId(),count);
 		return tariff;
 	}
 
@@ -102,7 +104,7 @@ public class TariffDAO {
 		int count = ctx.getDslContext().delete(TARIFF)
 			.where(TARIFF.ID.eq(id))
 			.execute();
-		ctx.log().info("DELETE TARIFF id:" + id + " ("+count+" rows)");
+		ctx.log().debug("DELETE TARIFF id: {0} ({1} rows)",id,count);
 	}
 
 	// ***************************************

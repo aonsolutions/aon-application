@@ -403,7 +403,7 @@ public class CommonImpl implements ICommon {
 	}
 
 	@Override
-	public LinkedList<Workgroup> getWorkgroupList(AONContext ctx, WorkgroupFilter filter) {
+	public List<Workgroup> getWorkgroupList(AONContext ctx, WorkgroupFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 
 		WorkgroupDAO.getList(ctx, filter));
 	}

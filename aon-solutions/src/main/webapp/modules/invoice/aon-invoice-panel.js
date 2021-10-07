@@ -4,8 +4,8 @@ import { insertInvoice, deleteInvoices, actionMobile, getDomainUserRoles, selfco
 import { Invoice } from './Invoice.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
-import { AonNewInvoice } from './aon-new-invoice.js';
-import { AonMobileNewInvoice } from './aon-mobile-new-invoice.js';
+import { AonInvoice } from './aon-invoice.js';
+import { AonMobileInvoice } from './aon-mobile-invoice.js';
 
 import './aon-invoice-list.js';
 import './aon-mobile-invoice-list.js';
@@ -102,11 +102,7 @@ export class AonInvoicePanel extends AonElement {
 
 		this.getElement(this.INPUT_CAMERA).addEventListener('change',  ({target}) => this.preview(target.files));
 
-		aonInvoice.addEventListener('drop', (event) => {
-			if(event && event.dataTransfer && event.dataTransfer.files){
-				this.preview(event.dataTransfer.files);
-			}
-		});
+		aonInvoice.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.preview(e.detail));
 
 		if(this.isMobile()) {
 			aonInvoice.addFloatOption(ACTION.ADD_INVOICE, () => this.addInvoice());
@@ -373,7 +369,7 @@ export class AonInvoicePanel extends AonElement {
 			let toolbar = this.getElement(aonInvoice.TOOLBAR);
 			toolbar.removeButtons();
 		}
-		let ni = this.isMobile() ? new AonMobileNewInvoice() : new AonNewInvoice();
+		let ni = this.isMobile() ? new AonMobileInvoice() : new AonInvoice();
 		ni.setType(type);
 		ni.setInvoice(invoice);
 		aonInvoice.setContent(ni);

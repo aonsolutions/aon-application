@@ -36,8 +36,12 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 	private ListBox defaultVatRegime = new ListBox();
 	private DoubleBox prorate = new DoubleBox(7);
 	
-	public NewDeclarationPopup(Model390HFModuleOptions options,final Mod390HF mod390 ,final Model390HFCallback callback) {
-		setCaption(AON.MSG.newDeclaration());
+	public NewDeclarationPopup(Model390HFModuleOptions options, final Mod390HF mod390, final Model390HFCallback callback) {
+		this(options, mod390, false, callback);	 	
+	}
+	
+	public NewDeclarationPopup(Model390HFModuleOptions options, final Mod390HF mod390, final boolean reset, final Model390HFCallback callback) {
+		setCaption(reset?AON.MSG.resetDeclaration():AON.MSG.newDeclaration());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
@@ -62,6 +66,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		admonList.setEnabled(!reset);
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -97,6 +102,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
+		yearBox.setEnabled(!reset);
 		yearBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
@@ -121,6 +127,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 
 		// COMPLEMENTARIA
 		complementary.setText(AON.MSG.complementary());
+		complementary.setEnabled(!reset);
 		complementary.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -140,6 +147,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		
 		// SUSTITUTIVA
 		replacement.setText(AON.MSG.replacement());
+		replacement.setEnabled(!reset);
 		replacement.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -171,6 +179,15 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.setWidget(row, 0, withoutActivity);
 		row++;
+		
+		// MENSAJE DE AVISO PARA INICIALIZAR EL MODELO
+		if (reset) {
+			Label labelReset = new Label(AON.MSG.resetWarning());
+			labelReset.addStyleName(AON.CSS.aonMarginTop());
+			labelReset.addStyleName(AON.CSS.aonColorRed());
+			tab.setWidget(row, 0, labelReset);
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		}
 		
 		rootPanel.add(tab);
 		
@@ -209,9 +226,11 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		add(rootPanel);
 	}
 
-	private void populate(Mod390HF mod303) {
-		admonList.setSelectedIndex( mod303.getAdministration().ordinal());
-		yearBox.setValue(mod303.getYear());
-		prorate.setValue(mod303.ensureDetail(mod303.getProrateKey()).getAmount());
+	private void populate(Mod390HF mod390) {
+		admonList.setSelectedIndex( mod390.getAdministration().ordinal());
+		yearBox.setValue(mod390.getYear());
+		prorate.setValue(mod390.ensureDetail(mod390.getProrateKey()).getAmount());
+		complementary.setValue(mod390.isComplementary());
+		replacement.setValue(mod390.isReplacement());
 	}
 }
