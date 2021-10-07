@@ -18,10 +18,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod303.FinishDeclarationPopup.FinishDeclarationPopupCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303FinishDeclarationPopup.FinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.IModel303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.TabLayoutFolderSafeTemplate;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303IdentificationData.IModel303IdentificationDataCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -36,10 +35,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -138,7 +134,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private Mod303 mod303;
 	private Model303BaseCallback callback;
 	private API api;
-	private Boolean test = false;
+	private boolean test = false;
 	private EnumMap<Mod303Key,AonDoubleBox> fieldsMap;
 	private boolean dirty;
 	
@@ -156,12 +152,12 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave());
 	protected final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconCancel());
 	protected final AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+	protected final AonToolbarButton resetButton = new AonToolbarButton(AON.MSG.resetAction(),AON.CSS.aonIconRefresh());
 	protected final AonToolbarButton printButton = new AonToolbarButton(AON.MSG.draft(),AON.CSS.aonIconExcel());
 	protected final AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
 	protected final AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
 	protected final AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
 	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
-	protected final Button resetButton = new Button();
 	protected FormPanel diskForm = new FormPanel("_blank");
 	protected FormPanel aeatForm = new FormPanel("aeatForm");
 
@@ -222,7 +218,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		return api;
 	}
 	
-	public Boolean getTest() {
+	public boolean getTest() {
 		return test;
 	}
 
@@ -248,6 +244,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
+		
+		resetButton.addClickHandler( event -> callback.onReset(getMod303()));
+		toolbarPanel.add(resetButton);		
 		
 		markAsFinishedButton.addClickHandler( event -> onFinalize(options));
 		toolbarPanel.add(markAsFinishedButton);
@@ -281,19 +280,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 						callback.onCancel();
 					}
 				}
-		
-		resetButton.setText(AON.MSG.resetAction());
-		resetButton.setTitle(resetButton.getText());
-		resetButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		resetButton.addStyleName(AON.AON_CSS.aonIconReset());
-		resetButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.onReset(getMod303());
-			}
-		});
-		buttonContainer.add(resetButton);		
 				@Override
 				public void onCancel() {
 					cancelButton.setEnabled(true);
@@ -460,42 +446,37 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		fieldsMap.put(key, input);
 		input.setEnabled(enabled); 
 		input.setValue(det1.getAmount());
-		if (key.isDiffEnabled()) {
-			if (AonMathUtils.isNotZero(det1.getAdjustAmount())) {
-				input.addStyleName(AON.CSS.aonChanged());
-				input.setTitle("Valor calculado ..: " + det1.getResultAmount() 
-					+ ". Se ha realizado un ajuste por valor de " + AonMathUtils.round( det1.getAdjustAmount() * -1));
-			}
+		if (key.isDiffEnabled() && AonMathUtils.isNotZero(det1.getAdjustAmount())) {
+			input.addStyleName(AON.CSS.aonChanged());
+			input.setTitle("Valor calculado ..: " + det1.getResultAmount() 
+				+ ". Se ha realizado un ajuste por valor de " + AonMathUtils.round( det1.getAdjustAmount() * -1));
 		}
-		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				if (input.getValue() == null) input.setValue(0.0,false);
-				if (key.isDiffEnabled()) {
-					double result = mod303.getResultAmount(key);
-					double adjust = mod303.getAdjustAmount(key);
-					double amount = input.getValue();
-					if (AonMathUtils.isNotZero(result - adjust - amount)) {
-						mod303.ensureDetail(key).setAdjustAmount( result - amount);	
-					}
+		input.addValueChangeHandler(event -> {
+			if (input.getValue() == null) input.setValue(0.0,false);
+			if (key.isDiffEnabled()) {
+				double result = mod303.getResultAmount(key);
+				double adjust = mod303.getAdjustAmount(key);
+				double amount = input.getValue();
+				if (AonMathUtils.isNotZero(result - adjust - amount)) {
+					mod303.ensureDetail(key).setAdjustAmount( result - amount);	
 				}
-				mod303.ensureDetail(key).setAmount(input.getValue());
-
-				if (key.isDiffEnabled()) {
-					if (AonMathUtils.isNotZero(mod303.ensureDetail(key).getAdjustAmount())) {
-						input.addStyleName(AON.CSS.aonChanged());
-						input.setTitle("Valor calculado ..: " + mod303.ensureDetail(key).getResultAmount() 
-							+ ". Se ha realizado un ajuste por valor de " + AonMathUtils.round( mod303.ensureDetail(key).getAdjustAmount() * -1));
-					} else {
-						input.removeStyleName(AON.CSS.aonChanged());
-					}
-				}
-				
-				if (input.isEnabled()) {
-					calculateAndRefresh();
-				}
-				markAsDirty();
 			}
+			mod303.ensureDetail(key).setAmount(input.getValue());
+
+			if (key.isDiffEnabled()) {
+				if (AonMathUtils.isNotZero(mod303.ensureDetail(key).getAdjustAmount())) {
+					input.addStyleName(AON.CSS.aonChanged());
+					input.setTitle("Valor calculado ..: " + mod303.ensureDetail(key).getResultAmount() 
+						+ ". Se ha realizado un ajuste por valor de " + AonMathUtils.round( mod303.ensureDetail(key).getAdjustAmount() * -1));
+				} else {
+					input.removeStyleName(AON.CSS.aonChanged());
+				}
+			}
+			
+			if (input.isEnabled()) {
+				calculateAndRefresh();
+			}
+			markAsDirty();
 		});
 		table.setWidget(row, col, input);
 		return ++col;
@@ -519,7 +500,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		final CheckBox check = new CheckBox();
 		check.setValue(this.mod303.ensureDetail(key).getAmount() == 1);
 		check.addClickHandler( event -> {
-				mod303.ensureDetail(key).setAmount(check.getValue()?1.0:0.0);
+				mod303.ensureDetail(key).setAmount((check.getValue() != null && check.getValue())?1.0:0.0);
 				markAsDirty();
 		});
 		table.setWidget(row, 1, check);
@@ -612,8 +593,8 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					button.addStyleName(AON.CSS.aonIconData());
 				}
 				button.setTabIndex(-2); // NO FOCUS
-				button.addClickHandler( event  -> {
-					Model303.SERVICE.getInfo(callback.getDomainName(), callback.getUser(), callback.getDomain(),
+				button.addClickHandler( event  -> 
+					Model303.service.getInfo(callback.getDomainName(), callback.getUser(), callback.getDomain(),
 							mod303,script, infoKey,new AsyncCallback<String>() {
 						
 						@Override
@@ -626,8 +607,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 							callback.showBreakdownPanel(result);
 						}
 					}
-							);	
-				});
+				));
 				buttonContainer.add(button);
 			}
 		}
@@ -645,7 +625,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	public void calculateAndRefresh(AsyncCallback<Mod303> cbk) {
-		Model303.SERVICE.calculate(callback.getDomainName(), callback.getUser(), this.mod303,
+		Model303.service.calculate(callback.getDomainName(), callback.getUser(), this.mod303,
 				new AsyncCallback<Mod303>() {
 
 					@Override
@@ -724,7 +704,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.SERVICE.save(callback.getDomainName(), callback.getUser(), this.mod303, new AsyncCallback<Mod303>() {
+		Model303.service.save(callback.getDomainName(), callback.getUser(), this.mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result,options);
@@ -749,7 +729,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 			@Override
 			public void onAccept() {
-				Model303.SERVICE.delete(callback.getDomainName(), callback.getUser(),mod303, new AsyncCallback<Void>() {
+				Model303.service.delete(callback.getDomainName(), callback.getUser(),mod303, new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
 						deleteButton.setEnabled(true);
@@ -774,7 +754,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private void onFinalize( Model303ModuleOptions options) {
 		markAsFinishedButton.setEnabled(false);
 		callback.cleanErrorPanel();
-		Model303.SERVICE.initializeForFinish(callback.getDomainName(), callback.getUser(),mod303,
+		Model303.service.initializeForFinish(callback.getDomainName(), callback.getUser(),mod303,
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
@@ -792,7 +772,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	private void showFinalizePopup(final Model303ModuleOptions options) {
-		FinishDeclarationPopup finalizeDialog = new FinishDeclarationPopup(this.mod303, options, getCallback(), new FinishDeclarationPopupCallback() {
+		Model303FinishDeclarationPopup finalizeDialog = new Model303FinishDeclarationPopup(this.mod303, options, getCallback(), new FinishDeclarationPopupCallback() {
 			@Override
 			public void onCancel() {
 				// nothing
@@ -819,7 +799,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.SERVICE.markAsCustomerCheck(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsCustomerCheck(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result,options);
@@ -845,7 +825,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.SERVICE.markAsFinished(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsFinished(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result,options);
@@ -870,7 +850,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.SERVICE.markAsPending(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsPending(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result,options);
@@ -891,7 +871,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private void markAsSent(Model303ModuleOptions options) {
 		markAsSentButton.setEnabled(false);
 		callback.cleanErrorPanel();
-		Model303.SERVICE.markAsSent(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsSent(callback.getDomainName(), callback.getUser(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result,options);
@@ -1135,27 +1115,21 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			commentPanel.setStyleName(AON.CSS.aonHeightAll());
 			commentPanel.addStyleName(AON.CSS.aonTextCenter());
 			TextArea comment = new TextArea();
-			comment.addValueChangeHandler(new ValueChangeHandler<String>() {
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					mod303.setComments(event.getValue());
-					styleCommentsButton();
-					Model303.SERVICE.saveComments( callback.getOptions().getDomainName(), callback.getOptions().getUser(), mod303, new AsyncCallback<Mod303>() {
-						@Override
-						public void onSuccess(Mod303 result) {
-							toast.hide();
-						}
+			comment.addValueChangeHandler(event1 -> {
+				mod303.setComments(event1.getValue());
+				styleCommentsButton();
+				Model303.service.saveComments( callback.getOptions().getDomainName(), callback.getOptions().getUser(), mod303, new AsyncCallback<Mod303>() {
+					@Override
+					public void onSuccess(Mod303 result) {
+						toast.hide();
+					}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							toast.hide();
-							callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-						}
-					});
-					
-					
-					
-				}
+					@Override
+					public void onFailure(Throwable caught) {
+						toast.hide();
+						callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
 			});
 			comment.setText(mod303.getComments());
 			comment.setWidth("90%");

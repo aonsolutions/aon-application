@@ -12,9 +12,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class Model303AEATActivity2018Panel extends AonCustomDialog implements HasSelectionHandlers<Epigraph>{
+class Model303AEATActivity2018Panel extends AonCustomDialog implements HasSelectionHandlers<Epigraph>{
 
-	public Model303AEATActivity2018Panel() {
+	protected Model303AEATActivity2018Panel() {
 		setVisible(false);
 		setAnimationEnabled(true);
 		setGlassEnabled(true);

@@ -52,7 +52,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainEntryPoint implements EntryPoint {
 
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
+	private static final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
 	
 	private static final String ENTRY_POINT_PARAM = "entryPoint";
 	//
@@ -813,7 +813,7 @@ public class MainEntryPoint implements EntryPoint {
 	
 	public static String getCurrentUser() {
 		return getToken() != null ? aonData.getUser().getLogin() : getCurrentUserJs();
-	};
+	}
 	
 	public static native String getCurrentUserJs()
 	/*-{

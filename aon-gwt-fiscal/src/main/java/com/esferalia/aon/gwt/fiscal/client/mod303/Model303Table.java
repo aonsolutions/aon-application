@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mod303>{
+class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mod303>{
 	
 	private static final Logger LOGGER = Logger.getLogger(Model303Table.class.getName());
 	static {
@@ -44,7 +44,7 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 	private FlowPanel container;
 	private AonDisplayGrid tab;
 	
-	public Model303Table(Model303Callback cbk) {
+	protected Model303Table(Model303Callback cbk) {
 		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);
 		tableDockLayout.addNorth(getToolbarPanel(cbk), AonToolbar.HEIGTH);
 		centerLayoutPanel = new SimpleLayoutPanel();
@@ -66,11 +66,11 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 	public void refresh(Model303Callback cbk) {
 		container.clear();
 		container.add(getTable());
-		Model303.SERVICE.getMod303s(cbk.getOptions().getDomainName(), cbk.getOptions().getUser(), cbk.getOptions().getDomain(),
+		Model303.service.getMod303s(cbk.getOptions().getDomainName(), cbk.getOptions().getUser(), cbk.getOptions().getDomain(),
 				new AsyncCallback<LinkedList<Mod303>>() {
 					@Override
 					public void onSuccess(LinkedList<Mod303> result) {
-						paint(cbk,result);
+						paint(result);
 					}
 
 					@Override
@@ -100,7 +100,7 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 	// **************************************************************************
 	// **************************************************************************
 	// **************************************************************************
-	private static enum COLS {
+	private enum COLS {
 		  CHK(AON.MSG.model()		, 50 ,AON.CSS.aonTextCenter())
 	    , STA("A"					, 20 ,AON.CSS.aonTextCenter())
 	    , YER(AON.MSG.fiscalYear()	, 50 ,AON.CSS.aonTextCenter())
@@ -150,7 +150,7 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 			Label label = new Label( col.getHeaderLabel());
 			AonDisplayGridCell headerCell = headerRow.addCell(col.getCellStyleClass());
 			if (col == COLS.AUTO ) {
-				headerCell.addStyleName(AON.CSS.aonFlexGrow1());;
+				headerCell.addStyleName(AON.CSS.aonFlexGrow1());
 			} else {
 				headerCell.setWidth(col.getColWidth()  + "px");
 			}
@@ -159,7 +159,7 @@ public class Model303Table extends SimpleLayoutPanel implements HasSelectionHand
 		return tab;
 	}
 
-	private void paint(Model303Callback cbk, LinkedList<Mod303> result) {
+	private void paint(LinkedList<Mod303> result) {
 		for ( Mod303 mod303 : result) {
 			
 			InlineLabel admon = new InlineLabel();

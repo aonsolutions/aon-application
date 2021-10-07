@@ -17,4 +17,9 @@ public class AonEnumUtils {
 		return (value == 1);
 	}
 	
+	public static boolean getBoolean(Boolean value) {
+		if (value == null)
+			return false;
+		return (value.booleanValue());
+	}
 }

@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.google.gwt.core.client.GWT;
@@ -46,8 +47,15 @@ public class Model303 extends MainEntryPoint {
 	private static final int INFORMATION_TAB = 1;
 	private static final int AEAT_TAB = 2;
 
-	protected static Mod303ServiceAsync SERVICE;
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
+	protected static Mod303ServiceAsync service;
+	protected static FiscalMSServiceAsync fiscalMsService;
+	static {
+		Mod303ServiceAsync mod303ServiceRaw = GWT.create(Mod303Service.class);
+		service = new Mod303ServiceAsyncDecorator(mod303ServiceRaw);
+		
+		FiscalMSServiceAsync fiscalServideRaw =  GWT.create(FiscalMSService.class);
+		fiscalMsService = new FiscalMSServiceAsyncDecorator(fiscalServideRaw);	
+	}
 	
 	private SplitLayoutPanel splitLayoutPanel;
 	private SimpleLayoutPanel declarationContainer;
@@ -67,7 +75,7 @@ public class Model303 extends MainEntryPoint {
 		public void onAccept(Mod303 mod303);
 		public void onCancel();
 		public void onNew();
-		public void onReset(Mod303 mod303);
+		public void onReset(Mod303 oldMod303);
 		public void showBreakdownPanel(String htmlText);
 		public void showVisorAEAT();
 		public void cleanBreakdownPanel();
@@ -81,30 +89,87 @@ public class Model303 extends MainEntryPoint {
 		public void onAccept(Mod303 mod303) {
 			// REDEFINE
 		}
+		
 		@Override
 		public void onCancel() {
-			cancel();
+			cleanErrorPanel();
+			cleanBreakdownPanel();
+			declarationContainer.setWidget(model303Table);
+			model303Table.refresh( new Model303Callback() );
+			tabLayout.selectTab(INFORMATION_TAB);
+			closeFootPanel();
 		}
+		
 		@Override
 		public void onNew() {
-			Model303.this.onNew();
+			cleanErrorPanel();
+			service.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),null,
+					new AsyncCallback<Mod303>() {
+						@Override
+						public void onSuccess(Mod303 m303) {
+							cleanBreakdownPanel();
+							tabLayout.selectTab(INFORMATION_TAB);
+							closeFootPanel();
+							showNewDeclarationPopup(m303);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						}
+					});
 		}
+		
 		@Override
-		public void onReset(Mod303 mod303) {
-			Model303.this.onReset(mod303);
+		public void onReset(Mod303 oldMod303) {
+			cleanErrorPanel();
+			service.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),null,
+					new AsyncCallback<Mod303>() {
+						@Override
+						public void onSuccess(Mod303 newMod303) {
+							cleanBreakdownPanel();
+							tabLayout.selectTab(INFORMATION_TAB);
+							closeFootPanel();
+							// Asignamos determinadas propiedades del modelo 
+							// que queremos reinicializar
+							newMod303.setAdministration(oldMod303.getAdministration());
+							newMod303.setYear(oldMod303.getYear());
+							newMod303.setPeriod(oldMod303.getPeriod());
+							newMod303.setComplementary(oldMod303.isComplementary());
+							newMod303.setReplacement(oldMod303.isReplacement());
+							newMod303.setReplacedNumber(oldMod303.getReplacedNumber());
+							showResetDeclarationPopup(newMod303,oldMod303);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						}
+					});
 		}
+		
 		@Override
 		public void showVisorAEAT() {
-			Model303.this.showVisorAEAT();
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(AEAT_TAB);		
 		}
 		@Override
 		public void showBreakdownPanel(String htmlText) {
-			Model303.this.showBreakdownPanel(htmlText);
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			HTMLPanel panel = new HTMLPanel(htmlText);
+			breakdownPanel.setWidget(panel);
+			breakdownPanel.scrollToTop();
 		}
+		
 		@Override
 		public void cleanBreakdownPanel() {
-			Model303.this.cleanBreakdownPanel();
+			Widget w = breakdownPanel.getWidget();
+			if (w != null) {
+				breakdownPanel.remove( breakdownPanel.getWidget() ); 
+			}
 		}
+		
 		@Override
 		public void cleanErrorPanel() {
 			Model303.this.cleanErrorPanel();
@@ -124,6 +189,7 @@ public class Model303 extends MainEntryPoint {
 		public String getDomainName() {
 			return getCurrentDomainName();
 		}
+		
 		@Override
 		public String getUser() {
 			return getCurrentUser();
@@ -133,11 +199,62 @@ public class Model303 extends MainEntryPoint {
 			return getCurrentDomain();
 		}
 
+		private void showResetDeclarationPopup(Mod303 newMod303, Mod303 oldMod303) {
+			Model303NewDeclarationPopup newDialog = new Model303NewDeclarationPopup( newMod303, true, new Model303Callback() {
+
+						@Override
+						public void onAccept(Mod303 mod303) {
+							final PopupPanel popup = new PopupPanel(false, true);
+							popup.add(new AonSplash());
+							popup.setGlassEnabled(true);
+							popup.setAnimationEnabled(true);
+							popup.center();
+							
+							// Primero borrar el modelo actual
+							service.delete(getCurrentDomainName(), getCurrentUser(), oldMod303,
+									new AsyncCallback<Void>() {
+								@Override
+								public void onSuccess(Void m303) {
+									service.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),mod303,
+											new AsyncCallback<Mod303>() {
+												@Override
+												public void onSuccess(Mod303 m303) {
+													popup.hide();
+													select(m303);
+												}
+
+												@Override
+												public void onFailure(Throwable caught) {
+													popup.hide();
+													showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+												}
+											});
+								}
+
+								@Override
+								public void onFailure(Throwable caught) {
+									popup.hide();									
+									showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+								}
+							});
+						}
+						
+						@Override
+						public void onCancel() {
+							// Nothing
+						}
+						
+					}
+				); 
+				newDialog.center();
+				newDialog.show();
+		}
+		
 	}
 	
 	@Override
 	public void onModuleLoad() {
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		fiscalMsService.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 			
 			@Override
 			public void onSuccess(AonData aonData) {
@@ -167,9 +284,6 @@ public class Model303 extends MainEntryPoint {
 		this.options = options;
 		AON.ensureInjected();
 
-		Mod303ServiceAsync mod303ServiceRaw = GWT.create(Mod303Service.class);
-		SERVICE = new Mod303ServiceAsyncDecorator(mod303ServiceRaw);
-
 		splitLayoutPanel = new SplitLayoutPanel();
 		declarationContainer = new SimpleLayoutPanel();
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
@@ -184,7 +298,7 @@ public class Model303 extends MainEntryPoint {
 		
 		Model303Callback callback = new Model303Callback();
 		model303Table = new Model303Table(callback);
-		model303Table.addSelectionHandler( event -> onSelectionChange(event));
+		model303Table.addSelectionHandler( this::onSelectionChange );
 		declarationContainer.setWidget(model303Table);
 		
 		getOptions().getParentWidget().add(splitLayoutPanel);
@@ -202,7 +316,7 @@ public class Model303 extends MainEntryPoint {
 	}
 
 	private void newModel(Mod303 newModel) {
-		SERVICE.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),newModel,
+		service.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),newModel,
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 m303) {
@@ -221,7 +335,7 @@ public class Model303 extends MainEntryPoint {
 
 	private void onSelect(Integer id ) {
 		LOGGER.info("OnSelect Model303 with a ID: " + getOptions().getFiscalModelId());
-		SERVICE.getMod303(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id , new AsyncCallback<Mod303>() {
+		service.getMod303(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id , new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 selected) {
 						if (selected == null) {
@@ -242,7 +356,7 @@ public class Model303 extends MainEntryPoint {
 
 	private void onSelectionChange(SelectionEvent<Mod303> event) {
 		Mod303 sel = event.getSelectedItem();
-		SERVICE.getMod303(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
+		service.getMod303(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
 				sel.getId(), new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 selected) {
@@ -259,98 +373,9 @@ public class Model303 extends MainEntryPoint {
 					}
 				});
 	}
-	
-	private void select(Mod303 selected) {
-		cleanErrorPanel();
-		if (selected.isAEAT()) {
-			if (selected.getYear() > 2021) {
-				declarationContainer.setWidget( new Model3032021_2AEAT(selected,new Model303Callback(), getOptions()));
-			} else if (selected.getYear() == 2021 && (selected.getPeriod().isLastSemester())) {
-				declarationContainer.setWidget( new Model3032021_2AEAT(selected,new Model303Callback(), getOptions()));
-			} else if (selected.getYear() == 2021 && (selected.getPeriod().isFirstSemester())) {	
-				declarationContainer.setWidget( new Model3032021AEAT(selected,new Model303Callback(), getOptions()));
-			} else if (selected.getYear() < 2018) {
-				declarationContainer.setWidget( new Model3032017AEAT(selected,new Model303Callback(), getOptions()));
-			} else if ((selected.getYear() >= 2018 && selected.getYear() < 2020) 
-				|| (selected.getYear() == 2020 && !selected.isLastPeriod()))  {
-				declarationContainer.setWidget( new Model3032018AEAT(selected,new Model303Callback(), getOptions()));
-			} else {
-				declarationContainer.setWidget( new Model3032020AEAT(selected,new Model303Callback(), getOptions()));
-			}
-			
-		} else if (selected.isBizkaia()) {
-			if (selected.getYear() < 2017) {
-				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback(), getOptions()));	
-			} else { 
-				declarationContainer.setWidget( new Model3032017BIZKAIA(selected,new Model303Callback(), getOptions()));
-			}
-		} else if (selected.isAraba()) {
-			if (selected.getYear() < 2019) {
-				declarationContainer.setWidget( new Model3032017ARABA(selected,new Model303Callback(), getOptions()));	
-			} else {
-				declarationContainer.setWidget( new Model3032019ARABA(selected,new Model303Callback(), getOptions()));
-			}
-		} else if (selected.isGipuzkoa()) {
-			if (selected.getYear() >2021 ) {
-				declarationContainer.setWidget( new Model3032021GIPUZKOA(selected,new Model303Callback(), getOptions()));	
-			} else if (selected.getYear() == 2021 && selected.getPeriod().isLastSemester()) {
-				declarationContainer.setWidget( new Model3032021GIPUZKOA(selected,new Model303Callback(), getOptions()));
-			} else {
-				declarationContainer.setWidget( new Model3032017GIPUZKOA(selected,new Model303Callback(), getOptions()));
-			}
-		} else {
-			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
-		}
-	}
 
-	private void onNew() {
-		cleanErrorPanel();
-		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),null,
-				new AsyncCallback<Mod303>() {
-					@Override
-					public void onSuccess(Mod303 m303) {
-						cleanBreakdownPanel();
-						tabLayout.selectTab(INFORMATION_TAB);
-						closeFootPanel();
-						showNewDeclarationPopup(m303);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-					}
-				});
-	}
-
-	private void onReset(Mod303 oldMod303) {
-		cleanErrorPanel();
-		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),null,
-				new AsyncCallback<Mod303>() {
-					@Override
-					public void onSuccess(Mod303 newMod303) {
-						cleanBreakdownPanel();
-						tabLayout.selectTab(INFORMATION_TAB);
-						closeFootPanel();
-						// Asignamos determinadas propiedades del modelo 
-						// que queremos reinicializar
-						newMod303.setAdministration(oldMod303.getAdministration());
-						newMod303.setYear(oldMod303.getYear());
-						newMod303.setPeriod(oldMod303.getPeriod());
-						newMod303.setComplementary(oldMod303.isComplementary());
-						newMod303.setReplacement(oldMod303.isReplacement());
-						newMod303.setReplacedNumber(oldMod303.getReplacedNumber());
-						showResetDeclarationPopup(newMod303,oldMod303);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-					}
-				});
-	}
-	
 	private void showNewDeclarationPopup(Mod303 m303) {
-		NewDeclarationPopup<Mod303> newDialog = new NewDeclarationPopup<>( m303,
+		Model303NewDeclarationPopup newDialog = new Model303NewDeclarationPopup( m303,
 			new Model303Callback() {
 
 					@Override
@@ -362,7 +387,7 @@ public class Model303 extends MainEntryPoint {
 						popup.center();
 
 						// Crear el modelo nuevo
-						SERVICE.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),mod303,
+						service.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),mod303,
 								new AsyncCallback<Mod303>() {
 									@Override
 									public void onSuccess(Mod303 m303) {
@@ -384,76 +409,13 @@ public class Model303 extends MainEntryPoint {
 			newDialog.show();
 	}
 	
-	private void showResetDeclarationPopup(Mod303 newMod303, Mod303 oldMod303) {
-		NewDeclarationPopup<Mod303> newDialog = new NewDeclarationPopup<Mod303>( newMod303, true,
-			new Model303Callback() {
-
-					@Override
-					public void onAccept(Mod303 mod303) {
-						final PopupPanel popup = new PopupPanel(false, true);
-						Label label = new Label(AON.MSG.processing());
-						label.addStyleName(AON.AON_CSS.aonTimer());
-						popup.add(label);
-						popup.setGlassEnabled(true);
-						popup.setAnimationEnabled(true);
-						popup.center();
-						
-						// Primero borrar el modelo actual
-						SERVICE.delete(getCurrentDomainName(), getCurrentUser(), oldMod303,
-								new AsyncCallback<Void>() {
-							@Override
-							public void onSuccess(Void m303) {
-								// Si todo ha ido bien, entonces crear el nuevo modelo
-								SERVICE.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),mod303,
-										new AsyncCallback<Mod303>() {
-											@Override
-											public void onSuccess(Mod303 m303) {
-												popup.hide();
-												select(m303);
-											}
-
-											@Override
-											public void onFailure(Throwable caught) {
-												popup.hide();
-												showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-											}
-										});
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								popup.hide();									
-								showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
-							}
-						});
-					}
-					
-					@Override
-					public void onCancel() {				
-					}
-					
-				}
-			); 
-			newDialog.center();
-			newDialog.show();
-	}
-
-	private void cancel() {
-		cleanErrorPanel();
-		cleanBreakdownPanel();
-		declarationContainer.setWidget(model303Table);
-		model303Table.refresh( new Model303Callback() );
-		tabLayout.selectTab(INFORMATION_TAB);
-		closeFootPanel();
-	}
-
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);
 	}
 
 	private void openFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
 		splitLayoutPanel.animate(500);
 	}
 	private void openFootPanelIfNeeded() {
@@ -468,11 +430,6 @@ public class Model303 extends MainEntryPoint {
 		closeFootPanel();
 	}
 
-	private void showVisorAEAT() {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(AEAT_TAB);		
-	}
-	
 	private void showErrorPanel(String msg) {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
@@ -487,27 +444,11 @@ public class Model303 extends MainEntryPoint {
 		resultsPanel.setWidget(panel);
 	}
 	
-	private void cleanBreakdownPanel() {
-		Widget w = breakdownPanel.getWidget();
-		if (w != null) {
-			breakdownPanel.remove( breakdownPanel.getWidget() ); 
-		}
-	}
-	
-	private void showBreakdownPanel(String htmlText) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(INFORMATION_TAB);
-		HTMLPanel panel = new HTMLPanel(htmlText);
-		breakdownPanel.setWidget(panel);
-		breakdownPanel.scrollToTop();
-	}
-
-	
 	private AonMinimizePanel getMinimizePanel() {
 		footPanel = new AonMinimizePanel();
 		footPanel.addMinimizeHandler( event -> closeFootPanel() );
 		footPanel.addMaximizeHandler( event -> {
-			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
 			splitLayoutPanel.animate(500);
 		});
 		footPanel.setStyleName(AON.CSS.aonSelector());
@@ -528,5 +469,139 @@ public class Model303 extends MainEntryPoint {
 		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
 		return footPanel; 
 	}
+
+	enum Mod303Declarations {
+		AEAT_2021_LAST_SEMESTER {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAEAT() && ((mod303.getYear() > 2021)
+					|| (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())));
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
+				return new Model30320212AEAT(mod303,cbk,options);
+			}
+		},
+		AEAT_2021_FIRST_SEMESTER {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAEAT() && mod303.getYear() == 2021 && mod303.getPeriod().isFirstSemester());
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
+				return new Model3032021AEAT(mod303,cbk,options);
+			}
+		},
+		AEAT_2020_LAST_PERIOD {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAEAT() && mod303.getYear() == 2020 && mod303.isLastPeriod());
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
+				return new Model3032020AEAT(mod303,cbk,options);
+			}
+		},
+		AEAT_2018_2020 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAEAT() && (
+					(mod303.getYear() >= 2018 && mod303.getYear() <= 2020) 
+				 || (mod303.getYear() == 2020 && !mod303.isLastPeriod())));
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
+				return new Model3032018AEAT(mod303,cbk,options);
+			}
+		},
+		AEAT_2017 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAEAT() && mod303.getYear() < 2017);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
+				return new Model3032017AEAT(mod303,cbk,options);
+			}
+		},
+		ARABA_2017 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAraba() && mod303.getYear() < 2019);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
+				return new Model3032017ARABA(mod303,cbk,options);
+			}
+		},
+		ARABA_2019 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAraba() && mod303.getYear() >= 2019);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
+				return new Model3032019ARABA(mod303,cbk,options);
+			}
+		},
+		BIZKAIA {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isBizkaia());
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
+				return new Model3032017BIZKAIA(mod303,cbk,options);
+			}
+		},
+		GIPUZKOA_2017 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isGipuzkoa() && mod303.getYear() < 2021);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
+				return new Model3032017GIPUZKOA(mod303,cbk,options);
+			}
+		},
+		GIPUZKOA_2021_LAST_SEMESTER {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isGipuzkoa() && ((mod303.getYear() > 2021)
+					|| (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())));
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
+				return new Model3032021GIPUZKOA(mod303,cbk,options);
+			}
+		},
+		;
+		public abstract boolean accept(Mod303 mod303);
+		public abstract Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options);
+	}
 	
+	private void select(Mod303 selected) {
+		cleanErrorPanel();
+		Widget declaration = null;
+		for (Mod303Declarations dec : Mod303Declarations.values()) {
+			if (dec.accept(selected)) {
+				declaration = dec.getDeclarationWidget(selected, new Model303Callback(), getOptions());
+			}
+		}
+		if (declaration != null) {
+			declarationContainer.setWidget( declaration );		
+		} else {
+			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
+		}
+	}
 }

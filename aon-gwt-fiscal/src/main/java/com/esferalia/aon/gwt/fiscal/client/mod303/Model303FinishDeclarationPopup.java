@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 
-public class FinishDeclarationPopup extends AonCustomDialog {
+class Model303FinishDeclarationPopup extends AonCustomDialog {
 	
 	private static FiscalMSServiceAsync service;
 	static {
@@ -51,7 +51,7 @@ public class FinishDeclarationPopup extends AonCustomDialog {
 	protected final FlexTable tab = new FlexTable();
 	protected int row = 0;
 	
-	public FinishDeclarationPopup(final Mod303 mod303 ,final Model303ModuleOptions options, final IModel303Callback callback,FinishDeclarationPopupCallback popupCallback) {
+	protected Model303FinishDeclarationPopup(final Mod303 mod303 ,final Model303ModuleOptions options, final IModel303Callback callback,FinishDeclarationPopupCallback popupCallback) {
 		setCaption(AON.MSG.finish());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);

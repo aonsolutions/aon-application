@@ -53,7 +53,7 @@ public class Model3032021AEAT extends Model303Base {
 	private static final int RESULT_TAB = 4;
 	private static final int LAST_PERIOD_INFORMATION_TAB = 6;
 
-	public Model3032021AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
+	protected Model3032021AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
 		super(mod303,callback, options);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -636,6 +636,7 @@ public class Model3032021AEAT extends Model303Base {
 		activityTable.paint(getCallback().getMod303().getActivityList());
 	}
 	
+	@Override
 	protected void save(Model303ModuleOptions options) {
 		save(new AsyncCallback<Mod303>() {
 			@Override 

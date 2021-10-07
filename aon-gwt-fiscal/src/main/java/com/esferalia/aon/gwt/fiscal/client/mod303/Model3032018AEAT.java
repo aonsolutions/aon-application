@@ -40,7 +40,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model3032018AEAT extends Model303Base {
+class Model3032018AEAT extends Model303Base {
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
 	
 	private final Model303AEATActivityFarmerTable farmerTable;
@@ -52,7 +52,7 @@ public class Model3032018AEAT extends Model303Base {
 	private static final int RESULT_TAB = 4;
 	private static final int LAST_PERIOD_INFORMATION_TAB = 6;
 
-	public Model3032018AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
+	protected Model3032018AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
 		super(mod303,callback, options);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -638,6 +638,7 @@ public class Model3032018AEAT extends Model303Base {
 		activityTable.paint(getCallback().getMod303().getActivityList());
 	}
 	
+	@Override
 	protected void save(Model303ModuleOptions options) {
 		save(new AsyncCallback<Mod303>() {
 			@Override 

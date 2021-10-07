@@ -23,9 +23,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model3032021GIPUZKOA extends Model303Base {
+class Model3032021GIPUZKOA extends Model303Base {
 	
-	public Model3032021GIPUZKOA(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
+	protected Model3032021GIPUZKOA(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
 		super(mod303,callback, options);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -208,10 +208,10 @@ public class Model3032021GIPUZKOA extends Model303Base {
 
 	@Override
 	protected LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
-		list.add(new Pair<String, String>("Informaci\u00F3n general."
+		LinkedList<Pair<String, String>> list = new LinkedList<>();
+		list.add(new Pair<>("Informaci\u00F3n general."
 				,"https://egoitza.gipuzkoa.eus/es/listado-tramites/-/tramiteak/xehetasuna/740"));
-		list.add(new Pair<String, String>("Formulario PDF." 
+		list.add(new Pair<>("Formulario PDF." 
 				,"http://www2.gipuzkoa.eus/wps/wcm/connect/990ddb4f-eb8d-471c-a61e-df793f4d44b9/Impreso_300_Inprimakia_v2_2011_01_19.pdf?MOD=AJPERES&CACHEID=990ddb4f-eb8d-471c-a61e-df793f4d44b9&useDefaultText=0&useDefaultDesc=0"));
 		return list;
 	}

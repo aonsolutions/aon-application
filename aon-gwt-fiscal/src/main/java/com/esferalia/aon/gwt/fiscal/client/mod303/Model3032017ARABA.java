@@ -24,9 +24,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model3032017ARABA extends Model303Base {
+class Model3032017ARABA extends Model303Base {
 	
-	public Model3032017ARABA(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
+	protected Model3032017ARABA(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
 		super(mod303,callback, options);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);

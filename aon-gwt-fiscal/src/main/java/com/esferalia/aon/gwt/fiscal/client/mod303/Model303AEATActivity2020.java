@@ -36,7 +36,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model303AEATActivity2020 extends DockLayoutPanel implements HasValueChangeHandlers<Mod303Activity> {
+class Model303AEATActivity2020 extends DockLayoutPanel implements HasValueChangeHandlers<Mod303Activity> {
 
 	interface TabLabelTemplate extends SafeHtmlTemplates {
 		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
@@ -124,7 +124,7 @@ public class Model303AEATActivity2020 extends DockLayoutPanel implements HasValu
 		void onRemove();
 	}
 	
-	public Model303AEATActivity2020(final IMod303ActivityCallback callback, boolean lastPeriod) {
+	protected Model303AEATActivity2020(final IMod303ActivityCallback callback, boolean lastPeriod) {
 		super(Unit.PX);
 		this.lastPeriod = lastPeriod;
 		setStyleName(AON.CSS.aonSelector());

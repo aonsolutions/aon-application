@@ -40,7 +40,9 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model3032020AEAT extends Model303Base {
+class Model3032020AEAT extends Model303Base {
+	private static final String _150PX = "150px";
+
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
 	
 	private final Model303AEATActivityFarmerTable farmerTable;
@@ -52,7 +54,7 @@ public class Model3032020AEAT extends Model303Base {
 	private static final int RESULT_TAB = 4;
 	private static final int LAST_PERIOD_INFORMATION_TAB = 6;
 
-	public Model3032020AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
+	protected Model3032020AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
 		super(mod303,callback, options);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -313,7 +315,7 @@ public class Model3032020AEAT extends Model303Base {
 		paintCheck(Mod303Key.CM_002,table);	// ¿Está inscrito en el Registro de devolució3n mensual (Art. 30 RIVA)?
 		
 		final ListBox a12 = new ListBox();
-		a12.setWidth("150px");
+		a12.setWidth(_150PX);
 		a12.addItem("(0) Para el mes de enero (01)", "0");
 		a12.addItem("(1) SI", "1");
 		a12.addItem("(2) NO", "2");
@@ -415,14 +417,14 @@ public class Model3032020AEAT extends Model303Base {
 		paintCheck(Mod303Key.CT_A10,table);	// Revocación de la opción por la aplicación de la prorrata especial
 		
 		final ListBox a13 = new ListBox();
-		a13.setWidth("150px");
+		a13.setWidth(_150PX);
 		a13.addItem("(0) Para el mes de enero (01)", "0");
 		a13.addItem("(1) SI", "1");
 		a13.addItem("(2) NO", "2");
 		paintListBox(a13, Mod303Key.CT_A13, table);
 		
 		final ListBox a14 = new ListBox();
-		a14.setWidth("150px");
+		a14.setWidth(_150PX);
 		a14.addItem("(0) Para todos los periodos distintos del \u00FAltimo (12 y 4T)", "0");   
 		a14.addItem("(1) SI", "1");
 		a14.addItem("(2) NO", "2");
@@ -637,6 +639,7 @@ public class Model3032020AEAT extends Model303Base {
 		activityTable.paint(getCallback().getMod303().getActivityList());
 	}
 	
+	@Override
 	protected void save(Model303ModuleOptions options) {
 		save(new AsyncCallback<Mod303>() {
 			@Override 
@@ -728,10 +731,10 @@ public class Model3032020AEAT extends Model303Base {
 		
 		tab2.getColumnFormatter().setWidth(0, "80px");
 		tab2.getColumnFormatter().setWidth(1, "20px");
-		tab2.getColumnFormatter().setWidth(2, "150px");
-		tab2.getColumnFormatter().setWidth(3, "150px");
+		tab2.getColumnFormatter().setWidth(2, _150PX);
+		tab2.getColumnFormatter().setWidth(3, _150PX);
 		tab2.getColumnFormatter().setWidth(4, "80px");
-		tab2.getColumnFormatter().setWidth(5, "150px");
+		tab2.getColumnFormatter().setWidth(5, _150PX);
 		tab2.getColumnFormatter().setWidth(6, "auto");
 		
 		tab2.setWidget(1, 0, new Label( "C.N.A.E.") ); 

@@ -12,9 +12,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class Model303AEATActivityFarmer2018 extends AonCustomDialog implements HasSelectionHandlers<FarmerIVA>{
+class Model303AEATActivityFarmer2018 extends AonCustomDialog implements HasSelectionHandlers<FarmerIVA>{
 
-	public Model303AEATActivityFarmer2018() {
+	protected Model303AEATActivityFarmer2018() {
 		setVisible(false);
 		setAnimationEnabled(true);
 		setGlassEnabled(true);

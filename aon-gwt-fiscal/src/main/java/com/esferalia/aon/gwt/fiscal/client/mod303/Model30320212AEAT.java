@@ -43,7 +43,7 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model3032021_2AEAT extends Model303Base {
+class Model30320212AEAT extends Model303Base {
 	private static final String VALIDATE_PRINT_ACTION = "/aon_gwt_fiscal/ms/Model303PrintAEAT";
 	
 	private final Model303AEATActivityFarmerTable farmerTable;
@@ -56,7 +56,7 @@ public class Model3032021_2AEAT extends Model303Base {
 	private static final int RESULT_TAB = 4;
 	private static final int LAST_PERIOD_INFORMATION_TAB = 6;
 
-	public Model3032021_2AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
+	protected Model30320212AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
 		super(mod303,callback, options);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -558,7 +558,7 @@ public class Model3032021_2AEAT extends Model303Base {
 				}
 			};
 			Model303AEATActivityFarmer actPanel = new Model303AEATActivityFarmer(activityCallback, getCallback().getMod303().isLastPeriod());
-			actPanel.addValueChangeHandler( event1 -> {
+			actPanel.addValueChangeHandler( event1 -> 
 				calculateAndRefresh( new AsyncCallback<Mod303>() {
 
 					@Override public void onFailure(Throwable caught) {
@@ -569,8 +569,8 @@ public class Model3032021_2AEAT extends Model303Base {
 					public void onSuccess(Mod303 result) {
 						actPanel.populateActivity(result.getActivityFarmerList().get(currentIndex));
 					}
-				});
-			});
+				})
+			);
 			dialog.setCaption(AON.MSG.farmerActivity());
 			dialog.setGlassEnabled(true);
 			dialog.setAnimationEnabled(true);
@@ -632,7 +632,7 @@ public class Model3032021_2AEAT extends Model303Base {
 				}
 			};
 			Model303AEATActivity2020 actPanel = new Model303AEATActivity2020(activityCallback, getCallback().getMod303().isLastPeriod());
-			actPanel.addValueChangeHandler( event1 ->  {
+			actPanel.addValueChangeHandler( event1 ->  
 				calculateAndRefresh( new AsyncCallback<Mod303>() {
 
 					@Override public void onFailure(Throwable caught) {
@@ -643,8 +643,8 @@ public class Model3032021_2AEAT extends Model303Base {
 					public void onSuccess(Mod303 result) {
 						actPanel.populateActivity(result.getActivityList().get(currentIndex));
 					}
-				});
-			});
+				})
+			);
 			dialog.setCaption(AON.MSG.simplifieedActivities());
 			dialog.setGlassEnabled(true);
 			dialog.setAnimationEnabled(true);
@@ -685,6 +685,7 @@ public class Model3032021_2AEAT extends Model303Base {
 		activityTable.paint(getCallback().getMod303().getActivityList());
 	}
 	
+	@Override
 	protected void save(Model303ModuleOptions options) {
 		save(new AsyncCallback<Mod303>() {
 			@Override public void onFailure(Throwable caught) { 

@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasValueChangeHandlers<Mod303ActivityFarmer> {
+class Model303AEATActivityFarmer extends DockLayoutPanel implements HasValueChangeHandlers<Mod303ActivityFarmer> {
 	
 	private final Label epigraph = new Label();
 	private final Label epigraphLabel = new Label();
@@ -45,7 +45,7 @@ public class Model303AEATActivityFarmer extends DockLayoutPanel implements HasVa
 		void onRemove();
 	}
 	
-	public Model303AEATActivityFarmer(final IMod303ActivityFarmerCallback cbk, boolean lastPeriod) {
+	protected Model303AEATActivityFarmer(final IMod303ActivityFarmerCallback cbk, boolean lastPeriod) {
 		super(Unit.PX);
 		this.lastPeriod = lastPeriod;
 		setStyleName(AON.CSS.aonSelector());
