@@ -73,7 +73,8 @@ public class Model184 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew(Model184ModuleOptions options);
-		void onDuplicate(Model184ModuleOptions options, int id);
+		void onReset(Model184ModuleOptions options, Mod184 mod184);
+		void onDuplicate(Model184ModuleOptions options, int id);		
 	}
 	
 	protected class Model184Callback implements IModel184Callback {
@@ -93,6 +94,10 @@ public class Model184 extends MainEntryPoint {
 		@Override
 		public void onNew(Model184ModuleOptions options) {
 			newModel(options);
+		}
+		@Override
+		public void onReset(Model184ModuleOptions options, Mod184 mod184) {
+			resetModel(options, mod184);
 		}
 		@Override
 		public void onDuplicate(Model184ModuleOptions options, int id) {
@@ -267,6 +272,31 @@ public class Model184 extends MainEntryPoint {
 				});
 	}
 	
+	private void resetModel(Model184ModuleOptions options, Mod184 oldMod184) {
+		cleanErrorPanel();
+		SERVICE.initializeMod184(options.getDomainName(),options.getUser(),options.getDomain(), oldMod184.getYear(),
+				new AsyncCallback<Mod184>() {
+					@Override
+					public void onSuccess(Mod184 newMod184) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+						
+						newMod184.setAdministration(oldMod184.getAdministration());
+						newMod184.setYear(oldMod184.getYear());
+						newMod184.setComplementary(oldMod184.isComplementary());
+						newMod184.setReplacement(oldMod184.isReplacement());
+						newMod184.setReplacedReceipt(oldMod184.getReplacedReceipt());
+						showResetDeclarationPopup(options, newMod184, oldMod184);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
+	}
+	
 	private void duplicateModel(Model184ModuleOptions options, int id) {
 		cleanErrorPanel();
 		SERVICE.getMod184(options.getDomainName(),options.getUser(),options.getDomain(), id,
@@ -398,8 +428,60 @@ public class Model184 extends MainEntryPoint {
 			newDialog.show();
 	}
 	
+	private void showResetDeclarationPopup(Model184ModuleOptions options, Mod184 newMod184, Mod184 oldMod184) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup( newMod184, false, true, 
+			new Model184Callback() {
+
+					@Override
+					public void onAccept(Mod184 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+						
+						SERVICE.deleteMod184(options.getDomainName(),options.getUser(),options.getDomain(), oldMod184, 
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										SERVICE.saveMod184(options.getDomainName(),options.getUser(),options.getDomain(),model,
+												new AsyncCallback<Mod184>() {
+													@Override
+													public void onSuccess(Mod184 model) {
+														popup.hide();
+														select(options, model, null, null, null);
+													}
+
+													@Override
+													public void onFailure(Throwable caught) {
+														popup.hide();
+														showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+													}
+												});
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+									}
+								});
+
+					}
+					
+					@Override
+					public void onCancel() {};
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 	private void showDuplicateDeclarationPopup(Model184ModuleOptions options, Mod184 model) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, 
+		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, false, 
 			new Model184Callback() {
 
 					@Override
