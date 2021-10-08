@@ -132,6 +132,41 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				});
 	}
 
+	@Test
+	public void testSimpleStartAt() throws ExpressionException, SQLException {
+
+		Consumer<IrpfResult> asserts = result -> assertAnnualRemuneration(
+				CommonUtil.round((1500.00 + 250.00) * 1.10
+						* (12 /*-result.getEffectiveDate().getMonth()*/ ), 3),
+				result.getAnnualRemuneration());
+		asserts = asserts.andThen(result -> assertEquals(
+				CommonUtil.round(result.getAnnualRemuneration() * 0.15, 3),
+				result.getDeducciblesExpenses()));
+
+		
+		Date contractStart = getFirstDayOfMonth(getToday());
+		contractStart = add(contractStart, DAY_OF_MONTH, 14);
+		
+		test(
+			asserts, 
+			contractStart,
+			null,
+			new String[] { 
+			"( P_1 + P_2 ) * 0.10 ",
+			"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+			"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+			}, 
+			new String[] {
+			"BASE_CGC * 0.10", 
+			"BASE_CGP * 0.05", 
+			"BASE_ESTR * 0.10",
+			"BASE_NESTR * 0.20", 
+			"BASE_IRPF * PORCENTAJE_IRPF" 
+			},
+			new Extra [] {}) ;
+			
+
+	}
 
 	@Test
 	public void testShortWithExtras() throws ExpressionException, SQLException, SalaryException {

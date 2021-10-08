@@ -65,10 +65,10 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
@@ -358,6 +358,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				
 				return AonDateUtils.getDay(getStartDate()) == 1 ;
 			}
+		}
+		
+		public boolean isUndefined() {
+			Date contractEndDate = ctx.getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE)  ;
+			return contractEndDate == null ||
+					contractEndDate.after(ctx.getEndDate());
 		}
 		
 		// --------------------------------------------------------------------
@@ -1196,18 +1202,19 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 						* salary.getIrpfBase());
 			}
 
+			double irpfBase = ( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00);
+			double proration = ( salary.getExtraPayProration() != null ? salary.getExtraPayProration() : 0.00 ) ;
+			if ( proration > 0.00 ) {
+				double extrasPayment = 
+				salary.getSalaryPayments().stream()
+				.filter(p -> p.getAmount() > 0.00 && p.getType() == PaymentType.CRA_0004  )				
+				.collect(Collectors.summingDouble(p -> p.getAmount()));		
+				irpfBase -= extrasPayment;
+			}
+
 			if ( irpfCtx.isFullStandard() ) {
 				
 				
-				double irpfBase = ( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00);
-				double proration = ( salary.getExtraPayProration() != null ? salary.getExtraPayProration() : 0.00 ) ;
-				if ( proration > 0.00 ) {
-					double extrasPayment = 
-					salary.getSalaryPayments().stream()
-					.filter(p -> p.getAmount() > 0.00 && p.getType() == PaymentType.CRA_0004  )				
-					.collect(Collectors.summingDouble(p -> p.getAmount()));		
-					irpfBase -= extrasPayment;
-				}
 				
 				nextIrpfBase = (
 						( irpfBase )
@@ -1218,7 +1225,27 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				
 				
 				break;
+			} else if ( irpfCtx.isUndefined() ) {
+				
+				double salaryDays = getAllSalaryData(salary,ContextVariable.QUOTE_DAYS);
+				double monthDays = getOneSalaryData(salary,ContextVariable.MONTH_DAYS, 30.00);
+				
+				irpfBase = irpfBase / salaryDays * monthDays; 
+				proration = proration / salaryDays * monthDays; 
+				
+				nextIrpfBase = (
+						( irpfBase )
+						+ ( proration ) 
+						) * size;
+				
+				double socialSecurityContributions = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 );
+				
+				nextSocialSecurityContributons = socialSecurityContributions / salaryDays * monthDays  * size;
+				
+				break;
+
 			}
+			
 //			
 			nextIrpfBase += ( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00);
 			nextSocialSecurityContributons += ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 );
@@ -1338,6 +1365,19 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private static <T> T rethrow(SQLException e) {
 
 		throw new RuntimeException(e.getMessage());
+	}
+
+	private static Double getAllSalaryData(Salary salary, ContextVariable ctxVariable) {
+		return salary.getSalaryDatas().stream()
+		.filter( d -> AonStringUtils.equals(ctxVariable.getName(), d.getName()) )
+		.collect(Collectors.summingDouble( d -> Double.parseDouble(d.getExpression()) ));
+	}
+
+	private static Double getOneSalaryData(Salary salary, ContextVariable ctxVariable, Double def) {
+		return salary.getSalaryDatas().stream()
+		.filter( d -> AonStringUtils.equals(ctxVariable.getName(), d.getName()) )
+		.map( d -> Double.parseDouble(d.getExpression() ))
+		.findAny().orElse(def);
 	}
 
 }
