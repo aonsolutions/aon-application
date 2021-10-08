@@ -54,6 +54,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class CheckItModule extends MainEntryPoint {
 	private static final Logger LOGGER = Logger.getLogger(CheckItModule.class.getName());
@@ -378,6 +379,7 @@ public class CheckItModule extends MainEntryPoint {
 			balanceBox.setStyleName(AON.CSS.aonMarginLeft());
 			balanceBox.addStyleName(AON.CSS.aonFontMedium());
 			balanceBox.addStyleName(AON.CSS.aonTextRight());
+			balanceBox.addStyleName(AON.CSS.aonBold());
 			if (AonMathUtils.isLessThanZero( balanceTotal )) {
 				balanceBox.addStyleName(AON.CSS.aonColorRed());	
 			}
@@ -391,6 +393,7 @@ public class CheckItModule extends MainEntryPoint {
 			remainderBox.setStyleName(AON.CSS.aonMarginLeft());
 			remainderBox.addStyleName(AON.CSS.aonFontMedium());
 			remainderBox.addStyleName(AON.CSS.aonTextRight());
+			remainderBox.addStyleName(AON.CSS.aonBold());
 			if (AonMathUtils.isLessThanZero( remainderTotal )) {
 				remainderBox.addStyleName(AON.CSS.aonColorRed());
 			}
@@ -434,8 +437,15 @@ public class CheckItModule extends MainEntryPoint {
 	}
 	
 	private class AonCheckItBankCard extends AonCard {
+		
+		boolean updateError;
 
 		private AonCheckItBankCard(final CheckItModuleOptions opt, CheckItBankAccount checkItBankAccount) {
+			
+			updateError = false;
+			boolean areLogs = (checkItBankAccount.getLogs() != null && !checkItBankAccount.getLogs().isEmpty());
+//			Label updateErrorLabel = new Label("Error de actualizaci\u00F3n");
+//			updateErrorLabel.addStyleName(AON.CSS.aonColorRed());
 			
 			InlineLabel title = new InlineLabel();
 			title.addStyleName(AON.CSS.aonBorderNone());
@@ -463,6 +473,11 @@ public class CheckItModule extends MainEntryPoint {
 			atDateBox.addStyleName(AON.CSS.aonFontMedium());
 			atDateBox.setText( checkItBankAccount.getAtDate() == null ? "----" : AON.TIME_FORMAT.format( checkItBankAccount.getAtDate()));
 			atDatePanel.addStyleName(AON.CSS.aonMarginBottom());
+			
+			if (checkItBankAccount.getAtDate() != null && CalendarUtil.getDaysBetween(checkItBankAccount.getAtDate(), new Date()) >= 3) {
+				atDatePanel.addStyleName(AON.CSS.aonColorRed());
+				updateError = true;
+			}
 			atDatePanel.add(atDateBox);
 			
 			FlowPanel balanceLabelPanel = new FlowPanel();
@@ -549,8 +564,16 @@ public class CheckItModule extends MainEntryPoint {
 									openFootPanel();
 									
 									if (result != null && result != 0) {
-										body.remove(bottomTable);
-										body.add(new Label("No hay movimientos pendientes"));
+//										getBottomCardMessage(new Label("No hay movimientos pendientes"), Optional.empty(), updateError);
+//										if (!updateError) {
+										getBottomCardMessage(bottomTable
+												, new Label("No hay movimientos pendientes")
+												, updateError
+												, areLogs);
+//										body.remove(bottomTable);											
+//										body.add(new Label("No hay movimientos pendientes"));
+										
+//										}
 										checkItBankAccount.setPending(Collections.emptyList());
 									}
 									dialog.hide();
@@ -588,12 +611,11 @@ public class CheckItModule extends MainEntryPoint {
 					noMovLbl.setWidth("100%");
 					noMovLbl.setStyleName(AON.CSS.aonTextCenter());
 					movementsFlow.add(noMovLbl);
+						
 				}
 				ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
 				movementsPanel.addStyleName(AON.CSS.aonMarginTop());
-//				movementsPanel.setWidth("65vw");
 				movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
-//				movementsPanel.setHeight("40vh");
 				panel.add(movementsPanel);
 				panel.add(closeImport);
 				dialog.add(panel);
@@ -605,6 +627,7 @@ public class CheckItModule extends MainEntryPoint {
 			
 			bottomTable.addStyleName(AON.CSS.aonBlockCenter());
 			
+			Widget msgWidget = null;
 			if (pendingMovements > 0) {
 				
 				
@@ -622,23 +645,20 @@ public class CheckItModule extends MainEntryPoint {
 				
 				movText.addStyleName(AON.CSS.aonTextCenter());
 				movText.addStyleName(AON.CSS.aonColorGreen());
-				bottomTable.setWidget(0, 0, movText);
+				msgWidget = movText;
+//				bottomTable.setWidget(0, 0, movText);
 			} else {
 				Label noMovLbl = new Label("No hay movimientos pendientes");
-				bottomTable.setWidget(0, 0, noMovLbl);
+				msgWidget = noMovLbl;
+				
+//				bottomTable.setWidget(0, 0, noMovLbl);
 				
 			}
 			
-			if (checkItBankAccount.getLogs() != null && !checkItBankAccount.getLogs().isEmpty()) {
-				Label warn = new Label();
-				warn.setTitle("Existen errores con esta cuenta");
-				warn.addStyleName(AON.CSS.aonIconLabel());
-				warn.addStyleName(AON.CSS.aonIconWarning());
-				warn.addStyleName(AON.CSS.aonColorRed());
-				bottomTable.setWidget(0, 1, warn);
-			}
+			getBottomCardMessage(bottomTable, msgWidget, updateError, areLogs);
+			body.add(bottomTable);				
 			
-			body.add(bottomTable);
+			
 			this.setBody(body);
 			
 			AonTableButton saveButton = new AonTableButton(AON.MSG.importAction(), AON.CSS.aonIconImport());
@@ -661,8 +681,14 @@ public class CheckItModule extends MainEntryPoint {
 								openFootPanel();
 								
 								if (result != null && result != 0) {
-									body.remove(bottomTable);
-									body.add(new Label("No hay movimientos pendientes"));
+									getBottomCardMessage(bottomTable
+											, new Label("No hay movimientos pendientes")
+											, updateError
+											, areLogs);
+//									if (!updateError) {
+//										body.remove(bottomTable);
+//										body.add(new Label("No hay movimientos pendientes"));										
+//									}
 									checkItBankAccount.setPending(Collections.emptyList());
 								}
 								
@@ -1147,6 +1173,7 @@ public class CheckItModule extends MainEntryPoint {
 
 					@Override
 					public void onSuccess(Boolean result) {
+						dialog.hide();
 						if (result != null && result) {
 							Label sccsLabel = new Label("A\u00F1adida la cuenta " + checkItUnlinkedBankAccount.getIban());
 							sccsLabel.setStyleName(AON.CSS.aonColorGreen());
@@ -1180,7 +1207,6 @@ public class CheckItModule extends MainEntryPoint {
 							sessionLog.add(errorLabel);
 							openFootPanel();
 						}
-						
 					}
 				});
 				
@@ -1201,6 +1227,32 @@ public class CheckItModule extends MainEntryPoint {
 			dialog.show();
 		}
 		
+	}
+	
+	private FlexTable getBottomCardMessage(FlexTable bottomTable, Widget message, boolean updateError, boolean logs) {
+		bottomTable.clear();
+		if (updateError) {
+			FlexTable updateTable = new FlexTable();
+			Label updateErrorLabel = new Label("Error de actualizaci\u00F3n");
+			updateErrorLabel.addStyleName(AON.CSS.aonColorRed());
+			updateTable.setWidget(1, 1, updateErrorLabel);
+			Label errorIcon = new Label();
+			errorIcon.addStyleName(AON.CSS.aonIconLabel());
+			errorIcon.addStyleName(AON.CSS.aonIconInvalid());
+			updateTable.setWidget(1, 0, errorIcon);
+			bottomTable.setWidget(1, 0, updateTable);
+		}
+		if (logs) {
+			Label warn = new Label();
+			warn.setTitle("Existen errores con esta cuenta");
+			warn.addStyleName(AON.CSS.aonIconLabel());
+			warn.addStyleName(AON.CSS.aonIconWarning());
+			warn.addStyleName(AON.CSS.aonColorRed());
+			bottomTable.setWidget(0, 1, warn);
+		}
+		bottomTable.setWidget(0, 0, message);
+		bottomTable.addStyleName(AON.CSS.aonBlockCenter());
+		return bottomTable;
 	}
 	
 	
