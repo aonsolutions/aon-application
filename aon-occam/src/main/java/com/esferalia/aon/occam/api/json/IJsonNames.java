@@ -28,6 +28,8 @@ public interface IJsonNames {
 	String ADMINISTRATIVE = "administrative";
 	String ALIAS = "alias"; 
 	String AMOUNT = "amount";
+	String ATTACH_MODULE = "attachModule";
+	String ATTACH_TYPE = "attachType";
 	String AUTH = "auth";
 	// ---------------------------------------------------------------------------------------------	[B] 
 	String BACKGROUND = "background";
@@ -67,8 +69,11 @@ public interface IJsonNames {
 	String CONFIDENTIAL = "confidential";
 	String CONFIGURED_VISIBLE = "configuredVisible";
 	String CONSOLIDATION = "consolidation";
-	String CONTENT_DISPOSITION = "Content-disposition";
-	String CONTENT_TYPE = "content_type";
+	String CONTENT = "content";
+	String CONTENT_ENCODING = "contentEncoding";
+	String CONTENT_NAME = "contentName";
+	String CONTENT_SIZE = "contentSize";
+	String CONTENT_TYPE = "contentType";
 	String COST_CENTER = "costCenter";
 	String COST_CENTERS = "costCenters";
 	String COUNTRY = "country";
@@ -98,6 +103,7 @@ public interface IJsonNames {
 	String DOMAIN_NAME = "domainName";
 	String DOMAIN_TYPE = "domainType";
 	String DOMAINS = "domains";
+	String DRIVE_ID = "driveId";
 	String DUE_DATE = "due_date";
 	// ---------------------------------------------------------------------------------------------	[E] 
 	String E_INVOICE = "eInvoice";
@@ -258,6 +264,7 @@ public interface IJsonNames {
 	String REGISTRY_ID = "registryId";
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
+	String REMOVED = "removed";
 	String REPLACEMENT = "replacement";
 	String RESERVATION = "reservation";
 	String RESULT = "result";
@@ -283,6 +290,7 @@ public interface IJsonNames {
 	String SETTLED = "settled";
 	String SHARED = "shared";
 	String SHOW_COVER = "showCover";
+	String SIZE = "size";
 	String SOURCE = "source";
 	String SOURCE_ID = "source_id";
 	String START_DATE = "start_date";

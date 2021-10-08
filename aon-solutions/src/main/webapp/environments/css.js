@@ -16,7 +16,6 @@ export const AON_MENU = 'aonMenu';
 export const ROOT_PANEL = 'rootPanel';
 export const ROOT_MOBILE_PANEL = 'rootMobilePanel';
 export const AON_ICON_BUTTON = 'aonIconButton';
-export const AON_REGISTER_LOGO = 'aonRegisterLogo';
 export const AON_LOGO = 'aonLogo';
 export const AON_PARENT_LOGO = 'aonParentLogo';
 export const AON_WIDTH_ALL = 'aonWidthAll';

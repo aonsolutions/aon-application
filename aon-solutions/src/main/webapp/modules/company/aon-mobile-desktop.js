@@ -1,6 +1,6 @@
 import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo, getDomainUserRoles} from  '../../services/service.js';
 import { MSG, TAG } from '../../environments/environments.js';
-import {AonElement} from '../../components/components.js';
+import {AonElement} from '../../components/AonElement';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonSign } from '../signin/aon-sign.js';
 import { AonMessenger } from '../messenger/aon-messenger.js';

@@ -243,6 +243,11 @@ public class RegistryAddressDAO {
 	
 	public static RegistryAddress save(AONContext ctx, RegistryAddress registryAddress) {
 		ctx.checkWrite();
+		if(registryAddress.getId() != null && registryAddress.isRemoved()) { 
+			delete(ctx, registryAddress.getId());
+			return registryAddress;
+		}
+		if(!registryAddress.isDirty()) return registryAddress;
 		RegistryAddressAutoComplete.autoComplete(ctx, registryAddress);
 		RegistryAddressValidation.validate(ctx, registryAddress);
 		return (registryAddress.getId() == null)

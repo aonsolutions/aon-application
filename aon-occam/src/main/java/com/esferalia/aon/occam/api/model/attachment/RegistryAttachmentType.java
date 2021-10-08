@@ -38,6 +38,26 @@ public enum RegistryAttachmentType {
 		return this.toString();
 	}
 	
+
+	public static RegistryAttachmentType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static RegistryAttachmentType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= RegistryAttachmentType.values().length) return null;
+		return RegistryAttachmentType.values()[i];
+	}
+
+	public static RegistryAttachmentType safeValueOf( String str) {
+		for (RegistryAttachmentType rs : values()) {
+			if(rs.name().equalsIgnoreCase(str) || rs.getName().equalsIgnoreCase(str))
+				return rs;
+		}
+		return null;
+	}
+
+	
 	public static Byte[] drive(){
 		return new Byte[]{
 			ADDITIONAL_IMAGE.value(), BANNER.value(),

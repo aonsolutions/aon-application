@@ -1,77 +1,20 @@
-import {AonElement} from '../../components/AonElement.js';
 import {getDomainCompanies} from '../../services/service.js';
+import { TAG} from '../../environments/environments.js';
+import { AonRegistryList } from '../registry/aon-registry-list.js';
 
-import '../../components/aon-table.js';
+export class AonCompanyList extends AonRegistryList {
 
-import { AonCompany } from "../company/aon-company.js";
-
-import { CONSTANT, MSG, TAG} from '../../environments/environments.js';
-
-export class AonCompanyList extends AonElement {
-
-	AON_COMPANY_TABLE;
-	static get observedAttributes() {
-		return [CONSTANT.FILTER];
-	}
-
-	get filter() {
-    return this.getAttribute(CONSTANT.FILTER);
-  }
-
-  set filter(filter) {
-    this.setAttribute(CONSTANT.FILTER, filter);
-  }
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		this.initialize();
-		if(CONSTANT.FILTER === name) {
-			this.init();
+	build(){
+		this.filter = {
+			parent:true,
+			page: 1,
+			perPage: 50		
 		}
+		super.build();
 	}
 
-	connectedCallback () {
-		this.innerHTML = `
-			<aon-table id='${this.AON_COMPANY_TABLE}'></aon-table>
-			`;
-		this.build();
- 	}
-
-	initialize() {
-		this.AON_COMPANY_TABLE = 'aonCompanyTable';
-	}
-
-	build() {
-	 let aonTable = this.getElement(this.AON_COMPANY_TABLE);
-	 aonTable.addColumn(MSG.BUSINESS_NAME, 'string', 'name', '80%');
-	 aonTable.addColumn('CIF', 'string', 'document', '20%');
-
-	 // INFO
-	 // aonInvoiceTable.addColumn('', '', '');
-
-	 this.init();
- }
-
-	init() {
-		let aonTable = this.getElement(this.AON_COMPANY_TABLE);
-		if(aonTable) {
-			getDomainCompanies({parent:true}).then(companies => {
-				aonTable.removeRows();
-				companies.forEach((company, i) => {
-					aonTable.addRow(company, () => this.buildCompany(company));
-				});
-			});
-		}
-	}
-
-	buildCompany(company) {
-		let aonCompany = new AonCompany();
-		aonCompany.id = this.getApplication().id + 'Company';
-		aonCompany.company = company;
-		this.getApplication().setContent(aonCompany);
-	}
-
-	getFilter() {
-		return this.filter || {};
+	getRegistries() {
+		return getDomainCompanies(this.filter);
 	}
 }
 

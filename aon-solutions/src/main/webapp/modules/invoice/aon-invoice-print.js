@@ -139,6 +139,7 @@ export class AonInvoicePrint extends AonElement {
     let uploadFondo = new AonUpload();
     uploadFondo.id = this.id + 'Upload';
     uploadFondo.setMessage(MSG.ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND);
+    uploadFondo.setDeleteMessage(MSG.DELETE_BACKGROUND_CONFIRM);
     uploadFondo.setShowDeleteButton(this.printConfiguration.background);
     uploadFondo.addEventListener(EVENT.UPLOAD, (e) => {
       getReader(e.detail).then(f => {

@@ -77,6 +77,24 @@ public class RegistryServlet extends AonApiHttpServlet {
 		}
 	}
 	
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("EXAMPLE SERVLET - POST METHOD");
+		try {
+			AonApiData api = initialize(req, resp);
+			switch (api.getPath()) {
+			case "/":
+				response(req, resp, saveRegistry(api));
+				break;
+			default:
+				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+			}
+		} catch (Exception e) {
+			error(req, resp, e);
+		}
+	}
+	
+	
 	private JSONObject getRegistry(AonApiData api) {
 		Integer id = api.getData().opt(IJsonNames.REGISTRY) != null 
 				? api.getData().optInt(IJsonNames.REGISTRY)
@@ -85,6 +103,13 @@ public class RegistryServlet extends AonApiHttpServlet {
 		JSONObject json = RegistryJSON.toJSON(registry);
 		
 		return getRegistryAdditionalInfo(json, api, id, null);
+	}
+	
+	public static JSONObject saveRegistry(AonApiData api) {
+		Registry registry = RegistryJSON.fromJSON(api.getData());
+		//AON.saveRegistry();
+		saveRegistryAdditionalInfo(api, registry.getId(), registry.getDomain().getId());
+		return new JSONObject();
 	}
 	
 	public static JSONObject getRegistryAdditionalInfo(JSONObject json, AonApiData api, Integer registryId, LinkedList<RegistryAdditionalInfo> rais) {
@@ -120,15 +145,34 @@ public class RegistryServlet extends AonApiHttpServlet {
 				}
 			
 				if(rai.equals(RegistryAdditionalInfo.MEDIA)) {
-					JSONObject mJson = new JSONObject();
 					RegistryMediaFilter filter  = f -> f.getRegistryProperty().eq(registryId);
-					AON.getStream(api.getDomain(), api.getUser(), filter)
-						.forEach(media -> mJson.put(media.getMedia().name().toLowerCase(), RegistryMediaJSON.toJSON(media))); 
-					json.put(rai.name().toLowerCase(), mJson);
+					json.put(rai.name().toLowerCase(),
+						RegistryMediaJSON.toJSON(AON.getStream(api.getDomain(), api.getUser(), filter)));
 				}
 			});
 		}
 		return json;
+	}
+	
+	protected static void saveRegistryAdditionalInfo(AonApiData api, Integer registryId, Integer registryDomain) {
+		JSONObject json = api.getData();
+		if(json.opt(RegistryAdditionalInfo.ADDRESSES.name().toLowerCase()) != null) {
+			JSONArray arr = json.optJSONArray(RegistryAdditionalInfo.ADDRESSES.name().toLowerCase());
+			RegistryAddressJSON.fromJSON(arr).stream().forEach(address -> {
+				address.setDomain(registryDomain);
+				if(address.getRegistry() == null) address.setRegistry(registryId);
+				AON.save(api.getDomain(), api.getUser().getLogin(), address);
+			});
+		}
+		
+		if(json.opt(RegistryAdditionalInfo.MEDIA.name().toLowerCase()) != null) {
+			JSONArray arr = json.optJSONArray(RegistryAdditionalInfo.MEDIA.name().toLowerCase());
+			RegistryMediaJSON.fromJSON(arr).stream().forEach( media -> {
+				media.setDomain(registryDomain);
+				if(media.getRegistry() == null) media.setRegistry(registryId);
+				AON.save(api.getDomain(), api.getUser().getLogin(), media);
+			});
+		}
 	}
 	
 	private JSONObject getRegistryAddress(AonApiData api) {

@@ -250,6 +250,7 @@ export class AonViewer extends AonElement {
 				if(c) c.parentElement.removeChild(c);
 				const canvas = this.createElement(TAG.CANVAS);
 				canvas.id = 'canvas' + pageNumber;
+				canvas.style.border = '1px solid #ebebeb';
 				div.appendChild(canvas);
 
 				pdf.getPage(pageNumber).then((page) =>  {

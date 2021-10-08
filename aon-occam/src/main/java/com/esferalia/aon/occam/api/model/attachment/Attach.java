@@ -158,6 +158,10 @@ public class Attach implements Serializable {
 		return this;
 	}
 
+	public Boolean isConfidential() {
+		return confidential;
+	}
+	
 	public Boolean getConfidential() {
 		return confidential;
 	}

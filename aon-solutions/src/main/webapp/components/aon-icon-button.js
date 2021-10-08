@@ -235,6 +235,11 @@ export class AonIconButton extends AonElement {
     this.innerHTML = '';
   }
 
+  isVisible() {
+    return !this.hasAttribute(CONSTANT.VISIBLE) ||
+      (this.hasAttribute(CONSTANT.VISIBLE) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.VISIBLE));
+  }
+
   setDisabled(disabled) {
     this.disabled = disabled;
     this.getElement(this.BUTTON).disabled = disabled;

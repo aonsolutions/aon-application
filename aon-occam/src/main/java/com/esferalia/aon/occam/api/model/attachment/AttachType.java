@@ -33,6 +33,25 @@ public enum AttachType  implements Serializable {
 	public Byte value(){
 		return (byte) ordinal();
 	}
+	
+
+	public static AttachType safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	public static AttachType safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= AttachType.values().length) return null;
+		return AttachType.values()[i];
+	}
+
+	public static AttachType safeValueOf( String str) {
+		for (AttachType rs : values()) {
+			if(rs.name().equalsIgnoreCase(str) || rs.getName().equalsIgnoreCase(str))
+				return rs;
+		}
+		return REGISTRY;
+	}
 
 	public static AttachType getAttachType(String name){
 		if(name.equalsIgnoreCase(REGISTRY.getName()))

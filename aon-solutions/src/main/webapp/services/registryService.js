@@ -1,4 +1,4 @@
-import { get, post } from "./request.js";
+import { get, post, put } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 let customers;
@@ -13,6 +13,7 @@ export const clearCustomers = () => customers = undefined;
 export const clearDomain = () => domain = undefined;
 
 export const getRegistry = (data) => post(`${API_URL}/registry`, data);
+export const saveRegistry = (data) => put(`${API_URL}/registry`, data)
 
 export const getRegistries = (data) => get(`${API_URL}/suggestion/registry`, data);
 
