@@ -240,8 +240,8 @@ export const createStartJustifiedRow = (styles) => newComponent({
 export const createStartJustifiedColumn = () =>newComponent({
     classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
     styles: {
-        width : "100%", 
-        marginBottom: "5px"
+      width : "100%", 
+      marginBottom: "5px"
     }
 });
 

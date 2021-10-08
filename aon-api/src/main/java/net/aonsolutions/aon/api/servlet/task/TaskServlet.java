@@ -3,6 +3,7 @@ package net.aonsolutions.aon.api.servlet.task;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
@@ -35,6 +36,7 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
+
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -201,7 +203,11 @@ public class TaskServlet extends AonApiHttpServlet{
 	}
 	
 	private void saveAllTaskWorkflow(AonApiData api, Task task) {
-		task.getWorkflows().stream().forEach(workflow -> AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflow.setTask(task.getId())));
+		List<TaskWorkflow> workflows = task.getWorkflows();
+		for (TaskWorkflow workflow : workflows) {
+			 TaskWorkflow newWorkflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflow.setTask(task.getId()));
+			 UtilsTask.sendWorkflowCommunication(api, newWorkflow);
+		}	
 	}
 
 	private JSONObject saveTaskWorkflow(AonApiData api) {
@@ -257,11 +263,10 @@ public class TaskServlet extends AonApiHttpServlet{
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
 			HashMap<Byte, Integer> aux = AON_SOLUTIONS.getTaskStatusCount(domain, new User(),  f -> UtilsTask.taskFilterStatusCount(f, api, domain, customer));
 			aux.keySet().stream().forEach(key -> {
-				if(counts.containsKey(key)) {
+				if(counts.containsKey(key)) 
 					counts.put(key, counts.get(key) + aux.get(key));
-				} else {
-					counts.put(key, aux.get(key));
-				}
+			    else 
+			    	counts.put(key, aux.get(key));
 			});
 		});
 		
@@ -287,11 +292,10 @@ public class TaskServlet extends AonApiHttpServlet{
 			f -> UtilsTask.taskFilterCount(api, domain, f, customer),
 			taskHolder1);
 			aux.keySet().stream().forEach(key -> {
-				if(counts.containsKey(key)) {
+				if(counts.containsKey(key)) 
 					counts.put(key, counts.get(key) + aux.get(key));
-				} else {
+				else 
 					counts.put(key, aux.get(key));
-				}
 			});
 		});
 		
@@ -373,9 +377,8 @@ public class TaskServlet extends AonApiHttpServlet{
 				if(!company.optString(IJsonNames.DOCUMENT).isEmpty()) {
 					Customer customer = AON.getCustomer(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 							f->f.getDocumentProperty().eq(company.optString(IJsonNames.DOCUMENT)));
-					if(!customer.getDocument().isEmpty()){
+					if(!customer.getDocument().isEmpty())
 						task.setRegistry(customer.get());
-					}
 				}
 				
 			} catch (Exception e) {e.printStackTrace();}

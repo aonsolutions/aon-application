@@ -1,3 +1,17 @@
+import { TAG } from "../environments/environments.js";
+
+
+export const createDiv = (properties)=> newComponent({
+  type: TAG.DIV,
+  ...properties
+});
+
+export const createSpan = (properties)=> newComponent({
+  type: TAG.SPAN,
+  ...properties
+});
+
+
 /** 
  * Creates a new component
  * @param {*} properties - json with properties

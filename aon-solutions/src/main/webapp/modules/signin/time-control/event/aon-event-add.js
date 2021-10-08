@@ -16,10 +16,11 @@ import {
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import * as ACTION from '../../../actions.js';
-import { CONSTANT, EVENT, MSG } from "../../../../environments/environments.js";
-import { AON_TAGS } from "../../../../environments/aonTag.js";
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from "../../../../environments/environments.js";
 import { createFormEvent, createCardEvent } from "../../createComponent.js";
 import { createToolbar } from "../../../notification/createComponent.js";
+import { AonMessenger } from "../../../messenger/aon-messenger.js";
+import { TASK_SOURCE } from "../../../messenger/MessengerEnums.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -82,7 +83,7 @@ export class AonEventAdd extends AonElement {
     let aonCardEvent = this.getElement(`${this.id}CardEvent`);
     createCardEvent(aonCardEvent.getContent());
 
-    if (!this.isMobile()) this.paintViewMap();
+    // if (!this.isMobile()) this.paintViewMap();
   }
 
   async paintViewMap() {
@@ -131,6 +132,13 @@ export class AonEventAdd extends AonElement {
     let toolbarEl = this.getElement(this.TOOLBAR);
     toolbarEl.removeButtons();
     if (this.data && this.data.id) {
+
+      toolbarEl.addButton2({
+        id: "request",
+        name: "Solicitar",
+        icon: MATERIAL_ICONS.ASSIGNMENT
+      }, () => this.goMessenger());
+
       if(!this.applicationParentEl.isEmployee()){
         toolbarEl.addButton2(ACTION.DELETE, () => this.delete());
       }
@@ -145,8 +153,12 @@ export class AonEventAdd extends AonElement {
   }
 
   getFormValues() {
-    const form = this.getElement(`${this.id}Form`);
-    return serializeForm(form);
+    const serialize = serializeForm(this.getElement(`${this.id}Form`));
+    return {
+      ...serialize,
+      task_holder: this.TASK_HOLDER.id,
+      date: new Date( formatDateOrigin(serialize.date) + " " + serialize.time ).getTime(),
+    };
   }
 
   async listStatus() {
@@ -192,21 +204,14 @@ export class AonEventAdd extends AonElement {
       this.getElement("name").disabled = "disabled";
     }
     
-    if(this.applicationParentEl.isEmployee()) this.formRead();
+    // if(this.applicationParentEl.isEmployee()) this.formRead();
   }
 
   async save() {
     this.applicationEl.startLoading();
     try {
       let formValues = this.getFormValues();
-      const data = {
-        ...formValues,
-        task_holder: this.TASK_HOLDER.id,
-        date: new Date(
-          formatDateOrigin(formValues.date) + " " + formValues.time
-        ).getTime(),
-      };
-      const { id, date:start_date } = await saveTimeControlDetail(data);
+      const { id, date:start_date } = await saveTimeControlDetail(formValues);
       if (id) {
         setValueName("id", id);
       }
@@ -239,11 +244,11 @@ export class AonEventAdd extends AonElement {
     });
   }
 
-  formRead() {
-    [...this.getElement(`${this.id}Form`).querySelectorAll(AON_TAGS)].map(el => {
-      el.readonly = true;
-    });
-  }
+  // formRead() {
+  //   [...this.getElement(`${this.id}Form`).querySelectorAll(AON_TAGS)].map(el => {
+  //     el.readonly = true;
+  //   });
+  // }
 
   back() {
     let data = undefined;
@@ -252,6 +257,16 @@ export class AonEventAdd extends AonElement {
     if(this.START_DATE) startDate = formatDateOrigin(this.START_DATE);
     this.applicationParentEl.DATE_TMP = {...this.applicationParentEl.DATE_TMP, startDate};
     this.applicationParentEl.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, data);
+  }
+
+  goMessenger(){
+    const form = this.getFormValues();
+
+    const description = JSON.stringify({timeId: form.id, date:form.date, time:form.time });
+    let data = { source: TASK_SOURCE.REQUEST, source_id: 3, task_holder: form.task_holder, description };
+    let aonMessenger = new AonMessenger();
+    aonMessenger.data = data;
+    this.rootPanel(aonMessenger);
   }
 }
 

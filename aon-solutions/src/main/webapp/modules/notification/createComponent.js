@@ -5,17 +5,7 @@ import { AonInput } from "../../components/aon-input.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { CSS, TAG } from "../../environments/environments.js";
-import { newComponent, setAttributes, setClasses, setEvents } from "../../services/utilsComponents.js";
-
-export const createDiv = (properties)=> newComponent({
-  type: TAG.DIV,
-  ...properties
-});
-
-export const createSpan = (properties)=> newComponent({
-  type: TAG.SPAN,
-  ...properties
-});
+import { createDiv, createSpan, newComponent, setAttributes, setClasses, setEvents } from "../../services/utilsComponents.js";
 
 export const createUl = (id) => newComponent({
   id,

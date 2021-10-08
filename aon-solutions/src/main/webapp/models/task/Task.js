@@ -30,9 +30,7 @@ export class Task {
   workflowTmp;
   myTaskHolder;
   auth;
-
   constructor(task) {
-    // this._onPropertyChanged = (propName, val) => {};
     if(task)
       this.setTask(task);
     else {
@@ -59,9 +57,9 @@ export class Task {
     }
   }
 
-  // task._onPropertyChanged = ("source", val) => {
-  //   console.log(s);
-  // }
+//   task._onPropertyChanged = (name, val) => {
+//     console.log(change, val);
+// }
 
   setTask(task) {
     if(task) {
@@ -195,7 +193,6 @@ export class Task {
 
   setSource(v) {
     this.source = v;
-    // this._onPropertyChanged('source', v);
   }
 
   getSourceId() {
@@ -204,6 +201,7 @@ export class Task {
 
   setSourceId(source_id) {
     this.source_id = source_id;
+    this.onPropertyChanged('source_id', this.source_id);
   }
 
   getWorkgroup() {
@@ -366,6 +364,10 @@ export class Task {
       type: WORKFLOW_TYPES.COMMENT,
       email: this.auth.email ? this.auth.email : undefined
     }
+  }
+
+  onPropertyChanged(propName, val){
+    return (propName, val);
   }
 }
 

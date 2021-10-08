@@ -154,10 +154,8 @@ export class AonMessengerList extends AonElement {
         }
     })
 
-    if(this.applicationParentEl)
-      this.applicationParentEl.getTaskHoldersEnterprise().then(ths=>
-        taskHolderEl.setOptions(ths)
-      );
+    if(this.getApplicationParent())
+      this.getApplicationParent().getTaskHoldersEnterprise().then(ths=>taskHolderEl.setOptions(ths));
 
     statusEl.setOptions(TASK_STATUS_VALUE);
   }
@@ -280,7 +278,9 @@ export class AonMessengerList extends AonElement {
   }
 
   getNewTitle(res, document, documentTh){
-       
+    let div = this.createElement("div");
+    div.style.position = "relative";
+
     let newTitle  = res.title;
     if(res.registry && res.registry.name && document !== res.registry.document) 
       newTitle = `[${res.registry.name}] ${newTitle}`;
@@ -290,14 +290,21 @@ export class AonMessengerList extends AonElement {
     let description = res.description;
     try { description = JSON.parse(res.description).observation;  } catch (e) {}
 
-    if(description)
-      newTitle = /*html*/`
-        <div style="position:relative;">
-          <span style="font-weight: 550;bottom:1px;position:absolute;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;">${newTitle}</span>
-          <div style="color:grey;position:absolute;top:3px;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;">${description}</div> 
-        </div>`;
 
-    return newTitle;
+    let divTwo = this.createElement("div");
+    divTwo.style = `font-weight: 550;bottom:${description ? 1 : -9}px;position:absolute;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;`;
+    divTwo.innerText = newTitle;
+    div.appendChild(divTwo);
+     
+
+    if(description){
+      let divThree = this.createElement("div");
+      divThree.innerText = description;
+      divThree.style = "color:grey;position:absolute;top:3px;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;";
+      div.appendChild(divThree);
+    }
+  
+    return div.outerHTML;
   }
 
   // createIcon(icon, marginTop="11px"){
