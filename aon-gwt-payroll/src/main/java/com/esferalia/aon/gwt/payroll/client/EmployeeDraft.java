@@ -490,7 +490,11 @@ public abstract class EmployeeDraft extends Composite {
 					initializeIdcMonthListBox();
 					initializeView();
 					initializeUndoRedo();
-					onCheckStatus(getEmployeeDraftObject());
+					
+					// Check SS only if not RETA
+					Byte ssRegime = employeeDraftObject.getContractData().getSsRegimen();
+					if (null == ssRegime || ssRegime != 3) 
+						onCheckStatus(getEmployeeDraftObject());
 			}, t -> {}
 		);
 	

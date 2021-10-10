@@ -755,7 +755,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					showContractButtons();
 					contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 							success -> {
-								checkStatus(this.contrataEmployeeObject);
+								// Check SS only if not RETA
+								Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+								if (null == ssRegime || ssRegime != 3) 
+									checkStatus(this.contrataEmployeeObject);
+								
 								checkCertificateSEPE();
 								checkTGSSStatus();
 								checkContractExtension();
@@ -902,7 +906,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				s -> {
 					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 					showContractButtons();
-					checkStatus(this.contrataEmployeeObject);
+					
+					// Check SS only if not RETA
+					Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+					if (null == ssRegime || ssRegime != 3) 
+						checkStatus(this.contrataEmployeeObject);
+					
 					checkCertificateSEPE();
 					checkTGSSStatus();
 					checkContractExtension();
@@ -1169,9 +1178,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 			@Override
 			public void onAccept() {
-				contrataEmployeeObject.deleteContract(s -> {
+				
+				contrataEmployeeObject.delete4EverContract(s -> {
 					onListShow(true);
 				}, f-> {});
+				
+//				contrataEmployeeObject.deleteContract(s -> {
+//					onListShow(true);
+//				}, f-> {});
 			}
 		});
 	}
@@ -1196,7 +1210,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
-									checkStatus(contrataEmployeeObject);
+									// Check SS only if not RETA
+									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+									if (null == ssRegime || ssRegime != 3) 
+										checkStatus(this.contrataEmployeeObject);
+									
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
@@ -1219,7 +1237,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 								contrataEmployeeObject, 
 								this.contrataEmployeeObject.getContractId(),
 								success -> {
-									checkStatus(contrataEmployeeObject);
+									// Check SS only if not RETA
+									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+									if (null == ssRegime || ssRegime != 3) 
+										checkStatus(this.contrataEmployeeObject);
+									
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
@@ -1254,7 +1276,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 							contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
 									success -> {
-										checkStatus(contrataEmployeeObject);
+										// Check SS only if not RETA
+										Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+										if (null == ssRegime || ssRegime != 3) 
+											checkStatus(contrataEmployeeObject);
+										
 										checkCertificateSEPE();
 										checkTGSSStatus();
 										checkContractExtension();
@@ -1420,7 +1446,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
-									checkStatus(contrataEmployeeObject);
+									// Check SS only if not RETA
+									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+									if (null == ssRegime || ssRegime != 3) 
+										checkStatus(this.contrataEmployeeObject);
+									
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
@@ -1437,7 +1467,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
-									checkStatus(contrataEmployeeObject);
+									// Check SS only if not RETA
+									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+									if (null == ssRegime || ssRegime != 3) 
+										checkStatus(this.contrataEmployeeObject);
+									
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
@@ -1454,7 +1488,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
-									checkStatus(contrataEmployeeObject);
+									// Check SS only if not RETA
+									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+									if (null == ssRegime || ssRegime != 3) 
+										checkStatus(this.contrataEmployeeObject);
+									
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
@@ -1474,7 +1512,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				AonMessagePanel.showSuccess(messageContainer, successMap);
 				contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
 						success -> {
-							checkStatus(contrataEmployeeObject);
+							// Check SS only if not RETA
+							Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+							if (null == ssRegime || ssRegime != 3) 
+								checkStatus(contrataEmployeeObject);
+							
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
@@ -1515,7 +1557,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					
 					contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
 							success -> {
-								checkStatus(contrataEmployeeObject);
+								// Check SS only if not RETA
+								Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+								if (null == ssRegime || ssRegime != 3) 
+									checkStatus(this.contrataEmployeeObject);
+								
 								checkCertificateSEPE();
 								checkTGSSStatus();
 								checkContractExtension();
@@ -2005,14 +2051,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		ContractInfo contractData = contrataEmployeeObject.getContractData();
 		EmployeeInfo employeeData = contrataEmployeeObject.getEmployeeData();
 		
-		String message = "Este contrato ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>?";
+		String message = "Este contrato ser\u00E1 eliminado de forma permanente.<br> \u00BFDesea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>?";
 		
 		if(null != contractData.getSalariesCount() && contractData.getSalariesCount() > 0) {
-			message = "Este contrato contiene n" + String.valueOf("\u00F3") + "minas existentes. Si lo elimina se enviar" + String.valueOf("\u00E1") + " a la papelera.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>? <br><br>";
+			message = "Este contrato contiene n\u00F3minas existentes. Si lo elimina, se borrar\u00E1n todos los datos de este contrato incluidas las n\u00F3minas.<br> \u00BFDesea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>? <br><br>";
 			message += "<b>N" + String.valueOf("\u00F3") + "minas:</b><br><br>";
 			for(ContractSalaryInfo salaryInfo : contractData.getContractSalariesInfo())
-				message += "&emsp;" + salaryInfo.getType() + "&emsp;(" + formatFullDate.format(salaryInfo.getStart()) + " - " + formatFullDate.format(salaryInfo.getEnd()) + ")&emsp;Percibido : " + salaryInfo.getTotalLiquid() + String.valueOf("\u20AC") + "<br>";
+				message += "&emsp;" + salaryInfo.getType() + "&emsp;(" + formatFullDate.format(salaryInfo.getStart()) + " - " + formatFullDate.format(salaryInfo.getEnd()) + ")&emsp;Percibido : " + salaryInfo.getTotalLiquid() + "\u20AC<br>";
 		}
+		
+//		String message = "Este contrato ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>?";
+//		
+//		if(null != contractData.getSalariesCount() && contractData.getSalariesCount() > 0) {
+//			message = "Este contrato contiene n" + String.valueOf("\u00F3") + "minas existentes. Si lo elimina se enviar" + String.valueOf("\u00E1") + " a la papelera.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>? <br><br>";
+//			message += "<b>N" + String.valueOf("\u00F3") + "minas:</b><br><br>";
+//			for(ContractSalaryInfo salaryInfo : contractData.getContractSalariesInfo())
+//				message += "&emsp;" + salaryInfo.getType() + "&emsp;(" + formatFullDate.format(salaryInfo.getStart()) + " - " + formatFullDate.format(salaryInfo.getEnd()) + ")&emsp;Percibido : " + salaryInfo.getTotalLiquid() + String.valueOf("\u20AC") + "<br>";
+//		}
 		
 		HTML label = new HTML(message);
 		return label;

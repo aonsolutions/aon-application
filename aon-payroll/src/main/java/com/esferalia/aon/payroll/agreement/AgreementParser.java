@@ -392,7 +392,7 @@ public class AgreementParser {
 		put("GARANTIZADO_MENSUAL", "GARANTIZADO_MENSUAL");
 		put("GASTOS_LOCOMOCION_SIN_JUSTIFICANTE_DIARIO", "IMPORTE_KM");
 		put("GASTOS_MANUTENCION_DIARIO", "IMPORTE_MANUTENCION");
-		put("GASTOS_PECNORTA_DIARIO", "IMPORTE_PERNOCTA");
+		put("GASTOS_PERNOCTA_DIARIO", "IMPORTE_PERNOCTA");
 		put("GRATIFICACION_ANUAL", "GRATIFICACION_ANUAL");
 		put("GRATIFICACION_ESPECIAL_ANUAL", "GRATIFICACION_ESPECIAL");
 		put("GRATIFICACION_ESPECIAL_HORAS", "GRATIFICACION_ESPECIAL");
@@ -403,6 +403,11 @@ public class AgreementParser {
 		put("GRATIFICACION_NAVIDAD_MENSUAL", "GRATIF_NAVIDAD");
 		put("GRATIFICACION_PERMANENCIA_20_AÑOS_ANUAL", "GRATIF_PERMANEN_20");
 		put("GRATIFICACION_PERMANENCIA_30_AÑOS_ANUAL", "GRATIF_PERMANEN_30");
+		put("GRATIFICACION_PERMANENCIA_60_AÑOS_ANUAL", "GRATIF_PERMANEN_60");
+		put("GRATIFICACION_PERMANENCIA_61_AÑOS_ANUAL", "GRATIF_PERMANEN_61");
+		put("GRATIFICACION_PERMANENCIA_62_AÑOS_ANUAL", "GRATIF_PERMANEN_62");
+		put("GRATIFICACION_PERMANENCIA_63_AÑOS_ANUAL", "GRATIF_PERMANEN_63");
+		put("GRATIFICACION_PERMANENCIA_64_AÑOS_ANUAL", "GRATIF_PERMANEN_64");
 		put("GRATIFICACION_PERMANENCIA_10_AÑOS_MENSUAL", "GRATIF_PERMANEN_10");
 		put("GRATIFICACION_PERMANENCIA_15_AÑOS_MENSUAL", "GRATIF_PERMANEN_15");
 		put("GRATIFICACION_PERMANENCIA_20_AÑOS_MENSUAL", "GRATIF_PERMANEN_20");
@@ -1425,6 +1430,21 @@ public class AgreementParser {
 				
 				System.out.println(agreementPayment.getConceptCode());
 				
+				String irpfExpression = "_P";
+				String quoteExpression = "_P";
+				
+				if(AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "MANUTENCION")) {
+					irpfExpression = "EXCESO(26.67 * DIAS_MANUTENCION)";
+					quoteExpression = "EXCESO(26.67 * DIAS_MANUTENCION)";
+				} else if(AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "PERNOCTA")) {
+					irpfExpression = "EXCESO(53.34 * DIAS_PERNOCTA)";
+					quoteExpression = "EXCESO(53.34 * DIAS_PERNOCTA)";
+				} else if(AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "LOCOMOCI") ||
+						AonStringUtils.containsIgnoreCase(agreementPayment.getConceptCode(), "IMPORTE_KM")) {
+					irpfExpression = "EXCESO(0.19 * KMS)";
+					quoteExpression = "EXCESO(0.19 * KMS)";
+				}
+				
 				PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
 						.set(PAYMENT_CONCEPT.DOMAIN, DOMAIN_ID)
 						.set(PAYMENT_CONCEPT.CODE, agreementPayment.getConceptCode())
@@ -1432,8 +1452,8 @@ public class AgreementParser {
 						.set(PAYMENT_CONCEPT.TYPE, agreementPayment.getType())
 						.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
 						.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.getExpression())
-						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
-						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
+						.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, irpfExpression)
+						.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, quoteExpression)
 						.returning(PAYMENT_CONCEPT.ID)
 						.fetchOne();
 				
@@ -1449,8 +1469,8 @@ public class AgreementParser {
 						.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(agreement.getStartDate()))
 						.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
-						.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
-						.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
+						.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
+						.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, quoteExpression)
 						.returning(AGREEMENT_PAYMENT.ID)
 						.fetchOne();
 				
