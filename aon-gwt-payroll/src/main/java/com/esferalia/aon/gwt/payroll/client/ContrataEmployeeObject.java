@@ -187,6 +187,21 @@ public class ContrataEmployeeObject {
 		}	
 	}
 	
+	public void delete4EverContract(Consumer<Void> success, Consumer<Throwable> failure) {
+		enterprisesService.delete4EverContract(getContractData().getContractId(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});	
+	}
+	
 	// ------------------------------------------------- Database Methods (Specific Data)
 	
 	public void getContractSpecificData(Consumer<ContractSpecificData> success, Consumer<Throwable> failure) {
