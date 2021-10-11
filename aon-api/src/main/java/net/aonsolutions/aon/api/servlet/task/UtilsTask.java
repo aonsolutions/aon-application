@@ -227,7 +227,66 @@ public class UtilsTask {
 		return filter;
 	}
 	
-	public static void sendNotificationComment(AonApiData api, Task task, TaskWorkflow workflow) {
+	public static String getLogoCompany(String companyName) {
+		String logo = "https://aon.solutions/assets/aon-logo.png";
+		try {
+			String urlLogo = "https://" + companyName + "/aonDocuments/company.logo";
+		    final URL url = new URL(urlLogo);
+	        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+	        int statusCode = connection.getResponseCode();
+	        if(200 == statusCode) {
+	        	logo = urlLogo;
+	        }
+            connection.disconnect();
+		} catch (Exception e) {}
+
+		return logo;
+	}
+	
+	public static Matcher regexFile(Task task, String dataId) {
+		String description = task.getDescription();
+	    String regex = "(\\<\\S[^<>]*?href=[\\\\]?\")(blob[^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
+	    Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+	    Matcher matcher = pattern.matcher(description);
+	    if(!matcher.find()) {
+		    regex = "(\\<\\S[^<>]*?src=[\\\\]?\")(blob[^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
+		    pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		    matcher = pattern.matcher(description);
+		    if(!matcher.find()) {
+		    	return null;
+		    }
+	    }
+	    return matcher;
+	}
+	
+	public static void sendWorkflowCommunication(AonApiData api, TaskWorkflow workflow) {
+		Thread newThread = new Thread(() -> {
+			try {
+				Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(workflow.getTask()));
+				if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.CLOSE.getName())) {
+//					if(!task.getGtaskId().isEmpty() && task.getGtaskId().indexOf("@")>=0) {
+//						Auth auth = AON_SOLUTIONS.getAuth(task.getGtaskId());
+						AonToken aonToken = SECURITY.getAonToken(api.getToken());
+						Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
+						if(!auth.getEmail().isEmpty()) {
+							sendNotification(api, task, auth);
+							sendEmail(api, task, auth);
+						}
+//					}
+				} else if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.COMMENT.getName())) {
+					sentNotificationThAndWg(api, task, workflow, "Han comentado en la solicitud ");
+				} else if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.OPEN.getName())) {
+					sentNotificationThAndWg(api, task, workflow, "Solicitud abierta, " +task.getTitle());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		newThread.start();
+	}
+	
+	//SEND TASK HOLDER AND WORKGROUP
+	public static void sentNotificationThAndWg(AonApiData api, Task task, TaskWorkflow workflow, String body) {
 		LinkedList<Auth> auths = new LinkedList<>();
 		Domain domain = api.getDomain();
 		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
@@ -251,10 +310,10 @@ public class UtilsTask {
 		}
 		
 		if(auths.size()>0) {
-			String title = "SOLICITUD | AON SOLUTIONS";
+			String title = "SOLICITUD "+task.getNumber()+" | AON SOLUTIONS";
 	    	NotificationRequest notification = new NotificationRequest();
 	    	notification.setTitle(title);
-	    	notification.setBody("Han respondido en la solicitud Nº "+ task.getNumber());
+	    	notification.setBody(body);
 	    	notification.setSender(user.getAuth().getAuth());
 	    	notification.setDomain(domain);
 	    	notification.setUser(api.getUser());
@@ -320,62 +379,6 @@ public class UtilsTask {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public static String getLogoCompany(String companyName) {
-		String logo = "https://aon.solutions/assets/aon-logo.png";
-		try {
-			String urlLogo = "https://" + companyName + "/aonDocuments/company.logo";
-		    final URL url = new URL(urlLogo);
-	        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-	        int statusCode = connection.getResponseCode();
-	        if(200 == statusCode) {
-	        	logo = urlLogo;
-	        }
-            connection.disconnect();
-		} catch (Exception e) {}
-
-		return logo;
-	}
-	
-	public static Matcher regexFile(Task task, String dataId) {
-		String description = task.getDescription();
-	    String regex = "(\\<\\S[^<>]*?href=[\\\\]?\")(blob[^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
-	    Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-	    Matcher matcher = pattern.matcher(description);
-	    if(!matcher.find()) {
-		    regex = "(\\<\\S[^<>]*?src=[\\\\]?\")(blob[^\"\\\\]*?)([\\\\]?\"[^<>]*?data-id=[\\\\]?\""+dataId+"[\\\\]?\"[^<>]*?\\>)";
-		    pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-		    matcher = pattern.matcher(description);
-		    if(!matcher.find()) {
-		    	return null;
-		    }
-	    }
-	    return matcher;
-	}
-	
-	public static void sendWorkflowCommunication(AonApiData api, TaskWorkflow workflow) {
-		Thread newThread = new Thread(() -> {
-			try {
-				Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(workflow.getTask()));
-				if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.CLOSE.getName())) {
-//					if(!task.getGtaskId().isEmpty() && task.getGtaskId().indexOf("@")>=0) {
-//						Auth auth = AON_SOLUTIONS.getAuth(task.getGtaskId());
-						AonToken aonToken = SECURITY.getAonToken(api.getToken());
-						Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
-						if(!auth.getEmail().isEmpty()) {
-							sendNotification(api, task, auth);
-							sendEmail(api, task, auth);
-						}
-//					}
-				} else if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.COMMENT.getName())) {
-					sendNotificationComment(api, task, workflow);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-		newThread.start();
 	}
 	
 	public static void checkFiles(AonApiData api, Task task){

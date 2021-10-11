@@ -256,7 +256,7 @@ public class RegistryAddress implements Serializable {
 		}
     	StringBuffer buf = new StringBuffer();
     	buf.append(AonStringUtils.defaultString(streetType));
-    	buf.append(AonStringUtils.isBlank(streetType) ? ". " : "");
+    	buf.append(!AonStringUtils.isBlank(streetType) ? ". " : "");
     	buf.append(AonStringUtils.isEmpty(getAddress())? "":getAddress());
     	buf.append(AonStringUtils.isEmpty(getNumber())?"":" ");
     	buf.append(AonStringUtils.isEmpty(getNumber())?"":getNumber());

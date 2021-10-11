@@ -3,8 +3,8 @@ import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { formatDateOrigin } from "../../services/utils.js";
-import { setAttributes } from "../../services/utilsComponents.js";
-import { createCard, createDate, createDiv, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
+import { setAttributes, createDiv } from "../../services/utilsComponents.js";
+import { createCard, createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
 
 export const createBajaDialogContent = () =>{
     const div = document.createElement(TAG.DIV);

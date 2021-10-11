@@ -1,5 +1,6 @@
 import { CSS } from "../../environments/environments.js";
-import { createDate, createDiv, createForm, createInput, createSelect, createCard } from "../notification/createComponent.js";
+import { createDiv } from "../../services/utilsComponents.js";
+import { createDate, createForm, createInput, createSelect, createCard } from "../notification/createComponent.js";
 
 export const createFormEvent = (id, parent) => {
     const form = createForm(id+"Form");
@@ -23,7 +24,7 @@ export const createFormEvent = (id, parent) => {
 export const createCardEvent = (parent) => {
     
     let divC;
-    divC = createDiv({classes:["aonCol-sm-6", "aonCol-md-3"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_3]})
     divC.appendTo(parent);
     createInput({
         attributes:{
@@ -34,7 +35,7 @@ export const createCardEvent = (parent) => {
         }
     }, divC.element);
 
-    divC = createDiv({classes:["aonCol-sm-6", "aonCol-md-2"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -45,7 +46,7 @@ export const createCardEvent = (parent) => {
     }, divC.element);
  
 
-    divC = createDiv({classes:["aonCol-sm-6", "aonCol-md-3"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_3]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -56,7 +57,7 @@ export const createCardEvent = (parent) => {
     }, divC.element);
 
 
-    divC = createDiv({classes:["aonCol-sm-6", "aonCol-md-2"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
     divC.appendTo(parent);
     createDate({
         attributes:{
@@ -67,7 +68,7 @@ export const createCardEvent = (parent) => {
     }, divC.element);
 
 
-    divC = createDiv({classes:["aonCol-sm-6", "aonCol-md-2"]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_6, CSS.AON_COL_MD_2]})
     divC.appendTo(parent);
     createInput({
         attributes:{

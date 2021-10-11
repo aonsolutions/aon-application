@@ -3,7 +3,7 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { TAG, MSG, CSS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { getStatus, getTimeControlDetail, saveTimeControlDetail } from "../../../services/timeControlService.js";
-import {  formatDateOrigin, serializeForm, setDateTimestampDay, setTime, sortBy } from "../../../services/utils.js";
+import {  formatDateOrigin, serializeForm, setDateTimestampDay, sortBy } from "../../../services/utils.js";
 import { newComponent, setAttributes } from "../../../services/utilsComponents.js";
 import { firstLetters } from "../../signin/time-control/utils.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
@@ -36,34 +36,35 @@ import { createDivEditable } from "../shared/creationUtils.js";
  */
 const createDataForm = (form, aonMessengerChat) => {
     const task = aonMessengerChat.task;
-    let data = task.id ? JSON.parse(task.description) : {};
+    let data = task.getDescriptionJson();
 
     let times = setAttributes(new AonSelect(),{ title: "Seleccione registro a modificar", id:"timeId", name:"timeId"});
     createDiv(form, times, {classes:[CSS.AON_COL_XS_12]})
-    fillTimeControl(times, data.timeId, task);
+
+    const taskHolderId = data.task_holder || task.myTaskHolder.id;
+    fillTimeControl(times, data.timeId, taskHolderId);
     if(task.id)
         times.setDisabled(CONSTANT.TRUE);
 
     let date = setAttributes(new AonDate(),{ title: MSG.DATE, id:"date", name:"date"});
     createDiv(form, date, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
     if(data.date) date.setDate(new Date(data.date));
-    else date.setDate(new Date());
 
     let time = setAttributes(new AonInput(), {
         name:"time",
         id:"time",
         type:"time",
         description:"Hora",
-        value: data.time || setTime(new Date())
+        value: data.time ?  data.time : ""
     });
     createDiv(form, time, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
-    if(!task.id) times.addEventListener(EVENT.CHANGE,({detail})=>{
-        if(detail.date){
-            date.value = formatDateOrigin(detail.date);
-            time.value = setTime(detail.date);
-        }
-    });
+    // if(!task.id) times.addEventListener(EVENT.CHANGE,({detail})=>{
+    //     if(detail.date){
+    //         date.value = formatDateOrigin(detail.date);
+    //         time.value = setTime(detail.date);
+    //     }
+    // });
 
     //OBSERVATION
     const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
@@ -83,16 +84,15 @@ const createDataForm = (form, aonMessengerChat) => {
 }
 
 //-----------FILL
-const fillTimeControl = (aonSelect, timeId, task) => {
+const fillTimeControl = (aonSelect, timeId, taskHolderId) => {
     let filter = { 
       startDate: formatDateOrigin( new Date().addDay(-7)),
       endDate:formatDateOrigin( new Date()),
-      taskHolderId: task.myTaskHolder.id
+      taskHolderId
     }
     getTimeControlDetail(filter).then(res=>{
         const options = sortBy(res, "date", "desc").map(r => ({...r, name: `${firstLetters(setDateTimestampDay(r.date))} - ${getStatus(r.status.toLowerCase()).name}` , value:r.id}));
         aonSelect.setOptions( options );
-
         if(timeId) aonSelect.value = timeId;
     });
 }

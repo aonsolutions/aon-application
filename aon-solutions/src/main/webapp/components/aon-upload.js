@@ -12,10 +12,11 @@ export class AonUpload extends AonElement {
     DELETE_BUTTON;
 
     message;
+    deleteMessage;
+
     accept;
 
     showDeleteButton;
-    data;
 
     get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -42,6 +43,7 @@ export class AonUpload extends AonElement {
         this.SPAN = this.id + 'Span';
         this.DELETE_BUTTON = this.id + 'DeleteButton';
         this.message = this.message || MSG.ATTACH_FILES_DRAGGING_DROPPING;
+        this.deleteMessage = this.deleteMessage || 'Estás seguro de eliminar el fichero';
         this.accept = this.accept || 'image/jpeg, image/png';
     }
 
@@ -93,8 +95,7 @@ export class AonUpload extends AonElement {
         button.addEventListener(EVENT.CLICK, (e) => {
             e.stopPropagation();
             e.preventDefault();
-            button.classList.add(CSS.AON_NONE);
-            this.dispatchEvent(new Event(EVENT.DELETE))
+            this.deleteFile();
         });
        div.appendChild(button);
     }
@@ -152,6 +153,10 @@ export class AonUpload extends AonElement {
         this.message = message;
     }
 
+    setDeleteMessage(deleteMessage) {
+        this.deleteMessage = deleteMessage;
+    }
+
     setAccept(accept) {
         this.accept = accept;
     }
@@ -160,8 +165,26 @@ export class AonUpload extends AonElement {
         return this.getElement(this.INPUT);
     }
 
+    deleteFile() {
+        let d = document.getElementById(this.getApplication().DIALOG);
+        d.clear();
+        d.setTitle(MSG.DELETE_FILE);
+        d.width = '400px';
+        d.setContentHTML(this.deleteMessage);
+        d.addAcceptAction(() => {
+            let deleteButton = this.getElement(this.DELETE_BUTTON);
+            deleteButton.classList.add(CSS.AON_NONE);
+            this.dispatchEvent(new Event(EVENT.DELETE));
+        });
+        d.open();
+      }
+
     setShowDeleteButton(showDeleteButton) {
         this.showDeleteButton = showDeleteButton;
+        let deleteButton = this.getElement(this.DELETE_BUTTON);
+        if(deleteButton && this.showDeleteButton) {
+            deleteButton.classList.remove(CSS.AON_NONE);
+        }
     }
 }
 if(!window.customElements.get(TAG.AON_UPLOAD)){

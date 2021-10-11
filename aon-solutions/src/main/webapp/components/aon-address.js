@@ -1,7 +1,12 @@
 import { AonElement } from './AonElement.js';
 import { Countries } from "../services/country.js";
 
-import { CONSTANT, EVENT, TAG, MATERIAL_ICONS } from '../environments/environments.js';
+import { CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG, CSS } from '../environments/environments.js';
+import { Address } from '../models/registry/Address.js';
+import { AonInput } from './aon-input.js';
+import { AonSelect } from './aon-select.js';
+import { TABLE } from '../environments/aonTag.js';
+import { AonBasicTable } from './aon-basic-table.js';
 
 export class AonAddress extends AonElement {
 
@@ -13,9 +18,7 @@ export class AonAddress extends AonElement {
   PROVINCE;
   ZIP;
 
-  static get observedAttributes() {
-    return [CONSTANT.VALUE];
-  }
+  address;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -53,26 +56,7 @@ export class AonAddress extends AonElement {
 		super();
 	}
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    this.initialize();
-    if(CONSTANT.VALUE === name) {
-      let value = this.hasAttribute(CONSTANT.VALUE)
-        ? JSON.parse(this.getAttribute(CONSTANT.VALUE))
-        : {
-            country: "ES",
-            address: "",
-            zip: "",
-            postal_code: "",
-            city: "",
-            province: "",
-          };
-      let aonInput = this.getElement(this.INPUT);
-      if(aonInput) aonInput.value = `${value.address}, ${value.zip} ${value.city}, ${value.province}, ${value.country}`;
-    }
-  }
-
-
-	connectedCallback() {
+  connectedCallback() {
     this.initialize();
     this.build();
 	}
@@ -86,28 +70,23 @@ export class AonAddress extends AonElement {
     this.INPUT = this.id + 'Input';
     this.PROVINCE = this.id + 'Province';
     this.ZIP = this.id + 'Zip';
+    this.address = this.address || new Address();
   }
 
   build() {
     this.clear();
-    this.innerHTML = `
-      <aon-input id="${this.INPUT}"  description="${this.title}"></aon-input>
-		`;
-    let aonInput = this.getElement(this.INPUT);
-    let value = this.hasAttribute(CONSTANT.VALUE)
-      ? JSON.parse(this.getAttribute(CONSTANT.VALUE))
-      : {
-          country: "ES",
-          address: "",
-          zip: "",
-          postal_code: "",
-          city: "",
-          province: "",
-        };
+    let aonInput = new AonInput();
+    aonInput.id = this.INPUT;
+    aonInput.description = this.title;
+    aonInput.value = this.address.getFullAddress();
+    this.appendChild(aonInput);
     aonInput.readonly = CONSTANT.READONLY;
-    aonInput.value = `${value.address}, ${value.zip} ${value.city}, ${value.province}, ${value.country}`;
+    this.buildAddress();
+    let color = this.address.isMain() ? '#002469' : undefined;
+    aonInput.addIconWithRemove(MATERIAL_ICONS.ROOM, color, () => this.dispatchEvent(new Event(EVENT.DELETE)));
 
-    aonInput.addIconButton(MATERIAL_ICONS.ROOM, () => {
+    this.getElement(aonInput.INPUT).style.cursor = 'pointer';
+    aonInput.addEventListener(EVENT.CLICK, () => {
       if (!this.isReadonly()) {
         let divEdit = this.getElement(this.EDIT);
         if (divEdit.style.display === "block") {
@@ -117,127 +96,98 @@ export class AonAddress extends AonElement {
         }
       }
     });
-    this.buildAddress();
   }
 
   buildAddress() {
-    let div = this.createElement(TAG.DIV);
-    div.id = this.EDIT;
-    div.style.width = "100%";
-    div.style.display = "none";
-    let html = `
-      <aon-input class='aon-width-100' id='${this.ADDRESS}' description='Dirección'></aon-input>
-      <aon-input class='aonWidth25' id='${this.ZIP}' description='C.P.'></aon-input>
-      <aon-input class='aonWidth25' id='${this.CITY}' description='Ciudad'></aon-input>
-      <aon-input class='aonWidth25' id='${this.PROVINCE}' description='Provincia'></aon-input>
-      <aon-input type="list" class='aonWidth25' id='${this.COUNTRY}' description='País' ></aon-input>
-    `;
-    div.innerHTML = html;
-    this.appendChild(div);
-  }
+    let table = new AonBasicTable();
+    table.id = this.EDIT;
+		table.style.display = "none";
+    this.appendChild(table);
 
-  buildAddressValue(val) {
-    if(!val) val = {};
-    let value = {
-      country: val.country || "ES",
-      address: val.address || "",
-      zip: val.zip || "",
-      postal_code: val.zip || "",
-      city: val.city || "",
-      province: val.provice ||  ""
-    }
-    this.value = JSON.stringify(value);
+    table.addRow();
+    
+    let addressInput = new AonInput();
+    addressInput.id = this.ADDRESS;
+    addressInput.description = MSG.ADDRESS;
+    addressInput.className = CSS.AON_WIDTH_ALL;
+    addressInput.value = this.address.getAddress();
+    addressInput.readonly = this.isReadonly();
+    addressInput.addEventListener(EVENT.CHANGE, () => {
+      this.address.setAddress(addressInput.value);
+      this.getElement(this.INPUT).value = this.address.getFullAddress();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    table.addCell(addressInput, 4);
 
-    let address = this.getElement(this.ADDRESS);
-    if (address) {
-      address.value = value.address;
-      address.readonly = this.isReadonly();
-      address.addEventListener(EVENT.CHANGE, () => this.updateAddress());
-    }
+    table.addRow();
 
-    let zip = this.getElement(this.ZIP);
-    if (zip) {
-      zip.value = value.zip;
-      zip.readonly = this.isReadonly();
-      zip.addEventListener(EVENT.CHANGE, () => this.updateZip());
-    }
+    let zipInput = new AonInput();
+    zipInput.id = this.ZIP;
+    zipInput.description = MSG.POSTAL_CODE_MIN;
+    zipInput.value = this.address.getZip();
+    zipInput.readonly = this.isReadonly();
+    zipInput.addEventListener(EVENT.CHANGE, () => {
+      this.address.setZip(zipInput.value);
+      this.getElement(this.INPUT).value = this.address.getFullAddress();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    table.addCell(zipInput);
 
-    let city = this.getElement(this.CITY);
-    if (city) {
-      city.value = value.city;
-      city.readonly = this.isReadonly();
-      city.addEventListener(EVENT.CHANGE, () => this.updateCity());
-    }
-    let province = this.getElement(this.PROVINCE);
-    if (province) {
-      province.value = value.province;
-      province.readonly = this.isReadonly();
-      province.addEventListener(EVENT.CHANGE, () => this.updateProvince());
-    }
+    let cityInput = new AonInput();
+    cityInput.id = this.CITY;
+    cityInput.description = MSG.CITY;
+    cityInput.value = this.address.getCity();
+    cityInput.readonly = this.isReadonly();
+    cityInput.addEventListener(EVENT.CHANGE, () => {
+      this.address.setCity(cityInput.value);
+      this.getElement(this.INPUT).value = this.address.getFullAddress();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    table.addCell(cityInput);
 
-    let country = this.getElement(this.COUNTRY);
-    if (country) {
-      country.options = JSON.stringify(
-        Countries.map((c) => {
-          return { value: c.iso2, name: c.nombre };
-        })
-      );
-      country.readonly = this.isReadonly();
-      country.value = value.country;
-      country.addEventListener(EVENT.SELECT, () => this.updateCountry());
-    }
-  }
 
-  updateAddress() {
-    if (this.hasAttribute(CONSTANT.VALUE)) {
-      let address = this.getElement(this.ADDRESS);
-      let value = JSON.parse(this.getAttribute(CONSTANT.VALUE));
-      value.address = address.value;
-      this.value = JSON.stringify(value);
-      this.getElement()
-    }
-  }
+    let provinceInput = new AonInput();
+    provinceInput.id = this.PROVINCE;
+    provinceInput.description = MSG.PROVINCE;
+    provinceInput.value = this.address.getProvince();
+    provinceInput.readonly = this.isReadonly();
+    provinceInput.addEventListener(EVENT.CHANGE, () => {
+      this.address.setProvince(provinceInput.value);
+      this.getElement(this.INPUT).value = this.address.getFullAddress();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    table.addCell(provinceInput);
 
-  updateZip() {
-    if (this.hasAttribute(CONSTANT.VALUE)) {
-      let zip = this.getElement(this.ZIP);
-      let value = JSON.parse(this.getAttribute(CONSTANT.VALUE));
-      value.zip = zip.value;
-      value.postal_code = zip.value;
-      this.value = JSON.stringify(value);
-    }
-  }
 
-  updateCity() {
-    if (this.hasAttribute(CONSTANT.VALUE)) {
-      let city = this.getElement(this.CITY);
-      let value = JSON.parse(this.getAttribute(CONSTANT.VALUE));
-      value.city = city.value;
-      this.value = JSON.stringify(value);
-    }
-  }
-
-  updateProvince() {
-    if (this.hasAttribute(CONSTANT.VALUE)) {
-      let province = this.getElement(this.PROVINCE);
-      let value = JSON.parse(this.getAttribute(CONSTANT.VALUE));
-      value.province = province.value;
-      this.value = JSON.stringify(value);
-    }
-  }
-
-  updateCountry() {
-    if (this.hasAttribute(CONSTANT.VALUE)) {
-      let country = this.getElement(this.COUNTRY);
-      let value = JSON.parse(this.getAttribute(CONSTANT.VALUE));
-      value.country = country.value;
-      this.value = JSON.stringify(value);
-    }
+    let countryInput = new AonSelect();
+    countryInput.id = this.COUNTRY;
+    countryInput.title = MSG.COUNTRY;
+    countryInput.options = JSON.stringify(
+      Countries.map((c) => {
+        return { value: c.iso2, name: c.nombre };
+      })
+    );
+    countryInput.readonly = this.isReadonly();
+    countryInput.value = this.address.getCountry();
+    countryInput.addEventListener(EVENT.SELECT, () => {
+      this.address.setCountry(countryInput.value);
+      this.getElement(this.INPUT).value = this.address.getFullAddress();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    table.addCell(countryInput);
   }
 
   isReadonly() {
     return this.hasAttribute(CONSTANT.READONLY) && this.getAttribute(CONSTANT.READONLY)
       && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
+  }
+
+  getAddress() {
+    return this.address;
+  }
+
+  setAddress(address) {
+    this.address = new Address(address);
   }
 }
 

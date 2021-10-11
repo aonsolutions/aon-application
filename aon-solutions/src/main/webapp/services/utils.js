@@ -1,5 +1,6 @@
 import { AON_TAGS } from "../environments/aonTag.js";
 import { EVENT } from "../environments/environments.js";
+import { Attach } from "../models/Attach.js";
 import { DAYS, MONTHS } from "../models/enums.js";
 
 export const getReader = (file) =>  new Promise((resolve) => {
@@ -9,13 +10,16 @@ export const getReader = (file) =>  new Promise((resolve) => {
     const { result } = READER;
     const { name, size, type: contentType } = file;
     const base64File = result.split(',')[1];
-    resolve({
-      content: base64File,
-      contentType,
-      contentEncoding: 'base64',
-      name,
-      size
-    });
+    let attach = new Attach()
+      .setContent(base64File)
+      .setContentType(contentType)
+      .setContentEncoding('base64')
+      .setContentSize(size)
+      .setSize(size)
+      .setContentName(name)
+      .setName(name);
+  
+    resolve(attach);
   };
 });
 

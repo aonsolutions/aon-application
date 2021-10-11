@@ -3,8 +3,9 @@ import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { FirebaseService } from '../../services/firebaseService.js';
 import { getTotalNotification, saveAuthDevice } from '../../services/service.js';
 import { waitEl } from '../../services/utils.js';
+import { createSpan } from '../../services/utilsComponents.js';
 import { AonNotification } from './aon-notification.js';
-import { createBadge, createIconButton, createSpan } from './createComponent.js';
+import { createBadge, createIconButton } from './createComponent.js';
 
 export class AonNotificationIcon extends AonElement {
 

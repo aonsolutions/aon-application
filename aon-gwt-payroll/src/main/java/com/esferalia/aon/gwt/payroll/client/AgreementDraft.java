@@ -1348,7 +1348,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	Element salaryTableFirstColumn;
 	Element salaryTableLastColumn;
 	Element salaryTableUpperLeftCorner;
-	Element salaryTableUpperRightCorner;
+//	Element salaryTableUpperRightCorner;
 
 	AgreementDraftObject agreementDraftObject;
 
@@ -2533,7 +2533,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		col++;
 		
 		//cellFormatter.addStyleName(0, col-1, "aon-width-all"); // fill remain
-		salaryTable.setWidget(0, col, new Label());
+		HTMLPanel panel = new HTMLPanel("");
+		salaryTable.setWidget(0, col, panel);
 //		salaryTable.setWidget(0, col, getViewButton());
 
 		SortedSet<Level> levels = new TreeSet<Level>(new LevelComparator());
@@ -2781,7 +2782,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		salaryTableHead = getFreezeTableHead(salaryTable);
 		salaryTableUpperLeftCorner = getFreezeTableUpperLeftCorner(salaryTable);
-		salaryTableUpperRightCorner = getFreezeTableUpperRightCorner(salaryTable, salaryTableScrollPane);
+//		salaryTableUpperRightCorner = getFreezeTableUpperRightCorner(salaryTable, salaryTableScrollPane);
 		salaryTableFirstColumn = getFreezeTableFirstCol(salaryTable, salaryTableScrollPane);
 		salaryTableLastColumn = getFreezeTableLastCol(salaryTable, salaryTableScrollPane);
 
@@ -2790,7 +2791,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		DOM.appendChild(scroller, salaryTableFirstColumn);
 		DOM.appendChild(scroller, salaryTableLastColumn);
 		DOM.appendChild(scroller, salaryTableUpperLeftCorner);
-		DOM.appendChild(scroller, salaryTableUpperRightCorner);
+//		DOM.appendChild(scroller, salaryTableUpperRightCorner);
 
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 
@@ -2801,7 +2802,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				int height = salaryTableScrollPane.getElement().getClientHeight();
 
 				toFixedPosition(salaryTableUpperLeftCorner, width, height);
-				toFixedPosition(salaryTableUpperRightCorner, width, height);
+//				toFixedPosition(salaryTableUpperRightCorner, width, height);
 				toFixedPosition(salaryTableHead, width - salaryTableUpperLeftCorner.getOffsetWidth(), height);
 				toFixedPosition(salaryTableFirstColumn, width, height - salaryTableUpperLeftCorner.getOffsetHeight());
 				toFixedPosition(salaryTableLastColumn, width, height - salaryTableUpperLeftCorner.getOffsetHeight());
@@ -2881,7 +2882,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		salaryTableFirstColumn = clear(salaryTableFirstColumn);
 		salaryTableLastColumn = clear(salaryTableLastColumn);
 		salaryTableUpperLeftCorner = clear(salaryTableUpperLeftCorner);
-		salaryTableUpperRightCorner = clear(salaryTableUpperRightCorner);
+//		salaryTableUpperRightCorner = clear(salaryTableUpperRightCorner);
 
 	}
 
@@ -3769,12 +3770,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		setClip(salaryTableUpperLeftCorner.getStyle(), clipTop, salaryTableUpperLeftCorner.getOffsetWidth(),
 				salaryTableUpperLeftCorner.getOffsetHeight(), clipLeft);
 
-		salaryTableUpperRightCorner.getStyle().setTop(top, Unit.PX);
-		left = salaryTableScrollPane.getAbsoluteLeft() + clientWidth - salaryTableUpperRightCorner.getOffsetWidth()
-				+ draftScrollPane.getHorizontalScrollPosition();
-		salaryTableUpperRightCorner.getStyle().setLeft(left + 1, Unit.PX);
-		setClip(salaryTableUpperRightCorner.getStyle(), clipTop, salaryTableUpperRightCorner.getOffsetWidth(),
-				salaryTableUpperRightCorner.getOffsetHeight(), 0);
+//		salaryTableUpperRightCorner.getStyle().setTop(top, Unit.PX);
+//		left = salaryTableScrollPane.getAbsoluteLeft() + clientWidth - salaryTableUpperRightCorner.getOffsetWidth()
+//				+ draftScrollPane.getHorizontalScrollPosition();
+//		salaryTableUpperRightCorner.getStyle().setLeft(left + 1, Unit.PX);
+//		setClip(salaryTableUpperRightCorner.getStyle(), clipTop, salaryTableUpperRightCorner.getOffsetWidth(),
+//				salaryTableUpperRightCorner.getOffsetHeight(), 0);
 
 		left = salaryTableScrollPane.getAbsoluteLeft() + salaryTableUpperLeftCorner.getOffsetWidth() - horizontalScroll;
 		salaryTableHead.getStyle().setTop(top, Unit.PX);
@@ -4134,7 +4135,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		table.getStyle().setPosition(Position.ABSOLUTE);
 		table.getStyle().setTop(0, Unit.PX);
 		table.getStyle().setLeft(left + 1, Unit.PX);
-		table.getStyle().setWidth(width + 1, Unit.PX);
+		table.getStyle().setWidth(width, Unit.PX);
 		table.getStyle().setBackgroundColor("white");
 		table.setClassName(flexTable.getElement().getClassName());
 

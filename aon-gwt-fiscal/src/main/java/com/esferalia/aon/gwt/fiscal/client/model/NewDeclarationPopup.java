@@ -56,7 +56,6 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		paintPeriod();
 		paintVariablePanel();
 		paintModelSpecificPanel();
-		rootPanel.add(tab);
 		
 		// MENSAJE DE AVISO PARA INICIALIZAR EL MODELO
 		if (reset) {
@@ -66,6 +65,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 			tab.setWidget(row, 0, labelReset);
 			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		}
+		
+		rootPanel.add(tab);
 		
 		rootPanel.add(getButtonsPanels());
 		add(rootPanel);

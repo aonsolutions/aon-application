@@ -3,6 +3,7 @@ import {Apps} from "../../../services/app.js";
 import { getOfficeProjects, getProjects} from "../../../services/projectService.js";
 import { getCustomers } from "../../../services/registryService.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
+import { getTaskProcess } from "../../../services/taskService.js";
 import { waitEl } from "../../../services/utils.js";
 import { MESSENGER_DIRECTION, MESSENGER_IDS, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { createAction, createChatMessage, createNoMessage} from "./creationUtils.js";
@@ -220,19 +221,14 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
 export const fillProcessType =  ({source_id}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROCESS_TYPE);
     aonSelect.clear();
-    let options = [
-        { value:1, name:"Solicitud de vacaciones"},
-    ];
-    
-    if( aonMessengerChat.getDur().isMessengerManager() ){
-        options.push({ value:2, name:"Alta de empleado"});
+
+    let options = getTaskProcess();
+
+    if( !aonMessengerChat.getDur().isMessengerManager() ){
+        options = options.filter(({value})=> value!=2);
     }
 
-    options.push({ value:3, name: `Error ${MSG.TIMECONTROL}`});
-
-    if(options){
-        aonSelect.setOptions( options );
-    }
+    aonSelect.setOptions( options );
     if(source_id) aonSelect.value = source_id;
 
     aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{

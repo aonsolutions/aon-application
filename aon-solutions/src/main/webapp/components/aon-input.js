@@ -308,6 +308,34 @@ export class AonInput extends AonElement {
     }
   }
 
+  addIconWithRemove(icon, color, removeFn) {
+    let div = this.getElement(this.DIV);
+    let iconLabel = this.getElement(this.ICON);
+    if (!iconLabel) {
+      iconLabel = this.createElement(TAG.LABEL);
+      div.appendChild(iconLabel);
+    }
+    iconLabel.className = CSS.AON_INPUT_ICON_LABEL;
+    iconLabel.id = this.ICON;
+    iconLabel.setAttribute("for", this.INPUT);
+    let aonIconButton = new AonIconButton();
+    aonIconButton.id = this.ICON_LABEL;
+    aonIconButton.icon = icon;
+    aonIconButton.noHover = "true";
+    aonIconButton.addEventListener(EVENT.MOUSEOVER, () => 
+      aonIconButton.icon = MATERIAL_ICONS.CLOSE);
+
+    aonIconButton.addEventListener(EVENT.MOUSELEAVE, () => 
+      aonIconButton.icon = icon);
+
+    aonIconButton.addEventListener(EVENT.CLICK, removeFn);
+
+    iconLabel.appendChild(aonIconButton);
+
+    if (color) this.getElement(this.ICON_LABEL).color = color; 
+    this.getElement(this.INPUT).style.paddingRight = '40px';
+  }
+
   addIcon(icon, color) {
     let div = this.getElement(this.DIV);
     let iconLabel = this.getElement(this.ICON);
@@ -325,6 +353,7 @@ export class AonInput extends AonElement {
     iconLabel.appendChild(aonIconButton);
 
     if (color) this.getElement(this.ICON_LABEL).color = color;
+    this.getElement(this.INPUT).style.paddingRight = '40px';
   }
 
   removeIcon() {
@@ -359,6 +388,7 @@ export class AonInput extends AonElement {
     aonIconButton.aonIcon = aonIcon;
     aonIconButton.noHover = "true";
     iconLabel.appendChild(aonIconButton);
+    this.getElement(this.INPUT).style.paddingRight = '40px';
   }
 
   buildOptions() {

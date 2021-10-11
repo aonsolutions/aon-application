@@ -1,9 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {RegistryType, ToolbarType} from '../../models/enums.js';
 
-import '../../components/aon-address.js';
-import '../../components/aon-input.js';
-
 import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
 

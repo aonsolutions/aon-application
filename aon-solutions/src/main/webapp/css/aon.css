@@ -226,10 +226,6 @@ button:disabled, button[disabled]{
   cursor: pointer;
 }
 
-.aonRegisterLogo {
-  margin-top: 25px;
-}
-
 .aonLogo {
   position: absolute;
   margin-left: 10px;

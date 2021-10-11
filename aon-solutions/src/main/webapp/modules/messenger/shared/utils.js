@@ -332,6 +332,8 @@ export const buildForm = (div, aonMessengerChat) => {
     const isGestor = task.isGestor();
     const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
 
+    const dataDefault = aonMessengerChat.getData();
+
     isDefault = aonMessengerChat.getData().project && aonMessengerChat.getData().project.id;
 
     //-----------------------APPEND DIV TAGS
@@ -367,7 +369,7 @@ export const buildForm = (div, aonMessengerChat) => {
     //-----------------TYPE REQUEST
     const requestTypeSelect = createRequestType();
     requestTypeSelect.style.width = "100%";
-    if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
+    if(task.id || dataDefault.source_id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
     rowsDiv.appendChild(requestTypeSelect);
     //-----------------END TYPE REQUEST
 
@@ -387,15 +389,19 @@ export const buildForm = (div, aonMessengerChat) => {
         selectApp.style.marginLeft = "5px";
         rowsDiv.appendChild(selectApp);
         fillSelectAppCau(aonMessengerChat);
-    } else if( !task.id || task.isExternal() && aonMessengerChat.getDur().isMessengerManager() ){
-
+    } else if( 
+        (!task.id || task.isExternal()) && 
+        aonMessengerChat.getDur().isMessengerManager() &&
+        !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) )
+      ){
         let initText = isReceived(task, myWorkgroups) ? 'De' : 'Para';
         let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
         const btnExternal = createAonSwitch(titleBtn);
         rowsDiv.appendChild(btnExternal);
-        if(task.id || isDefault) btnExternal.disabled =  true;
+        if(task.id || isDefault) btnExternal.disabled = CONSTANT.TRUE;
         btnExternal.checked = task.isProject();
         btnExternal.addEventListener(EVENT.CHANGE, ({target}) => {
+            console.log("---------------------CHANGE BTN INTERNAL--------");
             changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess);
             if(!isGestor && target.checked) 
                 showTags(false);
@@ -419,7 +425,7 @@ export const buildForm = (div, aonMessengerChat) => {
  const changeRequestType = (aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess) =>{
     const task = aonMessengerChat.task;
     const btnExternal = document.getElementById(MESSENGER_IDS.EXTERNAL_TASK);
-    if(btnExternal && btnExternal.disabled == "true")
+    if(btnExternal && btnExternal.disabled == CONSTANT.TRUE)
         task.cleanTask(true);
 
     const detail = requestTypeSelect.getDetail();
@@ -432,8 +438,10 @@ export const buildForm = (div, aonMessengerChat) => {
         //------------------HTML CLEAN UP
         if(detail.value){
             task.setSource(detail.value);
+            
             if(!task.id)
                 task.setTitle(detail.name);
+               
             if(detail.value === TASK_SOURCE.REQUEST){
                 formRequest(columnsDivTwo, aonMessengerChat, btnExternal ? btnExternal.isChecked() : false);
             } else {
@@ -568,8 +576,8 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
             const projectSelect = createProject();
             projectSelect.default = true;
             projectSelect.style.width = "100%";
-            if(isGestor)  projectSelect.style.marginLeft = "5px";
-            if(task.id) projectSelect.disabled = projectSelect.readonly = true;
+            if(isGestor) projectSelect.style.marginLeft = "5px";
+            if(task.id) setAttributes(projectSelect, {disabled:CONSTANT.TRUE, readonly:CONSTANT.TRUE});
             rowsDivThree.appendChild(projectSelect);
             fillProject(task);
         } 
@@ -590,22 +598,24 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
  */
 const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
     const task = aonMessengerChat.task;
+    const dataDefault = aonMessengerChat.getData();
     const isGestor = task.isGestor();
 
     const divTwo = createReceiverDiv().element;
     columnsDiv.appendChild(divTwo);
 
     //-----------------TYPE PROCESS
-    const typeProcess = createProcessType();
-    typeProcess.default = true;
-    typeProcess.style.width = "100%";
-    divTwo.appendChild(typeProcess);
-    typeProcess.addEventListener(EVENT.CHANGE, ({detail})=>{
+    const processType = createProcessType();
+    processType.default = CONSTANT.TRUE;
+    processType.style.width = "100%";
+    if(dataDefault.source_id) setAttributes(processType, {disabled:CONSTANT.TRUE, readonly:CONSTANT.TRUE});
+    divTwo.appendChild(processType);
+    processType.addEventListener(EVENT.CHANGE, ({detail})=>{
         if(detail && detail.value)
             changeFormProcess(detail, aonMessengerChat);
     })
     fillProcessType(task, aonMessengerChat);
-    if(task.id) typeProcess.setDisabled(CONSTANT.TRUE);
+    if(task.id) processType.setDisabled(CONSTANT.TRUE);
         
     if(forManager){
         //--------- DIV PROJECT
@@ -620,7 +630,7 @@ const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
         fillProject(task);
     }
 
-    if(isGestor) {
+    if((isGestor || !forManager) && !aonMessengerChat.getApplicationParent().cau){
         //--------------------------DIV WORKGROUP AND TASKHOLDER
         addTaskHolderAndWorkgroup(task, aonMessengerChat, columnsDiv);
     }
