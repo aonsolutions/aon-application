@@ -294,12 +294,15 @@ export class AonMessengerList extends AonElement {
     let divTwo = this.createElement("div");
     divTwo.style = `font-weight: 550;bottom:${description ? 1 : -9}px;position:absolute;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;`;
     divTwo.innerText = newTitle;
+    divTwo.title = newTitle;
     div.appendChild(divTwo);
      
 
     if(description){
       let divThree = this.createElement("div");
-      divThree.innerText = description;
+      const dText = description.replace(/<[^>]+>|&nbsp;/g, ' ');
+      divThree.innerText = dText;
+      divThree.title = dText;
       divThree.style = "color:grey;position:absolute;top:3px;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;";
       div.appendChild(divThree);
     }

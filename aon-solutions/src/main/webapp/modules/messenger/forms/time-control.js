@@ -1,10 +1,10 @@
 import { AonDate } from "../../../components/aon-date.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
-import { TAG, MSG, CSS, EVENT, CONSTANT } from "../../../environments/environments.js";
+import { TAG, MSG, CSS, EVENT, CONSTANT, COLORS } from "../../../environments/environments.js";
 import { getStatus, getTimeControlDetail, saveTimeControlDetail } from "../../../services/timeControlService.js";
 import {  formatDateOrigin, serializeForm, setDateTimestampDay, sortBy } from "../../../services/utils.js";
-import { newComponent, setAttributes } from "../../../services/utilsComponents.js";
+import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { firstLetters } from "../../signin/time-control/utils.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import { createDivEditable } from "../shared/creationUtils.js";
@@ -26,7 +26,6 @@ import { createDivEditable } from "../shared/creationUtils.js";
     //-----------DATA FORM
     createDataForm(form, aonMessengerChat);
     //-----------END DATA ENTERPRISE
-
 }
 
 /**
@@ -37,16 +36,21 @@ import { createDivEditable } from "../shared/creationUtils.js";
 const createDataForm = (form, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     let data = task.getDescriptionJson();
+    
+    const taskHolderId = data.task_holder || task.myTaskHolder.id;
 
+    let taskHolder = setAttributes(new AonInput(),{name:"task_holder", value: taskHolderId}) ;
+    taskHolder.style.display = "none"; 
+    form.appendChild( taskHolder );
+   
     let times = setAttributes(new AonSelect(),{ title: "Seleccione registro a modificar", id:"timeId", name:"timeId"});
     createDiv(form, times, {classes:[CSS.AON_COL_XS_12]})
 
-    const taskHolderId = data.task_holder || task.myTaskHolder.id;
     fillTimeControl(times, data.timeId, taskHolderId);
     if(task.id)
         times.setDisabled(CONSTANT.TRUE);
 
-    let date = setAttributes(new AonDate(),{ title: MSG.DATE, id:"date", name:"date"});
+    let date = setAttributes(new AonDate(),{ title: `Nueva ${MSG.DATE}`, id:"date", name:"date"});
     createDiv(form, date, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
     if(data.date) date.setDate(new Date(data.date));
 
@@ -54,7 +58,7 @@ const createDataForm = (form, aonMessengerChat) => {
         name:"time",
         id:"time",
         type:"time",
-        description:"Hora",
+        description:`Nueva Hora`,
         value: data.time ?  data.time : ""
     });
     createDiv(form, time, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
@@ -73,12 +77,28 @@ const createDataForm = (form, aonMessengerChat) => {
     let dur = aonMessengerChat.getDur();
 
     if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isTimecontrolManager() && aonMessengerChat.getDur().isTimecontrolPortal())){
-        const btnSubmit = document.createElement(TAG.BUTTON);
-        btnSubmit.className = CSS.AON_BUTTON;
-        btnSubmit.style.marginTop = "15px";
-        btnSubmit.textContent =  MSG.ACCEPT;
-        btnSubmit.addEventListener(EVENT.CLICK, ()=>saveTimeControl(times.getDetail(), {date: date.value, time: time.value}, aonMessengerChat));
-        createDiv(form, btnSubmit, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+
+        const btnReject = setStyles(document.createElement(TAG.BUTTON),{
+            marginTop: "15px",
+            padding: "0.5rem 1rem",
+            background: CSS.variable(COLORS.MATERIAL_RED)
+        });
+        btnReject.className = CSS.AON_BUTTON;
+        btnReject.textContent =  MSG.REJECT;
+        btnReject.addEventListener(EVENT.CLICK, ()=>aonMessengerChat.getApplication().development());
+        const div = createDiv(form, btnReject, {classes:[CSS.AON_COL_XS_12]});
+        div.style.textAlign = "center";
+
+
+        const btnAccept = setStyles(document.createElement(TAG.BUTTON),{
+            margin:"15px 0 0 15px",
+            padding: "0.5rem 1rem"
+        });
+        btnAccept.className = CSS.AON_BUTTON;
+        btnAccept.textContent =  MSG.ACCEPT;
+        // aonCol-xs-offset-2
+        btnAccept.addEventListener(EVENT.CLICK, ()=>saveTimeControl(times.getDetail(), {date: date.value, time: time.value}, aonMessengerChat));
+        div.appendChild(btnAccept);
     }
 
 }
@@ -133,6 +153,7 @@ const createDiv = (parent, child, properties)=> {
 
 
 const saveTimeControl = async (tm,{date, time},aonMessengerChat) => {
+    
     aonMessengerChat.getApplication().startLoading();
     try {
         if(tm.id){
