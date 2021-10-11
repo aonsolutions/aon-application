@@ -139,7 +139,7 @@ input:required {
 }
 
 .aonInputUnderlined > input {
-	background: var(--aon-color-bg-high-contrast);
+	background: transparent;
 }
 .aonInputFilled > input {
 	background: var(--aon-color-bg-low-contrast);

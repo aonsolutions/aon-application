@@ -7,10 +7,14 @@ import { AonInput } from './aon-input.js';
 import { AonSelect } from './aon-select.js';
 import { TABLE } from '../environments/aonTag.js';
 import { AonBasicTable } from './aon-basic-table.js';
+import { getStreetTypes, streetType } from '../services/StreetType.js';
 
 export class AonAddress extends AonElement {
 
+  STREET_TYPE;
   ADDRESS;
+  NUMBER;
+  ADDRESS2;
   CITY;
   COUNTRY;
   EDIT;
@@ -63,7 +67,10 @@ export class AonAddress extends AonElement {
 
   initialize() {
     this.id = this.id || 'aonAddress';
+    this.STREET_TYPE = this.id + 'StreetType';
     this.ADDRESS = this.id + 'Address';
+    this.ADDRESS2 = this.id + 'Address2';
+    this.NUMBER = this.id + 'Number';
     this.CITY = this.id + 'City';
     this.COUNTRY = this.id + 'Country';
     this.EDIT = this.id + 'Edit';
@@ -78,6 +85,7 @@ export class AonAddress extends AonElement {
     let aonInput = new AonInput();
     aonInput.id = this.INPUT;
     aonInput.description = this.title;
+    aonInput.title = this.address.getFullAddress();
     aonInput.value = this.address.getFullAddress();
     this.appendChild(aonInput);
     aonInput.readonly = CONSTANT.READONLY;
@@ -102,9 +110,27 @@ export class AonAddress extends AonElement {
     let table = new AonBasicTable();
     table.id = this.EDIT;
 		table.style.display = "none";
+    table.style.backgroundColor = "#f1f1f1";
     this.appendChild(table);
 
     table.addRow();
+
+    let streetTypeSelect = new AonSelect();
+    streetTypeSelect.id = this.STREET_TYPE;
+    streetTypeSelect.title = 'Tipo vía'; //MSG.STREET_TYPE;
+    streetTypeSelect.options = JSON.stringify(
+      getStreetTypes().map((c) => {
+        return { value: c.ineCode, name: c.description.toLowerCase()};
+      })
+    );
+    streetTypeSelect.readonly = this.isReadonly();
+    streetTypeSelect.value = this.address.getStreetType();
+    streetTypeSelect.addEventListener(EVENT.SELECT, () => {
+      this.address.setStreetType(streetTypeSelect.value);
+      this.getElement(this.INPUT).value = this.address.getFullAddress();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    table.addCell(streetTypeSelect, 2);
     
     let addressInput = new AonInput();
     addressInput.id = this.ADDRESS;
@@ -117,9 +143,56 @@ export class AonAddress extends AonElement {
       this.getElement(this.INPUT).value = this.address.getFullAddress();
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
-    table.addCell(addressInput, 4);
+    table.addCell(addressInput, 6);
 
     table.addRow();
+
+    let numberInput = new AonInput();
+    numberInput.id = this.NUMBER;
+    numberInput.description = MSG.NUMBER;
+    numberInput.className = CSS.AON_WIDTH_ALL;
+    numberInput.value = this.address.getNumber();
+    numberInput.readonly = this.isReadonly();
+    numberInput.addEventListener(EVENT.CHANGE, () => {
+      this.address.setNumber(numberInput.value);
+      this.getElement(this.INPUT).value = this.address.getFullAddress();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    table.addCell(numberInput, 2);
+
+    let address2Input = new AonInput();
+    address2Input.id = this.ADDRESS2;
+    address2Input.description = 'Resto Dirección';//MSG.ADDRESS;
+    address2Input.className = CSS.AON_WIDTH_ALL;
+    address2Input.value = this.address.getAddress2();
+    address2Input.readonly = this.isReadonly();
+    address2Input.addEventListener(EVENT.CHANGE, () => {
+      this.address.setAddress2(address2Input.value);
+      this.getElement(this.INPUT).value = this.address.getFullAddress();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    table.addCell(address2Input, 6);
+
+    table.addRow();
+
+
+    let countryInput = new AonSelect();
+    countryInput.id = this.COUNTRY;
+    countryInput.title = MSG.COUNTRY;
+    countryInput.options = JSON.stringify(
+      Countries.map((c) => {
+        return { value: c.iso2, name: c.iso2 };
+      })
+    );
+    countryInput.readonly = this.isReadonly();
+    countryInput.value = this.address.getCountry();
+    countryInput.addEventListener(EVENT.SELECT, () => {
+      this.address.setCountry(countryInput.value);
+      this.getElement(this.INPUT).value = this.address.getFullAddress();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    let countryTd = table.addCell(countryInput, 1);
+    countryTd.style.width = '20%';
 
     let zipInput = new AonInput();
     zipInput.id = this.ZIP;
@@ -129,10 +202,11 @@ export class AonAddress extends AonElement {
     zipInput.addEventListener(EVENT.CHANGE, () => {
       this.address.setZip(zipInput.value);
       this.getElement(this.INPUT).value = this.address.getFullAddress();
+      this.getElement(this.PROVINCE).value = this.address.getProvince();
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
-    table.addCell(zipInput);
-
+    let zipTd = table.addCell(zipInput, 1);
+    zipTd.style.width = '15%';
     let cityInput = new AonInput();
     cityInput.id = this.CITY;
     cityInput.description = MSG.CITY;
@@ -143,7 +217,7 @@ export class AonAddress extends AonElement {
       this.getElement(this.INPUT).value = this.address.getFullAddress();
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
-    table.addCell(cityInput);
+    table.addCell(cityInput, 3);
 
 
     let provinceInput = new AonInput();
@@ -156,25 +230,7 @@ export class AonAddress extends AonElement {
       this.getElement(this.INPUT).value = this.address.getFullAddress();
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
-    table.addCell(provinceInput);
-
-
-    let countryInput = new AonSelect();
-    countryInput.id = this.COUNTRY;
-    countryInput.title = MSG.COUNTRY;
-    countryInput.options = JSON.stringify(
-      Countries.map((c) => {
-        return { value: c.iso2, name: c.nombre };
-      })
-    );
-    countryInput.readonly = this.isReadonly();
-    countryInput.value = this.address.getCountry();
-    countryInput.addEventListener(EVENT.SELECT, () => {
-      this.address.setCountry(countryInput.value);
-      this.getElement(this.INPUT).value = this.address.getFullAddress();
-      this.dispatchEvent(new Event(EVENT.CHANGE));
-    });
-    table.addCell(countryInput);
+    table.addCell(provinceInput, 3);
   }
 
   isReadonly() {
