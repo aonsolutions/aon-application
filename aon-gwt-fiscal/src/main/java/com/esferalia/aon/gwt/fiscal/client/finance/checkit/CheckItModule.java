@@ -10,11 +10,10 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCards;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCards.AonCard;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
@@ -31,6 +30,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -68,6 +69,8 @@ public class CheckItModule extends MainEntryPoint {
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 	private static final String EURO = "\u20AC";
+	private static final DateTimeFormat DATE_HOURS = DateTimeFormat.getFormat("hh:mm");
+	
 	
 	private static CheckItServiceAsync CHECKIT_SERVICE;
 	
@@ -99,6 +102,7 @@ public class CheckItModule extends MainEntryPoint {
 	}
 	
 	public void onModuleLoad( final CheckItModuleOptions opt ) {
+		ensureGwtSelector();
 		AON.ensureInjected();
 		CheckItServiceAsync serviceRaw = GWT.create(CheckItService.class);
 		CHECKIT_SERVICE = new CheckItServiceAsyncDecorator(serviceRaw);
@@ -162,53 +166,6 @@ public class CheckItModule extends MainEntryPoint {
 		return panel;
 	}
 	
-//	private void paintRegistrationConfirmation(CheckItModuleOptions opt) {
-//		FlexTable registrationTable = new FlexTable();
-//		AonDialog dialog = new AonDialog("Confirmaci\u00F3n de registro", registrationTable);
-//		dialog.setAutoHideEnabled(true);
-//		Label confirmLabel = new Label("\u00BFDesea registrar esta empresa en CheckIt?");
-//		confirmLabel.getElement().getStyle().setProperty("margin-bottom", "1.5em");
-//		confirmLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-//		registrationTable.setWidget(0, 0, confirmLabel);
-//		HorizontalPanel hp = new HorizontalPanel();
-//		Button hai = new Button("S\u00CD");
-//		Button iie = new Button(AON.MSG.no());
-//		hp.setWidth("100%");
-//		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-//		hp.add(hai);
-//		hp.add(iie);
-//		registrationTable.setWidget(1, 0, hp);
-//		
-//		hai.addClickHandler(handler -> {
-//			dialog.hide();
-//			CHECKIT_SERVICE.saveEnterpriseData(
-//			opt.getDomainName()
-//			, opt.getDomain()
-//			, opt.getUser()
-//			, new AsyncCallback<Integer>() {
-//				@Override
-//				public void onSuccess(Integer result) {
-//					opt.getConfiguration().setEnterpriseId(result);
-//				}
-//				
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					toolbar.showErrorMessage(caught.getMessage());
-//				}	
-//		});
-//			dockLayoutPanel.clear();
-//			onModuleLoad();
-//			
-//		});
-//		
-//		iie.addClickHandler(handler -> {
-//			dialog.hide();
-//			container.remove(dialog);
-//		});
-//		dialog.center();
-//		container.add(dialog);
-//		dialog.show();
-//	}
 
 	private Widget paintRegistration(CheckItModuleOptions opt) {
 		FlowPanel panel = new FlowPanel();
@@ -219,12 +176,6 @@ public class CheckItModule extends MainEntryPoint {
 		panel.addStyleName(AON.CSS.aonBorder());
 		panel.addStyleName(AON.CSS.aonPadding());
 		if (!opt.getConfiguration().isDown() && !opt.getConfiguration().isRegistrationFailed()) {
-			/*InlineLabel label = new InlineLabel("No se ha encontrado informaci\u00F3n sobre el registro en Check It");
-			AonTextButton registerButton = new AonTextButton( AON.MSG.register(), AON.CSS.aonIconRegister() );
-			registerButton.addClickHandler(event -> paintRegistrationConfirmation(opt));
-			registerButton.addStyleName(AON.CSS.aonMarginLeft());
-			panel.add( label );
-			panel.add( registerButton );*/
 			CHECKIT_SERVICE.saveEnterpriseData(
 					opt.getDomainName()
 					, opt.getDomain()
@@ -254,64 +205,30 @@ public class CheckItModule extends MainEntryPoint {
 	}
 
 	private void paintRegistrationData(CheckItModuleOptions opt) {
-		AonToolbarButton config = new AonToolbarButton(AON.MSG.settings(), AON.CSS.aonIconSettings());
+		AonToolbarButton config = new AonToolbarButton(AON.MSG.information(), AON.CSS.aonIconAudit());
 		toolbar.add(config);
 		config.addClickHandler(event -> {
-			AonCustomDialog dialog = new AonCustomDialog();
-			dialog.setCaption(AON.MSG.settings());
-
-			FlowPanel panel = new FlowPanel();
-			panel.setStyleName(AON.CSS.aonTextCenter());
-			panel.addStyleName(AON.CSS.aonWidthAlmostAll());
-			panel.addStyleName(AON.CSS.aonMarginTop());
-			panel.addStyleName(AON.CSS.aonMarginBottom());
-			panel.addStyleName(AON.CSS.aonBlockCenter());
-			panel.addStyleName(AON.CSS.aonBorder());
-			panel.addStyleName(AON.CSS.aonPadding());
-			InlineLabel label = new InlineLabel("Identificador de empresa");
-			label.setStyleName(AON.CSS.aonTableLabel());
-			panel.add( label );
-			AonIntegerBox enterpriseIdBox = new AonIntegerBox();
-			enterpriseIdBox.setEnabled(false);
-			enterpriseIdBox.setVisibleLength(8);
-			enterpriseIdBox.addStyleName(AON.CSS.aonMarginLeft());
-			enterpriseIdBox.setValue(opt.getConfiguration().getEnterpriseId());
-//			enterpriseIdBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-//				
-//				@Override
-//				public void onValueChange(ValueChangeEvent<Integer> event) {
-//					AonConfirmDialog cd = new AonConfirmDialog();
-//					cd.confirm("Confirma la modificación del identificador", new AonConfirmDialogCallback() {
-//						
-//						@Override
-//						public void onCancel() {
-//							enterpriseIdBox.setValue(opt.getConfiguration().getEnterpriseId());				
-//						}
-//						
-//						@Override
-//						public void onAccept() {
-//							// Modificar el parámetro en la BD
-//						}
-//					});
-//				}
-//			});
-			panel.add( enterpriseIdBox );
 			
-			FlowPanel buttons = new FlowPanel();
-	    	buttons.setStyleName(AON.CSS.aonTextCenter());
-	    	buttons.addStyleName(AON.CSS.aonMarginTop());
-	    	buttons.addStyleName(AON.CSS.aonMarginBottom());
-
-	    	final Button cancelButton = new Button();
-	    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
-	    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
-	    	cancelButton.setText( AON.MSG.close());
-	    	cancelButton.addClickHandler(ev -> {
-	    		cancelButton.setEnabled(false);
-				dialog.hide();
-	    	});
-	    	buttons.add(cancelButton);
-	    	panel.add(buttons);
+			CustomDialog dialog = new CustomDialog();
+			
+			dialog.setCaption(AON.MSG.information());
+			
+			FlowPanel panel = new FlowPanel();
+			panel.getElement().getStyle().setProperty("minWidth", "175px");
+			panel.getElement().getStyle().setProperty("minHeight", "80px");
+			FlexTable idTable = new FlexTable();
+			idTable.addStyleName(AON.CSS.aonMargin());
+			idTable.setWidth("100%");
+			InlineLabel label = new InlineLabel("Identificador de empresa:");
+			label.addStyleName(AON.CSS.aonTextLeft());
+			label.setStyleName(AON.CSS.aonBold());
+			label.setStyleName(AON.CSS.aonTableLabel());
+			idTable.setWidget(0, 0, label );
+			InlineLabel enterpriseIdLabel = new InlineLabel(AonNumberUtils.toString(opt.getConfiguration().getEnterpriseId()));
+			enterpriseIdLabel.addStyleName(AON.CSS.aonTextRight());
+			enterpriseIdLabel.addStyleName(AON.CSS.aonMarginRight());
+			idTable.setWidget(0, 1, enterpriseIdLabel);
+			panel.add(idTable);
 			
 			dialog.add(panel);
 			dialog.center();
@@ -444,8 +361,6 @@ public class CheckItModule extends MainEntryPoint {
 			
 			updateError = false;
 			boolean areLogs = (checkItBankAccount.getLogs() != null && !checkItBankAccount.getLogs().isEmpty());
-//			Label updateErrorLabel = new Label("Error de actualizaci\u00F3n");
-//			updateErrorLabel.addStyleName(AON.CSS.aonColorRed());
 			
 			InlineLabel title = new InlineLabel();
 			title.addStyleName(AON.CSS.aonBorderNone());
@@ -470,15 +385,33 @@ public class CheckItModule extends MainEntryPoint {
 			
 			FlowPanel atDatePanel = new FlowPanel();
 			InlineLabel atDateBox = new InlineLabel();
+			InlineLabel atDateBox2 = new InlineLabel();
 			atDateBox.addStyleName(AON.CSS.aonFontMedium());
-			atDateBox.setText( checkItBankAccount.getAtDate() == null ? "----" : AON.TIME_FORMAT.format( checkItBankAccount.getAtDate()));
+			atDateBox.setText( checkItBankAccount.getAtDate() == null ? "----" : AON.DATE_FORMAT.format( checkItBankAccount.getAtDate()));
+			atDateBox2.setText( checkItBankAccount.getAtDate() == null ? "" : " hora: " + DATE_HOURS.format( checkItBankAccount.getAtDate()));
+			
 			atDatePanel.addStyleName(AON.CSS.aonMarginBottom());
 			
+			
 			if (checkItBankAccount.getAtDate() != null && CalendarUtil.getDaysBetween(checkItBankAccount.getAtDate(), new Date()) >= 3) {
-				atDatePanel.addStyleName(AON.CSS.aonColorRed());
+				atDateBox.addStyleName(AON.CSS.aonColorRed());
 				updateError = true;
+				int noUpDays = CalendarUtil.getDaysBetween(checkItBankAccount.getAtDate(), new Date());
+				FlowPanel updateErrorPanel = new FlowPanel();
+				Label updateErrorLbl = new Label("Error de actualizaci\u00F3n en cuenta " + checkItBankAccount.getBank() + " - " +checkItBankAccount.getCcc() + ": la cuenta lleva " + noUpDays + " d\u00EDas sin actualizarse");
+				updateErrorLbl.addStyleName(AON.CSS.aonColorRed());
+				Label updateErrorLbl2 = new Label("Acceda a su banca online para verificar el acceso");
+				updateErrorLbl2.addStyleName(AON.CSS.aonMarginLeft());
+				updateErrorPanel.add(updateErrorLbl);
+				updateErrorPanel.add(updateErrorLbl2);
+				sessionLog.add(updateErrorPanel);
+				openFootPanel();
+				
+			} else if (checkItBankAccount.getAtDate() != null){
+				atDateBox.addStyleName(AON.CSS.aonColorGreen());				
 			}
 			atDatePanel.add(atDateBox);
+			atDatePanel.add(atDateBox2);
 			
 			FlowPanel balanceLabelPanel = new FlowPanel();
 			InlineLabel balanceLabel = new InlineLabel("Saldo ");
@@ -528,7 +461,7 @@ public class CheckItModule extends MainEntryPoint {
 			ClickHandler clickHandler = event -> {
 				FlowPanel panel = new FlowPanel();
 				
-				AonCustomDialog dialog = new AonCustomDialog();
+				CustomDialog dialog = new CustomDialog();
 				dialog.setAutoHideEnabled(true);
 				
 				dialog.setCaption("MOVIMIENTOS PENDIENTES");
@@ -540,9 +473,9 @@ public class CheckItModule extends MainEntryPoint {
 				closeImport.addStyleName(AON.CSS.aonPaddingBottom());
 				
 				
-				Button close = new Button(AON.MSG.close());
-				close.setStyleName(AON.CSS.aonMarginRight());
-				close.addClickHandler(e -> dialog.hide());
+//				Button close = new Button(AON.MSG.close());
+//				close.setStyleName(AON.CSS.aonMarginRight());
+//				close.addClickHandler(e -> dialog.hide());
 				Button importBtn = new Button("Importar");
 				importBtn.setStyleName(AON.CSS.aonMarginLeft());
 				
@@ -589,7 +522,7 @@ public class CheckItModule extends MainEntryPoint {
 								}	
 						}));
 				
-				closeImport.add(close);
+//				closeImport.add(close);
 				
 				if (checkItBankAccount.getPending() != null && !checkItBankAccount.getPending().isEmpty())
 					closeImport.add(importBtn);
@@ -1347,6 +1280,16 @@ public class CheckItModule extends MainEntryPoint {
 		}
 		return iban;
 	}
+	
+	public static void ensureGwtSelector() {
+		BodyElement body = Document.get().getBody();
+		String className = body.getClassName();
+		if (AonStringUtils.isBlank(className)
+				|| (className.indexOf("gwt-Selector") == -1))
+			body.addClassName("gwt-Selector");
+
+	}
+
 	
 
 }		
