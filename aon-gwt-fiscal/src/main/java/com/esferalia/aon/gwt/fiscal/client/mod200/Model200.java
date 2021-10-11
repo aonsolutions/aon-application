@@ -160,6 +160,13 @@ public class Model200 extends MainEntryPoint {
 		public void removed() {
 			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 		}
+		
+		public void reset(Model200ModuleOptions options,Mod2002020 mod200) {
+			// El botón inicializar, se utiliza a partir del 2020
+			if (mod200.getYear() == 2020)
+				changeView2020(options, mod200);			
+		}
+		
 	}
 	
 	@Override
