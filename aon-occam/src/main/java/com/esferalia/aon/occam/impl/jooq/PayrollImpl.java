@@ -28,6 +28,11 @@ public class PayrollImpl implements IPayroll {
 	
 	
 	@Override
+	public ContractData[] getData(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate) {
+		return EmployeeDAO.getData(ctx, domainName, ccc, naf, startDate, endDate);
+	}
+
+	@Override
 	public ContractData[] setData(AONContext ctx, String domainName, String ccc, String naf, 
 			Date startDate, Date endDate,  ContractData... contractDatas) {
 		return EmployeeDAO.setData(ctx, domainName, ccc, naf, startDate, endDate, contractDatas);

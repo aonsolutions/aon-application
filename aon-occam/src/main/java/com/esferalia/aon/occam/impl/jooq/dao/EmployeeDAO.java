@@ -269,6 +269,10 @@ public class EmployeeDAO {
 		return setCosts(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), costs);
 	}
 
+	public static ContractData [] getData(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate) {
+		return getData(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate));
+	}
+
 	public static ContractData[] setData(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, ContractData... contractDatas) {
 		return setData(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), contractDatas);
 	}
@@ -1037,6 +1041,34 @@ public class EmployeeDAO {
 		
 	}
 	
+	private static ContractData [] getData(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate) {
+		
+		return 
+		dslContext
+		.select()
+		.from(DOMAIN)
+		.innerJoin(CONTRACT_DATA).on(DOMAIN.ID.eq(CONTRACT_DATA.DOMAIN))
+		.innerJoin(CONTRACT).on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID))
+		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
+		.where(DOMAIN.NAME.eq(domainName))
+		.and(ENTERPRISE_CCC.CCC.eq(ccc))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
+		.and(DSL.condition(endDate == null ).or(CONTRACT_DATA.START_DATE.le(endDate)))
+		.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(startDate)))
+		.fetchStreamInto(CONTRACT_DATA)
+		.map(data -> 
+		new ContractData()
+		.setId(data.getId())
+		.setName(data.getName())
+		.setDomain(data.getDomain())
+		.setEndDate(data.getEndDate())
+		.setStartDate(data.getStartDate())
+		.setExpression(data.getExpression())
+		).toArray(ContractData[]::new);
+		
+	}
+
 	private static ContractData [] setData(DSLContext dslContext, String domainName, java.sql.Date startDate, java.sql.Date endDate, ContractRecord contractRecord, ContractData ...datas) {
 		
 		List<ContractData> datasList = new ArrayList<ContractData>(datas.length);

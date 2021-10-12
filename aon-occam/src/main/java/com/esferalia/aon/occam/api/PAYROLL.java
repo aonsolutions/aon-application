@@ -46,6 +46,11 @@ public class PAYROLL {
 		}
 	}
 
+	public static ContractData[] getData(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
+		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
+			return getPayroll().getData(ctx, domainName, ccc, naf, startDate, endDate);
+		}
+	}
 
 	// -------------------- DEDUCTIONS
 	

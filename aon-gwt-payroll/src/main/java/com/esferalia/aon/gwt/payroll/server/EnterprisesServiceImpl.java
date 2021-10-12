@@ -116,6 +116,7 @@ import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.agreement.AgreementParser;
 import com.esferalia.aon.payroll.agreement.ServiAgreementsFilter;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
@@ -1908,7 +1909,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			connection = AonServletUtils.getConnection(currentDomainName);
 			Integer domainId = AonServletUtils.getDomainID(currentDomainName);
 			
-			syncPECs(currentDomainName, currentUser, contractId, connection);
+			syncWithIdcs(currentDomainName, currentUser, contractId, connection);
 			
 			return getPECs(currentDomainName, domainId, currentUser, contractId);
 		} catch (SQLException e) {
@@ -1929,7 +1930,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
 			
-			syncPECs(currentDomainName, currentUser, contractId, connection);
+			syncWithIdcs(currentDomainName, currentUser, contractId, connection);
 			
 			return JooqSSBonus.getSSBonus(connection, contractId);
 		} catch (SQLException e) {
@@ -2508,6 +2509,50 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 							String.format("%s. %s %s", deduction.getDescription(), "CUOTA TRABAJADOR", getName(deduction.getType())), 
 							deduction.getExpression()));
 			
+			com.esferalia.aon.occam.api.model.payroll.ContractData datas [] = 
+			PAYROLL.getData(domainName, domainId, user, ccc, naf, startDate, null);
+			for (com.esferalia.aon.occam.api.model.payroll.ContractData data : datas) {
+				ContextVariable contextVar = ContextVariable.getVariableByName(data.getName());
+				if ( contextVar == null )
+					continue;
+				
+				switch (contextVar) {
+				case IT_RATE:
+					pecs.add(newSSPECData(
+						null,
+						data.getStartDate(), 
+						data.getEndDate(), 
+						String.format("I.T.: %.2f %%", Double.parseDouble(data.getExpression())), 
+						data.getExpression()));
+					break;
+				case IMS_RATE:
+					pecs.add(newSSPECData(
+						null,
+						data.getStartDate(), 
+						data.getEndDate(), 
+						String.format("I.M.S.: %.2f %%", Double.parseDouble(data.getExpression())), 
+						data.getExpression()));
+					break;
+				case UNEMPLOY_EMPLOYEE_PERCENT:
+					pecs.add(newSSPECData(
+						null,
+						data.getStartDate(), 
+						data.getEndDate(), 
+						String.format("DESEMPLEO TRABAJADOR: %.2f %%", Double.parseDouble(data.getExpression())), 
+						data.getExpression()));
+					break;
+				case UNEMPLOY_ENTERPRISE_PERCENT:
+					pecs.add(newSSPECData(
+						null,
+						data.getStartDate(), 
+						data.getEndDate(), 
+						String.format("DESEMPLEO EMPRESA:  %.2f %%", Double.parseDouble(data.getExpression())), 
+						data.getExpression()));
+					break;
+				default:
+					break;
+				}
+			}
 		});
 		
 		
@@ -2739,7 +2784,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		return new SSPECData(isSystem, startDate, endDate, description, ordinal, expression);
 	}
 	
-	private static void syncPECs(String currentDomainName, String currentUser, Integer contractId, Connection connection)
+	private static void syncWithIdcs(String currentDomainName, String currentUser, Integer contractId, Connection connection)
 			throws SQLException {
 		Integer domainId = AonServletUtils.getDomainID(currentDomainName);
 		Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName); 
@@ -2750,7 +2795,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				parentDomainId, 
 				currentUser, 
 				p -> p.getIdProperty().eq(contractId))
-		.ifPresent( contract -> SistemaRED2AON.addBonus(
+		.ifPresent( contract -> SistemaRED2AON.syncWithIdcs(
 				currentUser, 
 				currentDomainName, 
 				domainId, 
