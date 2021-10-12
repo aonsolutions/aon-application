@@ -66,6 +66,8 @@ public interface IPayroll {
 
 	// -------------------- BONUS 
 	
+	public ContractData [] setData(AONContext ctx, String domainName,String ccc, String naf, Date startDate, Date endDate, ContractData...contractDatas);
+
 	public ContractData [] setContractData(AONContext ctx, String domainName, ContractFilter filter, ContractData...contractDatas);
 
 	// -------------------- CCC

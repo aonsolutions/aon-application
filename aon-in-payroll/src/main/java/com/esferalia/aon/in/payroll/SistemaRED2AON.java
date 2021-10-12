@@ -13,6 +13,7 @@ import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentTyp
 import static com.esferalia.aon.salary.expression.Period.max;
 import static com.esferalia.aon.salary.expression.Period.min;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -38,6 +39,7 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.tgss.idc.PEC;
 import com.esferalia.aon.in.payroll.tgss.sld.SLDSalaries;
 import com.esferalia.aon.occam.api.AON;
@@ -50,6 +52,7 @@ import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.BonusType;
@@ -465,6 +468,38 @@ public class SistemaRED2AON {
 	}
 
 
+	public static void syncWithIdc(byte data[], String userLogin, String domainName, Integer domainId, Date date, String ccc, String  naf) throws IOException, UnknownPDFException {
+	
+		com.esferalia.aon.in.payroll.tgss.idc.Idc.parse(data, new com.esferalia.aon.in.payroll.tgss.idc.Idc.IdcListener() {
+			
+			@Override
+			public void onSSPECs(Collection<PEC> ssPECs) {
+				addPECs(ssPECs, userLogin, domainName, domainId, date, ccc, naf);
+			}
+			
+			@Override
+			public void onContractData(Date startDate, Date endDate, Map<ContextVariable, Object> contractData) {
+				addData(contractData, userLogin, domainName, domainId, startDate, endDate, ccc, naf);
+			}
+		});
+	}
+
+	public static void syncWithIdc(String userLogin, String domainName, Integer domainId, Integer userId, Date date, String regime,
+			String ccc, String  naf) {
+		
+		try {
+	
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			byte data [] = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+			
+			syncWithIdc(data, userLogin, domainName, domainId, date, ccc, naf);
+			
+		} catch ( Throwable e ) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void addPECs(String userLogin, String domainName, Integer domainId, Integer userId, Date date, String regime,
 			String ccc, String  naf) {
 		
@@ -550,6 +585,39 @@ public class SistemaRED2AON {
 
 	}
 	
+	public static void addData(
+	Map<ContextVariable, Object> data, 
+	String userLogin, 
+	String domainName, 
+	Integer domainId, 
+	Date startDate, 
+	Date endDate, 
+	String ccc, 
+	String  naf) {
+		
+		ContractData contractDatas [] =
+		data.entrySet().stream()
+		.map( e ->
+			new ContractData()
+			.setEndDate(endDate)
+			.setStartDate(startDate)
+			.setName(e.getKey().getName())
+			.setExpression(toString(e.getValue()))
+		)
+		.toArray(ContractData[]::new)
+		;
+		
+		PAYROLL.setData(
+		domainName, 
+		domainId, 
+		userLogin, 
+		ccc,
+		naf,
+		startDate,
+		endDate,
+		contractDatas);					
+
+	}
 
 
 
@@ -596,6 +664,64 @@ public class SistemaRED2AON {
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void syncWithIdcs(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
+			String ccc, String naf, Date endDate) {
+	
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		try {
+			Collection<solutions.aon.seg.social.object.Idc> idcs = 
+			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+			
+			Date idcDates [] = 
+			idcs.stream()
+			.filter(idc -> AonStringUtils.equals("ALTA", idc.getDescripcion()))
+			.filter(idc -> endDate == null || idc.getFecha().compareTo(endDate) <= 0 )
+			.map(idc ->idc.getFecha()).sorted()
+			.toArray(Date[]::new);
+			
+			if ( idcDates.length == 0 )
+				return;
+			
+			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(endDate == null ? new Date() : endDate);
+			Date ssStartDate = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
+
+			for ( int i = 1; i < idcDates.length ; i++ ) {
+				Date start = idcDates[i-1];
+				Date end = AonDateUtils.add(idcDates[i], Calendar.DAY_OF_MONTH,-1);
+				if ( end.before(ssStartDate)) 
+					continue;
+				syncWithIdc(userLogin, domainName, domainId, userId, start, regime, ccc, naf);
+			}
+			
+			Date last = idcDates[idcDates.length-1];
+			System.out.println("IDC : " + last );
+			addPECs(userLogin, domainName, domainId, userId, last, regime, ccc, naf);
+			
+			//.peek( d -> System.out.println("IDC : " + d ))
+			//.reduce( (d1,d2) -> d2 )
+			//.filter( d -> true )
+			//.ifPresent( date -> addPECs(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
+
+			System.out.println("\tSUCCESS: " + naf );
+		
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static String toString(Object obj) {
+		if ( obj == null )
+			return null;
+		if ( obj instanceof String) {
+			return String.format("\"%s\"", obj);
+		}else if ( obj instanceof Integer) {
+			return Integer.toString((Integer) obj);
+		}else if ( obj instanceof Number) {
+			return Double.toString((Double) obj) ;
+		}
+		return obj.toString();
 	}
 	
 }

@@ -3,7 +3,7 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 import java.util.Date;
 import java.util.List;
 
-public interface IdcListener {
+public interface IdcParserListener {
 	default void onPeriod(Date date) {
 	};
 
