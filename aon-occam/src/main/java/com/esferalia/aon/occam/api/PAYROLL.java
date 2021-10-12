@@ -40,6 +40,13 @@ public class PAYROLL {
 		}
 	}
 
+	public static ContractData[] setData(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate, ContractData... contractDatas) {
+		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
+			return getPayroll().setData(ctx, domainName, ccc, naf, startDate, endDate, contractDatas);
+		}
+	}
+
+
 	// -------------------- DEDUCTIONS
 	
 	public static Deduction[] getDeductions(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
