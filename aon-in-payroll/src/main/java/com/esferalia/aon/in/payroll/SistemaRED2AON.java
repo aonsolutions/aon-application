@@ -114,9 +114,9 @@ public class SistemaRED2AON {
 		.desc("Sync several databases.")
 		.build();
 		
-		Option bonusOption = Option.builder()
-		.longOpt("bonus")
-		.desc("Adds Bonuses from PECs.")
+		Option idcOption = Option.builder()
+		.longOpt("idc")
+		.desc("Adds Bonuses, Quotes from IDCs.")
 		.build();
 
 		Option calcsOption = Option.builder()
@@ -137,7 +137,7 @@ public class SistemaRED2AON {
 		options.addOption(dateOption);
 		options.addOption(whereOption);
 		options.addOption(databasesOption);
-		options.addOption(bonusOption);
+		options.addOption(idcOption);
 		options.addOption(calcsOption);
 		options.addOption(nafsOption);
 	
@@ -154,8 +154,8 @@ public class SistemaRED2AON {
 			
 			Condition condition = DSL.condition(commandLine.getOptionValue(whereOption.getLongOpt(), "1=1"));
 			
+			boolean idc = commandLine.hasOption(idcOption.getLongOpt());
 			boolean calcs = commandLine.hasOption(calcsOption.getLongOpt());
-			boolean bonus = commandLine.hasOption(bonusOption.getLongOpt());
 			
 			String nafs [] = Optional.ofNullable(commandLine.getOptionValues(nafsOption.getLongOpt())).orElse(new String[0]);
 			
@@ -220,8 +220,8 @@ public class SistemaRED2AON {
 										startDate, 
 										endDate,
 										nafs);
-							if ( bonus )
-								addBonus(
+							if ( idc )
+								syncWithIdcs(
 										login, 
 										userId, 
 										domainName, 
@@ -352,7 +352,7 @@ public class SistemaRED2AON {
 		return new java.sql.Date(AonDateUtils.addDays(date, -1).getTime());		
 	}
 
-	private static void addBonus(
+	private static void syncWithIdcs(
 			String login,
 			Integer userId,
 			String domainName, 
@@ -382,7 +382,7 @@ public class SistemaRED2AON {
 			employees.forEach((naf, list) -> System.out.println(naf + " :" + list.stream().map(e ->e.getName().orElse("") + "," + e.getContractType()).collect(Collectors.joining(","))) );
 			
 			// TODO : all employees
-			employees.keySet().forEach(naf -> addBonus(login, domainName, domainId, userId, regimen, ccc, naf, endDate));
+			employees.keySet().forEach(naf -> syncWithIdcs(login, domainName, domainId, userId, regimen, ccc, naf, endDate));
 			
 	}
 	
@@ -697,7 +697,7 @@ public class SistemaRED2AON {
 			
 			Date last = idcDates[idcDates.length-1];
 			System.out.println("IDC : " + last );
-			addPECs(userLogin, domainName, domainId, userId, last, regime, ccc, naf);
+			syncWithIdc(userLogin, domainName, domainId, userId, last, regime, ccc, naf);
 			
 			//.peek( d -> System.out.println("IDC : " + d ))
 			//.reduce( (d1,d2) -> d2 )

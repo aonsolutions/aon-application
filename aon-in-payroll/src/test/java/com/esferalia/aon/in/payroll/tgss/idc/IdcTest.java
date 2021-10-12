@@ -2357,6 +2357,141 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcSyncXIIIAndXIV2() throws IOException, UnknownPDFException {
+		
+		AONContext aonContext = new AONContext(getConnection());
+
+		String ccc = "01105360062";
+		String naf = "011005185924";
+		Date contractDate = getDate(01, Calendar.AUGUST, 2020);
+		String domainName = java.util.UUID.randomUUID().toString();
+		ContractRecord contract = newContract(aonContext, domainName, contractDate, ccc, naf);
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.TC2, "\"189\"");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.QUOTE_GROUP, "\"05\"");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.IT_RATE, "5.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.IMS_RATE, "15.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, "25.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, "25.00");
+
+		for ( int i = 0; i < 2 ; i++ ) {
+			try ( InputStream is = IdcTest.class.getResourceAsStream("idcXIII.pdf") ){
+				
+				byte data []  = is.readAllBytes();
+	
+				Date idcStartDate = contractDate;
+				SistemaRED2AON.syncWithIdc(data, "login", domainName, contract.getDomain(), idcStartDate, ccc, naf);
+				
+				Map<String, ContractData> contractDatas = 
+				PAYROLL.getContractDataStream(
+				domainName, 
+				contract.getDomain(), 
+				"login", p -> p.getContractProperty().eq(contract.getId()))
+				.filter(d -> d.getStartDate().equals(idcStartDate))
+				.collect(Collectors.toMap( d -> d.getName() , d -> d ));
+				
+				Date idcEndDate = getDate(31, Calendar.JULY, 2021);
+	
+				ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
+				Assert.assertEquals(idcEndDate, tc2Data.getEndDate());
+				Assert.assertEquals(idcStartDate, tc2Data.getStartDate());
+				Assert.assertEquals("\"100\"", tc2Data.getExpression());
+	
+				ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
+				Assert.assertEquals(idcEndDate, quoteGroupData.getEndDate());
+				Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
+				Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
+	
+				ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+				Assert.assertEquals(idcEndDate, itData.getEndDate());
+				Assert.assertEquals(idcStartDate, itData.getStartDate());
+				Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
+	
+				ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+				Assert.assertEquals(idcEndDate, imsData.getEndDate());
+				Assert.assertEquals(idcStartDate, imsData.getStartDate());
+				Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
+	
+				ContractData unemployEmployeePercentData = contractDatas.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
+				Assert.assertEquals(idcEndDate, unemployEmployeePercentData.getEndDate());
+				Assert.assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
+				Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+	
+				ContractData unemployEnterprisePercentData = contractDatas.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
+				Assert.assertEquals(idcEndDate, unemployEnterprisePercentData.getEndDate());
+				Assert.assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
+				Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+				
+	
+			} finally {
+				
+			}
+		
+			for ( int j = 0; j < 2 ; j++ ) {
+				try ( InputStream is = IdcTest.class.getResourceAsStream("idcXIV.pdf") ){
+					byte data []  = is.readAllBytes();
+		
+					Date idcStartDate = getDate(01, Calendar.AUGUST, 2021);
+					SistemaRED2AON.syncWithIdc(data, "login", domainName, contract.getDomain(), idcStartDate, ccc, naf);
+					
+					Map<String, List<ContractData>> contractDatas = 
+					PAYROLL.getContractDataStream(
+					domainName, 
+					contract.getDomain(), 
+					"login", p -> p.getContractProperty().eq(contract.getId()))
+					.collect(Collectors.groupingBy( d -> d.getName() ));
+					
+					List<ContractData> tc2Datas = contractDatas.get(ContextVariable.TC2.getName());
+					Collections.sort(tc2Datas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData tc2Data = tc2Datas.get(0);
+					Assert.assertNull(tc2Data.getEndDate());
+					Assert.assertEquals(idcStartDate, tc2Data.getStartDate());
+					Assert.assertEquals("\"100\"", tc2Data.getExpression());
+		
+					List<ContractData> quoteGroupDatas = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
+					Collections.sort(quoteGroupDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData quoteGroupData = quoteGroupDatas.get(0);
+					Assert.assertNull(quoteGroupData.getEndDate());
+					Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
+					Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
+		
+					List<ContractData> itDatas = contractDatas.get(ContextVariable.IT_RATE.getName());
+					Collections.sort(itDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData itData = itDatas.get(0);
+					Assert.assertNull(itData.getEndDate());
+					Assert.assertEquals(idcStartDate, itData.getStartDate());
+					Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
+		
+					List<ContractData> imsDatas = contractDatas.get(ContextVariable.IMS_RATE.getName());
+					Collections.sort(imsDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData imsData = imsDatas.get(0);
+					Assert.assertNull(imsData.getEndDate());
+					Assert.assertEquals(idcStartDate, imsData.getStartDate());
+					Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
+		
+					List<ContractData> unemployEmployeePercentDatas = contractDatas.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
+					Collections.sort(unemployEmployeePercentDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData unemployEmployeePercentData = unemployEmployeePercentDatas.get(0);
+					Assert.assertNull(unemployEmployeePercentData.getEndDate());
+					Assert.assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
+					Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+		
+					List<ContractData> unemployEnterprisePercentDatas = contractDatas.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
+					Collections.sort(unemployEnterprisePercentDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData unemployEnterprisePercentData = unemployEnterprisePercentDatas.get(0);
+					Assert.assertNull(unemployEnterprisePercentData.getEndDate());
+					Assert.assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
+					Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+					
+		
+				} finally {
+					
+				}
+			}
+		}
+	}
+
 	public static final DomainRecord newDomain(AONContext aonContext, String name ) {
 		return aonContext.getDslContext()
 				.insertInto(DOMAIN)
