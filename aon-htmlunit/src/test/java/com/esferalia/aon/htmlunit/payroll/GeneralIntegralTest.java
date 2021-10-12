@@ -378,7 +378,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 200.00);
 		assertValue("cgpBaseLabel", 200.00);
 		assertValue("totalPaymentsLabel", 300.00);
-		assertValue("totalLiquidLabel", 300.00 - (200.00 * (4.70 + 1.55 + 0.10) / 100.00));
+		assertValue("totalLiquidLabel", 300.00 - (200.00 * (4.70 + 1.55 + 0.10 + 18.46) / 100.00));
 		
 
 	}
