@@ -79,7 +79,6 @@ export const buildTextareaToolbar =  (aonTextArea) => {
     },() =>{});
 }
 
-
 const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
 
 const createLink =() =>{
@@ -161,15 +160,19 @@ const appendChatMessage = (properties) => {
 } 
 
 /**
- * 
- * @param {HTMLElement} aonTextArea 
+ * @param {String} text optional
  * @param {HTMLElement} aon-messenger-chat 
  * @returns {Array} [value, messageEl] message element html
  */
-export const sendMessage = async (aonTextArea, aonMessengerChat) => {
-    await checkFilesAndSend(aonTextArea); //CHECK FILES COMMENT AND SEND
-
-    const value =  aonTextArea.value;
+export const sendMessage = async (text, aonMessengerChat) => {
+    let value = text;
+    if(!text){
+        let aonTextArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
+        await checkFilesAndSend(aonTextArea); //CHECK FILES COMMENT AND SEND
+        value = aonTextArea.value;
+        aonTextArea.clear();
+    }
+    
     if(!value || (value && !value.trim().length)) return ;
 
     const task = aonMessengerChat.task;
@@ -180,8 +183,6 @@ export const sendMessage = async (aonTextArea, aonMessengerChat) => {
         creation_date: new Date()
     }
 
-    aonTextArea.clear();
-    
     task.workflow.push(message);
 
     const messageEl = appendChatMessage({

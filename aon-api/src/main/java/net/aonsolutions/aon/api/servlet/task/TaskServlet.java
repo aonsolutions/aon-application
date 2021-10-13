@@ -36,7 +36,6 @@ import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
-
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -346,7 +345,7 @@ public class TaskServlet extends AonApiHttpServlet{
 					 .and(f.getTypeProperty().eq(TaskWorkflowType.COMMENT.value()))
 					 .and(f.getNotificationUserProperty().isNotNull())
 					 .or(f.getIdProperty().eq(workflowId))
-			 ).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())) .collect(Collectors.toCollection(LinkedList::new));
+			 ).sorted((t1, t2)-> t2.getId().compareTo(t1.getId())).collect(Collectors.toCollection(LinkedList::new));
 			task.setWorkflows(taskWorkflow);
 			
 			sendHistoricWorkflow(api, task);

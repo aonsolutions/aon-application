@@ -1,7 +1,7 @@
 import { AonDate } from "../../../components/aon-date.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
-import { TAG, MSG, CSS, EVENT, CONSTANT, COLORS } from "../../../environments/environments.js";
+import { TAG, MSG, CSS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { getStatus, getTimeControlDetail, saveTimeControlDetail } from "../../../services/timeControlService.js";
 import {  formatDateOrigin, serializeForm, setDateTimestampDay, sortBy } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
@@ -78,27 +78,12 @@ const createDataForm = (form, aonMessengerChat) => {
 
     if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isTimecontrolManager() && aonMessengerChat.getDur().isTimecontrolPortal())){
 
-        const btnReject = setStyles(document.createElement(TAG.BUTTON),{
-            marginTop: "15px",
-            padding: "0.5rem 1rem",
-            background: CSS.variable(COLORS.MATERIAL_RED)
-        });
-        btnReject.className = CSS.AON_BUTTON;
-        btnReject.textContent =  MSG.REJECT;
-        btnReject.addEventListener(EVENT.CLICK, ()=>aonMessengerChat.getApplication().development());
-        const div = createDiv(form, btnReject, {classes:[CSS.AON_COL_XS_12]});
-        div.style.textAlign = "center";
-
-
-        const btnAccept = setStyles(document.createElement(TAG.BUTTON),{
-            margin:"15px 0 0 15px",
-            padding: "0.5rem 1rem"
-        });
+        let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
         btnAccept.className = CSS.AON_BUTTON;
-        btnAccept.textContent =  MSG.ACCEPT;
-        // aonCol-xs-offset-2
-        btnAccept.addEventListener(EVENT.CLICK, ()=>saveTimeControl(times.getDetail(), {date: date.value, time: time.value}, aonMessengerChat));
-        div.appendChild(btnAccept);
+        btnAccept.textContent = "Procesar";
+        btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(times.getDetail(), {date: date.value, time: time.value}, aonMessengerChat) );
+         
+        createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
     }
 
 }
@@ -152,7 +137,7 @@ const createDiv = (parent, child, properties)=> {
 }
 
 
-const saveTimeControl = async (tm,{date, time},aonMessengerChat) => {
+const processAccept = async (tm,{date, time},aonMessengerChat) => {
     
     aonMessengerChat.getApplication().startLoading();
     try {
@@ -164,7 +149,7 @@ const saveTimeControl = async (tm,{date, time},aonMessengerChat) => {
                 date: new Date( formatDateOrigin(date) + " " + time ).getTime()
             }
             await saveTimeControlDetail(data);
-            await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED);
+            await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `Solicitud procesada`);
         }
     } catch (err) {
         console.log(err);

@@ -299,8 +299,8 @@ export class AonMessengerList extends AonElement {
      
 
     if(description){
-      let divThree = this.createElement("div");
       const dText = description.replace(/<[^>]+>|&nbsp;/g, ' ');
+      let divThree = this.createElement("div");
       divThree.innerText = dText;
       divThree.title = dText;
       divThree.style = "color:grey;position:absolute;top:3px;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;";
@@ -319,6 +319,13 @@ export class AonMessengerList extends AonElement {
   //   i.style.marginLeft = "-11px";
   //   return i;
   // }
+
+
+  convertToPlain(html){
+    let tmp = this.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  }
 
   goMessengerChat(res, idx){
     setIndexTask(idx);

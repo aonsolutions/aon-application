@@ -64,10 +64,9 @@ export class AonMessenger extends AonElement {
 
 		this.cauData = await getCauInfo();
 
-		if(this.cauData && this.cauData.auth.email){
+		if(this.cauData && this.cauData.auth.email)
 			this._filter.email = this.cauData.auth.email;
-		}
-
+			
 		this.paintView();
 		this.applicationEl = this.getApplication();
 		this.applicationParentEl = this.getApplicationParent();

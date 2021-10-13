@@ -186,14 +186,21 @@ const createCommentContent = (properties) => newComponent({
   }
 });
 
-
-export const createAction = (icon, message) => {
+/**
+ * 
+ * @param {Object} icon 
+ * @param {String} message 
+ * @param {String} submessage optional submessage
+ * @returns 
+ */
+export const createAction = (icon, message, submessage) => {
   const comp = createStartJustifiedRow();
   setStyles(comp.element,{
     width :"100%",
     padding:"5px 0",
-    textAlign: "justify"
-  })
+    textAlign: "justify",
+    flexWrap: "wrap"
+  });
 
   const wrapper = newComponent({
   classes : [CSS.CENTER_FLEX],
@@ -219,10 +226,26 @@ export const createAction = (icon, message) => {
     fontWeight:400,
     color : CSS.variable(COLORS.GRAYSON)
   });
+  text.element.style.flex = "1 0";
   
   image.appendTo(wrapper.element);
   wrapper.appendTo(comp.element);
   text.appendTo(comp.element);
+  if(submessage){
+    const blockquote = newComponent({
+      type:"blockquote",
+      text:submessage,
+      styles : {
+        margin:"0px 0px 0px 5.8ex",
+        borderLeft:"1px solid rgb(204,204,204)",
+        paddingLeft:"1ex",
+        flex: "100%",
+        fontWeight: 500,
+        color:CSS.variable(COLORS.ONLINE_GREEN)
+      }
+    });
+    blockquote.appendTo(comp.element);
+  }
 
   return comp;
 }

@@ -41,7 +41,6 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
  */
  export const fillProject = async (task) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
-    // console.log(task.project);
     if(aonSelect){
         aonSelect.loading(true);
         const project = task.getProject();
@@ -221,15 +220,24 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
 export const fillProcessType =  ({source_id}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROCESS_TYPE);
     aonSelect.clear();
+    const dur = aonMessengerChat.getDur();
 
-    let options = getTaskProcess();
+    let options = [];
+    if(!dur.isPayrollManager() && !dur.isPayrollPortal())
+        options.push(getTaskProcess(1));
+    else if(!dur.isPayrollManager() && dur.isPayrollPortal())
+        options.push(getTaskProcess(2));
+    
+    if( !dur.isTimecontrolManager() && !dur.isTimecontrolPortal() )
+        options.push(getTaskProcess(3));
 
-    if( !aonMessengerChat.getDur().isMessengerManager() ){
-        options = options.filter(({value})=> value!=2);
-    }
-
+    if(source_id && !options.some(({value})=> value ==source_id))
+        options.push(getTaskProcess(source_id));
+    
     aonSelect.setOptions( options );
-    if(source_id) aonSelect.value = source_id;
+    
+    if(source_id) 
+        aonSelect.value = source_id;
 
     aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
       if(detail && detail.value) {
@@ -268,13 +276,13 @@ export const fillChat = (workflows=[], aonMessengerChat)=>{
                 }
 
                 if(!me) message.name = alias || name || email;
-
                 if (type == WORKFLOW_TYPES.COMMENT) {
                     createChatMessage(message, chat);
                 } else{
                     message.name = name || email;
                     const actionJson = chooseIconMessage(message);
-                    const action = createAction(actionJson, actionJson.comment);
+                    const submessage =  message.comment && WORKFLOW_TYPES.CLOSE.indexOf(type)>=0 ? message.comment : null;
+                    const action = createAction(actionJson, actionJson.comment, submessage);
                     action.appendTo(chat);
                 }
             });
