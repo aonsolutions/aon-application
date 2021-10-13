@@ -26,7 +26,7 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
     if(TASK_SOURCE.MANUAL === source)
         sources.unshift({value: TASK_SOURCE.MANUAL, name: "MANUAL" }); 
 
-    if(aonMessengerChat.getApplicationParent().dur.hasCallCenter())
+    if(aonMessengerChat.getDur().hasCallCenter())
         sources.push({value: TASK_SOURCE.CAU, name: "Soporte" });
 
     aonSelect.setOptions(sources);
@@ -175,7 +175,6 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
                     aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
                 }
             });
-    
 
             if(registry && registry.id) aonSelect.value = registry.id;
     
@@ -189,28 +188,6 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
         aonSelect.loading(false);
     }
 }
-
-/**
- * fill tag (Etiquetas)
- * @param {Task} Class task 
- * @param {HTMLElement} aon-messenger-chat component
- */
-// export const fillTag = async (task, aonMessengerChat) => {
-//     const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKTAG}`).catch(e=>null);
-//     const applicationParent = aonMessengerChat.getApplicationParent();
-//     if(aonSelect){
-//         aonSelect.clear();
-//         const tags = applicationParent._tags;
-//         if(tags){
-//             aonSelect.setOptions( tags.map( c=> ({...c, value: c.id}) ) );
-//         }
-//         if(task.getDescriptionJson().tag) aonSelect.value = task.getDescriptionJson().tag;
-
-//         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-//             task.setDescriptionJson({tag:detail.id});
-//         })
-//     }
-// }
 
 /**
  * fill processType (Titular de la tarea)
@@ -235,7 +212,7 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
         options.push(getTaskProcess(source_id));
     
     aonSelect.setOptions( options );
-    
+
     if(source_id) 
         aonSelect.value = source_id;
 

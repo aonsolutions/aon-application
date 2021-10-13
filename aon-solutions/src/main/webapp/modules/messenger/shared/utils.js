@@ -329,6 +329,7 @@ const jsonDiv = ()=> {
  */
 export const buildForm = (div, aonMessengerChat) => {
     const task = aonMessengerChat.task;
+    const dur = aonMessengerChat.getDur();
     const aonMessenger = aonMessengerChat.applicationParentEl;
     const isGestor = task.isGestor();
     const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
@@ -392,7 +393,7 @@ export const buildForm = (div, aonMessengerChat) => {
         fillSelectAppCau(aonMessengerChat);
     } else if( 
         (!task.id || task.isExternal()) && 
-        aonMessengerChat.getDur().isMessengerManager() &&
+        (!dur.isPayrollManager() && dur.isPayrollPortal()) &&
         !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) )
       ){
         let initText = isReceived(task, myWorkgroups) ? 'De' : 'Para';

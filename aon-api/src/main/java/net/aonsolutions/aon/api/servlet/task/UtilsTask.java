@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet.task;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
@@ -6,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jooq.tools.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
@@ -215,8 +217,9 @@ public class UtilsTask {
 				} else if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.COMMENT.getName())) {
 					String body = "Han comentado la solicitud";
 					Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
-					if(auth!=null && !auth.getName().isEmpty()) 
-						body = auth.getName() +" ha comentado la solicitud";
+					if(auth!=null && !auth.getName().isEmpty()) {
+						body = auth.getName() +" ha comentado: <br>" + workflow.getComment();
+					}
 					sentNotificationThAndWg(api, task, workflow, body);
 				} else if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.OPEN.getName())) {
 					sentNotificationThAndWg(api, task, workflow, "Solicitud abierta");
@@ -259,7 +262,7 @@ public class UtilsTask {
 		}
 		
 		if(auths.size()>0) {
-			String title = "SOLICITUD "+task.getNumber()+" | "+ task.getTitle();
+			String title = "SOLICITUD "+getNumberStr(task.getNumber())+" | "+ task.getTitle();
 	    	NotificationRequest notification = new NotificationRequest();
 	    	notification.setTitle(title);
 	    	notification.setBody(body);
@@ -281,7 +284,7 @@ public class UtilsTask {
 				
 				String to = auth.getEmail();
 				
-				String subject = "SOLICITUD "+task.getNumber()+" | "+ task.getTitle();
+				String subject = "SOLICITUD "+getNumberStr(task.getNumber())+" | "+ task.getTitle();
 				
 				String url = "https://aon.solutions";
 				
@@ -354,7 +357,12 @@ public class UtilsTask {
 		catch(NumberFormatException e){}
 		if(numberSearch!=0)
 			filter = filter.or(f.getNumberProperty().like(numberSearch));
-		
+
 		return filter;
+	}
+	
+	private static String getNumberStr(Integer number) {
+		if(number==null) number = 0;
+		return "#"+StringUtils.leftPad(number.toString(), 5, "0");
 	}
 }
