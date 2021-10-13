@@ -52,6 +52,10 @@ public class FileServlet extends AonApiHttpServlet{
 	}
 	
 	private Attach getFile(AonApiData api, JSONObject json) {
+		String domainName = json.optString("domain_name");
+		Integer domainId = json.optInt("domain_id");
+		api.getDomain().setId(domainId);
+		api.getDomain().setName(domainName);
 		AttachType attachType = AttachType.getAttachType(json.getString("attach_type"));
 		Integer id = json.getInt("id");
 		

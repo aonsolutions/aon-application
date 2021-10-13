@@ -14,6 +14,7 @@ import { getReader } from '../../services/utils.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonUpload } from '../../components/aon-upload.js';
 import { AonViewer } from '../../components/aon-viewer.js';
+import { getAttach } from '../../services/fileService.js';
 
 export class AonInvoicePrint extends AonElement {
 
@@ -141,6 +142,17 @@ export class AonInvoicePrint extends AonElement {
     uploadFondo.setMessage(MSG.ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND);
     uploadFondo.setDeleteMessage(MSG.DELETE_BACKGROUND_CONFIRM);
     uploadFondo.setShowDeleteButton(this.printConfiguration.background);
+   
+    let filter = {
+      attachType: 'data',
+      source: 17
+    };
+    getAttach(filter).then(attach => {
+      this.logo = attach;
+      if(this.logo.id)
+        uploadFondo.setAttach(attach);
+    });
+    
     uploadFondo.addEventListener(EVENT.UPLOAD, (e) => {
       getReader(e.detail).then(f => {
         this.printConfiguration.backgroundRemove = false;

@@ -1117,7 +1117,7 @@ button:disabled, button[disabled]{
 }
 
 .aonNone {
-  display: none;
+  display: none !important;
 }
 
 /* The dots/bullets/indicators */
