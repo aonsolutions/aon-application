@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {AonAvatar} from '../../components/aon-avatar.js';
 import { Apps} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl} from  '../../services/service.js';
+import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getCompanyHeaderInfo} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -87,9 +87,24 @@ export class AonDesktop extends AonElement {
 		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
 		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
 
-
-		// let domainName = localStorage.getItem('aon_domain_name');
 		if(this.isBeta()) {
+			let divLogo = this.createElement(TAG.DIV);
+			divLogo.id = this.id + 'Logo';
+			divLogo.style.maxHeight = '60px';
+			divLogo.style.height = '100%';
+			divLogo.style.margin = '10px';
+			divLogo.style.justifyContent = 'center';
+			this.getApplication().getSidenav().appendChild(divLogo);
+
+			getCompanyHeaderInfo().then((pi) =>{
+				let img = this.createElement(TAG.IMG);
+				img.id = this.id + 'LogoImg';
+				img.style.maxHeight = '100%';
+				img.style.maxWidth = '100%';
+				img.src = pi.logo;
+				divLogo.appendChild(img);
+			});
+			
 			let myGestor = {
 				id: 'Gestor',
 				name: 'MI GESTOR'
@@ -242,17 +257,11 @@ export class AonDesktop extends AonElement {
 		div.style.marginRight = '100px';
 		aonDesktop.setContent(div);
 
-		let banner = this.createElement(TAG.DIV);
-		banner.style.marginTop = '20px';
-
-		let bannerImg = this.createElement(TAG.IMG);
-		bannerImg.src = 'assets/img/atp_img_publi.jpg';
-		bannerImg.style.width = '100%';
-		bannerImg.style.maxWidth = '1117px';
-		banner.appendChild(bannerImg);
-		let divSlide = this.createElement(TAG.DIV);
-		divSlide.innerHTML = '<aon-stat></aon-stat>'
-		div.appendChild(divSlide);
+		if(!this.isBeta()){
+			let divSlide = this.createElement(TAG.DIV);
+			divSlide.innerHTML = '<aon-stat></aon-stat>'
+			div.appendChild(divSlide);
+		}
 
 		div.appendChild(this.buildTitle(MSG.AVAILABLE.toUpperCase()));
 

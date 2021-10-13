@@ -73,7 +73,8 @@ export class AonUpload extends AonElement {
 
         let img = this.createElement(TAG.IMG);
         img.id = this.IMG;
-        img.style.height = "100%";
+        img.style.maxHeight = "100%";
+        img.style.maxWidth = "100%";
         img.className = CSS.AON_NONE;
         div.appendChild(img);
 

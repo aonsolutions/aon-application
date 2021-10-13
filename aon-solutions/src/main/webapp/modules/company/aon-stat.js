@@ -12,7 +12,6 @@ export class AonStat extends AonElement {
 
   connectedCallback () {
     getCompanyHeaderInfo().then((pi) =>{
-
       this.build(pi);
     });
   }
