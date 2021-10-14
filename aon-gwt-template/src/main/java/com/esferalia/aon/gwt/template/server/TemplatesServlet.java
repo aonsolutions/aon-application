@@ -428,10 +428,13 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				.setData(data);
 		Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
 		attach.setId(attachId);
-		DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
-    	Drive drive = AonDrive.getInstace().serviceInitialize(d);
-    	AonDrive.getInstace().sync(drive, user, attach, false);
-
+    	try {
+    		DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
+    		Drive drive = AonDrive.getInstace().serviceInitialize(d);
+        	AonDrive.getInstace().sync(drive, user, attach, false);	
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
 	}
 	
 	//-------------------- IMPORTAR FEE
