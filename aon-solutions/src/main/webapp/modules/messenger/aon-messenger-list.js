@@ -278,7 +278,7 @@ export class AonMessengerList extends AonElement {
   }
 
   getNewTitle(res, document, documentTh){
-    let div = this.createElement("div");
+    let div = this.createElement(TAG.DIV);
     div.style.position = "relative";
 
     let newTitle  = res.title;
@@ -290,20 +290,20 @@ export class AonMessengerList extends AonElement {
     let description = res.description;
     try { description = JSON.parse(res.description).observation;  } catch (e) {}
 
-
-    let divTwo = this.createElement("div");
-    divTwo.style = `font-weight: 550;bottom:${description ? 1 : -9}px;position:absolute;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;`;
+    let divTwo = this.createElement(TAG.DIV);
+    divTwo.style = `font-weight: 550; bottom:${description ? 1 : -9}px; position:absolute; left:0; right:0; white-space:nowrap; text-overflow:ellipsis; overflow: hidden;`;
     divTwo.innerText = newTitle;
     divTwo.title = newTitle;
     div.appendChild(divTwo);
-     
+
+    // description = `Buenas tardes,\n\nCIF EMPRESA: B71148738\nNOMBRE DEL TRABAJADOR/ES: FAUSTO GREGORIO CUEVA CUEVA.\nEXPLICACIÓN DE LA CONSULTA (de forma clara y concisa): El trabajador ha recibido un embargo de 2585.97€ de Hacienda, tras revisar la formación y ver el video de aplicar en Aon el embargo tengo la siguiente duda:\n\n \n\nHe realizado el cálculo desde el enlace que habilita Hacienda indicando el importe liquido de la nomina, sale a embargar 261.50€ y al incluirlo en Aon lo recoge bien ( Adjunto nomina). Mi duda es, según hacienda, las dietas son concepto que debe ser embargados al 100% y Aon no lo recoge así, sino como se fuese un concepto salarial normal. Tendria que indicar en el enlace de Hacienda el liquido sin esas dietas y luego en Aon lo incluyo manual sumando al resultado de Hacienda las dietas? O como se puede configurar para que lo recoja el 100% las dietas.\n\n `;
 
     if(description){
-      const dText = description.replace(/<[^>]+>|&nbsp;/g, ' ');
-      let divThree = this.createElement("div");
-      divThree.innerText = dText;
+      const dText = description.replace(/<[^>]+>|&nbsp;|\n/g, ' ');
+      let divThree = this.createElement(TAG.DIV);
+      divThree.textContent = dText;
       divThree.title = dText;
-      divThree.style = "color:grey;position:absolute;top:3px;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;";
+      divThree.style = "color:grey; position:absolute; top:3px; left:0; right:0; white-space:nowrap; text-overflow:ellipsis; overflow: hidden;";
       div.appendChild(divThree);
     }
   
@@ -321,11 +321,11 @@ export class AonMessengerList extends AonElement {
   // }
 
 
-  convertToPlain(html){
-    let tmp = this.createElement("div");
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || "";
-  }
+  // convertToPlain(html){
+  //   let tmp = this.createElement("div");
+  //   tmp.innerHTML = html;
+  //   return tmp.textContent || tmp.innerText || "";
+  // }
 
   goMessengerChat(res, idx){
     setIndexTask(idx);
