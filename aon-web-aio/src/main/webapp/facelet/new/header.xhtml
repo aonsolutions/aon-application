@@ -109,8 +109,26 @@
 		border-right:none;
     	border-bottom: 1px solid #ddd;
 	}	
-	.gwt-TabLayoutPanelTab {
-		background-color: #ddd;
+	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+		color : #4b4b4b;
+		background: none;
+		border-top: none;
+		border-left: none;
+		border-right: none;
+		border-bottom: 2px solid #fff;
+	}
+	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+		color : #000;
+		background: none;
+		border-top: none;
+		border-left: none;
+		border-right: none;
+		border-bottom: 2px solid #2152a5;
+	}
+	
+	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+		padding-top: 5px;
+		border-bottom: 2px solid #fff;
 	}
 	
 	.aon-table-row-hover {
@@ -474,6 +492,15 @@
 		padding-right:36px;
 		display:inline-block;
 		background: url(#{aonResource.resolve['/images/aon-tools.svg']}) scroll right center no-repeat;
+		background-size:32px;
+	}
+
+	.aon-button-notes {
+		padding-top:4px;
+		padding-bottom: 4px;
+		padding-right:36px;
+		display:inline-block;
+		background: url(#{aonResource.resolve['/images/aon-notes.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
 
