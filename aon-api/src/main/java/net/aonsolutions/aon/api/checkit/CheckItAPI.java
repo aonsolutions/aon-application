@@ -1188,8 +1188,11 @@ public class CheckItAPI implements IParamNames{
 			return null;
 		JSONObject obj = getBank(allBanks, bankId);
 		if (obj != null) {
-			String png = obj.getString("logo");
-			return LOGO_BASE_URL + png;
+			String png = obj.optString("logo");
+			if (png == null || png.isEmpty())
+				return null;
+			else
+				return LOGO_BASE_URL + png;
 		} else {
 			return null;
 		}

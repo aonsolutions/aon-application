@@ -57,6 +57,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
+import com.sun.tools.sjavac.Log;
 
 public class CheckItModule extends MainEntryPoint {
 	private static final Logger LOGGER = Logger.getLogger(CheckItModule.class.getName());
@@ -364,7 +365,7 @@ public class CheckItModule extends MainEntryPoint {
 			boolean areLogs = (checkItBankAccount.getLogs() != null && !checkItBankAccount.getLogs().isEmpty());
 			
 			FlowPanel titlePanel = new FlowPanel();
-			if (checkItBankAccount.getLogo() != null || !checkItBankAccount.getLogo().isEmpty()) {
+			if (checkItBankAccount.getLogo() != null && !checkItBankAccount.getLogo().isEmpty()) {
 				Image logoImg = new Image(checkItBankAccount.getLogo());
 				logoImg.setHeight("40px");
 				titlePanel.add(logoImg);
