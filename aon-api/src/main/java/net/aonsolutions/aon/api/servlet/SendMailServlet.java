@@ -21,15 +21,12 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-//import com.code.aon.webservice.common.MSG;
-//import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -60,34 +57,35 @@ public class SendMailServlet extends HttpServlet{
 		String domainName = req.getHeader("domain_name");
 		Domain domain = AON.getDomain(domainName, domainId, "");
 		User user = AON_SOLUTIONS.getUser(domain, token);
-		AonToken aonToken = SECURITY.getAonToken(token);
-		//Auth auth = AON_SOLUTIONS.getAuth(aonToken.getAuth());
+		
 		
 		JSONObject json = Utils.getRequestJSON(req);
-		String to = json.getString("to");
+		String to = json.optString("to");
 		String body = json.opt("body") != null ? json.optString("body") : "";
 		String subject = "";
 		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
 		if(pathInfo != null) {
 			if("invoice".equalsIgnoreCase(pathInfo[1])) {
 				subject = "Facturas";
-				body = invoiceContent(domain, user.getLogin(), json.getJSONArray("invoices"));
+				body = invoiceContent(domain, user.getLogin(), json.optJSONArray("invoices"));
 			}
 			
 			if("document".equalsIgnoreCase(pathInfo[1])) {
 				subject = "Documentos";
-				body = documentContent(domain, user.getLogin(), json.getJSONArray("documents"));				
+				body = documentContent(domain, user.getLogin(), json.optJSONArray("documents"));				
 			}
 		}
-	
+		
+		Company cp = AON.getCompany(domainName, domainId, "", f -> f.getDomainProperty().eq(domainId));
 		SESMessage msg = new SESMessage()
 				.setTo(to)
+				.setAlias(cp.getName())
 				.setSubject(subject)
 				.setBody(body);
 		
 		String m = SES.sendEmail(msg);
-		JSONObject j = new JSONObject();
-		j.put("message", m);
+		JSONObject j = new JSONObject()
+			.put(IJsonNames.MESSAGE, m);
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, j, new JSONObject());
 	}
@@ -129,10 +127,10 @@ public class SendMailServlet extends HttpServlet{
 		
 		LinkedList<DocumentMail> list = new LinkedList<>();
 		for (int i = 0; i < documentArray.length(); i++) {
-			JSONObject doc = documentArray.getJSONObject(i);
+			JSONObject doc = documentArray.optJSONObject(i);
 			DocumentMail dm = new DocumentMail();
-			dm.setDate(doc.opt("date") != null ? doc.getString("date"): "");
-			dm.setTitle(doc.opt("title") != null ? doc.getString("title") : "");
+			dm.setDate(doc.opt("date") != null ? doc.optString("date"): "");
+			dm.setTitle(doc.opt("title") != null ? doc.optString("title") : "");
 			dm.setUrl(getDocumentUrl(domain, login, doc));
 			list.add(dm);
 		}
@@ -165,11 +163,6 @@ public class SendMailServlet extends HttpServlet{
 		    String result = Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
 			return "https://" +domain.getName() +"/ms/api/download_invoice_pdf?json=" + result;
 		}
-		
-//		String str = "domain="+ domain.getId() + "&id=" + invoice.getInt("id") + "&attach_type=data";
-//	    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
-//	    
-//	    return "https://" +domain.getName() +"/ms/download_rawdoc/"  + domain.getName() + "/" + login + "/" +  result;
 	}
 	
 	private boolean isRawdoc(String status) {
@@ -189,9 +182,6 @@ public class SendMailServlet extends HttpServlet{
 		String total;
 		String url; 
 		
-		public InvoiceMail() {
-		}
-
 		public String getReference() {
 			return reference;
 		}
@@ -221,10 +211,6 @@ public class SendMailServlet extends HttpServlet{
 		String date;
 		String title;
 		String url; 
-		
-		public DocumentMail() {
-		}
-
 	
 		public String getDate() {
 			return date;
