@@ -226,11 +226,13 @@ export class AonMessengerList extends AonElement {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
       this.setFilter(filter);
-      const tasks = await getTasks(filter);
+      let tasks = await getTasks(filter);
       if(tasks.length == 0)
         this.MORE = false;
       else {
-        data = tasks.map(task=>{
+        data = tasks
+        .filter((v,idx, self)=>self.findIndex((m) => m.id === v.id) === idx )
+        .map(task=>{
           const newNumber = (task.number ? task.number : 0).toString().padStart(5,0);
           return {
             ...task,
@@ -295,8 +297,6 @@ export class AonMessengerList extends AonElement {
     divTwo.innerText = newTitle;
     divTwo.title = newTitle;
     div.appendChild(divTwo);
-
-    // description = `Buenas tardes,\n\nCIF EMPRESA: B71148738\nNOMBRE DEL TRABAJADOR/ES: FAUSTO GREGORIO CUEVA CUEVA.\nEXPLICACIÓN DE LA CONSULTA (de forma clara y concisa): El trabajador ha recibido un embargo de 2585.97€ de Hacienda, tras revisar la formación y ver el video de aplicar en Aon el embargo tengo la siguiente duda:\n\n \n\nHe realizado el cálculo desde el enlace que habilita Hacienda indicando el importe liquido de la nomina, sale a embargar 261.50€ y al incluirlo en Aon lo recoge bien ( Adjunto nomina). Mi duda es, según hacienda, las dietas son concepto que debe ser embargados al 100% y Aon no lo recoge así, sino como se fuese un concepto salarial normal. Tendria que indicar en el enlace de Hacienda el liquido sin esas dietas y luego en Aon lo incluyo manual sumando al resultado de Hacienda las dietas? O como se puede configurar para que lo recoja el 100% las dietas.\n\n `;
 
     if(description){
       const dText = description.replace(/<[^>]+>|&nbsp;|\n/g, ' ');

@@ -2,11 +2,10 @@
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { AonDate } from "../../../components/aon-date.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
-import { AonSelect } from "../../../components/aon-select.js";
-import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments.js";
+import { TAG, EVENT, MSG, MATERIAL_ICONS, CSS } from "../../../environments/environments.js";
 import { formatDateOrigin, serializeForm } from "../../../services/utils.js";
-import { setAttributes } from "../../../services/utilsComponents.js";
-import { MESSENGER_IDS } from "../MessengerEnums.js";
+import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
+import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import { createDivEditable } from "../shared/creationUtils.js";
 
 /**
@@ -15,7 +14,8 @@ import { createDivEditable } from "../shared/creationUtils.js";
  */
  export const createFormVacation = (card, aonMessengerChat) =>{
     const task = aonMessengerChat.task;
-    
+    const dur = aonMessengerChat.getDur();
+
     let data = task.id ? JSON.parse(task.description) : {};
 
     const form  = setAttributes(document.createElement(TAG.FORM),{
@@ -25,14 +25,6 @@ import { createDivEditable } from "../shared/creationUtils.js";
     form.onsubmit = () => false;
     form.style.width = "100%";
     card.setContent(form);
-
-    if(task.id){
-        let aonSelect = setAttributes(new AonSelect(),{ title: "Estado", id:"status", name:"status"});
-        form.appendChild(aonSelect);
-        aonSelect.options = JSON.stringify(getStatus());
-        if(data.status) aonSelect.value = data.status;
-    }
-
 
     let table = setAttributes(new AonBasicTable(),{ id:"tableVacation" });
     form.appendChild(table);
@@ -58,6 +50,16 @@ import { createDivEditable } from "../shared/creationUtils.js";
 
     //OBSERVATION
     createDivEditable(form, MSG.OBSERVATION,  data.observatio0n || "" , "observation" ,  MSG.TYPE_HERE);
+
+    if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isPayrollManager() || dur.isPayrollPortal()) ){
+
+        let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"30px 0 0 15px"});
+        btnAccept.className = CSS.AON_BUTTON;
+        btnAccept.textContent = "Procesar";
+        btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(aonMessengerChat) );
+         
+        createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+    }
 }
 
 /**
@@ -124,13 +126,34 @@ export const getFormVacationJson = ()=>{
 }
 
 
-const getStatus = () => [
-    {
-        name:MSG.ACCEPT,
-        value: 1
-    },
-    {
-        name:MSG.REJECT,
-        value: 2
+
+const processAccept = async (aonMessengerChat) => {
+    
+    aonMessengerChat.getApplication().startLoading();
+    try {
+        await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `Solicitud tramitada`);
+    } catch (err) {
+        console.log(err);
+        aonMessengerChat.showError(err)
     }
-];
+
+    aonMessengerChat.getApplication().stopLoading();
+}
+
+/**
+ * 
+ * @param {HTMLElement} parent appenchild
+ * @param {HTMLElement} child element add
+ * @param {Object} properties 
+ * @returns 
+ */
+ const createDiv = (parent, child, properties)=> {
+
+    const div = newComponent({ type: TAG.DIV, ...properties }).element;
+
+    parent.appendChild(div);
+
+    div.appendChild(child);
+
+    return div;
+}

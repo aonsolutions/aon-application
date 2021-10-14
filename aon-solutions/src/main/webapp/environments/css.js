@@ -279,6 +279,7 @@ export const TRANSITION_CASCADE = "transitionCascade"
 export const TRANSITION_QUICK = "transitionQuick"
 export const AON_TRANSITION_LEFT = "aonTransitionLeft";
 export const DIV_DRAG_OVER = "divDragOver";
+export const PULSE = "pulse";
 
 export const RESIZE_VERTICAL = "resizeVertical";
 

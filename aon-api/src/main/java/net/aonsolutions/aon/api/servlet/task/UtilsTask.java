@@ -56,14 +56,15 @@ public class UtilsTask {
 		else if(!status.isEmpty())
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
 	
-		if(Boolean.FALSE.equals(api.getDur().isMessengerManager())) 
-			filter = filter.and(f.getGtaskIdProperty().eq(email));
-		
+
 		if(!search.isEmpty()) 
 			filter = filter.and(getSearchFilter(f, search));
 		
 		if(customer!=null && customer.getId()!=null) { //CUSTOMER
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
+			
+			if(Boolean.FALSE.equals(api.getDur().isMessengerManager())) 
+				filter = filter.and(f.getGtaskIdProperty().eq(email));
 			
 			if(!json.optString(IJsonNames.TASK_HOLDER).isEmpty()) //----------RECIBIDAS
 				filter = filter.and(f.getSenderProperty().isNotNull());
@@ -205,24 +206,33 @@ public class UtilsTask {
 			try {
 				Task task = AON_SOLUTIONS.getTask(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(workflow.getTask()));
 				if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.CLOSE.getName())) {
+					String body = workflow.getComment()!=null &&  Boolean.FALSE.equals(workflow.getComment().isEmpty()) ? workflow.getComment() :"Solicitud cerrada" ;
+					sentNotificationThAndWg(api, task, workflow, body);
+					
 					if(!task.getGtaskId().isEmpty() && task.getGtaskId().indexOf("@")>=0 && 
 						workflow.getEmail()!=null && !workflow.getEmail().equals(task.getGtaskId())) {
 						Auth auth = AON_SOLUTIONS.getAuth(task.getGtaskId());
-//						AonToken aonToken = SECURITY.getAonToken(api.getToken());
-//						Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 						if(!auth.getEmail().isEmpty()) 
 							sendEmail(api, task, auth);
 					}
-					sentNotificationThAndWg(api, task, workflow, workflow.getComment().isEmpty() ? "Solicitud cerrada" : workflow.getComment());
+					
 				} else if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.COMMENT.getName())) {
 					String body = "Han comentado la solicitud";
 					Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
-					if(auth!=null && !auth.getName().isEmpty()) {
-						body = auth.getName() +" ha comentado: <br>" + workflow.getComment();
-					}
+					if(auth!=null && !auth.getName().isEmpty()) 
+						body = "<b>"+auth.getName() +"</b> ha comentado: <br>" + workflow.getComment();
+
 					sentNotificationThAndWg(api, task, workflow, body);
 				} else if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.OPEN.getName())) {
-					sentNotificationThAndWg(api, task, workflow, "Solicitud abierta");
+					String body = "Solicitud abierta";
+					Auth auth = AON_SOLUTIONS.getAuth(workflow.getEmail());
+					if(auth!=null && !auth.getName().isEmpty()) 
+						body += " por <b>" +auth.getName()+"</b>";
+					
+					sentNotificationThAndWg(api, task, workflow, body);
+				} else if(workflow.getType().getName().equalsIgnoreCase(TaskWorkflowType.ASSIGN.getName())) {
+					String body = "Solicitud reasignada a <b>" + workflow.getComment()+ "</b>";
+					sentNotificationThAndWg(api, task, workflow, body);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -236,18 +246,19 @@ public class UtilsTask {
 		LinkedList<Auth> auths = new LinkedList<>();
 		Domain domain = api.getDomain();
 		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
-
-		if(task.getSender().getId()!=null && !task.getSender().getId().equals(workflow.getTaskHolder().getId()) ) {
+		System.out.println(task.getSender().getUserId() + " "+ user.getId());
+		//SEND SENDER
+		if(task.getSender()!=null && Integer.compare(task.getSender().getUserId(), user.getId())!=0 ) {
 			User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getSender().getUserId()));
 			if(usr!=null) auths.add(usr.getAuth());
 			System.out.println("COMMENT SENDER SEND ID"+ task.getSender().getId());
 		}
-		
+		//SEND TASKHOLDERA ASSIGNED
 		if(task.getTaskHolder().getId()!=null && !task.getTaskHolder().getId().equals(workflow.getTaskHolder().getId()) ) {
 			User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getTaskHolder().getUserId()));
 			if(usr!=null) auths.add(usr.getAuth());
 			System.out.println("COMMENT TASKHOLDER SEND ID"+ task.getTaskHolder().getId());
-		} else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){
+		} else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){ // SEND WORKGROUP ASSIGNED
 			AON.getTaskHolderWorkgroupStream(
 					domain, api.getUser(), 
 					f->f.getIdProperty().ne(workflow.getTaskHolder().getId())
@@ -266,9 +277,9 @@ public class UtilsTask {
 	    	NotificationRequest notification = new NotificationRequest();
 	    	notification.setTitle(title);
 	    	notification.setBody(body);
+	    	notification.setUser(user);
 	    	notification.setSender(user.getAuth().getAuth());
 	    	notification.setDomain(domain);
-	    	notification.setUser(api.getUser());
 	    	notification.setSource(NotificationSource.MESSENGER);
 	    	notification.setSourceId(task.getId());
 	    	notification.setAuths(auths);

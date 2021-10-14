@@ -136,7 +136,6 @@ const createDiv = (parent, child, properties)=> {
     return div;
 }
 
-
 const processAccept = async (tm,{date, time},aonMessengerChat) => {
     
     aonMessengerChat.getApplication().startLoading();

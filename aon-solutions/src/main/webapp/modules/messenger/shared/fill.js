@@ -240,7 +240,7 @@ export const fillChat = (workflows=[], aonMessengerChat)=>{
             const meId = aonMessengerChat.getApplicationParent().TASK_HOLDER.id;
 
             workflows.forEach(workflow => {
-                const {id, comment, type, creation_date, notification_user, notification_date, email, task_holder:{name, alias, id:taskHolderId}} = workflow;
+                const {id, comment, type, creation_date, notification_user, notification_date, email, task_holder:{name, id:taskHolderId}} = workflow;
                 const me = (taskHolderId == meId) || (email ===task.auth.email); // if taskHolder id is me
                 let message = {
                     id,
@@ -252,7 +252,7 @@ export const fillChat = (workflows=[], aonMessengerChat)=>{
                     notification_user
                 }
 
-                if(!me) message.name = alias || name || email;
+                if(!me) message.name = name || email;
                 if (type == WORKFLOW_TYPES.COMMENT) {
                     createChatMessage(message, chat);
                 } else{
