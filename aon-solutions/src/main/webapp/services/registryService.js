@@ -21,6 +21,9 @@ export const getRegistryAddress = (data) => get(`${API_URL}/registry/address`, d
 
 export const getRegistryBanks = (id) => get(`${API_URL}/registry/banks`, {id});
 
+export const getRegistryPaymethod = (data) => get(`${API_URL}/registry/paymethod`, data);
+
+
 export const getCustomers = (data) => {
   data = data || {};
   return new Promise((resolve, reject) => {

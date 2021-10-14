@@ -120,7 +120,7 @@ export class AonAddress extends AonElement {
     streetTypeSelect.title = 'Tipo vía'; //MSG.STREET_TYPE;
     streetTypeSelect.options = JSON.stringify(
       getStreetTypes().map((c) => {
-        return { value: c.ineCode, name: c.description.toLowerCase()};
+        return { value: c.ineCode, name: c.description.toLowerCase().initCap()};
       })
     );
     streetTypeSelect.readonly = this.isReadonly();
@@ -242,8 +242,10 @@ export class AonAddress extends AonElement {
     return this.address;
   }
 
-  setAddress(address) {
+  setAddress(address, build) {
     this.address = new Address(address);
+    if(build) 
+      this.build()
   }
 }
 

@@ -1,4 +1,5 @@
 import { Provinces } from "../../services/province.js";
+import { getStreetTypes } from "../../services/StreetType.js";
 
 export class Address {
     
@@ -198,6 +199,9 @@ export class Address {
     }
 
     getFullAddress() {
-        return `${this.getAddress()}, ${this.getNumber()} ${this.getAddress2()}, ${this.getZip()} ${this.getCity()}, ${this.getProvince()}, ${this.getCountry()}`;
+        let street = '';
+        let a = getStreetTypes().filter(f => f.ineCode === this.getStreetType());
+        if(a.length > 0) street = a[0].description.toLowerCase().initCap() + '.'; 
+        return `${street} ${this.getAddress()}, ${this.getNumber()} ${this.getAddress2()}, ${this.getZip()} ${this.getCity()}, ${this.getProvince()}, ${this.getCountry()}`;
     }
 }
