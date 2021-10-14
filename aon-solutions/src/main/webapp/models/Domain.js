@@ -27,7 +27,7 @@ export class Domain {
     }
 
     getName() {
-        return this.domain;  
+        return this.name;  
     }
 
     setName(name) {

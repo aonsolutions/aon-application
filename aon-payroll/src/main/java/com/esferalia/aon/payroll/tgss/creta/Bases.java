@@ -460,8 +460,10 @@ public class Bases {
 			try {
 				double newValue = get(salary, tramo.getFechaDesde(),
 						tramo.getFechaHasta());
-
-				if (optional && newValue == 0.00)
+				// truncate decimal points
+				int horas = (int)newValue;
+				
+				if (optional && horas == 0)
 					return;
 
 				if (newValue == 0.00)
@@ -472,7 +474,7 @@ public class Bases {
 				DatoBuilder datoBuilder = new DatoBuilder();
 				datoBuilder.setCodigo(datoSolicitado.getCodigo());
 				datoBuilder.setTipo(datoSolicitado.getTipoDato());
-				datoBuilder.setHoras((int)newValue); // truncate decimal points
+				datoBuilder.setHoras(horas); 
 				tramoBuilder.addDato(datoBuilder.create());
 
 			} catch (NoSuchVariableException e) {
@@ -1666,6 +1668,68 @@ public class Bases {
 		}
 	}
 	
+	private static final class H02CretaData extends HCretaData {
+		private H02CretaData(String variable) {
+			super(variable);
+		}
+
+		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, BasesCallback[] cbs) {
+			Fecha desde = tramo.getFechaDesde();
+			Fecha hasta = tramo.getFechaHasta();
+			Period period = new Period(toDate(desde), toDate(hasta));
+			try {
+				Double base = get(ADDITIONAL_BASE.getName(), salary, period);
+				if ( AonNumberUtils.isValid(base) && base > 0 ) {
+					super.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
+				}
+			} catch (NoSuchVariableException e) {
+				try {
+					for (BasesCallback cb : cbs)
+						cb.noSuchDato(salary, tramo, datoSolicitado,
+								tramoBuilder, isOptional(datoSolicitado));
+				} catch (Cancel c) {
+				}
+			} catch (UnMatchedVariableException e) {
+				for (BasesCallback cb : cbs)
+					cb.unMatchedVariable(salary, e.getVariable(),
+							e.getContextData(), datoSolicitado, tramo,
+							tramoBuilder, isOptional(datoSolicitado));
+			}
+		}
+	}
+
+	private static final class C537CretaData extends NonNegativeCCretaData {
+		private C537CretaData(String variable) {
+			super(variable);
+		}
+
+		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, BasesCallback[] cbs) {
+			Fecha desde = tramo.getFechaDesde();
+			Fecha hasta = tramo.getFechaHasta();
+			Period period = new Period(toDate(desde), toDate(hasta));
+			try {
+				Double hours = get(ADDITIONAL_HOURS.getName(), salary, period);
+				// clean decimal part
+				if ( AonNumberUtils.isValid(hours) && hours.intValue() > 0 ) {
+					super.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
+				}
+			} catch (NoSuchVariableException e) {
+				try {
+					for (BasesCallback cb : cbs)
+						cb.noSuchDato(salary, tramo, datoSolicitado,
+								tramoBuilder, isOptional(datoSolicitado));
+				} catch (Cancel c) {
+				}
+			} catch (UnMatchedVariableException e) {
+				for (BasesCallback cb : cbs)
+					cb.unMatchedVariable(salary, e.getVariable(),
+							e.getContextData(), datoSolicitado, tramo,
+							tramoBuilder, isOptional(datoSolicitado));
+			}
+		}
+	}
+
+
 	private static class DistributeHCretaData extends HCretaData {
 		
 		public DistributeHCretaData(String variable) {
@@ -1966,7 +2030,7 @@ public class Bases {
 			put("535", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
 			put("536", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 			
-			put("537", new NonNegativeCCretaData(ADDITIONAL_BASE.getName()));
+			put("537", new C537CretaData(ADDITIONAL_BASE.getName()));
 
 			put("501", new CCretaData(STRUCTURAL_OVERTIME_BASE.getName()));
 			put("502", new CCretaData(
@@ -2015,31 +2079,7 @@ public class Bases {
 					return 0.00;
 				};
 			});
-			put("02", new HCretaData(ADDITIONAL_HOURS.getName()) {
-				public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, BasesCallback[] cbs) {
-					Fecha desde = tramo.getFechaDesde();
-					Fecha hasta = tramo.getFechaHasta();
-					Period period = new Period(toDate(desde), toDate(hasta));
-					try {
-						Double base = get(ADDITIONAL_BASE.getName(), salary, period);
-						if ( AonNumberUtils.isValid(base) && base > 0 ) {
-							super.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
-						}
-					} catch (NoSuchVariableException e) {
-						try {
-							for (BasesCallback cb : cbs)
-								cb.noSuchDato(salary, tramo, datoSolicitado,
-										tramoBuilder, isOptional(datoSolicitado));
-						} catch (Cancel c) {
-						}
-					} catch (UnMatchedVariableException e) {
-						for (BasesCallback cb : cbs)
-							cb.unMatchedVariable(salary, e.getVariable(),
-									e.getContextData(), datoSolicitado, tramo,
-									tramoBuilder, isOptional(datoSolicitado));
-					}
-				};
-			});
+			put("02", new H02CretaData(ADDITIONAL_HOURS.getName()));
 
 			put("05", new CompositeHCretaData() {
 					public Double get(Salary salary, Fecha desde, Fecha hasta) 

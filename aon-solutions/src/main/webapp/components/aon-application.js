@@ -718,6 +718,10 @@ export class AonApplication extends AonElement {
     return el;
   }
 
+  getSidenav() {
+    return this.getElement(this.SIDENAV);
+  }
+
   getContent() {
     return this.getElement(this.CONTENT);
   }

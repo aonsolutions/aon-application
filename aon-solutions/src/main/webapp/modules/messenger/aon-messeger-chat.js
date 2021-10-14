@@ -132,18 +132,17 @@ export class AonMessengerChat extends AonElement {
     }
   }
 
-  async saveTaskWorkflow() {
-    let aonTextArea = this.getElement(MESSENGER_IDS.COMMENT_TASK);
-    const [comment, messengeEl] = await sendMessage(aonTextArea, this); 
+  /**
+   * 
+   * @param {String} text Optional
+   */
+  async saveTaskWorkflow(text) {
+    const [comment, messengeEl] = await sendMessage(text, this); 
     try {
       if(comment){
-        const workflow = await saveTaskWorkflow({
-          ...this.task.getWorkflowTmp(),
-          comment
-        });
-        if(workflow){
+        const workflow = await saveTaskWorkflow({...this.task.getWorkflowTmp(), comment});
+        if(workflow)
           messengeEl.dataset["id"] = workflow.id;
-        }
       }
     } catch (error) {
       console.log(error);
@@ -151,7 +150,12 @@ export class AonMessengerChat extends AonElement {
     }
   }
 
-  async updateTaskStatus(status){
+  /**
+   * 
+   * @param {String} status 
+   * @param {String} comment Optional 
+   */
+  async updateTaskStatus(status, comment){
     // this.applicationEl.confirmDialog(MSG.CONFIRM, "Estas seguro?", async()=>{
       this.task.setStatus(status);
       let type = undefined;
@@ -166,7 +170,7 @@ export class AonMessengerChat extends AonElement {
           type = WORKFLOW_TYPES.CLOSE;
         break;
       }
-      await saveTaskWorkflow({...this.task.getWorkflowTmp(), type});
+      await saveTaskWorkflow({...this.task.getWorkflowTmp(), type, comment});
       await this.save();
       this.applicationParentEl.updateCount();
       this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);

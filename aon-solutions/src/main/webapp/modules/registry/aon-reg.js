@@ -166,7 +166,7 @@ export class AonReg extends AonElement {
 			getAttach(filter).then(attach => {
 				this.logo = attach;
 				if(this.logo.id)
-					uploadLogo.setShowDeleteButton(true);
+					uploadLogo.setAttach(attach);
 			});
 		}
 	}

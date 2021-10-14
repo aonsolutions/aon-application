@@ -123,7 +123,7 @@ public class NotificationRequest extends Notification {
 			  authDevices.addAll(aths);
 		} catch (Exception e) {}
 	  });
-	  return authDevices.stream().map(ad -> ad.getDeviceToken()).toArray(String[]::new);
+	  return authDevices.stream().map(AuthDevice::getDeviceToken).toArray(String[]::new);
 	}
 	
 	private void saveNotification(){
