@@ -105,6 +105,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendarNew;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeEvents;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEvents;
@@ -142,6 +143,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
@@ -6624,6 +6626,27 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public int contractTransform(String domainName, ContractTransform contractTransform) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqContractTransform.createContractTransform(connection, contractTransform);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	// ------------------------------------------------- EmployeeIrpf
+	
+	@Override
+	public List<EmployeeIrpf> getEmployeeIrpf(String domainName, Integer contractId, Date startDate) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEmployeeIrpf.getEmployeeIrpf(connection, contractId, startDate);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void setEmployeeIrpf(String domainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqEmployeeIrpf.setEmployeeIrpf(connection, domainId, contractId, employeeIrpfs);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
