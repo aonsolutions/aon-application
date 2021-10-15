@@ -398,11 +398,18 @@ public class ContrataEmployeeObject {
 		success.accept(employeeEventsDraftObject);
 	}
 	
-	// ------------------------------------------------- Database Methods (Events)
+	// ------------------------------------------------- Database Methods (Payments)
 	
 	public void getEmployeeContractPaymentsObject(Consumer<EmployeeContractPaymentsObject> success) {
 		EmployeeContractPaymentsObject employeeContractPaymentsObject = new EmployeeContractPaymentsObject(contractData.getContractId());
 		success.accept(employeeContractPaymentsObject);
+	}
+	
+	// ------------------------------------------------- Database Methods (IRPF)
+	
+	public void getEmployeeContractIrpfObject(Consumer<EmployeeContractIrpfObject> success) {
+		EmployeeContractIrpfObject employeeContractIrpfObject = new EmployeeContractIrpfObject(contractData.getContractId());
+		success.accept(employeeContractIrpfObject);
 	}
 	
 	// ------------------------------------------------- Database Methods (Salary Draft)
