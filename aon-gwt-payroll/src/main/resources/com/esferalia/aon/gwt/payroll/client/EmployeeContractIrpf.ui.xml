@@ -1,0 +1,55 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeContractIrpf.MyStyle">
+
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 10px;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		
+		.heightAll{
+			height: 100%;
+		}
+		
+		.widthAll{
+			width: 100%;
+		}
+		
+		.width90{
+			width: 90px;
+			text-align: center;
+		}
+		
+		.title{
+			font-weight: bold;
+		}
+		
+		.width50{
+			width: 50px;
+		}
+		
+		.header{
+			min-height: 2rem;
+			background-color: #eee;
+		}
+		
+	</ui:style>
+
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
+		<g:center>
+			<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.heightAll} {style.widthAll}" />
+		</g:center>
+	</g:DockLayoutPanel>
+	
+</ui:UiBinder>
