@@ -48,6 +48,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -56,6 +57,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
+import com.sun.tools.sjavac.Log;
 
 public class CheckItModule extends MainEntryPoint {
 	private static final Logger LOGGER = Logger.getLogger(CheckItModule.class.getName());
@@ -362,12 +364,20 @@ public class CheckItModule extends MainEntryPoint {
 			updateError = false;
 			boolean areLogs = (checkItBankAccount.getLogs() != null && !checkItBankAccount.getLogs().isEmpty());
 			
-			InlineLabel title = new InlineLabel();
-			title.addStyleName(AON.CSS.aonBorderNone());
-			title.setText(AonStringUtils.abbreviate(checkItBankAccount.getBank(), 26));
-			String bankTitle = checkItBankAccount.getBank();
-			title.setTitle(bankTitle);
-			this.setTitle(title);
+			FlowPanel titlePanel = new FlowPanel();
+			if (checkItBankAccount.getLogo() != null && !checkItBankAccount.getLogo().isEmpty()) {
+				Image logoImg = new Image(checkItBankAccount.getLogo());
+				logoImg.setHeight("40px");
+				titlePanel.add(logoImg);
+			} else {
+				Label title = new Label();
+				title.addStyleName(AON.CSS.aonBorderNone());
+				title.setText(AonStringUtils.abbreviate(checkItBankAccount.getBank(), 26));
+				String bankTitle = checkItBankAccount.getBank();
+				title.setTitle(bankTitle);
+				titlePanel.add(title);
+			}
+			this.setTitle(titlePanel);
 			
 			FlowPanel body = new FlowPanel();
 			FlexTable bottomTable = new FlexTable();
@@ -460,6 +470,7 @@ public class CheckItModule extends MainEntryPoint {
 			
 			ClickHandler clickHandler = event -> {
 				FlowPanel panel = new FlowPanel();
+				panel.getElement().getStyle().setProperty("minWidth", "230px");
 				
 				CustomDialog dialog = new CustomDialog();
 				dialog.setAutoHideEnabled(true);
@@ -556,7 +567,7 @@ public class CheckItModule extends MainEntryPoint {
 				dialog.show();
 			};
 			body.addDomHandler(clickHandler, ClickEvent.getType());
-			title.addDomHandler(clickHandler, ClickEvent.getType());
+//			title.addDomHandler(clickHandler, ClickEvent.getType());
 			
 			bottomTable.addStyleName(AON.CSS.aonBlockCenter());
 			
