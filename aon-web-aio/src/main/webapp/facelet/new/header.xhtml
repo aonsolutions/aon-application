@@ -523,6 +523,10 @@
 		padding-right:44px;
 		background-size:40px;
 	}
+	
+	.aon-pl-10{
+		padding-left: 10px !important;
+	}
 
 
 	</style>
@@ -551,11 +555,10 @@
 			}
 	</script>
 		
-	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 1px solid #ddd;" >
+	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 0px solid #ddd;" >
 		<aon:form id="headerOptionsForm">
-		<aon:panelGrid columns="4" width="100%" 
-			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-name  aon-width-all, aon-header-options aon-width-300" style="height:60px;" >
-			
+		<aon:panelGrid columns="3" width="100%" 
+			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-name  aon-width-all, aon-header-options aon-width-300 aon-pl-10" style="height:60px;" >
 
 			<aon:panelGroup>
 
@@ -584,8 +587,7 @@
 				</aon:div>
 			</aon:panelGroup>
 			
-		
-			<aon:panelGroup style="text-align:left" >
+			<aon:panelGroup style="text-align:left; display:flex" >
 					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
 						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 					</aon:commandLink>
@@ -599,6 +601,7 @@
 						onblur="javascript:hideSearchResults()" 
 						onfocus="javascript:showSearchResults()" 
 						onkeydown="javascript:escSearchResults(event)"
+						style="width:100%"
 						>
 						<a4j:support 
 						event="onkeyup"
@@ -614,7 +617,7 @@
 						
 					</aon:inputText>
 					
-					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%">
+					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;">
 						<aon:div id="smartFilterTablePanel" rendered="#{aonConfiguration.properties.showSearchResults}" >
 							<aon:div styleClass="search-results-popup-filter" >
 								<aon:outputText value="Resultados de búsqueda de '#{search.filter}'"
@@ -685,9 +688,8 @@
 			</aon:panelGroup>
 					
 			<aon:div styleClass="aon-width-all aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
-				style="color:#999;">
+				style="color:#999; padding-left: 10px;">
 
-					
 					<aon:panelGroup style="display:inline;">
 						<aon:outputText value="#{domainSwitcher.domainName}"
 							style="vertical-align: middle; color: #5f6368;"
@@ -788,6 +790,7 @@
 					</aon:panelGroup> 
 					
 			</aon:div>
+		
 		</aon:panelGrid>
 		</aon:form>
 	</aon:div>
