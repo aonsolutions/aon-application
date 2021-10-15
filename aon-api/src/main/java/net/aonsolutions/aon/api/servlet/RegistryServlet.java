@@ -112,7 +112,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 	
 	public static JSONObject saveRegistry(AonApiData api) {
 		Registry registry = RegistryJSON.fromJSON(api.getData());
-		//AON.saveRegistry();
+		registry = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), registry);
 		saveRegistryAdditionalInfo(api, registry.getId(), registry.getDomain().getId());
 		return new JSONObject();
 	}

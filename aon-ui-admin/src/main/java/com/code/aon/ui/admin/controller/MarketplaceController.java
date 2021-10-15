@@ -47,6 +47,10 @@ public class MarketplaceController implements Serializable {
 		return domainApps.containsKey(app)&& domainApps.get(app).isActive();
 	}
 	
+	public boolean isDisabled(AonApp app) {
+		return getDur().hasParentApp(app);
+	}
+	
 	public void setActive(AonApp app, boolean active) {
 		if(domainApps.containsKey(app)) 
 			domainApps.get(app).setActive(active);
@@ -121,6 +125,23 @@ public class MarketplaceController implements Serializable {
 	
 	public boolean isOcrActive() {
 		return getDur().hasOcr();
+	}
+	
+	public boolean isOcrDisabled() {
+		return getDur().hasParentApp(AonApp.OCR);
+	}
+	
+	public boolean isComunicaDisabled() {
+		return getDur().hasParentApp(AonApp.COMUNICA)
+			|| getDur().hasApp(AonApp.PACK_SUITE) || getDur().hasApp(AonApp.PACK_PAYROLL);
+	}
+	
+	public boolean isConveniosDisabled() {
+		return getDur().hasParentApp(AonApp.CONVENIOS);
+	}
+	
+	public boolean isBankDisabled() {
+		return getDur().getDomain().isParent();
 	}
 	
 	public boolean isAioActive() {
