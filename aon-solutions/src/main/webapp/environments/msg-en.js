@@ -134,11 +134,13 @@ export const HOLDERS = 'Holders';
 
 // ----- I
 
+export const IN_DEVELOPMENT = 'This option is under development...';
 export const INACTIVE = 'Inactive';
 export const INACTIVES ='Inactive';
 export const INBOX = 'Inbox';
 export const INCLUDE_COMPANY_DATA = 'Include Company Data';
 export const INCLUDE_LOGO = 'Include Logo';
+export const INFORMATION = 'Information';
 export const INVESTMENT = 'Investment';
 export const INVOICE = 'Invoice';
 export const INVOICE_CONCEPTS = 'Invoice Concepts';
@@ -159,7 +161,7 @@ export const ISSUEDS = 'Issued';
 
 export const LAST_LOCATION = 'Last Location';
 export const LAST_STATUS = 'Last Status';
-export const LOCATION = "Location";
+export const LOCATION = 'Location';
 
 // ----- M
 

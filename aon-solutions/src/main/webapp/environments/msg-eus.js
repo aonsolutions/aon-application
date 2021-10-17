@@ -134,11 +134,13 @@ export const HOLDERS = 'Titularrak';
 
 // ----- I
 
+export const IN_DEVELOPMENT = 'Aukera hau garatzen ari da...';
 export const INACTIVE = 'Ez-Aktibo';
 export const INACTIVES = 'Ez-Aktibo';
 export const INBOX = 'Sarrera-Ontzia';
 export const INCLUDE_COMPANY_DATA = 'Sartu Empresaren Datuak';
 export const INCLUDE_LOGO = 'Sartu Logoa';
+export const INFORMATION = 'Informazioa';
 export const INVESTMENT = 'Inbertsioa';
 export const INVOICE = 'Faktura';
 export const INVOICE_CONCEPTS = 'Fakturaren Kontzeptuak';
@@ -157,9 +159,9 @@ export const ISSUEDS = 'Igorritakoak';
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";
-export const LAST_STATUS = "Último estado";
-export const LOCATION = "Ubicación";
+export const LAST_LOCATION = 'Azken kokapena';
+export const LAST_STATUS = 'Azken egoera';
+export const LOCATION = 'Kokapena';
 
 // ----- M
 

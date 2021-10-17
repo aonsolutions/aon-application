@@ -190,11 +190,14 @@ export const HOURS = "Horas";//TODO
 export const HISTORIC = "Historial"; //TODO
 // ----- I
 
+export const IN_DEVELOPMENT = MSG.IN_DEVELOPMENT;
 export const INACTIVE = MSG.INACTIVE;
 export const INACTIVES = MSG.INACTIVES;
 export const INBOX = MSG.INBOX;
 export const INCLUDE_COMPANY_DATA = MSG.INCLUDE_COMPANY_DATA;
 export const INCLUDE_LOGO = MSG.INCLUDE_LOGO;
+export const INFORMATION = MSG.INFORMATION;
+export const INTERNAL = "Interno"; //TODO
 export const INVESTMENT = MSG.INVESTMENT;
 export const INVOICE = MSG.INVOICE;
 export const INVOICE_CONCEPTS = MSG.INVOICE_CONCEPTS;
@@ -207,16 +210,16 @@ export const IRPF = MSG.IRPF;
 export const ISSUED = MSG.ISSUED;
 export const ISSUEDS = MSG.ISSUEDS;
 export const ISSUE = "Asunto"; //TODO
-export const INTERNAL = "Interno"; //TODO
+
 // ----- J
 
 // ----- K
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";//TODO
-export const LAST_STATUS = "Último estado";//TODO
-export const LOCATION = "Ubicación";//TODO
+export const LAST_LOCATION = MSG.LAST_LOCATION;
+export const LAST_STATUS = MSG.LAST_STATUS;
+export const LOCATION = MSG.LOCATION;
 
 // ----- M
 

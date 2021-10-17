@@ -4,10 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.logging.Logger;
@@ -24,18 +26,25 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.in.payroll.pdf.maker.PdfMaker;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 
@@ -152,15 +161,27 @@ public class MultipleDownloadServlet extends HttpServlet{
     	} else { 
     		AON.getRawdocFullStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().in(idsArray)).forEach(r -> {
     			JSONObject data = new JSONObject(r.getJson());
-    			String name = data.opt("reference") != null ? data.optString("reference") : "invoice";
+    			String name = data.opt("reference") != null && !AonStringUtils.isBlank(data.optString("reference"))
+    					? data.optString("reference") : "invoice";
 				try {
 					if(r.getData() != null) {
 						File file = File.createTempFile(name, "." + r.getMimeType().getExtension());
 						AonFileUtils.writeByteArrayToFile(file, r.getData());
 						list.add(file);
 					} else {
-						TediInvoice invoice = TediInvoiceJSON.fromJSON(data);
-						list.add(InvoicePdfServlet.createPdf(invoice));
+						CompanyFull company = AON.getCompanyFull(domain.getName(), domain.getId(), user.getLogin());
+						Attach logo = new Attach();
+						PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domain.getName(), domain.getId(), user.getLogin(), true);
+						if(config.isLogo()) {
+							Integer id = company.getRegistry().getId();
+							logo = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f-> f.getAttachModuleProperty().eq(id)
+								.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+						}
+						Invoice invoice = InvoiceJSON.fromJSON(new JSONObject(r.getJson()));
+						File file = File.createTempFile(name, ".pdf");
+						FileOutputStream out = new FileOutputStream(file);
+						PdfMaker.printInvoice(out, config.isCompany() ? company : null, invoice, config, null, logo.getData());
+						list.add(file);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();

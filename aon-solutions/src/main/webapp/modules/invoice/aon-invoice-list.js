@@ -341,6 +341,9 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	aonInvoiceContextMenu(e, invoice, i) {
+		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+		const number = aonInvoiceTable.selected.length;
+		
 		let inv =	new Invoice(invoice.type);
 		inv.createInvoice(invoice);
 
@@ -356,51 +359,59 @@ export class AonInvoiceList extends AonElement {
    		let d = document.getElementById(aonInvoice.OPTION_DIALOG);
 
 		let send = ACTION.SEND_INVOICE;
-		send.fn = () => {}; //this.recordInvoice();
+		send.fn = () => this.sendInvoices();
 
 		let download = ACTION.DOWNLOAD_INVOICE;
-	    download.fn = () => {}; //this.recordInvoice();
+	    download.fn = () => this.downloadInvoices();
 
     	let record = ACTION.RECORD_INVOICE;
-    	record.fn = () => {}; //this.recordInvoice();
+    	record.fn = () => this.getApplication().development(MSG.RECORD_INVOICE);
 
     	let reject = ACTION.REJECT_INVOICE;
-    	reject.fn = () => {}; //this.rejectInvoice();
+    	reject.fn = () => this.rejectInvoices();
 
     	let restore = ACTION.RESTORE_INVOICE;
-    	restore.fn = () => {}; //this.restoreInvoice();
+    	restore.fn = () => this.restoreInvoices();
 
     	let addComment = ACTION.COMMENT;
-   		addComment.fn = () => {}; //this.addInvoiceComment();
+   		addComment.fn = () =>  this.getApplication().development(MSG.ADD_COMMENT);
 
   		let deleteInvoice = ACTION.DELETE_TO_TRASH;
-	  	deleteInvoice.fn = () => {}; //this.trashInvoice();
+	  	deleteInvoice.fn = () => this.deleteInvoices();
 
 	  	let deleteForever = ACTION.DELETE_FOREVER;
-	  	deleteForever.fn = () => {}; //this.removeInvoice();
-
+	  	deleteForever.fn = () => this.deleteForeverInvoices();
+		  
 	  	let rectify = ACTION.RECTIFY_INVOICE;
-	  	rectify.fn = () => {}; //this.rectifyInvoice();
+	  	rectify.fn = () => this.getApplication().development(MSG.RECTIFY_INVOICE);
 
 	  	let duplicate = ACTION.DUPLICATE_INVOICE;
-	  	duplicate.fn = () => {}; //this.duplicateInvoice();
+	  	duplicate.fn = () => this.getApplication().development(MSG.DUPLICATE_INVOICE);
 
     	let addFile = ACTION.ADD_FILE;
-  		addFile.fn = () => {}; //this.addInvoiceFile();
+  		addFile.fn = () => this.getApplication().development(MSG.ADD_FILE);
 
 	  	let actions = [];
 	  	if(inv.isRejected()) {
 	  		actions = [restore, deleteInvoice];
 	  	} else if(inv.isDraft()) {
 	  		actions = [restore, deleteForever];
-	  	}  else if(inv.isInbox()){
+	  	}  else if(inv.isInbox() && number === 1){
 			if(this.getDur().isInvoiceManager()){
 	    		actions = [send, download, addComment, deleteInvoice, reject, record, rectify, duplicate];
 	  		} else {
 	    	  actions = [send, download, addComment, deleteInvoice, rectify, duplicate];
 	    	}
+		} else if(inv.isInbox() && number > 1){
+			if(this.getDur().isInvoiceManager()){
+	    		actions = [send, download, deleteInvoice, reject, record];
+	  		} else {
+	    	  actions = [send, download, deleteInvoice];
+	    	}
+		} else {
+			actions = [send, download];
 		}
-	  	if(!inv.file && !inv.isEmitida()){
+	  	if(!inv.file && !inv.isEmitida() && number === 1){
 	  		actions.push(addFile);
 	  	}
 

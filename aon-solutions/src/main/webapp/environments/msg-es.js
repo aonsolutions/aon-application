@@ -135,11 +135,13 @@ export const HOLDERS = 'Titulares';
 
 // ----- I
 
+export const IN_DEVELOPMENT = 'Esta opción está en desarrollo...';
 export const INACTIVE = 'Inactivo';
 export const INACTIVES = 'Inactivas';
 export const INBOX = 'Bandeja de Entrada';
 export const INCLUDE_COMPANY_DATA = 'Incluir Datos de Empresa';
 export const INCLUDE_LOGO = 'Incluir Logo';
+export const INFORMATION = 'Información';
 export const INVESTMENT = 'Inversión';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS =  'Conceptos Factura';
@@ -158,9 +160,9 @@ export const ISSUEDS = 'Emitidas';
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";
-export const LAST_STATUS = "Último estado";
-export const LOCATION = "Ubicación";
+export const LAST_LOCATION = 'Última ubicación';
+export const LAST_STATUS = 'Último estado';
+export const LOCATION = 'Ubicación';
 
 // ----- M
 

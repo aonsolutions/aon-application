@@ -135,11 +135,13 @@ export const HOLDERS = 'Titulares';
 
 // ----- I
 
+export const IN_DEVELOPMENT = 'Esta opción está en desenvolvemento...';
 export const INACTIVE = 'Inactivo';
 export const INACTIVES = 'Inactivas';
 export const INBOX = `Caixa de Entrada`;
 export const INCLUDE_COMPANY_DATA = 'Incluír Datos da Empresa';
 export const INCLUDE_LOGO = 'Incluír Logo';
+export const INFORMATION = 'Información';
 export const INVESTMENT = 'Investimento';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS = 'Conceptos Factura';
@@ -152,15 +154,16 @@ export const IRPF = 'IRPF';
 export const ISSUED = 'Emitida';
 export const ISSUEDS = 'Emitidas';
 
+
 // ----- J
 
 // ----- K
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";
-export const LAST_STATUS = "Último estado";
-export const LOCATION = "Ubicación";
+export const LAST_LOCATION = 'Última ubicación';
+export const LAST_STATUS = 'Último estado';
+export const LOCATION = 'Ubicación';
 
 // ----- M
 

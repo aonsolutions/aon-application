@@ -1442,6 +1442,7 @@ export class AonInvoice extends AonElement {
 				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json))
 				: this.getInvoice().file.url;
 			viewer.width = fileDiv.offsetWidth;
+			viewer.addEventListener(EVENT.SEND_MAIL, () => this.sendInvoice());
 			fileDiv.appendChild(viewer);
 		}
 	}

@@ -133,11 +133,14 @@ export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulars';
 
 // ----- I
+
+export const IN_DEVELOPMENT = 'Aquesta opció està en desenvolupament...';
 export const INACTIVE = 'Inactivo';
 export const INACTIVES = 'Inactives';
 export const INBOX = `Safata d'Entrada`;
 export const INCLUDE_COMPANY_DATA = `Incloure Dades d'Empresa`;
 export const INCLUDE_LOGO = 'Incloure Logo';
+export const INFORMATION = 'Informació';
 export const INVESTMENT = 'Inversió';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS = 'Conceptes Factura';
@@ -156,9 +159,9 @@ export const ISSUEDS = 'Emeses';
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";
-export const LAST_STATUS = "Último estado";
-export const LOCATION = "Ubicación";
+export const LAST_LOCATION = 'Última ubicació';
+export const LAST_STATUS = 'Último estat';
+export const LOCATION = 'Ubicació';
 
 // ----- M
 
