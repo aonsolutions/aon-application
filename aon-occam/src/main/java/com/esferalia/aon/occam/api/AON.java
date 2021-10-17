@@ -71,6 +71,7 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -188,6 +189,7 @@ import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -1013,6 +1015,13 @@ public class AON {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getCompanyStream(ctx, filter, page, perPage);
 		}
+	}
+
+	public static CompanyFull getCompanyFull(String domainName, Integer domainId, String login){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCompanyFull(ctx, domainId);
+		}
+
 	}
 	
 	public static Company getCompany(String domainName, Integer domainId, String login, CompanyFilter filter){
@@ -6649,6 +6658,7 @@ public class AON {
 	// **************************************************
 	// ************************************* [PAY_METHOD]
 	// **************************************************
+
 	public static LinkedList<PayMethod> getPayMethods(String domainName, Integer domain, String user) {
 		AONContext ctx = null;
 		try {
@@ -6660,15 +6670,14 @@ public class AON {
 		}
 	}
 	
-	public static PayMethod getPayMethod(String domainName, Integer domain, String user, String name) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getFinance().getPayMethod(ctx, name);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static PayMethod getPayMethod(String domainName, Integer domain, String user, PayMethodFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getFinance().getPayMethod(ctx, filter);
 		}
+	}
+	
+	public static PayMethod getPayMethod(String domainName, Integer domain, String user, String name) {
+		return getPayMethod(domainName, domain, user, f -> f.getNameProperty().eq(name));
 	}
 	
 	public static PayMethod savePayMethod(String domainName, Integer domain, String user, PayMethod paymethod) {

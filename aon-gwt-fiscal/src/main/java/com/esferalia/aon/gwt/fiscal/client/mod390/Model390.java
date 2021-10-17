@@ -29,6 +29,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -87,6 +89,9 @@ public class Model390 extends MainEntryPoint {
 		public void onNew(Model390ModuleOptions options, int year) {
 			Model390.this.onNew( options, year );
 		}
+		public void onReset(Model390ModuleOptions options, Mod390 mod390) {
+			Model390.this.onReset( options, mod390 );
+		}
 		public void showBreakdownPanel(String htmlText) {
 			Model390.this.showBreakdownPanel(htmlText);
 		}
@@ -136,7 +141,7 @@ public class Model390 extends MainEntryPoint {
 
 		Model390ServiceAsync serviceRaw = GWT.create(Model390Service.class);
 		MOD390_SERVICE = new Model390ServiceAsyncDecorator(serviceRaw);
-
+		
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
 		
 		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");
@@ -284,6 +289,76 @@ public class Model390 extends MainEntryPoint {
 			newDialog.center();
 			newDialog.show();
 	}
+	
+	private void onReset(Model390ModuleOptions options, Mod390 oldMod390) {
+		cleanErrorPanel();
+		MOD390_SERVICE.initialize(options.getDomainName(),options.getDomain(),options.getUser(), oldMod390.getYear(),
+				new AsyncCallback<Mod390>() {
+					@Override
+					public void onSuccess(Mod390 newMod390) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
+						// Valores de la declaración actual
+						newMod390.setAdministration(oldMod390.getAdministration());
+						newMod390.setYear(oldMod390.getYear());
+						newMod390.setComplementary(oldMod390.isComplementary());
+						newMod390.setReplacement(oldMod390.isReplacement());
+						newMod390.setReplacedReceipt(oldMod390.getReplacedReceipt());						
+						showResetDeclarationPopup(options, newMod390, oldMod390);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					}
+				});
+	}
+	
+	private void showResetDeclarationPopup(Model390ModuleOptions options, Mod390 newMod390, Mod390 oldMod390) {
+		cleanErrorPanel();
+		cleanBreakdownPanel();
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
+		NewDeclarationPopup newDialog = new NewDeclarationPopup( newMod390, true, new Model390Callback() {
+
+					@Override
+					public void onAccept(Mod390 mod390) {
+					
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+
+						MOD390_SERVICE.delete(options.getDomainName(), options.getDomain(), options.getUser(), oldMod390,
+								new AsyncCallback<Void>() {
+									@Override
+									public void onSuccess(Void result) {
+										popup.hide();
+										select(options, mod390);
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+									}
+								});				
+
+					}
+
+					@Override
+					public void onCancel() {
+					}
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 
 	private void cancel() {
 		cleanErrorPanel();

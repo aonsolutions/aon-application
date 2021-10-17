@@ -23,14 +23,18 @@ public interface IJsonNames {
 	String ACTIVITY_TYPE = "activity_type";
 	String ACTIVITY_DESCRIPTION = "activityDescription";
 	String ADDRESS = "address";
+	String ADDRESS2 = "address2";
 	String ADJUST = "adjust";
 	String ADMINISTRATION = "administration";
 	String ADMINISTRATIVE = "administrative";
 	String ALIAS = "alias"; 
 	String AMOUNT = "amount";
+	String ATTACH_MODULE = "attachModule";
+	String ATTACH_TYPE = "attachType";
 	String AUTH = "auth";
 	// ---------------------------------------------------------------------------------------------	[B] 
 	String BACKGROUND = "background";
+	String BACKGROUND_ATTACH = "backgroundAttach";
 	String BALANCE_TYPE = "balanceType";
 	String BALANCE = "balance";
 	String BALANCES = "balances";
@@ -66,8 +70,11 @@ public interface IJsonNames {
 	String CONFIDENTIAL = "confidential";
 	String CONFIGURED_VISIBLE = "configuredVisible";
 	String CONSOLIDATION = "consolidation";
-	String CONTENT_DISPOSITION = "Content-disposition";
-	String CONTENT_TYPE = "content_type";
+	String CONTENT = "content";
+	String CONTENT_ENCODING = "contentEncoding";
+	String CONTENT_NAME = "contentName";
+	String CONTENT_SIZE = "contentSize";
+	String CONTENT_TYPE = "contentType";
 	String COST_CENTER = "costCenter";
 	String COST_CENTERS = "costCenters";
 	String COUNTRY = "country";
@@ -97,6 +104,7 @@ public interface IJsonNames {
 	String DOMAIN_NAME = "domainName";
 	String DOMAIN_TYPE = "domainType";
 	String DOMAINS = "domains";
+	String DRIVE_ID = "driveId";
 	String DUE_DATE = "due_date";
 	// ---------------------------------------------------------------------------------------------	[E] 
 	String E_INVOICE = "eInvoice";
@@ -170,6 +178,7 @@ public interface IJsonNames {
 	String LEVEL = "level";
 	String LIMIT = "limit";
 	String LOGIN = "login";
+	String LOGO = "logo";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
 	// ---------------------------------------------------------------------------------------------	[M] 
 	String MAIN = "main";
@@ -256,6 +265,7 @@ public interface IJsonNames {
 	String REGISTRY_ID = "registryId";
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
+	String REMOVED = "removed";
 	String REPLACEMENT = "replacement";
 	String RESERVATION = "reservation";
 	String RESULT = "result";
@@ -281,12 +291,14 @@ public interface IJsonNames {
 	String SETTLED = "settled";
 	String SHARED = "shared";
 	String SHOW_COVER = "showCover";
+	String SIZE = "size";
 	String SOURCE = "source";
 	String SOURCE_ID = "source_id";
 	String START_DATE = "start_date";
 	String STATEMENT = "statement";
 	String STATEMENTS = "statements";
 	String STATUS = "status";
+	String STREET_TYPE = "streetType";
 	String SUBJECT = "subject";
 	String SURCHARGE_QUOTA = "surcharge_quota";
 	String SURCHARGE = "surcharge";

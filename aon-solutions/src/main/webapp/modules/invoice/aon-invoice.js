@@ -1,5 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices, getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail} from '../../services/service.js';
+import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices,
+	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -11,7 +12,6 @@ import '../../components/aon-date.js';
 import '../../components/aon-select.js';
 import '../../components/aon-suggestion.js';
 import '../../components/aon-input.js';
-import "../../components/aon-address.js";
 import '../../components/aon-number.js';
 import '../../components/aon-checkbox.js';
 import '../../components/aon-icon-button.js';
@@ -19,7 +19,6 @@ import '../../components/aon-switch.js';
 import '../../components/aon-dialog.js';
 import '../../components/aon-dialog-menu.js';
 import { AonViewer } from '../../components/aon-viewer.js';
-import { AonBasicTable, AonDate, AonDialog, AonIconButton, AonInput, AonNumber, AonRegistry, AonSelect, AonSuggestion, AonSwitch } from '../../components/components.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
@@ -27,6 +26,16 @@ import { Transactions } from '../../services/transaction.js';
 import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType } from './invoiceEnums.js';
 import { getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
+import { AonBasicTable } from '../../components/aon-basic-table.js';
+import { AonDate } from '../../components/aon-date.js';
+import { AonDialog } from '../../components/aon-dialog.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
+import { AonInput } from '../../components/aon-input.js';
+import { AonNumber } from '../../components/aon-number.js';
+import { AonRegistry } from '../../components/aon-registry.js';
+import { AonSelect } from '../../components/aon-select.js';
+import { AonSuggestion } from '../../components/aon-suggestion.js';
+import { AonSwitch } from '../../components/aon-switch.js';
 
 export class AonInvoice extends AonElement {
 
@@ -582,10 +591,20 @@ export class AonInvoice extends AonElement {
 		registry.readonly = this.invoice.isReadonly();
 		registry.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setRegistry(registry.getRegistry());
+			getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
+				this.invoice.setPaymethod(rpm.paymethod.id);
+				this.invoice.setBankAccount(rpm.rbank.bank_account);
+				this.reload();
+			});
 			if(this.autosave) this.save();
 		});
 		registry.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setRegistry(registry.getRegistry());
+			getRegistryPaymethod({registry: registry.getRegistry().id}).then(pm => {
+				this.invoice.setPaymethod(rpm.paymethod.id);
+				this.invoice.setBankAccount(rpm.rbank.bank_account);
+				this.reload();
+			});
 			if(this.autosave) this.save();
 		});
 		table.addCell(registry, this.invoice.isEmitida() ? '4' : '6');
@@ -1423,6 +1442,7 @@ export class AonInvoice extends AonElement {
 				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json))
 				: this.getInvoice().file.url;
 			viewer.width = fileDiv.offsetWidth;
+			viewer.addEventListener(EVENT.SEND_MAIL, () => this.sendInvoice());
 			fileDiv.appendChild(viewer);
 		}
 	}

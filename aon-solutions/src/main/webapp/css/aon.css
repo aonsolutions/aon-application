@@ -226,10 +226,6 @@ button:disabled, button[disabled]{
   cursor: pointer;
 }
 
-.aonRegisterLogo {
-  margin-top: 25px;
-}
-
 .aonLogo {
   position: absolute;
   margin-left: 10px;
@@ -1121,7 +1117,7 @@ button:disabled, button[disabled]{
 }
 
 .aonNone {
-  display: none;
+  display: none !important;
 }
 
 /* The dots/bullets/indicators */
@@ -1307,3 +1303,38 @@ button:disabled, button[disabled]{
 .colorOther.messageAfter:after{
   border-left: 5px solid var(--aonBlack);
 }
+
+.aonUpload {
+  border-radius: 8px;
+  border: 2px dashed #ddd;
+  flex-direction: column;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  justify-content: center;
+  height: 165px;
+  display: flex;
+  position: relative;
+  margin-bottom: 16px;
+  padding: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.aonUpload:hover {
+  border-color: #002469;
+}
+
+.aonUploadLabel {
+  cursor: pointer;
+  color: #aaa;
+  -webkit-box-align: center;
+  align-items: center;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  justify-content: center;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+

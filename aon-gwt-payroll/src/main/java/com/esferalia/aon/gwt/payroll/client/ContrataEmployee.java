@@ -356,6 +356,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	}
 	
+	class ContractTransformCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			contractTransform();
+		}
+
+	}
+	
 	class RemoveContractCommand implements ScheduledCommand {
 
 		@Override
@@ -373,6 +382,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		private MenuItem cetifica2PDF;
 		
 		private MenuItem contractExtension;
+		private MenuItem contractTransform;
 		private MenuItem removeContractExtension;
 		
 		private MenuItem sendBasicCopy;
@@ -405,6 +415,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			contractExtension = addItem("Pr\u00F3rroga Contrato", new ContractExtensionCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			contractExtension.ensureDebugId("contractExtension");
+			
+			contractTransform = addItem("Transformaci\u00F3n Contrato", new ContractTransformCommand(), 
+					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			contractTransform.ensureDebugId("contractTransform");
 			
 			removeContractExtension = addItem("Eliminar Pr\u00F3rroga Contrato", new DeleteContractExtensionCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
@@ -448,6 +462,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		public MenuItem getContractExtension() {
 			return contractExtension;
+		}
+		
+		public MenuItem getContractTransform() {
+			return contractTransform;
 		}
 		
 		public MenuItem getRemoveContractExtension() {
@@ -498,6 +516,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	@UiField (provided = true)
 	EmployeeContractPayments employeeContractPayments;
+	
+	@UiField (provided = true)
+	EmployeeContractIrpf employeeContractIrpf;
 	
 	@UiField (provided = true)
 	SalaryDraft salaryDraft;
@@ -551,7 +572,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private Integer contractId;
 	
 	private AonToolbar toolbar;
-//	private AonMessagePanel messagePanel;
 
 	private AonToolbarButton listEmployees;
 	private HTMLPanel employeeContractButtons;
@@ -598,6 +618,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton addContractPaymentsButton;
 	private ListBox yearLBContractPayments;
 	
+	// EmployeeContractIrpf
+	private HTMLPanel employeeContractIrpfButtons;
+	private AonToolbarButton saveContractIrpfButton;
+	private ListBox yearLBContractIrpf;
+	
 	// SalaryDraft
 	private HTMLPanel salaryDraftButtos;
 	private AonToolbarButton acceptButton;
@@ -623,11 +648,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton nextContract;
 	private Label employeeCounter;
 	
-	private boolean hasCertificateSEPE = false;;
+	private boolean hasCertificateSEPE = false;
 	
 	// ------------------------------------------------- Constructor
 	
-	public ContrataEmployee() {
+	protected ContrataEmployee() {
 		// Init Tabs Elements
 		contractEmployeeUI = new ContractEmployeeUIImpl();
 		contractSpecificData = new ContractSpecificData();
@@ -648,6 +673,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		employeeContractPayments = new EmployeeContractPayments();
 		employeeContractPayments.hideToolbar();
+		
+		employeeContractIrpf = new EmployeeContractIrpf();
+		employeeContractIrpf.hideToolbar();
 		
 		salaryDraft = new SalaryDraft();
 		salaryDraft.hideToolbar();
@@ -688,13 +716,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void initFootPanel() {
-		footPanel.addMaximizeHandler((e) -> {
-			showFootPanel();
-		});
-		
-		footPanel.addMinimizeHandler((e) -> {
-			hideFootPanel();
-		});	
+		footPanel.addMaximizeHandler(e -> showFootPanel());
+		footPanel.addMinimizeHandler(e -> hideFootPanel());	
 	}
 	
 	private void initResultsPanel () {
@@ -737,10 +760,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					showContractButtons();
 					contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 							success -> {
-								checkStatus(this.contrataEmployeeObject);
+								// Check SS only if not RETA
+								Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+								if (null == ssRegime || ssRegime != 3) 
+									checkStatus(this.contrataEmployeeObject);
+								
 								checkCertificateSEPE();
 								checkTGSSStatus();
 								checkContractExtension();
+								checkContractTransform();
 							});
 				}, f -> {});
 				break;
@@ -818,6 +846,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				});
 				break;
 			case 10:
+				contrataEmployeeObject.getEmployeeContractIrpfObject(employeeContractIrpfObject -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					showContractIrpfButtons();
+					employeeContractIrpf.setEmployeeContractIrpfObject(employeeContractIrpfObject);
+				});
+				break;
+			case 11:
 				contrataEmployeeObject.getSalaryDraftObject(salaryDraftObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showSalaryDraftButtons();
@@ -883,10 +918,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				s -> {
 					employeeCounter.setText(selectedEmployeeIdx + " de " + employeesSize);
 					showContractButtons();
-					checkStatus(this.contrataEmployeeObject);
+					
+					// Check SS only if not RETA
+					Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+					if (null == ssRegime || ssRegime != 3) 
+						checkStatus(this.contrataEmployeeObject);
+					
 					checkCertificateSEPE();
 					checkTGSSStatus();
 					checkContractExtension();
+					checkContractTransform();
 					success.accept("");
 				});
 	}
@@ -911,6 +952,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeEventsButtons.setVisible(false);
 		employeeContractPaymentsButtons.setVisible(false);
 		salaryDraftButtos.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
 	}
 	
 	private void showContractButtons() {
@@ -920,6 +962,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeEventsButtons.setVisible(false);
 		employeeContractPaymentsButtons.setVisible(false);
 		salaryDraftButtos.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
 	}
 	
 	private void showCalendarButtons() {
@@ -929,6 +972,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeEventsButtons.setVisible(false);
 		employeeContractPaymentsButtons.setVisible(false);
 		salaryDraftButtos.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
 	}
 	
 	private void showEventsButtons() {
@@ -938,10 +982,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
 		salaryDraftButtos.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
 	}
 	
 	private void showContractPaymentsButtons() {
 		employeeContractPaymentsButtons.setVisible(true);
+		employeeEventsButtons.setVisible(false);
+		employeeCalendarButtons.setVisible(false);
+		employeeContractButtons.setVisible(false);
+		employeeSalaryButtons.setVisible(false);
+		salaryDraftButtos.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
+	}
+	
+	private void showContractIrpfButtons() {
+		employeeContractIrpfButtons.setVisible(true);
+		employeeContractPaymentsButtons.setVisible(false);
 		employeeEventsButtons.setVisible(false);
 		employeeCalendarButtons.setVisible(false);
 		employeeContractButtons.setVisible(false);
@@ -956,6 +1012,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeCalendarButtons.setVisible(false);
 		employeeContractButtons.setVisible(false);
 		employeeSalaryButtons.setVisible(false);
+		employeeContractIrpfButtons.setVisible(false);
 	}
 	
 	// ------------------------------------------------- Abstract methods
@@ -963,6 +1020,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	protected abstract void onListShow(boolean reloadEmployees);
 	protected abstract void onPreviusContract(Integer contractId);
 	protected abstract void onNextContract(Integer contractId);
+	protected abstract void onTransformContract(Integer newContractId);
 	
 	// ------------------------------------------------- Toolbar panel
 	
@@ -995,10 +1053,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeEventsButtons = initEmployeeEventsButtons();
 		toolbar.add(employeeEventsButtons);
 		
-		// EmployeeEvents
+		// EmployeePayments
 		
 		employeeContractPaymentsButtons = initEmployeeContractPaymentsButtons();
 		toolbar.add(employeeContractPaymentsButtons);
+		
+		// EmployeeIrpf
+		
+		employeeContractIrpfButtons = initEmployeeContractIrpfButtons();
+		toolbar.add(employeeContractIrpfButtons);
 		
 		// SalaryDrat
 		
@@ -1148,9 +1211,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 			@Override
 			public void onAccept() {
-				contrataEmployeeObject.deleteContract(s -> {
+				
+				contrataEmployeeObject.delete4EverContract(s -> {
 					onListShow(true);
 				}, f-> {});
+				
+//				contrataEmployeeObject.deleteContract(s -> {
+//					onListShow(true);
+//				}, f-> {});
 			}
 		});
 	}
@@ -1175,10 +1243,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
-									checkStatus(contrataEmployeeObject);
+									// Check SS only if not RETA
+									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+									if (null == ssRegime || ssRegime != 3) 
+										checkStatus(this.contrataEmployeeObject);
+									
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
+									checkContractTransform();
 								});
 					}, f -> {});
 				}, 
@@ -1197,10 +1270,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 								contrataEmployeeObject, 
 								this.contrataEmployeeObject.getContractId(),
 								success -> {
-									checkStatus(contrataEmployeeObject);
+									// Check SS only if not RETA
+									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+									if (null == ssRegime || ssRegime != 3) 
+										checkStatus(this.contrataEmployeeObject);
+									
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
+									checkContractTransform();
 								});
 						
 					}, f -> {});
@@ -1231,10 +1309,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 							contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
 									success -> {
-										checkStatus(contrataEmployeeObject);
+										// Check SS only if not RETA
+										Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+										if (null == ssRegime || ssRegime != 3) 
+											checkStatus(contrataEmployeeObject);
+										
 										checkCertificateSEPE();
 										checkTGSSStatus();
 										checkContractExtension();
+										checkContractTransform();
 									});
 						}, f -> {});
 					}
@@ -1396,10 +1479,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
-									checkStatus(contrataEmployeeObject);
+									// Check SS only if not RETA
+									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+									if (null == ssRegime || ssRegime != 3) 
+										checkStatus(this.contrataEmployeeObject);
+									
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
+									checkContractTransform();
 								});
 					}, f -> {});
 				}, 
@@ -1412,10 +1500,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
-									checkStatus(contrataEmployeeObject);
+									// Check SS only if not RETA
+									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+									if (null == ssRegime || ssRegime != 3) 
+										checkStatus(this.contrataEmployeeObject);
+									
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
+									checkContractTransform();
 								});
 					}, f -> {});
 				}, 
@@ -1428,10 +1521,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
-									checkStatus(contrataEmployeeObject);
+									// Check SS only if not RETA
+									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+									if (null == ssRegime || ssRegime != 3) 
+										checkStatus(this.contrataEmployeeObject);
+									
 									checkCertificateSEPE();
 									checkTGSSStatus();
 									checkContractExtension();
+									checkContractTransform();
 								});
 					}, f -> {});
 				}, 
@@ -1447,11 +1545,33 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				AonMessagePanel.showSuccess(messageContainer, successMap);
 				contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
 						success -> {
-							checkStatus(contrataEmployeeObject);
+							// Check SS only if not RETA
+							Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+							if (null == ssRegime || ssRegime != 3) 
+								checkStatus(contrataEmployeeObject);
+							
 							checkCertificateSEPE();
 							checkTGSSStatus();
 							checkContractExtension();
+							checkContractTransform();
 						});
+			}
+
+			@Override
+			protected void fireError(Map<String, String> errorMap) {
+				AonMessagePanel.showError(messageContainer, errorMap);
+			}
+		};
+	}
+	
+	private void contractTransform() {
+		new ContractTransformDialog(this.contrataEmployeeObject.getContractEmployeeInfo()) {
+			@Override
+			protected void onTransformDone(Integer newContractId) {
+				Map<String, String> successMap = new HashMap<>();
+				successMap.put("Pr\u00F3rroga", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
+				AonMessagePanel.showSuccess(messageContainer, successMap);
+				onTransformContract(newContractId);
 			}
 
 			@Override
@@ -1470,10 +1590,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					
 					contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
 							success -> {
-								checkStatus(contrataEmployeeObject);
+								// Check SS only if not RETA
+								Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+								if (null == ssRegime || ssRegime != 3) 
+									checkStatus(this.contrataEmployeeObject);
+								
 								checkCertificateSEPE();
 								checkTGSSStatus();
 								checkContractExtension();
+								checkContractTransform();
 							});
 				},
 				f -> {}
@@ -1625,6 +1750,26 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractPayments.initializeYearLB(yearLBContractPayments);
 		employeeContractPayments.setYearLB(yearLBContractPayments);
 		hPanel.add(yearLBContractPayments);
+		
+		return hPanel;
+	}
+	
+	// ------------------------------------------------- EmployeeContractIrpfButtons
+	
+	private HTMLPanel initEmployeeContractIrpfButtons() {
+		HTMLPanel hPanel = new HTMLPanel("");
+		hPanel.addStyleName(style.flex());
+		
+		saveContractIrpfButton = new AonToolbarButton( AON.MSG.saveAction() + " Irpf", AON.CSS.aonIconSave() );
+		saveContractIrpfButton.addClickHandler(e -> {
+			employeeContractIrpf.onSave();
+		});
+		hPanel.add(saveContractIrpfButton);
+		
+		yearLBContractIrpf = new ListBox();
+		employeeContractIrpf.initializeYearLB(yearLBContractIrpf);
+		employeeContractIrpf.setYearLB(yearLBContractIrpf);
+		hPanel.add(yearLBContractIrpf);
 		
 		return hPanel;
 	}
@@ -1909,7 +2054,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void checkCertificateSEPE() {
-//		setVisible(sepe.getElement(), hasCertificateSEPE);
 		setVisible(sepeContextMenu.getCto().getElement(), hasCertificateSEPE);
 		setVisible(sepeContextMenu.getCbc().getElement(), hasCertificateSEPE);
 		
@@ -1932,6 +2076,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		 }
 	}
 	
+	private void checkContractTransform() {
+		 String contractTypeStr = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType();
+		 
+		 if(AonStringUtils.isNotBlank(contractTypeStr)) {
+			 Integer contractTypeValue = Integer.parseInt(contractTypeStr);
+			 setVisible(sepeContextMenu.getContractExtension().getElement(), contractTypeValue >= 400);
+		 }
+	}
+	
 	// ------------------------------------------------- TGSS status
 	
 	private void checkTGSSStatus() {
@@ -1950,14 +2103,23 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		ContractInfo contractData = contrataEmployeeObject.getContractData();
 		EmployeeInfo employeeData = contrataEmployeeObject.getEmployeeData();
 		
-		String message = "Este contrato ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>?";
+		String message = "Este contrato ser\u00E1 eliminado de forma permanente.<br> \u00BFDesea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>?";
 		
 		if(null != contractData.getSalariesCount() && contractData.getSalariesCount() > 0) {
-			message = "Este contrato contiene n" + String.valueOf("\u00F3") + "minas existentes. Si lo elimina se enviar" + String.valueOf("\u00E1") + " a la papelera.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>? <br><br>";
-			message += "<b>N" + String.valueOf("\u00F3") + "minas:</b><br><br>";
+			message = "Este contrato contiene n\u00F3minas existentes. Si lo elimina, se borrar\u00E1n todos los datos de este contrato incluidas las n\u00F3minas.<br> \u00BFDesea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>? <br><br>";
+			message += "<b>N\u00F3minas:</b><br><br>";
 			for(ContractSalaryInfo salaryInfo : contractData.getContractSalariesInfo())
-				message += "&emsp;" + salaryInfo.getType() + "&emsp;(" + formatFullDate.format(salaryInfo.getStart()) + " - " + formatFullDate.format(salaryInfo.getEnd()) + ")&emsp;Percibido : " + salaryInfo.getTotalLiquid() + String.valueOf("\u20AC") + "<br>";
+				message += "&emsp;" + salaryInfo.getType() + "&emsp;(" + formatFullDate.format(salaryInfo.getStart()) + " - " + formatFullDate.format(salaryInfo.getEnd()) + ")&emsp;Percibido : " + salaryInfo.getTotalLiquid() + "\u20AC<br>";
 		}
+		
+//		String message = "Este contrato ser" + String.valueOf("\u00E1") + " eliminado de forma permanente.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>?";
+//		
+//		if(null != contractData.getSalariesCount() && contractData.getSalariesCount() > 0) {
+//			message = "Este contrato contiene n" + String.valueOf("\u00F3") + "minas existentes. Si lo elimina se enviar" + String.valueOf("\u00E1") + " a la papelera.<br>" + String.valueOf("\u00BF") + "Desea eliminar el contrato de <b>" + employeeData.getFullName() + "</b>? <br><br>";
+//			message += "<b>N" + String.valueOf("\u00F3") + "minas:</b><br><br>";
+//			for(ContractSalaryInfo salaryInfo : contractData.getContractSalariesInfo())
+//				message += "&emsp;" + salaryInfo.getType() + "&emsp;(" + formatFullDate.format(salaryInfo.getStart()) + " - " + formatFullDate.format(salaryInfo.getEnd()) + ")&emsp;Percibido : " + salaryInfo.getTotalLiquid() + String.valueOf("\u20AC") + "<br>";
+//		}
 		
 		HTML label = new HTML(message);
 		return label;

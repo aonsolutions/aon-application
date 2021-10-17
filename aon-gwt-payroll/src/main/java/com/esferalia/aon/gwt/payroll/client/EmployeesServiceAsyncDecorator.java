@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
+import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -29,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
@@ -936,6 +938,28 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	public void deleteContractExtension(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) {
 		AON.start();
 		employeesServiceAsync.deleteContractExtension(currentDomainName, contractId, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	// ------------------------------------------------- ContractTransform
+
+	@Override
+	public void contractTransform(String currentDomainName, ContractTransform contractTransform, AsyncCallback<Integer> callback) {
+		AON.start();
+		employeesServiceAsync.contractTransform(currentDomainName, contractTransform, new AsyncCallbackWrapper<Integer>(callback));
+	}
+	
+	// ------------------------------------------------- EmployeeIrpf
+
+	@Override
+	public void getEmployeeIrpf(String currentDomainName, Integer contractId, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeIrpf(currentDomainName, contractId, startDate, new AsyncCallbackWrapper<List<EmployeeIrpf>>(callback));
+	}
+
+	@Override
+	public void setEmployeeIrpf(String currentDomainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.setEmployeeIrpf(currentDomainName, contractId, employeeIrpfs, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 }

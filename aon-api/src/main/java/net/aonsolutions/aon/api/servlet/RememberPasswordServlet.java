@@ -1,7 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Properties;
 
@@ -9,33 +7,33 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
-import com.code.aon.google.apis.GmailUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.api.services.gmail.Gmail;
+
+import net.aonsolutions.aon.api.ewok.AonApiData;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "RememberPasswordServlet", urlPatterns = {"/ms/api/remember/*"})
-public class RememberPasswordServlet extends HttpServlet{
+public class RememberPasswordServlet extends AonApiHttpServlet {
 		
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		JSONObject json = Utils.getRequestJSON(req);
 		String email = json.getString("email");
-		
+		AonApiData api = initialize(req, resp);
 		if(Utils.isEmail(email)) {
 			Auth auth = new Auth();
 	    	List<String> schemas = AONContext.getSchemas();
@@ -51,22 +49,19 @@ public class RememberPasswordServlet extends HttpServlet{
 	    	    		auth.setPassword(pass);
 	    	    		AON_SOLUTIONS.updateAuthPassword(auth);
 	    	    		// SEND EMAIL
-	    	    		sendGmail(domain, 0, "", email, password);
+	    	    		sendGmail(api, email, password);
 	    	    	} 
 	    	    }	    		
 	    	}
 		}	
 	}
 	
-	public void sendGmail(String domainName, Integer domainId, String login, String to, String password) {
-		try {
-			DomainGserviceaccount g = AON.getDomainGserviceaccount(domainName, domainId, "");		
-			Gmail gmail = GmailUtils.serviceInitialize(g);
-			MimeMessage email = createEmail(to, g.getGoogleAccount(), "RECORDAR CLAVE" , getContent(password), "AON SOLUTIONS | RECORDAR CLAVE");
-			GmailUtils.sendMessage(gmail, "me", email); 
-		} catch (MessagingException | IOException | GeneralSecurityException e) {
-			e.printStackTrace();
-		}
+	public void sendGmail(AonApiData api, String to, String password) {
+		SESMessage msg = new SESMessage()
+			.setTo(to)
+			.setSubject("RECORDAR CLAVE")
+			.setBody(getContent(password));
+		SES.sendEmail(msg);
 	}
 
 	private String getContent(String password) {

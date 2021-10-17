@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
@@ -86,6 +87,8 @@ public class Model2002020 extends ResizeComposite  {
 	Button saveButton;
 	@UiField
 	Button removeButton;
+	@UiField
+	Button resetButton;
 	@UiField
 	Button cancelButton;
 	@UiField
@@ -317,6 +320,7 @@ public class Model2002020 extends ResizeComposite  {
 		importAccountingButton.setVisible(mod200Object.isInitialized());
 		saveButton.setVisible(mod200Object.isInitialized());
 		removeButton.setVisible(mod200Object.getMod200().getId() != null);
+		resetButton.setVisible(mod200Object.getMod200().getId() != null);
 		cancelButton.setVisible(true);
 		//validateButton.setVisible(mod200Object.isInitialized() && mod200Object.getMod200().getId() != null);
 		validateButton.setVisible(false); // A partir del 2020 no se utiliza "VALIDAR" de AON ya que está desactualizado y "Validar/Imprimir" de la Agencia Tributaria hace todas las validaciones posibles
@@ -406,6 +410,62 @@ public class Model2002020 extends ResizeComposite  {
 						public void onSuccess(Void result) {
 							popup.hide();
 							mod200Callback.removed();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							MessageDialog.error("No se han podido borrar los datos.");
+						}
+					});
+				} catch (IllegalArgumentException e) {
+					popup.hide();
+					MessageDialog.error("No se han podido borrar los datos.");
+				}
+			}
+		});
+	}
+	
+	@UiHandler("resetButton")
+	void onResetButtonClick(ClickEvent event) {
+		ConfirmDialog cd = new ConfirmDialog();
+		cd.confirm(AON.MSG.resetWarning(), new ConfirmDialogCallback() {
+
+			@Override
+			public void onCancel() {
+			}
+
+			@Override
+			public void onAccept() {
+				final PopupPanel popup = new PopupPanel(false, true);
+				Label label = new Label(AON.MSG.processing());
+				label.addStyleName(AON.AON_CSS.aonTimer());
+				popup.add(label);
+				popup.setGlassEnabled(true);
+				popup.setAnimationEnabled(true);
+				popup.center();
+				try {
+					// Primero borramos el modelo actual
+					mod200Object.delete(new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void result) {
+							// Si todo ha ido bien, creamos el nuevo modelo
+							Model200.getMod2002020Service().createMod2002020(options.getDomainName(), options.getDomain(), options.getUser(), 2020
+									, new AsyncCallback<Mod2002020>() {
+
+										@Override
+										public void onSuccess(Mod2002020 mod200) {
+											popup.hide();
+											mod200Callback.reset(options, mod200);
+										}
+
+										@Override
+										public void onFailure(Throwable caught) {
+											popup.hide();
+											MessageDialog.error("No se ha podido inicializar el modelo.");
+										}
+									});							
 						}
 						
 						@Override

@@ -8,6 +8,7 @@ export const ACCOUNTING = 'Accounting';
 export const ACTIVATE = 'Activate';
 export const ACTIVE = 'Active';
 export const ACTIVES = 'Active';
+export const ACTIVITY = 'Activity';
 export const ADD = 'Add';
 export const ADD_CATEGORY = 'Add Category';
 export const ADD_COMMENT = 'Add Comment';
@@ -21,6 +22,9 @@ export const ALL_FILES = 'All Files';
 export const AMOUNT = 'Amount';
 export const API_DOCUMENTATION = 'API Documentation';
 export const ASESOR = 'Asesor';
+export const ATTACH_FILES_DRAGGING_DROPPING = 'Drag or select the file';
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Drag or select the background';
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Drag or select the logo';
 export const AVAILABLE = 'Available';
 
 // ----- B
@@ -69,11 +73,14 @@ export const CUSTOMERS = 'Customers';
 export const DATE = 'Date';
 export const DEACTIVATE = 'Deactivate';
 export const DELETE = 'Delete';
+export const DELETE_BACKGROUND_CONFIRM = 'Are you sure to delete the background';
 export const DELETE_CATEGORY = 'Delete Category';
-export const DELETE_CONFIRM = "Estas seguro de eliminar";
+export const DELETE_CONFIRM = "Are you sure to delete";
 export const DELETE_FILE = 'Delete File';
+export const DELETE_FILE_CONFIRM = 'Are you sure to delete the file';
 export const DELETE_FOREVER = 'Delete Permanently';
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'The Invoice has been definitively deleted.';
+export const DELETE_LOGO_CONFIRM = 'Are you sure to delete the logo';
 export const DELETE_TAG = 'Delete Tag';
 export const DELETE_TAX = 'Delete Tax';
 export const DELETED_DATA = "The data has been deleted successfully";
@@ -127,9 +134,13 @@ export const HOLDERS = 'Holders';
 
 // ----- I
 
+export const IN_DEVELOPMENT = 'This option is under development...';
 export const INACTIVE = 'Inactive';
 export const INACTIVES ='Inactive';
 export const INBOX = 'Inbox';
+export const INCLUDE_COMPANY_DATA = 'Include Company Data';
+export const INCLUDE_LOGO = 'Include Logo';
+export const INFORMATION = 'Information';
 export const INVESTMENT = 'Investment';
 export const INVOICE = 'Invoice';
 export const INVOICE_CONCEPTS = 'Invoice Concepts';
@@ -150,7 +161,7 @@ export const ISSUEDS = 'Issued';
 
 export const LAST_LOCATION = 'Last Location';
 export const LAST_STATUS = 'Last Status';
-export const LOCATION = "Location";
+export const LOCATION = 'Location';
 
 // ----- M
 
@@ -190,6 +201,7 @@ export const PENDINGS = 'Pending';
 export const PERMISSIONS = 'Permissions';
 export const PHONE = 'Phone';
 export const POSTAL_CODE = 'Postal Code';
+export const POSTAL_CODE_MIN = 'ZIP';
 export const PREVIOUS = 'Previous';
 export const PRICE =  'Price';
 export const PRINT_INVOICE = 'Print Invoice';

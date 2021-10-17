@@ -83,6 +83,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			this.callback.onNew();
 		}
 		@Override
+		public void onReset(Mod303 mod303) {
+			this.callback.onReset(mod303);
+		}
+		@Override
 		public void showBreakdownPanel(String htmlText) {
 			this.callback.showBreakdownPanel(htmlText);
 		}
@@ -152,6 +156,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final Button saveButton = new Button();
 	protected final Button cancelButton = new Button();		
 	protected final Button deleteButton = new Button();
+	protected final Button resetButton = new Button();
 	protected final Button printButton = new Button();
 	protected final Button markAsPendingButton = new Button();
 	protected final Button markAsFinishedButton = new Button();
@@ -338,6 +343,19 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		});
 		buttonContainer.add(deleteButton);
 		
+		resetButton.setText(AON.MSG.resetAction());
+		resetButton.setTitle(resetButton.getText());
+		resetButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		resetButton.addStyleName(AON.AON_CSS.aonIconReset());
+		resetButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.onReset(getMod303());
+			}
+		});
+		buttonContainer.add(resetButton);		
+		
 		markAsFinishedButton.setText(AON.MSG.finish());
 		markAsFinishedButton.setTitle(markAsFinishedButton.getText());
 		markAsFinishedButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -439,11 +457,13 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	private void refreshToolbarState(Model303ModuleOptions options) {
 		deleteButton.setVisible(!mod303.isNew());
+		resetButton.setVisible(!mod303.isNew());
 		auditButton.setVisible(!mod303.isNew());
 		newButton.setVisible(!mod303.isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
 		cancelButton.setVisible(true);
 		saveButton.setVisible(!mod303.isFinished() && !mod303.isSent());
 		deleteButton.setVisible(!mod303.isFinished() && !mod303.isSent());
+		resetButton.setVisible(!mod303.isFinished() && !mod303.isSent());
 		markAsPendingButton.setVisible(!mod303.isNew() &&
 				(mod303.getStatus() == FiscalStatus.FINISHED 
 				|| mod303.getStatus() == FiscalStatus.BATCHED

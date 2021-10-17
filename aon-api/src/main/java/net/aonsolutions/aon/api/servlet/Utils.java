@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.code.aon.jaas.auth.util.Util;
-import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
+import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -261,9 +261,40 @@ public class Utils {
 	}
 	
 	public static String generatePassword() {
-		return com.code.aon.google.apis.Utils.PasswordGenerator.getPassword(
-				com.code.aon.google.apis.Utils.PasswordGenerator.MINUSCULAS
-				+ com.code.aon.google.apis.Utils.PasswordGenerator.MAYUSCULAS
-				+ com.code.aon.google.apis.Utils.PasswordGenerator.NUMEROS, 10);
+		return PasswordGenerator.getPassword(
+				PasswordGenerator.MINUSCULAS +
+				PasswordGenerator.MAYUSCULAS + 
+				PasswordGenerator.NUMEROS, 10);
+	}
+	
+	public static class PasswordGenerator {
+
+		public static final String NUMEROS = "0123456789";
+
+		public static final String MAYUSCULAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+		public static final String MINUSCULAS = "abcdefghijklmnopqrstuvwxyz";
+
+		public static String getPinNumber() {
+			return getPassword(NUMEROS, 4);
+		}
+
+		public static String getPassword() {
+			return getPassword(8);
+		}
+
+		public static String getPassword(int length) {
+			return getPassword(NUMEROS + MAYUSCULAS + MINUSCULAS, length);
+		}
+
+		public static String getPassword(String key, int length) {
+			String pswd = "";
+
+			for (int i = 0; i < length; i++) {
+				pswd += key.charAt((int) (Math.random() * key.length()));
+			}
+
+			return pswd;
+		}
 	}
 }

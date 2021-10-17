@@ -8,6 +8,7 @@ export const ACCOUNTING = 'Comptabilitat';
 export const ACTIVATE = 'Activar';
 export const ACTIVE = 'Activo';
 export const ACTIVES = 'Actives';
+export const ACTIVITY = 'Activitat';
 export const ADD = 'Afegir';
 export const ADD_CATEGORY = 'Afegir Categoria';
 export const ADD_COMMENT = 'Afegir Comentari';
@@ -21,6 +22,9 @@ export const ALL_FILES = 'Tots els Fitxers';
 export const AMOUNT = 'Import';
 export const API_DOCUMENTATION = 'Documentació API';
 export const ASESOR = 'Assessor';
+export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrossega o selecciona el fitxer';
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrossega o selecciona el fons';
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Arrossega o selecciona el logo';
 export const AVAILABLE = 'Disponible';
 
 // ----- B
@@ -69,11 +73,14 @@ export const CUSTOMERS = 'Clients';
 export const DATE = 'Data';
 export const DEACTIVATE = 'Desactivar';
 export const DELETE = 'Esborrar';
+export const DELETE_BACKGROUND_CONFIRM = "Estàs segur d'eliminar el fons";
 export const DELETE_CATEGORY = 'Esborrar Categoria';
-export const DELETE_CONFIRM = "Estas seguro de eliminar";
+export const DELETE_CONFIRM = "Estàs segur d'eliminar";
 export const DELETE_FILE = 'Esborrar Fitxer';
+export const DELETE_FILE_CONFIRM = "Estàs segur d'eliminar el fitxer";
 export const DELETE_FOREVER = 'Esborrar Definitivament';
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = `La factura s'ha esborrat definitivament.`;
+export const DELETE_LOGO_CONFIRM = "Estàs segur d'eliminar el logo";
 export const DELETE_TAG = 'Esborrar Etiqueta';
 export const DELETE_TAX = 'Esborrar Impost';
 export const DELETED_DATA = "Los datos se han eliminado correctamente";
@@ -126,9 +133,14 @@ export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulars';
 
 // ----- I
+
+export const IN_DEVELOPMENT = 'Aquesta opció està en desenvolupament...';
 export const INACTIVE = 'Inactivo';
 export const INACTIVES = 'Inactives';
 export const INBOX = `Safata d'Entrada`;
+export const INCLUDE_COMPANY_DATA = `Incloure Dades d'Empresa`;
+export const INCLUDE_LOGO = 'Incloure Logo';
+export const INFORMATION = 'Informació';
 export const INVESTMENT = 'Inversió';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS = 'Conceptes Factura';
@@ -147,9 +159,9 @@ export const ISSUEDS = 'Emeses';
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";
-export const LAST_STATUS = "Último estado";
-export const LOCATION = "Ubicación";
+export const LAST_LOCATION = 'Última ubicació';
+export const LAST_STATUS = 'Último estat';
+export const LOCATION = 'Ubicació';
 
 // ----- M
 
@@ -189,6 +201,7 @@ export const PENDINGS = 'Pendentes';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
 export const POSTAL_CODE = 'Código Postal';
+export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
 export const PRICE = 'Preu';
 export const PRINT_INVOICE = 'Imprimir Factura';

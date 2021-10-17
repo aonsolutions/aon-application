@@ -8,6 +8,7 @@ export const ACCOUNTING = 'Kontabilitatea';
 export const ACTIVATE = 'Aktibatu';
 export const ACTIVE = 'Aktibo';
 export const ACTIVES = 'Aktibo';
+export const ACTIVITY = 'Aktibitatea';
 export const ADD = 'Gehitu';
 export const ADD_CATEGORY = 'Kategoria Gehitu';
 export const ADD_COMMENT = 'Iruzkina Gehitu';
@@ -21,6 +22,9 @@ export const ALL_FILES = 'Fitxategi Guztiak';
 export const AMOUNT = 'Zenbatekoa';
 export const API_DOCUMENTATION = 'APIren Dokumentazioa';
 export const ASESOR = 'Aholkulari';
+export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrastatu edo hautatu fitxategia';
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrastatu edo hautatu hondoa';
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Arrastatu edo hautatu logoa';
 export const AVAILABLE = 'Eskuragai';
 
 // ----- B
@@ -69,11 +73,14 @@ export const CUSTOMERS = 'Bezeroak';
 export const DATE = 'Data';
 export const DEACTIVATE = 'Desaktibatu';
 export const DELETE = 'Ezabatu';
+export const DELETE_BACKGROUND_CONFIRM = 'Ziur zaude hondoa ezabatzeaz';
 export const DELETE_CATEGORY = 'Kategoria Ezabatu';
-export const DELETE_CONFIRM = "Estas seguro de eliminar";
+export const DELETE_CONFIRM = "Ziur zaude ezabatzeaz";
 export const DELETE_FILE = 'Fitxategia Ezabatu';
+export const DELETE_FILE_CONFIRM = 'Ziur zaude fitxategia ezabatzeaz';
 export const DELETE_FOREVER = 'Betirako Ezabatu';
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'Faktura betirako ezabatu da.';
+export const DELETE_LOGO_CONFIRM = 'Ziur zaude logoa ezabatzeaz';
 export const DELETE_TAG = 'Etiketa Ezabatu';
 export const DELETE_TAX = 'Zerga Ezabatu';
 export const DELETED_DATA = 'Datuak zuzen ezabatu dira';
@@ -127,9 +134,13 @@ export const HOLDERS = 'Titularrak';
 
 // ----- I
 
+export const IN_DEVELOPMENT = 'Aukera hau garatzen ari da...';
 export const INACTIVE = 'Ez-Aktibo';
 export const INACTIVES = 'Ez-Aktibo';
 export const INBOX = 'Sarrera-Ontzia';
+export const INCLUDE_COMPANY_DATA = 'Sartu Empresaren Datuak';
+export const INCLUDE_LOGO = 'Sartu Logoa';
+export const INFORMATION = 'Informazioa';
 export const INVESTMENT = 'Inbertsioa';
 export const INVOICE = 'Faktura';
 export const INVOICE_CONCEPTS = 'Fakturaren Kontzeptuak';
@@ -148,9 +159,9 @@ export const ISSUEDS = 'Igorritakoak';
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";
-export const LAST_STATUS = "Último estado";
-export const LOCATION = "Ubicación";
+export const LAST_LOCATION = 'Azken kokapena';
+export const LAST_STATUS = 'Azken egoera';
+export const LOCATION = 'Kokapena';
 
 // ----- M
 
@@ -190,6 +201,7 @@ export const PENDINGS = 'Zain Daudenak';
 export const PERMISSIONS = 'Baimenak';
 export const PHONE =  'Telefono';
 export const POSTAL_CODE = 'Posta-kodea';
+export const POSTAL_CODE_MIN = 'P.K.';
 export const PREVIOUS = 'Aurrekoa';
 export const PRICE = 'Prezioa';
 export const PRINT_INVOICE = 'Faktura Inprimatu';

@@ -1,3 +1,5 @@
+// MATERIAL 
+export const MATERIAL_ICONS = 'material-icons';
 // aon.css
 
 export const AON_APP_LI = 'aonAppLi';
@@ -14,7 +16,6 @@ export const AON_MENU = 'aonMenu';
 export const ROOT_PANEL = 'rootPanel';
 export const ROOT_MOBILE_PANEL = 'rootMobilePanel';
 export const AON_ICON_BUTTON = 'aonIconButton';
-export const AON_REGISTER_LOGO = 'aonRegisterLogo';
 export const AON_LOGO = 'aonLogo';
 export const AON_PARENT_LOGO = 'aonParentLogo';
 export const AON_WIDTH_ALL = 'aonWidthAll';
@@ -98,6 +99,9 @@ export const AON_COMPANY_LOGO_IMG = 'aonCompanyLogoImg';
 export const CONTINUE_LINED = 'continueLined';
 export const MATERIAL_SCROLL = 'materialScroll';
 export const AON_IMG_COMMENT = 'aonImgComment';
+export const AON_UPLOAD = 'aonUpload';
+export const AON_UPLOAD_LABEL = 'aonUploadLabel';
+
 // aon-toast.css
 
 export const AON_TOAST = 'aonToast';
@@ -275,6 +279,7 @@ export const TRANSITION_CASCADE = "transitionCascade"
 export const TRANSITION_QUICK = "transitionQuick"
 export const AON_TRANSITION_LEFT = "aonTransitionLeft";
 export const DIV_DRAG_OVER = "divDragOver";
+export const PULSE = "pulse";
 
 export const RESIZE_VERTICAL = "resizeVertical";
 

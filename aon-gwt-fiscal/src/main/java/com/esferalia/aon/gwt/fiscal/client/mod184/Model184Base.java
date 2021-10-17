@@ -115,6 +115,10 @@ abstract class Model184Base extends DockLayoutPanel {
 			cbk.onNew( options );
 		}
 		@Override
+		public void onReset(Model184ModuleOptions options, Mod184 mod184) {
+			cbk.onReset(options, mod184);
+		}
+		@Override
 		public void onDuplicate(Model184ModuleOptions options, int id) {
 			cbk.onDuplicate( options, id );
 		}
@@ -136,6 +140,7 @@ abstract class Model184Base extends DockLayoutPanel {
 	protected final Button saveButton = new Button();
 	protected final Button cancelButton = new Button();		
 	protected final Button deleteButton = new Button();
+	protected final Button resetButton = new Button();
 	protected final Button markAsPendingButton = new Button();
 	protected final Button markAsFinishedButton = new Button();
 	protected final Button markAsSentButton = new Button();
@@ -348,6 +353,20 @@ abstract class Model184Base extends DockLayoutPanel {
 		});
 		buttonContainer.add(deleteButton);
 		
+		// Botón Inicializar
+		resetButton.setText(AON.MSG.resetAction());
+		resetButton.setTitle(resetButton.getText());
+		resetButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		resetButton.addStyleName(AON.AON_CSS.aonIconReset());
+		resetButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.onReset(options, getMod184());
+			}
+		});
+		buttonContainer.add(resetButton);
+		
 		markAsFinishedButton.setText(AON.MSG.finish());
 		markAsFinishedButton.setTitle(markAsFinishedButton.getText());
 		markAsFinishedButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -540,6 +559,7 @@ abstract class Model184Base extends DockLayoutPanel {
 		newButton.setVisible(!getMod184().isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
 		saveButton.setVisible(!getMod184().isFinished() && !getMod184().isSent());
 		deleteButton.setVisible(!getMod184().isNew() && !getMod184().isFinished() && !getMod184().isSent());
+		resetButton.setVisible(!getMod184().isNew() && !getMod184().isFinished() && !getMod184().isSent());
 		cancelButton.setVisible(true);
 		markAsPendingButton.setVisible(!getMod184().isNew() &&
 			(getMod184().getStatus() == FiscalStatus.FINISHED 

@@ -21,9 +21,13 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
-
+	
 	public Model130NewDeclarationPopup(IFiscalModelCallback<Mod130> callback) {
-		super(callback);
+		this(false, callback);
+	}
+
+	public Model130NewDeclarationPopup(boolean reset, IFiscalModelCallback<Mod130> callback) {
+		super(reset, callback);
 	}
 	
 	@Override
@@ -32,6 +36,7 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 
+		admonList.setEnabled(!reset);
 		admonList.setSelectedIndex( callback.getFiscalModel().getAdministration().ordinal());
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override

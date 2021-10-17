@@ -39,6 +39,10 @@ public class Model390ServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public Mod390 saveComments(String domainName, String user, Mod390 mod390) {
 		return FISCAL.saveComments(domainName, mod390.getDomain(), user, mod390);
 	}
-
+	
+	@Override
+	public void delete(String domainName, Integer domain, String user, Mod390 mod390) {
+		FISCAL.deleteMod390(domainName, domain, user, mod390);
+	}
 
 }

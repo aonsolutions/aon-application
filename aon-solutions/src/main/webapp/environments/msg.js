@@ -36,7 +36,7 @@ export const ACCOUNTING = MSG.ACCOUNTING;
 export const ACTIVATE = MSG.ACTIVATE;
 export const ACTIVE = MSG.ACTIVE;
 export const ACTIVES= MSG.ACTIVES;
-export const ACTIVITY = 'Actividad';//TODO
+export const ACTIVITY = MSG.ACTIVITY;
 export const ADD = MSG.ADD;
 export const ADD_CATEGORY = MSG.ADD_CATEGORY;
 export const ADD_COMMENT = MSG.ADD_COMMENT;
@@ -55,9 +55,12 @@ export const ALL_FILES = MSG.ALL_FILES;
 export const AMOUNT = MSG.AMOUNT;
 export const API_DOCUMENTATION = MSG.API_DOCUMENTATION;
 export const ASESOR = MSG.ASESOR;
+export const ATTACH_FILES_DRAGGING_DROPPING = MSG.ATTACH_FILES_DRAGGING_DROPPING;
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = MSG.ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND;
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = MSG.ATTACH_FILES_DRAGGING_DROPPING_LOGO;
 export const AVAILABLE = MSG.AVAILABLE;
 export const AVERAGE = "Media";// TODO
-export const ATTACH_FILES_DRAGGING_DROPPING = "Adjunte archivos arrastrándolos y soltándolos"; //TODO
+
 // ----- B
 
 export const BACK = MSG.BACK;
@@ -83,13 +86,14 @@ export const CITY = MSG.CITY;
 export const CODE = MSG.CODE;
 export const COMMENT = MSG.COMMENT;
 export const COMMENTS = MSG.COMMENTS;
+export const COMMERCIAL_NAME = 'Nombre Comercial';
+export const COMMUNICATE = "Comunicar";// TODO
+export const COMMUNICATE_CONFIRM = "¿Desea comunicar a la seguridad social?";// TODO
 export const COMPANIES = MSG.COMPANIES;
 export const COMPANY = MSG.COMPANY;
 export const COMPANY_COSTS = MSG.COMPANY_COSTS;
 export const COMPONENTS = MSG.COMPONENTS;
 export const COMUNICA = "Comunic@";// TODO
-export const COMMUNICATE = "Comunicar";// TODO
-export const COMMUNICATE_CONFIRM = "Desea comunicar a la seguridad social?";// TODO
 export const CONFIRM = "Confirmar";// TODO
 export const CONCEPT = MSG.CONCEPT;
 export const CONCEPTS = MSG.CONCEPTS;
@@ -113,13 +117,16 @@ export const DATE = MSG.DATE;
 export const DATA = "Datos";//TODO
 export const DEACTIVATE = MSG.DEACTIVATE;
 export const DELETE = MSG.DELETE;
+export const DELETE_BACKGROUND_CONFIRM = MSG.DELETE_BACKGROUND_CONFIRM;
 export const DELETE_CATEGORY = MSG.DELETE_CATEGORY;
-export const DELETE_CONFIRM = "Estas seguro de eliminar";
+export const DELETE_CONFIRM = MSG.DELETE_CONFIRM;
 export const DELETE_DETAIL = MSG.DELETE; // TODO
 export const DELETE_FILE = MSG.DELETE_FILE;
+export const DELETE_FILE_CONFIRM = MSG.DELETE_FILE_CONFIRM;
 export const DELETE_FINANCE = MSG.DELETE; // TODO
 export const DELETE_FOREVER = MSG.DELETE_FOREVER;
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = MSG.DELETE_FOREVER_INVOICE_CONFIRMATION;
+export const DELETE_LOGO_CONFIRM = MSG.DELETE_LOGO_CONFIRM;
 export const DELETE_TAG = MSG.DELETE_TAG;
 export const DELETE_WORKGROUP = "Borrar Grupo de trabajo"; // TODO
 export const DELETE_TAX = MSG.DELETE_TAX;
@@ -183,9 +190,14 @@ export const HOURS = "Horas";//TODO
 export const HISTORIC = "Historial"; //TODO
 // ----- I
 
+export const IN_DEVELOPMENT = MSG.IN_DEVELOPMENT;
 export const INACTIVE = MSG.INACTIVE;
 export const INACTIVES = MSG.INACTIVES;
 export const INBOX = MSG.INBOX;
+export const INCLUDE_COMPANY_DATA = MSG.INCLUDE_COMPANY_DATA;
+export const INCLUDE_LOGO = MSG.INCLUDE_LOGO;
+export const INFORMATION = MSG.INFORMATION;
+export const INTERNAL = "Interno"; //TODO
 export const INVESTMENT = MSG.INVESTMENT;
 export const INVOICE = MSG.INVOICE;
 export const INVOICE_CONCEPTS = MSG.INVOICE_CONCEPTS;
@@ -198,16 +210,16 @@ export const IRPF = MSG.IRPF;
 export const ISSUED = MSG.ISSUED;
 export const ISSUEDS = MSG.ISSUEDS;
 export const ISSUE = "Asunto"; //TODO
-export const INTERNAL = "Interno"; //TODO
+
 // ----- J
 
 // ----- K
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";//TODO
-export const LAST_STATUS = "Último estado";//TODO
-export const LOCATION = "Ubicación";//TODO
+export const LAST_LOCATION = MSG.LAST_LOCATION;
+export const LAST_STATUS = MSG.LAST_STATUS;
+export const LOCATION = MSG.LOCATION;
 
 // ----- M
 
@@ -262,6 +274,7 @@ export const PERMISSIONS = MSG.PERMISSIONS;
 export const PHONE = MSG.PHONE;
 export const PORTAL = 'Portal';
 export const POSTAL_CODE = MSG.POSTAL_CODE;
+export const POSTAL_CODE_MIN = MSG.POSTAL_CODE_MIN;
 export const PREVIOUS = MSG.PREVIOUS;
 export const PRICE = MSG.PRICE;
 export const PRINT_INVOICE = MSG.PRINT_INVOICE;

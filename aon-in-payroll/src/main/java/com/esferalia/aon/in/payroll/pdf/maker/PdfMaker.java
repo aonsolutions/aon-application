@@ -18,6 +18,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlePrintConfiguratio
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.SettlementTemplate;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 
 public class PdfMaker {
 
@@ -28,9 +29,9 @@ public class PdfMaker {
 	 * @param invoice, Invoice Object
 	 * @param config, print invoice configuration
 	 */
-	public static void printInvoice(OutputStream out, Invoice invoice, PrintInvoiceConfiguration config, byte[] qr) {
+	public static void printInvoice(OutputStream out, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] qr, byte[] logo) {
 		try {
-			InvoiceTemplate.create(out, invoice, config, qr);
+			InvoiceTemplate.create(out, company, invoice, config, qr, logo);
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();
 		}		

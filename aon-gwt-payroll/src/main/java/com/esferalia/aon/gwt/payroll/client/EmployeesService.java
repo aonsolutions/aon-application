@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
+import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -20,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
@@ -69,19 +71,19 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	List<Extra> getExtras(String domain, List<Employee> employees) throws IllegalArgumentException;
 
-	String getCostReceiptPDF(String domain, Cost cost, Salary.Type types[])
+	String getCostReceiptPDF(String domain, Cost cost, Salary.Type[] types)
 			throws IllegalArgumentException;
 
-	String getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
+	String getCostReceiptHTML(String domain, Cost cost, Salary.Type[] types, int zoom)
 			throws IllegalArgumentException;
 
-	String getSLDCalcReceiptHTML(String domain, String user, Cost cost, Salary.Type types[], int zoom)
+	String getSLDCalcReceiptHTML(String domain, String user, Cost cost, Salary.Type[] types, int zoom)
 			throws IllegalArgumentException;
 
 	String getIrpfReceiptHTML(String domain, Irpf irpf, int zoom)
 			throws IllegalArgumentException;
 
-	String getSalaryReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom)
+	String getSalaryReceiptHTML(String domain, Cost cost, Salary.Type[] type, int zoom)
 			throws IllegalArgumentException;
 
 	String getSalaryReceiptHTML(String domain, Salary salary, int zoom)
@@ -93,7 +95,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	SalaryDraft saveSalary(String domain,  String user, SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 	
-	SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft, Date sections [])
+	SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft, Date[] sections)
 			throws IllegalArgumentException;
 
 	ContextDescriptor getContext(String domain, SalaryDraft salaryDraft)
@@ -108,7 +110,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
-	SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft, Date sections [])
+	SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft, Date[] sections)
 			throws IllegalArgumentException;
 
 	SalaryDraft syncSalaryDraft(String domain, String user, SalaryDraft salaryDraft)
@@ -146,10 +148,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 			throws IllegalArgumentException;
 
 	Events getEvents(String domain, Integer workplaceId, Date startDate, Date endDate,
-			int offset, int limit, String names[])
+			int offset, int limit, String[] names)
 			throws IllegalArgumentException;
 
-	List<Variable> getVariables(String domain, SalaryDraft salaryDraft, Date startDate, Date endDate, String names[])
+	List<Variable> getVariables(String domain, SalaryDraft salaryDraft, Date startDate, Date endDate, String[] names)
 			throws IllegalArgumentException;
 
 	Period getAvailPeriod(String domain, Integer workplaceId, String name)
@@ -174,7 +176,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void deleteContract(String domain, Employee employee) throws IllegalArgumentException;
 
-	void delete(String domain, Salary salaries[]) throws IllegalArgumentException;
+	void delete(String domain, Salary[] salaries) throws IllegalArgumentException;
 
 	Map<String, String> getAvaiableEmployees(String domain) throws IllegalArgumentException;
 
@@ -185,7 +187,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	EmployeeContractInfo getEmployeeInfoDataBase(String domain, String user, Integer contractId, Workplace workplace);
 
-	EmployeeContractInfo setEmployeeInfoDataBase(String domain, EmployeeContractInfo new_employeeContractData);
+	EmployeeContractInfo setEmployeeInfoDataBase(String domain, EmployeeContractInfo employeeContractData);
 
 	EmployeeContractInfo createEmployeeContract(String domain, EmployeeContractInfo employeeContractData);
 
@@ -272,7 +274,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 			String tc2, Date fecha) throws IllegalArgumentException;
 
 	void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
-			String grup_ctz, Date fecha) throws IllegalArgumentException;
+			String grupCtz, Date fecha) throws IllegalArgumentException;
 
 	void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 			String ocup, Date fecha) throws IllegalArgumentException;
@@ -309,5 +311,15 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	void contractExtension(String currentDomainName, ContractExtension contractExtension);
 
 	void deleteContractExtension(String currentDomainName, Integer contractId);
+
+	// ------------------------------------------------- ContractTransform
+	
+	int contractTransform(String currentDomainName, ContractTransform contractTransform);
+
+	// ------------------------------------------------- EmployeeIrpf
+	
+	List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, Integer contractId, Date startDate);
+
+	void setEmployeeIrpf(String currentDomainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs);
 
 }

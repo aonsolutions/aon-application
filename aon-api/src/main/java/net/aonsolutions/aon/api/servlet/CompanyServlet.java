@@ -149,18 +149,17 @@ public class CompanyServlet extends AonApiHttpServlet{
 				.setDomainManagement(false);
 			Domain d = AON_SOLUTIONS.insertDomain(api.getDomain(), api.getUser(), domain, company);
 			Company c = AON.getCompany(d.getName(), d.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(d.getId()));
-			String mail = saveMedias(api, d, api.getUser(), c);
-			saveAddress(api, d, api.getUser(), c);
+			RegistryServlet.saveRegistryAdditionalInfo(api, c.getId(), c.getDomain().getId());
+			// String mail = saveMedias(api, d, api.getUser(), c);
+			// saveAddress(api, d, api.getUser(), c);
+			String mail = AON.getRMedia(c.getDomain().getName(), c.getDomain().getId(), "", f -> f.getRegistryProperty().eq(c.getId()).and(f.getMediaProperty().eq(MediaType.EMAIL.value()))).getValue();
 			Auth auth = createAuth(c, mail);
 			User user = createUser(d, auth, c);
 			createUserScopes(api, domain, user);
 			createUserRoles(api, d, user, false);
 			return CompanyJSON.toJSON(c);
 		} else {	
-			Domain d = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(company.getDomain().getId()));
-			saveMedias(api, d, api.getUser(), company);
-			saveAddress(api, d, api.getUser(), company);
-			AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), company);
+			RegistryServlet.saveRegistry(api);
 		}
 
 		return api.getData();
@@ -195,7 +194,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 					.setEmail(mail)
 					.setName(company.getName())
 					.setPassword(pass);
-			auth = AON_SOLUTIONS.insertAuth(auth);
+			auth = AON_SOLUTIONS.insertAuth(company.getDomain().getName(), company.getDomain().getId(), auth);
 		} 
 		return auth;
 	}
@@ -309,7 +308,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 		JSONArray jsArray = new JSONArray();
 		if(api.getParams().opt("parent") != null && api.getParams().optBoolean("parent")) {
 			AON.getCompanyStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-				f.getDomainParentProperty().eq(api.getDomain().getId())).forEach(c -> jsArray.put(CompanyJSON.toJSON(c)));
+				f.getDomainParentProperty().eq(api.getDomain().getId()),
+				api.getParams().optInt(IJsonNames.PAGE), api.getParams().optInt(IJsonNames.PER_PAGE))
+			.forEach(c -> jsArray.put(CompanyJSON.toJSON(c)));
 		} else {
 			List<String> schemas = AONContext.getSchemas();
 		

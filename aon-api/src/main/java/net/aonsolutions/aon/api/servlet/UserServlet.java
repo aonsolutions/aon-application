@@ -171,8 +171,6 @@ public class UserServlet extends AonApiHttpServlet {
 		JSONArray jsArray = new JSONArray();
 		AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> userFilter(api, f))
 		.map(user -> {
-			AON.getWorkgroupList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					f-> f.getDomainProperty().eq(api.getDomain().getId()));
 			user.setWorkgroups(AON.getUserWorkgroupStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getUserIdProperty().eq(user.getId()))
 					.map(uw -> uw.getWorkgroup()).collect(Collectors.toCollection(LinkedList::new)));
 			return user;
@@ -826,15 +824,18 @@ public class UserServlet extends AonApiHttpServlet {
 		return json;
 	}	
 	
-	private void sendAuthCreateInfoMail(String email, String password) {
+	private void sendAuthCreateInfoMail(String email, String password, Company cp) {
 		SESMessage msg = new SESMessage()
 				.setTo(email)
+				.setAlias(cp.getName())
 				.setBody(authCreateInfoContent(email, password))
 				.setSubject("NUEVO USUARIO | AON SOLUTIONS");
 		SES.sendEmail(msg);
 	}
 	
 	private JSONObject sendAuthInfoMail(AonApiData api) {
+		Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId()));
 		String email = api.getData().optString("email");
 		Auth auth = AON_SOLUTIONS.getAuth(email);
 		
@@ -843,7 +844,7 @@ public class UserServlet extends AonApiHttpServlet {
 		auth.setPassword(pass);
 		AON_SOLUTIONS.updateAuthPassword(auth);
 		
-		sendAuthCreateInfoMail(email, password);
+		sendAuthCreateInfoMail(email, password, cp);
 		return new JSONObject();
 	}
 	

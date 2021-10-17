@@ -16,6 +16,7 @@ public class TimeControl implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+    private Integer id;
 	private Date startDate;
 	private Date endDate;
 	private TimeControlGroup group;
@@ -31,6 +32,15 @@ public class TimeControl implements Serializable {
 	
 	public TimeControl() {
 		this.time = 0L;
+	}
+	
+	public Integer getId() {
+		return id;
+	}
+
+	public TimeControl setId(Integer id) {
+		this.id = id;
+		return this;
 	}
 	
 	public Long getTime() {
@@ -133,6 +143,7 @@ public class TimeControl implements Serializable {
 
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
+		json.put("id", getId());
 		json.put("start_date", getStartDate() != null ? getStartDate().getTime() : null);
 		json.put("end_date", getEndDate() != null ? getEndDate().getTime() : null);
 		json.put("group", getGroup() != null ? getGroup().name() : null);

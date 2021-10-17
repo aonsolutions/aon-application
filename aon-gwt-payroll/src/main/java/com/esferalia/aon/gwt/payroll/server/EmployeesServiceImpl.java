@@ -58,7 +58,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
@@ -98,6 +97,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractAttach;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractExtension;
+import com.esferalia.aon.gwt.payroll.jooq.JooqContractTransform;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
@@ -105,6 +105,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendarNew;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeEvents;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEvents;
@@ -131,6 +132,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
+import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -141,6 +143,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
@@ -203,7 +206,6 @@ import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryCostsFactory;
-import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryDeductionsFactory;
 import com.esferalia.aon.payroll.SalaryEmbargo;
@@ -6617,8 +6619,38 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	// ------------------------------------------------- ContractTransform
+	
+	@Override
+	public int contractTransform(String domainName, ContractTransform contractTransform) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqContractTransform.createContractTransform(connection, contractTransform);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	// ------------------------------------------------- EmployeeIrpf
+	
+	@Override
+	public List<EmployeeIrpf> getEmployeeIrpf(String domainName, Integer contractId, Date startDate) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEmployeeIrpf.getEmployeeIrpf(connection, contractId, startDate);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
-
+	@Override
+	public void setEmployeeIrpf(String domainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqEmployeeIrpf.setEmployeeIrpf(connection, domainId, contractId, employeeIrpfs);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	// ------------------------------------------------- Auxiliar Methods
 

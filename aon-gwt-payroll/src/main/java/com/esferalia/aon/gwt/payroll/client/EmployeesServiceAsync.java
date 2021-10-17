@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
+import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -20,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
@@ -74,19 +76,19 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getExtras(String domain, List<Employee> employees, AsyncCallback<List<Extra>> callback)
 			throws IllegalArgumentException;
 
-	void getCostReceiptPDF(String domain, Cost cost, Salary.Type types[],
+	void getCostReceiptPDF(String domain, Cost cost, Salary.Type[] types,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
-	void getCostReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom,
+	void getCostReceiptHTML(String domain, Cost cost, Salary.Type[] types, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
-	void getSLDCalcReceiptHTML(String domain, String user, Cost cost, Salary.Type types[], int zoom,
+	void getSLDCalcReceiptHTML(String domain, String user, Cost cost, Salary.Type[] types, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getIrpfReceiptHTML(String domain, Irpf irpf, int zoom, AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 
-	void getSalaryReceiptHTML(String domain, Cost cost, Salary.Type types[], int zoom,
+	void getSalaryReceiptHTML(String domain, Cost cost, Salary.Type[] types, int zoom,
 			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getSalaryReceiptHTML(String domain, Salary salary, int zoom,
@@ -98,7 +100,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void saveSalary(String domain, String user, SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
-	void saveSalary(String domain, SalaryDraft salaryDraft, Date sections[], AsyncCallback<SalaryDraft> callback)
+	void saveSalary(String domain, SalaryDraft salaryDraft, Date[] sections, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
 	void calculateIrpf(String domain, SalaryDraft salaryDraft, AsyncCallback<Double> callback)
@@ -109,7 +111,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			throws IllegalArgumentException;
 
 	void calculateSalaryDraft(String domain, SalaryDraft salaryDraft, 
-			Date sections [],
+			Date[] sections,
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
@@ -158,7 +160,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void getEvents(String domain, Integer workplaceId, Date startDate, Date endDate,
-			int offset, int limit, String names[],
+			int offset, int limit, String[] names,
 			AsyncCallback<Events> callback) throws IllegalArgumentException;
 
 	void getAvailPeriod(String domain, Integer workplaceId, String name,
@@ -176,10 +178,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			AsyncCallback<ContextDescriptor> callback);
 
 	void getVariables(String domain, SalaryDraft salaryDraft, Date startDate, Date endDate,
-			String names[], AsyncCallback<List<Variable>> callback)
+			String[] names, AsyncCallback<List<Variable>> callback)
 			throws IllegalArgumentException;
 
-	void delete(String domain, Salary salaries[], AsyncCallback<Void> callback)
+	void delete(String domain, Salary[] salaries, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 
 	void pasteContract(String domain, int workplaceId, int contractId, String document,
@@ -204,7 +206,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getEmployeeInfoDataBase(String domain, String user, Integer contractId, Workplace workplace, AsyncCallback<EmployeeContractInfo> asyncCallback) throws IllegalArgumentException;
 
-	void setEmployeeInfoDataBase(String domain, EmployeeContractInfo new_employeeContractData,
+	void setEmployeeInfoDataBase(String domain, EmployeeContractInfo employeeContractData,
 			AsyncCallback<EmployeeContractInfo> asyncCallback);
 
 	void createEmployeeContract(String domain, EmployeeContractInfo employeeContractData,
@@ -292,7 +294,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			String tc2, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	void cambioGrupCtz(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
-			String grup_ctz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
+			String grupCtz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			String ocup, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
@@ -329,5 +331,15 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void contractExtension(String currentDomainName, ContractExtension contractExtension, AsyncCallback<Void> callback);
 
 	void deleteContractExtension(String currentDomainName, Integer contractId, AsyncCallback<Void> callback);
+	
+	// ------------------------------------------------- ContractTransform
+	
+	void contractTransform(String currentDomainName, ContractTransform contractTransform, AsyncCallback<Integer> callback);
+
+	// ------------------------------------------------- EmployeeIrpf
+	
+	void getEmployeeIrpf(String currentDomainName, Integer contractId, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback);
+
+	void setEmployeeIrpf(String currentDomainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback);
 
 }

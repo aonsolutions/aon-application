@@ -1,8 +1,10 @@
 import { AonElement } from './AonElement.js';
 import { getRegistries, getRegistryAddress } from '../services/service.js';
 
-import { AonSuggestion, AonAddress } from './components.js';
+import { AonSuggestion} from './aon-suggestion.js';
+
 import { CONSTANT, CSS, EVENT, MSG, TAG } from '../environments/environments.js';
+import { AonAddress } from './aon-address.js';
 
 export class AonRegistry extends AonElement {
 
@@ -206,10 +208,11 @@ export class AonRegistry extends AonElement {
       address.id = this.ADDRESS;
       address.title = MSG.ADDRESS;
       address.readonly = this.isReadonly();
+      address.setAddress(this.registry.address);
       div2.appendChild(address);
-      address.buildAddressValue(this.registry.address)
+
       address.addEventListener(EVENT.CHANGE, () => {
-        this.registry.address = JSON.parse(address.value);
+        this.registry.address = address.getAddress();
         this.dispatchEvent(new Event(EVENT.CHANGE));
       });
     }
@@ -273,9 +276,9 @@ export class AonRegistry extends AonElement {
       if(address) {
         let data = {registry: registry.id, global: registry.global};
         getRegistryAddress(data).then(ra => {
-           address.buildAddressValue(ra);
-           this.registry.address = ra;
-           this.dispatchEvent(new Event(EVENT.CHANGE));
+            address.setAddress(ra, true);
+            this.registry.address = ra;
+            this.dispatchEvent(new Event(EVENT.CHANGE));
         });
       }
     }

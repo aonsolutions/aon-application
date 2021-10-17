@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
@@ -22,7 +23,12 @@ import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedContent;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAppearanceDictionary;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.apache.pdfbox.text.PDFMarkedContentExtractor;
@@ -31,6 +37,8 @@ import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfPage;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
  * <p>
@@ -482,23 +490,51 @@ public class PDFToolkit {
 		ArrayList<String> words	= (ArrayList<String>) StringToolkit.toWords(text);
 		String			  line	= "";
 
-		for (int i = 0; i < words.size(); i++)
-		{
+		for (int i = 0; i < words.size(); i++) {
 			float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
 			if (fw < max)
 			{
 				line += " " + words.get(i);
-				if (i == words.size() - 1)
-					lines.add(line);
-			} else
-			{
+			} else {
 				lines.add(line);
 				line = "" + words.get(i);
 			}
+			if (i == words.size() - 1)
+				lines.add(line);
 		}
-		if (lines.size() == 0)
-			lines.add(line);
+		if (lines.isEmpty()) {
+			lines.add(line);			
+		}
 		return lines;
+	}
+	
+	public static String getFirstLine(String text, float max, PDFont font, float fontSize) throws IOException {
+
+		ArrayList<String> words	= (ArrayList<String>) StringToolkit.toWords(text);
+		String			  line	= "";
+
+		for (int i = 0; i < words.size(); i++) {
+			float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
+			if (fw < max) {
+				line += " " + words.get(i);
+			} else {
+				return line;
+			}
+			if (i == words.size() - 1)
+				return line;
+		}
+		return line;
+	}
+	
+	
+	public static String croppedStringWholeWord(String text, double width, PDFont font, float fontSize) throws IOException {
+		if (text == null)
+			return null;
+		String str = AonStringUtils.trimToEmpty(getFirstLine(text, (float) width, font, fontSize));
+		if (AonStringUtils.equals(AonStringUtils.trimToEmpty(text), str)) {
+			return str;
+		} else
+			return str + "...";
 	}
 
 	/**
@@ -625,5 +661,62 @@ public class PDFToolkit {
 		
 		return Optional.empty();
 	}
+
+	public static void drawResizedLogo(PDDocument doc, PDPage page, PDPageContentStream contents, byte[] logo, float x, float y, float maxHeight, float maxWidth, String externalLink) throws IOException {
+		float logoHeigth = 0;
+		float logoWidth = 0;
+		
+		if (logo != null) {
+			BufferedImage bufferedImage = null;
+			bufferedImage = ImageIO.read(new ByteArrayInputStream(logo));
+			logoHeigth = bufferedImage.getHeight();
+			logoWidth = bufferedImage.getWidth();
+			float proportion = logoHeigth/logoWidth;
+			
+			if (logoHeigth > maxHeight) {
+				logoHeigth = maxHeight;
+				logoWidth = logoHeigth / proportion;
+			}
+			if (logoWidth > maxWidth) {
+				logoWidth = maxWidth;
+				logoHeigth = logoWidth * proportion;
+			}
+			
+			drawImage(doc, contents, logo, x, y, logoWidth, logoHeigth);
+			
+			if (externalLink != null) {
+				PDRectangle rectangle = new PDRectangle(x, y, logoWidth, logoHeigth);
+				PDAnnotationLink txtLink = new PDAnnotationLink();
+				PDActionURI action = new PDActionURI();
+				action.setURI(externalLink);
+				txtLink.setAction(action);
+				txtLink.setHidden(true);
+				txtLink.setRectangle(rectangle);
+				page.getAnnotations().add(txtLink);
+			}
+		}
+	}
+	public static float getLogoFinalHeight(byte[] logo, float maxHeight, float maxWidth) throws IOException {
+		if (logo == null)
+			return 0;
+		BufferedImage bufferedImage = null;
+		bufferedImage = ImageIO.read(new ByteArrayInputStream(logo));
+		float logoHeigth = bufferedImage.getHeight();
+		float logoWidth = bufferedImage.getWidth();
+		float proportion = logoHeigth/logoWidth;
+		
+		if (logoHeigth > maxHeight) {
+			logoHeigth = maxHeight;
+			logoWidth = logoHeigth / proportion;
+		}
+		if (logoWidth > maxWidth) {
+			logoWidth = maxWidth;
+			logoHeigth = logoWidth * proportion;
+		}
+		
+		return logoHeigth;
+	}
+	
+	
 
 }

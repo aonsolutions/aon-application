@@ -78,6 +78,9 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		public void onNew(Model390HFModuleOptions options) {
 			this.callback.onNew(options);
 		}
+		public void onReset(Model390HFModuleOptions options, Mod390HF mod390) {
+			this.callback.onReset(options, mod390);
+		}
 		public void showBreakdownPanel(String htmlText) {
 			this.callback.showBreakdownPanel(htmlText);
 		}
@@ -121,6 +124,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	protected final Button saveButton = new Button();
 	protected final Button cancelButton = new Button();		
 	protected final Button deleteButton = new Button();
+	protected final Button resetButton = new Button();
 	protected final Button printButton = new Button();
 	protected final Button markAsPendingButton = new Button();
 	protected final Button markAsFinishedButton = new Button();
@@ -273,6 +277,19 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		});
 		buttonContainer.add(deleteButton);
 		
+		resetButton.setText(AON.MSG.resetAction());
+		resetButton.setTitle(resetButton.getText());
+		resetButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		resetButton.addStyleName(AON.AON_CSS.aonIconReset());
+		resetButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.onReset(options, getMod390HF());
+			}
+		});
+		buttonContainer.add(resetButton);
+		
 		markAsFinishedButton.setText(AON.MSG.finish());
 		markAsFinishedButton.setTitle(markAsFinishedButton.getText());
 		markAsFinishedButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
@@ -370,6 +387,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	
 	private void refreshToolbarState( Model390HFModuleOptions options) {
 		deleteButton.setVisible(!mod390.isNew());
+		resetButton.setVisible(!mod390.isNew());
 		auditButton.setVisible(!mod390.isNew());
 		newButton.setVisible(!mod390.isNew());
 		newButton.setVisible(!mod390.isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
@@ -377,6 +395,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		cancelButton.setVisible(true);
 		saveButton.setVisible(!mod390.isFinished() && !mod390.isSent());
 		deleteButton.setVisible(!mod390.isFinished() && !mod390.isSent());
+		resetButton.setVisible(!mod390.isFinished() && !mod390.isSent());
 		markAsPendingButton.setVisible(!mod390.isNew() &&
 				(mod390.getStatus() == FiscalStatus.FINISHED 
 				|| mod390.getStatus() == FiscalStatus.BATCHED

@@ -54,25 +54,41 @@ export const createMobileMainView = () => newComponent({
 }).element;
 
 
-export const createDivEditable = (title, id, placeholder) => newComponent({
-  type: "text",
-  id,
-  text: title ? title : null,
-  classes : [CSS.TRANSITION_QUICK, CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.FOCUS_COLOR_MINUS],
-  styles: {
-    fontSize: "15px",
-    fontWeight: "400",
-    padding : "10px",
-    background: "transparent",
-    borderBottom: `1px solid ${CSS.variable(COLORS.GRAYSON)}`,
-    width: "100%",
-    color: CSS.variable(COLORS.AON_BLUE),
-  },
-  attributes: {
-    contentEditable : "",
-    placeholder: placeholder || "...",
-  }
-}).element;
+export const createDivEditable = (parent, title, value, id, placeholder) => {
+  const div = createStartJustifiedColumn();
+  if(parent) parent.appendChild(div.element);
+  let span = setStyles(document.createElement(TAG.SPAN),{
+      fontSize: "0.9375rem",
+      width:"100%",
+      color:CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST)
+  });
+  span.textContent = title +` (${MSG.OPTIONAL})`;
+  div.appendChild(span);
+
+  const divTwo =  newComponent({
+    type: "text",
+    id,
+    text: value ? value : null,
+    classes : [CSS.TRANSITION_QUICK, CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.FOCUS_COLOR_MINUS],
+    styles: {
+      fontSize: "15px",
+      fontWeight: "400",
+      padding : "10px",
+      background: "transparent",
+      borderBottom: `1px solid ${CSS.variable(COLORS.GRAYSON)}`,
+      width: "100%",
+      color: CSS.variable(COLORS.AON_BLUE),
+    },
+    attributes: {
+      contentEditable : "",
+      placeholder: placeholder || "...",
+    }
+  }).element;
+
+  div.appendChild(divTwo);  
+
+  return div.element;
+}
 
 export const createTitle = (title) => newComponent({
   type: "text",
@@ -170,14 +186,21 @@ const createCommentContent = (properties) => newComponent({
   }
 });
 
-
-export const createAction = (icon, message) => {
+/**
+ * 
+ * @param {Object} icon 
+ * @param {String} message 
+ * @param {String} submessage optional submessage
+ * @returns 
+ */
+export const createAction = (icon, message, submessage) => {
   const comp = createStartJustifiedRow();
   setStyles(comp.element,{
     width :"100%",
     padding:"5px 0",
-    textAlign: "justify"
-  })
+    textAlign: "justify",
+    flexWrap: "wrap"
+  });
 
   const wrapper = newComponent({
   classes : [CSS.CENTER_FLEX],
@@ -203,10 +226,26 @@ export const createAction = (icon, message) => {
     fontWeight:400,
     color : CSS.variable(COLORS.GRAYSON)
   });
+  text.element.style.flex = "1 0";
   
   image.appendTo(wrapper.element);
   wrapper.appendTo(comp.element);
   text.appendTo(comp.element);
+  if(submessage){
+    const blockquote = newComponent({
+      type:"blockquote",
+      text:submessage,
+      styles : {
+        margin:"0px 0px 0px 5.8ex",
+        borderLeft:"1px solid rgb(204,204,204)",
+        paddingLeft:"1ex",
+        flex: "100%",
+        fontWeight: 500,
+        color:CSS.variable(COLORS.ONLINE_GREEN)
+      }
+    });
+    blockquote.appendTo(comp.element);
+  }
 
   return comp;
 }
@@ -224,22 +263,11 @@ export const createStartJustifiedRow = (styles) => newComponent({
 export const createStartJustifiedColumn = () =>newComponent({
     classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
     styles: {
-        width : "100%", 
-        marginBottom: "5px"
+      width : "100%", 
+      marginBottom: "5px"
     }
 });
 
-export const titleFirstDiv  = (title="") => {
-    const div = createStartJustifiedColumn();
-    let span = setStyles(document.createElement(TAG.SPAN),{
-        fontSize: "0.9375rem",
-        width:"100%",
-        color:CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST)
-    });
-    span.textContent = title;
-    div.appendChild(span);
-    return div.element;
-}
 
 /**
  * Create a text 
@@ -322,12 +350,20 @@ const checkProperties = (properties) => {
     return properties;
 }
 
+//----------------TYPE REQUEST CAU 
+export const createSelectCau = (name, id, title) => setAttributes( new AonSelect(),{
+  name,
+  id,
+  title,
+});
+
 //----------------TYPE REQUEST   
 export const createRequestType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.SOURCE_TASK,
   name: MESSENGER_IDS.SOURCE_TASK,
   title: MSG.TYPE_REQUEST
 });
+
 
 //----------------WORKGROUP   
 export const createWorkgroup = () =>setAttributes( new AonSelect(),{

@@ -1,3 +1,17 @@
+import { TAG } from "../environments/environments.js";
+
+
+export const createDiv = (properties)=> newComponent({
+  type: TAG.DIV,
+  ...properties
+});
+
+export const createSpan = (properties)=> newComponent({
+  type: TAG.SPAN,
+  ...properties
+});
+
+
 /** 
  * Creates a new component
  * @param {*} properties - json with properties
@@ -66,7 +80,7 @@
    * @param {*} element 
    * @param {*} dataset 
    */
-  export const setDataset = (element,dataset) => {
+  export const setDataset = (element, dataset) => {
     if(element && dataset) 
         for (const key in dataset) 
           element.dataset[key] = dataset[key];
@@ -78,7 +92,7 @@
    * @param {*} element 
    * @param {*} events 
    */
-  export const setEvents =(element,events) => {
+  export const setEvents = (element,events) => {
     if(element && events) 
         for (const key in events)  
           element.addEventListener(key,events[key]);

@@ -35,6 +35,9 @@
 							<g:Button ui:field="removeButton"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconDelete}" 
 								text="{msg.deleteAction}" />
+							<g:Button ui:field="resetButton"
+								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconReset}" 
+								text="{msg.resetAction}" />
 							<g:Button ui:field="validateButton"
 								styleName="{aonResources.css.aonFindingToolbarItem} {aonResources.css.aonIconValidate}" 
 								text="{msg.validateAction}" />

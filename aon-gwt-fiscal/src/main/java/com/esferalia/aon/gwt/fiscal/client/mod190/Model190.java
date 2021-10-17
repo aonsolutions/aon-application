@@ -66,7 +66,8 @@ public class Model190 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew(Model190ModuleOptions options);
-		void onDuplicate(Model190ModuleOptions options, int id);
+		void onReset(Model190ModuleOptions options, Mod190 mod190);
+		void onDuplicate(Model190ModuleOptions options, int id);		
 	}
 	protected class Model190Callback implements IModel190Callback {
 		
@@ -85,6 +86,9 @@ public class Model190 extends MainEntryPoint {
 		@Override
 		public void onNew(Model190ModuleOptions options) {
 			newModel(options);
+		}
+		public void onReset(Model190ModuleOptions options, Mod190 mod190) {
+			resetModel(options, mod190);
 		}
 		@Override
 		public void onDuplicate(Model190ModuleOptions options, int id) {
@@ -257,6 +261,31 @@ public class Model190 extends MainEntryPoint {
 				});
 	}
 	
+	private void resetModel(Model190ModuleOptions options, Mod190 oldMod190) {
+		cleanErrorPanel();
+		SERVICE.initialize(options.getDomainName(), options.getUser(),options.getDomain(), oldMod190.getYear(),
+				new AsyncCallback<Mod190>() {
+					@Override
+					public void onSuccess(Mod190 newMod190) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+						
+						newMod190.setAdministration(oldMod190.getAdministration());
+						newMod190.setYear(oldMod190.getYear());
+						newMod190.setComplementary(oldMod190.isComplementary());
+						newMod190.setReplacement(oldMod190.isReplacement());
+						newMod190.setReplacedReceipt(oldMod190.getReplacedReceipt());						
+						showResetDeclarationPopup(options, newMod190, oldMod190);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
+	}
+	
 	private void duplicateModel(Model190ModuleOptions options, int id) {
 		cleanErrorPanel();
 		SERVICE.getMod190(options.getDomainName(),options.getUser(),options.getDomain(), id,
@@ -385,8 +414,59 @@ public class Model190 extends MainEntryPoint {
 			newDialog.show();
 	}
 	
+	private void showResetDeclarationPopup(Model190ModuleOptions options, Mod190 newMod190, Mod190 oldMod190) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup( newMod190, false, true,
+			new Model190Callback() {
+
+					@Override
+					public void onAccept(Mod190 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+						
+						SERVICE.delete(options.getDomainName(), options.getUser(),options.getDomain(), oldMod190, 
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										SERVICE.save(options.getDomainName(), options.getUser(),options.getDomain(),model,
+												new AsyncCallback<Mod190>() {
+													@Override
+													public void onSuccess(Mod190 model) {
+														popup.hide();
+														select(options,model, null);
+													}
+
+													@Override
+													public void onFailure(Throwable caught) {
+														popup.hide();
+														showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+													}
+												});
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+									}
+								});
+					}
+					
+					@Override
+					public void onCancel() {};
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 	private void showDuplicateDeclarationPopup(Model190ModuleOptions options, Mod190 model) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, 
+		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, false, 
 			new Model190Callback() {
 
 					@Override

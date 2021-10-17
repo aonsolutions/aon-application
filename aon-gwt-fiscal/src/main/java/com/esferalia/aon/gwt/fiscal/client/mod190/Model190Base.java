@@ -92,6 +92,10 @@ abstract class Model190Base extends DockLayoutPanel {
 			cbk.onNew(options);
 		}
 		@Override
+		public void onReset(Model190ModuleOptions options, Mod190 mod190) {
+			cbk.onReset(options, mod190);
+		}
+		@Override
 		public void onDuplicate(Model190ModuleOptions options, int id) {
 			cbk.onDuplicate( options, id );
 		}
@@ -114,6 +118,7 @@ abstract class Model190Base extends DockLayoutPanel {
 	protected final Button saveButton = new Button();
 	protected final Button cancelButton = new Button();		
 	protected final Button deleteButton = new Button();
+	protected final Button resetButton = new Button();
 	protected final Button markAsPendingButton = new Button();
 	protected final Button markAsFinishedButton = new Button();
 	protected final Button markAsSentButton = new Button();
@@ -332,6 +337,20 @@ abstract class Model190Base extends DockLayoutPanel {
 			}
 		});
 		buttonContainer.add(deleteButton);
+		
+		// Botón Inicializar
+		resetButton.setText(AON.MSG.resetAction());
+		resetButton.setTitle(resetButton.getText());
+		resetButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		resetButton.addStyleName(AON.AON_CSS.aonIconReset());
+		resetButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				callback.onReset(options,getMod190());
+			}
+		});
+		buttonContainer.add(resetButton);
 		
 		markAsFinishedButton.setText(AON.MSG.finish());
 		markAsFinishedButton.setTitle(markAsFinishedButton.getText());
@@ -554,6 +573,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		newButton.setVisible(!getMod190().isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
 		saveButton.setVisible(!getMod190().isFinished() && !getMod190().isSent());
 		deleteButton.setVisible(!getMod190().isNew() && !getMod190().isFinished() && !getMod190().isSent());
+		resetButton.setVisible(!getMod190().isNew() && !getMod190().isFinished() && !getMod190().isSent());
 		cancelButton.setVisible(true);
 		markAsPendingButton.setVisible(!getMod190().isNew() &&
 			(getMod190().getStatus() == FiscalStatus.FINISHED 

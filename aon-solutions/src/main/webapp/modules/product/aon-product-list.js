@@ -1,5 +1,5 @@
+import { AonTable } from '../../components/aon-table.js';
 import { AonElement } from '../../components/AonElement.js';
-import { AonTable } from '../../components/components.js';
 import { CONSTANT, MSG } from '../../environments/environments.js';
 import { getProducts } from '../../services/productService.js';
 

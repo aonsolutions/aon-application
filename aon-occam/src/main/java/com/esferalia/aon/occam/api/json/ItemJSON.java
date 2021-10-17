@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -10,7 +11,11 @@ import com.esferalia.aon.occam.api.model.product.Item;
 
 public class ItemJSON {
 
-	public static LinkedList<Item> fromJSON(JSONArray json) {
+	private ItemJSON() {
+		
+	}
+	
+	public static List<Item> fromJSON(JSONArray json) {
 		LinkedList<Item> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)));
@@ -26,7 +31,7 @@ public class ItemJSON {
 //				.setName(JsonUtils.getString(json, IJsonNames.NAME));
 	}
 	
-	public static JSONArray toJSON(LinkedList<Item> items) {
+	public static JSONArray toJSON(List<Item> items) {
 		return toJSON(items.stream());
 	}
 	

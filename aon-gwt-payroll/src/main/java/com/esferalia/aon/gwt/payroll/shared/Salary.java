@@ -27,6 +27,8 @@ public class  Salary implements Serializable{
 		default E visitL03(Type type) { return visitDelay(type); };
 
 		default E visitL13(Type type) { return visitSettle(type); };
+		
+		default E visitL110(Type type) { return visitSalary(type); };
 }
 	
 	public static enum Type implements HasDescription{
@@ -74,6 +76,13 @@ public class  Salary implements Serializable{
 			@Override
 			public <E> E accept(TypeVisitor<E> visitor) {
 				return visitor.visitL13(this);
+			}
+		},
+		L110 
+		{
+			@Override
+			public <E> E accept(TypeVisitor<E> visitor) {
+				return visitor.visitL110(this);
 			}
 		}
 		

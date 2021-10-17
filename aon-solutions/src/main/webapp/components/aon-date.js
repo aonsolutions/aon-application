@@ -471,6 +471,14 @@ export class AonDate extends AonElement {
       && CONSTANT.UNDEFINED !== this.getAttribute(CONSTANT.READONLY) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
   }
 
+  disabledDate(b){
+    let input = this.getElement(this.INPUT);
+    if(input) {
+      input.readonly = b;
+      input.disabled = b;
+    }
+  }
+
   // parseDateStr(dateStr) {
   //     if(dateStr.includes('/')){
   //       let dateArr = dateStr.split('/');

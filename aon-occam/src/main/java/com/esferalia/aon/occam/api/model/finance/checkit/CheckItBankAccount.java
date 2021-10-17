@@ -15,6 +15,7 @@ public class CheckItBankAccount implements Serializable {
 	private Date atDate; // "fecha_saldo"
 	private Integer bankId; // "banco_id"
 	private String bank; // "entidad"
+	private String logo; // "logo"
 	private Integer bankAccountId; // "id_cuentabancaria"
 	private double balance; // "saldo"
 	private double remainder; // "disponible"
@@ -106,6 +107,13 @@ public class CheckItBankAccount implements Serializable {
 	}
 	public CheckItBankAccount setLogs(List<CheckItLog> logs) {
 		this.logs = logs;
+		return this;
+	}
+	public String getLogo() {
+		return logo;
+	}
+	public CheckItBankAccount setLogo(String logo) {
+		this.logo = logo;
 		return this;
 	}
 

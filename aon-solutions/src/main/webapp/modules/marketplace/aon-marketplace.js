@@ -315,6 +315,9 @@ export class AonMarketplace extends AonElement {
 			return dur.hasPackSuite();
 		else if(App.AIO === app)
 			return false;
+		else if(App.BANK === app) {
+			return dur.getDomain().isParent();
+		}
 		else return false;
 	}
 }

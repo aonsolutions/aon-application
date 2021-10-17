@@ -81,6 +81,7 @@ export const CHROME_READER_MODE = 'chrome_reader_mode';
 export const CLASS = 'class';
 export const CLOSE = 'close';
 export const CLOSE_FULLSCREEN = 'close_fullscreen';
+export const CLOUD_UPLOAD = 'cloud_upload';
 export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMMENT_BANK = 'comment_bank';

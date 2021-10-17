@@ -1,7 +1,9 @@
 import { EVENT, MSG } from "../../../environments/environments.js";
+import {Apps} from "../../../services/app.js";
 import { getOfficeProjects, getProjects} from "../../../services/projectService.js";
 import { getCustomers } from "../../../services/registryService.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
+import { getTaskProcess } from "../../../services/taskService.js";
 import { waitEl } from "../../../services/utils.js";
 import { MESSENGER_DIRECTION, MESSENGER_IDS, TASK_SOURCE, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { createAction, createChatMessage, createNoMessage} from "./creationUtils.js";
@@ -15,14 +17,16 @@ import { chooseIconMessage } from "./utils.js";
 export const fillRequestType = ({source}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.SOURCE_TASK);
     let sources = [
-        {value: TASK_SOURCE.QUERY, name: MSG[TASK_SOURCE.QUERY.toUpperCase()] },
-        {value: TASK_SOURCE.REQUEST, name: MSG.FORMALITIES },
+        {value: TASK_SOURCE.QUERY, name: MSG[TASK_SOURCE.QUERY.toUpperCase()] }
     ];
+
+    if(!aonMessengerChat.isCau())
+     sources.push({value: TASK_SOURCE.REQUEST, name: MSG.FORMALITIES });
 
     if(TASK_SOURCE.MANUAL === source)
         sources.unshift({value: TASK_SOURCE.MANUAL, name: "MANUAL" }); 
 
-    if(aonMessengerChat.getApplicationParent().dur.hasCallCenter())
+    if(aonMessengerChat.getDur().hasCallCenter())
         sources.push({value: TASK_SOURCE.CAU, name: "Soporte" });
 
     aonSelect.setOptions(sources);
@@ -37,7 +41,6 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
  */
  export const fillProject = async (task) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
-    // console.log(task.project);
     if(aonSelect){
         aonSelect.loading(true);
         const project = task.getProject();
@@ -55,7 +58,6 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
             if(project && project.id){ aonSelect.value = project.id; } 
 
             const fnProject = ({detail})=>{
-                console.log(detail);
                 if(detail && detail.id)
                     task.setProject(detail);
                 else 
@@ -97,10 +99,9 @@ export const fillWorkGroup = async (task, aonMessengerChat) => {
         } 
 
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-            if(detail){
+            if(detail)
                 task.setWorkgroup(detail);
-            }
-            fillTaskHolder(aonMessengerChat, detail.value);
+            fillTaskHolder(aonMessengerChat);
         });
 
         aonSelect.loading(false);
@@ -110,14 +111,15 @@ export const fillWorkGroup = async (task, aonMessengerChat) => {
 /**
  * fill taskHolder (Titular de la tarea)
  * @param {HTMLElement} aon-messenger-chat component
- * @param {Integer} workgroupId 
+ * @param {Integer} workgroup 
  */
-export const fillTaskHolder = async (aonMessengerChat, workgroupId=0) => {
+export const fillTaskHolder = async (aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKHOLDER}`).catch(e=>null);
     const task = aonMessengerChat.task;
     if(aonSelect){
         aonSelect.clear();
-        const taskHolders = await getTastHoldersWorkGroup({workgroupId});
+        const workgroup = task.getWorkgroup().id;
+        const taskHolders = await getTastHoldersWorkGroup({workgroup, active:1});
 
         let options = [];
         if(taskHolders && taskHolders.length>0){
@@ -173,7 +175,6 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
                     aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
                 }
             });
-    
 
             if(registry && registry.id) aonSelect.value = registry.id;
     
@@ -189,28 +190,6 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
 }
 
 /**
- * fill tag (Etiquetas)
- * @param {Task} Class task 
- * @param {HTMLElement} aon-messenger-chat component
- */
-// export const fillTag = async (task, aonMessengerChat) => {
-//     const aonSelect = await waitEl(`#${MESSENGER_IDS.TASKTAG}`).catch(e=>null);
-//     const applicationParent = aonMessengerChat.getApplicationParent();
-//     if(aonSelect){
-//         aonSelect.clear();
-//         const tags = applicationParent._tags;
-//         if(tags){
-//             aonSelect.setOptions( tags.map( c=> ({...c, value: c.id}) ) );
-//         }
-//         if(task.getDescriptionJson().tag) aonSelect.value = task.getDescriptionJson().tag;
-
-//         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-//             task.setDescriptionJson({tag:detail.id});
-//         })
-//     }
-// }
-
-/**
  * fill processType (Titular de la tarea)
  * @param {Task} Class task 
  * @param {HTMLElement} aon-messenger-chat component
@@ -218,13 +197,24 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
 export const fillProcessType =  ({source_id}, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROCESS_TYPE);
     aonSelect.clear();
-    const typeProcess = [
-        { value:1, name:"Solicitud de vacaciones"},
-    ];
-    if(typeProcess){
-        aonSelect.setOptions( typeProcess.map(tp=> tp) );
-    }
-    if(source_id) aonSelect.value = source_id;
+    const dur = aonMessengerChat.getDur();
+
+    let options = [];
+    if(!dur.isPayrollManager() && !dur.isPayrollPortal())
+        options.push(getTaskProcess(1));
+    else if(!dur.isPayrollManager() && dur.isPayrollPortal())
+        options.push(getTaskProcess(2));
+    
+    if( !dur.isTimecontrolManager() && !dur.isTimecontrolPortal() )
+        options.push(getTaskProcess(3));
+
+    if(source_id && !options.some(({value})=> value ==source_id))
+        options.push(getTaskProcess(source_id));
+    
+    aonSelect.setOptions( options );
+
+    if(source_id) 
+        aonSelect.value = source_id;
 
     aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
       if(detail && detail.value) {
@@ -250,7 +240,7 @@ export const fillChat = (workflows=[], aonMessengerChat)=>{
             const meId = aonMessengerChat.getApplicationParent().TASK_HOLDER.id;
 
             workflows.forEach(workflow => {
-                const {id, comment, type, creation_date, notification_user, notification_date, email, task_holder:{name, alias, id:taskHolderId}} = workflow;
+                const {id, comment, type, creation_date, notification_user, notification_date, email, task_holder:{name, id:taskHolderId}} = workflow;
                 const me = (taskHolderId == meId) || (email ===task.auth.email); // if taskHolder id is me
                 let message = {
                     id,
@@ -262,17 +252,118 @@ export const fillChat = (workflows=[], aonMessengerChat)=>{
                     notification_user
                 }
 
-                if(!me) message.name = alias || name || email;
-
+                if(!me) message.name = name || email;
                 if (type == WORKFLOW_TYPES.COMMENT) {
                     createChatMessage(message, chat);
                 } else{
                     message.name = name || email;
                     const actionJson = chooseIconMessage(message);
-                    const action = createAction(actionJson, actionJson.comment);
+                    const submessage =  message.comment && WORKFLOW_TYPES.CLOSE.indexOf(type)>=0 ? message.comment : null;
+                    const action = createAction(actionJson, actionJson.comment, submessage);
                     action.appendTo(chat);
                 }
             });
         }
    })
+}
+
+
+/**
+ * fill processType (Titular de la tarea)
+ * @param {Task} Class task 
+ */
+ export const fillTypeRequestCau =  (aonMessengerChat) => {
+    const task = aonMessengerChat.task;
+    const aonSelect = document.getElementById(MESSENGER_IDS.TYPE_REQUEST_CAU);
+    aonSelect.clear();
+
+    let value = task.getDescriptionJson().type;
+
+    const options = [
+        { value:1, name:"CONSULTA"},
+        { value:2, name:"ERROR"},
+        { value:3, name:"SERVICIOS"},
+        { value:4, name:"SUGERENCIAS"},
+        { value:5, name:"eMail"},
+    ];
+
+    if(options)
+        aonSelect.setOptions( options );
+
+    aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+      let title = "";
+      if(detail && detail.value) {
+        title = detail.name;
+        task.setDescriptionJson({type:detail.value});
+        const selectApp = document.getElementById(MESSENGER_IDS.SELECT_APP);
+        if(selectApp) title = detail.name+ " / "+ selectApp.getText();
+        
+        task.setTitle(title);
+      }
+    });
+
+    if(value) aonSelect.value = value;
+}
+
+
+/**
+ * fill processType (Titular de la tarea)
+ * @param {Task} Class task 
+ */
+ export const fillSelectAppCau =  (aonMessengerChat) => {
+    const task = aonMessengerChat.task;
+    const aonSelect = document.getElementById(MESSENGER_IDS.SELECT_APP);
+    aonSelect.clear();
+
+    try {
+        let value = task.getDescriptionJson().app;
+
+        const apps = getAppPermission(aonMessengerChat.getDur());
+        let options = apps.map(app => ({value:app.app, name:app.title}));
+
+        if(options)
+            aonSelect.setOptions( options );
+
+        aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+            let title = "";
+            if(detail && detail.value) {
+                task.setDescriptionJson({app:detail.value});
+                const selectTypeRequest = document.getElementById(MESSENGER_IDS.TYPE_REQUEST_CAU);
+                if(selectTypeRequest) title = selectTypeRequest.getText() +" / "+detail.name;
+            }
+            task.setTitle(title);
+        });
+        
+        if(value) aonSelect.value = value;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+
+const getAppPermission = (dur) => {
+  let apps = [];
+  if( dur.isAccounting())
+    apps.push(Apps.ACCOUNTING);
+
+  if(dur.isFiscal())
+    apps.push(Apps.FISCAL);
+
+  if((dur.isComunicaManager() || dur.isComunicaPortal() ) && !dur.isPayroll())
+   apps.push(Apps.COMUNICA);
+
+  if(dur.isPayroll())
+    apps.push(Apps.PAYROLL);
+
+  if(dur.isDocumental())
+    apps.push(Apps.DOCUMENTAL);
+
+  if(dur.isTimecontrol())
+    apps.push(Apps.TIMECONTROL);
+
+  if(dur.isInvoice())
+    apps.push(Apps.INVOICE);
+
+  return apps;
 }

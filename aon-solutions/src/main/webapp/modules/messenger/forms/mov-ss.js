@@ -1,0 +1,304 @@
+import { AonDate } from "../../../components/aon-date.js";
+import { AonInput } from "../../../components/aon-input.js";
+import { AonSelect } from "../../../components/aon-select.js";
+import { AonSwitch } from "../../../components/aon-switch.js";
+import { AonNumber } from "../../../components/aon-number.js";
+import { TAG, EVENT, MSG, CONSTANT, CSS, COLORS } from "../../../environments/environments.js";
+import { getCccForActivity } from "../../../services/contractService.js";
+import {  serializeForm } from "../../../services/utils.js";
+import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
+import { MESSENGER_IDS } from "../MessengerEnums.js";
+import { createDivEditable } from "../shared/creationUtils.js";
+
+
+/**
+ * 
+ * @param {HTMLElement} card 
+ */
+ export const createFormMov = (card, aonMessengerChat) =>{
+    const task = aonMessengerChat.task;
+    card.flex = "true";
+    card.getCardTitle().style.marginBottom = 0;
+    
+    let data = task.id ? JSON.parse(task.description) : {};
+
+    const form  = setAttributes(document.createElement(TAG.FORM),{
+        id:MESSENGER_IDS.FORM_DINAMIC,
+        action:"#"
+    });
+    form.onsubmit = () => false;
+    form.style.width = "100%";
+    card.setContent(form);
+
+    //-----------DATA ENTERPRISE
+    createDataEnterprise(form, data);
+    //-----------END DATA ENTERPRISE
+
+    //---------------------DATA EMPLOYEE
+    createDataEmployee(form, data)
+    //---------------------END DATA EMPLOYEE
+
+    //---------------------DATA CONTRACT
+    createDataContract(form, data);
+    //---------------------END DATA CONTRACT
+
+}
+
+/**
+ * 
+ * @param {HTMLElement} form 
+ * @param {Object} data 
+ */
+const createDataEnterprise = (form, data) => {
+
+    let ctaCti = setAttributes(new AonSelect(),{ title: "Cuenta de cotización", id:"ctaCti", name:"ctaCti"});
+    createDiv(form, ctaCti, {classes:[CSS.AON_COL_XS_12]})
+    fillCtaCti(ctaCti, data);
+
+    let regime = setAttributes(new AonInput(),{ id:"regime", name:"regime", visible:CONSTANT.FALSE });
+    form.appendChild(regime);
+
+    ctaCti.addEventListener(EVENT.CHANGE, ({ detail }) => regime.value = detail.cccRegimeCode);
+
+}
+
+/**
+ * 
+ * @param {HTMLElement} form 
+ * @param {Object} data 
+ */
+ const createDataEmployee = (form, data) => {
+    createTitle(form, "Datos del empleado");
+    
+    let nss = setAttributes(new AonInput(),{
+        id:"nss",
+        name:"nss",
+        description:"NSS/NAF (Opcional)",
+        value: data.nss ? data.nss : ""
+    });
+    createDiv(form, nss, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+
+    let ipf = setAttributes(new AonInput(),{
+        id: "ipf",
+        name:"ipf",
+        description: "DNI/NIE",
+        value: data.ipf ? data.ipf : ""
+    });
+    createDiv(form, ipf, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+
+    let surname = setAttributes(new AonInput(),{
+        id:"surname",
+        name:"surname",
+        description:"Apellido 1",
+        value: data.surname ? data.surname : ""
+    });
+    createDiv(form, surname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+
+    let lastSurname = setAttributes(new AonInput(),{
+        id: "lastSurname",
+        name:"lastSurname",
+        description: "Apellido 2",
+        value: data.lastSurname ? data.lastSurname : ""
+    });
+    createDiv(form, lastSurname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+
+    let name = setAttributes(new AonInput(),{
+        id: "name",
+        name:"name",
+        description: "Nombre",
+        value: data.name ? data.name : ""
+    });
+    createDiv(form, name, {classes:[CSS.AON_COL_XS_12]})
+
+}
+
+/**
+ * 
+ * @param {HTMLElement} form 
+ * @param {Object} data 
+ */
+ const createDataContract = (form, data) => {
+     
+    createTitle(form, "Datos del Contrato");
+
+    let fra = setAttributes(new AonDate(),{ title: MSG.START_DATE, id:"fra", name:"fra"});
+    createDiv(form, fra, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    if(data.fra) fra.setDate(new Date(data.fra))
+
+    let category = setAttributes(new AonInput(),{
+        id:"category",
+        name:"category",
+        description:"Categoria profesional",
+        value: data.category ? data.category : "",
+    });
+    createDiv(form, category, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+
+    let salaryCheck = setAttributes(new AonSwitch(),{ title: "Salario s/convenio", id:"salaryCheck", name:"salaryCheck", checked: data.salaryCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
+    createDiv(form, salaryCheck, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_5], styles:{ marginBottom: "8px"} });
+
+    let salaryType = setAttributes(new AonSelect(),{ title: "Tipo", id:"salaryType", name:"salaryType"});
+    createDiv(form, salaryType, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_3]});
+    salaryType.setDisabled(salaryCheck.isChecked());
+    fillSalaryType(salaryType, data.salaryType);
+
+    let salary = setAttributes(new AonNumber(),{
+        id:"salary", 
+        name:"salary", 
+        description:"Salario mensual",
+        decimals:"2",
+        format:CONSTANT.TRUE,
+        value: data.salary ? data.salary : "",
+    })
+    createDiv(form, salary, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_4]});
+    if(salaryCheck.isChecked()) salary.disabled = CONSTANT.TRUE;
+
+    salaryCheck.addEventListener(EVENT.CHANGE,({target})=>{
+        salary.value = "";
+        salaryType.clear();
+        salary.disabled = target.checked;
+        salaryType.setDisabled(target.checked);
+    });
+
+    let fullTimeCheck = setAttributes(new AonSwitch(),{ title: "Jornada completa", id:"fullTimeCheck", name:"fullTimeCheck", checked: data.fullTimeCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
+    createDiv(form, fullTimeCheck, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_5], styles:{ marginBottom: "8px"} });
+
+    let jornadaType = setAttributes(new AonSelect(),{ title: "Tipo", id:"jornadaType", name:"jornadaType"});
+    createDiv(form, jornadaType, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_3]});
+    jornadaType.setDisabled(fullTimeCheck.isChecked());
+    fillJornadaType(jornadaType, data.jornadaType);
+
+    let hour = setAttributes(new AonNumber(),{
+        id:"hour", 
+        name:"hour", 
+        description:"Horas",
+        decimals:"2",
+        format:CONSTANT.TRUE,
+        value: data.hour ? data.hour : "",
+    })
+    createDiv(form, hour, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_4]});
+    if(fullTimeCheck.isChecked()) hour.disabled = CONSTANT.TRUE;
+
+    fullTimeCheck.addEventListener(EVENT.CHANGE,({target})=>{
+        hour.value = "";
+        hour.disabled = target.checked;
+        jornadaType.clear();
+        jornadaType.setDisabled(target.checked);
+    });
+
+
+    let durationCheck = setAttributes(new AonSwitch(),{ title: "Duración indefinida", id:"durationCheck", name:"durationCheck", checked: data.durationCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
+    createDiv(form, durationCheck, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_5]});
+
+    let frb = setAttributes(new AonDate(),{ title: MSG.END_DATE, id:"frb", name:"frb"});
+    createDiv(form, frb, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_7]});
+    frb.disabledDate(durationCheck.isChecked());
+    if(data.frb) frb.setDate(new Date(data.frb))
+
+    durationCheck.addEventListener(EVENT.CHANGE,({target})=>{
+        frb.value = "";
+        frb.disabledDate(target.checked);
+    });
+
+    // //OBSERVATION
+    const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
+    createDiv(form, observation, {classes:[CSS.AON_COL_XS_12]});
+}
+
+//-----------FILL
+const fillCtaCti = (aonSelect, data) => {
+
+    getCccForActivity().then(({cccs})=>{
+        
+        let options = [];
+        for (const key in cccs) {
+            const ccc = cccs[key];
+            options.push(ccc);
+        }
+
+        options = options.filter( (v,index, self)=>self.findIndex((m) => m.ccc === v.ccc) === index ).map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
+
+        if(data.ctaCti &&  data.regime){
+            const exists = options.some(v => v.ccc === data.ctaCti);
+            if(!exists)  options.push({ccc: data.ctaCti, cccRegimeCode: data.regime});
+        }
+
+        aonSelect.setOptions( options );
+
+        if(data.ctaCti) aonSelect.value = data.ctaCti;
+    });
+}
+
+//-----------FILL
+const fillSalaryType = (aonSelect, salaryType) => {
+    let options = [
+        {name: 'Bruto', value:1},
+        {name: 'Neto', value: 2}
+    ];
+
+    aonSelect.setOptions( options );
+
+    if(salaryType) aonSelect.value = salaryType;
+}
+
+//-----------FILL
+const fillJornadaType = (aonSelect, jornadaType) => {
+    let options = [
+        {name: 'Semanal', value:1},
+        {name: 'Diaria', value: 2}
+    ];
+
+    aonSelect.setOptions( options );
+
+    if(jornadaType) aonSelect.value = jornadaType;
+}
+
+
+
+/**
+ * 
+ * @returns json form vacacion json
+ */
+ export const getFormMovJson = ()=>{
+    const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
+    if(form){
+        const formSerialize = serializeForm(form);
+        let observation = form.querySelector("#observation").innerText;
+        return { ...formSerialize, observation };
+    }
+    return null;
+}
+
+
+/**
+ * 
+ * @param {HTMLElement} parent 
+ * @param {String} text 
+ */
+const createTitle = (parent, text) => {
+    let title = setStyles(document.createElement(TAG.SPAN),{ fontSize: "16px", fontWeight:750, color:CSS.variable(COLORS.AON_DARK_GRAY) });
+    title.innerHTML = text;
+    createDiv(parent, title, {
+        classes:[CSS.AON_COL_XS_12],
+        styles:{
+            padding: "5px 0"
+        }
+    });
+} 
+
+/**
+ * 
+ * @param {HTMLElement} parent appenchild
+ * @param {HTMLElement} child element add
+ * @param {Object} properties 
+ * @returns 
+ */
+const createDiv = (parent, child, properties)=> {
+
+    const div = newComponent({ type: TAG.DIV, ...properties }).element;
+
+    parent.appendChild(div);
+
+    div.appendChild(child);
+
+    return div;
+}

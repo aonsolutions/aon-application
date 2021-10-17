@@ -36,10 +36,16 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		
 	protected int row = 0;
 	protected IFiscalModelCallback<T> callback;
-
+	protected boolean reset;
+	
 	public NewDeclarationPopup(final IFiscalModelCallback<T> callback) {
+		this(false, callback);
+	}
+
+	public NewDeclarationPopup(final boolean reset, final IFiscalModelCallback<T> callback) {
 		this.callback = callback;
-		setCaption(AON.MSG.newDeclaration());
+		this.reset = reset;
+		setCaption(reset?AON.MSG.resetDeclaration():AON.MSG.newDeclaration());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
@@ -50,7 +56,18 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		paintPeriod();
 		paintVariablePanel();
 		paintModelSpecificPanel();
+		
+		// MENSAJE DE AVISO PARA INICIALIZAR EL MODELO
+		if (reset) {
+			Label labelReset = new Label(AON.MSG.resetWarning());
+			labelReset.addStyleName(AON.CSS.aonMarginTop());
+			labelReset.addStyleName(AON.CSS.aonColorRed());
+			tab.setWidget(row, 0, labelReset);
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		}
+		
 		rootPanel.add(tab);
+		
 		rootPanel.add(getButtonsPanels());
 		add(rootPanel);
 	}
@@ -102,6 +119,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		admonList.setSelectedIndex( callback.getFiscalModel().getAdministration().ordinal());
+		admonList.setEnabled(!reset);
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -123,6 +141,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		yearBox.setValue(callback.getFiscalModel().getYear());
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
+		yearBox.setEnabled(!reset);
 		yearBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
@@ -148,6 +167,7 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 				}
 			}
 		}
+		periodList.setEnabled(!reset);
 		periodList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -174,6 +194,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		FlowPanel replPanel = new FlowPanel();
 		//replPanel.setStyleName(AON.AON_CSS.aonTextCenter());
 		replacement.setText(AON.MSG.replacement());
+		replacement.setEnabled(!reset);
+		replacement.setValue(callback.getFiscalModel().isReplacement());
 		replacement.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -196,6 +218,8 @@ public class NewDeclarationPopup<T extends FiscalModel> extends CustomDialog {
 		FlowPanel compPanel = new FlowPanel();
 		//compPanel.setStyleName(AON.AON_CSS.aonTextCenter());
 		complementary.setText(AON.MSG.complementary());
+		complementary.setEnabled(!reset);
+		complementary.setValue(callback.getFiscalModel().isComplementary());
 		complementary.addClickHandler(new ClickHandler() {
 			
 			@Override

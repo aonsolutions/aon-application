@@ -87,7 +87,10 @@ public class NotificationRequest extends Notification {
 		    JSONObject payload = new JSONObject();
 		    JSONObject notification = new JSONObject();
 		    notification.put("title", getTitle());
-		    notification.put("body", getBody());
+		    String body = getBody();
+		    if(body!=null) body = body.replaceAll("<[^>]+>|&nbsp;|\n", " ");
+		 
+		    notification.put("body", body);
 		    if(getPathImage()!=null) notification.put("image", getPathImage());
 		    payload.put("registration_ids", getAuthDevices());
 		    payload.put("notification", notification);
@@ -123,7 +126,7 @@ public class NotificationRequest extends Notification {
 			  authDevices.addAll(aths);
 		} catch (Exception e) {}
 	  });
-	  return authDevices.stream().map(ad -> ad.getDeviceToken()).toArray(String[]::new);
+	  return authDevices.stream().map(AuthDevice::getDeviceToken).toArray(String[]::new);
 	}
 	
 	private void saveNotification(){

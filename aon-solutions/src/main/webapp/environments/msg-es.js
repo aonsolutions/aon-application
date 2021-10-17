@@ -8,6 +8,7 @@ export const ACCOUNTING = 'Contabilidad';
 export const ACTIVATE = 'Activar';
 export const ACTIVE = 'Activo';
 export const ACTIVES = 'Activas'
+export const ACTIVITY = 'Actividad';
 export const ADD = 'Añadir';
 export const ADD_CATEGORY = 'Añadir Categoría';
 export const ADD_COMMENT = 'Añadir Comentario';
@@ -21,7 +22,11 @@ export const ALL_FILES = 'Todos los Ficheros';
 export const AMOUNT = 'Importe';
 export const API_DOCUMENTATION = 'Documentación API';
 export const ASESOR = 'Asesor';
+export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrastra o selecciona el fichero';
+export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrastra o selecciona el fondo';
+export const ATTACH_FILES_DRAGGING_DROPPING_LOGO = 'Arrastra o selecciona el logo';
 export const AVAILABLE = 'Disponible';
+
 
 // ----- B
 
@@ -69,11 +74,14 @@ export const CUSTOMERS = 'Clientes';
 export const DATE = 'Fecha';
 export const DEACTIVATE = 'Desactivar';
 export const DELETE = 'Borrar';
+export const DELETE_BACKGROUND_CONFIRM = 'Estás seguro de eliminar el fondo';
 export const DELETE_CATEGORY = 'Borrar Categoría';
 export const DELETE_CONFIRM = "Estas seguro de eliminar";
 export const DELETE_FILE = 'Borrar Fichero';
+export const DELETE_FILE_CONFIRM = 'Estás seguro de eliminar el fichero';
 export const DELETE_FOREVER = 'Borrar Definitivamente';
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'La Factura se ha borrado Definitivamente.';
+export const DELETE_LOGO_CONFIRM = 'Estás seguro de eliminar el logo';
 export const DELETE_TAG = 'Borrar Etiqueta';
 export const DELETE_TAX = 'Borrar Impuesto';
 export const DELETED_DATA = "Los datos se han eliminado correctamente";
@@ -127,9 +135,13 @@ export const HOLDERS = 'Titulares';
 
 // ----- I
 
+export const IN_DEVELOPMENT = 'Esta opción está en desarrollo...';
 export const INACTIVE = 'Inactivo';
 export const INACTIVES = 'Inactivas';
 export const INBOX = 'Bandeja de Entrada';
+export const INCLUDE_COMPANY_DATA = 'Incluir Datos de Empresa';
+export const INCLUDE_LOGO = 'Incluir Logo';
+export const INFORMATION = 'Información';
 export const INVESTMENT = 'Inversión';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS =  'Conceptos Factura';
@@ -148,9 +160,9 @@ export const ISSUEDS = 'Emitidas';
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";
-export const LAST_STATUS = "Último estado";
-export const LOCATION = "Ubicación";
+export const LAST_LOCATION = 'Última ubicación';
+export const LAST_STATUS = 'Último estado';
+export const LOCATION = 'Ubicación';
 
 // ----- M
 
@@ -190,6 +202,7 @@ export const PENDINGS = 'Pendiente';
 export const PERMISSIONS = 'Permisos';
 export const PHONE = 'Teléfono';
 export const POSTAL_CODE = 'Código Postal';
+export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
 export const PRICE = 'Precio';
 export const PRINT_INVOICE = 'Imprimir Factura';

@@ -5,9 +5,11 @@ import {  setAttributes, setStyles } from "../../../services/utilsComponents.js"
 import {  setTime, setFullDate } from "../../../services/utils.js";
 import { createFormVacation } from "../forms/vacation.js";
 import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
-import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillTaskHolder, fillWorkGroup } from "./fill.js";
+import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
+import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
+import { createFormMov } from "../forms/mov-ss.js";
+import { createFormTimeControl } from "../forms/time-control.js";
 
 
 let isDefault = false;
@@ -76,7 +78,6 @@ export const buildTextareaToolbar =  (aonTextArea) => {
         name:MSG.ADD_FILE
     },() =>{});
 }
-
 
 const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
 
@@ -159,15 +160,19 @@ const appendChatMessage = (properties) => {
 } 
 
 /**
- * 
- * @param {HTMLElement} aonTextArea 
+ * @param {String} text optional
  * @param {HTMLElement} aon-messenger-chat 
  * @returns {Array} [value, messageEl] message element html
  */
-export const sendMessage = async (aonTextArea, aonMessengerChat) => {
-    await checkFilesAndSend(aonTextArea); //CHECK FILES COMMENT AND SEND
-
-    const value =  aonTextArea.value;
+export const sendMessage = async (text, aonMessengerChat) => {
+    let value = text;
+    if(!text){
+        let aonTextArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK);
+        await checkFilesAndSend(aonTextArea); //CHECK FILES COMMENT AND SEND
+        value = aonTextArea.value;
+        aonTextArea.clear();
+    }
+    
     if(!value || (value && !value.trim().length)) return ;
 
     const task = aonMessengerChat.task;
@@ -178,8 +183,6 @@ export const sendMessage = async (aonTextArea, aonMessengerChat) => {
         creation_date: new Date()
     }
 
-    aonTextArea.clear();
-    
     task.workflow.push(message);
 
     const messageEl = appendChatMessage({
@@ -278,7 +281,7 @@ const changeFormProcess = ({value,name}, aonMessengerChat) => {
     processDiv.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
     aonCard.getCard().style.marginTop = "10px";
-    if(task.id){ //BUTTON SHOW JSON
+    if(task.id && aonMessengerChat.getDur().isMessengerManager()){ //BUTTON SHOW JSON
         aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
             let d = aonMessengerChat.applicationEl.getDialog();
              if(d){
@@ -294,7 +297,12 @@ const changeFormProcess = ({value,name}, aonMessengerChat) => {
 
     if(value===1){ //FORM VACATION
         createFormVacation(aonCard, aonMessengerChat);
-    } 
+    } else if(value ===2) {
+        createFormMov(aonCard, aonMessengerChat);
+    }
+    else if(value ===3) {
+        createFormTimeControl(aonCard, aonMessengerChat);
+    }
 }
 
 const jsonDiv = ()=> {
@@ -321,8 +329,12 @@ const jsonDiv = ()=> {
  */
 export const buildForm = (div, aonMessengerChat) => {
     const task = aonMessengerChat.task;
-    const applicationParent = aonMessengerChat.applicationParentEl;
+    const dur = aonMessengerChat.getDur();
+    const aonMessenger = aonMessengerChat.applicationParentEl;
     const isGestor = task.isGestor();
+    const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
+
+    const dataDefault = aonMessengerChat.getData();
 
     isDefault = aonMessengerChat.getData().project && aonMessengerChat.getData().project.id;
 
@@ -333,12 +345,12 @@ export const buildForm = (div, aonMessengerChat) => {
     const aonCard = createCardMessenger(MSG.DATA, "");
     div.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
-    if(task.source !== TASK_SOURCE.CAU && applicationParent.cau && task.registry && task.registry.name){ // CARD TITLE REGISTRY
+    // if(task.source !== TASK_SOURCE.CAU && applicationParent.cau && task.registry && task.registry.name){ // CARD TITLE REGISTRY
+    if( task.registry && task.registry.name && isReceived(task, myWorkgroups) ){
         const registryName = `[${task.registry.name}]`;
         aonCard.setTitleSection1(registryName)
     }
-
-   //-----------------------END CREATE FIRST CARD
+    //-----------------------END CREATE FIRST CARD
 
     //-----------------------CREATE DIV PROCESS
     const divProcess = createStartJustifiedColumn().element;
@@ -359,29 +371,48 @@ export const buildForm = (div, aonMessengerChat) => {
     //-----------------TYPE REQUEST
     const requestTypeSelect = createRequestType();
     requestTypeSelect.style.width = "100%";
-    if(task.id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
+    if(task.id || dataDefault.source_id) requestTypeSelect.disabled = requestTypeSelect.readonly = true;
     rowsDiv.appendChild(requestTypeSelect);
-    
     //-----------------END TYPE REQUEST
-    const aonMessenger = aonMessengerChat.applicationParentEl;
-    const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
-    let initText = isReceived(task, myWorkgroups, task.isGestor(),  task.auth.email) ? 'De' : 'Para';
-    let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
-    const btnExternal = createAonSwitch(titleBtn);
-    rowsDiv.appendChild(btnExternal);
-    if(task.id || isDefault) btnExternal.disabled =  true;
-    btnExternal.checked = task.isProject();
-    btnExternal.addEventListener(EVENT.CHANGE, ({target}) => {
-        changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess);
-        if(!isGestor && target.checked) 
-            showTags(false);
-        else 
-            showTags(true);
-    });
- 
-    requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess));
 
-    ///AL CAMBIAR DE TIPO DE SOLICITUD SE LIMPIAN LOS DATOS DE PROJECT (ERROR)
+    //---------------------IS CAU
+    if(aonMessengerChat.isCau()){
+        showTags(false);
+        task.setSource(TASK_SOURCE.CAU);
+        requestTypeSelect.style.display = "none";
+
+        const selectTypeRequestCau = createSelectCau('typeCau', MESSENGER_IDS.TYPE_REQUEST_CAU, MSG.TYPE_REQUEST);
+        selectTypeRequestCau.style.width = "100%";
+        rowsDiv.appendChild(selectTypeRequestCau);
+        fillTypeRequestCau(aonMessengerChat);
+
+        const selectApp = createSelectCau('selectApp', MESSENGER_IDS.SELECT_APP, 'Aplicación');
+        selectApp.style.width = "100%";
+        selectApp.style.marginLeft = "5px";
+        rowsDiv.appendChild(selectApp);
+        fillSelectAppCau(aonMessengerChat);
+    } else if( 
+        (!task.id || task.isExternal()) && 
+        (!dur.isPayrollManager() && dur.isPayrollPortal()) &&
+        !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) )
+      ){
+        let initText = isReceived(task, myWorkgroups) ? 'De' : 'Para';
+        let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
+        const btnExternal = createAonSwitch(titleBtn);
+        rowsDiv.appendChild(btnExternal);
+        if(task.id || isDefault) btnExternal.disabled = CONSTANT.TRUE;
+        btnExternal.checked = task.isProject();
+        btnExternal.addEventListener(EVENT.CHANGE, ({target}) => {
+            console.log("---------------------CHANGE BTN INTERNAL--------");
+            changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess);
+            if(!isGestor && target.checked) 
+                showTags(false);
+            else 
+                showTags(true);
+        });
+    }
+
+    requestTypeSelect.addEventListener(EVENT.CHANGE, ()=> changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess));
 
     fillRequestType(task, aonMessengerChat);
 }
@@ -396,7 +427,7 @@ export const buildForm = (div, aonMessengerChat) => {
  const changeRequestType = (aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess) =>{
     const task = aonMessengerChat.task;
     const btnExternal = document.getElementById(MESSENGER_IDS.EXTERNAL_TASK);
-    if(btnExternal && btnExternal.disabled == "true")
+    if(btnExternal && btnExternal.disabled == CONSTANT.TRUE)
         task.cleanTask(true);
 
     const detail = requestTypeSelect.getDetail();
@@ -407,10 +438,12 @@ export const buildForm = (div, aonMessengerChat) => {
         const aonTextArea = document.getElementById(MESSENGER_IDS.DESCRIPTION_TASK);
         if(aonTextArea) aonTextArea.remove();
         //------------------HTML CLEAN UP
-        
         if(detail.value){
             task.setSource(detail.value);
-            task.setTitle(detail.name);
+            
+            if(!task.id)
+                task.setTitle(detail.name);
+               
             if(detail.value === TASK_SOURCE.REQUEST){
                 formRequest(columnsDivTwo, aonMessengerChat, btnExternal ? btnExternal.isChecked() : false);
             } else {
@@ -482,7 +515,7 @@ const addTaskDescription = (aonMessengerChat) => {
     if(!aonMessengerChat.isMobile()){ //-------------------------------------------------------DESKTOP
         const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
   
-        setStyles(aonTextArea, { minHeight: '150x', maxHeight: '300px', position: 'relative', borderRadius:"5px"});
+        setStyles(aonTextArea, { minHeight: '150px', maxHeight: '300px', position: 'relative', borderRadius:"5px"});
         processDiv.appendChild(aonTextArea);
         
         const label = aonTextArea.addLabelTextEnd();
@@ -545,8 +578,8 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
             const projectSelect = createProject();
             projectSelect.default = true;
             projectSelect.style.width = "100%";
-            if(isGestor)  projectSelect.style.marginLeft = "5px";
-            if(task.id) projectSelect.disabled = projectSelect.readonly = true;
+            if(isGestor) projectSelect.style.marginLeft = "5px";
+            if(task.id) setAttributes(projectSelect, {disabled:CONSTANT.TRUE, readonly:CONSTANT.TRUE});
             rowsDivThree.appendChild(projectSelect);
             fillProject(task);
         } 
@@ -567,21 +600,24 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
  */
 const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
     const task = aonMessengerChat.task;
+    const dataDefault = aonMessengerChat.getData();
     const isGestor = task.isGestor();
 
     const divTwo = createReceiverDiv().element;
     columnsDiv.appendChild(divTwo);
 
     //-----------------TYPE PROCESS
-    const typeProcess = createProcessType();
-    typeProcess.default = true;
-    typeProcess.style.width = "100%";
-    divTwo.appendChild(typeProcess);
-    typeProcess.addEventListener(EVENT.CHANGE, ({detail})=>{
+    const processType = createProcessType();
+    processType.default = CONSTANT.TRUE;
+    processType.style.width = "100%";
+    if(dataDefault.source_id) setAttributes(processType, {disabled:CONSTANT.TRUE, readonly:CONSTANT.TRUE});
+    divTwo.appendChild(processType);
+    processType.addEventListener(EVENT.CHANGE, ({detail})=>{
         if(detail && detail.value)
             changeFormProcess(detail, aonMessengerChat);
     })
     fillProcessType(task, aonMessengerChat);
+    if(task.id) processType.setDisabled(CONSTANT.TRUE);
         
     if(forManager){
         //--------- DIV PROJECT
@@ -596,7 +632,7 @@ const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
         fillProject(task);
     }
 
-    if(isGestor) {
+    if((isGestor || !forManager) && !aonMessengerChat.getApplicationParent().cau){
         //--------------------------DIV WORKGROUP AND TASKHOLDER
         addTaskHolderAndWorkgroup(task, aonMessengerChat, columnsDiv);
     }
@@ -770,16 +806,16 @@ const showTags = (b) => {
  * @param {Array} workgroups my workgrouprs
  * @returns 
  */
-export const isReceived = (task, workgroups, isGestor, email) => {
+const isReceived = (task, workgroups) => {
     let condition = false;
     try {
         if(task.id){
             const isWorkgroup = workgroups.some(({id})=> id === task.workgroup.id );
-            condition = isGestor
+            condition = task.isGestor()
             ? 
                 (task.task_holder.id === task.myTaskHolder.id) || isWorkgroup 
             : 
-                task.sender.id && task.gtask_id ===email;
+                task.sender.id && task.gtask_id === task.auth.email;
         }
     } catch (error) {console.log(error);}
     return condition;
