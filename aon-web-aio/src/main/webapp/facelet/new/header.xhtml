@@ -109,8 +109,26 @@
 		border-right:none;
     	border-bottom: 1px solid #ddd;
 	}	
-	.gwt-TabLayoutPanelTab {
-		background-color: #ddd;
+	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+		color : #4b4b4b;
+		background: none;
+		border-top: none;
+		border-left: none;
+		border-right: none;
+		border-bottom: 2px solid #fff;
+	}
+	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+		color : #000;
+		background: none;
+		border-top: none;
+		border-left: none;
+		border-right: none;
+		border-bottom: 2px solid #2152a5;
+	}
+	
+	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+		padding-top: 5px;
+		border-bottom: 2px solid #fff;
 	}
 	
 	.aon-table-row-hover {
@@ -429,7 +447,7 @@
 	}
 	
 	.aon-rigth-bar .aon-direct-access-list-element:hover {
-		background-color: #fff !important;
+		background-color: #fff;
 	}
 	
 	.aon-button-fiscal {
@@ -477,6 +495,15 @@
 		background-size:32px;
 	}
 
+	.aon-button-notes {
+		padding-top:4px;
+		padding-bottom: 4px;
+		padding-right:36px;
+		display:inline-block;
+		background: url(#{aonResource.resolve['/images/aon-notes.svg']}) scroll right center no-repeat;
+		background-size:32px;
+	}
+
 	.aon-button {
 		padding-top:4px;
 		padding-bottom: 4px;
@@ -495,6 +522,28 @@
 	{
 		padding-right:44px;
 		background-size:40px;
+	}
+	
+	.aon-support {
+		padding: 0.5em 1.5em;
+	}
+	
+	.aon-direct-access-list-head {
+		color: white; 
+		font-size: 18px; 
+		font-weight: 400;
+		padding: 16px 8px;
+		margin-bottom: 0.5em;
+		background-color: #1f8cff;
+	}
+	
+	.aon-direct-access-list-element a {
+		overflow : hidden;
+  		text-overflow: ellipsis;
+  	}	
+	
+	.aon-menu-portlet {
+		min-height: 600px;
 	}
 	
 	.aon-pl-10{

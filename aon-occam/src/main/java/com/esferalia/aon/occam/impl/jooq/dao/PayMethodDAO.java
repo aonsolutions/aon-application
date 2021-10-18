@@ -135,23 +135,11 @@ public class PayMethodDAO {
 	}
 
 	public static PayMethod  get(AONContext ctx, Integer id) {
-		ctx.checkRead();
-		return getSelect(ctx, p -> p.getIdProperty().eq(id))
-			.fetch()
-			.stream()
-			.map( new PayMethodFiller())
-			.findFirst()
-			.orElse(null);
+		return get(ctx, p -> p.getIdProperty().eq(id));
 	}
 
 	public static PayMethod  get(AONContext ctx, String name) {
-		ctx.checkRead();
-		return getSelect(ctx, p -> p.getNameProperty().eq(name))
-			.fetch()
-			.stream()
-			.map( new PayMethodFiller())
-			.findFirst()
-			.orElse(null);
+		return get(ctx, p -> p.getNameProperty().eq(name));
 	}
 	
 	public static PayMethod get(AONContext ctx, PayMethodFilter filter) {

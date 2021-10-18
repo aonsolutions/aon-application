@@ -23,6 +23,7 @@ public interface IJsonNames {
 	String ACTIVITY_TYPE = "activity_type";
 	String ACTIVITY_DESCRIPTION = "activityDescription";
 	String ADDRESS = "address";
+	String ADDRESS2 = "address2";
 	String ADJUST = "adjust";
 	String ADMINISTRATION = "administration";
 	String ADMINISTRATIVE = "administrative";
@@ -297,6 +298,7 @@ public interface IJsonNames {
 	String STATEMENT = "statement";
 	String STATEMENTS = "statements";
 	String STATUS = "status";
+	String STREET_TYPE = "streetType";
 	String SUBJECT = "subject";
 	String SURCHARGE_QUOTA = "surcharge_quota";
 	String SURCHARGE = "surcharge";

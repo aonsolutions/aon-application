@@ -21,6 +21,8 @@ import { Registry } from '../../models/registry/Registry.js';
 import { Address } from '../../models/registry/Address.js';
 import { getReader } from '../../services/utils.js';
 import { deleteAttach, getAttach, uploadAttach, uploadFile } from '../../services/fileService.js';
+import { Countries } from '../../services/country.js';
+import { AonSelect } from '../../components/aon-select.js';
 
 export class AonReg extends AonElement {
 
@@ -116,23 +118,45 @@ export class AonReg extends AonElement {
 
 		table.addRow();
 
+		let countryInput = new AonSelect();
+		countryInput.id = 'aonConfigurationGeneralCountry';
+		countryInput.title = MSG.COUNTRY;
+		countryInput.options = JSON.stringify(
+		  Countries.map((c) => {
+			return { value: c.iso2, name: c.iso2 };
+		  })
+		);
+		countryInput.value = this.registry.getDocumentCountry();
+		countryInput.addEventListener(EVENT.SELECT, () => 
+			 this.registry.setDocumentCountry(countryInput.value));
+		let countryTd = table.addCell(countryInput);
+		countryTd.style.width = '20%';
+
 		let documentInput = new AonInput();
 		documentInput.id = 'aonConfigurationGeneralNif';
-		documentInput.description = MSG.DOCUMENT;
+		documentInput.description = MSG.NIF;
 		documentInput.value = this.registry.getDocument();
 		documentInput.addEventListener(EVENT.CHANGE, () => this.registry.setDocument(documentInput.value));
 
 		let td = table.addCell(documentInput);
 		td.style.width = '25%';
 
+		let aliasInput = new AonInput();
+		aliasInput.id = 'aonConfigurationGeneralAlias';
+		aliasInput.description = MSG.COMMERCIAL_NAME + ' / ' + MSG.ALIAS;
+		aliasInput.value = this.registry.getAlias();
+		aliasInput.addEventListener(EVENT.CHANGE, () => this.registry.setAlias(aliasInput.value));
+		let td1 = table.addCell(aliasInput);
+		td1.style.width = '55%';
+
+		table.addRow();
+
 		let nameInput = new AonInput();
 		nameInput.id = 'aonConfigurationGeneralName';
-		nameInput.description = MSG.NAME;
+		nameInput.description = MSG.BUSINESS_NAME + ' / ' + MSG.NAME;
 		nameInput.value = this.registry.getName();
 		nameInput.addEventListener(EVENT.CHANGE, () => this.registry.setName(nameInput.value));
-
-		let td1 = table.addCell(nameInput);
-		td1.style.width = '75%';
+		table.addCell(nameInput, 3);
 
 		this.buildAddresses(div);
 
@@ -166,7 +190,7 @@ export class AonReg extends AonElement {
 			getAttach(filter).then(attach => {
 				this.logo = attach;
 				if(this.logo.id)
-					uploadLogo.setShowDeleteButton(true);
+					uploadLogo.setAttach(attach);
 			});
 		}
 	}

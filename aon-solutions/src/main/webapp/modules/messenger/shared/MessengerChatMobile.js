@@ -2,10 +2,10 @@ import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents.js";
-import * as ACTIONS from "../../actions.js";
 import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";
-import { buildForm, buildTextareaToolbar } from "./utils.js";
+import { addIconToolbar, buildForm, buildTextareaToolbar } from "./utils.js";
+import * as ACTIONS from "../../actions.js";
 
 /**
  * 
@@ -160,11 +160,17 @@ const changeStyleSectionComment = (divs) => {
     divs.aonTextArea.style.fontSize = "15px";
     divs.aonTextArea.style.margin = "0";
     divs.aonTextArea.style.minHeight = "55px";
-    divs.divComment.style. background = "#fff";
+    divs.divComment.style.background = "#fff";
     divs.iconOpenFull.querySelector("i").style.fontSize = "1.8em";
     divs.iconSend.querySelector("i").style.fontSize = "1.8em";
 }
 
+/**
+ * 
+ * @param {HTMLElement} aonMessengerChat 
+ * @param {HTMLElement} div 
+ * @param {Boolean} create form create true or false
+ */
 const buildToolbar = (aonMessengerChat, div, create = false) => {
     const task = aonMessengerChat.task;
     /**
@@ -173,39 +179,47 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
      const sourceText =  MSG[task.source.toString().toUpperCase()] || task.source;
      const toolbar = setAttributes(new AonToolbar(),{
         type: ToolbarType.SECONDARY,
-        title:sourceText +" #" + (task.number || "0").toString().padStart(5, 0)
+        title:sourceText +" #" + (task.number || "0").toString().padStart(5, 0),
+       
     });
     toolbar.style.width = "100%"; 
     
     div.appendChild(toolbar);
 
     if(create){
-        if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status))
+        if([TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status)){
             toolbar.addButton2(ACTIONS.SAVE,() => aonMessengerChat.save())
+        }
     } else {
+        toolbar.addButton2({...ACTIONS.SHOW_FILE, name:"Mostrar"},() =>showForm(true, true));
         toolbar.addButton2(ACTIONS.EDIT,() => showForm(true));
     }
     
     toolbar.addButton2(ACTIONS.BACK,() =>{
         if(task.id && create) {
             showForm(false);
-        }
-        else 
+        } else 
             aonMessengerChat.back();
     });
+
+    addIconToolbar(toolbar, task);
 }
 
 /**
  * 
  * @param {Boolean} b true or false 
  */
-const showForm = (b) => {
+const showForm = (b, cardDataHidden = false) => {
     const divMainTwo = document.getElementById(MESSENGER_IDS.DIV_MAIN_MOBILE);
     let styles = {zIndex : -9, opacity : 0};
     if(b)
         styles = {zIndex: 9, opacity: 1, left: 0};
 
-    setTimeout(() => setStyles(divMainTwo, styles), 100);
+    setStyles(divMainTwo, styles);
+
+    let aonCardDate = document.getElementById(MSG.DATA);
+    if(aonCardDate) aonCardDate.style.display = cardDataHidden ? "none": "block";  
+    hiddenBtnToolbar(divMainTwo, cardDataHidden, ACTIONS.BACK.id);
 }
 
 /**
@@ -218,53 +232,12 @@ const showFullComment  = (b) => {
     const aonTextArea = document.getElementById(MESSENGER_IDS.COMMENT_TASK)
     if(b){
         if(aonTextArea.value) textarea.value = aonTextArea.value;
-        // show writter
-        let componentWrite = setStyles(writter, { display: "flex" });
-        setTimeout(() => setStyles(componentWrite, {zIndex: 9,opacity: 1,left: 0}), 100);
+        setTimeout(() => setStyles(writter, {display: "flex", zIndex: 9,opacity: 1,left: 0}), 100);
     } else {
-        setTimeout(() => setStyles(document.getElementById(MESSENGER_COMPONENTS.WRITTER),{zIndex : -9, opacity : 0}), 100);
+        setTimeout(() => setStyles(writter,{zIndex : -9, opacity : 0}), 100);
     }
 } 
 
-/**
- * 
- * @param {HTMLElement} div div class aonMobileSubContent
- * @param {HTMLElement} aonMessengerChat component aon-messenger-chat.js
- */
- const buildQuery = (div, aonMessengerChat) => {
-    const task = aonMessengerChat.task;
-
-    // buildFormQuery(div, aonMessengerChat);
-
-    // /**
-    //  * Creating text area
-    //  */
-    const aonTextArea = setStyles(createAonTextArea(`${MSG.WRITE_A_DESCRIPTION}...`),{
-        height: "100%",
-        width: "100%",
-        boxShadow : "none",
-        marginTop : 0
-    });
-    aonTextArea.id = MESSENGER_IDS.DESCRIPTION_TASK;
-    div.appendChild(aonTextArea);
-    if(task && task.getDescriptionJson().observation) aonTextArea.value = task.getDescriptionJson().observation;
-    buildTextareaToolbar(aonTextArea);
-
-   /**
-    * CHANGE STYLE AONTEXTAAREA
-    */
-    let textAreaDiv = aonTextArea.getTextAreaDiv();
-    if(textAreaDiv) textAreaDiv.style.padding = "20px";
-
-    const aonTextAreaToolbar = aonTextArea.getToolbar();
-    if(aonTextAreaToolbar){
-        setStyles(aonTextAreaToolbar,{
-            paddingLeft  : "calc(1.5em - 5px)",
-            paddingRight : "calc(1.5em - 5px)",
-            borderBottom : "1px solid #e0e0e0"
-        });
-    }
-}
 
 const createFirstDiv = (mainView) => {
     const firstDiv = newComponent({
@@ -308,7 +281,7 @@ const createSecondDiv = (mainView) => {
             background: CSS.variable(COLORS.AON_WHITE),
             position: 'absolute',
             top: '0%',
-            transition: '.5s',
+            // transition: '.5s',
             opacity: 0,
             zIndex: -9
         }
@@ -325,3 +298,24 @@ const createSecondDiv = (mainView) => {
     return secondDiv;
 }
   
+/**
+ * 
+ * @param {HTMLElement} parent
+ * @param {Boolean} b true or false
+ * @param {String} exclude name exclude
+ */
+const hiddenBtnToolbar =(parent, b, exclude) => {
+    const toolbar =  parent.querySelector(`aon-toolbar`);
+    if(toolbar){
+        const section = toolbar.getToolSection();
+        if(section){
+            [...section.querySelectorAll("span")].forEach(el=>{
+                const child  = el.firstChild;
+                if(exclude && child && child.id.toString().includes(exclude)){
+                    el.style.display = "block";
+                } else 
+                    el.style.display = b ? "none" : "block";
+            });
+        }
+    }
+}

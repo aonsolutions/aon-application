@@ -1,5 +1,5 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, TAG } from "../environments/environments.js";3
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../environments/environments.js";3
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonIcon } from "./aon-icon.js";
 import "./aon-toolbar.js";
@@ -718,6 +718,10 @@ export class AonApplication extends AonElement {
     return el;
   }
 
+  getSidenav() {
+    return this.getElement(this.SIDENAV);
+  }
+
   getContent() {
     return this.getElement(this.CONTENT);
   }
@@ -736,7 +740,7 @@ export class AonApplication extends AonElement {
     );
   }
 
-  development(title='Información', subtitle='Esta opción está en desarrollo...') {
+  development(title=MSG.INFORMATION, subtitle=MSG.IN_DEVELOPMENT) {
 		this.confirmDialog(title, subtitle, () => {});
 	}
 

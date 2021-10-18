@@ -26,7 +26,7 @@ export class Registry {
             this.domain = new Domain(registry.domain);
             this.document = registry.document;
             this.documentType = registry.documentType;
-            this.documentCountry = registry.documentCountry;
+            this.documentCountry = registry.documentCountry || 'ES';
             this.name = registry.name;
             this.alias = registry.alias;
             this.legalPerson = registry.legalPerson;
@@ -42,6 +42,7 @@ export class Registry {
         } else {
             this.domain = new Domain();
             this.document = '';
+            this.documentCountry = 'ES';
             this.name = '';
             this.alias = '';
             this.legalPerson = false;

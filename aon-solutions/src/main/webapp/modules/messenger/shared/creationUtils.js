@@ -10,6 +10,13 @@ import { newComponent, setAttributes, setStyles } from "../../../services/utilsC
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 
+
+export const createBtnAccept = () => {
+  let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
+  btnAccept.className = CSS.AON_BUTTON;
+  btnAccept.textContent = "Procesar";
+  return btnAccept;
+}
 // ----------------------------------------------------
 // MAIN VIEW
 // ----------------------------------------------------
@@ -186,14 +193,21 @@ const createCommentContent = (properties) => newComponent({
   }
 });
 
-
-export const createAction = (icon, message) => {
+/**
+ * 
+ * @param {Object} icon 
+ * @param {String} message 
+ * @param {String} submessage optional submessage
+ * @returns 
+ */
+export const createAction = (icon, message, submessage) => {
   const comp = createStartJustifiedRow();
   setStyles(comp.element,{
     width :"100%",
     padding:"5px 0",
-    textAlign: "justify"
-  })
+    textAlign: "justify",
+    flexWrap: "wrap"
+  });
 
   const wrapper = newComponent({
   classes : [CSS.CENTER_FLEX],
@@ -219,10 +233,26 @@ export const createAction = (icon, message) => {
     fontWeight:400,
     color : CSS.variable(COLORS.GRAYSON)
   });
+  text.element.style.flex = "1 0";
   
   image.appendTo(wrapper.element);
   wrapper.appendTo(comp.element);
   text.appendTo(comp.element);
+  if(submessage){
+    const blockquote = newComponent({
+      type:"blockquote",
+      text:submessage,
+      styles : {
+        margin:"0px 0px 0px 5.8ex",
+        borderLeft:"1px solid rgb(204,204,204)",
+        paddingLeft:"1ex",
+        flex: "100%",
+        fontWeight: 500,
+        color:CSS.variable(COLORS.ONLINE_GREEN)
+      }
+    });
+    blockquote.appendTo(comp.element);
+  }
 
   return comp;
 }
@@ -655,7 +685,7 @@ export const appendTaskTag = ( tag, parent, fn) =>{
     padding: "0 4px",
     backgroundColor: "rgb(221, 221, 221)",
     color: "rgb(102, 102, 102)",
-    margin: "0 5px 5px 5px",
+    margin: "5px",
     fontWeight: "450" 
   });
   divOne.dataset.taskTag = tag.id;
@@ -670,7 +700,7 @@ export const appendTaskTag = ( tag, parent, fn) =>{
   divThree.addEventListener(EVENT.CLICK,()=> fn(tag.id));
   divOne.appendChild(divThree);
 
-  const i = setStyles(document.createElement("i"),{fontSize: "15px" });
+  const i = setStyles(document.createElement("i"),{ fontSize: "15px" });
   i.className = ICON_TYPES.MATERIAL_ICONS;
   i.innerText = MATERIAL_ICONS.CLOSE;
   divThree.appendChild(i);

@@ -8,7 +8,8 @@ import { getCccForActivity } from "../../../services/contractService.js";
 import {  serializeForm } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS } from "../MessengerEnums.js";
-import { createDivEditable } from "../shared/creationUtils.js";
+import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
+import { getGrupoCotizacion, getOcupacion, getTipoContrato } from "../../../services/comunicaService.js";
 
 
 /**
@@ -39,7 +40,7 @@ import { createDivEditable } from "../shared/creationUtils.js";
     //---------------------END DATA EMPLOYEE
 
     //---------------------DATA CONTRACT
-    createDataContract(form, data);
+    createDataContract(form, data, aonMessengerChat);
     //---------------------END DATA CONTRACT
 
 }
@@ -116,9 +117,10 @@ const createDataEnterprise = (form, data) => {
  * 
  * @param {HTMLElement} form 
  * @param {Object} data 
+ * @param {HTMLElement} aonMessengerChat aon-messenger-chat 
  */
- const createDataContract = (form, data) => {
-     
+ const createDataContract = (form, data, aonMessengerChat) => {
+    // const dur = aonMessengerChat.getDur();
     createTitle(form, "Datos del Contrato");
 
     let fra = setAttributes(new AonDate(),{ title: MSG.START_DATE, id:"fra", name:"fra"});
@@ -199,60 +201,31 @@ const createDataEnterprise = (form, data) => {
         frb.disabledDate(target.checked);
     });
 
-    // //OBSERVATION
+    //---------------------DATA RESTANT
+    if(data.fra){
+        let contract = setAttributes(new AonSelect(),{ title: "Tipo de contrato", id:"contract", name:"contract", autocomplete: CONSTANT.OFF});
+        createDiv(form, contract, {classes:[CSS.AON_COL_SM_4]});
+        fillContract(contract, data.contract);
+    
+        let gc = setAttributes(new AonSelect(),{ title: "Grupo de cotización", id:"gc", name:"gc"});
+        createDiv(form, gc, {classes:[CSS.AON_COL_SM_4]});
+        fillGc(gc, data.gc);
+    
+        let ocup = setAttributes(new AonSelect(),{ title: "Ocupación", id:"ocup", name:"ocup"});
+        createDiv(form, ocup, {classes:[CSS.AON_COL_SM_4]});
+        fillOcu(ocup, data.ocup);
+    }
+
+
+    // ------------OBSERVATION
     const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
     createDiv(form, observation, {classes:[CSS.AON_COL_XS_12]});
+
+    let btnAccept = createBtnAccept();
+    btnAccept.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.getApplication().development() );
+     
+    createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
 }
-
-//-----------FILL
-const fillCtaCti = (aonSelect, data) => {
-
-    getCccForActivity().then(({cccs})=>{
-        
-        let options = [];
-        for (const key in cccs) {
-            const ccc = cccs[key];
-            options.push(ccc);
-        }
-
-        options = options.filter( (v,index, self)=>self.findIndex((m) => m.ccc === v.ccc) === index ).map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
-
-        if(data.ctaCti &&  data.regime){
-            const exists = options.some(v => v.ccc === data.ctaCti);
-            if(!exists)  options.push({ccc: data.ctaCti, cccRegimeCode: data.regime});
-        }
-
-        aonSelect.setOptions( options );
-
-        if(data.ctaCti) aonSelect.value = data.ctaCti;
-    });
-}
-
-//-----------FILL
-const fillSalaryType = (aonSelect, salaryType) => {
-    let options = [
-        {name: 'Bruto', value:1},
-        {name: 'Neto', value: 2}
-    ];
-
-    aonSelect.setOptions( options );
-
-    if(salaryType) aonSelect.value = salaryType;
-}
-
-//-----------FILL
-const fillJornadaType = (aonSelect, jornadaType) => {
-    let options = [
-        {name: 'Semanal', value:1},
-        {name: 'Diaria', value: 2}
-    ];
-
-    aonSelect.setOptions( options );
-
-    if(jornadaType) aonSelect.value = jornadaType;
-}
-
-
 
 /**
  * 
@@ -301,4 +274,103 @@ const createDiv = (parent, child, properties)=> {
     div.appendChild(child);
 
     return div;
+}
+
+
+
+//-----------FILL CTACTI
+const fillCtaCti = (aonSelect, data) => {
+
+    getCccForActivity().then(({cccs})=>{
+        
+        let options = [];
+        for (const key in cccs) {
+            const ccc = cccs[key];
+            options.push(ccc);
+        }
+
+        options = options.filter( (v,index, self)=>self.findIndex((m) => m.ccc === v.ccc) === index ).map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
+
+        if(data.ctaCti &&  data.regime){
+            const exists = options.some(v => v.ccc === data.ctaCti);
+            if(!exists)  options.push({ccc: data.ctaCti, cccRegimeCode: data.regime, name: `${data.regime} - ${data.ctaCti}`, value: data.ctaCti });
+        }
+
+        aonSelect.setOptions( options );
+
+        if(data.ctaCti) aonSelect.value = data.ctaCti;
+    });
+}
+
+//-----------FILL SALARYTYPE
+const fillSalaryType = (aonSelect, salaryType) => {
+    let options = [
+        {name: 'Bruto', value:1},
+        {name: 'Neto', value: 2}
+    ];
+
+    aonSelect.setOptions( options );
+
+    if(salaryType) aonSelect.value = salaryType;
+}
+
+//-----------FILL JORNADATYPE
+const fillJornadaType = (aonSelect, jornadaType) => {
+    let options = [
+        {name: 'Semanal', value:1},
+        {name: 'Diaria', value: 2}
+    ];
+
+    aonSelect.setOptions( options );
+
+    if(jornadaType) aonSelect.value = jornadaType;
+}
+
+
+//-----------FILL CONTRACT
+const fillContract = (aonSelect, contract) => {
+    getTipoContrato().then(resp=>{
+        let options = resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}));
+
+        if(contract){
+            const exists = options.some(v => v.value === contract);
+            if(!exists)  options.push({name: contract, value: contract});
+        }
+
+        aonSelect.setOptions( options );
+
+        if(contract) aonSelect.value = contract;
+    })
+}
+
+//-----------FILL GRUPO DE COTIZACION
+const fillGc = (aonSelect, gc) => {
+    getGrupoCotizacion().then(resp=>{
+        let options = resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}) );
+
+        if(gc){
+            const exists = options.some(v => v.value === gc);
+            if(!exists)  options.push({name: gc, value: gc});
+        }
+
+        aonSelect.setOptions( options );
+
+        if(gc) aonSelect.value = gc;
+    })
+}
+
+//-----------FILL OCUPACION
+const fillOcu = (aonSelect, ocup) => {
+    getOcupacion().then(resp=>{
+        let options = resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}));
+
+        if(ocup){
+            const exists = options.some(v => v.value === ocup);
+            if(!exists)  options.push({name: ocup, value: ocup});
+        }
+
+        aonSelect.setOptions( options );
+
+        if(ocup) aonSelect.value = ocup;
+    })
 }

@@ -67,16 +67,16 @@ export class AonMarketplace extends AonElement {
 		this.buildTitle('Packs');
 		this.buildApps(Packs, dur);
 
-		this.buildTitle('Aplicaciones');
+		this.buildTitle(MSG.APPLICATIONS);
 		this.buildApps(Apps, dur);
 
-		this.buildTitle('Servicios');
+		this.buildTitle(MSG.SERVICES);
 		this.buildApps(Services, dur);
 
-		this.buildTitle('Aplicaciones Clásicas');
+		this.buildTitle(MSG.CLASSIC_APPLICATIONS);
 		this.buildApps(ClassicApps, dur);
 
-		this.buildTitle('Otros Servicios');
+		this.buildTitle(MSG.OTHER_SERVICES);
 		this.buildApps(OtherServices, dur);
 	}
 
@@ -315,6 +315,9 @@ export class AonMarketplace extends AonElement {
 			return dur.hasPackSuite();
 		else if(App.AIO === app)
 			return false;
+		else if(App.BANK === app) {
+			return dur.getDomain().isParent();
+		}
 		else return false;
 	}
 }

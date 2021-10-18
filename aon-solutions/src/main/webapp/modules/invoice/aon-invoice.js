@@ -1,5 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices, getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail} from '../../services/service.js';
+import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices,
+	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -590,10 +591,20 @@ export class AonInvoice extends AonElement {
 		registry.readonly = this.invoice.isReadonly();
 		registry.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setRegistry(registry.getRegistry());
+			getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
+				this.invoice.setPaymethod(rpm.paymethod.id);
+				this.invoice.setBankAccount(rpm.rbank.bank_account);
+				this.reload();
+			});
 			if(this.autosave) this.save();
 		});
 		registry.addEventListener(EVENT.SELECT, () => {
 			this.invoice.setRegistry(registry.getRegistry());
+			getRegistryPaymethod({registry: registry.getRegistry().id}).then(pm => {
+				this.invoice.setPaymethod(rpm.paymethod.id);
+				this.invoice.setBankAccount(rpm.rbank.bank_account);
+				this.reload();
+			});
 			if(this.autosave) this.save();
 		});
 		table.addCell(registry, this.invoice.isEmitida() ? '4' : '6');
@@ -1431,6 +1442,7 @@ export class AonInvoice extends AonElement {
 				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json))
 				: this.getInvoice().file.url;
 			viewer.width = fileDiv.offsetWidth;
+			viewer.addEventListener(EVENT.SEND_MAIL, () => this.sendInvoice());
 			fileDiv.appendChild(viewer);
 		}
 	}

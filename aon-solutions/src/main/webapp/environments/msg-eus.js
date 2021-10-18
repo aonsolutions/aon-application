@@ -9,6 +9,7 @@ export const ACTIVATE = 'Aktibatu';
 export const ACTIVE = 'Aktibo';
 export const ACTIVES = 'Aktibo';
 export const ACTIVITY = 'Aktibitatea';
+export const ACTIVITY_SUMMARY = 'Jardueren Laburpena';
 export const ADD = 'Gehitu';
 export const ADD_CATEGORY = 'Kategoria Gehitu';
 export const ADD_COMMENT = 'Iruzkina Gehitu';
@@ -21,6 +22,7 @@ export const ADDRESS = 'Helbidea';
 export const ALL_FILES = 'Fitxategi Guztiak';
 export const AMOUNT = 'Zenbatekoa';
 export const API_DOCUMENTATION = 'APIren Dokumentazioa';
+export const APPLICATIONS = 'Aplikazioak';
 export const ASESOR = 'Aholkulari';
 export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrastatu edo hautatu fitxategia';
 export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrastatu edo hautatu hondoa';
@@ -47,12 +49,16 @@ export const CATEGORY = 'Kategoria';
 export const CATEGORIES = 'Kategoriak';
 export const CHANGE_TYPE = 'Mota Aldatu';
 export const CITY = 'Hiria';
+export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
+export const CLASSIC_VIEW = 'Ikuspegi Klasikoa';
+export const CLOSE = 'Itxi';
 export const CODE = 'Kodea';
 export const COMMENT = 'Iruzkina';
 export const COMMENTS = 'Iruzkinak';
 export const COMPANIES = 'Enpresak';
 export const COMPANY = 'Enpresa';
 export const COMPANY_COSTS = 'Enpresaren kostuak';
+export const COMPANY_MANAGEMENT = 'Enpresen Kudeaketa';
 export const COMPONENTS = 'Osagaiak';
 export const CONCEPT = 'Kontzeptua';
 export const CONCEPTS = 'Kontzeptuak';
@@ -63,6 +69,7 @@ export const CONTACT_DATA = 'Kontaktuaren Datuak';
 export const CONTACTS = 'Kontaktuak';
 export const CONTRACT = 'Kontratatu';
 export const COUNTRY = 'Herrialde';
+export const CREATE = 'Sortu';
 export const CREDITOR = 'Hartzekodun';
 export const CREDITORS = 'Hartzekodunak';
 export const CUSTOMER = 'Bezero';
@@ -123,20 +130,28 @@ export const FOOTER = 'Oina';
 
 export const GENERAL_INFORMATION = 'Informazio Generala';
 export const GROUP_DATA = 'Taldeko Datuak';
+export const GROUP_MANAGEMENT = 'Taldeen Kudeaketa';
 export const GROUP = 'Taldea';
 export const GROUPS = 'Taldeak';
 
 // ----- H
 
 export const HEADER = 'Goiburu';
+export const HIRING = 'Kontratazioa';
 export const HOLDER = 'Titularra';
 export const HOLDERS = 'Titularrak';
+export const HOURS = "Orduak";
+export const HISTORIC = "Historia";
 
 // ----- I
 
+export const IN_DEVELOPMENT = 'Aukera hau garatzen ari da...';
 export const INACTIVE = 'Ez-Aktibo';
 export const INACTIVES = 'Ez-Aktibo';
 export const INBOX = 'Sarrera-Ontzia';
+export const INCLUDE_COMPANY_DATA = 'Sartu Enpresaren Datuak';
+export const INCLUDE_LOGO = 'Sartu Logoa';
+export const INFORMATION = 'Informazioa';
 export const INVESTMENT = 'Inbertsioa';
 export const INVOICE = 'Faktura';
 export const INVOICE_CONCEPTS = 'Fakturaren Kontzeptuak';
@@ -155,9 +170,9 @@ export const ISSUEDS = 'Igorritakoak';
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";
-export const LAST_STATUS = "Último estado";
-export const LOCATION = "Ubicación";
+export const LAST_LOCATION = 'Azken kokapena';
+export const LAST_STATUS = 'Azken egoera';
+export const LOCATION = 'Kokapena';
 
 // ----- M
 
@@ -178,11 +193,15 @@ export const NEXT = 'Hurrengoa';
 export const NUMBER = 'Zenbakia';
 
 // ----- O
-
+export const OBSERVATION = 'Oharra';
+export const OFFICE = 'Bulegoa';
 export const ONLY_PORTAL = 'Portala Soilik';
 export const OPEN = 'Ireki';
 export const OPEN_MENU = 'Ireki Menua';
+export const OPEN_REQUESTS = 'Irekita Dauden Eskaerak';
+export const OPTIONAL = "Aukerako";
 export const OPTIONS = 'Aukerak';
+export const OTHER_SERVICES = 'Beste Zerbitzuak';
 
 // ----- P
 
@@ -232,6 +251,8 @@ export const REJECTED_INVOICES = 'Baztertu Diren Fakturak';
 export const REJECTEDS = 'Baztertua';
 export const REQUEST = 'Eskaera';
 export const REQUESTS = 'Eskaerak';
+export const REQUESTS_SENT = 'Bidalitako Eskaerak';
+export const REQUESTS_RECEIVED = 'Jasotako Eskaerak';
 export const RESTORE = 'Berreskuratu';
 export const RESTORED_DATA = 'Datuak zuzen berreskuratu dira';
 export const RESTORE_INVOICE = 'Faktura Berreskuratu';
@@ -252,6 +273,7 @@ export const SEND_INVOICES =  'Fakturak Bidali';
 export const SEPA_FILES = 'SEPA Fitxategiak';
 export const SERIE = 'Serie';
 export const SERVICE = 'Zerbitzu';
+export const SERVICES = 'Zerbitzuak';
 export const SETTING = 'Konfigurazioa';
 export const SHOW_FILE = 'Fitxategia Erakutsi';
 export const SII = 'SII';

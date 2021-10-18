@@ -100,11 +100,14 @@ export class AonViewer extends AonElement {
 		aibm.id = "aonViewerButtonsDivEmail";
 		aibm.icon = "email";
 		aibm.background = "#f1f1f1";
+		aibm.addEventListener(EVENT.CLICK, () => {
+			this.dispatchEvent(new CustomEvent(EVENT.SEND_MAIL));
+		});
 		mail.appendChild(aibm);
 		div.appendChild(mail);
 
 		let print = this.createElement(TAG.SPAN);
-		print.style.marginTop =  "4px";
+		print.style.marginTop = "4px";
 		let aibp = new AonIconButton();
 		aibp.id = "aonViewerButtonsDivPrint";
 		aibp.icon = "print";

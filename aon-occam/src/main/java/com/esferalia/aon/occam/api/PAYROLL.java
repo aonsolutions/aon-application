@@ -40,6 +40,18 @@ public class PAYROLL {
 		}
 	}
 
+	public static ContractData[] setData(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate, ContractData... contractDatas) {
+		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
+			return getPayroll().setData(ctx, domainName, ccc, naf, startDate, endDate, contractDatas);
+		}
+	}
+
+	public static ContractData[] getData(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
+		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
+			return getPayroll().getData(ctx, domainName, ccc, naf, startDate, endDate);
+		}
+	}
+
 	// -------------------- DEDUCTIONS
 	
 	public static Deduction[] getDeductions(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate) {
@@ -166,6 +178,12 @@ public class PAYROLL {
 				ctx.close();
 			}
 		}
+	}
+	
+	public static LinkedList<ContractData> saveContractData(String domainName, Integer domainId, String login, ContractData ...contractData) {
+		try( AONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			return getPayroll().saveContractData(ctx, contractData);
+		} 
 	}
 	
 	public static LinkedList<ContractData> getContractDataList(String domainName, Integer domainId, String login, ContractDataFilter filter) {

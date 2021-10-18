@@ -9,6 +9,7 @@ export const ACTIVATE = 'Activate';
 export const ACTIVE = 'Active';
 export const ACTIVES = 'Active';
 export const ACTIVITY = 'Activity';
+export const ACTIVITY_SUMMARY = 'Activity Summary';
 export const ADD = 'Add';
 export const ADD_CATEGORY = 'Add Category';
 export const ADD_COMMENT = 'Add Comment';
@@ -21,6 +22,7 @@ export const ADDRESS = 'Address';
 export const ALL_FILES = 'All Files';
 export const AMOUNT = 'Amount';
 export const API_DOCUMENTATION = 'API Documentation';
+export const APPLICATIONS = 'Applications';
 export const ASESOR = 'Asesor';
 export const ATTACH_FILES_DRAGGING_DROPPING = 'Drag or select the file';
 export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Drag or select the background';
@@ -47,12 +49,16 @@ export const CATEGORY = 'Category';
 export const CATEGORIES = 'Categories';
 export const CHANGE_TYPE = 'Change Type';
 export const CITY = 'City';
+export const CLASSIC_APPLICATIONS = 'Classic Applications';
+export const CLASSIC_VIEW = 'Classic View';
+export const CLOSE = 'Close';
 export const CODE = 'Code';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
 export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
 export const COMPANY_COSTS = 'Company Costs';
+export const COMPANY_MANAGEMENT = 'Company Management';
 export const COMPONENTS = 'Components';
 export const CONCEPT = 'Concept';
 export const CONCEPTS = 'Concepts';
@@ -63,6 +69,7 @@ export const CONTACT_DATA = 'Contact Data';
 export const CONTACTS = 'Contacts';
 export const CONTRACT = 'Contract';
 export const COUNTRY = 'Country';
+export const CREATE = 'Create';
 export const CREDITOR = 'Creditor';
 export const CREDITORS = 'Creditors';
 export const CUSTOMER = 'Customer';
@@ -123,20 +130,28 @@ export const FOOTER = 'Footer';
 
 export const GENERAL_INFORMATION = 'General Information';
 export const GROUP_DATA = 'Group Data';
+export const GROUP_MANAGEMENT = 'Group Management';
 export const GROUP = 'Group';
 export const GROUPS = 'Groups';
 
 // ----- H
 
 export const HEADER = 'Header';
+export const HIRING = 'Hiring';
 export const HOLDER = 'Holder';
 export const HOLDERS = 'Holders';
+export const HOURS = "Hours";
+export const HISTORIC = "Historic";
 
 // ----- I
 
+export const IN_DEVELOPMENT = 'This option is under development...';
 export const INACTIVE = 'Inactive';
 export const INACTIVES ='Inactive';
 export const INBOX = 'Inbox';
+export const INCLUDE_COMPANY_DATA = 'Include Company Data';
+export const INCLUDE_LOGO = 'Include Logo';
+export const INFORMATION = 'Information';
 export const INVESTMENT = 'Investment';
 export const INVOICE = 'Invoice';
 export const INVOICE_CONCEPTS = 'Invoice Concepts';
@@ -157,7 +172,7 @@ export const ISSUEDS = 'Issued';
 
 export const LAST_LOCATION = 'Last Location';
 export const LAST_STATUS = 'Last Status';
-export const LOCATION = "Location";
+export const LOCATION = 'Location';
 
 // ----- M
 
@@ -178,11 +193,16 @@ export const NEXT = 'Next';
 export const NUMBER = 'Number';
 
 // ----- O
-
+export const OBSERVATION = 'Observation';
+export const OFFICE = 'Office';
 export const ONLY_PORTAL = 'Only Portal';
 export const OPEN = 'Open';
 export const OPEN_MENU = 'Open Menu';
-export const OPIONS = 'Options';
+export const OPEN_REQUESTS = 'Open Requests';
+export const OPTIONAL = "Optional"; 
+export const OPTIONS = 'Options';
+export const OTHER_SERVICES = 'Other Services';
+
 
 // ----- P
 
@@ -232,6 +252,8 @@ export const REJECTED_INVOICES = 'Rejected Invoices';
 export const REJECTEDS = 'Rejected';
 export const REQUEST = 'Request';
 export const REQUESTS = 'Requests';
+export const REQUESTS_SENT = 'Sent Requests';
+export const REQUESTS_RECEIVED = 'Received Requests';
 export const RESTORE = 'Restore';
 export const RESTORED_DATA = 'The data has been restored successfully';
 export const RESTORE_INVOICE = 'Restore Invoice';
@@ -252,6 +274,7 @@ export const SEND_INVOICES = 'Send Invoices';
 export const SEPA_FILES = 'SEPA Files';
 export const SERIE = 'Serie';
 export const SERVICE = 'Service';
+export const SERVICES = 'Services';
 export const SETTING = 'Setting';
 export const SHOW_FILE = 'Show File';
 export const SII = 'SII';

@@ -21,6 +21,7 @@ import { createFormEvent, createCardEvent } from "../../createComponent.js";
 import { createToolbar } from "../../../notification/createComponent.js";
 import { AonMessenger } from "../../../messenger/aon-messenger.js";
 import { TASK_SOURCE } from "../../../messenger/MessengerEnums.js";
+import { AON_TAGS } from "../../../../environments/aonTag.js";
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -133,11 +134,13 @@ export class AonEventAdd extends AonElement {
     toolbarEl.removeButtons();
     if (this.data && this.data.id) {
 
-      toolbarEl.addButton2({
-        id: "request",
-        name: "Solicitar",
-        icon: MATERIAL_ICONS.ASSIGNMENT
-      }, () => this.goMessenger());
+      if(this.applicationParentEl.isEmployee() && this.applicationParentEl.getDur().isMessenger()){
+        toolbarEl.addButton2({
+          id: "request",
+          name: "Solicitar",
+          icon: MATERIAL_ICONS.ASSIGNMENT
+        }, () => this.goMessenger());
+      }
 
       if(!this.applicationParentEl.isEmployee()){
         toolbarEl.addButton2(ACTION.DELETE, () => this.delete());
@@ -204,7 +207,8 @@ export class AonEventAdd extends AonElement {
       this.getElement("name").disabled = "disabled";
     }
     
-    // if(this.applicationParentEl.isEmployee()) this.formRead();
+    if(this.applicationParentEl.isEmployee()) 
+      this.formRead();
   }
 
   async save() {
@@ -244,11 +248,9 @@ export class AonEventAdd extends AonElement {
     });
   }
 
-  // formRead() {
-  //   [...this.getElement(`${this.id}Form`).querySelectorAll(AON_TAGS)].map(el => {
-  //     el.readonly = true;
-  //   });
-  // }
+  formRead() {
+    [...this.getElement(`${this.id}Form`).querySelectorAll(AON_TAGS)].map(el => el.readonly = true);
+  }
 
   back() {
     let data = undefined;
@@ -262,8 +264,8 @@ export class AonEventAdd extends AonElement {
   goMessenger(){
     const form = this.getFormValues();
 
-    const description = JSON.stringify({timeId: form.id, date:form.date, time:form.time });
-    let data = { source: TASK_SOURCE.REQUEST, source_id: 3, task_holder: form.task_holder, description };
+    const description = JSON.stringify({timeId: form.id, date:form.date, time:form.time, task_holder: form.task_holder});
+    let data = { source: TASK_SOURCE.REQUEST, source_id: 3, description };
     let aonMessenger = new AonMessenger();
     aonMessenger.data = data;
     this.rootPanel(aonMessenger);

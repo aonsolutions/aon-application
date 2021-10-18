@@ -226,11 +226,13 @@ export class AonMessengerList extends AonElement {
       let filter = this.getFilter();    
       filter.page = filter.page + 1;
       this.setFilter(filter);
-      const tasks = await getTasks(filter);
+      let tasks = await getTasks(filter);
       if(tasks.length == 0)
         this.MORE = false;
       else {
-        data = tasks.map(task=>{
+        data = tasks
+        .filter((v,idx, self)=>self.findIndex((m) => m.id === v.id) === idx )
+        .map(task=>{
           const newNumber = (task.number ? task.number : 0).toString().padStart(5,0);
           return {
             ...task,
@@ -278,7 +280,7 @@ export class AonMessengerList extends AonElement {
   }
 
   getNewTitle(res, document, documentTh){
-    let div = this.createElement("div");
+    let div = this.createElement(TAG.DIV);
     div.style.position = "relative";
 
     let newTitle  = res.title;
@@ -290,17 +292,18 @@ export class AonMessengerList extends AonElement {
     let description = res.description;
     try { description = JSON.parse(res.description).observation;  } catch (e) {}
 
-
-    let divTwo = this.createElement("div");
-    divTwo.style = `font-weight: 550;bottom:${description ? 1 : -9}px;position:absolute;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;`;
+    let divTwo = this.createElement(TAG.DIV);
+    divTwo.style = `font-weight: 550; bottom:${description ? 1 : -9}px; position:absolute; left:0; right:0; white-space:nowrap; text-overflow:ellipsis; overflow: hidden;`;
     divTwo.innerText = newTitle;
+    divTwo.title = newTitle;
     div.appendChild(divTwo);
-     
 
     if(description){
-      let divThree = this.createElement("div");
-      divThree.innerText = description;
-      divThree.style = "color:grey;position:absolute;top:3px;left:0; right:0; white-space:nowrap; text-overflow:ellipsis;overflow: hidden;";
+      const dText = description.replace(/<[^>]+>|&nbsp;|\n/g, ' ');
+      let divThree = this.createElement(TAG.DIV);
+      divThree.textContent = dText;
+      divThree.title = dText;
+      divThree.style = "color:grey; position:absolute; top:3px; left:0; right:0; white-space:nowrap; text-overflow:ellipsis; overflow: hidden;";
       div.appendChild(divThree);
     }
   
@@ -315,6 +318,13 @@ export class AonMessengerList extends AonElement {
   //   i.style.position = "fixed";
   //   i.style.marginLeft = "-11px";
   //   return i;
+  // }
+
+
+  // convertToPlain(html){
+  //   let tmp = this.createElement("div");
+  //   tmp.innerHTML = html;
+  //   return tmp.textContent || tmp.innerText || "";
   // }
 
   goMessengerChat(res, idx){

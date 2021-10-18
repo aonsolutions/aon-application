@@ -4,6 +4,7 @@ import static com.esferalia.aon.in.payroll.tgss.idc.PEC.isBonus;
 import static com.esferalia.aon.in.payroll.tgss.idc.PEC.isCost;
 import static com.esferalia.aon.in.payroll.tgss.idc.PEC.isDeduction;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
@@ -37,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -57,6 +59,7 @@ import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
@@ -65,6 +68,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -115,7 +119,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	@Test
 	public void testIdcplccc() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplccc.pdf") ){
-			IdcplcccParser.parse(is, new IdcListener() {
+			IdcplcccParser.parse(is, new IdcParserListener() {
 				
 				@Override
 				public void onPeriod(Date date) {
@@ -198,7 +202,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	@Test
 	public void testIdcplcccI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplcccI.pdf") ){
-			IdcplcccParser.parse(is, new IdcListener() {
+			IdcplcccParser.parse(is, new IdcParserListener() {
 				
 				@Override
 				public void onPeriod(Date date) {
@@ -274,7 +278,7 @@ public class IdcTest extends AbstractSQLTestCase {
 	@Ignore
 	public void testIdcplnss() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnss.pdf") ){
-			IdcplnssParser.parse(is, new IdcListener() {
+			IdcplnssParser.parse(is, new IdcParserListener() {
 				
 				@Override
 				public void onPeriod(Date date) {
@@ -354,8 +358,13 @@ public class IdcTest extends AbstractSQLTestCase {
 	
 	@Test
 	public void testIdc() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		
+		
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idc.pdf") ){
-			IdcParser.parse(is, new IdcListener() {
+			
+			AtomicBoolean onEmployeeQuoteTypes = new AtomicBoolean(false);
+			
+			IdcParser.parse(is, new IdcParserListener() {
 				
 				@Override
 				public void onPeriod(Date date) {
@@ -384,12 +393,6 @@ public class IdcTest extends AbstractSQLTestCase {
 				public void onEmployeePerido(String nss, String ccc, Date startDate, Date endDate) {
 					assertEquals("NSS:","081053913352", nss);
 					assertEquals("C.C.C:","11112501771", ccc);
-					if ( startDate.equals(getDate(14, Calendar.MAY, 2020)))
-							assertEquals(getDate(31, Calendar.MAY, 2020), endDate);
-					else if ( startDate.equals(getDate(1, Calendar.JUNE, 2020)))
-						assertEquals(getDate(30, Calendar.JUNE, 2020), endDate);
-					else 
-						fail();
 					
 				}
 				
@@ -399,6 +402,12 @@ public class IdcTest extends AbstractSQLTestCase {
 						String portTipo, String quota, Date startDate, Date endDate) {
 					assertEquals("NSS:","081053913352", nss);
 					assertEquals("C.C.C:","11112501771", ccc);
+					if ( startDate.equals(getDate(14, Calendar.MAY, 2020)))
+						assertEquals(getDate(31, Calendar.MAY, 2020), endDate);
+					else if ( startDate.equals(getDate(1, Calendar.JUNE, 2020)))
+						assertEquals(getDate(30, Calendar.JUNE, 2020), endDate);
+					else 
+						fail();
 					
 					ArrayList<IdcPEC> PECS = new ArrayList<IdcPEC>(6);
 					PECS.add(new IdcPEC("37", getDate(14, Calendar.MAY, 2020), getDate(31, Calendar.MAY, 2020), 85.00, "01"));
@@ -420,16 +429,27 @@ public class IdcTest extends AbstractSQLTestCase {
 					fail("Unknow PEC");
 
 				}
-
+				
+				@Override
+				public void onEmployeeQuoteTypes(double it, double ims, double unemployment) {
+					assertEquals(it, 1.70, 0.00);
+					assertEquals(ims, 1.30, 0.00);
+					assertEquals(unemployment, 7.05, 0.00);
+					onEmployeeQuoteTypes.set(true);
+					System.out.println("IT:" + it +" I.M.S:" + ims + " DESEMPLEO:" + unemployment);
+				}
+				
 				
 			});
+			
+			Assert.assertTrue(onEmployeeQuoteTypes.get());
 		}
 	}
 	
 	@Test
 	public void testIdcII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcII.pdf") ){
-			IdcParser.parse(is, new IdcListener() {
+			IdcParser.parse(is, new IdcParserListener() {
 				
 
 				@Override
@@ -462,6 +482,12 @@ public class IdcTest extends AbstractSQLTestCase {
 						fail("Unknow PEC");
 				}
 
+				@Override
+				public void onEmployeeQuoteTypes(double it, double ims, double unemployment) {
+					assertEquals(it, 0.80, 0.00);
+					assertEquals(ims, 0.70, 0.00);
+					assertEquals(unemployment, 7.05, 0.00);
+				}
 				
 			});
 		}
@@ -914,6 +940,7 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+
 	@Test
 	public void testIdcVIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
 		
@@ -1217,6 +1244,10 @@ public class IdcTest extends AbstractSQLTestCase {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "100");
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "08");			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_RATE), 1.70);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_RATE), 1.30);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);			
 		}
 	}
 
@@ -1226,6 +1257,10 @@ public class IdcTest extends AbstractSQLTestCase {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "189");
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "10");			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_RATE), 1.70);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_RATE), 1.30);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);			
 		}
 	}
 
@@ -1246,6 +1281,10 @@ public class IdcTest extends AbstractSQLTestCase {
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "289");
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "07");			
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.PARTIAL_FACTOR), 0.750 );			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_RATE), 1.70);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_RATE), 1.30);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);			
 		}
 	}
 
@@ -1255,6 +1294,23 @@ public class IdcTest extends AbstractSQLTestCase {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "100");
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "02");			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_RATE), 0.80);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_RATE), 0.70);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);			
+		}
+	}
+
+	@Test
+	public void testIdcContractDataXII() throws IOException, UnknownPDFException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXII.pdf") ){
+			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "189");
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "09");			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_RATE), 3.35);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_RATE), 3.35);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);			
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);			
 		}
 	}
 
@@ -2118,7 +2174,360 @@ public class IdcTest extends AbstractSQLTestCase {
 			
 		}
 	}
+	
+	@Test
+	public void testIdcSyncI() throws IOException, UnknownPDFException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcI.pdf") ){
+			byte data []  = is.readAllBytes();
+			
+			AONContext aonContext = new AONContext(getConnection());
+			
+			String ccc = "11112501771";
+			String naf = "081053913352";
+			Date contractDate = getDate(01, Calendar.FEBRUARY, 2020);
+			String domainName = java.util.UUID.randomUUID().toString();
+			ContractRecord contract = newContract(aonContext, domainName, contractDate, ccc, naf);
+			
+			Date idcDate = getDate(14, Calendar.MAY, 2020);
+			SistemaRED2AON.syncWithIdc(data, "login", domainName, contract.getDomain(), idcDate, ccc, naf);
+			
+			Map<String, ContractData> contractDatas = 
+			PAYROLL.getContractDataStream(
+			domainName, 
+			contract.getDomain(), 
+			"login", p -> p.getContractProperty().eq(contract.getId()))
+			.collect(Collectors.toMap( d -> d.getName() , d -> d ));
+			
+			ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
+			Assert.assertNull(tc2Data.getEndDate());
+			Assert.assertEquals(idcDate, tc2Data.getStartDate());
+			Assert.assertEquals("\"189\"", tc2Data.getExpression());
 
+			ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
+			Assert.assertNull(quoteGroupData.getEndDate());
+			Assert.assertEquals(idcDate, quoteGroupData.getStartDate());
+			Assert.assertEquals("\"10\"", quoteGroupData.getExpression());
+
+			ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+			Assert.assertNull(itData.getEndDate());
+			Assert.assertEquals(idcDate, itData.getStartDate());
+			Assert.assertEquals(1.70, Double.parseDouble(itData.getExpression()), 0.00);
+
+			ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+			Assert.assertNull(imsData.getEndDate());
+			Assert.assertEquals(idcDate, imsData.getStartDate());
+			Assert.assertEquals(1.30, Double.parseDouble(imsData.getExpression()), 0.00);
+
+			ContractData unemployEmployeePercentData = contractDatas.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
+			Assert.assertNull(unemployEmployeePercentData.getEndDate());
+			Assert.assertEquals(idcDate, unemployEmployeePercentData.getStartDate());
+			Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+
+			ContractData unemployEnterprisePercentData = contractDatas.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
+			Assert.assertNull(unemployEnterprisePercentData.getEndDate());
+			Assert.assertEquals(idcDate, unemployEnterprisePercentData.getStartDate());
+			Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+			
+
+		} finally {
+			
+		}
+		
+	}
+	
+	@Test
+	public void testIdcSyncXIIIAndXIV() throws IOException, UnknownPDFException {
+		
+		AONContext aonContext = new AONContext(getConnection());
+
+		String ccc = "01105360062";
+		String naf = "011005185924";
+		Date contractDate = getDate(01, Calendar.AUGUST, 2020);
+		String domainName = java.util.UUID.randomUUID().toString();
+		ContractRecord contract = newContract(aonContext, domainName, contractDate, ccc, naf);
+
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXIII.pdf") ){
+			byte data []  = is.readAllBytes();
+
+			Date idcStartDate = contractDate;
+			SistemaRED2AON.syncWithIdc(data, "login", domainName, contract.getDomain(), idcStartDate, ccc, naf);
+			
+			Map<String, ContractData> contractDatas = 
+			PAYROLL.getContractDataStream(
+			domainName, 
+			contract.getDomain(), 
+			"login", p -> p.getContractProperty().eq(contract.getId()))
+			.collect(Collectors.toMap( d -> d.getName() , d -> d ));
+			
+			Date idcEndDate = getDate(31, Calendar.JULY, 2021);
+
+			ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
+			Assert.assertEquals(idcEndDate, tc2Data.getEndDate());
+			Assert.assertEquals(idcStartDate, tc2Data.getStartDate());
+			Assert.assertEquals("\"100\"", tc2Data.getExpression());
+
+			ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
+			Assert.assertEquals(idcEndDate, quoteGroupData.getEndDate());
+			Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
+			Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
+
+			ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+			Assert.assertEquals(idcEndDate, itData.getEndDate());
+			Assert.assertEquals(idcStartDate, itData.getStartDate());
+			Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
+
+			ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+			Assert.assertEquals(idcEndDate, imsData.getEndDate());
+			Assert.assertEquals(idcStartDate, imsData.getStartDate());
+			Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
+
+			ContractData unemployEmployeePercentData = contractDatas.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
+			Assert.assertEquals(idcEndDate, unemployEmployeePercentData.getEndDate());
+			Assert.assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
+			Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+
+			ContractData unemployEnterprisePercentData = contractDatas.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
+			Assert.assertEquals(idcEndDate, unemployEnterprisePercentData.getEndDate());
+			Assert.assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
+			Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+			
+
+		} finally {
+			
+		}
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXIV.pdf") ){
+			byte data []  = is.readAllBytes();
+
+			Date idcStartDate = getDate(01, Calendar.AUGUST, 2021);
+			SistemaRED2AON.syncWithIdc(data, "login", domainName, contract.getDomain(), idcStartDate, ccc, naf);
+			
+			Map<String, List<ContractData>> contractDatas = 
+			PAYROLL.getContractDataStream(
+			domainName, 
+			contract.getDomain(), 
+			"login", p -> p.getContractProperty().eq(contract.getId()))
+			.collect(Collectors.groupingBy( d -> d.getName() ));
+			
+			List<ContractData> tc2Datas = contractDatas.get(ContextVariable.TC2.getName());
+			Collections.sort(tc2Datas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+			ContractData tc2Data = tc2Datas.get(0);
+			Assert.assertNull(tc2Data.getEndDate());
+			Assert.assertEquals(idcStartDate, tc2Data.getStartDate());
+			Assert.assertEquals("\"100\"", tc2Data.getExpression());
+
+			List<ContractData> quoteGroupDatas = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
+			Collections.sort(quoteGroupDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+			ContractData quoteGroupData = quoteGroupDatas.get(0);
+			Assert.assertNull(quoteGroupData.getEndDate());
+			Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
+			Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
+
+			List<ContractData> itDatas = contractDatas.get(ContextVariable.IT_RATE.getName());
+			Collections.sort(itDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+			ContractData itData = itDatas.get(0);
+			Assert.assertNull(itData.getEndDate());
+			Assert.assertEquals(idcStartDate, itData.getStartDate());
+			Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
+
+			List<ContractData> imsDatas = contractDatas.get(ContextVariable.IMS_RATE.getName());
+			Collections.sort(imsDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+			ContractData imsData = imsDatas.get(0);
+			Assert.assertNull(imsData.getEndDate());
+			Assert.assertEquals(idcStartDate, imsData.getStartDate());
+			Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
+
+			List<ContractData> unemployEmployeePercentDatas = contractDatas.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
+			Collections.sort(unemployEmployeePercentDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+			ContractData unemployEmployeePercentData = unemployEmployeePercentDatas.get(0);
+			Assert.assertNull(unemployEmployeePercentData.getEndDate());
+			Assert.assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
+			Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+
+			List<ContractData> unemployEnterprisePercentDatas = contractDatas.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
+			Collections.sort(unemployEnterprisePercentDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+			ContractData unemployEnterprisePercentData = unemployEnterprisePercentDatas.get(0);
+			Assert.assertNull(unemployEnterprisePercentData.getEndDate());
+			Assert.assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
+			Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+			
+
+		} finally {
+			
+		}
+	}
+
+	@Test
+	public void testIdcSyncXIIIAndXIV2() throws IOException, UnknownPDFException {
+		
+		AONContext aonContext = new AONContext(getConnection());
+
+		String ccc = "01105360062";
+		String naf = "011005185924";
+		Date contractDate = getDate(01, Calendar.AUGUST, 2020);
+		String domainName = java.util.UUID.randomUUID().toString();
+		ContractRecord contract = newContract(aonContext, domainName, contractDate, ccc, naf);
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.TC2, "\"189\"");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.QUOTE_GROUP, "\"05\"");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.IT_RATE, "5.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.IMS_RATE, "15.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, "25.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, "25.00");
+
+		for ( int i = 0; i < 2 ; i++ ) {
+			try ( InputStream is = IdcTest.class.getResourceAsStream("idcXIII.pdf") ){
+				
+				byte data []  = is.readAllBytes();
+	
+				Date idcStartDate = contractDate;
+				SistemaRED2AON.syncWithIdc(data, "login", domainName, contract.getDomain(), idcStartDate, ccc, naf);
+				
+				Map<String, ContractData> contractDatas = 
+				PAYROLL.getContractDataStream(
+				domainName, 
+				contract.getDomain(), 
+				"login", p -> p.getContractProperty().eq(contract.getId()))
+				.filter(d -> d.getStartDate().equals(idcStartDate))
+				.collect(Collectors.toMap( d -> d.getName() , d -> d ));
+				
+				Date idcEndDate = getDate(31, Calendar.JULY, 2021);
+	
+				ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
+				Assert.assertEquals(idcEndDate, tc2Data.getEndDate());
+				Assert.assertEquals(idcStartDate, tc2Data.getStartDate());
+				Assert.assertEquals("\"100\"", tc2Data.getExpression());
+	
+				ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
+				Assert.assertEquals(idcEndDate, quoteGroupData.getEndDate());
+				Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
+				Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
+	
+				ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+				Assert.assertEquals(idcEndDate, itData.getEndDate());
+				Assert.assertEquals(idcStartDate, itData.getStartDate());
+				Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
+	
+				ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+				Assert.assertEquals(idcEndDate, imsData.getEndDate());
+				Assert.assertEquals(idcStartDate, imsData.getStartDate());
+				Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
+	
+				ContractData unemployEmployeePercentData = contractDatas.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
+				Assert.assertEquals(idcEndDate, unemployEmployeePercentData.getEndDate());
+				Assert.assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
+				Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+	
+				ContractData unemployEnterprisePercentData = contractDatas.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
+				Assert.assertEquals(idcEndDate, unemployEnterprisePercentData.getEndDate());
+				Assert.assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
+				Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+				
+	
+			} finally {
+				
+			}
+		
+			for ( int j = 0; j < 2 ; j++ ) {
+				try ( InputStream is = IdcTest.class.getResourceAsStream("idcXIV.pdf") ){
+					byte data []  = is.readAllBytes();
+		
+					Date idcStartDate = getDate(01, Calendar.AUGUST, 2021);
+					SistemaRED2AON.syncWithIdc(data, "login", domainName, contract.getDomain(), idcStartDate, ccc, naf);
+					
+					Map<String, List<ContractData>> contractDatas = 
+					PAYROLL.getContractDataStream(
+					domainName, 
+					contract.getDomain(), 
+					"login", p -> p.getContractProperty().eq(contract.getId()))
+					.collect(Collectors.groupingBy( d -> d.getName() ));
+					
+					List<ContractData> tc2Datas = contractDatas.get(ContextVariable.TC2.getName());
+					Collections.sort(tc2Datas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData tc2Data = tc2Datas.get(0);
+					Assert.assertNull(tc2Data.getEndDate());
+					Assert.assertEquals(idcStartDate, tc2Data.getStartDate());
+					Assert.assertEquals("\"100\"", tc2Data.getExpression());
+		
+					List<ContractData> quoteGroupDatas = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
+					Collections.sort(quoteGroupDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData quoteGroupData = quoteGroupDatas.get(0);
+					Assert.assertNull(quoteGroupData.getEndDate());
+					Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
+					Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
+		
+					List<ContractData> itDatas = contractDatas.get(ContextVariable.IT_RATE.getName());
+					Collections.sort(itDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData itData = itDatas.get(0);
+					Assert.assertNull(itData.getEndDate());
+					Assert.assertEquals(idcStartDate, itData.getStartDate());
+					Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
+		
+					List<ContractData> imsDatas = contractDatas.get(ContextVariable.IMS_RATE.getName());
+					Collections.sort(imsDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData imsData = imsDatas.get(0);
+					Assert.assertNull(imsData.getEndDate());
+					Assert.assertEquals(idcStartDate, imsData.getStartDate());
+					Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
+		
+					List<ContractData> unemployEmployeePercentDatas = contractDatas.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
+					Collections.sort(unemployEmployeePercentDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData unemployEmployeePercentData = unemployEmployeePercentDatas.get(0);
+					Assert.assertNull(unemployEmployeePercentData.getEndDate());
+					Assert.assertEquals(idcStartDate, unemployEmployeePercentData.getStartDate());
+					Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+		
+					List<ContractData> unemployEnterprisePercentDatas = contractDatas.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
+					Collections.sort(unemployEnterprisePercentDatas, (d1,d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
+					ContractData unemployEnterprisePercentData = unemployEnterprisePercentDatas.get(0);
+					Assert.assertNull(unemployEnterprisePercentData.getEndDate());
+					Assert.assertEquals(idcStartDate, unemployEnterprisePercentData.getStartDate());
+					Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+					
+		
+				} finally {
+					
+				}
+			}
+		}
+	}
+
+	public static final DomainRecord newDomain(AONContext aonContext, String name ) {
+		return aonContext.getDslContext()
+				.insertInto(DOMAIN)
+				.set(DOMAIN.NAME, name)
+				.set(DOMAIN.OWNER, "")
+				.set(DOMAIN.DESCRIPTION, "")
+				.returning().fetchOne();
+	}
+	
+	private static ContractRecord newContract(AONContext aonContext, String domainName,  Date startDate, String ccc, String nss) {
+		DomainRecord domain = newDomain(aonContext, domainName);
+		ScopeRecord scope = newScope(aonContext, domain.getId());
+		EnterpriseActivityRecord enterpriseActivity = newEnterpriseActivity(aonContext, domain.getId(), scope.getId(), SSRegimeType.GENERAL);
+		EnterpriseCccRecord enterpriseCcc = newEnterpriseCcc(aonContext, domain.getId(), scope.getId(), enterpriseActivity.getId(), CCCType.PRINCIPAL, ccc);
+		WorkplaceRecord workplace = newWorkplace(aonContext, domain.getId(), scope.getId(), enterpriseActivity.getEnterprise());
+		RegistryRecord person = newPerson(aonContext, domain.getId(), null, nss);
+		
+		ContractRecord contract = newContract(aonContext,
+				SSRegimeType.GENERAL, 
+				CCCType.PRINCIPAL,			
+				toSQL(startDate),
+				null,
+				Collections.emptyMap(),
+				new String[] {}, 
+				new String[] {},
+				null,
+				domain.getId(), 			//domainId, 
+				person.getId(),				//personId, 
+				workplace.getId(),			//workplaceId, 
+				enterpriseCcc.getId(),		//enterpriseCccId,
+				enterpriseActivity.getId()	//enterpriseActivityId
+				);
+
+		return contract;
+	}
+	
 	private static class IdcPEC {
 		private String pec;
 		private Date startDate;
@@ -2147,23 +2556,6 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 		
 	}
-	
-//	private static Date resetTime(Date date) {
-//		if (date == null)
-//			return null;
-//
-//		Calendar cal = Calendar.getInstance();
-//		cal.setTime(date);
-//
-//		// Set time fields to zero
-//		cal.set(Calendar.HOUR, 0);
-//		cal.set(Calendar.MINUTE, 0);
-//		cal.set(Calendar.SECOND, 0);
-//		cal.set(Calendar.MILLISECOND, 0);
-//
-//		// Put iterator back in the Date object
-//		return cal.getTime();
-//	}
 	
 	private static <T> void marshall(T t, OutputStream os) {
 		try {

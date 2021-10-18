@@ -29,19 +29,19 @@ import com.esferalia.aon.watson.util.AonUtils;
 
 public class IdcParser {
 	
-	public static void parse( File file , IdcListener listener) throws IOException, UnknownPDFException {
+	public static void parse( File file , IdcParserListener listener) throws IOException, UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(file)){
 			parse(doc, listener);
 		}
 	}
 
- 	public static void parse( InputStream is ,IdcListener listener) throws IOException , UnknownPDFException {
+ 	public static void parse( InputStream is ,IdcParserListener listener) throws IOException , UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(is)){
 			parse(doc, listener);
 		}
 	}
 	
-	public static void parse(PDDocument doc, IdcListener listener) throws IOException, UnknownPDFException {
+	public static void parse(PDDocument doc, IdcParserListener listener) throws IOException, UnknownPDFException {
        AccessPermission ap = doc.getCurrentAccessPermission();
 		if (!ap.canExtractContent()){
 			throw new IOException("You do not have permission to extract text");
@@ -65,7 +65,7 @@ public class IdcParser {
 		}					
 	}
 		
-	public static void parse(String text, IdcListener listener) throws IOException, UnknownPDFException {
+	public static void parse(String text, IdcParserListener listener) throws IOException, UnknownPDFException {
 //		System.out.println(text);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -94,11 +94,15 @@ public class IdcParser {
 			String enterpriseRegime = matcher.group("regime");
 			
 			matcher = find(reader, EMPLOYEE_PERIOD_START);
-			Date startDate = simpleDateFormat.parse(matcher.group("start"));
+			Date periodStart = simpleDateFormat.parse(matcher.group("start"));
+			Date periodEnd =  matcher.group("end") != null ?  simpleDateFormat.parse(matcher.group("end")): null;
+			listener.onEmployeePerido(nss, enterpriseCCC, periodStart, periodEnd);
+
 			
 			matcher = find(reader, CONTRACT_TYPE_START_END);
 			listener.onContractType(matcher.group("contractType"));
 			listener.onContractStart(simpleDateFormat.parse(matcher.group("start")));
+			
 			
 			if(hasData(matcher.group("end"))) {
 				try {
@@ -132,7 +136,7 @@ public class IdcParser {
 			matcher = find(reader, PECULIARITIES_HEADER);
 			
 			Date endDate = null;
-			startDate = null;
+			Date startDate = null;
 			
 			try {
 				for ( Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); 
@@ -152,8 +156,8 @@ public class IdcParser {
 					if ( optional.get().group("end") != null )
 						end = simpleDateFormat.parse(optional.get().group("end"));
 					
-					if ( AonUtils.notEquals(start,startDate) || AonUtils.notEquals(end, endDate) ) 
-						listener.onEmployeePerido(nss, enterpriseCCC, start, end);
+//					if ( AonUtils.notEquals(start,startDate) || AonUtils.notEquals(end, endDate) ) 
+//						listener.onEmployeePerido(nss, enterpriseCCC, start, end);
 					
 					onEmployeeQuotePEC(listener, nss, enterpriseCCC, code, description, portTipo, quota, start, end);
 					
@@ -176,7 +180,7 @@ public class IdcParser {
 		}
 	}
 
-	private static void onEmployeeQuotePEC(IdcListener listener, String nss, String enterpriseCCC, String code,
+	private static void onEmployeeQuotePEC(IdcParserListener listener, String nss, String enterpriseCCC, String code,
 			String description, String portTipo, String quota, Date start, Date end) {
 		code = remove(code, " ");
 		quota = remove(quota, " ");
@@ -184,7 +188,7 @@ public class IdcParser {
 		listener.onEmployeeQuotePEC(nss, enterpriseCCC, code, description, portTipo, quota, start, end);
 	}
 
-	private static void onEnterprise(IdcListener listener, String socialReason, String enterpriseCCC,
+	private static void onEnterprise(IdcParserListener listener, String socialReason, String enterpriseCCC,
 			String enterpriseCIF, String enterpriseActivityCode, String enterpriseActivityDescription,
 			String enterpriseRegime, String enterpriseCompleteCCC) {
 		socialReason = trim(socialReason);
@@ -199,7 +203,7 @@ public class IdcParser {
 		listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode, enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
 	}
 
-	private static void onEmployee(IdcListener listener, String fullName, String nss) {
+	private static void onEmployee(IdcParserListener listener, String fullName, String nss) {
 		nss = remove(nss, " ");
 		fullName = trim(fullName);
 		listener.onEmployee(nss, fullName);
@@ -264,7 +268,7 @@ public class IdcParser {
 	//ACTIVIDAD ECONOMICA: 9311 Gestión de instalaciones deportivas REGIMEN: REGIMEN GENERAL
 	private static final Pattern EMPLOYEE_PERIOD_START = 
 	Pattern.compile(
-	"^PERIODO\\s*:\\s*DESDE\\s*(?<start>[0-9]+-[0-9]+-[0-9]+).*$"
+	"^PERIODO\\s*:\\s*DESDE\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)(\\s*HASTA\\s*(?<end>[0-9]+-[0-9]+-[0-9]+))?.*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TIPO CONTRATO: 289 INDEFINIDO.TIEMPO PARCIAL.TRANSFORMACION ALTA: 01-05-2018 BAJA:  

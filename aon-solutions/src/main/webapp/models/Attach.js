@@ -1,4 +1,4 @@
-import { Domain } from "./Domain";
+import { Domain } from "./Domain.js";
 
 export class Attach {
     id;

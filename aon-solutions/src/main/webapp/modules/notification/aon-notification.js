@@ -25,6 +25,7 @@ export class AonNotification extends AonElement {
   TASK_HOLDERS;
   dur;
   UL;
+  TOAST;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -61,6 +62,7 @@ export class AonNotification extends AonElement {
 
   initialize() {
     this.AON_NOTIFICATION = "aonNotification";
+    this.TOAST = this.AON_NOTIFICATION+"Toast";
     this.DIALOG = this.AON_NOTIFICATION+"Dialog";
     this.AON_TABS = this.AON_NOTIFICATION + "aonTabs";
     this.TASK_HOLDERS = [];
@@ -74,7 +76,7 @@ export class AonNotification extends AonElement {
 
   async build() {
     let toast = new AonToast();
-    toast.id = "toastNotification";
+    toast.id = this.TOAST;
     this.appendChild(toast);
     this.eventListener();
     if (this.isMobile()) 
@@ -126,9 +128,8 @@ export class AonNotification extends AonElement {
 
       createUl(this.UL).appendTo(aonNotification);
       // ------ BUTTON FLOAT ADD NOTIFICATION
-      if(!this.getDur().isEmployee()) {
+      if(!this.getDur().isEmployee()) 
         this.addFloatButton();
-      }
       
       await this.loadMore();
       this.changeBadgeComponent();
@@ -147,14 +148,13 @@ export class AonNotification extends AonElement {
 
       if(datos.length == 0) {
         this.MORE = false;
-        if(filter.page<=1){
+        if(filter.page<=1)
           this.createCard({
             id: 0,
             status:1,
             title: "Sin notificaciones",
             body: "No existen notificaciones pendientes."
           });
-        }
       } else {
         this.removeFadeOutNotify(0, 0);
         
@@ -214,16 +214,15 @@ export class AonNotification extends AonElement {
     
     createLi(data).appendTo(ulEl).appendChild(aonCard);
 
-    if(close){
+    if(close)
       this.buttonClose(aonCard, data.id);
-    }
+
     const content = createContent(data.body);
     aonCard.setContent(content.element);
-    if (!data.status) {
+    if (!data.status) 
       aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
-    }
 
-    const titleEl =  aonCard.getSection1();
+    const titleEl = aonCard.getCardTitle1();
     titleEl.style.display="block";
     titleEl.innerHTML = createTitle(data.title).element.outerHTML;
     return aonCard;
@@ -264,9 +263,8 @@ export class AonNotification extends AonElement {
     if (aonCard) {
       aonCard.setBackground("#fff");
       const icon = this.getElement(`${id}Icon`);
-      if (icon) {
+      if (icon) 
         icon.remove();
-      }
     }
   }
 
@@ -338,21 +336,26 @@ export class AonNotification extends AonElement {
     const dialog = this.getElement(this.DIALOG) || new AonDialog();
     dialog.id = this.DIALOG;
     aonNotification.appendChild(dialog);
-    const span = createSpanFloat();
-    aonNotification.appendChild(span.element);
+    const span = createSpanFloat().element;
+    if(!this.isMobile())
+      setStyles(span,{ bottom:0, top:76, right: "7%" });
 
-    createIconButton({
+    aonNotification.appendChild(span);
+    const color = "rgba(0, 36, 105, 0.1)";
+    let icon = createIconButton({
       attributes:{
-        id:"aonNotificationFloatSpanButton",
+        id:span.id+"Button",
         icon:"add",
-        title:"Crear notificatión",
-        background:"#f1f1f1"
+        title:`${MSG.CREATE} ${MSG.NOTIFICATION}`,
       },
       events:{
         click: () => this.openDialog()
       }
     }, span);
-
+    let btn = icon.getButton(); 
+    btn.classList.add(CSS.PULSE);
+    setStyles(btn,{ boxShadow: "0 0 0 0 " + color, backgroundColor:color});
+    // btn.style.boxShadow = `0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%), 0 3px 1px -2px rgb(0 0 0 / 20%)`;
   }
 
   openDialog() {
@@ -360,9 +363,9 @@ export class AonNotification extends AonElement {
     dialog.clear();
     if (!this.isMobile()) dialog.width = "500px";
     dialog.setContent(this.dialogHtml());
-    dialog.setTitle("Notificación");
+    dialog.setTitle(MSG.NOTIFICATION);
     dialog.open();
-    dialog.addSendAction(() =>  this.sendNotification(), "Enviar");
+    dialog.addSendAction(() =>  this.sendNotification(), MSG.SEND);
   }
 
   dialogHtml(){
@@ -371,13 +374,14 @@ export class AonNotification extends AonElement {
       attributes:{
         name:"type",
         id:"type",
-        title:"Tipo",
+        title:MSG.TYPE,
         options: TYPE_USER,
         value: TYPE_USER[0].value
       },   
       events: {
         change: ({detail})=>{
-          if(detail && detail.value) this.hiddenElement(detail.value);
+          if(detail && detail.value) 
+            this.hiddenElement(detail.value);
         }
       },
     }, form);
@@ -386,7 +390,7 @@ export class AonNotification extends AonElement {
       attributes:{
         name:"task_holder",
         id:"task_holder",
-        title:"Trabajador"
+        title: MSG.EMPLOYEE
       }
     }, form);
     this.listTaskHolder().then(taskHolders=>selectTaskHolders.options = JSON.stringify(taskHolders));
@@ -395,7 +399,7 @@ export class AonNotification extends AonElement {
       attributes:{
         name:"email",
         id:"email",
-        description:"Correo",
+        description:MSG.EMAIL,
         type:"text",
         hidden:true
       }
@@ -405,7 +409,7 @@ export class AonNotification extends AonElement {
       attributes:{
         name:"title", 
         id:"title", 
-        description:"Título",
+        description:MSG.TITLE,
         type:"text"
       }
     }, form);
@@ -461,7 +465,7 @@ export class AonNotification extends AonElement {
 
   showToast(obj) {
     if(typeof obj === "string")  obj = JSON.parse(obj);
-    const toast = this.getElement("toastNotification");
+    const toast = this.getElement(this.TOAST);
     if(toast) toast.start(obj);
   }
 }

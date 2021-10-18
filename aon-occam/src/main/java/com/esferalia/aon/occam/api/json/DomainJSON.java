@@ -5,9 +5,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonDomainFromJSON;
 import com.esferalia.aon.occam.api.json.JsonFunctionalInterfaces.IAonDomainToJSON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.type.DomainType;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public enum DomainJSON {
 

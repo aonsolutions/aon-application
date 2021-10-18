@@ -9,6 +9,7 @@ export const ACTIVATE = 'Activar';
 export const ACTIVE = 'Activo';
 export const ACTIVES = 'Actives';
 export const ACTIVITY = 'Activitat';
+export const ACTIVITY_SUMMARY = `Resum d'Activitats`;
 export const ADD = 'Afegir';
 export const ADD_CATEGORY = 'Afegir Categoria';
 export const ADD_COMMENT = 'Afegir Comentari';
@@ -21,6 +22,7 @@ export const ADDRESS = 'Dirección';
 export const ALL_FILES = 'Tots els Fitxers';
 export const AMOUNT = 'Import';
 export const API_DOCUMENTATION = 'Documentació API';
+export const APPLICATIONS = 'Aplicacions';
 export const ASESOR = 'Assessor';
 export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrossega o selecciona el fitxer';
 export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrossega o selecciona el fons';
@@ -47,12 +49,16 @@ export const CATEGORY = 'Categoria';
 export const CATEGORIES = 'Categories';
 export const CHANGE_TYPE = 'Canviar Tipus';
 export const CITY = 'Ciudad';
+export const CLASSIC_APPLICATIONS = 'Aplicacions Clàssiques';
+export const CLASSIC_VIEW = 'Vista Clàssica';
+export const CLOSE = 'Tancar';
 export const CODE = 'Codi';
 export const COMMENT = 'Comentari';
 export const COMMENTS = 'Comentaris';
 export const COMPANIES = 'Empreses';
 export const COMPANY = 'Empresa';
 export const COMPANY_COSTS = `Costos d'Empresa`;
+export const COMPANY_MANAGEMENT = `Gestió d'Empreses`;
 export const COMPONENTS = 'Components';
 export const CONCEPT = 'Concepte';
 export const CONCEPTS = 'Conceptes';
@@ -63,6 +69,7 @@ export const CONTACT_DATA = 'Dades de Contacte';
 export const CONTACTS = 'Contactes';
 export const CONTRACT = 'Contractar';;
 export const COUNTRY = 'País';
+export const CREATE = 'Crear';
 export const CREDITOR = 'Creditor';
 export const CREDITORS = 'Creditors';
 export const CUSTOMER =  'Client';
@@ -123,19 +130,28 @@ export const FOOTER = 'Peu';
 
 export const GENERAL_INFORMATION = 'Informació General';
 export const GROUP_DATA = 'Dades de el Grup';
+export const GROUP_MANAGEMENT = `Gestió d'Grups`;
 export const GROUP = 'Grup';
 export const GROUPS = 'Grups';
 
 // ----- H
 
 export const HEADER = 'Capçalera';
+export const HIRING = 'Contractació';
 export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulars';
+export const HOURS = "Hores";
+export const HISTORIC = "Historial";
 
 // ----- I
+
+export const IN_DEVELOPMENT = 'Aquesta opció està en desenvolupament...';
 export const INACTIVE = 'Inactivo';
 export const INACTIVES = 'Inactives';
 export const INBOX = `Safata d'Entrada`;
+export const INCLUDE_COMPANY_DATA = `Incloure Dades d'Empresa`;
+export const INCLUDE_LOGO = 'Incloure Logo';
+export const INFORMATION = 'Informació';
 export const INVESTMENT = 'Inversió';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS = 'Conceptes Factura';
@@ -154,9 +170,9 @@ export const ISSUEDS = 'Emeses';
 
 // ----- L
 
-export const LAST_LOCATION = "Última ubicación";
-export const LAST_STATUS = "Último estado";
-export const LOCATION = "Ubicación";
+export const LAST_LOCATION = 'Última ubicació';
+export const LAST_STATUS = 'Último estat';
+export const LOCATION = 'Ubicació';
 
 // ----- M
 
@@ -178,10 +194,15 @@ export const NUMBER = 'Nombre';
 
 // ----- O
 
+export const OBSERVATION = 'Observació';
+export const OFFICE = 'Despatx';
 export const ONLY_PORTAL = 'Sol Portal';
 export const OPEN = 'Obrir';
 export const OPEN_MENU = 'Obrir Menú';
+export const OPEN_REQUESTS = 'Sol·licituds Obertes';
+export const OPTIONAL = "Opcional"; 
 export const OPTIONS = 'Opcions';
+export const OTHER_SERVICES = 'Altres Serveis';
 
 // ----- P
 
@@ -231,6 +252,8 @@ export const REJECTED_INVOICES = 'Factures Rebutjades';
 export const REJECTEDS = 'Rebutjades';
 export const REQUEST = 'Sol·licitud';
 export const REQUESTS = 'Sol·licituds';
+export const REQUESTS_SENT = 'Sol·licituds Enviades';
+export const REQUESTS_RECEIVED = 'Sol·licituds Rebudes';
 export const RESTORE = 'Restaurar';
 export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
@@ -251,6 +274,7 @@ export const SEND_INVOICES = 'Enviar Factures';
 export const SEPA_FILES = 'Fitxers SEPA';
 export const SERIE = 'Sèrie';
 export const SERVICE = 'Servei';
+export const SERVICES = 'Serveis';
 export const SETTING = 'Configuració';
 export const SHOW_FILE = 'Mostrar Fitxer';
 export const SII = 'SII';

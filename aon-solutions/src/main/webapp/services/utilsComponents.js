@@ -80,7 +80,7 @@ export const createSpan = (properties)=> newComponent({
    * @param {*} element 
    * @param {*} dataset 
    */
-  export const setDataset = (element,dataset) => {
+  export const setDataset = (element, dataset) => {
     if(element && dataset) 
         for (const key in dataset) 
           element.dataset[key] = dataset[key];
@@ -92,7 +92,7 @@ export const createSpan = (properties)=> newComponent({
    * @param {*} element 
    * @param {*} events 
    */
-  export const setEvents =(element,events) => {
+  export const setEvents = (element,events) => {
     if(element && events) 
         for (const key in events)  
           element.addEventListener(key,events[key]);

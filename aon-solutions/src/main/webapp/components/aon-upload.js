@@ -1,4 +1,5 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import { Attach } from '../models/Attach.js';
 import { getReader } from '../services/utils.js';
 import { AonIconButton } from './aon-icon-button.js';
 import { AonElement } from './AonElement.js';
@@ -7,6 +8,7 @@ export class AonUpload extends AonElement {
 	
     DIV;
     INPUT;
+    IMG;
     LABEL;
     SPAN;
     DELETE_BUTTON;
@@ -39,6 +41,7 @@ export class AonUpload extends AonElement {
         this.id = this.id || 'aonUpload';
         this.DIV = this.id + 'Div';
         this.INPUT = this.id + 'Input';
+        this.IMG = this.id + 'Img';
         this.LABEL = this.id + 'Label';
         this.SPAN = this.id + 'Span';
         this.DELETE_BUTTON = this.id + 'DeleteButton';
@@ -67,6 +70,13 @@ export class AonUpload extends AonElement {
         div.addEventListener(EVENT.CLICK, () => {
           input.click();  
         });
+
+        let img = this.createElement(TAG.IMG);
+        img.id = this.IMG;
+        img.style.maxHeight = "100%";
+        img.style.maxWidth = "100%";
+        img.className = CSS.AON_NONE;
+        div.appendChild(img);
 
         let label = this.createElement(TAG.LABEL);
         label.id = this.LABEL;
@@ -145,7 +155,14 @@ export class AonUpload extends AonElement {
     }
 
     upload(file) {
-        this.getElement(this.DELETE_BUTTON).classList.remove(CSS.AON_NONE);
+        if(file.type.includes('image')) {
+            let img = this.getElement(this.IMG);
+            img.src = URL.createObjectURL(file);
+            img.classList.remove(CSS.AON_NONE);
+            let label = this.getElement(this.LABEL);
+            label.classList.add(CSS.AON_NONE);
+        }
+        this.setShowDeleteButton(true);
         this.dispatchEvent(new CustomEvent(EVENT.UPLOAD, { detail: file}));
     }
 
@@ -174,10 +191,35 @@ export class AonUpload extends AonElement {
         d.addAcceptAction(() => {
             let deleteButton = this.getElement(this.DELETE_BUTTON);
             deleteButton.classList.add(CSS.AON_NONE);
+            let img = this.getElement(this.IMG);
+            img.classList.add(CSS.AON_NONE);
+
+            let label = this.getElement(this.LABEL);
+            label.classList.remove(CSS.AON_NONE);
             this.dispatchEvent(new Event(EVENT.DELETE));
         });
         d.open();
       }
+
+    setAttach(attach) {
+        let att = new Attach(attach);
+        if(att.getContentType().includes("image")){
+            let img = this.getElement(this.IMG);
+            let data = {
+                domain_id: att.getDomain().getId(),
+                attach_type: att.getAttachType(),
+                domain_name: att.getDomain().getName(),
+                id: att.getId()
+            };
+            let url = location.href + 'ms/api/file/' + btoa(JSON.stringify(data));
+            img.src = url;
+            img.classList.remove(CSS.AON_NONE);
+
+            let label = this.getElement(this.LABEL);
+            label.classList.add(CSS.AON_NONE);
+        }
+        this.setShowDeleteButton(true);
+    }  
 
     setShowDeleteButton(showDeleteButton) {
         this.showDeleteButton = showDeleteButton;

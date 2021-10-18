@@ -1,5 +1,5 @@
 import {  get } from "./request.js";
-import { API_URL, MSG } from "../environments/environments.js";
+import { API_URL } from "../environments/environments.js";
 import { isSigGet, isSigPost, isSigRemove } from "./sigService.js";
 
 //---------------------------TASK
@@ -32,7 +32,7 @@ export const getTaskProcess =  (data) => {
     let json = [
         { value:1, name:"Solicitud de vacaciones"},
         { value:2, name:"Alta de empleado"},
-        { value:3, name: `Error ${MSG.TIMECONTROL}`}
+        { value:3, name: `Modificación de fichaje`}
     ];
     if(data) json = json.find((r) => r.value == data);
 

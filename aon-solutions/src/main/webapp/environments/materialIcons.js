@@ -124,6 +124,7 @@ export const FIBER_MANUAL_RECORD = "fiber_manual_record";
 
 // ----- G
 export const GROUP_OFF = 'group_off';
+export const GROUPS = 'groups';
 
 // ----- H
 
@@ -154,6 +155,8 @@ export const MOVE_TO_INBOX = "move_to_inbox";
 export const MARK_EMAIL_READ = "mark_email_read";
 
 export const NOTIFICATIONS = "notifications";
+export const NOTIFICATION_ADD = "notification_add";
+
 // ----- P
 
 export const PENDING_ACTIONS = 'pending_actions';
@@ -164,6 +167,7 @@ export const PHONE = 'phone';
 export const PRINT = 'print';
 export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 export const PEOPLE_ALT = 'people_alt';
+export const PEOPLE = 'people';
 
 // ----- R
 
@@ -178,6 +182,7 @@ export const SAVE = 'save';
 export const SEARCH = 'search';
 export const SEND = 'send';
 export const SETTING = 'setting';
+export const STORE_MALL_DIRECTORY = 'store_mall_directory';
 export const SWAP_CALLS = 'swap_calls';
 export const SUPPORT_AGENT = "support_agent";
 

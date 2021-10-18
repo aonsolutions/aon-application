@@ -19,7 +19,7 @@ import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder.Tipo
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadoresTramosBuilder;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TramoBuilder;
 
-public class CretaListener implements IdcListener {
+public class CretaListener implements IdcParserListener {
 	
 	private static final class SetTramoBuilder extends TramoBuilder {
 		HashSet<String> added = new HashSet();

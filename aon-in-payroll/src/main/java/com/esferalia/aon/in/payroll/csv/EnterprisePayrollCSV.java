@@ -3,21 +3,18 @@ package com.esferalia.aon.in.payroll.csv;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
-import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
-import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
-import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
@@ -26,17 +23,23 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.Bonus;
 import com.esferalia.aon.occam.api.model.Salary.Cost;
+import com.esferalia.aon.occam.api.model.Salary.Deduction;
 import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
+
 public class EnterprisePayrollCSV {
-	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls) throws JsonGenerationException, JsonMappingException, IOException {
+	
+	private EnterprisePayrollCSV() {
+	    throw new IllegalStateException("Utility class");
+	  }
+	
+	public static void write(OutputStream outputStream, Collection<IEnterprisePayroll> payrolls) throws IOException {
 		
 		
 		
@@ -84,7 +87,7 @@ public class EnterprisePayrollCSV {
 	
 	
 	public static Stream<EnterprisePayroll> getEnterprisePayrolls(AONContext aonContext, final int month,
-			final int year, Integer enterpriseId, Integer workplaceId) throws IOException {
+			final int year, Integer enterpriseId, Integer workplaceId) {
 
 		Condition condition = DSL.year(SALARY.ISSUE_DATE).eq(year).and(DSL.month(SALARY.ISSUE_DATE).eq(month))
 				.and(ENTERPRISE.REGISTRY.eq(enterpriseId));
@@ -150,55 +153,55 @@ public class EnterprisePayrollCSV {
 			// PICKING UP DEDUCTIONS
 			Double cgc = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double cgp = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType().ordinal() == DeductionType.IT.ordinal()
 							|| d.getDeductionType().ordinal() == DeductionType.IMS.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double unemployment = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType().ordinal() == DeductionType.UNEMPLOYMENT.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double jobTraining = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType().ordinal() == DeductionType.JOB_TRAINING.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double advancedPayment = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType().ordinal() == DeductionType.ADVANCE_PAYMENT.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double otherDeductions = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType().ordinal() == DeductionType.OTHER.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double estruc = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType().ordinal() == DeductionType.STRUCTURAL_OVERTIME.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double noEstruct = s.getDeductions().stream()
 					.filter(d -> d.getDeductionType().ordinal() == DeductionType.NON_STRUCTURAL_OVERTIME.ordinal())
-					.mapToDouble(d -> d.getAmount()).sum();
+					.mapToDouble(Deduction::getAmount).sum();
 			Double embargos = s.getEmbargos().stream()
 					.mapToDouble(Embargo::getAmount).sum();
 			// PICKING UP COSTS
 			Double cgcEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.COMMON_CONTINGENCY.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			Double cgpEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.IT.ordinal()
 					|| c.getCostType().ordinal() == DeductionType.IMS.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			
 			Double unemploymentEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.UNEMPLOYMENT.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			Double jobTrainingEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.JOB_TRAINING.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			Double fogasaEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.FOGASA.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			Double estrucEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.STRUCTURAL_OVERTIME.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 			Double noEstrucEnterprise = s.getCosts().stream()
 					.filter(c -> c.getCostType().ordinal() == DeductionType.NON_STRUCTURAL_OVERTIME.ordinal())
-					.mapToDouble(c -> c.getAmount()).sum();
+					.mapToDouble(Cost::getAmount).sum();
 
 			// DEDUCTIONS
 			enterprisePayroll.cgc = cgc;
@@ -221,96 +224,6 @@ public class EnterprisePayrollCSV {
 
 			return enterprisePayroll;
 		});
-	}
-	@Deprecated
-	public static Stream<EnterprisePayroll> getEnterprisePayrolls(DSLContext ctx, Condition condition)
-			throws IOException {
-
-		Map<Integer, Double> bonusesMap = ctx.select().from(SALARY).innerJoin(CONTRACT)
-				.on(CONTRACT.ID.eq(SALARY.CONTRACT)).innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
-				.innerJoin(SALARY_BONUS).on(SALARY.ID.eq(SALARY_BONUS.SALARY)).where(condition)
-				.fetchStreamInto(SALARY_BONUS)
-				.collect(Collectors.toMap(s -> s.getSalary(), s -> s.getAmount(), (a1, a2) -> a1 + a2));
-
-		System.out.println(ctx.select().from(SALARY).innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
-				.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID)).innerJoin(SALARY_BONUS)
-				.on(SALARY.ID.eq(SALARY_BONUS.SALARY)).where(condition).getSQL());
-
-//		Map<Integer, Map<String, Double>> deductions = ctx.select().from(SALARY).innerJoin(SALARY_DEDUCTION).onKey()
-//				.where(condition).fetchStream().collect(Collectors.groupingBy(s -> s.get(SALARY.ID), 
-//						Collectors.toMap(s -> s.get(SALARY.ID), s -> Collectors.toMap(s -> s.get(SALARY_DEDUCTION.DESCRIPTION), s -> s.get(SALARY_DEDUCTION.AMOUNT)))));
-		
-		ArrayList<Double> dedBonuses = new ArrayList<Double>();
-		
-		Map<Integer, Map<String, Double>> deductions = new HashMap<Integer, Map<String, Double>>();
-		ctx.select().from(SALARY).innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT)).innerJoin(WORKPLACE)
-				.on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID)).innerJoin(SALARY_DEDUCTION)
-				.on(SALARY.ID.eq(SALARY_DEDUCTION.SALARY)).where(condition).fetchStream().forEach(s -> {
-					
-					
-					if (s.get(SALARY_DEDUCTION.TYPE) == null &&
-							s.get(SALARY_DEDUCTION.AMOUNT) != null &&
-							s.get(SALARY_DEDUCTION.AMOUNT) < 0
-						)
-						dedBonuses.add(s.get(SALARY_DEDUCTION.AMOUNT));
-					
-					if (deductions.get(s.get(SALARY.ID)) != null) {
-						deductions.get(s.get(SALARY.ID)).put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT),
-								s.get(SALARY_DEDUCTION.AMOUNT));
-					} else {
-						Map<String, Double> map = new HashMap<String, Double>();
-						map.put(s.get(SALARY_DEDUCTION.DEDUCTION_CONCEPT), s.get(SALARY_DEDUCTION.AMOUNT));
-						deductions.put(s.get(SALARY.ID), map);
-
-					}
-				});
-
-		return ctx.select().from(SALARY).innerJoin(CONTRACT).onKey().innerJoin(WORKPLACE).onKey().where(condition)
-				.fetchStream().map(record -> {
-					EnterprisePayroll enterprisePayroll = new EnterprisePayroll();
-					enterprisePayroll.employee = record.get(SALARY.EMPLOYEE_NAME);
-					enterprisePayroll.workplace = record.get(WORKPLACE.DESCRIPTION);
-
-					enterprisePayroll.irpf = record.get(SALARY.TOTAL_IRPF);
-
-					enterprisePayroll.cgcBase = record.get(SALARY.CGC_BASE);
-					enterprisePayroll.irpfBase = record.get(SALARY.IRPF_BASE);
-
-					enterprisePayroll.raw = record.get(SALARY.TOTAL_PAYMENT);
-					enterprisePayroll.liquid = record.get(SALARY.TOTAL_LIQUID);
-					
-					Double employeeSS = record.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
-					if (!dedBonuses.isEmpty()) {
-						Double amount = dedBonuses.stream().mapToDouble(a -> a).sum();
-						
-						if (employeeSS != null && amount != null)
-							employeeSS += amount;
-						else if (amount != null)
-							employeeSS = amount;
-					}
-					
-					
-					enterprisePayroll.employeeSS = employeeSS;
-					
-					
-					
-					
-					enterprisePayroll.enterpriseSS = record.get(SALARY.TOTAL_ENTERPRISE);
-					enterprisePayroll.totalSS = enterprisePayroll.employeeSS + enterprisePayroll.enterpriseSS;
-					enterprisePayroll.totalCost = enterprisePayroll.totalSS + enterprisePayroll.irpf;
-
-					enterprisePayroll.bonuses = bonusesMap.get(record.get(SALARY.ID));
-
-					Map<String, Double> map = deductions.get(record.get(SALARY.ID));
-					if (map != null) {
-
-						enterprisePayroll.cgc = map.get("CGC");
-						enterprisePayroll.unemployment = map.get("DESMPL");
-						enterprisePayroll.jobTraining = map.get("FP");
-					}
-
-					return enterprisePayroll;
-				});
 	}
 	
 	
@@ -543,6 +456,42 @@ public class EnterprisePayrollCSV {
 		@Override
 		public Double getMoneyIrpfBase() {
 			return moneyIrpfBase;
+		}
+
+		@Override
+		public Date getStartDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Date getEndDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IEnterprisePayroll getOriginalPayroll() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IEnterprisePayroll setOriginalPayroll(IEnterprisePayroll originalPayroll) {
+			// TODO Auto-generated method stub
+			return this;
+		}
+
+		@Override
+		public String getEmployeeNaf() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getCcc() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 		

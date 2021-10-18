@@ -70,6 +70,7 @@ import com.esferalia.aon.occam.api.model.HasStartDate;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.type.BonusType;
+import com.esferalia.aon.occam.api.model.type.ContractStatus;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Gender;
@@ -266,6 +267,14 @@ public class EmployeeDAO {
 
 	public static Cost [] setCosts(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Cost ...costs) {
 		return setCosts(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), costs);
+	}
+
+	public static ContractData [] getData(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate) {
+		return getData(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate));
+	}
+
+	public static ContractData[] setData(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, ContractData... contractDatas) {
+		return setData(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), contractDatas);
 	}
 
 	public static ContractData[] setContractData(AONContext aonContext, String domainName, ContractFilter filter, ContractData... contractDatas) {
@@ -580,6 +589,26 @@ public class EmployeeDAO {
 		}
 		
 		return costs;
+	}
+
+	private static ContractData [] setData(DSLContext dslContext, String domainName, String ccc, String naf,java.sql.Date startDate, java.sql.Date endDate, ContractData ...datas) {
+		
+		List<ContractRecord> contractRecords = 
+		getContracts(dslContext, domainName, ccc, naf, startDate, endDate)
+		;
+		
+		for ( ContractRecord contractRecord : contractRecords  ) {
+			ContractData contractDatas [] = 
+			Arrays.stream(datas)
+			.filter( b -> intersects(contractRecord, b) )
+			.toArray(ContractData[]::new);
+			if ( contractDatas.length >= 0 ) {
+				setData(dslContext, domainName, startDate, endDate, contractRecord, contractDatas);
+			}
+			
+		}
+		
+		return datas;
 	}
 
 	private static ContractData [] setContractData(DSLContext dslContext, String domainName, ContractFilter filter, ContractData ...contractDatas) {
@@ -1012,6 +1041,98 @@ public class EmployeeDAO {
 		
 	}
 	
+	private static ContractData [] getData(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate) {
+		
+		return 
+		dslContext
+		.select()
+		.from(DOMAIN)
+		.innerJoin(CONTRACT_DATA).on(DOMAIN.ID.eq(CONTRACT_DATA.DOMAIN))
+		.innerJoin(CONTRACT).on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID))
+		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
+		.where(DOMAIN.NAME.eq(domainName))
+		.and(ENTERPRISE_CCC.CCC.eq(ccc))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
+		.and(DSL.condition(endDate == null ).or(CONTRACT_DATA.START_DATE.le(endDate)))
+		.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(startDate)))
+		.fetchStreamInto(CONTRACT_DATA)
+		.map(data -> 
+		new ContractData()
+		.setId(data.getId())
+		.setName(data.getName())
+		.setDomain(data.getDomain())
+		.setEndDate(data.getEndDate())
+		.setStartDate(data.getStartDate())
+		.setExpression(data.getExpression())
+		).toArray(ContractData[]::new);
+		
+	}
+
+	private static ContractData [] setData(DSLContext dslContext, String domainName, java.sql.Date startDate, java.sql.Date endDate, ContractRecord contractRecord, ContractData ...datas) {
+		
+		List<ContractData> datasList = new ArrayList<ContractData>(datas.length);
+		Arrays.stream(datas).forEach( data -> datasList.add(data));
+		
+		dslContext
+		.select()
+		.from(CONTRACT_DATA)
+		.where(CONTRACT_DATA.CONTRACT.eq(contractRecord.getId()))
+		.and(DSL.condition(endDate == null ).or(CONTRACT_DATA.START_DATE.le(endDate)))
+		.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(startDate)))
+		.fetchStream()
+		.filter( EmployeeDAO::filter )
+		.forEach( r -> {
+			
+			ContractDataRecord contractData = r.into(CONTRACT_DATA); 
+			
+			if ( compare(contractData.getStartDate(), startDate) >= 0 ) { 
+				if ( compare(contractData.getEndDate(), endDate ) <= 0 ) {
+					// contract data starts after start date and ends before end date. So delete it.
+					contractData.delete();
+				}
+				else { 
+					// contract data ends after end date. So now starts just after end date. 
+					contractData.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					contractData.update();
+				}
+			} else {
+				if ( compare(contractData.getEndDate(), endDate ) <= 0 ) {
+					// contract data starts before start date and ends before end date. So ends just before start date.
+					contractData.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					contractData.update();
+				} else {
+					// contract data starts before start date and ends after end date. So we need to split it.
+					ContractDataRecord leftContractCost = contractData;
+					ContractDataRecord rightContractCost = contractData.copy();
+					leftContractCost.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					leftContractCost.update();
+					rightContractCost.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					rightContractCost.insert();
+				}
+			}
+				
+		});
+		;
+		
+		for (ContractData data : datasList) {
+			
+			dslContext
+			.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, contractRecord.getDomain())
+			.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+			.set(CONTRACT_DATA.START_DATE, toSql(data.getStartDate()))
+			.set(CONTRACT_DATA.END_DATE, toSql(data.getEndDate()))
+			.set(CONTRACT_DATA.NAME, data.getName())
+			.set(CONTRACT_DATA.EXPRESSION, data.getExpression())
+			.execute()
+			;
+		}
+		
+		return datas;
+		
+	}
+
 	private static <T extends Enum<?>> Byte valueOf(T t) {
 		if ( t == null )
 			return null;

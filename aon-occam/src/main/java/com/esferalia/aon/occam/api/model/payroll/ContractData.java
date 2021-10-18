@@ -3,8 +3,13 @@ package com.esferalia.aon.occam.api.model.payroll;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.HasEndDate;
+import com.esferalia.aon.occam.api.model.HasStartDate;
+
+import jdk.internal.module.ModuleHashes.HashSupplier;
+
 @SuppressWarnings("serial")
-public class ContractData implements Serializable{
+public class ContractData implements Serializable, HasStartDate, HasEndDate{
 
 	Integer id;
 	Integer domain;

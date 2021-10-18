@@ -1362,6 +1362,16 @@ public interface Properties {
 		Property<Double> getLongitudeProperty();
 	}
 	
+	public interface NoteProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getOwnerProperty();
+		Property<String> getSubjectProperty();
+		Property<String> getNoteProperty();
+		Property<Timestamp> getDateProperty();
+	}
+	
+	
 	public interface AuthDeviceProperties {
 		Property<Integer> getIdProperty();
 		Property<byte[]> getAuthProperty();

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.PayMethodJSON;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.json.RegistryPaymethodJSON;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -49,6 +51,9 @@ public class RegistryServlet extends AonApiHttpServlet {
 				break;
 			case "/banks":
 				response(req, resp, getRegistryBanks(api));
+				break;
+			case "/paymethod":
+				response(req, resp, getRegistryPaymethod(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -107,7 +112,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 	
 	public static JSONObject saveRegistry(AonApiData api) {
 		Registry registry = RegistryJSON.fromJSON(api.getData());
-		//AON.saveRegistry();
+		registry = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), registry);
 		saveRegistryAdditionalInfo(api, registry.getId(), registry.getDomain().getId());
 		return new JSONObject();
 	}
@@ -186,5 +191,16 @@ public class RegistryServlet extends AonApiHttpServlet {
 		Stream<RegistryBank> rbanks = AON.getRBankStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 			f.getDomainProperty().eq(api.getDomain().getId()));
 		return RegistryBankJSON.toJSON(rbanks);
+	}
+	
+	private JSONObject getRegistryPaymethod(AonApiData api) {
+		Integer registry = api.getParams().optInt(IJsonNames.REGISTRY);
+		RegistryPayMethod rpm = AON.getRPayMethod(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getRegistryProperty().eq(registry));
+		PayMethod pm = AON.getPayMethod(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(rpm.getPayMethod()));
+		RegistryBank rbank =  AON.getRBank(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getIdProperty().eq(rpm.getRbank()));
+		JSONObject json = new JSONObject();
+		json.put(IJsonNames.PAYMETHOD, PayMethodJSON.toJSON(pm));
+		json.put("rbank", RegistryBankJSON.toJSON(rbank));
+		return json;
 	}
 }

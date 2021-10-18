@@ -16,7 +16,7 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
-class PECListener  implements IdcListener {
+class PECListener  implements IdcParserListener {
 	
 	@FunctionalInterface
 	private static interface CostProvider {
@@ -179,7 +179,7 @@ class PECListener  implements IdcListener {
 		return Collections.unmodifiableCollection(ssPECs);
 	}
 
-	// ------------------------------------------------------------ IdcListener
+	// ------------------------------------------------------------ IdcParserListener
 
 	@Override
 	public void onEmployeeQuotePEC(String nss, String ccc, String code, String description, String portTipo,

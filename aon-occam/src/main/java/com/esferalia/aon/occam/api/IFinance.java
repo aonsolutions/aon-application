@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
@@ -136,8 +137,7 @@ public interface IFinance {
 	// 	***********************************************
 	// 	************************** PAY_METHOD *********
 	// 	***********************************************
-	
-	public PayMethod getPayMethod(AONContext ctx, String name);
+	public PayMethod getPayMethod(AONContext ctx, PayMethodFilter filter);
 	public LinkedList<PayMethod> getPayMethods(AONContext ctx);
 	public PayMethod savePayMethod(AONContext ctx, PayMethod payMethod);
 	public void deletePayMethod(AONContext ctx,Integer id);

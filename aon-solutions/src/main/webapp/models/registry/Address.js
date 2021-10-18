@@ -1,10 +1,16 @@
+import { Provinces } from "../../services/province.js";
+import { getStreetTypes } from "../../services/StreetType.js";
+
 export class Address {
     
     id;
     domain;
     registry;
     main;
+    streetType;
     address;
+    number;
+    address2;
     city;
     province;
     country;
@@ -15,19 +21,24 @@ export class Address {
     
     constructor(address) {
         if(address) {
-           this.id = address.id;
-           this.domain = address.domain;
-           this.registry = address.registry;
-           this.main = address.main;
-           this.address = address.address;
-           this.city = address.city;
-           this.province = address.province;
-           this.country = address.country;
-           this.zip = address.zip;
-           this.dirty = address.dirty || false;
-           this.removed = address.removed || false;
+            this.id = address.id;
+            this.domain = address.domain;
+            this.registry = address.registry;
+            this.main = address.main;
+            this.streetType = address.streetType;
+            this.address = address.address;
+            this.number = address.number;
+            this.address2 = address.address2;
+            this.city = address.city;
+            this.province = address.province;
+            this.country = address.country;
+            this.zip = address.zip;
+            this.dirty = address.dirty || false;
+            this.removed = address.removed || false;
         } else {
             this.address = '';
+            this.number = '';
+            this.address2 = '';
             this.city = '';
             this.province = '';
             this.country = 'ES';
@@ -74,6 +85,16 @@ export class Address {
         return this;
     }
    
+    getStreetType() {
+        return this.streetType;
+    }
+
+    setStreetType(streetType) {
+        this.setDirty(true);
+        this.streetType = streetType;
+        return this;
+    }
+
     getAddress() {
         return this.address;
     }
@@ -81,6 +102,28 @@ export class Address {
     setAddress(address) {
         this.setDirty(true);
         this.address = address; 
+        return this;
+    }
+
+    getNumber() {
+        if(this.number === undefined) this.number = '';
+        return this.number;
+    }
+
+    setNumber(number) {
+        this.setDirty(true);
+        this.number = number; 
+        return this;
+    }
+
+    getAddress2() {
+        if(this.address2 === undefined) this.address2 = '';
+        return this.address2;
+    }
+
+    setAddress2(address2) {
+        this.setDirty(true);
+        this.address2 = address2; 
         return this;
     }
 
@@ -95,7 +138,7 @@ export class Address {
     }
 
     getProvince() {
-        return this.city;
+        return this.province;
     }
 
     setProvince(province) {
@@ -121,7 +164,16 @@ export class Address {
     setZip(zip) {
         this.setDirty(true);
         this.zip = zip; 
+        this.calculateProvince();
         return this;
+    }
+
+    calculateProvince() {
+        if(this.country === 'ES' && this.zip){
+            const provinces = Provinces.filter(f => f.code === this.zip.substring(0,2));
+            if(provinces.length > 0) 
+                this.province = provinces[0].name;
+        }
     }
 
     isDirty() {
@@ -147,6 +199,9 @@ export class Address {
     }
 
     getFullAddress() {
-        return `${this.getAddress()}, ${this.getZip()} ${this.getCity()}, ${this.getProvince()}, ${this.getCountry()}`;
+        let street = '';
+        let a = getStreetTypes().filter(f => f.ineCode === this.getStreetType());
+        if(a.length > 0) street = a[0].description.toLowerCase().initCap() + '.'; 
+        return `${street} ${this.getAddress()}, ${this.getNumber()} ${this.getAddress2()}, ${this.getZip()} ${this.getCity()}, ${this.getProvince()}, ${this.getCountry()}`;
     }
 }

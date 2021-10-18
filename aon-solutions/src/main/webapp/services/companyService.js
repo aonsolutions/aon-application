@@ -96,6 +96,7 @@ export const getDomainUserRoles = (data) => {
   });
 }
 
+export const updateDurDefinedUsers = (definedUsers) => durum.definedUsers = definedUsers;
 
 export const getDomainApps = (domain) => {
     let d = true;

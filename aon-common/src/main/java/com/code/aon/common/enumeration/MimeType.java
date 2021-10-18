@@ -190,6 +190,21 @@ public enum MimeType implements IResourceable {
      * Signed Facturae file MIME Type.
      */
     MIME_SIGNED_FACTURAE ("text/xml", "xml"),
+
+    /**
+     * JSON file MIME Type.
+     */
+    MIME_JSON("application/json","js"),
+    
+    /**
+     * PKCS12 (CERT) file MIME Type.
+     */
+    MIME_PKCS12("application/x-pkcs12","p12"),
+    
+    /**
+     * JKS file MIME Type.
+     */
+    MIME_JKS("application/x-java-keystore","jks"),
     
     /**
      * SVG file MIME Type.

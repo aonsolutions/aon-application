@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ToJSON {
 	
@@ -98,7 +99,7 @@ public class ToJSON {
 			.put("date", AonDateUtils.simpleFormat(attach.getDate()))
 			.put("confidential", attach.getConfidential())
 			.put("size", AonFileUtils.byteCountToDisplaySize( attach.getDparentId() != null ? Long.parseLong( attach.getDparentId()): 0))
-			.put("title", attach.getDescription())
+			.put("title", AonStringUtils.isBlank(attach.getDescription()) ? "Certificado. " + attach.getDomain().getDescription() : attach.getDescription())
 			.put("icon", icon)
 			.put("tags", tagArray)
 			.put("type", type)

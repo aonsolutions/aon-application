@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -22,17 +23,31 @@ import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.impl.jooq.dao.CCCDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ContractDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EmployeeDAO;
 
 public class PayrollImpl implements IPayroll {
 	
 	
 	@Override
+	public ContractData[] getData(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate) {
+		return EmployeeDAO.getData(ctx, domainName, ccc, naf, startDate, endDate);
+	}
+
+	@Override
+	public ContractData[] setData(AONContext ctx, String domainName, String ccc, String naf, 
+			Date startDate, Date endDate,  ContractData... contractDatas) {
+		return EmployeeDAO.setData(ctx, domainName, ccc, naf, startDate, endDate, contractDatas);
+	}
+
+
+	@Override
 	public ContractData[] setContractData(AONContext ctx, String domainName, ContractFilter filter,
 			ContractData... contractDatas) {
 		return EmployeeDAO.setContractData(ctx, domainName, filter, contractDatas);
 	}
 	
+
 	@Override
 	public Deduction[] getDeductions(AONContext ctx, String domainName, String ccc, String naf, Date startDate,
 			Date endDate) {
@@ -95,7 +110,13 @@ public class PayrollImpl implements IPayroll {
 	
 	public Stream<ContractData> getContractDataStream(AONContext ctx, ContractDataFilter filter){
 		return ctx.getDslContext().transactionResult(configuration ->
-			ContractDAO.getContractDataStream(ctx, filter));
+			ContractDataDAO.getStream(ctx, filter));
+	}
+	
+	// -------------------- CONTRACT DATA
+	
+	public LinkedList<ContractData> saveContractData(AONContext ctx, ContractData ...contractData){
+		return ctx.getDslContext().transactionResult(configuration -> ContractDataDAO.insert(ctx, contractData));
 	}
 
 	// -------------------- IRPF DATA

@@ -660,6 +660,12 @@ export class Invoice {
     this.calculateFinances();
   }
 
+  setBankAccount(bankAccount) {
+    this.finances.forEach((finance,i) => {
+      this.finances[i].bank_account = bankAccount;
+    });
+  }
+
   calculateFinances() {
     if(this.finances.length === 0) {
       if(!this.paymethod) this.paymethod = 'CASH';
