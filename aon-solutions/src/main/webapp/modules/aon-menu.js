@@ -1,8 +1,9 @@
 import {AonElement} from '../components/AonElement.js';
 import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu} from  '../services/app.js';
 import {getDomainUserRoles} from  '../services/service.js';
+import {saveNote, deleteNote, getNotes} from  '../services/noteService.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
-import { CONSTANT, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
 import {AonDocumental} from './documental/aon-documental.js';
 import {AonDocumentalAyudat} from './documental/ayudat/aon-documental-ayudat.js';
 import './imports/aon-imports.js';
@@ -15,6 +16,8 @@ import { AonFiscal } from './fiscal/aon-fiscal.js';
 import { AonSignin } from './signin/aon-signin.js';
 import { AonLaboral } from './laboral/aon-laboral.js';
 import { AonIcon } from '../components/aon-icon.js';
+import { AonTextArea } from '../components/aon-textarea.js';
+import { AonDate } from '../components/aon-date.js';
 // import './example/aon-example.js';
 // import './faqs/aon-faqs.js';
 const ID = 'id';
@@ -26,6 +29,7 @@ export class AonMenu extends AonElement {
 
 	dur;
 	AON_MENU_SIDENAV;
+	CLOSE;
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -78,6 +82,7 @@ export class AonMenu extends AonElement {
 	initialize() {
 		this.dur = [];
 		this.AON_MENU_SIDENAV = 'aonMenuSidenav';
+		this.CLOSE = true;
 	}
 
 	init() {
@@ -144,6 +149,9 @@ export class AonMenu extends AonElement {
 			case AuxApps.TOOLS.app:
 				this.buildAppMenu(AuxApps.TOOLS);
 				break;
+			case Apps.NOTES.app:
+				this.buildNoteMenu(Apps.NOTES);
+			break;
 		}
 	}
 
@@ -154,18 +162,20 @@ export class AonMenu extends AonElement {
 		this.appendChild(aonMenuSidenav);
 
 		aonMenuSidenav.addEventListener(EVENT.MOUSELEAVE, () => {
-			aonMenuSidenav.style.transitionDuration = '500ms';
-			if(this.getAttribute('opened')) {
-				aonMenuSidenav.style.width = '60px';
-				this.getRootPanel().style.marginRight = '60px';
-			} else {
-				aonMenuSidenav.style.width = '0px';
-				this.getRootPanel().style.marginRight = '0px';
+			if(this.CLOSE){
+				aonMenuSidenav.style.transitionDuration = '500ms';
+				if(this.getAttribute('opened')) {
+					aonMenuSidenav.style.width = '60px';
+					this.getRootPanel().style.marginRight = '60px';
+				} else {
+					aonMenuSidenav.style.width = '0px';
+					this.getRootPanel().style.marginRight = '0px';
+				}
+				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+					item.style.display = 'none';
+				});
+				this.buildMenu();
 			}
-			document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
-				item.style.display = 'none';
-			});
-			this.buildMenu();
 		});
 
 		if(this.getAttribute('opened')) {
@@ -212,6 +222,7 @@ export class AonMenu extends AonElement {
 					ul.appendChild(this.buildApp(MenuApps[item]));
 				}
 			}
+
 			if(this.getDur().isAdmin()) {
 				let liAdd = this.createElement(TAG.LI);
 				liAdd.style.textAlign =  'right';
@@ -391,8 +402,171 @@ export class AonMenu extends AonElement {
 		});
 	}
 
+	buildNoteMenu(app) {
+		this.CLOSE = false;
+		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
+		aonMenuSidenav.style.width = '250';
+		aonMenuSidenav.innerHTML = '';
+
+		let div = this.createElement(TAG.DIV);
+	 	div.className = 'aonMenuSidenavAppToolbar';
+		div.style.backgroundColor = this.getAppToolbarBackgroundColor(app);
+		aonMenuSidenav.appendChild(div);
+
+		let span = this.createElement(TAG.SPAN);
+		span.className= 'aonTitle';
+		span.innerHTML = app.title;
+
+		let span2 = this.createElement(TAG.SPAN);
+		span2.className = 'aonRight40';
+		let aibS = new AonIconButton();
+		aibS.id   = "aon-menu-sidenav-app-launch-button";
+		aibS.icon ="add";
+		aibS.color = "white";
+		aibS.noHover = "true";
+		span2.appendChild(aibS);
+
+		let span3 = this.createElement(TAG.SPAN);
+		span3.className = 'aonRight0';
+		let aibC = new AonIconButton();
+		aibC.id   = "aon-menu-sidenav-app-close-button";
+		aibC.icon ="close";
+		aibC.color = "white";
+		aibC.noHover = "true";
+		span3.appendChild(aibC);
+		div.appendChild(span);
+		div.appendChild(span2);
+		div.appendChild(span3);
+
+		let div2 = this.createElement(TAG.DIV);
+		let ul = this.createElement(TAG.UL);
+		ul.className = 'aonMenuSidenavSubAppList';
+		div2.appendChild(ul);
+		aonMenuSidenav.appendChild(div2);
+
+		aibS.addEventListener(EVENT.CLICK,()=>this.appendNote(ul));
+		
+		getNotes().then((notes)=>{
+			notes.map(note=> this.appendNote(ul, note))
+		})
+	
+		let launchButton = this.getElement('aon-menu-sidenav-app-launch-button');
+		launchButton.addEventListener(EVENT.CLICK, () => {
+			if(Apps.ACCOUNTING.app === app.app) {
+				this.rootPanelHtml('<aon-accounting></aon-accounting>');
+			} else if(Apps.FISCAL.app === app.app) {
+				this.rootPanel(new AonFiscal());
+			} else if(Apps.PAYROLL.app === app.app) {
+				this.rootPanel(new AonLaboral());
+			}
+		});
+		let closeButton = this.getElement('aon-menu-sidenav-app-close-button');
+		closeButton.addEventListener(EVENT.CLICK, () => {
+			this.CLOSE = true;
+			aonMenuSidenav.style.width = '175px';
+			this.buildMenu();
+		});
+	}
+
+	appendNote(ul, note={}){
+		let li = this.createElement(TAG.LI);
+
+		ul.insertBefore(li, ul.firstChild);
+		const idRand =  Math.random().toString(36).substring(7);
+		let div = this.createElement(TAG.DIV);
+		div.id ="div"+idRand;
+		div.style.margin = "3px 10px";
+
+		li.appendChild(div);
+	
+		let textArea = new AonTextArea();
+		textArea.placeholder = "Escribe una nota";
+		textArea.id = `notes${idRand}`;
+		textArea.title  = `notes${idRand}`;
+		textArea.style.border = "1px solid #dadce0";
+		textArea.style.backgroundColor = "rgb(255, 255, 255)";
+		textArea.style.borderRadius = "10px";
+		textArea.style.boxShadow = "none";
+		textArea.style.overflow = "hidden";
+		textArea.style.padding = "0 10px 10px";
+		textArea.style.color = "var(--aonGray)";
+		textArea.setAttribute("tabindex", 0);
+		div.appendChild(textArea);
+		if(note.note) textArea.value = note.note;
+		
+		const toolbar = textArea.getToolbar();
+		toolbar.style.borderBottom = "none";
+		toolbar.style.height = "auto";
+		toolbar.style.color  = "black";
+		toolbar.style.display = note.note ? "none" : "block";
+
+		textArea.addEventListener(EVENT.INPUT, ()=>{
+			note.note =  textArea.value || "";
+		});
+
+		textArea.addToolbarOptionRight({
+			id: MATERIAL_ICONS.DELETE,
+			icon: MATERIAL_ICONS.DELETE,
+			name: MSG.DELETE
+		},() => {
+			if(confirm("Estas seguro de eliminar la nota?")){
+				deleteNote(note);
+				li.remove();
+			}
+		});
+		
+		note.id = note.id ? note.id : idRand;
+
+		if(this.getApplication()) textArea.addToolbarOptionRight({
+			id: MATERIAL_ICONS.NOTIFICATION_ADD,
+			icon: MATERIAL_ICONS.NOTIFICATION_ADD,
+			name: "Recordatorio"
+		},(ev) => {
+			const rect = ev.target.getBoundingClientRect();
+			const top  = rect.top +  (ev.clientY - rect.top);
+			let left = rect.left + (ev.clientX - rect.left) - 10;
+			const dialog = this.getApplication().getOptionDialog();
+			const content = dialog.getContent();
+			dialog.clear();
+			content.style.textAlign = "center";
+			content.style.width = "250px";
+			dialog.setContentTitle("Recordatorio");
+			const aonDate = new AonDate(); 
+			aonDate.id = "date"+ idRand;
+			aonDate.name = "date"+ idRand;
+			aonDate.title =  MSG.DATE;
+			if(note.date) aonDate.value = note.date;
+			aonDate.addEventListener(EVENT.CHANGE, ({target})=>{
+				if(target.value) saveNote({...note, date: target.value});
+			})
+
+			let divContent = this.createElement(TAG.DIV);
+			divContent.style.margin = "0 10px";
+			divContent.appendChild(aonDate);
+			dialog.setContent(divContent);
+
+			dialog.openPosition({top, left});
+			
+		});
+
+		textArea.addToolbarOptionRight({
+			id: MATERIAL_ICONS.SAVE,
+			icon: MATERIAL_ICONS.SAVE,
+			name:MSG.SAVE
+		},() => {
+			saveNote({...note, date: note.date ? note.date : "0000-00-00"});
+		});
+
+		textArea.draggableEnable(); 
+		textArea.removeBackground();
+
+		li.addEventListener(EVENT.CLICK, () => toolbar.style.display = "block");
+		li.addEventListener(EVENT.MOUSELEAVE, () => toolbar.style.display = "none");
+
+	}
+
 	development(title) {
-		let aonApplication = document.querySelector('aon-application');
+		let aonApplication = this.getApplication();
 		aonApplication.development(title);
 	}
 
@@ -515,7 +689,7 @@ export class AonMenu extends AonElement {
 			return this.getDur().isInvoice();
 		else if(MenuApps.MESSENGER.app === app.app)
 			return this.getDur().isMessenger();
-		else if(MenuApps.TOOLS.app === app.app)
+		else if(MenuApps.TOOLS.app === app.app ||MenuApps.NOTES.app === app.app)
 			return true;
 		else return false;
 	}

@@ -10,6 +10,13 @@ import { newComponent, setAttributes, setStyles } from "../../../services/utilsC
 import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 
+
+export const createBtnAccept = () => {
+  let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
+  btnAccept.className = CSS.AON_BUTTON;
+  btnAccept.textContent = "Procesar";
+  return btnAccept;
+}
 // ----------------------------------------------------
 // MAIN VIEW
 // ----------------------------------------------------

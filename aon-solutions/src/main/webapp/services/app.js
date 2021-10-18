@@ -209,6 +209,14 @@ export const TOOLS = {
   price: ' ', //'-'
 };
 
+export const NOTES = {
+  app: "note",
+  title: MSG.NOTES,
+  icon: AON_ICONS.AON_APP,
+  color: '#fcbc0c',
+  price: ' ', //'-'
+};
+
 export const AON_SOLUTIONS = {
   app: 'aio',
   title: 'aonSolutions',
@@ -300,7 +308,7 @@ export const OUTSOURCING = {
   disabled: true
 };
 
-export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, MESSENGER, TOOLS};
+export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, MESSENGER, TOOLS, NOTES};
 
 export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, INVOICE, MESSENGER, PAYROLL, COMUNICA, FISCAL, ACCOUNTING];
 
@@ -308,7 +316,7 @@ export const EmployeeApps = ['documental', 'timecontrol', 'payroll', 'messenger'
 export const EnterpriseApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'messenger', 'ocr', 'aio', 'bidoq', 'selfconta'];
 
 export const Apps = { ACCOUNTING, FISCAL,PAYROLL, COMUNICA, DOCUMENTAL,
-   TIMECONTROL, INVOICE, MESSENGER};
+   TIMECONTROL, INVOICE, MESSENGER, NOTES};
 export const AuxApps = {TOOLS};
 export const ClassicApps = {AON_SOLUTIONS, BIDOQ, SELFCONTA};
 export const Services = {OCR, CONVENIOS, BANK};

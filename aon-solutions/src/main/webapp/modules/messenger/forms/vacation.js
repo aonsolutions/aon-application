@@ -7,7 +7,7 @@ import { saveVacation } from "../../../services/contractService.js";
 import { formatDateOrigin, serializeForm } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
-import { createDivEditable } from "../shared/creationUtils.js";
+import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
 
 /**
  * 
@@ -53,12 +53,8 @@ import { createDivEditable } from "../shared/creationUtils.js";
     createDivEditable(form, MSG.OBSERVATION,  data.observatio0n || "" , "observation" ,  MSG.TYPE_HERE);
 
     if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isPayrollManager() || dur.isPayrollPortal()) ){
-
-        let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"30px 0 0 15px"});
-        btnAccept.className = CSS.AON_BUTTON;
-        btnAccept.textContent = "Procesar";
+        let btnAccept = createBtnAccept();
         btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(aonMessengerChat) );
-         
         createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
     }
 }

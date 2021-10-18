@@ -217,7 +217,7 @@ export class AonTextArea extends AonElement {
 			attributes:{
 				contentEditable: true,
 				name: this.name,
-				placeholder: this.placeholder ? this.placeholder : null
+				placeholder: this.placeholder ? this.placeholder : ""
 			},
 			events:{
 				dragenter: preventDefault,
@@ -296,8 +296,8 @@ export class AonTextArea extends AonElement {
 				attributes:{
 					title: properties.name ? properties.name : "",
 				},
-				events : {click : fn}
 			});
+			icon.element.addEventListener(EVENT.CLICK, fn);
 			waitEl("#" + this.TOOLBAR + " #" + this.RIGHT).then(el => el.appendChild(icon.element));
 			return icon.element;
 		}

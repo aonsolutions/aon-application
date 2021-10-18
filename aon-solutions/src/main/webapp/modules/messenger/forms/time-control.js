@@ -4,10 +4,10 @@ import { AonSelect } from "../../../components/aon-select.js";
 import { TAG, MSG, CSS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { getStatus, getTimeControlDetail, saveTimeControlDetail } from "../../../services/timeControlService.js";
 import {  formatDateOrigin, serializeForm, setDateTimestampDay, sortBy } from "../../../services/utils.js";
-import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
+import { newComponent, setAttributes } from "../../../services/utilsComponents.js";
 import { firstLetters } from "../../signin/time-control/utils.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
-import { createDivEditable } from "../shared/creationUtils.js";
+import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
 
 
 /**
@@ -78,9 +78,7 @@ const createDataForm = (form, aonMessengerChat) => {
 
     if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isTimecontrolManager() && aonMessengerChat.getDur().isTimecontrolPortal())){
 
-        let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
-        btnAccept.className = CSS.AON_BUTTON;
-        btnAccept.textContent = "Procesar";
+        let btnAccept = createBtnAccept();
         btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(times.getDetail(), {date: date.value, time: time.value}, aonMessengerChat) );
          
         createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
