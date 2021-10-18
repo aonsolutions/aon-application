@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -37,6 +38,7 @@ public interface IPayroll {
 	// -------------------- CONTRACT DATA
 	
 	public Stream<ContractData> getContractDataStream(AONContext ctx, ContractDataFilter filter);
+	public LinkedList<ContractData> saveContractData(AONContext ctx, ContractData ...contractData);
 
 	// -------------------- IRPF DATA
 

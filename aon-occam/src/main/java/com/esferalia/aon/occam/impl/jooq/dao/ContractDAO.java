@@ -53,14 +53,6 @@ public class ContractDAO {
 			, filter).fetch().stream().map(new ContractFiller());		
 	}
 	
-	// -------------------- CONTRACT DATA
-	
-	public static Stream<ContractData> getContractDataStream(AONContext ctx, ContractDataFilter filter){
-		ctx.checkRead();
-		return CONTRACT_DATA_PROPERTIES.build(ctx.getDslContext().select()
-			.from(CONTRACT_DATA), filter).fetch().stream().map(new ContractDataFiller());		
-	}
-	
 	// -------------------- IRPF DATA
 	
 	public static Stream<IrpfData> getIrpfDataStream(AONContext ctx, IrpfDataFilter filter){
