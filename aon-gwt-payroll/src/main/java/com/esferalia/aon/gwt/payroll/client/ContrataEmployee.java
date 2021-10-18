@@ -850,6 +850,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showContractIrpfButtons();
 					employeeContractIrpf.setEmployeeContractIrpfObject(employeeContractIrpfObject);
+//					employeeContractIrpf.initializeYearLB(yearLBContractIrpf);
 				});
 				break;
 			case 11:
@@ -1767,7 +1768,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		hPanel.add(saveContractIrpfButton);
 		
 		yearLBContractIrpf = new ListBox();
-		employeeContractIrpf.initializeYearLB(yearLBContractIrpf);
 		employeeContractIrpf.setYearLB(yearLBContractIrpf);
 		hPanel.add(yearLBContractIrpf);
 		

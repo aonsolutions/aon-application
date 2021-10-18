@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
+import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
 
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
@@ -20,6 +21,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployeeIrpf {
 	
@@ -75,70 +77,101 @@ public class JooqEmployeeIrpf {
 			
 			// Salary Records
 			Result<Record> salaryRecords = dslContext.select().from(SALARY)
-					.where(SALARY.START_DATE.ge(parseDateToSQL(iteratorDate)))
-					.and(SALARY.END_DATE.le(parseDateToSQL(endDate)))
+					.where(SALARY.ISSUE_DATE.between(parseDateToSQL(iteratorDate), parseDateToSQL(endDate)).or(SALARY.ISSUE_DATE.eq(parseDateToSQL(iteratorDate)).or(SALARY.ISSUE_DATE.eq( parseDateToSQL(endDate)))))
 					.and(SALARY.CONTRACT.eq(contractId))
+					.orderBy(SALARY.TYPE)
 					.fetch();
 			
 			if(salaryRecords.isNotEmpty()) {
-				EmployeeIrpf employeeIrpf = new EmployeeIrpf();
-				
 				if(salaryRecords.size() > 1)
 					System.err.println("More than one Salary for a month (contractId : " + contractId + ", Date : " + formatDate.format(iteratorDate) + ")");
 				
 				// Get SalaryRecord
-				Record salaryRecord = salaryRecords.get(0);
+				for(Record salaryRecord : salaryRecords) {
 				
-				String salaryType = getSalaryType(salaryRecord.get(SALARY.TYPE));
-				
-				Double baseCgc = salaryRecord.get(SALARY.CGC_BASE);
-				Double baseCgp = salaryRecord.get(SALARY.CGP_BASE);
-				
-				Double employeeSSQuote = salaryRecord.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
-				Double totalIrpf = salaryRecord.get(SALARY.TOTAL_IRPF);
-				
-				Double moneyBase = salaryRecord.get(SALARY.MONEY_IRPF_BASE);
-				Double inkindBase = salaryRecord.get(SALARY.INKIND_IRPF_BASE);
-				
-				// Get irpf percent
-				Integer salaryId = salaryRecord.get(SALARY.ID);
-				Double irpfPercent = 0.00;
-				Double moneyQuote = 0.00;
-				Double inkindQuote = 0.00;
-				
-				Result<Record> irpfPercentRecords = dslContext.select().from(SALARY_DATA)
-						.where(SALARY_DATA.SALARY.eq(salaryId))
-						.and(SALARY_DATA.NAME.eq("PORCENTAJE_IRPF"))
-						.fetch();
-				
-				if(irpfPercentRecords.isNotEmpty()) {
-					if(irpfPercentRecords.size() > 1)
-						System.err.println("More than one Salary IRPF percent for a salary (salaryId : " + salaryId + ")");
+					EmployeeIrpf employeeIrpf = new EmployeeIrpf();
 					
-					Record irpfPercentRecord = irpfPercentRecords.get(0);
-					try {
-						irpfPercent = Double.parseDouble(irpfPercentRecord.get(SALARY_DATA.EXPRESSION));
-//						moneyQuote = moneyBase * irpfPercent / 100;
-//						inkindQuote = inkindBase * irpfPercent / 100;
-					} catch (NumberFormatException e) {
-						System.err.println("Can't format percent : " + irpfPercentRecord.get(SALARY_DATA.EXPRESSION));
+					Integer salaryId = salaryRecord.get(SALARY.ID);
+					String salaryType = getSalaryType(salaryRecord.get(SALARY.TYPE));
+					
+					Double employeeSSQuote = salaryRecord.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
+					if(employeeSSQuote == 0.00) {
+						Result<Record> salaryDeductions = dslContext.select().from(SALARY_DEDUCTION)
+							.where(SALARY_DEDUCTION.SALARY.eq(salaryId))
+							.and(
+								SALARY_DEDUCTION.DEDUCTION_CONCEPT.eq("CGC")
+								.or(SALARY_DEDUCTION.DEDUCTION_CONCEPT.eq("DESMPL"))
+								.or(SALARY_DEDUCTION.DEDUCTION_CONCEPT.eq("FP"))
+							).fetch();
+						Double value = 0.00;
+						for(Record salaryDeduction : salaryDeductions)
+							value += salaryDeduction.get(SALARY_DEDUCTION.AMOUNT);
+						employeeSSQuote = value;
 					}
+					
+					Double totalIrpf = salaryRecord.get(SALARY.TOTAL_IRPF);
+					if(employeeSSQuote == 0.00) {
+						Double value = dslContext.select(SALARY_DEDUCTION.AMOUNT).from(SALARY_DEDUCTION)
+								.where(SALARY_DEDUCTION.SALARY.eq(salaryId))
+								.and(SALARY_DEDUCTION.DEDUCTION_CONCEPT.eq("IRPF")).fetchOne(SALARY_DEDUCTION.AMOUNT);
+						if(null != value)
+							totalIrpf = value;
+					}
+					
+					Double inkindBase = salaryRecord.get(SALARY.INKIND_IRPF_BASE);
+					if(inkindBase == 0.00) {
+						Double value = dslContext.select(SALARY_DEDUCTION.AMOUNT).from(SALARY_DEDUCTION)
+								.where(SALARY_DEDUCTION.SALARY.eq(salaryId))
+								.and(SALARY_DEDUCTION.DEDUCTION_CONCEPT.eq("EN_ESPECIE")).fetchOne(SALARY_DEDUCTION.AMOUNT);
+						
+						String baseCgcStr = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
+								.where(SALARY_DATA.NAME.eq("BASE_CGC"))
+								.and(SALARY_DATA.SALARY.eq(salaryId))
+								.fetchOne(SALARY_DATA.EXPRESSION);
+						if(null != value && AonStringUtils.isNotBlank(baseCgcStr))
+							inkindBase = Double.parseDouble(baseCgcStr) - value;
+					}
+					
+					Double moneyBase = salaryRecord.get(SALARY.MONEY_IRPF_BASE);
+					
+					
+					// Get irpf percent
+					Double irpfPercent = 0.00;
+					Double moneyQuote = 0.00;
+					Double inkindQuote = 0.00;
+					
+					Result<Record> irpfPercentRecords = dslContext.select().from(SALARY_DATA)
+							.where(SALARY_DATA.SALARY.eq(salaryId))
+							.and(SALARY_DATA.NAME.eq("PORCENTAJE_IRPF"))
+							.fetch();
+					
+					if(irpfPercentRecords.isNotEmpty()) {
+						if(irpfPercentRecords.size() > 1)
+							System.err.println("More than one Salary IRPF percent for a salary (salaryId : " + salaryId + ")");
+						
+						Record irpfPercentRecord = irpfPercentRecords.get(0);
+						try {
+							irpfPercent = Double.parseDouble(irpfPercentRecord.get(SALARY_DATA.EXPRESSION));
+							moneyQuote = moneyBase * irpfPercent / 100;
+							inkindQuote = inkindBase * irpfPercent / 100;
+						} catch (NumberFormatException e) {
+							System.err.println("Can't format percent : " + irpfPercentRecord.get(SALARY_DATA.EXPRESSION));
+						}
+					}
+					
+					employeeIrpf.setDate(iteratorDate)
+								.setSalaryId(salaryId)
+								.setSalaryType(salaryType)
+								.setMoneyBase(moneyBase)
+								.setMoneyQuote(moneyQuote)
+								.setInkindBase(inkindBase)
+								.setInkindQuote(inkindQuote)
+								.setIrpfPercent(irpfPercent)
+								.setEmployeeSSQuote(employeeSSQuote)
+								.setTotalIrpf(totalIrpf);
+					
+					employeeIrpfList.add(employeeIrpf);
 				}
-				
-				employeeIrpf.setDate(iteratorDate)
-							.setSalaryId(salaryId)
-							.setSalaryType(salaryType)
-							.setMoneyBase(moneyBase)
-							.setMoneyQuote(moneyQuote)
-							.setInkindBase(inkindBase)
-							.setInkindQuote(inkindQuote)
-							.setIrpfPercent(irpfPercent)
-							.setBaseCgc(baseCgc)
-							.setBaseCgp(baseCgp)
-							.setEmployeeSSQuote(employeeSSQuote)
-							.setTotalIrpf(totalIrpf);
-				
-				employeeIrpfList.add(employeeIrpf);
 			}
 			
 			// Add month to iteratorDate
@@ -159,6 +192,12 @@ public class JooqEmployeeIrpf {
 			return "Finiquito";
 		case (byte) 3:
 			return "Retraso";
+		case (byte) 4:
+			return "L00";
+		case (byte) 5:
+			return "L03";
+		case (byte) 6:
+			return "L13";
 		case (byte) 7:
 			return "Manual";
 		default:
@@ -210,8 +249,6 @@ public class JooqEmployeeIrpf {
 					.set(SALARY.REGISTRATION, 0)
 					.set(SALARY.TIME_UNITS, 30)
 					.set(SALARY.ISSUE_DATE, parseDateToSQL(endDate))
-					.set(SALARY.CGC_BASE, employeeIrpf.getBaseCgc())
-					.set(SALARY.CGP_BASE, employeeIrpf.getBaseCgp())
 					.set(SALARY.MONEY_IRPF_BASE, employeeIrpf.getMoneyBase())
 					.set(SALARY.INKIND_IRPF_BASE, employeeIrpf.getInkindBase())
 					.set(SALARY.IRPF_BASE,	employeeIrpf.getMoneyBase() + employeeIrpf.getInkindBase())

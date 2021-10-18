@@ -26,8 +26,19 @@
 			width: 100%;
 		}
 		
+		.width120{
+			width: 120px;
+			text-align: center;
+			margin-left: 10px;
+		}
+		
 		.width90{
 			width: 90px;
+			text-align: center;
+		}
+		
+		.width70{
+			width: 70px;
 			text-align: center;
 		}
 		
@@ -37,6 +48,12 @@
 		
 		.width50{
 			width: 50px;
+			text-align: center;
+		}
+		
+		.width40{
+			width: 40px;
+			text-align: center;
 		}
 		
 		.header{
@@ -44,11 +61,20 @@
 			background-color: #eee;
 		}
 		
+		.l00{
+			color: green;
+		}
+		
+		.l190{
+			color: blue;
+		}
+		
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
-			<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.heightAll} {style.widthAll}" />
+			<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.heightAll} {style.widthAll}">
+			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 	

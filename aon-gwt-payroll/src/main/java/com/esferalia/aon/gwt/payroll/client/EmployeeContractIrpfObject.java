@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeContractIrpfObject {
@@ -17,11 +18,13 @@ public class EmployeeContractIrpfObject {
 	
 	private List<EmployeeIrpf> employeeIrpfList;
 	private Integer contractId;
+	private Date contractStartDate;
 	
 	// ----------------------------------------------- Constructor 
 	
-	public EmployeeContractIrpfObject(Integer contractId) {
+	public EmployeeContractIrpfObject(Integer contractId, Date contractStartDate) {
 		this.contractId = contractId;
+		this.contractStartDate = contractStartDate;
 		this.employeeIrpfList = new ArrayList<>();
 	}
 
@@ -50,6 +53,7 @@ public class EmployeeContractIrpfObject {
 	}
 	
 	public void setEmployeeIrpf(Consumer<Void> success, Consumer<Throwable> failure) {
+		Window.alert("employeeIrpfList size : " + employeeIrpfList.size());
 		employeesService.setEmployeeIrpf(contractId, employeeIrpfList, new AsyncCallback<Void>() {
 			
 			@Override
@@ -65,25 +69,31 @@ public class EmployeeContractIrpfObject {
 	}
 	
 	// ----------------------------------------------- Methods
+	
+	public Integer getContractStartYear() {
+		return DateUtils.getYear(this.contractStartDate);
+	}
 
-	public EmployeeIrpf getEmployeeIrpf(Date date) {
+	public List<EmployeeIrpf> getEmployeeIrpf(Date date) {
 		DateUtils.resetTime(date);
+		List<EmployeeIrpf> result = new ArrayList<>();
 		
 		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
 			if(DateUtils.equals(date, employeeIrpf.getDate()) && !employeeIrpf.isDelete())
-				return employeeIrpf;
+				result.add(employeeIrpf);
 		
-		return null;
+		return result;
 	}
 	
 	public void createUpdateEmployeeIrpf(Date date, Double moneyBase, Double moneyQuote, Double inkindBase,
-			Double inkindQuote, Double irpfPercent, Double baseCgc, Double baseCgp, Double employeeSSQuote, Double totalIrpf) {
+			Double inkindQuote, Double irpfPercent, Double employeeSSQuote, Double totalIrpf, Integer salaryId) {
 		
-		EmployeeIrpf employeeIrpf = getEmployeeIrpf(date);
+		EmployeeIrpf employeeIrpf = getEmployeeIrpf(date, salaryId);
 		
 		if(null == employeeIrpf) {
 			employeeIrpf = new EmployeeIrpf();
 			employeeIrpf.setNew(true);
+			employeeIrpf.setSalaryType("Manual");
 			employeeIrpfList.add(employeeIrpf);
 		}
 		
@@ -93,14 +103,88 @@ public class EmployeeContractIrpfObject {
 					.setInkindBase(inkindBase)
 					.setInkindQuote(inkindQuote)
 					.setIrpfPercent(irpfPercent)
-					.setBaseCgc(baseCgc)
-					.setBaseCgp(baseCgp)
 					.setEmployeeSSQuote(employeeSSQuote)
 					.setTotalIrpf(totalIrpf);
+		
+		Window.alert(employeeIrpf.toString());
+		
+	}
+
+	private EmployeeIrpf getEmployeeIrpf(Date date, Integer salaryId) {
+		if(salaryId == null) {
+			List<EmployeeIrpf> employeeIrpfListAux = getEmployeeIrpf(date);
+			return employeeIrpfListAux.isEmpty() ? null : employeeIrpfListAux.get(0);
+		}
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(salaryId == employeeIrpf.getSalaryId() && !employeeIrpf.isDelete())
+				return employeeIrpf;
+		
+		return null;
 	}
 
 	public void deleteEmployeeIrpf(EmployeeIrpf employeeIrpf) {
 		employeeIrpf.setDelete(true);
+	}
+
+	public Double getAccumulateMoneyBase() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getMoneyBase() != null)
+				accumulate += employeeIrpf.getMoneyBase();
+		
+		return accumulate;
+	}
+
+	public Double getAccumulateMoneyQuote() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getMoneyQuote() != null)
+				accumulate += employeeIrpf.getMoneyQuote();
+		
+		return accumulate;
+	}
+
+	public Double getAccumulateInkindBase() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getInkindBase() != null)
+				accumulate += employeeIrpf.getInkindBase();
+		
+		return accumulate;
+	}
+
+	public Double getAccumulateInkindQuote() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getInkindQuote() != null)
+				accumulate += employeeIrpf.getInkindQuote();
+		
+		return accumulate;
+	}
+
+	public Double getAccumulateTotalIrpf() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getTotalIrpf() != null)
+				accumulate += employeeIrpf.getTotalIrpf();
+		
+		return accumulate;
+	}
+
+	public Double getAccumulateEmployeeSSQuote() {
+		Double accumulate = 0.00;
+		
+		for(EmployeeIrpf employeeIrpf : employeeIrpfList)
+			if(employeeIrpf.getEmployeeSSQuote() != null)
+				accumulate += employeeIrpf.getEmployeeSSQuote();
+		
+		return accumulate;
 	}
 	
 }
