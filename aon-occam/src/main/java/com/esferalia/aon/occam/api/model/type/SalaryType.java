@@ -74,7 +74,7 @@ public enum SalaryType {
 
 	
 
-	abstract <E> E accept( TypeVisitor<E> visitor); 
+	public abstract <E> E accept( TypeVisitor<E> visitor); 
 	
 	public byte value() {
 		return (byte) ordinal();
