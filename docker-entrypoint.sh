@@ -23,7 +23,7 @@ for arg; do
 done
 
 if [ "$1" = 'catalina.sh' -a -z "$wantHelp" ]; then
-
+	if [ -n "${DB_HOST+x}" ]; then
 	: ${DB_PORT:=3306}
 	: ${DB_HOST:=localhost}
 	: ${DB_USER:=aonsolutions}
@@ -37,6 +37,8 @@ password=$DB_PASSWD
 timezone=$DB_TIMEZONE
 useSSL=false
 EOF
+	fi
+
 	: ${AWS_REGION:=eu-west-1}
         cat << EOF > $AWS_HOME/config
 [default]
@@ -77,12 +79,7 @@ EOF
 	echo
 	echo $(date)
 	echo
-	echo -e "Using DB_HOST:\t\t$DB_HOST"
-	echo -e "Using DB_PORT:\t\t$DB_PORT"
-	echo -e "Using DB_USER:\t\t$DB_USER" 
-	echo -e "Using DB_PASSWD:\t$DB_PASSWD"
-	echo -e "Using DB_TIMEZONE:\t$DB_TIMEZONE"
-	[[ -n $MEMCACHED_NODES ]] && echo -e "Using MEMCACHED_NODES:\t$MEMCACHED_NODES" 
+	cat $AON_AIO_CONF/connection
 	echo
 	echo 'AON init process complete; ready for start up.'
 	echo

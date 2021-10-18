@@ -109,7 +109,7 @@ public class AmazonLoginCallbackServlet extends HttpServlet {
 					.getDefaultConnectionInfo();
 
 			Util util = new Util(connectionInfo);
-			util.createMetadataConnection();
+			util.createMetadataConnection(domainName);
 			Domain domain = util.getDomain(domainName);
 			connection = connectionInfo.getDomainConnection(domain
 					.getDataBaseName());

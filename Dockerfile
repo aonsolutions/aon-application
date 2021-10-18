@@ -130,4 +130,6 @@ EXPOSE 8080
 ENV JAVA_OPTS="${JAVA_OPTS} -Duser.language=es -Duser.country=ES"
 ENV JAVA_OPTS="${JAVA_OPTS} -Djava.security.auth.login.config=${TOMCAT_CONFDIR}/login.config"
 
+VOLUME [$AON_AIO_CONF]
+
 CMD ["catalina.sh", "run"]

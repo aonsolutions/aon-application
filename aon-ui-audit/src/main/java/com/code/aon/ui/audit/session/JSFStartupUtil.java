@@ -123,13 +123,8 @@ public class JSFStartupUtil {
 	private AuthPrincipal getAuthPrincipal( ConnectionInfo ci ) {
 		AuthPrincipal principal = null;
 		Connection connection = null;
-		QueryRunner run = new QueryRunner();
 		try {
-			connection = ci.getMetadataConnection();
-			ResultSetHandler<List<String>> h = new ColumnListHandler<String>();
-			List<String> dbs = run.query( connection,
-				"SELECT t.TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES as t "+
-				"WHERE t.TABLE_NAME IN ('domain','db_version','profile') GROUP BY t.TABLE_SCHEMA", h);
+			List<String> dbs = ci.getSchemas();
 			if ( dbs != null ) {
 				for( String db : dbs ) {
 					principal = getAuthPrincipal(db);
