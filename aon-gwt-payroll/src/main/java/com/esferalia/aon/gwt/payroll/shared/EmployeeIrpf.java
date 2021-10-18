@@ -13,14 +13,10 @@ public class EmployeeIrpf implements Serializable {
 	private String salaryType;
 	private Date date;
 	private Double moneyBase;
-//	private Double moneyPercent;
 	private Double moneyQuote;
 	private Double inkindBase;
-//	private Double inkindPercent;
 	private Double inkindQuote;
 	private Double irpfPercent;
-	private Double baseCgc;
-	private Double baseCgp;
 	private Double employeeSSQuote;
 	private Double totalIrpf;
 	
@@ -137,24 +133,6 @@ public class EmployeeIrpf implements Serializable {
 		return this;
 	}
 
-	public Double getBaseCgc() {
-		return baseCgc;
-	}
-
-	public EmployeeIrpf setBaseCgc(Double baseCgc) {
-		this.baseCgc = baseCgc;
-		return this;
-	}
-
-	public Double getBaseCgp() {
-		return baseCgp;
-	}
-
-	public EmployeeIrpf setBaseCgp(Double baseCgp) {
-		this.baseCgp = baseCgp;
-		return this;
-	}
-
 	public Double getEmployeeSSQuote() {
 		return null != employeeSSQuote ? round(employeeSSQuote, 2) : employeeSSQuote;
 	}
@@ -180,6 +158,14 @@ public class EmployeeIrpf implements Serializable {
 	    value = value * factor;
 	    long tmp = Math.round(value);
 	    return (double) tmp / factor;
+	}
+
+	@Override
+	public String toString() {
+		return "EmployeeIrpf [isNew=" + isNew + ", isDelete=" + isDelete + ", salaryId=" + salaryId + ", salaryType="
+				+ salaryType + ", date=" + date + ", moneyBase=" + moneyBase + ", moneyQuote=" + moneyQuote
+				+ ", inkindBase=" + inkindBase + ", inkindQuote=" + inkindQuote + ", irpfPercent=" + irpfPercent
+				+ ", employeeSSQuote=" + employeeSSQuote + ", totalIrpf=" + totalIrpf + "]";
 	}
 	
 }
