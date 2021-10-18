@@ -401,7 +401,7 @@ class ConnectionInfoImpl extends ConnectionInfo{
 		properties.put(USER_PROPERTY, user);
 		properties.put(PASSWORD_PROPERTY, password);
 		properties.put(USESSL_PROPERTY, useSSL);
-		properties.put(TIMEZONE_PROPERTY, timeZone);
+		properties.put("serverTimezone", timeZone);
 		
 		try {
 			return DriverManager.getConnection(url, properties);
