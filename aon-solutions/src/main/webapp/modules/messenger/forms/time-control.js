@@ -148,7 +148,7 @@ const processAccept = async (tm,{date, time},aonMessengerChat) => {
                 date: new Date( formatDateOrigin(date) + " " + time ).getTime()
             }
             await saveTimeControlDetail(data);
-            await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `Solicitud tramitada`);
+            await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
         }
     } catch (err) {
         console.log(err);

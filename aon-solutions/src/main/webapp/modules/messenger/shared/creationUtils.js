@@ -678,7 +678,7 @@ export const appendTaskTag = ( tag, parent, fn) =>{
     padding: "0 4px",
     backgroundColor: "rgb(221, 221, 221)",
     color: "rgb(102, 102, 102)",
-    margin: "0 5px 5px 5px",
+    margin: "5px",
     fontWeight: "450" 
   });
   divOne.dataset.taskTag = tag.id;
@@ -693,7 +693,7 @@ export const appendTaskTag = ( tag, parent, fn) =>{
   divThree.addEventListener(EVENT.CLICK,()=> fn(tag.id));
   divOne.appendChild(divThree);
 
-  const i = setStyles(document.createElement("i"),{fontSize: "15px" });
+  const i = setStyles(document.createElement("i"),{ fontSize: "15px" });
   i.className = ICON_TYPES.MATERIAL_ICONS;
   i.innerText = MATERIAL_ICONS.CLOSE;
   divThree.appendChild(i);

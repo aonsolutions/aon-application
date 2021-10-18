@@ -383,7 +383,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			try {
 				String pre = mov.equalsIgnoreCase("alta") ? "el" : "la";
 				Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-				String subject = "TGSS | "+mov.toUpperCase()+" "+employee.getName().get();
+				String subject = "TGSS | "+mov.toUpperCase()+" de "+employee.getName().get();
 				String body = "La Tesorería General de la Seguridad Social ha procedido a reconocer "+pre+" <b>"+mov+"</b> "
 						+ "en el Régimen General de D./Dña. <b>"+employee.getName().get()+"</b>, "
 						+ "con número de afiliación <b>"+employee.getNss()+"</b> y DNI/NIE <b>"+employee.getIpf()+"</b>, con fecha <b>"+Toolkit.formatDate(date, "dd-MM-yyyy").get()+"</b>, "
@@ -415,7 +415,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					e.printStackTrace();
 				}
 
-				sendEmail(api, subject, body, new LinkedList<>());
+				sendEmail(api, subject, body, files);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -443,7 +443,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			
 			Domain domain = api.getDomain();
 			User user = AON_SOLUTIONS.getUser(domain, api.getToken());
-			LinkedList<Auth> auths = new LinkedList<Auth>();
+			LinkedList<Auth> auths = new LinkedList<>();
 			
 			AON.getDomainUserStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().ne(user.getId())).forEach(usr -> {
 				DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, user.getLogin(), usr.getId());

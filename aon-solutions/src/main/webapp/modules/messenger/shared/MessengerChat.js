@@ -1,14 +1,14 @@
 import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, MATERIAL_ICONS, MSG, EVENT} from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
-import { newComponent, setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
+import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS } from "../MessengerEnums.js";
-import * as ACTIONS from "../../actions.js";
-import {  createMainView, createTitle, createAonTextArea, createChat, createOutlinedMaterialIcon, createSectionComment, createLabelFileText} from "./creationUtils.js";
-import { buildForm, buildTextareaToolbar, dialogTaskTags, downChat, getIconJson, upChat } from "./utils.js";
+import {  createMainView, createTitle, createAonTextArea, createChat, createSectionComment, createLabelFileText} from "./creationUtils.js";
+import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
 import { SigninSidenav } from "../../signin/signinEnums.js";
+import * as ACTIONS from "../../actions.js";
 
 /**
  * 
@@ -79,17 +79,7 @@ const buildToolbar = (aonMessengerChat) => {
 
     toolbar.addButton2(ACTIONS.BACK, () => aonMessengerChat.back());
 
-    const titleSpan = setClasses(toolbar.querySelector( `.${CSS.AON_SECONDARY_TOOLBAR_TITLE}` ), [CSS.FLEX_ROW, CSS.FLEX_ALIGN_CENTER]);
-
-    const iconJson = getIconJson(task);
-    const status = createOutlinedMaterialIcon({
-      name:  iconJson.icon,
-      color: iconJson.icon_color,
-      size: "20px"
-    });
-    status.element.style.marginLeft = "10px";
-    status.element.style.marginTop = "-1px";
-    status.appendTo(titleSpan);
+    addIconToolbar(toolbar, task);
 }
 
 /**

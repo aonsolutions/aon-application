@@ -2,10 +2,10 @@ import { AonToolbar } from "../../../components/aon-toolbar.js";
 import { COLORS, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { ToolbarType } from "../../../models/enums.js";
 import { newComponent, setAttributes, setStyles} from "../../../services/utilsComponents.js";
-import * as ACTIONS from "../../actions.js";
 import {  MESSENGER_COMPONENTS, MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import {  createMobileMainView, createTitle, createAonTextArea, createChat, createSectionComment} from "./creationUtils.js";
-import { buildForm, buildTextareaToolbar } from "./utils.js";
+import { addIconToolbar, buildForm, buildTextareaToolbar } from "./utils.js";
+import * as ACTIONS from "../../actions.js";
 
 /**
  * 
@@ -201,6 +201,8 @@ const buildToolbar = (aonMessengerChat, div, create = false) => {
         } else 
             aonMessengerChat.back();
     });
+
+    addIconToolbar(toolbar, task);
 }
 
 /**

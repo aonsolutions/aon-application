@@ -3,6 +3,7 @@ import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { AonDate } from "../../../components/aon-date.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { TAG, EVENT, MSG, MATERIAL_ICONS, CSS } from "../../../environments/environments.js";
+import { saveVacation } from "../../../services/contractService.js";
 import { formatDateOrigin, serializeForm } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
@@ -34,9 +35,9 @@ import { createDivEditable } from "../shared/creationUtils.js";
     
     let i = 0;
     if(data.dates && data.dates.length){
-        data.dates.forEach(dt=> addDates(table, dt, i++) );
+        data.dates.forEach(dt=> addDates(table, i++, dt) );
     } else {
-        addDates(table, undefined, i++);
+        addDates(table, i++);
     }
 
     //ADD BUTTON 
@@ -45,7 +46,7 @@ import { createDivEditable } from "../shared/creationUtils.js";
         title:MSG.ADD_DETAIL,
         icon:MATERIAL_ICONS.ADD
     });
-    addButton.addEventListener(EVENT.CLICK, () => addDates(table, undefined, i++) );
+    addButton.addEventListener(EVENT.CLICK, () => addDates(table,i++) );
     div.appendChild(addButton);
 
     //OBSERVATION
@@ -65,10 +66,10 @@ import { createDivEditable } from "../shared/creationUtils.js";
 /**
  * 
  * @param {HTMLElement} table html table
+ * @param {Number} i row numeric
  * @param {Object} data data object default
- * @param {Number} i row numericw
  */
-const addDates = (table, data={}, i) =>{
+const addDates = (table, i, data={}) =>{
     const rowIndex = table.addRow(); // ----- RETURN ROW INDEX
     
     //DATE INI
@@ -131,7 +132,11 @@ const processAccept = async (aonMessengerChat) => {
     
     aonMessengerChat.getApplication().startLoading();
     try {
-        await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `Solicitud tramitada`);
+        const task = aonMessengerChat.task;
+        const data = getFormVacationJson();
+        const registry = task.sender.id; 
+        await saveVacation({...data, registry});
+        await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
     } catch (err) {
         console.log(err);
         aonMessengerChat.showError(err)

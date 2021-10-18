@@ -227,10 +227,10 @@ export const fillProcessType =  ({source_id}, aonMessengerChat) => {
 
 /**
  * fill chat (Chats)
- * @param {Array} workflows array de flujo de trabajo
  * @param {HTMLElement} aon-messenger-chat component
+ * @param {Array} workflows array de flujo de trabajo
  */
-export const fillChat = (workflows=[], aonMessengerChat)=>{
+export const fillChat = (aonMessengerChat, workflows=[])=>{
     waitEl(`#${MESSENGER_IDS.MESSENGER_CHAT}`).then(chat=>{
         if(workflows.length == 0){
             let noMessage = createNoMessage();
