@@ -399,7 +399,7 @@ class ConnectionInfoImpl extends ConnectionInfo{
 		
 		Properties properties = new Properties();
 		properties.put(USER_PROPERTY, user);
-		properties.put(PASSWORD_PROPERTY, user);
+		properties.put(PASSWORD_PROPERTY, password);
 		properties.put(USESSL_PROPERTY, useSSL);
 		properties.put(TIMEZONE_PROPERTY, timeZone);
 		

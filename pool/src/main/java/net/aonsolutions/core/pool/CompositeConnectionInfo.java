@@ -155,7 +155,7 @@ class CompositeConnectionInfo extends ConnectionInfo {
 		return schemasMap;
 	}
 	private ConnectionInfo getConnectionInfo(String schema) {
-		return schemasMap.getOrDefault(schema, new NoSuchSchemaConnectionInfo(schema));
+		return getSchemasMap().getOrDefault(schema, new NoSuchSchemaConnectionInfo(schema));
 	}
 	
 
