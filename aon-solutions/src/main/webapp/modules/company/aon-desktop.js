@@ -138,7 +138,7 @@ export class AonDesktop extends AonElement {
 			let taskOptions = [];
 			if(this.getDur().isInvoice()){
 				taskOptions.push({
-					name: 'Facturas Pendientes',
+					name: MSG.PENDING_INVOICES,
 					icon: 'inbox',
 					fn: (count) => {
 						if(count>0){
@@ -148,7 +148,7 @@ export class AonDesktop extends AonElement {
 				});
 
 				taskOptions.push({
-					name: 'Facturas Rechazadas',
+					name: MSG.REJECTED_INVOICES,
 					icon: MATERIAL_ICONS.REPORT,
 					fn: (count) => {
 						if(count>0){
@@ -168,7 +168,7 @@ export class AonDesktop extends AonElement {
 							this.rootPanel(aonMessenger);
 						});
 					} else {
-						this.development('Solicitud')
+						this.development(MSG.REQUEST)
 					}
 				}
 			});
@@ -183,11 +183,11 @@ export class AonDesktop extends AonElement {
 							this.rootPanel(aonMessenger);
 						});
 					} else {
-						this.development('Solicitud')
+						this.development(MSG.REQUEST)
 					}
 				} 
 			});
-			aonDesktop.addSidenavOptions('RESUMEN ACTIVIDADES', taskOptions);
+			aonDesktop.addSidenavOptions(MSG.ACTIVITY_SUMMARY.toUpperCase(), taskOptions);
 		}
 
 		let classicOptions = [];
@@ -241,12 +241,12 @@ export class AonDesktop extends AonElement {
 		}
 
 		if(classicOptions.length > 0)
-			aonDesktop.addSidenavOptions('VISTA CLÁSICA', classicOptions);
+			aonDesktop.addSidenavOptions(MSG.CLASSIC_VIEW.toUpperCase(), classicOptions);
 
 		if(this.getDur().isTimecontrol()) {
 			getTimeControl().then(r => {
 				let aonSign = new AonSign();
-				aonDesktop.addSidenavWidget('CONTROL HORARIO', aonSign);
+				aonDesktop.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
 				aonSign.buildSignin(r);
 				let aonHeader = this.getElement('aonHeader');
 				aonHeader.timeControlStatus(r);
@@ -501,7 +501,7 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(new AonSignin());
 				break;
 			case Apps.MESSENGER.app:
-				this.isBeta() ? this.rootPanel(new AonMessenger()) : this.development('Solicitud');
+				this.isBeta() ? this.rootPanel(new AonMessenger()) : this.development(MSG.REQUEST);
 				break;
 			}
 	}
@@ -677,7 +677,7 @@ export class AonDesktop extends AonElement {
 			id: 'messenger',
 			name: 'Nueva Solicitud',
 			icon: 'message',
-			fn: () => {this.development('Nueva Solicitud');}
+			fn: () => {this.development(MSG.NEW_REQUEST);}
 		};
 
 	  	let actions = [NEW_INVOICE, NEW_DOCUMENT, NEW_MESSENGER];
