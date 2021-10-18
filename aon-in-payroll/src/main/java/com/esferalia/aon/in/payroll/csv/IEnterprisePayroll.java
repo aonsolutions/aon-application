@@ -1,10 +1,17 @@
 package com.esferalia.aon.in.payroll.csv;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 
 public interface IEnterprisePayroll {
 	
+	public Date getStartDate();
+	public Date getEndDate();
+	
 	public String getEmployee();
+	public String getEmployeeNaf();
+	public String getCcc();
 	public String getWorkplace();
 	public SalaryType getSalaryType();
 	
@@ -39,5 +46,8 @@ public interface IEnterprisePayroll {
 	public Double getFogasaEnterprise();
 	public Double getEstrucEnterprise();
 	public Double getNoEstructEnterprise();
+	
+	public IEnterprisePayroll getOriginalPayroll();
+	public IEnterprisePayroll setOriginalPayroll(IEnterprisePayroll originalPayroll);
 
 }

@@ -572,6 +572,15 @@ public class Cost extends ResizeComposite {
 		if (isMenuItemChecked(seeMenu.getDelay()))
 			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
 					, String.valueOf(Salary.Type.DELAY.ordinal())));
+		if (isMenuItemChecked(seeMenu.getL00()))
+			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.L00.ordinal())));
+		if (isMenuItemChecked(seeMenu.getL03()))
+			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.L03.ordinal())));
+		if (isMenuItemChecked(seeMenu.getL13()))
+			flowPanel.add(new Hidden(CostExcelService.Params.FILTER.getName()
+					, String.valueOf(Salary.Type.L13.ordinal())));
 		
 		formPanel.add(flowPanel);
 		
