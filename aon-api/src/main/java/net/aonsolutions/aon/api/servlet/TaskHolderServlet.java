@@ -117,7 +117,8 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 		Integer active    = api.getParams().optInt(IJsonNames.ACTIVE);
 		return TaskHolderJSON.toJSON(AON.getTaskHolderWorkgroupStream(domain, api.getUser(), 
 				f->f.getUserIdProperty().isNotNull()
-				.and(f.getActiveProperty().eq(active.byteValue())), 
+				.and(f.getActiveProperty().eq(active.byteValue()))
+				.and(f.getDomainProperty().eq(api.getDomain().getId())), 
 				workgroup));
 	}
 	
