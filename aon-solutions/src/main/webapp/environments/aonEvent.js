@@ -9,6 +9,7 @@ export const DRAGLEAVE = 'dragleave';
 export const DROP = 'drop';
 export const AON_APPLICATION_DROP = 'apDrop';
 export const FOCUS = 'focus';
+export const FOCUSOUT = 'focusout';
 export const KEYPRESS = 'keypress';
 export const KEYUP = 'keyup';
 export const KEYDOWN = 'keydown';

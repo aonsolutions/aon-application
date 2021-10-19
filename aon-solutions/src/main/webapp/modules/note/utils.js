@@ -1,8 +1,11 @@
 import { AonDate } from "../../components/aon-date.js";
 import { AonTextArea } from "../../components/aon-textarea.js";
 import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
+import { MONTHS } from "../../models/enums.js";
 import { deleteNote, saveNote } from "../../services/noteService.js";
+import { setTime } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
+import { dateCustomDayHour } from "../signin/time-control/utils.js";
 
 /**
  * 
@@ -39,7 +42,7 @@ export const appendNote = (ul, note) => {
     //SET STYLE BTN RIGHT TOOLBAR
     setStyles(document.getElementById(textArea.RIGHT),{
         paddingRight : 0,
-        display : "none",
+        // display : "none",
         alignSelf : "flex-start"
     });
     
@@ -67,18 +70,20 @@ export const appendNote = (ul, note) => {
         id: MATERIAL_ICONS.MORE_VERT,
         icon: MATERIAL_ICONS.MORE_VERT,
         name: MSG.OPTIONS
-    },(ev) => dialogMoreVert(ev, note, li));
+    },(ev) => dialogMoreVert(ev, note, li, div, textArea.id));
     
 
     textArea.draggableEnable(); 
 
-    textArea.getTextAreaDiv().addEventListener(EVENT.BLUR, async() => {
+    div.addEventListener(EVENT.FOCUSOUT, async() => {
         const {id} = await saveNote(note);
         note.setId(id);
     });
+
+    if(note.date && new Date(note.date).isValid()) appendDate(div, note.date, textArea.id);
 }
 
-const dialogMoreVert = (ev, note, li) => {
+const dialogMoreVert = (ev, note, li, divParent, textAreaId) => {
     ev.preventDefault();
 
     const rect = ev.target.getBoundingClientRect();
@@ -102,10 +107,11 @@ const dialogMoreVert = (ev, note, li) => {
                 aonDate.id = "date"+ idRand;
                 aonDate.name = "date"+ idRand;
                 aonDate.title =  MSG.DATE;
-                aonDate.addEventListener(EVENT.CHANGE, ({target})=>{
-                    if(target.value){
-                        note.setDate(target.value);
+                aonDate.addEventListener(EVENT.CHANGE, ()=>{
+                    if(aonDate.value){
+                        note.setDate(aonDate.value);
                         saveNote(note);
+                        appendDate(divParent, aonDate.value, textAreaId);
                         dialog.close();
                     }
                 })
@@ -115,7 +121,7 @@ const dialogMoreVert = (ev, note, li) => {
                 divContent.appendChild(aonDate);
                 dialog.setContent(divContent);
 
-                if(note.date) aonDate.setDate(note.date);
+                if(note.date && new Date(note.date).isValid()) aonDate.setDate(note.date);
     
                 dialog.openPosition({top, left: (left - 100) });
             }
@@ -135,3 +141,46 @@ const dialogMoreVert = (ev, note, li) => {
     dialog.setMenuOptions(moreActions, top, left);
     dialog.open();
 } 
+
+
+const appendDate = (parent, date, textAreaId)=>{
+    let label = document.getElementById("label"+textAreaId);
+    if(!label){
+        let div = setStyles(document.createElement(TAG.DIV),{
+            display: "flex",
+            alignItems: "center",
+            height: "18px",
+            justifyContent: "center",
+            minWidth: "35px",
+            padding:" 3px 5px",
+            cursor: "pointer",
+            "-webkit-justify-content": "center",
+            "-webkit-align-items": "center",
+        })
+        div.id = "div"+textAreaId;
+        parent.appendChild(div);
+    
+        let icon = setStyles(document.createElement(TAG.DIV),{ height: "28px",  opacity: "0.54", width: "17px" })    
+        icon.innerHTML = `<span class="material-icons-outlined">schedule</span>`;
+        div.appendChild(icon);
+    
+        label = setStyles(document.createElement(TAG.LABEL),{
+            border: "1px solid transparent",
+            textAlign: "center",
+            fontSize: "11px",
+            margin: "0 6px",
+            padding: "1px",
+            whiteSpace: "nowrap"
+        });
+        label.id = "label"+textAreaId;
+        div.appendChild(label);
+    }
+    label.innerText = dateFormat(date);//"16 abr 2022, 20:00";  
+}
+
+const dateFormat = (d) => {
+    const date = new Date(d);
+    let day = dateCustomDayHour(d);
+    //, ${setTime(d)}
+    return day ? day : `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}

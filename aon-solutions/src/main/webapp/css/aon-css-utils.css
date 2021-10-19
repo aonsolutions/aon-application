@@ -134,6 +134,6 @@
 .noteBoxShadow:focus-within{
     box-shadow: 1px 1px 2px black;
 }
-.noteBoxShadow:focus-within > aon-textarea:first-child > toolbar > div:last-child {
+/* .noteBoxShadow:focus-within > aon-textarea:first-child > toolbar > div:last-child {
     display: flex !important;
-}
+} */
