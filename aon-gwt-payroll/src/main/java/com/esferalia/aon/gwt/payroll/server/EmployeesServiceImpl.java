@@ -6690,6 +6690,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		if(AonStringUtils.isNotBlank(settleReason))
 			builder.setSituation(settleReason);
 
+		String rlce = employeeContractInfo.getContractInfo().getRlce();
+		if(AonStringUtils.isNotBlank(rlce))
+			builder.setRlce(rlce);
+		
 		return builder.build();
 	}
 
