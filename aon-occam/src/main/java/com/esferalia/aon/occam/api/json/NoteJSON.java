@@ -23,7 +23,7 @@ public class NoteJSON {
 			.setOwner(JsonUtils.getInteger(json, "owner"))
 			.setSubject(JsonUtils.getString(json, "subject"))
 			.setNote(JsonUtils.getString(json, "note"))
-			.setDate(JsonUtils.getDate(json, "date"))
+			.setDate(JsonUtils.getDateFormat(json, "date", "yyyy-MM-dd"))
 			;
 	}
 	
