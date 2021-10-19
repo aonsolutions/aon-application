@@ -51,23 +51,6 @@ aws_access_key_id = $AWS_ACCESS_KEY_ID \
 aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 EOF
 
-	CLASSPATH=`find $TOMCAT_LIBDIR -name 'mysql-connector-java-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $AON_AIO_HOME -name 'dbutils-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $AON_AIO_HOME -name 'aon-master-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'slf4j-api-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'slf4j-jdk14-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'commons-lang-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'commons-dbutils-*.jar'`
-	java -classpath $CLASSPATH com.code.aon.master.Up2DateDB \
-	jdbc:mysql://$DB_HOST:$DB_PORT $DB_USER $DB_PASSWD com.mysql.cj.jdbc.Driver \
-	|| echo -e "Can't up2date all databases";
-
-	[[ -n $DYNAMODB_MANAGER_REGION_ID ]] && \
-	sed -i \
-	-e 's/Manager-->/Manager>/' \
-	-e 's/<!--Manager/<Manager/' \
-	-e 's/DYNAMODB_MANAGER_REGION_ID/'$DYNAMODB_MANAGER_REGION_ID'/' $AON_AIO_HOME/META-INF/context.xml;
-
         cat << EOF > $TOMCAT_BINDIR/setenv.sh
 CATALINA_OPTS="-Duser.language=es \
 -Duser.country=ES \
