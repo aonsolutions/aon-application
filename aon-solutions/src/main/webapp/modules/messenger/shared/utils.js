@@ -414,7 +414,6 @@ export const buildForm = (div, aonMessengerChat) => {
         fillSelectAppCau(aonMessengerChat);
     } else if( 
         (!task.id || task.isExternal()) && 
-        (!dur.isPayrollManager() && dur.isPayrollPortal()) &&
         !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) )
       ){
         let initText = received ? 'De' : 'Para';

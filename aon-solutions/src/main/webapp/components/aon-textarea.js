@@ -1,6 +1,6 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../environments/environments.js';
 import { openFileUrl } from '../services/fileService.js';
-import { convertBase64Url, getReader, waitEl } from '../services/utils.js';
+import { convertBase64Url, getReader } from '../services/utils.js';
 import { newComponent, setAttributes} from '../services/utilsComponents.js';
 import { AonElement } from './AonElement.js';
 
@@ -132,18 +132,37 @@ export class AonTextArea extends AonElement {
 
 	constructor () {
 		super();
-		this.left = "left";
-		this.right = "right";
 		this.FILES = [];
 	}
 
 	connectedCallback () {
 		this.TEXTAREA = "textarea" + this.id;
 		this.TOOLBAR = "toolbar" + this.id;
+		this.left = "left"+ this.id;
+		this.right = "right"+this.id;
 		this.build();
 	}
 
 	build() {
+		this.buildToolbar();
+
+		const textarea = this.generateTextArea();
+		textarea.appendTo(this);
+
+  	 	//ADD INPUT FILE
+		let inputFile = setAttributes(document.createElement(TAG.INPUT),{
+			id:this.id+"Files",
+			type:'file',
+			name:'file',
+			multiple:true
+		});        
+		inputFile.style.display = "none";
+		inputFile.addEventListener(EVENT.CHANGE, () => this.addFiles(inputFile.files));
+		this.appendChild(inputFile);
+	}
+
+	buildToolbar(){
+		if(this.NOT_TOOLBAR) return;
 		const bar = newComponent({
 			type: "toolbar",
 			id : this.TOOLBAR,
@@ -154,6 +173,9 @@ export class AonTextArea extends AonElement {
 				CSS.FLEX_JUSTIFY_BETWEEN,
 				CSS.NO_COPY
 			],
+			styles:{
+				height: "auto"
+			}
 		});
 		bar.appendTo(this);
 
@@ -178,20 +200,6 @@ export class AonTextArea extends AonElement {
 			]
 		});
 		right.appendTo(bar.element);
-
-		const textarea = this.generateTextArea();
-		textarea.appendTo(this);
-
-  	 	//ADD INPUT FILE
-		let inputFile = setAttributes(document.createElement(TAG.INPUT),{
-			id:this.id+"Files",
-			type:'file',
-			name:'file',
-			multiple:true
-		});        
-		inputFile.style.display = "none";
-		inputFile.addEventListener(EVENT.CHANGE, () => this.addFiles(inputFile.files));
-		this.appendChild(inputFile);
 	}
 
 	getSelection() {
@@ -209,9 +217,9 @@ export class AonTextArea extends AonElement {
 			ev.preventDefault();
 			ev.stopPropagation();
 		}  
-		return  newComponent({
+		const element =  newComponent({
 			type: TAG.DIV,
-			classes: [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL, CSS.CONTENT_EDITABLE, CSS.FOCUS_COLOR_MINUS],
+			classes: [CSS.COPY, CSS.NO_FOCUS, CSS.MATERIAL_SCROLL, CSS.CONTENT_EDITABLE],
 			id: this.TEXTAREA,
 			text: this.dataset.value,
 			attributes:{
@@ -239,6 +247,10 @@ export class AonTextArea extends AonElement {
 				dragOver: MSG.DROP_FILE,
 			}
 		});
+
+		element.element.classList.add(CSS.FOCUS_COLOR_MINUS);
+		if(this.NOT_BACKGROUND) element.element.classList.remove(CSS.FOCUS_COLOR_MINUS);
+		return element;
 	}
 
 	clear(){
@@ -271,13 +283,19 @@ export class AonTextArea extends AonElement {
 				events : {
 					click : (ev)=> properties.id === MATERIAL_ICONS.ATTACH_FILE ? this.clickFile() : fn(ev)
 				}
-			});
-			waitEl("#" + this.TOOLBAR + " #" + this.LEFT).then(el => el.appendChild(icon.element));
+			}).element;
+			this.addToolbarLeft(icon, fn);
 		}
 		//ENABLE DRAGGRABLE FILE
 		if(properties.icon === MATERIAL_ICONS.ATTACH_FILE){ 
 			this.draggableEnable(); 
 		}
+	}
+	
+	addToolbarLeft(element, fn){
+		element.addEventListener(EVENT.CLICK, fn);
+		const el = this.getElement(this.LEFT);
+		if(el) el.appendChild(element);
 	}
 
 	clickFile(){
@@ -296,16 +314,16 @@ export class AonTextArea extends AonElement {
 				attributes:{
 					title: properties.name ? properties.name : "",
 				},
-			});
-			icon.element.addEventListener(EVENT.CLICK, fn);
-			waitEl("#" + this.TOOLBAR + " #" + this.RIGHT).then(el => el.appendChild(icon.element));
-			return icon.element;
+			}).element;
+			this.addToolbarRight(icon, fn);
+			return icon;
 		}
 	}
 
 	addToolbarRight(element, fn){
 		element.addEventListener(EVENT.CLICK, fn);
-		waitEl("#" + this.TOOLBAR + " #" + this.RIGHT).then(el => el.appendChild(element));
+		const el = this.getElement(this.RIGHT);
+		if(el) el.appendChild(element);
 	}
 
 	getValue() {return this.value && this.value === 'true';}

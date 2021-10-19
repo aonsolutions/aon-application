@@ -1,13 +1,11 @@
 import {AonElement} from '../components/AonElement.js';
 import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu} from  '../services/app.js';
 import {getDomainUserRoles} from  '../services/service.js';
-import {saveNote, deleteNote, getNotes} from  '../services/noteService.js';
+import {getNotes} from  '../services/noteService.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
-import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../environments/environments.js';
+import {  CONSTANT, EVENT, MATERIAL_ICONS,  TAG } from '../environments/environments.js';
 import {AonDocumental} from './documental/aon-documental.js';
 import {AonDocumentalAyudat} from './documental/ayudat/aon-documental-ayudat.js';
-import './imports/aon-imports.js';
-import './invoice/aon-invoice-panel.js';
 import './project/aon-project-panel.js';
 import * as GWT from "../gwt/gwt.js";
 import { AonMessenger } from './messenger/aon-messenger.js';
@@ -16,8 +14,13 @@ import { AonFiscal } from './fiscal/aon-fiscal.js';
 import { AonSignin } from './signin/aon-signin.js';
 import { AonLaboral } from './laboral/aon-laboral.js';
 import { AonIcon } from '../components/aon-icon.js';
-import { AonTextArea } from '../components/aon-textarea.js';
-import { AonDate } from '../components/aon-date.js';
+import { Note } from '../models/note/Note.js';
+import { AonDialogMenu } from '../components/aon-dialog-menu.js';
+import { appendNote } from './note/utils.js';
+import { AonInvoicePanel } from './invoice/aon-invoice-panel.js';
+import { AonAccounting } from './accounting/aon-accounting.js';
+import { AonMarketplace } from './marketplace/aon-marketplace.js';
+
 // import './example/aon-example.js';
 // import './faqs/aon-faqs.js';
 const ID = 'id';
@@ -125,7 +128,7 @@ export class AonMenu extends AonElement {
 			case Apps.ACCOUNTING.app:
 					if(this.getDur().isAccountingManager()) {
 					this.buildAppMenu(Apps.ACCOUNTING);
-				} else this.rootPanelHtml('<aon-accounting></aon-accounting>');
+				} else this.rootPanel( new AonAccounting());
 				break;
 			case Apps.FISCAL.app:
 				if(this.getDur().isFiscalManager()) {
@@ -138,7 +141,7 @@ export class AonMenu extends AonElement {
 				} else this.rootPanel(new AonLaboral());
 				break;
 			case Apps.INVOICE.app:
-				this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
+				this.rootPanel(new AonInvoicePanel());
 				break;
 			case Apps.TIMECONTROL.app:
 				this.rootPanel(new AonSignin());
@@ -242,7 +245,9 @@ export class AonMenu extends AonElement {
 			if(this.getDur().isAdmin()) {
 				let aonMenuAddButton = this.getElement('aonMenuAddButton');
 				aonMenuAddButton.addEventListener(EVENT.CLICK, () => {
-					this.rootPanelHtml('<aon-marketplace id="aonMarketplace" > </aon-marketplace>');
+					let aonMarketPlace = new AonMarketplace()
+					aonMarketPlace.id = "aonMarketplace";
+					this.rootPanel(aonMarketPlace);
 				});
 			}
 		}
@@ -444,125 +449,22 @@ export class AonMenu extends AonElement {
 		div2.appendChild(ul);
 		aonMenuSidenav.appendChild(div2);
 
-		aibS.addEventListener(EVENT.CLICK,()=>this.appendNote(ul));
-		
-		getNotes().then((notes)=>{
-			notes.map(note=> this.appendNote(ul, note))
-		})
-	
-		let launchButton = this.getElement('aon-menu-sidenav-app-launch-button');
-		launchButton.addEventListener(EVENT.CLICK, () => {
-			if(Apps.ACCOUNTING.app === app.app) {
-				this.rootPanelHtml('<aon-accounting></aon-accounting>');
-			} else if(Apps.FISCAL.app === app.app) {
-				this.rootPanel(new AonFiscal());
-			} else if(Apps.PAYROLL.app === app.app) {
-				this.rootPanel(new AonLaboral());
-			}
-		});
-		let closeButton = this.getElement('aon-menu-sidenav-app-close-button');
-		closeButton.addEventListener(EVENT.CLICK, () => {
+		aibC.addEventListener(EVENT.CLICK,()=>{
 			this.CLOSE = true;
 			aonMenuSidenav.style.width = '175px';
 			this.buildMenu();
 		});
-	}
 
-	appendNote(ul, note={}){
-		let li = this.createElement(TAG.LI);
-
-		ul.insertBefore(li, ul.firstChild);
-		const idRand =  Math.random().toString(36).substring(7);
-		let div = this.createElement(TAG.DIV);
-		div.id ="div"+idRand;
-		div.style.margin = "3px 10px";
-
-		li.appendChild(div);
-	
-		let textArea = new AonTextArea();
-		textArea.placeholder = "Escribe una nota";
-		textArea.id = `notes${idRand}`;
-		textArea.title  = `notes${idRand}`;
-		textArea.style.border = "1px solid #dadce0";
-		textArea.style.backgroundColor = "rgb(255, 255, 255)";
-		textArea.style.borderRadius = "10px";
-		textArea.style.boxShadow = "none";
-		textArea.style.overflow = "hidden";
-		textArea.style.padding = "0 10px 10px";
-		textArea.style.color = "var(--aonGray)";
-		textArea.setAttribute("tabindex", 0);
-		div.appendChild(textArea);
-		if(note.note) textArea.value = note.note;
+		aibS.addEventListener(EVENT.CLICK,()=>appendNote(ul, new Note()));
 		
-		const toolbar = textArea.getToolbar();
-		toolbar.style.borderBottom = "none";
-		toolbar.style.height = "auto";
-		toolbar.style.color  = "black";
-		toolbar.style.display = note.note ? "none" : "block";
-
-		textArea.addEventListener(EVENT.INPUT, ()=>{
-			note.note =  textArea.value || "";
-		});
-
-		textArea.addToolbarOptionRight({
-			id: MATERIAL_ICONS.DELETE,
-			icon: MATERIAL_ICONS.DELETE,
-			name: MSG.DELETE
-		},() => {
-			if(confirm("Estas seguro de eliminar la nota?")){
-				deleteNote(note);
-				li.remove();
-			}
-		});
+		let aonDialogM = new AonDialogMenu();
+		aonDialogM.id = "DialogNote";
+		ul.appendChild(aonDialogM);
 		
-		note.id = note.id ? note.id : idRand;
-
-		if(this.getApplication()) textArea.addToolbarOptionRight({
-			id: MATERIAL_ICONS.NOTIFICATION_ADD,
-			icon: MATERIAL_ICONS.NOTIFICATION_ADD,
-			name: "Recordatorio"
-		},(ev) => {
-			const rect = ev.target.getBoundingClientRect();
-			const top  = rect.top +  (ev.clientY - rect.top);
-			let left = rect.left + (ev.clientX - rect.left) - 10;
-			const dialog = this.getApplication().getOptionDialog();
-			const content = dialog.getContent();
-			dialog.clear();
-			content.style.textAlign = "center";
-			content.style.width = "250px";
-			dialog.setContentTitle("Recordatorio");
-			const aonDate = new AonDate(); 
-			aonDate.id = "date"+ idRand;
-			aonDate.name = "date"+ idRand;
-			aonDate.title =  MSG.DATE;
-			if(note.date) aonDate.value = note.date;
-			aonDate.addEventListener(EVENT.CHANGE, ({target})=>{
-				if(target.value) saveNote({...note, date: target.value});
-			})
-
-			let divContent = this.createElement(TAG.DIV);
-			divContent.style.margin = "0 10px";
-			divContent.appendChild(aonDate);
-			dialog.setContent(divContent);
-
-			dialog.openPosition({top, left});
-			
+		
+		getNotes().then((notes)=>{
+			notes.map(note=> appendNote(ul, new Note(note)))
 		});
-
-		textArea.addToolbarOptionRight({
-			id: MATERIAL_ICONS.SAVE,
-			icon: MATERIAL_ICONS.SAVE,
-			name:MSG.SAVE
-		},() => {
-			saveNote({...note, date: note.date ? note.date : "0000-00-00"});
-		});
-
-		textArea.draggableEnable(); 
-		textArea.removeBackground();
-
-		li.addEventListener(EVENT.CLICK, () => toolbar.style.display = "block");
-		li.addEventListener(EVENT.MOUSELEAVE, () => toolbar.style.display = "none");
-
 	}
 
 	development(title) {

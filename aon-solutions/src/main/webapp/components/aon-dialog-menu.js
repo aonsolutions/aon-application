@@ -1,5 +1,5 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT } from '../environments/environments.js';
+import { CONSTANT, TAG } from '../environments/environments.js';
 import './aon-icon.js';
 
 
@@ -23,15 +23,19 @@ export class AonDialogMenu extends AonElement {
 	}
 
 	connectedCallback () {
-		this.innerHTML = `
-		<div id="${this.DIALOG}" class="aonDialog">
-			<div id="${this.CONTENT}" class="aonDialogMenuContent">
+		let divOne = this.createElement(TAG.DIV);
+		divOne.className = `aonDialog`;
+		divOne.id = this.DIALOG;
+		this.appendChild(divOne);
 
-			</div>
-		</div>
-		`;
+		let divTwo = this.createElement(TAG.DIV);
+		divTwo.className = `aonDialogMenuContent`;
+		divTwo.id = this.CONTENT;
+		divOne.appendChild(divTwo);
+
 		this.build();
   }
+  
 
 	build() {
 		let dialog = this.getElement(this.DIALOG);

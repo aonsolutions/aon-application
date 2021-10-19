@@ -352,8 +352,12 @@ export class AonAltaDirecta extends AonElement {
 
     async listTipoContrato() {
         try {
-            // if(!this.applicationParentEl.getDur().isComunicaManager())enable = 0;
-            const resp = await getTipoContrato();
+            let manager = this.applicationParentEl.getDur().isComunicaManager();
+            let resp = await getTipoContrato();
+            let contract = this.data && this.data.contract ? this.data.contract : "";
+            if(!manager)
+                resp = resp.filter(({enable, value})=> enable || value === contract);
+            
             let type_cto = this.getElement('type_cto');
             type_cto.setOptions(resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})));
         } catch (error) { }

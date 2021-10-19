@@ -256,6 +256,7 @@ export const NOTIFICATIONS = 'Notificaciones';//TODO
 export const NOTIFICATION = 'Notificación';//TODO
 export const NUMBER = MSG.NUMBER;
 export const NOTES = "Notas";//TODO
+export const NOTE = "Nota";//TODO
 // ----- O
 
 export const OBSERVATION = MSG.OBSERVATION;

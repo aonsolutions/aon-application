@@ -9,7 +9,7 @@
   {
     "id": "2",
     "enable": 0,
-    "name": "Indefinido, TC/Transf. CT-Fomento Contratación",
+    "name": "Indefinido, TC/Transf. CT-Fomento Contr.",
     "value": "109",
     "tipo_jornada": "0"
   },
@@ -30,7 +30,7 @@
   {
     "id": "7",
     "enable": 0,
-    "name": "Indefinido, TC/Fomento Contratación Emp.Estable inicial",
+    "name": "Indefinido, TC/Fomento Contr. Emp.Estable inicial",
     "value": "150",
     "tipo_jornada": "0"
   },
@@ -51,7 +51,7 @@
   {
     "id": "11",
     "enable": 0,
-    "name": "ndefinido, TP/Transf. CT Fomento Contratación",
+    "name": "ndefinido, TP/Transf. CT Fomento Contr.",
     "value": "209",
     "tipo_jornada": "1"
   },
@@ -72,7 +72,7 @@
   {
     "id": "16",
     "enable": 0,
-    "name": "Indefinido, TP/Fomento Contratación Empl.Estable inicial",
+    "name": "Indefinido, TP/Fomento Contr. Emp.Estable inicial",
     "value": "250",
     "tipo_jornada": "1"
   },
@@ -81,6 +81,48 @@
     "enable": 0,
     "name": "Indefinido, TP/Transf. Cto. Temporal",
     "value": "289",
+    "tipo_jornada": "1"
+  },
+  {
+    "id": "45",
+    "enable": 0,
+    "name": "Indefinido/Fijo-Discontinuo",
+    "value": "300",
+    "tipo_jornada": "1"
+  },
+  {
+    "id": "46",
+    "enable": 0,
+    "name": "Indefinido/Fijo-Discontinuo Transf. CT",
+    "value": "309",
+    "tipo_jornada": "1"
+  },
+  {
+    "id": "47",
+    "enable": 0,
+    "name": "Indefinido/Fijo-Discontinuo Discapacitados",
+    "value": "330",
+    "tipo_jornada": "1"
+  },
+  {
+    "id": "48",
+    "enable": 0,
+    "name": "Indefinido/Fijo-Discontinuo Discapacitados, Transf.",
+    "value": "339",
+    "tipo_jornada": "1"
+  },
+  {
+    "id": "49",
+    "enable": 0,
+    "name": "Indefinido/Fijo-Disc. Fomento Contr. Empl.Estable inicial",
+    "value": "350",
+    "tipo_jornada": "1"
+  },
+  {
+    "id": "50",
+    "enable": 0,
+    "name": "Indefinido/Fijo-Discontinuo Transf. CT",
+    "value": "389",
     "tipo_jornada": "1"
   },
   {
@@ -107,7 +149,7 @@
   {
     "id": "22",
     "enable": 0,
-    "name": "Temporal, TC/Caracter Administrativo",
+    "name": "Temporal, TC/Caracter Admin.",
     "value": "408",
     "tipo_jornada": "0"
   },
@@ -121,7 +163,7 @@
   {
     "id": "24",
     "enable": 0,
-    "name": "Temporal, TC/Interinidad C.Administrativo",
+    "name": "Temporal, TC/Interinidad C.Admin.",
     "value": "418",
     "tipo_jornada": "0"
   },
@@ -156,7 +198,7 @@
   {
     "id": "30",
     "enable": 0,
-    "name": "Temporal, TC/Fomento Contratación indefinida",
+    "name": "Temporal, TC/Fomento Contr. indefinida",
     "value": "450",
     "tipo_jornada": "0"
   },
@@ -191,7 +233,7 @@
   {
     "id": "34",
     "enable": 0,
-    "name": "Temporal, TP/Caracter administrativo",
+    "name": "Temporal, TP/Caracter Admin.",
     "value": "508",
     "tipo_jornada": "1"
   },
@@ -205,7 +247,7 @@
   {
     "id": "36",
     "enable": 0,
-    "name": "Temporal, TP/Interinidad C.Administrativo",
+    "name": "Temporal, TP/Interinidad C.Admin.",
     "value": "518",
     "tipo_jornada": "1"
   },
@@ -240,7 +282,7 @@
   {
     "id": "42",
     "enable": 0,
-    "name": "Temporal, TP/Fomento Contratación indefinida Empl.Estable",
+    "name": "Temporal, TP/Fomento Contr. indefinida Empl.Estable",
     "value": "550",
     "tipo_jornada": "1"
   },
