@@ -213,7 +213,7 @@ export const NOTES = {
   app: "note",
   title: MSG.NOTES,
   icon: AON_ICONS.AON_APP,
-  color: '#fcbc0c',
+  color: '#ffd700',
   price: ' ', //'-'
 };
 

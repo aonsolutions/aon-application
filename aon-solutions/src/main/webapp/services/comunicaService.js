@@ -9,6 +9,8 @@ export const getIpfxnaf = (data) => get(`${API_URL}/comunica/ipfxnaf`, data);
 
 export const getNafxipf = (data) => get(`${API_URL}/comunica/nafxipf`, data);
 
+export const getRlce = (data) => get(`${API_URL}/comunica/rlce`, data);
+
 export const getTA = (data) => openFile(`${API_URL}/comunica/pdf/get-ta`, data);
 
 export const getReportAffiliateInAlta = (data) => openFile(`${API_URL}/comunica/pdf/get-report-affiliate-in-alta`, data);
@@ -40,6 +42,7 @@ export const getEmployee = (data) =>
   get(`${API_URL}/comunica/get-employee`, data);
 
 export const getTipoContrato = () => requestJsonAsset("type_contract.json");
+
 export const getTipoJornada = () => requestJsonAsset("type_jornada.json");
 
 export const getGrupoCotizacion = () => requestJsonAsset("group_ctz.json"); 

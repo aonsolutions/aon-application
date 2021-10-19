@@ -329,12 +329,12 @@ const partTime = (divH) => {
         description:"Coef. Parcial"
     })
     divC.appendChild(numberC);
-    addSpanDecimal();
+    addSpanDecimal(numberC);
     return divC;
 }
 
-const addSpanDecimal = () =>  {
-    let coefInput = document.getElementById('coefparcialInput');
+export const addSpanDecimal = (input) =>  {
+    let coefInput = document.getElementById(input.INPUT);
     if(coefInput){
         let span = document.createElement(TAG.SPAN);
         span.innerHTML = '0,';

@@ -100,6 +100,14 @@ public class JsonUtils {
 		return d;
 	}
 	
+	public static Date getDateFormat(JSONObject json, String key, String format ) {
+		if(json == null) return null;
+		String date = json.optString(key, null);
+		Date d = AonDateUtils.parse(date, format);
+		if(d == null) d = getDateTime(json, key);
+		return d;
+	}
+	
 	public static Date getDateTime(JSONObject json, String key ) {
 		try {
 			 long date = json.optLong(key);

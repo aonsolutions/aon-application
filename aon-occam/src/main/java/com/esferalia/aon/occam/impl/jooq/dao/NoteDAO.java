@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Note.NOTE;
+
 import java.sql.Timestamp;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -55,11 +56,17 @@ public class NoteDAO {
 	}
 	
 	
-	public static Note update(AONContext ctx, Note note){
+	public static Note save(AONContext ctx, Note note) {
+		return note.getId() != null
+			? update(ctx, note)
+			: insert(ctx, note); 
+	}
+	
+	private static Note update(AONContext ctx, Note note){
 		ctx.getDslContext().update(NOTE)
 			.set(NOTE.DOMAIN, note.getDomain())
 			.set(NOTE.OWNER, note.getOwner())
-			.set(NOTE.SUBJECT, note.getSubject())
+			.set(NOTE.SUBJECT, note.getSubject()!=null?  note.getSubject() : "")
 			.set(NOTE.NOTE_, note.getNote())
 			.set(NOTE.DATE, new Timestamp(note.getDate().getTime()))
 			.where(NOTE.ID.eq(note.getId()))
@@ -68,12 +75,12 @@ public class NoteDAO {
 		return note;
 	}
 	
-	public static Note insert(AONContext ctx, Note note) {
-		Integer id  = ctx.getDslContext()
+	private static Note insert(AONContext ctx, Note note) {
+		Integer id = ctx.getDslContext()
 				.insertInto(NOTE)
 				.set(NOTE.DOMAIN, note.getDomain())
 				.set(NOTE.OWNER, note.getOwner())
-				.set(NOTE.SUBJECT, note.getSubject())
+				.set(NOTE.SUBJECT, note.getSubject()!=null?  note.getSubject() : "")
 				.set(NOTE.NOTE_, note.getNote())
 				.set(NOTE.DATE, new Timestamp(note.getDate().getTime()))
 				.returning(NOTE.ID).fetchOne().getId();

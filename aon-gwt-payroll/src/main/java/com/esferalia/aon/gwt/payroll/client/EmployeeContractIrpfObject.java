@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeContractIrpfObject {
@@ -109,7 +110,6 @@ public class EmployeeContractIrpfObject {
 					.setIrpfPercent(irpfPercent)
 					.setEmployeeSSQuote(employeeSSQuote)
 					.setTotalIrpf(totalIrpf);
-		
 	}
 
 	private EmployeeIrpf getEmployeeIrpf(Date date, Integer salaryId) {

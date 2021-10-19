@@ -230,6 +230,10 @@ class SistemaREDMov {
 	    	);
 	
 			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			
+			if(employee.getRlce()!=null && !employee.getRlce().isEmpty())
+				form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(employee.getRlce());
+			
 			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
 			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
 			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
