@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeContractIrpfObject {
@@ -18,12 +17,14 @@ public class EmployeeContractIrpfObject {
 	
 	private List<EmployeeIrpf> employeeIrpfList;
 	private Integer contractId;
+	private String ssNumber;
 	private Date contractStartDate;
 	
 	// ----------------------------------------------- Constructor 
 	
-	public EmployeeContractIrpfObject(Integer contractId, Date contractStartDate) {
+	public EmployeeContractIrpfObject(Integer contractId,  String ssNumber, Date contractStartDate) {
 		this.contractId = contractId;
+		this.ssNumber = ssNumber;
 		this.contractStartDate = contractStartDate;
 		this.employeeIrpfList = new ArrayList<>();
 	}
@@ -31,7 +32,7 @@ public class EmployeeContractIrpfObject {
 	// ----------------------------------------------- DataBase.Methods
 	
 	public void getEmployeeIrpf(Date date, Consumer<List<EmployeeIrpf>> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeIrpf(contractId, date, new AsyncCallback<List<EmployeeIrpf>>() {
+		employeesService.getEmployeeIrpf(ssNumber, date, new AsyncCallback<List<EmployeeIrpf>>() {
 			
 			@Override
 			public void onSuccess(List<EmployeeIrpf> employeeIrpfListDB) {
@@ -53,8 +54,7 @@ public class EmployeeContractIrpfObject {
 	}
 	
 	public void setEmployeeIrpf(Consumer<Void> success, Consumer<Throwable> failure) {
-		Window.alert("employeeIrpfList size : " + employeeIrpfList.size());
-		employeesService.setEmployeeIrpf(contractId, employeeIrpfList, new AsyncCallback<Void>() {
+		employeesService.setEmployeeIrpf(contractId, ssNumber, employeeIrpfList, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -72,6 +72,10 @@ public class EmployeeContractIrpfObject {
 	
 	public Integer getContractStartYear() {
 		return DateUtils.getYear(this.contractStartDate);
+	}
+	
+	public String getSSNumber() {
+		return this.ssNumber;
 	}
 
 	public List<EmployeeIrpf> getEmployeeIrpf(Date date) {
@@ -105,8 +109,6 @@ public class EmployeeContractIrpfObject {
 					.setIrpfPercent(irpfPercent)
 					.setEmployeeSSQuote(employeeSSQuote)
 					.setTotalIrpf(totalIrpf);
-		
-		Window.alert(employeeIrpf.toString());
 		
 	}
 

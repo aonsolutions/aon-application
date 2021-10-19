@@ -23,10 +23,11 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EmployeeContractIrpf extends Composite {
+public abstract class EmployeeContractIrpf extends Composite {
 
 	// ----------------------------------------------- UiBinder 
 	
@@ -57,6 +58,9 @@ public class EmployeeContractIrpf extends Composite {
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
+	ScrollPanel scrollPanel;
+	
+	@UiField
 	HTMLPanel mainPanel;
 	
 	// ----------------------------------------------- Variables 
@@ -79,6 +83,8 @@ public class EmployeeContractIrpf extends Composite {
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 
 		saveButton.setEnabled(false);
+		
+		scrollPanel.setHeight((Window.getClientHeight() - 200) + "px");
 	}
 		
 	// ----------------------------------------------- setEmployeeContractIrpfObject 
@@ -92,9 +98,19 @@ public class EmployeeContractIrpf extends Composite {
 		
 		this.employeeContractIrpfObject.getEmployeeIrpf(
 				date,
-				r -> initEmployeeIrpfTable(),
+				r -> {
+					initEmployeeIrpfTable();
+					String ssNumber = this.employeeContractIrpfObject.getSSNumber();
+					if(AonStringUtils.isBlank(ssNumber)) {
+						this.yearLB.setEnabled(false);
+						this.saveButton.setEnabled(false);
+						fireSSNumberErrorMessage();
+					}
+				},
 				t -> {});
 	}
+
+	protected abstract void fireSSNumberErrorMessage();
 
 	// ----------------------------------------------- setEmployeeContractPaymentsObject.Methods
 	
@@ -129,9 +145,9 @@ public class EmployeeContractIrpf extends Composite {
 		Label emptyLabel = new Label("");
 		emptyLabel.addStyleName(style.width90());
 		
-		Label typeLabel = new Label("Tipo");
-		typeLabel.addStyleName(style.width90());
-		typeLabel.addStyleName(style.title());
+//		Label typeLabel = new Label("Tipo");
+//		typeLabel.addStyleName(style.width90());
+//		typeLabel.addStyleName(style.title());
 		
 		Label irpfPercentLabel = new Label("% IRPF");
 		irpfPercentLabel.addStyleName(style.width70());
@@ -165,7 +181,7 @@ public class EmployeeContractIrpf extends Composite {
 		actionLabel.addStyleName(style.width50());
 		
 		headerRow.add(emptyLabel);
-		headerRow.add(typeLabel);
+//		headerRow.add(typeLabel);
 		headerRow.add(irpfPercentLabel);
 		headerRow.add(moneyBaseLabel);
 		headerRow.add(moneyQuoteLabel);
@@ -200,8 +216,8 @@ public class EmployeeContractIrpf extends Composite {
 		monthLabel.addStyleName(style.width90());
 		monthLabel.addStyleName(style.title());
 		
-		Label typeLabel = new Label("");
-		typeLabel.addStyleName(style.width90());
+//		Label typeLabel = new Label("");
+//		typeLabel.addStyleName(style.width90());
 		
 		HTMLPanel irpfPercentPanel = new HTMLPanel("");
 		irpfPercentPanel.addStyleName(style.width70());
@@ -263,7 +279,7 @@ public class EmployeeContractIrpf extends Composite {
 		actionPanel.addStyleName(style.width50());
 		
 		if(null != employeeIrpf) {
-			typeLabel.setText(employeeIrpf.getSalaryType());
+//			typeLabel.setText(employeeIrpf.getSalaryType());
 			irpfPercentBox.setValue(format(employeeIrpf.getIrpfPercent()));
 			moneyBaseBox.setValue(format(employeeIrpf.getMoneyBase()));
 			moneyQuoteBox.setValue(format(employeeIrpf.getMoneyQuote()));
@@ -275,10 +291,13 @@ public class EmployeeContractIrpf extends Composite {
 				valuesLabels.forEach(box -> box.setEnabled(false));
 		
 			// Check styles
-			if(AonStringUtils.equalsIgnoreCase(employeeIrpf.getSalaryType(), "L00"))
+			if(AonStringUtils.equalsIgnoreCase(employeeIrpf.getSalaryType(), "L00")) {
 				employeeSSQuoteBaseBox.addStyleName(style.l00());
-			else if(AonStringUtils.equalsIgnoreCase(employeeIrpf.getSalaryType(), "Manual"))
+				employeeSSQuoteBaseBox.setTitle("Valor obtenido de un L00");
+			} else if(AonStringUtils.equalsIgnoreCase(employeeIrpf.getSalaryType(), "Manual")) {
 				employeeSSQuoteBaseBox.addStyleName(style.l190());
+				employeeSSQuoteBaseBox.setTitle("Valor obtenido de un L190 (Manual)");
+			}
 		}
 		
 		// Add ValueChangeHandlers
@@ -345,7 +364,7 @@ public class EmployeeContractIrpf extends Composite {
 		
 		// Add elements to monthRow
 		monthRow.add(monthLabel);
-		monthRow.add(typeLabel);
+//		monthRow.add(typeLabel);
 		monthRow.add(irpfPercentPanel);
 		monthRow.add(moneyBasePanel);
 		monthRow.add(moneyQuotePanel);
@@ -372,8 +391,8 @@ public class EmployeeContractIrpf extends Composite {
 		Label emptyLabel = new Label("");
 		emptyLabel.addStyleName(style.width90());
 		
-		Label typeLabel = new Label("");
-		typeLabel.addStyleName(style.width90());
+//		Label typeLabel = new Label("");
+//		typeLabel.addStyleName(style.width90());
 		
 		Label irpfPercentLabel = new Label("");
 		irpfPercentLabel.addStyleName(style.width70());
@@ -406,7 +425,7 @@ public class EmployeeContractIrpf extends Composite {
 		actionLabel.addStyleName(style.width50());
 		
 		accumulateRow.add(emptyLabel);
-		accumulateRow.add(typeLabel);
+//		accumulateRow.add(typeLabel);
 		accumulateRow.add(irpfPercentLabel);
 		accumulateRow.add(moneyBaseLabel);
 		accumulateRow.add(moneyQuoteLabel);

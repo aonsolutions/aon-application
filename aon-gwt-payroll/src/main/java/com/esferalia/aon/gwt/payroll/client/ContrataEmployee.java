@@ -153,6 +153,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 	}
 
+	// ------------------------------------------------- EmployeeIrpfImpl
+	
+	public class EmployeeIrpfImpl extends EmployeeContractIrpf{
+
+		@Override
+		protected void fireSSNumberErrorMessage() {
+			Map<String, String> messageErrorMap = new HashMap<>();
+			messageErrorMap.put("Error n\u00FAmero Seguridad Social", "El contrato " + contrataEmployeeObject.getEmployeeFullName() + " no tiene definido el n\u00FAmero de la Seguridad Social. Def\u00EDnalo antes de rellas los IRPFs");
+			AonMessagePanel.showError(messageContainer, messageErrorMap);
+		}
+		
+	}
+	
 	// ------------------------------------------------- ScheduledCommand (TGSS)
 	
 	class AFICommand implements ScheduledCommand {
@@ -674,7 +687,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractPayments = new EmployeeContractPayments();
 		employeeContractPayments.hideToolbar();
 		
-		employeeContractIrpf = new EmployeeContractIrpf();
+		employeeContractIrpf = new EmployeeIrpfImpl();
 		employeeContractIrpf.hideToolbar();
 		
 		salaryDraft = new SalaryDraft();
