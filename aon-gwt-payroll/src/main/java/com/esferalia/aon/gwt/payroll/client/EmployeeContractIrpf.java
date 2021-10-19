@@ -51,7 +51,7 @@ public abstract class EmployeeContractIrpf extends Composite {
 		String title();
 		String header();
 		String l00();
-		String l190();
+		String m190();
 	}
 	
 	@UiField
@@ -75,7 +75,7 @@ public abstract class EmployeeContractIrpf extends Composite {
 	
 	// ----------------------------------------------- Constructor 
 	
-	public EmployeeContractIrpf() {
+	protected EmployeeContractIrpf() {
 		initializeToolbarPanel();
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -295,8 +295,8 @@ public abstract class EmployeeContractIrpf extends Composite {
 				employeeSSQuoteBaseBox.addStyleName(style.l00());
 				employeeSSQuoteBaseBox.setTitle("Valor obtenido de un L00");
 			} else if(AonStringUtils.equalsIgnoreCase(employeeIrpf.getSalaryType(), "Manual")) {
-				employeeSSQuoteBaseBox.addStyleName(style.l190());
-				employeeSSQuoteBaseBox.setTitle("Valor obtenido de un L190 (Manual)");
+				employeeSSQuoteBaseBox.addStyleName(style.m190());
+				employeeSSQuoteBaseBox.setTitle("Valor obtenido de un M190 (Manual)");
 			}
 		}
 		

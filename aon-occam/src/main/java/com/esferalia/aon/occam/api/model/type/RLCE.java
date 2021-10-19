@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.shared;
+package com.esferalia.aon.occam.api.model.type;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,6 +82,5 @@ public class RLCE {
 		
 		return code + " - " + rlceTable.get(code);
 	}
-	
 	
 }
