@@ -338,8 +338,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	// ------------------------------------------------- EmployeeIrpf
 	
-	void getEmployeeIrpf(String currentDomainName, Integer contractId, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback);
+	void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback);
 
-	void setEmployeeIrpf(String currentDomainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback);
+	void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback);
 
 }

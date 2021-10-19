@@ -951,15 +951,15 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	// ------------------------------------------------- EmployeeIrpf
 
 	@Override
-	public void getEmployeeIrpf(String currentDomainName, Integer contractId, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) {
+	public void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) {
 		AON.start();
-		employeesServiceAsync.getEmployeeIrpf(currentDomainName, contractId, startDate, new AsyncCallbackWrapper<List<EmployeeIrpf>>(callback));
+		employeesServiceAsync.getEmployeeIrpf(currentDomainName, ssNumber, startDate, new AsyncCallbackWrapper<List<EmployeeIrpf>>(callback));
 	}
 
 	@Override
-	public void setEmployeeIrpf(String currentDomainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
+	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
 		AON.start();
-		employeesServiceAsync.setEmployeeIrpf(currentDomainName, contractId, employeeIrpfs, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.setEmployeeIrpf(currentDomainName, contractId, ssNumber, employeeIrpfs, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 }
