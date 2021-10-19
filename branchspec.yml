@@ -16,7 +16,6 @@ phases:
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
   build:
     commands:
-      - ${TAG:=test}
       - echo Entered the build phase...
       - echo Building $TAG version...
       - echo Build started on `date`
