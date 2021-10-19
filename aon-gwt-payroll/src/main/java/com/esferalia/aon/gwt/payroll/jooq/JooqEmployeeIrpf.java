@@ -312,7 +312,7 @@ public class JooqEmployeeIrpf {
 			return "L03";
 		case (byte) 6:
 			return "L13";
-		case (byte) 7:
+		case (byte) 7: // M190
 			return "Manual";
 		default:
 			return "N/D";
