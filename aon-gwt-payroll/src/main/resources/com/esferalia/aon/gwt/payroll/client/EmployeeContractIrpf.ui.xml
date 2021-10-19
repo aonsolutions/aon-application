@@ -73,8 +73,9 @@
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
-			<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.heightAll} {style.widthAll}">
-			</g:HTMLPanel>
+			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.widthAll}">
+				<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.heightAll} {style.widthAll}" />
+			</g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 	

@@ -631,12 +631,12 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- EmployeeIrpf
 	
-	public void getEmployeeIrpf(Integer contractId, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) {
-		employeesServiceAsync.getEmployeeIrpf(getCurrentDomainName(), contractId, startDate, callback);
+	public void getEmployeeIrpf(String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) {
+		employeesServiceAsync.getEmployeeIrpf(getCurrentDomainName(), ssNumber, startDate, callback);
 	}
 	
-	public void setEmployeeIrpf(Integer contractId, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
-		employeesServiceAsync.setEmployeeIrpf(getCurrentDomainName(), contractId, employeeIrpfs, callback);
+	public void setEmployeeIrpf(Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
+		employeesServiceAsync.setEmployeeIrpf(getCurrentDomainName(), contractId, ssNumber, employeeIrpfs, callback);
 	}
 
 	// ------------------------------------------------------------------------

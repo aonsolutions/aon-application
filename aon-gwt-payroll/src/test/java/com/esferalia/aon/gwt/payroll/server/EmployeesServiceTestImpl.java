@@ -961,13 +961,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, Integer contractId, Date startDate) {
+	public List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setEmployeeIrpf(String currentDomainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs) {
+	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs) {
 		// TODO Auto-generated method stub
 		
 	}

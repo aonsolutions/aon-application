@@ -318,8 +318,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	// ------------------------------------------------- EmployeeIrpf
 	
-	List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, Integer contractId, Date startDate);
+	List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate);
 
-	void setEmployeeIrpf(String currentDomainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs);
+	void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs);
 
 }
