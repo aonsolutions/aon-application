@@ -21,6 +21,8 @@ public class MainTest {
 	private static final String DB = "aon-dsi";
 	private static final String OWNER = "soporte@analize.es";
 	private static final String PARENT = "dsigrupo.aonsolutions.net";
+	
+	private static final String WORKING_DIR =  System.getProperty("user.dir");
 
 	private int parentDomain = 1;
 
@@ -44,7 +46,7 @@ public class MainTest {
 	@Before
 	public void setupDsi() throws Exception {
 		dsiConn = DBUtils
-				.getDsiConnection("jdbc:paradox:////var/tmp/aon-application/aon-dsi/target/test-classes/db");
+				.getDsiConnection("jdbc:paradox:///"+WORKING_DIR+"/test-classes/db");
 	}
 
 	@After

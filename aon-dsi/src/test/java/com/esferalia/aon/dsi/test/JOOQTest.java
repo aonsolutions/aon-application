@@ -48,7 +48,8 @@ import com.hxtt.sql.paradox.ParadoxDriver;
 @RunWith(JUnit4.class)
 public class JOOQTest {
 
-	public static final String CONNECTION_STRING = "jdbc:paradox:/target/test-classes/";
+	private static final String WORKING_DIR =  System.getProperty("user.dir");
+	public static final String CONNECTION_STRING = "jdbc:paradox:///"+WORKING_DIR+"/test-classes/";
 	private Connection conn;
 
 	@BeforeClass
