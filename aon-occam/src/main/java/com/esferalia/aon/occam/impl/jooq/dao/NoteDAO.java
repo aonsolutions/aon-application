@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.Filter.NoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.NoteProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.Note;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class NoteDAO {
 	private static final NotePropertiesDAO NOTE_PROPERTIES = new NotePropertiesDAO();
@@ -57,6 +58,7 @@ public class NoteDAO {
 	
 	
 	public static Note save(AONContext ctx, Note note) {
+		autoComplete(note);
 		return note.getId() != null
 			? update(ctx, note)
 			: insert(ctx, note); 
@@ -107,5 +109,10 @@ public class NoteDAO {
 					.setDate(r.getValue(NOTE.DATE))
 					;		
 		}
+	}
+	
+	private static void autoComplete(Note note) {
+		if(note.getDate()==null) 
+			note.setDate(AonDateUtils.parse("0000-01-01", "yyyy-MM-dd"));
 	}
 }
