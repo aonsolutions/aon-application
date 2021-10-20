@@ -41,11 +41,11 @@ phases:
         {"name":"TEST","imageUri":"%s/aon-application:%s"}
         ]' $REPOSITORY_URI  $TAG > testimgdef.json
       - cat testimgdef.json
-      #- |
-      #  printf '[
-      #  {"name":"TEST-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
-      #  ]' $REPOSITORY_URI $TAG > testsolutionsimgdef.json
-      #- cat testsolutionsimgdef.json
+      - |
+        printf '[
+        {"name":"TEST-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
+        ]' $REPOSITORY_URI $TAG > testsolutionsimgdef.json
+      - cat testsolutionsimgdef.json
 artifacts:
   files:
     - testimgdef.json
