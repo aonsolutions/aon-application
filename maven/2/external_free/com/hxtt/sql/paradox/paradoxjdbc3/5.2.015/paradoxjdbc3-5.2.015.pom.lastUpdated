@@ -1,0 +1,14 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Oct 19 16:46:42 CEST 2021
+https\://repo1.maven.org/maven2/.error=
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
+https\://repo1.maven.org/maven2/.lastUpdated=1634630230381
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.error=
+https\://repo.maven.apache.org/maven2/.lastUpdated=1634630232714
+https\://mvnrepository.com/repos/central/.error=Could not transfer artifact com.hxtt.sql.paradox\:paradoxjdbc3\:pom\:5.2.015 from/to central-repository (https\://mvnrepository.com/repos/central)\: Authorization failed for https\://mvnrepository.com/repos/central/com/hxtt/sql/paradox/paradoxjdbc3/5.2.015/paradoxjdbc3-5.2.015.pom 403 Forbidden
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1634630232224
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1634630229892
+@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1634654802215
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.error=
+https\://repo.maven.apache.org/maven2/.error=
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.lastUpdated=1634630231511
