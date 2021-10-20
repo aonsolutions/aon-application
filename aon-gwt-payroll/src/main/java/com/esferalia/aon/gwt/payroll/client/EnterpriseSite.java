@@ -319,12 +319,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 //	}
 
 	@Override
-	public void onEmployeeNewDraftSelected(EmployeeNewDraftObject employeeNewDraft) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onWorkplaceSalarySelected(WorkplaceSalaryObject workplaceSalaryObject) {
 		WorkplaceSalary workplaceSalary = new WorkplaceSalary();
 		detailPanel.setWidget(workplaceSalary);

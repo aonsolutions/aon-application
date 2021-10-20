@@ -130,8 +130,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		void onEmployeeDraftSelected(EmployeeDraftObject employeeDraft);
 		
-		void onEmployeeNewDraftSelected(EmployeeNewDraftObject employeeNewDraft);
-
 		void onCategoryDraftSelected(CategoryDraftObject agreementDraftObject);
 
 		void onAgreementDraftSelected(AgreementDraftObject agreementDraftObject);
@@ -493,8 +491,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onEmployeeSalarySelected((EmployeeSalaryObject) userObject);
 		} else if (userObject instanceof EmployeeDraftObject) {
 			onEmployeeDraftSelected((EmployeeDraftObject) userObject);
-		} else if (userObject instanceof EmployeeNewDraftObject) {
-			onEmployeeNewDraftSelected((EmployeeNewDraftObject) userObject);
 		} 
 	}
 
@@ -1437,12 +1433,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
 		for (Listener listener : listeners) {
 			listener.onEmployeeDraftSelected(employeeDraftObject);
-		}	
-	}
-	
-	private void onEmployeeNewDraftSelected(EmployeeNewDraftObject employeeNewDraftObject) {
-		for (Listener listener : listeners) {
-			listener.onEmployeeNewDraftSelected(employeeNewDraftObject);
 		}	
 	}
 
