@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod130MVELContext extends ModelMVELContext implements Map<String, Object> {
 
@@ -61,7 +62,8 @@ public class Mod130MVELContext extends ModelMVELContext implements Map<String, O
 	 */
 	public double computeC16() throws AonCoreException {
 		Double p2 = (Double) get(Mod130Key.P2.toString());
-		if (p2 != null && p2 == 1) {
+		double c14 = (Double) get(Mod130Key.C14.toString());
+		if ((p2 != null && p2 == 1) && !AonMathUtils.isNegative(c14)) {
 			double c03 = (Double) get(Mod130Key.C03.toString());
 			double c08 = (Double) get(Mod130Key.C08.toString());
 			if (isNotZero(c03) && isNotZero(c08)) {
@@ -69,9 +71,10 @@ public class Mod130MVELContext extends ModelMVELContext implements Map<String, O
 			}
 			double cXX = c08 > c03 ? c08 : c03;
 			cXX = round(cXX * 2 / 100);
-			double c14 = (Double) get(Mod130Key.C14.toString());
 			double c15 = (Double) get(Mod130Key.C15.toString());
-			cXX = (cXX > (c14 - c15)?(c14 - c15):cXX);
+			double dif1415 = (c14 - c15);
+			dif1415 = AonMathUtils.isLessThanZero(dif1415)?0.0:dif1415;
+			cXX = (cXX > dif1415?dif1415:cXX);
 			return cXX > C16_MAX_VALUE ? C16_MAX_VALUE : cXX;
 		}
 		return 0.0;
