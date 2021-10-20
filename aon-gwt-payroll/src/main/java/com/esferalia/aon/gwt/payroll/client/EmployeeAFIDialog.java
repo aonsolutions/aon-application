@@ -16,10 +16,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
-import com.esferalia.aon.gwt.payroll.shared.ContractType;
-import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.SettleReason;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
+import com.esferalia.aon.occam.api.model.type.Occupation;
+import com.esferalia.aon.occam.api.model.type.QuoteGroup;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -211,7 +213,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 					public void onSuccess(DomainUserRoles result) {
 						userRoles = result;
 						afiChangesMap = afiChanges;
-						dateList = new ArrayList<Date>();
+						dateList = new ArrayList<>();
 						dateList.addAll(afiChangesMap.getAFIChanges().keySet());
 						
 						initView();
@@ -225,12 +227,14 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 						
 						showDialog();
 						
-						if(!userRoles.isComunica())
+						if(Boolean.FALSE.equals(userRoles.isComunica()))
 							notifyPanel.getElement().getStyle().setDisplay(Display.NONE);
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						// Nothing to do here
+					}
 					
 				});
 				
@@ -338,34 +342,14 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			this.tc2.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), AonStringUtils.leftPad(entry.getKey().toString(), 3, '0'));
 		
 		// Quote Group
-		this.quoteGroup.clear();
-		this.quoteGroup.addItem("-", "-1");
-		this.quoteGroup.addItem("01. Alta direcci" + String.valueOf("\u00F3") + "n y personal no incluido en el E.T.", "01");
-		this.quoteGroup.addItem("02. Ingenieros t" + String.valueOf("\u00E9") + "cnicos, peritos y ayudantes titulados", "02");
-		this.quoteGroup.addItem("03. Jefes administrativos y de taller", "03");
-		this.quoteGroup.addItem("04. Ayudantes no titulados", "04");
-		this.quoteGroup.addItem("05. Oficiales administrativos", "05");
-		this.quoteGroup.addItem("06. Subalternos", "06");
-		this.quoteGroup.addItem("07. Axiliares administrativos", "07");
-		this.quoteGroup.addItem("08. Oficiales de primera y segunda", "08");
-		this.quoteGroup.addItem("09. Oficiales de tercera y especialista", "09");
-		this.quoteGroup.addItem("10. Peones", "10");
-		this.quoteGroup.addItem("11. Trabajadores menos de dieciocho a" + String.valueOf("\u00F1") + "os", "11");
+		QuoteGroup.getQuoteGroup().entrySet().forEach(entry -> this.quoteGroup.addItem(entry.getKey(), entry.getValue()));
 
 		// Ocupation
-		this.ocupation.clear();
-		this.ocupation.addItem("-", "-1");
-		this.ocupation.addItem("a. Personal en trabajos exclusivos de oficina", "a");
-		this.ocupation.addItem("b. Tipo de cotizaci" + String.valueOf("\u00F3") + "n para todos los trabajadores que deban desplazarse habitalmente", "b");
-		this.ocupation.addItem("d. Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcci" + String.valueOf("\u00F3") + "n en general", "d");
-		this.ocupation.addItem("e. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de pasajeros en general (taxis, autom" + String.valueOf("\u00F3") + "viles, autobuses, etc)", "e");
-		this.ocupation.addItem("f. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de mercanc" + String.valueOf("\u00ED") + "as que tengan una capacidad de carga " + String.valueOf("\u00FA") + "til superior a 3,5 Tm." , "f");
-		this.ocupation.addItem("g. Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles", "g");
-		this.ocupation.addItem("h. Vigilantes, guardas, guardas jurados y personal de seguridad", "h");
+		Occupation.getOccupation().entrySet().forEach(entry -> this.ocupation.addItem(entry.getKey(), entry.getValue()));
 	}
 	
 	private void initTabs() {
-		if(dateList.size() == 0) {
+		if(dateList.isEmpty()) {
 			resetListBox();
 		}else {
 			for(int i=0; i < dateList.size(); i++){
