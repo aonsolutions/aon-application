@@ -4,7 +4,7 @@ import { domainName } from "../../../services/request.js";
 import {  setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
 import {  setTime, setFullDate } from "../../../services/utils.js";
 import { createFormVacation } from "../forms/vacation.js";
-import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
+import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
 import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
@@ -131,7 +131,7 @@ export const chooseIconMessage = ({type, date, name, comment}) => {
     
     let actionJson = {
         icon : MATERIAL_ICONS.INFO,
-        type : ICON_TYPES.MATERIAL_OUTLINED,
+        type : CONSTANT.MATERIAL_OUTLINED,
         color : CSS.variable(COLORS.MATERIAL_BLUE),
         comment: `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> ${dateParse}`
     }

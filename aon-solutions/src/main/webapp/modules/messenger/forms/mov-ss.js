@@ -5,11 +5,11 @@ import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonNumber } from "../../../components/aon-number.js";
 import { TAG, EVENT, MSG, CONSTANT, CSS, COLORS } from "../../../environments/environments.js";
 import { getCccForActivity } from "../../../services/contractService.js";
-import {  serializeForm } from "../../../services/utils.js";
+import {  serializeForm, sortBy } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS } from "../MessengerEnums.js";
 import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
-import { getGrupoCotizacion, getOcupacion, getTipoContrato } from "../../../services/comunicaService.js";
+import { getOccupation, getRlce, getContractType, getQuoteGroup, getTipoJornada } from "../../../services/comunicaService.js";
 import { addSpanDecimal } from "../../laboral/createComponent.js";
 
 
@@ -183,15 +183,6 @@ const createDataEnterprise = (form, data) => {
     createDiv(form, hour, {classes:[CSS.AON_COL_XS_4, CSS.AON_COL_MD_2]});
     if(fullTimeCheck.isChecked()) hour.disabled = CONSTANT.TRUE;
 
-    jornadaType.addEventListener(EVENT.CHANGE,({detail})=> {
-        if(detail && detail.value){
-            hour.value = detail.value === 1 ? 40 : 8;
-            hour.dispatchEvent(new Event(EVENT.CHANGE));
-        } 
-    })
-
-    hour.addEventListener(EVENT.CHANGE,()=> calculoCoef(jornadaType.getDetail()) );
-
     let coef = setAttributes(new AonNumber(),{
         id:"coef", 
         name:"coef", 
@@ -211,7 +202,6 @@ const createDataEnterprise = (form, data) => {
         jornadaType.setDisabled(target.checked);
     });
 
-
     let durationCheck = setAttributes(new AonSwitch(),{ title: "Duración indefinida", id:"durationCheck", name:"durationCheck", checked: data.durationCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
     createDiv(form, durationCheck, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_5]});
 
@@ -225,22 +215,33 @@ const createDataEnterprise = (form, data) => {
         frb.disabledDate(target.checked);
     });
 
-
     const divManager = createDiv(form, undefined, {});
     divManager.style.display = data.fra && dur.isComunicaManager() ? "block" : "none";
     //---------------------DATA RESTANT
     let contract = setAttributes(new AonSelect(),{ title: "Tipo de contrato", id:"contract", name:"contract", autocomplete: CONSTANT.OFF});
-    createDiv(divManager, contract, {classes:[CSS.AON_COL_SM_4]});
+    createDiv(divManager, contract, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
     fillContract(contract, data.contract);
 
     let gc = setAttributes(new AonSelect(),{ title: "Grupo de cotización", id:"gc", name:"gc"});
-    createDiv(divManager, gc, {classes:[CSS.AON_COL_SM_4]});
+    createDiv(divManager, gc, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
     fillGc(gc, data.gc);
 
     let ocup = setAttributes(new AonSelect(),{ title: "Ocupación", id:"ocup", name:"ocup"});
-    createDiv(divManager, ocup, {classes:[CSS.AON_COL_SM_4]});
+    createDiv(divManager, ocup, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
     fillOcu(ocup, data.ocup);
 
+    let rlce = setAttributes(new AonSelect(),{ title: "RLCE (opcional)", id:"rlce", name:"rlce"});
+    createDiv(divManager, rlce, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_12]});
+    fillRlce(rlce, data.rlce);
+
+    jornadaType.addEventListener(EVENT.CHANGE,({detail})=> {
+        if(detail && detail.value){
+            hour.value = detail.value === "semanal" ? 40 : 8;
+            hour.dispatchEvent(new Event(EVENT.CHANGE));
+        } 
+    });
+
+    hour.addEventListener(EVENT.CHANGE,()=> calculoCoef(jornadaType.getDetail()) );
 
     // ------------OBSERVATION
     const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
@@ -265,7 +266,6 @@ const createDataEnterprise = (form, data) => {
     }
     return null;
 }
-
 
 /**
  * 
@@ -341,19 +341,14 @@ const fillSalaryType = (aonSelect, salaryType) => {
 
 //-----------FILL JORNADATYPE
 const fillJornadaType = (aonSelect, jornadaType) => {
-    let options = [
-        {name: 'Semanal', value:1},
-        {name: 'Diaria', value: 2}
-    ];
-
-    aonSelect.setOptions( options );
-
+   const resp =  getTipoJornada();
+    aonSelect.setOptions( resp );
     if(jornadaType) aonSelect.value = jornadaType;
 }
 
 //-----------FILL CONTRACT
 const fillContract = (aonSelect, contract) => {
-    getTipoContrato().then(resp=>{
+    getContractType().then(resp=>{
         let options = resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}));
 
         if(contract){
@@ -369,8 +364,9 @@ const fillContract = (aonSelect, contract) => {
 
 //-----------FILL GRUPO DE COTIZACION
 const fillGc = (aonSelect, gc) => {
-    getGrupoCotizacion().then(resp=>{
-        let options = resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}) );
+    getQuoteGroup().then(resp=>{
+        resp = sortBy(resp, 'name', 'asc');
+        let options = resp.map(r =>  ({ ...r, name: `${r.name}`, value: r.value}) );
 
         if(gc){
             const exists = options.some(v => v.value === gc);
@@ -385,8 +381,9 @@ const fillGc = (aonSelect, gc) => {
 
 //-----------FILL OCUPACION
 const fillOcu = (aonSelect, ocup) => {
-    getOcupacion().then(resp=>{
-        let options = resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}));
+    getOccupation().then(resp=>{
+        resp = sortBy(resp, 'value', 'asc');
+        let options = resp.map(r =>  ({ ...r, name: `${r.name}`, value: r.value}));
 
         if(ocup){
             const exists = options.some(v => v.value === ocup);
@@ -398,6 +395,23 @@ const fillOcu = (aonSelect, ocup) => {
         if(ocup) aonSelect.value = ocup;
     })
 }
+//-----------FILL RLCE
+const fillRlce = (aonSelect, rlce) => {
+    getRlce().then(resp=>{
+
+        let options = sortBy( resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})), 'value', 'asc');
+
+        if(rlce){
+            const exists = options.some(v => v.value === rlce);
+            if(!exists)  options.push({name: rlce, value: rlce});
+        }
+
+        aonSelect.setOptions( options );
+
+        if(rlce) aonSelect.value = rlce;
+    });
+}
+
 
 const calculoCoef = ({value}) =>  {
     if(value){

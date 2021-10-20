@@ -128,7 +128,7 @@ export const GROUP_OFF = 'group_off';
 export const GROUPS = 'groups';
 
 // ----- H
-
+export const SCHEDULE = 'schedule';
 // ----- I
 
 export const INBOX = 'inbox';

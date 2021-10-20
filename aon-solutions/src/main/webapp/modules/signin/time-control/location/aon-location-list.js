@@ -66,11 +66,10 @@ export class AonLocationList extends AonElement {
   buildToolbar() {
     this.applicationEl.removeToolbarOptions();
 
-    if (this.isMobile()) {
-        this.applicationEl.addFloatOption(SigninSidenav.ADD,() => this.add());
-    } else {
+    if (this.isMobile()) 
+      this.applicationEl.addFloatOption(SigninSidenav.ADD,() => this.add());
+    else 
       this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () => this.add());
-    }
   }
 
   async getTable() {

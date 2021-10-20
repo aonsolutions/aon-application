@@ -6,7 +6,7 @@ import { getTasks } from "../../services/taskService.js";
 import { setFullDate, setTime, sortBy } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
-import { ICON_TYPES, MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from "./MessengerEnums.js";
+import { MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
 import { getIconJson } from "./shared/utils.js";
@@ -252,7 +252,7 @@ export class AonMessengerList extends AonElement {
   getIconList(res){      
     return {
       ...getIconJson(res),
-      icon_class:ICON_TYPES.MATERIAL_ICONS_OUTLINED,
+      icon_class:CONSTANT.MATERIAL_ICONS_OUTLINED,
       icon_title:res.source,
     }
   }
@@ -265,7 +265,7 @@ export class AonMessengerList extends AonElement {
     span.title = res.source;
 
     let iOne = this.createElement("i");
-    iOne.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
+    iOne.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
     iOne.textContent = icon.icon;
     span.appendChild(iOne);
 
@@ -312,7 +312,7 @@ export class AonMessengerList extends AonElement {
 
   // createIcon(icon, marginTop="11px"){
   //   let i = this.createElement("i");
-  //   i.className = ICON_TYPES.MATERIAL_ICONS_OUTLINED;
+  //   i.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
   //   i.textContent = icon;
   //   i.style.marginTop = marginTop;
   //   i.style.position = "fixed";

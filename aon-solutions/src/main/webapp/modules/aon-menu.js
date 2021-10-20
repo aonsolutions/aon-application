@@ -461,7 +461,6 @@ export class AonMenu extends AonElement {
 		aonDialogM.id = "DialogNote";
 		ul.appendChild(aonDialogM);
 		
-		
 		getNotes().then((notes)=>{
 			notes.map(note=> appendNote(ul, new Note(note)))
 		});

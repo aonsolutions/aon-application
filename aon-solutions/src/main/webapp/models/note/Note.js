@@ -15,14 +15,14 @@ export class Note {
       this.subject     = note.subject || "";
       this.note        = note.note || "";
       this.owner       = note.owner || undefined;
-      this.date        = note.date  ? new Date(note.date) : "0000-00-00";
+      this.date        = note.date && !note.date.includes("0001-01-01") ? new Date(note.date) : null;
     } else {
       this.id          = undefined;
       this.domain      = new Domain().getId(); 
       this.subject     = "";
       this.note        = undefined;
       this.owner       = undefined;
-      this.date        = "0000-00-00";
+      this.date        = null;
     }
   }
 

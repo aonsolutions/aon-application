@@ -126,7 +126,10 @@ export const MAX = 'max';
 export const MESSENGER = 'messenger';
 export const MIN = 'min';
 export const MOVABLE_CAPITAL = 'movableCapital';
-
+export const MATERIAL = "material";
+export const MATERIAL_ICONS = 'material-icons';
+export const MATERIAL_OUTLINED = 'material_outlined';
+export const MATERIAL_ICONS_OUTLINED = 'material-icons-outlined';
 // ----- N
 
 export const NAME = 'name';
