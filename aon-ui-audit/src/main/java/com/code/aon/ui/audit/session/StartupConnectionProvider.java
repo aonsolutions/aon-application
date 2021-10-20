@@ -44,8 +44,10 @@ public class StartupConnectionProvider implements ConnectionProvider {
 				} else {
 					for ( String schema : ci.getSchemas() ) {
 						try {
+							System.out.println("Try schema : " + schema );
 							return ci.getConnection(schema);
 						} catch ( Exception e ) {
+							System.err.println(schema + ":" + e.getMessage());
 							// No permission
 						}
 					}
