@@ -358,7 +358,8 @@
 		background: transparent url(#{aonResource.resolve['/images/aon-right-arrow.png']}) scroll center center no-repeat;
 	}
 	
-	.aon-dataTable .aon-icon-reset {
+	.aon-dataTable .aon-icon-reset,
+	.aon-editDataTable .aon-icon-reset{
 		background-size: cover;
 		background-color: transparent;
 		background-position-x: left;
@@ -549,8 +550,39 @@
 	.aon-pl-10{
 		padding-left: 10px !important;
 	}
+	
+	.aon-panelGrid-odd {
+		background-color: #f6f6f6;
+	}
+	
+	.rich-tab-active {
+		color : #000;
+		border-bottom: 2px solid #2152a5;
+	}
 
+	.rich-tab-inactive {
+		color : #4b4b4b;
+		border-color:#fff;
+		background-color:#fff;
+		border-bottom: 2px solid #fff;
+	}
+	
+	.rich-tab-bottom-line {
+		border-color: #fff;
+	}
 
+	.rich-tabpanel-content {
+		border:none;
+	}
+
+	.rich-tabhdr-side-cell {
+		border-top:none
+	}
+
+	.rich-tabhdr-side-border {
+		background: none;
+	}
+	
 	</style>
 
 	<script type="text/javascript">
@@ -712,6 +744,7 @@
 			<aon:div styleClass="aon-width-all aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
 				style="color:#999; padding-left: 10px;">
 
+					
 					<aon:panelGroup style="display:inline;">
 						<aon:outputText value="#{domainSwitcher.domainName}"
 							style="vertical-align: middle; color: #5f6368;"

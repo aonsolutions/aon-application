@@ -358,7 +358,8 @@
 		background: transparent url(#{aonResource.resolve['/images/aon-right-arrow.png']}) scroll center center no-repeat;
 	}
 	
-	.aon-dataTable .aon-icon-reset {
+	.aon-dataTable .aon-icon-reset,
+	.aon-editDataTable .aon-icon-reset{
 		background-size: cover;
 		background-color: transparent;
 		background-position-x: left;
@@ -546,6 +547,42 @@
 		min-height: 600px;
 	}
 	
+	.aon-pl-10{
+		padding-left: 10px !important;
+	}
+	
+	.aon-panelGrid-odd {
+		background-color: #f6f6f6;
+	}
+	
+	.rich-tab-active {
+		color : #000;
+		border-bottom: 2px solid #2152a5;
+	}
+
+	.rich-tab-inactive {
+		color : #4b4b4b;
+		border-color:#fff;
+		background-color:#fff;
+		border-bottom: 2px solid #fff;
+	}
+	
+	.rich-tab-bottom-line {
+		border-color: #fff;
+	}
+
+	.rich-tabpanel-content {
+		border:none;
+	}
+
+	.rich-tabhdr-side-cell {
+		border-top:none
+	}
+
+	.rich-tabhdr-side-border {
+		background: none;
+	}
+	
 	</style>
 
 	<script type="text/javascript">
@@ -572,11 +609,10 @@
 			}
 	</script>
 		
-	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 1px solid #ddd;" >
+	<aon:div id="aonHeader" styleClass="aon-header" style="border-top: 0px solid #999999; border-bottom: 0px solid #ddd;" >
 		<aon:form id="headerOptionsForm">
-		<aon:panelGrid columns="4" width="100%" 
-			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-name  aon-width-all, aon-header-options aon-width-300" style="height:60px;" >
-			
+		<aon:panelGrid columns="3" width="100%" 
+			columnClasses="aon-header-name aon-vertical-align-middle,aon-header-name  aon-width-all, aon-header-options aon-width-300 aon-pl-10" style="height:60px;" >
 
 			<aon:panelGroup>
 
@@ -605,8 +641,7 @@
 				</aon:div>
 			</aon:panelGroup>
 			
-		
-			<aon:panelGroup style="text-align:left" >
+			<aon:panelGroup style="text-align:left; display:flex" >
 					<aon:commandLink styleClass="aon-italic aon-margin-right aon-header-search" reRender="smartFilterTableContainer" >
 						<f:setPropertyActionListener target="#{aonConfiguration.properties.showSearchResults}" value="#{true}" />
 					</aon:commandLink>
@@ -620,6 +655,7 @@
 						onblur="javascript:hideSearchResults()" 
 						onfocus="javascript:showSearchResults()" 
 						onkeydown="javascript:escSearchResults(event)"
+						style="width:100%"
 						>
 						<a4j:support 
 						event="onkeyup"
@@ -635,7 +671,7 @@
 						
 					</aon:inputText>
 					
-					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%">
+					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;">
 						<aon:div id="smartFilterTablePanel" rendered="#{aonConfiguration.properties.showSearchResults}" >
 							<aon:div styleClass="search-results-popup-filter" >
 								<aon:outputText value="Resultados de búsqueda de '#{search.filter}'"
@@ -706,7 +742,7 @@
 			</aon:panelGroup>
 					
 			<aon:div styleClass="aon-width-all aon-nowrap aon-padding-left" rendered="#{loggedUser.logged}"
-				style="color:#999;">
+				style="color:#999; padding-left: 10px;">
 
 					
 					<aon:panelGroup style="display:inline;">
@@ -809,6 +845,7 @@
 					</aon:panelGroup> 
 					
 			</aon:div>
+		
 		</aon:panelGrid>
 		</aon:form>
 	</aon:div>
