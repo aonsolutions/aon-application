@@ -405,6 +405,13 @@ public class Mod130DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod130 calculateMod130(AONContext ctx, Mod130 mod130) {
+		_calculateMod130(ctx,mod130);
+		mod130.putAmount(Mod130Key.C15, getInitialC15(ctx,mod130));
+		_calculateMod130(ctx,mod130);
+		return mod130;
+	}
+	
+	public static Mod130 _calculateMod130(AONContext ctx, Mod130 mod130) {
 		Mod130MVELContext mvelCtx = getMVELcontext(ctx,mod130);
 		for (Mod130KeyDAO key : Mod130KeyDAO.values()) {
 			if (AonStringUtils.isNotEmpty( key.getExpression()) && key.acceptModel(mod130)) {
