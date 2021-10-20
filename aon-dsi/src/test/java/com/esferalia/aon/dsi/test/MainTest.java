@@ -29,24 +29,27 @@ public class MainTest {
 
 	@Before
 	public void setupAon() throws Exception {
-		aonConn = DBUtils.getAonConnection("jdbc:mysql://localhost/aon-dsi",
-				"aon", "40n");
-		/*
-		 * DBUtils.createDatabase(aonConn, DB); parentDomain =
-		 * DBUtils.createParentDomain(aonConn, PARENT, "DSI GRUPO", OWNER);
-		 */
+		aonConn = DBUtils.getAonConnection("jdbc:mysql://localhost", "dbuser", "serubd2000");
 
+		try {
+			DBUtils.dropDatabase(aonConn, DB);
+		} catch ( java.sql.SQLException e ) {
+			// Can't drop database 'aon-dsi'; database doesn't exist		
+		}
+		
+		DBUtils.createDatabase(aonConn, DB); 
+		parentDomain =DBUtils.createParentDomain(aonConn, PARENT, "DSI GRUPO", OWNER);
 	}
 
 	@Before
 	public void setupDsi() throws Exception {
 		dsiConn = DBUtils
-				.getDsiConnection("jdbc:paradox:/target/test-classes/db");
+				.getDsiConnection("jdbc:paradox:////var/tmp/aon-application/aon-dsi/target/test-classes/db");
 	}
 
 	@After
 	public void teardownAon() throws Exception {
-		// DBUtils.dropDatabase(aonConn, DB);
+
 		aonConn.close();
 	}
 
