@@ -3,12 +3,15 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.TaskHolder.TASK_HOLDER;
 import static com.esferalia.aon.jooq.tables.TaskHolderWorkgroup.TASK_HOLDER_WORKGROUP;
+
 import java.util.function.Function;
 import java.util.stream.Stream;
+
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
@@ -22,6 +25,10 @@ import com.esferalia.aon.occam.impl.jooq.validation.TaskHolderValidation;
 
 public class TaskHolderDAO {
 	
+	private TaskHolderDAO() {
+	
+	}
+	
 	private static final TaskHolderPropertiesDAO TASK_HOLDER_PROPERTIES = new TaskHolderPropertiesDAO();
 	public static class TaskHolderPropertiesDAO extends RegistryPropertiesDAO implements TaskHolderProperties {
 		
@@ -32,15 +39,16 @@ public class TaskHolderDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(TASK_HOLDER.ACTIVE);}
-		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.USER_ID);}
-		@Override public Property<Integer> getCostProfileProperty() {return new FilterDAO.PropertyDAO<Integer>(TASK_HOLDER.COST_PROFILE);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.DOMAIN);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.TYPE);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.ACTIVE);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.USER_ID);}
+		@Override public Property<Integer> getCostProfileProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.COST_PROFILE);}
 	}
 
 	
 	public static class TaskHolderFiller extends Filler implements Function<Record, TaskHolder> {
 
-		@Override
 		public TaskHolder apply(Record r) {
 			return build(r, REGISTRY);
 		}
@@ -154,15 +162,15 @@ public class TaskHolderDAO {
 	}
 	
 	public static Stream<TaskHolder> getTaskHolderWorkgroup(AONContext ctx, TaskHolderFilter filter, Integer workgroupId){
-		SelectConditionStep<Record> record = ctx.getDslContext().select()
+		SelectConditionStep<Record> r = ctx.getDslContext().select()
 				.from(TASK_HOLDER)
 				.join(REGISTRY).on(REGISTRY.ID.eq(TASK_HOLDER.REGISTRY))
 				.leftOuterJoin(TASK_HOLDER_WORKGROUP).on(TASK_HOLDER.REGISTRY.eq(TASK_HOLDER_WORKGROUP.TASK_HOLDER))
 				.where(TASK_HOLDER_PROPERTIES.getConditions(filter));
 		if(workgroupId != null && workgroupId>0)
-			record.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId));
+			r.and(TASK_HOLDER_WORKGROUP.WORKGROUP.eq(workgroupId));
 	
-		return record.orderBy(REGISTRY.NAME).fetch().stream().map(new TaskHolderFiller());
+		return r.orderBy(REGISTRY.NAME).fetch().stream().map(new TaskHolderFiller());
 	}
 
 	// *************************************************
