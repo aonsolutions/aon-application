@@ -76,7 +76,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
@@ -2053,7 +2052,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private ActivityDraft activityDraft;
 	private EmployeeEventsDraft employeeEventsDraft;
 	private EmployeeDraft employeeDraft;
-	private EmployeeNewDraft employeeNewDraft;
 	private EmployeeCalendarDraft employeeCalendarDraft;
 	private EmployeeCalendarDraftNew employeeCalendarDraftNew;
 	private EmployeeSalary employeeSalary;
@@ -2518,12 +2516,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	@Override
-	public void onEmployeeNewDraftSelected(EmployeeNewDraftObject employeeNewDraftObject) {
-		employeeDetail.setWidget(getEmployeeNewDraft());
-		getEmployeeNewDraft().setEmployeeNewDraftObject(employeeNewDraftObject);
-	}
-
-	@Override
 	public void onEmployeeCopy(Employee employee) {
 		singlenton.getEmployeeContextMenu().setCopyEmployee(employee);
 		storage.setItem(EMPLOYEE, employee2Json(employee));
@@ -2797,12 +2789,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				}}
 		;// .setOnSaved(w -> refreshWorkplace() );
 		return employeeDraft;
-	}
-
-	private EmployeeNewDraft getEmployeeNewDraft() {
-		if (employeeNewDraft == null)
-			employeeNewDraft = new EmployeeNewDraft();
-		return employeeNewDraft;
 	}
 
 	private CategoryDraft getCategoryDraft() {

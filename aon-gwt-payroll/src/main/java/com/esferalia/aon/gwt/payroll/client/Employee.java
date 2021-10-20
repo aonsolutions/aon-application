@@ -18,16 +18,18 @@ import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.gwt.payroll.shared.ContractType;
-import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
-import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
+import com.esferalia.aon.occam.api.model.type.ContractType.ModelRecord;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.Occupation;
+import com.esferalia.aon.occam.api.model.type.QuoteGroup;
 import com.esferalia.aon.occam.api.model.type.RLCE;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -823,29 +825,11 @@ public abstract class Employee extends ResizeComposite {
 		this.modality.addItem("-", "-1");
 
 		// GRUPO DE COTIZACION
-		this.quoteGroup.addItem("-", "-1");
-		this.quoteGroup.addItem("01. Alta direcci\u00F3n y personal no incluido en el E.T.", "01");
-		this.quoteGroup.addItem("02. Ingenieros t\u00E9cnicos, peritos y ayudantes titulados", "02");
-		this.quoteGroup.addItem("03. Jefes administrativos y de taller", "03");
-		this.quoteGroup.addItem("04. Ayudantes no titulados", "04");
-		this.quoteGroup.addItem("05. Oficiales administrativos", "05");
-		this.quoteGroup.addItem("06. Subalternos", "06");
-		this.quoteGroup.addItem("07. Axiliares administrativos", "07");
-		this.quoteGroup.addItem("08. Oficiales de primera y segunda", "08");
-		this.quoteGroup.addItem("09. Oficiales de tercera y especialista", "09");
-		this.quoteGroup.addItem("10. Peones", "10");
-		this.quoteGroup.addItem("11. Trabajadores menos de dieciocho a\u00F1os", "11");
-
+		QuoteGroup.getQuoteGroup().entrySet().forEach(entry -> this.quoteGroup.addItem(entry.getKey(), entry.getValue()));
+		
 		// OCUPACION
-		this.occupation.addItem("-", "-1");
-		this.occupation.addItem("a. Personal en trabajos exclusivos de oficina", "a");
-		this.occupation.addItem("b. Tipo de cotizaci\u00F3n para todos los trabajadores que deban desplazarse habitalmente", "b");
-		this.occupation.addItem("d. Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcci\u00F3n en general", "d");
-		this.occupation.addItem("e. Conductores de veh\u00EDculo autom\u00F3vil de transporte de pasajeros en general (taxis, autom\u00F3viles, autobuses, etc)", "e");
-		this.occupation.addItem("f. Conductores de veh\u00EDculo autom\u00F3vil de transporte de mercanc\u00EDas que tengan una capacidad de carga \u00FAtil superior a 3,5 Tm.", "f");
-		this.occupation.addItem("g. Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles", "g");
-		this.occupation.addItem("h. Vigilantes, guardas, guardas jurados y personal de seguridad", "h");
-
+		Occupation.getOccupation().entrySet().forEach(entry -> this.occupation.addItem(entry.getKey(), entry.getValue()));
+		
 		// RLCE
 		RLCE.getRLCE().entrySet().forEach(entry -> rlce.addItem(entry.getKey() + " - " + entry.getValue(), entry.getKey()));
 		
@@ -921,7 +905,7 @@ public abstract class Employee extends ResizeComposite {
 		//DOCUMENT
 		List<String> employeesDocuments = workplaceEmployees.getWorkplaceEmployeesDocument();
 		List<String> employeesDocumentsSuggest = new ArrayList<>();
-		employeesDocuments.forEach(document -> employeesDocumentsSuggest.add(document+""));
+		employeesDocuments.forEach(documentValue -> employeesDocumentsSuggest.add(documentValue+""));
 		MultiWordSuggestOracle orclDocuments = (MultiWordSuggestOracle) document.getSuggestOracle();
 		orclDocuments.addAll(employeesDocumentsSuggest);
 		document.setAutoSelectEnabled(false);
@@ -937,7 +921,7 @@ public abstract class Employee extends ResizeComposite {
 		//NAMES
 		List<String> employeesNames = workplaceEmployees.getWorkplaceEmployeesName();
 		List<String> employeesNamesSuggest = new ArrayList<>();
-		employeesNames.forEach(name -> employeesNamesSuggest.add(name+""));
+		employeesNames.forEach(nameValue -> employeesNamesSuggest.add(nameValue+""));
 		MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) name.getSuggestOracle();
 		orclNames.addAll(employeesNamesSuggest);
 		name.setAutoSelectEnabled(false);
