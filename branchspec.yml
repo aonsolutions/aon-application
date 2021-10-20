@@ -49,5 +49,5 @@ phases:
 artifacts:
   files:
     - testimgdef.json
-    # - testsolutionsimgdef.json
+    - testsolutionsimgdef.json
     # - location
