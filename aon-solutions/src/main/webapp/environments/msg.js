@@ -67,7 +67,10 @@ export const AVERAGE = "Media";// TODO
 
 export const BACK = MSG.BACK;
 export const BACKGROUND_ADJUST = MSG.BACKGROUND_ADJUST;
+export const BANK = 'Banco';
+export const BANK_ACCOUNT = 'Cuenta Bancaria';
 export const BASE = MSG.BASE;
+export const BIC_SWIFT = 'Bic / Swift';
 export const BILLING = MSG.BILLING;
 export const BLOCKED_POPUP = "Ventana bloqueada!";// TODO
 export const BOOKING = MSG.BOOKING;

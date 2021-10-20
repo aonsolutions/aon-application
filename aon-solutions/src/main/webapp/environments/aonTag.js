@@ -48,6 +48,7 @@ export const AON_TOOLBAR = 'aon-toolbar';
 export const AON_VIEWER = 'aon-viewer';
 export const AON_NOTIFICATION_ICON = 'aon-notification-icon';
 export const AON_UPLOAD = 'aon-upload';
+export const AON_IBAN = 'aon-iban';
 
 // MODULES - COMPANY
 
@@ -78,6 +79,10 @@ export const AON_MOBILE_INVOICE = 'aon-mobile-invoice';
 // DEV DOC
 export const AON_API_DOC = 'aon-api-doc';
 export const AON_COMPONENTS_DOC = 'aon-components-doc';
+
+
+export const AON_BANK_LIST = 'aon-bank-list';
+export const AON_BANK = 'aon-bank';
 
 export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH].join(", ");
 

@@ -10,6 +10,7 @@ export const ADD = 'add';
 export const ADD_FILE = 'addFile';
 export const ADD_INVOICE = 'addInvoice'
 export const ADVANCED_BUTTON = 'advancedButton';
+export const ALIAS = 'alias';
 export const AMOUNT = 'amount';
 export const AON_APPLICATION = 'aonApplication';
 export const AON_ACCOUNTING = 'aonAccounting';
@@ -31,6 +32,7 @@ export const BACK = 'back';
 export const BANK = 'bank';
 export const BANK_ACCOUNT = 'bankAccount';
 export const BASE = 'base';
+export const BIC = 'bic';
 export const BLANK = 'blank';
 export const BADGE = 'badge';
 
@@ -100,6 +102,7 @@ export const HOLDERS = 'holders';
 
 // ----- I
 
+export const IBAN = 'iban';
 export const ID = 'id';
 export const INBOX = 'inbox';
 export const INPUT = 'input';

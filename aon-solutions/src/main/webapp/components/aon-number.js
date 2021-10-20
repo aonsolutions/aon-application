@@ -172,6 +172,7 @@ export class AonNumber extends AonElement {
         input.id = this.INPUT;
         input.name = this.getAttribute(CONSTANT.NAME);
         input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
+        input.style.fontSize = "14px";
         input.type = 'text';
         input.autocomplete = "off"
         input.style.textAlign = 'right';

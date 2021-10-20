@@ -139,14 +139,14 @@ public class RegistryServlet extends AonApiHttpServlet {
 				}
 			
 				if(rai.equals(RegistryAdditionalInfo.BANKS)) {
-					LinkedList<RegistryBank> rbanks = AON.getRegistryBanks(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), registryId);
-					json.put(rai.name().toLowerCase(), RegistryBankJSON.toJSON(rbanks));
+					json.put(rai.name().toLowerCase(), RegistryBankJSON.toJSON(
+						AON.getRegistryBankStream(api.getDomain(), api.getUser().getLogin(), f -> f.getRegistryProperty().eq(registryId))));
 				}
 			
-				if(rai.equals(RegistryAdditionalInfo.PAYMETHODS)) {
-					Stream<RegistryPayMethod> rpms = AON.getRPayMethodStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
+				if(rai.equals(RegistryAdditionalInfo.PAYMETHOD)) {
+					RegistryPayMethod rpm = AON.getRPayMethod(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 						f.getRegistryProperty().eq(registryId));
-					json.put(rai.name().toLowerCase(), RegistryPaymethodJSON.toJSON(rpms));
+					json.put(rai.name().toLowerCase(), RegistryPaymethodJSON.toJSON(rpm));
 				}
 			
 				if(rai.equals(RegistryAdditionalInfo.MEDIA)) {
@@ -178,6 +178,22 @@ public class RegistryServlet extends AonApiHttpServlet {
 				AON.save(api.getDomain(), api.getUser().getLogin(), media);
 			});
 		}
+		
+		if(json.opt(RegistryAdditionalInfo.BANKS.name().toLowerCase()) != null) {
+			JSONArray arr = json.optJSONArray(RegistryAdditionalInfo.BANKS.name().toLowerCase());
+			RegistryBankJSON.fromJSON(arr).stream().forEach( bank -> {
+				bank.setDomain(registryDomain);
+				if(bank.getRegistry() == null) bank.setRegistry(registryId);
+				AON.saveRegistryBank(api.getDomain(), api.getUser().getLogin(), bank);
+			});
+		}
+		
+		if(json.opt(RegistryAdditionalInfo.PAYMETHOD.name().toLowerCase()) != null) {
+			RegistryPayMethod rpaymethod = RegistryPaymethodJSON.fromJSON(json.optJSONObject(RegistryAdditionalInfo.PAYMETHOD.name().toLowerCase()));
+			rpaymethod.setDomain(registryDomain);
+			if(rpaymethod.getRegistry() == null) rpaymethod.setRegistry(registryId);
+			AON.saveRegistryPayMethod(api.getDomain(), api.getUser(), rpaymethod);
+		}
 	}
 	
 	private JSONObject getRegistryAddress(AonApiData api) {
@@ -188,8 +204,9 @@ public class RegistryServlet extends AonApiHttpServlet {
 	}
 	
 	private JSONArray getRegistryBanks(AonApiData api) {
+		Integer id = api.getParams().optInt("id");
 		Stream<RegistryBank> rbanks = AON.getRBankStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-			f.getDomainProperty().eq(api.getDomain().getId()));
+			f.getDomainProperty().eq(api.getDomain().getId()).and(f.getRegistryProperty().eq(id)));
 		return RegistryBankJSON.toJSON(rbanks);
 	}
 	

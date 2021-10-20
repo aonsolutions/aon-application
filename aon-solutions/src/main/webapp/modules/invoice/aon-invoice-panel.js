@@ -175,8 +175,8 @@ export class AonInvoicePanel extends AonElement {
 	buildSettingOptions() {
 		let settingOptions = [];
 		if(!this.isMobile()) {
-			settingOptions = [ OPTION.REGISTRY, OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
-		} else settingOptions = [ OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
+			settingOptions = [ OPTION.REGISTRY, OPTION.PRODUCT ];
+		} else settingOptions = [ OPTION.PRODUCT ];
 
 		if(this.getDur().isAlpha()){
 			settingOptions.push(OPTION.CONFIGURATION_SII_TBAI);

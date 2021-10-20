@@ -4581,6 +4581,9 @@ public class AON {
 
 	// ------------------------------------- RBANK
 	
+	/**
+	 * @deprecated  Replaced by AON.getRegistryBankStream
+	 */
 	public static Stream<RegistryBank> getRBankStream(String domainName, Integer domainId, String login, RegistryBankFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -4592,6 +4595,9 @@ public class AON {
 		}
 	}
 		
+	/**
+	 * @deprecated  Replaced by AON.getRegistryBank
+	 */
 	public static RegistryBank getRBank(String domainName, Integer domainId, String login, RegistryBankFilter filter) {
 		return getRBankStream(domainName, domainId, login, filter)
 			.findFirst().orElse(new RegistryBank());
@@ -4602,6 +4608,9 @@ public class AON {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON.saveRegistryBank
+	 */
 	public static RegistryBank insertRBank(String domainName, Integer domainId, String login, RegistryBank rbank) {
 		AONContext ctx = null;
 		try {
@@ -4613,6 +4622,9 @@ public class AON {
 		}
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON.deleteRegistryBank
+	 */
 	public static void deleteRBank(String domainName, Integer domainId, String login, Integer id) {
 		AONContext ctx = null;
 		try {
@@ -4623,49 +4635,91 @@ public class AON {
 				ctx.close();
 		}
 	}
+
+	public static RegistryBank getRegistryBank(Domain domain, String login, RegistryBankFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().getRegistryBank(ctx, filter);
+		}
+	}
+	
+	public static Stream<RegistryBank> getRegistryBankStream(Domain domain, String login, RegistryBankFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().getRegistryBankStream(ctx, filter);
+		}
+	}
+	
+	public static RegistryBank saveRegistryBank(Domain domain, String login, RegistryBank rbank) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().saveRegistryBank(ctx, rbank);
+		}
+	}
+	
+	public static void deleteRegistryBank(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			getRegistry().deleteRegistryBank(ctx, id);
+		}
+	}
 	
 	// ------------------------------------- RPAYMETHOD
 	
+	/**
+	 * @deprecated  Replaced by AON.getRegistryPayMethodStream
+	 */
 	public static Stream<RegistryPayMethod> getRPayMethodStream(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getRPayMethodStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		return getRegistryPayMethodStream(domainName, domainId, login, filter);
 	}
 		
+	/**
+	 * @deprecated  Replaced by AON.getRegistryPayMethod
+	 */
 	public static RegistryPayMethod getRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
-		return getRPayMethodStream(domainName, domainId, login, filter)
-			.findFirst().orElse(new RegistryPayMethod());
-	}
-		
-	public static LinkedList<RegistryPayMethod> getRPayMethodList(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
-		return getRPayMethodStream(domainName, domainId, login, filter)
-			.collect(Collectors.toCollection(LinkedList::new));
+		return getRegistryPayMethod(domainName, domainId, login, filter);
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON.saveRegistryPayMethod
+	 */
 	public static RegistryPayMethod insertRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethod rpaymethod) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertRPayMethod(ctx, rpaymethod);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		return saveRegistryPayMethod(domainName, domainId, login, rpaymethod);
+	}
+	
+	public static RegistryPayMethod getRegistryPayMethod(Domain domain, User user, RegistryPayMethodFilter filter) {
+		return getRegistryPayMethod(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static RegistryPayMethod getRegistryPayMethod(Domain domain, String login, RegistryPayMethodFilter filter) {
+		return getRegistryPayMethod(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static RegistryPayMethod getRegistryPayMethod(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getRegistryPayMethod(ctx, filter);
 		}
 	}
 	
-	public static RegistryPayMethod deleteRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().deleteRPayMethod(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Stream<RegistryPayMethod> getRegistryPayMethodStream(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getRegistryPayMethodStream(ctx, filter);
+		}
+	}
+	
+	public static RegistryPayMethod saveRegistryPayMethod(Domain domain, User user, RegistryPayMethod registryPayMethod) {
+		return saveRegistryPayMethod(domain.getName(), domain.getId(), user.getLogin(), registryPayMethod);
+	}
+	
+	public static RegistryPayMethod saveRegistryPayMethod(Domain domain, String login, RegistryPayMethod registryPayMethod) {
+		return saveRegistryPayMethod(domain.getName(), domain.getId(), login, registryPayMethod);
+	}
+	
+	public static RegistryPayMethod saveRegistryPayMethod(String domainName, Integer domainId, String login, RegistryPayMethod registryPayMethod) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveRegistryPayMethod(ctx, registryPayMethod);
+		}
+	}
+	
+	public static void deleteRegistryPayMethod(String domainName, Integer domainId, String login, Integer id) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getRegistry().deleteRegistryPayMethod(ctx, id);
 		}
 	}
 	

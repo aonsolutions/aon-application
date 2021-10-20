@@ -1,5 +1,7 @@
+import { Bank } from '../../modules/registry/bank/Bank.js';
 import * as LS from '../../services/localStorageService.js';
 import { Domain } from '../Domain.js';
+import { RegistryPaymethod } from '../RegistryPaymethod.js';
 import { Address } from './Address.js';
 import { Media } from './Media.js';
 
@@ -19,6 +21,8 @@ export class Registry {
 
     addresses;
     media;
+    banks;
+    paymethod;
 
     constructor(registry) {
         if(registry) {
@@ -38,6 +42,11 @@ export class Registry {
             this.media = registry.media 
                 ? registry.media.map(m => new Media(m))
                 : [];
+
+            this.banks = registry.banks 
+                ? registry.banks.map(m => new Bank(m))
+                : [];
+            this.paymethod = new RegistryPaymethod(registry.paymethod);
             this.dirty = registry.dirty;
         } else {
             this.domain = new Domain();
@@ -51,6 +60,8 @@ export class Registry {
             this.dirty = false;
             this.addresses = [];
             this.media = [];
+            this.banks = [];
+            this.paymethod = new RegistryPaymethod();
         }
     }
 
@@ -175,6 +186,20 @@ export class Registry {
         return this.getAddresses();
     } 
 
+    getBanks() {
+        return this.banks;
+    }
+
+    setBanks(banks) {
+        this.banks = banks;
+        return this;
+    }
+
+    addBank(bank) {
+        this.getBanks().push(bank)
+        return this.getBanks();
+    } 
+
     getMedia() {
         return this.media;
     }
@@ -188,6 +213,15 @@ export class Registry {
         this.getMedia().push(media)
         return this.getMedia();
     } 
+
+    getPaymethod() {
+        return this.paymethod;
+    }
+
+    setPaymethod(paymethod) {
+        this.paymethod = paymethod;
+        return this;
+    }
 
     isDirty() {
         return this.dirty;

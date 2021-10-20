@@ -150,12 +150,16 @@ public interface IRegistry {
 	public RegistryBank updateRBank(AONContext ctx, RegistryBank rbank);
 	public void deleteRBank(AONContext ctx, Integer id);
 	
-	// ------------------- RPAYMETHOD
+	public RegistryBank getRegistryBank(AONContext ctx, RegistryBankFilter filter);
+	public Stream<RegistryBank> getRegistryBankStream(AONContext ctx, RegistryBankFilter filter);
+	public RegistryBank saveRegistryBank(AONContext ctx, RegistryBank rbank);
+	public void deleteRegistryBank(AONContext ctx, Integer id);
 	
-	public Stream<RegistryPayMethod> getRPayMethodStream(AONContext ctx, RegistryPayMethodFilter filter);
-	public RegistryPayMethod insertRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod);
-	public RegistryPayMethod updateRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod);
-	public RegistryPayMethod deleteRPayMethod(AONContext ctx, RegistryPayMethodFilter filter);
+	// ------------------- RPAYMETHOD
+	public RegistryPayMethod getRegistryPayMethod(AONContext ctx, RegistryPayMethodFilter filter);
+	public Stream<RegistryPayMethod> getRegistryPayMethodStream(AONContext ctx, RegistryPayMethodFilter filter);
+	public void deleteRegistryPayMethod(AONContext ctx, Integer id);
+	public RegistryPayMethod saveRegistryPayMethod(AONContext ctx, RegistryPayMethod rpaymethod);
 
 	// ------------------- RADDINFO
 	
