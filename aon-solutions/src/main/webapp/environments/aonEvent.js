@@ -21,6 +21,7 @@ export const RECEIVED_NOTIFICATION = 'receivedNotification';
 export const SEARCH = 'search';
 export const SEND_MAIL = 'sendMail';
 export const SELECT = 'select';
+export const SELECT_REGISTRY = 'selectRegistry';
 export const SELECT_OPTION = 'selectOption';
 export const APPLY_FILTER = 'applyFilter';
 export const RESIZE = 'resize';
