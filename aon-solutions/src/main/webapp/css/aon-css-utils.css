@@ -106,6 +106,10 @@
     background : var(--aon-color-interaction-minus-two) !important; 
 }
 
+.firstLetterUpper{
+    display: inline-block;
+}
+
 .firstLetterUpper:first-letter {
     text-transform: uppercase;
 }
@@ -139,6 +143,3 @@
     box-shadow: 1px 1px 2px black;
     background: var(--aonWhite);
 }
-/* .noteBoxShadow:focus-within > aon-textarea:first-child > toolbar > div:last-child {
-    display: flex !important;
-} */

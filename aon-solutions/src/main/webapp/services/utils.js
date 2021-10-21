@@ -165,18 +165,21 @@ export const setDateTimestamp = (d) => {
   return formatDate(date) + " " + setTime(date);
 }
 
-export const dayStr = (date) => {
+export const lastThreeDayStr = (d)=>{
+  const date = new Date(d);
   const now = new Date();
-  let day = DAYS[date.getDay()];
+  let day = null;
   if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
-    if(date.getDate() === now.getDate()){
-      day = "hoy";
-    } else if(date.getDate() === now.addDay(-1).getDate()){
+    if(date.getDate() === now.addDay(-1).getDate())
       day = "ayer";
-    }
+    else if(date.getDate() === new Date().getDate())
+      day = "hoy";
+    else if(date.getDate() === new Date().addDay(1).getDate())
+      day = "mañana";
   }
   return day;
 }
+export const dayStr = (date) =>  lastThreeDayStr(date) || DAYS[date.getDay()];
 
 export const setDateTpDay = (d)=>{
   const date = new Date(d);
