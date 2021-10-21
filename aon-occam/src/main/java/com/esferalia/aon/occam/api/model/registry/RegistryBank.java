@@ -44,6 +44,8 @@ public class RegistryBank implements Serializable {
 		return this;
 	}
 	public BankAccount getBankAccount() {
+		if(bankAccount == null) 
+			bankAccount = new BankAccount();
 		return bankAccount;
 	}
 	public RegistryBank setBankAccount(BankAccount bankAccount) {

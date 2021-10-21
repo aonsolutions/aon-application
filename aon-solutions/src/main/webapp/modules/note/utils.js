@@ -3,9 +3,8 @@ import { AonTextArea } from "../../components/aon-textarea.js";
 import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import { MONTHS } from "../../models/enums.js";
 import { deleteNote, saveNote } from "../../services/noteService.js";
-import { addZero } from "../../services/utils.js";
+import { addZero, lastThreeDayStr } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
-import { dateCustomDayHour } from "../signin/time-control/utils.js";
 
 /**
  * 
@@ -75,7 +74,6 @@ export const appendNote = (ul, note) => {
     
 
     textArea.draggableEnable(); 
-
     div.addEventListener(EVENT.FOCUSOUT, async() => {
         const {id} = await saveNote(note);
         note.setId(id);
@@ -117,11 +115,10 @@ const dialogMoreVert = (ev, li, note, textAreaId) => {
     dialog.open();
 } 
 
-
 const appendDate = (note, textAreaId)=>{
     const parent = document.getElementById(textAreaId).parentNode;
     if(parent){
-        const date = note.getDate();
+        const date = note.date;
         let idDiv = "div"+textAreaId;
         let color = COLORS.AON_GRAY;
         let today = new Date().setHours(0,0,0,0);
@@ -145,25 +142,26 @@ const appendDate = (note, textAreaId)=>{
             cursor: "pointer", 
             borderRadius:"7px",
             margin:"3px",
-            border: `1px solid #E9E7E7`,
+            border: `1px solid #E9E7E7`
         });
         divMain.appendChild(div);
 
         div.style.color = CSS.variable(color);
 
-        let reloj = setStyles(document.createElement(TAG.SPAN),{   height: "28px", opacity: "0.54", fontSize: "16px"});
+        let reloj = setStyles(document.createElement(TAG.SPAN),{ height: "28px", opacity: "0.54", fontSize: "16px"});
         reloj.classList.add(CONSTANT.MATERIAL_ICONS_OUTLINED);
         reloj.innerText = MATERIAL_ICONS.SCHEDULE;
         reloj.addEventListener(EVENT.CLICK, (ev)=> reminder(ev, note, textAreaId) );
         div.appendChild(reloj);
     
         let label = setStyles(document.createElement(TAG.LABEL),{ border: "1px solid transparent", fontSize: "11px", position:"relative", top:"-4px", cursor:"pointer"});
-        label.addEventListener(EVENT.CLICK, (ev)=> reminder(ev, note, textAreaId) );
+        label.classList.add(CSS.FIRST_LETTER_UPPER);
         label.id = "label"+textAreaId;
+        label.addEventListener(EVENT.CLICK, (ev)=> reminder(ev, note, textAreaId) );
         div.appendChild(label);
-        label.innerText = dateFormat(date);
+        label.innerText = dateFormat(note.date);
 
-        let iconX = setStyles(document.createElement(TAG.SPAN),{   height: "28px", opacity: "0.54", fontSize: "16px", display:"none"});
+        let iconX = setStyles(document.createElement(TAG.SPAN),{ height: "28px", opacity: "0.54", fontSize: "16px", display:"none"});
         iconX.classList.add(CONSTANT.MATERIAL_ICONS_OUTLINED);
         iconX.innerText = MATERIAL_ICONS.CLOSE;
         iconX.addEventListener(EVENT.CLICK, ()=> {
@@ -175,7 +173,6 @@ const appendDate = (note, textAreaId)=>{
 
         div.addEventListener(EVENT.MOUSELEAVE,()=> iconX.style.display = "none" )
         div.addEventListener(EVENT.MOUSEOVER,()=> iconX.style.display = "contents" );
-        
     }
 }
 
@@ -202,8 +199,7 @@ const reminder = (ev, note, textAreaId) => {
             appendDate(note, textAreaId);
             dialog.close();
         }
-    })
-
+    });
     let divContent = document.createElement(TAG.DIV);
     divContent.style.margin = "0 10px";
     divContent.appendChild(aonDate);
@@ -215,7 +211,7 @@ const reminder = (ev, note, textAreaId) => {
 }
 
 const dateFormat = (d) => {
+    let day = lastThreeDayStr(d);
     const date = new Date(d);
-    let day = dateCustomDayHour(d);
     return day ? day : `${addZero(date.getDate(),2)} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }

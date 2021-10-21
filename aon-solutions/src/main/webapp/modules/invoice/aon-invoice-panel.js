@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
-import { insertInvoice, deleteInvoices, actionMobile, getDomainUserRoles, selfconta } from '../../services/service.js';
+import { insertInvoice, deleteInvoices, mobileAction, MOBILE_ACTION, getDomainUserRoles, selfconta } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
@@ -308,8 +308,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	async openCamera() {
-		const isApp = await actionMobile({ action: "camera", id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
-		console.log('aon-invoice-panel');
+		const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
 		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
 	}
 

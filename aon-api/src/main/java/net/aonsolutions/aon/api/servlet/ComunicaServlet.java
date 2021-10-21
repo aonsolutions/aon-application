@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
@@ -300,15 +301,13 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String name =  api.getData().getString("name");
 		Date fecha = Toolkit.parseDate(api.getData().getString("fra"), FORMAT_DATE);
 		
-		if(!api.getData().isNull("frb")) {
+		if(!api.getData().isNull("frb")) 
 			fecha = Toolkit.parseDate(api.getData().getString("frb"), FORMAT_DATE);
-		}
 
-		if(prev) {
+		if(prev) 
 			SistemaRED.movPrevDelete(certificateInputStream, certificatePassword, certificateType,  situation, regimen, ctaCti, nss, fecha);
-		} else {
+		else 
 			SistemaRED.altaConsolidadaDelete(certificateInputStream, certificatePassword, certificateType, situation, regimen, ctaCti, nss);
-		}
 		
 		if(!api.getData().isNull("name")) {
 			String situationStr = situation.equalsIgnoreCase("AL") ? "Alta"  : "Baja";
@@ -477,14 +476,15 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private List<String> getEmails(AonApiData api, User user) {
 	    Domain domain = api.getDomain();
 	    List<String> toList = new LinkedList<>();
+	    String alternative = JsonUtils.optString(api.getData(), "alternative");
+	    if(alternative!=null && !alternative.isEmpty()) toList.add(alternative);
 		User newUser = user; //.isPresent() ? user.get() : AON_SOLUTIONS.getUser(domain, api.getToken()) ;
 		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth().getAuth());
 		toList.add(auth.getEmail());
 		AON.getDomainUserStream(domain.getName(), domain.getId(), newUser.getLogin(), f -> f.getAuthProperty().isNotNull().and(f.getIdProperty().ne(newUser.getId()))).forEach(usr -> {
     		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, newUser.getLogin(), usr.getId());
-    		if(dur.isComunicaManager()) {
+    		if(dur.isComunicaManager()) 
 				toList.add(AON_SOLUTIONS.getAuth(usr.getAuth().getAuth()).getEmail());
-    		}
     	});
 		return toList;
 	}

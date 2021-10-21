@@ -3,7 +3,7 @@ import { AonIconButton } from "../components/aon-icon-button.js";
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
 import { waitEl } from "../services/utils.js";
-import { actionMobile, closeSession, getDomainUserRoles } from "../services/service.js";
+import { MOBILE_ACTION, mobileAction, closeSession, getDomainUserRoles } from "../services/service.js";
 import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
 import * as LS from '../services/localStorageService.js';
 import { AonNotification } from "./notification/aon-notification.js";
@@ -349,7 +349,7 @@ export class AonNewMobileMenu extends AonElement {
 
 
 	async openCamera() {
-		const isApp = await actionMobile({ action: "camera", id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
+		const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
 		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
 	}
 

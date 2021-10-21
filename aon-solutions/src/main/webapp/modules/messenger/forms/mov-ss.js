@@ -7,11 +7,10 @@ import { TAG, EVENT, MSG, CONSTANT, CSS, COLORS } from "../../../environments/en
 import { getCccForActivity } from "../../../services/contractService.js";
 import {  serializeForm, sortBy } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
-import { MESSENGER_IDS } from "../MessengerEnums.js";
+import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
-import { getOccupation, getRlce, getContractType, getQuoteGroup, getTipoJornada } from "../../../services/comunicaService.js";
+import { getOccupation, getRlce, getContractType, getQuoteGroup, getTipoJornada, sendAlta } from "../../../services/comunicaService.js";
 import { addSpanDecimal } from "../../laboral/createComponent.js";
-
 
 /**
  * 
@@ -32,6 +31,11 @@ import { addSpanDecimal } from "../../laboral/createComponent.js";
     form.style.width = "100%";
     card.setContent(form);
 
+    //EMAIL ALTERNATIVE
+    let alternative = setAttributes(new AonInput(),{ id:"alternative", name:"alternative", visible:CONSTANT.FALSE });
+    alternative.value = data.alternative || (!task.id && task.auth && task.auth.email ? task.auth.email : "");
+    form.appendChild(alternative);
+
     //-----------DATA ENTERPRISE
     createDataEnterprise(form, data);
     //-----------END DATA ENTERPRISE
@@ -43,7 +47,6 @@ import { addSpanDecimal } from "../../laboral/createComponent.js";
     //---------------------DATA CONTRACT
     createDataContract(form, data, aonMessengerChat);
     //---------------------END DATA CONTRACT
-
 }
 
 /**
@@ -88,22 +91,6 @@ const createDataEnterprise = (form, data) => {
     });
     createDiv(form, ipf, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
-    let surname = setAttributes(new AonInput(),{
-        id:"surname",
-        name:"surname",
-        description:"Apellido 1",
-        value: data.surname ? data.surname : ""
-    });
-    createDiv(form, surname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
-
-    let lastSurname = setAttributes(new AonInput(),{
-        id: "lastSurname",
-        name:"lastSurname",
-        description: "Apellido 2",
-        value: data.lastSurname ? data.lastSurname : ""
-    });
-    createDiv(form, lastSurname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
-
     let name = setAttributes(new AonInput(),{
         id: "name",
         name:"name",
@@ -112,6 +99,21 @@ const createDataEnterprise = (form, data) => {
     });
     createDiv(form, name, {classes:[CSS.AON_COL_XS_12]})
 
+    let surname = setAttributes(new AonInput(),{
+        id:"surname",
+        name:"surname",
+        description:"1er Apellido",
+        value: data.surname ? data.surname : ""
+    });
+    createDiv(form, surname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+
+    let lastSurname = setAttributes(new AonInput(),{
+        id: "lastSurname",
+        name:"lastSurname",
+        description: `2do Apellido (${MSG.OPTIONAL})`,
+        value: data.lastSurname ? data.lastSurname : ""
+    });
+    createDiv(form, lastSurname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 }
 
 /**
@@ -122,6 +124,7 @@ const createDataEnterprise = (form, data) => {
  */
  const createDataContract = (form, data, aonMessengerChat) => {
     const dur = aonMessengerChat.getDur();
+    const task = aonMessengerChat.task;
     createTitle(form, "Datos del Contrato");
 
     let fra = setAttributes(new AonDate(),{ title: MSG.START_DATE, id:"fra", name:"fra"});
@@ -247,10 +250,12 @@ const createDataEnterprise = (form, data) => {
     const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
     createDiv(form, observation, {classes:[CSS.AON_COL_XS_12]});
 
-    let btnAccept = createBtnAccept();
-    btnAccept.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.getApplication().development() );
-     
-    createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+    if(dur.isComunicaManager() && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status)){
+        let btnAccept = createBtnAccept();
+        btnAccept.addEventListener(EVENT.CLICK, ()=>  processAccept(aonMessengerChat) );
+         
+        createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+    }
 }
 
 /**
@@ -300,8 +305,6 @@ const createDiv = (parent, child, properties)=> {
 
     return div;
 }
-
-
 
 //-----------FILL CTACTI
 const fillCtaCti = (aonSelect, data) => {
@@ -424,4 +427,29 @@ const calculoCoef = ({value}) =>  {
         }
         document.getElementById('coef').value = coef;
     }
+}
+
+
+const processAccept = async (aonMessengerChat) => {
+    aonMessengerChat.getApplication().startLoading();
+    try {
+        const data = getFormMovJson();
+        let newData = {
+            ...data,
+            regimen: data.regime,
+            fecha: data.fra,
+            grup_ctz: data.gc,
+            type_cto: data.contract,
+            name: `${data.name} ${data.surname} ${data.lastSurname || ""}`
+        }
+        if(data.ocu) newData.ocupacion = data.ocu;
+        if(data.coef) newData.coefparcial = parseInt(data.coef);
+        await sendAlta(newData);
+        await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
+    } catch (err) {
+        console.log(err);
+        aonMessengerChat.showError(err);
+    }
+
+    aonMessengerChat.getApplication().stopLoading();
 }

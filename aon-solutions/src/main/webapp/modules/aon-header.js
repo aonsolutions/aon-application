@@ -203,9 +203,7 @@ export class AonHeader extends AonElement {
 			this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
 		});
 		if(this.activeTimecontrol) {
-			getTimeControl().then(r => {
-				this.timeControlStatus(r);
-			});;
+			getTimeControl().then(r => this.timeControlStatus(r) );
 		}
 		let aonHeaderUserButton = this.getElement('aonHeaderUserButton');
 		aonHeaderUserButton.addEventListener('click', () => {

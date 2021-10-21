@@ -403,6 +403,7 @@ export class Invoice {
     if(this.isEmitida()) {
       this.receiver = registry;
     } else this.sender = registry;
+    this.name = registry.name;
   }
  
   getRegistryType() {
