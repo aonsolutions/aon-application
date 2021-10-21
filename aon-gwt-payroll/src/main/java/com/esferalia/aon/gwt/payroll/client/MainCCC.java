@@ -124,6 +124,11 @@ public class MainCCC extends MainEntryPoint{
 	}
 	
 	// ----------------------------------------------- onModuleLoad
+	
+	@Override
+	public void onModuleLoad() {
+		onModuleLoad( new MainCCCObject());
+	}
 
 	public void onModuleLoad(MainCCCObject mainCCCObject) {
 		this.mainCCCObject = mainCCCObject;

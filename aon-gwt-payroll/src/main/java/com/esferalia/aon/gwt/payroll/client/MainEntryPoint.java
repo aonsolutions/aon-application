@@ -6,11 +6,13 @@ import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
+import com.google.gwt.user.client.Window;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronLabelElement;
@@ -74,68 +76,236 @@ public class MainEntryPoint implements EntryPoint {
 				Constants.ENTRY_POINT_PARAM);
 
 		if (entryPoint.equalsIgnoreCase(Constants.ENTERPRISE_SITE_ENTRY_POINT)) {
-			EnterpriseSite enterpriseSite = new EnterpriseSite();
-			enterpriseSite.onModuleLoad();
-		}
-
-		else if (entryPoint
+			runAsync( EnterpriseSite.class, new EnterpriseSite());
+		}else if (entryPoint
 				.equalsIgnoreCase(Constants.EMPLOYEE_TREE_ENTRY_POINT)) {
-			EmployeeTree employeeTree = new EmployeeTree();
-			employeeTree.onModuleLoad();
+			runAsync( EmployeeTree.class, new EmployeeTree() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CALCULATOR_ENTRY_POINT)) {
-			MainCalculator mainCalculator = new MainCalculator();
-			mainCalculator.onModuleLoad();
+			runAsync( MainCalculator.class, new MainCalculator() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_AGREEMENT_ENTRY_POINT)) {
-			MainAgreement mainAgreement = new MainAgreement();
-			mainAgreement.onModuleLoad();
+			runAsync( MainAgreement.class, new MainAgreement());
 		}else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_TRASH_ENTRY_POINT)) {
-			MainTrash mainTrash = new MainTrash();
-			mainTrash.onModuleLoad();
+			runAsync(  MainTrash.class, new MainTrash() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRETA_ENTRY_POINT)) {
-			MainCreta mainCreta = new MainCreta();
-			mainCreta.onModuleLoad();
+			runAsync( MainCreta.class, new MainCreta() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_AFI_ENTRY_POINT)) {
-			AgrarianAFI agrarianAFI = new AgrarianAFI();
-			agrarianAFI.onModuleLoad();
+			runAsync( AgrarianAFI.class, new AgrarianAFI() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRA_ENTRY_POINT)) {
-			
-			MainCRAObject mainCRAObject = new MainCRAObject();
-			MainCRA mainCRA = new MainCRA();
-			mainCRA.onModuleLoad(mainCRAObject);
+			runAsync( MainCRA.class, new MainCRA() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CONTRATA_ENTRY_POINT)) {
-			MainContrataContractObject mainContrataContractObject = new MainContrataContractObject();
-			MainContrataContract mainContrataContract = new MainContrataContract();
-			mainContrataContract.onModuleLoad(mainContrataContractObject);
+			runAsync(MainContrataContract.class,  new MainContrataContract() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_IT_ENTRY_POINT)) {
-			MainContrataITObject mainContrataITObject = new MainContrataITObject();
-			MainContrataIT mainContrataIT = new MainContrataIT();
-			mainContrataIT.onModuleLoad(mainContrataITObject);
+			runAsync( MainContrataIT.class, new MainContrataIT() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_DIGITAL_CERTIFICATES_ENTRY_POINT)) {
-			MainDigitalCertificatesObject mainDigitalCertificatesObject = new MainDigitalCertificatesObject();
-			MainDigitalCertificates mainDigitalCertificates = new MainDigitalCertificates();
-			mainDigitalCertificates.onModuleLoad(mainDigitalCertificatesObject);
+			runAsync(MainDigitalCertificates.class, new MainDigitalCertificates());
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CCC_ENTRY_POINT)) {
-			MainCCCObject mainCCCObject = new MainCCCObject();
-			MainCCC mainCCC = new MainCCC();
-			mainCCC.onModuleLoad(mainCCCObject);
+			runAsync(MainCCC.class, new MainCCC());
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CONFIG_COMUNICA_ENTRY_POINT)) {
-			MainConfigComunicaObject mainConfigComunicaObject = new MainConfigComunicaObject();
-			MainConfigComunica mainConfigComunica = new MainConfigComunica();
-			mainConfigComunica.onModuleLoad(mainConfigComunicaObject);
+			runAsync( MainConfigComunica.class, new MainConfigComunica());
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
-			ActivitySummary activitySummary = new ActivitySummary();
-			activitySummary.onModuleLoad();
+			runAsync(ActivitySummary.class, new ActivitySummary() );
 		}
+	}
+	
+
+	public static void runAsync (Class<?> name,EntryPoint entryPoint) {
+		if (name == MainCalculator.class ) {
+			GWT.runAsync(MainCalculator.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == EnterpriseSite.class ) {
+			GWT.runAsync(EnterpriseSite.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == EmployeeTree.class ) {
+			GWT.runAsync(EmployeeTree.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainAgreement.class ) {
+			GWT.runAsync(MainAgreement.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainTrash.class ) {
+			GWT.runAsync(MainTrash.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainCreta.class ) {
+			GWT.runAsync(MainCreta.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		}  else if (name == AgrarianAFI.class ) {
+			GWT.runAsync(AgrarianAFI.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainCRA.class ) {
+			GWT.runAsync(MainCRA.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainContrataContract.class ) {
+			GWT.runAsync(MainContrataContract.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainContrataIT.class ) {
+			GWT.runAsync(MainContrataIT.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainDigitalCertificates.class ) {
+			GWT.runAsync(MainDigitalCertificates.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainCCC.class ) {
+			GWT.runAsync(MainCCC.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainConfigComunica.class ) {
+			GWT.runAsync(MainConfigComunica.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else {
+			Window.alert("Modulo desconcido '" + name +"'");
+		}
+	}
+
+	public static void runAsync (Class<?> name, Runnable runnable) {
+		GWT.runAsync(name, new RunAsyncCallback() {
+			
+			@Override
+			public void onSuccess() {
+				runnable.run();
+			}
+			
+			@Override
+			public void onFailure(Throwable reason) {
+                Window.alert("Error al cargar");
+			}
+		});
 	}
 
 	/**
@@ -191,5 +361,7 @@ public class MainEntryPoint implements EntryPoint {
 	/*-{
 		return $wnd.localStorage.getItem("rootPanel");
 	}-*/;
+	
+	
 
 }

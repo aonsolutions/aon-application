@@ -160,6 +160,11 @@ public class MainContrataIT extends MainEntryPoint {
 	
 	// --------------------------------------------------- OnModuleLoad
 	
+	@Override
+	public void onModuleLoad() {
+		onModuleLoad(new MainContrataITObject());
+	}
+	
 	public void onModuleLoad(MainContrataITObject mainContrataITObject) {
 		this.mainContrataITObject = mainContrataITObject;
 		itWidget.loadITWidget();

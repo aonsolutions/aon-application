@@ -627,6 +627,11 @@ public class MainCRA extends MainEntryPoint {
 	// --------------------------------------------------------------------------------------------
 	// ON MODULE LOAD
 	// --------------------------------------------------------------------------------------------
+	
+	@Override
+	public void onModuleLoad() {
+		onModuleLoad(new MainCRAObject());
+	}
 
 	public void onModuleLoad(MainCRAObject mainCRAObjectNew) {
 		this.mainCRAObjectNew = mainCRAObjectNew;
