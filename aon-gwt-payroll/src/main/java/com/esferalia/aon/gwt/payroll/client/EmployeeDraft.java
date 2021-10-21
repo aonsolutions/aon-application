@@ -687,16 +687,21 @@ public abstract class EmployeeDraft extends Composite {
 		
 		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
 		
-		Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
-		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
-			employee.showPartialTimeContract();
-			if(employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
-				employee.createJourneyDurationWarning();
-			} else {
-				employee.createJourneyDurationInfo(employeeDraftObject.getContractData().getContractJourneyDuration().getJourneyText());
-			}
-		} else
-			employee.showElementsFullTimeContract();
+		Integer contractTypeInt = null;
+		try {
+			contractTypeInt = Integer.parseInt(contractData.getContractType());
+			if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
+				employee.showPartialTimeContract();
+				if(employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
+					employee.createJourneyDurationWarning();
+				} else {
+					employee.createJourneyDurationInfo(employeeDraftObject.getContractData().getContractJourneyDuration().getJourneyText());
+				}
+			} else
+				employee.showElementsFullTimeContract();
+		} catch (NumberFormatException e) {
+			// TODO: handle exception
+		}
 		
 		employee.updateModality(contractTypeInt);
 		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
@@ -719,7 +724,9 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		
 		Double partialityCoef = contractData.getPartialityCoef();
-		if(null == partialityCoef || partialityCoef == 0.00) {
+		if( (null == partialityCoef || partialityCoef == 0.00) && 
+				(null != contractTypeInt && (AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)))) {
+			
 			partialityCoef = calculatePartialityCoef();
 			contractData.setPartialityCoef(partialityCoef);
 		}
