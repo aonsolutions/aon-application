@@ -537,19 +537,24 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		
 		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
 		
-		Integer contractTypeInt = Integer.parseInt(contractData.getContractType());
-		if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
-			employee.showPartialTimeContract();
-			if(contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
-				employee.createJourneyDurationWarning();
-			} else {
-				employee.createJourneyDurationInfo(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
-			}
-		} else
-			employee.showElementsFullTimeContract();
-
-		employee.updateModality(contractTypeInt);
-		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
+		Integer contractTypeInt = null;
+		try {
+			contractTypeInt = Integer.parseInt(contractData.getContractType());
+			if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
+				employee.showPartialTimeContract();
+				if(contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
+					employee.createJourneyDurationWarning();
+				} else {
+					employee.createJourneyDurationInfo(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
+				}
+			} else
+				employee.showElementsFullTimeContract();
+	
+			employee.updateModality(contractTypeInt);
+			setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
+		} catch (NumberFormatException e) {
+			// TODO: handle exception
+		}
 		
 		employee.startDate.setValue(contractData.getStartDate());
 		employee.seniorityDate.setValue(contractData.getSeniorityDate());
@@ -570,7 +575,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		
 		Double partialityCoef = contractData.getPartialityCoef();
 		if( (null == partialityCoef || partialityCoef == 0.00) && 
-			(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0))) {
+			(null != contractTypeInt && (AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)))) {
 			
 			partialityCoef = calculatePartialityCoef();
 			contractData.setPartialityCoef(partialityCoef);
