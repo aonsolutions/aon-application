@@ -607,7 +607,8 @@
 		background-size: 24px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-excel.svg']}) ;
 	}
-
+	
+	.aon-icon-new,
 	.aon-icon-reset{
 		background-size: 24px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-add.svg']}) ;
@@ -638,6 +639,11 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-delete.svg']}) ;
 	}
 
+	.aon-icon-email{
+		background-size: 24px;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-email.svg']}) ;
+	}
+
 	.aon-icon-info{
 		background-size: cover;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-info.svg']}) ;
@@ -647,7 +653,27 @@
 		background-size: 32px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-info.svg']}) ;
 	}
+	
+	.aon-icon-sepe {
+		padding: 24px;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-sepe.png']});
+	}
 
+	.aon-icon-winsuite {
+		padding: 24px;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-tgss.png']});
+	}
+	
+	.aon-direct-access-panel.aon-icon-sepe,
+	.aon-direct-access-panel.aon-icon-winsuite {
+		padding:8px 8px 8px 40px;
+	}
+	
+	.aon-menu-icon.aon-icon-email {
+		background-size:cover;
+	}
+
+	.aon-finding-toolbar-item.aon-icon-new,
 	.aon-finding-toolbar-item.aon-icon-pdf,
 	.aon-finding-toolbar-item.aon-icon-excel,
 	.aon-finding-toolbar-item.aon-icon-reset,
@@ -664,6 +690,7 @@
 		background-position-y : center;
 	}
 
+	.aon-editDataTable-button.aon-icon-new,
 	.aon-editDataTable-button.aon-icon-pdf,
 	.aon-editDataTable-button.aon-icon-excel,
 	.aon-editDataTable-button.aon-icon-reset,
@@ -695,6 +722,84 @@
 		background: none !important;
 	}
 	
+	.rich-calendar-button{
+		width: 0px;
+		height: 0px;
+		padding: 12px;
+		background: url(#{aonResource.resolve['/images/aon-icon-date.svg']}) scroll right center no-repeat;
+	}
+	
+	.aon-button-goto {
+		background-size:18px;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-launch.svg']}) ;
+	}
+
+	.aon-lookupButton-clear{
+		background-size:cover;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-refresh.svg']}) ;
+	}
+	
+	.aon-icon-predetermine {
+		background-size:cover;
+		background-image: url(#{aonResource.resolve['/images/aon-accept.svg']}) ;
+	}
+	
+	.aon-icon-exception {
+		background-size:cover;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-error.svg']}) ;
+	}
+	
+	
+	.rich-fileupload-button, 
+	.rich-fileupload-button-dis, 
+	.rich-fileupload-button-light, 
+	.rich-fileupload-button-press, 
+	.rich-fileupload-button-selection
+	 {
+		width: auto;
+		mouse: pointer;
+    	color: #4b4b4b;
+    	background: none;
+    	border-radius: 0px;
+    	border: 1px solid #aaa;
+	}
+	
+	.rich-fileupload-button-light{
+		background-color:#f6f6f6;
+	}
+	.rich-fileupload-ico-add {
+		padding-left: 26px;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-upload.svg']}) ;
+	}
+	
+	.aon-spin-control-element {
+		font-size:12px;
+	}
+	.aon-dataScroller-button-last,
+	.aon-dataScroller-button-last-disabled{
+		background-image: url(#{aonResource.resolve['/images/aon-icon-arrow-right.svg']}) ;
+	}
+	.aon-dataScroller-button-next,
+	.aon-dataScroller-button-next-disabled{
+		background-image: url(#{aonResource.resolve['/images/aon-icon-arrow-right.svg']}) ;
+	}
+	.aon-dataScroller-button-first,
+	.aon-dataScroller-button-first-disabled{
+		background-image: url(#{aonResource.resolve['/images/aon-icon-arrow-left.svg']}) ;
+	}
+	.aon-dataScroller-button-previous,
+	.aon-dataScroller-button-previous-disabled{
+		background-image: url(#{aonResource.resolve['/images/aon-icon-arrow-left.svg']}) ;
+	}
+	
+	.aon-dataScroller-button-last-disabled,
+	.aon-dataScroller-button-next-disabled,
+	.aon-dataScroller-button-first-disabled,
+	.aon-dataScroller-button-previous-disabled{
+		opacity: 0.25;
+	}
+	
+
 	</style>
 
 	<script type="text/javascript">
