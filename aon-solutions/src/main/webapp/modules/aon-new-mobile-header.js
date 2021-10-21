@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {actionMobile, getTimeControl} from  '../services/service.js';
+import {mobileAction, getTimeControl} from  '../services/service.js';
 import '../components/aon-icon-button.js';
 import '../components/aon-dialog-menu.js';
 import './configuration/aon-configuration.js';
@@ -178,7 +178,7 @@ export class AonNewMobileHeader extends AonElement {
 
 	companyIn(onlyOne) {
 		onlyOne = onlyOne || LS.isOnlyOne();
-		actionMobile({ action: "statusBar", statusBar: true});
+		mobileAction({ action: "statusBar", statusBar: true});
 
 		this.parent = false;
 		let div = this.getElement(this.WEB);
@@ -219,7 +219,7 @@ export class AonNewMobileHeader extends AonElement {
 	}
 
 	companyOut() {
-		actionMobile({ action: "statusBar", statusBar: false});
+		mobileAction({ action: "statusBar", statusBar: false});
 
 		this.parent = true;
 		let div = this.getElement(this.WEB);

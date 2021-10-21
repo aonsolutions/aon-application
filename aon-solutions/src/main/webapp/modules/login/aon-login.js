@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { login, getManifest, rememberPassword, getCompanies, getUser, actionMobile } from "../../services/service.js";
+import { login, getManifest, rememberPassword, getCompanies, getUser, mobileAction, MOBILE_ACTION } from "../../services/service.js";
 
 import "../../components/aon-input.js";
 import "../../components/aon-loader.js";
@@ -197,8 +197,8 @@ export class AonLogin extends AonElement {
       this.tag = this.tag + 1;
       if(this.tag >= 5){
         const BASE_URL_MOBILE = href.includes("aonsolutions.org") ? "https://aon.solutions/" : "https://aonsolutions.org";
-        actionMobile({
-          action:"setBaseUrl",
+        mobileAction({
+          action:MOBILE_ACTION.SET_BASE_URL,
           BASE_URL_MOBILE
         });
         this.tag = 0;
