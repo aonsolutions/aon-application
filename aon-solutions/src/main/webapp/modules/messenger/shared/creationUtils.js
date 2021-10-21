@@ -7,9 +7,16 @@ import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../..
 import { taskHistoricSend } from "../../../services/taskService.js";
 import { setDateTimestampDay } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
-import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
+import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
 
+
+export const createBtnAccept = () => {
+  let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
+  btnAccept.className = CSS.AON_BUTTON;
+  btnAccept.textContent = "Procesar";
+  return btnAccept;
+}
 // ----------------------------------------------------
 // MAIN VIEW
 // ----------------------------------------------------
@@ -219,7 +226,7 @@ export const createAction = (icon, message, submessage) => {
     size : "1.4em"
   };
 
-  const image = icon.type === ICON_TYPES.MATERIAL_OUTLINED ? createOutlinedMaterialIcon(properties) : createMaterialIcon(properties);
+  const image = icon.type === CONSTANT.MATERIAL_OUTLINED ? createOutlinedMaterialIcon(properties) : createMaterialIcon(properties);
   const text = createText({
     text : message,
     fontSize : "1.1em",
@@ -293,7 +300,7 @@ const createText = (properties) => newComponent({
 const createMaterialIcon = (properties) => newComponent({
     type: 'i',
     text: properties.name,
-    classes: [ICON_TYPES.MATERIAL_ICONS],
+    classes: [CONSTANT.MATERIAL_ICONS],
     styles: {
         fontSize: properties.size,
         color: properties.color
@@ -312,7 +319,7 @@ const createMaterialIcon = (properties) => newComponent({
   return newComponent({
       type: 'i',
       text: properties.name,
-      classes: [ICON_TYPES.MATERIAL_ICONS_OUTLINED],
+      classes: [CONSTANT.MATERIAL_ICONS_OUTLINED],
       styles: {
           fontSize: properties.size ? properties.size : "24px",
           color: properties.color ? properties.color : "#404040"
@@ -434,7 +441,7 @@ const iconComment = (icon_name) => {
         lineHeight: "44px",
         color: CSS.variable(COLORS.AON_BLUE)
     });
-    icon.className   = ICON_TYPES.MATERIAL_ICONS;
+    icon.className   = CONSTANT.MATERIAL_ICONS;
     icon.textContent = icon_name;
     a.appendChild(icon);
 
@@ -678,7 +685,7 @@ export const appendTaskTag = ( tag, parent, fn) =>{
     padding: "0 4px",
     backgroundColor: "rgb(221, 221, 221)",
     color: "rgb(102, 102, 102)",
-    margin: "0 5px 5px 5px",
+    margin: "5px",
     fontWeight: "450" 
   });
   divOne.dataset.taskTag = tag.id;
@@ -693,8 +700,8 @@ export const appendTaskTag = ( tag, parent, fn) =>{
   divThree.addEventListener(EVENT.CLICK,()=> fn(tag.id));
   divOne.appendChild(divThree);
 
-  const i = setStyles(document.createElement("i"),{fontSize: "15px" });
-  i.className = ICON_TYPES.MATERIAL_ICONS;
+  const i = setStyles(document.createElement("i"),{ fontSize: "15px" });
+  i.className = CONSTANT.MATERIAL_ICONS;
   i.innerText = MATERIAL_ICONS.CLOSE;
   divThree.appendChild(i);
 

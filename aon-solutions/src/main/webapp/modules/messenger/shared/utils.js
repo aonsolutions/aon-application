@@ -1,11 +1,11 @@
 import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
 import { openFileUrl } from "../../../services/fileService.js";
 import { domainName } from "../../../services/request.js";
-import {  setAttributes, setStyles } from "../../../services/utilsComponents.js";
+import {  setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
 import {  setTime, setFullDate } from "../../../services/utils.js";
 import { createFormVacation } from "../forms/vacation.js";
-import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
+import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
+import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
 import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { createFormMov } from "../forms/mov-ss.js";
@@ -81,6 +81,21 @@ export const buildTextareaToolbar =  (aonTextArea) => {
 
 const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
 
+export const addIconToolbar = (toolbar, task) => {
+    const titleSpan = setClasses(toolbar.querySelector( `.${CSS.AON_SECONDARY_TOOLBAR_TITLE}` ), [CSS.FLEX_ROW, CSS.FLEX_ALIGN_CENTER]);
+    if(titleSpan){
+        const iconJson = getIconJson(task);
+        const status = createOutlinedMaterialIcon({
+          name:  iconJson.icon,
+          color: iconJson.icon_color,
+          size: "20px"
+        });
+        status.element.style.marginLeft = "10px";
+        status.element.style.marginTop = "-1px";
+        status.appendTo(titleSpan);
+    }
+}
+
 const createLink =() =>{
     const selection = document.getSelection();
     const url = prompt('URL:', 'https://');
@@ -116,7 +131,7 @@ export const chooseIconMessage = ({type, date, name, comment}) => {
     
     let actionJson = {
         icon : MATERIAL_ICONS.INFO,
-        type : ICON_TYPES.MATERIAL_OUTLINED,
+        type : CONSTANT.MATERIAL_OUTLINED,
         color : CSS.variable(COLORS.MATERIAL_BLUE),
         comment: `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> ${dateParse}`
     }
@@ -276,11 +291,13 @@ const changeFormProcess = ({value,name}, aonMessengerChat) => {
     const task = aonMessengerChat.task;
     const processDiv = document.getElementById(MESSENGER_IDS.PROCESS_DIV);
     processDiv.innerHTML = "";
+    let sender;
     //CREATE CARD
     let aonCard = createCardMessenger("aonCardProcess", name);
     processDiv.appendChild(aonCard);
-    aonCard.getCard().style.margin = 0;
-    aonCard.getCard().style.marginTop = "10px";
+    setStyles(aonCard.getCard(), { margin:0, marginTop:"10px" });
+    aonCard.getCardTitle1().style.whiteSpace = "pre-wrap";
+
     if(task.id && aonMessengerChat.getDur().isMessengerManager()){ //BUTTON SHOW JSON
         aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
             let d = aonMessengerChat.applicationEl.getDialog();
@@ -295,12 +312,16 @@ const changeFormProcess = ({value,name}, aonMessengerChat) => {
         });
     }
 
+    if(aonMessengerChat.isMobile() && task.sender && task.sender.name ) 
+        sender = `[${task.sender.name}] ${name}`;
+     
     if(value===1){ //FORM VACATION
+        if(sender) aonCard.setTitleSection1(sender);
         createFormVacation(aonCard, aonMessengerChat);
     } else if(value ===2) {
         createFormMov(aonCard, aonMessengerChat);
-    }
-    else if(value ===3) {
+    } else if(value ===3) {
+        if(sender) aonCard.setTitleSection1(sender);
         createFormTimeControl(aonCard, aonMessengerChat);
     }
 }
@@ -333,6 +354,7 @@ export const buildForm = (div, aonMessengerChat) => {
     const aonMessenger = aonMessengerChat.applicationParentEl;
     const isGestor = task.isGestor();
     const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
+    const received =  isReceived(task, myWorkgroups);
 
     const dataDefault = aonMessengerChat.getData();
 
@@ -345,8 +367,7 @@ export const buildForm = (div, aonMessengerChat) => {
     const aonCard = createCardMessenger(MSG.DATA, "");
     div.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
-    // if(task.source !== TASK_SOURCE.CAU && applicationParent.cau && task.registry && task.registry.name){ // CARD TITLE REGISTRY
-    if( task.registry && task.registry.name && isReceived(task, myWorkgroups) ){
+    if( task.registry && task.registry.name && received ){
         const registryName = `[${task.registry.name}]`;
         aonCard.setTitleSection1(registryName)
     }
@@ -393,10 +414,9 @@ export const buildForm = (div, aonMessengerChat) => {
         fillSelectAppCau(aonMessengerChat);
     } else if( 
         (!task.id || task.isExternal()) && 
-        (!dur.isPayrollManager() && dur.isPayrollPortal()) &&
         !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) )
       ){
-        let initText = isReceived(task, myWorkgroups) ? 'De' : 'Para';
+        let initText = received ? 'De' : 'Para';
         let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
         const btnExternal = createAonSwitch(titleBtn);
         rowsDiv.appendChild(btnExternal);
@@ -721,11 +741,8 @@ export const dialogTaskTags = (ev, aonMessengerChat) => {
     dialog.clear();
     dialog.setContentTitle(MSG.TAGS);
 
-    const div = document.createElement("div");
-    div.style.margin = "5px";
-    div.style.display = "flex";
-    div.style.flexDirection = "column";
-
+    const div = setStyles(document.createElement("div"),{ margin:"5px", display:"flex", flexDirection:"column" });
+  
     const divTaskTags = document.getElementById(MESSENGER_IDS.DIV_TASK_TAGS);
 
     const tags = aonMessengerChat.getApplicationParent()._tags;
@@ -737,11 +754,10 @@ export const dialogTaskTags = (ev, aonMessengerChat) => {
         aonCheckbox.description = tag.name;
         aonCheckbox.checked = taskTags.find(t=>t.id ===tag.id) ? true : false;
         aonCheckbox.addEventListener(EVENT.CHANGE, ({target})=>{
-          if(target.checked){
+          if(target.checked)
             addTaskTag(tag, divTaskTags);
-          } else {
+          else 
             removeTaskTag(tag.id);
-          }
         })
         div.appendChild(aonCheckbox);
     }
@@ -787,16 +803,25 @@ const setTaskTags = () => {
  * @param {Boolean} b 
  */
 const showTags = (b) => {
-    const iconBtn = document.getElementById("aonMessengerChatToolbarHeaderToolSectionLabelsButton");
-    if(iconBtn){
-        const buttonToolbar = iconBtn.parentNode;
-        let display = "block";
-        if(!b) {
-            display = "none";
-            [...document.querySelectorAll("[data-task-tag]")].map(el => el.remove());
+    
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    if(aonMessengerChat) {
+        // if(!aonMessengerChat.task.isExternal()) 
+        //     b = false;
+        const toolbar = aonMessengerChat.getApplication().getToolbar();
+        if(toolbar){
+            const iconBtn = toolbar.querySelector(`#${toolbar.TOOL_SECTION}LabelsButton`);
+            if(iconBtn){
+                const buttonToolbar = iconBtn.parentNode;
+                let display = "block";
+                if(!b) {
+                    display = "none";
+                    [...document.querySelectorAll("[data-task-tag]")].map(el => el.remove());
+                }
+                buttonToolbar.style.display = display;
+                setTaskTags();
+            }
         }
-        buttonToolbar.style.display = display;
-        setTaskTags();
     }
 }
 

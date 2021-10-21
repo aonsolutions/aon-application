@@ -9,6 +9,7 @@ export const ACTIVATE = 'Activar';
 export const ACTIVE = 'Activo';
 export const ACTIVES = 'Activas';
 export const ACTIVITY = 'Actividad';
+export const ACTIVITY_SUMMARY = 'Resumo da Actividades';
 export const ADD = 'Engadir';
 export const ADD_CATEGORY = 'Engadir Categoría';
 export const ADD_COMMENT = 'Engadir Comentario';
@@ -21,6 +22,7 @@ export const ADDRESS = 'Dirección';
 export const ALL_FILES = 'Todos os Ficheiros';
 export const AMOUNT = 'Importe';
 export const API_DOCUMENTATION = 'Documentación API';
+export const APPLICATIONS = 'Aplicacións';
 export const ASESOR = 'Asesor';
 export const ATTACH_FILES_DRAGGING_DROPPING = 'Arrastre ou seleccione o ficheiro';
 export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Arrastre ou seleccione o fondo';
@@ -47,6 +49,9 @@ export const CATEGORY = 'Categoría';
 export const CATEGORIES = 'Categorías';
 export const CHANGE_TYPE = 'Cambiar Tipo';
 export const CITY = 'Ciudad';
+export const CLASSIC_APPLICATIONS = 'Aplicacións Clásicas';
+export const CLASSIC_VIEW = 'Vista Clásica';
+export const CLOSE = 'Pechar';
 export const CODE = 'Código';
 export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';
@@ -54,6 +59,7 @@ export const COMMERCIAL_NAME = 'Nome Comercial';
 export const COMPANIES = 'Empresas';
 export const COMPANY = 'Empresa';
 export const COMPANY_COSTS = 'Custos da Empresa';
+export const COMPANY_MANAGEMENT = 'Xestión de Empresas';
 export const COMPONENTS = 'Compoñentes';
 export const CONCEPT = 'Concepto';
 export const CONCEPTS = 'Conceptos';
@@ -64,6 +70,7 @@ export const CONTACT_DATA = 'Datos do Contacto';
 export const CONTACTS = 'Contactos';
 export const CONTRACT = 'Contratar';
 export const COUNTRY = 'País'
+export const CREATE = 'Crear';
 export const CREDITOR = 'Acredor';
 export const CREDITORS = 'Acredores';
 export const CUSTOMER = 'Cliente';
@@ -124,14 +131,18 @@ export const FOOTER = 'Pé';
 
 export const GENERAL_INFORMATION = 'Información General';
 export const GROUP_DATA = 'Datos do Grupo';
+export const GROUP_MANAGEMENT = 'Xestión de Grupos';
 export const GROUP = 'Grupo';
 export const GROUPS = 'Grupos';
 
 // ----- H
 
 export const HEADER = 'Cabeceira';
+export const HIRING = 'Contratación';
 export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulares';
+export const HOURS = "Horas";
+export const HISTORIC = "Historial";
 
 // ----- I
 
@@ -185,10 +196,15 @@ export const NUMBER = 'Número';
 
 // ----- O
 
+export const OBSERVATION = 'Observación';
+export const OFFICE = 'Despacho';
 export const ONLY_PORTAL = 'Só Portal';
 export const OPEN = 'Abrir';
 export const OPEN_MENU = 'Abrir Menú';
-export const OPTIONS = "Opcións"
+export const OPEN_REQUESTS = 'Solicitudes Abertas';
+export const OPTIONAL = 'Opcional'; 
+export const OPTIONS = 'Opcións';
+export const OTHER_SERVICES = 'Outros Servizos';
 
 // ----- P
 
@@ -238,6 +254,8 @@ export const REJECTED_INVOICES = 'Factures Rexeitadas';
 export const REJECTEDS = 'Rexeitadas';
 export const REQUEST = 'Solicitude';
 export const REQUESTS = 'Solicitudes';
+export const REQUESTS_SENT = 'Solicitudes Enviadas';
+export const REQUESTS_RECEIVED = 'Solicitudes Recibidas';
 export const RESTORE = 'Restaurar';
 export const RESTORED_DATA = 'Los datos se han restaurado correctamente';
 export const RESTORE_INVOICE = 'Restaurar Factura';
@@ -258,6 +276,7 @@ export const SEND_INVOICES = 'Enviar Factures';
 export const SEPA_FILES = 'Ficheiros SEPA';
 export const SERIE = 'Serie';
 export const SERVICE = 'Servizo';
+export const SERVICES = 'Servizos';
 export const SETTING = 'Configuración'; 
 export const SHOW_FILE = 'Ensinar Ficheiro';
 export const SII = 'SII';

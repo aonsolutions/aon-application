@@ -10,16 +10,17 @@ import "../company/aon-company-list.js";
 import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 import * as ACTION from '../actions.js';
-import { CONFIGURATION} from "../../services/app.js";
+import { CONFIGURATION, INVOICE } from "../../services/app.js";
 import { AonUser } from "../user/aon-user.js";
 import { AonWorkgroup } from "./groups/aon-workgroup.js";
 import { AonReg } from "../registry/aon-reg.js";
 import * as LS from '../../services/localStorageService.js';
 import { Registry } from "../../models/registry/Registry.js";
+import { AonInvoicePrint } from "../invoice/aon-invoice-print.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -108,37 +109,51 @@ export class AonConfiguration extends AonElement {
       let companyOptions = [];
       companyOptions.push({
         name: MSG.GENERAL_INFORMATION,
-        icon: "business",
+        icon: MATERIAL_ICONS.BUSINESS,
         fn: () => this.buildGeneral(),
       });
       companyOptions.push({
         name: MSG.USER_MANAGEMENT,
-        icon: "people",
+        icon: MATERIAL_ICONS.PEOPLE,
         fn: () => this.buildUser(),
       });
       if (!company.parentId) {
         companyOptions.push({
-          name: "Gestión de Empresas",
-          icon: "business",
+          name: MSG.COMPANY_MANAGEMENT,
+          icon: MATERIAL_ICONS.BUSINESS,
           fn: () => this.buildCompanyList(),
         });
       }
 
       companyOptions.push({
-        name: "Gestión de Grupos",
-        icon: "groups",
+        name: MSG.GROUP_MANAGEMENT,
+        icon: MATERIAL_ICONS.GROUPS,
         fn: () => this.buildGroups(),
       });
 
       if (!this.isMobile()) {
         companyOptions.push({
-          name: "Contratación",
-          icon: "store_mall_directory",
+          name: MSG.HIRING,
+          icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
           fn: () => this.buildStore(),
         });
       }
 
-      aonConfiguration.addSidenavOptions("EMPRESA", companyOptions);
+      aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+
+      let appOptions = []; 
+
+
+      appOptions.push({
+        name: INVOICE.title,
+        aonIcon: {
+          icon: 'aon_app',
+          color: INVOICE.color
+        },
+        fn: () => this.buildInvoiceConfiguration(),
+      });
+
+      aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
     }
 
     this.buildPersonal();
@@ -168,7 +183,7 @@ export class AonConfiguration extends AonElement {
   buildGeneral() {
     let data = {
 			id: LS.getCompany().registry,
-			additional_info: ['ADDRESSES', 'MEDIA']
+			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
 		};
     
     getRegistry(data).then(cp => {
@@ -206,6 +221,10 @@ export class AonConfiguration extends AonElement {
     // });
 
   }
+
+	buildInvoiceConfiguration() {
+		this.getApplication().setContent(new AonInvoicePrint());
+	}
 
   buildCompanyList() {
     let aonConfiguration = this.getApplication();

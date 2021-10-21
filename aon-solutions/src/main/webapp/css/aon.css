@@ -550,6 +550,10 @@ button:disabled, button[disabled]{
   z-index: 2;
 }
 
+.aonMenuSidenav::-webkit-scrollbar {
+  display: none;
+}
+
 .aonMenuSidenavAppToolbar {
   height: 64px;
   color: white;

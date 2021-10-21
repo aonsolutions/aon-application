@@ -19,7 +19,7 @@
 }
 
 .flexJustifyStart{
-    justify-content: flex-start;
+    justify-content: flex-start
 }
 
 .flexJustifyEnd{
@@ -129,3 +129,16 @@
 @-moz-keyframes pulse {to {box-shadow: 0 0 0 45px rgba(232, 76, 61, 0);}}
 @-ms-keyframes pulse {to {box-shadow: 0 0 0 45px rgba(232, 76, 61, 0);}}
 @keyframes pulse {to {box-shadow: 0 0 0 45px rgba(232, 76, 61, 0);}}
+
+
+.noteBoxShadow{
+    background: #fffde7;
+}
+
+.noteBoxShadow:focus-within{
+    box-shadow: 1px 1px 2px black;
+    background: var(--aonWhite);
+}
+/* .noteBoxShadow:focus-within > aon-textarea:first-child > toolbar > div:last-child {
+    display: flex !important;
+} */

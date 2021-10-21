@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.shared;
+package com.esferalia.aon.occam.api.model.type;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,21 +19,21 @@ public class RLCE {
 		Map<String, String> rlceTableMap = new HashMap<>();
 		
 		rlceTableMap.put("", "");
-		rlceTableMap.put("0100", "Personal de Alta Direccio\u00F3n");
+		rlceTableMap.put("0100", "Personal de Alta Direcci\u00F3n");
 		rlceTableMap.put("0301", "Penados en Instituciones Penitenciarias. Aprendizaje/Formaci\u00F3n");
 		rlceTableMap.put("0302", "Penados en Instituciones Penitenciarias. Actividad Laboral");
 		rlceTableMap.put("0303", "Penados en Instituciones Penitenciarias. Beneficio Comunidad");
 		rlceTableMap.put("0304", "Penados en Instituciones Penitenciarias. Menores");
 		rlceTableMap.put("0409", "Deportistas profesionales");
 		rlceTableMap.put("0500", "Representantes de comercio");
-		rlceTableMap.put("0501", "Representantes de comercio -vendedores del cup\00F3n de la ONCE-");
+		rlceTableMap.put("0501", "Representantes de comercio -vendedores del cup\u00F3n de la ONCE-");
 		rlceTableMap.put("0600", "Minusv\u00E1lidos en Centros Especiales de Empleo");
 		rlceTableMap.put("0601", "Minusv\u00E1lido procedente enclave laboral");
 		rlceTableMap.put("0602", "Discapacitado Organizaci\u00F3n Nacional de Ciegos");
 		rlceTableMap.put("0700", "Estibadores portuarios");
 		rlceTableMap.put("0800", "Artistas en espect\u00E1culos p\u00FAblicos");
 		rlceTableMap.put("0900", "Abogados en despachos de abogados");
-		rlceTableMap.put("9901", "Investigadores del Sistema Espa\u00F1ol de Ciencia y Tecnolog\u00EDa -contratos pr\u00E1cticas-");
+		rlceTableMap.put("9901", "Investigadores del Sistema Espa\u00F1ol de Ciencia y Tecnolog\u00EDa -contratos pr\u00E1cticas");
 		rlceTableMap.put("9902", "M\u00E9dicos Interinos Residentes");
 		rlceTableMap.put("9903", "Universidad P\u00FAblica -Profesor Ayudante");
 		rlceTableMap.put("9904", "Universidad P\u00FAblica -Profesor Ayudante Doctor");
@@ -82,6 +82,5 @@ public class RLCE {
 		
 		return code + " - " + rlceTable.get(code);
 	}
-	
 	
 }

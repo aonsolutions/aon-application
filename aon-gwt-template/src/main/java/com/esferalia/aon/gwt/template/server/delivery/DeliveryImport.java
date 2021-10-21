@@ -1159,7 +1159,7 @@ public class DeliveryImport {
 							.setSuffix("")
 							.setAlias(r.getBanco())
 							.setActive(true)
-							.setAccount(customer.getAccount());
+							.setAccountId(customer.getAccount());
 					AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);
 				}
 
@@ -1174,7 +1174,7 @@ public class DeliveryImport {
 								.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 1)
 								.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
 								.setDaysBetwenPymnts(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)
-								.setPymnt_days(r.getDiasPago() != null ? getDiasPago(r.getDiasPago())  : "");
+								.setPymntDays(r.getDiasPago() != null ? getDiasPago(r.getDiasPago())  : "");
 						AON.insertRPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
 					}
 				}

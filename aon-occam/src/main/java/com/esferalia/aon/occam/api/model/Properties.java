@@ -549,9 +549,9 @@ public interface Properties {
 		Property<Integer> getRegistryProperty();
 		Property<Integer> getPayMethodProperty();
 		Property<Integer> getRBankProperty();
-		Property<Integer> getNumberOfPymntsProperty();
-		Property<Integer> getDaysToFirstPymntProperty();
-		Property<Integer> getDaysBetweenPymntsProperty();
+		Property<Short> getNumberOfPymntsProperty();
+		Property<Short> getDaysToFirstPymntProperty();
+		Property<Short> getDaysBetweenPymntsProperty();
 		Property<String> getPymntDaysProperty();
 	}
 	
@@ -1361,6 +1361,16 @@ public interface Properties {
 		Property<Double> getLatitudeProperty();
 		Property<Double> getLongitudeProperty();
 	}
+	
+	public interface NoteProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getOwnerProperty();
+		Property<String> getSubjectProperty();
+		Property<String> getNoteProperty();
+		Property<Timestamp> getDateProperty();
+	}
+	
 	
 	public interface AuthDeviceProperties {
 		Property<Integer> getIdProperty();

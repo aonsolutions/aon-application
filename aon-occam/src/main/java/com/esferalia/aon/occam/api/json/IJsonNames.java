@@ -39,6 +39,7 @@ public interface IJsonNames {
 	String BALANCE = "balance";
 	String BALANCES = "balances";
 	String BALANCING_ACCOUNT = "balancingAccount";
+	String BANK = "bank";
 	String BANK_ACCOUNT = "bank_account";
 	String BANK_ALIAS = "bankAlias";
 	String BASE = "base";
@@ -83,6 +84,8 @@ public interface IJsonNames {
 	String CREDIT = "credit";
 	// ---------------------------------------------------------------------------------------------	[D] 
 	String DATE = "date";
+	String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
+	String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
 	String DEBIT = "debit";
 	String DEFINED_USERS = "definedUsers";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
@@ -199,6 +202,7 @@ public interface IJsonNames {
 	String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
 	String NULL = "null";
 	String NUMBER = "number";
+	String NUMBER_OF_PYMNTS = "numberOfPymnts";
 	// ---------------------------------------------------------------------------------------------	[O] 
 	String OFFER_STATUS_APPROVED = "offerStatusApproved";
 	String OFFER_STATUS_BLOCKED = "offerStatusBlocked";
@@ -249,6 +253,7 @@ public interface IJsonNames {
 	String PROMO = "promo";
 	String PROVINCE = "province";
 	String PURCHASES_RATIO = "purchasesRatio";
+	String PYMNT_DAYS = "pymntDays";
 	// ---------------------------------------------------------------------------------------------	[O]
 	String OWNER = "owner";
 	// ---------------------------------------------------------------------------------------------	[Q] 
@@ -300,6 +305,7 @@ public interface IJsonNames {
 	String STATUS = "status";
 	String STREET_TYPE = "streetType";
 	String SUBJECT = "subject";
+	String SUFIX = "sufix";
 	String SURCHARGE_QUOTA = "surcharge_quota";
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";

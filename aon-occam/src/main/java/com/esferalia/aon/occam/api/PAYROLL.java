@@ -180,6 +180,12 @@ public class PAYROLL {
 		}
 	}
 	
+	public static LinkedList<ContractData> saveContractData(String domainName, Integer domainId, String login, ContractData ...contractData) {
+		try( AONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			return getPayroll().saveContractData(ctx, contractData);
+		} 
+	}
+	
 	public static LinkedList<ContractData> getContractDataList(String domainName, Integer domainId, String login, ContractDataFilter filter) {
 		AONContext ctx = null;
 		try {

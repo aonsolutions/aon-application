@@ -34,6 +34,8 @@ public class Employee {
 	private String reducingCoefic;
 	private Integer ident;
 	private String mdCtz;
+	private String rlce;
+
 	private Employee() {}
 	
 	public void accept(Visitor visitor) {
@@ -92,6 +94,13 @@ public class Employee {
 	public String getOcup() {return ocup;}
 	public Optional<String> getMdctz(){return Optional.ofNullable(mdCtz);}
 	
+	public String getRlce() {return rlce;}
+
+	public Employee setRlce(String rlce) {
+		this.rlce = rlce;
+		return this;
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -187,6 +196,8 @@ public class Employee {
 		private String reducingCoefic;
 		private Integer ident;
 		private String mdCtz;
+		private String rlce;
+
 		public EmployeeBuilder(){}		
 		
 	
@@ -195,7 +206,12 @@ public class Employee {
 			else this.nss = null;
 			return this;
 		}
-
+		
+		public EmployeeBuilder setRlce(String rlce) {
+			if(rlce != null && !rlce.trim().equals("")) this.rlce = rlce.trim();
+			else this.rlce = null;
+			return this;
+		}
 
 		public EmployeeBuilder setName(String name) {
 			if(name != null && !name.trim().equals("")) this.name = name.trim();
@@ -407,6 +423,7 @@ public class Employee {
 			employee.reducingCoefic = this.reducingCoefic;
 			employee.ident = this.ident;
 			employee.mdCtz = this.mdCtz;
+			employee.rlce = this.rlce;
 			return employee;
 		}
 

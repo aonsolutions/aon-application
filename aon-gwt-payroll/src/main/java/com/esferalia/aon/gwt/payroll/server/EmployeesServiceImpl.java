@@ -6634,19 +6634,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	// ------------------------------------------------- EmployeeIrpf
 	
 	@Override
-	public List<EmployeeIrpf> getEmployeeIrpf(String domainName, Integer contractId, Date startDate) {
+	public List<EmployeeIrpf> getEmployeeIrpf(String domainName, String ssNumber, Date startDate) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqEmployeeIrpf.getEmployeeIrpf(connection, contractId, startDate);
+			return JooqEmployeeIrpf.getEmployeeIrpf(connection, ssNumber, startDate);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
-	public void setEmployeeIrpf(String domainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs) {
+	public void setEmployeeIrpf(String domainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			JooqEmployeeIrpf.setEmployeeIrpf(connection, domainId, contractId, employeeIrpfs);
+			JooqEmployeeIrpf.setEmployeeIrpf(connection, domainId, contractId, ssNumber, employeeIrpfs);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -6690,6 +6690,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		if(AonStringUtils.isNotBlank(settleReason))
 			builder.setSituation(settleReason);
 
+		String rlce = employeeContractInfo.getContractInfo().getRlce();
+		if(AonStringUtils.isNotBlank(rlce))
+			builder.setRlce(rlce);
+		
 		return builder.build();
 	}
 

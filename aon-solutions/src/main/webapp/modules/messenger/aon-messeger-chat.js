@@ -180,10 +180,10 @@ export class AonMessengerChat extends AonElement {
   async getTaskWorkflow() {
     this.applicationEl.startLoading();
     try {
-      let workflow = await getTaskWorkflow({ task:this.task.id, domainId:this.task.domain.id, domainName:this.task.domain.name });
-      this.task.setWorkflow(workflow);
-      fillChat(workflow, this);
-      if(workflow.length>0) this.addButtonDelete();
+      let workflows = await getTaskWorkflow({ task:this.task.id, domainId:this.task.domain.id, domainName:this.task.domain.name });
+      this.task.setWorkflow(workflows);
+      fillChat(this, workflows);
+      if(workflows.length>0) this.addButtonDelete();
     } catch (error) {}
     this.applicationEl.stopLoading();
   }
@@ -211,24 +211,15 @@ export class AonMessengerChat extends AonElement {
 
   async saveSourceRequest(){
     try {
-        const processType = this.getElement(MESSENGER_IDS.PROCESS_TYPE);
-        let description = null;
-        if("1" === processType.value )
-          description = getFormVacationJson();
-        else if("2" === processType.value )
-          description = getFormMovJson();
-        else if("3" === processType.value )
-          description = getFormTimeJson();
-
-        if(description){
-          this.task.title = processType.getText();
-          this.task.description = "";
-          this.task.setDescriptionJson(description);
+        const json = this.getFormJson();
+        if(json){
+          this.task.setDescriptionJson(json);
           const data = await saveTask(this.task);
           this.task.editTask(data);
           if(this.getData().id){
             this.setData(data);
-            if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow(), this);
+            if(this.task.getWorkflow().length) 
+              fillChat(this, this.task.getWorkflow());
           } else {
             this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
           }
@@ -247,7 +238,8 @@ export class AonMessengerChat extends AonElement {
 
       if(this.getData().id){
         this.setData(data);
-        if(this.task.getWorkflow().length) fillChat(this.task.getWorkflow(), this);
+        if(this.task.getWorkflow().length) 
+          fillChat(this, this.task.getWorkflow());
       } else {
         this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
       }
@@ -290,6 +282,34 @@ export class AonMessengerChat extends AonElement {
 
   isCau(){     //IS CAU
     return parseInt(localStorage.getItem("taskCau") || 0);
+  }
+
+  /**
+   * 
+   * @returns json of description task
+   */
+  getFormJson(){
+    let json = null;
+    const processType = this.getElement(MESSENGER_IDS.PROCESS_TYPE);
+    if(processType){
+      this.task.title = processType.getText();
+    
+      if("1" === processType.value )
+        json = getFormVacationJson();
+      else if("2" === processType.value )
+        json = getFormMovJson();
+      else if("3" === processType.value )
+        json = getFormTimeJson();
+  
+      if(json){
+        //TAGS
+        let descriptionJson = this.task.getDescriptionJson();
+        if(descriptionJson.tags) json.tags = descriptionJson.tags;
+
+        this.task.description = "";
+      }
+    }
+    return json;
   }
 
   back(){

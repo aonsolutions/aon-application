@@ -4,8 +4,8 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.type.SalaryType;
@@ -244,6 +244,42 @@ public class EnterprisePayrollCSVTestCase {
 		@Override
 		public Double getMoneyIrpfBase() {
 			return moneyIrpfBase;
+		}
+
+		@Override
+		public Date getStartDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Date getEndDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IEnterprisePayroll getOriginalPayroll() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IEnterprisePayroll setOriginalPayroll(IEnterprisePayroll originalPayroll) {
+			// TODO Auto-generated method stub
+			return this;
+		}
+
+		@Override
+		public String getEmployeeNaf() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getCcc() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}

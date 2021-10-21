@@ -33,7 +33,7 @@ export class AonParent extends AonElement {
 		
 		let taskOptions = [{
 				name: MSG.PENDING_INVOICES,
-				icon: 'inbox',
+				icon: MATERIAL_ICONS.INBOX,
 				fn: (count) => {
 					if(this.notice &&count > 0) {
 						this.init({ids: this.notice.invoice.inbox.domains})
@@ -41,7 +41,7 @@ export class AonParent extends AonElement {
 				}
 			}, {
 				name: MSG.REJECTED_INVOICES,
-				icon: 'report',
+				icon: MATERIAL_ICONS.REPORT,
 				fn: (count) => {
 					if(this.notice && count > 0) {
 						this.init({ids: this.notice.invoice.rejected.domains})

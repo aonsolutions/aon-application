@@ -537,7 +537,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getEmployeeIrpf(String currentDomainName, Integer contractId, Date startDate,
+			public void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate,
 					AsyncCallback<List<EmployeeIrpf>> callback) {
 				// TODO Auto-generated method stub
 				
@@ -546,7 +546,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void setEmployeeIrpf(String currentDomainName, Integer contractId, List<EmployeeIrpf> employeeIrpfs,
+			public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs,
 					AsyncCallback<Void> callback) {
 				// TODO Auto-generated method stub
 				

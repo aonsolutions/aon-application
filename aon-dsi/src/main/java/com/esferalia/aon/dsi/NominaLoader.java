@@ -511,11 +511,13 @@ public class NominaLoader extends AbstractLoader {
 					.set(SALARY_COST.COST_CONCEPT, "CGC_E")
 					.set(SALARY_COST.DESCRIPTION, String.format("%.2f %%",nominc.getF30tccemp()))
 					.set(SALARY_COST.TYPE, enum2Byte(COMMON_CONTINGENCY))
-					.set(SALARY_DEDUCTION.AMOUNT, nominc.getF30cccemp())
+					.set(SALARY_COST.AMOUNT, nominc.getF30cccemp())
 					;
 			//@formatter:on
 		}
 
+		
+		
 		if (nominc.getF30cdeemp() != null) {
 			int id = getSalaryCostId(salary, UNEMPLOYMENT);
 			InsertSetStep<SalaryCostRecord> insertSetStepSalaryCost = getSalaryCostInsertSetStep();

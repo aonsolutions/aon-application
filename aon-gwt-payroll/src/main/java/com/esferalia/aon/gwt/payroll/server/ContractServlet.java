@@ -5,18 +5,23 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.jooq.tools.json.JSONArray;
 import org.richfaces.json.JSONException;
 import org.richfaces.json.JSONObject;
+
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
@@ -39,9 +44,13 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.ContractDataJSON;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.payroll.Contract;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -51,6 +60,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.seg.social.ServicioRED;
@@ -75,7 +85,7 @@ public class ContractServlet extends AonApiHttpServlet {
 					responseFile(req, resp, getCompanyCostsExcel(api), MimeType.MS_EXCEL);
 					break;
 				default:
-					responseJson(req, resp);
+					responseJson(req, resp, api);
 			}
 		} catch (Exception e) {
 			error(req, resp, e);
@@ -87,9 +97,8 @@ public class ContractServlet extends AonApiHttpServlet {
 		doGet(req, resp);
 	}
 	
-	private void responseJson(HttpServletRequest req, HttpServletResponse resp) {
+	private void responseJson(HttpServletRequest req, HttpServletResponse resp, AonApiData api) {
 		try {
-			AonApiData api = initialize(req, resp);
 			switch (api.getPath()) {
 				case "/":
 					response(req, resp, getAllEmployeesInfo(api));
@@ -114,6 +123,9 @@ public class ContractServlet extends AonApiHttpServlet {
 					break;
 				case "/seg-social/ccc-life":
 					response(req, resp, getMovementsSegSocial(api));
+					break;
+				case "/save/vacation":
+					response(req, resp, saveVacation(api));
 					break;
 				default:
 					throw new Exception("La ruta introducida es incorrecta.");
@@ -410,7 +422,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		Domain domain = api.getDomain();
 		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<>();
 	
 		Date startDate = !api.getParams().optString("startDate").isEmpty() ?Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd") : new Date();
 		Date endDate = !api.getParams().optString("endDate").isEmpty() ?Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd") : new Date();
@@ -440,6 +452,45 @@ public class ContractServlet extends AonApiHttpServlet {
 		String jsonInString = gjson.toJson(employees);
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
+	}
+	
+	private org.json.JSONArray saveVacation(AonApiData api) throws Exception{
+		Domain domain = api.getDomain();
+		Integer registry = api.getData().optInt(IJsonNames.REGISTRY);
+		org.json.JSONArray dates = api.getData().optJSONArray("dates");
+		LinkedList <ContractData> contractDataArr = new LinkedList<>();
+		if(dates!=null && dates.length()>0) {
+	        java.sql.Date now=new java.sql.Date(Calendar.getInstance().getTime().getTime());  
+			Optional<Contract> contract = PAYROLL.getContract(domain.getName(), domain.getId(), api.getUser().getLogin(),
+					f->f.getDomainProperty().eq(domain.getId())
+					.and(f.getPersonProperty().eq(registry))
+					.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(now))));
+			
+			if(!contract.isEmpty()) {
+				for (int i = 0; i < dates.length(); i++) {
+					org.json.JSONObject json = dates.getJSONObject(i);
+					if(!json.optString("startDate").isEmpty() && !json.optString("endDate").isEmpty()) {
+						ContractData cData = new ContractData();
+						cData.setContract(contract.get().getId())
+						.setDomain(domain.getId())
+						.setName("DIAS_VACACIONES")
+						.setStartDate(Toolkit.parseDate(json.optString("startDate"), "yyyy-MM-dd"))
+						.setEndDate(Toolkit.parseDate(json.optString("endDate"), "yyyy-MM-dd"));
+						
+						long days = AonDateUtils.getDaysBetweenDates(cData.getStartDate(), cData.getEndDate());
+						cData.setExpression(days+"");	
+						contractDataArr.add(cData);
+					}
+				}
+				if(!contractDataArr.isEmpty()) {
+					return ContractDataJSON.toJSON(
+							PAYROLL.saveContractData(domain.getName(), domain.getId(), api.getUser().getLogin(), 
+							contractDataArr.toArray(new ContractData[contractDataArr.size()]))
+					);
+				}
+			}
+		}
+		return new org.json.JSONArray();
 	}
 
 }

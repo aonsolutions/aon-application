@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
-import { setValueName, serializeForm, disabledForm, formatDateOrigin } from '../../../services/utils.js';
-import { getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, sendAlta, sendBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, updateContrato, getCccForActivity, getCodBaja } from '../../../services/service.js'
+import { setValueName, serializeForm, disabledForm, formatDateOrigin, sortBy } from '../../../services/utils.js';
+import { getConvenios, getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, updateContrato, getCccForActivity, getCodBaja } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
@@ -53,7 +53,7 @@ export class AonAltaDirecta extends AonElement {
     build() {
         this.paintView();
         this.buildToolbar();
-        this.initLists().then(()=>{
+        this.initGets().then(()=>{
             this.eventListener();
             if(this.data){
                 const toolbarEl = this.getElement(this.TOOLBAR);
@@ -78,7 +78,7 @@ export class AonAltaDirecta extends AonElement {
         createEmployeeData(aonEmployeeCard.getContent(),  this.id);
  
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
-        createContractData(aonContratoCard.getContent());
+        createContractData(aonContratoCard.getContent(), this.applicationParentEl.getDur().isComunicaManager() && !this.data);
 
         if(!this.isMobile() && this.data && this.data.status) {
             const titleRight = aonContratoCard.getCardTitle2();
@@ -136,14 +136,15 @@ export class AonAltaDirecta extends AonElement {
     }
 
 
-    async initLists() {
+    async initGets() {
         await Promise.all([
-            this.listWorkPlace(),
-            this.listTipoContrato(),
-            this.listTipoJornada(),
-            this.listGrupoCotizacion(),
-            this.listOcupacion(),
-            this.suggestionConvenio()
+            this.getWorkplace(),
+            this.getContractTye(),
+            this.getTipoJornada(),
+            this.getQuoteGroup(),
+            this.getOccupation(),
+            this.getRlce(),
+            // this.suggestionConvenio()
         ]).catch(e=> console.log(e));
     }
 
@@ -303,7 +304,7 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-    async listWorkPlace() {
+    async getWorkplace() {
         try {
             const resp = await getCccForActivity();
             if(resp && resp.cccs){
@@ -350,54 +351,74 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-    async listTipoContrato() {
+    async getContractTye() {
         try {
-            const resp = await getTipoContrato();
+            let manager = this.applicationParentEl.getDur().isComunicaManager();
+            let resp = await getContractType();
+            let contract = this.data && this.data.contract ? this.data.contract : "";
+            if(!manager)
+                resp = resp.filter(({enable, value})=> enable || value === contract);
+            
             let type_cto = this.getElement('type_cto');
             type_cto.setOptions(resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})));
         } catch (error) { }
     }
 
-    async listTipoJornada() {
+    async getTipoJornada() {
         let tipo_jornada = this.getElement('tipo_jornada');
         try {
-            const resp = await getTipoJornada();
+            const resp =  getTipoJornada();
             const options = resp.map(r => ({ ...r, name: `${r.name}`, value: r.value }) );
             tipo_jornada.setOptions(options);
             tipo_jornada.value = options[0].value;
         } catch (error) { }
     }
 
-    async suggestionConvenio() {
-        const convenios = await getConvenios();
+    // async suggestionConvenio() {
+    //     const convenios = await getConvenios();
 
-        const suggestion = this.getElement(`convenio`);
-        suggestion.querySelector("input").autocomplete = "on";
+    //     const suggestion = this.getElement(`convenio`);
+    //     suggestion.querySelector("input").autocomplete = "on";
         
-        suggestion.addEventListener(EVENT.AON_KEYUP, ({ target: { value } }) => {
-            let newValue = value.toString().toUpperCase();
-            if (newValue.length > 2) {
-                const resp = convenios.filter(c=> (c.name && c.name.indexOf(newValue)>=0) );
-                suggestion.buildOptions(resp);
-            } else {
-                suggestion.closeOptions();
-            }
-        });
-    }
+    //     suggestion.addEventListener(EVENT.AON_KEYUP, ({ target: { value } }) => {
+    //         let newValue = value.toString().toUpperCase();
+    //         if (newValue.length > 2) {
+    //             const resp = convenios.filter(c=> (c.name && c.name.indexOf(newValue)>=0) );
+    //             suggestion.buildOptions(resp);
+    //         } else {
+    //             suggestion.closeOptions();
+    //         }
+    //     });
+    // }
 
-    async listGrupoCotizacion() {
+    async getQuoteGroup() {
         try {
-            const resp = await getGrupoCotizacion();
+            let resp = await getQuoteGroup();
+            resp = sortBy(resp, 'name', 'asc');
             let grup_ctz = this.getElement('grup_ctz');
-            grup_ctz.setOptions(resp.map(r => ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})));
+            grup_ctz.setOptions(resp.map(r => ({ ...r, name: `${r.name}`, value: r.value})));
         } catch (error){}
     }
 
-    async listOcupacion() {
+    async getOccupation() {
         try {
-            const resp = await getOcupacion();
+            let resp = await getOccupation();
+            resp = sortBy(resp, 'value', 'asc');
             let ocupacion = this.getElement('ocupacion');
-            ocupacion.setOptions(resp.map(r => ({ name: `${r.value} - ${r.name}`, value: r.value})));
+            ocupacion.setOptions(resp.map(r => ({ name: `${r.name}`, value: r.value})));
+        } catch (error){}
+    }
+
+    async getRlce() {
+        try {
+            let rlce = this.getElement('rlce');
+            if(rlce){
+                let resp = await getRlce();
+                let options = sortBy( resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})), 'value', 'asc');
+              
+                rlce.setOptions( options );
+            }
+
         } catch (error){}
     }
 

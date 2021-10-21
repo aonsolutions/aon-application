@@ -230,6 +230,10 @@ class SistemaREDMov {
 	    	);
 	
 			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			
+			if(employee.getRlce()!=null && !employee.getRlce().isEmpty())
+				form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(employee.getRlce());
+			
 			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
 			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
 			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
@@ -237,7 +241,8 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(employee.getGc().get()); 
 			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(employee.getContract().get());
 			if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty()) {
-				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute( employee.getColec() ); 
+				String conv = employee.getColec()!=null ? employee.getColec() : "60888888888888";
+				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(conv); 
 			}
 			if ("0163" == employee.getRegime() && !employee.getMdctz().isEmpty()) {
 				form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());

@@ -17,42 +17,69 @@ export const getReportAffiliateInMovPrev = (data) => openFile(`${API_URL}/comuni
 
 export const getIdcCcc = (data) => openFile(`${API_URL}/comunica/pdf/get-idc-ccc`, data);
 
-export const getIDC = (data) =>
-  openFile(`${API_URL}/comunica/pdf/get-idc`, data);
+export const getIDC = (data) => openFile(`${API_URL}/comunica/pdf/get-idc`, data);
 
-export const getCertCorriente = (data) =>
-  openFile(`${API_URL}/comunica/pdf/cert-corriente`, data);
+export const getCertCorriente = (data) => openFile(`${API_URL}/comunica/pdf/cert-corriente`, data);
 
 
-export const sendAlta = (data) =>
-  post(`${API_URL}/comunica/alta-directa`, data);
+export const sendAlta = (data) => post(`${API_URL}/comunica/alta-directa`, data);
 
-export const sendBaja = (data) =>
-post(`${API_URL}/comunica/baja`, data);
+export const sendBaja = (data) => post(`${API_URL}/comunica/baja`, data);
   
-export const updateContrato = (data) =>
-  post(`${API_URL}/comunica/update-contrato`, data);
+export const updateContrato = (data) => post(`${API_URL}/comunica/update-contrato`, data);
 
-export const movDelete = (data) =>
-  post(`${API_URL}/comunica/delete-mov`, data); 
+export const movDelete = (data) => post(`${API_URL}/comunica/delete-mov`, data); 
 
-export const getEmployee = (data) =>
-  get(`${API_URL}/comunica/get-employee`, data);
+export const getEmployee = (data) => get(`${API_URL}/comunica/get-employee`, data);
 
-export const getTipoContrato = () => requestJsonAsset("type_contract.json");
-export const getTipoJornada = () => requestJsonAsset("type_jornada.json");
+export const getTipoCtz = (data) => new Promise(async (resolve) => {
+  const json = await getAllTipoCtz();
+  resolve(json.find((r) => r.value == data));
+});
 
-export const getGrupoCotizacion = () => requestJsonAsset("group_ctz.json"); 
-
-export const getOcupacion = () => requestJsonAsset("occupation.json");
+export const getTipoJornada = () => [
+    { id: 1, name: "Semanal", value: "semanal"},
+    { id: 2, name: "Diaria", value: "diaria"}
+];
 
 export const getAllTipoCtz = () => requestJsonAsset("type_ctz.json"); 
 
-export const getTipoCtz = (data) =>
-  new Promise(async (resolve) => {
-    const json = await getAllTipoCtz();
-    resolve(json.find((r) => r.value == data));
-  });
-
-
 export const getCodBaja = () => requestJsonAsset("cod_baja.json"); 
+
+export const getContractType = () =>  requestJsonAsset("type_contract.json"); 
+
+export const getRlce = async(data) => {
+  const resp = await get(`${API_URL}/comunica/rlce`, data);
+  let options = [];
+  for (const key in resp) {
+    if(key)  options.push({value: key, name: resp[key] });
+  }
+  return options;
+};
+
+export const getOccupation = async(data) => {
+  const resp = await get(`${API_URL}/comunica/occupation`, data);
+  let options = [];
+  for (const key in resp) {
+    if(key) options.push({value: key, name: resp[key]});
+  }
+  return options;
+};
+
+export const getQuoteGroup = async(data) => {
+  const resp = await get(`${API_URL}/comunica/quote-group`, data);
+  let options = [];
+  for (const key in resp) {
+    if(key) options.push({value: key, name: resp[key]});
+  }
+  return options;
+};
+  
+// {
+//   const resp = await get(`${API_URL}/comunica/contract-type`, data);
+//   let options = [];
+//   // for (const key in resp) {
+//   //   if(key)  options.push({value: key, name: resp[key] });
+//   // }
+//   return options;
+// };

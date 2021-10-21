@@ -65,7 +65,7 @@ export const createFormComunica = (id, parent) => {
 
 export const createEnterpriseData = (parent) => {
     let divC;
-    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -76,7 +76,7 @@ export const createEnterpriseData = (parent) => {
     }, divC.element);
  
 
-    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -86,15 +86,15 @@ export const createEnterpriseData = (parent) => {
         }
     }, divC.element);
 
-    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
-    divC.appendTo(parent);
-    let aonConvenio = setAttributes(new AonSuggestion(),{
-        id:"convenio",
-        title:"Convenio (opcional)",
-        name:"convenio"
-    });
-    aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/\D/g,''));
-    divC.appendChild(aonConvenio);
+    // divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
+    // divC.appendTo(parent);
+    // let aonConvenio = setAttributes(new AonSuggestion(),{
+    //     id:"convenio",
+    //     title:"Convenio (opcional)",
+    //     name:"convenio"
+    // });
+    // aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/\D/g,''));
+    // divC.appendChild(aonConvenio);
 
     createInput({
         attributes:{
@@ -106,7 +106,7 @@ export const createEnterpriseData = (parent) => {
     }, parent);
 }
 
-export const createContractData = (parent) => {
+export const createContractData = (parent, isManager) => {
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
@@ -168,6 +168,19 @@ export const createContractData = (parent) => {
             visible:CONSTANT.FALSE
         }
     }, parent);
+
+    if(isManager){
+        divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_12]})
+        divC.appendTo(parent);
+        createSelect({
+            attributes:{
+                name:"rlce",
+                id:"rlce",
+                title:"RLCE (opcional)",
+                autocomplete: CONSTANT.OFF
+            }
+        }, divC.element);
+    } 
 
     dateContract.value = formatDateOrigin(new Date());
 
@@ -329,12 +342,12 @@ const partTime = (divH) => {
         description:"Coef. Parcial"
     })
     divC.appendChild(numberC);
-    addSpanDecimal();
+    addSpanDecimal(numberC);
     return divC;
 }
 
-const addSpanDecimal = () =>  {
-    let coefInput = document.getElementById('coefparcialInput');
+export const addSpanDecimal = (input) =>  {
+    let coefInput = document.getElementById(input.INPUT);
     if(coefInput){
         let span = document.createElement(TAG.SPAN);
         span.innerHTML = '0,';

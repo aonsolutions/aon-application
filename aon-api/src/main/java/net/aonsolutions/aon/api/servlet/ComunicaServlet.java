@@ -11,14 +11,18 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -29,9 +33,15 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
+import com.esferalia.aon.occam.api.model.type.Occupation;
+import com.esferalia.aon.occam.api.model.type.QuoteGroup;
+import com.esferalia.aon.occam.api.model.type.RLCE;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
+
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -77,7 +87,23 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				case "/nafxipf":
 					LOGGER.info("NAFXIPF SERVLET - GET METHOD");
 					jsonInString = gjson.toJson(this.nafxipf(api, certificateInputStream, certificate.getPassword(), certificate.getType()));
-					break;
+				break;
+				case "/rlce":
+					LOGGER.info("RLCE SERVLET - GET METHOD");
+					jsonInString = gjson.toJson(this.getRlce(api));
+				break;
+				case "/contract-type":
+					LOGGER.info("CONTRACT-TYPE SERVLET - GET METHOD");
+					jsonInString = gjson.toJson(this.getContractType(api));
+				break;
+				case "/occupation":
+					LOGGER.info("OCCUPATION SERVLET - GET METHOD");
+					jsonInString = gjson.toJson(this.getOccupation(api));
+				break;
+				case "/quote-group":
+					LOGGER.info("QUOTE-GROUP SERVLET - GET METHOD");
+					jsonInString = gjson.toJson(this.getQuoteGroup(api));
+				break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -154,6 +180,29 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		return employees;
 	}
 	
+	private Map<String, String> getRlce(AonApiData api) throws Exception {
+		return RLCE.getRLCE();
+	}
+	
+	private Map<Integer, ContractTypeRecord> getContractType(AonApiData api) throws Exception {
+		 return new ContractType().getContractTypes();
+	}
+	
+	private  Map<String, String> getOccupation(AonApiData api) throws Exception {
+		Map<String, String> map = new HashMap<>();
+		for (Entry<String, String> v : Occupation.getOccupation().entrySet()) 
+			map.put(v.getValue(), v.getKey());
+		return map;
+	}
+	
+	private Map<String, String> getQuoteGroup(AonApiData api) throws Exception {
+		Map<String, String> map = new HashMap<>();
+		for (Entry<String, String> v : QuoteGroup.getQuoteGroup().entrySet()) 
+			map.put(v.getValue(), v.getKey());
+
+		return map;
+	}
+	
 	private Collection<Employee> ipfxnaf(AonApiData api, final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType) throws Exception {
 			String nss = api.getParams().optString("nss");
@@ -185,6 +234,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String ocupacion = api.getData().has("ocupacion")  && !api.getData().isNull("ocupacion") ? api.getData().optString("ocupacion") : null;
 		String coefparcial = api.getData().has("coefparcial")  && !api.getData().isNull("coefparcial") ? api.getData().optString("coefparcial") : null;
 		String convenio =  api.getData().has("convenio")  && !api.getData().isNull("convenio") ? api.getData().optString("convenio") : "60888888888888";
+		String rlce = api.getData().has("rlce")  && !api.getData().isNull("rlce") ? api.getData().optString("rlce") : null; //para regimen agrario
 		String md_ctz = api.getData().has("md_ctz")  && !api.getData().isNull("md_ctz") ? api.getData().optString("md_ctz") : null; //para regimen agrario
 //        Ctz mensual = 1
 //        Jornadas reales = 2
@@ -202,6 +252,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setGc(grup_ctz)
 		.setContract(type_cto)
 		.setMdctz(md_ctz)
+		.setRlce(rlce)
 		.build();
 		employee = SistemaRED.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 		if(employee.getName().isPresent()) 
@@ -383,7 +434,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			try {
 				String pre = mov.equalsIgnoreCase("alta") ? "el" : "la";
 				Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-				String subject = "TGSS | "+mov.toUpperCase()+" "+employee.getName().get();
+				String subject = "TGSS | "+mov.toUpperCase()+" de "+employee.getName().get();
 				String body = "La Tesorería General de la Seguridad Social ha procedido a reconocer "+pre+" <b>"+mov+"</b> "
 						+ "en el Régimen General de D./Dña. <b>"+employee.getName().get()+"</b>, "
 						+ "con número de afiliación <b>"+employee.getNss()+"</b> y DNI/NIE <b>"+employee.getIpf()+"</b>, con fecha <b>"+Toolkit.formatDate(date, "dd-MM-yyyy").get()+"</b>, "
@@ -415,7 +466,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					e.printStackTrace();
 				}
 
-				sendEmail(api, subject, body, new LinkedList<>());
+				sendEmail(api, subject, body, files);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -443,7 +494,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			
 			Domain domain = api.getDomain();
 			User user = AON_SOLUTIONS.getUser(domain, api.getToken());
-			LinkedList<Auth> auths = new LinkedList<Auth>();
+			LinkedList<Auth> auths = new LinkedList<>();
 			
 			AON.getDomainUserStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().ne(user.getId())).forEach(usr -> {
 				DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, user.getLogin(), usr.getId());

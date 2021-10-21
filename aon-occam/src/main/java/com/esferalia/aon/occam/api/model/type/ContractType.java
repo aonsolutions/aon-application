@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.payroll.shared;
+package com.esferalia.aon.occam.api.model.type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class ContractType {
+
 	public class ModelRecord{
 		private Integer id;
 		private String description;
@@ -31,7 +34,7 @@ public class ContractType {
 		
 		public ContractTypeRecord(String description) {
 			this.drescription = description;
-			this.models = new ArrayList<ContractType.ModelRecord>();
+			this.models = new ArrayList<>();
 		}
 		
 		public void addNewModel(Integer id, String description){
@@ -50,7 +53,7 @@ public class ContractType {
 	private Map<Integer, ContractTypeRecord> contractTypes;
 	
 	public ContractType() {
-		this.contractTypes = new HashMap<Integer, ContractTypeRecord>();
+		this.contractTypes = new HashMap<>();
 		
 		//Initialize static contact type map
 		this.contractTypes.put(000, new ContractTypeRecord("BECARIO"));
@@ -97,7 +100,7 @@ public class ContractType {
 		this.contractTypes.put(550, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, FOMENTO CONTRATACION INDEFINIDA/EMPLEO ESTABLE"));
 		this.contractTypes.put(552, new ContractTypeRecord("TEMPORAL, TIEMPO PARCIAL, FOMENTO DEL EMPLEO"));
 		this.contractTypes.put(970, new ContractTypeRecord("ADSCRIPCION A COLABORACION SOCIAL"));
-		this.contractTypes.put(980, new ContractTypeRecord("JUBILACION ESPECIAL A LOS 64 A" + String.valueOf("\u00D1") + "OS"));
+		this.contractTypes.put(980, new ContractTypeRecord("JUBILACION ESPECIAL A LOS 64 A\u00D1OS"));
 		this.contractTypes.put(990, new ContractTypeRecord("OTROS CONTRATOS"));
 		
 		//Initialice models of contract
@@ -132,10 +135,10 @@ public class ContractType {
 		this.contractTypes.get(150).addNewModel(9, "INDEFINIDO DE EXCLUIDOS EN EMPRESAS DE INSERCION");
 		this.contractTypes.get(250).addNewModel(9, "INDEFINIDO DE EXCLUIDOS EN EMPRESAS DE INSERCION");
 		this.contractTypes.get(350).addNewModel(9, "INDEFINIDO DE EXCLUIDOS EN EMPRESAS DE INSERCION");
-		this.contractTypes.get(100).addNewModel(10, "INDEFINIDO DE MAYORES DE 52 A" + String.valueOf("\u00D1") + "OS BENEFICIARIOS DE SUBSIDIOS POR DESEMPLEO");
-		this.contractTypes.get(150).addNewModel(10, "INDEFINIDO DE MAYORES DE 52 A" + String.valueOf("\u00D1") + "OS BENEFICIARIOS DE SUBSIDIOS POR DESEMPLEO");
-		this.contractTypes.get(300).addNewModel(10, "INDEFINIDO DE MAYORES DE 52 A" + String.valueOf("\u00D1") + "OS BENEFICIARIOS DE SUBSIDIOS POR DESEMPLEO");
-		this.contractTypes.get(350).addNewModel(10, "INDEFINIDO DE MAYORES DE 52 A" + String.valueOf("\u00D1") + "OS BENEFICIARIOS DE SUBSIDIOS POR DESEMPLEO");
+		this.contractTypes.get(100).addNewModel(10, "INDEFINIDO DE MAYORES DE 52 A\u00D1OS BENEFICIARIOS DE SUBSIDIOS POR DESEMPLEO");
+		this.contractTypes.get(150).addNewModel(10, "INDEFINIDO DE MAYORES DE 52 A\u00D1OS BENEFICIARIOS DE SUBSIDIOS POR DESEMPLEO");
+		this.contractTypes.get(300).addNewModel(10, "INDEFINIDO DE MAYORES DE 52 A\u00D1OS BENEFICIARIOS DE SUBSIDIOS POR DESEMPLEO");
+		this.contractTypes.get(350).addNewModel(10, "INDEFINIDO DE MAYORES DE 52 A\u00D1OS BENEFICIARIOS DE SUBSIDIOS POR DESEMPLEO");
 		this.contractTypes.get(150).addNewModel(11, "INDEFINIDO PROCENTE DE PRIMER EMPLEO JOVEN DE ETT");
 		this.contractTypes.get(250).addNewModel(11, "INDEFINIDO PROCENTE DE PRIMER EMPLEO JOVEN DE ETT");
 		this.contractTypes.get(350).addNewModel(11, "INDEFINIDO PROCENTE DE PRIMER EMPLEO JOVEN DE ETT");
@@ -165,7 +168,7 @@ public class ContractType {
 		this.contractTypes.get(520).addNewModel(21, "PRACTICAS ( ORDINARIO )");
 		this.contractTypes.get(450).addNewModel(22, "PRACTICAS DE TRABAJADORES EN SITUACION DE EXCLUSIÓN SOCIAL, VICTIMAS DE VIOLENCIA DE GENERO, DOMESTICA O VICTIMA DE TERRORISMO");
 		this.contractTypes.get(550).addNewModel(22, "PRACTICAS DE TRABAJADORES EN SITUACION DE EXCLUSIÓN SOCIAL, VICTIMAS DE VIOLENCIA DE GENERO, DOMESTICA O VICTIMA DE TERRORISMO");
-		this.contractTypes.get(420).addNewModel(23, "PRACTICAS DE TRABAJADORES MAYORES DE 52 A" + String.valueOf("\u00D1") + "OS BENEFICIARIOS DE LOS SUBSIDIOS POR DESEMPLEO");
+		this.contractTypes.get(420).addNewModel(23, "PRACTICAS DE TRABAJADORES MAYORES DE 52 A\u00D1OS BENEFICIARIOS DE LOS SUBSIDIOS POR DESEMPLEO");
 		this.contractTypes.get(420).addNewModel(24, "PRACTICAS DE PERSONAS CON DISCAPACIDAD EN CENTROS ESPECIALES DE EMPLEO");
 		this.contractTypes.get(520).addNewModel(24, "PRACTICAS DE PERSONAS CON DISCAPACIDAD EN CENTROS ESPECIALES DE EMPLEO");
 		this.contractTypes.get(420).addNewModel(25, "PRACTICAS DE TRABAJOS DE INTERES SOCIAL/FOMENTO DE EMPLEO AGRARIO");
@@ -237,19 +240,19 @@ public class ContractType {
 	}
 	
 	public ContractTypeRecord getContractType(int contractType){
-		return this.contractTypes.get(contractTypes);
+		return this.contractTypes.get(contractType);
 	}
 	
 	public List<ModelRecord> getModelsContractType(int contractType){
 		if(-1 == contractType)
-			return new ArrayList<ModelRecord>();
+			return new ArrayList<>();
 		else
 			return this.contractTypes.get(contractType).getContractModels();
 	}
 	
 	public Integer getContractTypeId(String contractTypeDescription){
 		for(Entry<Integer, ContractTypeRecord> e : this.contractTypes.entrySet()){
-			if(e.getValue().getContractTypeDescription() == contractTypeDescription)
+			if(AonStringUtils.equalsIgnoreCase(e.getValue().getContractTypeDescription(), contractTypeDescription))
 				return e.getKey();
 		}
 		return -1;
@@ -273,7 +276,7 @@ public class ContractType {
 			Integer index = 0;
 			
 			for (ModelRecord model : this.contractTypes.get(contractTypeCode).getContractModels()){
-				if(model.getEnumeration() == contactModelCode)
+				if(model.getEnumeration().equals(contactModelCode))
 					return index;
 				index++;
 			}
@@ -289,4 +292,5 @@ public class ContractType {
 		}
 		return -1;
 	}
+	
 }

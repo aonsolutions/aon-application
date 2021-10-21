@@ -505,6 +505,12 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface NoteFilter{
+		Filter filter(NoteProperties properties);
+	}
+	
+	
+	@FunctionalInterface
 	public interface NotificationFilter{
 		Filter filter(NotificationProperties properties);
 	}

@@ -2,8 +2,6 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.occam.api.model.task.TaskSource;
-
 public enum TagType implements Serializable{
 
 	RATTACH,
@@ -18,7 +16,10 @@ public enum TagType implements Serializable{
 	TASK_TYPE,
 	TASK_PRIORITY,
 	TASK_LABEL,
-	TASK_DOCUMENT
+	TASK_DOCUMENT,
+	TGSS_CERT,
+	SEPE_CERT,
+	AEAT_CERT
 	; // Tipo de Aviso
 
 

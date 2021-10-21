@@ -899,54 +899,6 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getAttachProperty() {return new FilterDAO.PropertyDAO<>(RECORD_DATA.ATTACH);}
 	}
 	
-	protected static class RBankPropertiesDAO implements RegistryBankProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select,RegistryBankFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(RegistryBankFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null){
-				return new Condition[0];
-			}
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RBANK.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RBANK.REGISTRY);}
-		@Override public Property<String> getBankAccountProperty() {return new FilterDAO.PropertyDAO<>(RBANK.BANK_ACCOUNT);}
-		@Override public Property<String> getBicProperty() {return new FilterDAO.PropertyDAO<>(RBANK.BIC);}
-		@Override public Property<String> getSufixProperty() {return new FilterDAO.PropertyDAO<>(RBANK.SUFIX);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ALIAS);}
-		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ACTIVE);}
-		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(RBANK.REGISTRY);}
-	}
-	
-	protected static class RPayMethodPropertiesDAO implements RegistryPayMethodProperties {
-		protected Select<Record> build(SelectJoinStep<Record> select,RegistryPayMethodFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			return filterDAO.build(select);
-		}
-		
-		protected Condition[] getConditions(RegistryPayMethodFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null){
-				return new Condition[0];
-			}
-			return new Condition[] { filterDAO.getCondition() };
-		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RPAYMETHOD.ID);} 
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RPAYMETHOD.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RPAYMETHOD.REGISTRY);}
-		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<>(RPAYMETHOD.PAY_METHOD);}
-		@Override public Property<Integer> getRBankProperty() {return new FilterDAO.PropertyDAO<>(RPAYMETHOD.RBANK);}
-		@Override public Property<Integer> getNumberOfPymntsProperty() {return null;} // new FilterDAO.PropertyDAO<>(RPAYMETHOD.NUMBER_OF_PYMNTS);}
-		@Override public Property<Integer> getDaysToFirstPymntProperty() {return null;} // new FilterDAO.PropertyDAO<>(RPAYMETHOD.DAYS_TO_FIRST_PYMNT);}
-		@Override public Property<Integer> getDaysBetweenPymntsProperty() {return null;} // new FilterDAO.PropertyDAO<>(RPAYMETHOD.DAYS_BETWEEN_PYMNTS);}
-		@Override public Property<String> getPymntDaysProperty() {return new FilterDAO.PropertyDAO<>(RPAYMETHOD.PYMNT_DAYS);}
-	}
-	
 	protected static class RegistryAddInfoPropertiesDAO implements RegistryAddInfoProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, RegistryAddInfoFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);

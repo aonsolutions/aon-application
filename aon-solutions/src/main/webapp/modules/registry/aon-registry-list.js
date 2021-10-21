@@ -72,7 +72,7 @@ export class AonRegistryList extends AonElement {
 	buildRegistry(registry) {
 		let data = {
 			id: registry.id,
-			additional_info: ['ADDRESSES', 'MEDIA']
+			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
 		};
 		getRegistry(data).then(r => {
 			let aonRegistry = new AonReg();
