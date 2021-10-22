@@ -479,6 +479,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.paintCell(table.getColumn("Total S.S"), color);
 		table.paintCell(table.getColumn("Coste total"), color);
 
+		/* Comentado para que no aparezca un guión cuando no hay ninguna nómina de diferencias asociada
 		table.newRow();
 		table.fillCell(table.getColumn("Trabajador"), "");
 		table.fillCell(table.getColumn("Tipo"), "-");
@@ -501,7 +502,7 @@ public class EnterprisePayrollTemplate extends PdfFile {
 		table.paintCell(table.getColumn("S.S. Empr."),		BLACK);
 		table.paintCell(table.getColumn("Bonificaciones"),	BLACK);
 		table.paintCell(table.getColumn("Total S.S"),		BLACK);
-		table.paintCell(table.getColumn("Coste total"),		BLACK);
+		table.paintCell(table.getColumn("Coste total"),		BLACK);*/
 
 		table.newRow();
 		t.y(table.y());
