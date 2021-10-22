@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class RegistryBank implements Serializable {
 	
@@ -104,7 +105,7 @@ public class RegistryBank implements Serializable {
 		return bic;
 	}
 	public RegistryBank setBic(String bic) {
-		this.setDirty(!bic.equals(this.bic));
+		this.setDirty(isDirty()?true:AonUtils.notEquals(this.bic , bic));
 		this.bic = bic;
 		return this;
 	}
@@ -112,7 +113,7 @@ public class RegistryBank implements Serializable {
 		return suffix;
 	}
 	public RegistryBank setSuffix(String suffix) {
-		this.setDirty(!suffix.equals(this.suffix));
+		this.setDirty(isDirty()?true:AonUtils.notEquals(this.suffix, suffix));
 		this.suffix = suffix;
 		return this;
 	}
@@ -120,7 +121,7 @@ public class RegistryBank implements Serializable {
 		return alias;
 	}
 	public RegistryBank setAlias(String alias) {
-		this.setDirty(!alias.equals(this.alias));
+		this.setDirty(isDirty()?true:AonUtils.notEquals(this.alias, alias));
 		this.alias = alias;
 		return this;
 	}
@@ -134,7 +135,7 @@ public class RegistryBank implements Serializable {
 	}
 	
 	public RegistryBank setActive(Boolean active) {
-		this.setDirty(!active.equals(this.active));
+		this.setDirty(isDirty()?true:AonUtils.notEquals(this.active, active));
 		this.active = active;
 		return this;
 	}
