@@ -172,10 +172,10 @@ export class AonGraphicsTrial extends AonElement {
       div.style.margin = "auto";
 
       colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
-      const el1 = this.getElement("aonAccountingSidenavVista Trimestral");
-      const el2 = this.getElement("aonAccountingSidenavVista Anual");
-      const el3 = this.getElement("aonAccountingSidenavVista Mensual");
-
+      const el1 = this.getElement("aonAccountingSidenavVista Trimestral") || this.getElement("aonAccountingMobileSidenavContentVista Trimestral");
+      const el2 = this.getElement("aonAccountingSidenavVista Anual") || this.getElement("aonAccountingMobileSidenavContentVista Anual");
+      const el3 = this.getElement("aonAccountingSidenavVista Mensual") || this.getElement("aonAccountingMobileSidenavContentVista Mensual");
+      
       if (el1)
         el1.addEventListener("click", () => {
           if (!this.filter) this.filter = new Object();
