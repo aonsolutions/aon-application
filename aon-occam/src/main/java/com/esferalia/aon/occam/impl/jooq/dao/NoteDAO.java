@@ -3,11 +3,19 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Note.NOTE;
 
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
 import org.jooq.Condition;
+import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record2;
 import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.NoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -95,6 +103,27 @@ public class NoteDAO {
 		ctx.checkWrite();
 		ctx.getDslContext().delete(NOTE).where(NOTE.ID.eq(id)).execute();	
 		ctx.log().debug("DELETE NOTE id: " + id);		
+	}
+	
+	public static HashMap<String, Integer> countForDate(AONContext ctx, NoteFilter filter, Date dateEnd) {
+		HashMap<String, Integer> map = new HashMap<>();
+
+		String dateStr = AonDateUtils.format(dateEnd, "yyyy-MM-dd");
+		
+		Condition whenOne = NOTE.DATE.gt(DSL.cast(DSL.inline("0001-01-01"), SQLDataType.TIMESTAMP));
+		Condition whenTwo = NOTE.DATE.le(DSL.cast(DSL.inline(dateStr), SQLDataType.TIMESTAMP));
+		
+		Field<Integer> total = DSL.count().as("total");
+		Field<Integer> totalExpired = DSL.count( DSL.when(whenOne.and(whenTwo), DSL.inline(1)) ).as("total_expired");
+		
+		Record2<Integer, Integer> result = ctx.getDslContext()
+		.select(totalExpired, total)
+		.from(NOTE)
+		.where(NOTE_PROPERTIES.getConditions(filter)).fetchOne();
+		
+		map.put("total_expired", (Integer) result.get(DSL.name("total_expired")));
+		map.put("total", (Integer) result.get(DSL.name("total")));
+		return map;
 	}
 	
 	private static class NoteFiller implements Function<Record, Note> {

@@ -1,5 +1,8 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +34,9 @@ public class NoteServlet extends AonApiHttpServlet{
 				break;
 			case "/one":
 				response(req, resp, getNote(api));
+				break;
+			case "/note-count":
+				response(req, resp, getNoteCount(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -78,6 +84,20 @@ public class NoteServlet extends AonApiHttpServlet{
 		return NoteJSON.toJSON( 
 				AON_SOLUTIONS.getNoteStream(api.getDomain(), "", f->f.getOwnerProperty().eq(api.getUser().getId()))
 		);
+	}
+	
+	private JSONObject getNoteCount(AonApiData api) {
+	    Date dateEnd = new Date();
+		JSONObject json = new JSONObject();
+		HashMap<String, Integer> map = AON_SOLUTIONS.getNoteCountForDate(api.getDomain(), "", f->f.getDomainProperty().eq(api.getDomain().getId())
+				.and(f.getOwnerProperty().eq(api.getUser().getId()) ),
+				dateEnd
+		);
+
+		for (Entry<String, Integer> entry : map.entrySet()) 
+			json.put(entry.getKey(), entry.getValue());
+
+		return json;
 	}
 
 	private JSONObject getNote(AonApiData api) {

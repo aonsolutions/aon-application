@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.INote;
@@ -27,5 +29,10 @@ public class NoteImpl implements INote {
 	@Override
 	public void deleteNote(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(configuration -> NoteDAO.delete(ctx, id));
+	}
+	
+	@Override
+	public HashMap<String, Integer> getNoteCountForDate(AONContext ctx, NoteFilter filter, Date dateEnd) {
+		return ctx.getDslContext().transactionResult(configuration -> NoteDAO.countForDate(ctx, filter, dateEnd));
 	}
 }
