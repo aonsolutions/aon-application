@@ -143,8 +143,18 @@ public class JooqDigitalCertificate {
 			.where(RATTACH.ID.eq(digitalCertificate.getRattachId()))
 			.execute();
 	
+		Integer registryId = dslContext.select(RADDINFO.REGISTRY).from(RADDINFO)
+				.where(RADDINFO.ID.eq(digitalCertificate.getRaddinfoId()))
+				.fetchOne(RADDINFO.REGISTRY);
+		
 		dslContext.delete(RADDINFO)
 			.where(RADDINFO.ID.eq(digitalCertificate.getRaddinfoId()))
+			.execute();
+		
+		if(null != registryId)
+			dslContext.delete(RADDINFO)
+			.where(RADDINFO.REGISTRY.eq(registryId))
+			.and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD"))
 			.execute();
 	}
 
@@ -185,17 +195,26 @@ public class JooqDigitalCertificate {
 			registryUserId = createRegistryForUser(dslContext, userRecord, domainId);
 		
 		// RAddInfo Password
-		if(null == raddinfoId)
-			dslContext.insertInto(RADDINFO)
-					.set(RADDINFO.DOMAIN, domainId)
-					.set(RADDINFO.REGISTRY, registryUserId)
-					.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
+		if(null == raddinfoId) {
+			Record raddinfoRecord = dslContext.select().from(RADDINFO).where(RADDINFO.REGISTRY.eq(registryUserId)).and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD")).fetchOne();
+			if(null == raddinfoRecord)
+				dslContext.insertInto(RADDINFO)
+						.set(RADDINFO.DOMAIN, domainId)
+						.set(RADDINFO.REGISTRY, registryUserId)
+						.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
+						.set(RADDINFO.VALUE, password)
+						.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
+						.execute();
+			else
+				dslContext.update(RADDINFO)
 					.set(RADDINFO.VALUE, password)
 					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
+					.where(RADDINFO.ID.eq(raddinfoRecord.get(RADDINFO.ID)))
 					.execute();
-		else
+		} else
 			dslContext.update(RADDINFO)
 				.set(RADDINFO.VALUE, password)
+				.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
 				.where(RADDINFO.ID.eq(raddinfoId))
 				.execute();
 		
@@ -232,15 +251,23 @@ public class JooqDigitalCertificate {
 				.fetchOne(ENTERPRISE.REGISTRY);
 		
 		// RAddInfo Password
-		if(null == raddinfoId)
-			dslContext.insertInto(RADDINFO)
-					.set(RADDINFO.DOMAIN, domainId)
-					.set(RADDINFO.REGISTRY, registryEntepriseId)
-					.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
+		if(null == raddinfoId) {
+			Record raddinfoRecord = dslContext.select().from(RADDINFO).where(RADDINFO.REGISTRY.eq(registryEntepriseId)).and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD")).fetchOne();
+			if(null == raddinfoRecord)
+				dslContext.insertInto(RADDINFO)
+						.set(RADDINFO.DOMAIN, domainId)
+						.set(RADDINFO.REGISTRY, registryEntepriseId)
+						.set(RADDINFO.ATTRIBUTE, "DIGITAL_CERTIFICATE_PASSWORD")
+						.set(RADDINFO.VALUE, password)
+						.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
+						.execute();
+			else
+				dslContext.update(RADDINFO)
 					.set(RADDINFO.VALUE, password)
 					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
+					.where(RADDINFO.ID.eq(raddinfoRecord.get(RADDINFO.ID)))
 					.execute();
-		else
+		} else
 			dslContext.update(RADDINFO)
 				.set(RADDINFO.VALUE, password)
 				.where(RADDINFO.ID.eq(raddinfoId))
