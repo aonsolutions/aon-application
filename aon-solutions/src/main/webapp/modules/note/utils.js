@@ -80,6 +80,9 @@ export const appendNote = (ul, note) => {
     });
 
     if(note.date && new Date(note.date).isValid()) appendDate(note, textArea.id);
+
+    if(!note.id)
+        subject.focus();
 }
 
 const dialogMoreVert = (ev, li, note, textAreaId) => {
@@ -100,10 +103,8 @@ const dialogMoreVert = (ev, li, note, textAreaId) => {
             icon: MATERIAL_ICONS.DELETE,
             id: MATERIAL_ICONS.DELETE,
             fn : () =>  {
-                if(confirm("Estas seguro de eliminar la nota?")){
-                    deleteNote(note);
-                    li.remove();
-                }
+                deleteNote(note);
+                li.remove();
             }
         }
     ];	

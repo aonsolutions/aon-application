@@ -27,6 +27,7 @@ import '../accounting/aon-accounting.js';
 import './aon-stat.js';
 import { getOfficeProjects } from '../../services/projectService.js';
 import { Project } from '../../models/project/Project.js';
+import { getNoteCount } from '../../services/noteService.js';
 
 
 export class AonDesktop extends AonElement {
@@ -157,37 +158,9 @@ export class AonDesktop extends AonElement {
 					}
 				});
 			}
-			taskOptions.push({
-				name: MSG.REQUESTS_RECEIVED,
-				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
-				fn: () =>{
-					if(this.isBeta()){
-						getTaskHolder().then(th=>{
-							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.task_holder = th.id;
-							this.rootPanel(aonMessenger);
-						});
-					} else {
-						this.development(MSG.REQUEST)
-					}
-				}
-			});
-			taskOptions.push({
-				name: MSG.REQUESTS_SENT,
-				icon: MATERIAL_ICONS.OUTBOX,
-				fn: () =>{
-					if(this.isBeta()){
-						getTaskHolder().then(th=>{
-							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.sender = th.id;
-							this.rootPanel(aonMessenger);
-						});
-					} else {
-						this.development(MSG.REQUEST)
-					}
-				} 
-			});
+
 			aonDesktop.addSidenavOptions(MSG.ACTIVITY_SUMMARY.toUpperCase(), taskOptions);
+			this.getSidenav();
 		}
 
 		let classicOptions = [];
@@ -557,15 +530,79 @@ export class AonDesktop extends AonElement {
 			application.updateSidenavCount('Facturas Pendientes', inboxCount);
 			application.updateSidenavCount('Facturas Rechazadas', rejectedCount);
 		});
+	}
 
+	async getSidenav(){
+		await this.requestSidenav();
+		await this.noteSidenav();
+	}
 
-		getTaskHolder().then(th=>{
-			getTaskCount({task_holder:th.id}).then(count=>{
-				application.updateSidenavCount("Solicitudes Enviadas", count.sender);
-				application.updateSidenavCount("Solicitudes Recibidas", count.task_holder);
+	async requestSidenav(){
+		try {
+			const th = await getTaskHolder();
+			const count = await getTaskCount({task_holder:th.id});
+			let opts = [];
+			if(count.task_holder) opts.push({
+				name: MSG.REQUESTS_RECEIVED,
+				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
+				count:count.task_holder,
+				fn: () =>{
+					if(this.isBeta()){
+						getTaskHolder().then(th=>{
+							let aonMessenger = new AonMessenger();
+							aonMessenger._filter.task_holder = th.id;
+							this.rootPanel(aonMessenger);
+						});
+					} else {
+						this.development(MSG.REQUEST)
+					}
+				}
 			});
-		});
-		
+			if(count.sender) opts.push({
+				name: MSG.REQUESTS_SENT,
+				icon: MATERIAL_ICONS.OUTBOX,
+				count:count.sender,
+				fn: () =>{
+					if(this.isBeta())
+						getTaskHolder().then(th=>{
+							let aonMessenger = new AonMessenger();
+							aonMessenger._filter.sender = th.id;
+							this.rootPanel(aonMessenger);
+						});
+					else 
+						this.development(MSG.REQUEST)
+				} 
+			});
+
+			if(opts.length) this.getApplication().addSidenavOptionsList({
+				id: MSG.ACTIVITY_SUMMARY.toUpperCase(),
+				name:MSG.ACTIVITY_SUMMARY.toUpperCase()
+			}, opts);
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async noteSidenav(){
+		try {
+			const {total, total_expired} = await getNoteCount();
+			if(total>0){
+				let opts = [{
+					name: MSG.NOTES,
+					icon: "event_note",
+					count:`${total_expired}/${total}`,
+					fn: () =>{
+						console.log("note1");
+					}
+				}];
+				this.getApplication().addSidenavOptionsList({
+					id: MSG.ACTIVITY_SUMMARY.toUpperCase(),
+					name:MSG.ACTIVITY_SUMMARY.toUpperCase()
+				}, opts);
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	statOption(app) {

@@ -41,7 +41,7 @@ const errorCallback = (error) => {
 
 export const getPosition = async () => {
   let result = null;
-  const isApp = await mobileAction({ action: MOBILE_ACTION.SET_POSITION });
+  const isApp = await mobileAction({ action: MOBILE_ACTION.SET_POSITION, times:2 });
   if (isApp) 
     result = await sleepPosition();
   else 

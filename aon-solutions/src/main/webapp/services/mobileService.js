@@ -10,7 +10,7 @@ export const MOBILE_ACTION = {
     SET_CURRENT_POSITION: 'setCurrentPosition', // SET POSITION (window.setCurrentPosition)
     SET_WATCH: 'setWatch',// SET POSITION (window.setWatch)
     CLEAR_WATCH: 'clearWatch',// STOP WATCH POSITION
-    SET_POSITION: 'setPosition', //OLD SET POSITION  (window.setPosition)
+    SET_POSITION: 'setPosition', //OLD SET POSITION  (window.setPosition) params times,
     SET_WATCH_POSITION:'setWatchPosition', //SET POSITION  (window.setPosition)
     SET_BASE_URL: 'setBaseUrl', //CHANGE URL BASE APP
     CLOSE_APP: 'closeAPP', //CLOSE APP
