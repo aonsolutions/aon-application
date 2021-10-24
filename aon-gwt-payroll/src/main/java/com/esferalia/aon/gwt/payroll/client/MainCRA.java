@@ -1136,7 +1136,7 @@ public class MainCRA extends MainEntryPoint {
 	public void createNewCRA(ArrayList<CCCInfo> cccsSelected, ArrayList<String> cccList, ArrayList<Integer> cccIdList,
 			Integer cccId) {
 		mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N", v -> {
-			if (null == v) {
+			if (AonStringUtils.isBlank(v)) {
 				for (CCCInfo cccInfo : cccsSelected) {
 					cccInfo.getCRADates().add(findingDate);
 				}
@@ -1157,7 +1157,7 @@ public class MainCRA extends MainEntryPoint {
 
 	public void createNewCRARectificative(ArrayList<CCCInfo> cccsSelected, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId) {
 		mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R", v -> {
-			if (null == v) {
+			if (AonStringUtils.isBlank(v)) {
 				AonConfirmDialog dialog = new AonConfirmDialog();
 				dialog.info("INTRUCCIONES: CRA Rectificativo",
 						"Debe enviar el CRA rectificativo que se ha generado en el historial de CRAs rectificativos, para anular el anterior y actualizar la informacion.");
