@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -56,11 +55,11 @@ public class FiscalMSServiceAsyncDecorator implements FiscalMSServiceAsync {
 		serviceAsync.getAonDataToken(domainName,domainId, token, new AsyncCallbackWrapper<AonData>(callback));
 	}
 
-	@Override
-	public void presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id, AsyncCallback<Integer> callback) {
-		AON.start();
-		serviceAsync.presentationFile(domainName,domainId, user, type, id, new AsyncCallbackWrapper<Integer>(callback));
-	}
+//	@Override
+//	public void presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id, AsyncCallback<Integer> callback) {
+//		AON.start();
+//		serviceAsync.presentationFile(domainName,domainId, user, type, id, new AsyncCallbackWrapper<Integer>(callback));
+//	}
 
 	@Override
 	public void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model, AsyncCallback<Void> callback) throws AonCoreException {

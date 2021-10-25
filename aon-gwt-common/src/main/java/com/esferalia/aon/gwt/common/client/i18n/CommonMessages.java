@@ -9,16 +9,14 @@ import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// Ã --> \u00C1 Ã¡ --> \u00E1 
-	// Ã‰ --> \u00C9 Ã© --> \u00E9 
-	// Ã --> \u00CD Ã­ --> \u00ED 
-	// Ã“ --> \u00D3 Ã³ --> \u00F3 
-	// Ãš --> \u00DA Ãº --> \u00FA ... acento
-	// Ãœ --> \u00DC Ã¼ --> \u00fc ... diÃ©resis
-	// Ã‘ --> \u00D1 Ã± --> \u00F1
-	// Âº --> \u00BA Âª --> \u00AA 
-	// Â¿ --> \u00BF 
-	// EUR-> \u20AC
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// ª --> \u00AA º --> \u00BA
+	// ¿ --> \u00BF
 	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
@@ -4051,7 +4049,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.")
 	String mustFinishModel();
 
-  @DefaultMessage("Inicializar declaraci\u00F3n")
+	@DefaultMessage("Inicializar declaraci\u00F3n")
 	String resetDeclaration();
 	
 	@DefaultMessage("ATENCION: Esta opci\u00F3n borra todos los datos del modelo y lo vuelve a crear. Se perder\u00E1n todos los datos introducidos en el modelo.")
@@ -4060,5 +4058,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Inicializar")
 	String resetAction();
 
+	@DefaultMessage("Valor calculado ..: {0}. Se ha realizado un ajuste por valor de {1}")
+	String difCalc(String calc, String adjust);
 }
 

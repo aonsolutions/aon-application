@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.shared.AonData;
@@ -16,13 +17,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -32,18 +29,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model303 extends MainEntryPoint {
 
-	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
-		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
-		SafeHtml tab(String title, String icon);
-	}
-	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
-
 	private static final Logger LOGGER = Logger.getLogger(Model303.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	private static final int NOTIFICATIONS_TAB = 0;
 	private static final int INFORMATION_TAB = 1;
 
 	protected static Mod303ServiceAsync service;
@@ -56,10 +46,10 @@ public class Model303 extends MainEntryPoint {
 		fiscalMsService = new FiscalMSServiceAsyncDecorator(fiscalServideRaw);	
 	}
 	
+	private AonLayoutPanel aonLayout;
 	private SplitLayoutPanel splitLayoutPanel;
 	private SimpleLayoutPanel declarationContainer;
 	private TabLayoutPanel tabLayout;
-	private SimpleLayoutPanel resultsPanel;
 	private AonMinimizePanel footPanel;
 	private ScrollPanel breakdownPanel;
 	private Model303ModuleOptions options;
@@ -76,7 +66,6 @@ public class Model303 extends MainEntryPoint {
 		public void onReset(Mod303 oldMod303);
 		public void showBreakdownPanel(String htmlText);
 		public void cleanBreakdownPanel();
-		public void cleanErrorPanel();
 		public void showError(String msg);
 	}
 
@@ -89,7 +78,7 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void onCancel() {
-			cleanErrorPanel();
+			
 			cleanBreakdownPanel();
 			declarationContainer.setWidget(model303Table);
 			model303Table.refresh( new Model303Callback() );
@@ -99,7 +88,7 @@ public class Model303 extends MainEntryPoint {
 		
 		@Override
 		public void onNew() {
-			cleanErrorPanel();
+			aonLayout.hideErrorPanel();
 			service.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),null,
 					new AsyncCallback<Mod303>() {
 						@Override
@@ -112,14 +101,14 @@ public class Model303 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+							aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 						}
 					});
 		}
 		
 		@Override
 		public void onReset(Mod303 oldMod303) {
-			cleanErrorPanel();
+			aonLayout.hideErrorPanel();
 			service.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),null,
 					new AsyncCallback<Mod303>() {
 						@Override
@@ -140,7 +129,7 @@ public class Model303 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+							aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 						}
 					});
 		}
@@ -163,13 +152,8 @@ public class Model303 extends MainEntryPoint {
 		}
 		
 		@Override
-		public void cleanErrorPanel() {
-			Model303.this.cleanErrorPanel();
-		}
-	
-		@Override
 		public void showError(String msg) {
-			Model303.this.showErrorPanel(msg);
+			aonLayout.showErrorPanel(msg);
 		}
 
 		@Override
@@ -218,7 +202,7 @@ public class Model303 extends MainEntryPoint {
 												@Override
 												public void onFailure(Throwable caught) {
 													popup.hide();
-													showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+													aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 												}
 											});
 								}
@@ -226,7 +210,7 @@ public class Model303 extends MainEntryPoint {
 								@Override
 								public void onFailure(Throwable caught) {
 									popup.hide();									
-									showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+									aonLayout.showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
 								}
 							});
 						}
@@ -276,7 +260,10 @@ public class Model303 extends MainEntryPoint {
 		this.options = options;
 		AON.ensureInjected();
 
-		splitLayoutPanel = new SplitLayoutPanel();
+		aonLayout = new AonLayoutPanel();
+		splitLayoutPanel = new SplitLayoutPanel( 2 );
+		aonLayout.add(splitLayoutPanel);
+		
 		declarationContainer = new SimpleLayoutPanel();
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		
@@ -287,7 +274,7 @@ public class Model303 extends MainEntryPoint {
 		model303Table.addSelectionHandler( this::onSelectionChange );
 		declarationContainer.setWidget(model303Table);
 		
-		getOptions().getParentWidget().add(splitLayoutPanel);
+		getOptions().getParentWidget().add(aonLayout);
 		if (getOptions().getFiscalModelId() != null ) {
 			LOGGER.info("Access to Model303 with a ID: " + getOptions().getFiscalModelId());
 			onSelect(getOptions().getFiscalModelId());
@@ -296,8 +283,6 @@ public class Model303 extends MainEntryPoint {
 			newModel(getOptions().getNewModel()); 
 		} else {
 			model303Table.refresh( callback );
-			LOGGER.info("Model303 setting NOTIFICATIONS_TAB");
-			tabLayout.selectTab(NOTIFICATIONS_TAB);
 		}
 	}
 
@@ -314,7 +299,7 @@ public class Model303 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 					}
 				});
 	}
@@ -326,7 +311,7 @@ public class Model303 extends MainEntryPoint {
 					public void onSuccess(Mod303 selected) {
 						if (selected == null) {
 							LOGGER.info("onSuccess Model303 with a NULL selected Model ID: ");
-							showErrorPanel(AON.MSG.unableToFindDeclaration());
+							aonLayout.showErrorPanel(AON.MSG.unableToFindDeclaration());
 						} else {
 							LOGGER.info("onSuccess Model303 with a ID: " + selected.getId());
 							select(selected);
@@ -335,7 +320,7 @@ public class Model303 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+						aonLayout.showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
 					}
 				});
 	}
@@ -347,7 +332,7 @@ public class Model303 extends MainEntryPoint {
 					@Override
 					public void onSuccess(Mod303 selected) {
 						if (selected == null) {
-							showErrorPanel(AON.MSG.unableToFindDeclaration());
+							aonLayout.showErrorPanel(AON.MSG.unableToFindDeclaration());
 						} else {
 							select(selected);
 						}
@@ -355,7 +340,7 @@ public class Model303 extends MainEntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+						aonLayout.showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
 					}
 				});
 	}
@@ -384,7 +369,7 @@ public class Model303 extends MainEntryPoint {
 									@Override
 									public void onFailure(Throwable caught) {
 										popup.hide();
-										showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+										aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 									}
 								});
 
@@ -410,26 +395,6 @@ public class Model303 extends MainEntryPoint {
 		}
 	}
 	
-	private void cleanErrorPanel() {
-		SimpleLayoutPanel panel = new SimpleLayoutPanel();
-		resultsPanel.setWidget(panel);
-		closeFootPanel();
-	}
-
-	private void showErrorPanel(String msg) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		ScrollPanel panel = new ScrollPanel();
-		FlowPanel list = new  FlowPanel();
-		Label label = new Label(msg);
-		label.setStyleName(AON.CSS.aonMarginTop());
-		label.addStyleName(AON.CSS.aonBlockMessage());
-		label.addStyleName(AON.CSS.aonBlockErrorMessage());
-		list.add(label);
-		panel.add(list);
-		resultsPanel.setWidget(panel);
-	}
-	
 	private AonMinimizePanel getMinimizePanel() {
 		footPanel = new AonMinimizePanel();
 		footPanel.addMinimizeHandler( event -> closeFootPanel() );
@@ -442,11 +407,8 @@ public class Model303 extends MainEntryPoint {
 		tabLayout.setWidth("100%");
 		footPanel.add(tabLayout);
 		
-		resultsPanel = new SimpleLayoutPanel();
-		tabLayout.add(resultsPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.notifications(), AON.CSS.aonIconNotification()));
-		
 		breakdownPanel = new ScrollPanel();
-		tabLayout.add(breakdownPanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.informationBreakdown(), AON.CSS.aonIconInfo()));
+		tabLayout.add(breakdownPanel, AON.MSG.informationBreakdown());
 
 		tabLayout.setAnimationDuration(300);
 		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
@@ -574,7 +536,7 @@ public class Model303 extends MainEntryPoint {
 	}
 	
 	private void select(Mod303 selected) {
-		cleanErrorPanel();
+		aonLayout.hideErrorPanel();
 		Widget declaration = null;
 		for (Mod303Declarations dec : Mod303Declarations.values()) {
 			if (dec.accept(selected)) {
@@ -584,7 +546,7 @@ public class Model303 extends MainEntryPoint {
 		if (declaration != null) {
 			declarationContainer.setWidget( declaration );		
 		} else {
-			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
+			aonLayout.showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
 	}
 }

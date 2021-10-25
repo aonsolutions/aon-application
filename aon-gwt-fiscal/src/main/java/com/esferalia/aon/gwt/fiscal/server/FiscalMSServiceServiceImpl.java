@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.server.fiscal.mod303.Mod303ServiceImpl;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FISCAL;
@@ -118,6 +119,8 @@ public class FiscalMSServiceServiceImpl extends AonStatelessRemoteServiceServlet
 		if ( (customerCheckEnabled == null || customerCheckEnabled.getId() == null) && domain!=null && domain.getParentId() != null) {
 			customerCheckEnabled  = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_CUSTOMER_CHECK_ENABLED);			
 		}
+		ApplicationParameter certDoc = AON.getApplicationParameter(domainName, domainId, login, AppParam.FISCAL_CERT_DOCUMENT);
+		ApplicationParameter certName = AON.getApplicationParameter(domainName, domainId, login, AppParam.FISCAL_CERT_NAME);
 		Company company = AON.getCompany(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));
 		return new AonData().setUser(user)
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
@@ -126,7 +129,10 @@ public class FiscalMSServiceServiceImpl extends AonStatelessRemoteServiceServlet
 				.setBetaEnabled((beta!=null && Boolean.valueOf(beta.getValue())))
 				.setAlphaEnabled((alpha!=null && Boolean.valueOf(alpha.getValue())))
 				.setCustomerCheckEnabled(customerCheckEnabled!=null && ("1".equals(customerCheckEnabled.getValue()) || Boolean.valueOf(customerCheckEnabled.getValue())))
-				.setCompany(company);
+				.setCompany(company)
+				.setCertificateDocument(certDoc==null?null:certDoc.getValue())
+				.setCertificateName(certName==null?null:certName.getValue())
+				;
 				
 	}
 	
@@ -165,22 +171,22 @@ public class FiscalMSServiceServiceImpl extends AonStatelessRemoteServiceServlet
         return sb.toString();
 	}
 	
-	@Override
-	public Integer presentationFile(String domainName, Integer domainId, String user, FiscalModelType type,
-			Integer id) {
-		if(FiscalModelType.M303.equals(type) 
-				|| FiscalModelType.M303_RG.equals(type)
-				|| FiscalModelType.M303_RS.equals(type)) {
-			return Mod303ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
-		} else if(FiscalModelType.M111.equals(type)) {
-			return Mod111ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
-		}  else if(FiscalModelType.M115.equals(type)) {
-			return Mod115ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
-		}  else if(FiscalModelType.M123.equals(type)) {
-			return Mod123ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
-		}
-		return -1;
-	}
+//	@Override
+//	public Integer presentationFile(String domainName, Integer domainId, String user, FiscalModelType type,
+//			Integer id) {
+//		if(FiscalModelType.M303.equals(type) 
+//				|| FiscalModelType.M303_RG.equals(type)
+//				|| FiscalModelType.M303_RS.equals(type)) {
+//			return Mod303ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
+//		} else if(FiscalModelType.M111.equals(type)) {
+//			return Mod111ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
+//		}  else if(FiscalModelType.M115.equals(type)) {
+//			return Mod115ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
+//		}  else if(FiscalModelType.M123.equals(type)) {
+//			return Mod123ServiceImpl.getInstance().presentationFile(domainName, domainId, user, id);
+//		}
+//		return -1;
+//	}
 	
 	@Override
 	public void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model) {

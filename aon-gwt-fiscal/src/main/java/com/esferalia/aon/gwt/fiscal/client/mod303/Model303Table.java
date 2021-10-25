@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridCell;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridHeaderRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
@@ -16,8 +17,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -28,6 +27,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -64,6 +64,12 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 	}
 
 	public void refresh(Model303Callback cbk) {
+		final PopupPanel popup = new PopupPanel(false, true);
+		popup.add( new AonSplash());
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		
 		container.clear();
 		container.add(getTable());
 		Model303.service.getMod303s(cbk.getOptions().getDomainName(), cbk.getOptions().getUser(), cbk.getOptions().getDomain(),
@@ -71,10 +77,12 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 					@Override
 					public void onSuccess(LinkedList<Mod303> result) {
 						paint(result);
+						popup.hide();					
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
+						popup.hide();					
 						cbk.showError( AON.MSG.unableToReadDeclaration(caught.getMessage()) );
 					}
 				});
@@ -85,22 +93,13 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 		AonToolbar toolbar = new AonToolbar( "IVA. Autoliquidaci\u00F3n." );
 		
 		final AonToolbarButton newButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
-		newButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				cbk.onNew();
-			}
-		});
+		newButton.addClickHandler( event -> cbk.onNew());
 		toolbar.add(newButton);
 		
 		return toolbar;
 	}
 
-	// **************************************************************************
-	// **************************************************************************
-	// **************************************************************************
-	private enum COLS {
+	private enum Columns {
 		  CHK(AON.MSG.model()		, 50 ,AON.CSS.aonTextCenter())
 	    , STA("A"					, 20 ,AON.CSS.aonTextCenter())
 	    , YER(AON.MSG.fiscalYear()	, 50 ,AON.CSS.aonTextCenter())
@@ -119,11 +118,7 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 		int colWidth;
 		String cellStyleClass;
 
-		private COLS(String headerLabel,int colWidth) {
-			this(headerLabel, colWidth, null);
-		}
-
-		private COLS(String headerLabel,int colWidth,String cellStyleClass) {
+		private Columns(String headerLabel,int colWidth,String cellStyleClass) {
 			this.headerLabel = headerLabel;
 			this.colWidth = colWidth;
 			this.cellStyleClass = cellStyleClass;
@@ -146,10 +141,10 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		
 		AonDisplayGridHeaderRow headerRow = tab.addHeaderRow();
-		for ( COLS col : COLS.values()) {
+		for ( Columns col : Columns.values()) {
 			Label label = new Label( col.getHeaderLabel());
 			AonDisplayGridCell headerCell = headerRow.addCell(col.getCellStyleClass());
-			if (col == COLS.AUTO ) {
+			if (col == Columns.AUTO ) {
 				headerCell.addStyleName(AON.CSS.aonFlexGrow1());
 			} else {
 				headerCell.setWidth(col.getColWidth()  + "px");
@@ -179,12 +174,7 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 			
 			AonDisplayGridRow row = tab.addRow();
 			row.addStyleName(AON.CSS.aonClickable());
-			row.addClickHandler( new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					SelectionEvent.fire(Model303Table.this, mod303);					
-				}
-			});
+			row.addClickHandler( event ->  SelectionEvent.fire(Model303Table.this, mod303));					
 			
 			row.addCell( new InlineLabel(FiscalModelUtils.getModelName(mod303)), AON.CSS.aonTextCenter())
 				.addCell( admon , AON.CSS.aonTextCenter())
@@ -201,7 +191,7 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 			row.addCell( comp , AON.CSS.aonTextCenter())
 				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod303.getDocument()))
-				.addCell( new InlineLabel(mod303.getName()))
+				.addCell( new InlineLabel(mod303.getFullName()))
 				.addCell( new InlineLabel(AON.FMT.format(mod303.getResult())), AON.CSS.aonTextRight())
 				.addCell( new InlineLabel(mod303.getDeclarationType() == null ? "" : mod303.getDeclarationType().getDescription()))
 				.addCell( new InlineLabel(

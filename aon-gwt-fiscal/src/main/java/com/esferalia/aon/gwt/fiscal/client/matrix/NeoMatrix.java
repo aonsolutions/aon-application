@@ -13,8 +13,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -61,8 +59,6 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
-	
 	private API API;
 	private AonData aonData;
 	private HashMap<Integer, JsFiscalMenuItem> modelMap = new HashMap<>();
@@ -531,30 +527,30 @@ public abstract class NeoMatrix extends DockLayoutPanel {
 		hp.add(l0);
 		hp.add(l1);
 		FiscalModelType modelType = FiscalModelType.safeValueOf(model.getModel());
-		FISCAL_SERVICE.presentationFile(domain.getName(), domain.getId(), user, modelType, model.getId(), new AsyncCallback<Integer>() {
-
-			@Override
-			public void onSuccess(Integer result) {
-				if(result > 0) {
-					Button download = new Button();
-					download.setStyleName("aon-icon-mail-save");
-					download.addStyleName(AON.AON_CSS.aonIconCommandButton());
-					download.getElement().getStyle().setPaddingTop(16, Unit.PX);
-					
-					download.addClickHandler(new ClickHandler() {
-				
-						@Override
-						public void onClick(ClickEvent event) {
-							getAPI().getFiscal().download(result +"");
-						}
-					});
-					hp.add(download);
-				}
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		
-		});
+//		FISCAL_SERVICE.presentationFile(domain.getName(), domain.getId(), user, modelType, model.getId(), new AsyncCallback<Integer>() {
+//
+//			@Override
+//			public void onSuccess(Integer result) {
+//				if(result > 0) {
+//					Button download = new Button();
+//					download.setStyleName("aon-icon-mail-save");
+//					download.addStyleName(AON.AON_CSS.aonIconCommandButton());
+//					download.getElement().getStyle().setPaddingTop(16, Unit.PX);
+//					
+//					download.addClickHandler(new ClickHandler() {
+//				
+//						@Override
+//						public void onClick(ClickEvent event) {
+//							getAPI().getFiscal().download(result +"");
+//						}
+//					});
+//					hp.add(download);
+//				}
+//			}
+//			
+//			@Override public void onFailure(Throwable caught) {}
+//		
+//		});
 	
 		return hp;		
 	}

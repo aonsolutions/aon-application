@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
@@ -26,10 +27,57 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JsonParser {
+	
 	private static final String ENCODING = "utf-8";
-	private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	
+	private JsonParser() {
+		
+	}
+	
+	public static AEATParams parseAEATParams(String aeatParams) throws ParseException {
+		AEATParams params = new AEATParams();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonParams =  (JSONObject) parser.parse(aeatParams);
 
-	public static AccountParams parseAccountParams(String accountParams) throws ParseException, java.text.ParseException {
+		String domainName = (String) jsonParams.get(IRequestParamsNames.DOMAIN_NAME);
+		params.setDomainName(domainName);
+		
+		Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN_ID);
+		params.setDomainId( domain.intValue());
+		
+		String user = (String) jsonParams.get(IRequestParamsNames.USER);
+		params.setUser(user);
+		
+		Long mod = (Long) jsonParams.get(IRequestParamsNames.MOD);
+		params.setMod(mod==null?null:mod.intValue());
+
+		Long certificateId = (Long) jsonParams.get(IRequestParamsNames.CERTIFICATE_ID);
+		params.setCertificateId(certificateId==null?null:certificateId.intValue());
+
+		String pass = (String) jsonParams.get(IRequestParamsNames.PASS);
+		if (AonStringUtils.isNotBlank(pass)) {
+			params.setPass(pass);			
+		}
+		
+		String name = (String) jsonParams.get(IRequestParamsNames.NAME);
+		if (AonStringUtils.isNotBlank(name)) {
+			params.setName(name);			
+		}
+
+		String document = (String) jsonParams.get(IRequestParamsNames.DOCUMENT);
+		if (AonStringUtils.isNotBlank(document)) {
+			params.setDocument(document);			
+		}
+
+		String nrc = (String) jsonParams.get(IRequestParamsNames.NRC);
+		if (AonStringUtils.isNotBlank(nrc)) {
+			params.setNrc(nrc);			
+		}
+		return params;
+	}
+
+	public static AccountParams parseAccountParams(String accountParams) throws ParseException {
 		AccountParams params = new AccountParams();
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(accountParams);

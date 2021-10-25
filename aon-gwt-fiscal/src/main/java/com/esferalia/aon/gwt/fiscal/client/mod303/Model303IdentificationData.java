@@ -74,7 +74,7 @@ public class Model303IdentificationData extends ScrollPanel {
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.CSS.aonTable());
 		tab.addStyleName(AON.CSS.aonMarginTop());
-		tab.addStyleName(AON.CSS.aonMarginLeft());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
 		
 		tab.getColumnFormatter().setWidth(0, "300px");
 		tab.getColumnFormatter().setWidth(1, "auto");
@@ -115,10 +115,12 @@ public class Model303IdentificationData extends ScrollPanel {
 					surnameLabel.setVisible(false);
 					surname.setValue(null);
 					surname.setVisible(false);
+					name.setVisibleLength(45);
 				} else {
 					nameLabel.setText(AON.MSG.name());
 					surnameLabel.setVisible(true);
 					surname.setVisible(true);
+					name.setVisibleLength(25);
 				}
 				callback.documentChanged(document.getValue());
 		});
@@ -126,11 +128,11 @@ public class Model303IdentificationData extends ScrollPanel {
 		
 		FlowPanel names = new FlowPanel();
 		name.addValueChangeHandler( event -> callback.nameChanged(name.getValue()));
-		name.setVisibleLength(45);
+		name.setVisibleLength(25);
 		name.setMaxLength(45);
 		names.add(name);
 		surname.addValueChangeHandler(event -> callback.surnameChanged(surname.getValue()));
-		surname.setVisibleLength(40);
+		surname.setVisibleLength(25);
 		surname.setMaxLength(40);
 		names.add(surname);
 		tab.setWidget(1, 1, names);
@@ -255,10 +257,12 @@ public class Model303IdentificationData extends ScrollPanel {
 			surnameLabel.setVisible(false);
 			surname.setValue(null);
 			surname.setVisible(false);
+			name.setVisibleLength(45);
 		} else {
 			nameLabel.setText(AON.MSG.name());
 			surnameLabel.setVisible(true);
 			surname.setVisible(true);
+			name.setVisibleLength(25);
 		}
 		
 		phone.setValue(callback.getPhone());

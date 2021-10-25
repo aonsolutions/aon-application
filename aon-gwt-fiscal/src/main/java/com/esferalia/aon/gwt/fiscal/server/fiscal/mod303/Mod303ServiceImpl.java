@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod303;
 
 import java.util.LinkedList;
 
@@ -116,21 +116,22 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		}
 	}
 	
-	@Override
-	public Integer validationFile(String domainName, Integer domainId, String user,Integer id) {
-		Attach attach = AON.getAttach(domainName, domainId, user, f -> 
-			f.getSourceTypeProperty().eq(DataAttachSource.MOD303.value())
-			.and(f.getSourceBatchProperty().eq(id))
-			.and(f.getDescriptionProperty().eq("Validacion AEAT")), AttachType.DATA, false);
-		return attach != null && attach.getId() != null ? attach.getId() :  -1;
-	}
+//	@Override
+//	public Integer validationFile(String domainName, Integer domainId, String user,Integer id) {
+//		Attach attach = AON.getAttach(domainName, domainId, user, f -> 
+//			f.getSourceTypeProperty().eq(DataAttachSource.MOD303.value())
+//			.and(f.getSourceBatchProperty().eq(id))
+//			.and(f.getDescriptionProperty().eq("Validacion AEAT")), AttachType.DATA, false);
+//		return attach != null && attach.getId() != null ? attach.getId() :  -1;
+//	}
+//	
+//	@Override
+//	public Integer presentationFile(String domainName, Integer domainId, String user,Integer id) {
+//		Attach attach = AON.getAttach(domainName, domainId, user, f -> 
+//		f.getSourceTypeProperty().eq(DataAttachSource.MOD303.value())
+//		.and(f.getSourceBatchProperty().eq(id))
+//		.and(f.getDescriptionProperty().eq("Presentacion AEAT")), AttachType.DATA, false);
+//		return attach != null && attach.getId() != null ? attach.getId() :  -1;
+//	}
 	
-	@Override
-	public Integer presentationFile(String domainName, Integer domainId, String user,Integer id) {
-		Attach attach = AON.getAttach(domainName, domainId, user, f -> 
-		f.getSourceTypeProperty().eq(DataAttachSource.MOD303.value())
-		.and(f.getSourceBatchProperty().eq(id))
-		.and(f.getDescriptionProperty().eq("Presentacion AEAT")), AttachType.DATA, false);
-		return attach != null && attach.getId() != null ? attach.getId() :  -1;
-	}
 }

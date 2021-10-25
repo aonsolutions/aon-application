@@ -249,6 +249,17 @@ public class FISCAL {
 		}
 	}
 	
+	public static Mod303 aeatPresentationMod303(String domainName,int domainId, String user, Mod303 mod303, String aeatResponse) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId,user);
+			return getFiscal().aeatPresentationMod303(ctx, mod303, aeatResponse);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	// ----------------------------------MODELO 390 HACIENDAS FORALES
 	public static LinkedList<Mod390HF> getMod390HFs(String domainName,int domainId, String user) {
 		AONContext ctx = null;

@@ -556,6 +556,11 @@ public class FiscalImpl implements IFiscal {
 	public String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod303DAO.getMod303Info(ctx,mod303,script,infoKey);
 	}
+	
+	@Override
+	public Mod303 aeatPresentationMod303(AONContext ctx, Mod303 mod303, String aeatResponse) {
+		return Mod303DAO.aeatPresentation(ctx, mod303, aeatResponse);
+	}
 
 //	@Override
 //	public void importMod303(AONContext ctx, int domain) {

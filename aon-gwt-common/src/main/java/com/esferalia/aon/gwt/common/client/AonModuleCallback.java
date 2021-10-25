@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.common.client;
 
-public interface AonModuleCallback<T> {
+import java.io.Serializable;
+
+public interface AonModuleCallback<T> extends Serializable {
 	
 	void onChange(T changed);
 	void onRemove(T removed);

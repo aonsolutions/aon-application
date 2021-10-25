@@ -69,4 +69,6 @@ public class AonHttpUtils implements Serializable {
 	public static final String WARNING = "Warning";
 	public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
 
+	public static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
+
 }

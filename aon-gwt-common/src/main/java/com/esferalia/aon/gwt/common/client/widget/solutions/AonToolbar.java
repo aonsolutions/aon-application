@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -13,7 +14,11 @@ public class AonToolbar extends FlowPanel {
 	
 	private FlowPanel buttonContainer;
 	private FlowPanel messagePanel;
-	private Label title;
+	private FlowPanel titlePanel;
+	
+	public AonToolbar( ) {
+		this( AonStringUtils.EMPTY);
+	}
 	
 	public AonToolbar( String name ) {
 		super();
@@ -30,11 +35,9 @@ public class AonToolbar extends FlowPanel {
 		messagePanel.setStyleName(AON.CSS.aonToolbarMessageContainer());
 		innerToolbar.add(messagePanel);
 		
-		FlowPanel titlePanel = new FlowPanel();
+		titlePanel = new FlowPanel();
 		titlePanel.addStyleName(AON.CSS.aonToolbarTitleContainer());
-		title = new Label( name );
-		title.setStyleName(AON.CSS.aonToolbarTitle());
-		titlePanel.add( title );
+		setTitle(name);
 		innerToolbar.add(titlePanel);
 
 		super.add(innerToolbar);
@@ -69,9 +72,21 @@ public class AonToolbar extends FlowPanel {
 		messagePanel.clear();		
 	}
 	
-	public void setTitle(String name) {
-		title.setText(name);
+	public FlowPanel getMessagePanel() {
+		return messagePanel;
 	}
 	
+	@Override
+	public void setTitle(String name) {
+		titlePanel.clear();
+		Label title = new Label( name );
+		title.setStyleName(AON.CSS.aonToolbarTitle());
+		titlePanel.add( title );
+	}
+	
+	public void setTitle(Widget widget) {
+		titlePanel.clear();
+		titlePanel.add( widget );
+	}
 	
 }

@@ -213,6 +213,10 @@ public enum AppParam {
 
 	// IDENTIFICADOR DE EMPRESA EN CHECK IT
 	, CHECK_IT_ENTERPRISE_ID
+
+	, FISCAL_CERT_DOCUMENT
+	, FISCAL_CERT_NAME
+	, FISCAL_AEAT_TEST_ENV
 	;
 	
 	public String getValue() {

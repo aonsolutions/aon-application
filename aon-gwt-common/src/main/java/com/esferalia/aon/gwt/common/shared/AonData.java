@@ -1,22 +1,27 @@
 package com.esferalia.aon.gwt.common.shared;
 
+import java.io.Serializable;
+
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class AonData implements IsSerializable{
+public class AonData implements Serializable {
 
-	User user;
-	Integer userOperator;
-	String md5;
-	Domain domain;
-	Company company;
-	Boolean betaEnabled;
-	Boolean alphaEnabled;
-	Boolean aonSolutions;
-	boolean customerCheckEnabled;
-	String rootPanel;
+	private static final long serialVersionUID = -4746030973585760037L;
+	
+	private User user;
+	private Integer userOperator;
+	private String md5;
+	private Domain domain;
+	private Company company;
+	private Boolean betaEnabled;
+	private Boolean alphaEnabled;
+	private Boolean aonSolutions;
+	private boolean customerCheckEnabled;
+	private String certificateDocument;
+	private String certificateName;
+	private String rootPanel;
 	
 	public User getUser() {
 		return user;
@@ -92,5 +97,20 @@ public class AonData implements IsSerializable{
 		return this;
 	}
 	
+	public String getCertificateDocument() {
+		return certificateDocument;
+	}
+	public AonData setCertificateDocument(String certificateDocument) {
+		this.certificateDocument = certificateDocument;
+		return this;
+	}
+
+	public String getCertificateName() {
+		return certificateName;
+	}
+	public AonData setCertificateName(String certificateName) {
+		this.certificateName= certificateName;
+		return this;
+	}
 	
 }

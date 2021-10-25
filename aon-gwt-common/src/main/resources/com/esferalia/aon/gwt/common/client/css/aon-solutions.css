@@ -311,6 +311,10 @@
 .aon_icon_link { background-image: iconLink;}
 @url iconNotification aonIconNotification;
 .aon_icon_notification { background-image: iconNotification;}
+@url iconDirty aonIconDirty;
+.aon_icon_dirty { background-image: iconDirty;}
+@url iconDiff aonIconDiff;
+.aon_icon_diff { background-image: iconDiff;}
 
 
 /* BASICS */
@@ -347,6 +351,9 @@
 }
 .aon_inline_block {
 	display: inline-block;
+}
+.aon_display_flex {
+	display: flex;	
 }
 
 .aon_display_table {
@@ -607,6 +614,9 @@
 	color: RoyalBlue;
 }
 
+.aon_background_white {
+	background-color: white;
+}
 .aon_background_orange {
 	background-color: #ffa54f;
 }
@@ -618,6 +628,9 @@
 }
 .aon_background_ligthgray {
 	background-color: #EEE;
+}
+.aon_background_ligth_blue {
+	background-color: AliceBlue;
 }
 .aon_background_highlighted_green {
 	background-color: #c1f9ba;
@@ -673,11 +686,11 @@
 	display: inline;
 }
 .aon_loader {
-	border: 2px solid #f3f3f3;
+	border: 2px solid #ccc;
 	border-radius: 50%;
-  	border-top: 2px solid #bbb;
-  	width: 8px;
-  	height: 8px;
+  	border-top: 2px solid #666;
+  	width: 15px;
+  	height: 15px;
   	-webkit-animation: spin 2s linear infinite; /* Safari */
   	animation: spin 2s linear infinite;
 }
@@ -776,11 +789,6 @@
     align-items: center;
     box-sizing: border-box;
     display: inline-flex;
-}
-.aon_flex_block {
-	display: flex;
-	align-items: baseline;
-	box-sizing: border-box;
 }
 
 .aon_flex_block {
@@ -1166,16 +1174,23 @@
 }
 
 .aon_selector .gwt-TabLayoutPanel {
+	background-color: white;
+	color : #4b4b4b;
+	background: none;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 2px solid #fff;
 	height: 100%;
 	pointer-events: none;
 }
 
 .aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
-	background: transparent none repeat scroll 0 0;
+	background: transparent none repeat scroll 0 0; 
 	padding-left: 5px;
-	padding-top: 6px;
+	padding-top: 5px;
 	pointer-events: none;
-	border-bottom: 1px solid #ccc;
+	border-bottom: 2px solid #fff;
 }
 
 .aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
@@ -1192,11 +1207,11 @@
 }
 
 .aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
-	background: #CBCBCB none repeat scroll 0 0;
+	background: white none repeat scroll 0 0;
 	border-radius: 3px 3px 0 0;
-	border-top: 1px solid #ccc;
-	border-left: 1px solid #ccc;
-	border-right: 1px solid #ccc;
+	border-top: none;
+	border-left: none;
+	border-right: none;
 	color: black;
 	cursor: pointer;
 	font-weight: normal;
@@ -1207,11 +1222,16 @@
 }
 
 .aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
-	background: white none repeat scroll 0 0;
 	top: 1px;
-	color: #333;
 	cursor: default;
 	font-weight: bold;
+	color : #000;
+	background: none;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 2px solid #2152a5;
+	
 }
 
 .aon_selector .gwt-TabBar {
@@ -1526,9 +1546,9 @@
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-color: inherit;
-	width: 20px;
-	height: 20px;
-	background-size: 20px 20px;		
+	width: 24px;
+	height: 24px;
+	background-size: 24px 24px;		
 }
 
 .aon_label_with_icon{
@@ -1547,8 +1567,8 @@
 	background-repeat: no-repeat;
 	background-color: inherit;
 	width: auto;
-	height: 20px;
-	background-size: 20px 20px;
+	height: 24px;
+	background-size: 24px 24px;
 	align-items: center;		
 }
 
@@ -1671,7 +1691,7 @@
 	position: absolute;
 	color: #333;
 	width: 300px;
-	background-color: seashell;
+	background-color: #d8ecff;
 	top: 160px;
 	right: 15px;
 	border: 0.5px solid #999;
@@ -1706,4 +1726,26 @@
 	background-repeat: no-repeat;
 	padding-left: 25px !important;
 	background-size: contain;
+}
+
+
+.aon_floating_message {
+	width: 90%;
+	height: 50px;
+	top: 160px;
+	right: 15px;
+	margin: 4px auto 2px auto;
+	border-radius: 10px;
+}
+
+.aon_floating_message_header {
+	display: flex;
+	padding-left: 10px;
+	font-weight: bold;
+	margin-top: 2px;
+	align-items: center;
+}
+
+.aon_floating_message_content {
+	padding: 3px 20px;
 }

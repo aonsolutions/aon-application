@@ -2,11 +2,11 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
-import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -26,14 +26,14 @@ class Model303NewDeclarationPopup extends AonCustomDialog {
 	
 	protected int row = 0;
 	private AdministrationListBox admonList = new AdministrationListBox();
-	private IntegerBox yearBox = new IntegerBox();
+	private AonIntegerBox yearBox = new AonIntegerBox();
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
 	private CheckBox withoutActivity = new CheckBox();
 	private CheckBox diffCalculation = new CheckBox();
 	private Label defaultVatRegimeLabel = new Label();
 	private ListBox defaultVatRegime = new ListBox();
-	private DoubleBox prorate = new DoubleBox(7);
+	private AonDoubleBox prorate = new AonDoubleBox(7);
 	private CheckBox specialProrate = new CheckBox("Especial");
 	private PeriodListBox periodList = new PeriodListBox(true);
 	
@@ -135,7 +135,7 @@ class Model303NewDeclarationPopup extends AonCustomDialog {
 			boolean diff = diffCalculation.getValue() != null && diffCalculation.getValue();
 			if ( p != null && !p.isFirstPeriod() && diff) {
 				String msg = "Si modifica el tipo de prorrata con el c\u00E1lculo por diferencia activo, revise los valores resultantes en IVA deducible.";
-				MessageDialog.show("AVISO", msg);
+				AonMessageDialog.show("AVISO", msg);
 			}
 		});
 		proratePanel.add(prorate);
