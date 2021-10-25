@@ -1,0 +1,14 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon Oct 25 13:10:45 CEST 2021
+https\://repo1.maven.org/maven2/.error=
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
+https\://repo1.maven.org/maven2/.lastUpdated=1635160243708
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.error=
+https\://repo.maven.apache.org/maven2/.lastUpdated=1635160245132
+https\://mvnrepository.com/repos/central/.error=Could not transfer artifact es.aeat\:ModRet2021\:jar\:javadoc\:1.2 from/to central-repository (https\://mvnrepository.com/repos/central)\: Access denied to https\://mvnrepository.com/repos/central/es/aeat/ModRet2021/1.2/ModRet2021-1.2-javadoc.jar. Error code 403, 
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1635160245061
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1635160243480
+@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1635160243552
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.error=
+https\://repo.maven.apache.org/maven2/.error=
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.lastUpdated=1635160244376

@@ -1,14 +1,20 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Wed Dec 30 02:58:55 CET 2020
-http\://jasperreports.sourceforge.net/maven2/.lastUpdated=1609293534809
+#Tue Jul 27 00:03:14 CEST 2021
+http\://jasperreports.sourceforge.net/maven2/.lastUpdated=1611257732839
+https\://repo1.maven.org/maven2/.error=
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
 http\://jasperreports.sourceforge.net/maven2/.error=
+https\://repo1.maven.org/maven2/.lastUpdated=1627336994643
 http\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
 http\://download.java.net/maven/2/.error=
 https\://repository.jboss.org/nexus/content/groups/public-jboss/.error=
-https\://repo.maven.apache.org/maven2/.lastUpdated=1609293535171
-https\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1609293534312
-http\://download.java.net/maven/2/.lastUpdated=1609293532594
+https\://repo.maven.apache.org/maven2/.lastUpdated=1611257733111
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1611257732461
+https\://mvnrepository.com/repos/central/.error=Could not transfer artifact es.aeat\:ModRet2021\:jar\:sources\:1.1 from/to central-repository (https\://mvnrepository.com/repos/central)\: Access denied to https\://mvnrepository.com/repos/central/es/aeat/ModRet2021/1.1/ModRet2021-1.1-sources.jar. Error code 403, 
+http\://download.java.net/maven/2/.lastUpdated=1611257731039
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1627336994499
+@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1627336994581
 https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.error=
 https\://repo.maven.apache.org/maven2/.error=
-http\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1609293531177
-https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.lastUpdated=1609293533492
+http\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1611257729713
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.lastUpdated=1611257731754
