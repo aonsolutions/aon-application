@@ -166,6 +166,11 @@ public class MainConfigComunica extends MainEntryPoint{
 	}
 	
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
+	
+	@Override
+	public void onModuleLoad() {
+		onModuleLoad(new MainConfigComunicaObject());
+	}
 
 	public void onModuleLoad(MainConfigComunicaObject mainConfigComunicaObject) {
 		this.mainConfigComunicaObject = mainConfigComunicaObject;

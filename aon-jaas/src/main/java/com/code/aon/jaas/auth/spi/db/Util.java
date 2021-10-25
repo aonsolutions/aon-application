@@ -34,16 +34,17 @@ public class Util {
 		this.info = info;
 	}
 	
-	public Connection createMetadataConnection() throws AonConnectionException {
-		setConnection(info.getMetadataConnection());
-		return connection;
-	}
-	
-	public Connection createConnection(String name) throws AonConnectionException {
-		setConnection(info.getDomainConnection(name));
+	public Connection createConnection(String domainName) throws AonConnectionException {
+		setConnection(info.getDomainConnection(domainName));
 		return connection;
 	}
 
+	public Connection createMetadataConnection(String domainName) throws AonConnectionException {
+		String dbName = info.getDomainDatabase(domainName);
+		setConnection(info.getMetadataConnection(dbName));
+		return connection;
+	}
+	
 	public void setConnection(Connection connection) {
 		this.connection = connection;
 	}

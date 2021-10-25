@@ -786,6 +786,11 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 
 	// ------------------------------------------ OnModuleLoad
+	
+	@Override
+	public void onModuleLoad() {
+		onModuleLoad(new MainContrataContractObject());
+	}
 
 	public void onModuleLoad(MainContrataContractObject mainContrataContractObject) {
 		this.mainContrataContractObject = mainContrataContractObject;

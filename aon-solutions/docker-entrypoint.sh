@@ -23,7 +23,7 @@ for arg; do
 done
 
 if [ "$1" = 'catalina.sh' -a -z "$wantHelp" ]; then
-
+	if [ -n "${DB_HOST+x}" ]; then
 	: ${DB_PORT:=3306}
 	: ${DB_HOST:=localhost}
 	: ${DB_USER:=aonsolutions}
@@ -34,6 +34,8 @@ jdbcUrl=jdbc:mysql://$DB_HOST:$DB_PORT
 user=$DB_USER
 password=$DB_PASSWD
 EOF
+	fi
+
 	: ${AWS_REGION:=eu-west-1}
         cat << EOF > $AWS_HOME/config
 [default]
@@ -46,17 +48,6 @@ aws_access_key_id = $AWS_ACCESS_KEY_ID \
 aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 EOF
 
-	CLASSPATH=`find $TOMCAT_LIBDIR -name 'mysql-connector-java-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $AON_SOLUTIONS_HOME -name 'dbutils-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $AON_SOLUTIONS_HOME -name 'aon-master-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'slf4j-api-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'slf4j-jdk14-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'commons-lang-*.jar'`
-	CLASSPATH=$CLASSPATH:`find $TOMCAT_LIBDIR -name 'commons-dbutils-*.jar'`
-	java -classpath $CLASSPATH com.code.aon.master.Up2DateDB \
-	jdbc:mysql://$DB_HOST:$DB_PORT $DB_USER $DB_PASSWD org.gjt.mm.mysql.Driver \
-	|| echo -e "Can't up2date all databases";
-
         cat << EOF > $TOMCAT_BINDIR/setenv.sh
 CATALINA_OPTS="-Duser.language=es \
 -Duser.country=ES \
@@ -65,10 +56,7 @@ EOF
 	echo
 	echo $(date)
 	echo
-	echo -e "Using DB_HOST:\t\t$DB_HOST"
-	echo -e "Using DB_PORT:\t\t$DB_PORT"
-	echo -e "Using DB_USER:\t\t$DB_USER"
-	echo -e "Using DB_PASSWD:\t$DB_PASSWD"
+	cat $AON_SOLUTIONS_CONF/connection
 	echo
 	echo 'AON init process complete; ready for start up.'
 	echo
