@@ -12,6 +12,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -81,7 +82,6 @@ public class NotificationRequest extends Notification {
 			saveNotification();
 		    HttpPost httpPost = new HttpPost(urlFB);
 			httpPost.addHeader("Authorization", "key="+keyFB);
-			httpPost.addHeader("Content-Type", "application/json");
 			httpPost.addHeader("Accept", "*/*");
 			
 		    JSONObject payload = new JSONObject();
@@ -95,7 +95,8 @@ public class NotificationRequest extends Notification {
 		    payload.put("registration_ids", getAuthDevices());
 		    payload.put("notification", notification);
 		    payload.put("data", getData());
-			StringEntity params = new StringEntity(payload.toString());
+		    
+			StringEntity params = new StringEntity(payload.toString(), ContentType.APPLICATION_JSON);
 		    httpPost.setEntity(params);
 	
 		    CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
@@ -124,7 +125,9 @@ public class NotificationRequest extends Notification {
 		 try {
 			  LinkedList<AuthDevice> aths = SECURITY.getAuthDevices(getDomain(), getUser().getLogin(), f-> f.getAuthProperty().eq(auth.getAuth()));
 			  authDevices.addAll(aths);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	  });
 	  return authDevices.stream().map(AuthDevice::getDeviceToken).toArray(String[]::new);
 	}

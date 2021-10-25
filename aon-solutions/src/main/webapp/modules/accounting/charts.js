@@ -1,4 +1,5 @@
 import { formatDate } from "../../services/utils.js";
+import { setStyles, setAttributes } from "../../services/utilsComponents.js";
 import * as UTILS from "./accounting-utils.js";
 
 let selectedElement,
@@ -13,6 +14,8 @@ let selectedElement,
   raw,
   arrAmortizations,
   amortizations,
+  arrOtherOutgoings,
+  otherOutgoings,
   liquid,
   data1,
   data2,
@@ -29,7 +32,9 @@ function getArray(selectedColumn) {
       return arrPurchases;
     case 3:
       return arrOutgoings;
-    case 5:
+    case 4:
+      return arrOtherOutgoings;
+    case 6:
       return arrAmortizations;
     default:
       return null;
@@ -44,7 +49,9 @@ function getTotalByColumn(selectedColumn) {
       return purchases;
     case 3:
       return outgoings;
-    case 5:
+    case 4:
+      return otherOutgoings;
+    case 6:
       return amortizations;
     default:
       return null;
@@ -56,8 +63,6 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     //PARA EL TRIMESTRAL
 
     filter = filter == null ? { show: "yearly" } : filter
-
-    
 
     if (data.intervals && filter && filter.show === "quarterly") {
       // accounts = data.intervals;
@@ -87,11 +92,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
             data.intervals[j].interval.toDate
           );
 
-          if (
-            interFrom.getTime() != interTo.getTime() &&
-            dteFrom <= interFrom &&
-            dteTo >= interTo
-          ) {
+          if (interFrom.getTime() != interTo.getTime() && dteFrom <= interFrom && dteTo >= interTo) {
             data.intervals[j].statements.forEach((stm) => {
               let repeatedAccount = stmnts.filter(
                 (st) =>
@@ -99,8 +100,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
               );
               if (repeatedAccount.length > 0) {
                 repeatedAccount[0].debit = repeatedAccount[0].debit + stm.debit;
-                repeatedAccount[0].credit =
-                  repeatedAccount[0].credit + stm.credit;
+                repeatedAccount[0].credit = repeatedAccount[0].credit + stm.credit;
               } else {
                 let statement = {
                   account: stm.account,
@@ -150,6 +150,9 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
       accounts = data.intervals || [];
     }
 
+
+    accounts = UTILS.getOnly6and7(accounts);
+
     const drawChart = () => {
       let divCombo = document.createElement("div");
 
@@ -168,6 +171,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
               let result = element.statements.filter(
                 (st) => st.account.type == "RESULT"
               )[0];
+
               let total = result.credit - result.debit;
               let entry = [
                 element.interval.name,
@@ -197,10 +201,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         };
 
         divCombo.style.width = isMobile ? "100%" : "70%";
-        div.style.display = "flex";
-        div.style.flexWrap = "wrap";
-        div.style.justifyContent = "center";
-        div.style.alignItems = "center";
+        setStyles(div, {display : "flex", flexWrap : "wrap", justifyContent : "center", alignItems : "center"});
         div.appendChild(divCombo);
         chart = new google.visualization.ComboChart(divCombo);
 
@@ -219,29 +220,21 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           divCombo.style.overflow = "hidden";
         }
       } else {
-        let divMessage = document.createElement("div");
-        divMessage.style.display = "flex";
-        divMessage.style.justifyContent = "center";
-        divMessage.style.alignItems = "center";
-        divMessage.style.paddingTop = "1.5em";
-        divMessage.style.maxWidth = "90%";
+        let divMessage = setStyles(document.createElement("div"), {
+          display : "flex", justifyContent : "center", alignItems : "center", paddingTop : "1.5em", maxWidth : "90%"
+        });
 
-        let message = isMobile
-          ? document.createElement("p")
-          : document.createElement("h4");
+        let message = isMobile ? document.createElement("p") : document.createElement("h4");
         if (isMobile) message.style.fontWeight = "bold";
-        message.style.textAlign = "center";
         message.innerHTML = "NO HAY DATOS DISPONIBLES PARA ESTA CONSULTA";
-        message.style.margin = "10%";
+        setStyles(message, {textAlign : "center", margin : "10%"});
 
-        let infoSpan = document.createElement("span");
+        let infoSpan = setStyles(document.createElement("span"), {
+          fontSize : isMobile ? "2em" : "3.5em",
+          display : isMobile ? "block" : "",
+          marginRight : "10px"
+        });
         infoSpan.classList.add("material-icons-outlined");
-        infoSpan.style.fontSize = isMobile ? "2em" : "3.5em";
-
-        infoSpan.style.display = isMobile ? "block" : "";
-
-        infoSpan.style.marginRight = "10px";
-
         infoSpan.innerHTML = "info";
 
         divMessage.appendChild(infoSpan);
@@ -322,16 +315,21 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           let amount = null;
           if (selectedColumn == 1) amount = entry.credit - entry.debit;
           else amount = entry.debit - entry.credit;
-
-          rows.push([
-            entry.account.description,
-            {
-              v: amount,
-              f: UTILS.formatNumber(amount) + " €",
-            },
-          ]);
-          colors.push(UTILS.getRandomColor());
+          if (amount >= 0) {
+            rows.push([
+              entry.account.description,
+              {
+                v: amount,
+                f: UTILS.formatNumber(amount) + " €",
+              },
+            ]);
+            // colors.push(UTILS.getRandomColor());
+          }
         });
+        for (let i=0; i<rows.length; i++) {
+          let index = i > UTILS.googleChartsColors.length - 1 ? i % (UTILS.googleChartsColors.length ) : i;
+          colors.push(UTILS.googleChartsColors[index]);
+        }
 
         data2.addRows(rows);
 
@@ -355,16 +353,16 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         let pieDiv = document.createElement("div");
         pieDiv.id = "pieDiv";
 
-        console.log(isMobile);
-        pieDiv.style.width = isMobile ? "100%" : "60%";
+        pieDiv.style.width = isMobile ? "100%" : "55%";
 
         var chart2 = new google.visualization.PieChart(pieDiv);
 
-        let legend = document.createElement("table");
+        let legend = setStyles(document.createElement("table"), {
+          padding : "10px",
+          marginTop : "auto",
+          marginBottom : "auto"
+        });
         legend.id = "legend";
-        legend.style.padding = "10px";
-        legend.style.marginTop = "auto";
-        legend.style.marginBottom = "auto";
 
         for (let i = 0; i < arr.length; i++) {
           let amount =
@@ -374,19 +372,14 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
           let legendTr = document.createElement("tr");
           let colorTd = document.createElement("td");
-          // colorTd.style.backgroundColor = colors[i];
-          // colorTd.style.width = "50px";
-
-          const colorDiv = document.createElement("div");
-          colorDiv.style.background = colors[i];
 
           const pixels = 15;
-
-          colorDiv.style.width = pixels + "px";
-          colorDiv.style.height = pixels + "px";
-          // colorDiv.style.padding = "5px";
-          colorDiv.style.borderRadius = "999px";
-
+          const colorDiv = setStyles(document.createElement("div"), {
+            background : colors[i],
+            width : pixels + "px",
+            height : pixels + "px",
+            borderRadius : "999px"
+          });
           colorTd.appendChild(colorDiv);
 
           legendTr.appendChild(colorTd);
@@ -395,41 +388,33 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           percentTd.id = "percentTd";
           let percent = (amount / getTotalByColumn(selectedColumn)) * 100;
           percentTd.innerHTML = UTILS.formatNumber(percent) + "%";
-          percentTd.style.textAlign = "right";
-          percentTd.style.width = "4em";
+          setStyles(percentTd, {textAlign : "right", width : "3em"});
           legendTr.appendChild(percentTd);
 
-          let descTd = document.createElement("td");
-          descTd.style.maxWidth = window.innerWidth > 360 ? "10em" : "7em";
-
-          // descTd.style.fontSize = ".8em";
-          descTd.style.whiteSpace = "nowrap";
-          descTd.style.textOverflow = "ellipsis";
-          descTd.style.overflow = "hidden";
+          let descTd = setStyles(document.createElement("td"), {
+            maxWidth : !isMobile ? "10em" : "7em",
+            whiteSpace : "nowrap",
+            textOverflow : "ellipsis",
+            overflow : "hidden",
+            padding : "5px",
+            cursor : "pointer"
+          });
+          
           let description = arr[i].account.description;
           descTd.innerText = description;
-          descTd.style.padding = "5px";
-          descTd.style.cursor = "pointer";
+          descTd.title = description;
           // descTd.dataset["complete"] = arr[i].account.description;
           descTd.addEventListener("click", () => {
             if (descTd.style.whiteSpace == "nowrap") {
-              descTd.style.whiteSpace = "";
-              descTd.style.textOverflow = "";
-              descTd.style.overflow = "";
-              colorTd.style.display = "flex";
-              colorTd.style.alignItems = "flex-start";
+              setStyles(descTd, {whiteSpace : "", textOverflow : "", overflow : ""});
+              setStyles(colorTd, {display : "flex", alignItems : "flex-start"});
               colorDiv.style.marginTop = "6.5px";
-              percentTd.style.verticalAlign = "text-top";
-              percentTd.style.marginTop = "5.5px";
+              setStyles(percentTd, {verticalAlign : "text-top", marginTop : "5.5px"});
             } else {
-              descTd.style.whiteSpace = "nowrap";
-              descTd.style.textOverflow = "ellipsis";
-              descTd.style.overflow = "hidden";
-              colorTd.style.display = "";
-              colorTd.style.alignItems = "";
+              setStyles(descTd, {whiteSpace : "nowrap", textOverflow : "ellipsis", overflow : "hidden"});
+              setStyles(colorTd, {display : "", alignItems : ""});
               colorDiv.style.marginTop = "";
-              percentTd.style.verticalAlign = "";
-              percentTd.style.marginTop = "";
+              setStyles(percentTd, {verticalAlign : "", marginTop : ""});
             }
           });
 
@@ -437,25 +422,22 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
           let amountTd = document.createElement("td");
           amountTd.style.textAlign = "right";
-          // amountTd.style.width = "17em";
           amountTd.innerText =
             window.innerWidth > 350
               ? UTILS.formatNumber(amount) + " €"
               : UTILS.formatNumber(amount) + "€";
           legendTr.appendChild(amountTd);
           legend.appendChild(legendTr);
-          legend.style.width = isMobile ? "95%" : "38%";
+          legend.style.width = isMobile ? "95%" : "43%";
         }
 
         let head = document.createElement("h1");
         head.innerHTML = title;
         head.style.fontSize = "1em";
-
         div.innerHTML = "";
         div.appendChild(pieDiv);
         div.appendChild(legend);
-        div.style.marginTop = "3em";
-        div.style.marginBottom = "3em";
+        setStyles(div, {margin : "3em auto"});
         chart2.draw(data2, opt);
 
         if (isMobile) {
@@ -492,17 +474,18 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
             ).style.display = "none";
           });
 
-        selAccounts = selectedElement.statements;
+        selAccounts = selectedElement.statements
+        .filter(state => (
+            state.account && state.account.code && (state.account.code.substring(0, 1) == "6" || state.account.code.substring(0, 1) == "7")
+          ));
 
         arrIncome = selAccounts
           .filter(
             (a) =>
               a.account.code != null &&
               a.account.code.length > 2 &&
-              ((a.account.code.substring(0, 1) == "7" &&
-                a.credit - a.debit > 0) ||
-                (a.account.code.substring(0, 1) == "6" &&
-                  a.debit - a.credit < 0))
+              ((a.account.code.substring(0, 1) == "7" /*&&  a.credit - a.debit > 0*/)/* ||
+                (a.account.code.substring(0, 1) == "6" && a.debit - a.credit < 0)*/)
           )
           .sort((a, b) => b.credit - b.debit - (a.credit - a.debit));
 
@@ -517,8 +500,8 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
               a.account.code != null &&
               a.account.code.length > 2 &&
               Number.parseInt(a.account.code.substring(0, 2)) >= 60 &&
-              Number.parseInt(a.account.code.substring(0, 2)) <= 61 &&
-              a.debit - a.credit > 0
+              Number.parseInt(a.account.code.substring(0, 2)) <= 61 /*&&
+              a.debit - a.credit > 0*/
           )
           .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
 
@@ -535,10 +518,10 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
               a.account.code != null &&
               a.account.code.length > 2 &&
               ((Number.parseInt(a.account.code.substring(0, 2)) >= 62 &&
-                Number.parseInt(a.account.code.substring(0, 2)) <= 67 &&
-                a.debit - a.credit > 0) ||
+                Number.parseInt(a.account.code.substring(0, 2)) <= 67 /*&&
+                a.debit - a.credit > 0*/)/* ||
                 (a.account.code.substring(0, 1) == "7" &&
-                  a.credit - a.debit < 0))
+                  a.credit - a.debit < 0)*/)
           )
           .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
 
@@ -556,8 +539,8 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
             (a) =>
               a.account.code != null &&
               a.account.code.length > 2 &&
-              a.account.code.substring(0, 2) == "68" &&
-              a.debit - a.credit > 0
+              a.account.code.substring(0, 2) == "68"/* &&
+              a.debit - a.credit > 0*/
           )
           .sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
 
@@ -567,17 +550,35 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
                 .map((a) => a.debit - a.credit)
                 .reduce((a, b) => a + b)
             : 0;
+        
+            
+        arrOtherOutgoings = selAccounts
+            .filter(
+              (a) =>
+              a.account.code != null &&
+              a.account.code.length > 2 &&
+              a.account.code.substring(0, 2) == "69"
+            ).sort((a, b) => b.debit - b.credit - (a.debit - a.credit));
 
-        liquid = raw - amortizations;
+        otherOutgoings =
+          arrOtherOutgoings.length != 0
+            ? arrOtherOutgoings
+                .map((a) => a.debit - a.credit)
+                .reduce((a, b) => a + b)
+            : 0;
+            
+
+        liquid = raw - otherOutgoings - amortizations;
         google.charts.load("current", { packages: ["corechart"] });
         google.charts.setOnLoadCallback(drawBarChart);
       } else {
-        let divMessage = document.createElement("div");
-        divMessage.style.display = "flex";
-        divMessage.style.justifyContent = "center";
-        divMessage.style.alignItems = "center";
-        divMessage.style.paddingTop = "1.5em";
-        divMessage.style.maxWidth = "90%";
+        let divMessage = setStyles(document.createElement("div"), {
+          display : "flex", 
+          justifyContent : "center",
+          alignItems : "center",
+          paddingTop : "1.5em",
+          maxWidth : "90%"
+        });
 
         let message = isMobile
           ? document.createElement("p")
@@ -587,13 +588,12 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         message.innerHTML = "NO HAY DATOS DISPONIBLES PARA ESTA CONSULTA";
         message.style.margin = "10%";
 
-        let infoSpan = document.createElement("span");
+        let infoSpan = setStyles(document.createElement("span"), {
+          fontSize : isMobile ? "2em" : "3.5em",
+          display : isMobile ? "block" : "",
+          marginRight : "10px"
+        });
         infoSpan.classList.add("material-icons-outlined");
-        infoSpan.style.fontSize = isMobile ? "2em" : "3.5em";
-
-        infoSpan.style.display = isMobile ? "block" : "";
-
-        infoSpan.style.marginRight = "10px";
 
         infoSpan.innerHTML = "info";
 
@@ -639,6 +639,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
       data1.addColumn("number", "Ingresos");
       data1.addColumn("number", "Compras");
       data1.addColumn("number", "Gastos");
+      data1.addColumn("number", "Otros gastos");
       data1.addColumn("number", "Resultado bruto");
       data1.addColumn("number", "Amortizaciones");
       data1.addColumn("number", "Resultado neto");
@@ -647,6 +648,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         [
           "Vtas./Ing.",
           { v: income, f: UTILS.formatNumber(income) + " €" },
+          null,
           null,
           null,
           null,
@@ -667,9 +669,21 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           null,
           null,
           null,
+          null,
+        ],
+        [
+          "Otros gastos",
+          null,
+          null,
+          null,
+          { v: otherOutgoings, f: UTILS.formatNumber(otherOutgoings) + " €" },
+          null,
+          null,
+          null,
         ],
         [
           "Rdo. bruto",
+          null,
           null,
           null,
           null,
@@ -683,6 +697,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           null,
           null,
           null,
+          null,
           {
             v: amortizations,
             f: UTILS.formatNumber(amortizations) + " €",
@@ -691,6 +706,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         ],
         [
           "Rdo. neto",
+          null,
           null,
           null,
           null,
@@ -716,9 +732,7 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         },
       };
 
-      div.style.display = "flex";
-      div.style.flexWrap = "wrap";
-      div.style.justifyContent = "center";
+      setStyles(div, {display : "flex", flexWrap : "wrap", justifyContent : "center"});
 
       let divCol = document.createElement("div");
       divCol.style.width = isMobile ? "100%" : "70%";
@@ -744,12 +758,8 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     function getColLegend(isMobile) {
       //LEGEND
 
-      let legend = document.createElement("table");
-      legend.style.marginTop = "auto";
-      legend.style.marginBottom = "auto";
-
+      let legend = setStyles(document.createElement("table"), {marginTop : "auto", marginBottom : "auto"});
       const colorSize = 15;
-
       const legendColData = [
         {
           color: "#3366cc",
@@ -771,18 +781,24 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         },
         {
           color: "#109618",
+          name: "Otros Gastos",
+          amount: otherOutgoings,
+          selectedColumn: 4,
+        },
+        {
+          color: "#990099",
           name: "Rdo. bruto",
           amount: raw,
           selectedColumn: null,
         },
         {
-          color: "#990099",
+          color: "#0099c6",
           name: "Amortiz.",
           amount: amortizations,
-          selectedColumn: 5,
+          selectedColumn: 6,
         },
         {
-          color: "#0099c6",
+          color: "#dd4477",
           name: "Rdo. neto",
           amount: liquid,
           selectedColumn: null,
@@ -794,28 +810,30 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         let tdCategColor = document.createElement("td");
         tdCategColor.style.width = colorSize * 2.5 + "px";
 
-        let divCategColor = document.createElement("div");
-        divCategColor.style.width = "100%";
-        divCategColor.style.height = colorSize + "px";
-        divCategColor.style.borderRadius = "1px";
-        divCategColor.style.background = categ.color;
+        let divCategColor = setStyles(document.createElement("div"), {
+          width : "100%",
+          height : colorSize + "px",
+          borderRadius : "1px",
+          background : categ.color
+        });
 
         tdCategColor.appendChild(divCategColor);
         trCateg.appendChild(tdCategColor);
 
-        let tdCategDesc = document.createElement("td");
+        let tdCategDesc = setStyles(document.createElement("td"), {
+          maxWidth : "7em",
+          textIndent : isMobile ? ".3em" : "",
+          overflow : "hidden",
+          whiteSpace : "nowrap"
+        });
         tdCategDesc.innerHTML = categ.name;
-        tdCategDesc.style.maxWidth = "7em";
-        tdCategDesc.style.textIndent = isMobile ? ".3em" : "";
-        tdCategDesc.style.overflow = "hidden";
-        tdCategDesc.style.whiteSpace = "nowrap";
         // tdCategDesc.style.textOverflow = "ellipsis";
 
         trCateg.appendChild(tdCategDesc);
 
-        let tdCategAmount = document.createElement("td");
-        tdCategAmount.style.textAlign = "right";
-        tdCategAmount.style.width = "9em";
+        let tdCategAmount = setStyles(document.createElement("td"), 
+        {textAlign : "right", width : "9em"});
+
         tdCategAmount.innerHTML = `${UTILS.formatNumber(categ.amount)} €`;
 
         trCateg.appendChild(tdCategAmount);

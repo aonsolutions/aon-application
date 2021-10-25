@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Filter.NoteFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.Note;
@@ -13,5 +15,7 @@ public interface INote {
 	public Note saveNote(AONContext ctx, Note note);
 	
 	public void deleteNote(AONContext ctx, Integer id);
+
+	public HashMap<String, Integer> getNoteCountForDate(AONContext ctx, NoteFilter filter, Date dateEnd);
 
 }

@@ -418,7 +418,7 @@ public class MainContrataContract extends MainEntryPoint {
 			public String getValue(EmployeeContractInfo employeeContractInfo) {
 				if ((byte) 3 == employeeContractInfo.getContractInfo().getSsRegimen())
 					return "RETA";
-				if (employeeContractInfo.getContractInfo().getContractType().equals("000"))
+				if ("000".equals(employeeContractInfo.getContractInfo().getContractType()))
 					return "BECARIO";
 				return employeeContractInfo.getContractInfo().getContractType();
 			}
@@ -497,7 +497,7 @@ public class MainContrataContract extends MainEntryPoint {
 
 		List<EmployeeContractInfo> employeeContractInfoList = dataProvider.getList();
 		employeeContractInfoList.clear();
-
+		
 		this.employeesList = mainContrataContractObject.getEmployeesList();
 
 		for (EmployeeContractInfo employeeContractInfo : this.employeesList)
@@ -506,7 +506,7 @@ public class MainContrataContract extends MainEntryPoint {
 		employeeDataGrid.setPageSize(employeesList.size());
 
 		addStyleToHeader();
-
+		
 		addSortColums(employeeDataGrid, employeeContractInfoList);
 	}
 	
@@ -794,7 +794,7 @@ public class MainContrataContract extends MainEntryPoint {
 
 	public void onModuleLoad(MainContrataContractObject mainContrataContractObject) {
 		this.mainContrataContractObject = mainContrataContractObject;
-
+		
 		this.mainContrataContractObject.getEmployeesInfo(false, 
 				s -> {
 					initWorkplaceLB();

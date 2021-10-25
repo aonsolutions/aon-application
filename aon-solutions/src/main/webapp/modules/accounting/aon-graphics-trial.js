@@ -7,7 +7,11 @@ import {
   setValueName,
 } from "../../services/utils.js";
 import { colChart } from "./charts.js";
-import { getAccounting, getPeriods, PERIOD_FILTER } from "../../services/accountingService.js";
+import {
+  getAccounting,
+  getPeriods,
+  PERIOD_FILTER,
+} from "../../services/accountingService.js";
 import "../../components/aon-filter.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { getPeriodAccounting } from "../../services/service.js";
@@ -25,7 +29,7 @@ export class AonGraphicsTrial extends AonElement {
     domainName: localStorage.getItem("aon_domain_name"),
     user: "",
     level: 5,
-    byMonth : true
+    byMonth: true,
   };
 
   set id(id) {
@@ -49,17 +53,33 @@ export class AonGraphicsTrial extends AonElement {
   }
 
   initialize() {
-    this.TOOLBAR = this.id + 'Toolbar';
+    this.TOOLBAR = this.id + "Toolbar";
   }
 
   async build() {
+
+    if (!this.params.domain || !this.params.domainName) {
+      try {
+        let company = JSON.parse(localStorage.getItem("company"));
+        this.params.domain = company.id;
+        this.params.domainName = company.domain;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     this.innerHTML = `
     <aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="Pérdidas y Ganancias"> </aon-toolbar>
     <aon-filter id="${this.id}Filter" title="Filtros"></aon-filter>`;
-    this.PERIODS = await getPeriods(this.params).catch((error) => null);
+    this.PERIODS = await getPeriods(this.params).catch((error) => {console.log(error);return []});
 
-    let lastDateTime = Math.max.apply(null, this.PERIODS.map(p => new Date(p.initiationDate).getTime()));
-    let lastPeriod = this.PERIODS.filter(p => new Date(p.initiationDate).getTime() == lastDateTime)[0];
+    let lastDateTime = Math.max.apply(
+      null,
+      this.PERIODS.map((p) => new Date(p.initiationDate).getTime())
+    );
+    let lastPeriod = this.PERIODS.filter(
+      (p) => new Date(p.initiationDate).getTime() == lastDateTime
+    )[0];
     this.selectedPeriod = lastPeriod;
 
     this.buildToolbar();
@@ -70,10 +90,9 @@ export class AonGraphicsTrial extends AonElement {
     if (this.selectedPeriod)
       this.getElement("year").value = this.selectedPeriod.id;
 
-    this.getElement("show").value = this.filter != null ? this.filter.show : "yearly";
+    this.getElement("show").value =
+      this.filter != null ? this.filter.show : "yearly";
     this.getElement("detail").value = this.params.level;
-    
-
   }
 
   buildToolbar() {
@@ -105,7 +124,7 @@ export class AonGraphicsTrial extends AonElement {
     let yearEl = this.getElement("year");
     let years = [];
 
-    for (let i=0; i<this.PERIODS.length; i++) {
+    for (let i = 0; i < this.PERIODS.length; i++) {
       years.push({
         name: this.PERIODS[i].name,
         value: this.PERIODS[i].id,
@@ -121,23 +140,22 @@ export class AonGraphicsTrial extends AonElement {
     let detailsJson = [
       {
         name: "Resumido",
-        value: 3
+        value: 3,
       },
       {
         name: "Estándar",
-        value: 5
+        value: 5,
       },
       {
         name: "Detallado",
-        value: 9
-      }
+        value: 9,
+      },
     ];
     detailEl.options = JSON.stringify(detailsJson);
   }
 
   async draw() {
     this.getApplication().startLoader();
-
 
     let id = "chart_div";
 
@@ -152,50 +170,72 @@ export class AonGraphicsTrial extends AonElement {
       div.style.flexWrap = "wrap";
       this.appendChild(div);
       div.style.margin = "auto";
-      
-      colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
 
-      document.getElementById("aonAccountingSidenavVista Trimestral").addEventListener("click", () => {
-        if (!this.filter) this.filter = new Object();
-        div.innerHTML = "";
-        this.filter.show = "quarterly";
-        this.getElement("show").value = this.filter.show;
-        colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
-      });
-      document.getElementById("aonAccountingSidenavVista Anual").addEventListener("click", () => {
-        if (!this.filter) this.filter = new Object();
-        div.innerHTML = "";
-        this.filter.show = "yearly";
-        this.getElement("show").value = this.filter.show;
-        colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
-      });
-      document.getElementById("aonAccountingSidenavVista Mensual").addEventListener("click", () => {
-        if (!this.filter) this.filter = new Object();
-        div.innerHTML = "";
-        this.filter.show = "monthly";
-        this.getElement("show").value = this.filter.show;
-        colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
-      });
+      colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
+      const el1 = this.getElement("aonAccountingSidenavVista Trimestral") || this.getElement("aonAccountingMobileSidenavContentVista Trimestral");
+      const el2 = this.getElement("aonAccountingSidenavVista Anual") || this.getElement("aonAccountingMobileSidenavContentVista Anual");
+      const el3 = this.getElement("aonAccountingSidenavVista Mensual") || this.getElement("aonAccountingMobileSidenavContentVista Mensual");
+      
+      if (el1)
+        el1.addEventListener("click", () => {
+          if (!this.filter) this.filter = new Object();
+          div.innerHTML = "";
+          this.filter.show = "quarterly";
+          this.getElement("show").value = this.filter.show;
+          colChart(
+            div,
+            result,
+            this.selectedPeriod,
+            this.isMobile(),
+            this.filter
+          );
+        });
+      if (el2)
+        el2.addEventListener("click", () => {
+          if (!this.filter) this.filter = new Object();
+          div.innerHTML = "";
+          this.filter.show = "yearly";
+          this.getElement("show").value = this.filter.show;
+          colChart(
+            div,
+            result,
+            this.selectedPeriod,
+            this.isMobile(),
+            this.filter
+          );
+        });
+      if (el3)
+        el3.addEventListener("click", () => {
+          if (!this.filter) this.filter = new Object();
+          div.innerHTML = "";
+          this.filter.show = "monthly";
+          this.getElement("show").value = this.filter.show;
+          colChart(
+            div,
+            result,
+            this.selectedPeriod,
+            this.isMobile(),
+            this.filter
+          );
+        });
     }
     this.getApplication().stopLoader();
   }
 
   getData = async () => {
     if (this.filter) {
-      this.selectedPeriod = this.PERIODS.filter(p => p.id == this.filter.year)[0];
+      this.selectedPeriod = this.PERIODS.filter(
+        (p) => p.id == this.filter.year
+      )[0];
       this.params.level = this.filter.detail;
     }
 
     if (!isEmptyObject(this.PERIODS)) {
-
-
       if (this.PERIODS && this.PERIODS.length > 0) {
         this.params.period = this.selectedPeriod.id;
-        
+
         this.params.fromDate = this.selectedPeriod.initiationDate;
         this.params.toDate = this.selectedPeriod.deadline;
-          
-
       }
       this.ACCOUNTS = await getAccounting(this.params).catch((error) => null);
       console.log(this.PERIODS);
