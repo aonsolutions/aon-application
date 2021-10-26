@@ -539,7 +539,7 @@ public class CheckItModule extends MainEntryPoint {
 					closeImport.add(importBtn);
 				
 				FlowPanel movementsFlow = new FlowPanel();
-				movementsFlow.setWidth("85%");
+				movementsFlow.setWidth("90%");
 				movementsFlow.setStyleName(AON.CSS.aonBlockCenter());
 				if (checkItBankAccount.getPending() != null && !checkItBankAccount.getPending().isEmpty()) {
 					int i = 1;
@@ -558,6 +558,7 @@ public class CheckItModule extends MainEntryPoint {
 						
 				}
 				ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
+				movementsPanel.getElement().getStyle().setProperty("minWidth", "700px");
 				movementsPanel.addStyleName(AON.CSS.aonMarginTop());
 				movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
 				panel.add(movementsPanel);
@@ -1271,8 +1272,8 @@ public class CheckItModule extends MainEntryPoint {
 		descriptionLabel.setWidth("100%");
 		
 		tag.getColumnFormatter().setWidth(0, "18%");
-		tag.getColumnFormatter().setWidth(1, "64%");
-		tag.getColumnFormatter().setWidth(2, "18%");
+		tag.getColumnFormatter().setWidth(1, "60%");
+		tag.getColumnFormatter().setWidth(2, "22%");
 		
 		tag.setWidget(0, 0, dateLabel);
 		tag.setWidget(0, 1, descriptionLabel);
