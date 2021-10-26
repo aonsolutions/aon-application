@@ -80,20 +80,27 @@ public class NotificationRequest extends Notification {
 		try {
 			setId(0);
 			saveNotification();
+			
 		    HttpPost httpPost = new HttpPost(urlFB);
+			//---------HEADER
 			httpPost.addHeader("Authorization", "key="+keyFB);
 			httpPost.addHeader("Accept", "*/*");
-			
-		    JSONObject payload = new JSONObject();
-		    JSONObject notification = new JSONObject();
-		    notification.put("title", getTitle());
+			httpPost.addHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+		  
+		    //---------BODY
 		    String body = getBody();
 		    if(body!=null) body = body.replaceAll("<[^>]+>|&nbsp;|\n", " ");
-		 
-		    notification.put("body", body);
+		    
+		    //-------NOTIFICATION
+		    JSONObject notification = new JSONObject();
 		    if(getPathImage()!=null) notification.put("image", getPathImage());
-		    payload.put("registration_ids", getAuthDevices());
+		    notification.put("title", getTitle());
+		    notification.put("body", body);
+		    
+		    //--------PAYLOAD
+		    JSONObject payload = new JSONObject();
 		    payload.put("notification", notification);
+		    payload.put("registration_ids", getAuthDevices());
 		    payload.put("data", getData());
 		    
 			StringEntity params = new StringEntity(payload.toString(), ContentType.APPLICATION_JSON);
@@ -101,7 +108,7 @@ public class NotificationRequest extends Notification {
 	
 		    CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
 		    StatusLine response = httpResponse.getStatusLine();
-		    if(response.getStatusCode() ==200) {
+		    if(response.getStatusCode() == 200) {
 			    HttpEntity responseEntity = httpResponse.getEntity();
 			    if(responseEntity!=null) {
 			        String responseString = EntityUtils.toString(responseEntity);
@@ -129,7 +136,9 @@ public class NotificationRequest extends Notification {
 			e.printStackTrace();
 		}
 	  });
-	  return authDevices.stream().map(AuthDevice::getDeviceToken).toArray(String[]::new);
+	  return authDevices.stream()
+			  .filter(at->at.getDeviceToken()!=null && !at.getDeviceToken().isEmpty())
+			  .map(AuthDevice::getDeviceToken).toArray(String[]::new);
 	}
 	
 	private void saveNotification(){
