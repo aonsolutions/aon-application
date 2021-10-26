@@ -47,7 +47,10 @@ export class AonMovementsList extends AonElement {
   }
 
   disconnectedCallback() {
-    if (this.applicationEl) this.applicationEl.removeFloatOption();
+    if (this.applicationEl){
+      this.applicationEl.stopLoader();
+      this.applicationEl.removeFloatOption();
+    } 
   }
 
   build() {

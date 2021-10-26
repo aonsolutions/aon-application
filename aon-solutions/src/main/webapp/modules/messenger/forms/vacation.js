@@ -126,8 +126,8 @@ export const getFormVacationJson = ()=>{
 
 
 const processAccept = async (aonMessengerChat) => {
-    
-    aonMessengerChat.getApplication().startLoading();
+    let application = aonMessengerChat.getApplication();
+    application.startLoading();
     try {
         const task = aonMessengerChat.task;
         const data = getFormVacationJson();
@@ -139,7 +139,7 @@ const processAccept = async (aonMessengerChat) => {
         aonMessengerChat.showError(err)
     }
 
-    aonMessengerChat.getApplication().stopLoading();
+    application.stopLoading();
 }
 
 /**

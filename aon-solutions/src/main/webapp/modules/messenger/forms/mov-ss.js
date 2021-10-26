@@ -271,6 +271,7 @@ const createDataEnterprise = (form, data) => {
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
     if(form){
         const formSerialize = serializeForm(form);
+        console.log(formSerialize);
         let observation = form.querySelector("#observation").innerText;
         return { ...formSerialize, observation };
     }
@@ -287,9 +288,7 @@ const createTitle = (parent, text) => {
     title.innerHTML = text;
     createDiv(parent, title, {
         classes:[CSS.AON_COL_XS_12],
-        styles:{
-            padding: "5px 0"
-        }
+        styles:{ padding: "5px 0" }
     });
 } 
 
@@ -436,7 +435,8 @@ const calculoCoef = ({value}) =>  {
 
 
 const processAccept = async (aonMessengerChat) => {
-    // aonMessengerChat.getApplication().startLoading();
+    let application = aonMessengerChat.getApplication();
+    // application.startLoading();
     try {
         const data = getFormMovJson();
         let newData = {
@@ -444,19 +444,20 @@ const processAccept = async (aonMessengerChat) => {
             regimen: data.regime,
             fecha: data.fra,
             grup_ctz: data.gc,
-            type_cto: data.contract
+            type_cto: data.contract,
+            name: `${data.name} ${data.surname} ${data.lastSurname || ""}`
         }
         if(data.ocu) newData.ocupacion = data.ocu;
         if(data.coef) newData.coefparcial = parseInt(data.coef);
 
-        aonMessengerChat.getApplication().development();
+        application.development();
 
-        //---ADD CONTRACT
+        // ---ADD CONTRACT
         // const contractInfo = await addContract(newData);
         // console.log(contractInfo);
 
         //---SEND MOV TGSS
-        // await sendAlta({...newData, name: `${data.name} ${data.surname} ${data.lastSurname || ""}`});
+        // await sendAlta(newData);
 
         //---CLOSE TASK
         // await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
@@ -465,5 +466,5 @@ const processAccept = async (aonMessengerChat) => {
         aonMessengerChat.showError(err);
     }
 
-    // aonMessengerChat.getApplication().stopLoading();
+    // application.stopLoading();
 }

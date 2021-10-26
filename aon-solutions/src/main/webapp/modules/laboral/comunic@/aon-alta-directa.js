@@ -60,7 +60,9 @@ export class AonAltaDirecta extends AonElement {
                 const toolbarEl = this.getElement(this.TOOLBAR);
                 if(toolbarEl) toolbarEl.title = 'Editar contrato';
                 this.edit(this.data);
-            }        
+            } else {
+                this.enterpriseDataDefault();
+            } 
         });
     }
 
@@ -151,7 +153,7 @@ export class AonAltaDirecta extends AonElement {
 
     eventListener() {
         let workplace = this.getElement('centro_trabajo');
-        workplace.addEventListener(EVENT.CHANGE, (ev) => this.listCuentaCotizacion(ev));
+        workplace.addEventListener(EVENT.CHANGE, (ev) => this.listCtaCti(ev));
 
         let ctaCti = this.getElement('ctaCti');
         ctaCti.addEventListener(EVENT.CHANGE, ({ detail }) =>  this.getElement('regimen').setAttribute('value', detail.cccRegimeCode)  );
@@ -191,16 +193,29 @@ export class AonAltaDirecta extends AonElement {
         this.getElement('apellido2IconLabel').addEventListener(EVENT.CLICK, () => this.getNaf());
 
         this.getElement(`${this.id}IconReset`).addEventListener(EVENT.CLICK, () => this.disabledCardTrabajor(false));
-
-        if(!this.data){
-            workplace.setIndexOf(0);
-            ctaCti.setIndexOf(0);
-            nss.focus();
-        }
     }
 
     getContrato() {
         return serializeForm(this.getElement(`${this.id}Form`));
+    }
+
+    enterpriseDataDefault(){
+        let workplace = this.getElement('centro_trabajo');
+        let ctaCti    = this.getElement('ctaCti')
+        let options = workplace.getOptions();
+        let workplaceOne = 1 === options.length;
+        if(workplaceOne){
+            workplace.setIndexOf(0);
+    
+            let ctaCtiOne  = options[0].cccs &  1 === options[0].cccs.length;
+            if(ctaCtiOne){
+                ctaCti.setIndexOf(0);
+                this.getElement(`${this.id}Nss`).focus()
+            } else 
+                ctaCti.focus();
+        } else {
+            workplace.focus();
+        }
     }
 
     edit(data) {
@@ -315,17 +330,32 @@ export class AonAltaDirecta extends AonElement {
             if(resp && resp.cccs){
                 const groupedGeozone = this.groupBy(resp.cccs, ccc => ccc.geozone);
                 let geozones = [];
-                groupedGeozone.forEach((v,k)=>{
+                groupedGeozone.forEach((cccs, value)=>{
+                    if(cccs && cccs.length)
+                        cccs = cccs.filter( (value,index, self)=>self.findIndex((m) => m.ccc === value.ccc) === index );
+                        
                     geozones.push({
-                        cccs:v,
-                        name:k,
-                        value:k
+                        cccs,
+                        value,
+                        name:value
                     });
                 })
                 let centro_trabajo = this.getElement('centro_trabajo');
                 centro_trabajo.setOptions(geozones);
             }
         } catch (error) { }
+    }
+
+    listCtaCti({ detail }) {
+        if (detail) {
+            try {
+                const { cccs } = detail;
+                let ctaCti = this.getElement('ctaCti');
+                let options = cccs
+                .map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
+                ctaCti.setOptions(options);
+            } catch (error) { }
+        }
     }
 
     groupBy(list, keyGetter) {
@@ -341,19 +371,6 @@ export class AonAltaDirecta extends AonElement {
             }
         }
         return map;
-    }
-
-    listCuentaCotizacion({ detail }) {
-        if (detail) {
-            try {
-                const { cccs } = detail;
-                let ctaCti = this.getElement('ctaCti');
-                let options = cccs
-                .filter( (value,index, self)=>self.findIndex((m) => m.ccc === value.ccc) === index )
-                .map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
-                ctaCti.setOptions(options);
-            } catch (error) { }
-        }
     }
 
     async getContractTye() {

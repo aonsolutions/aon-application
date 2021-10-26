@@ -48,7 +48,7 @@ const createDataForm = (form, aonMessengerChat) => {
     createDiv(form, times, {classes:[CSS.AON_COL_XS_12]})
 
     fillTimeControl(times, data.timeId, taskHolderId);
-    if(task.id)
+    if(data.timeId)
         times.setDisabled(CONSTANT.TRUE);
 
     let date = setAttributes(new AonDate(),{ title: `Nueva ${MSG.DATE}`, id:"date", name:"date"});
@@ -64,12 +64,12 @@ const createDataForm = (form, aonMessengerChat) => {
     });
     createDiv(form, time, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
-    // if(!task.id) times.addEventListener(EVENT.CHANGE,({detail})=>{
-    //     if(detail.date){
-    //         date.value = formatDateOrigin(detail.date);
-    //         time.value = setTime(detail.date);
-    //     }
-    // });
+    if(!task.id) times.addEventListener(EVENT.CHANGE,({detail})=>{
+        if(detail.date){
+            date.value = formatDateOrigin(detail.date);
+            time.value = setTime(detail.date);
+        }
+    });
 
     //OBSERVATION
     const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
@@ -136,8 +136,8 @@ const createDiv = (parent, child, properties)=> {
 }
 
 const processAccept = async (tm,{date, time},aonMessengerChat) => {
-    
-    aonMessengerChat.getApplication().startLoading();
+    let application = aonMessengerChat.getApplication();
+    application.startLoading();
     try {
         if(tm.id){
             let data = {
@@ -148,11 +148,12 @@ const processAccept = async (tm,{date, time},aonMessengerChat) => {
             }
             await saveTimeControlDetail(data);
             await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
+        } else {
+            aonMessengerChat.showError({message:`Seleccione registro a modificar`, type:CONSTANT.ERROR});
         }
     } catch (err) {
         console.log(err);
         aonMessengerChat.showError(err)
     }
-
-    aonMessengerChat.getApplication().stopLoading();
+    application.stopLoading();
 }
