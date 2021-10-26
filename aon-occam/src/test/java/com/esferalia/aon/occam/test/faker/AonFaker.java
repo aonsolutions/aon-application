@@ -417,7 +417,7 @@ public class AonFaker {
 	public static Brand getBrand( AONContext ctx ) {
 		return new Brand()
 			.setDomain(ctx.getDomainId())
-			.setName(AonRandom.string(0, 1, 14));
+			.setName(AonRandom.string(-1, 1, 14));
 	}
 	
 	
