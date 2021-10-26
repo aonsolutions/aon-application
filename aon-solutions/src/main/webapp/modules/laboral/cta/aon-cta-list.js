@@ -10,9 +10,9 @@ import {
 } from "../../../services/service.js";
 import { PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CONSTANT } from "../../../environments/environments.js";
-import { formatDateOrigin } from "../../../services/utils.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
 export class AonCtaList extends AonElement {
@@ -190,7 +190,7 @@ export class AonCtaList extends AonElement {
     this.applicationEl.startLoading();
     try {
       const { ccc, cccRegimeCode: regimen } = data;
-      const fecha = formatDateOrigin( new Date());
+      const fecha = AonDateUtils.formatDateOrigin( new Date());
       await getIdcCcc({ ccc, regimen, fecha }); // open pdf
     } catch (error) {
       this.showToast(error);

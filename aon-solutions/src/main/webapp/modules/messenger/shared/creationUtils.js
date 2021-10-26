@@ -5,10 +5,10 @@ import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { taskHistoricSend } from "../../../services/taskService.js";
-import { setDateTimestampDay } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
 export const createBtnAccept = () => {
@@ -465,7 +465,7 @@ export const createChatMessage = (properties, chat) => {
 
     if(messageSend || me){
       const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
-      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date(properties.notification_date)) : MSG.SEND;
+      iconSendWorkflow.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(properties.notification_date)) : MSG.SEND;
       iconSendWorkflow.id = MESSENGER_IDS.ICON_SEND_WORKFLOW;
       let color = COLORS.AON_BLUE;
 
@@ -503,7 +503,7 @@ export const createChatMessage = (properties, chat) => {
     description.appendTo(message);
 
     const date = createText({
-        text: setDateTimestampDay(new Date(properties.date)),
+        text: AonDateUtils.setDateTimestampDay(new Date(properties.date)),
         color: CSS.variable(COLORS.AON_GRAY),
         fontSize : "11px",//'0.6em',
         classes: [CSS.FIRST_LETTER_UPPER]
@@ -662,7 +662,7 @@ const sendHistoric = async (workflowId) => {
         message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
         const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
         if(iconSendWorkflow){
-          iconSendWorkflow.title = "Enviado "+setDateTimestampDay(workflow.notification_date)
+          iconSendWorkflow.title = "Enviado "+AonDateUtils.setDateTimestampDay(workflow.notification_date)
           iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
           iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
         }

@@ -2,9 +2,9 @@ import { AonNumber } from "../../components/aon-number.js";
 import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
-import { formatDateOrigin } from "../../services/utils.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
 import { createCard, createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
+import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 export const createBajaDialogContent = () =>{
     const div = document.createElement(TAG.DIV);
@@ -170,7 +170,7 @@ export const createContractData = (parent, isManager) => {
     }, parent);
 
     if(isManager){
-        divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_12]})
+        divC = createDiv({classes:[CSS.AON_COL_XS_12]})
         divC.appendTo(parent);
         createSelect({
             attributes:{
@@ -182,7 +182,7 @@ export const createContractData = (parent, isManager) => {
         }, divC.element);
     } 
 
-    dateContract.value = formatDateOrigin(new Date());
+    dateContract.value = AonDateUtils.formatDateOrigin(new Date());
 
 }
 

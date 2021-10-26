@@ -1,7 +1,8 @@
 import { MSG, TAG } from "../../../environments/environments.js";
-import { lastThreeDayStr, setTime, timePaser } from "../../../services/utils.js";
+
 import { AonSelect } from "../../../components/aon-select.js";
 import { APRIL, AUGUST, DECEMBER, FEBRUARY, JANUARY, JULY, JUNE, MARCH, MAY, NOVEMBER, OCTOBER, SEPTEMBER } from "../../../environments/msg.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 export const StringTwoLetters = (str) => {
   let newStr = "";
@@ -24,13 +25,13 @@ export const StringTwoLetters = (str) => {
 export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
 
 export const dateCustomDayHour = (d) => {
-  let day = lastThreeDayStr(d);
-  if(day) day = firstLetters(day)+", "+ setTime(d);
+  let day = AonDateUtils.lastThreeDayStr(d);
+  if(day) day = firstLetters(day)+", "+ AonDateUtils.setTime(d);
   return day;
 }
 
 export const timeHour = (time) => {
-  let arr = timePaser(time).split(":");
+  let arr = AonDateUtils.timeParser(time).split(":");
   return `${arr[0]}:${arr[1]}`;
 }
 

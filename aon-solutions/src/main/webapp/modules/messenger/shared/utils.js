@@ -2,7 +2,6 @@ import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG } from "../.
 import { openFileUrl } from "../../../services/fileService.js";
 import { domainName } from "../../../services/request.js";
 import {  setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
-import {  setTime, setFullDate } from "../../../services/utils.js";
 import { createFormVacation } from "../forms/vacation.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
@@ -10,6 +9,7 @@ import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelect
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { createFormMov } from "../forms/mov-ss.js";
 import { createFormTimeControl } from "../forms/time-control.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
 let isDefault = false;
@@ -127,7 +127,7 @@ const blockquote = ()=>{
  * @returns {Object} actionJson message new object
  */
 export const chooseIconMessage = ({type, date, name, comment}) => {
-    const dateParse = setFullDate(date) + " " + setTime(date);
+    const dateParse = AonDateUtils.setFullDate(date) + " " + AonDateUtils.setTime(date);
     
     let actionJson = {
         icon : MATERIAL_ICONS.INFO,

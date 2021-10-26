@@ -416,6 +416,12 @@ export class AonApplication extends AonElement {
     return null;
   }
 
+  removeSidenavById(id){
+    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    let div = this.getElement(sidenav.id + id);
+    if(div) div.remove();
+  }
+
   buildSidenavSubOptions(data, options) {
     let ul = this.createElement(TAG.UL);
     ul.className = "aonClip";

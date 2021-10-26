@@ -1,5 +1,5 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { formatNumber, isEmptyObject, formatDate, sortBy, waitEl, geMonthYear, setValueName } from "../../../services/utils.js";
+import { formatNumber, isEmptyObject, sortBy, waitEl, setValueName } from "../../../services/utils.js";
 import { firstLetters } from "../../signin/time-control/utils.js";
 import { getEmployeeSalaries, getEnterpriseSalaries, getPeriodLaboral, getWorkplaceCCCs, getAllEmployeesWorkplace } from "../../../services/service.js";
 import {  PRESENCE_FILTER } from "../../signin/signinEnums.js";
@@ -7,6 +7,7 @@ import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
 export class AonPayrollList extends AonElement {
@@ -149,8 +150,8 @@ export class AonPayrollList extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          res.startDateP =  formatDate(res.startDate);
-          res.endDateP   = formatDate(res.endDate);
+          res.startDateP =  AonDateUtils.formatDate(res.startDate);
+          res.endDateP   = AonDateUtils.formatDate(res.endDate);
           aonTable.addRow(res, (el) => this.aonEvent(el, res));
         });
       } catch (e) {
@@ -170,7 +171,7 @@ export class AonPayrollList extends AonElement {
 
         resp.map((res, idx) => {
           let options = {};
-          let dateParse = firstLetters(geMonthYear(res.endDate));
+          let dateParse = firstLetters(AonDateUtils.getMonthYear(res.endDate));
           if(isEmployee){
             options.paddingTopTitle = "5px";
             options.iconHtmlCustom = `${res.lettersHtml} <span style="padding-top: 5px;float: right;color: rgba(0,0,0,.54);">${res.totalLiquid}</span>`;

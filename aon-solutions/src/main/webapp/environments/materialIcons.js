@@ -186,6 +186,7 @@ export const SETTING = 'setting';
 export const STORE_MALL_DIRECTORY = 'store_mall_directory';
 export const SWAP_CALLS = 'swap_calls';
 export const SUPPORT_AGENT = "support_agent";
+export const STICKY_NOTE = 'sticky_note_2';
 
 // ----- T
 

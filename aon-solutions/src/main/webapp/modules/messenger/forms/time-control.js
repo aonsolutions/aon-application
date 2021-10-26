@@ -3,9 +3,10 @@ import { AonInput } from "../../../components/aon-input.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { TAG, MSG, CSS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { getStatus, getTimeControlDetail, saveTimeControlDetail } from "../../../services/timeControlService.js";
-import {  formatDateOrigin, serializeForm, setDateTimestampDay, sortBy } from "../../../services/utils.js";
+import { serializeForm, sortBy } from "../../../services/utils.js";
 import { newComponent, setAttributes } from "../../../services/utilsComponents.js";
 import { firstLetters } from "../../signin/time-control/utils.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
 
@@ -89,12 +90,12 @@ const createDataForm = (form, aonMessengerChat) => {
 //-----------FILL
 const fillTimeControl = (aonSelect, timeId, taskHolderId) => {
     let filter = { 
-      startDate: formatDateOrigin( new Date().addDay(-7)),
-      endDate:formatDateOrigin( new Date()),
+      startDate: AonDateUtils.formatDateOrigin( new Date().addDay(-7)),
+      endDate:AonDateUtils.formatDateOrigin( new Date()),
       taskHolderId
     }
     getTimeControlDetail(filter).then(res=>{
-        const options = sortBy(res, "date", "desc").map(r => ({...r, name: `${firstLetters(setDateTimestampDay(r.date))} - ${getStatus(r.status.toLowerCase()).name}` , value:r.id}));
+        const options = sortBy(res, "date", "desc").map(r => ({...r, name: `${firstLetters(AonDateUtils.setDateTimestampDay(r.date))} - ${getStatus(r.status.toLowerCase()).name}` , value:r.id}));
         aonSelect.setOptions( options );
         if(timeId) aonSelect.value = timeId;
     });
@@ -143,7 +144,7 @@ const processAccept = async (tm,{date, time},aonMessengerChat) => {
                 ...tm, 
                 task_holder:tm.task_holder.id,
                 coordinates: tm.coordinates.latitude + "," + tm.coordinates.longitude,
-                date: new Date( formatDateOrigin(date) + " " + time ).getTime()
+                date: new Date( AonDateUtils.formatDateOrigin(date) + " " + time ).getTime()
             }
             await saveTimeControlDetail(data);
             await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);

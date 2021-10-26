@@ -1,10 +1,11 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getContracts } from "../../../services/service.js";
-import { formatDate, formatDateOrigin, isEmptyObject, setDate } from "../../../services/utils.js";
+import { isEmptyObject } from "../../../services/utils.js";
 import { CONTRACT_OPTIONS, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 export class AonContractList extends AonElement {
   TABLE_ID;
@@ -103,7 +104,7 @@ export class AonContractList extends AonElement {
           let options = {
             icon: "assignment",
             title: ` ${res.surName} ${res.name}`,
-            subtitle: `(${res.document}) ${setDate(res.dateParse)}`,
+            subtitle: `(${res.document}) ${AonDateUtils.setDate(res.dateParse)}`,
           };
           if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx);
@@ -154,8 +155,8 @@ export class AonContractList extends AonElement {
               res.regime = res.completeCCC.toString().substr(0,4);
               res.ctaCti = res.completeCCC.toString().substr(4);
             } 
-            res.startDate = formatDateOrigin(res.startDate);
-            res.dateParse = formatDate(res.startDate);
+            res.startDate = AonDateUtils.formatDateOrigin(res.startDate);
+            res.dateParse = AonDateUtils.formatDate(res.startDate);
             return res;
           }
         );

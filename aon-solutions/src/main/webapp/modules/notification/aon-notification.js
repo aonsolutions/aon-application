@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonCard } from "../../components/aon-card.js";
-import { scrollInfinite, serializeForm, setFullDate, setTime } from "../../services/utils.js";
+import { scrollInfinite, serializeForm } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { AonTabs } from "../../components/aon-tabs.js";
@@ -16,6 +16,7 @@ import { TYPE_USER, NOTIFICATION_TABS, badgeUpdate } from "./NotificationEnums.j
 import { AonToast } from "../../components/aon-toast.js";
 import { AonMessenger } from "../messenger/aon-messenger.js";
 import { App } from "../../models/enums.js";
+import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 export class AonNotification extends AonElement {
   AON_NOTIFICATION;
@@ -164,7 +165,7 @@ export class AonNotification extends AonElement {
           aonCard.addEventListener(EVENT.CLICK, () =>  this.goNotification(data));
           const divFooter = createDivFooter();
           aonCard.setContent(divFooter.element);
-          const dateText = firstLetters(setFullDate(data.date)) + " " + setTime(data.date);
+          const dateText = firstLetters(AonDateUtils.setFullDate(data.date)) + " " + AonDateUtils.setTime(data.date);
           createDivFooter1(dateText).appendTo(divFooter)
         });
       }

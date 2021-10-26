@@ -93,6 +93,23 @@
   border-top: 1px solid #ddd;
 }
 
+/* remove color active */
+.aonMobileMenu button{
+  -webkit-tap-highlight-color: transparent;
+}
+
+.aonMobileMenu > span > aon-icon-button > button:active, .aonMobileMenu aon-icon-button > button:active  {
+  transform: translateY(1px);
+}
+
+.aonMobileMenu aon-icon-button > button {
+  border-radius: 11px !important;
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
+}
+
+.aonMobileMenu > span > aon-icon-button > button:focus:not(#aonMobileMenuAddButtonIconButton) {
+  color: var(--aonBlue) !important;
+} 
 
 .aonMobileDesktopCompany {
   display: flex;

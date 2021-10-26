@@ -7,12 +7,12 @@ import * as ACTION from '../../actions.js';
 import { extensionsType } from '../../../services/extensionsEnums.js';
 import { DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import { postBidoq } from '../../../services/bidoqService.js';
-import { setDateTimestamp } from '../../../services/utils.js';
 import { setAttributes } from '../../../services/utilsComponents.js';
 import { AonViewer } from '../../../components/aon-viewer.js';
 import { AonToolbar } from '../../../components/aon-toolbar.js';
 import { AonCard } from '../../../components/aon-card.js';
 import { AonInput } from '../../../components/aon-input.js';
+import { AonDateUtils } from '../../utils/AonDateUtils.js';
 
 
 export class AonDocumentAyudat extends AonElement {
@@ -308,7 +308,7 @@ export class AonDocumentAyudat extends AonElement {
   }
 
   convertTimeStamp(timestamp){
-    return setDateTimestamp(new Date(timestamp * 1000));
+    return AonDateUtils.setDateTimestamp(new Date(timestamp * 1000));
   }
 
 }

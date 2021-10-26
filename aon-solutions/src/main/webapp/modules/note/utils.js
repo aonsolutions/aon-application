@@ -3,8 +3,9 @@ import { AonTextArea } from "../../components/aon-textarea.js";
 import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../environments/environments.js";
 import { MONTHS } from "../../models/enums.js";
 import { deleteNote, saveNote } from "../../services/noteService.js";
-import { addZero, lastThreeDayStr } from "../../services/utils.js";
+import { addZero } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
+import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 /**
  * 
@@ -130,10 +131,9 @@ const appendDate = (note, textAreaId)=>{
         let divMain = document.getElementById(idDiv);
         if(divMain) divMain.remove();
 
-        divMain = document.createElement(TAG.DIV);
+        divMain = setStyles(document.createElement(TAG.DIV), { display:"flex", justifyContent:"end"});
         divMain.id = idDiv;
 
-        setStyles(divMain, { display:"flex", justifyContent:"end"});
         divMain.setAttribute("tabindex",0);
         parent.appendChild(divMain);
     
@@ -212,7 +212,7 @@ const reminder = (ev, note, textAreaId) => {
 }
 
 const dateFormat = (d) => {
-    let day = lastThreeDayStr(d);
+    let day = AonDateUtils.lastThreeDayStr(d);
     const date = new Date(d);
     return day ? day : `${addZero(date.getDate(),2)} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }

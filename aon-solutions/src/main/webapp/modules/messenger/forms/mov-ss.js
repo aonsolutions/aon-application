@@ -4,7 +4,7 @@ import { AonSelect } from "../../../components/aon-select.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonNumber } from "../../../components/aon-number.js";
 import { TAG, EVENT, MSG, CONSTANT, CSS, COLORS } from "../../../environments/environments.js";
-import { getCccForActivity } from "../../../services/contractService.js";
+import { addContract, getCccForActivity } from "../../../services/contractService.js";
 import {  serializeForm, sortBy } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
@@ -35,6 +35,11 @@ import { addSpanDecimal } from "../../laboral/createComponent.js";
     let alternative = setAttributes(new AonInput(),{ id:"alternative", name:"alternative", visible:CONSTANT.FALSE });
     alternative.value = data.alternative || (!task.id && task.auth && task.auth.email ? task.auth.email : "");
     form.appendChild(alternative);
+
+    //DOMAIN SENDER
+    let domain = setAttributes(new AonInput(),{ id:"domain", name:"domain", visible:CONSTANT.FALSE });
+    domain.value = data.domain || (!task.id && task.domain && task.domain.id ? task.domain.id : "");
+    form.appendChild(domain);
 
     //-----------DATA ENTERPRISE
     createDataEnterprise(form, data);
@@ -431,7 +436,7 @@ const calculoCoef = ({value}) =>  {
 
 
 const processAccept = async (aonMessengerChat) => {
-    aonMessengerChat.getApplication().startLoading();
+    // aonMessengerChat.getApplication().startLoading();
     try {
         const data = getFormMovJson();
         let newData = {
@@ -439,17 +444,26 @@ const processAccept = async (aonMessengerChat) => {
             regimen: data.regime,
             fecha: data.fra,
             grup_ctz: data.gc,
-            type_cto: data.contract,
-            name: `${data.name} ${data.surname} ${data.lastSurname || ""}`
+            type_cto: data.contract
         }
         if(data.ocu) newData.ocupacion = data.ocu;
         if(data.coef) newData.coefparcial = parseInt(data.coef);
-        await sendAlta(newData);
-        await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
+
+        aonMessengerChat.getApplication().development();
+
+        //---ADD CONTRACT
+        // const contractInfo = await addContract(newData);
+        // console.log(contractInfo);
+
+        //---SEND MOV TGSS
+        // await sendAlta({...newData, name: `${data.name} ${data.surname} ${data.lastSurname || ""}`});
+
+        //---CLOSE TASK
+        // await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
     } catch (err) {
         console.log(err);
         aonMessengerChat.showError(err);
     }
 
-    aonMessengerChat.getApplication().stopLoading();
+    // aonMessengerChat.getApplication().stopLoading();
 }

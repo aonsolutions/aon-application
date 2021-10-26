@@ -1,5 +1,5 @@
-import { formatDate } from "../../services/utils.js";
-import { setStyles, setAttributes } from "../../services/utilsComponents.js";
+import { setStyles } from "../../services/utilsComponents.js";
+import { AonDateUtils } from "../utils/AonDateUtils.js";
 import * as UTILS from "./accounting-utils.js";
 
 let selectedElement,
@@ -115,8 +115,8 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         let quarter = {
           interval: {
-            fromDate: formatDate(dteFrom),
-            toDate: formatDate(dteTo),
+            fromDate: AonDateUtils.formatDate(dteFrom),
+            toDate: AonDateUtils.formatDate(dteTo),
             name: `${i}T`,
           },
           statements: stmnts,

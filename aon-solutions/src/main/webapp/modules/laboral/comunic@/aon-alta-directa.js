@@ -1,11 +1,12 @@
 import { AonElement } from '../../../components/AonElement.js';
-import { setValueName, serializeForm, disabledForm, formatDateOrigin, sortBy } from '../../../services/utils.js';
-import { getConvenios, getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, updateContrato, getCccForActivity, getCodBaja } from '../../../services/service.js'
+import { setValueName, serializeForm, disabledForm, sortBy } from '../../../services/utils.js';
+import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, updateContrato, getCccForActivity, getCodBaja } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData } from '../createComponent.js';
 import { createToolbar } from '../../notification/createComponent.js';
+import { AonDateUtils } from '../../utils/AonDateUtils.js';
 
 export class AonAltaDirecta extends AonElement {
     _contrato;
@@ -149,16 +150,14 @@ export class AonAltaDirecta extends AonElement {
     }
 
     eventListener() {
+        let workplace = this.getElement('centro_trabajo');
+        workplace.addEventListener(EVENT.CHANGE, (ev) => this.listCuentaCotizacion(ev));
 
-        this.getElement('centro_trabajo').addEventListener(EVENT.CHANGE, (ev) => this.listCuentaCotizacion(ev));
+        let ctaCti = this.getElement('ctaCti');
+        ctaCti.addEventListener(EVENT.CHANGE, ({ detail }) =>  this.getElement('regimen').setAttribute('value', detail.cccRegimeCode)  );
 
-        this.getElement('ctaCti').addEventListener(EVENT.CHANGE, ({ detail }) => 
-            this.getElement('regimen').setAttribute('value', detail.cccRegimeCode)
-        );
-
-        this.getElement(`${this.id}Nss`).addEventListener(EVENT.CHANGE, ({ target }) => {
-            this.comprobarNss(target.value);
-        });
+        let nss = this.getElement(`${this.id}Nss`);
+        nss.addEventListener(EVENT.CHANGE, ({ target }) =>  this.comprobarNss(target.value));
 
         let typeCtoSelect = this.getElement('type_cto');
         if(typeCtoSelect){
@@ -192,6 +191,12 @@ export class AonAltaDirecta extends AonElement {
         this.getElement('apellido2IconLabel').addEventListener(EVENT.CLICK, () => this.getNaf());
 
         this.getElement(`${this.id}IconReset`).addEventListener(EVENT.CLICK, () => this.disabledCardTrabajor(false));
+
+        if(!this.data){
+            workplace.setIndexOf(0);
+            ctaCti.setIndexOf(0);
+            nss.focus();
+        }
     }
 
     getContrato() {
@@ -605,7 +610,7 @@ export class AonAltaDirecta extends AonElement {
         const button = this.getElement("btnSubmitBaja");
 
         const fechaEl = this.getElement("fechaBaja");
-        fechaEl.value = formatDateOrigin(new Date());
+        fechaEl.value = AonDateUtils.formatDateOrigin(new Date());
         fechaEl.addEventListener(EVENT.CHANGE, ()=>{
             if(new Date(fechaEl.value).isValid()) button.disabled = false;
             else button.disabled = true;
