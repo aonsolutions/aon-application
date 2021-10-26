@@ -25,7 +25,9 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class NoteDAO {
 	private static final NotePropertiesDAO NOTE_PROPERTIES = new NotePropertiesDAO();
-
+	
+	public static final String DATE_DEFAULT = "9999-01-01"; 
+	 
 	protected static class NotePropertiesDAO implements NoteProperties {
 		protected Condition[] getConditions(NoteFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -110,7 +112,7 @@ public class NoteDAO {
 
 		String dateStr = AonDateUtils.format(dateEnd, "yyyy-MM-dd");
 		
-		Condition whenOne = NOTE.DATE.gt(DSL.cast(DSL.inline("0001-01-01"), SQLDataType.TIMESTAMP));
+		Condition whenOne = NOTE.DATE.lt(DSL.cast(DSL.inline(DATE_DEFAULT), SQLDataType.TIMESTAMP));
 		Condition whenTwo = NOTE.DATE.le(DSL.cast(DSL.inline(dateStr), SQLDataType.TIMESTAMP));
 		
 		Field<Integer> total = DSL.count().as("total");
@@ -142,6 +144,6 @@ public class NoteDAO {
 	
 	private static void autoComplete(Note note) {
 		if(note.getDate()==null) 
-			note.setDate(AonDateUtils.parse("0000-01-01", "yyyy-MM-dd"));
+			note.setDate(AonDateUtils.parse(DATE_DEFAULT, "yyyy-MM-dd"));
 	}
 }

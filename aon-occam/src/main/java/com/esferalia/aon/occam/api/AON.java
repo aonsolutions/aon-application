@@ -255,6 +255,7 @@ import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
+import com.esferalia.aon.occam.impl.jooq.PersonImpl;
 import com.esferalia.aon.occam.impl.jooq.Product2Impl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
@@ -344,6 +345,10 @@ public class AON {
 
 	private static IRegistry getRegistry() {
 		return new RegistryImpl();
+	}
+	
+	private static IPerson getPerson() {
+		return new PersonImpl();
 	}
 
 	private static ICommercial getCommercial() {
@@ -6793,6 +6798,31 @@ public class AON {
 	public static GeoZone get(String domainName, Integer domainId, String login, GeoZoneFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().get(ctx, filter);
+		}
+	}
+	
+	//--------------PERSON
+	public static Person savePerson(Domain domain, String login, Person person) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPerson().savePerson(ctx, person);
+		}
+	}
+	
+	public static Person getPerson(Domain domain, String login, PersonFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPerson().getPerson(ctx, filter);
+		}
+	}
+
+	public static Stream<Person> getPersonStream(Domain domain, String login, PersonFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPerson().getPersonStream(ctx, filter);
+		}
+	}
+	
+	public static void deletePerson(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getPerson().deletePerson(ctx, id);
 		}
 	}
 		

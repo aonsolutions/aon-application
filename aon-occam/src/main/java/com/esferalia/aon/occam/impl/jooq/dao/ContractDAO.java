@@ -1,35 +1,27 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import java.sql.Date;
 import java.util.stream.Stream;
-
-import com.esferalia.aon.jooq.tables.EnterpriseCcc;
-import com.esferalia.aon.jooq.tables.Person;
-import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
-import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
-import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AgreementLevelCategoryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IrpfDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.AgreementLevelCategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractDataPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IrpfDataPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AgreementLevelCategoryFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractDataFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IrpfDataFiller;
-
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
-import static com.esferalia.aon.jooq.tables.Person.PERSON;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 
 public class ContractDAO {
 	
@@ -68,6 +60,49 @@ public class ContractDAO {
 		return AGREEMENT_LEVEL_CATEGORY_PROPERTIES.build(ctx.getDslContext().select()
 			.from(AGREEMENT_LEVEL_CATEGORY), filter).fetch().stream().map(new AgreementLevelCategoryFiller());		
 	}
+	
+	public static Contract save(AONContext ctx, Contract contract) {
+		ctx.checkWrite();
+		return contract.getId()!=null ? update(ctx, contract) : insert(ctx, contract);
+	}
+	
+	
+	public static Contract insert(AONContext ctx, Contract contract) {
+		ctx.checkWrite();
+		Integer id = ctx.getDslContext().insertInto(CONTRACT)
+		.set(CONTRACT.DOMAIN, contract.getDomain())
+		.set(CONTRACT.PERSON, contract.getPerson())
+		.set(CONTRACT.START_DATE, converDateSql(contract.getStartDate()) ) 
+		.set(CONTRACT.END_DATE, contract.getEndDate() !=null ? converDateSql(contract.getEndDate()) : null)
+		.set(CONTRACT.SENIORITY_DATE, contract.getSeniorityDate() !=null ? converDateSql(contract.getSeniorityDate()) : null)
+		.set(CONTRACT.CATEGORY_DESCRIPTION, contract.getCategoryDescription())
+		.set(CONTRACT.AGREEMENT_LEVEL,  contract.getAgreementLevel())
+		.returning(CONTRACT.ID).fetchOne().getId();
+		contract.setId(id);
+		ctx.log().debug("INSERT CONTRACT id "+ contract.getId());		
+		return contract;
+	}
+	
+	public static Contract update(AONContext ctx, Contract contract) {
+		ctx.checkWrite();
+		ctx.getDslContext().update(CONTRACT)
+			.set(CONTRACT.DOMAIN, contract.getDomain())
+			.set(CONTRACT.PERSON, contract.getPerson())
+			.set(CONTRACT.START_DATE, converDateSql(contract.getStartDate()) ) 
+			.set(CONTRACT.END_DATE, contract.getEndDate() !=null ? converDateSql(contract.getEndDate()) : null)
+			.set(CONTRACT.SENIORITY_DATE, contract.getSeniorityDate() !=null ? converDateSql(contract.getSeniorityDate()) : null)
+			.set(CONTRACT.CATEGORY_DESCRIPTION, contract.getCategoryDescription())
+			.set(CONTRACT.AGREEMENT_LEVEL,  contract.getAgreementLevel())
+			.where(CONTRACT.ID.eq(contract.getId()))
+			.execute();
+		ctx.log().debug("UPDATE CIBTRACT id "+ contract.getId());		
+		return contract;
+	}
+	
+	private static Date converDateSql(java.util.Date date) {
+	    return date != null ? new Date(date.getTime()) : null;
+	}
+
 }
 
 
