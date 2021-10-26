@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
+import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
@@ -64,7 +65,7 @@ abstract class Model303AEAT extends Model303Base {
 	private SimpleLayoutPanel pdfViewerPanel;
 	private FullViewer pdfViewer = new FullViewer();
 	
-	private AonLink modelInfoLinklink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconAeat(), "Modelo 303. IVA. Autoliquidaci\u00F3n.");
+	private AonLink modelInfoLinklink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconLink(), "Informaci\u00F3n de procedimiento del modelo 303 en la Agencia Tributaria.");
 	private AonLink validateLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconValid(), "Validar / Borrador PDF via AEAT");
 	private AonLink downloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n");
 	private AonLink sendLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconSend(), "Presentaci\u00F3n via AEAT.");
@@ -185,7 +186,12 @@ abstract class Model303AEAT extends Model303Base {
 				boolean showNRC = getMod303().isStrictToDeposit();
 				String doc = getCallback().getOptions().getAonData().getCertificateDocument();
 				String name = getCallback().getOptions().getAonData().getCertificateName();
-				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), name, doc, showNRC) {
+				AonCertificationPopupParams params = new AonCertificationPopupParams()
+						.setDocument(doc)
+						.setName(name)
+						.setShowNRC(showNRC)
+						.setInfoMessage("Va a proceder a la presentaci\u00F3n del Modelo 303.");
+				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
 					
 					@Override
 					protected void onCancel() {
@@ -227,15 +233,14 @@ abstract class Model303AEAT extends Model303Base {
 			int state = xhreq.getReadyState();
 			if (state == XMLHttpRequest.DONE) {
 				ArrayBuffer buff = xhreq.getResponseArrayBuffer();
-				if (AonStringUtils.equals(MimeType.PDF.getName(), xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE))) {
-					showPDF( buff.toString() );
-				} else if (AonStringUtils.equals(MimeType.JSON.getName(), xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE))) {
+				String contentTypeHeader = xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE);
+				if (AonStringUtils.equals(MimeType.PDF.getName(), contentTypeHeader)) {
 					Model303.service.getMod303(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), getCallback().getOptions().getDomain(), 
 							getCallback().getMod303().getId(), new AsyncCallback<Mod303>() {
 						@Override
 						public void onSuccess(Mod303 selected) {
 							selectAndPopulate(selected,getCallback().getOptions());
-							checkDataResponseData();
+							showPDF( buff.toString() );
 						}
 						@Override
 						public void onFailure(Throwable caught) {
@@ -372,7 +377,11 @@ abstract class Model303AEAT extends Model303Base {
 			} else {
 				String doc = getCallback().getOptions().getAonData().getCertificateDocument();
 				String name = getCallback().getOptions().getAonData().getCertificateName();
-				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), name, doc, false) {
+				AonCertificationPopupParams params = new AonCertificationPopupParams()
+						.setDocument(doc)
+						.setName(name)
+						.setShowNRC(false);
+				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
 					
 					@Override
 					protected void onCancel() {
@@ -433,6 +442,8 @@ abstract class Model303AEAT extends Model303Base {
 			container.addStyleName(AON.CSS.aonClickableBlock());
 			container.addStyleName(AON.CSS.aonMarginTop());
 			container.addStyleName(AON.CSS.aonFlexBlock());
+			container.addStyleName(AON.CSS.aonBorder());
+			container.getElement().getStyle().setProperty("min-height", "35px");
 			
 			Image cardImage2 = new Image(resource.getSafeUri());
 			cardImage2.setWidth("20px");

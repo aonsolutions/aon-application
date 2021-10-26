@@ -35,8 +35,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -156,12 +154,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
 	
-	interface TabLabelTemplate extends SafeHtmlTemplates {
-		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
-		SafeHtml render(String label, String iconStyle);
-	}
-	protected static final TabLabelTemplate TAB_TEMPLATE = GWT.create(TabLabelTemplate.class);
-
 	protected Model303Base(Mod303 mod303,Model303Callback cbk, Model303ModuleOptions options) {
 		super(Unit.PX);
 		select( mod303 , options);
@@ -1104,8 +1096,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			this.insert( paymentContainer, Direction.NORTH, 30, decToolbar);
 			this.forceLayout();
 		} else {
-			this.remove(paymentContainer);
-			this.forceLayout();
+			if (paymentContainer != null) {
+				this.remove(paymentContainer);
+				this.forceLayout();
+			}
 		}
 	}
 

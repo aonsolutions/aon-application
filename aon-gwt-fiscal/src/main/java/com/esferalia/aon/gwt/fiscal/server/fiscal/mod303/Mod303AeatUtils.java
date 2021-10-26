@@ -284,7 +284,7 @@ class Mod303AeatUtils {
 				.and(f.getSourceBatchProperty().eq( params.getMod() ))
 				,AttachType.DATA);
 		if (attach == null || attach.getData() == null || attach.getData().length == 0) {
-			Mod303AeatUtils.giveExceptionBack(resp, "Declaración no enconctrada" );				
+			Mod303AeatUtils.giveExceptionBack(resp, "Declaración no encontrada" );				
 		} else {
 			boolean pdfContentType = MimeType.PDF == attach.getMimeType(); 
 			Mod303AeatUtils.giveBase64Back(resp, attach.getData(), (pdfContentType?MimeType.PDF:MimeType.HTML));

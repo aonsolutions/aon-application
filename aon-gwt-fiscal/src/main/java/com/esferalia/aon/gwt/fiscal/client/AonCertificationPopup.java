@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import java.io.Serializable;
+
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.documental.JsAttach;
@@ -20,6 +22,48 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 
 public abstract class AonCertificationPopup extends AonCustomDialog {
 	
+	public static class AonCertificationPopupParams implements Serializable {
+		
+		private static final long serialVersionUID = 913077124638436678L;
+		
+		private String name;
+		private String document;
+		private boolean showNRC;
+		private String infoMessage;
+		
+		public String getName() {
+			return name;
+		}
+		public AonCertificationPopupParams setName(String name) {
+			this.name = name;
+			return this;
+		}
+		
+		public String getDocument() {
+			return document;
+		}
+		public AonCertificationPopupParams setDocument(String document) {
+			this.document = document;
+			return this;
+		}
+		
+		public boolean isShowNRC() {
+			return showNRC;
+		}
+		public AonCertificationPopupParams setShowNRC(boolean showNRC) {
+			this.showNRC = showNRC;
+			return this;
+		}
+		
+		public String getInfoMessage() {
+			return infoMessage;
+		}
+		public AonCertificationPopupParams setInfoMessage(String infoMessage) {
+			this.infoMessage = infoMessage;
+			return this;
+		}
+	}
+	
 	private API api;
 	public API getAPI() {
 		return api;
@@ -35,7 +79,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 	protected abstract void onAccept( AEATParams params);
 	protected abstract void onCancel();
 
-	protected AonCertificationPopup(API api, String nam, String doc, boolean showNRC) {
+	protected AonCertificationPopup(API api, AonCertificationPopupParams params) {
 		this.api = api;
 		setWidth("600px");
 		setCaption("Certificado Digital");
@@ -44,8 +88,18 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		
 		FlowPanel rootPanel = new FlowPanel();  
 		
+		if (AonStringUtils.isNotBlank( params.getInfoMessage())) {
+			Label messageLabel = new Label( params.getInfoMessage() );
+			messageLabel.setStyleName(AON.CSS.aonMarginBottom());
+			messageLabel.addStyleName(AON.CSS.aonMarginTop());
+			messageLabel.addStyleName(AON.CSS.aonBlockCenter());
+			messageLabel.addStyleName(AON.CSS.aonBlockMessage());
+			messageLabel.addStyleName(AON.CSS.aonBlockInfoMessage());
+			messageLabel.setWidth("80%");
+			rootPanel.add(messageLabel);	
+		}
+		
 		AonDisplayTable table = new AonDisplayTable();
-		table.addStyleName(AON.CSS.aonWidthAlmostAll());
 		table.addStyleName(AON.CSS.aonBlockCenter());
 		table.addStyleName(AON.CSS.aonMarginTop());
 		
@@ -81,14 +135,14 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		l.addStyleName(AON.CSS.aonTableLabel());
 		name.setVisibleLength(45);
 		name.addKeyUpHandler(event -> name.decorateAsValid());
-		name.setText(nam);
+		name.setText(params.getName());
 		table.addRow()
 			.addCell(l)
 			.addCell(name);
 		
 		Label l0 = new Label("DNI/NIF");
 		l0.addStyleName(AON.CSS.aonTableLabel());
-		document.setText(doc);
+		document.setText(params.getDocument());
 		document.setVisibleLength(11);
 		document.addKeyUpHandler(event -> document.decorateAsValid());
 		table.addRow()
@@ -103,7 +157,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 			.addCell(l2)
 			.addCell(password);
 		
-		if (showNRC) {
+		if (params.isShowNRC()) {
 			Label lx = new Label("NRC");
 			lx.addStyleName(AON.CSS.aonTableLabel());
 			nrc.setText("");
@@ -136,7 +190,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 				password.addStyleName(AON.CSS.aonInputTextError());
 				password.selectAll();
 				password.setFocus(true);
-			} else if (showNRC && AonStringUtils.isBlank(nrc.getValue())) {
+			} else if (params.isShowNRC() && AonStringUtils.isBlank(nrc.getValue())) {
 				nrc.addStyleName(AON.CSS.aonInputTextError());
 				nrc.selectAll();
 				nrc.setFocus(true);

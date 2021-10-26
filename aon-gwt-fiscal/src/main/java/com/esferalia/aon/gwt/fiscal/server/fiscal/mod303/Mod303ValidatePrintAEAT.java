@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server.fiscal.mod303;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -31,20 +32,83 @@ public class Mod303ValidatePrintAEAT extends HttpServlet {
 	
 	private static final Logger LOGGER = Logger.getLogger(Mod303ValidatePrintAEAT.class.getName()); 
 	private static final long serialVersionUID = -8391437522744646639L;
+	
+	private enum AeatUrl {
+		URL_2021_2_SEMESTER {
+
+			@Override
+			protected boolean accept(Mod303 mod303) {
+				return mod303.getYear() > 2021
+					|| (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester());
+			}
+
+			@Override
+			protected String getUrl() {
+				return "https://prewww2.aeat.es/wlpl/PFTW-PICW/ServVali";
+			}
+
+			@Override
+			protected String getUrlParameters(Mod303 mod303) throws IOException {
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				PrintWriter writer = new PrintWriter(output, true, StandardCharsets.ISO_8859_1);
+				Mod303Writer.fillWriter(mod303, writer);
+				return MessageFormat.format("MOD=303&EJF={0}&FIC={1}&IDI=ES"
+						,AonNumberUtils.toString( mod303.getYear())
+						,Mod303AeatUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1));
+			}
+			
+		},
+		URL_2021_1_SEMESTER{
+			@Override
+			protected boolean accept(Mod303 mod303) {
+				return mod303.getYear() == 2021 && mod303.getPeriod().isFirstSemester();
+			}
+
+			@Override
+			protected String getUrl() {
+				return "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
+			}
+
+			@Override
+			protected String getUrlParameters(Mod303 mod303) throws IOException {
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				OutputStreamWriter wr = new OutputStreamWriter(output, StandardCharsets.ISO_8859_1);
+				PrintWriter writer = new PrintWriter(wr);
+				Mod303Writer.fillWriter(mod303, writer);
+				return "HID=IE83030A"
+					+"&IDI=ES"
+					+"&LEV=000000000000"
+					+"&FIC=" + Mod303AeatUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1)
+					+"&RUT="
+					+"&FIN="
+					+"&EJF=" + mod303.getYear()
+					+"&MOD=303";
+			}
+		};
+		private static AeatUrl getAeatUrl(Mod303 mod303) {
+			for (AeatUrl aeatUrl : AeatUrl.values()) {
+				if (aeatUrl.accept(mod303)) {
+					return aeatUrl;
+				}
+			}
+			throw new AonCoreException("No se encontró una configuración válida para la petición de validación a la AEAT." +
+				" Descargue el archivo para su presentación y acceda a los servidores de la Agencia Tributaria manualmente.");
+		}
+
+		protected abstract boolean accept( Mod303 mod303);
+		protected abstract String getUrl();
+		protected abstract String getUrlParameters(Mod303 mod303) throws IOException;
+	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			Mod303 mod303 = Mod303AeatUtils.getMod303(req);
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			PrintWriter writer = new PrintWriter(output, true, StandardCharsets.ISO_8859_1);
-			Mod303Writer.fillWriter(mod303, writer);
-			String urlParameters = MessageFormat.format("MOD=303&EJF={0}&FIC={1}&IDI=ES"
-				,AonNumberUtils.toString( mod303.getYear())
-				,Mod303AeatUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1));
+			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod303);
+			System.out.println(aeatURL.getUrl());
 			HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create("https://prewww2.aeat.es/wlpl/PFTW-PICW/ServVali"))
-				.POST(HttpRequest.BodyPublishers.ofString(urlParameters))
+				.uri(URI.create( aeatURL.getUrl() ))
+				.POST(HttpRequest.BodyPublishers.ofString(aeatURL.getUrlParameters(mod303)))
 				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
 				.build();

@@ -41,6 +41,16 @@ public class Mod303SendAEAT extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//		try {
+//			AEATParams aeatParams = Mod303AeatUtils.getAEATParams(req);
+//			Mod303 mod303 = Mod303AeatUtils.getMod303(aeatParams);
+//			FISCAL.markAsSent(aeatParams.getDomainName(), mod303, aeatParams.getUser());
+//		} catch (AonCoreException e) {
+//			Mod303AeatUtils.giveExceptionBack(resp,e.getMessage());
+//		}
+//	}
+//	//@Override
+//	protected void doPost1(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			AEATParams aeatParams = Mod303AeatUtils.getAEATParams(req);
 			Mod303 mod303 = Mod303AeatUtils.getMod303(aeatParams);

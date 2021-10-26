@@ -70,7 +70,7 @@ class Model3032017BIZKAIA extends Model303Base {
 
 		table.getColumnFormatter().setWidth(9, "50px");
 		additionalDataScrollPanel.setWidget(table);
-		tabPanel.add(additionalDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.additionalData(), AON.CSS.aonIconLetterD()));
+		tabPanel.add(additionalDataScrollPanel, AON.MSG.additionalData());
 		paintDeclaration(table,Model3032017BIZKAIAAdditionalDataScript.values(),10);
 	}
 
@@ -93,7 +93,7 @@ class Model3032017BIZKAIA extends Model303Base {
 
 		table.getColumnFormatter().setWidth(5, "50px");
 		specificOpDataScrollPanel.setWidget(table);
-		tabPanel.add(specificOpDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.specificOperations(), AON.CSS.aonIconLetterE()));
+		tabPanel.add(specificOpDataScrollPanel, AON.MSG.specificOperations());
 		paintDeclaration(table,Model3032017BIZKAIASpecificOperationsScript.values(),4);
 	}
 
@@ -138,7 +138,7 @@ class Model3032017BIZKAIA extends Model303Base {
 		container.add(table);
 		
 		generalRegimeScrollPanel.setWidget(container);
-		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.liquidacion(), AON.CSS.aonIconData()));
+		tabPanel.add(generalRegimeScrollPanel, AON.MSG.liquidacion());
 	}
 
 	private void paintDeclarationTab(TabLayoutPanel tabPanel) {
@@ -163,12 +163,12 @@ class Model3032017BIZKAIA extends Model303Base {
 		paintDate( Mod303Key.BZ_C185_2,table);	// Fraccionamiento de per\u00EDodo en concursal. Hasta.
 		container.add(addGroupPanel("", table));
 		declarationScrollPanel.setWidget(container);
-		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.CSS.aonIconData()));
+		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
 
 	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
 		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.CSS.aonIconEmployee()));
+		tabPanel.add(identificationData, AON.MSG.identification());
 	}
 
 	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
@@ -189,7 +189,7 @@ class Model3032017BIZKAIA extends Model303Base {
 		panel.add(administrationPanel);
 		FlowPanel informationPanel = getInformationPanel();
 		panel.add(informationPanel);
-		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration())));
+		tabPanel.add(panel,"Foru Aldundia / Diputaci\u00F3n Foral");
 	}
 
 	protected FlowPanel getAdministrationPanel() {

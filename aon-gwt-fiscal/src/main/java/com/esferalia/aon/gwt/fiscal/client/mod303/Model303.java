@@ -34,7 +34,7 @@ public class Model303 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	private static final int INFORMATION_TAB = 1;
+	private static final int INFORMATION_TAB = 0;
 
 	protected static Mod303ServiceAsync service;
 	protected static FiscalMSServiceAsync fiscalMsService;

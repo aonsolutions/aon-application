@@ -55,7 +55,7 @@ class Model3032021GIPUZKOA extends Model303Base {
 
 	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
 		Model303IdentificationData identificationData = new Model303IdentificationData( new Model303IdentificationDataCallback()) ;
-		tabPanel.add(identificationData, TAB_TEMPLATE.render(AON.MSG.identification(), AON.CSS.aonIconEmployee()));
+		tabPanel.add(identificationData, AON.MSG.identification());
 	}
 
 	private void paintDeclarationTab(TabLayoutPanel tabPanel) {
@@ -79,7 +79,7 @@ class Model3032021GIPUZKOA extends Model303Base {
 		
 		container.add(addGroupPanel("", table));
 		declarationScrollPanel.setWidget(container);
-		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.CSS.aonIconData()));
+		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
 	
 	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
@@ -104,7 +104,7 @@ class Model3032021GIPUZKOA extends Model303Base {
 		paintDeclaration(table,Model3032017GIPUZKOARScript1.values(),8);
 		container.add(table);
 		generalRegimeScrollPanel.setWidget(container);
-		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.generalRegime(), AON.CSS.aonIconLetterG()));
+		tabPanel.add(generalRegimeScrollPanel, AON.MSG.generalRegime());
 	}
 	
 	private void paintResultTab(TabLayoutPanel tabPanel) {
@@ -121,7 +121,7 @@ class Model3032021GIPUZKOA extends Model303Base {
 		table.getColumnFormatter().setWidth(2, "140px");
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
-		tabPanel.add(resultScrollPanel, TAB_TEMPLATE.render(AON.MSG.result(), AON.CSS.aonIconLetterR()));
+		tabPanel.add(resultScrollPanel, AON.MSG.result());
 		paintDeclaration(table,Model3032017GipuzkoaResultScript.values(),3);
 	}
 
@@ -145,7 +145,7 @@ class Model3032021GIPUZKOA extends Model303Base {
 		table.getColumnFormatter().setWidth(5, "50px");
 		
 		additionalDataScrollPanel.setWidget(table);
-		tabPanel.add(additionalDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.additionalData(), AON.CSS.aonIconLetterD()));
+		tabPanel.add(additionalDataScrollPanel, AON.MSG.additionalData());
 		paintDeclaration(table,Model3032021GIPUZKOAAdditionalDataScript.values(),3);
 	}
 	
@@ -169,7 +169,7 @@ class Model3032021GIPUZKOA extends Model303Base {
 		FlowPanel informationPanel = getInformationPanel();
 		panel.add(informationPanel);
 		
-		tabPanel.add(panel,TAB_TEMPLATE.render("Foru Aldundia / Diputaci\u00F3n Foral", FiscalModelUtils.getAdministrationBWIconStyle(getMod303().getAdministration())));		
+		tabPanel.add(panel,"Foru Aldundia / Diputaci\u00F3n Foral");		
 		
 	}
 	

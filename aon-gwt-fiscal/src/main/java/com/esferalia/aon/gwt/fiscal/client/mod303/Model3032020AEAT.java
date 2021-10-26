@@ -137,13 +137,13 @@ class Model3032020AEAT extends Model303AEAT {
 		container.add(table);
 		
 		generalRegimeScrollPanel.setWidget(container);
-		tabPanel.add(generalRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.generalRegime(), AON.CSS.aonIconLetterG()));
+		tabPanel.add(generalRegimeScrollPanel, AON.MSG.generalRegime());
 	}
 	
 	private void paintSimplifiedRegimeTab(TabLayoutPanel tabPanel) {
 		ScrollPanel simplifiedRegimeScrollPanel = new ScrollPanel();
 		simplifiedRegimeScrollPanel.setWidget(getSimplifiedRegimePanel());
-		tabPanel.add(simplifiedRegimeScrollPanel, TAB_TEMPLATE.render(AON.MSG.simplifiedRegime(), AON.CSS.aonIconLetterS()));
+		tabPanel.add(simplifiedRegimeScrollPanel, AON.MSG.simplifiedRegime());
 	}
 
 	private void paintResultTab(TabLayoutPanel tabPanel) {
@@ -160,7 +160,7 @@ class Model3032020AEAT extends Model303AEAT {
 		table.getColumnFormatter().setWidth(2, "140px");
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
-		tabPanel.add(resultScrollPanel, TAB_TEMPLATE.render(AON.MSG.result(), AON.CSS.aonIconLetterR()));
+		tabPanel.add(resultScrollPanel, AON.MSG.result());
 		paintDeclaration(table,Model3032017AEATResultScript.values(),3);
 	}
 
@@ -184,7 +184,7 @@ class Model3032020AEAT extends Model303AEAT {
 		
 		table.getColumnFormatter().setWidth(5, "50px");
 		additionalDataScrollPanel.setWidget(table);
-		tabPanel.add(additionalDataScrollPanel, TAB_TEMPLATE.render(AON.MSG.additionalData(), AON.CSS.aonIconLetterD()));
+		tabPanel.add(additionalDataScrollPanel, AON.MSG.additionalData());
 		paintDeclaration(table,Model3032017AEATAdditionalDataScript.values(),3);
 	}
 		
@@ -316,7 +316,7 @@ class Model3032020AEAT extends Model303AEAT {
 		container.add(addGroupPanel("", table));
 		
 		declarationScrollPanel.setWidget(container);
-		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.CSS.aonIconData()));
+		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
 	
 	private void paintA02(Mod303Key key, FlexTable table) {
@@ -541,7 +541,7 @@ class Model3032020AEAT extends Model303AEAT {
 	private void paintLastPeriodInformationTab(TabLayoutPanel tabPanel) {
 		lastPeriodInformationScrollPanel = new ScrollPanel();
 		fillLastPeriodInformationScrollPanel();
-		tabPanel.add(lastPeriodInformationScrollPanel, TAB_TEMPLATE.render("Inf. Exonerados 390.", AON.CSS.aonIconData()));
+		tabPanel.add(lastPeriodInformationScrollPanel, "Inf. Exonerados 390.");
 	}
 
 

@@ -17,7 +17,6 @@ import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -25,8 +24,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -37,12 +34,6 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 class Model303AEATActivity2016 extends DockLayoutPanel implements HasValueChangeHandlers<Mod303Activity> {
-
-	interface TabLabelTemplate extends SafeHtmlTemplates {
-		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
-		SafeHtml render(String label, String iconStyle);
-	}
-	private static final TabLabelTemplate TAB_TEMPLATE = GWT.create(TabLabelTemplate.class);
 
 	private boolean lastPeriod;
 	
@@ -273,11 +264,11 @@ class Model303AEATActivity2016 extends DockLayoutPanel implements HasValueChange
 		
 		ScrollPanel additionalDataPanel = new ScrollPanel();
 		additionalDataPanel.setWidget(getAdditionalDataPanel(callback.getActivity()));
-		tabLayoutPanel.add(additionalDataPanel, TAB_TEMPLATE.render(AON.MSG.additionalData(),  AON.CSS.aonIconData()));
+		tabLayoutPanel.add(additionalDataPanel, AON.MSG.additionalData());
 
 		ScrollPanel modulesPanel = new ScrollPanel();
 		modulesPanel.setWidget(getModulesPanel(callback.getActivity()));
-		tabLayoutPanel.add(modulesPanel, Model303Base.TAB_TEMPLATE.render(AON.MSG.modules(), AON.CSS.aonIconList()));
+		tabLayoutPanel.add(modulesPanel, AON.MSG.modules());
 
 		addNorth(tabLayoutPanel, 240);
 		tabLayoutPanel.selectTab(1);
