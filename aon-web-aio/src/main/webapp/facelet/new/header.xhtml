@@ -686,6 +686,12 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-visibility.svg']});
 	}
 
+	.aon-icon-calendar{
+		background-size: 24px;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-date.svg']}) ;
+	}
+
+
 	.aon-direct-access-panel.aon-icon-sepe,
 	.aon-direct-access-panel.aon-icon-winsuite {
 		padding:8px 8px 8px 40px;
@@ -695,39 +701,60 @@
 		background-size:cover;
 	}
 
+	.aon-finding-toolbar-item-group {
+	    padding: 0px 0;
+	}
+
 	.aon-finding-toolbar-item.aon-icon-new,
 	.aon-finding-toolbar-item.aon-icon-pdf,
 	.aon-finding-toolbar-item.aon-icon-info,
 	.aon-finding-toolbar-item.aon-icon-excel,
+	.aon-finding-toolbar-item.aon-icon-audit,
 	.aon-finding-toolbar-item.aon-icon-reset,
 	.aon-finding-toolbar-item.aon-icon-accept,
 	.aon-finding-toolbar-item.aon-icon-cancel,
 	.aon-finding-toolbar-item.aon-icon-rubber,
 	.aon-finding-toolbar-item.aon-icon-search,
 	.aon-finding-toolbar-item.aon-icon-delete,
+	.aon-finding-toolbar-item.aon-icon-webmail2,
 	.aon-finding-toolbar-item.aon-icon-import-excel-trans,
 	.aon-finding-toolbar-item.aon-icon-export-excel-trans
 	{
 		min-height:24px;
-		padding-left:24px;
 		padding-top:4px;
 		padding-bottom:4px;
+		padding-left:24px; !important;
 		background-position-y : center;
 	}
+	
+	.aon-finding-toolbar-item.aon-icon-info,
+	.aon-finding-toolbar-item.aon-icon-audit,
+	.aon-finding-toolbar-item.aon-icon-webmail2
+	{
+		background-size:24px;
+	}
+	
 
+	
 	.aon-editDataTable-button.aon-icon-new,
 	.aon-editDataTable-button.aon-icon-pdf,
+	.aon-editDataTable-button.aon-icon-warn,
 	.aon-editDataTable-button.aon-icon-excel,
 	.aon-editDataTable-button.aon-icon-reset,
 	.aon-editDataTable-button.aon-icon-accept,
 	.aon-editDataTable-button.aon-icon-cancel,
 	.aon-editDataTable-button.aon-icon-rubber,
 	.aon-editDataTable-button.aon-icon-search,
-	.aon-editDataTable-button.aon-icon-delete
+	.aon-editDataTable-button.aon-icon-delete,
+	.aon-editDataTable-button.aon-icon-calendar,
+	.aon-editDataTable-button.aon-icon-rowSelector,
+	.aon-editDataTable-button.aon-icon-rowSelector-C, 
+	.aon-editDataTable-button.aon-icon-rowSelector-S 
 	{
 		padding-left:24px;
-		padding-top:4px;
-		padding-bottom:4px;
+		padding-top:12px;
+		padding-bottom:12px;
+		background-position-x : center;
 		background-position-y : center;
 	}
 	
@@ -781,6 +808,7 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-refresh.svg']}) ;
 	}
 	
+	/*
 	.aon-icon-predetermine {
 		background-size:cover;
 		background-image: url(#{aonResource.resolve['/images/aon-accept.svg']}) ;
@@ -789,8 +817,11 @@
 	.aon-icon-exception {
 		background-size:cover;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-error.svg']}) ;
-	}
+	}*/
 	
+	.aon-panelBar-title{
+		text-align:center;
+	}
 	
 	.rich-fileupload-button, 
 	.rich-fileupload-button-dis, 
