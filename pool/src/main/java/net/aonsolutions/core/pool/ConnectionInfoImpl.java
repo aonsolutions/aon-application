@@ -51,6 +51,8 @@ class ConnectionInfoImpl extends ConnectionInfo{
 	private String timeZone;
 	private String driverClass;
 	
+	private Connection metadaConnection;
+	
 	@Override
 	public String getUrl(String schema) {
 		return url;
@@ -97,12 +99,11 @@ class ConnectionInfoImpl extends ConnectionInfo{
 
 	@Override
 	public List<String> getSchemas() throws AonConnectionException{
-		Connection connection = null;
 		PreparedStatement preparedStmt = null;
 		ResultSet resultSet = null;
 
 		try {
-			connection = getMetadataConnection();
+			Connection connection = getMetadataConnection();
 			preparedStmt = connection.prepareStatement(SELECT_SCHEMAS,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			resultSet = preparedStmt.executeQuery();
@@ -117,13 +118,12 @@ class ConnectionInfoImpl extends ConnectionInfo{
 		} finally {
 			closeQuietly(resultSet);
 			closeQuietly(preparedStmt);
-			closeQuietly(connection);
 		}
 	}
 
 	@Override
 	public Connection getMetadataConnection(String schema) throws AonConnectionException {
-		return getMetadataConnection();
+		return newMetadataConnection();
 	}
 
 	@Override
@@ -133,12 +133,11 @@ class ConnectionInfoImpl extends ConnectionInfo{
 
 	@Override
 	public List<String> getSchemaDomains(String schema) throws AonConnectionException{
-		Connection c = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			c = getMetadataConnection();
+			Connection c = getMetadataConnection();
 			String select = "SELECT name FROM `" + schema + "`.domain";
 			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
@@ -154,18 +153,16 @@ class ConnectionInfoImpl extends ConnectionInfo{
 		} finally {
 			closeQuietly(rs);
 			closeQuietly(ps);
-			closeQuietly(c);
 		}
 	}
 
 	@Override
 	public String getSchemaFirstDomain(String schema) throws AonConnectionException{
-		Connection c = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			c = getMetadataConnection();
+			Connection c = getMetadataConnection();
 			String select = "SELECT name FROM `" + schema + "`.domain limit 1";
 			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
@@ -181,19 +178,17 @@ class ConnectionInfoImpl extends ConnectionInfo{
 		} finally {
 			closeQuietly(rs);
 			closeQuietly(ps);
-			closeQuietly(c);
 		}
 	}
 
 	@Override
 	public Map<String, String> getDomains() throws AonConnectionException {
-		Connection c = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		PreparedStatement ps1 = null;
 		ResultSet rs1 = null;
 		try {
-			c = getMetadataConnection();
+			Connection c = getMetadataConnection();
 			ps = c.prepareStatement(SELECT_SCHEMAS,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			rs = ps.executeQuery();
@@ -219,19 +214,17 @@ class ConnectionInfoImpl extends ConnectionInfo{
 			closeQuietly(ps1);
 			closeQuietly(rs);
 			closeQuietly(ps);
-			closeQuietly(c);
 		}
 	}
 
 	@Override
 	public Map<String, Integer> getDomainMap() throws AonConnectionException {
-		Connection c = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		PreparedStatement ps1 = null;
 		ResultSet rs1 = null;
 		try {
-			c = getMetadataConnection();
+			Connection c = getMetadataConnection();
 			ps = c.prepareStatement(SELECT_SCHEMAS,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			rs = ps.executeQuery();
@@ -258,19 +251,17 @@ class ConnectionInfoImpl extends ConnectionInfo{
 			closeQuietly(ps1);
 			closeQuietly(rs);
 			closeQuietly(ps);
-			closeQuietly(c);
 		}
 	}
 
 	@Override
 	public String getDomainDatabase(String domainName) throws AonConnectionException {
-		Connection c = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		PreparedStatement ps1 = null;
 		ResultSet rs1 = null;
 		try {
-			c = getMetadataConnection();
+			Connection c = getMetadataConnection();
 			ps = c.prepareStatement(SELECT_SCHEMAS,
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			rs = ps.executeQuery();
@@ -297,7 +288,6 @@ class ConnectionInfoImpl extends ConnectionInfo{
 			closeQuietly(ps1);
 			closeQuietly(rs);
 			closeQuietly(ps);
-			closeQuietly(c);
 		}
 	}
 	
@@ -391,6 +381,16 @@ class ConnectionInfoImpl extends ConnectionInfo{
 	}
 	
 	private Connection getMetadataConnection() throws AonConnectionException{
+		if ( metadaConnection != null ) {
+			return metadaConnection;
+		}
+		
+		metadaConnection = newMetadataConnection();
+		return metadaConnection;
+	}
+	
+
+	private Connection newMetadataConnection() throws AonConnectionException{
 		try {
 			Class.forName(driverClass);
 		} catch ( ClassNotFoundException e) {
@@ -404,11 +404,9 @@ class ConnectionInfoImpl extends ConnectionInfo{
 		properties.put("serverTimezone", timeZone);
 		
 		try {
-			return DriverManager.getConnection(url, properties);
+			return  DriverManager.getConnection(url, properties);
 		} catch ( SQLException e ) {
 			throw new AonConnectionException(e);
 		}
 	}
-	
-
 }

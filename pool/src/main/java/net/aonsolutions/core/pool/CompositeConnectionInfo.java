@@ -33,6 +33,7 @@ class CompositeConnectionInfo extends ConnectionInfo {
 		}
 	}
 
+	private Map<String, String> domainsMap;
 	private Map<String, ConnectionInfo> schemasMap ;
 
 	private List<ConnectionInfo> connectionInfos = new LinkedList<ConnectionInfo>();
@@ -79,15 +80,10 @@ class CompositeConnectionInfo extends ConnectionInfo {
 
 	@Override
 	public Map<String, String> getDomains() throws AonConnectionException {
-		Map<String, String> domains = new HashMap<>();
-		for (ConnectionInfo connectionInfo : connectionInfos) {
-			try {
-				domains.putAll(connectionInfo.getDomains());
-			} catch ( AonConnectionException e) {
-			}
+		if ( domainsMap == null ) { 
+			domainsMap = getDomainsMap();
 		}
-		//domains.forEach((k,v) -> System.out.println(k +" = " + v ));
-		return domains;
+		return domainsMap;
 	}
 
 	@Override
@@ -122,6 +118,11 @@ class CompositeConnectionInfo extends ConnectionInfo {
 
 	@Override
 	public String getDomainDatabase(String domainName) throws AonConnectionException {
+		String dataBase = getDomains().get(domainName);
+		if ( dataBase != null  ) {
+			return dataBase;
+		}
+		reloadDomains();
 		return getDomains().get(domainName);
 	}
 
@@ -135,6 +136,22 @@ class CompositeConnectionInfo extends ConnectionInfo {
 		return getConnectionInfo(domain).getConnection(domain);
 		//return getConnection(getDomains().get(domain));
 	}
+	
+	private void reloadDomains() throws AonConnectionException {
+		domainsMap = getDomainsMap();
+	}
+
+	private Map<String, String> getDomainsMap() throws AonConnectionException {
+		Map<String, String> domains = new HashMap<>();
+		for (ConnectionInfo connectionInfo : connectionInfos) {
+			try {
+				domains.putAll(connectionInfo.getDomains());
+			} catch ( AonConnectionException e) {
+			}
+		}
+		return domains;
+	}
+	
 	
 	// 
 	
