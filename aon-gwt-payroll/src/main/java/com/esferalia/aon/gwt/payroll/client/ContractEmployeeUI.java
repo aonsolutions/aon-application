@@ -573,6 +573,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		
+		setSelectedValueLB(employee.journeyType, (null == contractData.getJourneyType() || contractData.getJourneyType() == 0) ? "false" : "true");
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
+		
 		Double partialityCoef = contractData.getPartialityCoef();
 		if( (null == partialityCoef || partialityCoef == 0.00) && 
 			(null != contractTypeInt && (AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)))) {

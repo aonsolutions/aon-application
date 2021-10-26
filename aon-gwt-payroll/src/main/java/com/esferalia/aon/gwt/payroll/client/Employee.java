@@ -1070,6 +1070,7 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	private void showElementsPartialTimeContract() {
+		this.contractDataTable.getRows().getItem(16).getStyle().clearDisplay();	
 		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();	
 	}
 	
