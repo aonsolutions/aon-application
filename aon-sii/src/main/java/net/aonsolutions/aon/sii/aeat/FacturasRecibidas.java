@@ -247,7 +247,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		Boolean isRegistro = "R".equals(ap.getValue());
 		Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
 		// PeriodoLiquidacion || PeriodoImpositivo
-		factura.setPeriodoLiquidacion(periodoLiquidacion(opDate, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), opDate, false));
 				
 		ApplicationParameter ap2 = AON.getApplicationParameter(domain.getName(), domain.getId(), login,
 				AppParam.SII_INCLUDE_DATE);
@@ -332,7 +332,7 @@ public class FacturasRecibidas extends SIIBuilt {
 					h -> h.getIdProperty().eq(vat.getRectificationInvoice()));
 			// SOLO 1 RECTIFICADA PARA CADA RECTIFICATIVA!
 			IDFacturaARType a2 = new IDFacturaARType();
-			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getIssueDate(), "dd-MM-yyyy")); // TODO
+			a2.setFechaExpedicionFacturaEmisor(AonDateUtils.format(rectificada.getTaxDate(), "dd-MM-yyyy")); // TODO
 			a2.setNumSerieFacturaEmisor(rectificada.getReferenceCode());
 			fr.getIDFacturaRectificada().add(a2);
 			frt.setFacturasRectificadas(fr);
