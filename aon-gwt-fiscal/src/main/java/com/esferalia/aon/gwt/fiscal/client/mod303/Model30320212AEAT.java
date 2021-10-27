@@ -40,7 +40,9 @@ class Model30320212AEAT extends Model303AEAT {
 
 	private final Model303AEATActivityFarmerTable farmerTable;
 	private final Model303AEATActivityTable activityTable;
+
 	private ScrollPanel lastPeriodPanel;
+	private TabLayoutPanel tabPanel; 
 	
 	private static final int GENERAL_REGIME_TAB = 2;
 	private static final int SIMPLIFIED_REGIME_TAB = 3;
@@ -49,7 +51,8 @@ class Model30320212AEAT extends Model303AEAT {
 
 	protected Model30320212AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
 		super(mod303,callback, options);
-		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
+		tabPanel = new TabLayoutPanel(26, Unit.PX);
+		
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.addStyleName(AON.CSS.aonScrollArea());
 		centerPanel.setWidget(tabPanel);
@@ -81,17 +84,19 @@ class Model30320212AEAT extends Model303AEAT {
 		}
 		tabPanel.addBeforeSelectionHandler(this::beforeSelectTab);
 		
-		Scheduler.get().scheduleDeferred(() -> {
-			if (mod303.isFinished() || mod303.isSent()) {
-				tabPanel.selectTab(RESULT_TAB);
+		Scheduler.get().scheduleDeferred(() -> selectDefaultTab() );
+	}
+	
+	private void selectDefaultTab() {
+		if (getCallback().getMod303().isFinished() || getCallback().getMod303().isSent()) {
+			tabPanel.selectTab(RESULT_TAB);
+		} else {
+			if (getCallback().getMod303().getAmount(Mod303Key.CT_A02) == 0) {
+				tabPanel.selectTab(SIMPLIFIED_REGIME_TAB);	
 			} else {
-				if (mod303.getAmount(Mod303Key.CT_A02) == 0) {
-					tabPanel.selectTab(SIMPLIFIED_REGIME_TAB);	
-				} else {
-					tabPanel.selectTab(GENERAL_REGIME_TAB);
-				}
+				tabPanel.selectTab(GENERAL_REGIME_TAB);
 			}
-		});
+		}
 	}
 	
 	private void beforeSelectTab(BeforeSelectionEvent<Integer> event) {

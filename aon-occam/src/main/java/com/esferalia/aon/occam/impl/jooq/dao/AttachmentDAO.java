@@ -722,8 +722,8 @@ public class AttachmentDAO {
 		ctx.getDslContext().delete(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 	
-	public static void deleteDataAttach(AONContext ctx, AttachFilter filter){
-		ctx.getDslContext().delete(DATA_ATTACH).where(DATA_ATTACH_PROPERTIES.getConditions(filter)).execute();
+	public static int deleteDataAttach(AONContext ctx, AttachFilter filter){
+		return ctx.getDslContext().delete(DATA_ATTACH).where(DATA_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 	
 	public static void deleteRegistryAttachTag(AONContext ctx, Integer rattachId){

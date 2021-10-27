@@ -454,6 +454,11 @@ abstract class Model303AEAT extends Model303Base {
 			setWidget(container);
 		}
 	}
+	
+	protected void styleStatusLabel(Mod303 mod) {
+		super.styleStatusLabel(mod);
+		cleanViewers();
+	}
 
 	
 }

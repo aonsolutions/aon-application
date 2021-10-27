@@ -3,10 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModelDetail.FS_MODEL_DETAIL;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.EnumMap;
@@ -19,15 +15,7 @@ import org.mvel2.MVEL;
 import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.DataResponse;
-import com.esferalia.aon.occam.api.model.DataResponseDetail;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -35,22 +23,19 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.IMod303KeyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.Mod303Declaration;
+import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -541,9 +526,16 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod303 markAsPending(AONContext ctx,Mod303 mod303) {
+		Finance finance = mod303.getFinance();
+		if (finance != null) {
+			FinanceValidation.validateDelete(ctx, finance);
+		}
+		if (AonStringUtils.isNotBlank( mod303.getNumber())) {
+			DataResponseDAO.deleteAEATResponse(ctx, mod303);
+			mod303.setNumber( null);
+		}
 		mod303.setDeclarationType( (String) null);
 		mod303.setStatus(FiscalStatus.PENDING);
-		Finance finance = mod303.getFinance();
 		mod303.setFinance(null);
 		mod303 = saveMod303(ctx, mod303);
 		if (finance != null) {
@@ -643,33 +635,8 @@ public class Mod303DAO extends FiscalModelDAO {
 	
 	public static Mod303 aeatPresentation(AONContext ctx, Mod303 mod303, String aeatResponse) {
 		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			DataResponseDAO.insertAEATResponse(ctx, mod303, aeatResponse);
 			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
-			DataResponse dr = new DataResponse()
-					.setSource(DataResponseSource.MOD303)
-					.setSourceId( mod303.getId() )
-					.setCode("Presentación AEAT")
-					.setDomain( mod303.getDomain() )
-					.setResponseDate(new Date());
-			dr = DataResponseDAO.insertDataResponse(ctx, dr);
-			String key = "RESPUESTA AEAT";
-			DataResponseDetail drd = new DataResponseDetail()
-					.setDomain(dr.getDomain())
-					.setDataResponse(dr.getId())
-					.setDataVariable(key)
-					.setDataValue(aeatResponse);
-			DataResponseDAO.insertDataResponseDetail(ctx, drd);
-			if(AonStringUtils.isNotBlank(response.getUrlPdf())) {
-				AttachmentDAO.insertDataAttach(ctx, new Attach()
-					.setSourceType(DataAttachSource.MOD303.value())
-					.setSourceBatch( mod303.getId() )
-					.setType(DataAttachType.RESPONSE_OK.value())
-					.setAttachModule(dr.getId())
-					.setAttachType(AttachType.DATA)
-					.setDomain(new Domain().setId(mod303.getDomain()))
-					.setData(getUrlFile(response.getUrlPdf()))
-					.setMimeType(MimeType.PDF)
-					.setDescription("Presentacion AEAT"));
-			}
 			Mod303 changed = getMod303(ctx, mod303.getId());
 			if (changed != null) {
 				changed.setNumber(response.getJustificante());
@@ -677,22 +644,6 @@ public class Mod303DAO extends FiscalModelDAO {
 			}
 		}
 		return mod303;
-	}
-
-	private static synchronized byte[] getUrlFile(String pdfUrl) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		InputStream is = null;
-		try {
-			URL url = new URL(pdfUrl);
-			is = url.openStream();
-			AonIOUtils.copy(is, baos);
-			return baos.toByteArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			AonIOUtils.closeQuietly(is);
-		}
-		return null;
 	}
 
 /*
