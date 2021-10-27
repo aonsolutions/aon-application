@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -30,6 +31,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -667,21 +669,21 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> callback) throws IllegalArgumentException {
+	public void getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId, AsyncCallback<List<SecondaryUserCertificate>> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getSecondaryUsers(currentDomainName, currentUser, new AsyncCallbackWrapper<List<SecondaryUserCertificate>>(callback));
+		enterprisesServiceAsync.getSecondaryUsers(currentDomainName, currentUser, rattachId, new AsyncCallbackWrapper<List<SecondaryUserCertificate>>(callback));
 	}
 
 	@Override
-	public void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> callback) {
+	public void deleteSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf, AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.deleteSecondaryUser(currentDomainName, currentUser, ipfType, ipf, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.deleteSecondaryUser(currentDomainName, currentUser, rattachId, ipfType, ipf, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> callback) {
+	public void createSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf, String naf, AsyncCallback<Void> callback) {
 		AON.start();
-		enterprisesServiceAsync.createSecondaryUser(currentDomainName, currentUser, ipfType, ipf, naf, new AsyncCallbackWrapper<Void>(callback));
+		enterprisesServiceAsync.createSecondaryUser(currentDomainName, currentUser, rattachId, ipfType, ipf, naf, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -848,4 +850,32 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getAllConcepts(domainName, currentUser, new AsyncCallbackWrapper<>(callback));
 	}
 
+	// ----------------------------------------------------------------- DigitalCertificates (New)
+
+	@Override
+	public void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificateNew>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getDigitalCertificates(currentDomainName, currentUser, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteDigitalCertificate(String currentDomainName, DigitalCertificateNew digitalCertificate, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteDigitalCertificate(currentDomainName, digitalCertificate, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId,
+			List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags,
+			AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.verifyCertificate(currentDomainName, currentUser, rattachId, tags, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void validateCertJava(String currentDomainName, Integer rattachId, AsyncCallback<CertificateInfo> callback) {
+		AON.start();
+		enterprisesServiceAsync.validateCertJava(currentDomainName, rattachId, new AsyncCallbackWrapper<>(callback));
+	}
+	
 }

@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -26,6 +27,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -151,9 +153,9 @@ public interface EnterprisesServiceAsync {
 	void getContractBonus(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate, AsyncCallback<Void> asyncCallback);
-	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
-	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> asyncCallback);
-	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback);
+	void getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
+	void deleteSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf, AsyncCallback<Void> asyncCallback);
+	void createSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback);
 	void getIpfxNaf(String currentDomainName, String currentUser, ArrayList<String> nssList, AsyncCallback<EmployeeSegSocial> asyncCallback);
 	void getNafxIpf(String currentDomainName, String currentUser, String ipf, String apellido1, String apellido2, AsyncCallback<EmployeeSegSocial> asyncCallback);
 	void createITCertificate(String currentDomainName, String currentUser, String affiliationNumber, String regime,
@@ -196,5 +198,9 @@ public interface EnterprisesServiceAsync {
 	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType,AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getEmployeeITInfo(String currentDomainName, Integer contractId, AsyncCallback<List<ITEmployee>> asyncCallback);
 	void getAllConcepts(String currentDomainName, String currentUser, AsyncCallback<ContractConcepts> asyncCallback);
+	void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificateNew>> asyncCallback);
+	void deleteDigitalCertificate(String currentDomainName, DigitalCertificateNew digitalCertificate, AsyncCallback<Void> asyncCallback);
+	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags, AsyncCallback<Void> asyncCallback);
+	void validateCertJava(String currentDomainName, Integer rattachId, AsyncCallback<CertificateInfo> asyncCallback);
 	
 }
