@@ -54,19 +54,17 @@ export class AonProductList extends AonElement {
 	}
 
 	aonProduct(product) {
-		if(this.isBeta()) {
-			if(product && product.id){
-				getItem({product: product.id}).then(item => {
-					let aonProduct = new AonProduct();
-					aonProduct.setProduct(product);
-					aonProduct.setItem(item);
-					this.getApplication().setContent(aonProduct);				
-				})
-			} else {
+		if(product && product.id){
+			getItem({product: product.id}).then(item => {
 				let aonProduct = new AonProduct();
-				this.getApplication().setContent(aonProduct);
-			}	
-		}
+				aonProduct.setProduct(product);
+				aonProduct.setItem(item);
+				this.getApplication().setContent(aonProduct);				
+			})
+		} else {
+			let aonProduct = new AonProduct();
+			this.getApplication().setContent(aonProduct);
+		}	
 	}
 
 	getFilter() {

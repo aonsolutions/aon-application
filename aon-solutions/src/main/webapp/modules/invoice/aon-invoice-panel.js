@@ -119,7 +119,9 @@ export class AonInvoicePanel extends AonElement {
 		let toolbar = this.getElement(aonInvoice.TOOLBAR);
 		toolbar.removeButtons();
 		if(!this.isMobile()) {
-			if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
+			if(this.selectedOption && (OPTION.PRODUCT.id === this.selectedOption.id
+				|| OPTION.CONCEPTS.id === this.selectedOption.id
+				|| OPTION.EXPENSES.id === this.selectedOption.id)){
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addProduct());
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
@@ -176,7 +178,7 @@ export class AonInvoicePanel extends AonElement {
 	buildSettingOptions() {
 		let settingOptions = [];
 		if(!this.isMobile()) {
-			settingOptions = [ OPTION.REGISTRY, OPTION.PRODUCT ];
+			settingOptions = [ OPTION.REGISTRY, OPTION.CONCEPTS ];
 		} else settingOptions = [ OPTION.PRODUCT ];
 
 		if(this.getDur().isAlpha()){
@@ -232,16 +234,15 @@ export class AonInvoicePanel extends AonElement {
 		} else {
 			productList = this.isMobile() ? new AonMobileProductList() : new AonProductList();
 			productList.id = this.PRODUCT_LIST;	
+			productList.filter = filter;
 			aonInvoice.setContent(productList);
 		}
 	}
 
 	addProduct() {
-		if(this.isBeta()) {
-			let aonProduct = new AonProduct();
-			aonProduct.id = this.id + 'Product';
-			this.getApplication().setContent(aonProduct);	
-		}
+		let aonProduct = new AonProduct();
+		aonProduct.id = this.id + 'Product';
+		this.getApplication().setContent(aonProduct);	
 	}
 
 	addInvoice() {
@@ -438,8 +439,14 @@ export class AonInvoicePanel extends AonElement {
 				break;
 			case OPTION.OFFER.id:
 				break;
-			case OPTION.PRODUCT.id:
+			case OPTION.CONCEPTS.id:
 				this.aonProductList();
+				break;
+			case OPTION.PRODUCT.id:
+				this.aonProductList({expense: false});
+				break;
+			case OPTION.EXPENSES.id:
+				this.aonProductList({expense: true});
 				break;
 			case OPTION.CONFIGURATION_PRINT.id:
 				this.aonInvoicePrint();

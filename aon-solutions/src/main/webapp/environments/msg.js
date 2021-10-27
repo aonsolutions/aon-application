@@ -171,6 +171,7 @@ export const ENVIRONMENT = 'Entorno';//TODO
 export const EQUIVALENCE_SURCHARGE = MSG.EQUIVALENCE_SURCHARGE;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
 export const END_DATE = "Fecha fin";//TODO
+export const EXPENSES = "Gastos"; // TODO 
 
 // ----- F
 
