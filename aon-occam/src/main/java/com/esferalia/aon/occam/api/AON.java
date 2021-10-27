@@ -582,7 +582,7 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			Certificate certificate =  getSecurity().getCertificate(ctx, p -> p.getIdProperty().eq(userId));
+			Certificate certificate =  getSecurity().getCertificate(ctx, p -> p.getIdProperty().eq(userId), userId);
 			if(null == certificate.getCertificate())
 				throw new CertificateNotFoundException();
 			return certificate;

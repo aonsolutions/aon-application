@@ -114,7 +114,7 @@ public class MainDigitalCertificatesObject {
 	
 	public void getSecondaryUsers(Consumer<List<SecondaryUserCertificate>> success, Consumer<Throwable> failure){
 		
-		impl.getSecondaryUsers(new AsyncCallback<List<SecondaryUserCertificate>>() {
+		impl.getSecondaryUsers(null, new AsyncCallback<List<SecondaryUserCertificate>>() {
 			
 			@Override
 			public void onSuccess(List<SecondaryUserCertificate> result) {
@@ -142,7 +142,7 @@ public class MainDigitalCertificatesObject {
 				String ipf = result.getIpf();
 				String ipfType = checkIPFType(ipf);
 				
-				impl.deleteSecondaryUser(ipfType, ipf, new AsyncCallback<Void>() {
+				impl.deleteSecondaryUser(null, ipfType, ipf, new AsyncCallback<Void>() {
 					
 					@Override
 					public void onSuccess(Void result) {
@@ -174,7 +174,7 @@ public class MainDigitalCertificatesObject {
 				String ipf = result.getIpf();
 				String ipfType = checkIPFType(ipf);
 				
-				impl.createSecondaryUser(ipfType, ipf, naf, new AsyncCallback<Void>() {
+				impl.createSecondaryUser(null, ipfType, ipf, naf, new AsyncCallback<Void>() {
 					
 					@Override
 					public void onSuccess(Void result) {
