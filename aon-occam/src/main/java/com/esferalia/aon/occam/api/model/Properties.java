@@ -549,9 +549,9 @@ public interface Properties {
 		Property<Integer> getRegistryProperty();
 		Property<Integer> getPayMethodProperty();
 		Property<Integer> getRBankProperty();
-		Property<Integer> getNumberOfPymntsProperty();
-		Property<Integer> getDaysToFirstPymntProperty();
-		Property<Integer> getDaysBetweenPymntsProperty();
+		Property<Short> getNumberOfPymntsProperty();
+		Property<Short> getDaysToFirstPymntProperty();
+		Property<Short> getDaysBetweenPymntsProperty();
 		Property<String> getPymntDaysProperty();
 	}
 	

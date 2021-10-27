@@ -1,5 +1,6 @@
 import { TAG } from "../../environments/environments.js";
 import { TOTAL_SUPPLIED } from "../../environments/msg-en.js";
+import { setStyles } from "../../services/utilsComponents.js";
 export function getRandomColor() {
   var letters = "0123456789ABCDEF";
   var color = "#";
@@ -47,7 +48,9 @@ export function getTitle(selectedColumn) {
       return "Compras";
     case 3:
       return "Gastos";
-    case 5:
+    case 4:
+      return "Otros gastos";
+    case 6:
       return "Amortizaciones";
     default:
       return "";
@@ -128,10 +131,10 @@ export function getMobileLegend(accounts, isMobile) {
     console.log(error);
   }
 
-  let mobileLegend = document.createElement("table");
-  // mobileLegend.style.margin = "auto";
-  mobileLegend.style.width = isMobile ? "90%" : "26%";
-  mobileLegend.style.cursor = "default";
+  let mobileLegend = setStyles(document.createElement("table"), {
+    width : isMobile ? "90%" : "26%",
+    cursor : "default"
+  });
 
   const colorSize = 15;
 
@@ -172,11 +175,12 @@ export function getMobileLegend(accounts, isMobile) {
     let tdColumnColor = document.createElement("td");
     tdColumnColor.style.width = colorSize * 2.5 + "px";
 
-    let divColumnColor = document.createElement("div");
-    divColumnColor.style.width = "100%";
-    divColumnColor.style.height = colorSize + "px";
-    divColumnColor.style.borderRadius = "1px";
-    divColumnColor.style.background = d.color;
+    let divColumnColor = setStyles(document.createElement("div"), {
+      width : "100%",
+      height : colorSize + "px",
+      borderRadius : "1px",
+      background : d.color
+    });
 
     tdColumnColor.appendChild(divColumnColor);
 
@@ -184,24 +188,21 @@ export function getMobileLegend(accounts, isMobile) {
 
     trColumn.appendChild(tdColumnColor);
 
-    let tdColumnDescriptor = document.createElement("td");
+    let tdColumnDescriptor = setStyles(document.createElement("td"), {
+      textIndent : ".4em",
+      maxWidth : "4em",
+      whiteSpace : "nowrap",
+      overflow : "hidden",
+      textOverflow : "ellipsis"
+    });
     tdColumnDescriptor.innerHTML = d.name;
-    tdColumnDescriptor.style.textIndent = ".4em";
-    tdColumnDescriptor.style.maxWidth = "4em";
-    tdColumnDescriptor.style.whiteSpace = "nowrap";
-    tdColumnDescriptor.style.overflow = "hidden";
-    tdColumnDescriptor.style.textOverflow = "ellipsis";
     tdColumnDescriptor.colSpan = 2;
-    // tdColumnDescriptor.style.maxWidth = "40%";
 
     trColumn.appendChild(tdColumnDescriptor);
 
     let tdColumnAmount = document.createElement("td");
-    tdColumnAmount.innerHTML =
-      window.innerWidth > 320 ? `${d.amount} €` : `${d.amount}€`;
-    tdColumnAmount.style.textAlign = "right";
-    tdColumnAmount.style.width = "8em";
-
+    tdColumnAmount.innerHTML = window.innerWidth > 320 ? `${d.amount} €` : `${d.amount}€`;
+    setStyles(tdColumnAmount, {textAlign : "right", width : "8em"});
     trColumn.appendChild(tdColumnAmount);
 
     trColumn.addEventListener("click", () => {
@@ -287,6 +288,25 @@ function periodChooser(periodName) {
   return periodName;
 }
 
+export function getOnly6and7(accounts) {
+  if (accounts) {
+    accounts.forEach(acc => {
+      let states = acc.statements ? acc.statements : [];
+      states = states.filter(stm => stm.account && stm.account.code && (stm.account.code.substring(0,1) == "7" || stm.account.code.substring(0,1) == "6"));
+      let newResult = {
+        account : { code: "RESULT", description: "RESULTADO", type: "RESULT" },
+        credit : 0,
+        debit : 0
+      };
+      newResult.credit = states.filter(st => st.account.code.substring(0,1) == "7").map(st => st.credit - st.debit).reduce((a, b) => a + b, 0);
+      newResult.debit = states.filter(st => st.account.code.substring(0,1) == "6").map(st => st.debit - st.credit).reduce((a, b) => a + b, 0);
+      states.push(newResult);
+      acc.statements = states;
+    });
+  }
+  return accounts;
+}
+
 function getTotalsTables(totals, totalAmounts) {
   let ret = { income: [], outgoing: [], result: [] };
 
@@ -336,15 +356,12 @@ function getTotalsTables(totals, totalAmounts) {
       tdAmountResult.innerHTML = "-";
     }
 
-    let tdNameIncome = document.createElement("td");
-    tdNameIncome.style.textIndent = ".4em";
+    let tdNameIncome = setStyles(document.createElement("td"), {textIndent : ".4em"});
     tdNameIncome.innerHTML = periodChooser(periodName);
-    let tdNameOutgoing = document.createElement("td");
+    let tdNameOutgoing = setStyles(document.createElement("td"), {textIndent : ".4em"});
     tdNameOutgoing.innerHTML = periodChooser(periodName);
-    tdNameOutgoing.style.textIndent = ".4em";
-    let tdNameResult = document.createElement("td");
+    let tdNameResult = setStyles(document.createElement("td"), {textIndent : ".4em"});
     tdNameResult.innerHTML = periodChooser(periodName);
-    tdNameResult.style.textIndent = ".4em";
 
     trIncome.appendChild(document.createElement("td"));
     trIncome.appendChild(tdNameIncome);

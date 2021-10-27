@@ -90,6 +90,7 @@ export const COMPARE_ARROWS = 'compare_arrows';
 export const CONTACT_PAGE = 'contact_page';
 export const CONTACT_SUPPORT = 'contact_support';
 export const CONTACTLESS = 'contactless';
+export const CREDIT_CARD = 'credit_card';
 
 // ----- D
 
@@ -127,7 +128,7 @@ export const GROUP_OFF = 'group_off';
 export const GROUPS = 'groups';
 
 // ----- H
-
+export const SCHEDULE = 'schedule';
 // ----- I
 
 export const INBOX = 'inbox';
@@ -185,6 +186,7 @@ export const SETTING = 'setting';
 export const STORE_MALL_DIRECTORY = 'store_mall_directory';
 export const SWAP_CALLS = 'swap_calls';
 export const SUPPORT_AGENT = "support_agent";
+export const STICKY_NOTE = 'sticky_note_2';
 
 // ----- T
 

@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.json.ContractDataJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
@@ -61,6 +62,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.seg.social.ServicioRED;
@@ -103,6 +106,9 @@ public class ContractServlet extends AonApiHttpServlet {
 				case "/":
 					response(req, resp, getAllEmployeesInfo(api));
 					break;
+				case "/add":
+					response(req, resp, addContract(api));
+					break;
 				case "/employee/workplace":
 					response(req, resp, getAllEmployeesWorkplace(api));
 					break;
@@ -128,7 +134,7 @@ public class ContractServlet extends AonApiHttpServlet {
 					response(req, resp, saveVacation(api));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -452,6 +458,61 @@ public class ContractServlet extends AonApiHttpServlet {
 		String jsonInString = gjson.toJson(employees);
 		if(jsonInString!=null) return new JsonParser().parse(jsonInString);
 		return new JSONObject();
+	}
+	
+	private org.json.JSONArray addContract(AonApiData api) throws Exception{
+		org.json.JSONObject params = api.getData();
+		Domain domain = new Domain();
+		
+		domain.setId(params.optInt("domain"));
+		domain.setName(AonServletUtils.getDomainName(domain.getId()));
+		
+
+		String doc = params.optString("ipf");
+		String nss = params.optString("nss");
+		Date fra = Toolkit.parseDate(params.optString("fra"), "yyyy-MM-dd");
+
+		java.sql.Date fraSql = new java.sql.Date(fra.getTime());      
+		//----------PERSON
+		Optional<Contract> contract = Optional.empty();
+		Person person = AON.getPerson(domain, "", f->f.getDomainProperty().eq(domain.getId()).and(f.getSocialSecurityNumProperty().eq(nss)));
+		if(null!= person.getDocument()) {
+		    contract = PAYROLL.getContract(domain.getName(), domain.getId(), "",
+			f->f.getDomainProperty().eq(domain.getId())
+			.and(f.getPersonProperty().eq(person.getId()))
+			.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(fraSql))));
+		}
+
+	    if(contract.isEmpty()) { // CONTRACT NO EXIST
+			com.esferalia.aon.occam.api.model.payroll.Employee employee = new com.esferalia.aon.occam.api.model.payroll.Employee();
+			
+			employee.setRegime(params.optString("regime"));
+			employee.setCcc(params.optString("ctaCti"));
+			employee.setDni(doc);
+			employee.setName(params.optString("name"));
+			employee.setNaf(nss);
+			employee.setStartDate(fra);
+			
+			if(!params.optString("frb").isEmpty())
+				employee.setEndDate(Toolkit.parseDate(params.optString("frb"), "yyyy-MM-dd"));
+			
+			if(!params.optString("coef").isEmpty())
+				employee.setFactor(params.optDouble("coef") / 1000);
+			
+			employee.setContractType(params.optString("contract"));
+			employee.setQuoteGroup(params.optString("gc"));
+			
+			if(!params.optString("ocup").isEmpty())
+				employee.setOccupation(params.optString("ocup"));
+			
+			if(!params.optString("rlce").isEmpty())
+				employee.setRlce(params.optString("rlce"));
+			
+			employee = PAYROLL.addEmployee(domain.getName(), domain.getId(), "", employee);
+	    } else {
+	    	throw new AonApiException("Ya existe un contrato para esa fecha");
+	    }
+		return new org.json.JSONArray();
 	}
 	
 	private org.json.JSONArray saveVacation(AonApiData api) throws Exception{

@@ -3,10 +3,11 @@ import { AonTable } from '../../../components/aon-table.js';
 import { AonElement } from '../../../components/AonElement.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import { postBidoq } from  '../../../services/bidoqService.js';
-import {  formatBytes, formatDate, getReader } from '../../../services/utils.js';
-import {  newComponent } from '../../../services/utilsComponents.js';
+import { formatBytes, getReader } from '../../../services/utils.js';
+import { newComponent } from '../../../services/utilsComponents.js';
 import { DOCUMENTAL_VIEWS } from '../DocumentalEnums.js';
 import * as ACTION from '../../actions.js';
+import { AonDateUtils } from '../../utils/AonDateUtils.js';
 
 export class AonDocumentalListAyudat extends AonElement {
     _tags;
@@ -161,7 +162,7 @@ export class AonDocumentalListAyudat extends AonElement {
                 data = datos.map(resp =>({
                     ...resp,
                     title: resp.name,
-                    dateParse: formatDate(new Date(resp.date * 1000)),
+                    dateParse: AonDateUtils.formatDate(new Date(resp.date * 1000)),
                     size: formatBytes(resp.size)
                 }));
             } 

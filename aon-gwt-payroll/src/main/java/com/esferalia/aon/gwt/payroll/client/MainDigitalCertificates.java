@@ -170,6 +170,11 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	
 	// ------------------------------------------------------ onModuleLoad
 	
+	@Override
+	public void onModuleLoad() {
+		onModuleLoad(new MainDigitalCertificatesObject());
+	}
+	
 	public void onModuleLoad(MainDigitalCertificatesObject mainDigitalCertificatesObject) {
 		this.mainDigitalCertificatesObject = mainDigitalCertificatesObject;
 		this.mainDigitalCertificatesObject.getEnterpriseId(s -> {

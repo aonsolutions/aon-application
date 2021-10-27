@@ -2,8 +2,10 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonUtils;
 
 public class RegistryBank implements Serializable {
 	
@@ -16,16 +18,11 @@ public class RegistryBank implements Serializable {
 	private String bic;
 	private String suffix;
 	private String alias;
-	private Integer account;
-	private String accountCode;
-	private String accountDescription;
+	private Account account;
 	private Boolean active;
-
-	
-	public RegistryBank() {
-	
-	}
-	
+	private boolean dirty;
+	private boolean removed;
+		
 	public Integer getId() {
 		return id;
 	}
@@ -48,34 +45,67 @@ public class RegistryBank implements Serializable {
 		return this;
 	}
 	public BankAccount getBankAccount() {
+		if(bankAccount == null) 
+			bankAccount = new BankAccount();
 		return bankAccount;
 	}
 	public RegistryBank setBankAccount(BankAccount bankAccount) {
+		this.setDirty(true);
 		this.bankAccount = bankAccount;
 		return this;
 	}
 	
+	public Account getAccount() {
+		if(account == null) {
+			account = new Account();
+		}
+		return account;
+	}
+	public RegistryBank setAccount(Account account) {
+		this.setDirty(true);
+		this.account = account;
+		return this;
+	}
+	
+	@Deprecated
+	public Integer getAccountId() {
+		return getAccount().getId();
+	}
+	
+	@Deprecated
+	public RegistryBank setAccountId(Integer accountId) {
+		this.setDirty(true);
+		getAccount().setId(accountId);
+		return this;
+	}
+	
+	@Deprecated
 	public String getAccountCode() {
-		return accountCode;
+		return getAccount().getCode();
 	}
+	
+	@Deprecated
 	public RegistryBank setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
+		getAccount().setCode(accountCode);
 		return this;
 	}
 
+	@Deprecated
 	public String getAccountDescription() {
-		return accountDescription;
+		return getAccount().getDescription();
 	}
+	
+	@Deprecated
 	public RegistryBank setAccountDescription(String accountDescription) {
-		this.accountDescription = accountDescription;
+		getAccount().setDescription(accountDescription);
 		return this;
-
 	}
 
 	public String getBic() {
 		return bic;
 	}
 	public RegistryBank setBic(String bic) {
+		this.setDirty(isDirty()?true:AonUtils.notEquals(this.bic , bic));
 		this.bic = bic;
 		return this;
 	}
@@ -83,6 +113,7 @@ public class RegistryBank implements Serializable {
 		return suffix;
 	}
 	public RegistryBank setSuffix(String suffix) {
+		this.setDirty(isDirty()?true:AonUtils.notEquals(this.suffix, suffix));
 		this.suffix = suffix;
 		return this;
 	}
@@ -90,20 +121,21 @@ public class RegistryBank implements Serializable {
 		return alias;
 	}
 	public RegistryBank setAlias(String alias) {
+		this.setDirty(isDirty()?true:AonUtils.notEquals(this.alias, alias));
 		this.alias = alias;
 		return this;
 	}
-	public Integer getAccount() {
-		return account;
+	
+	public Byte getActive() {
+		return (byte) (active ? 1 : 0);
 	}
-	public RegistryBank setAccount(Integer account) {
-		this.account = account;
-		return this;
-	}
+	
 	public Boolean isActive() {
 		return active;
 	}
+	
 	public RegistryBank setActive(Boolean active) {
+		this.setDirty(isDirty()?true:AonUtils.notEquals(this.active, active));
 		this.active = active;
 		return this;
 	}
@@ -129,6 +161,28 @@ public class RegistryBank implements Serializable {
 			sb.append(getAlias());	
 		}
 		return sb.toString(); 
+	}
+	
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	public RegistryBank setDirty(boolean dirty) {
+		this.dirty = dirty;
+		return this;
+	}
+	
+	public boolean isRemoved() {
+		return removed;
+	}
+	
+	public RegistryBank setRemoved(boolean removed) {
+		this.removed = removed;
+		return this;
+	}
+	
+	public void remove() {
+		setRemoved(true);
 	}
 	
 }

@@ -471,15 +471,28 @@ public class InvoiceTemplate {
 		str = croppedString(str, 230, HELVETICA_BOLD, 12);
 		drawText(contents, str, x, y, BLACK, HELVETICA_BOLD, 12, REGISTRY_NAME);
 		y -= 15;
-		if(invoice.getAddress() != null) {
+		
+		if(invoice.getRegistryAddressData() != null) {
+			RegistryAddress address = invoice.getRegistryAddressData();
+			str = safeString(address.getFullAddress());
+			str = croppedString(str, 230, HELVETICA, 9);
+			drawText(contents,  str, x, y, BLACK, HELVETICA, 9, ADDRESS);
+
+			y -= 10;
+
+			String zipCityProvince =  safeString(address.getZip()) + " "+  safeString(address.getCity()) + " " +  safeString(address.getProvince()); 
+			drawText(contents, zipCityProvince.trim(), x, y, BLACK, HELVETICA, 9, ADDRESS_LINE_TWO);
+		} else {
 			str = safeString(invoice.getAddress());
 			str = croppedString(str, 230, HELVETICA, 9);
 			drawText(contents,  str, x, y, BLACK, HELVETICA, 9, ADDRESS);
-		}
-		y -= 10;
 
-		String zipCityProvince =  safeString(invoice.getAddressZIP()) + " "+  safeString(invoice.getAddressTown()) + " " +  safeString(invoice.getAddressProvince()); 
-		drawText(contents, zipCityProvince.trim(), x, y, BLACK, HELVETICA, 9, ADDRESS_LINE_TWO);
+			y -= 10;
+
+			String zipCityProvince =  safeString(invoice.getAddressZIP()) + " "+  safeString(invoice.getAddressTown()) + " " +  safeString(invoice.getAddressProvince()); 
+			drawText(contents, zipCityProvince.trim(), x, y, BLACK, HELVETICA, 9, ADDRESS_LINE_TWO);
+		}
+
 	}
 
 	// DRAW DETAILED HEADER
@@ -632,8 +645,9 @@ public class InvoiceTemplate {
 				x = 180;
 				drawText(contents, formatDate(finance.getDueDate(), "dd/MM/yyyy").orElse(""), x + 5f, y - 12, BLACK, HELVETICA, 7, i + FINANCE_DATE);
 				x += 60;
-			
-				drawText(contents, finance.getPayMethodType() == null ?  "" :  finance.getPayMethodType().getDescription(), x + 5f, y - 12, BLACK, HELVETICA,7, i + FINANCE_PAY_METHOD);
+				
+				String paymethod = finance.getPayMethodName() != null ? finance.getPayMethodName() : (finance.getPayMethodType() != null ? finance.getPayMethodType().getDescription(): "");
+				drawText(contents, paymethod, x + 5f, y - 12, BLACK, HELVETICA,7, i + FINANCE_PAY_METHOD);
 				x += 80;
 			
 				if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null)

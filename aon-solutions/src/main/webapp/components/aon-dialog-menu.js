@@ -1,6 +1,6 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, TAG } from '../environments/environments.js';
-import './aon-icon.js';
+import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { AonIcon } from './aon-icon.js';
 
 
 export class AonDialogMenu extends AonElement {
@@ -99,12 +99,7 @@ export class AonDialogMenu extends AonElement {
 		let content = this.getElement(this.CONTENT);
 		let p = this.createElement('p');
 		p.innerHTML = title;
-		p.style.fontWeight = "600";
-		p.style.padding = "10px 10px 5px";
-		p.style.whiteSpace = "nowrap";
-		p.style.textTransform = "uppercase";
-		p.style.textOverflow = "ellipsis";
-		p.style.overflow = "hidden";
+		p.style.fontWeight = "600";http://localhost:8080/
 		p.style.margin = "auto";
 		p.style.textAlign = "center";
 
@@ -132,9 +127,12 @@ export class AonDialogMenu extends AonElement {
 			ul.appendChild(li);
 
 			if(item.aonIcon) {
-				let ai = document.createElement('span');
+				let ai = document.createElement(TAG.SPAN);
 				ai.style.verticalAlign = 'middle';
-				ai.innerHTML = `<aon-icon icon="${item.aonIcon}" size="15"></aon-icon>`;
+				let aonIcon = new AonIcon();
+				aonIcon.icon = item.aonIcon;
+				aonIcon.size = 15;
+				ai.appendChild(aonIcon);
 				li.appendChild(ai);
 			} else if(item.icon){
 				let ic = document.createElement('i');
@@ -145,15 +143,15 @@ export class AonDialogMenu extends AonElement {
 				li.appendChild(ic);
 			}
 
-			let span = document.createElement('span');
+			let span = document.createElement(TAG.SPAN);
 			span.style.marginLeft = '5px';
 			span.style.fontSize = '13px';
 			span.innerHTML = item.name;
 			span.title     = item.name;
 			li.appendChild(span);
-			li.addEventListener('click', () => {
+			li.addEventListener(EVENT.CLICK, (ev) => {
 				this.close();
-				item.fn();
+				item.fn(ev);
 			});
 		});
 	}

@@ -2,9 +2,9 @@ import { AonNumber } from "../../components/aon-number.js";
 import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
-import { formatDateOrigin } from "../../services/utils.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
 import { createCard, createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
+import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 export const createBajaDialogContent = () =>{
     const div = document.createElement(TAG.DIV);
@@ -65,7 +65,7 @@ export const createFormComunica = (id, parent) => {
 
 export const createEnterpriseData = (parent) => {
     let divC;
-    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -76,7 +76,7 @@ export const createEnterpriseData = (parent) => {
     }, divC.element);
  
 
-    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -86,15 +86,15 @@ export const createEnterpriseData = (parent) => {
         }
     }, divC.element);
 
-    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
-    divC.appendTo(parent);
-    let aonConvenio = setAttributes(new AonSuggestion(),{
-        id:"convenio",
-        title:"Convenio (opcional)",
-        name:"convenio"
-    });
-    aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/\D/g,''));
-    divC.appendChild(aonConvenio);
+    // divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
+    // divC.appendTo(parent);
+    // let aonConvenio = setAttributes(new AonSuggestion(),{
+    //     id:"convenio",
+    //     title:"Convenio (opcional)",
+    //     name:"convenio"
+    // });
+    // aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/\D/g,''));
+    // divC.appendChild(aonConvenio);
 
     createInput({
         attributes:{
@@ -106,7 +106,7 @@ export const createEnterpriseData = (parent) => {
     }, parent);
 }
 
-export const createContractData = (parent) => {
+export const createContractData = (parent, isManager) => {
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
@@ -169,7 +169,20 @@ export const createContractData = (parent) => {
         }
     }, parent);
 
-    dateContract.value = formatDateOrigin(new Date());
+    if(isManager){
+        divC = createDiv({classes:[CSS.AON_COL_XS_12]})
+        divC.appendTo(parent);
+        createSelect({
+            attributes:{
+                name:"rlce",
+                id:"rlce",
+                title:"RLCE (opcional)",
+                autocomplete: CONSTANT.OFF
+            }
+        }, divC.element);
+    } 
+
+    dateContract.value = AonDateUtils.formatDateOrigin(new Date());
 
 }
 

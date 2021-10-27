@@ -416,6 +416,12 @@ export class AonApplication extends AonElement {
     return null;
   }
 
+  removeSidenavById(id){
+    let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
+    let div = this.getElement(sidenav.id + id);
+    if(div) div.remove();
+  }
+
   buildSidenavSubOptions(data, options) {
     let ul = this.createElement(TAG.UL);
     ul.className = "aonClip";
@@ -458,7 +464,7 @@ export class AonApplication extends AonElement {
       let span = this.createElement(TAG.SPAN);
       span.className = "aonMenuItemSpan";
       span.title =  option.name;
-      if (option.count && option.count > 0) {
+      if (option.count) {
         span.innerHTML = option.name + " (" + option.count + ")";
         span.style.fontWeight = "bold";
       } else span.innerHTML = option.name;

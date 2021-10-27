@@ -122,7 +122,7 @@ export class AonRegistry extends AonElement {
         // enter
         this.closeOptions();
         this.setRegistry(this.options[this.selected].registry);
-        this.dispatchEvent(new Event(EVENT.SELECT));
+        // this.dispatchEvent(new Event(EVENT.SELECT));
        } else {
           console.log(doc.value);
           if(doc.value.length > 2) {
@@ -178,7 +178,7 @@ export class AonRegistry extends AonElement {
         // enter
         this.closeOptions();
         this.setRegistry(this.options[this.selected].registry);
-        this.dispatchEvent(new Event(EVENT.SELECT));
+        // this.dispatchEvent(new Event(EVENT.SELECT));
        } else {
          if(name.value.length > 2) {
           console.log(this.types);
@@ -237,7 +237,7 @@ export class AonRegistry extends AonElement {
         li.addEventListener('click', (e) => {
           div.classList.remove('is-visible');
           this.setRegistry(options[i].registry);
-          this.dispatchEvent(new Event(EVENT.SELECT));
+          // this.dispatchEvent(new Event(EVENT.SELECT));
         });
         ul.appendChild(li);
       }
@@ -276,11 +276,12 @@ export class AonRegistry extends AonElement {
       if(address) {
         let data = {registry: registry.id, global: registry.global};
         getRegistryAddress(data).then(ra => {
+            ra.registry = registry.id;
             address.setAddress(ra, true);
             this.registry.address = ra;
-            this.dispatchEvent(new Event(EVENT.CHANGE));
+            this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
         });
-      }
+      } else this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
     }
   }
 

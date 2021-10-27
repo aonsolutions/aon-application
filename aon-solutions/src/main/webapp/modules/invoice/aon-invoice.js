@@ -591,16 +591,11 @@ export class AonInvoice extends AonElement {
 		registry.readonly = this.invoice.isReadonly();
 		registry.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setRegistry(registry.getRegistry());
-			getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
-				this.invoice.setPaymethod(rpm.paymethod.id);
-				this.invoice.setBankAccount(rpm.rbank.bank_account);
-				this.reload();
-			});
 			if(this.autosave) this.save();
 		});
-		registry.addEventListener(EVENT.SELECT, () => {
+		registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
 			this.invoice.setRegistry(registry.getRegistry());
-			getRegistryPaymethod({registry: registry.getRegistry().id}).then(pm => {
+			getRegistryPaymethod({registry: registry.getRegistry().id}).then(rpm => {
 				this.invoice.setPaymethod(rpm.paymethod.id);
 				this.invoice.setBankAccount(rpm.rbank.bank_account);
 				this.reload();

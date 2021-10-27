@@ -43,6 +43,7 @@ public class PayMethodJSON {
 	}
 	
 	public static JSONObject toJSON(PayMethod paymethod) {
+		if(paymethod == null) return new JSONObject();
 		return new JSONObject()
 				.put(IJsonNames.ID, paymethod.getId())
 				.put(IJsonNames.DOMAIN, paymethod.getDomain())

@@ -4,7 +4,6 @@ import {
   isEmptyObject,
   sortBy,
   waitEl,
-  geMonthYear,
   setValueName
 } from "../../../services/utils.js";
 import {
@@ -20,6 +19,7 @@ import {
 } from "../PayrollEnums.js";
 import { pieChar, addLegend} from "./pieChar.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
 export class AonCompanyCostsList extends AonElement {
@@ -196,8 +196,8 @@ export class AonCompanyCostsList extends AonElement {
         if(workplaceEl && workplaceEl.textContent) workplaceText = workplaceEl.textContent+": ";
       }
 
-      let startDateText = geMonthYear(startDate),
-      endDateText = geMonthYear(endDate);
+      let startDateText = AonDateUtils.getMonthYear(startDate),
+      endDateText = AonDateUtils.getMonthYear(endDate);
       if(startDateText === endDateText){
         title = title + " "+ startDateText;
       } else {

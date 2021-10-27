@@ -1,3 +1,50 @@
+export class Country {
+    nombre;
+    name;
+    nom;
+    iso2;
+    iso3;
+    phoneCode;
+    bankIdLength;
+    ibanLength;
+    
+    constructor(country) {
+        if(country) {
+            this.nombre = country.nombre;
+            this.name = country.name;
+            this.nom = country.nom;
+            this.iso2 = country.iso2;
+            this.iso3 = country.iso3;
+            this.phoneCode = country.phoneCode;
+            this.bankIdLength = country.bankIdLength;
+            this.ibanLength = country.ibanLength;
+        }
+    }
+
+    getName() {
+        return this.name;
+    }
+
+    getIso2() {
+        return this.iso2;
+    }
+
+    getIso3() {
+        return this.iso3;
+    }
+
+    getPhoneCode() {
+        return this.phoneCode;
+    }
+
+    getBankIdLength() {
+        return this.bankIdLength;
+    }
+
+    getIbanLength() {
+        return this.ibanLength;
+    }
+}
 
 export const Countries = [{
         nombre: 'Afganistán',
@@ -5,7 +52,9 @@ export const Countries = [{
         nom: 'Afghanistan',
         iso2: 'AF',
         iso3: 'AFG',
-        phone_code: 93
+        phoneCode: 93,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Albania',
@@ -13,7 +62,9 @@ export const Countries = [{
         nom: 'Albanie',
         iso2: 'AL',
         iso3: 'ALB',
-        phone_code: 355
+        phoneCode: 355,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Alemania',
@@ -21,7 +72,9 @@ export const Countries = [{
         nom: 'Allemagne',
         iso2: 'DE',
         iso3: 'DEU',
-        phone_code: 49
+        phoneCode: 49,
+        bankIdLength: 8,
+        ibanLength: 22
     },
     {
         nombre: 'Algeria',
@@ -29,7 +82,10 @@ export const Countries = [{
         nom: 'Algérie',
         iso2: 'DZ',
         iso3: 'DZA',
-        phone_code: 213
+        phoneCode: 213,
+        bankIdLength: 4,
+        ibanLength: 34
+        
     },
     {
         nombre: 'Andorra',
@@ -37,7 +93,9 @@ export const Countries = [{
         nom: 'Andorra',
         iso2: 'AD',
         iso3: 'AND',
-        phone_code: 376
+        phoneCode: 376,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Angola',
@@ -45,7 +103,9 @@ export const Countries = [{
         nom: 'Angola',
         iso2: 'AO',
         iso3: 'AGO',
-        phone_code: 244
+        phoneCode: 244,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Anguila',
@@ -53,7 +113,9 @@ export const Countries = [{
         nom: 'Anguilla',
         iso2: 'AI',
         iso3: 'AIA',
-        phone_code: '1 264'
+        phoneCode: '1 264',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Antártida',
@@ -61,7 +123,9 @@ export const Countries = [{
         nom: 'L\'Antarctique',
         iso2: 'AQ',
         iso3: 'ATA',
-        phone_code: 672
+        phoneCode: 672,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Antigua y Barbuda',
@@ -69,7 +133,9 @@ export const Countries = [{
         nom: 'Antigua et Barbuda',
         iso2: 'AG',
         iso3: 'ATG',
-        phone_code: '1 268'
+        phoneCode: '1 268',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Antillas Neerlandesas',
@@ -77,7 +143,9 @@ export const Countries = [{
         nom: 'Antilles Néerlandaises',
         iso2: 'AN',
         iso3: 'ANT',
-        phone_code: 599
+        phoneCode: 599,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Arabia Saudita',
@@ -85,7 +153,9 @@ export const Countries = [{
         nom: 'Arabie Saoudite',
         iso2: 'SA',
         iso3: 'SAU',
-        phone_code: 966
+        phoneCode: 966,
+        bankIdLength: 2,
+        ibanLength: 24
     },
     {
         nombre: 'Argentina',
@@ -93,7 +163,9 @@ export const Countries = [{
         nom: 'Argentine',
         iso2: 'AR',
         iso3: 'ARG',
-        phone_code: 54
+        phoneCode: 54,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Armenia',
@@ -101,7 +173,9 @@ export const Countries = [{
         nom: 'L\'Arménie',
         iso2: 'AM',
         iso3: 'ARM',
-        phone_code: 374
+        phoneCode: 374,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Aruba',
@@ -109,7 +183,9 @@ export const Countries = [{
         nom: 'Aruba',
         iso2: 'AW',
         iso3: 'ABW',
-        phone_code: 297
+        phoneCode: 297,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Australia',
@@ -117,7 +193,9 @@ export const Countries = [{
         nom: 'Australie',
         iso2: 'AU',
         iso3: 'AUS',
-        phone_code: 61
+        phoneCode: 61,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Austria',
@@ -125,7 +203,9 @@ export const Countries = [{
         nom: 'Autriche',
         iso2: 'AT',
         iso3: 'AUT',
-        phone_code: 43
+        phoneCode: 43,
+        bankIdLength: 5,
+        ibanLength: 20
     },
     {
         nombre: 'Azerbayán',
@@ -133,7 +213,9 @@ export const Countries = [{
         nom: 'L\'Azerbaïdjan',
         iso2: 'AZ',
         iso3: 'AZE',
-        phone_code: 994
+        phoneCode: 994,
+        bankIdLength: 4,
+        ibanLength: 28
     },
     {
         nombre: 'Bélgica',
@@ -141,7 +223,9 @@ export const Countries = [{
         nom: 'Belgique',
         iso2: 'BE',
         iso3: 'BEL',
-        phone_code: 32
+        phoneCode: 32,
+        bankIdLength: 3,
+        ibanLength: 16
     },
     {
         nombre: 'Bahamas',
@@ -149,7 +233,9 @@ export const Countries = [{
         nom: 'Bahamas',
         iso2: 'BS',
         iso3: 'BHS',
-        phone_code: '1 242'
+        phoneCode: '1 242',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Bahrein',
@@ -157,7 +243,9 @@ export const Countries = [{
         nom: 'Bahreïn',
         iso2: 'BH',
         iso3: 'BHR',
-        phone_code: 973
+        phoneCode: 973,
+        bankIdLength: 4,
+        ibanLength: 22
     },
     {
         nombre: 'Bangladesh',
@@ -165,7 +253,9 @@ export const Countries = [{
         nom: 'Bangladesh',
         iso2: 'BD',
         iso3: 'BGD',
-        phone_code: 880
+        phoneCode: 880,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Barbados',
@@ -173,7 +263,9 @@ export const Countries = [{
         nom: 'Barbade',
         iso2: 'BB',
         iso3: 'BRB',
-        phone_code: '1 246'
+        phoneCode: '1 246',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Belice',
@@ -181,7 +273,9 @@ export const Countries = [{
         nom: 'Belize',
         iso2: 'BZ',
         iso3: 'BLZ',
-        phone_code: 501
+        phoneCode: 501,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Benín',
@@ -189,7 +283,9 @@ export const Countries = [{
         nom: 'Bénin',
         iso2: 'BJ',
         iso3: 'BEN',
-        phone_code: 229
+        phoneCode: 229,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Bhután',
@@ -197,7 +293,9 @@ export const Countries = [{
         nom: 'Le Bhoutan',
         iso2: 'BT',
         iso3: 'BTN',
-        phone_code: 975
+        phoneCode: 975,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Bielorrusia',
@@ -205,7 +303,9 @@ export const Countries = [{
         nom: 'Biélorussie',
         iso2: 'BY',
         iso3: 'BLR',
-        phone_code: 375
+        phoneCode: 375,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Birmania',
@@ -213,7 +313,9 @@ export const Countries = [{
         nom: 'Myanmar',
         iso2: 'MM',
         iso3: 'MMR',
-        phone_code: 95
+        phoneCode: 95,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Bolivia',
@@ -221,7 +323,9 @@ export const Countries = [{
         nom: 'Bolivie',
         iso2: 'BO',
         iso3: 'BOL',
-        phone_code: 591
+        phoneCode: 591,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Bosnia y Herzegovina',
@@ -229,7 +333,9 @@ export const Countries = [{
         nom: 'Bosnie-Herzégovine',
         iso2: 'BA',
         iso3: 'BIH',
-        phone_code: 387
+        phoneCode: 387,
+        bankIdLength: 3,
+        ibanLength: 20
     },
     {
         nombre: 'Botsuana',
@@ -237,7 +343,9 @@ export const Countries = [{
         nom: 'Botswana',
         iso2: 'BW',
         iso3: 'BWA',
-        phone_code: 267
+        phoneCode: 267,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Brasil',
@@ -245,7 +353,9 @@ export const Countries = [{
         nom: 'Brésil',
         iso2: 'BR',
         iso3: 'BRA',
-        phone_code: 55
+        phoneCode: 55,
+        bankIdLength: 8,
+        ibanLength: 29
     },
     {
         nombre: 'Brunéi',
@@ -253,7 +363,9 @@ export const Countries = [{
         nom: 'Brunei',
         iso2: 'BN',
         iso3: 'BRN',
-        phone_code: 673
+        phoneCode: 673,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Bulgaria',
@@ -261,7 +373,9 @@ export const Countries = [{
         nom: 'Bulgarie',
         iso2: 'BG',
         iso3: 'BGR',
-        phone_code: 359
+        phoneCode: 359,
+        bankIdLength: 4,
+        ibanLength: 22
     },
     {
         nombre: 'Burkina Faso',
@@ -269,7 +383,9 @@ export const Countries = [{
         nom: 'Burkina Faso',
         iso2: 'BF',
         iso3: 'BFA',
-        phone_code: 226
+        phoneCode: 226,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Burundi',
@@ -277,7 +393,9 @@ export const Countries = [{
         nom: 'Burundi',
         iso2: 'BI',
         iso3: 'BDI',
-        phone_code: 257
+        phoneCode: 257,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Cabo Verde',
@@ -285,7 +403,9 @@ export const Countries = [{
         nom: 'Cap-Vert',
         iso2: 'CV',
         iso3: 'CPV',
-        phone_code: 238
+        phoneCode: 238,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Camboya',
@@ -293,7 +413,9 @@ export const Countries = [{
         nom: 'Cambodge',
         iso2: 'KH',
         iso3: 'KHM',
-        phone_code: 855
+        phoneCode: 855,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Camerún',
@@ -301,7 +423,9 @@ export const Countries = [{
         nom: 'Cameroun',
         iso2: 'CM',
         iso3: 'CMR',
-        phone_code: 237
+        phoneCode: 237,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Canadá',
@@ -309,7 +433,9 @@ export const Countries = [{
         nom: 'Canada',
         iso2: 'CA',
         iso3: 'CAN',
-        phone_code: 1
+        phoneCode: 1,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Chad',
@@ -317,7 +443,9 @@ export const Countries = [{
         nom: 'Tchad',
         iso2: 'TD',
         iso3: 'TCD',
-        phone_code: 235
+        phoneCode: 235,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Chile',
@@ -325,7 +453,9 @@ export const Countries = [{
         nom: 'Chili',
         iso2: 'CL',
         iso3: 'CHL',
-        phone_code: 56
+        phoneCode: 56,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'China',
@@ -333,7 +463,9 @@ export const Countries = [{
         nom: 'Chine',
         iso2: 'CN',
         iso3: 'CHN',
-        phone_code: 86
+        phoneCode: 86,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Chipre',
@@ -341,7 +473,9 @@ export const Countries = [{
         nom: 'Chypre',
         iso2: 'CY',
         iso3: 'CYP',
-        phone_code: 357
+        phoneCode: 357,
+        bankIdLength: 3,
+        ibanLength: 28
     },
     {
         nombre: 'Ciudad del Vaticano',
@@ -349,7 +483,9 @@ export const Countries = [{
         nom: 'Cité du Vatican',
         iso2: 'VA',
         iso3: 'VAT',
-        phone_code: 39
+        phoneCode: 39,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Colombia',
@@ -357,7 +493,9 @@ export const Countries = [{
         nom: 'Colombie',
         iso2: 'CO',
         iso3: 'COL',
-        phone_code: 57
+        phoneCode: 57,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Comoras',
@@ -365,7 +503,9 @@ export const Countries = [{
         nom: 'Comores',
         iso2: 'KM',
         iso3: 'COM',
-        phone_code: 269
+        phoneCode: 269,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Congo',
@@ -373,7 +513,7 @@ export const Countries = [{
         nom: 'Congo',
         iso2: 'CG',
         iso3: 'COG',
-        phone_code: 242
+        phoneCode: 242
     },
     {
         nombre: 'Congo',
@@ -381,7 +521,9 @@ export const Countries = [{
         nom: 'Congo',
         iso2: 'CD',
         iso3: 'COD',
-        phone_code: 243
+        phoneCode: 243,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Corea del Norte',
@@ -389,7 +531,9 @@ export const Countries = [{
         nom: 'Corée du Nord',
         iso2: 'KP',
         iso3: 'PRK',
-        phone_code: 850
+        phoneCode: 850,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Corea del Sur',
@@ -397,7 +541,9 @@ export const Countries = [{
         nom: 'Corée du Sud',
         iso2: 'KR',
         iso3: 'KOR',
-        phone_code: 82
+        phoneCode: 82,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Costa de Marfil',
@@ -405,7 +551,9 @@ export const Countries = [{
         nom: 'Côte-d\'Ivoire',
         iso2: 'CI',
         iso3: 'CIV',
-        phone_code: 225
+        phoneCode: 225,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Costa Rica',
@@ -413,7 +561,9 @@ export const Countries = [{
         nom: 'Costa Rica',
         iso2: 'CR',
         iso3: 'CRI',
-        phone_code: 506
+        phoneCode: 506,
+        bankIdLength: 3,
+        ibanLength: 21
     },
     {
         nombre: 'Croacia',
@@ -421,7 +571,9 @@ export const Countries = [{
         nom: 'Croatie',
         iso2: 'HR',
         iso3: 'HRV',
-        phone_code: 385
+        phoneCode: 385,
+        bankIdLength: 7,
+        ibanLength: 21
     },
     {
         nombre: 'Cuba',
@@ -429,7 +581,9 @@ export const Countries = [{
         nom: 'Cuba',
         iso2: 'CU',
         iso3: 'CUB',
-        phone_code: 53
+        phoneCode: 53,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Dinamarca',
@@ -437,7 +591,9 @@ export const Countries = [{
         nom: 'Danemark',
         iso2: 'DK',
         iso3: 'DNK',
-        phone_code: 45
+        phoneCode: 45,
+        bankIdLength: 4,
+        ibanLength: 18
     },
     {
         nombre: 'Dominica',
@@ -445,7 +601,9 @@ export const Countries = [{
         nom: 'Dominique',
         iso2: 'DM',
         iso3: 'DMA',
-        phone_code: '1 767'
+        phoneCode: '1 767',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Ecuador',
@@ -453,7 +611,9 @@ export const Countries = [{
         nom: 'Equateur',
         iso2: 'EC',
         iso3: 'ECU',
-        phone_code: 593
+        phoneCode: 593,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Egipto',
@@ -461,7 +621,9 @@ export const Countries = [{
         nom: 'Egypte',
         iso2: 'EG',
         iso3: 'EGY',
-        phone_code: 20
+        phoneCode: 20,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'El Salvador',
@@ -469,7 +631,9 @@ export const Countries = [{
         nom: 'El Salvador',
         iso2: 'SV',
         iso3: 'SLV',
-        phone_code: 503
+        phoneCode: 503,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Emiratos Árabes Unidos',
@@ -477,7 +641,9 @@ export const Countries = [{
         nom: 'Emirats Arabes Unis',
         iso2: 'AE',
         iso3: 'ARE',
-        phone_code: 971
+        phoneCode: 971,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Eritrea',
@@ -485,7 +651,9 @@ export const Countries = [{
         nom: 'Erythrée',
         iso2: 'ER',
         iso3: 'ERI',
-        phone_code: 291
+        phoneCode: 291,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Eslovaquia',
@@ -493,7 +661,9 @@ export const Countries = [{
         nom: 'Slovaquie',
         iso2: 'SK',
         iso3: 'SVK',
-        phone_code: 421
+        phoneCode: 421,
+        bankIdLength: 4,
+        ibanLength: 24
     },
     {
         nombre: 'Eslovenia',
@@ -501,7 +671,9 @@ export const Countries = [{
         nom: 'Slovénie',
         iso2: 'SI',
         iso3: 'SVN',
-        phone_code: 386
+        phoneCode: 386,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'España',
@@ -509,7 +681,9 @@ export const Countries = [{
         nom: 'Espagne',
         iso2: 'ES',
         iso3: 'ESP',
-        phone_code: 34
+        phoneCode: 34,
+        bankIdLength: 4,
+        ibanLength: 24
     },
     {
         nombre: 'Estados Unidos de América',
@@ -517,7 +691,9 @@ export const Countries = [{
         nom: 'États-Unis d\'Amérique',
         iso2: 'US',
         iso3: 'USA',
-        phone_code: 1
+        phoneCode: 1,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Estonia',
@@ -525,7 +701,9 @@ export const Countries = [{
         nom: 'L\'Estonie',
         iso2: 'EE',
         iso3: 'EST',
-        phone_code: 372
+        phoneCode: 372,
+        bankIdLength: 2,
+        ibanLength: 20
     },
     {
         nombre: 'Etiopía',
@@ -533,7 +711,9 @@ export const Countries = [{
         nom: 'Ethiopie',
         iso2: 'ET',
         iso3: 'ETH',
-        phone_code: 251
+        phoneCode: 251,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Filipinas',
@@ -541,7 +721,9 @@ export const Countries = [{
         nom: 'Philippines',
         iso2: 'PH',
         iso3: 'PHL',
-        phone_code: 63
+        phoneCode: 63,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Finlandia',
@@ -549,7 +731,9 @@ export const Countries = [{
         nom: 'Finlande',
         iso2: 'FI',
         iso3: 'FIN',
-        phone_code: 358
+        phoneCode: 358,
+        bankIdLength: 3,
+        ibanLength: 18
     },
     {
         nombre: 'Fiyi',
@@ -557,7 +741,9 @@ export const Countries = [{
         nom: 'Fidji',
         iso2: 'FJ',
         iso3: 'FJI',
-        phone_code: 679
+        phoneCode: 679,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Francia',
@@ -565,7 +751,9 @@ export const Countries = [{
         nom: 'France',
         iso2: 'FR',
         iso3: 'FRA',
-        phone_code: 33
+        phoneCode: 33,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Gabón',
@@ -573,7 +761,9 @@ export const Countries = [{
         nom: 'Gabon',
         iso2: 'GA',
         iso3: 'GAB',
-        phone_code: 241
+        phoneCode: 241,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Gambia',
@@ -581,7 +771,9 @@ export const Countries = [{
         nom: 'Gambie',
         iso2: 'GM',
         iso3: 'GMB',
-        phone_code: 220
+        phoneCode: 220,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Georgia',
@@ -589,7 +781,9 @@ export const Countries = [{
         nom: 'Géorgie',
         iso2: 'GE',
         iso3: 'GEO',
-        phone_code: 995
+        phoneCode: 995,
+        bankIdLength: 2,
+        ibanLength: 22
     },
     {
         nombre: 'Ghana',
@@ -597,7 +791,9 @@ export const Countries = [{
         nom: 'Ghana',
         iso2: 'GH',
         iso3: 'GHA',
-        phone_code: 233
+        phoneCode: 233,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Gibraltar',
@@ -605,7 +801,7 @@ export const Countries = [{
         nom: 'Gibraltar',
         iso2: 'GI',
         iso3: 'GIB',
-        phone_code: 350
+        phoneCode: 350
     },
     {
         nombre: 'Granada',
@@ -613,7 +809,9 @@ export const Countries = [{
         nom: 'Grenade',
         iso2: 'GD',
         iso3: 'GRD',
-        phone_code: '1 473'
+        phoneCode: '1 473',
+        bankIdLength: 4,
+        ibanLength: 23
     },
     {
         nombre: 'Grecia',
@@ -621,7 +819,9 @@ export const Countries = [{
         nom: 'Grèce',
         iso2: 'GR',
         iso3: 'GRC',
-        phone_code: 30
+        phoneCode: 30,
+        bankIdLength: 3,
+        ibanLength: 27
     },
     {
         nombre: 'Groenlandia',
@@ -629,7 +829,9 @@ export const Countries = [{
         nom: 'Groenland',
         iso2: 'GL',
         iso3: 'GRL',
-        phone_code: 299
+        phoneCode: 299,
+        bankIdLength: 4,
+        ibanLength: 18
     },
     {
         nombre: 'Guadalupe',
@@ -637,7 +839,9 @@ export const Countries = [{
         nom: 'Guadeloupe',
         iso2: 'GP',
         iso3: 'GLP',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Guam',
@@ -645,7 +849,9 @@ export const Countries = [{
         nom: 'Guam',
         iso2: 'GU',
         iso3: 'GUM',
-        phone_code: '1 671'
+        phoneCode: '1 671',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Guatemala',
@@ -653,7 +859,9 @@ export const Countries = [{
         nom: 'Guatemala',
         iso2: 'GT',
         iso3: 'GTM',
-        phone_code: 502
+        phoneCode: 502,
+        bankIdLength: 4,
+        ibanLength: 28
     },
     {
         nombre: 'Guayana Francesa',
@@ -661,7 +869,9 @@ export const Countries = [{
         nom: 'Guyane française',
         iso2: 'GF',
         iso3: 'GUF',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Guernsey',
@@ -669,7 +879,9 @@ export const Countries = [{
         nom: 'Guernesey',
         iso2: 'GG',
         iso3: 'GGY',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Guinea',
@@ -677,7 +889,9 @@ export const Countries = [{
         nom: 'Guinée',
         iso2: 'GN',
         iso3: 'GIN',
-        phone_code: 224
+        phoneCode: 224,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Guinea Ecuatorial',
@@ -685,7 +899,9 @@ export const Countries = [{
         nom: 'Guinée Equatoriale',
         iso2: 'GQ',
         iso3: 'GNQ',
-        phone_code: 240
+        phoneCode: 240,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Guinea-Bissau',
@@ -693,7 +909,9 @@ export const Countries = [{
         nom: 'Guinée-Bissau',
         iso2: 'GW',
         iso3: 'GNB',
-        phone_code: 245
+        phoneCode: 245,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Guyana',
@@ -701,7 +919,9 @@ export const Countries = [{
         nom: 'Guyane',
         iso2: 'GY',
         iso3: 'GUY',
-        phone_code: 592
+        phoneCode: 592,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Haití',
@@ -709,7 +929,9 @@ export const Countries = [{
         nom: 'Haïti',
         iso2: 'HT',
         iso3: 'HTI',
-        phone_code: 509
+        phoneCode: 509,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Honduras',
@@ -717,7 +939,9 @@ export const Countries = [{
         nom: 'Honduras',
         iso2: 'HN',
         iso3: 'HND',
-        phone_code: 504
+        phoneCode: 504,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Hong kong',
@@ -725,7 +949,9 @@ export const Countries = [{
         nom: 'Hong Kong',
         iso2: 'HK',
         iso3: 'HKG',
-        phone_code: 852
+        phoneCode: 852,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Hungría',
@@ -733,7 +959,9 @@ export const Countries = [{
         nom: 'Hongrie',
         iso2: 'HU',
         iso3: 'HUN',
-        phone_code: 36
+        phoneCode: 36,
+        bankIdLength: 3,
+        ibanLength: 28
     },
     {
         nombre: 'India',
@@ -741,7 +969,9 @@ export const Countries = [{
         nom: 'Inde',
         iso2: 'IN',
         iso3: 'IND',
-        phone_code: 91
+        phoneCode: 91,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Indonesia',
@@ -749,7 +979,9 @@ export const Countries = [{
         nom: 'Indonésie',
         iso2: 'ID',
         iso3: 'IDN',
-        phone_code: 62
+        phoneCode: 62,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Irán',
@@ -757,7 +989,9 @@ export const Countries = [{
         nom: 'Iran',
         iso2: 'IR',
         iso3: 'IRN',
-        phone_code: 98
+        phoneCode: 98,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Irak',
@@ -765,7 +999,9 @@ export const Countries = [{
         nom: 'Irak',
         iso2: 'IQ',
         iso3: 'IRQ',
-        phone_code: 964
+        phoneCode: 964,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Irlanda',
@@ -773,7 +1009,9 @@ export const Countries = [{
         nom: 'Irlande',
         iso2: 'IE',
         iso3: 'IRL',
-        phone_code: 353
+        phoneCode: 353,
+        bankIdLength: 4,
+        ibanLength: 22
     },
     {
         nombre: 'Isla Bouvet',
@@ -781,7 +1019,9 @@ export const Countries = [{
         nom: 'Bouvet Island',
         iso2: 'BV',
         iso3: 'BVT',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Isla de Man',
@@ -789,7 +1029,9 @@ export const Countries = [{
         nom: 'Ile de Man',
         iso2: 'IM',
         iso3: 'IMN',
-        phone_code: 44
+        phoneCode: 44,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Isla de Navidad',
@@ -797,7 +1039,9 @@ export const Countries = [{
         nom: 'Christmas Island',
         iso2: 'CX',
         iso3: 'CXR',
-        phone_code: 61
+        phoneCode: 61,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Isla Norfolk',
@@ -805,7 +1049,9 @@ export const Countries = [{
         nom: 'Île de Norfolk',
         iso2: 'NF',
         iso3: 'NFK',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islandia',
@@ -813,7 +1059,9 @@ export const Countries = [{
         nom: 'Islande',
         iso2: 'IS',
         iso3: 'ISL',
-        phone_code: 354
+        phoneCode: 354,
+        bankIdLength: 4,
+        ibanLength: 26
     },
     {
         nombre: 'Islas Bermudas',
@@ -821,7 +1069,9 @@ export const Countries = [{
         nom: 'Bermudes',
         iso2: 'BM',
         iso3: 'BMU',
-        phone_code: '1 441'
+        phoneCode: '1 441',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Caimán',
@@ -829,7 +1079,9 @@ export const Countries = [{
         nom: 'Iles Caïmans',
         iso2: 'KY',
         iso3: 'CYM',
-        phone_code: '1 345'
+        phoneCode: '1 345',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Cocos (Keeling)',
@@ -837,7 +1089,9 @@ export const Countries = [{
         nom: 'Cocos (Keeling',
         iso2: 'CC',
         iso3: 'CCK',
-        phone_code: 61
+        phoneCode: 61,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Cook',
@@ -845,7 +1099,9 @@ export const Countries = [{
         nom: 'Iles Cook',
         iso2: 'CK',
         iso3: 'COK',
-        phone_code: 682
+        phoneCode: 682,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas de Åland',
@@ -853,7 +1109,9 @@ export const Countries = [{
         nom: 'Îles Åland',
         iso2: 'AX',
         iso3: 'ALA',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Feroe',
@@ -861,7 +1119,9 @@ export const Countries = [{
         nom: 'Iles Féro',
         iso2: 'FO',
         iso3: 'FRO',
-        phone_code: 298
+        phoneCode: 298,
+        bankIdLength: 4,
+        ibanLength: 18
     },
     {
         nombre: 'Islas Georgias del Sur y Sandwich del Sur',
@@ -869,7 +1129,9 @@ export const Countries = [{
         nom: 'Géorgie du Sud et les Îles Sandwich du Sud',
         iso2: 'GS',
         iso3: 'SGS',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Heard y McDonald',
@@ -877,7 +1139,9 @@ export const Countries = [{
         nom: 'Les îles Heard et McDonald',
         iso2: 'HM',
         iso3: 'HMD',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Maldivas',
@@ -885,7 +1149,9 @@ export const Countries = [{
         nom: 'Maldives',
         iso2: 'MV',
         iso3: 'MDV',
-        phone_code: 960
+        phoneCode: 960,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Malvinas',
@@ -893,7 +1159,9 @@ export const Countries = [{
         nom: 'Iles Falkland (Malvinas',
         iso2: 'FK',
         iso3: 'FLK',
-        phone_code: 500
+        phoneCode: 500,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Marianas del Norte',
@@ -901,7 +1169,9 @@ export const Countries = [{
         nom: 'Iles Mariannes du Nord',
         iso2: 'MP',
         iso3: 'MNP',
-        phone_code: '1 670'
+        phoneCode: '1 670',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Marshall',
@@ -909,7 +1179,9 @@ export const Countries = [{
         nom: 'Iles Marshall',
         iso2: 'MH',
         iso3: 'MHL',
-        phone_code: 692
+        phoneCode: 692,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Pitcairn',
@@ -917,7 +1189,9 @@ export const Countries = [{
         nom: 'Iles Pitcairn',
         iso2: 'PN',
         iso3: 'PCN',
-        phone_code: 870
+        phoneCode: 870,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Salomón',
@@ -925,7 +1199,9 @@ export const Countries = [{
         nom: 'Iles Salomon',
         iso2: 'SB',
         iso3: 'SLB',
-        phone_code: 677
+        phoneCode: 677,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Turcas y Caicos',
@@ -933,7 +1209,9 @@ export const Countries = [{
         nom: 'Iles Turques et Caïques',
         iso2: 'TC',
         iso3: 'TCA',
-        phone_code: '1 649'
+        phoneCode: '1 649',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Ultramarinas Menores de Estados Unidos',
@@ -941,7 +1219,9 @@ export const Countries = [{
         nom: 'États-Unis Îles mineures éloignées',
         iso2: 'UM',
         iso3: 'UMI',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Islas Vírgenes Británicas',
@@ -949,7 +1229,9 @@ export const Countries = [{
         nom: 'Iles Vierges',
         iso2: 'VG',
         iso3: 'VG',
-        phone_code: '1 284'
+        phoneCode: '1 284',
+        bankIdLength: 4,
+        ibanLength: 24
     },
     {
         nombre: 'Islas Vírgenes de los Estados Unidos',
@@ -957,7 +1239,9 @@ export const Countries = [{
         nom: 'Îles Vierges américaines',
         iso2: 'VI',
         iso3: 'VIR',
-        phone_code: '1 340'
+        phoneCode: '1 340',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Israel',
@@ -965,7 +1249,9 @@ export const Countries = [{
         nom: 'Israël',
         iso2: 'IL',
         iso3: 'ISR',
-        phone_code: 972
+        phoneCode: 972,
+        bankIdLength: 3,
+        ibanLength: 23
     },
     {
         nombre: 'Italia',
@@ -973,7 +1259,9 @@ export const Countries = [{
         nom: 'Italie',
         iso2: 'IT',
         iso3: 'ITA',
-        phone_code: 39
+        phoneCode: 39,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Jamaica',
@@ -981,7 +1269,9 @@ export const Countries = [{
         nom: 'Jamaïque',
         iso2: 'JM',
         iso3: 'JAM',
-        phone_code: '1 876'
+        phoneCode: '1 876',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Japón',
@@ -989,7 +1279,9 @@ export const Countries = [{
         nom: 'Japon',
         iso2: 'JP',
         iso3: 'JPN',
-        phone_code: 81
+        phoneCode: 81,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Jersey',
@@ -997,7 +1289,9 @@ export const Countries = [{
         nom: 'Maillot',
         iso2: 'JE',
         iso3: 'JEY',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Jordania',
@@ -1005,7 +1299,9 @@ export const Countries = [{
         nom: 'Jordan',
         iso2: 'JO',
         iso3: 'JOR',
-        phone_code: 962
+        phoneCode: 962,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Kazajistán',
@@ -1013,7 +1309,9 @@ export const Countries = [{
         nom: 'Le Kazakhstan',
         iso2: 'KZ',
         iso3: 'KAZ',
-        phone_code: 7
+        phoneCode: 7,
+        bankIdLength: 3,
+        ibanLength: 20
     },
     {
         nombre: 'Kenia',
@@ -1021,7 +1319,9 @@ export const Countries = [{
         nom: 'Kenya',
         iso2: 'KE',
         iso3: 'KEN',
-        phone_code: 254
+        phoneCode: 254,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Kirgizstán',
@@ -1029,7 +1329,9 @@ export const Countries = [{
         nom: 'Kirghizstan',
         iso2: 'KG',
         iso3: 'KGZ',
-        phone_code: 996
+        phoneCode: 996,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Kiribati',
@@ -1037,7 +1339,9 @@ export const Countries = [{
         nom: 'Kiribati',
         iso2: 'KI',
         iso3: 'KIR',
-        phone_code: 686
+        phoneCode: 686,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Kuwait',
@@ -1045,7 +1349,9 @@ export const Countries = [{
         nom: 'Koweït',
         iso2: 'KW',
         iso3: 'KWT',
-        phone_code: 965
+        phoneCode: 965,
+        bankIdLength: 4,
+        ibanLength: 30
     },
     {
         nombre: 'Líbano',
@@ -1053,7 +1359,9 @@ export const Countries = [{
         nom: 'Liban',
         iso2: 'LB',
         iso3: 'LBN',
-        phone_code: 961
+        phoneCode: 961,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Laos',
@@ -1061,7 +1369,9 @@ export const Countries = [{
         nom: 'Laos',
         iso2: 'LA',
         iso3: 'LAO',
-        phone_code: 856
+        phoneCode: 856,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Lesoto',
@@ -1069,7 +1379,9 @@ export const Countries = [{
         nom: 'Lesotho',
         iso2: 'LS',
         iso3: 'LSO',
-        phone_code: 266
+        phoneCode: 266,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Letonia',
@@ -1077,7 +1389,9 @@ export const Countries = [{
         nom: 'La Lettonie',
         iso2: 'LV',
         iso3: 'LVA',
-        phone_code: 371
+        phoneCode: 371,
+        bankIdLength: 4,
+        ibanLength: 21
     },
     {
         nombre: 'Liberia',
@@ -1085,7 +1399,9 @@ export const Countries = [{
         nom: 'Liberia',
         iso2: 'LR',
         iso3: 'LBR',
-        phone_code: 231
+        phoneCode: 231,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Libia',
@@ -1093,7 +1409,9 @@ export const Countries = [{
         nom: 'Libye',
         iso2: 'LY',
         iso3: 'LBY',
-        phone_code: 218
+        phoneCode: 218,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Liechtenstein',
@@ -1101,7 +1419,9 @@ export const Countries = [{
         nom: 'Liechtenstein',
         iso2: 'LI',
         iso3: 'LIE',
-        phone_code: 423
+        phoneCode: 423,
+        bankIdLength: 5,
+        ibanLength: 21
     },
     {
         nombre: 'Lituania',
@@ -1109,7 +1429,9 @@ export const Countries = [{
         nom: 'La Lituanie',
         iso2: 'LT',
         iso3: 'LTU',
-        phone_code: 370
+        phoneCode: 370,
+        bankIdLength: 5,
+        ibanLength: 20
     },
     {
         nombre: 'Luxemburgo',
@@ -1117,7 +1439,9 @@ export const Countries = [{
         nom: 'Luxembourg',
         iso2: 'LU',
         iso3: 'LUX',
-        phone_code: 352
+        phoneCode: 352,
+        bankIdLength: 3,
+        ibanLength: 20
     },
     {
         nombre: 'México',
@@ -1125,7 +1449,9 @@ export const Countries = [{
         nom: 'Mexique',
         iso2: 'MX',
         iso3: 'MEX',
-        phone_code: 52
+        phoneCode: 52,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Mónaco',
@@ -1133,7 +1459,9 @@ export const Countries = [{
         nom: 'Monaco',
         iso2: 'MC',
         iso3: 'MCO',
-        phone_code: 377
+        phoneCode: 377,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Macao',
@@ -1141,7 +1469,9 @@ export const Countries = [{
         nom: 'Macao',
         iso2: 'MO',
         iso3: 'MAC',
-        phone_code: 853
+        phoneCode: 853,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Macedônia',
@@ -1149,7 +1479,9 @@ export const Countries = [{
         nom: 'Macédoine',
         iso2: 'MK',
         iso3: 'MKD',
-        phone_code: 389
+        phoneCode: 389,
+        bankIdLength: 3,
+        ibanLength: 19
     },
     {
         nombre: 'Madagascar',
@@ -1157,7 +1489,9 @@ export const Countries = [{
         nom: 'Madagascar',
         iso2: 'MG',
         iso3: 'MDG',
-        phone_code: 261
+        phoneCode: 261,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Malasia',
@@ -1165,7 +1499,9 @@ export const Countries = [{
         nom: 'Malaisie',
         iso2: 'MY',
         iso3: 'MYS',
-        phone_code: 60
+        phoneCode: 60,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Malawi',
@@ -1173,7 +1509,9 @@ export const Countries = [{
         nom: 'Malawi',
         iso2: 'MW',
         iso3: 'MWI',
-        phone_code: 265
+        phoneCode: 265,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Mali',
@@ -1181,7 +1519,9 @@ export const Countries = [{
         nom: 'Mali',
         iso2: 'ML',
         iso3: 'MLI',
-        phone_code: 223
+        phoneCode: 223,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Malta',
@@ -1189,7 +1529,9 @@ export const Countries = [{
         nom: 'Malte',
         iso2: 'MT',
         iso3: 'MLT',
-        phone_code: 356
+        phoneCode: 356,
+        bankIdLength: 4,
+        ibanLength: 31
     },
     {
         nombre: 'Marruecos',
@@ -1197,7 +1539,9 @@ export const Countries = [{
         nom: 'Maroc',
         iso2: 'MA',
         iso3: 'MAR',
-        phone_code: 212
+        phoneCode: 212,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Martinica',
@@ -1205,7 +1549,9 @@ export const Countries = [{
         nom: 'Martinique',
         iso2: 'MQ',
         iso3: 'MTQ',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Mauricio',
@@ -1213,7 +1559,9 @@ export const Countries = [{
         nom: 'Iles Maurice',
         iso2: 'MU',
         iso3: 'MUS',
-        phone_code: 230
+        phoneCode: 230,
+        bankIdLength: 6,
+        ibanLength: 30
     },
     {
         nombre: 'Mauritania',
@@ -1221,7 +1569,9 @@ export const Countries = [{
         nom: 'Mauritanie',
         iso2: 'MR',
         iso3: 'MRT',
-        phone_code: 222
+        phoneCode: 222,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Mayotte',
@@ -1229,7 +1579,9 @@ export const Countries = [{
         nom: 'Mayotte',
         iso2: 'YT',
         iso3: 'MYT',
-        phone_code: 262
+        phoneCode: 262,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Micronesia',
@@ -1237,7 +1589,9 @@ export const Countries = [{
         nom: 'Federados Estados de',
         iso2: 'FM',
         iso3: 'FSM',
-        phone_code: 691
+        phoneCode: 691,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Moldavia',
@@ -1245,7 +1599,9 @@ export const Countries = [{
         nom: 'Moldavie',
         iso2: 'MD',
         iso3: 'MDA',
-        phone_code: 373
+        phoneCode: 373,
+        bankIdLength: 2,
+        ibanLength: 24
     },
     {
         nombre: 'Mongolia',
@@ -1253,7 +1609,9 @@ export const Countries = [{
         nom: 'Mongolie',
         iso2: 'MN',
         iso3: 'MNG',
-        phone_code: 976
+        phoneCode: 976,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Montenegro',
@@ -1261,7 +1619,9 @@ export const Countries = [{
         nom: 'Monténégro',
         iso2: 'ME',
         iso3: 'MNE',
-        phone_code: 382
+        phoneCode: 382,
+        bankIdLength: 3,
+        ibanLength: 22
     },
     {
         nombre: 'Montserrat',
@@ -1269,7 +1629,9 @@ export const Countries = [{
         nom: 'Montserrat',
         iso2: 'MS',
         iso3: 'MSR',
-        phone_code: '1 664'
+        phoneCode: '1 664',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Mozambique',
@@ -1277,7 +1639,9 @@ export const Countries = [{
         nom: 'Mozambique',
         iso2: 'MZ',
         iso3: 'MOZ',
-        phone_code: 258
+        phoneCode: 258,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Namibia',
@@ -1285,7 +1649,9 @@ export const Countries = [{
         nom: 'Namibie',
         iso2: 'NA',
         iso3: 'NAM',
-        phone_code: 264
+        phoneCode: 264,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Nauru',
@@ -1293,7 +1659,9 @@ export const Countries = [{
         nom: 'Nauru',
         iso2: 'NR',
         iso3: 'NRU',
-        phone_code: 674
+        phoneCode: 674,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Nepal',
@@ -1301,7 +1669,9 @@ export const Countries = [{
         nom: 'Népal',
         iso2: 'NP',
         iso3: 'NPL',
-        phone_code: 977
+        phoneCode: 977,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Nicaragua',
@@ -1309,7 +1679,9 @@ export const Countries = [{
         nom: 'Nicaragua',
         iso2: 'NI',
         iso3: 'NIC',
-        phone_code: 505
+        phoneCode: 505,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Niger',
@@ -1317,7 +1689,9 @@ export const Countries = [{
         nom: 'Niger',
         iso2: 'NE',
         iso3: 'NER',
-        phone_code: 227
+        phoneCode: 227,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Nigeria',
@@ -1325,7 +1699,9 @@ export const Countries = [{
         nom: 'Nigeria',
         iso2: 'NG',
         iso3: 'NGA',
-        phone_code: 234
+        phoneCode: 234,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Niue',
@@ -1333,7 +1709,9 @@ export const Countries = [{
         nom: 'Niou',
         iso2: 'NU',
         iso3: 'NIU',
-        phone_code: 683
+        phoneCode: 683,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Noruega',
@@ -1341,7 +1719,9 @@ export const Countries = [{
         nom: 'Norvège',
         iso2: 'NO',
         iso3: 'NOR',
-        phone_code: 47
+        phoneCode: 47,
+        bankIdLength: 4,
+        ibanLength: 15
     },
     {
         nombre: 'Nueva Caledonia',
@@ -1349,7 +1729,9 @@ export const Countries = [{
         nom: 'Nouvelle-Calédonie',
         iso2: 'NC',
         iso3: 'NCL',
-        phone_code: 687
+        phoneCode: 687,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Nueva Zelanda',
@@ -1357,7 +1739,9 @@ export const Countries = [{
         nom: 'Nouvelle-Zélande',
         iso2: 'NZ',
         iso3: 'NZL',
-        phone_code: 64
+        phoneCode: 64,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Omán',
@@ -1365,7 +1749,9 @@ export const Countries = [{
         nom: 'Oman',
         iso2: 'OM',
         iso3: 'OMN',
-        phone_code: 968
+        phoneCode: 968,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Países Bajos',
@@ -1373,7 +1759,9 @@ export const Countries = [{
         nom: 'Pays-Bas',
         iso2: 'NL',
         iso3: 'NLD',
-        phone_code: 31
+        phoneCode: 31,
+        bankIdLength: 4,
+        ibanLength: 18
     },
     {
         nombre: 'Pakistán',
@@ -1381,7 +1769,9 @@ export const Countries = [{
         nom: 'Pakistan',
         iso2: 'PK',
         iso3: 'PAK',
-        phone_code: 92
+        phoneCode: 92,
+        bankIdLength: 4,
+        ibanLength: 24
     },
     {
         nombre: 'Palau',
@@ -1389,7 +1779,9 @@ export const Countries = [{
         nom: 'Palau',
         iso2: 'PW',
         iso3: 'PLW',
-        phone_code: 680
+        phoneCode: 680,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Palestina',
@@ -1397,7 +1789,9 @@ export const Countries = [{
         nom: 'La Palestine',
         iso2: 'PS',
         iso3: 'PSE',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 29
     },
     {
         nombre: 'Panamá',
@@ -1405,7 +1799,9 @@ export const Countries = [{
         nom: 'Panama',
         iso2: 'PA',
         iso3: 'PAN',
-        phone_code: 507
+        phoneCode: 507,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Papúa Nueva Guinea',
@@ -1413,7 +1809,9 @@ export const Countries = [{
         nom: 'Papouasie-Nouvelle-Guinée',
         iso2: 'PG',
         iso3: 'PNG',
-        phone_code: 675
+        phoneCode: 675,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Paraguay',
@@ -1421,7 +1819,9 @@ export const Countries = [{
         nom: 'Paraguay',
         iso2: 'PY',
         iso3: 'PRY',
-        phone_code: 595
+        phoneCode: 595,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Perú',
@@ -1429,7 +1829,9 @@ export const Countries = [{
         nom: 'Pérou',
         iso2: 'PE',
         iso3: 'PER',
-        phone_code: 51
+        phoneCode: 51,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Polinesia Francesa',
@@ -1437,7 +1839,9 @@ export const Countries = [{
         nom: 'Polynésie française',
         iso2: 'PF',
         iso3: 'PYF',
-        phone_code: 689
+        phoneCode: 689,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Polonia',
@@ -1445,7 +1849,9 @@ export const Countries = [{
         nom: 'Pologne',
         iso2: 'PL',
         iso3: 'POL',
-        phone_code: 48
+        phoneCode: 48,
+        bankIdLength: 8,
+        ibanLength: 28
     },
     {
         nombre: 'Portugal',
@@ -1453,7 +1859,9 @@ export const Countries = [{
         nom: 'Portugal',
         iso2: 'PT',
         iso3: 'PRT',
-        phone_code: 351
+        phoneCode: 351,
+        bankIdLength: 4,
+        ibanLength: 25
     },
     {
         nombre: 'Puerto Rico',
@@ -1461,7 +1869,9 @@ export const Countries = [{
         nom: 'Porto Rico',
         iso2: 'PR',
         iso3: 'PRI',
-        phone_code: 1
+        phoneCode: 1,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Qatar',
@@ -1469,7 +1879,9 @@ export const Countries = [{
         nom: 'Qatar',
         iso2: 'QA',
         iso3: 'QAT',
-        phone_code: 974
+        phoneCode: 974,
+        bankIdLength: 4,
+        ibanLength: 29
     },
     {
         nombre: 'Reino Unido',
@@ -1477,7 +1889,9 @@ export const Countries = [{
         nom: 'Royaume-Uni',
         iso2: 'GB',
         iso3: 'GBR',
-        phone_code: 44
+        phoneCode: 44,
+        bankIdLength: 4,
+        ibanLength: 22
     },
     {
         nombre: 'República Centroafricana',
@@ -1485,7 +1899,9 @@ export const Countries = [{
         nom: 'République Centrafricaine',
         iso2: 'CF',
         iso3: 'CAF',
-        phone_code: 236
+        phoneCode: 236,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'República Checa',
@@ -1493,7 +1909,9 @@ export const Countries = [{
         nom: 'République Tchèque',
         iso2: 'CZ',
         iso3: 'CZE',
-        phone_code: 420
+        phoneCode: 420,
+        bankIdLength: 4,
+        ibanLength: 24
     },
     {
         nombre: 'República Dominicana',
@@ -1501,7 +1919,9 @@ export const Countries = [{
         nom: 'République Dominicaine',
         iso2: 'DO',
         iso3: 'DOM',
-        phone_code: '1 809'
+        phoneCode: '1 809',
+        bankIdLength: 4,
+        ibanLength: 28
     },
     {
         nombre: 'Reunión',
@@ -1509,7 +1929,9 @@ export const Countries = [{
         nom: 'Réunion',
         iso2: 'RE',
         iso3: 'REU',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Ruanda',
@@ -1517,7 +1939,9 @@ export const Countries = [{
         nom: 'Rwanda',
         iso2: 'RW',
         iso3: 'RWA',
-        phone_code: 250
+        phoneCode: 250,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Rumanía',
@@ -1525,7 +1949,9 @@ export const Countries = [{
         nom: 'Roumanie',
         iso2: 'RO',
         iso3: 'ROU',
-        phone_code: 40
+        phoneCode: 40,
+        bankIdLength: 4,
+        ibanLength: 24
     },
     {
         nombre: 'Rusia',
@@ -1533,7 +1959,9 @@ export const Countries = [{
         nom: 'La Russie',
         iso2: 'RU',
         iso3: 'RUS',
-        phone_code: 7
+        phoneCode: 7,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Sahara Occidental',
@@ -1541,7 +1969,9 @@ export const Countries = [{
         nom: 'Sahara Occidental',
         iso2: 'EH',
         iso3: 'ESH',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Samoa',
@@ -1549,7 +1979,9 @@ export const Countries = [{
         nom: 'Samoa',
         iso2: 'WS',
         iso3: 'WSM',
-        phone_code: 685
+        phoneCode: 685,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Samoa Americana',
@@ -1557,7 +1989,9 @@ export const Countries = [{
         nom: 'Les Samoa américaines',
         iso2: 'AS',
         iso3: 'ASM',
-        phone_code: '1 684'
+        phoneCode: '1 684',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'San Bartolomé',
@@ -1565,7 +1999,9 @@ export const Countries = [{
         nom: 'Saint-Barthélemy',
         iso2: 'BL',
         iso3: 'BLM',
-        phone_code: 590
+        phoneCode: 590,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'San Cristóbal y Nieves',
@@ -1573,7 +2009,9 @@ export const Countries = [{
         nom: 'Saint Kitts et Nevis',
         iso2: 'KN',
         iso3: 'KNA',
-        phone_code: '1 869'
+        phoneCode: '1 869',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'San Marino',
@@ -1581,7 +2019,9 @@ export const Countries = [{
         nom: 'San Marino',
         iso2: 'SM',
         iso3: 'SMR',
-        phone_code: 378
+        phoneCode: 378,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'San Martín (Francia)',
@@ -1589,7 +2029,9 @@ export const Countries = [{
         nom: 'Saint-Martin (partie française)',
         iso2: 'MF',
         iso3: 'MAF',
-        phone_code: '1 599'
+        phoneCode: '1 599',
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'San Pedro y Miquelón',
@@ -1597,7 +2039,9 @@ export const Countries = [{
         nom: 'Saint-Pierre-et-Miquelon',
         iso2: 'PM',
         iso3: 'SPM',
-        phone_code: 508
+        phoneCode: 508,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'San Vicente y las Granadinas',
@@ -1605,7 +2049,9 @@ export const Countries = [{
         nom: 'Saint-Vincent et Grenadines',
         iso2: 'VC',
         iso3: 'VCT',
-        phone_code: '1 784'
+        phoneCode: '1 784',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Santa Elena',
@@ -1613,7 +2059,9 @@ export const Countries = [{
         nom: 'Ascensión y Tristan de Acuña',
         iso2: 'SH',
         iso3: 'SHN',
-        phone_code: 290
+        phoneCode: 290,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Santa Lucía',
@@ -1621,7 +2069,9 @@ export const Countries = [{
         nom: 'Sainte-Lucie',
         iso2: 'LC',
         iso3: 'LCA',
-        phone_code: '1 758'
+        phoneCode: '1 758',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Santo Tomé y Príncipe',
@@ -1629,7 +2079,9 @@ export const Countries = [{
         nom: 'Sao Tomé et Principe',
         iso2: 'ST',
         iso3: 'STP',
-        phone_code: 239
+        phoneCode: 239,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Senegal',
@@ -1637,7 +2089,9 @@ export const Countries = [{
         nom: 'Sénégal',
         iso2: 'SN',
         iso3: 'SEN',
-        phone_code: 221
+        phoneCode: 221,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Serbia',
@@ -1645,7 +2099,9 @@ export const Countries = [{
         nom: 'Serbie',
         iso2: 'RS',
         iso3: 'SRB',
-        phone_code: 381
+        phoneCode: 381,
+        bankIdLength: 3,
+        ibanLength: 22
     },
     {
         nombre: 'Seychelles',
@@ -1653,7 +2109,9 @@ export const Countries = [{
         nom: 'Les Seychelles',
         iso2: 'SC',
         iso3: 'SYC',
-        phone_code: 248
+        phoneCode: 248,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Sierra Leona',
@@ -1661,7 +2119,9 @@ export const Countries = [{
         nom: 'Sierra Leone',
         iso2: 'SL',
         iso3: 'SLE',
-        phone_code: 232
+        phoneCode: 232,
+        bankIdLength: 4,
+        ibanLength: 19
     },
     {
         nombre: 'Singapur',
@@ -1669,7 +2129,9 @@ export const Countries = [{
         nom: 'Singapour',
         iso2: 'SG',
         iso3: 'SGP',
-        phone_code: 65
+        phoneCode: 65,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Siria',
@@ -1677,7 +2139,9 @@ export const Countries = [{
         nom: 'Syrie',
         iso2: 'SY',
         iso3: 'SYR',
-        phone_code: 963
+        phoneCode: 963,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Somalia',
@@ -1685,7 +2149,9 @@ export const Countries = [{
         nom: 'Somalie',
         iso2: 'SO',
         iso3: 'SOM',
-        phone_code: 252
+        phoneCode: 252,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Sri lanka',
@@ -1693,7 +2159,9 @@ export const Countries = [{
         nom: 'Sri Lanka',
         iso2: 'LK',
         iso3: 'LKA',
-        phone_code: 94
+        phoneCode: 94,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Sudáfrica',
@@ -1701,7 +2169,9 @@ export const Countries = [{
         nom: 'Afrique du Sud',
         iso2: 'ZA',
         iso3: 'ZAF',
-        phone_code: 27
+        phoneCode: 27,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Sudán',
@@ -1709,7 +2179,9 @@ export const Countries = [{
         nom: 'Soudan',
         iso2: 'SD',
         iso3: 'SDN',
-        phone_code: 249
+        phoneCode: 249,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Suecia',
@@ -1717,7 +2189,9 @@ export const Countries = [{
         nom: 'Suède',
         iso2: 'SE',
         iso3: 'SWE',
-        phone_code: 46
+        phoneCode: 46,
+        bankIdLength: 3,
+        ibanLength: 24
     },
     {
         nombre: 'Suiza',
@@ -1725,7 +2199,9 @@ export const Countries = [{
         nom: 'Suisse',
         iso2: 'CH',
         iso3: 'CHE',
-        phone_code: 41
+        phoneCode: 41,
+        bankIdLength: 5,
+        ibanLength: 21
     },
     {
         nombre: 'Surinám',
@@ -1733,7 +2209,9 @@ export const Countries = [{
         nom: 'Surinam',
         iso2: 'SR',
         iso3: 'SUR',
-        phone_code: 597
+        phoneCode: 597,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Svalbard y Jan Mayen',
@@ -1741,7 +2219,9 @@ export const Countries = [{
         nom: 'Svalbard et Jan Mayen',
         iso2: 'SJ',
         iso3: 'SJM',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Swazilandia',
@@ -1749,7 +2229,9 @@ export const Countries = [{
         nom: 'Swaziland',
         iso2: 'SZ',
         iso3: 'SWZ',
-        phone_code: 268
+        phoneCode: 268,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Tadjikistán',
@@ -1757,7 +2239,9 @@ export const Countries = [{
         nom: 'Le Tadjikistan',
         iso2: 'TJ',
         iso3: 'TJK',
-        phone_code: 992
+        phoneCode: 992,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Tailandia',
@@ -1765,7 +2249,9 @@ export const Countries = [{
         nom: 'Thaïlande',
         iso2: 'TH',
         iso3: 'THA',
-        phone_code: 66
+        phoneCode: 66,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Taiwán',
@@ -1773,7 +2259,9 @@ export const Countries = [{
         nom: 'Taiwan',
         iso2: 'TW',
         iso3: 'TWN',
-        phone_code: 886
+        phoneCode: 886,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Tanzania',
@@ -1781,7 +2269,9 @@ export const Countries = [{
         nom: 'Tanzanie',
         iso2: 'TZ',
         iso3: 'TZA',
-        phone_code: 255
+        phoneCode: 255,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Territorio Británico del Océano Índico',
@@ -1789,7 +2279,9 @@ export const Countries = [{
         nom: 'Territoire britannique de l\'océan Indien',
         iso2: 'IO',
         iso3: 'IOT',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Territorios Australes y Antárticas Franceses',
@@ -1797,7 +2289,9 @@ export const Countries = [{
         nom: 'Terres australes françaises',
         iso2: 'TF',
         iso3: 'ATF',
-        phone_code: ''
+        phoneCode: '',
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Timor Oriental',
@@ -1805,7 +2299,9 @@ export const Countries = [{
         nom: 'Timor-Oriental',
         iso2: 'TL',
         iso3: 'TLS',
-        phone_code: 670
+        phoneCode: 670,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Togo',
@@ -1813,7 +2309,9 @@ export const Countries = [{
         nom: 'Togo',
         iso2: 'TG',
         iso3: 'TGO',
-        phone_code: 228
+        phoneCode: 228,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Tokelau',
@@ -1821,7 +2319,9 @@ export const Countries = [{
         nom: 'Tokélaou',
         iso2: 'TK',
         iso3: 'TKL',
-        phone_code: 690
+        phoneCode: 690,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Tonga',
@@ -1829,7 +2329,9 @@ export const Countries = [{
         nom: 'Tonga',
         iso2: 'TO',
         iso3: 'TON',
-        phone_code: 676
+        phoneCode: 676,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Trinidad y Tobago',
@@ -1837,7 +2339,9 @@ export const Countries = [{
         nom: 'Trinidad et Tobago',
         iso2: 'TT',
         iso3: 'TTO',
-        phone_code: '1 868'
+        phoneCode: '1 868',
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Tunez',
@@ -1845,7 +2349,9 @@ export const Countries = [{
         nom: 'Tunisie',
         iso2: 'TN',
         iso3: 'TUN',
-        phone_code: 216
+        phoneCode: 216,
+        bankIdLength: 2,
+        ibanLength: 24
     },
     {
         nombre: 'Turkmenistán',
@@ -1853,7 +2359,9 @@ export const Countries = [{
         nom: 'Le Turkménistan',
         iso2: 'TM',
         iso3: 'TKM',
-        phone_code: 993
+        phoneCode: 993,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Turquía',
@@ -1861,7 +2369,9 @@ export const Countries = [{
         nom: 'Turquie',
         iso2: 'TR',
         iso3: 'TUR',
-        phone_code: 90
+        phoneCode: 90,
+        bankIdLength: 5,
+        ibanLength: 26
     },
     {
         nombre: 'Tuvalu',
@@ -1869,7 +2379,9 @@ export const Countries = [{
         nom: 'Tuvalu',
         iso2: 'TV',
         iso3: 'TUV',
-        phone_code: 688
+        phoneCode: 688,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Ucrania',
@@ -1877,7 +2389,9 @@ export const Countries = [{
         nom: 'L\'Ukraine',
         iso2: 'UA',
         iso3: 'UKR',
-        phone_code: 380
+        phoneCode: 380,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Uganda',
@@ -1885,7 +2399,9 @@ export const Countries = [{
         nom: 'Ouganda',
         iso2: 'UG',
         iso3: 'UGA',
-        phone_code: 256
+        phoneCode: 256,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Uruguay',
@@ -1893,7 +2409,9 @@ export const Countries = [{
         nom: 'Uruguay',
         iso2: 'UY',
         iso3: 'URY',
-        phone_code: 598
+        phoneCode: 598,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Uzbekistán',
@@ -1901,7 +2419,9 @@ export const Countries = [{
         nom: 'L\'Ouzbékistan',
         iso2: 'UZ',
         iso3: 'UZB',
-        phone_code: 998
+        phoneCode: 998,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Vanuatu',
@@ -1909,7 +2429,9 @@ export const Countries = [{
         nom: 'Vanuatu',
         iso2: 'VU',
         iso3: 'VUT',
-        phone_code: 678
+        phoneCode: 678,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Venezuela',
@@ -1917,7 +2439,9 @@ export const Countries = [{
         nom: 'Venezuela',
         iso2: 'VE',
         iso3: 'VEN',
-        phone_code: 58
+        phoneCode: 58,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Vietnam',
@@ -1925,7 +2449,9 @@ export const Countries = [{
         nom: 'Vietnam',
         iso2: 'VN',
         iso3: 'VNM',
-        phone_code: 84
+        phoneCode: 84,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Wallis y Futuna',
@@ -1933,7 +2459,9 @@ export const Countries = [{
         nom: 'Wallis et Futuna',
         iso2: 'WF',
         iso3: 'WLF',
-        phone_code: 681
+        phoneCode: 681,
+        bankIdLength: 5,
+        ibanLength: 27
     },
     {
         nombre: 'Yemen',
@@ -1941,7 +2469,9 @@ export const Countries = [{
         nom: 'Yémen',
         iso2: 'YE',
         iso3: 'YEM',
-        phone_code: 967
+        phoneCode: 967,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Yibuti',
@@ -1949,7 +2479,9 @@ export const Countries = [{
         nom: 'Djibouti',
         iso2: 'DJ',
         iso3: 'DJI',
-        phone_code: 253
+        phoneCode: 253,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Zambia',
@@ -1957,7 +2489,9 @@ export const Countries = [{
         nom: 'Zambie',
         iso2: 'ZM',
         iso3: 'ZMB',
-        phone_code: 260
+        phoneCode: 260,
+        bankIdLength: 4,
+        ibanLength: 34
     },
     {
         nombre: 'Zimbabue',
@@ -1965,6 +2499,13 @@ export const Countries = [{
         nom: 'Zimbabwe',
         iso2: 'ZW',
         iso3: 'ZWE',
-        phone_code: 263
+        phoneCode: 263,
+        bankIdLength: 4,
+        ibanLength: 34
     }
 ];
+
+export const getCountry = (iso2) => {
+    let cts = Countries.filter(f => f.iso2.toUpperCase() === iso2.toUpperCase());
+    return cts.length > 0 ? new Country(cts[0]) : new Country(); 
+}

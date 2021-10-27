@@ -1,8 +1,8 @@
 import {AonElement} from './AonElement.js';
-import {setDate} from '../services/utils.js';
 import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
 import { AonInput } from './aon-input.js';
 import { AonIconButton } from './aon-icon-button.js';
+import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
 
 export class AonDate extends AonElement {
 
@@ -67,7 +67,7 @@ export class AonDate extends AonElement {
     if(CONSTANT.VALUE === name) {
       let input = this.getElement(this.INPUT);
       if(newValue && input)
-        input.value = setDate(newValue);
+        input.value = AonDateUtils.setDate(newValue);
       else if(input && newValue === '') input.value = '';
    }
   }

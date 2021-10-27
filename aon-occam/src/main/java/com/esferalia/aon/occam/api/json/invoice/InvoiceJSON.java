@@ -37,6 +37,7 @@ public class InvoiceJSON {
 		Registry registry = RegistryJSON.fromJSON(registryJSON);
 		JSONObject addressJSON = JsonUtils.getJSONObject(registryJSON, IJsonNames.ADDRESS);
 		RegistryAddress raddress = RegistryAddressJSON.fromJSON(addressJSON);
+		if(raddress.getRegistry() == null) raddress.setRegistry(registry.getId());
 		return new Invoice()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))

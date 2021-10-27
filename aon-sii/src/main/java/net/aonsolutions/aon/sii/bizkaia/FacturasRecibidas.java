@@ -240,7 +240,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		Boolean isRegistro = "R".equals(ap.getValue());
 		Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
 		// PeriodoLiquidacion || PeriodoImpositivo
-		factura.setPeriodoLiquidacion(periodoLiquidacion(opDate, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), opDate, false));
 		
 		ApplicationParameter ap2 = AON.getApplicationParameter(domain.getName(), domain.getId(), login,
 				AppParam.SII_INCLUDE_DATE);

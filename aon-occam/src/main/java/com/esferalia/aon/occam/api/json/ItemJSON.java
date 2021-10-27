@@ -7,7 +7,10 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.ProductStatus;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ItemJSON {
 
@@ -25,10 +28,37 @@ public class ItemJSON {
 	
 	public static Item fromJSON(JSONObject json) {
 		return new Item()
-				.setId(JsonUtils.getInteger(json, IJsonNames.ID));
-//				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN));
-//				.setCode(JsonUtils.getString(json, IJsonNames.CODE))
-//				.setName(JsonUtils.getString(json, IJsonNames.NAME));
+				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
+				.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)))
+				.setDetail(JsonUtils.getString(json, IJsonNames.DETAIL))
+				.setDetail2(JsonUtils.getString(json, IJsonNames.DETAIL2))
+				.setDetail3(JsonUtils.getString(json, IJsonNames.DETAIL3))
+				.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
+				.setSerialNumber(JsonUtils.getString(json, IJsonNames.SERIAL_NUMBER))
+				.setSerialDate(JsonUtils.getDate(json, IJsonNames.SERIAL_DATE))
+				.setBarcode(AonStringUtils.isBlank(JsonUtils.getString(json, IJsonNames.BARCODE))
+						? null : JsonUtils.getString(json, IJsonNames.BARCODE))
+	
+				.setStatus(ProductStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)))
+				.setProduct(ProductJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.PRODUCT)))
+				.setPrice(JsonUtils.getDouble(json, IJsonNames.PRICE))
+				.setExpensesPercent(JsonUtils.getDouble(json, IJsonNames.EXPENSES_PERCENT))
+				.setProfitPercent(JsonUtils.getDouble(json, IJsonNames.PROFIT_PERCENT))
+				.setPurchasePrice(JsonUtils.getDouble(json, IJsonNames.PURCHASE_PRICE))
+				.setExpensesFixed(JsonUtils.getDouble(json, IJsonNames.EXPENSES_FIXED))
+
+				.setInternet(JsonUtils.getboolean(json, IJsonNames.INTERNET))
+
+				.setPackFormatTag(new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_FORMAT_TAG)))
+				.setPackUnits(JsonUtils.getInteger(json, IJsonNames.PACK_UNITS))
+				.setPackUnitsTag(new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_UNITS_TAG)))
+				.setPackMeasurement(JsonUtils.getdouble(json, IJsonNames.PACK_MEASUREMENT))
+				.setPackMeasurementTag(new Tag().setId(JsonUtils.getInteger(json, IJsonNames.PACK_MEASUREMENT_TAG)))
+				.setStockUnitTag(new Tag().setId(JsonUtils.getInteger(json, IJsonNames.STOCK_UNIT_TAG)))				
+				.setCreationUser(JsonUtils.getString(json, IJsonNames.CREATION_USER))
+				.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
+				.setModificationUser(JsonUtils.getString(json, IJsonNames.MODIFICATION_USER))
+				.setModificationDate(JsonUtils.getDate(json, IJsonNames.MODIFICATION_DATE));
 	}
 	
 	public static JSONArray toJSON(List<Item> items) {
@@ -45,10 +75,34 @@ public class ItemJSON {
 	public static JSONObject toJSON(Item item) {
 		return new JSONObject()
 				.put(IJsonNames.ID, item.getId())
-				.put(IJsonNames.DOMAIN, item.getDomain().getId())
+				.put(IJsonNames.DOMAIN, item.getDomain())
+				.put(IJsonNames.DETAIL, item.getDetail())
+				.put(IJsonNames.DETAIL2, item.getDetail2())
+				.put(IJsonNames.DETAIL3, item.getDetail3())
 				.put(IJsonNames.CODE, item.getProduct().getCode())
 				.put(IJsonNames.NAME, item.getProduct().getName())
 				.put(IJsonNames.PRICE, item.getPrice())
-				.put(IJsonNames.DESCRIPTION, item.getDescription());
+				.put(IJsonNames.DESCRIPTION, item.getDescription())
+				.put(IJsonNames.SERIAL_NUMBER, item.getSerialNumber())
+				.put(IJsonNames.SERIAL_DATE, item.getSerialDate())
+				.put(IJsonNames.BARCODE, item.getBarcode())
+				.put(IJsonNames.STATUS, item.getStatus() != null ? item.getStatus().name() : "")
+				.put(IJsonNames.PRODUCT, ProductJSON.toJSON(item.getProduct()))
+				.put(IJsonNames.EXPENSES_PERCENT, item.getExpensesPercent())
+				.put(IJsonNames.PROFIT_PERCENT, item.getProfitPercent())
+				.put(IJsonNames.PURCHASE_PRICE, item.getPurchasePrice())
+				.put(IJsonNames.EXPENSES_FIXED, item.getExpensesFixed())
+				.put(IJsonNames.INTERNET, item.isInternet())
+				.put(IJsonNames.PACK_FORMAT_TAG, item.getPackFormatTag().getId())
+				.put(IJsonNames.PACK_UNITS, item.getPackUnits())
+				.put(IJsonNames.PACK_UNITS_TAG, item.getPackUnitsTag().getId())
+				.put(IJsonNames.PACK_MEASUREMENT, item.getPackMeasurement())
+				.put(IJsonNames.PACK_MEASUREMENT_TAG, item.getPackMeasurementTag().getId())
+				.put(IJsonNames.STOCK_UNIT_TAG, item.getStockUnitTag().getId())
+				.put(IJsonNames.CREATION_USER, item.getCreationUser())
+				.put(IJsonNames.CREATION_DATE, item.getCreationDate())
+				.put(IJsonNames.MODIFICATION_DATE, item.getModificationDate())
+				.put(IJsonNames.MODIFICATION_USER, item.getModificationUser())
+				;
 	}
 }

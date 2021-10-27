@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
-import { insertInvoice, deleteInvoices, actionMobile, getDomainUserRoles, selfconta } from '../../services/service.js';
+import { insertInvoice, deleteInvoices, mobileAction, MOBILE_ACTION, getDomainUserRoles, selfconta } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
@@ -25,6 +25,7 @@ import { AonInvoicePrint } from './aon-invoice-print.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
 import Apps from '../../services/app.js';
+import { AonProduct } from '../product/aon-product.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -119,7 +120,7 @@ export class AonInvoicePanel extends AonElement {
 		toolbar.removeButtons();
 		if(!this.isMobile()) {
 			if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
-				// TODO
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addProduct());
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
@@ -175,8 +176,8 @@ export class AonInvoicePanel extends AonElement {
 	buildSettingOptions() {
 		let settingOptions = [];
 		if(!this.isMobile()) {
-			settingOptions = [ OPTION.REGISTRY, OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
-		} else settingOptions = [ OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
+			settingOptions = [ OPTION.REGISTRY, OPTION.PRODUCT ];
+		} else settingOptions = [ OPTION.PRODUCT ];
 
 		if(this.getDur().isAlpha()){
 			settingOptions.push(OPTION.CONFIGURATION_SII_TBAI);
@@ -232,6 +233,14 @@ export class AonInvoicePanel extends AonElement {
 			productList = this.isMobile() ? new AonMobileProductList() : new AonProductList();
 			productList.id = this.PRODUCT_LIST;	
 			aonInvoice.setContent(productList);
+		}
+	}
+
+	addProduct() {
+		if(this.isBeta()) {
+			let aonProduct = new AonProduct();
+			aonProduct.id = this.id + 'Product';
+			this.getApplication().setContent(aonProduct);	
 		}
 	}
 
@@ -308,8 +317,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	async openCamera() {
-		const isApp = await actionMobile({ action: "camera", id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
-		console.log('aon-invoice-panel');
+		const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
 		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
 	}
 

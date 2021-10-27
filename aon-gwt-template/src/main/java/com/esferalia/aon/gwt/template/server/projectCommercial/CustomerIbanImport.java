@@ -31,9 +31,6 @@ public class CustomerIbanImport {
 		return new CustomerIbanImport();
 	}
 
-	public CustomerIbanImport() {
-
-	}
 	CustomerIban ci;
 	public LinkedList<CustomerIban> importation(Domain domain, String login, byte[] data){
 		HSSFWorkbook workbook = null;
@@ -187,12 +184,8 @@ public class CustomerIbanImport {
 							.setDomain(domain.getId())
 							.setRegistry(c.getId())
 							.setRbank(rbank.getId())
-							.setPayMethod(paymethod.getId())
-							.setNumberOfPymnts((short) 1)
-							.setDaysBetwenPymnts((short)0)
-							.setDaysToFirstPymnt((short) 0)
-							.setPymnt_days("");				
-					AON.insertRPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
+							.setPayMethod(paymethod.getId());				
+					AON.saveRegistryPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
 				}
 				RDirStaff rdirstaff = new RDirStaff()
 						.setDomain(domain.getId())

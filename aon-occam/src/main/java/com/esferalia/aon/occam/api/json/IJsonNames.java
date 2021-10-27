@@ -39,14 +39,17 @@ public interface IJsonNames {
 	String BALANCE = "balance";
 	String BALANCES = "balances";
 	String BALANCING_ACCOUNT = "balancingAccount";
+	String BANK = "bank";
 	String BANK_ACCOUNT = "bank_account";
 	String BANK_ALIAS = "bankAlias";
+	String BARCODE = "barcode";
 	String BASE = "base";
 	String BATCHED = "batched";
 	String BEFORE_PERIOD_DEBIT = "beforePeriodDebit";
 	String BEFORE_PERIOD_CREDIT = "beforePeriodCredit";
 	String BIC = "bic";
 	String BLOCKED = "blocked";
+	String BRAND = "brand";
 	String BRAND_IDS = "brandIds";
 	String BREAKDOWN_ENABLED = "breakdownEnabled";
 	String BY_MONTH = "byMonth";
@@ -66,6 +69,8 @@ public interface IJsonNames {
 	String COMMERCIAL = "commercial";
 	String COMPANY = "company";
 	String COMPLEMENTARY = "complementary";
+	String COMPOSITION = "composition";
+	String COMPOSITION_PRICE = "compositionPrice";
 	String CONCEPT = "concept";
 	String CONFIDENTIAL = "confidential";
 	String CONFIGURED_VISIBLE = "configuredVisible";
@@ -83,12 +88,17 @@ public interface IJsonNames {
 	String CREDIT = "credit";
 	// ---------------------------------------------------------------------------------------------	[D] 
 	String DATE = "date";
+	String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
+	String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
 	String DEBIT = "debit";
 	String DEFINED_USERS = "definedUsers";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
 	String DEADLINE = "deadline";
 	String DESCRIPTION = "description";
+	String DETAIL = "detail";
+	String DETAIL2 = "detail2";
+	String DETAIL3 = "detail3";
 	String DETAILED = "detailed";
 	String DETAILS = "details";
 	String DIRTY = "dirty";
@@ -116,6 +126,8 @@ public interface IJsonNames {
 	String EPIGRAPH = "epigraph";
 	String ERROR = "error";
 	String EXPENSES = "expenses";
+	String EXPENSES_FIXED = "expensesFixed";
+	String EXPENSES_PERCENT = "expensesPercent";
 	String EXPENSES_RATIO = "expensesRatio";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	String FARMER_REGIME = "farmerRegime";
@@ -155,8 +167,10 @@ public interface IJsonNames {
 	String INACTIVE = "inactive";
 	String INCREASE_PERCENT = "increasePercent";
 	String INITIATION_DATE = "initiationDate";
+	String INTERNET = "internet";
 	String INTERVAL = "interval";
 	String INTERVALS = "intervals";
+	String INVENTORIABLE = "inventoriable";
 	String INVESTMENT = "investment";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
@@ -170,6 +184,7 @@ public interface IJsonNames {
 	String JOURNAL = "journal";
 	// ---------------------------------------------------------------------------------------------	[K] 
 	String KEY = "key";
+	String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
 	String LEDGER_ACCOUNT = "ledgerAccount";
 	String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
@@ -179,9 +194,11 @@ public interface IJsonNames {
 	String LIMIT = "limit";
 	String LOGIN = "login";
 	String LOGO = "logo";
+	String LOTABLE = "lotable";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";
 	// ---------------------------------------------------------------------------------------------	[M] 
 	String MAIN = "main";
+	String MANUFACTURED = "manufactured";
 	String MAX_DEFINED_USERS = "maxDefinedUsers";
 	String MEDIA = "media";
 	String MESSAGE = "message";
@@ -199,6 +216,7 @@ public interface IJsonNames {
 	String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
 	String NULL = "null";
 	String NUMBER = "number";
+	String NUMBER_OF_PYMNTS = "numberOfPymnts";
 	// ---------------------------------------------------------------------------------------------	[O] 
 	String OFFER_STATUS_APPROVED = "offerStatusApproved";
 	String OFFER_STATUS_BLOCKED = "offerStatusBlocked";
@@ -217,7 +235,14 @@ public interface IJsonNames {
 	String ORDER_STATUS_PENDING = "orderStatusPending";
 	String ORDER_STATUS_SERVED = "orderStatusServed";
 	String OUTPUT = "output";
+	String OWNER = "owner";
 	// ---------------------------------------------------------------------------------------------	[P] 
+	String PACKAGED = "packaged";
+	String PACK_FORMAT_TAG = "packFormatTag";
+	String PACK_MEASUREMENT = "packMeasurement";
+	String PACK_MEASUREMENT_TAG = "packMeasurementTag";
+	String PACK_UNITS = "packUnits";
+	String PACK_UNITS_TAG = "packUnitsTag";
 	String PAGE = "page";
 	String PAGE_OFFSET = "pageOffset";
 	String PAGE_OFFSET_TEXT = "pageOffsetText";
@@ -243,14 +268,18 @@ public interface IJsonNames {
 	String PRICE = "price";
 	String PRINCIPAL = "principal";
 	String PRIORITY = "priority";
+	String PRODUCT = "product";
 	String PRODUCT_ID = "productId";
+	String PROFIT_PERCENT = "profitPercent";
 	String PROJECT = "project";
 	String PROJECT_HOLDER = "projectHolder";
 	String PROMO = "promo";
 	String PROVINCE = "province";
+	String PURCHASE_ACCOUNT = "purchaseAccount";
+	String PURCHASE_PRICE = "purchasePrice";
 	String PURCHASES_RATIO = "purchasesRatio";
-	// ---------------------------------------------------------------------------------------------	[O]
-	String OWNER = "owner";
+	String PYMNT_DAYS = "pymntDays";
+
 	// ---------------------------------------------------------------------------------------------	[Q] 
 	String QUANTITY = "quantity";
 	String QUOTA = "quota";
@@ -276,6 +305,7 @@ public interface IJsonNames {
 	String ROLES = "roles";
 	String ROOT_BAR = "/";
 	// ---------------------------------------------------------------------------------------------	[S] 
+	String SALES_ACCOUNT  = "salesAccount";
 	String SALES_RATIO = "salesRatio";
 	String SCOPE = "scope";
 	String SECURITY_LEVEL = "securityLevel";
@@ -284,6 +314,9 @@ public interface IJsonNames {
 	String SELECTED_PERIOD = "selectedPeriod";
 	String SELLER_IDS = "sellerIds";
 	String SENDER = "sender";
+	String SERIAL_NUMBER = "serialNumber";
+	String SERIAL_DATE = "serialDate";
+	String SERIALIZABLE = "serializable";
 	String SERIES = "series";
 	String SERIE = "serie";
 	String SERVICE = "service";
@@ -298,8 +331,10 @@ public interface IJsonNames {
 	String STATEMENT = "statement";
 	String STATEMENTS = "statements";
 	String STATUS = "status";
+	String STOCK_UNIT_TAG = "stockUnitTag";
 	String STREET_TYPE = "streetType";
 	String SUBJECT = "subject";
+	String SUFIX = "sufix";
 	String SURCHARGE_QUOTA = "surcharge_quota";
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";

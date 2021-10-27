@@ -527,6 +527,11 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static HashMap<String, Integer> getNoteCountForDate(Domain domain, String login, NoteFilter filter, Date date) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getNote().getNoteCountForDate(ctx, filter, date);
+		}
+	}
 	
 	public static Note saveNote(Domain domain, String login, Note note) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
@@ -638,6 +643,9 @@ public class AON_SOLUTIONS {
 	public static JSONObject getInvoiceJSON(String domainName, Integer domainId, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Invoice invoice = getFinance().getFullInvoice(ctx, id);
+			if(invoice.getRegistryAddressData().getId() == null) {
+				invoice.setRegistryAddressData(getRegistry().getMain(ctx, invoice.getRegistry()));
+			}
 			return InvoiceJSON.toJSON(invoice);
 		}
 	}

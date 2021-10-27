@@ -23,6 +23,11 @@ import { getReader } from '../../services/utils.js';
 import { deleteAttach, getAttach, uploadAttach, uploadFile } from '../../services/fileService.js';
 import { Countries } from '../../services/country.js';
 import { AonSelect } from '../../components/aon-select.js';
+import { AonTab } from '../../components/aon-tab.js';
+import { Bank } from './bank/Bank.js';
+import { AonIban } from '../../components/aon-iban.js';
+import { AonNumber } from '../../components/aon-number.js';
+import { getPaymethods } from '../../services/invoiceService.js';
 
 export class AonReg extends AonElement {
 
@@ -45,15 +50,20 @@ export class AonReg extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.build();
-  }
+  	}
 
 	initialize() {
 		this.id = this.id || 'aonCompany';
 		this.REGISTRY_TOOLBAR = this.id + 'Toolbar';
+		this.DIV = this.id + 'Div';
 		this.GENERAL_CARD = this.id + 'GeneralCard';
 		this.GENERAL_TABLE = this.GENERAL_CARD + 'Table';
 		this.ADDRESS_TABLE = this.GENERAL_CARD + 'AddressTable';
 		this.ADDRESS_ADD = this.ADDRESS_TABLE + 'Add';
+
+		this.BANK_CARD = this.id + 'BankCard';
+		this.BANK_TABLE = this.BANK_CARD + 'Table';
+		this.BANK_ADD = this.BANK_TABLE + 'Add';
 
 		this.INFO_CARD = this.id + 'InfoCard';
 		this.INFO_TABLE = this.INFO_CARD + 'Table';
@@ -71,6 +81,15 @@ export class AonReg extends AonElement {
 		this.WEB_INPUT = this.WEB_TABLE + 'Input';
 		this.WEB_ADD= this.WEB_TABLE + 'Add';
 
+		this.PAYMETHOD_CARD = this.id + 'Paymethod';
+		this.PAYMETHOD_TABLE = this.PAYMETHOD_CARD + 'Table';
+		this.PAYMETHOD_PAYMETHOD = this.PAYMETHOD_TABLE + 'Paymethod';
+		this.PAYMETHOD_BANK = this.PAYMETHOD_TABLE + 'Bank';
+		this.PAYMETHOD_NUMPAY = this.PAYMETHOD_TABLE + 'NumPay';
+		this.PAYMETHOD_FIRSTPAY = this.PAYMETHOD_TABLE + 'FirstPay';
+		this.PAYMETHOD_BETWEENPAY = this.PAYMETHOD_TABLE + 'BetweenPay';
+		this.PAYMETHOD_PAYDAY = this.PAYMETHOD_TABLE + 'PayDay';
+
 		this.registry = this.registry || new Registry();
 		this.showLogo = this.showLogo || false;
 		this.emails = [];
@@ -87,19 +106,44 @@ export class AonReg extends AonElement {
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
 
+		this.buildTabs();
+
 		let div = this.createElement(TAG.DIV);
+		div.id = this.DIV;
 		div.style.display = "flex";
 		div.style.width = "100%";
 		this.appendChild(div);
 
-		let div2 = this.createElement(TAG.DIV);
-		div2.style.display = "flex";
-		div2.style.width = "100%";
-		this.appendChild(div2);
+		// let div2 = this.createElement(TAG.DIV);
+		// div2.style.display = "flex";
+		// div2.style.width = "100%";
+		// this.appendChild(div2);
+		this.buildGeneralData();
+		// this.buildInfoCard(div2);
+	}
 
+	buildTabs() {
+		let tab = new AonTab();
+		let options = [
+			{ title: 'Datos Generales', fn: () => this.buildGeneralData()},
+			{ title: 'Datos Bancarios', fn: () => this.buildBankData()}
+		];
+		tab.setOptions(options);
+		this.appendChild(tab);
+	}
+
+	buildGeneralData() {
+		let div = this.getElement(this.DIV);
+		this.clearElement(div);
 		this.buildGeneralCard(div);
 		this.buildMediaCard(div);
-		this.buildInfoCard(div2);
+	}
+
+	buildBankData() {
+		let div = this.getElement(this.DIV);
+		this.clearElement(div);
+		this.buildBankAccountCard(div);
+		this.buildPaymethodCard(div);
 	}
 
 	buildGeneralCard(parent){
@@ -195,6 +239,7 @@ export class AonReg extends AonElement {
 		}
 	}
 
+
 	buildMediaCard(parent){
 		let card = new AonCard();
 		card.id = this.MEDIA_CARD;
@@ -208,6 +253,88 @@ export class AonReg extends AonElement {
 		this.buildEmails(div);	
 		this.buildPhones(div);
 		this.buildWebs(div);
+	}
+
+	buildBankAccountCard(parent){
+		let card = new AonCard();
+		card.id = this.BANK_CARD;
+		card.title = 'Cuentas Bancarias';//MSG.CONTACT_DATA;
+		card.style.width = '50%';
+		parent.appendChild(card);
+
+		let div = this.createElement(TAG.DIV);
+		card.setContent(div);
+
+		this.buildBanks(div);	
+	}
+
+
+	buildPaymethodCard(parent){
+		let card = new AonCard();
+		card.id = this.PAYMETHOD_CARD;
+		card.title = 'Forma de Pago Predeterminada';//MSG.CONTACT_DATA;
+		card.style.width = '50%';
+		parent.appendChild(card);
+
+		let div = this.createElement(TAG.DIV);
+		card.setContent(div);
+
+		let table = new AonBasicTable();
+		table.id = this.PAYMETHOD_TABLE;
+		div.appendChild(table);
+
+		table.addRow();
+
+		let paymethodSelect = new AonSelect();
+		paymethodSelect.setAlias('id', 'name');
+		paymethodSelect.id = this.PAYMETHOD_PAYMETHOD;
+		paymethodSelect.title = MSG.PAYMETHOD;
+		table.addCell(paymethodSelect, 4);
+		getPaymethods({}).then(paymethods => {
+			paymethodSelect.setOptions(paymethods);
+			paymethodSelect.value = this.registry.getPaymethod().getPaymethod() || paymethods[0].id;
+		});
+
+		table.addRow();
+
+		let bankSelect = new AonSelect()
+		bankSelect.id = this.PAYMETHOD_BANK;
+		bankSelect.title = MSG.BANK_ACCOUNT;
+		bankSelect.setAlias('id', 'fullName');
+		bankSelect.setOptions(this.registry.getBanks());
+		bankSelect.value = this.registry.getPaymethod().getBank();
+		bankSelect.addEventListener(EVENT.CHANGE, (e) => this.registry.getPaymethod().setBank(bankSelect.value));
+		table.addCell(bankSelect, 4);
+
+		table.addRow();
+
+		let numPayNumber = new AonNumber();
+		numPayNumber.id = this.PAYMETHOD_NUMPAY;
+		numPayNumber.description = 'Nº Pagos';
+		numPayNumber.value = this.registry.getPaymethod().getNumberOfPymnts();
+		numPayNumber.addEventListener(EVENT.CHANGE, () => this.registry.getPaymethod().setNumberOfPymnts(numPayNumber.value));
+		table.addCell(numPayNumber, 1);
+
+		let firstPayNumber = new AonNumber();
+		firstPayNumber.id = this.PAYMETHOD_FIRSTPAY;
+		firstPayNumber.description = 'Días 1º Pago';
+		firstPayNumber.value = this.registry.getPaymethod().getDaysToFirstPymnt();
+		firstPayNumber.addEventListener(EVENT.CHANGE, () => this.registry.getPaymethod().setDaysToFirstPymnt(firstPayNumber.value));
+		table.addCell(firstPayNumber, 1);
+
+		let betweenPayNumber = new AonNumber();
+		betweenPayNumber.id = this.PAYMETHOD_BETWEENPAY;
+		betweenPayNumber.description = 'Días entre Pagos';
+		betweenPayNumber.value = this.registry.getPaymethod().getDaysBetweenPymnts();
+		betweenPayNumber.addEventListener(EVENT.CHANGE, () => this.registry.getPaymethod().setDaysBetweenPymnts(betweenPayNumber.value));
+		table.addCell(betweenPayNumber, 1);
+
+		let payDayInput = new AonInput();
+		payDayInput.id = this.PAYMETHOD_PAYDAY;
+		payDayInput.description = 'Días Pago';
+		payDayInput.value = this.registry.getPaymethod().getPymntDays();
+		payDayInput.addEventListener(EVENT.CHANGE, () => this.registry.getPaymethod().setPymntDays(payDayInput.value));
+		table.addCell(payDayInput, 1);		
 	}
 
 	buildInfoCard(parent) {
@@ -268,6 +395,70 @@ export class AonReg extends AonElement {
 								j = h;
 						});
 						this.getElement(this.ADDRESS_ADD + j).visible = true;
+					}
+				}
+			});
+		}
+	}
+
+	buildBanks(parent) {
+		let table = new AonBasicTable();
+		table.id = this.BANK_TABLE;
+		parent.appendChild(table);
+
+		if(!this.registry.getBanks() || this.registry.getBanks().length <= 0)
+			this.registry.addBank(new Bank().setRegistry(this.registry.getId()));
+		
+		this.registry.getBanks().forEach((bank, i) => 
+			this.buildBank(table, bank, i));
+	}
+
+	buildBank(table, bank, i) {
+		if(!bank.isRemoved()){
+			let rowNum = table.addRow();
+
+			let aonBank = new AonIban();
+			aonBank.id = 'aonConfigurationGeneralBank' + i;
+			aonBank.title = MSG.BANK_ACCOUNT + ' ' + (this.registry.getBanks().length > 1 ? i + 1 : '');
+			aonBank.setBank(bank);
+			aonBank.addEventListener(EVENT.CHANGE, () => {
+				this.registry.banks[i] = aonBank.getBank();
+				this.getElement(this.PAYMETHOD_BANK).setOptions(this.registry.getBanks().filter(f => !f.isRemoved()));
+			});
+			let td = table.addCell(aonBank);
+			td.style.width = '100%';
+
+			let addBank = new AonIconButton();
+			addBank.id = this.BANK_ADD + i;
+			addBank.title = MSG.ADD;
+			addBank.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
+			addBank.visible = this.registry.banks.length === i+1;
+			addBank.addEventListener(EVENT.CLICK, () => {
+				let number = this.registry.banks.length;
+				let aux = new Bank().setRegistry(this.registry.getId())
+				this.registry.addBank(aux);
+				addBank.visible = false;
+				this.buildBank(table, aux, number);
+			});
+			table.addCell(addBank);
+
+			aonBank.addEventListener(EVENT.DELETE, () => {
+				if(table.getRowsCount() === 1) {
+					let aux = new Bank().setRegistry(this.registry.getId())
+					aonBank.setBank(aux);
+					this.registry.getBanks()[i] = aux;
+				} else {
+					let last = this.getElement(this.BANK_ADD + i).isVisible();
+					this.registry.getBanks()[i].remove();
+					this.getElement(this.PAYMETHOD_BANK).setOptions(this.registry.getBanks().filter(f => !f.isRemoved()));
+					table.removeRow(rowNum);
+					if(last) {
+						let j = 0;
+						this.registry.getBanks().forEach((item, h) => {
+							if(!item.isRemoved())
+								j = h;
+						});
+						this.getElement(this.BANK_ADD + j).visible = true;
 					}
 				}
 			});

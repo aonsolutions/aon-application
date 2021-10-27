@@ -4,14 +4,13 @@ import { AonSelect } from "../../../components/aon-select.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonNumber } from "../../../components/aon-number.js";
 import { TAG, EVENT, MSG, CONSTANT, CSS, COLORS } from "../../../environments/environments.js";
-import { getCccForActivity } from "../../../services/contractService.js";
-import {  serializeForm } from "../../../services/utils.js";
+import { addContract, getCccForActivity } from "../../../services/contractService.js";
+import {  serializeForm, sortBy } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
-import { MESSENGER_IDS } from "../MessengerEnums.js";
+import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
-import { getGrupoCotizacion, getOcupacion, getTipoContrato } from "../../../services/comunicaService.js";
+import { getOccupation, getRlce, getContractType, getQuoteGroup, getTipoJornada, sendAlta } from "../../../services/comunicaService.js";
 import { addSpanDecimal } from "../../laboral/createComponent.js";
-
 
 /**
  * 
@@ -32,6 +31,16 @@ import { addSpanDecimal } from "../../laboral/createComponent.js";
     form.style.width = "100%";
     card.setContent(form);
 
+    //EMAIL ALTERNATIVE
+    let alternative = setAttributes(new AonInput(),{ id:"alternative", name:"alternative", visible:CONSTANT.FALSE });
+    alternative.value = data.alternative || (!task.id && task.auth && task.auth.email ? task.auth.email : "");
+    form.appendChild(alternative);
+
+    //DOMAIN SENDER
+    let domain = setAttributes(new AonInput(),{ id:"domain", name:"domain", visible:CONSTANT.FALSE });
+    domain.value = data.domain || (!task.id && task.domain && task.domain.id ? task.domain.id : "");
+    form.appendChild(domain);
+
     //-----------DATA ENTERPRISE
     createDataEnterprise(form, data);
     //-----------END DATA ENTERPRISE
@@ -43,7 +52,6 @@ import { addSpanDecimal } from "../../laboral/createComponent.js";
     //---------------------DATA CONTRACT
     createDataContract(form, data, aonMessengerChat);
     //---------------------END DATA CONTRACT
-
 }
 
 /**
@@ -88,22 +96,6 @@ const createDataEnterprise = (form, data) => {
     });
     createDiv(form, ipf, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
-    let surname = setAttributes(new AonInput(),{
-        id:"surname",
-        name:"surname",
-        description:"Apellido 1",
-        value: data.surname ? data.surname : ""
-    });
-    createDiv(form, surname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
-
-    let lastSurname = setAttributes(new AonInput(),{
-        id: "lastSurname",
-        name:"lastSurname",
-        description: "Apellido 2",
-        value: data.lastSurname ? data.lastSurname : ""
-    });
-    createDiv(form, lastSurname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
-
     let name = setAttributes(new AonInput(),{
         id: "name",
         name:"name",
@@ -112,6 +104,21 @@ const createDataEnterprise = (form, data) => {
     });
     createDiv(form, name, {classes:[CSS.AON_COL_XS_12]})
 
+    let surname = setAttributes(new AonInput(),{
+        id:"surname",
+        name:"surname",
+        description:"1er Apellido",
+        value: data.surname ? data.surname : ""
+    });
+    createDiv(form, surname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+
+    let lastSurname = setAttributes(new AonInput(),{
+        id: "lastSurname",
+        name:"lastSurname",
+        description: `2do Apellido (${MSG.OPTIONAL})`,
+        value: data.lastSurname ? data.lastSurname : ""
+    });
+    createDiv(form, lastSurname, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 }
 
 /**
@@ -122,6 +129,7 @@ const createDataEnterprise = (form, data) => {
  */
  const createDataContract = (form, data, aonMessengerChat) => {
     const dur = aonMessengerChat.getDur();
+    const task = aonMessengerChat.task;
     createTitle(form, "Datos del Contrato");
 
     let fra = setAttributes(new AonDate(),{ title: MSG.START_DATE, id:"fra", name:"fra"});
@@ -183,15 +191,6 @@ const createDataEnterprise = (form, data) => {
     createDiv(form, hour, {classes:[CSS.AON_COL_XS_4, CSS.AON_COL_MD_2]});
     if(fullTimeCheck.isChecked()) hour.disabled = CONSTANT.TRUE;
 
-    jornadaType.addEventListener(EVENT.CHANGE,({detail})=> {
-        if(detail && detail.value){
-            hour.value = detail.value === 1 ? 40 : 8;
-            hour.dispatchEvent(new Event(EVENT.CHANGE));
-        } 
-    })
-
-    hour.addEventListener(EVENT.CHANGE,()=> calculoCoef(jornadaType.getDetail()) );
-
     let coef = setAttributes(new AonNumber(),{
         id:"coef", 
         name:"coef", 
@@ -211,7 +210,6 @@ const createDataEnterprise = (form, data) => {
         jornadaType.setDisabled(target.checked);
     });
 
-
     let durationCheck = setAttributes(new AonSwitch(),{ title: "Duración indefinida", id:"durationCheck", name:"durationCheck", checked: data.durationCheck == CONSTANT.FALSE ? CONSTANT.FALSE : CONSTANT.TRUE});
     createDiv(form, durationCheck, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_5]});
 
@@ -225,31 +223,44 @@ const createDataEnterprise = (form, data) => {
         frb.disabledDate(target.checked);
     });
 
-
     const divManager = createDiv(form, undefined, {});
     divManager.style.display = data.fra && dur.isComunicaManager() ? "block" : "none";
     //---------------------DATA RESTANT
     let contract = setAttributes(new AonSelect(),{ title: "Tipo de contrato", id:"contract", name:"contract", autocomplete: CONSTANT.OFF});
-    createDiv(divManager, contract, {classes:[CSS.AON_COL_SM_4]});
+    createDiv(divManager, contract, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
     fillContract(contract, data.contract);
 
     let gc = setAttributes(new AonSelect(),{ title: "Grupo de cotización", id:"gc", name:"gc"});
-    createDiv(divManager, gc, {classes:[CSS.AON_COL_SM_4]});
+    createDiv(divManager, gc, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
     fillGc(gc, data.gc);
 
     let ocup = setAttributes(new AonSelect(),{ title: "Ocupación", id:"ocup", name:"ocup"});
-    createDiv(divManager, ocup, {classes:[CSS.AON_COL_SM_4]});
+    createDiv(divManager, ocup, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_4]});
     fillOcu(ocup, data.ocup);
 
+    let rlce = setAttributes(new AonSelect(),{ title: "RLCE (opcional)", id:"rlce", name:"rlce"});
+    createDiv(divManager, rlce, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_MD_12]});
+    fillRlce(rlce, data.rlce);
+
+    jornadaType.addEventListener(EVENT.CHANGE,({detail})=> {
+        if(detail && detail.value){
+            hour.value = detail.value === "semanal" ? 40 : 8;
+            hour.dispatchEvent(new Event(EVENT.CHANGE));
+        } 
+    });
+
+    hour.addEventListener(EVENT.CHANGE,()=> calculoCoef(jornadaType.getDetail()) );
 
     // ------------OBSERVATION
     const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
     createDiv(form, observation, {classes:[CSS.AON_COL_XS_12]});
 
-    let btnAccept = createBtnAccept();
-    btnAccept.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.getApplication().development() );
-     
-    createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+    if(dur.isComunicaManager() && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status)){
+        let btnAccept = createBtnAccept();
+        btnAccept.addEventListener(EVENT.CLICK, ()=>  processAccept(aonMessengerChat) );
+         
+        createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+    }
 }
 
 /**
@@ -260,12 +271,12 @@ const createDataEnterprise = (form, data) => {
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
     if(form){
         const formSerialize = serializeForm(form);
+        console.log(formSerialize);
         let observation = form.querySelector("#observation").innerText;
         return { ...formSerialize, observation };
     }
     return null;
 }
-
 
 /**
  * 
@@ -277,9 +288,7 @@ const createTitle = (parent, text) => {
     title.innerHTML = text;
     createDiv(parent, title, {
         classes:[CSS.AON_COL_XS_12],
-        styles:{
-            padding: "5px 0"
-        }
+        styles:{ padding: "5px 0" }
     });
 } 
 
@@ -300,8 +309,6 @@ const createDiv = (parent, child, properties)=> {
 
     return div;
 }
-
-
 
 //-----------FILL CTACTI
 const fillCtaCti = (aonSelect, data) => {
@@ -341,19 +348,14 @@ const fillSalaryType = (aonSelect, salaryType) => {
 
 //-----------FILL JORNADATYPE
 const fillJornadaType = (aonSelect, jornadaType) => {
-    let options = [
-        {name: 'Semanal', value:1},
-        {name: 'Diaria', value: 2}
-    ];
-
-    aonSelect.setOptions( options );
-
+   const resp =  getTipoJornada();
+    aonSelect.setOptions( resp );
     if(jornadaType) aonSelect.value = jornadaType;
 }
 
 //-----------FILL CONTRACT
 const fillContract = (aonSelect, contract) => {
-    getTipoContrato().then(resp=>{
+    getContractType().then(resp=>{
         let options = resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}));
 
         if(contract){
@@ -369,8 +371,9 @@ const fillContract = (aonSelect, contract) => {
 
 //-----------FILL GRUPO DE COTIZACION
 const fillGc = (aonSelect, gc) => {
-    getGrupoCotizacion().then(resp=>{
-        let options = resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}) );
+    getQuoteGroup().then(resp=>{
+        resp = sortBy(resp, 'name', 'asc');
+        let options = resp.map(r =>  ({ ...r, name: `${r.name}`, value: r.value}) );
 
         if(gc){
             const exists = options.some(v => v.value === gc);
@@ -385,8 +388,9 @@ const fillGc = (aonSelect, gc) => {
 
 //-----------FILL OCUPACION
 const fillOcu = (aonSelect, ocup) => {
-    getOcupacion().then(resp=>{
-        let options = resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value}));
+    getOccupation().then(resp=>{
+        resp = sortBy(resp, 'value', 'asc');
+        let options = resp.map(r =>  ({ ...r, name: `${r.name}`, value: r.value}));
 
         if(ocup){
             const exists = options.some(v => v.value === ocup);
@@ -398,6 +402,23 @@ const fillOcu = (aonSelect, ocup) => {
         if(ocup) aonSelect.value = ocup;
     })
 }
+//-----------FILL RLCE
+const fillRlce = (aonSelect, rlce) => {
+    getRlce().then(resp=>{
+
+        let options = sortBy( resp.map(r =>  ({ ...r, name: `${r.value} - ${r.name}`, value: r.value})), 'value', 'asc');
+
+        if(rlce){
+            const exists = options.some(v => v.value === rlce);
+            if(!exists)  options.push({name: rlce, value: rlce});
+        }
+
+        aonSelect.setOptions( options );
+
+        if(rlce) aonSelect.value = rlce;
+    });
+}
+
 
 const calculoCoef = ({value}) =>  {
     if(value){
@@ -410,4 +431,39 @@ const calculoCoef = ({value}) =>  {
         }
         document.getElementById('coef').value = coef;
     }
+}
+
+
+const processAccept = async (aonMessengerChat) => {
+    let application = aonMessengerChat.getApplication();
+    application.startLoading();
+    try {
+        const data = getFormMovJson();
+        let newData = {
+            ...data,
+            regimen: data.regime,
+            fecha: data.fra,
+            grup_ctz: data.gc,
+            type_cto: data.contract,
+            name: `${data.name} ${data.surname} ${data.lastSurname || ""}`
+        }
+        if(data.ocu) newData.ocupacion = data.ocu;
+        if(data.coef) newData.coefparcial = parseInt(data.coef);
+
+        // application.development();
+
+        //---SEND MOV TGSS
+        await sendAlta(newData);
+
+        // ---ADD CONTRACT
+        await addContract(newData);
+
+        //---CLOSE TASK
+        await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
+    } catch (err) {
+        console.log(err);
+        aonMessengerChat.showError(err);
+    }
+
+    application.stopLoading();
 }

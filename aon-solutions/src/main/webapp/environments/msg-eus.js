@@ -189,6 +189,8 @@ export const MY_USER = 'Nire Erabiltzailea';
 export const NAME = 'Izena';
 export const NEW = 'Berria';
 export const NEW_COMPANY = 'Enpresa Berria';
+export const NEW_PRODUCT = 'Produktu Berria';
+export const NEW_REQUEST = 'Eskaera Berria';
 export const NEXT = 'Hurrengoa';
 export const NUMBER = 'Zenbakia';
 

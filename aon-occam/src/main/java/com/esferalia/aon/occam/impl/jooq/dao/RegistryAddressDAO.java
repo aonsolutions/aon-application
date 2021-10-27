@@ -47,21 +47,21 @@ public class RegistryAddressDAO {
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
 		}
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(RADDRESS.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(RADDRESS.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<Integer>(RADDRESS.REGISTRY);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(RADDRESS.TYPE);}
-		@Override public Property<String> getRecipientProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.RECIPIENT);}
-		@Override public Property<String> getStreetTypeProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.STREET_TYPE);}
-		@Override public Property<String> getAddressProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ADDRESS);}
-		@Override public Property<String> getAddress2Property() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ADDRESS2);}
-		@Override public Property<String> getAddress3Property() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ADDRESS3);}
-		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.NUMBER);}
-		@Override public Property<String> getZipProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ZIP);}
-		@Override public Property<String> getCityProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.CITY);}
-		@Override public Property<Integer> getGeozoneProperty() {return new FilterDAO.PropertyDAO<Integer>(RADDRESS.GEOZONE);}
-		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.ALIAS);}
-		@Override public Property<String> getMunicipalityCodeProperty() {return new FilterDAO.PropertyDAO<String>(RADDRESS.MUNICIPALITY_CODE);}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.DOMAIN);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.REGISTRY);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.TYPE);}
+		@Override public Property<String> getRecipientProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.RECIPIENT);}
+		@Override public Property<String> getStreetTypeProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.STREET_TYPE);}
+		@Override public Property<String> getAddressProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.ADDRESS);}
+		@Override public Property<String> getAddress2Property() {return new FilterDAO.PropertyDAO<>(RADDRESS.ADDRESS2);}
+		@Override public Property<String> getAddress3Property() {return new FilterDAO.PropertyDAO<>(RADDRESS.ADDRESS3);}
+		@Override public Property<String> getNumberProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.NUMBER);}
+		@Override public Property<String> getZipProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.ZIP);}
+		@Override public Property<String> getCityProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.CITY);}
+		@Override public Property<Integer> getGeozoneProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.GEOZONE);}
+		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.ALIAS);}
+		@Override public Property<String> getMunicipalityCodeProperty() {return new FilterDAO.PropertyDAO<>(RADDRESS.MUNICIPALITY_CODE);}
 	}
 
 	public static class RegistryAddressFiller implements Function<Record, RegistryAddress> {

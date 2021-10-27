@@ -4,8 +4,9 @@ import { AonDate } from "../../../components/aon-date.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { TAG, EVENT, MSG, MATERIAL_ICONS, CSS } from "../../../environments/environments.js";
 import { saveVacation } from "../../../services/contractService.js";
-import { formatDateOrigin, serializeForm } from "../../../services/utils.js";
-import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
+import { serializeForm } from "../../../services/utils.js";
+import { newComponent, setAttributes } from "../../../services/utilsComponents.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
 
@@ -75,7 +76,7 @@ const addDates = (table, i, data={}) =>{
     });
 
     table.addCell(startDate);
-    startDate.value = data.startDate || formatDateOrigin(new Date());
+    startDate.value = data.startDate || AonDateUtils.formatDateOrigin(new Date());
 
     //DATE END
     let endDate = setAttributes(new AonDate(),{
@@ -125,8 +126,8 @@ export const getFormVacationJson = ()=>{
 
 
 const processAccept = async (aonMessengerChat) => {
-    
-    aonMessengerChat.getApplication().startLoading();
+    let application = aonMessengerChat.getApplication();
+    application.startLoading();
     try {
         const task = aonMessengerChat.task;
         const data = getFormVacationJson();
@@ -138,7 +139,7 @@ const processAccept = async (aonMessengerChat) => {
         aonMessengerChat.showError(err)
     }
 
-    aonMessengerChat.getApplication().stopLoading();
+    application.stopLoading();
 }
 
 /**

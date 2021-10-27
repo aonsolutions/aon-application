@@ -23,7 +23,7 @@ export * from './registryService.js';
 
 export * from './contractService.js';
 
-export * from './actionMobile.js';
+export * from './mobileService.js';
 
 export * from './timeControlService.js';
 

@@ -2,17 +2,15 @@ import { API_URL, COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG } from "../.
 import { openFileUrl } from "../../../services/fileService.js";
 import { domainName } from "../../../services/request.js";
 import {  setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
-import {  setTime, setFullDate } from "../../../services/utils.js";
 import { createFormVacation } from "../forms/vacation.js";
-import { ICON_TYPES, MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
+import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
 import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
 import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { createFormMov } from "../forms/mov-ss.js";
 import { createFormTimeControl } from "../forms/time-control.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
-
-let isDefault = false;
 /**
  * Build standard toolbar options 
  * @param {HTMLElement} aonTextArea aon-text-area
@@ -127,11 +125,11 @@ const blockquote = ()=>{
  * @returns {Object} actionJson message new object
  */
 export const chooseIconMessage = ({type, date, name, comment}) => {
-    const dateParse = setFullDate(date) + " " + setTime(date);
+    const dateParse = AonDateUtils.setFullDate(date) + " " + AonDateUtils.setTime(date);
     
     let actionJson = {
         icon : MATERIAL_ICONS.INFO,
-        type : ICON_TYPES.MATERIAL_OUTLINED,
+        type : CONSTANT.MATERIAL_OUTLINED,
         color : CSS.variable(COLORS.MATERIAL_BLUE),
         comment: `${WORKFLOW_TYPE(type)} por <b>${name ? name : null}</b> ${dateParse}`
     }
@@ -350,15 +348,13 @@ const jsonDiv = ()=> {
  */
 export const buildForm = (div, aonMessengerChat) => {
     const task = aonMessengerChat.task;
-    const dur = aonMessengerChat.getDur();
     const aonMessenger = aonMessengerChat.applicationParentEl;
     const isGestor = task.isGestor();
     const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
     const received =  isReceived(task, myWorkgroups);
 
     const dataDefault = aonMessengerChat.getData();
-
-    isDefault = aonMessengerChat.getData().project && aonMessengerChat.getData().project.id;
+    const isProjectDefault = aonMessengerChat.isProjectDefault();
 
     //-----------------------APPEND DIV TAGS
     createTagsDiv(div, task);
@@ -420,7 +416,7 @@ export const buildForm = (div, aonMessengerChat) => {
         let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
         const btnExternal = createAonSwitch(titleBtn);
         rowsDiv.appendChild(btnExternal);
-        if(task.id || isDefault) btnExternal.disabled = CONSTANT.TRUE;
+        if(task.id || isProjectDefault) btnExternal.disabled = CONSTANT.TRUE;
         btnExternal.checked = task.isProject();
         btnExternal.addEventListener(EVENT.CHANGE, ({target}) => {
             console.log("---------------------CHANGE BTN INTERNAL--------");
@@ -447,8 +443,9 @@ export const buildForm = (div, aonMessengerChat) => {
  const changeRequestType = (aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess) =>{
     const task = aonMessengerChat.task;
     const btnExternal = document.getElementById(MESSENGER_IDS.EXTERNAL_TASK);
-    if(btnExternal && btnExternal.disabled == CONSTANT.TRUE)
-        task.cleanTask(true);
+    
+    // if(!task.id && btnExternal && btnExternal.disabled == CONSTANT.TRUE)
+    //     task.cleanTask(true);
 
     const detail = requestTypeSelect.getDetail();
     if(detail){
@@ -464,10 +461,13 @@ export const buildForm = (div, aonMessengerChat) => {
             if(!task.id)
                 task.setTitle(detail.name);
                
+            const forManager  = btnExternal ? btnExternal.isChecked() : false;
+            if(!forManager) task.setProject({});
+
             if(detail.value === TASK_SOURCE.REQUEST){
-                formRequest(columnsDivTwo, aonMessengerChat, btnExternal ? btnExternal.isChecked() : false);
+                formRequest(columnsDivTwo, aonMessengerChat, forManager);
             } else {
-                formQuery(columnsDivTwo, aonMessengerChat, btnExternal ? btnExternal.isChecked() : false);
+                formQuery(columnsDivTwo, aonMessengerChat, forManager);
             }
         }
     }

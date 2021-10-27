@@ -27,6 +27,7 @@ public enum ProductStatus implements Serializable {
 	}
 	
 	public static ProductStatus safeValueOf( String i ) {
+		if(i == null) return null;
 		for (ProductStatus rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

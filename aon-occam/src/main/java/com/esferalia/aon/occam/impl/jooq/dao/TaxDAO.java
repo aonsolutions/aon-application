@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Timestamp;
@@ -17,7 +16,6 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
-import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
@@ -176,5 +174,33 @@ public class TaxDAO {
 					.setModificationUser(rec.getValue(TAX.MODIFICATION_USER))
 					.setModificationDate(rec.getValue(TAX.MODIFICATION_DATE));					
 		}
-	}	
+	}
+	
+	public static class TaxFiller implements Function<Record, Tax> {
+
+		@Override
+		public Tax apply(Record r) {
+			return build(r, TAX);					
+		}
+		
+		public static Tax build(Record r, com.esferalia.aon.jooq.tables.Tax t) {
+			if(r.getValue(t.ID) == null) return new Tax();
+			return new Tax()
+			.setId(r.getValue(t.ID))
+			.setDomain(r.getValue(t.DOMAIN))
+			.setName(r.getValue(t.NAME))
+			.setType(TaxType.safeValueOf( r.getValue(t.TAX_TYPE)))
+			.setPercentage(r.getValue(t.PERCENTAGE))
+			.setSurcharge(r.getValue(t.SURCHARGE))
+			.setStartDate(r.getValue(t.START_DATE))
+			.setVatDeductionType( VatDeductionType.safeValueOf( r.getValue(t.VAT_DEDUCTION_TYPE)))
+			.setWithholdingType(WithholdingType.safeValueOf( r.getValue(t.WITHHOLDING_TYPE)))
+			.setPurchaseAccount(new Account().setId(r.getValue(t.PURCHASE_ACCOUNT)))
+			.setSalesAccount(new Account().setId(r.getValue(t.SALES_ACCOUNT)))
+			.setCreationUser(r.getValue(t.CREATION_USER))
+			.setCreationDate(r.getValue(t.CREATION_DATE))
+			.setModificationUser(r.getValue(t.MODIFICATION_USER))
+			.setModificationDate(r.getValue(t.MODIFICATION_DATE));
+		}
+	}
 }

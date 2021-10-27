@@ -1,5 +1,5 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { disabledForm, formatDateOrigin, setDate, setValueName } from "../../../services/utils.js";
+import { disabledForm, setValueName } from "../../../services/utils.js";
 import { getMovements, getEmployee, getCccLife } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
@@ -7,6 +7,7 @@ import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js
 import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
 export class AonMovementsList extends AonElement {
@@ -46,7 +47,10 @@ export class AonMovementsList extends AonElement {
   }
 
   disconnectedCallback() {
-    if (this.applicationEl) this.applicationEl.removeFloatOption();
+    if (this.applicationEl){
+      this.applicationEl.stopLoader();
+      this.applicationEl.removeFloatOption();
+    } 
   }
 
   build() {
@@ -89,8 +93,8 @@ export class AonMovementsList extends AonElement {
     periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
       if(detail){
         let {startDate, endDate} = detail;
-        if(new Date(startDate) > today) startDate = formatDateOrigin(today);
-        if(new Date(endDate) > today) endDate     = formatDateOrigin(today);
+        if(new Date(startDate) > today) startDate = AonDateUtils.formatDateOrigin(today);
+        if(new Date(endDate) > today) endDate     = AonDateUtils.formatDateOrigin(today);
         setValueName('startDate', startDate);
         setValueName('endDate', endDate);
       }
@@ -99,11 +103,11 @@ export class AonMovementsList extends AonElement {
     let startDateEl = this.getElement("startDate");
     let endDateEl   = this.getElement("endDate");
     startDateEl.addEventListener(EVENT.CHANGE,({detail})=>{
-      if(detail && new Date(detail) > today) startDateEl.value = formatDateOrigin(today);
+      if(detail && new Date(detail) > today) startDateEl.value = AonDateUtils.formatDateOrigin(today);
       periodEl.value = "personalized";
     });
     endDateEl.addEventListener(EVENT.CHANGE,({detail})=>{
-      if(detail && new Date(detail) > today) endDateEl.value = formatDateOrigin(today);
+      if(detail && new Date(detail) > today) endDateEl.value = AonDateUtils.formatDateOrigin(today);
       periodEl.value = "personalized";
     });
   }
@@ -221,7 +225,7 @@ export class AonMovementsList extends AonElement {
   formatData(res){
     let { ipf, fra, frb, situation } = res;
     fra = frb || fra;
-    const fechaParse = setDate(fra);
+    const fechaParse = AonDateUtils.setDate(fra);
     const date_now = new Date();
     const prev = new Date(fra).getTime() > date_now.getTime();
     let dni = ipf.toString();
@@ -317,26 +321,26 @@ export class AonMovementsList extends AonElement {
     return [{
       name: "Últimos 3 meses",
       value: "last_three_month",
-      startDate: formatDateOrigin(new Date().addMonth(-3)),
-      endDate: formatDateOrigin(now),
+      startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-3)),
+      endDate: AonDateUtils.formatDateOrigin(now),
     },
     {
       name: "Últimos 6 meses",
       value: "last_six_month",
-      startDate: formatDateOrigin(new Date().addMonth(-6)),
-      endDate: formatDateOrigin(now),
+      startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-6)),
+      endDate: AonDateUtils.formatDateOrigin(now),
     },
     {
       name: "Año actual",
       value: "this_year",
-      startDate: formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
-      endDate: formatDateOrigin(new Date(now.getFullYear(), 12, 0)),
+      startDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear(), 12, 0)),
     },
     {
       name: "Año anterior",
       value: "last_year",
-      startDate: formatDateOrigin(new Date(now.getFullYear() - 1, 0, 1)),
-      endDate: formatDateOrigin(new Date(now.getFullYear() - 1, 12, 0)),
+      startDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear() - 1, 0, 1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear() - 1, 12, 0)),
     },
     {
       name: "Personalizado",

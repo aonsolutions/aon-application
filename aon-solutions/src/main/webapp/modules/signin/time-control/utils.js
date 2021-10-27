@@ -1,7 +1,8 @@
 import { MSG, TAG } from "../../../environments/environments.js";
-import { setTime, timePaser } from "../../../services/utils.js";
+
 import { AonSelect } from "../../../components/aon-select.js";
 import { APRIL, AUGUST, DECEMBER, FEBRUARY, JANUARY, JULY, JUNE, MARCH, MAY, NOVEMBER, OCTOBER, SEPTEMBER } from "../../../environments/msg.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 export const StringTwoLetters = (str) => {
   let newStr = "";
@@ -24,23 +25,14 @@ export const StringTwoLetters = (str) => {
 export const firstLetters = (l) => l.replace(/^.{1}/g, l[0].toUpperCase());
 
 export const dateCustomDayHour = (d) => {
-  const date = new Date(d);
-  const now = new Date();
-  if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
-    let day = null;
-    if(date.getDate() === now.getDate()){
-      day = "hoy";
-    } else if(date.getDate() === now.addDay(-1).getDate()){
-      day = "ayer";
-    }
-    if(day) return firstLetters(day)+", "+ setTime(date);
-  }
-  return null;
+  let day = AonDateUtils.lastThreeDayStr(d);
+  if(day) day = firstLetters(day)+", "+ AonDateUtils.setTime(d);
+  return day;
 }
 
 export const timeHour = (time) => {
-  let arr = timePaser(time).split(":");
-  return  `${arr[0]}:${arr[1]}`;
+  let arr = AonDateUtils.timeParser(time).split(":");
+  return `${arr[0]}:${arr[1]}`;
 }
 
 /**

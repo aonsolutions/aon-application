@@ -1,18 +1,11 @@
-import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
-
-export const ICON_TYPES = {
-    MATERIAL : "material",
-    MATERIAL_ICONS:"material-icons",
-    MATERIAL_OUTLINED : "material_outlined",
-    MATERIAL_ICONS_OUTLINED : "material-icons-outlined"
-}
+import { COLORS, CONSTANT, CSS, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
 const AON_MESSENGER_LIST_OPEN = {
     name: 'Abiertas',
     id:'Abiertas',
     icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
     icon_color: "#2e7d32",
-    icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED
+    icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };
 
 const AON_MESSENGER_LIST_CLOSE = {
@@ -20,7 +13,7 @@ const AON_MESSENGER_LIST_CLOSE = {
     id:'Cerradas',
     icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
     icon_color: CSS.variable(COLORS.AON_BLACK),
-    icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED
+    icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };
 
 const AON_MESSENGER_LIST_ARCHIVE = {
@@ -28,7 +21,7 @@ const AON_MESSENGER_LIST_ARCHIVE = {
     id: 'Archivadas',
     icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
     icon_color: COLORS.ORANGE,
-    icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED
+    icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };
 
 export const MessengerOptions = {

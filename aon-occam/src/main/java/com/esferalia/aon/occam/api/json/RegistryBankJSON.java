@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -11,7 +12,11 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 
 public class RegistryBankJSON {
 
-	public static LinkedList<RegistryBank> fromJSON(JSONArray json) {
+	private RegistryBankJSON() {
+	
+	}
+	
+	public static List<RegistryBank> fromJSON(JSONArray json) {
 		LinkedList<RegistryBank> list = new LinkedList<>();
 		for(Integer i = 0; i < json.length(); i++) {
 			list.add(fromJSON(json.getJSONObject(i)));
@@ -26,13 +31,15 @@ public class RegistryBankJSON {
 				.setRegistry(JsonUtils.getInteger(json, IJsonNames.REGISTRY))
 				.setBankAccount(new BankAccount(JsonUtils.getString(json, IJsonNames.BANK_ACCOUNT)))
 				.setBic(JsonUtils.getString(json, IJsonNames.BIC))
-//				.setSuffix(JsonUtils.getString(json, IJsonNames.SUFIX))
+				.setSuffix(JsonUtils.getString(json, IJsonNames.SUFIX))
 				.setAlias(JsonUtils.getString(json, IJsonNames.ALIAS))
 				.setActive(JsonUtils.getBoolean(json, IJsonNames.ACTIVE))
-				.setAccount(JsonUtils.getInteger(json, IJsonNames.ACCOUNT));
+				.setAccountId(JsonUtils.getInteger(json, IJsonNames.ACCOUNT))
+				.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY))
+				.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED));
 	}
 	
-	public static JSONArray toJSON(LinkedList<RegistryBank> rbanks) {
+	public static JSONArray toJSON(List<RegistryBank> rbanks) {
 		return toJSON(rbanks.stream());
 	}
 	
@@ -49,9 +56,11 @@ public class RegistryBankJSON {
 				.put(IJsonNames.REGISTRY, rbank.getRegistry())
 				.put(IJsonNames.BANK_ACCOUNT, rbank.getBankAccount().getIban())
 				.put(IJsonNames.BIC, rbank.getBic())
-//				.put(IJsonNames.SUFIX, rbank.getSuffix());
+				.put(IJsonNames.SUFIX, rbank.getSuffix())
 				.put(IJsonNames.ALIAS, rbank.getAlias())
 				.put(IJsonNames.ACTIVE, rbank.isActive())
-				.put(IJsonNames.ACCOUNT, rbank.getAccount());
+				.put(IJsonNames.ACCOUNT, rbank.getAccountId())
+				.put(IJsonNames.DIRTY, rbank.isDirty())
+				.put(IJsonNames.REMOVED, rbank.isRemoved());
 	}
 }

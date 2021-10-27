@@ -241,7 +241,8 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(employee.getGc().get()); 
 			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(employee.getContract().get());
 			if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty()) {
-				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute( employee.getColec() ); 
+				String conv = employee.getColec()!=null ? employee.getColec() : "60888888888888";
+				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(conv); 
 			}
 			if ("0163" == employee.getRegime() && !employee.getMdctz().isEmpty()) {
 				form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());

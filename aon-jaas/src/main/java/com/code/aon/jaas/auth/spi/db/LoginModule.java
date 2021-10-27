@@ -80,7 +80,7 @@ public class LoginModule extends UsernamePasswordLoginModule {
 		Connection connection = null;
 
 		try {
-			metadataConnection = dbUtil.createMetadataConnection();
+			metadataConnection = dbUtil.createMetadataConnection(domainName);
 			Domain domain = dbUtil.getDomain(domainName);
 			if ( domain == null ) {
 				throw new AuthenticationLoginException( "aon_login_err_2", domainName );

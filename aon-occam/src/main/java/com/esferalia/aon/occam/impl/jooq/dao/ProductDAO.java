@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.impl.jooq.dao.BrandDAO.BrandFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductCategoryDAO.ProductCategoryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO.TaxFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 
@@ -39,6 +41,8 @@ import com.esferalia.aon.occam.impl.jooq.validation.ProductValidation;
 public class ProductDAO {
 	
 	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
+	public static final com.esferalia.aon.jooq.tables.Tax VAT_ALIAS = TAX.as("vat");
+	public static final com.esferalia.aon.jooq.tables.Tax RETENTION_ALIAS = TAX.as("retention");
 
 	protected static class ProductPropertiesDAO implements ProductProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select,ProductFilter filter) {
@@ -82,6 +86,8 @@ public class ProductDAO {
 				.from(PRODUCT)
 				.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
 				.leftOuterJoin(BRAND).on(BRAND.ID.eq(PRODUCT.BRAND))
+				.leftOuterJoin(VAT_ALIAS).on(VAT_ALIAS.ID.eq(PRODUCT.VAT))
+				.leftOuterJoin(RETENTION_ALIAS).on(RETENTION_ALIAS.ID.eq(PRODUCT.RETENTION))
 				.where(PRODUCT_PROPERTIES.getConditions(filter))
 				.and(PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)));
 	}
@@ -213,12 +219,16 @@ public class ProductDAO {
 					.setManufactured(getBoolean(r, PRODUCT.MANUFACTURED))
 					.setPackaged(getBoolean(r, PRODUCT.PACKAGED))
 					.setPurchaseAccount(new Account().setId(getValue(r, PRODUCT.PURCHASE_ACCOUNT)))
-					.setRetention(new Tax().setType(TaxType.RETENTION).setId(getValue(r, PRODUCT.RETENTION)))
+					.setRetention(checkField(r, RETENTION_ALIAS.ID)
+							? TaxFiller.build(r, RETENTION_ALIAS)
+							: new Tax().setType(TaxType.RETENTION).setId(getValue(r, PRODUCT.RETENTION)))
 					.setSalesAccount(new Account().setId(getValue(r, PRODUCT.SALES_ACCOUNT)))
 					.setSerializable(getBoolean(r, PRODUCT.SERIALIZABLE))
 					.setStatus(ProductStatus.safeValueOf(getValue(r, PRODUCT.STATUS)))
 					.setType(ProductType.safeValueOf(getValue(r, PRODUCT.TYPE)))
-					.setVat(new Tax().setType(TaxType.VAT).setId(getValue(r, PRODUCT.VAT)))
+					.setVat(checkField(r, VAT_ALIAS.ID)
+						? TaxFiller.build(r, VAT_ALIAS)
+						: new Tax().setType(TaxType.VAT).setId(getValue(r, PRODUCT.VAT)))
 					.setCreationDate(getValue(r, PRODUCT.CREATION_DATE))
 					.setCreationUser(getValue(r, PRODUCT.CREATION_USER))
 					.setModificationDate(getValue(r, PRODUCT.MODIFICATION_DATE))

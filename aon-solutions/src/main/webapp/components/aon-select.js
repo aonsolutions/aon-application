@@ -303,6 +303,15 @@ export class AonSelect extends AonElement {
     this.nameAlias = nameAlias;
   }
 
+  setIndexOf(idx){
+    let options = this.getOptions();
+    if(options.length){
+      const option = options[idx];
+      if(option)
+        this.value = option.value;
+    }
+  }
+
   setValueAlias(valueAlias) {
     this.valueAlias = valueAlias;
   }

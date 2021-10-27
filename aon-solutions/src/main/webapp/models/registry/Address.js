@@ -26,13 +26,13 @@ export class Address {
             this.registry = address.registry;
             this.main = address.main;
             this.streetType = address.streetType;
-            this.address = address.address;
-            this.number = address.number;
-            this.address2 = address.address2;
-            this.city = address.city;
-            this.province = address.province;
-            this.country = address.country;
-            this.zip = address.zip;
+            this.address = address.address || '';
+            this.number = address.number || '';
+            this.address2 = address.address2 || '';
+            this.city = address.city || '';
+            this.province = address.province || '';
+            this.country = address.country || 'ES';
+            this.zip = address.zip || '';
             this.dirty = address.dirty || false;
             this.removed = address.removed || false;
         } else {

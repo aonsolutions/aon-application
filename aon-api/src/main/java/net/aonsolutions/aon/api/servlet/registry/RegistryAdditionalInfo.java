@@ -5,7 +5,7 @@ public enum RegistryAdditionalInfo {
 	ADDRESS,
 	ADDRESSES,
 	BANKS,
-	PAYMETHODS,
+	PAYMETHOD,
 	MEDIA;
 
 	private RegistryAdditionalInfo() {

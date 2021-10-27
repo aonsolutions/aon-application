@@ -1,6 +1,6 @@
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../environments/environments.js';
 import { openFileUrl } from '../services/fileService.js';
-import { convertBase64Url, getReader } from '../services/utils.js';
+import { getReader } from '../services/utils.js';
 import { newComponent, setAttributes} from '../services/utilsComponents.js';
 import { AonElement } from './AonElement.js';
 
@@ -339,7 +339,7 @@ export class AonTextArea extends AonElement {
 					content: reader.content,
 					id:fileId
 				})
-				const url = convertBase64Url(reader.content, reader.contentType);
+				const url = this.convertBase64Url(reader.content, reader.contentType);
 				let element = null;
 				if(reader.contentType && reader.contentType.indexOf("image")>-1){
 					element = document.createElement(TAG.IMG);
@@ -370,6 +370,8 @@ export class AonTextArea extends AonElement {
 		}
 		this.dispatchEvent(new CustomEvent(EVENT.INPUT));
 	}
+
+
 
 	getToolbar(){
 		return this.getElement(this.TOOLBAR);
@@ -417,6 +419,20 @@ export class AonTextArea extends AonElement {
 
 	removeBackground(){
 		this.getTextAreaDiv().classList.remove(CSS.FOCUS_COLOR_MINUS);
+	}
+
+	/**
+	 * 
+	 * @param {String} base64Str base64 file
+	 * @param {String} contentType mimeType
+	 * @returns {String} url
+	 */
+	convertBase64Url(base64Str, contentType) {
+		let byteCharacters = atob(base64Str);
+		let byteNumbers = new Array(byteCharacters.length);
+		for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+		let file = new Blob([new Uint8Array(byteNumbers)], { type: `${contentType};base64` });
+		return URL.createObjectURL(file);
 	}
 }
 if(!window.customElements.get('aon-textarea')){

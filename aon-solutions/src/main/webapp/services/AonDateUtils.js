@@ -1,5 +1,5 @@
 Date.prototype.isValid = function () {
-  return this.getTime() === this.getTime();
+  return this.getTime() === this.getTime() && !this.getFullYear().toString().includes("9999");
 };
 
 Date.prototype.getWeekNumber = function(){

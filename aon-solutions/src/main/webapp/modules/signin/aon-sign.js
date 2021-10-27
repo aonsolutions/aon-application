@@ -1,11 +1,11 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
-import { timePaser, setDateTimestampDay } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
 import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { timeHour } from './time-control/utils.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 export class AonSign extends AonElement {
   _taskHolders;
@@ -243,7 +243,7 @@ export class AonSign extends AonElement {
 
   changeTime(time){
     let timeDiv = this.getElement(this.TIME);
-    if( timeDiv && time >= 0 ) timeDiv.innerHTML = timePaser(time);
+    if( timeDiv && time >= 0 ) timeDiv.innerHTML = AonDateUtils.timeParser(time);
   }
 
   divLastTime(signin){
@@ -268,7 +268,7 @@ export class AonSign extends AonElement {
       div.style.color = "grey";
       div.style.fontSize = "12px";
       div.style.cursor = "default";
-      div.innerHTML = `Ult. ${textStatus} ${setDateTimestampDay(signin.last_date)}`;
+      div.innerHTML = `Ult. ${textStatus} ${AonDateUtils.setDateTimestampDay(signin.last_date)}`;
       content.appendChild(div);
       this.totalHourWeek();
     }
