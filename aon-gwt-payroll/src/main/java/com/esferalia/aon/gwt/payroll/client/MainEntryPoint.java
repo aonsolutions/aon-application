@@ -123,6 +123,11 @@ public class MainEntryPoint implements EntryPoint {
 			MainDigitalCertificatesObject mainDigitalCertificatesObject = new MainDigitalCertificatesObject();
 			MainDigitalCertificates mainDigitalCertificates = new MainDigitalCertificates();
 			mainDigitalCertificates.onModuleLoad(mainDigitalCertificatesObject);
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_DIGITAL_CERTIFICATES_ENTRY_POINT_NEW)) {
+			MainDigitalCertificatesObjectNew mainDigitalCertificatesObject = new MainDigitalCertificatesObjectNew();
+			MainDigitalCertificatesNew mainDigitalCertificates = new MainDigitalCertificatesNew();
+			mainDigitalCertificates.onModuleLoad(mainDigitalCertificatesObject);
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CCC_ENTRY_POINT)) {
 			MainCCCObject mainCCCObject = new MainCCCObject();
 			MainCCC mainCCC = new MainCCC();
