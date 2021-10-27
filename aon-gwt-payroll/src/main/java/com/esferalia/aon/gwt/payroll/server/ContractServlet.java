@@ -22,17 +22,13 @@ import org.jooq.tools.json.JSONArray;
 import org.richfaces.json.JSONException;
 import org.richfaces.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
-import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqMainCCC;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
@@ -56,19 +52,18 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.seg.social.ServicioRED;
@@ -139,7 +134,7 @@ public class ContractServlet extends AonApiHttpServlet {
 					response(req, resp, saveVacation(api));
 					break;
 				default:
-					throw new Exception("La ruta introducida es incorrecta.");
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -472,96 +467,51 @@ public class ContractServlet extends AonApiHttpServlet {
 		domain.setId(params.optInt("domain"));
 		domain.setName(AonServletUtils.getDomainName(domain.getId()));
 		
-		try(Connection conn = AonServletUtils.getConnection(domain.getName())){
-			EmployeeContractInfo employeeContractInfo = new EmployeeContractInfo();
-			EmployeeInfo employeeData = new EmployeeInfo();
-			ContractInfo contractInfo = new ContractInfo();
-			
-			String doc = params.optString("ipf");
-			Registry registry = AON.getRegistry(domain, new User(), f->f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(doc)));
-			
-			//---------REGISTRY
-			if(null == registry.getId()) { //------- REGISTRY NOT EXIST
-				DocumentType documentType = DocumentType.NIE;
-				if(AonDocumentUtil.isValidNIF(doc.toCharArray())) 
-					documentType = DocumentType.NIF;
-				
-				String name = params.optString("name")+" "+params.optString("surname");
-				registry = AON.save(domain.getName(), domain.getId(), "", 
-						new Registry()
-						.setDomain(domain)
-						.setDocument(doc)
-						.setName(name)
-						.setDocumentType(documentType)
-						.setDocumentCountry(Country.ES)
-						.setConfidential(false)
-				);
-			}
-			
-			Integer registryId = registry.getId();
-			
-			//----------PERSON
-			Person person = AON.getPerson(domain, "", f->f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(doc)));
-			if(null == person.getDocument()) { //PERSON NOT EXIST
-				person = new Person().setFirstName(params.optString("surname"));
-				if(!params.optString("lastSurname").isEmpty()) 
-					person.setSecondSurname(params.optString("lastSurname"));
-				person.setName(params.optString("name"));
-				person.setDomain(domain);
-				person.setId(registryId);
-				person = AON.savePerson(domain, "", person);
-			}
-//			
-//		    java.sql.Date now = new java.sql.Date(Calendar.getInstance().getTime().getTime());      
-//		    Optional<Contract> contract = PAYROLL.getContract(domain.getName(), domain.getId(), api.getUser().getLogin(),
-//			f->f.getDomainProperty().eq(domain.getId())
-//			.and(f.getPersonProperty().eq(registryId))
-//			.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(now))));
 
+		String doc = params.optString("ipf");
+		String nss = params.optString("nss");
+		Date fra = Toolkit.parseDate(params.optString("fra"), "yyyy-MM-dd");
 
-
-			
-			employeeContractInfo.setEmployeeInfo(employeeData);
-			employeeContractInfo.setContractInfo(contractInfo);
-		
-//		
-//			
-//			employeeContractInfo = JooqEmployee.createEmployeeContractDB(conn, employeeContractInfo);
-//			
-//			org.json.JSONArray dates = api.getData().optJSONArray("dates");
-//			LinkedList <ContractData> contractDataArr = new LinkedList<>();
-//			if(dates!=null && dates.length()>0) {
-//		    
-//				Optional<Contract> contract = PAYROLL.getContract(domain.getName(), domain.getId(), api.getUser().getLogin(),
-//						f->f.getDomainProperty().eq(domain.getId())
-//						.and(f.getPersonProperty().eq(5))
-//						.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(now))));
-//				
-//				if(!contract.isEmpty()) {
-//					for (int i = 0; i < dates.length(); i++) {
-//						org.json.JSONObject json = dates.getJSONObject(i);
-//						if(!json.optString("startDate").isEmpty() && !json.optString("endDate").isEmpty()) {
-//							ContractData cData = new ContractData();
-//							cData.setContract(contract.get().getId())
-//							.setDomain(domain.getId())
-//							.setName("DIAS_VACACIONES")
-//							.setStartDate(Toolkit.parseDate(json.optString("startDate"), "yyyy-MM-dd"))
-//							.setEndDate(Toolkit.parseDate(json.optString("endDate"), "yyyy-MM-dd"));
-//							
-//							long days = AonDateUtils.getDaysBetweenDates(cData.getStartDate(), cData.getEndDate());
-//							cData.setExpression(days+"");	
-//							contractDataArr.add(cData);
-//						}
-//					}
-//					if(!contractDataArr.isEmpty()) {
-//						return ContractDataJSON.toJSON(
-//								PAYROLL.saveContractData(domain.getName(), domain.getId(), api.getUser().getLogin(), 
-//								contractDataArr.toArray(new ContractData[contractDataArr.size()]))
-//						);
-//					}
-//				}
-//			}
+		java.sql.Date fraSql = new java.sql.Date(fra.getTime());      
+		//----------PERSON
+		Optional<Contract> contract = Optional.empty();
+		Person person = AON.getPerson(domain, "", f->f.getDomainProperty().eq(domain.getId()).and(f.getSocialSecurityNumProperty().eq(nss)));
+		if(null!= person.getDocument()) {
+		    contract = PAYROLL.getContract(domain.getName(), domain.getId(), "",
+			f->f.getDomainProperty().eq(domain.getId())
+			.and(f.getPersonProperty().eq(person.getId()))
+			.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(fraSql))));
 		}
+
+	    if(contract.isEmpty()) { // CONTRACT NO EXIST
+			com.esferalia.aon.occam.api.model.payroll.Employee employee = new com.esferalia.aon.occam.api.model.payroll.Employee();
+			
+			employee.setRegime(params.optString("regime"));
+			employee.setCcc(params.optString("ctaCti"));
+			employee.setDni(doc);
+			employee.setName(params.optString("name"));
+			employee.setNaf(nss);
+			employee.setStartDate(fra);
+			
+			if(!params.optString("frb").isEmpty())
+				employee.setEndDate(Toolkit.parseDate(params.optString("frb"), "yyyy-MM-dd"));
+			
+			if(!params.optString("coef").isEmpty())
+				employee.setFactor(params.optDouble("coef") / 1000);
+			
+			employee.setContractType(params.optString("contract"));
+			employee.setQuoteGroup(params.optString("gc"));
+			
+			if(!params.optString("ocup").isEmpty())
+				employee.setOccupation(params.optString("ocup"));
+			
+			if(!params.optString("rlce").isEmpty())
+				employee.setRlce(params.optString("rlce"));
+			
+			employee = PAYROLL.addEmployee(domain.getName(), domain.getId(), "", employee);
+	    } else {
+	    	throw new AonApiException("Ya existe un contrato para esa fecha");
+	    }
 		return new org.json.JSONArray();
 	}
 	
