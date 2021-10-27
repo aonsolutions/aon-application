@@ -22,6 +22,7 @@ import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
 import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Role.ROLE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
@@ -88,6 +89,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
@@ -1173,34 +1175,32 @@ public class SecurityDAO {
 	
 	
 	
-	public static Optional<Certificate> getCertificate(AONContext aonContext, UserFilter userFilter ) {
+	public static Optional<Certificate> getCertificate(AONContext aonContext, UserFilter userFilter, Integer userId) {
 		return 
-		getUserCertificate(aonContext.getDslContext(), userFilter)
+		getUserCertificate(aonContext.getDslContext(), userId)
 		.or(()->getDomainCertificate(aonContext.getDslContext(), userFilter))
 		.or(()-> getParentDomainCertificate(aonContext.getDslContext(), userFilter));
 	}
 	
-	
-	public static Optional<Certificate> getUserCertificate(DSLContext dslContext, UserFilter userFilter ) {
-		SelectOnConditionStep<Record> select = 
-		dslContext
-		.select()
-		.from(USER)
-		.innerJoin(REGISTRY).onKey()
-		.innerJoin(RATTACH).on(REGISTRY.ID.eq(RATTACH.REGISTRY), RATTACH.TYPE.eq(DIGITAL_CERTIFICATE.value()) )
-		.innerJoin(RADDINFO).on(REGISTRY.ID.eq(RADDINFO.REGISTRY), RADDINFO.ATTRIBUTE.eq(DIGITAL_CERTIFICATE_PASSWORD))
-		;
+	public static Optional<Certificate> getUserCertificate(DSLContext dslContext, Integer userId ) {
+		Integer userRegistryId = dslContext.select(USER.REGISTRY).from(USER).where(USER.ID.eq(userId)).fetchOne(USER.REGISTRY);
+		
+		Record r = dslContext.select().from(USER)
+			.innerJoin(REGISTRY).on(USER.REGISTRY.eq(REGISTRY.ID))
+			.innerJoin(RATTACH).on(REGISTRY.ID.eq(RATTACH.REGISTRY), RATTACH.TYPE.eq(DIGITAL_CERTIFICATE.value()) )
+			.innerJoin(RADDINFO).on(REGISTRY.ID.eq(RADDINFO.REGISTRY), RADDINFO.ATTRIBUTE.eq(DIGITAL_CERTIFICATE_PASSWORD))
+			.leftJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
+			.where(RATTACH.ID.isNull())
+			.and(USER.REGISTRY.eq(userRegistryId))
+			.fetchOne();
+		
+		if(null == r)
+			throw new CertificateNotFoundException();
 				
-		return 
-		USER_PROPERTIES
-		.build(select, userFilter)
-		.fetchOptional()
-		.map(r -> new Certificate()
+		return Optional.of(new Certificate()
 		.setType(MimeType.PKCS12.name())
 		.setPassword(r.get(RADDINFO.VALUE))
-		.setCertificate(r.get(RATTACH.DATA))
-		)
-		;
+		.setCertificate(r.get(RATTACH.DATA)));
 	}
 	
 	
@@ -1324,22 +1324,26 @@ public class SecurityDAO {
 	public static Optional<Certificate> getCertificateSEPE(AONContext aonContext, Integer domainId) {
 		return getCertificateSEPE(aonContext.getDslContext(), domainId);
 	}
-
-	private static Optional<Certificate> getCertificateSEPE(DSLContext dslContext, Integer domainId) {
-		return dslContext
-		.select()
-		.from(ENTERPRISE)
-		.innerJoin(REGISTRY).onKey()
-		.innerJoin(RATTACH).on(REGISTRY.ID.eq(RATTACH.REGISTRY), RATTACH.TYPE.eq(DIGITAL_CERTIFICATE.value()) )
-		.innerJoin(RADDINFO).on(REGISTRY.ID.eq(RADDINFO.REGISTRY), RADDINFO.ATTRIBUTE.eq(DIGITAL_CERTIFICATE_PASSWORD))
-		.where(ENTERPRISE.DOMAIN.eq(domainId))
-		.fetchOptional()
-		.map(r -> new Certificate()
+	
+	public static Optional<Certificate> getCertificateSEPE(DSLContext dslContext, Integer domainId ) {
+		Integer enterpriseRegistryId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
+		
+		Record r = dslContext.select().from(ENTERPRISE)
+			.innerJoin(REGISTRY).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
+			.innerJoin(RATTACH).on(REGISTRY.ID.eq(RATTACH.REGISTRY), RATTACH.TYPE.eq(DIGITAL_CERTIFICATE.value()) )
+			.innerJoin(RADDINFO).on(REGISTRY.ID.eq(RADDINFO.REGISTRY), RADDINFO.ATTRIBUTE.eq(DIGITAL_CERTIFICATE_PASSWORD))
+			.leftJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
+			.where(RATTACH.ID.isNull())
+			.and(ENTERPRISE.REGISTRY.eq(enterpriseRegistryId))
+			.fetchOne();
+		
+		if(null == r)
+			throw new CertificateNotFoundException();
+				
+		return Optional.of(new Certificate()
 		.setType(MimeType.PKCS12.name())
 		.setPassword(r.get(RADDINFO.VALUE))
-		.setCertificate(r.get(RATTACH.DATA))
-		);
-		
+		.setCertificate(r.get(RATTACH.DATA)));
 	}
 	
 	public static DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId) {
