@@ -436,7 +436,7 @@ const calculoCoef = ({value}) =>  {
 
 const processAccept = async (aonMessengerChat) => {
     let application = aonMessengerChat.getApplication();
-    // application.startLoading();
+    application.startLoading();
     try {
         const data = getFormMovJson();
         let newData = {
@@ -450,21 +450,20 @@ const processAccept = async (aonMessengerChat) => {
         if(data.ocu) newData.ocupacion = data.ocu;
         if(data.coef) newData.coefparcial = parseInt(data.coef);
 
-        application.development();
-
-        // ---ADD CONTRACT
-        // const contractInfo = await addContract(newData);
-        // console.log(contractInfo);
+        // application.development();
 
         //---SEND MOV TGSS
-        // await sendAlta(newData);
+        await sendAlta(newData);
+
+        // ---ADD CONTRACT
+        await addContract(newData);
 
         //---CLOSE TASK
-        // await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
+        await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
     } catch (err) {
         console.log(err);
         aonMessengerChat.showError(err);
     }
 
-    // application.stopLoading();
+    application.stopLoading();
 }

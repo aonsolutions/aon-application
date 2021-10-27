@@ -247,16 +247,16 @@ public class UtilsTask {
 		Domain domain = api.getDomain();
 		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
 		//SEND SENDER
-		if(task.getSender()!=null && Integer.compare(task.getSender().getUserId(), user.getId())!=0 ) {
+		if(task.getSender()!=null && task.getSender().getUserId()!=null && Integer.compare(task.getSender().getUserId(), user.getId())!=0 ) {
 			User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getSender().getUserId()));
 			if(usr!=null) auths.add(usr.getAuth());
-			System.out.println("COMMENT SENDER SEND ID"+ task.getSender().getId());
+			System.out.println("COMMENT SENDER SEND ID:"+ task.getSender().getId());
 		}
 		//SEND TASKHOLDER ASSIGNED
 		if(task.getTaskHolder().getId()!=null && !task.getTaskHolder().getId().equals(workflow.getTaskHolder().getId()) ) {
 			User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getTaskHolder().getUserId()));
 			if(usr!=null) auths.add(usr.getAuth());
-			System.out.println("COMMENT TASKHOLDER SEND ID"+ task.getTaskHolder().getId());
+			System.out.println("COMMENT TASKHOLDER SEND ID:"+ task.getTaskHolder().getId());
 		} // SEND WORKGROUP ASSIGNED
 		else if(task.getWorkgroup()!=null && task.getWorkgroup().getId()!=null){ 
 			AON.getTaskHolderWorkgroupStream(
@@ -269,7 +269,7 @@ public class UtilsTask {
 				User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
 				if(usr!=null) auths.add(usr.getAuth());
 			});
-			System.out.println("COMMENT WORKGROUP SEND ID"+ task.getWorkgroup().getId());
+			System.out.println("COMMENT WORKGROUP SEND ID:"+ task.getWorkgroup().getId());
 		}
 		
 		if(auths.size()>0) {

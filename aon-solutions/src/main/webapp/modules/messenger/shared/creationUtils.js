@@ -481,12 +481,12 @@ export const createChatMessage = (properties, chat) => {
         iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(parseInt(message.dataset.id)));
 
         //-------------------icon share
-        const textShare = "Compartir entre ramas (En desarrollo)";
-        const iconShare = createOutlinedMaterialIcon({name:MATERIAL_ICONS.IOS_SHARE}).element;
-        iconShare.title = textShare;
-        setStyles(iconShare, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "12px", zIndex: 1 , right: "39px", cursor: "pointer" });
-        iconShare.addEventListener(EVENT.CLICK, ()=> alert(textShare));
-        message.appendChild(iconShare);
+        // const textShare = "Compartir entre ramas (En desarrollo)";
+        // const iconShare = createOutlinedMaterialIcon({name:MATERIAL_ICONS.IOS_SHARE}).element;
+        // iconShare.title = textShare;
+        // setStyles(iconShare, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "12px", zIndex: 1 , right: "39px", cursor: "pointer" });
+        // iconShare.addEventListener(EVENT.CLICK, ()=> alert(textShare));
+        // message.appendChild(iconShare);
 
          //-------------------icon delete
       } else {

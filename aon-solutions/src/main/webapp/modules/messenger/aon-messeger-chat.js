@@ -311,6 +311,10 @@ export class AonMessengerChat extends AonElement {
     }
     return json;
   }
+  
+  isProjectDefault(){
+    return this.getData().project && this.getData().project.id ? true : false;
+  }
 
   back(){
    this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter);
