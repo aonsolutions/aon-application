@@ -281,7 +281,7 @@ export class AonRegistry extends AonElement {
             this.registry.address = ra;
             this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
         });
-      }
+      } else this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
     }
   }
 

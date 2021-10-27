@@ -122,14 +122,10 @@ export class AonProject extends AonElement {
 		registry.types = RegistryType.CUSTOMER;
 		registry.value = this.project.getRegistry();
 		registry.setRegistry(this.project.getRegistry());
-		registry.addEventListener(EVENT.CHANGE, () => {
+		registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
 			this.project.setRegistry(registry.getRegistry());
 			if(this.autosave) this.save();
-		});
-		registry.addEventListener(EVENT.SELECT, () => {
-			this.project.setRegistry(registry.getRegistry());
-			if(this.autosave) this.save();
-		});
+		})
 		table.addCell(registry,2);
 		registry.showAddress = false;
 
