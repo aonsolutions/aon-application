@@ -189,6 +189,8 @@ export const MY_USER = 'My User';
 export const NAME = 'Name';
 export const NEW = 'New';
 export const NEW_COMPANY = 'New Company';
+export const NEW_PRODUCT = 'New Product';
+export const NEW_REQUEST = 'New Request';
 export const NEXT = 'Next';
 export const NUMBER = 'Number';
 

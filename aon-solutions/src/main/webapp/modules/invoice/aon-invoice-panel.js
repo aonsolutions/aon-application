@@ -25,6 +25,7 @@ import { AonInvoicePrint } from './aon-invoice-print.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
 import Apps from '../../services/app.js';
+import { AonProduct } from '../product/aon-product.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -119,7 +120,7 @@ export class AonInvoicePanel extends AonElement {
 		toolbar.removeButtons();
 		if(!this.isMobile()) {
 			if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
-				// TODO
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addProduct());
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
@@ -232,6 +233,14 @@ export class AonInvoicePanel extends AonElement {
 			productList = this.isMobile() ? new AonMobileProductList() : new AonProductList();
 			productList.id = this.PRODUCT_LIST;	
 			aonInvoice.setContent(productList);
+		}
+	}
+
+	addProduct() {
+		if(this.isBeta()) {
+			let aonProduct = new AonProduct();
+			aonProduct.id = this.id + 'Product';
+			this.getApplication().setContent(aonProduct);	
 		}
 	}
 

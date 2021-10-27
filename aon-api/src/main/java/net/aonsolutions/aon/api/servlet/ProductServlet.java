@@ -7,12 +7,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.json.ItemJSON;
+import com.esferalia.aon.occam.api.json.ProductCategoryJSON;
+import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -36,7 +43,13 @@ public class ProductServlet extends AonApiHttpServlet {
 				response(req, resp, getProducts(api));
 				break;
 			case "/item":
+				response(req, resp, getItem(api));
+				break;
+			case "/items":
 				response(req, resp, getItems(api));
+				break;
+			case "/category":
+				response(req, resp, getProductCategories(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -54,7 +67,10 @@ public class ProductServlet extends AonApiHttpServlet {
 		
 			switch (api.getPath()) {
 			case "/":
-//				response(req, resp, getResponseObject());
+				response(req, resp, saveProduct(api));
+				break;
+			case "/item":
+				response(req, resp, saveItem(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -73,6 +89,9 @@ public class ProductServlet extends AonApiHttpServlet {
 			switch (api.getPath()) {
 			case "/":
 //				response(req, resp, getResponseObject());
+				break;
+			case "/item":
+				response(req, resp, saveItem(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -105,9 +124,32 @@ public class ProductServlet extends AonApiHttpServlet {
 				productFilter(api, f));
 	}
 	
+	private JSONObject getItem(AonApiData api) {
+		Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> 
+			itemFilter(api, f));
+		return ItemJSON.toJSON(item);
+	}
+	
 	private JSONArray getItems(AonApiData api) {
 		return AON_SOLUTIONS.getItems(api.getDomain(), api.getUser(), f -> 
 			itemFilter(api, f));
+	}
+	
+	private JSONArray getProductCategories(AonApiData api) {
+		return ProductCategoryJSON.toJSON(AON.getProductCategoryStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId())));
+	}
+
+	private JSONObject saveProduct(AonApiData api) {
+		Product product = ProductJSON.fromJSON(api.getData());
+		product = AON.saveProduct(api.getDomain(), api.getUser().getLogin(), product);
+		return ProductJSON.toJSON(product);
+	}
+	
+	private JSONObject saveItem(AonApiData api) {
+		Item item = ItemJSON.fromJSON(api.getData());
+		item = AON.saveItem(api.getDomain(), api.getUser().getLogin(), item);
+		return ItemJSON.toJSON(item);
 	}
 	
 	private Filter productFilter(AonApiData api, ProductProperties f) {
@@ -125,6 +167,11 @@ public class ProductServlet extends AonApiHttpServlet {
 	
 	private Filter itemFilter(AonApiData api, ItemProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+		
+		if(api.getParams().opt(IJsonNames.PRODUCT) != null){
+			Integer product = api.getParams().optInt(IJsonNames.PRODUCT);
+			filter = filter.and(f.getProductProperty().eq(product));
+		}
 		
 		if(!AonStringUtils.isBlank(api.getParams().optString(IJsonNames.VALUE))) {
 			String value = api.getParams().optString(IJsonNames.VALUE);

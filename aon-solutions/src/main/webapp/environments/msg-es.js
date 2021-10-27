@@ -190,6 +190,8 @@ export const MY_USER = 'Mi Usuario';
 export const NAME = 'Nombre';
 export const NEW = 'Nuevo';
 export const NEW_COMPANY = 'Nueva Empresa';
+export const NEW_PRODUCT = 'Nuevo Producto';
+export const NEW_REQUEST = 'Nueva Solicitud';
 export const NEXT = 'Siguiente';
 export const NUMBER = 'Número';
 
