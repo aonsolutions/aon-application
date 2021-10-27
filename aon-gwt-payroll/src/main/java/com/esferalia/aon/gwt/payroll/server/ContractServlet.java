@@ -442,7 +442,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		  String cti     = ccc.getCccAccount();
 		  String regimen = ccc.getCccRegimeCode();
 		  try {
-			  byte[] pdf = ServicioRED.getCccLaboralLife(
+			  byte[] pdf = ServicioRED.getCccLaboralLifePOST(
 					new ByteArrayInputStream(certificate.getCertificate()), 
 					certificate.getPassword(), 
 					certificate.getType(), 

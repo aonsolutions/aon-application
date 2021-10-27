@@ -97,6 +97,11 @@ public class Calc {
 			return false;
 		return true;
 	}
+	@Override
+	public String toString() {
+		return "Calc [base=" + base + ", total=" + total + ", employee=" + employee + ", enterprise=" + enterprise
+				+ ", employeePercent=" + employeePercent + ", enterprisePercent=" + enterprisePercent + "]";
+	}
 	
 	
 }

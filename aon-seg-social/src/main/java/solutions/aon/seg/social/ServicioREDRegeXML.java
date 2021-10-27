@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -161,7 +161,7 @@ public abstract class ServicioREDRegeXML {
 	
 	protected static void liquidationDataType(LiquidationBuilder lb, Collection<String> trs) throws SegSocialException {
 		for (String tr : trs) {
-			LinkedList<String> rows = Toolkit.getTdsTexts(tr);
+			List<String> rows = Toolkit.getTdsTexts(tr);
 			String rowConcept=Toolkit.safeRemoveWeirdCharacters(Toolkit.safeGet(rows, 0));
 			if (rowConcept != null) {
 				if(rowConcept.equalsIgnoreCase("CONTINGENCIAS COMUNES")) {
@@ -266,7 +266,7 @@ public abstract class ServicioREDRegeXML {
 	public static void workerLiquidationDataType(WorkerLiquidationBuilder wlb, Collection<String> trs) throws SegSocialException {
 		
 		for (String tr : trs) {
-			LinkedList<String> rows = Toolkit.getTdsTexts(tr);
+			List<String> rows = Toolkit.getTdsTexts(tr);
 			String rowConcept=Toolkit.safeRemoveWeirdCharacters(Toolkit.safeGet(rows, 0));
 			if (rowConcept != null) {
 				
