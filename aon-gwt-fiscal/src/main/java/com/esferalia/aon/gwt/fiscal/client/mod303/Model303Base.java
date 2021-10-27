@@ -781,6 +781,26 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	private void reopenDeclaration(Model303ModuleOptions options) {
 		markAsPendingButton.setEnabled(false);
+		if (mod303.isSent() && AonStringUtils.isNotBlank(mod303.getNumber())) {
+			AonConfirmDialog cd = new AonConfirmDialog();
+			cd.confirm(AON.MSG.confirmReopenDeclarationAction(), new AonConfirmDialogCallback() {
+				
+				@Override
+				public void onAccept() {
+					doReopenDeclaration(options);
+				}
+				
+				@Override
+				public void onCancel() {
+					markAsPendingButton.setEnabled(true);
+				}
+			});
+		} else {
+			doReopenDeclaration(options);
+		}
+	}
+	
+	private void doReopenDeclaration(Model303ModuleOptions options) {
 		final PopupPanel popup = new PopupPanel(false, true);
 		popup.add(new AonSplash());
 		popup.setGlassEnabled(true);
@@ -1044,7 +1064,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		adjLabel.setVisible(adjusted);
 	}
 	
-	private void styleStatusLabel(Mod303 mod) {
+	protected void styleStatusLabel(Mod303 mod) {
 		statusLabel.setText(mod.getStatus().getName());
 		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( mod.getStatus() ));
 		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( mod.getStatus() ));

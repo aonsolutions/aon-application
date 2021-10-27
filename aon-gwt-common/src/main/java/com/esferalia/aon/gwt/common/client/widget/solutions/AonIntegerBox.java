@@ -76,7 +76,7 @@ public class AonIntegerBox extends ValueBox<Integer> {
 				new Timer() {
 					@Override
 					public void run() {
-						removeStyleName(AON.AON_CSS.aonValueChanged());
+						removeStyleName(AON.CSS.aonValueChanged());
 					}
 				}.schedule(CHANGE_DISPLAY_MILLIS);
 		}

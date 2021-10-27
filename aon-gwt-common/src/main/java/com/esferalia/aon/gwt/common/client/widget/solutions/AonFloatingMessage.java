@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.common.client.widget;
+package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.event.logical.shared.CloseEvent;

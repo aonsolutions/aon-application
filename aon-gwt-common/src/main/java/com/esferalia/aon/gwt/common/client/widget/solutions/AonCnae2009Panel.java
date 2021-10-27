@@ -23,7 +23,7 @@ public class AonCnae2009Panel extends AonCustomDialog implements HasSelectionHan
 		ScrollPanel scroll = new ScrollPanel();
 		scroll.setWidth("550px");
 		scroll.setHeight("500px");
-		scroll.setStyleName(AON.AON_CSS.aonPadding());
+		scroll.setStyleName(AON.CSS.aonPadding());
 		
 		AonDisplayGrid table = new AonDisplayGrid();
 		table.addStyleName(AON.CSS.aonWidthAll());

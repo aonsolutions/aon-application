@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
-import com.esferalia.aon.gwt.common.client.widget.AonFloatingMessage;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -14,7 +13,7 @@ public class AonLayoutPanel extends DockLayoutPanel {
 	public AonLayoutPanel(Unit unit) {
 		super(unit);
 		dummyNorthPanel = new FlowPanel();
-		addSouth(dummyNorthPanel, 0);
+		addNorth(dummyNorthPanel, 0);
 	}
 
 	public AonLayoutPanel() {

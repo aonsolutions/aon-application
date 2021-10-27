@@ -417,6 +417,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa.\n \u00BFContinuar con el borrado?")
 	String confirmDeclarationDeleteAction();
+	
+	@DefaultMessage("La declaraci\u00F3n se encuentra en estado \"PRESENTADO\", si contin\u00FAa se borrar\u00E1n los documentos relativos a su presentaci\u00F3n, si los hubiere, \u00BFRealmente desea continuar?")
+	String confirmReopenDeclarationAction();
 
 	@DefaultMessage("Si continua se borrar\u00E1n los todos los datos de la actividad.\n \u00BFContinuar con el borrado?")
 	String newEpigrapSelected();
