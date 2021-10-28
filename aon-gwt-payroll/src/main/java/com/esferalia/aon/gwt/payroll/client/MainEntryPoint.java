@@ -107,12 +107,6 @@ public class MainEntryPoint implements EntryPoint {
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_DIGITAL_CERTIFICATES_ENTRY_POINT)) {
 			runAsync(MainDigitalCertificates.class, new MainDigitalCertificates());
-		} else if (entryPoint
-				.equalsIgnoreCase(Constants.MAIN_DIGITAL_CERTIFICATES_ENTRY_POINT_NEW)) {
-			MainDigitalCertificatesObjectNew mainDigitalCertificatesObject = new MainDigitalCertificatesObjectNew();
-			MainDigitalCertificatesNew mainDigitalCertificates = new MainDigitalCertificatesNew();
-			mainDigitalCertificates.onModuleLoad(mainDigitalCertificatesObject);
-      //runAsync(MainDigitalCertificatesNew.class, new MainDigitalCertificatesNew());
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CCC_ENTRY_POINT)) {
 			runAsync(MainCCC.class, new MainCCC());
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CONFIG_COMUNICA_ENTRY_POINT)) {

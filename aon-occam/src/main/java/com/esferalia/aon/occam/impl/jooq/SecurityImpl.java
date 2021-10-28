@@ -332,9 +332,9 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
-	public Certificate getCertificate(AONContext ctx, UserFilter userFilter, Integer userId) {
+	public Certificate getCertificate(AONContext ctx, UserFilter userFilter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> SecurityDAO.getCertificate(ctx, userFilter, userId))
+				configuration -> SecurityDAO.getCertificate(ctx, userFilter))
 		.orElseThrow(CertificateNotFoundException::new);
 	}
 	

@@ -16,7 +16,6 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
-import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -27,7 +26,6 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
-import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
@@ -236,11 +234,11 @@ public interface EnterprisesService extends RemoteService {
 
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate);
 
-	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId);
+	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser) throws IllegalArgumentException;
 
-	void deleteSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf);
+	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf);
 
-	void createSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf, String naf);
+	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf);
 
 	EmployeeSegSocial getIpfxNaf(String currentDomainName, String currentUser, ArrayList<String> nssList);
 
@@ -305,13 +303,6 @@ public interface EnterprisesService extends RemoteService {
 
 	List<ITEmployee> getEmployeeITInfo(String currentDomainName, Integer contractId);
 
-	ContractConcepts getAllConcepts(String currentDomainName, String currentUser);
-
-	List<DigitalCertificateNew> getDigitalCertificates(String currentDomainName, String currentUser);
-
-	void deleteDigitalCertificate(String currentDomainName, DigitalCertificateNew digitalCertificate);
-
-	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags);
-
-	CertificateInfo validateCertJava(String currentDomainName, Integer rattachId);
+	ContractConcepts getAllConcepts(String currentDomainName, String currentUser);	
+	
 }

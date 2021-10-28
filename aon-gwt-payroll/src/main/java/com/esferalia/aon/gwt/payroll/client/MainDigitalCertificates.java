@@ -621,7 +621,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		
 		comunicateBtn.addClickHandler(e -> {
 			if(AonStringUtils.equalsIgnoreCase(secondaryUser.getSituation(), "Baja")) {
-				SecondaryUserDialog dialog = new SecondaryUserDialog(null, secondaryUser.getNaf()) {
+				SecondaryUserDialog dialog = new SecondaryUserDialog(secondaryUser.getNaf()) {
 					
 					@Override
 					protected void onAccept() {
@@ -703,7 +703,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	// ------------------------------------------------------ Insert Secondary Users.Toolbar Methods
 	
 	private void onAddSecondaryUser(ClickEvent event) {
-		SecondaryUserDialog dialog = new SecondaryUserDialog(null) {
+		SecondaryUserDialog dialog = new SecondaryUserDialog() {
 			
 			@Override
 			protected void onAccept() {
