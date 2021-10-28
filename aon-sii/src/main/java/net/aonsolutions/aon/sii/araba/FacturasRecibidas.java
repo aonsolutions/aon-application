@@ -166,18 +166,18 @@ public class FacturasRecibidas extends SIIBuilt{
 		LinkedList<VatData> noExenta = new LinkedList<>();
 		LinkedList<VatData> pasivoList = new LinkedList<>();
 		if (!vat.isIntracommunity()) {
-			noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && !f.isOtherISP())
+			noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && !f.isOtherISP() && !f.isPrepayment())
 					.map(h -> new VatData().setBase(h.getBase()).setPercentage(h.getPercentage())
 							.setQuota(h.getQuota()).setSurchargePercent(h.getSurchargePercent())
 							.setSurchargeQuota(h.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
-			pasivoList = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.isOtherISP())
+			pasivoList = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.isOtherISP() && !f.isPrepayment())
 					.map(f -> new VatData().setBase(f.getBase()).setPercentage(f.getPercentage())
 							.setQuota(f.getQuota()).setSurchargePercent(f.getSurchargePercent())
 							.setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 		} else {
-			noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId))
+			noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && !f.isPrepayment())
 					.map(f -> new VatData().setBase(f.getBase()).setPercentage(f.getPercentage())
 							.setQuota(f.getQuota()).setSurchargePercent(f.getSurchargePercent())
 							.setSurchargeQuota(f.getSurchargeQuota()))
