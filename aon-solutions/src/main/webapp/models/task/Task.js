@@ -52,7 +52,7 @@ export class Task {
       this.source      = TASK_SOURCE.QUERY;
       this.status      = TASK_STATUS.PENDING;
       this.workflow    = [];
-      this.workflowTmp = {};
+      this.setWorkflowTmp({domain: this.domain.id});
       this.files = [];
     }
   }
@@ -77,7 +77,7 @@ export class Task {
       this.setSourceId(task.source_id || undefined);
       this.setStartDate(task.start_date || undefined);
       this.setParent(task.parent || undefined);
-      this.setGTaskId(task.gtask_id || (!this.id && this.auth.email && !this.isGestor() ? this.auth.email : undefined));
+      this.setGTaskId(task.gtask_id || (!this.id && this.auth.email && !this.isAdvisoryCompany() ? this.auth.email : undefined));
       this.setDomain(new Domain(task.domain)) 
       this.setWorkflow(task.workflow || []);
       this.setDomainTmp(this.domain);
@@ -326,25 +326,32 @@ export class Task {
   }
 
   isExternal(){
-    if(this.isGestor()) return false;
-    return this.id && parseInt(LS.getDomainId()) !== parseInt(this.domain.id);
+    let bool = false;
+    if( !this.isAdvisoryCompany() && this.id && this.isOtherDomain())
+      bool = true;
+    return bool;
   }
 
-  isGestor(){
-    return "OFFICE" === LS.getCompany().type;
+  isOtherDomain(){
+    return parseInt(LS.getDomainId()) !== parseInt(this.domain.id) ? true : false;
+  }
+
+  isAdvisoryCompany(){
+    return "OFFICE" === LS.getCompany().type ? true : false;
   }
 
   senderCondition(){
-    return !this.isGestor() && this.isProject() ? undefined : this.myTaskHolder;
+    return !this.isAdvisoryCompany() && this.isProject() && !this.isExternal() ? undefined : this.myTaskHolder;
   }
+
 
   /**
    * CHANGE VALUES WHEN PROJECT CHANGE 
    */
   changeProject(){
 
-    if(this.isProject() && !this.isExternal())
-      this.setDomain(new Domain(this.project.domain));
+    // if(this.isProject() && !this.isExternal())
+    //   this.setDomain(new Domain(this.project.domain));
 
     if(this.isProject()){
       const {projectHolder} = this.project;
@@ -352,13 +359,13 @@ export class Task {
       this.setWorkgroup(new Workgroup(workgroup));
       const taskHolder = projectHolder.taskHolder && projectHolder.taskHolder.id ? projectHolder.taskHolder : this.task_holder;
       this.setTaskHolder(taskHolder);
-    } else {
+    } else if(!this.id) {
       this.setWorkgroup(new Workgroup());
       this.setTaskHolder(new TaskHolder());
     }
 
-    const registry = this.project.registry && this.project.registry.id ? this.project.registry : this.registry;
-    this.setRegistry(new Registry(registry));
+    // const registry = this.project.registry && this.project.registry.id ? this.project.registry : this.registry;
+    // this.setRegistry(new Registry(registry));
 
     if(!this.id)
      this.setSender( new TaskHolder(this.senderCondition()));
@@ -372,7 +379,7 @@ export class Task {
       email: this.auth.email ? this.auth.email : undefined
     });
   }
-
+  
   onPropertyChanged(propName, val){
     return (propName, val);
   }

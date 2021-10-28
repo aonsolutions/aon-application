@@ -4,8 +4,8 @@ import { domainName } from "../../../services/request.js";
 import {  setAttributes, setClasses, setStyles } from "../../../services/utilsComponents.js";
 import { createFormVacation } from "../forms/vacation.js";
 import { MessengerOptions, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPE, WORKFLOW_TYPES } from "../MessengerEnums.js";
-import { appendTaskTag, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
-import { fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
+import { appendTaskTag, createAdvisory, createAonSwitch, createAonTextArea, createCardMessenger, createChatMessage, createCustomer, createInputContact, createOutlinedMaterialIcon, createProcessType, createProject, createReceiverDiv, createRequestType, createSelectCau, createStartJustifiedColumn, createStartJustifiedRow, createTaskHolder, createWorkgroup } from "./creationUtils.js";
+import { fillAdvisory, fillCustomer, fillProcessType, fillProject, fillRequestType, fillSelectAppCau, fillTaskHolder, fillTypeRequestCau, fillWorkGroup } from "./fill.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { createFormMov } from "../forms/mov-ss.js";
 import { createFormTimeControl } from "../forms/time-control.js";
@@ -348,13 +348,12 @@ const jsonDiv = ()=> {
  */
 export const buildForm = (div, aonMessengerChat) => {
     const task = aonMessengerChat.task;
-    const aonMessenger = aonMessengerChat.applicationParentEl;
-    const isGestor = task.isGestor();
-    const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
-    const received =  isReceived(task, myWorkgroups);
+    const isAdvisoryCompany = task.isAdvisoryCompany();
+    // const aonMessenger = aonMessengerChat.applicationParentEl;
+    // const myWorkgroups = aonMessenger ? aonMessenger._workgroups: [];
+    // const received =  isReceived(task, myWorkgroups);
 
     const dataDefault = aonMessengerChat.getData();
-    const isProjectDefault = aonMessengerChat.isProjectDefault();
 
     //-----------------------APPEND DIV TAGS
     createTagsDiv(div, task);
@@ -363,7 +362,7 @@ export const buildForm = (div, aonMessengerChat) => {
     const aonCard = createCardMessenger(MSG.DATA, "");
     div.appendChild(aonCard);
     aonCard.getCard().style.margin = 0;
-    if( task.registry && task.registry.name && received ){
+    if( !task.isExternal() && task.registry && task.registry.name){
         const registryName = `[${task.registry.name}]`;
         aonCard.setTitleSection1(registryName)
     }
@@ -408,20 +407,19 @@ export const buildForm = (div, aonMessengerChat) => {
         selectApp.style.marginLeft = "5px";
         rowsDiv.appendChild(selectApp);
         fillSelectAppCau(aonMessengerChat);
-    } else if( 
-        (!task.id || task.isExternal()) && 
-        !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) )
-      ){
-        let initText = received ? 'De' : 'Para';
-        let titleBtn = isGestor ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
+    } else //if(   (!task.id || task.isExternal()) && !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) ))
+    if( !task.id || task.isExternal() ){
+        let initText = !task.isExternal() ? 'De' : 'Para';
+        let titleBtn = isAdvisoryCompany ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
         const btnExternal = createAonSwitch(titleBtn);
         rowsDiv.appendChild(btnExternal);
-        if(task.id || isProjectDefault) btnExternal.disabled = CONSTANT.TRUE;
-        btnExternal.checked = task.isProject();
+        if(task.id || task.isOtherDomain()) btnExternal.disabled = CONSTANT.TRUE;
+        btnExternal.checked = task.isOtherDomain();
+
         btnExternal.addEventListener(EVENT.CHANGE, ({target}) => {
             console.log("---------------------CHANGE BTN INTERNAL--------");
             changeRequestType(aonMessengerChat, requestTypeSelect, columnsDivTwo, divProcess);
-            if(!isGestor && target.checked) 
+            if(!isAdvisoryCompany && target.checked) 
                 showTags(false);
             else 
                 showTags(true);
@@ -582,31 +580,39 @@ const addTaskDescription = (aonMessengerChat) => {
 const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
     const task = aonMessengerChat.task;
     const applicationParent = aonMessengerChat.applicationParentEl;
-    const isGestor = task.isGestor();
+    const isAdvisoryCompany = task.isAdvisoryCompany();
     //-------------------------CAU--------------------------
     if((task.source === TASK_SOURCE.CAU && !applicationParent.cau) || forManager){
         //-------------------------- DIV ADD CUSTOMER AND CONTACT
         let rowsDivThree =  createStartJustifiedRow().element;
-        if(isGestor){
+        if(isAdvisoryCompany){
             rowsDivThree = addCustomerAndContact(task, aonMessengerChat, columnsDiv);
         } else {
             rowsDivThree.style.width = "100%";
             columnsDiv.appendChild(rowsDivThree);
         }
         if(forManager){
+            // ------------------ADVISORY SELECT
+            const advisorySelect = createAdvisory();
+            advisorySelect.style.width = "100%";
+            rowsDivThree.appendChild(advisorySelect);
+            fillAdvisory(task);
+
             // ------------------PROJECT
+            let rowsDivFour =  createStartJustifiedRow().element;
+            rowsDivFour.style.width = "100%";
+            columnsDiv.appendChild(rowsDivFour);
             const projectSelect = createProject();
             projectSelect.default = true;
             projectSelect.style.width = "100%";
-            if(isGestor) projectSelect.style.marginLeft = "5px";
+            if(isAdvisoryCompany) projectSelect.style.marginLeft = "5px";
             if(task.id) setAttributes(projectSelect, {disabled:CONSTANT.TRUE, readonly:CONSTANT.TRUE});
-            rowsDivThree.appendChild(projectSelect);
-            fillProject(task);
+            rowsDivFour.appendChild(projectSelect);
         } 
     } 
 
     //--------------------------DIV WORKGROUP AND TASKHOLDER
-    if((isGestor || !forManager) && !applicationParent.cau)
+    if((isAdvisoryCompany || !forManager) && !applicationParent.cau)
         addTaskHolderAndWorkgroup(task, aonMessengerChat, columnsDiv);
 
     addTaskDescription(aonMessengerChat);
@@ -621,7 +627,6 @@ const formQuery = (columnsDiv, aonMessengerChat, forManager = false) => {
 const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
     const task = aonMessengerChat.task;
     const dataDefault = aonMessengerChat.getData();
-    const isGestor = task.isGestor();
 
     const divTwo = createReceiverDiv().element;
     columnsDiv.appendChild(divTwo);
@@ -640,11 +645,20 @@ const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
     if(task.id) processType.setDisabled(CONSTANT.TRUE);
         
     if(forManager){
-        //--------- DIV PROJECT
+        // ------------------ADVISORY SELECT
+        let rowsDivQ =  createStartJustifiedRow().element;
+        rowsDivQ.style.width = "100%";
+        columnsDiv.appendChild(rowsDivQ);
+        const advisorySelect = createAdvisory();
+        advisorySelect.style.width = "100%";
+        rowsDivQ.appendChild(advisorySelect);
+        fillAdvisory(task);
+
+        // ------------------PROJECT
         let rowsDivThree =  createStartJustifiedRow().element;
         rowsDivThree.style.width = "100%";
         columnsDiv.appendChild(rowsDivThree);
-        // ------------------PROJECT
+
         const projectSelect = createProject();
         projectSelect.default = true;
         projectSelect.style.width = "100%";
@@ -652,7 +666,7 @@ const formRequest = (columnsDiv, aonMessengerChat, forManager = false) => {
         fillProject(task);
     }
 
-    if((isGestor || !forManager) && !aonMessengerChat.getApplicationParent().cau){
+    if((task.isAdvisoryCompany() || !forManager) && !aonMessengerChat.getApplicationParent().cau){
         //--------------------------DIV WORKGROUP AND TASKHOLDER
         addTaskHolderAndWorkgroup(task, aonMessengerChat, columnsDiv);
     }
@@ -676,10 +690,9 @@ const addTaskHolderAndWorkgroup = (task, aonMessengerChat, parent) => {
     fillWorkGroup(task, aonMessengerChat);
 
     //-----------------TASK HOLDER
-    const taskHolderSelect = createTaskHolder();
+    const taskHolderSelect = setStyles(createTaskHolder(),{ width: "100%", marginLeft:"5px" });
     taskHolderSelect.default = true;
-    taskHolderSelect.style.width = "100%";
-    taskHolderSelect.style.marginLeft = "5px";
+
     rowDiv.appendChild(taskHolderSelect);
     fillTaskHolder(aonMessengerChat);
 }
@@ -831,17 +844,17 @@ const showTags = (b) => {
  * @param {Array} workgroups my workgrouprs
  * @returns 
  */
-const isReceived = (task, workgroups) => {
-    let condition = false;
-    try {
-        if(task.id){
-            const isWorkgroup = workgroups.some(({id})=> id === task.workgroup.id );
-            condition = task.isGestor()
-            ? 
-                (task.task_holder.id === task.myTaskHolder.id) || isWorkgroup 
-            : 
-                task.sender.id && task.gtask_id === task.auth.email;
-        }
-    } catch (error) {console.log(error);}
-    return condition;
-}
+// const isReceived = (task, workgroups) => {
+//     let condition = false;
+//     try {
+//         if(task.id){
+//             const isWorkgroup = workgroups.some(({id})=> id === task.workgroup.id );
+//             condition = task.isAdvisoryCompany()
+//             ? 
+//                 (task.task_holder.id === task.myTaskHolder.id) || isWorkgroup 
+//             : 
+//                 task.sender.id && task.gtask_id === task.auth.email;
+//         }
+//     } catch (error) {console.log(error);}
+//     return condition;
+// }

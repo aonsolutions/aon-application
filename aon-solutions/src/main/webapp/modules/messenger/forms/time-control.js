@@ -4,11 +4,11 @@ import { AonSelect } from "../../../components/aon-select.js";
 import { TAG, MSG, CSS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { getStatus, getTimeControlDetail, saveTimeControlDetail } from "../../../services/timeControlService.js";
 import { serializeForm, sortBy } from "../../../services/utils.js";
-import { newComponent, setAttributes } from "../../../services/utilsComponents.js";
+import { setAttributes } from "../../../services/utilsComponents.js";
 import { firstLetters } from "../../signin/time-control/utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
-import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
+import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/creationUtils.js";
 
 
 /**
@@ -45,14 +45,14 @@ const createDataForm = (form, aonMessengerChat) => {
     form.appendChild( taskHolder );
    
     let times = setAttributes(new AonSelect(),{ title: "Seleccione registro a modificar", id:"timeId", name:"timeId"});
-    createDiv(form, times, {classes:[CSS.AON_COL_XS_12]})
+    createDivGrid(form, times, {classes:[CSS.AON_COL_XS_12]})
 
     fillTimeControl(times, data.timeId, taskHolderId);
     if(data.timeId)
         times.setDisabled(CONSTANT.TRUE);
 
     let date = setAttributes(new AonDate(),{ title: `Nueva ${MSG.DATE}`, id:"date", name:"date"});
-    createDiv(form, date, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    createDivGrid(form, date, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
     if(data.date) date.setDate(new Date(data.date));
 
     let time = setAttributes(new AonInput(), {
@@ -62,7 +62,7 @@ const createDataForm = (form, aonMessengerChat) => {
         description:`Nueva Hora`,
         value: data.time ?  data.time : ""
     });
-    createDiv(form, time, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+    createDivGrid(form, time, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     if(!task.id) times.addEventListener(EVENT.CHANGE,({detail})=>{
         if(detail.date){
@@ -73,7 +73,7 @@ const createDataForm = (form, aonMessengerChat) => {
 
     //OBSERVATION
     const observation = createDivEditable(undefined, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
-    createDiv(form, observation, {classes:[CSS.AON_COL_XS_12]});
+    createDivGrid(form, observation, {classes:[CSS.AON_COL_XS_12]});
 
     let dur = aonMessengerChat.getDur();
 
@@ -82,7 +82,7 @@ const createDataForm = (form, aonMessengerChat) => {
         let btnAccept = createBtnAccept();
         btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(times.getDetail(), {date: date.value, time: time.value}, aonMessengerChat) );
          
-        createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+        createDivGrid(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
     }
 
 }
@@ -116,24 +116,6 @@ const fillTimeControl = (aonSelect, timeId, taskHolderId) => {
     return null;
 }
 
-
-/**
- * 
- * @param {HTMLElement} parent appenchild
- * @param {HTMLElement} child element add
- * @param {Object} properties 
- * @returns 
- */
-const createDiv = (parent, child, properties)=> {
-
-    const div = newComponent({ type: TAG.DIV, ...properties }).element;
-
-    parent.appendChild(div);
-
-    div.appendChild(child);
-
-    return div;
-}
 
 const processAccept = async (tm,{date, time},aonMessengerChat) => {
     let application = aonMessengerChat.getApplication();

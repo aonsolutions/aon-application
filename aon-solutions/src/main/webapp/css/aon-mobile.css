@@ -102,7 +102,7 @@
   transform: translateY(1px);
 }
 
-.aonMobileMenu > span > aon-icon-button > button:focus:not(#aonMobileMenuAddButtonIconButton) {
+.aonMobileMenu > span > aon-notification-icon aon-icon-button > button:focus, .aonMobileMenu > span > aon-icon-button > button:focus:not(#aonMobileMenuAddButtonIconButton) {
   color: var(--aonBlue) !important;
 } 
 

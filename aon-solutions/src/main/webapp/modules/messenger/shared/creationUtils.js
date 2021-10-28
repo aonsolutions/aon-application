@@ -11,6 +11,24 @@ import { checkFilesAddEventClick, downChat } from "./utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
+/**
+ * 
+ * @param {HTMLElement} parent appenchild
+ * @param {HTMLElement} child element add Optional
+ * @param {Object} properties 
+ * @returns 
+ */
+ export const createDivGrid = (parent, child, properties)=> {
+
+  const div = newComponent({ type: TAG.DIV, ...properties }).element;
+
+  parent.appendChild(div);
+
+  if(child) div.appendChild(child);
+
+  return div;
+}
+
 export const createBtnAccept = () => {
   let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
   btnAccept.className = CSS.AON_BUTTON;
@@ -414,6 +432,14 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
   title: MSG.TYPE,
+  autocomplete: CONSTANT.OFF
+});
+
+ //-----------------ADVISORY
+ export const createAdvisory = () => setAttributes( new AonSelect(),{
+  id: MESSENGER_IDS.ADVISORY_TASK,
+  name: MESSENGER_IDS.ADVISORY_TASK,
+  title: "Asesoria",
   autocomplete: CONSTANT.OFF
 });
 

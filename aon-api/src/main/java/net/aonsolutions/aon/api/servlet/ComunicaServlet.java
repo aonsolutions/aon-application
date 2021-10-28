@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -30,7 +31,9 @@ import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -51,6 +54,7 @@ import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -100,7 +104,11 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				break;
 				case "/quote-group":
 					LOGGER.info("QUOTE-GROUP SERVLET - GET METHOD");
-					jsonInString = gjson.toJson(this.getQuoteGroup(api));
+					jsonInString = gjson.toJson(getQuoteGroup(api));
+				break;
+				case "/update-contracts":
+					LOGGER.info("QUOTE-GROUP SERVLET - GET METHOD");
+					jsonInString = gjson.toJson(updateContracts(api));
 				break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -544,6 +552,94 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			}
 		});
 		newThread.start();
+	}
+	
+	
+	private static JSONObject updateContracts(AonApiData api){
+		
+		Thread newThread = new Thread(() -> {
+			try {
+				Domain domain = api.getDomain();
+				Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+				
+				ArrayList<Employee> employees = new ArrayList<>();
+				PAYROLL.getCCCStream(domain.getName(), domain.getId(), api.getUser().getLogin())
+				.filter(distinctByKey(ci -> ci.getCccAccount()))
+				.forEach(ccc -> {
+		            String cti = ccc.getCccAccount();
+		            String regimen = ccc.getCccRegimeCode();
+		            try{            	
+		                employees.addAll(SistemaRED.getTotalEmployees(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regimen, cti));
+		            } catch(Exception e) {e.printStackTrace();}
+		        });	
+		        
+				employees.forEach(data ->{
+					try {
+					    String ipf = Toolkit.fillStringLeft(data.getIpf(), "0", 10);
+					    String nss = data.getNss();
+						//----GET PERSON
+						java.sql.Date fraSql = new java.sql.Date(data.getFra().getTime());      
+						Optional<Contract> contract = Optional.empty();
+						Person person = AON.getPerson(domain, "", f->f.getDomainProperty().eq(domain.getId()).and(f.getSocialSecurityNumProperty().eq(nss)));
+						
+						////--GET CONTRACT ACTIVE
+						if(null!= person.getDocument()) {
+							contract = PAYROLL.getContract(domain.getName(), domain.getId(), "",
+								f->f.getDomainProperty().eq(domain.getId())
+								.and(f.getPersonProperty().eq(person.getId()))
+								.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(fraSql))));
+						}
+						// CONTRACT NO EXIST
+						if(contract.isEmpty()) { 
+							  Employee employee = SistemaRED.getEmployee(
+										new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), 
+										data.getRegime(), data.getCtaCti().get(), data.getNss());
+							com.esferalia.aon.occam.api.model.payroll.Employee newEmployee = new com.esferalia.aon.occam.api.model.payroll.Employee();
+							
+							if(employee!=null && employee.getNss()!=null) {
+								System.out.println("-------------CREANDO CONTRATO-------------");
+								System.out.println(data.toString());
+								newEmployee.setRegime(employee.getRegime());
+								newEmployee.setDni(ipf);
+								newEmployee.setNaf(employee.getNss());
+								newEmployee.setStartDate(employee.getFra());
+								
+								employee.getCtaCti().ifPresent(newEmployee::setCcc);
+								
+								employee.getName().ifPresent(newEmployee::setName);
+								
+								employee.getContract().ifPresent(newEmployee::setContractType);
+								
+								employee.getFrb().ifPresent(newEmployee::setEndDate);
+								
+								employee.getCoef().ifPresent(newEmployee::setFactor);
+								
+								employee.getSex().ifPresent(newEmployee::setSex);
+		
+								employee.getGc().ifPresent(newEmployee::setQuoteGroup);
+
+								employee.getBirthDate().ifPresent(newEmployee::setBirthDate);
+								
+								if(employee.getOcup()!=null && !employee.getOcup().isEmpty()) {
+									newEmployee.setOccupation(employee.getOcup().toLowerCase());
+								} 
+								
+								PAYROLL.addEmployee(domain.getName(), domain.getId(), "", newEmployee);
+							}
+						} else {
+							System.out.println("--------YA EXISTE EL CONTRATO-------------");
+							System.out.println(data.toString());
+						}
+			
+					} catch (SegSocialException e) {e.printStackTrace();}	
+				});
+
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		newThread.start();
+		return new JSONObject();
 	}
 	
 	// predicate to filter the duplicates by the given key extractor.

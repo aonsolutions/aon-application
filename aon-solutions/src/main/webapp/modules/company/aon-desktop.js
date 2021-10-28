@@ -125,7 +125,7 @@ export class AonDesktop extends AonElement {
 								  icon: 'chat',
 								  action: () => {
 									let aonMessengerChat = new AonMessenger();	
-									aonMessengerChat.data = {source:TASK_SOURCE.QUERY, project: item};
+									aonMessengerChat.data = {source:TASK_SOURCE.QUERY, project: item, domain: item.domain};
 									this.rootPanel(aonMessengerChat);
 								  }
 								}]

@@ -142,13 +142,13 @@ const addTextAreaChat = (wrapper) => {
 
     divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
       if (ev.ctrlKey && ev.keyCode == 13) {
-        aonMessengerChat.saveTaskWorkflow();
+        aonMessengerChat.saveComment();
       } else if(ev.ctrlKey && ev.keyCode == 88){
         openFullComment(aonMessengerChat, divs.aonTextArea);
       }
     });
 
-    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
+    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment());
     divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
   }
 }
@@ -173,7 +173,7 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
 
   let button = dialog.addSendAction(
     ()=>{
-      aonMessengerChat.saveTaskWorkflow();
+      aonMessengerChat.saveComment();
       dialog.close();
     }, 
     MSG.SEND
