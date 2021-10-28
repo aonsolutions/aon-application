@@ -454,11 +454,18 @@ export class AonApplication extends AonElement {
         newLi.style.transition = "opacity 1s ease-out";
         this.hiddenElement(newLi, true);
         ul.appendChild(newLi);
-        arrow.addEventListener(EVENT.CLICK, (e => {
-          e.preventDefault();
-          arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT ? MATERIAL_ICONS.ARROW_DROP_DOWN : MATERIAL_ICONS.ARROW_RIGHT;
-          this.hiddenElement(newLi, arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT);
-        }));
+        if(option.clickable) {
+          arrow.addEventListener(EVENT.CLICK, (e => {
+            e.preventDefault();
+            arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT ? MATERIAL_ICONS.ARROW_DROP_DOWN : MATERIAL_ICONS.ARROW_RIGHT;
+            this.hiddenElement(newLi, arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT);
+          }));
+        } else {
+          li.addEventListener(EVENT.CLICK,() => {
+            arrow.innerHTML = arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT ? MATERIAL_ICONS.ARROW_DROP_DOWN : MATERIAL_ICONS.ARROW_RIGHT;
+            this.hiddenElement(newLi, arrow.innerHTML === MATERIAL_ICONS.ARROW_RIGHT);
+          });
+        } 
       }
 
       let span = this.createElement(TAG.SPAN);
@@ -537,33 +544,34 @@ export class AonApplication extends AonElement {
           aib.addEventListener(EVENT.CLICK, item.action);
         });
       }
-
-      li.addEventListener(EVENT.CLICK, () => {
-        let backgroundEl = li.style.backgroundColor;
+      if(!option.options || option.clickable){
+        li.addEventListener(EVENT.CLICK, () => {
+          let backgroundEl = li.style.backgroundColor;
         
-        ul.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
+          ul.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId)
               el.style.backgroundColor = "transparent";
             else {
               // console.log(el.style.backgroundColor);
             }
-        });
+          });
         
-        li.style.backgroundColor = (!backgroundEl || backgroundEl.indexOf("transparent")>=0) ? "#ddd" : "transparent";
+          li.style.backgroundColor = (!backgroundEl || backgroundEl.indexOf("transparent")>=0) ? "#ddd" : "transparent";
 
-        this.selected = id;
-        let toolbar = this.getElement(this.TOOLBAR);
-        if(toolbar) toolbar.setAttribute("option", option.name);
-        if(option.fn){
-          let count = 0;
-          if(li.querySelector("span")) count = li.querySelector("span").dataset.count;
-          option.fn(count);
-        } 
-        this.dispatchEvent(new CustomEvent(EVENT.SELECT_OPTION, { detail: option }));
-        if (this.isMobile()) {
-          this.closeMobileSidenav();
-        }
-      });
+          this.selected = id;
+          let toolbar = this.getElement(this.TOOLBAR);
+          if(toolbar) toolbar.setAttribute("option", option.name);
+          if(option.fn){
+            let count = 0;
+            if(li.querySelector("span")) count = li.querySelector("span").dataset.count;
+            option.fn(count);
+          } 
+          this.dispatchEvent(new CustomEvent(EVENT.SELECT_OPTION, { detail: option }));
+          if (this.isMobile()) {
+            this.closeMobileSidenav();
+          }
+        });
+      }
     }
   }
 

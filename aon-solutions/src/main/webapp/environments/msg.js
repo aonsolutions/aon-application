@@ -254,6 +254,7 @@ export const MAILBOX = "Buzón";//TODO
 export const NAME = MSG.NAME;
 export const NEW = MSG.NEW;
 export const NEW_COMPANY = MSG.NEW_COMPANY;
+export const NEW_EXPENSE = 'Nuevo Gasto';
 export const NEW_PRODUCT = MSG.NEW_PRODUCT;
 export const NEW_REQUEST = MSG.NEW_REQUEST;
 export const NEXT = MSG.NEXT;

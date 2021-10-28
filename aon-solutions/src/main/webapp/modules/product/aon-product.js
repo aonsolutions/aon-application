@@ -43,6 +43,7 @@ export class AonProduct extends AonElement {
 
 	product;
 	item;
+	expense;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -59,7 +60,7 @@ export class AonProduct extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.build();
-    } 
+    }
 
 	initialize() {
 		this.id = this.id || 'aonProduct';
@@ -82,16 +83,19 @@ export class AonProduct extends AonElement {
 		this.ITEM_PRICE = this.id + 'ItemPrice';
 		this.ITEM_PVP = this.id + 'ItemPvp';
 
+
 		this.product = new Product(this.product);
 		this.item = new Item(this.item);
+		this.expense = this.expense || this.product.getType() === 'EXPENSE';
 	}
 
 	build() {
+		let newTitle = this.expense ? MSG.NEW_EXPENSE : MSG.NEW_PRODUCT;
 		let toolbar = new AonToolbar();
 		toolbar.id = this.PRODUCT_TOOLBAR;
 		toolbar.type = ToolbarType.SECONDARY;
 		toolbar.title = this.product.getId()
-            ? this.product.getName() : MSG.NEW_PRODUCT.toUpperCase(); 
+            ? this.product.getName() : newTitle.toUpperCase(); 
 		this.appendChild(toolbar);
 		toolbar.addButton2(ACTION.SAVE, () => this.save());
 		toolbar.addButton2(ACTION.BACK, () => this.back());
@@ -102,6 +106,8 @@ export class AonProduct extends AonElement {
 		this.appendChild(div);
 
 		this.buildGeneralCard(div);
+		if(!this.expense)
+			this.buildItemCard(div);
 	}
 
 	buildGeneralCard(parent){
@@ -134,36 +140,36 @@ export class AonProduct extends AonElement {
 		div.appendChild(table2);
 
         table2.addRow();
+		if(!this.expense) {
+			let types = [
+				{name:'Servicio', value: 'SERVICE'},
+				{name:'Producto Comercial', value: 'COMMERCIAL_PRODUCT'},
+				{name:'Suplido', value: 'PREPAYMENT'}];
+			let typeSelect = this.createSelect(this.PRODUCT_TYPE, MSG.TYPE);
+    	    typeSelect.setOptions(types);
+			typeSelect.value = this.expense ? 'EXPENSE' : this.product.getType();
+			
+			typeSelect.addEventListener(EVENT.CHANGE, (e) => {
+				this.product.setType(typeSelect.getDetail().value);
+				if(typeSelect.getDetail().value === 'PREPAYMENT') {
+					let vat = this.getElement(this.PRODUCT_VAT);
+					vat.value = '';
+					vat.disabled = true;
 
-		let types = [
-			{name:'Gasto', value: 'EXPENSE'},
-			{name:'Servicio', value: 'SERVICE'},
-			{name:'Producto Comercial', value: 'COMMERCIAL_PRODUCT'},
-			{name:'Suplido', value: 'PREPAYMENT'}];
-		let typeSelect = this.createSelect(this.PRODUCT_TYPE, MSG.TYPE);
-        typeSelect.setOptions(types);
-		typeSelect.value = this.product.getType();
-		typeSelect.addEventListener(EVENT.CHANGE, (e) => {
-			this.product.setType(typeSelect.getDetail().value);
-			if(typeSelect.getDetail().value === 'PREPAYMENT') {
-				let vat = this.getElement(this.PRODUCT_VAT);
-				vat.value = '';
-				vat.disabled = true;
+					let ret = this.getElement(this.PRODUCT_RETENTION);
+					ret.value = '';
+					ret.disabled = true;
+				} else {
+					let vat = this.getElement(this.PRODUCT_VAT);
+					vat.disabled = false;
 
-				let ret = this.getElement(this.PRODUCT_RETENTION);
-				ret.value = '';
-				ret.disabled = true;
-			} else {
-				let vat = this.getElement(this.PRODUCT_VAT);
-				vat.disabled = false;
-
-				let ret = this.getElement(this.PRODUCT_RETENTION);
-				ret.disabled = false;
-			}
-		});
+					let ret = this.getElement(this.PRODUCT_RETENTION);
+					ret.disabled = false;
+				}
+			});
 		
-        table2.addCell(typeSelect);
-
+        	table2.addCell(typeSelect);
+		}
 		let categorySelect = this.createSelect(this.PRODUCT_CATEGORY, MSG.CATEGORY);
 		categorySelect.setAlias('id', 'name');
 		categorySelect.addEventListener(EVENT.CHANGE, (e) =>  {
@@ -175,7 +181,7 @@ export class AonProduct extends AonElement {
 			categorySelect.value = this.product.category.id;
 		});
 		
-        table2.addCell(categorySelect);
+        table2.addCell(categorySelect, this.expense ? 2 : 1);
 
 		table2.addRow();
 
@@ -199,25 +205,6 @@ export class AonProduct extends AonElement {
 		});
 		table2.addCell(retentionSelect);
  	}
-
-	 build() {
-		let toolbar = new AonToolbar();
-		toolbar.id = this.PRODUCT_TOOLBAR;
-		toolbar.type = ToolbarType.SECONDARY;
-		toolbar.title = this.product.getId()
-            ? this.product.getName() : MSG.NEW_PRODUCT.toUpperCase(); 
-		this.appendChild(toolbar);
-		toolbar.addButton2(ACTION.SAVE, () => this.save());
-		toolbar.addButton2(ACTION.BACK, () => this.back());
-
-		let div = this.createElement(TAG.DIV);
-		div.style.display = "flex";
-		div.style.width = "100%";
-		this.appendChild(div);
-
-		this.buildGeneralCard(div);
-		this.buildItemCard(div);
-	}
 
 	buildItemCard(parent){
 		let card = this.createCard(this.ITEM_CARD, MSG.ADDITIONAL_INFORMATION);

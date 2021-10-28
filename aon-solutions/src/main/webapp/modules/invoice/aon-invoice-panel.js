@@ -119,10 +119,10 @@ export class AonInvoicePanel extends AonElement {
 		let toolbar = this.getElement(aonInvoice.TOOLBAR);
 		toolbar.removeButtons();
 		if(!this.isMobile()) {
-			if(this.selectedOption && (OPTION.PRODUCT.id === this.selectedOption.id
-				|| OPTION.CONCEPTS.id === this.selectedOption.id
-				|| OPTION.EXPENSES.id === this.selectedOption.id)){
+			if(this.selectedOption && (OPTION.PRODUCT.id === this.selectedOption.id)){
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addProduct());
+			} else if(this.selectedOption && (OPTION.EXPENSES.id === this.selectedOption.id)){
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addExpense());
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
@@ -242,6 +242,13 @@ export class AonInvoicePanel extends AonElement {
 	addProduct() {
 		let aonProduct = new AonProduct();
 		aonProduct.id = this.id + 'Product';
+		this.getApplication().setContent(aonProduct);	
+	}
+
+	addExpense() {
+		let aonProduct = new AonProduct();
+		aonProduct.id = this.id + 'Expense';
+		aonProduct.expense = true;
 		this.getApplication().setContent(aonProduct);	
 	}
 
@@ -440,7 +447,6 @@ export class AonInvoicePanel extends AonElement {
 			case OPTION.OFFER.id:
 				break;
 			case OPTION.CONCEPTS.id:
-				this.aonProductList();
 				break;
 			case OPTION.PRODUCT.id:
 				this.aonProductList({expense: false});
