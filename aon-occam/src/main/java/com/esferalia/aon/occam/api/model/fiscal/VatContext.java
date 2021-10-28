@@ -46,6 +46,7 @@ public class VatContext implements Serializable {
 	private boolean vatAccrualRegime;
 	private VatDeductionType vatDeductionType;
 	private boolean farmerRegime;
+	private boolean prepayment;
 	
 	private boolean vatImportation;
 	private boolean duaLinked;
@@ -279,6 +280,15 @@ public class VatContext implements Serializable {
 	}
 	public VatContext setFarmerRegime(boolean farmerRegime) {
 		this.farmerRegime = farmerRegime;
+		return this;
+	}
+	
+	public boolean isPrepayment() {
+		return prepayment;
+	}
+	
+	public VatContext setPrepayment(boolean prepayment) {
+		this.prepayment = prepayment;
 		return this;
 	}
 	

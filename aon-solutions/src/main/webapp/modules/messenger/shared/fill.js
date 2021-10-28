@@ -49,9 +49,15 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
             let registry = task.getRegistry();
             if(registry.id && task.isGestor())
                 projects = await getProjects({ registry: registry.id });
-            else
-                projects = await getOfficeProjects();
+            else {
+                const offices = await getOfficeProjects();
 
+                offices.forEach(item => {
+                    item.projects.forEach(p => projects.push(p));
+                });
+
+            }
+            console.log(projects);
             aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
 
             

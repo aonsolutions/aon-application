@@ -10,10 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProjectJSON;
 import com.esferalia.aon.occam.api.json.ProjectTypeJSON;
+import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -105,12 +107,18 @@ public class ProjectServlet extends AonApiHttpServlet{
 		JSONArray arr = new JSONArray();
 		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
+			JSONObject json = new JSONObject();
+			json.put(IJsonNames.DOMAIN, DomainJSON.toJSON(domain));
+			JSONArray projects = new JSONArray();
+			json.put(IJsonNames.REGISTRY, RegistryJSON.toJSON(customer));
 			AON.getProjectStream(domain, "", f -> f.getRegistryProperty().eq(customer.getId()).and(f.getProjectTypeProperty().isNotNull()))
 				.forEach(project -> {
 					ProjectHolder holder = AON.getProjectHolder(project.getDomain(), "", f -> f.getProjectProperty().eq(project.getId()).and(f.getEndDateProperty().isNull()));
 					project.setProjectHolder(holder);
-					arr.put(ProjectJSON.toJSON(project));	
+					projects.put(ProjectJSON.toJSON(project));	
 				});
+			json.put(IJsonNames.PROJECTS, projects);
+			arr.put(json);
 		});
 		return arr;
 	}

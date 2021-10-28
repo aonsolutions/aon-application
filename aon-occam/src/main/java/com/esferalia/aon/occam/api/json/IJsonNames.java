@@ -272,6 +272,7 @@ public interface IJsonNames {
 	String PRODUCT_ID = "productId";
 	String PROFIT_PERCENT = "profitPercent";
 	String PROJECT = "project";
+	String PROJECTS = "projects";
 	String PROJECT_HOLDER = "projectHolder";
 	String PROMO = "promo";
 	String PROVINCE = "province";
