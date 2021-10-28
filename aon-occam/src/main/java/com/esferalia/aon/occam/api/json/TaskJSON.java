@@ -24,7 +24,7 @@ public class TaskJSON {
 	public static Task fromJSON(JSONObject json) {
 		return new Task()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-			.setDomain(DomainJSON.fromJSON(json))
+			.setDomain(DomainJSON.fromJSON(json.optJSONObject(IJsonNames.DOMAIN)))
 //			.setActivityType(JsonUtils.getInteger(json, IJsonNames.ACTIVITY_TYPE))
 			.setTitle(JsonUtils.getString(json, IJsonNames.TITLE))
 			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
