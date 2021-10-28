@@ -269,6 +269,10 @@
 		border: none;
 	}
 	
+	.aon-portlet-title{
+		overflow: hidden;
+	}
+	
 	.gwt-Selector .gwt-PopupPanel {
     	z-index: 69;
     	padding: 5px;
@@ -717,6 +721,12 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-home.svg']}) ;
 	}
 
+	.aon-icon-segsocial-small {
+		background-size: 14px;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-tgss.png']});
+	}
+
+
 	.aon-direct-access-panel.aon-icon-sepe,
 	.aon-direct-access-panel.aon-icon-winsuite,
 	.aon-direct-access-panel.aon-icon-company {
@@ -814,7 +824,13 @@
 		padding-top:12px;
 		padding-bottom:12px;
 	}
-	
+
+	.aon-portlet-title .aon-icon-company {
+		padding-top:12px;
+		padding-left:24px;
+		padding-bottom:12px;
+	}
+
 	.aon-editDataTable-iconColumn .aon-icon-company{
 		padding-top:6px;
 		padding-left:24px;
@@ -924,7 +940,16 @@
 		opacity: 0.25;
 	}
 	
+	.gwt-MenuItem
+ 	{
+		height: 16px;
+	}
 	
+	.gwt-MenuItem .aon-icon-reset
+ 	{
+		background-position-y:center;
+	}
+
 	</style>
 
 	<script type="text/javascript">
