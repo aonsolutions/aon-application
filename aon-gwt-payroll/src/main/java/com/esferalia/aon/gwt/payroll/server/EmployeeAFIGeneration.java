@@ -48,7 +48,7 @@ public final class EmployeeAFIGeneration {
 			this.hour = AonStringUtils.leftPad((actualCalendar.get(Calendar.HOUR) + 1) + "", 2, '0');
 			this.minute = AonStringUtils.leftPad((actualCalendar.get(Calendar.MINUTE) + 1) + "", 2, '0');
 			
-			this.fileName = AonStringUtils.isNotBlank(fileName) ? this.day + this.month + this.hour + this.minute : fileName;
+			this.fileName = AonStringUtils.isBlank(fileName) ? this.day + this.month + this.hour + this.minute : fileName;
 			
 			this.sufixAFI = "AFI";
 			this.priorityCode = priorityCode;
@@ -147,7 +147,7 @@ public final class EmployeeAFIGeneration {
 			this.reserved2 = StringUtils.leftPad("", 2, ' ');
 			
 			this.cccRegimePrincipal = AonStringUtils.leftPad(cccRegimePrincipal, 4, '0');
-			this.cccProvincePrincipal = AonStringUtils.leftPad(cccProvincePrincipal, 3, '0');
+			this.cccProvincePrincipal = AonStringUtils.leftPad(cccProvincePrincipal, 2, '0');
 			this.cccPrincipal = AonStringUtils.leftPad(cccPrincipal, 9, '0');
 			
 			this.reservedCollection = AonStringUtils.leftPad("", 13, ' ');
@@ -369,11 +369,19 @@ public final class EmployeeAFIGeneration {
 	public static class MB{
 		FAB fab;
 		DAM dam;
+		FCT fct;
 		
 		public MB(FAB fab, DAM dam) {
 			super();
 			this.fab = fab;
 			this.dam = dam;
+		}
+		
+		public MB(FAB fab, DAM dam, FCT fct) {
+			super();
+			this.fab = fab;
+			this.dam = dam;
+			this.fct = fct;
 		}
 
 		public FAB getFab() {
@@ -387,6 +395,12 @@ public final class EmployeeAFIGeneration {
 		}
 		public void setDam(DAM dam) {
 			this.dam = dam;
+		}
+		public FCT getFct() {
+			return fct;
+		}
+		public void setFct(FCT fct) {
+			this.fct = fct;
 		}
 		
 	}
@@ -626,6 +640,62 @@ public final class EmployeeAFIGeneration {
 		
 	}
 	
+	public static class FCT{
+		String fctHeader;
+		String reserved6;
+		String holidayDay;
+		String holidayMonth;
+		String holidayYear;
+		String reserved53;
+		
+		public FCT ( String holidayDay, String holidayMonth, String holidayYear ) {
+			this.fctHeader = "FCT";
+			this.reserved6 = AonStringUtils.leftPad("", 6, ' ');
+			this.holidayDay = AonStringUtils.leftPad(holidayDay, 2, '0');
+			this.holidayMonth = AonStringUtils.leftPad(holidayMonth, 2, '0');
+			this.holidayYear = AonStringUtils.leftPad(holidayYear, 4, '0');
+			this.reserved53 = AonStringUtils.leftPad("", 53, ' ');
+		}
+
+		public String getFctHeader() {
+			return fctHeader;
+		}
+		public void setFctHeader(String fctHeader) {
+			this.fctHeader = fctHeader;
+		}
+		public String getReserved6() {
+			return reserved6;
+		}
+		public void setReserved6(String reserved6) {
+			this.reserved6 = reserved6;
+		}
+		public String getHolidayDay() {
+			return holidayDay;
+		}
+		public void setHolidayDay(String holidayDay) {
+			this.holidayDay = holidayDay;
+		}
+		public String getHolidayMonth() {
+			return holidayMonth;
+		}
+		public void setHolidayMonth(String holidayMonth) {
+			this.holidayMonth = holidayMonth;
+		}
+		public String getHolidayYear() {
+			return holidayYear;
+		}
+		public void setHolidayYear(String holidayYear) {
+			this.holidayYear = holidayYear;
+		}
+		public String getReserved53() {
+			return reserved53;
+		}
+		public void setReserved53(String reserved53) {
+			this.reserved53 = reserved53;
+		}
+		
+	}
+	
 	public static class ETF{
 		String etfHeader;
 		String sintaxIndent;
@@ -819,7 +889,16 @@ public final class EmployeeAFIGeneration {
 			
 			DAM dam = new DAM("", ""); // 	JSONObject damJson = (JSONObject) edcJson.get("DAM");
 			
-			mb = new MB(fab, dam);
+			JSONObject fctJson = (JSONObject) edcJson.get("FCT");
+			if(null != fctJson) {
+				FCT fct = new FCT(
+						fctJson.get("dayHoliday").toString(),
+						fctJson.get("monthHoliday").toString(),
+						fctJson.get("yearHoliday").toString());
+				
+				mb = new MB(fab, dam, fct);
+			} else
+				mb = new MB(fab, dam);
 		}
 		
 		//CHC
@@ -1034,6 +1113,16 @@ public final class EmployeeAFIGeneration {
 					mb.getDam().getOcupation() +
 					mb.getDam().getReserved8() +
 					"\r\n";
+			
+			if(null != mb.getFct())
+				employeeAFI +=
+						mb.getFct().getFctHeader() +
+						mb.getFct().getReserved6() +
+						mb.getFct().getHolidayDay() +
+						mb.getFct().getHolidayMonth() +
+						mb.getFct().getHolidayYear() +
+						mb.getFct().getReserved53() +
+						"\r\n";
 
 		}
 			
