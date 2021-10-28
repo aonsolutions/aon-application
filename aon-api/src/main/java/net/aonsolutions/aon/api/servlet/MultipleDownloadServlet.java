@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.logging.Logger;
@@ -41,6 +40,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -48,8 +48,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 
-import es.translogia.tedi.ewok.TediInvoice;
-import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 import net.aonsolutions.aon.google.apis.drive.SearchFiles;
 
@@ -147,14 +145,34 @@ public class MultipleDownloadServlet extends HttpServlet{
 		LinkedList<File> list = new LinkedList<>();
 		
 		InvoiceStatus st = getInvoiceStatus(json.optString("status"));
-    	if(InvoiceStatus.SCORED.equals(st)) {
-    		AON.getAttachStream(domain.getName(), domain.getId(), user.getLogin(), f -> f.getAttachModuleProperty().in(idsArray)
-    				.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value())), AttachType.INVOICE, true).forEach(r -> {
-				try {
-					File file = File.createTempFile(r.getDescription(), "." + r.getMimeType().getExtension());
-					AonFileUtils.writeByteArrayToFile(file, r.getData());
-					list.add(file);
-				} catch (IOException e) {
+    	if(InvoiceStatus.SCORED.equals(st) || InvoiceStatus.PENDING.equals(st)) {
+    		ids.stream().forEach(id ->{
+    			Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),  f -> f.getAttachModuleProperty().in(idsArray)
+        				.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value())), AttachType.INVOICE);
+    			try {
+    				if(attach.getId() != null) {
+    					File file = File.createTempFile(attach.getDescription(), "." + attach.getMimeType().getExtension());
+    					AonFileUtils.writeByteArrayToFile(file, attach.getData());
+    					list.add(file);
+    				
+    				} else {
+    					Invoice invoice = AON.getInvoice(domain.getName(), domain.getId(), user.getLogin(), id);
+    					if(InvoiceType.SALES.equals(invoice.getType())) {
+    						CompanyFull company = AON.getCompanyFull(domain.getName(), domain.getId(), user.getLogin());
+    						Attach logo = new Attach();
+    						PrintInvoiceConfiguration config = AON_SOLUTIONS.getPrintInvoiceConfiguration(domain.getName(), domain.getId(), user.getLogin(), true);
+    						if(config.isLogo()) {
+    							Integer regId = company.getRegistry().getId();
+    							logo = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f-> f.getAttachModuleProperty().eq(regId)
+    								.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
+    						}
+    						File file = File.createTempFile(invoice.getReferenceCode(), ".pdf");
+    						FileOutputStream out = new FileOutputStream(file);
+    						PdfMaker.printInvoice(out, config.isCompany() ? company : null, invoice, config, null, logo.getData());
+    						list.add(file);	
+    					}
+    				}
+    			} catch (IOException e) {
 					e.printStackTrace();
 				}
     		});
