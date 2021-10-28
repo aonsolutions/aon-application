@@ -1363,7 +1363,7 @@ public class EmployeeDAO {
 		switch (sex) {
 		case "F":
 			return Gender.FEMALE;
-		case "M":
+		case "M": case "V":
 			return Gender.MALE;
 		default:
 			return Gender.UNKNOWN;
