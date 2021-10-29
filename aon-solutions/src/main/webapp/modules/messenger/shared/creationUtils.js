@@ -491,7 +491,7 @@ export const createChatMessage = (properties, chat) => {
 
     if(messageSend || me){
       const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
-      iconSendWorkflow.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(properties.notification_date)) : MSG.SEND;
+      iconSendWorkflow.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(properties.notification_date)) : `${MSG.SEND} por ${MSG.EMAIL}`;
       iconSendWorkflow.id = MESSENGER_IDS.ICON_SEND_WORKFLOW;
       let color = COLORS.AON_BLUE;
 

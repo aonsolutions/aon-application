@@ -271,7 +271,6 @@ const createDataEnterprise = (form, data) => {
     const form = document.getElementById(MESSENGER_IDS.FORM_DINAMIC);
     if(form){
         const formSerialize = serializeForm(form);
-        console.log(formSerialize);
         let observation = form.querySelector("#observation").innerText;
         return { ...formSerialize, observation };
     }
