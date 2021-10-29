@@ -37,7 +37,6 @@ import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
-import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.Liquidation;
@@ -57,9 +56,6 @@ public class ServicioRED extends ServicioREDRegeXML {
 	 */
 	private static final Pattern FORM_PATTERN = Pattern.compile("\\<form.*action=\"(?<link>.+?SessionId=(?<session>[^\\&]+?)\\&.*?)\"");
 	private static final DateFormat PDF_DATE_FORMAT = new SimpleDateFormat("dd MM yyyy");
-	public static final String DEFAULT_ENCODING = IServicioRedConstants.ISO_8859_1;
-	
-	
 	/**
 	 * INFORME DE DATOS DE COTIZACIÓN (IDC)
 	 * @param certificateInputStream
@@ -116,10 +112,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 				params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
 				params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, IServicioRedConstants.CONTINUE));
 				
-				httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 				
 				body = Toolkit.getBodyPOST(httpClient, httpPost);
-				checkOldSsError(body);
+				ServicioREDRegeXML.checkOldSsError(body);
 				link = Toolkit.getLink(body);
 				sessionId = Toolkit.getSessionId(body);
 				
@@ -135,7 +131,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 				params.add(new BasicNameValuePair("btn_FkeyButton", "+"));
 				params.add(new BasicNameValuePair("tbl_cbo_Sub0900112078_0_0", "Select"));
 				
-				httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 				
 				body = Toolkit.getBodyPOST(httpClient, httpPost);
 				httpPost = Toolkit.reportGenerationForm(body);
@@ -204,10 +200,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("chk_SDFSELEC", "1"));
 			params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, IServicioRedConstants.CONTINUE));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			
 			httpPost = Toolkit.reportGenerationForm(body);
 			
@@ -280,10 +276,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, IServicioRedConstants.CONTINUE));
 			
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			httpPost = Toolkit.reportGenerationForm(body);
 			
 			try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
@@ -298,12 +294,6 @@ public class ServicioRED extends ServicioREDRegeXML {
 		}
 	}
 
-	private static void checkOldSsError(String body) throws SegSocialException {
-		String error = Toolkit.getDIL(body);
-		if (Toolkit.getErrCode(error) != null)
-			InvalidDataException.checkCode(Toolkit.getErrCode(error), Toolkit.getErrMsg(error));
-	}
-	
 	/**
 	 * DUPLICADOS DE DOCUMENTOS TA
 	 * @param certificateInputStream
@@ -362,10 +352,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("chk_SDFINFTA1", "1"));
 			params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, ""));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			link = Toolkit.getLink(body);
 			sessionId = Toolkit.getSessionId(body);
 			httpPost = new HttpPost(link);
@@ -380,10 +370,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("btn_FkeyButton", "+"));
 			params.add(new BasicNameValuePair("tbl_cbo_Sub0900112079_0_0", "Select"));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			httpPost = Toolkit.reportGenerationForm(body);
 			
 			try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
@@ -443,10 +433,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
 			params.add(new BasicNameValuePair(focusedControl, IServicioRedConstants.CONTINUE));
 		
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			focusedControl = Toolkit.getButtonNameByValue(body, "Confirmar");
 			link = Toolkit.getLink(body);
 			sessionId = Toolkit.getSessionId(body);
@@ -466,10 +456,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
 			params.add(new BasicNameValuePair(focusedControl, "Confirmar"));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			link = Toolkit.getLink(body);
 			sessionId = Toolkit.getSessionId(body);
 			httpPost = Toolkit.reportGenerationForm(body);
@@ -543,10 +533,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
 			params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, IServicioRedConstants.CONTINUE));
 		
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			link = Toolkit.getLink(body);
 			sessionId = Toolkit.getSessionId(body);
 			
@@ -609,10 +599,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("chk_SDFINFTA1", "1"));
 			params.add(new BasicNameValuePair("btn_Sub2207601004", "Continuar"));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			
 			String labelRegex = "\\<label[^<>]*id=[\"'](?<id>Sub0900112079_(?<column>\\d+)_(?<row>\\d+))[\"'][^<>]*\\>" +dateToMatch + "[^<>]*" + "\\<\\/label\\>";
 			Pattern labelPattern = Pattern.compile(labelRegex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
@@ -639,10 +629,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 				params.add(new BasicNameValuePair("btn_FkeyButton", "+"));
 				params.add(new BasicNameValuePair(btnField, "Select"));
 				
-				httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 				
 				body = Toolkit.getBodyPOST(httpClient, httpPost);
-				checkOldSsError(body);
+				ServicioREDRegeXML.checkOldSsError(body);
 				link = Toolkit.getLink(body);
 				httpPost = Toolkit.reportGenerationForm(body);
 				try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
@@ -653,7 +643,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 				}
 				
 				body = Toolkit.goBackPdf(httpClient, link, sessionId);
-				checkOldSsError(body);
+				ServicioREDRegeXML.checkOldSsError(body);
 				link = Toolkit.getLink(body);
 			}
 		}
@@ -705,10 +695,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
 			params.add(new BasicNameValuePair("btn_Sub2207601004", "Continuar"));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			
 			String labelRegex = "\\<label[^<>]*id=[\"'](?<id>Sub0900112078_1_(?<row>\\d+))[\"'][^<>]*\\>" + dateToMatch + "[^<>]*" + "\\<\\/label\\>";
 			Pattern labelPattern = Pattern.compile(labelRegex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
@@ -740,10 +730,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 					}
 				}
 				
-				httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 				
 				body = Toolkit.getBodyPOST(httpClient, httpPost);
-				checkOldSsError(body);
+				ServicioREDRegeXML.checkOldSsError(body);
 				link = Toolkit.getLink(body);
 				httpPost = Toolkit.reportGenerationForm(body);
 				try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
@@ -754,7 +744,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 				}
 				
 				body = Toolkit.goBackPdf(httpClient, link, sessionId);
-				checkOldSsError(body);
+				ServicioREDRegeXML.checkOldSsError(body);
 				link = Toolkit.getLink(body);
 			}
 		}
@@ -815,10 +805,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("txt_SDFNUMCTA", txtSDFNUMCTA));
 			params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, IServicioRedConstants.CONTINUE));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			Map<String, String> values = Toolkit.getEverythingWithId(body);
             fillManagementData(seb, values);
             link = Toolkit.getLink(body);
@@ -839,10 +829,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("chk_SDFCONSSII", "1"));
 			params.add(new BasicNameValuePair("btn_Sub2205801003", "Datos+Iden."));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			values = Toolkit.getEverythingWithId(body);
 			fillIdentifyingData(seb, values);
 			
@@ -883,7 +873,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 			
 			try (CloseableHttpResponse resp = httpClient.execute(new HttpGet("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR69&E=I&AP=AFIR"))) {
 				Toolkit.checkResponseStatus(resp);
-				String body = EntityUtils.toString(resp.getEntity(), DEFAULT_ENCODING);
+				String body = EntityUtils.toString(resp.getEntity(), ServicioREDRegeXML.DEFAULT_ENCODING);
 				Matcher matcher = FORM_PATTERN.matcher(body);
 				if (matcher.find()) {
 					
@@ -912,7 +902,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("txt_SDFNUMCTA", txtSDFNUMCTA));
 			params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, IServicioRedConstants.CONTINUE));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			
 			
@@ -921,8 +911,8 @@ public class ServicioRED extends ServicioREDRegeXML {
 				HttpEntity entity = resp.getEntity();
 			
 				if (entity != null) {
-					String body = EntityUtils.toString(entity, DEFAULT_ENCODING);
-					checkOldSsError(body);
+					String body = EntityUtils.toString(entity, ServicioREDRegeXML.DEFAULT_ENCODING);
+					ServicioREDRegeXML.checkOldSsError(body);
 					
 					Map<String, String> values = extractSituacionEmpresaInfo(body); 
 		            fillManagementData(seb, values);
@@ -950,15 +940,15 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("chk_SDFCONSSII", "1"));
 			params.add(new BasicNameValuePair("btn_Sub2205801003", "Datos+Iden."));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
 				Toolkit.checkResponseStatus(resp);
 				HttpEntity entity = resp.getEntity();
 			
 				if (entity != null) {
-					String body = EntityUtils.toString(entity, DEFAULT_ENCODING);
-					checkOldSsError(body);
+					String body = EntityUtils.toString(entity, ServicioREDRegeXML.DEFAULT_ENCODING);
+					ServicioREDRegeXML.checkOldSsError(body);
 					
 					Map<String, String> values = extractSituacionEmpresaInfo(body);
 					fillIdentifyingData(seb, values);
@@ -1038,10 +1028,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
 			params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, IServicioRedConstants.CONTINUE));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body);
+			ServicioREDRegeXML.checkOldSsError(body);
 			return (body != null && !body.isEmpty()) ? Toolkit.getIDCDatesByRegex(body) : Collections.emptyList();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1128,7 +1118,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair(IServicioRedConstants.LIQUIDATION_ORIGIN, liqOrigin.getValue()));
 			params.add(new BasicNameValuePair(IServicioRedConstants.SPM_ACCEPT, IServicioRedConstants.ACCEPT));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
 			Toolkit.checkProsaError(body);
@@ -1145,7 +1135,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 				params.add(new BasicNameValuePair(IServicioRedConstants.LIQUIDATION, String.valueOf(liq)));
 				params.add(new BasicNameValuePair(IServicioRedConstants.SPM_CONTINUE, IServicioRedConstants.CONTINUE));
 				
-				httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 				
 				body = Toolkit.getBodyPOST(httpClient, httpPost);
 				Toolkit.checkProsaError(body);
@@ -1205,7 +1195,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair(IServicioRedConstants.LIQUIDATION_ORIGIN, liqOrigin.getValue()));
 			params.add(new BasicNameValuePair(IServicioRedConstants.SPM_ACCEPT, IServicioRedConstants.ACCEPT));
 			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
 			Toolkit.checkProsaError(body);
@@ -1228,7 +1218,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 				params.add(new BasicNameValuePair(IServicioRedConstants.LIQUIDATION, String.valueOf(liq)));
 				params.add(new BasicNameValuePair(IServicioRedConstants.SPM_CONTINUE, IServicioRedConstants.CONTINUE));
 				
-				httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 				
 				body = Toolkit.getBodyPOST(httpClient, httpPost);
 				Toolkit.checkProsaError(body);
@@ -1244,7 +1234,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 				params.add(new BasicNameValuePair(IServicioRedConstants.SPM_PORTALTYPE, "HTML"));
 				params.add(new BasicNameValuePair("SPM.ACC.CONSULTA_TRABAJADORES", "Consulta+de+Trabajadores"));
 				
-				httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+				httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 				
 				body = Toolkit.getBodyPOST(httpClient, httpPost);
 				Toolkit.checkProsaError(body);
@@ -1263,7 +1253,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 					params.add(new BasicNameValuePair("NAF", String.valueOf(naf)));
 					params.add(new BasicNameValuePair("SPM.ACC.CONSULTAR", "Consultar"));
 					
-					httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+					httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 					
 					body = Toolkit.getBodyPOST(httpClient, httpPost);
 					Toolkit.checkProsaError(body);
@@ -1333,7 +1323,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 						params.add(new BasicNameValuePair("NUM_AUTORIZADO", "0"));
 						params.add(new BasicNameValuePair(IServicioRedConstants.SPM_ACCEPT, IServicioRedConstants.ACCEPT));
 						
-						httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+						httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 						
 						body = Toolkit.getBodyPOST(httpClient, httpPost);
 						Toolkit.checkProsaError(body);
@@ -1357,7 +1347,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 					params.add(new BasicNameValuePair(IServicioRedConstants.LIQUIDATION_ORIGIN, liqOrigin.getValue()));
 					params.add(new BasicNameValuePair(IServicioRedConstants.SPM_ACCEPT, IServicioRedConstants.ACCEPT));
 					
-					httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+					httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 					
 					body = Toolkit.getBodyPOST(httpClient, httpPost);
 					Toolkit.checkProsaError(body);
@@ -1379,7 +1369,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 						params.add(new BasicNameValuePair(IServicioRedConstants.LIQUIDATION, String.valueOf(liq)));
 						params.add(new BasicNameValuePair(IServicioRedConstants.SPM_CONTINUE, IServicioRedConstants.CONTINUE));
 						
-						httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+						httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 						
 						
 						body = Toolkit.getBodyPOST(httpClient, httpPost);
@@ -1397,7 +1387,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 						params.add(new BasicNameValuePair(IServicioRedConstants.SPM_PORTALTYPE, "HTML"));
 						params.add(new BasicNameValuePair("SPM.ACC.CONSULTA_TRABAJADORES", "Consulta+de+Trabajadores"));
 						
-						httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+						httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 						
 						boolean inputText = false;
 						Map<String, String> nafValues = null;
@@ -1432,7 +1422,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 							
 							params.add(new BasicNameValuePair("SPM.ACC.CONSULTAR", "Consultar"));
 							
-							httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+							httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 							
 							
 							body = Toolkit.getBodyPOST(httpClient, httpPost);
@@ -1481,7 +1471,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 								params.add(new BasicNameValuePair(IServicioRedConstants.SPM_PORTALTYPE, "HTML"));
 								params.add(new BasicNameValuePair("SPM.ACC.RELACION_TRAMOS", "Relaci%F3n+de+Tramos"));
 								
-								httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+								httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 								
 								
 								body = Toolkit.getBodyPOST(httpClient, httpPost);
@@ -1518,7 +1508,7 @@ public class ServicioRED extends ServicioREDRegeXML {
 									params.add(new BasicNameValuePair("TRAMO", String.valueOf(i++)));
 									params.add(new BasicNameValuePair("SPM.ACC.CALCULOS_TRAMO", "C%E1lculos+del+Tramo"));
 									
-									httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+									httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 									
 									body = Toolkit.getBodyPOST(httpClient, httpPost);
 									inLink = Toolkit.getLinkPROSA(body);
@@ -1573,85 +1563,6 @@ public class ServicioRED extends ServicioREDRegeXML {
 				}
 				
 				return ret;
-	}
-	
-	
-	
-	/**
-	 * INFORME DE VIDA LABORAL DE UN C. C. C.
-	 * @param certificateInputStream
-	 * @param certificatePassword
-	 * @param certificateType
-	 * @param regime
-	 * @param ccc
-	 * @param from
-	 * @param to
-	 * @return a PDF file
-	 * @throws SegSocialException
-	 */
-	public static byte[] getCccLaboralLifePOST(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException {
-		
-		SSLContext sslContext = null;
-		
-		try {
-			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
-		} catch (Exception e1) {
-			throw new InvalidCertificateException();
-		}
-		String link = "";
-		String sessionId = "";
-		
-		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
-			
-			String body1 = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR71&E=I&AP=AFIR");
-			link = Toolkit.getLink(body1);
-			sessionId = Toolkit.getSessionId(body1);
-			
-			HttpPost httpPost = new HttpPost(link);
-
-			String txtSDFTESCCO = ccc.length() > 2 ? ccc.substring(0, 2) : "";
-			String txtSDFNYCCCO = ccc.length() > 2 ? ccc.substring(2) : "";
-			
-			List<NameValuePair> params = new ArrayList<>();
-			params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, IServicioRedConstants.LIBAFCON));
-			params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ACRM7101"));
-			params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
-			params.add(new BasicNameValuePair(IServicioRedConstants.FOCUSED_CONTROL, "Sub2207001009"));
-			params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
-			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_ENTORNO_PR, "0"));
-			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_TRANSAC, "Acr71"));
-			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_PRACTICE_MENU, "I"));
-			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_COMMAND_EDIT, "Acr71"));
-			params.add(new BasicNameValuePair("txt_SDFREGCCO", regime));
-			params.add(new BasicNameValuePair("txt_SDFTESCCO", txtSDFTESCCO));
-			params.add(new BasicNameValuePair("txt_SDFNYCCCO", txtSDFNYCCCO));
-			params.add(new BasicNameValuePair("txt_SDFDIADESDEM", String.format("%td", from)));
-			params.add(new BasicNameValuePair("txt_SDFMESDESDEM", String.format("%tm", from)));
-			params.add(new BasicNameValuePair("txt_SDFAODESDEM", String.format("%tY", from)));
-			params.add(new BasicNameValuePair("txt_SDFDIAHASTAM", String.format("%td", to)));
-			params.add(new BasicNameValuePair("txt_SDFMESHASTAM", String.format("%tm", to)));
-			params.add(new BasicNameValuePair("txt_SDFAOHASTAM", String.format("%tY", to)));
-			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
-			params.add(new BasicNameValuePair("btn_Sub2207001009", IServicioRedConstants.CONTINUE));
-			
-			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
-			
-			body1 = Toolkit.getBodyPOST(httpClient, httpPost);
-			checkOldSsError(body1);
-			Toolkit.checkTooLong(body1);
-			httpPost = Toolkit.reportGenerationForm(body1);
-			try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
-				Toolkit.checkResponseStatus(resp);
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				resp.getEntity().writeTo(baos);
-				return baos.toByteArray();
-			}
-			
-		} catch (IOException e) {
-			throw new InvalidCertificateException();
-		}
-		
 	}
 	
 	

@@ -1138,7 +1138,7 @@ public class TestServicioRED extends SegSocialTest {
 		@Test
 		public void getCccLaboralLifeTest() throws IOException {
 			try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
-				byte[] pdf = ServicioRED.getCccLaboralLifePOST(
+				byte[] pdf = ServicioREDEmployee.getCccLaboralLifePOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1169,7 +1169,7 @@ public class TestServicioRED extends SegSocialTest {
 				cal.set(Calendar.YEAR, 2020);
 				Date from = cal.getTime();
 				cal.set(Calendar.YEAR, 2021);
-				ServicioRED.getCccLaboralLifePOST(
+				ServicioREDEmployee.getCccLaboralLifePOST(
 						certificateInputStream,
 						"123456",
 						"pkcs12",

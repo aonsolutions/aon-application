@@ -1,22 +1,41 @@
 package solutions.aon.seg.social;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContexts;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.object.Liquidation.LiquidationBuilder;
 import solutions.aon.seg.social.object.SituacionEmpresa.SituacionEmpresaBuilder;
 import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilder;
@@ -24,6 +43,7 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 public abstract class ServicioREDRegeXML {
 	protected static final String DATE_FORMAT = "dd/MM/yyyy";
+	protected static final String DATE_FORMAT_DASHES = "dd-MM-yyyy";
 	/**
 	 * Not reliable, it sometimes does not pick up some values properly
 	 * @param xml The xml String
@@ -407,6 +427,155 @@ public abstract class ServicioREDRegeXML {
 			}
 		}
 		
+	}
+
+	public static void checkOldSsError(String body) throws SegSocialException {
+		String error = Toolkit.getDIL(body);
+		if (Toolkit.getErrCode(error) != null)
+			InvalidDataException.checkCode(Toolkit.getErrCode(error), Toolkit.getErrMsg(error));
+	}
+	
+	public static void checkOldSsError(String body, Integer... exceptions) throws SegSocialException {
+		String error = Toolkit.getDIL(body);
+		if (Toolkit.getErrCode(error) != null) {
+			if (exceptions == null || exceptions.length == 0 || !Arrays.stream(exceptions).anyMatch(code -> code.equals(Toolkit.getErrCode(error))))
+				InvalidDataException.checkCode(Toolkit.getErrCode(error), Toolkit.getErrMsg(error));
+		}
+	}
+	
+	public static String removeSpaces(String text) {
+		if (text == null || text.isEmpty())
+			return text;
+		else
+			return text.replace(" ", "");
+	}
+
+	public static String emptyIfNull(String text) {
+		if (text == null)
+			return "";
+		else
+			return text;
+	}
+	
+	public static Date parseDateWithDashes(String strDate) {
+		if (strDate == null || strDate.isEmpty())
+			return null;
+		String d = strDate.trim();
+		DateFormat df = new SimpleDateFormat(DATE_FORMAT_DASHES);
+		try {
+			return df.parse(d);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+	
+	public static Date parseDateWithSlashes(String strDate) {
+		if (strDate == null || strDate.isEmpty())
+			return null;
+		String d = strDate.trim();
+		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+		try {
+			return df.parse(d);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
+	public static final String DEFAULT_ENCODING = IServicioRedConstants.ISO_8859_1;
+	static List<Employee> getEmployeesFromTable(CloseableHttpClient httpClient, String body, String link,
+			String sessionId, String regime, String ccc) throws SegSocialException, IOException {
+		String dil = Toolkit.getDIL(body);
+		boolean endOfData = false;
+		List<Employee> employees = new ArrayList<>();
+		while (!endOfData) {
+			String table = Toolkit.getTable(body);
+			Collection<String> trs = Toolkit.getTrs(table);
+			for (String tr : trs) {
+				List<String> tds = Toolkit.getTdsTexts(tr);
+				if (tds != null && !tds.isEmpty()) {
+					String nss = removeSpaces(tds.get(0));
+					if (nss == null || nss.isEmpty())
+						break;
+					EmployeeBuilder builder = new EmployeeBuilder();
+					String name = tds.get(1);
+					Date date = parseDateWithDashes(tds.get(2));
+					String situation = tds.get(3) != null && !tds.get(3).isEmpty() ? tds.get(3) : "AL";
+					String ipf = Toolkit.removeExtraZeros(removeSpaces(tds.get(4)));
+					Employee employee = builder.setNss(nss)
+												.setName(name)
+												.setFra(date)
+												.setSituation(situation)
+												.setIpf(ipf)
+												.setCtaCti(ccc)
+												.setRegime(regime).build();
+					
+					employees.add(employee);
+				}
+			}
+			
+			if (dil == null ||(dil != null && dil.contains("3252")))
+				endOfData = true;
+			else {
+				HttpPost httpPost = new HttpPost(link);
+				List<NameValuePair> params = new ArrayList<>();
+				params.add(new BasicNameValuePair(IServicioRedConstants.LIBAFCON, IServicioRedConstants.LIBAFCON));
+				params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6202"));
+				params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+				params.add(new BasicNameValuePair("btn_Sub2207801001", "Pág.+Sig."));
+				httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+				body = Toolkit.getBodyPOST(httpClient, httpPost);
+				checkOldSsError(body);
+				link = Toolkit.getLink(body);
+				sessionId = Toolkit.getSessionId(body);
+				dil = Toolkit.getDIL(body);
+			}
+		}	
+		
+		return employees;
+	}
+
+	static Collection<Employee> getEmployeesCommon(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String regime, String ccc, boolean prev)
+			throws SegSocialException {
+		
+		SSLContext sslContext = null;
+		try {				
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		String link = "";
+		String sessionId = "";
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
+			link = Toolkit.getLink(body);
+			sessionId = Toolkit.getSessionId(body);
+			
+			String txtSDFTESO62 = ccc != null && ccc.length() > 2 ? ccc.substring(0, 2) : "";
+			String txtSDFNUM62 = ccc != null && ccc.length() > 2 ? ccc.substring(2) : "";
+			
+			HttpPost httpPost = new HttpPost(link);
+			List<NameValuePair> params = new ArrayList<>();
+			params.add(new BasicNameValuePair(IServicioRedConstants.LIBAFCON, IServicioRedConstants.LIBAFCON));
+			params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6201"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+			params.add(new BasicNameValuePair("txt_SDFREG62_ayuda", regime));
+			params.add(new BasicNameValuePair("txt_SDFTESO62", txtSDFTESO62));
+			params.add(new BasicNameValuePair("txt_SDFNUM62", txtSDFNUM62));
+			params.add(new BasicNameValuePair("chk_chkgrupo1_1", "1"));
+			params.add(new BasicNameValuePair("chk_chkgrupo1_" + (prev ? "2" : "1"), "1"));
+			params.add(new BasicNameValuePair("chk_chkgrupo1_2", "1"));
+			params.add(new BasicNameValuePair("btn_Sub2207601004", IServicioRedConstants.CONTINUE));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			body = Toolkit.getBodyPOST(httpClient, httpPost);
+			checkOldSsError(body);
+			link = Toolkit.getLink(body);
+			sessionId = Toolkit.getSessionId(body);
+			return getEmployeesFromTable(httpClient, body, link, sessionId, regime, ccc);
+		} catch (IOException e) {
+			throw new InvalidCertificateException();
+		}
 	}
 	
 	

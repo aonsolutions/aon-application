@@ -52,7 +52,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.IServicioRedConstants;
-import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.ServicioREDRegeXML;
 import solutions.aon.seg.social.exception.ReportTooLongException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -542,7 +541,7 @@ public class Toolkit {
 	}
 	
 	public static String getTable (String body) {
-		Pattern pattern = Pattern.compile("\\<table\\>.+?\\<\\/table>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Pattern pattern = Pattern.compile("\\<table[^<>]*\\>.+?\\<\\/table>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(body);
 		try {			
 			return matcher.find() ? matcher.group().replaceAll("\\&nbsp;", "").replaceAll("\\&euro;", "") : null;
@@ -553,7 +552,7 @@ public class Toolkit {
 	
 	public static Collection<String> getTrs (String html) {
 		if (html == null)
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		Pattern pattern = Pattern.compile("\\<tr\\>.*?\\<\\/tr\\>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(html);
 		
@@ -957,7 +956,7 @@ public class Toolkit {
 		if (element == null || element.isEmpty() || attributeName == null || attributeName.isEmpty())
 			return null;
 		else if (attributeName.equals("innerText")) {
-			strBuilder.append("\\>(?<inner>[^\"'<>])\\<");
+			strBuilder.append("\\>(?<value>[^\"'<>]*)\\<");
 		} else {
 			strBuilder.append(attributeName + "=[\"'](?<value>[^'\"<>]*)[\"']");
 		}
@@ -984,7 +983,7 @@ public class Toolkit {
 		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_PRACTICE_MENU, "I"));
 		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_COMMAND_EDIT, "EN"));
 		params.add(new BasicNameValuePair("btn_FkeyButton", "+"));
-		httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioRED.DEFAULT_ENCODING));
+		httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 		return getBodyPOST(httpClient, httpPost);
 		
 		/*{
