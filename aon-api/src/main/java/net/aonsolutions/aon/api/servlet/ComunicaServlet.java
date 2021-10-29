@@ -122,7 +122,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		    String jsonInString = null;
 		    Domain domain = api.getDomain();
 			User user = AON_SOLUTIONS.getUser(domain, api.getToken());
-			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+//			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 			final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
 			switch (api.getPath()) {
 				case "/alta-directa":
@@ -154,7 +155,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private Collection<Employee> getMovements(AonApiData api) throws Exception {
 		
 		Domain domain = api.getDomain();
-		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+//		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		ArrayList<Employee> employees = new ArrayList<>();
 	
@@ -206,7 +208,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private Collection<Employee> ipfxnaf(AonApiData api) throws Exception {
 			Domain domain = api.getDomain();
-			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+//			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 			final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			
 			String nss = api.getParams().optString("nss");
@@ -324,7 +327,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private Employee nafxipf(AonApiData api) throws Exception{
 		Domain domain = api.getDomain();
-		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+//		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String ipf = api.getParams().optString("ipf");
 		String apellido1 =  api.getParams().optString("apellido1");
@@ -334,7 +338,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private Employee getEmployee(AonApiData api) throws Exception{
 		Domain domain = api.getDomain();
-		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+//		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		
 		String regimen = api.getParams().optString("regime");
@@ -451,7 +456,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				//SEND EMAIL
 				Domain domain = api.getDomain();
 				User user = AON_SOLUTIONS.getUser(domain, api.getToken());
-				Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+//				Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+				Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 				final InputStream certificateInputStream =  new ByteArrayInputStream(certificate.getCertificate());
 				String regimen = employee.getRegime();
 				String ccc = employee.getCtaCti().get();

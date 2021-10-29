@@ -100,7 +100,6 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqContractExtension;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractTransform;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
-import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendarNew;
@@ -322,10 +321,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 	};
 	
-	private static final com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType TGSS = com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType.TGSS;
-	private static final com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType SEPE = com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType.SEPE;
-
-
 	// ----------------------------------------------- EmployeesService methods
 
 	@Override
@@ -2427,7 +2422,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 			Date endDate = calendar.getTime();
 
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			Map<String, Map<String, Map<String, WorkerLiquidation>>> cccSldCosts = new HashMap<String, Map<String, Map<String, WorkerLiquidation>>>();
 
 			PAYROLL.getCCCStream(domainName, domainId, userLogin).forEach(ccc -> {
@@ -5961,7 +5956,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, SEPE);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 
@@ -5991,7 +5986,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, SEPE);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 
@@ -6025,7 +6020,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Get certificate
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			// Create nssList for ipfxnaf
 			ArrayList<String> nssList = new ArrayList<String>();
@@ -6067,7 +6062,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Get certificate
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			// Create nssList for ipfxnaf
 			ArrayList<String> nssList = new ArrayList<String>();
@@ -6111,7 +6106,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Get certificate
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 
 			// movPrevDelete
@@ -6142,7 +6137,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Get certificate
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 
 			// altaConsolidadaDelete
@@ -6170,7 +6165,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Get certificate
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
 					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
@@ -6228,7 +6223,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Get certificate
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
 					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
@@ -6278,7 +6273,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Get certificate
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
 					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
@@ -6326,7 +6321,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Get certificate
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
 					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
@@ -6373,7 +6368,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
 			// Get certificate
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n" + 
 					employeeContractInfo.getEmployeeInfo().getSurName() + "\n" +  
@@ -6422,7 +6417,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, SEPE);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 
 			aon.sepe.objects.Contract cto = createContract(domainName, domainId, userLogin, employeeContractInfo,
@@ -6448,7 +6443,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, SEPE);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 
 			// Data
@@ -6477,7 +6472,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, SEPE);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 
 			// Get contract SEPE id
 			String sepeId = employeeContractInfo.getContractInfo().getSepeId();
@@ -6505,7 +6500,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, SEPE);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			
 			// Get suspensionReason Code
 			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, domainId, contractId);
@@ -6533,7 +6528,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, SEPE);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			
 			// Get Certifica2 PDF
 			byte[] pdfBytes = Sepe.certEnterprisePdf(new ByteArrayInputStream(certificate.getCertificate()), 

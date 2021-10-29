@@ -169,9 +169,6 @@ import solutions.aon.sepe.exceptions.SepeException;
 public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		EnterprisesService {
 	
-	private static final com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType TGSS = com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType.TGSS;
-	private static final com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType SEPE = com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType.SEPE;
-
 	@Override
 	public Integer getDomain(String domain) {
 		try {
@@ -2168,7 +2165,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			List<CCC> cccs = getEnterprises(connection, userId, domainId, 0, Short.MAX_VALUE).stream()
 			.filter(e -> enterpriseId == null || e.getId().equals(enterpriseId) )
@@ -2819,7 +2816,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			
@@ -2845,7 +2842,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			
@@ -2873,7 +2870,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			float newBaseCC = JooqEmployee.getBaseCC(connection, docNum, dateFrom);
 //			baseCC = 0 == newBaseCC ? baseCC : newBaseCC;
@@ -2901,7 +2898,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.voidPaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
 		
@@ -2969,7 +2966,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITBaja(
 					certificate.getCertificate(), 
@@ -3006,7 +3003,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITConfirmation(
 					certificate.getCertificate(), 
@@ -3039,7 +3036,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITAlta(
 					certificate.getCertificate(), 
@@ -3072,7 +3069,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.removeIT(
 					certificate.getCertificate(), 
@@ -3097,7 +3094,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, SEPE);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			
 			Contract contract = Sepe.getContractData(is, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate);
@@ -3166,7 +3163,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, SEPE);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			
 			return null != certificate;
 			
@@ -3229,13 +3226,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = null;
 			
 			if(certificateType == CertificateType.TGSS) {
-				certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, TGSS);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 				SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}
 			
 			if(certificateType == CertificateType.SEPE) {
-				certificate = JooqDigitalCertificateNew.getCertificate(connection, domainName, domainId, parentDomainId, userLogin, userId, SEPE);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 				Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}

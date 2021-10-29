@@ -144,7 +144,8 @@ public class EmployeesServiceHelper {
 		String naf = contract.getPersonSsNumber();
 		String regime = contract.getSsRegime().getCode();	
 		
-		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		byte data [] =  SistemaRED.getTA(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}
@@ -161,10 +162,9 @@ public class EmployeesServiceHelper {
 		String naf = contract.getPersonSsNumber();
 		String regime = contract.getSsRegime().getCode();	
 		
-		
-		
-		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-		
+//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+
 		byte data [] =  SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}
@@ -179,10 +179,8 @@ public class EmployeesServiceHelper {
 		String naf = contract.getPersonSsNumber();
 		String regime = contract.getSsRegime().getCode();	
 		
-		
-		
-		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-		
+//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		
 		byte data [] =  SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
@@ -198,7 +196,8 @@ public class EmployeesServiceHelper {
 		String naf = contract.getPersonSsNumber();
 		String regime = contract.getSsRegime().getCode();	
 		
-		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
 		List<Date> dates = new ArrayList<Date>();
 		Collection<Idc> idcs = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
@@ -226,7 +225,8 @@ public class EmployeesServiceHelper {
 			Date date = new Date();
 			java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			Employee employee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, nss);
 			
 			
@@ -389,7 +389,8 @@ public class EmployeesServiceHelper {
 			String naf = contract.getPersonSsNumber();
 			String regime = contract.getSsRegime().getCode();	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			return getSSContractData(certificate, regime, ccc, naf, date);
 		} catch (IOException e) {
 			e.printStackTrace();
