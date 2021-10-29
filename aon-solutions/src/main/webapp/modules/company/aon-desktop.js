@@ -364,7 +364,7 @@ export class AonDesktop extends AonElement {
 								switch(Apps[key].app){
 								case Apps.DOCUMENTAL.app:
 									let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-									uploadDocuments(inputDocumentFile, files);
+									uploadDocuments(inputDocumentFile, files, this.getDur());
 									break;
 								case Apps.INVOICE.app:
 									let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
