@@ -650,6 +650,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		flowPanel.add(userLoginHidden);
 		flowPanel.add(currentDomainHidden);
 		flowPanel.add(tokenHidden);
+		flowPanel.add(securityHidden);
 		flowPanel.add(tgssHidden);
 		flowPanel.add(sepeHidden);
 		flowPanel.add(aeatHidden);
