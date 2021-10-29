@@ -183,7 +183,7 @@ export class AonConfiguration extends AonElement {
   buildGeneral() {
     let data = {
 			id: LS.getCompany().registry,
-			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
+			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RECORD_DATA']
 		};
     
     getRegistry(data).then(cp => {
