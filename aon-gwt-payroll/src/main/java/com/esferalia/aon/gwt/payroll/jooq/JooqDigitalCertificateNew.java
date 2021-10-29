@@ -33,9 +33,7 @@ import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateOwn
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateSecurity;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.security.Certificate;
-import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 
@@ -464,98 +462,5 @@ public class JooqDigitalCertificateNew {
 		}
 		return null;
 	}
-
-	public static Certificate getCertificate(Connection conn, String domainName, Integer domainId, Integer parentDomainId, String userLogin, Integer userId, CertificateType certificateType) {
-		Certificate certificate;
-		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
-		
-		Integer userRegistryId = dslContext.select(USER.REGISTRY).from(USER).where(USER.ID.eq(userId)).fetchOne(USER.REGISTRY);
-		Integer enterpriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
-		Integer enterpriseParentId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(parentDomainId)).fetchOne(ENTERPRISE.REGISTRY);
-		
-		certificate = getUserCertificateNew(dslContext, userRegistryId, certificateType);
-		
-		if(null != certificate) return certificate;
-		
-		certificate = getEnterpriseCertificateNew(dslContext, enterpriseId, certificateType);
-		
-		if(null != certificate) return certificate;
-		
-		certificate = getEnterpriseParentCertificateNew(dslContext, enterpriseParentId, certificateType);
-		
-		if(null != certificate) return certificate;
-
-		if(CertificateType.TGSS.equals(certificateType)) {
-			certificate = getUserCertificateOld(domainName, domainId, userLogin, userId);
-			if(null != certificate) return certificate;
-		} else {
-			certificate = getEnterpriseCertificateOld(domainName, domainId, userLogin);
-			if(null != certificate) return certificate;
-		}
-		
-		throw new CertificateNotFoundException();
-	}
-
-	private static Certificate getUserCertificateOld(String domainName, Integer domainId, String userLogin, Integer userId) {
-		return AON.getCertificate(domainName, domainId, userLogin, userId);
-	}
 	
-	private static Certificate getEnterpriseCertificateOld(String domainName, Integer domainId, String userLogin) {
-		return AON.getCertificateSEPE(domainName, domainId, userLogin);
-	}
-
-	private static Certificate getUserCertificateNew(DSLContext dslContext, Integer userRegistryId, CertificateType certificateType) {
-		Record certificateRecord = dslContext.select().from(RATTACH)
-				.innerJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
-				.innerJoin(TAG).on(RATTACH_TAG.TAG.eq(TAG.ID), TAG.TYPE.eq(TagType.CERTIFICATE.value()), TAG.NAME.eq(certificateType.name()))
-				.where(RATTACH.TYPE.eq((byte)4))
-				.and(RATTACH.REGISTRY.eq(userRegistryId))
-				.fetchOne();
-		
-		if(null == certificateRecord) return null;
-		
-		String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
-		
-		return new Certificate()
-				.setType(MimeType.PKCS12.name())
-				.setPassword(password)
-				.setCertificate(certificateRecord.get(RATTACH.DATA));
-	}
-	
-	private static Certificate getEnterpriseCertificateNew(DSLContext dslContext, Integer enterpriseId, CertificateType certificateType) {
-		Record certificateRecord = dslContext.select().from(RATTACH)
-				.innerJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
-				.innerJoin(TAG).on(RATTACH_TAG.TAG.eq(TAG.ID), TAG.TYPE.eq(TagType.CERTIFICATE.value()), TAG.NAME.eq(certificateType.name()))
-				.where(RATTACH.TYPE.eq((byte)4))
-				.and(RATTACH.REGISTRY.eq(enterpriseId))
-				.fetchOne();
-		
-		if(null == certificateRecord) return null;
-		
-		String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
-		
-		return new Certificate()
-				.setType(MimeType.PKCS12.name())
-				.setPassword(password)
-				.setCertificate(certificateRecord.get(RATTACH.DATA));
-	}
-	
-	private static Certificate getEnterpriseParentCertificateNew(DSLContext dslContext, Integer enterpriseParentId, CertificateType certificateType) {
-		Record certificateRecord = dslContext.select().from(RATTACH)
-				.innerJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
-				.innerJoin(TAG).on(RATTACH_TAG.TAG.eq(TAG.ID), TAG.TYPE.eq(TagType.CERTIFICATE.value()), TAG.NAME.eq(certificateType.name()))
-				.where(RATTACH.TYPE.eq((byte)4))
-				.and(RATTACH.SECURITY_LEVEL.eq((byte)0))
-				.and(RATTACH.REGISTRY.eq(enterpriseParentId))
-				.fetchOne();
-		
-		if(null == certificateRecord) return null;
-		
-		String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
-		
-		return new Certificate()
-				.setType(MimeType.PKCS12.name())
-				.setPassword(password)
-				.setCertificate(certificateRecord.get(RATTACH.DATA));
-	}
 }
