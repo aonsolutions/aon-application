@@ -129,6 +129,7 @@ public interface IRegistry {
 
 	// ------------------- RECORD DATA
 	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter);
+	public RecordData saveRecordData(AONContext ctx, RecordData recordData);
 
 	// ------------------- COMPANY
 	public Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] scopes);

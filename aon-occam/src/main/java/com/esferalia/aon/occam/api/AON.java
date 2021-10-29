@@ -5026,13 +5026,8 @@ public class AON {
 	// ------------------- RECORD DATA
 	
 	public static Stream<RecordData> getRecordDataStream(String domainName, Integer domainId, String login, RecordDataFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getRecordDataStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 		
@@ -5041,11 +5036,12 @@ public class AON {
 			.findFirst().orElse(new RecordData());
 	}
 		
-	public static LinkedList<RecordData> getRecordDataList(String domainName, Integer domainId, String login, RecordDataFilter filter) {
-		return getRecordDataStream(domainName, domainId, login, filter)
-			.collect(Collectors.toCollection(LinkedList::new));
+	public static RecordData saveRecordData(String domainName, Integer domainId, String login, RecordData recordData) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveRecordData(ctx, recordData);
+		}
 	}
-
+	
 	
 	// ********************************************
 	// ******************************** CREDITOR **

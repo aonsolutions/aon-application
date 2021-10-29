@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.PayMethodJSON;
+import com.esferalia.aon.occam.api.json.RecordDataJSON;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
 import com.esferalia.aon.occam.api.json.RegistryBankJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
@@ -21,6 +22,7 @@ import com.esferalia.aon.occam.api.json.RegistryPaymethodJSON;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -154,6 +156,13 @@ public class RegistryServlet extends AonApiHttpServlet {
 					json.put(rai.name().toLowerCase(),
 						RegistryMediaJSON.toJSON(AON.getStream(api.getDomain(), api.getUser(), filter)));
 				}
+				
+				if(rai.equals(RegistryAdditionalInfo.RECORD_DATA)) {
+					json.put(rai.name().toLowerCase(),
+						RecordDataJSON.toJSON(
+							AON.getRecordData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+								f -> f.getRegistryProperty().eq(registryId))));
+				}
 			});
 		}
 		return json;
@@ -193,6 +202,13 @@ public class RegistryServlet extends AonApiHttpServlet {
 			rpaymethod.setDomain(registryDomain);
 			if(rpaymethod.getRegistry() == null) rpaymethod.setRegistry(registryId);
 			AON.saveRegistryPayMethod(api.getDomain(), api.getUser(), rpaymethod);
+		}
+		
+		if(json.opt(RegistryAdditionalInfo.RECORD_DATA.name().toLowerCase()) != null) {
+			RecordData recordData = RecordDataJSON.fromJSON(json.optJSONObject(RegistryAdditionalInfo.RECORD_DATA.name().toLowerCase()));
+			recordData.setDomain(registryDomain);
+			if(recordData.getRegistry() == null) recordData.setRegistry(registryId);
+			AON.saveRecordData(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), recordData);
 		}
 	}
 	

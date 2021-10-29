@@ -278,6 +278,12 @@ public class RegistryImpl implements IRegistry{
 				configuration -> RegistryOldDAO.getRecordDataStream(ctx, filter));
 	}
 	
+	@Override
+	public RecordData saveRecordData(AONContext ctx, RecordData recordData) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.saveRecordData(ctx, recordData));
+	}
+	
 	// -------------------- Company
 	
 	@Override
