@@ -26,6 +26,7 @@ export const getLanguage = () => get(AON_LANGUAGE);
 
 export const setLanguage = (value) => {
     set(AON_LANGUAGE, value);
+    location.reload();
 }
 
 export const removeLanguage = () => {

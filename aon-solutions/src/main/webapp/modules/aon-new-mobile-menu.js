@@ -48,7 +48,7 @@ export class AonNewMobileMenu extends AonElement {
         let display = "block";
         let application = this.getApplication();
         if((target.innerHeight +15) < height){
-         // display = "none";
+          display = "none";
           bottom = "1px";
         }
         if(application && application.getContent())

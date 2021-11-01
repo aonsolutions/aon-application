@@ -37,11 +37,11 @@ export class AonTab extends AonElement {
         div.style.paddingTop = '15px';
         this.appendChild(div);
         this.options.forEach((option, i) => {
-            this.addOption(option, i);
+            this.printOption(option, i);
         })
     }
 
-    addOption(option, i) {
+    printOption(option, i) {
         let span = this.createElement(TAG.SPAN);
         span.id = this.SPAN + i;
         span.innerHTML = option.title;
@@ -64,6 +64,11 @@ export class AonTab extends AonElement {
 
     setOptions(options) {
         this.options = options;
+    }
+
+    addOption(option) {
+        this.options.push(option);
+        this.printOption(option, this.options.length - 1);
     }
 
 }

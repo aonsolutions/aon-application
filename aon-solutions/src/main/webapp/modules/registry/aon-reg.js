@@ -20,7 +20,7 @@ import { saveRegistry } from '../../services/registryService.js';
 import { Registry } from '../../models/registry/Registry.js';
 import { Address } from '../../models/registry/Address.js';
 import { getReader } from '../../services/utils.js';
-import { deleteAttach, getAttach, uploadAttach, uploadFile } from '../../services/fileService.js';
+import { deleteAttach, getAttach, uploadAttach } from '../../services/fileService.js';
 import { Countries } from '../../services/country.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { AonTab } from '../../components/aon-tab.js';
@@ -34,7 +34,9 @@ export class AonReg extends AonElement {
 
 	registry;
 	showLogo;
+	oneAddress;
 	logo;
+	options;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -55,6 +57,7 @@ export class AonReg extends AonElement {
 
 	initialize() {
 		this.id = this.id || 'aonCompany';
+		this.TABS = this.id + 'Tabs';
 		this.REGISTRY_TOOLBAR = this.id + 'Toolbar';
 		this.DIV = this.id + 'Div';
 		this.GENERAL_CARD = this.id + 'GeneralCard';
@@ -104,11 +107,23 @@ export class AonReg extends AonElement {
 		this.REGISTRAL_FOLIO = this.REGISTRAL_TABLE + 'Folio';
 		this.REGISTRAL_HOJA = this.REGISTRAL_TABLE + 'Hoja';
 
+		this.FISCAL_CARD = this.id + 'Fiscal';
+		this.FISCAL_TABLE = this.FISCAL_CARD + 'Table';
+		this.FISCAL_TRANSACTION = this.FISCAL_CARD + 'Transaction';
+		this.FISCAL_SURCHARGE = this.FISCAL_CARD + 'Surcharge';
+		this.FISCAL_WITHHOLDING = this.FISCAL_CARD + 'Withholding';
+
 		this.registry = this.registry || new Registry();
 		this.showLogo = this.showLogo || false;
 		this.emails = [];
 		this.webs = [];
 		this.phones = [];
+		this.oneAddress = this.oneAddress || true;
+		this.options = this.options || [
+			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
+			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
+			{ title: MSG.REGISTRATION_DATA, fn: () => this.buildRegistralData()}
+		];
 	}
 
 	build() {
@@ -138,15 +153,11 @@ export class AonReg extends AonElement {
 
 	buildTabs() {
 		let tab = new AonTab();
-		let options = [
-			{ title: 'Datos Generales', fn: () => this.buildGeneralData()},
-			{ title: 'Datos Bancarios', fn: () => this.buildBankData()},
-			{ title: 'Datos Registrales', fn: () => this.buildRegistralData()}
-		];
-		tab.setOptions(options);
+		tab.id = this.TABS;
+		tab.setOptions(this.options);
 		this.appendChild(tab);
 	}
-
+	
 	buildGeneralData() {
 		let div = this.getElement(this.DIV);
 		this.clearElement(div);
@@ -279,7 +290,7 @@ export class AonReg extends AonElement {
 	buildBankAccountCard(parent){
 		let card = new AonCard();
 		card.id = this.BANK_CARD;
-		card.title = 'Cuentas Bancarias';//MSG.CONTACT_DATA;
+		card.title = MSG.BANK_ACCOUNTS;
 		card.style.width = '50%';
 		parent.appendChild(card);
 
@@ -293,7 +304,7 @@ export class AonReg extends AonElement {
 	buildPaymethodCard(parent){
 		let card = new AonCard();
 		card.id = this.PAYMETHOD_CARD;
-		card.title = 'Forma de Pago Predeterminada';//MSG.CONTACT_DATA;
+		card.title = 'Forma de Pago Predeterminada';
 		card.style.width = '50%';
 		parent.appendChild(card);
 
@@ -358,12 +369,10 @@ export class AonReg extends AonElement {
 		table.addCell(payDayInput, 1);		
 	}
 
-
-
 	buildRegistralCard(parent){
 		let card = new AonCard();
 		card.id = this.REGISTRAL_CARD;
-		card.title = 'Datos Registrales';//MSG.REGISTRAL_DATA;
+		card.title = MSG.REGISTRATION_DATA;
 		card.style.width = '50%';
 		parent.appendChild(card);
 
@@ -389,7 +398,7 @@ export class AonReg extends AonElement {
 		let creationDate = new AonDate();
 		creationDate.id = this.REGISTRAL_CREATION_DATE;
 		creationDate.value = this.registry.getRecordData().getCreationDate();
-		creationDate.title = 'Fecha de Creación';//MSG.CREATION_DATE;
+		creationDate.title = MSG.CREATION_DATE;
 		creationDate.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setCreationDate(creationDate.value);
 			if(this.autosave) this.save();
@@ -398,7 +407,7 @@ export class AonReg extends AonElement {
 
 		let recordDate = new AonDate();
 		recordDate.id = this.REGISTRAL_RECORD_DATE;
-		recordDate.title = 'Fecha de Registro';//MSG.CREATION_DATE;
+		recordDate.title = MSG.REGISTRATION_DATE;
 		recordDate.value = this.registry.getRecordData().getRecordDate();
 		recordDate.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setRecordDate(recordDate.value);
@@ -410,7 +419,7 @@ export class AonReg extends AonElement {
 		
 		let notary = new AonInput()
 		notary.id = this.REGISTRAL_NOTARY;
-		notary.description = 'Notario'; // MSG.DESCRIPTION;
+		notary.description = MSG.NOTARY;
 		notary.value = this.registry.getRecordData().getNotary();
 		notary.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setNotary(notary.value);
@@ -421,7 +430,7 @@ export class AonReg extends AonElement {
 
 		let protocol = new AonInput()
 		protocol.id = this.REGISTRAL_PROTOCOL_NUMBER;
-		protocol.description = 'Número de Protocolo';//MSG.DESCRIPTION;
+		protocol.description = MSG.PROTOCOL;
 		protocol.value = this.registry.getRecordData().getNumber();
 		protocol.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setNumber(protocol.value);
@@ -430,7 +439,7 @@ export class AonReg extends AonElement {
 
 		let inscription = new AonInput()
 		inscription.id = this.REGISTRAL_INSCRIPTION;
-		inscription.description = 'Inscripción';//MSG.DESCRIPTION;
+		inscription.description = MSG.INSCRIPTION;
 		inscription.value = this.registry.getRecordData().getRegistration();
 		inscription.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setRegistration(inscription.value);
@@ -441,7 +450,7 @@ export class AonReg extends AonElement {
 
 		let tomo = new AonInput()
 		tomo.id = this.REGISTRAL_TOMO;
-		tomo.description = 'Tomo';//MSG.DESCRIPTION;
+		tomo.description = MSG.VOLUME;
 		tomo.value = this.registry.getRecordData().getVolume();
 		tomo.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setVolume(tomo.value);
@@ -450,7 +459,7 @@ export class AonReg extends AonElement {
 
 		let section = new AonInput()
 		section.id = this.REGISTRAL_SECTION;
-		section.description = 'Sección';//MSG.DESCRIPTION;
+		section.description = MSG.SECTION;
 		section.value = this.registry.getRecordData().getSection();
 		section.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setSection(section.value);
@@ -459,7 +468,7 @@ export class AonReg extends AonElement {
 
 		let folio = new AonInput()
 		folio.id = this.REGISTRAL_FOLIO;
-		folio.description = 'Folio';//MSG.DESCRIPTION;
+		folio.description = MSG.FOLIO;
 		folio.value = this.registry.getRecordData().getPage();
 		folio.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setPage(folio.value);
@@ -468,7 +477,7 @@ export class AonReg extends AonElement {
 
 		let hoja = new AonInput()
 		hoja.id = this.REGISTRAL_HOJA;
-		hoja.description = 'Hoja';//MSG.DESCRIPTION;
+		hoja.description = MSG.SHEET;
 		hoja.value = this.registry.getRecordData().getSheet();
 		hoja.addEventListener(EVENT.CHANGE, () => {
 			this.registry.getRecordData().setSheet(hoja.value);
@@ -486,9 +495,9 @@ export class AonReg extends AonElement {
 		parent.appendChild(table);
 
 		if(!this.registry.getAddresses() || this.registry.getAddresses().length <= 0)
-			this.registry.addAddress(new Address().setRegistry(this.registry.getId()));
+			this.registry.addAddress(new Address().setRegistry(this.registry.getId()).setMain(true));
 		
-		this.registry.getAddresses().forEach((address, i) => 
+		this.registry.getAddresses().filter(f => !this.oneAddress || f.isMain()).forEach((address, i) => 
 			this.buildAddress(table, address, i));
 	}
 
@@ -508,7 +517,7 @@ export class AonReg extends AonElement {
 			addAddress.id = this.ADDRESS_ADD + i;
 			addAddress.title = MSG.ADD;
 			addAddress.icon = MATERIAL_ICONS.ADD_CIRCLE_OUTLINE;
-			addAddress.visible = this.registry.addresses.length === i+1;
+			addAddress.visible = !this.oneAddress && this.registry.addresses.length === i+1;
 			addAddress.addEventListener(EVENT.CLICK, () => {
 				let number = this.registry.addresses.length;
 				let aux = new Address().setRegistry(this.registry.getId())

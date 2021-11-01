@@ -1273,7 +1273,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		table.addCell(date);
+		let dateCell = table.addCell(date);
+		dateCell.style.width = '15%';
 		date.value = finance.due_date;
 
 		// ----- FINANCE PAYMETHOD
@@ -1290,7 +1291,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		table.addCell(paymethod);
+		let paymethodCell = table.addCell(paymethod);
+		paymethodCell.style.width = '25%';
 
 		getPaymethods({}).then(paymethods => {
 			let pms = paymethods.map(pm => {return {name: pm.name, value: pm.id};});
@@ -1323,7 +1325,8 @@ export class AonInvoice extends AonElement {
 		// 	this.setFocus(this.FINANCE_AMOUNT + i);
 		// })
 
-		table.addCell(bankAccount);
+		let ibanCell = table.addCell(bankAccount);
+		ibanCell.style.width = '50%';
 		finance.bank_account = finance.bank_account || finance.iban;
 		bankAccount.value = finance.bank_account;
 
@@ -1341,7 +1344,8 @@ export class AonInvoice extends AonElement {
 			this.invoice.setFinance(finance, i);
 			if(this.autosave) this.save();
 		});
-		table.addCell(amount);
+		let amountCell = table.addCell(amount);
+		amountCell.style.width = '10%';
 		amount.value = finance.amount;
 
 		// ----- FINANCE DELETE

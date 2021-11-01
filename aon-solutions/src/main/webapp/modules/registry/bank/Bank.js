@@ -37,7 +37,7 @@ export class Bank {
            this.active = bank.active || true;
            this.dirty = bank.dirty || false;
            this.removed = bank.removed || false;
-           this.fullName = this.iban + ' - ' + this.bank;
+           this.fullName = this.formatIban() + ' - ' + this.bank;
         } else {
             this.domain = LS.getDomainId();
             this.bankAccount = new BankAccount();
@@ -163,6 +163,11 @@ export class Bank {
 
     remove() {
         this.setRemoved(true);
+    }
+
+    formatIban() {
+        let EVERY_FOUR_CHARS =/(.{4})(?!$)/g;
+        return this.iban.replace(EVERY_FOUR_CHARS, "$1" + ' ');
     }
 
 

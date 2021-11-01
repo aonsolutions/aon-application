@@ -93,8 +93,10 @@ public interface IJsonNames {
 	String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
 	String DEBIT = "debit";
 	String DEFINED_USERS = "definedUsers";
+	String DELIVERY_GROUPED = "deliveryGrouped";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
+	String DELIVERY_VALUATED = "deliveryValuated";
 	String DEADLINE = "deadline";
 	String DESCRIPTION = "description";
 	String DETAIL = "detail";
@@ -173,6 +175,7 @@ public interface IJsonNames {
 	String INTERVALS = "intervals";
 	String INVENTORIABLE = "inventoriable";
 	String INVESTMENT = "investment";
+	String INVOICING_GROUP = "invoicingGroup";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
@@ -274,7 +277,8 @@ public interface IJsonNames {
 	String PRODUCT_ID = "productId";
 	String PROFIT_PERCENT = "profitPercent";
 	String PROJECT = "project";
-	String PROJECTS = "projects";
+	String PROJECT_GROUPED = "ProjectGrouped";
+ 	String PROJECTS = "projects";
 	String PROJECT_HOLDER = "projectHolder";
 	String PROMO = "promo";
 	String PROVINCE = "province";
@@ -346,6 +350,7 @@ public interface IJsonNames {
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";
 	// ---------------------------------------------------------------------------------------------	[T] 
+	String TARIFF = "tariff";
 	String TAS = "tas";
 	String TASK = "task";
 	String TASK_HOLDER = "task_holder";

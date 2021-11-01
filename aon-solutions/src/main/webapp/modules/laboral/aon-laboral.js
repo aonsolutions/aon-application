@@ -114,7 +114,7 @@ export class AonLaboral extends AonElement {
       laboralOptions.push(aon_comunica);
     }
 
-    this.applicationEl.addSidenavOptions(MSG.PAYROLL, laboralOptions);
+    this.applicationEl.addSidenavOptions(MSG.PAYROLL.toUpperCase(), laboralOptions);
 
     if(this.isComunica() || !this.isEmployee()){
       let aon_cta_list = PayrollOptions.AON_CCC;
@@ -132,7 +132,7 @@ export class AonLaboral extends AonElement {
         }
         conf.push(aon_cert);
       }
-      this.applicationEl.addSidenavOptions(MSG.CONFIGURATION, conf);
+      this.applicationEl.addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), conf);
     }
 
     let iconContract = this.getElement(this.applicationEl.SIDENAV + PayrollOptions.AON_CONTRACT.name + "AonIcon");

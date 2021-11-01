@@ -307,7 +307,7 @@ export class AonApplication extends AonElement {
 
     let sidenavTitle = this.createElement(TAG.DIV);
     sidenavTitle.className = "aonSidenavTitle";
-    sidenavTitle.innerHTML = title;
+    sidenavTitle.innerHTML = title.toUpperCase();
     sidenavTitle.title = title;
     div.appendChild(sidenavTitle);
 
@@ -327,7 +327,7 @@ export class AonApplication extends AonElement {
 
       let sidenavTitle = this.createElement(TAG.DIV);
       sidenavTitle.className = "aonSidenavTitle";
-      sidenavTitle.innerHTML = title;
+      sidenavTitle.innerHTML = title.toUpperCase();
       sidenavTitle.title = title;
       div.appendChild(sidenavTitle);
 
@@ -389,7 +389,7 @@ export class AonApplication extends AonElement {
     });  
 
     let span = this.createElement(TAG.SPAN);
-    span.innerHTML = data.name;
+    span.innerHTML = data.name.toUpperCase();
     sidenavTitle.appendChild(span);
 
     div.appendChild(sidenavTitle);
@@ -436,7 +436,7 @@ export class AonApplication extends AonElement {
     let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     ul = ul || this.getElement(sidenavId + data.id + "List");
     if (!option.hidden) {
-      let id = sidenavId + option.name;
+      let id = sidenavId + option.id;
       let li = this.createElement(TAG.LI);
       li.id = id;
       li.title = option.name;

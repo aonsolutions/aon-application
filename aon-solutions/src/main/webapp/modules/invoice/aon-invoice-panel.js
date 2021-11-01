@@ -26,6 +26,7 @@ import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
 import Apps from '../../services/app.js';
 import { AonProduct } from '../product/aon-product.js';
+import { AonCustomerList } from '../registry/aon-customer-list.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -37,6 +38,7 @@ export class AonInvoicePanel extends AonElement {
 	INPUT_FILE;
 	INPUT_CAMERA;
 	PRODUCT_LIST;
+	CUSTOMER_LIST;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -77,6 +79,7 @@ export class AonInvoicePanel extends AonElement {
 		this.INPUT_FILE = this.INVOICE + 'InputFile';
 		this.INPUT_CAMERA = 'aonMobileMenuCameraInput';// this.INVOICE + 'InputCamera';
 		this.PRODUCT_LIST = this.id + 'ProductList';
+		this.CUSTOMER_LIST = this.id + 'CustomerList';
 		this.status = this.status || CONSTANT.INBOX;
 		this.filter = {
 			status: this.status || CONSTANT.INBOX,
@@ -155,7 +158,7 @@ export class AonInvoicePanel extends AonElement {
 			OPTION.RAWDOC_REJECT, 
 			OPTION.RAWDOC_DRAFT
 		];
-		this.getApplication().addSidenavOptions(MSG.PENDING_DOCUMENTS.toUpperCase(), pendingOptions);
+		this.getApplication().addSidenavOptions(MSG.PENDING_DOCUMENTS, pendingOptions);
 	}
 
 	buildInvoiceOptions() {
@@ -164,14 +167,14 @@ export class AonInvoicePanel extends AonElement {
 			OPTION.INVOICE_RECEIVED, 
 			OPTION.INVOICE_TICKET
 		];
-			
-		this.getApplication().addSidenavOptions(MSG.INVOICES.toUpperCase(), invoiceOptions);
+		
+		this.getApplication().addSidenavOptions(MSG.INVOICES, invoiceOptions);
 	}
 
 	buildOfferOptions() {
 		if(this.getDur().isAlpha() && (this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager())){
 			let budgetOptions = [ OPTION.OFFER ];
-			this.getApplication().addSidenavOptions(MSG.BUDGETS.toUpperCase(), budgetOptions);
+			this.getApplication().addSidenavOptions(MSG.BUDGETS, budgetOptions);
 		}
 	}
 
@@ -184,7 +187,7 @@ export class AonInvoicePanel extends AonElement {
 		if(this.getDur().isAlpha()){
 			settingOptions.push(OPTION.CONFIGURATION_SII_TBAI);
 		}
-		this.getApplication().addSidenavOptions(MSG.SETTING.toUpperCase(), settingOptions);
+		this.getApplication().addSidenavOptions(MSG.SETTING, settingOptions);
 	}
 
 	add(){
@@ -225,6 +228,18 @@ export class AonInvoicePanel extends AonElement {
 
 	aonInvoicePrint() {
 		this.getApplication().setContent(new AonInvoicePrint());
+	}
+
+	aonCustomerList(filter) {
+		let customerList = this.getElement(this.CUSTOMER_LIST);
+		if(customerList) {
+			customerList.setFilter(filter);
+		} else {
+			customerList = new AonCustomerList();
+			customerList.id = this.CUSTOMER_LIST;	
+			customerList.filter = filter;
+			aonInvoice.setContent(customerList);
+		}
 	}
 
 	aonProductList(filter) {
@@ -436,6 +451,7 @@ export class AonInvoicePanel extends AonElement {
 				this.aonInvoiceList({status:'accounting', type:'ticket', page:1, per_page: 50});
 				break;
 			case OPTION.REGISTRY_CUSTOMER.id:
+				// this.aonCustomerList();
 				GWT.load(GWT.CUSTOMER, this.getApplication().CONTENT);
 				break;
 			case OPTION.REGISTRY_SUPPLIER.id:

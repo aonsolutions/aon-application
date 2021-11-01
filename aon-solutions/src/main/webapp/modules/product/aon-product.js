@@ -142,9 +142,9 @@ export class AonProduct extends AonElement {
         table2.addRow();
 		if(!this.expense) {
 			let types = [
-				{name:'Servicio', value: 'SERVICE'},
-				{name:'Producto Comercial', value: 'COMMERCIAL_PRODUCT'},
-				{name:'Suplido', value: 'PREPAYMENT'}];
+				{name: MSG.SERVICE, value: 'SERVICE'},
+				{name: MSG.COMMERCIAL_PRODUCT, value: 'COMMERCIAL_PRODUCT'},
+				{name: MSG.SUPPLIED, value: 'PREPAYMENT'}];
 			let typeSelect = this.createSelect(this.PRODUCT_TYPE, MSG.TYPE);
     	    typeSelect.setOptions(types);
 			typeSelect.value = this.expense ? 'EXPENSE' : this.product.getType();
@@ -233,7 +233,7 @@ export class AonProduct extends AonElement {
 
 	 	table.addRow();
 		
-		let purchasePrice = this.createNumber(this.ITEM_PURCHASE_PRICE, 'Precio Coste');
+		let purchasePrice = this.createNumber(this.ITEM_PURCHASE_PRICE, MSG.PURCHASE_PRICE);
 		purchasePrice.value = this.item.getPurchasePrice();
 		purchasePrice.format = CONSTANT.TRUE;
 		purchasePrice.decimals = "2";
@@ -245,7 +245,7 @@ export class AonProduct extends AonElement {
 		});
 		table.addCell(purchasePrice, 1);
 
-		let profitPercent = this.createNumber(this.ITEM_PROFIT_PERCENT, '% Beneficio');
+		let profitPercent = this.createNumber(this.ITEM_PROFIT_PERCENT, '% ' + MSG.PROFIT);
 		profitPercent.value = this.item.getProfitPercent();
 		profitPercent.format = CONSTANT.TRUE;
 		profitPercent.decimals = "2";
@@ -257,7 +257,7 @@ export class AonProduct extends AonElement {
 		});
 		table.addCell(profitPercent, 1);
 
-		let price = this.createNumber(this.ITEM_PRICE, 'Precio');
+		let price = this.createNumber(this.ITEM_PRICE, MSG.PRICE);
 		price.value = this.item.getPrice();
 		price.format = CONSTANT.TRUE;
 		price.decimals = "2";
