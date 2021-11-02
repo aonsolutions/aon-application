@@ -1147,9 +1147,6 @@ public class TestServicioRED extends SegSocialTest {
 						new Date(),
 						new Date()
 				);
-				FileOutputStream fos = new FileOutputStream("/home/igonzalez/Escritorio/pruebar.pdf");
-				fos.write(pdf);
-				fos.close();
 				assertTrue(pdf.length > 130000);
 				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
