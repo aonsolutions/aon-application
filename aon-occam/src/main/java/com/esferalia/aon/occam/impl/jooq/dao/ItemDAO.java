@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 
 
@@ -171,9 +172,9 @@ public class ItemDAO {
 		.set(ITEM.DETAIL3, item.getDetail3())
 		.set(ITEM.DESCRIPTION, item.getDescription())
 		.set(ITEM.SERIAL_NUMBER, item.getSerialNumber())
-		.set(ITEM.SERIAL_DATE, new Date(item.getSerialDate().getTime()))
+		.set(ITEM.SERIAL_DATE, item.getSerialDate() != null ? new Date(item.getSerialDate().getTime()) : null)
 		.set(ITEM.PRICE, item.getPrice())
-		.set(ITEM.STATUS, item.getStatus().value())
+		.set(ITEM.STATUS, item.getStatus() != null ? item.getStatus().value() : null)
 		.set(ITEM.EXPENSES_PERCENT, item.getExpensesPercent())
 		.set(ITEM.EXPENSES_FIXED, item.getExpensesFixed())
 		.set(ITEM.PROFIT_PERCENT, item.getProfitPercent())
@@ -194,6 +195,7 @@ public class ItemDAO {
 		.execute();
 		return item;
 	}
+
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
 		ctx.getDslContext()

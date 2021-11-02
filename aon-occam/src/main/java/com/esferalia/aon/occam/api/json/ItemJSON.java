@@ -75,7 +75,7 @@ public class ItemJSON {
 	public static JSONObject toJSON(Item item) {
 		return new JSONObject()
 				.put(IJsonNames.ID, item.getId())
-				.put(IJsonNames.DOMAIN, item.getDomain())
+				.put(IJsonNames.DOMAIN, DomainJSON.toJSON(item.getDomain()))
 				.put(IJsonNames.DETAIL, item.getDetail())
 				.put(IJsonNames.DETAIL2, item.getDetail2())
 				.put(IJsonNames.DETAIL3, item.getDetail3())

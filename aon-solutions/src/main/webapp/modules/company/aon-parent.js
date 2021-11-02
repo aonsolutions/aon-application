@@ -57,7 +57,7 @@ export class AonParent extends AonElement {
 				fn: () => {}
 			}
 		];
-		aonParent.addSidenavOptions(MSG.PENDING_TASKS.toUpperCase(), taskOptions);
+		aonParent.addSidenavOptions(MSG.ACTIVITY_SUMMARY.toUpperCase(), taskOptions);
 		
 		let filterOptions = [{
 				name: MSG.ACTIVES,
@@ -88,7 +88,7 @@ export class AonParent extends AonElement {
 			let aonSign = new AonSign();
 			aonSign.setParent(true);
 			aonSign.setTimeControl(r);
-			aonParent.addSidenavWidget('CONTROL HORARIO', aonSign);
+			aonParent.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
 			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});

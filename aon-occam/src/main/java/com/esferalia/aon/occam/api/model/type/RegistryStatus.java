@@ -37,9 +37,19 @@ public enum RegistryStatus implements Serializable {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 
 	}
+	
 	public static RegistryStatus safeValueOf( Integer i ) {
 		if (i == null) return null;
 		if (i < 0 || i >= RegistryStatus.values().length) return null;
 		return RegistryStatus.values()[i];
 	}
+	
+	public static RegistryStatus safeValueOf( String str) {
+		for (RegistryStatus rs : values()) {
+			if(rs.name().equalsIgnoreCase(str) || rs.getDescription().equalsIgnoreCase(str))
+				return rs;
+		}
+		return ACTIVE;
+	}
+	
 }

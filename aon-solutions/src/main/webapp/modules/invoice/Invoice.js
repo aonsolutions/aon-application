@@ -645,11 +645,8 @@ export class Invoice {
         }
       }
     });  
-    this.calculateTotalFromDetail();
     this.calculateWithholdingFromTax();
-    this.taxes.filter(f => TaxType.IRPF === f.tax).forEach(tax => {
-      this.total = this.total - Number(tax.quota);
-    });
+    this.calculateTotalFromDetail();
   }
   
   calculateTotalFromDetail() {
@@ -657,6 +654,11 @@ export class Invoice {
     this.details.forEach( detail => {
       total = total + detail.amount + detail.quota + detail.surcharge_quota;
     });  
+
+    this.taxes.filter(f => TaxType.IRPF === f.tax).forEach(tax => {
+      total = total - Number(tax.quota);
+    });
+
     this.total = total;
     this.calculateFinances();
   }
@@ -702,13 +704,30 @@ export class Invoice {
   
   addFinance() {
     if(!this.paymethod) this.paymethod = 'CASH';
-    let finance = {
-      due_date: this.date,
-      paymethod: this.paymethod,
-      amount: 0.0,
-      iban: ''
-     };
-     this.finances.push(finance);
+    
+    if(this.finances.length > 0) {
+      let financeTotal = 0.0;
+      this.finances.forEach((finance, i) => {
+        finance.paymethod = this.paymethod;
+        this.finances[i] = finance;
+        financeTotal = financeTotal + Number(finance.amount);
+      });
+       let finance = {
+         due_date: this.date,
+         paymethod: this.paymethod,
+         bank_account: this.finances[0].bank_account,
+         amount: Number(this.total) - Number(financeTotal)
+       };
+       this.finances.push(finance);
+    } else {
+      let finance = {
+        due_date: this.date,
+        paymethod: this.paymethod,
+        amount: this.total,
+        iban: ''
+      };
+      this.finances.push(finance);
+    }
   }
 
   setFinance(finance, i) {

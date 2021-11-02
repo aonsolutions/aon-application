@@ -1,4 +1,4 @@
-import { EVENT, MSG } from "../../../environments/environments.js";
+import {  EVENT, MSG } from "../../../environments/environments.js";
 import {Apps} from "../../../services/app.js";
 import { getOfficeProjects, getProjects} from "../../../services/projectService.js";
 import { getCustomers } from "../../../services/registryService.js";
@@ -34,39 +34,34 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
     if(source){  aonSelect.value = source; } 
 }
 
-
-/**
- * fill typeRequest (Tipo de solicitud)
- * @param {Task} Class task
- */
- export const fillProject = async (task) => {
-    const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
+export const fillAdvisory = async (task) => {
+    const aonSelect = document.getElementById(MESSENGER_IDS.ADVISORY_TASK);
     if(aonSelect){
         aonSelect.loading(true);
-        const project = task.getProject();
+        const domain = task.getDomain();
         try {
-            let projects = [];
-            let registry = task.getRegistry();
-            if(registry.id && task.isGestor())
-                projects = await getProjects({ registry: registry.id });
-            else
-                projects = await getOfficeProjects();
+            let offices = await getOfficeProjects();
 
-            aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
+            aonSelect.setOptions(offices.map(office => ({...office, value:office.domain.id, name:office.domain.description})));
+            aonSelect.addEventListener(EVENT.CHANGE,  ({detail})=>{
+                if(detail && detail.value){
+                    task.setDomain(detail.domain);
+                    task.setRegistry(detail.registry)
+                    if(task.isExternal() || !task.id )
+                        task.setSender({});
 
-            
-            if(project && project.id){ aonSelect.value = project.id; } 
-
-            const fnProject = ({detail})=>{
-                if(detail && detail.id)
-                    task.setProject(detail);
-                else 
-                    task.setProject({});
-            };
-
-            aonSelect.removeEventListener(EVENT.CHANGE, fnProject);
-            aonSelect.addEventListener(EVENT.CHANGE, fnProject);
+                    task.setWorkflowTmp({...task.getWorkflowTmp(), domain: task.domain.id});
+                    fillProject(aonMessengerChat.task, detail.projects);
+                }
+            });
         
+            if(domain && domain.id && task.getId())
+                aonSelect.value = domain.id; 
+            else if(1===offices.length)
+                aonSelect.setIndexOf(0);
+
+            if( (domain && domain.id && task.getId()) || 1 === offices.length)
+                aonSelect.setDisabled(true);
         } catch (error) {
             console.log(error);
         }
@@ -74,6 +69,44 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
     }
 }
 
+
+/**
+ * fill typeRequest (Tipo de solicitud) RE
+ * @param {Task} Class task
+ * @param {Array} Array optionals
+ */
+export const fillProject = async (task, projects =[]) => {
+    const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
+    if(aonSelect){
+        aonSelect.loading(true);
+        const project = task.getProject();
+        try {
+
+            if(projects.length ===0 && !task.isExternal())
+                projects = await getProjects({ registry: task.getRegistry().id });
+              
+            aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
+            
+            if(project && project.id)
+                aonSelect.value = project.id; 
+            else if(1===projects.length && !task.id){
+                aonSelect.setIndexOf(0);
+                aonSelect.parentNode.style.display = "none";
+            }
+
+            aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+                if(detail && detail.id)
+                    task.setProject(detail);
+                else 
+                    task.setProject({});
+            });
+        
+        } catch (error) {
+            console.log(error);
+        }
+        aonSelect.loading(false);
+    }
+}
 
 /**
  * fill workgroup (Grupo de trabajo)

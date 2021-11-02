@@ -74,6 +74,7 @@ import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -113,6 +114,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RBankPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RegistryBankFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class RegistryOldDAO {
@@ -923,6 +925,55 @@ public class RegistryOldDAO {
 				.from(RECORD_DATA)
 				.where(RECORD_DATA_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new RecordDataFiller());
+	}
+	
+	public static RecordData saveRecordData(AONContext ctx, RecordData recordData) {
+		return recordData.getId() != null 
+			? updateRecordData(ctx, recordData)
+			: insertRecordData(ctx, recordData); 
+	}
+	
+	private static RecordData insertRecordData(AONContext ctx, RecordData recordData){
+		Integer id = ctx.getDslContext().insertInto(RECORD_DATA)
+			.set(RECORD_DATA.DOMAIN, recordData.getDomain())
+			.set(RECORD_DATA.REGISTRY, recordData.getRegistry())
+			.set(RECORD_DATA.DESCRIPTION, recordData.getDescription())
+			.set(RECORD_DATA.CREATION_DATE, AonDateUtils.toSql(recordData.getCreationDate()))
+			.set(RECORD_DATA.NOTARY, recordData.getNotary())
+			.set(RECORD_DATA.NUMBER, recordData.getNumber())
+			.set(RECORD_DATA.RECORD_DATE, AonDateUtils.toSql(recordData.getRecordDate()))
+			.set(RECORD_DATA.VOLUME, recordData.getVolume())
+			.set(RECORD_DATA.SECTION, recordData.getSection())
+			.set(RECORD_DATA.PAGE, recordData.getPage())
+			.set(RECORD_DATA.SHEET, recordData.getSheet())
+			.set(RECORD_DATA.REGISTRATION, recordData.getRegistration())
+			.set(RECORD_DATA.ATTACH, recordData.getAttach())
+			.returning(RECORD_DATA.ID)
+			.fetchOne()
+			.getValue(RECORD_DATA.ID);
+		recordData.setId(id);
+		ctx.log().debug("INSERT REGISTRY RECORD DATA ( registry: {0}) id: {1}",recordData.getRegistry(),recordData.getId());
+		return recordData;
+	}
+	private static RecordData updateRecordData(AONContext ctx, RecordData recordData){
+		int count = ctx.getDslContext().update(RECORD_DATA)
+			.set(RECORD_DATA.DOMAIN, recordData.getDomain())
+			.set(RECORD_DATA.REGISTRY, recordData.getRegistry())
+			.set(RECORD_DATA.DESCRIPTION, recordData.getDescription())
+			.set(RECORD_DATA.CREATION_DATE, AonDateUtils.toSql(recordData.getCreationDate()))
+			.set(RECORD_DATA.NOTARY, recordData.getNotary())
+			.set(RECORD_DATA.NUMBER, recordData.getNumber())
+			.set(RECORD_DATA.RECORD_DATE, AonDateUtils.toSql(recordData.getRecordDate()))
+			.set(RECORD_DATA.VOLUME, recordData.getVolume())
+			.set(RECORD_DATA.SECTION, recordData.getSection())
+			.set(RECORD_DATA.PAGE, recordData.getPage())
+			.set(RECORD_DATA.SHEET, recordData.getSheet())
+			.set(RECORD_DATA.REGISTRATION, recordData.getRegistration())
+			.set(RECORD_DATA.ATTACH, recordData.getAttach())
+			.where(RECORD_DATA.ID.eq(recordData.getId()))
+			.execute();
+		ctx.log().debug("UPDATE REGISTRY RECORD DATA ( registry: {0}) id: {1}. ({2} rows)", recordData.getRegistry(), recordData.getId(), count);
+		return recordData;
 	}
 	
 	// ------------------- RBANK

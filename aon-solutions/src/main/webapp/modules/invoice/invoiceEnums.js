@@ -48,7 +48,7 @@ export const TaxVatType = [
 export const TaxWithholdingType = [
   { value: 'IRPF_PROF', name: 'IRPF PROF.'},
   { value: 'IRPF_ALQ', name: 'IRPF ALQ.'}
-]
+];
 
 export const TaxIVAPercentage = [
   {value:21.0, name:'21%'},

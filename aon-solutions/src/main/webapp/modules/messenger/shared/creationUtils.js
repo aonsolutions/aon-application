@@ -11,6 +11,24 @@ import { checkFilesAddEventClick, downChat } from "./utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
+/**
+ * 
+ * @param {HTMLElement} parent appenchild
+ * @param {HTMLElement} child element add Optional
+ * @param {Object} properties 
+ * @returns 
+ */
+ export const createDivGrid = (parent, child, properties)=> {
+
+  const div = newComponent({ type: TAG.DIV, ...properties }).element;
+
+  parent.appendChild(div);
+
+  if(child) div.appendChild(child);
+
+  return div;
+}
+
 export const createBtnAccept = () => {
   let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
   btnAccept.className = CSS.AON_BUTTON;
@@ -417,6 +435,14 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
   autocomplete: CONSTANT.OFF
 });
 
+ //-----------------ADVISORY
+ export const createAdvisory = () => setAttributes( new AonSelect(),{
+  id: MESSENGER_IDS.ADVISORY_TASK,
+  name: MESSENGER_IDS.ADVISORY_TASK,
+  title: "Asesoria",
+  autocomplete: CONSTANT.OFF
+});
+
 
 //-------------TEXT AREA COMMENT
 export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea(),{
@@ -465,7 +491,7 @@ export const createChatMessage = (properties, chat) => {
 
     if(messageSend || me){
       const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
-      iconSendWorkflow.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(properties.notification_date)) : MSG.SEND;
+      iconSendWorkflow.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(properties.notification_date)) : `${MSG.SEND} por ${MSG.EMAIL}`;
       iconSendWorkflow.id = MESSENGER_IDS.ICON_SEND_WORKFLOW;
       let color = COLORS.AON_BLUE;
 
@@ -481,12 +507,12 @@ export const createChatMessage = (properties, chat) => {
         iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(parseInt(message.dataset.id)));
 
         //-------------------icon share
-        const textShare = "Compartir entre ramas (En desarrollo)";
-        const iconShare = createOutlinedMaterialIcon({name:MATERIAL_ICONS.IOS_SHARE}).element;
-        iconShare.title = textShare;
-        setStyles(iconShare, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "12px", zIndex: 1 , right: "39px", cursor: "pointer" });
-        iconShare.addEventListener(EVENT.CLICK, ()=> alert(textShare));
-        message.appendChild(iconShare);
+        // const textShare = "Compartir entre ramas (En desarrollo)";
+        // const iconShare = createOutlinedMaterialIcon({name:MATERIAL_ICONS.IOS_SHARE}).element;
+        // iconShare.title = textShare;
+        // setStyles(iconShare, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "12px", zIndex: 1 , right: "39px", cursor: "pointer" });
+        // iconShare.addEventListener(EVENT.CLICK, ()=> alert(textShare));
+        // message.appendChild(iconShare);
 
          //-------------------icon delete
       } else {

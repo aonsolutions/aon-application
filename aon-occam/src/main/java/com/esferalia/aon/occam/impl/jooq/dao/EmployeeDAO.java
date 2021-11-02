@@ -188,7 +188,6 @@ public class EmployeeDAO {
 
 	public static  ContractRecord addEmployee(DSLContext dslContext, Integer domainId, Employee employee ) {
 		
-		
 		EnterpriseCccRecord enterpriseCccRecord =
 		getEnterpriseCCC(dslContext, domainId, employee );
 		
@@ -221,8 +220,11 @@ public class EmployeeDAO {
 		.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
 		.set(CONTRACT_DATA.NAME, "TC2" )
 		.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", employee.getContractType()))
-		.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
-		.newRecord()
+		.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()));
+		
+		employee.getEndDate().ifPresent(endDate -> insertContractData.set(CONTRACT_DATA.END_DATE, toSql(endDate)));
+		
+		InsertSetMoreStep<ContractDataRecord> quoteGroupInsert = insertContractData.newRecord()
 		.set(CONTRACT_DATA.DOMAIN, domainId)
 		.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
 		.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION" )
@@ -230,15 +232,44 @@ public class EmployeeDAO {
 		.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
 		;
 		
+		employee.getEndDate().ifPresent(endDate -> quoteGroupInsert.set(CONTRACT_DATA.END_DATE, toSql(endDate)));
+		
 		employee.getFactor().ifPresent(factor -> {
-			insertContractData.newRecord()
+			InsertSetMoreStep<ContractDataRecord> insertFactor = insertContractData.newRecord()
 			.set(CONTRACT_DATA.DOMAIN, domainId)
 			.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
 			.set(CONTRACT_DATA.NAME, "COEFICIENTE_PARCIALIDAD" )
 			.set(CONTRACT_DATA.EXPRESSION, Double.toString(factor))
 			.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
 			;
+			
+			employee.getEndDate().ifPresent(endDate -> insertFactor.set(CONTRACT_DATA.END_DATE, toSql(endDate)));
 		});
+		
+		employee.getOccupation().ifPresent(occupation -> {
+			InsertSetMoreStep<ContractDataRecord> insertOccupation = insertContractData.newRecord()
+			.set(CONTRACT_DATA.DOMAIN, domainId)
+			.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+			.set(CONTRACT_DATA.NAME, "OCUPACION" )
+			.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", occupation))
+			.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
+			;
+			
+			employee.getEndDate().ifPresent(endDate -> insertOccupation.set(CONTRACT_DATA.END_DATE, toSql(endDate)));
+		});
+		
+		employee.getRlce().ifPresent(rlce -> {
+			InsertSetMoreStep<ContractDataRecord> insertRlce = insertContractData.newRecord()
+			.set(CONTRACT_DATA.DOMAIN, domainId)
+			.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+			.set(CONTRACT_DATA.NAME, "RLCE" )
+			.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", rlce))
+			.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
+			;
+			
+			employee.getEndDate().ifPresent(endDate -> insertRlce.set(CONTRACT_DATA.END_DATE, toSql(endDate)));
+		});
+		
 		
 		insertContractData.execute();
 		
@@ -1332,7 +1363,7 @@ public class EmployeeDAO {
 		switch (sex) {
 		case "F":
 			return Gender.FEMALE;
-		case "M":
+		case "M": case "V":
 			return Gender.MALE;
 		default:
 			return Gender.UNKNOWN;

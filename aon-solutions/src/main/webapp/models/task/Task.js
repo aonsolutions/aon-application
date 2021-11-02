@@ -52,7 +52,7 @@ export class Task {
       this.source      = TASK_SOURCE.QUERY;
       this.status      = TASK_STATUS.PENDING;
       this.workflow    = [];
-      this.workflowTmp = {};
+      this.setWorkflowTmp({domain: this.domain.id});
       this.files = [];
     }
   }
@@ -63,34 +63,36 @@ export class Task {
 
   setTask(task) {
     if(task) {
-      this.id          = task.id || undefined;
-      this.auth        = task.auth || {};
-      this.status      = task.status || TASK_STATUS.PENDING;
-      this.number      = task.number || undefined;
-      this.workgroup   = new Workgroup(task.workgroup);
-      this.registry    = new Registry(task.registry);
       this.myTaskHolder= new TaskHolder(task.myTaskHolder);
-      this.task_holder = new TaskHolder(task.task_holder);
-      this.title       = task.title || "";
-      this.description = task.description || "";
-      this.source      = task.source || TASK_SOURCE.QUERY;
-      this.source_id   = task.source_id || undefined;
-      this.start_date  = task.start_date || undefined;
-      this.parent      = task.parent || undefined;
-      this.gtask_id    = task.gtask_id || (!this.id && this.auth.email && !this.isGestor() ? this.auth.email : undefined);
-      this.domain      = new Domain(task.domain); 
-      this.workflow    = task.workflow || [];
-      this.domainTmp   = this.domain;
-      this.workflowTmp = {
+      this.setId(task.id || undefined);
+      this.setAuth(task.auth || {});
+      this.setStatus(task.status || TASK_STATUS.PENDING);
+      this.setNumber(task.number || undefined);
+      this.setWorkgroup(new Workgroup(task.workgroup));
+      this.setRegistry(new Registry(task.registry));
+      this.setTaskHolder(new TaskHolder(task.task_holder));
+      this.setTitle(task.title || "");
+      this.setDescription(task.description || "")
+      this.setSource(task.source || TASK_SOURCE.QUERY);
+      this.setSourceId(task.source_id || undefined);
+      this.setStartDate(task.start_date || undefined);
+      this.setParent(task.parent || undefined);
+      this.setGTaskId(task.gtask_id || (!this.id && this.auth.email && !this.isAdvisoryCompany() ? this.auth.email : undefined));
+      this.setDomain(new Domain(task.domain)) 
+      this.setWorkflow(task.workflow || []);
+      this.setDomainTmp(this.domain);
+
+      this.setWorkflowTmp({
         comment:"",
         domain:this.domain.id,
         task_holder: this.myTaskHolder,
         task: this.id,
         type: WORKFLOW_TYPES.COMMENT,
         email: this.auth.email ? this.auth.email : undefined
-      }
+      });
+  
       this.setProject(new Project(task.project));
-      this.sender = new TaskHolder( task.id ? task.sender : this.senderCondition() );
+      this.setSender(new TaskHolder( task.id ? task.sender : this.senderCondition() ))
     }   
   }
 
@@ -116,19 +118,18 @@ export class Task {
    * 
    * @param {Boolean} projectDefault default project, false clean, true not clean
    */
-  cleanTask(projectDefault=false){
-    if(!this.id){
-      this.workgroup   = new Workgroup();
-      if(!projectDefault)this.setProject(new Project());
-      this.registry    = new Registry();
-      this.task_holder = new TaskHolder();
-      this.title       = "";
-      this.description = "";
-      this.source_id   = undefined;
-      this.workflow    = [];
-      this.setFiles([]);
-    }
-  }
+  // cleanTask(projectDefault=false){
+  //   this.workgroup   = new Workgroup();
+  //   if(!projectDefault)
+  //     this.setProject(new Project());
+  //   this.registry    = new Registry();
+  //   this.task_holder = new TaskHolder();
+  //   this.title       = "";
+  //   this.description = "";
+  //   this.source_id   = undefined;
+  //   this.workflow    = [];
+  //   this.setFiles([]);
+  // }
 
   getId() {
     return this.id;
@@ -193,6 +194,8 @@ export class Task {
 
   setSource(v) {
     this.source = v;
+    if(TASK_SOURCE.REQUEST !== v)
+      this.source_id = null;
   }
 
   getSourceId() {
@@ -323,24 +326,32 @@ export class Task {
   }
 
   isExternal(){
-    if(this.isGestor()) return false;
-    return this.id && parseInt(LS.getDomainId()) !== parseInt(this.domain.id);
+    let bool = false;
+    if( !this.isAdvisoryCompany() && this.id && this.isOtherDomain())
+      bool = true;
+    return bool;
   }
 
-  isGestor(){
-    return "OFFICE" === LS.getCompany().type;
+  isOtherDomain(){
+    return parseInt(LS.getDomainId()) !== parseInt(this.domain.id) ? true : false;
+  }
+
+  isAdvisoryCompany(){
+    return "OFFICE" === LS.getCompany().type ? true : false;
   }
 
   senderCondition(){
-    return !this.isGestor() && this.isProject() ? undefined : this.myTaskHolder;
+    return !this.isAdvisoryCompany() && this.isProject() && !this.isExternal() ? undefined : this.myTaskHolder;
   }
+
 
   /**
    * CHANGE VALUES WHEN PROJECT CHANGE 
    */
   changeProject(){
-    if(this.isProject() && !this.isExternal())
-      this.setDomain(new Domain(this.project.domain));
+
+    // if(this.isProject() && !this.isExternal())
+    //   this.setDomain(new Domain(this.project.domain));
 
     if(this.isProject()){
       const {projectHolder} = this.project;
@@ -348,24 +359,27 @@ export class Task {
       this.setWorkgroup(new Workgroup(workgroup));
       const taskHolder = projectHolder.taskHolder && projectHolder.taskHolder.id ? projectHolder.taskHolder : this.task_holder;
       this.setTaskHolder(taskHolder);
+    } else if(!this.id) {
+      this.setWorkgroup(new Workgroup());
+      this.setTaskHolder(new TaskHolder());
     }
 
-    const registry = this.project.registry && this.project.registry.id ? this.project.registry : this.registry;
-    this.setRegistry(new Registry(registry));
+    // const registry = this.project.registry && this.project.registry.id ? this.project.registry : this.registry;
+    // this.setRegistry(new Registry(registry));
 
     if(!this.id)
      this.setSender( new TaskHolder(this.senderCondition()));
 
-    this.workflowTmp = {
+    this.setWorkflowTmp({
       comment:"",
       domain:this.domain.id,
       task_holder: this.myTaskHolder,
       task: this.id,
       type: WORKFLOW_TYPES.COMMENT,
       email: this.auth.email ? this.auth.email : undefined
-    }
+    });
   }
-
+  
   onPropertyChanged(propName, val){
     return (propName, val);
   }

@@ -184,21 +184,15 @@ export class AonMessengerList extends AonElement {
   getDataDesktop(datos){
     try {
       const company = LS.getCompany();
+      const domainId = parseInt(LS.getDomainId());
       const document = company ? company.document: undefined;
       const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
       datos.map((res, idx) => {
-        const dateParse = firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
-        let assigned = "";
-        if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
-        else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
-  
-        const newTitle = this.getNewTitle(res, document, documentTh);
-
         const newData = { 
           ...res, 
-          newTitle,
-          assigned,
-          dateParse,
+          dateParse: firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date),
+          newTitle: this.getNewTitle(res, document, documentTh),
+          assigned: this.getAssigned(res, domainId),
           lettersHtml: this.getIcon(res),
         };
         this.AON_TABLE.addRow(newData, () =>  this.goMessengerChat(res, idx));
@@ -282,6 +276,17 @@ export class AonMessengerList extends AonElement {
     // }
 
     return span.outerHTML;
+  }
+
+  getAssigned(res, domainId){
+    let assigned = "";
+    if( res.domain && res.domain.id && domainId !== parseInt(res.domain.id) )  
+      assigned = res.domain.description;
+    else if(res.task_holder&&res.task_holder.id)                                                
+      assigned = res.task_holder.alias || res.task_holder.name; 
+    else if(res.workgroup&&res.workgroup.description) 
+      assigned = res.workgroup.description;
+    return assigned;
   }
 
   getNewTitle(res, document, documentTh){

@@ -48,6 +48,7 @@ export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMPANY = 'company';
 export const COMUNICA = 'comunica';
+export const CONCEPTS = 'concepts';
 export const CONFIGURATION = 'configuration';
 export const CONFIGURATION_PRINT = 'configurationPrint';
 export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
@@ -85,6 +86,7 @@ export const EDIT = 'edit';
 export const EDIT_FILE = 'editFile';
 export const ENTERPRISE = 'enterprise';
 export const ERROR = "error";
+export const EXPENSES = "expenses";
 
 // ----- F
 

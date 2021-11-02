@@ -6373,8 +6373,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		org.junit.Assert.assertEquals(1,liquidacion.getLiquidacionMes().size());
 		
 		LiquidacionMes liquidacionMes = liquidacion.getLiquidacionMes().get(0);
-		int month  = (Integer.parseInt(mes)+1) % 12;
-		int year = Integer.parseInt(anho) + ((Integer.parseInt(mes)+1) / 12);
+		int year = Integer.parseInt(anho);
+		int month  = (Integer.parseInt(mes)+1) ;
+		if ( month > 12 ) {
+			year++;
+			month = month % 12;
+		}
+		
 		org.junit.Assert.assertEquals(year, Integer.parseInt(liquidacionMes.getMesLiquidativo().getAnho()));
 		org.junit.Assert.assertEquals(month, Integer.parseInt(liquidacionMes.getMesLiquidativo().getMes()));
 		

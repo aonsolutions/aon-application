@@ -112,7 +112,7 @@ export class AonMessengerChat extends AonElement {
           comment: this.task.getWorkgroup().description,
           domain:this.task.getWorkflowTmp().domain,
           creation_date:new Date().getTime(),
-          task_holder: this.task.getSender(),
+          task_holder: this.task.myTaskHolder,
           type: WORKFLOW_TYPES.ASSIGN,
           email:this.task.auth.email
         });
@@ -122,7 +122,7 @@ export class AonMessengerChat extends AonElement {
           comment: this.task.getTaskHolder().name,
           domain:this.task.getWorkflowTmp().domain,
           creation_date:new Date().getTime(),
-          task_holder: this.task.getSender(),
+          task_holder: this.task.myTaskHolder,
           type: WORKFLOW_TYPES.ASSIGN,
           email:this.task.auth.email
         });
@@ -136,7 +136,7 @@ export class AonMessengerChat extends AonElement {
    * 
    * @param {String} text Optional
    */
-  async saveTaskWorkflow(text) {
+  async saveComment(text) {
     const [comment, messengeEl] = await sendMessage(text, this); 
     try {
       if(comment){
@@ -172,7 +172,6 @@ export class AonMessengerChat extends AonElement {
       }
       await saveTaskWorkflow({...this.task.getWorkflowTmp(), type, comment});
       await this.save();
-      this.applicationParentEl.updateCount();
       this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.task);
     // });
   }
@@ -197,15 +196,16 @@ export class AonMessengerChat extends AonElement {
     this.applicationEl.startLoading();
     this.buildTaskWorkflow();
 
-    let btnInternal = this.getElement(MESSENGER_IDS.EXTERNAL_TASK);
-    if(btnInternal && btnInternal.isChecked() && !this.task.project.id){
-      this.showError({message:"Proyecto requerido", type:CONSTANT.ERROR});
-    } else {
+    // let btnInternal = this.getElement(MESSENGER_IDS.EXTERNAL_TASK);
+    // if(btnInternal && btnInternal.isChecked() && !this.task.project.id){
+    //   this.showError({message:"Proyecto requerido", type:CONSTANT.ERROR});
+    // } else {
       if(this.task.source === TASK_SOURCE.REQUEST)
         await this.saveSourceRequest();
       else 
         await this.saveSourceQuery();
-    }
+    // }
+    this.applicationParentEl.updateCount();
     this.applicationEl.stopLoading();    
   }
 
@@ -311,7 +311,7 @@ export class AonMessengerChat extends AonElement {
     }
     return json;
   }
-
+  
   back(){
    this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.applicationParentEl._filter);
   }

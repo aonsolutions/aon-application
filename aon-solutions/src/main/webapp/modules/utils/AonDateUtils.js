@@ -1,3 +1,4 @@
+import { MSG } from "../../environments/environments.js";
 import { DAYS, MONTHS } from "../../models/enums.js";
 import { addZero } from "../../services/utils.js";
 
@@ -64,11 +65,11 @@ export const AonDateUtils = {
         let day = null;
         if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
           if(date.getDate() === now.addDay(-1).getDate())
-            day = "ayer";
+            day = MSG.YESTERDAY;
           else if(date.getDate() === new Date().getDate())
-            day = "hoy";
+            day = MSG.TODAY;
           else if(date.getDate() === new Date().addDay(1).getDate())
-            day = "mañana";
+            day = MSG.TOMORROW;
         }
         return day;
     },

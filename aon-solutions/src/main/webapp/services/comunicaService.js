@@ -5,6 +5,8 @@ export const getWorkplaceCCCs = () => get(`${API_URL}/workplace_ccc`);
 
 export const getMovements = (data) =>  get(`${API_URL}/comunica/movements`, data);
 
+export const updateContracts = (data) =>  get(`${API_URL}/comunica/update-contracts`, data);
+
 export const getIpfxnaf = (data) => get(`${API_URL}/comunica/ipfxnaf`, data);
 
 export const getNafxipf = (data) => get(`${API_URL}/comunica/nafxipf`, data);
@@ -20,7 +22,6 @@ export const getIdcCcc = (data) => openFile(`${API_URL}/comunica/pdf/get-idc-ccc
 export const getIDC = (data) => openFile(`${API_URL}/comunica/pdf/get-idc`, data);
 
 export const getCertCorriente = (data) => openFile(`${API_URL}/comunica/pdf/cert-corriente`, data);
-
 
 export const sendAlta = (data) => post(`${API_URL}/comunica/alta-directa`, data);
 

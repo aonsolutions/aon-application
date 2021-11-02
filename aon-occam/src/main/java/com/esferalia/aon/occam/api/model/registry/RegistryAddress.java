@@ -248,7 +248,7 @@ public class RegistryAddress implements Serializable {
 	}
 	
 	public String getFullAddress() {
-		String streetType = getStreetType()==null?"":getStreetType().getDescription();
+		String streetType = getStreetType()==null?"": getStreetType().getDescription().substring(0, 1) + getStreetType().getDescription().substring(1).toLowerCase();
 		if(getStreetType() == null 
 			|| getStreetType() == StreetType.XX 		// TODO ????????????
 			|| getStreetType() == StreetType.ZZ) { 		// TODO ????????????

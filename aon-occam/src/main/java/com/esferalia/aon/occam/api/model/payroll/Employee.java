@@ -30,6 +30,9 @@ public class Employee implements Serializable{
 	private Date deleteDate;
 	
 	
+	private String occupation;
+	private String rlce;
+	
 	private Integer employeeId;
 	private Integer workplaceId;
 	
@@ -215,7 +218,23 @@ public class Employee implements Serializable{
 //		return Optional.ofNullable(statusDescription);
 //	}
 	
+	public Optional<String> getOccupation() {
+		return Optional.ofNullable(occupation);
+	}
 	
+	public Employee setOccupation(String occupation) {
+		this.occupation = occupation;
+		return this;
+	}
+	
+	public Optional<String> getRlce() {
+		return Optional.ofNullable(rlce);
+	}
+	
+	public Employee setRlce(String rlce) {
+		this.rlce = rlce;
+		return this;
+	}
 	
 	public Employee set(Date deleteDate) {
 		this.deleteDate = deleteDate;

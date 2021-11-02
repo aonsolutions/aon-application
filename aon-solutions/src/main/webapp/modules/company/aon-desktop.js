@@ -109,26 +109,30 @@ export class AonDesktop extends AonElement {
 				name: 'MI GESTOR'
 			};
 			aonDesktop.addSidenavOptions2(myGestor, []);
-			getOfficeProjects({}).then(projects => {
+			getOfficeProjects({}).then(offices => {
 				this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
-           		projects.forEach(item => {
-					let p = new Project(item);
-					let h =  p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
-					let option = {
-                    	name: p.getType().getDescription() + (h ? ' - ' + h : '') ,
-                    	icon: 'support_agent',
-	                    fn: () => {}, 
-    	                actions: [{
-        	              id: 'Contact',
-            	          icon: 'chat',
-                	      action: () => {
-							let aonMessengerChat = new AonMessenger();	
-							aonMessengerChat.data = {source:TASK_SOURCE.QUERY, project: item};
-							this.rootPanel(aonMessengerChat);
-						  }
-                    	}]
-                	};
-                	aonDesktop.addSidenavOptionsListValue(myGestor, option);
+				offices.forEach(office => {
+					if(office.projects.length > 0) {
+						office.projects.forEach(item => {
+							let p = new Project(item);
+							let h =  p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
+							let option = {
+								name: p.getType().getDescription() + (h ? ' - ' + h : '') ,
+								icon: 'support_agent',
+								fn: () => {}, 
+								actions: [{
+								  id: 'Contact',
+								  icon: 'chat',
+								  action: () => {
+									let aonMessengerChat = new AonMessenger();	
+									aonMessengerChat.data = {source:TASK_SOURCE.QUERY, project: item, domain: item.domain};
+									this.rootPanel(aonMessengerChat);
+								  }
+								}]
+							};
+							aonDesktop.addSidenavOptionsListValue(myGestor, option);
+						});
+					}
            		});
 			}); 
 		}
@@ -360,7 +364,7 @@ export class AonDesktop extends AonElement {
 								switch(Apps[key].app){
 								case Apps.DOCUMENTAL.app:
 									let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-									uploadDocuments(inputDocumentFile, files);
+									uploadDocuments(inputDocumentFile, files, this.getDur());
 									break;
 								case Apps.INVOICE.app:
 									let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);

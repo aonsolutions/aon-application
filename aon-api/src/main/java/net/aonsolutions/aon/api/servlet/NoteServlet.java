@@ -82,7 +82,9 @@ public class NoteServlet extends AonApiHttpServlet{
 
 	private JSONArray getNotes(AonApiData api) {
 		return NoteJSON.toJSON( 
-				AON_SOLUTIONS.getNoteStream(api.getDomain(), "", f->f.getOwnerProperty().eq(api.getUser().getId()))
+				AON_SOLUTIONS.getNoteStream(api.getDomain(), "", 
+						f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getOwnerProperty().eq(api.getUser().getId()))
+				)
 		);
 	}
 	

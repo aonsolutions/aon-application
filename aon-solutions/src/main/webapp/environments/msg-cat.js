@@ -33,7 +33,9 @@ export const AVAILABLE = 'Disponible';
 
 export const BACK = 'Endarrere';
 export const BACKGROUND_ADJUST = 'Ajustar Fons';
+export const BARCODE = 'Codi de Barres';
 export const BASE = 'Base';
+export const BASQUE = 'Euskera';
 export const BILLING = 'Facturació';
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Contractació';
@@ -45,6 +47,7 @@ export const BUSINESS_NAME = 'Raó Social';
 // ----- C
 
 export const CANCEL = 'Cancel·lar';
+export const CATALAN = 'Català';
 export const CATEGORY = 'Categoria';
 export const CATEGORIES = 'Categories';
 export const CHANGE_TYPE = 'Canviar Tipus';
@@ -52,6 +55,7 @@ export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicacions Clàssiques';
 export const CLASSIC_VIEW = 'Vista Clàssica';
 export const CLOSE = 'Tancar';
+export const CLOSE_SESSION = 'Tancar Sessió';
 export const CODE = 'Codi';
 export const COMMENT = 'Comentari';
 export const COMMENTS = 'Comentaris';
@@ -91,6 +95,7 @@ export const DELETE_LOGO_CONFIRM = "Estàs segur d'eliminar el logo";
 export const DELETE_TAG = 'Esborrar Etiqueta';
 export const DELETE_TAX = 'Esborrar Impost';
 export const DELETED_DATA = "Los datos se han eliminado correctamente";
+export const DESCRIPTION = 'Descripció';
 export const DETAILED = 'Detallat';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
@@ -113,8 +118,14 @@ export const EDIT_FILES = 'Editar Fitxers';
 export const EDIT_TAG = 'Editar Etiqueta';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Empleat';
+export const END_DATE = 'Data Fin';
+export const ENGLISH = 'Anglès';;
 export const ENTERPRISE = 'Empresa';
+export const ENTRY = 'Entrada';
 export const EQUIVALENCE_SURCHARGE = `Recàrrec d'Equivalència`;
+export const EXIT = 'Sortida';
+export const EXPENSE = 'Despesa';
+export const EXPENSES = 'Despeses';
 export const EXPIRATIONS = 'Venciments';
 
 // ----- F
@@ -128,6 +139,7 @@ export const FOOTER = 'Peu';
 
 // ----- G
 
+export const GALICIAN = 'Gallec';
 export const GENERAL_INFORMATION = 'Informació General';
 export const GROUP_DATA = 'Dades de el Grup';
 export const GROUP_MANAGEMENT = `Gestió d'Grups`;
@@ -137,6 +149,7 @@ export const GROUPS = 'Grups';
 // ----- H
 
 export const HEADER = 'Capçalera';
+export const HELP = 'Ajuda';
 export const HIRING = 'Contractació';
 export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulars';
@@ -170,6 +183,8 @@ export const ISSUEDS = 'Emeses';
 
 // ----- L
 
+export const LANGUAGE = 'Idioma';
+export const LAST = 'Última';
 export const LAST_LOCATION = 'Última ubicació';
 export const LAST_STATUS = 'Último estat';
 export const LOCATION = 'Ubicació';
@@ -189,9 +204,12 @@ export const MY_USER = 'Mi Usuari';
 export const NAME = 'Nom';
 export const NEW = 'Nou';
 export const NEW_COMPANY = 'Nova Empresa';
+export const NEW_EXPENSE = 'Nova Despesa';
 export const NEW_PRODUCT = 'Nou Producte';
 export const NEW_REQUEST = 'Nova Sol·licitud';
 export const NEXT = 'Següent';
+export const NOTES = 'Notes';
+export const NOTE = 'Nota';
 export const NUMBER = 'Nombre';
 
 // ----- O
@@ -208,6 +226,7 @@ export const OTHER_SERVICES = 'Altres Serveis';
 
 // ----- P
 
+export const PAUSE = 'Pausa';
 export const PAYMETHOD = 'Forma de Pagament';
 export const PAYROLL = "Nómina";
 export const PAYSHEET = 'Nòmina';
@@ -252,6 +271,7 @@ export const REJECT_INVOICES = 'Rebutjar Factures';
 export const REJECTED = 'Factures Rebutjada';
 export const REJECTED_INVOICES = 'Factures Rebutjades';
 export const REJECTEDS = 'Rebutjades';
+export const REMINDER = 'Recordatori';
 export const REQUEST = 'Sol·licitud';
 export const REQUESTS = 'Sol·licituds';
 export const REQUESTS_SENT = 'Sol·licituds Enviades';
@@ -278,15 +298,18 @@ export const SERIE = 'Sèrie';
 export const SERVICE = 'Servei';
 export const SERVICES = 'Serveis';
 export const SETTING = 'Configuració';
+export const SHARED = 'Compartides';
 export const SHOW_FILE = 'Mostrar Fitxer';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Mida';
+export const SPANISH = 'Castellà';
 export const STATISTICS = 'Estadístiques';
 export const STATUS = "Estado";
 export const SUPPLIED = 'Bestretes';
 export const SUPPLIER = 'Proveïdor';
 export const SUPPLIERS = 'Proveïdors';
+export const SUPPORT = 'Suport';
 export const SURCHARGE = 'Recàrrec';
 export const SURNAME = 'Cognoms';
 export const SYSTEM_MESSAGES =  'Missatges de Sistema';
@@ -302,8 +325,11 @@ export const TICKET = 'Tiquet';
 export const TICKETBAI = 'TicketBAI';
 export const TICKETS = 'Tiquets';
 export const TIMECONTROL = `Control d'Horari`;
+export const TITLE = 'Títol';
 export const TITULAR_DATA = 'Titular Data';
 export const TO_TRASH = 'Enviar a la Paperera';
+export const TODAY = 'Avui';
+export const TOMORROW = 'Matí';
 export const TOOLS = 'Eines';
 export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Bestretes';
@@ -332,9 +358,40 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retenció';
+export const WORKGROUP = 'Grup de treball';
+export const WRITE_YOUR_TITLE = "Escriu el teu títol aquí";
+export const WRITE_A_COMMENT =  "Escriu un comentari";
+export const WRITE_A_DESCRIPTION = "Escriu una descripció";
+export const WRITE_A_NOTE =  "Escriu una nota";
 
 // ----- X
 
 // ----- Y
 
+export const YEAR = 'Any';
+export const YESTERDAY = 'Ahir';
+
 // ----- Z
+
+//-------------DAYS
+export const SUNDAY = "Diumenge";
+export const MONDAY = "Dilluns"; 
+export const TUESDAY = "Dimarts";
+export const WEDNESDAY = "Dimecres";
+export const THURSDAY = "Dijous"; 
+export const FRIDAY = "Divendres"; 
+export const SATURDAY = "Dissabte"; 
+
+//-------------MONTHS
+export const JANUARY = "Gener"; 
+export const FEBRUARY = "Febrer"; 
+export const MARCH = "Març"; 
+export const APRIL = "Abril"; 
+export const MAY = "Maig"; 
+export const JUNE = "Juny"; 
+export const JULY = "Juliol"; 
+export const AUGUST = "Agost";
+export const SEPTEMBER = "Setembre";
+export const OCTOBER = "Octubre"; 
+export const NOVEMBER = "Novembre"; 
+export const DECEMBER = "Desembre"; 

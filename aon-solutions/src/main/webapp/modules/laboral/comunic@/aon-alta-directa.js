@@ -207,10 +207,10 @@ export class AonAltaDirecta extends AonElement {
         if(workplaceOne){
             workplace.setIndexOf(0);
     
-            let ctaCtiOne  = options[0].cccs &  1 === options[0].cccs.length;
+            let ctaCtiOne  = options[0].cccs && 1 === options[0].cccs.length;
             if(ctaCtiOne){
                 ctaCti.setIndexOf(0);
-                this.getElement(`${this.id}Nss`).focus()
+                this.getElement(`${this.id}Nss`).focus();
             } else 
                 ctaCti.focus();
         } else {
@@ -330,14 +330,14 @@ export class AonAltaDirecta extends AonElement {
             if(resp && resp.cccs){
                 const groupedGeozone = this.groupBy(resp.cccs, ccc => ccc.geozone);
                 let geozones = [];
-                groupedGeozone.forEach((cccs, value)=>{
+                groupedGeozone.forEach((cccs, name)=>{
                     if(cccs && cccs.length)
                         cccs = cccs.filter( (value,index, self)=>self.findIndex((m) => m.ccc === value.ccc) === index );
                         
                     geozones.push({
                         cccs,
-                        value,
-                        name:value
+                        name,
+                        value:name
                     });
                 })
                 let centro_trabajo = this.getElement('centro_trabajo');

@@ -29,6 +29,7 @@ public interface IJsonNames {
 	String ADMINISTRATIVE = "administrative";
 	String ALIAS = "alias"; 
 	String AMOUNT = "amount";
+	String ATTACH = "attach";
 	String ATTACH_MODULE = "attachModule";
 	String ATTACH_TYPE = "attachType";
 	String AUTH = "auth";
@@ -92,8 +93,10 @@ public interface IJsonNames {
 	String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
 	String DEBIT = "debit";
 	String DEFINED_USERS = "definedUsers";
+	String DELIVERY_GROUPED = "deliveryGrouped";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
+	String DELIVERY_VALUATED = "deliveryValuated";
 	String DEADLINE = "deadline";
 	String DESCRIPTION = "description";
 	String DETAIL = "detail";
@@ -172,6 +175,7 @@ public interface IJsonNames {
 	String INTERVALS = "intervals";
 	String INVENTORIABLE = "inventoriable";
 	String INVESTMENT = "investment";
+	String INVOICING_GROUP = "invoicingGroup";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
@@ -214,6 +218,7 @@ public interface IJsonNames {
 	String NEARBY_NUMBERS = "nearbyNumbers";
 	String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
+	String NOTARY = "notary";
 	String NULL = "null";
 	String NUMBER = "number";
 	String NUMBER_OF_PYMNTS = "numberOfPymnts";
@@ -272,6 +277,8 @@ public interface IJsonNames {
 	String PRODUCT_ID = "productId";
 	String PROFIT_PERCENT = "profitPercent";
 	String PROJECT = "project";
+	String PROJECT_GROUPED = "ProjectGrouped";
+ 	String PROJECTS = "projects";
 	String PROJECT_HOLDER = "projectHolder";
 	String PROMO = "promo";
 	String PROVINCE = "province";
@@ -286,11 +293,13 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[R] 
 	String RDOCUMENT = "rdocument";
 	String RECEIVER = "receiver";
+	String RECORD_DATE = "recordDate";
 	String RECTIFICATION = "rectification";
 	String RECTIFICATION_INVOICE = "rectification_invoice";
 	String RECTIFIED = "rectified";
 	String REFERENCE_CODE = "referenceCode";
 	String REFERENCE = "reference";
+	String REGISTRATION = "registration";
 	String REGISTRY_ID = "registryId";
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
@@ -308,6 +317,7 @@ public interface IJsonNames {
 	String SALES_ACCOUNT  = "salesAccount";
 	String SALES_RATIO = "salesRatio";
 	String SCOPE = "scope";
+	String SECTION = "section";
 	String SECURITY_LEVEL = "securityLevel";
 	String SELECTED_ACCOUNT = "selectedAccount";
 	String SELECTED_ACTIVITY = "selectedActivity";
@@ -323,6 +333,7 @@ public interface IJsonNames {
 	String SESSION_ID = "session_id";
 	String SETTLED = "settled";
 	String SHARED = "shared";
+	String SHEET = "sheet";
 	String SHOW_COVER = "showCover";
 	String SIZE = "size";
 	String SOURCE = "source";
@@ -339,6 +350,7 @@ public interface IJsonNames {
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";
 	// ---------------------------------------------------------------------------------------------	[T] 
+	String TARIFF = "tariff";
 	String TAS = "tas";
 	String TASK = "task";
 	String TASK_HOLDER = "task_holder";
@@ -364,6 +376,7 @@ public interface IJsonNames {
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
 	String VAT = "vat";
+	String VOLUME = "volume";
 	// ---------------------------------------------------------------------------------------------	[W] 
 	String WEB = "web";
 	String WITHHOLDING = "withholding";
