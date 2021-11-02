@@ -89,7 +89,7 @@ public class FacturasRecibidas extends SIIBuilt{
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(SuministroLRFacturasRecibidas.class);
-			b = writeXml(ctx, suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, mod, terceros));
+			b = writeXml(ctx, suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, mod, terceros, false));
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -154,7 +154,7 @@ public class FacturasRecibidas extends SIIBuilt{
 	 * @param company
 	 * @param invoiceList
 	 */
-	protected SuministroLRFacturasRecibidas suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
+	protected SuministroLRFacturasRecibidas suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros, boolean errorPeriodo) {
 		SuministroLRFacturasRecibidas suministro = new SuministroLRFacturasRecibidas();
 
 		// CABECERA
@@ -238,7 +238,7 @@ public class FacturasRecibidas extends SIIBuilt{
 		Boolean isRegistro = "R".equals(ap.getValue());
 		Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
 		// PeriodoLiquidacion || PeriodoImpositivo
-		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), opDate, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), opDate, false, errorPeriodo));
 		
 		ApplicationParameter ap2 = AON.getApplicationParameter(domain.getName(), domain.getId(), login,
 				AppParam.SII_INCLUDE_DATE);

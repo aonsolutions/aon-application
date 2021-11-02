@@ -777,7 +777,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 						sb.appendHtmlConstant("</button>");
 	        		}
 	        		if(text.equals("download")){
-	        			String icon = "aon-icon-mail-save";
+	        			String icon = "aon-icon-download";
 	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button " + icon + "\" tabindex=\"-1\">");
 						sb.appendHtmlConstant("</button>");
 	        		}

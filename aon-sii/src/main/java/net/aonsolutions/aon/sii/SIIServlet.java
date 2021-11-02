@@ -124,7 +124,7 @@ public class SIIServlet extends HttpServlet{
 					}
 				} else if(option.contains("fr_")){
 					if(isSuministro(action)){
-						object = manager.suministroFacturasRecibidas(domain, login, company, ids[0], contextList, terceros);
+						object = manager.suministroFacturasRecibidas(domain, login, company, ids[0], contextList, terceros, false);
 					} else if(isBaja(action)){
 						object = manager.bajaFacturasRecibidas(domain, login, company, ids[0], contextList, terceros);
 					}

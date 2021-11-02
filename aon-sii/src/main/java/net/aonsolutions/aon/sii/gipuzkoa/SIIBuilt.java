@@ -38,9 +38,9 @@ public class SIIBuilt {
 	 * @param invoice
 	 * @return PeriodoImpositivo
 	 */
-	protected PeriodoLiquidacion periodoLiquidacion(Date invDate, Date date, boolean anual){
-		Integer nowDay = AonDateUtils.getDay(new Date());
-		Integer nowMonth = AonDateUtils.getMonth(new Date()) + 1;
+	protected PeriodoLiquidacion periodoLiquidacion(Date invDate, Date date, boolean anual, boolean errorPeriodo){
+		Integer nowDay = errorPeriodo ? AonDateUtils.getDay(date) : AonDateUtils.getDay(new Date());
+		Integer nowMonth = errorPeriodo ? AonDateUtils.getMonth(date) + 1 : AonDateUtils.getMonth(new Date()) + 1;
 		
 		Integer invYear = AonDateUtils.getYear(invDate);
 		Integer invMonth = AonDateUtils.getMonth(invDate) + 1;
