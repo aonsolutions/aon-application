@@ -1,22 +1,45 @@
 package solutions.aon.seg.social;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
+import javax.net.ssl.SSLContext;
+import javax.sound.midi.Soundbank;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContexts;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.object.Liquidation.LiquidationBuilder;
 import solutions.aon.seg.social.object.SituacionEmpresa.SituacionEmpresaBuilder;
 import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilder;
@@ -24,6 +47,7 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 public abstract class ServicioREDRegeXML {
 	protected static final String DATE_FORMAT = "dd/MM/yyyy";
+	protected static final String DATE_FORMAT_DASHES = "dd-MM-yyyy";
 	/**
 	 * Not reliable, it sometimes does not pick up some values properly
 	 * @param xml The xml String
@@ -77,6 +101,179 @@ public abstract class ServicioREDRegeXML {
         saxParser.parse(is, handler);
         	
         return values;
+	}
+	
+	protected static List<Employee> extractIpfXNafInfo (String xml) throws SegSocialException, ParserConfigurationException, SAXException, IOException {
+		List<Employee> employees = new LinkedList<>();
+		
+		DefaultHandler handler = new DefaultHandler() {
+			private StringBuilder data;
+			EmployeeBuilder employeeBuilder;
+			String errMsg = null;
+			boolean bNss;
+			boolean bIpf;
+			boolean bName;
+			boolean bMessage;
+			boolean bTipo;
+			boolean bTexto;
+			boolean empty;
+			boolean error;
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes attributes)
+					throws SAXException {
+				if (qName.equalsIgnoreCase("TRABAJADOR")) {
+					empty = true;
+					employeeBuilder = new EmployeeBuilder();
+				} else if (qName.equalsIgnoreCase("NA5NumSegSocialCompleto")) {
+					bNss = true;
+				} else if (qName.equalsIgnoreCase("IP9NumDoc")) {
+					bIpf = true;
+				} else if (qName.equalsIgnoreCase("NOMBRE_COMPLETO")) {
+					bName = true;
+				} else if (qName.equalsIgnoreCase("MESSAGE")) {
+					bMessage = true;
+				} else if (bMessage && qName.equalsIgnoreCase("TIPO")) {
+					bTipo = true;
+				} else if (bMessage && qName.equalsIgnoreCase("TEXTO")) {
+					bTexto = true;
+				}
+				data = new StringBuilder();
+			}
+
+			@Override
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				if (bNss) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					employeeBuilder.setNss(data.toString());
+					bNss = false;
+				} else if (bIpf) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					employeeBuilder.setIpf(data.toString());
+					bIpf = false;
+				} else if (bName) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					String name = data.toString();
+					name = name != null ? name.trim() : null;
+					employeeBuilder.setName(name);
+					bName = false;
+				} else if (bTipo) {
+					error = data.toString() != null && data.toString().equalsIgnoreCase("ERROR");
+					bTipo = false;
+				} else if (bTexto) {
+					errMsg = data.toString();
+					bTexto = false;
+				}
+				if (qName.equalsIgnoreCase("TRABAJADOR") && !empty) {
+					employees.add(employeeBuilder.build());
+				} else if (qName.equalsIgnoreCase("MESSAGE")) {
+					bMessage = false;
+					if (error) {
+						throw new SAXException(errMsg != null ? errMsg : "");
+					}
+				}
+			}
+
+			@Override
+			public void characters(char[] ch, int start, int length) throws SAXException {
+				data.append(new String(ch, start, length));
+			}
+		};
+		
+		 
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser saxParser = factory.newSAXParser();
+		StringReader reader = new StringReader(xml);
+		InputSource is = new InputSource(reader);
+        is.setEncoding("UTF-8");
+        saxParser.parse(is, handler);
+        	
+        return employees;
+	}
+	
+	protected static Employee extractNafXIpfInfo (String xml) throws SegSocialException, ParserConfigurationException, SAXException, IOException {
+		//builder.setNss(nss).setName(name).setIpf(ipf1).setIdent(Integer.parseInt(ident1));
+		EmployeeBuilder employeeBuilder = new EmployeeBuilder();
+		DefaultHandler handler = new DefaultHandler() {
+			StringBuilder data;
+			boolean bNss;
+			boolean bIpf;
+			boolean bName;
+			boolean bCodeType;
+			boolean bTipo;
+			boolean bTextoError;
+			boolean error;
+			String errorText = null;
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes attributes)
+					throws SAXException {
+				if (qName.equalsIgnoreCase("NA5NumSegSocialCompleto")) {
+					bNss = true;
+				} else if (qName.equalsIgnoreCase("IP6NUMERO_DOCUMENTO")) {
+					bIpf = true;
+				} else if (qName.equalsIgnoreCase("NOMBRE_COMPLETO")) {
+					bName = true;
+				} else if (qName.contentEquals("CODIGO_TIPO")) {
+					bCodeType = true;
+				} else if (qName.contentEquals("TIPO")) {
+					bTipo = true;
+				} else if (error && qName.contentEquals("TEXTO")) {
+					bTextoError = true;
+				}
+					data = new StringBuilder();
+			}
+
+			@Override
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				if (bNss) {
+					employeeBuilder.setNss(data.toString());
+					bNss = false;
+				} else if (bIpf) {
+					employeeBuilder.setIpf(data.toString());
+					bIpf = false;
+				} else if (bName) {
+					employeeBuilder.setName(data.toString());
+					bName = false;
+				} else if (bCodeType) {
+					try {						
+						employeeBuilder.setIdent(Integer.parseInt(data.toString()));
+					} catch (NumberFormatException e) {
+					} finally {
+						bCodeType = false;
+					}
+				} else if (bTipo) {
+					if (data.toString().equalsIgnoreCase("ERROR")) {
+						error = true;
+					}
+					bTipo = false;
+				} else if (bTextoError) {
+					errorText = data.toString();
+					bTextoError = false;
+				}
+				
+				if (error && qName.contentEquals("MESSAGE")) {
+					throw new SAXException(errorText != null ? errorText : "");
+				}
+				
+			}
+
+			@Override
+			public void characters(char[] ch, int start, int length) throws SAXException {
+				data.append(new String(ch, start, length));
+			}
+		};
+		
+		 
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser saxParser = factory.newSAXParser();
+		StringReader reader = new StringReader(xml);
+		InputSource is = new InputSource(reader);
+        is.setEncoding("UTF-8");
+        saxParser.parse(is, handler);
+        	
+        return employeeBuilder.build();
 	}
 	
 	protected static void fillManagementData (SituacionEmpresaBuilder seb, Map<String, String> values) {
@@ -161,7 +358,7 @@ public abstract class ServicioREDRegeXML {
 	
 	protected static void liquidationDataType(LiquidationBuilder lb, Collection<String> trs) throws SegSocialException {
 		for (String tr : trs) {
-			LinkedList<String> rows = Toolkit.getTdsTexts(tr);
+			List<String> rows = Toolkit.getTdsTexts(tr);
 			String rowConcept=Toolkit.safeRemoveWeirdCharacters(Toolkit.safeGet(rows, 0));
 			if (rowConcept != null) {
 				if(rowConcept.equalsIgnoreCase("CONTINGENCIAS COMUNES")) {
@@ -266,7 +463,7 @@ public abstract class ServicioREDRegeXML {
 	public static void workerLiquidationDataType(WorkerLiquidationBuilder wlb, Collection<String> trs) throws SegSocialException {
 		
 		for (String tr : trs) {
-			LinkedList<String> rows = Toolkit.getTdsTexts(tr);
+			List<String> rows = Toolkit.getTdsTexts(tr);
 			String rowConcept=Toolkit.safeRemoveWeirdCharacters(Toolkit.safeGet(rows, 0));
 			if (rowConcept != null) {
 				
@@ -407,6 +604,200 @@ public abstract class ServicioREDRegeXML {
 			}
 		}
 		
+	}
+
+	public static void checkOldSsError(String body) throws SegSocialException {
+		String error = Toolkit.getDIL(body);
+		if (Toolkit.getErrCode(error) != null)
+			InvalidDataException.checkCode(Toolkit.getErrCode(error), Toolkit.getErrMsg(error));
+	}
+	
+	public static void checkOldSsError(String body, Integer... exceptions) throws SegSocialException {
+		String error = Toolkit.getDIL(body);
+		if (Toolkit.getErrCode(error) != null) {
+			if (exceptions == null || exceptions.length == 0 || !Arrays.stream(exceptions).anyMatch(code -> code.equals(Toolkit.getErrCode(error))))
+				InvalidDataException.checkCode(Toolkit.getErrCode(error), Toolkit.getErrMsg(error));
+		}
+	}
+	
+	public static String removeSpaces(String text) {
+		if (text == null || text.isEmpty())
+			return text;
+		else
+			return text.replace(" ", "");
+	}
+
+	public static String emptyIfNull(String text) {
+		if (text == null)
+			return "";
+		else
+			return text;
+	}
+	
+	public static Date parseDateWithDashes(String strDate) {
+		if (strDate == null || strDate.isEmpty())
+			return null;
+		String d = strDate.trim();
+		DateFormat df = new SimpleDateFormat(DATE_FORMAT_DASHES);
+		try {
+			return df.parse(d);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+	
+	public static Date parseDateWithSlashes(String strDate) {
+		if (strDate == null || strDate.isEmpty())
+			return null;
+		String d = strDate.trim();
+		DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+		try {
+			return df.parse(d);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
+	public static final String DEFAULT_ENCODING = IServicioRedConstants.ISO_8859_1;
+	static List<Employee> getEmployeesFromTable(CloseableHttpClient httpClient, String body, String link,
+			String sessionId, String regime, String ccc) throws SegSocialException, IOException {
+		String dil = Toolkit.getDIL(body);
+		boolean endOfData = false;
+		List<Employee> employees = new ArrayList<>();
+		while (!endOfData) {
+			String table = Toolkit.getTable(body);
+			Collection<String> trs = Toolkit.getTrs(table);
+			for (String tr : trs) {
+				List<String> tds = Toolkit.getTdsTexts(tr);
+				if (tds != null && !tds.isEmpty()) {
+					String nss = removeSpaces(tds.get(0));
+					if (nss == null || nss.isEmpty())
+						break;
+					EmployeeBuilder builder = new EmployeeBuilder();
+					String name = tds.get(1);
+					Date date = parseDateWithDashes(tds.get(2));
+					String situation = tds.get(3) != null && !tds.get(3).isEmpty() ? tds.get(3) : "AL";
+					String ipf = Toolkit.removeExtraZeros(removeSpaces(tds.get(4)));
+					Employee employee = builder.setNss(nss)
+												.setName(name)
+												.setFra(date)
+												.setSituation(situation)
+												.setIpf(ipf)
+												.setCtaCti(ccc)
+												.setRegime(regime).build();
+					
+					employees.add(employee);
+				}
+			}
+			
+			if (dil == null ||(dil != null && dil.contains("3252")))
+				endOfData = true;
+			else {
+				HttpPost httpPost = new HttpPost(link);
+				List<NameValuePair> params = new ArrayList<>();
+				params.add(new BasicNameValuePair(IServicioRedConstants.LIBAFCON, IServicioRedConstants.LIBAFCON));
+				params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6202"));
+				params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+				params.add(new BasicNameValuePair("btn_Sub2207801001", "Pág.+Sig."));
+				httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+				body = Toolkit.getBodyPOST(httpClient, httpPost);
+				checkOldSsError(body);
+				link = Toolkit.getLink(body);
+				sessionId = Toolkit.getSessionId(body);
+				dil = Toolkit.getDIL(body);
+			}
+		}	
+		
+		return employees;
+	}
+
+	static Collection<Employee> getEmployeesCommon(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String regime, String ccc, boolean prev)
+			throws SegSocialException {
+		
+		SSLContext sslContext = null;
+		try {				
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		String link = "";
+		String sessionId = "";
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
+			link = Toolkit.getLink(body);
+			sessionId = Toolkit.getSessionId(body);
+			
+			String txtSDFTESO62 = ccc != null && ccc.length() > 2 ? ccc.substring(0, 2) : "";
+			String txtSDFNUM62 = ccc != null && ccc.length() > 2 ? ccc.substring(2) : "";
+			
+			HttpPost httpPost = new HttpPost(link);
+			List<NameValuePair> params = new ArrayList<>();
+			params.add(new BasicNameValuePair(IServicioRedConstants.LIBAFCON, IServicioRedConstants.LIBAFCON));
+			params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6201"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+			params.add(new BasicNameValuePair("txt_SDFREG62_ayuda", regime));
+			params.add(new BasicNameValuePair("txt_SDFTESO62", txtSDFTESO62));
+			params.add(new BasicNameValuePair("txt_SDFNUM62", txtSDFNUM62));
+			params.add(new BasicNameValuePair("chk_chkgrupo1_1", "1"));
+			params.add(new BasicNameValuePair("chk_chkgrupo1_" + (prev ? "2" : "1"), "1"));
+			params.add(new BasicNameValuePair("chk_chkgrupo1_2", "1"));
+			params.add(new BasicNameValuePair("btn_Sub2207601004", IServicioRedConstants.CONTINUE));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, DEFAULT_ENCODING));
+			body = Toolkit.getBodyPOST(httpClient, httpPost);
+			checkOldSsError(body);
+			link = Toolkit.getLink(body);
+			sessionId = Toolkit.getSessionId(body);
+			return getEmployeesFromTable(httpClient, body, link, sessionId, regime, ccc);
+		} catch (IOException e) {
+			throw new InvalidCertificateException();
+		}
+	}
+
+	public static String identity(String ipf) {
+		ipf = Toolkit.removeExtraZeros(ipf);
+		Pattern nif  = Pattern.compile(
+				//  -------- LEGAL_PERSON_NIF PATTERN  
+				// -------- (1) --> X00000000
+					"^[A-JUV]"
+					+"[\\s-_/]?"
+					+"[0-9]{2}"
+					+"[-_/\\.]?"
+					+"[0-9]{3}"
+					+"[-_/\\.]?"
+					+"[0-9]{3}$"
+					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		Pattern dni  = Pattern.compile(
+					"[0-9]?"
+					+"[0-9]"
+					+"[\\s-_/\\.]?"
+					+"[0-9]{3}"
+					+"[\\s-_/\\.]?"
+					+"[0-9]{3}"
+					+"[\\s-_/]?"
+					+"[A-Z]"
+					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+				//  -------- NIE PATTERN 
+				// -------- (1) --> X0000000X
+		Pattern nie  = Pattern.compile(
+					"[XYZ]"
+					+"[\\s-_/]?"
+					+"[0-9]{7}"
+					+"[\\s-_/]?"
+					+"[A-HJ-NP-TV-Z]"
+				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		
+		Map<Pattern, Integer> patterns = new HashMap<Pattern, Integer>();
+		patterns.put(nif, 1);
+		patterns.put(dni, 1);
+		patterns.put(nie, 6);
+		
+		String identity = "";
+		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {
+			if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }
+		}
+		return identity;
 	}
 	
 	

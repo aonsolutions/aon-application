@@ -122,6 +122,11 @@ public class Period {
 			return false;
 		return true;
 	}
+	@Override
+	public String toString() {
+		return "Period [startDate=" + startDate + ", endDate=" + endDate + ", hours=" + hours + ", baseCC=" + baseCC
+				+ ", baseAT=" + baseAT + ", quoteDays=" + quoteDays + "]";
+	}
 	
 	
 }

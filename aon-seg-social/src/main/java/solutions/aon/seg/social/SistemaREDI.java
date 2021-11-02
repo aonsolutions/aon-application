@@ -1147,7 +1147,9 @@ class SistemaREDI {
 	
 	
 	
-	////GETS THE WORKER LIQUIDATION AVAILABLE IN THE FIRST ENTERPRISE LIQUIDATION SHOWN FOR THE WORKER WHOSE NAF IS INPUTTED
+	/**
+	 * GETS THE WORKER LIQUIDATION AVAILABLE IN THE FIRST ENTERPRISE LIQUIDATION SHOWN FOR THE WORKER WHOSE NAF IS INPUTTED
+	 */
 	public static WorkerLiquidation WorkerCalculationQueryByNAF(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String naf, final String ccc,
 			final SistemaRED.Regime regime, final Date dateFrom, final Date dateTo, final SistemaRED.LiquidationType liqType,

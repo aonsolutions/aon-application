@@ -66,7 +66,7 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
-import solutions.aon.seg.social.ServicioRED;
+import solutions.aon.seg.social.ServicioREDEmployee;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
@@ -437,7 +437,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		  String cti     = ccc.getCccAccount();
 		  String regimen = ccc.getCccRegimeCode();
 		  try {
-			  byte[] pdf = ServicioRED.getCccLaboralLife(
+			  byte[] pdf = ServicioREDEmployee.getCccLaboralLifePOST(
 					new ByteArrayInputStream(certificate.getCertificate()), 
 					certificate.getPassword(), 
 					certificate.getType(), 
