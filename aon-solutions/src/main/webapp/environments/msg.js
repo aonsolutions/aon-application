@@ -124,6 +124,7 @@ export const CREATE = MSG.CREATE;
 export const CREATION_DATE = 'Fecha de Creación'; // TODO
 export const CREDITOR = MSG.CREDITOR;
 export const CREDITORS = MSG.CREDITORS;
+export const CUSTOM_VIEW = MSG.CUSTOM_VIEW;
 export const CUSTOMER = MSG.CUSTOMER;
 export const CUSTOMERS = MSG.CUSTOMERS;
 

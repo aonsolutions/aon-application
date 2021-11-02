@@ -275,6 +275,7 @@ export const BANK = {
   color: '#D38C5B',
   price:  ' ', // 'Desde 45€/mes'
 };
+
 export const FORMACION = {
   app: 'formacion',
   title: 'Formación',
@@ -308,6 +309,15 @@ export const OUTSOURCING = {
   disabled: true
 };
 
+export const CUSTOM_VIEW = {
+  app: 'custom_view',
+  title: MSG.CUSTOM_VIEW,
+  description: MSG.CUSTOM_VIEW,
+  icon: 'aon_app',
+  color: '#CAF509',
+  price:  ' '
+};
+
 export const MenuApps = {ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL, INVOICE, TIMECONTROL, MESSENGER, TOOLS, NOTES};
 
 export const MobileMenuApps = [DOCUMENTAL, TIMECONTROL, INVOICE, MESSENGER, PAYROLL, COMUNICA, FISCAL, ACCOUNTING];
@@ -320,7 +330,7 @@ export const Apps = { ACCOUNTING, FISCAL,PAYROLL, COMUNICA, DOCUMENTAL,
 export const AuxApps = {TOOLS};
 export const ClassicApps = {AON_SOLUTIONS, BIDOQ, SELFCONTA};
 export const Services = {OCR, CONVENIOS, BANK};
-export const OtherServices = {FORMACION, ACELERA, OUTSOURCING };
+export const OtherServices = {FORMACION, ACELERA, OUTSOURCING, CUSTOM_VIEW };
 
 export const AllApps = { ACCOUNTING, FISCAL, PAYROLL, COMUNICA, DOCUMENTAL,
    TIMECONTROL, INVOICE, MESSENGER, OCR, CONVENIOS, BANK, AON_SOLUTIONS, BIDOQ, SELFCONTA};

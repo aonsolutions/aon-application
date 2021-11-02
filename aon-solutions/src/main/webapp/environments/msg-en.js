@@ -76,6 +76,7 @@ export const COUNTRY = 'Country';
 export const CREATE = 'Create';
 export const CREDITOR = 'Creditor';
 export const CREDITORS = 'Creditors';
+export const CUSTOM_VIEW = 'Custom View';
 export const CUSTOMER = 'Customer';
 export const CUSTOMERS = 'Customers';
 

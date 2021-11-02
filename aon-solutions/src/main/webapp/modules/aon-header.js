@@ -73,8 +73,8 @@ export class AonHeader extends AonElement {
 	build() {
 		this.innerHTML = /*html*/`
 			<div id="aonHeaderWeb" class="aonHeader" >
-				<span>
-					<img id="aonLogo" class="aonLogo" width="230px" />
+				<span class="aonHeaderLogoSpan">
+					<img id="aonLogo" class="aonLogo"  />
 				</span>
 
 				<span id="aonHeaderSearch" class="aonLeft250 aonHeaderButton" >
@@ -236,6 +236,7 @@ export class AonHeader extends AonElement {
 			localStorage.removeItem('aon_domain_login');
 			clearDurum();
 			this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
+			this.defaultLogo();
 		});
 		if(this.activeTimecontrol) {
 			getTimeControl().then(r => this.timeControlStatus(r) );
@@ -366,7 +367,15 @@ export class AonHeader extends AonElement {
 				this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
 			}
 		})
+	}
 
+	defaultLogo() {
+		let aonLogo = this.getElement('aonLogo');
+		if(window.location.href.includes('ayudat')){
+			aonLogo.src = '../assets/ayudat-logo2.png';
+		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
+			aonLogo.src = '../assets/ayudat-logo3.png';
+		} else aonLogo.src = '../assets/aon-logo2.png';
 	}
 
 	aonConfiguration() {

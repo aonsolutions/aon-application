@@ -355,4 +355,10 @@ public class DomainUserRoles implements Serializable {
 	public boolean isEnterprise() {
 		return this.hasRole(AonRole.ENTERPRISE);
 	}
+	
+	// CUSTOM VIEW
+	
+	public boolean hasCustomView() {
+		return hasApp(AonApp.CUSTOM_VIEW);
+	}
 }

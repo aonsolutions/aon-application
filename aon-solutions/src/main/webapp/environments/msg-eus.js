@@ -76,6 +76,7 @@ export const COUNTRY = 'Herrialde';
 export const CREATE = 'Sortu';
 export const CREDITOR = 'Hartzekodun';
 export const CREDITORS = 'Hartzekodunak';
+export const CUSTOM_VIEW = 'Ikuspegi Pertsonalizatua';
 export const CUSTOMER = 'Bezero';
 export const CUSTOMERS = 'Bezeroak';
 
