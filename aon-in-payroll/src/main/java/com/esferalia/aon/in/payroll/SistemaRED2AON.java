@@ -456,9 +456,6 @@ public class SistemaRED2AON {
 	}
 
 	private static DeductionType getDeductionType(String name) {
-		if ( AonStringUtils.isBlank(name) )
-			return DeductionType.BONUS;
-		
 		ContextVariable var = ContextVariable.getVariableByName(name);
 		if ( var != null )
 			return getDeductionType(var );
