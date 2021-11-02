@@ -2,7 +2,7 @@ import { AonElement } from "../../../components/AonElement.js";
 
 import {
   getCertCorriente,
-  getTipoCtz,
+  getQuoteType,
   getReportAffiliateInAlta,
   getReportAffiliateInMovPrev,
   getCccForActivity,
@@ -149,7 +149,7 @@ export class AonCtaList extends AonElement {
   }
 
   async getTipo(data) {
-    const { name } = await getTipoCtz(data);
+    const { name } = await getQuoteType(data);
     return name;
   }
 

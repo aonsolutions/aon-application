@@ -58,7 +58,7 @@ export class AonPayrollList extends AonElement {
 
   async build(){
     this.paintView();
-    if(!this.applicationParentEl.isEmployee()){
+    if(!this.isEmployee()){
       this.buildToolbar();
       this.applicationParentEl.changeFilter();
     }
@@ -139,8 +139,10 @@ export class AonPayrollList extends AonElement {
     const aonTable = this.getElement(this.TABLE_ID);
     if (aonTable) {
       aonTable.removeColumns();
-      aonTable.addColumn("Nombre", "string", "name", "30%");
-      aonTable.addColumn("C. Trabajo", "string", "workplaceName", "20%");
+      if(!this.isEmployee()){
+        aonTable.addColumn(MSG.NAME, "string", "name", "30%");
+        aonTable.addColumn("C. Trabajo", "string", "workplaceName", "20%");
+      }
       aonTable.addColumn("F. Inicio", "date", "startDateP", "10%");
       aonTable.addColumn("F. Fin", "date", "endDateP", "10%");
       aonTable.addColumn("Bruto", "number", "totalPayment", "10%");
@@ -167,7 +169,7 @@ export class AonPayrollList extends AonElement {
         const resp = await this.getData();
         aonTable.removeAllLi();
 
-        const isEmployee = this.applicationParentEl.isEmployee();
+        const isEmployee = this.isEmployee();
 
         resp.map((res, idx) => {
           let options = {};
@@ -192,43 +194,28 @@ export class AonPayrollList extends AonElement {
   async getData() {
     let data = [];
     try {
-      if(this._list.length){
+      if(this._list.length)
         data = this._list;
-      } else {
-        const isEmployee = this.applicationParentEl.isEmployee();
+      else {
         let filter = this.applicationParentEl._filter;
-        let datos = isEmployee ? await getEmployeeSalaries(filter) : await getEnterpriseSalaries(filter);
+        let datos = []; 
+        if(this.isEmployee())  {
+          datos = await getEmployeeSalaries(filter);
+          datos = sortBy(datos, 'endDate', 'desc').filter(({endDate})=> new Date(endDate) <= new Date());
+        } else {
+          datos = await getEnterpriseSalaries(filter);
+          datos = sortBy(datos, 'employeeName', 'asc');
+        }
+
         if (!isEmptyObject(datos)) {
-          datos = isEmployee ? sortBy(datos, 'endDate', 'desc').filter(({endDate})=> new Date(endDate) <= new Date()) : sortBy(datos, 'employeeName', 'asc');
-          data = datos.map(({
-              contract,
-              employeeName:name,
-              endDate,
-              id,
-              startDate,
-              totalDeduction,
-              totalLiquid,
-              totalPayment,
-              type,
-              workplaceName,
-            }) => {
-                const lettersType = this.applicationParentEl.getTypeSalaryText(type);
-                const lettersHtml = `<div class="profile-letters ${lettersType.color}">${lettersType.typeReduce}</div>`;
-                return {
-                  id,
-                  lettersHtml,
-                  contract,
-                  type,
-                  workplaceName,
-                  name,
-                  startDate,
-                  endDate,
-                  totalDeduction: formatNumber(totalDeduction, 2, "EUR"),
-                  totalLiquid: formatNumber(totalLiquid, 2, "EUR"),
-                  totalPayment: formatNumber(totalPayment, 2, "EUR"),
-                }
-            }
-          );
+          data = datos.map(res => ({
+            ...res,
+            name: res.employeeName,
+            lettersHtml: this.getDivIconStyle(res.type),
+            totalDeduction: formatNumber(res.totalDeduction, 2, "EUR"),
+            totalLiquid: formatNumber(res.totalLiquid, 2, "EUR"),
+            totalPayment: formatNumber(res.totalPayment, 2, "EUR"),
+          }));
           this._list = data;
           if(this.searchFilter) data = this.filterSearch(["name", "workplaceName"], data);
         }
@@ -257,6 +244,19 @@ export class AonPayrollList extends AonElement {
     if(parent) parent.getSalary({salaryId:data.id});
   }
 
+  isEmployee(){
+    return this.applicationParentEl.isEmployee();
+  }
+
+  getDivIconStyle(type){
+    const {color, typeReduce} = this.applicationParentEl.getTypeSalaryText(type);
+    let div = this.createElement("div");
+    div.innerText = typeReduce;
+    div.classList.add("profile-letters");
+    if(color) div.classList.add(color);
+    return div.outerHTML;
+  }
+
   async getEmployees(detail){
     try {
       let employeeEl = this.getElement("employee");
@@ -268,7 +268,6 @@ export class AonPayrollList extends AonElement {
         employeeEl.hidden =  false;
       }
       else employeeEl.hidden =  true;
-
     } catch (error) {
       console.log(error);
     }

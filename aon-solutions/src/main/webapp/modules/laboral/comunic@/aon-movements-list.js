@@ -1,6 +1,6 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { disabledForm, setValueName } from "../../../services/utils.js";
-import { getMovements, getEmployee, getCccLife } from "../../../services/service.js";
+import { getMovements, getEmployee, getMovementsCccs } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
@@ -290,7 +290,7 @@ export class AonMovementsList extends AonElement {
     this.setFilter(detail);
     try {
       let count = 0;
-      const resp = await getCccLife(this.getFilter());
+      const resp = await getMovementsCccs(this.getFilter());
       resp
       .map((res) => {
         const newData = this.formatData(res);

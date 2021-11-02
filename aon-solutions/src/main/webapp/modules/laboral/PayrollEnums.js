@@ -74,7 +74,7 @@ export const PAYROLL_FILTER = [
       type: "select",
       id: "employee",
       name: "employee",
-      title: "Trabajador",
+      title: MSG.EMPLOYEE,
       hidden:true
     }
 ];

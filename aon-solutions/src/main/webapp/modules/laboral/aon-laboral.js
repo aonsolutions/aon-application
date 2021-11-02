@@ -15,6 +15,7 @@ import { AonApplication } from "../../components/aon-application.js";
 import { AonCtaList } from "./cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
 import Apps from "../../services/app.js";
+import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 
 export class AonLaboral extends AonElement {
@@ -281,8 +282,11 @@ export class AonLaboral extends AonElement {
   }
 
   updateContracts(){
-    updateContracts().then(r=>{
-      console.log("----------UPDATE CONTRACTS------", r);
+    updateContracts({
+      startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-6)),
+      endDate: AonDateUtils.formatDateOrigin(new Date()),
+    }).then(()=>{
+      console.log("----------UPDATE CONTRACTS------");
     });
   }
 

@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, disabledForm, sortBy } from '../../../services/utils.js';
-import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getTipoJornada, getIpfxnaf, getNafxipf, getTipoCtz, updateContrato, getCccForActivity, getCodBaja } from '../../../services/service.js'
+import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getTipoJornada, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
@@ -270,8 +270,8 @@ export class AonAltaDirecta extends AonElement {
             nss.parentNode.classList = dni.parentNode.classList = 'aonCol-sm-12 aonCol-md-6';
 
         //disabled tipo de contrato
-        this.getElement('type_cto').disabled = true;
-        disabledForm('type_cto');
+        // this.getElement('type_cto').disabled = true;
+        // disabledForm('type_cto');
     }
 
     selectTipojornada({ detail }) {
@@ -301,7 +301,7 @@ export class AonAltaDirecta extends AonElement {
 
     selectTypeCto(type) {
         const type_cto = document.querySelector('#type_cto > aon-input');
-        getTipoCtz(type).then(({name})=>{
+        getQuoteType(type).then(({name})=>{
             if (type_cto && !type_cto.value && name)
                 type_cto.value = name;
         });
@@ -545,16 +545,21 @@ export class AonAltaDirecta extends AonElement {
         this.applicationEl.startLoading();
         let cto_new = this.getContrato();
         const cto_old = this._contrato;
-        for (const property in cto_new) {
-            if (cto_new[property] && (cto_old[property] != cto_new[property])) {
+        for (const property in cto_new) 
+            if (cto_new[property] && (cto_old[property] != cto_new[property])) 
                 cto_new[`${property}_edit`] = true;
-            }
-        }
         try {
-            await updateContrato(cto_new);
-            this.showToast({ message: MSG.UPDATED_CONTRACT, type: CONSTANT.PRIMARY, delay: 3000 });
-            this.applicationParentEl._movements = [];
-            this.back();
+            const resp = await updateContract(cto_new);
+            let message = `No existen cambios en el contrato`;
+
+            if(resp.errors && resp.errors.length>0)
+                message = resp.errors.join(".");
+            else if(resp.contract_edit === true) {
+                message = MSG.UPDATED_CONTRACT;
+                this.applicationParentEl._movements = [];
+            } 
+
+            this.showToast({ message, type: CONSTANT.ERROR, delay: 4500 });
         } catch (error) {
             this.showToast(error);
         }
