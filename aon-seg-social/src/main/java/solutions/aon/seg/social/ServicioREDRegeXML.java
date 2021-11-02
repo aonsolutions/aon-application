@@ -11,10 +11,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
+import javax.sound.midi.Soundbank;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -97,6 +101,179 @@ public abstract class ServicioREDRegeXML {
         saxParser.parse(is, handler);
         	
         return values;
+	}
+	
+	protected static List<Employee> extractIpfXNafInfo (String xml) throws SegSocialException, ParserConfigurationException, SAXException, IOException {
+		List<Employee> employees = new LinkedList<>();
+		
+		DefaultHandler handler = new DefaultHandler() {
+			private StringBuilder data;
+			EmployeeBuilder employeeBuilder;
+			String errMsg = null;
+			boolean bNss;
+			boolean bIpf;
+			boolean bName;
+			boolean bMessage;
+			boolean bTipo;
+			boolean bTexto;
+			boolean empty;
+			boolean error;
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes attributes)
+					throws SAXException {
+				if (qName.equalsIgnoreCase("TRABAJADOR")) {
+					empty = true;
+					employeeBuilder = new EmployeeBuilder();
+				} else if (qName.equalsIgnoreCase("NA5NumSegSocialCompleto")) {
+					bNss = true;
+				} else if (qName.equalsIgnoreCase("IP9NumDoc")) {
+					bIpf = true;
+				} else if (qName.equalsIgnoreCase("NOMBRE_COMPLETO")) {
+					bName = true;
+				} else if (qName.equalsIgnoreCase("MESSAGE")) {
+					bMessage = true;
+				} else if (bMessage && qName.equalsIgnoreCase("TIPO")) {
+					bTipo = true;
+				} else if (bMessage && qName.equalsIgnoreCase("TEXTO")) {
+					bTexto = true;
+				}
+				data = new StringBuilder();
+			}
+
+			@Override
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				if (bNss) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					employeeBuilder.setNss(data.toString());
+					bNss = false;
+				} else if (bIpf) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					employeeBuilder.setIpf(data.toString());
+					bIpf = false;
+				} else if (bName) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					String name = data.toString();
+					name = name != null ? name.trim() : null;
+					employeeBuilder.setName(name);
+					bName = false;
+				} else if (bTipo) {
+					error = data.toString() != null && data.toString().equalsIgnoreCase("ERROR");
+					bTipo = false;
+				} else if (bTexto) {
+					errMsg = data.toString();
+					bTexto = false;
+				}
+				if (qName.equalsIgnoreCase("TRABAJADOR") && !empty) {
+					employees.add(employeeBuilder.build());
+				} else if (qName.equalsIgnoreCase("MESSAGE")) {
+					bMessage = false;
+					if (error) {
+						throw new SAXException(errMsg != null ? errMsg : "");
+					}
+				}
+			}
+
+			@Override
+			public void characters(char[] ch, int start, int length) throws SAXException {
+				data.append(new String(ch, start, length));
+			}
+		};
+		
+		 
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser saxParser = factory.newSAXParser();
+		StringReader reader = new StringReader(xml);
+		InputSource is = new InputSource(reader);
+        is.setEncoding("UTF-8");
+        saxParser.parse(is, handler);
+        	
+        return employees;
+	}
+	
+	protected static Employee extractNafXIpfInfo (String xml) throws SegSocialException, ParserConfigurationException, SAXException, IOException {
+		//builder.setNss(nss).setName(name).setIpf(ipf1).setIdent(Integer.parseInt(ident1));
+		EmployeeBuilder employeeBuilder = new EmployeeBuilder();
+		DefaultHandler handler = new DefaultHandler() {
+			StringBuilder data;
+			boolean bNss;
+			boolean bIpf;
+			boolean bName;
+			boolean bCodeType;
+			boolean bTipo;
+			boolean bTextoError;
+			boolean error;
+			String errorText = null;
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes attributes)
+					throws SAXException {
+				if (qName.equalsIgnoreCase("NA5NumSegSocialCompleto")) {
+					bNss = true;
+				} else if (qName.equalsIgnoreCase("IP6NUMERO_DOCUMENTO")) {
+					bIpf = true;
+				} else if (qName.equalsIgnoreCase("NOMBRE_COMPLETO")) {
+					bName = true;
+				} else if (qName.contentEquals("CODIGO_TIPO")) {
+					bCodeType = true;
+				} else if (qName.contentEquals("TIPO")) {
+					bTipo = true;
+				} else if (error && qName.contentEquals("TEXTO")) {
+					bTextoError = true;
+				}
+					data = new StringBuilder();
+			}
+
+			@Override
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				if (bNss) {
+					employeeBuilder.setNss(data.toString());
+					bNss = false;
+				} else if (bIpf) {
+					employeeBuilder.setIpf(data.toString());
+					bIpf = false;
+				} else if (bName) {
+					employeeBuilder.setName(data.toString());
+					bName = false;
+				} else if (bCodeType) {
+					try {						
+						employeeBuilder.setIdent(Integer.parseInt(data.toString()));
+					} catch (NumberFormatException e) {
+					} finally {
+						bCodeType = false;
+					}
+				} else if (bTipo) {
+					if (data.toString().equalsIgnoreCase("ERROR")) {
+						error = true;
+					}
+					bTipo = false;
+				} else if (bTextoError) {
+					errorText = data.toString();
+					bTextoError = false;
+				}
+				
+				if (error && qName.contentEquals("MESSAGE")) {
+					throw new SAXException(errorText != null ? errorText : "");
+				}
+				
+			}
+
+			@Override
+			public void characters(char[] ch, int start, int length) throws SAXException {
+				data.append(new String(ch, start, length));
+			}
+		};
+		
+		 
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser saxParser = factory.newSAXParser();
+		StringReader reader = new StringReader(xml);
+		InputSource is = new InputSource(reader);
+        is.setEncoding("UTF-8");
+        saxParser.parse(is, handler);
+        	
+        return employeeBuilder.build();
 	}
 	
 	protected static void fillManagementData (SituacionEmpresaBuilder seb, Map<String, String> values) {
@@ -576,6 +753,51 @@ public abstract class ServicioREDRegeXML {
 		} catch (IOException e) {
 			throw new InvalidCertificateException();
 		}
+	}
+
+	public static String identity(String ipf) {
+		ipf = Toolkit.removeExtraZeros(ipf);
+		Pattern nif  = Pattern.compile(
+				//  -------- LEGAL_PERSON_NIF PATTERN  
+				// -------- (1) --> X00000000
+					"^[A-JUV]"
+					+"[\\s-_/]?"
+					+"[0-9]{2}"
+					+"[-_/\\.]?"
+					+"[0-9]{3}"
+					+"[-_/\\.]?"
+					+"[0-9]{3}$"
+					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		Pattern dni  = Pattern.compile(
+					"[0-9]?"
+					+"[0-9]"
+					+"[\\s-_/\\.]?"
+					+"[0-9]{3}"
+					+"[\\s-_/\\.]?"
+					+"[0-9]{3}"
+					+"[\\s-_/]?"
+					+"[A-Z]"
+					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+				//  -------- NIE PATTERN 
+				// -------- (1) --> X0000000X
+		Pattern nie  = Pattern.compile(
+					"[XYZ]"
+					+"[\\s-_/]?"
+					+"[0-9]{7}"
+					+"[\\s-_/]?"
+					+"[A-HJ-NP-TV-Z]"
+				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		
+		Map<Pattern, Integer> patterns = new HashMap<Pattern, Integer>();
+		patterns.put(nif, 1);
+		patterns.put(dni, 1);
+		patterns.put(nie, 6);
+		
+		String identity = "";
+		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {
+			if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }
+		}
+		return identity;
 	}
 	
 	

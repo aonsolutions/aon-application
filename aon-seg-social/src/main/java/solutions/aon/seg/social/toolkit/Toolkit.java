@@ -985,27 +985,6 @@ public class Toolkit {
 		params.add(new BasicNameValuePair("btn_FkeyButton", "+"));
 		httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 		return getBodyPOST(httpClient, httpPost);
-		
-		/*{
-	"Applname": "SGIRED",
-	"Formname": "EIOMINTE",
-	"sessionId": "-1326666770",
-	"sequenceNumber": "8",
-	"focusedControl": "Sub2203601009",
-	"keepAliveURL": "/KeepAlive?",
-	"keepAliveInterval": "180000",
-	"clientDebugLevel": "0",
-	"default_null": "1",
-	"txt_EntornoPr": "0",
-	"txt_Transac": "Atr37",
-	"txt_MenuPracticas": "I",
-	"txt_CommandEdit": "EN",
-	"btn_FkeyButton": "+",
-	"txt_SDFIDIOMA": "",
-	"txt_SDFINFORMEA602": "",
-	"txt_SDFINFORMEA603": "",
-	"txt_SDFINFORMEA604": ""
-}*/
 	}
 	
 //	public static void findInfoFromElem(String line, String attribute, String tagName, String refAttr, String refAttrValue) {
