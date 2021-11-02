@@ -1887,6 +1887,46 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcXVBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXV.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			Assert.assertTrue(ssPecs.size() > 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2020);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.APRIL);
+
+			Date april012020 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( april012020 , pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> Assert.assertNull( pec.getEndDate()));
+			
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = " + pec.getFormula() + ", " + pec.getStartDate() ));
+			
+			calendar.set(Calendar.MONTH,Calendar.JUNE);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date june = calendar.getTime();
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), june);
+			
+			salary.getSalaryCosts().forEach(c -> System.out.println("COST :" + c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			salary.getSalaryDeductions().forEach(d -> System.out.println("DEDUCTION :" + d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
+			salary.getSalaryBonus().forEach(d -> System.out.println("BONUS :" + d.getBonusConcept() +" : " + d.getAmount() +", " + d.getType()));
+			
+			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
+			
+		}
+	}
+
+	@Test
 	public void testIdcXIPECs() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
 		
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXI.pdf") ){
