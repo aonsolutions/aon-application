@@ -4474,14 +4474,18 @@ public class AON {
 		return getCustomer(domainName, domainId, login, f -> f.getRegistryProperty().eq(registry));
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON.saveCustomer
+	 */
 	public static Customer insertCustomer(String domainName, Integer domainId, String login, Customer customer) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().insertCustomer(ctx, customer);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static Customer saveCustomer(String domainName, Integer domainId, String login, Customer customer) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveCustomer(ctx, customer);
 		}
 	}
 	

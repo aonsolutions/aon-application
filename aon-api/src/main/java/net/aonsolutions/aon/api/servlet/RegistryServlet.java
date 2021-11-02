@@ -102,7 +102,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 				response(req, resp, saveRegistry(api));
 				break;
 			case "/customer":
-//				response(req, resp, saveRegistry(api));
+				response(req, resp, saveCustomer(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -136,6 +136,13 @@ public class RegistryServlet extends AonApiHttpServlet {
 		Registry registry = RegistryJSON.fromJSON(api.getData());
 		registry = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), registry);
 		saveRegistryAdditionalInfo(api, registry.getId(), registry.getDomain().getId());
+		return new JSONObject();
+	}
+	
+	public static JSONObject saveCustomer(AonApiData api) {
+		Customer customer = CustomerJSON.fromJSON(api.getData());
+		customer = AON.saveCustomer(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), customer);
+		saveRegistryAdditionalInfo(api, customer.getId(), customer.getDomain().getId());
 		return new JSONObject();
 	}
 	

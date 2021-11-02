@@ -20,7 +20,7 @@ export class AonCustomerList extends AonRegistryList {
 	buildRegistry(registry) {
 		let data = {
 			id: registry.id,
-			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RECORD_DATA']
+			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
 		};
 		getCustomer(data).then(r => {
 			let aonCustomer = new AonCustomer();

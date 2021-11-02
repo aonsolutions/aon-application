@@ -236,8 +236,8 @@ button:disabled, button[disabled]{
 }
 
 .aonLogo {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 250px;
+  max-height: 60px;
   padding: 5px;
 }
 

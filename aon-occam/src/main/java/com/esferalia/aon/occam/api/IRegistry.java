@@ -106,7 +106,8 @@ public interface IRegistry {
 	// ------------------- CUSTOMER
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter);
 	public Customer insertCustomer(AONContext ctx, Customer customer);
-
+	public Customer saveCustomer(AONContext ctx, Customer customer);
+	
 	// ------------------- SELLER
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter);
 	

@@ -242,6 +242,11 @@ public class RegistryImpl implements IRegistry{
 				configuration -> CustomerDAO.getStream(ctx, filter));
 	}
 	
+	public Customer saveCustomer(AONContext ctx, Customer customer) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.save(ctx, customer));
+	}
+	
 	@Override
 	public Customer insertCustomer(AONContext ctx, Customer customer) {
 		return 	ctx.getDslContext().transactionResult(

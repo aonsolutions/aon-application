@@ -7,6 +7,8 @@ import { AonSwitch } from '../../components/aon-switch.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { Transactions } from '../../services/transaction.js';
 import { Customer } from '../../models/registry/Customer.js';
+import { saveCustomer } from '../../services/registryService.js';
+import { AonCustomerList } from './aon-customer-list.js';
 
 export class AonCustomer extends AonReg {
 
@@ -77,6 +79,27 @@ export class AonCustomer extends AonReg {
 		});
 		table.addCell(withholding, 1);
 	}	
+
+	back() {
+		let list = new AonCustomerList();
+		list.id = this.getApplication().id + 'CustomerList';
+		this.getApplication().setContent(list);
+	}
+
+	save() {
+		let medias = this.emails.concat(this.phones).concat(this.webs);
+		this.registry.setMedia(medias);
+
+		saveCustomer(this.registry).then(registry => {
+			this.registry.id = registry.id;
+			this.showToast({
+				type: 'success',
+	 			message: 'Datos Guardados Correctamente'
+	 		});
+		}).catch(error => {
+	 		this.showToast(error);
+	 	});
+	}
 
 	setCustomer(customer) {
 		this.registry = new Customer(customer);
