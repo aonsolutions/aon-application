@@ -232,8 +232,6 @@ public interface EnterprisesService extends RemoteService {
 
 	List<SSBonusData> getContractBonus(String currentDomainName, Integer contractId);
 
-	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData);
-
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate);
 
 	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId);

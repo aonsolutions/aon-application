@@ -97,6 +97,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractAttach;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractExtension;
+import com.esferalia.aon.gwt.payroll.jooq.JooqContractPDF;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractTransform;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
@@ -5782,11 +5783,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 
-			byte[] pdfBytes = JooqContrataContract.contractFill(connection, domainId, parentDomainId, contractId, contractType,
+			byte[] pdfBytes = JooqContractPDF.contractFill(connection, domainId, parentDomainId, contractId, contractType,
 					formativeLvl);
 			
-			JooqContrataContract.saveDraftContract(domainName, contractId, pdfBytes);
-			return JooqContrataContract.getContractAttachments(connection, domainId, contractId);
+			JooqContractPDF.saveDraftContract(domainName, contractId, pdfBytes);
+			return JooqContractAttach.getContractAttachments(connection, domainId, contractId);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
