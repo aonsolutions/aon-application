@@ -84,7 +84,7 @@
 			gap: 5px;
 		}
 		
-		.cmd_btn{
+		.cmdBtn{
 			background-position: center left;
 			background-repeat: no-repeat;
 			padding-left: 25px !important;
@@ -106,6 +106,33 @@
 			flex-grow: 1;
 		}
 		
+		.loadingPanel{
+			display: flex;
+			align-items: center;
+			animation-name: spin;
+			animation-duration: 2500ms;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+		
+		@keyframes spin {
+		    from {
+		        transform:rotate(0deg);
+		    }
+		    to {
+		        transform:rotate(360deg);
+		    }
+		}
+		
+		.message{
+			display: flex;
+			justify-content: center;
+			text-transform: uppercase;
+			margin-top: 5px 0;
+			gap: 5px;
+			align-items: center;
+		}
+		
 	</ui:Style>
 
 	<g:SimpleLayoutPanel>
@@ -115,10 +142,11 @@
 					<g:center>
 						<g:HTMLPanel styleName="{style.mt50} {aonResources.css.aonSelector}">
 							<g:HTMLPanel ui:field="messageContainer" />
+							<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}" />
 							<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 								<g:tab>
 							    	<g:header size='7'>Datos Afiliación</g:header>
-							    	<g:HTMLPanel styleName="{style.mt10} {style.flex1}">
+							    	<g:HTMLPanel styleName="{style.mt10}">
 							    		<g:ScrollPanel ui:field="scrolledPanel" styleName="{style.p5} {style.center} {style.flexGrow}">
 							    			<a:ContractEmployeeUI ui:field="contractEmployeeUI" />
 										</g:ScrollPanel>
