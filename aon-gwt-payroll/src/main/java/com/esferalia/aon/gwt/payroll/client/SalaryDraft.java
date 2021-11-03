@@ -324,7 +324,13 @@ public class SalaryDraft extends ResizeComposite
 			
 			"CAUSA_INACTIVIDAD",
 			
-			"JORNADAS_TEORICAS"
+			"JORNADAS_TEORICAS",
+			
+			"BONIFICACION_TUTORIA",
+			"BONIFICACION_FORMACION_CONTINUA"
+			
+			
+			
 			
 			
 	};
