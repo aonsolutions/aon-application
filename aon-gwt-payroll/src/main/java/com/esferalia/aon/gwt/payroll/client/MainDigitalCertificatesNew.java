@@ -87,6 +87,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	DeckPanel userCertDataTableDeckPanel;
 	
 	@UiField
+	HTMLPanel  userCertLoadingPanel;
+	
+	@UiField
 	ScrollPanel  userCertTableScrollPanel;
 	
 	@UiField
@@ -124,6 +127,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	
 	@UiField
 	DeckPanel enterpriseCertDataTablDeckPanel;
+	
+	@UiField
+	HTMLPanel  enterpriseCertLoadingPanel;
 	
 	@UiField
 	ScrollPanel  enterpriseCertTableScrollPanel;
@@ -245,14 +251,27 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	
 	private void initUserCertDataTable() {
 		resetPreview(userCertDataTableHeader, userCertDataTable);
-		userCertDataTableDeckPanel.showWidget(1);
+		initLoadingPanel(userCertLoadingPanel);
+		userCertDataTableDeckPanel.showWidget(0);
 	}
 
 	private void initEnterpriseCertDataTable() {
 		resetPreview(enterpriseCertDataTableHeader, enterpriseCertDataTable);
-		enterpriseCertDataTablDeckPanel.showWidget(1);
+		initLoadingPanel(enterpriseCertLoadingPanel);
+		enterpriseCertDataTablDeckPanel.showWidget(0);
 	}
 	
+	private void initLoadingPanel(HTMLPanel loadingPanel) {
+		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
+		loadingBtn.addStyleName(style.loadingPanel());
+		
+		Label loadingL = new Label("Obteniendo certificados...");
+		loadingL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		
+		loadingPanel.add(loadingBtn);
+		loadingPanel.add(loadingL);
+	}
+
 	private void resetPreview(Grid dataTableHeader, Grid dataTable) {
 		dataTableHeader.clear();
 		dataTableHeader.resize(0, 0);
@@ -330,9 +349,20 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	
 	public void onModuleLoad(MainDigitalCertificatesObjectNew mainDigitalCertificatesObject) {
 		this.mainDigitalCertificatesObject = mainDigitalCertificatesObject;
-		this.mainDigitalCertificatesObject.getEnterpriseId(s -> loadDigitalCertificates(), f -> {});
+		this.mainDigitalCertificatesObject.getEnterpriseId(
+				s -> {
+					mainDigitalCertificatesObject.getDomainUserRoles(domainUserRole -> {
+						if(null == domainUserRole.isAdmin() || !domainUserRole.isAdmin())
+							hideEnterpriseTab();
+					}, fa -> {});
+					loadDigitalCertificates();
+				}, f -> {});
 	}
 	
+	private void hideEnterpriseTab() {
+		tabLayoutPanel.remove(1);
+	}
+
 	// ------------------------------------------------------ Init Preview (Secondary Users)
 	
 	private void paintHeaderSecondaryUser(Grid dataTableHeader) {
@@ -387,9 +417,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	private void createUserCertDataTableRows() {
 		List<DigitalCertificateNew> userCertificateList = mainDigitalCertificatesObject.getUserCertificateList();
 		if(userCertificateList.isEmpty())
-			userCertDataTableDeckPanel.showWidget(1);
+			userCertDataTableDeckPanel.showWidget(2);
 		else {
-			userCertDataTableDeckPanel.showWidget(0);
+			userCertDataTableDeckPanel.showWidget(1);
 			for(DigitalCertificateNew digitalCertificate : userCertificateList)
 				insertCertificateRow(digitalCertificate, userCertDataTable);
 		}
@@ -398,9 +428,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	private void createEnterpriseCertDataTableRows() {
 		List<DigitalCertificateNew> enterpriseCertificateList = mainDigitalCertificatesObject.getEnterpriseCertificateList();
 		if(enterpriseCertificateList.isEmpty())
-			enterpriseCertDataTablDeckPanel.showWidget(1);
+			enterpriseCertDataTablDeckPanel.showWidget(2);
 		else {
-			enterpriseCertDataTablDeckPanel.showWidget(0);
+			enterpriseCertDataTablDeckPanel.showWidget(1);
 			for(DigitalCertificateNew digitalCertificate : enterpriseCertificateList)
 				insertCertificateRow(digitalCertificate, enterpriseCertDataTable);
 		}
@@ -598,20 +628,20 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 				digitalCertificate.getRattachId(), 
 				digitalCertificate.getTags(), 
 				s -> {
-					AonDialog dialog = new AonDialog("Certificado", new HTML("Certificado validado correctamente"));
-					dialog.warning();
+					Map<String, String> successMap = new HashMap<>();
+					successMap.put("Certificado", "Certificado validado correctamente");
+					AonMessagePanel.showSuccess(messagePanel, successMap);
 				}, f -> {
-					AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
-					dialog.warning();
+					Map<String, String> warningMap = new HashMap<>();
+					warningMap.put("Error verificaci\u00F3n", f.getMessage());
+					AonMessagePanel.showWarning(messagePanel, warningMap);
 				}
 			)
 		);
 		verifyButton.setVisible(false);
 		
 		AonTableButton secondaryUsersButton = new AonTableButton("Usuarios Secundarios", AON.CSS.aonIconList());
-		secondaryUsersButton.addClickHandler(e -> {
-			onSecondaryUser(digitalCertificate.getRattachId(), digitalCertificate.getTags());
-		});
+		secondaryUsersButton.addClickHandler(e -> onSecondaryUser(digitalCertificate.getRattachId(), digitalCertificate.getTags()));
 		
 		secondaryUsersButton.setVisible(false);
 		
@@ -744,8 +774,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 						else
 							enterpriseSecondayUsersPanel.setVisible(false);
 						
-						AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
-						dialog.warning();
+						Map<String, String> warningMap = new HashMap<>();
+						warningMap.put("Error usuarios secundarios", f.getMessage());
+						AonMessagePanel.showWarning(messagePanel, warningMap);
 					}
 				);
 			
@@ -755,22 +786,39 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 				else
 					enterpriseSecondayUsersPanel.setVisible(false);
 				
-				AonDialog dialog = new AonDialog("Error", new HTML(failure.getMessage()));
-				dialog.warning();
+				Map<String, String> warningMap = new HashMap<>();
+				warningMap.put("Error verificaci\u00F3n", failure.getMessage());
+				AonMessagePanel.showWarning(messagePanel, warningMap);
 			}
 		);	
 	}
 
 	private void loadDigitalCertificates() {
+		updateLoadingPanelStatus();
 		this.mainDigitalCertificatesObject.getDigitalCertificates(
 				s -> {
 					Integer index = tabLayoutPanel.getSelectedIndex();
-					if(index == 0)
+					if(index == 0) 
 						createUserCertDataTable();
 					else if(index == 1)
 						createEntepriseCertDataTable();
 				}, 
 				f -> {});
+	}
+
+	private void updateLoadingPanelStatus() {
+		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
+		Label loadingL =  null;
+		
+		if(CertificateOwner.USER.equals(owner)) {
+			userCertDataTableDeckPanel.showWidget(0);
+			loadingL = (Label) userCertLoadingPanel.getWidget(userCertLoadingPanel.getWidgetCount()-1);
+		} else {
+			enterpriseCertDataTablDeckPanel.showWidget(0);
+			loadingL = (Label) enterpriseCertLoadingPanel.getWidget(enterpriseCertLoadingPanel.getWidgetCount()-1);
+		}
+		
+		loadingL.setText("Cargando certificados...");
 	}
 
 	private boolean hasTGSSCertificate(DigitalCertificateNew digitalCertificate) {
@@ -893,8 +941,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 					
 					@Override
 					protected void onAccept() {
-						AonConfirmDialog dialog = new AonConfirmDialog();
-						dialog.info("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
+						Map<String, String> successMap = new HashMap<>();
+						successMap.put("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
+						AonMessagePanel.showSuccess(messagePanel, successMap);
 						
 						mainDigitalCertificatesObject.getSecondaryUsers(
 								mainDigitalCertificatesObject.getCertificateTGSSId(owner), 
@@ -920,8 +969,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 						@Override
 						public void onAccept() {
 							mainDigitalCertificatesObject.deleteSecondaryUser(mainDigitalCertificatesObject.getCertificateTGSSId(owner), secondaryUser, s -> {
-								AonConfirmDialog dialog = new AonConfirmDialog();
-								dialog.info("AVISO: Borrado", "El usuario secundario ha sido borrado correctamente.");
+								Map<String, String> successMap = new HashMap<>();
+								successMap.put("AVISO: Borrado", "El usuario secundario ha sido borrado correctamente.");
+								AonMessagePanel.showSuccess(messagePanel, successMap);
 								
 								mainDigitalCertificatesObject.getSecondaryUsers(
 										mainDigitalCertificatesObject.getCertificateTGSSId(owner), 
@@ -991,8 +1041,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 			
 			@Override
 			protected void onAccept() {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.info("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
+				Map<String, String> successMap = new HashMap<>();
+				successMap.put("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
+				AonMessagePanel.showSuccess(messagePanel, successMap);
 				
 				mainDigitalCertificatesObject.getSecondaryUsers(
 						mainDigitalCertificatesObject.getCertificateTGSSId(owner), 

@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateOwner;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
@@ -53,6 +54,21 @@ public class MainDigitalCertificatesObjectNew {
 			}
 		});
 		
+	}
+	
+	public void getDomainUserRoles(Consumer<DomainUserRoles> success, Consumer<Throwable> failure) {
+		impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
+			
+			@Override
+			public void onSuccess(DomainUserRoles result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
 	}
 	
 	// -------------------------------------------------- DataBase methods (DigitalCertificate)

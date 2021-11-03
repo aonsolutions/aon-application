@@ -166,6 +166,7 @@
 			    			<g:HTMLPanel styleName="{style.tableWidth} {style.heightAll} {style.centerColumn}">
 				    			<g:Grid ui:field="userCertDataTableHeader" styleName="{style.header}" />
 				    			<g:DeckPanel ui:field="userCertDataTableDeckPanel" styleName="{style.tableWidth} {style.heightAll}">
+				    				<g:HTMLPanel ui:field="userCertLoadingPanel" styleName="{style.message}" />
 				    				<g:ScrollPanel ui:field="userCertTableScrollPanel" styleName="{style.scrollStyle}">
 						    			<g:Grid ui:field="userCertDataTable" />
 						    		</g:ScrollPanel>
@@ -195,6 +196,7 @@
 				    		<g:HTMLPanel styleName="{style.tableWidth} {style.heightAll} {style.centerColumn}">
 				    			<g:Grid ui:field="enterpriseCertDataTableHeader" styleName="{style.header}" />
 				    			<g:DeckPanel ui:field="enterpriseCertDataTablDeckPanel" styleName="{style.tableWidth} {style.heightAll}">
+					    			<g:HTMLPanel ui:field="enterpriseCertLoadingPanel" styleName="{style.message}" />
 					    			<g:ScrollPanel ui:field="enterpriseCertTableScrollPanel" styleName="{style.scrollStyle}">
 						    			<g:Grid ui:field="enterpriseCertDataTable" />
 						    		</g:ScrollPanel>
