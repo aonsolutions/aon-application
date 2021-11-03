@@ -6858,26 +6858,26 @@ public class SalaryDraft extends ResizeComposite
 	
 	// -------------------------------------------------- ContrataEmployee.Methods
 	
-	public void onUndoAll(ClickEvent e) {
+	public void onUndoAll() {
 		salaryDraftObject.clearDrafts();
 		salaryDraftObject.calculate(SalaryDraft.this);
 	}
 	
-	public void onUndo(ClickEvent e) {
+	public void onUndo() {
 		salaryDraftObject.undo();
 		salaryDraftObject.calculate(SalaryDraft.this);
 	}
 	
-	public void onRedo(ClickEvent e) {
+	public void onRedo() {
 		salaryDraftObject.redo();
 		salaryDraftObject.calculate(SalaryDraft.this);
 	}
 	
-	public void onAccept(ClickEvent e) {
+	public void onAccept() {
 		salaryDraftObject.save(this);
 	}
 	
-	public void onSalary(ClickEvent e) {
+	public void onSalary() {
 		salaryDraftObject.save(new CalculateCallback() {
 	
 			@Override
@@ -6897,15 +6897,15 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}
 	
-	public void onExtra(ClickEvent e) {
+	public void onExtra() {
 		salaryDraftObject.emitSalary(this);
 	}
 
-	public void onSettle(ClickEvent e) {
+	public void onSettle() {
 		salaryDraftObject.emitSalary(this);
 	}
 	
-	public void onFx(ClickEvent e) {
+	public void onFx() {
 		final FxDialog fxDialog = new FxDialog(salaryDraftObject);
 		fxDialog.setExpression(fxhasValue.getValue());
 		fxDialog.center();
@@ -6929,12 +6929,12 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}
 	
-	public void onTgssCheckChange(ValueChangeEvent<Boolean> e) {
+	public void onTgssCheckChange() {
 		showTimeRulePanel();
 		showDbTimeRulePanel();
 	}
 	
-	public void onCostsCheck2Change(ValueChangeEvent<Boolean> e) {
+	public void onCostsCheck2Change() {
 		showCosts();
 	}
 	
@@ -6948,15 +6948,15 @@ public class SalaryDraft extends ResizeComposite
 		showPaymentsEvents(eventsTable.isVisible());
 	}
 	
-	public void onPrintPreview(ClickEvent e) {
+	public void onPrintPreview() {
 		printPreview();
 	}
 	
-	public void onIRPFPreview(ClickEvent e) {
+	public void onIRPFPreview() {
 		irpfPrint();
 	}
 	
-	public void onSave(ClickEvent e) {
+	public void onSave() {
 		String fileName = 
 				salaryDraftObject.getEmployeeName() + " " 
 				+ DateTimeFormat.getFormat(PredefinedFormat.MONTH).format(salaryDraftObject.getChargeDate())
@@ -6968,11 +6968,11 @@ public class SalaryDraft extends ResizeComposite
 		// ***************************
 	}
 	
-	public void onClosePreview(ClickEvent e) {
+	public void onClosePreview() {
 		showDraft();
 	}
 	
-	public void onSettlePreviewLBChange(ChangeEvent e) {
+	public void onSettlePreviewLBChange() {
 		printSettle();
 	}
 	
