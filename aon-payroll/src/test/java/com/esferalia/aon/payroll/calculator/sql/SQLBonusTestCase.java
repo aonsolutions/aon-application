@@ -46,6 +46,7 @@ import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
+import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
@@ -55,9 +56,11 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import junit.framework.Assert;
 
@@ -1104,6 +1107,427 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 		
 
 	}
+
+	@Test
+	public void testTutoriaBonus() throws ExpressionException, SQLException,
+			SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		addFormacionAndTutoriaBonus(aonContext);
+
+
+
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String,String>(){
+				{
+					put(ContextVariable.TC2.getName(), "'100'");
+					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+					
+					// TUTORIA
+					put(ContextVariable.SLD_H06.getName(), "10.00");
+					put(ContextVariable.SLD_C737.getName(), "60.00");
+
+				}
+				},
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS/DIAS_MES",
+						//"TRACE('HORAS_FORMACION_DISTANCIA=%f\r\n',HORAS_FORMACION_DISTANCIA);0.00",
+						//"TRACE('HORAS_FORMACION_DISTANCIA=%f\r\n',HORAS_FORMACION_DISTANCIA);0.00",
+						//"TRACE('DIAS_COTIZADOS=%f\r\n',DIAS_COTIZADOS);0.00"
+						}, 
+				new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						},
+				null
+			);
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(String message) {
+				org.junit.Assert.fail(message);
+			}
+		});
+
+		Salary salary =
+		calculator.calculate(
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		org.junit.Assert.assertEquals(1, salary.getSalaryBonus().size());
+	
+		
+		for (SalaryBonus bonus : salary.getSalaryBonus()) {
+			System.out.println(bonus.getDescription() +" = " + bonus.getAmount() );
+			if (AonStringUtils.equals(bonus.getDescription(), "BONIFICACI\u00D3N TUTORIA"))
+				org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+			else 
+				org.junit.Assert.fail("Unknown '" + bonus.getDescription() +"'");
+		}
+		
+
+		
+
+	}
+
+	@Test
+	public void testTutoriaWithNoHoursBonus() throws ExpressionException, SQLException,
+			SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		addFormacionAndTutoriaBonus(aonContext);
+
+
+
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String,String>(){
+				{
+					put(ContextVariable.TC2.getName(), "'100'");
+					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+					
+					// TUTORIA
+					put(ContextVariable.SLD_C737.getName(), "60.00");
+
+				}
+				},
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}, 
+				new String[] {
+						},
+				null
+			);
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(String message) {
+				throw new RuntimeException(message);
+			}
+		});
+		
+		try {
+			Salary salary =
+			calculator.calculate(
+			getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+			
+			org.junit.Assert.assertEquals(0, salary.getSalaryBonus().size());
+		
+			
+			org.junit.Assert.fail("No hours message");
+		} catch ( RuntimeException e ) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	@Test
+	public void testFormacionDistanciaBonus() throws ExpressionException, SQLException,
+			SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		addFormacionAndTutoriaBonus(aonContext);
+
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String,String>(){
+				{
+					put(ContextVariable.TC2.getName(), "'100'");
+					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+					
+					put(ContextVariable.SLD_H04.getName(), "10.00");
+					put(ContextVariable.SLD_C763.getName(), "60.00");
+
+				}
+				},
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS/DIAS_MES",
+						}, 
+				new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						},
+				null
+			);
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(String message) {
+				org.junit.Assert.fail(message);
+			}
+		});
+
+		Salary salary =
+		calculator.calculate(
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		org.junit.Assert.assertEquals(1, salary.getSalaryBonus().size());
+	
+		
+		for (SalaryBonus bonus : salary.getSalaryBonus()) {
+			System.out.println(bonus.getDescription() +" = " + bonus.getAmount() );
+			if (AonStringUtils.equals(bonus.getDescription(), "BONIF FORM. T.DISTAN"))
+				org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+			else 
+				org.junit.Assert.fail("Unknown '" + bonus.getDescription() +"'");
+		}
+		
+
+		
+
+	}
+
+	@Test
+	public void testFormacionPresencialBonus() throws ExpressionException, SQLException,
+			SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		addFormacionAndTutoriaBonus(aonContext);
+
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String,String>(){
+				{
+					put(ContextVariable.TC2.getName(), "'100'");
+					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+					
+					put(ContextVariable.SLD_H03.getName(), "10.00");
+					put(ContextVariable.SLD_C763.getName(), "60.00");
+
+				}
+				},
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS/DIAS_MES",
+						}, 
+				new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						},
+				null
+			);
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(String message) {
+				org.junit.Assert.fail(message);
+			}
+		});
+
+		Salary salary =
+		calculator.calculate(
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		org.junit.Assert.assertEquals(1, salary.getSalaryBonus().size());
+	
+		
+		for (SalaryBonus bonus : salary.getSalaryBonus()) {
+			System.out.println(bonus.getDescription() +" = " + bonus.getAmount() );
+			if (AonStringUtils.equals(bonus.getDescription(), "BONIF FORM. T.PRESEN"))
+				org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+			else 
+				org.junit.Assert.fail("Unknown '" + bonus.getDescription() +"'");
+		}
+		
+
+		
+
+	}
+
+	
+	@Test
+	public void testTutoriaAnFormacionBonus() throws ExpressionException, SQLException,
+			SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		addFormacionAndTutoriaBonus(aonContext);
+
+
+
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String,String>(){
+				{
+					put(ContextVariable.TC2.getName(), "'100'");
+					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+					
+					// TUTORIA
+					put(ContextVariable.SLD_H06.getName(), "10.00");
+					put(ContextVariable.SLD_C737.getName(), "60.00");
+
+					put(ContextVariable.SLD_H04.getName(), "10.00");
+					put(ContextVariable.SLD_C763.getName(), "60.00");
+
+				}
+				},
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS/DIAS_MES",
+						//"TRACE('HORAS_FORMACION_DISTANCIA=%f\r\n',HORAS_FORMACION_DISTANCIA);0.00",
+						//"TRACE('HORAS_FORMACION_DISTANCIA=%f\r\n',HORAS_FORMACION_DISTANCIA);0.00",
+						//"TRACE('DIAS_COTIZADOS=%f\r\n',DIAS_COTIZADOS);0.00"
+						}, 
+				new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						},
+				null
+			);
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(String message) {
+				org.junit.Assert.fail(message);
+			}
+		});
+
+		Salary salary =
+		calculator.calculate(
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		org.junit.Assert.assertEquals(2, salary.getSalaryBonus().size());
+	
+		
+		for (SalaryBonus bonus : salary.getSalaryBonus()) {
+			System.out.println(bonus.getDescription() +" = " + bonus.getAmount() );
+			if (AonStringUtils.equals(bonus.getDescription(), "BONIFICACI\u00D3N TUTORIA"))
+				org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+			else if (AonStringUtils.equals(bonus.getDescription(), "BONIF FORM. T.DISTAN"))
+				org.junit.Assert.assertEquals(60.00, bonus.getAmount(), DELTA);
+			else 
+				org.junit.Assert.fail("Unknown '" + bonus.getDescription() +"'");
+		}
+		
+
+		
+
+	}
+
+	@Test
+	public void testFormacionWithNoHoursBonus() throws ExpressionException, SQLException,
+			SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		addFormacionAndTutoriaBonus(aonContext);
+
+
+
+		ContractRecord contract = newContract(
+				aonContext, 
+				getFirstDayOfYear(getToday()), 
+				new HashMap<String,String>(){
+				{
+					put(ContextVariable.TC2.getName(), "'100'");
+					put(ContextVariable.MONTH_DAYS.getName(), "30.00");
+					
+					// TUTORIA
+					put(ContextVariable.SLD_C763.getName(), "60.00");
+
+				}
+				},
+				new String[] { 
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}, 
+				new String[] {
+						},
+				null
+			);
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(String message) {
+				throw new RuntimeException(message);
+			}
+		});
+		
+		try {
+			Salary salary =
+			calculator.calculate(
+			getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+			
+			org.junit.Assert.assertEquals(0, salary.getSalaryBonus().size());
+		
+			
+			org.junit.Assert.fail("No hours message");
+		} catch ( RuntimeException e ) {
+			System.out.println(e.getMessage());
+		}
+	}
+
 	// ------------------------------------------------------------------------
 
 	protected final ContractBonusRecord addBonus(AONContext aonContext,
@@ -1143,5 +1567,60 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				.set(CONTRACT_BONUS.BONUS_CONCEPT, concept.getId()).returning()
 				.fetchOne();
 
+	}
+
+	protected final void addFormacionAndTutoriaBonus(AONContext aonContext) {
+		
+		addSSRegimeData(aonContext, 
+				SSRegimeType.GENERAL, 
+				getFirstDayOfYear(getToday()), 
+				null, 
+				new HashMap<String, String>(){
+					{
+						put("HORAS_TUTORIA_MSG", 
+							"\"<div>Para completar la <b>BONIFICACI\u00D3N TUTORIA</b> es necesario indicar las horas de tutoria ( HORAS_TUTORIA ).</div>"
+							+"<div>&nbsp;</div>"
+							+ "<div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\"");
+						put("HORAS_FORM_DISTAN_MSG", 
+							"\"<div>Para completar la <b>BONIF FORM. T.DISTAN</b> es necesario indicar las horas de formaci\u00f3n ( HORAS_FORMACION_DISTANCIA ).</div>"
+							+"<div>&nbsp;</div>"
+							+ "<div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\"");
+						put("HORAS_FORM_PRESEN_MSG",
+							"\"<div>Para completar la <b>BONIF FORM. T.PRESEN</b> es necesario indicar las horas de formaci\u00f3n ( HORAS_FORMACION_PRESENCIAL ).</div>"
+							+"<div>&nbsp;</div>"
+							+ "<div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\"");
+								
+					}
+				});
+		
+		addSSRegimePayment(aonContext, 
+				SSRegimeType.GENERAL, 
+				getFirstDayOfYear(getToday()), 
+				PaymentType.CRA_0001, 
+				"BONIFICACION_FORMACION_CONTINUA; "
+				+ "isdef HORAS_FORMACION_DISTANCIA ? "
+				+ "SELF.addBonus('BONIF FORM. T.DISTAN','HORAS_FORMACION_DISTANCIA; BONIFICACION_FORMACION_CONTINUA');HIDE() "
+				+ ": isdef HORAS_FORMACION_PRESENCIAL ? HIDE() : HIDE(HORAS_FORM_DISTAN_MSG)"
+				);
+		
+		addSSRegimePayment(aonContext, 
+				SSRegimeType.GENERAL, 
+				getFirstDayOfYear(getToday()), 
+				PaymentType.CRA_0001, 
+				"BONIFICACION_FORMACION_CONTINUA; "
+				+ "isdef HORAS_FORMACION_PRESENCIAL ? "
+				+ "SELF.addBonus('BONIF FORM. T.PRESEN','HORAS_FORMACION_PRESENCIAL; BONIFICACION_FORMACION_CONTINUA');HIDE() "
+				+ ": isdef HORAS_FORMACION_DISTANCIA ? HIDE() : HIDE(HORAS_FORM_PRESEN_MSG)"
+				);
+
+		addSSRegimePayment(aonContext, 
+				SSRegimeType.GENERAL, 
+				getFirstDayOfYear(getToday()), 
+				PaymentType.CRA_0001, 
+				"BONIFICACION_TUTORIA; "
+				+ "isdef HORAS_TUTORIA ? "
+				+ "SELF.addBonus('BONIFICACI\u00D3N TUTORIA','HORAS_TUTORIA; BONIFICACION_TUTORIA');HIDE() "
+				+ ": HIDE(HORAS_TUTORIA_MSG)"
+				);
 	}
 }
