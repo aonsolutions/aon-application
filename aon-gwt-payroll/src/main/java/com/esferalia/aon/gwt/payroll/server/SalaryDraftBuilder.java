@@ -379,7 +379,7 @@ public class SalaryDraftBuilder
 		List<IDeduction> ssDeductions;
 		ssDeductions = new ArrayList<IDeduction>(ssSalary.getDeductionS());
 		for (Deduction deduction : salaryDraft.getDeductions()) {
-			List<IDeduction> ssCounterParts = getDbDeductionCounterParts(
+			List<IDeduction> ssCounterParts = getSsDeductionCounterParts(
 					ssDeductions, deduction);
 			
 			if (ssCounterParts.size() == 0)
@@ -404,7 +404,7 @@ public class SalaryDraftBuilder
 		List<IDeduction> ssCosts;
 		ssCosts = new ArrayList<IDeduction>(ssSalary.getCostS());
 		for (Deduction cost : salaryDraft.getCosts()) {
-			List<IDeduction> ssCounterParts = getDbDeductionCounterParts(
+			List<IDeduction> ssCounterParts = getSsDeductionCounterParts(
 					ssCosts, cost);
 			if (ssCounterParts.size() == 0)
 				continue;
@@ -1576,6 +1576,27 @@ public class SalaryDraftBuilder
 				: nameMatchDbItems;
 	}
 
+	private static <T extends ISalaryItem<?>> List<T> getSsItemCounterParts(
+			Collection<T> ssItems, Item<?> item) {
+
+		List<T> nameMatchDbItems = new LinkedList<T>();
+
+		String name = item.getName();
+		Enum<?> type = item.getType();
+		for (T ssItem : ssItems) {
+			if (!StringUtils.equals(name, ssItem.getName())) {
+				continue;
+			}
+			if (StringUtils.isBlank(name)
+					&& !equals(type, ssItem.getType())) {
+				continue;
+			}
+			nameMatchDbItems.add(ssItem);
+		}
+
+		return nameMatchDbItems;
+	}
+
 	private static <T extends ISalaryItem<?>> List<T> getDbDeductionCounterParts(
 			Collection<T> dbDeductions, Item<?> deduction) {
 		List<T> matchDbItems = getDbItemCounterParts(dbDeductions, deduction);
@@ -1590,6 +1611,23 @@ public class SalaryDraftBuilder
 					typeMatchDbItems.add(dbDeduction);
 
 		return typeMatchDbItems;
+
+	}
+
+	private static <T extends ISalaryItem<?>> List<T> getSsDeductionCounterParts(
+			Collection<T> ssDeductions, Item<?> deduction) {
+		List<T> matchSsItems = getSsItemCounterParts(ssDeductions, deduction);
+		if (matchSsItems.size() > 0)
+			return matchSsItems;
+
+		List<T> typeMatchSsItems = new LinkedList<T>();
+		for (T ssDeduction : ssDeductions)
+			if (deduction.getType() != null && ssDeduction.getType() != null)
+				if (deduction.getType().ordinal() == ssDeduction.getType()
+						.ordinal())
+					typeMatchSsItems.add(ssDeduction);
+
+		return typeMatchSsItems;
 
 	}
 

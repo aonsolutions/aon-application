@@ -174,6 +174,14 @@ public class SLDSalaries {
 			});
 		});
 
+		// Deductions 'Reductions'
+		calcs.forEach((description, calc) -> {
+			Optional.ofNullable(calc.getEmployee()).ifPresent(amount -> {
+				getReductionType(description).ifPresent(deductionType -> 
+					salary.addDeduction(deductionType, -amount, "REDUCCION_TGSS", description));
+			});
+		});
+
 		// Costs 
 		calcs.forEach((description, calc) -> {
 			Optional.ofNullable(calc.getEnterprise()).ifPresent(amount -> {
@@ -190,6 +198,14 @@ public class SLDSalaries {
 			});
 		});
 		
+		// Costs 'Reductions' 
+		calcs.forEach((description, calc) -> {
+			Optional.ofNullable(calc.getEnterprise()).ifPresent(amount -> {
+				getReductionType(description).ifPresent(deductionType -> 
+					salary.addCost(deductionType,  "REDUCCION_TGSS_E", -amount, description));
+			});
+		});
+
 		// Bonus
 		Optional.ofNullable(calcs.get(BONIF_Y_SUBVENC_CON_CARGO_AL_INEM))
 		.ifPresent(calc -> {
@@ -326,6 +342,15 @@ public class SLDSalaries {
 		
 	}
 
+	private static Optional<DeductionType>  getReductionType(String description) {
+		switch (description) {
+		case "REDUCCIONES A CARGO DE LA TGSS":
+			return Optional.of(DeductionType.COMMON_CONTINGENCY);
+		default:
+			return Optional.empty();
+		}
+	}
+
 	private static Optional<DeductionType>  getDeductionType(String description) {
 		switch (description) {
 		case "FOGASA":
@@ -356,6 +381,7 @@ public class SLDSalaries {
 		case "COMPENSACION IT ENFERMEDAD COMUN" : 
 		case "COMP.IT POR ACCIDENTE DE TRABAJO" :
 		case "BONIF.Y SUBVENC.CON CARGO AL INEM":
+		case "REDUCCIONES A CARGO DE LA TGSS":
 			return Optional.empty();
 		default:
 			return Optional.of(DeductionType.OTHER);

@@ -8367,7 +8367,7 @@ CREATE TABLE `system_payment` (
   `payment_concept` int(4) DEFAULT NULL COMMENT 'Identificador unico del concepto',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `description_decorable` tinyint(2) NOT NULL DEFAULT '0',
-  `expression` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
+  `expression` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
   `irpf_expression` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe tributable',
   `quote_expression` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe cotizable',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio',
