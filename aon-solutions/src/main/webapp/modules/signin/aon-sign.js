@@ -252,7 +252,7 @@ export class AonSign extends AonElement {
       let textStatus = null;
       switch(signin.status){
         case "pause":
-          textStatus = MSG.PAUSE.toLowerCase;
+          textStatus = MSG.PAUSE.toLowerCase();
           break;
         case "out":
           textStatus = MSG.EXIT.toLowerCase();

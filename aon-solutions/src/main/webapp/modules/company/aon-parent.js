@@ -30,7 +30,6 @@ export class AonParent extends AonElement {
 
 	buildSidenav() {
 		let aonParent = this.getElement('aonParentMain');
-		console.log(this.notice);
 		let taskOptions = [{
 				id: 'PendingInvoices',
 				name: MSG.PENDING_INVOICES,
