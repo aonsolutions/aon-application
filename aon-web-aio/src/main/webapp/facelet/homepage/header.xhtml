@@ -45,12 +45,10 @@
 	}	
 
 	.aon-direct-access-panel {
-		height:16px;
-    	border-bottom: 1px solid #ccc;
-    	background-color: #f7f7f7 !important;
-		border-top-right-radius: 50px 50px;
-    	border-bottom-right-radius: 50px 50px;
-		color: #0a0a0a;
+		height:24px;
+    	border-bottom: 1px solid #ddd;
+    	background-color: #fff !important;
+		color: #0c0c0c;
 		padding-left: 12px;
     	background-image: none;
 	}	
@@ -613,7 +611,8 @@
 	.rich-tabhdr-side-border {
 		background: none;
 	}
-	.aon-icon-csv{
+	.aon-icon-csv,
+	.aon-icon-invoice{
 		background-size: 24px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-document.svg']}) ;
 	}
@@ -630,7 +629,8 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-excel.svg']}) ;
 	}
 	
-	.aon-icon-close{
+	.aon-icon-close,
+	.aon-icon-file-exit-cancel{
 		background-size: 24px;
 		background-image: url(#{aonResource.resolve['/images/aon-cancel.svg']}) ;
 	}
@@ -721,10 +721,16 @@
 		background-image: url(#{aonResource.resolve['/images/aon-icon-home.svg']}) ;
 	}
 
+	.aon-icon-file-entrance  {
+		background-size:24px;
+		background-image: url(#{aonResource.resolve['/images/aon-icon-forward.svg']}) ;
+	}
+
 	.aon-icon-segsocial-small {
 		background-size: 14px;
 		background-image: url(#{aonResource.resolve['/images/aon-icon-tgss.png']});
 	}
+	
 
 
 	.aon-direct-access-panel.aon-icon-sepe,
@@ -753,6 +759,7 @@
 	.aon-finding-toolbar-item.aon-icon-rubber,
 	.aon-finding-toolbar-item.aon-icon-search,
 	.aon-finding-toolbar-item.aon-icon-delete,
+	.aon-finding-toolbar-item.aon-icon-invoice,
 	.aon-finding-toolbar-item.aon-icon-webmail2,
 	.aon-finding-toolbar-item.aon-icon-import-excel-trans,
 	.aon-finding-toolbar-item.aon-icon-export-excel-trans
@@ -784,11 +791,14 @@
 	.aon-editDataTable-button.aon-icon-rubber,
 	.aon-editDataTable-button.aon-icon-search,
 	.aon-editDataTable-button.aon-icon-delete,
+	.aon-editDataTable-button.aon-icon-invoice,
 	.aon-editDataTable-button.aon-icon-calendar,
 	.aon-editDataTable-button.aon-icon-edit-add,
 	.aon-editDataTable-button.aon-icon-rowSelector,
 	.aon-editDataTable-button.aon-icon-rowSelector-C, 
-	.aon-editDataTable-button.aon-icon-rowSelector-S 
+	.aon-editDataTable-button.aon-icon-rowSelector-S,
+	.aon-editDataTable-button.aon-icon-file-exit-cancel,	
+	.aon-editDataTable-button.aon-icon-file-entrance	
 	{
 		padding-left:24px;
 		padding-top:12px;
@@ -817,7 +827,8 @@
 	.aon-icon-commandButton.aon-icon-cancel,
 	.aon-icon-commandButton.aon-icon-rubber,
 	.aon-icon-commandButton.aon-icon-search,
-	.aon-icon-commandButton.aon-icon-delete
+	.aon-icon-commandButton.aon-icon-delete,
+	.aon-icon-commandButton.aon-icon-invoice
 	{
 		line-height: 0px;
 		padding-left:24px;
@@ -948,6 +959,11 @@
 	.gwt-MenuItem .aon-icon-reset
  	{
 		background-position-y:center;
+	}
+	
+	.gwt-TabLayoutPanelTabInner .gwt-InlineLabel {
+		padding-left : 0px;
+		background-image: none;
 	}
 
 	</style>
