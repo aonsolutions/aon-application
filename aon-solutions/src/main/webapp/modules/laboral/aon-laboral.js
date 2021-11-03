@@ -281,13 +281,11 @@ export class AonLaboral extends AonElement {
     return obj;
   }
 
-  updateContracts(){
-    updateContracts({
-      startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-6)),
-      endDate: AonDateUtils.formatDateOrigin(new Date()),
-    }).then(()=>{
-      console.log("----------UPDATE CONTRACTS------");
-    });
+  async updateContracts(){
+    this.applicationEl.startLoading();
+    await updateContracts({ startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-6)), endDate: AonDateUtils.formatDateOrigin(new Date()) }).catch(e=>console.log("erros",e));
+    console.log("----------UPDATE CONTRACTS------");
+    this.applicationEl.stopLoading();
   }
 
   showView(view, data = undefined, filter = undefined){

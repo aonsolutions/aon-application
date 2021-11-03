@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Person;
@@ -305,7 +306,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setMdctz(md_ctz)
 		.setRlce(rlce)
 		.build();
-		employee = SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getPassword(), employee);
+		employee = SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), employee);
 		if(employee.getName().isPresent()) 
 			sendMovEmailNotification(api, employee, fecha, "alta");
 		return employee;
@@ -637,9 +638,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private static JSONObject updateContracts(AonApiData api){
 		
-		Thread newThread = new Thread(() -> {
+//		Thread newThread = new Thread(() -> {
+			Domain domain = api.getDomain();
 			try {
-				Domain domain = api.getDomain();
+			
 				Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
 				
 				ArrayList<Employee> employees = new ArrayList<>();
@@ -759,15 +761,36 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			
 					} catch (SegSocialException e) {e.printStackTrace();}	
 				});
-
-			}catch (Exception e) {
+				if(!employees.isEmpty()) {
+					saveAppParams(api); //SAVE APP PARAMS
+				}
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		});
-		newThread.start();
+//		});
+//		newThread.start();
 		return new JSONObject();
 	}
 	
+	
+	private static void saveAppParams(AonApiData api) {
+		Domain domain = api.getDomain();
+		ApplicationParameter appParams = new ApplicationParameter()
+				.setDomain(domain.getId())
+				.setValue(new Date().getTime()+"")
+				.setName("APP_COMUNICA_SINCRONIZED")
+				;
+		ApplicationParameter exists = AON.getApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams.getName());
+		if(exists!=null && exists.getId()!=null) {
+			System.out.println("--------UPDATE APP PARAMS-------------");
+			AON.updateApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams, 
+					f->f.getDomainProperty().eq(appParams.getDomain()).and(f.getNameProperty().eq(appParams.getName()))
+				);
+		} else {
+			System.out.println("--------SAVE APP PARAMS-------------");
+			AON.insertApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams);
+		}
+	}
 	
 	// predicate to filter the duplicates by the given key extractor.
 	private static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {

@@ -408,8 +408,8 @@ export const buildForm = (div, aonMessengerChat) => {
         rowsDiv.appendChild(selectApp);
         fillSelectAppCau(aonMessengerChat);
     } else //if(   (!task.id || task.isExternal()) && !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) ))
-    if( !task.id || task.isExternal() ){
-        let initText = !task.isExternal() ? 'De' : 'Para';
+    if(!task.id || task.isExternal()){
+        let initText = !task.id || task.isExternal() ? 'Para' : 'De';
         let titleBtn = isAdvisoryCompany ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;
         const btnExternal = createAonSwitch(titleBtn);
         rowsDiv.appendChild(btnExternal);
