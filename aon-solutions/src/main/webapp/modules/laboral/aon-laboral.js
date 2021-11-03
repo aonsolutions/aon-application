@@ -283,7 +283,7 @@ export class AonLaboral extends AonElement {
 
   async updateContracts(){
     this.applicationEl.startLoading();
-    await updateContracts({ startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-6)), endDate: AonDateUtils.formatDateOrigin(new Date()) }).catch(e=>console.log("erros",e));
+    await updateContracts({ startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-6)) }).catch(e=>console.log("erros",e));
     console.log("----------UPDATE CONTRACTS------");
     this.applicationEl.stopLoading();
   }

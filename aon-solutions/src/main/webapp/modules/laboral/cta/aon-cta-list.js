@@ -156,8 +156,8 @@ export class AonCtaList extends AonElement {
   async getCertCorriente(data) {
     this.applicationEl.startLoading();
     try {
-      const { ccc, cccRegimeCode: regimen } = data;
-      await getCertCorriente({ ccc, regimen }); // open pdf
+      const { ccc, cccRegimeCode: regime } = data;
+      await getCertCorriente({ ccc, regime }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}
@@ -167,8 +167,8 @@ export class AonCtaList extends AonElement {
   async getReportAffiliateInAlta(data) {
     this.applicationEl.startLoading();
     try {
-      const { ccc, cccRegimeCode: regimen } = data;
-      await getReportAffiliateInAlta({ ccc, regimen }); // open pdf
+      const { ccc, cccRegimeCode: regime } = data;
+      await getReportAffiliateInAlta({ ccc, regime }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}
@@ -178,8 +178,8 @@ export class AonCtaList extends AonElement {
   async getReportAffiliateInMovPrev(data) {
     this.applicationEl.startLoading();
     try {
-      const { ccc, cccRegimeCode: regimen } = data;
-      await getReportAffiliateInMovPrev({ ccc, regimen }); // open pdf
+      const { ccc, cccRegimeCode: regime } = data;
+      await getReportAffiliateInMovPrev({ ccc, regime }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}
@@ -189,9 +189,9 @@ export class AonCtaList extends AonElement {
   async getIdcCcc(data) {
     this.applicationEl.startLoading();
     try {
-      const { ccc, cccRegimeCode: regimen } = data;
+      const { ccc, cccRegimeCode: regime } = data;
       const fecha = AonDateUtils.formatDateOrigin( new Date());
-      await getIdcCcc({ ccc, regimen, fecha }); // open pdf
+      await getIdcCcc({ ccc, regime, fecha }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}

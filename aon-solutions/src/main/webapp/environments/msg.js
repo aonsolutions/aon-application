@@ -338,6 +338,7 @@ export const PROTOCOL = "Protocolo";
 export const QUANTITY = MSG.QUANTITY;
 export const QUOTA = MSG.QUOTA;
 export const QUERY = "Consulta"; //TODO
+export const QUOTE_GROUP = "Grupo de cotización";//TODO
 // ----- R
 
 export const RADIO = "Radio"; // TODO
@@ -372,7 +373,7 @@ export const RESTORED_DATA = MSG.RESTORED_DATA;
 export const RESUME_COSTS = "Resumen de costes"; // TODO
 export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
 export const REOPEN = "Reabrir"; // TODO
-
+export const REGIME = "Regimen"; // TODO
 // ----- S
 
 export const SAVE = MSG.SAVE;

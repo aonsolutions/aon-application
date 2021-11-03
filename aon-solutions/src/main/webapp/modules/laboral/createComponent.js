@@ -1,7 +1,6 @@
 import { AonNumber } from "../../components/aon-number.js";
-import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
+import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
 import { createCard, createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
@@ -69,8 +68,8 @@ export const createEnterpriseData = (parent) => {
     divC.appendTo(parent);
     createSelect({
         attributes:{
-            name:"centro_trabajo",
-            id:"centro_trabajo",
+            name:"workplace",
+            id:"workplace",
             title:"Centro de trabajo"
         }
     }, divC.element);
@@ -98,9 +97,9 @@ export const createEnterpriseData = (parent) => {
 
     createInput({
         attributes:{
-            name:"regimen",
-            id:"regimen",
-            description:"Regimen",
+            name:"regime",
+            id:"regime",
+            description:MSG.REGIME,
             visible:CONSTANT.FALSE,
         }
     }, parent);
@@ -112,8 +111,8 @@ export const createContractData = (parent, isManager) => {
     divC.appendTo(parent);
     createSelect({
         attributes:{
-            name:"type_cto",
-            id:"type_cto",
+            name:"contract",
+            id:"contract",
             title:"Tipo de contrato",
             autocomplete: CONSTANT.OFF
         }
@@ -133,9 +132,9 @@ export const createContractData = (parent, isManager) => {
     divC.appendTo(parent);
     createSelect({
         attributes:{
-            name:"grup_ctz",
-            id:"grup_ctz",
-            title:"Grupo de cotización"
+            name:"gc",
+            id:"gc",
+            title:MSG.QUOTE_GROUP
         }
     }, divC.element);
 
@@ -143,8 +142,8 @@ export const createContractData = (parent, isManager) => {
     divC.appendTo(parent);
     createSelect({
         attributes:{
-            name:"ocupacion",
-            id:"ocupacion",
+            name:"ocup",
+            id:"ocup",
             title:"Ocupación"
         }
     }, divC.element);
@@ -337,8 +336,8 @@ const partTime = (divH) => {
     divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
     divC.appendTo(divH);
     numberC = setAttributes(new AonNumber(),{
-        id:"coefparcial", 
-        name:"coefparcial",
+        id:"coef", 
+        name:"coef",
         description:"Coef. Parcial"
     })
     divC.appendChild(numberC);
