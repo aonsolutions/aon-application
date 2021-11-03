@@ -570,19 +570,20 @@ export class AonDesktop extends AonElement {
 			if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
 				rejectedCount = notice.invoice.rejected.count;
 			}
-			if(rejectedCount) this.SIDENAV_ACTIVITY_SUMMARY.push({
+
+			this.SIDENAV_ACTIVITY_SUMMARY.push({
 				name: MSG.PENDING_INVOICES,
 				icon: 'inbox',
-				count:rejectedCount,
+				count: inboxCount,
 				fn: () => {
 					this.rootPanel(new AonInvoicePanel());
 				}
 			});
 
-			if(inboxCount) this.SIDENAV_ACTIVITY_SUMMARY.push({
+			this.SIDENAV_ACTIVITY_SUMMARY.push({
 				name: MSG.REJECTED_INVOICES,
 				icon: MATERIAL_ICONS.REPORT,
-				count:inboxCount,
+				count: rejectedCount,
 				fn: () => {
 					let aonInvoice = new AonInvoicePanel();
 					aonInvoice.status = "refused";

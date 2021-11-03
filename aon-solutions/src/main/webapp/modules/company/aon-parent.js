@@ -30,8 +30,9 @@ export class AonParent extends AonElement {
 
 	buildSidenav() {
 		let aonParent = this.getElement('aonParentMain');
-		
+		console.log(this.notice);
 		let taskOptions = [{
+				id: 'PendingInvoices',
 				name: MSG.PENDING_INVOICES,
 				icon: MATERIAL_ICONS.INBOX,
 				fn: (count) => {
@@ -40,6 +41,7 @@ export class AonParent extends AonElement {
 					}
 				}
 			}, {
+				id: 'RejectedInvoices',
 				name: MSG.REJECTED_INVOICES,
 				icon: MATERIAL_ICONS.REPORT,
 				fn: (count) => {
@@ -175,8 +177,8 @@ export class AonParent extends AonElement {
 		if(this.notice.invoice && this.notice.invoice.rejected && this.notice.invoice.rejected.count && this.notice.invoice.rejected.count > 0) 
 			rejectedCount = this.notice.invoice.rejected.count;
 
-		application.updateSidenavCount(MSG.PENDING_INVOICES, inboxCount);
-		application.updateSidenavCount(MSG.REJECTED_INVOICES, rejectedCount);
+		application.updateSidenavCount('PendingInvoices', inboxCount);
+		application.updateSidenavCount('RejectedInvoices', rejectedCount);
 	}
 
  	build() {

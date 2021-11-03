@@ -48,6 +48,7 @@ export class Bank {
             this.active = true;
             this.dirty = false;
             this.removed = false;
+            this.fullName = '';
         }
     }
 

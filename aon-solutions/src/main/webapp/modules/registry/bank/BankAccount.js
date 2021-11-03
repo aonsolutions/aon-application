@@ -50,7 +50,7 @@ export class BankAccount {
     }
 
     getBank() {
-        return this.bank;
+        return this.bank || '';
     }
 
     setBank(bank) {
