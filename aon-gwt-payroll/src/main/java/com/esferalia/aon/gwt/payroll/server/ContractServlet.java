@@ -127,6 +127,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	private JSONArray getAllEmployeesInfo(AonApiData api) throws Exception {
 		LOGGER.info("[GET] EMPLOYEE INFO");
 		JSONArray arr = new JSONArray();
+		
 		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
 			boolean allEmployees = api.getParams().optBoolean("allEmployees");  
 			List<EmployeeContractInfo> employees = JooqContrataContract.getEmployeesInfo(conn, api.getDomain().getId(), allEmployees);
@@ -417,7 +418,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	}
 
 
-	private JSONArray addContract(AonApiData api) throws Exception{
+	private JSONObject addContract(AonApiData api) throws Exception{
 		JSONObject params = api.getData();
 
 		Domain domain = new Domain();
@@ -470,7 +471,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	    } else {
 	    	throw new AonApiException("Ya existe un contrato para esa fecha");
 	    }
-		return new JSONArray();
+		return new JSONObject();
 	}
 	
 	private JSONArray saveVacation(AonApiData api) throws Exception{
