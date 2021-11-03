@@ -1182,7 +1182,9 @@ public class SecurityDAO {
 		DSLContext dslContext = ctx.getDslContext();
 		
 		Integer parentDomainId = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(domainId)).fetchOne(DOMAIN.PARENT);
-		Integer userRegistryId = dslContext.select(USER.REGISTRY).from(USER).where(USER.ID.eq(userId)).fetchOne(USER.REGISTRY);
+		Record userRegistryRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
+		Integer userRegistryId = userRegistryRecord.get(USER.REGISTRY);
+		Integer userRegistryDomain = userRegistryRecord.get(USER.DOMAIN);
 		Integer enterpriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
 		Integer enterpriseParentId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(parentDomainId)).fetchOne(ENTERPRISE.REGISTRY);
 		
@@ -1194,7 +1196,7 @@ public class SecurityDAO {
 		
 		if(null != certificate) return certificate;
 		
-		certificate = getEnterpriseParentCertificateNew(dslContext, enterpriseParentId, certificateType);
+		certificate = getEnterpriseParentCertificateNew(dslContext, enterpriseParentId, userRegistryDomain, certificateType);
 		
 		if(null != certificate) return certificate;
 
@@ -1245,12 +1247,12 @@ public class SecurityDAO {
 				.setCertificate(certificateRecord.get(RATTACH.DATA));
 	}
 	
-	private static Certificate getEnterpriseParentCertificateNew(DSLContext dslContext, Integer enterpriseParentId, String certificateType) {
+	private static Certificate getEnterpriseParentCertificateNew(DSLContext dslContext, Integer enterpriseParentId, Integer userRegistryDomain, String certificateType) {
 		Record certificateRecord = dslContext.select().from(RATTACH)
 				.innerJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
 				.innerJoin(TAG).on(RATTACH_TAG.TAG.eq(TAG.ID), TAG.TYPE.eq(TagType.CERTIFICATE.value()), TAG.NAME.eq(certificateType))
 				.where(RATTACH.TYPE.eq((byte)4))
-				.and(RATTACH.SECURITY_LEVEL.eq((byte)0))
+				.and(RATTACH.SECURITY_LEVEL.eq((byte)0).or(RATTACH.SECURITY_LEVEL.eq((byte)1).and(RATTACH.DOMAIN.eq(userRegistryDomain))))
 				.and(RATTACH.REGISTRY.eq(enterpriseParentId))
 				.fetchOne();
 		
@@ -1433,7 +1435,7 @@ public class SecurityDAO {
 						.setCertificate(r.get(RATTACH.DATA));
 		}
 		
-		return Optional.of(certificate);
+		return null == certificate ? Optional.empty() : Optional.of(certificate);
 		
 	}
 	

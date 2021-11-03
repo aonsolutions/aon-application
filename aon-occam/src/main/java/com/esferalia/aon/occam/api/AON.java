@@ -622,7 +622,7 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Certificate certificate =  getSecurity().getCertificateSEPE(ctx, domainId);
-			if(null == certificate.getCertificate())
+			if(null == certificate || null == certificate.getCertificate())
 				throw new CertificateNotFoundException();
 			return certificate;
 		} finally {
