@@ -20,6 +20,7 @@ import { appendNote } from './note/utils.js';
 import { AonInvoicePanel } from './invoice/aon-invoice-panel.js';
 import { AonAccounting } from './accounting/aon-accounting.js';
 import { AonMarketplace } from './marketplace/aon-marketplace.js';
+import { sortBy } from '../services/utils.js';
 
 // import './example/aon-example.js';
 // import './faqs/aon-faqs.js';
@@ -409,8 +410,10 @@ export class AonMenu extends AonElement {
 
 	buildNoteMenu(app) {
 		this.CLOSE = false;
+		let rootPanel = this.getRootPanel();
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
-		aonMenuSidenav.style.width = '250';
+		aonMenuSidenav.style.width = '250px';
+		if(rootPanel) rootPanel.style.marginRight = '250px';
 		aonMenuSidenav.innerHTML = '';
 
 		let div = this.createElement(TAG.DIV);
@@ -462,7 +465,7 @@ export class AonMenu extends AonElement {
 		ul.appendChild(aonDialogM);
 		
 		getNotes().then((notes)=>{
-			notes.map(note=> appendNote(ul, new Note(note)))
+		 	sortBy(notes, 'date', 'desc').map(note=> appendNote(ul, new Note(note)))
 		});
 	}
 

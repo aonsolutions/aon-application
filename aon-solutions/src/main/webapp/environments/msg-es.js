@@ -34,7 +34,9 @@ export const AVAILABLE = 'Disponible';
 
 export const BACK = 'Atrás';
 export const BACKGROUND_ADJUST = 'Ajustar Fondo';
+export const BARCODE = 'Código de Barras';
 export const BASE = 'Base';
+export const BASQUE = 'Euskera';
 export const BILLING = 'Facturación';
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Contratación';
@@ -46,6 +48,7 @@ export const BUSINESS_NAME = 'Razón Social';
 // ----- C
 
 export const CANCEL = 'Cancelar';
+export const CATALAN = 'Catalán';
 export const CATEGORY = 'Categoría';
 export const CATEGORIES = 'Categorías';
 export const CHANGE_TYPE = 'Cambiar Tipo';
@@ -53,6 +56,7 @@ export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicaciones Clásicas';
 export const CLASSIC_VIEW = 'Vista Clásica';
 export const CLOSE = 'Cerrar';
+export const CLOSE_SESSION = 'Cerrar Sesión';
 export const CODE = 'Código';
 export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';
@@ -73,6 +77,7 @@ export const COUNTRY = 'País';
 export const CREATE = 'Crear';
 export const CREDITOR = 'Acreedor';
 export const CREDITORS = 'Acreedores';
+export const CUSTOM_VIEW = 'Vista Personalizada';
 export const CUSTOMER = 'Cliente';
 export const CUSTOMERS = 'Clientes';
 
@@ -92,6 +97,7 @@ export const DELETE_LOGO_CONFIRM = 'Estás seguro de eliminar el logo';
 export const DELETE_TAG = 'Borrar Etiqueta';
 export const DELETE_TAX = 'Borrar Impuesto';
 export const DELETED_DATA = "Los datos se han eliminado correctamente";
+export const DESCRIPTION = 'Descripción';
 export const DETAILED = 'Detallado';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
@@ -114,8 +120,14 @@ export const EDIT_FILES = 'Editar Ficheros';
 export const EDIT_TAG = 'Editar Etiqueta';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Empleado';
+export const END_DATE = 'Fecha Fin';
+export const ENGLISH = 'Inglés';
 export const ENTERPRISE = 'Empresa';
+export const ENTRY = 'Entrada';
 export const EQUIVALENCE_SURCHARGE = 'Recargo de Equivalencia';
+export const EXIT = 'Salida';
+export const EXPENSE = 'Gasto';
+export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencimientos';
 
 // ----- F
@@ -129,6 +141,7 @@ export const FOOTER = 'Pie';
 
 // ----- G
 
+export const GALICIAN = 'Gallego';
 export const GENERAL_INFORMATION = 'Información General';
 export const GROUP_DATA = 'Datos del Grupo';
 export const GROUP_MANAGEMENT = 'Gestión de Grupos';
@@ -138,6 +151,7 @@ export const GROUPS = 'Grupos';
 // ----- H
 
 export const HEADER = 'Cabecera';
+export const HELP = 'Ayuda';
 export const HIRING = 'Contratación';
 export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulares';
@@ -171,6 +185,8 @@ export const ISSUEDS = 'Emitidas';
 
 // ----- L
 
+export const LANGUAGE = 'Idioma';
+export const LAST = 'Última';
 export const LAST_LOCATION = 'Última ubicación';
 export const LAST_STATUS = 'Último estado';
 export const LOCATION = 'Ubicación';
@@ -190,7 +206,12 @@ export const MY_USER = 'Mi Usuario';
 export const NAME = 'Nombre';
 export const NEW = 'Nuevo';
 export const NEW_COMPANY = 'Nueva Empresa';
+export const NEW_EXPENSE = 'Nuevo Gasto';
+export const NEW_PRODUCT = 'Nuevo Producto';
+export const NEW_REQUEST = 'Nueva Solicitud';
 export const NEXT = 'Siguiente';
+export const NOTES = 'Notas';
+export const NOTE = 'Nota';
 export const NUMBER = 'Número';
 
 // ----- O
@@ -207,6 +228,7 @@ export const OTHER_SERVICES = 'Otros Servicios';
 
 // ----- P
 
+export const PAUSE = 'Pausa';
 export const PAYMETHOD = 'Forma de Pago';
 export const PAYROLL = "Nómina";
 export const PAYSHEET = 'Nómina';
@@ -251,6 +273,7 @@ export const REJECT_INVOICES = 'Rechazar Facturas';
 export const REJECTED = 'Rechazada';
 export const REJECTED_INVOICES = 'Facturas Rechazadas';
 export const REJECTEDS = 'Rechazadas';
+export const REMINDER = 'Recordatorio';
 export const REQUEST = 'Solicitud';
 export const REQUESTS = 'Solicitudes';
 export const REQUESTS_SENT = 'Solicitudes Enviadas';
@@ -277,15 +300,18 @@ export const SERIE = 'Serie';
 export const SERVICE = 'Servicio';
 export const SERVICES = 'Servicios';
 export const SETTING =  'Configuración';
+export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Mostrar Fichero';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Tamaño';
+export const SPANISH = 'Castellano';
 export const STATISTICS = 'Estadísticas';
 export const STATUS = "Estado";
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Proveedor';
 export const SUPPLIERS = 'Proveedores';
+export const SUPPORT = 'Soporte';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apellidos';
 export const SYSTEM_MESSAGES = 'Mensajes del Sistema';
@@ -301,8 +327,11 @@ export const TICKET = 'Ticket';
 export const TICKETBAI = 'TicketBAI';
 export const TICKETS = 'Tickets';
 export const TIMECONTROL = 'Control Horario'; //'Control de Horario';
+export const TITLE = 'Título';
 export const TITULAR_DATA = 'Datos del Titular';
 export const TO_TRASH = 'Enviar a la Papelera';
+export const TODAY = 'Hoy';
+export const TOMORROW = 'Mañana';
 export const TOOLS = 'Herramientas';
 export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Suplidos';
@@ -330,9 +359,40 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retención';
+export const WORKGROUP = 'Grupo de trabajo';
+export const WRITE_YOUR_TITLE = "Escribe tu título aquí";
+export const WRITE_A_COMMENT =  "Escribe un comentario";
+export const WRITE_A_DESCRIPTION = "Escribe una descripción";
+export const WRITE_A_NOTE =  "Escribe una nota";
 
 // ----- X
 
 // ----- Y
 
+export const YEAR = 'Año';
+export const YESTERDAY = 'Ayer';
+
 // ----- Z
+
+//-------------DAYS
+export const SUNDAY = "Domingo";
+export const MONDAY = "Lunes"; 
+export const TUESDAY = "Martes";
+export const WEDNESDAY = "Miércoles";
+export const THURSDAY = "Jueves"; 
+export const FRIDAY = "Viernes"; 
+export const SATURDAY = "Sábado"; 
+
+//-------------MONTHS
+export const JANUARY = "Enero"; 
+export const FEBRUARY = "Febrero"; 
+export const MARCH = "Marzo"; 
+export const APRIL = "Abril"; 
+export const MAY = "Mayo"; 
+export const JUNE = "Junio"; 
+export const JULY = "Julio"; 
+export const AUGUST = "Agosto";
+export const SEPTEMBER = "Septiembre";
+export const OCTOBER = "Octubre"; 
+export const NOVEMBER = "Noviembre"; 
+export const DECEMBER = "Diciembre"; 

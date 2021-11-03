@@ -70,7 +70,8 @@ export const CACHED = 'cached';
 export const CALENDAR_TODAY = 'calendar_today';
 export const CALENDAR_VIEW_DAY = 'calendar_view_day';
 export const CAMERA_ENHANCE = 'camera_enhance';
-export const CANCEL_SCHEDULE_SEND = 'cancel_schedule_end';
+export const CANCEL_SCHEDULE_END = 'cancel_schedule_end';
+export const CANCEL_SCHEDULE_SEND = 'cancel_schedule_send';
 export const CARD_GIFTCARD = 'card_giftcard';
 export const CARD_MEMBERSHIP = 'card_membership';
 export const CARD_TRAVEL = 'card_travel';
@@ -135,6 +136,7 @@ export const INBOX = 'inbox';
 export const INFO = 'info';
 export const INFO_OUTLINE = 'info_outline';
 export const INSERT_DRIVE_FILE = "insert_drive_file";
+export const INVENTORY_2 = "inventory_2";
 export const IOS_SHARE = 'ios_share';
 
 // ----- K
@@ -186,6 +188,7 @@ export const SETTING = 'setting';
 export const STORE_MALL_DIRECTORY = 'store_mall_directory';
 export const SWAP_CALLS = 'swap_calls';
 export const SUPPORT_AGENT = "support_agent";
+export const STICKY_NOTE = 'sticky_note_2';
 
 // ----- T
 

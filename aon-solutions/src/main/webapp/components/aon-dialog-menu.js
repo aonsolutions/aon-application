@@ -126,7 +126,27 @@ export class AonDialogMenu extends AonElement {
 			li.style.cursor = 'pointer';
 			ul.appendChild(li);
 
-			if(item.aonIcon) {
+			if(item.options) {
+				let d = new AonDialogMenu();
+				d.id = 'newDialog';
+				this.getElement('rootPanel').appendChild(d);
+				li.addEventListener(EVENT.MOUSEOVER, () => {
+					const rect = li.getBoundingClientRect();
+					d.setMenuOptions(item.options, rect.top, rect.left - 12);
+					d.open();
+				});
+
+				li.addEventListener(EVENT.MOUSELEAVE, (e) => {
+					let isClickInside = li.contains(e.target) || li === e.target || d.contains(e.target) || d === e.target;
+				    if (!isClickInside) d.close();
+				});
+
+			}
+			if(item.image) {
+				let img = document.createElement('img');
+				img.src = item.image;
+				li.appendChild(img);
+			} else if(item.aonIcon) {
 				let ai = document.createElement(TAG.SPAN);
 				ai.style.verticalAlign = 'middle';
 				let aonIcon = new AonIcon();

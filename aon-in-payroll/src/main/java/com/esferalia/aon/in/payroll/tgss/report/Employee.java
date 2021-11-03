@@ -1,6 +1,7 @@
 package com.esferalia.aon.in.payroll.tgss.report;
 
 import java.util.Date;
+import java.util.Optional;
 
 public class Employee {
 
@@ -36,7 +37,14 @@ public class Employee {
 	public Float getIms() {return ims;}
 	public Float getTotal() {return total;}
 	public Integer getCotDays() {return cotDays;}
-
+	public Date getFra() {return fra;}
+	public Optional<Date> getFrb() {return Optional.ofNullable(frb);}
+	public Optional<String>  getGc() {return Optional.ofNullable(gc);}
+	public Optional<String> getContract() {return Optional.ofNullable(tc);}
+	public Optional<String> getCoef() { return ctp!=null&&ctp > 0 ? Optional.ofNullable(ctp.toString()) : Optional.empty(); }
+	public Optional<String> getOccupation() {return Optional.ofNullable(ep);}
+	
+	
 	private Employee() {}
 	
 	public void accept(Visitor visitor) {

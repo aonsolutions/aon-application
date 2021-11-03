@@ -6,9 +6,9 @@ import { timeHour } from "../utils.js";
 import { getTaskHoldersUser } from "../../../../services/taskHolderService.js";
 import { getTaskHolderTimeControl,
 } from "../../../../services/timeControlService.js";
-import { formatDateOrigin } from "../../../../services/utils.js";
 import {  setStyles } from "../../../../services/utilsComponents.js";
 import { DAYS } from "../../../../models/enums.js";
+import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 
 export class AonStatistics extends AonElement {
   TABLE_ID;
@@ -123,8 +123,8 @@ export class AonStatistics extends AonElement {
     let dt = this.data;
     try {
       if (!dt.length) {
-        const startDate = formatDateOrigin( new Date().addDay(-7));
-        const endDate = formatDateOrigin(new Date());
+        const startDate = AonDateUtils.formatDateOrigin( new Date().addDay(-7));
+        const endDate = AonDateUtils.formatDateOrigin(new Date());
         const [taskHolder] = await getTaskHoldersUser();
         dt = await getTaskHolderTimeControl({
           taskHolderId: taskHolder.id,

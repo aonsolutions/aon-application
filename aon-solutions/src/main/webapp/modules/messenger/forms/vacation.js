@@ -4,10 +4,11 @@ import { AonDate } from "../../../components/aon-date.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { TAG, EVENT, MSG, MATERIAL_ICONS, CSS } from "../../../environments/environments.js";
 import { saveVacation } from "../../../services/contractService.js";
-import { formatDateOrigin, serializeForm } from "../../../services/utils.js";
-import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
+import { serializeForm } from "../../../services/utils.js";
+import { setAttributes } from "../../../services/utilsComponents.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
-import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
+import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/creationUtils.js";
 
 /**
  * 
@@ -55,7 +56,7 @@ import { createBtnAccept, createDivEditable } from "../shared/creationUtils.js";
     if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isPayrollManager() || dur.isPayrollPortal()) ){
         let btnAccept = createBtnAccept();
         btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(aonMessengerChat) );
-        createDiv(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+        createDivGrid(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
     }
 }
 
@@ -75,7 +76,7 @@ const addDates = (table, i, data={}) =>{
     });
 
     table.addCell(startDate);
-    startDate.value = data.startDate || formatDateOrigin(new Date());
+    startDate.value = data.startDate || AonDateUtils.formatDateOrigin(new Date());
 
     //DATE END
     let endDate = setAttributes(new AonDate(),{
@@ -125,8 +126,8 @@ export const getFormVacationJson = ()=>{
 
 
 const processAccept = async (aonMessengerChat) => {
-    
-    aonMessengerChat.getApplication().startLoading();
+    let application = aonMessengerChat.getApplication();
+    application.startLoading();
     try {
         const task = aonMessengerChat.task;
         const data = getFormVacationJson();
@@ -138,23 +139,5 @@ const processAccept = async (aonMessengerChat) => {
         aonMessengerChat.showError(err)
     }
 
-    aonMessengerChat.getApplication().stopLoading();
-}
-
-/**
- * 
- * @param {HTMLElement} parent appenchild
- * @param {HTMLElement} child element add
- * @param {Object} properties 
- * @returns 
- */
- const createDiv = (parent, child, properties)=> {
-
-    const div = newComponent({ type: TAG.DIV, ...properties }).element;
-
-    parent.appendChild(div);
-
-    div.appendChild(child);
-
-    return div;
+    application.stopLoading();
 }

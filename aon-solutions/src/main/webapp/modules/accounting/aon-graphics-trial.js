@@ -1,11 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { TAG } from "../../environments/environments.js";
 
-import {
-  formatDate,
-  isEmptyObject,
-  setValueName,
-} from "../../services/utils.js";
+import { isEmptyObject } from "../../services/utils.js";
 import { colChart } from "./charts.js";
 import {
   getAccounting,

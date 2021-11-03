@@ -83,7 +83,7 @@ const addTextAreaChat = (aonMessengerChat) => {
     
         const divs = createSectionComment(div);
         divs.iconOpenFull.addEventListener(EVENT.CLICK, ()=>showFullComment(true));
-        divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
+        divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment());
         changeStyleSectionComment(divs);
     
         buildFullComment(aonMessengerChat, divs.aonTextArea);
@@ -124,7 +124,7 @@ const buildFullComment = (aonMessengerChat, aonTextArea) => {
     writter.appendChild(bar);
 
     bar.addButton2(ACTIONS.SEND,() => {
-        aonMessengerChat.saveTaskWorkflow();
+        aonMessengerChat.saveComment();
         showFullComment(false);
     });
     bar.addButton2(ACTIONS.BACK,() => showFullComment(false));

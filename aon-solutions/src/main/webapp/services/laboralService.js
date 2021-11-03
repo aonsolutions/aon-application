@@ -1,6 +1,6 @@
 import { get, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
-import { formatDateOrigin } from "./utils.js";
+import { AonDateUtils } from "../modules/utils/AonDateUtils.js";
 
 export const getEmployeeSalaries = (data) =>
   get(`${API_URL}/contract/employee/salaries`, data);
@@ -17,20 +17,20 @@ export const getPeriodLaboral = (data) => {
     {
       name: "Mes actual",
       value: "this_month",
-      startDate: formatDateOrigin(
+      startDate: AonDateUtils.formatDateOrigin(
         new Date(now.getFullYear(), now.getMonth(), 1)
       ),
-      endDate: formatDateOrigin(
+      endDate: AonDateUtils.formatDateOrigin(
         new Date(now.getFullYear(), now.getMonth() + 1, 0)
       ),
     },
     {
       name: "Mes anterior",
       value: "last_month",
-      startDate: formatDateOrigin(
+      startDate: AonDateUtils.formatDateOrigin(
         new Date(now.getFullYear(), now.getMonth() - 1, 1)
       ),
-      endDate: formatDateOrigin(
+      endDate: AonDateUtils.formatDateOrigin(
         new Date(now.getFullYear(), now.getMonth() - 1 + 1, 0)
       ),
     },
@@ -44,32 +44,32 @@ export const getPeriodLaboral = (data) => {
       jsonValues.push({
         name: "Primer trimestre",
         value: "first_quarterly",
-        startDate: formatDateOrigin(firstDayOfYear),
-        endDate:formatDateOrigin(endDate),
+        startDate: AonDateUtils.formatDateOrigin(firstDayOfYear),
+        endDate:AonDateUtils.formatDateOrigin(endDate),
       });
       endDate = lastDayOfMonth(firstDayOfYear, +5);
       if(now>=endDate){
         jsonValues.push({
           name: "Segundo trimestre",
           value: "second_quarterly",
-          startDate: formatDateOrigin(new Date(firstDayOfYear).addMonth(+3)),
-          endDate:formatDateOrigin(endDate),
+          startDate: AonDateUtils.formatDateOrigin(new Date(firstDayOfYear).addMonth(+3)),
+          endDate:AonDateUtils.formatDateOrigin(endDate),
         });
         endDate = lastDayOfMonth(firstDayOfYear, +8);
         if(now>=endDate){
           jsonValues.push({
             name: "Tercer trimestre",
             value: "third_quarterly",
-            startDate: formatDateOrigin(new Date(firstDayOfYear).addMonth(+6)),
-            endDate:formatDateOrigin(endDate),
+            startDate: AonDateUtils.formatDateOrigin(new Date(firstDayOfYear).addMonth(+6)),
+            endDate:AonDateUtils.formatDateOrigin(endDate),
           });
           endDate = lastDayOfMonth(firstDayOfYear, +11);
           if(now>=endDate){
             jsonValues.push({
               name: "Cuarto trimestre",
               value: "fourth_quarterly",
-              startDate: formatDateOrigin(new Date(firstDayOfYear).addMonth(+9)),
-              endDate:formatDateOrigin(endDate),
+              startDate: AonDateUtils.formatDateOrigin(new Date(firstDayOfYear).addMonth(+9)),
+              endDate:AonDateUtils.formatDateOrigin(endDate),
             });
           }
         }
@@ -79,14 +79,14 @@ export const getPeriodLaboral = (data) => {
     jsonValues.push({
       name: "Año actual",
       value: "this_year",
-      startDate: formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
-      endDate: formatDateOrigin(new Date(now.getFullYear(), 12, 0)),
+      startDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear(), 12, 0)),
     },
     {
       name: "Año anterior",
       value: "last_year",
-      startDate: formatDateOrigin(new Date(now.getFullYear() - 1, 0, 1)),
-      endDate: formatDateOrigin(new Date(now.getFullYear() - 1, 12, 0)),
+      startDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear() - 1, 0, 1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear() - 1, 12, 0)),
     },
     {
       name: "Personalizado",

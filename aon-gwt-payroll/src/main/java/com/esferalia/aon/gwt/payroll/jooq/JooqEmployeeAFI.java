@@ -417,6 +417,7 @@ public class JooqEmployeeAFI {
 		JSONObject json = new JSONObject();
 		JSONObject fab = new JSONObject();
 		JSONObject dam = new JSONObject();
+		JSONObject fct = new JSONObject();
 		
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
 		
@@ -451,12 +452,30 @@ public class JooqEmployeeAFI {
 						.fetch(SALARY.ID))
 			).fetch();
 		
+		Result<Record> holidaysDataRecords = dslContext.select().from(SALARY_DATA)
+				.where(SALARY_DATA.NAME.eq("DIAS_VACACIONES_NO_DISFRUTADOS"))
+				.and(SALARY_DATA.SALARY.in(
+						dslContext.select(SALARY.ID).from(SALARY)
+							.where(SALARY.TYPE.eq((byte)2))
+							.and(SALARY.CONTRACT.eq(contractId))
+							.fetch(SALARY.ID))
+				).orderBy(SALARY_DATA.START_DATE.desc())
+				.fetch();
+		
 		Calendar endDateCalendar = Calendar.getInstance();
 		endDateCalendar.setTime(contractRecord.get(CONTRACT.END_DATE));
 		
 		String quoteGroup = parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String tc2 = parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String partialityCoef = contractDataPCRecord.isEmpty() ? null : parseContractData(contractDataPCRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
+		
+		if(holidaysDataRecords.isNotEmpty()) {
+			Calendar holidyaEndDateCalendar = Calendar.getInstance();
+			holidyaEndDateCalendar.setTime(holidaysDataRecords.get(0).get(SALARY_DATA.END_DATE));
+			fct.put("dayHoliday", endDateCalendar.get(Calendar.DAY_OF_MONTH));
+			fct.put("monthHoliday", endDateCalendar.get(Calendar.MONTH) + 1);
+			fct.put("yearHoliday", endDateCalendar.get(Calendar.YEAR));
+		}
 		
 		//FAB
 		fab.put("action", "MB");
@@ -468,12 +487,14 @@ public class JooqEmployeeAFI {
 		fab.put("year", endDateCalendar.get(Calendar.YEAR));
 		fab.put("quoteGroup", quoteGroup);
 		fab.put("tc2", tc2);
-		fab.put("partialityCoef", partialityCoef);
+		fab.put("partialityCoef", partialityCoef == null ? "" : partialityCoef);
 		fab.put("gender", gender);
 		
 		//DAM -> All reserved
 		json.put("FAB", fab);
 		json.put("DAM", dam);
+		if(holidaysDataRecords.isNotEmpty())
+			json.put("FCT", fct);
 		
 		return json;
 	}

@@ -17,6 +17,7 @@
 		.scrollHeight{
 			max-height: 300px;
     		min-height: 30px;
+    		width: 100%;
 		}
 		
 		.flex{

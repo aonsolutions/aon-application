@@ -62,10 +62,11 @@ export class AonNotificationIcon extends AonElement {
 
     async changeBadge(){
         const notificationSpan = await waitEl("#"+this.AON_NOTIFICATION_ICON);
+        notificationSpan.style.position = "relative";
         const total = this.getTotalCount();
         const badge = this.getElement(this.BADGE) || createBadge(this.BADGE).element;
         if(total && total > 0){
-            badge.textContent = total;
+            // badge.textContent = total;
             notificationSpan.appendChild(badge);   
         } else {
             badge.remove();

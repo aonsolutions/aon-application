@@ -242,6 +242,11 @@ public class RegistryImpl implements IRegistry{
 				configuration -> CustomerDAO.getStream(ctx, filter));
 	}
 	
+	public Customer saveCustomer(AONContext ctx, Customer customer) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.save(ctx, customer));
+	}
+	
 	@Override
 	public Customer insertCustomer(AONContext ctx, Customer customer) {
 		return 	ctx.getDslContext().transactionResult(
@@ -276,6 +281,12 @@ public class RegistryImpl implements IRegistry{
 	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRecordDataStream(ctx, filter));
+	}
+	
+	@Override
+	public RecordData saveRecordData(AONContext ctx, RecordData recordData) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.saveRecordData(ctx, recordData));
 	}
 	
 	// -------------------- Company

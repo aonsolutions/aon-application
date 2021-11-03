@@ -18,9 +18,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +39,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -48,6 +51,7 @@ import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import solutions.aon.seg.social.IServicioRedConstants;
 import solutions.aon.seg.social.ServicioREDRegeXML;
 import solutions.aon.seg.social.exception.ReportTooLongException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -63,6 +67,10 @@ import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilder;
 
 public class Toolkit {
+	
+	private static final String PROSA_ERR = "\\<div[^<>]*?id=(\"|')ARQContenMensaje(\"|')[^<>]*\\>.*?\\<li[^<>]*?class=(\"|')mensajeError(\"|')[^<>]*\\>(?<error>[^<>]*?)\\<\\/li\\>.*?\\<\\/div\\>";
+	private static final Pattern FORM_PATTERN = Pattern.compile("\\<form.*action=\"(?<link>.+?SessionId=(?<session>[^\\&]+?)\\&.*?)\"");
+	private static final Pattern FORM_PATTERN_PROSA = Pattern.compile("\\<form.*action=\"(?<link>[^\"']+?ARQ\\.SPM\\.TICKET=(?<ticket>[^\\&]+?)\\&.*?)\"");
 
 	// LOGS AN ARRAY OF INFORMATION THROUGH CONSOLE
 	public static void log(Object[] things) {
@@ -416,11 +424,11 @@ public class Toolkit {
 			+ Toolkit.getValue(body, "SDFINFORMEA604")
 		));
 //		System.out.println(Toolkit.getValue(body, "SDFINFORMEA601"));
-		params.add(new BasicNameValuePair("aplicacion", Toolkit.getValue(body, "SDFAPLICACION")));
-		params.add(new BasicNameValuePair("usuario", Toolkit.getValue(body, "SDFUSUARIO")));
-		params.add(new BasicNameValuePair("idioma", Toolkit.getValue(body, "SDFIDIOMA")));
-		params.add(new BasicNameValuePair("fecha", Toolkit.getValue(body, "SDFFECHA") + " " + Toolkit.getValue(body, "SDFHORA")));
-		params.add(new BasicNameValuePair("tipo", Toolkit.getValue(body, "SDFTIPO")));
+		params.add(new BasicNameValuePair("aplicacion", getValue(body, "SDFAPLICACION")));
+		params.add(new BasicNameValuePair("usuario", getValue(body, "SDFUSUARIO")));
+		params.add(new BasicNameValuePair("idioma", getValue(body, "SDFIDIOMA")));
+		params.add(new BasicNameValuePair("fecha", getValue(body, "SDFFECHA") + " " + getValue(body, "SDFHORA")));
+		params.add(new BasicNameValuePair("tipo", getValue(body, "SDFTIPO")));
 		
 		httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 		return httpPost;
@@ -532,11 +540,23 @@ public class Toolkit {
 		}
 	}
 	
+	public static String getTable (String body) {
+		Pattern pattern = Pattern.compile("\\<table[^<>]*\\>.+?\\<\\/table>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		try {			
+			return matcher.find() ? matcher.group().replaceAll("\\&nbsp;", "").replaceAll("\\&euro;", "") : null;
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
+	
 	public static Collection<String> getTrs (String html) {
+		if (html == null)
+			return new ArrayList<>();
 		Pattern pattern = Pattern.compile("\\<tr\\>.*?\\<\\/tr\\>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(html);
 		
-		Collection<String> collection = new ArrayList<String>();
+		Collection<String> collection = new ArrayList<>();
 		
 		while (matcher.find()) {
 			collection.add(matcher.group());
@@ -556,11 +576,11 @@ public class Toolkit {
 		return collection;
 	}
 	
-	public static LinkedList<String> getTdsTexts (String html) {
+	public static List<String> getTdsTexts (String html) {
 		Pattern pattern = Pattern.compile("\\<td[^<>]*\\>(?<inner>.*?)\\<\\/td\\>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(html);
 		
-		LinkedList<String> collection = new LinkedList<String>();
+		LinkedList<String> collection = new LinkedList<>();
 		
 		while (matcher.find()) {
 			
@@ -575,8 +595,7 @@ public class Toolkit {
 	
 	public static String removeTags (String text) {
 		if (text != null) {
-			String str = text.replaceAll("\\<[^<>]*?\\>", "");
-			return str;
+			return text.replaceAll("\\<[^<>]*?\\>", "");
 		}
 		return null;
 	}
@@ -592,6 +611,14 @@ public class Toolkit {
 	public static Float strToFloat(String str) {
 		try {
 			return Float.parseFloat(str.replaceAll("\\.", "").replaceAll(",", "."));
+		} catch (NullPointerException | NumberFormatException e) {
+			return null;
+		}
+	}
+	
+	public static Double strToDouble(String str) {
+		try {
+			return Double.parseDouble(str.replaceAll("\\.", "").replaceAll(",", "."));
 		} catch (NullPointerException | NumberFormatException e) {
 			return null;
 		}
@@ -624,7 +651,7 @@ public class Toolkit {
 	}
 	
 	public static void checkProsaError(String body) throws SegSocialException{
-		Pattern pattern = Pattern.compile("\\<div[^<>]*?id=(\"|')ARQContenMensaje(\"|')[^<>]*\\>.*?\\<li[^<>]*?class=(\"|')mensajeError(\"|')[^<>]*\\>(?<error>[^<>]*?)\\<\\/li\\>.*?\\<\\/div\\>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Pattern pattern = Pattern.compile(PROSA_ERR, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(body);
 		String errText = null;
 		if (matcher.find()) {
@@ -731,6 +758,233 @@ public class Toolkit {
 			ServicioREDRegeXML.workerLiquidationDataType(wlb, trs);
 		}
 		return wlb.build();
+	}
+	
+	public static String getBodyGET(CloseableHttpClient httpClient, String link) throws SegSocialException, IOException {
+			try (CloseableHttpResponse resp = httpClient.execute(new HttpGet(link))) {
+				Toolkit.checkResponseStatus(resp);
+				HttpEntity entity = resp.getEntity();
+				if (entity != null) {
+					return EntityUtils.toString(resp.getEntity(), IServicioRedConstants.ISO_8859_1);
+				}
+				return null;
+			}
+		}
+
+	public static String getBodyPOST(CloseableHttpClient httpClient, HttpPost httpPost) throws SegSocialException, IOException {
+		try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+			Toolkit.checkResponseStatus(resp);
+			HttpEntity entity = resp.getEntity();
+			if (entity != null) {
+				return EntityUtils.toString(entity, IServicioRedConstants.ISO_8859_1);
+			}
+			return null;
+		}
+	}
+	
+	public static String getLinkPROSA(String body) {
+		Matcher matcher = FORM_PATTERN_PROSA.matcher(body);
+		if (matcher.find()) {
+			String params = matcher.group("link").replace("&amp;", "&");
+			return "https://w2.seg-social.es/" + params;
+		}
+		return null;
+	}
+	public static String getLink(String body) {
+		Matcher matcher = FORM_PATTERN.matcher(body);
+		if (matcher.find()) {
+			String params = matcher.group("link").replace("&amp;", "&");
+			return "https://w2.seg-social.es/" + params;
+		}
+		return null;
+	}
+	
+	public static String getSessionId(String body) {
+		Matcher matcher = FORM_PATTERN.matcher(body);
+		if (matcher.find()) {
+			return matcher.group(IServicioRedConstants.SESSION);
+		}
+		return null;
+	}
+	
+	public static String getTicket(String body) {
+		Matcher matcher = FORM_PATTERN_PROSA.matcher(body);
+		if (matcher.find()) {
+			return matcher.group("ticket");
+		}
+		return null;
+	}
+	
+	public static List<String> getRelations(String body) {
+		String regex = "\\<tr\\>.*?\\<input\\s*[^<>]*?name=\"TRAMO\"[^<>]*\\>.*?\\<\\/tr\\>";
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(body);
+		LinkedList<String> list = new LinkedList<>();
+		while (matcher.find()) {
+			String content = safeRemoveWeirdCharacters(matcher.group());
+			content = content != null ? content.replace("&nbsp;", "") : content;
+			list.add(content);
+		}
+		return list;
+	}
+	
+	public static boolean isThereProsaError(String body) {
+		Pattern pattern = Pattern.compile(PROSA_ERR, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		return matcher.find();
+	}
+	
+	public static String changeAccent(String description) {
+		return description.replaceAll("FORMACI.?N", "FORMACION");
+	}
+	
+	public static boolean idExists(String id, String body) {
+		Pattern pattern = Pattern.compile("id=(\"|')" + id + "(\"|')", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(body);
+		return matcher.find();
+	}
+	
+	public static Map<String, String> getNafValues (String body) {
+		Map<String, String> nafValues = new LinkedHashMap<>();
+		String regex = "\\<input\\s*[^>]*?name=\"NAF\"[^>]*\\>";
+		String valueRegex = "value=[\"'](?<value>[^\"'])[\"']";
+		String nafRegex = "title=\"Seleccionar\\s*el\\s*NAF\\s*(?<naf>\\d+)\"";
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Pattern valuePattern = Pattern.compile(valueRegex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Pattern nafPattern = Pattern.compile(nafRegex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Matcher matcher= pattern.matcher(body);
+		while (matcher.find()) {		
+			String match = matcher.group();
+			Matcher valueMatcher = valuePattern.matcher(match);
+			if (valueMatcher.find()) {
+				String value = valueMatcher.group("value");
+				Matcher nafMatcher = nafPattern.matcher(match);
+				if (nafMatcher.find()) {
+					String naf = nafMatcher.group("naf");
+					nafValues.put(naf, value);
+				}
+			}
+		}
+		return nafValues;
+	}
+	
+	public static String getElementByAttributeFirstTag(String body, String attributeName, String attributeValue) {
+		if (attributeName == null || attributeName.isEmpty() || attributeValue == null) {
+			return null;
+		}
+		String regex = "\\<[^<>/]+" + attributeName + "=[\"']" + attributeValue + "[\"'][^<>]*\\>";
+		Pattern pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		if (matcher.find()) {
+			return matcher.group();
+		}
+		return null;
+	}
+	
+	public static List<String> getElementsByAttributeFirstTag(String body, String attributeName, String attributeValue) {
+		if (attributeName == null || attributeName.isEmpty() || attributeValue == null) {
+			return Collections.emptyList();
+		}
+		LinkedList<String> elementList = new LinkedList<>();
+		String regex = "\\<[^<>/]+" + attributeName + "=[\"']" + attributeValue + "[\"'][^<>]*\\>";
+		Pattern pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		while (matcher.find()) {
+			elementList.add(matcher.group());
+		}
+		return elementList;
+	}
+	
+	public static List<String> getElementsContainingAttributeFirstTag(String body, String attributeName, String stringContained) {
+		if (attributeName == null || attributeName.isEmpty() || stringContained == null) {
+			return Collections.emptyList();
+		}
+		LinkedList<String> elementList = new LinkedList<>();
+		String regex = "\\<[^<>/]+" + attributeName + "=[\"'][^\"'<>]" + stringContained + "[^\"'<>][\"'][^<>]*\\>";
+		Pattern pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		while (matcher.find()) {
+			elementList.add(matcher.group());
+		}
+		return elementList;
+	}
+	
+	public static String getElementByAttribute(String body, String attributeName, String attributeValue) {
+		if (attributeName == null || attributeName.isEmpty() || attributeValue == null) {
+			return null;
+		}
+		String regex = "\\<[^<>]+" + attributeName + "=[\"']" + attributeValue + "[\"'][^<>]*(\\/\\>|\\>[^<>]*\\<[^<>]*\\>)";
+		Pattern pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		if (matcher.find()) {
+			return matcher.group();
+		}
+		return null;
+	}
+	
+	public static List<String> getElementsByAttribute(String body, String attributeName, String attributeValue) {
+		if (attributeName == null || attributeName.isEmpty() || attributeValue == null) {
+			return Collections.emptyList();
+		}
+		LinkedList<String> elementList = new LinkedList<>();
+		String regex = "\\<[^<>]+" + attributeName + "=[\"']" + attributeValue + "[\"'][^<>]*(\\/\\>|\\>[^<>]*\\<[^<>]*\\>)";
+		Pattern pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		while (matcher.find()) {
+			elementList.add(matcher.group());
+		}
+		return elementList;
+	}
+	//TODO
+	public static List<String> getElementsContainingAttribute(String body, String attributeName, String stringContained) {
+		if (attributeName == null || attributeName.isEmpty() || stringContained == null || stringContained.isEmpty()) {
+			return Collections.emptyList();
+		}
+		LinkedList<String> elementList = new LinkedList<>();
+		String regex = "\\<[^<>]+?" + attributeName + "=[\"'][^\"'<>]*" + stringContained + "[^\"'<>]*[\"'][^<>]*(\\/\\>|\\>[^<>]*\\<[^<>]*\\>)";
+		Pattern pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(body);
+		while (matcher.find()) {
+			elementList.add(matcher.group());
+		}
+		return elementList;
+	}
+	
+	
+	public static String getAttribute(String element, String attributeName) {
+		StringBuilder strBuilder = new StringBuilder("");
+		if (element == null || element.isEmpty() || attributeName == null || attributeName.isEmpty())
+			return null;
+		else if (attributeName.equals("innerText")) {
+			strBuilder.append("\\>(?<value>[^\"'<>]*)\\<");
+		} else {
+			strBuilder.append(attributeName + "=[\"'](?<value>[^'\"<>]*)[\"']");
+		}
+		String regex = strBuilder.toString();
+		Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(element);
+		if (matcher.find()) {
+			return matcher.group("value");
+		}
+		return null;
+	}
+
+	public static String goBackPdf(CloseableHttpClient httpClient, String link, String sessionId)
+			throws UnsupportedEncodingException, SegSocialException, IOException {
+		HttpPost httpPost;
+		List<NameValuePair> params;
+		httpPost = new HttpPost(link);
+		params = new ArrayList<>();
+		params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, "SGIRED"));
+		params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "EIOMINTE"));
+		params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+		params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
+		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_ENTORNO_PR, "0"));
+		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_PRACTICE_MENU, "I"));
+		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_COMMAND_EDIT, "EN"));
+		params.add(new BasicNameValuePair("btn_FkeyButton", "+"));
+		httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+		return getBodyPOST(httpClient, httpPost);
 	}
 	
 //	public static void findInfoFromElem(String line, String attribute, String tagName, String refAttr, String refAttrValue) {

@@ -3,7 +3,7 @@ import { AonTable } from "../../components/aon-table.js";
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { getTasks } from "../../services/taskService.js";
-import { setFullDate, setTime, sortBy } from "../../services/utils.js";
+import { sortBy } from "../../services/utils.js";
 import { SigninSidenav } from "../signin/signinEnums.js";
 import { firstLetters } from "../signin/time-control/utils.js";
 import { MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from "./MessengerEnums.js";
@@ -13,6 +13,7 @@ import { getIconJson } from "./shared/utils.js";
 import { getCustomers } from "../../services/registryService.js";
 import { getTaskHolder } from "../../services/taskHolderService.js";
 import * as LS from '../../services/localStorageService.js';
+import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 export class AonMessengerList extends AonElement {
   MORE;
@@ -183,32 +184,28 @@ export class AonMessengerList extends AonElement {
   getDataDesktop(datos){
     try {
       const company = LS.getCompany();
+      const domainId = parseInt(LS.getDomainId());
       const document = company ? company.document: undefined;
       const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
       datos.map((res, idx) => {
-        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
-        let assigned = "";
-        if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
-        else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
-  
-        const newTitle = this.getNewTitle(res, document, documentTh);
-
         const newData = { 
           ...res, 
-          newTitle,
-          assigned,
-          dateParse,
+          dateParse: firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date),
+          newTitle: this.getNewTitle(res, document, documentTh),
+          assigned: this.getAssigned(res, domainId),
           lettersHtml: this.getIcon(res),
         };
         this.AON_TABLE.addRow(newData, () =>  this.goMessengerChat(res, idx));
       });
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   }
   
   getDataMobile(datos){
     try{
       datos.map((res, idx) => {
-        const dateParse = firstLetters(setFullDate(res.date)) + " " + setTime(res.date);
+        const dateParse = firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
         const newTitle  = `#${res.newNumber} ${res.title}`;
         const options = {
           title: newTitle,
@@ -217,7 +214,9 @@ export class AonMessengerList extends AonElement {
         };
         this.AON_TABLE.addLi(options, idx, () => this.goMessengerChat(res, idx));
       });
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async getData(){
@@ -277,6 +276,17 @@ export class AonMessengerList extends AonElement {
     // }
 
     return span.outerHTML;
+  }
+
+  getAssigned(res, domainId){
+    let assigned = "";
+    if( res.domain && res.domain.id && domainId !== parseInt(res.domain.id) )  
+      assigned = res.domain.description;
+    else if(res.task_holder&&res.task_holder.id)                                                
+      assigned = res.task_holder.alias || res.task_holder.name; 
+    else if(res.workgroup&&res.workgroup.description) 
+      assigned = res.workgroup.description;
+    return assigned;
   }
 
   getNewTitle(res, document, documentTh){

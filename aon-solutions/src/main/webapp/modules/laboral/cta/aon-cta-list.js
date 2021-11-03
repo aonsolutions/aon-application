@@ -2,7 +2,7 @@ import { AonElement } from "../../../components/AonElement.js";
 
 import {
   getCertCorriente,
-  getTipoCtz,
+  getQuoteType,
   getReportAffiliateInAlta,
   getReportAffiliateInMovPrev,
   getCccForActivity,
@@ -10,9 +10,9 @@ import {
 } from "../../../services/service.js";
 import { PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CONSTANT } from "../../../environments/environments.js";
-import { formatDateOrigin } from "../../../services/utils.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
 export class AonCtaList extends AonElement {
@@ -149,15 +149,15 @@ export class AonCtaList extends AonElement {
   }
 
   async getTipo(data) {
-    const { name } = await getTipoCtz(data);
+    const { name } = await getQuoteType(data);
     return name;
   }
 
   async getCertCorriente(data) {
     this.applicationEl.startLoading();
     try {
-      const { ccc, cccRegimeCode: regimen } = data;
-      await getCertCorriente({ ccc, regimen }); // open pdf
+      const { ccc, cccRegimeCode: regime } = data;
+      await getCertCorriente({ ccc, regime }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}
@@ -167,8 +167,8 @@ export class AonCtaList extends AonElement {
   async getReportAffiliateInAlta(data) {
     this.applicationEl.startLoading();
     try {
-      const { ccc, cccRegimeCode: regimen } = data;
-      await getReportAffiliateInAlta({ ccc, regimen }); // open pdf
+      const { ccc, cccRegimeCode: regime } = data;
+      await getReportAffiliateInAlta({ ccc, regime }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}
@@ -178,8 +178,8 @@ export class AonCtaList extends AonElement {
   async getReportAffiliateInMovPrev(data) {
     this.applicationEl.startLoading();
     try {
-      const { ccc, cccRegimeCode: regimen } = data;
-      await getReportAffiliateInMovPrev({ ccc, regimen }); // open pdf
+      const { ccc, cccRegimeCode: regime } = data;
+      await getReportAffiliateInMovPrev({ ccc, regime }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}
@@ -189,9 +189,9 @@ export class AonCtaList extends AonElement {
   async getIdcCcc(data) {
     this.applicationEl.startLoading();
     try {
-      const { ccc, cccRegimeCode: regimen } = data;
-      const fecha = formatDateOrigin( new Date());
-      await getIdcCcc({ ccc, regimen, fecha }); // open pdf
+      const { ccc, cccRegimeCode: regime } = data;
+      const fecha = AonDateUtils.formatDateOrigin( new Date());
+      await getIdcCcc({ ccc, regime, fecha }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}

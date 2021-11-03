@@ -1,9 +1,10 @@
 package solutions.aon.seg.social;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -11,13 +12,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.junit.Ignore;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.ReportTooLongException;
@@ -33,12 +32,15 @@ import solutions.aon.seg.social.exception.invalid.WrongAffNumber;
 import solutions.aon.seg.social.exception.invalid.WrongIdentifierException;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
 import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Idc;
-import solutions.aon.seg.social.object.Liquidation;
-import solutions.aon.seg.social.object.WorkerLiquidation;
+import solutions.aon.seg.social.object.Period;
 
 //@Ignore
 public class TestServicioRED extends SegSocialTest {
+	
+	private static Logger LOG = Logger.getLogger(TestServicioRED.class.getName());
+	private static final String PASSED = "PASSED - ";
 
 //------------------------------------------------CONTRIBUTION INFO---------------------------------------------
 
@@ -49,7 +51,7 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, 2020);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			byte[] pdf = ServicioRED.getIDCPost(certificateInputStream
+			byte[] pdf = ServicioRED.getIDCPOST(certificateInputStream
 					, "jg@FNMT"
 					, "pkcs12"
 					, "011017250195"
@@ -59,9 +61,10 @@ public class TestServicioRED extends SegSocialTest {
 					);
 //			if (pdf != null) {
 				assertTrue(pdf != null && pdf.length > 120000);
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 //			}
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.severe(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail();
@@ -75,7 +78,7 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, 2020);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			ServicioRED.getIDCPost(certificateInputStream
+			ServicioRED.getIDCPOST(certificateInputStream
 					, "jg@FNFT"
 					, "pkcs12"
 					, "011017250195"
@@ -85,9 +88,9 @@ public class TestServicioRED extends SegSocialTest {
 					);
 			fail();
 		} catch (InvalidCertificateException e) {
-			
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail();
@@ -101,7 +104,7 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, 2020);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			ServicioRED.getIDCPost(certificateInputStream
+			ServicioRED.getIDCPOST(certificateInputStream
 					, "jg@FNMT"
 					, "pkcs12"
 					, "011017250195"
@@ -111,9 +114,9 @@ public class TestServicioRED extends SegSocialTest {
 					);
 			fail();
 		} catch (WrongRegimeException e) {
-			
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail();
@@ -127,7 +130,7 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, 2020);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			ServicioRED.getIDCPost(certificateInputStream
+			ServicioRED.getIDCPOST(certificateInputStream
 					, "jg@FNMT"
 					, "pkcs12"
 					, "011017250999"
@@ -137,9 +140,9 @@ public class TestServicioRED extends SegSocialTest {
 					);
 			fail();
 		} catch (WrongAffNumber e) {
-			
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail();
@@ -153,7 +156,7 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, 2020);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			ServicioRED.getIDCPost(certificateInputStream
+			ServicioRED.getIDCPOST(certificateInputStream
 					, "jg@FNMT"
 					, "pkcs12"
 					, "011017250195"
@@ -163,9 +166,9 @@ public class TestServicioRED extends SegSocialTest {
 					);
 			fail();
 		} catch (invalidCccException e) {
-			
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail();
@@ -179,7 +182,7 @@ public class TestServicioRED extends SegSocialTest {
 			calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
 			calendar.set(Calendar.MONTH, Calendar.JUNE);
 			calendar.set(Calendar.DAY_OF_MONTH, 23);
-			ServicioRED.getIDCPost(certificateInputStream
+			ServicioRED.getIDCPOST(certificateInputStream
 					, "jg@FNMT"
 					, "pkcs12"
 					, "011017250195"
@@ -189,9 +192,9 @@ public class TestServicioRED extends SegSocialTest {
 					);
 			fail();
 		} catch (InvalidDateException e) {
-		
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
@@ -206,7 +209,6 @@ public class TestServicioRED extends SegSocialTest {
 	public void testContributionInfoCccPOST() throws IOException {
 		try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 			
-			
 			byte[] pdf = ServicioRED.getIDCCccPOST(
 					certificateInputStream,
 					"jg@FNMT",
@@ -216,9 +218,10 @@ public class TestServicioRED extends SegSocialTest {
 					new Date());
 //			if (pdf != null) {
 				assertTrue(pdf != null && pdf.length > 12000);
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 //			}
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail();
@@ -241,9 +244,9 @@ public class TestServicioRED extends SegSocialTest {
 					);
 			fail();
 		} catch (InvalidCertificateException e) {
-			
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail();
@@ -266,9 +269,9 @@ public class TestServicioRED extends SegSocialTest {
 					);
 			fail(pdf.length+"");
 		} catch (WrongRegimeException e) {
-			
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail();
@@ -291,9 +294,9 @@ public class TestServicioRED extends SegSocialTest {
 					);
 			fail();
 		} catch (invalidCccException e) {
-			
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail();
@@ -316,9 +319,9 @@ public class TestServicioRED extends SegSocialTest {
 					);
 			fail();
 		} catch (InvalidDateException e) {
-			
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 		} catch (StatusCodeException e) {
-			System.err.println(e.getMessage());
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
@@ -333,7 +336,6 @@ public class TestServicioRED extends SegSocialTest {
 		public void testContributionInfoNafPOST() throws IOException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				
-				
 				byte[] pdf = ServicioRED.getIDCNAfPOST(
 						certificateInputStream,
 						"jg@FNMT",
@@ -344,9 +346,10 @@ public class TestServicioRED extends SegSocialTest {
 						new Date());
 //				if (pdf != null) {
 					assertTrue(pdf != null && pdf.length > 12000);
+					LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 //				}
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -371,9 +374,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidCertificateException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -398,9 +401,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (WrongRegimeException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -425,9 +428,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (WrongAffNumber e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -452,9 +455,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (invalidCccException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -479,9 +482,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidDateException e) {
-			
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
@@ -511,9 +514,10 @@ public class TestServicioRED extends SegSocialTest {
 						calendar.getTime());
 //				if (pdf != null) {
 					assertTrue(pdf != null && pdf.length > 120000);
+					LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 //				}
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -539,9 +543,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidCertificateException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -567,9 +571,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (NotAllowedContributionAccount e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -595,9 +599,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (WrongAffNumber e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -623,9 +627,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (invalidCccException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -651,9 +655,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (DataDoesNotExist e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
@@ -663,7 +667,7 @@ public class TestServicioRED extends SegSocialTest {
 		
 //---------------------------------------------------------------------------------------------------------------
 		
-//------------------------------------------------TA DUPLICATE---------------------------------------------------
+//--------------------------------------------OBLIGATION AWARENESS-----------------------------------------------
 		
 		@Test
 		public void testObligationAwarenessCertificatePOST() throws IOException {
@@ -677,9 +681,10 @@ public class TestServicioRED extends SegSocialTest {
 						);
 //				if (pdf != null) {
 					assertTrue(pdf != null && pdf.length > 110000);
+					LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 //				}
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -698,9 +703,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidCertificateException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -719,9 +724,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidDataException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -741,9 +746,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (WrongIdentifierException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -771,9 +776,10 @@ public class TestServicioRED extends SegSocialTest {
 						calendar.getTime());
 //				if (pdf != null) {
 					assertTrue(pdf != null && pdf.length > 130000);
+					LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 //				}
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -798,9 +804,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidCertificateException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -825,9 +831,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (WrongRegimeException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -852,9 +858,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (WrongAffNumber e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -879,9 +885,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (invalidCccException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -906,9 +912,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidDateException e) {
-			
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail(e.getMessage());
@@ -919,69 +925,19 @@ public class TestServicioRED extends SegSocialTest {
 //---------------------------------------------------------------------------------------------------------------
 		
 //----------------------------------------------SITUACIÓN EMPRESA------------------------------------------------
-		
 		@Test
-		@Ignore
 		public void testSituacionEmpresaPOST() throws IOException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
-				assertEquals("Situación de la empresa: \n" + 
-						"	CCC: \"01105360062\"\n" + 
-						"	ID Empresario: \"9\"\n" + 
-						"	NIF: \"B01487271\"\n" + 
-						"	Régimen: \"0111\"\n" + 
-						"	UGTGSS: \"010202\"\n" + 
-						"	SIT: \"02ALTA\"\n" + 
-						"	FSit: \"TUE AUG 27 00:00:00 CEST 2013\"\n" + 
-						"	Fecha alta inicial: \"TUE AUG 27 00:00:00 CEST 2013\"\n" + 
-						"	Trabajadores de alta: \"10\"\n" + 
-						"	Alta primer trabaajdor: \"WED SEP 04 00:00:00 CEST 2013\"\n" + 
-						"	Ultima baja ef. cot.: \"SAT JUL 31 00:00:00 CEST 2021\"\n" + 
-						"	C.Esp num.: \"9999\"\n" + 
-						"	C.Esp cad.: \"OTROS COLECTIVOS SIN ESPE\"\n" + 
-						"	C.TA2ALTA: \"0\"\n" + 
-						"	TA2BAJA: \"3\"\n" + 
-						"	CNAE09 num.: \"6209\"\n" + 
-						"	CNAE09 cad.: \"OTROS SERVICIOS RELACIONADOS CON LAS TEC\"\n" + 
-						"	Tipos ATyEPIT.: \"0.8\"\n" + 
-						"	IMS: \"0.7\"\n" + 
-						"	Total: \"1.5\"\n" + 
-						"	 Coeficiente jubilación:\"0\"\n" + 
-						"	Cad. coef. jubilación: \"COEFICIENTE REDUCTOR\"\n" + 
-						"	Esc taller: \"FALSE\"\n" + 
-						"	Autorización red: \"228115 AUTORIZADO\"\n" + 
-						"	Plazo incorp. red: \"TUE OCT 01 00:00:00 CEST 2013\"\n" + 
-						"	Fecha aut. can: \"WED AUG 01 00:00:00 CEST 2018\"\n" + 
-						"	Anagrama: \"AON SOLUTIONS, S.L\"\n" + 
-						"	Móvil: \"646964199\"\n" + 
-						"	Tlf. fijo: \"945121010\"\n" + 
-						"	Email: \"JGARCIA@AONSOLUTIONS.ES\"\n" + 
-						"	FNotif. domicilio empresa: \"TRUE\"\n" + 
-						"	Tipo vía domicilio empresa: \"CL\"\n" + 
-						"	Tipo vía dirección actividad: \"CL\"\n" + 
-						"	Dir. empresa calle: \"DUQUE DE WELLINGTON\"\n" + 
-						"	Num. dir. empresa: \"52\"\n" + 
-						"	Dir. emp. piso: \"B\"\n" + 
-						"	CP empresa: \"01010\"\n" + 
-						"	Num municipio empresa: \"010590000\"\n" + 
-						"	Municipio empresa: \"VITORIA-GASTEIZ\"\n" + 
-						"	Notif. domicilio actividad: \"FALSE\"\n" + 
-						"	Act UGTGSS: \"010202\"\n" + 
-						"	Dir. actividad calle: \"DUQUE DE WELLINGTON\"\n" + 
-						"	Dir. actividad calle: \"DUQUE DE WELLINGTON\"\n" + 
-						"	Dir. act. piso: \"B\"\n" + 
-						"	CP actividad: \"01010\"\n" + 
-						"	Dir. act. num. municipio: \"010590000\"\n" + 
-						"	Dir. act. nom. muni.: \"VITORIA-GASTEIZ\"\n",
-						
-						ServicioRED.getSituacionEmpresaPOST(
+				assertNotNull(ServicioRED.getSituacionEmpresaPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
 						"0111",
 						"01105360062"
-						).toString());
+						));
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1000,9 +956,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidCertificateException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());	
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1021,9 +977,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidDataException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1044,150 +1000,14 @@ public class TestServicioRED extends SegSocialTest {
 				fail();
 			} catch (UnfilledMandatory e) {
 				// In this case, when an invalid CCC is inputed, the system works as if there were an unfilled mandatory field
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
 			}
 		}
-		
-		@Ignore
-		@Test
-		public void testSituacionEmpresaSAX() throws IOException, ParserConfigurationException, SAXException {
-			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {		
-				assertEquals("Situación de la empresa: \n" + 
-						"	CCC: \"01105360062\"\n" + 
-						"	ID Empresario: \"9\"\n" + 
-						"	NIF: \"B01487271\"\n" + 
-						"	Régimen: \"0111\"\n" + 
-						"	UGTGSS: \"010202\"\n" + 
-						"	SIT: \"02ALTA\"\n" + 
-						"	FSit: \"TUE AUG 27 00:00:00 CEST 2013\"\n" + 
-						"	Fecha alta inicial: \"TUE AUG 27 00:00:00 CEST 2013\"\n" + 
-						"	Trabajadores de alta: \"10\"\n" + 
-						"	Alta primer trabaajdor: \"WED SEP 04 00:00:00 CEST 2013\"\n" + 
-						"	Ultima baja ef. cot.: \"SAT JUL 31 00:00:00 CEST 2021\"\n" + 
-						"	C.Esp num.: \"9999\"\n" + 
-						"	C.Esp cad.: \"OTROS COLECTIVOS SIN ESPE\"\n" + 
-						"	C.TA2ALTA: \"0\"\n" + 
-						"	TA2BAJA: \"3\"\n" + 
-						"	CNAE09 num.: \"6209\"\n" + 
-						"	CNAE09 cad.: \"OTROS SERVICIOS RELACIONADOS CON LAS TEC\"\n" + 
-						"	Tipos ATyEPIT.: \"0.8\"\n" + 
-						"	IMS: \"0.7\"\n" + 
-						"	Total: \"1.5\"\n" + 
-						"	 Coeficiente jubilación:\"0\"\n" + 
-						"	Cad. coef. jubilación: \"COEFICIENTE REDUCTOR\"\n" + 
-						"	Esc taller: \"FALSE\"\n" + 
-						"	Autorización red: \"228115 AUTORIZADO\"\n" + 
-						"	Plazo incorp. red: \"TUE OCT 01 00:00:00 CEST 2013\"\n" + 
-						"	Fecha aut. can: \"WED AUG 01 00:00:00 CEST 2018\"\n" + 
-						"	Anagrama: \"AON SOLUTIONS, S.L\"\n" + 
-						"	Móvil: \"646964199\"\n" + 
-						"	Tlf. fijo: \"945121010\"\n" + 
-						"	Email: \"JGARCIA@AONSOLUTIONS.ES\"\n" + 
-						"	FNotif. domicilio empresa: \"TRUE\"\n" + 
-						"	Tipo vía domicilio empresa: \"CL\"\n" + 
-						"	Tipo vía dirección actividad: \"CL\"\n" + 
-						"	Dir. empresa calle: \"DUQUE DE WELLINGTON\"\n" + 
-						"	Num. dir. empresa: \"52\"\n" + 
-						"	Dir. emp. piso: \"B\"\n" + 
-						"	CP empresa: \"01010\"\n" + 
-						"	Num municipio empresa: \"010590000\"\n" + 
-						"	Municipio empresa: \"VITORIA-GASTEIZ\"\n" + 
-						"	Notif. domicilio actividad: \"FALSE\"\n" + 
-						"	Act UGTGSS: \"010202\"\n" + 
-						"	Dir. actividad calle: \"DUQUE DE WELLINGTON\"\n" + 
-						"	Dir. actividad calle: \"DUQUE DE WELLINGTON\"\n" + 
-						"	Dir. act. piso: \"B\"\n" + 
-						"	CP actividad: \"01010\"\n" + 
-						"	Dir. act. num. municipio: \"010590000\"\n" + 
-						"	Dir. act. nom. muni.: \"VITORIA-GASTEIZ\"\n",
-						
-						ServicioRED.getSituacionEmpresaSAX(
-						certificateInputStream,
-						"jg@FNMT",
-						"pkcs12",
-						"0111",
-						"01105360062"
-						).toString());
-			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
-			} catch (SegSocialException e) {
-				e.printStackTrace();
-				fail();
-			}
-		}
-		
-		@Ignore
-		@Test
-		public void testSituacionEmpresaSAXInvalidCertificate() throws IOException {
-			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
-				ServicioRED.getSituacionEmpresaSAX(
-						certificateInputStream,
-						"jg@FNFT",
-						"pkcs12",
-						"0111",
-						"01105360062"
-						);
-				fail();
-			} catch (InvalidCertificateException e) {
-				
-			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
-			} catch (SegSocialException e) {
-				e.printStackTrace();
-				fail();
-			}
-		}
-		
-		@Ignore
-		@Test
-		public void testSituacionEmpresaSAXInvalidRegime() throws IOException {
-			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
-				ServicioRED.getSituacionEmpresaSAX(
-						certificateInputStream,
-						"jg@FNMT",
-						"pkcs12",
-						"011",
-						"01105360062"
-						);
-				fail();
-			} catch (InvalidDataException e) {
-				
-			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
-			} catch (SegSocialException e) {
-				e.printStackTrace();
-				fail();
-			}
-		}
-		
-		@Ignore
-		@Test
-		public void testSituacionEmpresaPOSTInvalidSAX() throws IOException {
-			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
-				
-				ServicioRED.getSituacionEmpresaSAX(
-						certificateInputStream,
-						"jg@FNMT",
-						"pkcs12",
-						"0111",
-						"01105577932"
-						);
-				fail();
-			} catch (UnfilledMandatory e) {
-				// In this case, when an invalid CCC is inputed, the system works as if there were an unfilled mandatory field
-			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
-			} catch (SegSocialException e) {
-				e.printStackTrace();
-				fail();
-			}
-		}
-
-//---------------------------------------------------------------------------------------------------------------
 
 //----------------------------------------------SITUACIÓN EMPRESA------------------------------------------------
 		@Test
@@ -1206,8 +1026,9 @@ public class TestServicioRED extends SegSocialTest {
 						fail("Not taking well idc dates");
 					}
 				}
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1227,9 +1048,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidCertificateException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1249,9 +1070,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (InvalidDataException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1271,9 +1092,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (invalidCccException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1300,8 +1121,9 @@ public class TestServicioRED extends SegSocialTest {
 						fail("Not picking up some dates");
 					}
 				}
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1316,7 +1138,7 @@ public class TestServicioRED extends SegSocialTest {
 		@Test
 		public void getCccLaboralLifeTest() throws IOException {
 			try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
-				byte[] pdf = ServicioRED.getCccLaboralLife(
+				byte[] pdf = ServicioREDEmployee.getCccLaboralLifePOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1326,8 +1148,9 @@ public class TestServicioRED extends SegSocialTest {
 						new Date()
 				);
 				assertTrue(pdf.length > 130000);
-			} catch (StatusCodeException ignored) {
-				ignored.printStackTrace();
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				fail("unexpected SegSocialException");
 			}
@@ -1343,7 +1166,7 @@ public class TestServicioRED extends SegSocialTest {
 				cal.set(Calendar.YEAR, 2020);
 				Date from = cal.getTime();
 				cal.set(Calendar.YEAR, 2021);
-				ServicioRED.getCccLaboralLife(
+				ServicioREDEmployee.getCccLaboralLifePOST(
 						certificateInputStream,
 						"123456",
 						"pkcs12",
@@ -1354,9 +1177,9 @@ public class TestServicioRED extends SegSocialTest {
 				);
 				fail();
 			} catch (ReportTooLongException e) {
-				System.err.println(e.getMessage());
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				e.printStackTrace();
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				fail("unexpected SegSocialException");
 			}
@@ -1372,7 +1195,7 @@ public class TestServicioRED extends SegSocialTest {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				
 				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
-				Collection<Liquidation> liq = ServicioRED.calculationByCCC(
+				ServicioRED.calculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1383,12 +1206,9 @@ public class TestServicioRED extends SegSocialTest {
 						SistemaRED.LiquidationType.L00_NORMAL,
 						SistemaRED.LiquidationOrigin.TODAS
 						);
-				
-//				for (Liquidation liquidation : liq) {
-//					System.out.println(liquidation);
-//				}
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1400,7 +1220,7 @@ public class TestServicioRED extends SegSocialTest {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				
 				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
-				Collection<Liquidation> liq = ServicioRED.calculationByCCC(
+				ServicioRED.calculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1411,12 +1231,9 @@ public class TestServicioRED extends SegSocialTest {
 						SistemaRED.LiquidationType.L00_NORMAL,
 						SistemaRED.LiquidationOrigin.TODAS
 						);
-				
-//				for (Liquidation liquidation : liq) {
-//					System.out.println(liquidation);
-//				}
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1429,7 +1246,7 @@ public class TestServicioRED extends SegSocialTest {
 				Calendar c=Calendar.getInstance();
 				c.add(Calendar.MONTH, 1);
 				Date d=c.getTime();
-				ServicioRED.calculationByCCC(
+				ServicioRED.calculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1443,9 +1260,9 @@ public class TestServicioRED extends SegSocialTest {
 				
 				fail();
 			} catch (DataDoesNotExist e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1456,7 +1273,7 @@ public class TestServicioRED extends SegSocialTest {
 		public void testCalculationOriginNoData() throws IOException, ParseException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
-				ServicioRED.calculationByCCC(
+				ServicioRED.calculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1470,9 +1287,9 @@ public class TestServicioRED extends SegSocialTest {
 				
 				fail();
 			} catch (LiquidationDoesNotExist e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1483,7 +1300,7 @@ public class TestServicioRED extends SegSocialTest {
 		public void testCalculationQueryRegimeCCCNotFound() throws IOException, ParseException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-09-2020");
-				ServicioRED.calculationByCCC(
+				ServicioRED.calculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1496,9 +1313,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (WrongRegimeException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1509,7 +1326,7 @@ public class TestServicioRED extends SegSocialTest {
 		public void testCalculationQueryNullCCC() throws IOException, ParseException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-09-2020");
-				ServicioRED.calculationByCCC(
+				ServicioRED.calculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1522,9 +1339,9 @@ public class TestServicioRED extends SegSocialTest {
 				);
 				fail();
 			} catch (UnfilledMandatory e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1540,7 +1357,7 @@ public class TestServicioRED extends SegSocialTest {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				
 				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
-				Map<String, Map<String, WorkerLiquidation>> liqs = ServicioRED.workersCalculationByCCC(
+				ServicioRED.workersCalculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1551,8 +1368,9 @@ public class TestServicioRED extends SegSocialTest {
 						SistemaRED.LiquidationType.L00_NORMAL,
 						SistemaRED.LiquidationOrigin.TODAS
 				);
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1564,7 +1382,7 @@ public class TestServicioRED extends SegSocialTest {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				
 				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
-				Map<String, Map<String, WorkerLiquidation>> liq = ServicioRED.workersCalculationByCCC(
+				ServicioRED.workersCalculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1575,8 +1393,9 @@ public class TestServicioRED extends SegSocialTest {
 						SistemaRED.LiquidationType.L00_NORMAL,
 						SistemaRED.LiquidationOrigin.TODAS
 						);
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1589,7 +1408,7 @@ public class TestServicioRED extends SegSocialTest {
 				Calendar c=Calendar.getInstance();
 				c.add(Calendar.MONTH, 1);
 				Date d=c.getTime();
-				ServicioRED.workersCalculationByCCC(
+				ServicioRED.workersCalculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1603,9 +1422,9 @@ public class TestServicioRED extends SegSocialTest {
 				
 				fail();
 			} catch (DataDoesNotExist e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1616,7 +1435,7 @@ public class TestServicioRED extends SegSocialTest {
 		public void testWorkersCalculationOriginNoData() throws IOException, ParseException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
-				ServicioRED.workersCalculationByCCC(
+				ServicioRED.workersCalculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1627,12 +1446,11 @@ public class TestServicioRED extends SegSocialTest {
 						SistemaRED.LiquidationType.L00_NORMAL,
 						SistemaRED.LiquidationOrigin.GENERADAS_POR_LA_TGSS
 						);
-				
 				fail();
 			} catch (LiquidationDoesNotExist e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1643,7 +1461,7 @@ public class TestServicioRED extends SegSocialTest {
 		public void testWorkersCalculationQueryRegimeCCCNotFound() throws IOException, ParseException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-09-2020");
-				ServicioRED.workersCalculationByCCC(
+				ServicioRED.workersCalculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1656,9 +1474,9 @@ public class TestServicioRED extends SegSocialTest {
 						);
 				fail();
 			} catch (WrongRegimeException e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1669,7 +1487,7 @@ public class TestServicioRED extends SegSocialTest {
 		public void testWorkersCalculationQueryNullCCC() throws IOException, ParseException {
 			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
 				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-09-2020");
-				ServicioRED.workersCalculationByCCC(
+				ServicioRED.workersCalculationByCCCPOST(
 						certificateInputStream,
 						"jg@FNMT",
 						"pkcs12",
@@ -1682,9 +1500,9 @@ public class TestServicioRED extends SegSocialTest {
 				);
 				fail();
 			} catch (UnfilledMandatory e) {
-				
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
 			} catch (StatusCodeException e) {
-				System.err.println(e.getMessage());
+				LOG.warning(e.getMessage());
 			} catch (SegSocialException e) {
 				e.printStackTrace();
 				fail();
@@ -1692,5 +1510,412 @@ public class TestServicioRED extends SegSocialTest {
 		}
 		
 
+//---------------------------------------------------------------------------------------------------------------
+		
+//------------------------------------WORKERS' CALCULATION BY CCC AND NAFS---------------------------------------
+		
+		@Test
+		public void testWorkersCalculationByCCCandNAFsPOST() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("AyudaTFNMT.p12")) {
+				
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+				Map<String, Map<String, Map<Period, Map<String, Calc>>>> map = ServicioRED.workersCalculationByCCCandNAFsPOST(
+						certificateInputStream,
+						"123456",
+						"pkcs12",
+						"11122534302",
+						SistemaRED.Regime.GENERAL,
+						d,
+						d,
+						SistemaRED.LiquidationType.TODAS,
+						SistemaRED.LiquidationOrigin.TODAS,
+						"gwt354", "111016467058", "111008520536");
+				LOG.info(map.toString());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		@Test
+		public void testWorkersCalculationByCCCandNAFsMultpleNafsWrongDatePOST() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("AyudaTFNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-"+(Calendar.getInstance().get(Calendar.YEAR)+2));
+				ServicioRED.workersCalculationByCCCandNAFsPOST(
+						certificateInputStream,
+						"123456",
+						"pkcs12",
+						"11122534302",
+						SistemaRED.Regime.GENERAL,
+						d,
+						d,
+						SistemaRED.LiquidationType.TODAS,
+						SistemaRED.LiquidationOrigin.TODAS,
+						"111016467058", "111008520536", "gwt354");
+				fail("Shouldn't end");
+			} catch (DataDoesNotExist e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		@Test
+		public void testWorkersCalculationByCCCandNAFsMultpleNafsDateWithNoDataPOST() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("AyudaTFNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2006");
+				ServicioRED.workersCalculationByCCCandNAFsPOST(
+						certificateInputStream,
+						"123456",
+						"pkcs12",
+						"11122534302",
+						SistemaRED.Regime.GENERAL,
+						d,
+						d,
+						SistemaRED.LiquidationType.TODAS,
+						SistemaRED.LiquidationOrigin.TODAS,
+						"gwt354", "111016467058", "111008520536");
+				fail("Shouldn't end");
+			} catch (DataDoesNotExist e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+
+		@Test
+		public void testWorkersCalculationByCCCandNAFsMultpleNafsWrongRegimePOST() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("AyudaTFNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+				ServicioRED.workersCalculationByCCCandNAFsPOST(
+						certificateInputStream,
+						"123456",
+						"pkcs12",
+						"11122534302",
+						SistemaRED.Regime.ESPECIAL_MAR_ASIMILADOS_GRUPO_1,
+						d,
+						d,
+						SistemaRED.LiquidationType.TODAS,
+						SistemaRED.LiquidationOrigin.TODAS,
+						"111016467058", "111008520536", "gwt354");
+				fail("Shouldn't end");
+			} catch (WrongRegimeException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		@Test
+		public void testWorkersCalculationByCCCandNAFsMultpleNafsWrongCCCPOST() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("AyudaTFNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
+				ServicioRED.workersCalculationByCCCandNAFsPOST(
+						certificateInputStream,
+						"123456",
+						"pkcs12",
+						"11177534302",
+						SistemaRED.Regime.GENERAL,
+						d,
+						d,
+						SistemaRED.LiquidationType.TODAS,
+						SistemaRED.LiquidationOrigin.TODAS,
+						"111016467058", "111008520536", "gwt354");
+				fail("Shouldn't end");
+			} catch (invalidCccException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		
+//---------------------------------------------------------------------------------------------------------------
+
+//--------------------------------------------TA CERTIFICATE PDFS------------------------------------------------
+		
+		@Test
+		public void testTACertificatePDFsPOST() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+				List<byte[]> pdfs = ServicioRED.getTACertificatePDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"0111",
+						"01105360062",
+						d);
+				assertTrue(!pdfs.isEmpty());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		@Test
+		public void testTACertificatePdfsPOSTWrongCCC() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+				ServicioRED.getTACertificatePDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"0111",
+						"01105368062",
+						d);
+				fail("Should have returned a pdf");
+			} catch (invalidCccException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+
+		@Test
+		public void testTACertificatePdfsPOSTNullCCC() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+				ServicioRED.getTACertificatePDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"0111",
+						"",
+						d);
+				fail("Should have returned a pdf");
+			} catch (InvalidDataException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+
+		@Test
+		public void testTACertificatePdfsPOSTNullRegime() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+				ServicioRED.getTACertificatePDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"",
+						"01105360062",
+						d);
+				fail("Should have returned a pdf");
+			} catch (WrongRegimeException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+
+		@Test
+		public void testTACertificatePdfsPOSTWrongRegime() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+				ServicioRED.getTACertificatePDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"0181",
+						"01105360062",
+						d);
+				fail("Should have returned a pdf");
+			} catch (NotAllowedContributionAccount e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		@Test
+		public void testTACertificatePdfsPOSTWrongDate() throws IOException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Calendar c = Calendar.getInstance();
+				c.add(Calendar.YEAR, 4);
+				Date d = c.getTime();
+				ServicioRED.getTACertificatePDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"0111",
+						"01105360062",
+						d);
+				fail("Should have thrown an exception");
+			} catch (InvalidDataException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+//---------------------------------------------------------------------------------------------------------------
+		
+//---------------------------------------------CONTRIBUTION PDFS-------------------------------------------------
+		
+		@Test
+		public void testContributionPDFsPOST() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+				List<byte[]> pdfs = ServicioRED.getContributionPDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"0111",
+						"01105360062",
+						d);
+				
+				assertTrue(!pdfs.isEmpty());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+		
+		@Test
+		public void testContributionPdfsWrongCCC() throws ParseException, IOException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+				ServicioRED.getContributionPDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"0111",
+						"01105368062",
+						d);
+				fail("Should have returned a pdf");
+			} catch (invalidCccException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+
+		@Test
+		public void testContributionPdfsNullCCC() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+				ServicioRED.getContributionPDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"0111",
+						"",
+						d);
+				fail("Should have returned a pdf");
+			} catch (InvalidDataException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+
+		@Test
+		public void testContributionPdfsNullRegime() throws ParseException, IOException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+				ServicioRED.getContributionPDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"",
+						"01105360062",
+						d);
+				fail("Should have returned a pdf");
+			} catch (WrongRegimeException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+
+		@Test
+		public void testContributionPdfsWrongRegime() throws IOException, ParseException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+				ServicioRED.getContributionPDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"0181",
+						"01105360062",
+						d);
+				fail("Should have returned a pdf");
+			} catch (WrongRegimeException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+
+		@Test
+		public void testContributionPdfsWrongDate() throws IOException {
+			try (final InputStream certificateInputStream = TestSistemaREDI.class.getResourceAsStream("FNMT.p12")) {
+				Calendar c = Calendar.getInstance();
+				c.add(Calendar.YEAR, 1);
+				Date d = c.getTime();
+				ServicioRED.getContributionPDFsPOST(certificateInputStream,
+						"jg@FNMT",
+						"pkcs12",
+						"011005185924",
+						"0111",
+						"01105360062",
+						d);
+				fail("Should have thrown an exception");
+			} catch (InvalidDataException e) {
+				LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+			} catch (StatusCodeException e) {
+				LOG.warning(e.getMessage());
+			} catch (SegSocialException e) {
+				e.printStackTrace();
+				fail();
+			}
+		}
+
+		
 //---------------------------------------------------------------------------------------------------------------
 }

@@ -222,7 +222,7 @@ public class SIIManager {
 
 	 // -------------------- FACTURAS RECIBIDAS
 	
-	protected byte[] getSuministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
+	protected byte[] getSuministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, boolean errorPeriodo) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		System.out.println("SII SUMINISTRO FACTURAS RECIBIDAS - ID => " + invoiceId);
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS, getAdministration());
 
@@ -271,7 +271,7 @@ public class SIIManager {
     	return null;
     }
 	
-	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
+	protected JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, boolean errorPeriodo) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
 		System.out.println("SII SUMINISTRO FACTURAS RECIBIDAS - ID => " + invoiceId);
     	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_RECIBIDAS, getAdministration());
 
@@ -286,35 +286,35 @@ public class SIIManager {
     	{
     		System.out.println("SII SUMINISTRO FR - AEAT");
 			if(newList.size() > 0){
-				return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS);
+				return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS, false);
 			}
 
 			if(modList.size() > 0){
-				return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS);
+				return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS, errorPeriodo);
 			}
 		} else if(isAraba()) {
 			if(newList.size() > 0){
-				return SIIArabaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS);
+				return SIIArabaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS, false);
 			}
 
 			if(modList.size() > 0){
-				return SIIArabaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS);
+				return SIIArabaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS, errorPeriodo);
 			}
 		} else if(isGipuzkoa()) {
 			if(newList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS);
+				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS, false);
 			}
 
 			if(modList.size() > 0){
-				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS);
+				return SIIGipuzkoaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS, errorPeriodo);
 			}
 		} else if(isBizkaia()) {
 			if(newList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS);
+				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_RECIBIDAS, false);
 			}
 
 			if(modList.size() > 0){
-				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS);
+				return SIIBizkaiaPost.getInstance(getCert(), getPass()).suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_RECIBIDAS, errorPeriodo);
 			}
 		}
     	return new JSONArray();

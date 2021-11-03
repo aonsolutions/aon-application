@@ -1,11 +1,11 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getPeriod, getTaskHolder, getTaskHoldersUser, getTaskHolderTimeControl, getTimeControl, saveTimeControl} from '../../services/service.js';
 import {getPosition} from '../../services/maps.js';
-import { timePaser, setDateTimestampDay } from '../../services/utils.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { SIGNIN_VIEWS } from "./signinEnums.js";
-import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
+import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { timeHour } from './time-control/utils.js';
+import { AonDateUtils } from '../utils/AonDateUtils.js';
 
 export class AonSign extends AonElement {
   _taskHolders;
@@ -84,7 +84,7 @@ export class AonSign extends AonElement {
       divGeneral.appendChild(company);
       let select = new AonSelect();
       select.id = this.AON_SIGN +'Select2';
-      select.title = 'Empresa';
+      select.title = MSG.COMPANY;
       select.options = JSON.stringify(this._taskHolders.map(c => ({value: c.id, name: c.company})
       ));
       select.addEventListener(EVENT.CHANGE, () => {
@@ -121,7 +121,7 @@ export class AonSign extends AonElement {
       button.style.backgroundColor = '#86D364';
       button.style.padding = '1rem 1rem';
       button.style.width = '120px';
-      button.innerHTML = 'ENTRADA';
+      button.innerHTML = MSG.ENTRY.toUpperCase();
       if(this.isMobile()){
         button.style.width = "60%";
         button.style.borderRadius = "12px";
@@ -162,7 +162,7 @@ export class AonSign extends AonElement {
       button.style.marginRight = '10px';
       button.style.width = '100px';
       button.style.padding = '1rem 1rem';
-      button.innerHTML = 'SALIDA';
+      button.innerHTML = MSG.EXIT.toUpperCase();
       button.addEventListener(EVENT.CLICK, () => this.saveTimeCtrl('out'));
       content.appendChild(button);
   
@@ -243,7 +243,7 @@ export class AonSign extends AonElement {
 
   changeTime(time){
     let timeDiv = this.getElement(this.TIME);
-    if( timeDiv && time >= 0 ) timeDiv.innerHTML = timePaser(time);
+    if( timeDiv && time >= 0 ) timeDiv.innerHTML = AonDateUtils.timeParser(time);
   }
 
   divLastTime(signin){
@@ -252,13 +252,13 @@ export class AonSign extends AonElement {
       let textStatus = null;
       switch(signin.status){
         case "pause":
-          textStatus = 'pausa';
+          textStatus = MSG.PAUSE.toLowerCase();
           break;
         case "out":
-          textStatus = 'salida';
+          textStatus = MSG.EXIT.toLowerCase();
           break;
         default:
-          textStatus = "entrada";
+          textStatus = MSG.ENTRY.toLowerCase();
           break;
       }
       const id = 'lastTimeUser';
@@ -268,7 +268,7 @@ export class AonSign extends AonElement {
       div.style.color = "grey";
       div.style.fontSize = "12px";
       div.style.cursor = "default";
-      div.innerHTML = `Ult. ${textStatus} ${setDateTimestampDay(signin.last_date)}`;
+      div.innerHTML = `${MSG.LAST} ${textStatus} ${AonDateUtils.setDateTimestampDay(signin.last_date)}`;
       content.appendChild(div);
       this.totalHourWeek();
     }

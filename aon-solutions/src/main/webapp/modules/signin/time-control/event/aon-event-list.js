@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { setFullDate, setValueName, sortBy, setDateTpDay, formatDateOrigin, formatDate, isEmptyObject } from "../../../../services/utils.js";
+import { setValueName, sortBy, isEmptyObject } from "../../../../services/utils.js";
 import { setAttributes } from "../../../../services/utilsComponents.js";
 import {
   getGroups,
@@ -16,6 +16,7 @@ import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";
 import { AonToolbar } from "../../../../components/aon-toolbar.js";
 import { AonIconButton } from "../../../../components/aon-icon-button.js";
+import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 
 export class AonEventList extends AonElement {
   TABLE_ID;
@@ -219,10 +220,10 @@ export class AonEventList extends AonElement {
 
               const nameLocation = r.last_location && r.last_location.name ? r.last_location.name : "";
 
-              let dateParse = r.dateParse = firstLetters(setFullDate(r.start_date));
+              let dateParse = r.dateParse = firstLetters(AonDateUtils.setFullDate(r.start_date));
               if(isMobile){
                 const groupV  = r.group;
-                dateParse =  groupV && groupV.indexOf("DAY")>=0 ? formatDate(r.start_date)+" - "+ formatDate(r.end_date) : firstLetters(setDateTpDay(r.start_date))
+                dateParse =  groupV && groupV.indexOf("DAY")>=0 ? AonDateUtils.formatDate(r.start_date)+" - "+ AonDateUtils.formatDate(r.end_date) : firstLetters(AonDateUtils.setDateTpDay(r.start_date))
               }
 
               data.push({
@@ -312,8 +313,8 @@ export class AonEventList extends AonElement {
   aonEvent({}, data) {
     let newData = data;
     const parent = this.applicationParentEl;
-    if(newData.start_date) parent.DATE_TMP = {...parent.DATE_TMP, startDate:formatDateOrigin(newData.start_date)};
-    if(newData.end_date) parent.DATE_TMP = {...parent.DATE_TMP, endDate:formatDateOrigin(newData.end_date)};
+    if(newData.start_date) parent.DATE_TMP = {...parent.DATE_TMP, startDate:AonDateUtils.formatDateOrigin(newData.start_date)};
+    if(newData.end_date) parent.DATE_TMP = {...parent.DATE_TMP, endDate:AonDateUtils.formatDateOrigin(newData.end_date)};
     parent.showView(SIGNIN_VIEWS.AON_EVENT_DETAIL_LIST, newData);
   }
 

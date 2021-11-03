@@ -13,7 +13,10 @@ export const clearCustomers = () => customers = undefined;
 export const clearDomain = () => domain = undefined;
 
 export const getRegistry = (data) => post(`${API_URL}/registry`, data);
-export const saveRegistry = (data) => put(`${API_URL}/registry`, data)
+export const saveRegistry = (data) => put(`${API_URL}/registry`, data);
+
+export const getCustomer = (data) => post(`${API_URL}/registry/customer`, data);
+export const saveCustomer = (data) => put(`${API_URL}/registry/customer`, data);
 
 export const getRegistries = (data) => get(`${API_URL}/suggestion/registry`, data);
 

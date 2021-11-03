@@ -255,6 +255,7 @@ import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
+import com.esferalia.aon.occam.impl.jooq.PersonImpl;
 import com.esferalia.aon.occam.impl.jooq.Product2Impl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
@@ -344,6 +345,10 @@ public class AON {
 
 	private static IRegistry getRegistry() {
 		return new RegistryImpl();
+	}
+	
+	private static IPerson getPerson() {
+		return new PersonImpl();
 	}
 
 	private static ICommercial getCommercial() {
@@ -4469,14 +4474,18 @@ public class AON {
 		return getCustomer(domainName, domainId, login, f -> f.getRegistryProperty().eq(registry));
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON.saveCustomer
+	 */
 	public static Customer insertCustomer(String domainName, Integer domainId, String login, Customer customer) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().insertCustomer(ctx, customer);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static Customer saveCustomer(String domainName, Integer domainId, String login, Customer customer) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveCustomer(ctx, customer);
 		}
 	}
 	
@@ -5021,13 +5030,8 @@ public class AON {
 	// ------------------- RECORD DATA
 	
 	public static Stream<RecordData> getRecordDataStream(String domainName, Integer domainId, String login, RecordDataFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getRecordDataStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 		
@@ -5036,11 +5040,12 @@ public class AON {
 			.findFirst().orElse(new RecordData());
 	}
 		
-	public static LinkedList<RecordData> getRecordDataList(String domainName, Integer domainId, String login, RecordDataFilter filter) {
-		return getRecordDataStream(domainName, domainId, login, filter)
-			.collect(Collectors.toCollection(LinkedList::new));
+	public static RecordData saveRecordData(String domainName, Integer domainId, String login, RecordData recordData) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveRecordData(ctx, recordData);
+		}
 	}
-
+	
 	
 	// ********************************************
 	// ******************************** CREDITOR **
@@ -6793,6 +6798,31 @@ public class AON {
 	public static GeoZone get(String domainName, Integer domainId, String login, GeoZoneFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().get(ctx, filter);
+		}
+	}
+	
+	//--------------PERSON
+	public static Person savePerson(Domain domain, String login, Person person) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPerson().savePerson(ctx, person);
+		}
+	}
+	
+	public static Person getPerson(Domain domain, String login, PersonFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPerson().getPerson(ctx, filter);
+		}
+	}
+
+	public static Stream<Person> getPersonStream(Domain domain, String login, PersonFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPerson().getPersonStream(ctx, filter);
+		}
+	}
+	
+	public static void deletePerson(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getPerson().deletePerson(ctx, id);
 		}
 	}
 		

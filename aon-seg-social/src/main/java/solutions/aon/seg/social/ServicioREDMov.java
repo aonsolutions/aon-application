@@ -1,0 +1,147 @@
+package solutions.aon.seg.social;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.net.ssl.SSLContext;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContexts;
+import org.xml.sax.SAXException;
+
+import solutions.aon.seg.social.exception.InvalidCertificateException;
+import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
+import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.toolkit.Toolkit;
+
+public class ServicioREDMov extends ServicioREDRegeXML {
+	
+	public static List<Employee> ipfxnaf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, List<String> nssList) throws SegSocialException, IOException, ParserConfigurationException {
+		if (nssList == null || nssList.isEmpty()) {			
+			throw new UnfilledMandatory("Faltan los NAF");
+		} else if(nssList.size() >= 7)
+			throw new SegSocialException("Número máximo de NAF permitidos: 7");
+		
+		
+		SSLContext sslContext = null;
+
+		try {
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		String link = "";
+		String ticket = "";
+		String navegacion = "";
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			
+			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
+			link ="https://w2.seg-social.es/" + Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "FORMULARIO_1"), "action");
+			ticket = Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "ARQ_SPM_TICKET"), "value");
+			navegacion = Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "ARQ_SPM_TMS_NAVEGACION"), "value");
+			
+			HttpPost httpPost = new HttpPost(link);
+			
+			List<NameValuePair> params = new ArrayList<>();
+			params.add(new BasicNameValuePair(IServicioRedConstants.TICKET, ticket));
+			params.add(new BasicNameValuePair("SPM.CONTEXT", IServicioRedConstants.INTERNET));
+			params.add(new BasicNameValuePair("ARQ.SPM.TMS_NAVEGACION", navegacion));
+			params.add(new BasicNameValuePair("ARQ.SPM.OUT", "XML_STYLESHEET"));
+			params.add(new BasicNameValuePair("ES_FW4", "1"));
+			params.add(new BasicNameValuePair("SPM.ISPOPUP", "0"));
+			params.add(new BasicNameValuePair("SPM.HAYJS", "1"));
+			for (int i=0; i<7; i++) {
+				if (i <= nssList.size() - 1)
+					params.add(new BasicNameValuePair("NA1NumSegSocialSinDC" + (i + 1), nssList.get(i)));
+				else
+					params.add(new BasicNameValuePair("NA1NumSegSocialSinDC" + (i + 1), ""));
+					
+			}
+			params.add(new BasicNameValuePair("SPM.ACC.Consultar", "Consultar"));
+			
+			
+			
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+			
+			String xml = Toolkit.getBodyPOST(httpClient, httpPost);
+			if (xml != null)
+				xml = xml.trim();
+			try {				
+				return extractIpfXNafInfo(xml);
+			} catch (SAXException e) {
+				throw new InvalidDataException(e.getMessage());
+			}
+			
+		}
+	}
+	
+	public static Employee nafxipf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException, IOException, ParserConfigurationException {
+		SSLContext sslContext = null;
+		if (ipf == null || ipf.isEmpty()) {
+			throw new UnfilledMandatory("El IPF no puede estar vacío");
+		}
+		try {
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		String link = "";
+		String ticket = "";
+		String navegacion = "";
+		
+		Integer ident  = 1; //NIF DEFAULT
+	    if(ServicioREDRegeXML.identity(ipf).equals("6")) ident = 3; // NIE
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
+			link ="https://w2.seg-social.es/" + Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "FORMULARIO_1"), "action");
+			ticket = Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "ARQ_SPM_TICKET"), "value");
+			navegacion = Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "ARQ_SPM_TMS_NAVEGACION"), "value");
+			
+			HttpPost httpPost = new HttpPost(link);
+			
+			List<NameValuePair> params = new ArrayList<>();
+			params.add(new BasicNameValuePair(IServicioRedConstants.TICKET, ticket));
+			params.add(new BasicNameValuePair("SPM.CONTEXT", IServicioRedConstants.INTERNET));
+			params.add(new BasicNameValuePair("ARQ.SPM.TMS_NAVEGACION", navegacion));
+			params.add(new BasicNameValuePair("ARQ.SPM.OUT", "XML_STYLESHEET"));
+			params.add(new BasicNameValuePair("ES_FW4", "1"));
+			params.add(new BasicNameValuePair("SPM.ISPOPUP", "0"));
+			params.add(new BasicNameValuePair("SPM.HAYJS", "1"));
+			params.add(new BasicNameValuePair("tipo", String.valueOf(ident)));
+			params.add(new BasicNameValuePair("ipf6NumeroDocumento", ipf));
+			params.add(new BasicNameValuePair("primerApellido", apellido1 != null ? apellido1 : ""));
+			if (apellido1 == null || apellido1.isEmpty()) {
+				params.add(new BasicNameValuePair("checkApellido1", "1"));				
+			}
+			params.add(new BasicNameValuePair("segundoApellido", apellido2 != null ? apellido2 : ""));
+			if (apellido2 == null || apellido2.isEmpty()) {
+				params.add(new BasicNameValuePair("checkApellido2", "2"));								
+			}
+			params.add(new BasicNameValuePair(IServicioRedConstants.SPM_CONTINUE, IServicioRedConstants.CONTINUE));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+			
+			String xml = Toolkit.getBodyPOST(httpClient, httpPost);
+			
+			try {				
+				return extractNafXIpfInfo(xml);
+			} catch (SAXException e) {
+				throw new InvalidDataException(e.getMessage());
+			}
+		}
+	}
+	
+}

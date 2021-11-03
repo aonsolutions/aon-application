@@ -420,4 +420,9 @@ export class DomainUserRoles {
   isEnterprise() {
     return this.hasRole(Role.ENTERPRISE);
   }
+
+
+  hasCustomView() {
+    return this.hasApp(App.CUSTOM_VIEW);
+  }
 }

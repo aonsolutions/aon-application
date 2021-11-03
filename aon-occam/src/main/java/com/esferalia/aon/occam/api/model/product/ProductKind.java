@@ -30,6 +30,7 @@ public enum ProductKind implements Serializable {
 	}
 	
 	public static ProductKind safeValueOf( String i ) {
+		if(i == null) return null;
 		for (ProductKind rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;

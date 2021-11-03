@@ -66,6 +66,7 @@ export const MESSENGER_IDS = {
     COMMENT_TASK: "commentTask",
     CUSTOMER_TASK: "customerTask",
     PROJECT_TASK: "projectTask",
+    ADVISORY_TASK: "advisoryTask",
     DESCRIPTION_TASK: "descriptionTask",
     GTASK_ID_TASK: "GTaskIdTask",
     TITLE_TASK: "titleTask",

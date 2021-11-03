@@ -38,6 +38,7 @@ public enum ProductType implements Serializable {
 	}
 	
 	public static ProductType safeValueOf( String i ) {
+		if(i == null) return null;
 		for (ProductType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getName()))
 				return rs;

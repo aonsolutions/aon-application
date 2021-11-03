@@ -4,13 +4,13 @@ import {DomainUserRoles} from '../models/DomainUserRoles.js';
 import {AonDialogMenu} from "../components/aon-dialog-menu.js";
 import { waitEl } from "../services/utils.js";
 import { MOBILE_ACTION, mobileAction, closeSession, getDomainUserRoles } from "../services/service.js";
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, TAG } from '../environments/environments.js';
 import * as LS from '../services/localStorageService.js';
 import { AonNotification } from "./notification/aon-notification.js";
 import { AonApps } from "./aon-apps.js";
 import { AonNotificationIcon } from "./notification/aon-notification-icon.js";
 // import { AonMobileProfile } from "./user/aon-mobile-profile.js";
-import { uploadInvoices } from "./invoice/InvoiceUtils.js";
+import { uploadInvoice, uploadInvoices } from "./invoice/InvoiceUtils.js";
 import { uploadDocuments } from "./documental/DocumentalUtils.js";
 import { AonDialog } from "../components/aon-dialog.js";
 
@@ -38,7 +38,7 @@ export class AonNewMobileMenu extends AonElement {
   eventListener(){
     this.build();
     window.addEventListener(EVENT.RESIZE, () => {
-      this.reload();
+      this.resize();
     });
 
     if(this.android()){
@@ -97,6 +97,38 @@ export class AonNewMobileMenu extends AonElement {
     this.buildMenu();
   }
 
+  resize() {
+    let n = (window.innerWidth / 5 - 40) / 2;
+    
+    this.getElement('aonMobileMenuHome').style.marginLeft = n;
+    this.getElement('aonMobileMenuHome').style.marginRight = n;
+
+    this.getElement('aonMobileMenuApps').style.marginLeft = n;
+    this.getElement('aonMobileMenuApps').style.marginRight = n;
+
+    this.getElement('aonMobileMenuAdd').style.marginLeft = n;
+    this.getElement('aonMobileMenuAdd').style.marginRight = n;
+
+    this.getElement('aonMobileMenuNotification').style.marginLeft = n;
+    this.getElement('aonMobileMenuNotification').style.marginRight = n;
+
+    this.getElement('aonMobileMenuExit').style.marginLeft = n;
+    this.getElement('aonMobileMenuExit').style.marginRight = n;
+    
+
+    let n1 = (window.innerWidth / 2) - 95;
+    this.getElement('proba').style.left = n1 + 'px';
+
+    let n2 = (window.innerWidth / 2) - 45;
+    this.getElement('proba2').style.left = n2 + 'px';
+
+    let n3 = (window.innerWidth / 2) + 5;
+    this.getElement('proba3').style.left = n3 + 'px';
+
+    let n4 = (window.innerWidth / 2) +55;
+    this.getElement('proba4').style.left = n4 + 'px';
+  }
+
   reload() {
     waitEl(`#${this.id}Sidenav`).then(async(menu)=>{
         const r = await getDomainUserRoles({});
@@ -131,12 +163,16 @@ export class AonNewMobileMenu extends AonElement {
       fn: () => this.apps()
     });
 
-    this.addMenuButton({
+    let btnAdd = this.addMenuButton({
+      icon: MATERIAL_ICONS.ADD,
       name: 'Add',
-      icon: 'add',
       color: 'white',
       background: '#002469',
-      fn: () => this.add()
+      fn: () => {
+        if(btnAdd.icon)
+          btnAdd.icon = MATERIAL_ICONS.CLOSE;
+        this.add();
+      }
     });
 
     this.addMenuButton({
@@ -173,8 +209,8 @@ export class AonNewMobileMenu extends AonElement {
         span.style.marginRight = n;
       }
       menu.appendChild(span);
-      
-      if(app.icon === 'notifications'){
+
+      if(app.icon === MATERIAL_ICONS.NOTIFICATIONS){
         span.appendChild(new AonNotificationIcon());
       } else {
         let button = new AonIconButton();
@@ -192,8 +228,11 @@ export class AonNewMobileMenu extends AonElement {
           this.getElement(button.BUTTON).style.bottom = '5px';
           this.getElement(button.AON_ICON).size = "20";
         }
+
+        return button;
       }
     }
+    return null;
   }
 
   loading(load) {
@@ -232,6 +271,9 @@ export class AonNewMobileMenu extends AonElement {
     div.style.display = 'none';
     div.addEventListener(EVENT.CLICK, () => {
       div.style.display = 'none';
+      let btnAdd = this.getElement("aonMobileMenuAddButton");
+      if(btnAdd.icon)
+        btnAdd.icon = MATERIAL_ICONS.ADD;
     });
     this.appendChild(div);
 
@@ -303,8 +345,9 @@ export class AonNewMobileMenu extends AonElement {
   }
 
   add() {
-    const div = this.getElement('probaDiv');
-    if(div) div.style.display = 'block';
+    const dialog = this.getElement('probaDiv');
+    if(dialog) 
+      dialog.style.display = 'block';
     if(LS.getCompany()) {
       let aonHeader = this.getElement("aonHeader");
       aonHeader.companyIn();
@@ -349,9 +392,14 @@ export class AonNewMobileMenu extends AonElement {
 
 
 	async openCamera() {
-		const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
+		const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-new-mobile-menu' });
 		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
 	}
+
+  async receiveAppImage(file) {
+    uploadInvoice(file);
+	}
+
 
   addDocumentFile() {
     if(LS.getDomainName()) 

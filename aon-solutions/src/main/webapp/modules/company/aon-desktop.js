@@ -1,7 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
-import {AonAvatar} from '../../components/aon-avatar.js';
 import { Apps} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getCompanyHeaderInfo} from  '../../services/service.js';
+import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
@@ -22,13 +21,12 @@ import { AonLaboral } from '../laboral/aon-laboral.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
 import '../marketplace/aon-marketplace.js';
-import '../invoice/aon-invoice-panel.js';
-import '../accounting/aon-accounting.js';
-import './aon-stat.js';
 import { getOfficeProjects } from '../../services/projectService.js';
 import { Project } from '../../models/project/Project.js';
 import { getNoteCount } from '../../services/noteService.js';
-
+import { AonStat } from './aon-stat.js';
+import { AonAccounting } from '../accounting/aon-accounting.js';
+import { Attach } from '../../models/Attach.js';
 
 export class AonDesktop extends AonElement {
 
@@ -36,8 +34,8 @@ export class AonDesktop extends AonElement {
 	AON_DESKTOP;
 	INPUT_INVOICE_FILE;
 	INPUT_DOCUMENT_FILE;
-
 	appOption;
+	SIDENAV_ACTIVITY_SUMMARY;
 
 	static get observedAttributes() {
 		return [];
@@ -60,6 +58,7 @@ export class AonDesktop extends AonElement {
 		this.AON_DESKTOP = 'aonDesktopMain';
 		this.INPUT_INVOICE_FILE = this.id + 'InputInvoiceFile';
 		this.INPUT_DOCUMENT_FILE = this.id + 'InputDocumentFile';
+		this.SIDENAV_ACTIVITY_SUMMARY = [];
 	}	
 
 	getDur() {
@@ -88,79 +87,102 @@ export class AonDesktop extends AonElement {
 		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
 		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
 
-		if(this.isBeta()) {
-			let divLogo = this.createElement(TAG.DIV);
-			divLogo.id = this.id + 'Logo';
-			divLogo.style.maxHeight = '60px';
-			divLogo.style.height = '100%';
-			divLogo.style.margin = '10px';
-			divLogo.style.justifyContent = 'center';
-			this.getApplication().getSidenav().appendChild(divLogo);
+		let divLogo = this.createElement(TAG.DIV);
+		divLogo.id = this.id + 'Logo';
+		aonDesktop.getSidenav().appendChild(divLogo);
 
-			getCompanyHeaderInfo().then((pi) =>{
+		let filter = {
+			attachType: 'registry',
+			attachModule: company.registry,
+			type: 0
+		}; 
+					
+		let parentFilter = {
+			attachType: 'registry',
+			domainId: company.parentId,
+			type: 0
+		};
+		let f = this.getDur().hasCustomView() || this.getDur().isEmployee() 
+			?  filter : parentFilter; 
+
+		getAttach(f).then(r => {
+			let attach = new Attach(r);
+			if(attach && attach.id && attach.getContentType().includes("image")){
+				divLogo.style.maxHeight = '60px';
+				divLogo.style.margin = '10px';
+				divLogo.style.justifyContent = 'center';
+
+				let data = {
+					domain_id: attach.getDomain().getId(),
+					attach_type: attach.getAttachType(),
+					domain_name: attach.getDomain().getName(),
+					id: attach.getId()
+				};
+				let url = location.href + 'ms/api/file/' + btoa(JSON.stringify(data));
+
 				let img = this.createElement(TAG.IMG);
 				img.id = this.id + 'LogoImg';
-				img.style.maxHeight = '100%';
+				img.style.maxHeight = '60px';
 				img.style.maxWidth = '100%';
-				img.src = pi.logo;
+				img.src = url;
 				divLogo.appendChild(img);
+			}
+		});
+
+		if(this.getDur().hasCustomView()){
+			getAttach(parentFilter).then(r => {
+				let attach = new Attach(r);
+				if(attach && attach.id && attach.getContentType().includes("image")){
+					let data = {
+						domain_id: attach.getDomain().getId(),
+						attach_type: attach.getAttachType(),
+						domain_name: attach.getDomain().getName(),
+						id: attach.getId()
+					};
+					let url = location.href + 'ms/api/file/' + btoa(JSON.stringify(data));
+	
+					let headerLogo = this.getElement('aonLogo');
+					headerLogo.src = url;
+				}
 			});
-			
+		}
+
+		if(this.isBeta()) {
 			let myGestor = {
 				id: 'Gestor',
 				name: 'MI GESTOR'
 			};
-			this.getApplication().addSidenavOptions2(myGestor, []);
-			getOfficeProjects({}).then(projects => {
-				this.clearElementById(this.getApplication().SIDENAV + myGestor.id + 'List');
-           		projects.forEach(item => {
-					let p = new Project(item);
-					let h =  p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
-					let option = {
-                    	name: p.getType().getDescription() + (h ? ' - ' + h : '') ,
-                    	icon: 'support_agent',
-	                    fn: () => {}, 
-    	                actions: [{
-        	              id: 'Contact',
-            	          icon: 'chat',
-                	      action: () => {
-							let aonMessengerChat = new AonMessenger();	
-							aonMessengerChat.data = {source:TASK_SOURCE.QUERY, project: item};
-							this.rootPanel(aonMessengerChat);
-						  }
-                    	}]
-                	};
-                	this.getApplication().addSidenavOptionsListValue(myGestor, option);
+			aonDesktop.addSidenavOptions2(myGestor, []);
+			getOfficeProjects({}).then(offices => {
+				this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
+				offices.forEach(office => {
+					if(office.projects.length > 0) {
+						office.projects.forEach(item => {
+							let p = new Project(item);
+							let h =  p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
+							let option = {
+								name: p.getType().getDescription() + (h ? ' - ' + h : '') ,
+								icon: 'support_agent',
+								fn: () => {}, 
+								actions: [{
+								  id: 'Contact',
+								  icon: 'chat',
+								  action: () => {
+									let aonMessengerChat = new AonMessenger();	
+									aonMessengerChat.data = {source:TASK_SOURCE.QUERY, project: item, domain: item.domain};
+									this.rootPanel(aonMessengerChat);
+								  }
+								}]
+							};
+							aonDesktop.addSidenavOptionsListValue(myGestor, option);
+						});
+					}
            		});
 			}); 
 		}
 
 		if(company.parentId || company.type !== 'CONSULTANCY'){
-			let taskOptions = [];
-			if(this.getDur().isInvoice()){
-				taskOptions.push({
-					name: MSG.PENDING_INVOICES,
-					icon: 'inbox',
-					fn: (count) => {
-						if(count>0){
-							this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
-						}
-					}
-				});
-
-				taskOptions.push({
-					name: MSG.REJECTED_INVOICES,
-					icon: MATERIAL_ICONS.REPORT,
-					fn: (count) => {
-						if(count>0){
-							this.rootPanelHtml('<aon-invoice-panel status="refused"></aon-invoice-panel>');
-						} 
-					}
-				});
-			}
-
-			aonDesktop.addSidenavOptions(MSG.ACTIVITY_SUMMARY.toUpperCase(), taskOptions);
-			this.getSidenav();
+			this.getSidenavActivity();
 		}
 
 		let classicOptions = [];
@@ -230,11 +252,11 @@ export class AonDesktop extends AonElement {
 		div.style.marginRight = '100px';
 		aonDesktop.setContent(div);
 
-		if(!this.isBeta()){
-			let divSlide = this.createElement(TAG.DIV);
-			divSlide.innerHTML = '<aon-stat></aon-stat>'
-			div.appendChild(divSlide);
-		}
+		// if(!this.isBeta()){
+		// 	let divSlide = this.createElement(TAG.DIV);
+		// 	divSlide.appendChild(new AonStat());
+		// 	div.appendChild(divSlide);
+		// }
 
 		div.appendChild(this.buildTitle(MSG.AVAILABLE.toUpperCase()));
 
@@ -386,7 +408,7 @@ export class AonDesktop extends AonElement {
 								switch(Apps[key].app){
 								case Apps.DOCUMENTAL.app:
 									let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-									uploadDocuments(inputDocumentFile, files);
+									uploadDocuments(inputDocumentFile, files, this.getDur());
 									break;
 								case Apps.INVOICE.app:
 									let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
@@ -432,8 +454,6 @@ export class AonDesktop extends AonElement {
 			ul.appendChild(li);
 		}
 		div.appendChild(ul);
-
-		this.updateCount();
 	}
 
 	buildTitle(title) {
@@ -452,7 +472,7 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
 				break;
 			case Apps.ACCOUNTING.app:
-				this.rootPanelHtml('<aon-accounting></aon-accounting>');
+				this.rootPanel(new AonAccounting());
 				break;
 			case Apps.FISCAL.app:
 				this.rootPanel(new AonFiscal());
@@ -468,7 +488,7 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(payroll);
 				break;
 			case Apps.INVOICE.app:
-				this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
+				this.rootPanel(new AonInvoicePanel());
 				break;
 			case Apps.TIMECONTROL.app:
 				this.rootPanel(new AonSignin());
@@ -514,10 +534,34 @@ export class AonDesktop extends AonElement {
 		else return false;
 	}
 
-	updateCount(){
+	async getSidenavActivity(){
 		let application = this.getApplication();
-			
-		getDomainNotice().then(notice => {
+
+		application.addSidenavOptions2({
+			id: MSG.ACTIVITY_SUMMARY.toUpperCase(),
+			name:MSG.ACTIVITY_SUMMARY.toUpperCase()
+		},[]);
+
+		if(this.getDur().isInvoice()) {
+			await this.invoiceSidenav();
+		}
+		await this.requestSidenav();
+		await this.noteSidenav();
+		
+		if(this.SIDENAV_ACTIVITY_SUMMARY.length){
+			application.addSidenavOptionsList({
+				id: MSG.ACTIVITY_SUMMARY.toUpperCase(),
+				name:MSG.ACTIVITY_SUMMARY.toUpperCase()
+			}, this.SIDENAV_ACTIVITY_SUMMARY);
+		} else {
+			application.removeSidenavById(MSG.ACTIVITY_SUMMARY.toUpperCase());
+		}
+	}
+
+	async invoiceSidenav(){
+		try {
+			const notice = await getDomainNotice();
+	
 			let inboxCount = 0;
 			let rejectedCount = 0;
 			if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
@@ -527,22 +571,35 @@ export class AonDesktop extends AonElement {
 				rejectedCount = notice.invoice.rejected.count;
 			}
 
-			application.updateSidenavCount('Facturas Pendientes', inboxCount);
-			application.updateSidenavCount('Facturas Rechazadas', rejectedCount);
-		});
-	}
+			this.SIDENAV_ACTIVITY_SUMMARY.push({
+				name: MSG.PENDING_INVOICES,
+				icon: 'inbox',
+				count: inboxCount,
+				fn: () => {
+					this.rootPanel(new AonInvoicePanel());
+				}
+			});
 
-	async getSidenav(){
-		await this.requestSidenav();
-		await this.noteSidenav();
+			this.SIDENAV_ACTIVITY_SUMMARY.push({
+				name: MSG.REJECTED_INVOICES,
+				icon: MATERIAL_ICONS.REPORT,
+				count: rejectedCount,
+				fn: () => {
+					let aonInvoice = new AonInvoicePanel();
+					aonInvoice.status = "refused";
+					this.rootPanel(aonInvoice);
+				}
+			});
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	async requestSidenav(){
 		try {
 			const th = await getTaskHolder();
 			const count = await getTaskCount({task_holder:th.id});
-			let opts = [];
-			if(count.task_holder) opts.push({
+			if(count.task_holder) this.SIDENAV_ACTIVITY_SUMMARY.push({
 				name: MSG.REQUESTS_RECEIVED,
 				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 				count:count.task_holder,
@@ -558,7 +615,7 @@ export class AonDesktop extends AonElement {
 					}
 				}
 			});
-			if(count.sender) opts.push({
+			if(count.sender) this.SIDENAV_ACTIVITY_SUMMARY.push({
 				name: MSG.REQUESTS_SENT,
 				icon: MATERIAL_ICONS.OUTBOX,
 				count:count.sender,
@@ -573,11 +630,6 @@ export class AonDesktop extends AonElement {
 						this.development(MSG.REQUEST)
 				} 
 			});
-
-			if(opts.length) this.getApplication().addSidenavOptionsList({
-				id: MSG.ACTIVITY_SUMMARY.toUpperCase(),
-				name:MSG.ACTIVITY_SUMMARY.toUpperCase()
-			}, opts);
 		} catch (error) {
 			console.log(error);
 		}
@@ -587,18 +639,12 @@ export class AonDesktop extends AonElement {
 		try {
 			const {total, total_expired} = await getNoteCount();
 			if(total>0){
-				let opts = [{
+				this.SIDENAV_ACTIVITY_SUMMARY.push({
 					name: MSG.NOTES,
-					icon: "event_note",
+					icon: MATERIAL_ICONS.STICKY_NOTE ,
 					count:`${total_expired}/${total}`,
-					fn: () =>{
-						console.log("note1");
-					}
-				}];
-				this.getApplication().addSidenavOptionsList({
-					id: MSG.ACTIVITY_SUMMARY.toUpperCase(),
-					name:MSG.ACTIVITY_SUMMARY.toUpperCase()
-				}, opts);
+					fn: () =>{}
+				});
 			}
 		} catch (error) {
 			console.log(error);
@@ -610,7 +656,7 @@ export class AonDesktop extends AonElement {
 			case Apps.DOCUMENTAL.app:
 				break;
 			case Apps.ACCOUNTING.app:
-				this.rootPanelHtml('<aon-accounting></aon-accounting>');
+				this.rootPanel(new AonAccounting());
 				break;
 			case Apps.FISCAL.app:
 				break;

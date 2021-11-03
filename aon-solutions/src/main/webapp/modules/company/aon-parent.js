@@ -30,8 +30,8 @@ export class AonParent extends AonElement {
 
 	buildSidenav() {
 		let aonParent = this.getElement('aonParentMain');
-		
 		let taskOptions = [{
+				id: 'PendingInvoices',
 				name: MSG.PENDING_INVOICES,
 				icon: MATERIAL_ICONS.INBOX,
 				fn: (count) => {
@@ -40,6 +40,7 @@ export class AonParent extends AonElement {
 					}
 				}
 			}, {
+				id: 'RejectedInvoices',
 				name: MSG.REJECTED_INVOICES,
 				icon: MATERIAL_ICONS.REPORT,
 				fn: (count) => {
@@ -57,7 +58,7 @@ export class AonParent extends AonElement {
 				fn: () => {}
 			}
 		];
-		aonParent.addSidenavOptions(MSG.PENDING_TASKS.toUpperCase(), taskOptions);
+		aonParent.addSidenavOptions(MSG.ACTIVITY_SUMMARY.toUpperCase(), taskOptions);
 		
 		let filterOptions = [{
 				name: MSG.ACTIVES,
@@ -88,7 +89,7 @@ export class AonParent extends AonElement {
 			let aonSign = new AonSign();
 			aonSign.setParent(true);
 			aonSign.setTimeControl(r);
-			aonParent.addSidenavWidget('CONTROL HORARIO', aonSign);
+			aonParent.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
 			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});
@@ -175,8 +176,8 @@ export class AonParent extends AonElement {
 		if(this.notice.invoice && this.notice.invoice.rejected && this.notice.invoice.rejected.count && this.notice.invoice.rejected.count > 0) 
 			rejectedCount = this.notice.invoice.rejected.count;
 
-		application.updateSidenavCount(MSG.PENDING_INVOICES, inboxCount);
-		application.updateSidenavCount(MSG.REJECTED_INVOICES, rejectedCount);
+		application.updateSidenavCount('PendingInvoices', inboxCount);
+		application.updateSidenavCount('RejectedInvoices', rejectedCount);
 	}
 
  	build() {

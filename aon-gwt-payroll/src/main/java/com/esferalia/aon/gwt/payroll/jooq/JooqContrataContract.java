@@ -639,6 +639,8 @@ public class JooqContrataContract {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (IndexOutOfBoundsException e) {
+			return contractSpecificData;
 		}
 		
 		contractSpecificData.setId(contractAttachRecord.get(CONTRACT_ATTACH.ID));

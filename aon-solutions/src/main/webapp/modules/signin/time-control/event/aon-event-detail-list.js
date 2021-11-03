@@ -1,5 +1,5 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import { removeEmpty, setDateTimestamp, setValueName, sortBy} from "../../../../services/utils.js";
+import { removeEmpty, setValueName, sortBy} from "../../../../services/utils.js";
 import { setAttributes} from "../../../../services/utilsComponents.js";
 import {
   getStatus,
@@ -16,6 +16,7 @@ import { AonToolbar } from "../../../../components/aon-toolbar.js";
 import { AonMobileList } from "../../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../../components/aon-table.js";
 import { AonIconButton } from "../../../../components/aon-icon-button.js";
+import { AonDateUtils } from "../../../utils/AonDateUtils.js";
 
 
 export class AonEventDetailList extends AonElement {
@@ -223,7 +224,7 @@ export class AonEventDetailList extends AonElement {
             textStatus,
             status: newStatus,
             nameLocation,
-            dateParse: setDateTimestamp(resp.date),
+            dateParse: AonDateUtils.setDateTimestamp(resp.date),
           });
         });
       }

@@ -1,35 +1,28 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+
 import java.util.stream.Stream;
 
-import com.esferalia.aon.jooq.tables.EnterpriseCcc;
-import com.esferalia.aon.jooq.tables.Person;
-import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
-import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
-import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AgreementLevelCategoryFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IrpfDataFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.AgreementLevelCategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractDataPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ContractPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.IrpfDataPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AgreementLevelCategoryFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ContractDataFiller;
-import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IrpfDataFiller;
-
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
-import static com.esferalia.aon.jooq.tables.Person.PERSON;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 
 public class ContractDAO {
 	

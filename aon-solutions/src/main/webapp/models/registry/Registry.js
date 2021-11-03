@@ -4,6 +4,7 @@ import { Domain } from '../Domain.js';
 import { RegistryPaymethod } from '../RegistryPaymethod.js';
 import { Address } from './Address.js';
 import { Media } from './Media.js';
+import { RecordData } from './RecordData.js';
 
 export class Registry {
     id;
@@ -23,7 +24,7 @@ export class Registry {
     media;
     banks;
     paymethod;
-
+    record_data;
     constructor(registry) {
         if(registry) {
             this.id = registry.id;
@@ -48,6 +49,7 @@ export class Registry {
                 : [];
             this.paymethod = new RegistryPaymethod(registry.paymethod);
             this.dirty = registry.dirty;
+            this.record_data = new RecordData(registry.record_data);
         } else {
             this.domain = new Domain();
             this.document = '';
@@ -62,6 +64,7 @@ export class Registry {
             this.media = [];
             this.banks = [];
             this.paymethod = new RegistryPaymethod();
+            this.record_data = new RecordData();
         }
     }
 
@@ -232,5 +235,13 @@ export class Registry {
         return this;
     }
 
+    getRecordData() {
+        return this.record_data;
+    }
+
+    setRecordData(recordData) {
+        this.record_data = recordData;
+        return this;
+    }
 
 } 
