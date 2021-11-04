@@ -1,6 +1,6 @@
-import {getCustomers, getCustomer} from '../../services/service.js';
-import { TAG} from '../../environments/environments.js';
-import { AonRegistryList } from './aon-registry-list.js';
+import {getCustomers, getCustomer} from '../../../services/service.js';
+import { TAG} from '../../../environments/environments.js';
+import { AonRegistryList } from '../aon-registry-list.js';
 import { AonCustomer } from './aon-customer.js';
 
 export class AonCustomerList extends AonRegistryList {
@@ -14,7 +14,7 @@ export class AonCustomerList extends AonRegistryList {
 	}
 
 	getRegistries() {
-		return getCustomers(this.filter);
+		return getCustomer(this.filter);
 	}
 
 	buildRegistry(registry) {

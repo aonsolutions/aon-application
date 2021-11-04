@@ -23,6 +23,10 @@ export class AonRegistryList extends AonElement {
 	initialize() {
 		this.more = true;
 		this.AON_REGISTRY_TABLE = 'aonRegistryTable';
+		this.filter = this.filter || {
+			page: 1,
+			perPage: 50		
+		};
 	}
 
 	build() {
@@ -85,6 +89,12 @@ export class AonRegistryList extends AonElement {
 	getFilter() {
 		return this.filter || {};
 	}
+
+	setFilter(filter) {
+		this.filter = filter;
+		this.init();
+	}
+
 }
 
 if(!window.customElements.get(TAG.AON_REGISTRY_LIST)) {

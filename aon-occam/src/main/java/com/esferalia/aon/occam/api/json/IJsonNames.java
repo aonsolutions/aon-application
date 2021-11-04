@@ -285,6 +285,7 @@ public interface IJsonNames {
 	String PURCHASE_ACCOUNT = "purchaseAccount";
 	String PURCHASE_PRICE = "purchasePrice";
 	String PURCHASES_RATIO = "purchasesRatio";
+	String PURCHASE_VALUATED = "purchaseValuated";
 	String PYMNT_DAYS = "pymntDays";
 
 	// ---------------------------------------------------------------------------------------------	[Q] 
@@ -372,7 +373,7 @@ public interface IJsonNames {
 	String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	String VALUE = "value";
-	String VAT_ACCRUAL_PAYMENT = "vat_accrual_payment";
+	String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
 	String VAT = "vat";
@@ -380,7 +381,7 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[W] 
 	String WEB = "web";
 	String WITHHOLDING = "withholding";
-	String WITHHOLDING_FARMER = "withholding_farmer";
+	String WITHHOLDING_FARMER = "withholdingFarmer";
 	String WITHHOLDING_PERCENTAGE = "withholding_percentage";
 	String WITHHOLDING_QUOTA = "withholding_quota";
 	String WITHHOLDING_TYPE = "withholding_type";

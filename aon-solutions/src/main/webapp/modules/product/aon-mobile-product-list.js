@@ -54,5 +54,14 @@ export class AonMobileProductList extends AonMobileList {
         }
         this.addLi(liValue, i, () => {});
     }
+    
+    getFilter() {
+		return this.filter || {};
+	}
+
+    setFilter(filter) {		
+		this.filter = JSON.stringify(filter);
+        this.init();
+	}
 }
 window.customElements.define('aon-mobile-product-list', AonMobileProductList);

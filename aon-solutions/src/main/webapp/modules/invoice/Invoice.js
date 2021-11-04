@@ -35,8 +35,8 @@ export class Invoice {
   service; // boolean | servicio
   withholding; // boolean | retencion 
   investment; // boolean | bienes de inversion
-  withholding_farmer; // boolean | regimen agrario
-  vat_accrual_payment; // boolean | criterio de caja
+  withholdingFarmer; // boolean | regimen agrario
+  vatAccrualPayment; // boolean | criterio de caja
   surcharge; // boolean | recargo de equivalencia
 
   rectified; // boolean | rectificativa
@@ -93,7 +93,7 @@ export class Invoice {
 
     let company = JSON.parse(localStorage.getItem('company'));
     this.surcharge = company.surcharge;
-    this.vat_accrual_payment = company.vat_accrual_payment;
+    this.vatAccrualPayment = company.vatAccrualPayment;
     this.withholding = false; //this.isEmitida() ? company.withholding : false;
     this.creation_user = LS.getDomainLogin();
   }
@@ -155,8 +155,8 @@ export class Invoice {
       this.service = invoice.service || false;// boolean | servicio
       this.withholding = invoice.withholding || false; //this.isEmitida() ? company.withholding : false; // boolean | retencion 
       this.investment = invoice.investment || false; // boolean | bienes de inversion
-      this.withholding_farmer = invoice.withholding_farmer || false; // boolean | regimen agrario
-      this.vat_accrual_payment = invoice.vat_accrual_payment || company.vat_accrual_payment; // boolean | criterio de caja
+      this.withholdingFarmer = invoice.withholdingFarmer || false; // boolean | regimen agrario
+      this.vatAccrualPayment = invoice.vatAccrualPayment || company.vatAccrualPayment; // boolean | criterio de caja
       this.surcharge = invoice.surcharge || company.surcharge;
       this.rectified = invoice.rectified || false;
       this.rectification_invoice = invoice.rectification_invoice || undefined;
@@ -367,11 +367,11 @@ export class Invoice {
   }
 
   isWithholdingFarmer() {
-    return this.withholding_farmer  && this.withholding_farmer != CONSTANT.FALSE;;
+    return this.withholdingFarmer  && this.withholdingFarmer != CONSTANT.FALSE;;
   }
 
-  setWithholdingFarmer(withholding_farmer) {
-    this.withholding_farmer = withholding_farmer;
+  setWithholdingFarmer(withholdingFarmer) {
+    this.withholdingFarmer = withholdingFarmer;
     this.calculateWithholdingFromTax();
     this.calculateTotalFromTax();
   }
@@ -385,7 +385,7 @@ export class Invoice {
     if(this.isEmitida() && !this.isNacional()){
       this.surcharge = false;
       this.withholding = false;
-      this.withholding_farmer = false;
+      this.withholdingFarmer = false;
       this.taxes = [];
       this.details.forEach((detail,i) => {
         detail.percentage = undefined;
