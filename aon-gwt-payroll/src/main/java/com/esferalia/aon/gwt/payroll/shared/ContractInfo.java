@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class ContractInfo implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -208,8 +210,12 @@ public class ContractInfo implements Serializable{
 	}
 
 	public void setContractType(String contractType) {
-		if(null != contractType && contractType.contains("\""))
-			this.contractType = contractType.split("\"")[1];
+		if(AonStringUtils.isNotBlank(contractType) && contractType.contains("\""))
+			try {
+				this.contractType = contractType.split("\"")[1];
+			} catch (IndexOutOfBoundsException e) {
+				this.contractType = contractType;
+			}	
 		else
 			this.contractType = contractType;
 	}
@@ -279,8 +285,12 @@ public class ContractInfo implements Serializable{
 	}
 
 	public void setQuoteGroup(String quoteGroup) {
-		if(null != quoteGroup && quoteGroup.contains("\""))
-			this.quoteGroup = quoteGroup.split("\"")[1];
+		if(AonStringUtils.isNotBlank(contractType) && quoteGroup.contains("\""))
+			try {
+				this.quoteGroup = quoteGroup.split("\"")[1];
+			} catch (IndexOutOfBoundsException e) {
+				this.quoteGroup = quoteGroup;
+			}
 		else
 			this.quoteGroup = quoteGroup;
 	}
@@ -290,8 +300,12 @@ public class ContractInfo implements Serializable{
 	}
 
 	public void setOcupation(String ocupation) {
-		if(null != ocupation && ocupation.contains("\""))
-			this.ocupation = ocupation.split("\"")[1];
+		if(AonStringUtils.isNotBlank(contractType) && ocupation.contains("\""))
+			try {
+				this.ocupation = ocupation.split("\"")[1];
+			} catch (IndexOutOfBoundsException e) {
+				this.ocupation = ocupation;
+			}
 		else
 			this.ocupation = ocupation;
 	}
