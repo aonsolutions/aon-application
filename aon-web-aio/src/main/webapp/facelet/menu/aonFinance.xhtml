@@ -307,6 +307,16 @@
 												actionListener="#{bankStatement.onEditSearch}"
 												value="#{bundle.finance_bank_statement_module}"/>
 										</aon:div>
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_checkIt-aonFinance"
+												action="gwt_checkIt-aonFinance"
+												title="Agregador bancario">
+												<aon:outputText
+													styleClass="aon-fiscal-link-label aon-icon-new-text"
+													style="margin-left: 5px; padding-left: 20px;"
+													value="Agregador bancario" />
+											</aon:commandLink>
+										</aon:div>
 									</aon:if>
 									<aon:if test="#{aonRole.accountingOperator and domainSwitcher.parentDomainUserInChildDomain}">
 										<aon:div styleClass="aon-direct-access-list-element">
