@@ -73,13 +73,15 @@ export const AonDateUtils = {
         }
         return day;
     },
+    getYearFirstDay: function(d) {
+        return new Date(d.getFullYear(), 0, 1);
+    },
     dayStr: function(date) { //DAY STR
         return this.lastThreeDayStr(date) || DAYS[date.getDay()]
     },
     setDateTpDay: function(d) { // DAY, dd-MM-yyyy
         const date = new Date(d);
-        const day = this.dayStr(date);
-        return day+", "+this.formatDate(date);
+        return this.dayStr(date)+", "+this.formatDate(date);
     },
     setDateTimestampDay: function(d) { // DAY, dd-MM-yyyy H:m
         return this.setDateTpDay(new Date(d)) +" " + this.setTime(new Date(d));

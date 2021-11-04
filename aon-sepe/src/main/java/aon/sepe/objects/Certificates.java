@@ -22,12 +22,12 @@ public class Certificates {
 	private String causeSuspension; //01 - 33
 	private String officePublic;
 	private Integer dedicationPer;
-	private Date fAEd; // fecha de alta de empresa
-	private Date fSTd; // fecha de extension 
+	private Date fAEd; // Fecha de alta
+	private Date fSTd; // Fecha de suspensión o extinción
 	//data vacation
 	private Integer daysCtzVc; // Dias cotizados vacaciones
-	private String bcccVc; // Base cotizacion vacaciones
-	private String bcdVc; 
+	private String bcccVc; // Base cotizacion vacaciones 0.00
+	private String bcdVc; // 0.00
 	List<Map<String, String>> dataCtz;
 	private Integer durationContract; // Duracion contrato (horas)
 	

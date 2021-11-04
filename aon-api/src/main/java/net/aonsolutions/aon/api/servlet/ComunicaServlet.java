@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.Occupation;
 import com.esferalia.aon.occam.api.model.type.QuoteGroup;
 import com.esferalia.aon.occam.api.model.type.RLCE;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -70,7 +71,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(ComunicaServlet.class.getName());
 	private static final String FORMAT_DATE = "yyyy-MM-dd"; 
-
+	private static final String APP_PARAMS_NAME = "APP_COMUNICA_SINCRONIZED"; 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON COMUNICA SERVLET");
@@ -222,7 +223,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		  } catch(Exception e) {}
 		});	
 
-		if(errors.size() > 0) throw new Exception(errors.get(0));
+		if(!errors.isEmpty()) throw new Exception(errors.get(0));
 		
 		return employees;
 	}
@@ -582,7 +583,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	    		}
 			});
 		
-			if(auths.size()>0) {
+			if(!auths.isEmpty()) {
 				String title = "AON | COMUNIC@";
 		    	NotificationRequest notification = new NotificationRequest();
 		    	notification.setTitle(title);
@@ -607,7 +608,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 						.setBody(body)
 						.setTo(getEmails(api, user));
 				
-				if(files.size()>0) 
+				if(!files.isEmpty()) 
 					msg.setFiles(files);
 				
 				SES.sendEmail(msg);
@@ -625,10 +626,17 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			ArrayList<Employee> employees = new ArrayList<>();
 			List<CCCInfo> cccs = getCcs(api);
 			
+			ApplicationParameter appParams = new ApplicationParameter();
+			
 			//------------MOVEMENTS OLD
 			if(!api.getParams().optString("startDate").isEmpty()) {
-				Date startDate = Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd");
-				employees.addAll(ComunicaUtils.getEmployeesOld(startDate, certificate, cccs));
+				Date startIni = Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd");
+				appParams = appParamsExists(api);
+				if(appParams.getId()!=null && appParams.getValue()!=null) {
+					//DEDUCT 15 DAYS
+					startIni = AonDateUtils.addDays(new Date( Long.parseLong( appParams.getValue() ) ), -15) ;
+				} 
+				employees.addAll(ComunicaUtils.getEmployeesOld(startIni, certificate, cccs));
 			}
 
 			//------------MOVEMENTS REAL(ACTUAL)
@@ -678,8 +686,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				} catch (SegSocialException e) {e.printStackTrace();}	
 			});
 			if(!employees.isEmpty()) {
-				saveAppParams(api); //SAVE APP PARAMS
-			}
+				saveAppParams(api, appParams); //SAVE APP PARAMS
+			} 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -689,15 +697,14 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	/*
 	 * SAVE OR UPDATE APP PARAMS
 	 */
-	private static void saveAppParams(AonApiData api) {
+	private static void saveAppParams(AonApiData api, ApplicationParameter exists) {
 		Domain domain = api.getDomain();
 		ApplicationParameter appParams = new ApplicationParameter()
 				.setDomain(domain.getId())
 				.setValue(new Date().getTime()+"")
-				.setName("APP_COMUNICA_SINCRONIZED")
+				.setName(APP_PARAMS_NAME)
 				;
-		ApplicationParameter exists = AON.getApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams.getName());
-		if(exists!=null && exists.getId()!=null) {
+		if(exists.getId()!=null) {
 			System.out.println("--------UPDATE APP PARAMS-------------");
 			AON.updateApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams, 
 					f->f.getDomainProperty().eq(appParams.getDomain()).and(f.getNameProperty().eq(appParams.getName()))
@@ -706,6 +713,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			System.out.println("--------SAVE APP PARAMS-------------");
 			AON.insertApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), appParams);
 		}
+	}
+	
+	private static ApplicationParameter appParamsExists(AonApiData api) {
+		return AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), APP_PARAMS_NAME);
 	}
 	
 	private static List<CCCInfo> getCcs(AonApiData api) {

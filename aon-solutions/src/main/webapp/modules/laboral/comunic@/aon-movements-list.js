@@ -172,22 +172,33 @@ export class AonMovementsList extends AonElement {
     }
   }
 
-  async aonMovement(dt) {
+  async aonMovement(data) {
     this.applicationEl.startLoading();
-    try {
-      let resp = await getEmployee({ regime:dt.regime, ctaCti:dt.ctaCti, nss: dt.nss });
-      if (resp) {
-        const data = { ...resp, ...dt };
-        const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, data);
-        if (aonAltaDirecta) {
-          disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
-          disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, AON_SWITCH);
-        }
-      }
-    } catch (error) {
-      this.showError(error);
+    let newData = undefined;
+    if(data.tc){
+      newData = this.movParseData(data);
+    } else {
+      try {
+        let resp = await getEmployee({ regime:data.regime, ctaCti:data.ctaCti, nss: data.nss });
+        if (resp) newData = { ...resp, ...data };
+      } catch (error) {}
     }
+
+    if(newData){
+      const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, newData);
+      if (aonAltaDirecta) {
+        disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
+        disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, AON_SWITCH);
+      }
+    }
+ 
     this.applicationEl.stopLoading();
+  }
+
+  movParseData(data){
+    let dt = {...data, contract: data.tc};
+    if(data.ep) dt.ocup = data.ep.toLowerCase();
+    return dt;
   }
 
   getFilter = () => JSON.parse(this.getAttribute(CONSTANT.FILTER));

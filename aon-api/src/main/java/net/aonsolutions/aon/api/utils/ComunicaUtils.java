@@ -48,11 +48,14 @@ public class ComunicaUtils {
 	
 	/**
 	 * GET EMPLOYEES OLD DATA SEG SOCIAL
+	 * @param startDateIni startDateIni search
+	 * @param certificate
+	 * @param cccs
 	 * @return ArrayList<Employee>
 	 */
-	public static ArrayList<Employee> getEmployeesOld(Date date, Certificate certificate, List<CCCInfo> cccs) {
+	public static ArrayList<Employee> getEmployeesOld(Date startDateIni, Certificate certificate, List<CCCInfo> cccs) {
 		 ArrayList<Employee> employees = new ArrayList<>();
-	     List<Date> startDates = ComunicaUtils.getStartDates(date);
+	     List<Date> startDates = ComunicaUtils.getStartDates(startDateIni);
 	     
 	     for (CCCInfo ccc : cccs) {
 		     String cti = ccc.getCccAccount();
@@ -61,6 +64,8 @@ public class ComunicaUtils {
 			 	Date endDate = AonDateUtils.getMonthLastDay(startDate);
 			 	if( com.esferalia.aon.watson.util.AonDateUtils.compare(endDate, new Date()) > 0 ) 
 			 		endDate = new Date();
+			 	
+			 	System.out.println("----- START_DATE: "+AonDateUtils.format(startDate, "dd-MM-yyyy")+ " END_DATE: "+AonDateUtils.format(endDate, "dd-MM-yyyy")+" -----");
 
 	            try {
 		  			byte[] pdf = ServicioREDEmployee.getCccLaboralLifePOST(
@@ -112,7 +117,7 @@ public class ComunicaUtils {
 	 * @return return dates for month
 	 */
 	public static List<Date> getStartDates(Date date) {
-	    Date startDate = AonDateUtils.getYearFirstDay(date);
+	    Date startDate = AonDateUtils.getMonthFirstDay(date);
         Date endDate = new Date();
         List<Date> dates = new ArrayList<>();
         GregorianCalendar calendar = new GregorianCalendar();
