@@ -64,7 +64,10 @@ public class EmployeeContractPayments extends Composite {
 	    }
 	    
 	    static String getContractConceptCalcType(String contractConceptCalcTypeShort) {
-			switch (contractConceptCalcTypeShort) {
+			if(AonStringUtils.isBlank(contractConceptCalcTypeShort))
+				return "N/D";
+	    	
+	    	switch (contractConceptCalcTypeShort) {
 				case "P":
 					return "Pagos";
 				case "D":
@@ -144,7 +147,7 @@ public class EmployeeContractPayments extends Composite {
 	}
 	
 	private String getParsedExpression(String expression) {
-		return expression.replaceAll("HIDE\\(.*\\); ", "");
+		return AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
 	}
 	
 	// ----------------------------------------------- ProvideContractConceptCalcDG

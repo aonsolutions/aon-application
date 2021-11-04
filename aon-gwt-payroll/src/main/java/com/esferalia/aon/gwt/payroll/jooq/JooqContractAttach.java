@@ -5,24 +5,122 @@ import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record10;
+import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 
 public class JooqContractAttach {
 	
-	private static Settings SETTINGS = null;
+	private JooqContractAttach() {
+		super();
+	}
+	
+	private static Settings settings = null;
 	
 	protected static Settings getDefaultSettings() {
-		if (SETTINGS == null) {
-			SETTINGS = new Settings();
-			SETTINGS.setRenderSchema(false);
+		if (settings == null) {
+			settings = new Settings();
+			settings.setRenderSchema(false);
 		}
-		return SETTINGS;
+		return settings;
+	}
+	
+	public static List<ContractAttach> getContractAttachments(Connection conn, Integer domainId, Integer contractId) {
+		return getContractAttachmentsDB(DSL.using(conn, getDefaultSettings()), domainId, contractId);
+	}
+	
+	private static List<ContractAttach> getContractAttachmentsDB(DSLContext dslContext, Integer domainId, Integer contractId) {
+		List<ContractAttach> contractAttachs = new ArrayList<>();
+		
+		 Result<Record10<Integer, Integer, Integer, Byte, String, Byte, Integer, Byte, Timestamp, String>> contractAttachRecords = dslContext.select(
+				CONTRACT_ATTACH.ID, CONTRACT_ATTACH.DOMAIN, CONTRACT_ATTACH.CONTRACT, CONTRACT_ATTACH.MIMETYPE,
+				CONTRACT_ATTACH.DESCRIPTION, CONTRACT_ATTACH.TYPE, CONTRACT_ATTACH.SCOPE, CONTRACT_ATTACH.SECURITY_LEVEL,
+				CONTRACT_ATTACH.ATTACH_DATE, CONTRACT_ATTACH.DRIVEID).from(CONTRACT_ATTACH)
+			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId)
+					.or(CONTRACT_ATTACH.CONTRACT.isNull()))
+			.and(CONTRACT_ATTACH.DOMAIN.eq(domainId))
+			.fetch();
+		
+		for(Record contractAttachRecord : contractAttachRecords) {
+			if(null != contractAttachRecord.get(CONTRACT_ATTACH.TYPE) && contractAttachRecord.get(CONTRACT_ATTACH.TYPE) == (byte)4)
+				continue;
+			
+			ContractAttach contractAttach = new ContractAttach();
+			contractAttach.setId(contractAttachRecord.get(CONTRACT_ATTACH.ID));
+			contractAttach.setDomain(contractAttachRecord.get(CONTRACT_ATTACH.DOMAIN));
+			contractAttach.setContract(contractAttachRecord.get(CONTRACT_ATTACH.CONTRACT));
+			contractAttach.setMimeType(contractAttachRecord.get(CONTRACT_ATTACH.MIMETYPE));
+			contractAttach.setDescription(contractAttachRecord.get(CONTRACT_ATTACH.DESCRIPTION));
+			contractAttach.setData("".getBytes()); //contractAttachRecord.get(CONTRACT_ATTACH.DATA));
+			contractAttach.setType(contractAttachRecord.get(CONTRACT_ATTACH.TYPE));
+			contractAttach.setScope(contractAttachRecord.get(CONTRACT_ATTACH.SCOPE));
+			contractAttach.setSecurityLevel(contractAttachRecord.get(CONTRACT_ATTACH.SECURITY_LEVEL));
+			contractAttach.setAttachDate(contractAttachRecord.get(CONTRACT_ATTACH.ATTACH_DATE));
+			contractAttach.setDriveId(contractAttachRecord.get(CONTRACT_ATTACH.DRIVEID));
+			
+			contractAttachs.add(contractAttach);
+		}
+		
+		return contractAttachs;
+	}
+
+	public static List<ContractAttach> createContractAttach(Connection conn, Integer domainId,ContractAttach contractAttach) {
+		return createContractAttachDB(DSL.using(conn, getDefaultSettings()), domainId, contractAttach);
+	}
+
+	private static List<ContractAttach> createContractAttachDB(DSLContext dslContext, Integer domainId, ContractAttach contractAttach) {
+		 dslContext.insertInto(CONTRACT_ATTACH)
+			.set(CONTRACT_ATTACH.DOMAIN, contractAttach.getDomain())
+			.set(CONTRACT_ATTACH.CONTRACT, contractAttach.getContract())
+			.execute();
+		 
+		 return getContractAttachmentsDB(dslContext, domainId, contractAttach.getContract());
+	}
+	
+	public static List<ContractAttach> deleteContractAttach(Connection conn, Integer domainId, ContractAttach contractAttach) {
+		return deleteContractAttachDB(DSL.using(conn, getDefaultSettings()), domainId, contractAttach);
+	}
+	
+	private static List<ContractAttach> deleteContractAttachDB(DSLContext dslContext, Integer domainId, ContractAttach contractAttach) {
+		dslContext.delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.ID.eq(contractAttach.getId())).execute();
+		return getContractAttachmentsDB(dslContext, domainId, contractAttach.getContract());
+	}
+	
+	public static List<ContractAttach> setContractAttachments(Connection conn, List<ContractAttach> contractAttachments) {
+		return setContractAttachmentsDB(DSL.using(conn, getDefaultSettings()), contractAttachments);
+	}
+	
+	private static List<ContractAttach> setContractAttachmentsDB(DSLContext dslContext, List<ContractAttach> contractAttachments) {
+		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+		
+		for(ContractAttach contractAttach : contractAttachments) {
+			if(null == contractAttach.getContract())
+				continue;
+			
+			dslContext.update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DESCRIPTION, contractAttach.getDescription())
+				.set(CONTRACT_ATTACH.TYPE, contractAttach.getType() == (byte) -1 ? null : contractAttach.getType())
+				.set(CONTRACT_ATTACH.SCOPE, contractAttach.getScope() == (byte) -1 ? null : contractAttach.getScope())
+				.set(CONTRACT_ATTACH.SECURITY_LEVEL, contractAttach.getSecurityLevel())
+				.set(CONTRACT_ATTACH.ATTACH_DATE, contractAttach.getAttachDate() == null ? null : new Timestamp(contractAttach.getAttachDate().getTime()))
+				.where(CONTRACT_ATTACH.ID.eq(contractAttach.getId()))
+				.execute();
+			
+		}
+		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
+		
+		return contractAttachments;
 	}
 	
 	public static void setContractAttachAttachment(String domainName, Integer attachId, String fileName, byte[] data, byte mimeType) {
@@ -51,9 +149,7 @@ public class JooqContractAttach {
 				.where(CONTRACT_ATTACH.ID.eq(attachId))
 				.fetchOne();
 			
-			byte[] data = contractAttachRecord.get(CONTRACT_ATTACH.DATA);
-			
-			return data;
+			return contractAttachRecord.get(CONTRACT_ATTACH.DATA);
 			
 		}catch (SQLException e) {
 			throw new RuntimeException(e);

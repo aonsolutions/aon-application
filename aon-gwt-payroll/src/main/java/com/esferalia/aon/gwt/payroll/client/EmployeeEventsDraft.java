@@ -902,19 +902,19 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		
 		undoAllButton = new AonToolbarButton( "Restaurar últimos valores guardados", AON.CSS.aonIconUndo() );
 		undoAllButton.addClickHandler(e -> {
-			onUndo(e);
+			onUndo();
 		});
 		toolbar.add(undoAllButton);
 		
 		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		saveButton.addClickHandler(e -> {
-			onSave(e);
+			onSave();
 		});
 		toolbar.add(saveButton);
 		
 		newValueButton = new AonToolbarButton( "Nuevo valor", AON.CSS.aonIconAdd() );
 		newValueButton.addClickHandler(e -> {
-			onNewValue(e);
+			onNewValue();
 		});
 		toolbar.add(newValueButton);
 		
@@ -937,11 +937,11 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 
 	// ----------------------------------------------- Toolbar.Methods
 
-	public void onUndo(ClickEvent e) {
+	public void onUndo() {
 		initUndoAllDialog();
 	}
 	
-	public void onSave(ClickEvent e) {
+	public void onSave() {
 		employeeEventsDraft.updateDBCalendar(
 				r -> {
 					//Descargar Variables actualizadas
@@ -961,7 +961,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 				t -> {});
 	}
 	
-	public void onNewValue(ClickEvent e) {
+	public void onNewValue() {
 		openNewValueDialog(null);
 	}
 	

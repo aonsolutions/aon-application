@@ -7,6 +7,8 @@ import java.util.Date;
 
 public class ContractSpecificData implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private String cno;
 	private String calendarFormativeStartDate;
@@ -233,7 +235,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getWorkProgramData() {
-		return null == workProgramData ? false : workProgramData;
+		return null == workProgramData ? Boolean.FALSE : workProgramData;
 	}
 
 	public void setWorkProgramData(Boolean workProgramData) {
@@ -249,7 +251,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getTemporalWorkEnterprise() {
-		return null == temporalWorkEnterprise ? false : temporalWorkEnterprise;
+		return null == temporalWorkEnterprise ? Boolean.FALSE : temporalWorkEnterprise;
 	}
 
 	public void setTemporalWorkEnterprise(Boolean temporalWorkEnterprise) {
@@ -289,7 +291,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getContractRelief() {
-		return null == contractRelief ? false : contractRelief;
+		return null == contractRelief ? Boolean.FALSE : contractRelief;
 	}
 
 	public void setContractRelief(Boolean contractRelief) {
@@ -329,7 +331,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getOfferWorkData() {
-		return null == offerWorkData ? false : offerWorkData;
+		return null == offerWorkData ? Boolean.FALSE : offerWorkData;
 	}
 
 	public void setOfferWorkData(Boolean offerWorkData) {
@@ -345,7 +347,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getWorkshopSchoolB() {
-		return null == workshopSchoolB ? false : workshopSchoolB;
+		return null == workshopSchoolB ? Boolean.FALSE : workshopSchoolB;
 	}
 
 	public void setWorkshopSchoolB(Boolean workshopSchoolB) {
@@ -361,7 +363,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getDisabilityB() {
-		return null == disabilityB ? false : disabilityB;
+		return null == disabilityB ? Boolean.FALSE : disabilityB;
 	}
 
 	public void setDisabilityB(Boolean disabilityB) {
@@ -377,7 +379,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getAnnexedB() {
-		return null == annexedB ? false : annexedB;
+		return null == annexedB ? Boolean.FALSE : annexedB;
 	}
 
 	public void setAnnexedB(Boolean annexedB) {
@@ -401,7 +403,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getCampaigns() {
-		return null == campaigns ? false : campaigns;
+		return null == campaigns ? Boolean.FALSE : campaigns;
 	}
 
 	public void setCampaigns(Boolean campaigns) {
@@ -433,7 +435,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getInvest() {
-		return null == invest ? false : invest;
+		return null == invest ? Boolean.FALSE : invest;
 	}
 
 	public void setInvest(Boolean invest) {
@@ -465,7 +467,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getIsInterimCause() {
-		return null == interimCauseB ? false : interimCauseB;
+		return null == interimCauseB ? Boolean.FALSE : interimCauseB;
 	}
 
 	public void setIsInterimCause(Boolean interimCauseB) {
@@ -481,7 +483,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getEntrepreneurSupport() {
-		return null == entrepreneurSupport ? false : entrepreneurSupport;
+		return null == entrepreneurSupport ? Boolean.FALSE : entrepreneurSupport;
 	}
 
 	public void setEntrepreneurSupport(Boolean entrepreneurSupport) {
@@ -505,7 +507,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getPromotionMeasures() {
-		return null == promotionMeasures ? false : promotionMeasures;
+		return null == promotionMeasures ? Boolean.FALSE : promotionMeasures;
 	}
 
 	public void setPromotionMeasures(Boolean promotionMeasures) {
@@ -521,7 +523,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getQuoteReductions() {
-		return null == quoteReductions ? false : quoteReductions;
+		return null == quoteReductions ? Boolean.FALSE : quoteReductions;
 	}
 
 	public void setQuoteReductions(Boolean quoteReductions) {

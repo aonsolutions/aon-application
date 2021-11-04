@@ -1,0 +1,281 @@
+package com.esferalia.aon.gwt.payroll.jooq;
+
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
+
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
+import com.esferalia.aon.gwt.payroll.shared.Municipalities;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.payroll.contract.ContractFill;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+public class JooqContractPDF {
+
+	// ---------------------------------------------------- Constructor
+	
+	private JooqContractPDF() {
+		super();
+	}
+	
+	// ---------------------------------------------------- Settings
+
+	private static Settings settings = null;
+	
+	protected static Settings getDefaultSettings() {
+		if (settings == null) {
+			settings = new Settings();
+			settings.setRenderSchema(false);
+		}
+		return settings;
+	}
+	
+	// ---------------------------------------------------- DataBase
+	
+	// ---------------------------------------------------- Contract PDF (Save)
+	
+	public static void saveDraftContract(String domainName, Integer contractId, byte[] pdfBytes) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			
+			dslContext.insertInto(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DOMAIN, domainId)
+				.set(CONTRACT_ATTACH.CONTRACT, contractId)
+				.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+				.set(CONTRACT_ATTACH.DESCRIPTION, "BORRADOR CONTRATO")
+				.set(CONTRACT_ATTACH.DATA, pdfBytes)
+				.set(CONTRACT_ATTACH.TYPE, (byte)0)
+				.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+				.execute();
+			
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+	
+	// ---------------------------------------------------- Contract PDF (fill)
+	
+	public static byte[] contractFill(Connection connection, Integer domainId, Integer parentDomainId, Integer contractId, Integer contractType, String formativeLevelCode) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+				
+			Map<String, String> contractOtherInfo = JooqContractOtherInfo.getContractOtherInfo(connection, domainId, parentDomainId, contractId, contractType+"");
+			Map<String, String> contractFillInfo = getContractFillInfoDB(dslContext, contractId);
+			
+			Map<String, String> contractClauses = parseClausesToMap(JooqContractClauses.getContractClauses(connection, contractId));
+			
+			FormativeLevel formativeLevel = new FormativeLevel();
+			contractFillInfo.put("E_FORMATIVE_LVL", AonStringUtils.abbreviate(formativeLevel.getFormativeLevelDescription(formativeLevelCode), 32));
+			contractFillInfo.put("E_FORMATIVE_LVL_CODE", formativeLevelCode);
+			
+			return ContractFill.fillContract(contractType, contractOtherInfo, contractFillInfo, contractClauses);
+	}
+
+	public static byte[] contractFill(String domainName, Integer contractId, String contractTypeStr, String formativeLevelCode) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer contractType = Integer.parseInt(contractTypeStr);
+			return contractFill(connection, domainId, parentDomainId, contractId, contractType, formativeLevelCode);
+		}catch (SQLException | NumberFormatException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+	
+	// ---------------------------------------------------- Contract PDF (fill - clauses)
+	
+	private static Map<String, String> parseClausesToMap(List<ContractClause> contractClauses) {
+		Map<String, String> contractClausesMap = new HashMap<>();
+		contractClauses.forEach(contractClause -> contractClausesMap.put(contractClause.getName(), contractClause.getDescription()));
+		return contractClausesMap;
+	}
+	
+	// ---------------------------------------------------- Contract PDF (fill - info)
+
+	private static Map<String, String> getContractFillInfoDB(DSLContext dslContext, Integer contractId) {
+		Map<String, String> contractFillData = new HashMap<>();
+		
+		Municipalities municipalities = new Municipalities();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		
+		// ENTRPRISE
+		
+		Result<Record> entepriseRecords = dslContext.select().from(ENTERPRISE)
+				.leftJoin(RADDRESS)
+				.on(ENTERPRISE.REGISTRY.eq(RADDRESS.REGISTRY))
+				.leftJoin(REGISTRY)
+				.on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
+				.where(ENTERPRISE.REGISTRY.eq(
+						dslContext.select(ENTERPRISE_ACTIVITY.ENTERPRISE).from(ENTERPRISE_ACTIVITY).where(ENTERPRISE_ACTIVITY.ID.eq(
+								dslContext.select(CONTRACT.ENTERPRISE_ACTIVITY).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne(CONTRACT.ENTERPRISE_ACTIVITY)
+						)).fetchOne(ENTERPRISE_ACTIVITY.ENTERPRISE)
+				)).fetch();
+		
+		if(!entepriseRecords.isEmpty()) {
+			Record enterpriseRecord = entepriseRecords.get(0);
+			
+			contractFillData.put("ET_NIF", enterpriseRecord.get(REGISTRY.DOCUMENT));
+			contractFillData.put("ENTERPRISE_NAME", enterpriseRecord.get(REGISTRY.NAME));
+			String address = enterpriseRecord.get(RADDRESS.STREET_TYPE) + " " + enterpriseRecord.get(RADDRESS.ADDRESS) + ", " + enterpriseRecord.get(RADDRESS.NUMBER);
+			contractFillData.put("ENTERPRISE_ADDR", address);
+			
+			String municipalityCode = enterpriseRecord.get(RADDRESS.MUNICIPALITY_CODE);
+			if(null != municipalityCode) {
+				String municipality = municipalities.getMunicipalityByZip(municipalityCode);
+				
+				contractFillData.put("ENTERPRISE_MUNICIPALITY", municipality);
+				contractFillData.put("ENTERPRISE_MUNICIPALITY_CODE", municipalityCode);
+			}
+			
+			
+			contractFillData.put("ENTERPRISE_COUNTRY", "ESPA\u00D1A");
+			contractFillData.put("ENTERPRISE_COUNTRY_CODE", "724");
+			
+			contractFillData.put("ENTERPRISE_ZIP", enterpriseRecord.get(RADDRESS.ZIP));
+		}
+		
+		// ENTRPRISE CCC AND ACTIVITY
+		
+		Result<Record> entepriseCCCRecords = dslContext.select().from(CONTRACT)
+				.leftJoin(ENTERPRISE_CCC)
+				.on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
+				.leftJoin(ENTERPRISE_ACTIVITY)
+				.on(CONTRACT.ENTERPRISE_ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
+				.where(CONTRACT.ID.eq(contractId))
+				.fetch();
+		
+		if(!entepriseCCCRecords.isEmpty()) {
+			Record entepriseCCCRecord = entepriseCCCRecords.get(0);
+		
+			contractFillData.put("ENTERPRISE_CCC_REG", getCCCRegimeCode(entepriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
+			
+			String cccAcount = entepriseCCCRecord.get(ENTERPRISE_CCC.CCC);
+			contractFillData.put("ENTERPRISE_CCC_PRV", cccAcount.substring(0, 2));
+			contractFillData.put("ENTERPRISE_CCC_NUM", cccAcount.substring(2, 9));
+			contractFillData.put("ENTERPRISE_CCC_DC", cccAcount.substring(9, 11));
+			
+			contractFillData.put("ENTERPRISE_ACTIVITY", entepriseCCCRecord.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
+			contractFillData.put("ENTERPRISE_ACTIVITY_CODE", "");
+		}
+		
+		// Workplace
+		
+		Record raddressRecord = dslContext.select().from(RADDRESS).where(RADDRESS.ID.in(
+					dslContext.select(WORKPLACE.ADDRESS).from(WORKPLACE).where(WORKPLACE.ID.in(
+								dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT).where(CONTRACT.ID.eq(contractId))
+									.fetchOne(CONTRACT.WORKPLACE)
+							)).fetchOne(WORKPLACE.ADDRESS)
+				)).fetchOne();
+		
+		if(null != raddressRecord) {
+			String municipalityCode = raddressRecord.get(RADDRESS.MUNICIPALITY_CODE);
+			if(null != municipalityCode) {
+				String municipality = municipalities.getMunicipalityByZip(municipalityCode);
+				
+				contractFillData.put("WORKPLC_MUNICIPALITY", municipality);
+				contractFillData.put("WORKPLC_MUNICIPALITY_CODE", municipalityCode);
+			}
+		}
+		
+		contractFillData.put("WORKPLC_COUNTRY", "ESPA\u00D1A");
+		contractFillData.put("WORKPLC_COUNTRY_CODE", "724");
+		
+		// Employee
+		
+		Result<Record> contractRecords = dslContext.select().from(CONTRACT)
+			.leftJoin(PERSON)
+			.on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+			.leftJoin(REGISTRY)
+			.on(CONTRACT.PERSON.eq(REGISTRY.ID))
+			.leftJoin(RADDRESS)
+			.on(CONTRACT.PERSON.eq(RADDRESS.REGISTRY))
+			.where(CONTRACT.ID.eq(contractId))
+			.fetch();
+		
+		if(!contractRecords.isEmpty()) {
+			Record contractRecord = contractRecords.get(0);
+			contractFillData.put("E_NAME", contractRecord.get(PERSON.NAME));
+			contractFillData.put("E_SURNAME", contractRecord.get(PERSON.FIRST_SURNAME));
+			contractFillData.put("E_SURNAME2", contractRecord.get(PERSON.SECOND_SURNAME));
+			contractFillData.put("E_NIF", contractRecord.get(REGISTRY.DOCUMENT));
+			
+			Date birthDate = contractRecord.get(PERSON.BIRTH_DATE);
+			if(null != birthDate) {
+				contractFillData.put("E_BDAT", simpleDateFormat.format(birthDate));
+			}
+			
+			String ssNum = contractRecord.get(PERSON.SOCIAL_SECURITY_NUM);
+			contractFillData.put("E_SS1", ssNum.substring(0, 2));
+			contractFillData.put("E_SS2", ssNum.substring(2, 10));
+			contractFillData.put("E_SS3", ssNum.substring(10, 12));
+			
+			String nationality = contractRecord.get(REGISTRY.NATIONALITY);
+			contractFillData.put("E_NATIONALITY", Country.valueOf(nationality).getName());
+			contractFillData.put("E_NATIONALITY_CODE", Country.valueOf(nationality).getIsoCode()+"");
+			
+			String municipalityCode = contractRecord.get(RADDRESS.MUNICIPALITY_CODE);
+			if(null != municipalityCode) {
+				String municipality = municipalities.getMunicipalityByZip(municipalityCode);
+				
+				contractFillData.put("E_MUNICIPALITY_ADDR", municipality);
+				contractFillData.put("E_MUNICIPALITY_ADDR_CODE", municipalityCode);
+			}
+			
+			contractFillData.put("E_COUNTRY_ADDR", "ESPA\u00D1A");
+			contractFillData.put("E_COUNTRY_ADDR_CODE", "724");
+			
+		}
+		
+		return contractFillData;
+	}
+	
+	// ---------------------------------------------------- Auxiliar methods
+	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
+		}
+	}
+}
