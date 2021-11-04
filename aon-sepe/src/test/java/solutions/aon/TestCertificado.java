@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
 import aon.sepe.objects.Certificates;
+import aon.sepe.objects.QuoteData;
 import aon.sepe.objects.Certificates.CertificatesBuilder;
 import aon.sepe.objects.Certificates.TypeDuration;
 import solutions.aon.sepe.Certificado;
@@ -44,9 +46,9 @@ public class TestCertificado {
 			String certificateType = "pkcs12";
 			CertificatesBuilder bd  = new CertificatesBuilder();
 			bd.setRegimen("0111")
-			.setCtaCti("44108285354")
-			.setIpf("99905668P")
-			.setIpfManager("J41956999")
+			.setCtaCti("01105360062")
+			.setIpf("xxxx72740703Y")
+			.setIpfManager("72740703Y")
 			.setName("TEST")
 			.setSurname("TEST")
 			.setLastSurname("TEST")
@@ -90,6 +92,12 @@ public class TestCertificado {
 	@Test
 	@Ignore
 	public void testValues() {
+		
+		List<QuoteData> quoteDatas = new LinkedList<>();
+		
+		quoteDatas.add(parseQuoteData(2021, 01, 20, 25.20, 25.10));
+		quoteDatas.add(parseQuoteData(2020, 11, 20, 10.55, 15.44));
+		
 		CertificatesBuilder bd  = new CertificatesBuilder();
 		bd.setRegimen("0111")
 		.setCtaCti("01105360062")
@@ -108,19 +116,25 @@ public class TestCertificado {
 		.setfSTd(new Date())
 		.setDaysCtzVc(30)
 		.setBcccVc("000001200")
+		.setQuoteData(quoteDatas)
 		.setBcdVc("000001200");
-		List<Map<String, String>> dataCtz = new ArrayList<Map<String, String>>();
-
-		dataCtz.add(parseMap("2021", "01", "20", "000001200", "000001200"));
-		dataCtz.add(parseMap("2020", "11", "20", "000001200", "000001200"));
 		
-		bd.setDataCtz(dataCtz);
-		System.out.println(bd.build());
-		for(Map<String, String> ctz: dataCtz) {
-			System.out.println(ctz);
+		Certificates certificate = bd.build();
+
+		for(QuoteData data: certificate.getQuoteData()) {
+			System.out.println(data.toString());
 		}
 	}
 	
+	
+	private static QuoteData parseQuoteData(Integer anio, Integer month, Integer days, Double bccc, Double bcd) {
+		return new QuoteData()
+		.setAnio(anio)
+		.setMonth(month)
+		.setDays(days)
+		.setBccc(bccc)
+		.setBcd(bcd);
+	}
 	
 	private static Map<String, String> parseMap(String anio, String month, String days, String bccc, String bcd) {
 		Map<String, String> map = new HashMap<String, String>();

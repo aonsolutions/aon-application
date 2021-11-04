@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -20,8 +19,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+
 import aon.sepe.exceptions.invalidData.InvalidDataException;
 import aon.sepe.objects.Certificates;
+import aon.sepe.objects.QuoteData;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.sepe.toolkit.HtmlUnitToolkit;
@@ -127,7 +128,6 @@ public class Certificado {
 	    	String typeContract = certificates.getTypeContract();
 
 	    	Integer dedicationPer = certificates.getDedicationPer();
-	    	List<Map<String, String>> dataCtz = certificates.getDataCtz();
 
 	    	if(Toolkit.identity(ipfManager).equals("4")) tipodocManager = "CIF";
 	    	else if(Toolkit.identity(ipfManager).equals("6")) tipodocManager = "NIE"; 
@@ -204,15 +204,21 @@ public class Certificado {
 			
 			{//DATA COTINGENCIES
 				{//DATA CTZ
-					for(Map<String, String> ctz: dataCtz) {
+					for(QuoteData qdata: certificates.getQuoteData()) {
+						System.out.println(qdata.getBccc().get() +" "+ qdata.getBccc().get());
 						form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion").setValueAttribute(ctz.get("anioCtz"));
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion").setValueAttribute(ctz.get("monthCtz"));
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion").setValueAttribute(ctz.get("daysCtz"));
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes")
-						.setValueAttribute(ctz.get("bccc").replace(".",","));
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo")
-						.setValueAttribute(ctz.get("bcd").replace(".",","));
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion").setValueAttribute(qdata.getAnio().toString());
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion").setValueAttribute(qdata.getMonth().toString());
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion").setValueAttribute(qdata.getDays().toString());
+						if(qdata.getBccc().isPresent()) {
+							form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes")
+							.setValueAttribute(qdata.getBccc().get());
+						}
+						
+						if(qdata.getBcd().isPresent()) {
+							form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo")
+							.setValueAttribute(qdata.getBcd().get());
+						}
 						htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btAnadir]")).click();
 					}
 					handleSepeExceptions(htmlPage);

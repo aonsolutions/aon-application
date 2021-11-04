@@ -1,6 +1,7 @@
 package aon.sepe.objects;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,9 @@ public class Certificates {
 	private Integer daysCtzVc; // Dias cotizados vacaciones
 	private String bcccVc; // Base cotizacion vacaciones 0.00
 	private String bcdVc; // 0.00
-	List<Map<String, String>> dataCtz;
+
+	private List<QuoteData> quoteData;
+	
 	private Integer durationContract; // Duracion contrato (horas)
 	
 	public Integer getDurationContract() {
@@ -118,9 +121,9 @@ public class Certificates {
 	public String getBcdVc() {
 		return bcdVc;
 	}
-
-	public List<Map<String, String>> getDataCtz() {
-		return dataCtz;
+	
+	public List<QuoteData> getQuoteData() {
+		return quoteData;
 	}
 	
 	private Certificates() {}
@@ -147,9 +150,15 @@ public class Certificates {
 		private Integer daysCtzVc;
 		private String bcccVc;
 		private String bcdVc;
-		List<Map<String, String>> dataCtz;
 		private Integer durationContract;
+		private List<QuoteData> quoteData;
 		
+
+		public CertificatesBuilder setQuoteData(List<QuoteData> quoteData) {
+			this.quoteData = quoteData;
+			return this;
+		}
+
 		public CertificatesBuilder setDaysCtzVc(Integer daysCtzVc) {
 			this.daysCtzVc = daysCtzVc;
 			return this;
@@ -260,9 +269,20 @@ public class Certificates {
 			this.bcdVc = bcdVc;
 			return this;
 		}
-
+		@Deprecated
 		public CertificatesBuilder setDataCtz(List<Map<String, String>> dataCtz) {
-			this.dataCtz = dataCtz;
+			List<QuoteData> quoteDatas = new LinkedList<>();
+			for(Map<String, String> ctz: dataCtz) {
+				quoteDatas.add(
+						new QuoteData()
+						.setAnio( Integer.parseInt(ctz.get("anioCtz")) )
+						.setMonth( Integer.parseInt(ctz.get("monthCtz")) )
+						.setDays( Integer.parseInt(ctz.get("daysCtz")) )
+						.setBccc( Double.parseDouble(ctz.get("bccc")) )
+						.setBcd( Double.parseDouble(ctz.get("bcd")) )
+				);
+			}
+			this.setQuoteData(quoteDatas);
 			return this;
 		}
 		
@@ -291,7 +311,7 @@ public class Certificates {
 			ct.daysCtzVc = this.daysCtzVc;
 			ct.bcccVc = this.bcccVc;
 			ct.bcdVc = this.bcdVc;
-			ct.dataCtz = this.dataCtz;
+			ct.quoteData = this.quoteData;
 			ct.durationContract = this.durationContract;
 			return ct;
 		}
