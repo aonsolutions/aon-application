@@ -84,6 +84,73 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 	}
 
 	@Override 
+	public void visitM303() {
+		LOGGER.info("Before visitM303");
+		AonCustomPopup entryDialog = new AonCustomPopup();
+		entryDialog.setWidth((Window.getClientWidth() - 50) + "px");
+		entryDialog.setHeight((Window.getClientHeight() - 50) + "px");
+		entryDialog.setAnimationEnabled(true);
+		entryDialog.setGlassEnabled(true);
+		entryDialog.setModal(true);
+		entryDialog.setCaption( AonStringUtils.abbreviate( AON.MSG.fiscalModelDescriptionlong(modelType) , 60 ));
+		try {
+			Model303 model303 = new Model303();
+			Model303ModuleOptions options = new Model303ModuleOptions();
+			options.setParentWidget(entryDialog);
+			options.setDomainName(aonData.getDomain().getName());
+			options.setDomain( model.getDomain() );
+			options.setUser(aonData.getUser().getLogin());
+			options.setAonData(aonData);
+			options.setFiscalModelId( id );
+			options.setEmbedded(true);
+			options.setBackButtonVisible(true);
+			options.setExternalCallback( new AonModuleCallback<Mod303>() {
+				
+				@Override
+				public void onRemove(Mod303 removed) {
+					hide();
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {}
+				
+				@Override
+				public void onExit(Mod303 edited) {
+					hide();
+				}
+				
+				@Override
+				public void onChange(Mod303 changed) {
+					hide();
+				}
+				
+				private void hide() {
+					entryDialog.hide();
+					entryDialog.clear();
+				}
+			});
+			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+				
+				@Override
+				public void onClose(CloseEvent<PopupPanel> event) {
+					entryDialog.clear();
+				}
+			});
+			model303.onModuleLoad( options );
+			entryDialog.center();
+			entryDialog.show();
+		} catch (Throwable t) {
+			Window.alert("Error inesperado! [" + t.getMessage() + "]");
+		}
+	}
+
+	// ********************************************************************************
+	// ********************************************************************************
+	// ********************************************************************************
+	// ********************************************************************************
+	// ********************************************************************************
+
+	@Override 
 	public void visitM200() {
 		LOGGER.info("Before visitM200");
 		AonCustomPopup entryDialog = new AonCustomPopup();
@@ -136,7 +203,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			LOGGER.info("Before visitM303 model200.onModuleLoad( options )");
+			LOGGER.info("Before visitM200 model200.onModuleLoad( options )");
 			model200.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
@@ -198,7 +265,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			LOGGER.info("Before visitM303 model390.onModuleLoad( options )");
+			LOGGER.info("Before visitM390 model390.onModuleLoad( options )");
 			model390.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
@@ -260,7 +327,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			LOGGER.info("Before visitM303 model349.onModuleLoad( options )");
+			LOGGER.info("Before visitM349 model349.onModuleLoad( options )");
 			model349.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
@@ -322,7 +389,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			LOGGER.info("Before visitM303 model347.onModuleLoad( options )");
+			LOGGER.info("Before visitM347 model347.onModuleLoad( options )");
 			model347.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
@@ -384,7 +451,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			LOGGER.info("Before visitM303 model193.onModuleLoad( options )");
+			LOGGER.info("Before visitM193 model193.onModuleLoad( options )");
 			model193.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
@@ -446,7 +513,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			LOGGER.info("Before visitM303 model190.onModuleLoad( options )");
+			LOGGER.info("Before visitM190 model190.onModuleLoad( options )");
 			model190.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
@@ -508,7 +575,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			LOGGER.info("Before visitM303 model184.onModuleLoad( options )");
+			LOGGER.info("Before visitM184 model184.onModuleLoad( options )");
 			model184.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
@@ -570,7 +637,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			LOGGER.info("Before visitM303 model180.onModuleLoad( options )");
+			LOGGER.info("Before visitM180 model180.onModuleLoad( options )");
 			model180.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
@@ -632,7 +699,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			LOGGER.info("Before visitM303 model390HF.onModuleLoad( options )");
+			LOGGER.info("Before visitM390HF model390HF.onModuleLoad( options )");
 			model390HF.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
@@ -641,67 +708,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 		}
 	}
 	
-	@Override 
-	public void visitM303() {
-		LOGGER.info("Before visitM303");
-		AonCustomPopup entryDialog = new AonCustomPopup();
-		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-		entryDialog.setAnimationEnabled(true);
-		entryDialog.setGlassEnabled(true);
-		entryDialog.setModal(true);
-		entryDialog.setCaption( AonStringUtils.abbreviate( AON.MSG.fiscalModelDescriptionlong(modelType) , 60 ));
-		try {
-			Model303 model303 = new Model303();
-			Model303ModuleOptions options = new Model303ModuleOptions();
-			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
-			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
-			options.setFiscalModelId( id );
-			options.setEmbedded(true);
-			options.setBackButtonVisible(true);
-			options.setExternalCallback( new AonModuleCallback<Mod303>() {
-				
-				@Override
-				public void onRemove(Mod303 removed) {
-					hide();
-				}
 
-				@Override
-				public void onFailure(Throwable caught) {}
-				
-				@Override
-				public void onExit(Mod303 edited) {
-					hide();
-				}
-				
-				@Override
-				public void onChange(Mod303 changed) {
-					hide();
-				}
-				
-				private void hide() {
-					entryDialog.hide();
-					entryDialog.clear();
-				}
-			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
-			model303.onModuleLoad( options );
-			entryDialog.center();
-			entryDialog.show();
-		} catch (Throwable t) {
-			Window.alert("Error inesperado! [" + t.getMessage() + "]");
-		}
-	}
-	
 	@Override 
 	public void visitM202() {
 		LOGGER.info("Before visitM202");

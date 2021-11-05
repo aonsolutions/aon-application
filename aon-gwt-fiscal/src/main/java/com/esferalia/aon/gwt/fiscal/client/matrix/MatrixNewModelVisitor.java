@@ -78,6 +78,76 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
+	@Override 
+	public void visitM303() {
+		LOGGER.info("Before visitM303");
+		AonCustomPopup entryDialog = new AonCustomPopup();
+		entryDialog.setWidth((Window.getClientWidth() - 50) + "px");
+		entryDialog.setHeight((Window.getClientHeight() - 50) + "px");
+		entryDialog.setAnimationEnabled(true);
+		entryDialog.setGlassEnabled(true);
+		entryDialog.setModal(true);
+		entryDialog.setCaption( AonStringUtils.abbreviate( AON.MSG.fiscalModelDescriptionlong(model.getModel()) , 60 ));
+		try {
+			Mod303 mod303 = new Mod303();
+			FiscalModel.map(model,mod303);
+			Model303 model303 = new Model303();
+			Model303ModuleOptions options = new Model303ModuleOptions();
+			options.setParentWidget(entryDialog);
+			options.setDomainName(aonData.getDomain().getName());
+			options.setDomain( model.getDomain() );
+			options.setUser(aonData.getUser().getLogin());
+			options.setAonData(aonData);
+			options.setNewModel(mod303);
+			options.setEmbedded(true);
+			options.setBackButtonVisible(true);
+			options.setExternalCallback( new AonModuleCallback<Mod303>() {
+				
+				@Override
+				public void onRemove(Mod303 removed) {
+					hide();
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {}
+				
+				@Override
+				public void onExit(Mod303 edited) {
+					hide();
+				}
+				
+				@Override
+				public void onChange(Mod303 changed) {
+					hide();
+				}
+				
+				private void hide() {
+					entryDialog.hide();
+					entryDialog.clear();
+				}
+			});
+			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+				
+				@Override
+				public void onClose(CloseEvent<PopupPanel> event) {
+					entryDialog.clear();
+				}
+			});
+			model303.onModuleLoad( options );
+			entryDialog.center();
+			entryDialog.show();
+		} catch (Throwable t) {
+			Window.alert("Error inesperado! [" + t.getMessage() + "]");
+		}
+	}
+
+	
+	// ********************************************************************************
+	// ********************************************************************************
+	// ********************************************************************************
+	// ********************************************************************************
+	// ********************************************************************************
+	
 	@Override
 	public void visitM111() {
 		LOGGER.info("Before visitM111");
@@ -448,69 +518,6 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		}
 	}
 	
-	@Override 
-	public void visitM303() {
-		LOGGER.info("Before visitM303");
-		AonCustomPopup entryDialog = new AonCustomPopup();
-		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-		entryDialog.setAnimationEnabled(true);
-		entryDialog.setGlassEnabled(true);
-		entryDialog.setModal(true);
-		entryDialog.setCaption( AonStringUtils.abbreviate( AON.MSG.fiscalModelDescriptionlong(model.getModel()) , 60 ));
-		try {
-			Mod303 mod303 = new Mod303();
-			FiscalModel.map(model,mod303);
-			Model303 model303 = new Model303();
-			Model303ModuleOptions options = new Model303ModuleOptions();
-			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
-			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
-			options.setNewModel(mod303);
-			options.setEmbedded(true);
-			options.setBackButtonVisible(true);
-			options.setExternalCallback( new AonModuleCallback<Mod303>() {
-				
-				@Override
-				public void onRemove(Mod303 removed) {
-					hide();
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {}
-				
-				@Override
-				public void onExit(Mod303 edited) {
-					hide();
-				}
-				
-				@Override
-				public void onChange(Mod303 changed) {
-					hide();
-				}
-				
-				private void hide() {
-					entryDialog.hide();
-					entryDialog.clear();
-				}
-			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
-			model303.onModuleLoad( options );
-			entryDialog.center();
-			entryDialog.show();
-		} catch (Throwable t) {
-			Window.alert("Error inesperado! [" + t.getMessage() + "]");
-		}
-	}
-
 	@Override 
 	public void visitM390HF(){
 		LOGGER.info("Before visitM390HF");

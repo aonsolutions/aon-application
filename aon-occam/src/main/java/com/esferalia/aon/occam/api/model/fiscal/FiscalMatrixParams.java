@@ -62,5 +62,8 @@ public class FiscalMatrixParams implements Serializable{
 		return this;
 	}
 	
+	public boolean isFiscalModelTypePresent() {
+		return model != null; 
+	}
 	
 }

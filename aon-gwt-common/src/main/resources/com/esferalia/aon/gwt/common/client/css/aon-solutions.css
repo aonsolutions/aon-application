@@ -315,6 +315,8 @@
 .aon_icon_dirty { background-image: iconDirty;}
 @url iconDiff aonIconDiff;
 .aon_icon_diff { background-image: iconDiff;}
+@url iconBullet aonIconBullet;
+.aon_icon_bullet { background-image: iconBullet;}
 
 
 /* BASICS */
@@ -458,6 +460,7 @@
 .aon_width_80 { width: 80px; }
 .aon_width_100 { width: 80px; }
 .aon_width_150 { width: 80px; }
+.aon_width_400 { width: 400px; }
 
 .aon_fixed_font {
 	font-family: Fixed, monospace;
@@ -528,6 +531,10 @@
 .aon_text_line_through {
 	text-decoration: line-through;
 }
+.aon_text_uppercase {
+	text-transform: uppercase;
+}
+
 .aon_clickable {
 	cursor: pointer;
 }

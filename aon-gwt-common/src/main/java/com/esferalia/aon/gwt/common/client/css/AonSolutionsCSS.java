@@ -474,6 +474,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_diff")
 	String aonIconDiff();
 
+	@ClassName("aon_icon_bullet")
+	String aonIconBullet();
+
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
@@ -562,6 +565,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_width_150")
 	String aonWidth150();
 
+	@ClassName("aon_width_400")
+	String aonWidth400();
+
 	@ClassName("aon_height_all")
 	String aonHeightAll();
 
@@ -606,6 +612,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_text_line_through")
 	String aonTextLineThrough();
+	
+	@ClassName("aon_text_uppercase")
+	String aonTextUppercase();
 	
 	@ClassName("aon_vertical_align_top")
 	String aonVerticalAlignTop();
@@ -1069,6 +1078,6 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_floating_message_content")
 	String aonFloatingMessageContent();
-	
+
 }
 

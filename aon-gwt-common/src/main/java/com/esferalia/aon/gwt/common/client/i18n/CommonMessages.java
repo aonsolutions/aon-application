@@ -163,6 +163,9 @@ public interface CommonMessages extends Messages {
 		})	
 	String fiscalModelDescriptionlong(@Select FiscalModelType f);
 
+	@DefaultMessage("Ver declaraci\u00F3n del {0} del periodo: {1}")
+	String viewDeclaration(String model, String period);
+	
 	@DefaultMessage("ESP")
 	String currencyCode();
 	

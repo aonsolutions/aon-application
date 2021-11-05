@@ -167,12 +167,16 @@ abstract class Model303AEAT extends Model303Base {
 	}
 
 	private void cleanViewers() {
-		aeatPanel.clear();
-		pdfViewer.open("data:application/pdf;base64," +
-			"JVBERi0xLjAKMSAwIG9iajw8L1BhZ2VzIDIgMCBSPj5lbmRvYmogMiAwIG9iajw8L0tpZHNbMy" +
-			"Aw\nIFJdL0NvdW50IDE+PmVuZG9iaiAzIDAgb2JqPDwvTWVkaWFCb3hbMCAwIDMgM10+PmVuZG" +
-			"9iagp0\ncmFpbGVyPDwvUm9vdCAxIDAgUj4+Cg=="
-		);
+		if (aeatPanel != null) {
+			aeatPanel.clear();
+		}
+		if (pdfViewer != null) {
+			pdfViewer.open("data:application/pdf;base64," +
+				"JVBERi0xLjAKMSAwIG9iajw8L1BhZ2VzIDIgMCBSPj5lbmRvYmogMiAwIG9iajw8L0tpZHNbMy" +
+				"Aw\nIFJdL0NvdW50IDE+PmVuZG9iaiAzIDAgb2JqPDwvTWVkaWFCb3hbMCAwIDMgM10+PmVuZG" +
+				"9iagp0\ncmFpbGVyPDwvUm9vdCAxIDAgUj4+Cg=="
+				);
+		}
 	}
 	
 	private void sendToAEAT() {
@@ -455,6 +459,7 @@ abstract class Model303AEAT extends Model303Base {
 		}
 	}
 	
+	@Override
 	protected void styleStatusLabel(Mod303 mod) {
 		super.styleStatusLabel(mod);
 		cleanViewers();
