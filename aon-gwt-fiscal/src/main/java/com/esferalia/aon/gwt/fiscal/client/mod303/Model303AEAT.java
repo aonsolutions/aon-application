@@ -72,11 +72,13 @@ abstract class Model303AEAT extends Model303Base {
 	private AonLink checkLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconAeatBw(), "Consultar Presentaci\u00F3n via AEAT.");
 	private AonLink viewDocumentLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconPdf(), "Consultar Presentaci\u00F3n guardada.");
 	
-	protected Model303AEAT(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-		super(mod303, cbk, options);
-		this.api = new API(GWT.getModuleBaseURL(), options.getAonData().getMd5(),
-				options.getAonData().getDomain().getName(), options.getAonData().getDomain().getId(),
-				options.getAonData().getUser().getLogin());
+	protected Model303AEAT(Mod303 mod303, Model303Callback cbk) {
+		super(mod303, cbk);
+		this.api = new API(GWT.getModuleBaseURL(), 
+				getCallback().getOptions().getAonData().getMd5(),
+				getCallback().getOptions().getAonData().getDomain().getName(), 
+				getCallback().getOptions().getAonData().getDomain().getId(),
+				getCallback().getOptions().getAonData().getUser().getLogin());
 		
 	}
 
@@ -151,11 +153,11 @@ abstract class Model303AEAT extends Model303Base {
 	@Override
 	protected void decorateAdministrationTab() {
 		modelInfoLinklink.setVisible(true);
-		validateLink.setVisible( getCallback().getMod303().isFinished() );
-		downloadLink.setVisible( getCallback().getMod303().isFinished() );
-		sendLink.setVisible( getCallback().getMod303().isFinished() );
-		checkLink.setVisible( getCallback().getMod303().isSent() && AonStringUtils.isNotBlank(getCallback().getMod303().getNumber()) ); 
-		viewDocumentLink.setVisible( getCallback().getMod303().isSent() ); 
+		validateLink.setVisible( getMod303().isFinished() );
+		downloadLink.setVisible( getMod303().isFinished() );
+		sendLink.setVisible( getMod303().isFinished() );
+		checkLink.setVisible( getMod303().isSent() && AonStringUtils.isNotBlank(getMod303().getNumber()) ); 
+		viewDocumentLink.setVisible( getMod303().isSent() ); 
 	}
 
 	private void downloadFile() {
@@ -205,9 +207,9 @@ abstract class Model303AEAT extends Model303Base {
 					@Override
 					protected void onAccept( AEATParams params) {
 						params
-						.setDomainName(getCallback().getDomainName())
-						.setDomainId(getCallback().getDomain())
-						.setUser(getCallback().getUser())
+						.setDomainName(getCallback().getOptions().getDomainName())
+						.setDomainId(getCallback().getOptions().getDomain())
+						.setUser(getCallback().getOptions().getUser())
 						.setMod(getMod303().getId())
 						;
 						sendAEAT(params);
@@ -240,10 +242,10 @@ abstract class Model303AEAT extends Model303Base {
 				String contentTypeHeader = xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE);
 				if (AonStringUtils.equals(MimeType.PDF.getName(), contentTypeHeader)) {
 					Model303.service.getMod303(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), getCallback().getOptions().getDomain(), 
-							getCallback().getMod303().getId(), new AsyncCallback<Mod303>() {
+							getMod303().getId(), new AsyncCallback<Mod303>() {
 						@Override
 						public void onSuccess(Mod303 selected) {
-							selectAndPopulate(selected,getCallback().getOptions());
+							selectAndPopulate(selected);
 							showPDF( buff.toString() );
 						}
 						@Override
@@ -292,9 +294,9 @@ abstract class Model303AEAT extends Model303Base {
 				getCallback().showError(AON.MSG.mustFinishModel());	
 			} else {
 				validateAEAT(new AEATParams()
-						.setDomainName(getCallback().getDomainName())
-						.setDomainId(getCallback().getDomain())
-						.setUser(getCallback().getUser())
+						.setDomainName(getCallback().getOptions().getDomainName())
+						.setDomainId(getCallback().getOptions().getDomain())
+						.setUser(getCallback().getOptions().getUser())
 						.setMod(getMod303().getId()));
 			}
 		}
@@ -336,9 +338,9 @@ abstract class Model303AEAT extends Model303Base {
 				getCallback().showError("El modelo no est\u00E1 presentado.");	
 			} else {
 				checkDataResponseData(new AEATParams()
-						.setDomainName(getCallback().getDomainName())
-						.setDomainId(getCallback().getDomain())
-						.setUser(getCallback().getUser())
+						.setDomainName(getCallback().getOptions().getDomainName())
+						.setDomainId(getCallback().getOptions().getDomain())
+						.setUser(getCallback().getOptions().getUser())
 						.setMod(getMod303().getId()));
 			}
 		}
@@ -395,9 +397,9 @@ abstract class Model303AEAT extends Model303Base {
 					@Override
 					protected void onAccept( AEATParams params) {
 						params
-						.setDomainName(getCallback().getDomainName())
-						.setDomainId(getCallback().getDomain())
-						.setUser(getCallback().getUser())
+						.setDomainName(getCallback().getOptions().getDomainName())
+						.setDomainId(getCallback().getOptions().getDomain())
+						.setUser(getCallback().getOptions().getUser())
 						.setMod(getMod303().getId())
 						;
 						checkAEAT(params);

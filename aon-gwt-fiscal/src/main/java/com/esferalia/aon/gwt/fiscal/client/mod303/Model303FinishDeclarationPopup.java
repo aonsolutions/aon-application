@@ -51,7 +51,7 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 	protected final FlexTable tab = new FlexTable();
 	protected int row = 0;
 	
-	protected Model303FinishDeclarationPopup(final Mod303 mod303 ,final Model303ModuleOptions options, final IModel303Callback callback,FinishDeclarationPopupCallback popupCallback) {
+	protected Model303FinishDeclarationPopup(final Mod303 mod303, final IModel303Callback callback,FinishDeclarationPopupCallback popupCallback) {
 		setCaption(AON.MSG.finish());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
@@ -77,7 +77,7 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 			tab.setWidget(row, 1, new Label( mod303.getDeclarationType().getDescription() ));	
 			row++;
 		} else {
-			final AonCreditorBox creditorBox = new AonCreditorBox(options.getDomainName(),options.getDomain(),options.getUser());
+			final AonCreditorBox creditorBox = new AonCreditorBox(callback.getOptions().getDomainName(),callback.getOptions().getDomain(),callback.getOptions().getUser());
 			final AonIbanTextBox iban = new AonIbanTextBox( new BanksSuggestOracle(callback) );
 			final ListBox listBox = new ListBox();
 			listBox.setSelectedIndex(0);
@@ -159,7 +159,7 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 		});
 		flowPanel.add(acceptButton);
 		
-		if (options != null && options.getAonData().isCustomerCheckEnabled() && mod303.getStatus() != FiscalStatus.CUSTOMER_CHECK)  {
+		if (callback != null && callback.getOptions() != null && callback.getOptions().getAonData().isCustomerCheckEnabled() && mod303.getStatus() != FiscalStatus.CUSTOMER_CHECK)  {
 			Button customerCheckButton = new Button();
 			customerCheckButton.setStyleName(AON.CSS.aonCheckButton());
 			customerCheckButton.addStyleName(AON.CSS.aonMarginLeft());
@@ -210,7 +210,7 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 		
 		@Override
 		public void requestSuggestions(final Request request,final Callback callback) {
-			service.getCompanyBanks (modelCallback.getDomainName(),modelCallback.getUser(),modelCallback.getDomain(), 
+			service.getCompanyBanks (modelCallback.getOptions().getDomainName(),modelCallback.getOptions().getUser(),modelCallback.getOptions().getDomain(), 
 					new AsyncCallback<LinkedList<CompanyBank>>() {
 
 						public void onFailure(Throwable caught) {

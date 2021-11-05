@@ -26,8 +26,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 class Model3032019ARABA extends Model303Base {
 	
-	protected Model3032019ARABA(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
-		super(mod303,callback, options);
+	protected Model3032019ARABA(Mod303 mod303,Model303Callback callback) {
+		super(mod303,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -70,7 +70,7 @@ class Model3032019ARABA extends Model303Base {
 		
 		// Número de identificación declaracion anterior (necesario si la anterior se presento telematicamente)
 		// Debe introducirse Ejercicio+Numero (EEEENNNNNN)
-		if (getCallback().getMod303().isReplacement()) {
+		if (getMod303().isReplacement()) {
 			int row = table.getRowCount();
 			paintLabel(table, row, AON.MSG.previousReceipt() + " Formato EEEENNNNNN (Ejercicio + N\u00FAmero)");
 			
@@ -79,9 +79,9 @@ class Model3032019ARABA extends Model303Base {
 			final AonTextBox receiptBox = new AonTextBox();
 			receiptBox.setVisibleLength(15);
 			receiptBox.setMaxLength(12);
-			receiptBox.setValue( getCallback().getMod303().getReplacedNumber() );
+			receiptBox.setValue( getMod303().getReplacedNumber() );
 			receiptBox.addValueChangeHandler( event -> {
-				getCallback().getMod303().setReplacedNumber(receiptBox.getValue());
+				getMod303().setReplacedNumber(receiptBox.getValue());
 				markAsDirty();
 			});
 			table.setWidget(row, 1, receiptBox);

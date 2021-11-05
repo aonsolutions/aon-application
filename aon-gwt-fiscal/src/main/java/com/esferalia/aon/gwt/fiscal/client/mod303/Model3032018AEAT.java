@@ -45,8 +45,8 @@ class Model3032018AEAT extends Model303AEAT {
 	private static final int RESULT_TAB = 4;
 	private static final int LAST_PERIOD_INFORMATION_TAB = 6;
 
-	protected Model3032018AEAT(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
-		super(mod303,callback, options);
+	protected Model3032018AEAT(Mod303 mod303,Model303Callback callback) {
+		super(mod303,callback);
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.addStyleName(AON.CSS.aonScrollArea());
@@ -62,7 +62,7 @@ class Model3032018AEAT extends Model303AEAT {
 		paintSimplifiedRegimeTab(tabPanel);
 		paintResultTab(tabPanel);
 		paintAdditionalDataTab(tabPanel);
-		if (getCallback().getMod303().isLastPeriod()) {
+		if (getMod303().isLastPeriod()) {
 			paintLastPeriodInformationTab(tabPanel);
 		}
 		paintAdministrationTab(tabPanel);
@@ -78,7 +78,7 @@ class Model3032018AEAT extends Model303AEAT {
 		}
 		
 		tabPanel.addBeforeSelectionHandler(event -> {
-			double a02 = getCallback().getMod303().getAmount(Mod303Key.CT_A02);
+			double a02 = getMod303().getAmount(Mod303Key.CT_A02);
 			if (event.getItem() == GENERAL_REGIME_TAB && a02 == 0) {
 				event.cancel();
 				AonMessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
@@ -87,8 +87,8 @@ class Model3032018AEAT extends Model303AEAT {
 				event.cancel();
 				AonMessageDialog.warning("No procede para este tipo de declaraci\u00F3n");
 			}
-			if (getCallback().getMod303().isLastPeriod()) {
-				double a11 = getCallback().getMod303().getAmount(Mod303Key.CT_A11);
+			if (getMod303().isLastPeriod()) {
+				double a11 = getMod303().getAmount(Mod303Key.CT_A11);
 				if (event.getItem() == LAST_PERIOD_INFORMATION_TAB && a11 == 0) {
 					event.cancel();
 					AonMessageDialog.warning("Para rellenar estos datos, debe rellenar la casilla \""+Mod303Key.CT_A11.getDescription()+ "\" en la solapa \"Declaraci\u00F3n\"");
@@ -218,20 +218,20 @@ class Model3032018AEAT extends Model303AEAT {
 		a11.addItem("(1) Exonerados, cuando se tiene volumen de operaciones  (art. 121 LIVA)", "1");
 		a11.addItem("(2) Exonerados, cuando NO se tiene volumen de operaciones  (art. 121 LIVA)", "2");
 		paintListBox(a11, Mod303Key.CT_A11, table);
-		a11.setEnabled(getCallback().getMod303().isLastPeriod());
-		if (getCallback().getMod303().isLastPeriod()) {
+		a11.setEnabled(getMod303().isLastPeriod());
+		if (getMod303().isLastPeriod()) {
 			a11.addChangeHandler( event -> {
 				if (a11.getSelectedIndex() != 0) {
-					if (AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U1D))
-					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U2D))								
-					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U3D))								
-					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_U4D))
-					 || AonMathUtils.isNotZero( getCallback().getMod303().getAmount(Mod303Key.CT_C88))
-					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P1C))
-					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P2C))
-					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P3C))
-					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P4C))
-					 || AonStringUtils.isNotBlank(getCallback().getMod303().getDescription(Mod303Key.CT_P5C))) {
+					if (AonStringUtils.isNotBlank(getMod303().getDescription(Mod303Key.CT_U1D))
+					 || AonStringUtils.isNotBlank(getMod303().getDescription(Mod303Key.CT_U2D))								
+					 || AonStringUtils.isNotBlank(getMod303().getDescription(Mod303Key.CT_U3D))								
+					 || AonStringUtils.isNotBlank(getMod303().getDescription(Mod303Key.CT_U4D))
+					 || AonMathUtils.isNotZero( getMod303().getAmount(Mod303Key.CT_C88))
+					 || AonStringUtils.isNotBlank(getMod303().getDescription(Mod303Key.CT_P1C))
+					 || AonStringUtils.isNotBlank(getMod303().getDescription(Mod303Key.CT_P2C))
+					 || AonStringUtils.isNotBlank(getMod303().getDescription(Mod303Key.CT_P3C))
+					 || AonStringUtils.isNotBlank(getMod303().getDescription(Mod303Key.CT_P4C))
+					 || AonStringUtils.isNotBlank(getMod303().getDescription(Mod303Key.CT_P5C))) {
 
 						Mod303Key[] keys = new Mod303Key[]{
 								 Mod303Key.CT_U1D,Mod303Key.CT_U1C,Mod303Key.CT_U1E
@@ -254,7 +254,7 @@ class Model3032018AEAT extends Model303AEAT {
 								,Mod303Key.CT_P5C,Mod303Key.CT_P5I,Mod303Key.CT_P5D,Mod303Key.CT_P5T,Mod303Key.CT_P5P
 						};
 						for (Mod303Key key : keys) {
-							getCallback().getMod303().ensureDetail(key).clear();
+							getMod303().ensureDetail(key).clear();
 						}
 						lastPeriodInformationScrollPanel.clear();
 						fillLastPeriodInformationScrollPanel();
@@ -277,7 +277,7 @@ class Model3032018AEAT extends Model303AEAT {
 		a06.addItem("(2) SI Postconcursal", "2");
 		paintListBox(a06, Mod303Key.CT_A06, table);
 
-		if (getCallback().getMod303().isComplementary()) {
+		if (getMod303().isComplementary()) {
 			int row = table.getRowCount();
 			paintLabel(table, row, AON.MSG.previousReceipt());
 			
@@ -286,9 +286,9 @@ class Model3032018AEAT extends Model303AEAT {
 			final AonTextBox receiptBox = new AonTextBox();
 			receiptBox.setVisibleLength(15);
 			receiptBox.setMaxLength(13);
-			receiptBox.setValue( getCallback().getMod303().getReplacedNumber() );
+			receiptBox.setValue( getMod303().getReplacedNumber() );
 			receiptBox.addValueChangeHandler( event ->  {
-				getCallback().getMod303().setReplacedNumber(receiptBox.getValue());
+				getMod303().setReplacedNumber(receiptBox.getValue());
 				markAsDirty();
 			});
 			table.setWidget(row, 1, receiptBox);
@@ -350,12 +350,12 @@ class Model3032018AEAT extends Model303AEAT {
 	}
 
 	private Model303AEATActivityFarmerTable getActivityFarmerTable() {
-		farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
+		farmerTable.paint(getMod303().getActivityFarmerList());
 		farmerTable.addSelectionHandler(event ->  {
 			final Mod303ActivityFarmer original = Mod303ActivityFarmer.clone(event.getSelectedItem()); 
 			int idx = 0;
-			for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
-				if (getCallback().getMod303().getActivityFarmerList().get(i) == event.getSelectedItem()) {
+			for (int i = 0; i < getMod303().getActivityList().size() ; i++ ) {
+				if (getMod303().getActivityFarmerList().get(i) == event.getSelectedItem()) {
 					idx = i;
 				}
 			}
@@ -367,28 +367,28 @@ class Model3032018AEAT extends Model303AEAT {
 				@Override
 				public void onCancel() {
 					dialog.hide();
-					getCallback().getMod303().getActivityFarmerList().set(currentIndex, original);
+					getMod303().getActivityFarmerList().set(currentIndex, original);
 					calculateAndRefresh();
-					farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
+					farmerTable.paint(getMod303().getActivityFarmerList());
 				}
 				
 				@Override
 				public void onAccept(Mod303ActivityFarmer act) {
-					getCallback().getMod303().getActivityFarmerList().set(currentIndex, act);
+					getMod303().getActivityFarmerList().set(currentIndex, act);
 					dialog.hide();
-					farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
+					farmerTable.paint(getMod303().getActivityFarmerList());
 				}
 				
 				@Override
 				public void onRemove() {
 					dialog.hide();
-					for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
-						if (getCallback().getMod303().getActivityFarmerList().get(i) == event.getSelectedItem()) {
-							getCallback().getMod303().getActivityFarmerList().get(i).initialize();
+					for (int i = 0; i < getMod303().getActivityList().size() ; i++ ) {
+						if (getMod303().getActivityFarmerList().get(i) == event.getSelectedItem()) {
+							getMod303().getActivityFarmerList().get(i).initialize();
 						}
 					}
 					calculateAndRefresh();
-					farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
+					farmerTable.paint(getMod303().getActivityFarmerList());
 				}
 
 				@Override
@@ -396,7 +396,7 @@ class Model3032018AEAT extends Model303AEAT {
 					return event.getSelectedItem();
 				}
 			};
-			Model303AEATActivityFarmer actPanel = new Model303AEATActivityFarmer(activityCallback, getCallback().getMod303().isLastPeriod());
+			Model303AEATActivityFarmer actPanel = new Model303AEATActivityFarmer(activityCallback, getMod303().isLastPeriod());
 			actPanel.addValueChangeHandler( event1 ->
 				calculateAndRefresh( new AsyncCallback<Mod303>() {
 
@@ -420,17 +420,17 @@ class Model3032018AEAT extends Model303AEAT {
 			dialog.show();
 			dialog.center();
 		});
-		farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
+		farmerTable.paint(getMod303().getActivityFarmerList());
 		return farmerTable;
 	}
 	
 	private Model303AEATActivityTable getActivityTable() {
-		activityTable.paint(getCallback().getMod303().getActivityList());
+		activityTable.paint(getMod303().getActivityList());
 		activityTable.addSelectionHandler(event ->  {
 			final Mod303Activity original = Mod303Activity.clone(event.getSelectedItem()); 
 			int idx = 0;
-			for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
-				if (getCallback().getMod303().getActivityList().get(i) == event.getSelectedItem()) {
+			for (int i = 0; i < getMod303().getActivityList().size() ; i++ ) {
+				if (getMod303().getActivityList().get(i) == event.getSelectedItem()) {
 					idx = i;
 				}
 			}
@@ -441,29 +441,29 @@ class Model3032018AEAT extends Model303AEAT {
 				@Override
 				public void onCancel() {
 					dialog.hide();
-					getCallback().getMod303().getActivityList().set(currentIndex, original);
+					getMod303().getActivityList().set(currentIndex, original);
 					calculateAndRefresh();
-					activityTable.paint(getCallback().getMod303().getActivityList());
+					activityTable.paint(getMod303().getActivityList());
 				}
 				
 				@Override
 				public void onAccept(Mod303Activity act) {
 					dialog.hide();
-					getCallback().getMod303().getActivityList().set(currentIndex, act);
+					getMod303().getActivityList().set(currentIndex, act);
 					calculateAndRefresh();
-					activityTable.paint(getCallback().getMod303().getActivityList());
+					activityTable.paint(getMod303().getActivityList());
 				}
 				
 				@Override
 				public void onRemove() {
 					dialog.hide();
-					for (int i = 0; i < getCallback().getMod303().getActivityList().size() ; i++ ) {
-						if (getCallback().getMod303().getActivityList().get(i) == event.getSelectedItem()) {
-							getCallback().getMod303().getActivityList().get(i).initialize();
+					for (int i = 0; i < getMod303().getActivityList().size() ; i++ ) {
+						if (getMod303().getActivityList().get(i) == event.getSelectedItem()) {
+							getMod303().getActivityList().get(i).initialize();
 						}
 					}
 					calculateAndRefresh();
-					activityTable.paint(getCallback().getMod303().getActivityList());
+					activityTable.paint(getMod303().getActivityList());
 				}
 
 				@Override
@@ -471,7 +471,7 @@ class Model3032018AEAT extends Model303AEAT {
 					return event.getSelectedItem();
 				}
 			};
-			Model303AEATActivity2018 actPanel = new Model303AEATActivity2018(activityCallback, getCallback().getMod303().isLastPeriod());
+			Model303AEATActivity2018 actPanel = new Model303AEATActivity2018(activityCallback, getMod303().isLastPeriod());
 			actPanel.addValueChangeHandler(event1 -> calculateAndRefresh( new AsyncCallback<Mod303>() {
 
 				@Override 
@@ -508,7 +508,7 @@ class Model3032018AEAT extends Model303AEAT {
 		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(2, "140px");
 		table.getColumnFormatter().setWidth(3, "50px");
-		if (getCallback().getMod303().isLastPeriod()) {
+		if (getMod303().isLastPeriod()) {
 			paintDeclaration(table,Model3032017AEATSimplifiedRegime4TScript.values(),3);
 		} else {
 			paintDeclaration(table,Model3032017AEATSimplifiedRegimeScript.values(),3);
@@ -519,12 +519,12 @@ class Model3032018AEAT extends Model303AEAT {
 	@Override
 	protected void populate(Mod303 mod303) {
 		super.populate(mod303);
-		farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
-		activityTable.paint(getCallback().getMod303().getActivityList());
+		farmerTable.paint(getMod303().getActivityFarmerList());
+		activityTable.paint(getMod303().getActivityList());
 	}
 	
 	@Override
-	protected void save(Model303ModuleOptions options) {
+	protected void save() {
 		save(new AsyncCallback<Mod303>() {
 			@Override 
 			public void onFailure(Throwable caught) {
@@ -532,10 +532,10 @@ class Model3032018AEAT extends Model303AEAT {
 			}
 			@Override
 			public void onSuccess(Mod303 result) {
-				farmerTable.paint(getCallback().getMod303().getActivityFarmerList());
-				activityTable.paint(getCallback().getMod303().getActivityList());
+				farmerTable.paint(getMod303().getActivityFarmerList());
+				activityTable.paint(getMod303().getActivityList());
 			}
-		},options);
+		});
 	}
 
 	private void paintLastPeriodInformationTab(TabLayoutPanel tabPanel) {
@@ -666,9 +666,9 @@ class Model3032018AEAT extends Model303AEAT {
 		cnae.setVisibleLength(4);
 		cnae.setMaxLength(4);
 		cnae.setStyleName(AON.CSS.aonInputText());
-		cnae.setValue(getCallback().getMod303().getDescription(cnaeKey));
+		cnae.setValue(getMod303().getDescription(cnaeKey));
 		cnae.addValueChangeHandler(event -> {
-			getCallback().getMod303().putDescription(cnaeKey, cnae.getValue() );
+			getMod303().putDescription(cnaeKey, cnae.getValue() );
 			markAsDirty();
 		});
 		tab.setWidget(row, 0, cnae);
@@ -676,7 +676,7 @@ class Model3032018AEAT extends Model303AEAT {
 		AonCnae2009Panel panel = new AonCnae2009Panel( );
 		panel.addSelectionHandler( event -> {
 			cnae.setValue(event.getSelectedItem().getCodeWithoutPoint(),false);
-			getCallback().getMod303().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
+			getMod303().putDescription(cnaeKey, event.getSelectedItem().getCodeWithoutPoint());
 			markAsDirty();
 		});
 		
@@ -685,17 +685,17 @@ class Model3032018AEAT extends Model303AEAT {
 		tab.setWidget(row, 1, button);
 		
 		AonDoubleBox amount = new AonDoubleBox();
-		amount.setValue(getCallback().getMod303().getAmount(amountKey));
+		amount.setValue(getMod303().getAmount(amountKey));
 		amount.addValueChangeHandler(event -> {
-			getCallback().getMod303().putAmount(amountKey, amount.getValue() );
+			getMod303().putAmount(amountKey, amount.getValue() );
 			markAsDirty();
 		});
 		tab.setWidget(row, 2, amount);
 		
 		AonDoubleBox amountRight = new AonDoubleBox();
-		amountRight.setValue(getCallback().getMod303().getAmount(amountRightKey));
+		amountRight.setValue(getMod303().getAmount(amountRightKey));
 		amountRight.addValueChangeHandler(event -> {
-			getCallback().getMod303().putAmount(amountRightKey, amountRight.getValue() );
+			getMod303().putAmount(amountRightKey, amountRight.getValue() );
 			markAsDirty();
 		});
 		tab.setWidget(row, 3, amountRight);
@@ -705,21 +705,21 @@ class Model3032018AEAT extends Model303AEAT {
 		typeBox.addItem(" - ", "");
 		typeBox.addItem("G - General", "G");
 		typeBox.addItem("E - Especial", "E");
-		String type = getCallback().getMod303().getDescription(typeKey);
+		String type = getMod303().getDescription(typeKey);
 		if (AonStringUtils.equals(type, "G")) typeBox.setSelectedIndex(1);
 		else if (AonStringUtils.equals(type, "E")) typeBox.setSelectedIndex(2);
 		else typeBox.setSelectedIndex(0); 
 		typeBox.addChangeHandler(event -> {
-			getCallback().getMod303().putDescription(typeKey,typeBox.getSelectedValue());
+			getMod303().putDescription(typeKey,typeBox.getSelectedValue());
 			markAsDirty();
 		});
 		tab.setWidget(row, 4, typeBox);
 		
 		
 		AonDoubleBox percent = new AonDoubleBox();
-		percent.setValue(getCallback().getMod303().getAmount(percentKey));
+		percent.setValue(getMod303().getAmount(percentKey));
 		percent.addValueChangeHandler(event -> {
-			getCallback().getMod303().putAmount(percentKey, percent.getValue() );
+			getMod303().putAmount(percentKey, percent.getValue() );
 			markAsDirty();
 		});
 		tab.setWidget(row, 5, percent);
@@ -735,9 +735,9 @@ class Model3032018AEAT extends Model303AEAT {
 		epi.setVisibleLength(5);
 		epi.setMaxLength(4);
 		epi.setStyleName(AON.CSS.aonInputText());
-		epi.setValue(getCallback().getMod303().getDescription(epiKey));
+		epi.setValue(getMod303().getDescription(epiKey));
 		epi.addValueChangeHandler(event -> {
-			getCallback().getMod303().putDescription(epiKey,epi.getValue());
+			getMod303().putDescription(epiKey,epi.getValue());
 			markAsDirty();
 		});
 		tab.setWidget(row, 1, epi);
@@ -746,9 +746,9 @@ class Model3032018AEAT extends Model303AEAT {
 		key.setVisibleLength(2);
 		key.setMaxLength(1);
 		key.setStyleName(AON.CSS.aonInputText());
-		key.setValue(getCallback().getMod303().getDescription(keyKey));
+		key.setValue(getMod303().getDescription(keyKey));
 		key.addValueChangeHandler(event ->  {
-			getCallback().getMod303().putDescription(keyKey,key.getValue());
+			getMod303().putDescription(keyKey,key.getValue());
 			markAsDirty();
 		});
 		tab.setWidget(row, 2, key);
@@ -757,9 +757,9 @@ class Model3032018AEAT extends Model303AEAT {
 		description.setVisibleLength(40);
 		description.setMaxLength(40);
 		description.setStyleName(AON.CSS.aonInputText());
-		description.setValue(getCallback().getMod303().getDescription(desKey));
+		description.setValue(getMod303().getDescription(desKey));
 		description.addValueChangeHandler(event -> {
-			getCallback().getMod303().putDescription(desKey,description.getValue());
+			getMod303().putDescription(desKey,description.getValue());
 			markAsDirty();
 		});
 		tab.setWidget(row, 3, description);

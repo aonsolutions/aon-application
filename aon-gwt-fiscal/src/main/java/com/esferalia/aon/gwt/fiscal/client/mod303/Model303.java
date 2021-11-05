@@ -56,11 +56,9 @@ public class Model303 extends MainEntryPoint {
 	private  Model303Table model303Table;
 
 	protected interface IModel303Callback {
-		public String getDomainName();
-		public String getUser();
-		public int getDomain();
 		public Model303ModuleOptions getOptions();
 		public void onAccept(Mod303 mod303);
+		public void onRemove(Mod303 mod303);
 		public void onCancel();
 		public void onNew();
 		public void onReset(Mod303 oldMod303);
@@ -73,6 +71,11 @@ public class Model303 extends MainEntryPoint {
 
 		@Override
 		public void onAccept(Mod303 mod303) {
+			// REDEFINE
+		}
+		
+		@Override
+		public void onRemove(Mod303 mod303) {
 			// REDEFINE
 		}
 		
@@ -159,20 +162,6 @@ public class Model303 extends MainEntryPoint {
 		@Override
 		public Model303ModuleOptions getOptions() {
 			return Model303.this.getOptions();
-		}
-
-		@Override
-		public String getDomainName() {
-			return getCurrentDomainName();
-		}
-		
-		@Override
-		public String getUser() {
-			return getCurrentUser();
-		}
-		@Override
-		public int getDomain() {
-			return getCurrentDomain();
 		}
 
 		private void showResetDeclarationPopup(Mod303 newMod303, Mod303 oldMod303) {
@@ -424,8 +413,8 @@ public class Model303 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-				return new Model30320212AEAT(mod303,cbk,options);
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model30320212AEAT(mod303,cbk);
 			}
 		},
 		AEAT_2021_FIRST_SEMESTER {
@@ -435,8 +424,8 @@ public class Model303 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-				return new Model3032021AEAT(mod303,cbk,options);
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model3032021AEAT(mod303,cbk);
 			}
 		},
 		AEAT_2020_LAST_PERIOD {
@@ -446,8 +435,8 @@ public class Model303 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-				return new Model3032020AEAT(mod303,cbk,options);
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model3032020AEAT(mod303,cbk);
 			}
 		},
 		AEAT_2018_2020 {
@@ -459,8 +448,8 @@ public class Model303 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-				return new Model3032018AEAT(mod303,cbk,options);
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model3032018AEAT(mod303,cbk);
 			}
 		},
 		AEAT_2017 {
@@ -470,8 +459,8 @@ public class Model303 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-				return new Model3032017AEAT(mod303,cbk,options);
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model3032017AEAT(mod303,cbk);
 			}
 		},
 		ARABA_2017 {
@@ -481,8 +470,8 @@ public class Model303 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-				return new Model3032017ARABA(mod303,cbk,options);
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model3032017ARABA(mod303,cbk);
 			}
 		},
 		ARABA_2019 {
@@ -492,8 +481,8 @@ public class Model303 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-				return new Model3032019ARABA(mod303,cbk,options);
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model3032019ARABA(mod303,cbk);
 			}
 		},
 		BIZKAIA {
@@ -503,19 +492,20 @@ public class Model303 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-				return new Model3032017BIZKAIA(mod303,cbk,options);
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model3032017BIZKAIA(mod303,cbk);
 			}
 		},
 		GIPUZKOA_2017 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isGipuzkoa() && mod303.getYear() < 2021);
+				return (mod303.isGipuzkoa() && ((mod303.getYear() < 2021)
+					|| (mod303.getYear() == 2021 && mod303.getPeriod().isFirstSemester())));
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-				return new Model3032017GIPUZKOA(mod303,cbk,options);
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model3032017GIPUZKOA(mod303,cbk);
 			}
 		},
 		GIPUZKOA_2021_LAST_SEMESTER {
@@ -526,13 +516,13 @@ public class Model303 extends MainEntryPoint {
 			}
 
 			@Override
-			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options) {
-				return new Model3032021GIPUZKOA(mod303,cbk,options);
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model3032021GIPUZKOA(mod303,cbk);
 			}
 		},
 		;
 		public abstract boolean accept(Mod303 mod303);
-		public abstract Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk, Model303ModuleOptions options);
+		public abstract Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk);
 	}
 	
 	private void select(Mod303 selected) {
@@ -540,7 +530,7 @@ public class Model303 extends MainEntryPoint {
 		Widget declaration = null;
 		for (Mod303Declarations dec : Mod303Declarations.values()) {
 			if (dec.accept(selected)) {
-				declaration = dec.getDeclarationWidget(selected, new Model303Callback(), getOptions());
+				declaration = dec.getDeclarationWidget(selected, new Model303Callback());
 			}
 		}
 		if (declaration != null) {

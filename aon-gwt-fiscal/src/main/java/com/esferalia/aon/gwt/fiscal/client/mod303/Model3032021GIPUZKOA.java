@@ -25,8 +25,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 class Model3032021GIPUZKOA extends Model303Base {
 	
-	protected Model3032021GIPUZKOA(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
-		super(mod303,callback, options);
+	protected Model3032021GIPUZKOA(Mod303 mod303,Model303Callback callback) {
+		super(mod303,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
@@ -41,9 +41,9 @@ class Model3032021GIPUZKOA extends Model303Base {
 		paintAdditionalDataTab(tabPanel);
 		paintAdministrationTab(tabPanel);
 		
-		if (getCallback().getMod303().getId() == null && getCallback().getMod303().getYear() == 2021 && !getCallback().getMod303().isDiffCalculationDisabled()) {
-			double c51 = getCallback().getMod303().getAmount(Mod303Key.GP_C051);
-			double c52 = getCallback().getMod303().getAmount(Mod303Key.GP_C052);
+		if (getMod303().getId() == null && getMod303().getYear() == 2021 && !getMod303().isDiffCalculationDisabled()) {
+			double c51 = getMod303().getAmount(Mod303Key.GP_C051);
+			double c52 = getMod303().getAmount(Mod303Key.GP_C052);
 			if (AonMathUtils.isNotZero(c51) || AonMathUtils.isNotZero(c52)) {
 				AonMessageDialog.show("AVISO",
 						"Solapa \"Datos adicionales\". La casilla 32 se ha desdoblado en las casillas 51 y 52. No se puede realizar el c\u00E1lculo por diferencia en dichas casillas y tienen valor. Por favor revise los valores suministrados por la aplicaci\u00F3n."

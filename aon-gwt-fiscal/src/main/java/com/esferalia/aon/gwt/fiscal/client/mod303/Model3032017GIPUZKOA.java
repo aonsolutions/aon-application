@@ -23,8 +23,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 class Model3032017GIPUZKOA extends Model303Base {
 	
-	protected Model3032017GIPUZKOA(Mod303 mod303,Model303Callback callback, Model303ModuleOptions options) {
-		super(mod303,callback, options);
+	protected Model3032017GIPUZKOA(Mod303 mod303,Model303Callback callback) {
+		super(mod303,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
