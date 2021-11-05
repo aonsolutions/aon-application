@@ -11,6 +11,8 @@ import { saveSupplier } from '../../../services/registryService.js';
 
 export class AonSupplier extends AonReg {
 
+	saveBool;
+
 	connectedCallback () {
 		this.supplierInitialize();
 		this.initialize();
@@ -19,6 +21,7 @@ export class AonSupplier extends AonReg {
   	}
 	
 	supplierInitialize() {
+		this.saveBool = true;
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
@@ -98,18 +101,22 @@ export class AonSupplier extends AonReg {
 	}
 
 	save() {
-		let medias = this.emails.concat(this.phones).concat(this.webs);
-		this.registry.setMedia(medias);
-
-		saveSupplier(this.registry).then(registry => {
-			this.registry.id = registry.id;
-			this.showToast({
-				type: 'success',
-	 			message: 'Datos Guardados Correctamente'
-	 		});
-		}).catch(error => {
-	 		this.showToast(error);
-	 	});
+		if(this.saveBool) {
+			let medias = this.emails.concat(this.phones).concat(this.webs);
+			this.registry.setMedia(medias);
+			this.saveBool = false;
+			saveSupplier(this.registry).then(registry => {
+				this.registry.id = registry.id;
+				this.saveBool = true;
+				this.showToast({
+					type: 'success',
+					 message: 'Datos Guardados Correctamente'
+				 });
+			}).catch(error => {
+				this.saveBool = true;
+				this.showToast(error);
+			});
+		}
 	}
 
 	setSupplier(supplier) {

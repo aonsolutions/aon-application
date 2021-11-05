@@ -11,12 +11,19 @@ export class Creditor extends Registry {
 
     constructor(creditor) {
         super(creditor);
-        this.withholding = creditor.withholding;
-        this.vatAccrualPayment = creditor.vatAccrualPayment;
-        this.transaction = creditor.transaction;
-        this.status = creditor.status;
-        this.scope = creditor.scope;
-        this.account = creditor.account;
+        if(creditor) {
+            this.withholding = creditor.withholding;
+            this.vatAccrualPayment = creditor.vatAccrualPayment;
+            this.transaction = creditor.transaction || 'NAC';
+            this.status = creditor.status;
+            this.scope = creditor.scope;
+            this.account = creditor.account;
+        } else {
+            this.transaction = 'NAC';
+            this.withholding = false;
+            this.vatAccrualPayment = false;
+        }
+
     }
 
     isVatAccrualPayment() {

@@ -118,7 +118,7 @@ public class CustomerServlet extends AonApiHttpServlet {
 		Customer customer = CustomerJSON.fromJSON(api.getData());
 		customer = AON.saveCustomer(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), customer);
 		RegistryServlet.saveRegistryAdditionalInfo(api, customer.getId(), customer.getDomain().getId());
-		return new JSONObject();
+		return CustomerJSON.toJSON(customer);
 	}
 	
 }

@@ -29,7 +29,7 @@ public class SupplierJSON {
 	public static Supplier fromJSON(JSONObject json) {
 		return new Supplier()
 			.copy(RegistryJSON.fromJSON(json))
-			.setAccount(json.optInt(IJsonNames.ACCOUNT))
+			.setAccount(JsonUtils.getInteger(json, IJsonNames.ACCOUNT))
 			.setPurchaseValuated(JsonUtils.getboolean(json, IJsonNames.PURCHASE_VALUATED))
 			.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
 			.setTariff(JsonUtils.getInteger(json, IJsonNames.TARIFF))

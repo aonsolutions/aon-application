@@ -328,6 +328,8 @@ export class AonReg extends AonElement {
 			paymethodSelect.setOptions(paymethods);
 			paymethodSelect.value = this.registry.getPaymethod().getPaymethod() || paymethods[0].id;
 		});
+		paymethodSelect.addEventListener(EVENT.CHANGE, (e) => this.registry.getPaymethod().setPaymethod(paymethodSelect.value));
+
 
 		table.addRow();
 

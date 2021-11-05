@@ -29,7 +29,7 @@ public class CustomerJSON {
 	public static Customer fromJSON(JSONObject json) {
 		return new Customer()
 			.copy(RegistryJSON.fromJSON(json))
-			.setAccount(json.optInt(IJsonNames.ACCOUNT))
+			.setAccount(JsonUtils.getInteger(json, IJsonNames.ACCOUNT))
 			.setDeliveryGrouped(JsonUtils.getboolean(json, IJsonNames.DELIVERY_GROUPED))
 			.setDeliveryValuated(JsonUtils.getboolean(json, IJsonNames.DELIVERY_VALUATED))
 			.setEInvoice(JsonUtils.getboolean(json, IJsonNames.E_INVOICE))

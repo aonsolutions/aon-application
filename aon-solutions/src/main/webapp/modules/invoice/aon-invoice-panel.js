@@ -32,6 +32,9 @@ import { AonCreditorList } from '../registry/creditor/aon-creditor-list.js';
 import { AonMobileSupplierList } from '../registry/supplier/aon-mobile-supplier-list.js';
 import { AonMobileCreditorList } from '../registry/creditor/aon-mobile-creditor-list.js';
 import { AonMobileCustomerList } from '../registry/customer/aon-mobile-customer-list.js';
+import { AonCustomer } from '../registry/customer/aon-customer.js';
+import { AonSupplier } from '../registry/supplier/aon-supplier.js';
+import { AonCreditor } from '../registry/creditor/aon-creditor.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -136,6 +139,12 @@ export class AonInvoicePanel extends AonElement {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addProduct());
 			} else if(this.selectedOption && (OPTION.EXPENSES.id === this.selectedOption.id)){
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addExpense());
+			} else if(this.selectedOption && (OPTION.REGISTRY_CUSTOMER.id === this.selectedOption.id)){
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addCustomer());
+			} else if(this.selectedOption && (OPTION.REGISTRY_SUPPLIER.id === this.selectedOption.id)){
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addSupplier());
+			} else if(this.selectedOption && (OPTION.REGISTRY_CREDITOR.id === this.selectedOption.id)){
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addCreditor());
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
@@ -295,6 +304,27 @@ export class AonInvoicePanel extends AonElement {
 			productList.filter = filter;
 			aonInvoice.setContent(productList);
 		}
+	}
+
+	addCustomer() {
+		let aonCustomer = new AonCustomer();
+		aonCustomer.id = this.id + 'Customer';
+		aonCustomer.setCustomer();
+		this.getApplication().setContent(aonCustomer);	
+	}
+
+	addSupplier() {
+		let aonSupplier = new AonSupplier();
+		aonSupplier.id = this.id + 'Supplier';
+		aonSupplier.setSupplier();
+		this.getApplication().setContent(aonSupplier);	
+	}
+	
+	addCreditor() {
+		let aonCreditor = new AonCreditor();
+		aonCreditor.id = this.id + 'Creditor';
+		aonCreditor.setCreditor();
+		this.getApplication().setContent(aonCreditor);	
 	}
 
 	addProduct() {

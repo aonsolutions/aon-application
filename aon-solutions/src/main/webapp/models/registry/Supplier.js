@@ -12,17 +12,25 @@ export class Supplier extends Registry {
     purchaseValuated;
     account;
 
-    constructor(customer) {
-        super(customer);
-        this.tariff = customer.tariff;
-        this.withholding = customer.withholding;
-        this.withholdingFarmer = customer.withholdingFarmer;
-        this.vatAccrualPayment = customer.vatAccrualPayment;
-        this.transaction = customer.transaction;
-        this.status = customer.status;
-        this.scope = customer.scope;
-        this.purchaseValuated = customer.purchaseValuated;
-        this.account = customer.account;
+    constructor(supplier) {
+        super(supplier);
+        if(supplier) {
+            this.tariff = supplier.tariff;
+            this.withholding = supplier.withholding;
+            this.withholdingFarmer = supplier.withholdingFarmer;
+            this.vatAccrualPayment = supplier.vatAccrualPayment;
+            this.transaction = supplier.transaction || 'NAC';
+            this.status = supplier.status;
+            this.scope = supplier.scope;
+            this.purchaseValuated = supplier.purchaseValuated;
+            this.account = supplier.account;
+        } else {
+            this.transaction = 'NAC';
+            this.withholding = false;
+            this.withholdingFarmer = false;
+            this.vatAccrualPayment = false;
+        }
+
     }
 
     isWithholdingFarmer() {

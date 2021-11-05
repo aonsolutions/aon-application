@@ -121,7 +121,7 @@ public class CreditorServlet extends AonApiHttpServlet {
 		Creditor creditor = CreditorJSON.fromJSON(api.getData());
 		creditor = AON.saveCreditor(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), creditor);
 		RegistryServlet.saveRegistryAdditionalInfo(api, creditor.getId(), creditor.getDomain().getId());
-		return new JSONObject();
+		return  CreditorJSON.toJSON(creditor);
 	}
 	
 }

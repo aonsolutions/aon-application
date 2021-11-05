@@ -29,7 +29,7 @@ public class CreditorJSON {
 	public static Creditor fromJSON(JSONObject json) {
 		return new Creditor()
 			.copy(RegistryJSON.fromJSON(json))
-			.setAccount(json.optInt(IJsonNames.ACCOUNT))
+			.setAccount(JsonUtils.getInteger(json, IJsonNames.ACCOUNT))
 			.setScope(JsonUtils.getInteger(json, IJsonNames.SCOPE))
 			.setTransaction(InvoiceTransactionType.safeValueOf(JsonUtils.getString(json, IJsonNames.TRANSACTION)))
 			.setWithholding(JsonUtils.getboolean(json, IJsonNames.WITHHOLDING))

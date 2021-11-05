@@ -118,7 +118,7 @@ public class SupplierServlet extends AonApiHttpServlet {
 		Supplier supplier = SupplierJSON.fromJSON(api.getData());
 		supplier = AON.saveSupplier(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), supplier);
 		RegistryServlet.saveRegistryAdditionalInfo(api, supplier.getId(), supplier.getDomain().getId());
-		return new JSONObject();
+		return SupplierJSON.toJSON(supplier);
 	}
 	
 }

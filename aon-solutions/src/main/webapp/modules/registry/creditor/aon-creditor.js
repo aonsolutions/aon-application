@@ -11,6 +11,8 @@ import { saveCreditor } from '../../../services/registryService.js';
 
 export class AonCreditor extends AonReg {
 
+	saveBool;
+
 	connectedCallback () {
 		this.creditorInitialize();
 		this.initialize();
@@ -18,7 +20,8 @@ export class AonCreditor extends AonReg {
 
   	}
 	
-	  creditorInitialize() {
+	creditorInitialize() {
+		this.saveBool = true;
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
@@ -86,18 +89,23 @@ export class AonCreditor extends AonReg {
 	}
 
 	save() {
-		let medias = this.emails.concat(this.phones).concat(this.webs);
-		this.registry.setMedia(medias);
-
-		saveCreditor(this.registry).then(registry => {
-			this.registry.id = registry.id;
-			this.showToast({
-				type: 'success',
-	 			message: 'Datos Guardados Correctamente'
-	 		});
-		}).catch(error => {
-	 		this.showToast(error);
-	 	});
+		if(this.saveBool) {
+			this.saveBool = false;
+			let medias = this.emails.concat(this.phones).concat(this.webs);
+			this.registry.setMedia(medias);
+	
+			saveCreditor(this.registry).then(registry => {
+				this.registry.id = registry.id;
+				this.saveBool = true;
+				this.showToast({
+					type: 'success',
+					 message: 'Datos Guardados Correctamente'
+				 });
+			}).catch(error => {
+				this.saveBool = true;
+				this.showToast(error);
+			 });
+		}
 	}
 
 	setCreditor(creditor) {

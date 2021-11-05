@@ -205,7 +205,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 			RegistryPayMethod rpaymethod = RegistryPaymethodJSON.fromJSON(json.optJSONObject(RegistryAdditionalInfo.PAYMETHOD.name().toLowerCase()));
 			rpaymethod.setDomain(registryDomain);
 			if(rpaymethod.getRegistry() == null) rpaymethod.setRegistry(registryId);
-			AON.saveRegistryPayMethod(api.getDomain(), api.getUser(), rpaymethod);
+			if(rpaymethod.getPayMethod() != null) AON.saveRegistryPayMethod(api.getDomain(), api.getUser(), rpaymethod);
 		}
 		
 		if(json.opt(RegistryAdditionalInfo.RECORD_DATA.name().toLowerCase()) != null) {
