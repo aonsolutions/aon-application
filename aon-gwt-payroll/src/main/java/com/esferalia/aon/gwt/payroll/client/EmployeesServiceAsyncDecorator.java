@@ -886,9 +886,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void sendCertifica2(String currentDomainName, String user, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void sendCertifica2(String currentDomainName, String user, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.sendCertifica2(currentDomainName, user, contractId, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.sendCertifica2(currentDomainName, user, contractId, certifica2Info, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override

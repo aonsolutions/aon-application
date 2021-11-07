@@ -861,7 +861,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId)
+	public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, Certifica2Info certifica2Info)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
