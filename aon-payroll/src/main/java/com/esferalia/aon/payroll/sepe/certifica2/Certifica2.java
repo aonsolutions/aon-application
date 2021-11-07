@@ -19,11 +19,11 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -38,8 +38,6 @@ import org.apache.commons.cli.ParseException;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.tools.json.JSONArray;
-import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
@@ -49,14 +47,19 @@ import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CertificadoEmp
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.EMPRESATYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE;
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE.DatosVacacionesCotizadas;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 
 public class Certifica2 {
 	
+	// ----------------------------------------------------- Variables
+	
 	private static SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyyMMdd");
 	private static SimpleDateFormat yearDateFormat = new SimpleDateFormat("yyyy");
 	private static SimpleDateFormat monthDateFormat = new SimpleDateFormat("MM");
+	
+	private static DecimalFormat decimalFormat = new DecimalFormat("######0.00");
 
 	public static void main(String[] args) {
 		//@formatter:off
@@ -101,13 +104,9 @@ public class Certifica2 {
 			String suspensionReasonCode = cmd.getOptionValue(reasonCode.getLongOpt());
 			
 			// Get dslContext for given connection
-			AONContext aonContext = new AONContext(connection);
-			DSLContext dslContext = aonContext.getDslContext();
+			DSLContext dslContext = new AONContext(connection).getDslContext();
 			
 			getCertifica2(dslContext, contractId, suspensionReasonCode, System.out);
-			
-//			JSONObject certifica2JSON = getCertifica2JSON(dslContext, contractId, suspensionReasonCode);
-//			System.out.println(certifica2JSON.toString());
 			
 		} catch (ParseException | ClassNotFoundException | SQLException e) {
 			// Oops, something went wrong
@@ -144,11 +143,10 @@ public class Certifica2 {
 				.build();
 	}
 	
-	// ---------------------------------------------------------------------------------------------------------- 
-	// ----------------------------------------------------- GetCertifica2JSON
-	// ----------------------------------------------------------------------------------------------------------
+	// ----------------------------------------------------- getCertifica2
 	
 	public static String getCertifica2(DSLContext dslContext, Integer contractId, String suspensionReasonCode, OutputStream os) {
+		
 		// ---------------------------------------------------- Employee Data
 		
 		Record contractRecord = dslContext.select().from(CONTRACT)
@@ -163,6 +161,8 @@ public class Certifica2 {
 		Date endDate = contractRecord.get(CONTRACT.END_DATE);
 		Long contractDuration = getDaysBetween(startDate, endDate);
 		
+		Date seniorityDate = contractRecord.get(CONTRACT.SENIORITY_DATE);
+		
 		Record personRecord = dslContext.select().from(PERSON)
 				.where(PERSON.REGISTRY.eq(personId))
 				.fetchOne();
@@ -171,7 +171,7 @@ public class Certifica2 {
 		String surName = personRecord.get(PERSON.FIRST_SURNAME);
 		String ssNum = personRecord.get(PERSON.SOCIAL_SECURITY_NUM);
 		
-		if(checkIfNotExist(ssNum))
+		if(Boolean.TRUE.equals(checkIfNotExist(ssNum)))
 			return "No existe numero de la Seguridad Social para esta persona";
 		
 		Record employeeRegistry = dslContext.select().from(REGISTRY)
@@ -180,7 +180,7 @@ public class Certifica2 {
 		
 		String dni = employeeRegistry.get(REGISTRY.DOCUMENT);
 		
-		if(checkIfNotExist(dni))
+		if(Boolean.TRUE.equals(checkIfNotExist(dni)))
 			return "No existe documento de identidad para esta persona";
 		
 		String contractType = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA)
@@ -195,7 +195,7 @@ public class Certifica2 {
 				.and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION"))
 				.fetchOne(CONTRACT_DATA.EXPRESSION);
 		
-		if(checkIfNotExist(quoteGroupType))
+		if(Boolean.TRUE.equals(checkIfNotExist(quoteGroupType)))
 			return "No existe grupo de cotizacion para este contrato";
 		
 		String quoteGroup = normalizeString(quoteGroupType);
@@ -207,9 +207,8 @@ public class Certifica2 {
 		
 		String cno = "";
 		
-		if(!checkIfNotExist(cnoType)) {
+		if(Boolean.FALSE.equals(checkIfNotExist(cnoType))) {
 			cno = normalizeString(cnoType);
-//			return "No existe CNO para este contrato";
 		}
 		
 		// ---------------------------------------------------- Enterprise Data
@@ -219,7 +218,7 @@ public class Certifica2 {
 				.fetchOne();
 		
 		String ccc = enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
-		String completeCCC = parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
+		String completeCCC = parseSSRegime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
 		
 		Record enterpriseRegistryRecord = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(
 					dslContext.select(ENTERPRISE_ACTIVITY.ENTERPRISE).from(ENTERPRISE_ACTIVITY)
@@ -231,7 +230,7 @@ public class Certifica2 {
 		
 		// ---------------------------------------------------- Salaries Data
 		
-		List<Certifica2Info> certifica2List = new ArrayList<Certifica2Info>();
+		List<Certifica2Info> certifica2List = new ArrayList<>();
 		Integer maxDays = 0;
 
 		Calendar cal = Calendar.getInstance();
@@ -239,11 +238,15 @@ public class Certifica2 {
 		cal.add(Calendar.DATE, -180);
 		Date filterDate = parseDateToSQL(cal.getTime());
 		
+		if(null != seniorityDate)
+			filterDate = filterDate.before(seniorityDate) ? seniorityDate : filterDate;
+		
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)0))
 				.and(SALARY.END_DATE.ge(filterDate))
+				.and(SALARY.END_DATE.le(endDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
@@ -374,12 +377,7 @@ public class Certifica2 {
 		trabajadorType.setFechaSuspensionExtincion(fullDateFormat.format(endDate));
 		trabajadorType.setDiasSalarioTramitacion("00000");
 		
-		certifica2List.sort(new Comparator<Certifica2Info>() {
-			@Override
-			public int compare(Certifica2Info o1, Certifica2Info o2) {
-				return o2.getMonth().compareTo(o1.getMonth());
-			}
-		});
+		certifica2List.sort((o1, o2) -> o2.getMonth().compareTo(o1.getMonth()));
 		
 		for(Certifica2Info certifica2 : certifica2List) {
 			COTIZACIONTYPE cotizacionType = new COTIZACIONTYPE();
@@ -387,16 +385,16 @@ public class Certifica2 {
 			cotizacionType.setAno(certifica2.getYear());
 			cotizacionType.setMes(certifica2.getMonth());
 			cotizacionType.setNumDiasCotizados(StringUtils.leftPad(certifica2.getQuotedDays().toString(), 3, '0'));
-			cotizacionType.setBaseCotizacionContingenciasComunes(StringUtils.leftPad(String.format("%.2f", certifica2.getBase_cgc()).replaceAll(",", ""), 9, '0'));
-			cotizacionType.setBaseCotizacionDesempleo(StringUtils.leftPad(String.format("%.2f", certifica2.getBase_unemployment()).replaceAll(",", ""), 9, '0'));
+			cotizacionType.setBaseCotizacionContingenciasComunes(AonStringUtils.leftPad(decimalFormat.format(certifica2.getBase_cgc()), 9, '0'));
+			cotizacionType.setBaseCotizacionDesempleo(AonStringUtils.leftPad(decimalFormat.format(certifica2.getBase_unemployment()), 9, '0'));
 			
 			trabajadorType.getDatosCotizacion().add(cotizacionType);
 		}
 		
 		DatosVacacionesCotizadas datosVacacionesCotizadas = new DatosVacacionesCotizadas();
 		datosVacacionesCotizadas.setNumDiasCotizados(StringUtils.leftPad(settlementCertifica2Info.getQuotedDays().toString(), 3, '0'));
-		datosVacacionesCotizadas.setBaseCotizacionContingenciasComunes(StringUtils.leftPad(String.format("%.2f", settlementCertifica2Info.getBase_cgc()).replaceAll(",", ""), 9, '0'));
-		datosVacacionesCotizadas.setBaseCotizacionDesempleo(StringUtils.leftPad(String.format("%.2f", settlementCertifica2Info.getBase_unemployment()).replaceAll(",", ""), 9, '0'));
+		datosVacacionesCotizadas.setBaseCotizacionContingenciasComunes(AonStringUtils.leftPad(decimalFormat.format(settlementCertifica2Info.getBase_unemployment()), 9, '0'));
+		datosVacacionesCotizadas.setBaseCotizacionDesempleo(AonStringUtils.leftPad(decimalFormat.format(settlementCertifica2Info.getBase_unemployment()), 9, '0'));
 		trabajadorType.setDatosVacacionesCotizadas(datosVacacionesCotizadas);
 		
 		cuentaCotizacion.setDatosEmpresa(empresaType);
@@ -422,219 +420,8 @@ public class Certifica2 {
 		
 		return new Date(cal.getTimeInMillis());
 	}
-
-	private static java.util.Date parseDateToJava(Date dateSQL) {
-		if(null == dateSQL)
-			return null;
-		
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(dateSQL.getTime());
-		
-		return cal.getTime();
-	}
 	
-	private static JSONObject getCertifica2JSON(DSLContext dslContext, Integer contractId, String suspensionReasonCode) {
-		
-		// ---------------------------------------------------- Employee Data
-		
-		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
-		
-		Integer personId = contractRecord.get(CONTRACT.PERSON);
-		Integer enterpriseCCCId = contractRecord.get(CONTRACT.ENTERPRISE_CCC);
-		Integer enterpriseActivityId = contractRecord.get(CONTRACT.ENTERPRISE_ACTIVITY);
-		
-		Date startDate = contractRecord.get(CONTRACT.START_DATE);
-		Date endDate = contractRecord.get(CONTRACT.END_DATE);
-		java.util.Date startDateJava = new java.util.Date(startDate.getTime());
-		java.util.Date endDateJava = new java.util.Date(endDate.getTime());
-		Long contractDuration = Duration.between(startDateJava.toInstant(), endDateJava.toInstant()).toDays() + 1;
-		String contractDurationStr = contractDuration + "";
-		
-		Record personRecord = dslContext.select().from(PERSON).where(PERSON.REGISTRY.eq(personId)).fetchOne();
-		
-		String name = personRecord.get(PERSON.NAME);
-		String surName = personRecord.get(PERSON.FIRST_SURNAME);
-		String ssNum = personRecord.get(PERSON.SOCIAL_SECURITY_NUM);
-		
-		Record employeeRegistry = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(personId)).fetchOne();
-		
-		String dni = employeeRegistry.get(REGISTRY.DOCUMENT);
-		
-		String contractType = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).fetchOne(CONTRACT_DATA.EXPRESSION);
-		
-		String tc2 = normalizeString(contractType);
-		
-		String quoteGroupType = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).fetchOne(CONTRACT_DATA.EXPRESSION);
-		
-		String quoteGroup = normalizeString(quoteGroupType);
-		
-		String cnoType = dslContext.select(CONTRACT_DATA.EXPRESSION).from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("CNO")).fetchOne(CONTRACT_DATA.EXPRESSION);
-		
-		String cno = normalizeString(cnoType);
-		
-		// ---------------------------------------------------- Enterprise Data
-		
-		Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC).where(ENTERPRISE_CCC.ID.eq(enterpriseCCCId)).fetchOne();
-		
-		String completeCCC = parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
-		
-		Record enterpriseRegistryRecord = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(
-					dslContext.select(ENTERPRISE_ACTIVITY.ENTERPRISE).from(ENTERPRISE_ACTIVITY)
-						.where(ENTERPRISE_ACTIVITY.ID.eq(enterpriseActivityId))
-						.fetchOne(ENTERPRISE_ACTIVITY.ENTERPRISE)
-			)).fetchOne();
-		
-		String enterpriseCIF = enterpriseRegistryRecord.get(REGISTRY.DOCUMENT);
-		
-		// ---------------------------------------------------- Salaries Data
-		
-		//TODO : check salaries
-		
-		List<Certifica2Info> certifica2List = new ArrayList<Certifica2Info>();
-		Integer maxDays = 0;
-		
-		Result<Record> salariesRecords = dslContext.select().from(SALARY).where(SALARY.CONTRACT.eq(contractId)).and(SALARY.TYPE.eq((byte)0)).orderBy(SALARY.ID.desc()).fetch();
-		
-		for(Record salary : salariesRecords) {
-			if(maxDays > 180)
-				break;
-			
-			Integer salaryId = salary.get(SALARY.ID);
-			
-			Date salaryStartDate = salary.get(SALARY.START_DATE);
-			Date salaryEndDate = salary.get(SALARY.END_DATE);
-			java.util.Date salaryStartDateJava = new java.util.Date(salaryStartDate.getTime());
-			java.util.Date salaryEndDateJava = new java.util.Date(salaryEndDate.getTime());
-			Long salaryDaysBetween = Duration.between(salaryStartDateJava.toInstant(), salaryEndDateJava.toInstant()).toDays() + 1;
-			
-			List<String> baseCGCRecords = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.eq(salaryId))
-					.and(SALARY_DATA.NAME.eq("BASE_CGC"))
-					.fetch(SALARY_DATA.EXPRESSION);
-			
-			Double baseCGC = 0.00;
-			
-			for(String baseCGCStr : baseCGCRecords) {
-				baseCGC += Double.parseDouble(baseCGCStr);
-			}
-			
-			List<String> baseCGPRecords = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
-					.where(SALARY_DATA.SALARY.eq(salaryId))
-					.and(SALARY_DATA.NAME.eq("BASE_CGP"))
-					.fetch(SALARY_DATA.EXPRESSION);
-			
-			Double baseCGP = 0.00;
-			
-			for(String baseCGPStr : baseCGPRecords) {
-				baseCGP += Double.parseDouble(baseCGPStr);
-			}
-			
-			Certifica2Info certifica2Info = null;
-			
-			// Ya has cumplido los 180 dias de registro
-			if(maxDays + salaryDaysBetween > 180) {
-				 Long restDays = salaryDaysBetween - (maxDays + salaryDaysBetween - 180);
-				 
-				 certifica2Info = new Certifica2Info(
-							yearDateFormat.format(salaryStartDate), 
-							monthDateFormat.format(salaryStartDate), 
-							restDays.intValue(), 
-							baseCGC / 30 * restDays.intValue(), 
-							baseCGP / 30 * restDays.intValue());
-				 
-				 maxDays += salaryDaysBetween.intValue();
-				 
-			} else {
-				certifica2Info = new Certifica2Info(
-						yearDateFormat.format(salaryStartDate), 
-						monthDateFormat.format(salaryStartDate), 
-						salaryDaysBetween.intValue(), 
-						baseCGC, 
-						baseCGP);
-				
-				maxDays += salaryDaysBetween.intValue();
-			}
-			
-			certifica2List.add(certifica2Info);
-			
-		}
-		
-		// Check Settle for unEnjoy Holidays
-		
-		Result<Record> settlementRecords = dslContext.select().from(SALARY).where(SALARY.CONTRACT.eq(contractId)).and(SALARY.TYPE.eq((byte)2)).orderBy(SALARY.ID.desc()).fetch();
-		
-		Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
-		
-		Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
-		Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
-		java.util.Date chargeDateJava = new java.util.Date(chargeDate.getTime());
-		java.util.Date settlementEndDateJava = new java.util.Date(settlementEndDate.getTime());
-		Long settlementDaysBetween = Duration.between(chargeDateJava.toInstant(), settlementEndDateJava.toInstant()).toDays();
-		
-		Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.eq(settlementId)).and(SALARY_PAYMENT.TYPE.eq((byte)6)).fetchOne();
-		
-		Double baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
-		Double baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
-		
-		Certifica2Info settlementCertifica2Info = new Certifica2Info(
-				null,
-				null,
-				settlementDaysBetween.intValue(), 
-				baseCGC, 
-				baseCGP);
-		
-		// ---------------------------------------------------- Create JSON
-		
-		JSONObject certifica2JSON = new JSONObject();
-		
-		certifica2JSON.put("enterprise_cif", enterpriseCIF);
-		certifica2JSON.put("enterprise_ccc", completeCCC);
-		
-		certifica2JSON.put("dni", dni);
-		certifica2JSON.put("name", name);
-		certifica2JSON.put("sur_name", surName);
-		certifica2JSON.put("ss_num", ssNum);
-		certifica2JSON.put("quote_group", quoteGroup);
-		certifica2JSON.put("contract_type", tc2);
-		certifica2JSON.put("contract_duration", StringUtils.leftPad(contractDurationStr, 5, '0'));
-		certifica2JSON.put("cno", StringUtils.rightPad(cno, 7, '0'));
-		certifica2JSON.put("start_date", fullDateFormat.format(startDate));
-		certifica2JSON.put("suspension_code", suspensionReasonCode);
-		certifica2JSON.put("end_date", fullDateFormat.format(endDate));
-		certifica2JSON.put("dayly_salary", "00000");
-		
-		certifica2List.sort(new Comparator<Certifica2Info>() {
-			@Override
-			public int compare(Certifica2Info o1, Certifica2Info o2) {
-				return o2.getMonth().compareTo(o1.getMonth());
-			}
-		});
-		
-		JSONArray quotesInfoList = new JSONArray();
-		
-		for(Certifica2Info certifica2 : certifica2List) {
-			JSONObject salaryOjt = new JSONObject();
-			
-			salaryOjt.put("year", certifica2.getYear());
-			salaryOjt.put("month", certifica2.getMonth());
-			salaryOjt.put("days", StringUtils.leftPad(certifica2.getQuotedDays().toString(), 3, '0'));
-			salaryOjt.put("base_cgc", StringUtils.leftPad(String.format("%.2f", certifica2.getBase_cgc()).replaceAll(",", ""), 9, '0'));
-			salaryOjt.put("base_cgp", StringUtils.leftPad(String.format("%.2f", certifica2.getBase_unemployment()).replaceAll(",", ""), 9, '0'));
-			
-			quotesInfoList.add(salaryOjt);
-		}
-		
-		certifica2JSON.put("quoteInfoList", quotesInfoList);
-		
-		JSONObject settlementOjt = new JSONObject();
-		
-		settlementOjt.put("days", StringUtils.leftPad(settlementCertifica2Info.getQuotedDays().toString(), 3, '0'));
-		settlementOjt.put("base_cgc",  StringUtils.leftPad(String.format("%.2f", settlementCertifica2Info.getBase_cgc()).replaceAll(",", ""), 9, '0'));
-		settlementOjt.put("base_cgp", StringUtils.leftPad(String.format("%.2f", settlementCertifica2Info.getBase_unemployment()).replaceAll(",", ""), 9, '0'));
-		certifica2JSON.put("holidaysInfo", settlementOjt);
-		
-		return certifica2JSON;
-	}
+	
 	
 	// ----------------------------------------------------- Auxiliar Methods
 	
@@ -654,28 +441,28 @@ public class Certifica2 {
 		return contractType;
 	}
 
-	private static String parseSS_Regime(Byte ss_regime) {
-		switch (ss_regime) {
-		case 0:
-			return "0111";
-		case 1:
-			return "0111";
-		case 2:
-			return "0111";
-		case 3:
-			return "0111";
-		case 4:
-			return "0111";
-		case 5:
-			return "0111";
-		case 6:
-			return "0138";
-		case 7:
-			return "0163";
-		case 8:
-			return "0112";
-		default:
-			return "0111";
+	private static String parseSSRegime(Byte ssRegime) {
+		switch (ssRegime) {
+			case 0:
+				return "0111";
+			case 1:
+				return "0111";
+			case 2:
+				return "0111";
+			case 3:
+				return "0111";
+			case 4:
+				return "0111";
+			case 5:
+				return "0111";
+			case 6:
+				return "0138";
+			case 7:
+				return "0163";
+			case 8:
+				return "0112";
+			default:
+				return "0111";
 		}
 	}
 

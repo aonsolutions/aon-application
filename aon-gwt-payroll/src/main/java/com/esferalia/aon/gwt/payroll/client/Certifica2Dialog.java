@@ -18,9 +18,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -129,13 +127,9 @@ public class Certifica2Dialog extends AonCustomDialog {
 	
 	private DateTimeFormat dateFormat = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
-	private AonToolbar toolbar;
-	private AonToolbarSmallButton downloadCertifica2;
 	private AonToolbarSmallButton comunicateCertifica2;
 	private AonToolbarSmallButton comunicateCertifica2PDF;
 	
-	private Button closeBtnDialog;
-
 	private DomainUserRoles userRoles;
 	private Integer contractId;
 	private Certifica2Info certifica2Info;
@@ -158,7 +152,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 		
 		this.contractId = contractId;
 		this.pdfViewer = new FullViewer();
-		this.cnoMap = new HashMap<String, CNO>();
+		this.cnoMap = new HashMap<>();
 		
 		getToolbarPanel();
 		getButtonsPanel();
@@ -171,13 +165,15 @@ public class Certifica2Dialog extends AonCustomDialog {
 			public void onSuccess(DomainUserRoles result) {
 				userRoles = result;
 				
-				if(!userRoles.isComunica())
+				if(Boolean.FALSE.equals(userRoles.isComunica()))
 					comunicateCertifica2.setVisible(false);
 				
 				enterprisesService.getCNOs(new AsyncCallback<Map<String, CNO>>() {
 
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						// Not user here
+					}
 
 					@Override
 					public void onSuccess(Map<String, CNO> result) {
@@ -258,10 +254,10 @@ public class Certifica2Dialog extends AonCustomDialog {
 	}
 	
 	private void initSuggestBox() {
-		List<String> cnoEntry = new ArrayList<String>();
+		List<String> cnoEntry = new ArrayList<>();
 		for(Entry<String, CNO> entry : cnoMap.entrySet())
 			cnoEntry.add(entry.getKey() + " - " + entry.getValue().getTitle());
-		List<String> cnoSuggest = new ArrayList<String>();
+		List<String> cnoSuggest = new ArrayList<>();
 		for(String cno : cnoEntry)
 			cnoSuggest.add(cno);
 		MultiWordSuggestOracle orclIbans = (MultiWordSuggestOracle) profesionalCategorySB.getSuggestOracle();
@@ -291,7 +287,6 @@ public class Certifica2Dialog extends AonCustomDialog {
 		this.endDateL.setText(null == certifica2Info.getEndDate() ? "" : dateFormat.format(certifica2Info.getEndDate()));
 		this.contractDurationL.setText(certifica2Info.getContractDuration() + " d\u00EDa(s)");
 		setSelectedValueLB(this.suspensionCodeLB, certifica2Info.getSuspensionCode());
-//		this.suspensionCodeL.setText(certifica2Info.getSuspensionCode());
 		CNO cnoObj = cnoMap.get(certifica2Info.getProfesionalCategory());
 		if(null != cnoObj)
 			profesionalCategorySB.setText(cnoObj.getCode() + " - " + cnoObj.getTitle());
@@ -351,12 +346,9 @@ public class Certifica2Dialog extends AonCustomDialog {
 	
 	public void showDialog() {
 		// Show center
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			@Override
-			public void execute() {
-				center();
-				show();
-			}
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
 		});
 	}
 	
@@ -376,9 +368,9 @@ public class Certifica2Dialog extends AonCustomDialog {
 	
 	private void getToolbarPanel() {
 		toolbarPanel.clear();
-		toolbar = new AonToolbar("");
+		AonToolbar toolbar = new AonToolbar("");
 		
-		downloadCertifica2 = new AonToolbarSmallButton("Descargar XML", AON.CSS.aonIconDownload());
+		AonToolbarSmallButton downloadCertifica2 = new AonToolbarSmallButton("Descargar XML", AON.CSS.aonIconDownload());
 		downloadCertifica2.getElement().getStyle().setMarginRight(10, Unit.PX);
 		downloadCertifica2.addClickHandler(e -> {
 			if(hasChange) {
@@ -395,7 +387,9 @@ public class Certifica2Dialog extends AonCustomDialog {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						// Not use here
+					}
 				});
 			} else
 				formPanel.submit();
@@ -419,7 +413,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 						messageL.setText("Comunicando Certifica2 al SEPE...");
 						messagesPanel.setVisible(true);
 						
-						employeesService.sendCertifica2(contractId, new AsyncCallback<Void>() {
+						employeesService.sendCertifica2(contractId, certifica2Info, new AsyncCallback<Void>() {
 							
 							@Override
 							public void onSuccess(Void result) {
@@ -440,14 +434,16 @@ public class Certifica2Dialog extends AonCustomDialog {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						// Not use here
+					}
 				});
 			} else {
 			
 				messageL.setText("Comunicando Certifica2 al SEPE...");
 				messagesPanel.setVisible(true);
 				
-				employeesService.sendCertifica2(contractId, new AsyncCallback<Void>() {
+				employeesService.sendCertifica2(contractId, certifica2Info, new AsyncCallback<Void>() {
 					
 					@Override
 					public void onSuccess(Void result) {
@@ -483,8 +479,6 @@ public class Certifica2Dialog extends AonCustomDialog {
 				public void onSuccess(String dataURI) {
 					messagesPanel.setVisible(false);
 					pdfViewer.open(dataURI);
-//					String fileName = "Certifica2_" + certifica2Info.getDocument() + ".pdf";
-//					pdfViewer.download(fileName);
 				}
 				
 				@Override
@@ -527,26 +521,18 @@ public class Certifica2Dialog extends AonCustomDialog {
 		flowPanel.add(documentHidden);
 		
 		formPanel.add(flowPanel);
-		formPanel.addSubmitHandler(e -> {
-			messagesPanel.setVisible(false);
-		});
+		formPanel.addSubmitHandler(e -> messagesPanel.setVisible(false));
 	}
 
 	// ------------------------------------------------- ButtonsPanel
 	
 	private void getButtonsPanel() {
-		closeBtnDialog = new Button();
+		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText("Cerrar");
-		closeBtnDialog.addClickHandler(e -> {
-			onCloseDialog(e);
-		});
+		closeBtnDialog.addClickHandler(e -> hide());
 		
 		buttonsPanel.add(closeBtnDialog);
-	}
-	
-	private void onCloseDialog(ClickEvent event) {
-		hide();
 	}
 	
 	// ------------------------------------------------- LoadingPanel

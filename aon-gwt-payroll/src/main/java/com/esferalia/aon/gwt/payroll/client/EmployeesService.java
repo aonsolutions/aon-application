@@ -290,7 +290,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void removeContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;
 	
-	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId,
+			Certifica2Info certifica2Info);
 
 	String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate) throws IllegalArgumentException;
 

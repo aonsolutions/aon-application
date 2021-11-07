@@ -126,6 +126,33 @@ public class Certificates {
 		return quoteData;
 	}
 	
+	@Override
+	public String toString() {
+		return "Certificates [\n\tregimen=" + regimen + 
+				",\n\tctaCti=" + ctaCti + 
+				",\n\tipf=" + ipf + 
+				",\n\tipfManager=" + ipfManager + 
+				",\n\tnameManager=" + nameManager + 
+				",\n\tsurnameManager=" + surnameManager + 
+				",\n\t lastSurnameManager=" + lastSurnameManager + 
+				",\n\tcargoManager=" + cargoManager + 
+				",\n\ttypeContract=" + typeContract + 
+				",\n\tgz=" + gz + 
+				",\n\ttypeDuration=" + typeDuration + 
+				",\n\tpublicPosition=" + publicPosition + 
+				",\n\tcatProfessional=" + catProfessional + 
+				",\n\tcauseSuspension=" + causeSuspension + 
+				",\n\tofficePublic=" + officePublic + 
+				",\n\tdedicationPer=" + dedicationPer + 
+				",\n\tfAEd=" + fAEd + 
+				",\n\tfSTd=" + fSTd + 
+				",\n\tdaysCtzVc=" + daysCtzVc + 
+				",\n\tbcccVc=" + bcccVc + 
+				",\n\tbcdVc=" + bcdVc + 
+				",\n\tdurationContract=" + durationContract+
+				", quoteData=" + quoteData + "\n]";
+	}
+
 	private Certificates() {}
 	public static class CertificatesBuilder {
 		private String regimen;
