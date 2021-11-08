@@ -79,7 +79,7 @@ public class PGCImport {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (OfficeXmlFileException e){
-			importationX(domain, login, data);
+			return importationX(domain, login, data);
 		} finally {
 			if(workbook != null) {
 				try {

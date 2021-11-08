@@ -52,12 +52,15 @@ export class AonAccounting extends AonElement {
 			name: 'Pérdidas y Ganancias',
 			icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
 			fn: () => this.aonGraphicsTrialView ()
-		}, {
-			id: 'banks',
-			name: MSG.BANKS,
-			icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
-			fn: () => GWT.load(GWT.CHECKIT, this.getApplication().CONTENT)
 		}];
+		if(this.dur.isBank())
+			options.push({
+				id: 'banks',
+				name: MSG.BANKS,
+				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
+				fn: () => GWT.load(GWT.CHECKIT, this.getApplication().CONTENT)
+			});
+
 		application.addSidenavOptions(MSG.ACCOUNTING, options);
 
 
