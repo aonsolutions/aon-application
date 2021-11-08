@@ -135,7 +135,8 @@ public enum Period implements Serializable {
 			|| this == Period.M11
 			|| this == Period.M12
 			|| this == Period.T3
-			|| this == Period.T4);
+			|| this == Period.T4
+			|| this == Period.YEAR);
 	}
 
 	public static Period safeValueOf( Byte i ) {

@@ -34,8 +34,9 @@ import org.jooq.tools.json.ParseException;
 import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
@@ -141,7 +142,11 @@ class Mod303AeatUtils {
 		if (aeatParams.getMod() == null) {
 			throw new AonCoreException("[INT] Identificador de modelo no indicado.");	
 		}
-		Mod303 mod303 = FISCAL.getMod303(aeatParams.getDomainName(), aeatParams.getDomainId(), aeatParams.getUser(), aeatParams.getMod());
+		Occam occam = new Occam()
+				.setDomainName(aeatParams.getDomainName())
+				.setDomain(aeatParams.getDomainId())
+				.setUser(aeatParams.getUser());
+		Mod303 mod303 = MODEL303.getMod303(occam, aeatParams.getMod());
 		if (mod303 == null) {
 			throw new AonCoreException("[INT] Modelo no encontrado");
 		}
@@ -278,10 +283,18 @@ class Mod303AeatUtils {
 	}
 
 	protected static synchronized  void giveDataResponseDataBack( HttpServletResponse resp, AEATParams params)  {
+		Occam occam = new Occam()
+				.setDomainName(params.getDomainName())
+				.setDomain(params.getDomainId())
+				.setUser(params.getUser());
+		Mod303 mod303 = MODEL303.getMod303(occam, params.getMod());
+		if (mod303 == null) {
+			Mod303AeatUtils.giveExceptionBack(resp, "Declaración no encontrada" );
+		}
 		Attach attach = AON.getAttach(params.getDomainName(), params.getDomainId(), params.getUser(), 
-				f -> f.getDomainProperty().eq( params.getDomainId())
+				f -> f.getDomainProperty().eq( mod303.getDomain())
 				.and(f.getSourceTypeProperty().eq( DataAttachSource.MOD303.value() ))
-				.and(f.getSourceBatchProperty().eq( params.getMod() ))
+				.and(f.getSourceBatchProperty().eq( mod303.getId() ))
 				,AttachType.DATA);
 		if (attach == null || attach.getData() == null || attach.getData().length == 0) {
 			Mod303AeatUtils.giveExceptionBack(resp, "Declaración no encontrada" );				
@@ -294,7 +307,11 @@ class Mod303AeatUtils {
 	
 
 	private static void manageRightResponse(HttpServletResponse resp, HttpClient httpClient, AEATParams aeatParams, Mod303 mod303, String aeatResponse) {
-		FISCAL.aeatPresentationMod303(aeatParams.getDomainName(),aeatParams.getDomainId(),aeatParams.getUser(), mod303, aeatResponse);
+		Occam occam = new Occam()
+				.setDomainName(aeatParams.getDomainName())
+				.setDomain(aeatParams.getDomainId())
+				.setUser(aeatParams.getUser());
+		MODEL303.aeatPresentationMod303(occam, mod303, aeatResponse);
 		giveDataResponseDataBack(resp, aeatParams);
 	}
 

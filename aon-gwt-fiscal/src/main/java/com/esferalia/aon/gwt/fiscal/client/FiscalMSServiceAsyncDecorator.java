@@ -7,9 +7,7 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -61,9 +59,9 @@ public class FiscalMSServiceAsyncDecorator implements FiscalMSServiceAsync {
 //		serviceAsync.presentationFile(domainName,domainId, user, type, id, new AsyncCallbackWrapper<Integer>(callback));
 //	}
 
-	@Override
-	public void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model, AsyncCallback<Void> callback) throws AonCoreException {
-		AON.start();
-		serviceAsync.markAsFinished(domainName,domainId, user, model, new AsyncCallbackWrapper<Void>(callback));
-	}
+//	@Override
+//	public void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model, AsyncCallback<Void> callback) throws AonCoreException {
+//		AON.start();
+//		serviceAsync.markAsFinished(domainName,domainId, user, model, new AsyncCallbackWrapper<Void>(callback));
+//	}
 }

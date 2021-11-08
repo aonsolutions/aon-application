@@ -42,7 +42,7 @@ class Model30320212AEAT extends Model303AEAT {
 	private final Model303AEATActivityTable activityTable;
 
 	private ScrollPanel lastPeriodPanel;
-	private TabLayoutPanel tabPanel; 
+	private TabLayoutPanel tabPanel;
 	
 	private static final int GENERAL_REGIME_TAB = 2;
 	private static final int SIMPLIFIED_REGIME_TAB = 3;
@@ -84,7 +84,7 @@ class Model30320212AEAT extends Model303AEAT {
 		}
 		tabPanel.addBeforeSelectionHandler(this::beforeSelectTab);
 		
-		Scheduler.get().scheduleDeferred(() -> selectDefaultTab() );
+		Scheduler.get().scheduleDeferred(this::selectDefaultTab);
 	}
 	
 	private void selectDefaultTab() {
@@ -322,7 +322,8 @@ class Model30320212AEAT extends Model303AEAT {
 		
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
-		final AonTextBox receiptBox = new AonTextBox();
+		
+		receiptBox = new AonTextBox();
 		receiptBox.setVisibleLength(15);
 		receiptBox.setMaxLength(13);
 		receiptBox.setValue( getMod303().getNumber() );

@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
@@ -54,7 +53,6 @@ import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
-import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 
 public interface IFiscal {
@@ -149,25 +147,6 @@ public interface IFiscal {
 	public Mod3902018 saveMod3902018(AONContext ctx, Mod3902018 mod390);
 	public void deleteMod3902018(AONContext ctx,Mod3902018 mod390);
 	public Mod3902018 changeStatusMod3902018(AONContext ctx, Mod3902018 mod184, FiscalStatus newStatus);
-
-	// 				   		  MOD303
-	public Mod303 getMod303(AONContext ctx, int id);
-	public LinkedList<Mod303> getMod303s(AONContext ctx, int domain);
-	public Mod303 calculateMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 saveMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 saveCommentsMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 initializeForFinishMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 markAsFinishedMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 markAsPendingMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 markAsSentMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 markAsCustomerCheckMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 initializeMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 createMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 declarationChanged(AONContext ctx, Mod303 mod303);
-	public void deleteMod303(AONContext ctx, Mod303 mod303);
-	public String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey);
-	public Mod303 aeatPresentationMod303(AONContext ctx, Mod303 mod303, String aeatResponse);
-	//	public void importMod303(AONContext ctx, int domain);
 
 	// 				   		  MOD390HF
 	public Mod390HF getMod390HF(AONContext ctx, int id);

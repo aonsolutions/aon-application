@@ -92,7 +92,7 @@ public class Model303 extends MainEntryPoint {
 		@Override
 		public void onNew() {
 			aonLayout.hideErrorPanel();
-			service.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),null,
+			service.initialize(getOptions().getOccam(),null,
 					new AsyncCallback<Mod303>() {
 						@Override
 						public void onSuccess(Mod303 m303) {
@@ -112,7 +112,7 @@ public class Model303 extends MainEntryPoint {
 		@Override
 		public void onReset(Mod303 oldMod303) {
 			aonLayout.hideErrorPanel();
-			service.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),null,
+			service.initialize(getOptions().getOccam(),null,
 					new AsyncCallback<Mod303>() {
 						@Override
 						public void onSuccess(Mod303 newMod303) {
@@ -176,11 +176,11 @@ public class Model303 extends MainEntryPoint {
 							popup.center();
 							
 							// Primero borrar el modelo actual
-							service.delete(getCurrentDomainName(), getCurrentUser(), oldMod303,
+							service.delete(getOptions().getOccam(), oldMod303,
 									new AsyncCallback<Void>() {
 								@Override
 								public void onSuccess(Void m303) {
-									service.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),mod303,
+									service.create(getOptions().getOccam(),mod303,
 											new AsyncCallback<Mod303>() {
 												@Override
 												public void onSuccess(Mod303 m303) {
@@ -220,7 +220,6 @@ public class Model303 extends MainEntryPoint {
 	@Override
 	public void onModuleLoad() {
 		fiscalMsService.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
-			
 			@Override
 			public void onSuccess(AonData aonData) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
@@ -276,7 +275,7 @@ public class Model303 extends MainEntryPoint {
 	}
 
 	private void newModel(Mod303 newModel) {
-		service.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),newModel,
+		service.initialize(getOptions().getOccam(),newModel,
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 m303) {
@@ -295,7 +294,7 @@ public class Model303 extends MainEntryPoint {
 
 	private void onSelect(Integer id ) {
 		LOGGER.info("OnSelect Model303 with a ID: " + getOptions().getFiscalModelId());
-		service.getMod303(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id , new AsyncCallback<Mod303>() {
+		service.getMod303(getOptions().getOccam(), id , new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 selected) {
 						if (selected == null) {
@@ -316,7 +315,7 @@ public class Model303 extends MainEntryPoint {
 
 	private void onSelectionChange(SelectionEvent<Mod303> event) {
 		Mod303 sel = event.getSelectedItem();
-		service.getMod303(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
+		service.getMod303(getOptions().getOccam(),
 				sel.getId(), new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 selected) {
@@ -347,7 +346,7 @@ public class Model303 extends MainEntryPoint {
 						popup.center();
 
 						// Crear el modelo nuevo
-						service.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),mod303,
+						service.create(getOptions().getOccam(),mod303,
 								new AsyncCallback<Mod303>() {
 									@Override
 									public void onSuccess(Mod303 m303) {

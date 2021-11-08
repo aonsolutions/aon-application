@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.shared.mod303.Model303ScriptProvider;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -34,7 +35,11 @@ public class Mod303Print extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");
-			Mod303 mod303 = FISCAL.getMod303(domainName, domainId, user,id);
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(user);
+			Mod303 mod303 = MODEL303.getMod303(occam,id);
 
 			Mod303ExcelAction action = new Mod303ExcelAction(mod303);
 			action.initialize(FiscalModelUtils.getModelName(mod303));

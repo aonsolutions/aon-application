@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
@@ -17,6 +18,7 @@ import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.typedarrays.shared.ArrayBuffer;
@@ -60,11 +62,13 @@ abstract class Model303AEAT extends Model303Base {
 	private boolean checkingDataResponse;
 	private boolean checkingAEAT;
 	
+	protected AonTextBox receiptBox;
+
 	private DeckLayoutPanel deckLayoutPanel;
 	private SimpleLayoutPanel aeatPanel;
 	private SimpleLayoutPanel pdfViewerPanel;
 	private FullViewer pdfViewer = new FullViewer();
-	
+
 	private AonLink modelInfoLinklink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconLink(), "Informaci\u00F3n de procedimiento del modelo 303 en la Agencia Tributaria.");
 	private AonLink validateLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconValid(), "Validar / Borrador PDF via AEAT");
 	private AonLink downloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n");
@@ -151,13 +155,26 @@ abstract class Model303AEAT extends Model303Base {
 	}
 	
 	@Override
+	protected void decorateDeclarationTab() {
+		if (receiptBox != null) {
+			receiptBox.setValue( getMod303().getNumber() );
+		}
+	}
+
+	@Override
 	protected void decorateAdministrationTab() {
 		modelInfoLinklink.setVisible(true);
 		validateLink.setVisible( getMod303().isFinished() );
 		downloadLink.setVisible( getMod303().isFinished() );
-		sendLink.setVisible( getMod303().isFinished() );
-		checkLink.setVisible( getMod303().isSent() && AonStringUtils.isNotBlank(getMod303().getNumber()) ); 
-		viewDocumentLink.setVisible( getMod303().isSent() ); 
+		if ((getMod303().getYear() > 2021)  || (getMod303().getYear() == 2021 && getMod303().getPeriod().isLastSemester())) {
+			sendLink.setVisible( getMod303().isFinished() );
+			checkLink.setVisible( getMod303().isSent() && AonStringUtils.isNotBlank(getMod303().getNumber()) ); 
+			viewDocumentLink.setVisible( getMod303().isSent() ); 
+		} else {
+			sendLink.setVisible( false );
+			checkLink.setVisible( false  ); 
+			viewDocumentLink.setVisible( false  ); 
+		}
 	}
 
 	private void downloadFile() {
@@ -189,13 +206,11 @@ abstract class Model303AEAT extends Model303Base {
 			} else if (!getMod303().isFinished()) {
 				getCallback().showError(AON.MSG.mustFinishModel());	
 			} else {
-				boolean showNRC = getMod303().isStrictToDeposit();
-				String doc = getCallback().getOptions().getAonData().getCertificateDocument();
-				String name = getCallback().getOptions().getAonData().getCertificateName();
 				AonCertificationPopupParams params = new AonCertificationPopupParams()
-						.setDocument(doc)
-						.setName(name)
-						.setShowNRC(showNRC)
+						.setDocument(getCallback().getOptions().getAonData().getCertificateDocument())
+						.setName(getCallback().getOptions().getAonData().getCertificateName())
+						.setTestEnvironment(getCallback().getOptions().getAonData().isTestEnvironment())
+						.setShowNRC(getMod303().isStrictToDeposit())
 						.setInfoMessage("Va a proceder a la presentaci\u00F3n del Modelo 303.");
 				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
 					
@@ -241,12 +256,12 @@ abstract class Model303AEAT extends Model303Base {
 				ArrayBuffer buff = xhreq.getResponseArrayBuffer();
 				String contentTypeHeader = xhreq.getResponseHeader( AonHttpUtils.CONTENT_TYPE);
 				if (AonStringUtils.equals(MimeType.PDF.getName(), contentTypeHeader)) {
-					Model303.service.getMod303(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), getCallback().getOptions().getDomain(), 
+					Model303.service.getMod303(getCallback().getOptions().getOccam(), 
 							getMod303().getId(), new AsyncCallback<Mod303>() {
 						@Override
 						public void onSuccess(Mod303 selected) {
 							selectAndPopulate(selected);
-							showPDF( buff.toString() );
+							Scheduler.get().scheduleDeferred(() -> showPDF( buff.toString() ));
 						}
 						@Override
 						public void onFailure(Throwable caught) {
@@ -461,11 +476,5 @@ abstract class Model303AEAT extends Model303Base {
 		}
 	}
 	
-	@Override
-	protected void styleStatusLabel(Mod303 mod) {
-		super.styleStatusLabel(mod);
-		cleanViewers();
-	}
-
 	
 }

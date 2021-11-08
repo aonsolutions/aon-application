@@ -72,7 +72,7 @@ class Model303Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 		
 		container.clear();
 		container.add(getTable());
-		Model303.service.getMod303s(cbk.getOptions().getDomainName(), cbk.getOptions().getUser(), cbk.getOptions().getDomain(),
+		Model303.service.getMod303s(cbk.getOptions().getOccam(),
 				new AsyncCallback<LinkedList<Mod303>>() {
 					@Override
 					public void onSuccess(LinkedList<Mod303> result) {

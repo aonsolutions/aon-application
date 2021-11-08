@@ -29,6 +29,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		private String name;
 		private String document;
 		private boolean showNRC;
+		private boolean testEnvironment;
 		private String infoMessage;
 		
 		public String getName() {
@@ -52,6 +53,14 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		}
 		public AonCertificationPopupParams setShowNRC(boolean showNRC) {
 			this.showNRC = showNRC;
+			return this;
+		}
+		
+		public boolean isTestEnvironment() {
+			return testEnvironment;
+		}
+		public AonCertificationPopupParams setTestEnvironment(boolean testEnvironment) {
+			this.testEnvironment = testEnvironment;
 			return this;
 		}
 		
@@ -89,7 +98,8 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		FlowPanel rootPanel = new FlowPanel();  
 		
 		if (AonStringUtils.isNotBlank( params.getInfoMessage())) {
-			Label messageLabel = new Label( params.getInfoMessage() );
+			String msg = params.getInfoMessage() + (params.isTestEnvironment()?" [Entorno de pruebas]":" [AEAT]");
+			Label messageLabel = new Label( msg );
 			messageLabel.setStyleName(AON.CSS.aonMarginBottom());
 			messageLabel.addStyleName(AON.CSS.aonMarginTop());
 			messageLabel.addStyleName(AON.CSS.aonBlockCenter());

@@ -157,7 +157,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			comment.addValueChangeHandler(event1 -> {
 				mod303.setComments(event1.getValue());
 				styleCommentsButton();
-				Model303.service.saveComments( getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), mod303, new AsyncCallback<Mod303>() {
+				Model303.service.saveComments( getCallback().getOptions().getOccam(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						toast.hide();
@@ -242,6 +242,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected void selectAndPopulate( Mod303 mod303) {
 		select(mod303);
 		populate(mod303);
+		decorateDeclarationTab();
 		decorateAdministrationTab();
 	}
 	
@@ -514,7 +515,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				}
 				button.setTabIndex(-2); // NO FOCUS
 				button.addClickHandler( event  -> 
-					Model303.service.getInfo(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), getCallback().getOptions().getDomain(),
+					Model303.service.getInfo(getCallback().getOptions().getOccam(),
 							mod303,script, infoKey,new AsyncCallback<String>() {
 						
 						@Override
@@ -545,7 +546,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 	
 	public void calculateAndRefresh(AsyncCallback<Mod303> cbk) {
-		Model303.service.calculate(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), this.mod303,
+		Model303.service.calculate(getCallback().getOptions().getOccam(), this.mod303,
 				new AsyncCallback<Mod303>() {
 
 					@Override
@@ -588,7 +589,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.service.save(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), this.mod303, new AsyncCallback<Mod303>() {
+		Model303.service.save(getCallback().getOptions().getOccam(), this.mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
@@ -613,7 +614,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 			@Override
 			public void onAccept() {
-				Model303.service.delete(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(),mod303, new AsyncCallback<Void>() {
+				Model303.service.delete(getCallback().getOptions().getOccam(),mod303, new AsyncCallback<Void>() {
 					@Override
 					public void onSuccess(Void result) {
 						deleteButton.setEnabled(true);
@@ -637,7 +638,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	private void onFinalize( ) {
 		markAsFinishedButton.setEnabled(false);
-		Model303.service.initializeForFinish(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(),mod303,
+		Model303.service.initializeForFinish(getCallback().getOptions().getOccam(),mod303,
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
@@ -681,7 +682,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.service.markAsCustomerCheck(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsCustomerCheck(getCallback().getOptions().getOccam(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
@@ -706,7 +707,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.service.markAsFinished(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsFinished(getCallback().getOptions().getOccam(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
@@ -750,7 +751,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		Model303.service.markAsPending(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsPending(getCallback().getOptions().getOccam(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
@@ -770,7 +771,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	
 	private void markAsSent() {
 		markAsSentButton.setEnabled(false);
-		Model303.service.markAsSent(getCallback().getOptions().getDomainName(), getCallback().getOptions().getUser(), mod303, new AsyncCallback<Mod303>() {
+		Model303.service.markAsSent(getCallback().getOptions().getOccam(), mod303, new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
 						selectAndPopulate(result);
@@ -1029,6 +1030,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			commentsButton.removeStyleName(AON.CSS.aonIconNoComments());
 		}
 		commentsButton.setTitle(mod303.getComments());
+	}
+	
+	protected void decorateDeclarationTab() {
+		// Redefine if needed
 	}
 
 	protected void decorateAdministrationTab() {

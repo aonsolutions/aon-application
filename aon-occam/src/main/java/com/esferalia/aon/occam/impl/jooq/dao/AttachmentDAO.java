@@ -28,6 +28,7 @@ import org.jooq.Record7;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectField;
 import org.jooq.SelectJoinStep;
+import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.jooq.tables.records.AuthAttachRecord;
 import com.esferalia.aon.jooq.tables.records.ContractAttachRecord;
@@ -186,6 +187,10 @@ public class AttachmentDAO {
 	public static Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
 		SelectJoinStep<Record> select = ctx.getDslContext().select(dataAttachWD).from(DATA_ATTACH);
 		if(withData) select = ctx.getDslContext().select().from(DATA_ATTACH);
+		System.out.println(
+				DATA_ATTACH_PROPERTIES.build(select, filter)
+				.getSQL(ParamType.INLINED)
+				);
 		return DATA_ATTACH_PROPERTIES.build(select, filter).fetchInto(DATA_ATTACH).stream().map(new FullDataAttachFiller());
 	}
 	

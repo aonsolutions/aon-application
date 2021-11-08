@@ -21,6 +21,7 @@ public class AonData implements Serializable {
 	private boolean customerCheckEnabled;
 	private String certificateDocument;
 	private String certificateName;
+	private boolean testEnvironment;
 	private String rootPanel;
 	
 	public User getUser() {
@@ -112,5 +113,14 @@ public class AonData implements Serializable {
 		this.certificateName= certificateName;
 		return this;
 	}
+	
+	public boolean isTestEnvironment() {
+		return testEnvironment;
+	}
+	public AonData setTestEnvironment(boolean testEnvironment) {
+		this.testEnvironment = testEnvironment;
+		return this;
+	}
+	
 	
 }

@@ -71,7 +71,7 @@ class Model303NewDeclarationPopup extends AonCustomDialog {
 		admonList.setEnabled(!reset);
 		admonList.addChangeHandler( event -> {
 			mod303.setAdministration( admonList.getValue() );
-			Model303.service.declarationChanged(callback.getOptions().getDomainName(), callback.getOptions().getUser(), callback.getOptions().getDomain(),mod303,
+			Model303.service.declarationChanged(callback.getOptions().getOccam(),mod303,
 					new AsyncCallback<Mod303>() {
 						@Override
 						public void onSuccess(Mod303 result) {

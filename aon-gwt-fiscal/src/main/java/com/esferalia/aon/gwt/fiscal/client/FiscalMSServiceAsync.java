@@ -6,9 +6,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FiscalMSServiceAsync {
@@ -23,6 +21,6 @@ public interface FiscalMSServiceAsync {
 	void getAonData(String domainName, Integer domainId, String user, AsyncCallback<AonData> callback);
 	void getAonDataToken(String domainName, Integer domainId, String token, AsyncCallback<AonData> callback);
 //	void presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id, AsyncCallback<Integer> callback);
-	void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model, AsyncCallback<Void> callback) throws AonCoreException;
+//	void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model, AsyncCallback<Void> callback) throws AonCoreException;
 
 }

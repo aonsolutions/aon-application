@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
@@ -32,8 +34,12 @@ public class Mod303File extends HttpServlet {
 			int id = Integer.parseInt(req.getParameter("mod303"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			String user = req.getParameter("user"); 
-			Mod303 mod303 = FISCAL.getMod303(domainName, domainId, user ,id);
+			String user = req.getParameter("user");
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(user);
+			Mod303 mod303 = MODEL303.getMod303(occam,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
