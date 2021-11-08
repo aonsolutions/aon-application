@@ -33,6 +33,8 @@ export const AVAILABLE = 'Disponible';
 
 export const BACK = 'Endarrere';
 export const BACKGROUND_ADJUST = 'Ajustar Fons';
+export const BANK = 'Banc';
+export const BANKS = 'Bancs';
 export const BARCODE = 'Codi de Barres';
 export const BASE = 'Base';
 export const BASQUE = 'Euskera';
