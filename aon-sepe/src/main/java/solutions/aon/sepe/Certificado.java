@@ -3,6 +3,7 @@ package solutions.aon.sepe;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -30,6 +31,8 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Certificado {
 
+	private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
+	
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String nif, Date fecha) throws SepeException {
 			try {

@@ -33,6 +33,8 @@ export const AVAILABLE = 'Eskuragai';
 
 export const BACK = 'Atzera';
 export const BACKGROUND_ADJUST = 'Atzealdea Estutu';
+export const BANK = 'Bankua';
+export const BANKS = 'Bankuak';
 export const BARCODE = 'Barra-kodea';
 export const BASE = 'Oinarria';
 export const BASQUE = 'Euskara';

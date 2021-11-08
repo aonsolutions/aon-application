@@ -67,7 +67,8 @@ export const AVERAGE = "Media";// TODO
 
 export const BACK = MSG.BACK;
 export const BACKGROUND_ADJUST = MSG.BACKGROUND_ADJUST;
-export const BANK = 'Banco'; // TODO
+export const BANK = MSG.BANK;
+export const BANKS = MSG.BANKS;
 export const BANK_ACCOUNT = 'Cuenta Bancaria';// TODO
 export const BANK_ACCOUNTS = 'Cuentas Bancarias';
 export const BANK_DATA = 'Datos Bancarios';// TODO

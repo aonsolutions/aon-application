@@ -33,6 +33,8 @@ export const AVAILABLE = 'Available';
 
 export const BACK = 'Back';
 export const BACKGROUND_ADJUST = 'Background Adjust';
+export const BANK = 'Bank';
+export const BANKS = 'Banks';
 export const BARCODE = 'Barcode';
 export const BASE = 'Base';
 export const BASQUE = 'Basque';

@@ -235,8 +235,12 @@ public class UserServlet extends AonApiHttpServlet {
 		} else {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
 			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
-				(f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId())))
+				f.getDomainProperty().eq(api.getDomain().getId())
 				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
+			if(user == null || user.getId() == null)
+				user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+					f.getDomainProperty().eq(api.getDomain().getParentId())
+					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 		}
 		JSONObject json = new JSONObject();
 		json.put("id",user.getId());

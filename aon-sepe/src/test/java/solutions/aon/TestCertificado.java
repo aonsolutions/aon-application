@@ -61,8 +61,8 @@ public class TestCertificado {
 			.setfAEd(new Date("2021/01/01"))
 			.setfSTd(new Date("2021/09/05"))
 			.setDaysCtzVc(1)
-			.setBcccVc("0.0")
-			.setBcdVc("0.0");
+			.setBcccVc(0.00)
+			.setBcdVc(0.00);
 			
 			List<Map<String, String>> dataCtz = new ArrayList<Map<String, String>>();
 
@@ -115,9 +115,9 @@ public class TestCertificado {
 		.setfAEd(new Date("2020/01/01"))
 		.setfSTd(new Date())
 		.setDaysCtzVc(30)
-		.setBcccVc("000001200")
+		.setBcccVc(1200.00)
 		.setQuoteData(quoteDatas)
-		.setBcdVc("000001200");
+		.setBcdVc(1200.00);
 		
 		Certificates certificate = bd.build();
 

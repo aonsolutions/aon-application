@@ -140,10 +140,10 @@ export class AonConfiguration extends AonElement {
       }
 
       aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
+    }
 
-      let appOptions = []; 
-
-
+    let appOptions = [];
+    if(this.dur.isInvoice()) {
       appOptions.push({
         name: INVOICE.title,
         aonIcon: {
@@ -151,10 +151,10 @@ export class AonConfiguration extends AonElement {
           color: INVOICE.color
         },
         fn: () => this.buildInvoiceConfiguration(),
-      });
-
-      aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
+      });  
     }
+
+    aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
 
     this.buildPersonal();
   }

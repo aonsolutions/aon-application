@@ -13,6 +13,8 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
 import { AonGraphicsTrial } from './aon-graphics-trial.js';
 import Apps from '../../services/app.js';
 
+import * as GWT from '../../gwt/gwt.js';
+
 export class AonAccounting extends AonElement {
 
 	dur;
@@ -50,7 +52,15 @@ export class AonAccounting extends AonElement {
 			name: 'Pérdidas y Ganancias',
 			icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
 			fn: () => this.aonGraphicsTrialView ()
-		},];
+		}];
+		if(this.dur.isBank())
+			options.push({
+				id: 'banks',
+				name: MSG.BANKS,
+				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
+				fn: () => GWT.load(GWT.CHECKIT, this.getApplication().CONTENT)
+			});
+
 		application.addSidenavOptions(MSG.ACCOUNTING, options);
 
 
