@@ -31,7 +31,7 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Certificado {
 
-	private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
+	private static DecimalFormat decimalFormat = new DecimalFormat("#00.00");
 	
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String nif, Date fecha) throws SepeException {
