@@ -35,7 +35,6 @@ import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags
 import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags.TAX_PERCENTAGE;
 import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags.TAX_QUOTE;
 import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags.TAX_TYPE;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
@@ -45,6 +44,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -67,9 +67,11 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -502,17 +504,42 @@ public class InvoiceTest {
 			CompanyFull company = new CompanyFull();
 			LinkedList<RegistryMedia> rmediaList = new LinkedList<RegistryMedia>();
 			rmediaList.add(new RegistryMedia()
-					.setMedia(com.esferalia.aon.occam.api.model.type.MediaType.FIXED_PHONE)
+					.setMedia(MediaType.FIXED_PHONE)
 					.setValue("699969633"));
+			
+//			rmediaList.add(new RegistryMedia()
+//					.setMedia(MediaType.FIXED_PHONE)
+//					.setValue("888888888"));
+			
+//			rmediaList.add(new RegistryMedia()
+//					.setMedia(MediaType.FIXED_PHONE)
+//					.setValue("777777777"));
+			
+//			rmediaList.add(new RegistryMedia()
+//					.setMedia(MediaType.FIXED_PHONE)
+//					.setValue("666666666"));
+//			
+//			rmediaList.add(new RegistryMedia()
+//					.setMedia(MediaType.FIXED_PHONE)
+//					.setValue("555555555"));
+			
 			rmediaList.add(new RegistryMedia()
-					.setMedia(com.esferalia.aon.occam.api.model.type.MediaType.EMAIL)
+					.setMedia(MediaType.EMAIL)
 					.setValue("karyuu_no_tekken@fairytail.jp"));
+//			rmediaList.add(new RegistryMedia()
+//					.setMedia(MediaType.WEB)
+//					.setValue("https://www.mazda.com"));
+
 			rmediaList.add(new RegistryMedia()
-					.setMedia(com.esferalia.aon.occam.api.model.type.MediaType.WEB)
-					.setValue("https://www.mazda.com/"));
+					.setMedia(MediaType.WEB)
+					.setValue("https://www.google.es"));
+//			
+//			rmediaList.add(new RegistryMedia()
+//					.setMedia(MediaType.WEB)
+//					.setValue("https://www.youtube.com"));
 			
 			Company registry = new Company();
-			registry.setName("COMPAÑÍA FALSA S.L.").setDocument("L012345678");
+			registry.setName("COMPAÑÍA FALSA PERO MUY FALSA EH XD S.L.").setDocument("L012345678");
 			
 			LinkedList<RegistryAddress> addressList = new LinkedList<>();
 			addressList.add(new RegistryAddress().setAddress("Rey Don Sancho, Rey Don Sancho, no digas que no te aviso, pero, de dentro de Zamora un alevoso ha salido"));
@@ -528,6 +555,16 @@ public class InvoiceTest {
 			company.setAddresses(addressList);
 			company.setMedias(rmediaList);
 			company.setRegistry(registry);
+			
+			ArrayList<RecordData> rdl = new ArrayList<RecordData>(1);
+			rdl.add(new RecordData()
+					.setRegistration("Inscrito en el registro mercantil de Algún Lugar")
+					.setVolume("1234")
+					.setPage("12345")
+					.setSheet("9012")
+					.setRecordDate(new Date()));
+			company.setRecordDatas(rdl);
+			
 			
 			
 			InputStream logoStream = InvoiceTest.class.getResourceAsStream("matsuda.png");

@@ -44,9 +44,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
@@ -67,6 +72,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.MediaType;
@@ -76,7 +82,7 @@ public class InvoiceTemplate {
 	
 	public static final int MIN_HEADER_FOR_LOGO = 80;
 	public static final int MAX_LOGO_HEIGHT = 55;
-	public static final int MIN_FOOTER = 15;
+	public static final int MIN_FOOTER = 30;
 	
 	OutputStream filename;
 	float		 height;
@@ -134,12 +140,160 @@ public class InvoiceTemplate {
 			template.drawBottomInfo(doc, invoice);
 			
 			template.contents.close();
-			template.drawPageNums(doc);				
+			template.drawFooter(doc, company);				
 			doc.save(template.filename);
 			new OutputStreamWriter(os,StandardCharsets.ISO_8859_1);
 		} catch (Exception e)
 		{
 			throw new CanNotCreatePdfException(e);
+		}
+	}
+	
+	private void drawFooter(PDDocument doc, CompanyFull company) throws IOException {
+		
+		RecordData recordData = company.getRecordDatas() != null && !company.getRecordDatas().isEmpty() ? company.getRecordDatas().get(0) : null;
+		Company reg = company.getRegistry();
+		String companyName = "", registration = "", tomo = "", folio = "", hoja = "", fechaRegistro = "", nif = "";
+		String registrationString = "";
+		if (recordData != null) {
+			companyName = AonStringUtils.trimToEmpty(reg != null ? reg.getName() : "");
+			registration = AonStringUtils.trimToEmpty(recordData.getRegistration());
+			tomo = AonStringUtils.trimToEmpty(recordData.getVolume());
+			folio = AonStringUtils.trimToEmpty(recordData.getPage());
+			hoja = AonStringUtils.trimToEmpty(recordData.getSheet());
+			Date registryDate = recordData.getRecordDate();
+			fechaRegistro = registryDate != null ? new SimpleDateFormat("dd/MM/yyyy").format(registryDate) : "";
+			nif = AonStringUtils.trimToEmpty(reg != null ? reg.getDocument() : "");
+			
+			registrationString = 
+					(!AonStringUtils.isEmpty(registration) ? registration: "") +
+					(!AonStringUtils.isEmpty(tomo)			? "  Tomo: "		+ tomo			: "") +
+					(!AonStringUtils.isEmpty(folio)			? "  Folio: "		+ folio			: "") +
+					(!AonStringUtils.isEmpty(hoja)			? "  Hoja: "		+ hoja			: "") +
+					(!AonStringUtils.isEmpty(fechaRegistro)	? "  F.registro: "	+ fechaRegistro	: "");
+			
+		}
+		
+		String fullStr = "";
+		String webStr = "";
+		String phoneStr = "";
+		String emailStr = "";
+		String mediaStr = "";
+		
+		if (company.getMedias() != null && !company.getMedias().isEmpty()) {
+			LinkedList<RegistryMedia> medias = company.getMedias();
+			
+			List<RegistryMedia> webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && m.getMedia().equals(MediaType.WEB)).collect(Collectors.toList());
+			if (!webMedias.isEmpty()) {
+				webStr = "Web: ";
+				StringBuilder sb = new StringBuilder(webStr);
+				for(RegistryMedia m : webMedias) {
+					if (!sb.toString().equals("Web: "))
+						sb.append(" | ");
+					sb.append(m.getValue());
+					if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
+						webStr = sb.toString();
+					}
+				}
+				fullStr = sb.toString();
+			}
+
+			webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && (m.getMedia().equals(MediaType.FIXED_PHONE) || m.getMedia().equals(MediaType.CELLULAR))).collect(Collectors.toList());
+			if (!webMedias.isEmpty()) {
+				phoneStr = "Teléfono/s: ";
+				StringBuilder sb = new StringBuilder(phoneStr);
+				for(RegistryMedia m : webMedias) {
+					if (!sb.toString().equals("Teléfono/s: "))
+						sb.append(" | ");
+					sb.append(m.getValue());
+					if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
+						phoneStr = sb.toString();
+					}
+				}
+				fullStr += (!fullStr.isEmpty() ? "    " : "") + sb.toString();
+			}
+			
+			webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && (m.getMedia().equals(MediaType.EMAIL) || m.getMedia().equals(MediaType.CELLULAR))).collect(Collectors.toList());
+			if (!webMedias.isEmpty()) {
+				emailStr = "Email: ";
+				StringBuilder sb = new StringBuilder(emailStr);
+				for(RegistryMedia m : webMedias) {
+					if (!sb.toString().equals("Email: "))
+						sb.append(" | ");
+					sb.append(m.getValue());
+					if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
+						emailStr = sb.toString();
+					}
+				}
+				fullStr += (!fullStr.isEmpty() ? "    " : "") + sb.toString();
+			}
+			mediaStr = webStr + "    " + phoneStr + "    " + emailStr;
+		}
+		
+		for (int i=0; i<this.pageNumber; i++) {
+			contents = new PDPageContentStream(doc, doc.getPage(i), PDPageContentStream.AppendMode.APPEND, true);
+			
+			if (company.getMedias() != null && !company.getMedias().isEmpty()) {
+				
+				if ((HELVETICA.getStringWidth(fullStr) / 1000.0f * 7) < 575) {
+					mediaStr = fullStr;
+				}
+				
+				drawText(contents
+						, mediaStr
+						, 10f
+						, 20f
+						, BLACK
+						, HELVETICA
+						, 7);
+				
+			}
+			
+			PDFToolkit.drawBox(contents, 10, 15, 575, 1, PdfColors.GRAY);
+			
+			String page = "Pag. " + (i+1) + " de " + pageNumber;
+			
+			float pageNumWidth = HELVETICA.getStringWidth(page) / 1000f * 9;
+			float pageNumInitX = 585 - pageNumWidth;
+			
+			float registrationStrWidth = HELVETICA.getStringWidth(registrationString) / 1000.0f * 7;
+			float initRegistrationX = pageNumInitX - 5 - registrationStrWidth;
+			
+			drawTextRight(contents
+					, new PDRectangle(570, 5, 15, 15)
+					, page
+					, BLACK
+					, HELVETICA
+					, 9
+					, 0
+					, 0);
+			
+			drawText(contents
+					, registrationString
+					, 10f
+					, 5f
+					, BLACK
+					, HELVETICA
+					, 7);
+			
+//			drawText(contents
+//					, croppedString(companyName, initRegistrationX - 15 , HELVETICA, 7)
+//					, 10f
+//					, 5f
+//					, BLACK
+//					, HELVETICA
+//					, 7);
+//			
+//			drawTextRight(contents
+//					, new PDRectangle(initRegistrationX, 5, registrationStrWidth, 15)
+//					, registrationString
+//					, BLACK
+//					, HELVETICA
+//					, 7
+//					, 0
+//					, 0);
+//			
+			contents.close();
 		}
 	}
 	
@@ -149,6 +303,18 @@ public class InvoiceTemplate {
 			drawPageNumber(i+1);
 			contents.close();
 		}
+	}
+	
+	//DRAW PAGE NUMBER
+	private void drawPageNumber(int num) throws IOException {
+		drawTextRight(contents
+				, new PDRectangle(570, 5, 15, 15)
+				, "Pag. " + num + " de " + pageNumber
+				, BLACK
+				, HELVETICA
+				, 9
+				, 0
+				, 0);
 	}
 
 	// DRAW PAGE
@@ -388,7 +554,7 @@ public class InvoiceTemplate {
 			
 			web = "";
 			if (company.getMedias() != null && !company.getMedias().isEmpty()) {
-				web = company.getMedias().stream().filter(m -> m.getMedia() == MediaType.WEB).map(RegistryMedia::getValue).findFirst().orElse("");			
+				web = company.getMedias().stream().filter(m -> m.getValue() != null && !m.getValue().isEmpty() && m.getMedia() == MediaType.WEB).map(RegistryMedia::getValue).findFirst().orElse("");			
 			}
 			
 			tempY -= 10;
@@ -472,7 +638,7 @@ public class InvoiceTemplate {
 		drawText(contents, str, x, y, BLACK, HELVETICA_BOLD, 12, REGISTRY_NAME);
 		y -= 15;
 		
-		if(invoice.getRegistryAddressData() != null) {
+		if (invoice.getRegistryAddressData() != null) {
 			RegistryAddress address = invoice.getRegistryAddressData();
 			str = safeString(address.getFullAddress());
 			str = croppedString(str, 230, HELVETICA, 9);
@@ -541,18 +707,6 @@ public class InvoiceTemplate {
 
 		drawTaxes(invoice);
 		drawFinances(invoice);
-	}
-	
-	//DRAW PAGE NUMBER
-	private void drawPageNumber(int num) throws IOException {
-		drawTextRight(contents
-				, new PDRectangle(570, 5, 15, 15)
-				, "Pag. " + num + " de " + pageNumber
-				, BLACK
-				, HELVETICA
-				, 9
-				, 0
-				, 0);
 	}
 
 	// DRAW TAXES
