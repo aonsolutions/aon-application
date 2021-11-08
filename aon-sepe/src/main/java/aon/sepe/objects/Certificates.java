@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Certificates {
 
@@ -27,8 +28,8 @@ public class Certificates {
 	private Date fSTd; // Fecha de suspensión o extinción
 	//data vacation
 	private Integer daysCtzVc; // Dias cotizados vacaciones
-	private String bcccVc; // Base cotizacion vacaciones 0.00
-	private String bcdVc; // 0.00
+	private Double bcccVc; // Base cotizacion vacaciones 0.00
+	private Double bcdVc; // 0.00
 
 	private List<QuoteData> quoteData;
 	
@@ -113,13 +114,13 @@ public class Certificates {
 	public Integer getDaysCtzVc() {
 		return daysCtzVc;
 	}
-
-	public String getBcccVc() {
-		return bcccVc;
+	
+	public Optional<Double> getBcccVc() {
+		return Optional.ofNullable(bcccVc);
 	}
-
-	public String getBcdVc() {
-		return bcdVc;
+	
+	public Optional<Double> getBcdVc() {
+		return Optional.ofNullable(bcdVc);
 	}
 	
 	public List<QuoteData> getQuoteData() {
@@ -134,7 +135,7 @@ public class Certificates {
 				",\n\tipfManager=" + ipfManager + 
 				",\n\tnameManager=" + nameManager + 
 				",\n\tsurnameManager=" + surnameManager + 
-				",\n\t lastSurnameManager=" + lastSurnameManager + 
+				",\n\tlastSurnameManager=" + lastSurnameManager + 
 				",\n\tcargoManager=" + cargoManager + 
 				",\n\ttypeContract=" + typeContract + 
 				",\n\tgz=" + gz + 
@@ -175,8 +176,8 @@ public class Certificates {
 		private Date fSTd; // fecha de extension 
 		//data vacation
 		private Integer daysCtzVc;
-		private String bcccVc;
-		private String bcdVc;
+		private Double bcccVc;
+		private Double bcdVc;
 		private Integer durationContract;
 		private List<QuoteData> quoteData;
 		
@@ -287,12 +288,12 @@ public class Certificates {
 		}
 
 
-		public CertificatesBuilder setBcccVc(String bcccVc) {
+		public CertificatesBuilder setBcccVc(Double bcccVc) {
 			this.bcccVc = bcccVc;
 			return this;
 		}
 
-		public CertificatesBuilder setBcdVc(String bcdVc) {
+		public CertificatesBuilder setBcdVc(Double bcdVc) {
 			this.bcdVc = bcdVc;
 			return this;
 		}

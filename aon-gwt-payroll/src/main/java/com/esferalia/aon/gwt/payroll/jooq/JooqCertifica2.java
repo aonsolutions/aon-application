@@ -628,8 +628,8 @@ public class JooqCertifica2 {
 			.setfAEd(startDate)
 			.setfSTd(endDate)
 			.setDaysCtzVc(settlementCertifica2Info.getQuotedDays())
-			.setBcccVc(settlementCertifica2Info.getBase_cgc()+"")
-			.setBcdVc(settlementCertifica2Info.getBase_unemployment()+"");
+			.setBcccVc(settlementCertifica2Info.getBase_cgc())
+			.setBcdVc(settlementCertifica2Info.getBase_unemployment());
 		
 		List<QuoteData> quoteDatas = new ArrayList<>();
 		

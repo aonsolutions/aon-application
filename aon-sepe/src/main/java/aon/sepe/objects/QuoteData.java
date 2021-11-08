@@ -39,8 +39,8 @@ public class QuoteData {
 		return this;
 	}
 	
-	public Optional<String> getBccc() {
-		return Optional.ofNullable(bccc.toString().replace(".", ","));
+	public Optional<Double> getBccc() {
+		return Optional.ofNullable(bccc);
 	}
 	
 	public QuoteData setBccc(Double bccc) {
@@ -48,8 +48,8 @@ public class QuoteData {
 		return this;
 	}
 	
-	public Optional<String> getBcd() {
-		return Optional.ofNullable(bcd.toString().replace(".", ","));
+	public Optional<Double> getBcd() {
+		return Optional.ofNullable(bcd);
 	}
 	
 	public QuoteData setBcd(Double bcd) {
