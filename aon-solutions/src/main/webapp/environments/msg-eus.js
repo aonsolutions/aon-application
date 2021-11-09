@@ -100,6 +100,7 @@ export const DELETE_TAX = 'Zerga Ezabatu';
 export const DELETED_DATA = 'Datuak zuzen ezabatu dira';
 export const DESCRIPTION = 'Deskribapena';
 export const DETAILED = 'Xehatua';
+export const DEUTSCH = 'Alemana';
 export const DOCUMENT = 'Dokumentua';
 export const DOCUMENTS = 'Dokumentuak';
 export const DOCUMENTARY = 'Dokumentala';

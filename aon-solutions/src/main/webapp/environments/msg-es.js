@@ -101,6 +101,7 @@ export const DELETE_TAX = 'Borrar Impuesto';
 export const DELETED_DATA = "Los datos se han eliminado correctamente";
 export const DESCRIPTION = 'Descripción';
 export const DETAILED = 'Detallado';
+export const DEUTSCH = 'Alemán';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
 export const DOCUMENTARY = 'Documental';

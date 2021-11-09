@@ -83,28 +83,32 @@ public class InvoiceTemplate {
 	public static final int MIN_FOOTER = 30;
 	
 	OutputStream filename;
-	float		 height;
-	float		 top;
-	float		 bottom;
-	float		 x;
-	float		 y;
-	float		 topInfoHeight	  = 140;
-	float		 bottomInfoHeight = 140;
-	float		 limit;
+	float height;
+	float top;
+	float bottom;
+	float x;
+	float y;
+	float topInfoHeight	  = 140;
+	float bottomInfoHeight = 140;
+	float limit;
 
 	byte[] background;
 	byte[] qrCode;
 
-	boolean				adapt;
+	boolean adapt;
 	PDPageContentStream	contents;
 	int pageNumber;
-
+	InvoiceTemplateMsg msg;
+	PrintInvoiceConfiguration config;
+	
 	// THE PDF DOCUMENT
 	public static void create(OutputStream os, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] qrCode, byte[] logo) throws IOException, CanNotCreatePdfException {
 		try (PDDocument doc = new PDDocument())
 		{
 			InvoiceTemplate template = new InvoiceTemplate();
 			template.pageNumber = 0;
+			template.msg = new InvoiceTemplateMsg(config.getLanguage());
+			template.config = config;
 
 			if (os != null)
 				template.filename = os;
@@ -130,7 +134,7 @@ public class InvoiceTemplate {
 			template.contents = template.drawPage(doc, company, invoice, config, logo);
 			template.y		  = template.height - template.top - template.topInfoHeight - 5;
 
-			if (config.isDetailed() != null && config.isDetailed())
+			if (config.isDetailed())
 				template.drawDetailedEntries(doc, company, invoice, config, logo);
 			else
 				template.drawSimplifiedEntries(doc, company, invoice, config, logo);
@@ -153,7 +157,7 @@ public class InvoiceTemplate {
 			Company reg = company.getRegistry();
 			String companyName = "", registration = "", tomo = "", folio = "", hoja = "", fechaRegistro = "", nif = "";
 			String registrationString = "";
-			if (recordData != null) {
+			if (recordData != null && getConfig().isRecordData()) {
 				companyName = AonStringUtils.trimToEmpty(reg != null ? reg.getName() : "");
 				registration = AonStringUtils.trimToEmpty(recordData.getRegistration());
 				tomo = AonStringUtils.trimToEmpty(recordData.getVolume());
@@ -178,7 +182,7 @@ public class InvoiceTemplate {
 			String emailStr = "";
 			String mediaStr = "";
 			
-			if (company.getMedias() != null && !company.getMedias().isEmpty()) {
+			if (company.getMedias() != null && !company.getMedias().isEmpty() && getConfig().isContactData()) {
 				LinkedList<RegistryMedia> medias = company.getMedias();
 			
 				List<RegistryMedia> webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && m.getMedia().equals(MediaType.WEB)).collect(Collectors.toList());
@@ -340,7 +344,7 @@ public class InvoiceTemplate {
 
 		drawTopInfo(doc, config, invoice, company, logo);
 
-		if (config.isDetailed() != null && config.isDetailed())
+		if (config.isDetailed())
 			drawDetailedHeader();
 		else
 			drawSimpleHeader();
@@ -602,16 +606,16 @@ public class InvoiceTemplate {
 			PDFToolkit.drawResizedLogo(doc, doc.getPage(pageNumber - 1), contents, logo, logoX, logoY, maxHeight, maxWidth, web);
 		}
 		
-		drawText(contents, "FACTURA", x, y, BLACK, HELVETICA_BOLD, 16);
+		drawText(contents, getMsg().invoice().toUpperCase(), x, y, BLACK, HELVETICA_BOLD, 16);
 		y -= 30;
 
-		drawText(contents, "Número: " + safeString(invoice.getReferenceCode()), x, y, BLACK, HELVETICA, 11,REFERENCE_NUMBER);
+		drawText(contents, getMsg().number() + ": " + safeString(invoice.getReferenceCode()), x, y, BLACK, HELVETICA, 11,REFERENCE_NUMBER);
 		y -= 4;
 
 		drawBox(contents, x, y, 200, .5f, BLACK);
 		y -= 16;
 
-		drawText(contents, "Fecha: " + formatDate(invoice.getIssueDate(), "dd/MM/yyyy").orElse(""), x, y,BLACK, HELVETICA, 11 , INVOICE_DATE);
+		drawText(contents, getMsg().date() + ": " + formatDate(invoice.getIssueDate(), "dd/MM/yyyy").orElse(""), x, y,BLACK, HELVETICA, 11 , INVOICE_DATE);
 
 		y -= 4;
 
@@ -665,15 +669,15 @@ public class InvoiceTemplate {
 		x  = 50;
 
 		drawBox(contents, x, y, 249, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 249, 15), "Descripci" + "\u00F3" + "n", WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawTextCenter(contents, new PDRectangle(x, y, 249, 15), getMsg().description(), WHITE, HELVETICA_BOLD, 9, 4.5f);
 		x += 250;
 
 		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), "Cantidad", WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), getMsg().quantity(), WHITE, HELVETICA_BOLD, 9, 4.5f);
 		x += 70;
 
 		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), "Precio", WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), getMsg().price(), WHITE, HELVETICA_BOLD, 9, 4.5f);
 		x += 70;
 
 		drawBox(contents, x, y, 39, 15, BLACK);
@@ -681,7 +685,7 @@ public class InvoiceTemplate {
 		x += 40;
 
 		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15), "Importe", WHITE, HELVETICA_BOLD, 9, 5, 4.5f);
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), WHITE, HELVETICA_BOLD, 9, 5, 4.5f);
 	}
 
 	// DRAW SIMPLE HEADER
@@ -689,11 +693,11 @@ public class InvoiceTemplate {
 		y -= 60;
 		x  = 50;
 		drawBox(contents, x, y, 429, 15, BLACK);
-		drawText(contents, "Descripci" + "\u00F3" + "n", x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
+		drawText(contents, getMsg().description(), x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
 		x += 430;
 
 		drawBox(contents, x, y, 69, 15, BLACK);
-		drawText(contents, "Importe", x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
+		drawText(contents, getMsg().amount(), x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
 	}
 
 	// DRAW BOTTOM INFO
@@ -713,7 +717,7 @@ public class InvoiceTemplate {
 		y = bottom + 107;
 
 		drawBox(contents, x, y, 79, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 79, 15), "Base", WHITE, HELVETICA, 9, 5, 4.5f);
+		drawTextRight(contents, new PDRectangle(x, y, 79, 15), getMsg().base(), WHITE, HELVETICA, 9, 5, 4.5f);
 		x += 80;
 
 		drawBox(contents, x, y, 79, 15, BLACK);
@@ -721,15 +725,15 @@ public class InvoiceTemplate {
 		x += 80;
 
 		drawBox(contents, x, y, 59, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 59, 15), "Tipo", WHITE, HELVETICA, 9, 4.5f);
+		drawTextCenter(contents, new PDRectangle(x, y, 59, 15), getMsg().type(), WHITE, HELVETICA, 9, 4.5f);
 		x += 60;
 		
 		drawBox(contents, x, y, 49, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 49, 15), "Cuota", WHITE, HELVETICA, 9, 5, 4.5f);
+		drawTextRight(contents, new PDRectangle(x, y, 49, 15), getMsg().quota(), WHITE, HELVETICA, 9, 5, 4.5f);
 		x += 50;
 
 		drawBox(contents, x, y, 99, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 99, 15), "Total factura", WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawTextCenter(contents, new PDRectangle(x, y, 99, 15), getMsg().totalInvoice(), WHITE, HELVETICA_BOLD, 9, 4.5f);
 
 		if (invoice.getBreakdown() != null){
 //			double sum = 0;
@@ -776,19 +780,19 @@ public class InvoiceTemplate {
 		y = bottom + 50;
 
 		drawBox(contents, x, y, 59, 15, BLACK);
-		drawText(contents, "Fecha", x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
+		drawText(contents, getMsg().date(), x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
 		x += 60;
 
 		drawBox(contents, x, y, 79, 15, BLACK);
-		drawText(contents, "Forma de pago", x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
+		drawText(contents, getMsg().payMethod(), x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
 		x += 80;
 
 		drawBox(contents, x, y, 159, 15, BLACK);
-		drawText(contents, "Cuenta Bancaria", x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
+		drawText(contents, getMsg().bankAccount(), x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
 		x += 160;
 
 		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15), "Importe", WHITE, HELVETICA, 9, 5, 4.5f);
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), WHITE, HELVETICA, 9, 5, 4.5f);
 
 
 		if(invoice.getFinances() != null) {
@@ -815,5 +819,12 @@ public class InvoiceTemplate {
 			}
 		}
 	}
+	
+	private InvoiceTemplateMsg getMsg() {	
+		return this.msg;
+	}
 
+	private PrintInvoiceConfiguration getConfig() {
+		return config;
+	}
 }

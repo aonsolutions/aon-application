@@ -76,6 +76,7 @@ public interface IJsonNames {
 	String CONFIDENTIAL = "confidential";
 	String CONFIGURED_VISIBLE = "configuredVisible";
 	String CONSOLIDATION = "consolidation";
+	String CONTACT_DATA = "contactData";
 	String CONTENT = "content";
 	String CONTENT_ENCODING = "contentEncoding";
 	String CONTENT_NAME = "contentName";
@@ -190,6 +191,7 @@ public interface IJsonNames {
 	String KEY = "key";
 	String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
+	String LANGUAGE = "language";
 	String LEDGER_ACCOUNT = "ledgerAccount";
 	String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
 	String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
@@ -294,6 +296,7 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[R] 
 	String RDOCUMENT = "rdocument";
 	String RECEIVER = "receiver";
+	String RECORD_DATA = "recordData";
 	String RECORD_DATE = "recordDate";
 	String RECTIFICATION = "rectification";
 	String RECTIFICATION_INVOICE = "rectification_invoice";
