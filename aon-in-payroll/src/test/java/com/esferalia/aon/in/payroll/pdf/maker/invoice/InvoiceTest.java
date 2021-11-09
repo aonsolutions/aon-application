@@ -500,6 +500,7 @@ public class InvoiceTest {
 			config.setAdjustImage(true);
 			config.setHeader(50);
 			config.setFooter(0);
+			config.setCompany(true);
 			
 			CompanyFull company = new CompanyFull();
 			LinkedList<RegistryMedia> rmediaList = new LinkedList<RegistryMedia>();
