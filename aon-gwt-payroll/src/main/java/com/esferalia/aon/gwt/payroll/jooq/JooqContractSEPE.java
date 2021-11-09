@@ -72,7 +72,7 @@ public class JooqContractSEPE {
 		Result<Record> contractAttachRecords = dslContext.select().from(CONTRACT_ATTACH)
 			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 			.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
-			.orderBy(CONTRACT_ATTACH.ATTACH_DATE.desc())
+			.orderBy(CONTRACT_ATTACH.ID.desc())
 			.fetch();
 		
 		if(null == contractAttachRecords || contractAttachRecords.isEmpty())
