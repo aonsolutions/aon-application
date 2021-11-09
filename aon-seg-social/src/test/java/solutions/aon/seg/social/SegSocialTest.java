@@ -11,6 +11,8 @@ import org.junit.BeforeClass;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public abstract class SegSocialTest {
+	public static final String PASSED = "PASSED - ";
+	
 	@BeforeClass
 	public static void notDown() {
 		testDisponibility("https://w2.seg-social.es/M/menuAFI-REMESAS.html");

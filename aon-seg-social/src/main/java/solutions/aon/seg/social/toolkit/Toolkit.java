@@ -968,6 +968,16 @@ public class Toolkit {
 		}
 		return null;
 	}
+	
+	public static String getCleanAttribute(String element, String attributeName) {
+		String raw = getAttribute(element, attributeName);
+		if (raw == null)
+			return null;
+		else
+			return Toolkit.removeWeirdCharacters(raw);
+	}
+	
+	
 
 	public static String goBackPdf(CloseableHttpClient httpClient, String link, String sessionId)
 			throws UnsupportedEncodingException, SegSocialException, IOException {

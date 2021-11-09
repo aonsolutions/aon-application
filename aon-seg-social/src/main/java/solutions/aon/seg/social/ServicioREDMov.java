@@ -1,5 +1,6 @@
 package solutions.aon.seg.social;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -140,6 +142,110 @@ public class ServicioREDMov extends ServicioREDRegeXML {
 				return extractNafXIpfInfo(xml);
 			} catch (SAXException e) {
 				throw new InvalidDataException(e.getMessage());
+			}
+		}
+	}
+	
+	public static byte[] getReportAffiliateInAlta(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regime, String ccc) throws SegSocialException, IOException {
+		
+		if (regime == null || regime.isEmpty()) {
+			throw new UnfilledMandatory("El régimen no debe quedar vacío");
+		} else if (ccc == null || ccc.isEmpty()) {
+			throw new UnfilledMandatory("El CCC no debe quedar vacío");			
+		}
+		
+		SSLContext sslContext = null;
+		
+		try {
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		String link = "";
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			
+			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR64&E=I&AP=AFIR");
+			link = Toolkit.getLink(body);
+			
+			HttpPost httpPost = new HttpPost(link);
+
+			String txtSDFTESO62 = Toolkit.removeExtraZeros(ccc.length() > 2 ? ccc.substring(0, 2) : "");
+			String txtSDFNUM62 = ccc.length() > 2 ? ccc.substring(2) : "";
+			
+			List<NameValuePair> params = new ArrayList<>();
+			params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, IServicioRedConstants.LIBAFCON));
+			params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6401"));
+			params.add(new BasicNameValuePair("txt_SDFREG62_ayuda", Toolkit.removeExtraZeros(regime)));
+			params.add(new BasicNameValuePair("txt_SDFTESO62", txtSDFTESO62));
+			params.add(new BasicNameValuePair("txt_SDFNUM62", txtSDFNUM62));
+			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
+			params.add(new BasicNameValuePair("btn_Sub2207601004", IServicioRedConstants.CONTINUE));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+			
+			body = Toolkit.getBodyPOST(httpClient, httpPost);
+			ServicioREDRegeXML.checkOldSsError(body);
+			httpPost = Toolkit.reportGenerationForm(body);
+			
+			try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+				Toolkit.checkResponseStatus(resp);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				resp.getEntity().writeTo(baos);
+				return baos.toByteArray();
+			}
+		}
+	}
+	
+	public static byte[] getReportAffiliateInMovPrev(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regime, String ccc) throws SegSocialException, IOException {
+		if (regime == null || regime.isEmpty()) {
+			throw new UnfilledMandatory("El régimen no debe quedar vacío");
+		} else if (ccc == null || ccc.isEmpty()) {
+			throw new UnfilledMandatory("El CCC no debe quedar vacío");			
+		}
+		
+		SSLContext sslContext = null;
+		
+		try {
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		String link = "";
+		String sessionId = "";
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			
+			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR74&E=I&AP=AFIR");
+			link = Toolkit.getLink(body);
+			sessionId = Toolkit.getSessionId(body);
+			
+			HttpPost httpPost = new HttpPost(link);
+
+			String txtSDFTESCCCENT = ccc.length() > 2 ? ccc.substring(0, 2) : "";
+			String txtSDFCODCCCENT = ccc.length() > 2 ? ccc.substring(2) : "";
+			
+			List<NameValuePair> params = new ArrayList<>();
+			params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, IServicioRedConstants.LIBAFCON));
+			params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM7400"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+			params.add(new BasicNameValuePair("txt_SDFREGENT_ayuda", regime));
+			params.add(new BasicNameValuePair("txt_SDFTESCCCENT", txtSDFTESCCCENT));
+			params.add(new BasicNameValuePair("txt_SDFCODCCCENT", txtSDFCODCCCENT));
+			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
+			params.add(new BasicNameValuePair("btn_Sub2207501004", IServicioRedConstants.CONTINUE));
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+			
+			body = Toolkit.getBodyPOST(httpClient, httpPost);
+			ServicioREDRegeXML.checkOldSsError(body);
+			httpPost = Toolkit.reportGenerationForm(body);
+			
+			try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+				Toolkit.checkResponseStatus(resp);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				resp.getEntity().writeTo(baos);
+				return baos.toByteArray();
 			}
 		}
 	}
