@@ -117,10 +117,14 @@ public interface IRegistry {
 	
 	// ------------------- SUPPLIER
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter);
+	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter, int offset, int limit);
+	public Supplier saveSupplier(AONContext ctx, Supplier supplier);
 	public Supplier insertSupplier(AONContext ctx, Supplier supplier);
 
 	// ------------------- CREDITOR
 	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter);
+	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter, int offset, int limit);
+	public Creditor saveCreditor(AONContext ctx, Creditor creditor);
 	public Creditor insertCreditor(AONContext ctx, Creditor creditor);
 
 	// ------------------- TARGET

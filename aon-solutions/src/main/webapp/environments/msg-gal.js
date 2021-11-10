@@ -33,6 +33,8 @@ export const AVAILABLE = 'Dispoñible';
 
 export const BACK = 'Atrás';
 export const BACKGROUND_ADJUST = 'Axustar Fondo';
+export const BANK = 'Banco';
+export const BANKS = 'Bancos';
 export const BARCODE = 'Código de Barras';
 export const BASE = 'Base';
 export const BASQUE = 'Euskera';
@@ -99,6 +101,7 @@ export const DELETE_TAX = 'Borrar Imposto';
 export const DELETED_DATA = 'Los datos se han eliminado correctamente';
 export const DESCRIPTION = 'Descrición';
 export const DETAILED = 'Detallado';
+export const DEUTSCH = 'Alemán';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
 export const DOCUMENTARY = 'Documental';

@@ -3,9 +3,9 @@ package solutions.aon.sepe;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.text.DecimalFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -20,8 +20,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+
 import aon.sepe.exceptions.invalidData.InvalidDataException;
 import aon.sepe.objects.Certificates;
+import aon.sepe.objects.QuoteData;
 import solutions.aon.sepe.exceptions.SepeException;
 import solutions.aon.sepe.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.sepe.toolkit.HtmlUnitToolkit;
@@ -29,6 +31,8 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Certificado {
 
+	private static DecimalFormat decimalFormat = new DecimalFormat("#00.00");
+	
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String nif, Date fecha) throws SepeException {
 			try {
@@ -51,7 +55,7 @@ public class Certificado {
 			if(fecha==null) fecha = new Date();
 			String[] fra = Toolkit.formatDate(fecha);
 
-			HtmlPage htmlPage = first_page_sepe_cert(webClient);
+			HtmlPage htmlPage = firstPageSepeCert(webClient);
   
 			HtmlAnchor hrefButton = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("https://sede.sepe.gob.es/ConsultasCertificadosRTWEB/ActionEntradaConsultas.do")).orElseThrow();
 			htmlPage = (HtmlPage) hrefButton.click();
@@ -101,10 +105,10 @@ public class Certificado {
 		return null; 
 	}
 	
-	public static String certEnterprise(final InputStream certificateInputStream,
+	public static void certEnterprise(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, Certificates certificates) throws SepeException {
 			try {
-				return certEnterpriseImpl(certificateInputStream, certificatePassword, certificateType, certificates);
+				certEnterpriseImpl(certificateInputStream, certificatePassword, certificateType, certificates);
 			} 
 			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
@@ -113,7 +117,7 @@ public class Certificado {
 			catch (Exception e) {throw new SepeException(e);}
 	}
 	
-	private static String certEnterpriseImpl(final InputStream certificateInputStream, 
+	private static void certEnterpriseImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, Certificates certificates ) throws IOException, SepeException, InterruptedException  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
@@ -122,24 +126,24 @@ public class Certificado {
 	    	
 	    	String ctaCti = certificates.getCtaCti();
 	    	String ipfManager= certificates.getIpfManager();
-			String tipodocManager =  "NIF";
-	    	String cargoManager = certificates.getCargoManager();
+			
 	    	String typeContract = certificates.getTypeContract();
 
-	    	Integer dedicationPer = certificates.getDedicationPer();
-	    	List<Map<String, String>> dataCtz = certificates.getDataCtz();
-
-	    	if(Toolkit.identity(ipfManager).equals("4")) tipodocManager = "CIF";
-	    	else if(Toolkit.identity(ipfManager).equals("6")) tipodocManager = "NIE"; 
+	    	String tipodocManager =  "NIF";
+	    	
+	    	if(Toolkit.identity(ipfManager).equals("4")) 
+	    		tipodocManager = "CIF";
+	    	else if(Toolkit.identity(ipfManager).equals("6")) 
+	    		tipodocManager = "NIE"; 
 	    	
 	    	String[] fAE = Toolkit.formatDate(certificates.getfAEd());
 	    	String[] fST = Toolkit.formatDate(certificates.getfSTd());
 	    	
-			HtmlPage htmlPage = first_page_sepe_cert(webClient);
+			HtmlPage htmlPage = firstPageSepeCert(webClient);
 			HtmlAnchor hrefButton = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("https://sede.sepe.gob.es/CertificadosRedTrabajaWEB/ActionMecanizacionEntradaEmpresa.do")).orElseThrow();
 			htmlPage = (HtmlPage) hrefButton.click();
 			
-			HtmlForm form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
+			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 			
 			{//DATA ENTERPRISE
 				form.getInputByName("orDatosEmpresa.srCCCRegimenCot").setValueAttribute(certificates.getRegimen());
@@ -159,10 +163,17 @@ public class Certificado {
 				form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 				form.getInputByName("orDatosRepresentante.srNombreRepresentante").setValueAttribute(certificates.getNameManager());
 				form.getInputByName("orDatosRepresentante.srPrimerApellidoRepresentante").setValueAttribute(certificates.getSurnameManager());
-				if(certificates.getLastSurname()!=null) form.getInputByName("orDatosRepresentante.srSegundoApellidoRepresentante").setValueAttribute(certificates.getLastSurname());
+				if(certificates.getLastSurname().isPresent()) {
+					form.getInputByName("orDatosRepresentante.srSegundoApellidoRepresentante").setValueAttribute(certificates.getLastSurname().get());
+				} 
+					
 				((HtmlSelect)form.querySelector("select[name=\"orDatosRepresentante.srTipoDocRepresentante\"]")).setSelectedAttribute(tipodocManager, true);
 				form.getInputByName("orDatosRepresentante.srNifRepresentante").setValueAttribute(ipfManager);
-				if(cargoManager!=null) form.getInputByName("orDatosRepresentante.srCargoRepresentante").setValueAttribute(cargoManager);
+				
+				if(certificates.getCargoManager().isPresent()) {
+					form.getInputByName("orDatosRepresentante.srCargoRepresentante").setValueAttribute(certificates.getCargoManager().get());
+				}
+					
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
 			}
@@ -179,9 +190,9 @@ public class Certificado {
 				}
 				if(certificates.getPublicPosition()!=null) {
 					((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csTipoCargoPublicoOSindical.valor\"]")).setSelectedAttribute(certificates.getPublicPosition().getValue().toString(), true);
-					if(dedicationPer!=null) {
-						form.getInputByName("orDatosTrabajador.srPorcentualDedicacion").setValueAttribute(dedicationPer.toString());
-					} 
+					if(certificates.getDedicationPer().isPresent()) {
+						form.getInputByName("orDatosTrabajador.srPorcentualDedicacion").setValueAttribute(certificates.getDedicationPer().get().toString());
+					}  
 				}
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
@@ -189,7 +200,8 @@ public class Certificado {
 			
 			{//DATA SUSPENSION OR TERMINATION
 				form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-				((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csCausaSuspension.valor\"]")).setSelectedAttribute(certificates.getCauseSuspension(), true);
+				if(certificates.getCauseSuspension()!=null)
+					((HtmlSelect)form.querySelector("select[name=\"orDatosTrabajador.csCausaSuspension.valor\"]")).setSelectedAttribute(certificates.getCauseSuspension(), true);
 				form.getInputByName("orDatosTrabajador.srDiaFechaAlta").setValueAttribute(fAE[0]);
 				form.getInputByName("orDatosTrabajador.srMesFechaAlta").setValueAttribute(fAE[1]);
 				form.getInputByName("orDatosTrabajador.srAnyoFechaAlta").setValueAttribute(fAE[2]);
@@ -203,13 +215,29 @@ public class Certificado {
 			
 			{//DATA COTINGENCIES
 				{//DATA CTZ
-					for(Map<String, String> ctz: dataCtz) {
+					for(QuoteData qdata: certificates.getQuoteData()) {
 						form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion").setValueAttribute(ctz.get("anioCtz"));
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion").setValueAttribute(ctz.get("monthCtz"));
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion").setValueAttribute(ctz.get("daysCtz"));
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes").setValueAttribute(ctz.get("bccc"));
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo").setValueAttribute(ctz.get("bcd"));
+						
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion")
+						.setValueAttribute(qdata.getAnio().toString());
+						
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion")
+						.setValueAttribute(qdata.getMonth().toString());
+						
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion")
+						.setValueAttribute(qdata.getDays().toString());
+						
+						if(qdata.getBccc().isPresent()) {
+							System.out.println("BCCC "+decimalFormat.format(qdata.getBccc().get()));
+							form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes")
+							.setValueAttribute(decimalFormat.format(qdata.getBccc().get()));
+						}
+						
+						if(qdata.getBcd().isPresent()) {
+							System.out.println("BCD "+decimalFormat.format(qdata.getBcd().get()));
+							form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo")
+							.setValueAttribute(decimalFormat.format(qdata.getBcd().get()));
+						}
 						htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btAnadir]")).click();
 					}
 					handleSepeExceptions(htmlPage);
@@ -219,25 +247,23 @@ public class Certificado {
 					form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 					if(certificates.getDaysCtzVc()!=null)
 						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion").setValueAttribute(certificates.getDaysCtzVc().toString());
-					if(certificates.getBcccVc()!=null)
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes").setValueAttribute(certificates.getBcccVc());
-					if(certificates.getBcdVc()!=null)
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo").setValueAttribute(certificates.getBcdVc());
+					if(certificates.getBcccVc().isPresent())
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes").setValueAttribute(decimalFormat.format(certificates.getBcccVc().get()));
+					if(certificates.getBcdVc().isPresent())
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo").setValueAttribute(decimalFormat.format(certificates.getBcdVc().get()));
 					htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btActualizarTotales]")).click();
 					handleSepeExceptions(htmlPage);
 				}
-
 				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
 				handleSepeExceptions(htmlPage);
 			}
 
 //	        Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testCertificates.html");
-	        System.out.println("END " + htmlPage);
-			return null;
+	        System.out.println("END");
 		} 
 	}
 	
-	private static HtmlPage first_page_sepe_cert(WebClient webClient)  throws SepeException , IOException, InterruptedException{
+	private static HtmlPage firstPageSepeCert(WebClient webClient)  throws SepeException , IOException, InterruptedException{
 		  webClient.getOptions().setJavaScriptEnabled(true);
 		  webClient.getOptions().setThrowExceptionOnScriptError(false);
 		  webClient.setJavaScriptErrorListener(HtmlUnitToolkit.jascriptFunctionExceptionError());
@@ -245,9 +271,9 @@ public class Certificado {
 	      Integer MAX_ATTEMPS = 10;
 	      Integer i = 0;
 	      while(!(page instanceof HtmlPage) &&  i < MAX_ATTEMPS) {
-	    	  System.out.println("attempt " + (i+1));
+	    	  System.out.println("ATTEMPT " + (i+1));
 		      try {
-		    	  page = page_first_process(webClient);  
+		    	  page = pageFirstProcess(webClient);  
 		      } catch (FailingHttpStatusCodeException e) { System.out.println("I do not load the page, retrying!");  }
 	    	  i++;
 	    	  Thread.sleep(1000);
@@ -258,7 +284,7 @@ public class Certificado {
 		  return htmlPage;
 	}
 	
-	private static Page page_first_process(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException{
+	private static Page pageFirstProcess(WebClient webClient) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException, InterruptedException{
 
 	      HtmlPage htmlPage = webClient.getPage("https://isweb.sepe.gob.es/GetAccess/Saml/SSO/Init?GAURI=https%3A%2F%2Fsede.sepe.gob.es%2FDCertificadosWeb%2FActionNavegacion.do%3FaccesoGA%3Dempresas%26accion%3Dnavegacion&GA_SAML_AC_COMPARISON=minimum&GA_SAML_IS_PASSIVE=false&GA_SAML_AC_CLASS_REF=http%3A%2F%2Feidas.europa.eu%2FLoA%2Flow&GA_SAML_PROVIDER=Q2819009H_E00142804&GA_SAML_IDP=https%3A%2F%2Fpasarela.clave.gob.es%2FProxy2");
 

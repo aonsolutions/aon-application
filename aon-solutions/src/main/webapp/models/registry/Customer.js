@@ -17,18 +17,25 @@ export class Customer extends Registry {
 
     constructor(customer) {
         super(customer);
-        this.tariff = customer.tariff;
-        this.surcharge = customer.surcharge;
-        this.withholding = customer.withholding;
-        this.transaction = customer.transaction;
-        this.status = customer.status;
-        this.scope = customer.scope;
-        this.eInvoice = customer.eInvoice;
-        this.invoicingGroup = customer.invoicingGroup;
-        this.projectGrouped = customer.projectGrouped;
-        this.deliveryGrouped = customer.deliveryGrouped;
-        this.deliveryValuated = customer.deliveryValuated;
-        this.account = customer.account;
+        if(customer) {
+            this.tariff = customer.tariff;
+            this.surcharge = customer.surcharge;
+            this.withholding = customer.withholding;
+            this.transaction = customer.transaction || 'NAC';
+            this.status = customer.status;
+            this.scope = customer.scope;
+            this.eInvoice = customer.eInvoice;
+            this.invoicingGroup = customer.invoicingGroup;
+            this.projectGrouped = customer.projectGrouped;
+            this.deliveryGrouped = customer.deliveryGrouped;
+            this.deliveryValuated = customer.deliveryValuated;
+            this.account = customer.account;
+        } else {
+            this.transaction = 'NAC';
+            this.withholding = false;
+            this.surcharge = false;
+        }   
+
     }
 
     isSurcharge() {

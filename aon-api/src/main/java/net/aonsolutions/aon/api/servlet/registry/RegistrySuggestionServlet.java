@@ -1,4 +1,4 @@
-package net.aonsolutions.aon.api.servlet;
+package net.aonsolutions.aon.api.servlet.registry;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
@@ -19,6 +19,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiRegistrySuggestionServlet", urlPatterns = {"/ms/api/suggestion/registry/*"})

@@ -3,14 +3,14 @@ import { setValueName, serializeForm, disabledForm, sortBy } from '../../../serv
 import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, addContract, sendBaja, getTipoJornada, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
-import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
 import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData } from '../createComponent.js';
 import { createToolbar } from '../../notification/createComponent.js';
 import { AonDateUtils } from '../../utils/AonDateUtils.js';
 import * as LS from '../../../services/localStorageService.js';
 
 export class AonAltaDirecta extends AonElement {
-    _contrato;
+    _contract;
     ACTION;
     static get observedAttributes() {
         return [CONSTANT.DATA];
@@ -98,9 +98,13 @@ export class AonAltaDirecta extends AonElement {
         const toolbar = this.getElement(this.TOOLBAR);
         toolbar.removeButtons();
 
-        if(this.isAlta() && this.data.fra) 
-            toolbar.addButton2(ACTION_COMUNICA.DUPLICATE, () => this.duplicateMov());
-  
+        if(this.data && this.data.fra && this.data.contract) {
+            let aib = toolbar.addButton2(ACTION_COMUNICA.DUPLICATE, () => this.duplicateMov());
+            // let btn = aib.getButton();
+            // if(btn)
+            //     btn.classList.add(CSS.PULSE);
+        }
+            
         if(!this.isMobile() && this.data && this.data.fra){
             toolbar.addButton2(ACTION_COMUNICA.INFORMES, (ev) => this.openDialogReports(ev));
             this.setStyleIconSegSocial(toolbar, ACTION_COMUNICA.INFORMES.id);
@@ -112,7 +116,7 @@ export class AonAltaDirecta extends AonElement {
         if( this.isAlta() || !this.data )  // ALTA
             toolbar.addButton2(ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
 
-        if(this.data && this.applicationParentEl.anularCondition(this.data.situation, this.data.fra))
+        if(this.data && this.data.fra && this.applicationParentEl.anularCondition(this.data.situation, this.data.fra))
             toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
 
         toolbar.addButton2(ACTION_COMUNICA.BACK, () => this.back());
@@ -200,18 +204,23 @@ export class AonAltaDirecta extends AonElement {
     edit(data) {
         if(data.fra)
             this.ACTION = "UPDATE";
-        let obj = {
-            ...data,
-            name: data.name,
-            fecha: data.fra,
-        }
-        if (data.ocup) obj['ocup'] = data.ocup.toString().toLowerCase();
+        let obj = { ...data, name: data.name, fecha: data.fra}
+        if (data.ocup) 
+            obj.ocup = data.ocup.toString().toLowerCase();
+    
         if (data.coef) {
-            obj['tipo_jornada'] = "semanal";
-            obj['coef'] = parseInt(data.coef.toString().replace(',', ''));
+            obj.tipo_jornada = "semanal";
+            obj.coef = parseInt(data.coef.toString().replace(',', ''));
         }
-        for (const property in obj) setValueName(property, obj[property]);
-        this._contrato = obj; //contrato
+
+        for (const property in obj) 
+            setValueName(property, obj[property]);
+
+        this._contract = obj; //contrato
+
+        //COEF
+        if(obj.coef)
+            this.getElement("coef").value = obj.coef;
 
         //seleccionar workplace;
         const workplace = this.getElement('workplace');
@@ -530,7 +539,7 @@ export class AonAltaDirecta extends AonElement {
     async update() {
         this.applicationEl.startLoading();
         let cto_new = this.getContract();
-        const cto_old = this._contrato;
+        const cto_old = this._contract;
         for (const property in cto_new) 
             if (cto_new[property] && (cto_old[property] != cto_new[property])) 
                 cto_new[`${property}_edit`] = true;
@@ -538,14 +547,14 @@ export class AonAltaDirecta extends AonElement {
             const resp = await updateContract(cto_new);
             let message = `No existen cambios en el contrato`;
 
-            if(resp.errors && resp.errors.length>0)
+            if( resp.errors && resp.errors.length > 0 )
                 message = resp.errors.join(".");
             else if(resp.contract_edit === true) {
                 message = MSG.UPDATED_CONTRACT;
                 this.applicationParentEl._movements = [];
             } 
 
-            this.showToast({ message, type: CONSTANT.ERROR, delay: 4500 });
+            this.showToast({ message, delay: 4500 });
         } catch (error) {
             this.showToast(error);
         }
@@ -676,7 +685,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     duplicateMov(){
-        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, {...this.data, fra:null}).then(el=>{
+        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, {...this.data, fra:null, status:null, situation:"AL"}).then(el=>{
             disabledForm(`${el.id}TrabajadorCard`);
         });
     }

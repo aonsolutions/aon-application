@@ -112,6 +112,8 @@ export class AonReg extends AonElement {
 		this.FISCAL_TRANSACTION = this.FISCAL_CARD + 'Transaction';
 		this.FISCAL_SURCHARGE = this.FISCAL_CARD + 'Surcharge';
 		this.FISCAL_WITHHOLDING = this.FISCAL_CARD + 'Withholding';
+		this.FISCAL_WITHHOLDING_FARMER = this.FISCAL_CARD + 'WithholdingFarmer';
+		this.FISCAL_VAT_ACCRUAL_PAYMENT = this.FISCAL_CARD + 'VatAccrualPayment';
 
 		this.registry = this.registry || new Registry();
 		this.showLogo = this.showLogo || false;
@@ -326,6 +328,8 @@ export class AonReg extends AonElement {
 			paymethodSelect.setOptions(paymethods);
 			paymethodSelect.value = this.registry.getPaymethod().getPaymethod() || paymethods[0].id;
 		});
+		paymethodSelect.addEventListener(EVENT.CHANGE, (e) => this.registry.getPaymethod().setPaymethod(paymethodSelect.value));
+
 
 		table.addRow();
 

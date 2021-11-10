@@ -224,7 +224,6 @@ export class Item {
             price = price + (price * Number(this.profitPercent) / 100);
         }
         this.price = price;
-        alert(this.price);
     }
 
     calculateProfitPercent() {

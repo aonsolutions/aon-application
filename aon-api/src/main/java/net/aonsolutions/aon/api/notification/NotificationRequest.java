@@ -1,13 +1,8 @@
 package net.aonsolutions.aon.api.notification;
 
-import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.security.Auth;
-import com.esferalia.aon.occam.api.model.security.AuthDevice;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
-import com.esferalia.aon.occam.api.model.aonsolutions.NotificationReceiver;
 import java.util.LinkedList;
+import java.util.Optional;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -17,7 +12,16 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
+import com.esferalia.aon.occam.api.model.aonsolutions.NotificationReceiver;
+import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.AuthDevice;
+import com.esferalia.aon.occam.api.model.security.User;
 
 public class NotificationRequest extends Notification {
 
@@ -43,25 +47,29 @@ public class NotificationRequest extends Notification {
 		return data;
 	}
 	
-	public String getPathImage() {
-		return pathName;
+	public Optional<String> getPathImage() {
+		return Optional.ofNullable(pathName);
 	}
 	
 	public User getUser() {
 		return user;
 	}
-	public NotificationRequest setPathImage(String path_image) {
-		this.pathName = path_image;
+	
+	public NotificationRequest setPathImage(String pathImage) {
+		this.pathName = pathImage;
 		return this;
 	}
+	
 	public NotificationRequest setAuths(LinkedList<Auth> auths) {
 		this.auths = auths;
 		return this;
 	}
+	
 	public NotificationRequest setUrl(String url) {
 		this.url = url;
 		return this;
 	}
+	
 	public NotificationRequest setData(JSONObject data) {
 		this.data = data;
 		return this;
@@ -76,49 +84,49 @@ public class NotificationRequest extends Notification {
 		final String urlFB = "https://fcm.googleapis.com/fcm/send";
 		final String keyFB = "AAAAQ_8KqDo:APA91bFXY2DUz7Ie9TM1qK9hO8RJ_8um9uKkIvT87QcyPobWunCFOvJpP4k961zzfJdGW0sUFWQUGGUMwsa9AOGsLtT0jTI_5sHl95MIgbBQBPDf6vbuOEQU16LQh84lVm1Jh2kNMl3G";
 		Boolean success = false;
-		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-		try {
+		try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
 			setId(0);
 			saveNotification();
-			
-		    HttpPost httpPost = new HttpPost(urlFB);
-			//---------HEADER
-			httpPost.addHeader("Authorization", "key="+keyFB);
-			httpPost.addHeader("Accept", "*/*");
-			httpPost.addHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
-		  
-		    //---------BODY
-		    String body = getBody();
-		    if(body!=null) body = body.replaceAll("<[^>]+>|&nbsp;|\n", " ");
-		    
-		    //-------NOTIFICATION
-		    JSONObject notification = new JSONObject();
-		    if(getPathImage()!=null) notification.put("image", getPathImage());
-		    notification.put("title", getTitle());
-		    notification.put("body", body);
-		    
-		    //--------PAYLOAD
-		    JSONObject payload = new JSONObject();
-		    payload.put("notification", notification);
-		    payload.put("registration_ids", getAuthDevices());
-		    payload.put("data", getData());
-		    
-			StringEntity params = new StringEntity(payload.toString(), ContentType.APPLICATION_JSON);
-		    httpPost.setEntity(params);
-	
-		    CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
-		    StatusLine response = httpResponse.getStatusLine();
-		    if(response.getStatusCode() == 200) {
+		    String[] tokens = getAuthDevices();
+		    if(tokens!=null && tokens.length>0) {
+			    HttpPost httpPost = new HttpPost(urlFB);
+				//---------HEADER
+				httpPost.addHeader("Authorization", "key="+keyFB);
+				httpPost.addHeader("Accept", "*/*");
+				httpPost.addHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+			  
+			    //---------BODY
+			    String body = getBody();
+			    if(body!=null) 
+			    	body = body.replaceAll("<[^>]+>|&nbsp;|\n", " ");
+			    
+			    //-------NOTIFICATION
+			    JSONObject notification = new JSONObject();
+			    getPathImage().ifPresent(path-> notification.put("image", path) );
+			    notification.put("title", getTitle());
+			    notification.put("body", body);
+//			    notification.put("content-available", 0);
+			    
+			    //--------PAYLOAD
+			    JSONObject payload = new JSONObject();
+			    payload.put("notification", notification);
+			    payload.put("registration_ids", tokens);
+			    payload.put("data", getData());
+
+			    httpPost.setEntity(new StringEntity(payload.toString(), ContentType.APPLICATION_JSON));
+		
+			    CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+			    StatusLine response = httpResponse.getStatusLine();
 			    HttpEntity responseEntity = httpResponse.getEntity();
-			    if(responseEntity!=null) {
-			        String responseString = EntityUtils.toString(responseEntity);
-			        JSONObject responseJSON = new JSONObject(responseString);
+			    
+			    if(responseEntity!=null && response.getStatusCode() == 200 ) {
+			        JSONObject responseJSON = new JSONObject(EntityUtils.toString(responseEntity));
 			        success = responseJSON.optInt("success") > 0;
+			        checkTokenFailed(responseJSON, tokens);
+			    } else {
+			    	throw new Exception(response.getReasonPhrase());
 			    }
-		    } else {
-		    	throw new Exception(response.getReasonPhrase());
 		    }
-		    httpClient.close();
 		} catch (Exception e) {
 			 e.printStackTrace();
 		}
@@ -131,7 +139,8 @@ public class NotificationRequest extends Notification {
 	  getAuths().stream().forEach(auth->{
 		 try {
 			  LinkedList<AuthDevice> aths = SECURITY.getAuthDevices(getDomain(), getUser().getLogin(), f-> f.getAuthProperty().eq(auth.getAuth()));
-			  authDevices.addAll(aths);
+			  if(!aths.isEmpty())
+				  authDevices.addAll(aths);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -141,12 +150,33 @@ public class NotificationRequest extends Notification {
 			  .map(AuthDevice::getDeviceToken).toArray(String[]::new);
 	}
 	
+	private void checkTokenFailed(JSONObject response, String[] tokens) {
+		try {
+			LinkedList<String> tokenList = new LinkedList<>();
+			if(response.has("failure") && response.optInt("failure") > 0) {
+				JSONArray results = response.getJSONArray("results");
+				for (int i = 0; i < results.length(); i++) {
+					JSONObject result = results.getJSONObject(i);
+					if(!result.optString("error").isEmpty()) {
+						tokenList.add(tokens[i]);
+						System.out.println(result.optString("error")+ " TOKEN:"+ tokens[i]);
+					}
+				}
+			}
+			if(!tokenList.isEmpty()) {
+				 SECURITY.deleteAuthDevice(getDomain(), getUser().getLogin(), 
+						 f-> f.getDeviceTokenProperty().in(tokenList.stream().toArray(String[]::new)));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void saveNotification(){
 		try {
 			LinkedList<NotificationReceiver> receiver = getReceiver();
-			getAuths().stream().forEach(auth->
-				receiver.add(new NotificationReceiver().setAuth(auth.getAuth()))
-			);
+			getAuths().stream().map(Auth::getAuth)
+			.forEach(auth-> receiver.add(new NotificationReceiver().setAuth(auth)) );
 			setReceiver(receiver);
 			AON_SOLUTIONS.saveNotification(getDomain(), getUser().getLogin(), this);
 		} catch (Exception e) {

@@ -395,7 +395,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId,
+			public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, Certifica2Info certifica2Info,
 					AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				

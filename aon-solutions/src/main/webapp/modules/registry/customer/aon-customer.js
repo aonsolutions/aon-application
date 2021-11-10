@@ -1,25 +1,26 @@
-import { AonReg } from './aon-reg.js';
-import { EVENT, MSG, TAG } from '../../environments/environments.js'; 
-import { AonCard } from '../../components/aon-card.js';
-import { AonSelect } from '../../components/aon-select.js';
-import { AonInput } from '../../components/aon-input.js';
-import { AonSwitch } from '../../components/aon-switch.js';
-import { AonBasicTable } from '../../components/aon-basic-table.js';
-import { Transactions } from '../../services/transaction.js';
-import { Customer } from '../../models/registry/Customer.js';
-import { saveCustomer } from '../../services/registryService.js';
+import { AonReg } from '../aon-reg.js';
+import { EVENT, MSG, TAG } from '../../../environments/environments.js'; 
+import { AonCard } from '../../../components/aon-card.js';
+import { AonSelect } from '../../../components/aon-select.js';
+import { AonSwitch } from '../../../components/aon-switch.js';
+import { AonBasicTable } from '../../../components/aon-basic-table.js';
+import { Transactions } from '../../../services/transaction.js';
+import { Customer } from '../../../models/registry/Customer.js';
+import { saveCustomer } from '../../../services/registryService.js';
 import { AonCustomerList } from './aon-customer-list.js';
 
 export class AonCustomer extends AonReg {
+
+	saveBool;
 
 	connectedCallback () {
 		this.customerInitialize();
 		this.initialize();
 		this.build();
-
   	}
 	
 	customerInitialize() {
+		this.saveBool = true;
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
@@ -64,7 +65,7 @@ export class AonCustomer extends AonReg {
 		surcharge.title = MSG.SURCHARGE_RE;
 		surcharge.checked = this.registry.isSurcharge();
 		surcharge.addEventListener(EVENT.CHANGE, () => {
-			this.registry.setSurcharge(surcharge.checked);
+			this.registry.setSurcharge(surcharge.isChecked());
 			if(this.autosave) this.save();
 		});
 		table.addCell(surcharge, 1);
@@ -74,7 +75,7 @@ export class AonCustomer extends AonReg {
 		withholding.title = MSG.IRPF;
 		withholding.checked = this.registry.isWithholding();
 		withholding.addEventListener(EVENT.CHANGE, () => {
-			this.registry.setWithholding(withholding.checked);
+			this.registry.setWithholding(withholding.isChecked());
 			if(this.autosave) this.save();
 		});
 		table.addCell(withholding, 1);
@@ -87,18 +88,23 @@ export class AonCustomer extends AonReg {
 	}
 
 	save() {
-		let medias = this.emails.concat(this.phones).concat(this.webs);
-		this.registry.setMedia(medias);
+		if(this.saveBool) {
+			let medias = this.emails.concat(this.phones).concat(this.webs);
+			this.registry.setMedia(medias);
+			this.saveBool = false;
+			saveCustomer(this.registry).then(registry => {
+				this.registry.id = registry.id;
+				this.saveBool = true;
+				this.showToast({
+					type: 'success',
+					 message: 'Datos Guardados Correctamente'
+				 });
+			}).catch(error => {
+				this.saveBool = true;
+				this.showToast(error);
+			 });
+		}
 
-		saveCustomer(this.registry).then(registry => {
-			this.registry.id = registry.id;
-			this.showToast({
-				type: 'success',
-	 			message: 'Datos Guardados Correctamente'
-	 		});
-		}).catch(error => {
-	 		this.showToast(error);
-	 	});
 	}
 
 	setCustomer(customer) {

@@ -17,6 +17,7 @@ import { AonComponentsDoc } from './dev/aon-components-doc.js';
 import { AonMessenger } from './messenger/aon-messenger.js';
 import { TASK_SOURCE } from './messenger/MessengerEnums.js';
 import * as LS from '../services/localStorageService.js';
+import { Language } from '../models/Language.js';
 
 export class AonHeader extends AonElement {
 
@@ -149,23 +150,27 @@ export class AonHeader extends AonElement {
 						options: [{
 							name: MSG.SPANISH,
 							image: '../assets/img/aonIconCastellano.png',
-							fn: () => LS.setLanguage('es')
+							fn: () => LS.setLanguage(Language.SPANISH)
 						}, {
 							name: MSG.ENGLISH,
 							image: '../assets/img/aonIconEnglish.png',
-							fn: () => LS.setLanguage('en')
+							fn: () => LS.setLanguage(Language.ENGLISH)
+						}, {
+							name: MSG.DEUTSCH,
+							image: '../assets/img/aonIconDeutsch.png',
+							fn: () => LS.setLanguage(Language.DEUTSCH)
 						}, {
 							name: MSG.BASQUE,
 							image: '../assets/img/aonIconEuskera.png',
-							fn: () => LS.setLanguage('eus')
+							fn: () => LS.setLanguage(Language.BASQUE)
 						}, {
 							name: MSG.CATALAN,
 							image: '../assets/img/aonIconCatala.png',
-							fn: () => LS.setLanguage('cat')
+							fn: () => LS.setLanguage(Language.CATALAN)
 						}, {
 							name: MSG.GALICIAN,
 							image: '../assets/img/aonIconGalego.png',
-							fn: () => LS.setLanguage('gal')
+							fn: () => LS.setLanguage(Language.DEUTSCH)
 						} ]
 					};
 

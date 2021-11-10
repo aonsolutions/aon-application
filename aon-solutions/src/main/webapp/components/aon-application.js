@@ -435,7 +435,7 @@ export class AonApplication extends AonElement {
   addSidenavOptionsListValue(data, option, ul) {
     let sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;
     ul = ul || this.getElement(sidenavId + data.id + "List");
-    if (!option.hidden) {
+    if (!option.hidden && ul) {
       let id = sidenavId + option.id;
       let li = this.createElement(TAG.LI);
       li.id = id;
@@ -660,7 +660,7 @@ export class AonApplication extends AonElement {
   }
 
   addToolbarOption2(option, fn) {
-    this.getElement(this.TOOLBAR).addButton2(option, fn);
+    return this.getElement(this.TOOLBAR).addButton2(option, fn);
   }
 
   removeToolbarOption(option) {

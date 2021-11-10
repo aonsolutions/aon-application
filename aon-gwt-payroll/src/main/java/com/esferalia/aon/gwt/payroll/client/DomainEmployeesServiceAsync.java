@@ -585,8 +585,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.removeContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractData, callback);
 	}
 	
-	public void sendCertifica2(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.sendCertifica2(getCurrentDomainName(), getCurrentUser(), contractId, callback);
+	public void sendCertifica2(Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendCertifica2(getCurrentDomainName(), getCurrentUser(), contractId, certifica2Info, callback);
 	}
 	
 	public void getCertifica2PDF(String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {

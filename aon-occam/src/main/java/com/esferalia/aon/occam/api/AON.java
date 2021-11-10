@@ -3900,12 +3900,14 @@ public class AON {
 	// ------------------ SUPPLIER 
 	
 	public static Stream<Supplier> getSupplierStream(String domainName, Integer domainId, String login, SupplierFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getSupplierStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Stream<Supplier> getSupplierStream(String domainName, Integer domainId, String login, SupplierFilter filter, int offset, int limit) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getSupplierStream(ctx, filter, offset, limit);
 		}
 	}
 	
@@ -3923,15 +3925,18 @@ public class AON {
 		return getSupplier(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
-	public static Supplier insertSupplier(String domainName, Integer domainId, String login, Supplier supplier) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertSupplier(ctx, supplier);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Supplier saveSupplier(String domainName, Integer domainId, String login, Supplier supplier) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveSupplier(ctx, supplier);
 		}
+	}
+	
+	/**
+	 * @deprecated  Replaced by AON.saveCreditor
+	 */
+	@Deprecated(forRemoval = true )
+	public static Supplier insertSupplier(String domainName, Integer domainId, String login, Supplier supplier) {
+		return saveSupplier(domainName, domainId, login, supplier);
 	}
 	
 	// ------------------ TARGET 
@@ -4442,22 +4447,15 @@ public class AON {
 	// ------------------- CUSTOMER
 	
 	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().getCustomerStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
 		}
 	}
+	
 	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().getCustomers(ctx, filter, ofs, limit);
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+		} 
 	}
 	
 	public static LinkedList<Customer> getCustomerList(String domainName, Integer domainId, String login, CustomerFilter filter){
@@ -5052,12 +5050,14 @@ public class AON {
 	// ********************************************
 
 	public static Stream<Creditor> getCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getCreditorStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Stream<Creditor> getCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter, int offset, int limit) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCreditorStream(ctx, filter, offset, limit);
 		}
 	}
 	
@@ -5071,15 +5071,21 @@ public class AON {
 				.findFirst();
 	}
 	
-	public static Creditor insertCreditor(String domainName, Integer domainId, String login, Creditor creditor) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertCreditor(ctx, creditor);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	
+	public static Creditor saveCreditor(String domainName, Integer domainId, String login, Creditor creditor) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveCreditor(ctx, creditor);
 		}
+	}
+	
+	/**
+	 * @deprecated  Replaced by AON.saveCreditor
+	 */
+	@Deprecated(forRemoval = true )
+	public static Creditor insertCreditor(String domainName, Integer domainId, String login, Creditor creditor) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().insertCreditor(ctx, creditor);
+		} 
 	}
 	
 	public static Stream<Creditor> getBasicCreditors(String domainName,

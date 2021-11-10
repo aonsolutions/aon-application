@@ -204,7 +204,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
             aonSelect.addEventListener(EVENT.INPUT, async({target})=>{
                 const value = target.value;
                 if(value.length > 2){
-                    const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
+                    const cs = await getCustomers({reload:true, page:1, perPage:30, value});
                     aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
                 }
             });

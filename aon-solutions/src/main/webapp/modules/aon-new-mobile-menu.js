@@ -147,7 +147,7 @@ export class AonNewMobileMenu extends AonElement {
   
     getDomainUserRoles({}).then(r => {
       this.dur = new DomainUserRoles(r);
-      this.newButtons();
+      // this.newButtons();
     });
 
 
@@ -169,7 +169,7 @@ export class AonNewMobileMenu extends AonElement {
       color: 'white',
       background: '#002469',
       fn: () => {
-        if(btnAdd.icon)
+        if(LS.getCompany() && btnAdd.icon)
           btnAdd.icon = MATERIAL_ICONS.CLOSE;
         this.add();
       }
@@ -265,10 +265,11 @@ export class AonNewMobileMenu extends AonElement {
 
   newButtons() {
     let div = this.getElement('probaDiv') || this.createElement(TAG.DIV);
+    this.clearElement(div);
     div.id = 'probaDiv';
     div.className = 'aonDialog';
     div.style.backgroundColor = 'transparent';
-    div.style.display = 'none';
+    div.style.display = 'block';
     div.addEventListener(EVENT.CLICK, () => {
       div.style.display = 'none';
       let btnAdd = this.getElement("aonMobileMenuAddButton");
@@ -345,12 +346,13 @@ export class AonNewMobileMenu extends AonElement {
   }
 
   add() {
-    const dialog = this.getElement('probaDiv');
-    if(dialog) 
-      dialog.style.display = 'block';
     if(LS.getCompany()) {
-      let aonHeader = this.getElement("aonHeader");
-      aonHeader.companyIn();
+      getDomainUserRoles({}).then(r => {
+        this.dur = new DomainUserRoles(r);
+        this.newButtons();
+        let aonHeader = this.getElement("aonHeader");
+        aonHeader.companyIn();
+      });
     } else {
       alert("selecciona una empresa.")
     }

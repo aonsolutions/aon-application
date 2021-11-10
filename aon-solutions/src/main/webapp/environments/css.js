@@ -282,12 +282,16 @@ export const TRANSITION_QUICK = "transitionQuick"
 export const AON_TRANSITION_LEFT = "aonTransitionLeft";
 export const DIV_DRAG_OVER = "divDragOver";
 export const PULSE = "pulse";
+export const PULSE_INFINITE = "pulseInfinite";
 
 export const RESIZE_VERTICAL = "resizeVertical";
 
 export const ELEMENT_HIDDEN = "elementHidden";
 
 export const MESSAGE_AFTER = "messageAfter";
+
+export const AON_FA_SPIN = 'aonFaSpin';
+export const AON_FA_PULSE = 'aonFaPulse';
 
 
 // aon-textarea 

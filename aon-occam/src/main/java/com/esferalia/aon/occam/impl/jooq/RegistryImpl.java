@@ -118,10 +118,23 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getCreditorStream(ctx, filter));
+				configuration -> CreditorDAO.getStream(ctx, filter));
 	}
 	
 	@Override
+	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CreditorDAO.getStream(ctx, filter, offset, limit));
+	}
+
+	@Override
+	public Creditor saveCreditor(AONContext ctx, Creditor creditor) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CreditorDAO.save(ctx, creditor));
+	}
+	
+	@Override
+	@Deprecated
 	public Creditor insertCreditor(AONContext ctx, Creditor creditor) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.insertCreditor(ctx, creditor));
@@ -341,15 +354,28 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getSupplierStream(ctx, filter));
+				configuration -> SupplierDAO.getStream(ctx, filter));
 	}
 	
 	@Override
+	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SupplierDAO.getStream(ctx, filter, offset, limit));
+	}
+	
+	@Override
+	@Deprecated
 	public Supplier insertSupplier(AONContext ctx, Supplier supplier) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.insertSupplier(ctx, supplier));
 	}
 
+	@Override
+	public Supplier saveSupplier(AONContext ctx, Supplier supplier) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> SupplierDAO.save(ctx, supplier));
+	}
+	
 	// -------------------- TARGET
 
 	@Override

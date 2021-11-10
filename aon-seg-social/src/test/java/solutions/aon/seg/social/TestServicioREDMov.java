@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -13,17 +14,18 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.NotExistingYetException;
+import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
+import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
+import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.object.Employee;
 
 public class TestServicioREDMov extends SegSocialTest {
 	
 	private static Logger LOG = Logger.getLogger(TestServicioREDMov.class.getName());
-	private static final String PASSED = "PASSED - ";
 	
 //----------------------------------------------------IPF X NAF--------------------------------------------------
 	
@@ -33,7 +35,10 @@ public class TestServicioREDMov extends SegSocialTest {
 		    ArrayList<String> nssList = new ArrayList<>();
 		    nssList.add("0100227573");
 		    nssList.add("0110051859");
-		    assertTrue(!ServicioREDMov.ipfxnaf(certificateInputStream, "jg@FNMT", "pkcs12", nssList).isEmpty());
+		    nssList.add("291136796369");
+		    List<Employee> ipfs = ServicioREDMov.ipfxnaf(certificateInputStream, "jg@FNMT", "pkcs12", nssList);
+		    System.out.println(ipfs);
+		    assertTrue(!ipfs.isEmpty());
 		} catch (StatusCodeException e) {
 			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
@@ -46,7 +51,7 @@ public class TestServicioREDMov extends SegSocialTest {
 	public void ipfxnafWrongNaf() throws ParserConfigurationException, SAXException, IOException {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
 			ArrayList<String> nssList = new ArrayList<>();
-			nssList.add("010022757387");
+			nssList.add("01f022757387");
 			ServicioREDMov.ipfxnaf(certificateInputStream, "jg@FNMT", "pkcs12", nssList);
 			fail();
 		} catch (InvalidDataException e) {
@@ -68,10 +73,26 @@ public class TestServicioREDMov extends SegSocialTest {
 		   ServicioREDMov.nafxipf(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "garcia", "perez");
 		} catch (NotExistingYetException e) {} catch (IOException e) {
 			fail("Wrong certificate on test");
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
-		} catch (FailingHttpStatusCodeException e) {
-			assertTrue(true);
+			fail();
+		}
+	}
+	
+	@Test
+	public void nafxipfNie() throws ParserConfigurationException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			Employee weas = ServicioREDMov.nafxipf(certificateInputStream, "jg@FNMT", "pkcs12", "Y7514970X", "vasquez beauperthuy", "");
+			System.out.println(weas);
+		} catch (NotExistingYetException e) {} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
 		}
 	}
 	
@@ -82,10 +103,11 @@ public class TestServicioREDMov extends SegSocialTest {
 			fail();
 		} catch (InvalidDataException e) {
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
-		} catch (FailingHttpStatusCodeException e) {
-			assertTrue(true);
+			fail();
 		}
 	}
 	
@@ -96,10 +118,11 @@ public class TestServicioREDMov extends SegSocialTest {
 			fail();
 		} catch (InvalidDataException e) {
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
-		} catch (FailingHttpStatusCodeException e) {
-			assertTrue(true);
+			fail();
 		}
 	}
 	
@@ -110,10 +133,11 @@ public class TestServicioREDMov extends SegSocialTest {
 			fail();
 		} catch (InvalidDataException e) {
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
-		} catch (FailingHttpStatusCodeException e) {
-			assertTrue(true);
+			fail();
 		}
 	}
 	
@@ -124,10 +148,11 @@ public class TestServicioREDMov extends SegSocialTest {
 			fail();
 		} catch (InvalidDataException e) {
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
-		} catch (FailingHttpStatusCodeException e) {
-			assertTrue(true);
+			fail();
 		}
 	}
 	
@@ -138,10 +163,11 @@ public class TestServicioREDMov extends SegSocialTest {
 			fail();
 		} catch (InvalidDataException e) {
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
-		} catch (FailingHttpStatusCodeException e) {
-			assertTrue(true);
+			fail();
 		}
 	}
 	
@@ -152,13 +178,158 @@ public class TestServicioREDMov extends SegSocialTest {
 			fail();
 		} catch (InvalidDataException e) {
 			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
 			e.printStackTrace();
-		} catch (FailingHttpStatusCodeException e) {
-			assertTrue(true);
+			fail();
 		}
 	}
 	
+	
+//---------------------------------------------------------------------------------------------------------------
+//--------------------------------------------REPORT AFFILIATE IN ALTA-------------------------------------------
+	
+	@Test
+	public void testReportAffiliateInAlta() throws IOException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+		   byte[] pdf = ServicioREDMov.getReportAffiliateInAlta(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
+		   assertTrue(pdf.length > 100000);
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void testReportAffiliateInAltaWrongRegime() throws IOException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			ServicioREDMov.getReportAffiliateInAlta(certificateInputStream, "jg@FNMT", "pkcs12", "0113", "01105360062");
+		} catch (WrongRegimeException e) {
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void testReportAffiliateInAltaNullRegime() throws IOException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			ServicioREDMov.getReportAffiliateInAlta(certificateInputStream, "jg@FNMT", "pkcs12", null, "01105360062");
+		} catch (UnfilledMandatory e) {
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void testReportAffiliateInAltaWrongCCC() throws IOException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			ServicioREDMov.getReportAffiliateInAlta(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360064");
+		} catch (invalidCccException e) {
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void testReportAffiliateInAltaNullCCC() throws IOException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			ServicioREDMov.getReportAffiliateInAlta(certificateInputStream, "jg@FNMT", "pkcs12", "0111", null);
+		} catch (UnfilledMandatory e) {
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+//---------------------------------------------------------------------------------------------------------------
+//--------------------------------------------REPORT AFFILIATE IN ALTA-------------------------------------------
+	
+	@Test
+	public void testReportAffiliateInMovPrev() throws IOException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+		   byte[] pdf = ServicioREDMov.getReportAffiliateInMovPrev(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
+		   assertTrue(pdf.length > 100000);
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void testReportAffiliateInMovPrevWrongRegime() throws IOException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			ServicioREDMov.getReportAffiliateInMovPrev(certificateInputStream, "jg@FNMT", "pkcs12", "0113", "01105360062");
+		} catch (WrongRegimeException e) {
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void testReportAffiliateInMovPrevNullRegime() throws IOException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			ServicioREDMov.getReportAffiliateInMovPrev(certificateInputStream, "jg@FNMT", "pkcs12", null, "01105360062");
+		} catch (UnfilledMandatory e) {
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void testReportAffiliateInMovPrevWrongCCC() throws IOException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			ServicioREDMov.getReportAffiliateInMovPrev(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360064");
+		} catch (UnfilledMandatory e) {
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void testReportAffiliateInMovPrevNullCCC() throws IOException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			ServicioREDMov.getReportAffiliateInMovPrev(certificateInputStream, "jg@FNMT", "pkcs12", "0111", null);
+		} catch (UnfilledMandatory e) {
+			LOG.info(PASSED + new Object(){}.getClass().getEnclosingMethod().getName());
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
 	
 //---------------------------------------------------------------------------------------------------------------
 }

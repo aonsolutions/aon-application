@@ -76,6 +76,7 @@ public interface IJsonNames {
 	String CONFIDENTIAL = "confidential";
 	String CONFIGURED_VISIBLE = "configuredVisible";
 	String CONSOLIDATION = "consolidation";
+	String CONTACT_DATA = "contactData";
 	String CONTENT = "content";
 	String CONTENT_ENCODING = "contentEncoding";
 	String CONTENT_NAME = "contentName";
@@ -190,6 +191,7 @@ public interface IJsonNames {
 	String KEY = "key";
 	String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
+	String LANGUAGE = "language";
 	String LEDGER_ACCOUNT = "ledgerAccount";
 	String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
 	String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
@@ -285,6 +287,7 @@ public interface IJsonNames {
 	String PURCHASE_ACCOUNT = "purchaseAccount";
 	String PURCHASE_PRICE = "purchasePrice";
 	String PURCHASES_RATIO = "purchasesRatio";
+	String PURCHASE_VALUATED = "purchaseValuated";
 	String PYMNT_DAYS = "pymntDays";
 
 	// ---------------------------------------------------------------------------------------------	[Q] 
@@ -293,6 +296,7 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[R] 
 	String RDOCUMENT = "rdocument";
 	String RECEIVER = "receiver";
+	String RECORD_DATA = "recordData";
 	String RECORD_DATE = "recordDate";
 	String RECTIFICATION = "rectification";
 	String RECTIFICATION_INVOICE = "rectification_invoice";
@@ -349,6 +353,7 @@ public interface IJsonNames {
 	String SURCHARGE_QUOTA = "surcharge_quota";
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";
+	String SEARCH = "search";
 	// ---------------------------------------------------------------------------------------------	[T] 
 	String TARIFF = "tariff";
 	String TAS = "tas";
@@ -372,7 +377,7 @@ public interface IJsonNames {
 	String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	String VALUE = "value";
-	String VAT_ACCRUAL_PAYMENT = "vat_accrual_payment";
+	String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
 	String VAT = "vat";
@@ -380,7 +385,7 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[W] 
 	String WEB = "web";
 	String WITHHOLDING = "withholding";
-	String WITHHOLDING_FARMER = "withholding_farmer";
+	String WITHHOLDING_FARMER = "withholdingFarmer";
 	String WITHHOLDING_PERCENTAGE = "withholding_percentage";
 	String WITHHOLDING_QUOTA = "withholding_quota";
 	String WITHHOLDING_TYPE = "withholding_type";

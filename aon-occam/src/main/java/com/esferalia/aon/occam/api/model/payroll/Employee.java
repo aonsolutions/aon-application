@@ -87,6 +87,7 @@ public class Employee implements Serializable{
 	
 	private Date insertDate;
 	private Date deleteDate;
+	private String workplaceName;
 	
 	private Integer employeeId;
 	private Integer workplaceId;
@@ -165,12 +166,23 @@ public class Employee implements Serializable{
 		return workplaceId;
 	}
 	
+	
+	public Employee setWorkplaceName(String workplaceName) {
+		this.workplaceName = workplaceName;
+		return this;
+	}
+
+	
 	public Employee setWorkplaceId(Integer workplaceId) {
 		this.workplaceId = workplaceId;
 		return this;
 	}
 
 	// ------------------------------------------------------------------------
+	
+	public Optional<String> getWorkplaceName() {
+		return Optional.ofNullable(workplaceName);
+	}
 	
 	public Optional<String> getSex() {
 		return Optional.ofNullable(sex);
@@ -382,7 +394,7 @@ public class Employee implements Serializable{
 			return Objects.equals(naf, employee.naf)
 					&& Objects.equals(ccc, employee.ccc)
 					&& Objects.equals(startDate, employee.startDate)
-					&& Objects.equals(startDate, employee.endDate);
+					&& Objects.equals(endDate, employee.endDate);
 	}
 
 	// -------------------------------------------------------------- protected
@@ -478,5 +490,4 @@ public class Employee implements Serializable{
 		return isNull(date) ? null : LocalDate.of(date.getYear() + 1900, date.getMonth() + 1, date.getDate()); 
     }
     
-	
 }

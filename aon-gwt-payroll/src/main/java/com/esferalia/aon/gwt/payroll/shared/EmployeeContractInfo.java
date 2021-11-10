@@ -10,6 +10,8 @@ import com.google.gwt.view.client.ProvidesKey;
 
 public class EmployeeContractInfo implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+	
 	private EmployeeInfo employeeInfo;
 	private ContractInfo contractInfo;
 	
@@ -25,24 +27,23 @@ public class EmployeeContractInfo implements Serializable{
 	private List<Workplace> workplaces;
 	private Map<String, String> payMethods;
 	
-	/**
-     * The key provider that provides the unique ID of a contact.
-     */
-    public static final ProvidesKey<EmployeeContractInfo> KEY_PROVIDER = new ProvidesKey<EmployeeContractInfo>() {
-      @Override
-      public Object getKey(EmployeeContractInfo item) {
-        return item == null ? null : item.getContractInfo().getContractId();
-      }
-    };
+	public static final ProvidesKey<EmployeeContractInfo> KEY_PROVIDER = item -> item == null ? null : item.getContractInfo().getContractId();
+	
+//	public static final ProvidesKey<EmployeeContractInfo> KEY_PROVIDER = new ProvidesKey<EmployeeContractInfo>() {
+//      @Override
+//      public Object getKey(EmployeeContractInfo item) {
+//        return item == null ? null : item.getContractInfo().getContractId();
+//      }
+//    };
 	
 	public EmployeeContractInfo(){
 		super();
 		this.contractSpecificData = new ContractSpecificData();
-		this.contractOtherData = new HashMap<String, String>();
-		this.contractClauses = new ArrayList<ContractClause>();
-		this.contractAttachments = new ArrayList<ContractAttach>();
-		this.contractBonus = new ArrayList<SSBonusData>();
-		this.scopeMap = new HashMap<String, String>();
+		this.contractOtherData = new HashMap<>();
+		this.contractClauses = new ArrayList<>();
+		this.contractAttachments = new ArrayList<>();
+		this.contractBonus = new ArrayList<>();
+		this.scopeMap = new HashMap<>();
 	}
 	
 	// ------------- GETTERS / SETTERS -------------

@@ -48,6 +48,7 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.registry.RegistryAdditionalInfo;
+import net.aonsolutions.aon.api.servlet.registry.RegistryServlet;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCompanyServlet", urlPatterns = {"/ms/api/company/*"})
@@ -341,7 +342,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		list.add(RegistryAdditionalInfo.ADDRESS);
 		list.add(RegistryAdditionalInfo.MEDIA);
 
-		return RegistryServlet.getRegistryAdditionalInfo(json, api, company.getId(), list);
+		return RegistryServlet.getRegistryAdditionalInfo(json, api, api.getParams(), company.getId(), list);
 	}
 	
 	private JSONObject getDomainUserRoles(AonApiData api) {

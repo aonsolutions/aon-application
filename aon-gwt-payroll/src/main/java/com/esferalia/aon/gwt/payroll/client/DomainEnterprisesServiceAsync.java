@@ -389,10 +389,6 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getContractBonus(getCurrentDomainName(), contractId, asyncCallback);
 	}
 
-	public void setContractBonus(EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.setContractBonus(getCurrentDomainName(), employeeContractData, asyncCallback);
-	}
-	
 	public void getCNOs(AsyncCallback<Map<String, CNO>> asyncCallback) {
 		enterprisesServiceAsync.getCNOs(getCurrentDomainName(), asyncCallback);
 	}

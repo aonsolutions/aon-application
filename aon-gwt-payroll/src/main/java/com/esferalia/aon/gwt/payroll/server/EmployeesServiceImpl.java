@@ -97,6 +97,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractAttach;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractExtension;
+import com.esferalia.aon.gwt.payroll.jooq.JooqContractPDF;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractTransform;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
@@ -5782,11 +5783,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 
-			byte[] pdfBytes = JooqContrataContract.contractFill(connection, domainId, parentDomainId, contractId, contractType,
+			byte[] pdfBytes = JooqContractPDF.contractFill(connection, domainId, parentDomainId, contractId, contractType,
 					formativeLvl);
 			
-			JooqContrataContract.saveDraftContract(domainName, contractId, pdfBytes);
-			return JooqContrataContract.getContractAttachments(connection, domainId, contractId);
+			JooqContractPDF.saveDraftContract(domainName, contractId, pdfBytes);
+			return JooqContractAttach.getContractAttachments(connection, domainId, contractId);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -6484,7 +6485,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 	
 	@Override
-	public void sendCertifica2(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
+	public void sendCertifica2(String domainName, String userLogin, Integer contractId, Certifica2Info certifica2Info) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			// Get domain id
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6492,11 +6493,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get certificate SEPE
 			Certificate certificateSEPE = AON.getCertificateSEPE(domainName, domainId, userLogin);
 			
-			// Get suspensionReason Code
-			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, domainId, contractId);
-			
 			// Create certificates
-			Certificates certificates = JooqCertifica2.createCertificates(connection, domainId, contractId, suspensionReasonCode);
+			Certificates certificates = JooqCertifica2.createCertificates(connection, contractId, certifica2Info.getSuspensionCode());
+			
+			System.out.println(certificates.toString());
 			
 			// Send certificates
 			Sepe.certEnterprise(
@@ -6547,19 +6547,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public Certifica2Info getCertifica2Info(String domainName, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			// Get domain id
-			Integer domainId = AonServletUtils.getDomainID(domainName);
-
 			// Get suspensionReason Code
-			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, domainId, contractId);
+			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, contractId);
 
 			// Get Certifica2Info
-			Certifica2Info certifica2Info = JooqCertifica2.getCertifica2Info(connection, domainId, contractId, suspensionReasonCode);
+			Certifica2Info certifica2Info = JooqCertifica2.getCertifica2Info(connection, contractId, suspensionReasonCode);
 			
 			System.out.println(certifica2Info);
 			
 			return certifica2Info;
-			
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

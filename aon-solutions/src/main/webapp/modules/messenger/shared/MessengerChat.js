@@ -52,12 +52,13 @@ const buildToolbar = (aonMessengerChat) => {
     toolbar.addButton2(ACTIONS.NEXT, () => aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getNextTask()) );
 		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
 
-    toolbar.addButton2({
+    if( task.status && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
+      toolbar.addButton2({
       id: 'Labels',
       name: 'Labels',
       icon: MATERIAL_ICONS.LABEL
-  }, (ev) =>  dialogTaskTags(ev, aonMessengerChat));
-
+      }, (ev) =>  dialogTaskTags(ev, aonMessengerChat));
+    }
 
     if(task.id){
       if( [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){

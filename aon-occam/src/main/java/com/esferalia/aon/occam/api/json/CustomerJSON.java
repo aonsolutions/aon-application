@@ -1,14 +1,15 @@
 package com.esferalia.aon.occam.api.json;
 
-import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 
 public class CustomerJSON {
 	
@@ -16,10 +17,19 @@ public class CustomerJSON {
 	
 	}
 	
+	public static List<Customer> fromJSON(JSONArray json) {
+		LinkedList<Customer> list = new LinkedList<>();
+		for(Integer i = 0; i < json.length(); i++) {
+			list.add(fromJSON(json.getJSONObject(i)));
+		}
+ 		return list;
+	}
+	
+	
 	public static Customer fromJSON(JSONObject json) {
 		return new Customer()
 			.copy(RegistryJSON.fromJSON(json))
-			.setAccount(json.optInt(IJsonNames.ACCOUNT))
+			.setAccount(JsonUtils.getInteger(json, IJsonNames.ACCOUNT))
 			.setDeliveryGrouped(JsonUtils.getboolean(json, IJsonNames.DELIVERY_GROUPED))
 			.setDeliveryValuated(JsonUtils.getboolean(json, IJsonNames.DELIVERY_VALUATED))
 			.setEInvoice(JsonUtils.getboolean(json, IJsonNames.E_INVOICE))
@@ -31,6 +41,17 @@ public class CustomerJSON {
 			.setTransaction(InvoiceTransactionType.safeValueOf(JsonUtils.getString(json, IJsonNames.TRANSACTION)))
 			.setWithholding(JsonUtils.getboolean(json, IJsonNames.WITHHOLDING))
 			.setStatus(RegistryStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.STATUS)));
+	}
+	
+
+	public static JSONArray toJSON(List<Customer> customers) {
+		return toJSON(customers.stream());
+	}
+	
+	public static JSONArray toJSON(Stream<Customer> customers) {
+		JSONArray array = new JSONArray();
+		customers.forEach(customer -> array.put(toJSON(customer)));
+		return array;
 	}
 	
 	public static JSONObject toJSON(Customer customer) {
@@ -45,7 +66,7 @@ public class CustomerJSON {
 			.put(IJsonNames.PROJECT_GROUPED, customer.isProjectGrouped())
 			.put(IJsonNames.SCOPE, customer.getScope())
 			.put(IJsonNames.TARIFF, customer.getTariff())
-			.put(IJsonNames.TRANSACTION, customer.getTransaction().name())
+			.put(IJsonNames.TRANSACTION, customer.getTransaction().getTediName())
 			.put(IJsonNames.STATUS, customer.getStatus().name());
 	}
 }

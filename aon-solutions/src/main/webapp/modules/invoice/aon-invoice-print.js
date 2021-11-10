@@ -7,7 +7,7 @@ import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 
-import { EVENT, MSG } from "../../environments/environments.js";
+import { EVENT, MSG, TAG } from "../../environments/environments.js";
 import { getPrintInvoiceConfiguration, savePrintInvoiceConfiguration } from '../../services/invoiceService.js';
 import { getReader } from '../../services/utils.js';
 
@@ -15,6 +15,8 @@ import * as LS from '../../services/localStorageService.js';
 import { AonUpload } from '../../components/aon-upload.js';
 import { AonViewer } from '../../components/aon-viewer.js';
 import { getAttach } from '../../services/fileService.js';
+import { AonSelect } from '../../components/aon-select.js';
+import { Language } from '../../models/Language.js';
 
 export class AonInvoicePrint extends AonElement {
 
@@ -254,6 +256,62 @@ export class AonInvoicePrint extends AonElement {
       this.printConfiguration.company = company.checked;
       this.save();
     });
+
+    let tr6 = document.createElement(TAG.TR);
+    table.appendChild(tr6);
+
+    let tdRecordData= document.createElement(TAG.TD);
+    tdRecordData.setAttribute('colspan', '1');
+    tdRecordData.style.height = '60px';
+    tdRecordData.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationRecordData" title="${MSG.INCLUDE_REGISTRATION_DATA}"></aon-switch>`;
+    tr6.appendChild(tdRecordData);
+    let recordData = document.getElementById('aonInvoicePrintConfigurationRecordData');
+    recordData.checked = this.printConfiguration.recordData;
+    recordData.setWidth('135px');
+    recordData.addEventListener('change', () => {
+      this.printConfiguration.recordData = recordData.checked;
+      this.save();
+    });
+
+    let tdContactData = document.createElement(TAG.TD);
+    tdContactData.setAttribute('colspan', '1');
+    tdContactData.style.height = '60px';
+    tdContactData.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationContactData" title="${MSG.INCLUDE_CONTACT_DATA}"></aon-switch>`;
+    tr6.appendChild(tdContactData);
+    let contactData = document.getElementById('aonInvoicePrintConfigurationContactData');
+    contactData.checked = this.printConfiguration.contactData;
+    contactData.setWidth('135px');
+    contactData.addEventListener('change', () => {
+      this.printConfiguration.contactData = contactData.checked;
+      this.save();
+    });
+
+    let tr7 = document.createElement(TAG.TR);
+    table.appendChild(tr7);
+
+    const languages = [
+      {value: Language.SPANISH, name: MSG.SPANISH},
+      {value: Language.ENGLISH, name: MSG.ENGLISH},
+      {value: Language.DEUTSCH, name: MSG.DEUTSCH},
+      {value: Language.BASQUE, name: MSG.BASQUE},
+      {value: Language.CATALAN, name: MSG.CATALAN},
+      {value: Language.GALICIAN, name: MSG.GALICIAN},
+    ];
+
+    let tdLanguage = document.createElement(TAG.TD);
+    tdLanguage.setAttribute('colspan', '2');
+    tdLanguage.style.height = '60px';
+    let language = new AonSelect() ;
+    language.id = 'aonInvoicePrintConfigurationLanguage';
+    language.title = MSG.LANGUAGE;
+    language.setOptions(languages);
+    language.value = this.printConfiguration.language;
+    language.addEventListener('change', () => {
+      this.printConfiguration.language = language.value;
+      this.save();
+    });
+    tdLanguage.appendChild(language);
+    tr7.appendChild(tdLanguage); 
   }
 
 }

@@ -168,7 +168,7 @@ public class MultipleDownloadServlet extends HttpServlet{
     						}
     						File file = File.createTempFile(invoice.getReferenceCode(), ".pdf");
     						FileOutputStream out = new FileOutputStream(file);
-    						PdfMaker.printInvoice(out, config.isCompany() ? company : null, invoice, config, null, logo.getData());
+    						PdfMaker.printInvoice(out, company, invoice, config, null, logo.getData());
     						list.add(file);	
     					}
     				}
@@ -198,7 +198,7 @@ public class MultipleDownloadServlet extends HttpServlet{
 						Invoice invoice = InvoiceJSON.fromJSON(new JSONObject(r.getJson()));
 						File file = File.createTempFile(name, ".pdf");
 						FileOutputStream out = new FileOutputStream(file);
-						PdfMaker.printInvoice(out, config.isCompany() ? company : null, invoice, config, null, logo.getData());
+						PdfMaker.printInvoice(out, company, invoice, config, null, logo.getData());
 						list.add(file);
 					}
 				} catch (IOException e) {

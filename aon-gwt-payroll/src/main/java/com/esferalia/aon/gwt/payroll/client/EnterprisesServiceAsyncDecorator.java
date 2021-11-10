@@ -655,12 +655,6 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) {
-		AON.start();
-		enterprisesServiceAsync.setContractBonus(currentDomainName, employeeContractData, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
 	public void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate, AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.deleteDigitalCertificate(currentDomainName, digitalCertificate, new AsyncCallbackWrapper<Void>(callback));

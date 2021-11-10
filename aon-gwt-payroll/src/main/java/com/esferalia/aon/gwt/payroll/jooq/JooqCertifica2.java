@@ -17,10 +17,10 @@ import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,7 @@ import javax.xml.bind.JAXBException;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -50,31 +51,43 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import aon.sepe.objects.Certificates;
 import aon.sepe.objects.Certificates.CertificatesBuilder;
 import aon.sepe.objects.Certificates.TypeDuration;
+import aon.sepe.objects.QuoteData;
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 
 public class JooqCertifica2 {
+	
+	// ---------------------------------------------------------- Constructor
+	
+	private JooqCertifica2() {
+		super();
+	}
+	
+	// ---------------------------------------------------------- Variables
 
-	private static Settings SETTINGS = null;
+	private static Settings settings = null;
+	
+	protected static Settings getDefaultSettings() {
+		if (settings == null) {
+			settings = new Settings();
+			settings.setRenderSchema(false);
+		}
+		return settings;
+	}
+	
 	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 	
 	private static SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyyMMdd");
 	private static SimpleDateFormat yearDateFormat = new SimpleDateFormat("yyyy");
 	private static SimpleDateFormat monthDateFormat = new SimpleDateFormat("MM");
 	
-	protected static Settings getDefaultSettings() {
-		if (SETTINGS == null) {
-			SETTINGS = new Settings();
-			SETTINGS.setRenderSchema(false);
-		}
-		return SETTINGS;
-	}
+	private static DecimalFormat decimalFormat = new DecimalFormat("######0.00");
+	
+	// ---------------------------------------------------------- generateCertifica2
 	
 	public static void generateCertifica2(String domainName, Integer contractId) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			generateCertifica2(connection, domainId, contractId);
-			
+			generateCertifica2(connection, domainId, contractId);	
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -128,7 +141,7 @@ public class JooqCertifica2 {
 		
 		
 		// --------------------------- INSERT CERTIFICA2_BATCH TABLE
-		Certifica2BatchRecord cetifica2_batchRecord = dslContext.insertInto(CERTIFICA2_BATCH)
+		Certifica2BatchRecord cetifica2BatchRecord = dslContext.insertInto(CERTIFICA2_BATCH)
 			.set(CERTIFICA2_BATCH.DOMAIN, domainId)
 			.set(CERTIFICA2_BATCH.ENTERPRISE, enterpriseId)
 			.set(CERTIFICA2_BATCH.INCOME_FILE, (byte[])null)
@@ -136,12 +149,12 @@ public class JooqCertifica2 {
 			.returning(CERTIFICA2_BATCH.ID)
 			.fetchOne();
 		 
-		Integer cetifica2_batch_id = cetifica2_batchRecord.get(CERTIFICA2_BATCH.ID);
+		Integer cetifica2BatchId = cetifica2BatchRecord.get(CERTIFICA2_BATCH.ID);
 		
 		// --------------------------- INSERT CERTIFICA2_BATCH_DETAIL TABLE
 		dslContext.insertInto(CERTIFICA2_BATCH_DETAIL)
 			.set(CERTIFICA2_BATCH_DETAIL.DOMAIN, domainId)
-			.set(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH, cetifica2_batch_id)
+			.set(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH, cetifica2BatchId)
 			.set(CERTIFICA2_BATCH_DETAIL.CONTRACT, contractId)
 			.set(CERTIFICA2_BATCH_DETAIL.SUSPENSION_CAUSE_CODE, suspensionReasonCode)
 			.set(CERTIFICA2_BATCH_DETAIL.STATUS, (byte)0)
@@ -150,15 +163,15 @@ public class JooqCertifica2 {
 		
 		// Generate SEPE_BATCH_ATTACH description
 		java.util.Date date = new java.util.Date();
-		String sepe_batch_description = enterpriseDocument + simpleDateFormat.format(date);
+		String sepeBatchDescription = enterpriseDocument + simpleDateFormat.format(date);
 		
 		// --------------------------- INSERT SEPE_BATCH_ATTACH TABLE
 		dslContext.insertInto(SEPE_BATCH_ATTACH)
 			.set(SEPE_BATCH_ATTACH.DOMAIN, domainId)
-			.set(SEPE_BATCH_ATTACH.SOURCE_BATCH, cetifica2_batch_id)
+			.set(SEPE_BATCH_ATTACH.SOURCE_BATCH, cetifica2BatchId)
 			.set(SEPE_BATCH_ATTACH.SOURCE_TYPE, (byte)0)
 			.set(SEPE_BATCH_ATTACH.MIMETYPE, (byte)5)
-			.set(SEPE_BATCH_ATTACH.DESCRIPTION, sepe_batch_description)
+			.set(SEPE_BATCH_ATTACH.DESCRIPTION, sepeBatchDescription)
 			.set(SEPE_BATCH_ATTACH.DATA, out.toByteArray())
 			.set(SEPE_BATCH_ATTACH.TYPE, (byte)0)
 			.set(SEPE_BATCH_ATTACH.ATTACH_DATE, new Date(date.getTime()))
@@ -185,7 +198,7 @@ public class JooqCertifica2 {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		// --------------------------- CERTIFIC@2
-		String certifica2Message = generateCertifica2(dslContext, contractId, certifica2Info, out);
+		String certifica2Message = generateCertifica2(certifica2Info, out);
 		
 		if(AonStringUtils.isNotBlank(certifica2Message))
 			return "No se ha podido generar el fichero Certific@2: \n\n" + certifica2Message;
@@ -203,25 +216,25 @@ public class JooqCertifica2 {
 				.fetchOne(REGISTRY.DOCUMENT);
 		
 		// --------------------------- INSERT CERTIFICA2_BATCH_DETAIL TABLE
-		Record certifica2_batch_detailRecord = dslContext.select().from(CERTIFICA2_BATCH_DETAIL)
+		Record certifica2BatchDetailRecord = dslContext.select().from(CERTIFICA2_BATCH_DETAIL)
 			.where(CERTIFICA2_BATCH_DETAIL.DOMAIN.eq(domainId))
 			.and(CERTIFICA2_BATCH_DETAIL.CONTRACT.eq(contractId))
 			.fetchOne();
 		
-		Integer certifica2_batch_detailId = null;
-		Integer cetifica2_batch_id = null;
+		Integer certifica2BatchDetailId = null;
+		Integer cetifica2BatchId = null;
 		
-		if(null != certifica2_batch_detailRecord) {
-			certifica2_batch_detailId = certifica2_batch_detailRecord.get(CERTIFICA2_BATCH_DETAIL.ID);
-			cetifica2_batch_id = certifica2_batch_detailRecord.get(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH);
+		if(null != certifica2BatchDetailRecord) {
+			certifica2BatchDetailId = certifica2BatchDetailRecord.get(CERTIFICA2_BATCH_DETAIL.ID);
+			cetifica2BatchId = certifica2BatchDetailRecord.get(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH);
 			
 			dslContext.update(CERTIFICA2_BATCH_DETAIL)
 				.set(CERTIFICA2_BATCH_DETAIL.SUSPENSION_CAUSE_CODE, certifica2Info.getSuspensionCode())
-				.where(CERTIFICA2_BATCH_DETAIL.ID.eq(certifica2_batch_detailId))
+				.where(CERTIFICA2_BATCH_DETAIL.ID.eq(certifica2BatchDetailId))
 				.execute();
 		} else {
 			// --------------------------- INSERT CERTIFICA2_BATCH TABLE
-			Certifica2BatchRecord cetifica2_batchRecord = dslContext.insertInto(CERTIFICA2_BATCH)
+			Certifica2BatchRecord cetifica2BatchRecord = dslContext.insertInto(CERTIFICA2_BATCH)
 					.set(CERTIFICA2_BATCH.DOMAIN, domainId)
 					.set(CERTIFICA2_BATCH.ENTERPRISE, enterpriseId)
 					.set(CERTIFICA2_BATCH.INCOME_FILE, (byte[])null)
@@ -229,11 +242,11 @@ public class JooqCertifica2 {
 					.returning(CERTIFICA2_BATCH.ID)
 					.fetchOne();
 			 
-			cetifica2_batch_id = cetifica2_batchRecord.get(CERTIFICA2_BATCH.ID);
+			cetifica2BatchId = cetifica2BatchRecord.get(CERTIFICA2_BATCH.ID);
 			
 			dslContext.insertInto(CERTIFICA2_BATCH_DETAIL)
 				.set(CERTIFICA2_BATCH_DETAIL.DOMAIN, domainId)
-				.set(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH, cetifica2_batch_id)
+				.set(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH, cetifica2BatchId)
 				.set(CERTIFICA2_BATCH_DETAIL.CONTRACT, contractId)
 				.set(CERTIFICA2_BATCH_DETAIL.SUSPENSION_CAUSE_CODE, certifica2Info.getSuspensionCode())
 				.set(CERTIFICA2_BATCH_DETAIL.STATUS, (byte)0)
@@ -243,28 +256,31 @@ public class JooqCertifica2 {
 		
 		// Generate SEPE_BATCH_ATTACH description
 		java.util.Date date = new java.util.Date();
-		String sepe_batch_description = enterpriseDocument + simpleDateFormat.format(date);
+		String sepeBatchDescription = enterpriseDocument + simpleDateFormat.format(date);
 		
 		// --------------------------- INSERT SEPE_BATCH_ATTACH TABLE
-		Integer sepe_batch_attachId = dslContext.select(SEPE_BATCH_ATTACH.ID).from(SEPE_BATCH_ATTACH)
-			.where(SEPE_BATCH_ATTACH.SOURCE_BATCH.eq(cetifica2_batch_id))
+		Result<Record1<Integer>> sepeBatchAttachIdRecords = dslContext.select(SEPE_BATCH_ATTACH.ID).from(SEPE_BATCH_ATTACH)
+			.where(SEPE_BATCH_ATTACH.SOURCE_BATCH.eq(cetifica2BatchId))
 			.and(SEPE_BATCH_ATTACH.DOMAIN.eq(domainId))
-			.fetchOne(SEPE_BATCH_ATTACH.ID);
+			.orderBy(SEPE_BATCH_ATTACH.ID.desc())
+			.fetch();
 		
-		if(null != sepe_batch_attachId)
+		Integer sepeBatchAttachId = sepeBatchAttachIdRecords.isEmpty() ? null : sepeBatchAttachIdRecords.get(0).get(SEPE_BATCH_ATTACH.ID);
+		
+		if(null != sepeBatchAttachId)
 			dslContext.update(SEPE_BATCH_ATTACH)
-				.set(SEPE_BATCH_ATTACH.SOURCE_BATCH, cetifica2_batch_id)
-				.set(SEPE_BATCH_ATTACH.DESCRIPTION, sepe_batch_description + "HOLA")
+				.set(SEPE_BATCH_ATTACH.SOURCE_BATCH, cetifica2BatchId)
+				.set(SEPE_BATCH_ATTACH.DESCRIPTION, sepeBatchDescription + "HOLA")
 				.set(SEPE_BATCH_ATTACH.DATA, out.toByteArray())
 				.set(SEPE_BATCH_ATTACH.ATTACH_DATE, new Date(date.getTime()))
 				.execute();
 		else
 			dslContext.insertInto(SEPE_BATCH_ATTACH)
 				.set(SEPE_BATCH_ATTACH.DOMAIN, domainId)
-				.set(SEPE_BATCH_ATTACH.SOURCE_BATCH, cetifica2_batch_id)
+				.set(SEPE_BATCH_ATTACH.SOURCE_BATCH, cetifica2BatchId)
 				.set(SEPE_BATCH_ATTACH.SOURCE_TYPE, (byte)0)
 				.set(SEPE_BATCH_ATTACH.MIMETYPE, (byte)5)
-				.set(SEPE_BATCH_ATTACH.DESCRIPTION, sepe_batch_description)
+				.set(SEPE_BATCH_ATTACH.DESCRIPTION, sepeBatchDescription)
 				.set(SEPE_BATCH_ATTACH.DATA, out.toByteArray())
 				.set(SEPE_BATCH_ATTACH.TYPE, (byte)0)
 				.set(SEPE_BATCH_ATTACH.ATTACH_DATE, new Date(date.getTime()))
@@ -282,7 +298,7 @@ public class JooqCertifica2 {
 		return "El fichero Certific@2 se ha generado correctamente. \n\n Para poder visualizarlo y comunicarlo, dirijase a: \n\n Contratos > " + employeeName + " > Mas > Certific@2";
 	}
 	
-	private static String generateCertifica2(DSLContext dslContext, Integer contractId, com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, ByteArrayOutputStream os) {
+	private static String generateCertifica2(com.esferalia.aon.gwt.payroll.shared.Certifica2Info certifica2Info, ByteArrayOutputStream os) {
 		// ---------------------------------------------------- Create CertificadoEmpresa
 		
 		CertificadoEmpresa certificadoEmpresa = new CertificadoEmpresa();
@@ -319,25 +335,26 @@ public class JooqCertifica2 {
 			if(AonStringUtils.isBlank(certifica2Map.get("daysCtz")))
 				cotizacionType.setNumDiasCotizados("000");
 			else
-				cotizacionType.setNumDiasCotizados(StringUtils.leftPad(certifica2Map.get("daysCtz").toString(), 3, '0'));
+				cotizacionType.setNumDiasCotizados(StringUtils.leftPad(certifica2Map.get("daysCtz"), 3, '0'));
 			
 			if(AonStringUtils.isBlank(certifica2Map.get("bccc")))
 				cotizacionType.setBaseCotizacionContingenciasComunes("000000000");
 			else
-				cotizacionType.setBaseCotizacionContingenciasComunes(StringUtils.leftPad(certifica2Map.get("bccc").replaceAll(",", "").replaceAll("\\.", ""), 9, '0'));
+				cotizacionType.setBaseCotizacionContingenciasComunes(StringUtils.leftPad(format(certifica2Map.get("bccc")), 9, '0'));
+			
 			
 			if(AonStringUtils.isBlank(certifica2Map.get("bcd")))
 				cotizacionType.setBaseCotizacionDesempleo("000000000");
 			else
-				cotizacionType.setBaseCotizacionDesempleo(StringUtils.leftPad(certifica2Map.get("bcd").replaceAll(",", "").replaceAll("\\.", ""), 9, '0'));
+				cotizacionType.setBaseCotizacionDesempleo(StringUtils.leftPad(format(certifica2Map.get("bcd")), 9, '0'));
 			
 			trabajadorType.getDatosCotizacion().add(cotizacionType);
 		}
 		
 		DatosVacacionesCotizadas datosVacacionesCotizadas = new DatosVacacionesCotizadas();
 		datosVacacionesCotizadas.setNumDiasCotizados(StringUtils.leftPad(certifica2Info.getSettleQuoteDays().toString(), 3, '0'));
-		datosVacacionesCotizadas.setBaseCotizacionContingenciasComunes(StringUtils.leftPad(String.format("%.2f", certifica2Info.getBaseCgc()).replaceAll(",", ""), 9, '0'));
-		datosVacacionesCotizadas.setBaseCotizacionDesempleo(StringUtils.leftPad(String.format("%.2f", certifica2Info.getBaseUnemployment()).replaceAll(",", ""), 9, '0'));
+		datosVacacionesCotizadas.setBaseCotizacionContingenciasComunes(StringUtils.leftPad(format(certifica2Info.getBaseCgc()), 9, '0'));
+		datosVacacionesCotizadas.setBaseCotizacionDesempleo(StringUtils.leftPad(format(certifica2Info.getBaseUnemployment()), 9, '0'));
 		trabajadorType.setDatosVacacionesCotizadas(datosVacacionesCotizadas);
 		
 		cuentaCotizacion.setDatosEmpresa(empresaType);
@@ -353,33 +370,41 @@ public class JooqCertifica2 {
 		
 		return "";
 	}
+	
+	private static String format(Double value) {
+		return decimalFormat.format(value).replace(",", "").replace("\\.", "");
+	}
+	
+	private static String format(String value) {
+		return value.replace(",", "").replace("\\.", "");
+	}
 
-	private static String getSuspensionReasonCode (String compensation_reason) {
-		switch (compensation_reason) {
-		case "UNFAIR":
-			return "01";
-		case "OBJECTIVE":
-			return "02";
-		case "WORK_END":
-			return "11";
-		case "TEMP_END":
-			return "11";
-		case "DEFINITE_END":
-			return "11";
-		case "CONDITIONS_CHANGE":
-			return "21";
-		default:
-			return "00";
+	private static String getSuspensionReasonCode (String compensationReason) {
+		switch (compensationReason) {
+			case "UNFAIR":
+				return "01";
+			case "OBJECTIVE":
+				return "02";
+			case "WORK_END":
+				return "11";
+			case "TEMP_END":
+				return "11";
+			case "DEFINITE_END":
+				return "11";
+			case "CONDITIONS_CHANGE":
+				return "21";
+			default:
+				return "00";
 		}
 	}
 	
 	// ------------------------------------------- SEPE Comunication
 	
-	public static Certificates createCertificates(Connection conn, Integer domainId, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
-		return createCertificates(DSL.using(conn, getDefaultSettings()), domainId, contractId, suspensionReasonCode);
+	public static Certificates createCertificates(Connection conn, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
+		return createCertificates(DSL.using(conn, getDefaultSettings()), contractId, suspensionReasonCode);
 	}
 
-	private static Certificates createCertificates(DSLContext dslContext, Integer domainId, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
+	private static Certificates createCertificates(DSLContext dslContext, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
 		
 		// ---------------------------------------------------- Employee Data
 		Record contractRecord = dslContext.select().from(CONTRACT)
@@ -393,6 +418,8 @@ public class JooqCertifica2 {
 		Date startDate = contractRecord.get(CONTRACT.START_DATE);
 		Date endDate = contractRecord.get(CONTRACT.END_DATE);
 		Long contractDuration = getDaysBetween(startDate, endDate);
+		
+		Date seniorityDate = contractRecord.get(CONTRACT.SENIORITY_DATE);
 		
 		Record personRecord = dslContext.select().from(PERSON)
 				.where(PERSON.REGISTRY.eq(personId))
@@ -450,7 +477,7 @@ public class JooqCertifica2 {
 				.where(ENTERPRISE_CCC.ID.eq(enterpriseCCCId))
 				.fetchOne();
 		
-		String regime = parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE));
+		String regime = parseSSRegime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE));
 		String ccc = enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
 		
 		Record enterpriseRegistryRecord = dslContext.select().from(REGISTRY).where(REGISTRY.ID.eq(
@@ -463,18 +490,22 @@ public class JooqCertifica2 {
 		
 		// ---------------------------------------------------- Salaries Data
 		
-		List<Certifica2Info> certifica2List = new ArrayList<Certifica2Info>();
+		List<Certifica2Info> certifica2List = new ArrayList<>();
 		Integer maxDays = 0;
 
 		java.util.Date filterDateJava = DateUtils.copyDateOnly(parseDateToJava(endDate));
 		filterDateJava = DateUtils.addDays2Date(filterDateJava, -180);
 		Date filterDate = parseDateToSQL(filterDateJava);
 		
+		if(null != seniorityDate)
+			filterDate = filterDate.before(seniorityDate) ? seniorityDate : filterDate;
+		
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)0))
 				.and(SALARY.END_DATE.ge(filterDate))
+				.and(SALARY.END_DATE.le(endDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
@@ -549,34 +580,46 @@ public class JooqCertifica2 {
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)2))
 				.and(SALARY.END_DATE.ge(filterDate))
+				.and(SALARY.END_DATE.le(endDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
-		Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
+		Certifica2Info settlementCertifica2Info = null;
 		
-		Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
-		Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
-		Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate);
-		
-		Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
-				.where(SALARY_PAYMENT.SALARY.eq(settlementId))
-				.and(SALARY_PAYMENT.TYPE.eq((byte)6))
-				.fetchOne();
-		
-		Double baseCGC = 0.00;
-		Double baseCGP = 0.00;
-		
-		if(null != holidaysRecord) {
-			baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
-			baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
+		if(settlementRecords.isEmpty()) {
+			settlementCertifica2Info = new Certifica2Info(
+					null,
+					null,
+					0, 
+					0.00, 
+					0.00);
+		} else {
+			Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
+			
+			Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
+			Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
+			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate);
+			
+			Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
+					.where(SALARY_PAYMENT.SALARY.eq(settlementId))
+					.and(SALARY_PAYMENT.TYPE.eq((byte)6))
+					.fetchOne();
+			
+			Double baseCGC = 0.00;
+			Double baseCGP = 0.00;
+			
+			if(null != holidaysRecord) {
+				baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
+				baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
+			}
+			
+			settlementCertifica2Info = new Certifica2Info(
+					null,
+					null,
+					settlementDaysBetween.intValue(), 
+					baseCGC, 
+					baseCGP);
 		}
-		
-		Certifica2Info settlementCertifica2Info = new Certifica2Info(
-				null,
-				null,
-				settlementDaysBetween.intValue(), 
-				baseCGC, 
-				baseCGP);
 		
 		// ---------------------------------------------------- Create Certificates
 		
@@ -597,43 +640,35 @@ public class JooqCertifica2 {
 			.setfAEd(startDate)
 			.setfSTd(endDate)
 			.setDaysCtzVc(settlementCertifica2Info.getQuotedDays())
-			.setBcccVc(settlementCertifica2Info.getBase_cgc()+"")
-			.setBcdVc(settlementCertifica2Info.getBase_unemployment()+"");
+			.setBcccVc(settlementCertifica2Info.getBase_cgc())
+			.setBcdVc(settlementCertifica2Info.getBase_unemployment());
 		
-		List<Map<String, String>> dataCtz = new ArrayList<Map<String, String>>();
+		List<QuoteData> quoteDatas = new ArrayList<>();
 		
-		certifica2List.sort(new Comparator<Certifica2Info>() {
-			@Override
-			public int compare(Certifica2Info o1, Certifica2Info o2) {
-				return o2.getMonth().compareTo(o1.getMonth());
-			}
-		});
+		certifica2List.sort((o1, o2) -> o2.getMonth().compareTo(o1.getMonth()));
 		
 		for(Certifica2Info certifica2 : certifica2List) {
-			Map<String, String> values = new HashMap<String, String>();
-			
-			values.put("anioCtz", certifica2.getYear());
-			values.put("monthCtz", certifica2.getMonth());
-			values.put("daysCtz", certifica2.getQuotedDays()+"");
-			values.put("bccc", certifica2.getBase_cgc()+"");
-			values.put("bcd",  certifica2.getBase_unemployment()+"");
-			dataCtz.add(values);
+			QuoteData quoteData = new QuoteData();
+			quoteData.setAnio(Integer.parseInt(certifica2.getYear()));
+			quoteData.setMonth(Integer.parseInt(certifica2.getMonth()));
+			quoteData.setDays(certifica2.getQuotedDays());
+			quoteData.setBccc(certifica2.getBase_cgc());
+			quoteData.setBcd(certifica2.getBase_unemployment());
+			quoteDatas.add(quoteData);
 		}
 		
-		bd.setDataCtz(dataCtz);
+		bd.setQuoteData(quoteDatas);
 		
-		Certificates certificates = bd.build();
-		
-		return certificates;
+		return bd.build();
 	}
 	
 	// ------------------------------------------- Get Certifica2 Info
 	
-	public static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(Connection conn, Integer domainId, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
-		return getCertifica2Info(DSL.using(conn, getDefaultSettings()), domainId, contractId, suspensionReasonCode);
+	public static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(Connection conn, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
+		return getCertifica2Info(DSL.using(conn, getDefaultSettings()), contractId, suspensionReasonCode);
 	}
 
-	private static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(DSLContext dslContext, Integer domainId, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
+	private static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(DSLContext dslContext, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
 		
 		// ---------------------------------------------------- Employee Data
 		Record contractRecord = dslContext.select().from(CONTRACT)
@@ -649,6 +684,8 @@ public class JooqCertifica2 {
 		if (null == endDate)
 			throw new IllegalArgumentException("No existe fecha fin para este contrato");
 		Long contractDuration = getDaysBetween(startDate, endDate);
+		
+		Date seniorityDate = contractRecord.get(CONTRACT.SENIORITY_DATE);
 		
 		Record personRecord = dslContext.select().from(PERSON)
 				.where(PERSON.REGISTRY.eq(personId))
@@ -697,9 +734,6 @@ public class JooqCertifica2 {
 		
 		if(AonStringUtils.isNotBlank(cnoType))
 			cno = normalizeString(cnoType);
-//			throw new IllegalArgumentException("No existe CNO para este contrato");
-		
-//		String cno = normalizeString(cnoType);
 		
 		// ---------------------------------------------------- Enterprise Data
 		
@@ -707,7 +741,7 @@ public class JooqCertifica2 {
 				.where(ENTERPRISE_CCC.ID.eq(enterpriseCCCId))
 				.fetchOne();
 		
-		String regime = parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE));
+		String regime = parseSSRegime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE));
 		String ccc = enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);
 		String completeCCC = regime + ccc;
 		
@@ -721,18 +755,22 @@ public class JooqCertifica2 {
 		
 		// ---------------------------------------------------- Salaries Data
 		
-		List<Certifica2Info> certifica2List = new ArrayList<Certifica2Info>();
+		List<Certifica2Info> certifica2List = new ArrayList<>();
 		Integer maxDays = 0;
 		
 		java.util.Date filterDateJava = DateUtils.copyDateOnly(parseDateToJava(endDate));
 		filterDateJava = DateUtils.addDays2Date(filterDateJava, -180);
 		Date filterDate = parseDateToSQL(filterDateJava);
 		
+		if(null != seniorityDate)
+			filterDate = filterDate.before(seniorityDate) ? seniorityDate : filterDate;
+		
 		Result<Record> salariesRecords = dslContext.select().from(SALARY)
 				.where(SALARY.SOCIAL_SECURITY_NUMBER.eq(ssNum))
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)0))
 				.and(SALARY.END_DATE.ge(filterDate))
+				.and(SALARY.END_DATE.le(endDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
@@ -807,6 +845,7 @@ public class JooqCertifica2 {
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)2))
 				.and(SALARY.END_DATE.ge(filterDate))
+				.and(SALARY.END_DATE.le(endDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
@@ -870,17 +909,12 @@ public class JooqCertifica2 {
 		certifica2Info.setBaseCgc(round(settlementCertifica2Info.getBase_cgc(), 2));
 		certifica2Info.setBaseUnemployment(round(settlementCertifica2Info.getBase_unemployment(), 2));
 		
-		List<Map<String, String>> quoteDataList = new ArrayList<Map<String, String>>();
+		List<Map<String, String>> quoteDataList = new ArrayList<>();
 		
-		certifica2List.sort(new Comparator<Certifica2Info>() {
-			@Override
-			public int compare(Certifica2Info o1, Certifica2Info o2) {
-				return o2.getMonth().compareTo(o1.getMonth());
-			}
-		});
+		certifica2List.sort((o1, o2) ->  o2.getMonth().compareTo(o1.getMonth()));
 		
 		for(Certifica2Info certifica2 : certifica2List) {
-			Map<String, String> quoteData = new HashMap<String, String>();
+			Map<String, String> quoteData = new HashMap<>();
 			
 			quoteData.put("anioCtz", certifica2.getYear());
 			quoteData.put("monthCtz", certifica2.getMonth());
@@ -914,11 +948,11 @@ public class JooqCertifica2 {
 		return dateJava;
 	}
 
-	public static String getSuspensionReasonCode(Connection conn, Integer domainId, Integer contractId) throws IllegalArgumentException {
-		return getSuspensionReasonCode(DSL.using(conn, getDefaultSettings()), domainId, contractId);
+	public static String getSuspensionReasonCode(Connection conn, Integer contractId) throws IllegalArgumentException {
+		return getSuspensionReasonCode(DSL.using(conn, getDefaultSettings()), contractId);
 	}
 
-	private static String getSuspensionReasonCode(DSLContext dslContext, Integer domainId, Integer contractId) throws IllegalArgumentException {
+	private static String getSuspensionReasonCode(DSLContext dslContext, Integer contractId) throws IllegalArgumentException {
 		// Settlement Record
 		Result<Record> settlementRecords = dslContext.select().from(SALARY)
 				.where(SALARY.CONTRACT.eq(contractId))
@@ -928,7 +962,6 @@ public class JooqCertifica2 {
 		
 		if(settlementRecords.isEmpty())
 			return null;
-//			throw new IllegalArgumentException("No existe finiquito, por lo que no es posible comunicar Cetifica2");
 		
 		// Settlement Id
 		Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
@@ -941,7 +974,6 @@ public class JooqCertifica2 {
 		
 		if(suspensionCodeRecords.isEmpty())
 			return null;
-//			throw new IllegalArgumentException("No existe causa de indemnizaci\u00F3n para poder generar Cetifica2");
 		
 		String suspensionReasonCode = "00";
 		
@@ -958,18 +990,16 @@ public class JooqCertifica2 {
 			
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			
-			Integer cetifica2_batch_id = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH).from(CERTIFICA2_BATCH_DETAIL)
+			Integer cetifica2BatchId = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH).from(CERTIFICA2_BATCH_DETAIL)
 				.where(CERTIFICA2_BATCH_DETAIL.CONTRACT.eq(contractId))
 				.fetchOne(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH);
 			
-			if(null == cetifica2_batch_id)
+			if(null == cetifica2BatchId)
 				return null;
 			
-			byte[] data = dslContext.select(SEPE_BATCH_ATTACH.DATA).from(SEPE_BATCH_ATTACH)
-				.where(SEPE_BATCH_ATTACH.SOURCE_BATCH.eq(cetifica2_batch_id))
+			return dslContext.select(SEPE_BATCH_ATTACH.DATA).from(SEPE_BATCH_ATTACH)
+				.where(SEPE_BATCH_ATTACH.SOURCE_BATCH.eq(cetifica2BatchId))
 				.fetchOne(SEPE_BATCH_ATTACH.DATA);
-			
-			return data;
 			
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -990,28 +1020,28 @@ public class JooqCertifica2 {
 		return contractType;
 	}
 
-	private static String parseSS_Regime(Byte ss_regime) {
-		switch (ss_regime) {
-		case 0:
-			return "0111";
-		case 1:
-			return "0111";
-		case 2:
-			return "0111";
-		case 3:
-			return "0111";
-		case 4:
-			return "0111";
-		case 5:
-			return "0111";
-		case 6:
-			return "0138";
-		case 7:
-			return "0163";
-		case 8:
-			return "0112";
-		default:
-			return "0111";
+	private static String parseSSRegime(Byte ssRegime) {
+		switch (ssRegime) {
+			case 0:
+				return "0111";
+			case 1:
+				return "0111";
+			case 2:
+				return "0111";
+			case 3:
+				return "0111";
+			case 4:
+				return "0111";
+			case 5:
+				return "0111";
+			case 6:
+				return "0138";
+			case 7:
+				return "0163";
+			case 8:
+				return "0112";
+			default:
+				return "0111";
 		}
 	}
 	

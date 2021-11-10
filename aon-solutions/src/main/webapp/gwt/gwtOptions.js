@@ -172,3 +172,10 @@ export const INVOICE_STAT = {
   entryPoint: 'stat',
   subEntryPoint: 'StatControlPanel'
 }
+
+export const CHECKIT = {
+  title: MSG.BANKS,
+  name: MSG.BANKS,
+  module: GWT_FISCAL,
+  entryPoint: 'CheckItModule'
+}

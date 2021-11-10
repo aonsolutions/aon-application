@@ -10,15 +10,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
 import com.esferalia.aon.in.payroll.tgss.report.CCCLaboralLife;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.watson.server.AonDateUtils;
-
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.seg.social.ServicioREDEmployee;
-import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -33,14 +30,13 @@ public class ComunicaUtils {
 	 * GET EMPLOYEES REAL DATA  SEG SOCIAL
 	 * @return ArrayList<Employee>
 	 */
-	public static ArrayList<Employee> getEmployeesReal(Certificate certificate, List<CCCInfo> cccs) {
+	public static ArrayList<Employee> getEmployeesPrev(Certificate certificate, List<CCCInfo> cccs) {
 		 ArrayList<Employee> employees = new ArrayList<>();
 		 for (CCCInfo ccc : cccs) {
 			    String regimen = ccc.getCccRegimeCode();
 	            String cti = ccc.getCccAccount();
 	            try {
-		            employees.addAll(SistemaRED.getTotalEmployees(new ByteArrayInputStream(certificate.getCertificate()), 
-		              		certificate.getPassword(), certificate.getType(), regimen, cti));
+		            employees.addAll(ServicioREDEmployee.getPrevEmployees(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regimen, cti));
 				} catch (Exception e) {e.printStackTrace();}
 		 }
 	     return employees;
@@ -48,46 +44,51 @@ public class ComunicaUtils {
 	
 	/**
 	 * GET EMPLOYEES OLD DATA SEG SOCIAL
+	 * @param startDateIni startDateIni search
+	 * @param certificate
+	 * @param cccs
 	 * @return ArrayList<Employee>
 	 */
-	public static ArrayList<Employee> getEmployeesOld(Date date, Certificate certificate, List<CCCInfo> cccs) {
+	public static ArrayList<Employee> getEmployeesOld(Date startDateIni, Certificate certificate, List<CCCInfo> cccs) {
 		 ArrayList<Employee> employees = new ArrayList<>();
-	     List<Date> startDates = ComunicaUtils.getStartDates(date);
+	     List<Date> startDates = ComunicaUtils.getStartDates(startDateIni);
 	     
 	     for (CCCInfo ccc : cccs) {
-		     String cti = ccc.getCccAccount();
-		     String regimen = ccc.getCccRegimeCode();
+		     String ctaCti = ccc.getCccAccount();
+		     String regime = ccc.getCccRegimeCode();
 			 for (Date startDate : startDates) {
 			 	Date endDate = AonDateUtils.getMonthLastDay(startDate);
 			 	if( com.esferalia.aon.watson.util.AonDateUtils.compare(endDate, new Date()) > 0 ) 
 			 		endDate = new Date();
+			 	
+			 	System.out.println("----- START_DATE: "+AonDateUtils.format(startDate, "dd-MM-yyyy")+ " END_DATE: "+AonDateUtils.format(endDate, "dd-MM-yyyy")+" -----");
 
 	            try {
 		  			byte[] pdf = ServicioREDEmployee.getCccLaboralLifePOST(
 		  					new ByteArrayInputStream(certificate.getCertificate()), 
 		  					certificate.getPassword(), 
 		  					certificate.getType(), 
-		  					regimen, 
-		  					cti, 
+		  					regime, 
+		  					ctaCti, 
 		  					startDate, 
 		  					endDate
 		  			);
+		  		
 	  		        CCCLaboralLife.parse(new ByteArrayInputStream(pdf), new com.esferalia.aon.in.payroll.tgss.report.Employee.EmployeeBuilder()).forEach(data->{
-	  		    	  
-	  		    	EmployeeBuilder empl = new EmployeeBuilder()
-	  		    	.setName(data.getName())
-	  		    	.setNss(data.getNss())
-	  		    	.setIpf(data.getIpf())
-	  		    	.setCtaCti(data.getCtaCti())
-	  		    	.setRegime(data.getRegime())
-	  		    	.setFra(data.getFra());
-	  		    	
-	  		    	data.getGc().ifPresent(empl::setGc);
-	  		    	data.getFrb().ifPresent(empl::setFrb);
-	  		    	data.getContract().ifPresent(empl::setContract);
-	  		    	data.getCoef().ifPresent(empl::setCoef);
-	  		    	data.getOccupation().ifPresent(empl::setOcup);
-	  		    	employees.add(empl.build());
+		  		    	EmployeeBuilder empl = new EmployeeBuilder()
+		  		    	.setName(data.getName())
+		  		    	.setNss(data.getNss())
+		  		    	.setIpf(data.getIpf())
+		  		    	.setCtaCti(data.getCtaCti())
+		  		    	.setRegime(data.getRegime())
+		  		    	.setFra(data.getFra());
+		  		    	
+		  		    	data.getGc().ifPresent(empl::setGc);
+		  		    	data.getFrb().ifPresent(empl::setFrb);
+		  		    	data.getContract().ifPresent(empl::setContract);
+		  		    	data.getCoef().ifPresent(empl::setCoef);
+		  		    	data.getOccupation().ifPresent(empl::setOcup);
+		  		    	employees.add(empl.build());
 	  		      });
 	  		  } catch(Exception e)  {e.printStackTrace();}
 			 }
@@ -112,7 +113,7 @@ public class ComunicaUtils {
 	 * @return return dates for month
 	 */
 	public static List<Date> getStartDates(Date date) {
-	    Date startDate = AonDateUtils.getYearFirstDay(date);
+	    Date startDate = AonDateUtils.getMonthFirstDay(date);
         Date endDate = new Date();
         List<Date> dates = new ArrayList<>();
         GregorianCalendar calendar = new GregorianCalendar();

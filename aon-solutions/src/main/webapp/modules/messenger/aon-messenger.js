@@ -68,8 +68,9 @@ export class AonMessenger extends AonElement {
 			this._filter.email = this.cauData.auth.email;
 			
 		this.paintView();
+		
 		this.applicationEl = this.getApplication();
-		this.applicationParentEl = this.getApplicationParent();
+
 		this.buildToolbar();
 		
 		await getTaskHolder({reload:false}).then(th=>{

@@ -42,6 +42,7 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.model.mail.TaskMail;
 import net.aonsolutions.aon.api.model.mail.TaskMailTemplate;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.api.utils.TaskUtils;
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 
@@ -148,7 +149,7 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONArray getTasks(AonApiData api) {
 		Integer page = api.getParams().optInt(IJsonNames.PAGE);
 		Integer perPage = api.getParams().optInt(IJsonNames.PER_PAGE);
-		JSONArray jsonArr = TaskJSON.toJSON(AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), f -> UtilsTask.taskFilter(api, f, api.getDomain(), new Customer()), page, perPage));
+		JSONArray jsonArr = TaskJSON.toJSON(AON_SOLUTIONS.getTaskStream(api.getDomain(), api.getUser(), f -> TaskUtils.taskFilter(api, f, api.getDomain(), new Customer()), page, perPage));
 		if(page==1)
 			getTasksOffice(api, jsonArr);
 		return jsonArr;
@@ -166,12 +167,12 @@ public class TaskServlet extends AonApiHttpServlet{
 		boolean edit = task.getId() != null;
 		setCauData(api, task);
 		if(edit) {
-			UtilsTask.checkFiles(api, task);
+			TaskUtils.checkFiles(api, task);
 		}
 		task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
 		
 		if(!edit) {
-			UtilsTask.checkFiles(api, task);
+			TaskUtils.checkFiles(api, task);
 			task = AON_SOLUTIONS.saveTask(api.getDomain(), api.getUser(), task);
 		}
 		
@@ -206,13 +207,13 @@ public class TaskServlet extends AonApiHttpServlet{
 		List<TaskWorkflow> workflows = task.getWorkflows();
 		for (TaskWorkflow workflow : workflows) {
 			 TaskWorkflow newWorkflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), workflow.setTask(task.getId()));
-			 UtilsTask.sendWorkflowCommunication(api, newWorkflow);
+			 TaskUtils.sendWorkflowCommunication(api, newWorkflow);
 		}	
 	}
 
 	private JSONObject saveTaskWorkflow(AonApiData api) {
 		TaskWorkflow workflow = AON_SOLUTIONS.saveTaskWorkflow(api.getDomain(), api.getUser(), TaskWorkflowJSON.fromJSON(api.getData()));
-		UtilsTask.sendWorkflowCommunication(api, workflow);
+		TaskUtils.sendWorkflowCommunication(api, workflow);
 		return TaskWorkflowJSON.toJSON(workflow);
 	}
 
@@ -252,14 +253,14 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private JSONObject getTaskStatusCount(AonApiData api) {
 
-		HashMap<Byte, Integer> counts = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(),  f -> UtilsTask.taskFilterStatusCount(f, api, api.getDomain(), new Customer()));
+		HashMap<Byte, Integer> counts = AON_SOLUTIONS.getTaskStatusCount(api.getDomain(), api.getUser(),  f -> TaskUtils.taskFilterStatusCount(f, api, api.getDomain(), new Customer()));
 		
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		
 		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 			
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
-			HashMap<Byte, Integer> aux = AON_SOLUTIONS.getTaskStatusCount(domain, new User(),  f -> UtilsTask.taskFilterStatusCount(f, api, domain, customer));
+			HashMap<Byte, Integer> aux = AON_SOLUTIONS.getTaskStatusCount(domain, new User(),  f -> TaskUtils.taskFilterStatusCount(f, api, domain, customer));
 			aux.keySet().stream().forEach(key -> {
 				if(counts.containsKey(key)) 
 					counts.put(key, counts.get(key) + aux.get(key));
@@ -278,7 +279,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		Integer taskHolder = api.getParams().optString(IJsonNames.TASK_HOLDER).isEmpty() ? 0 : JsonUtils.getInteger(api.getParams(), IJsonNames.TASK_HOLDER);
 		
 		HashMap<String, Integer> counts = AON_SOLUTIONS.getTaskCount(api.getDomain(), api.getUser(), 
-				f-> UtilsTask.taskFilterCount(api, api.getDomain(), f, new Customer()), 
+				f-> TaskUtils.taskFilterCount(api, api.getDomain(), f, new Customer()), 
 				taskHolder
 		);
 		
@@ -287,7 +288,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
 			HashMap<String, Integer> aux = AON_SOLUTIONS.getTaskCount(domain, new User(),
-			f -> UtilsTask.taskFilterCount(api, domain, f, customer),
+			f -> TaskUtils.taskFilterCount(api, domain, f, customer),
 			taskHolder1);
 			aux.keySet().stream().forEach(key -> {
 				if(counts.containsKey(key)) 
@@ -389,7 +390,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
 			Company company = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getDomain().getId()));
 			if(company!=null) {
-				String logo = UtilsTask.getLogoCompany(company.getDomain().getName());
+				String logo = TaskUtils.getLogoCompany(company.getDomain().getName());
 				
 				String to = auth.getEmail();
 	
@@ -424,7 +425,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 			AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 				Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
-				AON_SOLUTIONS.getTaskStream(domain, new User(), f -> UtilsTask.taskFilter(api, f, domain, customer))
+				AON_SOLUTIONS.getTaskStream(domain, new User(), f -> TaskUtils.taskFilter(api, f, domain, customer))
 				.forEach(t -> arr.put(TaskJSON.toJSON(t)));
 			});
 //		}

@@ -62,9 +62,24 @@ export const AON_USER = 'aon-user';
 export const AON_MOBILE_PROFILE = 'aon-mobile-profile';
 
 export const AON_REG = 'aon-reg';
+export const AON_MOBILE_REG = 'aon-mobile-reg';
 export const AON_REGISTRY_LIST = 'aon-registry-list';
+export const AON_MOBILE_REGISTRY_LIST = 'aon-mobile-registry-list';
+
 export const AON_CUSTOMER = 'aon-customer';
 export const AON_CUSTOMER_LIST = 'aon-customer-list';
+export const AON_MOBILE_CUSTOMER = 'aon-mobile-customer';
+export const AON_MOBILE_CUSTOMER_LIST = 'aon-mobile-customer-list';
+
+export const AON_SUPPLIER = 'aon-supplier';
+export const AON_SUPPLIER_LIST = 'aon-supplier-list';
+export const AON_MOBILE_SUPPLIER = 'aon-mobile-supplier';
+export const AON_MOBILE_SUPPLIER_LIST = 'aon-mobile-supplier-list';
+
+export const AON_CREDITOR = 'aon-creditor';
+export const AON_CREDITOR_LIST = 'aon-creditor-list';
+export const AON_MOBILE_CREDITOR = 'aon-mobile-creditor';
+export const AON_MOBILE_CREDITOR_LIST = 'aon-mobile-creditor-list';
 
 export const AON_PROJECT_PANEL = 'aon-project-panel';
 export const AON_PROJECT_LIST = 'aon-project-list';

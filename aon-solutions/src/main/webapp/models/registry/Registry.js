@@ -29,11 +29,11 @@ export class Registry {
         if(registry) {
             this.id = registry.id;
             this.domain = new Domain(registry.domain);
-            this.document = registry.document;
+            this.document = registry.document || '';
             this.documentType = registry.documentType;
             this.documentCountry = registry.documentCountry || 'ES';
-            this.name = registry.name;
-            this.alias = registry.alias;
+            this.name = registry.name || '';
+            this.alias = registry.alias || '';
             this.legalPerson = registry.legalPerson;
             this.confidential = registry.confidential;
             this.global = registry.global;

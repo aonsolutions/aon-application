@@ -251,7 +251,6 @@ export class AonProduct extends AonElement {
 		profitPercent.decimals = "2";
 		profitPercent.addEventListener(EVENT.CHANGE, () => {
 			this.item.setProfitPercent(profitPercent.value);
-			alert(this.item.getPrice());
 			this.getElement(this.ITEM_PRICE).value = this.item.getPrice();
 			this.getElement(this.ITEM_PVP).value = this.getPvp();
 		});
