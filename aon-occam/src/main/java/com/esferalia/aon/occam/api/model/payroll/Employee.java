@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,11 +21,11 @@ import org.mvel2.MVEL;
 
 public class Employee implements Serializable{
 	
-	private static final String COEFICIENTE_PARCIALIDAD = "COEFICIENTE_PARCIALIDAD";
-	private static final String GRUPO_COTIZACION = "GRUPO_COTIZACION";
-	private static final String OCUPACION = "OCUPACION";
-	private static final String RLCE = "RLCE";
-	private static final String TC2 = "TC2";
+	public static final String TC2 = "TC2";
+	public static final String RLCE = "RLCE";
+	public static final String OCUPACION = "OCUPACION";
+	public static final String GRUPO_COTIZACION = "GRUPO_COTIZACION";
+	public static final String COEFICIENTE_PARCIALIDAD = "COEFICIENTE_PARCIALIDAD";
 
 	public static class Data<T> {
 		private T value;
@@ -270,6 +271,10 @@ public class Employee implements Serializable{
 		return getData(TC2, date, String.class);
 	}
 
+	public Employee addContractType(String contractType, Date startDate, Date endDate) {
+		return addString(TC2, contractType, toLocalDate(startDate), toLocalDate(endDate));
+	}
+
 	public Optional<String> getRlce() {
 		return getRlce(LocalDate.now());
 	}
@@ -284,6 +289,10 @@ public class Employee implements Serializable{
 
 	public Optional<String> getRlce(LocalDate date) {
 		return getData(RLCE, date, String.class);
+	}
+
+	public Employee addRlce(String rlce, Date startDate, Date endDate) {
+		return addString(RLCE, rlce, toLocalDate(startDate), toLocalDate(endDate));
 	}
 
 	public Optional<String> getOccupation() {
@@ -302,6 +311,10 @@ public class Employee implements Serializable{
 		return getData(OCUPACION, date, String.class);
 	}
 
+	public Employee addOccupation(String occupation, Date startDate, Date endDate) {
+		return addString(OCUPACION, occupation, toLocalDate(startDate), toLocalDate(endDate));
+	}
+
 	public Optional<String> getQuoteGroup() {
 		return getQuoteGroup(LocalDate.now());
 	}
@@ -316,6 +329,10 @@ public class Employee implements Serializable{
 
 	public Optional<String> getQuoteGroup(LocalDate date) {
 		return getData(GRUPO_COTIZACION, date, String.class);
+	}
+
+	public Employee addQuoteGroup(String quoteGroup, Date startDate, Date endDate) {
+		return addString(GRUPO_COTIZACION, quoteGroup, toLocalDate(startDate), toLocalDate(endDate));
 	}
 
 	public Optional<Double> getFactor() {
@@ -334,6 +351,10 @@ public class Employee implements Serializable{
 		return getData(COEFICIENTE_PARCIALIDAD, date, Double.class );
 	}
 	
+	public Employee addFactor(Double factor, Date startDate, Date endDate) {
+		return addNumber(COEFICIENTE_PARCIALIDAD, factor, toLocalDate(startDate), toLocalDate(endDate));
+	}
+
 	public Map<String, Collection<ExpressionData>> getDatas() {
 		return Collections.unmodifiableMap(dataMap);
 	}
@@ -384,8 +405,18 @@ public class Employee implements Serializable{
 	}
 
 	protected <T extends Number> Employee setNumber(String name, T t) {
-		String expression = t != null ? Double.toString(t.doubleValue()) : null;
+		String expression = t != null ? Double.toString(t.doubleValue()): null;
 		return setData(name, expression );
+	}
+
+	protected Employee addString(String name, String str, LocalDate startDate, LocalDate endDate) {
+		String expression = str != null ? String.format("\"%s\"", str): null;
+		return addData(name, expression, startDate, endDate );
+	}
+
+	protected <T extends Number> Employee addNumber(String name, T t, LocalDate startDate, LocalDate endDate) {
+		String expression = t != null ? Double.toString( t.doubleValue()): null;
+		return addData(name, expression, startDate, endDate );
 	}
 
 	protected Employee setData(String name, String expression) {
@@ -398,7 +429,7 @@ public class Employee implements Serializable{
 		return this;
 	}
 
-	protected void addData(String name, String expression, LocalDate startDate, LocalDate endDate) {
+	protected Employee addData(String name, String expression, LocalDate startDate, LocalDate endDate) {
 		ExpressionData expressionData = new ExpressionData();
 		expressionData.endDate = endDate;
 		expressionData.startDate = startDate;
@@ -407,6 +438,8 @@ public class Employee implements Serializable{
 		Collection<ExpressionData> expressionDatas = dataMap.computeIfAbsent(name, key -> new LinkedList<>());
 		
 		expressionDatas.add(expressionData);
+		
+		return this;
 	}
 	
 	protected <T> Collection<Data<T>> getDatas(String name, Class<T> type ) {

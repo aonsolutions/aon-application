@@ -288,6 +288,19 @@ public class MainEntryPoint implements EntryPoint {
 	                Window.alert("Error al cargar");
 				}
 			});
+		} else if (name == ActivitySummary.class ) {
+			GWT.runAsync(ActivitySummary.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
 		} else {
 			Window.alert("Modulo desconcido '" + name +"'");
 		}

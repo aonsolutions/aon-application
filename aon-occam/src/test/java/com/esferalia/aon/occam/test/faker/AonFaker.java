@@ -99,29 +99,63 @@ public class AonFaker {
 	}
 	
 	public static Employee getEmployee( AONContext ctx, Date startDate, Date endDate) {
-		return getEmployee(ctx, startDate, endDate, getCCC());
+		return getEmployee(ctx, getCCC(), startDate, endDate);
 	}
 
-	public static Employee getEmployee( AONContext ctx, Date startDate, Date endDate, String ccc ) {
-		return new Employee()
+//	public static Employee getEmployee( AONContext ctx, Date startDate, Date endDate, String ccc ) {
+//		return new Employee()
+//		.setCcc(ccc)		
+//		.setEndDate(endDate)
+//		.setStartDate(startDate)
+//		.setCategory(faker.job().title())
+//		.setName(faker.name().fullName())
+//		.setNaf(faker.regexify(nafRegexp))
+//		//.setCif(faker.regexify(documentRegexp))
+//		.setDni(faker.regexify(documentRegexp))
+//		.setRegime(AonRandom.getRandomSSRegime())
+//		.setQuoteGroup(AonRandom.getRandomQuoteGroup(5))
+//		.setOccupation(AonRandom.getRandomOccupation(75))
+//		.setContractType(AonRandom.getRandomContractType(5))
+//		.setFactor(AonRandom.gt(50)? faker.random().nextDouble(): null)
+//
+//		.setSex(AonRandom.gt(33) ? AonRandom.getRandomSex() : "U")
+//		.setBirthDate(AonRandom.gt(75) ? faker.date().birthday():null)
+//		.setPhone(AonRandom.gt(75) ? faker.phoneNumber().phoneNumber() :null)
+//		;
+//	}
+
+	public static Employee getEmployee( AONContext ctx, String ccc, Date ...dates) {
+		Date startDate = dates[0];
+		Date endDate = dates[dates.length-1];
+		Employee employee = 
+		new Employee()
 		.setCcc(ccc)		
-		.setEndDate(endDate)
 		.setStartDate(startDate)
+		.setEndDate(endDate)
 		.setCategory(faker.job().title())
 		.setName(faker.name().fullName())
 		.setNaf(faker.regexify(nafRegexp))
 		//.setCif(faker.regexify(documentRegexp))
 		.setDni(faker.regexify(documentRegexp))
 		.setRegime(AonRandom.getRandomSSRegime())
-		.setQuoteGroup(AonRandom.getRandomQuoteGroup(5))
-		.setOccupation(AonRandom.getRandomOccupation(75))
-		.setContractType(AonRandom.getRandomContractType(5))
-		.setFactor(AonRandom.gt(50)? faker.random().nextDouble(): null)
 
 		.setSex(AonRandom.gt(33) ? AonRandom.getRandomSex() : "U")
 		.setBirthDate(AonRandom.gt(75) ? faker.date().birthday():null)
 		.setPhone(AonRandom.gt(75) ? faker.phoneNumber().phoneNumber() :null)
 		;
+		
+		for ( int i = 0; i < dates.length; i += 2 ) {
+			Date dataStartDate = dates [i];
+			Date dataEndDate  = dates [i+1];
+			employee
+			.addQuoteGroup(AonRandom.getRandomQuoteGroup(5), dataStartDate, dataEndDate)
+			.addOccupation(AonRandom.getRandomOccupation(75), dataStartDate, dataEndDate)
+			.addContractType(AonRandom.getRandomContractType(5), dataStartDate, dataEndDate)
+			.addFactor(AonRandom.gt(50)? faker.random().nextDouble(): null, dataStartDate, dataEndDate);
+		}
+		
+		return employee;
+		
 	}
 
 	public static Customer getCustomer( AONContext ctx ) {
