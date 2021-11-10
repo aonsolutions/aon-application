@@ -65,8 +65,11 @@ public class ServicioREDMov extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("SPM.ISPOPUP", "0"));
 			params.add(new BasicNameValuePair("SPM.HAYJS", "1"));
 			for (int i=0; i<7; i++) {
-				if (i <= nssList.size() - 1)
-					params.add(new BasicNameValuePair("NA1NumSegSocialSinDC" + (i + 1), nssList.get(i)));
+				if (i <= nssList.size() - 1) {
+					String nss = nssList.get(i);
+					nss  = nss.length() > 10 ? nss.substring(0, 10) : nss;
+					params.add(new BasicNameValuePair("NA1NumSegSocialSinDC" + (i + 1), nss));					
+				}
 				else
 					params.add(new BasicNameValuePair("NA1NumSegSocialSinDC" + (i + 1), ""));
 					
@@ -105,7 +108,8 @@ public class ServicioREDMov extends ServicioREDRegeXML {
 		String navegacion = "";
 		
 		Integer ident  = 1; //NIF DEFAULT
-	    if(ServicioREDRegeXML.identity(ipf).equals("6")) ident = 3; // NIE
+	    if(ServicioREDRegeXML.identity(ipf).equals("6"))
+	    	ident = 6; // NIE
 		
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00D");
