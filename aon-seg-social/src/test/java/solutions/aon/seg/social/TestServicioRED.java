@@ -4,7 +4,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -40,7 +39,6 @@ import solutions.aon.seg.social.object.Period;
 public class TestServicioRED extends SegSocialTest {
 	
 	private static Logger LOG = Logger.getLogger(TestServicioRED.class.getName());
-	private static final String PASSED = "PASSED - ";
 
 //------------------------------------------------CONTRIBUTION INFO---------------------------------------------
 

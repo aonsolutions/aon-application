@@ -20,7 +20,6 @@ import solutions.aon.seg.social.exception.invalid.invalidCccException;
 public class TestServicioREDEmployee extends SegSocialTest {
 	
 	private static Logger LOG = Logger.getLogger(TestServicioREDEmployee.class.getName());
-	private static final String PASSED = "PASSED - ";
 
 //-------------------------------------------------TOTAL EMPLOYEES-----------------------------------------------
 
