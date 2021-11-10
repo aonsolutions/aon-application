@@ -221,7 +221,8 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void setContractSpecificData(Consumer<Void> success, Consumer<Throwable> failure) {
+	public void setContractSpecificData(ContractSpecificData contractSpecificData, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeeContractData.setContractSpecificData(contractSpecificData);
 		enterprisesService.setContractSpecificData(employeeContractData, new AsyncCallback<Void>() {
 			
 			@Override
