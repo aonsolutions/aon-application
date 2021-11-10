@@ -1927,6 +1927,97 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcXVIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXVI.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			Assert.assertTrue(ssPecs.size() == 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH,20);
+			calendar.set(Calendar.MONTH,Calendar.OCTOBER);
+
+			Date october2020201 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( october2020201 , pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> Assert.assertNull( pec.getEndDate()));
+			
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = " + pec.getFormula() + ", " + pec.getStartDate() ));
+			
+			calendar.set(Calendar.MONTH,Calendar.NOVEMBER);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date november = calendar.getTime();
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), november);
+			
+			salary.getSalaryCosts().forEach(c -> System.out.println("COST :" + c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			salary.getSalaryDeductions().forEach(d -> System.out.println("DEDUCTION :" + d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
+			salary.getSalaryBonus().forEach(d -> System.out.println("BONUS :" + d.getBonusConcept() +" : " + d.getAmount() +", " + d.getType()));
+			
+			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			//assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
+			
+		}
+	}
+
+	@Test
+	public void testIdcXVIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXVII.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			Assert.assertTrue(ssPecs.size() == 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH,21);
+			calendar.set(Calendar.MONTH,Calendar.OCTOBER);
+
+			Date october2120201 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( october2120201 , pec.getStartDate()));
+
+			
+			calendar.set(Calendar.YEAR, 2024);
+			calendar.set(Calendar.DAY_OF_MONTH,20);
+			calendar.set(Calendar.MONTH,Calendar.OCTOBER);
+
+			Date october2020204 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( october2020204 , pec.getEndDate()));
+			
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = " + pec.getFormula() + ", " + pec.getStartDate() ));
+			
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.MONTH,Calendar.NOVEMBER);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date november = calendar.getTime();
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), november);
+			
+			salary.getSalaryCosts().forEach(c -> System.out.println("COST :" + c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			salary.getSalaryDeductions().forEach(d -> System.out.println("DEDUCTION :" + d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
+			salary.getSalaryBonus().forEach(d -> System.out.println("BONUS :" + d.getBonusConcept() +" : " + d.getAmount() +", " + d.getType()));
+			
+			
+			salary.getSalaryBonus().forEach(d -> assertEquals(43.75, d.getAmount(), DELTA) );
+			
+			//assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			//assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
+			
+		}
+	}
+	@Test
 	public void testIdcXIPECs() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
 		
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXI.pdf") ){
