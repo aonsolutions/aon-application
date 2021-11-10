@@ -1105,9 +1105,10 @@ public interface Properties {
 		Property<String> getCCCProperty();
 		Property<Date> getStartDateProperty();
 		Property<Date> getEndDateProperty();
-
 		Property<Integer> getDomainProperty();
-
+		
+		Property<String> getNameProperty();
+		Property<String> getDocumentProperty();
 	}
 
 	public interface ContractProperties{

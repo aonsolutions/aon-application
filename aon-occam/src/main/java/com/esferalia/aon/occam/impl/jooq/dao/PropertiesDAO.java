@@ -998,7 +998,9 @@ public class PropertiesDAO {
 		@Override public Property<String> getCCCProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.CCC);}
 		@Override public Property<Date> getStartDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.START_DATE);}
 		@Override public Property<Date> getEndDateProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT.END_DATE);}
-
+		
+		@Override public Property<String> getNameProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.NAME);}
+		@Override public Property<String> getDocumentProperty()  {return new FilterDAO.PropertyDAO<>(REGISTRY.DOCUMENT);}
 	}
 
 	protected static class ContractPropertiesDAO implements ContractProperties{

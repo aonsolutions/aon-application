@@ -25,7 +25,6 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqMainCCC;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
@@ -38,10 +37,13 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.ContractDataJSON;
+import com.esferalia.aon.occam.api.json.EmployeeJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Person;
+import com.esferalia.aon.occam.api.model.Properties.EmployeeProperties;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
@@ -127,37 +129,16 @@ public class ContractServlet extends AonApiHttpServlet {
 	private JSONArray getAllEmployeesInfo(AonApiData api) throws Exception {
 		LOGGER.info("[GET] EMPLOYEE INFO");
 		JSONArray arr = new JSONArray();
-		
-		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
-			boolean allEmployees = api.getParams().optBoolean("allEmployees");  
-			List<EmployeeContractInfo> employees = JooqContrataContract.getEmployeesInfo(conn, api.getDomain().getId(), allEmployees);
-			
-			for(EmployeeContractInfo info: employees) {
-				JSONObject json = new JSONObject();
-				json.put("document", info.getEmployeeInfo().getDocument());
-				json.put("domain", info.getEmployeeInfo().getDomain());
-				json.put("employeeId", info.getEmployeeInfo().getEmployeeId());
-				json.put("name", info.getEmployeeInfo().getName());
-				json.put("secondSurName", info.getEmployeeInfo().getSecondSurName());
-				json.put("ssNumber", info.getEmployeeInfo().getSsNumber());
-				json.put("surName", info.getEmployeeInfo().getSurName());
-				json.put("startDate", info.getContractInfo().getStartDate().getTime());
-				json.put("contractType", info.getContractInfo().getContractType());
-				json.put("completeCCC", info.getContractInfo().getCompleteCCC());
-				json.put("agreementCategory", info.getContractInfo().getAgreementCategory());
-				json.put("workplaceName", info.getContractInfo().getWorkplaceName());
-				if(info.getContractInfo().getEndDate()!=null) {
-					json.put("endDate", info.getContractInfo().getEndDate().getTime());
-				}
-				arr.put(json);
-			}
-		}
+		PAYROLL.getEmployees(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f->filterEmployees(api, f))
+		.forEach(employee-> arr.put( EmployeeJSON.toJSON(employee) ) );
+
 		return arr;
 	}
 	
 	private JSONArray getAllEmployeesWorkplace(AonApiData api) throws Exception {
 		LOGGER.info("[GET] EMPLOYEE WORKPLACE");
 		JSONArray arr = new JSONArray();
+		
 		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
 			boolean allEmployees = api.getParams().optBoolean("allEmployees");  
 			Integer workplaceId = api.getParams().optInt("workplace");  
@@ -417,7 +398,6 @@ public class ContractServlet extends AonApiHttpServlet {
 	        .put("endDate",  AonDateUtils.format( salaryInfo.getEndDate(), "yyyy-MM-dd"));
 	}
 
-
 	private JSONObject addContract(AonApiData api) throws Exception{
 		JSONObject params = api.getData();
 
@@ -511,5 +491,27 @@ public class ContractServlet extends AonApiHttpServlet {
 			}
 		}
 		return new JSONArray();
+	}
+	
+	private static Filter filterEmployees(AonApiData api, EmployeeProperties f) {
+		JSONObject params = api.getParams();
+		Boolean contractAll = params.optBoolean("contractAll");
+		Date startDate = params.optString("startDate").isEmpty() ? new Date() : Toolkit.parseDate(params.optString("startDate"), "yyyy-MM-dd");
+		Date endDate =  null;
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+		
+		if(Boolean.TRUE.equals(contractAll)) {	
+			
+		} else if(params.optString("endDate").isEmpty()) {
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			cal.add(Calendar.MONTH, -1);
+			endDate = new Date(cal.getTimeInMillis());
+			filter = filter.and( f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge( new java.sql.Date(endDate.getTime()) ) ) );
+		} else {
+			endDate = Toolkit.parseDate(params.optString("endDate"), "yyyy-MM-dd");
+			filter = filter.and( f.getStartDateProperty().eq( new java.sql.Date(startDate.getTime()) ).and(f.getEndDateProperty().eq( new java.sql.Date(endDate.getTime()) ) )  );
+		}
+		return filter;
 	}
 }

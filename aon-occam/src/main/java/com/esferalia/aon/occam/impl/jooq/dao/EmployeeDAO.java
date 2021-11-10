@@ -88,7 +88,7 @@ public class EmployeeDAO {
 	public  static Registry ENTERPRISE_REGISTRY = REGISTRY.as("enterprise");
 	
 
-	private static String EMPLOYEE_DATA [] = {"TC2", "GRUPO_COTIZACION", "COEFICIENTE_PARCIALIDAD", "OCUPACION"};
+	private static String EMPLOYEE_DATA [] = {"TC2", "GRUPO_COTIZACION", "COEFICIENTE_PARCIALIDAD", "OCUPACION", "RLCE"};
 	
 
 	public  static Optional<Employee> getEmployee(AONContext aonContext, EmployeeFilter filter ) {
@@ -136,7 +136,7 @@ public class EmployeeDAO {
 				.setCategory(r.get(CONTRACT.CATEGORY_DESCRIPTION))
 				
 				.setRegime(getSSRegimeCode(r.get(CONTRACT.SS_REGIME)))
-
+				.setWorkplaceName(r.get(WORKPLACE.DESCRIPTION))
 				.setWorkplaceId(r.get(WORKPLACE.ID))
 				
 				, r -> new Object [] {

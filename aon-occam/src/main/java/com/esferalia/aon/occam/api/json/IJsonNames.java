@@ -353,6 +353,7 @@ public interface IJsonNames {
 	String SURCHARGE_QUOTA = "surcharge_quota";
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";
+	String SEARCH = "search";
 	// ---------------------------------------------------------------------------------------------	[T] 
 	String TARIFF = "tariff";
 	String TAS = "tas";
