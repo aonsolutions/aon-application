@@ -72,13 +72,27 @@ public class JooqContractSEPE {
 		Result<Record> contractAttachRecords = dslContext.select().from(CONTRACT_ATTACH)
 			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 			.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
+			.and(CONTRACT_ATTACH.MIMETYPE.eq((byte)5))
 			.orderBy(CONTRACT_ATTACH.ID.desc())
 			.fetch();
 		
-		if(null == contractAttachRecords || contractAttachRecords.isEmpty())
+		Record contractAttachRecord = null;
+		
+		if(null == contractAttachRecords || contractAttachRecords.isEmpty()) {
+			System.out.println("GETTER - getContractSpecificData empty - id : null");
 			return contractSpecificData;	
+		} else {
+			// Clean DB
+			contractAttachRecord = contractAttachRecords.get(0);
+			
+			dslContext.delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+				.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
+				.and(CONTRACT_ATTACH.MIMETYPE.eq((byte)5))
+				.and(CONTRACT_ATTACH.ID.ne(contractAttachRecord.get(CONTRACT_ATTACH.ID)))
+				.execute();
+		}
 
-		Record contractAttachRecord = contractAttachRecords.get(0);
+		
 		
 		contractSpecificData.setId(contractAttachRecord.get(CONTRACT_ATTACH.ID));
 
@@ -92,6 +106,8 @@ public class JooqContractSEPE {
 		} catch (JAXBException | IOException | IndexOutOfBoundsException e) {
 			e.printStackTrace();
 		}
+		
+		System.out.println("GETTER : getContractSpecificData hasData - id : " + contractSpecificData.getId() + " - cno : " + contractSpecificData.getCno());
 		
 		return contractSpecificData;
 	}
@@ -126,10 +142,13 @@ public class JooqContractSEPE {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		try {
-			Utils.marshal(contratos, System.out);
+//			Utils.marshal(contratos, System.out);
 			Utils.marshal(contratos, out);
 			
 			Integer attachId = employeeContractInfo.getContractSpecificData().getId();
+			
+			System.out.println("SETTER : setContractSpecificData - id : " + contractSpecificData.getId() + " - cno : " + contractSpecificData.getCno());
+			
 			if(null == attachId) {
 				dslContext.insertInto(CONTRACT_ATTACH)
 					.set(CONTRACT_ATTACH.DOMAIN, employeeContractInfo.getEmployeeInfo().getDomain())

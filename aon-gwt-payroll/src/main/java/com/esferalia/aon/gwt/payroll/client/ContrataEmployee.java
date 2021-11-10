@@ -695,45 +695,45 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Label loadingL = (Label) loadingPanel.getWidget(1);
 		loadingL.setText(getLoadingText());
 		
-		setTabAddBeforeClickTabEmpty();
+//		setTabAddBeforeClickTabEmpty();
 		
 		loadingPanel.setVisible(true);
 	}
 
 	private void hideLoadingPanel(){
 		loadingPanel.setVisible(false);
-		setTabAddBeforeClickTab();
+//		setTabAddBeforeClickTab();
 	}
 	
-	private void setTabAddBeforeClickTabEmpty() {
-		tabLayOutPanel.addBeforeSelectionHandler(e -> {});
-	}
-	
-	private void setTabAddBeforeClickTab() {
-		tabLayOutPanel.addBeforeSelectionHandler(e -> {
-			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
-			switch (itemIdx) {
-				case 0:
-					contrataEmployeeObject.setEmployeeContract(s -> {}, f -> {});
-					break;
-				case 1:
-					contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
-					break;
-				case 2:
-					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-					contrataEmployeeObject.setContractOtherInfo(s -> {}, f -> {});
-					break;
-				case 3:
-					contrataEmployeeObject.setContractClauses(s -> {}, f -> {});
-					break;
-				case 4:
-					contrataEmployeeObject.setContractAttachments(s -> {}, f -> {});
-					break;
-				default:
-					break;
-			}
-		});
-	}
+//	private void setTabAddBeforeClickTabEmpty() {
+//		tabLayOutPanel.addBeforeSelectionHandler(e -> {});
+//	}
+//	
+//	private void setTabAddBeforeClickTab() {
+//		tabLayOutPanel.addBeforeSelectionHandler(e -> {
+//			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
+//			switch (itemIdx) {
+//				case 0:
+//					contrataEmployeeObject.setEmployeeContract(s -> {}, f -> {});
+//					break;
+//				case 1:
+//					contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
+//					break;
+//				case 2:
+//					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+//					contrataEmployeeObject.setContractOtherInfo(s -> {}, f -> {});
+//					break;
+//				case 3:
+//					contrataEmployeeObject.setContractClauses(s -> {}, f -> {});
+//					break;
+//				case 4:
+//					contrataEmployeeObject.setContractAttachments(s -> {}, f -> {});
+//					break;
+//				default:
+//					break;
+//			}
+//		});
+//	}
 
 	private String getLoadingText() {
 		switch (tabLayOutPanel.getSelectedIndex()) {
@@ -799,7 +799,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.setEmployeeContract(s -> {}, f -> {});
 				break;
 			case 1:
-				contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
+				contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), s -> {}, f -> {});
 				break;
 			case 2:
 				contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
@@ -843,7 +843,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.getContractSpecificData(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showContractButtons();
-					contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+					contractSpecificData.setEmployeeContractInfo(
+							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
+							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData());
 					hideLoadingPanel();
 				}, f -> {});
 				break;
@@ -1261,7 +1263,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				AonMessagePanel.showError(messageContainer, messageMap);
 			break;
 		case 1:
-			contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
+			contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), s -> {}, f -> {});
 			break;
 		case 2:
 			contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
