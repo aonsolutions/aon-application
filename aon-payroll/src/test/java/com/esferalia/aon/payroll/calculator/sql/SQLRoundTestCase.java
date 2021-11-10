@@ -21,7 +21,9 @@ import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -260,13 +262,119 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		}
 	}
 
-	private Salary calculate(String[] payments, Connection connection, AONContext aonContext)
+	@Test
+	public void testRoundLiquidAndTotalDeduction()
+			throws ExpressionException, SQLException, SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		try {
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		Salary salary = calculate(new String[] {
+				"2000.306000000000",
+				 "455.048345238095"
+		}, connection, aonContext);
+		
+		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		
+		Assert.assertEquals(2455.35 , salary.getCommonBase(),0.00);
+		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
+		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
+		
+		double deductions = salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d->d.getAmount()));
+		Assert.assertEquals(deductions, salary.getTotalDeduction(),0.00);
+
+		
+		
+		Assert.assertEquals(salary.getTotalPayment() - deductions, salary.getTotalLiquid(),0.00);
+
+		} finally {
+			cleanSystemData(aonContext);
+			cleanSystemCosts(aonContext);
+			cleanSystemDeductions(aonContext);
+		}
+	}
+
+	@Test
+	public void testRoundLiquidAndTotalDeductionWithEmbargos()
+			throws ExpressionException, SQLException, SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		try {
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		Salary salary = 
+		calculate(
+		new String[] {
+		"2000.306000000000",
+		"455.048345238095"
+		}, 
+		new String[] {
+		"20.0666666666666",
+		"20.0466666666666",
+		}, 
+		connection, 
+		aonContext);
+		
+		salary.getSalaryEmbargos().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		
+		Assert.assertEquals(2455.35 , salary.getCommonBase(),0.00);
+		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
+		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
+		
+		double deductions = salary.getSalaryDeductions().stream().collect(Collectors.summingDouble(d->d.getAmount()));
+		Assert.assertEquals(deductions, salary.getTotalDeduction(),0.00);
+
+		double embargos = salary.getSalaryEmbargos().stream().collect(Collectors.summingDouble(d->d.getAmount()));
+		Assert.assertEquals(20.07+ 20.05, embargos ,0.00);
+		
+		System.out.println("Embargos : " + embargos);
+		System.out.println("Deductions : " + deductions);
+		System.out.println("Payment : " + salary.getTotalPayment());
+		
+		Assert.assertEquals(salary.getTotalPayment() - deductions - 40.12 , salary.getTotalLiquid(),0.00);
+
+		} finally {
+			cleanSystemData(aonContext);
+			cleanSystemCosts(aonContext);
+			cleanSystemDeductions(aonContext);
+		}
+	}
+
+	private Salary calculate(
+			String[] payments,
+			Connection connection, 
+			AONContext aonContext)
+			throws SalaryException, ExpressionException, SQLException {
+		return calculate(payments, new String [] {}, connection, aonContext);
+	}
+
+	private Salary calculate(
+			String[] payments,
+			String [] embargos,
+			Connection connection, 
+			AONContext aonContext)
 			throws SalaryException, ExpressionException, SQLException {
 		ContractRecord contract = newContract(aonContext,
 				payments,
 				new String[] {
 				}
 		);
+		
+		for (String embargo : embargos) {
+			addEmbargo(aonContext, contract, embargo);
+		}
 		
 		Date firstDayOfYear = AonDateUtils.getFirstDayOfYear(contract.getStartDate());
 		
@@ -352,5 +460,6 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
+	
 
 }
