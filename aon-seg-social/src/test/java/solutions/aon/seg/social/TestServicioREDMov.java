@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,6 +21,7 @@ import solutions.aon.seg.social.exception.invalid.NotExistingYetException;
 import solutions.aon.seg.social.exception.invalid.UnfilledMandatory;
 import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
 import solutions.aon.seg.social.exception.invalid.invalidCccException;
+import solutions.aon.seg.social.object.Employee;
 
 public class TestServicioREDMov extends SegSocialTest {
 	
@@ -33,7 +35,10 @@ public class TestServicioREDMov extends SegSocialTest {
 		    ArrayList<String> nssList = new ArrayList<>();
 		    nssList.add("0100227573");
 		    nssList.add("0110051859");
-		    assertTrue(!ServicioREDMov.ipfxnaf(certificateInputStream, "jg@FNMT", "pkcs12", nssList).isEmpty());
+		    nssList.add("291136796369");
+		    List<Employee> ipfs = ServicioREDMov.ipfxnaf(certificateInputStream, "jg@FNMT", "pkcs12", nssList);
+		    System.out.println(ipfs);
+		    assertTrue(!ipfs.isEmpty());
 		} catch (StatusCodeException e) {
 			LOG.warning(e.getMessage());
 		} catch (SegSocialException e) {
@@ -46,7 +51,7 @@ public class TestServicioREDMov extends SegSocialTest {
 	public void ipfxnafWrongNaf() throws ParserConfigurationException, SAXException, IOException {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
 			ArrayList<String> nssList = new ArrayList<>();
-			nssList.add("010022757387");
+			nssList.add("01f022757387");
 			ServicioREDMov.ipfxnaf(certificateInputStream, "jg@FNMT", "pkcs12", nssList);
 			fail();
 		} catch (InvalidDataException e) {
@@ -66,6 +71,21 @@ public class TestServicioREDMov extends SegSocialTest {
 	public void nafxipf() throws ParserConfigurationException {
 		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
 		   ServicioREDMov.nafxipf(certificateInputStream, "jg@FNMT", "pkcs12", "16262835H", "garcia", "perez");
+		} catch (NotExistingYetException e) {} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (StatusCodeException e) {
+			LOG.warning(e.getMessage());
+		} catch (SegSocialException e) {
+			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	@Test
+	public void nafxipfNie() throws ParserConfigurationException {
+		try(InputStream certificateInputStream = TestSistemaREDMov.class.getResourceAsStream("FNMT.p12")){
+			Employee weas = ServicioREDMov.nafxipf(certificateInputStream, "jg@FNMT", "pkcs12", "Y7514970X", "vasquez beauperthuy", "");
+			System.out.println(weas);
 		} catch (NotExistingYetException e) {} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (StatusCodeException e) {
