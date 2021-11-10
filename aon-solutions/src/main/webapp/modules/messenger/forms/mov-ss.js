@@ -99,7 +99,7 @@ const createDataEnterprise = (form, data) => {
     let name = setAttributes(new AonInput(),{
         id: "name",
         name:"name",
-        description: "Nombre",
+        description: MSG.NAME,
         value: data.name ? data.name : ""
     });
     createDivGrid(form, name, {classes:[CSS.AON_COL_XS_12]})
@@ -130,7 +130,7 @@ const createDataEnterprise = (form, data) => {
  const createDataContract = (form, data, aonMessengerChat) => {
     const dur = aonMessengerChat.getDur();
     const task = aonMessengerChat.task;
-    createTitle(form, "Datos del Contrato");
+    createTitle(form, `${MSG.DATA} del Contrato`);
 
     let fra = setAttributes(new AonDate(),{ title: MSG.START_DATE, id:"fra", name:"fra"});
     createDivGrid(form, fra, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
@@ -422,10 +422,7 @@ const processAccept = async (aonMessengerChat) => {
         const data = getFormMovJson();
         let newData = {
             ...data,
-            regimen: data.regime,
             fecha: data.fra,
-            grup_ctz: data.gc,
-            type_cto: data.contract,
             name: `${data.name} ${data.surname} ${data.lastSurname || ""}`
         }
         if(data.ocu) newData.ocupacion = data.ocu;

@@ -547,14 +547,14 @@ export class AonAltaDirecta extends AonElement {
             const resp = await updateContract(cto_new);
             let message = `No existen cambios en el contrato`;
 
-            if(resp.errors && resp.errors.length>0)
+            if( resp.errors && resp.errors.length > 0 )
                 message = resp.errors.join(".");
             else if(resp.contract_edit === true) {
                 message = MSG.UPDATED_CONTRACT;
                 this.applicationParentEl._movements = [];
             } 
 
-            this.showToast({ message, type: CONSTANT.ERROR, delay: 4500 });
+            this.showToast({ message, delay: 4500 });
         } catch (error) {
             this.showToast(error);
         }

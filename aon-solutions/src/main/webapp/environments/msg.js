@@ -218,6 +218,7 @@ export const HIRING = MSG.HIRING;
 export const HOLDER = MSG.HOLDER;
 export const HOLDERS = MSG.HOLDERS;
 export const HOURS = MSG.HOURS;
+export const HOUR = "Hora"; //TODO
 export const HISTORIC = MSG.HISTORIC;
 // ----- I
 
@@ -475,6 +476,7 @@ export const WRITE_YOUR_TITLE = MSG.WRITE_YOUR_TITLE;
 export const WRITE_A_COMMENT =  MSG.WRITE_A_COMMENT;
 export const WRITE_A_DESCRIPTION = MSG.WRITE_A_DESCRIPTION;
 export const WRITE_A_NOTE = MSG.WRITE_A_NOTE;
+export const WORKPLACE = "Centro de trabajo";//TODO
 // ----- X
 
 // ----- Y

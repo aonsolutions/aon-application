@@ -188,14 +188,13 @@ export class AonMessengerList extends AonElement {
       const document = company ? company.document: undefined;
       const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
       datos.map((res, idx) => {
-        const newData = { 
+        this.AON_TABLE.addRow({ 
           ...res, 
           dateParse: firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date),
           newTitle: this.getNewTitle(res, document, documentTh),
           assigned: this.getAssigned(res, domainId),
           lettersHtml: this.getIcon(res),
-        };
-        this.AON_TABLE.addRow(newData, () =>  this.goMessengerChat(res, idx));
+        }, () =>  this.goMessengerChat(res, idx));
       });
     } catch (e) {
       console.log(e);
@@ -205,14 +204,11 @@ export class AonMessengerList extends AonElement {
   getDataMobile(datos){
     try{
       datos.map((res, idx) => {
-        const dateParse = firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
-        const newTitle  = `#${res.newNumber} ${res.title}`;
-        const options = {
-          title: newTitle,
-          subtitle: dateParse,
+        this.AON_TABLE.addLi({
+          title: `#${res.newNumber} ${res.title}`,
+          subtitle: firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date),
           ...this.getIconList(res)
-        };
-        this.AON_TABLE.addLi(options, idx, () => this.goMessengerChat(res, idx));
+        }, idx, () => this.goMessengerChat(res, idx));
       });
     } catch (e) {
       console.log(e);
@@ -231,14 +227,11 @@ export class AonMessengerList extends AonElement {
       else {
         data = tasks
         .filter((v,idx, self)=>self.findIndex((m) => m.id === v.id) === idx )
-        .map(task=>{
-          const newNumber = (task.number ? task.number : 0).toString().padStart(5,0);
-          return {
+        .map(task=>({
             ...task,
             date:task.start_date,
-            newNumber
-          };
-        });
+            newNumber: (task.number ? task.number : 0).toString().padStart(5,0)
+        }));
       }
       data = sortBy(data, 'id','desc');
     } catch (error) {
@@ -248,20 +241,19 @@ export class AonMessengerList extends AonElement {
     return data;
   }
 
-  getIconList(res){      
-    return {
-      ...getIconJson(res),
-      icon_class:CONSTANT.MATERIAL_ICONS_OUTLINED,
-      icon_title:res.source,
-    }
-  }
+  getIconList = ({source,status}) => ({      
+    ...getIconJson({source,status}),
+    icon_class:CONSTANT.MATERIAL_ICONS_OUTLINED,
+    icon_title:source,
+  })
 
-  getIcon(res){
-    let icon = getIconJson(res);
+
+  getIcon({source,status}){
+    let icon = getIconJson({source,status});
 
     let span = this.createElement(TAG.SPAN);
     span.style.color = icon.icon_color;
-    span.title = res.source;
+    span.title = source;
 
     let iOne = this.createElement("i");
     iOne.className = CONSTANT.MATERIAL_ICONS_OUTLINED;

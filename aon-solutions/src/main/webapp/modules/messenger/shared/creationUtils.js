@@ -22,7 +22,7 @@ import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
   const div = newComponent({ type: TAG.DIV, ...properties }).element;
 
-  parent.appendChild(div);
+  if(parent) parent.appendChild(div);
 
   if(child) div.appendChild(child);
 
@@ -658,8 +658,6 @@ export const createAonSwitch = (title) => {
   let btn = new AonSwitch();
   btn.id = MESSENGER_IDS.EXTERNAL_TASK;
   btn.title = title;
-  btn.style.width = "100%";
-  btn.style.marginLeft = "13px";
   return btn;
 }
 

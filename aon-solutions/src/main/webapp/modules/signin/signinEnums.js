@@ -1,3 +1,5 @@
+import { MATERIAL_ICONS } from "../../environments/environments.js";
+
 export const SigninSidenav = {
   PRESENCE: {
     icon: "account_box",
@@ -11,8 +13,8 @@ export const SigninSidenav = {
   },
   ADD: {
     name: "Agregar",
-    icon: "add",
-    id: "add",
+    icon: MATERIAL_ICONS.ADD,
+    id: MATERIAL_ICONS.ADD,
   },
   FILTER:{
     name: "Filter",
@@ -21,8 +23,13 @@ export const SigninSidenav = {
   },
   MORE:{
     name: "Ver",
-    icon: "more_vert",
-    id: "more",
+    icon: MATERIAL_ICONS.MORE_VERT,
+    id: MATERIAL_ICONS.MORE_VERT,
+  },
+  SYNCHRONIZE:{
+    name: "SYNCHRONIZE",
+    icon: "autorenew",
+    id: "SYNCHRONIZE",
   },
   EXCEL:{
     name: "Excel",

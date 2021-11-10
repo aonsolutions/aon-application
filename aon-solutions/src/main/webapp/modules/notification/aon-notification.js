@@ -224,7 +224,7 @@ export class AonNotification extends AonElement {
       aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
 
     const titleEl = aonCard.getCardTitle1();
-    titleEl.style.display="block";
+    titleEl.style.whiteSpace = "pre-wrap";
     titleEl.innerHTML = createTitle(data.title).element.outerHTML;
     return aonCard;
   }
