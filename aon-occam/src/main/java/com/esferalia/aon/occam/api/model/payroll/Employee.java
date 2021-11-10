@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -392,7 +393,7 @@ public class Employee implements Serializable{
 	}
 
 	protected <T extends Number> Employee setNumber(String name, T t) {
-		String expression = t != null ? String.format("%f", t.doubleValue()): null;
+		String expression = t != null ? Double.toString(t.doubleValue()): null;
 		return setData(name, expression );
 	}
 
@@ -402,7 +403,7 @@ public class Employee implements Serializable{
 	}
 
 	protected <T extends Number> Employee addNumber(String name, T t, LocalDate startDate, LocalDate endDate) {
-		String expression = t != null ? String.format("%f", t.doubleValue()): null;
+		String expression = t != null ? Double.toString( t.doubleValue()): null;
 		return addData(name, expression, startDate, endDate );
 	}
 
@@ -476,5 +477,6 @@ public class Employee implements Serializable{
     public static LocalDate toLocalDate(Date date) {
 		return isNull(date) ? null : LocalDate.of(date.getYear() + 1900, date.getMonth() + 1, date.getDate()); 
     }
+    
 	
 }
