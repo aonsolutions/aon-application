@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.test.payroll.employee;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,22 @@ public class CRUDETest extends AbstractOccamTest {
 		for ( int i = 0; i < cccs.length; i++ ) {
 			cccs[i] = AonFaker.getCCC();
 			for ( int j = 0; j < cccEmployeesLength; j++ ) {
-				addEmployees [i * cccEmployeesLength +j] = AonFaker.getEmployee(ctx, AonRandom.getPastDate(0), AonRandom.getFutureDate(50), cccs[i]);
+
+				Date dates [] = {
+					AonRandom.getPastDate(0),						
+					AonRandom.getPastDate(0),						
+					AonRandom.getPastDate(0)						
+				};
+				Arrays.sort(dates);
+				
+				addEmployees [i * cccEmployeesLength +j] = 
+				AonFaker.getEmployee(
+						ctx, 
+						cccs[i], 
+						dates[0],
+						dates[1],
+						dates[2],
+						AonRandom.getFutureDate(50) );
 			}
 		}
 
@@ -48,9 +64,9 @@ public class CRUDETest extends AbstractOccamTest {
 								).orElseThrow();
 		}
 		
-//		for ( int i = 0; i < getEmployees.length; i++ ) {
-//			printf(getEmployees[i]);
-//		}
+		//for ( int i = 0; i < getEmployees.length; i++ ) {
+		//printf(getEmployees[i]);
+		//}
 		
 		for ( int i = 0; i < getEmployees.length; i++ ) {
 			Employee addEmployee = addEmployees[i];
