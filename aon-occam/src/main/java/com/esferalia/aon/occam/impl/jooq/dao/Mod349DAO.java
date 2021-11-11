@@ -19,7 +19,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsMod349Record;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
@@ -419,20 +419,19 @@ public class Mod349DAO {
 			year = year - 1;			
 		}
 		
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-		
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		
 		Mod349 mod349 = new Mod349();
 		mod349.setDomain(ctx.getDomainId());
 		mod349.setYear(year);		
-		mod349.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY));
+		mod349.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
 		mod349.setNumber("3490000000001");
-		mod349.setDocument(params.getDocument());
-		mod349.setName(AonStringUtils.left(params.getName(), FS_MOD349.NAME.getDataType().length()));
-		mod349.setContactPhone(AonStringUtils.left(params.getContactPhone(), FS_MOD349.CONTACT_PHONE.getDataType().length()));
-		mod349.setContactPerson(AonStringUtils.left(params.getContactPerson(), FS_MOD349.CONTACT_PERSON.getDataType().length()));
-		mod349.setContactMail(AonStringUtils.left(params.getContactMail(), FS_MOD349.CONTACT_MAIL.getDataType().length()));		
+		mod349.setDocument(conf.getCompany().getDocument());
+		mod349.setName(AonStringUtils.left(conf.getCompany().getName(), FS_MOD349.NAME.getDataType().length()));
+		mod349.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(), FS_MOD349.CONTACT_PHONE.getDataType().length()));
+		mod349.setContactPerson(AonStringUtils.left(conf.fiscal().getContactPerson(), FS_MOD349.CONTACT_PERSON.getDataType().length()));
+		mod349.setContactMail(AonStringUtils.left(conf.fiscal().getContactMail(), FS_MOD349.CONTACT_MAIL.getDataType().length()));		
 		mod349.setStatus(FiscalStatus.PENDING);
-	    mod349.setDiffEnabled(!params.isMod303ByDifferenceDisabled());				
+	    mod349.setDiffEnabled(!conf.fiscal().isMod303ByDifferenceDisabled());				
 		mod349.setDetails(new LinkedList<Mod349Detail>());
 		return mod349;
 	}

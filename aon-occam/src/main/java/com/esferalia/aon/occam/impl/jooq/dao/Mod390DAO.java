@@ -14,7 +14,7 @@ import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -169,15 +169,15 @@ public class Mod390DAO {
 		if (year < 2014) {
 			throw new AonCoreException("La generaci\u00F3n de modelos anteriores al ejercicio 2014 no est\u00E1 soportada");
 		} 
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
 		Mod390 mod390 = new Mod390();
-		mod390.setAdministration( params.getAdministration(Administration.COMMON_TERRITORY) );
+		mod390.setAdministration( conf.fiscal().getAdministration(Administration.COMMON_TERRITORY) );
 		mod390.setStatus(FiscalStatus.PENDING);
 		mod390.setOldStyle(true);
-		mod390.setEnterprise(params.getCompany());
+		mod390.setEnterprise(conf.getCompany().getId());
 		mod390.setDomain(ctx.getDomainId());
-		mod390.setDocument(params.getDocument());
-		mod390.setEnterpriseName(params.getName());
+		mod390.setDocument(conf.getCompany().getDocument());
+		mod390.setEnterpriseName(conf.getCompany().getName());
 		mod390.setYear( year );
 		if (mod390.isLegalEntity()) mod390.setName(mod390.getEnterpriseName());
 		else {

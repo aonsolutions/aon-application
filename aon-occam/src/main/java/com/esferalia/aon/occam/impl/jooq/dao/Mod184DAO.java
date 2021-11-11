@@ -17,7 +17,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel184Record;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
@@ -600,20 +600,20 @@ public class Mod184DAO {
 
 	public static Mod184 initialize(AONContext ctx, int year) {
 		Mod184 mod184 = new Mod184();
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-		mod184.setEnterprise(params.getCompany());
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+		mod184.setEnterprise(conf.getCompany().getId());
 		mod184.setDomain(ctx.getDomainId());
-		mod184.setDocument(params.getDocument());
-		mod184.setName(params.getName());
+		mod184.setDocument(conf.getCompany().getDocument());
+		mod184.setName(conf.getCompany().getName());
 		mod184.setYear(year);
 		mod184.setReceipt("1840000000001");
 		mod184.setStatus(FiscalStatus.PENDING);
-		mod184.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY));
-		mod184.setContactPerson(AonStringUtils.left(params.getContactPerson(),
+		mod184.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
+		mod184.setContactPerson(AonStringUtils.left(conf.fiscal().getContactPerson(),
 				FS_MODEL184.CONTACT_PERSON.getDataType().length()));
-		mod184.setContactPhone(AonStringUtils.left(params.getContactPhone(),
+		mod184.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(),
 				FS_MODEL184.CONTACT_PHONE.getDataType().length()));
-		mod184.setContactMail(AonStringUtils.left(params.getContactMail(),
+		mod184.setContactMail(AonStringUtils.left(conf.fiscal().getContactMail(),
 				FS_MODEL184.CONTACT_MAIL.getDataType().length()));
 		mod184.setIncomes(new LinkedList<Mod184Income>());
 		mod184.setPartners(new LinkedList<Mod184Partner>());

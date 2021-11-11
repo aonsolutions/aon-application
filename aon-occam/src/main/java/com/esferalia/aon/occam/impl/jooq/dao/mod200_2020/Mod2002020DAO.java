@@ -22,7 +22,6 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.GroupEntitie;
 import com.esferalia.aon.occam.api.model.UteBase;
 import com.esferalia.aon.occam.api.model.UteForeign;
@@ -35,9 +34,9 @@ import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.MinorEntity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
+import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.Mod200CompanyParticipation;
-import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.DoubleVariable2020;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
@@ -51,7 +50,6 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
@@ -813,14 +811,13 @@ public class Mod2002020DAO  {
 			mod200.setEcpnType( EcpnType.NO_CONSTA );
 			mod200.setPygType(BalanceType.ABREVIADO );
 			
-			FiscalParameters fiscalParameters = AppParamDAO.getFiscalParameters(ctx);
-			
-			mod200.setEnterprise(fiscalParameters.getCompany());
-			mod200.setEnterpriseDocument(fiscalParameters.getDocument());
-			mod200.setEnterpriseName(fiscalParameters.getName());
-			mod200.setEnterprisePhone1(fiscalParameters.getContactPhone());
-			mod200.setEnterprisePhone2(fiscalParameters.getContactCellular());
-			Administration adm = fiscalParameters.getAdministration(Administration.COMMON_TERRITORY);
+			AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+			mod200.setEnterprise(conf.getCompany().getId());
+			mod200.setEnterpriseDocument(conf.getCompany().getDocument());
+			mod200.setEnterpriseName(conf.getCompany().getName());
+			mod200.setEnterprisePhone1(conf.fiscal().getContactPhone());
+			mod200.setEnterprisePhone2(conf.fiscal().getContactCellular());
+			Administration adm = conf.fiscal().getAdministration(Administration.COMMON_TERRITORY);
 			mod200.setAdministration(adm);
 			mod200.setInitializedFromLastYear(false);
 			

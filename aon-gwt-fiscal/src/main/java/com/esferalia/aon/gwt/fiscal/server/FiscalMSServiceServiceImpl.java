@@ -98,13 +98,13 @@ public class FiscalMSServiceServiceImpl extends AonStatelessRemoteServiceServlet
 		if ( (customerCheckEnabled == null || customerCheckEnabled.getId() == null) && domain!=null && domain.getParentId() != null) {
 			customerCheckEnabled  = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_CUSTOMER_CHECK_ENABLED);			
 		}
-		ApplicationParameter certDoc = AON.getApplicationParameter(domainName, domainId, login, AppParam.FISCAL_CERT_DOCUMENT);
-		ApplicationParameter certName = AON.getApplicationParameter(domainName, domainId, login, AppParam.FISCAL_CERT_NAME);
-		ApplicationParameter testEnvironment = AON.getApplicationParameter(domainName, domainId, login, AppParam.FISCAL_AEAT_TEST_ENV);
+		ApplicationParameter certDoc = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_CERT_DOCUMENT);
+		ApplicationParameter certName = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_CERT_NAME);
+		ApplicationParameter testEnvironment = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_AEAT_TEST_ENV);
 		if ((certDoc == null || AonStringUtils.isBlank(certDoc.getValue())) && domain.getParentId() != null) {
-			certDoc = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FISCAL_CERT_DOCUMENT);
-			certName = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FISCAL_CERT_NAME);
-			testEnvironment = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FISCAL_AEAT_TEST_ENV);
+			certDoc = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_CERT_DOCUMENT);
+			certName = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_CERT_NAME);
+			testEnvironment = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_AEAT_TEST_ENV);
 		}
 		boolean testEnv = ( testEnvironment != null)? AonEnumUtils.getAonBoolean(testEnvironment.getValue()):false;
 		Company company = AON.getCompany(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));

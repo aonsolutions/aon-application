@@ -324,8 +324,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 
 	private void loadModule() {
 		boolean editing = (getOptions().getAccountEntryId() != null) || (getOptions().getAccountingInvoice() !=null);
-		if (getOptions().getConfiguration().getPeriods() != null && !getOptions().getConfiguration().getPeriods().isEmpty()) {
-			period.fill(getOptions().getConfiguration().getPeriods());
+		if (getOptions().getConfiguration().accounting().getPeriods() != null && !getOptions().getConfiguration().accounting().getPeriods().isEmpty()) {
+			period.fill(getOptions().getConfiguration().accounting().getPeriods());
 		} else {
 			if (!editing) {
 				invalidateModule(AON.MSG.noActiveAccountPeriod());
@@ -988,7 +988,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		if (base == null) {
 			EnterpriseActivity ea = getOptions().getConfiguration().getMainActivity();
 			Integer activity = (ea==null?null:ea.getId());
-			AccountPeriod period = getOptions().getConfiguration().getDefaultAccountPeriod();
+			AccountPeriod period = getOptions().getConfiguration().accounting().getDefaultAccountPeriod();
 			Integer periodId = (period == null? null : period.getId());
 			base = new AccountEntry()
 					.setPeriod(periodId)
@@ -1284,7 +1284,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		table.setWidget(row,0,new InlineLabel(AON.MSG.period()));
 		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		AccountPeriodBox period = new AccountPeriodBox();
-		period.fill(getOptions().getConfiguration().getPeriods());
+		period.fill(getOptions().getConfiguration().accounting().getPeriods());
 		period.select(orig.getPeriod());
 		table.setWidget(row,1,period);
 		row++;

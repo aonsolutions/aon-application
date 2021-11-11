@@ -545,18 +545,18 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		}
 		SalaryEntry ai = new SalaryEntry()
 			.setConcept("N\u00F3minas")
-			.setMoneySalaryAccount( getCallback().getConfiguration().getDefaultSalary() )
-			.setInKindSalaryAccount(getCallback().getConfiguration().getDefaultSalaryInKind())
-			.setAllowanceAccount(getCallback().getConfiguration().getDefaultAllowance())
-			.setSalaryCompensationAccount(getCallback().getConfiguration().getDefaultCompensation())
-			.setSalaryDedAdvPaymentAccount(getCallback().getConfiguration().getSalaryDedAdvPayment())
-			.setSalaryDedSeizeAccount(getCallback().getConfiguration().getSalaryDedSeize())
-			.setSalaryOtherDeductionsAccount(getCallback().getConfiguration().getSalaryOtherDeductions())
-			.setIrpfAccount(getCallback().getConfiguration().getSalaryChargedRet())
-			.setInKindIrpfAccount(getCallback().getConfiguration().getSalaryChargedRetInKind())
-			.setEmployeeSocialInsuranceAccount(	getCallback().getConfiguration().getDefaultSocialInsurance())
-			.setCompanySocialInsuranceAccount(getCallback().getConfiguration().getDefaultCompanySocIns())
-			.setNetSalaryAccount(getCallback().getConfiguration().getDefaultPendingSalary())
+			.setMoneySalaryAccount( getCallback().getConfiguration().accounting().getDefaultSalary() )
+			.setInKindSalaryAccount(getCallback().getConfiguration().accounting().getDefaultSalaryInKind())
+			.setAllowanceAccount(getCallback().getConfiguration().accounting().getDefaultAllowance())
+			.setSalaryCompensationAccount(getCallback().getConfiguration().accounting().getDefaultCompensation())
+			.setSalaryDedAdvPaymentAccount(getCallback().getConfiguration().accounting().getSalaryDedAdvPayment())
+			.setSalaryDedSeizeAccount(getCallback().getConfiguration().accounting().getSalaryDedSeize())
+			.setSalaryOtherDeductionsAccount(getCallback().getConfiguration().accounting().getSalaryOtherDeductions())
+			.setIrpfAccount(getCallback().getConfiguration().accounting().getSalaryChargedRet())
+			.setInKindIrpfAccount(getCallback().getConfiguration().accounting().getSalaryChargedRetInKind())
+			.setEmployeeSocialInsuranceAccount(	getCallback().getConfiguration().accounting().getDefaultSocialInsurance())
+			.setCompanySocialInsuranceAccount(getCallback().getConfiguration().accounting().getDefaultCompanySocIns())
+			.setNetSalaryAccount(getCallback().getConfiguration().accounting().getDefaultPendingSalary())
 		;
 		ai.setAccountEntry(new AccountEntry()
 			.setEntryType(AccountEntryType.SALARY)
@@ -937,7 +937,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		Integer period = getWrapper().getAccountEntry().getPeriod();
 		Date start = new Date();
 		Date end = new Date();
-		for( AccountPeriod ap : getCallback().getConfiguration().getPeriods() ) {
+		for( AccountPeriod ap : getCallback().getConfiguration().accounting().getPeriods() ) {
 			if (AonNumberUtils.equals(ap.getId(), period)) {
 				start = ap.getInitiationDate();
 				end = ap.getDeadline();

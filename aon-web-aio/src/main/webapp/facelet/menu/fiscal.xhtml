@@ -18,6 +18,14 @@
 					
 					columnClasses="aon-vertical-align-top aon-width-half, aon-vertical-align-top aon-width-half">
 					<aon:panelGroup>
+						<aon:div styleClass="aon-direct-access-list-element">
+							<aon:commandLink id="gwt_fiscalMenu"
+								action="gwt_fiscalMenu"
+								title="FISCAL"
+								value="FISCAL" >
+							</aon:commandLink>
+						</aon:div>
+						
 						<aon:panelGrid id="group_fiscal_vat_tax_statement_new"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-fiscal-header">
@@ -349,17 +357,10 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_modelMatrix" 
 											action="gwt_modelMatrix">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
+											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
 												style="margin-left: 5px; padding-left: 20px;" 
 												value="Matriz de empresas y modelos fiscales" />												
 										</aon:commandLink>
-									</aon:div> 
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="fiscalMatrix" 
-											action="fiscalMatrix_list"
-											actionListener="#{fiscalMatrix.onSearch}"
-											title="Matriz de empresas y modelos fiscales (Obsoleta)"
-											value="Matriz de empresas y modelos fiscales (Obsoleta)" />
 									</aon:div>
 								</aon:div> 
 							</aon:panelGrid>

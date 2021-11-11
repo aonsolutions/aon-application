@@ -118,10 +118,10 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
@@ -364,18 +364,19 @@ public class AON {
 	// ********************************************
 	// *************************** CONFIGURATION **
 	// ********************************************
+	public static AonConfiguration getConfiguration(Occam occam,Date atDate) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getConfiguration(ctx, atDate);
+		}
+	}
+
 	public static AonConfiguration getConfiguration(String domainName, int domainId, String login) {
 		return getConfiguration(domainName, domainId, login, null);
 	}
 	
 	public static AonConfiguration getConfiguration(String domainName, int domainId, String login,Date atDate) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getConfiguration(ctx, atDate);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -844,18 +845,6 @@ public class AON {
 				.and(f.getNameProperty().eq(id))
 				.perPage(1))
 			.findFirst().orElse(new ApplicationParameter()); // TODO Devolver Optional
-	}
-
-	public static FiscalParameters getFiscalParameters(String domainName,
-			int domainId, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getFiscalParameters(ctx);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
 	}
 
 	public static ApplicationParameter fetchApplicationParameter(AONContext ctx,

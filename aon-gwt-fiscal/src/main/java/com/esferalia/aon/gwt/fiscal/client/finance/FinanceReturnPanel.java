@@ -378,7 +378,7 @@ public class FinanceReturnPanel extends SimplePanel implements Focusable {
 			registryBankListBox.setValue(null);
 			bankAccountBox.setValue(null);
 			cashListBox.setSelectedIndex(0);
-			Account cashAccount = config.getDefaultCashAccount();
+			Account cashAccount = config.accounting().getDefaultCashAccount();
 			payAccount.setAccount(cashAccount);
 			tracking.setRegistryBank(null);
 			tracking.setPayAccount(cashAccount);

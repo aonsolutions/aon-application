@@ -97,7 +97,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 				callback.getResult().getInvoice().setIssueDate(date);
 				callback.getResult().getInvoice().setTaxDate(date);
 				if (date != null) {
-					for (AccountPeriod period : getCallback().getConfiguration().getPeriods()) {
+					for (AccountPeriod period : getCallback().getConfiguration().accounting().getPeriods()) {
 						if (!date.before(period.getInitiationDate()) && !date.after(period.getDeadline())) {
 							callback.getResult().getAccountingInvoice().getAccountEntry().setPeriod(period.getId());		
 							callback.getResult().getAccountingInvoice().getAccountEntry().setPeriodName(period.getName());

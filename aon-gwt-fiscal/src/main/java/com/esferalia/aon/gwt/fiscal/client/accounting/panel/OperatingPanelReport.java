@@ -115,11 +115,11 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 	}
 	
 	private void fill(AccountingReportModuleOptions options, AccountingReportParams params) {
-		if (options.getConfiguration().getPeriods() == null || options.getConfiguration().getPeriods().size() == 0 ) {
+		if (options.getConfiguration().accounting().getPeriods() == null || options.getConfiguration().accounting().getPeriods().size() == 0 ) {
 			Window.alert("No se han encontrado ejercicios contables");
 		} else {
 			boolean activitiesListBoxEnabled = (options.getConfiguration() != null && options.getConfiguration().hasActivities());
-			boolean hasCostCenters = (options.getConfiguration() != null && options.getConfiguration().hasCostCenters());
+			boolean hasCostCenters = (options.getConfiguration() != null && options.getConfiguration().accounting().hasCostCenters());
 			
 			addStyleName(AON.CSS.aonScrollArea());
 			addStyleName(AON.CSS.aonMarginBottom());
@@ -131,11 +131,11 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			toDate = new AonDateBox();
 			
 			boolean periodBoxShown = false;
-			period.fill(options.getConfiguration().getPeriods(),true);
+			period.fill(options.getConfiguration().accounting().getPeriods(),true);
 			period.removeItem(0);
 			if (params != null) {
 				if (params.getPeriod() != null) {
-					for (AccountPeriod p : options.getConfiguration().getPeriods()) {
+					for (AccountPeriod p : options.getConfiguration().accounting().getPeriods()) {
 						if (AonNumberUtils.equals(p.getId(), params.getPeriod())) {
 							period.select(params.getPeriod());
 							ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
@@ -297,12 +297,12 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 			
 			ListBox costCenters = new ListBox();
 			FlowPanel selectedCostCenter = new FlowPanel();
-			if (options.getConfiguration() != null && options.getConfiguration().hasCostCenters()) {
+			if (options.getConfiguration() != null && options.getConfiguration().accounting().hasCostCenters()) {
 				costCenters.setWidth("200px");
 				costCenters.addItem("--- Todos ---");
 				costCenters.addItem(AccountingReportParams.EMPTY_COST_CENTER_ACCOUNT);
 				costCenters.setSelectedIndex(0);
-				for (String costCenter : options.getConfiguration().getCostCenters()) {
+				for (String costCenter : options.getConfiguration().accounting().getCostCenters()) {
 					costCenters.addItem(costCenter);
 				}
 				costCenters.addChangeHandler(new ChangeHandler() {
@@ -450,7 +450,7 @@ public class OperatingPanelReport extends DockLayoutPanel implements Focusable, 
 	}
 
 	private ListBox getPeriodBox(AccountingReportModuleOptions options,String selectedValue) {
-		LinkedList<AccountPeriod> periods = options.getConfiguration().getPeriods();
+		LinkedList<AccountPeriod> periods = options.getConfiguration().accounting().getPeriods();
 		ListBox periodBox = new ListBox();
 		periodBox.clear();
 		periodBox.addItem(" --- ", "");

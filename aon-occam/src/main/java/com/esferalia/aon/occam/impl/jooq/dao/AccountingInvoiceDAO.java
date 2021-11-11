@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -43,6 +44,8 @@ import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
+import com.esferalia.aon.occam.api.model.config.ConfigBlock;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
@@ -106,7 +109,7 @@ public class AccountingInvoiceDAO {
 	}
 	
 	public static AccountingInvoice getAccountingInvoice(final AONContext ctx, final Integer accountEntry) {
-		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, null);
+		final AonConfiguration config = ConfigurationDAO.getAccountingConfiguration(ctx);
 		Integer invoiceId = ctx.getDslContext()
 			.select( ACCOUNT_ENTRY_INVOICE.INVOICE )
 			.from( ACCOUNT_ENTRY_INVOICE )
@@ -323,16 +326,16 @@ public class AccountingInvoiceDAO {
 					vat.setInputAccountId(tax.getValue(VAT_ACCOUNT.ID))
 					.setInputAccountCode(tax.getValue(VAT_ACCOUNT.CODE))
 					.setInputAccountDescription(tax.getValue(VAT_ACCOUNT.DESCRIPTION));
-					if (ai.isOutputVatEnabled() && config.getDefaultChargedVatAccount() != null) {
-						vat.setOutputAccountId(config.getDefaultChargedVatAccount().getId())
-						.setOutputAccountCode(config.getDefaultChargedVatAccount().getCode())
-						.setOutputAccountDescription(config.getDefaultChargedVatAccount().getDescription());
+					if (ai.isOutputVatEnabled() && config.accounting().getDefaultChargedVatAccount() != null) {
+						vat.setOutputAccountId(config.accounting().getDefaultChargedVatAccount().getId())
+						.setOutputAccountCode(config.accounting().getDefaultChargedVatAccount().getCode())
+						.setOutputAccountDescription(config.accounting().getDefaultChargedVatAccount().getDescription());
 					}
 				}
-				if (vat.getInvestAsset() != null && config.getVatNegativeAdjustAccount() != null) {
-					vat.setAdjAccountId(config.getVatNegativeAdjustAccount().getId())
-					.setAdjAccountCode(config.getVatNegativeAdjustAccount().getCode())
-					.setAdjAccountDescription(config.getVatNegativeAdjustAccount().getDescription());
+				if (vat.getInvestAsset() != null && config.accounting().getVatNegativeAdjustAccount() != null) {
+					vat.setAdjAccountId(config.accounting().getVatNegativeAdjustAccount().getId())
+					.setAdjAccountCode(config.accounting().getVatNegativeAdjustAccount().getCode())
+					.setAdjAccountDescription(config.accounting().getVatNegativeAdjustAccount().getDescription());
 				}
 			}
 		});
@@ -465,7 +468,7 @@ public class AccountingInvoiceDAO {
 					+ "genera facturas de " 
 					+ reg.getType().getInvoiceType().getDescription() );
 		}
-		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, issueDate);
+		final AonConfiguration config = ConfigurationDAO.getAccountingConfiguration(ctx,issueDate);
 		AccountingInvoice ai = new AccountingInvoice()
 				.setRegistry(reg)
 				.setWorkplace(config.getWorkplaces().get(0).getId())
@@ -509,8 +512,8 @@ public class AccountingInvoiceDAO {
 			}
 			if (withholdingAccount == null) {
 				withholdingAccount = ai.isSales()
-					?config.getDefaultPaidRetAccount()
-					:config.getDefaultChargedRetAccount(); 
+					?config.accounting().getDefaultPaidRetAccount()
+					:config.accounting().getDefaultChargedRetAccount(); 
 			}
 			if (withholdingAccount != null) {
 				ai.getWithholdingData().setAccountId(withholdingAccount.getId());
@@ -537,32 +540,32 @@ public class AccountingInvoiceDAO {
 			inputVatAccount = config.getDefaultVatPercent().getPurchaseAccount();
 			outputVatAccount = config.getDefaultVatPercent().getSalesAccount();
 		}
-		if (inputVatAccount == null) inputVatAccount = config.getDefaultPaidVatAccount();
+		if (inputVatAccount == null) inputVatAccount = config.accounting().getDefaultPaidVatAccount();
 		if (inputVatAccount != null) {
 			vat.setInputAccountId(inputVatAccount.getId());
 			vat.setInputAccountCode(inputVatAccount.getCode());
 			vat.setInputAccountDescription(inputVatAccount.getDescription());
 		}
-		if (outputVatAccount== null) outputVatAccount = config.getDefaultChargedVatAccount();
+		if (outputVatAccount== null) outputVatAccount = config.accounting().getDefaultChargedVatAccount();
 		if (outputVatAccount != null) {
 			vat.setOutputAccountId(outputVatAccount.getId());
 			vat.setOutputAccountCode(outputVatAccount.getCode());
 			vat.setOutputAccountDescription(outputVatAccount.getDescription());
 		}
-		if (config.getVatNegativeAdjustAccount() != null) {
-			vat.setAdjAccountId( config.getVatNegativeAdjustAccount().getId());
-			vat.setAdjAccountCode( config.getVatNegativeAdjustAccount().getCode());
-			vat.setAdjAccountDescription( config.getVatNegativeAdjustAccount().getDescription());
+		if (config.accounting().getVatNegativeAdjustAccount() != null) {
+			vat.setAdjAccountId( config.accounting().getVatNegativeAdjustAccount().getId());
+			vat.setAdjAccountCode( config.accounting().getVatNegativeAdjustAccount().getCode());
+			vat.setAdjAccountDescription( config.accounting().getVatNegativeAdjustAccount().getDescription());
 		}
-		if (ai.isSales() && config.getDefaultSalesAccount() != null) {
-			vat.setExpAccountId(config.getDefaultSalesAccount().getId());
-			vat.setExpAccountCode(config.getDefaultSalesAccount().getCode());
-			vat.setExpAccountDescription(config.getDefaultSalesAccount().getDescription());
+		if (ai.isSales() && config.accounting().getDefaultSalesAccount() != null) {
+			vat.setExpAccountId(config.accounting().getDefaultSalesAccount().getId());
+			vat.setExpAccountCode(config.accounting().getDefaultSalesAccount().getCode());
+			vat.setExpAccountDescription(config.accounting().getDefaultSalesAccount().getDescription());
 		}
-		if (ai.isPurchase() && config.getDefaultPurchaseAccount() != null) {
-			vat.setExpAccountId(config.getDefaultPurchaseAccount().getId());
-			vat.setExpAccountCode(config.getDefaultPurchaseAccount().getCode());
-			vat.setExpAccountDescription(config.getDefaultPurchaseAccount().getDescription());
+		if (ai.isPurchase() && config.accounting().getDefaultPurchaseAccount() != null) {
+			vat.setExpAccountId(config.accounting().getDefaultPurchaseAccount().getId());
+			vat.setExpAccountCode(config.accounting().getDefaultPurchaseAccount().getCode());
+			vat.setExpAccountDescription(config.accounting().getDefaultPurchaseAccount().getDescription());
 		}
 		vat.setWithholding(ai.isWithholding());
 		return vat;

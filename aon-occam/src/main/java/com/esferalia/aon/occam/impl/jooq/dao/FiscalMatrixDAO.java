@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -31,20 +31,6 @@ import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FiscalMatrixDAO {
-	private static String ID = "ID";
-	private static String YEAR = "YEAR";
-	private static String STATUS = "STATUS";
-	private static String DOCUMENT = "DOCUMENT";
-	private static String NAME = "NAME";
-	private static String SURNAME = "SURNAME";
-	private static String PERIOD = "PERIOD";
-	private static String MODEL = "MODEL";
-	private static String ADMINISTRATION = "ADMINISTRATION";
-	private static String COMPLEMENTARY = "COMPLEMENTARY";
-	private static String REPLACEMENT = "REPLACEMENT";
-	private static String DOMAIN_ID = "DOMAIN_ID";
-	private static String DOMAIN_NAME = "DOMAIN_NAME";
-	
 	
 	public static final String PARAM_DEFAULT_ADMINISTRATION = "FS_DEFAULT_ADMINISTRATION";
 	public static final String PARAM_PREFIX = "FS_MODEL_CFG_";
@@ -108,7 +94,7 @@ public class FiscalMatrixDAO {
 	}
 	
 	public static Stream<IFiscalModel> fillConfiguratedModels(AONContext ctx, int domain, int user,FiscalMatrixParams params) {
-		FiscalParameters fiscalParams = AppParamDAO.getFiscalParameters(ctx);
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx); 
 		return ctx.getDslContext()
 			.select( APP_PARAM.NAME
 					,APP_PARAM.VALUE
@@ -126,7 +112,7 @@ public class FiscalMatrixDAO {
 			.map( rec -> new FiscalModel()
 					.setDomain(rec.getValue(DOMAIN.ID))
 					.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
-					.setAdministration(fiscalParams.getAdministration(Administration.UNKNOWN)) 
+					.setAdministration(conf.fiscal().getAdministration(Administration.UNKNOWN)) 
 					.setModel( fromAppParamName(rec.getValue(APP_PARAM.NAME)) )
 					.setStatus( FiscalStatus.MISSING)
 					.setPeriod("Y".equals(rec.getValue(APP_PARAM.VALUE))?Period.YEAR:"Q".equals(rec.getValue(APP_PARAM.VALUE))?Period.T1:Period.M01)

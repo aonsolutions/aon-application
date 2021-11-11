@@ -166,7 +166,7 @@ class EntriesRemover extends OptionBase {
 
 	private void fillNorthPanel(final AonConfiguration config) {
 		period = new AccountPeriodBox();
-		period.fill(config.getPeriods(),true);
+		period.fill(config.accounting().getPeriods(),true);
 		period.addChangeHandler(new ChangeHandler() {
 			
 			@Override

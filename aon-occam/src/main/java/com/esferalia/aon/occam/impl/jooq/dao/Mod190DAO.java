@@ -43,7 +43,7 @@ import com.esferalia.aon.jooq.tables.records.IrpfDataAscendantsRecord;
 import com.esferalia.aon.jooq.tables.records.IrpfDataDescendientsRecord;
 import com.esferalia.aon.jooq.tables.records.IrpfDataRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
@@ -52,8 +52,8 @@ import com.esferalia.aon.occam.api.model.type.Mod1902014Key;
 import com.esferalia.aon.occam.api.model.type.Mod1902015Key;
 import com.esferalia.aon.occam.api.model.type.Mod1902016Key;
 import com.esferalia.aon.occam.api.model.type.PaymentType;
-import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.occam.api.model.type.PaymentType.PaymentTypeVisitor;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -815,17 +815,17 @@ public class Mod190DAO {
 
 	public static Mod190 initialize(AONContext ctx, int year) {
 		Mod190 mod190 = new Mod190();
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-		mod190.setEnterprise(params.getCompany());
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+		mod190.setEnterprise(conf.getCompany().getId());
 		mod190.setDomain(ctx.getDomainId());
-		mod190.setDocument(params.getDocument());
-		mod190.setName(AonStringUtils.left(params.getName(), FS_MODEL190.NAME.getDataType().length()));
+		mod190.setDocument(conf.getCompany().getDocument());
+		mod190.setName(AonStringUtils.left(conf.getCompany().getName(), FS_MODEL190.NAME.getDataType().length()));
 		mod190.setYear(year);
 		mod190.setReceipt("1900000000001");
-		mod190.setAdministration(params.getAdministration()!=null?Administration.safeValueOf(params.getAdministration()):Administration.COMMON_TERRITORY);
-		mod190.setContactPerson(AonStringUtils.left(params.getContactPerson(),FS_MODEL190.CONTACT_PERSON.getDataType().length()));
-		mod190.setContactPhone(AonStringUtils.left(params.getContactPhone(),FS_MODEL190.CONTACT_PHONE.getDataType().length()));
-		mod190.setContactMail(AonStringUtils.left(params.getContactMail(),FS_MODEL190.CONTACT_MAIL.getDataType().length()));
+		mod190.setAdministration(conf.fiscal().getAdministration()!=null?Administration.safeValueOf(conf.fiscal().getAdministration()):Administration.COMMON_TERRITORY);
+		mod190.setContactPerson(AonStringUtils.left(conf.fiscal().getContactPerson(),FS_MODEL190.CONTACT_PERSON.getDataType().length()));
+		mod190.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(),FS_MODEL190.CONTACT_PHONE.getDataType().length()));
+		mod190.setContactMail(AonStringUtils.left(conf.fiscal().getContactMail(),FS_MODEL190.CONTACT_MAIL.getDataType().length()));
 		mod190.setStatus(FiscalStatus.PENDING);
 		return mod190;
 	}
