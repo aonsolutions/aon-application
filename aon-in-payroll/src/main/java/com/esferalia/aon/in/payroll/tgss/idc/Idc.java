@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -46,11 +47,18 @@ public class Idc {
 		}
 				
 		@Override
-		public void onEmployeeQuoteTypes(double it, double ims, double unemployment) {
-			contractData.put(ContextVariable.IT_RATE, it);
-			contractData.put(ContextVariable.IMS_RATE, ims);
-			contractData.put(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, unemployment == 7.05 ? 1.55 : 1.60);
-			contractData.put(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, unemployment == 7.05 ? 5.50 : 6.70);
+		public void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
+			if (Objects.nonNull(it)) {
+				contractData.put(ContextVariable.IT_RATE, it);
+			}
+			if (Objects.nonNull(ims)) {
+				contractData.put(ContextVariable.IMS_RATE, ims);
+			}
+			
+			if (Objects.nonNull(unemployment)) {
+				contractData.put(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, unemployment == 7.05 ? 1.55 : 1.60);
+				contractData.put(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT, unemployment == 7.05 ? 5.50 : 6.70);
+			}
 		}
 		
 		@Override
@@ -112,6 +120,5 @@ public class Idc {
 		IdcParser.parse(is, ssBonusListener );
 		return ssBonusListener.getSSBonuses();
 	}
-	
 	
 }
