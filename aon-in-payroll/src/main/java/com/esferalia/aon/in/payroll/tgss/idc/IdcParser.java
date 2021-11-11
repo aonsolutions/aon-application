@@ -100,7 +100,10 @@ public class IdcParser {
 
 			
 			matcher = find(reader, CONTRACT_TYPE_START_END);
-			listener.onContractType(matcher.group("contractType"));
+			if ( hasData(matcher.group("contractType"))) {
+				listener.onContractType(matcher.group("contractType"));
+			}
+			
 			listener.onContractStart(simpleDateFormat.parse(matcher.group("start")));
 			
 			
@@ -113,25 +116,39 @@ public class IdcParser {
 			}
 			
 			matcher = find(reader, CONTRACT_PARTIALCOEF_DATE_AGE);
-			if(null != matcher.group("partialCoef")) listener.onContractPartialCoeficient(matcher.group("partialCoef"));
+			if(hasData(matcher.group("partialCoef"))) {
+				listener.onContractPartialCoeficient(matcher.group("partialCoef"));
+			}
 			
 			matcher = find(reader, CONTRACT_QUOTEGROUP_INACTIVITY_COMPLETECCC);
-			listener.onContractQuoteGroup(matcher.group("quoteGroup"));
+			if ( hasData(matcher.group("quoteGroup"))) {
+				listener.onContractQuoteGroup(matcher.group("quoteGroup"));
+			}
 			String enterpriseCompleteCCC = (matcher.group("completeCCC"));
-			if(hasData(matcher.group("inactivity"))) listener.onContractInactivityType(matcher.group("inactivity"));
+			if(hasData(matcher.group("inactivity"))) {
+				listener.onContractInactivityType(matcher.group("inactivity"));
+			}
 			
 			onEnterprise(listener, socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode,
 					enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
 			
 			matcher = find(reader, CONTRACT_OCUPATION);
-			if(hasData(matcher.group("ocupation"))) listener.onContractOcupation(matcher.group("ocupation"));
+			if(hasData(matcher.group("ocupation")))  {
+				listener.onContractOcupation(matcher.group("ocupation"));
+			}
 			
 			matcher = find(reader, CONTRACT_QUOTEMODALITY);
-			if(hasData(matcher.group("quoteModality"))) listener.onContractAgrarianQuoteModality(matcher.group("quoteModality"));
+			if(hasData(matcher.group("quoteModality"))) {
+				listener.onContractAgrarianQuoteModality(matcher.group("quoteModality"));
+			}
 			
 			matcher = find(reader, CONTRACT_REALJOURNEY);
-			if(hasData(matcher.group("realJourney"))) listener.onContractAgrarianRealJourney(matcher.group("realJourney"));
-			if(hasData(matcher.group("realJourneyProvided"))) listener.onContractAgrarianRealJourneyProvided(matcher.group("realJourneyProvided"));
+			if(hasData(matcher.group("realJourney"))) {
+				listener.onContractAgrarianRealJourney(matcher.group("realJourney"));
+			}
+			if(hasData(matcher.group("realJourneyProvided"))) {
+				listener.onContractAgrarianRealJourneyProvided(matcher.group("realJourneyProvided"));
+			}
 			
 			matcher = find(reader, PECULIARITIES_HEADER);
 			
@@ -171,9 +188,9 @@ public class IdcParser {
 			
 			matcher = find(reader, TOTAL_CLV);
 			matcher = find(reader, QUOTATION_TYPES);
-			Double it = hasData(matcher.group("it")) ? Double.parseDouble(matcher.group("it").replace(",", ".")) : 0.00;
-			Double ims = hasData(matcher.group("ims")) ? Double.parseDouble(matcher.group("ims").replace(",", ".")) : 0.00;
-			Double unemployment = hasData(matcher.group("unemployment")) ? Double.parseDouble(matcher.group("unemployment").replace(",", ".")) : 0.00;
+			Double it = hasData(matcher.group("it")) ? Double.parseDouble(matcher.group("it").replace(",", ".")) : null;
+			Double ims = hasData(matcher.group("ims")) ? Double.parseDouble(matcher.group("ims").replace(",", ".")) : null;
+			Double unemployment = hasData(matcher.group("unemployment")) ? Double.parseDouble(matcher.group("unemployment").replace(",", ".")) : null;
 			listener.onEmployeeQuoteTypes(it, ims, unemployment);
 		} catch (ParseException e) {
 			e.printStackTrace();

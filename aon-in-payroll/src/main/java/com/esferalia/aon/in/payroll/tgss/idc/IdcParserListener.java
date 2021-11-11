@@ -31,7 +31,7 @@ public interface IdcParserListener {
 	default void onEmployeeQuoteGroup(String group) {
 	};
 
-	default void onEmployeeQuoteTypes(double it, double ims, double unemployment) {
+	default void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
 	};
 
 	default void onNoEmployeeQuotePEC(String ssNum, String ccc, Date start, Date end) {

@@ -56,7 +56,7 @@ public class IdcCompositeParserListener implements IdcParserListener {
 	}
 
 	@Override
-	public void onEmployeeQuoteTypes(double it, double ims, double unemployment) {
+	public void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
 		idcParserListeners.forEach(l -> l.onEmployeeQuoteTypes(it, ims, unemployment));
 	}
 
