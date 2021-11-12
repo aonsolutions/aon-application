@@ -13,7 +13,7 @@ public enum DataResponseSource implements IResourceable {
 	SII,
 	SII_INVOICE,
 	SII_FINANCE,
-	TEDI_INVOICE,
+	TBAI,
 	SERES_DELIVERY,
 	SERES_INVOICE,
 	SERES_SALES,
@@ -29,7 +29,7 @@ public enum DataResponseSource implements IResourceable {
 	INGENET_SALES,
 	PATURPAT_QUALITY,
 	ANALYTIC_ACCOUNTING,
-	INVOICE,
+	INVOICE, // NOT IN USE.
 	IMPORTATION,
 	NOTIFICATION_TOKEN;
 	
