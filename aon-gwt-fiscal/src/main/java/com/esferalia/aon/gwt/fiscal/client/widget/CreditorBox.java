@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -130,7 +131,8 @@ public class CreditorBox extends ResizeComposite implements HasValue<String>
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					SERVICE.getBasicCreditors(domainName, user, domain,request.getQuery()
+					Occam occam = new Occam().setDomainName(domainName).setDomain(domain).setUser(user);
+					SERVICE.getBasicCreditors(occam,request.getQuery()
 							,new AsyncCallback<LinkedList<Creditor>>() {
 		
 								public void onFailure(Throwable caught) {

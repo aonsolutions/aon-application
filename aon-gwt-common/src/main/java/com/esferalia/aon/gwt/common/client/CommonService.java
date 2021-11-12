@@ -56,11 +56,6 @@ public interface CommonService extends RemoteService {
 	void deletePayMethod(String domainName,int domain, String user, Integer id) throws AonCoreException;
 
 	// **************************************************
-	// *************************************** [CREDITOR]
-	// **************************************************
-	LinkedList<Creditor> getBasicCreditors(String domainName,int domain, String user,String query) throws AonCoreException;
-
-	// **************************************************
 	// **************************************** [INVOICE]
 	// **************************************************
 	LinkedList<InvoiceRegistry> getInvoiceRegistries(String domainName,int domain, String user,String query) throws AonCoreException;

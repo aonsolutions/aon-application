@@ -147,6 +147,7 @@ import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
 import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
+import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -370,6 +371,11 @@ public class AON {
 		}
 	}
 
+	public static AonConfiguration getFiscalConfiguration(Occam occam) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getCommon().getConfiguration(ctx, new Date(), ConfigBlock.FISCAL);
+		}
+	}
 	public static AonConfiguration getConfiguration(String domainName, int domainId, String login) {
 		return getConfiguration(domainName, domainId, login, null);
 	}
@@ -387,6 +393,13 @@ public class AON {
 	public static AonConfiguration getConfiguration(AONContext ctx,Date atDate) {
 		return getCommon().getConfiguration(ctx, atDate);
 	}
+	
+	public static ApplicationParameter saveApplicationParameter(Occam occam, ApplicationParameter ap) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getCommon().saveApplicationParameter(ctx, ap);
+		}
+	}
+	
 	// ********************************************
 	// ******************************** SECURITY **
 	// ********************************************
@@ -5011,17 +5024,10 @@ public class AON {
 		}
 	}
 	
-	public static Stream<Creditor> getBasicCreditors(String domainName,
-			int domainId, String login, CreditorFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Stream<Creditor> getBasicCreditors(Occam occam, CreditorFilter filter) {
+		try ( AONContext ctx = AONContext.getAONContext(occam)) {
 			return getRegistry().getBasicCreditors(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
-
 	}
 
 	// ********************************************

@@ -42,6 +42,14 @@ public class AonFloatingMessage extends FlowPanel implements HasCloseHandlers<Ao
 		return msg;
 	}
 
+	public static AonFloatingMessage info(String message) {
+		AonFloatingMessage msg = new AonFloatingMessage(AON.MSG.information(),message);
+		msg.addStyleName(AON.CSS.aonMessageInfo());
+		msg.addStyleName(AON.CSS.aonBold());
+		msg.addStyleName(AON.CSS.aonFlexGrow1());
+		return msg;
+	}
+	
 	@Override
 	public HandlerRegistration addCloseHandler(CloseHandler<AonFloatingMessage> handler) {
 		return super.addHandler(handler, CloseEvent.getType());

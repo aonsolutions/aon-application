@@ -29,6 +29,8 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
+import com.esferalia.aon.occam.api.model.config.ConfigBlock;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -557,23 +559,16 @@ public class FiscalModelDAO {
 	public static <T extends FiscalModel> T initializeForFinish(AONContext ctx,T fiscalModel) {
 		fiscalModel.setDefaultDeclarationType();
 		if (fiscalModel.getDeclarationType().mustCreateFinance()) {
-			AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx); 
-			Integer credId = null;
-			if (fiscalModel.getModel() != null && fiscalModel.getModel().isVat()) {
-				credId = conf.fiscal().getAdmonVatCreditor();
-			} else if (fiscalModel.getModel() != null && fiscalModel.getModel().isRetention()) {
-				credId = conf.fiscal().getAdmonRetentionCreditor();
-			}
-			if ( credId == null ) {
-				credId = conf.fiscal().getAdmonCreditor();	
-			}
+			AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx, 
+					new ConfigParams().setBlocks(ConfigBlock.FISCAL)); 
 			Creditor creditor = null;
-			Integer creditorId = credId;
-			if ( creditorId != null ) {
-				creditor = CreditorDAO
-						.getBasicCreditors(ctx, p -> p.getIdProperty().eq(creditorId))
-						.findFirst()
-						.orElse(null);
+			if (fiscalModel.getModel() != null && fiscalModel.getModel().isVat()) {
+				creditor = conf.fiscal().getAdmonVatCreditor();
+			} else if (fiscalModel.getModel() != null && fiscalModel.getModel().isRetention()) {
+				creditor = conf.fiscal().getAdmonRetentionCreditor();
+			}
+			if ( creditor == null ) {
+				creditor = conf.fiscal().getAdmonCreditor();	
 			}
 			String concept = "Mod." + FiscalModelUtils.getModelName(fiscalModel) 
 				+ " - " + fiscalModel.getYear() 

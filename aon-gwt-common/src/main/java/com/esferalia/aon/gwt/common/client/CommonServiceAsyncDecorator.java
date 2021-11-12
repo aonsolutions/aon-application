@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -131,15 +130,6 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 	public void deletePayMethod(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback) {
 		AON.start();
 		serviceAsync.deletePayMethod(domainName, domain, user, id, new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	// **************************************************
-	// *************************************** [CREDITOR]
-	// **************************************************
-	@Override
-	public void getBasicCreditors(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<Creditor>> callback) {
-		AON.start();
-		serviceAsync.getBasicCreditors(domainName, domain, user, query, new AsyncCallbackWrapper<LinkedList<Creditor>>(callback));
 	}
 
 	// **************************************************

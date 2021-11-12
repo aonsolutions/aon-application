@@ -7,11 +7,11 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
-import com.esferalia.aon.gwt.common.client.widget.CreditorBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox;
 import com.esferalia.aon.gwt.common.client.widget.IbanTextBox.IbanSuggestion;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF.IModel390HFCallback;
+import com.esferalia.aon.gwt.fiscal.client.widget.CreditorBox;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.IIbanContainer;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -86,7 +86,7 @@ public class FinishDeclarationPopup extends CustomDialog {
 			tab.setWidget(row, 1, new Label(mod390.getDeclarationType().getDescription()));
 			row++;
 		} else {
-			final CreditorBox creditorBox = new CreditorBox(options.getDomainName(),options.getDomain(),options.getUser());
+			final CreditorBox creditorBox = new CreditorBox(options.getDomainName(),options.getUser(),options.getDomain());
 			final IbanTextBox iban = new IbanTextBox(new EnterpriseSuggestOracle<Mod390HF>(options,callback));
 
 			final ListBox listBox = new ListBox();

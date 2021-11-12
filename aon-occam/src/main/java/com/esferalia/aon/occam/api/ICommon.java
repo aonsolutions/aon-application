@@ -48,7 +48,8 @@ public interface ICommon {
 	// --------------------------------------------
 	public AonConfiguration getConfiguration(AONContext ctx, Date atDate);
 	public AonConfiguration getConfiguration(AONContext ctx, Date atDate, ConfigBlock ... block );
-
+	public ApplicationParameter saveApplicationParameter(AONContext ctx, ApplicationParameter ap);
+	
 	// --------------------------------------------
 	// APPLICATION PARATEMER
 	// --------------------------------------------

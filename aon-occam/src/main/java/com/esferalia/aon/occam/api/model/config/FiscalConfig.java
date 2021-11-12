@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.config;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.Administration;
 
 public class FiscalConfig implements Serializable {
@@ -13,9 +14,9 @@ public class FiscalConfig implements Serializable {
 	private String administrationCode;
 	private boolean taxRefundRegistry;
 	private Integer taxRegime;
-	private Integer admonCreditor;
-	private Integer admonVatCreditor;
-	private Integer admonRetentionCreditor;
+	private Creditor admonCreditor;
+	private Creditor admonVatCreditor;
+	private Creditor admonRetentionCreditor;
 	private boolean permAddressChanges;
 	private String contactPerson;
 	private String contactPhone;
@@ -73,26 +74,26 @@ public class FiscalConfig implements Serializable {
 		return this;
 	}
 	
-	public Integer getAdmonCreditor() {
+	public Creditor getAdmonCreditor() {
 		return admonCreditor;
 	}
-	public FiscalConfig setAdmonCreditor(Integer admonCreditor) {
+	public FiscalConfig setAdmonCreditor(Creditor admonCreditor) {
 		this.admonCreditor = admonCreditor;
 		return this;
 	}
 	
-	public Integer getAdmonVatCreditor() {
+	public Creditor getAdmonVatCreditor() {
 		return admonVatCreditor;
 	}
-	public FiscalConfig setAdmonVatCreditor(Integer admonVatCreditor) {
+	public FiscalConfig setAdmonVatCreditor(Creditor admonVatCreditor) {
 		this.admonVatCreditor = admonVatCreditor;
 		return this;
 	}
 	
-	public Integer getAdmonRetentionCreditor() {
+	public Creditor getAdmonRetentionCreditor() {
 		return admonRetentionCreditor;
 	}
-	public FiscalConfig setAdmonRetentionCreditor(Integer admonRetentionCreditor) {
+	public FiscalConfig setAdmonRetentionCreditor(Creditor admonRetentionCreditor) {
 		this.admonRetentionCreditor = admonRetentionCreditor;
 		return this;
 	}

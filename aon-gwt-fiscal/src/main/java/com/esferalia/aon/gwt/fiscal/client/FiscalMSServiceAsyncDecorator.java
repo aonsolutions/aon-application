@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -29,10 +30,10 @@ public class FiscalMSServiceAsyncDecorator implements FiscalMSServiceAsync {
 
 	// -------------------------------------------------------------- CREDITOR
 	@Override
-	public void getBasicCreditors(String domainName, String user, int domain, String query,
+	public void getBasicCreditors(Occam occam, String query,
 			AsyncCallback<LinkedList<Creditor>> callback) {
 		AON.start();
-		serviceAsync.getBasicCreditors(domainName,user, domain, query, new AsyncCallbackWrapper<LinkedList<Creditor>>(callback));
+		serviceAsync.getBasicCreditors(occam, query, new AsyncCallbackWrapper<LinkedList<Creditor>>(callback));
 	}
 	// -------------------------------------------------------------- ACTIVITIES
 	@Override

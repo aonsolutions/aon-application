@@ -24,14 +24,33 @@ public class AonLayoutPanel extends DockLayoutPanel {
 		this.showErrorPanel(msg, null );	
 	}
 	public void showErrorPanel(String msg, Widget beforeWidget) {
-		hideErrorPanel();
 		msgWidget = AonFloatingMessage.error(msg);
+		showMessagesPanel(beforeWidget);
+	}
+	
+	public void showInfoPanel(String msg) {
+		this.showInfoPanel(msg, null );	
+	}
+	public void showInfoPanel(String msg, Widget beforeWidget) {
+		msgWidget = AonFloatingMessage.info(msg);
+		showMessagesPanel(beforeWidget);
+	}
+
+	public void showMessagesPanel(Widget beforeWidget) {
+		hideInfoPanel();
 		insertNorth(msgWidget, 60 , (beforeWidget == null ? dummyNorthPanel :  beforeWidget) );
 		forceLayout();
 		msgWidget.addCloseHandler(event -> hideErrorPanel());
 	}
-	
+
 	public void hideErrorPanel() {
+		hideMessqagesPanel();
+	}
+	public void hideInfoPanel() {
+		hideMessqagesPanel();
+	}
+	
+	public void hideMessqagesPanel() {
 		if (msgWidget != null) {
 			remove(msgWidget);
 		}

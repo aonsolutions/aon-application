@@ -45,6 +45,7 @@ import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -423,8 +424,8 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					FiscalConfig menu = new FiscalConfig();
-					menu.onModuleLoad();
+					FiscalConfig fiscalConfig = new FiscalConfig();
+					fiscalConfig.onModuleLoad();
 				}
 			});
 		} else if ( entryPoint.equalsIgnoreCase(RG_CUSTOMER_ENTRY_POINT)) {
@@ -804,7 +805,13 @@ public class MainEntryPoint implements EntryPoint {
 			});
 		}
 	}
-
+	protected Occam getOccam() {
+		return new Occam()
+			.setDomainName(getCurrentDomainName())
+			.setDomain(getCurrentDomain())
+			.setUser(getCurrentUser());
+	}
+	
 	public static native String getToken()
 	/*-{
 		return $wnd.localStorage.getItem("aon_session_id");

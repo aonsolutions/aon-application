@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -44,11 +45,11 @@ public class FiscalMSServiceServiceImpl extends AonStatelessRemoteServiceServlet
 
 	// -------------------------------------------------------------- CREDITOR
 	@Override
-	public LinkedList<Creditor> getBasicCreditors(String domainName, String user, int domain, String query) throws AonCoreException {
+	public LinkedList<Creditor> getBasicCreditors(Occam occam, String query) throws AonCoreException {
 		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);
-		return AON.getBasicCreditors(domainName, domain,user,
+		return AON.getBasicCreditors(occam,
 				p ->  p.getStatusProperty().eq( RegistryStatus.ACTIVE.value())
 					.and(p.getDocumentProperty().like(q)
 					 .or(p.getNameProperty().like(q))

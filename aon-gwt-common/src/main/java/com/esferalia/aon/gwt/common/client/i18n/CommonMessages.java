@@ -463,8 +463,14 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Marcar")
 	String check();
 
+	@DefaultMessage("Activado")
+	String checked();
+
 	@DefaultMessage("Desmarcar")
 	String uncheck();
+
+	@DefaultMessage("Desactivado")
+	String unchecked();
 
 	@DefaultMessage("Aceptar")
 	String accept();

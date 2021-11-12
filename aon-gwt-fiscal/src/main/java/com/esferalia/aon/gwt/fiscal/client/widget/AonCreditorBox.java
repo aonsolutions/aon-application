@@ -1,12 +1,14 @@
-package com.esferalia.aon.gwt.common.client.widget.solutions;
+package com.esferalia.aon.gwt.fiscal.client.widget;
 
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.CommonService;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
-import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -39,8 +41,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
-import com.google.gwt.user.client.ui.SuggestOracle;
-import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonCreditorBox extends ResizeComposite implements HasValue<String>
@@ -53,7 +53,12 @@ public class AonCreditorBox extends ResizeComposite implements HasValue<String>
 	private static final int MIN_CHARACTERS = 3;
 	private static final int MAX_CHARACTERS = 8;
 
-	private CommonServiceAsync commonService;
+	private static final FiscalMSServiceAsync SERVICE;
+	static {
+		FiscalMSServiceAsync serviceRaw = GWT.create(FiscalMSService.class);
+		SERVICE = new FiscalMSServiceAsyncDecorator(serviceRaw);
+	}
+
 
 	private Integer id;
 	private String description;
@@ -113,14 +118,14 @@ public class AonCreditorBox extends ResizeComposite implements HasValue<String>
 		}
 		
 	}
-	
+	public AonCreditorBox(Occam occam) {
+		this(occam.getDomainName(),occam.getDomain(),occam.getUser(),true);
+	}
 	public AonCreditorBox(final String domainName, final int domain, final String user) {
 		this(domainName,domain,user,true);
 	}
 	
 	public AonCreditorBox(final String domainName, final int domain, final String user, boolean showDescription) {
-		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -128,7 +133,8 @@ public class AonCreditorBox extends ResizeComposite implements HasValue<String>
 				if (AonStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && AonStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					commonService.getBasicCreditors(domainName,domain, user,request.getQuery()
+					Occam occam = new Occam().setDomainName(domainName).setDomain(domain).setUser(user);
+					SERVICE.getBasicCreditors(occam,request.getQuery()
 							,new AsyncCallback<LinkedList<Creditor>>() {
 		
 								public void onFailure(Throwable caught) {
@@ -138,11 +144,11 @@ public class AonCreditorBox extends ResizeComposite implements HasValue<String>
 								}
 		
 								public void onSuccess(LinkedList<Creditor> result) {
-									LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
+									LinkedList<Suggestion> suggestions = new LinkedList<>();
 									if (result != null) {
-										for (final Creditor creditor : result) {
-											suggestions.add(new CreditorSuggestion(creditor, creditor.getDocument()
-									        		, decorate(Registry.getFullDescription(creditor), request.getQuery())));
+										for (final Creditor cred : result) {
+											suggestions.add(new CreditorSuggestion(cred, cred.getDocument()
+									        		, decorate(Registry.getFullDescription(cred), request.getQuery())));
 										}
 									}
 									Response resp = new Response(suggestions);
@@ -164,13 +170,11 @@ public class AonCreditorBox extends ResizeComposite implements HasValue<String>
 		descriptionLabel.addStyleName(AON.CSS.aonFontSmall());
 		descriptionLabel.setVisible(showDescription);
 		
-		creditor.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-			@Override
-			public void onSelection(SelectionEvent<Suggestion> event) {
-				CreditorSuggestion selected = (CreditorSuggestion) event.getSelectedItem();
+		creditor.addSelectionHandler(event -> {
+				CreditorSuggestion selected = ((CreditorSuggestion) event.getSelectedItem());
 				select( selected.getCreditor() );
 			}
-		});
+		);
 		
 		rooPanel = new FlowPanel();
 		rooPanel.addStyleName(AON.CSS.aonNowrap() );

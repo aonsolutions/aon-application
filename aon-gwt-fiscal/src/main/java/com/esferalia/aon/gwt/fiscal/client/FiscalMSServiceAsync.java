@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -14,7 +15,7 @@ public interface FiscalMSServiceAsync {
 	// ---------------------------------- COMPANY
 	void getCompanyBanks(String domainName, String user, int domain, AsyncCallback<LinkedList<CompanyBank>> callback);
 	// -------------------------------------------------------------- CREDITOR
-	void getBasicCreditors(String domainName, String user, int domain, String query, AsyncCallback<LinkedList<Creditor>> callback);
+	void getBasicCreditors(Occam occam, String query, AsyncCallback<LinkedList<Creditor>> callback);
 	// -------------------------------------------------------------- ACTIVITIES
 	void getActivities(int activityGroup, AsyncCallback<LinkedList<Activity>> callback);
 	// --------------------------------------------------------------- GWT API INFO

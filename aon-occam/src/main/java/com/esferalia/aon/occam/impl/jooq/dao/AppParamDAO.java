@@ -23,6 +23,10 @@ public class AppParamDAO {
 	private static final String DATE_PATTERN = "dd/MM/yyyy";
 	private static final String[] DATE_PATTERNS = new String[]{DATE_PATTERN}; 
 	private static final ApplicationParameterPropertiesDAO APPLICATION_PARAMETER_PROPERTIES = new ApplicationParameterPropertiesDAO();
+	
+	private AppParamDAO() {
+		
+	}
 
 	public static String fetchValue(AONContext ctx, AppParam param) {
 		ApplicationParameter ap = fetchOne(ctx, param.getValue());
@@ -116,8 +120,13 @@ public class AppParamDAO {
 	}
 	
 	public static ApplicationParameter insertApplicationParameter(AONContext ctx, String param, String value){
-		if(ctx.getDslContext().select().from(APP_PARAM).where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
-			.and(APP_PARAM.NAME.eq(param)).fetch().isEmpty())
+		if(ctx.getDslContext()
+			.select()
+			.from(APP_PARAM)
+			.where(APP_PARAM.DOMAIN.eq(ctx.getDomainId()))
+			.and(APP_PARAM.NAME.eq(param))
+			.fetch()
+			.isEmpty())
 			ctx.getDslContext()
 				.insertInto(APP_PARAM, APP_PARAM.DOMAIN, APP_PARAM.NAME, APP_PARAM.VALUE)
 				.values(ctx.getDomainId(), param, value).execute();
@@ -144,6 +153,11 @@ public class AppParamDAO {
 			.set(APP_PARAM.VALUE, applicationParameter.getValue())
 			.where(APPLICATION_PARAMETER_PROPERTIES.getConditions(filter))
 			.returning().fetch().stream().map(new ApplicationParameterFiller()).findFirst().orElse(new ApplicationParameter());
+	}
+	
+	
+	public static ApplicationParameter saveApplicationParameter(AONContext ctx, ApplicationParameter ap) {
+		return insertApplicationParameter(ctx, ap.getName(),ap.getValue());
 	}
 	
 }

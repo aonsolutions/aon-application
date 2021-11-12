@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.ApplicationParameterFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -56,6 +57,12 @@ public class ConfigurationDAO {
 
 	public static AonConfiguration getConfiguration(final AONContext ctx, ConfigParams params) {
 		ctx.checkRead();
+		if (params == null) {
+			throw new IllegalArgumentException("Params can not be null");
+		}
+		if (params.getAtDate() == null) {
+			params.setAtDate(new Date());
+		}
 		int defaultVatPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_VAT_PERCENT);
 		int defaultWithholdingPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_RETENTION_PERCENT);
 		AonConfiguration conf = new AonConfiguration()
@@ -143,50 +150,50 @@ public class ConfigurationDAO {
 	// ********************************************************************************************
 	
 	public static interface IAppParamFiller {
-		void fill(AonConfiguration config, String value);
+		void fill(AONContext ctx, AonConfiguration config, String value);
 	}
 	private static final EnumMap<AppParam, IAppParamFiller> APM = new EnumMap<>(AppParam.class);
 	static {
 		
 		// ****************************************************** [FISCAL VALUES]
 		APM.put(AppParam.FS_DEFAULT_YEAR, 
-			(config, value) -> config.fiscal().setDefaultYear(AonNumberUtils.toInteger(value)));
+			(ctx, config, value) -> config.fiscal().setDefaultYear(AonNumberUtils.toInteger(value)));
 		APM.put(AppParam.FS_DEFAULT_ADMINISTRATION, 
-			(config, value) -> config.fiscal().setAdministration(AonNumberUtils.toInteger(value)));
+			(ctx, config, value) -> config.fiscal().setAdministration(AonNumberUtils.toInteger(value)));
 		APM.put(AppParam.FS_ADMINISTRATION_CODE, 
-			(config, value) -> config.fiscal().setAdministrationCode(value));
+			(ctx, config, value) -> config.fiscal().setAdministrationCode(value));
 		APM.put(AppParam.FS_TAX_REFUND_REGISTRY,
-			(config, value) -> config.fiscal().setTaxRefundRegistry( AonEnumUtils.getAonBoolean(value) ));
+			(ctx, config, value) -> config.fiscal().setTaxRefundRegistry( AonEnumUtils.getAonBoolean(value) ));
 		APM.put(AppParam.FS_TAX_REGIME, 
-			(config, value) -> config.fiscal().setTaxRegime(AonNumberUtils.toInteger(value)));
+			(ctx, config, value) -> config.fiscal().setTaxRegime(AonNumberUtils.toInteger(value)));
 		APM.put(AppParam.FS_ADMON_CREDITOR,
-			(config, value) -> config.fiscal().setAdmonCreditor(AonNumberUtils.toInteger(value)));
+			(ctx, config, value) -> config.fiscal().setAdmonCreditor( getCreditor(ctx,value) ));
 		APM.put(AppParam.FS_ADMON_VAT_CREDITOR,
-			(config, value) -> config.fiscal().setAdmonVatCreditor(AonNumberUtils.toInteger(value)));
+			(ctx, config, value) -> config.fiscal().setAdmonVatCreditor(getCreditor(ctx,value) ));
 		APM.put(AppParam.FS_ADMON_RETENTION_CREDITOR,
-			(config, value) -> config.fiscal().setAdmonRetentionCreditor(AonNumberUtils.toInteger(value)));
+			(ctx, config, value) -> config.fiscal().setAdmonRetentionCreditor(getCreditor(ctx,value) ));
 		APM.put(AppParam.FS_PERM_ADDRESS_CHANGES, 
-			(config, value) -> config.fiscal().setPermAddressChanges(AonEnumUtils.getAonBoolean(value) ));
+			(ctx, config, value) -> config.fiscal().setPermAddressChanges(AonEnumUtils.getAonBoolean(value) ));
 		APM.put(AppParam.FS_CONCTACT_PERSON, 
-			(config, value) -> config.fiscal().setContactPerson(value));
+			(ctx, config, value) -> config.fiscal().setContactPerson(value));
 		APM.put(AppParam.FS_CONCTACT_PHONE, 
-			(config, value) -> config.fiscal().setContactPhone(value));
+			(ctx, config, value) -> config.fiscal().setContactPhone(value));
 		APM.put(AppParam.FS_CONCTACT_CELLULAR,
-			(config, value) -> config.fiscal().setContactCellular(value));
+			(ctx, config, value) -> config.fiscal().setContactCellular(value));
 		APM.put(AppParam.FS_CONCTACT_MAIL, 
-			(config, value) -> config.fiscal().setContactMail(value));
+			(ctx, config, value) -> config.fiscal().setContactMail(value));
 		APM.put(AppParam.FS_MOD303_BY_DIFFERENCE_DISABLED, 
-			(config, value) -> config.fiscal().setMod303ByDifferenceDisabled( AonEnumUtils.getAonBoolean(value) ));
+			(ctx, config, value) -> config.fiscal().setMod303ByDifferenceDisabled( AonEnumUtils.getAonBoolean(value) ));
 		APM.put(AppParam.FS_CUSTOMER_CHECK_ENABLED, 
-			(config, value) -> config.fiscal().setCustomerCheckEnabled(AonEnumUtils.getAonBoolean(value) ));
+			(ctx, config, value) -> config.fiscal().setCustomerCheckEnabled(AonEnumUtils.getAonBoolean(value) ));
 	}
 
-	private static void fillParam( final ApplicationParameter ap, final AonConfiguration config ) {
+	private static void fillParam( AONContext ctx, final AonConfiguration config, final ApplicationParameter ap) {
 		if (ap != null && AonStringUtils.isNotBlank(ap.getName()) && AonStringUtils.isNotBlank(ap.getValue())) {
 			try {
 				AppParam param = AppParam.valueOf(ap.getName());
 				if (APM.containsKey(param)) {
-					APM.get(param).fill(config, ap.getValue());
+					APM.get(param).fill(ctx, config, ap.getValue());
 				}
 			} catch (IllegalArgumentException e) {
 				LOGGER.log(Level.WARNING
@@ -196,6 +203,15 @@ public class ConfigurationDAO {
 		}
 	}
 	
+	private static Creditor getCreditor(AONContext ctx, String value) {
+		Integer id = AonNumberUtils.toInteger(value);
+		Creditor creditor = null;
+		if (id != null) {
+			creditor = CreditorDAO.get(ctx, id);
+		}
+		return creditor;
+	}
+
 	private static void fillAccountingParameters(AONContext ctx, final AonConfiguration config) {
 		config.accounting()
 			.setPeriods(AccountPeriodDAO.getPeriods(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId())).collect(Collectors.toCollection(LinkedList::new)))
@@ -245,7 +261,7 @@ public class ConfigurationDAO {
 			.fetch()
 			.stream()
 			.map( new ApplicationParameterFiller() )
-			.forEach(param -> fillParam(param, config));
+			.forEach(param -> fillParam(ctx, config, param));
 	}
 	
 	
