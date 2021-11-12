@@ -1,10 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
@@ -12,6 +10,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -25,8 +24,6 @@ public class MainContrataContractObject {
 	private List<EmployeeContractInfo> allEmployeesList;
 	private List<EmployeeContractInfo> employeesList;
 	private List<EmployeeContractInfo> trashEmployeesList;
-	
-	private Map<String, Integer> employeesFilterMap;
 	
 	private List<Workplace> workplaces;
 	
@@ -44,7 +41,6 @@ public class MainContrataContractObject {
 		this.allEmployeesList = new ArrayList<>();
 		this.employeesList = new ArrayList<>();
 		this.trashEmployeesList = new ArrayList<>();
-		this.employeesFilterMap = new HashMap<>();
 		this.workplaces = new ArrayList<>();
 		this.hasCertificateSEPE = false;
 	}
@@ -160,16 +156,6 @@ public class MainContrataContractObject {
 		employeesList.clear();
 		allEmployeesList.addAll(employeesInfoList);
 		employeesList.addAll(employeesInfoList);
-		employeesFilterMap.clear();
-		
-		for(EmployeeContractInfo employee : allEmployeesList) {
-			String fullName = employee.getEmployeeInfo().getFullName();
-			String document = employee.getEmployeeInfo().getDocument();
-			String ssNumber = employee.getEmployeeInfo().getSsNumber();
-			Integer contractId = employee.getContractInfo().getContractId();
-			
-			employeesFilterMap.put(fullName + ", Documento : " + document + ", SS : " + ssNumber, contractId);
-		}
 	}
 	
 	// ------------------------------------------ Getters Methods
@@ -179,33 +165,46 @@ public class MainContrataContractObject {
 		return employeesList;
 	}
 	
+	public List<EmployeeContractInfo> getAllEmployeesList(){
+		return allEmployeesList;
+	} 
+	
 	public List<Workplace> getWorkplaces(){
 		return this.workplaces;
-	}
-	
-	public Map<String, Integer> getEmployeesMap(){
-		return employeesFilterMap;
 	}
 
 	public void resetEmployeesList() {
 		this.employeesList.clear();
 		this.employeesList.addAll(allEmployeesList);
 	}
-
-	public List<Integer> getEmployeesContractIds(String value) {
-		List<Integer> contractIds = new ArrayList<>();
+	
+	public void filterEmployeesList(Integer workplaceId) {
+		this.employeesList.clear();
 		
-		for(Entry<String, Integer> entry : employeesFilterMap.entrySet()) {
-			if( AonStringUtils.containsIgnoreCase(entry.getKey(), value) ||
-				AonStringUtils.contains(entry.getKey(), value) ||
-				AonStringUtils.equals(entry.getKey(), value) ||
-				AonStringUtils.equalsIgnoreCase(entry.getKey(), value)) {
-				
-				contractIds.add(entry.getValue());
-			}
+		for(EmployeeContractInfo employee : allEmployeesList) {
+			Integer employeeWorkplaceId = employee.getContractInfo().getWorkplaceId();
+			if(null != employeeWorkplaceId && AonNumberUtils.equals(workplaceId, employeeWorkplaceId))
+				this.employeesList.add(employee);
 		}
+	}
+	
+	public void filterEmployeesList(String pattern) {
+		this.employeesList.clear();
 		
-		return contractIds;
+		for(EmployeeContractInfo employee : allEmployeesList)
+			if(isEmployeeByPattern(employee, pattern))
+				this.employeesList.add(employee);
+			
+	}
+
+	private boolean isEmployeeByPattern(EmployeeContractInfo employee, String pattern) {
+		String fullName = employee.getEmployeeInfo().getFullName();
+		String document = employee.getEmployeeInfo().getDocument();
+		String ssNumber = employee.getEmployeeInfo().getSsNumber();
+		
+		return AonStringUtils.containsIgnoreCase(fullName, pattern) ||
+				(AonStringUtils.isNotBlank(document) && AonStringUtils.containsIgnoreCase(document, pattern)) ||
+				(AonStringUtils.isNotBlank(ssNumber) && AonStringUtils.containsIgnoreCase(ssNumber, pattern));
 	}
 	
 	public List<Integer> getEmployeesContractIdsByWorkplace(String workplaceIdStr) {
@@ -218,15 +217,6 @@ public class MainContrataContractObject {
 		}
 		
 		return contractIds;
-	}
-
-	public void filterEmployeesList(List<Integer> employeesContractIds) {
-		employeesList.clear();
-		
-		for(EmployeeContractInfo employee : allEmployeesList) {
-			if(employeesContractIds.contains(employee.getContractInfo().getContractId()))
-				employeesList.add(employee);
-		}
 	}
 	
 	// ------------------------------------------ DataBase Methods Trash
