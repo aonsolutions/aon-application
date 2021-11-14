@@ -1241,6 +1241,7 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 	
+
 	@Test
 	public void testIdcContractData() throws IOException, UnknownPDFException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idc.pdf") ){
@@ -2309,6 +2310,64 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 	
+	@Test
+	public void testIdcplnssTrabajadoresTramosXI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssXI.pdf") ){
+			TrabajadoresTramos trabajadoresTramos = Idcplnss.getTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
+			
+			marshal(trabajadoresTramos, System.out);
+			
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+			
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("04", liquidacion.getCcc().getProvincia());
+			assertEquals("118744682", liquidacion.getCcc().getNumero());
+			
+			assertEquals("10", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2021", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("10", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2021", liquidacion.getPeriodoHasta().getAnho());
+			
+			assertEquals(1,liquidacion.getLiquidacionMes().size());
+			
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("10", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2021", liquidacionesMes.getMesLiquidativo().getAnho());
+			
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size() );
+			
+			for ( Trabajador trabajador : trabajadores.getTrabajador() ) {
+
+				assertEquals("411022261502", trabajador.getNaf());
+
+				assertEquals(2, trabajador.getTramos().getTramo().size() );
+				
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("05", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("10", tramo.getFechaDesde().getMes());
+				assertEquals("2021", tramo.getFechaDesde().getAnho());
+				assertEquals("28", tramo.getFechaHasta().getDia());
+				assertEquals("10", tramo.getFechaHasta().getMes());
+				assertEquals("2021", tramo.getFechaHasta().getAnho());
+				assertTramoActivoNormal(tramo);
+				
+				tramo = trabajador.getTramos().getTramo().get(1);
+				assertEquals("05", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("29", tramo.getFechaDesde().getDia());
+				assertEquals("10", tramo.getFechaDesde().getMes());
+				assertEquals("2021", tramo.getFechaDesde().getAnho());
+				assertEquals("31", tramo.getFechaHasta().getDia());
+				assertEquals("10", tramo.getFechaHasta().getMes());
+				assertEquals("2021", tramo.getFechaHasta().getAnho());
+				assertTramoITPagoDirecto(tramo);
+
+			}
+			
+		}
+	}
+
 	@Test
 	public void testIdcSyncI() throws IOException, UnknownPDFException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcI.pdf") ){
