@@ -19,7 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.data.RemoveDataResponse;
+import net.aonsolutions.db.up2date.data.DataRequestCreation;
 
 public class Up2Date {
 
@@ -180,7 +180,8 @@ public class Up2Date {
     		//InvoiceFiscalCreation.INVOICE_FISCAL_CREATION,
     		//BofFormYTutoriaInsert.BOFFORMYTUTORIAINSERT,
     		//RemoveDomainAppBankForParent.REMOVE_DOMAIN_APP_BANK_FOR_PARENT,
-    		RemoveDataResponse.REMOVE_DATA_RESPONSE
+    		//RemoveDataResponse.REMOVE_DATA_RESPONSE,
+    		DataRequestCreation.DATA_REQUEST_CREATION
     };
 
 
