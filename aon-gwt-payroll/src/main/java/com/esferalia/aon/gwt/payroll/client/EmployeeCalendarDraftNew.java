@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -644,6 +645,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	@UiField
 	VerticalPanel mainContainer;
+	
+	@UiField
+	HTMLPanel daysTypePanel;
 	
 	// ---------------------------- Calendar (UiField)
 	
@@ -2075,5 +2079,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	public void hideToolbar(){
 		dockLayoutPanel.remove(toolbar);
 		mainContainer.getElement().getStyle().setMarginTop(0, Unit.PX);
+		daysTypePanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
 }
