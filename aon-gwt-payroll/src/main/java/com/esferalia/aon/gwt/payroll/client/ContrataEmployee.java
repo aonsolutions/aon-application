@@ -32,6 +32,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -497,7 +498,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		String flex();
 		String cmdBtn();
 		String loadingPanel();
+		String container();
 	}
+	
+	@UiField (provided = true)
+	AonToolbar toolbar;
 	
 	@UiField
 	HTMLPanel messageContainer;
@@ -589,8 +594,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private ContrataEmployeeObject contrataEmployeeObject;
 	private Integer contractId;
 	
-	private AonToolbar toolbar;
-
 	private AonToolbarButton listEmployees;
 	private HTMLPanel employeeContractButtons;
 	private AonToolbarButton saveContract;
@@ -659,12 +662,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		salaryDraft = new SalaryDraft();
 		salaryDraft.hideToolbar();
 		
+		// Init toolbar
+		getToolbarPanel();
+		
 		// Init Widget
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		// Init toolbar
-		getToolbarPanel();
-		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		// Show contract buttons
 		showContractButtons();
 		
 		// Init ContextMenu
@@ -695,46 +699,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Label loadingL = (Label) loadingPanel.getWidget(1);
 		loadingL.setText(getLoadingText());
 		
-//		setTabAddBeforeClickTabEmpty();
-		
 		loadingPanel.setVisible(true);
 	}
 
 	private void hideLoadingPanel(){
 		loadingPanel.setVisible(false);
-//		setTabAddBeforeClickTab();
 	}
 	
-//	private void setTabAddBeforeClickTabEmpty() {
-//		tabLayOutPanel.addBeforeSelectionHandler(e -> {});
-//	}
-//	
-//	private void setTabAddBeforeClickTab() {
-//		tabLayOutPanel.addBeforeSelectionHandler(e -> {
-//			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
-//			switch (itemIdx) {
-//				case 0:
-//					contrataEmployeeObject.setEmployeeContract(s -> {}, f -> {});
-//					break;
-//				case 1:
-//					contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
-//					break;
-//				case 2:
-//					contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-//					contrataEmployeeObject.setContractOtherInfo(s -> {}, f -> {});
-//					break;
-//				case 3:
-//					contrataEmployeeObject.setContractClauses(s -> {}, f -> {});
-//					break;
-//				case 4:
-//					contrataEmployeeObject.setContractAttachments(s -> {}, f -> {});
-//					break;
-//				default:
-//					break;
-//			}
-//		});
-//	}
-
 	private String getLoadingText() {
 		switch (tabLayOutPanel.getSelectedIndex()) {
 		case 1:
@@ -767,16 +738,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- Initialize View
 	
 	private void setScrollPanelsHeight() {
-		int height = Window.getClientHeight(); 
-		double emCoef = 0.063;
-		double scrollHeight = height * emCoef - 4;
-		scrolledPanel.setHeight(scrollHeight+"em");
-		scrolledPanelContractOtherData.setHeight(scrollHeight+"em");
-		scrolledPanelClauses.setHeight(scrollHeight+"em");
-		scrolledPanelAttach.setHeight(scrollHeight+"em");
-		scrolledPanelBonus.setHeight(scrollHeight+"em");
-		scrolledPanelContractSpecificData.setHeight(scrollHeight+"em");
-		scrolledPDFPanel.setHeight(scrollHeight+"em");
+		scrolledPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
+		scrolledPanelContractOtherData.getElement().getStyle().setHeight(Window.getClientHeight() - 250.00, Unit.PX);
+		scrolledPanelClauses.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
+		scrolledPanelAttach.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
+		scrolledPanelBonus.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
+		scrolledPanelContractSpecificData.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
+		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 170.00, Unit.PX);
 	}
 	
 	private void initFootPanel() {
@@ -790,6 +758,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private void initTabLayOutPanel() {
 		tabLayOutPanel.selectTab(0, false);
+		tabLayOutPanel.addStyleName(style.container());
 //		tabLayOutPanel.setAnimationDuration(1000);
 		
 		tabLayOutPanel.addBeforeSelectionHandler(e -> {
@@ -906,7 +875,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				break;
 			case 7:
 				showLoadingPanel();
-//				Window.alert("Calendar Selected -> " + contrataEmployeeObject.getEmployeeFullName());
 				contrataEmployeeObject.getEmployeeCalendarObject(employeeCalendarObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showCalendarButtons();
@@ -988,8 +956,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		nextContract.setVisible(false);
 
 		closePDF.setVisible(true);
-		idcDateListBox.setVisible(true);
-		idcMonthListBox.setVisible(true);
 
 		tabLayOutPanel.getElement().getStyle().setDisplay(Display.NONE);
 		pdfViewer.getElement().getStyle().clearDisplay();
@@ -998,7 +964,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- Initialize View (Auxiliar Method)
 	
 	protected void getContractBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
-		contrataEmployeeObject.getSSBonus( success, failure);
+		contrataEmployeeObject.getSSBonus(success, failure);
 	}
 	
 	// ------------------------------------------------- setContrataEmployeeObject
@@ -1371,7 +1337,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contractEmployeeUI.getQuoteGroup(),
 				contractEmployeeUI.getOccupation(),
 				contractEmployeeUI.getPartialityCoef(),
-				this.contrataEmployeeObject.getContractData().getPayrollDate(),
 				this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId()
@@ -2010,11 +1975,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+		splitLayoutPanel.setWidgetSize(footPanel, 20);
 	}
 
 	private void hideFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 15);
+		splitLayoutPanel.setWidgetSize(footPanel, 20);
 	}
 
 	private void showFootPanel() {

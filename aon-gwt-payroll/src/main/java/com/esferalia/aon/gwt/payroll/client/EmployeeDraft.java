@@ -874,7 +874,6 @@ public abstract class EmployeeDraft extends Composite {
 				employee.quoteGroup.getSelectedValue(),
 				employee.occupation.getSelectedValue(),
 				employee.partialityCoef.getValue(),
-				employeeDraftObject.getPayrollDate(),
 				employeeDraftObject.getContractId(),
 				employeeDraftObject.getDomainId(),
 				employeeDraftObject.getWorkplaceId()
