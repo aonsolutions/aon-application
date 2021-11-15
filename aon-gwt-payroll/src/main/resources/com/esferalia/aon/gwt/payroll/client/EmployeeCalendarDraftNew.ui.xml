@@ -286,7 +286,7 @@
 		<g:center>
 			<g:VerticalPanel ui:field="mainContainer" styleName="{style.container} {style.mt50}">
 			    
-				<g:HTMLPanel styleName="{style.daysTypePanel}">
+				<g:HTMLPanel ui:field="daysTypePanel" styleName="{style.daysTypePanel}">
 					<g:HTMLPanel>
 						<g:Button styleName="{style.aonButtonStyle} {style.aonButtonStyleWithOutIcon}" ui:field="workingDayButton">Laborable</g:Button>
 						<g:Button styleName="{style.typeButtonUpperMenuStyle} {style.noWorkingColor}" ui:field="nonWorkingDayButton">No Laborables</g:Button>

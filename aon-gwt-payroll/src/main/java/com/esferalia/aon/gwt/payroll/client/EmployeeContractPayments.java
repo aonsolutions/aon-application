@@ -123,7 +123,6 @@ public class EmployeeContractPayments extends Composite {
 	
 	private void setScrollPanelHeight() {
 		contractConceptCalcDG.setHeight(90 + "%");
-		contractConceptCalcDG.setWidth(100 + "%");
 	}
 	
 	private boolean isHideExpression(ContractConceptCalc contractConceptCalc) {
@@ -169,20 +168,6 @@ public class EmployeeContractPayments extends Composite {
 	    
 	    new ListDataProvider<ContractConceptCalc>(Collections.emptyList()).addDataDisplay(contractConceptCalcDG);
 	    
-	    // Add style to table header
-	    addStyleToHeader();
-	}
-	
-	public void addStyleToHeader() {
-		String headerStyle = "rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header";
-		contractConceptCalcDG.getHeader(0).setHeaderStyleNames(headerStyle);
-		contractConceptCalcDG.getHeader(1).setHeaderStyleNames(headerStyle);
-		contractConceptCalcDG.getHeader(2).setHeaderStyleNames(headerStyle);
-		contractConceptCalcDG.getHeader(3).setHeaderStyleNames(headerStyle);
-		contractConceptCalcDG.getHeader(4).setHeaderStyleNames(headerStyle);
-		contractConceptCalcDG.getHeader(5).setHeaderStyleNames(headerStyle);
-		contractConceptCalcDG.getHeader(6).setHeaderStyleNames(headerStyle);
-		contractConceptCalcDG.getHeader(7).setHeaderStyleNames(headerStyle);
 	}
 	
 	private void addContractConceptCalcColumns() {
