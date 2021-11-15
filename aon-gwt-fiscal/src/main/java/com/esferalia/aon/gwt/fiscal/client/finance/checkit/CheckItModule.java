@@ -132,7 +132,7 @@ public class CheckItModule extends MainEntryPoint {
 	}
 	
 	private void loadModule( final CheckItModuleOptions opt , boolean reload) {
-		if (reload)
+		if (isMobile() && reload)
 			dockLayoutPanel.clear();
 		toolbar = new AonToolbar(AON.MSG.chekItModule());
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH );
@@ -162,7 +162,7 @@ public class CheckItModule extends MainEntryPoint {
 		FlowPanel panel = new FlowPanel();
 		CheckItConfiguration conf = opt.getConfiguration();
 		if (conf.getEnterpriseId() != null) {
-			if (isMobile())
+			if (!isMobile())
 				paintRegistrationData( opt );
 			linkedBanks = paintBanks(opt);
 			unlinkedBanks = paintUnlinkedBanks(opt);
@@ -214,8 +214,7 @@ public class CheckItModule extends MainEntryPoint {
 
 	private void paintRegistrationData(CheckItModuleOptions opt) {
 		AonToolbarButton config = new AonToolbarButton(AON.MSG.information(), AON.CSS.aonIconAudit());
-		if (!isMobile())
-			toolbar.add(config);
+		toolbar.add(config);
 		config.addClickHandler(event -> {
 			
 			CustomDialog dialog = new CustomDialog();
