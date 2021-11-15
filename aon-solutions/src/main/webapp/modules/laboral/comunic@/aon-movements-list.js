@@ -110,7 +110,7 @@ export class AonMovementsList extends AonElement {
   }
 
   lastSincronizedText(date){
-    return date ? `Última sincronización ${AonDateUtils.setDateTimestampDay(date) }` : 'No sincronizado!';
+    return date ? `Última sincronización ${AonDateUtils.setDateTimestampDay(date) }` : 'No sincronizado';
   }
 
   searchValueDefault(){

@@ -80,14 +80,6 @@ const createDataEnterprise = (form, data) => {
  const createDataEmployee = (form, data) => {
     createTitle(form, "Datos del empleado");
     
-    let nss = setAttributes(new AonInput(),{
-        id:"nss",
-        name:"nss",
-        description:"NSS/NAF (Opcional)",
-        value: data.nss ? data.nss : ""
-    });
-    createDivGrid(form, nss, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
-
     let ipf = setAttributes(new AonInput(),{
         id: "ipf",
         name:"ipf",
@@ -95,6 +87,14 @@ const createDataEnterprise = (form, data) => {
         value: data.ipf ? data.ipf : ""
     });
     createDivGrid(form, ipf, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
+
+    let nss = setAttributes(new AonInput(),{
+        id:"nss",
+        name:"nss",
+        description:"NSS/NAF (Opcional)",
+        value: data.nss ? data.nss : ""
+    });
+    createDivGrid(form, nss, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     let name = setAttributes(new AonInput(),{
         id: "name",

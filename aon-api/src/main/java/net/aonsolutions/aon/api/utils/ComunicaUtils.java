@@ -151,7 +151,7 @@ public class ComunicaUtils {
 			}
 	}
 	
-	public static com.esferalia.aon.occam.api.model.payroll.Employee employeeParse(Employee data) {
+	public static com.esferalia.aon.occam.api.model.payroll.Employee employeeSSParse(Employee data) {
 		String ipf = Toolkit.fillStringLeft(data.getIpf().length()>10 ? data.getIpf().substring(1) : data.getIpf(),  "0", 10);
 		com.esferalia.aon.occam.api.model.payroll.Employee employee = new com.esferalia.aon.occam.api.model.payroll.Employee();
 		employee.setRegime(data.getRegime());

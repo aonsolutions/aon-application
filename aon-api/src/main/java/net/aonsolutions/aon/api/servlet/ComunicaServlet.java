@@ -7,10 +7,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -48,6 +46,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
+
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -57,6 +56,7 @@ import net.aonsolutions.aon.api.utils.ComunicaUtils;
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
 import solutions.aon.seg.social.ServicioREDEmployee;
+import solutions.aon.seg.social.ServicioREDMov;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -80,12 +80,35 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			switch (path) {
 				case "/app-param":
 					LOGGER.info("APP-PARAM SERVLET - POST METHOD");
-					AonApiData api = initialize(req, resp);
-					response(req, resp,	getAppParam(api));
+					response(req, resp,	getAppParam(initialize(req, resp)));
 				break;
 				case "/rlce":
 					LOGGER.info("RLCE SERVLET - GET METHOD");
 					response(req, resp,	getRlce());
+				break;
+				case "/occupation":
+					LOGGER.info("OCCUPATION SERVLET - GET METHOD");
+					response(req, resp,	getOccupation());
+				break;
+				case "/quote-group":
+					LOGGER.info("QUOTE-GROUP SERVLET - GET METHOD");
+					response(req, resp,	getQuoteGroup());
+				break;
+				case "/contract-type":
+					LOGGER.info("CONTRACT-TYPE SERVLET - GET METHOD");
+					response(req, resp,	getContractType());
+				break;
+				case "/ipfxnaf":
+					LOGGER.info("IPFXNAF SERVLET - GET METHOD");
+					response(req, resp, getIpfxNaf(initialize(req, resp)));
+				break;
+				case "/nafxipf":
+					LOGGER.info("NAFXIPF SERVLET - GET METHOD");
+					response(req, resp, getNafxIpf(initialize(req, resp)));
+				break;
+				case "/update-contracts":
+					LOGGER.info("UPDATE-CONTRACTS SERVLET - GET METHOD");
+					response(req, resp, updateContracts(initialize(req, resp)));
 				break;
 				default:
 					doGetGson(req, resp);
@@ -145,30 +168,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					LOGGER.info("MOVEMENTS CCCS SERVLET - GET METHOD");
 					jsonInString = gjson.toJson(this.getMovementsCcc(api));
 					break;
-				case "/ipfxnaf":
-					LOGGER.info("IPFXNAF SERVLET - GET METHOD");
-					jsonInString = gjson.toJson(this.ipfxnaf(api));
-					break;
-				case "/nafxipf":
-					LOGGER.info("NAFXIPF SERVLET - GET METHOD");
-					jsonInString = gjson.toJson(this.nafxipf(api));
-				break;
-				case "/contract-type":
-					LOGGER.info("CONTRACT-TYPE SERVLET - GET METHOD");
-					jsonInString = gjson.toJson(this.getContractType(api));
-				break;
-				case "/occupation":
-					LOGGER.info("OCCUPATION SERVLET - GET METHOD");
-					jsonInString = gjson.toJson(this.getOccupation(api));
-				break;
-				case "/quote-group":
-					LOGGER.info("QUOTE-GROUP SERVLET - GET METHOD");
-					jsonInString = gjson.toJson(getQuoteGroup(api));
-				break;
-				case "/update-contracts":
-					LOGGER.info("UPDATE-CONTRACTS SERVLET - GET METHOD");
-					jsonInString = gjson.toJson(updateContracts(api));
-				break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -244,33 +243,37 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private JSONArray getRlce() throws Exception {
 		JSONArray arr = new JSONArray();
-		for( Entry<String, String> rlce : RLCE.getRLCE().entrySet()) {
+		for( Entry<String, String> rlce : RLCE.getRLCE().entrySet()) 
 			arr.put(new JSONObject().put("value", rlce.getKey()).put("name", rlce.getValue()));
-		}
 		return arr;
 	}
 	
-	private Map<Integer, ContractTypeRecord> getContractType(AonApiData api) throws Exception {
-		 return new ContractType().getContractTypes();
+	private JSONArray getContractType() throws Exception {
+		 JSONArray arr = new JSONArray();
+		for( Entry<Integer, ContractTypeRecord> contractType : new ContractType().getContractTypes().entrySet()) 
+			arr.put(new JSONObject().put("value", contractType.getKey()).put("name", contractType.getValue()));
+		return arr;
 	}
 	
-	private  Map<String, String> getOccupation(AonApiData api) throws Exception {
-		Map<String, String> map = new HashMap<>();
+	private JSONArray getOccupation() throws Exception {
+		JSONArray arr = new JSONArray();
 		for (Entry<String, String> v : Occupation.getOccupation().entrySet()) 
-			map.put(v.getValue(), v.getKey());
-		return map;
+			arr.put(new JSONObject().put("value", v.getValue()).put("name",  v.getKey()));		
+		
+		return arr;
 	}
 	
-	private Map<String, String> getQuoteGroup(AonApiData api) throws Exception {
-		Map<String, String> map = new HashMap<>();
+	private JSONArray getQuoteGroup() throws Exception {
+		JSONArray arr = new JSONArray();
 		for (Entry<String, String> v : QuoteGroup.getQuoteGroup().entrySet()) 
-			map.put(v.getValue(), v.getKey());
+			arr.put(new JSONObject().put("value", v.getValue()).put("name",  v.getKey()));	
 
-		return map;
+		return arr;
 	}
 	
-	private Collection<Employee> ipfxnaf(AonApiData api) throws Exception {
+	private JSONArray getIpfxNaf(AonApiData api) throws Exception {
 			Domain domain = api.getDomain();
+			JSONArray arr = new JSONArray();
 			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
 			final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			
@@ -281,7 +284,31 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		    ArrayList<String> nssList = new ArrayList<>();
 		    nssList.add(nss);	
 		    
-		    return SistemaRED.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+		    List<Employee> list = ServicioREDMov.ipfxnaf(certificateInputStream, certificate.getPassword(), certificate.getType(), nssList);
+		    for (Employee employee : list) {
+				JSONObject json = new JSONObject();
+				json.put("ipf", employee.getIpf());
+				employee.getName().ifPresent(name-> json.put("name",name) );
+				json.put("nss", nss);
+				arr.put(json);
+			}
+		    return arr;
+	}
+	
+	private JSONObject getNafxIpf(AonApiData api) throws Exception{
+        JSONObject params = api.getParams(); 
+		Domain domain = api.getDomain();
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+		String ipf       =  params.optString("ipf");
+		String apellido1 =  params.optString("apellido1");
+		String apellido2 =  params.optString("apellido2");
+		JSONObject json = new JSONObject();
+		Employee employee = SistemaRED.nafxipf(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), ipf, apellido1, apellido2);
+		json.put("ident", employee.getIdent());
+		json.put("ipf", employee.getIpf());
+		employee.getName().ifPresent(name-> json.put("name",name) );
+		json.put("nss", employee.getNss());
+		return json;
 	}
 	
 	private JSONObject sendAlta(AonApiData api) throws Exception{
@@ -397,16 +424,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
-	private Employee nafxipf(AonApiData api) throws Exception{
-        JSONObject params = api.getParams(); 
-		Domain domain = api.getDomain();
-		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
-		String ipf       = params.optString("ipf");
-		String apellido1 =  params.optString("apellido1");
-		String apellido2 =  params.optString("apellido2");
-		return SistemaRED.nafxipf(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), ipf, apellido1,  apellido2);
-	}
-	
 	private Employee getEmployee(AonApiData api) throws Exception{
         JSONObject params = api.getParams(); 
 		Domain domain = api.getDomain();
@@ -415,7 +432,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String regime = params.optString("regime");
 		String ccc    = params.optString("ctaCti");
 		String nss    = params.optString("nss");
-		return SistemaRED.getEmployee(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regime, ccc, nss);	
+		Employee employee = SistemaRED.getEmployee(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regime, ccc, nss);	
+		return employee;
 	}
 	
 	private JSONObject updateContract(AonApiData api) throws Exception {
@@ -693,7 +711,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 						if( nss!=null) {
 							System.out.println("-------------CREANDO CONTRATO-------------");
 							System.out.println(data.toString());
-							PAYROLL.addEmployee(domain.getName(), domain.getId(), "", ComunicaUtils.employeeParse(data));
+							PAYROLL.addEmployee(domain.getName(), domain.getId(), "", ComunicaUtils.employeeSSParse(data));
 						}
 					} else {
 						System.out.println("--------YA EXISTE EL CONTRATO-------------");

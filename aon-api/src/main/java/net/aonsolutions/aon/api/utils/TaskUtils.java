@@ -72,14 +72,14 @@ public class TaskUtils {
 			else if(!params.optString(IJsonNames.SENDER).isEmpty()) //----------ENVIADAS
 				filter = filter.and(f.getSenderProperty().isNull());
 			
-		} else 
-			filter = filter.and(taskNotCustomerFilter(params, f, domain, customer));
-		
-		if(!workgroupStr.isEmpty()) {
-			String[]  str = workgroupStr.split(",");
-			Integer[] arr = new Integer[str.length];
-			for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
-			filter = filter.or(f.getWorkgroupProperty().in(arr));
+		} else {
+			 if(!workgroupStr.isEmpty()) {
+				 String[]  str = workgroupStr.split(",");
+				 Integer[] arr = new Integer[str.length];
+				 for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
+				 filter = filter.and(taskNotCustomerFilter(params, f, domain, customer).or(f.getWorkgroupProperty().in(arr)));
+			 } 
+			 else filter = filter.and(taskNotCustomerFilter(params, f, domain, customer));
 		}
 	
 		return filter;
@@ -89,8 +89,8 @@ public class TaskUtils {
 		Integer workgroup = params.optInt(IJsonNames.WORKGROUP);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		Integer sender = params.optInt(IJsonNames.SENDER);
-		String source = params.optString(IJsonNames.SOURCE);
 		Integer registry = params.optInt(IJsonNames.REGISTRY);
+		String source = params.optString(IJsonNames.SOURCE);
 		String email = params.optString(IJsonNames.EMAIL);
 		
 		Filter filter = f.getDomainProperty().eq(domain.getId());
@@ -107,9 +107,8 @@ public class TaskUtils {
 		if(registry != null && registry!=0) 
 			filter = filter.and(f.getRegistryProperty().eq(registry));
 		
-		if(!email.isEmpty() && (!params.optString("cau").isEmpty() && params.optInt("cau")>0) ) {
+		if(!email.isEmpty() && (!params.optString("cau").isEmpty() && params.optInt("cau")>0) ) 
 			filter = filter.and(f.getGtaskIdProperty().eq(email));
-		}
 		
 		if(workgroup != null && workgroup !=0) 
 			filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
@@ -125,33 +124,31 @@ public class TaskUtils {
 	
 	public static Filter taskFilterStatusCount(TaskProperties f, AonApiData api, Domain domain, Customer customer) {
 		JSONObject params = api.getParams();
-		
+
 		String source = params.optString(IJsonNames.SOURCE);
 		Integer taskHolder = params.optInt(IJsonNames.TASK_HOLDER);
 		String workgroupStr = params.optString(IJsonNames.WORKGROUPS);
 		String email = params.optString(IJsonNames.EMAIL);
-		
+
 		Filter filter = f.getDomainProperty().eq(domain.getId());
 
-		if(taskHolder != null && taskHolder!=0) 
-			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder)).or(f.getSenderProperty().eq(taskHolder));
-
-		if(!source.isEmpty()) 
-			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
-		
-		if(customer.getId()!=null) 
-			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
-		
-		if(!params.optString("cau").isEmpty() && params.optInt("cau")>0 && !email.isEmpty()) 
-			filter = filter.and(f.getGtaskIdProperty().eq(email));
-		
-		if(!workgroupStr.isEmpty()) {
+		if(taskHolder != null && taskHolder!=0 && !workgroupStr.isEmpty()) {
 			String[]  str = workgroupStr.split(",");
 			Integer[] arr = new Integer[str.length];
 			for(int i=0; i<str.length; i++) arr[i] = Integer.parseInt(str[i]);
-			filter = filter.or(f.getWorkgroupProperty().in(arr));
-		}
-		
+			filter.and(f.getTaskHolderProperty().eq(taskHolder)).or(f.getSenderProperty().eq(taskHolder).or(f.getWorkgroupProperty().in(arr)));
+		} else if(taskHolder != null && taskHolder!=0 && customer.getId()==null)
+			filter = filter.and(f.getTaskHolderProperty().eq(taskHolder)).or(f.getSenderProperty().eq(taskHolder));
+
+		if(!source.isEmpty())
+			filter = filter.and(f.getSourceProperty().eq(TaskSource.safeValueOf(source).value()));
+
+		if(customer.getId() != null)
+			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
+
+		if(!params.optString("cau").isEmpty() && params.optInt("cau")>0 && !email.isEmpty())
+			filter = filter.and(f.getGtaskIdProperty().eq(email));
+
 		return filter;
 	}
 	

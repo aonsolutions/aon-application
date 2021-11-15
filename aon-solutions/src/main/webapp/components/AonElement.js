@@ -139,11 +139,10 @@ export class AonElement extends HTMLElement{
 	}
 
   showMessage(msg) {
-    msg = {
+    this.showToast({
       type: CONSTANT.SUCCESS,
       message: msg || MSG.SAVED_DATA
-    }
-    this.showToast(msg);
+    });
   }
 
   showError(e) {

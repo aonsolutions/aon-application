@@ -12,11 +12,13 @@ import { getFormVacationJson } from "./forms/vacation.js";
 import { fillChat } from "./shared/fill.js";
 import { getFormMovJson } from "./forms/mov-ss.js";
 import { getFormTimeJson } from "./forms/time-control.js";
+import { getOfficeProjects } from "../../services/projectService.js";
 
 export class AonMessengerChat extends AonElement {
   task;
   _data;
   TOOLBAR;
+  PROJECTS;
   WORKGROUPS;
   static get observedAttributes() {
     return [CONSTANT.DATA];
@@ -63,6 +65,7 @@ export class AonMessengerChat extends AonElement {
     this.TOOLBAR = this.id+"Toolbar";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
+    this.PROJECTS = [];
     this.WORKGROUPS = [];
     this.deleteToolbar();
     this.setTask();
@@ -310,6 +313,12 @@ export class AonMessengerChat extends AonElement {
       }
     }
     return json;
+  }
+  
+  async getOfficeProjects(){
+    if(!this.PROJECTS.length)
+      this.PROJECTS = await getOfficeProjects().catch(()=>[]);
+    return this.PROJECTS;
   }
   
   back(){

@@ -55,23 +55,10 @@ export const getContractType = () =>  requestJsonAsset("type_contract.json");
 
 export const getRlce = (data) => get(`${API_URL}/comunica/rlce`, data);
 
-export const getOccupation = async(data) => {
-  const resp = await get(`${API_URL}/comunica/occupation`, data);
-  let options = [];
-  for (const key in resp) {
-    if(key) options.push({value: key, name: resp[key]});
-  }
-  return options;
-};
-
-export const getQuoteGroup = async(data) => {
-  const resp = await get(`${API_URL}/comunica/quote-group`, data);
-  let options = [];
-  for (const key in resp) {
-    if(key) options.push({value: key, name: resp[key]});
-  }
-  return options;
-};
+export const getOccupation = (data) =>  get(`${API_URL}/comunica/occupation`, data);
+ 
+export const getQuoteGroup = (data) => get(`${API_URL}/comunica/quote-group`, data);
+ 
   
 // {
 //   const resp = await get(`${API_URL}/comunica/contract-type`, data);

@@ -14,13 +14,14 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.j
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 import * as ACTION from '../actions.js';
-import { CONFIGURATION, INVOICE } from "../../services/app.js";
+import { CONFIGURATION, INVOICE, MESSENGER } from "../../services/app.js";
 import { AonUser } from "../user/aon-user.js";
 import { AonWorkgroup } from "./groups/aon-workgroup.js";
 import { AonReg } from "../registry/aon-reg.js";
 import * as LS from '../../services/localStorageService.js';
 import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoicePrint } from "../invoice/aon-invoice-print.js";
+import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -154,6 +155,19 @@ export class AonConfiguration extends AonElement {
       });  
     }
 
+    if(this.dur.getDomain().isOffice()) {
+      appOptions.push({
+        id: MESSENGER.title,
+        name: MESSENGER.title,
+        aonIcon: {
+          icon: MESSENGER.icon,
+          color: MESSENGER.color
+        },
+        fn: () => this.buildMessengerConfiguration(),
+      });  
+    }
+
+
     aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
 
     this.buildPersonal();
@@ -225,6 +239,10 @@ export class AonConfiguration extends AonElement {
 	buildInvoiceConfiguration() {
 		this.getApplication().setContent(new AonInvoicePrint());
 	}
+  
+  buildMessengerConfiguration(){
+    this.getApplication().setContent(new AonMessengerConfig());
+  }
 
   buildCompanyList() {
     let aonConfiguration = this.getApplication();

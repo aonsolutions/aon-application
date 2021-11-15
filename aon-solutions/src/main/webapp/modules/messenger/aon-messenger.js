@@ -73,38 +73,31 @@ export class AonMessenger extends AonElement {
 
 		this.buildToolbar();
 		
-		await getTaskHolder({reload:false}).then(th=>{
-			this.TASK_HOLDER = th;
-			this.updateCount();
-		});
+		await getTaskHolder({reload:false}).then(th=>this.TASK_HOLDER = th);
+
+		this.init();
+		this.loadWorkgroup();
+	}
+
+	init(){
 		if(this.data){
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, this.data);
 		} else if(this.value){
 			getTaskOne({id:this.value}).then(task=>this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, task))
 			.catch(e=>this.showError(e));
 		} else {
-			if(!this._filter.sender){
-				this._filter.task_holder = this.TASK_HOLDER.id;
-				this.applicationEl.addToolbarTitle("Recibidas");
-			} else {
-				this.applicationEl.addToolbarTitle(MSG.SENT);
-			}
+			if(this._filter.sender)
+				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.OUTBOX);
+			else if(this._filter.task_holder)
+				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.MOVE_TO_INBOX);
+			else 
+				this.applicationEl.addBackgroundSidenav(MATERIAL_ICONS.ALL_INBOX);
+
 			this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_OPEN.name);
-			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
+			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 		}
 
-		this.loadWorkgroup();
-	}
-
-	init(){
-		if(!this._filter.sender){
-			this._filter.task_holder = this.TASK_HOLDER.id;
-			this.applicationEl.addToolbarTitle("Recibidas");
-		} else {
-			this.applicationEl.addToolbarTitle(MSG.SENT);
-		}
-		this.applicationEl.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_OPEN.name);
-		this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
+		this.updateCount();
 	}
 
 	paintView(){
@@ -112,9 +105,8 @@ export class AonMessenger extends AonElement {
 	}
 
 	async buildToolbar(){
-		if(this.isMobile()){
+		if(this.isMobile())
 			this.applicationEl.addMobileSidenavHeader(Apps.MESSENGER);
-		}
 	
 		this.taskNavBar();
 		this.statusNavBar();
@@ -134,6 +126,7 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = this.TASK_HOLDER.id;
 					this._filter.sender = undefined;
+					this._filter.status = TASK_STATUS.PENDING;
 					this._filter.workgroups = undefined;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
@@ -145,6 +138,7 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = this.TASK_HOLDER.id;
+					this._filter.status = TASK_STATUS.PENDING;
 					this._filter.workgroups = undefined;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
@@ -156,13 +150,14 @@ export class AonMessenger extends AonElement {
 				fn: () =>{
 					this._filter.task_holder = undefined;
 					this._filter.sender = undefined;
+					this._filter.status = TASK_STATUS.PENDING;
 					this._filter.workgroups = this.getWorkgroupsStr();
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
 		];
 		
-		this.applicationEl.addSidenavOptions(MSG.REQUESTS, messengerOpts);
+		this.applicationEl.addSidenavOptions("SOLICITUDES PENDIENTES", messengerOpts);
 	}
 
 	statusNavBar(){
@@ -170,27 +165,21 @@ export class AonMessenger extends AonElement {
 			{
 				...MessengerOptions.AON_MESSENGER_LIST_OPEN,
 				fn: () =>{
-					let status = TASK_STATUS.PENDING;
-					if(this._filter.status && this._filter.status === status) status = undefined;
-					this._filter.status = status;
+					this._filter.status = TASK_STATUS.PENDING;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
 			{
 				...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
 				fn: () =>{
-					let status = TASK_STATUS.FINISHED;
-					if(this._filter.status && this._filter.status === status) status = undefined;
-					this._filter.status = status;
+					this._filter.status = TASK_STATUS.FINISHED;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
 			},
 			{
 				...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE,
 				fn: () =>{
-					let status = TASK_STATUS.DELETED;
-					if(this._filter.status && this._filter.status === status) status = undefined;
-					this._filter.status = status;
+					this._filter.status = TASK_STATUS.DELETED;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
 			},
@@ -217,9 +206,7 @@ export class AonMessenger extends AonElement {
 				name: "SIN GRUPO",
 				icon: MATERIAL_ICONS.GROUP_OFF,
 				fn: () => {
-				let b = true;
-				if(this._filter.workgroup) b = undefined;
-					this._filter.workgroup = b;
+					this._filter.workgroup = undefined;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
 			});
@@ -229,9 +216,7 @@ export class AonMessenger extends AonElement {
 				name: item.description,
 				icon: MATERIAL_ICONS.PEOPLE_ALT,
 				fn: () => {
-					let id = item.id;
-					if(this._filter.workgroup && this._filter.workgroup === item.id) id = undefined;
-					this._filter.workgroup = id;
+					this._filter.workgroup = item.id;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
 			})

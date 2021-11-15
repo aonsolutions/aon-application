@@ -8,8 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.AppParamJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
@@ -117,6 +118,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 					project.setProjectHolder(holder);
 					projects.put(ProjectJSON.toJSON(project));	
 				});
+			json.put("appParams", getAppParams(domain));
 			json.put(IJsonNames.PROJECTS, projects);
 			arr.put(json);
 		});
@@ -132,6 +134,15 @@ public class ProjectServlet extends AonApiHttpServlet{
 			arr.put(ProjectJSON.toJSON(project));	
 		});
 		return arr;
+	}
+	
+	private JSONArray getAppParams(Domain domain) {
+		String[] names = new String[] {"APP_DEFAULT_REQUESTS_WORKGROUP", "APP_DEFAULT_REQUESTS_TASK_HOLDER"};
+		return AppParamJSON.toJSON(
+			AON.getApplicationParameterStream(domain.getName(), domain.getId(), "",
+				f-> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().in(names))
+			)
+		);
 	}
 	
     private Filter projectFilter(AonApiData api, ProjectProperties f) {
