@@ -31,7 +31,7 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Certificado {
 
-	private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
+	private static DecimalFormat decimalFormat = new DecimalFormat("#00.00");
 	
 	public static byte[] certEnterprisePdf(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String nif, Date fecha) throws SepeException {
@@ -209,18 +209,20 @@ public class Certificado {
 				{//DATA CTZ
 					for(QuoteData qdata: certificates.getQuoteData()) {
 						System.out.println(qdata.getBccc().get() +" "+ qdata.getBccc().get());
+						System.out.println(decimalFormat.format(qdata.getBccc().get()) +" "+ 
+								decimalFormat.format(qdata.getBcd().get()));
 						form =  (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
 						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srAnyoCotizacion").setValueAttribute(qdata.getAnio().toString());
 						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srMesCotizacion").setValueAttribute(qdata.getMonth().toString());
 						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srDiasCotizacion").setValueAttribute(qdata.getDays().toString());
 						if(qdata.getBccc().isPresent()) {
 							form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes")
-							.setValueAttribute(decimalFormat.format(qdata.getBccc().get()).replaceAll("\\.", "").replaceAll(",", ""));
+							.setValueAttribute(decimalFormat.format(qdata.getBccc().get()));
 						}
 						
 						if(qdata.getBcd().isPresent()) {
 							form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo")
-							.setValueAttribute(decimalFormat.format(qdata.getBcd().get()).replaceAll("\\.", "").replaceAll(",", ""));
+							.setValueAttribute(decimalFormat.format(qdata.getBcd().get()));
 						}
 						htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btAnadir]")).click();
 					}
@@ -232,9 +234,9 @@ public class Certificado {
 					if(certificates.getDaysCtzVc()!=null)
 						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion").setValueAttribute(certificates.getDaysCtzVc().toString());
 					if(certificates.getBcccVc()!=null)
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes").setValueAttribute(decimalFormat.format(certificates.getBcccVc().get()).replaceAll("\\.", "").replaceAll(",", ""));
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes").setValueAttribute(decimalFormat.format(certificates.getBcccVc().get()));
 					if(certificates.getBcdVc()!=null)
-						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo").setValueAttribute(decimalFormat.format(certificates.getBcdVc().get()).replaceAll("\\.", "").replaceAll(",", ""));
+						form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo").setValueAttribute(decimalFormat.format(certificates.getBcdVc().get()));
 					htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btActualizarTotales]")).click();
 					handleSepeExceptions(htmlPage);
 				}

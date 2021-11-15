@@ -44,14 +44,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
@@ -115,7 +113,7 @@ public class InvoiceTemplate {
 
 			template.adapt	= config.getAdjustImage();
 			
-			if ((logo != null || company != null) && (config.getHeader() != null && config.getHeader() < MIN_HEADER_FOR_LOGO))
+			if ((logo != null || (company != null && config.isCompany())) && (config.getHeader() != null && config.getHeader() < MIN_HEADER_FOR_LOGO))
 				template.top = MIN_HEADER_FOR_LOGO;
 			else
 				template.top	= config.getHeader();
@@ -150,96 +148,95 @@ public class InvoiceTemplate {
 	}
 	
 	private void drawFooter(PDDocument doc, CompanyFull company) throws IOException {
-		
-		RecordData recordData = company.getRecordDatas() != null && !company.getRecordDatas().isEmpty() ? company.getRecordDatas().get(0) : null;
-		Company reg = company.getRegistry();
-		String companyName = "", registration = "", tomo = "", folio = "", hoja = "", fechaRegistro = "", nif = "";
-		String registrationString = "";
-		if (recordData != null) {
-			companyName = AonStringUtils.trimToEmpty(reg != null ? reg.getName() : "");
-			registration = AonStringUtils.trimToEmpty(recordData.getRegistration());
-			tomo = AonStringUtils.trimToEmpty(recordData.getVolume());
-			folio = AonStringUtils.trimToEmpty(recordData.getPage());
-			hoja = AonStringUtils.trimToEmpty(recordData.getSheet());
-			Date registryDate = recordData.getRecordDate();
-			fechaRegistro = registryDate != null ? new SimpleDateFormat("dd/MM/yyyy").format(registryDate) : "";
-			nif = AonStringUtils.trimToEmpty(reg != null ? reg.getDocument() : "");
+		if(company != null) {
+			RecordData recordData = company.getRecordDatas() != null && !company.getRecordDatas().isEmpty() ? company.getRecordDatas().get(0) : null;
+			Company reg = company.getRegistry();
+			String companyName = "", registration = "", tomo = "", folio = "", hoja = "", fechaRegistro = "", nif = "";
+			String registrationString = "";
+			if (recordData != null) {
+				companyName = AonStringUtils.trimToEmpty(reg != null ? reg.getName() : "");
+				registration = AonStringUtils.trimToEmpty(recordData.getRegistration());
+				tomo = AonStringUtils.trimToEmpty(recordData.getVolume());
+				folio = AonStringUtils.trimToEmpty(recordData.getPage());
+				hoja = AonStringUtils.trimToEmpty(recordData.getSheet());
+				Date registryDate = recordData.getRecordDate();
+				fechaRegistro = registryDate != null ? new SimpleDateFormat("dd/MM/yyyy").format(registryDate) : "";
+				nif = AonStringUtils.trimToEmpty(reg != null ? reg.getDocument() : "");
 			
-			registrationString = 
+				registrationString = 
 					(!AonStringUtils.isEmpty(registration) ? registration: "") +
 					(!AonStringUtils.isEmpty(tomo)			? "  Tomo: "		+ tomo			: "") +
 					(!AonStringUtils.isEmpty(folio)			? "  Folio: "		+ folio			: "") +
 					(!AonStringUtils.isEmpty(hoja)			? "  Hoja: "		+ hoja			: "") +
 					(!AonStringUtils.isEmpty(fechaRegistro)	? "  F.registro: "	+ fechaRegistro	: "");
 			
-		}
-		
-		String fullStr = "";
-		String webStr = "";
-		String phoneStr = "";
-		String emailStr = "";
-		String mediaStr = "";
-		
-		if (company.getMedias() != null && !company.getMedias().isEmpty()) {
-			LinkedList<RegistryMedia> medias = company.getMedias();
-			
-			List<RegistryMedia> webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && m.getMedia().equals(MediaType.WEB)).collect(Collectors.toList());
-			if (!webMedias.isEmpty()) {
-				webStr = "Web: ";
-				StringBuilder sb = new StringBuilder(webStr);
-				for(RegistryMedia m : webMedias) {
-					if (!sb.toString().equals("Web: "))
-						sb.append(" | ");
-					sb.append(m.getValue());
-					if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
-						webStr = sb.toString();
-					}
-				}
-				fullStr = sb.toString();
 			}
-
-			webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && (m.getMedia().equals(MediaType.FIXED_PHONE) || m.getMedia().equals(MediaType.CELLULAR))).collect(Collectors.toList());
-			if (!webMedias.isEmpty()) {
-				phoneStr = "Teléfono/s: ";
-				StringBuilder sb = new StringBuilder(phoneStr);
-				for(RegistryMedia m : webMedias) {
-					if (!sb.toString().equals("Teléfono/s: "))
-						sb.append(" | ");
-					sb.append(m.getValue());
-					if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
-						phoneStr = sb.toString();
-					}
-				}
-				fullStr += (!fullStr.isEmpty() ? "    " : "") + sb.toString();
-			}
-			
-			webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && (m.getMedia().equals(MediaType.EMAIL) || m.getMedia().equals(MediaType.CELLULAR))).collect(Collectors.toList());
-			if (!webMedias.isEmpty()) {
-				emailStr = "Email: ";
-				StringBuilder sb = new StringBuilder(emailStr);
-				for(RegistryMedia m : webMedias) {
-					if (!sb.toString().equals("Email: "))
-						sb.append(" | ");
-					sb.append(m.getValue());
-					if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
-						emailStr = sb.toString();
-					}
-				}
-				fullStr += (!fullStr.isEmpty() ? "    " : "") + sb.toString();
-			}
-			mediaStr = webStr + "    " + phoneStr + "    " + emailStr;
-		}
 		
-		for (int i=0; i<this.pageNumber; i++) {
-			contents = new PDPageContentStream(doc, doc.getPage(i), PDPageContentStream.AppendMode.APPEND, true);
+			String fullStr = "";
+			String webStr = "";
+			String phoneStr = "";
+			String emailStr = "";
+			String mediaStr = "";
 			
 			if (company.getMedias() != null && !company.getMedias().isEmpty()) {
-				
-				if ((HELVETICA.getStringWidth(fullStr) / 1000.0f * 7) < 575) {
-					mediaStr = fullStr;
+				LinkedList<RegistryMedia> medias = company.getMedias();
+			
+				List<RegistryMedia> webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && m.getMedia().equals(MediaType.WEB)).collect(Collectors.toList());
+				if (!webMedias.isEmpty()) {
+					webStr = "Web: ";
+					StringBuilder sb = new StringBuilder(webStr);
+					for(RegistryMedia m : webMedias) {
+						if (!sb.toString().equals("Web: "))
+							sb.append(" | ");
+						sb.append(m.getValue());
+						if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
+							webStr = sb.toString();
+						}
+					}
+					fullStr = sb.toString();
 				}
+
+				webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && (m.getMedia().equals(MediaType.FIXED_PHONE) || m.getMedia().equals(MediaType.CELLULAR))).collect(Collectors.toList());
+				if (!webMedias.isEmpty()) {
+					phoneStr = "Teléfono/s: ";
+					StringBuilder sb = new StringBuilder(phoneStr);
+					for(RegistryMedia m : webMedias) {
+						if (!sb.toString().equals("Teléfono/s: "))
+							sb.append(" | ");
+						sb.append(m.getValue());
+						if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
+							phoneStr = sb.toString();
+						}
+					}
+					fullStr += (!fullStr.isEmpty() ? "    " : "") + sb.toString();
+				}	
+			
+				webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && (m.getMedia().equals(MediaType.EMAIL) || m.getMedia().equals(MediaType.CELLULAR))).collect(Collectors.toList());
+				if (!webMedias.isEmpty()) {
+					emailStr = "Email: ";
+					StringBuilder sb = new StringBuilder(emailStr);
+					for(RegistryMedia m : webMedias) {
+						if (!sb.toString().equals("Email: "))
+							sb.append(" | ");
+						sb.append(m.getValue());
+						if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
+							emailStr = sb.toString();
+						}
+					}
+					fullStr += (!fullStr.isEmpty() ? "    " : "") + sb.toString();
+				}
+				mediaStr = webStr + "    " + phoneStr + "    " + emailStr;
+			}	
+		
+			for (int i=0; i<this.pageNumber; i++) {
+				contents = new PDPageContentStream(doc, doc.getPage(i), PDPageContentStream.AppendMode.APPEND, true);
 				
-				drawText(contents
+				if (company.getMedias() != null && !company.getMedias().isEmpty()) {
+					if ((HELVETICA.getStringWidth(fullStr) / 1000.0f * 7) < 575) {
+						mediaStr = fullStr;
+					}
+				
+					drawText(contents
 						, mediaStr
 						, 10f
 						, 20f
@@ -247,19 +244,19 @@ public class InvoiceTemplate {
 						, HELVETICA
 						, 7);
 				
-			}
+				}
 			
-			PDFToolkit.drawBox(contents, 10, 15, 575, 1, PdfColors.GRAY);
+				PDFToolkit.drawBox(contents, 10, 15, 575, 1, PdfColors.GRAY);
 			
-			String page = "Pag. " + (i+1) + " de " + pageNumber;
+				String page = "Pag. " + (i+1) + " de " + pageNumber;
 			
-			float pageNumWidth = HELVETICA.getStringWidth(page) / 1000f * 9;
-			float pageNumInitX = 585 - pageNumWidth;
-			
-			float registrationStrWidth = HELVETICA.getStringWidth(registrationString) / 1000.0f * 7;
-			float initRegistrationX = pageNumInitX - 5 - registrationStrWidth;
-			
-			drawTextRight(contents
+				float pageNumWidth = HELVETICA.getStringWidth(page) / 1000f * 9;
+				float pageNumInitX = 585 - pageNumWidth;
+				
+				float registrationStrWidth = HELVETICA.getStringWidth(registrationString) / 1000.0f * 7;
+				float initRegistrationX = pageNumInitX - 5 - registrationStrWidth;
+				
+				drawTextRight(contents
 					, new PDRectangle(570, 5, 15, 15)
 					, page
 					, BLACK
@@ -268,7 +265,7 @@ public class InvoiceTemplate {
 					, 0
 					, 0);
 			
-			drawText(contents
+				drawText(contents
 					, registrationString
 					, 10f
 					, 5f
@@ -293,7 +290,8 @@ public class InvoiceTemplate {
 //					, 0
 //					, 0);
 //			
-			contents.close();
+				contents.close();
+			}
 		}
 	}
 	
@@ -340,7 +338,7 @@ public class InvoiceTemplate {
 		x = 50f;
 		y = height - top - 20;
 
-		drawTopInfo(doc, invoice, company, logo);
+		drawTopInfo(doc, config, invoice, company, logo);
 
 		if (config.isDetailed() != null && config.isDetailed())
 			drawDetailedHeader();
@@ -502,7 +500,7 @@ public class InvoiceTemplate {
 	}
 
 	// DRAW UPPER INFO
-	private void drawTopInfo(PDDocument doc, Invoice invoice, CompanyFull company, byte[] logo) throws IOException {
+	private void drawTopInfo(PDDocument doc, PrintInvoiceConfiguration config, Invoice invoice, CompanyFull company, byte[] logo) throws IOException {
 		
 		float maxHeight = MAX_LOGO_HEIGHT;
 		float maxWidth = 297 - x - 20;
@@ -514,7 +512,7 @@ public class InvoiceTemplate {
 		float logoY = tempY - 10;
 		String web = null;
 		
-		if (company != null) {
+		if (company != null && config.isCompany()) {
 			Company registry = company.getRegistry();
 			String companyName = registry != null ? AonStringUtils.trimToEmpty(registry.getName()) : "";
 			companyName = croppedString(companyName, 240, HELVETICA, 9);

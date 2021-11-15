@@ -321,34 +321,46 @@ public class Certifica2 {
 				.and(SALARY.CCC.eq(ccc))
 				.and(SALARY.TYPE.eq((byte)2))
 				.and(SALARY.END_DATE.ge(filterDate))
+				.and(SALARY.END_DATE.le(endDate))
 				.orderBy(SALARY.END_DATE.desc())
 				.fetch();
 		
-		Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
+		Certifica2Info settlementCertifica2Info = null;
 		
-		Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
-		Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
-		Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate);
-		
-		Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
-				.where(SALARY_PAYMENT.SALARY.eq(settlementId))
-				.and(SALARY_PAYMENT.TYPE.eq((byte)6))
-				.fetchOne();
-		
-		Double baseCGC = 0.00;
-		Double baseCGP = 0.00;
-		
-		if(null != holidaysRecord) {
-			baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
-			baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
-		} 
-		
-		Certifica2Info settlementCertifica2Info = new Certifica2Info(
-				null,
-				null,
-				settlementDaysBetween.intValue(), 
-				baseCGC, 
-				baseCGP);
+		if(settlementRecords.isEmpty()) {
+			settlementCertifica2Info = new Certifica2Info(
+					null,
+					null,
+					0, 
+					0.00, 
+					0.00);
+		} else {
+			Integer settlementId = settlementRecords.get(0).get(SALARY.ID);
+			
+			Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
+			Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
+			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate);
+			
+			Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
+					.where(SALARY_PAYMENT.SALARY.eq(settlementId))
+					.and(SALARY_PAYMENT.TYPE.eq((byte)6))
+					.fetchOne();
+			
+			Double baseCGC = 0.00;
+			Double baseCGP = 0.00;
+			
+			if(null != holidaysRecord) {
+				baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
+				baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
+			} 
+			
+			settlementCertifica2Info = new Certifica2Info(
+					null,
+					null,
+					settlementDaysBetween.intValue(), 
+					baseCGC, 
+					baseCGP);
+		}
 		
 		// ---------------------------------------------------- Create CertificadoEmpresa
 		
