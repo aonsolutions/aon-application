@@ -27,6 +27,7 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.api.utils.TaskUtils.APP_PARAMS;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiProjectServlet", urlPatterns = {"/ms/api/project/*"})
@@ -137,7 +138,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONArray getAppParams(Domain domain) {
-		String[] names = new String[] {"APP_DEFAULT_REQUESTS_WORKGROUP", "APP_DEFAULT_REQUESTS_TASK_HOLDER"};
+		String[] names = new String[] {APP_PARAMS.APP_REQUESTS_EXT_WORKGROUP, APP_PARAMS.APP_REQUESTS_EXT_TASK_HOLDER};
 		return AppParamJSON.toJSON(
 			AON.getApplicationParameterStream(domain.getName(), domain.getId(), "",
 				f-> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().in(names))

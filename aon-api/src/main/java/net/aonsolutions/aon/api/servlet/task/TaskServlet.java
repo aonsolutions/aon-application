@@ -448,6 +448,7 @@ public class TaskServlet extends AonApiHttpServlet{
 			 ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), param.getName());
 			 if(exists.getId()!=null) {
 				 if(param.getValue()!=null) {
+					 exists.setValue(param.getValue());
 					 System.out.println("--------UPDATE APP PARAMS "+ param.getName()+"-------------");
 					 AON.updateApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), exists, 
 								f->f.getDomainProperty().eq(exists.getDomain()).and(f.getNameProperty().eq(exists.getName()))
@@ -468,15 +469,17 @@ public class TaskServlet extends AonApiHttpServlet{
 	private JSONArray getAppParams(AonApiData api) {
 		JSONArray params = api.getData().optJSONArray("params");
 		if(params!=null) {
-		    String[] names= new String[params.length()];
-			for(int i=0; i<params.length(); i++) names[i]=params.optString(i);
+		    String[] names = new String[params.length()];
+		    
+			for(int i=0; i<params.length(); i++) 
+				names[i]=params.optString(i);
+			
 			return AppParamJSON.toJSON(
 				AON.getApplicationParameterStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 					f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().in(names))
 				)
 			);
 		}
-
 		return new JSONArray();
 	}
 }
