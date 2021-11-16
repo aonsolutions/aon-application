@@ -22,7 +22,6 @@ import * as LS from '../../services/localStorageService.js';
 import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoicePrint } from "../invoice/aon-invoice-print.js";
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
-import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
