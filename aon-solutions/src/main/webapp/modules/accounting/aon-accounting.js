@@ -48,10 +48,50 @@ export class AonAccounting extends AonElement {
 			application.addMobileSidenavHeader(Apps.ACCOUNTING);
 		}
 
+
+		let options2 = [
+			{
+				id: 'VistaAnual',
+				name: 'Vista Anual',
+				icon: MATERIAL_ICONS.CALENDAR_TODAY,
+				fn: () => {}
+			},
+			{
+				id: 'VistaTrimestral',
+				name: 'Vista Trimestral',
+				icon: MATERIAL_ICONS.CALENDAR_TODAY,
+				fn: () => {}
+			},
+			{
+				id: 'VistaMensual',
+				name: 'Vista Mensual',
+				icon: MATERIAL_ICONS.CALENDAR_TODAY,
+				fn: () => {}
+			},];
+
+
 		let options = [{
+			id: 'PyG',
 			name: 'Pérdidas y Ganancias',
+// <<<<<<< HEAD
+			icon: MATERIAL_ICONS.BAR_CHART,
+			fn: () => {
+				application.removeSidenavById("Opciones");
+				application.addSidenavOptions(MSG.OPTIONS , options2);
+				this.aonGraphicsTrialView ();
+			}
+		}, {
+			id: 'banks',
+			name: MSG.BANKS,
 			icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
-			fn: () => this.aonGraphicsTrialView ()
+			fn: () => {
+				application.removeSidenavById("Opciones");
+				GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
+			}
+// =======
+// 			icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
+// 			fn: () => this.aonGraphicsTrialView ()
+// >>>>>>> origin/master
 		}];
 		if(this.dur.isBank())
 			options.push({
@@ -64,22 +104,7 @@ export class AonAccounting extends AonElement {
 		application.addSidenavOptions(MSG.ACCOUNTING, options);
 
 
-		let options2 = [
-		{
-			name: 'Vista Anual',
-			icon: MATERIAL_ICONS.CALENDAR_TODAY,
-			fn: () => {}
-		},
-		{
-			name: 'Vista Trimestral',
-			icon: MATERIAL_ICONS.CALENDAR_TODAY,
-			fn: () => {}
-		},
-		{
-			name: 'Vista Mensual',
-			icon: MATERIAL_ICONS.CALENDAR_TODAY,
-			fn: () => {}
-		},];
+		
 		application.addSidenavOptions(MSG.OPTIONS , options2);
 	}
 
