@@ -22,6 +22,7 @@ import * as LS from '../../services/localStorageService.js';
 import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoicePrint } from "../invoice/aon-invoice-print.js";
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
+import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -143,29 +144,34 @@ export class AonConfiguration extends AonElement {
       aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
     }
 
-    let appOptions = [];
-    if(this.dur.isInvoice()) {
+    if (localStorage.getItem("aon_domain_id") && localStorage.getItem("company")) {
+      let appOptions = [];
+      if (this.dur.isInvoice()) {
+        appOptions.push({
+          name: INVOICE.title,
+          aonIcon: {
+            icon: 'aon_app',
+            color: INVOICE.color
+          },
+          fn: () => this.buildInvoiceConfiguration(),
+        });
+      }
+
       appOptions.push({
-        name: INVOICE.title,
+        id: MESSENGER.title,
+        name: MESSENGER.title,
         aonIcon: {
-          icon: 'aon_app',
-          color: INVOICE.color
+          icon: MESSENGER.icon,
+          color: MESSENGER.color
         },
-        fn: () => this.buildInvoiceConfiguration(),
-      });  
+        fn: () => this.buildMessengerConfiguration(),
+      });
+
+
+
+      aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
     }
 
-    appOptions.push({
-      id: MESSENGER.title,
-      name: MESSENGER.title,
-      aonIcon: {
-        icon: MESSENGER.icon,
-        color: MESSENGER.color
-      },
-      fn: () => this.buildMessengerConfiguration(),
-    });  
-
-    aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
 
     this.buildPersonal();
   }
@@ -234,7 +240,8 @@ export class AonConfiguration extends AonElement {
   }
 
 	buildInvoiceConfiguration() {
-		this.getApplication().setContent(new AonInvoicePrint());
+    // this.getApplication().setContent(new AonInvoiceConfiguration());
+    this.getApplication().setContent(new AonInvoicePrint());
 	}
   
   buildMessengerConfiguration(){
