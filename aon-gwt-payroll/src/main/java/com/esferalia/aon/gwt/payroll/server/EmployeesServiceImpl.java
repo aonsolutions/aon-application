@@ -98,6 +98,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractAttach;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractExtension;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractPDF;
+import com.esferalia.aon.gwt.payroll.jooq.JooqContractSEPE;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractTransform;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
@@ -5666,10 +5667,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
 			String base64Pdf_TA = EmployeesServiceHelper.getTA(connection, domainName, domainId, userLogin, userId, contractId);
-			JooqContractAttach.setContractTA(connection, domainId, contractId, base64Pdf_TA.getBytes());
+			JooqContractAttach.setContractTA(connection, domainId, contractId, Base64.getDecoder().decode(base64Pdf_TA));
 			
 			String base64Pdf_IDC = EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, userId, contractId, new Date());
-			JooqContractAttach.setContractIDC(connection, domainId, contractId, base64Pdf_IDC.getBytes());
+			JooqContractAttach.setContractIDC(connection, domainId, contractId, Base64.getDecoder().decode(base64Pdf_IDC));
 			
 		} catch (SQLException | IOException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
@@ -6045,7 +6046,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employee);
 			
 		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getMessage());
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -6087,7 +6088,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employee);
 
 		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -6118,7 +6119,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					fecha);
 
 		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -6148,7 +6149,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					nss);
 
 		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -6206,7 +6207,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					coef);
 
 		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -6256,7 +6257,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					null);
 
 		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -6304,7 +6305,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					fecha);
 
 		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -6351,7 +6352,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					fecha);
 
 		} catch (SQLException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -6400,7 +6401,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		} catch (SQLException | SegSocialException e) {
 			e.printStackTrace();
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -6414,9 +6415,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			Certificate certificate = AON.getCertificateSEPE(domainName, domainId, userLogin);
 			InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+			
+			if(AonStringUtils.isEmpty(employeeContractInfo.getContractSpecificData().getFormativeLevel()))
+				employeeContractInfo.setContractSpecificData(JooqContractSEPE.getContractSpecificData(connection, employeeContractInfo.getContractInfo().getContractId()));
 
 			aon.sepe.objects.Contract cto = createContract(domainName, domainId, userLogin, employeeContractInfo,
 					employeeContractInfo.getEmployeeInfo().getDocument());
+			
+			System.out.println(cto.toString());
 
 			// Devuelve el ide del contrato en el SEPE
 			String ide = Sepe.sendContract(certificateIS, certificate.getPassword(), certificate.getType(), cto);
@@ -6426,7 +6432,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				JooqContrataContract.setSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), ide);
 
 		} catch (SQLException | SepeException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -6452,7 +6458,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					endDate, FirmType.values()[signType], workplaceAddress, restContract);
 
 		} catch (SQLException | SepeException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 	
@@ -6480,7 +6486,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			JooqContrataContract.removeSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), sepeId);
 
 		} catch (SQLException | SepeException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 	
@@ -6506,7 +6512,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					certificates);
 
 		} catch (SQLException | SepeException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 	
@@ -6538,7 +6544,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return dataUri;
 
 		} catch (SQLException | SepeException | CertificateNotFoundException | IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 	
