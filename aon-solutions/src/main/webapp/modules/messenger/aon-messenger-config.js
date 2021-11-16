@@ -72,7 +72,7 @@ export class AonMessengerConfig extends AonElement {
     let toolbar = new AonToolbar();
     toolbar.id = "we23";
     toolbar.type = ToolbarType.SECONDARY;
-    toolbar.title = "Parametros por defecto";
+    toolbar.title = "Parametros Generales";
     this.appendChild(toolbar);
     toolbar.addButton2(ACTION.SAVE, () => this.save());
 }

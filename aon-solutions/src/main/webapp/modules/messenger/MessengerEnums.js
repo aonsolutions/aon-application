@@ -169,12 +169,13 @@ export const TASK_FILTER = [
         title: MSG.STATUS,
         default:true
     },
-    // {
-    //   type: "date",
-    //   name: "startDate",
-    //   id: "startDate",
-    //   title: MSG.DATE,
-    // }
+    {
+      type: "select",
+      name: "workgroup",
+      id: "workgroup",
+      title: MSG.WORKGROUP,
+      default:true
+    }
 ];
 
 export const APP_PARAMS_REQUEST = {

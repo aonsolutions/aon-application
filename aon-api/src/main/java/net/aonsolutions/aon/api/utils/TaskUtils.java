@@ -67,6 +67,7 @@ public class TaskUtils {
 			filter = filter.and(getSearchFilter(f, search));
 		
 		if(customer!=null && customer.getId()!=null) { //CUSTOMER
+			Integer workgroup = params.optInt(IJsonNames.WORKGROUP);
 			filter = filter.and(f.getRegistryProperty().eq(customer.getId()));
 			
 			if(Boolean.FALSE.equals(api.getDur().isMessengerManager())) 
@@ -77,6 +78,9 @@ public class TaskUtils {
 			else if(!params.optString(IJsonNames.SENDER).isEmpty()) //----------ENVIADAS
 				filter = filter.and(f.getSenderProperty().isNull());
 			
+			if(workgroup != null && workgroup !=0) 
+				filter = filter.and(f.getWorkgroupProperty().eq(workgroup));
+
 		} else {
 			 if(!workgroupStr.isEmpty()) {
 				 String[]  str = workgroupStr.split(",");
@@ -435,7 +439,7 @@ public class TaskUtils {
 		ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), "", param);
 		System.out.println("param "+param+" "+ appParam.getName()+" "+appParam.getValue());
 //		appParam.getId() == null ||
-		return  (appParam.getId()!=null && appParam.getValue().equals("true"));
+		return (appParam.getId()!=null && appParam.getValue().equals("true"));
 	}
 	
 	public interface APP_PARAMS_REQUEST {
