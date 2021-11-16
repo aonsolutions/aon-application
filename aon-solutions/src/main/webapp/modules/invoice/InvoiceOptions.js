@@ -134,7 +134,7 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
 
   export const CONFIGURATION_PRINT = {
     id: CONSTANT.CONFIGURATION_PRINT.initCap(),
-    name: MSG.INVOICE_PRINTING,
+    name: MSG.PRINTING_INVOICES,
     icon: MATERIAL_ICONS.PRINT
   }
 

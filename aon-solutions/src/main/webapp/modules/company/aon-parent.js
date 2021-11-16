@@ -10,8 +10,6 @@ export class AonParent extends AonElement {
 	companies;
 	selected;
 	notice;
-	filter;
-
 	constructor () {
 		super();
 		this.id = 'aonParent';
@@ -97,12 +95,9 @@ export class AonParent extends AonElement {
 		});
 
 		this.getNotices();
-		
-		
 	}
 
 	init(filter) {
-		this.filter = filter;
 		let aonParent = this.getElement('aonParentMain');
 		if(aonParent){
 			aonParent.startLoader();
@@ -110,11 +105,10 @@ export class AonParent extends AonElement {
 			getCompanies()
 			.then( companies => {
 				aonParent.stopLoader();
-				if(companies.length === 1){
+				if(companies.length ===1){
 					this.companySelection(companies[0], true);
 				} else {
-					this.page = 1;
-					this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
+					this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)));
 				}
 		  	}, () => closeSession());
 		}
@@ -198,44 +192,21 @@ export class AonParent extends AonElement {
 		div.style.paddingLeft = '16px';
 		div.innerHTML = MSG.COMPANIES.toUpperCase();
 		content.appendChild(div);
-		
 
 		let ul = this.createElement('ul');
 		ul.id = "UlCompanies";
-		ul.className = 'noScrollbar';
+		ul.className = 'list-group';
 		ul.style.marginLeft = '20px';
 		ul.style.marginRight = '20px';
-		ul.style.height = 'calc(100vh - 104px)';
-		ul.style.overflowY = 'auto';
 		content.appendChild(ul);
-		ul.addEventListener("scroll", () => {
-			let scrollTop = ul.scrollTop;
-			let offsetHeight = ul.offsetHeight;
-			let physicalSize = ul.scrollHeight;
-			let maxScrollPosition = physicalSize - offsetHeight;
-			console.log(scrollTop + ' - ' + maxScrollPosition);
-			if (scrollTop >= maxScrollPosition) {
-				this.more();
-			}
-		  });
 		aonParent.setContent(content);
-	}
-
-	more() {
-		this.getApplication().startLoader();
-		getCompanies().then( companies => {
-			this.getApplication().stopLoader();
-			let first = this.page * 30;
-			this.page = this.page + 1;
-			this.buildCompanies(companies.filter(f => this.companyFilter(f, this.filter)).slice(first, first + 30));	
-		});
 	}
 
 	buildCompanies(companies){
 		let ul = this.getElement("UlCompanies");
-		for(var company of companies) {
+		companies.map(company=>{
 			ul.appendChild(this.buildLi(company, 'transparent'));
-		}
+		})
 	}
 
 	buildLi(company, color) {
