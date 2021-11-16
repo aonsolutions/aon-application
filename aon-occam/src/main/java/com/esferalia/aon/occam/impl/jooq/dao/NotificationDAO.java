@@ -4,6 +4,8 @@ import org.jooq.Record;
 import org.jooq.SelectSeekStep2;
 import static com.esferalia.aon.jooq.tables.Notification.NOTIFICATION;
 import static com.esferalia.aon.jooq.tables.NotificationReceiver.NOTIFICATION_RECEIVER;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.function.Function;
@@ -15,6 +17,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.NotificationPropertiesDAO;
 
 
@@ -27,6 +30,7 @@ public class NotificationDAO {
 			.select()
 			.from(NOTIFICATION)
 			.join(NOTIFICATION_RECEIVER).on(NOTIFICATION_RECEIVER.NOTIFICATION.eq(NOTIFICATION.ID))
+			.join(DOMAIN).on(DOMAIN.ID.eq(NOTIFICATION.DOMAIN))
 			.where(NOTIFICATION_PROPERTIES.getConditions(filter))
 			.groupBy(NOTIFICATION_RECEIVER.NOTIFICATION)
 			.orderBy( NOTIFICATION_RECEIVER.STATUS.asc(), NOTIFICATION.ID.desc());
@@ -153,7 +157,7 @@ public class NotificationDAO {
 		public Notification apply(Record r) {
 			return new Notification()
 					.setId(r.getValue(NOTIFICATION_RECEIVER.ID))
-					.setDomain(new Domain().setId(r.getValue(NOTIFICATION.DOMAIN)))
+					.setDomain(DomainFiller.build(r))
 					.setDate(r.getValue(NOTIFICATION.DATE))
 					.setTitle(r.getValue(NOTIFICATION.TITLE))
 					.setBody(r.getValue(NOTIFICATION.BODY))
