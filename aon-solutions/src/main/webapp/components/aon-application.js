@@ -547,8 +547,8 @@ export class AonApplication extends AonElement {
       if(!option.options || option.clickable){
         li.addEventListener(EVENT.CLICK, () => {
           let backgroundEl = li.style.backgroundColor;
-        
-          ul.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
+          // ul
+          this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId)
               el.style.backgroundColor = "transparent";
             else {

@@ -110,34 +110,6 @@ export class AonMessengerChat extends AonElement {
     buildMobile(this);
   }
 
-  buildTaskWorkflow(){
-    this.task.setWorkflow([]);
-    if (this.task.id) { //UPDATE
-      if( this.getData().workgroup && this.task.getWorkgroup().id && this.getData().workgroup.id!= this.task.getWorkgroup().id){
-        this.task.addWorkflow({
-          comment: this.task.getWorkgroup().description,
-          domain:this.task.getWorkflowTmp().domain,
-          creation_date:new Date().getTime(),
-          task_holder: this.task.myTaskHolder,
-          type: WORKFLOW_TYPES.ASSIGN,
-          email:this.task.auth.email
-        });
-      }
-      if( this.getData().task_holder && this.task.getTaskHolder().id && this.getData().task_holder.id!= this.task.getTaskHolder().id){
-        this.task.addWorkflow({
-          comment: this.task.getTaskHolder().name,
-          domain:this.task.getWorkflowTmp().domain,
-          creation_date:new Date().getTime(),
-          task_holder: this.task.myTaskHolder,
-          type: WORKFLOW_TYPES.ASSIGN,
-          email:this.task.auth.email
-        });
-      }
-    } else {
-      this.task.addWorkflow({...this.task.getWorkflowTmp(), type: WORKFLOW_TYPES.OPEN}); // ADD WORKFLOW OPEN TASK
-    }
-  }
-
   /**
    * 
    * @param {String} text Optional
@@ -200,8 +172,7 @@ export class AonMessengerChat extends AonElement {
 
   async save() {
     this.applicationEl.startLoading();
-    this.buildTaskWorkflow();
-    this.buildWgAndTh();
+    this.autoComplete();
     // let btnInternal = this.getElement(MESSENGER_IDS.EXTERNAL_TASK);
     // if(btnInternal && btnInternal.isChecked() && !this.task.project.id){
     //   this.showError({message:"Proyecto requerido", type:CONSTANT.ERROR});
@@ -335,13 +306,50 @@ export class AonMessengerChat extends AonElement {
     return json;
   }
 
-  buildWgAndTh(){
-    if(!this.task.id && !this.task.isOtherDomain()){
-      if(!this.task.workgroup.id && this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_WORKGROUP])
-        this.task.setWorkgroup({id:this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_WORKGROUP]});
+  autoComplete(){
+    this.autoCompleteTaskWorkflow();
 
-      if(!this.task.task_holder.id && this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER]) 
-        this.task.setTaskHolder({id:this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER]});
+    if(!this.task.id){
+      if(this.task.isOtherDomain()){ // OTHER DOMAIN
+        if(!this.task.getGTaskId()){
+          this.task.setGTaskId(this.task.auth.email);
+        }
+      }  else { //
+        if(!this.task.workgroup.id && this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_WORKGROUP]){
+          this.task.setWorkgroup({id:this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_WORKGROUP]});
+        }
+        if(!this.task.task_holder.id && this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER]) {
+          this.task.setTaskHolder({id:this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER]});
+        }
+      }
+    }
+  }
+
+  autoCompleteTaskWorkflow(){
+    this.task.setWorkflow([]);
+    if (this.task.id) { //UPDATE
+      if( this.getData().workgroup && this.task.getWorkgroup().id && this.getData().workgroup.id!= this.task.getWorkgroup().id){
+        this.task.addWorkflow({
+          comment: this.task.getWorkgroup().description,
+          domain:this.task.getWorkflowTmp().domain,
+          creation_date:new Date().getTime(),
+          task_holder: this.task.myTaskHolder,
+          type: WORKFLOW_TYPES.ASSIGN,
+          email:this.task.auth.email
+        });
+      }
+      if( this.getData().task_holder && this.task.getTaskHolder().id && this.getData().task_holder.id!= this.task.getTaskHolder().id){
+        this.task.addWorkflow({
+          comment: this.task.getTaskHolder().name,
+          domain:this.task.getWorkflowTmp().domain,
+          creation_date:new Date().getTime(),
+          task_holder: this.task.myTaskHolder,
+          type: WORKFLOW_TYPES.ASSIGN,
+          email:this.task.auth.email
+        });
+      }
+    } else {
+      this.task.addWorkflow({...this.task.getWorkflowTmp(), type: WORKFLOW_TYPES.OPEN}); // ADD WORKFLOW OPEN TASK
     }
   }
   
