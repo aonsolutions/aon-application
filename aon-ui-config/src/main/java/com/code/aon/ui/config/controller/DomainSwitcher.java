@@ -1,30 +1,25 @@
 package com.code.aon.ui.config.controller;
 
-import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.io.Serializable;
 import java.net.IDN;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
@@ -47,7 +42,6 @@ import com.code.aon.common.domain.DomainEvent;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.domain.IDomainChangeListener;
 import com.code.aon.common.enumeration.AppParam;
-import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.Domain;
 import com.code.aon.config.enumeration.DomainType;
@@ -65,7 +59,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements
 		ITemplateController, Serializable {
@@ -88,13 +81,18 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	private String domainURL;
 	private int page;
 	private Integer pageLimit;
+	private String beanName;
+
+	private boolean showActive;
 	private boolean showInactive;
 	private boolean showExpired;
-	private String beanName;
+	private boolean showOffice;
+	private boolean showShared;
 	
 	public DomainSwitcher() {
 		try {
 			setPageLimit(10);
+			setShowActive(true);
 			super.setDomainId(initializeDomain());
 		} catch (Throwable th) {
 			super.setDomainId(1);
@@ -265,9 +263,22 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 					DOMAIN.EXPIRATIONDATE.gt(DSL.currentDate()));
 			condition = condition.and(expirationCondition);
 		}
-		if (!showInactive) {
+		if (showInactive) {
+			condition = condition.and(DOMAIN.ACTIVE.eq((byte) 0));
+		} 
+		
+		if ( showActive ){
 			condition = condition.and(DOMAIN.ACTIVE.eq((byte) 1));
 		}
+		
+		if ( showOffice ) {
+			condition = condition.and(DOMAIN.TYPE.eq((byte)DomainType.OFFICE.ordinal()));
+		}
+		
+		if ( showShared ) {
+			condition = condition.and( DSL.falseCondition());
+		}
+
 		if (!isAdminDomain()) {
 			Condition scopeCondition = DOMAIN.SCOPE.isNull();
 			List<Integer> scopes = getUserScopes();
@@ -279,51 +290,6 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return condition;
 	}
 
-	private void __initializeModel() {
-		List<DomainData> domains = Collections.emptyList();
-		if (getParentDomain() != null) {
-			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
-			domains = ctx
-					.getDslContext()
-					.select()
-					.from(DOMAIN)
-					
-					.leftOuterJoin(APP_PARAM).on(APP_PARAM.DOMAIN.eq(DOMAIN.ID).and(APP_PARAM.NAME.eq(AppParam.AON_CUSTOMIZE_ID.getValue())))
-					.leftOuterJoin(RATTACH).on(DSL.cast(APP_PARAM.VALUE, Integer.class).eq(RATTACH.REGISTRY).and(RATTACH.DESCRIPTION.eq(ICommonConstants.TOOLBAR_LOGO_NAME)))
-					
-					.where(getDomainCondition())
-
-					.orderBy(DOMAIN.DESCRIPTION)
-					.fetchStream()
-					.map( r -> {
-						DomainData domainData = 
-								new DomainData(
-								r.get(DOMAIN.ID), 
-								r.get(DOMAIN.NAME), 
-								r.get(DOMAIN.DESCRIPTION), 
-								r.get(DOMAIN.EXPIRATIONDATE), 
-								r.get(DOMAIN.ACTIVE) == 1, 
-								r.get(DOMAIN.ENABLEHEREDITY) == 1);
-						
-						byte logo [] = r.get(RATTACH.DATA);
-						if ( logo == null || ArrayUtils.isEmpty(logo) ) {
-							domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
-						}
-						else {
-							MimeType mimeType = AonEnumUtils.enumValue(r.get(RATTACH.MIMETYPE),
-									MimeType.MIME_PNG);
-							domainData.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
-									Base64.getEncoder().encodeToString(logo)));
-						}
-						return domainData;
-						
-					}).collect(Collectors.toList())					
-					;
-
-			ctx.finalize();
-		}
-		setModel(new SerializableListDataModel(domains));
-	}
 
 	private void initializeModel() {
 		
@@ -363,7 +329,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 						r.get(DOMAIN.DESCRIPTION), 
 						r.get(DOMAIN.EXPIRATIONDATE), 
 						r.get(DOMAIN.ACTIVE) == 1, 
-						r.get(DOMAIN.ENABLEHEREDITY) == 1);
+						r.get(DOMAIN.ENABLEHEREDITY) == 1,
+						getSafeDomainType(r.get(DOMAIN.TYPE)));
 				
 				String ccc = r.get(ENTERPRISE_CCC.CCC);
 				if ( StringUtils.isNotBlank(ccc) ) 
@@ -633,7 +600,15 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 			return null;
 		}
 	}
-
+	
+	public boolean isShowOffice() {
+		return showOffice;
+	}
+	
+	public void setShowOffice(boolean showOffice) {
+		this.showOffice = showOffice;
+	}
+	
 	public boolean isShowInactive() {
 		return showInactive;
 	}
@@ -648,6 +623,22 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 	public void setShowExpired(boolean showExpired) {
 		this.showExpired = showExpired;
+	}
+	
+	public void setShowShared(boolean showShared) {
+		this.showShared = showShared;
+	}
+	
+	public boolean isShowShared() {
+		return showShared;
+	}
+	
+	public void setShowActive(boolean showActive) {
+		this.showActive = showActive;
+	}
+
+	public boolean isShowActive() {
+		return showActive ; 
 	}
 
 	public void onChangeShowInactive(ActionEvent event) {
@@ -680,6 +671,51 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return token;
 	}
 	
+	
+	public void showInactive(ActionEvent event) {
+		setShowShared(false);
+		setShowOffice(false);
+		setShowActive(false);
+		
+		setShowInactive(true);
+		setModel(null);
+	}
+	
+	public void showActive(ActionEvent event) {
+		setShowShared(false);
+		setShowOffice(false);
+		setShowInactive(false);
 
+		setShowActive(true);
+		setModel(null);
+	}
+
+	public void showOffice(ActionEvent event) {
+		setShowShared(false);
+		setShowInactive(false);
+		setShowActive(false);
+
+		setShowOffice(true);
+		setModel(null);
+	}
+
+	public void showShared(ActionEvent event) {
+		setShowOffice(false);
+		setShowInactive(false);
+		setShowActive(false);
+
+		setShowShared(true);
+		setModel(null);
+	}
+	
+	public String getTrace() {
+		return String.valueOf(new Date(System.currentTimeMillis()));
+	}
+
+	private static DomainType getSafeDomainType( Byte b ) {
+		if (b == null) return null;
+		if (b < 0 || b >= DomainType.values().length) return null;
+		return DomainType.values()[b];
+	}
 	
 }

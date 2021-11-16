@@ -12,8 +12,8 @@
 	<h:panelGrid columns="2" styleClass="aon-width-all aon-padding-bottom"
 		columnClasses="aon-float-left,aon-float-right">		
 		<aon:panelGroup>
-			<aon:outputText styleClass="aon-italic aon-margin-right aon-bold" value="#{bundle.aon_filter}:"/>
-			<aon:inputText id="domainFilter" size="60" value="#{domainSwitcher.filter}">
+			<aon:outputText styleClass="aon-margin-right aon-bold" value="#{bundle.aon_filter}:"/>
+			<aon:inputText id="domainFilter" size="90" styleClass="aon-input-search" value="#{domainSwitcher.filter}">
 				<a4j:support 
 					event="onkeyup"
 					reRender="domainSwitcherTableContainer"
@@ -24,41 +24,17 @@
 					limitToList="true"/>
 			</aon:inputText>
 		</aon:panelGroup>
-		<aon:panelGroup>	
-			<aon:outputText 
-				styleClass="aon-italic aon-bold aon-margin-right" 
-				value="#{bundle.admin_domain_show}:" />
-			<aon:outputLabel for="Domains_showInactive"
-				styleClass="aon-italic" 
-				value="#{bundle.admin_domain_show_inactives}" />
-			<aon:selectBooleanCheckbox id="Domains_showInactive"
-				value="#{domainSwitcher.showInactive}" >
-				<a4j:support 
-					event="onclick"
-					reRender="domainSwitcherTableContainer"
-					eventsQueue="domainSwitcherFilterKeyUp"
-					actionListener="#{domainSwitcher.onChangeShowInactive}"
-					requestDelay="500"
-					ajaxSingle="true"
-					ignoreDupResponses="true"
-					limitToList="true"/>						
-			</aon:selectBooleanCheckbox>			
-			<aon:outputLabel for="Domains_showExpired"
-				styleClass="aon-italic" 
-				value="#{bundle.admin_domain_show_expired}" />										
-			<aon:selectBooleanCheckbox id="Domains_showExpired"
-				value="#{domainSwitcher.showExpired}" >
-				<a4j:support 
-					event="onclick"
-					reRender="domainSwitcherTableContainer"
-					eventsQueue="domainSwitcherFilterKeyUp"
-					actionListener="#{domainSwitcher.onChangeShowExpired}"
-					requestDelay="500"
-					ajaxSingle="true"
-					ignoreDupResponses="true"
-					limitToList="true"/>						
-			</aon:selectBooleanCheckbox>
-		</aon:panelGroup>															
+		<aon:panelGroup>
+				<aon:commandLink id="domainBooking"
+					actionListener="#{domainBooking.onInit}" action="domainBooking_list">
+					<aon:outputText value="#{bundle.config_domain_booking}"
+						style="padding-bottom: 1px;padding-top: 1px;"
+						styleClass="aon-portlet-title-text aon-icon aon-button-goto"/>
+					<f:setPropertyActionListener target="#{domainBooking.backAction}"
+						value="#{null}"/>						
+				</aon:commandLink>
+		</aon:panelGroup>
+		
 	</h:panelGrid>
 	<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">
 		<aon:methodParam name="rowSelectorAction" value="start" />
@@ -68,27 +44,44 @@
 			<ui:param name="skipFocusFirst" value="true" />
 			<ui:define name="columns">
 				<aon:column styleClass="aon-width-30">
+					<c:set var="heredity" value="#{to.enableHeredity ? bundle.aon_domian_enableHeredity : bundle.aon_domian_disableHeredity}"/>
 					<aon:outputText 
-						rendered="#{to.enableHeredity}"
-						title="#{bundle.aon_domian_enableHeredity}"
-						styleClass="aon-icon2 aon-icon-index" />														
+						rendered="#{!to.active}"
+						title="#{bundle.admin_domain_inactive}"
+						styleClass="material-icons  aon-vertical-middle aon-gray" value="domain_disabled" />														
 					<aon:outputText 
-						rendered="#{!to.enableHeredity}"
-						title="#{bundle.aon_domian_disableHeredity}"
-						styleClass="aon-icon2 aon-icon-disableHeredity" />
+						rendered="#{to.active and to.office}"
+						title="#{heredity}"
+						styleClass="material-icons  aon-vertical-middle aon-gray" value="work" />
+					<aon:outputText 
+						rendered="#{to.active and to.consultancy}"
+						title="#{heredity}"
+						styleClass="material-icons  aon-vertical-middle aon-gray" value="apartment" />
+					<aon:outputText 
+						rendered="#{to.active and !to.office and !to.consultancy}"
+						title="#{heredity}"
+						styleClass="material-icons  aon-vertical-middle aon-gray" value="domain" 
+					/>
 				</aon:column>
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 					<f:facet name="header">
-						<aon:outputText value="#{bundle.aon_name}" />
+						<aon:outputText value="EMPRESAS" />
 					</f:facet>							
 					<aon:outputText value="#{to.description}"
 						title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
-						style="#{(!to.active or to.expired)?'color:red;font-style:italic;':''}"/>
+					/>
 					<br/>
 					<aon:outputText value="#{( empty to.document)? 'SIN IDENTIFCACIÓN':to.document }"
 						title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
-						style="#{(!to.active or to.expired)?'color:red;font-style:italic;':'color:gray'}"/>
+						style="color:gray"/>
 										
+				</aon:column>
+
+				<aon:column styleClass="aon-width-30">
+					<aon:outputText 
+						rendered="#{to.enableHeredity}"
+						title="#{bundle.aon_domian_enableHeredity}"
+						styleClass="material-icons  aon-vertical-middle aon-gray" value="arrow_upward" />
 				</aon:column>
 
 				<aon:column styleClass="aon-width-40">

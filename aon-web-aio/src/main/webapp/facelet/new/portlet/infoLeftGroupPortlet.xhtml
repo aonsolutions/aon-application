@@ -34,6 +34,38 @@
 			border-top-right-radius: 50%; 
 			border-bottom-right-radius: 50%;  
 		}
+		
+		.aon-portlet-title {
+			color: gray;
+			font-size: 12px;
+			font-weight: normal;
+			margin-top: 15px;			
+			margin-left: 15px;
+			margin-bottom: 10px;
+			text-transform: uppercase;
+		}
+		
+		/* copied from aon.solutions's .aonButton */
+		.aonButton {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			background: var(--aonBlue);
+			border: none;
+			border-radius: 6px;
+			box-shadow: 0 2px 4px rgb(0,0,0,.15);
+			color: #fff;
+			cursor: pointer;
+			display: inline-block;
+			font-family: sans-serif;
+			font-size: 1rem;
+			font-weight: 700;
+			margin: 0;
+			outline: none !important;
+			padding: 1rem 2rem;
+			text-align: center;
+			text-decoration: none;
+			transition: background .25s ease-in-out,transform .15s ease;
+		}		
 	</style>
 	
 	<script type='text/javascript' >
@@ -68,23 +100,29 @@
 		onclick="javascript:hideInfoGroup()"/>	
 
 		<aon:div id="infoGroupDiv" style="display:none;  position:relative; top: -32px" >
-			<aon:div styleClass="aon-portlet" >
-				<aon:div styleClass="aon-portlet-title">								
-					<aon:commandLink id="menu_refresh"
-						title="#{bundle.aon_refresh}"
-						reRender="desktopDiv1" immediate="true"
-						actionListener="#{desktop.onRefresh}">
-						<aon:outputText value="#{bundle.aon_refresh}"
-							style="padding-bottom: 1px;padding-top: 1px;"
-							styleClass="aon-portlet-title-text aon-icon aon-icon-refresh"/>
-					</aon:commandLink>
-				</aon:div>
-			</aon:div>
-			<aon:if test="#{domainSwitcher.parentDomain or desktop.groupwareEnabled}">
-				<ui:include src="/facelet/homepage/portlet/taskPortlet.xhtml" />
+			<!--
+			<ui:include src="/facelet/new/portlet/summaryControlPortlet.xhtml" /> 
+			-->
+			
+
+			<aon:if test="#{!domainSwitcher.childDomain}">
+				<ui:include src="/facelet/new/portlet/filterControlPortlet.xhtml" />
 			</aon:if>
-			<ui:include src="/facelet/homepage/portlet/noticePortlet.xhtml" />
+
+			
+			<!--
+			<aon:if test="#{timeControl.active and false }">
+				<ui:include src="/facelet/new/portlet/timeControlPortlet.xhtml" />
+			</aon:if>
+			-->
 		</aon:div>
+		
+		<aon:if test="#{!domainSwitcher.childDomain}">
+			<script type='text/javascript' >
+				showInfoGroup();
+			</script>
+		</aon:if>
+	
 	</aon:div>
 					
 </ui:composition>
