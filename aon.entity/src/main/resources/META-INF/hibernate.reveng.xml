@@ -56,6 +56,7 @@
 	<table-filter match-name="task_workflow" exclude="true" />
 	<table-filter match-name="task_attach" exclude="true" />
 	<table-filter match-name="project_holder" exclude="true" />
+	<table-filter match-name="data_request" exclude="true" />
 
 
 	<!--  ***************** -->

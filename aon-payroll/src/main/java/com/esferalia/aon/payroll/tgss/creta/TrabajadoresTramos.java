@@ -340,6 +340,8 @@ public class TrabajadoresTramos {
 						for ( ContextData cgcData: salary.getContextData().getOrDefault(var.getName(), Collections.emptyList()) )
 							cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					
+					for ( ContextData cgcData: salary.getContextData().getOrDefault(ContextVariable.DIRECT_BASE.getName(), Collections.emptyList()) )
+						cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					
 					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
 					

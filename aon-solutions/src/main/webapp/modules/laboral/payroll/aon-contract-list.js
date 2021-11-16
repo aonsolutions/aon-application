@@ -1,8 +1,8 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { getContracts } from "../../../services/service.js";
+import { getContracts, getContratoPdf } from "../../../services/service.js";
 import { isEmptyObject, sortBy } from "../../../services/utils.js";
 import { CONTRACT_OPTIONS, PAYROLL_VIEWS } from "../PayrollEnums.js";
-import { CONSTANT, EVENT, MSG } from "../../../environments/environments.js";
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
@@ -36,7 +36,7 @@ export class AonContractList extends AonElement {
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
     this._filter= {
-      allEmployees: false 
+      contractAll: false 
     };
   }
 
@@ -66,9 +66,9 @@ export class AonContractList extends AonElement {
   buildToolbarSearch(){
     const btnSearch = this.applicationEl.addSearchOption();
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
-    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail:{allEmployees, search}})=>{
+    btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail:{contractAll, search}})=>{
       this._list = [];
-      this._filter.allEmployees = allEmployees;
+      this._filter.contractAll = contractAll;
       this.search(search);
     });
 
@@ -76,8 +76,8 @@ export class AonContractList extends AonElement {
       type: CONSTANT.HTML_ELEMENT,
       element: new AonSwitch(),
       id: "aonSwitchFilter",
-      name:"allEmployees",
-      title:"Contratos inactivos",
+      name:"contractAll",
+      title:"Todos los contratos",
       checked:false
     }]);
   }
@@ -96,11 +96,11 @@ export class AonContractList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumn(MSG.NAME, "string", "name", "20%");
-      aonTable.addColumn("DNI/NIE", "string", "document", "10%");
-      aonTable.addColumn("Nª SS", "string", "ssNumber", "10%");
+      aonTable.addColumn("DNI/NIE", "string", "ipf", "10%");
+      aonTable.addColumn("Nª SS", "string", "naf", "10%");
       aonTable.addColumn("Tipo contrato", "string", "contractType", "10%");
-      aonTable.addColumn("Centro trabajo", "string", "workplaceName", "10%");
-      aonTable.addColumn(MSG.CATEGORY, "string", "agreementCategory", "10%");
+      aonTable.addColumn(MSG.WORKPLACE, "string", "workplaceName", "10%");
+      // aonTable.addColumn(MSG.CATEGORY, "string", "agreementCategory", "10%");
       aonTable.addColumn(MSG.START_DATE, "date", "startDateParse", "10%");
       aonTable.addColumn(MSG.END_DATE, "date", "endDateParse", "10%");
       aonTable.addColumn("Opción", "fn", "option", "5%");
@@ -108,7 +108,7 @@ export class AonContractList extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          let options = { ...res, name:`${res.surName} ${res.name}`}
+          let options = { ...res}
           if (res.contractType) options.option = this.getOptions(res);
           aonTable.addRow(options);
         });
@@ -127,9 +127,9 @@ export class AonContractList extends AonElement {
         aonTable.removeAllLi();
         resp.map((res, idx) => {
           let options = {
-            icon: "assignment",
-            title: ` ${res.surName} ${res.name}`,
-            subtitle: `(${res.document}) ${AonDateUtils.setDate(res.startDateParse)}`,
+            icon: MATERIAL_ICONS.ASSIGNMENT,
+            title: res.name,
+            subtitle: `(${res.ipf}) ${AonDateUtils.setDate(res.startDateParse)}`,
           };
           if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx);
@@ -147,19 +147,19 @@ export class AonContractList extends AonElement {
     if(!prev){
       options.push({
         ...CONTRACT_OPTIONS.CONTRACT,
-        fn: (el) => this.applicationParentEl.getContratoPdf(res, el),
+        fn: (el) => this.getContratoPdf(res, el),
       });
     }
 
     options.push({
       ...CONTRACT_OPTIONS.TA,
-      fn: (el) => this.applicationParentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+      fn: (el) => this.applicationParentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.naf, fra:res.startDate }, el)
     });
     
     if(!prev){
       options.push({
         ...CONTRACT_OPTIONS.IDC,
-        fn: (el) => this.applicationParentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.ssNumber, fra:res.startDate }, el)
+        fn: (el) => this.applicationParentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.naf, fra:res.startDate }, el)
       });
     }
 
@@ -170,16 +170,12 @@ export class AonContractList extends AonElement {
     let data = [];
     try {
       if(this.searchFilter && !isEmptyObject(this._list)){
-        data = this._list.filter(({name, document, ssNumber})=> this.includeSearch(name) || this.includeSearch(document) || this.includeSearch(ssNumber));
+        data = this._list.filter(({name, ipf, naf})=> this.includeSearch(name) || this.includeSearch(ipf) || this.includeSearch(naf));
       } else {
         const contracts = await getContracts(this._filter);
         data = sortBy(contracts, 'startDate', 'desc').map(
           (res) => {
             res.contractType = Number.parseInt(res.contractType);
-            if (res.completeCCC) {
-              res.regime = res.completeCCC.toString().substr(0,4);
-              res.ctaCti = res.completeCCC.toString().substr(4);
-            } 
             let startDate = AonDateUtils.formatDateOrigin(res.startDate);
             let startDateParse = AonDateUtils.formatDate(res.startDate);
             let endDateParse = "";
@@ -204,5 +200,15 @@ export class AonContractList extends AonElement {
     return this.searchFilter && str && str.toLowerCase().includes(this.searchFilter.toLowerCase());
   }
 
+  async getContratoPdf(data) {
+    this.applicationEl.startLoading();
+    try {
+      const { ipf, startDate } = data;
+      await getContratoPdf({ ipf, startDate });
+    } catch (error) {
+      this.showToast(error);
+		}
+    this.applicationEl.stopLoading();
+  }
 }
 window.customElements.define("aon-contract-list", AonContractList);

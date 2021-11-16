@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -29,13 +30,17 @@ import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
@@ -62,7 +67,7 @@ public class AonRandom {
 //    }
     
     public static boolean gt( int threshold) {
-		return faker.random().nextInt(0,100) > threshold;
+		return faker.random().nextInt(0,100) >= threshold;
 	}
 
     public static String string( int nullThreshold, int minLength, int maxLength ) {
@@ -277,6 +282,64 @@ public class AonRandom {
     			:null;
 	}
 	
+	public static String getRandomContractType() {
+		return getRandomContractType(0);
+	}
+	public static String getRandomContractType(int nullThreshold) {
+		Integer  models [] = new ContractType().getContractTypes().keySet().toArray(Integer[]::new);
+    	return gt(nullThreshold)
+    			? String.format("%03d", models[faker.random().nextInt(models.length)])
+    			:null;
+	}
+
+	public static String getRandomOccupation() {
+		return getRandomQuoteGroup(0);
+	}
+	public static String getRandomOccupation(int nullThreshold) {
+		String occupations [] = {"a","b","c","d","e","f","g","h","i","v","w","x","y","z"};
+    	return gt(nullThreshold) ? occupations [faker.random().nextInt(occupations.length)] :null;
+	}
+
+	public static String getRandomQuoteGroup() {
+		return getRandomQuoteGroup(0);
+	}
+	public static String getRandomQuoteGroup(int nullThreshold) {
+    	return gt(nullThreshold)?String.format("%02d", faker.random().nextInt(1,10)):null;
+	}
+
+	public static Province getRandomProvince() {
+		return getRandomProvince(0);
+	}
+	public static Province getRandomProvince(int nullThreshold) {
+    	return gt(nullThreshold)
+    			?Province.values()[faker.random().nextInt(Province.values().length)]
+    			:null;
+	}
+
+	public static String getRandomSex() {
+		return getRandomGender(-1).getName().substring(0,1).toUpperCase();
+	}
+	public static Gender getRandomGender() {
+		return getRandomGender(0);
+	}
+	public static Gender getRandomGender(int nullThreshold) {
+    	return gt(nullThreshold)
+    			?Gender.values()[faker.random().nextInt(Gender.values().length)]
+    			:null;
+	}
+
+	public static String getRandomSSRegime() {
+		return getRandomSSRegimeType(-1).getCode();
+	}
+	public static SSRegimeType getRandomSSRegimeType() {
+		return getRandomSSRegimeType(0);
+	}
+	public static SSRegimeType getRandomSSRegimeType(int nullThreshold) {
+    	return gt(nullThreshold)
+    			?SSRegimeType.values()[faker.random().nextInt(SSRegimeType.values().length)]
+    			:null;
+	}
+
 	public static Country getRandomCountry() {
 		return getRandomCountry(0);
 	}

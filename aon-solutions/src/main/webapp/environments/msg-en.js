@@ -100,6 +100,7 @@ export const DELETE_TAX = 'Delete Tax';
 export const DELETED_DATA = "The data has been deleted successfully";
 export const DESCRIPTION = 'Description';
 export const DETAILED = 'Detailed';
+export const DEUTSCH = 'German';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documentary';

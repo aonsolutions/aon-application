@@ -31,6 +31,8 @@ export const sendBaja = (data) => post(`${API_URL}/comunica/baja`, data);
   
 export const updateContract = (data) => post(`${API_URL}/comunica/update-contrato`, data);
 
+export const getAppParamComunica = (data) => get(`${API_URL}/comunica/app-param`, data);
+
 export const movDelete = (data) => post(`${API_URL}/comunica/delete-mov`, data); 
 
 export const getEmployee = (data) => get(`${API_URL}/comunica/get-employee`, data);
@@ -51,32 +53,12 @@ export const getCodBaja = () => requestJsonAsset("cod_baja.json");
 
 export const getContractType = () =>  requestJsonAsset("type_contract.json"); 
 
-export const getRlce = async(data) => {
-  const resp = await get(`${API_URL}/comunica/rlce`, data);
-  let options = [];
-  for (const key in resp) {
-    if(key)  options.push({value: key, name: resp[key] });
-  }
-  return options;
-};
+export const getRlce = (data) => get(`${API_URL}/comunica/rlce`, data);
 
-export const getOccupation = async(data) => {
-  const resp = await get(`${API_URL}/comunica/occupation`, data);
-  let options = [];
-  for (const key in resp) {
-    if(key) options.push({value: key, name: resp[key]});
-  }
-  return options;
-};
-
-export const getQuoteGroup = async(data) => {
-  const resp = await get(`${API_URL}/comunica/quote-group`, data);
-  let options = [];
-  for (const key in resp) {
-    if(key) options.push({value: key, name: resp[key]});
-  }
-  return options;
-};
+export const getOccupation = (data) =>  get(`${API_URL}/comunica/occupation`, data);
+ 
+export const getQuoteGroup = (data) => get(`${API_URL}/comunica/quote-group`, data);
+ 
   
 // {
 //   const resp = await get(`${API_URL}/comunica/contract-type`, data);

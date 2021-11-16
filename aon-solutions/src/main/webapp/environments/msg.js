@@ -3,25 +3,23 @@ import * as MSG_EUS from './msg-eus.js';
 import * as MSG_CAT from './msg-cat.js';
 import * as MSG_ES from './msg-es.js';
 import * as MSG_GAL from './msg-gal.js';
+import * as MSG_DE from './msg-de.js';
+import { Language } from '../models/Language.js';
 
-const ES = 'es';
-const EN = 'en';
-const EUS = 'eus';
-const CAT = 'cat';
-const GAL = 'gal';
-
-let language = localStorage.getItem('aon_language') || ES;
+let language = localStorage.getItem('aon_language') || Language.SPANISH;
 
 let MSG = undefined;
 
-if(EN === language) {
+if(Language.ENGLISH === language) {
   MSG = MSG_EN;
-} else if(EUS === language){
+} else if(Language.BASQUE === language){
   MSG = MSG_EUS;
-} else if(CAT === language) {
+} else if(Language.CATALAN === language) {
   MSG = MSG_CAT;
-} else if(GAL === language) {
+} else if(Language.GALICIAN === language) {
   MSG = MSG_GAL;
+} else if(Language.DEUTSCH == language){
+  MSG = MSG_DE;
 } else {
   MSG = MSG_ES;
 }
@@ -151,6 +149,7 @@ export const DELETE_TAX = MSG.DELETE_TAX;
 export const DELETED_DATA = MSG.DELETED_DATA;
 export const DESCRIPTION = MSG.DESCRIPTION;
 export const DETAILED = MSG.DETAILED;
+export const DEUTSCH = MSG.DEUTSCH;
 export const DOCUMENT = MSG.DOCUMENT;
 export const DOCUMENTS = MSG.DOCUMENTS;
 export const DOCUMENTARY = MSG.DOCUMENTARY;
@@ -219,6 +218,7 @@ export const HIRING = MSG.HIRING;
 export const HOLDER = MSG.HOLDER;
 export const HOLDERS = MSG.HOLDERS;
 export const HOURS = MSG.HOURS;
+export const HOUR = "Hora"; //TODO
 export const HISTORIC = MSG.HISTORIC;
 // ----- I
 
@@ -228,6 +228,8 @@ export const INACTIVES = MSG.INACTIVES;
 export const INBOX = MSG.INBOX;
 export const INCLUDE_COMPANY_DATA = MSG.INCLUDE_COMPANY_DATA;
 export const INCLUDE_LOGO = MSG.INCLUDE_LOGO;
+export const INCLUDE_REGISTRATION_DATA = 'Incluir Datos Registrales';
+export const INCLUDE_CONTACT_DATA = 'Incluir Datos de Contacto';
 export const INFORMATION = MSG.INFORMATION;
 export const INSCRIPTION = 'Inscripción';
 export const INTERNAL = "Interno"; //TODO
@@ -474,6 +476,7 @@ export const WRITE_YOUR_TITLE = MSG.WRITE_YOUR_TITLE;
 export const WRITE_A_COMMENT =  MSG.WRITE_A_COMMENT;
 export const WRITE_A_DESCRIPTION = MSG.WRITE_A_DESCRIPTION;
 export const WRITE_A_NOTE = MSG.WRITE_A_NOTE;
+export const WORKPLACE = "Centro de trabajo";//TODO
 // ----- X
 
 // ----- Y

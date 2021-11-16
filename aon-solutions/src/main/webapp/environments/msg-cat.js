@@ -100,6 +100,7 @@ export const DELETE_TAX = 'Esborrar Impost';
 export const DELETED_DATA = "Los datos se han eliminado correctamente";
 export const DESCRIPTION = 'Descripció';
 export const DETAILED = 'Detallat';
+export const DEUTSCH = 'Alemany';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documental';

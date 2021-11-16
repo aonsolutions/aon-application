@@ -314,10 +314,13 @@ class SistemaREDEmployee {
 				if (ipf != null)
 					ipf = Toolkit.removeExtraZeros(ipf.replace(" ", ""));
 
-				Employee employee = builder.setNss(nss).setName(name).setFra(fra).setSituation(situation).setIpf(ipf)
-						.setCtaCti(ccc).setRegime(regime).build();
-
-				employees.add(employee);
+				 builder.setNss(nss).setName(name).setFra(fra).setSituation(situation).setIpf(ipf)
+						.setCtaCti(ccc).setRegime(regime);
+				 
+				if(!situation.contains("AL")) 
+					builder.setFeb(fra);
+				
+				employees.add(builder.build());
 			}
 			HtmlInput btn = htmlPage.querySelector("input[name=btn_Sub2207801001]");
 			htmlPage = btn.click();

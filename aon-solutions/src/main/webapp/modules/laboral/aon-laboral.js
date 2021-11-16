@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, movDelete, updateContracts } from "../../services/service.js";
+import { getDomainUserRoles, getIDC, getSalaryPdf, getTA, movDelete, updateContracts } from "../../services/service.js";
 import { setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
@@ -15,8 +15,6 @@ import { AonApplication } from "../../components/aon-application.js";
 import { AonCtaList } from "./cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
 import Apps from "../../services/app.js";
-import { AonDateUtils } from "../utils/AonDateUtils.js";
-
 
 export class AonLaboral extends AonElement {
 
@@ -193,17 +191,6 @@ export class AonLaboral extends AonElement {
 		return option;
 	}
 
-  async getContratoPdf(data, el) {
-    this.applicationEl.startLoading();
-    try {
-      const { document: ipf, startDate: fecha } = data;
-      await getContratoPdf({ ipf, fecha });
-    } catch (error) {
-      this.showToast(error);
-		}
-    this.applicationEl.stopLoading();
-  }
-
   async getTa(data, el) {
 		this.applicationEl.startLoading();
 		try {
@@ -282,12 +269,11 @@ export class AonLaboral extends AonElement {
   }
 
   async updateContracts(){
-    this.applicationEl.startLoading();
+    this.applicationEl.startLoader();
     //SINCRONIZED INIT YEAR
-    const startIni = AonDateUtils.getYearFirstDay( new Date().addMonth(-6) );
-    await updateContracts({ startDate: AonDateUtils.formatDateOrigin( startIni ) }).catch(e=>console.log("erros",e));
+    await updateContracts({employeesOld:true}).catch(e=>console.log("erros",e));
     console.log("----------UPDATE CONTRACTS------");
-    this.applicationEl.stopLoading();
+    this.applicationEl.stopLoader();
   }
 
   showView(view, data = undefined, filter = undefined){

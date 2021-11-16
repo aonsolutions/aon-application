@@ -224,7 +224,7 @@ export class AonNotification extends AonElement {
       aonCard.setBackground(`rgb(0, 36, 105, 0.1)`);
 
     const titleEl = aonCard.getCardTitle1();
-    titleEl.style.display="block";
+    titleEl.style.whiteSpace = "pre-wrap";
     titleEl.innerHTML = createTitle(data.title).element.outerHTML;
     return aonCard;
   }
@@ -342,7 +342,6 @@ export class AonNotification extends AonElement {
       setStyles(span,{ bottom:0, top:76, right: "7%" });
 
     aonNotification.appendChild(span);
-    const color = "rgba(0, 36, 105, 0.1)";
     let icon = createIconButton({
       attributes:{
         id:span.id+"Button",
@@ -354,8 +353,7 @@ export class AonNotification extends AonElement {
       }
     }, span);
     let btn = icon.getButton(); 
-    btn.classList.add(CSS.PULSE, CSS.PULSE_INFINITE);
-    setStyles(btn,{ backgroundColor:color});
+    btn.classList.add("addNotification", CSS.PULSE)
     // btn.style.boxShadow = `0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%), 0 3px 1px -2px rgb(0 0 0 / 20%)`;
   }
 
@@ -440,7 +438,7 @@ export class AonNotification extends AonElement {
   }
 
   async listTaskHolder(){
-    if(this.TASK_HOLDERS.length<= 0){
+    if(this.TASK_HOLDERS.length <= 0){
       let result = await getTastHolders().catch(e=>null);
       if(result) this.TASK_HOLDERS = result.map(r=>({name:r.name,value:r.id}));
     }

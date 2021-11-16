@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, MSG } from "../../environments/environments.js";
-import { MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
-import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask} from "../../services/taskService.js";
+import { APP_PARAMS_REQUEST, MESSENGER_IDS, MESSENGER_VIEWS, TASK_SOURCE, TASK_STATUS, WORKFLOW_TYPES} from "./MessengerEnums.js";
+import { saveTask, getTaskWorkflow, saveTaskWorkflow, saveTaskAttach, deleteTask, getTaskAppParams} from "../../services/taskService.js";
 import {getWorkgroups} from '../../services/workgroupService.js';
 import { Task } from "../../models/task/Task.js";
 import { buildDesktop } from "./shared/MessengerChat.js";
@@ -12,12 +12,15 @@ import { getFormVacationJson } from "./forms/vacation.js";
 import { fillChat } from "./shared/fill.js";
 import { getFormMovJson } from "./forms/mov-ss.js";
 import { getFormTimeJson } from "./forms/time-control.js";
+import { getOfficeProjects } from "../../services/projectService.js";
 
 export class AonMessengerChat extends AonElement {
   task;
   _data;
   TOOLBAR;
+  PROJECTS;
   WORKGROUPS;
+  APP_PARAMS;
   static get observedAttributes() {
     return [CONSTANT.DATA];
   }
@@ -63,7 +66,9 @@ export class AonMessengerChat extends AonElement {
     this.TOOLBAR = this.id+"Toolbar";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
+    this.PROJECTS = [];
     this.WORKGROUPS = [];
+    this.APP_PARAMS = [];
     this.deleteToolbar();
     this.setTask();
   }
@@ -86,6 +91,7 @@ export class AonMessengerChat extends AonElement {
     this.paintView();
     //FILL CHATS WORKFLOW
     if (this.task.id) this.getTaskWorkflow();
+    this.getAppParams();
   }
 
   paintView() {
@@ -195,7 +201,7 @@ export class AonMessengerChat extends AonElement {
   async save() {
     this.applicationEl.startLoading();
     this.buildTaskWorkflow();
-
+    this.buildWgAndTh();
     // let btnInternal = this.getElement(MESSENGER_IDS.EXTERNAL_TASK);
     // if(btnInternal && btnInternal.isChecked() && !this.task.project.id){
     //   this.showError({message:"Proyecto requerido", type:CONSTANT.ERROR});
@@ -247,6 +253,23 @@ export class AonMessengerChat extends AonElement {
       console.log(error);
       this.showError(error);
     }
+  }
+
+  async getAppParams(){
+    let params = [];
+    let newResp=[];
+    if(!this.APP_PARAMS.length){
+      for (let name in APP_PARAMS_REQUEST) 
+        params.push(name);
+
+      let resp = await getTaskAppParams({params});
+      resp.map(param => {
+        newResp[param.name] = param.value;
+      });
+      this.APP_PARAMS = newResp;
+    }
+
+    return this.APP_PARAMS;
   }
 
   async uploadFile({file, task}) {
@@ -310,6 +333,22 @@ export class AonMessengerChat extends AonElement {
       }
     }
     return json;
+  }
+
+  buildWgAndTh(){
+    if(!this.task.id && !this.task.isOtherDomain()){
+      if(!this.task.workgroup.id && this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_WORKGROUP])
+        this.task.setWorkgroup({id:this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_WORKGROUP]});
+
+      if(!this.task.task_holder.id && this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER]) 
+        this.task.setTaskHolder({id:this.APP_PARAMS[APP_PARAMS_REQUEST.APP_REQUESTS_INT_TASK_HOLDER]});
+    }
+  }
+  
+  async getOfficeProjects(){
+    if(!this.PROJECTS.length)
+      this.PROJECTS = await getOfficeProjects().catch(()=>[]);
+    return this.PROJECTS;
   }
   
   back(){

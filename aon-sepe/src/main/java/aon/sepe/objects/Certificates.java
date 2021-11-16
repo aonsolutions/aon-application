@@ -63,12 +63,12 @@ public class Certificates {
 		return surnameManager;
 	}
 
-	public String getLastSurname() {
-		return lastSurnameManager;
+	public Optional<String> getLastSurname() {
+		return Optional.ofNullable(lastSurnameManager);
 	}
 
-	public String getCargoManager() {
-		return cargoManager;
+	public Optional<String> getCargoManager() {
+		return Optional.ofNullable(cargoManager);
 	}
 
 	public String getTypeContract() {
@@ -95,12 +95,12 @@ public class Certificates {
 		return causeSuspension;
 	}
 
-	public String getOfficePublic() {
-		return officePublic;
+	public Optional<String> getOfficePublic() {
+		return Optional.ofNullable(officePublic);
 	}
 
-	public Integer getDedicationPer() {
-		return dedicationPer;
+	public Optional<Integer> getDedicationPer() {
+		return Optional.ofNullable(dedicationPer);
 	}
 
 	public Date getfAEd() {

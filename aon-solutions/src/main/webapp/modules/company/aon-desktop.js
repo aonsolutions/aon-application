@@ -157,15 +157,15 @@ export class AonDesktop extends AonElement {
 				this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
 				offices.forEach(office => {
 					if(office.projects.length > 0) {
-						office.projects.forEach(item => {
+						office.projects.forEach((item,idx) => {
 							let p = new Project(item);
 							let h =  p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
 							let option = {
 								name: p.getType().getDescription() + (h ? ' - ' + h : '') ,
-								icon: 'support_agent',
+								icon: MATERIAL_ICONS.SUPPORT_AGENT,
 								fn: () => {}, 
 								actions: [{
-								  id: 'Contact',
+								  id: 'Contact'+idx,
 								  icon: 'chat',
 								  action: () => {
 									let aonMessengerChat = new AonMessenger();	
@@ -605,13 +605,13 @@ export class AonDesktop extends AonElement {
 				count:count.task_holder,
 				fn: () =>{
 					if(this.isBeta()){
-						getTaskHolder().then(th=>{
+						getTaskHolder().then(({id})=>{
 							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.task_holder = th.id;
+							aonMessenger._filter.task_holder = id;
 							this.rootPanel(aonMessenger);
 						});
 					} else {
-						this.development(MSG.REQUEST)
+						this.development(MSG.REQUEST);
 					}
 				}
 			});
@@ -621,9 +621,9 @@ export class AonDesktop extends AonElement {
 				count:count.sender,
 				fn: () =>{
 					if(this.isBeta())
-						getTaskHolder().then(th=>{
+						getTaskHolder().then(({id})=>{
 							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.sender = th.id;
+							aonMessenger._filter.sender = id;
 							this.rootPanel(aonMessenger);
 						});
 					else 

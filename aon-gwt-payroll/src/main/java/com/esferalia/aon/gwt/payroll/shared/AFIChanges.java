@@ -4,11 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.client.Window;
 
 @SuppressWarnings("serial")
 public class AFIChanges implements Serializable {
@@ -47,11 +48,11 @@ public class AFIChanges implements Serializable {
 	}
 	
 	//BEGIN AFI CHANGES CLASS
-	private Map<Date, ArrayList<AFIChange>> afiChanges;
+	private NavigableMap<Date, ArrayList<AFIChange>> afiChanges;
 	
 	public AFIChanges() {
 		super();
-		this.afiChanges = new TreeMap<Date, ArrayList<AFIChange>>();
+		this.afiChanges = new TreeMap<>();
 	}
 	
 	public Map<Date, ArrayList<AFIChange>> getAFIChanges() {
@@ -69,10 +70,12 @@ public class AFIChanges implements Serializable {
 	public void addAFIChange(Date date) {
 		ArrayList<AFIChange> afiChangesList = new ArrayList<>();
 		
-		AFIChange tc2 = new AFIChange("TC2", null);
-		AFIChange quoteGroup = new AFIChange("GRUPO_COTIZACION", null);
-		AFIChange ocupation = new AFIChange("OCUPACION", null);
-		AFIChange partialityCoef = new AFIChange("COEFICIENTE_PARCIALIDAD", null);
+		Entry<Date, ArrayList<AFIChange>> lastEntry = afiChanges.lastEntry();
+		
+		AFIChange tc2 = new AFIChange("TC2", getValueOfEntry(lastEntry.getValue(), "TC2"));
+		AFIChange quoteGroup = new AFIChange("GRUPO_COTIZACION", getValueOfEntry(lastEntry.getValue(), "GRUPO_COTIZACION"));
+		AFIChange ocupation = new AFIChange("OCUPACION", getValueOfEntry(lastEntry.getValue(), "OCUPACION"));
+		AFIChange partialityCoef = new AFIChange("COEFICIENTE_PARCIALIDAD", getValueOfEntry(lastEntry.getValue(), "COEFICIENTE_PARCIALIDAD"));
 		
 		afiChangesList.add(tc2);
 		afiChangesList.add(quoteGroup);
@@ -84,12 +87,17 @@ public class AFIChanges implements Serializable {
 		this.afiChanges.put(date, afiChangesList);
 	}
 	
+	private String getValueOfEntry(ArrayList<AFIChange> afiChangeValues, String key) {
+		for(AFIChange afiChange : afiChangeValues)
+			if(AonStringUtils.equalsIgnoreCase(key, afiChange.getName()))
+				return afiChange.getValue();
+		return null;
+	}
+
 	public void updateAFIChange(Date date, String name, String value) {
-		for(AFIChange afiChange : this.afiChanges.get(date)) {
-			if(afiChange.getName().equals(name)) {
+		for(AFIChange afiChange : this.afiChanges.get(date))
+			if(afiChange.getName().equals(name))
 				afiChange.setValue(value);
-			}
-		}
 	}
 
 	public void addAFIChangeByDate(Date date, String name, String value) {
@@ -111,13 +119,13 @@ public class AFIChanges implements Serializable {
 	}
 
 	public boolean hasChange(String type, String value) {
-		ArrayList<Date> datesList = new ArrayList<Date>();
+		ArrayList<Date> datesList = new ArrayList<>();
 		datesList.addAll(afiChanges.keySet());
 		
 		if(!datesList.isEmpty() && datesList.size() > 1) {
 			Date date = datesList.get(datesList.size() - 1);
 			for(AFIChange afiChange : afiChanges.get(date)) {
-				if(afiChange.getName().equals(type) && (null != afiChange.getValue() && afiChange.getValue() != value))
+				if(afiChange.getName().equals(type) && (null != afiChange.getValue() && !value.equals(afiChange.getValue())))
 					return true;
 			}		
 		}
@@ -125,7 +133,7 @@ public class AFIChanges implements Serializable {
 	}
 	
 	public String getChangeValue(String type) {
-		ArrayList<Date> datesList = new ArrayList<Date>();
+		ArrayList<Date> datesList = new ArrayList<>();
 		datesList.addAll(afiChanges.keySet());
 		
 		if(!datesList.isEmpty() && datesList.size() > 1) {
@@ -139,11 +147,9 @@ public class AFIChanges implements Serializable {
 	}
 	
 	public Date getChangeDate() {
-		ArrayList<Date> datesList = new ArrayList<Date>();
+		ArrayList<Date> datesList = new ArrayList<>();
 		datesList.addAll(afiChanges.keySet());
-		Date date = datesList.get(datesList.size() - 1);
-		return date;
+		return datesList.get(datesList.size() - 1);
 	}
-	
 		
 }

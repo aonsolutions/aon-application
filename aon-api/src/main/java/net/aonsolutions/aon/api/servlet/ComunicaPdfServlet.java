@@ -128,9 +128,9 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 		Certificate certificate = getCert(api, "SEPE");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String ipf = api.getParams().getString("ipf");
-		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
+		Date date = AonDateUtils.parse(api.getParams().getString("startDate"), FORMAT_DATE); 
 		
-		return Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, fecha, fecha);
+		return Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, date, date);
 
 	}
 	

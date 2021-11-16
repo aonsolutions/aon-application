@@ -59,15 +59,15 @@ const createDataForm = (form, aonMessengerChat) => {
         name:"time",
         id:"time",
         type:"time",
-        description:`Nueva Hora`,
+        description: `Nueva ${MSG.HOUR}`,
         value: data.time ?  data.time : ""
     });
     createDivGrid(form, time, {classes:[CSS.AON_COL_XS_6, CSS.AON_COL_MD_6]})
 
     if(!task.id) times.addEventListener(EVENT.CHANGE,({detail})=>{
         if(detail.date){
-            date.value = formatDateOrigin(detail.date);
-            time.value = setTime(detail.date);
+            date.value = AonDateUtils.formatDateOrigin(detail.date);
+            time.value = AonDateUtils.setTime(detail.date);
         }
     });
 

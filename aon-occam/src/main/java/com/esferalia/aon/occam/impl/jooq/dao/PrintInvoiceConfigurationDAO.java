@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
@@ -48,6 +49,22 @@ public class PrintInvoiceConfigurationDAO {
 			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_COMPANY.toString())))
 			.findFirst().orElse(new ApplicationParameter());
 		
+		ApplicationParameter recordData = AppParamDAO.getApplicationParameterStream(ctx, f -> 
+		f.getDomainProperty().eq(ctx.getDomainId())	
+		.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_RECORD_DATA.toString())))
+		.findFirst().orElse(new ApplicationParameter());
+		
+		ApplicationParameter contactData = AppParamDAO.getApplicationParameterStream(ctx, f -> 
+		f.getDomainProperty().eq(ctx.getDomainId())	
+		.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_CONTACT.toString())))
+		.findFirst().orElse(new ApplicationParameter());
+		
+		ApplicationParameter language = AppParamDAO.getApplicationParameterStream(ctx, f -> 
+		f.getDomainProperty().eq(ctx.getDomainId())	
+		.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_LANGUAGE.toString())))
+		.findFirst().orElse(new ApplicationParameter());
+	
+		
 		Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), withData)
 				.findFirst().orElse(new Attach());
 			
@@ -60,7 +77,10 @@ public class PrintInvoiceConfigurationDAO {
 				.setFooter(AonNumberUtils.toInteger(footer.getValue()))
 				.setLogo(logo.getValue() != null && (logo.getValue().equalsIgnoreCase("true") || logo.getValue().equals("1")))
 				.setCompany(company.getValue() != null && (company.getValue().equalsIgnoreCase("true") || company.getValue().equals("1")))
-				.setBackground(attach);
+				.setBackground(attach)
+				.setRecordData(recordData.getValue() != null && (recordData.getValue().equalsIgnoreCase("true") || recordData.getValue().equals("1")))
+				.setContactData(contactData.getValue() != null && (contactData.getValue().equalsIgnoreCase("true") || contactData.getValue().equals("1")))
+				.setLanguage(AonLanguage.safeValueOf(language.getValue()));
 		
 	}
 
@@ -69,11 +89,11 @@ public class PrintInvoiceConfigurationDAO {
 
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.INVOICE_PRINT_CONFIG_ADJUST.toString(),
-				pic.getAdjustImage().toString());
+				Boolean.toString(pic.getAdjustImage()));
 		
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.INVOICE_PRINT_CONFIG_DETAILED.toString(),
-				pic.isDetailed().toString());
+				Boolean.toString(pic.isDetailed()));
 		
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.INVOICE_PRINT_CONFIG_HEADER.toString(),
@@ -85,12 +105,24 @@ public class PrintInvoiceConfigurationDAO {
 		
 		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOICE_PRINT_CONFIG_LOGO.toString(),
-				pic.isLogo().toString());
+				Boolean.toString(pic.isLogo()));
 		
 		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOICE_PRINT_CONFIG_COMPANY.toString(),
-				pic.isCompany().toString());
+				Boolean.toString(pic.isCompany()));
 		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOICE_PRINT_CONFIG_RECORD_DATA.toString(),
+				Boolean.toString(pic.isRecordData()));
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOICE_PRINT_CONFIG_CONTACT.toString(),
+				Boolean.toString(pic.isContactData()));
+		
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOICE_PRINT_CONFIG_LANGUAGE.toString(),
+				pic.getLanguage().getLanguage());
 		
 		if(pic.getBackground() != null && pic.getBackground().getData() != null) {
 			Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), false)
