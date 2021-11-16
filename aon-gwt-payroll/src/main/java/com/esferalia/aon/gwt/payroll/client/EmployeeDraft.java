@@ -876,7 +876,8 @@ public abstract class EmployeeDraft extends Composite {
 				employee.partialityCoef.getValue(),
 				employeeDraftObject.getContractId(),
 				employeeDraftObject.getDomainId(),
-				employeeDraftObject.getWorkplaceId()
+				employeeDraftObject.getWorkplaceId(),
+				false
 				){
 
 					@Override
@@ -886,32 +887,32 @@ public abstract class EmployeeDraft extends Composite {
 
 					@Override
 					protected void onPartialityCoefContract(String partialityCoef, Date date) {
-						// Not use in this case}
+						// Not use in this case
 					}
 
 					@Override
 					protected void onOcupationContract(String ocupation, Date date) {
-						// Not use in this case}
+						// Not use in this case
 					}
 
 					@Override
 					protected void onQuoteContract(String quoteGroup, Date date) {
-						// Not use in this case}
+						// Not use in this case
 					}
 
 					@Override
 					protected void onChangeContract(String contract, Date date) {
-						// Not use in this case}
+						// Not use in this case
 					}
 
 					@Override
 					protected void onEndContract(String settleReason) {
-						// Not use in this case}
+						// Not use in this case
 					}
 
 					@Override
 					protected void onStartContract() {
-						// Not use in this case}
+						// Not use in this case
 					}
 		
 		};

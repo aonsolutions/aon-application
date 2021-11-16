@@ -29,6 +29,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -385,6 +386,10 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 					initLogicWindow();
 					initializeIdcMonthListBox();
 					initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
+					if(null == this.contrataEmployeeObject.getContractData().getEndDate())
+						getAFIEnd().getElement().getStyle().setDisplay(Display.NONE);
+					else
+						getAFIEnd().getElement().getStyle().clearDisplay();
 					success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
 				}, t -> {}
 		);
@@ -689,6 +694,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract SplitLayoutPanel getSplitLayoutPanel();
 	protected abstract AonToolbar getToolbar();
 	protected abstract AonToolbarButton getExportContract();
+	protected abstract MenuItem getAFIEnd();
 	protected abstract MinimizePanel getFootPanel();
 	protected abstract MonthListBox getIDCMonthListBox();
 	
