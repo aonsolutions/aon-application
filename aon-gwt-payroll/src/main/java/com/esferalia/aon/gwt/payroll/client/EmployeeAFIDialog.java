@@ -168,7 +168,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	// ------------------------------------------------- Constructor
 
 	protected EmployeeAFIDialog(Date startDate, Date endDate, String tc2, String quoteGroup, String ocupation,
-			Double partialityCoef, Integer contractId, Integer domainId, Integer workplaceId) {
+			Double partialityCoef, Integer contractId, Integer domainId, Integer workplaceId, boolean afiEnd) {
 
 		setCaption("Datos AFI");
 
@@ -190,6 +190,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		this.workplaceId = workplaceId;
 
 		checkStartEndContractAFI(startDate, endDate);
+		isBaja = afiEnd;
 
 		impl.getEmployeeAFIChanges(contractId, new AsyncCallback<AFIChanges>() {
 
