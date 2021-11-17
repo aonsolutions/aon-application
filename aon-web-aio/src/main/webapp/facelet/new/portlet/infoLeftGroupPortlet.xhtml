@@ -110,14 +110,13 @@
 			</aon:if>
 
 			
-			<!--
-			<aon:if test="#{timeControl.active and false }">
+			<aon:if test="#{timeControl.active}">
 				<ui:include src="/facelet/new/portlet/timeControlPortlet.xhtml" />
 			</aon:if>
-			-->
+
 		</aon:div>
 		
-		<aon:if test="#{!domainSwitcher.childDomain}">
+		<aon:if test="#{!domainSwitcher.childDomain or timeControl.active}">
 			<script type='text/javascript' >
 				showInfoGroup();
 			</script>

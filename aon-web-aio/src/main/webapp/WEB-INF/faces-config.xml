@@ -95,6 +95,15 @@
 		</managed-property>
 	</managed-bean>
 
+	<!--  **** TIMECONTROL CONTROLLER **** -->
+	<managed-bean>
+		<managed-bean-name>timeControl</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.aio.controller.TimeControlController
+		</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 
 	<navigation-rule>
