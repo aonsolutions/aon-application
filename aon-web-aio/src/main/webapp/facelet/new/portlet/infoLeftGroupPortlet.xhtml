@@ -100,12 +100,9 @@
 		onclick="javascript:hideInfoGroup()"/>	
 
 		<aon:div id="infoGroupDiv" style="display:none;  position:relative; top: -32px" >
-			<!--
-			<ui:include src="/facelet/new/portlet/summaryControlPortlet.xhtml" /> 
-			-->
-			
 
 			<aon:if test="#{!domainSwitcher.childDomain}">
+			<ui:include src="/facelet/new/portlet/summaryControlPortlet.xhtml" /> 
 				<ui:include src="/facelet/new/portlet/filterControlPortlet.xhtml" />
 			</aon:if>
 
