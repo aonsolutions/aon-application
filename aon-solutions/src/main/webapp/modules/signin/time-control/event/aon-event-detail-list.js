@@ -257,7 +257,7 @@ export class AonEventDetailList extends AonElement {
       if(auth && auth.phone){
         let color = "black";
         if(taskHolder.status && "in"===taskHolder.status) color = "green";
-        let aEl = this.createElement("a");
+        let aEl = this.createElement(TAG.A);
         aEl.href = `tel:+34${auth.phone}`;
         aEl.style.position = "absolute";
         aEl.style.top = "-1px";

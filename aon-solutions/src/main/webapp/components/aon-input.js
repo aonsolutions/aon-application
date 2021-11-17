@@ -405,6 +405,8 @@ export class AonInput extends AonElement {
     if (options.length === 0) return div;
 
     let ul = document.createElement(TAG.UL);
+    ul.classList.add(CSS.AON_UL);
+    ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
     ul.className = CSS.AON_INPUT_LIST_OPTIONS_UL;
     ul.setAttribute("for", this.ICON);
     for (let i = 0; i < options.length; i++) {

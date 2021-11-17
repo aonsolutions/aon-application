@@ -1,5 +1,5 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonInput } from './aon-input.js';
 
 export class AonSelect extends AonElement {
@@ -205,7 +205,8 @@ export class AonSelect extends AonElement {
     }
 
     let ul = this.createElement(TAG.UL);
-    ul.className = 'aonInputListOptionsUl';
+    ul.classList.add(CSS.AON_UL);
+    ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
     ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
     for (const option of options) {
       let li = this.createElement(TAG.LI);

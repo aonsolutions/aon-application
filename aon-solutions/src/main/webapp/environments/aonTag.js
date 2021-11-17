@@ -1,5 +1,5 @@
 // HTML
-
+export const A = 'a';
 export const DIV = 'div';
 export const IMG = 'img';
 export const I = 'i';
@@ -94,6 +94,9 @@ export const AON_WORKGROUP = 'aon-workgroup';
 
 export const AON_INVOICE = 'aon-invoice';
 export const AON_MOBILE_INVOICE = 'aon-mobile-invoice';
+export const AON_INVOICE_CONFIGURATION = 'aon-invoice-configuration';
+export const AON_INVOICE_COMMUNICATION = 'aon-invoice-communication';
+export const AON_INVOICE_PRINT = 'aon-invoice-print';
 
 // DEV DOC
 export const AON_API_DOC = 'aon-api-doc';

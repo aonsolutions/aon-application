@@ -405,7 +405,8 @@ export class AonApplication extends AonElement {
       if(!ul){
         ul = this.createElement(TAG.UL);
         ul.id =idUl;
-        ul.className = "aonClip";
+        ul.classList.add(CSS.AON_UL);
+        ul.classList.add(CSS.AON_CLIP);
         div.appendChild(ul);
       }
       options.forEach((option, i) => {
@@ -424,7 +425,8 @@ export class AonApplication extends AonElement {
 
   buildSidenavSubOptions(data, options) {
     let ul = this.createElement(TAG.UL);
-    ul.className = "aonClip";
+    ul.classList.add(CSS.AON_UL);
+    ul.classList.add(CSS.AON_CLIP);
     ul.style.marginLeft = '12px';
     options.forEach((option, i) => {
       this.addSidenavOptionsListValue(data, option, ul);

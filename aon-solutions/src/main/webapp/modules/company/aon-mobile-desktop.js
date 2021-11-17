@@ -1,5 +1,5 @@
 import {getCompanies, getDomainNotice, getUserNotice, getUser, getTimeControl, getCompanyHeaderInfo, getDomainUserRoles} from  '../../services/service.js';
-import { MSG, TAG } from '../../environments/environments.js';
+import { CSS, MSG, TAG } from '../../environments/environments.js';
 import {AonElement} from '../../components/AonElement';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { AonSign } from '../signin/aon-sign.js';
@@ -161,7 +161,8 @@ export class AonMobileDesktop extends AonElement {
 		div.appendChild(titleA);
 
 		let ul = this.createElement(TAG.UL);
-		ul.className = 'aonClip';
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_CLIP);
 		div.appendChild(ul);
 
 		if(this.getDur().isInvoice()){			

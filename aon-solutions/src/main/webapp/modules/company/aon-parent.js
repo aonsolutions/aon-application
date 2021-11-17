@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
-import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import '../../components/aon-application.js';
 import {AonSign} from '../signin/aon-sign.js';
 import './aon-desktop.js';
@@ -200,9 +200,10 @@ export class AonParent extends AonElement {
 		content.appendChild(div);
 		
 
-		let ul = this.createElement('ul');
+		let ul = this.createElement(TAG.UL);
 		ul.id = "UlCompanies";
-		ul.className = 'noScrollbar';
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.NO_SCROLLBAR);
 		ul.style.marginLeft = '20px';
 		ul.style.marginRight = '20px';
 		ul.style.height = 'calc(100vh - 104px)';

@@ -451,7 +451,7 @@ export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea
 });
 
 const iconComment = (icon_name) => {
-    const a = setStyles(document.createElement("a"),{
+    const a = setStyles(document.createElement(TAG.A),{
         boxShadow: "none",
         margin: "5px",
         marginTop: "auto",
