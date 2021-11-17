@@ -1,12 +1,14 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.checkit;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
@@ -251,7 +253,9 @@ public class CheckItModule extends MainEntryPoint {
 		panel.addStyleName(AON.CSS.aonMarginTop());
 		panel.addStyleName(AON.CSS.aonBlockCenter());
 		panel.addStyleName(AON.CSS.aonBorder());
-		panel.addStyleName(AON.CSS.aonPadding());
+		panel.addStyleName(AON.CSS.aonPaddingBottom());
+		panel.addStyleName(AON.CSS.aonPaddingTop());
+//		panel.addStyleName(AON.CSS.aonPadding());
 		Label linkedTitle = new Label("Cuentas vinculadas");
 		linkedTitle.addStyleName(AON.CSS.aonTextLeft());
 		linkedTitle.addStyleName(AON.CSS.aonFontMedium());
@@ -294,7 +298,9 @@ public class CheckItModule extends MainEntryPoint {
 			panel.addStyleName(AON.CSS.aonWidthAlmostAll());
 			panel.addStyleName(AON.CSS.aonMarginTop());
 			panel.addStyleName(AON.CSS.aonBlockCenter());
-			panel.addStyleName(AON.CSS.aonPadding());
+//			panel.addStyleName(AON.CSS.aonPadding());
+			panel.addStyleName(AON.CSS.aonPaddingBottom());
+			panel.addStyleName(AON.CSS.aonPaddingTop());
 			
 			Label accumLabel = new Label("Acumulados ");
 			accumLabel.setStyleName(AON.CSS.aonTableLabel());
@@ -354,7 +360,8 @@ public class CheckItModule extends MainEntryPoint {
 		panel.addStyleName(AON.CSS.aonWidthAlmostAll());
 		panel.addStyleName(AON.CSS.aonMarginTop());
 		panel.addStyleName(AON.CSS.aonBlockCenter());
-		panel.addStyleName(AON.CSS.aonPadding());
+		panel.addStyleName(AON.CSS.aonPaddingBottom());
+		panel.addStyleName(AON.CSS.aonPaddingTop());
 		if (opt.getConfiguration().getCheItBanks() != null && !opt.getConfiguration().getCheckItUnlinkedBanks().isEmpty()) {
 			
 			Label unlinkedTitle = new Label("Cuentas no vinculadas");
@@ -503,10 +510,30 @@ public class CheckItModule extends MainEntryPoint {
 				FlowPanel panel = new FlowPanel();
 				panel.getElement().getStyle().setProperty("minWidth", "230px");
 				
-				CustomDialog dialog = new CustomDialog();
-				dialog.setAutoHideEnabled(true);
+				FlowPanel movFlow = null;
+				CustomDialog dialog = null;
 				
-				dialog.setCaption("MOVIMIENTOS PENDIENTES");
+				if (isMobile()) {
+					AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack()); 
+					toolbar.setTitle("MOVIMIENTOS");
+					toolbar.add(back);
+					centerPanel.clear();
+					back.addClickHandler(h -> {
+						toolbar.remove(back);
+						centerPanel.clear();
+						loadModule(opt, true);
+					});
+					
+					
+					movFlow = new FlowPanel();
+					centerPanel.add(movFlow);
+				} else {					
+					dialog = new CustomDialog();
+					dialog.setAutoHideEnabled(true);
+					
+					dialog.setCaption("MOVIMIENTOS PENDIENTES");
+				}
+				
 				
 				HorizontalPanel closeImport = new HorizontalPanel();
 				closeImport.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -521,6 +548,7 @@ public class CheckItModule extends MainEntryPoint {
 				Button importBtn = new Button("Importar");
 				importBtn.setStyleName(AON.CSS.aonMarginLeft());
 				
+				CustomDialog dial = dialog;
 				importBtn.addClickHandler(e ->
 					CHECKIT_SERVICE.insertTransactions(
 							opt.getDomainName()
@@ -545,7 +573,8 @@ public class CheckItModule extends MainEntryPoint {
 												, areLogs);
 										checkItBankAccount.setPending(Collections.emptyList());
 									}
-									dialog.hide();
+									if (!isMobile())
+										dial.hide();
 								}
 								
 								@Override
@@ -554,7 +583,8 @@ public class CheckItModule extends MainEntryPoint {
 									errLabel.setStyleName(AON.CSS.aonColorRed());
 									sessionLog.add(errLabel);
 									openFootPanel();
-									dialog.hide();
+									if (!isMobile())
+										dial.hide();
 								}	
 						}));
 				
@@ -564,17 +594,26 @@ public class CheckItModule extends MainEntryPoint {
 					closeImport.add(importBtn);
 				
 				FlowPanel movementsFlow = new FlowPanel();
-				movementsFlow.setWidth("90%");
+				movementsFlow.setWidth(isMobile() ? "100%" : "90%");
 				movementsFlow.setStyleName(AON.CSS.aonBlockCenter());
+				
+				FlowPanel topInfo = new FlowPanel();
+				topInfo.setWidth("100%");
+				
+				Image logoImg = new Image(checkItBankAccount.getLogo());
+				logoImg.setHeight("40px");
+				logoImg.addStyleName(AON.AON_CSS.aonDisplayBlock());
+				logoImg.addStyleName(AON.CSS.aonBlockCenter());
+				Label ibanLbl = new Label(checkItBankAccount.getCcc());
+				ibanLbl.addStyleName(AON.CSS.aonTextCenter());
+				topInfo.add(logoImg);
+				topInfo.add(ibanLbl);
+				topInfo.addStyleName(AON.CSS.aonMarginBottom());
+				
+				movementsFlow.add(topInfo);
+				
 				if (checkItBankAccount.getPending() != null && !checkItBankAccount.getPending().isEmpty()) {
-					int i = 1;
-					for (BankStatement bankStatement : checkItBankAccount.getPending()) {
-						FlexTable tag = getPendingMovementTag(bankStatement);
-						if (i++%2!=0)
-							tag.setStyleName(AON.CSS.aonBackgroundLigthGray());
-						tag.setWidth("100%");
-						movementsFlow.add(tag);
-					}
+					movementsFlow.add(getMovements(checkItBankAccount));
 				} else {
 					Label noMovLbl = new Label("No hay movimientos pendientes");
 					noMovLbl.setWidth("100%");
@@ -583,27 +622,36 @@ public class CheckItModule extends MainEntryPoint {
 						
 				}
 				ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
-				movementsPanel.getElement().getStyle().setProperty("minWidth", "700px");
-				movementsPanel.addStyleName(AON.CSS.aonMarginTop());
-				movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
+				if (isMobile()) {
+					movementsPanel.setWidth("100%");
+				} else {					
+					movementsPanel.getElement().getStyle().setProperty("minWidth", "700px");
+					movementsPanel.addStyleName(AON.CSS.aonMarginTop());
+					movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
+				}
 				panel.add(movementsPanel);
-				panel.add(closeImport);
-				dialog.add(panel);
-				dialog.center();
-				dialog.show();
+				if (isMobile()) {
+					movFlow.add(panel);
+					centerPanel.getElement().getStyle().setPadding(5, Unit.PX);
+				} else {					
+					panel.add(closeImport);
+					dialog.add(panel);
+					dialog.center();
+					dialog.show();
+				}
 			};
 			
 			
 			
 			
-			if (!isMobile())
-				body.addDomHandler(clickHandler, ClickEvent.getType());
+//			if (!isMobile())
+			body.addDomHandler(clickHandler, ClickEvent.getType());
 //			title.addDomHandler(clickHandler, ClickEvent.getType());
 			
 			bottomTable.addStyleName(AON.CSS.aonBlockCenter());
 			
 			Widget msgWidget = null;
-			if (pendingMovements > 0) {
+			if (!isMobile() && pendingMovements > 0) {
 				
 				String singPlur = pendingMovements != 1 ? " nuevos movimientos" : " nuevo movimiento";
 				
@@ -621,7 +669,7 @@ public class CheckItModule extends MainEntryPoint {
 				movText.addStyleName(AON.CSS.aonColorGreen());
 				msgWidget = movText;
 //				bottomTable.setWidget(0, 0, movText);
-			} else {
+			} else if (!isMobile()) {
 				Label noMovLbl = new Label("No hay movimientos pendientes");
 				msgWidget = noMovLbl;
 				
@@ -1713,20 +1761,59 @@ public class CheckItModule extends MainEntryPoint {
 		centerLayoutPanel.animate(500);
 	}
 	
-	private FlexTable getPendingMovementTag(BankStatement bankStatement) {
-		DateTimeFormat dtf = DateTimeFormat.getFormat("EEE d MMM");
+	
+	private FlexTable getMovements(CheckItBankAccount checkItBankAccount) {
+		DateTimeFormat dtf = DateTimeFormat.getFormat("d MMM | EEEE");
+		
+		FlexTable tab = new FlexTable();
+		
+		List<BankStatement> statements = isMobile() ? checkItBankAccount.getAllMovements() : checkItBankAccount.getPending();
+		Stream<String> dates = statements.stream().map(pm -> pm != null ? dtf.format(pm.getOperationDate()).toUpperCase() : "").distinct()
+				.sorted(new Comparator<String>() {
+
+					@Override
+					public int compare(String o1, String o2) {
+						if (o1 == null || o1.isEmpty() || o2 == null || o2.isEmpty())
+							return -1;
+						Date d1 = dtf.parse(o1);
+						Date d2 = dtf.parse(o2);
+						return d2.compareTo(d1);
+					}
+					
+		});
+		
+		dates.forEach(dte -> {
+			int nextRow = tab.getRowCount();
+			Label dateLabel = new Label(dte);
+			dateLabel.addStyleName(AON.CSS.aonFontMedium());
+			dateLabel.addStyleName(AON.CSS.aonBold());
+			dateLabel.getElement().getStyle().setColor("#002469");
+			dateLabel.setWidth("100%");
+			dateLabel.getElement().getStyle().setMarginTop(12, Unit.PX);
+			dateLabel.getElement().getStyle().setMarginBottom(8, Unit.PX);
+			tab.setWidget(nextRow, 0, dateLabel);
+			
+			int[] index = {0};
+			
+			statements.stream()
+			.filter(pen -> dte.equals(pen.getOperationDate() != null ? dtf.format(pen.getOperationDate()).toUpperCase() : ""))
+			.forEach(mov -> getPendingMovementTag(tab, mov, index[0]++ % 2 == 0));
+		});
+		
+//		for (BankStatement bankStatement : pending) {
+//			getPendingMovementTag(tab, bankStatement);
+//		}		
+		tab.setWidth("100%");
+		tab.getColumnFormatter().setWidth(0, "70%");
+		tab.getColumnFormatter().setWidth(1, "30%");
+		return tab;
+	}
+	
+	private void getPendingMovementTag(FlexTable table, BankStatement bankStatement, boolean gray) {
 		Date operationDate = bankStatement.getOperationDate();
 		
 		String description = bankStatement.getDescription();
 		Double amount = !bankStatement.isPayment() ? bankStatement.getAmount() : bankStatement.getAmount() * (-1);
-		
-		FlexTable tag = new FlexTable();
-		
-		String dateString = dtf.format(operationDate);
-		dateString = dateString != null ? dateString.toUpperCase() : "";
-		Label dateLabel = new Label(dateString);
-		dateLabel.setStyleName(AON.CSS.aonFontLarger());
-		dateLabel.setWidth("100%");
 		
 		Label amountLabel = new Label(AON.FMT.format(amount) + " " + EURO);
 		amountLabel.setStyleName(AON.CSS.aonFontMedium());
@@ -1740,15 +1827,13 @@ public class CheckItModule extends MainEntryPoint {
 		descriptionLabel.setStyleName(AON.CSS.aonFontLarger());
 		descriptionLabel.setWidth("100%");
 		
-		tag.getColumnFormatter().setWidth(0, "18%");
-		tag.getColumnFormatter().setWidth(1, "60%");
-		tag.getColumnFormatter().setWidth(2, "22%");
+		int nextRow = table.getRowCount();
 		
-		tag.setWidget(0, 0, dateLabel);
-		tag.setWidget(0, 1, descriptionLabel);
-		tag.setWidget(0, 2, amountLabel);
-			
-		return tag;
+		if (gray)
+			table.getRowFormatter().addStyleName(nextRow, AON.CSS.aonBackgroundLigthGray());
+		table.setWidget(nextRow, 0, descriptionLabel);
+		table.setWidget(nextRow, 1, amountLabel);
+		table.getElement().setAttribute("cellSpacing", "0");
 	}
 	
 	private String formatIban(String iban) {

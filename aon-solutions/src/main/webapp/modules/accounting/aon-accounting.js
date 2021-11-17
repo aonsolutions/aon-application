@@ -73,7 +73,6 @@ export class AonAccounting extends AonElement {
 		let options = [{
 			id: 'PyG',
 			name: 'Pérdidas y Ganancias',
-// <<<<<<< HEAD
 			icon: MATERIAL_ICONS.BAR_CHART,
 			fn: () => {
 				application.removeSidenavById("Opciones");
@@ -88,10 +87,6 @@ export class AonAccounting extends AonElement {
 				application.removeSidenavById("Opciones");
 				GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
 			}
-// =======
-// 			icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
-// 			fn: () => this.aonGraphicsTrialView ()
-// >>>>>>> origin/master
 		}];
 		if(this.dur.isBank())
 			options.push({
