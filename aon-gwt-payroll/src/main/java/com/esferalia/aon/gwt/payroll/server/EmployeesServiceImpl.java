@@ -2877,32 +2877,66 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		PreparedStatement stmt = null;
 
 		try {
-			String startCol = "START";
-			String endCol = "END";
+			String yearCol = "YEAR";
+			String monthCol = "MONTH";
 
-			String sql = "SELECT" + " MIN(" + CONTRACT + "." + ContractColumns.START_DATE + ") " + startCol
-					+ ", MAX(IFNULL(" + CONTRACT + "." + ContractColumns.END_DATE + ",CURDATE())) " + endCol + " FROM "
-					+ WORKPLACE + ", " + CONTRACT + " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = "
-					+ CONTRACT + "." + ContractColumns.WORKPLACE + " AND " + WORKPLACE + "." + WorkplaceColumns.ID
-					+ " = ?";
+			// We asume that one enterprise one domain. This way SELECT it's
+			// more clear.
+			String sql = "SELECT" 
+					+ " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol 
+					+ ", YEAR(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol 
+					+ " FROM " + WORKPLACE + ", " + SALARY
+					+ " WHERE " + WORKPLACE + "." + WorkplaceColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN 
+					+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal()
+					+ " GROUP BY 1, 2" 
+					+ " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, workplaceId);
 			rs = stmt.executeQuery();
 
-			if (rs.next() && rs.getDate(startCol) != null) {
-				return getWorkplaceCosts(workplaceId, rs.getDate(startCol), rs.getDate(endCol));
-			}
+			return getWorkplaceCosts(rs, workplaceId, yearCol, monthCol);
 
-			return Collections.emptyList();
 		} finally {
 			if (rs != null) {
 				rs.close();
 			}
 			if (stmt != null) {
-				stmt.close();
+				rs.close();
 			}
 		}
+		
+//		ResultSet rs = null;
+//		PreparedStatement stmt = null;
+//
+//		try {
+//			String startCol = "START";
+//			String endCol = "END";
+//
+//			String sql = "SELECT" + " MIN(" + CONTRACT + "." + ContractColumns.START_DATE + ") " + startCol
+//					+ ", MAX(IFNULL(" + CONTRACT + "." + ContractColumns.END_DATE + ",CURDATE())) " + endCol + " FROM "
+//					+ WORKPLACE + ", " + CONTRACT + " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = "
+//					+ CONTRACT + "." + ContractColumns.WORKPLACE + " AND " + WORKPLACE + "." + WorkplaceColumns.ID
+//					+ " = ?";
+//
+//			stmt = connection.prepareStatement(sql);
+//			stmt.setInt(1, workplaceId);
+//			rs = stmt.executeQuery();
+//
+//			if (rs.next() && rs.getDate(startCol) != null) {
+//				return getWorkplaceCosts(workplaceId, rs.getDate(startCol), rs.getDate(endCol));
+//			}
+//
+//			return Collections.emptyList();
+//		} finally {
+//			if (rs != null) {
+//				rs.close();
+//			}
+//			if (stmt != null) {
+//				stmt.close();
+//			}
+//		}
 	}
 
 	private static List<Cost> getSiteWorkplaceCosts(Connection connection, Integer workplaceId) throws SQLException {
@@ -2982,7 +3016,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 
 		return costs;
-
 	}
 
 	private static List<Cost> getWorkplaceCosts(Integer workplaceId, Date startDate, Date endDate) throws SQLException {
