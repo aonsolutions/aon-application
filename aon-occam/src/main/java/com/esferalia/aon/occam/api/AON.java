@@ -148,6 +148,7 @@ import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
 import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -368,6 +369,11 @@ public class AON {
 	public static AonConfiguration getConfiguration(Occam occam,Date atDate) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getConfiguration(ctx, atDate);
+		}
+	}
+	public static AonConfiguration getConfiguration(Occam occam, ConfigParams params) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getCommon().getConfiguration(ctx, params);
 		}
 	}
 

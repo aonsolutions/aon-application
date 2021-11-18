@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.server.fiscal.mod303;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -19,7 +18,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
+import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.Mod303Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -38,8 +41,9 @@ public class Mod303ValidatePrintAEAT extends HttpServlet {
 
 			@Override
 			protected boolean accept(Mod303 mod303) {
-				return mod303.getYear() > 2021
-					|| (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester());
+				return mod303.getYear() == 2021
+					|| (mod303.getYear() == 2021 && mod303.getPeriod().isLastSemester())
+					;
 			}
 
 			@Override
@@ -54,37 +58,11 @@ public class Mod303ValidatePrintAEAT extends HttpServlet {
 				Mod303Writer.fillWriter(mod303, writer);
 				return MessageFormat.format("MOD=303&EJF={0}&FIC={1}&IDI=ES"
 						,AonNumberUtils.toString( mod303.getYear())
-						,Mod303AeatUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1));
+						,ModelAdmonUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1));
 			}
 			
 		},
-		URL_2021_1_SEMESTER{
-			@Override
-			protected boolean accept(Mod303 mod303) {
-				return mod303.getYear() == 2021 && mod303.getPeriod().isFirstSemester();
-			}
-
-			@Override
-			protected String getUrl() {
-				return "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
-			}
-
-			@Override
-			protected String getUrlParameters(Mod303 mod303) throws IOException {
-				ByteArrayOutputStream output = new ByteArrayOutputStream();
-				OutputStreamWriter wr = new OutputStreamWriter(output, StandardCharsets.ISO_8859_1);
-				PrintWriter writer = new PrintWriter(wr);
-				Mod303Writer.fillWriter(mod303, writer);
-				return "HID=IE83030A"
-					+"&IDI=ES"
-					+"&LEV=000000000000"
-					+"&FIC=" + Mod303AeatUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1)
-					+"&RUT="
-					+"&FIN="
-					+"&EJF=" + mod303.getYear()
-					+"&MOD=303";
-			}
-		};
+		;
 		private static AeatUrl getAeatUrl(Mod303 mod303) {
 			for (AeatUrl aeatUrl : AeatUrl.values()) {
 				if (aeatUrl.accept(mod303)) {
@@ -103,7 +81,15 @@ public class Mod303ValidatePrintAEAT extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			Mod303 mod303 = Mod303AeatUtils.getMod303(req);
+			AEATParams aeatParams = ModelAdmonUtils.getAEATParams(req);
+			Occam occam = new Occam()
+					.setDomainName(aeatParams.getDomainName())
+					.setDomain(aeatParams.getDomainId())
+					.setUser(aeatParams.getUser());
+			Mod303 mod303 = MODEL303.getMod303(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			if (mod303 == null) {
+				throw new AonCoreException("[INT] Modelo no encontrado");
+			}
 			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod303);
 			System.out.println(aeatURL.getUrl());
 			HttpRequest request = HttpRequest.newBuilder()
@@ -118,15 +104,15 @@ public class Mod303ValidatePrintAEAT extends HttpServlet {
 	            .build();
 			HttpResponse<byte[]> response = httpClient
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
-			String headerValue = Mod303AeatUtils.getContentTypeHeader( response );  
+			String headerValue = ModelAdmonUtils.getContentTypeHeader( response );  
 			boolean pdfContentType = MimeType.PDF.getName().equals(headerValue); 
-			Mod303AeatUtils.giveBase64Back(resp, response.body(), (pdfContentType?MimeType.PDF:MimeType.HTML));
+			ModelAdmonUtils.giveBase64Back(resp, response.body(), (pdfContentType?MimeType.PDF:MimeType.HTML));
 		} catch (InterruptedException e) {	
 			LOGGER.log(Level.WARNING,"Thread Interrupted! [{0}] ", e.getMessage());
 		    // Restore interrupted state...
 		    Thread.currentThread().interrupt();
 		} catch (IOException | AonCoreException e ) {
-			Mod303AeatUtils.giveExceptionBack(resp,e.getMessage());
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}
 

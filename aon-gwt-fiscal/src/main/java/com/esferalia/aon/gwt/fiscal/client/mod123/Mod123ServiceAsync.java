@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod123;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -10,21 +11,18 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface Mod123ServiceAsync {
 	
-	void getMod123(String domainName, String userLogin, int domain,int id,AsyncCallback<Mod123> callback);
-	void getMod123s(String domainName, String userLogin, int domain,AsyncCallback<LinkedList<Mod123>> callback);
-	void calculate(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> callback);
-	void delete(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Void> callback);
-	void save(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
-	void saveComments(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
-	void initializeForFinish(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
-	void markAsFinished(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
-	void markAsSent(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
-	void markAsCustomerCheck(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
-	void markAsPending(String domainName, String userLogin, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
-	void initialize(String domainName, String userLogin, int domain, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
-	void create(String domainName, String userLogin, int domain, Mod123 mod123, AsyncCallback<Mod123> callback);
-	void getInfo(String domainName, String userLogin, int domain, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
-	void mathExpression(String expression, AsyncCallback<Double> callback);
-	void validationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback);
-	void presentationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback);
+	void getMod123(Occam occam,int id,AsyncCallback<Mod123> callback);
+	void getMod123s(Occam occam,AsyncCallback<LinkedList<Mod123>> callback);
+	void calculate(Occam occam, Mod123 mod123,AsyncCallback<Mod123> callback);
+	void delete(Occam occam, Mod123 mod123,AsyncCallback<Void> callback);
+	void save(Occam occam, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
+	void saveComments(Occam occam, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
+	void initializeForFinish(Occam occam, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
+	void markAsFinished(Occam occam, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
+	void markAsSent(Occam occam, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
+	void markAsCustomerCheck(Occam occam, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
+	void markAsPending(Occam occam, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
+	void initialize(Occam occam, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
+	void create(Occam occam, Mod123 mod123, AsyncCallback<Mod123> callback);
+	void getInfo(Occam occam, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 }

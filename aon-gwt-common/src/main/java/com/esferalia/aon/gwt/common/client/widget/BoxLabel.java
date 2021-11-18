@@ -4,7 +4,11 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.Label;
-
+/**
+ * @author ecastellano Use AonBoxLabel
+ *
+ */
+@Deprecated
 public class BoxLabel extends Label {
 	
 	private static final int DEFAULT_TEXT_SIZE = 3;

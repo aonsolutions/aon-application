@@ -80,7 +80,7 @@ public class Mod131MVELContext implements Map<String, Object> {
 				return ret;
 			}
 		}
-		return new Double(0);
+		return Double.valueOf(0.0);
 	}
 	public Object evaluateExpression(String key,String expression) {
 		return mvelEval(key,expression);

@@ -20,7 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL130;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -40,8 +41,11 @@ public class Mod130PrintAEAT extends ModPrintAEAT {
 		try {
 			JSONObject json = getRequestJSON(req);
 			init(json);
-
-			Mod130 mod130 = FISCAL.getMod130(domainName, domainId, user,id);
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(user);
+			Mod130 mod130 = MODEL130.getMod130(occam,id);
 			Boolean isI = FiscalModelDeclarationType.DEPOSIT.equals(mod130.getDeclarationType());
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -138,8 +142,12 @@ public class Mod130PrintAEAT extends ModPrintAEAT {
 
 	@Override
 	protected void updateMod(JSONObject json) throws JSONException {
-		Mod130 mod130 = FISCAL.getMod130(getDomainName(), getDomainId(), getUser(), getId());
+		Occam occam = new Occam()
+			.setDomainName(getDomainName())
+			.setDomain(getDomainId())
+			.setUser(getUser());
+		Mod130 mod130 = MODEL130.getMod130(occam, getId());
 		mod130.setNumber(json.getString("JUS"));
-		FISCAL.markAsSent(getDomainName(), getUser(), mod130);
+		MODEL130.markAsSent(occam, mod130);
 	}
 }

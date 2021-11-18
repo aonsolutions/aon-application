@@ -13,6 +13,8 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
@@ -36,7 +38,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain,String user, Date atDate) {
 		return AON.getConfiguration(currentDomainName, currentDomain,user, atDate);
 	}
-
+	@Override
+	public AonConfiguration getAonConfiguration(Occam occam, ConfigParams params) throws AonCoreException {
+		return AON.getConfiguration(occam, params);
+	}
 	// **************************************************
 	// *************************************** [SECURITY]
 	// **************************************************

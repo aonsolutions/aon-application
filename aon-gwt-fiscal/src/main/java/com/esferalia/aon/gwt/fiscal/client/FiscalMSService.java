@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.client;
 
 import java.util.LinkedList;
 
-import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
@@ -21,8 +20,8 @@ public interface FiscalMSService extends RemoteService {
 	// -------------------------------------------------------------- ACTIVITIES
 	LinkedList<Activity> getActivities(int activityGroup) throws AonCoreException;
 	// --------------------------------------------------------------- GWT API INFO
-	AonData getAonData(String domainName, Integer domainId, String user);
-	AonData getAonDataToken(String domainName, Integer domainId, String token);
+//	AonData getAonData(String domainName, Integer domainId, String user);
+//	AonData getAonDataToken(String domainName, Integer domainId, String token);
 //	void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model);
 //	Integer presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id);
 	

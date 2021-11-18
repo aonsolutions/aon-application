@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -9,7 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
@@ -33,17 +37,10 @@ public class ConfigurationDAO {
 	private ConfigurationDAO() {
 	}
 	
-	/**
-	 * @deprecated Use getConfiguration(final AONContext ctx, ConfigParams params) and ask want you want 
-	 */
-	@Deprecated
 	public static AonConfiguration getConfiguration(final AONContext ctx) {
 		return getConfiguration(ctx, new Date());
 	}
-	/**
-	 * @deprecated Use getConfiguration(final AONContext ctx, ConfigParams params) and ask want you want 
-	 */
-	@Deprecated
+
 	public static AonConfiguration getConfiguration(final AONContext ctx, Date atDate) {
 		return getConfiguration(ctx, new ConfigParams().setAtDate(atDate).setBlocks(ConfigBlock.ALL) );
 	}
@@ -54,7 +51,7 @@ public class ConfigurationDAO {
 	public static AonConfiguration getAccountingConfiguration(AONContext ctx, Date atDate) {
 		return getConfiguration(ctx, new ConfigParams().setAtDate(atDate).setBlocks(ConfigBlock.ACCOUNTING) );
 	}
-
+	
 	public static AonConfiguration getConfiguration(final AONContext ctx, ConfigParams params) {
 		ctx.checkRead();
 		if (params == null) {
@@ -63,41 +60,51 @@ public class ConfigurationDAO {
 		if (params.getAtDate() == null) {
 			params.setAtDate(new Date());
 		}
+		
+		AonConfiguration conf = getBasicConfiguration(ctx,params);
+		
+		Integer operator = AON.getTaskHolder(conf.getDomain().getName(), conf.getDomain().getId(), conf.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(conf.getDomain().getId())
+				.and(f.getUserIdProperty().eq(conf.getUser().getId()))).getId();
+
+		
 		int defaultVatPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_VAT_PERCENT);
 		int defaultWithholdingPercent = AppParamDAO.fetchIntValue(ctx, AppParam.ACC_DEFAULT_RETENTION_PERCENT);
-		AonConfiguration conf = new AonConfiguration()
-				.setCompany(CompanyDAO.getCompany(ctx, ctx.getDomainId()))
-				.setUser(SecurityDAO.getUser(ctx))
-				.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
-				.setInvestAsset( CompanyDAO.getInvestAssets(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
-				.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, 
-						p -> {
-							Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
-							return (userScopes == null) 
-								? p.getDomainProperty().eq(ctx.getDomainId())
-									.and(p.getActiveProperty().eq( (byte) 1 ))
-								: p.getDomainProperty().eq(ctx.getDomainId())
-									.and(p.getActiveProperty().eq( (byte) 1 ))
-									.and(p.getScopeProperty().in( userScopes ));
-						}
-						))
-				.setVatTaxes( TaxDAO.getVatTaxs(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
-				.setGeozones( GeoZoneDAO.getStream(ctx, null).collect(Collectors.toCollection(LinkedList::new)))
-				.setAvailableScopes(SecurityDAO.getAvailableScopes (ctx))
-				.setPayMethods(PayMethodDAO.getOrderByNames(ctx))
-				.setPayMethodTypeDetails(PayMethodDAO.getPayMethodTypeDetails(ctx))
-				.setDefaultVatPercent(defaultVatPercent == 0
-					?null
-					:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultVatPercent)))
-				.setWithholdingTaxes( TaxDAO.getWithholdingTaxs(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
-				.setDefaultWithholdingPercent(defaultWithholdingPercent== 0
-					?null
-					:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultWithholdingPercent)))
-				.setDefaultInvoiceSeries(AppParamDAO.fetchValue(ctx, AppParam.ACC_DEFAULT_INVOICE_SERIES))
-				.setOperationsDeadline( AppParamDAO.fetchDateValue(ctx, AppParam.ACC_OPERATIONS_DEADLINE))
-				.setChildDomains(DomainDAO.getActiveChildDomains(ctx))
-				.setDefaultCreditor(getDefaultCreditor(ctx))
-				.setOCRActive(SecurityDAO.isOCRActive(ctx, ctx.getDomainId()))
+		
+		conf.setMd5(getMd5(conf.getUser().getLogin()+conf.getDomain().getName()))
+			.setUserOperator(operator)
+			.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setInvestAsset( CompanyDAO.getInvestAssets(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, 
+					p -> {
+						Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
+						return (userScopes == null) 
+							? p.getDomainProperty().eq(ctx.getDomainId())
+								.and(p.getActiveProperty().eq( (byte) 1 ))
+							: p.getDomainProperty().eq(ctx.getDomainId())
+								.and(p.getActiveProperty().eq( (byte) 1 ))
+								.and(p.getScopeProperty().in( userScopes ));
+					}
+					))
+			.setVatTaxes( TaxDAO.getVatTaxs(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setGeozones( GeoZoneDAO.getStream(ctx, null).collect(Collectors.toCollection(LinkedList::new)))
+			.setAvailableScopes(SecurityDAO.getAvailableScopes (ctx))
+			.setPayMethods(PayMethodDAO.getOrderByNames(ctx))
+			.setPayMethodTypeDetails(PayMethodDAO.getPayMethodTypeDetails(ctx))
+			.setDefaultVatPercent(defaultVatPercent == 0
+				?null
+				:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultVatPercent)))
+			.setWithholdingTaxes( TaxDAO.getWithholdingTaxs(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setDefaultWithholdingPercent(defaultWithholdingPercent== 0
+				?null
+				:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultWithholdingPercent)))
+			.setDefaultInvoiceSeries(AppParamDAO.fetchValue(ctx, AppParam.ACC_DEFAULT_INVOICE_SERIES))
+			.setOperationsDeadline( AppParamDAO.fetchDateValue(ctx, AppParam.ACC_OPERATIONS_DEADLINE))
+			.setChildDomains(DomainDAO.getActiveChildDomains(ctx))
+			.setDefaultCreditor(getDefaultCreditor(ctx))
+			.setOCRActive(SecurityDAO.isOCRActive(ctx, ctx.getDomainId()))
+			.setBetaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_BETA_ENABLED)))
+			.setAlphaEnabled(AonEnumUtils.getAonBoolean(AppParamDAO.fetchValue(ctx, AppParam.AON_ALPHA_ENABLED)))
 		;
 		if (params.hasAccounting() ) {
 			fillAccountingParameters(ctx, conf);
@@ -105,27 +112,41 @@ public class ConfigurationDAO {
 		if (params.hasFiscal() ) {
 			fillFiscalParameters(ctx, conf);
 		}
-		if (conf != null) {
-			SeriesDAO.getSeries(ctx, p -> p.getDomainProperty().in( SecurityDAO.getInheritanceDomainIds(ctx) )
-							.and(p.getActiveProperty().eq((byte) 1)  )
-							.and(p.getInvoiceProperty().eq((byte) 1)  
-								.or(p.getRectificationProperty().eq((byte) 1) )))
-			.forEach(series -> {
-				conf.addInvoiceSalesSeries(series.getCode());
-				if (series.isRectification()) {
-					conf.addInvoiceRectificationSalesSeries(series.getCode());
-				} 
-			});
-			if (conf.getCompany() != null && conf.getCompany().getId() != null) {
-				conf.getCompany().setMainAddress( RegistryOldDAO.getRAddressStream(ctx, 
-					p -> p.getRegistryProperty().eq(conf.getCompany().getId()))
-					.findFirst().orElse(null));
-			}
+
+		SeriesDAO.getSeries(ctx, p -> p.getDomainProperty().in( SecurityDAO.getInheritanceDomainIds(ctx) )
+						.and(p.getActiveProperty().eq((byte) 1)  )
+						.and(p.getInvoiceProperty().eq((byte) 1)  
+							.or(p.getRectificationProperty().eq((byte) 1) )))
+		.forEach(series -> {
+			conf.addInvoiceSalesSeries(series.getCode());
+			if (series.isRectification()) {
+				conf.addInvoiceRectificationSalesSeries(series.getCode());
+			} 
+		});
+		if (conf.getCompany() != null && conf.getCompany().getId() != null) {
+			conf.getCompany().setMainAddress( RegistryOldDAO.getRAddressStream(ctx, 
+				p -> p.getRegistryProperty().eq(conf.getCompany().getId()))
+				.findFirst().orElse(null));
 		}
 			
 		return conf;
 	}
 	
+	private static AonConfiguration getBasicConfiguration(AONContext ctx, ConfigParams params) {
+		AonConfiguration conf = new AonConfiguration()
+				.setDomain( DomainDAO.getDomain(ctx, ctx.getDomainId()) )
+				.setCompany(CompanyDAO.getCompany(ctx, ctx.getDomainId()))
+				;
+		if (params.isByToken()) {
+			conf.setUser(AON_SOLUTIONS.getUser(conf.getDomain(), params.getToken()))
+				.setAonSolutions(true);
+		} else {
+			conf.setUser(AON.getUser(conf.getDomain().getName(), conf.getDomain().getId(), ctx.getUser()))
+				.setAonSolutions(false);
+		}
+		return conf;
+	}
+
 	private static AccountingRegistry getDefaultCreditor(AONContext ctx) {
 		return AccountingRegistryDAO.getAccountingRegistries(ctx, f -> 
 				(f.getDocumentProperty().isNull().or(f.getDocumentProperty().eq(" ")).or(f.getDocumentProperty().eq("")))
@@ -186,6 +207,12 @@ public class ConfigurationDAO {
 			(ctx, config, value) -> config.fiscal().setMod303ByDifferenceDisabled( AonEnumUtils.getAonBoolean(value) ));
 		APM.put(AppParam.FS_CUSTOMER_CHECK_ENABLED, 
 			(ctx, config, value) -> config.fiscal().setCustomerCheckEnabled(AonEnumUtils.getAonBoolean(value) ));
+		APM.put(AppParam.FS_CERT_DOCUMENT, 
+				(ctx, config, value) -> config.fiscal().setCertificateDocument(value));
+		APM.put(AppParam.FS_CERT_NAME, 
+				(ctx, config, value) -> config.fiscal().setCertificateName(value));
+		APM.put(AppParam.FS_AEAT_TEST_ENV, 
+				(ctx, config, value) -> config.fiscal().setTestEnvironment(AonEnumUtils.getAonBoolean(value) ));
 	}
 
 	private static void fillParam( AONContext ctx, final AonConfiguration config, final ApplicationParameter ap) {
@@ -262,7 +289,35 @@ public class ConfigurationDAO {
 			.stream()
 			.map( new ApplicationParameterFiller() )
 			.forEach(param -> fillParam(ctx, config, param));
+		
+		if (!config.fiscal().isCustomerCheckEnabled() && config.getDomain().getParentId() != null) {
+			ctx.getDslContext()
+				.select()
+				.from(APP_PARAM)
+				.where(APP_PARAM.DOMAIN.equal(config.getDomain().getParentId()))
+				.and(APP_PARAM.NAME.eq(AppParam.FS_CUSTOMER_CHECK_ENABLED.toString()))
+				.and(APP_PARAM.VALUE.isNotNull())
+				.fetch()
+				.stream()
+				.map( new ApplicationParameterFiller() )
+				.forEach(param -> fillParam(ctx, config, param));
+		}
 	}
 	
-	
+	private static String getMd5(String str){
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+	    md.update(str.getBytes());
+	    byte byteData[] = md.digest();
+	    //convert the byte to hex format method 1
+        StringBuffer sb = new StringBuffer();
+	    for (int i = 0; i < byteData.length; i++) {
+	     	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+	    }       
+        return sb.toString();
+	}
 }

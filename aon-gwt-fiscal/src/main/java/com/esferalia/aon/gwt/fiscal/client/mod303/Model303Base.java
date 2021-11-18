@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import java.util.EnumMap;
-import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -22,6 +21,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303FinishDeclarationPopup.FinishDeclarationPopupCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303IdentificationData.IModel303IdentificationDataCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -31,11 +31,9 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -51,8 +49,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Model303Base extends DockLayoutPanel  {
 
-	protected static final String DOWNLOAD_FILE_ACTION = "/aon_gwt_fiscal/ms/Model303File";
+	protected static final String MODEL303_FILE = "/aon_gwt_fiscal/ms/Model303File";
 	private static final String MODEL303_PRINT = "/aon_gwt_fiscal/ms/Model303Print";
+
+	protected static final String WIDTH_150PX = "150px";
+	protected static final String WIDTH_140PX = "140px";
 
 	protected static final boolean ENABLED = true;
 	protected static final boolean DISABLED = false;
@@ -66,6 +67,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private EnumMap<Mod303Key,AonDoubleBox> fieldsMap;
 	private boolean dirty;
 	
+	protected FiscalModelAdmonPanel<Mod303, Model303ModuleOptions> admonPanel;
 	protected final AonToolbar toolbarPanel = new AonToolbar(); 
 	protected final AonToolbarButton newButton = new AonToolbarButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
 	protected final AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave());
@@ -78,7 +80,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
 	protected final AonToolbarButton commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
 	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
-	protected FormPanel diskForm = new FormPanel("_blank");
 	
 	private FlowPanel paymentContainer;
 	
@@ -90,6 +91,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final InlineLabel prorataLabel = new InlineLabel();
 	protected final Label statusLabel = new Label();
 	
+	protected FormPanel diskForm = new FormPanel("_blank");
 	protected Hidden mod303Hidden = new Hidden("mod303");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
@@ -116,10 +118,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	public Model303Callback getCallback() {
 		return callback;
 	}
-	protected Mod303 getMod303() {
+	protected Mod303 getModel() {
 		return mod303;
 	}
-	public void setMod303(Mod303 mod303) {
+	public void setModel(Mod303 mod303) {
 		this.mod303 = mod303;
 	}
 
@@ -141,7 +143,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
 		
-		resetButton.addClickHandler( event -> getCallback().onReset(getMod303()));
+		resetButton.addClickHandler( event -> getCallback().onReset(getModel()));
 		toolbarPanel.add(resetButton);		
 		
 		printButton.addClickHandler( event ->  print());
@@ -196,7 +198,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
 						getCallback().getOptions().getExternalCallback().onExit(mod303);
 					} else {
-						getCallback().onCancel();
+						getCallback().onCancel(mod303);
 					}
 				}
 				@Override
@@ -208,7 +210,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
 				getCallback().getOptions().getExternalCallback().onExit(mod303);
 			} else {
-				getCallback().onCancel();
+				getCallback().onCancel(mod303);
 			}
 		}
 	}
@@ -234,7 +236,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	}
 
 	protected void select( Mod303 mod303) {
-		setMod303(mod303);
+		setModel(mod303);
 		refreshToolbarState();
 		styleStatusLabel(mod303);
 	}
@@ -525,7 +527,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 						
 						@Override
 						public void onSuccess(String result) {
-							getCallback().showBreakdownPanel(result);
+							getCallback().showInfoPanel(result);
 						}
 					}
 				));
@@ -618,7 +620,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					@Override
 					public void onSuccess(Void result) {
 						deleteButton.setEnabled(true);
-						getCallback().onCancel();
+						getCallback().onRemove(mod303);
 					}
 
 					@Override
@@ -793,95 +795,95 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 	protected class Model303IdentificationDataCallback implements IModel303IdentificationDataCallback {
 
-		@Override public boolean isFinished() 		{ return getMod303().isFinished() || getMod303().isSent();}
+		@Override public boolean isFinished() 		{ return getModel().isFinished() || getModel().isSent();}
 		
-		@Override public String getDocument() 		{return getMod303().getDocument();			}
-		@Override public String getName() 			{return getMod303().getName(); 				}
-		@Override public String getSurname() 		{return getMod303().getSurname();			}
-		@Override public String getPhone() 			{return getMod303().getPhone();				}
-		@Override public String getStreetInitial() 	{return getMod303().getStreetInitial();		}
-		@Override public String getStreetName() 	{return getMod303().getStreetName();		}
-		@Override public String getStreetNumber() 	{return getMod303().getStreetNumber();		}
-		@Override public String getStreetStair() 	{return getMod303().getStreetStair();		}
-		@Override public String getStreetFloor() 	{return getMod303().getStreetFloor();		}
-		@Override public String getStreetDoor() 	{return getMod303().getStreetDoor();		}
-		@Override public String getTown() 			{return getMod303().getTown();				}
-		@Override public String getProvince() 		{return getMod303().getProvince();			}
-		@Override public String getZip() 			{return getMod303().getZip();				}
-		@Override public String getContactPerson() 	{return getMod303().getContactPerson();		}
-		@Override public String getContactPhone() 	{return getMod303().getContactPhone();		}
-		@Override public String getContactCellular(){return getMod303().getContactCellular();	}
-		@Override public String getContactEmail() 	{return getMod303().getContactEmail();		}
+		@Override public String getDocument() 		{return getModel().getDocument();			}
+		@Override public String getName() 			{return getModel().getName(); 				}
+		@Override public String getSurname() 		{return getModel().getSurname();			}
+		@Override public String getPhone() 			{return getModel().getPhone();				}
+		@Override public String getStreetInitial() 	{return getModel().getStreetInitial();		}
+		@Override public String getStreetName() 	{return getModel().getStreetName();		}
+		@Override public String getStreetNumber() 	{return getModel().getStreetNumber();		}
+		@Override public String getStreetStair() 	{return getModel().getStreetStair();		}
+		@Override public String getStreetFloor() 	{return getModel().getStreetFloor();		}
+		@Override public String getStreetDoor() 	{return getModel().getStreetDoor();		}
+		@Override public String getTown() 			{return getModel().getTown();				}
+		@Override public String getProvince() 		{return getModel().getProvince();			}
+		@Override public String getZip() 			{return getModel().getZip();				}
+		@Override public String getContactPerson() 	{return getModel().getContactPerson();		}
+		@Override public String getContactPhone() 	{return getModel().getContactPhone();		}
+		@Override public String getContactCellular(){return getModel().getContactCellular();	}
+		@Override public String getContactEmail() 	{return getModel().getContactEmail();		}
 	
 		@Override public void documentChanged(String value) {
-			getMod303().setDocument(value);
+			getModel().setDocument(value);
 			identificationLabelChanged();
 			markAsDirty();			
 		}
 		@Override public void nameChanged(String value) {
-			getMod303().setName(value);
+			getModel().setName(value);
 			identificationLabelChanged();
 			markAsDirty();			
 		}
 		@Override public void surnameChanged(String value) {
-			getMod303().setSurname(value);
+			getModel().setSurname(value);
 			identificationLabelChanged();
 			markAsDirty();			
 		}
 		@Override public void phoneChanged(String value) {
-			getMod303().setPhone(value);
+			getModel().setPhone(value);
 			markAsDirty();			
 		}
 		@Override public void streetInitialChanged(String value) {
-			getMod303().setStreetInitial(value);
+			getModel().setStreetInitial(value);
 			markAsDirty();			
 		}
 		@Override public void streetNameChanged(String value) {
-			getMod303().setStreetName(value);
+			getModel().setStreetName(value);
 			markAsDirty();			
 		}
 		@Override public void streetNumberChanged(String value) {
-			getMod303().setStreetNumber(value);
+			getModel().setStreetNumber(value);
 			markAsDirty();			
 		}
 		@Override public void streetStairChanged(String value) {
-			getMod303().setStreetStair(value);
+			getModel().setStreetStair(value);
 			markAsDirty();			
 		}
 		@Override public void streetFloorChanged(String value) {
-			getMod303().setStreetFloor(value);
+			getModel().setStreetFloor(value);
 			markAsDirty();			
 		}
 		@Override public void streetDoorChanged(String value) {
-			getMod303().setStreetDoor(value);
+			getModel().setStreetDoor(value);
 			markAsDirty();			
 		}
 		@Override public void townChanged(String value) {
-			getMod303().setTown(value);
+			getModel().setTown(value);
 			markAsDirty();			
 		}
 		@Override public void provinceChanged(String value) {
-			getMod303().setProvince(value);
+			getModel().setProvince(value);
 			markAsDirty();			
 		}
 		@Override public void zipChanged(String value) {
-			getMod303().setZip(value);
+			getModel().setZip(value);
 			markAsDirty();			
 		}
 		@Override public void contactPersonChanged(String value) {
-			getMod303().setContactPerson(value);
+			getModel().setContactPerson(value);
 			markAsDirty();			
 		}
 		@Override public void contactPhoneChanged(String value) {
-			getMod303().setContactPhone(value);
+			getModel().setContactPhone(value);
 			markAsDirty();			
 		}
 		@Override public void contactCellularChanged(String value) {
-			getMod303().setContactCellular(value);
+			getModel().setContactCellular(value);
 			markAsDirty();			
 		}
 		@Override public void contactMailChanged(String value) {
-			getMod303().setContactEmail(value);
+			getModel().setContactEmail(value);
 			markAsDirty();			
 		}
 		
@@ -891,36 +893,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		
 	}
 	
-	protected FlowPanel getInformationPanel() {
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.CSS.aonScrollArea());
-		panel.addStyleName(AON.CSS.aonWidthAll());
-		panel.addStyleName(AON.CSS.aonMarginTop());
-		panel.addStyleName(AON.CSS.aonPaddingTop());
-		panel.addStyleName(AON.CSS.aonPaddingLeft());
-
-		Label title = new Label("Informaci\u00F3n \u00FAtil para la confecci\u00F3n del modelo");
-		title.setStyleName(AON.CSS.aonMarginTop());
-		title.addStyleName(AON.CSS.aonBold());
-		title.addStyleName(AON.CSS.aonTextUnderline());
-		panel.add(title);
-		
-		for (Pair<String, String> pair : getInformationLinks()) {
-			FlowPanel anchorPanel = new FlowPanel();
-			anchorPanel.addStyleName(AON.CSS.aonMarginTop());
-			Anchor a = new Anchor(pair.getLeft(),pair.getRight(), "_blank");
-			a.setStyleName(AON.CSS.aonLabelWithIcon());
-			a.addStyleName(FiscalModelUtils.getAdministrationBWIconStyle(mod303.getAdministration()));
-			a.addStyleName(AON.CSS.aonPaddingLeft());
-			anchorPanel.add(a);
-			panel.add(anchorPanel);
-		}
-		return panel;
-	}
-	
-	protected void submitForm(String action) {
+	private void submitForm(String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		mod303Hidden.setValue(String.valueOf(getMod303().getId()));
+		mod303Hidden.setValue(String.valueOf(getModel().getId()));
 		domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
 		domainNameHidden.setValue(getCallback().getOptions().getDomainName());
 		userHidden.setValue(getCallback().getOptions().getUser());
@@ -1032,14 +1007,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		commentsButton.setTitle(mod303.getComments());
 	}
 	
-	protected void decorateDeclarationTab() {
-		// Redefine if needed
-	}
-
-	protected void decorateAdministrationTab() {
-		// Redefine if needed
-	}
-	
 	protected void showPaymentInfo(Mod303 mod) {
 		if (mod.isFinished() || mod.isSent()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
@@ -1072,7 +1039,14 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		}
 	}
 
-	protected abstract LinkedList<Pair<String, String>> getInformationLinks();
-	
+	protected void decorateDeclarationTab() {
+		// Redefine if needed
+	}
+
+	protected void decorateAdministrationTab() {
+		if (admonPanel != null) {
+			admonPanel.manageLinks();
+		}
+	}
 
 }

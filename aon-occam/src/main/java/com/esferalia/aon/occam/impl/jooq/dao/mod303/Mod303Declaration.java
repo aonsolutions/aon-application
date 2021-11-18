@@ -10,6 +10,9 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 public abstract class Mod303Declaration {
 	
 	public static Mod303Declaration getInstance( Mod303 mod) {
+		if (mod.getPeriod() == null) {
+			throw new AonCoreException("No se ha indicado periodo para la declaración");	
+		}
 		if (AEAT_2021_2_Declaration.accept(mod)) 		return new AEAT_2021_2_Declaration();
 		if (AEAT_2021_Declaration.accept(mod)) 		return new AEAT_2021_Declaration();
 		if (AEAT_2020_Declaration.accept(mod)) 		return new AEAT_2020_Declaration();

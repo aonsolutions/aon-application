@@ -6,12 +6,8 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod130.Mod130Service;
-import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.fiscal.MODEL130;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -28,91 +24,73 @@ public class Mod130ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public Mod130 getMod130(String domainName, String user, int domain,int id) throws AonCoreException {
-		return FISCAL.getMod130(domainName, domain, user , id);
+	public Mod130 getMod130(Occam occam,int id) throws AonCoreException {
+		return MODEL130.getMod130(occam , id);
 	}
 
 	@Override
-	public LinkedList<Mod130> getMod130s(String domainName, String user, int domain) throws AonCoreException {
-		return FISCAL.getMod130s(domainName, domain, user);
+	public LinkedList<Mod130> getMod130s(Occam occam) throws AonCoreException {
+		return MODEL130.getMod130s(occam);
 	}
 
 	@Override
-	public Mod130 calculate(String domainName, String user, Mod130 mod130) {
-		return FISCAL.calculate(domainName, user, mod130);
+	public Mod130 calculate(Occam occam, Mod130 mod130) {
+		return MODEL130.calculate(occam, mod130);
 	}
 
 	@Override
-	public Mod130 save(String domainName, String user, Mod130 mod130) {
-		return FISCAL.save(domainName, user, mod130);
+	public Mod130 save(Occam occam, Mod130 mod130) {
+		return MODEL130.save(occam, mod130);
 	}
 
 	@Override
-	public Mod130 saveComments(String domainName, String user, Mod130 mod130) {
-		return FISCAL.saveComments(domainName, user, mod130);
+	public Mod130 saveComments(Occam occam, Mod130 mod130) {
+		return MODEL130.saveComments(occam, mod130);
 	}
 
 	@Override
-	public Mod130 initializeForFinish(String domainName, String user, Mod130 mod130) {
-		return FISCAL.initializeForFinish(domainName, user, mod130);
+	public Mod130 initializeForFinish(Occam occam, Mod130 mod130) {
+		return MODEL130.initializeForFinish(occam, mod130);
 	}
 
 	@Override
-	public Mod130 markAsFinished(String domainName, String user, Mod130 mod130) {
-		return FISCAL.markAsFinished(domainName, user, mod130);
+	public Mod130 markAsFinished(Occam occam, Mod130 mod130) {
+		return MODEL130.markAsFinished(occam, mod130);
 	}
 
 	@Override
-	public Mod130 markAsSent(String domainName, String user, Mod130 mod130) {
-		return FISCAL.markAsSent(domainName, user, mod130);
+	public Mod130 markAsSent(Occam occam, Mod130 mod130) {
+		return MODEL130.markAsSent(occam, mod130);
 	}
 
 	@Override
-	public Mod130 markAsCustomerCheck(String domainName, String user, Mod130 mod130) {
-		return FISCAL.markAsCustomerCheck(domainName, user, mod130);
+	public Mod130 markAsCustomerCheck(Occam occam, Mod130 mod130) {
+		return MODEL130.markAsCustomerCheck(occam, mod130);
 	}
 
 	@Override
-	public Mod130 markAsPending(String domainName, String user, Mod130 mod130) {
-		return FISCAL.markAsPending(domainName, user, mod130);
+	public Mod130 markAsPending(Occam occam, Mod130 mod130) {
+		return MODEL130.markAsPending(occam, mod130);
 	}
 
 	@Override
-	public Mod130 initialize(String domainName, String user, int domain, Mod130 mod130) {
-		return FISCAL.initializeMod130(domainName, domain, user, mod130);
+	public Mod130 initialize(Occam occam, Mod130 mod130) {
+		return MODEL130.initializeMod130(occam, mod130);
 	}
 
 	@Override
-	public Mod130 create(String domainName, String user, int domain, Mod130 mod130) {
-		return FISCAL.createMod130(domainName, domain, user, mod130);
+	public Mod130 create(Occam occam, Mod130 mod130) {
+		return MODEL130.createMod130(occam, mod130);
 	}
 
 	@Override
-	public void delete(String domainName, String user, Mod130 mod130) {
-		FISCAL.deleteMod130(domainName, user, mod130);
+	public void delete(Occam occam, Mod130 mod130) {
+		MODEL130.deleteMod130(occam, mod130);
 	}
 	@Override
-	public String getInfo(String domainName, String user, int domain, Mod130 mod130
-			, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException {
-		return FISCAL.getMod130Info(domainName, domain, user, mod130, script, infoKey);
+	public String getInfo(Occam occam, Mod130 mod130 , IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException {
+		return MODEL130.getMod130Info(occam, mod130, script, infoKey);
 		
 	}
 	
-	@Override
-	public Double mathExpression(String expression) throws AonCoreException {
-		try {
-			return AONMVELUtils.mathExpression(expression);
-		} catch ( Throwable t) {
-			throw new AonCoreException(t);
-		}
-	}
-	
-	@Override
-	public Integer presentationFile(String domainName, Integer domainId, String user,Integer id) {
-		Attach attach = AON.getAttach(domainName, domainId, user, f -> 
-		f.getSourceTypeProperty().eq(DataAttachSource.MOD130.value())
-		.and(f.getSourceBatchProperty().eq(id))
-		.and(f.getDescriptionProperty().eq("Presentacion AEAT")), AttachType.DATA, false);
-		return attach != null && attach.getId() != null ? attach.getId() :  -1;
-	}
 }

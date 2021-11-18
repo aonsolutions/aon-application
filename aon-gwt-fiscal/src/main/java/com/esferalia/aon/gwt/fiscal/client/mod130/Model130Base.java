@@ -6,13 +6,11 @@ import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
-import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod130.Model130.IMod130Declaration;
-import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod130.Model130.Model130Callback;
 import com.esferalia.aon.gwt.fiscal.shared.mod130.Model130ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -24,10 +22,6 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -54,10 +48,8 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 	
 	private Mod130 model;
 	private API API;
-	private AonData aonData;
-	private Boolean test = false;
 	private FlexTable table;
-	IFiscalModelCallback<Mod130> callback;
+	Model130Callback callback;
 	private EnumMap<Mod130Key,DoubleBox> fieldsMap;
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
@@ -79,20 +71,14 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 	protected Hidden nrcAeatHidden = new Hidden("nrc");
 	protected Hidden testHidden = new Hidden("test");
 	
-	private ExpressionResolver resolver = new ExpressionResolver() {
-		@Override
-		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model130.SERVICE.mathExpression(expression,callback);
-		}
-	}; 
-
-	public Model130Base(final IFiscalModelCallback<Mod130> callback, AonData aonData) {
+	Model130Base(Mod130 mod130, final Model130Callback callback) {
 		this.callback = callback;
-		this.aonData = aonData;
-		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getName(), aonData.getDomain().getId(),
-				aonData.getUser().getLogin());
-		this.model = callback.getFiscalModel();
+		this.API = new API(GWT.getModuleBaseURL(), 
+			callback.getOptions().getConfiguration().getMd5(),
+			callback.getOptions().getConfiguration().getDomain().getName(), 
+			callback.getOptions().getConfiguration().getDomain().getId(),
+			callback.getOptions().getConfiguration().getUser().getLogin());
+		this.model = mod130;
 		this.fieldsMap = new EnumMap<>(Mod130Key.class);
 		this.table = new FlexTable();
 		paintDeclaration();
@@ -110,7 +96,7 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 		return model;
 	}
 	
-	public IFiscalModelCallback<Mod130> getCallback() {
+	public Model130Callback getCallback() {
 		return callback;
 	}
 
@@ -118,25 +104,13 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 		return API;
 	}
 	
-	public AonData getAonData() {
-		return aonData;
-	}
-	
-	public Boolean getTest() {
-		return test;
-	}
-
-	public void setTest(Boolean test) {
-		this.test = test;
-	}
-
 	protected void paintDeclaration() {
 		if (getTable().getRowCount() > 0) {
 			getTable().removeAllRows();
 		}
 		defineTable();
 		
-		for (IModelScript<Mod130Key> ms : Model130ScriptProvider.obtainScript(getCallback().getFiscalModel())) {
+		for (IModelScript<Mod130Key> ms : Model130ScriptProvider.obtainScript(getModel())) {
 			if (ms.paintHeaderBefore()) {
 				paintHeader();
 			}
@@ -188,12 +162,12 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 		table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);
 	}
 
-	protected void paintRow(final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
+	protected void paintRow(final Model130Callback callback, IModelScript<Mod130Key> script) {
 		if (script.hasGraphicParticularity()) {
 			paintParticularyRow(callback,script);		
 		} else {
 			int row = table.getRowCount();
-			paintLabel(row,callback,script);
+			paintLabel(row,script);
 			if (script.getKeys() == null) {
 				table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);	
 			} else {
@@ -207,11 +181,11 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 		}
 	}
 	
-	protected void paintParticularyRow(final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
+	protected void paintParticularyRow(final Model130Callback callback, IModelScript<Mod130Key> script) {
 		
 	}
 	
-	protected void paintLabel( int row,final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
+	protected void paintLabel( int row, IModelScript<Mod130Key> script) {
 		String labelText = script.getLabel();
 		Label label = new Label();
 		if (AonStringUtils.length(labelText) > MAX_LABEL_LENGTH) {
@@ -234,35 +208,31 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 		return ++col;
 	}
 
-	private int paintField(int row, int col, final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script, final Mod130Key key) {
-		final FiscalModelDetail det1 = callback.getFiscalModel().ensureDetail(key);
+	private int paintField(int row, int col, final Model130Callback callback, IModelScript<Mod130Key> script, final Mod130Key key) {
+		final FiscalModelDetail det1 = getModel().ensureDetail(key);
 		final DoubleBox input = new DoubleBox();
-		input.setResolver(resolver);
 		fieldsMap.put(key, input);
-		input.setEnabled(callback.getFiscalModel().isNotFinished() && script.isEnabled()); 
+		input.setEnabled(getModel().isNotFinished() && script.isEnabled()); 
 		input.setValue(det1.getAmount());
-		input.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				if (event.getValue() == null) input.setValue(0.0, false);
-				double result = callback.getFiscalModel().getResultAmount(key);
-				double adjust = callback.getFiscalModel().getAdjustAmount(key);
-				double amount = input.getValue();
-				if (AonMathUtils.isNotZero(result - adjust - amount)) {
-					callback.getFiscalModel().ensureDetail(key).setAdjustAmount( result - amount);	
-				}
-				callback.getFiscalModel().ensureDetail(key).setAmount(input.getValue());
-				if (input.isEnabled()) {
-					calculateAndRefresh( callback );
-				}
-				callback.markAsDirty();
+		input.addValueChangeHandler(event -> {
+			if (event.getValue() == null) input.setValue(0.0, false);
+			double result = getModel().getResultAmount(key);
+			double adjust = getModel().getAdjustAmount(key);
+			double amount = input.getValue();
+			if (AonMathUtils.isNotZero(result - adjust - amount)) {
+				getModel().ensureDetail(key).setAdjustAmount( result - amount);	
 			}
+			getModel().ensureDetail(key).setAmount(input.getValue());
+			if (input.isEnabled()) {
+				calculateAndRefresh( callback );
+			}
+			callback.markAsDirty();
 		});
 		table.setWidget(row, col, input);
 		return ++col;
 	}
 	
-	private void paintInfoCol(int row, int col, final IFiscalModelCallback<Mod130> callback, final IModelScript<Mod130Key> script) {
+	private void paintInfoCol(int row, int col, final Model130Callback callback, final IModelScript<Mod130Key> script) {
 		FlowPanel buttonContainer = new FlowPanel();
 		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
 			buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());
@@ -280,27 +250,22 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 				if 	(infoKey == FiscalModelKeyInfo.COMPUTE_KEY) button.addStyleName(AON.AON_CSS.aonIconCalculator());
 				if 	(infoKey == FiscalModelKeyInfo.ACT_ACCOUNT) button.addStyleName(AON.AON_CSS.aonIconCompanyData());
 				
-				button.addClickHandler(new ClickHandler() {
+				button.addClickHandler(event -> Model130.SERVICE.getInfo(
+					callback.getOptions().getOccam(),
+					getModel(), script, infoKey,new AsyncCallback<String>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								callback.showError(AON.MSG.errorMessage());
+							}
+
+							@Override
+							public void onSuccess(String result) {
+								callback.showInfoPanel(result);
+							}
 					
-					@Override
-					public void onClick(ClickEvent event) {
-						Model130.SERVICE.getInfo(callback.getDomainName(),callback.getUser(), callback.getDomain(),
-							callback.getFiscalModel(), script, infoKey,new AsyncCallback<String>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										callback.showErrorMsg(AON.MSG.errorMessage());
-									}
-
-									@Override
-									public void onSuccess(String result) {
-										callback.showInfoPanel(result);
-									}
-							
-								}
-							);	
-					}
-				});
+						}
+					));
 				buttonContainer.add(button);
 			}
 			table.setWidget(row, col, buttonContainer);
@@ -308,13 +273,15 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 	}
 
 	@Override
-	public void calculateAndRefresh(final IFiscalModelCallback<Mod130> callback) {
-		Model130.SERVICE.calculate(callback.getDomainName(),callback.getUser(),callback.getFiscalModel(),
+	public void calculateAndRefresh(final Model130Callback callback) {
+		Model130.SERVICE.calculate(
+				callback.getOptions().getOccam(),
+				getModel(),
 				new AsyncCallback<Mod130>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						callback.showErrorMsg(AON.MSG.errorMessage());
+						callback.showError(AON.MSG.errorMessage());
 					}
 
 					@Override
@@ -337,7 +304,7 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 		p.setStyleName(AON.AON_CSS.aonPadding2());
 		Anchor a = new Anchor(label,href,"_blank");
 		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		a.addStyleName(FiscalModelUtils.getAdministrationIcon(mod130.getAdministration()));
+		a.addStyleName(FiscalModelUtils.getAdministrationIconStyle(mod130.getAdministration()));
 		p.add(a);
 		return p;
 	}
@@ -366,9 +333,9 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 	protected void submitForm(String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod130Hidden.setValue(String.valueOf(getModel().getId()));
-		domainIdHidden.setValue(String.valueOf(getCallback().getDomain()));
-		domainNameHidden.setValue(getCallback().getDomainName());
-		userHidden.setValue(getCallback().getUser());
+		domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
+		domainNameHidden.setValue(getCallback().getOptions().getDomainName());
+		userHidden.setValue(getCallback().getOptions().getUser());
 		diskForm.submit();
 	}
 
@@ -379,15 +346,15 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 	protected void submitAEAT(String action, String cert, String pass, String document, String name, String nrc) {
 		aeatForm.setAction(GWT.getHostPageBaseURL() + action);
 		modAeatHidden.setValue(String.valueOf(getModel().getId()));
-		domainIdAeatHidden.setValue(String.valueOf(getCallback().getDomain()));
-		domainNameAeatHidden.setValue(getCallback().getDomainName());
-		userAeatHidden.setValue(getCallback().getUser());
+		domainIdAeatHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
+		domainNameAeatHidden.setValue(getCallback().getOptions().getDomainName());
+		userAeatHidden.setValue(getCallback().getOptions().getUser());
 		certAeatHidden.setValue(cert);
 		passAeatHidden.setValue(pass);
 		nameAeatHidden.setValue(name);
 		documentAeatHidden.setValue(document);
-		nrcAeatHidden.setValue(nrc != null ? nrc : "null");	
-		testHidden.setValue(getTest() ? "1" : "0");
+		nrcAeatHidden.setValue(nrc != null ? nrc : "null");
+		testHidden.setValue(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment() ? "1" : "0");
 		aeatForm.submit();
 	}
 	
@@ -411,13 +378,13 @@ public abstract class Model130Base extends SimplePanel implements IMod130Declara
 		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
 		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getModel().getAdministration()));
+		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()));
 		tab.setWidget(0, 0, title);
 		
 		int row = 1;
 		for (Pair<String, String> pair : getInformationLinks()) {
 			Label icon = new Label();
-			icon.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
+			icon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
 			tab.setWidget(row, 0, icon );
 			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 

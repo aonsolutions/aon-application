@@ -6,6 +6,12 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 
+/**
+ * @author ecastellano
+ * @deprecated Use aonConfiguration
+ *
+ */
+@Deprecated
 public class AonData implements Serializable {
 
 	private static final long serialVersionUID = -4746030973585760037L;
@@ -18,10 +24,6 @@ public class AonData implements Serializable {
 	private Boolean betaEnabled;
 	private Boolean alphaEnabled;
 	private Boolean aonSolutions;
-	private boolean customerCheckEnabled;
-	private String certificateDocument;
-	private String certificateName;
-	private boolean testEnvironment;
 	private String rootPanel;
 	
 	public User getUser() {
@@ -78,14 +80,6 @@ public class AonData implements Serializable {
 		return aonSolutions;
 	}
 	
-	public boolean isCustomerCheckEnabled() {
-		return customerCheckEnabled;
-	}
-	public AonData setCustomerCheckEnabled(boolean customerCheckEnabled) {
-		this.customerCheckEnabled = customerCheckEnabled;
-		return this;
-	}
-	
 	public AonData setAonSolutions(Boolean aonSolutions) {
 		this.aonSolutions = aonSolutions;
 		return this;
@@ -97,30 +91,5 @@ public class AonData implements Serializable {
 		this.rootPanel = rootPanel;
 		return this;
 	}
-	
-	public String getCertificateDocument() {
-		return certificateDocument;
-	}
-	public AonData setCertificateDocument(String certificateDocument) {
-		this.certificateDocument = certificateDocument;
-		return this;
-	}
-
-	public String getCertificateName() {
-		return certificateName;
-	}
-	public AonData setCertificateName(String certificateName) {
-		this.certificateName= certificateName;
-		return this;
-	}
-	
-	public boolean isTestEnvironment() {
-		return testEnvironment;
-	}
-	public AonData setTestEnvironment(boolean testEnvironment) {
-		this.testEnvironment = testEnvironment;
-		return this;
-	}
-	
 	
 }

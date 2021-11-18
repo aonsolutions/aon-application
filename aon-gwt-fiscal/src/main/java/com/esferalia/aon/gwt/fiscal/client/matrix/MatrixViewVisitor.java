@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303ModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
@@ -21,7 +20,7 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
-	private class AonModuleCallbackWrapper<FM extends FiscalModel> implements AonModuleCallback<FM> {
+	private class AonModuleCallbackWrapper<T extends FiscalModel> implements AonModuleCallback<T> {
 		
 		private static final long serialVersionUID = 1L;
 		
@@ -34,7 +33,7 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 		}
 
 		@Override
-		public void onRemove(FM removed) {
+		public void onRemove(T removed) {
 			hide();
 			callback.onRemove(removed);
 		}
@@ -45,13 +44,13 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 		}
 		
 		@Override
-		public void onExit(FM edited) {
+		public void onExit(T edited) {
 			hide();
 			callback.onExit(edited);
 		}
 		
 		@Override
-		public void onChange(FM changed) {
+		public void onChange(T changed) {
 			hide();
 			callback.onChange(changed);
 		}
@@ -91,18 +90,18 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			Model303 model303 = new Model303();
 			Model303ModuleOptions options = new Model303ModuleOptions();
 			options.setParentWidget(modelDialog);
-			options.setDomainName(opt.getAonData().getDomain().getName());
-			options.setDomain( opt.getAonData().getDomain().getId() );
-			options.setUser(opt.getAonData().getUser().getLogin());
-			options.setAonData(opt.getAonData());
+			options.setDomainName(opt.getConfiguration().getDomain().getName());
+			options.setDomain( opt.getConfiguration().getDomain().getId() );
+			options.setUser(opt.getConfiguration().getUser().getLogin());
+			options.setConfiguration(opt.getConfiguration());
 			options.setFiscalModelId( model.getId() );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( new AonModuleCallbackWrapper<Mod303>(modelDialog, callback) );
+			options.setExternalCallback( new AonModuleCallbackWrapper<>(modelDialog, callback) );
 			model303.onModuleLoad( options );
 			modelDialog.center();
 			modelDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}

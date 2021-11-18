@@ -5,10 +5,9 @@ import java.util.EnumMap;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.BoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Model202.IMod202Declaration;
-import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod202.Model202.Model202Callback;
 import com.esferalia.aon.gwt.fiscal.shared.mod202.Model202ScriptProvider;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -18,10 +17,6 @@ import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -39,24 +34,20 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 	
 	private static final int MAX_LABEL_LENGTH = 100;
 	private static final int COL_NUMBER = 8;
-	
+	private Mod202 model;
 	private FlexTable table;
 	private EnumMap<Mod202Key,DoubleBox> fieldsMap;
 	
-	private ExpressionResolver resolver = new ExpressionResolver() {
-		@Override
-		public void resolve(String expression, AsyncCallback<Double> callback) {
-			Model202.SERVICE.mathExpression(expression,callback);
-		}
-	}; 
-
-	public Model202Base(IFiscalModelCallback<Mod202> callback) {
+	Model202Base(Mod202 mod202, Model202Callback callback) {
 		fieldsMap = new EnumMap<>(Mod202Key.class);
+		this.model = mod202;
 		table = new FlexTable();
 		paintDeclaration(callback);
 		setWidget(table);
 	}
-	
+	public Mod202 getModel() {
+		return model;
+	}
 	protected FlexTable getTable() {
 		return table;
 	}
@@ -64,13 +55,13 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 		return fieldsMap;
 	}
 	
-	protected void paintDeclaration(final IFiscalModelCallback<Mod202> callback) {
+	protected void paintDeclaration(final Model202Callback callback) {
 		if (getTable().getRowCount() > 0) {
 			getTable().removeAllRows();
 		}
 		defineTable();
 		
-		for (IModelScript<Mod202Key> ms : Model202ScriptProvider.obtainScript(callback.getFiscalModel())) {
+		for (IModelScript<Mod202Key> ms : Model202ScriptProvider.obtainScript(getModel())) {
 			paintRow(callback,ms);	
 		}
 	}
@@ -105,12 +96,12 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 		table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);
 	}
 
-	protected void paintRow(final IFiscalModelCallback<Mod202> callback, IModelScript<Mod202Key> script) {
+	protected void paintRow(final Model202Callback callback, IModelScript<Mod202Key> script) {
 		if (script.hasGraphicParticularity()) {
 			paintParticularyRow(callback,script);		
 		} else {
 			int row = table.getRowCount();
-			paintLabel(row,callback,script);
+			paintLabel(row,script);
 			if (script.getKeys() == null) {
 				table.getFlexCellFormatter().setColSpan(row, 0, COL_NUMBER);	
 			} else {
@@ -132,11 +123,11 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 		}
 	}
 	
-	protected void paintParticularyRow(final IFiscalModelCallback<Mod202> callback, IModelScript<Mod202Key> script) {
+	protected void paintParticularyRow(final Model202Callback callback, IModelScript<Mod202Key> script) {
 		
 	}
 	
-	protected void paintLabel( int row,final IFiscalModelCallback<Mod202> callback, IModelScript<Mod202Key> script) {
+	protected void paintLabel( int row, IModelScript<Mod202Key> script) {
 		String labelText = script.getLabel();
 		Label label = new Label();
 		if (AonStringUtils.length(labelText) > MAX_LABEL_LENGTH) {
@@ -161,37 +152,33 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 		return ++col;
 	}
 
-	private int paintField(int row, int col, final IFiscalModelCallback<Mod202> callback, IModelScript<Mod202Key> script, final Mod202Key key) {
+	private int paintField(int row, int col, final Model202Callback callback, IModelScript<Mod202Key> script, final Mod202Key key) {
 		if (key != null) {
-			final FiscalModelDetail det1 = callback.getFiscalModel().ensureDetail(key);
+			final FiscalModelDetail det1 = getModel().ensureDetail(key);
 			final DoubleBox input = new DoubleBox();
-			input.setResolver(resolver);
 			fieldsMap.put(key, input);
-			input.setEnabled(callback.getFiscalModel().isNotFinished() && script.isEnabled()); 
+			input.setEnabled(getModel().isNotFinished() && script.isEnabled()); 
 			input.setValue(det1.getAmount());
-			input.addValueChangeHandler(new ValueChangeHandler<Double>() {
-				@Override
-				public void onValueChange(ValueChangeEvent<Double> event) {
-					if (event.getValue() == null) input.setValue(0.0, false);
-					double result = callback.getFiscalModel().getResultAmount(key);
-					double adjust = callback.getFiscalModel().getAdjustAmount(key);
-					double amount = input.getValue();
-					if (AonMathUtils.isNotZero(result - adjust - amount)) {
-						callback.getFiscalModel().ensureDetail(key).setAdjustAmount( result - amount);	
-					}
-					callback.getFiscalModel().ensureDetail(key).setAmount(input.getValue());
-					if (input.isEnabled()) {
-						calculateAndRefresh( callback );
-					}
-					callback.markAsDirty();
+			input.addValueChangeHandler(event -> {
+				if (event.getValue() == null) input.setValue(0.0, false);
+				double result = getModel().getResultAmount(key);
+				double adjust = getModel().getAdjustAmount(key);
+				double amount = input.getValue();
+				if (AonMathUtils.isNotZero(result - adjust - amount)) {
+					getModel().ensureDetail(key).setAdjustAmount( result - amount);	
 				}
+				getModel().ensureDetail(key).setAmount(input.getValue());
+				if (input.isEnabled()) {
+					calculateAndRefresh( callback );
+				}
+				callback.markAsDirty();
 			});
 			table.setWidget(row, col, input);
 		}
 		return ++col;
 	}
 	
-	private void paintInfoCol(int row, int col, final IFiscalModelCallback<Mod202> callback, final IModelScript<Mod202Key> script) {
+	private void paintInfoCol(int row, int col, final Model202Callback callback, final IModelScript<Mod202Key> script) {
 		FlowPanel buttonContainer = new FlowPanel();
 		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
 			buttonContainer.setStyleName(AON.AON_CSS.aonNowrap());
@@ -204,27 +191,22 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 				if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.AON_CSS.aonIconCalculator());
 				if 	(infoKey == FiscalModelKeyInfo.ACT_ACCOUNT) button.addStyleName(AON.AON_CSS.aonIconCompanyData());
 				
-				button.addClickHandler(new ClickHandler() {
+				button.addClickHandler(event -> Model202.SERVICE.getInfo(
+					callback.getOptions().getOccam(),
+					getModel(),script, infoKey,new AsyncCallback<String>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								callback.showError(AON.MSG.errorMessage());
+							}
+
+							@Override
+							public void onSuccess(String result) {
+								callback.showInfoPanel(result);
+							}
 					
-					@Override
-					public void onClick(ClickEvent event) {
-						Model202.SERVICE.getInfo(callback.getDomainName(),callback.getUser(),callback.getDomain(),
-							callback.getFiscalModel(),script, infoKey,new AsyncCallback<String>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										callback.showErrorMsg(AON.MSG.errorMessage());
-									}
-
-									@Override
-									public void onSuccess(String result) {
-										callback.showInfoPanel(result);
-									}
-							
-								}
-							);	
-					}
-				});
+						}
+					));
 				buttonContainer.add(button);
 			}
 			table.setWidget(row, col, buttonContainer);
@@ -232,13 +214,15 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 	}
 
 	@Override
-	public void calculateAndRefresh(final IFiscalModelCallback<Mod202> callback) {
-		Model202.SERVICE.calculate(callback.getDomainName(),callback.getUser(),callback.getFiscalModel(),
+	public void calculateAndRefresh(final Model202Callback callback) {
+		Model202.SERVICE.calculate(
+				callback.getOptions().getOccam(),
+				getModel(),
 				new AsyncCallback<Mod202>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						callback.showErrorMsg(AON.MSG.errorMessage());
+						callback.showError(AON.MSG.errorMessage());
 					}
 
 					@Override
@@ -262,7 +246,7 @@ public abstract class Model202Base extends SimplePanel implements IMod202Declara
 		p.setStyleName(AON.AON_CSS.aonPadding2());
 		Anchor a = new Anchor(label,href,"_blank");
 		a.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		a.addStyleName(FiscalModelUtils.getAdministrationIcon(mod202.getAdministration()));
+		a.addStyleName(FiscalModelUtils.getAdministrationIconStyle(mod202.getAdministration()));
 		p.add(a);
 		return p;
 	}

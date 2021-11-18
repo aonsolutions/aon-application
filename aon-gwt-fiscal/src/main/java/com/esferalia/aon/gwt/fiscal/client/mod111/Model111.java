@@ -1,73 +1,32 @@
 package com.esferalia.aon.gwt.fiscal.client.mod111;
 
-import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.AonToast;
-import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.model.FinishDeclarationPopup;
-import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelIdentificationData;
-import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelProvidesKey;
-import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelTable;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.event.logical.shared.AttachEvent.Handler;
+import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DeckLayoutPanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class Model111 extends MainEntryPoint {
 
@@ -76,200 +35,186 @@ public class Model111 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	final static int IDENTIFICATION_TAB = 0;
-	final static int LIQUIDATION_TAB = 1;
-	final static int FISCAL_INFORMATION_TAB = 2;
-	
-	final static int NOTIFICATIONS_TAB = 0;
-	final static int INFORMATION_TAB = 1;
-	private final static int AEAT_TAB = 2;
+	private static final int INFORMATION_TAB = 0;
 
-	protected static Mod111ServiceAsync SERVICE;
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
-
-	interface Model111Binder extends UiBinder<Widget, Model111> {
-	}
-	private static final Model111Binder MODEL_111_BINDER = GWT
-			.create(Model111Binder.class);
-
-	public static interface IMod111Declaration extends IsWidget {
-		FlowPanel getDeclarationPanel();
-		LinkedList<Pair<String, String>> getInformationLinks();
-		void calculateAndRefresh(IFiscalModelCallback<Mod111> callback);
-		void printButtonClick();
-		HandlerRegistration addAttachHandler(Handler handler);
+	protected static final Mod111ServiceAsync SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
+		
+		Mod111ServiceAsync serviceRaw = GWT.create(Mod111Service.class);
+		SERVICE = new Mod111ServiceAsyncDecorator(serviceRaw);
 	}
 	
-	private Mod111 currentMod;
 	private Model111ModuleOptions options;
-	private boolean dirty;
 
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
-	@UiField
-	SimplePanel headerPanel;
-	@UiField
-	DeckLayoutPanel deckPanel;
-	@UiField
-	Panel listPanel;
-	@UiField
-	DockLayoutPanel formPanel;
-	@UiField
-	TabLayoutPanel tabLayout;
-	@UiField
-	ResultsPanel resultsPanel;
-	@UiField
-	MinimizePanel footPanel;
-	@UiField
-	Label fiscalInformationLabel;
-	@UiField
-	ScrollPanel informationPanel;
-	@UiField
-	SimpleLayoutPanel aeatPanel;
-	@UiField
-	Panel formContainer;
+	private AonLayoutPanel aonLayout;
+	private SplitLayoutPanel splitLayoutPanel;
+	private SimpleLayoutPanel declarationContainer;
+	private Model111Table model111Table;
+	private TabLayoutPanel tabLayout;
+	private AonMinimizePanel footPanel;
+	private ScrollPanel breakdownPanel;	
 
-	@UiField(provided = true)
-	FiscalModelTable<Mod111> table;
-
-	@UiField
-	Button saveButton;
-	@UiField
-	Button deleteButton;
-	@UiField
-	Button resetButton;
-	@UiField
-	Button newButton;
-	@UiField
-	Button cancelButton;
-	@UiField
-	Button printButton;
-	@UiField
-	Button markAsPendingButton;
-	@UiField
-	Button markAsSentButton;	
-	@UiField
-	Button markAsFinishedButton;
-	@UiField
-	Button auditButton;
-
-	@UiField
-	InlineLabel documentLabel;
-	@UiField
-	InlineLabel nameLabel;
-	@UiField
-	InlineLabel surnameLabel;
-	@UiField
-	Label diffLabel;
-	@UiField
-	InlineLabel dirtyLabel;
-	@UiField
-	Label statusLabel;
-	@UiField
-	Label replacementLabel;
-	@UiField
-	Label complementaryLabel;
-	@UiField
-	TextBox replacedNumber;
-	@UiField
-	Label replacedNumberLabel;
-	@UiField
-	CheckBox confidential;
-	@UiField
-	Button commentsButton;
-	
-	@UiField
-	FlowPanel paymentInfo;
-
-	@UiField
-	TabLayoutPanel tabPanel;
-	@UiField
-	ScrollPanel identificationContainer;
-	@UiField
-	ScrollPanel declarationContainer;
-	private IMod111Declaration declaration;
-	@UiField
-	ScrollPanel infoContainer;
-	
-	private abstract class FiscalModelCallback implements IFiscalModelCallback<Mod111> {
+	protected class Model111Callback implements IFiscalModelCallback<Mod111,Model111ModuleOptions> {
 		
 		@Override
-		public void showErrorMsg(String msg) {
+		public void showError(String msg) {
 			showErrorMessage(msg);
 		}
 		
 		@Override
 		public void showInfoPanel(String htmlText) {
-			Model111.this.showInfoPanel(htmlText);
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			HTMLPanel panel = new HTMLPanel(htmlText);
+			breakdownPanel.setWidget(panel);
+			breakdownPanel.scrollToTop();
 		}
 		
 		@Override
-		public void showVisorAEAT() {
-			Model111.this.showVisorAEAT();
-		}
-		
-		@Override
-		public boolean isFinished() {
-			return (currentMod.getStatus() == FiscalStatus.FINISHED);
-		}
-		
-		@Override
-		public Mod111 getFiscalModel() {
-			return currentMod;
-		}
-		@Override
-		public void onCustomerCheck() {
-		}
-		@Override
-		public boolean isDirty() {
-			return Model111.this.isDirty();
-		}
-		@Override
-		public void markAsDirty() {
-			if (!isDirty()) {
-				Model111.this.setDirty(true);
+		public void cleanInfoPanel() {
+			Widget w = breakdownPanel.getWidget();
+			if (w != null) {
+				breakdownPanel.remove( breakdownPanel.getWidget() ); 
 			}
 		}
 
 		@Override
-		public void identificationLabelChanged() {
-			documentLabel.setText(currentMod.getDocument());
-			nameLabel.setText(currentMod.getName());
-			surnameLabel.setText(currentMod.getSurname());
+		public Model111ModuleOptions getOptions() {
+			return Model111.this.options;
 		}
 
 		@Override
-		public String getDomainName() {
-			return getCurrentDomainName();
+		public void onAccept(Mod111 model) {
+			// Nothing
 		}
 
 		@Override
-		public String getUser() {
-			return getCurrentUser();
+		public void onCancel(Mod111 model) {
+			cleanInfoPanel();
+			declarationContainer.setWidget(model111Table);
+			model111Table.refresh( new Model111Callback() );
+			tabLayout.selectTab(INFORMATION_TAB);
+			closeFootPanel();
+			
 		}
 
 		@Override
-		public int getDomain() {
-			return getCurrentDomain();
+		public void onRemove(Mod111 model) {
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(model);
+			} else {
+				onCancel(model);
+			}
 		}
 
-	};
+		@Override
+		public void onNew() {
+			SERVICE.initialize(getOptions().getOccam(),null,
+			new AsyncCallback<Mod111>() {
+				@Override
+				public void onSuccess(Mod111 m111) {
+					cleanInfoPanel();
+					tabLayout.selectTab(INFORMATION_TAB);
+					closeFootPanel();
+					showNewDeclarationPopup(m111);
+				}
+
+
+				@Override
+				public void onFailure(Throwable caught) {
+					showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+				}
+			});
+		}
+
+		@Override
+		public void onReset(Mod111 oldModel) {
+			SERVICE.initialize(getOptions().getOccam(), null,
+				new AsyncCallback<Mod111>() {
+					@Override
+					public void onSuccess(Mod111 newMod111) {
+						cleanInfoPanel();
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
+						// Valores de la declaración actual
+						newMod111.setAdministration(oldModel.getAdministration());
+						newMod111.setYear(oldModel.getYear());
+						newMod111.setPeriod(oldModel.getPeriod());
+						newMod111.setComplementary(oldModel.isComplementary());
+						newMod111.setReplacement(oldModel.isReplacement());
+						newMod111.setReplacedNumber(oldModel.getReplacedNumber());
+						showResetDeclarationPopup(newMod111, oldModel);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+					}
+				});
+		}
+
+		private void showResetDeclarationPopup(Mod111 newMod111, Mod111 oldMod111) {
+			NewDeclarationPopup<Mod111,Model111ModuleOptions> newDialog = new NewDeclarationPopup<>(newMod111, true,
+				new Model111Callback() {
+
+						@Override
+						public void onAccept(Mod111 mod111) {
+							
+							SERVICE.delete(getOptions().getOccam(), oldMod111, new AsyncCallback<Void>() {
+								
+								@Override
+								public void onSuccess(Void result) {
+									SERVICE.create(getOptions().getOccam(), newMod111,
+											new AsyncCallback<Mod111>() {
+												@Override
+												public void onSuccess(Mod111 m111) {
+													select(m111);
+												}
+
+												@Override
+												public void onFailure(Throwable caught) {
+													showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+												}
+											});
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));								
+								}
+							});
+						}
+
+						@Override
+						public void onCancel(Mod111 mod111) {
+							// Nothing
+						}
+					}
+				); 
+				newDialog.center();
+				newDialog.show();
+		}
+	}
 	
 	
 	@Override
 	public void onModuleLoad() {
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser()
+			, new AsyncCallback<AonConfiguration>() {
 			
 			@Override
-			public void onSuccess(AonData aonData) {
+			public void onSuccess(AonConfiguration config) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-				Model111ModuleOptions options = new Model111ModuleOptions();
-				options.setParentWidget(root);
-				options.setDomainName(getCurrentDomainName());
-				options.setDomain(getCurrentDomain());
-				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
-				onModuleLoad( options );
+				Model111ModuleOptions opts = new Model111ModuleOptions();
+				opts.setParentWidget(root);
+				opts.setDomainName(getCurrentDomainName());
+				opts.setDomain(getCurrentDomain());
+				opts.setUser(getCurrentUser());
+				opts.setConfiguration(config);
+				onModuleLoad( opts );
 			}
 			
 			@Override public void onFailure(Throwable caught) {
@@ -288,827 +233,282 @@ public class Model111 extends MainEntryPoint {
 		this.options = options;
 		AON.ensureInjected();
 
-		Mod111ServiceAsync serviceRaw = GWT.create(Mod111Service.class);
-		SERVICE = new Mod111ServiceAsyncDecorator(serviceRaw);
+		aonLayout = new AonLayoutPanel();
+		splitLayoutPanel = new SplitLayoutPanel( 2 );
+		aonLayout.add(splitLayoutPanel);
+		
+		declarationContainer = new SimpleLayoutPanel();
+		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 
-		table = new FiscalModelTable<Mod111>(new Mod111SelectionHandler(), new FiscalModelProvidesKey<Mod111>());
-
-		Widget ui = MODEL_111_BINDER.createAndBindUi(this);
-
-		if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
-			cancelButton.setText(AON.MSG.backAction());
-		}
-		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");
-		html.setWidth("100%");
-		html.setHeight("100%");
-		aeatPanel.setWidget(html);
-
-		replacedNumber.setVisibleLength(13);
-		replacedNumber.setMaxLength(13);
-
-//		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-//		root.add(ui);
-		getOptions().getParentWidget().add(ui);
+		splitLayoutPanel.add(declarationContainer);
+		
+		
+		
+		model111Table = new Model111Table( new Model111Callback() );
+		model111Table.addSelectionHandler( this::onSelectionChange );
+		declarationContainer.setWidget(model111Table);
+		
+		getOptions().getParentWidget().add(aonLayout);
 		if (getOptions().getFiscalModelId() != null ) {
-			LOGGER.info("Access to Model111 with a ID: " + getOptions().getFiscalModelId());
 			onSelect(getOptions().getFiscalModelId());
 		} else if (getOptions().getNewModel() != null ) {
-			LOGGER.info("Access to Model111 new Model");
 			newModel(getOptions().getNewModel()); 
 		} else {
-			table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-			LOGGER.info("Model111 setting NOTIFICATIONS_TAB");
-			tabLayout.selectTab(NOTIFICATIONS_TAB);
+			model111Table.refresh( new Model111Callback() );
 		}
 		tabLayout.setAnimationDuration(300);
-		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Integer> event) {
-				openFootPanelIfNeeded();
-			}
+		tabLayout.addSelectionHandler(event -> openFootPanelIfNeeded());
+	}
+
+	private AonMinimizePanel getMinimizePanel() {
+		footPanel = new AonMinimizePanel();
+		footPanel.addMinimizeHandler( event -> closeFootPanel() );
+		footPanel.addMaximizeHandler( event -> {
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
+			splitLayoutPanel.animate(500);
 		});
-	}
-	
-	private void onSelect(Integer id ) {
-		LOGGER.info("OnSelect Model111 with a ID: " + getOptions().getFiscalModelId());
-		SERVICE.getMod111(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id , new AsyncCallback<Mod111>() {
-					@Override
-					public void onSuccess(Mod111 selected) {
-						if (selected == null) {
-							LOGGER.info("onSuccess Model111 with a NULL selected Model ID: ");
-							showErrorMessage(AON.MSG.unableToFindDeclaration());
-						} else {
-							LOGGER.info("onSuccess Model111 with a ID: " + selected.getId());
-							select(selected);
-						}
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
-					}
-				});
-	}
-
-	class Mod111SelectionHandler implements SelectionChangeEvent.Handler {
-		@Override
-		public void onSelectionChange(SelectionChangeEvent event) {
-			Mod111 sel = table.getSelected();
-			SERVICE.getMod111(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
-					sel.getId(), new AsyncCallback<Mod111>() {
-						@Override
-						public void onSuccess(Mod111 selected) {
-							if (selected == null) {
-								showErrorMessage(AON.MSG.unableToFindDeclaration());
-							} else {
-								select(selected);
-								tabPanel.selectTab(LIQUIDATION_TAB);
-								int i = deckPanel.getWidgetIndex(formPanel);
-								deckPanel.showWidget(i);
-								cleanErrorMessage();
-							}
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
-						}
-					});
-		}
-	}
-	public boolean isDirty() {
-		return dirty;
-	}
-	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
-		styleDirtyLabel();
-	}
-	
-	private void refreshToolbarState() {
-		LOGGER.info("Model111 refreshToolbarState! ");
-		newButton.setVisible(!currentMod.isNew() && !this.options.isBackButtonVisible() && !this.options.hasExternalCallback());
-		saveButton.setVisible(!currentMod.isFinished() && !currentMod.isSent());
-		cancelButton.setVisible(true);
-		deleteButton.setVisible(!currentMod.isNew() && !currentMod.isFinished() && !currentMod.isSent());
-		resetButton.setVisible(!currentMod.isNew() && !currentMod.isFinished() && !currentMod.isSent());
-		printButton.setVisible(!currentMod.isNew());
-		markAsPendingButton.setVisible(!currentMod.isNew() &&
-				(currentMod.getStatus() == FiscalStatus.FINISHED 
-				|| currentMod.getStatus() == FiscalStatus.BATCHED
-				|| currentMod.getStatus() == FiscalStatus.SENT
-				|| currentMod.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| currentMod.getStatus() == FiscalStatus.BLOCKED));
-		markAsSentButton.setVisible(!currentMod.isNew() &&
-				(currentMod.getStatus() == FiscalStatus.FINISHED));
-		markAsFinishedButton.setVisible(!currentMod.isNew() &&
-				(currentMod.getStatus() == FiscalStatus.PENDING
-				|| currentMod.getStatus() == FiscalStatus.CUSTOMER_CHECK
-				|| currentMod.getStatus() == FiscalStatus.MISSING));
-		auditButton.setVisible(!currentMod.isNew());
-	}
-	
-	private void toolbarForTable() {
-		hideToolbarButtons();
-		cancelButton.setVisible(false);
-	}
-	
-	private void hideToolbarButtons() {
-		deleteButton.setVisible(false);
-		resetButton.setVisible(false);
-		auditButton.setVisible(false);
-		newButton.setVisible(true);
-		cancelButton.setVisible(true);
-		saveButton.setVisible(false);
-		printButton.setVisible(false);
-		markAsPendingButton.setVisible(false);
-		markAsFinishedButton.setVisible(false);
-		markAsSentButton.setVisible(false);
-	}
-	
-	private void select(Mod111 selected) {
-		currentMod = selected;
-		dirty = false;
+		footPanel.setStyleName(AON.CSS.aonSelector());
+		tabLayout = new TabLayoutPanel(26, Unit.PX);
+		tabLayout.setWidth("100%");
+		footPanel.add(tabLayout);
 		
-		documentLabel.setText(currentMod.getDocument());
-		nameLabel.setText(currentMod.getName());
-		surnameLabel.setText(currentMod.getSurname());
-		
-		styleDirtyLabel();
-		styleStatusLabel();
-		if (currentMod.isReplacementDeclarationAvailable()) {
-			replacementLabel.setText(AON.MSG.replacement());
-			replacementLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			replacementLabel.addStyleName(currentMod.isReplacement()
-					?AON.AON_CSS.aonIconChecked()
-					:AON.AON_CSS.aonIconCheck()
-				);
-		} else {
-			replacementLabel.setText("");
-		}
-		
-		if (currentMod.isComplementaryDeclarationAvailable()) {
-			complementaryLabel.setText(AON.MSG.complementary());
-			complementaryLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			complementaryLabel.addStyleName(currentMod.isComplementary()
-					?AON.AON_CSS.aonIconChecked()
-					:AON.AON_CSS.aonIconCheck()
-				);
-		} else {
-			complementaryLabel.setText("");
-		}
-		
-		replacedNumber.setValue(currentMod.getReplacedNumber());
-		replacedNumber.setEnabled(currentMod.isReplacedNumberAvailable());
-		
-		confidential.setValue(currentMod.isConfidential());
-		
-		styleCommentsButton();
-		
-		fiscalInformationLabel.setStyleName(AON.AON_CSS.aonPaddingRight());
-		fiscalInformationLabel.addStyleName(AON.AON_CSS.aonPaddingLeft20());
-		fiscalInformationLabel.addStyleName(FiscalModelUtils.getAdministrationIconBW(currentMod.getAdministration()));
+		breakdownPanel = new ScrollPanel();
+		tabLayout.add(breakdownPanel, AON.MSG.informationBreakdown());
 
-		refreshToolbarState();
-		
-		FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod);
-		FiscalModelUtils.paintHeaderTable(headerPanel,currentMod);
-		
-		FiscalModelCallback callback = new FiscalModelCallback(){
-			@Override
-			public void onAccept() {}
-
-			@Override
-			public void onCancel() {}
-			
-		}; 
-		FiscalModelIdentificationData<Mod111> identificationData = new FiscalModelIdentificationData<Mod111>(callback);
-		identificationContainer.setWidget( identificationData);
-		if (currentMod.getAdministration() == Administration.COMMON_TERRITORY) {
-			declaration = new Model111AEAT(callback, getOptions().getAonData());
-		} else  if (currentMod.getAdministration() == Administration.GIPUZKOA) {
-			if (currentMod.getPeriod().isQuarterPeriod()) {
-				declaration = new Model110Gipuzkoa(callback, getOptions().getAonData());
-			} else {
-				declaration = new Model111Gipuzkoa(callback, getOptions().getAonData());
-			}
-		} else  if (currentMod.getAdministration() == Administration.BIZKAIA) {
-			if (currentMod.getPeriod().isQuarterPeriod()) {
-				declaration = new Model110Bizkaia(callback, getOptions().getAonData());
-			} else {
-				declaration = new Model111Bizkaia(callback, getOptions().getAonData());
-			}
-		} else  if (currentMod.getAdministration() == Administration.NAVARRA) {
-			if (currentMod.getPeriod().isQuarterPeriod()) {
-				declaration = new Model715Navarra(callback, getOptions().getAonData());
-			} else {
-				declaration = new Model745Navarra(callback, getOptions().getAonData());
-			}
-		} else  if (currentMod.getAdministration() == Administration.ALAVA) {
-			if (currentMod.getYear() > 2015) {
-				declaration = new Model111Araba2016(callback, getOptions().getAonData());	
-			} else {
-				declaration = new Model111Araba(callback, getOptions().getAonData());
-			}
-		}
-		if (declaration != null) {
-			declaration.addAttachHandler(new Handler() {
-				@Override
-				public void onAttachOrDetach(AttachEvent event) {
-					if (event.isAttached() ) {
-						
-						Scheduler.get().scheduleDeferred(new Command() {
-							public void execute() {
-								LOGGER.info("Declaration Attached!");
-								tabPanel.selectTab(LIQUIDATION_TAB);
-								int i = deckPanel.getWidgetIndex(formPanel);
-								deckPanel.showWidget(i);
-								cleanErrorMessage();
-								refreshToolbarState();
-							}
-						});		
-					}
-				}
-			});
-			declarationContainer.setWidget( declaration );
-			infoContainer.setWidget(declaration.getDeclarationPanel()) ;
-		} else {
-			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
-			hideToolbarButtons();
-			cancelButton.setVisible(true);
-		}
-	}
-	
-	private void styleDirtyLabel() {
-		// Indicar que el modelo ha sido generado por diferencias
-		if (currentMod.isDiffCalculationDisabled()) {
-			diffLabel.setText("");
-			diffLabel.setTitle("");
-		}
-		else {
-			diffLabel.setText("[DIF.]");
-			diffLabel.setTitle("C\u00E1lculo por diferencia habilitado");
-		}
-		// Indicar si el modelo se ha modificado
-		dirtyLabel.setText(isDirty()?"[CAMBIOS]":"");				
-	}
-
-	private void styleStatusLabel() {
-		statusLabel.setText(currentMod.getStatus().getName());
-		statusLabel.setStyleName( FiscalModelUtils.getStatusIconStyle(currentMod.getStatus()));
-		statusLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-	}
-
-	@UiHandler("table")
-	void onTableRangeChange(RangeChangeEvent event) {
-		SERVICE.getMod111s(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(),
-				new AsyncCallback<LinkedList<Mod111>>() {
-					@Override
-					public void onSuccess(LinkedList<Mod111> result) {
-						int i = deckPanel.getWidgetIndex(listPanel);
-						table.setRowData(result);
-						deckPanel.showWidget(i);
-						toolbarForTable();	
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
-					}
-				});
-	}
-
-	@UiHandler("saveButton")
-	void onAcceptButtonClick(ClickEvent event) {
-		save();
-	}
-	@UiHandler("markAsPendingButton")
-	void markAsPendingButtonClick(ClickEvent event) {
-		markAsPendingButton.setEnabled(false);
-		cleanErrorMessage();
-		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		popup.add(label);
-		popup.setGlassEnabled(true);
-		popup.setAnimationEnabled(true);
-		popup.center();
-		SERVICE.markAsPending(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod111>() {
-					@Override
-					public void onSuccess(Mod111 result) {
-						select(result);
-						popup.hide();
-						markAsPendingButton.setEnabled(true);
-						FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						popup.hide();
-						showErrorMessage(AON.MSG.unableToReopenDeclaration(caught.getMessage()));
-						markAsPendingButton.setEnabled(true);
-					}
-				});
-	}
-	@UiHandler("markAsSentButton")
-	void markAsSentButtonClick(ClickEvent event) {
-		markAsSentButton.setEnabled(false);
-		cleanErrorMessage();
-		SERVICE.markAsSent(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod111>() {
-					@Override
-					public void onSuccess(Mod111 result) {
-						select(result);
-						markAsSentButton.setEnabled(true);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToMarkAsSentDeclaration(caught.getMessage()));
-						markAsSentButton.setEnabled(true);
-					}
-				});
-	}
-	
-	@UiHandler("markAsFinishedButton")
-	void markAsFinishedButtonClick(ClickEvent event) {
-		markAsFinishedButton.setEnabled(false);
-		cleanErrorMessage();
-		SERVICE.initializeForFinish(getCurrentDomainName(), getCurrentUser(),currentMod,
-				new AsyncCallback<Mod111>() {
-					@Override
-					public void onSuccess(Mod111 m111) {
-						currentMod = m111;
-						showFinalizePopup();
-						markAsFinishedButton.setEnabled(true);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-						markAsFinishedButton.setEnabled(true);
-					}
-				});
-	}
-	
-	private void save() {
-		saveButton.setEnabled(false);
-		cleanErrorMessage();
-		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		popup.add(label);
-		popup.setGlassEnabled(true);
-		popup.setAnimationEnabled(true);
-		popup.center();
-		SERVICE.save(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod111>() {
-					@Override
-					public void onSuccess(Mod111 result) {
-						select(result);
-						popup.hide();
-						saveButton.setEnabled(true);
-						cleanInfo();
-						tabLayout.selectTab(INFORMATION_TAB);
-						closeFootPanel();
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						popup.hide();
-						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-						saveButton.setEnabled(true);
-					}
-				});
-	}
-	
-	private void markAsFinished() {
-		markAsFinishedButton.setEnabled(false);
-		cleanErrorMessage();
-		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		popup.add(label);
-		popup.setGlassEnabled(true);
-		popup.setAnimationEnabled(true);
-		popup.center();
-		SERVICE.markAsFinished(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod111>() {
-					@Override
-					public void onSuccess(Mod111 result) {
-						select(result);
-						popup.hide();
-						markAsFinishedButton.setEnabled(true);
-						FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						popup.hide();
-						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-						markAsFinishedButton.setEnabled(true);
-					}
-				});
-	}
-
-	private void markAsCustomerCheck() {
-		markAsFinishedButton.setEnabled(false);
-		cleanErrorMessage();
-		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		popup.add(label);
-		popup.setGlassEnabled(true);
-		popup.setAnimationEnabled(true);
-		popup.center();
-		SERVICE.markAsCustomerCheck(getCurrentDomainName(), getCurrentUser(), this.currentMod, new AsyncCallback<Mod111>() {
-					@Override
-					public void onSuccess(Mod111 result) {
-						select(result);
-						popup.hide();
-						markAsFinishedButton.setEnabled(true);
-						FiscalModelUtils.paintPaymentInfo(paymentInfo,currentMod);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						popup.hide();
-						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-						markAsFinishedButton.setEnabled(true);
-					}
-				});
-	}
-	
-
-	@UiHandler("deleteButton")
-	void onDeleteButtonClick(ClickEvent event) {
-		deleteButton.setEnabled(false);
-		ConfirmDialog cd = new ConfirmDialog();
-		cd.confirm(AON.MSG.confirmDeclarationDeleteAction(), new ConfirmDialogCallback() {
-
-			@Override
-			public void onAccept() {
-				SERVICE.delete(getCurrentDomainName(),getCurrentUser(),currentMod, new AsyncCallback<Void>() {
-					@Override
-					public void onSuccess(Void result) {
-						table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-						deleteButton.setEnabled(true);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						deleteButton.setEnabled(true);
-						showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
-					}
-				});
-			}
-
-			@Override
-			public void onCancel() {
-				deleteButton.setEnabled(true);
-			}
-		});
-	}
-
-	@UiHandler("newButton")
-	void onNewButtonClick(ClickEvent event) {
-		newButton.setEnabled(false);
-		cleanErrorMessage();
-		newModel( null);
-	}		
-		
-	private void newModel(Mod111 newModel) {
-		SERVICE.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),newModel,
-				new AsyncCallback<Mod111>() {
-					@Override
-					public void onSuccess(Mod111 m111) {
-						currentMod = m111;
-						cleanInfo();
-						tabLayout.selectTab(INFORMATION_TAB);
-						closeFootPanel();
-						showNewDeclarationPopup();
-						newButton.setEnabled(true);
-					}
-
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-						newButton.setEnabled(true);
-					}
-				});
-	}
-	private void showNewDeclarationPopup() {
-		NewDeclarationPopup<Mod111> newDialog = new NewDeclarationPopup<Mod111>(
-			new FiscalModelCallback() {
-
-					@Override
-					public void onAccept() {
-						SERVICE.create(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(),currentMod,
-								new AsyncCallback<Mod111>() {
-									@Override
-									public void onSuccess(Mod111 m111) {
-										int i = deckPanel.getWidgetIndex(formPanel);
-										deckPanel.showWidget(i);
-										tabPanel.selectTab(IDENTIFICATION_TAB);
-										select(m111);
-									}
-
-									@Override
-									public void onFailure(Throwable caught) {
-										showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-									}
-								});
-					}
-
-					@Override
-					public void onCancel() {
-						cancel();
-					}
-
-					@Override
-					public Mod111 getFiscalModel() {
-						return currentMod;
-					}
-				}
-			); 
-			newDialog.center();
-			newDialog.show();
-	}
-
-	@UiHandler("cancelButton")
-	void onCancelButtonClick(ClickEvent event) {
-		if (!isDirty()) {
-			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
-				this.options.getExternalCallback().onExit( currentMod );
-			} else {
-				cancel();
-			}
-		} else {
-			if (this.options.isBackButtonVisible() && this.options.hasExternalCallback()) {
-				this.options.getExternalCallback().onExit( currentMod );
-			} else {
-				cancelButton.setEnabled(false);
-				ConfirmDialog cd = new ConfirmDialog();
-				cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new ConfirmDialogCallback() {
-	
-					@Override
-					public void onAccept() {
-						cancel();
-					}
-	
-					@Override
-					public void onCancel() {
-						cancelButton.setEnabled(true);
-					}
-				});
-			}
-		}
-	}
-	
-	private void cancel() {
-		cleanErrorMessage();
-		cleanInfo();
-		tabLayout.selectTab(INFORMATION_TAB);
-		closeFootPanel();
-		int i = deckPanel.getWidgetIndex(listPanel);
-		deckPanel.showWidget(i);
-		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
-		cancelButton.setEnabled(true);
-	}
-
-	@UiHandler("auditButton")
-	public void onAudit(ClickEvent event) {
-		AuditDialog dialog = new AuditDialog();
-		dialog.show(currentMod);
-	}
-
-	// -------------------------------------------------------------- UiHandler
-	@UiHandler("commentsButton")
-	public void onComments(ClickEvent event) {
-		final AonToast toast = new AonToast();
-		FlowPanel commentPanel = new FlowPanel();
-		commentPanel.setStyleName( FiscalModelUtils.getAdministrationBG(currentMod.getAdministration()) );
-		commentPanel.setStyleName(AON.AON_CSS.aonHeightAll());
-		commentPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		TextArea comment = new TextArea();
-		comment.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				currentMod.setComments(event.getValue());
-				styleCommentsButton();
-				SERVICE.saveComments(getCurrentDomainName(), getCurrentUser(), currentMod, new AsyncCallback<Mod111>() {
-					@Override
-					public void onSuccess(Mod111 result) {
-						toast.hide();
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						toast.hide();
-						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
-				});
-				
-				
-				
-			}
-		});
-		comment.setText(currentMod.getComments());
-		comment.setWidth("90%");
-		comment.setHeight("5em");
-		commentPanel.add(comment);
-		toast.show(AON.MSG.comments(), commentPanel);
-	}
-	
-	private void styleCommentsButton() {
-		if (AonStringUtils.isEmpty(currentMod.getComments())) {
-			commentsButton.addStyleName(AON.AON_CSS.aonIconComment());
-			commentsButton.removeStyleName(AON.AON_CSS.aonIconCommentRed());
-		} else {
-			commentsButton.addStyleName(AON.AON_CSS.aonIconCommentRed());
-			commentsButton.removeStyleName(AON.AON_CSS.aonIconComment());
-		}
-	}
-	
-	@UiHandler("printButton")
-	void onPrintButtonClick(ClickEvent event) {
-		declaration.printButtonClick();
-	}
-	
-	@UiHandler("confidential")
-	void onConfidentialClick(ClickEvent event) {
-		currentMod.setConfidential(confidential.getValue());
-		setDirty(true);
-	}
-	
-	@UiHandler("replacedNumber")
-	void onConfidentialChange(ChangeEvent event) {
-		currentMod.setReplacedNumber(replacedNumber.getValue());
-		setDirty(true);
-	}
-	
-	
-	@UiHandler("footPanel")
-	void onFootMinimize(MinimizeEvent event) {
-		closeFootPanel();
-	}
-
-	@UiHandler("footPanel")
-	void onFootMaximize(MaximizeEvent event) {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
-		splitLayoutPanel.animate(500);
+		tabLayout.setAnimationDuration(300);
+		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
+		return footPanel; 
 	}
 
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);
 	}
-
-	private void openFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
-		splitLayoutPanel.animate(500);
-	}
 	private void openFootPanelIfNeeded() {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
-			openFootPanel();
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
+			splitLayoutPanel.animate(500);
 		}
 	}
 	
-	private void cleanErrorMessage() {
-		SimpleLayoutPanel panel = new SimpleLayoutPanel();
-		resultsPanel.setWidget(panel);
-		closeFootPanel();
-	}
-	
-	private void showVisorAEAT() {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(AEAT_TAB);		
-	}
-	
-	private void showErrorMessage(String msg) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		SimpleLayoutPanel panel = new SimpleLayoutPanel();
-		Label label = new Label(msg);
-		label.addStyleName("aon-icon-errorwarning");
-		label.addStyleName("aon-message-error");
-		label.addStyleName("aon-icon");
-		panel.add(label);
-		resultsPanel.setWidget(panel);
-	}
-	private void cleanInfo() {
-		Widget w = informationPanel.getWidget();
-		if (w != null) {
-			informationPanel.remove( informationPanel.getWidget() ); 
-		}
-	}
-	
-	private void showInfoPanel(String htmlText) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(INFORMATION_TAB);
-		HTMLPanel panel = new HTMLPanel(htmlText);
-		informationPanel.setWidget(panel);
-		informationPanel.scrollToTop();
+	private void onSelect(Integer id ) {
+		SERVICE.getMod111(getOptions().getOccam(), id , new AsyncCallback<Mod111>() {
+			@Override
+			public void onSuccess(Mod111 selected) {
+				if (selected == null) {
+					showErrorMessage(AON.MSG.unableToFindDeclaration());
+				} else {
+					select(selected);
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+			}
+		});
 	}
 
-	private void showFinalizePopup() {
-		FinishDeclarationPopup<Mod111> finalizeDialog = new FinishDeclarationPopup<>( 
-				new FiscalModelCallback() {
-			
-			@Override
-			public void onAccept() {
-				markAsFinished();
-			}
-			@Override
-			public void onCustomerCheck() {
-				markAsCustomerCheck();
-			}
-			@Override
-			public void onCancel() {
-				
-			}
-			
-		},getOptions().getAonData());
-		finalizeDialog.center();
-		finalizeDialog.show();
-	}
-	
-	@UiHandler("resetButton")
-	void onResetButtonClick(ClickEvent event) {
-		resetButton.setEnabled(false);
-		cleanErrorMessage();
-		resetModel(currentMod);
-	}		
-		
-	private void resetModel(Mod111 oldMod111) {
-		SERVICE.initialize(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(), null,
+	private void newModel(Mod111 newModel) {
+		SERVICE.initialize(getOptions().getOccam(),newModel,
 				new AsyncCallback<Mod111>() {
 					@Override
-					public void onSuccess(Mod111 newMod111) {
-//						currentMod = newMod111;
-						cleanInfo();
+					public void onSuccess(Mod111 m111) {
 						tabLayout.selectTab(INFORMATION_TAB);
 						closeFootPanel();
-						// Valores de la declaración actual
-						newMod111.setAdministration(oldMod111.getAdministration());
-						newMod111.setYear(oldMod111.getYear());
-						newMod111.setPeriod(oldMod111.getPeriod());
-						newMod111.setComplementary(oldMod111.isComplementary());
-						newMod111.setReplacement(oldMod111.isReplacement());
-						newMod111.setReplacedNumber(oldMod111.getReplacedNumber());
-						showResetDeclarationPopup(newMod111, oldMod111);
-						resetButton.setEnabled(true);
+						showNewDeclarationPopup( m111 );
 					}
+
 
 					@Override
 					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-						resetButton.setEnabled(true);
+						aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 					}
 				});
 	}
+
+	enum Mod111Declarations {
+		AEAT {
+			@Override
+			public boolean accept(Mod111 mod111) {
+				return mod111.isAEAT();
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod111 mod111, Model111Callback cbk) {
+				return new Model111AEAT(mod111, cbk);
+			}
+		},
+		BIZKAIA_QUARTER {
+
+			@Override
+			public boolean accept(Mod111 mod111) {
+				return mod111.isBizkaia() && mod111.getPeriod().isQuarterPeriod();
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod111 mod111, Model111Callback cbk) {
+				return new Model110Bizkaia(mod111,cbk);
+			}
+		},
+		BIZKAIA_MONTH {
+
+			@Override
+			public boolean accept(Mod111 mod111) {
+				return mod111.isBizkaia() && mod111.getPeriod().isMonthPeriod();
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod111 mod111, Model111Callback cbk) {
+				return new Model111Bizkaia(mod111,cbk);
+			}
+		},
+		GIPUZKOA_QUARTER {
+
+			@Override
+			public boolean accept(Mod111 mod111) {
+				return mod111.isGipuzkoa() && mod111.getPeriod().isQuarterPeriod();
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod111 mod111, Model111Callback cbk) {
+				return new Model110Gipuzkoa(mod111,cbk);
+			}
+		},
+		GIPUZKOA_MONTH {
+
+			@Override
+			public boolean accept(Mod111 mod111) {
+				return mod111.isGipuzkoa() && mod111.getPeriod().isMonthPeriod();
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod111 mod111, Model111Callback cbk) {
+				return new Model111Gipuzkoa(mod111,cbk);
+			}
+		},
+		ARABA_2016 {
+
+			@Override
+			public boolean accept(Mod111 mod111) {
+				return mod111.isAraba() && mod111.getYear() > 2015;
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod111 mod111, Model111Callback cbk) {
+				return new Model111Araba2016(mod111,cbk);
+			}
+		},
+		ARABA {
+
+			@Override
+			public boolean accept(Mod111 mod111) {
+				return mod111.isAraba() && mod111.getYear() <= 2015;
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod111 mod111, Model111Callback cbk) {
+				return new Model111Araba(mod111,cbk);
+			}
+		},
+		NAVARRA_QUARTER {
+
+			@Override
+			public boolean accept(Mod111 mod111) {
+				return mod111.isNavarra() && mod111.getPeriod().isQuarterPeriod();
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod111 mod111, Model111Callback cbk) {
+				return new Model715Navarra(mod111,cbk);
+			}
+		},
+		NAVARRA_MONTH {
+
+			@Override
+			public boolean accept(Mod111 mod111) {
+				return mod111.isNavarra() && mod111.getPeriod().isMonthPeriod();
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod111 mod111, Model111Callback cbk) {
+				return new Model745Navarra(mod111,cbk);
+			}
+		},
+		;
+		public abstract boolean accept(Mod111 mod111);
+		public abstract Widget getDeclarationWidget(Mod111 mod111, Model111Callback cbk);
+	}
+
+			
+	private void select(Mod111 selected) {
+		aonLayout.hideErrorPanel();
+		Widget declaration = null;
+		for (Mod111Declarations dec : Mod111Declarations.values()) {
+			if (dec.accept(selected)) {
+				declaration = dec.getDeclarationWidget(selected, new Model111Callback());
+			}
+		}
+		if (declaration != null) {
+			declarationContainer.setWidget( declaration );		
+		} else {
+			aonLayout.showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
+		}
+	}
+
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
+	// *************************************************************
 	
-	private void showResetDeclarationPopup(Mod111 newMod111, Mod111 oldMod111) {
-		NewDeclarationPopup<Mod111> newDialog = new NewDeclarationPopup<Mod111>(true,
-			new FiscalModelCallback() {
+
+	private void onSelectionChange(SelectionEvent<Mod111> event) {
+		Mod111 sel = event.getSelectedItem();
+		SERVICE.getMod111(getOptions().getOccam(),sel.getId(), new AsyncCallback<Mod111>() {
+			@Override
+			public void onSuccess(Mod111 selected) {
+				if (selected == null) {
+					aonLayout.showErrorPanel(AON.MSG.unableToFindDeclaration());
+				} else {
+					select(selected);
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+			}
+		});
+	}
+	
+	private void showNewDeclarationPopup( Mod111 m111 ) {
+		NewDeclarationPopup<Mod111,Model111ModuleOptions> newDialog = new NewDeclarationPopup<>( m111,
+			new Model111Callback() { 
 
 					@Override
-					public void onAccept() {
-						
-						SERVICE.delete(getCurrentDomainName(), getCurrentUser(), oldMod111, new AsyncCallback<Void>() {
-							
-							@Override
-							public void onSuccess(Void result) {
-								SERVICE.create(getCurrentDomainName(),getCurrentUser(),getCurrentDomain(), newMod111,
-										new AsyncCallback<Mod111>() {
-											@Override
-											public void onSuccess(Mod111 m111) {
-												int i = deckPanel.getWidgetIndex(formPanel);
-												deckPanel.showWidget(i);
-												tabPanel.selectTab(IDENTIFICATION_TAB);
-												select(m111);
-											}
-
-											@Override
-											public void onFailure(Throwable caught) {
-												showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-											}
-										});
-							}
-							
-							@Override
-							public void onFailure(Throwable caught) {
-								showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));								
-							}
-						});
-					}
-
-					@Override
-					public void onCancel() {
-						
-					}
-
-					@Override
-					public Mod111 getFiscalModel() {
-						return newMod111;
+					public void onAccept(Mod111 mod111) {
+						SERVICE.create(getOptions().getOccam(),mod111,
+							new AsyncCallback<Mod111>() {
+								@Override
+								public void onSuccess(Mod111 m111) {
+									select(m111);
+								}
+	
+								@Override
+								public void onFailure(Throwable caught) {
+									showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+								}
+							});
 					}
 				}
 			); 
@@ -1116,5 +516,24 @@ public class Model111 extends MainEntryPoint {
 			newDialog.show();
 	}
 
+	private void showErrorMessage(String msg) {
+		aonLayout.showErrorPanel(msg);
+	}
 	
+	public static void run() {
+		GWT.runAsync(Model111.class, new RunAsyncCallback() {
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				Window.alert(AON.MSG.loadError("Modelo 111"));
+			}
+
+			@Override
+			public void onSuccess() {
+				Model111 model111 = new Model111();
+				model111.onModuleLoad();
+			}
+			
+		});
+	}
 }

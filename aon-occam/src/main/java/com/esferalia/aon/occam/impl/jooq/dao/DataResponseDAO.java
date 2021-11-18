@@ -28,7 +28,6 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -188,12 +187,24 @@ public class DataResponseDAO {
 		return dr;
 	}
 	
-	private static Pair<DataResponseSource, DataAttachSource> getDataResponseData(IFiscalModel fm) {
+	public static Pair<DataResponseSource, DataAttachSource> getDataResponseData(IFiscalModel fm) {
 		final Pair<DataResponseSource,DataAttachSource> pair = new Pair<>(null, null);
 		fm.getModel().visit( new IFiscalModelTypeVisitor() {
 			@Override
 			public void visitM303() {
 				pair.setLeft( DataResponseSource.MOD303 ).setRight(DataAttachSource.MOD303);
+			}
+			@Override 
+			public void visitM111() { 
+				pair.setLeft( DataResponseSource.MOD111 ).setRight(DataAttachSource.MOD111);
+			}
+			@Override 
+			public void visitM115() { 
+				pair.setLeft( DataResponseSource.MOD115 ).setRight(DataAttachSource.MOD115);
+			}
+			@Override 
+			public void visitM123() { 
+				pair.setLeft( DataResponseSource.MOD123 ).setRight(DataAttachSource.MOD123);
 			}
 			
 			@Override public void visitM390HF() { /* nothing */ }
@@ -208,9 +219,6 @@ public class DataResponseDAO {
 			@Override public void visitM180() { /* nothing */ }
 			@Override public void visitM131() { /* nothing */ }
 			@Override public void visitM130() { /* nothing */ }
-			@Override public void visitM123() { /* nothing */ }
-			@Override public void visitM115() { /* nothing */ }
-			@Override public void visitM111() { /* nothing */}
 		});
 		return pair;
 	}

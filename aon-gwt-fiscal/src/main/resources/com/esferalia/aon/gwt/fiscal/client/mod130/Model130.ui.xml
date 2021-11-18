@@ -59,7 +59,7 @@
 					<g:DeckLayoutPanel ui:field="deckPanel">
 						<g:DockLayoutPanel ui:field="formPanel" unit="PX">
 							<g:north size="65">
-								<g:SimplePanel ui:field="headerPanel"/>
+								<g:SimpleLayoutPanel ui:field="headerPanel"/>
 							</g:north>
 							<g:north size="75">
 								<g:HTMLPanel styleName="{aonResources.css.aonScrollArea}">

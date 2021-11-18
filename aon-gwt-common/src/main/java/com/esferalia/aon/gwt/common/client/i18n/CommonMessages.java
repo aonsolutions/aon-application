@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
@@ -162,6 +163,16 @@ public interface CommonMessages extends Messages {
 		,"M303"		,"IVA. Autoliquidaci\u00F3n."
 		})	
 	String fiscalModelDescriptionlong(@Select FiscalModelType f);
+
+	@DefaultMessage("-----")
+	@AlternateMessage(
+		{"ALAVA"			,"Diputaci\u00F3n foral \u00C1lava"
+		,"BIZKAIA" 			,"Diputaci\u00F3n foral Bizkaia"
+		,"GIPUZKOA"			,"Diputaci\u00F3n foral Gipuzkoa"
+		,"NAVARRA"			,"Gobierno foral de Navarra"
+		,"COMMON_TERRITORY"	,"Agencia Tributaria"
+		})	
+	String administrationName(@Select Administration administration);
 
 	@DefaultMessage("Ver declaraci\u00F3n del {0} del periodo: {1}")
 	String viewDeclaration(String model, String period);
@@ -4072,5 +4083,12 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Valor calculado ..: {0}. Se ha realizado un ajuste por valor de {1}")
 	String difCalc(String calc, String adjust);
+	
+	@DefaultMessage("Par\u00E1metros fiscales")
+	String fiscalParameters();
+	
+	@DefaultMessage("Error al cargar el \"m\u00F3dulo {0}\"")
+	String loadError(String module);
+
 }
 

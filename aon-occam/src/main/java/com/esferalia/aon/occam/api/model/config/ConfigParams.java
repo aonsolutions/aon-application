@@ -6,15 +6,32 @@ import static com.esferalia.aon.occam.api.model.config.ConfigBlock.FISCAL;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.EnumSet;
+import java.util.HashSet;
+
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConfigParams implements Serializable {
 
 	private static final long serialVersionUID = 7427598155727053547L;
 	
+	private String token;
 	private Date atDate;
-	private EnumSet<ConfigBlock> configBlocks = EnumSet.noneOf(ConfigBlock.class);
+	
+	// Deberia ser un EnumSet pero .... 
+	// https://code.google.com/archive/p/google-web-toolkit/issues/3028
+	private HashSet<ConfigBlock> configBlocks = new HashSet<>();
 
+	
+	public String getToken() {
+		return token;
+	}
+	public ConfigParams  setToken(String token) {
+		this.token = token;
+		return this;
+	}
+	public boolean isByToken() {
+		return AonStringUtils.isNotBlank(getToken());
+	}
 	
 	public Date getAtDate() {
 		return atDate;
@@ -24,10 +41,10 @@ public class ConfigParams implements Serializable {
 		return this;
 	}
 
-	public EnumSet<ConfigBlock> getConfigBlocks() {
+	public HashSet<ConfigBlock> getConfigBlocks() {
 		return configBlocks;
 	}
-	public ConfigParams setConfigBlocks(EnumSet<ConfigBlock> configBlocks) {
+	public ConfigParams setConfigBlocks(HashSet<ConfigBlock> configBlocks) {
 		this.configBlocks = configBlocks;
 		return this;
 	}

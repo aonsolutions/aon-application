@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox.IbanS
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.IModel303Callback;
+import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.widget.AonCreditorBox;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.IIbanContainer;
@@ -51,7 +51,7 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 	protected final FlexTable tab = new FlexTable();
 	protected int row = 0;
 	
-	protected Model303FinishDeclarationPopup(final Mod303 mod303, final IModel303Callback callback,FinishDeclarationPopupCallback popupCallback) {
+	protected Model303FinishDeclarationPopup(final Mod303 mod303, final Model303Callback callback,FinishDeclarationPopupCallback popupCallback) {
 		setCaption(AON.MSG.finish());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
@@ -159,7 +159,10 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 		});
 		flowPanel.add(acceptButton);
 		
-		if (callback != null && callback.getOptions() != null && callback.getOptions().getAonData().isCustomerCheckEnabled() && mod303.getStatus() != FiscalStatus.CUSTOMER_CHECK)  {
+		if (callback != null 
+				&& callback.getOptions() != null 
+				&& callback.getOptions().getConfiguration().fiscal().isCustomerCheckEnabled() 
+				&& mod303.getStatus() != FiscalStatus.CUSTOMER_CHECK)  {
 			Button customerCheckButton = new Button();
 			customerCheckButton.setStyleName(AON.CSS.aonCheckButton());
 			customerCheckButton.addStyleName(AON.CSS.aonMarginLeft());
@@ -201,9 +204,9 @@ class Model303FinishDeclarationPopup extends AonCustomDialog {
 	}
 
 	private static class BanksSuggestOracle  extends MultiWordSuggestOracle {
-		private IModel303Callback modelCallback;
+		private Model303Callback modelCallback;
 
-		private BanksSuggestOracle (final IModel303Callback modelCallback) {
+		private BanksSuggestOracle (final Model303Callback modelCallback) {
 			super();
 			this.modelCallback = modelCallback;
 		}

@@ -27,14 +27,16 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import com.esferalia.aon.gwt.fiscal.server.fiscal.mod303.aeat.RespuestaCorrecta;
-import com.esferalia.aon.gwt.fiscal.server.fiscal.mod303.aeat.ServicioConsultasDirectas;
+import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
+import com.esferalia.aon.gwt.fiscal.server.fiscal.aeat.ServicioConsultasDirectas;
+import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.ibm.icu.text.MessageFormat;
 
 @WebServlet(name = "Mod303 Check AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Mod303CheckAEAT" })
@@ -46,8 +48,15 @@ public class Mod303CheckAEAT extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			AEATParams aeatParams = Mod303AeatUtils.getAEATParams(req);
-			Mod303 mod303 = Mod303AeatUtils.getMod303(aeatParams);
+			AEATParams aeatParams = ModelAdmonUtils.getAEATParams(req);
+			Occam occam = new Occam()
+					.setDomainName(aeatParams.getDomainName())
+					.setDomain(aeatParams.getDomainId())
+					.setUser(aeatParams.getUser());
+			Mod303 mod303 = MODEL303.getMod303(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			if (mod303 == null) {
+				throw new AonCoreException("[INT] Modelo no encontrado");
+			}
 			String year = AonNumberUtils.toString(mod303.getYear());
 					
 			String urlParameters = MessageFormat.format("NIF={0}&ANR={1}&MOD=303&EJF={2}&PER={3}&FED={4}&FEH={5}&HOD={6}&HOH={7}"
@@ -62,8 +71,8 @@ public class Mod303CheckAEAT extends HttpServlet {
 					);
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
-			sslContext.init( Mod303AeatUtils.getKeyManagers(aeatParams),
-					new TrustManager[] { new Mod303AeatUtils.DefaultTrustManager() },
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
 					new SecureRandom());
 			HttpClient httpClient = HttpClient.newBuilder()
 		            .version(HttpClient.Version.HTTP_2)
@@ -86,84 +95,19 @@ public class Mod303CheckAEAT extends HttpServlet {
 			Unmarshaller um = context.createUnmarshaller();
 			ServicioConsultasDirectas scd = (ServicioConsultasDirectas) um.unmarshal(reader);
 			if ( scd.getError() != null) {
-				Mod303AeatUtils.giveExceptionBack(resp,true,scd.getError().getDescripcionError());	
+				ModelAdmonUtils.giveExceptionBack(resp,true,scd.getError().getDescripcionError());	
 			} else if ( scd.getRespuestaCorrecta()  != null) {
-				StringBuffer buff = new StringBuffer();
-				buff.append("<html>"
-					+"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>"
-					+"<style>"
-					+"#aeat {"
-					+"	margin: 10px;"
-					+"	padding: 10px;"
-					+"	border: #c4c4c4 1px solid;"
-					+"	font: 12px \"arial\", \"lucida Grande\", \"Trebuchet MS\", sans-serif;"
-					+"	text-align: center;"
-					+"	font-weight: bold;"
-					+"}"
-					+"#response {"
-					+"	font: 12px/1.333 \"arial\", \"lucida Grande\", \"Trebuchet MS\", sans-serif;"
-					+"	margin-left: auto;"
-					+"	margin-right: auto;"
-					+"	border-collapse: collapse;"
-					+"	width: 80%;"
-					+"}"
-					+"#response td {"
-					+"	padding: 1px 0.5em 1px 0.5em;"
-					+"	vertical-align: middle;"
-					+"	border: #c4c4c4 1px solid;"
-					+"}"
-					+"#label {"
-					+"	font-weight: bold;"
-					+"	white-space: nowrap;"
-					+"	width: 10%;"
-					+"	background-color: AliceBlue;"
-					+"}"
-					+"</style>"
-					+"<body>");
-				buff.append("<div id=\"aeat\">La Agencia Tributaria devolvió el siguiente mensaje:</div>");
-				buff.append("<table id=\"response\">");
-				String labelTD = "<tr><td id=\"label\">{0}</td>"; 
-				String valueTD = "<td>{0}</td></tr>";
-				String valueTD2 = "<td>{0, date, DD-MM-YYYY hh:mm:ss}</td></tr>";
-				
-				for (RespuestaCorrecta rc : scd.getRespuestaCorrecta()) {
-					buff.append(MessageFormat.format(labelTD,"Ejercicio"));
-					buff.append(MessageFormat.format(valueTD, rc.getEjercicio()));
-					buff.append(MessageFormat.format(labelTD,"Modelo"));
-					buff.append(MessageFormat.format(valueTD, rc.getModelo()));
-					buff.append(MessageFormat.format(labelTD,"Periodo"));
-					buff.append(MessageFormat.format(valueTD, rc.getPeriodo()));
-					buff.append(MessageFormat.format(labelTD,"NIF"));
-					buff.append(MessageFormat.format(valueTD, rc.getNif()));
-					buff.append(MessageFormat.format(labelTD,"CSV"));
-					buff.append(MessageFormat.format(valueTD, rc.getCsv()));
-					buff.append(MessageFormat.format(labelTD,"Expediente"));
-					buff.append(MessageFormat.format(valueTD, rc.getExpediente()));
-					buff.append(MessageFormat.format(labelTD,"Justificante"));
-					buff.append(MessageFormat.format(valueTD, rc.getJustificante()));
-					if (AonStringUtils.isNotBlank(rc.getJustAnterior())) {
-						buff.append(MessageFormat.format(labelTD,"Justificante anterior"));
-						buff.append(MessageFormat.format(valueTD, rc.getJustAnterior()));
-					}
-					if (rc.getFechaYHoraPresentacion() != null) {
-						buff.append(MessageFormat.format(labelTD,"Fecha y hora de presentación"));
-						buff.append(MessageFormat.format(valueTD2, rc.getFechaYHoraPresentacion().toGregorianCalendar().getTime()));
-					}
-				}
-				buff.append("</table>");
-				buff.append("</body></html>");
-				Mod303AeatUtils.giveBase64Back(resp, buff.toString().getBytes(), MimeType.HTML);
+				StringBuilder buff = ModelAdmonUtils.formatRespuestaCorrecta( scd);
+				ModelAdmonUtils.giveBase64Back(resp, buff.toString().getBytes(), MimeType.HTML);
 			} else{
-				Mod303AeatUtils.giveExceptionBack(resp,"La Agencia Tributaria ha devuelto un mensaje, pero no se han encontrado mensajes en el mismo.");
+				ModelAdmonUtils.giveExceptionBack(resp,"La Agencia Tributaria ha devuelto un mensaje, pero no se han encontrado mensajes en el mismo.");
 			}
-			
-			
 		} catch (InterruptedException e) {
 			LOGGER.log(Level.WARNING,"Thread Interrupted! [{0}] ", e.getMessage());
 			// Restore interrupted state...
 			Thread.currentThread().interrupt();
 		} catch (JAXBException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			Mod303AeatUtils.giveExceptionBack(resp,e.getMessage());
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}
 

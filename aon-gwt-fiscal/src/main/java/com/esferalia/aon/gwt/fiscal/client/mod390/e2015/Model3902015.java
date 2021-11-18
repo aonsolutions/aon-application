@@ -466,7 +466,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		linkContainer.add(new WestFocusPanel(AON.MSG.specificOperations(), new Page09(m390),callback));
 		linkContainer.add(new WestFocusPanel(AON.MSG.prorrata(), new Page10(m390),callback));
 		linkContainer.add(new WestFocusPanel(AON.MSG.difActivitiesRegime(), new Page11(m390),callback));
-		linkContainer.add(new WestFocusPanel("Agencia Tributaria", new Page12(m390, options.getAonData(), callback), callback));
+		linkContainer.add(new WestFocusPanel("Agencia Tributaria", new Page12(m390, options, callback), callback));
 		container.add(linkContainer);
 		return container;
 	}

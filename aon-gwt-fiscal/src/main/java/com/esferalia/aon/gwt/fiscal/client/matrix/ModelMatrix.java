@@ -10,14 +10,14 @@ import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.fiscal.JsFiscalMenuItem;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
@@ -39,32 +39,32 @@ public class ModelMatrix extends MainEntryPoint {
 	}
 
 	protected static final FiscalModelServiceAsync SERVICE;
-	protected static final FiscalMSServiceAsync FISCAL_SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
 		FiscalModelServiceAsync serviceRaw = GWT.create(FiscalModelService.class);
 		SERVICE = new FiscalModelServiceAsyncDecorator(serviceRaw);
 		
-		FiscalMSServiceAsync fiscalServiceRaw = GWT.create(FiscalMSService.class);
-		FISCAL_SERVICE = new FiscalMSServiceAsyncDecorator(fiscalServiceRaw);
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
 	}
 	
 	private ScrollPanel scrollPanel; 
 	
 	@Override
 	public void onModuleLoad() {
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
 
 			@Override public void onFailure(Throwable caught) { /* Nothing */ }
 
 			@Override
-			public void onSuccess(AonData aonData) {
+			public void onSuccess(AonConfiguration aonConfiguration) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 				MatrixModuleOptions options = new MatrixModuleOptions();
 				options.setParentWidget(root);
 				options.setDomainName(getCurrentDomainName());
 				options.setDomain(getCurrentDomain());
 				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
+				options.setConfiguration(aonConfiguration);
 				onModuleLoad(options);
 			}
 		});
@@ -95,9 +95,11 @@ public class ModelMatrix extends MainEntryPoint {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		
-		API api = new API(GWT.getHostPageBaseURL(), options.getAonData().getMd5(),
-				options.getAonData().getDomain().getName(), options.getAonData().getDomain().getId(),
-				options.getAonData().getUser().getLogin());
+		API api = new API(GWT.getHostPageBaseURL(), 
+				options.getConfiguration().getMd5(),
+				options.getConfiguration().getDomain().getName(), 
+				options.getConfiguration().getDomain().getId(),
+				options.getConfiguration().getUser().getLogin());
 		HashMap<String, LinkedList<String>> filterMap = new HashMap<>();
 		LinkedList<String> yearListt = new LinkedList<>();
 		yearListt.add(AonNumberUtils.toString(params.getYear()) );

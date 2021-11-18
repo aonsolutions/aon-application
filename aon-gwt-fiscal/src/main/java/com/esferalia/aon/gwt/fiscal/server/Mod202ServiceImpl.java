@@ -8,6 +8,8 @@ import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Mod202Service;
 import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL202;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -24,79 +26,70 @@ public class Mod202ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	@Override
-	public Mod202 getMod202(String domainName,String user, int domain,int id) throws AonCoreException {
-		return FISCAL.getMod202(domainName, domain, user, id);
+	public Mod202 getMod202(Occam occam,int id) throws AonCoreException {
+		return MODEL202.getMod202(occam, id);
 	}
 
 	@Override
-	public LinkedList<Mod202> getMod202s(String domainName,String user, int domain) throws AonCoreException {
-		return FISCAL.getMod202s(domainName, domain,user);
+	public LinkedList<Mod202> getMod202s(Occam occam) throws AonCoreException {
+		return MODEL202.getMod202s(occam);
 	}
 
 	@Override
-	public Mod202 calculate(String domainName,String user, Mod202 mod202) {
-		return FISCAL.calculate(domainName,user, mod202);
+	public Mod202 calculate(Occam occam, Mod202 mod202) {
+		return MODEL202.calculate(occam, mod202);
 	}
 
 	@Override
-	public Mod202 save(String domainName,String user, Mod202 mod202) {
-		return FISCAL.save(domainName,user, mod202);
+	public Mod202 save(Occam occam, Mod202 mod202) {
+		return MODEL202.save(occam, mod202);
 	}
 
 	@Override
-	public Mod202 initialize(String domainName,String user, int domain, Mod202 mod202) {
-		return FISCAL.initializeMod202(domainName, domain,user, mod202);
+	public Mod202 initialize(Occam occam, Mod202 mod202) {
+		return MODEL202.initializeMod202(occam, mod202);
 	}
 
 	@Override
-	public void delete(String domainName,String user, Mod202 mod202) {
-		FISCAL.deleteMod202(domainName,user, mod202);
+	public void delete(Occam occam, Mod202 mod202) {
+		MODEL202.deleteMod202(occam, mod202);
 	}
 	@Override
-	public Mod202 saveComments(String domainName,String user, Mod202 mod202) {
-		return FISCAL.saveComments(domainName, user, mod202);
+	public Mod202 saveComments(Occam occam, Mod202 mod202) {
+		return MODEL202.saveComments(occam, mod202);
 	}
 
 	@Override
-	public Mod202 initializeForFinish(String domainName,String user, Mod202 mod202) {
-		return FISCAL.initializeForFinish(domainName, user, mod202);
+	public Mod202 initializeForFinish(Occam occam, Mod202 mod202) {
+		return MODEL202.initializeForFinish(occam, mod202);
 	}
 
 	@Override
-	public Mod202 markAsFinished(String domainName,String user, Mod202 mod202) {
-		return FISCAL.markAsFinished(domainName, user, mod202);
+	public Mod202 markAsFinished(Occam occam, Mod202 mod202) {
+		return MODEL202.markAsFinished(occam, mod202);
 	}
 
 	@Override
-	public Mod202 markAsSent(String domainName,String user, Mod202 mod202) {
-		return FISCAL.markAsSent(domainName, user, mod202);
+	public Mod202 markAsSent(Occam occam, Mod202 mod202) {
+		return MODEL202.markAsSent(occam, mod202);
 	}
 	@Override
-	public Mod202 markAsCustomerCheck(String domainName, String user, Mod202 mod202) throws AonCoreException {
-		return FISCAL.markAsCustomerCheck(domainName, user, mod202);
+	public Mod202 markAsCustomerCheck(Occam occam, Mod202 mod202) throws AonCoreException {
+		return MODEL202.markAsCustomerCheck(occam, mod202);
 	}
 
 	@Override
-	public Mod202 markAsPending(String domainName,String user, Mod202 mod202) {
-		return FISCAL.markAsPending(domainName, user, mod202);
+	public Mod202 markAsPending(Occam occam, Mod202 mod202) {
+		return MODEL202.markAsPending(occam, mod202);
 	}
 
 	@Override
-	public Mod202 create(String domainName,String user, int domain, Mod202 mod202) {
-		return FISCAL.createMod202(domainName, domain, user, mod202);
+	public Mod202 create(Occam occam, Mod202 mod202) {
+		return MODEL202.createMod202(occam, mod202);
 	}
 	@Override
-	public String getInfo(String domainName,String user, int domain, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey)
-			throws AonCoreException {
-		return FISCAL.getMod202Info(domainName, domain, user, mod202, script, infoKey);
+	public String getInfo(Occam occam, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException {
+		return MODEL202.getMod202Info(occam, mod202, script, infoKey);
 	}
-
-	@Override
-	public Double mathExpression(String expression) throws AonCoreException {
-		try {
-			return AONMVELUtils.mathExpression(expression);
-		} catch ( Throwable t) {
-			throw new AonCoreException(t);
-		}
-	}
+	
 }

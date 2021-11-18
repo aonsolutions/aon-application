@@ -26,9 +26,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
+import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -41,20 +45,17 @@ public class Mod303SendAEAT extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//		try {
-//			AEATParams aeatParams = Mod303AeatUtils.getAEATParams(req);
-//			Mod303 mod303 = Mod303AeatUtils.getMod303(aeatParams);
-//			FISCAL.markAsSent(aeatParams.getDomainName(), mod303, aeatParams.getUser());
-//		} catch (AonCoreException e) {
-//			Mod303AeatUtils.giveExceptionBack(resp,e.getMessage());
-//		}
-//	}
-//	//@Override
-//	protected void doPost1(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			AEATParams aeatParams = Mod303AeatUtils.getAEATParams(req);
-			Mod303 mod303 = Mod303AeatUtils.getMod303(aeatParams);
-			byte[] fileContent = Mod303AeatUtils.getModelFile(mod303);
+			AEATParams aeatParams = ModelAdmonUtils.getAEATParams(req);
+			Occam occam = new Occam()
+					.setDomainName(aeatParams.getDomainName())
+					.setDomain(aeatParams.getDomainId())
+					.setUser(aeatParams.getUser());
+			Mod303 mod303 = MODEL303.getMod303(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			if (mod303 == null) {
+				throw new AonCoreException("[INT] Modelo no encontrado");
+			}
+			byte[] fileContent = ModelAdmonUtils.getModelFile(mod303);
 			
 			JSONObject params = new JSONObject();
 			params.put("MODELO", "303");
@@ -62,7 +63,7 @@ public class Mod303SendAEAT extends HttpServlet {
 			params.put("PERIODO", mod303.getPeriod().getName());
 			params.put("NRC", (mod303.isStrictToDeposit()?aeatParams.getNrc() : ""));
 			params.put("IDI", "ES");
-			params.put("F01", Mod303AeatUtils.getUnencodedFile(fileContent,StandardCharsets.UTF_8));
+			params.put("F01", ModelAdmonUtils.getUnencodedFile(fileContent,StandardCharsets.UTF_8));
 			params.put("FIR", "FirmaBasica");
 			params.put("FIRNIF", aeatParams.getDocument());
 			params.put("FIRNOMBRE", aeatParams.getName());
@@ -72,8 +73,8 @@ public class Mod303SendAEAT extends HttpServlet {
 //				: "DESACTIVADO_https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica");
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
-			sslContext.init( Mod303AeatUtils.getKeyManagers(aeatParams),
-					new TrustManager[] { new Mod303AeatUtils.DefaultTrustManager() },
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
 					new SecureRandom());
 			HttpClient httpClient = HttpClient.newBuilder()
 		            .version(HttpClient.Version.HTTP_2)
@@ -91,15 +92,15 @@ public class Mod303SendAEAT extends HttpServlet {
 				.send(request, HttpResponse.BodyHandlers.ofByteArray());
 			
 			if (response.statusCode() == 302) {
-				Mod303AeatUtils.giveRedirectBack( resp,response,httpClient );
+				ModelAdmonUtils.giveRedirectBack( resp,response,httpClient );
 			} else {
-				String ct = Mod303AeatUtils.getContentTypeHeader(response);
+				String ct = ModelAdmonUtils.getContentTypeHeader(response);
 				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
-					Mod303AeatUtils.manageJSONContent( resp, httpClient, aeatParams, mod303 ,response.body() );
+					ModelAdmonUtils.manageJSONContent( resp, aeatParams, mod303 ,response.body() );
 				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
-					Mod303AeatUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
+					ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
 				} else {	
-					Mod303AeatUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
+					ModelAdmonUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
 				}
 			}
 			
@@ -108,7 +109,7 @@ public class Mod303SendAEAT extends HttpServlet {
 			// Restore interrupted state...
 			Thread.currentThread().interrupt();
 		} catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
-			Mod303AeatUtils.giveExceptionBack(resp,e.getMessage());
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}
 

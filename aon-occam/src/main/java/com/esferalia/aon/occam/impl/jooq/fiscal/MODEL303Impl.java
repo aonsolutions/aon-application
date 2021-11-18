@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 
 public class MODEL303Impl implements IMODEL303 {
@@ -18,7 +19,7 @@ public class MODEL303Impl implements IMODEL303 {
 	}
 	@Override
 	public LinkedList<Mod303> getMod303s(AONContext ctx, int domain) {
-		LinkedList<Mod303> list = new LinkedList<Mod303>();
+		LinkedList<Mod303> list = new LinkedList<>();
 		Mod303DAO.getMod303s(ctx, domain)
 			.forEach(list::add);
 		return list;
@@ -39,7 +40,7 @@ public class MODEL303Impl implements IMODEL303 {
 	}
 	@Override
 	public Mod303 initializeForFinishMod303(AONContext ctx, Mod303 mod303){
-		return Mod303DAO.initializeForFinish(ctx, mod303);
+		return FiscalModelDAO.initializeForFinish(ctx, mod303);
 	}
 	@Override
 	public Mod303 markAsFinishedMod303(AONContext ctx, Mod303 mod303){
@@ -65,7 +66,7 @@ public class MODEL303Impl implements IMODEL303 {
 	@Override
 	public void deleteMod303(AONContext ctx, Mod303 mod303) {
 		ctx.getDslContext().transaction(
-				configuration -> Mod303DAO.delete(ctx, mod303));
+				configuration -> FiscalModelDAO.delete(ctx, mod303));
 	}
 
 	@Override

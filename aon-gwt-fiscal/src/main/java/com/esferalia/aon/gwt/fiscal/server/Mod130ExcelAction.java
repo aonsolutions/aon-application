@@ -48,7 +48,7 @@ public class Mod130ExcelAction extends ModelIRPFExcelAction<Mod130,Mod130Key> {
 		cellCount = 0;
 
 		try {
-			InputStream inputStream = Mod115ExcelAction.class.getResourceAsStream(
+			InputStream inputStream = Mod130ExcelAction.class.getResourceAsStream(
 					IMAGES[ model.getAdministration().ordinal()]);
 			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
 			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);

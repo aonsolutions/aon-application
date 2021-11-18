@@ -19,6 +19,10 @@ public class AonConfiguration implements Serializable {
 	private static final long serialVersionUID = 7723888010939038114L;
 	
 	private Company company;
+	private Domain domain;
+	private Integer userOperator;
+	private String md5;
+	private boolean aonSolutions;
 	private AccountingConfig accounting = new AccountingConfig();
 	private FiscalConfig fiscal = new FiscalConfig();
 	
@@ -57,11 +61,43 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 	
+	public Domain getDomain() {
+		return domain;
+	}
+	public AonConfiguration setDomain(Domain domain) {
+		this.domain = domain;
+		return this;
+	}
+	
 	public User getUser() {
 		return user;
 	}
 	public AonConfiguration setUser(User user) {
 		this.user = user;
+		return this;
+	}
+	
+	public Integer getUserOperator() {
+		return userOperator;
+	}
+	public AonConfiguration setUserOperator(Integer userOperator) {
+		this.userOperator = userOperator;
+		return this;
+	}
+	
+	public String getMd5() {
+		return md5;
+	}
+	public AonConfiguration setMd5(String md5) {
+		this.md5 = md5;
+		return this;
+	}
+	
+	public boolean isAonSolutions() {
+		return aonSolutions;
+	}
+	public AonConfiguration setAonSolutions(boolean aonSolutions) {
+		this.aonSolutions = aonSolutions;
 		return this;
 	}
 	

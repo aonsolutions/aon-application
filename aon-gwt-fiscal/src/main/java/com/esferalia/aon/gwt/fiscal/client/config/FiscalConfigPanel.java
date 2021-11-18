@@ -5,9 +5,11 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.fiscal.client.widget.AonCreditorBox;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -40,6 +42,12 @@ public class FiscalConfigPanel extends SimpleLayoutPanel {
 	private static final String CONCTACT_PHONE = "Tel\u00E9fono de contacto";
 	private static final String CONCTACT_CELLULAR = "M\u00F3vil de contacto";
 	private static final String CONCTACT_MAIL  = "Correo electr\u00F3nico de contacto";
+	private static final String CERTIFICATE_DATA_INFO = "Informaci\u00F3n para la presentaci\u00F3n tel\u00E1matica en la Agencia Tributaria";
+	private static final String CERTIFICATE_DOCUMENT= "Certificado digital. Documento.";
+	private static final String CERTIFICATE_NAME = "Certificado digital. Nombre o raz\u00F3n social.";
+	private static final String AEAT_TEST = "Modo de presentaci\u00F3n de las declaraciones";
+	private static final String AEAT_TEST_PRODUCTION = "REAL - Entorno de producci\u00F3n.";
+	private static final String AEAT_TEST_TEST 		 = "TEST - Entorno de pruebas.";
 
 	
 	private static final int CHANGE_DISPLAY_MILLIS = 1000;
@@ -57,27 +65,33 @@ public class FiscalConfigPanel extends SimpleLayoutPanel {
 	private AonLayoutPanel layout;
 
 	public FiscalConfigPanel( FiscalConfigModuleOptions options ) {
-		this.layout = new AonLayoutPanel(); 
+		this.layout = new AonLayoutPanel();
+		this.layout.addNorth(new AonToolbar(AON.MSG.fiscalParameters()), AonToolbar.HEIGTH);
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonBlockCenter());
 		tab.addStyleName(AON.CSS.aonMarginTop());
-		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
 		
 		this.layout.add(tab);
 		setWidget(this.layout);
-		paintDefaultYear(options, tab);
-		paintDefaultAdministration(options, tab);
-		paintAdmonCreditor(options, tab);
-		paintAdmonVatCreditor(options, tab);
-		paintAdmonRetentionCreditor(options, tab);
-		paintTaxRefundRegime(options, tab);
-		paintMod303ByDifferenceDisabled(options, tab);
-		paintPermAddressChanges(options, tab);
-		paintContactDataInfo(options, tab);
-		paintContactPerson(options, tab);
-		paintContactPhone(options, tab);
-		paintContactCellular(options, tab);
-		paintContactMail(options, tab);
+		if (!options.getConfiguration().getCompany().getDomain().isParent()) {
+			paintDefaultYear(options, tab);
+			paintDefaultAdministration(options, tab);
+			paintAdmonCreditor(options, tab);
+			paintAdmonVatCreditor(options, tab);
+			paintAdmonRetentionCreditor(options, tab);
+			paintTaxRefundRegime(options, tab);
+			paintMod303ByDifferenceDisabled(options, tab);
+			paintPermAddressChanges(options, tab);
+			paintContactDataInfo(options, tab);
+			paintContactPerson(options, tab);
+			paintContactPhone(options, tab);
+			paintContactCellular(options, tab);
+			paintContactMail(options, tab);
+		}
+		paintCertifiateDataInfo(options, tab);
+		paintCertifiateDocument(options, tab);
+		paintCertifiateName(options, tab);
+		paintCertifiateEnvironment(options, tab);
 	}
 
 	private void addRow(AonDisplayTable tab, Label label, Widget widget, Label msg) {
@@ -87,7 +101,7 @@ public class FiscalConfigPanel extends SimpleLayoutPanel {
 		paramPanel.add(widget);
 		paramPanel.add(msg);
 		tab.addRow()
-			.addCell( label, AON.CSS.aonBold() )
+			.addCell( label, AON.CSS.aonBold(),AON.CSS.aonWidth400() )
 			.addCell( paramPanel, AON.CSS.aonFlexGrow1() );
 	}
 	
@@ -273,7 +287,10 @@ public class FiscalConfigPanel extends SimpleLayoutPanel {
 	private void paintContactDataInfo(FiscalConfigModuleOptions options, AonDisplayTable tab) {
 		final Label msg = getEmptyLabel();
 		final Label widget = getEmptyLabel();
-		addRow(tab, new Label(CONTACT_DATA_INFO),widget,msg);
+		final Label title = new Label(CONTACT_DATA_INFO);
+		title.setStyleName(AON.CSS.aonBold());
+		title.setStyleName(AON.CSS.aonTextUnderline());
+		addRow(tab, title,widget,msg);
 	}
 
 	private void paintContactPerson(FiscalConfigModuleOptions options, AonDisplayTable tab) {
@@ -328,7 +345,7 @@ public class FiscalConfigPanel extends SimpleLayoutPanel {
 		final Label msg = getEmptyLabel();
 		AonTextBox box = new AonTextBox();
 		box.setMaxLength(40);
-		box.setVisibleLength(25);
+		box.setVisibleLength(40);
 		box.setValue(options.getConfiguration().fiscal().getContactMail());
 		box.addValueChangeHandler( event -> {
 			options.getConfiguration().fiscal().setContactMail(box.getValue());
@@ -340,6 +357,61 @@ public class FiscalConfigPanel extends SimpleLayoutPanel {
 		addRow(tab, new Label(CONCTACT_MAIL),box,msg);
 	}
 	
+	private void paintCertifiateDataInfo(FiscalConfigModuleOptions options, AonDisplayTable tab) {
+		final Label msg = getEmptyLabel();
+		final Label widget = getEmptyLabel();
+		final Label title = new Label(CERTIFICATE_DATA_INFO);
+		title.setStyleName(AON.CSS.aonBold());
+		title.setStyleName(AON.CSS.aonTextUnderline());
+		addRow(tab, title,widget,msg);
+	}
+	
+	private void paintCertifiateDocument(FiscalConfigModuleOptions options, AonDisplayTable tab) {
+		final Label msg = getEmptyLabel();
+		AonDocumentTextBox box = new AonDocumentTextBox();
+		box.setValue(options.getConfiguration().fiscal().getCertificateDocument());
+		box.addValueChangeHandler( event -> {
+			options.getConfiguration().fiscal().setCertificateDocument(box.getValue());
+			saveParam(options, 
+				new ApplicationParameter().setName(AppParam.FS_CERT_DOCUMENT)
+				.setValue(box.getValue())
+				,msg);
+		});
+		addRow(tab, new Label(CERTIFICATE_DOCUMENT),box,msg);
+	}
+
+	private void paintCertifiateName(FiscalConfigModuleOptions options, AonDisplayTable tab) {
+		final Label msg = getEmptyLabel();
+		AonTextBox box = new AonTextBox();
+		box.setMaxLength(40);
+		box.setVisibleLength(40);
+		box.setValue(options.getConfiguration().fiscal().getCertificateName());
+		box.addValueChangeHandler( event -> {
+			options.getConfiguration().fiscal().setCertificateName(box.getValue());
+			saveParam(options, 
+				new ApplicationParameter().setName(AppParam.FS_CERT_NAME)
+				.setValue(box.getValue())
+				,msg);
+		});
+		addRow(tab, new Label(CERTIFICATE_NAME),box,msg);
+	}
+	
+	private void paintCertifiateEnvironment(FiscalConfigModuleOptions options, AonDisplayTable tab) {
+		final Label msg = getEmptyLabel();
+		ListBox box = new ListBox();
+		box.addItem(AEAT_TEST_PRODUCTION);
+		box.addItem(AEAT_TEST_TEST);
+		
+		box.setSelectedIndex(options.getConfiguration().fiscal().isTestEnvironment()?0:1);
+		box.addChangeHandler( event -> {
+			options.getConfiguration().fiscal().setTestEnvironment(box.getSelectedIndex()==0);
+			saveParam(options, 
+				new ApplicationParameter().setName(AppParam.FS_AEAT_TEST_ENV)
+				.setValue(Boolean.toString(options.getConfiguration().fiscal().isTestEnvironment()))
+				,msg);
+		});
+		addRow(tab, new Label(AEAT_TEST),box,msg);
+	}
 }
 
 

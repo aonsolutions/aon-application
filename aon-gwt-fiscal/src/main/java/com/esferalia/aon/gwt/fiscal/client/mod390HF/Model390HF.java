@@ -3,15 +3,16 @@ package com.esferalia.aon.gwt.fiscal.client.mod390HF;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -43,8 +44,15 @@ public class Model390HF extends MainEntryPoint {
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int INFORMATION_TAB = 1;
 
-	protected static Mod390HFServiceAsync MOD_SERVICE;
-	protected static final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
+	static final Mod390HFServiceAsync MOD_SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
+		
+		Mod390HFServiceAsync serviceRaw = GWT.create(Mod390HFService.class);
+		MOD_SERVICE = new Mod390HFServiceAsyncDecorator(serviceRaw);
+	}
 	
 	interface Mod390HFBinder extends UiBinder<Widget, Model390HF> {
 	}
@@ -81,7 +89,7 @@ public class Model390HF extends MainEntryPoint {
 		public void cleanErrorPanel();
 		public void showError(String msg);
 
-	};
+	}
 
 	protected class Model390HFCallback implements IModel390HFCallback{
 
@@ -110,17 +118,17 @@ public class Model390HF extends MainEntryPoint {
 			Model390HF.this.showErrorPanel(msg);
 		}
 
-	};
+	}
 	
 
 	@Override
 	public void onModuleLoad() {
 		AON.ensureInjected();
 		LOGGER.info("Access to onModuleLoad");
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
 			
 			@Override
-			public void onSuccess(AonData aonData) {
+			public void onSuccess(AonConfiguration config) {
 				LOGGER.info("Access to onModuleLoad: aonData get");
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 				Model390HFModuleOptions options = new Model390HFModuleOptions();
@@ -128,7 +136,7 @@ public class Model390HF extends MainEntryPoint {
 				options.setDomainName(getCurrentDomainName());
 				options.setDomain(getCurrentDomain());
 				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
+				options.setConfiguration(config);
 				onModuleLoad( options );
 			}
 			
@@ -141,9 +149,6 @@ public class Model390HF extends MainEntryPoint {
 	public void onModuleLoad(Model390HFModuleOptions options) {
 		LOGGER.info("Access to onModuleLoad with options");
 		AON.ensureInjected();
-
-		Mod390HFServiceAsync modServiceRaw = GWT.create(Mod390HFService.class);
-		MOD_SERVICE = new Mod390HFServiceAsyncDecorator(modServiceRaw);
 
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
 

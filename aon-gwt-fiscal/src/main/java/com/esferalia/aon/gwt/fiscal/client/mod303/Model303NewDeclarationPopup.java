@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -237,7 +238,7 @@ class Model303NewDeclarationPopup extends AonCustomDialog {
     	cancelButton.setText( AON.MSG.cancelAction());
 		cancelButton.addClickHandler(event -> {
 			hide();
-			callback.onCancel();
+			callback.onCancel(mod303);
 		});
 		buttonsPanel.add(cancelButton);
 		rootPanel.add(buttonsPanel);

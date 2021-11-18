@@ -214,7 +214,7 @@ public class ModelMatrixPanel extends FlowPanel {
 			model.setYear(fm.getYear());
 			model.setDomain(fm.getDomain());
 			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
-			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getAonData(),model)));
+			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model)));
 			AonDisplayTableCell cell = row.addCell();
 			cell.add(addButton);
 			cell.addStyleName( AON.CSS.aonBorderBottom() );

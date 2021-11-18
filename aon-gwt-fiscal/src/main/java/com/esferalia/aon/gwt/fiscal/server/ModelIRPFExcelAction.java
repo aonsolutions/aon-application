@@ -142,7 +142,7 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 		cellCount = 0;
 
 		try {
-			InputStream inputStream = Mod115ExcelAction.class.getResourceAsStream(
+			InputStream inputStream = ModelIRPFExcelAction.class.getResourceAsStream(
 					IMAGES[ model.getAdministration().ordinal()]);
 			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
 			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);

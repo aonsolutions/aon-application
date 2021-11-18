@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -19,103 +20,87 @@ public class Mod111ServiceAsyncDecorator implements Mod111ServiceAsync {
 	}
 
 	@Override
-	public void getMod111(String domainName, String userLogin, int domain, int id, AsyncCallback<Mod111> callback) {
+	public void getMod111(Occam occam, int id, AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.getMod111(domainName, userLogin ,domain, id, new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.getMod111(occam, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getMod111s(String domainName, String userLogin, int domain, AsyncCallback<LinkedList<Mod111>> callback) {
+	public void getMod111s(Occam occam, AsyncCallback<LinkedList<Mod111>> callback) {
 		AON.start();
-		fsa.getMod111s(domainName, userLogin, domain, new AsyncCallbackWrapper<LinkedList<Mod111>>(callback));
+		fsa.getMod111s(occam, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void calculate(String domainName, String userLogin, Mod111 mod111, AsyncCallback<Mod111> callback) {
+	public void calculate(Occam occam, Mod111 mod111, AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.calculate(domainName, userLogin, mod111, new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.calculate(occam, mod111, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void save(String domainName, String userLogin, Mod111 mod111, AsyncCallback<Mod111> callback) {
+	public void save(Occam occam, Mod111 mod111, AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.save(domainName, userLogin, mod111, new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.save(occam, mod111, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void saveComments(String domainName, String userLogin, Mod111 mod111,AsyncCallback<Mod111> callback) {
+	public void saveComments(Occam occam, Mod111 mod111,AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.saveComments(domainName, userLogin, mod111, new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.saveComments(occam, mod111, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void initializeForFinish(String domainName, String userLogin, Mod111 mod111, AsyncCallback<Mod111> callback) {
+	public void initializeForFinish(Occam occam, Mod111 mod111, AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.initializeForFinish(domainName, userLogin, mod111, new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.initializeForFinish(occam, mod111, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void markAsFinished(String domainName, String userLogin, Mod111 mod111,AsyncCallback<Mod111> callback) {
+	public void markAsFinished(Occam occam, Mod111 mod111,AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.markAsFinished(domainName, userLogin, mod111, new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.markAsFinished(occam, mod111, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void markAsCustomerCheck(String domainName, String userLogin, Mod111 mod111,AsyncCallback<Mod111> callback) {
+	public void markAsCustomerCheck(Occam occam, Mod111 mod111,AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.markAsCustomerCheck(domainName, userLogin, mod111, new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.markAsCustomerCheck(occam, mod111, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void markAsPending(String domainName, String userLogin, Mod111 mod111,AsyncCallback<Mod111> callback) {
+	public void markAsPending(Occam occam, Mod111 mod111,AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.markAsPending(domainName, userLogin, mod111, new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.markAsPending(occam, mod111, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void markAsSent(String domainName, String userLogin, Mod111 mod111, AsyncCallback<Mod111> callback) {
+	public void markAsSent(Occam occam, Mod111 mod111, AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.markAsSent(domainName, userLogin, mod111, new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.markAsSent(occam, mod111, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void initialize(String domainName, String userLogin, int currentDomain,Mod111 mod111, AsyncCallback<Mod111> callback) {
+	public void initialize(Occam occam,Mod111 mod111, AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.initialize(domainName, userLogin, currentDomain,mod111,new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.initialize(occam,mod111,new AsyncCallbackWrapper<>(callback));
 
 	}
 
 	@Override
-	public void create(String domainName, String userLogin, int currentDomain, Mod111 mod111, AsyncCallback<Mod111> callback) {
+	public void create(Occam occam, Mod111 mod111, AsyncCallback<Mod111> callback) {
 		AON.start();
-		fsa.create(domainName, userLogin, currentDomain, mod111,new AsyncCallbackWrapper<Mod111>(callback));
+		fsa.create(occam, mod111,new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void delete(String domainName, String userLogin, Mod111 mod111, AsyncCallback<Void> callback) {
+	public void delete(Occam occam, Mod111 mod111, AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.delete(domainName, userLogin, mod111, new AsyncCallbackWrapper<Void>(callback));
+		fsa.delete(occam, mod111, new AsyncCallbackWrapper<>(callback));
 	}
 	@Override
-	public void getInfo(String domainName, String userLogin, int domain, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback) {
+	public void getInfo(Occam occam, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback) {
 		AON.start();
-		fsa.getInfo(domainName, userLogin, domain, mod111, script, infoKey,new AsyncCallbackWrapper<String>(callback));
-	}
-
-	@Override
-	public void mathExpression(String expression, AsyncCallback<Double> callback) {
-		AON.start();
-		fsa.mathExpression(expression,new AsyncCallbackWrapper<Double>(callback));
-	}
-
-	@Override
-	public void validationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback) {
-		
-	}
-
-	@Override
-	public void presentationFile(String domainName, Integer domainId, String user, Integer id, AsyncCallback<Integer> callback) {
-
+		fsa.getInfo(occam, mod111, script, infoKey,new AsyncCallbackWrapper<>(callback));
 	}
 
 }

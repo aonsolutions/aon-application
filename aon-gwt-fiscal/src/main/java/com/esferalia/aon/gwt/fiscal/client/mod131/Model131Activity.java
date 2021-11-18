@@ -118,14 +118,12 @@ public class Model131Activity extends DockLayoutPanel {
 	final EpigraphPanel epigraphPanel = new EpigraphPanel( new EpigraphPanelCallback(), null);
 
 	public static interface IMod131ActivityCallback {
+		Model131ModuleOptions getOptions();
 		Mod131 getModel();
 		Mod131Activity getActivity();
 		void onAccept();
 		void onCancel();
 		void onRemove();
-		String getDomainName();
-		int getDomain();
-		String getUser();
 	}
 	
 	
@@ -199,47 +197,31 @@ public class Model131Activity extends DockLayoutPanel {
 		accept.setText(AON.MSG.saveAction());
 		accept.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		accept.addStyleName(AON.AON_CSS.aonIconSave());
-		accept.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.onAccept();
-			}
-		});
+		accept.addClickHandler(event -> callback.onAccept());
 		buttonContainer.add(accept);
 		final Button cancel = new Button();
 		cancel.setText(AON.MSG.cancelAction());
 		cancel.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		cancel.addStyleName(AON.AON_CSS.aonIconCancel());
-		cancel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.onCancel();
-			}
-		});
+		cancel.addClickHandler(event -> callback.onCancel());
 		buttonContainer.add(cancel);
 		
 		final Button remove = new Button();
 		remove.setText(AON.MSG.deleteAction());
 		remove.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		remove.addStyleName(AON.AON_CSS.aonIconDelete());
-		remove.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				ConfirmDialog dialog = new ConfirmDialog();
-				dialog.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
-					@Override
-					public void onCancel() {
-					}
-					
-					@Override
-					public void onAccept() {
-						callback.onRemove();
-					}
-				});
-			}
+		remove.addClickHandler(event -> {
+			ConfirmDialog dialog = new ConfirmDialog();
+			dialog.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
+				@Override
+				public void onCancel() {
+				}
+				
+				@Override
+				public void onAccept() {
+					callback.onRemove();
+				}
+			});
 		});
 		buttonContainer.add(remove);
 		
@@ -513,37 +495,38 @@ public class Model131Activity extends DockLayoutPanel {
 	}
 	
 	private void calculate() {
-		Model131.SERVICE.calculateActivity( callback.getDomainName(), callback.getUser(), callback.getDomain(),
-				callback.getModel(), this.callback.getActivity(), new AsyncCallback<Mod131Activity>() {
-					
-					@Override
-					public void onSuccess(Mod131Activity result) {
-						for (int i = 0 ; i < callback.getActivity().getModules().size(); i++) {
-							callback.getActivity().getModules().get(i).setResult(result.getModules().get(i).getResult());	
-						}
-						callback.getActivity().setPrc(result.getPrc());
-						callback.getActivity().setRnp(result.getRnp());
-						callback.getActivity().setIem(result.getIem());
-						callback.getActivity().setRnm(result.getRnm());
-						callback.getActivity().setIc1(result.getIc1());
-						callback.getActivity().setIc2(result.getIc2());
-						callback.getActivity().setIc3(result.getIc3());
-						callback.getActivity().setIc4(result.getIc4());
-						callback.getActivity().setIc5(result.getIc5());
-						callback.getActivity().setRpf(result.getRpf());
-						callback.getActivity().setRlo(result.getRlo());
-						callback.getActivity().setRdr(result.getRdr());
-						callback.getActivity().setNet(result.getNet());
-						callback.getActivity().setPor(result.getPor());
-						callback.getActivity().setRes(result.getRes());
-						populateActivity(callback.getActivity());						
+		Model131.SERVICE.calculateActivity( 
+			callback.getOptions().getOccam(), 
+			callback.getModel(), this.callback.getActivity(), new AsyncCallback<Mod131Activity>() {
+				
+				@Override
+				public void onSuccess(Mod131Activity result) {
+					for (int i = 0 ; i < callback.getActivity().getModules().size(); i++) {
+						callback.getActivity().getModules().get(i).setResult(result.getModules().get(i).getResult());	
 					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
-					}
-				});
+					callback.getActivity().setPrc(result.getPrc());
+					callback.getActivity().setRnp(result.getRnp());
+					callback.getActivity().setIem(result.getIem());
+					callback.getActivity().setRnm(result.getRnm());
+					callback.getActivity().setIc1(result.getIc1());
+					callback.getActivity().setIc2(result.getIc2());
+					callback.getActivity().setIc3(result.getIc3());
+					callback.getActivity().setIc4(result.getIc4());
+					callback.getActivity().setIc5(result.getIc5());
+					callback.getActivity().setRpf(result.getRpf());
+					callback.getActivity().setRlo(result.getRlo());
+					callback.getActivity().setRdr(result.getRdr());
+					callback.getActivity().setNet(result.getNet());
+					callback.getActivity().setPor(result.getPor());
+					callback.getActivity().setRes(result.getRes());
+					populateActivity(callback.getActivity());						
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());
+				}
+			});
 	}
 	
 

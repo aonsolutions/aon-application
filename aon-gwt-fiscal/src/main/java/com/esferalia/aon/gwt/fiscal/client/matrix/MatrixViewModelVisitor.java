@@ -6,7 +6,6 @@ import com.esferalia.aon.gwt.api.client.fiscal.JsFiscalMenuItem;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
-import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod115.Model115;
@@ -39,6 +38,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HFModuleOptions;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
@@ -58,21 +58,18 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.PopupPanel;
 
 public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 	
-	private AonData aonData;
+	private AonConfiguration config;
 	private JsFiscalMenuItem model;
 	private Integer id;
 	private FiscalModelType modelType;
 	
-	public MatrixViewModelVisitor(AonData aonData, JsFiscalMenuItem model) {
-		this.aonData = aonData;
+	public MatrixViewModelVisitor(AonConfiguration config, JsFiscalMenuItem model) {
+		this.config = config;
 		this.model = model;
 		this.id = Integer.valueOf(model.getId() + "");
 		this.modelType = FiscalModelType.safeValueByName(model.getModel());
@@ -97,22 +94,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model303 model303 = new Model303();
 			Model303ModuleOptions options = new Model303ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod303>() {
 				
+				private static final long serialVersionUID = -561086138065926283L;
+
 				@Override
 				public void onRemove(Mod303 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod303 edited) {
@@ -129,17 +130,11 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			model303.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -164,22 +159,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model200 model200 = new Model200();
 			Model200ModuleOptions options = new Model200ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod200>() {
 				
+				private static final long serialVersionUID = 7126396383210126603L;
+
 				@Override
 				public void onRemove(Mod200 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod200 edited) {
@@ -196,18 +195,12 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			LOGGER.info("Before visitM200 model200.onModuleLoad( options )");
 			model200.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -226,22 +219,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model390 model390 = new Model390();
 			Model390ModuleOptions options = new Model390ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod390>() {
 				
+				private static final long serialVersionUID = 6459654524165930702L;
+
 				@Override
 				public void onRemove(Mod390 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod390 edited) {
@@ -258,18 +255,12 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			LOGGER.info("Before visitM390 model390.onModuleLoad( options )");
 			model390.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -288,22 +279,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model349 model349 = new Model349();
 			Model349ModuleOptions options = new Model349ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod349>() {
-				
+
+				private static final long serialVersionUID = -1940200535085754288L;
+
 				@Override
 				public void onRemove(Mod349 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod349 edited) {
@@ -320,18 +315,12 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			LOGGER.info("Before visitM349 model349.onModuleLoad( options )");
 			model349.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -350,22 +339,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model347 model347 = new Model347();
 			Model347ModuleOptions options = new Model347ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod347>() {
 				
+				private static final long serialVersionUID = -2944918868144513472L;
+
 				@Override
 				public void onRemove(Mod347 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod347 edited) {
@@ -382,18 +375,12 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			LOGGER.info("Before visitM347 model347.onModuleLoad( options )");
 			model347.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -412,22 +399,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model193 model193 = new Model193();
 			Model193ModuleOptions options = new Model193ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod193>() {
 				
+				private static final long serialVersionUID = -742847884612267846L;
+
 				@Override
 				public void onRemove(Mod193 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod193 edited) {
@@ -444,18 +435,12 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			LOGGER.info("Before visitM193 model193.onModuleLoad( options )");
 			model193.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -474,22 +459,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model190 model190 = new Model190();
 			Model190ModuleOptions options = new Model190ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod190>() {
 				
+				private static final long serialVersionUID = 7778702337671675038L;
+
 				@Override
 				public void onRemove(Mod190 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod190 edited) {
@@ -506,18 +495,12 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			LOGGER.info("Before visitM190 model190.onModuleLoad( options )");
 			model190.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -536,22 +519,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model184 model184 = new Model184();
 			Model184ModuleOptions options = new Model184ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod184>() {
 				
+				private static final long serialVersionUID = -1286940439944927660L;
+
 				@Override
 				public void onRemove(Mod184 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod184 edited) {
@@ -568,18 +555,12 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			LOGGER.info("Before visitM184 model184.onModuleLoad( options )");
 			model184.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -598,22 +579,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model180 model180 = new Model180();
 			Model180ModuleOptions options = new Model180ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod180>() {
 				
+				private static final long serialVersionUID = -4870715958812920380L;
+
 				@Override
 				public void onRemove(Mod180 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod180 edited) {
@@ -630,18 +615,12 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			LOGGER.info("Before visitM180 model180.onModuleLoad( options )");
 			model180.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -660,22 +639,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model390HF model390HF = new Model390HF();
 			Model390HFModuleOptions options = new Model390HFModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod390HF>() {
 				
+				private static final long serialVersionUID = 1588463155133008546L;
+
 				@Override
 				public void onRemove(Mod390HF removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod390HF edited) {
@@ -692,18 +675,12 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			LOGGER.info("Before visitM390HF model390HF.onModuleLoad( options )");
 			model390HF.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -723,22 +700,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model202 model202 = new Model202();
 			Model202ModuleOptions options = new Model202ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod202>() {
 				
+				private static final long serialVersionUID = 5437864786317977362L;
+
 				@Override
 				public void onRemove(Mod202 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod202 edited) {
@@ -755,17 +736,11 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			model202.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -784,22 +759,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model131 model131 = new Model131();
 			Model131ModuleOptions options = new Model131ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod131>() {
 				
+				private static final long serialVersionUID = 5434199356000463965L;
+
 				@Override
 				public void onRemove(Mod131 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod131 edited) {
@@ -816,17 +795,11 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			model131.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -845,22 +818,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model130 model130 = new Model130();
 			Model130ModuleOptions options = new Model130ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod130>() {
 				
+				private static final long serialVersionUID = 6159531689528381121L;
+
 				@Override
 				public void onRemove(Mod130 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod130 edited) {
@@ -877,17 +854,11 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			model130.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -906,22 +877,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model123 model123 = new Model123();
 			Model123ModuleOptions options = new Model123ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod123>() {
 				
+				private static final long serialVersionUID = 4004029550356098887L;
+
 				@Override
 				public void onRemove(Mod123 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod123 edited) {
@@ -938,17 +913,11 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			model123.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -967,14 +936,16 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model115 model115 = new Model115();
 			Model115ModuleOptions options = new Model115ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod115>() {
+				
+				private static final long serialVersionUID = -8522610106181709782L;
 				
 				@Override
 				public void onRemove(Mod115 removed) {
@@ -982,7 +953,9 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod115 edited) {
@@ -1001,7 +974,7 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			model115.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}
@@ -1020,22 +993,26 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 			Model111 model111 = new Model111();
 			Model111ModuleOptions options = new Model111ModuleOptions();
 			options.setParentWidget(entryDialog);
-			options.setDomainName(aonData.getDomain().getName());
+			options.setDomainName(config.getDomain().getName());
 			options.setDomain( model.getDomain() );
-			options.setUser(aonData.getUser().getLogin());
-			options.setAonData(aonData);
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
 			options.setFiscalModelId( id );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
 			options.setExternalCallback( new AonModuleCallback<Mod111>() {
 				
+				private static final long serialVersionUID = 5628595108690522678L;
+
 				@Override
 				public void onRemove(Mod111 removed) {
 					hide();
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {}
+				public void onFailure(Throwable caught) {
+					// Nothing
+				}
 				
 				@Override
 				public void onExit(Mod111 edited) {
@@ -1052,17 +1029,11 @@ public class MatrixViewModelVisitor implements IFiscalModelTypeVisitor {
 					entryDialog.clear();
 				}
 			});
-			entryDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-				
-				@Override
-				public void onClose(CloseEvent<PopupPanel> event) {
-					entryDialog.clear();
-				}
-			});
+			entryDialog.addCloseHandler(event -> entryDialog.clear());
 			model111.onModuleLoad( options );
 			entryDialog.center();
 			entryDialog.show();
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			Window.alert("Error inesperado! [" + t.getMessage() + "]");
 		}
 	}

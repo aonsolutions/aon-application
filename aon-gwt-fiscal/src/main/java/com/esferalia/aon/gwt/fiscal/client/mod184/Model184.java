@@ -3,15 +3,16 @@ package com.esferalia.aon.gwt.fiscal.client.mod184;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
@@ -60,8 +61,15 @@ public class Model184 extends MainEntryPoint {
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int BREAKDOWN_TAB = 1;
 	
-	static Model184ServiceAsync SERVICE;
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
+	static final Model184ServiceAsync SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
+		
+		Model184ServiceAsync serviceRaw = GWT.create(Model184Service.class);
+		SERVICE = new Model184ServiceAsyncDecorator(serviceRaw);
+	}
 	
 	interface Model184Binder extends UiBinder<Widget, Model184> {}
 	private static final Model184Binder MODEL_184_BINDER = GWT.create(Model184Binder.class);
@@ -133,17 +141,17 @@ public class Model184 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
 			
 			@Override
-			public void onSuccess(AonData aonData) {
+			public void onSuccess(AonConfiguration config) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 				Model184ModuleOptions options = new Model184ModuleOptions();
 				options.setParentWidget(root);
 				options.setDomainName(getCurrentDomainName());
 				options.setDomain(getCurrentDomain());
 				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
+				options.setConfiguration(config);
 				onModuleLoad( options );
 			}
 			
@@ -155,9 +163,6 @@ public class Model184 extends MainEntryPoint {
 	
 	public void onModuleLoad(Model184ModuleOptions options) {
 		AON.ensureInjected();
-
-		Model184ServiceAsync serviceRaw = GWT.create(Model184Service.class);
-		SERVICE = new Model184ServiceAsyncDecorator(serviceRaw);
 
 		Widget ui = MODEL_184_BINDER.createAndBindUi(this);
 

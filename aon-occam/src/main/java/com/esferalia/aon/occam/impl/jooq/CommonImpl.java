@@ -72,6 +72,10 @@ public class CommonImpl implements ICommon {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			AppParamDAO.saveApplicationParameter(ctx, ap));
 	}
+	@Override
+	public AonConfiguration getConfiguration(AONContext ctx, ConfigParams params) {
+		return ConfigurationDAO.getConfiguration(ctx, params);
+	}
 	
 	// ------------------ APPLICATION PARAMETERS
 	@Override

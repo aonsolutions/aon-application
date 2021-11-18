@@ -8,6 +8,8 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
@@ -19,8 +21,9 @@ public interface CommonServiceAsync {
 	// **************************************************
 	// ********************************** [CONFIGURATION]
 	// **************************************************
-	void getAonConfiguration(String currentDomainName, int currentDomain, String user, AsyncCallback<AonConfiguration> asyncCallback);
+	void getAonConfiguration(String currentDomainName, int currentDomain, String user, AsyncCallback<AonConfiguration> callback);
 	void getAonConfiguration(String currentDomainName, int currentDomain, String user, Date atDate, AsyncCallback<AonConfiguration> callback);
+	void getAonConfiguration(Occam occam, ConfigParams params, AsyncCallback<AonConfiguration> asyncCallback);
 
 	// **************************************************
 	// *************************************** [SECURITY]

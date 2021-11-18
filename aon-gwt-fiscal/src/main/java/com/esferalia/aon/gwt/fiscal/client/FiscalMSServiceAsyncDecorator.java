@@ -42,18 +42,18 @@ public class FiscalMSServiceAsyncDecorator implements FiscalMSServiceAsync {
 		serviceAsync.getActivities(activityGroup, new AsyncCallbackWrapper<LinkedList<Activity>>(callback));
 	}
 	// --------------------------------------------------------------- GWT API INFO
-	@Override
-	public void getAonData(String domainName, Integer domainId, String user, AsyncCallback<AonData> callback) {
-		AON.start();
-		serviceAsync.getAonData(domainName,domainId, user, new AsyncCallbackWrapper<AonData>(callback));
-	}
-
-	@Override
-	public void getAonDataToken(String domainName, Integer domainId, String token, AsyncCallback<AonData> callback) {
-		AON.start();
-		serviceAsync.getAonDataToken(domainName,domainId, token, new AsyncCallbackWrapper<AonData>(callback));
-	}
-
+//	@Override
+//	public void getAonData(String domainName, Integer domainId, String user, AsyncCallback<AonData> callback) {
+//		AON.start();
+//		serviceAsync.getAonData(domainName,domainId, user, new AsyncCallbackWrapper<AonData>(callback));
+//	}
+//
+//	@Override
+//	public void getAonDataToken(String domainName, Integer domainId, String token, AsyncCallback<AonData> callback) {
+//		AON.start();
+//		serviceAsync.getAonDataToken(domainName,domainId, token, new AsyncCallbackWrapper<AonData>(callback));
+//	}
+//
 //	@Override
 //	public void presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id, AsyncCallback<Integer> callback) {
 //		AON.start();

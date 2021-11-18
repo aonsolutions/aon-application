@@ -34,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 import com.esferalia.aon.occam.api.model.config.ConfigBlock;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -48,6 +49,7 @@ public interface ICommon {
 	// --------------------------------------------
 	public AonConfiguration getConfiguration(AONContext ctx, Date atDate);
 	public AonConfiguration getConfiguration(AONContext ctx, Date atDate, ConfigBlock ... block );
+	public AonConfiguration getConfiguration(AONContext ctx, ConfigParams params);
 	public ApplicationParameter saveApplicationParameter(AONContext ctx, ApplicationParameter ap);
 	
 	// --------------------------------------------

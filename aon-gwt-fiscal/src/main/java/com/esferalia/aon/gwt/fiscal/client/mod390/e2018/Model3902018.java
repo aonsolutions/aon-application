@@ -20,10 +20,6 @@ import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -52,9 +48,7 @@ public class Model3902018 extends DockLayoutPanel  {
 	private Mod3902018ServiceAsync MOD390_SERVICE;
 	
 	static interface IMod3902018CallBack {
-		String getDomainName();
-		Integer getDomainId();
-		String getUser();	
+		Model390ModuleOptions getOptions();
 		void calculateAndRefresh();
 		Mod3902018 getMod390();
 		void showVisorAEAT();
@@ -147,13 +141,9 @@ public class Model3902018 extends DockLayoutPanel  {
 		newButton.setTitle(newButton.getText());
 		newButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		newButton.addStyleName(AON.AON_CSS.aonIconReset());
-		newButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				cbk.cleanErrorPanel();
-				cbk.onNew(options, DEFAULT_YEAR);
-			}
+		newButton.addClickHandler(event -> {
+			cbk.cleanErrorPanel();
+			cbk.onNew(options, DEFAULT_YEAR);
 		});
 		buttonContainer.add(newButton);
 		
@@ -163,44 +153,40 @@ public class Model3902018 extends DockLayoutPanel  {
 		saveButton.setTitle(saveButton.getText());
 		saveButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		saveButton.addStyleName(AON.AON_CSS.aonIconSave());
-		saveButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				final PopupPanel popup = new PopupPanel(false, true);
-				Label label = new Label(AON.MSG.processing());
-				label.addStyleName(AON.AON_CSS.aonTimer());
-				popup.add(label);
-				popup.setGlassEnabled(true);
-				popup.setAnimationEnabled(true);
-				popup.center();
-				try {
-					m390.setDomain(getCurrentDomain());
-					m390.setConfidential(false);
-					for (int i = 0 ; i < linkContainer.getWidgetCount(); i ++) {
-						WestFocusPanel page = (WestFocusPanel) linkContainer.getWidget(i);
-						page.populate(m390);	
-					}
-					cbk.cleanErrorPanel();
-					validate(m390, cbk);
-					MOD390_SERVICE.saveMod3902018(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),m390
-							, new AsyncCallback<Mod3902018>() {
-								@Override
-								public void onSuccess(Mod3902018 result) {
-									select(options,result, cbk);
-									popup.hide();
-								}
-
-								@Override
-								public void onFailure(Throwable caught) {
-									popup.hide();
-									cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-								}
-							});
-				} catch (IllegalArgumentException e) {
-					popup.hide();
-					cbk.showError(e.getMessage());
+		saveButton.addClickHandler(event -> {
+			final PopupPanel popup = new PopupPanel(false, true);
+			Label label = new Label(AON.MSG.processing());
+			label.addStyleName(AON.AON_CSS.aonTimer());
+			popup.add(label);
+			popup.setGlassEnabled(true);
+			popup.setAnimationEnabled(true);
+			popup.center();
+			try {
+				m390.setDomain(getCurrentDomain());
+				m390.setConfidential(false);
+				for (int i = 0 ; i < linkContainer.getWidgetCount(); i ++) {
+					WestFocusPanel page = (WestFocusPanel) linkContainer.getWidget(i);
+					page.populate(m390);	
 				}
+				cbk.cleanErrorPanel();
+				validate(m390);
+				MOD390_SERVICE.saveMod3902018(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),m390
+						, new AsyncCallback<Mod3902018>() {
+							@Override
+							public void onSuccess(Mod3902018 result) {
+								select(options,result, cbk);
+								popup.hide();
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								popup.hide();
+								cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+							}
+						});
+			} catch (IllegalArgumentException e) {
+				popup.hide();
+				cbk.showError(e.getMessage());
 			}
 		});
 		buttonContainer.add(saveButton);
@@ -213,16 +199,12 @@ public class Model3902018 extends DockLayoutPanel  {
 		cancelButton.setTitle(cancelButton.getText());
 		cancelButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		cancelButton.addStyleName(AON.AON_CSS.aonIconCancel());
-		cancelButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if (options.isBackButtonVisible() && options.hasExternalCallback()) {
-					options.getExternalCallback().onExit(m390);
-				} else {
-					cbk.cleanErrorPanel();
-					cbk.onCancel();
-				}
+		cancelButton.addClickHandler(event -> {
+			if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+				options.getExternalCallback().onExit(m390);
+			} else {
+				cbk.cleanErrorPanel();
+				cbk.onCancel();
 			}
 		});
 		buttonContainer.add(cancelButton);
@@ -233,40 +215,36 @@ public class Model3902018 extends DockLayoutPanel  {
 		deleteButton.setTitle(deleteButton.getText());
 		deleteButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		deleteButton.addStyleName(AON.AON_CSS.aonIconDelete());
-		deleteButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				deleteButton.setEnabled(false);
-				ConfirmDialog cd = new ConfirmDialog();
-				cd.confirm(AON.MSG.confirmDeclarationDeleteAction(), new ConfirmDialogCallback() {
+		deleteButton.addClickHandler(event -> {
+			deleteButton.setEnabled(false);
+			ConfirmDialog cd = new ConfirmDialog();
+			cd.confirm(AON.MSG.confirmDeclarationDeleteAction(), new ConfirmDialogCallback() {
 
-					@Override
-					public void onAccept() {
-						MOD390_SERVICE.deleteMod3902018(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),
-								m390, new AsyncCallback<Void>() {
-							@Override
-							public void onSuccess(Void result) {
-								deleteButton.setEnabled(true);
-								cbk.cleanErrorPanel();
-								cbk.onCancel();
-							}
+				@Override
+				public void onAccept() {
+					MOD390_SERVICE.deleteMod3902018(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),
+							m390, new AsyncCallback<Void>() {
+						@Override
+						public void onSuccess(Void result) {
+							deleteButton.setEnabled(true);
+							cbk.cleanErrorPanel();
+							cbk.onCancel();
+						}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								deleteButton.setEnabled(true);
-								cbk.showError(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
-							}
-						});
-					}
+						@Override
+						public void onFailure(Throwable caught) {
+							deleteButton.setEnabled(true);
+							cbk.showError(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+						}
+					});
+				}
 
-					@Override
-					public void onCancel() {
-						deleteButton.setEnabled(true);
-					}
-					
-				});
-			}
+				@Override
+				public void onCancel() {
+					deleteButton.setEnabled(true);
+				}
+				
+			});
 		});
 		buttonContainer.add(deleteButton);
 
@@ -277,13 +255,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		resetButton.setTitle(resetButton.getText());
 		resetButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		resetButton.addStyleName(AON.AON_CSS.aonIconReset());
-		resetButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				cbk.onReset(options, m390);
-			}
-		});
+		resetButton.addClickHandler(event -> cbk.onReset(options, m390));
 		buttonContainer.add(resetButton);
 		
 		Button markAsFinishedButton = new Button();
@@ -294,24 +266,20 @@ public class Model3902018 extends DockLayoutPanel  {
 		markAsFinishedButton.setTitle(markAsFinishedButton.getText());
 		markAsFinishedButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		markAsFinishedButton.addStyleName(AON.AON_CSS.aonIconPointLightGreen());
-		markAsFinishedButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				markAsFinishedButton.setEnabled(false);
-				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.FINISHED, new AsyncCallback<Mod3902018>() {
-					@Override
-					public void onSuccess(Mod3902018 result) {
-						select(options, result, cbk);
-					}
+		markAsFinishedButton.addClickHandler(event -> {
+			markAsFinishedButton.setEnabled(false);
+			MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.FINISHED, new AsyncCallback<Mod3902018>() {
+				@Override
+				public void onSuccess(Mod3902018 result) {
+					select(options, result, cbk);
+				}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						markAsFinishedButton.setEnabled(true);
-						cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
-				});
-			}
+				@Override
+				public void onFailure(Throwable caught) {
+					markAsFinishedButton.setEnabled(true);
+					cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+				}
+			});
 		});
 		buttonContainer.add(markAsFinishedButton);
 
@@ -321,24 +289,20 @@ public class Model3902018 extends DockLayoutPanel  {
 		markAsSentButton.setTitle(markAsSentButton.getText());
 		markAsSentButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		markAsSentButton.addStyleName(AON.AON_CSS.aonIconPointGreen());
-		markAsSentButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				markAsSentButton.setEnabled(false);
-				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.SENT, new AsyncCallback<Mod3902018>() {
-					@Override
-					public void onSuccess(Mod3902018 result) {
-						select(options, result, cbk);
-					}
+		markAsSentButton.addClickHandler(event -> {
+			markAsSentButton.setEnabled(false);
+			MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.SENT, new AsyncCallback<Mod3902018>() {
+				@Override
+				public void onSuccess(Mod3902018 result) {
+					select(options, result, cbk);
+				}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						markAsSentButton.setEnabled(true);
-						cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
-				});
-			}
+				@Override
+				public void onFailure(Throwable caught) {
+					markAsSentButton.setEnabled(true);
+					cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+				}
+			});
 		});
 		buttonContainer.add(markAsSentButton);
 		
@@ -352,24 +316,20 @@ public class Model3902018 extends DockLayoutPanel  {
 		markAsPendingButton.setTitle(markAsPendingButton.getText());
 		markAsPendingButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		markAsPendingButton.addStyleName(AON.AON_CSS.aonIconPointOrange());
-		markAsPendingButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				markAsPendingButton.setEnabled(false);
-				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.PENDING, new AsyncCallback<Mod3902018>() {
-					@Override
-					public void onSuccess(Mod3902018 result) {
-						select(options, result, cbk);
-					}
+		markAsPendingButton.addClickHandler(event -> {
+			markAsPendingButton.setEnabled(false);
+			MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.PENDING, new AsyncCallback<Mod3902018>() {
+				@Override
+				public void onSuccess(Mod3902018 result) {
+					select(options, result, cbk);
+				}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						markAsPendingButton.setEnabled(true);
-						cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
-				});
-			}
+				@Override
+				public void onFailure(Throwable caught) {
+					markAsPendingButton.setEnabled(true);
+					cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+				}
+			});
 		});
 		buttonContainer.add(markAsPendingButton);
 		
@@ -378,13 +338,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		draftButton.setTitle(draftButton.getText());
 		draftButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		draftButton.addStyleName(AON.AON_CSS.aonIconExcel());
-		draftButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-					submitForm(MOD390_2018_DRAFT,m390.getId());				
-			}
-		});
+		draftButton.addClickHandler(event -> submitForm(MOD390_2018_DRAFT,m390.getId()));
 		buttonContainer.add(draftButton);
 		
 		toolbarPanel.add(toolbar);
@@ -456,7 +410,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		} else {
 			clear();
 			addNorth( getToolbar(options, m390,cbk), 26 );
-			addNorth( getHeaderPanel(m390,cbk), 60 );
+			addNorth( getHeaderPanel(m390), 60 );
 			addNorth( getDeclarationHeaderTable(m390,cbk) , 40);
 			pagesPanel = new DeckPanel();  
 			addWest( getLinksPanel(options, m390,cbk), 300 );
@@ -469,9 +423,13 @@ public class Model3902018 extends DockLayoutPanel  {
 		}
 	}
 
-	private Widget getLinksPanel(Model390ModuleOptions options, Mod3902018 m390, Model390Callback cbk) {
+	private Widget getLinksPanel(final Model390ModuleOptions options, Mod3902018 m390, Model390Callback cbk) {
 		IMod3902018CallBack callback = new IMod3902018CallBack() {
 
+			@Override
+			public Model390ModuleOptions getOptions() {
+				return options;
+			}
 			@Override
 			public void calculateAndRefresh() {
 				m390.calculate();
@@ -487,21 +445,6 @@ public class Model3902018 extends DockLayoutPanel  {
 				return m390;
 			}
 			
-			@Override
-			public String getDomainName() {
-				return getCurrentDomainName();
-			}
-			
-			@Override
-			public Integer getDomainId() {
-				return getCurrentDomain();
-			}
-			
-			@Override
-			public String getUser() {
-				return getCurrentUser();
-			}
-
 			@Override
 			public void showVisorAEAT() {
 				cbk.showVisorAEAT();
@@ -528,7 +471,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		linkContainer.add(new WestFocusPanel(AON.MSG.specificOperations(), new Page09(m390),callback));
 		linkContainer.add(new WestFocusPanel(AON.MSG.prorrata(), new Page10(m390),callback));
 		linkContainer.add(new WestFocusPanel(AON.MSG.difActivitiesRegime(), new Page11(m390),callback));
-		linkContainer.add(new WestFocusPanel("Agencia Tributaria", new Page12(m390, options.getAonData(), callback), callback));
+		linkContainer.add(new WestFocusPanel("Agencia Tributaria", new Page12(m390, options, callback), callback));
 		container.add(linkContainer);
 		return container;
 	}
@@ -544,7 +487,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		diskForm.submit();
 	}
 
-	private SimplePanel getHeaderPanel(Mod3902018 m390, Model390Callback cbk) {
+	private SimplePanel getHeaderPanel(Mod3902018 m390) {
 		SimplePanel headerPanel	= new SimplePanel(); 
 		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
 		FlexTable headerTable = new FlexTable();
@@ -590,12 +533,7 @@ public class Model3902018 extends DockLayoutPanel  {
 			pagesPanel.add(content);
 			content.setCallback(callback);
 			
-			addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					showPage();
-				}
-			});
+			addClickHandler(event -> showPage());
 		}
 
 		public void showPage() {
@@ -609,17 +547,14 @@ public class Model3902018 extends DockLayoutPanel  {
 		public void refresh(Mod3902018 m390) {
 			content.refresh(m390);
 		}
-//		public void setValue(Mod3902018 m390) {
-//			content.setValue(m390);
-//		}
 		public void populate(Mod3902018 m390) {
 			content.populate(m390);
 		}
 		
 	}
 	
-	private void validate(Mod3902018 m390, Model390Callback cbk) {
-		LinkedList<ValidationMessage> msg = new LinkedList<ValidationMessage>();
+	private void validate(Mod3902018 m390) {
+		LinkedList<ValidationMessage> msg = new LinkedList<>();
 		if (m390.getYear() != 2020 
 			&& m390.getYear() != 2019 
 			&& m390.getYear() != 2018 
@@ -648,22 +583,15 @@ public class Model3902018 extends DockLayoutPanel  {
 				!AonDocumentUtil.isValid(m390.getLegalRepr3().getDocument())) msg.add(ValidationMessages.LG3_WRONG_DOC.getMsg());
 		}
 		if (!msg.isEmpty()) {
-			LinkedList<Widget> widgets = new LinkedList<Widget>();
+			LinkedList<Widget> widgets = new LinkedList<>();
 			for (ValidationMessage m : msg ) {
 				String text = m.getPage()>=0?("P\u00E1g: " + Integer.toString(m.getPage()+1) + " "):"";
 				text += AonStringUtils.isEmpty(m.getKey())?"":("Casilla: " + m.getKey() + " ");
 				text += m.getMessage();
 				InlineLabel label = new InlineLabel(text);
-				// label.addStyleName(AON.AON_CSS.aonColorRed());
 				label.addStyleName(AON.AON_CSS.aonBold());
 				if (m.getPage()>=0) {
-					label.addClickHandler( new ClickHandler() {
-						
-						@Override
-						public void onClick(ClickEvent event) {
-							showPage(m.getPage());
-						}
-					});
+					label.addClickHandler( event -> showPage(m.getPage()));
 				}
 				widgets.add(label);
 			}
@@ -743,8 +671,14 @@ public class Model3902018 extends DockLayoutPanel  {
 		
 		InlineLabel statusLabel = new InlineLabel();
 		statusLabel.setText(m390.getStatus().getName());
-		statusLabel.setStyleName(FiscalModelUtils.getStatusIconStyle(m390.getStatus()));
-		statusLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( m390.getStatus() ));
+		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( m390.getStatus() ));
+		statusLabel.setStyleName(AON.CSS.aonToolbarTitle());
+		statusLabel.addStyleName(AON.CSS.aonPaddingLeft());
+		statusLabel.addStyleName(AON.CSS.aonPaddingRight());
+		statusLabel.addStyleName(AON.CSS.aonTextCenter());
+		statusLabel.addStyleName(AON.CSS.aonBorder());
+		statusLabel.addStyleName(AON.CSS.aonNowrap());
 
 		table.setWidget(0, 4, statusLabel);
 		table.getCellFormatter().setStyleName(0, 4, AON.AON_CSS.aonPanelGridEven());
@@ -754,44 +688,37 @@ public class Model3902018 extends DockLayoutPanel  {
 		FlowPanel commentsPanel = new FlowPanel();
 		Button commentsButton = new Button();
 		commentsButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		commentsButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				final AonToast toast = new AonToast();
-				FlowPanel commentPanel = new FlowPanel();
-				commentPanel.setStyleName( FiscalModelUtils.getAdministrationBG(m390.getAdministration()) );
-				commentPanel.setStyleName(AON.AON_CSS.aonHeightAll());
-				commentPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-				TextArea comment = new TextArea();
-				comment.addValueChangeHandler(new ValueChangeHandler<String>() {
+		commentsButton.addClickHandler(event -> {
+			final AonToast toast = new AonToast();
+			FlowPanel commentPanel = new FlowPanel();
+			commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(m390.getAdministration()) );
+			commentPanel.setStyleName(AON.AON_CSS.aonHeightAll());
+			commentPanel.addStyleName(AON.AON_CSS.aonTextCenter());
+			TextArea comment = new TextArea();
+			comment.addValueChangeHandler(event1 -> {
+				m390.setComments(event1.getValue());
+				styleCommentsButton(m390,commentsButton);
+				Model390.MOD390_SERVICE.saveComments(getCurrentDomainName(),getCurrentUser(), m390, new AsyncCallback<Mod390>() {
 					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						m390.setComments(event.getValue());
-						styleCommentsButton(m390,commentsButton);
-						Model390.MOD390_SERVICE.saveComments(getCurrentDomainName(),getCurrentUser(), m390, new AsyncCallback<Mod390>() {
-							@Override
-							public void onSuccess(Mod390 result) {
-								toast.hide();
-							}
+					public void onSuccess(Mod390 result) {
+						toast.hide();
+					}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								toast.hide();
-								cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-							}
-						});
-						
-						
-						
+					@Override
+					public void onFailure(Throwable caught) {
+						toast.hide();
+						cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 					}
 				});
-				comment.setText(m390.getComments());
-				comment.setWidth("90%");
-				comment.setHeight("5em");
-				commentPanel.add(comment);
-				toast.show(AON.MSG.comments(), commentPanel);
-			}
+				
+				
+				
+			});
+			comment.setText(m390.getComments());
+			comment.setWidth("90%");
+			comment.setHeight("5em");
+			commentPanel.add(comment);
+			toast.show(AON.MSG.comments(), commentPanel);
 		});
 		commentsPanel.add(commentsButton);
 		commentsPanel.add(new InlineLabel(AON.MSG.comments()));

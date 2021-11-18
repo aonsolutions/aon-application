@@ -1,35 +1,25 @@
 package com.esferalia.aon.gwt.fiscal.server;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
-import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.model.ApplicationParameter;
-import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
-import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "Aon MS Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Fiscal" })
@@ -88,76 +78,62 @@ public class FiscalMSServiceServiceImpl extends AonStatelessRemoteServiceServlet
 
 	// --------------------------------------------------------------- GWT API INFO
 	
-	public AonData getAonData(String domainName, Integer domainId, String login){
-		Domain domain = AON.getDomain(domainName, domainId, login);
-		User user = AON.getUser(domain.getName(), domain.getId(), login);
-		Integer operator = AON.getTaskHolder(domain.getName(), domainId, login, 
-				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
-		ApplicationParameter beta = AON.getApplicationParameter(domainName, domainId, login, AppParam.AON_BETA_ENABLED);
-		ApplicationParameter alpha = AON.getApplicationParameter(domainName, domainId, login, AppParam.AON_ALPHA_ENABLED);
-		ApplicationParameter customerCheckEnabled  = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_CUSTOMER_CHECK_ENABLED);
-		if ( (customerCheckEnabled == null || customerCheckEnabled.getId() == null) && domain!=null && domain.getParentId() != null) {
-			customerCheckEnabled  = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_CUSTOMER_CHECK_ENABLED);			
-		}
-		ApplicationParameter certDoc = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_CERT_DOCUMENT);
-		ApplicationParameter certName = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_CERT_NAME);
-		ApplicationParameter testEnvironment = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_AEAT_TEST_ENV);
-		if ((certDoc == null || AonStringUtils.isBlank(certDoc.getValue())) && domain.getParentId() != null) {
-			certDoc = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_CERT_DOCUMENT);
-			certName = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_CERT_NAME);
-			testEnvironment = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_AEAT_TEST_ENV);
-		}
-		boolean testEnv = ( testEnvironment != null)? AonEnumUtils.getAonBoolean(testEnvironment.getValue()):false;
-		Company company = AON.getCompany(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));
-		return new AonData().setUser(user)
-				.setMd5(getMd5(user.getLogin()+domain.getName()))
-				.setDomain(domain)
-				.setUserOperator(operator)
-				.setBetaEnabled((beta!=null && Boolean.valueOf(beta.getValue())))
-				.setAlphaEnabled((alpha!=null && Boolean.valueOf(alpha.getValue())))
-				.setCustomerCheckEnabled(customerCheckEnabled!=null && ("1".equals(customerCheckEnabled.getValue()) || Boolean.valueOf(customerCheckEnabled.getValue())))
-				.setCompany(company)
-				.setCertificateDocument(certDoc==null?null:certDoc.getValue())
-				.setCertificateName(certName==null?null:certName.getValue())
-				.setTestEnvironment(testEnv)
-				;
-				
-	}
+//	public AonData getAonData(String domainName, Integer domainId, String login){
+//		Domain domain = AON.getDomain(domainName, domainId, login);
+//		User user = AON.getUser(domain.getName(), domain.getId(), login);
+//		Integer operator = AON.getTaskHolder(domain.getName(), domainId, login, 
+//				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
+//		ApplicationParameter beta = AON.getApplicationParameter(domainName, domainId, login, AppParam.AON_BETA_ENABLED);
+//		ApplicationParameter alpha = AON.getApplicationParameter(domainName, domainId, login, AppParam.AON_ALPHA_ENABLED);
+//		ApplicationParameter customerCheckEnabled  = AON.getApplicationParameter(domainName, domainId, login, AppParam.FS_CUSTOMER_CHECK_ENABLED);
+//		if ( (customerCheckEnabled == null || customerCheckEnabled.getId() == null) && domain!=null && domain.getParentId() != null) {
+//			customerCheckEnabled  = AON.getApplicationParameter(domainName, domain.getParentId(), login, AppParam.FS_CUSTOMER_CHECK_ENABLED);			
+//		}
+//		Company company = AON.getCompany(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));
+//		return new AonData().setUser(user)
+//				.setMd5(getMd5(user.getLogin()+domain.getName()))
+//				.setDomain(domain)
+//				.setUserOperator(operator)
+//				.setBetaEnabled((beta!=null && Boolean.valueOf(beta.getValue())))
+//				.setAlphaEnabled((alpha!=null && Boolean.valueOf(alpha.getValue())))
+//				.setCompany(company)
+//				;
+//	}
 	
-	public AonData getAonDataToken(String domainName, Integer domainId, String token){
-		Domain domain = AON.getDomain(domainName, domainId, "");
-		User user = AON_SOLUTIONS.getUser(domain, token);
-		Integer operator = AON.getTaskHolder(domain.getName(), domainId, user.getLogin(), 
-				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
-		ApplicationParameter beta = AON.getApplicationParameter(domainName, domainId, user.getLogin(), AppParam.AON_BETA_ENABLED);
-		ApplicationParameter alpha = AON.getApplicationParameter(domainName, domainId, user.getLogin(), AppParam.AON_ALPHA_ENABLED);
-		Company company = AON.getCompany(domainName, domainId, user.getLogin(), f -> f.getDomainProperty().eq(domainId));
-		return new AonData().setUser(user)
-				.setMd5(getMd5(user.getLogin()+domain.getName()))
-				.setDomain(domain)
-				.setUserOperator(operator)
-				.setBetaEnabled((beta!=null && Boolean.valueOf(beta.getValue())))
-				.setAlphaEnabled((alpha!=null && Boolean.valueOf(alpha.getValue())))
-				.setCompany(company)
-				.setAonSolutions(true);
-	}
+//	public AonData getAonDataToken(String domainName, Integer domainId, String token){
+//		Domain domain = AON.getDomain(domainName, domainId, "");
+//		User user = AON_SOLUTIONS.getUser(domain, token);
+//		Integer operator = AON.getTaskHolder(domain.getName(), domainId, user.getLogin(), 
+//				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
+//		ApplicationParameter beta = AON.getApplicationParameter(domainName, domainId, user.getLogin(), AppParam.AON_BETA_ENABLED);
+//		ApplicationParameter alpha = AON.getApplicationParameter(domainName, domainId, user.getLogin(), AppParam.AON_ALPHA_ENABLED);
+//		Company company = AON.getCompany(domainName, domainId, user.getLogin(), f -> f.getDomainProperty().eq(domainId));
+//		return new AonData().setUser(user)
+//				.setMd5(getMd5(user.getLogin()+domain.getName()))
+//				.setDomain(domain)
+//				.setUserOperator(operator)
+//				.setBetaEnabled((beta!=null && Boolean.valueOf(beta.getValue())))
+//				.setAlphaEnabled((alpha!=null && Boolean.valueOf(alpha.getValue())))
+//				.setCompany(company)
+//				.setAonSolutions(true);
+//	}
 	
-	private String getMd5(String str){
-		MessageDigest md = null;
-		try {
-			md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-	    md.update(str.getBytes());
-	    byte byteData[] = md.digest();
-	    //convert the byte to hex format method 1
-        StringBuffer sb = new StringBuffer();
-	    for (int i = 0; i < byteData.length; i++) {
-	     	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-	    }       
-        return sb.toString();
-	}
+//	private String getMd5(String str){
+//		MessageDigest md = null;
+//		try {
+//			md = MessageDigest.getInstance("MD5");
+//		} catch (NoSuchAlgorithmException e) {
+//			e.printStackTrace();
+//		}
+//	    md.update(str.getBytes());
+//	    byte byteData[] = md.digest();
+//	    //convert the byte to hex format method 1
+//        StringBuffer sb = new StringBuffer();
+//	    for (int i = 0; i < byteData.length; i++) {
+//	     	sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+//	    }       
+//        return sb.toString();
+//	}
 	
 //	@Override
 //	public Integer presentationFile(String domainName, Integer domainId, String user, FiscalModelType type,

@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod130;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod130.Model130.Model130Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
@@ -11,49 +11,42 @@ import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
+public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130,Model130ModuleOptions>{
 	
-	public Model130NewDeclarationPopup(IFiscalModelCallback<Mod130> callback) {
-		this(false, callback);
+	public Model130NewDeclarationPopup(Mod130 mod130, Model130Callback callback) {
+		this(mod130, false, callback);
 	}
 
-	public Model130NewDeclarationPopup(boolean reset, IFiscalModelCallback<Mod130> callback) {
-		super(reset, callback);
+	public Model130NewDeclarationPopup(Mod130 mod130, boolean reset, Model130Callback callback) {
+		super(mod130, reset, callback);
 	}
 	
 	@Override
-	protected void paintAdministration() {
+	protected void paintAdministration(Mod130 mod130) {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 
 		admonList.setEnabled(!reset);
-		admonList.setSelectedIndex( callback.getFiscalModel().getAdministration().ordinal());
-		admonList.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				callback.getFiscalModel().setAdministration( admonList.getValue() );
-				replacement.setVisible(callback.getFiscalModel().isReplacementDeclarationAvailable());
-				complementary.setVisible(callback.getFiscalModel().isComplementaryDeclarationAvailable());
-				previousLabel.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
-				previous.setVisible(callback.getFiscalModel().isReplacedNumberAvailable());
-			}
+		admonList.setSelectedIndex( mod130.getAdministration().ordinal());
+		admonList.addChangeHandler( event -> {
+			mod130.setAdministration( admonList.getValue() );
+			replacement.setVisible(mod130.isReplacementDeclarationAvailable());
+			complementary.setVisible(mod130.isComplementaryDeclarationAvailable());
+			previousLabel.setVisible(mod130.isReplacedNumberAvailable());
+			previous.setVisible(mod130.isReplacedNumberAvailable());
 		});
 		tab.setWidget(row, 1, admonList);
 		row++;
 	}
 	
 	@Override
-	protected void paintModelSpecificPanel() {
+	protected void paintModelSpecificPanel(Mod130 mod130) {
 		final ListBox deponentBox = new ListBox();
 		final DocumentTextBox documentBox = new DocumentTextBox();
 		final Label nameLabel = new Label( AON.MSG.nameCompanyName());
@@ -68,94 +61,81 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
 		final Label regimeLabel = new Label(AON.MSG.regime());
 		final ListBox regimeList = new ListBox();
 		
-		admonList.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				regimeLabel.setVisible(callback.getFiscalModel().isAEAT());
-				regimeList.setVisible(callback.getFiscalModel().isAEAT());
-				percentLabel.setVisible(callback.getFiscalModel().isAEAT());
-				percentBox.setVisible(callback.getFiscalModel().isAEAT());
-				regularHome.setVisible(callback.getFiscalModel().isAEAT());
-			}
+		admonList.addChangeHandler( event -> {
+			regimeLabel.setVisible(mod130.isAEAT());
+			regimeList.setVisible(mod130.isAEAT());
+			percentLabel.setVisible(mod130.isAEAT());
+			percentBox.setVisible(mod130.isAEAT());
+			regularHome.setVisible(mod130.isAEAT());
 		});
 	
-		regimeLabel.setVisible(callback.getFiscalModel().isAEAT());
-		regimeList.setVisible(callback.getFiscalModel().isAEAT());
-		percentLabel.setVisible(callback.getFiscalModel().isAEAT());
-		percentBox.setVisible(callback.getFiscalModel().isAEAT());
-		regularHome.setVisible(callback.getFiscalModel().isAEAT());
+		regimeLabel.setVisible(mod130.isAEAT());
+		regimeList.setVisible(mod130.isAEAT());
+		percentLabel.setVisible(mod130.isAEAT());
+		percentBox.setVisible(mod130.isAEAT());
+		regularHome.setVisible(mod130.isAEAT());
 
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, regimeLabel);
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		regimeList.addItem(IRPFRegime.NORMAL.getName());
 		regimeList.addItem(IRPFRegime.SIMPLIFIED.getName());
-		regimeList.setSelectedIndex((callback.getFiscalModel().getRegime() == IRPFRegime.SIMPLIFIED)?1:0);
-		regimeList.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				callback.getFiscalModel().setRegime(
-						regimeList.getSelectedIndex() == 1?
-								IRPFRegime.SIMPLIFIED:IRPFRegime.NORMAL
-						);
-			}
-		});
+		regimeList.setSelectedIndex((mod130.getRegime() == IRPFRegime.SIMPLIFIED)?1:0);
+		regimeList.addChangeHandler(event -> mod130.setRegime(
+				regimeList.getSelectedIndex() == 1?
+						IRPFRegime.SIMPLIFIED:IRPFRegime.NORMAL
+				));
 		tab.setWidget(row, 1, regimeList);
 		row++;
 		
-		if (callback.getFiscalModel().getDeponents() != null && callback.getFiscalModel().getDeponents().size() > 1) {
+		if (mod130.getDeponents() != null && mod130.getDeponents().size() > 1) {
 			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 			tab.setWidget(row, 0, new Label(AON.MSG.deponents()));
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 			tab.setWidget(row, 1, deponentBox);
 			row++;
 			int d = 0;
-			for ( FiscalModel fm : callback.getFiscalModel().getDeponents().values() ) {
+			for ( FiscalModel fm : mod130.getDeponents().values() ) {
 				deponentBox.addItem(fm.getFullName(), fm.getDocument());
-				if (AonStringUtils.equals(fm.getDocument(), callback.getFiscalModel().getDocument())) {
+				if (AonStringUtils.equals(fm.getDocument(), mod130.getDocument())) {
 					deponentBox.setSelectedIndex( d );
 				}
 				d++;
 			}
-			deponentBox.addChangeHandler( new ChangeHandler() {
-
-				@Override
-				public void onChange(ChangeEvent event) {
-					Mod130 fm = callback.getFiscalModel().getDeponents().get(deponentBox.getSelectedValue());
-					if (fm != null) {
-						callback.getFiscalModel().setDocument(fm.getDocument());
-						callback.getFiscalModel().setSurname(fm.getSurname());
-						callback.getFiscalModel().setName(fm.getName());
-						callback.getFiscalModel().setStreetInitial(fm.getStreetInitial());
-						callback.getFiscalModel().setStreetName(fm.getStreetName());
-						callback.getFiscalModel().setStreetNumber(fm.getStreetNumber());
-						callback.getFiscalModel().setStreetStair(fm.getStreetStair());
-						callback.getFiscalModel().setStreetFloor(fm.getStreetFloor());
-						callback.getFiscalModel().setStreetDoor(fm.getStreetDoor());
-						callback.getFiscalModel().setPhone(fm.getPhone());
-						callback.getFiscalModel().setTown(fm.getTown());
-						callback.getFiscalModel().setProvince(fm.getProvince());
-						callback.getFiscalModel().setZip(fm.getZip());
-						callback.getFiscalModel().setAdmonAeat(fm.getAdmonAeat());
-						callback.getFiscalModel().setContactPerson(fm.getContactPerson());
-						callback.getFiscalModel().setContactPhone(fm.getContactPhone());
-						callback.getFiscalModel().setContactCellular(fm.getContactCellular());
-						callback.getFiscalModel().setContactEmail(fm.getContactEmail());
-						callback.getFiscalModel().putAmount(Mod130Key.P1, fm.getAmount(Mod130Key.P1) );
-						callback.getFiscalModel().setRegime(fm.getRegime() );
-						callback.getFiscalModel().putAmount(Mod130Key.P2, fm.getAmount(Mod130Key.P2) );
-						
-						documentBox.setValue(callback.getFiscalModel().getDocument());				
-						nameLabel.setText((AonDocumentUtil.isEntity( documentBox.getValue() ))
-								?AON.MSG.nameCompanyName()
-								:AON.MSG.name());
-						nameBox.setValue(callback.getFiscalModel().getName());
-						surnameBox.setValue(callback.getFiscalModel().getSurname());
-						if (callback.getFiscalModel().isAEAT()) {
-							percentBox.setValue( callback.getFiscalModel().getAmount(Mod130Key.P1));
-							regularHome.setValue( callback.getFiscalModel().getAmount(Mod130Key.P2)==1?true:false );
-						}
+			deponentBox.addChangeHandler( event -> {
+				Mod130 fm = mod130.getDeponents().get(deponentBox.getSelectedValue());
+				if (fm != null) {
+					mod130.setDocument(fm.getDocument());
+					mod130.setSurname(fm.getSurname());
+					mod130.setName(fm.getName());
+					mod130.setStreetInitial(fm.getStreetInitial());
+					mod130.setStreetName(fm.getStreetName());
+					mod130.setStreetNumber(fm.getStreetNumber());
+					mod130.setStreetStair(fm.getStreetStair());
+					mod130.setStreetFloor(fm.getStreetFloor());
+					mod130.setStreetDoor(fm.getStreetDoor());
+					mod130.setPhone(fm.getPhone());
+					mod130.setTown(fm.getTown());
+					mod130.setProvince(fm.getProvince());
+					mod130.setZip(fm.getZip());
+					mod130.setAdmonAeat(fm.getAdmonAeat());
+					mod130.setContactPerson(fm.getContactPerson());
+					mod130.setContactPhone(fm.getContactPhone());
+					mod130.setContactCellular(fm.getContactCellular());
+					mod130.setContactEmail(fm.getContactEmail());
+					mod130.putAmount(Mod130Key.P1, fm.getAmount(Mod130Key.P1) );
+					mod130.setRegime(fm.getRegime() );
+					mod130.putAmount(Mod130Key.P2, fm.getAmount(Mod130Key.P2) );
+					
+					documentBox.setValue(mod130.getDocument());				
+					nameLabel.setText((AonDocumentUtil.isEntity( documentBox.getValue() ))
+							?AON.MSG.nameCompanyName()
+							:AON.MSG.name());
+					nameBox.setValue(mod130.getName());
+					surnameBox.setValue(mod130.getSurname());
+					if (mod130.isAEAT()) {
+						percentBox.setValue( mod130.getAmount(Mod130Key.P1));
+						regularHome.setValue( mod130.getAmount(Mod130Key.P2)==1 );
 					}
 				}
 			});	
@@ -164,74 +144,51 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130>{
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.document()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		documentBox.setValue(callback.getFiscalModel().getDocument());
-		documentBox.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				callback.getFiscalModel().setDocument( documentBox.getValue() );
-			}
-		});
+		documentBox.setValue(mod130.getDocument());
+		documentBox.addChangeHandler( event -> mod130.setDocument( documentBox.getValue() ));
 		tab.setWidget(row, 1, documentBox);
 		row++;
 		
 		nameLabel.setText((AonDocumentUtil.isEntity( documentBox.getValue() ))
 				?AON.MSG.nameCompanyName()
 				:AON.MSG.name());
-		nameBox.setValue(callback.getFiscalModel().getName());		
+		nameBox.setValue(mod130.getName());		
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, nameLabel);
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		nameBox.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				callback.getFiscalModel().setName( nameBox.getValue() );
-			}
-		});
+		nameBox.addChangeHandler( event -> mod130.setName( nameBox.getValue() ));
 		tab.setWidget(row, 1, nameBox);
 		row++;
 		
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, surnameLabel);
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		surnameBox.setValue(callback.getFiscalModel().getSurname());
-		surnameBox.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				callback.getFiscalModel().setSurname(surnameBox.getValue() );
-			}
-		});
+		surnameBox.setValue(mod130.getSurname());
+		surnameBox.addChangeHandler( event -> mod130.setSurname(surnameBox.getValue() ));
 		tab.setWidget(row, 1, surnameBox);
 		row++;
 		
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, percentLabel );
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		percentBox.setValue( callback.getFiscalModel().getAmount(Mod130Key.P1));
-		percentBox.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				if (percentBox.getValue() > 100) {
-					percentBox.setValue(100.0);
-				}
-				if (percentBox.getValue() < 0) {
-					percentBox.setValue(0.0);
-				}
-				callback.getFiscalModel().putAmount(Mod130Key.P1,percentBox.getValue());
+		percentBox.setValue( mod130.getAmount(Mod130Key.P1));
+		percentBox.addChangeHandler( event -> {
+			if (percentBox.getValue() > 100) {
+				percentBox.setValue(100.0);
 			}
+			if (percentBox.getValue() < 0) {
+				percentBox.setValue(0.0);
+			}
+			mod130.putAmount(Mod130Key.P1,percentBox.getValue());
 		});
 		tab.setWidget(row, 1, percentBox);
 		row++;
 		
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		regularHome.setValue( callback.getFiscalModel().getAmount(Mod130Key.P2)==1?true:false );
+		regularHome.setValue( mod130.getAmount(Mod130Key.P2)==1);
 		regularHome.setText(AON.MSG.regularHomePayments());
-		regularHome.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.getFiscalModel().putAmount(Mod130Key.P2,regularHome.getValue()?1.0:0.0);
-			}
-		});
+		regularHome.addClickHandler( event -> mod130.putAmount(Mod130Key.P2,regularHome.getValue()?1.0:0.0));
 		tab.setWidget(row, 0, regularHome);
 	}
 

@@ -23,9 +23,11 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -568,6 +570,19 @@ public class Mod123DAO extends FiscalModelDAO {
 			return previousModels.stream(); 
 		} 
 		return getEffectivePreviousModels(ctx,fiscalModel);
+	}
+
+	public static Mod123 aeatPresentation(AONContext ctx, Mod123 mod123, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			DataResponseDAO.insertAEATResponse(ctx, mod123, aeatResponse);
+			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
+			Mod123 changed = getMod123(ctx, mod123.getId());
+			if (changed != null) {
+				changed.setNumber(response.getJustificante());
+				return markAsSent(ctx, changed);
+			}
+		}
+		return mod123;
 	}
 }
 

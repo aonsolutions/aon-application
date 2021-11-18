@@ -14,83 +14,82 @@
 
 			<aon:div styleClass="aon-scroll-area">		
 
-				<h:panelGrid columns="1" styleClass="aon-width-all aon-margin-bottom" cellspacing=""
-					
-					columnClasses="aon-vertical-align-top aon-width-half, aon-vertical-align-top aon-width-half">
-					<aon:panelGroup>
-						<aon:div styleClass="aon-direct-access-list-element">
-							<aon:commandLink id="gwt_fiscalConfig"
-								action="gwt_fiscalConfig"
-								title="FISCAL"
-								value="FISCAL" >
-							</aon:commandLink>
-						</aon:div>
+				<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+					<h:panelGrid columns="1" styleClass="aon-width-all aon-margin-bottom" cellspacing=""
 						
-						<aon:panelGrid id="group_fiscal_vat_tax_statement_new"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-fiscal-header">
-							<f:facet name="header">
-								<h:panelGrid columns="#{fiscalParams.defaultAdministration==null?6:2}" style="width: 100%;height: 100%;"
-									columnClasses="aon-width-50,
-										#{fiscalParams.defaultAdministration==null
-											?'aon-width-50, aon-width-50, aon-width-50, aon-width-50, aon-width-auto'
-											:'aon-width-auto'}">
-									<aon:if test="#{fiscalParams.aeat}">
-										<h:outputLink target="_blank" value="http://www.aeat.es"
-											styleClass="aon-menu-fiscal-model aon-menu-icon-aeat"
-											style="display: inline-block; margin-right: 0px;"
-											title="#{bundle.aon_navigate_to_official_website}">
-											<h:graphicImage styleClass="aon-vertical-align-middle"
-												title="Agencia Tributaria"
-												url="#{aonResource.resolve['/images/aon-icon/aon-aeat.png']}" />
-										</h:outputLink>
-									</aon:if>
-									<aon:if test="#{fiscalParams.araba}">
-										<h:outputLink target="_blank" value="http://www.alava.net"
-											styleClass="aon-menu-fiscal-model aon-menu-icon-araba"
-											style="display: inline-block; margin-right: 0px;"
-											title="#{bundle.aon_navigate_to_official_website}">
-											<h:graphicImage styleClass="aon-vertical-align-middle"
-												title="Diputación Foral de Alava / Arabako Foru Aldundia"
-												url="#{aonResource.resolve['/images/aon-icon/aon-icon-araba.png']}" />
-										</h:outputLink>
-									</aon:if>
-									<aon:if test="#{fiscalParams.bizkaia}">
-										<h:outputLink target="_blank" value="http://www.bizkaia.net"
-											styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia"
-											style="display: inline-block; margin-right: 0px;"
-											title="#{bundle.aon_navigate_to_official_website}">
-											<h:graphicImage styleClass="aon-vertical-align-middle"
-												title="Diputación Foral de Bizkaia / Bizkaiako Foru Aldundia"
-												url="#{aonResource.resolve['/images/aon-icon/aon-icon-bizkaia.png']}" />
-										</h:outputLink>
-									</aon:if>
-									<aon:if test="#{fiscalParams.gipuzkoa}">
-										<h:outputLink target="_blank" value="http://www.gipuzkoa.net"
-											styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa"
-											style="display: inline-block; margin-right: 0px;"
-											title="#{bundle.aon_navigate_to_official_website}">
-											<h:graphicImage styleClass="aon-vertical-align-middle"
-												title="Diputación Foral de Gipuzkoa / Gipuzkoako Foru Aldundia"
-												url="#{aonResource.resolve['/images/aon-icon/aon-icon-gipuzkoa.png']}" />
-										</h:outputLink>
-									</aon:if>
-									<aon:if test="#{fiscalParams.navarra}">
-										<h:outputLink target="_blank" value="http://www.navarra.es"
-											styleClass="aon-menu-fiscal-model aon-menu-icon-navarra"
-											style="display: inline-block; margin-right: 0px;"
-											title="#{bundle.aon_navigate_to_official_website}">
-											<h:graphicImage styleClass="aon-vertical-align-middle"
-												title="Gobierno de Navarra / Nafarroako Gobernua"
-												url="#{aonResource.resolve['/images/aon-icon/aon-icon-navarra.png']}" />
-										</h:outputLink>
-									</aon:if>
-									<aon:outputText value="Modelos tributarios" styleClass="aon-padding-left"/>
-								</h:panelGrid>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list aon-width-all">
-								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-									<!-- *********************** [MODELO 303] -->
+						columnClasses="aon-vertical-align-top aon-width-half, aon-vertical-align-top aon-width-half">
+						<aon:panelGroup>
+							<aon:panelGrid id="group_fiscal_vat_tax_statement_new"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-fiscal-header">
+								<f:facet name="header">
+									<h:panelGrid columns="#{fiscalParams.defaultAdministration==null?7:3}" style="width: 100%;height: 100%;"
+										columnClasses="aon-width-50,
+											#{fiscalParams.defaultAdministration==null
+												?'aon-width-50, aon-width-50, aon-width-50, aon-width-50, aon-width-auto'
+												:'aon-width-auto'},aon-width-50">
+										<aon:if test="#{fiscalParams.aeat}">
+											<h:outputLink target="_blank" value="http://www.aeat.es"
+												styleClass="aon-menu-fiscal-model aon-menu-icon-aeat"
+												style="display: inline-block; margin-right: 0px;"
+												title="#{bundle.aon_navigate_to_official_website}">
+												<h:graphicImage styleClass="aon-vertical-align-middle"
+													title="Agencia Tributaria"
+													url="#{aonResource.resolve['/images/aon-icon/aon-aeat.png']}" />
+											</h:outputLink>
+										</aon:if>
+										<aon:if test="#{fiscalParams.araba}">
+											<h:outputLink target="_blank" value="http://www.alava.net"
+												styleClass="aon-menu-fiscal-model aon-menu-icon-araba"
+												style="display: inline-block; margin-right: 0px;"
+												title="#{bundle.aon_navigate_to_official_website}">
+												<h:graphicImage styleClass="aon-vertical-align-middle"
+													title="Diputación Foral de Alava / Arabako Foru Aldundia"
+													url="#{aonResource.resolve['/images/aon-icon/aon-icon-araba.png']}" />
+											</h:outputLink>
+										</aon:if>
+										<aon:if test="#{fiscalParams.bizkaia}">
+											<h:outputLink target="_blank" value="http://www.bizkaia.net"
+												styleClass="aon-menu-fiscal-model aon-menu-icon-bizkaia"
+												style="display: inline-block; margin-right: 0px;"
+												title="#{bundle.aon_navigate_to_official_website}">
+												<h:graphicImage styleClass="aon-vertical-align-middle"
+													title="Diputación Foral de Bizkaia / Bizkaiako Foru Aldundia"
+													url="#{aonResource.resolve['/images/aon-icon/aon-icon-bizkaia.png']}" />
+											</h:outputLink>
+										</aon:if>
+										<aon:if test="#{fiscalParams.gipuzkoa}">
+											<h:outputLink target="_blank" value="http://www.gipuzkoa.net"
+												styleClass="aon-menu-fiscal-model aon-menu-icon-gipuzkoa"
+												style="display: inline-block; margin-right: 0px;"
+												title="#{bundle.aon_navigate_to_official_website}">
+												<h:graphicImage styleClass="aon-vertical-align-middle"
+													title="Diputación Foral de Gipuzkoa / Gipuzkoako Foru Aldundia"
+													url="#{aonResource.resolve['/images/aon-icon/aon-icon-gipuzkoa.png']}" />
+											</h:outputLink>
+										</aon:if>
+										<aon:if test="#{fiscalParams.navarra}">
+											<h:outputLink target="_blank" value="http://www.navarra.es"
+												styleClass="aon-menu-fiscal-model aon-menu-icon-navarra"
+												style="display: inline-block; margin-right: 0px;"
+												title="#{bundle.aon_navigate_to_official_website}">
+												<h:graphicImage styleClass="aon-vertical-align-middle"
+													title="Gobierno de Navarra / Nafarroako Gobernua"
+													url="#{aonResource.resolve['/images/aon-icon/aon-icon-navarra.png']}" />
+											</h:outputLink>
+										</aon:if>
+										
+										<aon:outputText value="Modelos tributarios" styleClass="aon-padding-left"/>
+										
+										<aon:commandLink id="gwt_fiscalConfig-child"
+											action="gwt_fiscalConfig-child"
+											style="padding-left: 20px; height: 25px; display: inline-block; margin-right: 0px;"
+											styleClass="aon-menu-fiscal-model aon-icon-config"
+											title="Configuración">
+										</aon:commandLink>
+									</h:panelGrid>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list aon-width-all">
 									<aon:div>
 										<aon:commandLink id="gwt_mod303-new" action="gwt_mod303-new" 
 											title="#{bundle.fiscal_model_303_module}" styleClass="aon-menu-fiscal">
@@ -335,37 +334,47 @@
 											
 										</aon:commandLink>
 									</aon:div>		
-								</aon:if>
-						</aon:div>
-						</aon:panelGrid>
-					</aon:panelGroup>
-				</h:panelGrid>
-				
-
-				<aon:if test="#{domainSwitcher.domainManagementAvailable}">
-					<h:panelGrid columns="2" styleClass="aon-width-all" cellspacing=""
-						columnClasses="aon-vertical-align-top aon-width-200,
-							aon-vertical-align-top aon-width-200,aon-vertical-align-top aon-width-200">
-						<aon:panelGroup>
-							<aon:panelGrid id="group_fiscal_modules_module_matrix"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-tree-root aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="Matriz de empresas y modelos fiscales"/>
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_modelMatrix" 
-											action="gwt_modelMatrix">
-											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="Matriz de empresas y modelos fiscales" />												
-										</aon:commandLink>
-									</aon:div>
-								</aon:div> 
+								</aon:div>
 							</aon:panelGrid>
 						</aon:panelGroup>
 					</h:panelGrid>
+				</aon:if>
+				
+
+				<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+					<aon:panelGroup>
+						<aon:panelGrid id="group_fiscal_modules_module_matrix" 
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-tree-root aon-direct-access-panel">
+							<f:facet name="header">
+								<h:panelGrid columns="2" style="width: 100%;height: 100%;"
+										columnClasses="aon-width-auto,aon-width-50">
+									<aon:outputText value="Matriz de empresas y modelos fiscales"/>
+									
+									<aon:commandLink id="gwt_fiscalConfig-child"
+										action="gwt_fiscalConfig-child"
+										style="padding-left: 20px; height: 25px; display: inline-block; margin-right: 0px;"
+										styleClass="aon-menu-fiscal-model aon-icon-config"
+										title="Configuración">
+									</aon:commandLink>
+								</h:panelGrid>
+								
+								
+								
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_modelMatrix" 
+										action="gwt_modelMatrix">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+											style="margin-left: 5px; padding-left: 20px;" 
+											value="Matriz de empresas y modelos fiscales" />												
+									</aon:commandLink>
+								</aon:div>
+							</aon:div> 
+						</aon:panelGrid>
+					</aon:panelGroup>
+					
 				</aon:if>
 				
 			</aon:div>

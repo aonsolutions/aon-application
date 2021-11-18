@@ -3,26 +3,16 @@ package com.esferalia.aon.gwt.fiscal.client.mod130;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod130.Model130.Model130Callback;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
-import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -32,8 +22,8 @@ public class Model130AEAT extends Model130Base {
 
 	final Mod130ServiceAsync MOD130Service = GWT.create(Mod130Service.class);
 	
-	public Model130AEAT(IFiscalModelCallback<Mod130> callback, AonData aonData) {
-		super(callback, aonData);
+	public Model130AEAT(Mod130 mod130,Model130Callback callback) {
+		super(mod130, callback);
 	}
 	
 	public FlowPanel getDeclarationPanel(){
@@ -95,12 +85,12 @@ public class Model130AEAT extends Model130Base {
 		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
 		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getModel().getAdministration()));
+		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()));
 		tab.setWidget(0, 0, title);
 		
 		int row = 1;
 		Label icon1 = new Label();
-		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
+		icon1.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
 		tab.setWidget(row, 0, icon1 );
 		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		
@@ -111,14 +101,11 @@ public class Model130AEAT extends Model130Base {
 		button1.addStyleName(AON.AON_CSS.aonBorderNone());
 		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
 		button1.addStyleName(AON.AON_CSS.aonClickable());
-		button1.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (getModel().isFinished() || getModel().isSent()) {
-					submitForm(MODEL130_FILE);
-				} else {
-					getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-				}
+		button1.addClickHandler( event -> {
+			if (getModel().isFinished() || getModel().isSent()) {
+				submitForm(MODEL130_FILE);
+			} else {
+				getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 			}
 		});
 		p1.add(button1);
@@ -128,7 +115,7 @@ public class Model130AEAT extends Model130Base {
 		row++;
 		
 		Label icon2 = new Label();
-		icon2.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
+		icon2.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
 		tab.setWidget(row, 0, icon2 );
 		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		FlowPanel p2 = new FlowPanel();
@@ -138,107 +125,98 @@ public class Model130AEAT extends Model130Base {
 		button2.addStyleName(AON.AON_CSS.aonBorderNone());
 		button2.addStyleName(AON.AON_CSS.aonEvenBackground());
 		button2.addStyleName(AON.AON_CSS.aonClickable());
-		button2.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (getModel().isFinished() || getModel().isSent()) {
-					submitAEAT(MODEL130_PRINT_AEAT);
-					getCallback().showVisorAEAT();
-				} else {
-					getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-				}
+		button2.addClickHandler( event -> {
+			if (getModel().isFinished() || getModel().isSent()) {
+				submitAEAT(MODEL130_PRINT_AEAT);
+			} else {
+				getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 			}
 		});
 		p2.add(button2);
 		tab.setWidget(row, 1, p2 );
 		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.getFlexCellFormatter().setColSpan(2, 1, 2);
-		row++;
 			
-		// CON FIRMA NO CRIPTOGRAFICA
-		Label icon3 = new Label();
-		icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
-		tab.setWidget(row, 0, icon3 );
-		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		FlowPanel p3 = new FlowPanel();
-		p3.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button3 = new Button("Presentaci\u00F3n via Agencia Tributaria con firma no criptogr\u00e1fica (a partir de los datos guardados).");
-		button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button3.addStyleName(AON.AON_CSS.aonBorderNone());
-		button3.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button3.addStyleName(AON.AON_CSS.aonClickable());
-		button3.addStyleName("aon-icon-beta-text");
-		button3.getElement().getStyle().setPaddingLeft(20, Unit.PX);
-		button3.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {		
-				Boolean showNRC = FiscalModelDeclarationType.DEPOSIT.equals(getModel().getDeclarationType()); 
-				CertificationPopup certPopup = new CertificationPopup(getAPI(), getModel().getName(), getModel().getDocument(), showNRC) {
-								
-					@Override
-					protected void onCancel() {
-					
-					}
-							
-					@Override
-					protected void onAccept() {
-						if(getModel().isSent()) {
-							getCallback().showInfoPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
-						} else if (getModel().isFinished()) {
-							submitAEAT(MODEL130_PRINT_AEAT, getCert(), getPass(), getDocument(), getName(), showNRC ? getNRC() : null);
-							getCallback().showVisorAEAT();
-						} else {
-							getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-						}	
-					}
-				};
-				certPopup.center();
-			}
-		});
-		p3.add(button3);
-		
-		if(getAonData().isBetaEnabled()) {
-			CheckBox testMode = new CheckBox();
-			testMode.setValue(false);
-			testMode.setStyleName(AON.AON_CSS.aonMarginRight());
-			testMode.setText("Modo Pruebas");
-			testMode.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					setTest(event.getValue());
-				}
-			});
-			p3.add(testMode);
-		}
-		
-		tab.setWidget(row, 1, p3 );
-		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-
-		MOD130Service.presentationFile(getCallback().getDomainName(), getCallback().getDomain(), getCallback().getUser(), getModel().getId(), new AsyncCallback<Integer>() {
-
-			@Override public void onFailure(Throwable caught) {}
-
-			@Override
-			public void onSuccess(Integer result) {
-				if(result > 0) {
-					Button download2 = new Button();
-					download2.setStyleName("aon-icon-mail-save");
-					download2.addStyleName(AON.AON_CSS.aonIconCommandButton());
-					download2.getElement().getStyle().setPaddingTop(16, Unit.PX);
-					download2.addClickHandler(new ClickHandler() {
-							
-						@Override
-						public void onClick(ClickEvent event) {
-							getAPI().getFiscal().download(result +"");
-						}
-					});
-					tab.setWidget(3, 2, download2 );
-					tab.getCellFormatter().setStyleName(3, 2, AON.AON_CSS.aonPanelGridEven());
-				} else tab.getFlexCellFormatter().setColSpan(3, 1, 2);
-			}
-		});
-		row++;
+//		// CON FIRMA NO CRIPTOGRAFICA
+//		Label icon3 = new Label();
+//		icon3.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
+//		tab.setWidget(row, 0, icon3 );
+//		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+//		FlowPanel p3 = new FlowPanel();
+//		p3.setStyleName(AON.AON_CSS.aonPadding2());
+//		Button button3 = new Button("Presentaci\u00F3n via Agencia Tributaria con firma no criptogr\u00e1fica (a partir de los datos guardados).");
+//		button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
+//		button3.addStyleName(AON.AON_CSS.aonBorderNone());
+//		button3.addStyleName(AON.AON_CSS.aonEvenBackground());
+//		button3.addStyleName(AON.AON_CSS.aonClickable());
+//		button3.addStyleName("aon-icon-beta-text");
+//		button3.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+//		button3.addClickHandler( event -> {		
+//			Boolean showNRC = FiscalModelDeclarationType.DEPOSIT.equals(getModel().getDeclarationType()); 
+//			CertificationPopup certPopup = new CertificationPopup(getAPI(), getModel().getName(), getModel().getDocument(), showNRC) {
+//							
+//				@Override
+//				protected void onCancel() {
+//					// Nothing
+//				}
+//						
+//				@Override
+//				protected void onAccept() {
+//					if(getModel().isSent()) {
+//						getCallback().showInfoPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
+//					} else if (getModel().isFinished()) {
+//						submitAEAT(MODEL130_PRINT_AEAT, getCert(), getPass(), getDocument(), getName(), showNRC ? getNRC() : null);
+//					} else {
+//						getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
+//					}	
+//				}
+//			};
+//			certPopup.center();
+//		});
+//		p3.add(button3);
+//		
+//		if(getAonData().isBetaEnabled()) {
+//			CheckBox testMode = new CheckBox();
+//			testMode.setValue(false);
+//			testMode.setStyleName(AON.AON_CSS.aonMarginRight());
+//			testMode.setText("Modo Pruebas");
+//			testMode.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+//				
+//				@Override
+//				public void onValueChange(ValueChangeEvent<Boolean> event) {
+//					setTest(event.getValue());
+//				}
+//			});
+//			p3.add(testMode);
+//		}
+//		
+//		tab.setWidget(row, 1, p3 );
+//		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+//
+//		MOD130Service.presentationFile(getCallback().getDomainName(), getCallback().getDomain(), getCallback().getUser(), getModel().getId(), new AsyncCallback<Integer>() {
+//
+//			@Override public void onFailure(Throwable caught) {}
+//
+//			@Override
+//			public void onSuccess(Integer result) {
+//				if(result > 0) {
+//					Button download2 = new Button();
+//					download2.setStyleName("aon-icon-mail-save");
+//					download2.addStyleName(AON.AON_CSS.aonIconCommandButton());
+//					download2.getElement().getStyle().setPaddingTop(16, Unit.PX);
+//					download2.addClickHandler(new ClickHandler() {
+//							
+//						@Override
+//						public void onClick(ClickEvent event) {
+//							getAPI().getFiscal().download(result +"");
+//						}
+//					});
+//					tab.setWidget(3, 2, download2 );
+//					tab.getCellFormatter().setStyleName(3, 2, AON.AON_CSS.aonPanelGridEven());
+//				} else tab.getFlexCellFormatter().setColSpan(3, 1, 2);
+//			}
+//		});
+//		row++;
 
 		panel.add(tab);
 		return panel;
@@ -246,18 +224,18 @@ public class Model130AEAT extends Model130Base {
 	
 	@Override
 	public LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
-		list.add(new Pair<String, String>("Tr\u00E1mites."
+		LinkedList<Pair<String, String>> list = new LinkedList<>();
+		list.add(new Pair<>("Tr\u00E1mites."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/G601.shtml"));
-		list.add(new Pair<String, String>("Informaci\u00F3n general." 
+		list.add(new Pair<>("Informaci\u00F3n general." 
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/G601.shtml"));
-		list.add(new Pair<String, String>("Ficha."
+		list.add(new Pair<>("Ficha."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G601.shtml"));
 		return list;
 	}
 	
 	@Override
-	protected void paintParticularyRow(final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
+	protected void paintParticularyRow(final Model130Callback callback, IModelScript<Mod130Key> script) {
 		if (script.getKeys() == null) return;
 		if (script.getKeys()[0] == Mod130Key.P0) {
 			paintRowP00(callback,script);
@@ -268,13 +246,13 @@ public class Model130AEAT extends Model130Base {
 		} 
 	}
 	
-	private void paintRowP00(final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
+	private void paintRowP00(final Model130Callback callback, IModelScript<Mod130Key> script) {
 		int row = getTable().getRowCount();
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );
 		getTable().setWidget(row, 1, new Label());
-		final FiscalModelDetail p1 = callback.getFiscalModel().ensureDetail(Mod130Key.P0);
+		final FiscalModelDetail p1 = getModel().ensureDetail(Mod130Key.P0);
 		String labelText = IRPFRegime.NORMAL.getDescription();
 		if (p1 != null && p1.getAmount() == 1) {
 			labelText = IRPFRegime.SIMPLIFIED.getDescription();	
@@ -282,19 +260,19 @@ public class Model130AEAT extends Model130Base {
 		getTable().setWidget(row, 2, new Label( labelText ));
 	}
 
-	private void paintRowP01(final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
+	private void paintRowP01(final Model130Callback callback, IModelScript<Mod130Key> script) {
 		int row = getTable().getRowCount();
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );
 		getTable().setWidget(row, 1, new Label());
-		final FiscalModelDetail p1 = callback.getFiscalModel().ensureDetail(Mod130Key.P1);
+		final FiscalModelDetail p1 = getModel().ensureDetail(Mod130Key.P1);
 		getTable().setWidget(row, 2, new Label( AON.FMT.format(p1.getAmount()) + "%"));
 	}
 
-	private void paintRowP02(final IFiscalModelCallback<Mod130> callback, IModelScript<Mod130Key> script) {
+	private void paintRowP02(final Model130Callback callback, IModelScript<Mod130Key> script) {
 		int row = getTable().getRowCount();
-		final FiscalModelDetail p2 = callback.getFiscalModel().ensureDetail(Mod130Key.P2);
+		final FiscalModelDetail p2 = getModel().ensureDetail(Mod130Key.P2);
 		getTable().setWidget(row, 0, new Label(script.getLabel()));
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextRight() );
 		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingRight() );

@@ -17,6 +17,7 @@ import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
+@Deprecated
 public class FiscalModelTable<FM extends FiscalModel> extends CellTable<FM> {
 	private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
 	
