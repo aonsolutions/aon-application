@@ -996,7 +996,7 @@ public class Model131 extends MainEntryPoint {
 		resetButton.setEnabled(false);
 		cleanErrorMessage();
 		
-		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(),null,
+		SERVICE.initialize(getOptions().getOccam(),null,
 				new AsyncCallback<Mod131>() {
 					@Override
 					public void onSuccess(Mod131 newMod131) {						
@@ -1019,17 +1019,17 @@ public class Model131 extends MainEntryPoint {
 	}
 	
 	private void showResetDeclarationPopup(Mod131 newMod131, Mod131 oldMod131) {
-		Model131NewDeclarationPopup newDialog = new Model131NewDeclarationPopup(true,
-			new FiscalModelCallback() {
+		Model131NewDeclarationPopup newDialog = new Model131NewDeclarationPopup(newMod131, true,
+			new Model131Callback() {
 
 				@Override
-				public void onAccept() {
+				public void onAccept(Mod131 mod131) {
 					
-					SERVICE.delete(getCurrentDomainName(), getCurrentUser(), oldMod131, new AsyncCallback<Void>() {
+					SERVICE.delete(getOptions().getOccam(), oldMod131, new AsyncCallback<Void>() {
 						
 						@Override
 						public void onSuccess(Void result) {
-							SERVICE.create(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), newMod131,
+							SERVICE.create(getOptions().getOccam(), newMod131,
 									new AsyncCallback<Mod131>() {
 										@Override
 										public void onSuccess(Mod131 m131) {
@@ -1054,14 +1054,9 @@ public class Model131 extends MainEntryPoint {
 				}
 
 				@Override
-				public void onCancel() {
+				public void onCancel(Mod131 mod131) {
 					
 				}
-				
-				@Override
-				public Mod131 getFiscalModel() {
-					return newMod131;
-				};
 			}
 		); 
 		newDialog.center();

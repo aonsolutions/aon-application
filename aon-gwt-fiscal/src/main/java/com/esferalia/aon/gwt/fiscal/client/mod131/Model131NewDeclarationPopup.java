@@ -24,8 +24,9 @@ public class Model131NewDeclarationPopup extends NewDeclarationPopup<Mod131,Mode
 
 	public Model131NewDeclarationPopup(Mod131 mod131,Model131Callback callback) {
 		super(mod131,false,callback);
-	public Model131NewDeclarationPopup(Mod131 mod131,boolean reset, IFiscalModelCallback<Mod131> callback) {
-		super(reset, callback);
+	}
+	public Model131NewDeclarationPopup(Mod131 mod131,boolean reset, Model131Callback callback) {
+		super(mod131,reset, callback);
 	}
 	
 	@Override

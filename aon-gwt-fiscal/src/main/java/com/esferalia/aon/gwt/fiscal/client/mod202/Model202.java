@@ -1123,7 +1123,7 @@ public class Model202 extends MainEntryPoint {
 		resetButton.setEnabled(false);
 		cleanErrorMessage();
 		
-		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), null,
+		SERVICE.initialize(getOptions().getOccam(), null,
 				new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 newMod202) {
@@ -1151,17 +1151,17 @@ public class Model202 extends MainEntryPoint {
 	}
 	
 	private void showResetDeclarationPopup(Mod202 newMod202, Mod202 oldMod202) {
-		Model202NewDeclarationPopup newDialog = new Model202NewDeclarationPopup(true,
-			new FiscalModelCallback() {
+		Model202NewDeclarationPopup newDialog = new Model202NewDeclarationPopup(newMod202, true,
+			new Model202Callback() {
 
 					@Override
-					public void onAccept() {
-						SERVICE.delete(getCurrentDomainName(), getCurrentUser(), oldMod202, 
+					public void onAccept( Mod202 model) {
+						SERVICE.delete(getOptions().getOccam(), oldMod202, 
 								new AsyncCallback<Void>() {
 									
 									@Override
 									public void onSuccess(Void result) {
-										SERVICE.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), newMod202,
+										SERVICE.create(getOptions().getOccam(), newMod202,
 												new AsyncCallback<Mod202>() {
 													@Override
 													public void onSuccess(Mod202 m202) {
@@ -1187,12 +1187,7 @@ public class Model202 extends MainEntryPoint {
 					}
 
 					@Override
-					public void onCancel() {						
-					}
-
-					@Override
-					public Mod202 getFiscalModel() {
-						return newMod202;
+					public void onCancel(Mod202 model) {						
 					}
 				}
 			); 
