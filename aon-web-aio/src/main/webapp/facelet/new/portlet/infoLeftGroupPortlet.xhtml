@@ -69,6 +69,18 @@
 	</style>
 	
 	<script type='text/javascript' >
+
+		function collapseMenuPortlet(el) {
+			el.nextSibling.style.display= "none";
+			el.firstChild.innerText= 'expand_more';
+			el.onclick=function() { expandMenuPortlet(el); };
+		} 
+		function expandMenuPortlet(el) {
+			el.nextSibling.style.display= "block";
+			el.firstChild.innerText= 'expand_less';
+			el.onclick=function() { collapseMenuPortlet(el); };
+		} 
+
 		function showInfoGroup() {
 			document.getElementById("aonContent:mainForm:showButton").style.display='none';
 			document.getElementById("aonContent:mainForm:hideButton").style.display='initial';
