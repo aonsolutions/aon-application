@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
@@ -190,6 +191,11 @@ public class MainContrataContract extends MainEntryPoint {
 				contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
 						selectedEmployeeIdx, employeesSize, selectedTab, s -> deckPanel.showWidget(2));
 			}
+		}
+
+		@Override
+		protected DomainUserRoles getDomainUserRole() {
+			return mainContrataContractObject.getDomainUserRoles();
 		}
 
 	}

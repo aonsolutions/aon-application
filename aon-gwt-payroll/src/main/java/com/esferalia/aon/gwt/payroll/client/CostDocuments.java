@@ -29,7 +29,7 @@ public class CostDocuments extends AbstractSpinnable<IDocument> implements IDocu
 	CostDocuments(List<Cost> costs, List<Salary.Type> types) {
 		this.costs = costs;
 		this.types = types;
-		last();
+		first();
 	}
 	
 	// ----------------------------------------------- IDocument

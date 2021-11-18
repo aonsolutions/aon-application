@@ -20,11 +20,13 @@ import java.util.List;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
@@ -32,20 +34,27 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 
 public class JooqPayrollSalaries {
 
-	private static Settings SETTINGS = null;
+	private static Settings settings = null;
 	
 	protected static Settings getDefaultSettings() {
-		if (SETTINGS == null) {
-			SETTINGS = new Settings();
-			SETTINGS.setRenderSchema(false);
+		if (settings == null) {
+			settings = new Settings();
+			settings.setRenderSchema(false);
 		}
-		return SETTINGS;
+		return settings;
 	}
 	
+	private JooqPayrollSalaries() {
+		super();
+	}
 
 	// --------------------------------------------------------------------------------------------
 	//									SALARY METHODS
 	// --------------------------------------------------------------------------------------------
+	
+	public static Period getSalariesDates(Connection connection, SalaryInfoFilter filter) {
+		return getSalariesDatesDB(DSL.using(connection, getDefaultSettings()), filter);
+	}
 	
 	public static List<SalaryInfo> getSalaries(Connection connection, SalaryInfoFilter filter) {
 		return getSalariesDB(DSL.using(connection, getDefaultSettings()), filter);
@@ -91,8 +100,39 @@ public class JooqPayrollSalaries {
 	//									SALARY METHODS IMPL
 	// --------------------------------------------------------------------------------------------
 	
+	private static Period getSalariesDatesDB(DSLContext dslContext, SalaryInfoFilter filter) {
+		// SalaryType
+		Condition salaryTypeCondition = getSalaryTypeCondition(filter);
+		
+		// Contracts
+		Condition contractsCondition = getContractCondition(dslContext, filter);
+		
+		Record1<Date> salaryMinDateRecord = dslContext.select(DSL.min(SALARY.END_DATE)).from(SALARY)
+				.where(contractsCondition)
+				.and(salaryTypeCondition)
+				.fetchOne();
+		
+		Date salaryMinDate = salaryMinDateRecord.value1();
+		
+		Record1<Date> salaryMaxDateRecord = dslContext.select(DSL.max(SALARY.END_DATE)).from(SALARY)
+				.where(contractsCondition)
+				.and(salaryTypeCondition)
+				.fetchOne();
+		
+		Date salaryMaxDate = salaryMaxDateRecord.value1();
+		
+		return new Period(parseToJavaDate(salaryMinDate), parseToJavaDate(salaryMaxDate));
+	}
+	
+	private static java.util.Date parseToJavaDate(Date sqlDate) {
+		if(null == sqlDate)
+			return null;
+		
+		return new java.util.Date(sqlDate.getTime());
+	}
+
 	private static List<SalaryInfo> getSalariesDB(DSLContext dslContext, SalaryInfoFilter filter) {
-		List<SalaryInfo> salaries = new ArrayList<SalaryInfo>();
+		List<SalaryInfo> salaries = new ArrayList<>();
 		
 		// SalaryType
 		Condition salaryTypeCondition = getSalaryTypeCondition(filter);
@@ -156,7 +196,6 @@ public class JooqPayrollSalaries {
 		return salaries;
 	}
 	
-	
 	private static SalaryInfo getSalariesDateEnd(DSLContext dslContext, SalaryInfoFilter filter) {
 		
 		// SalaryType
@@ -194,7 +233,7 @@ public class JooqPayrollSalaries {
 	
 	
 	private static List<SalaryInfo> getSalariesByDocumentDB(DSLContext dslContext, SalaryInfoFilter filter,  String document) {
-		List<SalaryInfo> salaries = new ArrayList<SalaryInfo>();
+		List<SalaryInfo> salaries = new ArrayList<>();
 		// SalaryType
 		Condition salaryTypeCondition = getSalaryTypeCondition(filter);
 		// Dates
@@ -307,26 +346,21 @@ public class JooqPayrollSalaries {
 	}
 	
 	private static Record getWorkplaceRecord(DSLContext dslContext, Integer contractId) {
-		Record workplaceRecord = dslContext.select()
+		return dslContext.select()
 				.from(WORKPLACE)
 				.where(WORKPLACE.ID.eq(
 						dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
 						.where(CONTRACT.ID.eq(contractId))))
 				.fetchOne();
-		
-		
-		return workplaceRecord;
 	}
 
 	private static Integer getEnterpriseId(DSLContext dslContext, Integer contractId) {
-		Integer enterpriseId =  dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
+		return dslContext.select(WORKPLACE.ENTERPRISE).from(WORKPLACE)
 				.where(WORKPLACE.ID.eq(
 						dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT)
 							.where(CONTRACT.ID.eq(contractId))
 				)).fetchOne()
 				.get(WORKPLACE.ENTERPRISE);
-		
-		return enterpriseId;
 	}
 
 	private static boolean isNumberValid(Integer number) {
@@ -370,7 +404,7 @@ public class JooqPayrollSalaries {
 	// --------------------------------------------------------------------------------------------
 	
 	private static List<EmployeeInfo> getEnterpriseActiveEmployeesDB(DSLContext dslContext, Integer enterpriseId) {
-		List<EmployeeInfo> enterpriseEmployees = new ArrayList<EmployeeInfo>();
+		List<EmployeeInfo> enterpriseEmployees = new ArrayList<>();
 		
 		Result<Record> contractRecords = dslContext.select().from(CONTRACT)
 				.where(CONTRACT.ID.gt(0))

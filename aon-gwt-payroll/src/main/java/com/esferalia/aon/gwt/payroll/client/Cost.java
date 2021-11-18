@@ -4,7 +4,9 @@ package com.esferalia.aon.gwt.payroll.client;
 import static com.esferalia.aon.gwt.payroll.shared.ExcelType.COMPLETE;
 import static com.esferalia.aon.gwt.payroll.shared.ExcelType.SUMMARY;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -484,11 +486,17 @@ public class Cost extends ResizeComposite {
 
 	private void syncCostDateListBox() {
 		dateListBox.clear();
-		for (com.esferalia.aon.gwt.payroll.shared.Cost cost : costDocuments
-				.getCosts()) {
+		List<Date> dates = new ArrayList<>();
+		for (com.esferalia.aon.gwt.payroll.shared.Cost cost : costDocuments.getCosts()) {
 			Date date = DateUtils.getDate(cost.getMonth(), cost.getYear());
-			dateListBox.addItem(DATE_FORMAT.format(date));
+			dates.add(date);
 		}
+		
+		// Sort descending
+		Collections.sort(dates, Collections.reverseOrder());
+		
+		dates.forEach(date -> dateListBox.addItem(DATE_FORMAT.format(date)));
+		
 		dateListBox.setSelectedIndex(costDocuments.getCurrentIndex());
 	}
 

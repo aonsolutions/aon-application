@@ -19,7 +19,6 @@ import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -29,9 +28,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -85,15 +84,7 @@ public class EmployeeContractPayments extends Composite {
 	// ----------------------------------------------- UiField 
 	
 	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {}
-	
-	@UiField
 	DockLayoutPanel dockLayoutPanel;
-	
-	@UiField
-	HTMLPanel mainPanel;
 	
 	@UiField(provided = true)
 	DataGrid<ContractConceptCalc> contractConceptCalcDG;
@@ -122,7 +113,7 @@ public class EmployeeContractPayments extends Composite {
 	// ----------------------------------------------- Auxiliar Methods (Constructor & DataGrid) 
 	
 	private void setScrollPanelHeight() {
-		contractConceptCalcDG.setHeight(90 + "%");
+		contractConceptCalcDG.setHeight((Window.getClientHeight() - 220) + "px");
 	}
 	
 	private boolean isHideExpression(ContractConceptCalc contractConceptCalc) {
@@ -352,6 +343,8 @@ public class EmployeeContractPayments extends Composite {
 	    
 		// Set page size
 		contractConceptCalcDG.setPageSize(contractConceptCalcListAux.size());
+		
+		setScrollPanelHeight();
 	}
 
 	private void addSortColums(List<ContractConceptCalc> contractConceptCalcList) {
@@ -413,10 +406,8 @@ public class EmployeeContractPayments extends Composite {
 		Integer year = DateUtils.getYear();
 		Integer yearAux = DateUtils.getYear();
 		Integer previusYear = year - 1;
-		Integer nextYear = year + 1;
 		
 		yearLB.clear();
-		yearLB.addItem(nextYear.toString(), nextYear.toString());
 		yearLB.addItem(yearAux.toString(), yearAux.toString());
 		yearLB.addItem(previusYear.toString(), previusYear.toString());
 		
@@ -487,7 +478,6 @@ public class EmployeeContractPayments extends Composite {
 	
 	public void hideToolbar(){
 		dockLayoutPanel.remove(toolbar);
-		mainPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
 	
 	public void setYearLB(ListBox yearLB) {
