@@ -13,6 +13,8 @@ import { serializeForm } from '../../services/utils.js';
 import { getTaskAppParams, saveTaskAppParams } from '../../services/taskService.js';
 import * as LS from '../../services/localStorageService.js';
 import { APP_PARAMS_REQUEST } from './MessengerEnums.js';
+import { getDomainUserRoles } from '../../services/companyService.js';
+import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
 
 export class AonMessengerConfig extends AonElement {
@@ -21,6 +23,7 @@ export class AonMessengerConfig extends AonElement {
   CARD_TWO;
   TASK_HOLDERS;
   WORKGROUPS;
+  dur;
   get id() {
     return this.getAttribute('id');
   }
@@ -35,7 +38,11 @@ export class AonMessengerConfig extends AonElement {
 
   connectedCallback () {
     this.initialize();
-    this.build();
+    getDomainUserRoles({}).then(r => {
+      this.dur = new DomainUserRoles(r);
+      this.build();
+    }).catch((err) =>this.showError(err));
+  
   }
 
   initialize() {
@@ -55,21 +62,9 @@ export class AonMessengerConfig extends AonElement {
       
       this.appendChild(form);
 
-      let divTwo = setStyles(this.createElement(TAG.DIV),{ flex:1 });
-      form.appendChild(divTwo);
-
-      let card = setAttributes(new AonCard(), { title:"Internas", id:this.CARD });
-      divTwo.appendChild(card);
-
-      let divThree = setStyles(this.createElement(TAG.DIV),{ flex:1 });
-      form.appendChild(divThree);
-
-      let cardE = setAttributes(new AonCard(), { title:"Generales",id:this.CARD_TWO });
-      divThree.appendChild(cardE);
-
-      this.getAppParams().then(params=>{
-        this.buildForm(params);
-      });
+      this.getAppParams().then(params=>
+        this.buildForm(params)
+      );
  
   }
 
@@ -77,98 +72,153 @@ export class AonMessengerConfig extends AonElement {
     let toolbar = new AonToolbar();
     toolbar.id = "we23";
     toolbar.type = ToolbarType.SECONDARY;
-    toolbar.title = "Parametros por defecto";
+    toolbar.title = "Parametros Generales";
     this.appendChild(toolbar);
     toolbar.addButton2(ACTION.SAVE, () => this.save());
 }
 
   buildForm(params){
-    let cardFirst = this.getElement(this.CARD).getContent();
+    Promise.all([
+      this.setWorkGroup(),
+      this.setTaskHolder()
+    ]).then(()=>{
+      let form = this.getElement(this.FORM);
+      let divFirst = this.createElement(TAG.DIV);
+      form.appendChild(divFirst);
+      this.cardInternal(divFirst, params);
 
-    let firstCard = this.createElement(TAG.DIV);
-    cardFirst.appendChild(firstCard);
-    this.buildFirstCard(firstCard, params);
+      if(this.dur.getDomain().isOffice()){
+        divFirst.style.flex = 1;
+        let divSecond = setStyles(this.createElement(TAG.DIV),{ flex:1 });
+        form.appendChild(divSecond);
+        this.cardExternal(divSecond, params);
+      }
+    });
 
-    let cardSecond = this.getElement(this.CARD_TWO).getContent();
-    let secondCard = this.createElement(TAG.DIV);
-    cardSecond.appendChild(secondCard);
-    this.buildSecondCard(secondCard, params);
 
   }
 
-  async buildFirstCard(firstCard, params){
+  cardInternal(divFirst, params){
+
+    let card = setAttributes(new AonCard(), { title:"Internas", id:this.CARD });
+    divFirst.appendChild(card);
+
+    let cardContent = this.getElement(this.CARD).getContent();
+
+    let divContent = this.createElement(TAG.DIV);
+    cardContent.appendChild(divContent);
     
-    await this.setWorkGroup();
-    await this.setTaskHolder();
+    const {APP_REQUESTS_INT_WORKGROUP, APP_REQUESTS_INT_TASK_HOLDER , APP_REQUESTS_INT_OPENED, APP_REQUESTS_INT_CLOSED, APP_REQUESTS_INT_COMMENT, APP_REQUESTS_INT_ASSIGN} = APP_PARAMS_REQUEST;
 
-    const {APP_REQUESTS_INT_WORKGROUP, APP_REQUESTS_INT_TASK_HOLDER, APP_REQUESTS_EXT_WORKGROUP, APP_REQUESTS_EXT_TASK_HOLDER} = APP_PARAMS_REQUEST;
+    let workgroup = setAttributes(new AonSelect(),{ title: MSG.WORKGROUP, id:this.getIdRand(), name:APP_REQUESTS_INT_WORKGROUP, default:true});
+    divContent.appendChild(workgroup);
 
-    let workgroupI = setAttributes(new AonSelect(),{ title: MSG.WORKGROUP, id:Math.random().toString(36).substring(7), name:APP_REQUESTS_INT_WORKGROUP, default:true});
-    firstCard.appendChild(workgroupI);
-
-    let taskHolderI = setAttributes(new AonSelect(),{ title: "Títular", id:Math.random().toString(36).substring(7), name:APP_REQUESTS_INT_TASK_HOLDER, default:true});
-    firstCard.appendChild(taskHolderI);
-
-    let div = setStyles(document.createElement(TAG.DIV),{ marginBottom: 0, marginTop:"25px" });
-    div.className = CSS.AON_CARD_TITLE;
-    div.innerText = "Externas";
-    firstCard.appendChild(div);
-
-    this.fillWorkGroup(workgroupI, params[APP_REQUESTS_INT_WORKGROUP]);
-    this.fillTaskHolder(taskHolderI, params[APP_REQUESTS_INT_WORKGROUP], params[APP_REQUESTS_INT_TASK_HOLDER]);
+    let taskHolder = setAttributes(new AonSelect(),{ title: "Títular", id:this.getIdRand(), name:APP_REQUESTS_INT_TASK_HOLDER, default:true});
+    divContent.appendChild(taskHolder);
 
 
-    let workgroupE = setAttributes(new AonSelect(),{ title: MSG.WORKGROUP, id:Math.random().toString(36).substring(7), name:APP_REQUESTS_EXT_WORKGROUP, default:true});
-    firstCard.appendChild(workgroupE);
+    this.fillWorkGroup(workgroup, params[APP_REQUESTS_INT_WORKGROUP]);
+    this.fillTaskHolder(taskHolder, params[APP_REQUESTS_INT_WORKGROUP], params[APP_REQUESTS_INT_TASK_HOLDER]);
 
-    let taskHolderE = setAttributes(new AonSelect(),{ title: "Títular", id:Math.random().toString(36).substring(7), name:APP_REQUESTS_EXT_TASK_HOLDER, default:true});
-    firstCard.appendChild(taskHolderE);
-
-
-    this.fillWorkGroup(workgroupE, params[APP_REQUESTS_EXT_WORKGROUP]);
-    this.fillTaskHolder(taskHolderE, params[APP_REQUESTS_EXT_WORKGROUP], params[APP_REQUESTS_EXT_TASK_HOLDER]);
-
-
-    workgroupI.addEventListener(EVENT.CHANGE, ({detail})=>{
-      if(detail && detail.id)
-          this.fillTaskHolder(taskHolderI, detail.id);
-    });
-
-    workgroupE.addEventListener(EVENT.CHANGE, ({detail})=>{
+    workgroup.addEventListener(EVENT.CHANGE, ({detail})=>{
         if(detail && detail.id)
-            this.fillTaskHolder(taskHolderE, detail.id);
+            this.fillTaskHolder(taskHolder, detail.id);
     });
+
+
+    let textC = setStyles(document.createElement(TAG.DIV),{ marginBottom: 8, marginTop:19 });
+    textC.className = CSS.AON_CARD_TITLE;
+    textC.innerText = "Comunicación";
+    divContent.appendChild(textC);
+
+    // let divTwo = setStyles(this.createElement(TAG.DIV),{margin:"0 0 7"});
+    // divContent.appendChild(divTwo);
+
+    // let rating = setAttributes(new AonSwitch(),{id:"rating", name:APP_REQUESTS_EMAIL_RATING, title: "Enviar calificación al cerrar", checked:params[APP_REQUESTS_EMAIL_RATING]});
+    // rating.style.margin ="10 0 0";
+    // divTwo.appendChild(rating);
+
+    let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
+    text.innerText = "Enviar Notificación al:";
+    divContent.appendChild(text);
+    
+    let div = setStyles(this.createElement(TAG.DIV),{display:"flex", flexWrap:"wrap", columnGap: "10px"});
+    divContent.appendChild(div);
+
+    let opened = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_OPENED, title: "Abrir", checked:params[APP_REQUESTS_INT_OPENED]});
+    div.appendChild(opened);
+
+    let closed = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_CLOSED, title: "Cerrar", checked:params[APP_REQUESTS_INT_CLOSED]});
+    div.appendChild(closed);
+
+    let comment = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_COMMENT, title: "Comentar", checked:params[APP_REQUESTS_INT_COMMENT]});
+    div.appendChild(comment);
+
+    let assign = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_INT_ASSIGN, title: "Asignar", checked:params[APP_REQUESTS_INT_ASSIGN]});
+    div.appendChild(assign);
   }
 
-  buildSecondCard(secondCard, params){
+  cardExternal(divSecond, params){
 
-    const {APP_REQUESTS_NOTI_OPENED, APP_REQUESTS_NOTI_CLOSED, APP_REQUESTS_NOTI_COMMENT, APP_REQUESTS_NOTI_ASSIGN, APP_REQUESTS_EMAIL_RATING} = APP_PARAMS_REQUEST;
+    let card = setAttributes(new AonCard(), { title:"Externas",id:this.CARD_TWO });
+    divSecond.appendChild(card);
+
+    let cardContent = this.getElement(this.CARD_TWO).getContent();
+    let divContent = this.createElement(TAG.DIV);
+    cardContent.appendChild(divContent);
+
+    const {APP_REQUESTS_EMAIL_RATING, APP_REQUESTS_EXT_WORKGROUP, APP_REQUESTS_EXT_TASK_HOLDER , APP_REQUESTS_EXT_OPENED, APP_REQUESTS_EXT_CLOSED, APP_REQUESTS_EXT_COMMENT, APP_REQUESTS_EXT_ASSIGN} = APP_PARAMS_REQUEST;
+
+    let workgroup = setAttributes(new AonSelect(),{ title: MSG.WORKGROUP, id:this.getIdRand(), name:APP_REQUESTS_EXT_WORKGROUP, default:true});
+    divContent.appendChild(workgroup);
+
+    let taskHolder = setAttributes(new AonSelect(),{ title: "Títular", id:this.getIdRand(), name:APP_REQUESTS_EXT_TASK_HOLDER, default:true});
+    divContent.appendChild(taskHolder);
+
+
+    this.fillWorkGroup(workgroup, params[APP_REQUESTS_EXT_WORKGROUP]);
+    this.fillTaskHolder(taskHolder, params[APP_REQUESTS_EXT_WORKGROUP], params[APP_REQUESTS_EXT_TASK_HOLDER]);
+
+    workgroup.addEventListener(EVENT.CHANGE, ({detail})=>{
+        if(detail && detail.id)
+            this.fillTaskHolder(taskHolder, detail.id);
+    });
+
+
+    let textC = setStyles(document.createElement(TAG.DIV),{ marginBottom: 8, marginTop:19 });
+    textC.className = CSS.AON_CARD_TITLE;
+    textC.innerText = "Comunicación";
+    divContent.appendChild(textC);
 
     let divTwo = setStyles(this.createElement(TAG.DIV),{margin:"0 0 7"});
-    secondCard.appendChild(divTwo);
+    divContent.appendChild(divTwo);
 
-    let rating = setAttributes(new AonSwitch(),{id:"rating", name:APP_REQUESTS_EMAIL_RATING, title: "Enviar calificación al cerrar", checked:params[APP_REQUESTS_EMAIL_RATING]});
+    let rating = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EMAIL_RATING, title: "Enviar calificación al cerrar", checked:params[APP_REQUESTS_EMAIL_RATING]});
     rating.style.margin ="10 0 0";
     divTwo.appendChild(rating);
 
     let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
     text.innerText = "Enviar Notificación al:";
-    secondCard.appendChild(text);
+    divContent.appendChild(text);
     
     let div = setStyles(this.createElement(TAG.DIV),{display:"flex", flexWrap:"wrap", columnGap: "10px"});
-    secondCard.appendChild(div);
+    divContent.appendChild(div);
 
-    let opened = setAttributes(new AonSwitch(),{id:"opened", name:APP_REQUESTS_NOTI_OPENED, title: "Abrir", checked:params[APP_REQUESTS_NOTI_OPENED]});
+    let opened = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_OPENED, title: "Abrir", checked:params[APP_REQUESTS_EXT_OPENED]});
     div.appendChild(opened);
 
-    let closed = setAttributes(new AonSwitch(),{id:"closed", name:APP_REQUESTS_NOTI_CLOSED, title: "Cerrar", checked:params[APP_REQUESTS_NOTI_CLOSED]});
+    let closed = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_CLOSED, title: "Cerrar", checked:params[APP_REQUESTS_EXT_CLOSED]});
     div.appendChild(closed);
 
-    let comment = setAttributes(new AonSwitch(),{id:"comment", name:APP_REQUESTS_NOTI_COMMENT, title: "Comentar", checked:params[APP_REQUESTS_NOTI_COMMENT]});
+    let comment = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_COMMENT, title: "Comentar", checked:params[APP_REQUESTS_EXT_COMMENT]});
     div.appendChild(comment);
 
-    let assign = setAttributes(new AonSwitch(),{id:"assign", name:APP_REQUESTS_NOTI_ASSIGN, title: "Asignar", checked:params[APP_REQUESTS_NOTI_ASSIGN]});
+    let assign = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_ASSIGN, title: "Asignar", checked:params[APP_REQUESTS_EXT_ASSIGN]});
     div.appendChild(assign);
+  }
+
+  getIdRand(){
+    return Math.random().toString(36).substring(7);
   }
 
   fillWorkGroup(workgroup, workgroupId = undefined){

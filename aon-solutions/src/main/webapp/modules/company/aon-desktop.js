@@ -3,7 +3,7 @@ import { Apps} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
 import { AonSign } from '../signin/aon-sign.js';
@@ -261,14 +261,15 @@ export class AonDesktop extends AonElement {
 		div.appendChild(this.buildTitle(MSG.AVAILABLE.toUpperCase()));
 
 		let ul = this.createElement(TAG.UL);
-		ul.className = 'list-group';
-
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_LIST_GROUP);
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 			for (let key in Apps){
 				if(this.isApp(Apps[key])) {
 					let li = this.createElement(TAG.LI);
 					li.id = this.AON_DESKTOP + Apps[key].app.initCap();
-					li.className = 'list-group-item aonAppLi';
+					li.classList.add(CSS.AON_LIST_GROUP_ITEM);
+					li.classList.add(CSS.AON_APP_LI);
 					li.style.borderRight = '0px';
 					li.style.borderLeft = '0px';
 					li.style.cursor = 'pointer';
@@ -423,7 +424,8 @@ export class AonDesktop extends AonElement {
 			}
   	} else {
 			let li = this.createElement(TAG.LI);
-			li.className = 'list-group-item aonAppLi';
+			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
+			li.classList.add(CSS.AON_APP_LI);
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';

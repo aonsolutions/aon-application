@@ -255,6 +255,10 @@ export class Invoice {
   isNacional() {
     return this.transaction === 'NAC';
   }
+  
+  isCcm() {
+    return this.transaction === 'CCM';
+  }
 
   isSelfconta() {
     return this.selfconta;
@@ -362,8 +366,13 @@ export class Invoice {
 
   setWithholding(withholding) {
     this.withholding = withholding;
-    this.calculateWithholdingFromTax();
-    this.calculateTotalFromTax();
+    if(this.isNacional()) {
+      this.calculateWithholdingFromTax();
+      this.calculateTotalFromTax();
+    } else {
+      this.calculateWithholdingFromDetail();
+      this.calculateTotalFromDetail();
+    }
   }
 
   isWithholdingFarmer() {
@@ -382,11 +391,15 @@ export class Invoice {
 
   setTransaction(transaction) {
     this.transaction = transaction;
-    if(this.isEmitida() && !this.isNacional()){
+    if(!this.isNacional()){
       this.surcharge = false;
-      this.withholding = false;
-      this.withholdingFarmer = false;
-      this.taxes = [];
+      
+      if(!this.isCcm()) {
+        this.withholding = false;
+        this.withholdingFarmer = false;
+        this.taxes = [];
+      } else this.taxes = this.taxes.filter(f => TaxType.IRPF === f.tax);
+
       this.details.forEach((detail,i) => {
         detail.percentage = undefined;
         detail.vat = undefined;
@@ -457,6 +470,48 @@ export class Invoice {
     this.taxes.splice(i, 1);
     this.calculateWithholdingFromTax();
     this.calculateTotalFromTax();
+  }
+
+  calculateWithholdingFromDetail() {
+    if(this.isWithholding() && this.taxes.filter(f => TaxType.IRPF === f.tax).length === 0) {
+      let tax = {
+        tax: TaxType.IRPF,
+        type: this.isWithholdingFarmer() ? TaxType.IRPF_AGRI : TaxType.IRPF_PROF,
+        percentage: this.isWithholdingFarmer() ? 2.0 : 15.0,
+        base: 0.0,
+        quota: 0.0,
+        surcharge: 0.0,
+        surcharge_quota: 0.0
+       };
+       this.taxes.push(tax);
+    }
+    if(this.isWithholding()) { 
+      let base = 0.0;
+      this.details.forEach((detail, i) => {
+        if(!detail.prepayment){ 
+          base = base + detail.amount;
+        }
+      });
+
+      this.taxes.forEach((tax, i) => {
+       if(TaxType.IRPF === tax.tax){
+          tax.type = this.isWithholdingFarmer() 
+            ? TaxType.IRPF_AGRI : (TaxType.IRPF_AGRI === tax.type ? TaxType.IRPF_PROF : tax.type);
+         tax.percentage = this.isWithholdingFarmer() 
+           ? 2.0 : (tax.percentage === 2.0 ? 15.0 : tax.percentage);
+         tax.base = base;
+         this.taxes[i] = this.calculateTax(tax); 
+        }
+      });
+    } else if(this.taxes.filter(f => TaxType.IRPF === f.tax).length > 0){
+      let index;
+      this.taxes.forEach((tax, i) => {
+        if(TaxType.IRPF === tax.tax){
+          index = i;
+        }
+      });
+      this.taxes.splice(index, 1);
+    }     
   }
 
   calculateWithholdingFromTax() {
@@ -587,17 +642,24 @@ export class Invoice {
      };
      this.details.push(detail);
      console.log("bb - " + this.isWithholding());
-     this.calculateTaxFromDetail();
+     if(this.isNacional()) this.calculateTaxFromDetail();
+     else if(this.isCcm()) this.calculateWithholdingFromDetail();
+     this.calculateTotalFromDetail();
+      
   }
 
   deleteDetail(detail, i) {
     this.details.splice(i, 1);
-    this.calculateTaxFromDetail();
+    if(this.isNacional()) this.calculateTaxFromDetail();
+     else if(this.isCcm()) this.calculateWithholdingFromDetail();
+    this.calculateTotalFromDetail();
   }
 
   setDetail(detail, i) {  
     this.details[i] = this.calculateDetail(detail);
-    this.calculateTaxFromDetail();
+    if(this.isNacional()) this.calculateTaxFromDetail();
+    else if(this.isCcm()) this.calculateWithholdingFromDetail();
+    this.calculateTotalFromDetail();
   }
 
   calculateDetail(detail){
@@ -646,7 +708,6 @@ export class Invoice {
       }
     });  
     this.calculateWithholdingFromTax();
-    this.calculateTotalFromDetail();
   }
   
   calculateTotalFromDetail() {

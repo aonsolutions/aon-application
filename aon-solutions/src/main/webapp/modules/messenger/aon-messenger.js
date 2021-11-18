@@ -206,6 +206,7 @@ export class AonMessenger extends AonElement {
 				name: "SIN GRUPO",
 				icon: MATERIAL_ICONS.GROUP_OFF,
 				fn: () => {
+					this._filter.status = TASK_STATUS.PENDING;
 					this._filter.workgroup = undefined;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
@@ -216,6 +217,7 @@ export class AonMessenger extends AonElement {
 				name: item.description,
 				icon: MATERIAL_ICONS.PEOPLE_ALT,
 				fn: () => {
+					this._filter.status = TASK_STATUS.PENDING;
 					this._filter.workgroup = item.id;
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}

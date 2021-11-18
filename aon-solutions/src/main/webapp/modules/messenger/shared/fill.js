@@ -94,7 +94,8 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
             else if(1===projects.length && !task.id){
                 aonSelect.setIndexOf(0);
                 aonSelect.parentNode.style.display = "none";
-            }
+            } else if(!projects.length)
+                aonSelect.parentNode.style.display = "none";
 
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail && detail.id)
@@ -220,11 +221,6 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
                 if(detail){
                     task.setRegistry(detail);
                     fillProject(task, undefined,  task.getRegistry().id);
-                    // if(detail.domain && detail.domain.owner){
-                    //     task.setGTaskId(detail.domain.owner);
-                    //     const contact = document.getElementById(MESSENGER_IDS.GTASK_ID_TASK);
-                    //     if(contact) contact.value = task.getGTaskId();
-                    // }
                 } 
             });
         } catch (error) { }

@@ -255,7 +255,7 @@ public class Utils {
                 "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
                 "A-Z]{2,7}$";
 		Pattern pat = Pattern.compile(emailRegex); 
-		if (email == null) 
+		if (AonStringUtils.isBlank(email)) 
 			return false; 
 		return pat.matcher(email).matches() || email.contains("@aon.solutions");
 	}

@@ -143,19 +143,19 @@ export class AonConfiguration extends AonElement {
       aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
     }
 
-    let appOptions = [];
-    if(this.dur.isInvoice()) {
-      appOptions.push({
-        name: INVOICE.title,
-        aonIcon: {
-          icon: 'aon_app',
-          color: INVOICE.color
-        },
-        fn: () => this.buildInvoiceConfiguration(),
-      });  
-    }
+    if (localStorage.getItem("aon_domain_id") && localStorage.getItem("company")) {
+      let appOptions = [];
+      if (this.dur.isInvoice()) {
+        appOptions.push({
+          name: INVOICE.title,
+          aonIcon: {
+            icon: 'aon_app',
+            color: INVOICE.color
+          },
+          fn: () => this.buildInvoiceConfiguration(),
+        });
+      }
 
-    if(this.dur.getDomain().isOffice()) {
       appOptions.push({
         id: MESSENGER.title,
         name: MESSENGER.title,
@@ -164,11 +164,13 @@ export class AonConfiguration extends AonElement {
           color: MESSENGER.color
         },
         fn: () => this.buildMessengerConfiguration(),
-      });  
+      });
+
+
+
+      aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
     }
 
-
-    aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
 
     this.buildPersonal();
   }
@@ -237,7 +239,8 @@ export class AonConfiguration extends AonElement {
   }
 
 	buildInvoiceConfiguration() {
-		this.getApplication().setContent(new AonInvoicePrint());
+    // this.getApplication().setContent(new AonInvoiceConfiguration());
+    this.getApplication().setContent(new AonInvoicePrint());
 	}
   
   buildMessengerConfiguration(){

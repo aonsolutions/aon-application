@@ -79,21 +79,17 @@ export class AonAccounting extends AonElement {
 				application.addSidenavOptions(MSG.OPTIONS , options2);
 				this.aonGraphicsTrialView ();
 			}
-		}, {
-			id: 'banks',
-			name: MSG.BANKS,
-			icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
-			fn: () => {
-				application.removeSidenavById("Opciones");
-				GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
-			}
 		}];
+		
 		if(this.dur.isBank())
 			options.push({
 				id: 'banks',
 				name: MSG.BANKS,
 				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
-				fn: () => GWT.load(GWT.CHECKIT, this.getApplication().CONTENT)
+				fn: () => {
+					application.removeSidenavById("Opciones");
+					GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
+				}
 			});
 
 		application.addSidenavOptions(MSG.ACCOUNTING, options);

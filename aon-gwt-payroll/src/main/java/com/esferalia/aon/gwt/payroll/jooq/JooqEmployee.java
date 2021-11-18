@@ -14,6 +14,8 @@ import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -769,6 +771,14 @@ public class JooqEmployee {
 			//ENTERPRISE ACTIVITY TABLE
 			Integer enterpriseActivityId = contractTable.get(CONTRACT.ENTERPRISE_ACTIVITY);
 			contractData.setActivityId(enterpriseActivityId);
+			
+			//ENTERPRISE DATA
+			String enterpriseDocument = dslContext.select(REGISTRY.DOCUMENT).from(REGISTRY)
+					.where(REGISTRY.ID.eq(
+							dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(employeeData.getDomain())).fetchOne(ENTERPRISE.REGISTRY)
+					)).fetchOne(REGISTRY.DOCUMENT);
+			
+			contractData.setEnterpriseCIF(enterpriseDocument);
 			
 			//ENTERPRISE CCC TABLE
 			Integer enterpriseCCCId = contractTable.get(CONTRACT.ENTERPRISE_CCC);

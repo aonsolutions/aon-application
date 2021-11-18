@@ -354,8 +354,7 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.RESTORE, () => this.restoreInvoice());
 		} else if(this.getInvoice().isInbox()){
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
-			if(this.getInvoice().isEmitida())
-				invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
+			invoiceToolbar.addButton2(ACTION.ACCEPT, () => this.acceptInvoice());
 			if(!this.autosave && this.getInvoice().isInbox()){
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
@@ -419,6 +418,7 @@ export class AonInvoice extends AonElement {
 
 		if(hasComment) {
 			let ul = this.createElement(TAG.UL);
+			ul.classList.add(CSS.AON_UL);
 			ul.style.width = '100%';
 			card.setContent(ul);
 			this.invoice.comments.forEach((item, i) => {
@@ -805,8 +805,12 @@ export class AonInvoice extends AonElement {
 		taxesTable.id = this.TAX_TABLE2;
 		card.addContent(taxesTable);
 
-		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
 			this.invoice.taxes = [];
+		}
+
+		if(this.invoice.isCcm()) {
+			this.invoice.taxes = this.invoice.taxes.filter(f => TaxType.IRPF === f.tax);
 		}
 
 		for(let i = 0; i < this.invoice.taxes.length; i++) {
@@ -836,7 +840,7 @@ export class AonInvoice extends AonElement {
 			addButton.icon = MATERIAL_ICONS.ADD;
 
 			addButton.addEventListener('click', () => {
-				if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+				if(!this.invoice.isNacional()) {
 					// TODO
 				} else { 
 					this.setFocus(this.TAX_TYPE + this.invoice.taxes.length);
@@ -846,7 +850,7 @@ export class AonInvoice extends AonElement {
 				}
 			});
 			div.appendChild(addButton);
-			if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+			if(!this.invoice.isNacional()) {
 				addButton.setDisabled(true);
 			}
 		}
@@ -867,7 +871,7 @@ export class AonInvoice extends AonElement {
 			if(this.autosave) this.save();
 		});
 		div.appendChild(irpf);
-		if(this.invoice.isEmitida() && !this.invoice.isNacional()) {
+		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
 			this.invoice.setWithholding(false);
 			irpf.setDisabled(true);
 		}

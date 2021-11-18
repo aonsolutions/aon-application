@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.Priority;
 
@@ -118,6 +120,7 @@ public class Notification implements Serializable {
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		json.put("id", getId());
+		json.put("domain", DomainJSON.toJSON(getDomain()));
 		json.put("date", getDate().getTime());
 		json.put("title", getTitle());
 		json.put("body", getBody());

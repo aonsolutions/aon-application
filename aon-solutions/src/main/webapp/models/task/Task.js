@@ -79,7 +79,7 @@ export class Task {
       this.setSourceId(task.source_id || undefined);
       this.setStartDate(task.start_date || undefined);
       this.setParent(task.parent || undefined);
-      this.setGTaskId(task.gtask_id || (!this.id && this.auth.email && !this.isAdvisoryCompany() ? this.auth.email : undefined));
+      this.setGTaskId(task.gtask_id  || undefined);
       this.setDomain(new Domain(task.domain)) 
       this.setWorkflow(task.workflow || []);
       this.setDomainTmp(this.domain);

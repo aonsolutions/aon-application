@@ -30,6 +30,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.error.AonApiError;
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -41,74 +43,34 @@ public class BidoqServlet extends AonApiHttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("AON API INVOICE SERVLET - POST METHOD");
+		try {
+			AonApiData api = initialize(req, resp);
+			if(BIDOQ_SESSION_ID.equals(api.getToken())) {
+				switch (api.getPath()) {
+				case "/":
+					response(req, resp, bidoq(api));
+					break;
+				case "/app":
+					response(req, resp, bidoqApp(api));
+					break;
+				default:
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+				}
+			} else {
+				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
+				throw new Exception("El token es incorrecto.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			error(req, resp, e);
+		}
+		
 		LOGGER.info("AON API BIDOQ SERVLET - POST METHOD");
 		try {
 			AonApiData api = initialize(req, resp);
 			if(BIDOQ_SESSION_ID.equals(api.getToken())) {
-				String user = api.getData().optString("user");
-				String company = api.getData().optString("company");
-				String action = api.getData().optString("action");
-
-				if(AonStringUtils.isEmpty(user)) {
-					throw new Exception("El campo user está vacío");
-				}
 				
-				if(AonStringUtils.isEmpty(company)) {
-					throw new Exception("El campo company está vacío");
-				}
-				
-				Auth auth = AON_SOLUTIONS.getAuthByDocument(user);
-				Company cp = new Company();
-				String token = "";
-				if(auth.getUuid() != null) {
-					String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
-					token = AonToken.build(auth, AonDateUtils.addDays(new Date(), 1));
-					cp = AON.getCompany(domain, 0, "", f -> f.getDocumentProperty().eq(company));
-				}
-		   	
-				if(cp.getId() == null) {
-					List<String> schemas = AONContext.getSchemas();
-					Integer index = 0;
-					while(cp.getId() == null && index < schemas.size()) {
-						String domainName = AONContext.getSchemaFirstDomain(schemas.get(index));
-						if(!AonStringUtils.isBlank(domainName)) {
-							cp = AON.getCompany(domainName, 0, "", f -> f.getDocumentProperty().eq(company));
-					   	}
-						index++;
-					}
-				}
-				if(cp.getId() == null) {
-					throw new Exception("La empresa no existe");
-				}
-				
-				if(auth.getUuid() == null) {
-					auth = createAuth(cp.getDomain(), user);
-					token = AonToken.build(auth, AonDateUtils.addDays(new Date(), 1), cp.getDomain().getName());
-				}
-				
-				byte[] a = auth.getAuth();
-				Domain domain = cp.getDomain();
-				User usr = AON.getUser(cp.getDomain().getName(), cp.getDomain().getId(), "", f ->
-					f.getAuthProperty().eq(a)
-					.and(f.getDomainProperty().eq(domain.getId())
-						.or(f.getDomainProperty().eq(domain.getParentId()))));
-				if(usr == null || usr.getId() == null) {
-					createUser(cp, auth);
-				}
-				
-				String url = "";
-				if(AonStringUtils.isBlank(action)) {
-					url = "https://" +  cp.getDomain().getName() +"/login?token=" + token;
-				} else {
-					url = "https://" +  cp.getDomain().getName() +"/login?initAction=" + action + "&token=" + token;
-				}
-
-				JSONObject json = new JSONObject();
-				json.put("url", url);
-				json.put("session_id", token);
-				json.put("domain_id", cp.getDomain().getId());
-				json.put("domain_name", cp.getDomain().getName());
-				response(req, resp, json);
 			} else {
 				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
 				throw new Exception("El token es incorrecto.");
@@ -119,9 +81,155 @@ public class BidoqServlet extends AonApiHttpServlet {
 		}
 	}
 	
+	private JSONObject bidoq(AonApiData api) throws Exception {
+		String user = api.getData().optString("user");
+		String company = api.getData().optString("company");
+		String action = api.getData().optString("action");
+
+		if(AonStringUtils.isEmpty(user)) {
+			throw new Exception("El campo user está vacío");
+		}
+		
+		if(AonStringUtils.isEmpty(company)) {
+			throw new Exception("El campo company está vacío");
+		}
+		
+		Auth auth = AON_SOLUTIONS.getAuthByDocument(user);
+		Company cp = new Company();
+		String token = "";
+		if(auth.getUuid() != null) {
+			String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
+			token = AonToken.build(auth, AonDateUtils.addDays(new Date(), 1));
+			cp = AON.getCompany(domain, 0, "", f -> f.getDocumentProperty().eq(company));
+		}
+   	
+		if(cp.getId() == null) {
+			List<String> schemas = AONContext.getSchemas();
+			Integer index = 0;
+			while(cp.getId() == null && index < schemas.size()) {
+				String domainName = AONContext.getSchemaFirstDomain(schemas.get(index));
+				if(!AonStringUtils.isBlank(domainName)) {
+					cp = AON.getCompany(domainName, 0, "", f -> f.getDocumentProperty().eq(company));
+			   	}
+				index++;
+			}
+		}
+		if(cp.getId() == null) {
+			throw new Exception("La empresa no existe");
+		}
+		
+		if(auth.getUuid() == null) {
+			auth = createAuth(cp.getDomain(), null, user);
+			token = AonToken.build(auth, AonDateUtils.addDays(new Date(), 1), cp.getDomain().getName());
+		}
+		
+		byte[] a = auth.getAuth();
+		Domain domain = cp.getDomain();
+		User usr = AON.getUser(cp.getDomain().getName(), cp.getDomain().getId(), "", f ->
+			f.getAuthProperty().eq(a)
+			.and(f.getDomainProperty().eq(domain.getId())
+				.or(f.getDomainProperty().eq(domain.getParentId()))));
+		if(usr == null || usr.getId() == null) {
+			createUser(cp, auth);
+		}
+		
+		String url = "";
+		if(AonStringUtils.isBlank(action)) {
+			url = "https://" +  cp.getDomain().getName() +"/login?token=" + token;
+		} else {
+			url = "https://" +  cp.getDomain().getName() +"/login?initAction=" + action + "&token=" + token;
+		}
+
+		JSONObject json = new JSONObject();
+		json.put("url", url);
+		json.put("session_id", token);
+		json.put("domain_id", cp.getDomain().getId());
+		json.put("domain_name", cp.getDomain().getName());
+		
+		return json;
+	}
 	
-	private Auth createAuth(Domain domain, String document) {
-		String email = document + "@aon.solutions";
+	private JSONObject bidoqApp(AonApiData api) throws Exception {
+		String user = api.getData().optString("user");
+		String company = api.getData().optString("company");
+		String action = api.getData().optString("action");
+		String email = api.getData().optString("email");
+		if(AonStringUtils.isEmpty(user)) {
+			throw new Exception("El campo user está vacío");
+		}
+		
+		if(AonStringUtils.isEmpty(company)) {
+			throw new Exception("El campo company está vacío");
+		}
+		
+		Auth auth = AON_SOLUTIONS.getAuthByDocument(user);
+		Company cp = new Company();
+		String token = "";
+		if(auth.getUuid() != null) {
+			String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
+			token = AonToken.build(auth, AonDateUtils.addDays(new Date(), 1));
+			cp = AON.getCompany(domain, 0, "", f -> f.getDocumentProperty().eq(company));
+		}
+   	
+		if(cp.getId() == null) {
+			List<String> schemas = AONContext.getSchemas();
+			Integer index = 0;
+			while(cp.getId() == null && index < schemas.size()) {
+				String domainName = AONContext.getSchemaFirstDomain(schemas.get(index));
+				if(!AonStringUtils.isBlank(domainName)) {
+					cp = AON.getCompany(domainName, 0, "", f -> f.getDocumentProperty().eq(company));
+			   	}
+				index++;
+			}
+		}
+		
+		if(cp.getId() == null) {
+			throw new Exception("La empresa no existe");
+		}
+		
+
+		if(auth.getUuid() == null && !Utils.isEmail(email)) {
+			throw new Exception("El usuario no existe");
+		} else if(auth.getUuid() == null) {
+			auth = createAuth(cp.getDomain(), email, user);
+			token = AonToken.build(auth, AonDateUtils.addDays(new Date(), 1), cp.getDomain().getName());
+		}
+		
+		byte[] a = auth.getAuth();
+		Domain domain = cp.getDomain();
+		User usr = AON.getUser(cp.getDomain().getName(), cp.getDomain().getId(), "", f ->
+			f.getAuthProperty().eq(a)
+			.and(f.getDomainProperty().eq(domain.getId())
+				.or(f.getDomainProperty().eq(domain.getParentId()))));
+		if(usr == null || usr.getId() == null) {
+			createUser(cp, auth);
+		}
+		
+		String url = "";
+		if(AonStringUtils.isBlank(action)) {
+			url = "https://" +  cp.getDomain().getName() +"/login?token=" + token;
+		} else {
+			url = "https://" +  cp.getDomain().getName() +"/login?initAction=" + action + "&token=" + token;
+		}
+
+		JSONObject json = new JSONObject();
+		json.put("url", url);
+		json.put("session_id", token);
+		json.put("domain_id", cp.getDomain().getId());
+		json.put("domain_name", cp.getDomain().getName());
+		
+		json.put("appMessage", "");
+		if(api.getData().opt("app") != null && api.getData().getString("app").equalsIgnoreCase("android")) {
+			json.put("appStore", "https://play.google.com/store/apps/details?id=aon.solutions");
+		} else if(api.getData().opt("app") != null && api.getData().getString("app").equalsIgnoreCase("ios")) {
+			json.put("appStore", "https://itunes.apple.com/es/app/aon-solutions/id1538461097");
+		}
+		
+		return json;
+	}
+	
+	private Auth createAuth(Domain domain, String email, String document) {
+		email = AonStringUtils.isBlank(email) ? document + "@aon.solutions" : email;;
 		String pass = Utils.createPasswordHash(email, document);
 
 		Auth auth = new Auth()

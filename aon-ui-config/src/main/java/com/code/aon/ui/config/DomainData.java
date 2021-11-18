@@ -3,7 +3,6 @@ package com.code.aon.ui.config;
 import static com.esferalia.aon.watson.util.AonStringUtils.INDEX_NOT_FOUND;
 import static com.esferalia.aon.watson.util.AonStringUtils.indexOfIgnoreCase;
 import static com.esferalia.aon.watson.util.AonStringUtils.isBlank;
-import static com.esferalia.aon.watson.util.AonStringUtils.isEmpty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,7 +14,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import com.code.aon.AonVersion;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.code.aon.config.enumeration.DomainType;
+import com.code.aon.ui.util.AonUtil;
 
 public class DomainData implements Serializable {
 	
@@ -39,7 +39,13 @@ public class DomainData implements Serializable {
 	
 	private List<String> cccs ;
 	
+	private DomainType type;
+	
 	public DomainData(Integer id, String name, String description, Date expirationDate, boolean active, boolean enableHeredity) {
+		this(id, name, description, expirationDate, active, enableHeredity, null);
+	}
+
+	public DomainData(Integer id, String name, String description, Date expirationDate, boolean active, boolean enableHeredity, DomainType type) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -47,6 +53,7 @@ public class DomainData implements Serializable {
 		this.active = active;
 		this.enableHeredity = enableHeredity;
 		this.cccs = new ArrayList<String>();
+		this.type = type;
 	}
 
 	public Integer getId() {
@@ -68,6 +75,26 @@ public class DomainData implements Serializable {
 	public boolean isActive() {
 		return active;
 	}	
+
+	public boolean isAdmin() {
+		return type == DomainType.ADMIN;
+	}
+
+	public boolean isOffice() {
+		return type == DomainType.OFFICE;
+	}
+
+	public boolean isEnterprise() {
+		return type == DomainType.ENTERPRISE;
+	}
+
+	public boolean isGeneric() {
+		return type == DomainType.GENERIC;
+	}
+
+	public boolean isConsultancy() {
+		return type == DomainType.CONSULTANCY;
+	}
 
 	public boolean isEnableHeredity() {
 		return enableHeredity;

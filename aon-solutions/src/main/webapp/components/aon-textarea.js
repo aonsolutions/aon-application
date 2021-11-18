@@ -355,7 +355,7 @@ export class AonTextArea extends AonElement {
 					source.type = reader.contentType;
 					element.appendChild(source);
 				} else {
-					element = document.createElement("a");
+					element = document.createElement(TAG.A);
 					element.target = "_blank";
 					element.className = CSS.AON_LINK;
 					element.href = url;

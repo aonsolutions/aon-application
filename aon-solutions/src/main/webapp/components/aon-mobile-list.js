@@ -1,5 +1,5 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonIcon } from "./aon-icon.js";
@@ -48,7 +48,8 @@ export class AonMobileList extends AonElement {
     let ul = this.createElement(TAG.UL);
     ul.id = this.UL;
     ul.style.overflow = "auto";
-    ul.className = "list-group";
+    ul.classList.add(CSS.AON_UL);
+    ul.classList.add(CSS.AON_LIST_GROUP);
     this.appendChild(ul);
     let aonAplication = this.getApplication();
     if(aonAplication){

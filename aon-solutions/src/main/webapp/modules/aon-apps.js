@@ -52,12 +52,14 @@ export class AonApps extends AonElement {
 		this.appendChild(this.buildTitle('APLICACIONES DISPONIBLES'));
 
 		let ul = this.createElement(TAG.UL);
-		ul.className = 'list-group';
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_LIST_GROUP);
 
 		for (let key in Apps){
 			if(this.isApp(Apps[key])) {
 				let li = this.createElement(TAG.LI);
-				li.className = 'list-group-item aonAppLi';
+				li.classList.add(CSS.AON_LIST_GROUP_ITEM);
+				li.classList.add(CSS.AON_APP_LI);
 				li.style.borderRight = '0px';
 				li.style.borderLeft = '0px';
 				li.style.cursor = 'pointer';

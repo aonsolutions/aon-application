@@ -3,7 +3,7 @@ import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, To
 import {getDomainUserRoles} from  '../services/service.js';
 import {getNotes} from  '../services/noteService.js';
 import {DomainUserRoles} from '../models/DomainUserRoles.js';
-import {  CONSTANT, EVENT, MATERIAL_ICONS,  TAG } from '../environments/environments.js';
+import {  CONSTANT, CSS, EVENT, MATERIAL_ICONS,  TAG } from '../environments/environments.js';
 import {AonDocumental} from './documental/aon-documental.js';
 import {AonDocumentalAyudat} from './documental/ayudat/aon-documental-ayudat.js';
 import './project/aon-project-panel.js';
@@ -195,6 +195,7 @@ export class AonMenu extends AonElement {
 	buildMenu() {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		let ul = this.createElement(TAG.UL);
+		ul.classList.add(CSS.AON_UL);
 		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
@@ -291,7 +292,7 @@ export class AonMenu extends AonElement {
 	      img.size = '30px';
 	    });
 
-	    let a = this.createElement('a');
+	    let a = this.createElement(TAG.A);
 	    a.style.cursor = 'pointer';
 	    a.style.textAlign = 'right';
 	    a.addEventListener(EVENT.CLICK, () => {
@@ -378,7 +379,8 @@ export class AonMenu extends AonElement {
 
 		let div2 = this.createElement(TAG.DIV);
 		let ul = this.createElement(TAG.UL);
-		ul.className = 'aonMenuSidenavSubAppList';
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_MENU_SIDENAV_SUBAPP_LIST);
 		this.getSubApps(app.app).forEach(subapp => {
 			if(!subapp.parent || (subapp.parent && company && company.parent)){
 				ul.appendChild(this.buildSubAppMenu(subapp));
@@ -448,7 +450,8 @@ export class AonMenu extends AonElement {
 
 		let div2 = this.createElement(TAG.DIV);
 		let ul = this.createElement(TAG.UL);
-		ul.className = 'aonMenuSidenavSubAppList';
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_MENU_SIDENAV_SUBAPP_LIST);
 		div2.appendChild(ul);
 		aonMenuSidenav.appendChild(div2);
 
@@ -489,7 +492,7 @@ export class AonMenu extends AonElement {
 
 	buildSubAppMenu(subapp) {
 		let li = this.createElement(TAG.LI);
-		li.className = 'aonMenuSidenavSubAppListItem';
+		li.className = CSS.AON_MENU_SIDENAV_SUBAPP_LIST_ITEM;;
 		li.title = subapp.title;
 		li.addEventListener(EVENT.MOUSEOVER, () => {
  			li.style.backgroundColor = '#f1f1f1';
@@ -498,8 +501,8 @@ export class AonMenu extends AonElement {
 			li.style.backgroundColor = 'transparent';
 		});
 
-		let a = this.createElement('a');
-		a.className = 'aonMenuLink';
+		let a = this.createElement(TAG.A);
+		a.className = CSS.AON_MENU_LINK;
 
 		let span = this.createElement(TAG.SPAN);
 		span.style.fontSize = "12px";
