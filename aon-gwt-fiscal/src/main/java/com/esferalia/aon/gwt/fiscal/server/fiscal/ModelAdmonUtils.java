@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
+import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -52,6 +53,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
@@ -61,6 +63,7 @@ import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod303Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
@@ -384,6 +387,12 @@ public class ModelAdmonUtils {
 		Mod123Writer.fillWriter(mod123, writer);
 		return output.toByteArray();
 	}
+	public static byte[] getModelFile(Mod130 mod130) throws IOException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
+		Mod130Writer.fillWriter(mod130, writer);
+		return output.toByteArray();
+	}
 	
 	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod303 mod303, byte[] body) {
 		AEATResponse response = AEATJson.toJSON(body); 
@@ -453,4 +462,21 @@ public class ModelAdmonUtils {
 		giveDataResponseDataBack(resp, aeatParams, mod123);
 	}
 
+	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod130 mod130, byte[] body) {
+		AEATResponse response = AEATJson.toJSON(body); 
+		if (response.isCorrect()) {
+			manageRightResponse(resp,aeatParams,mod130,new String(body));		
+		} else {
+			manageWrongResponse(resp, response);
+		}
+	}
+	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, Mod130 mod130, String aeatResponse) {
+		Occam occam = new Occam()
+				.setDomainName(aeatParams.getDomainName())
+				.setDomain(aeatParams.getDomainId())
+				.setUser(aeatParams.getUser());
+		mod130 = MODEL130.aeatPresentation(occam, mod130, aeatResponse);
+		giveDataResponseDataBack(resp, aeatParams, mod130);
+	}
+	
 }

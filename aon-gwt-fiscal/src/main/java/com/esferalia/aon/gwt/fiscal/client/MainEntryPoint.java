@@ -26,7 +26,6 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
-import com.esferalia.aon.gwt.fiscal.client.mod130.Model130;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
@@ -84,6 +83,11 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.mod123.Model123.run();
 			}
 		},
+		Model130 {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod130.Model130.run();
+			}
+		},
 		Model303 {
 			@Override
 			void run() {
@@ -93,7 +97,6 @@ public class MainEntryPoint implements EntryPoint {
 		;
 		abstract void run();
 	}
-	private static final String FS_MOD130_ENTRY_POINT = "Model130";
 	private static final String FS_MOD131_ENTRY_POINT = "Model131";
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
 	private static final String FS_MOD190_ENTRY_POINT = "Model190";
@@ -244,21 +247,21 @@ public class MainEntryPoint implements EntryPoint {
 //				}
 //				
 //			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD130_ENTRY_POINT)) {
-			GWT.runAsync(Model130.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model130 model130 = new Model130();
-					model130.onModuleLoad();
-				}
-				
-			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD130_ENTRY_POINT)) {
+//			GWT.runAsync(Model130.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model130 model130 = new Model130();
+//					model130.onModuleLoad();
+//				}
+//				
+//			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD131_ENTRY_POINT)) {
 			GWT.runAsync(Model131.class, new RunAsyncCallback() {
 

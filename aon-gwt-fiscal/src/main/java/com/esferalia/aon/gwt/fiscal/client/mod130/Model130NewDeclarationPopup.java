@@ -28,9 +28,8 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130,Mode
 	
 	@Override
 	protected void paintAdministration(Mod130 mod130) {
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 
 		admonList.setEnabled(!reset);
 		admonList.setSelectedIndex( mod130.getAdministration().ordinal());
@@ -51,10 +50,10 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130,Mode
 		final DocumentTextBox documentBox = new DocumentTextBox();
 		final Label nameLabel = new Label( AON.MSG.nameCompanyName());
 		final TextBox nameBox = new TextBox();
-		nameBox.setStyleName(AON.AON_CSS.aonInputText());
+		nameBox.setStyleName(AON.CSS.aonInputText());
 		final Label surnameLabel = new Label( AON.MSG.surname());
 		final TextBox surnameBox = new TextBox();
-		surnameBox.setStyleName(AON.AON_CSS.aonInputText());
+		surnameBox.setStyleName(AON.CSS.aonInputText());
 		final Label percentLabel = new Label(AON.MSG.partPercent());
 		final DoubleBox percentBox = new DoubleBox();
 		final CheckBox regularHome = new CheckBox();
@@ -75,9 +74,8 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130,Mode
 		percentBox.setVisible(mod130.isAEAT());
 		regularHome.setVisible(mod130.isAEAT());
 
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, regimeLabel);
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		regimeList.addItem(IRPFRegime.NORMAL.getName());
 		regimeList.addItem(IRPFRegime.SIMPLIFIED.getName());
 		regimeList.setSelectedIndex((mod130.getRegime() == IRPFRegime.SIMPLIFIED)?1:0);
@@ -89,9 +87,8 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130,Mode
 		row++;
 		
 		if (mod130.getDeponents() != null && mod130.getDeponents().size() > 1) {
-			tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+			tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 			tab.setWidget(row, 0, new Label(AON.MSG.deponents()));
-			tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 			tab.setWidget(row, 1, deponentBox);
 			row++;
 			int d = 0;
@@ -141,9 +138,8 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130,Mode
 			});	
 		}
 
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.document()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		documentBox.setValue(mod130.getDocument());
 		documentBox.addChangeHandler( event -> mod130.setDocument( documentBox.getValue() ));
 		tab.setWidget(row, 1, documentBox);
@@ -153,24 +149,21 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130,Mode
 				?AON.MSG.nameCompanyName()
 				:AON.MSG.name());
 		nameBox.setValue(mod130.getName());		
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, nameLabel);
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		nameBox.addChangeHandler( event -> mod130.setName( nameBox.getValue() ));
 		tab.setWidget(row, 1, nameBox);
 		row++;
 		
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, surnameLabel);
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		surnameBox.setValue(mod130.getSurname());
 		surnameBox.addChangeHandler( event -> mod130.setSurname(surnameBox.getValue() ));
 		tab.setWidget(row, 1, surnameBox);
 		row++;
 		
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, percentLabel );
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		percentBox.setValue( mod130.getAmount(Mod130Key.P1));
 		percentBox.addChangeHandler( event -> {
 			if (percentBox.getValue() > 100) {
@@ -184,11 +177,10 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130,Mode
 		tab.setWidget(row, 1, percentBox);
 		row++;
 		
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		regularHome.setValue( mod130.getAmount(Mod130Key.P2)==1);
 		regularHome.setText(AON.MSG.regularHomePayments());
-		regularHome.addClickHandler( event -> mod130.putAmount(Mod130Key.P2,regularHome.getValue()?1.0:0.0));
+		regularHome.addClickHandler( event -> mod130.putAmount(Mod130Key.P2,regularHome.getValue().booleanValue()?1.0:0.0));
 		tab.setWidget(row, 0, regularHome);
 	}
 

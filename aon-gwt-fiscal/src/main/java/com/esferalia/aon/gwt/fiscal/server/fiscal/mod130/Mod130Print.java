@@ -1,11 +1,8 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod130;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,22 +10,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.shared.mod130.Model130ScriptProvider;
+import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
-import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
-@WebServlet(name = "Mod130 File download", urlPatterns = { "/aon_gwt_fiscal/ms/Model130File" })
-public class Mod130File extends HttpServlet {
+@WebServlet(name = "Mod130 Print", urlPatterns = { "/aon_gwt_fiscal/ms/Model130Print" })
+public class Mod130Print extends HttpServlet {
 
-	private static final long serialVersionUID = 2643119785824552950L;
+	private static final long serialVersionUID = 1286623321139102473L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+
 		try {
 			int id = Integer.parseInt(req.getParameter("mod130"));
 			String domainName = req.getParameter("domainName");
@@ -40,22 +42,20 @@ public class Mod130File extends HttpServlet {
 				.setUser(user);
 			Mod130 mod130 = MODEL130.getMod130(occam,id);
 
+			Mod130ExcelAction action = new Mod130ExcelAction(mod130);
+			action.initialize(FiscalModelUtils.getModelName(mod130));
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			OutputStreamWriter wr = null;
-			try {
-				wr = new OutputStreamWriter(output,"ISO-8859-1");
-			} catch (UnsupportedEncodingException e) {
-				wr = new OutputStreamWriter(output);
+			
+			for (IModelScript<Mod130Key> ms : Model130ScriptProvider.obtainScript(mod130)) {
+				action.accept(ms);
 			}
-			PrintWriter writer = new PrintWriter(wr);
-			Mod130Writer.fillWriter(mod130, writer);
+			action.beforeFinalize();
+			action.finalize(output);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			
-		    String fileName = AonFiscalFileUtils.getFileName(mod130);
-		    MimeType mime = mod130.isAraba()?MimeType.XML:MimeType.TXT;
-		    resp.setCharacterEncoding("ISO-8859-1");
-			resp.setContentType(mime.getName());
-			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "." + mime.getExtension()+ "\";");
+			String fileName = AonFiscalFileUtils.getFileName(mod130);
+			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
+			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			AonIOUtils.copy(in, resp.getOutputStream());
 			resp.flushBuffer();
 
@@ -64,6 +64,4 @@ public class Mod130File extends HttpServlet {
 		}
 
 	}
-	
 }
- 

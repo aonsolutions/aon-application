@@ -105,5 +105,11 @@ public class MODEL130 {
 		}
 	}
 
+	public static Mod130 aeatPresentation(Occam occam, Mod130 mod130, String aeatResponse) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().aeatPresentation(ctx, mod130, aeatResponse);
+		}
+	}
+
 
 }

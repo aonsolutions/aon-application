@@ -82,5 +82,10 @@ public class MODEL130Impl implements IMODEL130 {
 	public String getInfo(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod130DAO.getMod130Info(ctx,mod130,script,infoKey);
 	}
+	
+	@Override
+	public Mod130 aeatPresentation(AONContext ctx, Mod130 mod130, String aeatResponse) {
+		return Mod130DAO.aeatPresentation(ctx, mod130, aeatResponse);
+	}
 
 }
