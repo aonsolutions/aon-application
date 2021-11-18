@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
@@ -33,6 +39,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import solutions.aon.aws.ses.SES;
+import solutions.aon.aws.ses.SESMessage;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "BidoqServlet", urlPatterns = {"/ms/api/bidoq/*"})
@@ -154,6 +162,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 		String company = api.getData().optString("company");
 		String action = api.getData().optString("action");
 		String email = api.getData().optString("email");
+
 		if(AonStringUtils.isEmpty(user)) {
 			throw new Exception("El campo user está vacío");
 		}
@@ -187,13 +196,17 @@ public class BidoqServlet extends AonApiHttpServlet {
 			throw new Exception("La empresa no existe");
 		}
 		
-
+		JSONObject json = new JSONObject();
 		if(auth.getUuid() == null && !Utils.isEmail(email)) {
-			throw new Exception("El usuario no existe");
+			json.put("success", false);
+			json.put("appMessage", "Hay una nueva aplicación disponible. Se requiere una cuenta de correo electrónico para acceder.");
+			json.put("appBlocked", true);
+			return json;
 		} else if(auth.getUuid() == null) {
 			auth = createAuth(cp.getDomain(), email, user);
+			sendAuthCreateInfoMail(email, user, cp);
 			token = AonToken.build(auth, AonDateUtils.addDays(new Date(), 1), cp.getDomain().getName());
-		}
+		} 
 		
 		byte[] a = auth.getAuth();
 		Domain domain = cp.getDomain();
@@ -212,13 +225,13 @@ public class BidoqServlet extends AonApiHttpServlet {
 			url = "https://" +  cp.getDomain().getName() +"/login?initAction=" + action + "&token=" + token;
 		}
 
-		JSONObject json = new JSONObject();
 		json.put("url", url);
 		json.put("session_id", token);
 		json.put("domain_id", cp.getDomain().getId());
 		json.put("domain_name", cp.getDomain().getName());
-		
-		json.put("appMessage", "");
+		json.put("success", true);
+		json.put("appBlocked", true);
+		json.put("appMessage", "Hay una nueva aplicación disponible. Su usuario de acceso es " + auth.getEmail());
 		if(api.getData().opt("app") != null && api.getData().getString("app").equalsIgnoreCase("android")) {
 			json.put("appStore", "https://play.google.com/store/apps/details?id=aon.solutions");
 		} else if(api.getData().opt("app") != null && api.getData().getString("app").equalsIgnoreCase("ios")) {
@@ -328,5 +341,32 @@ public class BidoqServlet extends AonApiHttpServlet {
 					.findFirst().orElse(null);
 		}
 		return s;
+	}
+	
+	private void sendAuthCreateInfoMail(String email, String password, Company cp) {
+		SESMessage msg = new SESMessage()
+				.setTo(email)
+				.setAlias(cp.getName())
+				.setBody(authCreateInfoContent(email, password))
+				.setSubject("NUEVO USUARIO | AON SOLUTIONS");
+		SES.sendEmail(msg);
+	}
+	
+	private String authCreateInfoContent(String email, String password) {
+		VelocityEngine engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		engine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		engine.init();
+			
+		VelocityContext context = new VelocityContext();
+		context.put("email", email);
+		context.put("password", password);
+			
+		Template template = engine.getTemplate("/net/aonsolutions/aon/api/servlet/templates/auth_create_info.vm");
+			
+		StringWriter writer = new StringWriter();
+		template.merge(context, writer);
+
+		return writer.toString();
 	}
 }

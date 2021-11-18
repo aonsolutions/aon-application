@@ -166,6 +166,8 @@ export class AonMessenger extends AonElement {
 				...MessengerOptions.AON_MESSENGER_LIST_OPEN,
 				fn: () =>{
 					this._filter.status = TASK_STATUS.PENDING;
+					this._filter.workgroup = undefined;
+					this._filter.workgroups = this.getWorkgroupsStr();
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined,  this._filter);
 				}
 			},
@@ -173,6 +175,8 @@ export class AonMessenger extends AonElement {
 				...MessengerOptions.AON_MESSENGER_LIST_CLOSE,
 				fn: () =>{
 					this._filter.status = TASK_STATUS.FINISHED;
+					this._filter.workgroup = undefined;
+					this._filter.workgroups = this.getWorkgroupsStr();
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
 			},
@@ -180,6 +184,8 @@ export class AonMessenger extends AonElement {
 				...MessengerOptions.AON_MESSENGER_LIST_ARCHIVE,
 				fn: () =>{
 					this._filter.status = TASK_STATUS.DELETED;
+					this._filter.workgroup = undefined;
+					this._filter.workgroups = this.getWorkgroupsStr();
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
 			},
