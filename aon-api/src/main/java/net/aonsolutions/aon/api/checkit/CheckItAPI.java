@@ -28,7 +28,6 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
@@ -40,7 +39,6 @@ import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
@@ -959,6 +957,31 @@ public class CheckItAPI implements IParamNames{
 				
 	}
 	
+	public static List<BankStatement> getAllBankStatements(Integer empresaId, Integer accountId) throws CheckItException {
+		JSONObject requestParams = new JSONObject();
+		
+		requestParams.put(API_KEY_PARAM, API_KEY);
+		requestParams.put(ENTERPRISE_ID_PARAM, empresaId);
+		requestParams.put(DATE_TO_PARAM, formatDateForTransactions(new Date())); // HOY
+		requestParams.put(ACCOUNT_ID_PARAM, accountId);
+		requestParams.put(DATE_FROM_PARAM, "1900-01-01"); // REQUEST PARAMS COMPLETED
+
+		JSONArray transactionsArray = CheckItAPI.getTransactions(requestParams);
+		
+		List<BankStatement> bankStatements = new LinkedList<>();
+		
+		for (int i = 0; i < transactionsArray.length(); i++) {
+
+			JSONObject transactionJson = transactionsArray.optJSONObject(i);
+
+			BankStatement bankStatement = bankStatementFromJson(transactionJson);
+			bankStatements.add(bankStatement);
+
+		}
+		bankStatements.sort((b1, b2) -> b2.getReference2().compareTo(b1.getReference2()));
+		return bankStatements;
+	}
+	
 	public static List<BankStatement> getBankStatements(Integer empresaId, Integer accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
 		Date today = new Date();
 		
@@ -1081,6 +1104,14 @@ public class CheckItAPI implements IParamNames{
 		return insertTransactions(params);
 	}
 	
+	public static List<BankStatement> getAllMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
+//			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
+			List<BankStatement> bankStatements = getAllBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban));
+//			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
+			return bankStatements;
+		}
+	}
 	
 	public static List<BankStatement> getNewMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
