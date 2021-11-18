@@ -1,6 +1,8 @@
 import { AonElement } from "./AonElement.js";
 import { AonIconButton } from "./aon-icon-button.js";
 import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS} from '../environments/environments.js'
+import '../css/aon-input.css';
+import '../css/aon-input-loading.css';
 
 export class AonInput extends AonElement {
   SPAN;

@@ -3,6 +3,8 @@ import { openFileUrl } from '../services/fileService.js';
 import { getReader } from '../services/utils.js';
 import { newComponent, setAttributes} from '../services/utilsComponents.js';
 import { AonElement } from './AonElement.js';
+import '../css/aon-textarea.css';
+import '../css/aon-css-utils.css';
 
 export class AonTextArea extends AonElement {
 

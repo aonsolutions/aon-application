@@ -301,6 +301,10 @@ export const AON_FA_PULSE = 'aonFaPulse';
 
 export const AON_TEXTAREA = 'aonTextarea';
 
+// aon-search 
+
+export const AON_SEARCH_INPUT = 'aonSearchInput';
+
 /**
  * Name to CSS variable conversion.
  * @param {string} name - the variable name

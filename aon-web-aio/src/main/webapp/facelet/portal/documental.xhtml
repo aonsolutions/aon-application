@@ -31,10 +31,7 @@
 	
 	</style>
 
-
-	<ui:include
-		src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
-
+	<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 	<ui:include src="/facelet/homepage/menu.xhtml" />
 
 
@@ -74,22 +71,12 @@
 			}       
 		}
 
-       	loadStylesSheet('https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css');
        	loadStylesSheet('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined');
        	loadStylesSheet('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap');
        	
-       	loadStylesSheet('css/aon.css');
-       	loadStylesSheet('css/aon-loader.css');
-       	loadStylesSheet('css/aon-mobile.css');
-       	loadStylesSheet('css/aon-toast.css');
-       	loadStylesSheet('css/aon-grid.css');
-       	loadStylesSheet('css/aon-input.css');
-       	loadStylesSheet('css/aon-slider.css');
-       	loadStylesSheet('css/aon-switch.css');
-       	loadStylesSheet('css/aon-input-loading.css');
-
-       	
-		localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
+		loadStylesSheet('dist/documental.min.css');
+		
+ 		localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
 		localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');
 		localStorage.setItem('aon_domain_login', '#{domainSwitcher.currentUser}');
 
@@ -99,15 +86,11 @@
     
 	<script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
 
-	<script type="module" src="modules/documental/aon-documental.js"></script>
+	<script type="module" src="dist/documental.min.js"></script>
 
-	<div id="rootPanel"
-		style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;" >
-		
+	<div id="rootPanel" style="width: 100%; min-height: 100%; height: auto !important; height: 100%; margin: 0;">
+	
 	</div>
-
-
-
 
 	<script type="text/javascript">
 		//<![CDATA[ 
@@ -115,6 +98,4 @@
 		//]]>
 	</script>
 	
-
-
 </ui:composition>
