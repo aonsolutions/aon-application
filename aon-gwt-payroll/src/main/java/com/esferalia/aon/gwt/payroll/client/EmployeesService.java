@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -324,5 +325,11 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate);
 
 	void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs);
+
+	// ------------------------------------------------- ContractVariables
+	
+	List<ContractVariable> getContractVariables(String currentDomainName, Integer contractId);
+
+	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables);
 
 }

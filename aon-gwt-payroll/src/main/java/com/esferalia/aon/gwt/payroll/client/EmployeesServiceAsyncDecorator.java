@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -966,6 +967,20 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
 		AON.start();
 		employeesServiceAsync.setEmployeeIrpf(currentDomainName, contractId, ssNumber, employeeIrpfs, new AsyncCallbackWrapper<Void>(callback));
+	}
+	
+	// ------------------------------------------------- ContractVariables
+
+	@Override
+	public void getContractVariables(String currentDomainName, Integer contractId, AsyncCallback<List<ContractVariable>> callback) {
+		AON.start();
+		employeesServiceAsync.getContractVariables(currentDomainName, contractId, new AsyncCallbackWrapper<List<ContractVariable>>(callback));
+	}
+
+	@Override
+	public void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.updateContractVariables(currentDomainName, contractVariables, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 }

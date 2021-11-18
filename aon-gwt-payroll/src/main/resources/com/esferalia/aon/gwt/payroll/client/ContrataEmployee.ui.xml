@@ -259,6 +259,14 @@
 							    		<a:SalaryDraft ui:field="salaryDraft" />
 							    	</g:HTMLPanel>
 							  	</g:tab>
+							  	<g:tab>
+							    	<g:customHeader size='7'>
+							      		<g:Label>Variables Contrato</g:Label>
+							    	</g:customHeader>
+							    	<g:HTMLPanel styleName="{style.mt10}">
+							    		<a:EmployeeContractVariables ui:field="employeeContractVariables" />
+							    	</g:HTMLPanel>
+							  	</g:tab>
 							 </g:TabLayoutPanel>
 	
 							<g:SimpleLayoutPanel ui:field="scrolledPDFPanel" styleName="{style.center}">

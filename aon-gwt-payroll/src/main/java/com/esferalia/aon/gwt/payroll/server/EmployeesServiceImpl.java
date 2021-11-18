@@ -106,6 +106,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendarNew;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractVariables;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
@@ -135,6 +136,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -6473,7 +6475,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if(AonStringUtils.isBlank(employeeContractInfo.getContractInfo().getSepeId()))
 				JooqContrataContract.setSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), ide);
 
-		} catch (SQLException | SepeException e) {
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch ( SQLException | SepeException e) {
 			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
@@ -6695,6 +6699,26 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	// ------------------------------------------------- ContractVariables
+	
+	@Override
+	public List<ContractVariable> getContractVariables(String domainName, Integer contractId) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEmployeeContractVariables.getContractVariables(connection, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void updateContractVariables(String domainName, List<ContractVariable> contractVariables) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqEmployeeContractVariables.updateContractVariables(connection, contractVariables);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	// ------------------------------------------------- Auxiliar Methods
 
@@ -6765,6 +6789,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				? employeeAddress.getCountry().getIsoCode()
 				: Country.ES.getIsoCode()); 
 		builder.setCodMunDom(employeeContractInfo.getEmployeeInfo().getAddressCity());
+		if(AonStringUtils.isEmpty(employeeContractInfo.getContractSpecificData().getFormativeLevel()))
+			throw new IllegalArgumentException("Nivel formativo obligatorio. Rellene primero la pesta\u00F1a datos SEPE");
 		builder.setCodFormativo(Integer.parseInt(employeeContractInfo.getContractSpecificData().getFormativeLevel()));
 		builder.setCodOccupation(employeeContractInfo.getContractSpecificData().getCno()); 		
 		builder.setCodPaisWork(workAddress.getCountry() != null 
