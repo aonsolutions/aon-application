@@ -963,7 +963,13 @@
 
 /*----------------------CONFLICTS-----------------------*/
 
-.gwt-Selector * {
+/* WARNING!
+	Avoid using generic selectors, as gwt-Selector, once added to body's class,
+	it remains there even if there's been loaded another non gwt module.
+*/
+
+.gwt-Selector .gwt-PopupPanel,
+.gwt-Selector .gwt-PopupPanel * { /*Problem with the visualization of CustomDialog's header size*/
     box-sizing: initial;
 }
 

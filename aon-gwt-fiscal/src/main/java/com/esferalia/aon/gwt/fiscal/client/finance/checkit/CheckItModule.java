@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.checkit;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -221,6 +220,7 @@ public class CheckItModule extends MainEntryPoint {
 			
 			CustomDialog dialog = new CustomDialog();
 			
+			dialog.setAutoHideEnabled(true);
 			dialog.setCaption(AON.MSG.information());
 			
 			FlowPanel panel = new FlowPanel();
@@ -255,7 +255,6 @@ public class CheckItModule extends MainEntryPoint {
 		panel.addStyleName(AON.CSS.aonBorder());
 		panel.addStyleName(AON.CSS.aonPaddingBottom());
 		panel.addStyleName(AON.CSS.aonPaddingTop());
-//		panel.addStyleName(AON.CSS.aonPadding());
 		Label linkedTitle = new Label("Cuentas vinculadas");
 		linkedTitle.addStyleName(AON.CSS.aonTextLeft());
 		linkedTitle.addStyleName(AON.CSS.aonFontMedium());
@@ -298,7 +297,6 @@ public class CheckItModule extends MainEntryPoint {
 			panel.addStyleName(AON.CSS.aonWidthAlmostAll());
 			panel.addStyleName(AON.CSS.aonMarginTop());
 			panel.addStyleName(AON.CSS.aonBlockCenter());
-//			panel.addStyleName(AON.CSS.aonPadding());
 			panel.addStyleName(AON.CSS.aonPaddingBottom());
 			panel.addStyleName(AON.CSS.aonPaddingTop());
 			
@@ -624,7 +622,8 @@ public class CheckItModule extends MainEntryPoint {
 				ScrollPanel movementsPanel = new ScrollPanel(movementsFlow);
 				if (isMobile()) {
 					movementsPanel.setWidth("100%");
-				} else {					
+				} else {
+					
 					movementsPanel.getElement().getStyle().setProperty("minWidth", "700px");
 					movementsPanel.addStyleName(AON.CSS.aonMarginTop());
 					movementsPanel.getElement().getStyle().setProperty("maxHeight", "40vh");
@@ -904,9 +903,7 @@ public class CheckItModule extends MainEntryPoint {
 								errorLbl.addStyleName(AON.CSS.aonMarginTop());
 								flow.add(errorLbl);
 								
-								iie.addClickHandler(e -> {
-									dial.hide();
-								});
+								iie.addClickHandler(e -> dial.hide());
 								hai.addClickHandler(e -> {
 									result.setUserIDInput(userID.getValue());
 									result.setUserPasswordInput(userPassword.getValue());
@@ -957,13 +954,6 @@ public class CheckItModule extends MainEntryPoint {
 						AonTextBox userID = new AonTextBox();
 						AonTextBox userPassword = new AonTextBox();
 						AonTextBox userPIN = new AonTextBox();
-						
-//						if (isMobile()) {
-//							userID.addStyleName(AON.CSS.aonMarginBottom());
-//							userPassword.addStyleName(AON.CSS.aonMarginBottom());
-//							userPIN.addStyleName(AON.CSS.aonMarginBottom());
-//						}
-						
 						
 						FlowPanel flow = new FlowPanel();
 						FlowPanel credentialFlow = null;
@@ -1113,9 +1103,7 @@ public class CheckItModule extends MainEntryPoint {
 						flow.add(errorLbl);
 						AonDialog dial = dialog;
 						if (dialog != null) {
-							iie.addClickHandler(e -> {
-								dial.hide();
-							});
+							iie.addClickHandler(e -> dial.hide());
 						}
 							
 							
@@ -1463,10 +1451,6 @@ public class CheckItModule extends MainEntryPoint {
 									fieldsTable.setWidget(0, 1, bankBox);
 								}
 								
-								
-								
-//								fieldsTable.setWidget(0, 0, new Label("Entidad:"));
-//								fieldsTable.setWidget(0, 1, bankBox);
 								if (result.size() > 1) {
 									ListBox loginDropdown = new ListBox();
 									loginDropdown.addItem("Seleccione un login");
@@ -1769,18 +1753,13 @@ public class CheckItModule extends MainEntryPoint {
 		
 		List<BankStatement> statements = isMobile() ? checkItBankAccount.getAllMovements() : checkItBankAccount.getPending();
 		Stream<String> dates = statements.stream().map(pm -> pm != null ? dtf.format(pm.getOperationDate()).toUpperCase() : "").distinct()
-				.sorted(new Comparator<String>() {
-
-					@Override
-					public int compare(String o1, String o2) {
+				.sorted((o1, o2) -> {
 						if (o1 == null || o1.isEmpty() || o2 == null || o2.isEmpty())
 							return -1;
 						Date d1 = dtf.parse(o1);
 						Date d2 = dtf.parse(o2);
 						return d2.compareTo(d1);
-					}
-					
-		});
+					});
 		
 		dates.forEach(dte -> {
 			int nextRow = tab.getRowCount();
@@ -1800,9 +1779,6 @@ public class CheckItModule extends MainEntryPoint {
 			.forEach(mov -> getPendingMovementTag(tab, mov, index[0]++ % 2 == 0));
 		});
 		
-//		for (BankStatement bankStatement : pending) {
-//			getPendingMovementTag(tab, bankStatement);
-//		}		
 		tab.setWidth("100%");
 		tab.getColumnFormatter().setWidth(0, "70%");
 		tab.getColumnFormatter().setWidth(1, "30%");
@@ -1810,7 +1786,6 @@ public class CheckItModule extends MainEntryPoint {
 	}
 	
 	private void getPendingMovementTag(FlexTable table, BankStatement bankStatement, boolean gray) {
-		Date operationDate = bankStatement.getOperationDate();
 		
 		String description = bankStatement.getDescription();
 		Double amount = !bankStatement.isPayment() ? bankStatement.getAmount() : bankStatement.getAmount() * (-1);
