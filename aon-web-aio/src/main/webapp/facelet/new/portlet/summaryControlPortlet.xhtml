@@ -11,16 +11,21 @@
 	</style>
 
 	<script type='text/javascript' >
-	
 	</script>
 	
 	
 	<aon:div id="summaryControlPortlet" styleClass="aon-portlet">
-		<aon:div styleClass="aon-portlet-title">
+		<aon:div 
+		style="cursor:pointer;" 
+		styleClass="aon-portlet-title" 
+		onclick="javascript:collapseMenuPortlet(this)">
+			<aon:outputText 
+			value="expand_less"
+			styleClass="material-icons aon-vertical-middle" />
 			<aon:outputText value="RESUMEN DE ACTIVIDADES" />
 		</aon:div>
 		
-		<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2" >
 			<aon:div 
 				id="summaryMenuPortlet" >
 				<aon:div styleClass="aon-direct-access-list">

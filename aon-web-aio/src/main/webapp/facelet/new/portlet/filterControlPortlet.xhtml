@@ -35,7 +35,13 @@
 	
 	
 	<aon:div id="filterControlPortlet" styleClass="aon-portlet">
-		<aon:div styleClass="aon-portlet-title">
+		<aon:div 
+		style="cursor:pointer;" 
+		styleClass="aon-portlet-title" 
+		onclick="javascript:collapseMenuPortlet(this)">
+			<aon:outputText 
+			value="expand_less"
+			styleClass="material-icons aon-vertical-middle" />
 			<aon:outputText value="FILTROS" />
 		</aon:div>
 		

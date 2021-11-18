@@ -69,10 +69,22 @@
 	</style>
 	
 	<script type='text/javascript' >
+
+		function collapseMenuPortlet(el) {
+			el.nextSibling.style.display= "none";
+			el.firstChild.innerText= 'expand_more';
+			el.onclick=function() { expandMenuPortlet(el); };
+		} 
+		function expandMenuPortlet(el) {
+			el.nextSibling.style.display= "block";
+			el.firstChild.innerText= 'expand_less';
+			el.onclick=function() { collapseMenuPortlet(el); };
+		} 
+
 		function showInfoGroup() {
 			document.getElementById("aonContent:mainForm:showButton").style.display='none';
 			document.getElementById("aonContent:mainForm:hideButton").style.display='initial';
-			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='200px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='250px';
 			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='100%';
 			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='block';
 		}
@@ -100,6 +112,8 @@
 		onclick="javascript:hideInfoGroup()"/>	
 
 		<aon:div id="infoGroupDiv" style="display:none;  position:relative; top: -32px" >
+
+			<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
 
 			<aon:if test="#{!domainSwitcher.childDomain}">
 			<ui:include src="/facelet/new/portlet/summaryControlPortlet.xhtml" /> 
