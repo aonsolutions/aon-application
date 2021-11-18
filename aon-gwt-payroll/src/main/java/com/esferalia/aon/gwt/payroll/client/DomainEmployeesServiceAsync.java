@@ -447,6 +447,10 @@ public class DomainEmployeesServiceAsync {
 	
 	// ----- Payroll Salaries
 	
+	public void getSalariesDates(SalaryInfoFilter filter, AsyncCallback<Period> callback) {
+		employeesServiceAsync.getSalariesDates(getCurrentDomainName(), filter, callback);
+	}
+	
 	public void getSalaries(SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
 		employeesServiceAsync.getSalaries(getCurrentDomainName(), filter, callback);
 	}

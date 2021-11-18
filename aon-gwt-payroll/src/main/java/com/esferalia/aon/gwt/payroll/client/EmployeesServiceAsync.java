@@ -226,6 +226,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void resetCalendar(String currentDomainName, Integer employeeId, AsyncCallback<String> callback);
 
+	void getSalariesDates(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<Period> callback);
+	
 	void getSalaries(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
 
 	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<Void> callback);

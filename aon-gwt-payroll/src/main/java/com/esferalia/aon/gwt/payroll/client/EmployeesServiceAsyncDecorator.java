@@ -671,6 +671,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	// ----- Payroll Salaries
+	
+	@Override
+	public void getSalariesDates(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<Period> callback) {
+		AON.start();
+		employeesServiceAsync.getSalariesDates(currentDomainName, filter, new AsyncCallbackWrapper<Period>(callback));
+	}
 
 	@Override
 	public void getSalaries(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {

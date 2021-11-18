@@ -1,10 +1,16 @@
 package com.esferalia.aon.payroll;
 
-public class Pair<A, B> {
+import java.io.Serializable;
+
+public class Pair<A, B> implements Serializable {
 	 
 	  public A fst;
 	  public B snd;
 	 
+	  public Pair() {
+		  super();
+	  }
+	  
 	  public Pair(A fst, B snd) {
 	    this.fst = fst;
 	    this.snd = snd;

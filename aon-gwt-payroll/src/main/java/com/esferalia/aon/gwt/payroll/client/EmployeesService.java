@@ -205,6 +205,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String resetCalendar(String currentDomainName, Integer employeeId);
 	
+	Period getSalariesDates(String currentDomainName, SalaryInfoFilter filter);
+	
 	List<SalaryInfo> getSalaries(String currentDomainName, SalaryInfoFilter filter);
 
 	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids);
