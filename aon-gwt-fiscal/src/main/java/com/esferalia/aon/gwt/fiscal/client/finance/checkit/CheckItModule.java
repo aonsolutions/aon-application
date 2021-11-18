@@ -610,7 +610,7 @@ public class CheckItModule extends MainEntryPoint {
 				
 				movementsFlow.add(topInfo);
 				
-				if (checkItBankAccount.getPending() != null && !checkItBankAccount.getPending().isEmpty()) {
+				if (isMobile() || (checkItBankAccount.getPending() != null && !checkItBankAccount.getPending().isEmpty())) {
 					movementsFlow.add(getMovements(checkItBankAccount));
 				} else {
 					Label noMovLbl = new Label("No hay movimientos pendientes");
