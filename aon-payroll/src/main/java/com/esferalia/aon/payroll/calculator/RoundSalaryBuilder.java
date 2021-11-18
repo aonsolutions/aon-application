@@ -2,7 +2,6 @@ package com.esferalia.aon.payroll.calculator;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_4_15;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -25,13 +24,11 @@ import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
-import com.esferalia.aon.salary.enumeration.DeductionTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
-import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
@@ -56,8 +53,15 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		private BigDecimal getTotalSS(UnaryOperator<BigDecimal> f) {
 			return deductions.stream()
 			.filter(d -> d.type != null && d.type.isSsDeduction())
-			.map(d -> f.apply(d.amount)).reduce(ZERO, RoundSalaryBuilder::add);
+			.map(d -> f.apply(d.amount))
+			.reduce(ZERO, RoundSalaryBuilder::add);
 			//.collect(Collectors.summingDouble( d -> f.apply(d.amount)));
+		}
+
+		private BigDecimal getTotal(UnaryOperator<BigDecimal> f) {
+			return deductions.stream()
+			.map(d -> f.apply(d.amount))
+			.reduce(ZERO, RoundSalaryBuilder::add);
 		}
 
 		private void addDeduction(String code, DeductionType type, Date startDate, Date endDate, double amount) {
@@ -118,6 +122,18 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			.collect(Collectors.toMap(d -> new Period(d.startDate, d.endDate), d -> d.amount, RoundSalaryBuilder::add ))
 			;
 		}
+	}
+
+	private static class Embargos extends Deductions {
+
+		private BigDecimal getTotal(UnaryOperator<BigDecimal> f) {
+			return super.getTotal(f);
+		}
+		
+		private void addEmbargo(String code, DeductionType type, Date startDate, Date endDate, double amount) {
+			super.deductions.add(super.newDeduction(code, type, startDate, endDate, amount));
+		}
+		
 	}
 	
 	private static class Bonuses {
@@ -301,6 +317,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	
 	private Costs costs;
 	private Bonuses bonuses;
+	private Embargos embargos;
 	private Deductions deductions;
 	
 	private ExpressionContext expressionContext;
@@ -327,6 +344,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		
 		this.costs = new Costs();
 		this.bonuses = new Bonuses();
+		this.embargos = new Embargos();
 		this.deductions = new Deductions();
 		
 		salaryBuilder.createNewSalary();
@@ -605,7 +623,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void addEmbargo(Integer id, Double amount, String description, IDeduction embargo,
 			Map<String, ITimedVariable<?>> context) {
-		salaryBuilder.addEmbargo(id, amount, description, embargo, context);
+		embargos.addEmbargo(embargo.getName(), embargo.getType(), null, null, amount);
+		salaryBuilder.addEmbargo(id, doubleValue(f.apply(bigDecimalValue(amount))), description, embargo, context);
 	}
 
 	@Override
@@ -618,7 +637,11 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	private BigDecimal getTotalSS() {
 		return deductions.getTotalSS(f);
 	}
-	
+
+	private BigDecimal getTotalDeduction() {
+		return deductions.getTotal(f);
+	}
+
 	private BigDecimal getTotalEnterprise() {
 		return costs.getTotalEnterprise(f);
 	}
@@ -627,6 +650,9 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		return bonuses.getTotal(f);
 	}
 
+	private BigDecimal getTotalEmbargo() {
+		return embargos.getTotal(f);
+	}
 	
 	private BigDecimal getDeductionAmount(String code, DeductionType type, Date startDate, Date endDate) {
 		if ( AonStringUtils.endsWith(code, "_E"))
@@ -636,20 +662,18 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 	private void round() {
 		
-		totalSS = getTotalSS();
 		totalEnterprise = add(getTotalEnterprise(), getTotalBonuses().negate());
 		
-		BigDecimal totalOther = add(totalDeduction, totalIrpf.negate(),totalSS.negate() );
-		totalSS = f.apply(totalSS);
+		totalSS = getTotalSS();
+		//totalSS = f.apply(totalSS);
 		totalIrpf = f.apply(totalIrpf);
-		totalOther = f.apply(totalOther);
-		totalDeduction = add( totalIrpf, totalSS, totalOther);
-		salaryBuilder.setTotalIrpf(doubleValue(totalIrpf));
+		totalDeduction = getTotalDeduction();
 		salaryBuilder.setTotalSS(doubleValue(totalSS));
+		salaryBuilder.setTotalIrpf(doubleValue(totalIrpf));
 		salaryBuilder.setTotalDeduction(doubleValue(totalDeduction));
 
-		BigDecimal totalEmbargo = add(totalPayment, totalLiquid.negate(), totalDeduction.negate());
-		totalEmbargo = f.apply(totalEmbargo);
+		BigDecimal totalEmbargo = getTotalEmbargo();
+		//totalEmbargo = f.apply(totalEmbargo);
 		totalPayment = f.apply(totalPayment);
 		totalLiquid = add(totalPayment, totalDeduction.negate(),totalEmbargo.negate());
 		salaryBuilder.setTotalPayment(doubleValue(totalPayment));

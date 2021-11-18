@@ -158,19 +158,19 @@ public class SIIAeatPost extends SIIPost{
     
 	// -------------------- FACTURAS RECIBIDAS
     
-	public JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri, LinkedList<VatContext> list, SendType type) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
+	public JSONArray suministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros, String uri, LinkedList<VatContext> list, SendType type, boolean errorPeriodo) throws ParserConfigurationException, JAXBException, SOAPException, IOException {
 		JSONArray array = new JSONArray();
 		
    		byte[] requestXml = null;
 		byte[] responseXml = null;
-		SuministroLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros);
+		SuministroLRFacturasRecibidas suministro = FacturasRecibidas.getInstance().suministroFacturasRecibidas(domain, login, company, invoiceId, list, type.isModificacion(), terceros, errorPeriodo);
 		String sumStr = marshal(SuministroLRFacturasRecibidas.class, suministro); 
 		String response = post(uri, sumStr);
 		RespuestaLRFRecibidasType respuesta = (RespuestaLRFRecibidasType) unmarshal(RespuestaLRFRecibidasType.class, response);
     	for (RespuestaRecibidaType r : respuesta.getRespuestaLinea()) {
     		Boolean correcto = r.getEstadoRegistro().equals(EstadoRegistroType.CORRECTO);
     		if(!correcto && r.getCodigoErrorRegistro().intValue() == 3000) {
-    			return suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, list, SendType.MOD_RECIBIDAS);
+    			return suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri, list, SendType.MOD_RECIBIDAS, errorPeriodo);
     		} else {
     			array.put(json(correcto ? 200 : r.getCodigoErrorRegistro().intValue(), 
     				correcto ? "Envio realizado correctamente" : r.getDescripcionErrorRegistro(),

@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -290,6 +291,22 @@ public class InvoiceAutoComplete {
 	};
 	
 	/**
+	 * Aseguramos el nombre del titular de la factura.
+	 */
+	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_ADDRESS_DATA = (inv,ctx) -> {
+		if(inv.getRegistryAddressData() != null && inv.getRegistryAddressData().getId() == null) {
+			if(inv.getRegistryAddressData().getRegistry() == null) {
+				inv.getRegistryAddressData().setRegistry(inv.getRegistry());
+			}
+			RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData());
+			inv.setRegistryAddress(raddress.getId());
+			inv.setRegistryAddressData(raddress);
+		}
+		
+	};
+	
+	
+	/**
 	 * Aseguramos los detalles de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_DETAILS = (inv,ctx) -> {
@@ -495,6 +512,7 @@ public class InvoiceAutoComplete {
 		.andThen(COMPLETE_SCOPE)
 		.andThen(COMPLETE_REGISTRY_DATA)
 		.andThen(ENSURE_REGISTRY_DATA)
+		.andThen(COMPLETE_REGISTRY_ADDRESS_DATA)
 		.andThen(COMPLETE_ACTIVITY)
 		.andThen(COMPLETE_FIRST_FINANCE)
 		.andThen(COMPLETE_DETAILS)

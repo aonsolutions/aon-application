@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
-import { getContratoPdf, getDomainUserRoles, getIDC, getSalaryPdf, getTA, movDelete } from "../../services/service.js";
+import { getDomainUserRoles, getIDC, getSalaryPdf, getTA, movDelete, updateContracts } from "../../services/service.js";
 import { setValueName } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
@@ -15,7 +15,6 @@ import { AonApplication } from "../../components/aon-application.js";
 import { AonCtaList } from "./cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
 import Apps from "../../services/app.js";
-
 
 export class AonLaboral extends AonElement {
 
@@ -114,7 +113,7 @@ export class AonLaboral extends AonElement {
       laboralOptions.push(aon_comunica);
     }
 
-    this.applicationEl.addSidenavOptions(MSG.PAYROLL, laboralOptions);
+    this.applicationEl.addSidenavOptions(MSG.PAYROLL.toUpperCase(), laboralOptions);
 
     if(this.isComunica() || !this.isEmployee()){
       let aon_cta_list = PayrollOptions.AON_CCC;
@@ -132,7 +131,7 @@ export class AonLaboral extends AonElement {
         }
         conf.push(aon_cert);
       }
-      this.applicationEl.addSidenavOptions(MSG.CONFIGURATION, conf);
+      this.applicationEl.addSidenavOptions(MSG.CONFIGURATION.toUpperCase(), conf);
     }
 
     let iconContract = this.getElement(this.applicationEl.SIDENAV + PayrollOptions.AON_CONTRACT.name + "AonIcon");
@@ -191,17 +190,6 @@ export class AonLaboral extends AonElement {
 		}
 		return option;
 	}
-
-  async getContratoPdf(data, el) {
-    this.applicationEl.startLoading();
-    try {
-      const { document: ipf, startDate: fecha } = data;
-      await getContratoPdf({ ipf, fecha });
-    } catch (error) {
-      this.showToast(error);
-		}
-    this.applicationEl.stopLoading();
-  }
 
   async getTa(data, el) {
 		this.applicationEl.startLoading();
@@ -278,6 +266,14 @@ export class AonLaboral extends AonElement {
     }
     if(obj.type) obj.typeReduce = obj.type.toString().substr(0,1);
     return obj;
+  }
+
+  async updateContracts(){
+    this.applicationEl.startLoader();
+    //SINCRONIZED INIT YEAR
+    await updateContracts({employeesOld:true}).catch(e=>console.log("erros",e));
+    console.log("----------UPDATE CONTRACTS------");
+    this.applicationEl.stopLoader();
   }
 
   showView(view, data = undefined, filter = undefined){

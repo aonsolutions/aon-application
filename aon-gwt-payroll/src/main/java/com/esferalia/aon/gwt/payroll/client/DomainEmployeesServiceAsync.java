@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
@@ -59,7 +60,6 @@ public class DomainEmployeesServiceAsync {
 	
 	private EmployeesServiceAsync employeesServiceAsync;
 
-	
 	public static DomainEmployeesServiceAsync newInstance() {
 		EmployeesServiceAsync employeesServiceAsync = 
 		GWT.create(EmployeesService.class);
@@ -410,9 +410,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeInfoDataBase(getCurrentDomainName(), getCurrentUser(), contractId, workplace, asyncCallback);
 	}
 
-	public void setEmployeeInfoDataBase(EmployeeContractInfo new_employeeContractData,
-			AsyncCallback<EmployeeContractInfo> asyncCallback) {
-		employeesServiceAsync.setEmployeeInfoDataBase(getCurrentDomainName(),  new_employeeContractData, asyncCallback);
+	public void setEmployeeInfoDataBase(EmployeeContractInfo employeeContractData, AsyncCallback<EmployeeContractInfo> callback) {
+		employeesServiceAsync.setEmployeeInfoDataBase(getCurrentDomainName(),  employeeContractData, callback);
 	}
 
 	public void createEmployeeContract(EmployeeContractInfo employeeContractData,
@@ -503,21 +502,19 @@ public class DomainEmployeesServiceAsync {
 	}
 	
 	public void getEmployeeIdc(Integer contractId, Date date, AsyncCallback<String> callback) {
-		employeesServiceAsync.getEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
+		employeesServiceAsync.getEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
 	}
 
 	public void getEmployeeIdcPlNss(Integer contractId, Date date, AsyncCallback<String> callback) {
-		employeesServiceAsync.getEmployeeIdcPlNss(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
+		employeesServiceAsync.getEmployeeIdcPlNss(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
 	}
 	
 	public void getEmployeeIdcDates(Integer contractId, Date date, AsyncCallback<List<Date>> callback) {
-		employeesServiceAsync.getEmployeeIdcDates(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
-
+		employeesServiceAsync.getEmployeeIdcDates(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
 	}
 
 	public void getEmployeeStatus(Integer contractId, AsyncCallback<EmployeeStatus> callback) {
 		employeesServiceAsync.getEmployeeStatus(getCurrentDomainName(), getCurrentUser(), contractId, callback);
-
 	}
 	
 	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) {
@@ -562,8 +559,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.cambioContrato(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, tc2, fecha, callback);
 	}
 	
-	public void cambioGrupCtz(EmployeeContractInfo employeeContractInfo, String grup_ctz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.cambioGrupCtz(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, grup_ctz, fecha, callback);
+	public void cambioGrupCtz(EmployeeContractInfo employeeContractInfo, String grupCtz, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioGrupCtz(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, grupCtz, fecha, callback);
 	}
 	
 	public void cambioOcupacion(EmployeeContractInfo employeeContractInfo, String ocup, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
@@ -588,8 +585,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.removeContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractData, callback);
 	}
 	
-	public void sendCertifica2(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.sendCertifica2(getCurrentDomainName(), getCurrentUser(), contractId, callback);
+	public void sendCertifica2(Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendCertifica2(getCurrentDomainName(), getCurrentUser(), contractId, certifica2Info, callback);
 	}
 	
 	public void getCertifica2PDF(String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
@@ -630,6 +627,16 @@ public class DomainEmployeesServiceAsync {
 	
 	public void contractTransform(ContractTransform contractTransform, AsyncCallback<Integer> callback) {
 		employeesServiceAsync.contractTransform(getCurrentDomainName(), contractTransform, callback);
+	}
+	
+	// ------------------------------------------------- EmployeeIrpf
+	
+	public void getEmployeeIrpf(String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) {
+		employeesServiceAsync.getEmployeeIrpf(getCurrentDomainName(), ssNumber, startDate, callback);
+	}
+	
+	public void setEmployeeIrpf(Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
+		employeesServiceAsync.setEmployeeIrpf(getCurrentDomainName(), contractId, ssNumber, employeeIrpfs, callback);
 	}
 
 	// ------------------------------------------------------------------------

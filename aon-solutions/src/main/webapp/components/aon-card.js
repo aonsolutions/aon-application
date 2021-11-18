@@ -52,6 +52,9 @@ export class AonCard extends AonElement {
 			} else {
 				this.style.display = 'block';
 			}
+		} else if("flex" === name){
+			let div = this.getElement(this.CARD);
+			if(div) div.classList.add("aonCardFlex");
 		}
 	}
 
@@ -124,12 +127,12 @@ export class AonCard extends AonElement {
 		title.appendChild(span);
 	}
 
-	getSection1() {
+	getCardTitle1() {
 		return this.getElement(this.TITLE_SECTION1);
 	}
 
 	setTitleSection1(title){
-		this.getElement(this.TITLE_SECTION1).innerHTML = title
+		this.getCardTitle1().innerHTML = title
 	}
 
 	getCardTitle2(){

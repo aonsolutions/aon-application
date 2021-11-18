@@ -45,6 +45,7 @@ export class AonBasicTable extends AonElement {
     let tr = this.getElement(this.TABLE_ROW + row);
     let td = this.createElement(TAG.TD);
     td.colSpan = colspan || '1';
+    
     td.appendChild(elem);
     tr.appendChild(td);
     return td;

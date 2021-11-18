@@ -143,6 +143,8 @@ public class Model202 extends MainEntryPoint {
 	@UiField
 	Button deleteButton;
 	@UiField
+	Button resetButton;
+	@UiField
 	Button newButton;
 	@UiField
 	Button cancelButton;
@@ -409,6 +411,7 @@ public class Model202 extends MainEntryPoint {
 		saveButton.setVisible(updatable && !currentMod.isFinished() && !currentMod.isSent());
 		cancelButton.setVisible(true);
 		deleteButton.setVisible(!currentMod.isNew() && !currentMod.isFinished() && !currentMod.isSent());
+		resetButton.setVisible(!currentMod.isNew() && !currentMod.isFinished() && !currentMod.isSent());
 		printButton.setVisible(!currentMod.isNew());
 		markAsPendingButton.setVisible(updatable && !currentMod.isNew() &&
 				(currentMod.getStatus() == FiscalStatus.FINISHED 
@@ -441,6 +444,7 @@ public class Model202 extends MainEntryPoint {
 	
 	private void hideToolbarButtons() {
 		deleteButton.setVisible(false);
+		resetButton.setVisible(false);
 		auditButton.setVisible(false);
 		newButton.setVisible(true);
 		cancelButton.setVisible(true);
@@ -758,7 +762,7 @@ public class Model202 extends MainEntryPoint {
 			}
 		});
 	}
-
+	
 	@UiHandler("newButton")
 	void onNewButtonClick(ClickEvent event) {
 		newButton.setEnabled(false);
@@ -783,7 +787,7 @@ public class Model202 extends MainEntryPoint {
 						newButton.setEnabled(true);
 					}
 				});
-	}		
+	}
 		
 	private void newModel(Mod202 newModel) {
 		SERVICE.initialize(getOptions().getOccam(),newModel,
@@ -1112,6 +1116,88 @@ public class Model202 extends MainEntryPoint {
 		}
 		panel.add(tab);
 		return panel;
+	}
+	
+	@UiHandler("resetButton")
+	void onResetButtonClick(ClickEvent event) {
+		resetButton.setEnabled(false);
+		cleanErrorMessage();
+		
+		SERVICE.initialize(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), null,
+				new AsyncCallback<Mod202>() {
+					@Override
+					public void onSuccess(Mod202 newMod202) {
+						
+						cleanInfo();
+						tabLayout.selectTab(INFORMATION_TAB);
+						closeFootPanel();
+						
+						newMod202.setAdministration(currentMod.getAdministration());
+						newMod202.setPeriod(currentMod.getPeriod());
+						newMod202.setComplementary(currentMod.isComplementary());
+						newMod202.setReplacement(currentMod.isReplacement());
+						newMod202.setReplacedNumber(currentMod.getReplacedNumber());						
+						showResetDeclarationPopup(newMod202, currentMod);
+						resetButton.setEnabled(true);
+					}
+
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						resetButton.setEnabled(true);
+					}
+				});
+	}
+	
+	private void showResetDeclarationPopup(Mod202 newMod202, Mod202 oldMod202) {
+		Model202NewDeclarationPopup newDialog = new Model202NewDeclarationPopup(true,
+			new FiscalModelCallback() {
+
+					@Override
+					public void onAccept() {
+						SERVICE.delete(getCurrentDomainName(), getCurrentUser(), oldMod202, 
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										SERVICE.create(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), newMod202,
+												new AsyncCallback<Mod202>() {
+													@Override
+													public void onSuccess(Mod202 m202) {
+														int i = deckPanel.getWidgetIndex(formPanel);
+														deckPanel.showWidget(i);
+														tabPanel.selectTab(IDENTIFICATION_TAB);
+														select(m202);
+													}
+
+													@Override
+													public void onFailure(Throwable caught) {
+														showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+													}
+												});
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+									}
+								});
+						
+					}
+
+					@Override
+					public void onCancel() {						
+					}
+
+					@Override
+					public Mod202 getFiscalModel() {
+						return newMod202;
+					}
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
 	}
 	
 }

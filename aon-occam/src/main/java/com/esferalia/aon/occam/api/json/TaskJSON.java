@@ -24,7 +24,7 @@ public class TaskJSON {
 	public static Task fromJSON(JSONObject json) {
 		return new Task()
 			.setId(JsonUtils.getInteger(json, IJsonNames.ID))
-			.setDomain(domainFromJSON(json))
+			.setDomain(DomainJSON.fromJSON(json.optJSONObject(IJsonNames.DOMAIN)))
 //			.setActivityType(JsonUtils.getInteger(json, IJsonNames.ACTIVITY_TYPE))
 			.setTitle(JsonUtils.getString(json, IJsonNames.TITLE))
 			.setDescription(JsonUtils.getString(json, IJsonNames.DESCRIPTION))
@@ -62,7 +62,7 @@ public class TaskJSON {
 	public static JSONObject toJSON(Task task) {
 		return new JSONObject()
 			.put(IJsonNames.ID, task.getId())
-			.put(IJsonNames.DOMAIN, domainToJSON(task.getDomain()))
+			.put(IJsonNames.DOMAIN, DomainJSON.toJSON(task.getDomain()))
 			.put(IJsonNames.DESCRIPTION, task.getDescription())
 			.put(IJsonNames.TITLE, task.getTitle())
 			.put(IJsonNames.NUMBER, task.getNumber())
@@ -88,20 +88,6 @@ public class TaskJSON {
 //			.put(IJsonNames.MODIFICATION_USER, task.getModificationUser())
 //			.put(IJsonNames.MODIFICATION_DATE, task.getModificationDate())
 			;
-	}
-	
-	private static Domain domainFromJSON(JSONObject json) {
-		JSONObject domainJson = json.getJSONObject(IJsonNames.DOMAIN);
-		return new Domain()
-			.setId(JsonUtils.getInteger(domainJson, IJsonNames.ID))
-			.setName(JsonUtils.optString(domainJson, IJsonNames.DOMAIN_NAME));
-	}
-	
-	private static JSONObject domainToJSON(Domain domain) {
-		JSONObject json = new JSONObject();
-		json.put(IJsonNames.ID, domain.getId());
-		json.put(IJsonNames.NAME, domain.getName());
-		return json;
 	}
 
 }

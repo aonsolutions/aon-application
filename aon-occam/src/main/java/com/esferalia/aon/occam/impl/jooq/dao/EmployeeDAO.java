@@ -19,14 +19,17 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static java.util.Calendar.DAY_OF_MONTH;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -69,6 +72,7 @@ import com.esferalia.aon.occam.api.model.HasEndDate;
 import com.esferalia.aon.occam.api.model.HasStartDate;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.api.model.payroll.TooManyEmployeesException;
 import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -84,50 +88,24 @@ public class EmployeeDAO {
 	public  static Registry ENTERPRISE_REGISTRY = REGISTRY.as("enterprise");
 	
 
-	public  static Optional<Employee> getEmployee(AONContext aonContext, EmployeeFilter filter ) {
-		DSLContext dslContext = aonContext.getDslContext();
-		
-		Registry ENTERPRISE_REGISTRY = REGISTRY.as("enterprise");
-		
-		
-		return 
-		dslContext
-		.select()
-		.from(CONTRACT)
-		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-		.innerJoin(REGISTRY).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
-		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
-		.innerJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
-		.innerJoin(ENTERPRISE_REGISTRY).on(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(ENTERPRISE_REGISTRY.ID))
-		.where(new EmployeePropertiesDAO().getConditions(filter))
-		.fetchOptional().map( r -> 
-		new Employee()
-		.setCcc(r.get(ENTERPRISE_CCC.CCC))
-		.setCif(r.get(ENTERPRISE_REGISTRY.DOCUMENT))
+	private static String EMPLOYEE_DATA [] = {"TC2", "GRUPO_COTIZACION", "COEFICIENTE_PARCIALIDAD", "OCUPACION", "RLCE"};
+	
 
-		.setDni(r.get(REGISTRY.DOCUMENT))
-		.setNaf(r.get(PERSON.SOCIAL_SECURITY_NUM))
-		.setName(r.get(REGISTRY.NAME))
-		.setSex(getSex(r.get(PERSON.GENDER)))
-		.setBirthDate(r.get(PERSON.BIRTH_DATE))
+	public  static Optional<Employee> getEmployee(AONContext aonContext, EmployeeFilter filter ) {
+		List<Employee> employees = getEmployees(aonContext, filter).collect(Collectors.toList());
 		
-		.setEmployeeId(r.get(CONTRACT.ID))
-		.setStartDate(r.get(CONTRACT.START_DATE))
-		.setEndDate(r.get(CONTRACT.END_DATE))
-		.setCategory(r.get(CONTRACT.CATEGORY_DESCRIPTION))
-		
-		.setWorkplaceId(r.get(WORKPLACE.ID))
-		);
-		
+		if ( employees.isEmpty() )
+			return Optional.empty();
+		else if ( employees.size() == 1 )
+			return Optional.of(employees.get(0));
+		else 
+			throw new TooManyEmployeesException();
 	}
 
 	public  static Stream<Employee> getEmployees(AONContext aonContext, EmployeeFilter filter ) {
 		DSLContext dslContext = aonContext.getDslContext();
 		
-		//com.esferalia.aon.jooq.tables.ContractData CONTRACT_GROUP = CONTRACT_DATA.as("grupo");
-		
-		return 
+		Map<Employee, List<Object[]>> employeeDataMap = 
 		dslContext
 		.select()
 		.from(CONTRACT)
@@ -137,34 +115,41 @@ public class EmployeeDAO {
 		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
 		.innerJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
 		.innerJoin(ENTERPRISE_REGISTRY).on(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(ENTERPRISE_REGISTRY.ID))
+		.leftJoin(CONTRACT_DATA).on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID).and(CONTRACT_DATA.NAME.in(EMPLOYEE_DATA)))
 		
 		.where(new EmployeePropertiesDAO().getConditions(filter))
-		.fetchStream().map( r ->  {
-			Employee employee = 
-			new Employee()
-			.setCcc(r.get(ENTERPRISE_CCC.CCC))
-			.setCif(r.get(ENTERPRISE_REGISTRY.DOCUMENT))
-	
-			.setDni(r.get(REGISTRY.DOCUMENT))
-			.setNaf(r.get(PERSON.SOCIAL_SECURITY_NUM))
-			.setName(r.get(REGISTRY.NAME))
-			.setSex(getSex(r.get(PERSON.GENDER)))
-			.setBirthDate(r.get(PERSON.BIRTH_DATE))
-			
-			.setEmployeeId(r.get(CONTRACT.ID))
-			.setStartDate(r.get(CONTRACT.START_DATE))
-			.setEndDate(r.get(CONTRACT.END_DATE))
-			.setCategory(r.get(CONTRACT.CATEGORY_DESCRIPTION))
-			
-			.setWorkplaceId(r.get(WORKPLACE.ID));
-
-			return employee;
-			
-		}
 		
-		)
-		.collect(Collectors.toUnmodifiableList()).stream();
+		.fetchGroups( r -> 
+				new Employee()
+				.setCcc(r.get(ENTERPRISE_CCC.CCC))
+				.setCif(r.get(ENTERPRISE_REGISTRY.DOCUMENT))
 		
+				.setDni(r.get(REGISTRY.DOCUMENT))
+				.setNaf(r.get(PERSON.SOCIAL_SECURITY_NUM))
+				.setName(r.get(REGISTRY.NAME))
+				.setSex(getSex(r.get(PERSON.GENDER)))
+				.setBirthDate(r.get(PERSON.BIRTH_DATE))
+				
+				.setEmployeeId(r.get(CONTRACT.ID))
+				.setStartDate(r.get(CONTRACT.START_DATE))
+				.setEndDate(r.get(CONTRACT.END_DATE))
+				.setCategory(r.get(CONTRACT.CATEGORY_DESCRIPTION))
+				
+				.setRegime(getSSRegimeCode(r.get(CONTRACT.SS_REGIME)))
+				.setWorkplaceName(r.get(WORKPLACE.DESCRIPTION))
+				.setWorkplaceId(r.get(WORKPLACE.ID))
+				
+				, r -> new Object [] {
+						r.get(CONTRACT_DATA.NAME),
+						r.get(CONTRACT_DATA.EXPRESSION),
+						r.get(CONTRACT_DATA.START_DATE),
+						r.get(CONTRACT_DATA.END_DATE)
+				});
+		
+		employeeDataMap.forEach((employee, datas) -> datas.forEach( data -> employee.addData((String)data[0], (String)data[1], (java.sql.Date)data[2], (java.sql.Date)data[3])));
+		
+		return employeeDataMap.keySet().stream();
+			
 	}
 
 	public  static Employee addEmployee(AONContext aonContext, String domainName, Employee employee ) {
@@ -186,7 +171,6 @@ public class EmployeeDAO {
 	}
 
 	public static  ContractRecord addEmployee(DSLContext dslContext, Integer domainId, Employee employee ) {
-		
 		
 		EnterpriseCccRecord enterpriseCccRecord =
 		getEnterpriseCCC(dslContext, domainId, employee );
@@ -213,31 +197,22 @@ public class EmployeeDAO {
 		
 		ContractRecord contractRecord = insertContract.returning().fetchOne();
 		
-		InsertSetMoreStep<ContractDataRecord> insertContractData = 
-		dslContext
-		.insertInto(CONTRACT_DATA)
-		.set(CONTRACT_DATA.DOMAIN, domainId)
-		.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
-		.set(CONTRACT_DATA.NAME, "TC2" )
-		.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", employee.getContractType()))
-		.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
-		.newRecord()
-		.set(CONTRACT_DATA.DOMAIN, domainId)
-		.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
-		.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION" )
-		.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", employee.getQuoteGroup()))
-		.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
-		;
+		InsertSetMoreStep<ContractDataRecord> insertContractData = null ; 
 		
-		employee.getFactor().ifPresent(factor -> {
-			insertContractData.newRecord()
-			.set(CONTRACT_DATA.DOMAIN, domainId)
-			.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
-			.set(CONTRACT_DATA.NAME, "COEFICIENTE_PARCIALIDAD" )
-			.set(CONTRACT_DATA.EXPRESSION, Double.toString(factor))
-			.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
-			;
-		});
+		for ( Map.Entry<String, Collection<Employee.ExpressionData>> entry: employee.getDatas().entrySet() ) {
+			for( Employee.ExpressionData data :  entry.getValue()) {
+				insertContractData = 
+				(insertContractData != null ? 
+				insertContractData.newRecord():
+				dslContext.insertInto(CONTRACT_DATA))
+				.set(CONTRACT_DATA.DOMAIN, domainId)
+				.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+				.set(CONTRACT_DATA.NAME, entry.getKey() )
+				.set(CONTRACT_DATA.START_DATE, toSql(data.getStartDate()))
+				.set(CONTRACT_DATA.END_DATE, toSql(data.getEndDate()))
+				.set(CONTRACT_DATA.EXPRESSION, data.getExpression());
+			}
+		}
 		
 		insertContractData.execute();
 		
@@ -266,6 +241,14 @@ public class EmployeeDAO {
 
 	public static Cost [] setCosts(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Cost ...costs) {
 		return setCosts(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), costs);
+	}
+
+	public static ContractData [] getData(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate) {
+		return getData(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate));
+	}
+
+	public static ContractData[] setData(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, ContractData... contractDatas) {
+		return setData(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), contractDatas);
 	}
 
 	public static ContractData[] setContractData(AONContext aonContext, String domainName, ContractFilter filter, ContractData... contractDatas) {
@@ -399,6 +382,7 @@ public class EmployeeDAO {
 		.innerJoin(ENTERPRISE_CCC).onKey()
 		.where(ENTERPRISE_ACTIVITY.DOMAIN.eq(domainId))
 		.and(ENTERPRISE_CCC.CCC.eq(employee.getCcc()))
+		.limit(1)
 		.fetchOptionalInto(ENTERPRISE_ACTIVITY)
 		.orElseGet(() ->
 			// No enterprise activity for ccc, return any 
@@ -494,11 +478,15 @@ public class EmployeeDAO {
 				getSecondSurname(name).ifPresent( s -> insertPerson.set(PERSON.SECOND_SURNAME, s));
 			});
 			
-			employee.getBirthDate().ifPresent(birthDate -> insertPerson.set(PERSON.BIRTH_DATE, toSql(birthDate)));
-			employee.getSex().map( sex -> getGender(sex)).ifPresent(gender -> insertPerson.set(PERSON.GENDER, gender.value()));
+			employee.getBirthDate().ifPresent(
+			birthDate -> insertPerson.set(PERSON.BIRTH_DATE, toSql(birthDate)));
+			
+			employee.getSex().map(EmployeeDAO::getGender).ifPresentOrElse(
+			gender -> insertPerson.set(PERSON.GENDER, gender.value()), 
+			() -> insertPerson.set(PERSON.GENDER, Gender.UNKNOWN.value()));
+			
 
 			insertPerson.execute();
-
 			
 			return registryRecord;
 
@@ -580,6 +568,26 @@ public class EmployeeDAO {
 		}
 		
 		return costs;
+	}
+
+	private static ContractData [] setData(DSLContext dslContext, String domainName, String ccc, String naf,java.sql.Date startDate, java.sql.Date endDate, ContractData ...datas) {
+		
+		List<ContractRecord> contractRecords = 
+		getContracts(dslContext, domainName, ccc, naf, startDate, endDate)
+		;
+		
+		for ( ContractRecord contractRecord : contractRecords  ) {
+			ContractData contractDatas [] = 
+			Arrays.stream(datas)
+			.filter( b -> intersects(contractRecord, b) )
+			.toArray(ContractData[]::new);
+			if ( contractDatas.length >= 0 ) {
+				setData(dslContext, domainName, startDate, endDate, contractRecord, contractDatas);
+			}
+			
+		}
+		
+		return datas;
 	}
 
 	private static ContractData [] setContractData(DSLContext dslContext, String domainName, ContractFilter filter, ContractData ...contractDatas) {
@@ -1012,6 +1020,98 @@ public class EmployeeDAO {
 		
 	}
 	
+	private static ContractData [] getData(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate) {
+		
+		return 
+		dslContext
+		.select()
+		.from(DOMAIN)
+		.innerJoin(CONTRACT_DATA).on(DOMAIN.ID.eq(CONTRACT_DATA.DOMAIN))
+		.innerJoin(CONTRACT).on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID))
+		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
+		.where(DOMAIN.NAME.eq(domainName))
+		.and(ENTERPRISE_CCC.CCC.eq(ccc))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
+		.and(DSL.condition(endDate == null ).or(CONTRACT_DATA.START_DATE.le(endDate)))
+		.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(startDate)))
+		.fetchStreamInto(CONTRACT_DATA)
+		.map(data -> 
+		new ContractData()
+		.setId(data.getId())
+		.setName(data.getName())
+		.setDomain(data.getDomain())
+		.setEndDate(data.getEndDate())
+		.setStartDate(data.getStartDate())
+		.setExpression(data.getExpression())
+		).toArray(ContractData[]::new);
+		
+	}
+
+	private static ContractData [] setData(DSLContext dslContext, String domainName, java.sql.Date startDate, java.sql.Date endDate, ContractRecord contractRecord, ContractData ...datas) {
+		
+		List<ContractData> datasList = new ArrayList<ContractData>(datas.length);
+		Arrays.stream(datas).forEach( data -> datasList.add(data));
+		
+		dslContext
+		.select()
+		.from(CONTRACT_DATA)
+		.where(CONTRACT_DATA.CONTRACT.eq(contractRecord.getId()))
+		.and(DSL.condition(endDate == null ).or(CONTRACT_DATA.START_DATE.le(endDate)))
+		.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(startDate)))
+		.fetchStream()
+		.filter( EmployeeDAO::filter )
+		.forEach( r -> {
+			
+			ContractDataRecord contractData = r.into(CONTRACT_DATA); 
+			
+			if ( compare(contractData.getStartDate(), startDate) >= 0 ) { 
+				if ( compare(contractData.getEndDate(), endDate ) <= 0 ) {
+					// contract data starts after start date and ends before end date. So delete it.
+					contractData.delete();
+				}
+				else { 
+					// contract data ends after end date. So now starts just after end date. 
+					contractData.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					contractData.update();
+				}
+			} else {
+				if ( compare(contractData.getEndDate(), endDate ) <= 0 ) {
+					// contract data starts before start date and ends before end date. So ends just before start date.
+					contractData.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					contractData.update();
+				} else {
+					// contract data starts before start date and ends after end date. So we need to split it.
+					ContractDataRecord leftContractCost = contractData;
+					ContractDataRecord rightContractCost = contractData.copy();
+					leftContractCost.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					leftContractCost.update();
+					rightContractCost.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					rightContractCost.insert();
+				}
+			}
+				
+		});
+		;
+		
+		for (ContractData data : datasList) {
+			
+			dslContext
+			.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, contractRecord.getDomain())
+			.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+			.set(CONTRACT_DATA.START_DATE, toSql(data.getStartDate()))
+			.set(CONTRACT_DATA.END_DATE, toSql(data.getEndDate()))
+			.set(CONTRACT_DATA.NAME, data.getName())
+			.set(CONTRACT_DATA.EXPRESSION, data.getExpression())
+			.execute()
+			;
+		}
+		
+		return datas;
+		
+	}
+
 	private static <T extends Enum<?>> Byte valueOf(T t) {
 		if ( t == null )
 			return null;
@@ -1201,7 +1301,7 @@ public class EmployeeDAO {
 		case MALE:
 			return "M";
 		default:
-			return "";
+			return "U";
 		}
 	}
 
@@ -1211,7 +1311,7 @@ public class EmployeeDAO {
 		switch (sex) {
 		case "F":
 			return Gender.FEMALE;
-		case "M":
+		case "M": case "V":
 			return Gender.MALE;
 		default:
 			return Gender.UNKNOWN;
@@ -1269,6 +1369,12 @@ public class EmployeeDAO {
 			return null;
 		return new java.sql.Date(date.getTime());
 	}
+
+	private static java.sql.Date toSql(LocalDate date) {
+		if ( date == null )
+			return null;
+		return java.sql.Date.valueOf(date);
+	}
 	
 	private static byte getCCCType(Employee employee) {
 		
@@ -1305,10 +1411,21 @@ public class EmployeeDAO {
 	}
 	private static SSRegimeType getSSRegimeType(Employee employee) {
 		for (SSRegimeType type : SSRegimeType.values()) {
-			if ( type.getCode().equals(employee.getRegime())) 
+			if ( Objects.equals(type.getCode(),employee.getRegime())) 
 				return type;
 		}
 		return SSRegimeType.GENERAL;
+	}
+	private static String getSSRegimeCode(Byte ordinal) {
+		if ( ordinal == null )
+			return null;
+		if ( ordinal < 0 )
+			return null;
+		SSRegimeType types [] = SSRegimeType.values();
+		if ( ordinal >= types.length )
+			return null;
+		
+		return types[ordinal].getCode();
 	}
 	
 	

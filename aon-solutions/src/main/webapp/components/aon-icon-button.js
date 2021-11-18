@@ -235,10 +235,19 @@ export class AonIconButton extends AonElement {
     this.innerHTML = '';
   }
 
+  isVisible() {
+    return !this.hasAttribute(CONSTANT.VISIBLE) ||
+      (this.hasAttribute(CONSTANT.VISIBLE) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.VISIBLE));
+  }
+
   setDisabled(disabled) {
     this.disabled = disabled;
     this.getElement(this.BUTTON).disabled = disabled;
-  } 
+  }
+  
+  getButton(){
+    return this.getElement(this.BUTTON);
+  }
 }
 if(!window.customElements.get('aon-icon-button')){
   window.customElements.define("aon-icon-button", AonIconButton);

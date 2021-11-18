@@ -12,15 +12,6 @@ import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
-import solutions.aon.seg.social.SistemaRED.AccidentType;
-import solutions.aon.seg.social.SistemaRED.CauseType;
-import solutions.aon.seg.social.SistemaRED.Contingencies;
-import solutions.aon.seg.social.SistemaRED.ContractType;
-import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
-import solutions.aon.seg.social.SistemaRED.LiquidationType;
-import solutions.aon.seg.social.SistemaRED.PartType;
-import solutions.aon.seg.social.SistemaRED.Regime;
-import solutions.aon.seg.social.SistemaRED.SituationEmployee;
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -29,6 +20,7 @@ import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.object.SecondaryUser;
+import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.WorkerLiquidation;
 
 public class SistemaRED {
@@ -437,7 +429,13 @@ public class SistemaRED {
 		SistemaREDMov.altaConsolidadaDelete(certificateInputStream, certificatePassword, certificateType, situation,
 				regimen, ctaCti, nss);
 	}
-
+	
+	public static void removeMovConsolidated(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws SegSocialException {
+		
+		SistemaREDMov.removeMovConsolidated(certificateInputStream, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);;
+	}
+	
 	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, ArrayList<String> nssList)
 			throws SegSocialException {

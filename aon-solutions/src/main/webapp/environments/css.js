@@ -1,7 +1,7 @@
 // MATERIAL 
 export const MATERIAL_ICONS = 'material-icons';
 // aon.css
-
+export const AON_UL = 'aonUl';
 export const AON_APP_LI = 'aonAppLi';
 export const AON_LINK = 'aonLink';
 export const AON_BUTTON = 'aonButton';
@@ -16,7 +16,7 @@ export const AON_MENU = 'aonMenu';
 export const ROOT_PANEL = 'rootPanel';
 export const ROOT_MOBILE_PANEL = 'rootMobilePanel';
 export const AON_ICON_BUTTON = 'aonIconButton';
-export const AON_REGISTER_LOGO = 'aonRegisterLogo';
+export const AON_HEADER_LOGO_SPAN = 'aonHeaderLogoSpan';
 export const AON_LOGO = 'aonLogo';
 export const AON_PARENT_LOGO = 'aonParentLogo';
 export const AON_WIDTH_ALL = 'aonWidthAll';
@@ -102,6 +102,9 @@ export const MATERIAL_SCROLL = 'materialScroll';
 export const AON_IMG_COMMENT = 'aonImgComment';
 export const AON_UPLOAD = 'aonUpload';
 export const AON_UPLOAD_LABEL = 'aonUploadLabel';
+export const AON_LIST_GROUP = 'aonListGroup';
+export const AON_LIST_GROUP_TOP = 'aonListGroupTop';
+export const AON_LIST_GROUP_ITEM = 'aonListGroupItem';
 
 // aon-toast.css
 
@@ -258,6 +261,7 @@ export const AON_COL_XS_OFFSET_12 = 'aonCol-xs-offset-12';
 export const AON_COL_SM_OFFSET_12 = 'aonCol-sm-offset-12';
 export const AON_COL_MD_OFFSET_12 = 'aonCol-md-offset-12';
 export const AON_COL_LG_OFFSET_12 = 'aonCol-lg-offset-12';
+export const NOTE_BOX_SHADOW = "noteBoxShadow";
 
 // aon-css-utils
 export const CENTER_FLEX = "centerFlex";
@@ -280,6 +284,8 @@ export const TRANSITION_CASCADE = "transitionCascade"
 export const TRANSITION_QUICK = "transitionQuick"
 export const AON_TRANSITION_LEFT = "aonTransitionLeft";
 export const DIV_DRAG_OVER = "divDragOver";
+export const PULSE = "pulse";
+export const PULSE_INFINITE = "pulseInfinite";
 
 export const RESIZE_VERTICAL = "resizeVertical";
 
@@ -287,10 +293,17 @@ export const ELEMENT_HIDDEN = "elementHidden";
 
 export const MESSAGE_AFTER = "messageAfter";
 
+export const AON_FA_SPIN = 'aonFaSpin';
+export const AON_FA_PULSE = 'aonFaPulse';
+
 
 // aon-textarea 
 
 export const AON_TEXTAREA = 'aonTextarea';
+
+// aon-search 
+
+export const AON_SEARCH_INPUT = 'aonSearchInput';
 
 /**
  * Name to CSS variable conversion.

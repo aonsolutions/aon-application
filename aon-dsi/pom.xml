@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>8.75-SNAPSHOT</version>
+		<version>9.23-SNAPSHOT</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon.dsi</artifactId>
@@ -21,9 +21,9 @@
                        	<plugin>
                                 <groupId>org.apache.maven.plugins</groupId>
                                	<artifactId>maven-surefire-plugin</artifactId>
-	      			<configuration>
+	      			<!--configuration>
 					<skipTests>true</skipTests>
-				</configuration>
+				</configuration-->
                         </plugin>
 
 			<plugin>
@@ -47,7 +47,7 @@
 					<dependency>
 						<groupId>com.hxtt.sql.paradox</groupId>
 						<artifactId>paradoxjdbc3</artifactId>
-						<version>5.2.015</version>
+						<version>7.1.131</version>
 						<scope>compile</scope>
 					</dependency>
 				</dependencies>
@@ -64,14 +64,21 @@
 
 					<!-- Generator parameters -->
 					<generator>
-						<name>org.jooq.util.DefaultGenerator</name>
+						<name>org.jooq.codegen.DefaultGenerator</name>
 
 						<database>
 							<!-- All elements are generated from our schema -->
 							<includes>.*</includes>
 							<outputSchema>fn</outputSchema>
 
-						</database>
+							<!-- The schema that is used locally as a source for meta information.
+							   This could be your development schema or the production schema, etc
+							   This cannot be combined with the schemata element.
+
+							   If left empty, jOOQ will generate all available schemata. See the
+							   manual's next section to learn how to generate several schemata -->
+							<inputSchema>dbo</inputSchema>
+      						</database>
 
 						<generate>
 
@@ -143,7 +150,7 @@
 		<dependency>
 			<groupId>com.hxtt.sql.paradox</groupId>
 			<artifactId>paradoxjdbc3</artifactId>
-			<version>5.2.015</version>
+			<version>7.1.131</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -155,7 +162,7 @@
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>3.8.4</version>
+			<version>3.11.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

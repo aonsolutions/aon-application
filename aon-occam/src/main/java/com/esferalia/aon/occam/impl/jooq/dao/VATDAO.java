@@ -544,7 +544,7 @@ public class VATDAO  {
 				
 				,DATA_RESPONSE_DETAIL.DATA_VALUE
 				
-				,AMORTIZATION.PERCENTAGE, AMORTIZATION.DESCRIPTION, AMORTIZATION.INITIAL_DATE
+				,AMORTIZATION.PERCENTAGE, AMORTIZATION.DESCRIPTION, AMORTIZATION.INITIAL_DATE, INVOICE_DETAIL.PREPAYMENT
 			)
 			.from(INVOICE)
 			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -806,7 +806,7 @@ public class VATDAO  {
 				.setVatDeductionType(VatDeductionType.safeValueOf(rec.getValue(INVOICE_TAX.VAT_DEDUCTION_TYPE)))
 				.setInvestAsset(rec.getValue(INVOICE_DETAIL.INVEST_ASSET))
 				.setDetailDescription(rec.getValue(INVOICE_DETAIL.DESCRIPTION))
-				
+				.setPrepayment(rec.getValue(INVOICE_DETAIL.PREPAYMENT) == 1)
 				.setSiiStatus(rec.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE) != null ? rec.getValue(DATA_RESPONSE_DETAIL.DATA_VALUE) : "Pendiente")
 				
 				.setBase(rec.getValue(INVOICE_TAX.BASE) != null ? rec.getValue(INVOICE_TAX.BASE) : rec.getValue(INVOICE_DETAIL.TAXABLE_BASE))

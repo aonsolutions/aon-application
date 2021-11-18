@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -27,6 +28,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.product.Brand;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
@@ -64,7 +66,13 @@ import com.github.javafaker.Faker;
 
 public class AonFaker {
 	private static Faker faker = new Faker(new Locale("es"));
+	private static String nafRegexp = "\\d{2}\\d{8}\\d{2}";
+	private static String cccRegexp = "\\d{2}\\d{7}\\d{2}";
 	private static String documentRegexp = "(\\d|[XYZ])\\d{7}[A-Z]";
+	
+	public static String getCCC() {
+		return faker.regexify(cccRegexp);
+	}
 	
 	public static Registry getRegistry( AONContext ctx ) {
 		return  new Registry()
@@ -90,6 +98,66 @@ public class AonFaker {
 			;
 	}
 	
+	public static Employee getEmployee( AONContext ctx, Date startDate, Date endDate) {
+		return getEmployee(ctx, getCCC(), startDate, endDate);
+	}
+
+//	public static Employee getEmployee( AONContext ctx, Date startDate, Date endDate, String ccc ) {
+//		return new Employee()
+//		.setCcc(ccc)		
+//		.setEndDate(endDate)
+//		.setStartDate(startDate)
+//		.setCategory(faker.job().title())
+//		.setName(faker.name().fullName())
+//		.setNaf(faker.regexify(nafRegexp))
+//		//.setCif(faker.regexify(documentRegexp))
+//		.setDni(faker.regexify(documentRegexp))
+//		.setRegime(AonRandom.getRandomSSRegime())
+//		.setQuoteGroup(AonRandom.getRandomQuoteGroup(5))
+//		.setOccupation(AonRandom.getRandomOccupation(75))
+//		.setContractType(AonRandom.getRandomContractType(5))
+//		.setFactor(AonRandom.gt(50)? faker.random().nextDouble(): null)
+//
+//		.setSex(AonRandom.gt(33) ? AonRandom.getRandomSex() : "U")
+//		.setBirthDate(AonRandom.gt(75) ? faker.date().birthday():null)
+//		.setPhone(AonRandom.gt(75) ? faker.phoneNumber().phoneNumber() :null)
+//		;
+//	}
+
+	public static Employee getEmployee( AONContext ctx, String ccc, Date ...dates) {
+		Date startDate = dates[0];
+		Date endDate = dates[dates.length-1];
+		Employee employee = 
+		new Employee()
+		.setCcc(ccc)		
+		.setStartDate(startDate)
+		.setEndDate(endDate)
+		.setCategory(faker.job().title())
+		.setName(faker.name().fullName())
+		.setNaf(faker.regexify(nafRegexp))
+		//.setCif(faker.regexify(documentRegexp))
+		.setDni(faker.regexify(documentRegexp))
+		.setRegime(AonRandom.getRandomSSRegime())
+
+		.setSex(AonRandom.gt(33) ? AonRandom.getRandomSex() : "U")
+		.setBirthDate(AonRandom.gt(75) ? faker.date().birthday():null)
+		.setPhone(AonRandom.gt(75) ? faker.phoneNumber().phoneNumber() :null)
+		;
+		
+		for ( int i = 0; i < dates.length; i += 2 ) {
+			Date dataStartDate = dates [i];
+			Date dataEndDate  = dates [i+1];
+			employee
+			.addQuoteGroup(AonRandom.getRandomQuoteGroup(5), dataStartDate, dataEndDate)
+			.addOccupation(AonRandom.getRandomOccupation(75), dataStartDate, dataEndDate)
+			.addContractType(AonRandom.getRandomContractType(5), dataStartDate, dataEndDate)
+			.addFactor(AonRandom.gt(50)? faker.random().nextDouble(): null, dataStartDate, dataEndDate);
+		}
+		
+		return employee;
+		
+	}
+
 	public static Customer getCustomer( AONContext ctx ) {
 		return getCustomer(ctx, getRegistry(ctx));
 	}

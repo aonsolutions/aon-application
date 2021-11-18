@@ -8,6 +8,7 @@ import {AonInput} from './aon-input.js';
 import {AonDate} from './aon-date.js';
 import {AonSelect} from './aon-select.js';
 
+import '../css/aon-search.css';
 
 export class AonSearch extends AonElement {
 
@@ -85,12 +86,9 @@ export class AonSearch extends AonElement {
 		span.appendChild(searchButton);
 		let input = this.createElement(TAG.INPUT);
 		input.id = this.SEARCH_INPUT;
+		input.className = CSS.AON_SEARCH_INPUT;
 		input.autocomplete = 'off';
 		input.style.display = 'none';
-		input.style.outline = 'none';
-		input.style.border = 'none';
-		input.style.marginTop = '1px';
-		input.style.height = '37px';
 		span.appendChild(input);
 
 		let advancedButton = new AonIconButton();

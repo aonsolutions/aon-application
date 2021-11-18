@@ -125,9 +125,14 @@ public class DomainUserRoles implements Serializable {
 		return getOldDomainModules().contains(module) || getOldParentDomainModules().contains(module);
 	}
 	
-	private Boolean hasApp(AonApp aonApp) {
+	public Boolean hasApp(AonApp aonApp) {
 		return getDomainApps().contains(aonApp) || getParentDomainApps().contains(aonApp);
 	}
+	
+	public Boolean hasParentApp(AonApp aonApp) {
+		return getParentDomainApps().contains(aonApp);
+	}
+	
 	
 	private Boolean hasRole(AonRole aonRole) {
 		return getDomainUserRoles().contains(aonRole) 
@@ -349,5 +354,11 @@ public class DomainUserRoles implements Serializable {
 
 	public boolean isEnterprise() {
 		return this.hasRole(AonRole.ENTERPRISE);
+	}
+	
+	// CUSTOM VIEW
+	
+	public boolean hasCustomView() {
+		return hasApp(AonApp.CUSTOM_VIEW);
 	}
 }

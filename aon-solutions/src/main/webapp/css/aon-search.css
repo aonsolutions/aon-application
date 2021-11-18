@@ -1,0 +1,13 @@
+.aonSearchInput {
+    outline: none;
+    border: none;
+    margin-top: 1px;
+    height: 37px;
+
+}
+
+.aonSearchInput:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}

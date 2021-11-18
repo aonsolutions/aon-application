@@ -15,7 +15,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 public class AbstractTediTest {
 
 	protected static AONContext ctx;
-	protected static String DOMAIN_NAME = "occamtest.aonsolutions.test";
+	protected static String DOMAIN_NAME = "occamTest.aonsolutions.test";
 	protected static Integer DOMAIN_ID = 1;
 	protected static String USER = "admin";
 	

@@ -187,6 +187,21 @@ public class ContrataEmployeeObject {
 		}	
 	}
 	
+	public void delete4EverContract(Consumer<Void> success, Consumer<Throwable> failure) {
+		enterprisesService.delete4EverContract(getContractData().getContractId(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});	
+	}
+	
 	// ------------------------------------------------- Database Methods (Specific Data)
 	
 	public void getContractSpecificData(Consumer<ContractSpecificData> success, Consumer<Throwable> failure) {
@@ -206,7 +221,8 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void setContractSpecificData(Consumer<Void> success, Consumer<Throwable> failure) {
+	public void setContractSpecificData(ContractSpecificData contractSpecificData, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeeContractData.setContractSpecificData(contractSpecificData);
 		enterprisesService.setContractSpecificData(employeeContractData, new AsyncCallback<Void>() {
 			
 			@Override
@@ -383,11 +399,18 @@ public class ContrataEmployeeObject {
 		success.accept(employeeEventsDraftObject);
 	}
 	
-	// ------------------------------------------------- Database Methods (Events)
+	// ------------------------------------------------- Database Methods (Payments)
 	
 	public void getEmployeeContractPaymentsObject(Consumer<EmployeeContractPaymentsObject> success) {
 		EmployeeContractPaymentsObject employeeContractPaymentsObject = new EmployeeContractPaymentsObject(contractData.getContractId());
 		success.accept(employeeContractPaymentsObject);
+	}
+	
+	// ------------------------------------------------- Database Methods (IRPF)
+	
+	public void getEmployeeContractIrpfObject(Consumer<EmployeeContractIrpfObject> success) {
+		EmployeeContractIrpfObject employeeContractIrpfObject = new EmployeeContractIrpfObject(contractData.getContractId(), employeeData.getSsNumber(), contractData.getStartDate());
+		success.accept(employeeContractIrpfObject);
 	}
 	
 	// ------------------------------------------------- Database Methods (Salary Draft)

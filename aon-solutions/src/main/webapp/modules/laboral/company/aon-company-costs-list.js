@@ -4,7 +4,6 @@ import {
   isEmptyObject,
   sortBy,
   waitEl,
-  geMonthYear,
   setValueName
 } from "../../../services/utils.js";
 import {
@@ -19,7 +18,8 @@ import {
   PAYROLL_VIEWS,
 } from "../PayrollEnums.js";
 import { pieChar, addLegend} from "./pieChar.js";
-import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
 export class AonCompanyCostsList extends AonElement {
@@ -185,7 +185,7 @@ export class AonCompanyCostsList extends AonElement {
         await addLegend(div, newData, newColor, (evClick)=>console.log(evClick));
 
         let button = this.createElement(TAG.BUTTON);
-        button.className = "aonButton";
+        button.className = CSS.AON_BUTTON;
         button.id = `${this.id}Nomina`;
         button.innerHTML = MSG.VIEW_PAYROLLS;
         button.style.marginTop = "10px";
@@ -196,8 +196,8 @@ export class AonCompanyCostsList extends AonElement {
         if(workplaceEl && workplaceEl.textContent) workplaceText = workplaceEl.textContent+": ";
       }
 
-      let startDateText = geMonthYear(startDate),
-      endDateText = geMonthYear(endDate);
+      let startDateText = AonDateUtils.getMonthYear(startDate),
+      endDateText = AonDateUtils.getMonthYear(endDate);
       if(startDateText === endDateText){
         title = title + " "+ startDateText;
       } else {

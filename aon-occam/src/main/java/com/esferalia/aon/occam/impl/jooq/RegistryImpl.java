@@ -62,9 +62,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryPayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistrySuggestionDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
@@ -116,10 +118,23 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getCreditorStream(ctx, filter));
+				configuration -> CreditorDAO.getStream(ctx, filter));
 	}
 	
 	@Override
+	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> CreditorDAO.getStream(ctx, filter, offset, limit));
+	}
+
+	@Override
+	public Creditor saveCreditor(AONContext ctx, Creditor creditor) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CreditorDAO.save(ctx, creditor));
+	}
+	
+	@Override
+	@Deprecated
 	public Creditor insertCreditor(AONContext ctx, Creditor creditor) {
 		return 	ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.insertCreditor(ctx, creditor));
@@ -240,6 +255,11 @@ public class RegistryImpl implements IRegistry{
 				configuration -> CustomerDAO.getStream(ctx, filter));
 	}
 	
+	public Customer saveCustomer(AONContext ctx, Customer customer) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> CustomerDAO.save(ctx, customer));
+	}
+	
 	@Override
 	public Customer insertCustomer(AONContext ctx, Customer customer) {
 		return 	ctx.getDslContext().transactionResult(
@@ -274,6 +294,12 @@ public class RegistryImpl implements IRegistry{
 	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.getRecordDataStream(ctx, filter));
+	}
+	
+	@Override
+	public RecordData saveRecordData(AONContext ctx, RecordData recordData) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RegistryOldDAO.saveRecordData(ctx, recordData));
 	}
 	
 	// -------------------- Company
@@ -328,15 +354,28 @@ public class RegistryImpl implements IRegistry{
 	@Override
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getSupplierStream(ctx, filter));
+				configuration -> SupplierDAO.getStream(ctx, filter));
 	}
 	
 	@Override
+	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SupplierDAO.getStream(ctx, filter, offset, limit));
+	}
+	
+	@Override
+	@Deprecated
 	public Supplier insertSupplier(AONContext ctx, Supplier supplier) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RegistryOldDAO.insertSupplier(ctx, supplier));
 	}
 
+	@Override
+	public Supplier saveSupplier(AONContext ctx, Supplier supplier) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> SupplierDAO.save(ctx, supplier));
+	}
+	
 	// -------------------- TARGET
 
 	@Override
@@ -361,6 +400,8 @@ public class RegistryImpl implements IRegistry{
 	
 	// -------------------- RBANK
 
+	
+	
 	@Override
 	public Stream<RegistryBank> getRBankStream(AONContext ctx, RegistryBankFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
@@ -383,33 +424,59 @@ public class RegistryImpl implements IRegistry{
 	public void deleteRBank(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(configuration -> RegistryOldDAO.deleteRBank(ctx, id));
 	}
+	
+
+	@Override
+	public RegistryBank getRegistryBank(AONContext ctx, RegistryBankFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryBankDAO.get(ctx, filter));
+	}
+
+	@Override
+	public Stream<RegistryBank> getRegistryBankStream(AONContext ctx, RegistryBankFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryBankDAO.getStream(ctx, filter));
+	}
+
+	@Override
+	public RegistryBank saveRegistryBank(AONContext ctx, RegistryBank rbank) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryBankDAO.save(ctx, rbank));
+	}
+
+	@Override
+	public void deleteRegistryBank(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> RegistryBankDAO.delete(ctx, id));
+	}
 
 	// -------------------- RPAYMETHOD
 	
 	@Override
-	public Stream<RegistryPayMethod> getRPayMethodStream(AONContext ctx, RegistryPayMethodFilter filter) {
+	public RegistryPayMethod getRegistryPayMethod(AONContext ctx, RegistryPayMethodFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.getRPayMethodStream(ctx, filter));
+				configuration -> RegistryPayMethodDAO.get(ctx, filter));
+	}
+	
+	@Override
+	public Stream<RegistryPayMethod> getRegistryPayMethodStream(AONContext ctx, RegistryPayMethodFilter filter) {
+		return 	ctx.getDslContext().transactionResult(
+				configuration -> RegistryPayMethodDAO.getStream(ctx, filter));
+	}
+	
+
+	@Override
+	public void deleteRegistryPayMethod(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> RegistryPayMethodDAO.delete(ctx, id));
 	}
 
 	@Override
-	public RegistryPayMethod insertRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod) {
+	public RegistryPayMethod saveRegistryPayMethod(AONContext ctx, RegistryPayMethod rpaymethod) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.insertRPayMethod(ctx, rpaymethod));
+				configuration -> RegistryPayMethodDAO.save(ctx, rpaymethod));
 	}
-
-	@Override
-	public RegistryPayMethod updateRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.updateRPayMethod(ctx, rpaymethod));
-	}
-
-	@Override
-	public RegistryPayMethod deleteRPayMethod(AONContext ctx, RegistryPayMethodFilter filter) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryOldDAO.deleteRPayMethod(ctx, filter));
-	}
-
+	
+	// -------------------- REGISTRY ADD INFO
 
 	@Override
 	public Stream<RegistryAddInfo> getRegistryAddInfoStream(AONContext ctx, RegistryAddInfoFilter filter) {

@@ -9,9 +9,12 @@ import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jooq.AggregateFunction;
@@ -23,9 +26,11 @@ import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
 import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.validation.BankStatementValidator;
+import com.esferalia.aon.occam.impl.jooq.validation.RegistryValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -144,15 +149,11 @@ public class CheckItDAO {
 
 	private static int getNextLotNumber(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		AggregateFunction<Integer> lot = DSL.max(BANK_STATEMENT.LOT_NUMBER);
-		return aonContext.getDslContext().select( lot )
-			.from(BANK_STATEMENT)
-			.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-			.and(BANK_STATEMENT.DOMAIN.eq(domainId))
-			.fetch()
-			.stream()
-			.map( r -> r.get(lot))
-			.findFirst()
-			.orElse(0) + 1;
+		return AonNumberUtils.zeroIfNull(aonContext.getDslContext().select( lot )
+				.from(BANK_STATEMENT)
+				.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+				.and(BANK_STATEMENT.DOMAIN.eq(domainId))
+				.fetchSingle().get(lot)) + 1;
 	}
 
 	public static Date getLastOperationDateDB(AONContext aonContext, Integer domainId, RegistryBank rbank) {
@@ -205,18 +206,25 @@ public class CheckItDAO {
 		if (id == null || id.isEmpty()) {
 			return null;
 		} else
-			return new Pair<String, Date>(id, utilDate);
+			return new Pair<>(id, utilDate);
 	}
 	
 	public static List<String> getActiveIbans(String domainName, Integer domainId, String user) {
-		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
-			return aonContext.getDslContext()
-			.select(RBANK.BANK_ACCOUNT)
-			.from(RBANK)
-			.where(RBANK.DOMAIN.eq(domainId))
-			.fetchStreamInto(RBANK)
-			.map(RbankRecord::getBankAccount)
-			.collect(Collectors.toList());
+		try {			
+			Company company = AON.getCompany(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId));
+			return AON.getRBankList(domainName
+					, domainId
+					, user
+					, f -> f.getDomainProperty().eq(domainId)
+					.and(f.getRegistryProperty().eq(company.getId()))
+					.and(f.getActiveProperty().eq(AonEnumUtils.getByte(true))))
+					.stream()
+					.filter(Objects::nonNull)
+					.map(rb -> rb.getBankAccount() != null ? rb.getBankAccount().getIban() : null)
+					.filter(Objects::nonNull)
+					.collect(Collectors.toList());
+		} catch (Exception e) {
+			return Collections.emptyList();
 		}
 	}
 	

@@ -39,7 +39,6 @@ import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
 import com.esferalia.aon.watson.util.AonEnumUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
@@ -50,8 +49,10 @@ public class CheckItAPI implements IParamNames{
 	}
 
 	private static final DateFormat DF_TIME = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", new Locale("es", "ES") );
-
-	private static final String API_URL = "https://www.checkitbancario.com/openapi/";
+	
+	private static final String BASE_URL = "https://www.checkitbancario.com/";
+	private static final String API_URL = BASE_URL + "openapi/";
+	private static final String LOGO_BASE_URL = BASE_URL + "login/img/logos/bancos/";
 	private static final String API_KEY = "84d9ee44e457ddef7f2c4f25dc8fa865";
 	private static final DateFormat DF = new SimpleDateFormat("yyyy-MM-dd", new Locale("es", "ES"));
 
@@ -956,6 +957,31 @@ public class CheckItAPI implements IParamNames{
 				
 	}
 	
+	public static List<BankStatement> getAllBankStatements(Integer empresaId, Integer accountId) throws CheckItException {
+		JSONObject requestParams = new JSONObject();
+		
+		requestParams.put(API_KEY_PARAM, API_KEY);
+		requestParams.put(ENTERPRISE_ID_PARAM, empresaId);
+		requestParams.put(DATE_TO_PARAM, formatDateForTransactions(new Date())); // HOY
+		requestParams.put(ACCOUNT_ID_PARAM, accountId);
+		requestParams.put(DATE_FROM_PARAM, "1900-01-01"); // REQUEST PARAMS COMPLETED
+
+		JSONArray transactionsArray = CheckItAPI.getTransactions(requestParams);
+		
+		List<BankStatement> bankStatements = new LinkedList<>();
+		
+		for (int i = 0; i < transactionsArray.length(); i++) {
+
+			JSONObject transactionJson = transactionsArray.optJSONObject(i);
+
+			BankStatement bankStatement = bankStatementFromJson(transactionJson);
+			bankStatements.add(bankStatement);
+
+		}
+		bankStatements.sort((b1, b2) -> b2.getReference2().compareTo(b1.getReference2()));
+		return bankStatements;
+	}
+	
 	public static List<BankStatement> getBankStatements(Integer empresaId, Integer accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
 		Date today = new Date();
 		
@@ -1078,6 +1104,14 @@ public class CheckItAPI implements IParamNames{
 		return insertTransactions(params);
 	}
 	
+	public static List<BankStatement> getAllMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
+		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
+//			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
+			List<BankStatement> bankStatements = getAllBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban));
+//			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
+			return bankStatements;
+		}
+	}
 	
 	public static List<BankStatement> getNewMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
@@ -1149,6 +1183,7 @@ public class CheckItAPI implements IParamNames{
 	
 	public static LinkedList<CheckItBankAccount> getAccounts( Integer empresaId, List<String> activeIbans ) throws CheckItException {
 		JSONArray accounts = getAccounts(empresaId, 1, null);
+		JSONArray allBanks = getBanks();
 		
 		for (int i=0; i<accounts.length(); i++) {
 			String iban = accounts.optJSONObject(i).optString(CCC);
@@ -1173,9 +1208,39 @@ public class CheckItAPI implements IParamNames{
 				.setBankAccountType(obj.optInt("tipo_cuenta_bancaria_id", 0))
 				.setBankLoginType(obj.optInt("tipo_login_banco_id", 0))
 				.setLogs(getCheckItLogs(empresaId, obj.optInt(BANK_ID_PARAM, 0)))
+				.setLogo(getLogo(allBanks, obj.optInt(BANK_ID_PARAM, 0)))
 			);
 		}
 		return acc;
+	}
+	
+	private static String getLogo(JSONArray allBanks, int bankId) {
+		if (bankId < 1)
+			return null;
+		JSONObject obj = getBank(allBanks, bankId);
+		if (obj != null) {
+			String png = obj.optString("logo");
+			if (png == null || png.isEmpty())
+				return null;
+			else
+				return LOGO_BASE_URL + png;
+		} else {
+			return null;
+		}
+	}
+	
+	
+	private static JSONObject getBank(JSONArray allBanks, int id) {
+		if (id < 1)
+			return null;
+		for (int i=0;i<allBanks.length(); i++) {
+			JSONObject obj = allBanks.optJSONObject(i);
+			if (obj != null) {
+				if (obj.optInt(BANK_ID) == id)
+					return obj;
+			}
+		}
+		return null;
 	}
 	
 	public static  List<CheckitUnlinkedBankAccount> getUnlinkedActive(String domainName, Integer domainId, String user, Integer empresaId) throws CheckItException {

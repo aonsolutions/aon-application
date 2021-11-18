@@ -30,10 +30,10 @@ public class NewDeclarationPopup extends CustomDialog {
 	private TextBox replacedReceiptBox = new TextBox();
 	
 	public NewDeclarationPopup(final Mod184 mod184 ,final Model184Callback callback) {
-		this(mod184 ,false, callback);
+		this(mod184 ,false, false, callback);
 	}
 	
-	public NewDeclarationPopup(final Mod184 mod184, final boolean duplicate, final Model184Callback callback) {
+	public NewDeclarationPopup(final Mod184 mod184, final boolean duplicate, final boolean reset, final Model184Callback callback) {
 
 		// Cuando se duplica, por defecto el ejercicio es el siguiente y 
 		// complementaria y sustitutiva están desmarcados
@@ -45,7 +45,7 @@ public class NewDeclarationPopup extends CustomDialog {
 			mod184.setReplacedReceipt("");
 		}		
 		
-		setCaption(duplicate?AON.MSG.duplicate():AON.MSG.newDeclaration());
+		setCaption(reset?AON.MSG.resetDeclaration():duplicate?AON.MSG.duplicate():AON.MSG.newDeclaration());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
@@ -53,6 +53,9 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		admonList.setSelectedIndex( mod184.getAdministration().ordinal());
 		yearBox.setValue(mod184.getYear());
+		complementary.setValue(mod184.isComplementary());
+		replacement.setValue(mod184.isReplacement());
+		replacedReceiptBox.setValue(mod184.getReplacedReceipt());
 
 		FlowPanel rootPanel = new FlowPanel(); 
 		tab.setCellPadding(0);
@@ -72,7 +75,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		admonList.setEnabled(!duplicate);
+		admonList.setEnabled(!reset && !duplicate);
 		admonList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -89,6 +92,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
+		yearBox.setEnabled(!reset);
 		yearBox.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
@@ -111,7 +115,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		// COMPLEMENTARIA
 		complementary.setText(AON.MSG.complementary());
-		complementary.setEnabled(!duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
+		complementary.setEnabled(!reset && !duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
 		complementary.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -135,7 +139,7 @@ public class NewDeclarationPopup extends CustomDialog {
 		
 		// SUSTITUTIVA
 		replacement.setText(AON.MSG.replacement());
-		replacement.setEnabled(!duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
+		replacement.setEnabled(!reset && !duplicate); // Por defecto deshabilitada si es duplicar, porque el ejercicio por defecto es el siguiente
 		replacement.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -172,6 +176,15 @@ public class NewDeclarationPopup extends CustomDialog {
 		});
 		tab.setWidget(row, 1, replacedReceiptBox);
 		row++;
+		
+		// MENSAJE DE AVISO PARA INICIALIZAR EL MODELO
+		if (reset) {
+			Label labelReset = new Label(AON.MSG.resetWarning());
+			labelReset.addStyleName(AON.CSS.aonMarginTop());
+			labelReset.addStyleName(AON.CSS.aonColorRed());
+			tab.setWidget(row, 0, labelReset);
+			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
+		}
 		
 		rootPanel.add(tab);
 		

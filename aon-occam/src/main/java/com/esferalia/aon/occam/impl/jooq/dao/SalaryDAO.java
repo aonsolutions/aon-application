@@ -23,7 +23,6 @@ import static com.esferalia.aon.watson.util.AonDateUtils.compare;
 import static com.esferalia.aon.watson.util.AonDateUtils.max;
 import static com.esferalia.aon.watson.util.AonDateUtils.min;
 
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;

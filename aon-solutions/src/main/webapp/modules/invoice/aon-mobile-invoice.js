@@ -64,7 +64,7 @@ export class AonMobileInvoice extends AonInvoice {
 
     	let file = this.createElement(TAG.DIV);
 		file.id  = this.FILE;
-	    file.className = CSS.AON_NONE;
+	    file.style.display = 'none';
 	    div.appendChild(file);
 
 		this.buildCommentCard(div);

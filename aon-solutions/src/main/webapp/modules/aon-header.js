@@ -16,6 +16,8 @@ import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { AonComponentsDoc } from './dev/aon-components-doc.js';
 import { AonMessenger } from './messenger/aon-messenger.js';
 import { TASK_SOURCE } from './messenger/MessengerEnums.js';
+import * as LS from '../services/localStorageService.js';
+import { Language } from '../models/Language.js';
 
 export class AonHeader extends AonElement {
 
@@ -72,8 +74,8 @@ export class AonHeader extends AonElement {
 	build() {
 		this.innerHTML = /*html*/`
 			<div id="aonHeaderWeb" class="aonHeader" >
-				<span>
-					<img id="aonLogo" class="aonLogo" width="230px" />
+				<span class="aonHeaderLogoSpan">
+					<img id="aonLogo" class="aonLogo"  />
 				</span>
 
 				<span id="aonHeaderSearch" class="aonLeft250 aonHeaderButton" >
@@ -127,8 +129,9 @@ export class AonHeader extends AonElement {
 				getDomainUserRoles({}).then(r => {
 					this.dur = new DomainUserRoles(r);
 					let d = this.getElement('aonHeaderDialogHelpOption');
-					let options = [{
-						name: 'Soporte / CAU',
+					let options = []
+					let support = {
+						name: MSG.SUPPORT + ' / CAU',
 						icon: MATERIAL_ICONS.SUPPORT_AGENT,
 						fn: () =>{
 							if(this.isBeta()){
@@ -139,8 +142,40 @@ export class AonHeader extends AonElement {
 							}  else 
 								alert('en desarrollo');
 						}
-					}, {
-						name: 'Ayuda',
+					};
+					
+					let language = {
+						name: MSG.LANGUAGE,
+						icon: 'language',
+						options: [{
+							name: MSG.SPANISH,
+							image: '../assets/img/aonIconCastellano.png',
+							fn: () => LS.setLanguage(Language.SPANISH)
+						}, {
+							name: MSG.ENGLISH,
+							image: '../assets/img/aonIconEnglish.png',
+							fn: () => LS.setLanguage(Language.ENGLISH)
+						}, {
+							name: MSG.DEUTSCH,
+							image: '../assets/img/aonIconDeutsch.png',
+							fn: () => LS.setLanguage(Language.DEUTSCH)
+						}, {
+							name: MSG.BASQUE,
+							image: '../assets/img/aonIconEuskera.png',
+							fn: () => LS.setLanguage(Language.BASQUE)
+						}, {
+							name: MSG.CATALAN,
+							image: '../assets/img/aonIconCatala.png',
+							fn: () => LS.setLanguage(Language.CATALAN)
+						}, {
+							name: MSG.GALICIAN,
+							image: '../assets/img/aonIconGalego.png',
+							fn: () => LS.setLanguage(Language.DEUTSCH)
+						} ]
+					};
+
+					let help = {
+						name: MSG.HELP,
 						icon: 'help_outline',
 						fn: () =>{
 							let iframe = document.createElement("iframe");
@@ -149,7 +184,12 @@ export class AonHeader extends AonElement {
 							iframe.src = "http://faqs.aonsolutions.es";
 							this.rootPanel(iframe);
 						} 
-					}];
+					};
+
+					options.push(support)
+					if(this.isBeta()) options.push(language);
+					options.push(help);
+
 					if(this.dur.isDev()) {
 						options.push({
 							name: MSG.COMPONENTS,
@@ -201,11 +241,10 @@ export class AonHeader extends AonElement {
 			localStorage.removeItem('aon_domain_login');
 			clearDurum();
 			this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
+			this.defaultLogo();
 		});
 		if(this.activeTimecontrol) {
-			getTimeControl().then(r => {
-				this.timeControlStatus(r);
-			});;
+			getTimeControl().then(r => this.timeControlStatus(r) );
 		}
 		let aonHeaderUserButton = this.getElement('aonHeaderUserButton');
 		aonHeaderUserButton.addEventListener('click', () => {
@@ -216,7 +255,7 @@ export class AonHeader extends AonElement {
 					this.timeControlStatus(r);
 
 					let d = this.getElement('aonHeaderDialogUserOption');
-
+					
 					let fichajeText = r.status === 'in' ? 'Marcar Salida': 'Marcar Entrada';
 					let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
 					let options = [{
@@ -225,12 +264,12 @@ export class AonHeader extends AonElement {
 							id: 'dialogAlarm',
 							fn: () => this.aonFichar(signin)
 						}, {
-							name: 'Configuración',
+							name: MSG.CONFIGURATION,
 							icon: 'settings',
-							id: 'dialogSettings',
+							id: 'dialogLanguage',
 							fn: () => this.aonConfiguration()
 						}, {
-							name: 'Cerrar Sesión',
+							name: MSG.CLOSE_SESSION,
 							icon: 'input',
 							id: 'dialogLogout',
 							fn: () => {
@@ -243,12 +282,12 @@ export class AonHeader extends AonElement {
 					}).catch(e => {
 						let d = this.getElement('aonHeaderDialogUserOption');
 						let options = [{
-							name: 'Configuración',
+							name: MSG.CONFIGURATION,
 							icon: 'settings',
 							id: 'dialogSettings',
 							fn: () => this.aonConfiguration()
 						}, {
-							name: 'Cerrar Sesión',
+							name: MSG.CLOSE_SESSION,
 							icon: 'input',
 							id: 'dialogLogout',
 							fn: () => closeSession()
@@ -259,12 +298,12 @@ export class AonHeader extends AonElement {
 				} else {
 					let d = this.getElement('aonHeaderDialogUserOption');
 					let options = [{
-							name: 'Configuración',
+							name: MSG.CONFIGURATION,
 							icon: 'settings',
 							id: 'dialogSettings',
 							fn: () => this.aonConfiguration()
 						}, {
-							name: 'Cerrar Sesión',
+							name: MSG.CLOSE_SESSION,
 							icon: 'input',
 							id: 'dialogLogout',
 							fn: () => closeSession()
@@ -333,7 +372,15 @@ export class AonHeader extends AonElement {
 				this.rootPanelHtml('<aon-parent id="aonParent"></aon-parent>');
 			}
 		})
+	}
 
+	defaultLogo() {
+		let aonLogo = this.getElement('aonLogo');
+		if(window.location.href.includes('ayudat')){
+			aonLogo.src = '../assets/ayudat-logo2.png';
+		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
+			aonLogo.src = '../assets/ayudat-logo3.png';
+		} else aonLogo.src = '../assets/aon-logo2.png';
 	}
 
 	aonConfiguration() {

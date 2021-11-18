@@ -2,10 +2,8 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.stream.Stream;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.model.task.TaskWorkflow;
 import com.esferalia.aon.occam.api.model.task.TaskWorkflowType;
 

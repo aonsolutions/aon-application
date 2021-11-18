@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
@@ -885,9 +886,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void sendCertifica2(String currentDomainName, String user, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void sendCertifica2(String currentDomainName, String user, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.sendCertifica2(currentDomainName, user, contractId, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.sendCertifica2(currentDomainName, user, contractId, certifica2Info, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -945,6 +946,20 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	public void contractTransform(String currentDomainName, ContractTransform contractTransform, AsyncCallback<Integer> callback) {
 		AON.start();
 		employeesServiceAsync.contractTransform(currentDomainName, contractTransform, new AsyncCallbackWrapper<Integer>(callback));
+	}
+	
+	// ------------------------------------------------- EmployeeIrpf
+
+	@Override
+	public void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) {
+		AON.start();
+		employeesServiceAsync.getEmployeeIrpf(currentDomainName, ssNumber, startDate, new AsyncCallbackWrapper<List<EmployeeIrpf>>(callback));
+	}
+
+	@Override
+	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
+		AON.start();
+		employeesServiceAsync.setEmployeeIrpf(currentDomainName, contractId, ssNumber, employeeIrpfs, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 }

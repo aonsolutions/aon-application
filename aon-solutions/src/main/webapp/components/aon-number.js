@@ -106,7 +106,7 @@ export class AonNumber extends AonElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        if ('value' === name) {
+        if (CONSTANT.VALUE === name) {
             let input = this.getElement(this.INPUT);
             if (newValue && 'undefined' !== newValue && input && !isNaN(newValue)) input.value = this.onBlur(newValue);
             if (input && newValue === '') input.value = '';
@@ -115,24 +115,23 @@ export class AonNumber extends AonElement {
               desc.classList.add(CSS.AON_INPUT_NOT_EMPTY);
             } else if(desc) desc.classList.remove(CSS.AON_INPUT_NOT_EMPTY);
         }
-        if (CONSTANT.DISABLED === name) {
-            this.getElement(this.getAttribute('id') + 'Input').setAttribute(CONSTANT.DISABLED, this.isDisabled());
-        }
-
-        if (CONSTANT.READONLY === name && this.getElement(this.INPUT)) {
+        else if (CONSTANT.DISABLED === name) {
+            let input = this.getElement(this.INPUT);
+            if(this.isDisabled())
+                input.setAttribute(CONSTANT.DISABLED, this.isDisabled());
+            else 
+                input.removeAttribute(CONSTANT.DISABLED);
+           
+        } else if (CONSTANT.READONLY === name && this.getElement(this.INPUT)) {
             if (this.isReadonly())
                 this.getElement(this.INPUT).setAttribute(CONSTANT.READONLY, this.isReadonly());
             else this.getElement(this.INPUT).removeAttribute(CONSTANT.READONLY);
-        }
-
-        if (CONSTANT.VISIBLE === name) {
+        } else if (CONSTANT.VISIBLE === name) {
             let label = this.getElement(this.getAttribute('id') + 'Label');
             if (label) {
                 label.style.display = this.isVisible() ? 'block' : 'none';
             }
-        }
-
-        if (CONSTANT.DESCRIPTION === name && this.getElement(this.DESCRIPTION)) {
+        } else if (CONSTANT.DESCRIPTION === name && this.getElement(this.DESCRIPTION)) {
             this.getElement(this.DESCRIPTION).innerHTML = newValue;
         }
     }
@@ -173,9 +172,11 @@ export class AonNumber extends AonElement {
         input.id = this.INPUT;
         input.name = this.getAttribute(CONSTANT.NAME);
         input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
+        input.style.fontSize = "14px";
         input.type = 'text';
         input.autocomplete = "off"
-        input.style.textAlign = 'right'
+        input.style.textAlign = 'right';
+        if(this.value) input.value = this.value.replace(".",",");
 
         if(this.iOS()) {
             label.classList.add(CSS.AON_INPUT_IOS)

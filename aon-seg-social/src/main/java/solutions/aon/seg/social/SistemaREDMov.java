@@ -38,6 +38,7 @@ import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.object.Employee;
+import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -175,6 +176,20 @@ class SistemaREDMov {
 		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 	}
 	
+	public static void removeMovConsolidated(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws SegSocialException{
+		
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		
+		try {removeMovConsolidatedImpl(certificateInputStream, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);} 
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e.getMessage());}
+	}
+	
+	
 	public static void cambioGrupCtz(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, 
 			String ipf, String regimen, String ctaCti, String nss, String grupCtz, Date fecha) throws SegSocialException{
@@ -230,6 +245,10 @@ class SistemaREDMov {
 	    	);
 	
 			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			
+			if(employee.getRlce()!=null && !employee.getRlce().isEmpty())
+				form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(employee.getRlce());
+			
 			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
 			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
 			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
@@ -237,7 +256,8 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(employee.getGc().get()); 
 			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(employee.getContract().get());
 			if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValueAttribute().isEmpty()) {
-				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute( employee.getColec() ); 
+				String conv = employee.getColec()!=null ? employee.getColec() : "60888888888888";
+				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(conv); 
 			}
 			if ("0163" == employee.getRegime() && !employee.getMdctz().isEmpty()) {
 				form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());
@@ -341,6 +361,17 @@ class SistemaREDMov {
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 		} 
 	}
+		
+	private static void removeMovConsolidatedImpl(final InputStream certificateInputStream, 
+			final String certificatePassword, final String certificateType, 
+			SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws Exception  {
+			
+		if(SituationType.ALTA.equals(situationType)) {
+			altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, "", regimen, ctaCti, nss);
+		} else if(SituationType.BAJA.equals(situationType)) {
+			removeBajaConsolidatedImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti, nss, ipf, date);
+		}
+	}
 	
 	private static void altaConsolidadaDeleteImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, 
@@ -366,6 +397,39 @@ class SistemaREDMov {
 				handleSegSocialExceptions((XmlPage)pageAux);
 			} else 
 				handleSegSocialExceptions((HtmlPage)pageAux);
+		} 
+	}
+	
+	private static void removeBajaConsolidatedImpl(final InputStream certificateInputStream, 
+			final String certificatePassword, final String certificateType, String regimen, String ctaCti, String nss, String ipf, Date date) throws Exception  {
+		
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR02&E=I&AP=AFIR");
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+			String ident = identity(ipf);
+			String dni =  Toolkit.fillStringLeft(ipf, "0", 10);
+			String[] fra = formatDate(date); //fecha [dia,mes,año]
+			
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			form.getInputByName("txt_SDFIDPRONAF").setValueAttribute(nss.substring(0,2));
+			form.getInputByName("txt_SDFIDNAFCON").setValueAttribute(nss.substring(2));
+			
+			form.getInputByName("txt_SDFIDTIPOPF_ayuda").setValueAttribute(ident);
+			form.getInputByName("txt_SDFIDNIDEPF").setValueAttribute(dni);
+			
+			form.getInputByName("txt_SDFIDREGIMEN_ayuda").setValueAttribute(regimen);
+			form.getInputByName("txt_SDFIDTESCTA").setValueAttribute(ctaCti.substring(0,2));
+			form.getInputByName("txt_SDFIDCTACON").setValueAttribute(ctaCti.substring(2));
+
+			form.getInputByName("txt_SDFIDFREALDD").setValueAttribute(fra[0]); 
+			form.getInputByName("txt_SDFIDFREALMM").setValueAttribute(fra[1]); 
+			form.getInputByName("txt_SDFIDFREALAA").setValueAttribute(fra[2]); 
+			
+			htmlPage = ((HtmlInput)form.querySelector("input[value=\"Continuar\"]")).click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			htmlPage = ((HtmlInput)htmlPage.querySelector("input[value=\"Confirmar\"]")).click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 		} 
 	}
 	
@@ -513,6 +577,7 @@ class SistemaREDMov {
 			final String certificatePassword, final String certificateType, 
 			String ipf, String regimen, String ctaCti, String nss, Date fecha, Optional<String>contract, String coef) throws Exception  {
 		
+
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 
 	        Integer ident  = 1; 
@@ -546,7 +611,8 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFFREALMM").setValueAttribute(fr[1]); 
 			form.getInputByName("txt_SDFFREALAA").setValueAttribute(fr[2]); 
 			
-			if(!contract.isEmpty())form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract.get()); //tipo de contrato
+			
+			if(!contract.isEmpty()) form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract.get()); //tipo de contrato
 			if(coef==null) coef = "0";
 			form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); //coef 3 digits
 			

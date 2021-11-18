@@ -8,12 +8,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.AppParamJSON;
+import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProjectJSON;
 import com.esferalia.aon.occam.api.json.ProjectTypeJSON;
+import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -24,6 +27,7 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.api.utils.TaskUtils.APP_PARAMS_REQUEST;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiProjectServlet", urlPatterns = {"/ms/api/project/*"})
@@ -105,12 +109,19 @@ public class ProjectServlet extends AonApiHttpServlet{
 		JSONArray arr = new JSONArray();
 		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
+			JSONObject json = new JSONObject();
+			json.put(IJsonNames.DOMAIN, DomainJSON.toJSON(domain));
+			JSONArray projects = new JSONArray();
+			json.put(IJsonNames.REGISTRY, RegistryJSON.toJSON(customer));
 			AON.getProjectStream(domain, "", f -> f.getRegistryProperty().eq(customer.getId()).and(f.getProjectTypeProperty().isNotNull()))
 				.forEach(project -> {
 					ProjectHolder holder = AON.getProjectHolder(project.getDomain(), "", f -> f.getProjectProperty().eq(project.getId()).and(f.getEndDateProperty().isNull()));
 					project.setProjectHolder(holder);
-					arr.put(ProjectJSON.toJSON(project));	
+					projects.put(ProjectJSON.toJSON(project));	
 				});
+			json.put("appParams", getAppParams(domain));
+			json.put(IJsonNames.PROJECTS, projects);
+			arr.put(json);
 		});
 		return arr;
 	}
@@ -124,6 +135,15 @@ public class ProjectServlet extends AonApiHttpServlet{
 			arr.put(ProjectJSON.toJSON(project));	
 		});
 		return arr;
+	}
+	
+	private JSONArray getAppParams(Domain domain) {
+		String[] names = new String[] {APP_PARAMS_REQUEST.APP_REQUESTS_EXT_WORKGROUP, APP_PARAMS_REQUEST.APP_REQUESTS_EXT_TASK_HOLDER};
+		return AppParamJSON.toJSON(
+			AON.getApplicationParameterStream(domain.getName(), domain.getId(), "",
+				f-> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().in(names))
+			)
+		);
 	}
 	
     private Filter projectFilter(AonApiData api, ProjectProperties f) {

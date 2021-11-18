@@ -108,7 +108,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
-import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -325,7 +324,13 @@ public class SalaryDraft extends ResizeComposite
 			
 			"CAUSA_INACTIVIDAD",
 			
-			"JORNADAS_TEORICAS"
+			"JORNADAS_TEORICAS",
+			
+			"BONIFICACION_TUTORIA",
+			"BONIFICACION_FORMACION_CONTINUA"
+			
+			
+			
 			
 			
 	};
@@ -4462,7 +4467,7 @@ public class SalaryDraft extends ResizeComposite
 
 		dumpSystemItem(deduction, description, row, percentWidget, expandButton, iconStyles);
 
-		Variable percentVariable = getPercentVariable(deduction.getType());
+		Variable percentVariable = getPercentVariable(getType(deduction, Deduction.Type.OTHER));
 		if (percentVariable == null)
 			return;
 
@@ -5319,7 +5324,7 @@ public class SalaryDraft extends ResizeComposite
 			paymentsTable.insertRow(beforeRow );
 			
 			Double percent = getPercent(cost, salaryDraftObject);
-			Deduction.Type type = cost.getType()  != null  ? cost.getType() : Deduction.Type.OTHER ;
+			Deduction.Type type = getType(cost, Deduction.Type.OTHER);
 
 			Button expandButton = null;
 			if (cost instanceof CompositeDeduction) {
@@ -5471,7 +5476,8 @@ public class SalaryDraft extends ResizeComposite
 
 
 	private Widget newPercentWidget(Deduction deduction, Double percent) {
-		switch (deduction.getType()) {
+		Deduction.Type type = getType(deduction, Deduction.Type.OTHER);
+		switch (type) {
 		case IRPF:
 			return newIrpfPercentBox(deduction, percent);
 		case OTHER:
@@ -5481,7 +5487,7 @@ public class SalaryDraft extends ResizeComposite
 		case UNEMPLOYMENT:
 			return newPercentBox("PORCENTAJE_" + deduction.getName(), deduction, percent);
 		default:
-			return newPercentLabel(deduction, percent, getPercentVariable(deduction.getType()));
+			return newPercentLabel(deduction, percent, getPercentVariable(type));
 		}
 	}
 	
@@ -6266,13 +6272,13 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private static Double getSsPercent(Deduction deduction, SalaryDraftObject draftObject) {
-		return getPercent(deduction.getType(), deduction.getSsAmount(), Double.NaN,
+		return getPercent(getType(deduction, Deduction.Type.OTHER), deduction.getSsAmount(), Double.NaN,
 				draftObject.getSsCgcBase(), draftObject.getSsCgpBase(), draftObject.getSsHExtraBase(),
 				draftObject.getSsNonHExtraBase());
 	}
 
 	private static Double getDbPercent(Deduction deduction, SalaryDraftObject draftObject) {
-		return getPercent(deduction.getType(), deduction.getDbAmount(), draftObject.getDbIrpfBase(),
+		return getPercent(getType(deduction, Deduction.Type.OTHER), deduction.getDbAmount(), draftObject.getDbIrpfBase(),
 				draftObject.getDbCgcBase(), draftObject.getDbCgpBase(), draftObject.getDbHExtraBase(),
 				draftObject.getDbNonHExtraBase());
 	}
@@ -6323,7 +6329,7 @@ public class SalaryDraft extends ResizeComposite
 		} 		
 		
 		
-		return getPercent(deduction.getType(), 
+		return getPercent(getType(deduction, Deduction.Type.OTHER), 
 				deduction.getAmount(), 
 				draftObject.getIrpfBase(),
 				cgcBase, 
@@ -6852,26 +6858,26 @@ public class SalaryDraft extends ResizeComposite
 	
 	// -------------------------------------------------- ContrataEmployee.Methods
 	
-	public void onUndoAll(ClickEvent e) {
+	public void onUndoAll() {
 		salaryDraftObject.clearDrafts();
 		salaryDraftObject.calculate(SalaryDraft.this);
 	}
 	
-	public void onUndo(ClickEvent e) {
+	public void onUndo() {
 		salaryDraftObject.undo();
 		salaryDraftObject.calculate(SalaryDraft.this);
 	}
 	
-	public void onRedo(ClickEvent e) {
+	public void onRedo() {
 		salaryDraftObject.redo();
 		salaryDraftObject.calculate(SalaryDraft.this);
 	}
 	
-	public void onAccept(ClickEvent e) {
+	public void onAccept() {
 		salaryDraftObject.save(this);
 	}
 	
-	public void onSalary(ClickEvent e) {
+	public void onSalary() {
 		salaryDraftObject.save(new CalculateCallback() {
 	
 			@Override
@@ -6891,15 +6897,15 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}
 	
-	public void onExtra(ClickEvent e) {
+	public void onExtra() {
 		salaryDraftObject.emitSalary(this);
 	}
 
-	public void onSettle(ClickEvent e) {
+	public void onSettle() {
 		salaryDraftObject.emitSalary(this);
 	}
 	
-	public void onFx(ClickEvent e) {
+	public void onFx() {
 		final FxDialog fxDialog = new FxDialog(salaryDraftObject);
 		fxDialog.setExpression(fxhasValue.getValue());
 		fxDialog.center();
@@ -6923,12 +6929,12 @@ public class SalaryDraft extends ResizeComposite
 		});
 	}
 	
-	public void onTgssCheckChange(ValueChangeEvent<Boolean> e) {
+	public void onTgssCheckChange() {
 		showTimeRulePanel();
 		showDbTimeRulePanel();
 	}
 	
-	public void onCostsCheck2Change(ValueChangeEvent<Boolean> e) {
+	public void onCostsCheck2Change() {
 		showCosts();
 	}
 	
@@ -6942,15 +6948,15 @@ public class SalaryDraft extends ResizeComposite
 		showPaymentsEvents(eventsTable.isVisible());
 	}
 	
-	public void onPrintPreview(ClickEvent e) {
+	public void onPrintPreview() {
 		printPreview();
 	}
 	
-	public void onIRPFPreview(ClickEvent e) {
+	public void onIRPFPreview() {
 		irpfPrint();
 	}
 	
-	public void onSave(ClickEvent e) {
+	public void onSave() {
 		String fileName = 
 				salaryDraftObject.getEmployeeName() + " " 
 				+ DateTimeFormat.getFormat(PredefinedFormat.MONTH).format(salaryDraftObject.getChargeDate())
@@ -6962,11 +6968,11 @@ public class SalaryDraft extends ResizeComposite
 		// ***************************
 	}
 	
-	public void onClosePreview(ClickEvent e) {
+	public void onClosePreview() {
 		showDraft();
 	}
 	
-	public void onSettlePreviewLBChange(ChangeEvent e) {
+	public void onSettlePreviewLBChange() {
 		printSettle();
 	}
 	
@@ -6975,6 +6981,33 @@ public class SalaryDraft extends ResizeComposite
 	public void hideToolbar(){
 		dockLayoutPanel.remove(toolbar);
 		scrollPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
+	}
+	
+	private static Deduction.Type getType(Item<Deduction.Type> item, Deduction.Type def) {
+		if ( item == null )
+			return def;
+		
+		Deduction.Type t = item.getType();
+		if ( t != null )
+			return t;
+	
+		String name = item.getName();
+		if ( name == null )
+			return def;
+		switch (name) {
+		case "FOGASA":
+		case "FOGASA_IT":
+			return Deduction.Type.FOGASA;
+		case "IT_E":
+		case "IMS_E":
+			return Deduction.Type.PROFESSIONAL_CONTINGENCY;
+		case "IRPF":
+			return Deduction.Type.IRPF;
+
+		default:
+			return def;
+		}
+		
 	}
 
 }

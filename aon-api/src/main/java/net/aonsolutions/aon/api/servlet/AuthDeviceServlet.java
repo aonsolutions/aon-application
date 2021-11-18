@@ -36,27 +36,26 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		try {
 			AonApiData api = initialize(req, resp);
-			LOGGER.info("AON AUTHDEVICE  SERVLET - GET METHOD");
-			Object responseObject = null;
-
 			switch (api.getPath()) {
-			case "/save":
-				responseObject = save(api);
-			break;
-			case "/delete":
-				responseObject = delete(api);
-			break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
+				case "/save":
+					LOGGER.info("AON AUTHDEVICE SAVE  SERVLET - GET METHOD");
+					response(req, resp, save(api));
+				break;
+				case "/delete":
+					LOGGER.info("AON AUTHDEVICE DELETE  SERVLET - GET METHOD");
+					response(req, resp, delete(api));
+				break;
+				default:
+					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
-			
-			response(req, resp, responseObject);
+	
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}	
 	
 	private JSONObject save(AonApiData api) {
+		JSONObject json = new JSONObject();
 		if(!api.getData().optString("tokenFCM").isEmpty()) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
 			Domain domain = new Domain().setName(aonToken.getSchemaFirstDomain()).setId(0);
@@ -65,13 +64,14 @@ public class AuthDeviceServlet extends AonApiHttpServlet{
 					.setAuth(aonToken.getAuth())
 					.setDeviceType(DeviceType.safeValueOf(api.getData().optString("device_type")))
 					.setDeviceToken(api.getData().optString("tokenFCM"));
-			return SECURITY.saveAuthDevice(domain, api.getUser().getLogin(), authDevice).toJSON();
+			json = SECURITY.saveAuthDevice(domain, api.getUser().getLogin(), authDevice).toJSON();
 		}
-		return new JSONObject();
+		return json;
 	}
 	
 	private JSONObject delete(AonApiData api) {
-		SECURITY.deleteAuthDevice(api.getDomain(), api.getUser().getLogin(), f-> f.getIdProperty().eq(api.getData().optInt("id")));
+		if(!api.getData().isNull("tokenFCM"))
+			SECURITY.deleteAuthDevice(api.getDomain(), api.getUser().getLogin(), f-> f.getDeviceTokenProperty().eq(api.getData().optString("tokenFCM")));
 		return new JSONObject();
 	}
 }

@@ -61,7 +61,6 @@ public class NewDeclarationPopup<T extends FiscalModel,O extends FiscalModelModu
 			tab.setWidget(row, 0, labelReset);
 			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		}
-		
 		rootPanel.add(getButtonsPanels( model ));
 		add(rootPanel);
 	}

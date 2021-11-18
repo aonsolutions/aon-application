@@ -1,8 +1,10 @@
 import { AonElement } from './AonElement.js';
 import { getRegistries, getRegistryAddress } from '../services/service.js';
 
-import { AonSuggestion, AonAddress } from './components.js';
+import { AonSuggestion} from './aon-suggestion.js';
+
 import { CONSTANT, CSS, EVENT, MSG, TAG } from '../environments/environments.js';
+import { AonAddress } from './aon-address.js';
 
 export class AonRegistry extends AonElement {
 
@@ -120,7 +122,7 @@ export class AonRegistry extends AonElement {
         // enter
         this.closeOptions();
         this.setRegistry(this.options[this.selected].registry);
-        this.dispatchEvent(new Event(EVENT.SELECT));
+        // this.dispatchEvent(new Event(EVENT.SELECT));
        } else {
           console.log(doc.value);
           if(doc.value.length > 2) {
@@ -176,7 +178,7 @@ export class AonRegistry extends AonElement {
         // enter
         this.closeOptions();
         this.setRegistry(this.options[this.selected].registry);
-        this.dispatchEvent(new Event(EVENT.SELECT));
+        // this.dispatchEvent(new Event(EVENT.SELECT));
        } else {
          if(name.value.length > 2) {
           console.log(this.types);
@@ -206,10 +208,11 @@ export class AonRegistry extends AonElement {
       address.id = this.ADDRESS;
       address.title = MSG.ADDRESS;
       address.readonly = this.isReadonly();
+      address.setAddress(this.registry.address);
       div2.appendChild(address);
-      address.buildAddressValue(this.registry.address)
+
       address.addEventListener(EVENT.CHANGE, () => {
-        this.registry.address = JSON.parse(address.value);
+        this.registry.address = address.getAddress();
         this.dispatchEvent(new Event(EVENT.CHANGE));
       });
     }
@@ -222,9 +225,10 @@ export class AonRegistry extends AonElement {
     if(options && options.length > 0){
       let div = this.getElement(this.OPTIONS);
       div.classList.add('is-visible');
-      let ul = this.createElement('ul');
+      let ul = this.createElement(TAG.UL);
       ul.id = this.OPTIONS_UL;
-      ul.className = CSS.AON_INPUT_LIST_OPTIONS_UL;
+      ul.classList.add(CSS.AON_UL);
+      ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
       ul.setAttribute('for', this.getAttribute('id') + 'Icon');
       for (let i = 0; i < options.length; i++) {
         let li = this.createElement('li');
@@ -234,7 +238,7 @@ export class AonRegistry extends AonElement {
         li.addEventListener('click', (e) => {
           div.classList.remove('is-visible');
           this.setRegistry(options[i].registry);
-          this.dispatchEvent(new Event(EVENT.SELECT));
+          // this.dispatchEvent(new Event(EVENT.SELECT));
         });
         ul.appendChild(li);
       }
@@ -273,11 +277,12 @@ export class AonRegistry extends AonElement {
       if(address) {
         let data = {registry: registry.id, global: registry.global};
         getRegistryAddress(data).then(ra => {
-           address.buildAddressValue(ra);
-           this.registry.address = ra;
-           this.dispatchEvent(new Event(EVENT.CHANGE));
+            ra.registry = registry.id;
+            address.setAddress(ra, true);
+            this.registry.address = ra;
+            this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
         });
-      }
+      } else this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));
     }
   }
 

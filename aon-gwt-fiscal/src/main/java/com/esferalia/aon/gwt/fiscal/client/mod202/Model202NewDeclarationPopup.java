@@ -29,9 +29,10 @@ public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202,Mode
 		}
 	}
 
-	
 	public Model202NewDeclarationPopup(Mod202 mod202, Model202Callback callback) {
-		super(mod202,callback);
+		super(mod202,false, callback);
+	public Model202NewDeclarationPopup(Mod202 mod202,boolean reset, IFiscalModelCallback<Mod202> callback) {
+		super(reset, callback);
 	}
 	
 	protected void paintAdministration(Mod202 mod202) {
@@ -61,6 +62,7 @@ public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202,Mode
 				}
 			}
 		}
+		periodList.setEnabled(!reset);
 		periodList.addChangeHandler( new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -89,6 +91,7 @@ public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202,Mode
 		});
 		tab.setWidget(row, 1, r21Box);
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
 	}
 	
 }

@@ -387,8 +387,8 @@ public class FinanceDAO {
 	// ------ FINANCE --- CALCULO EN FUNCION DE RPAYMETHOD ---------
 	// -------------------------------------------------------------
 	public static LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice) {
-		LinkedList<Finance> finances = new LinkedList<Finance>();
-		RegistryPayMethod rPayMethod = RegistryOldDAO.getRPayMethodStream(ctx, prop -> prop.getDomainProperty()
+		LinkedList<Finance> finances = new LinkedList<>();
+		RegistryPayMethod rPayMethod = RegistryPayMethodDAO.getStream(ctx, prop -> prop.getDomainProperty()
 				.eq(ctx.getDomainId()).and(prop.getRegistryProperty().eq(invoice.getRegistry()))).findFirst()
 				.orElse(null);
 		;
@@ -408,7 +408,7 @@ public class FinanceDAO {
 		double paymentPrice = AonMathUtils.round(invoice.getTotal() / numberOfPymnts);
 		for (int i = 0; i < numberOfPymnts; i++) {
 			int days = (i==0?daysToFirstPymnt:daysBetwenPymnts);
-			date = (rPayMethod==null? date : calculatePaymentDate(days, rPayMethod.getPymnt_days(), date));
+			date = (rPayMethod==null? date : calculatePaymentDate(days, rPayMethod.getPymntDays(), date));
 			Finance finance = buildFinance(invoice, date, payMethod , rBank, paymentPrice );  
 			finances.add(finance);
 		}

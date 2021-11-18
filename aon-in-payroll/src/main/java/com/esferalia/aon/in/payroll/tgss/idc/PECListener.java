@@ -16,7 +16,7 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
-class PECListener  implements IdcListener {
+class PECListener  implements IdcParserListener {
 	
 	@FunctionalInterface
 	private static interface CostProvider {
@@ -57,6 +57,13 @@ class PECListener  implements IdcListener {
 			put("57", "CUOTA_EMPRESARIAL"); 	// Cuota Total
 			put("68", "CGC_E + IT_E + IMS_E"); 	// Contingencias Comunes y Profesionales - Cuota Total
 			//put("81", "");
+		}
+	};
+
+	@SuppressWarnings("serial")
+	static final Map<String, String> DEDUCTION_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
+		{
+			put("08", "-CUOTA_TRABAJADOR"); 	// 
 		}
 	};
 
@@ -179,7 +186,7 @@ class PECListener  implements IdcListener {
 		return Collections.unmodifiableCollection(ssPECs);
 	}
 
-	// ------------------------------------------------------------ IdcListener
+	// ------------------------------------------------------------ IdcParserListener
 
 	@Override
 	public void onEmployeeQuotePEC(String nss, String ccc, String code, String description, String portTipo,
@@ -188,6 +195,8 @@ class PECListener  implements IdcListener {
 			try {
 				if ( BONUS_QUOTA_EXPRESSION_MAP.containsKey(quota))
 					ssPECs.add( newBonus(nss, ccc, code, description, portTipo, quota, start, end)) ;
+				if ( DEDUCTION_QUOTA_EXPRESSION_MAP.containsKey(quota))
+					ssPECs.add( newDeduction(nss, ccc, code, description, portTipo, quota, start, end)) ;
 			} catch (ParseException e) {
 			}
 		}
@@ -217,13 +226,42 @@ class PECListener  implements IdcListener {
 		ssBonus.setStartDate(start);
 		ssBonus.setEndDate(end);
 		ssBonus.setDescription(String.format(new Locale("es", "ES"),PEC_DESCRIPTION_MAP.getOrDefault(code, "%s (%.2f%%)"), description, percent));
-		ssBonus.setFormula(getEnterpriseFormula(code, portTipo, quota, start, end));
+		ssBonus.setFormula(getBonusFormula(code, portTipo, quota, start, end));
 		
 		
 		return ssBonus;
 	}
 
-	private static String getEnterpriseFormula(String code, String portTipo,
+	private static PEC newDeduction(String nss, String ccc, String code, String description, String portTipo,
+			String quota, Date start, Date end) throws ParseException {
+		
+		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
+		
+		PEC ssDeduction = new PEC.Deduction();		
+		ssDeduction.setCcc(ccc);
+		ssDeduction.setNss(nss);
+		ssDeduction.setStartDate(start);
+		ssDeduction.setEndDate(end);
+		ssDeduction.setName(ContextVariable.BONUS_EMPLOYEE.getName());
+		ssDeduction.setDescription(String.format(new Locale("es", "ES"),PEC_DESCRIPTION_MAP.getOrDefault(code, "%s (%.2f%%)"), description, percent));
+		ssDeduction.setFormula(getDeductionFormula(code, portTipo, quota, start, end));
+		
+		
+		return ssDeduction;
+	}
+
+	private static String getBonusFormula(String code, String portTipo,
+			String quota, Date start, Date end) throws ParseException {
+		return getFormula(BONUS_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
+		
+	}
+	
+	private static String getDeductionFormula(String code, String portTipo,
+			String quota, Date start, Date end) throws ParseException {
+		return getFormula(DEDUCTION_QUOTA_EXPRESSION_MAP.get(quota), code, portTipo, quota, start, end);
+	}
+	
+	private static String getFormula(String expression, String code, String portTipo,
 			String quota, Date start, Date end) throws ParseException {
 
 		double percent = NUMBER_FORMAT.parse(portTipo).doubleValue();
@@ -231,21 +269,19 @@ class PECListener  implements IdcListener {
 		
 		formula = String.format(Locale.ROOT,
 			"/*epoch:%d,pec:%s,quota:%s*//*read-only*/%s/**/",
-			//(percent == 100.00 ? "/*read-only*/%s/**/" : "/*read-only*/( %s ) * %.2f /**/"), 
 			Calendar.getInstance().getTimeInMillis(),
 			code, 
 			quota,
-			
-			String.format(Locale.ROOT, PEC_EXPRESSION_MAP.get(code), BONUS_QUOTA_EXPRESSION_MAP.get(quota), percent), 
-			
-			(percent / 100.00)
-			
+			String.format(Locale.ROOT, PEC_EXPRESSION_MAP.get(code), expression, percent) 
 			);
 		
 		return formula;
 	}
-	
-	
+
+	private static DeductionProvider newZeroDeduction( ContextVariable var ) {
+		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newZeroDeduction(nss, ccc, pec, quota, portTipo, description, start, end, var);
+	}
+
 	private static DeductionProvider newNegativeDeduction( ContextVariable var ) {
 		return (nss, ccc, pec, quota, portTipo, description, start, end) -> newNegativeDeduction(nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
@@ -270,6 +306,20 @@ class PECListener  implements IdcListener {
 			ContextVariable var){
 		PEC.Deduction deduction =  new PEC.Deduction();	
 		return newNegativePEC(deduction, nss, ccc, pec, quota, portTipo, description, start, end, var);
+	}
+
+	private static PEC.Deduction newZeroDeduction(
+			String nss, 
+			String ccc, 
+			String pec, 
+			String quota, 
+			String portTipo,
+			String description, 
+			Date start, 
+			Date end ,
+			ContextVariable var){
+		PEC.Deduction deduction =  new PEC.Deduction();	
+		return newZeroPEC(deduction, nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
 	private static PEC.Deduction newRemoveDeduction(
@@ -300,6 +350,34 @@ class PECListener  implements IdcListener {
 		return newRemovePEC(cost, nss, ccc, pec, quota, portTipo, description, start, end, var);
 	}
 
+	private static <T extends PEC> T newZeroPEC(
+			T t,
+			String nss, 
+			String ccc, 
+			String pec, 
+			String quota, 
+			String portTipo,
+			String description, 
+			Date start, 
+			Date end ,
+			ContextVariable var){
+		
+		t.setCcc(ccc);
+		t.setNss(nss);
+		t.setStartDate(start);
+		t.setEndDate(end);
+		t.setFormula(String.format(Locale.ROOT,
+				"/*epoch:%d,pec:%s,quota:%s*//*read-only*/0.00/**/", 
+				Calendar.getInstance().getTimeInMillis(),
+				pec, 
+				quota
+				));
+		t.setDescription(String.format(new Locale("es", "ES"),"%s %s (%s%%)", description, getDescription(var), portTipo));
+		t.setName(var.getName());
+		
+		return t;
+	}
+
 	private static <T extends PEC> T newRemovePEC(
 			T t,
 			String nss, 
@@ -322,7 +400,7 @@ class PECListener  implements IdcListener {
 				pec, 
 				quota
 				));
-		t.setDescription(String.format(new Locale("es", "ES"),"%s (%s)", description, portTipo));
+		t.setDescription(String.format(new Locale("es", "ES"),"%s %s (%s)", description, getDescription(var), portTipo));
 		t.setName(var.getName());
 		
 		return t;
@@ -386,6 +464,29 @@ class PECListener  implements IdcListener {
 			return DeductionType.FOGASA;
 		default:
 			return DeductionType.BONUS;
+		}
+	}
+	
+	private static String getDescription(ContextVariable var) {
+		switch (var) {
+		case IT_ENTERPRISE:
+			return "IT";
+		case IMS_ENTERPRISE:
+			return "IMS";
+		case FP_EMPLOYEE:
+		case FP_ENTERPRISE:
+			return "F.P";
+		case CGC_EMPLOYEE:
+		case CGC_ENTERPRISE:
+			return "CONTINGENCIAS COMUNES";
+		case FOGASA_ENTERPRISE:
+			return "FOGASA";
+		case UNEMPLOY_EMPLOYEE:
+		case UNEMPLOY_ENTERPRISE:
+			return "DESEMPLEO";
+
+		default:
+			return "";
 		}
 	}
 

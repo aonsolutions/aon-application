@@ -21,7 +21,7 @@ public class Item implements Serializable {
 	private Date serialDate;
 	private String barcode;
 	
-	private ProductStatus status; // TODO
+	private ProductStatus status;
 	private Product product;
 	
 	private Double price;
@@ -192,6 +192,9 @@ public class Item implements Serializable {
 	}
 
 	public Tag getPackFormatTag() {
+		if(packFormatTag == null) {
+			packFormatTag = new Tag();
+		}
 		return packFormatTag;
 	}
 	
@@ -210,6 +213,8 @@ public class Item implements Serializable {
 	}
 
 	public Tag getPackUnitsTag() {
+		if(packUnitsTag == null)
+			packUnitsTag = new Tag();
 		return packUnitsTag;
 	}
 	
@@ -228,6 +233,8 @@ public class Item implements Serializable {
 	}
 
 	public Tag getPackMeasurementTag() {
+		if(packMeasurementTag == null)
+			packMeasurementTag = new Tag();
 		return packMeasurementTag;
 	}
 	
@@ -237,6 +244,8 @@ public class Item implements Serializable {
 	}
 
 	public Tag getStockUnitTag() {
+		if(stockUnitTag == null)
+			stockUnitTag = new Tag();
 		return stockUnitTag;
 	}
 	

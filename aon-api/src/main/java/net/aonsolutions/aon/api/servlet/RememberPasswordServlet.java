@@ -57,12 +57,10 @@ public class RememberPasswordServlet extends AonApiHttpServlet {
 	}
 	
 	public void sendGmail(AonApiData api, String to, String password) {
-		Company cp = AON.getCompany(api.getDomain().getName(), api.getUser().getDomain(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(api.getUser().getDomain()));
 		SESMessage msg = new SESMessage()
 			.setTo(to)
 			.setSubject("RECORDAR CLAVE")
-			.setBody(getContent(password))
-			.setAlias(cp.getName());
+			.setBody(getContent(password));
 		SES.sendEmail(msg);
 	}
 

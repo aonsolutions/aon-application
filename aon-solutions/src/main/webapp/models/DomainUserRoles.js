@@ -1,5 +1,6 @@
 import {App, OldModule, Role} from './enums.js';
 import * as LS from '../services/localStorageService.js';
+import { Domain } from './Domain.js';
 
 export class DomainUserRoles {
 
@@ -22,7 +23,7 @@ export class DomainUserRoles {
 
 
   constructor(data) {
-    this.domain = data.domain;
+    this.domain = new Domain(data.domain);
     this.user = data.user;
     this.parentUser = data.parentUser;
     this.domainApps = data.domainApps;
@@ -418,5 +419,10 @@ export class DomainUserRoles {
 
   isEnterprise() {
     return this.hasRole(Role.ENTERPRISE);
+  }
+
+
+  hasCustomView() {
+    return this.hasApp(App.CUSTOM_VIEW);
   }
 }

@@ -9,8 +9,10 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
+import javax.imageio.spi.IIORegistry;
 
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.jbig2.JBIG2ImageReaderSpi;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
@@ -19,6 +21,8 @@ import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.text.PDFTextStripper;
 
+import com.github.jaiimageio.jpeg2000.impl.J2KImageReaderSpi;
+
 import solutions.aon.in.invoice.InvoiceBuilder;
 import solutions.aon.in.invoice.InvoiceTemplate;
 import solutions.aon.in.invoice.UnknownInvoiceException;
@@ -26,6 +30,15 @@ import solutions.aon.in.invoice.img.InvoiceIMGParser;
 import solutions.aon.in.invoice.templates.Templates;
 
 public class InvoicePDFParser {
+	
+	static {
+		IIORegistry registry = IIORegistry.getDefaultInstance();
+		registry.registerServiceProvider(new J2KImageReaderSpi());
+		registry.registerServiceProvider(new JBIG2ImageReaderSpi());
+	}
+
+	private InvoicePDFParser() {
+	}
 	
 	public static void parse( File file , InvoiceBuilder<?> handler) throws InvoicePDFException {
 		try (PDDocument doc = PDDocument.load(file)) {

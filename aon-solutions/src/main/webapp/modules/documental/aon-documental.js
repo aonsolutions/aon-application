@@ -17,7 +17,8 @@ import '../../components/aon-input.js';
 import { getReader } from '../../services/utils.js';
 import Apps from '../../services/app.js';
 
-
+import '../../css/aon-mobile.css';
+import '../../css/aon.css';
 
 export class AonDocumental extends AonElement {
     _filter;
@@ -37,7 +38,7 @@ export class AonDocumental extends AonElement {
     connectedCallback () {
       this.initialize();
       this.innerHTML = `
-        <aon-application id="${this.DOCUMENTAL}" title="${MSG.DOCUMENTARY}"></aon-application>
+        <aon-application id="${this.DOCUMENTAL}" title="${MSG.DOCUMENTARY}" drag_and_drop='true'></aon-application>
         <input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
       `;
       getDomainUserRoles({}).then(r => {
@@ -72,11 +73,8 @@ export class AonDocumental extends AonElement {
 
       input.addEventListener(EVENT.CHANGE, () => this.upload(input.files));
 
-  		aonDocumental.addEventListener('drop', (event) => {
-  			if(event && event.dataTransfer && event.dataTransfer.files){
-  				this.upload(event.dataTransfer.files);
-  			}
-  		});
+      aonDocumental.addEventListener(EVENT.AON_APPLICATION_DROP, (e) => this.upload(e.detail));
+
       if(this.isMobile()) {
         if(this.getDur().isDocumentalPortal() || this.getDur().isDocumentalManager())
           aonDocumental.addFloatOption(ACTION.UPLOAD_FILE, () => this.addDocumentalFile());

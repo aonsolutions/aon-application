@@ -74,7 +74,8 @@ public class Model180 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew(Model180ModuleOptions options);
-		void onDuplicate(Model180ModuleOptions options, int id);		
+		void onReset(Model180ModuleOptions options, Mod180 mod180);
+		void onDuplicate(Model180ModuleOptions options, int id);				
 	}
 
 	protected class Model180Callback implements IModel180Callback {
@@ -93,6 +94,10 @@ public class Model180 extends MainEntryPoint {
 		@Override
 		public void onNew(Model180ModuleOptions options) {
 			newModel(options);
+		}
+		@Override
+		public void onReset(Model180ModuleOptions options, Mod180 mod180) {
+			resetModel(options, mod180);
 		}
 		@Override
 		public void onDuplicate(Model180ModuleOptions options, int id) {
@@ -268,6 +273,31 @@ public class Model180 extends MainEntryPoint {
 				});
 	}
 	
+	private void resetModel(Model180ModuleOptions options, Mod180 oldMod180) {
+		cleanErrorPanel();
+		SERVICE.initializeMod180(getCurrentDomainName(), getCurrentUser(),getCurrentDomain(), oldMod180.getYear(),
+				new AsyncCallback<Mod180>() {
+					@Override
+					public void onSuccess(Mod180 newMod180) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+						
+						newMod180.setAdministration(oldMod180.getAdministration());
+						newMod180.setYear(oldMod180.getYear());
+						newMod180.setComplementary(oldMod180.isComplementary());
+						newMod180.setReplacement(oldMod180.isReplacement());
+						newMod180.setReplacedReceipt(oldMod180.getReplacedReceipt());						
+						showResetDeclarationPopup(options, newMod180, oldMod180);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
+	}
+	
 	private void duplicateModel(Model180ModuleOptions options, int id) {
 		cleanErrorPanel();
 		SERVICE.getMod180(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), id,
@@ -407,8 +437,63 @@ public class Model180 extends MainEntryPoint {
 			newDialog.show();
 	}
 	
+	private void showResetDeclarationPopup(Model180ModuleOptions options, Mod180 newMod180, Mod180 oldMod180) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup( newMod180, false, true,
+			new Model180Callback() {
+
+					@Override
+					public void onAccept(Mod180 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+						
+						SERVICE.deleteMod180(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), oldMod180, 
+								new AsyncCallback<Void>() {
+							
+									@Override
+									public void onSuccess(Void result) {
+										
+										SERVICE.saveMod180(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), model,
+												new AsyncCallback<Mod180>() {
+													@Override
+													public void onSuccess(Mod180 model) {
+														popup.hide();
+														select(options, model, null);
+													}
+		
+													@Override
+													public void onFailure(Throwable caught) {
+														popup.hide();
+														showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+													}
+												});
+										
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+									}
+						});
+
+					}
+					
+					@Override
+					public void onCancel() {};
+					
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+	
 	private void showDuplicateDeclarationPopup(Model180ModuleOptions options, Mod180 model) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, 
+		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, false, 
 			new Model180Callback() {
 
 					@Override

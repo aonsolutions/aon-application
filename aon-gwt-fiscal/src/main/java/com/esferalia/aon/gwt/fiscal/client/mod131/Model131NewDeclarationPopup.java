@@ -23,7 +23,9 @@ import com.google.gwt.user.client.ui.TextBox;
 public class Model131NewDeclarationPopup extends NewDeclarationPopup<Mod131,Model131ModuleOptions>{
 
 	public Model131NewDeclarationPopup(Mod131 mod131,Model131Callback callback) {
-		super(mod131,callback);
+		super(mod131,false,callback);
+	public Model131NewDeclarationPopup(Mod131 mod131,boolean reset, IFiscalModelCallback<Mod131> callback) {
+		super(reset, callback);
 	}
 	
 	@Override

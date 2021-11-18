@@ -2,7 +2,6 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.MaritalStatus;
@@ -17,6 +16,13 @@ public class Person extends Registry implements Serializable {
     private String firstName;
     private String firstSurname;
     private String secondSurname;
+    
+	public Person() {}
+	
+    public Person copy(Registry registry) {
+		return super.copy(registry, this);
+	}
+	
 
 	public Date getBirthDate() {
 		return birthDate;

@@ -88,7 +88,7 @@ public class InvoiceApiDAO {
 	
 
 
-	public static class InvoiceApiFiller  implements Function<Record,Invoice> {
+	public static class InvoiceApiFiller implements Function<Record,Invoice> {
 		AONContext aonCtx;
 		public InvoiceApiFiller(AONContext ctx) {
 			this.aonCtx = ctx;
@@ -124,8 +124,8 @@ public class InvoiceApiDAO {
 				.setProject(record.getValue(INVOICE.PROJECT))
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,record.getValue(INVOICE.RECTIFICATION_TYPE)))	
 				.setRectificationInvoice(record.getValue(INVOICE.RECTIFICATION_INVOICE))	
-				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,record.getValue(INVOICE.TRANSACTION)))
-				.setRecorded(record.getValue(INVOICE.STATUS) == 1 )	
+				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class, record.getValue(INVOICE.TRANSACTION)))
+				.setRecorded(record.getValue(INVOICE.STATUS) != null && record.getValue(INVOICE.STATUS) == 1 )	
 				.setSurcharge(record.getValue(INVOICE.SURCHARGE) == 1 )	
 				.setWithholding(record.getValue(INVOICE.WITHHOLDING) == 1 )	
 				.setWithholdingFarmer(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	

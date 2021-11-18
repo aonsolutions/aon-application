@@ -9,7 +9,7 @@ import '../../components/aon-card.js';
 import '../../components/aon-icon-button.js';
 import '../../components/aon-icon.js';
 
-import { MSG } from '../../environments/environments.js'; 
+import { CSS, MSG, TAG } from '../../environments/environments.js'; 
 
 export class AonMarketplace extends AonElement {
 
@@ -67,22 +67,23 @@ export class AonMarketplace extends AonElement {
 		this.buildTitle('Packs');
 		this.buildApps(Packs, dur);
 
-		this.buildTitle('Aplicaciones');
+		this.buildTitle(MSG.APPLICATIONS);
 		this.buildApps(Apps, dur);
 
-		this.buildTitle('Servicios');
+		this.buildTitle(MSG.SERVICES);
 		this.buildApps(Services, dur);
 
-		this.buildTitle('Aplicaciones Clásicas');
+		this.buildTitle(MSG.CLASSIC_APPLICATIONS);
 		this.buildApps(ClassicApps, dur);
 
-		this.buildTitle('Otros Servicios');
+		this.buildTitle(MSG.OTHER_SERVICES);
 		this.buildApps(OtherServices, dur);
 	}
 
 	buildApps(apps, dur) {
-		let ul = document.createElement('ul');
-		ul.className = 'list-group-top';
+		let ul = document.createElement(TAG.UL);
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_LIST_GROUP_TOP);
 		ul.style.marginLeft = '60px';
 		ul.style.marginRight = '60px';
 		this.appendChild(ul);
@@ -90,7 +91,8 @@ export class AonMarketplace extends AonElement {
 			const app = apps[key];
 			let contratado = this.hasApp(dur, app.app.toUpperCase());
 			let li = document.createElement('li');
-			li.className = 'list-group-item aonAppLi';
+		  	li.classList.add(CSS.AON_LIST_GROUP_ITEM);
+		    li.classList.add(CSS.AON_APP_LI);
 			let span = document.createElement('span');
 			span.style.margin = '20px';
 
@@ -128,7 +130,7 @@ export class AonMarketplace extends AonElement {
 			price.innerHTML = app.price;
 			buttons.appendChild(price);
 
-			let moreInfo = document.createElement('a');
+			let moreInfo = document.createElement(TAG.A);
 			moreInfo.style.margin = '10px';
 			moreInfo.style.color = 'gray';
 			moreInfo.style.cursor = 'pointer';
@@ -315,6 +317,9 @@ export class AonMarketplace extends AonElement {
 			return dur.hasPackSuite();
 		else if(App.AIO === app)
 			return false;
+		else if(App.BANK === app) {
+			return dur.getDomain().isParent();
+		}
 		else return false;
 	}
 }

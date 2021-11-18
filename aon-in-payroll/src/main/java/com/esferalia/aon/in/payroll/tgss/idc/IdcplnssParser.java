@@ -31,21 +31,21 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IdcplnssParser {
 
-	public static void parse( File file , IdcListener listener) throws IOException, UnknownPDFException {
+	public static void parse( File file , IdcParserListener listener) throws IOException, UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(file))
 		{
 			parse(doc, listener);
 		}
 	}
 
-	public static void parse( InputStream is ,IdcListener listener) throws IOException , UnknownPDFException {
+	public static void parse( InputStream is ,IdcParserListener listener) throws IOException , UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(is))
 		{
 			parse(doc, listener);
 		}
 	}
 	
-	public static void parse(PDDocument doc, IdcListener listener) throws IOException, UnknownPDFException {
+	public static void parse(PDDocument doc, IdcParserListener listener) throws IOException, UnknownPDFException {
        AccessPermission ap = doc.getCurrentAccessPermission();
 		if (!ap.canExtractContent())
 		{
@@ -74,7 +74,7 @@ public class IdcplnssParser {
 			
 	}
 		
-	public static void parse(String text, IdcListener listener) throws IOException, UnknownPDFException {
+	public static void parse(String text, IdcParserListener listener) throws IOException, UnknownPDFException {
 		//System.out.println(text);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			Matcher matcher = find(reader, EMPLOYEE_NAME_NSS_NIF);
@@ -138,12 +138,12 @@ public class IdcplnssParser {
 		}
 	}
 
-	private static void onNoEmployeeQuotePEC(IdcListener listener, String ssNum, String ccc, Date start, Date end) {
+	private static void onNoEmployeeQuotePEC(IdcParserListener listener, String ssNum, String ccc, Date start, Date end) {
 		listener.onNoEmployeeQuotePEC(ssNum, ccc, start, end);
 	}
 
 
-	private static void onEmployeeQuotePEC(IdcListener listener, String enterpriseCCC, String employeeeNss,
+	private static void onEmployeeQuotePEC(IdcParserListener listener, String enterpriseCCC, String employeeeNss,
 			Date startDate, Date endDate, String code, String description, String tipo, String quota) {
 		code = remove(code, " ");
 		tipo = remove(tipo, " ");
@@ -159,17 +159,17 @@ public class IdcplnssParser {
 				endDate);
 	}
 
-	private static void onEmployeeQuoteGroup(IdcListener listener, String group) {
+	private static void onEmployeeQuoteGroup(IdcParserListener listener, String group) {
 		group = trim(group);
 		listener.onEmployeeQuoteGroup(group);
 	}
 
-	private static void onEmployeePeriod(IdcListener listener, String enterpriseCCC, String employeeeNss,
+	private static void onEmployeePeriod(IdcParserListener listener, String enterpriseCCC, String employeeeNss,
 			Date startDate, Date endDate) {
 		listener.onEmployeePerido(employeeeNss, enterpriseCCC, startDate, endDate);
 	}
 
-	private static void onEmployee(IdcListener listener, String nss, String name) {
+	private static void onEmployee(IdcParserListener listener, String nss, String name) {
 		nss = remove(nss, " ");
 		
 		name  = trim(name);
@@ -180,7 +180,7 @@ public class IdcplnssParser {
 		listener.onEmployee(nss, name);
 	}
 
-	private static void onEnterprise(IdcListener listener, String socialReason, String enterpriseCCC,
+	private static void onEnterprise(IdcParserListener listener, String socialReason, String enterpriseCCC,
 			String enterpriseRegime ) {
 		socialReason = trim(socialReason);
 		enterpriseCCC = remove(enterpriseCCC, " ");

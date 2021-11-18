@@ -1,9 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {RegistryType, ToolbarType} from '../../models/enums.js';
 
-import '../../components/aon-address.js';
-import '../../components/aon-input.js';
-
 import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
 
@@ -125,14 +122,10 @@ export class AonProject extends AonElement {
 		registry.types = RegistryType.CUSTOMER;
 		registry.value = this.project.getRegistry();
 		registry.setRegistry(this.project.getRegistry());
-		registry.addEventListener(EVENT.CHANGE, () => {
+		registry.addEventListener(EVENT.SELECT_REGISTRY, () => {
 			this.project.setRegistry(registry.getRegistry());
 			if(this.autosave) this.save();
-		});
-		registry.addEventListener(EVENT.SELECT, () => {
-			this.project.setRegistry(registry.getRegistry());
-			if(this.autosave) this.save();
-		});
+		})
 		table.addCell(registry,2);
 		registry.showAddress = false;
 

@@ -200,7 +200,7 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 				} else {
 					tracking.setRegistryBank(rbank);
 					bankAccountBox.setValue(rbank.getBankAccount());
-					payAccount.setValue(rbank.getAccount(),rbank.getAccountCode(),rbank.getAccountDescription(),true);
+					payAccount.setValue(rbank.getAccountId(),rbank.getAccountCode(),rbank.getAccountDescription(),true);
 				}
 			}
 		});
@@ -422,7 +422,7 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 						} else {
 							tracking.setRegistryBank(selected);
 							tracking.setPayAccount(new Account()
-									.setId(selected.getAccount())
+									.setId(selected.getAccountId())
 									.setCode(selected.getAccountCode())
 									.setDescription(selected.getAccountDescription())
 									);
@@ -453,7 +453,7 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 						} else {
 							tracking.setRegistryBank(selected);
 							tracking.setPayAccount(new Account()
-									.setId(selected.getAccount())
+									.setId(selected.getAccountId())
 									.setCode(selected.getAccountCode())
 									.setDescription(selected.getAccountDescription())
 									);

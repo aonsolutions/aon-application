@@ -456,8 +456,9 @@ public class Trabaj2Loader extends AbstractLoader implements
 		contractRecord.setValue(CONTRACT.END_DATE, trabaj.getF20fbaja());
 		contractRecord.setValue(CONTRACT.DESCRIPTION, trabaj.getF20puesto());
 		contractRecord.setValue(CONTRACT.SENIORITY_DATE, trabaj.getF20fantig());
-		contractRecord.setValue(CONTRACT.AGREEMENT_LEVEL_CATEGORY,
-				cb.getCategory(trabaj));
+		// TODO: only agreement_level
+		//contractRecord.setValue(CONTRACT.AGREEMENT_LEVEL_CATEGORY,
+		//		cb.getCategory(trabaj));
 		contractRecord.setValue(CONTRACT.SS_REGIME, enum2Byte(regimeType));
 		contractRecord.setValue(CONTRACT.CATEGORY_DESCRIPTION,
 				trabaj.getF20nomcat());

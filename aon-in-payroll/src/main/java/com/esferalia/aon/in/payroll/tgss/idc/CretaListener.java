@@ -19,7 +19,7 @@ import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder.Tipo
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadoresTramosBuilder;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TramoBuilder;
 
-public class CretaListener implements IdcListener {
+public class CretaListener implements IdcParserListener {
 	
 	private static final class SetTramoBuilder extends TramoBuilder {
 		HashSet<String> added = new HashSet();
@@ -153,6 +153,9 @@ public class CretaListener implements IdcListener {
 			String quota, Date start, Date end) {
 		tramoBuilder.ifPresent( b -> {
 			switch (code) {
+			case "22": //IT.CC.PAGO DIRECTO
+				addIncapacidadTemporalCCPagoDirectoEstandar(b);
+				
 			case "23": //IT.AT.PAGO DELEGADO
 				if ( isScholarEmployee(ssNum, ccc, start, end))
 					addIncapacidadTemporalATEPPagoDelegadoBecario(b);
@@ -360,5 +363,20 @@ public class CretaListener implements IdcListener {
 		tramoBuilder.addDato(dataSolicitadoBuilder.create());
 	}
 	
+	private static void addIncapacidadTemporalCCPagoDirectoEstandar(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// 2.2 Situaciones de Incapacidad Temporal  
+		// 2.2.2 Incapacidad Temporal pago directo 
+		// Base de contingencias comunes en situación de IT
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("509");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Accidentes de Trabajo en situación de IT
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("603");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
 	
 }

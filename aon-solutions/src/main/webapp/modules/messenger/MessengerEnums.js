@@ -1,18 +1,11 @@
-import { COLORS, CSS, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
-
-export const ICON_TYPES = {
-    MATERIAL : "material",
-    MATERIAL_ICONS:"material-icons",
-    MATERIAL_OUTLINED : "material_outlined",
-    MATERIAL_ICONS_OUTLINED : "material-icons-outlined"
-}
+import { COLORS, CONSTANT, CSS, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 
 const AON_MESSENGER_LIST_OPEN = {
     name: 'Abiertas',
     id:'Abiertas',
     icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
     icon_color: "#2e7d32",
-    icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED
+    icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };
 
 const AON_MESSENGER_LIST_CLOSE = {
@@ -20,7 +13,7 @@ const AON_MESSENGER_LIST_CLOSE = {
     id:'Cerradas',
     icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
     icon_color: CSS.variable(COLORS.AON_BLACK),
-    icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED
+    icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };
 
 const AON_MESSENGER_LIST_ARCHIVE = {
@@ -28,7 +21,7 @@ const AON_MESSENGER_LIST_ARCHIVE = {
     id: 'Archivadas',
     icon: MATERIAL_ICONS.FIBER_MANUAL_RECORD,
     icon_color: COLORS.ORANGE,
-    icon_class: ICON_TYPES.MATERIAL_ICONS_OUTLINED
+    icon_class: CONSTANT.MATERIAL_ICONS_OUTLINED
 };
 
 export const MessengerOptions = {
@@ -73,6 +66,7 @@ export const MESSENGER_IDS = {
     COMMENT_TASK: "commentTask",
     CUSTOMER_TASK: "customerTask",
     PROJECT_TASK: "projectTask",
+    ADVISORY_TASK: "advisoryTask",
     DESCRIPTION_TASK: "descriptionTask",
     GTASK_ID_TASK: "GTaskIdTask",
     TITLE_TASK: "titleTask",
@@ -175,10 +169,27 @@ export const TASK_FILTER = [
         title: MSG.STATUS,
         default:true
     },
-    // {
-    //   type: "date",
-    //   name: "startDate",
-    //   id: "startDate",
-    //   title: MSG.DATE,
-    // }
+    {
+      type: "select",
+      name: "workgroup",
+      id: "workgroup",
+      title: MSG.WORKGROUP,
+      default:true
+    }
 ];
+
+export const APP_PARAMS_REQUEST = {
+    APP_REQUESTS_INT_WORKGROUP: "APP_REQUESTS_INT_WORKGROUP",
+    APP_REQUESTS_INT_TASK_HOLDER: "APP_REQUESTS_INT_TASK_HOLDER",
+    APP_REQUESTS_INT_OPENED: "APP_REQUESTS_INT_OPENED",
+    APP_REQUESTS_INT_CLOSED: "APP_REQUESTS_INT_CLOSED",
+    APP_REQUESTS_INT_COMMENT: "APP_REQUESTS_INT_COMMENT",
+    APP_REQUESTS_INT_ASSIGN: "APP_REQUESTS_INT_ASSIGN",
+    APP_REQUESTS_EXT_WORKGROUP: "APP_REQUESTS_EXT_WORKGROUP",
+    APP_REQUESTS_EXT_TASK_HOLDER: "APP_REQUESTS_EXT_TASK_HOLDER",
+    APP_REQUESTS_EXT_OPENED: "APP_REQUESTS_EXT_OPENED",
+    APP_REQUESTS_EXT_CLOSED: "APP_REQUESTS_EXT_CLOSED",
+    APP_REQUESTS_EXT_COMMENT: "APP_REQUESTS_EXT_COMMENT",
+    APP_REQUESTS_EXT_ASSIGN: "APP_REQUESTS_EXT_ASSIGN",
+    APP_REQUESTS_EMAIL_RATING: "APP_REQUESTS_EMAIL_RATING",
+  }

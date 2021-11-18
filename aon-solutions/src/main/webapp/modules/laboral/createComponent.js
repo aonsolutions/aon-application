@@ -1,10 +1,9 @@
 import { AonNumber } from "../../components/aon-number.js";
-import { AonSuggestion } from "../../components/aon-suggestion.js";
 import { AonSwitch } from "../../components/aon-switch.js";
-import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
-import { formatDateOrigin } from "../../services/utils.js";
-import { setAttributes } from "../../services/utilsComponents.js";
-import { createCard, createDate, createDiv, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
+import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
+import { setAttributes, createDiv } from "../../services/utilsComponents.js";
+import { createCard, createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
+import { AonDateUtils } from "../utils/AonDateUtils.js";
 
 export const createBajaDialogContent = () =>{
     const div = document.createElement(TAG.DIV);
@@ -29,7 +28,7 @@ export const createBajaDialogContent = () =>{
 
     const btnSubmit = document.createElement(TAG.BUTTON);
     btnSubmit.id = "btnSubmitBaja";
-    btnSubmit.className = "aonButton";
+    btnSubmit.className =  CSS.AON_BUTTON;
     btnSubmit.textContent = "Aceptar";
     btnSubmit.style.padding ="0.5rem 1rem";
     btnSubmit.style.marginBottom ="5px";
@@ -65,18 +64,18 @@ export const createFormComunica = (id, parent) => {
 
 export const createEnterpriseData = (parent) => {
     let divC;
-    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
-            name:"centro_trabajo",
-            id:"centro_trabajo",
+            name:"workplace",
+            id:"workplace",
             title:"Centro de trabajo"
         }
     }, divC.element);
  
 
-    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
+    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
@@ -86,34 +85,34 @@ export const createEnterpriseData = (parent) => {
         }
     }, divC.element);
 
-    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
-    divC.appendTo(parent);
-    let aonConvenio = setAttributes(new AonSuggestion(),{
-        id:"convenio",
-        title:"Convenio (opcional)",
-        name:"convenio"
-    });
-    aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/\D/g,''));
-    divC.appendChild(aonConvenio);
+    // divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_4]})
+    // divC.appendTo(parent);
+    // let aonConvenio = setAttributes(new AonSuggestion(),{
+    //     id:"convenio",
+    //     title:"Convenio (opcional)",
+    //     name:"convenio"
+    // });
+    // aonConvenio.addEventListener(EVENT.KEYUP, ({target}) =>  target.value = target.value.replace(/\D/g,''));
+    // divC.appendChild(aonConvenio);
 
     createInput({
         attributes:{
-            name:"regimen",
-            id:"regimen",
-            description:"Regimen",
+            name:"regime",
+            id:"regime",
+            description:MSG.REGIME,
             visible:CONSTANT.FALSE,
         }
     }, parent);
 }
 
-export const createContractData = (parent) => {
+export const createContractData = (parent, isManager) => {
     let divC;
     divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_6]})
     divC.appendTo(parent);
     createSelect({
         attributes:{
-            name:"type_cto",
-            id:"type_cto",
+            name:"contract",
+            id:"contract",
             title:"Tipo de contrato",
             autocomplete: CONSTANT.OFF
         }
@@ -133,9 +132,9 @@ export const createContractData = (parent) => {
     divC.appendTo(parent);
     createSelect({
         attributes:{
-            name:"grup_ctz",
-            id:"grup_ctz",
-            title:"Grupo de cotización"
+            name:"gc",
+            id:"gc",
+            title:MSG.QUOTE_GROUP
         }
     }, divC.element);
 
@@ -143,8 +142,8 @@ export const createContractData = (parent) => {
     divC.appendTo(parent);
     createSelect({
         attributes:{
-            name:"ocupacion",
-            id:"ocupacion",
+            name:"ocup",
+            id:"ocup",
             title:"Ocupación"
         }
     }, divC.element);
@@ -169,7 +168,20 @@ export const createContractData = (parent) => {
         }
     }, parent);
 
-    dateContract.value = formatDateOrigin(new Date());
+    if(isManager){
+        divC = createDiv({classes:[CSS.AON_COL_XS_12]})
+        divC.appendTo(parent);
+        createSelect({
+            attributes:{
+                name:"rlce",
+                id:"rlce",
+                title:"RLCE (opcional)",
+                autocomplete: CONSTANT.OFF
+            }
+        }, divC.element);
+    } 
+
+    dateContract.value = AonDateUtils.formatDateOrigin(new Date());
 
 }
 
@@ -324,17 +336,17 @@ const partTime = (divH) => {
     divC = createDiv({classes:[CSS.AON_COL_XS_6, CSS.AON_COL_SM_3]})
     divC.appendTo(divH);
     numberC = setAttributes(new AonNumber(),{
-        id:"coefparcial", 
-        name:"coefparcial",
+        id:"coef", 
+        name:"coef",
         description:"Coef. Parcial"
     })
     divC.appendChild(numberC);
-    addSpanDecimal();
+    addSpanDecimal(numberC);
     return divC;
 }
 
-const addSpanDecimal = () =>  {
-    let coefInput = document.getElementById('coefparcialInput');
+export const addSpanDecimal = (input) =>  {
+    let coefInput = document.getElementById(input.INPUT);
     if(coefInput){
         let span = document.createElement(TAG.SPAN);
         span.innerHTML = '0,';

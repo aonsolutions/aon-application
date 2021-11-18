@@ -67,7 +67,9 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		if (checkitAccounts != null) {
 			checkitAccounts.forEach(acc -> {
 				try {
+					List<BankStatement> allMovs = CheckItAPI.getAllMovements(domainName, domain, user, empresaId, acc.getCcc());
 					List<BankStatement> movs = CheckItAPI.getNewMovements(domainName, domain, user, empresaId, acc.getCcc());
+					acc.setAllMovements(allMovs);
 					acc.setPending(movs);
 				} catch (CheckItException e) {
 					throw new AonCoreException(e.getMessage());

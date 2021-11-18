@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.test.registry.creditor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -14,7 +15,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 public class ValidationSaveEmptyScope extends AbstractOccamTest {
 
-	@Test
+	@Test @Ignore
 	public void test() {
 		Creditor registry = AonFaker.getCreditor( ctx );
 		registry.setScope(null);

@@ -5,18 +5,11 @@ import { waitEl } from './services/utils.js';
 import { webkitRequestMobile } from './services/request.js';
 import { EVENT, TAG } from './environments/environments.js';
 import { saveAuthDevice } from './services/authDeviceService.js';
+
 import './css/aon-css-utils.css';
 import './css/aon-grid.css';
-import './css/aon-input.css';
-import './css/aon-input-loading.css';
-import './css/aon-loader.css';
 import './css/aon-mobile.css';
-import './css/aon-slider.css';
-import './css/aon-switch.css';
-import './css/aon-tabs.css';
-import './css/aon-textarea.css';
 import './css/aon.css';
-
 
 window.setPosition = (pos) => setPosition(pos);
 window.setTokenFCM =  (token) => {

@@ -29,19 +29,19 @@ import com.esferalia.aon.watson.util.AonUtils;
 
 public class IdcParser {
 	
-	public static void parse( File file , IdcListener listener) throws IOException, UnknownPDFException {
+	public static void parse( File file , IdcParserListener listener) throws IOException, UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(file)){
 			parse(doc, listener);
 		}
 	}
 
- 	public static void parse( InputStream is ,IdcListener listener) throws IOException , UnknownPDFException {
+ 	public static void parse( InputStream is ,IdcParserListener listener) throws IOException , UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(is)){
 			parse(doc, listener);
 		}
 	}
 	
-	public static void parse(PDDocument doc, IdcListener listener) throws IOException, UnknownPDFException {
+	public static void parse(PDDocument doc, IdcParserListener listener) throws IOException, UnknownPDFException {
        AccessPermission ap = doc.getCurrentAccessPermission();
 		if (!ap.canExtractContent()){
 			throw new IOException("You do not have permission to extract text");
@@ -65,7 +65,7 @@ public class IdcParser {
 		}					
 	}
 		
-	public static void parse(String text, IdcListener listener) throws IOException, UnknownPDFException {
+	public static void parse(String text, IdcParserListener listener) throws IOException, UnknownPDFException {
 //		System.out.println(text);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -94,11 +94,18 @@ public class IdcParser {
 			String enterpriseRegime = matcher.group("regime");
 			
 			matcher = find(reader, EMPLOYEE_PERIOD_START);
-			Date startDate = simpleDateFormat.parse(matcher.group("start"));
+			Date periodStart = simpleDateFormat.parse(matcher.group("start"));
+			Date periodEnd =  matcher.group("end") != null ?  simpleDateFormat.parse(matcher.group("end")): null;
+			listener.onEmployeePerido(nss, enterpriseCCC, periodStart, periodEnd);
+
 			
 			matcher = find(reader, CONTRACT_TYPE_START_END);
-			listener.onContractType(matcher.group("contractType"));
+			if ( hasData(matcher.group("contractType"))) {
+				listener.onContractType(matcher.group("contractType"));
+			}
+			
 			listener.onContractStart(simpleDateFormat.parse(matcher.group("start")));
+			
 			
 			if(hasData(matcher.group("end"))) {
 				try {
@@ -109,30 +116,44 @@ public class IdcParser {
 			}
 			
 			matcher = find(reader, CONTRACT_PARTIALCOEF_DATE_AGE);
-			if(null != matcher.group("partialCoef")) listener.onContractPartialCoeficient(matcher.group("partialCoef"));
+			if(hasData(matcher.group("partialCoef"))) {
+				listener.onContractPartialCoeficient(matcher.group("partialCoef"));
+			}
 			
 			matcher = find(reader, CONTRACT_QUOTEGROUP_INACTIVITY_COMPLETECCC);
-			listener.onContractQuoteGroup(matcher.group("quoteGroup"));
+			if ( hasData(matcher.group("quoteGroup"))) {
+				listener.onContractQuoteGroup(matcher.group("quoteGroup"));
+			}
 			String enterpriseCompleteCCC = (matcher.group("completeCCC"));
-			if(hasData(matcher.group("inactivity"))) listener.onContractInactivityType(matcher.group("inactivity"));
+			if(hasData(matcher.group("inactivity"))) {
+				listener.onContractInactivityType(matcher.group("inactivity"));
+			}
 			
 			onEnterprise(listener, socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode,
 					enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
 			
 			matcher = find(reader, CONTRACT_OCUPATION);
-			if(hasData(matcher.group("ocupation"))) listener.onContractOcupation(matcher.group("ocupation"));
+			if(hasData(matcher.group("ocupation")))  {
+				listener.onContractOcupation(matcher.group("ocupation"));
+			}
 			
 			matcher = find(reader, CONTRACT_QUOTEMODALITY);
-			if(hasData(matcher.group("quoteModality"))) listener.onContractAgrarianQuoteModality(matcher.group("quoteModality"));
+			if(hasData(matcher.group("quoteModality"))) {
+				listener.onContractAgrarianQuoteModality(matcher.group("quoteModality"));
+			}
 			
 			matcher = find(reader, CONTRACT_REALJOURNEY);
-			if(hasData(matcher.group("realJourney"))) listener.onContractAgrarianRealJourney(matcher.group("realJourney"));
-			if(hasData(matcher.group("realJourneyProvided"))) listener.onContractAgrarianRealJourneyProvided(matcher.group("realJourneyProvided"));
+			if(hasData(matcher.group("realJourney"))) {
+				listener.onContractAgrarianRealJourney(matcher.group("realJourney"));
+			}
+			if(hasData(matcher.group("realJourneyProvided"))) {
+				listener.onContractAgrarianRealJourneyProvided(matcher.group("realJourneyProvided"));
+			}
 			
 			matcher = find(reader, PECULIARITIES_HEADER);
 			
 			Date endDate = null;
-			startDate = null;
+			Date startDate = null;
 			
 			try {
 				for ( Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); 
@@ -152,8 +173,8 @@ public class IdcParser {
 					if ( optional.get().group("end") != null )
 						end = simpleDateFormat.parse(optional.get().group("end"));
 					
-					if ( AonUtils.notEquals(start,startDate) || AonUtils.notEquals(end, endDate) ) 
-						listener.onEmployeePerido(nss, enterpriseCCC, start, end);
+//					if ( AonUtils.notEquals(start,startDate) || AonUtils.notEquals(end, endDate) ) 
+//						listener.onEmployeePerido(nss, enterpriseCCC, start, end);
 					
 					onEmployeeQuotePEC(listener, nss, enterpriseCCC, code, description, portTipo, quota, start, end);
 					
@@ -167,16 +188,16 @@ public class IdcParser {
 			
 			matcher = find(reader, TOTAL_CLV);
 			matcher = find(reader, QUOTATION_TYPES);
-			Double it = hasData(matcher.group("it")) ? Double.parseDouble(matcher.group("it").replace(",", ".")) : 0.00;
-			Double ims = hasData(matcher.group("ims")) ? Double.parseDouble(matcher.group("ims").replace(",", ".")) : 0.00;
-			Double unemployment = hasData(matcher.group("unemployment")) ? Double.parseDouble(matcher.group("unemployment").replace(",", ".")) : 0.00;
+			Double it = hasData(matcher.group("it")) ? Double.parseDouble(matcher.group("it").replace(",", ".")) : null;
+			Double ims = hasData(matcher.group("ims")) ? Double.parseDouble(matcher.group("ims").replace(",", ".")) : null;
+			Double unemployment = hasData(matcher.group("unemployment")) ? Double.parseDouble(matcher.group("unemployment").replace(",", ".")) : null;
 			listener.onEmployeeQuoteTypes(it, ims, unemployment);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static void onEmployeeQuotePEC(IdcListener listener, String nss, String enterpriseCCC, String code,
+	private static void onEmployeeQuotePEC(IdcParserListener listener, String nss, String enterpriseCCC, String code,
 			String description, String portTipo, String quota, Date start, Date end) {
 		code = remove(code, " ");
 		quota = remove(quota, " ");
@@ -184,7 +205,7 @@ public class IdcParser {
 		listener.onEmployeeQuotePEC(nss, enterpriseCCC, code, description, portTipo, quota, start, end);
 	}
 
-	private static void onEnterprise(IdcListener listener, String socialReason, String enterpriseCCC,
+	private static void onEnterprise(IdcParserListener listener, String socialReason, String enterpriseCCC,
 			String enterpriseCIF, String enterpriseActivityCode, String enterpriseActivityDescription,
 			String enterpriseRegime, String enterpriseCompleteCCC) {
 		socialReason = trim(socialReason);
@@ -199,7 +220,7 @@ public class IdcParser {
 		listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode, enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
 	}
 
-	private static void onEmployee(IdcListener listener, String fullName, String nss) {
+	private static void onEmployee(IdcParserListener listener, String fullName, String nss) {
 		nss = remove(nss, " ");
 		fullName = trim(fullName);
 		listener.onEmployee(nss, fullName);
@@ -264,7 +285,7 @@ public class IdcParser {
 	//ACTIVIDAD ECONOMICA: 9311 Gestión de instalaciones deportivas REGIMEN: REGIMEN GENERAL
 	private static final Pattern EMPLOYEE_PERIOD_START = 
 	Pattern.compile(
-	"^PERIODO\\s*:\\s*DESDE\\s*(?<start>[0-9]+-[0-9]+-[0-9]+).*$"
+	"^PERIODO\\s*:\\s*DESDE\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)(\\s*HASTA\\s*(?<end>[0-9]+-[0-9]+-[0-9]+))?.*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TIPO CONTRATO: 289 INDEFINIDO.TIEMPO PARCIAL.TRANSFORMACION ALTA: 01-05-2018 BAJA:  
@@ -282,7 +303,7 @@ public class IdcParser {
 	//GC/M*: 08 RELEVO:  TIPO DE INACTIVIDAD/COEFIC: T.ACT.PAR.PR.COVID19/300 C.C.C.: 0111 11 112501771
 	private static final Pattern CONTRACT_QUOTEGROUP_INACTIVITY_COMPLETECCC =
 	Pattern.compile(
-	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
+	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})\\S*\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TRABAJADOR SUSTITUTO*:  OCUPACION*:   

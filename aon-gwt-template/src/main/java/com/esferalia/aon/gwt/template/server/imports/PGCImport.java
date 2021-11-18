@@ -70,7 +70,7 @@ public class PGCImport {
 						check(domain, login, title, cell);			
 					}
 				});
-				if(row.getRowNum() != 0) {
+				if(row.getRowNum() != 0 && account.getAccount().getCode() != null && account.getAccount().getDescription() != null) {
 					list.add(account);
 				}
 			});
@@ -79,7 +79,7 @@ public class PGCImport {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (OfficeXmlFileException e){
-			importationX(domain, login, data);
+			return importationX(domain, login, data);
 		} finally {
 			if(workbook != null) {
 				try {
@@ -122,7 +122,7 @@ public class PGCImport {
 						check(domain, login, title, cell);			
 					}
 				});
-				if(row.getRowNum() != 0) {
+				if(row.getRowNum() != 0 && account.getAccount().getCode() != null && account.getAccount().getDescription() != null) {
 					list.add(account);
 				}
 			});

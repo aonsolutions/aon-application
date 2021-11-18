@@ -71,6 +71,7 @@ import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailTemplateFilter;
 import com.esferalia.aon.occam.api.model.Filter.OfferDetailCommissionFilter;
+import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -256,6 +257,7 @@ import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
 import com.esferalia.aon.occam.impl.jooq.ManagementImpl;
 import com.esferalia.aon.occam.impl.jooq.MarketplaceImpl;
 import com.esferalia.aon.occam.impl.jooq.OfficeImpl;
+import com.esferalia.aon.occam.impl.jooq.PersonImpl;
 import com.esferalia.aon.occam.impl.jooq.Product2Impl;
 import com.esferalia.aon.occam.impl.jooq.ProductImpl;
 import com.esferalia.aon.occam.impl.jooq.ProjectImpl;
@@ -345,6 +347,10 @@ public class AON {
 
 	private static IRegistry getRegistry() {
 		return new RegistryImpl();
+	}
+	
+	private static IPerson getPerson() {
+		return new PersonImpl();
 	}
 
 	private static ICommercial getCommercial() {
@@ -3902,12 +3908,14 @@ public class AON {
 	// ------------------ SUPPLIER 
 	
 	public static Stream<Supplier> getSupplierStream(String domainName, Integer domainId, String login, SupplierFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getSupplierStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Stream<Supplier> getSupplierStream(String domainName, Integer domainId, String login, SupplierFilter filter, int offset, int limit) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getSupplierStream(ctx, filter, offset, limit);
 		}
 	}
 	
@@ -3925,15 +3933,18 @@ public class AON {
 		return getSupplier(domainName, domainId, login, f -> f.getIdProperty().eq(id));
 	}
 	
-	public static Supplier insertSupplier(String domainName, Integer domainId, String login, Supplier supplier) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertSupplier(ctx, supplier);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Supplier saveSupplier(String domainName, Integer domainId, String login, Supplier supplier) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveSupplier(ctx, supplier);
 		}
+	}
+	
+	/**
+	 * @deprecated  Replaced by AON.saveCreditor
+	 */
+	@Deprecated(forRemoval = true )
+	public static Supplier insertSupplier(String domainName, Integer domainId, String login, Supplier supplier) {
+		return saveSupplier(domainName, domainId, login, supplier);
 	}
 	
 	// ------------------ TARGET 
@@ -4444,22 +4455,15 @@ public class AON {
 	// ------------------- CUSTOMER
 	
 	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().getCustomerStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
 		}
 	}
+	
 	public static Stream<Customer> getCustomerStream(String domainName, Integer domainId, String login, CustomerFilter filter, int ofs, int limit){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().getCustomers(ctx, filter, ofs, limit);
-		} finally {
-			if (ctx != null) ctx.close();
-		}
+		} 
 	}
 	
 	public static LinkedList<Customer> getCustomerList(String domainName, Integer domainId, String login, CustomerFilter filter){
@@ -4476,14 +4480,18 @@ public class AON {
 		return getCustomer(domainName, domainId, login, f -> f.getRegistryProperty().eq(registry));
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON.saveCustomer
+	 */
 	public static Customer insertCustomer(String domainName, Integer domainId, String login, Customer customer) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().insertCustomer(ctx, customer);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static Customer saveCustomer(String domainName, Integer domainId, String login, Customer customer) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveCustomer(ctx, customer);
 		}
 	}
 	
@@ -4588,6 +4596,9 @@ public class AON {
 
 	// ------------------------------------- RBANK
 	
+	/**
+	 * @deprecated  Replaced by AON.getRegistryBankStream
+	 */
 	public static Stream<RegistryBank> getRBankStream(String domainName, Integer domainId, String login, RegistryBankFilter filter) {
 		AONContext ctx = null;
 		try {
@@ -4599,6 +4610,9 @@ public class AON {
 		}
 	}
 		
+	/**
+	 * @deprecated  Replaced by AON.getRegistryBank
+	 */
 	public static RegistryBank getRBank(String domainName, Integer domainId, String login, RegistryBankFilter filter) {
 		return getRBankStream(domainName, domainId, login, filter)
 			.findFirst().orElse(new RegistryBank());
@@ -4609,6 +4623,9 @@ public class AON {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON.saveRegistryBank
+	 */
 	public static RegistryBank insertRBank(String domainName, Integer domainId, String login, RegistryBank rbank) {
 		AONContext ctx = null;
 		try {
@@ -4620,6 +4637,9 @@ public class AON {
 		}
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON.deleteRegistryBank
+	 */
 	public static void deleteRBank(String domainName, Integer domainId, String login, Integer id) {
 		AONContext ctx = null;
 		try {
@@ -4630,49 +4650,91 @@ public class AON {
 				ctx.close();
 		}
 	}
+
+	public static RegistryBank getRegistryBank(Domain domain, String login, RegistryBankFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().getRegistryBank(ctx, filter);
+		}
+	}
+	
+	public static Stream<RegistryBank> getRegistryBankStream(Domain domain, String login, RegistryBankFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().getRegistryBankStream(ctx, filter);
+		}
+	}
+	
+	public static RegistryBank saveRegistryBank(Domain domain, String login, RegistryBank rbank) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			return getRegistry().saveRegistryBank(ctx, rbank);
+		}
+	}
+	
+	public static void deleteRegistryBank(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain, login)) {
+			getRegistry().deleteRegistryBank(ctx, id);
+		}
+	}
 	
 	// ------------------------------------- RPAYMETHOD
 	
+	/**
+	 * @deprecated  Replaced by AON.getRegistryPayMethodStream
+	 */
 	public static Stream<RegistryPayMethod> getRPayMethodStream(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().getRPayMethodStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		return getRegistryPayMethodStream(domainName, domainId, login, filter);
 	}
 		
+	/**
+	 * @deprecated  Replaced by AON.getRegistryPayMethod
+	 */
 	public static RegistryPayMethod getRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
-		return getRPayMethodStream(domainName, domainId, login, filter)
-			.findFirst().orElse(new RegistryPayMethod());
-	}
-		
-	public static LinkedList<RegistryPayMethod> getRPayMethodList(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
-		return getRPayMethodStream(domainName, domainId, login, filter)
-			.collect(Collectors.toCollection(LinkedList::new));
+		return getRegistryPayMethod(domainName, domainId, login, filter);
 	}
 	
+	/**
+	 * @deprecated  Replaced by AON.saveRegistryPayMethod
+	 */
 	public static RegistryPayMethod insertRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethod rpaymethod) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertRPayMethod(ctx, rpaymethod);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		return saveRegistryPayMethod(domainName, domainId, login, rpaymethod);
+	}
+	
+	public static RegistryPayMethod getRegistryPayMethod(Domain domain, User user, RegistryPayMethodFilter filter) {
+		return getRegistryPayMethod(domain.getName(), domain.getId(), user.getLogin(), filter);
+	}
+	
+	public static RegistryPayMethod getRegistryPayMethod(Domain domain, String login, RegistryPayMethodFilter filter) {
+		return getRegistryPayMethod(domain.getName(), domain.getId(), login, filter);
+	}
+	
+	public static RegistryPayMethod getRegistryPayMethod(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getRegistryPayMethod(ctx, filter);
 		}
 	}
 	
-	public static RegistryPayMethod deleteRPayMethod(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().deleteRPayMethod(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static Stream<RegistryPayMethod> getRegistryPayMethodStream(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getRegistryPayMethodStream(ctx, filter);
+		}
+	}
+	
+	public static RegistryPayMethod saveRegistryPayMethod(Domain domain, User user, RegistryPayMethod registryPayMethod) {
+		return saveRegistryPayMethod(domain.getName(), domain.getId(), user.getLogin(), registryPayMethod);
+	}
+	
+	public static RegistryPayMethod saveRegistryPayMethod(Domain domain, String login, RegistryPayMethod registryPayMethod) {
+		return saveRegistryPayMethod(domain.getName(), domain.getId(), login, registryPayMethod);
+	}
+	
+	public static RegistryPayMethod saveRegistryPayMethod(String domainName, Integer domainId, String login, RegistryPayMethod registryPayMethod) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveRegistryPayMethod(ctx, registryPayMethod);
+		}
+	}
+	
+	public static void deleteRegistryPayMethod(String domainName, Integer domainId, String login, Integer id) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getRegistry().deleteRegistryPayMethod(ctx, id);
 		}
 	}
 	
@@ -4974,13 +5036,8 @@ public class AON {
 	// ------------------- RECORD DATA
 	
 	public static Stream<RecordData> getRecordDataStream(String domainName, Integer domainId, String login, RecordDataFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getRecordDataStream(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 		
@@ -4989,23 +5046,26 @@ public class AON {
 			.findFirst().orElse(new RecordData());
 	}
 		
-	public static LinkedList<RecordData> getRecordDataList(String domainName, Integer domainId, String login, RecordDataFilter filter) {
-		return getRecordDataStream(domainName, domainId, login, filter)
-			.collect(Collectors.toCollection(LinkedList::new));
+	public static RecordData saveRecordData(String domainName, Integer domainId, String login, RecordData recordData) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveRecordData(ctx, recordData);
+		}
 	}
-
+	
 	
 	// ********************************************
 	// ******************************** CREDITOR **
 	// ********************************************
 
 	public static Stream<Creditor> getCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getRegistry().getCreditorStream(ctx, filter);
-		} finally {
-			if (ctx != null) ctx.close();
+		}
+	}
+	
+	public static Stream<Creditor> getCreditorStream(String domainName, Integer domainId, String login, CreditorFilter filter, int offset, int limit) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().getCreditorStream(ctx, filter, offset, limit);
 		}
 	}
 	
@@ -5019,15 +5079,21 @@ public class AON {
 				.findFirst();
 	}
 	
-	public static Creditor insertCreditor(String domainName, Integer domainId, String login, Creditor creditor) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().insertCreditor(ctx, creditor);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	
+	public static Creditor saveCreditor(String domainName, Integer domainId, String login, Creditor creditor) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().saveCreditor(ctx, creditor);
 		}
+	}
+	
+	/**
+	 * @deprecated  Replaced by AON.saveCreditor
+	 */
+	@Deprecated(forRemoval = true )
+	public static Creditor insertCreditor(String domainName, Integer domainId, String login, Creditor creditor) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getRegistry().insertCreditor(ctx, creditor);
+		} 
 	}
 	
 	public static Stream<Creditor> getBasicCreditors(Occam occam, CreditorFilter filter) {
@@ -6658,6 +6724,7 @@ public class AON {
 	// **************************************************
 	// ************************************* [PAY_METHOD]
 	// **************************************************
+
 	public static LinkedList<PayMethod> getPayMethods(String domainName, Integer domain, String user) {
 		AONContext ctx = null;
 		try {
@@ -6669,15 +6736,14 @@ public class AON {
 		}
 	}
 	
-	public static PayMethod getPayMethod(String domainName, Integer domain, String user, String name) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getFinance().getPayMethod(ctx, name);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+	public static PayMethod getPayMethod(String domainName, Integer domain, String user, PayMethodFilter filter) {
+		try(AONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
+			return getFinance().getPayMethod(ctx, filter);
 		}
+	}
+	
+	public static PayMethod getPayMethod(String domainName, Integer domain, String user, String name) {
+		return getPayMethod(domainName, domain, user, f -> f.getNameProperty().eq(name));
 	}
 	
 	public static PayMethod savePayMethod(String domainName, Integer domain, String user, PayMethod paymethod) {
@@ -6739,6 +6805,31 @@ public class AON {
 	public static GeoZone get(String domainName, Integer domainId, String login, GeoZoneFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().get(ctx, filter);
+		}
+	}
+	
+	//--------------PERSON
+	public static Person savePerson(Domain domain, String login, Person person) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPerson().savePerson(ctx, person);
+		}
+	}
+	
+	public static Person getPerson(Domain domain, String login, PersonFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPerson().getPerson(ctx, filter);
+		}
+	}
+
+	public static Stream<Person> getPersonStream(Domain domain, String login, PersonFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPerson().getPersonStream(ctx, filter);
+		}
+	}
+	
+	public static void deletePerson(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getPerson().deletePerson(ctx, id);
 		}
 	}
 		

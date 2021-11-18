@@ -85,7 +85,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 			}
 			
-			PdfMaker.printInvoice(resp.getOutputStream(), config.isCompany() ? company : null, invoice, config, null, logo.getData());
+			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, null, logo.getData());
 			
 			responseFile(req, resp, "factura", MimeType.PDF);
 		} catch (IOException e) {

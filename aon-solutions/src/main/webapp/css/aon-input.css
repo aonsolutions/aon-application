@@ -42,6 +42,11 @@ input:required {
 .aonInputUnderlined > input:focus,
 .aonInputFilled > input:focus {
 	outline: none;
+	border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: 1px solid var(--aon-color-ink-medium-contrast);
+	box-shadow: none !important;
 }
 
 .aonInputUnderlined > .aonInputLabel,
@@ -139,7 +144,7 @@ input:required {
 }
 
 .aonInputUnderlined > input {
-	background: var(--aon-color-bg-high-contrast);
+	background: transparent;
 }
 .aonInputFilled > input {
 	background: var(--aon-color-bg-low-contrast);

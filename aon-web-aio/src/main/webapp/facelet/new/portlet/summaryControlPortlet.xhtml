@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<style>
+	</style>
+
+	<script type='text/javascript' >
+	
+	</script>
+	
+	
+	<aon:div id="summaryControlPortlet" styleClass="aon-portlet">
+		<aon:div styleClass="aon-portlet-title">
+			<aon:outputText value="RESUMEN DE ACTIVIDADES" />
+		</aon:div>
+		
+		<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
+			<aon:div 
+				id="summaryMenuPortlet" >
+				<aon:div styleClass="aon-direct-access-list">
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+						
+						<aon:commandLink id="pendingInvoiceDomainEnterprise"
+							styleClass="aon-width-all aon-black "
+							actionListener="#{domainSwitcher.showPending}"
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="inbox" />
+							<aon:outputText value=" Facturas Pendientes" />
+						</aon:commandLink> 	
+						
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+						<aon:commandLink id="rejectInvoiceDomainEnterprise"
+							styleClass="aon-width-all aon-black"
+							actionListener="#{domainSwitcher.showReject}"
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle aon-black" value="report" />
+							<aon:outputText value=" Facturas Rechazadas" />
+						</aon:commandLink> 	
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left">
+						<aon:commandLink id="inboxNoticeDomainEnterprise"
+							styleClass="aon-width-all aon-black"
+							actionListener="#{domainSwitcher.showInbox}"
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="move_to_inbox" />
+							<aon:outputText value=" Solicitudes Recibidas" />
+						</aon:commandLink> 	
+					</aon:div>
+					<aon:div styleClass="aon-direct-access-list-element aon-align-left ">
+						<aon:commandLink id="sentNoticeDomainEnterprise"
+							styleClass="aon-width-all aon-black"
+							actionListener="#{domainSwitcher.showSent}"
+						>
+							<aon:outputText styleClass="material-icons  aon-vertical-middle" value="outbox" />
+							<aon:outputText value=" Solicitudes Enviadas" />
+						</aon:commandLink> 	
+					</aon:div>
+					
+				</aon:div>
+			</aon:div>		
+		</aon:div>		
+
+	</aon:div>
+
+
+</ui:composition>

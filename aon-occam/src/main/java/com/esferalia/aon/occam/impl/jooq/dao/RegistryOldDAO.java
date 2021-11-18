@@ -13,13 +13,11 @@ import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
-import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Rprofile.RPROFILE;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
@@ -52,7 +50,6 @@ import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
 import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
@@ -61,7 +58,6 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
@@ -70,21 +66,19 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySegmentProperties;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
-import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.Question;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
-import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryNote;
-import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryProfile;
 import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -107,10 +101,8 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CarrierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CategoryPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CustomerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.PersonPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RBankPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RNotePropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RPayMethodPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RecordDataPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryAddInfoPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryPropertiesDAO;
@@ -118,8 +110,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistrySellerPropert
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SellerPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.SupplierPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RBankPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RegistryBankFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class RegistryOldDAO {
@@ -130,7 +125,6 @@ public class RegistryOldDAO {
 	private static final CarrierPropertiesDAO CARRIER_PROPERTIES = new CarrierPropertiesDAO();
 	private static final RecordDataPropertiesDAO RECORD_DATA_PROPERTIES = new RecordDataPropertiesDAO();
 	private static final RBankPropertiesDAO RBANK_PROPERTIES = new RBankPropertiesDAO();
-	private static final RPayMethodPropertiesDAO RPAYMETHOD_PROPERTIES = new RPayMethodPropertiesDAO();
 	private static final RegistryAddInfoPropertiesDAO RADDINFO_PROPERTIES = new RegistryAddInfoPropertiesDAO();
 	private static final SupplierPropertiesDAO SUPPLIER_PROPERTIES = new SupplierPropertiesDAO();
 
@@ -933,6 +927,55 @@ public class RegistryOldDAO {
 				.fetch().stream().map(new RecordDataFiller());
 	}
 	
+	public static RecordData saveRecordData(AONContext ctx, RecordData recordData) {
+		return recordData.getId() != null 
+			? updateRecordData(ctx, recordData)
+			: insertRecordData(ctx, recordData); 
+	}
+	
+	private static RecordData insertRecordData(AONContext ctx, RecordData recordData){
+		Integer id = ctx.getDslContext().insertInto(RECORD_DATA)
+			.set(RECORD_DATA.DOMAIN, recordData.getDomain())
+			.set(RECORD_DATA.REGISTRY, recordData.getRegistry())
+			.set(RECORD_DATA.DESCRIPTION, recordData.getDescription())
+			.set(RECORD_DATA.CREATION_DATE, AonDateUtils.toSql(recordData.getCreationDate()))
+			.set(RECORD_DATA.NOTARY, recordData.getNotary())
+			.set(RECORD_DATA.NUMBER, recordData.getNumber())
+			.set(RECORD_DATA.RECORD_DATE, AonDateUtils.toSql(recordData.getRecordDate()))
+			.set(RECORD_DATA.VOLUME, recordData.getVolume())
+			.set(RECORD_DATA.SECTION, recordData.getSection())
+			.set(RECORD_DATA.PAGE, recordData.getPage())
+			.set(RECORD_DATA.SHEET, recordData.getSheet())
+			.set(RECORD_DATA.REGISTRATION, recordData.getRegistration())
+			.set(RECORD_DATA.ATTACH, recordData.getAttach())
+			.returning(RECORD_DATA.ID)
+			.fetchOne()
+			.getValue(RECORD_DATA.ID);
+		recordData.setId(id);
+		ctx.log().debug("INSERT REGISTRY RECORD DATA ( registry: {0}) id: {1}",recordData.getRegistry(),recordData.getId());
+		return recordData;
+	}
+	private static RecordData updateRecordData(AONContext ctx, RecordData recordData){
+		int count = ctx.getDslContext().update(RECORD_DATA)
+			.set(RECORD_DATA.DOMAIN, recordData.getDomain())
+			.set(RECORD_DATA.REGISTRY, recordData.getRegistry())
+			.set(RECORD_DATA.DESCRIPTION, recordData.getDescription())
+			.set(RECORD_DATA.CREATION_DATE, AonDateUtils.toSql(recordData.getCreationDate()))
+			.set(RECORD_DATA.NOTARY, recordData.getNotary())
+			.set(RECORD_DATA.NUMBER, recordData.getNumber())
+			.set(RECORD_DATA.RECORD_DATE, AonDateUtils.toSql(recordData.getRecordDate()))
+			.set(RECORD_DATA.VOLUME, recordData.getVolume())
+			.set(RECORD_DATA.SECTION, recordData.getSection())
+			.set(RECORD_DATA.PAGE, recordData.getPage())
+			.set(RECORD_DATA.SHEET, recordData.getSheet())
+			.set(RECORD_DATA.REGISTRATION, recordData.getRegistration())
+			.set(RECORD_DATA.ATTACH, recordData.getAttach())
+			.where(RECORD_DATA.ID.eq(recordData.getId()))
+			.execute();
+		ctx.log().debug("UPDATE REGISTRY RECORD DATA ( registry: {0}) id: {1}. ({2} rows)", recordData.getRegistry(), recordData.getId(), count);
+		return recordData;
+	}
+	
 	// ------------------- RBANK
 	private static SelectConditionStep<Record> getRegistryBankSelect(AONContext ctx, RegistryBankFilter filter) {
 		ctx.checkRead();
@@ -960,7 +1003,7 @@ public class RegistryOldDAO {
 		ctx.checkWrite();	
 		Integer id = ctx.getDslContext()
 			.insertInto(RBANK)
-			.set(RBANK.ACCOUNT, rbank.getAccount())
+			.set(RBANK.ACCOUNT, rbank.getAccount().getId())
 			.set(RBANK.ACTIVE, rbank.isActive() ? (byte) 1 : (byte) 0) 
 			.set(RBANK.ALIAS, rbank.getAlias())
 			.set(RBANK.BANK_ACCOUNT, rbank.getBankAccount()==null?null:rbank.getBankAccount().getIban()) 
@@ -987,37 +1030,6 @@ public class RegistryOldDAO {
 			.execute();
 		ctx.log().info("DELETE RBANK ("+i+") id: " + id);
 	}
-	
-	// ------------------- RPAYMETHOD
-	
-	public static Stream<RegistryPayMethod> getRPayMethodStream(AONContext ctx, RegistryPayMethodFilter filter){
-		return ctx.getDslContext().select()
-				.from(RPAYMETHOD)
-				.where(RPAYMETHOD_PROPERTIES.getConditions(filter))
-				.fetch().stream().map(new RegistryPayMethodFiller());
-	}
-	
-	public static RegistryPayMethod insertRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod){
-		return ctx.getDslContext().insertInto(RPAYMETHOD,RPAYMETHOD.DAYS_BETWEEN_PYMNTS, RPAYMETHOD.DAYS_TO_FIRST_PYMNT, 
-				RPAYMETHOD.DOMAIN, RPAYMETHOD.NUMBER_OF_PYMNTS, RPAYMETHOD.PAY_METHOD, RPAYMETHOD.PYMNT_DAYS,
-				RPAYMETHOD.RBANK, RPAYMETHOD.REGISTRY)
-			.values(rpaymethod.getDaysBetwenPymnts(), rpaymethod.getDaysToFirstPymnt(),
-					rpaymethod.getDomain(), rpaymethod.getNumberOfPymnts(), rpaymethod.getPayMethod(), rpaymethod.getPymnt_days(),
-					rpaymethod.getRbank(), rpaymethod.getRegistry()).returning()
-			.fetch().stream().map(new RegistryPayMethodFiller()).findFirst().orElse(new RegistryPayMethod());
-	}
-	
-	public static RegistryPayMethod updateRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod){
-		// TODO
-		return new RegistryPayMethod();
-	}
-	
-	public static RegistryPayMethod deleteRPayMethod(AONContext ctx, RegistryPayMethodFilter filter){
-		return ctx.getDslContext().delete(RPAYMETHOD)
-				.where(RPAYMETHOD_PROPERTIES.getConditions(filter)).returning()
-				.fetch().stream().map(new RegistryPayMethodFiller()).findFirst().orElse(new RegistryPayMethod());
-	}
-	
 	
 	// ------------------- REGISTRY ADD INFO
 	
@@ -1108,44 +1120,6 @@ public class RegistryOldDAO {
 					.setValueNumber(r.getValue(RPROFILE.VALUE_NUMBER));
 		}
 	}
-	
-	public static class RegistryBankFiller  implements Function<Record, RegistryBank> {
-
-		@Override
-		public RegistryBank apply(Record r) {
-			return new RegistryBank()
-					.setId(r.getValue(RBANK.ID))
-					.setRegistry(r.getValue(RBANK.REGISTRY))
-					.setDomain(r.getValue(RBANK.DOMAIN))
-					.setAccount(r.getValue(RBANK.ACCOUNT))
-					.setAccountCode(r.getValue(ACCOUNT.CODE))
-					.setAccountDescription(r.getValue(ACCOUNT.DESCRIPTION))
-					.setActive(r.getValue(RBANK.ACTIVE) == 1)
-					.setAlias(r.getValue(RBANK.ALIAS))
-					.setBankAccount(new BankAccount(r.getValue(RBANK.BANK_ACCOUNT)))
-					.setBic(r.getValue(RBANK.BIC))
-					.setSuffix(r.getValue(RBANK.SUFIX));
-		}
-	}
-	
-	public static class RegistryPayMethodFiller  implements Function<Record, RegistryPayMethod> {
-
-		@Override
-		public RegistryPayMethod apply(Record r) {
-			return new RegistryPayMethod()
-					.setId(r.getValue(RPAYMETHOD.ID))
-					.setRegistry(r.getValue(RPAYMETHOD.REGISTRY))
-					.setDomain(r.getValue(RPAYMETHOD.DOMAIN))
-					.setDaysBetwenPymnts(r.getValue(RPAYMETHOD.DAYS_BETWEEN_PYMNTS))
-					.setDaysToFirstPymnt(r.getValue(RPAYMETHOD.DAYS_TO_FIRST_PYMNT))
-					.setNumberOfPymnts(r.getValue(RPAYMETHOD.NUMBER_OF_PYMNTS))
-					.setPayMethod(r.getValue(RPAYMETHOD.PAY_METHOD))
-					.setPymnt_days(r.getValue(RPAYMETHOD.PYMNT_DAYS))
-					.setRbank(r.getValue(RPAYMETHOD.RBANK))
-					;
-		}
-	}
-	
 	
 	public static class RegistryAddInfoFiller  implements Function<Record, RegistryAddInfo> {
 

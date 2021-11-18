@@ -7,14 +7,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.Certificate;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -97,40 +97,40 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 	private byte[] getTA(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "SEG_SOCIAL");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regimen = api.getParams().optString("regime");
+		String regime = api.getParams().optString("regime");
 		String ccc = api.getParams().getString("ctaCti");
 		String nss = api.getParams().getString("nss");
 		Date fecha = AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
 		
-	    return SistemaRED.getTA(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);		
+	    return SistemaRED.getTA(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc, nss, fecha);		
 	}
 	
 	private byte[] getIDC(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "SEG_SOCIAL");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regimen = api.getParams().getString("regime");
+		String regime = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ctaCti");
 		String nss = api.getParams().getString("nss");
 		Date fecha =AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
 		
-	    return SistemaRED.getIDC(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, nss, fecha);	
+	    return SistemaRED.getIDC(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc, nss, fecha);	
 	}
 	
 	private byte[] getCertCorriente(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "SEG_SOCIAL");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regimen = api.getParams().getString("regimen");
+		String regime = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ccc");
-	    return SistemaRED.getUp2DateSS(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc);	
+	    return SistemaRED.getUp2DateSS(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc);	
 	}
 	
 	private byte[] getContratoPdf(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "SEPE");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String ipf = api.getParams().getString("ipf");
-		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
+		Date date = AonDateUtils.parse(api.getParams().getString("startDate"), FORMAT_DATE); 
 		
-		return Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, fecha, fecha);
+		return Sepe.getContratoPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, date, date);
 
 	}
 	
@@ -146,34 +146,34 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 	private byte[] getReportAffiliateInAlta(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "SEG_SOCIAL");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regimen = api.getParams().getString("regimen");
+		String regime = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ccc");
 	
-	    return SistemaRED.getReportAffiliateInAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc);	
+	    return SistemaRED.getReportAffiliateInAlta(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc);	
 	}
 	
 	private byte[] getReportAffiliateInMovPrev(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "SEG_SOCIAL");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regimen = api.getParams().getString("regimen");
+		String regime = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ccc");
-	    return SistemaRED.getReportAffiliateInMovPrev(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc);	
+	    return SistemaRED.getReportAffiliateInMovPrev(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc);	
 	}
 	
 	private byte[] getIdcCcc(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "SEG_SOCIAL");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regimen = api.getParams().getString("regimen");
+		String regime = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ccc");
 		Date fecha = AonDateUtils.parse(api.getParams().getString("fecha"), FORMAT_DATE); 
 		
-	    return SistemaRED.getIDCCCC(certificateInputStream, certificate.getPassword(), certificate.getType(), regimen, ccc, fecha);	
+	    return SistemaRED.getIDCCCC(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc, fecha);	
 	}
 
 	private Certificate getCert(AonApiData api, String typeCert) throws Exception {
 		Domain domain = api.getDomain();
 		Certificate certificate = null;
-		if("SEPE" == typeCert ) {
+		if(typeCert.equals("SEPE")) {
 			certificate = AON.getCertificateSEPE(domain.getName(), domain.getId(),  api.getUser().getLogin());
 		} else {
 			certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());

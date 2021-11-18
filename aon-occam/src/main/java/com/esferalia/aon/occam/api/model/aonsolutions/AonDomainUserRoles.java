@@ -5,6 +5,8 @@ import java.util.Arrays;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.json.DomainJSON;
+
 public class AonDomainUserRoles extends DomainUserRoles{
 
 	/**
@@ -48,7 +50,7 @@ public class AonDomainUserRoles extends DomainUserRoles{
 			Arrays.asList(getUser().getUserRoles()).stream().forEach(r -> oldUserRoles.put(r.name()));
 		}
 		
-		json.put("domain", getDomain().getId());
+		json.put("domain", DomainJSON.toJSON(getDomain()));
 		json.put("maxDefinedUsers", getDomain().getMaxDefinedUsers());
 		json.put("definedUsers", getDomain().getDefinedUsers());
 

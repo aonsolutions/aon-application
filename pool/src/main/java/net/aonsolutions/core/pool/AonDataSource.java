@@ -57,13 +57,13 @@ public class AonDataSource {
 	private DataSource createDatasource(String schema) throws AonConnectionException {
 		try {
 			ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
-			Class.forName(ci.getDriverClass());
+			Class.forName(ci.getDriverClass(schema));
 
                         Properties properties = new Properties();
-                        properties.setProperty("user", ci.getUser());
-                        properties.setProperty("password", ci.getPassword());
-                        properties.setProperty("useSSL", ci.getUseSSL());
-                        properties.setProperty("serverTimezone", ci.getTimeZone());
+                        properties.setProperty("user", ci.getUser(schema));
+                        properties.setProperty("password", ci.getPassword(schema));
+                        properties.setProperty("useSSL", ci.getUseSSL(schema));
+                        properties.setProperty("serverTimezone", ci.getTimeZone(schema));
 		
 			DataSource  ds_unpooled = DataSources.unpooledDataSource(
 					ci.getSchemaUrl(schema),properties);

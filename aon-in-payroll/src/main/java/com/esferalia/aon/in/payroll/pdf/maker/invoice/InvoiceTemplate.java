@@ -44,9 +44,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -67,6 +70,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.MediaType;
@@ -76,31 +80,35 @@ public class InvoiceTemplate {
 	
 	public static final int MIN_HEADER_FOR_LOGO = 80;
 	public static final int MAX_LOGO_HEIGHT = 55;
-	public static final int MIN_FOOTER = 15;
+	public static final int MIN_FOOTER = 30;
 	
 	OutputStream filename;
-	float		 height;
-	float		 top;
-	float		 bottom;
-	float		 x;
-	float		 y;
-	float		 topInfoHeight	  = 140;
-	float		 bottomInfoHeight = 140;
-	float		 limit;
+	float height;
+	float top;
+	float bottom;
+	float x;
+	float y;
+	float topInfoHeight	  = 140;
+	float bottomInfoHeight = 140;
+	float limit;
 
 	byte[] background;
 	byte[] qrCode;
 
-	boolean				adapt;
+	boolean adapt;
 	PDPageContentStream	contents;
 	int pageNumber;
-
+	InvoiceTemplateMsg msg;
+	PrintInvoiceConfiguration config;
+	
 	// THE PDF DOCUMENT
 	public static void create(OutputStream os, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] qrCode, byte[] logo) throws IOException, CanNotCreatePdfException {
 		try (PDDocument doc = new PDDocument())
 		{
 			InvoiceTemplate template = new InvoiceTemplate();
 			template.pageNumber = 0;
+			template.msg = new InvoiceTemplateMsg(config.getLanguage());
+			template.config = config;
 
 			if (os != null)
 				template.filename = os;
@@ -109,7 +117,7 @@ public class InvoiceTemplate {
 
 			template.adapt	= config.getAdjustImage();
 			
-			if ((logo != null || company != null) && (config.getHeader() != null && config.getHeader() < MIN_HEADER_FOR_LOGO))
+			if ((logo != null || (company != null && config.isCompany())) && (config.getHeader() != null && config.getHeader() < MIN_HEADER_FOR_LOGO))
 				template.top = MIN_HEADER_FOR_LOGO;
 			else
 				template.top	= config.getHeader();
@@ -126,7 +134,7 @@ public class InvoiceTemplate {
 			template.contents = template.drawPage(doc, company, invoice, config, logo);
 			template.y		  = template.height - template.top - template.topInfoHeight - 5;
 
-			if (config.isDetailed() != null && config.isDetailed())
+			if (config.isDetailed())
 				template.drawDetailedEntries(doc, company, invoice, config, logo);
 			else
 				template.drawSimplifiedEntries(doc, company, invoice, config, logo);
@@ -134,12 +142,160 @@ public class InvoiceTemplate {
 			template.drawBottomInfo(doc, invoice);
 			
 			template.contents.close();
-			template.drawPageNums(doc);				
+			template.drawFooter(doc, company);				
 			doc.save(template.filename);
 			new OutputStreamWriter(os,StandardCharsets.ISO_8859_1);
 		} catch (Exception e)
 		{
 			throw new CanNotCreatePdfException(e);
+		}
+	}
+	
+	private void drawFooter(PDDocument doc, CompanyFull company) throws IOException {
+		if(company != null) {
+			RecordData recordData = company.getRecordDatas() != null && !company.getRecordDatas().isEmpty() ? company.getRecordDatas().get(0) : null;
+			Company reg = company.getRegistry();
+			String companyName = "", registration = "", tomo = "", folio = "", hoja = "", fechaRegistro = "", nif = "";
+			String registrationString = "";
+			if (recordData != null && getConfig().isRecordData()) {
+				companyName = AonStringUtils.trimToEmpty(reg != null ? reg.getName() : "");
+				registration = AonStringUtils.trimToEmpty(recordData.getRegistration());
+				tomo = AonStringUtils.trimToEmpty(recordData.getVolume());
+				folio = AonStringUtils.trimToEmpty(recordData.getPage());
+				hoja = AonStringUtils.trimToEmpty(recordData.getSheet());
+				Date registryDate = recordData.getRecordDate();
+				fechaRegistro = registryDate != null ? new SimpleDateFormat("dd/MM/yyyy").format(registryDate) : "";
+				nif = AonStringUtils.trimToEmpty(reg != null ? reg.getDocument() : "");
+			
+				registrationString = 
+					(!AonStringUtils.isEmpty(registration) ? registration: "") +
+					(!AonStringUtils.isEmpty(tomo)			? "  Tomo: "		+ tomo			: "") +
+					(!AonStringUtils.isEmpty(folio)			? "  Folio: "		+ folio			: "") +
+					(!AonStringUtils.isEmpty(hoja)			? "  Hoja: "		+ hoja			: "") +
+					(!AonStringUtils.isEmpty(fechaRegistro)	? "  F.registro: "	+ fechaRegistro	: "");
+			
+			}
+		
+			String fullStr = "";
+			String webStr = "";
+			String phoneStr = "";
+			String emailStr = "";
+			String mediaStr = "";
+			
+			if (company.getMedias() != null && !company.getMedias().isEmpty() && getConfig().isContactData()) {
+				LinkedList<RegistryMedia> medias = company.getMedias();
+			
+				List<RegistryMedia> webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && m.getMedia().equals(MediaType.WEB)).collect(Collectors.toList());
+				if (!webMedias.isEmpty()) {
+					webStr = "Web: ";
+					StringBuilder sb = new StringBuilder(webStr);
+					for(RegistryMedia m : webMedias) {
+						if (!sb.toString().equals("Web: "))
+							sb.append(" | ");
+						sb.append(m.getValue());
+						if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
+							webStr = sb.toString();
+						}
+					}
+					fullStr = sb.toString();
+				}
+
+				webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && (m.getMedia().equals(MediaType.FIXED_PHONE) || m.getMedia().equals(MediaType.CELLULAR))).collect(Collectors.toList());
+				if (!webMedias.isEmpty()) {
+					phoneStr = "Teléfono/s: ";
+					StringBuilder sb = new StringBuilder(phoneStr);
+					for(RegistryMedia m : webMedias) {
+						if (!sb.toString().equals("Teléfono/s: "))
+							sb.append(" | ");
+						sb.append(m.getValue());
+						if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
+							phoneStr = sb.toString();
+						}
+					}
+					fullStr += (!fullStr.isEmpty() ? "    " : "") + sb.toString();
+				}	
+			
+				webMedias = medias.stream().filter(m -> m.getMedia() != null && (m.getValue() != null && !m.getValue().isEmpty()) && (m.getMedia().equals(MediaType.EMAIL) || m.getMedia().equals(MediaType.CELLULAR))).collect(Collectors.toList());
+				if (!webMedias.isEmpty()) {
+					emailStr = "Email: ";
+					StringBuilder sb = new StringBuilder(emailStr);
+					for(RegistryMedia m : webMedias) {
+						if (!sb.toString().equals("Email: "))
+							sb.append(" | ");
+						sb.append(m.getValue());
+						if ((HELVETICA.getStringWidth(sb.toString()) / 1000.0f * 7) <= 185) {
+							emailStr = sb.toString();
+						}
+					}
+					fullStr += (!fullStr.isEmpty() ? "    " : "") + sb.toString();
+				}
+				mediaStr = webStr + "    " + phoneStr + "    " + emailStr;
+			}	
+		
+			for (int i=0; i<this.pageNumber; i++) {
+				contents = new PDPageContentStream(doc, doc.getPage(i), PDPageContentStream.AppendMode.APPEND, true);
+				
+				if (company.getMedias() != null && !company.getMedias().isEmpty()) {
+					if ((HELVETICA.getStringWidth(fullStr) / 1000.0f * 7) < 575) {
+						mediaStr = fullStr;
+					}
+				
+					drawText(contents
+						, mediaStr
+						, 10f
+						, 20f
+						, BLACK
+						, HELVETICA
+						, 7);
+				
+				}
+			
+				PDFToolkit.drawBox(contents, 10, 15, 575, 1, PdfColors.GRAY);
+			
+				String page = "Pag. " + (i+1) + " de " + pageNumber;
+			
+				float pageNumWidth = HELVETICA.getStringWidth(page) / 1000f * 9;
+				float pageNumInitX = 585 - pageNumWidth;
+				
+				float registrationStrWidth = HELVETICA.getStringWidth(registrationString) / 1000.0f * 7;
+				float initRegistrationX = pageNumInitX - 5 - registrationStrWidth;
+				
+				drawTextRight(contents
+					, new PDRectangle(570, 5, 15, 15)
+					, page
+					, BLACK
+					, HELVETICA
+					, 9
+					, 0
+					, 0);
+			
+				drawText(contents
+					, registrationString
+					, 10f
+					, 5f
+					, BLACK
+					, HELVETICA
+					, 7);
+			
+//			drawText(contents
+//					, croppedString(companyName, initRegistrationX - 15 , HELVETICA, 7)
+//					, 10f
+//					, 5f
+//					, BLACK
+//					, HELVETICA
+//					, 7);
+//			
+//			drawTextRight(contents
+//					, new PDRectangle(initRegistrationX, 5, registrationStrWidth, 15)
+//					, registrationString
+//					, BLACK
+//					, HELVETICA
+//					, 7
+//					, 0
+//					, 0);
+//			
+				contents.close();
+			}
 		}
 	}
 	
@@ -149,6 +305,18 @@ public class InvoiceTemplate {
 			drawPageNumber(i+1);
 			contents.close();
 		}
+	}
+	
+	//DRAW PAGE NUMBER
+	private void drawPageNumber(int num) throws IOException {
+		drawTextRight(contents
+				, new PDRectangle(570, 5, 15, 15)
+				, "Pag. " + num + " de " + pageNumber
+				, BLACK
+				, HELVETICA
+				, 9
+				, 0
+				, 0);
 	}
 
 	// DRAW PAGE
@@ -174,9 +342,9 @@ public class InvoiceTemplate {
 		x = 50f;
 		y = height - top - 20;
 
-		drawTopInfo(doc, invoice, company, logo);
+		drawTopInfo(doc, config, invoice, company, logo);
 
-		if (config.isDetailed() != null && config.isDetailed())
+		if (config.isDetailed())
 			drawDetailedHeader();
 		else
 			drawSimpleHeader();
@@ -336,7 +504,7 @@ public class InvoiceTemplate {
 	}
 
 	// DRAW UPPER INFO
-	private void drawTopInfo(PDDocument doc, Invoice invoice, CompanyFull company, byte[] logo) throws IOException {
+	private void drawTopInfo(PDDocument doc, PrintInvoiceConfiguration config, Invoice invoice, CompanyFull company, byte[] logo) throws IOException {
 		
 		float maxHeight = MAX_LOGO_HEIGHT;
 		float maxWidth = 297 - x - 20;
@@ -348,7 +516,7 @@ public class InvoiceTemplate {
 		float logoY = tempY - 10;
 		String web = null;
 		
-		if (company != null) {
+		if (company != null && config.isCompany()) {
 			Company registry = company.getRegistry();
 			String companyName = registry != null ? AonStringUtils.trimToEmpty(registry.getName()) : "";
 			companyName = croppedString(companyName, 240, HELVETICA, 9);
@@ -388,7 +556,7 @@ public class InvoiceTemplate {
 			
 			web = "";
 			if (company.getMedias() != null && !company.getMedias().isEmpty()) {
-				web = company.getMedias().stream().filter(m -> m.getMedia() == MediaType.WEB).map(RegistryMedia::getValue).findFirst().orElse("");			
+				web = company.getMedias().stream().filter(m -> m.getValue() != null && !m.getValue().isEmpty() && m.getMedia() == MediaType.WEB).map(RegistryMedia::getValue).findFirst().orElse("");			
 			}
 			
 			tempY -= 10;
@@ -438,16 +606,16 @@ public class InvoiceTemplate {
 			PDFToolkit.drawResizedLogo(doc, doc.getPage(pageNumber - 1), contents, logo, logoX, logoY, maxHeight, maxWidth, web);
 		}
 		
-		drawText(contents, "FACTURA", x, y, BLACK, HELVETICA_BOLD, 16);
+		drawText(contents, getMsg().invoice().toUpperCase(), x, y, BLACK, HELVETICA_BOLD, 16);
 		y -= 30;
 
-		drawText(contents, "Número: " + safeString(invoice.getReferenceCode()), x, y, BLACK, HELVETICA, 11,REFERENCE_NUMBER);
+		drawText(contents, getMsg().number() + ": " + safeString(invoice.getReferenceCode()), x, y, BLACK, HELVETICA, 11,REFERENCE_NUMBER);
 		y -= 4;
 
 		drawBox(contents, x, y, 200, .5f, BLACK);
 		y -= 16;
 
-		drawText(contents, "Fecha: " + formatDate(invoice.getIssueDate(), "dd/MM/yyyy").orElse(""), x, y,BLACK, HELVETICA, 11 , INVOICE_DATE);
+		drawText(contents, getMsg().date() + ": " + formatDate(invoice.getIssueDate(), "dd/MM/yyyy").orElse(""), x, y,BLACK, HELVETICA, 11 , INVOICE_DATE);
 
 		y -= 4;
 
@@ -471,15 +639,28 @@ public class InvoiceTemplate {
 		str = croppedString(str, 230, HELVETICA_BOLD, 12);
 		drawText(contents, str, x, y, BLACK, HELVETICA_BOLD, 12, REGISTRY_NAME);
 		y -= 15;
-		if(invoice.getAddress() != null) {
+		
+		if (invoice.getRegistryAddressData() != null) {
+			RegistryAddress address = invoice.getRegistryAddressData();
+			str = safeString(address.getFullAddress());
+			str = croppedString(str, 230, HELVETICA, 9);
+			drawText(contents,  str, x, y, BLACK, HELVETICA, 9, ADDRESS);
+
+			y -= 10;
+
+			String zipCityProvince =  safeString(address.getZip()) + " "+  safeString(address.getCity()) + " " +  safeString(address.getProvince()); 
+			drawText(contents, zipCityProvince.trim(), x, y, BLACK, HELVETICA, 9, ADDRESS_LINE_TWO);
+		} else {
 			str = safeString(invoice.getAddress());
 			str = croppedString(str, 230, HELVETICA, 9);
 			drawText(contents,  str, x, y, BLACK, HELVETICA, 9, ADDRESS);
-		}
-		y -= 10;
 
-		String zipCityProvince =  safeString(invoice.getAddressZIP()) + " "+  safeString(invoice.getAddressTown()) + " " +  safeString(invoice.getAddressProvince()); 
-		drawText(contents, zipCityProvince.trim(), x, y, BLACK, HELVETICA, 9, ADDRESS_LINE_TWO);
+			y -= 10;
+
+			String zipCityProvince =  safeString(invoice.getAddressZIP()) + " "+  safeString(invoice.getAddressTown()) + " " +  safeString(invoice.getAddressProvince()); 
+			drawText(contents, zipCityProvince.trim(), x, y, BLACK, HELVETICA, 9, ADDRESS_LINE_TWO);
+		}
+
 	}
 
 	// DRAW DETAILED HEADER
@@ -488,15 +669,15 @@ public class InvoiceTemplate {
 		x  = 50;
 
 		drawBox(contents, x, y, 249, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 249, 15), "Descripci" + "\u00F3" + "n", WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawTextCenter(contents, new PDRectangle(x, y, 249, 15), getMsg().description(), WHITE, HELVETICA_BOLD, 9, 4.5f);
 		x += 250;
 
 		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), "Cantidad", WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), getMsg().quantity(), WHITE, HELVETICA_BOLD, 9, 4.5f);
 		x += 70;
 
 		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), "Precio", WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), getMsg().price(), WHITE, HELVETICA_BOLD, 9, 4.5f);
 		x += 70;
 
 		drawBox(contents, x, y, 39, 15, BLACK);
@@ -504,7 +685,7 @@ public class InvoiceTemplate {
 		x += 40;
 
 		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15), "Importe", WHITE, HELVETICA_BOLD, 9, 5, 4.5f);
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), WHITE, HELVETICA_BOLD, 9, 5, 4.5f);
 	}
 
 	// DRAW SIMPLE HEADER
@@ -512,11 +693,11 @@ public class InvoiceTemplate {
 		y -= 60;
 		x  = 50;
 		drawBox(contents, x, y, 429, 15, BLACK);
-		drawText(contents, "Descripci" + "\u00F3" + "n", x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
+		drawText(contents, getMsg().description(), x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
 		x += 430;
 
 		drawBox(contents, x, y, 69, 15, BLACK);
-		drawText(contents, "Importe", x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
+		drawText(contents, getMsg().amount(), x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
 	}
 
 	// DRAW BOTTOM INFO
@@ -529,18 +710,6 @@ public class InvoiceTemplate {
 		drawTaxes(invoice);
 		drawFinances(invoice);
 	}
-	
-	//DRAW PAGE NUMBER
-	private void drawPageNumber(int num) throws IOException {
-		drawTextRight(contents
-				, new PDRectangle(570, 5, 15, 15)
-				, "Pag. " + num + " de " + pageNumber
-				, BLACK
-				, HELVETICA
-				, 9
-				, 0
-				, 0);
-	}
 
 	// DRAW TAXES
 	private void drawTaxes(Invoice invoice) throws IOException {
@@ -548,7 +717,7 @@ public class InvoiceTemplate {
 		y = bottom + 107;
 
 		drawBox(contents, x, y, 79, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 79, 15), "Base", WHITE, HELVETICA, 9, 5, 4.5f);
+		drawTextRight(contents, new PDRectangle(x, y, 79, 15), getMsg().base(), WHITE, HELVETICA, 9, 5, 4.5f);
 		x += 80;
 
 		drawBox(contents, x, y, 79, 15, BLACK);
@@ -556,15 +725,15 @@ public class InvoiceTemplate {
 		x += 80;
 
 		drawBox(contents, x, y, 59, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 59, 15), "Tipo", WHITE, HELVETICA, 9, 4.5f);
+		drawTextCenter(contents, new PDRectangle(x, y, 59, 15), getMsg().type(), WHITE, HELVETICA, 9, 4.5f);
 		x += 60;
 		
 		drawBox(contents, x, y, 49, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 49, 15), "Cuota", WHITE, HELVETICA, 9, 5, 4.5f);
+		drawTextRight(contents, new PDRectangle(x, y, 49, 15), getMsg().quota(), WHITE, HELVETICA, 9, 5, 4.5f);
 		x += 50;
 
 		drawBox(contents, x, y, 99, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 99, 15), "Total factura", WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawTextCenter(contents, new PDRectangle(x, y, 99, 15), getMsg().totalInvoice(), WHITE, HELVETICA_BOLD, 9, 4.5f);
 
 		if (invoice.getBreakdown() != null){
 //			double sum = 0;
@@ -611,19 +780,19 @@ public class InvoiceTemplate {
 		y = bottom + 50;
 
 		drawBox(contents, x, y, 59, 15, BLACK);
-		drawText(contents, "Fecha", x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
+		drawText(contents, getMsg().date(), x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
 		x += 60;
 
 		drawBox(contents, x, y, 79, 15, BLACK);
-		drawText(contents, "Forma de pago", x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
+		drawText(contents, getMsg().payMethod(), x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
 		x += 80;
 
 		drawBox(contents, x, y, 159, 15, BLACK);
-		drawText(contents, "Cuenta Bancaria", x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
+		drawText(contents, getMsg().bankAccount(), x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
 		x += 160;
 
 		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15), "Importe", WHITE, HELVETICA, 9, 5, 4.5f);
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), WHITE, HELVETICA, 9, 5, 4.5f);
 
 
 		if(invoice.getFinances() != null) {
@@ -632,8 +801,9 @@ public class InvoiceTemplate {
 				x = 180;
 				drawText(contents, formatDate(finance.getDueDate(), "dd/MM/yyyy").orElse(""), x + 5f, y - 12, BLACK, HELVETICA, 7, i + FINANCE_DATE);
 				x += 60;
-			
-				drawText(contents, finance.getPayMethodType() == null ?  "" :  finance.getPayMethodType().getDescription(), x + 5f, y - 12, BLACK, HELVETICA,7, i + FINANCE_PAY_METHOD);
+				
+				String paymethod = finance.getPayMethodName() != null ? finance.getPayMethodName() : (finance.getPayMethodType() != null ? finance.getPayMethodType().getDescription(): "");
+				drawText(contents, paymethod, x + 5f, y - 12, BLACK, HELVETICA,7, i + FINANCE_PAY_METHOD);
 				x += 80;
 			
 				if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null)
@@ -649,5 +819,12 @@ public class InvoiceTemplate {
 			}
 		}
 	}
+	
+	private InvoiceTemplateMsg getMsg() {	
+		return this.msg;
+	}
 
+	private PrintInvoiceConfiguration getConfig() {
+		return config;
+	}
 }

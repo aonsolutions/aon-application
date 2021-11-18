@@ -1,12 +1,13 @@
 import { AonElement } from "../../../components/AonElement.js";
-import { disabledForm, formatDateOrigin, setDate, setValueName } from "../../../services/utils.js";
-import { getMovements, getEmployee, getCccLife } from "../../../services/service.js";
+import { disabledForm, setValueName } from "../../../services/utils.js";
+import { getMovements, getEmployee, getMovementsCccs, getAppParamComunica } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
-import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 
 export class AonMovementsList extends AonElement {
@@ -46,7 +47,10 @@ export class AonMovementsList extends AonElement {
   }
 
   disconnectedCallback() {
-    if (this.applicationEl) this.applicationEl.removeFloatOption();
+    if (this.applicationEl){
+      this.applicationEl.stopLoader();
+      this.applicationEl.removeFloatOption();
+    } 
   }
 
   build() {
@@ -69,6 +73,7 @@ export class AonMovementsList extends AonElement {
       this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA));
     }
     const btnSearch = this.applicationEl.addSearchOption();
+
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
       this.searchFilter = detail;
       this.search();
@@ -80,6 +85,32 @@ export class AonMovementsList extends AonElement {
 
     btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
     this.searchValueDefault();
+
+    const href = window.location.href;
+		if(href.includes('localhost') || href.includes('8080'))
+      this.sincronizedIcon();
+  }
+
+  sincronizedIcon(){
+    getAppParamComunica().then(({value})=>{
+
+      let name = this.lastSincronizedText( value ? Number(value) : null );
+
+      let aib = this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name}, async () =>  {
+        let btn = aib.getButton();
+        btn.classList.add(CSS.AON_FA_SPIN);
+        await this.applicationParentEl.updateContracts();
+        if(aib && btn) {
+          aib.getButton().title = aib.title = this.lastSincronizedText(new Date());
+          btn.classList.remove(CSS.AON_FA_SPIN);
+        }
+      });     
+    });
+
+  }
+
+  lastSincronizedText(date){
+    return date ? `Última sincronización ${AonDateUtils.setDateTimestampDay(date) }` : 'No sincronizado';
   }
 
   searchValueDefault(){
@@ -89,8 +120,8 @@ export class AonMovementsList extends AonElement {
     periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
       if(detail){
         let {startDate, endDate} = detail;
-        if(new Date(startDate) > today) startDate = formatDateOrigin(today);
-        if(new Date(endDate) > today) endDate     = formatDateOrigin(today);
+        if(new Date(startDate) > today) startDate = AonDateUtils.formatDateOrigin(today);
+        if(new Date(endDate) > today) endDate     = AonDateUtils.formatDateOrigin(today);
         setValueName('startDate', startDate);
         setValueName('endDate', endDate);
       }
@@ -99,11 +130,11 @@ export class AonMovementsList extends AonElement {
     let startDateEl = this.getElement("startDate");
     let endDateEl   = this.getElement("endDate");
     startDateEl.addEventListener(EVENT.CHANGE,({detail})=>{
-      if(detail && new Date(detail) > today) startDateEl.value = formatDateOrigin(today);
+      if(detail && new Date(detail) > today) startDateEl.value = AonDateUtils.formatDateOrigin(today);
       periodEl.value = "personalized";
     });
     endDateEl.addEventListener(EVENT.CHANGE,({detail})=>{
-      if(detail && new Date(detail) > today) endDateEl.value = formatDateOrigin(today);
+      if(detail && new Date(detail) > today) endDateEl.value = AonDateUtils.formatDateOrigin(today);
       periodEl.value = "personalized";
     });
   }
@@ -121,11 +152,11 @@ export class AonMovementsList extends AonElement {
     if (aonTable) {
       aonTable.removeColumns();
       aonTable.addColumn("#", "number", "count", "2%");
-      aonTable.addColumn("Nombre", "string", "name", "31%");
+      aonTable.addColumn(MSG.NAME, "string", "name", "31%");
       aonTable.addColumn("DNI/NIE", "string", "dni", "15%");
       aonTable.addColumn("Movimiento", "string", "status", "10%");
-      aonTable.addColumn("Cuenta", "string", "ctaCtiCompleta", "10%");
-      aonTable.addColumn("Fecha", "date", "fechaParse", "10%");
+      aonTable.addColumn(MSG.ACCOUNT, "string", "ctaCtiCompleta", "10%");
+      aonTable.addColumn(MSG.DATE, "date", "fechaParse", "10%");
       aonTable.addColumn("Opción", "fn", "option", "2%");
       try {
         const resp = await this.getData();
@@ -168,22 +199,33 @@ export class AonMovementsList extends AonElement {
     }
   }
 
-  async aonMovement(dt) {
+  async aonMovement(data) {
     this.applicationEl.startLoading();
-    try {
-      let resp = await getEmployee({ regime:dt.regime, ctaCti:dt.ctaCti, nss: dt.nss });
-      if (resp) {
-        const data = { ...resp, ...dt };
-        const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, data);
-        if (aonAltaDirecta) {
-          disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
-          disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, AON_SWITCH);
-        }
-      }
-    } catch (error) {
-      this.showError(error);
+    let newData = undefined;
+    if(data.tc || data.contractType){
+      newData = this.movParseData(data);
+    } else {
+      try {
+        let resp = await getEmployee({ regime:data.regime, ctaCti:data.ctaCti, nss: data.nss });
+        if (resp) newData = { ...resp, ...data };
+      } catch (error) {}
     }
+
+    if(newData){
+      const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, newData);
+      if (aonAltaDirecta) {
+        disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
+        disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, AON_SWITCH);
+      }
+    }
+ 
     this.applicationEl.stopLoading();
+  }
+
+  movParseData(data){
+    let dt = {...data, contract: data.tc || data.contractType};
+    if(data.ep) dt.ocup = data.ep.toLowerCase();
+    return dt;
   }
 
   getFilter = () => JSON.parse(this.getAttribute(CONSTANT.FILTER));
@@ -221,7 +263,7 @@ export class AonMovementsList extends AonElement {
   formatData(res){
     let { ipf, fra, frb, situation } = res;
     fra = frb || fra;
-    const fechaParse = setDate(fra);
+    const fechaParse = AonDateUtils.setDate(fra);
     const date_now = new Date();
     const prev = new Date(fra).getTime() > date_now.getTime();
     let dni = ipf.toString();
@@ -286,7 +328,7 @@ export class AonMovementsList extends AonElement {
     this.setFilter(detail);
     try {
       let count = 0;
-      const resp = await getCccLife(this.getFilter());
+      const resp = await getMovementsCccs(this.getFilter());
       resp
       .map((res) => {
         const newData = this.formatData(res);
@@ -317,26 +359,26 @@ export class AonMovementsList extends AonElement {
     return [{
       name: "Últimos 3 meses",
       value: "last_three_month",
-      startDate: formatDateOrigin(new Date().addMonth(-3)),
-      endDate: formatDateOrigin(now),
+      startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-3)),
+      endDate: AonDateUtils.formatDateOrigin(now),
     },
     {
       name: "Últimos 6 meses",
       value: "last_six_month",
-      startDate: formatDateOrigin(new Date().addMonth(-6)),
-      endDate: formatDateOrigin(now),
+      startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-6)),
+      endDate: AonDateUtils.formatDateOrigin(now),
     },
     {
       name: "Año actual",
       value: "this_year",
-      startDate: formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
-      endDate: formatDateOrigin(new Date(now.getFullYear(), 12, 0)),
+      startDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear(), 0, 1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear(), 12, 0)),
     },
     {
       name: "Año anterior",
       value: "last_year",
-      startDate: formatDateOrigin(new Date(now.getFullYear() - 1, 0, 1)),
-      endDate: formatDateOrigin(new Date(now.getFullYear() - 1, 12, 0)),
+      startDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear() - 1, 0, 1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date(now.getFullYear() - 1, 12, 0)),
     },
     {
       name: "Personalizado",

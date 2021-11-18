@@ -168,6 +168,11 @@ public class RegistryMediaDAO {
 	}
 	
 	public static RegistryMedia save(AONContext ctx, RegistryMedia media){
+		if(media.getId() != null && media.isRemoved()) {
+			delete(ctx, media.getId());
+			return media;
+		}
+		if(!media.isDirty()) return media;
 		return (media.getId() == null)
 				?insert(ctx, media)
 				:update(ctx, media);

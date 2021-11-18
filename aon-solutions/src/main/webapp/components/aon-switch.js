@@ -1,5 +1,6 @@
 import {AonElement} from './AonElement.js';
 import { CONSTANT, TAG, EVENT } from '../environments/environments.js';
+import '../css/aon-switch.css';
 
 export class AonSwitch extends AonElement {
 

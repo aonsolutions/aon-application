@@ -1,10 +1,11 @@
 import {AonElement} from '../../components/AonElement.js';
 import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { FirebaseService } from '../../services/firebaseService.js';
-import { getTotalNotification, saveAuthDevice } from '../../services/service.js';
+import { getTotalNotification, saveAuthDevice, deleteAuthDevice } from '../../services/service.js';
 import { waitEl } from '../../services/utils.js';
+import { createSpan } from '../../services/utilsComponents.js';
 import { AonNotification } from './aon-notification.js';
-import { createBadge, createIconButton, createSpan } from './createComponent.js';
+import { createBadge, createIconButton } from './createComponent.js';
 
 export class AonNotificationIcon extends AonElement {
 
@@ -12,7 +13,7 @@ export class AonNotificationIcon extends AonElement {
     BADGE;
     COUNT;
     color;
-
+    AUTH_DEVICE;
     static get observedAttributes() {
         return [CONSTANT.BADGE];
     }
@@ -61,10 +62,11 @@ export class AonNotificationIcon extends AonElement {
 
     async changeBadge(){
         const notificationSpan = await waitEl("#"+this.AON_NOTIFICATION_ICON);
+        notificationSpan.style.position = "relative";
         const total = this.getTotalCount();
         const badge = this.getElement(this.BADGE) || createBadge(this.BADGE).element;
         if(total && total > 0){
-            badge.textContent = total;
+            // badge.textContent = total;
             notificationSpan.appendChild(badge);   
         } else {
             badge.remove();
@@ -84,7 +86,7 @@ export class AonNotificationIcon extends AonElement {
 						(payload) => firebaseSrv.pushNotification(payload),
 						(err) => console.log(err)
 					);
-					saveAuthDevice({tokenFCM:token});
+					this.AUTH_DEVICE = await saveAuthDevice({tokenFCM:token});
 				}
 			} 
 		} catch(e){
@@ -104,6 +106,12 @@ export class AonNotificationIcon extends AonElement {
     async getTotalNotification(){
         this.COUNT = await getTotalNotification();
         this.changeBadge();
+    }
+    
+    deleteToken(){
+        let tokenFCM = window.tokenFCM;
+        if(tokenFCM)
+            deleteAuthDevice({tokenFCM}).then(console.log).catch(console.log);
     }
 
     getTotalCount(){

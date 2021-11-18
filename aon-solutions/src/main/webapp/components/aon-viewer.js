@@ -100,11 +100,14 @@ export class AonViewer extends AonElement {
 		aibm.id = "aonViewerButtonsDivEmail";
 		aibm.icon = "email";
 		aibm.background = "#f1f1f1";
+		aibm.addEventListener(EVENT.CLICK, () => {
+			this.dispatchEvent(new CustomEvent(EVENT.SEND_MAIL));
+		});
 		mail.appendChild(aibm);
 		div.appendChild(mail);
 
 		let print = this.createElement(TAG.SPAN);
-		print.style.marginTop =  "4px";
+		print.style.marginTop = "4px";
 		let aibp = new AonIconButton();
 		aibp.id = "aonViewerButtonsDivPrint";
 		aibp.icon = "print";
@@ -250,6 +253,7 @@ export class AonViewer extends AonElement {
 				if(c) c.parentElement.removeChild(c);
 				const canvas = this.createElement(TAG.CANVAS);
 				canvas.id = 'canvas' + pageNumber;
+				canvas.style.border = '1px solid #ebebeb';
 				div.appendChild(canvas);
 
 				pdf.getPage(pageNumber).then((page) =>  {

@@ -1,4 +1,4 @@
-import { actionMobile } from "./actionMobile.js";
+import { mobileAction, MOBILE_ACTION } from "./mobileService.js";
 
 let position;
 
@@ -12,9 +12,7 @@ const getCurrent = () =>
     else reject("browser no sopported");
   });
 
-const successCallback = ({ coords, timestamp }) => {
-  return { latitude: coords.latitude, longitude: coords.longitude, timestamp };
-};
+const successCallback = ({ coords, timestamp }) =>  ({ latitude: coords.latitude, longitude: coords.longitude, timestamp });
 
 const errorCallback = (error) => {
   let msg = null;
@@ -33,40 +31,38 @@ const errorCallback = (error) => {
     case error.UNKNOWN_ERROR:
       msg = "Un error desconocido ocurrió.";
       break;
-    case 999:
-      msg = "Inactive location";
-      break;
+    case 1: case 999:
+      msg = error.message || "Inactive location";
+    break;
   }
-  if (msg) {
-    console.warn(msg);
+  if (msg) 
     alert(msg);
-    // const toast = document.querySelector('aon-toast');
-    // if(toast){
-    //   toast.start({message:msg, type:"error"});
-    // }
-  }
 };
 
 export const getPosition = async () => {
   let result = null;
-  const isApp = await actionMobile({ action: "setPosition" });
-  if (isApp) {
+  const isApp = await mobileAction({ action: MOBILE_ACTION.SET_POSITION, times:2 });
+  if (isApp) 
     result = await sleepPosition();
-  } else {
-    result = await getCurrent()
-      .then(successCallback)
-      .catch((e) => e);
-  }
-  if (result && result.code) errorCallback(result);
+  else 
+    result = await getCurrent().then(successCallback).catch((e) => e);
+
+  if (result && result.code)  errorCallback(result);
+
+  setPosition(undefined);
+
+  console.log("position", position);
+  console.log("result", result);
+
   return result;
 };
 
-export const setPosition = async (pos) => {
+export const setPosition = (pos) => {
   position = pos;
 };
 
 const sleepPosition = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let idInterval = setInterval(() => {
       if (position) {
         resolve(position);

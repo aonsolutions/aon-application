@@ -23,13 +23,13 @@ public class AuthDevice {
 		return this;
 	}
 
-	public AuthDevice setDeviceType(DeviceType device_type) {
-		this.deviceType = device_type;
+	public AuthDevice setDeviceType(DeviceType dv) {
+		this.deviceType = dv;
 		return this;
 	}
 	
-	public AuthDevice setDeviceToken(String device_token) {
-		this.deviceToken = device_token;
+	public AuthDevice setDeviceToken(String dv) {
+		this.deviceToken = dv;
 		return this;
 	}
 

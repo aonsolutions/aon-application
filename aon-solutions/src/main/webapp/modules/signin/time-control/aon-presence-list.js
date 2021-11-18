@@ -1,7 +1,7 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { getPeriod, getStatus, getTimeControlList, getTimeControlExcel, getTimeControlPdf } from "../../../services/service.js";
-import { isEmptyObject, setDateTimestamp, setDateTimestampDay, setValueName, sortBy, waitEl } from "../../../services/utils.js";
-import {  setAttributes } from "../../../services/utilsComponents.js";
+import { isEmptyObject, setValueName, sortBy, waitEl } from "../../../services/utils.js";
+import { setAttributes } from "../../../services/utilsComponents.js";
 import { iconAddLocation, PRESENCE_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../signinEnums.js";
 import { dateCustomDayHour, modalReport, StringTwoLetters, timeHour } from "./utils.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../../environments/environments.js";
@@ -9,6 +9,7 @@ import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
 export class AonPresenceList extends AonElement {
   TABLE_ID;
@@ -133,7 +134,7 @@ export class AonPresenceList extends AonElement {
         const resp = await this.getData();
         aonTable.removeRows();
         resp.map((res) => {
-          let lastStatus = res.last_date ? `${res.textStatus} ${setDateTimestampDay(res.last_date)}` : null;
+          let lastStatus = res.last_date ? `${res.textStatus} ${AonDateUtils.setDateTimestampDay(res.last_date)}` : null;
           res.lastStatus = lastStatus;
           aonTable.addRow(res, (el) => this.aonEvent(el, res));
         });
@@ -152,7 +153,7 @@ export class AonPresenceList extends AonElement {
         resp.map((res, idx) => {
           let subtitle = null;
           if(res.last_date){
-            const dateParse = dateCustomDayHour(res.last_date) || setDateTimestamp(res.last_date);
+            const dateParse = dateCustomDayHour(res.last_date) || AonDateUtils.setDateTimestamp(res.last_date);
             subtitle = `${dateParse} <span style="float: right;">${res.nameLocation}</span> `;
           }
           let options = {

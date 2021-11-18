@@ -433,7 +433,7 @@ public class FinanceTrackingDAO {
 					.setId(record.getValue(RBANK.ID))
 					.setRegistry(record.getValue(RBANK.REGISTRY))
 					.setDomain(record.getValue(RBANK.DOMAIN))
-					.setAccount(record.getValue(RBANK.ACCOUNT))
+					.setAccountId(record.getValue(RBANK.ACCOUNT))
 					.setAccountCode(record.getValue(RBANK_ACCOUNT.CODE))
 					.setAccountDescription(record.getValue(RBANK_ACCOUNT.DESCRIPTION))
 					.setActive(AonEnumUtils.getBoolean( record.getValue(RBANK.ACTIVE)))

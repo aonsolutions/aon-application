@@ -5,7 +5,7 @@ import { AonInput } from "./aon-input.js";
 import { AonSelect } from "./aon-select.js";
 import { AonToolbar } from "./aon-toolbar.js";
 import { CONSTANT, CSS } from "../environments/environments.js";
-import { setAttributes, setClasses, setEvents } from "../services/utils.js";
+import { setAttributes, setClasses, setEvents } from "../services/utilsComponents.js";
 
 
 /**

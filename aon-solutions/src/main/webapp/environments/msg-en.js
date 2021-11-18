@@ -8,6 +8,8 @@ export const ACCOUNTING = 'Accounting';
 export const ACTIVATE = 'Activate';
 export const ACTIVE = 'Active';
 export const ACTIVES = 'Active';
+export const ACTIVITY = 'Activity';
+export const ACTIVITY_SUMMARY = 'Activity Summary';
 export const ADD = 'Add';
 export const ADD_CATEGORY = 'Add Category';
 export const ADD_COMMENT = 'Add Comment';
@@ -20,6 +22,7 @@ export const ADDRESS = 'Address';
 export const ALL_FILES = 'All Files';
 export const AMOUNT = 'Amount';
 export const API_DOCUMENTATION = 'API Documentation';
+export const APPLICATIONS = 'Applications';
 export const ASESOR = 'Asesor';
 export const ATTACH_FILES_DRAGGING_DROPPING = 'Drag or select the file';
 export const ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND = 'Drag or select the background';
@@ -30,7 +33,11 @@ export const AVAILABLE = 'Available';
 
 export const BACK = 'Back';
 export const BACKGROUND_ADJUST = 'Background Adjust';
+export const BANK = 'Bank';
+export const BANKS = 'Banks';
+export const BARCODE = 'Barcode';
 export const BASE = 'Base';
+export const BASQUE = 'Basque';
 export const BILLING = 'Billing';
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Booking';
@@ -42,16 +49,25 @@ export const BUSINESS_NAME = 'Business Name';
 // ----- C
 
 export const CANCEL = 'Cancel';
+export const CATALAN = 'Catalan';
 export const CATEGORY = 'Category';
 export const CATEGORIES = 'Categories';
+export const CERTIFICATE = 'Certificate';
+export const CERTIFICATES = 'Certificates';
 export const CHANGE_TYPE = 'Change Type';
 export const CITY = 'City';
+export const CLASSIC_APPLICATIONS = 'Classic Applications';
+export const CLASSIC_VIEW = 'Classic View';
+export const CLOSE = 'Close';
+export const CLOSE_SESSION = 'Logout';
 export const CODE = 'Code';
 export const COMMENT = 'Comment';
 export const COMMENTS = 'Comments';
+export const COMMUNICATION = 'Communication';
 export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
 export const COMPANY_COSTS = 'Company Costs';
+export const COMPANY_MANAGEMENT = 'Company Management';
 export const COMPONENTS = 'Components';
 export const CONCEPT = 'Concept';
 export const CONCEPTS = 'Concepts';
@@ -62,8 +78,10 @@ export const CONTACT_DATA = 'Contact Data';
 export const CONTACTS = 'Contacts';
 export const CONTRACT = 'Contract';
 export const COUNTRY = 'Country';
+export const CREATE = 'Create';
 export const CREDITOR = 'Creditor';
 export const CREDITORS = 'Creditors';
+export const CUSTOM_VIEW = 'Custom View';
 export const CUSTOMER = 'Customer';
 export const CUSTOMERS = 'Customers';
 
@@ -72,15 +90,20 @@ export const CUSTOMERS = 'Customers';
 export const DATE = 'Date';
 export const DEACTIVATE = 'Deactivate';
 export const DELETE = 'Delete';
+export const DELETE_BACKGROUND_CONFIRM = 'Are you sure to delete the background';
 export const DELETE_CATEGORY = 'Delete Category';
-export const DELETE_CONFIRM = "Estas seguro de eliminar";
+export const DELETE_CONFIRM = "Are you sure to delete";
 export const DELETE_FILE = 'Delete File';
+export const DELETE_FILE_CONFIRM = 'Are you sure to delete the file';
 export const DELETE_FOREVER = 'Delete Permanently';
 export const DELETE_FOREVER_INVOICE_CONFIRMATION = 'The Invoice has been definitively deleted.';
+export const DELETE_LOGO_CONFIRM = 'Are you sure to delete the logo';
 export const DELETE_TAG = 'Delete Tag';
 export const DELETE_TAX = 'Delete Tax';
 export const DELETED_DATA = "The data has been deleted successfully";
+export const DESCRIPTION = 'Description';
 export const DETAILED = 'Detailed';
+export const DEUTSCH = 'German';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documentary';
@@ -102,8 +125,14 @@ export const EDIT_FILES = 'Edit Files';
 export const EDIT_TAG = 'Edit Tag';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Employee';
+export const END_DATE = 'End Date';
+export const ENGLISH = 'English';
 export const ENTERPRISE = 'Enterprise';
+export const ENTRY = 'Entry';
 export const EQUIVALENCE_SURCHARGE = 'Equivalence Surcharge';
+export const EXIT = 'Exit';
+export const EXPENSE = 'Expense';
+export const EXPENSES = 'Expenses';
 export const EXPIRATIONS = 'Expirations';
 
 // ----- F
@@ -117,28 +146,40 @@ export const FOOTER = 'Footer';
 
 // ----- G
 
+export const GALICIAN = 'Galician';
 export const GENERAL_INFORMATION = 'General Information';
 export const GROUP_DATA = 'Group Data';
+export const GROUP_MANAGEMENT = 'Group Management';
 export const GROUP = 'Group';
 export const GROUPS = 'Groups';
 
 // ----- H
 
 export const HEADER = 'Header';
+export const HELP = 'Help';
+export const HIRING = 'Hiring';
 export const HOLDER = 'Holder';
 export const HOLDERS = 'Holders';
+export const HOURS = "Hours";
+export const HISTORIC = "Historic";
 
 // ----- I
 
+export const IN_DEVELOPMENT = 'This option is under development...';
 export const INACTIVE = 'Inactive';
 export const INACTIVES ='Inactive';
 export const INBOX = 'Inbox';
+export const INCLUDE_COMPANY_DATA = 'Include Company Data';
+export const INCLUDE_LOGO = 'Include Logo';
+export const INFORMATION = 'Information';
 export const INVESTMENT = 'Investment';
 export const INVOICE = 'Invoice';
 export const INVOICE_CONCEPTS = 'Invoice Concepts';
+export const INVOICE_CONFIGURATION = 'Invoice Configuration';
 export const INVOICE_DATA = 'Invoice Data';
 export const INVOICE_ISSUED = 'Invoice Issued';
 export const INVOICE_NUMBER = 'Invoice Number';
+export const INVOICE_PRINTING = 'Invoice Printing';
 export const INVOICE_RECEIVED = 'Invoice Received';
 export const INVOICES = 'Invoices';
 export const IRPF = 'IRPF';
@@ -151,9 +192,11 @@ export const ISSUEDS = 'Issued';
 
 // ----- L
 
+export const LANGUAGE = 'Language';
+export const LAST = 'Last';
 export const LAST_LOCATION = 'Last Location';
 export const LAST_STATUS = 'Last Status';
-export const LOCATION = "Location";
+export const LOCATION = 'Location';
 
 // ----- M
 
@@ -170,18 +213,29 @@ export const MY_USER = 'My User';
 export const NAME = 'Name';
 export const NEW = 'New';
 export const NEW_COMPANY = 'New Company';
+export const NEW_EXPENSE = 'New Expense';
+export const NEW_PRODUCT = 'New Product';
+export const NEW_REQUEST = 'New Request';
 export const NEXT = 'Next';
+export const NOTES = 'Notes';
+export const NOTE = 'Note';
 export const NUMBER = 'Number';
 
 // ----- O
-
+export const OBSERVATION = 'Observation';
+export const OFFICE = 'Office';
 export const ONLY_PORTAL = 'Only Portal';
 export const OPEN = 'Open';
 export const OPEN_MENU = 'Open Menu';
-export const OPIONS = 'Options';
+export const OPEN_REQUESTS = 'Open Requests';
+export const OPTIONAL = "Optional"; 
+export const OPTIONS = 'Options';
+export const OTHER_SERVICES = 'Other Services';
+
 
 // ----- P
 
+export const PAUSE = 'Pause';
 export const PAYMETHOD = 'Payment Method';
 export const PAYROLL = 'Payroll';
 export const PAYSHEET = 'Paysheet';
@@ -193,10 +247,10 @@ export const PENDINGS = 'Pending';
 export const PERMISSIONS = 'Permissions';
 export const PHONE = 'Phone';
 export const POSTAL_CODE = 'Postal Code';
+export const POSTAL_CODE_MIN = 'ZIP';
 export const PREVIOUS = 'Previous';
 export const PRICE =  'Price';
 export const PRINT_INVOICE = 'Print Invoice';
-export const PRINTING_INVOICES = 'Printing Invoices';
 export const PROCESSED_MOVEMENT = "The discharge has been processed successfully";
 export const PRODUCT = 'Product';
 export const PRODUCTS = 'Products';
@@ -225,8 +279,11 @@ export const REJECT_INVOICES = 'Reject Invoices';
 export const REJECTED = 'Rejected';
 export const REJECTED_INVOICES = 'Rejected Invoices';
 export const REJECTEDS = 'Rejected';
+export const REMINDER = 'Reminder';
 export const REQUEST = 'Request';
 export const REQUESTS = 'Requests';
+export const REQUESTS_SENT = 'Sent Requests';
+export const REQUESTS_RECEIVED = 'Received Requests';
 export const RESTORE = 'Restore';
 export const RESTORED_DATA = 'The data has been restored successfully';
 export const RESTORE_INVOICE = 'Restore Invoice';
@@ -247,16 +304,20 @@ export const SEND_INVOICES = 'Send Invoices';
 export const SEPA_FILES = 'SEPA Files';
 export const SERIE = 'Serie';
 export const SERVICE = 'Service';
+export const SERVICES = 'Services';
 export const SETTING = 'Setting';
+export const SHARED = 'Shared';
 export const SHOW_FILE = 'Show File';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Size';
+export const SPANISH = 'Spanish';
 export const STATISTICS = 'Statistics';
 export const STATUS = "Status";
 export const SUPPLIED = 'Supplied';
 export const SUPPLIER = 'Supplier';
 export const SUPPLIERS = 'Suppliers';
+export const SUPPORT = 'Support';
 export const SURCHARGE = 'Surcharge';
 export const SURNAME = 'Surname';
 export const SYSTEM_MESSAGES = 'System Messages';
@@ -268,12 +329,16 @@ export const TAGS = 'Tags';
 export const TAX = 'Tax';
 export const TAX_BASE = 'Tax Base';
 export const TAXES_DETAIL= 'Taxes Detail';
+export const TEST_ENVIRONMENT = 'Test Environment';
 export const TICKET = 'Ticket';
 export const TICKETBAI = 'TicketBAI';
 export const TICKETS = 'Tickets';
 export const TIMECONTROL = 'Time Control';
+export const TITLE = 'Títle';
 export const TITULAR_DATA = 'Titular Data';
 export const TO_TRASH = 'Send to Trash';
+export const TODAY = 'Today';
+export const TOMORROW = 'Tomorrow';
 export const TOOLS = 'Tools';
 export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Supplied';
@@ -302,9 +367,40 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 export const WEB = 'Web';
 export const WITHHOLDING = 'Withholding';
+export const WORKGROUP = 'Workgroup';
+export const WRITE_YOUR_TITLE = "Write your title here";
+export const WRITE_A_COMMENT =  "Write a comment";
+export const WRITE_A_DESCRIPTION = "Write a description";
+export const WRITE_A_NOTE =  "Write a note";
 
 // ----- X
 
 // ----- Y
 
+export const YEAR = 'Year';
+export const YESTERDAY = 'Yesterday';
+
 // ----- Z
+
+//-------------DAYS
+export const SUNDAY = "Sunday";
+export const MONDAY = "Monday"; 
+export const TUESDAY = "Tuesday";
+export const WEDNESDAY = "Wednesday";
+export const THURSDAY = "Thursday"; 
+export const FRIDAY = "Friday"; 
+export const SATURDAY = "Saturday"; 
+
+//-------------MONTHS
+export const JANUARY = "January"; 
+export const FEBRUARY = "February"; 
+export const MARCH = "March"; 
+export const APRIL = "April"; 
+export const MAY = "May"; 
+export const JUNE = "June"; 
+export const JULY = "July"; 
+export const AUGUST = "August";
+export const SEPTEMBER = "September";
+export const OCTOBER = "October"; 
+export const NOVEMBER = "November"; 
+export const DECEMBER = "December"; 

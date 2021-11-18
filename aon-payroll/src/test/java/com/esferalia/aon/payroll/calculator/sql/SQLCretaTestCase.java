@@ -4898,6 +4898,80 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaAdditionalHoursTooSmall()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "08");
+		
+		addData(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				new HashMap<String, String>() {
+					{
+						put(ContextVariable.MONDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.TUESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.WEDNESDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.THURSDAY_HOURS.getName(), "2.00");
+						put(ContextVariable.FRIDAY_HOURS.getName(), "2.00");
+					}
+				}
+				);
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addData(aonContext, 
+				contract, 
+				startDate, 
+				endDate, 
+				new HashMap<String, String>() {
+					{
+						put("HORAS_COMPLEMENTARIAS", "0.01");
+						put("IMPORTE_HORA_COMPLEMENTARIA", "57.00");
+					}
+				}
+				);
+
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				"HORAS COMPLEMENTARIAS PACTADAS", 
+				"/*read-only*/(HORAS_COMPLEMENTARIAS=FRACCIONAR(HORAS_COMPLEMENTARIAS)) * IMPORTE_HORA_COMPLEMENTARIA/**/", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0058);
+		
+		
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
+		getTramosBases(connection, startDate, endDate, ccc, contract);
+		
+		
+		tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("02"))
+		.forEach(d -> {
+			throw new AssertionError();
+		});
+
+		tramosBases.get(0).getDatosTramo().
+		getDato().stream().filter(d -> d.getCodigo().equals("537"))
+		.forEach(d -> {
+			throw new AssertionError();
+		});
+	}
+
+	@Test
 	@Ignore
 	public void testCretaAdditionalHoursIT()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
@@ -6299,8 +6373,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		org.junit.Assert.assertEquals(1,liquidacion.getLiquidacionMes().size());
 		
 		LiquidacionMes liquidacionMes = liquidacion.getLiquidacionMes().get(0);
-		int month  = (Integer.parseInt(mes)+1) % 12;
-		int year = Integer.parseInt(anho) + ((Integer.parseInt(mes)+1) / 12);
+		int year = Integer.parseInt(anho);
+		int month  = (Integer.parseInt(mes)+1) ;
+		if ( month > 12 ) {
+			year++;
+			month = month % 12;
+		}
+		
 		org.junit.Assert.assertEquals(year, Integer.parseInt(liquidacionMes.getMesLiquidativo().getAnho()));
 		org.junit.Assert.assertEquals(month, Integer.parseInt(liquidacionMes.getMesLiquidativo().getMes()));
 		

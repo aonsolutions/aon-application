@@ -84,7 +84,7 @@
 			gap: 5px;
 		}
 		
-		.cmd_btn{
+		.cmdBtn{
 			background-position: center left;
 			background-repeat: no-repeat;
 			padding-left: 25px !important;
@@ -106,20 +106,55 @@
 			flex-grow: 1;
 		}
 		
+		.loadingPanel{
+			display: flex;
+			align-items: center;
+			animation-name: spin;
+			animation-duration: 2500ms;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+		
+		@keyframes spin {
+		    from {
+		        transform:rotate(0deg);
+		    }
+		    to {
+		        transform:rotate(360deg);
+		    }
+		}
+		
+		.message{
+			display: flex;
+			justify-content: center;
+			text-transform: uppercase;
+			margin-top: 5px 0;
+			gap: 5px;
+			align-items: center;
+		}
+		
+		.container{
+			margin: 0 10px;
+		}
+		
 	</ui:Style>
 
 	<g:SimpleLayoutPanel>
-		<g:DockLayoutPanel ui:field="dockLayoutPanel">
+		<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
+			<g:north size="50">
+				<aon:AonToolbar ui:field="toolbar" />
+			</g:north>
 			<g:center>
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 					<g:center>
-						<g:HTMLPanel styleName="{style.mt50} {aonResources.css.aonSelector}">
+						<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
 							<g:HTMLPanel ui:field="messageContainer" />
+							<g:HTMLPanel ui:field="loadingPanel" styleName="{style.message}" />
 							<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 								<g:tab>
 							    	<g:header size='7'>Datos Afiliación</g:header>
-							    	<g:HTMLPanel styleName="{style.mt10} {style.flex1}">
-							    		<g:ScrollPanel ui:field="scrolledPanel" styleName="{style.p5} {style.center} {style.flexGrow}">
+							    	<g:HTMLPanel styleName="{style.mt10}">
+							    		<g:ScrollPanel ui:field="scrolledPanel" styleName="{style.center}">
 							    			<a:ContractEmployeeUI ui:field="contractEmployeeUI" />
 										</g:ScrollPanel>
 							    	</g:HTMLPanel>
@@ -129,7 +164,7 @@
 							      		<g:Label>Datos SEPE</g:Label>
 							    	</g:customHeader>
 							    	<g:HTMLPanel styleName="{style.mt10}">
-							    		<g:ScrollPanel ui:field="scrolledPanelContractSpecificData" styleName="{style.p5} {style.center}">
+							    		<g:ScrollPanel ui:field="scrolledPanelContractSpecificData" styleName="{style.center}">
 											<a:ContractSpecificData ui:field="contractSpecificData"/>
 										</g:ScrollPanel>
 							    	</g:HTMLPanel>
@@ -139,7 +174,7 @@
 							      		<g:Label>Datos Contrato</g:Label>
 							    	</g:customHeader>
 							    	<g:HTMLPanel styleName="{style.mt10}">
-							    		<g:ScrollPanel ui:field="scrolledPanelContractOtherData" styleName="{style.p5} {style.center}">
+							    		<g:ScrollPanel ui:field="scrolledPanelContractOtherData" styleName="{style.center}">
 											<a:ContractOtherData ui:field="contractOtherData"/>
 										</g:ScrollPanel>
 							    	</g:HTMLPanel>
@@ -149,7 +184,7 @@
 							      		<g:Label>Clausulas</g:Label>
 							    	</g:customHeader>
 							    	<g:HTMLPanel styleName="{style.mt10}">
-							    		<g:ScrollPanel ui:field="scrolledPanelClauses" styleName="{style.p5} {style.center}">
+							    		<g:ScrollPanel ui:field="scrolledPanelClauses" styleName="{style.center}">
 											<a:ContractClauseUI ui:field="contractClauseUI"/>
 										</g:ScrollPanel>
 							    	</g:HTMLPanel>
@@ -159,7 +194,7 @@
 							      		<g:Label>Documentos</g:Label>
 							    	</g:customHeader>
 							    	<g:HTMLPanel styleName="{style.mt10}">
-							    		<g:ScrollPanel ui:field="scrolledPanelAttach" styleName="{style.p5} {style.center}">
+							    		<g:ScrollPanel ui:field="scrolledPanelAttach" styleName="{style.center}">
 											<a:ContractAttachUI ui:field="contractAttachUI"/>
 										</g:ScrollPanel>
 							    	</g:HTMLPanel>
@@ -169,7 +204,7 @@
 							      		<g:Label>Bonificaciones</g:Label>
 							    	</g:customHeader>
 							    	<g:HTMLPanel styleName="{style.mt10}">
-							    		<g:ScrollPanel ui:field="scrolledPanelBonus" styleName="{style.p5} {style.center}">
+							    		<g:ScrollPanel ui:field="scrolledPanelBonus" styleName="{style.center}">
 											<a:ContractBonusUI ui:field="contractBonusUI"/>
 										</g:ScrollPanel>
 							    	</g:HTMLPanel>
@@ -210,6 +245,14 @@
 							  	</g:tab>
 							  	<g:tab>
 							    	<g:customHeader size='7'>
+							      		<g:Label>IRPF</g:Label>
+							    	</g:customHeader>
+							    	<g:HTMLPanel styleName="{style.mt10}">
+							    		<a:EmployeeContractIrpf ui:field="employeeContractIrpf" />
+							    	</g:HTMLPanel>
+							  	</g:tab>
+							  	<g:tab>
+							    	<g:customHeader size='7'>
 							      		<g:Label>Borrador</g:Label>
 							    	</g:customHeader>
 							    	<g:HTMLPanel styleName="{style.mt10}">
@@ -218,12 +261,12 @@
 							  	</g:tab>
 							 </g:TabLayoutPanel>
 	
-							<g:SimpleLayoutPanel ui:field="scrolledPDFPanel" styleName="{style.p5} {style.center}">
+							<g:SimpleLayoutPanel ui:field="scrolledPDFPanel" styleName="{style.center}">
 							 	<p:FullViewer styleName="reset" ui:field='pdfViewer' />
 							</g:SimpleLayoutPanel> 
 						 </g:HTMLPanel>
 					</g:center>
-					<g:south size="15">
+					<g:south size="20">
 						<c:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}" >
 							<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
 						</c:MinimizePanel>

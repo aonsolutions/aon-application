@@ -1,9 +1,8 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getAuth, getDomainUserRoles, getCompanyOne, getCompanyMedia } from "../../services/service.js";
+import { getAuth, getDomainUserRoles, getRegistry } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
-import "../../components/aon-address.js";
 import "../marketplace/aon-marketplace.js";
 import "../user/aon-user-list.js";
 import "../company/aon-company-list.js";
@@ -11,14 +10,18 @@ import "../company/aon-company-list.js";
 import { AonCompanyList } from "../company/aon-company-list.js";
 import { AonCompany } from "../company/aon-company.js";
 import { AonApplication } from '../../components/aon-application.js';
-import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
 import { AonUserList } from "../user/aon-user-list.js";
 import { AonMobileUserList } from "../user/aon-mobile-user-list.js";
 import * as ACTION from '../actions.js';
-import { CONFIGURATION} from "../../services/app.js";
-import { AonGroupList } from "./groups/aon-group-list.js";
+import { CONFIGURATION, INVOICE, MESSENGER } from "../../services/app.js";
 import { AonUser } from "../user/aon-user.js";
 import { AonWorkgroup } from "./groups/aon-workgroup.js";
+import { AonReg } from "../registry/aon-reg.js";
+import * as LS from '../../services/localStorageService.js';
+import { Registry } from "../../models/registry/Registry.js";
+import { AonInvoicePrint } from "../invoice/aon-invoice-print.js";
+import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -27,10 +30,6 @@ export class AonConfiguration extends AonElement {
   selected;
 
   dur;
-
-  static get observedAttributes() {
-    return ["company", "user"];
-  }
 
   get id() {
     return this.getAttribute(CONSTANT.ID);
@@ -62,11 +61,6 @@ export class AonConfiguration extends AonElement {
 
   set option(option) {
     this.setAttribute(CONSTANT.OPTION, option);
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    // if ("company" === name || "user" === name) {
-    // }
   }
 
   constructor() {
@@ -115,39 +109,68 @@ export class AonConfiguration extends AonElement {
       let company = JSON.parse(localStorage.getItem("company"));
       let companyOptions = [];
       companyOptions.push({
-        name: "Información General",
-        icon: "business",
+        name: MSG.GENERAL_INFORMATION,
+        icon: MATERIAL_ICONS.BUSINESS,
         fn: () => this.buildGeneral(),
       });
       companyOptions.push({
         name: MSG.USER_MANAGEMENT,
-        icon: "people",
+        icon: MATERIAL_ICONS.PEOPLE,
         fn: () => this.buildUser(),
       });
       if (!company.parentId) {
         companyOptions.push({
-          name: "Gestión de Empresas",
-          icon: "business",
+          name: MSG.COMPANY_MANAGEMENT,
+          icon: MATERIAL_ICONS.BUSINESS,
           fn: () => this.buildCompanyList(),
         });
       }
 
       companyOptions.push({
-        name: "Gestión de Grupos",
-        icon: "groups",
+        name: MSG.GROUP_MANAGEMENT,
+        icon: MATERIAL_ICONS.GROUPS,
         fn: () => this.buildGroups(),
       });
 
       if (!this.isMobile()) {
         companyOptions.push({
-          name: "Contratación",
-          icon: "store_mall_directory",
+          name: MSG.HIRING,
+          icon: MATERIAL_ICONS.STORE_MALL_DIRECTORY,
           fn: () => this.buildStore(),
         });
       }
 
-      aonConfiguration.addSidenavOptions("EMPRESA", companyOptions);
+      aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
     }
+
+    if (localStorage.getItem("aon_domain_id") && localStorage.getItem("company")) {
+      let appOptions = [];
+      if (this.dur.isInvoice()) {
+        appOptions.push({
+          name: INVOICE.title,
+          aonIcon: {
+            icon: 'aon_app',
+            color: INVOICE.color
+          },
+          fn: () => this.buildInvoiceConfiguration(),
+        });
+      }
+
+      appOptions.push({
+        id: MESSENGER.title,
+        name: MESSENGER.title,
+        aonIcon: {
+          icon: MESSENGER.icon,
+          color: MESSENGER.color
+        },
+        fn: () => this.buildMessengerConfiguration(),
+      });
+
+
+
+      aonConfiguration.addSidenavOptions(MSG.APPLICATIONS.toUpperCase(), appOptions);
+    }
+
 
     this.buildPersonal();
   }
@@ -174,53 +197,17 @@ export class AonConfiguration extends AonElement {
   }
 
   buildGeneral() {
-    let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
-    aonConfiguration.removeToolbarOptions();
-    let div = this.createElement(TAG.DIV);
-    div.style.display = this.isMobile() ? 'block' : 'flex'; 
-    div.innerHTML = `
-        <aon-card id="aonConfigurationGeneralCard" style="width:50%;" flex="true" title="Información General"></aon-card>
-        <aon-card id="aonConfigurationGeneral2Card" style="width:50%;" flex="true" title="Información Adicional"></aon-card>
-      `;
-    aonConfiguration.setContent(div);
+    let data = {
+			id: LS.getCompany().registry,
+			additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD', 'RECORD_DATA']
+		};
     
-    getCompanyOne().then(cp => {
-      let card = this.getElement("aonConfigurationGeneralCard");
-      card.setContentHTML(`
-        <form action="#" class="aon-margin-0">
-          <aon-input class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${
-            cp.document
-          }"></aon-input>
-          <aon-input class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${
-            cp.name
-          }"></aon-input>
-        </form>
-        <form action="#" class="aon-margin-0">
-          <aon-address class="aon-width-100" id="aonConfigurationGeneralAddress" title="Dirección" ></aon-address>
-        </form>
-      `);
-
-      let address = document.getElementById('aonConfigurationGeneralAddress');
-  		address.buildAddressValue(cp.address);
-      getCompanyMedia().then(m => {
-        let card2 = this.getElement("aonConfigurationGeneral2Card");
-        card2.setContentHTML(`
-    			<form action="#" class="aon-margin-0">
-    				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value="${m.fixed_phone}"></aon-input>
-    				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Fax" description="Fax" value="${m.fax}"></aon-input>
-    			</form>
-
-    			<form action="#" class="aon-margin-0">
-    				<aon-input class="aon-width-100" id="aonConfigurationGeneral2Email" description="Email" value="${m.email}"></aon-input>
-    			</form>
-
-    			<form action="#" class="aon-margin-0">
-    				<aon-input class="aon-width-100" id="aonConfigurationGeneral2Web" description="Web" value="${m.web}"></aon-input>
-    			</form>
-
-    			<!-- LOGO -->
-    		`);
-      });
+    getRegistry(data).then(cp => {
+      let aonRegistry = new AonReg();
+			aonRegistry.id = this.getApplication().id + 'Registry';
+      aonRegistry.setShowLogo(true);
+			aonRegistry.setRegistry(cp);
+			this.getApplication().setContent(aonRegistry);
     });
   }
 
@@ -251,6 +238,15 @@ export class AonConfiguration extends AonElement {
 
   }
 
+	buildInvoiceConfiguration() {
+    // this.getApplication().setContent(new AonInvoiceConfiguration());
+    this.getApplication().setContent(new AonInvoicePrint());
+	}
+  
+  buildMessengerConfiguration(){
+    this.getApplication().setContent(new AonMessengerConfig());
+  }
+
   buildCompanyList() {
     let aonConfiguration = this.getApplication();
     aonConfiguration.removeToolbarOptions();
@@ -263,10 +259,12 @@ export class AonConfiguration extends AonElement {
     aonConfiguration.setContent(aonCompanyList);
   }
 
-  buildCompany(company) {
+  buildCompany() {
     let aonCompany = new AonCompany();
     aonCompany.id = this.getApplication().id + 'Company';
-    aonCompany.company = company;
+    let reg = new Registry();
+    reg.domain = undefined;
+    aonCompany.setRegistry(reg);
     this.getApplication().setContent(aonCompany);
   }
 

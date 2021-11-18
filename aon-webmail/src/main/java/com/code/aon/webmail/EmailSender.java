@@ -62,6 +62,12 @@ public class EmailSender implements Serializable {
 		sendMessage(aonMessage);
 		return aonMessage;
 	}
+	
+	public AonMessage createMessage( Address[] to, String subject, String content, MimeType mimeType, AonFile ... attachemnts  ) throws WebmailException {
+		AonMessage aonMessage = createMessage(to, subject);
+		addMessageContent(aonMessage, content, mimeType, attachemnts);
+		return aonMessage;
+	}
 
 	public AonMessage createMessage() throws WebmailException {
 		AonMessage aonMessage = server.createAonMessage(from);

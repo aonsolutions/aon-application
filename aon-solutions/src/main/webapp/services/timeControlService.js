@@ -1,6 +1,6 @@
 import { post, get, remove, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
-import { formatDateOrigin} from "./utils.js";
+import { AonDateUtils } from "../modules/utils/AonDateUtils.js";
 
 export const getTimeControl = (data) => get(`${API_URL}/timecontrol`, data);
 export const saveTimeControl = (data) => post(`${API_URL}/timecontrol`, data);
@@ -81,50 +81,50 @@ export const getPeriod = (data) => {
     {
       name: "Hoy",
       value: "today",
-      startDate: formatDateOrigin(now),
-      endDate: formatDateOrigin(now)
+      startDate: AonDateUtils.formatDateOrigin(now),
+      endDate: AonDateUtils.formatDateOrigin(now)
     },
     {
       name: "Ayer",
       value: "yesterday",
-      startDate: formatDateOrigin( new Date().addDay(-1)),
-      endDate: formatDateOrigin(new Date().addDay(-1))
+      startDate: AonDateUtils.formatDateOrigin( new Date().addDay(-1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date().addDay(-1))
     },
     {
       name: "Semana actual",
       value: "this_week",
-      startDate: formatDateOrigin( dayWeekFirst ),
-      endDate: formatDateOrigin( dayWeekLast )
+      startDate: AonDateUtils.formatDateOrigin( dayWeekFirst ),
+      endDate: AonDateUtils.formatDateOrigin( dayWeekLast )
     },
     {
       name: "Semana anterior",
       value: "last_week",
-      startDate: formatDateOrigin(  dayWeekFirst.addDay(-7)  ),
-      endDate: formatDateOrigin( dayWeekLast.addDay(-7) )
+      startDate: AonDateUtils.formatDateOrigin(  dayWeekFirst.addDay(-7)  ),
+      endDate: AonDateUtils.formatDateOrigin( dayWeekLast.addDay(-7) )
     },
     {
       name: "Mes actual",
       value: "this_month",
-      startDate: formatDateOrigin(new Date(year, month, 1)),
-      endDate: formatDateOrigin(new Date(year, month + 1, 0))
+      startDate: AonDateUtils.formatDateOrigin(new Date(year, month, 1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date(year, month + 1, 0))
     },
     {
       name: "Mes anterior",
       value: "last_month",
-      startDate: formatDateOrigin(new Date(year, (month -1), 1)),
-      endDate: formatDateOrigin(new Date(year, (month-1) + 1, 0))
+      startDate: AonDateUtils.formatDateOrigin(new Date(year, (month -1), 1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date(year, (month-1) + 1, 0))
     },
     {
       name: "Año actual",
       value: "this_year",
-      startDate: formatDateOrigin(new Date(year, 0, 1)),
-      endDate: formatDateOrigin(new Date(year, 12, 0))
+      startDate: AonDateUtils.formatDateOrigin(new Date(year, 0, 1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date(year, 12, 0))
     },
     {
       name: "Año anterior",
       value: "last_year",
-      startDate: formatDateOrigin(new Date(year-1, 0, 1)),
-      endDate: formatDateOrigin(new Date(year-1, 12, 0))
+      startDate: AonDateUtils.formatDateOrigin(new Date(year-1, 0, 1)),
+      endDate: AonDateUtils.formatDateOrigin(new Date(year-1, 12, 0))
     },
     {
       name: "Personalizado",

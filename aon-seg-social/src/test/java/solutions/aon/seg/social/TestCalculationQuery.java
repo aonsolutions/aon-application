@@ -752,7 +752,7 @@ public class TestCalculationQuery {
 	public void testWorkersCalculationByCCCandNAFsMultpleNafsOk() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("AyudaTFNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-12-2020");
-			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354"));
+			System.out.println(Calculations.workersCalculationByCCCandNAFS(certificateInputStream, "123456", "pkcs12", "11122534302", SistemaRED.Regime.GENERAL, d, d, SistemaRED.LiquidationType.TODAS, SistemaRED.LiquidationOrigin.TODAS, "111016467058", "111008520536", "gwt354").toString());
 		} catch (OutOfServiceException e) {
 			System.err.println(e.getMessage()+"\n\t"+e.getCause().getMessage());
 		} catch (StatusCodeException e) {

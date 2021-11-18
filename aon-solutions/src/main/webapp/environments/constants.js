@@ -10,6 +10,7 @@ export const ADD = 'add';
 export const ADD_FILE = 'addFile';
 export const ADD_INVOICE = 'addInvoice'
 export const ADVANCED_BUTTON = 'advancedButton';
+export const ALIAS = 'alias';
 export const AMOUNT = 'amount';
 export const AON_APPLICATION = 'aonApplication';
 export const AON_ACCOUNTING = 'aonAccounting';
@@ -31,6 +32,7 @@ export const BACK = 'back';
 export const BANK = 'bank';
 export const BANK_ACCOUNT = 'bankAccount';
 export const BASE = 'base';
+export const BIC = 'bic';
 export const BLANK = 'blank';
 export const BADGE = 'badge';
 
@@ -39,12 +41,14 @@ export const BADGE = 'badge';
 export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
+export const CATEGORY_NAME = 'categoryName';
 export const CHANGE_TYPE = 'changeType';
 export const CHECKED = 'checked';
 export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMPANY = 'company';
 export const COMUNICA = 'comunica';
+export const CONCEPTS = 'concepts';
 export const CONFIGURATION = 'configuration';
 export const CONFIGURATION_PRINT = 'configurationPrint';
 export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
@@ -82,6 +86,7 @@ export const EDIT = 'edit';
 export const EDIT_FILE = 'editFile';
 export const ENTERPRISE = 'enterprise';
 export const ERROR = "error";
+export const EXPENSES = "expenses";
 
 // ----- F
 
@@ -100,6 +105,7 @@ export const HOLDERS = 'holders';
 
 // ----- I
 
+export const IBAN = 'iban';
 export const ID = 'id';
 export const INBOX = 'inbox';
 export const INPUT = 'input';
@@ -123,7 +129,10 @@ export const MAX = 'max';
 export const MESSENGER = 'messenger';
 export const MIN = 'min';
 export const MOVABLE_CAPITAL = 'movableCapital';
-
+export const MATERIAL = "material";
+export const MATERIAL_ICONS = 'material-icons';
+export const MATERIAL_OUTLINED = 'material_outlined';
+export const MATERIAL_ICONS_OUTLINED = 'material-icons-outlined';
 // ----- N
 
 export const NAME = 'name';

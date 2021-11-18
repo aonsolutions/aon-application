@@ -75,7 +75,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 			com.esferalia.aon.gwt.payroll.shared.Payment draftPayment = new com.esferalia.aon.gwt.payroll.shared.Payment();
 			draftPayment.setStartDate(startDate);
 			draftPayment.setEndDate(endDate);
-			draftPayment.setExpression("66666.00/(6.00 * " + months + ")");
+			draftPayment.setExpression("66666.00/(6.00 * " + months + ") * DIAS_TRABAJADOS / DIAS_MES");
 			draftPayment.setIrpfExpression("_P");
 			draftPayment.setQuoteExpression("_P");
 			draftPayment.setSalaryType(Salary.Type.SALARY);

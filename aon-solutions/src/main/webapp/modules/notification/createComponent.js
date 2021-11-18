@@ -5,21 +5,12 @@ import { AonInput } from "../../components/aon-input.js";
 import { AonSelect } from "../../components/aon-select.js";
 import { AonToolbar } from "../../components/aon-toolbar.js";
 import { CSS, TAG } from "../../environments/environments.js";
-import { newComponent, setAttributes, setClasses, setEvents } from "../../services/utilsComponents.js";
-
-export const createDiv = (properties)=> newComponent({
-  type: TAG.DIV,
-  ...properties
-});
-
-export const createSpan = (properties)=> newComponent({
-  type: TAG.SPAN,
-  ...properties
-});
+import { createDiv, createSpan, newComponent, setAttributes, setClasses, setEvents } from "../../services/utilsComponents.js";
 
 export const createUl = (id) => newComponent({
   id,
   type: TAG.UL,
+  classes: [CSS.AON_UL],
   styles:{
     listStyle: "none",
     padding: 0,
@@ -112,8 +103,9 @@ export const createBadge = (id) => createSpan({
   id,
   styles:{
     position: "absolute", 
-    right: "3px",
-    padding: "1px 4px",
+    right: "8px",
+    top: "5px",
+    padding: "4px",
     borderRadius: "50%",
     background: "rgb(220, 77, 48)",
     color: "white",

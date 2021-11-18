@@ -235,8 +235,12 @@ public class UserServlet extends AonApiHttpServlet {
 		} else {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
 			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
-				(f.getDomainProperty().eq(api.getDomain().getId()).or(f.getDomainProperty().eq(api.getDomain().getParentId())))
+				f.getDomainProperty().eq(api.getDomain().getId())
 				.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
+			if(user == null || user.getId() == null)
+				user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), "", f -> 
+					f.getDomainProperty().eq(api.getDomain().getParentId())
+					.and(f.getAuthProperty().eq(aonToken.getAuth()).or(f.getLoginProperty().eq(aonToken.getUuid()))));
 		}
 		JSONObject json = new JSONObject();
 		json.put("id",user.getId());
@@ -824,15 +828,18 @@ public class UserServlet extends AonApiHttpServlet {
 		return json;
 	}	
 	
-	private void sendAuthCreateInfoMail(String email, String password) {
+	private void sendAuthCreateInfoMail(String email, String password, Company cp) {
 		SESMessage msg = new SESMessage()
 				.setTo(email)
+				.setAlias(cp.getName())
 				.setBody(authCreateInfoContent(email, password))
 				.setSubject("NUEVO USUARIO | AON SOLUTIONS");
 		SES.sendEmail(msg);
 	}
 	
 	private JSONObject sendAuthInfoMail(AonApiData api) {
+		Company cp = AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+				f -> f.getDomainProperty().eq(api.getDomain().getId()));
 		String email = api.getData().optString("email");
 		Auth auth = AON_SOLUTIONS.getAuth(email);
 		
@@ -841,7 +848,7 @@ public class UserServlet extends AonApiHttpServlet {
 		auth.setPassword(pass);
 		AON_SOLUTIONS.updateAuthPassword(auth);
 		
-		sendAuthCreateInfoMail(email, password);
+		sendAuthCreateInfoMail(email, password, cp);
 		return new JSONObject();
 	}
 	

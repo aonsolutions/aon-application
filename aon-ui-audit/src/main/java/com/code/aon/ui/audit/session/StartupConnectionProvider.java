@@ -9,6 +9,8 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.connection.ConnectionProvider;
 import org.hibernate.connection.ConnectionProviderFactory;
 
+import com.code.aon.ui.util.AonUtil;
+
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.ConnectionInfo;
 
@@ -35,11 +37,27 @@ public class StartupConnectionProvider implements ConnectionProvider {
 		} else {
 			try {
 				ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
-				return ci.getMetadataConnection();
+				if ( AonUtil.getAuthPrincipal() != null ) {
+					String domainName = AonUtil.getDomainName();
+					String databaseName = ci.getDomainDatabase(domainName);
+					return ci.getConnection(databaseName);
+				} else {
+					for ( String schema : ci.getSchemas() ) {
+						try {
+							System.out.println("Try schema : " + schema );
+							return ci.getConnection(schema);
+						} catch ( Exception e ) {
+							System.err.println(schema + ":" + e.getMessage());
+							// No permission
+						}
+					}
+
+					throw new SQLException("No available databases");
+				}
 			} catch (AonConnectionException e) {
 				throw new SQLException(e.getMessage(),e);
 			} finally {
-				this.delegate = true;
+				//this.delegate = true;
 			}
 		}
 	}

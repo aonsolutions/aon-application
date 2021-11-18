@@ -1,3 +1,4 @@
+import { MATERIAL_ICONS } from "../../environments/environments.js";
 import * as MSG from "../../environments/msg.js";
 
 export const PAYSHEET = {
@@ -9,12 +10,12 @@ export const PAYSHEET = {
 export const COMPANY_COSTS = {
   id: 'CompanyCosts',
   name: MSG.COMPANY_COSTS,
-  icon: 'assignment'
+  icon: MATERIAL_ICONS.ASSIGNMENT
 };
 
 export const AON_CCC = {
   name: 'CCC',
-  icon: 'account_balance',
+  icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
   id: "CCC"
 };
 
@@ -28,7 +29,7 @@ export const AON_CERT = {
 
 export const AON_LABORAL = {
   name: 'Laboral',
-  icon: 'settings',
+  icon: MATERIAL_ICONS.SETTING,
   id: "LABORAL"
 };
 
@@ -55,7 +56,7 @@ export const SEPA_FILES = {
 }
 
 export const AON_CONTRACT = {
-  id: 'contract',
+  id: 'contractSidenav',
   name: 'Contratos',
   aonIcon: {
     icon: 'contract',
@@ -74,7 +75,7 @@ export const PAYROLL_FILTER = [
       type: "select",
       id: "employee",
       name: "employee",
-      title: "Trabajador",
+      title: MSG.EMPLOYEE,
       hidden:true
     }
 ];
@@ -111,17 +112,22 @@ export const ACTION_COMUNICA = {
   COMUNICAR:{
     id: 'Save',
     name: 'Comunicar',
-    icon: 'send'
+    icon: MATERIAL_ICONS.SEND
   },
   BACK: {
     id: 'Previous',
     name: 'Volver',
-    icon: 'arrow_back'
+    icon: MATERIAL_ICONS.ARROW_BACK
   },
   BAJA:{
     id: 'Baja',
     name: 'Dar baja',
-    icon: 'cancel_schedule_send'
+    icon: MATERIAL_ICONS.CANCEL_SCHEDULE_SEND
+  },
+  DUPLICATE:{
+    id: 'duplicateMov',
+    name: 'Copiar datos',
+    icon: 'content_copy'
   },
 }
 

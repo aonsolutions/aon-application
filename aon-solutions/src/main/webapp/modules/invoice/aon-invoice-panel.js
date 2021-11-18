@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
-import { insertInvoice, deleteInvoices, actionMobile, getDomainUserRoles, selfconta } from '../../services/service.js';
+import { insertInvoice, deleteInvoices, mobileAction, MOBILE_ACTION, getDomainUserRoles, selfconta } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
@@ -25,6 +25,16 @@ import { AonInvoicePrint } from './aon-invoice-print.js';
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonMobileProductList } from '../product/aon-mobile-product-list.js';
 import Apps from '../../services/app.js';
+import { AonProduct } from '../product/aon-product.js';
+import { AonCustomerList } from '../registry/customer/aon-customer-list.js';
+import { AonSupplierList } from '../registry/supplier/aon-supplier-list.js';
+import { AonCreditorList } from '../registry/creditor/aon-creditor-list.js';
+import { AonMobileSupplierList } from '../registry/supplier/aon-mobile-supplier-list.js';
+import { AonMobileCreditorList } from '../registry/creditor/aon-mobile-creditor-list.js';
+import { AonMobileCustomerList } from '../registry/customer/aon-mobile-customer-list.js';
+import { AonCustomer } from '../registry/customer/aon-customer.js';
+import { AonSupplier } from '../registry/supplier/aon-supplier.js';
+import { AonCreditor } from '../registry/creditor/aon-creditor.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -36,6 +46,9 @@ export class AonInvoicePanel extends AonElement {
 	INPUT_FILE;
 	INPUT_CAMERA;
 	PRODUCT_LIST;
+	CUSTOMER_LIST;
+	SUPPLIER_LIST;
+	CREDITOR_LIST;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -75,7 +88,11 @@ export class AonInvoicePanel extends AonElement {
 		this.INVOICE = 'aonInvoice';
 		this.INPUT_FILE = this.INVOICE + 'InputFile';
 		this.INPUT_CAMERA = 'aonMobileMenuCameraInput';// this.INVOICE + 'InputCamera';
-		this.PRODUCT_LIST = this.id + 'ProductList';
+		this.PRODUCT_LIST = this.INVOICE + 'ProductList';
+		this.CUSTOMER_LIST = this.INVOICE + 'CustomerList';
+		this.SUPPLIER_LIST = this.INVOICE + 'SupplierList';
+		this.CREDITOR_LIST = this.INVOICE + 'CreditorList';
+
 		this.status = this.status || CONSTANT.INBOX;
 		this.filter = {
 			status: this.status || CONSTANT.INBOX,
@@ -118,8 +135,16 @@ export class AonInvoicePanel extends AonElement {
 		let toolbar = this.getElement(aonInvoice.TOOLBAR);
 		toolbar.removeButtons();
 		if(!this.isMobile()) {
-			if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
-				// TODO
+			if(this.selectedOption && (OPTION.PRODUCT.id === this.selectedOption.id)){
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addProduct());
+			} else if(this.selectedOption && (OPTION.EXPENSES.id === this.selectedOption.id)){
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addExpense());
+			} else if(this.selectedOption && (OPTION.REGISTRY_CUSTOMER.id === this.selectedOption.id)){
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addCustomer());
+			} else if(this.selectedOption && (OPTION.REGISTRY_SUPPLIER.id === this.selectedOption.id)){
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addSupplier());
+			} else if(this.selectedOption && (OPTION.REGISTRY_CREDITOR.id === this.selectedOption.id)){
+				this.getApplication().addToolbarOption('Add', 'add', () => this.addCreditor());
 			} else {
 				this.getApplication().addToolbarOption('Add', 'add', () => this.addInvoice());
 				this.getApplication().addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
@@ -152,7 +177,7 @@ export class AonInvoicePanel extends AonElement {
 			OPTION.RAWDOC_REJECT, 
 			OPTION.RAWDOC_DRAFT
 		];
-		this.getApplication().addSidenavOptions(MSG.PENDING_DOCUMENTS.toUpperCase(), pendingOptions);
+		this.getApplication().addSidenavOptions(MSG.PENDING_DOCUMENTS, pendingOptions);
 	}
 
 	buildInvoiceOptions() {
@@ -161,27 +186,27 @@ export class AonInvoicePanel extends AonElement {
 			OPTION.INVOICE_RECEIVED, 
 			OPTION.INVOICE_TICKET
 		];
-			
-		this.getApplication().addSidenavOptions(MSG.INVOICES.toUpperCase(), invoiceOptions);
+		
+		this.getApplication().addSidenavOptions(MSG.INVOICES, invoiceOptions);
 	}
 
 	buildOfferOptions() {
 		if(this.getDur().isAlpha() && (this.getDur().isInvoicePortal() || this.getDur().isInvoiceManager())){
 			let budgetOptions = [ OPTION.OFFER ];
-			this.getApplication().addSidenavOptions(MSG.BUDGETS.toUpperCase(), budgetOptions);
+			this.getApplication().addSidenavOptions(MSG.BUDGETS, budgetOptions);
 		}
 	}
 
 	buildSettingOptions() {
 		let settingOptions = [];
 		if(!this.isMobile()) {
-			settingOptions = [ OPTION.REGISTRY, OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
-		} else settingOptions = [ OPTION.CONFIGURATION_PRINT, OPTION.PRODUCT ];
+			settingOptions = [ OPTION.REGISTRY, OPTION.CONCEPTS ];
+		} else settingOptions = [ OPTION.REGISTRY, OPTION.PRODUCT ];
 
 		if(this.getDur().isAlpha()){
 			settingOptions.push(OPTION.CONFIGURATION_SII_TBAI);
 		}
-		this.getApplication().addSidenavOptions(MSG.SETTING.toUpperCase(), settingOptions);
+		this.getApplication().addSidenavOptions(MSG.SETTING, settingOptions);
 	}
 
 	add(){
@@ -189,8 +214,16 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	search(value) {
-		if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
-			this.aonProductList({value});
+		if(this.selectedOption && OPTION.REGISTRY_CREDITOR.id === this.selectedOption.id) {
+			this.aonCreditorList({page:1, perPage:50, value});
+		} else if(this.selectedOption && OPTION.REGISTRY_SUPPLIER.id === this.selectedOption.id){
+			this.aonSupplierList({page:1, perPage:50, value});
+		} else if(this.selectedOption && OPTION.REGISTRY_CUSTOMER.id === this.selectedOption.id){
+			this.aonCustomerList({page:1, perPage:50, value});
+		} else if(this.selectedOption && OPTION.PRODUCT.id === this.selectedOption.id){
+			this.aonProductList({expense: false, value});
+		} else if(this.selectedOption && OPTION.EXPENSES.id === this.selectedOption.id){
+			this.aonProductList({expense: true, value});
 		} else {
 			if(this.filter.description !== value) {
 				this.filter.description = value;
@@ -224,6 +257,43 @@ export class AonInvoicePanel extends AonElement {
 		this.getApplication().setContent(new AonInvoicePrint());
 	}
 
+	aonCustomerList(filter) {
+		let customerList = this.getElement(this.CUSTOMER_LIST);
+		if(customerList) {
+			customerList.setFilter(filter);
+		} else {
+			customerList =  this.isMobile() ? new AonMobileCustomerList() : new AonCustomerList();
+			customerList.id = this.CUSTOMER_LIST;	
+			customerList.filter = filter;
+			aonInvoice.setContent(customerList);
+		}
+	}
+
+	aonSupplierList(filter) {
+		let supplierList = this.getElement(this.SUPPLIER_LIST);
+		if(supplierList) {
+			supplierList.setFilter(filter);
+		} else {
+			supplierList = this.isMobile() ? new AonMobileSupplierList() : new AonSupplierList();
+			supplierList.id = this.SUPPLIER_LIST;	
+			supplierList.filter = filter;
+			aonInvoice.setContent(supplierList);
+		}
+	}
+
+
+	aonCreditorList(filter) {
+		let creditorList = this.getElement(this.CREDITOR_LIST);
+		if(creditorList) {
+			creditorList.setFilter(filter);
+		} else {
+			creditorList = this.isMobile() ? new AonMobileCreditorList() : new AonCreditorList();
+			creditorList.id = this.CREDITOR_LIST;	
+			creditorList.filter = filter;
+			aonInvoice.setContent(creditorList);
+		}
+	}
+
 	aonProductList(filter) {
 		let productList = this.getElement(this.PRODUCT_LIST);
 		if(productList) {
@@ -231,8 +301,43 @@ export class AonInvoicePanel extends AonElement {
 		} else {
 			productList = this.isMobile() ? new AonMobileProductList() : new AonProductList();
 			productList.id = this.PRODUCT_LIST;	
+			productList.filter = filter;
 			aonInvoice.setContent(productList);
 		}
+	}
+
+	addCustomer() {
+		let aonCustomer = new AonCustomer();
+		aonCustomer.id = this.id + 'Customer';
+		aonCustomer.setCustomer();
+		this.getApplication().setContent(aonCustomer);	
+	}
+
+	addSupplier() {
+		let aonSupplier = new AonSupplier();
+		aonSupplier.id = this.id + 'Supplier';
+		aonSupplier.setSupplier();
+		this.getApplication().setContent(aonSupplier);	
+	}
+	
+	addCreditor() {
+		let aonCreditor = new AonCreditor();
+		aonCreditor.id = this.id + 'Creditor';
+		aonCreditor.setCreditor();
+		this.getApplication().setContent(aonCreditor);	
+	}
+
+	addProduct() {
+		let aonProduct = new AonProduct();
+		aonProduct.id = this.id + 'Product';
+		this.getApplication().setContent(aonProduct);	
+	}
+
+	addExpense() {
+		let aonProduct = new AonProduct();
+		aonProduct.id = this.id + 'Expense';
+		aonProduct.expense = true;
+		this.getApplication().setContent(aonProduct);	
 	}
 
 	addInvoice() {
@@ -308,8 +413,7 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	async openCamera() {
-		const isApp = await actionMobile({ action: "camera", id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
-		console.log('aon-invoice-panel');
+		const isApp = await mobileAction({ action: MOBILE_ACTION.CAMERA, id: this.INPUT_CAMERA, selector: 'aon-invoice-panel' });
 		if (!isApp) this.getElement(this.INPUT_CAMERA).click();
 	}
 
@@ -420,18 +524,26 @@ export class AonInvoicePanel extends AonElement {
 				this.aonInvoiceList({status:'accounting', type:'ticket', page:1, per_page: 50});
 				break;
 			case OPTION.REGISTRY_CUSTOMER.id:
-				GWT.load(GWT.CUSTOMER, this.getApplication().CONTENT);
+				this.aonCustomerList();
+				// GWT.load(GWT.CUSTOMER, this.getApplication().CONTENT);
 				break;
 			case OPTION.REGISTRY_SUPPLIER.id:
-				GWT.load(GWT.SUPPLIER, this.getApplication().CONTENT);
+				this.aonSupplierList();
+				//GWT.load(GWT.SUPPLIER, this.getApplication().CONTENT);
 				break;
 			case OPTION.REGISTRY_CREDITOR.id:
-				GWT.load(GWT.CREDITOR, this.getApplication().CONTENT);
+				this.aonCreditorList();
+				//GWT.load(GWT.CREDITOR, this.getApplication().CONTENT);
 				break;
 			case OPTION.OFFER.id:
 				break;
+			case OPTION.CONCEPTS.id:
+				break;
 			case OPTION.PRODUCT.id:
-				this.aonProductList();
+				this.aonProductList({expense: false});
+				break;
+			case OPTION.EXPENSES.id:
+				this.aonProductList({expense: true});
 				break;
 			case OPTION.CONFIGURATION_PRINT.id:
 				this.aonInvoicePrint();

@@ -74,6 +74,9 @@ export class AonIcon extends AonElement {
         </g>
       </svg>
 		`;
+
+    let svg = this.querySelector('svg');
+    svg.style.verticalAlign = 'middle';
   }
 }
 if(!window.customElements.get('aon-icon')){

@@ -14,6 +14,8 @@ import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -523,6 +525,17 @@ public class JooqEmployee {
 				.execute();
 		}
 		
+		if(null != contractData.getJourneyType()){
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "TIEMPO_COMPLETO")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "false" : "true")
+				.set(CONTRACT_DATA.START_DATE, contractStartDate)
+				.set(CONTRACT_DATA.END_DATE, contractEndDate)
+				.execute();
+		}
+		
 		contractData.setContractId(contractId);
 		employeeContractData.setContractInfo(contractData);
 		
@@ -758,6 +771,14 @@ public class JooqEmployee {
 			//ENTERPRISE ACTIVITY TABLE
 			Integer enterpriseActivityId = contractTable.get(CONTRACT.ENTERPRISE_ACTIVITY);
 			contractData.setActivityId(enterpriseActivityId);
+			
+			//ENTERPRISE DATA
+			String enterpriseDocument = dslContext.select(REGISTRY.DOCUMENT).from(REGISTRY)
+					.where(REGISTRY.ID.eq(
+							dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(employeeData.getDomain())).fetchOne(ENTERPRISE.REGISTRY)
+					)).fetchOne(REGISTRY.DOCUMENT);
+			
+			contractData.setEnterpriseCIF(enterpriseDocument);
 			
 			//ENTERPRISE CCC TABLE
 			Integer enterpriseCCCId = contractTable.get(CONTRACT.ENTERPRISE_CCC);
@@ -1013,12 +1034,17 @@ public class JooqEmployee {
 		
 		// ---------------------------------------------- Contract Extension
 		
-		Integer contractTypeValue = Integer.parseInt(contractData.getContractType());
 		Boolean hasExtension = false;
-		if(contractTypeValue >= 400) {
-			Result<Record> extensionRecords = dslContext.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_ATTACH.TYPE.eq((byte)13)).fetch();
-			if(extensionRecords.isNotEmpty()) hasExtension = true;
-		}
+		
+		try {
+			Integer contractTypeValue = Integer.parseInt(contractData.getContractType());
+			
+			if(contractTypeValue >= 400) {
+				Result<Record> extensionRecords = dslContext.select().from(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_ATTACH.TYPE.eq((byte)13)).fetch();
+				if(extensionRecords.isNotEmpty()) hasExtension = true;
+			}
+		} catch (NumberFormatException e) {}
+		
 		contractData.setHasExtension(hasExtension);
 		
 		employeeContractInfo.setEmployeeInfo(employeeData);
@@ -1627,10 +1653,10 @@ public class JooqEmployee {
 				}
 			}
 			
-			if(null != contractData.getJourneytypeId())
-				dslContext.delete(CONTRACT_DATA)
-					.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
-					.execute();
+//			if(null != contractData.getJourneytypeId())
+//				dslContext.delete(CONTRACT_DATA)
+//					.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
+//					.execute();
 			
 			if(null != contractData.getRetaId())
 				dslContext.delete(CONTRACT_INFO)
@@ -1646,31 +1672,31 @@ public class JooqEmployee {
 			.where(CONTRACT.ID.eq(contractData.getContractId()))
 			.execute();
 			
-			if(null == contractData.getJourneytypeId()){
-				if(null != contractData.getJourneyType()){
-					ContractDataRecord journeyRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-						.values(contractData.getJourneytypeId(), domain, "TIEMPO_COMPLETO", contractData.getContractId(), (contractData.getJourneyType() == 0) ? "false" : "true", 
-								startDate, endDate)
-						.returning(CONTRACT_DATA.ID)
-						.fetchOne();
-					
-					contractData.setJourneytypeId(journeyRecord.getId());
-				}
-			}else{
-				if(null == contractData.getJourneyType()){
-					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId())).execute();
-					contractData.setJourneytypeId(null);
-					contractData.setJourneyType(null);
-				}else{
-					dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "false" : "true")
-						.set(CONTRACT_DATA.START_DATE, startDate)
-						.set(CONTRACT_DATA.END_DATE, endDate)
-						.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
-						.execute();
-				}
-			}
+//			if(null == contractData.getJourneytypeId()){
+//				if(null != contractData.getJourneyType()){
+//					ContractDataRecord journeyRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+//							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+//						.values(contractData.getJourneytypeId(), domain, "TIEMPO_COMPLETO", contractData.getContractId(), (contractData.getJourneyType() == 0) ? "false" : "true", 
+//								startDate, endDate)
+//						.returning(CONTRACT_DATA.ID)
+//						.fetchOne();
+//					
+//					contractData.setJourneytypeId(journeyRecord.getId());
+//				}
+//			}else{
+//				if(null == contractData.getJourneyType()){
+//					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId())).execute();
+//					contractData.setJourneytypeId(null);
+//					contractData.setJourneyType(null);
+//				}else{
+//					dslContext.update(CONTRACT_DATA)
+//						.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "false" : "true")
+//						.set(CONTRACT_DATA.START_DATE, startDate)
+//						.set(CONTRACT_DATA.END_DATE, endDate)
+//						.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
+//						.execute();
+//				}
+//			}
 			
 			if(null == contractData.getRetaId()){
 				ContractInfoRecord retaRecord = dslContext.insertInto(CONTRACT_INFO, CONTRACT_INFO.ID, CONTRACT_INFO.DOMAIN, CONTRACT_INFO.CONTRACT, CONTRACT_INFO.NAME, CONTRACT_INFO.EXPRESSION, 
@@ -1735,6 +1761,32 @@ public class JooqEmployee {
 			
 				contractData.setContractmodelId(null);
 				contractData.setContractModel(null);
+			}
+		}
+		
+		if(null == contractData.getJourneytypeId()){
+			if(null != contractData.getJourneyType()){
+				ContractDataRecord journeyRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+						CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+					.values(contractData.getJourneytypeId(), domain, "TIEMPO_COMPLETO", contractData.getContractId(), (contractData.getJourneyType() == 0) ? "false" : "true", 
+							startDate, endDate)
+					.returning(CONTRACT_DATA.ID)
+					.fetchOne();
+				
+				contractData.setJourneytypeId(journeyRecord.getId());
+			}
+		}else{
+			if(null == contractData.getJourneyType()){
+				dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId())).execute();
+				contractData.setJourneytypeId(null);
+				contractData.setJourneyType(null);
+			}else{
+				dslContext.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.EXPRESSION, (contractData.getJourneyType() == 0) ? "false" : "true")
+					.set(CONTRACT_DATA.START_DATE, startDate)
+					.set(CONTRACT_DATA.END_DATE, endDate)
+					.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
+					.execute();
 			}
 		}
 		

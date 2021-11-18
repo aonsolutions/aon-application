@@ -53,6 +53,7 @@ export const AUTORENEW = 'autorenew';
 
 export const BACKUP = 'backup';
 export const BACKUP_TABLE = 'backup_table';
+export const BAR_CHART = 'bar_chart';
 export const BATCH_PREDICTION = 'batch_prediction';
 export const BOOK = 'book';
 export const BOOK_ONLINE = 'book_online';
@@ -70,7 +71,8 @@ export const CACHED = 'cached';
 export const CALENDAR_TODAY = 'calendar_today';
 export const CALENDAR_VIEW_DAY = 'calendar_view_day';
 export const CAMERA_ENHANCE = 'camera_enhance';
-export const CANCEL_SCHEDULE_SEND = 'cancel_schedule_end';
+export const CANCEL_SCHEDULE_END = 'cancel_schedule_end';
+export const CANCEL_SCHEDULE_SEND = 'cancel_schedule_send';
 export const CARD_GIFTCARD = 'card_giftcard';
 export const CARD_MEMBERSHIP = 'card_membership';
 export const CARD_TRAVEL = 'card_travel';
@@ -90,6 +92,7 @@ export const COMPARE_ARROWS = 'compare_arrows';
 export const CONTACT_PAGE = 'contact_page';
 export const CONTACT_SUPPORT = 'contact_support';
 export const CONTACTLESS = 'contactless';
+export const CREDIT_CARD = 'credit_card';
 
 // ----- D
 
@@ -124,15 +127,17 @@ export const FIBER_MANUAL_RECORD = "fiber_manual_record";
 
 // ----- G
 export const GROUP_OFF = 'group_off';
+export const GROUPS = 'groups';
 
 // ----- H
-
+export const SCHEDULE = 'schedule';
 // ----- I
 
 export const INBOX = 'inbox';
 export const INFO = 'info';
 export const INFO_OUTLINE = 'info_outline';
 export const INSERT_DRIVE_FILE = "insert_drive_file";
+export const INVENTORY_2 = "inventory_2";
 export const IOS_SHARE = 'ios_share';
 
 // ----- K
@@ -154,6 +159,8 @@ export const MOVE_TO_INBOX = "move_to_inbox";
 export const MARK_EMAIL_READ = "mark_email_read";
 
 export const NOTIFICATIONS = "notifications";
+export const NOTIFICATION_ADD = "notification_add";
+
 // ----- P
 
 export const PENDING_ACTIONS = 'pending_actions';
@@ -164,6 +171,7 @@ export const PHONE = 'phone';
 export const PRINT = 'print';
 export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 export const PEOPLE_ALT = 'people_alt';
+export const PEOPLE = 'people';
 
 // ----- R
 
@@ -178,8 +186,10 @@ export const SAVE = 'save';
 export const SEARCH = 'search';
 export const SEND = 'send';
 export const SETTING = 'setting';
+export const STORE_MALL_DIRECTORY = 'store_mall_directory';
 export const SWAP_CALLS = 'swap_calls';
 export const SUPPORT_AGENT = "support_agent";
+export const STICKY_NOTE = 'sticky_note_2';
 
 // ----- T
 

@@ -2,6 +2,7 @@ package com.code.aon.webservice.documental;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ import com.code.aon.webservice.common.MSG;
 import com.code.aon.webservice.common.Utils;
 import com.code.aon.webservice.util.ToJSON;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
@@ -272,9 +274,20 @@ public class DocumentalServlet extends HttpServlet{
 		Integer[] ds = {domain.getId(), domain.getParentId()};
 		Integer[] d = {domain.getId()};
 		User user = AON.getUser(domain.getName(), domain.getId(), login);
+		LinkedList<Integer> list = new LinkedList<>();
+		
+		Company cp = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+		list.add(cp.getId());
+		if(domain.getParentId() != null) {
+			Company parentCp = AON.getCompany(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getParentId()));
+			list.add(parentCp.getId());
+		}
+		Integer[] arr = new Integer[list.size()];
+		list.toArray(arr);
+		
 		AON.getAttachStream(domain.getName(), domain.getId(), login, 
 				f -> f.getDomainProperty().in(domain.getParentId() != null && user.getDomain().equals(domain.getParentId())? ds : d)
-				.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())
+				.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value()).and(f.getAttachModuleProperty().in(arr))
 				.page(1)
 				.perPage(30)
 			), AttachType.REGISTRY, false).forEach(a -> {

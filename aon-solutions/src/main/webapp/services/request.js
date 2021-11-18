@@ -269,9 +269,7 @@ export const actionRequestMobile = (data) => {
         if (data) _webkit.postMessage(JSON.stringify(data));
         result = true;
       }
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
     resolve(result);
   });
 };

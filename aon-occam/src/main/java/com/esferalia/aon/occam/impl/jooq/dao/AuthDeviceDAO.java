@@ -45,6 +45,7 @@ public class AuthDeviceDAO {
 					.returning(AUTH_DEVICE.ID).fetchOne().getValue(AUTH_DEVICE.ID);
 			ad.setId(id);
 		}
+		ctx.log().debug("INSERT AUTH_DEVICE id: " + ad.getId());		
 
 		return ad;
 	}
@@ -58,11 +59,12 @@ public class AuthDeviceDAO {
 			.set(AUTH_DEVICE.LAST_DATE, Timestamp.from(Instant.now()))
 			.where(AUTH_DEVICE.ID.eq(ad.getId()))
 			.execute();		
+		ctx.log().debug("UPDATE AUTH_DEVICE id: " + ad.getId());	
 		return ad;
 	}
 	
 	
-	public static void deleteAuthDevice(AONContext ctx, AuthDeviceFilter filter) {
+	public static void delete(AONContext ctx, AuthDeviceFilter filter) {
 		ctx.checkWrite();
 		ctx.getDslContext().delete(AUTH_DEVICE).where(AUTH_DEVICE_PROPERTIES.getConditions(filter)).execute();	
 	}

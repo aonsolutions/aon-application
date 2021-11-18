@@ -106,7 +106,8 @@ public interface IRegistry {
 	// ------------------- CUSTOMER
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter);
 	public Customer insertCustomer(AONContext ctx, Customer customer);
-
+	public Customer saveCustomer(AONContext ctx, Customer customer);
+	
 	// ------------------- SELLER
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter);
 	
@@ -116,10 +117,14 @@ public interface IRegistry {
 	
 	// ------------------- SUPPLIER
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter);
+	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter, int offset, int limit);
+	public Supplier saveSupplier(AONContext ctx, Supplier supplier);
 	public Supplier insertSupplier(AONContext ctx, Supplier supplier);
 
 	// ------------------- CREDITOR
 	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter);
+	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter, int offset, int limit);
+	public Creditor saveCreditor(AONContext ctx, Creditor creditor);
 	public Creditor insertCreditor(AONContext ctx, Creditor creditor);
 
 	// ------------------- TARGET
@@ -129,6 +134,7 @@ public interface IRegistry {
 
 	// ------------------- RECORD DATA
 	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter);
+	public RecordData saveRecordData(AONContext ctx, RecordData recordData);
 
 	// ------------------- COMPANY
 	public Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] scopes);
@@ -150,12 +156,16 @@ public interface IRegistry {
 	public RegistryBank updateRBank(AONContext ctx, RegistryBank rbank);
 	public void deleteRBank(AONContext ctx, Integer id);
 	
-	// ------------------- RPAYMETHOD
+	public RegistryBank getRegistryBank(AONContext ctx, RegistryBankFilter filter);
+	public Stream<RegistryBank> getRegistryBankStream(AONContext ctx, RegistryBankFilter filter);
+	public RegistryBank saveRegistryBank(AONContext ctx, RegistryBank rbank);
+	public void deleteRegistryBank(AONContext ctx, Integer id);
 	
-	public Stream<RegistryPayMethod> getRPayMethodStream(AONContext ctx, RegistryPayMethodFilter filter);
-	public RegistryPayMethod insertRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod);
-	public RegistryPayMethod updateRPayMethod(AONContext ctx, RegistryPayMethod rpaymethod);
-	public RegistryPayMethod deleteRPayMethod(AONContext ctx, RegistryPayMethodFilter filter);
+	// ------------------- RPAYMETHOD
+	public RegistryPayMethod getRegistryPayMethod(AONContext ctx, RegistryPayMethodFilter filter);
+	public Stream<RegistryPayMethod> getRegistryPayMethodStream(AONContext ctx, RegistryPayMethodFilter filter);
+	public void deleteRegistryPayMethod(AONContext ctx, Integer id);
+	public RegistryPayMethod saveRegistryPayMethod(AONContext ctx, RegistryPayMethod rpaymethod);
 
 	// ------------------- RADDINFO
 	

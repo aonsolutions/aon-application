@@ -1,6 +1,6 @@
 import { AON_TAGS } from "../environments/aonTag.js";
 import { EVENT } from "../environments/environments.js";
-import { DAYS, MONTHS } from "../models/enums.js";
+import { Attach } from "../models/Attach.js";
 
 export const getReader = (file) =>  new Promise((resolve) => {
   const READER = new FileReader();
@@ -9,29 +9,18 @@ export const getReader = (file) =>  new Promise((resolve) => {
     const { result } = READER;
     const { name, size, type: contentType } = file;
     const base64File = result.split(',')[1];
-    resolve({
-      content: base64File,
-      contentType,
-      contentEncoding: 'base64',
-      name,
-      size
-    });
+    let attach = new Attach()
+      .setContent(base64File)
+      .setContentType(contentType)
+      .setContentEncoding('base64')
+      .setContentSize(size)
+      .setSize(size)
+      .setContentName(name)
+      .setName(name);
+  
+    resolve(attach);
   };
 });
-
-/**
- * 
- * @param {string} base64Str base64 file
- * @param {string} contentType mimeType
- * @returns 
- */
-export const convertBase64Url = (base64Str, contentType)=> {
-  let byteCharacters = atob(base64Str);
-  let byteNumbers = new Array(byteCharacters.length);
-  for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
-  let file = new Blob([new Uint8Array(byteNumbers)], { type: `${contentType};base64` });
-  return URL.createObjectURL(file);
-}
 
 export const formatBytes = (a,b=2)=>{if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
 
@@ -121,93 +110,6 @@ export const setValueName = (name, value) => {
 }
 
 export const addZero = (value, length) => value.toString().length < length ? addZero("0" + value, length) : value;
-
-export const timePaser = (time) =>{
-  let msecPerMinute = 1000 * 60;
-  let msecPerHour = msecPerMinute * 60;
-
-  // Calcular las horas , minutos y segundos
-  let hours = Math.floor(time / msecPerHour );
-  time = time - (hours * msecPerHour );
-
-  let minutes = Math.floor(time / msecPerMinute );
-  time = time - (minutes * msecPerMinute );
-
-  let seconds = Math.floor(time / 1000 );
-  return  addZero(hours, 2) + ':'+ addZero(minutes, 2) + ':'+ addZero(seconds, 2);
-}
-
-
-export const formatDate = (d) => {
-  const date = new Date(d);
-  const day = addZero(date.getDate(), 2);
-  const month = addZero(date.getMonth() + 1, 2);
-  const year = date.getFullYear();
-  return day + '/' + month + '/' + year;
-}
-
-export const setDate = (date) => formatDate(date);
-
-export const formatDateOrigin = (d) => {
-  let date = new Date(d);
-  const day = addZero(date.getDate(), 2);
-  const month = addZero(date.getMonth() + 1, 2);
-  const year = date.getFullYear();
-  return year + '-' + month + '-' + day;
-}
-
-export const setDateTimestamp = (d) => {
-  const date = new Date(d);
-  return formatDate(date) + " " + setTime(date);
-}
-
-export const dayStr = (date) => {
-  const now = new Date();
-  let day = DAYS[date.getDay()];
-  if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
-    if(date.getDate() === now.getDate()){
-      day = "hoy";
-    } else if(date.getDate() === now.addDay(-1).getDate()){
-      day = "ayer";
-    }
-  }
-  return day;
-}
-
-export const setDateTpDay = (d)=>{
-  const date = new Date(d);
-  const day = dayStr(date);
-  return day+", "+formatDate(date);
-}
-
-export const setDateTimestampDay = (d)=> setDateTpDay(new Date(d)) +" " + setTime(new Date(d));
-
-export const setFullDate = (d) => {
-  const date = new Date(d);
-  const dayText = dayStr(date);
-  const monthText = MONTHS[date.getMonth()];
-  return `${dayText}, ${date.getDate()} de ${monthText} de ${date.getFullYear()}`;
-}
-
-export const setTime = (date)=> {
-  const newDate = new Date(date);
-  const hour =  addZero(newDate.getHours(), 2);
-  const min  =  addZero(newDate.getMinutes(), 2);
-  return hour+":"+min;
-}
-
-export const getDayMonth = (date) => {
-  const d = new Date(date);
-  const day = addZero(d.getDate(), 2);
-  const month = MONTHS[d.getMonth()];
-  return day + '-' + month;
-}
-
-export const geMonthYear = (date) => {
-  const d = new Date(date)
-  const month = MONTHS[d.getMonth()];
-  return month+". "+ d.getFullYear();
-}
 
 /**
  * 

@@ -40,6 +40,7 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     id: CONSTANT.RAWDOC_INBOX.initCap(),
     name: MSG.INVOICES,
     icon: MATERIAL_ICONS.INBOX,
+    clickable: true,
     options: [RAWDOC_INBOX_ISSUED, RAWDOC_INBOX_RECEIVED, RAWDOC_INBOX_TICKET]
   }
   
@@ -100,7 +101,8 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
   export const REGISTRY = {
     id: CONSTANT.HOLDERS.initCap(),
     name: MSG.HOLDERS,
-    icon: MATERIAL_ICONS.CONTACT_PAGE,
+    icon: MATERIAL_ICONS.PEOPLE,
+    clickable: false,
     options: [REGISTRY_CUSTOMER, REGISTRY_SUPPLIER, REGISTRY_CREDITOR]
   }
 
@@ -113,12 +115,26 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
   export const PRODUCT = {
     id: CONSTANT.PRODUCT.initCap(),
     name: MSG.PRODUCTS,
-    icon: MATERIAL_ICONS.LOCAL_MALL
+    icon: MATERIAL_ICONS.INVENTORY_2
+  }
+
+  export const EXPENSES = {
+    id: CONSTANT.EXPENSES.initCap(),
+    name: MSG.EXPENSES,
+    icon: MATERIAL_ICONS.INVENTORY_2
+  }
+
+  export const CONCEPTS = {
+    id: CONSTANT.CONCEPTS.initCap(),
+    name: MSG.CONCEPTS,
+    icon: MATERIAL_ICONS.LOCAL_MALL,
+    clickable: false,
+    options: [PRODUCT, EXPENSES]
   }
 
   export const CONFIGURATION_PRINT = {
     id: CONSTANT.CONFIGURATION_PRINT.initCap(),
-    name: MSG.PRINTING_INVOICES,
+    name: MSG.INVOICE_PRINTING,
     icon: MATERIAL_ICONS.PRINT
   }
 

@@ -92,8 +92,9 @@ export class AonMobileParent extends AonElement {
 		this.clearElement(content);
 
   		let ul = this.createElement(TAG.UL);
-  		ul.className = 'list-group';
-  		ul.style.marginLeft= '20px';
+	  	ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_LIST_GROUP);
+		ul.style.marginLeft= '20px';
   		ul.style.marginRight= '20px';
 
   		for(let i = 0; i < companies.length; i++){

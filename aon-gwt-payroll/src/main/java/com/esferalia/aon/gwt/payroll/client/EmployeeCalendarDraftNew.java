@@ -30,13 +30,13 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -63,7 +63,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 	
 	public class DayTypeCell implements CalendarDayTypeCell{
-		public DayType dayType;
+		private DayType dayType;
 		
 		public DayTypeCell(DayType dayTypeAux) {
 			this.dayType = dayTypeAux;
@@ -154,20 +154,20 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				
 				@Override
 				public Void visitEreFzaExonDay(DayType dayType) {
-					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
-					calendarGrid.getWidget(row, col).addStyleName(style.ereFzaExonStyle());	
-					return null;
+					return visitEreFzaExon();
 				}
 				
 				@Override
 				public Void visitEreFzaExonPartialDay(DayType dayType) {
-					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
-					calendarGrid.getWidget(row, col).addStyleName(style.ereFzaExonStyle());	
-					return null;
+					return visitEreFzaExon();
 				}
 				
 				@Override
 				public Void visitEreFzaExonEndDay(DayType dayType) {
+					return visitEreFzaExon();
+				}
+				
+				private Void visitEreFzaExon() {
 					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
 					calendarGrid.getWidget(row, col).addStyleName(style.ereFzaExonStyle());	
 					return null;
@@ -184,14 +184,16 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				// Jornadas Reales
 				@Override
 				public Void visitRealDay(DayType dayType) {
-					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
-					calendarGrid.getWidget(row, col).addStyleName(style.peonadasStyle());
-					return null;
+					return visitRealAndIfDay();
 				}
 				
 				// Jornadas Teoricas
 				@Override
 				public Void visitIfDay(DayType dayType) {
+					return visitRealAndIfDay();
+				}
+				
+				private Void visitRealAndIfDay() {
 					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
 					calendarGrid.getWidget(row, col).addStyleName(style.peonadasStyle());
 					return null;
@@ -252,7 +254,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		}
 		
 		@Override
-		public void setHour(int row, int col, String newHour) {}
+		public void setHour(int row, int col, String newHour) {
+			// DayCell not implements this method
+		}
 		
 		@Override
 		public String getHour(int row, int col) {
@@ -260,18 +264,26 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		}
 		
 		@Override
-		public void setOnChange(int row, int col) {}
+		public void setOnChange(int row, int col) {
+			// DayCell not implements this method
+		}
 		
 		@Override
-		public void eraseOnChange(int row, int col) {}
+		public void eraseOnChange(int row, int col) {
+			// DayCell not implements this method
+		}
 	}
 	
 	public class HourCell implements CalendarTypeCell{
 		@Override
-		public void select(int row, int col) {}
+		public void select(int row, int col) {
+			// HourCell not implements this method
+		}
 		
 		@Override
-		public void unSelect(int row, int col) {}
+		public void unSelect(int row, int col) {
+			// HourCell not implements this method
+		}
 		
 		@Override
 		public void setHour(int row, int col, String newHour) {
@@ -300,10 +312,14 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	public class HourComplementaryCell implements CalendarTypeCell{
 		@Override
-		public void select(int row, int col) {}
+		public void select(int row, int col) {
+			// HourComplementaryCell not implements this method
+		}
 		
 		@Override
-		public void unSelect(int row, int col) {}
+		public void unSelect(int row, int col) {
+			// HourComplementaryCell not implements this method
+		}
 		
 		@Override
 		public void setHour(int row, int col, String newHour) {
@@ -332,24 +348,34 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	public static class NoneCell implements CalendarTypeCell{
 		
-		public static NoneCell NONE_CELL = new NoneCell(); 
+		public static final NoneCell noneCell = new NoneCell(); 
 		
 		private NoneCell() {}
 		
 		@Override
-		public void select(int row, int col) {}
+		public void select(int row, int col) {
+			// NoneCell not implements this method
+		}
 		@Override
-		public void unSelect(int row, int col) {}
+		public void unSelect(int row, int col) {
+			// NoneCell not implements this method
+		}
 		@Override
-		public void setHour(int row, int col, String newHour) {}
+		public void setHour(int row, int col, String newHour) {
+			// NoneCell not implements this method
+		}
 		@Override
 		public String getHour(int row, int col) {
 			return "0";
 		}
 		@Override
-		public void setOnChange(int row, int col) {}
+		public void setOnChange(int row, int col) {
+			// NoneCell not implements this method
+		}
 		@Override
-		public void eraseOnChange(int row, int col) {}
+		public void eraseOnChange(int row, int col) {
+			// NoneCell not implements this method
+		}
 	}
 	
 	// ----------------------------------------------- ScheduledCommand (DefinitionMenu)
@@ -445,25 +471,25 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		public DefinitionMenu() {
 			
 			nonWorkingMenuItem = addItem("Definir semana laboral", new NonWorkingCommand(), 
-					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			nonWorkingMenuItem.ensureDebugId("nonWorkingMenuItem");
 			
 			hourMenuItem = addItem("Definir horas semanales", new HourCommand(), 
-					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			hourMenuItem.ensureDebugId("hourMenuItem");
 			
 			separator = addSeparator();
 			
 			showHourMenuItem = addItem("Ocultar horas", new ShowHourCommand(), 
-					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			showHourMenuItem.ensureDebugId("showHourMenuItem");
 			
 			showHourExtraMenuItem = addItem("Mostrar horas extras", new ShowHourExtraCommand(), 
-					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			showHourExtraMenuItem.ensureDebugId("showHourExtraMenuItem");
 			
 			showHourComplMenuItem = addItem("Mostrar horas complementarias", new ShowHourComplCommand(), 
-					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			showHourComplMenuItem.ensureDebugId("showHourComplMenuItem");
 		}
 
@@ -519,11 +545,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 		@Override
 		public void execute() {
-			AonDialog dialog = new AonDialog("RESETEAR", new HTML(String.valueOf("\u00BF")+"RESETEAR CALENDARIO con los valores INICIALES? Se BORRARAN todos los cambios realizados."));
+			AonDialog dialog = new AonDialog("RESETEAR", new HTML("\u00BFRESETEAR CALENDARIO con los valores INICIALES? Se BORRARAN todos los cambios realizados."));
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
-				public void onCancel() {}
+				public void onCancel() {
+					// Hides AonDialog
+				}
 				
 				@Override
 				public void onAccept() {
@@ -548,17 +576,17 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		public UtilityMenu() {
 			
 			eraseEventMenuItem = addItem("Eliminar valores modificados", new EraseEventCommand(), 
-					AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			eraseEventMenuItem.ensureDebugId("eraseEventMenuItem");
 			
 			undoAllMenuItem = addItem("Restaurar \u00FAltimos valores guardados", new UndoAllCommand(), 
-					AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			undoAllMenuItem.ensureDebugId("undoAllMenuItem");
 			
 			addSeparator();
 			
 			resetMenuItem = addItem("Resetear calendario", new ResetMenuCommand(), 
-					AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+					AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			resetMenuItem.ensureDebugId("resetMenuItem");
 		}
 
@@ -608,7 +636,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		String effectiveStyle();
 		// Out of contract
 		String outOfContractStyle();
-		String cmd_btn();
+		String cmdBtn();
 		String container();
 	}
 	
@@ -617,6 +645,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	@UiField
 	VerticalPanel mainContainer;
+	
+	@UiField
+	HTMLPanel daysTypePanel;
 	
 	// ---------------------------- Calendar (UiField)
 	
@@ -679,11 +710,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	private EmployeeCalendarDraftObject employeeCalendarDraftObject;
 	
-	private OrderedMultiSelectionModel<Date> selectedDates = new OrderedMultiSelectionModel<Date>();
+	private OrderedMultiSelectionModel<Date> selectedDates = new OrderedMultiSelectionModel<>();
 	
-	private final CalendarTypeCell cellsType[][] = new CalendarTypeCell[totalRows][totalCols];
-	private final CalendarDayTypeCell cellsDayType[][] = new CalendarDayTypeCell[totalRows][totalCols];
-	private final Date cellsDates[][] = new Date[totalRows][totalCols];
+	private final CalendarTypeCell[][] cellsType = new CalendarTypeCell[totalRows][totalCols];
+	private final CalendarDayTypeCell[][] cellsDayType = new CalendarDayTypeCell[totalRows][totalCols];
+	private final Date[][] cellsDates = new Date[totalRows][totalCols];
 	
 	private boolean showHours;
 	private boolean showHoursExtraCompl;
@@ -696,12 +727,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	private AonToolbar toolbar;
 	private AonToolbarButton undoAllButton;
 	private AonToolbarButton saveButton;
-	private AonToolbarButton definitionButton;
-	private AonToolbarButton utilityButton;
 	private ListBox yearLB;
 	
 	public EmployeeCalendarDraftNew() {
-		toolbar = getToolbarPanel();
+		getToolbarPanel();
 		//Inicializamos la vista del calendario
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -1094,7 +1123,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			Label labelDay = new Label(contDays.toString());
 			labelDay.addStyleName(style.cursorPointer());
 			labelDay.addStyleName(style.labelStyle());
-			calendarGrid.setWidget(row, column, labelDay);;
+			calendarGrid.setWidget(row, column, labelDay);
 			
 			Label hourDay = new Label();
 			hourDay.addStyleName(style.hourStyle());
@@ -1218,6 +1247,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		element.getStyle().clearDisplay();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private boolean isOutOfContractPeriod(Date date) {
 		Date contractEndDate = this.employeeCalendarDraftObject.getContractEndDate();
 		Date newEndDate = null;
@@ -1233,6 +1263,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		return date.before(startDate) || date.after(newEndDate);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private boolean isOutOfContractPeriodIncludeCurrentYear(Date date) {
 		Date contractEndDate = this.employeeCalendarDraftObject.getContractEndDate();
 		Date newEndDate = null;
@@ -1247,16 +1278,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		Date startDate = DateUtils.copyDateOnly(this.employeeCalendarDraftObject.getContractStartDate());
 		
 		return date.before(startDate) || date.after(newEndDate);
-	}
-	
-	private boolean isOutOfContractView(Date date) {
-		Date newEndDate = this.employeeCalendarDraftObject.getContractEndDate();
-		if(null == newEndDate) {
-			Integer nextYear = new Date().getYear() + 1;
-			newEndDate = new Date(nextYear, 11, 31);
-		}
-		return (date.before(this.employeeCalendarDraftObject.getContractStartDate()) && date.getYear() !=  this.employeeCalendarDraftObject.getContractStartDate().getYear()) || 
-				(date.after(newEndDate) && date.getYear() != newEndDate.getYear());
 	}
 	
 	// ----------------------------------------------------------------------------------------------------
@@ -1274,11 +1295,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 	
 	private void initUndoAll() {
-		AonDialog dialog = new AonDialog("RESTAURAR", new HTML(String.valueOf("\u00BF")+"RESTAURAR CALENDARIO con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?"));
+		AonDialog dialog = new AonDialog("RESTAURAR", new HTML("\u00BFRESTAURAR CALENDARIO con los valores de la \u00FAltima versi\u00F3n guardada?"));
 		dialog.confirm(new AonAcceptDialogCallback() {
 			
 			@Override
-			public void onCancel() {}
+			public void onCancel() {
+				// Hide AonDialog
+			}
 			
 			@Override
 			public void onAccept() {
@@ -1367,12 +1390,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 							addDayType(startDate, endDate, DayType.EREFZADAY, coefficient);
 							break;
 						case 6:
-							if(isEndERTE) {
-								if(null != endDate) {
-									Date newDate = DateUtils.copyDateOnly(endDate);
-									DateUtils.addDays2Date(newDate, 1);
-									employeeCalendarDraftObject.addDayType(newDate, newDate, DayType.EREFZAEXONENDDAY, "1");
-								}
+							if(Boolean.TRUE.equals(isEndERTE) && null != endDate) {
+								Date newDate = DateUtils.copyDateOnly(endDate);
+								DateUtils.addDays2Date(newDate, 1);
+								employeeCalendarDraftObject.addDayType(newDate, newDate, DayType.EREFZAEXONENDDAY, "1");
 							}
 							
 							addDayType(startDate, endDate, DayType.EREFZAEXONDAY, coefficient);
@@ -1499,7 +1520,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			}
 
 			@Override
-			protected void onComunicateIT(IT it) {}
+			protected void onComunicateIT(IT it) {
+				// Not use on this implementation
+			}
     		
     	};
     	
@@ -1515,9 +1538,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	private void openITDialogDate(Date itDate) {
 		employeeCalendarDraftObject.getEmployeeITInfo(
-				s -> {
-					openITDialog(itDate);
-				}, f -> {});
+				s -> openITDialog(itDate), 
+				f -> {});
 	}
 	
 	private void openITDialog(Date itDate) {
@@ -1606,9 +1628,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 	private void accept(ITEmployee itEmployee) {
 		employeeCalendarDraftObject.createUpdateITEmployee(itEmployee,
-				message -> {
-					reloadCalendar();
-				},
+				message -> reloadCalendar(),
 				f -> {});
 	}
 	
@@ -1616,11 +1636,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		if(ITDialog.isPartenityPart(it)) {
 			employeeCalendarDraftObject.deleteIT(it,
 					s -> {
-						if(it.isComunicate() && employeeCalendarDraftObject.isUserComunica())
+						if(Boolean.TRUE.equals(it.isComunicate()) && employeeCalendarDraftObject.isUserComunica())
 							employeeCalendarDraftObject.deleteComunicateIT(itEmployee, it, 
-									t -> {
-										reloadCalendar();
-									}, d -> {});
+									t -> reloadCalendar(),
+									d -> {});
 						else
 							reloadCalendar();
 					},
@@ -1628,11 +1647,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		} else {
 			employeeCalendarDraftObject.removeIT(itEmployee, it,
 					s -> {
-						if(it.isComunicate() && employeeCalendarDraftObject.isUserComunica())
+						if(Boolean.TRUE.equals(it.isComunicate()) && employeeCalendarDraftObject.isUserComunica())
 							employeeCalendarDraftObject.deleteComunicateIT(itEmployee, it, 
-									t -> {
-										reloadCalendar();
-									}, d -> {});
+									t -> reloadCalendar(),
+									d -> {});
 						else
 							reloadCalendar();
 					},
@@ -1753,6 +1771,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	//									PAINT CALENDAR AUX METHODS
 	// ----------------------------------------------------------------------------------------------------
 
+	@SuppressWarnings("deprecation")
 	private int calculateNumberDayOfWeek(Date date) {
 		DateUtils.resetTime(date);
 		int numDay = date.getDay();
@@ -1764,6 +1783,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		return numDay;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private int calculateLastDayOfMonth(Date date) {
 		return DateUtils.getLastDayOfMonth(date).getDate();
 	}
@@ -1795,6 +1815,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				row == 28 || row == 31 || row == 34;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private int calculateDatePosition(Date date) {
 		int row = calculateMonthRow(date.getMonth());
 		int pos = -1;
@@ -1914,10 +1935,10 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 	
 	private void hideYearLBOptions() {
-		ArrayList<Integer> idxsToDelete = new ArrayList<Integer>();
+		ArrayList<Integer> idxsToDelete = new ArrayList<>();
 		for(int i=0; i<this.yearLB.getItemCount(); i++) {
-			Integer year = Integer.parseInt(this.yearLB.getValue(i));
-			Date lastDayOfYear = DateUtils.getLastDayOfYear(year-1900);
+			Integer yearAux = Integer.parseInt(this.yearLB.getValue(i));
+			Date lastDayOfYear = DateUtils.getLastDayOfYear(yearAux-1900);
 			if(isOutOfContractPeriodIncludeCurrentYear(lastDayOfYear)) {
 				idxsToDelete.add(i);
 			}
@@ -1931,7 +1952,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			try {
 				this.yearLB.removeItem(idx);
 			} catch (Exception e) {
-				continue;
+				// Catch exception
 			}
 	}
 
@@ -1945,73 +1966,21 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		event.stopPropagation();
 		
 		ContextMenu menu = new  ContextMenu();
-		menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) laborables", new Command() {
-			@Override
-			public void execute() {
-				initDatesDialog(DayType.WORKINGDAY);
-			}
-		});
-		
-		menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) no laborables", new Command() {
-			@Override
-			public void execute() {
-				initDatesDialog(DayType.NOWORKINGDAY);
-			}
-		});
-		menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) efectivos", new Command() {
-			@Override
-			public void execute() {
-				initDatesDialog(DayType.EFFECTIVE);
-			}
-		});
-		menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) inactividad", new Command() {
-			@Override
-			public void execute() {
-				initiInactivityDialog(DayType.INACTIVITY);
-			}
-		});
-		menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) ausencia", new Command() {
-			@Override
-			public void execute() {
-				initDropDialog(DayType.DROPDAY);
-			}
-		});
-		menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) vacaciones", new Command() {
-			@Override
-			public void execute() {
-				initDatesDialog(DayType.HOLIDAY);
-			}
-		});
-		menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) parcialidad", new Command() {
-			@Override
-			public void execute() {
-				initPartialityDialog(DayType.PARTIALITY);
-			}
-		});
-		if(this.employeeCalendarDraftObject.isAgrarianContract()) {
-			menu.addItem("A"+String.valueOf("\u00f1")+"adir dia(s) peonadas", new Command() {
-				@Override
-				public void execute() {
-					initDatesDialog(DayType.REAL_DAYS);
-				}
-			});
-		}
+		menu.addItem("A\u00f1adir dia(s) laborables", () -> initDatesDialog(DayType.WORKINGDAY));
+		menu.addItem("A\u00f1adir dia(s) no laborables", () -> initDatesDialog(DayType.NOWORKINGDAY));
+		menu.addItem("A\u00f1adir dia(s) efectivos", () -> initDatesDialog(DayType.EFFECTIVE));
+		menu.addItem("A\u00f1adir dia(s) inactividad", () -> initDatesDialog(DayType.INACTIVITY));
+		menu.addItem("A\u00f1adir dia(s) ausencia", () -> initDatesDialog(DayType.DROPDAY));
+		menu.addItem("A\u00f1adir dia(s) vacaciones", () -> initDatesDialog(DayType.HOLIDAY));
+		menu.addItem("A\u00f1adir dia(s) parcialidad", () -> initDatesDialog(DayType.PARTIALITY));
+		if(this.employeeCalendarDraftObject.isAgrarianContract())
+			menu.addItem("A\u00f1adir dia(s) peonadas", () -> initDatesDialog(DayType.REAL_DAYS));
 		if(!this.employeeCalendarDraftObject.isFullTimeJourney()) {
 			menu.addSeparator();
-			menu.addItem("A"+String.valueOf("\u00f1") + " adir horas", new Command() {
-				@Override
-				public void execute() {
-					initHourDialog();
-				}
-			});
+			menu.addItem("A\u00f1adir horas", () -> initHourDialog());
 		}
 		menu.addSeparator();
-		menu.addItem("Borrar evento(s)", new Command() {
-			@Override
-			public void execute() {
-				initDatesDialog(DayType.NOTYPEDAY);
-			}
-		});
+		menu.addItem("Borrar evento(s)", () -> initDatesDialog(DayType.NOTYPEDAY));
 		
 		menu.setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
 	    menu.show();
@@ -2021,30 +1990,22 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	private AonToolbar getToolbarPanel() {
 		
-		AonToolbar toolbar = new AonToolbar("Calendario");
+		this.toolbar = new AonToolbar("Calendario");
 		
 		undoAllButton = new AonToolbarButton( "Deshacer todo", AON.CSS.aonIconUndoAll());
-		undoAllButton.addClickHandler(e -> {
-			onUndoAll(e);
-		});
+		undoAllButton.addClickHandler(e -> onUndoAll());
 		toolbar.add(undoAllButton);
 		
 		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		saveButton.addClickHandler(e -> {
-			onSave(e);
-		});
+		saveButton.addClickHandler(e -> onSave());
 		toolbar.add(saveButton);
 		
-		definitionButton = new AonToolbarButton( "Definicion", AON.CSS.aonIconEditCalendar() );
-		definitionButton.addClickHandler(e -> {
-			onDefinition(e);
-		});
+		AonToolbarButton definitionButton = new AonToolbarButton( "Definicion", AON.CSS.aonIconEditCalendar() );
+		definitionButton.addClickHandler(e -> onDefinition(e));
 		toolbar.add(definitionButton);
 		
-		utilityButton = new AonToolbarButton( "Utilidades", AON.CSS.aonIconSettings() );
-		utilityButton.addClickHandler(e -> {
-			onUtility(e);
-		});
+		AonToolbarButton utilityButton = new AonToolbarButton( "Utilidades", AON.CSS.aonIconSettings() );
+		utilityButton.addClickHandler(e -> onUtility(e));
 		toolbar.add(utilityButton);
 		
 		Label yearL = new Label("Ejercicio :");
@@ -2078,28 +2039,25 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		yearLB.addItem(yearAux.toString(), yearAux.toString());
 		yearLB.addItem(previusYear.toString(), previusYear.toString());
 		
-		yearLB.addChangeHandler(e -> {
-			changeYear();
-		});
+		yearLB.addChangeHandler(e -> changeYear());
 		
 		setSelectedValueLB(yearLB, year+"");
 		year = year - 1900;
 		
 	}
 
-	public void onUndoAll(ClickEvent e) {
+	public void onUndoAll() {
 		initUndoAll();
 	}
 	
-	public void onSave(ClickEvent e) {
+	public void onSave() {
 		this.employeeCalendarDraftObject.saveCalendarInfo(
-				s -> {
+				s ->
 					this.employeeCalendarDraftObject.initCalendarInfo(t -> {
 						// Init save and undo all
 						onSaved();
 						changeYear();
-					}, f -> {});
-				},
+					}, f -> {}),
 				f -> {}
 		);
 	}
@@ -2121,5 +2079,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	public void hideToolbar(){
 		dockLayoutPanel.remove(toolbar);
 		mainContainer.getElement().getStyle().setMarginTop(0, Unit.PX);
+		daysTypePanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
 }

@@ -53,7 +53,6 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -86,7 +85,7 @@ public class MainContrataContract extends MainEntryPoint {
 			syncTask.setDescription("Comprobando bonificaciones...");
 			MainContrataContract.this.progressPanel.showTask(syncTask);
 
-			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
+			dockLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 
 			InlineLabel tab = new InlineLabel("Progreso");
 			tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
@@ -208,8 +207,7 @@ public class MainContrataContract extends MainEntryPoint {
 
 	// ------------------------------------------ UiBinder
 
-	interface UIBinder extends UiBinder<Widget, MainContrataContract> {
-	}
+	interface UIBinder extends UiBinder<Widget, MainContrataContract> {}
 
 	private static final UIBinder binder = GWT.create(UIBinder.class);
 
@@ -220,68 +218,57 @@ public class MainContrataContract extends MainEntryPoint {
 
 	interface MyStyle extends CssResource {
 		String suggestBox();
-
 		String filterPanel();
-
 		String flexPanel();
 	}
-
+	
+	@UiField
+	DeckPanel deckPanel;
+	
+	// Employees List
+	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
-
+	@UiField (provided = true)
+	AonToolbar employeeToolbar;
+	
 	@UiField
 	HTMLPanel filterEmployeePanel;
 
-	@UiField
-	HTMLPanel mainTablePanel;
-
-	@UiField
-	HTMLPanel mainContainer;
-
-	@UiField
-	DeckPanel deckPanel;
-
 	@UiField(provided = true)
 	DataGrid<EmployeeContractInfo> employeeDataGrid;
-
-	@UiField(provided = true)
-	ContrataEmployee contrataEmployee;
-
+	
 	@UiField
 	MinimizePanel footPanel;
 
 	@UiField
 	TabLayoutPanel footTabPanel;
-
-	@UiField
-	PDFViewer pdfViewer;
-
+	
 	ResultsPanel resultsPanel;
 
 	ProgressPanel progressPanel;
+	
+	// Trash Employees List
 
-	// Trash Employee
-
-	@UiField
-	DockLayoutPanel trashDockLayoutPanel;
-
-	@UiField
-	SplitLayoutPanel trashSplitLayoutPanel;
-
-	@UiField
-	HTMLPanel trashMainContainer;
+	@UiField (provided = true)
+	AonToolbar employeeTrashToolbar;
 
 	@UiField
 	HTMLPanel filterTrashEmployeePanel;
 
-	@UiField
-	HTMLPanel mainTrashTablePanel;
-
 	@UiField(provided = true)
 	DataGrid<EmployeeContractInfo> trashEmployeeDataGrid;
+
+	// Contrata Employee
+	
+	@UiField(provided = true)
+	ContrataEmployee contrataEmployee;
+
+	// PDF Viewer
+
+	@UiField
+	PDFViewer pdfViewer;
 
 	// Enterprise Salary
 
@@ -289,15 +276,16 @@ public class MainContrataContract extends MainEntryPoint {
 	EnterpriseSalary enterpriseSalary;
 
 	// ------------------------------------------ Variables
+	
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	
 
 	private MainContrataContractObject mainContrataContractObject;
-	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private EnterpriseSalaryObject enterpriseSalaryObject;
+	
 	private List<EmployeeContractInfo> employeesList = Collections.emptyList();
 	private List<EmployeeContractInfo> trashEmployeesList = Collections.emptyList();
-	private EnterpriseSalaryObject enterpriseSalaryObject;
-
-	private AonToolbar toolbar;
-	private AonToolbar trashToolbar;
+	
 	private AonToolbarButton up2DateSS;
 
 	private SuggestBox employeeSB;
@@ -313,21 +301,15 @@ public class MainContrataContract extends MainEntryPoint {
 
 		provideEmployeesDataGrid();
 		provideTrashEmployeesDataGrid();
-
-		// Add style to table header
-		addStyleToHeader();
+		
+		getToolbarPanel();
+		getTrashToolbarPanel();
 
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
-
-		getToolbarPanel();
-		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
-
-		getTrashToolbarPanel();
-		trashDockLayoutPanel.addNorth(trashToolbar, AonToolbar.HEIGTH);
 
 		getFilterEmployeePanel();
 
@@ -346,8 +328,7 @@ public class MainContrataContract extends MainEntryPoint {
 		employeesList = Collections.emptyList();
 
 		employeeDataGrid = new CustomDataGrid<>(Integer.MAX_VALUE, EmployeeContractInfo.KEY_PROVIDER);
-		employeeDataGrid.setWidth("100%");
-
+		
 		employeeDataGrid.setAutoHeaderRefreshDisabled(true);
 
 		employeeDataGrid.setEmptyTableWidget(new Label("No existen contratos".toUpperCase()));
@@ -358,7 +339,6 @@ public class MainContrataContract extends MainEntryPoint {
 		addEmployeeInfoColumns(selectionCCCInfoModel);
 
 		new ListDataProvider<EmployeeContractInfo>(Collections.emptyList()).addDataDisplay(employeeDataGrid);
-
 	}
 
 	private void addEmployeeInfoColumns(NoSelectionModel<EmployeeContractInfo> selectionCCCInfoModel) {
@@ -418,7 +398,7 @@ public class MainContrataContract extends MainEntryPoint {
 			public String getValue(EmployeeContractInfo employeeContractInfo) {
 				if ((byte) 3 == employeeContractInfo.getContractInfo().getSsRegimen())
 					return "RETA";
-				if (employeeContractInfo.getContractInfo().getContractType().equals("000"))
+				if ("000".equals(employeeContractInfo.getContractInfo().getContractType()))
 					return "BECARIO";
 				return employeeContractInfo.getContractInfo().getContractType();
 			}
@@ -497,16 +477,14 @@ public class MainContrataContract extends MainEntryPoint {
 
 		List<EmployeeContractInfo> employeeContractInfoList = dataProvider.getList();
 		employeeContractInfoList.clear();
-
+		
 		this.employeesList = mainContrataContractObject.getEmployeesList();
 
 		for (EmployeeContractInfo employeeContractInfo : this.employeesList)
 			employeeContractInfoList.add(employeeContractInfo);
 
 		employeeDataGrid.setPageSize(employeesList.size());
-
-		addStyleToHeader();
-
+		
 		addSortColums(employeeDataGrid, employeeContractInfoList);
 	}
 	
@@ -516,8 +494,7 @@ public class MainContrataContract extends MainEntryPoint {
 		trashEmployeesList = Collections.emptyList();
 
 		trashEmployeeDataGrid = new CustomDataGrid<>(Integer.MAX_VALUE, EmployeeContractInfo.KEY_PROVIDER);
-		trashEmployeeDataGrid.setWidth("100%");
-
+		
 		trashEmployeeDataGrid.setAutoHeaderRefreshDisabled(true);
 
 		trashEmployeeDataGrid.setEmptyTableWidget(new Label("No existen contratos en la papelera".toUpperCase()));
@@ -754,42 +731,19 @@ public class MainContrataContract extends MainEntryPoint {
 
 		trashEmployeeDataGrid.setPageSize(trashEmployeesList.size());
 
-		addStyleToHeader();
-
 		addSortColums(trashEmployeeDataGrid, trashEmployeeContractInfoList);
 	}
 	
-	// ------------------------------------------ Header Styles
-
-	public void addStyleToHeader() {
-		String headerStyles = "rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header";
-
-		employeeDataGrid.getHeader(0).setHeaderStyleNames(headerStyles);
-		employeeDataGrid.getHeader(1).setHeaderStyleNames(headerStyles);
-		employeeDataGrid.getHeader(2).setHeaderStyleNames(headerStyles);
-		employeeDataGrid.getHeader(3).setHeaderStyleNames(headerStyles);
-		employeeDataGrid.getHeader(4).setHeaderStyleNames(headerStyles);
-		employeeDataGrid.getHeader(5).setHeaderStyleNames(headerStyles);
-		employeeDataGrid.getHeader(6).setHeaderStyleNames(headerStyles);
-		employeeDataGrid.getHeader(7).setHeaderStyleNames(headerStyles);
-
-		trashEmployeeDataGrid.getHeader(0).setHeaderStyleNames(headerStyles);
-		trashEmployeeDataGrid.getHeader(1).setHeaderStyleNames(headerStyles);
-		trashEmployeeDataGrid.getHeader(2).setHeaderStyleNames(headerStyles);
-		trashEmployeeDataGrid.getHeader(3).setHeaderStyleNames(headerStyles);
-		trashEmployeeDataGrid.getHeader(4).setHeaderStyleNames(headerStyles);
-		trashEmployeeDataGrid.getHeader(5).setHeaderStyleNames(headerStyles);
-		trashEmployeeDataGrid.getHeader(6).setHeaderStyleNames(headerStyles);
-		trashEmployeeDataGrid.getHeader(7).setHeaderStyleNames(headerStyles);
-		trashEmployeeDataGrid.getHeader(8).setHeaderStyleNames(headerStyles);
-		trashEmployeeDataGrid.getHeader(9).setHeaderStyleNames(headerStyles);
-	}
-
 	// ------------------------------------------ OnModuleLoad
+	
+	@Override
+	public void onModuleLoad() {
+		onModuleLoad(new MainContrataContractObject());
+	}
 
 	public void onModuleLoad(MainContrataContractObject mainContrataContractObject) {
 		this.mainContrataContractObject = mainContrataContractObject;
-
+		
 		this.mainContrataContractObject.getEmployeesInfo(false, 
 				s -> {
 					initWorkplaceLB();
@@ -814,12 +768,12 @@ public class MainContrataContract extends MainEntryPoint {
 			workplaceLB.addItem(workplace.getDescription(), workplace.getId().toString());
 		
 		workplaceLB.addChangeHandler(e -> {
-			String workplaceId = workplaceLB.getSelectedValue();
-			if (AonStringUtils.isBlank(workplaceId))
+			String workplaceIdStr = workplaceLB.getSelectedValue();
+			if (AonStringUtils.isBlank(workplaceIdStr))
 				mainContrataContractObject.resetEmployeesList();
 			else {
-				List<Integer> employeesContractIds = mainContrataContractObject.getEmployeesContractIdsByWorkplace(workplaceId);
-				mainContrataContractObject.filterEmployeesList(employeesContractIds);
+				Integer workplaceId = Integer.parseInt(workplaceIdStr);
+				mainContrataContractObject.filterEmployeesList(workplaceId);
 			}
 
 			initContractTable();
@@ -830,12 +784,17 @@ public class MainContrataContract extends MainEntryPoint {
 	private void initEnterpriseSB() {
 		// Enteprise List
 
-		List<String> enterprises = new ArrayList<>(mainContrataContractObject.getEmployeesMap().keySet());
+		List<EmployeeContractInfo> employees = mainContrataContractObject.getAllEmployeesList();
 
 		List<String> enterprisesSuggest = new ArrayList<>();
-		for (String enterprise : enterprises)
-			enterprisesSuggest.add(enterprise + "");
-
+		for (EmployeeContractInfo employee : employees) {
+			String fullName = employee.getEmployeeInfo().getFullName();
+			String document = employee.getEmployeeInfo().getDocument();
+			String ssNumber = employee.getEmployeeInfo().getSsNumber();
+			
+			enterprisesSuggest.add(fullName + ", "+ document + ", " + ssNumber);
+		}
+			
 		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) employeeSB.getSuggestOracle();
 		orclEnterprise.addAll(enterprisesSuggest);
 		employeeSB.setAutoSelectEnabled(false);
@@ -844,30 +803,16 @@ public class MainContrataContract extends MainEntryPoint {
 			String value = employeeSB.getValue();
 			if (AonStringUtils.isBlank(value) || value.length() < 3)
 				mainContrataContractObject.resetEmployeesList();
-			else {
-				List<Integer> employeesContractIds = mainContrataContractObject.getEmployeesContractIds(value);
-				mainContrataContractObject.filterEmployeesList(employeesContractIds);
-			}
+			else
+				mainContrataContractObject.filterEmployeesList(value);
 
 			initContractTable();
-		});
-
-		employeeSB.addSelectionHandler(e -> {
-			String value = employeeSB.getValue();
-			List<Integer> employeesContractIds = mainContrataContractObject.getEmployeesContractIds(value);
-			mainContrataContractObject.filterEmployeesList(employeesContractIds);
-
-			initContractTable();
-			employeeDataGrid.redraw();
 		});
 	}
 
 	private void setTableHeights() {
-		employeeDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 175), Unit.PX);
-
+		employeeDataGrid.getElement().getStyle().setHeight(Window.getClientHeight() - 200.00, Unit.PX);
 		trashEmployeeDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-		mainTrashTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 175), Unit.PX);
 	}
 
 	// ------------------------------------------ addSortColums
@@ -1037,8 +982,8 @@ public class MainContrataContract extends MainEntryPoint {
 	// ------------------------------------------ Auxiliar Methods
 
 	private void initFootPanel() {
-		footPanel.addMaximizeHandler(e -> splitLayoutPanel.setWidgetSize(footPanel, 150));
-		footPanel.addMinimizeHandler(e -> splitLayoutPanel.setWidgetSize(footPanel, 25));
+		footPanel.addMaximizeHandler(e -> dockLayoutPanel.setWidgetSize(footPanel, 150));
+		footPanel.addMinimizeHandler(e -> dockLayoutPanel.setWidgetSize(footPanel, 20));
 	}
 
 	private void initResultsPanel() {
@@ -1050,11 +995,11 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 	
 	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+		dockLayoutPanel.setWidgetSize(footPanel, 20);
 	}
 
 	private void showFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
+		dockLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 	}
 
 	private void selectResultsPanel() {
@@ -1197,23 +1142,23 @@ public class MainContrataContract extends MainEntryPoint {
 	// ------------------------------------------ Toolbar
 	
 	private void getToolbarPanel() {
-		this.toolbar = new AonToolbar("Contratos");
+		employeeToolbar = new AonToolbar("Contratos");
 
 		AonToolbarButton newContract = new AonToolbarButton("Nuevo contrato", AON.CSS.aonIconAdd());
 		newContract.addClickHandler(e -> onNewContract());
-		toolbar.add(newContract);
+		employeeToolbar.add(newContract);
 
 		AonToolbarButton trashListBtn = new AonToolbarButton("Papelera Contratos", AON.CSS.aonIconTrashList());
 		trashListBtn.addClickHandler(e -> onTrashListBtn());
-		toolbar.add(trashListBtn);
+		employeeToolbar.add(trashListBtn);
 
 		up2DateSS = new AonToolbarButton("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", AON.CSS.aonIconTgss());
 		up2DateSS.addClickHandler(e -> onUp2DateSS());
-		toolbar.add(up2DateSS);
+		employeeToolbar.add(up2DateSS);
 
 		AonToolbarButton salariesBtn = new AonToolbarButton("N\u00F3minas Empresa", AON.CSS.aonIconReceipt());
 		salariesBtn.addClickHandler(e -> showEnterpriseSalary());
-		toolbar.add(salariesBtn);
+		employeeToolbar.add(salariesBtn);
 	}
 	
 	// ------------------------------------------ Toolbar. Methods
@@ -1282,11 +1227,11 @@ public class MainContrataContract extends MainEntryPoint {
 	// ------------------------------------------ Toolbar Trash
 
 	private void getTrashToolbarPanel() {
-		this.trashToolbar = new AonToolbar("Papelera Contratos");
+		employeeTrashToolbar = new AonToolbar("Papelera Contratos");
 
 		AonToolbarButton backListBtn = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack());
 		backListBtn.addClickHandler(e -> onBackListBtn());
-		trashToolbar.add(backListBtn);
+		employeeTrashToolbar.add(backListBtn);
 	}
 
 	private void onBackListBtn() {

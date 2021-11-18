@@ -209,8 +209,12 @@ export class AonTable extends AonElement {
         td.addEventListener(EVENT.CLICK, fn);
         if (contextMenu) {
           td.addEventListener("contextmenu", () => {
-            this.deselectAll();
-            this.getElement(checkBoxId + "Input").click();
+            
+            let cb = this.getElement(checkBoxId + "Input");
+            if(!cb.checked){
+              this.deselectAll();
+              cb.click();
+            } 
           });
           td.addEventListener("contextmenu", contextMenu);
         }

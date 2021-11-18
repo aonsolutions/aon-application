@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.IFinance;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
+import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
@@ -414,10 +415,11 @@ public class FinanceImpl implements IFinance {
 	
 	
 	// ------------------------------------- PAY METHOD
+	
 	@Override
-	public PayMethod getPayMethod(AONContext ctx, String name) {
+	public PayMethod getPayMethod(AONContext ctx, PayMethodFilter filter) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> PayMethodDAO.get(ctx, name));
+				configuration -> PayMethodDAO.get(ctx, filter));
 	}
 	
 	@Override

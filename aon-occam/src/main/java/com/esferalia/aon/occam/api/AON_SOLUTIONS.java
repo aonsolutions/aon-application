@@ -4,13 +4,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.esferalia.aon.occam.api.json.ItemJSON;
 import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -21,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.LocationFilter;
+import com.esferalia.aon.occam.api.model.Filter.NoteFilter;
 import com.esferalia.aon.occam.api.model.Filter.NotificationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
@@ -33,6 +31,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.Coordinates;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.Location;
+import com.esferalia.aon.occam.api.model.aonsolutions.Note;
 import com.esferalia.aon.occam.api.model.aonsolutions.Notification;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControl;
 import com.esferalia.aon.occam.api.model.aonsolutions.TimeControlDetail;
@@ -56,6 +55,7 @@ import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
+import com.esferalia.aon.occam.impl.jooq.NoteImpl;
 import com.esferalia.aon.occam.impl.jooq.NotificationImpl;
 import com.esferalia.aon.occam.impl.jooq.Product2Impl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
@@ -109,6 +109,10 @@ public class AON_SOLUTIONS {
 	
 	private static IAttachment getAttachment() {
 		return new AttachmentImpl();
+	}
+	
+	private static INote getNote() {
+		return new NoteImpl();
 	}
 
 	public static AuthAttach getAuthAttach(Auth auth, AuthAttachFilter filter) { 
@@ -508,6 +512,41 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	
+	//----------------NOTE
+	
+	public static Note getNote(Domain domain, String login, NoteFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getNote().getNote(ctx, filter);
+		}
+	}
+	
+	public static Stream<Note> getNoteStream(Domain domain, String login, NoteFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getNote().getNoteStream(ctx, filter);
+		}
+	}
+	
+	public static HashMap<String, Integer> getNoteCountForDate(Domain domain, String login, NoteFilter filter, Date date) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getNote().getNoteCountForDate(ctx, filter, date);
+		}
+	}
+	
+	public static Note saveNote(Domain domain, String login, Note note) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getNote().saveNote(ctx, note);
+		}
+	}
+	
+	public static void deleteNote(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getNote().deleteNote(ctx, id);
+		}
+	}
+	
+	//----- END NOTE
+	
 	@Deprecated
 	public static void saveUserFinancePortal(Domain domain, String login, Integer userId) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
@@ -604,6 +643,9 @@ public class AON_SOLUTIONS {
 	public static JSONObject getInvoiceJSON(String domainName, Integer domainId, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Invoice invoice = getFinance().getFullInvoice(ctx, id);
+			if(invoice.getRegistryAddressData().getId() == null) {
+				invoice.setRegistryAddressData(getRegistry().getMain(ctx, invoice.getRegistry()));
+			}
 			return InvoiceJSON.toJSON(invoice);
 		}
 	}

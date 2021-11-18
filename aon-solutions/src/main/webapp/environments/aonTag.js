@@ -1,5 +1,5 @@
 // HTML
-
+export const A = 'a';
 export const DIV = 'div';
 export const IMG = 'img';
 export const I = 'i';
@@ -48,6 +48,7 @@ export const AON_TOOLBAR = 'aon-toolbar';
 export const AON_VIEWER = 'aon-viewer';
 export const AON_NOTIFICATION_ICON = 'aon-notification-icon';
 export const AON_UPLOAD = 'aon-upload';
+export const AON_IBAN = 'aon-iban';
 
 // MODULES - COMPANY
 
@@ -61,12 +62,31 @@ export const AON_USER = 'aon-user';
 export const AON_MOBILE_PROFILE = 'aon-mobile-profile';
 
 export const AON_REG = 'aon-reg';
+export const AON_MOBILE_REG = 'aon-mobile-reg';
 export const AON_REGISTRY_LIST = 'aon-registry-list';
+export const AON_MOBILE_REGISTRY_LIST = 'aon-mobile-registry-list';
+
 export const AON_CUSTOMER = 'aon-customer';
+export const AON_CUSTOMER_LIST = 'aon-customer-list';
+export const AON_MOBILE_CUSTOMER = 'aon-mobile-customer';
+export const AON_MOBILE_CUSTOMER_LIST = 'aon-mobile-customer-list';
+
+export const AON_SUPPLIER = 'aon-supplier';
+export const AON_SUPPLIER_LIST = 'aon-supplier-list';
+export const AON_MOBILE_SUPPLIER = 'aon-mobile-supplier';
+export const AON_MOBILE_SUPPLIER_LIST = 'aon-mobile-supplier-list';
+
+export const AON_CREDITOR = 'aon-creditor';
+export const AON_CREDITOR_LIST = 'aon-creditor-list';
+export const AON_MOBILE_CREDITOR = 'aon-mobile-creditor';
+export const AON_MOBILE_CREDITOR_LIST = 'aon-mobile-creditor-list';
 
 export const AON_PROJECT_PANEL = 'aon-project-panel';
 export const AON_PROJECT_LIST = 'aon-project-list';
 export const AON_PROJECT = 'aon-project';
+
+export const AON_PRODUCT_LIST = 'aon-product-list';
+export const AON_PRODUCT = 'aon-product';
 
 export const AON_GROUP_LIST = 'aon-group-list';
 export const AON_WORKGROUP = 'aon-workgroup';
@@ -74,10 +94,17 @@ export const AON_WORKGROUP = 'aon-workgroup';
 
 export const AON_INVOICE = 'aon-invoice';
 export const AON_MOBILE_INVOICE = 'aon-mobile-invoice';
+export const AON_INVOICE_CONFIGURATION = 'aon-invoice-configuration';
+export const AON_INVOICE_COMMUNICATION = 'aon-invoice-communication';
+export const AON_INVOICE_PRINT = 'aon-invoice-print';
 
 // DEV DOC
 export const AON_API_DOC = 'aon-api-doc';
 export const AON_COMPONENTS_DOC = 'aon-components-doc';
+
+
+export const AON_BANK_LIST = 'aon-bank-list';
+export const AON_BANK = 'aon-bank';
 
 export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH].join(", ");
 

@@ -385,7 +385,7 @@ public class RegistryImport extends Import {
 					}
 				}	
 				Integer pId = p.getId();
-				RegistryPayMethod rpaymethod = AON.getRPayMethod(domain.getName(), domain.getId(),	user.getLogin(), f -> 
+				RegistryPayMethod rpaymethod = AON.getRegistryPayMethod(domain, user, f -> 
 						f.getDomainProperty().eq(domain.getId())
 						.and(f.getRegistryProperty().eq(registryId))
 						.and(f.getPayMethodProperty().eq(pId)));
@@ -394,12 +394,8 @@ public class RegistryImport extends Import {
 						.setDomain(domain.getId())
 						.setRegistry(reg.getId())
 						.setPayMethod(p.getId())
-						.setRbank(rbank.getId())
-						.setNumberOfPymnts((short) 1)
-						.setDaysToFirstPymnt((short) 0)
-						.setDaysBetwenPymnts((short) 0)
-						.setPymnt_days("");
-					AON.insertRPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
+						.setRbank(rbank.getId());
+					AON.saveRegistryPayMethod(domain, user, rpaymethod);
 				}
 			}
 			

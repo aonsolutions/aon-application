@@ -2,12 +2,13 @@
 import { AonBasicTable } from "../../../components/aon-basic-table.js";
 import { AonDate } from "../../../components/aon-date.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
-import { AonSelect } from "../../../components/aon-select.js";
-import { TAG, EVENT, MSG, MATERIAL_ICONS } from "../../../environments/environments.js";
-import { formatDateOrigin, serializeForm } from "../../../services/utils.js";
+import { TAG, EVENT, MSG, MATERIAL_ICONS, CSS } from "../../../environments/environments.js";
+import { saveVacation } from "../../../services/contractService.js";
+import { serializeForm } from "../../../services/utils.js";
 import { setAttributes } from "../../../services/utilsComponents.js";
-import { MESSENGER_IDS } from "../MessengerEnums.js";
-import { createDivEditable, titleFirstDiv } from "../shared/creationUtils.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
+import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
+import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/creationUtils.js";
 
 /**
  * 
@@ -15,7 +16,8 @@ import { createDivEditable, titleFirstDiv } from "../shared/creationUtils.js";
  */
  export const createFormVacation = (card, aonMessengerChat) =>{
     const task = aonMessengerChat.task;
-    
+    const dur = aonMessengerChat.getDur();
+
     let data = task.id ? JSON.parse(task.description) : {};
 
     const form  = setAttributes(document.createElement(TAG.FORM),{
@@ -26,19 +28,6 @@ import { createDivEditable, titleFirstDiv } from "../shared/creationUtils.js";
     form.style.width = "100%";
     card.setContent(form);
 
-    if(task.id){
-        let aonSelect = setAttributes(new AonSelect(),{ title: "Estado", id:"status", name:"status"});
-        form.appendChild(aonSelect);
-        aonSelect.options = JSON.stringify(getStatus());
-        if(data.status) aonSelect.value = data.status;
-    }
-
-    //DIV TITLE
-    const titleDiv = titleFirstDiv(MSG.OBSERVATION);
-    form.appendChild(titleDiv);
-    const observation = createDivEditable( data.observation || "" , "observation" ,  MSG.TYPE_HERE);
-    titleDiv.appendChild(observation);
-
     let table = setAttributes(new AonBasicTable(),{ id:"tableVacation" });
     form.appendChild(table);
  
@@ -47,9 +36,9 @@ import { createDivEditable, titleFirstDiv } from "../shared/creationUtils.js";
     
     let i = 0;
     if(data.dates && data.dates.length){
-        data.dates.forEach(dt=> addDates(table, dt, i++) );
+        data.dates.forEach(dt=> addDates(table, i++, dt) );
     } else {
-        addDates(table, undefined, i++);
+        addDates(table, i++);
     }
 
     //ADD BUTTON 
@@ -58,17 +47,26 @@ import { createDivEditable, titleFirstDiv } from "../shared/creationUtils.js";
         title:MSG.ADD_DETAIL,
         icon:MATERIAL_ICONS.ADD
     });
-    addButton.addEventListener(EVENT.CLICK, () => addDates(table, undefined, i++) );
+    addButton.addEventListener(EVENT.CLICK, () => addDates(table,i++) );
     div.appendChild(addButton);
+
+    //OBSERVATION
+    createDivEditable(form, MSG.OBSERVATION,  data.observatio0n || "" , "observation" ,  MSG.TYPE_HERE);
+
+    if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isPayrollManager() || dur.isPayrollPortal()) ){
+        let btnAccept = createBtnAccept();
+        btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(aonMessengerChat) );
+        createDivGrid(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+    }
 }
 
 /**
  * 
  * @param {HTMLElement} table html table
- * @param {Object} data data object default
  * @param {Number} i row numeric
+ * @param {Object} data data object default
  */
-const addDates = (table, data={}, i) =>{
+const addDates = (table, i, data={}) =>{
     const rowIndex = table.addRow(); // ----- RETURN ROW INDEX
     
     //DATE INI
@@ -78,7 +76,7 @@ const addDates = (table, data={}, i) =>{
     });
 
     table.addCell(startDate);
-    startDate.value = data.startDate || formatDateOrigin(new Date());
+    startDate.value = data.startDate || AonDateUtils.formatDateOrigin(new Date());
 
     //DATE END
     let endDate = setAttributes(new AonDate(),{
@@ -126,13 +124,20 @@ export const getFormVacationJson = ()=>{
 }
 
 
-const getStatus = () => [
-    {
-        name:MSG.ACCEPT,
-        value: 1
-    },
-    {
-        name:MSG.REJECT,
-        value: 2
+
+const processAccept = async (aonMessengerChat) => {
+    let application = aonMessengerChat.getApplication();
+    application.startLoading();
+    try {
+        const task = aonMessengerChat.task;
+        const data = getFormVacationJson();
+        const registry = task.sender.id; 
+        await saveVacation({...data, registry});
+        await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
+    } catch (err) {
+        console.log(err);
+        aonMessengerChat.showError(err)
     }
-];
+
+    application.stopLoading();
+}

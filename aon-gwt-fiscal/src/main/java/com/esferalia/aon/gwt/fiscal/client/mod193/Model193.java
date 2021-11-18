@@ -74,7 +74,8 @@ public class Model193 extends MainEntryPoint {
 		void showError(String msg);
 		void cleanErrorPanel();
 		void onNew(Model193ModuleOptions options);
-		void onDuplicate(Model193ModuleOptions options, int id);
+		void onReset(Model193ModuleOptions options, Mod193 mod193);
+		void onDuplicate(Model193ModuleOptions options, int id);		
 	}
 	
 	protected class Model193Callback implements IModel193Callback {
@@ -94,6 +95,10 @@ public class Model193 extends MainEntryPoint {
 		@Override
 		public void onNew(Model193ModuleOptions options) {
 			newModel(options);
+		}
+		@Override
+		public void onReset(Model193ModuleOptions options, Mod193 mod193) {
+			resetModel(options, mod193);			
 		}
 		@Override
 		public void onDuplicate(Model193ModuleOptions options, int id) {
@@ -258,6 +263,31 @@ public class Model193 extends MainEntryPoint {
 				});
 	}
 	
+	private void resetModel(Model193ModuleOptions options, Mod193 oldMod193) {
+		cleanErrorPanel();
+		SERVICE.initialize(options.getDomainName(), options.getUser(),options.getDomain(), oldMod193.getYear(),
+				new AsyncCallback<Mod193>() {
+					@Override
+					public void onSuccess(Mod193 newMod193) {
+						cleanBreakdownPanel();
+						tabLayout.selectTab(BREAKDOWN_TAB);
+						closeFootPanel();
+						
+						newMod193.setAdministration(oldMod193.getAdministration());
+						newMod193.setYear(oldMod193.getYear());
+						newMod193.setComplementary(oldMod193.isComplementary());
+						newMod193.setReplacement(oldMod193.isReplacement());
+						newMod193.setReplacedReceipt(oldMod193.getReplacedReceipt());
+						showResetDeclarationPopup(options, newMod193, oldMod193);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
+	}
+	
 	private void duplicateModel(Model193ModuleOptions options, int id) {
 		cleanErrorPanel();
 		SERVICE.getMod193(options.getDomainName(),options.getUser(),options.getDomain(), id,
@@ -386,8 +416,61 @@ public class Model193 extends MainEntryPoint {
 			newDialog.show();
 	}
 	
+	private void showResetDeclarationPopup(Model193ModuleOptions options, Mod193 newMod193, Mod193 oldMod193) {
+		NewDeclarationPopup newDialog = new NewDeclarationPopup( newMod193, false, true,
+			new Model193Callback() {
+
+					@Override
+					public void onAccept(Mod193 model) {
+						final PopupPanel popup = new PopupPanel(false, true);
+						Label label = new Label(AON.MSG.processing());
+						label.addStyleName(AON.AON_CSS.aonTimer());
+						popup.add(label);
+						popup.setGlassEnabled(true);
+						popup.setAnimationEnabled(true);
+						popup.center();
+						
+						SERVICE.delete(options.getDomainName(), options.getUser(), options.getDomain(), oldMod193, 
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										SERVICE.save(options.getDomainName(), options.getUser(), options.getDomain(), model,
+												new AsyncCallback<Mod193>() {
+													@Override
+													public void onSuccess(Mod193 model) {
+														popup.hide();
+														select(options, model, null);
+													}
+
+													@Override
+													public void onFailure(Throwable caught) {
+														popup.hide();
+														showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+													}
+												});
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {
+										popup.hide();
+										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+									}
+								});
+
+					}
+					
+					@Override
+					public void onCancel() {						
+					};
+				}
+			); 
+			newDialog.center();
+			newDialog.show();
+	}
+
 	private void showDuplicateDeclarationPopup(Model193ModuleOptions options, Mod193 model) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, 
+		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, false, 
 			new Model193Callback() {
 
 					@Override

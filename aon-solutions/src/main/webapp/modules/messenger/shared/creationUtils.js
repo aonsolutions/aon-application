@@ -5,11 +5,36 @@ import { AonTextArea } from "../../../components/aon-textarea.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { CSS, MSG, TAG, COLORS, MATERIAL_ICONS, EVENT, CONSTANT } from "../../../environments/environments.js";
 import { taskHistoricSend } from "../../../services/taskService.js";
-import { setDateTimestampDay } from "../../../services/utils.js";
 import { newComponent, setAttributes, setStyles } from "../../../services/utilsComponents.js";
-import { ICON_TYPES, MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
+import { MESSENGER_COMPONENTS, MESSENGER_DIRECTION, MESSENGER_IDS, MESSENGER_VIEWS } from "../MessengerEnums.js";
 import { checkFilesAddEventClick, downChat } from "./utils.js";
+import { AonDateUtils } from "../../utils/AonDateUtils.js";
 
+
+/**
+ * 
+ * @param {HTMLElement} parent appenchild
+ * @param {HTMLElement} child element add Optional
+ * @param {Object} properties 
+ * @returns 
+ */
+ export const createDivGrid = (parent, child, properties)=> {
+
+  const div = newComponent({ type: TAG.DIV, ...properties }).element;
+
+  if(parent) parent.appendChild(div);
+
+  if(child) div.appendChild(child);
+
+  return div;
+}
+
+export const createBtnAccept = () => {
+  let btnAccept = setStyles(document.createElement(TAG.BUTTON),{ margin:"15px 0 0 15px"});
+  btnAccept.className = CSS.AON_BUTTON;
+  btnAccept.textContent = "Procesar";
+  return btnAccept;
+}
 // ----------------------------------------------------
 // MAIN VIEW
 // ----------------------------------------------------
@@ -54,25 +79,41 @@ export const createMobileMainView = () => newComponent({
 }).element;
 
 
-export const createDivEditable = (title, id, placeholder) => newComponent({
-  type: "text",
-  id,
-  text: title ? title : null,
-  classes : [CSS.TRANSITION_QUICK, CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.FOCUS_COLOR_MINUS],
-  styles: {
-    fontSize: "15px",
-    fontWeight: "400",
-    padding : "10px",
-    background: "transparent",
-    borderBottom: `1px solid ${CSS.variable(COLORS.GRAYSON)}`,
-    width: "100%",
-    color: CSS.variable(COLORS.AON_BLUE),
-  },
-  attributes: {
-    contentEditable : "",
-    placeholder: placeholder || "...",
-  }
-}).element;
+export const createDivEditable = (parent, title, value, id, placeholder) => {
+  const div = createStartJustifiedColumn();
+  if(parent) parent.appendChild(div.element);
+  let span = setStyles(document.createElement(TAG.SPAN),{
+      fontSize: "0.9375rem",
+      width:"100%",
+      color:CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST)
+  });
+  span.textContent = title +` (${MSG.OPTIONAL})`;
+  div.appendChild(span);
+
+  const divTwo =  newComponent({
+    type: "text",
+    id,
+    text: value ? value : null,
+    classes : [CSS.TRANSITION_QUICK, CSS.CONTENT_EDITABLE, CSS.NO_FOCUS, CSS.FOCUS_COLOR_MINUS],
+    styles: {
+      fontSize: "15px",
+      fontWeight: "400",
+      padding : "10px",
+      background: "transparent",
+      borderBottom: `1px solid ${CSS.variable(COLORS.GRAYSON)}`,
+      width: "100%",
+      color: CSS.variable(COLORS.AON_BLUE),
+    },
+    attributes: {
+      contentEditable : "",
+      placeholder: placeholder || "...",
+    }
+  }).element;
+
+  div.appendChild(divTwo);  
+
+  return div.element;
+}
 
 export const createTitle = (title) => newComponent({
   type: "text",
@@ -170,14 +211,21 @@ const createCommentContent = (properties) => newComponent({
   }
 });
 
-
-export const createAction = (icon, message) => {
+/**
+ * 
+ * @param {Object} icon 
+ * @param {String} message 
+ * @param {String} submessage optional submessage
+ * @returns 
+ */
+export const createAction = (icon, message, submessage) => {
   const comp = createStartJustifiedRow();
   setStyles(comp.element,{
     width :"100%",
     padding:"5px 0",
-    textAlign: "justify"
-  })
+    textAlign: "justify",
+    flexWrap: "wrap"
+  });
 
   const wrapper = newComponent({
   classes : [CSS.CENTER_FLEX],
@@ -196,17 +244,33 @@ export const createAction = (icon, message) => {
     size : "1.4em"
   };
 
-  const image = icon.type === ICON_TYPES.MATERIAL_OUTLINED ? createOutlinedMaterialIcon(properties) : createMaterialIcon(properties);
+  const image = icon.type === CONSTANT.MATERIAL_OUTLINED ? createOutlinedMaterialIcon(properties) : createMaterialIcon(properties);
   const text = createText({
     text : message,
     fontSize : "1.1em",
     fontWeight:400,
     color : CSS.variable(COLORS.GRAYSON)
   });
+  text.element.style.flex = "1 0";
   
   image.appendTo(wrapper.element);
   wrapper.appendTo(comp.element);
   text.appendTo(comp.element);
+  if(submessage){
+    const blockquote = newComponent({
+      type:"blockquote",
+      text:submessage,
+      styles : {
+        margin:"0px 0px 0px 5.8ex",
+        borderLeft:"1px solid rgb(204,204,204)",
+        paddingLeft:"1ex",
+        flex: "100%",
+        fontWeight: 500,
+        color:CSS.variable(COLORS.ONLINE_GREEN)
+      }
+    });
+    blockquote.appendTo(comp.element);
+  }
 
   return comp;
 }
@@ -224,22 +288,11 @@ export const createStartJustifiedRow = (styles) => newComponent({
 export const createStartJustifiedColumn = () =>newComponent({
     classes: [CSS.FLEX_COLUMN, CSS.FLEX_JUSTIFY_START, CSS.FLEX_ALIGN_CENTER],
     styles: {
-        width : "100%", 
-        marginBottom: "5px"
+      width : "100%", 
+      marginBottom: "5px"
     }
 });
 
-export const titleFirstDiv  = (title="") => {
-    const div = createStartJustifiedColumn();
-    let span = setStyles(document.createElement(TAG.SPAN),{
-        fontSize: "0.9375rem",
-        width:"100%",
-        color:CSS.variable(COLORS.AON_COLOR_INK_MEDIUM_CONTRANST)
-    });
-    span.textContent = title;
-    div.appendChild(span);
-    return div.element;
-}
 
 /**
  * Create a text 
@@ -265,7 +318,7 @@ const createText = (properties) => newComponent({
 const createMaterialIcon = (properties) => newComponent({
     type: 'i',
     text: properties.name,
-    classes: [ICON_TYPES.MATERIAL_ICONS],
+    classes: [CONSTANT.MATERIAL_ICONS],
     styles: {
         fontSize: properties.size,
         color: properties.color
@@ -284,7 +337,7 @@ const createMaterialIcon = (properties) => newComponent({
   return newComponent({
       type: 'i',
       text: properties.name,
-      classes: [ICON_TYPES.MATERIAL_ICONS_OUTLINED],
+      classes: [CONSTANT.MATERIAL_ICONS_OUTLINED],
       styles: {
           fontSize: properties.size ? properties.size : "24px",
           color: properties.color ? properties.color : "#404040"
@@ -378,7 +431,15 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
  export const createProject = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
-  title: MSG.TYPE,
+  title: "Receptor",
+  autocomplete: CONSTANT.OFF
+});
+
+ //-----------------ADVISORY
+ export const createAdvisory = () => setAttributes( new AonSelect(),{
+  id: MESSENGER_IDS.ADVISORY_TASK,
+  name: MESSENGER_IDS.ADVISORY_TASK,
+  title: "Asesoria",
   autocomplete: CONSTANT.OFF
 });
 
@@ -390,7 +451,7 @@ export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea
 });
 
 const iconComment = (icon_name) => {
-    const a = setStyles(document.createElement("a"),{
+    const a = setStyles(document.createElement(TAG.A),{
         boxShadow: "none",
         margin: "5px",
         marginTop: "auto",
@@ -406,7 +467,7 @@ const iconComment = (icon_name) => {
         lineHeight: "44px",
         color: CSS.variable(COLORS.AON_BLUE)
     });
-    icon.className   = ICON_TYPES.MATERIAL_ICONS;
+    icon.className   = CONSTANT.MATERIAL_ICONS;
     icon.textContent = icon_name;
     a.appendChild(icon);
 
@@ -430,7 +491,7 @@ export const createChatMessage = (properties, chat) => {
 
     if(messageSend || me){
       const iconSendWorkflow = createOutlinedMaterialIcon({name: messageSend ? MATERIAL_ICONS.MARK_EMAIL_READ : MATERIAL_ICONS.FORWARD_TO_INBOX}).element;
-      iconSendWorkflow.title = messageSend ? "Enviado "+setDateTimestampDay(new Date(properties.notification_date)) : MSG.SEND;
+      iconSendWorkflow.title = messageSend ? "Enviado "+AonDateUtils.setDateTimestampDay(new Date(properties.notification_date)) : `${MSG.SEND} por ${MSG.EMAIL}`;
       iconSendWorkflow.id = MESSENGER_IDS.ICON_SEND_WORKFLOW;
       let color = COLORS.AON_BLUE;
 
@@ -446,12 +507,12 @@ export const createChatMessage = (properties, chat) => {
         iconSendWorkflow.addEventListener(EVENT.CLICK, async()=> sendHistoric(parseInt(message.dataset.id)));
 
         //-------------------icon share
-        const textShare = "Compartir entre ramas (En desarrollo)";
-        const iconShare = createOutlinedMaterialIcon({name:MATERIAL_ICONS.IOS_SHARE}).element;
-        iconShare.title = textShare;
-        setStyles(iconShare, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "12px", zIndex: 1 , right: "39px", cursor: "pointer" });
-        iconShare.addEventListener(EVENT.CLICK, ()=> alert(textShare));
-        message.appendChild(iconShare);
+        // const textShare = "Compartir entre ramas (En desarrollo)";
+        // const iconShare = createOutlinedMaterialIcon({name:MATERIAL_ICONS.IOS_SHARE}).element;
+        // iconShare.title = textShare;
+        // setStyles(iconShare, { color: CSS.variable(color), fontSize: "17px", position:"absolute", top: "12px", zIndex: 1 , right: "39px", cursor: "pointer" });
+        // iconShare.addEventListener(EVENT.CLICK, ()=> alert(textShare));
+        // message.appendChild(iconShare);
 
          //-------------------icon delete
       } else {
@@ -468,7 +529,7 @@ export const createChatMessage = (properties, chat) => {
     description.appendTo(message);
 
     const date = createText({
-        text: setDateTimestampDay(new Date(properties.date)),
+        text: AonDateUtils.setDateTimestampDay(new Date(properties.date)),
         color: CSS.variable(COLORS.AON_GRAY),
         fontSize : "11px",//'0.6em',
         classes: [CSS.FIRST_LETTER_UPPER]
@@ -597,8 +658,6 @@ export const createAonSwitch = (title) => {
   let btn = new AonSwitch();
   btn.id = MESSENGER_IDS.EXTERNAL_TASK;
   btn.title = title;
-  btn.style.width = "100%";
-  btn.style.marginLeft = "13px";
   return btn;
 }
 
@@ -627,7 +686,7 @@ const sendHistoric = async (workflowId) => {
         message.classList.add(CSS.MESSAGE_AFTER, "colorMe");
         const iconSendWorkflow = message.querySelector(`#${MESSENGER_IDS.ICON_SEND_WORKFLOW}`);
         if(iconSendWorkflow){
-          iconSendWorkflow.title = "Enviado "+setDateTimestampDay(workflow.notification_date)
+          iconSendWorkflow.title = "Enviado "+AonDateUtils.setDateTimestampDay(workflow.notification_date)
           iconSendWorkflow.innerText =  MATERIAL_ICONS.MARK_EMAIL_READ;
           iconSendWorkflow.style.color = CSS.variable(COLORS.ONLINE_GREEN);
         }
@@ -650,7 +709,7 @@ export const appendTaskTag = ( tag, parent, fn) =>{
     padding: "0 4px",
     backgroundColor: "rgb(221, 221, 221)",
     color: "rgb(102, 102, 102)",
-    margin: "0 5px 5px 5px",
+    margin: "5px",
     fontWeight: "450" 
   });
   divOne.dataset.taskTag = tag.id;
@@ -665,8 +724,8 @@ export const appendTaskTag = ( tag, parent, fn) =>{
   divThree.addEventListener(EVENT.CLICK,()=> fn(tag.id));
   divOne.appendChild(divThree);
 
-  const i = setStyles(document.createElement("i"),{fontSize: "15px" });
-  i.className = ICON_TYPES.MATERIAL_ICONS;
+  const i = setStyles(document.createElement("i"),{ fontSize: "15px" });
+  i.className = CONSTANT.MATERIAL_ICONS;
   i.innerText = MATERIAL_ICONS.CLOSE;
   divThree.appendChild(i);
 

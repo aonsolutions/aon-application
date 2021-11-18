@@ -111,7 +111,7 @@ public interface ISecurity {
 	
 	
 	public AuthDevice saveAuthDevice(AONContext ctx, AuthDevice ad);
-	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter ad);
+	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter filter);
 	public AuthDevice getAuthDevice(AONContext ctx, AuthDeviceFilter adf);
 	public LinkedList<AuthDevice> getAuthDevices(AONContext ctx, AuthDeviceFilter adf);
 	

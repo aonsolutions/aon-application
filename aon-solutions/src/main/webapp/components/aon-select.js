@@ -1,5 +1,5 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonInput } from './aon-input.js';
 
 export class AonSelect extends AonElement {
@@ -85,20 +85,27 @@ export class AonSelect extends AonElement {
     if(CONSTANT.VALUE === name) {
       let options = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
       this.detail = {};
-      options.forEach((item, i) => {
-        if(item[this.valueAlias] == newValue) {
-          let input = this.getElement(this.INPUT);
-          if(input) input.value = item[this.nameAlias];
-        }
-      });
-
+      if(this.default && '' === newValue) {
+        let input = this.getElement(this.INPUT);
+        if(input) input.value = '-';
+      } else {
+        options.forEach((item, i) => {
+          if(item[this.valueAlias] == newValue) {
+            let input = this.getElement(this.INPUT);
+           if(input) input.value = item[this.nameAlias];
+         }
+       });
+      }
       if(options.length > 0)
         this.detail =  options.find(v => v[this.valueAlias] == newValue);
       this.dispatchEvent(new CustomEvent(EVENT.CHANGE,{detail: this.detail || {} }));
     } else if(CONSTANT.DISABLED === name){
       if(CONSTANT.TRUE == this.disabled){
         let input = this.getElement(this.INPUT);
-        if(input) input.removeIcon();
+        if(input) input.disabled = true;
+      } else {
+        let input = this.getElement(this.INPUT);
+        if(input) input.disabled = false;
       }
     }
   }
@@ -136,14 +143,14 @@ export class AonSelect extends AonElement {
         this.buildOptions(optios.filter(opt => opt[this.nameAlias].toUpperCase().includes(input.value.toUpperCase())));
       });
       input.addIconButton('arrow_drop_down', () => {
-        if(!this.isReadonly()) {
+        if(!this.isReadonly() && !this.isDisabled()) {
           const optios = this.hasAttribute(CONSTANT.OPTIONS) ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
           this.buildOptions(optios);
         }
       });
   
       input.addEventListener(EVENT.CLICK, () => {
-        if(!this.isReadonly()) {
+        if(!this.isReadonly() && !this.isDisabled()) {
           const optios = this.hasAttribute(CONSTANT.OPTIONS) && !this.getDisabled() ? JSON.parse(this.getAttribute(CONSTANT.OPTIONS)) : [];
           this.buildOptions(optios);
         }
@@ -198,7 +205,8 @@ export class AonSelect extends AonElement {
     }
 
     let ul = this.createElement(TAG.UL);
-    ul.className = 'aonInputListOptionsUl';
+    ul.classList.add(CSS.AON_UL);
+    ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
     ul.setAttribute('for', this.getAttribute(CONSTANT.ID) + 'Icon');
     for (const option of options) {
       let li = this.createElement(TAG.LI);
@@ -268,6 +276,11 @@ export class AonSelect extends AonElement {
       && CONSTANT.UNDEFINED !== this.getAttribute(CONSTANT.READONLY) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.READONLY);
   }
 
+  isDisabled() {
+    return this.hasAttribute(CONSTANT.DISABLED) && this.getAttribute(CONSTANT.DISABLED)
+      && CONSTANT.UNDEFINED !== this.getAttribute(CONSTANT.DISABLED) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.DISABLED);
+  }
+
   focus() {
     this.getElement(this.INPUT).focus();
   }
@@ -301,6 +314,15 @@ export class AonSelect extends AonElement {
   setAlias(valueAlias, nameAlias) {
     this.valueAlias = valueAlias;
     this.nameAlias = nameAlias;
+  }
+
+  setIndexOf(idx){
+    let options = this.getOptions();
+    if(options.length){
+      const option = options[idx];
+      if(option)
+        this.value = option.value;
+    }
   }
 
   setValueAlias(valueAlias) {

@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getUser, saveUser, deleteUser,
-	 changePassword, getAuth, getDomainUserRoles, sendUserInfoEmail} from  '../../services/service.js';
+	 changePassword, getAuth, getDomainUserRoles, sendUserInfoEmail, clearDurum, updateDurDefinedUsers} from  '../../services/service.js';
 import {AllApps, EnterpriseApps, EmployeeApps, getApp} from  '../../services/app.js';
 import {Role, ToolbarType} from '../../models/enums.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -321,7 +321,7 @@ export class AonUser extends AonElement {
 			let portal = new AonSwitch();
 			portal.id = 'aonConfigurationUserCardPortal';
 			portal.title = MSG.ONLY_PORTAL;
-			portal.readonly = this.user.portal && !this.getDur().checkUsers();
+			portal.disabled = this.user.portal && !this.getDur().checkUsers();
 			portal.checked = this.user.portal;
 			portal.style.marginLeft = '5px';
 			portal.addEventListener('change', () => {
@@ -330,7 +330,6 @@ export class AonUser extends AonElement {
 				if(this.user.portal) this.selectionEnterprisePortal();
 				else this.selectionPersonalizado();
 			});
-
 			card.getContent().appendChild(portal);
 		}
 
@@ -391,6 +390,9 @@ export class AonUser extends AonElement {
 		}
 		saveUser(this.user).then(r => {
 			this.user = r;
+			let definedUsers = getUsers().filter(f => !f.portal).length;
+			this.getDur().definedUsers = definedUsers;
+			updateDurDefinedUsers(definedUsers);
 			this.init();
 		}).catch(e => this.showError(e));
 	}

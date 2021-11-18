@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
@@ -860,7 +861,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId)
+	public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, Certifica2Info certifica2Info)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
@@ -957,6 +958,18 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	public int contractTransform(String currentDomainName, ContractTransform contractTransform) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
