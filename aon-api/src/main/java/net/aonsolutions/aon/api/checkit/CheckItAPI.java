@@ -98,8 +98,8 @@ public class CheckItAPI implements IParamNames{
 		try {
 			JSONObject jsonObj = (JSONObject) json;
 			String result = jsonObj.optString("result");
-			String code = jsonObj.optString("code");
-			if (result.isEmpty() || result.equalsIgnoreCase("Success") || code.equals("1")) {
+			int code = jsonObj.optInt("code");
+			if (result.isEmpty() || result.equalsIgnoreCase("Success") || code == 1) {
 				return jsonObj;
 			} else {				
 				throw new CheckItException(json.toString());
