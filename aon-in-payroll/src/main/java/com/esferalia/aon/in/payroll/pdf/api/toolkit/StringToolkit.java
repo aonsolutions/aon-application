@@ -29,6 +29,24 @@ public class StringToolkit {
 		return words;
 	}
 
+	public static List<String> toWordsWithLines(String text) {
+		ArrayList<String> words = new ArrayList<String>();
+		ArrayList<String> lines = new ArrayList<String>();
+		lines.addAll(Arrays.asList(text.split("\\n")));
+		
+		if (lines != null) {
+			lines.forEach(line -> {
+				words.addAll(Arrays.asList(line.split("\\s")));
+				words.add("\n");
+				
+			});
+		}
+		
+		words.removeIf(p -> p.length() < 1);
+		return words;
+	}
+	
+	
 	/**
 	 * Append somthing x times to a String
 	 * 
