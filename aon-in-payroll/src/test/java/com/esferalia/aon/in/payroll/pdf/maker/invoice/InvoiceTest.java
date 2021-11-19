@@ -133,6 +133,12 @@ public class InvoiceTest {
 		invoice.setIssueDate(issueDate);
 		invoice.setRegistryDocument(registryDocument);
 		
+		String listadecosas = "Lista de cosas:\n";
+		for (int i=1; i<=40; i++) {
+			listadecosas += "- Cosa (texto de relleno -como en Naruto xDDDD- para probar el ancho del comentario)" + i + ";\n";
+		}
+		invoice.setComments("Akatsuki (Akatsuki; literalmente Amanecer) fue en sus comienzos, una organización que buscaba acabar con la tiranía y la opresión a través de medios pacíficos, pero que pronto cambiaría sus métodos hasta volverse una organización criminal constituida por varios ninjas renegados de Clase S que se convirtieron en los principales antagonistas de la serie Naruto: Shippuuden. ");		
+		
 		/** BREAKDOWNS */
 		jump();
 		log(GENERATE, "Creating breakdowns.");
@@ -472,7 +478,21 @@ public class InvoiceTest {
 		detailFive.setQuantity(0);
 		detailFive.setTaxableBase(0);
 		
+		InvoiceDetail detailX= new InvoiceDetail();
+		detailX.setAccountCode("0192831010");
 		
+		String xdesc = "";
+		for (int i=1; i<=200; i++) {
+			xdesc += "línea" + i + "\n";
+		}
+		
+		detailX.setDescription(xdesc);
+		detailX.setPrice(0);
+		detailX.setDiscountExpression("30");
+		detailX.setQuantity(0);
+		detailX.setTaxableBase(0);
+		
+		details.add(detailX);
 		details.add(detailOne);
 		details.add(detailTwo);
 		details.add(detailThree);
