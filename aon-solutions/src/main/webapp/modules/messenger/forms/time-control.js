@@ -19,7 +19,7 @@ import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/cre
 
     card.flex = "true";
 
-    const form  = setAttributes(document.createElement(TAG.FORM),{ id:MESSENGER_IDS.FORM_DINAMIC, action:"#" });
+    const form = setAttributes(document.createElement(TAG.FORM),{ id:MESSENGER_IDS.FORM_DINAMIC, action:"#" });
     form.onsubmit = () => false;
     form.style.width = "100%";
     card.setContent(form);

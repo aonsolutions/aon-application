@@ -54,10 +54,15 @@ public class BidoqServlet extends AonApiHttpServlet {
 		LOGGER.info("AON API INVOICE SERVLET - POST METHOD");
 		try {
 			AonApiData api = initialize(req, resp);
-			if(BIDOQ_SESSION_ID.equals(api.getToken())) {
+//			if(BIDOQ_SESSION_ID.equals(api.getToken())) {
 				switch (api.getPath()) {
 				case "/":
-					response(req, resp, bidoq(api));
+					if(BIDOQ_SESSION_ID.equals(api.getToken())) {
+						response(req, resp, bidoq(api));
+					} else {
+						LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
+						throw new Exception("El token es incorrecto.");
+					}
 					break;
 				case "/app":
 					response(req, resp, bidoqApp(api));
@@ -65,24 +70,10 @@ public class BidoqServlet extends AonApiHttpServlet {
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 				}
-			} else {
-				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
-				throw new Exception("El token es incorrecto.");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			error(req, resp, e);
-		}
-		
-		LOGGER.info("AON API BIDOQ SERVLET - POST METHOD");
-		try {
-			AonApiData api = initialize(req, resp);
-			if(BIDOQ_SESSION_ID.equals(api.getToken())) {
-				
-			} else {
-				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
-				throw new Exception("El token es incorrecto.");
-			}
+//			} else {
+//				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
+//				throw new Exception("El token es incorrecto.");
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			error(req, resp, e);
@@ -162,7 +153,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 		String company = api.getData().optString("company");
 		String action = api.getData().optString("action");
 		String email = api.getData().optString("email");
-
+		
 		if(AonStringUtils.isEmpty(user)) {
 			throw new Exception("El campo user está vacío");
 		}
@@ -232,10 +223,11 @@ public class BidoqServlet extends AonApiHttpServlet {
 		json.put("success", true);
 		json.put("appBlocked", true);
 		json.put("appMessage", "Hay una nueva aplicación disponible. Su usuario de acceso es " + auth.getEmail());
+
 		if(api.getData().opt("app") != null && api.getData().getString("app").equalsIgnoreCase("android")) {
-			json.put("appStore", "https://play.google.com/store/apps/details?id=aon.solutions");
+			json.put("appStore", "itms-apps://itunes.apple.com/app/aon.solutions");
 		} else if(api.getData().opt("app") != null && api.getData().getString("app").equalsIgnoreCase("ios")) {
-			json.put("appStore", "https://itunes.apple.com/es/app/aon-solutions/id1538461097");
+			json.put("appStore", "market://details?id=aon.solutions");
 		}
 		
 		return json;

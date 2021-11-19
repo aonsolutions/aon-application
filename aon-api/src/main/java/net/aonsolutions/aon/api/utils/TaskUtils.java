@@ -438,8 +438,7 @@ public class TaskUtils {
 		}
 		ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), "", param);
 		System.out.println("param "+param+" "+ appParam.getName()+" "+appParam.getValue());
-//		appParam.getId() == null ||
-		return (appParam.getId()!=null && appParam.getValue().equals("true"));
+		return appParam.getId() == null || (appParam.getId()!=null && appParam.getValue().equals("true"));
 	}
 	
 	public interface APP_PARAMS_REQUEST {
