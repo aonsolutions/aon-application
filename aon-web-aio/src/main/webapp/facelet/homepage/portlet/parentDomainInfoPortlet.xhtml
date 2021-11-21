@@ -7,10 +7,11 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
-	<h:panelGrid columns="2" styleClass="aon-width-all aon-margin-bottom"
+	<h:panelGrid columns="3" styleClass="aon-width-all aon-margin-bottom aon-card"
 		style="border: solid #CCCCCC 1px; color: #777777; background-color: #F5F5F5;" 
 		columnClasses="aon-width-50 aon-vertical-align-center
-					,aon-width-auto aon-vertical-align-center">
+					,aon-width-all aon-vertical-align-center
+					,aon-nowrap aon-vertical-align-center">
 					
 		<aon:commandLink id="goToParentFromLogo-back" 
 			action="home" actionListener="#{domains.onParentDomain}"
@@ -44,6 +45,28 @@
 				<f:param name="email" value="#{parentDomain.email}" />
 			</aon:commandLink>
 		</h:panelGrid>
+		
+		<aon:div styleClass="aon-text-center">
+			<aon:div>
+				<aon:div style="font-size: 1.1em;">
+					<aon:outputText value="#{bundle.aon_support_title}" />
+				</aon:div>
+				<aon:div style="font-size: 1.3em; font-weight: bold;">
+					<aon:outputText value="#{customize.supportTelephone}" />
+				</aon:div>
+			</aon:div>
+			<aon:div style="font-weight: bold;">
+				<aon:commandLink title="#{bundle.webmail_send_email}" 
+				ajaxSingle="true" reRender="showNewMessageWindow"
+				value="#{customize.supportEmail}"
+				style="color:#888888; text-decoration:none;"
+				actionListener="#{webmailMessage.onSendEmail}" >
+				<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
+				<f:param name="email" value="#{customize.supportEmail}" />
+				</aon:commandLink>							    
+			</aon:div>			
+		</aon:div>
+				
 
 	</h:panelGrid>
 
