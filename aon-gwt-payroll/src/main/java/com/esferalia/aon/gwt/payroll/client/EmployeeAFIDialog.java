@@ -355,6 +355,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			if (this.dateList.size() == 1) {
 				initFirstToggleButton();
 				initPeculiaritiesTable(this.dateList.get(0));
+				selectedDate = this.dateList.get(0);
 			} else {
 				Date dateAux = dateList.get(dateList.size() - 1);
 				selectedDate = dateAux;
@@ -716,22 +717,22 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	}
 
 	public boolean isChangeContract() {
-		Window.alert("onChangeContract : " + afiChangesMap.hasChange("TC2", tc2Original));
+//		Window.alert("onChangeContract : " + afiChangesMap.hasChange("TC2", tc2Original));
 		return afiChangesMap.hasChange("TC2", tc2Original);
 	}
 
 	public boolean isQuoteContract() {
-		Window.alert("onQuoteContract : " + afiChangesMap.hasChange("GRUPO_COTIZACION", quoteGroupOriginal));
+//		Window.alert("onQuoteContract : " + afiChangesMap.hasChange("GRUPO_COTIZACION", quoteGroupOriginal));
 		return afiChangesMap.hasChange("GRUPO_COTIZACION", quoteGroupOriginal);
 	}
 
 	public boolean isOcupationContract() {
-		Window.alert("onOcupationContract : " + afiChangesMap.hasChange("OCUPACION", ocupationOriginal));
+//		Window.alert("onOcupationContract : " + afiChangesMap.hasChange("OCUPACION", ocupationOriginal));
 		return afiChangesMap.hasChange("OCUPACION", ocupationOriginal);
 	}
 
 	public boolean isPartialityCoefContract() {
-		Window.alert("onPartialityCoefContract : " + afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString()));
+//		Window.alert("onPartialityCoefContract : " + afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString()));
 		return afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD",
 				partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString());
 	}

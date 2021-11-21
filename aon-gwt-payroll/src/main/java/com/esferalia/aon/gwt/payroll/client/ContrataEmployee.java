@@ -1704,7 +1704,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private void sendBasicCopy() {
 		contrataEmployeeObject.sendBasicCopy(
-				s ->
+				s -> {
+					Map<String, String> successMap = new HashMap<>();
+					successMap.put("Comunicaci\u00F3n", "La copia basica ha sido notificada correctamente del SEPE");
+					AonMessagePanel.showSuccess(messageContainer, successMap);
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> 
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
@@ -1718,8 +1721,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkContractExtension();
 									checkContractTransform();
 								}), 
-						f -> {}), 
-				f -> {
+						f -> {});
+				}, f -> {
 					Map<String, String> errorMap = new HashMap<>();
 					errorMap.put("Error comunicaci\u00F3n", f.getMessage());
 					AonMessagePanel.showError(messageContainer, errorMap);
@@ -1728,7 +1731,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void sendContract() {
 		contrataEmployeeObject.sendContract(
-				s ->
+				s -> {
+					Map<String, String> successMap = new HashMap<>();
+					successMap.put("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
+					AonMessagePanel.showSuccess(messageContainer, successMap);
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn ->
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
@@ -1747,8 +1753,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									else
 										sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
 								}), 
-						f -> {}), 
-				f -> {
+						f -> {});
+				},f -> {
 					Map<String, String> errorMap = new HashMap<>();
 					errorMap.put("Error comunicaci\u00F3n", f.getMessage());
 					AonMessagePanel.showError(messageContainer, errorMap);
@@ -1764,7 +1770,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private void removeContract() {
 		contrataEmployeeObject.removeContract(
-				s ->
+				s -> {
+					Map<String, String> successMap = new HashMap<>();
+					successMap.put("Comunicaci\u00F3n", "El contrato ha sido eliminado correctamente del SEPE");
+					AonMessagePanel.showSuccess(messageContainer, successMap);
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn ->
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
@@ -1783,7 +1792,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									else
 										sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
 								}), 
-						f -> {}), 
+						f -> {});
+				},
+					
 				f -> {
 					Map<String, String> errorMap = new HashMap<>();
 					errorMap.put("Error comunicaci\u00F3n", f.getMessage());

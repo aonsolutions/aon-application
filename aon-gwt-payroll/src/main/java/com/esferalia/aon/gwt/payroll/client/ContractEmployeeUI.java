@@ -558,7 +558,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			employee.updateModality(contractTypeInt);
 			setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
 		} catch (NumberFormatException e) {
-			// TODO: handle exception
+			// Nothing to do here
 		}
 		
 		employee.startDate.setValue(contractData.getStartDate());
@@ -578,8 +578,10 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		
-		setSelectedValueLB(employee.journeyType, (null == contractData.getJourneyType() || contractData.getJourneyType() == 0) ? "false" : "true");
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
+		if(null != contractData.getJourneyType()) {
+			setSelectedValueLB(employee.journeyType, contractData.getJourneyType() == 0 ? "false" : "true");
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
+		}
 		
 		Double partialityCoef = contractData.getPartialityCoef();
 		if( (null == partialityCoef || partialityCoef == 0.00) && 
