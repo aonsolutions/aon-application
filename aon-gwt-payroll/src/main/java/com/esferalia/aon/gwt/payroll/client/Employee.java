@@ -1053,6 +1053,7 @@ public abstract class Employee extends ResizeComposite {
 	// ------------------------------------------------- Show/hide methods partial/full time
 	
 	public void showElementsFullTimeContract() {
+		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 	}
 	

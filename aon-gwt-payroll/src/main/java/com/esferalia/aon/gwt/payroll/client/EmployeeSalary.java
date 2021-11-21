@@ -281,7 +281,6 @@ public class EmployeeSalary extends Composite {
 		this.employeeSalaryObject.getSalariesDates(
 				s -> {
 					initDatesListBox();
-					setSettlePDFVisibility();
 					filterCurrentYearSalaries();
 				}, 
 				f -> {}
@@ -328,6 +327,7 @@ public class EmployeeSalary extends Composite {
 		
 		this.employeeSalaryObject.getSalaries(
 				s -> {
+					setSettlePDFVisibility();
 					salaryTable.setSalariesList(employeeSalaryObject.getEmployeeSalaries());
 					initSalariesTable();
 				}, f -> { }

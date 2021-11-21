@@ -25,6 +25,7 @@ import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -121,14 +122,15 @@ public class JooqPayrollSalaries {
 		
 		Date salaryMaxDate = salaryMaxDateRecord.value1();
 		
-		return new Period(parseToJavaDate(salaryMinDate), parseToJavaDate(salaryMaxDate));
+		return new Period(parseStartToJavaDate(salaryMinDate), parseEndToJavaDate(salaryMaxDate));
 	}
 	
-	private static java.util.Date parseToJavaDate(Date sqlDate) {
-		if(null == sqlDate)
-			return null;
-		
-		return new java.util.Date(sqlDate.getTime());
+	private static java.util.Date parseStartToJavaDate(Date sqlDate) {
+		return null == sqlDate ? DateUtils.getFirstDayOfYear() : new java.util.Date(sqlDate.getTime());
+	}
+	
+	private static java.util.Date parseEndToJavaDate(Date sqlDate) {
+		return null == sqlDate ? DateUtils.getLastDayOfYear(DateUtils.getFirstDayOfYear()) : new java.util.Date(sqlDate.getTime());
 	}
 
 	private static List<SalaryInfo> getSalariesDB(DSLContext dslContext, SalaryInfoFilter filter) {

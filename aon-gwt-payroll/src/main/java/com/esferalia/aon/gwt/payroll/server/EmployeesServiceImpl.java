@@ -5628,19 +5628,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public EmployeeCalendarInfo getEmployeeCalendarInfo(String domainName, Integer contractId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domainName);
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqEmployeeCalendarNew.getEmployeeCalendar(connection, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
 		}
 	}
 
