@@ -2835,6 +2835,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			costs.add(cost);
 		}
+		
+		if(!costs.isEmpty())
+			Collections.reverse(costs);
 
 		return costs;
 	}
@@ -3016,6 +3019,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			costs.add(cost);
 		}
+		
+		if(!costs.isEmpty())
+			Collections.reverse(costs);
 
 		return costs;
 	}

@@ -2360,7 +2360,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public void setContractSpecificData(String domainName, EmployeeContractInfo employeeContractData) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			JooqContractSEPE.setContractSpecificData(connection, employeeContractData);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqContractSEPE.setContractSpecificData(connection, domainId, employeeContractData);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
