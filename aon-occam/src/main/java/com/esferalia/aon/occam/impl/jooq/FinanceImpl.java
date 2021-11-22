@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -42,11 +43,13 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceFiscalDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceOLDDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PrintInvoiceConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryOldDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 
 public class FinanceImpl implements IFinance {
 
@@ -55,6 +58,12 @@ public class FinanceImpl implements IFinance {
 	public Invoice getInvoice(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> InvoiceDAO.getInvoice(ctx, id));
+	}
+	
+	@Override
+	public void deleteInvoice(AONContext ctx, Integer invoiceId) {
+		ctx.getDslContext().transaction(configuration -> 
+			InvoiceDAO.delete(ctx, invoiceId));
 	}
 	
 	@Override
@@ -451,4 +460,21 @@ public class FinanceImpl implements IFinance {
 				configuration -> PrintInvoiceConfigurationDAO.save(ctx, pic));
 	}
 	
+	@Override
+	public TbaiConfiguration getTbaiConfiguration(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TbaiConfigurationDAO.get(ctx));
+	}
+
+	@Override
+	public TbaiConfiguration saveTbaiConfiguration(AONContext ctx, TbaiConfiguration pic) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> TbaiConfigurationDAO.save(ctx, pic));
+	}
+	
+	@Override
+	public void deleteInvoiceFiscal(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> InvoiceFiscalDAO.delete(ctx, id));
+	}
 }

@@ -4,6 +4,8 @@ import { CONSTANT, CSS, MSG, TAG } from "../../environments/environments.js";
 import { setAttributes, createDiv } from "../../services/utilsComponents.js";
 import { createCard, createDate, createForm, createIconButton, createInput, createSelect } from "../notification/createComponent.js";
 import { AonDateUtils } from "../utils/AonDateUtils.js";
+import '../../css/aon-grid.css';
+import '../../css/aon-css-utils.css';
 
 export const createBajaDialogContent = () =>{
     const div = document.createElement(TAG.DIV);

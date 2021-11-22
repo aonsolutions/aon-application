@@ -1009,6 +1009,15 @@ public interface Properties {
 		Property<String> getDiscountExprProperty();
 		Property<Integer> getPurchaseDetailProperty();
 	}
+
+	public interface DataRequestProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Timestamp> getDateProperty();
+		Property<Byte> getTypeProperty();
+		Property<String> getBlackBoxProperty();
+		Property<String> getMd5Property();
+	}
 	
 	public interface DataResponseProperties extends AuditProperties{
 		Property<Integer> getIdProperty();

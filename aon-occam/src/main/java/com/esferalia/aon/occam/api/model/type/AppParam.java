@@ -216,6 +216,11 @@ public enum AppParam {
 	
 	// IDENTIFICADOR DE EMPRESA EN CHECK IT
 	, CHECK_IT_ENTERPRISE_ID
+	
+	// TICKET BAI
+	, TBAI_ACTIVE
+	, TBAI_DEFAULT_CERTIFICATE
+	, TBAI_TEST
 	;
 	
 	public String getValue() {

@@ -22,6 +22,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
+import com.code.aon.config.Domain;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.config.util.SeriesNumberUtil;
@@ -41,6 +42,7 @@ import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.supplier.Supplier;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
@@ -129,6 +131,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				removeFinances(invoice);
 				removeInvoiceDetails(invoice);
 				removeInvoiceAddress(invoice);
+				removeInvoiceFiscal(invoice);
 				if (invoice.isRectifier() && invoice.getRectificationInvoice() != null) {
 					updateRectifiedInvoices(invoice);
 				}
@@ -227,6 +230,20 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
             }
         }
         return false;
+	}
+	
+	private String getDomainName(Invoice invoice) throws ManagerBeanVetoListenerException {
+		String select = "SELECT domain.name" +
+						"FROM domain" +
+						"WHERE domain.id = " + invoice.getDomain();
+		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
+		SQLQuery query = session.createSQLQuery(select);
+        List<?> list = query.list();
+        if (!list.isEmpty()) {
+        	Object[] obj = (Object[])list.get(0);
+        	return (String) obj[0];
+        }
+        return null;
 	}
 
 	private boolean updateDetailsNeeded(Invoice invoice) throws ManagerBeanVetoListenerException {
@@ -365,7 +382,11 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			invoiceAddressBean.remove((InvoiceAddress)ito);
 		}
 	}
-
+	
+	private void removeInvoiceFiscal(Invoice invoice) {
+		AON.deleteInvoiceFiscal(HibernateUtil.getSessionFactoryName(), invoice.getId());
+	}
+	
 	public void updateRectifiedInvoices(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Invoice rectified = invoice.getRectificationInvoice();

@@ -4,7 +4,7 @@ import { getMovements, getEmployee, getMovementsCccs, getAppParamComunica } from
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
 import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
-import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
+import { PRESENCE_FILTER, SigninSidenav } from "../../timecontrol/signinEnums.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";

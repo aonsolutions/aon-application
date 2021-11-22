@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.validation.TaxAutoComplete;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 public class TaxDAO {
@@ -101,6 +102,7 @@ public class TaxDAO {
 	}
 	
 	public static Tax save(AONContext ctx, Tax tax) {
+		TaxAutoComplete.autoComplete(ctx, tax);
 		return tax.getId() != null
 			? update(ctx, tax)
 			: insert(ctx, tax); 

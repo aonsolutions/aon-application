@@ -19,7 +19,7 @@ export const SECTION = 'section';
 export const IFRAME = 'iframe';
 
 // COMPONENTS
-
+export const AON_ELEMENT = 'aon-element';
 export const AON_ADDRESS = 'aon-address';
 export const AON_APPLICATION = 'aon-application';
 export const AON_BASIC_TABLE = 'aon-basic-table';
@@ -105,6 +105,9 @@ export const AON_COMPONENTS_DOC = 'aon-components-doc';
 
 export const AON_BANK_LIST = 'aon-bank-list';
 export const AON_BANK = 'aon-bank';
+
+export const AON_MARKETPLACE = 'aon-marketplace';
+export const AON_MARKETPLACE_PANEL = 'aon-marketplace-panel';
 
 export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH].join(", ");
 

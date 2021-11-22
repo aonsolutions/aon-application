@@ -9,7 +9,8 @@ public enum DataAttachmentType implements IResourceable {
 
 	REQUEST,
 	RESPONSE_OK,
-	RESPONSE_ERROR;
+	RESPONSE_ERROR,
+	DIGITAL_CERTIFICATE;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_data_attachment_type_";

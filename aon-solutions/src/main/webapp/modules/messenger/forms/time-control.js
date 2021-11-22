@@ -5,7 +5,7 @@ import { TAG, MSG, CSS, EVENT, CONSTANT } from "../../../environments/environmen
 import { getStatus, getTimeControlDetail, saveTimeControlDetail } from "../../../services/timeControlService.js";
 import { serializeForm, sortBy } from "../../../services/utils.js";
 import { setAttributes } from "../../../services/utilsComponents.js";
-import { firstLetters } from "../../signin/time-control/utils.js";
+import { firstLetters } from "../../timecontrol/time-control/utils.js";
 import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/creationUtils.js";

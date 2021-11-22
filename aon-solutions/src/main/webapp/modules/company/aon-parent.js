@@ -2,7 +2,7 @@ import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import '../../components/aon-application.js';
-import {AonSign} from '../signin/aon-sign.js';
+import {AonSign} from '../timecontrol/aon-sign.js';
 import './aon-desktop.js';
 
 export class AonParent extends AonElement {

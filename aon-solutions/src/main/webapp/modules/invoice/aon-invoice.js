@@ -1,5 +1,5 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoices,
+import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
@@ -359,7 +359,7 @@ export class AonInvoice extends AonElement {
 				invoiceToolbar.addButton2(ACTION.SAVE, () => this.save());
 			}
 		} else if (this.getInvoice().isPending()){
-			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashInvoice());
+			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
 		}
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
 		if(!this.getInvoice().file && !this.invoice.isEmitida()){
@@ -1705,6 +1705,13 @@ export class AonInvoice extends AonElement {
 		this.reload();
 	}
 
+	trashPendingInvoice() {
+		deleteInvoice(this.getInvoice().id).then(() => {
+			this.showMessage(MSG.DELETED_DATA);
+			this.reload();
+		}).catch(e => this.showError(e));
+	}
+
 	restoreInvoice() {
 		this.getInvoice().status = CONSTANT.INBOX;
 		this.save(MSG.RESTORED_DATA);
@@ -1712,7 +1719,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	removeInvoice() {
-		deleteInvoices([this.getInvoice().id]).then(() => {
+		deleteRawdocInvoices([this.getInvoice().id]).then(() => {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';

@@ -7,8 +7,8 @@ import {  createMainView, createTitle, createAonTextArea, createChat, createSect
 import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
-import { SigninSidenav } from "../../signin/signinEnums.js";
 import * as ACTIONS from "../../actions.js";
+import { SigninSidenav } from "../../timecontrol/signinEnums.js";
 
 /**
  * 

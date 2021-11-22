@@ -374,6 +374,11 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface DataRequestFilter{
+		Filter filter(DataRequestProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface DataResponseFilter{
 		Filter filter(DataResponseProperties properties);
 	}

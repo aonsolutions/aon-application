@@ -1,8 +1,8 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { formatNumber, isEmptyObject, sortBy, waitEl, setValueName } from "../../../services/utils.js";
-import { firstLetters } from "../../signin/time-control/utils.js";
+import { firstLetters } from "../../timecontrol/time-control/utils.js";
 import { getEmployeeSalaries, getEnterpriseSalaries, getPeriodLaboral, getWorkplaceCCCs, getAllEmployeesWorkplace } from "../../../services/service.js";
-import {  PRESENCE_FILTER } from "../../signin/signinEnums.js";
+import {  PRESENCE_FILTER } from "../../timecontrol/signinEnums.js";
 import { PAYROLL_FILTER, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { CONSTANT, EVENT, MSG } from '../../../environments/environments.js';
 import { AonMobileList } from "../../../components/aon-mobile-list.js";

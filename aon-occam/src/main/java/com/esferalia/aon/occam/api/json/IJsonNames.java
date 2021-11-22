@@ -93,6 +93,7 @@ public interface IJsonNames {
 	String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
 	String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
 	String DEBIT = "debit";
+	String DEFAULT_CERTIFICATE = "defaultCertificate";
 	String DEFINED_USERS = "definedUsers";
 	String DELIVERY_GROUPED = "deliveryGrouped";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
@@ -257,6 +258,7 @@ public interface IJsonNames {
 	String PARAMS = "params";
 	String PARENT = "parent";
 	String PARENT_ID = "parentId";
+	String PASSWORD = "password";
 	String PAYMENT = "payment";
 	String PAY_METHOD = "payMethod";
 	String PAYMETHOD = "paymethod";
@@ -339,6 +341,7 @@ public interface IJsonNames {
 	String SHARED = "shared";
 	String SHEET = "sheet";
 	String SHOW_COVER = "showCover";
+	String SIGNATURE = "signature";
 	String SIZE = "size";
 	String SOURCE = "source";
 	String SOURCE_ID = "source_id";
@@ -362,6 +365,7 @@ public interface IJsonNames {
 	String TAXES = "taxes";
 	String TAX = "tax";
 	String TECHNICAL = "technical";
+	String TEST = "test";
 	String THUMB_URL = "thumbUrl";
 	String TITLE = "title";
 	String TO = "to";

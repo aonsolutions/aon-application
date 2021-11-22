@@ -70,11 +70,13 @@ public class ProductAutoComplete {
 	};
 	
 	public static final BiConsumer<AONContext, Product> COMPLETE_RETENTION = (ctx, product) -> {
-		if (product.getRetention() != null && product.getRetention().getId() == null) {
+		if (product.getRetention() != null && product.getRetention().getId() == null
+				&& product.getRetention().getPercentage() > 0) {
 			Tax t = TaxDAO.getTax(ctx, f -> f.getDomainProperty().eq(product.getDomain().getId())
 					.and(f.getPercentageProperty().eq(product.getRetention().getPercentage()))
 					.and(f.getSurchargeProperty().eq(product.getRetention().getSurcharge())
 					.and(f.getTaxTypeProperty().eq(TaxType.RETENTION.value()))));
+				
 			if(t.getId() == null) {
 				t = TaxDAO.save(ctx, product.getRetention());
 			}

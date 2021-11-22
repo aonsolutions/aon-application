@@ -18,11 +18,10 @@ export class AonDialogMenu extends AonElement {
 
 	constructor () {
 		super();
-		this.DIALOG = this.id + 'DialogMenu';
-		this.CONTENT = this.DIALOG + 'Content';
 	}
 
 	connectedCallback () {
+		this.initialize();
 		let divOne = this.createElement(TAG.DIV);
 		divOne.className = `aonDialog`;
 		divOne.id = this.DIALOG;
@@ -34,7 +33,12 @@ export class AonDialogMenu extends AonElement {
 		divOne.appendChild(divTwo);
 
 		this.build();
-  }
+  	}
+
+	initialize() {
+		this.DIALOG = this.id + 'DialogMenu';
+		this.CONTENT = this.DIALOG + 'Content';
+	}
   
 
 	build() {

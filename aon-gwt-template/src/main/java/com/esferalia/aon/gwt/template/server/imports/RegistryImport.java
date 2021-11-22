@@ -441,7 +441,7 @@ public class RegistryImport extends Import {
 							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
 							.setStatus(RegistryStatus.ACTIVE);
 					c.setDomain(domain);
-					AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
+					AON.saveCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
 				}
 				Optional<Target> target = AON.getTarget(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(registryId));
 				if(target.isEmpty()) {
@@ -458,12 +458,13 @@ public class RegistryImport extends Import {
 				if(!supplier.isPresent()) {
 					acc = getAccount(domain, user, acc);
 					Supplier sup = new Supplier()
+							.copy(reg)
 							.setAccount(acc.getId())
 							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
 							.setStatus(RegistryStatus.ACTIVE);
 					sup.setId(registryId);
 					sup.setDomain(domain);
-					AON.insertSupplier(domain.getName(), domain.getId(), user.getLogin(), sup);
+					AON.saveSupplier(domain.getName(), domain.getId(), user.getLogin(), sup);
 				}
 			}
 
@@ -473,13 +474,14 @@ public class RegistryImport extends Import {
 				if(!creditor.isPresent()) {
 					acc = getAccount(domain, user, acc);
 					Creditor cre = new Creditor()
+							.copy(reg)
 							.setAccount(acc==null?null:acc.getId())
 							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
 							.setStatus(RegistryStatus.ACTIVE);
 					cre.setId(registryId);
 					cre.copy(reg);
 					cre.setDomain(domain);
-					AON.insertCreditor(domain.getName(), domain.getId(), user.getLogin(), cre);
+					AON.saveCreditor(domain.getName(), domain.getId(), user.getLogin(), cre);
 				}
 			}
 		} catch (Exception e) {

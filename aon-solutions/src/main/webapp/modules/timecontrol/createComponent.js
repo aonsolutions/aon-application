@@ -2,6 +2,9 @@ import { CSS } from "../../environments/environments.js";
 import { createDiv } from "../../services/utilsComponents.js";
 import { createDate, createForm, createInput, createSelect, createCard } from "../notification/createComponent.js";
 
+import '../../css/aon-css-utils.css';
+import '../../css/aon-grid.css';
+
 export const createFormEvent = (id, parent) => {
     const form = createForm(id+"Form");
     parent.appendChild(form.element);

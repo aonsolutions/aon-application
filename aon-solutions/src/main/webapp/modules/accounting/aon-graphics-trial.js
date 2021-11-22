@@ -9,7 +9,7 @@ import {
   PERIOD_FILTER,
 } from "../../services/accountingService.js";
 import "../../components/aon-filter.js";
-import { SigninSidenav } from "../signin/signinEnums.js";
+import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import { getPeriodAccounting } from "../../services/service.js";
 import { ToolbarType } from "../../models/enums.js";
 import * as ACTION from "../actions.js";

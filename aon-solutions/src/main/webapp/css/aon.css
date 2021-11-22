@@ -38,7 +38,6 @@
   transform: translate(-50%, -50%);
 }
 
-
 .aonBody {
   padding: 0px !important;
   margin: 0px !important;
@@ -58,11 +57,11 @@
   background-color: var(--aonLightGray);
 }
 
-/* a {
+a {
   color: #000;
   text-decoration: none;
   background-color: transparent;
-} */
+}
 
 .aonListGroup {
   display: -ms-flexbox;

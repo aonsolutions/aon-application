@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -54,15 +55,10 @@ public class BidoqServlet extends AonApiHttpServlet {
 		LOGGER.info("AON API INVOICE SERVLET - POST METHOD");
 		try {
 			AonApiData api = initialize(req, resp);
-//			if(BIDOQ_SESSION_ID.equals(api.getToken())) {
+			if(BIDOQ_SESSION_ID.equals(api.getToken()) || BIDOQ_SESSION_ID.equals(api.getData().optString(IJsonNames.SESSION_ID))) {
 				switch (api.getPath()) {
 				case "/":
-					if(BIDOQ_SESSION_ID.equals(api.getToken())) {
-						response(req, resp, bidoq(api));
-					} else {
-						LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
-						throw new Exception("El token es incorrecto.");
-					}
+					response(req, resp, bidoq(api));
 					break;
 				case "/app":
 					response(req, resp, bidoqApp(api));
@@ -70,10 +66,10 @@ public class BidoqServlet extends AonApiHttpServlet {
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 				}
-//			} else {
-//				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
-//				throw new Exception("El token es incorrecto.");
-//			}
+			} else {
+				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
+				throw new Exception("El token es incorrecto.");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			error(req, resp, e);
@@ -162,7 +158,15 @@ public class BidoqServlet extends AonApiHttpServlet {
 			throw new Exception("El campo company está vacío");
 		}
 		
-		Auth auth = AON_SOLUTIONS.getAuthByDocument(user);
+		Auth auth = new Auth();
+		if(Utils.isEmail(email)) {
+			auth = AON_SOLUTIONS.getAuth(email);
+		}
+		
+		if(auth.isEmpty()) {
+			auth = AON_SOLUTIONS.getAuthByDocument(user);
+		}
+		
 		Company cp = new Company();
 		String token = "";
 		if(auth.getUuid() != null) {
