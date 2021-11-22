@@ -1340,13 +1340,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				AonMessagePanel.showError(messageContainer, messageMap);
 			break;
 		case 1:
-			contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), s -> {
-				contrataEmployeeObject.getContractSpecificData(su -> {
+			contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), s -> 
+				contrataEmployeeObject.getContractSpecificData(su -> 
 					contractSpecificData.setEmployeeContractInfo(
 							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
-							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData());
-				}, fa -> {});
-			}, f -> {});
+							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData())
+				, fa -> {})
+			, f -> {});
 			break;
 		case 2:
 			contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
