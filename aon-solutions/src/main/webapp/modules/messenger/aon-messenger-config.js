@@ -190,13 +190,6 @@ export class AonMessengerConfig extends AonElement {
     textC.innerText = "Comunicación";
     divContent.appendChild(textC);
 
-    let divTwo = setStyles(this.createElement(TAG.DIV),{margin:"0 0 7"});
-    divContent.appendChild(divTwo);
-
-    let rating = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EMAIL_RATING, title: "Enviar calificación al cerrar", checked:params[APP_REQUESTS_EMAIL_RATING]});
-    rating.style.margin ="10 0 0";
-    divTwo.appendChild(rating);
-
     let text = setStyles(this.createElement(TAG.DIV),{ fontWeight:500, color:CSS.variable(COLORS.AON_GRAY), marginBottom:4});
     text.innerText = "Enviar Notificación al:";
     divContent.appendChild(text);
@@ -215,6 +208,14 @@ export class AonMessengerConfig extends AonElement {
 
     let assign = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EXT_ASSIGN, title: "Asignar", checked:params[APP_REQUESTS_EXT_ASSIGN]});
     div.appendChild(assign);
+
+    let divTwo = setStyles(this.createElement(TAG.DIV),{margin:"7 0 7"});
+    divContent.appendChild(divTwo);
+
+    let rating = setAttributes(new AonSwitch(),{id:this.getIdRand(), name:APP_REQUESTS_EMAIL_RATING, title: "Enviar calificación al cerrar", checked:params[APP_REQUESTS_EMAIL_RATING]});
+    rating.style.margin ="10 0 0";
+    divTwo.appendChild(rating);
+
   }
 
   getIdRand(){
