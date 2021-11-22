@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,6 +39,7 @@ import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -1767,16 +1769,21 @@ public class CheckItModule extends MainEntryPoint {
 			dateLabel.addStyleName(AON.CSS.aonFontMedium());
 			dateLabel.addStyleName(AON.CSS.aonBold());
 			dateLabel.getElement().getStyle().setColor("#002469");
+			dateLabel.getElement().getStyle().setMarginLeft(1, Unit.EM);
 			dateLabel.setWidth("100%");
 			dateLabel.getElement().getStyle().setMarginTop(12, Unit.PX);
 			dateLabel.getElement().getStyle().setMarginBottom(8, Unit.PX);
 			tab.setWidget(nextRow, 0, dateLabel);
+			tab.getElement().setAttribute("cellSpacing", "0");
 			
-			int[] index = {0};
-			
-			statements.stream()
+			List<BankStatement> st = statements.stream()
 			.filter(pen -> dte.equals(pen.getOperationDate() != null ? dtf.format(pen.getOperationDate()).toUpperCase() : ""))
-			.forEach(mov -> getPendingMovementTag(tab, mov, index[0]++ % 2 == 0));
+			.collect(Collectors.toList());
+			
+			for (int i=0; i< st.size(); i++) {
+				BankStatement mov = st.get(i);
+				getPendingMovementTag(tab, mov, i == st.size() - 1);
+			}
 		});
 		
 		tab.setWidth("100%");
@@ -1785,7 +1792,7 @@ public class CheckItModule extends MainEntryPoint {
 		return tab;
 	}
 	
-	private void getPendingMovementTag(FlexTable table, BankStatement bankStatement, boolean gray) {
+	private void getPendingMovementTag(FlexTable table, BankStatement bankStatement, boolean last) {
 		
 		String description = bankStatement.getDescription();
 		Double amount = !bankStatement.isPayment() ? bankStatement.getAmount() : bankStatement.getAmount() * (-1);
@@ -1793,6 +1800,9 @@ public class CheckItModule extends MainEntryPoint {
 		Label amountLabel = new Label(AON.FMT.format(amount) + " " + EURO);
 		amountLabel.setStyleName(AON.CSS.aonFontMedium());
 		amountLabel.addStyleName(AON.CSS.aonTextRight());
+		amountLabel.getElement().getStyle().setPaddingRight(1, Unit.EM);
+		amountLabel.getElement().getStyle().setMarginTop(1, Unit.EM);
+		amountLabel.getElement().getStyle().setMarginBottom(1, Unit.EM);
 		amountLabel.setWidth("100%");
 		if (amount < 0) {
 			amountLabel.addStyleName(AON.CSS.aonColorRed());
@@ -1801,14 +1811,54 @@ public class CheckItModule extends MainEntryPoint {
 		Label descriptionLabel = new Label(description);
 		descriptionLabel.setStyleName(AON.CSS.aonFontLarger());
 		descriptionLabel.setWidth("100%");
+		descriptionLabel.getElement().getStyle().setMarginLeft(1, Unit.EM);
+		descriptionLabel.getElement().getStyle().setMarginTop(1, Unit.EM);
+		descriptionLabel.getElement().getStyle().setMarginBottom(1, Unit.EM);
+		AtomicBoolean multiple = new AtomicBoolean(true);
+		ClickHandler linesHandler = event -> {
+			descriptionLabel.getElement().getStyle().setProperty("overflow", multiple.get() ? "" : "hidden");
+			descriptionLabel.getElement().getStyle().setProperty("text-overflow", multiple.get() ? "" : "ellipsis");
+			descriptionLabel.getElement().getStyle().setProperty("display", multiple.get() ? "" : "-webkit-box");
+			descriptionLabel.getElement().getStyle().setProperty("-webkit-line-clamp", multiple.get() ? "" : "2");
+			descriptionLabel.getElement().getStyle().setProperty("-webkit-box-orient", multiple.get() ? "" : "vertical");
+			multiple.set(!multiple.get());
+		};
+		
+		
+		
+		if (isMobile()) {
+			descriptionLabel.getElement().getStyle().setProperty("overflow", "hidden");
+			descriptionLabel.getElement().getStyle().setProperty("text-overflow", "ellipsis");
+			descriptionLabel.getElement().getStyle().setProperty("display", "-webkit-box");
+			descriptionLabel.getElement().getStyle().setProperty("-webkit-line-clamp", "2");
+			descriptionLabel.getElement().getStyle().setProperty("-webkit-box-orient", "vertical");
+			
+			descriptionLabel.addClickHandler(linesHandler);
+			
+		}
+		
 		
 		int nextRow = table.getRowCount();
 		
-		if (gray)
-			table.getRowFormatter().addStyleName(nextRow, AON.CSS.aonBackgroundLigthGray());
+//		if (gray)
+//			table.getRowFormatter().addStyleName(nextRow, AON.CSS.aonBackgroundLigthGray());
 		table.setWidget(nextRow, 0, descriptionLabel);
 		table.setWidget(nextRow, 1, amountLabel);
-		table.getElement().setAttribute("cellSpacing", "0");
+		Label euskoLabel = new Label();
+		euskoLabel.setStyleName(AON.CSS.aonBlockCenter());
+		
+		String borderStyle = "dotted";
+		
+		if (!last) {			
+			euskoLabel.getElement().getStyle().setMarginLeft(1, Unit.EM);
+			euskoLabel.getElement().getStyle().setMarginRight(1, Unit.EM);
+		} else {
+			borderStyle = "solid";
+		}
+		euskoLabel.getElement().getStyle().setProperty("borderBottom", "2px " + borderStyle + " DarkGray");
+		table.setWidget(nextRow + 1, 0, euskoLabel);
+		table.getFlexCellFormatter().setColSpan(nextRow + 1, 0, 2);
+		
 	}
 	
 	private String formatIban(String iban) {
