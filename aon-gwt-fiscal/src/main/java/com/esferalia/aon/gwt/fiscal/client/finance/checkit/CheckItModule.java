@@ -32,6 +32,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
@@ -39,7 +40,6 @@ import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -159,6 +159,12 @@ public class CheckItModule extends MainEntryPoint {
 			sessionLog.add(loadingLabel);
 			openFootPanel();
 		}
+		
+		
+//		ScriptInjector.fromString("if($doc.querySelector('aon-application')) {"
+//				+ "$doc.querySelector('aon-application').stopLoader()"
+//				+ "}").inject();
+		
 	}
 
 	private FlowPanel paintEnterpiseData(CheckItModuleOptions opt) {
@@ -760,6 +766,7 @@ public class CheckItModule extends MainEntryPoint {
 						if (isMobile()) {
 							AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack()); 
 							
+							toolbar.setTitle("CREDENCIALES");
 							toolbar.add(back);
 							centerPanel.clear();
 							back.addClickHandler(h -> {
@@ -964,7 +971,7 @@ public class CheckItModule extends MainEntryPoint {
 						if (isMobile()) {
 							
 							AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack()); 
-							
+							toolbar.setTitle("CREDENCIALES");
 							toolbar.add(back);
 							centerPanel.clear();
 							back.addClickHandler(h -> {
@@ -1340,6 +1347,7 @@ public class CheckItModule extends MainEntryPoint {
 				
 				AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack()); 
 				
+				toolbar.setTitle("VINCULAR");
 				toolbar.add(back);
 				centerPanel.clear();
 				back.addClickHandler(h -> {
@@ -1570,7 +1578,7 @@ public class CheckItModule extends MainEntryPoint {
 				String user = userID.getValue();
 				String pass = userPassword.getValue();
 				String pin = userPIN.getValue();
-				CHECKIT_SERVICE.addAccount(enterpriseId, checkItUnlinkedBankAccount, user, pass, pin, new AsyncCallback<Boolean>() {
+				CHECKIT_SERVICE.addAccount(enterpriseId, checkItUnlinkedBankAccount, user, pass, pin, new AsyncCallback<String>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -1585,12 +1593,14 @@ public class CheckItModule extends MainEntryPoint {
 					}
 
 					@Override
-					public void onSuccess(Boolean result) {
-						if (result != null && result) {
+					public void onSuccess(String result) {
+						if (result != null && AonStringUtils.containsIgnoreCase(result, "cuenta creada")) {
 							Label sccsLabel = new Label("A\u00F1adida la cuenta " + checkItUnlinkedBankAccount.getIban());
+							Label res = new Label(result);
 							sccsLabel.setStyleName(AON.CSS.aonColorGreen());
 							if (!isMobile()) {
 								sessionLog.add(sccsLabel);								
+								sessionLog.add(res);								
 								openFootPanel();
 							}
 							
@@ -1786,9 +1796,11 @@ public class CheckItModule extends MainEntryPoint {
 			}
 		});
 		
+		boolean sugoiChiisai = Window.getClientWidth() < 350;
+		
 		tab.setWidth("100%");
-		tab.getColumnFormatter().setWidth(0, "70%");
-		tab.getColumnFormatter().setWidth(1, "30%");
+		tab.getColumnFormatter().setWidth(0, sugoiChiisai ? "55%" : "60%");
+		tab.getColumnFormatter().setWidth(1, sugoiChiisai ? "45" : "40%");
 		return tab;
 	}
 	
@@ -1798,7 +1810,8 @@ public class CheckItModule extends MainEntryPoint {
 		Double amount = !bankStatement.isPayment() ? bankStatement.getAmount() : bankStatement.getAmount() * (-1);
 		
 		Label amountLabel = new Label(AON.FMT.format(amount) + " " + EURO);
-		amountLabel.setStyleName(AON.CSS.aonFontMedium());
+		amountLabel.addStyleName(AON.CSS.aonFontMedium());
+		amountLabel.addStyleName(AON.CSS.aonBold());
 		amountLabel.addStyleName(AON.CSS.aonTextRight());
 		amountLabel.getElement().getStyle().setPaddingRight(1, Unit.EM);
 		amountLabel.getElement().getStyle().setMarginTop(1, Unit.EM);
@@ -1806,6 +1819,8 @@ public class CheckItModule extends MainEntryPoint {
 		amountLabel.setWidth("100%");
 		if (amount < 0) {
 			amountLabel.addStyleName(AON.CSS.aonColorRed());
+		} else if (amount > 0) {
+			amountLabel.addStyleName(AON.CSS.aonColorGreen());			
 		}
 		
 		Label descriptionLabel = new Label(description);

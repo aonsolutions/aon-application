@@ -47,7 +47,7 @@ public class CheckItServiceAsyncDecorator implements CheckItServiceAsync {
 
 	@Override
 	public void addAccount(Integer enterpriseId, CheckitUnlinkedBankAccount checkitUnlinkedBankAccount, String userID,
-			String userPassword, String userPIN, AsyncCallback<Boolean> callback) {
+			String userPassword, String userPIN, AsyncCallback<String> callback) {
 		AON.start();
 		fsa.addAccount(enterpriseId, checkitUnlinkedBankAccount, userID, userPassword, userPIN, new AsyncCallbackWrapper<>(callback));
 		

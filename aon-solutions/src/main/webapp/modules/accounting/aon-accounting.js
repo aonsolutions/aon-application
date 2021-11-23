@@ -14,6 +14,7 @@ import { AonGraphicsTrial } from './aon-graphics-trial.js';
 import Apps from '../../services/app.js';
 
 import * as GWT from '../../gwt/gwt.js';
+import { waitEl } from '../../services/utils.js';
 
 export class AonAccounting extends AonElement {
 
@@ -77,6 +78,8 @@ export class AonAccounting extends AonElement {
 			fn: () => {
 				application.removeSidenavById("Opciones");
 				application.addSidenavOptions(MSG.OPTIONS , options2);
+				this.getApplication().stopLoader();
+				this.getApplication().startLoader();
 				this.aonGraphicsTrialView ();
 			}
 		}];
@@ -87,8 +90,11 @@ export class AonAccounting extends AonElement {
 				name: MSG.BANKS,
 				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
 				fn: () => {
-					application.removeSidenavById("Opciones");
-					GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
+					/*application.removeSidenavById("Opciones");
+					this.getApplication().stopLoader();
+					this.getApplication().startLoader();
+					GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);*/
+					this.go2CheckIt();
 				}
 			});
 
@@ -99,6 +105,14 @@ export class AonAccounting extends AonElement {
 		application.addSidenavOptions(MSG.OPTIONS , options2);
 	}
 
+	async go2CheckIt () {
+		this.clearElementById(this.getApplication().getContent().id);
+		this.getApplication().startLoader();
+			GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
+		waitEl(`#${this.getApplication().getContent().id} .aon_toolbar`)
+		.catch(e => console.log(e))
+		.finally(() => this.getApplication().stopLoader());
+	}
 
 	aonGraphicsTrialView () {
 		const aonGraphicsTrial = new AonGraphicsTrial();
