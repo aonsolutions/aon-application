@@ -402,7 +402,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				    json.put("file", f);
 				}
 				JSONArray log = new JSONArray(r.getLog() != null ? r.getLog() : "[]");
-				json.put("comments", log);
+				json.put("remarks", log);
 				String reference = filter.getDescription() != null && json.opt("reference") != null ? json.optString("reference") : "";
 				String registryName = RawdocType.OUTPUT.equals(r.getType()) 
 						? (filter.getDescription() != null && json.opt("receiver") != null ? json.getJSONObject("receiver").optString("name") : "")
@@ -496,14 +496,14 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		    		.setUser(login);
 		    	try {
 		    		TediResult r = TEDI.parse(tctx, input, MimeType.get(contentType));
-		    		json = TediInvoiceJSON.toJSON(r.getTedi());
+		    		json = tediParse(TediInvoiceJSON.toJSON(r.getTedi()), json);
 		    	} catch (TediException e) {
 		    		e.printStackTrace();
 		    	}
 		    }
 		}
     	rawdoc.setJson(json.toString());
-    	rawdoc.setLog(json.opt("comments") != null? json.optJSONArray("comments").toString(): "[]");
+    	rawdoc.setLog(json.opt("remarks") != null? json.optJSONArray("remarks").toString(): "[]");
 
 		rawdoc = AON.rawdocSave(domain.getName(), domain.getId(), login, rawdoc);
 		json.put("id", rawdoc.getId()); 
@@ -521,6 +521,13 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		    f.put("content_type", rawdoc.getMimeType().getName());
 		    json.put("file", f);
 		}
+		return json;
+	}
+	
+	private static JSONObject tediParse(JSONObject tedi, JSONObject json) {
+		tedi.keySet().stream().forEach(key -> {
+			json.put(key, tedi.get(key));
+		});
 		return json;
 	}
 	
@@ -639,7 +646,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		json.put("finances", new JSONArray());
 		json.put("suplidos", initSuplidos());
 		json.put("status", "inbox");
-		json.put("comments", new JSONArray());
+		json.put("comments", "");
+		json.put("remarks", new JSONArray());
 		return json;
 	}
 	

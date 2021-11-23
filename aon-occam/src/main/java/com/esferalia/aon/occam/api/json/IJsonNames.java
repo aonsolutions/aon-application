@@ -311,6 +311,7 @@ public interface IJsonNames {
 	String REGISTRY_ID = "registryId";
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
+	String REMARKS = "remarks";
 	String REMOVED = "removed";
 	String REPLACEMENT = "replacement";
 	String RESERVATION = "reservation";
