@@ -290,6 +290,14 @@
 				cleanSelected();
 				enable();
 			}
+
+			function hideAllMenuPopup(){
+				menuContentPopup = document.getElementById('aonContent:menuContentPopup');
+				menuPopups = menuContentPopup.children
+				for ( i = 0; i < menuPopups.length; i++ ){
+					menuPopups[i].style.display="none"; 
+				}
+			}
 			
 			function disableMenuPopup(menuPopup, el){
 				hideMenuPopup(menuPopup);
@@ -315,7 +323,12 @@
 			//]]>
 		</script>
 
-		<aon:div id="menuContentPopup" styleClass="aon-menu-popup" style="position:fixed;  z-index:67; left: 34px; margin-top: -2.5px; min-width:50%; max-width: 90%;">
+		<aon:div 
+		id="menuContentPopup"
+		styleClass="aon-menu-popup" 
+		onclick="javascript:hideAllMenuPopup()"
+		style="position:fixed;  z-index:67; left: 34px; margin-top: -2.5px; min-width:50%; max-width: 90%;"
+		>
 			<ui:include src="/facelet/new/menu/pos.xhtml" />
 			<ui:include src="/facelet/new/menu/crm.xhtml" />
 			<ui:include src="/facelet/new/menu/fiscal.xhtml" />
