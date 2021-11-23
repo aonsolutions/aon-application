@@ -53,7 +53,7 @@ public class GeneralAgreementTest {
 	@BeforeClass
 	public static void setUp() throws Exception {
 		LOGGER.setLevel(Level.WARNING);
-		webClient = new WebClient(BrowserVersion.FIREFOX_45);
+		webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 		
 		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
