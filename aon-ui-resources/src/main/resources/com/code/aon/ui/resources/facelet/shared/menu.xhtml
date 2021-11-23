@@ -8,7 +8,7 @@
 
 	<aon:if test="#{!aonConfiguration.properties.hideMenuBar}">
 		<aon:form id="mainMenuForm">
-			<aon:menuBar id="mainMenuSer" style="border: none !important; min-height:1.9rem !important; padding: 1.5px !important;">
+			<aon:menuBar id="mainMenuSer" style="min-height:1.9rem !important; padding: 1.5px !important;">
 				<ui:insert name="beforeMenuContent"/>
 				<aon:componentGroup
 					family="javax.faces.Command"
@@ -64,6 +64,10 @@
 	 		</aon:menuBar>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/about.xhtml" />
-		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />				
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		
+		
+		<ui:insert name="menuContentPopup"/>				
+	
 	</aon:if>
  </ui:composition>
