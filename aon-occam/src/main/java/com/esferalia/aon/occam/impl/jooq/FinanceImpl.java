@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -156,6 +157,12 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate) {
 		return InvoiceDAO.getInvoiceSeries(ctx, from, to, taxDate);
+	}
+
+	@Override
+	public List<InvoiceSeries> getInvoiceSalesSeries(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> InvoiceDAO.getSalesSeries(ctx));
 	}
 	
 	// ------------------------------------- FEE

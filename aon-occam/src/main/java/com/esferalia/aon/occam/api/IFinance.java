@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
@@ -83,7 +84,9 @@ public interface IFinance {
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***
 	// 	***********************************************
+	
 	LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate);
+	List<InvoiceSeries> getInvoiceSalesSeries(AONContext ctx);
 	
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***

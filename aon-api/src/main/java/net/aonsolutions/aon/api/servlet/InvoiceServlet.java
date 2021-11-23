@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
 import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.TbaiConfigurationJSON;
 import com.esferalia.aon.occam.api.model.AccountProperties;
@@ -131,6 +132,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				break;
 			case "/accounts":
 				response(req, resp, getAccountsObject(api));
+				break;				
+			case "/series":
+				response(req, resp, getInvoiceSeries(api));
 				break;
 			case "/print_configuration":
 				response(req, resp, getPrintConfiguration(api));
@@ -242,6 +246,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			}
 		});
 		return array;
+	}
+	
+	private JSONArray getInvoiceSeries(AonApiData api) {
+		return InvoiceSeriesJSON.toJSON(AON.getInvoiceSalesSeries(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin()));
 	}
 
 	private JSONObject deleteInvoiceObject(AonApiData api) {

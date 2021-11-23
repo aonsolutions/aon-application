@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
-	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod} from '../../services/service.js';
+	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
@@ -54,6 +54,7 @@ export class AonInvoice extends AonElement {
 	fileOpened;
 
 	rbanks;
+	series;
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -89,7 +90,7 @@ export class AonInvoice extends AonElement {
 			this.dur = new DomainUserRoles(r);
 			this.build();
 		});
-
+	
 		let registry = this.getInvoice().isEmitida()
 			? this.getInvoice().getRegistry().id : LS.getCompany().registry;
 
@@ -518,6 +519,15 @@ export class AonInvoice extends AonElement {
 			serie.value = this.invoice.serie;
 			serie.addEventListener(EVENT.CHANGE, () => {
 				this.invoice.setSerie(serie.value);
+				if(this.invoice.isInbox()) {
+					let enabled = this.invoice.isInbox() && this.series && this.series.filter(f => f.description == this.invoice.serie).length === 0;
+					this.getElement(this.NUMBER).readonly = !enabled;
+					this.getElement(this.NUMBER).disabled = !enabled;
+					if(!enabled) {
+						this.invoice.number = undefined;
+						this.getElement(this.NUMBER).value = undefined;
+					}
+				}
 				if(this.autosave) this.save();
 			});
 
@@ -531,6 +541,14 @@ export class AonInvoice extends AonElement {
 			table.addCell(number);
 			number.readonly = CONSTANT.READONLY;
 			number.disabled = CONSTANT.TRUE;
+			if(this.invoice.isInbox()) {
+				getSalesSeries({}).then(r => {
+					this.series = r;
+					let enabled = this.invoice.isInbox() && r.filter(f => f.description == this.invoice.serie).length === 0;
+					number.readonly = !enabled;
+					number.disabled = !enabled;
+				});
+			}
 		} else {
 			// ----- REFERENCE
 

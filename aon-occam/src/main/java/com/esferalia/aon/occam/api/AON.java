@@ -5200,13 +5200,14 @@ public class AON {
 
 	public static LinkedList<InvoiceSeries> getInvoiceSeries(String domainName,
 			int domainId, String login, Date from, Date to, boolean taxDate) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getInvoiceSeries(ctx, from, to, taxDate);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static List<InvoiceSeries> getInvoiceSalesSeries(String domainName, int domainId, String login) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getInvoiceSalesSeries(ctx);
 		}
 	}
 
