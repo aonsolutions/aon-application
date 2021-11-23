@@ -54,7 +54,7 @@ public class MainAgreementTest {
 	@BeforeClass
 	public static void setUp() throws Exception {
 		LOGGER.setLevel(Level.WARNING);
-		webClient = new WebClient(BrowserVersion.FIREFOX_45);
+		webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 
 		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
@@ -78,6 +78,7 @@ public class MainAgreementTest {
 		LOGGER.warning("Cick on: " + menuPayrollAnchor.asText());
 		htmlPage = menuPayrollAnchor.click();
 
+		
 		// MainAgreement
 		HtmlAnchor gwtAgreementAnchor = htmlPage
 				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement2");
