@@ -76,7 +76,8 @@
     	padding: 5px 0 8px 12px;
 	}
 	.aon-direct-access-list-element a{
-    	width: 100%;
+    	width: 95%;
+    	height: 100%;
     	display: inline-block;
 	}
 		
@@ -1052,10 +1053,25 @@
 	.aon-menu-popup .aon-menu-fiscal{
 		border-bottom: 1px solid #2152A5;
 	}
-    .aon-menu-popup .aon-direct-access-list-element:hover,
-    .aon-menu-popup .aon-direct-access-list-element:hover * {
-    	color: #2152A5;
+    
+    .aon-menu-popup .aon-direct-access-list-element {
+    	padding: 0px;
+    }
+    
+    .aon-menu-popup .aon-direct-access-list-element a {
+    	padding: 5px 0 8px 12px;
+    }
+
+    .aon-menu-popup .aon-direct-access-list-element:hover {
+    	color: #FFF;
+    	background-color: #2152A5 !important;
+	}
+
+    .aon-menu-popup .aon-direct-access-list-element *:hover {
+    	color: #2152A5 !important;
     	background-color: #FFF !important;
+		border-top-right-radius: 50px 50px;
+    	border-bottom-right-radius: 50px 50px;
 	}
 	
 	.aon-top-menu-item:hover ,
