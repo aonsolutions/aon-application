@@ -108,8 +108,9 @@ export const CONFIGURATION_COMUNICA = {
   module: GWT_PAYROLL,
   entryPoint: 'MainConfigComunica'
 }
-
 export const FINANCE = {
+  title: MSG.CHARGES_AND_PAYMENTS,
+  name: MSG.CHARGES_AND_PAYMENTS,
   module: GWT_FISCAL,
   entryPoint: 'Finance'
 };

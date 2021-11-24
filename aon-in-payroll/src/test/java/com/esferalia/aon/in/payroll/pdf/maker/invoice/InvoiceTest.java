@@ -507,7 +507,6 @@ public class InvoiceTest {
 			
 			OutputStream dos = new FileOutputStream("./InvoiceIntegrationTest.pdf");
 			os = new ByteArrayOutputStream();
-			byte[] qrCode = new InvoiceTest().getClass().getResourceAsStream("qr.png").readAllBytes();
 			byte[] back = new InvoiceTest().getClass().getResourceAsStream("bg.jpg").readAllBytes();
 			
 			PrintInvoiceConfiguration config = new PrintInvoiceConfiguration();
@@ -596,8 +595,8 @@ public class InvoiceTest {
 //			company = null;
 //			logo = null;
 			
-			InvoiceTemplate.create(os, company, invoice, config, qrCode, logo);
-			InvoiceTemplate.create(dos, company, invoice, config, qrCode, logo);
+			InvoiceTemplate.create(os, company, invoice, config, "www.aonsolutions.es", logo);
+			InvoiceTemplate.create(dos, company, invoice, config, "www.aonsolutions.es", logo);
 			ByteArrayInputStream bis = new ByteArrayInputStream(os.toByteArray());
 			
 			PDDocument document = PDDocument.load(bis);

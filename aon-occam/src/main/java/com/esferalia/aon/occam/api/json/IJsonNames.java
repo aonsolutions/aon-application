@@ -341,6 +341,7 @@ public interface IJsonNames {
 	String SERIES_INFO = "seriesInfo";
 	String SERIE = "serie";
 	String SERVICE = "service";
+	String SERVICE_NAME = "serviceName";
 	String SESSION_ID = "session_id";
 	String SETTLED = "settled";
 	String SHARED = "shared";

@@ -15,6 +15,7 @@ export const ADD_CATEGORY = 'Add Category';
 export const ADD_COMMENT = 'Add Comment';
 export const ADD_FILE = 'Add File';
 export const ADD_INVOICE = 'Add Invoice';
+export const ADD_REMARKS = 'Add Remarks';
 export const ADD_TAG = 'Add Tag';
 export const ADD_TAX = 'Add Tax';
 export const ADDITIONAL_INFORMATION = 'Additional Information';
@@ -55,6 +56,7 @@ export const CATEGORIES = 'Categories';
 export const CERTIFICATE = 'Certificate';
 export const CERTIFICATES = 'Certificates';
 export const CHANGE_TYPE = 'Change Type';
+export const CHARGES_AND_PAYMENTS = 'Charges and Payments';
 export const CITY = 'City';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
@@ -200,6 +202,7 @@ export const LOCATION = 'Location';
 
 // ----- M
 
+export const MANAGEMENT = 'Management';
 export const MODEL_111 = 'Form 111';
 export const MODEL_111_DESCRIPTION = 'Form 111. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Self-assessment.';
 export const MODEL_190 = 'Form 190';
@@ -279,6 +282,7 @@ export const REJECT_INVOICES = 'Reject Invoices';
 export const REJECTED = 'Rejected';
 export const REJECTED_INVOICES = 'Rejected Invoices';
 export const REJECTEDS = 'Rejected';
+export const REMARKS = 'Remarks';
 export const REMINDER = 'Reminder';
 export const REQUEST = 'Request';
 export const REQUESTS = 'Requests';

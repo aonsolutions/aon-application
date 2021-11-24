@@ -1,8 +1,5 @@
 package com.esferalia.aon.in.payroll.pdf.maker.invoice;
 
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.BLACK;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.LIGHT_GRAY;
-import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors.WHITE;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts.HELVETICA_BOLD;
 import static com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats.formatDate;
@@ -40,6 +37,7 @@ import static com.esferalia.aon.in.payroll.pdf.maker.invoice.InvoiceTemplateTags
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -69,12 +67,18 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.Writer;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 public class InvoiceTemplate {
 	
@@ -94,7 +98,6 @@ public class InvoiceTemplate {
 	float commentSize;
 
 	byte[] background;
-	byte[] qrCode;
 	boolean adapt;
 	PDPageContentStream	contents;
 	int pageNumber;
@@ -102,7 +105,7 @@ public class InvoiceTemplate {
 	PrintInvoiceConfiguration config;
 	
 	// THE PDF DOCUMENT
-	public static void create(OutputStream os, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] qrCode, byte[] logo) throws IOException, CanNotCreatePdfException {
+	public static void create(OutputStream os, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo) throws IOException, CanNotCreatePdfException {
 		try (PDDocument doc = new PDDocument())
 		{
 			InvoiceTemplate template = new InvoiceTemplate();
@@ -129,7 +132,6 @@ public class InvoiceTemplate {
 
 			if (config.getBackground() != null)
 				template.background = config.getBackground().getData();
-			template.qrCode = qrCode;
 
 			template.contents = template.drawFirstPage(doc, company, invoice, config, logo);
 			
@@ -141,10 +143,10 @@ public class InvoiceTemplate {
 			else
 				template.drawSimplifiedEntries(doc, company, invoice, config, logo);
 
-			template.drawBottomInfo(doc, invoice);
+			template.drawBottomInfo(doc, invoice, qrUrl, config.getTheme());
 			
 			template.contents.close();
-			template.drawFooter(doc, company);				
+			template.drawFooter(doc, company, config.getTheme());				
 			doc.save(template.filename);
 			new OutputStreamWriter(os,StandardCharsets.ISO_8859_1);
 		} catch (Exception e)
@@ -153,18 +155,18 @@ public class InvoiceTemplate {
 		}
 	}
 	
-	private void drawComment(PDDocument doc, CompanyFull company, Invoice invoice, String comment, byte[] logo) throws IOException {
+	private void drawComment(PDDocument doc, CompanyFull company, Invoice invoice, String comment, byte[] logo, PrintInvoiceThemeConfiguration theme) throws IOException {
 		if (comment != null && !comment.isEmpty()) {
 			float firstY = y;
 			
-			drawText(contents, "Notas:", 50f, y, BLACK, HELVETICA_BOLD, 10);
+			drawText(contents, "Notas:", 50f, y, theme.getTextColor(), HELVETICA_BOLD, 10);
 			List<String> lines = PDFToolkit.getLinesRespectOriginal(comment, 575-100-50, HELVETICA, 10);
 			
 			this.commentSize = lines.size() * 10;
 			
 			for (String line : lines) {
 				line = line != null ? line.trim() : line;
-				drawText(contents, line, 100f, y, BLACK, HELVETICA, 10);
+				drawText(contents, line, 100f, y, theme.getTextColor(), HELVETICA, 10);
 				y-=10;
 				if (y < bottom) {
 					contents.close();
@@ -177,7 +179,7 @@ public class InvoiceTemplate {
 		}
 	}
 	
-	private void drawFooter(PDDocument doc, CompanyFull company) throws IOException {
+	private void drawFooter(PDDocument doc, CompanyFull company, PrintInvoiceThemeConfiguration theme) throws IOException {
 		if(company != null) {
 			RecordData recordData = company.getRecordDatas() != null && !company.getRecordDatas().isEmpty() ? company.getRecordDatas().get(0) : null;
 			Company reg = company.getRegistry();
@@ -270,7 +272,7 @@ public class InvoiceTemplate {
 						, mediaStr
 						, 10f
 						, 20f
-						, BLACK
+						, theme.getTextColor()
 						, HELVETICA
 						, 7);
 				
@@ -289,7 +291,7 @@ public class InvoiceTemplate {
 				drawTextRight(contents
 					, new PDRectangle(570, 5, 15, 15)
 					, page
-					, BLACK
+					, theme.getTextColor()
 					, HELVETICA
 					, 9
 					, 0
@@ -299,7 +301,7 @@ public class InvoiceTemplate {
 					, registrationString
 					, 10f
 					, 5f
-					, BLACK
+					, theme.getTextColor()
 					, HELVETICA
 					, 7);
 			
@@ -325,20 +327,20 @@ public class InvoiceTemplate {
 		}
 	}
 	
-	private void drawPageNums(PDDocument doc) throws IOException {
+	private void drawPageNums(PDDocument doc, PrintInvoiceThemeConfiguration theme) throws IOException {
 		for (int i=0; i<this.pageNumber; i++) {
 			contents = new PDPageContentStream(doc, doc.getPage(i), PDPageContentStream.AppendMode.APPEND, true);
-			drawPageNumber(i+1);
+			drawPageNumber(i+1, theme);
 			contents.close();
 		}
 	}
 	
 	//DRAW PAGE NUMBER
-	private void drawPageNumber(int num) throws IOException {
+	private void drawPageNumber(int num, PrintInvoiceThemeConfiguration theme) throws IOException {
 		drawTextRight(contents
 				, new PDRectangle(570, 5, 15, 15)
 				, "Pag. " + num + " de " + pageNumber
-				, BLACK
+				, theme.getTextColor()
 				, HELVETICA
 				, 9
 				, 0
@@ -373,9 +375,9 @@ public class InvoiceTemplate {
 		y -= 60;
 		if (withHeader)
 			if (config.isDetailed())
-				drawDetailedHeader();
+				drawDetailedHeader(config.getTheme());
 			else
-				drawSimpleHeader();
+				drawSimpleHeader(config.getTheme());
 
 		return contents;
 	}
@@ -406,12 +408,12 @@ public class InvoiceTemplate {
 		
 		y -= 60;
 		
-		drawComment(doc, company, invoice, invoice.getComments(), logo);
+		drawComment(doc, company, invoice, invoice.getComments(), logo, config.getTheme());
 		
 		if (config.isDetailed())
-			drawDetailedHeader();
+			drawDetailedHeader(config.getTheme());
 		else
-			drawSimpleHeader();
+			drawSimpleHeader(config.getTheme());
 		
 		return contents;
 	}
@@ -461,7 +463,7 @@ public class InvoiceTemplate {
 						divided.remove(divided.size() - 1);
 						stringHeight = lineDiff * divided.size();
 					}
-					drawDetail(i, detail, divided, lineDiff);
+					drawDetail(i, detail, divided, lineDiff, config.getTheme());
 					jumpToNewPage(doc, company, invoice, config, logo);
 					List<String> extraLines = PDFToolkit.getLinesRespectOriginal(AonStringUtils.trimToEmpty(extraBuilder.toString()), 240,PdfFonts.HELVETICA, 8);
 					int extraLineNum = extraLines.size();
@@ -473,7 +475,7 @@ public class InvoiceTemplate {
 							xtra.add(extraLines.get(0));
 							extraLines.remove(0);
 						}
-						drawExtraLines(i, xtra, lineDiff);
+						drawExtraLines(i, xtra, lineDiff, config.getTheme());
 						extraLineNum = extraLines.size();
 						jumpToNewPage(doc, company, invoice, config, logo);
 						
@@ -485,13 +487,13 @@ public class InvoiceTemplate {
 							xtra.add(extraLines.get(0));
 							extraLines.remove(0);
 						}
-						drawExtraLines(i, xtra, lineDiff);
+						drawExtraLines(i, xtra, lineDiff, config.getTheme());
 						jumpToNewPage(doc, company, invoice, config, logo);
 					}
 					
-					drawExtraLines(i, extraLines, lineDiff);
+					drawExtraLines(i, extraLines, lineDiff, config.getTheme());
 				} else {
-					drawDetail(i, detail, divided, lineDiff);
+					drawDetail(i, detail, divided, lineDiff, config.getTheme());
 				}
 				
 				if (shounenJump) {
@@ -513,36 +515,36 @@ public class InvoiceTemplate {
 		x		 = 50;
 	}
 
-	private void drawDetail(int i, InvoiceDetail detail, List<String> divided, float lineDiff) throws IOException {
+	private void drawDetail(int i, InvoiceDetail detail, List<String> divided, float lineDiff, PrintInvoiceThemeConfiguration theme) throws IOException {
 		float dy = y;
 
 		for (String str : divided)
 		{
-			drawText(contents, str.trim(), x + 5, dy, PdfColors.BLACK, PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
+			drawText(contents, str.trim(), x + 5, dy, theme.getBoxBodyTextColor(), PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
 			dy -= lineDiff;
 		}
 
 		x += 250;
 
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getQuantity()) + "", BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_AMOUNT);
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getQuantity()) + "", theme.getBoxBodyTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_AMOUNT);
 		x += 70;
 
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15),toLatinNumber(detail.getPrice()), BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_PRICE);
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15),toLatinNumber(detail.getPrice()), theme.getBoxBodyTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_PRICE);
 		x += 70;
 
-		drawTextRight(contents, new PDRectangle(x, y, 39, 15), safeString(detail.getDiscountExpression()), BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_DISCOUNT);
+		drawTextRight(contents, new PDRectangle(x, y, 39, 15), safeString(detail.getDiscountExpression()), theme.getBoxBodyTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_DISCOUNT);
 		x += 40;
 
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getTaxableBase()), BLACK, HELVETICA, 8, 4.5f, 0, i + DETAIL_TOTAL);
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getTaxableBase()), theme.getBoxBodyTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_TOTAL);
 		y = dy - 3;
 	}
 	
-	private void drawExtraLines(int i, List<String> divided, float lineDiff) throws IOException {
+	private void drawExtraLines(int i, List<String> divided, float lineDiff, PrintInvoiceThemeConfiguration theme) throws IOException {
 		float dy = y;
 
 		for (String str : divided)
 		{
-			drawText(contents, str.trim(), x + 5, dy, PdfColors.BLACK, PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
+			drawText(contents, str.trim(), x + 5, dy, theme.getBoxBodyTextColor(), PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
 			dy -= lineDiff;
 		}
 		y = dy - 3;
@@ -689,33 +691,33 @@ public class InvoiceTemplate {
 			PDFToolkit.drawResizedLogo(doc, doc.getPage(pageNumber - 1), contents, logo, logoX, logoY, maxHeight, maxWidth, web);
 		}
 		
-		drawText(contents, getMsg().invoice().toUpperCase(), x, y, BLACK, HELVETICA_BOLD, 16);
+		drawText(contents, getMsg().invoice().toUpperCase(), x, y, config.getTheme().getTextColor(), HELVETICA_BOLD, 16);
 		y -= 30;
 
-		drawText(contents, getMsg().number() + ":", x, y, BLACK, HELVETICA_BOLD, 11,REFERENCE_NUMBER);
-		drawText(contents, safeString(invoice.getReferenceCode()), x + 50, y, BLACK, HELVETICA, 11,REFERENCE_NUMBER);
+		drawText(contents, getMsg().number() + ":", x, y, config.getTheme().getTextColor(), HELVETICA_BOLD, 11,REFERENCE_NUMBER);
+		drawText(contents, safeString(invoice.getReferenceCode()), x + 50, y, config.getTheme().getTextColor(), HELVETICA, 11,REFERENCE_NUMBER);
 		y -= 4;
 
 //		drawBox(contents, x + 46, y, 150, .5f, BLACK);
 		y -= 16;
 
-		drawText(contents, getMsg().date() + ":", x, y,BLACK, HELVETICA_BOLD, 11 , INVOICE_DATE);
-		drawText(contents, formatDate(invoice.getIssueDate(), "dd/MM/yyyy").orElse(""), x + 50, y,BLACK, HELVETICA, 11 , INVOICE_DATE);
+		drawText(contents, getMsg().date() + ":", x, y, config.getTheme().getTextColor(), HELVETICA_BOLD, 11 , INVOICE_DATE);
+		drawText(contents, formatDate(invoice.getIssueDate(), "dd/MM/yyyy").orElse(""), x + 50, y, config.getTheme().getTextColor(), HELVETICA, 11 , INVOICE_DATE);
 
 		y -= 4;
 
 //		drawBox(contents, x + 46, y, 150, .5f, BLACK);
 		y -= 16;
 
-		drawText(contents, "N.I.F.:", x, y, BLACK, HELVETICA_BOLD, 11, NIF);
-		drawText(contents, safeString(invoice.getRegistryDocument()), x + 50, y, BLACK, HELVETICA, 11, NIF);
+		drawText(contents, "N.I.F.:", x, y, config.getTheme().getTextColor(), HELVETICA_BOLD, 11, NIF);
+		drawText(contents, safeString(invoice.getRegistryDocument()), x + 50, y, config.getTheme().getTextColor(), HELVETICA, 11, NIF);
 		y -= 4;
 
 //		drawBox(contents, x + 46, y, 150, .5f, BLACK);
 		y -= 6;
 		x += 250;
 
-		drawBox(contents, x, y, 250, 80, LIGHT_GRAY);
+		drawBox(contents, x, y, 250, 80, config.getTheme().getCustomerBackgroundColor());
 		x += 10;
 		y  = height - top - 45 /*- (company != null ? 30 : 0)*/;
 		String str = safeString(invoice.getRegistryName())
@@ -723,101 +725,102 @@ public class InvoiceTemplate {
 				/*.getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8")*/;
 		
 		str = croppedString(str, 230, HELVETICA_BOLD, 12);
-		drawText(contents, str, x, y, BLACK, HELVETICA_BOLD, 12, REGISTRY_NAME);
+		drawText(contents, str, x, y, config.getTheme().getTextColor(), HELVETICA_BOLD, 12, REGISTRY_NAME);
 		y -= 15;
 		
 		if (invoice.getRegistryAddressData() != null) {
 			RegistryAddress address = invoice.getRegistryAddressData();
 			str = safeString(address.getFullAddress());
 			str = croppedString(str, 230, HELVETICA, 9);
-			drawText(contents,  str, x, y, BLACK, HELVETICA, 9, ADDRESS);
+			drawText(contents,  str, x, y, config.getTheme().getTextColor(), HELVETICA, 9, ADDRESS);
 
 			y -= 10;
 
 			String zipCityProvince =  safeString(address.getZip()) + " "+  safeString(address.getCity()) + " " +  safeString(address.getProvince()); 
-			drawText(contents, zipCityProvince.trim(), x, y, BLACK, HELVETICA, 9, ADDRESS_LINE_TWO);
+			drawText(contents, zipCityProvince.trim(), x, y, config.getTheme().getTextColor(), HELVETICA, 9, ADDRESS_LINE_TWO);
 		} else {
 			str = safeString(invoice.getAddress());
 			str = croppedString(str, 230, HELVETICA, 9);
-			drawText(contents,  str, x, y, BLACK, HELVETICA, 9, ADDRESS);
+			drawText(contents,  str, x, y, config.getTheme().getTextColor(), HELVETICA, 9, ADDRESS);
 
 			y -= 10;
 
 			String zipCityProvince =  safeString(invoice.getAddressZIP()) + " "+  safeString(invoice.getAddressTown()) + " " +  safeString(invoice.getAddressProvince()); 
-			drawText(contents, zipCityProvince.trim(), x, y, BLACK, HELVETICA, 9, ADDRESS_LINE_TWO);
+			drawText(contents, zipCityProvince.trim(), x, y, config.getTheme().getTextColor(), HELVETICA, 9, ADDRESS_LINE_TWO);
 		}
 
 	}
 
 	// DRAW DETAILED HEADER
-	private void drawDetailedHeader() throws IOException {
+	private void drawDetailedHeader(PrintInvoiceThemeConfiguration theme) throws IOException {
 		x  = 50;
 
-		drawBox(contents, x, y, 249, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 249, 15), getMsg().description(), WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawBox(contents, x, y, 249, 15, theme.getBoxTitleBackgroundColor());
+		drawTextCenter(contents, new PDRectangle(x, y, 249, 15), getMsg().description(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 		x += 250;
 
-		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), getMsg().quantity(), WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
+		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), getMsg().quantity(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 		x += 70;
 
-		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), getMsg().price(), WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
+		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), getMsg().price(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 		x += 70;
 
-		drawBox(contents, x, y, 39, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 39, 15), "%Dto.", WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawBox(contents, x, y, 39, 15, theme.getBoxTitleBackgroundColor());
+		drawTextCenter(contents, new PDRectangle(x, y, 39, 15), "%Dto.", theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 		x += 40;
 
-		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), WHITE, HELVETICA_BOLD, 9, 5, 4.5f);
+		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 5, 4.5f);
 	}
 
 	// DRAW SIMPLE HEADER
-	private void drawSimpleHeader() throws IOException {
+	private void drawSimpleHeader(PrintInvoiceThemeConfiguration theme) throws IOException {
 		x  = 50;
-		drawBox(contents, x, y, 429, 15, BLACK);
-		drawText(contents, getMsg().description(), x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
+		drawBox(contents, x, y, 429, 15, theme.getBoxTitleBackgroundColor());
+		drawText(contents, getMsg().description(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9);
 		x += 430;
 
-		drawBox(contents, x, y, 69, 15, BLACK);
-		drawText(contents, getMsg().amount(), x + 5f, y + 4.5f, WHITE, HELVETICA_BOLD, 9);
+		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
+		drawText(contents, getMsg().amount(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9);
 	}
 
 	// DRAW BOTTOM INFO
-	private void drawBottomInfo(PDDocument doc, Invoice invoice) throws IOException {
+	private void drawBottomInfo(PDDocument doc, Invoice invoice, String qrUrl, PrintInvoiceThemeConfiguration theme) throws IOException, WriterException {
 		x = 50;
 		y = bottom + 10;
-		if (qrCode != null)
+		if(qrUrl != null) {
+			byte[] qrCode = createQR(qrUrl, 300, 300);
 			drawImage(doc, contents, qrCode, x, y, 120, 120);
-
-		drawTaxes(invoice);
-		drawFinances(invoice);
+		}
+		drawTaxes(invoice, theme);
+		drawFinances(invoice, theme);
 	}
 
 	// DRAW TAXES
-	private void drawTaxes(Invoice invoice) throws IOException {
+	private void drawTaxes(Invoice invoice, PrintInvoiceThemeConfiguration theme) throws IOException {
 		x = 180;
 		y = bottom + 107;
 
-		drawBox(contents, x, y, 79, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 79, 15), getMsg().base(), WHITE, HELVETICA, 9, 5, 4.5f);
+		drawBox(contents, x, y, 79, 15, theme.getBoxTitleBackgroundColor());
+		drawTextRight(contents, new PDRectangle(x, y, 79, 15), getMsg().base(), theme.getBoxTitleTextColor(), HELVETICA, 9, 5, 4.5f);
 		x += 80;
 
-		drawBox(contents, x, y, 79, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 79, 15), "%", WHITE, HELVETICA, 9, 5, 4.5f);
+		drawBox(contents, x, y, 79, 15, theme.getBoxTitleBackgroundColor());
+		drawTextRight(contents, new PDRectangle(x, y, 79, 15), "%", theme.getBoxTitleTextColor(), HELVETICA, 9, 5, 4.5f);
 		x += 80;
 
-		drawBox(contents, x, y, 59, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 59, 15), getMsg().type(), WHITE, HELVETICA, 9, 4.5f);
+		drawBox(contents, x, y, 59, 15, theme.getBoxTitleBackgroundColor());
+		drawTextCenter(contents, new PDRectangle(x, y, 59, 15), getMsg().type(), theme.getBoxTitleTextColor(), HELVETICA, 9, 4.5f);
 		x += 60;
 		
-		drawBox(contents, x, y, 49, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 49, 15), getMsg().quota(), WHITE, HELVETICA, 9, 5, 4.5f);
+		drawBox(contents, x, y, 49, 15, theme.getBoxTitleBackgroundColor());
+		drawTextRight(contents, new PDRectangle(x, y, 49, 15), getMsg().quota(), theme.getBoxTitleTextColor(), HELVETICA, 9, 5, 4.5f);
 		x += 50;
 
-		drawBox(contents, x, y, 99, 15, BLACK);
-		drawTextCenter(contents, new PDRectangle(x, y, 99, 15), getMsg().totalInvoice(), WHITE, HELVETICA_BOLD, 9, 4.5f);
+		drawBox(contents, x, y, 99, 15, theme.getBoxTitleBackgroundColor());
+		drawTextCenter(contents, new PDRectangle(x, y, 99, 15), getMsg().totalInvoice(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 
 		if (invoice.getBreakdown() != null){
 //			double sum = 0;
@@ -825,7 +828,7 @@ public class InvoiceTemplate {
 			for (InvoiceBreakdown tax : invoice.getBreakdown()) {
 				
 				x = 180;
-				drawTextRight(contents, new PDRectangle(x, y, 79, 15), toLatinNumber(tax.getBase()), BLACK, HELVETICA, 7, 5, -12, i + TAX_BASE);
+				drawTextRight(contents, new PDRectangle(x, y, 79, 15), toLatinNumber(tax.getBase()), theme.getBoxBodyTextColor(), HELVETICA, 7, 5, -12, i + TAX_BASE);
 				x += 80;
 				
 				String percent = "";
@@ -839,13 +842,13 @@ public class InvoiceTemplate {
 			
 				}
 
-				drawTextRight(contents, new PDRectangle(x, y, 79, 15), percent, BLACK, HELVETICA, 7, 5, -12, i + TAX_PERCENTAGE);
+				drawTextRight(contents, new PDRectangle(x, y, 79, 15), percent, theme.getBoxBodyTextColor(), HELVETICA, 7, 5, -12, i + TAX_PERCENTAGE);
 				x += 80;
 				
-				drawTextCenter(contents, new PDRectangle(x, y, 59, 15), tax.getTaxType().getName(), BLACK, HELVETICA, 7, -12, i + TAX_TYPE);
+				drawTextCenter(contents, new PDRectangle(x, y, 59, 15), tax.getTaxType().getName(), theme.getBoxBodyTextColor(), HELVETICA, 7, -12, i + TAX_TYPE);
 				x += 60;
 				
-				drawTextRight(contents, new PDRectangle(x, y, 49, 15), toLatinNumber(tax.getQuota() + tax.getSurchargeQuota()), BLACK, HELVETICA, 7, 5, -12, i + TAX_QUOTE);
+				drawTextRight(contents, new PDRectangle(x, y, 49, 15), toLatinNumber(tax.getQuota() + tax.getSurchargeQuota()), theme.getBoxBodyTextColor(), HELVETICA, 7, 5, -12, i + TAX_QUOTE);
 				x += 50;
 				
 //				sum	+= tax.getQuota() + tax.getSurchargeQuota() + tax.getBase();
@@ -853,55 +856,74 @@ public class InvoiceTemplate {
 				
 				i++;
 			}	
-			drawTextRight(contents, new PDRectangle(x, bottom + 107, 99, 15), toLatinNumber(invoice.getTotal()) + " \u20AC", BLACK, HELVETICA_BOLD, 8, 5, -14, INVOICE_TOTAL);
+			drawTextRight(contents, new PDRectangle(x, bottom + 107, 99, 15), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getBoxBodyTextColor(), HELVETICA_BOLD, 8, 5, -14, INVOICE_TOTAL);
 		}
 	}
 
 	// DRAW FINANCES
-	private void drawFinances(Invoice invoice) throws IOException {
+	private void drawFinances(Invoice invoice, PrintInvoiceThemeConfiguration theme) throws IOException {
 
 		x = 180;
 		y = bottom + 50;
 
-		drawBox(contents, x, y, 59, 15, BLACK);
-		drawText(contents, getMsg().date(), x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
+		drawBox(contents, x, y, 59, 15,  theme.getBoxTitleBackgroundColor());
+		drawText(contents, getMsg().date(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA, 9);
 		x += 60;
 
-		drawBox(contents, x, y, 79, 15, BLACK);
-		drawText(contents, getMsg().payMethod(), x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
+		drawBox(contents, x, y, 79, 15,  theme.getBoxTitleBackgroundColor());
+		drawText(contents, getMsg().payMethod(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA, 9);
 		x += 80;
 
-		drawBox(contents, x, y, 159, 15, BLACK);
-		drawText(contents, getMsg().bankAccount(), x + 5f, y + 4.5f, WHITE, HELVETICA, 9);
+		drawBox(contents, x, y, 159, 15, theme.getBoxTitleBackgroundColor());
+		drawText(contents, getMsg().bankAccount(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA, 9);
 		x += 160;
 
-		drawBox(contents, x, y, 69, 15, BLACK);
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), WHITE, HELVETICA, 9, 5, 4.5f);
+		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), theme.getBoxTitleTextColor(), HELVETICA, 9, 5, 4.5f);
 
 
 		if(invoice.getFinances() != null) {
 			int i = 0;
 			for (Finance finance : invoice.getFinances()) {
 				x = 180;
-				drawText(contents, formatDate(finance.getDueDate(), "dd/MM/yyyy").orElse(""), x + 5f, y - 12, BLACK, HELVETICA, 7, i + FINANCE_DATE);
+				drawText(contents, formatDate(finance.getDueDate(), "dd/MM/yyyy").orElse(""), x + 5f, y - 12, theme.getBoxBodyTextColor(), HELVETICA, 7, i + FINANCE_DATE);
 				x += 60;
 				
 				String paymethod = finance.getPayMethodName() != null ? finance.getPayMethodName() : (finance.getPayMethodType() != null ? finance.getPayMethodType().getDescription(): "");
-				drawText(contents, paymethod, x + 5f, y - 12, BLACK, HELVETICA,7, i + FINANCE_PAY_METHOD);
+				drawText(contents, paymethod, x + 5f, y - 12, theme.getBoxBodyTextColor(), HELVETICA,7, i + FINANCE_PAY_METHOD);
 				x += 80;
 			
 				if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null)
-					drawText(contents, finance.getBankAccount().getIban(), x + 5f, y - 12, BLACK, HELVETICA, 7, i + FINANCE_BANK_ACCOUNT);
+					drawText(contents, finance.getBankAccount().getIban(), x + 5f, y - 12, theme.getBoxBodyTextColor(), HELVETICA, 7, i + FINANCE_BANK_ACCOUNT);
 				else
-					drawText(contents, "", x + 5f, y - 12, BLACK, HELVETICA, 7, i + FINANCE_BANK_ACCOUNT);
+					drawText(contents, "", x + 5f, y - 12, theme.getBoxBodyTextColor(), HELVETICA, 7, i + FINANCE_BANK_ACCOUNT);
 			
 				x += 160;
-				drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(finance.getAmount()), BLACK, HELVETICA, 7, 5, -12, i + FINANCE_AMOUNT);
+				drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(finance.getAmount()), theme.getBoxBodyTextColor(), HELVETICA, 7, 5, -12, i + FINANCE_AMOUNT);
 				
 				y -= 10;
 				i++;
 			}
 		}
+	}
+	
+	public static byte[] createQR(String datos, int ancho, int altura) throws WriterException, IOException {
+	    BitMatrix matrix;
+	    Writer escritor = new QRCodeWriter();
+	    matrix = escritor.encode(datos, BarcodeFormat.QR_CODE, ancho, altura);
+	         
+	    BufferedImage imagen = new BufferedImage(ancho, altura, BufferedImage.TYPE_INT_RGB);
+	    
+	    for(int y = 0; y < altura; y++) {
+	        for(int x = 0; x < ancho; x++) {
+	            int grayValue = (matrix.get(x, y) ? 0 : 1) & 0xff;
+	            imagen.setRGB(x, y, (grayValue == 0 ? 0 : 0xFFFFFF));
+	        }
+	    }
+	         
+	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    ImageIO.write(imagen, "PNG", baos);
+	    return baos.toByteArray();        
 	}
 	
 	private InvoiceTemplateMsg getMsg() {	

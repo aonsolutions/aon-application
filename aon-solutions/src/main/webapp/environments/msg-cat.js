@@ -15,6 +15,7 @@ export const ADD_CATEGORY = 'Afegir Categoria';
 export const ADD_COMMENT = 'Afegir Comentari';
 export const ADD_FILE = 'Adjuntar Fitxer';
 export const ADD_INVOICE = 'Afegir Factura';
+export const ADD_REMARKS = 'Afegir Observacions';
 export const ADD_TAG = 'Afegir Etiqueta';
 export const ADD_TAX = 'Afegir Impost';
 export const ADDITIONAL_INFORMATION = 'Informació Addicional';
@@ -200,6 +201,7 @@ export const LOCATION = 'Ubicació';
 
 // ----- M
 
+export const MANAGEMENT = 'Gestió';
 export const MODEL_111 = 'Model 111';
 export const MODEL_111_DESCRIPTION = `Model 111. Retencions i ingressos a compte. Rendiments del treball i d'activitats econòmiques, premis i determinats guanys patrimonials i imputacions de renda. Autoliquidació.`;
 export const MODEL_190 = 'Model 190';
@@ -279,6 +281,7 @@ export const REJECT_INVOICES = 'Rebutjar Factures';
 export const REJECTED = 'Factures Rebutjada';
 export const REJECTED_INVOICES = 'Factures Rebutjades';
 export const REJECTEDS = 'Rebutjades';
+export const REMARKS = 'Observacions';
 export const REMINDER = 'Recordatori';
 export const REQUEST = 'Sol·licitud';
 export const REQUESTS = 'Sol·licituds';

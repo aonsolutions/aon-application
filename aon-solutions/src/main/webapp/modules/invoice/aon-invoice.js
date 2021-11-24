@@ -1,23 +1,12 @@
 import { AonElement } from '../../components/AonElement.js';
-import { getDomainUserRoles, getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
+import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries} from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
-import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 
 import { AonToolbar } from '../../components/aon-toolbar.js';
 import { AonCard } from '../../components/aon-card.js';
-import '../../components/aon-date.js';
-import '../../components/aon-select.js';
-import '../../components/aon-suggestion.js';
-import '../../components/aon-input.js';
-import '../../components/aon-number.js';
-import '../../components/aon-checkbox.js';
-import '../../components/aon-icon-button.js';
-import '../../components/aon-switch.js';
-import '../../components/aon-dialog.js';
-import '../../components/aon-dialog-menu.js';
 import { AonViewer } from '../../components/aon-viewer.js';
 import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 
@@ -40,7 +29,6 @@ import { AonSwitch } from '../../components/aon-switch.js';
 export class AonInvoice extends AonElement {
 
 	invoice;
-	dur;
 	focusId;
 	TOOLBAR;
 	GENERAL
@@ -86,15 +74,14 @@ export class AonInvoice extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-		getDomainUserRoles({}).then(r => {
-			this.dur = new DomainUserRoles(r);
+		this.buildDur().then(r => {
 			this.build();
 		});
-	
+
 		let registry = this.getInvoice().isEmitida()
 			? this.getInvoice().getRegistry().id : LS.getCompany().registry;
 
-		if(registry){
+		if(registry) {
 			let data = {
 				id: registry,
 				registry: registry,
@@ -189,10 +176,6 @@ export class AonInvoice extends AonElement {
 		this.FINANCE_DELETE = this.FINANCE + CONSTANT.DELETE.initCap();
 	}
 
-	getDur(){
-		return this.dur;
-	}
-
 	getInvoice() {
 		return this.invoice;
 	}
@@ -223,11 +206,20 @@ export class AonInvoice extends AonElement {
 			if(window.innerWidth && window.innerWidth > 1100 && !this.fileOpened){
 				this.getElement(this.GENERAL).style.display='flex';
 				this.getElement(this.GENERAL_CARD).style.width = '50%';
-				this.getElement(this.TAX).style.width = '50%';			
+				this.getElement(this.TAX).style.width = '50%';
+				let hasComment = this.invoice.comments && this.invoice.comments != undefined && this.invoice.comments != '';
+				let hasRemarks = this.invoice.remarks && this.invoice.remarks.length > 0;
+				if(hasComment && hasRemarks) {
+					this.getElement(this.REMARKS_CARD).style.width = '50%';
+					this.getElement(this.COMMENT_CARD).style.width = '50%';
+				}
+
 			} else if(window.innerWidth && window.innerWidth < 1050){
 				this.getElement(this.GENERAL).style.display='block';
 				this.getElement(this.GENERAL_CARD).style.width = '100%';
 				this.getElement(this.TAX).style.width = '100%';
+				this.getElement(this.REMARKS_CARD).style.width = '100%';
+				this.getElement(this.COMMENT_CARD).style.width = '100%';
 			} 
 				
 			if(window.innerWidth && window.innerWidth < 900){
@@ -322,11 +314,9 @@ export class AonInvoice extends AonElement {
 				moreActions.push(remarks);
 			}
 
-			if(this.isBeta()) {
-				let comment = ACTION.COMMENT;
-				comment.fn = () => this.addInvoiceComment();
-				moreActions.push(comment);
-			}
+			let comment = ACTION.COMMENT;
+			comment.fn = () => this.addInvoiceComment();
+			moreActions.push(comment);
 
 			let send = ACTION.SEND_INVOICE;
 			send.fn = () => this.sendInvoice();
@@ -421,7 +411,6 @@ export class AonInvoice extends AonElement {
 		parent.appendChild(commentsDiv);
 
 		let hasComment = this.invoice.comments && this.invoice.comments != undefined && this.invoice.comments != '';
-
 		let hasRemarks = this.invoice.remarks && this.invoice.remarks.length > 0;
 
 		let remarksCard = new AonCard();
@@ -1614,7 +1603,7 @@ export class AonInvoice extends AonElement {
 		let d = document.getElementById(aonInvoice.DIALOG);
 		d.clear();
 		if(!this.isMobile()) d.width = '400px';
-		d.setTitle(MSG.ADD_COMMENT);
+		d.setTitle(MSG.ADD_REMARKS);
 		d.setContentHTML('<textarea id="commentTextArea" class="aonTextarea"> </textarea>');
 		d.addAcceptAction(() => {
 			let ta = this.getElement('commentTextArea');

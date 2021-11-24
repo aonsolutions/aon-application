@@ -15,6 +15,7 @@ export const ADD_CATEGORY = 'Kategorie Hinzufügen';
 export const ADD_COMMENT = 'Kommentar Hinzufügen';
 export const ADD_FILE = 'Datei Hinzufügen';
 export const ADD_INVOICE = 'Rechnung Hinzufügen';
+export const ADD_REMARKS = 'Beobachtungen Hinzufügen';
 export const ADD_TAG = 'Tag Hinzufügen';
 export const ADD_TAX = 'Steuern Hinzufügen';
 export const ADDITIONAL_INFORMATION = 'Additional Information';
@@ -48,21 +49,22 @@ export const BUSINESS_NAME = 'Business Name';
 
 // ----- C
 
-export const CANCEL = 'Cancel';
-export const CATALAN = 'Catalan';
-export const CATEGORY = 'Category';
-export const CATEGORIES = 'Categories';
+export const CANCEL = 'Abbrechen';
+export const CATALAN = 'katalanisch';
+export const CATEGORY = 'Kategorie';
+export const CATEGORIES = 'Kategorien';
 export const CERTIFICATE = 'Zertifikat';
 export const CERTIFICATES = 'Zertifikate';
-export const CHANGE_TYPE = 'Change Type';
-export const CITY = 'City';
+export const CHANGE_TYPE = 'Typ ändern';
+export const CHARGES_AND_PAYMENTS = 'Gebühren und Zahlungen';
+export const CITY = 'Stadt';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
-export const CLOSE = 'Close';
-export const CLOSE_SESSION = 'Logout';
+export const CLOSE = 'nah dran';
+export const CLOSE_SESSION = 'Ausloggen';
 export const CODE = 'Code';
-export const COMMENT = 'Comment';
-export const COMMENTS = 'Comments';
+export const COMMENT = 'Kommentar';
+export const COMMENTS = 'Kommentare';
 export const COMMUNICATION = 'Kommunikation';
 export const COMPANIES = 'Companies';
 export const COMPANY = 'Company';
@@ -200,6 +202,7 @@ export const LOCATION = 'Location';
 
 // ----- M
 
+export const MANAGEMENT = 'Verwaltung';
 export const MODEL_111 = 'Form 111';
 export const MODEL_111_DESCRIPTION = 'Form 111. Withholdings and payment on account. Work income and income from economic activities, prizes and certain capital gains and income allocations. Self-assessment.';
 export const MODEL_190 = 'Form 190';
@@ -279,6 +282,7 @@ export const REJECT_INVOICES = 'Reject Invoices';
 export const REJECTED = 'Rejected';
 export const REJECTED_INVOICES = 'Rejected Invoices';
 export const REJECTEDS = 'Rejected';
+export const REMARKS = 'Beobachtungen';
 export const REMINDER = 'Reminder';
 export const REQUEST = 'Request';
 export const REQUESTS = 'Requests';

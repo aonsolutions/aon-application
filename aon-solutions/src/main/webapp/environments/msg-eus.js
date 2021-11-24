@@ -15,6 +15,7 @@ export const ADD_CATEGORY = 'Kategoria Gehitu';
 export const ADD_COMMENT = 'Iruzkina Gehitu';
 export const ADD_FILE = 'Fitxategia Erantsi';
 export const ADD_INVOICE = 'Faktura Gehitu';
+export const ADD_REMARKS = 'Oharrak Gehitu';
 export const ADD_TAG = 'Etiketa Gehitu';
 export const ADD_TAX = 'Zerga Gehitu';
 export const ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
@@ -55,6 +56,7 @@ export const CATEGORIES = 'Kategoriak';
 export const CERTIFICATE = 'Ziurtagiria';
 export const CERTIFICATES = 'Ziurtagiriak';
 export const CHANGE_TYPE = 'Mota Aldatu';
+export const CHARGES_AND_PAYMENTS = 'Kobrantza eta Ordainketa';
 export const CITY = 'Hiria';
 export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
 export const CLASSIC_VIEW = 'Ikuspegi Klasikoa';
@@ -200,6 +202,7 @@ export const LOCATION = 'Kokapena';
 
 // ----- M
 
+export const MANAGEMENT = 'Kudeaketa';
 export const MODEL_111 = '111 Eredua';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
 export const MODEL_190 = '190 Eredua';
@@ -278,6 +281,7 @@ export const REJECT_INVOICES = 'Fakturak Baztertu'
 export const REJECTED = 'Baztertua';
 export const REJECTED_INVOICES = 'Baztertu Diren Fakturak';
 export const REJECTEDS = 'Baztertua';
+export const REMARKS = 'Oharrak';
 export const REMINDER = 'Oroigarri';
 export const REQUEST = 'Eskaera';
 export const REQUESTS = 'Eskaerak';

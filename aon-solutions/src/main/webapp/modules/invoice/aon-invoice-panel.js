@@ -32,6 +32,7 @@ import { AonMobileCustomerList } from '../registry/customer/aon-mobile-customer-
 import { AonCustomer } from '../registry/customer/aon-customer.js';
 import { AonSupplier } from '../registry/supplier/aon-supplier.js';
 import { AonCreditor } from '../registry/creditor/aon-creditor.js';
+import * as GWT from '../../gwt/gwt.js';
 
 export class AonInvoicePanel extends AonElement {
 
@@ -197,13 +198,11 @@ export class AonInvoicePanel extends AonElement {
 	buildSettingOptions() {
 		let settingOptions = [];
 		if(!this.isMobile()) {
-			settingOptions = [ OPTION.REGISTRY, OPTION.CONCEPTS ];
+			settingOptions = [ OPTION.REGISTRY, OPTION.CONCEPTS, OPTION.CHARGES_PAYMENTS ];
 		} else settingOptions = [ OPTION.REGISTRY, OPTION.PRODUCT ];
 
-		if(this.getDur().isAlpha()){
-			settingOptions.push(OPTION.CONFIGURATION_SII_TBAI);
-		}
-		this.getApplication().addSidenavOptions(MSG.SETTING, settingOptions);
+
+		this.getApplication().addSidenavOptions(MSG.MANAGEMENT, settingOptions);
 	}
 
 	add(){
@@ -548,6 +547,9 @@ export class AonInvoicePanel extends AonElement {
 			case OPTION.CONFIGURATION_SII_TBAI.id:
 				break;
 			case OPTION.REGISTRY.id:
+				break;
+			case OPTION.CHARGES_PAYMENTS.id:
+				GWT.load(GWT.FINANCE, this.getApplication().CONTENT);
 				break;
 			default:
 				this.aonInvoiceList({status: CONSTANT.INBOX});

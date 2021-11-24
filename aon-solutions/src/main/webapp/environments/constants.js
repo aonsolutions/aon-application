@@ -43,6 +43,7 @@ export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
 export const CATEGORY_NAME = 'categoryName';
 export const CHANGE_TYPE = 'changeType';
+export const CHARGES_PAYMENTS = 'chargesPayments';
 export const CHECKED = 'checked';
 export const CODE = 'code';
 export const COMMENT = 'comment';

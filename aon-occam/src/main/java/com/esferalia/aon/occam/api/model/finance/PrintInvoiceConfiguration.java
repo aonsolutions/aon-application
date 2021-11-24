@@ -20,6 +20,8 @@ public class PrintInvoiceConfiguration {
 	private boolean recordData;
 	private boolean contactData;
 	private AonLanguage language;
+	
+	private PrintInvoiceThemeConfiguration theme;
 
 	@Deprecated
 	public InputStream getBackgroundImage() {
@@ -134,5 +136,13 @@ public class PrintInvoiceConfiguration {
 		this.language = language;
 		return this;
 	}
+
+	public PrintInvoiceThemeConfiguration getTheme() {
+		return theme;
+	}
 	
+	public PrintInvoiceConfiguration setTheme(PrintInvoiceThemeConfiguration theme) {
+		this.theme = theme;
+		return this;
+	}
 }

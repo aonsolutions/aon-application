@@ -43,7 +43,7 @@ export const ADD_DETAIL = MSG.ADD; // TODO
 export const ADD_FILE = MSG.ADD_FILE;
 export const ADD_FINANCE = MSG.ADD; // TODO
 export const ADD_INVOICE = MSG.ADD_INVOICE;
-export const ADD_REMARKS = 'Añadir Observaciones';
+export const ADD_REMARKS = MSG.ADD_REMARKS;
 export const ADD_TAG = MSG.ADD_TAG;
 export const ADD_TAX = MSG.ADD_TAX;
 export const ADD_TYPE = "Añadir Tipo"; // TODO
@@ -94,6 +94,7 @@ export const CATEGORIES = MSG.CATEGORIES;
 export const CERTIFICATE = MSG.CERTIFICATE;
 export const CERTIFICATES = MSG.CERTIFICATES;
 export const CHANGE_TYPE = MSG.CHANGE_TYPE;
+export const CHARGES_AND_PAYMENTS = MSG.CHARGES_AND_PAYMENTS;
 export const CITY = MSG.CITY;
 export const CLASSIC_APPLICATIONS = MSG.CLASSIC_APPLICATIONS;
 export const CLASSIC_VIEW = MSG.CLASSIC_VIEW;
@@ -266,6 +267,7 @@ export const LOCATION = MSG.LOCATION;
 
 // ----- M
 
+export const MANAGEMENT = MSG.MANAGEMENT;
 export const MODEL_111 = MSG.MODEL_111;
 export const MODEL_111_DESCRIPTION = MSG.MODEL_111_DESCRIPTION;
 export const MODEL_190 = MSG.MODEL_190;
@@ -369,7 +371,7 @@ export const REJECT_INVOICES = MSG.REJECT_INVOICES;
 export const REJECTED = MSG.REJECTED;
 export const REJECTED_INVOICES = MSG.REJECTED_INVOICES;
 export const REJECTEDS = MSG.REJECTEDS;
-export const REMARKS = "Observaciones";
+export const REMARKS = MSG.REMARKS;
 export const REMINDER = MSG.REMINDER;
 export const REQUEST = MSG.REQUEST;
 export const REQUESTS = MSG.REQUESTS;
