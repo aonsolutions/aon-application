@@ -207,17 +207,22 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
         google.visualization.events.addListener(chart, "select", callbackYear);
 
-        document.getElementById(
-          "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-        ).style.display = "none";
+        let trialToolbarHeader = document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton");
+
+        if (trialToolbarHeader)
+          trialToolbarHeader.style.display = "none";
 
         chart.draw(table, options);
 
         let mobileLegend = UTILS.getMobileLegend(accounts, isMobile);
         div.appendChild(mobileLegend);
         if (isMobile) {
-          divCombo.querySelector(":nth-child(1)").style.marginLeft = "8%";
-          divCombo.style.overflow = "hidden";
+
+          let firstChild = divCombo.querySelector(":nth-child(1)");
+          if (firstChild)
+            firstChild.style.marginLeft = "8%";
+          
+            divCombo.style.overflow = "hidden";
         }
       } else {
         let divMessage = setStyles(document.createElement("div"), {
@@ -246,14 +251,15 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         .getElementById(
           "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
         );
+
+        if (elem) {
           elem.onclick = () => {
             drawChart();
-            document
-              .querySelector(
-                "#aonAccountingSidenavOPCIONESList li:nth-child(1)"
-              )
-              .click();
+            let accSidenav = document.querySelector("#aonAccountingSidenavOPCIONESList li:nth-child(1)");
+            if (accSidenav)
+              accSidenav.click();
           };
+        }
       }
     };
 
@@ -287,9 +293,12 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
     }
 
     function drawPieChart(selectedColumn) {
-      document.getElementById(
-        "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-      ).style.display = "";
+
+
+      let trialToolbar = document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton");
+
+      if (trialToolbar)
+        trialToolbar.style.display = "";
 
       let arr = getArray(selectedColumn);
       let sDteStr = selectedElement.interval.fromDate;
@@ -341,14 +350,14 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
           colors: colors,
           legend: { position: "none" },
         };
-
-        document
-          .getElementById(
-            "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-          )
-          .addEventListener("click", () => {
+        let trialToolbar = document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton");
+        
+        if (trialToolbar) {
+          trialToolbar.addEventListener("click", () => {
             drawPeriodChart(selectedElement);
           });
+        }
+        
 
         let pieDiv = document.createElement("div");
         pieDiv.id = "pieDiv";
@@ -445,14 +454,20 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
 
           let marg = ratio <= 1 ? -1 * 35 * (1 - ratio) * 1.8 : 0;
 
-          document.querySelector("#pieDiv > div:first-of-type").style.overflow =
-            "hidden";
-          document.querySelector(
-            "#pieDiv > div:first-of-type > div:first-of-type"
-          ).style.marginTop = `${marg}%`;
-          document.querySelector(
-            "#pieDiv > div:first-of-type > div:first-of-type"
-          ).style.marginBottom = `${marg}%`;
+          let firstOfPie = document.querySelector("#pieDiv > div:first-of-type");
+
+          if (firstOfPie) {
+            firstOfPie.style.overflow = "hidden";
+
+            let firstOfPieSub = document.querySelector("#pieDiv > div:first-of-type > div:first-of-type");
+
+            if (firstOfPieSub) {
+              firstOfPieSub.style.marginTop = `${marg}%`;
+              firstOfPieSub.style.marginBottom = `${marg}%`;
+            }
+
+
+          }
         }
 
         pieDiv.prepend(head);
@@ -463,15 +478,12 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
       if (accounts.length > 1) {
         div.innerHTML = "";
 
-        document
-          .getElementById(
-            "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-          )
-          .addEventListener("click", () => {
+      let aonGraphicsTrial = document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton");
+
+      if (aonGraphicsTrial)
+          aonGraphicsTrial.addEventListener("click", () => {
             drawChart();
-            document.getElementById(
-              "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-            ).style.display = "none";
+            aonGraphicsTrial.style.display = "none";
           });
 
         selAccounts = selectedElement.statements
@@ -606,30 +618,30 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
         .getElementById(
           "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
         );
+        if (elem) {
           elem.onclick = () => {
             drawChart();
-            document
-              .querySelector(
-                "#aonAccountingSidenavOPCIONESList li:nth-child(1)"
-              )
-              .click();
+            let elemChild = document.querySelector("#aonAccountingSidenavOPCIONESList li:nth-child(1)");
+            if (elemChild)
+              elemChild.click();
           };
+        }
       }
     }
 
     function drawBarChart() {
       // Create the data table.
 
-      document.getElementById(
-        "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-      ).addEventListener("click", () => {
-        div.innerHTML = "";
-        drawChart();
-      });
+      let trialToolbarH = document.getElementById("aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton");
 
-      document.getElementById(
-        "aonGraphicsTrialToolbarHeaderToolSectionBackButtonIconButton"
-      ).style.display = filter && filter.show == "yearly" ? "none" : "";
+      if (trialToolbarH) {
+        trialToolbarH.addEventListener("click", () => {
+          div.innerHTML = "";
+          drawChart();
+        });
+        trialToolbarH.style.display = filter && filter.show == "yearly" ? "none" : "";
+      }
+
 
 
 
@@ -743,7 +755,9 @@ export const colChart = (div, data, selectedPeriod, isMobile, filter) => {
       chart.draw(data1, options);
 
       if (isMobile) {
-        div.querySelector(":nth-child(1)").style.marginLeft = "15%";
+        let childone = div.querySelector(":nth-child(1)");
+        if (childone)
+          childone.style.marginLeft = "15%";
         div.style.overflow = "hidden";
       }
 
