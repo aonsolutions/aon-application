@@ -1333,10 +1333,6 @@ public abstract class Employee extends ResizeComposite {
 	
 	// ------------------------------------------------- Save methods
 	
-	public boolean checkIfSaveEmployeeIsPossible() {
-		return checkIfNewEmployeeIsPossible() && checkAddress();
-	}
-	
 	public Map<String, String> checkSaveAndGetErrors() {
 		cleanErrorStyles();
 		Map<String, String> messageMap = new HashMap<>();
@@ -1350,6 +1346,7 @@ public abstract class Employee extends ResizeComposite {
 			if(!isWokplaceSelected()) messageMap.put("Centro de trabajo", "Campo obligatorio");
 			if(!isActivityCCCSelected()) messageMap.put("Actividad", "Campo obligatorio");
 			if(!isContractTypeSelected()) messageMap.put("Tipo de contrato", "Campo obligatorio");
+			if(!isAgreementAndLevelSelected()) messageMap.put("Convenio", "Para poder asigar un convenio se debe seleccionar un nivel/categoria");
 		}
 		
 		Date startDateValue = null == startDate.getValue() ? null : DateUtils.copyDateOnly(startDate.getValue());
@@ -1434,6 +1431,20 @@ public abstract class Employee extends ResizeComposite {
 			return true;
 	}
 	
+	private boolean isAgreementAndLevelSelected() {
+		String agreementValue = agreement.getSelectedValue();
+		if(AonStringUtils.equalsIgnoreCase(agreementValue, "-1")) {
+			return true;
+		} else {
+			String agreementLevelValue = level.getSelectedValue();
+			if(AonStringUtils.equalsIgnoreCase(agreementLevelValue, "-1")) {
+				addErrorBorder(level);
+				return false;
+			} else
+				return true;
+		}
+	}
+	
 	private boolean checkDates() {
 		Date startDateValue = null == startDate.getValue() ? null : DateUtils.copyDateOnly(startDate.getValue());
 		Date endDateValue = null == endDate.getValue() ? null : DateUtils.copyDateOnly(endDate.getValue());
@@ -1450,26 +1461,6 @@ public abstract class Employee extends ResizeComposite {
 			return false;
 		}
 
-	}
-	
-	// ------------------------------------------------- SaveMethods.checkAddress
-	
-	private boolean checkAddress() {
-		String addressZipValue = addressZip.getValue();
-		String addressProvinceValue = addressProvince.getSelectedValue();
-		String addressMunicipalityValue = addressMunicipality.getSelectedValue();
-		
-		if(AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")) {
-			if(AonStringUtils.isNotBlank(addressZipValue) && !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") && !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1"))
-				return true;
-			else {
-				if(AonStringUtils.isBlank(addressZipValue)) addErrorBorder(addressZip);
-				if(AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1")) addErrorBorder(addressProvince);
-				if(AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")) addErrorBorder(addressMunicipality);
-				return false;
-			}
-		} else
-			return true;
 	}
 	
 	// ------------------------------------------------- journeyDuration.Methods
@@ -1532,6 +1523,7 @@ public abstract class Employee extends ResizeComposite {
 		removeErrorBorder(addressZip);
 		removeErrorBorder(addressProvince);
 		removeErrorBorder(addressMunicipality);
+		removeErrorBorder(level);
 	}
 	
 }
