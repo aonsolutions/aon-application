@@ -820,12 +820,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
 			switch (itemIdx) {
 			case 0:
-				contrataEmployeeObject.setEmployeeContract(s -> {
-					if(null == this.contrataEmployeeObject.getContractData().getEndDate())
-						tgssContextMenu.getAfiEnd().getElement().getStyle().setDisplay(Display.NONE);
-					else
-						tgssContextMenu.getAfiEnd().getElement().getStyle().clearDisplay();
-				}, f -> {});
+				Map<String, String> messageMap = contractEmployeeUI.checkSaveAndGetErrors();
+				if(messageMap.isEmpty())
+					contrataEmployeeObject.setEmployeeContract(s -> {
+						if(null == this.contrataEmployeeObject.getContractData().getEndDate())
+							tgssContextMenu.getAfiEnd().getElement().getStyle().setDisplay(Display.NONE);
+						else
+							tgssContextMenu.getAfiEnd().getElement().getStyle().clearDisplay();
+					}, f -> {});
 				break;
 			case 1:
 				contrataEmployeeObject.setContractSpecificData(contractSpecificData.getContractSpecificData(), s -> {}, f -> {});
