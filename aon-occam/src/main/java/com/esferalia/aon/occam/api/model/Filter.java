@@ -510,6 +510,11 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface EnterpriseCCCFilter{
+		Filter filter(EnterpriseCCCProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface NoteFilter{
 		Filter filter(NoteProperties properties);
 	}

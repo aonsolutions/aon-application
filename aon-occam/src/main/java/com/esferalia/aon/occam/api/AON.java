@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.Expedient;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
@@ -62,6 +63,7 @@ import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
+import com.esferalia.aon.occam.api.model.Filter.EnterpriseCCCFilter;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
@@ -251,6 +253,7 @@ import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
 import com.esferalia.aon.occam.impl.jooq.CommissionImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
+import com.esferalia.aon.occam.impl.jooq.EnterpriseImpl;
 import com.esferalia.aon.occam.impl.jooq.ExpedientImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
@@ -367,6 +370,10 @@ public class AON {
 	
 	private static IExpedient getExpedient() {
 		return new ExpedientImpl();
+	}
+	
+	private static IEnterprise getEnterprise() {
+		return new EnterpriseImpl();
 	}
 
 	// ********************************************
@@ -6873,4 +6880,29 @@ public class AON {
 			getFinance().deleteInvoiceFiscal(ctx, invoiceId);
 		}
 	}	
+	
+	//-------------ENTERPRISE
+	public static EnterpriseCCC saveEnterpriseCCC(Domain domain, String login, EnterpriseCCC ec) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getEnterprise().saveEnterpriseCCC(ctx, ec);
+		}
+	}
+	
+	public static EnterpriseCCC getEnterpriseCCC(Domain domain, String login, EnterpriseCCCFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getEnterprise().getEnterpriseCCC(ctx, filter);
+		}
+	}
+
+	public static Stream<EnterpriseCCC> getEnterpriseCCCStream(Domain domain, String login, EnterpriseCCCFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getEnterprise().getEnterpriseCCCStream(ctx, filter);
+		}
+	}
+	
+	public static void deleteEnterpriseCCC(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getEnterprise().deleteEnterpriseCCC(ctx, id);
+		}
+	}
 }

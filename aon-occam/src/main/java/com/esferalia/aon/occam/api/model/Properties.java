@@ -1372,6 +1372,15 @@ public interface Properties {
 		Property<Double> getLongitudeProperty();
 	}
 	
+	public interface EnterpriseCCCProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getCccProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getEnterpriseActivityProperty();
+		Property<Integer> getGeozoneProperty();
+	}
+	
 	public interface NoteProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
