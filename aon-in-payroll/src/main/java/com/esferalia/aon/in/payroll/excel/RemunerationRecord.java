@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -607,7 +608,7 @@ public class RemunerationRecord {
 									cell.setCellValue(entry.getLevel());
 								}
 								//QUOTE GROUP
-								{
+								if (entry.getQuoteGroup() != null){
 									cell = row.getCell(28) != null ? row.getCell(28) : row.createCell(28);
 									copyCellProperties(wb, cell, firstRow.getCell(28));
 									cell.setCellValue(entry.getQuoteGroup());
@@ -710,15 +711,15 @@ public class RemunerationRecord {
 		.from(SALARY)
 		.innerJoin(CONTRACT).on(SALARY.CONTRACT.eq(CONTRACT.ID))
 		.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
-		.innerJoin(IRPF_DATA).on(CONTRACT.ID.eq(IRPF_DATA.CONTRACT))
 		.innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-		.innerJoin(AGREEMENT_LEVEL).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
-		.innerJoin(AGREEMENT).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT.ID))
-		.innerJoin(contractKey).on(SALARY.ID.eq(contractKey.SALARY)).and(contractKey.NAME.eq("TC2"))
-		.innerJoin(parcialityCoef).on(SALARY.ID.eq(parcialityCoef.SALARY)).and(parcialityCoef.NAME.eq("COEFICIENTE_PARCIALIDAD"))
-		.innerJoin(quoteGroup).on(SALARY.ID.eq(quoteGroup.SALARY)).and(quoteGroup.NAME.eq("GRUPO_COTIZACION"))
+		.leftJoin(IRPF_DATA).on(CONTRACT.ID.eq(IRPF_DATA.CONTRACT))
+		.leftJoin(AGREEMENT_LEVEL).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
+		.leftJoin(AGREEMENT).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT.ID))
+		.leftJoin(contractKey).on(SALARY.ID.eq(contractKey.SALARY)).and(contractKey.NAME.eq("TC2"))
+		.leftJoin(parcialityCoef).on(SALARY.ID.eq(parcialityCoef.SALARY)).and(parcialityCoef.NAME.eq("COEFICIENTE_PARCIALIDAD"))
+		.leftJoin(quoteGroup).on(SALARY.ID.eq(quoteGroup.SALARY)).and(quoteGroup.NAME.eq("GRUPO_COTIZACION"))
 		.where(condition).groupBy(CONTRACT.ID).orderBy(CONTRACT.START_DATE);
-
+		
 		
 		HashSet<SalaryPayment> aliasedTables = new HashSet<SalaryPayment>();
 		LinkedList<IRetributiveConcept> concepts = new LinkedList<IRetributiveConcept>();
@@ -826,7 +827,7 @@ public class RemunerationRecord {
 		TreeSet<Integer> groupSet = new TreeSet<Integer>();
 		
 		for (String key : entries.keySet())
-			entries.get(key).stream().map(e -> e.getQuoteGroup()).forEach(group -> groupSet.add(group));
+			entries.get(key).stream().filter(Objects::nonNull).map(e -> e.getQuoteGroup()).filter(Objects::nonNull).forEach(group -> groupSet.add(group));
 		
 		LinkedList<Integer> groups = new LinkedList<Integer>();
 		groups.addAll(groupSet);
@@ -852,6 +853,8 @@ public class RemunerationRecord {
 				}
 				
 				Integer groupInd = groups.indexOf(entryList.get(i).getQuoteGroup())+1;
+				if (groupInd == 0)
+					groupInd = groups.size() + 1;
 				ent.professionalGroup = groupInd > 9 ? "GRUPO "+groupInd : "GRUPO 0"+groupInd;
 			}
 		}
@@ -998,6 +1001,7 @@ public class RemunerationRecord {
 				.where(condition)
 				.groupBy(SALARY_PAYMENT.PAYMENT_CONCEPT)
 				.having(DSL.sum(SALARY_PAYMENT.AMOUNT).gt(new BigDecimal(0))).orderBy(1, 2).fetchStream();
+		
 		return payments;
 	}
 	
