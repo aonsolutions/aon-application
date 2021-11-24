@@ -66,6 +66,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -520,6 +521,7 @@ public class InvoiceTest {
 			config.setHeader(50);
 			config.setFooter(0);
 			config.setCompany(true);
+			config.setTheme(new PrintInvoiceThemeConfiguration());
 			
 			CompanyFull company = new CompanyFull();
 			LinkedList<RegistryMedia> rmediaList = new LinkedList<RegistryMedia>();
