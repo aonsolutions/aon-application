@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
+import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
@@ -407,19 +408,19 @@ public class RemunerationRecord {
 						Drawing<?> drawing = sheet.createDrawingPatriarch();
 						ClientAnchor anchor = wb.getCreationHelper().createClientAnchor();
 						anchor.setAnchorType( ClientAnchor.AnchorType.MOVE_AND_RESIZE );
-						int pictureIndex =
-						        wb.addPicture(remunerationRecordData.getLogo().orElse(null), Workbook.PICTURE_TYPE_PNG);
-	//					anchor.setCol1( 0 );
-	//					anchor.setRow1(0); // same row is okay
-	//					anchor.setRow2(0);
-	//					anchor.setCol2( 1 );
-						int top = width >= height ? 90 : 30;
-						anchor.setDx1(90 * Units.EMU_PER_PIXEL);
-						anchor.setDx2((90+width) * Units.EMU_PER_PIXEL);
-						anchor.setDy1(top* Units.EMU_PER_PIXEL);
-						anchor.setDy2((top+height) * Units.EMU_PER_PIXEL);
-						drawing.createPicture( anchor, pictureIndex );
-	//					pict.resize();
+						
+						try {
+							int pictureIndex = wb.addPicture(remunerationRecordData.getLogo().orElse(null), Workbook.PICTURE_TYPE_PNG);
+							int top = width >= height ? 90 : 30;
+							anchor.setDx1(90 * Units.EMU_PER_PIXEL);
+							anchor.setDx2((90+width) * Units.EMU_PER_PIXEL);
+							anchor.setDy1(top* Units.EMU_PER_PIXEL);
+							anchor.setDy2((top+height) * Units.EMU_PER_PIXEL);
+							drawing.createPicture( anchor, pictureIndex );							
+						} catch (PartAlreadyExistsException e) {
+							System.err.println(e.getMessage());
+						}
+						
 					
 					}
 				}
@@ -520,14 +521,17 @@ public class RemunerationRecord {
 								{
 									cell = row.getCell(2) != null ? row.getCell(2) : row.createCell(2);
 									copyCellProperties(wb, cell, firstRow.getCell(2));
-									cell.setCellValue(entry.getGender() != Gender.UNKNOWN ? entry.getGender().getName(new Locale("es")) : null);
+									String gender = entry.getGender() != null && entry.getGender() != Gender.UNKNOWN ? entry.getGender().getName(new Locale("es")) : null;
+									if (gender != null)
+										cell.setCellValue(gender);
 								}
 								//BIRTH DATE
 								{
 									cell = row.getCell(3) != null ? row.getCell(3) : row.createCell(3);
 									copyCellProperties(wb, cell, firstRow.getCell(3));
 									cell.setCellStyle(grayDate);
-									cell.setCellValue(entry.getBirthDate());
+									if (entry.getBirthDate() != null)
+										cell.setCellValue(entry.getBirthDate());
 								}
 								//FAMILY SITUATION
 								{
@@ -541,77 +545,89 @@ public class RemunerationRecord {
 									cell = row.getCell(7) != null ? row.getCell(7) : row.createCell(7);
 									copyCellProperties(wb, cell, firstRow.getCell(7));
 									cell.setCellStyle(blackDate);
-									cell.setCellValue(entry.getHireDate());
+									if (entry.getHireDate() != null)
+										cell.setCellValue(entry.getHireDate());
 								}
 								//CONTRACT END DATE
 								{
 									cell = row.getCell(8) != null ? row.getCell(8) : row.createCell(8);
 									copyCellProperties(wb, cell, firstRow.getCell(8));
 									cell.setCellStyle(grayDate);
-									cell.setCellValue(entry.getContractEndDate());
+									if (entry.getContractEndDate() != null)
+										cell.setCellValue(entry.getContractEndDate());
 								}
 								//SENIORITY DATE
 								{
 									cell = row.getCell(9) != null ? row.getCell(9) : row.createCell(9);
 									cell.setCellStyle(grayDate);
-									cell.setCellValue(entry.getSeniorityDate());
+									if (entry.getSeniorityDate() != null)
+										cell.setCellValue(entry.getSeniorityDate());
 								}
 								//CONTRACT SITUATION START
 								{
 									cell = row.getCell(10) != null ? row.getCell(10) : row.createCell(10);
 									copyCellProperties(wb, cell, firstRow.getCell(10));
 									cell.setCellStyle(blackDate);
-									cell.setCellValue(entry.getContractSituationStartDate());
+									if (entry.getContractSituationStartDate() != null)
+										cell.setCellValue(entry.getContractSituationStartDate());
 								}
 								//CONTRACT SITUATION END
 								{
 									cell = row.getCell(11) != null ? row.getCell(11) : row.createCell(11);
 									copyCellProperties(wb, cell, firstRow.getCell(11));
 									cell.setCellStyle(blackDate);
-									cell.setCellValue(entry.getContractSituationEndDate());
+									if (entry.getContractSituationEndDate() != null)
+										cell.setCellValue(entry.getContractSituationEndDate());
 								}
 								//WORDAY PERCENT
 								{
 									cell = row.getCell(12) != null ? row.getCell(12) : row.createCell(12);
 									copyCellProperties(wb, cell, firstRow.getCell(12));
 									cell.setCellStyle(percentageStyle);
-									cell.setCellValue(entry.getWorkdayPercent());
+									if (entry.getWorkdayPercent() != null)
+										cell.setCellValue(entry.getWorkdayPercent());
 								}
 								//CONTRACT KEY
 								{
 									cell = row.getCell(15) != null ? row.getCell(15) : row.createCell(15);
 									copyCellProperties(wb, cell, firstRow.getCell(15));
-									cell.setCellValue(entry.getContractKey());
+									if (entry.getContractKey() != null)
+										cell.setCellValue(entry.getContractKey());
 								}
 								//IN-ENTERPRISE CATEGORY
 								{
 									cell = row.getCell(18) != null ? row.getCell(18) : row.createCell(18);
 									copyCellProperties(wb, cell, firstRow.getCell(18));
-									cell.setCellValue(entry.getCategory());
+									if (entry.getCategory() != null)
+										cell.setCellValue(entry.getCategory());
 								}
 								//PROFESSIONAL GROUP
 								{
 									cell = row.getCell(22) != null ? row.getCell(22) : row.createCell(22);
 									copyCellProperties(wb, cell, firstRow.getCell(22));
-									cell.setCellValue(entry.getProfessionalGroup());
+									if (entry.getProfessionalGroup() != null)
+										cell.setCellValue(entry.getProfessionalGroup());
 								}
 								//AGREEMENT
 								{
 									cell = row.getCell(24) != null ? row.getCell(24) : row.createCell(24);
 									copyCellProperties(wb, cell, firstRow.getCell(24));
-									cell.setCellValue(entry.getAgreement());
+									if (entry.getAgreement() != null)
+										cell.setCellValue(entry.getAgreement());
 								}
 								//AGREEMENT LEVEL
 								{
 									cell = row.getCell(27) != null ? row.getCell(27) : row.createCell(27);
 									copyCellProperties(wb, cell, firstRow.getCell(27));
-									cell.setCellValue(entry.getLevel());
+									if (entry.getLevel() != null)
+										cell.setCellValue(entry.getLevel());
 								}
 								//QUOTE GROUP
-								if (entry.getQuoteGroup() != null){
+								{
 									cell = row.getCell(28) != null ? row.getCell(28) : row.createCell(28);
 									copyCellProperties(wb, cell, firstRow.getCell(28));
-									cell.setCellValue(entry.getQuoteGroup());
+									if (entry.getQuoteGroup() != null)
+										cell.setCellValue(entry.getQuoteGroup());
 								}
 								
 								//PAYMENTS
@@ -785,7 +801,8 @@ public class RemunerationRecord {
 				} catch (NullPointerException | NumberFormatException e) {
 					remunerationRecordEntry.quoteGroup = null;
 				}
-				remunerationRecordEntry.workdayPercent = Double.parseDouble(r.get(parcialityCoef.EXPRESSION));
+				if (r.get(parcialityCoef.EXPRESSION) != null)
+					remunerationRecordEntry.workdayPercent = Double.parseDouble(r.get(parcialityCoef.EXPRESSION));
 				remunerationRecordEntry.seniorityDate = r.get(CONTRACT.SENIORITY_DATE);
 				remunerationRecordEntry.socialSecurityNumber = r.get(PERSON.SOCIAL_SECURITY_NUM);
 				remunerationRecordEntry.level = r.get(AGREEMENT_LEVEL.DESCRIPTION);
