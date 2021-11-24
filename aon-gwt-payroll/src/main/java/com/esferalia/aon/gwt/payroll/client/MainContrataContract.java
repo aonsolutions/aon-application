@@ -165,10 +165,10 @@ public class MainContrataContract extends MainEntryPoint {
 					
 					contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
 					ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
-					contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getActivitiesCCCContex());
-					contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getWorkplacesContext());
-					contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getAgreementsContext());
-					contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getPayMethodsMapContext());
+					contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
+					contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
+					contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getEnterpriseContext().getAgreements());
+					contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getEnterpriseContext().getPayMethods());
 					contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, newContractId, selectedEmployeeIdx,
 							employeesList.size(), su -> deckPanel.showWidget(2));
 				}, 
@@ -184,10 +184,10 @@ public class MainContrataContract extends MainEntryPoint {
 				Integer contractId = employee.getContractInfo().getContractId();
 				contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
 				ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
-				contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getActivitiesCCCContex());
-				contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getWorkplacesContext());
-				contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getAgreementsContext());
-				contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getPayMethodsMapContext());
+				contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
+				contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
+				contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getEnterpriseContext().getAgreements());
+				contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getEnterpriseContext().getPayMethods());
 				contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId,
 						selectedEmployeeIdx, employeesSize, selectedTab, s -> deckPanel.showWidget(2));
 			}
@@ -356,10 +356,10 @@ public class MainContrataContract extends MainEntryPoint {
 
 			contrataEmployee.setHasCertificateSEPE(mainContrataContractObject.hasCertificateSEPE());
 			ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
-			contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getActivitiesCCCContex());
-			contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getWorkplacesContext());
-			contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getAgreementsContext());
-			contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getPayMethodsMapContext());
+			contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
+			contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
+			contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getEnterpriseContext().getAgreements());
+			contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getEnterpriseContext().getPayMethods());
 			contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, contractId, selectedEmployeeIdx,
 					employeesList.size(), s -> deckPanel.showWidget(2));
 		});
@@ -752,7 +752,6 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		this.mainContrataContractObject.getEmployeesInfo(false, 
 				s -> {
-					initWorkplaceLB();
 					initEnterpriseSB();
 					initContractTable();
 					setTableHeights();
@@ -761,7 +760,10 @@ public class MainContrataContract extends MainEntryPoint {
 				f -> {}
 		);
 
-		this.mainContrataContractObject.getContextInfo();
+		this.mainContrataContractObject.getContextInfo(
+				s -> initWorkplaceLB(),
+				f -> {}
+		);
 
 	}
 	
@@ -770,7 +772,7 @@ public class MainContrataContract extends MainEntryPoint {
 	private void initWorkplaceLB() {
 		workplaceLB.clear();
 		workplaceLB.addItem("-", "");
-		for (Workplace workplace : this.mainContrataContractObject.getWorkplaces())
+		for (Workplace workplace : this.mainContrataContractObject.getEnterpriseContext().getWorkplaces())
 			workplaceLB.addItem(workplace.getDescription(), workplace.getId().toString());
 		
 		workplaceLB.addChangeHandler(e -> {
@@ -1178,10 +1180,10 @@ public class MainContrataContract extends MainEntryPoint {
 				Integer selectedEmployeeIdx = getSelectedEmployeeIdx(contractId);
 
 				ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject();
-				contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getActivitiesCCCContex());
-				contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getWorkplacesContext());
-				contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getAgreementsContext());
-				contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getPayMethodsMapContext());
+				contrataEmployeeDialogObject.setActivitiesCCC(mainContrataContractObject.getEnterpriseContext().getActivitiesCCC());
+				contrataEmployeeDialogObject.setWorkplaces(mainContrataContractObject.getEnterpriseContext().getWorkplaces());
+				contrataEmployeeDialogObject.setAgreements(mainContrataContractObject.getEnterpriseContext().getAgreements());
+				contrataEmployeeDialogObject.setPayMethodsMap(mainContrataContractObject.getEnterpriseContext().getPayMethods());
 				contrataEmployee.setContrataEmployeeObject(
 						contrataEmployeeDialogObject, 
 						contractId,

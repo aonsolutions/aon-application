@@ -654,10 +654,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		getTabLayoutPanel().getTabWidget(1).setVisible(-1 != contractType);
 	}
 
-	public boolean checkIfSaveEmployeeIsPossible() {
-		return employee.checkIfSaveEmployeeIsPossible();
-	}
-	
 	public Map<String, String> checkSaveAndGetErrors() {
 		return employee.checkSaveAndGetErrors();
 	}
