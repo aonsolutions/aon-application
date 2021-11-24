@@ -17,6 +17,8 @@ import { AonViewer } from '../../components/aon-viewer.js';
 import { getAttach } from '../../services/fileService.js';
 import { AonSelect } from '../../components/aon-select.js';
 import { Language } from '../../models/Language.js';
+import { Theme } from './Themes.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
 
 export class AonInvoicePrint extends AonElement {
 
@@ -311,7 +313,43 @@ export class AonInvoicePrint extends AonElement {
       this.save();
     });
     tdLanguage.appendChild(language);
-    tr7.appendChild(tdLanguage); 
+    tr7.appendChild(tdLanguage);
+
+    let tr8 = document.createElement(TAG.TR);
+    table.appendChild(tr8);
+
+    const themes = [
+      {value: Theme.WHITE_AND_WHITE, name: MSG.WHITE_AND_WHITE},
+      {value: Theme.AON_BLUE, name: MSG.AON_BLUE},
+      // {value: Theme.PERSONALIZATED, name: MSG.PERSONALIZATED}
+    ];
+
+    let tdTheme = document.createElement(TAG.TD);
+    tdTheme.setAttribute('colspan', '2');
+    tdTheme.style.height = '60px';
+    let themeSelect = new AonSelect() ;
+    themeSelect.id = 'aonInvoicePrintConfigurationTheme';
+    themeSelect.title = MSG.THEME;
+    themeSelect.setOptions(themes);
+    themeSelect.value = this.printConfiguration.theme.theme;
+    themeSelect.addEventListener('change', () => {
+      this.printConfiguration.theme.theme = themeSelect.value;
+      this.save();
+    });
+    tdTheme.appendChild(themeSelect);
+
+    // let colorInput = new AonIconButton();
+    // colorInput.id = 'aonInvoicePrintConfigurationThemeColor';
+    // colorInput.icon = 'palette';
+    // colorInput.disabled = this.printConfiguration.theme.theme !== Theme.PERSONALIZATED;
+    // colorInput.addEventListener(EVENT.CLICK, () => {
+    //   alert("color");
+    // });
+
+    // tdTheme.appendChild(colorInput);
+    tr8.appendChild(tdTheme);
+    
+    
   }
 
 }

@@ -165,6 +165,44 @@ public class PrintInvoiceConfigurationDAO {
 				AppParam.INVOICE_PRINT_CONFIG_LANGUAGE.toString(),
 				pic.getLanguage().getLanguage());
 		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOICE_PRINT_CONFIG_THEME.toString(),
+				pic.getTheme().getTheme().value().toString());
+		
+		if(pic.getTheme().isPersonalized()) {
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BTBC.toString(),
+					pic.getTheme().getBoxTitleBackgroundColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BTTC.toString(),
+					pic.getTheme().getBoxTitleTextColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BTB.toString(),
+					Boolean.toString(pic.getTheme().isBoxTitleBorder()));
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BBBC.toString(),
+					pic.getTheme().getBoxBodyBackgroundColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BBTC.toString(),
+					pic.getTheme().getBoxBodyTextColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BBB.toString(),
+					Boolean.toString(pic.getTheme().isBoxBodyBorder()));
+		
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_TC.toString(),
+					pic.getTheme().getTextColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_CBC.toString(),
+					pic.getTheme().getCustomerBackgroundColorHTML());
+		}
+		
 		if(pic.getBackground() != null && pic.getBackground().getData() != null) {
 			Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), false)
 					.findFirst().orElse(new Attach());

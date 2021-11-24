@@ -48,6 +48,11 @@ public class PrintInvoiceThemeConfiguration {
 		return this;
 	}
 	
+	public String getTextColorHTML() {
+		if(AonStringUtils.isBlank(textColor) || isBlackAndWhite() || isAonBlue()) return "#404040";
+		else return textColor;
+	}
+	
 	public Color getTextColor() {
 		if(AonStringUtils.isBlank(textColor) || isBlackAndWhite() || isAonBlue()) return new Color(0x404040);
 		else return new Color(Integer.parseInt(textColor.replaceFirst("#", ""), 16)); 
@@ -58,6 +63,12 @@ public class PrintInvoiceThemeConfiguration {
 		return this;
 	}
 
+	public String getCustomerBackgroundColorHTML() {
+		if(isAonBlue()) return "#CDDBF3";
+		else if(AonStringUtils.isBlank(customerBackgroundColor) || isBlackAndWhite()) return "#E7E7E7";
+		else return customerBackgroundColor; 
+	}
+	
 	public Color getCustomerBackgroundColor() {
 		if(isAonBlue()) return new Color(0xCDDBF3);
 		else if(AonStringUtils.isBlank(customerBackgroundColor) || isBlackAndWhite()) return new Color(0xE7E7E7);
@@ -69,6 +80,12 @@ public class PrintInvoiceThemeConfiguration {
 		return this;
 	}
 
+	public String getBoxTitleBackgroundColorHTML() {
+		if(isAonBlue()) return "#002469";
+		else if(AonStringUtils.isBlank(boxTitleBackgroundColor) || isBlackAndWhite()) return "#404040";
+		else return boxTitleBackgroundColor; 
+	}
+	
 	public Color getBoxTitleBackgroundColor() {
 		if(isAonBlue()) return new Color(0x002469);
 		else if(AonStringUtils.isBlank(boxTitleBackgroundColor) || isBlackAndWhite()) return new Color(0x404040);
@@ -80,6 +97,11 @@ public class PrintInvoiceThemeConfiguration {
 		return this;
 	}
 
+	public String getBoxTitleTextColorHTML() {
+		if(AonStringUtils.isBlank(boxTitleTextColor) || isBlackAndWhite() || isAonBlue()) return "#ffffff";
+		else return boxTitleTextColor; 
+	}
+	
 	public Color getBoxTitleTextColor() {
 		if(AonStringUtils.isBlank(boxTitleTextColor) || isBlackAndWhite() || isAonBlue()) return new Color(0xffffff);
 		else return new Color(Integer.parseInt(boxTitleTextColor.replaceFirst("#", ""), 16)); 
@@ -100,6 +122,11 @@ public class PrintInvoiceThemeConfiguration {
 		return this;
 	}
 
+	public String getBoxBodyBackgroundColorHTML() {
+		if(AonStringUtils.isBlank(boxBodyBackgroundColor) || isBlackAndWhite() || isAonBlue()) return "#ffffff";
+		else return boxBodyBackgroundColor; 
+	}
+	
 	public Color getBoxBodyBackgroundColor() {
 		if(AonStringUtils.isBlank(boxBodyBackgroundColor) || isBlackAndWhite() || isAonBlue()) return new Color(0xffffff);
 		else return new Color(Integer.parseInt(boxBodyBackgroundColor.replaceFirst("#", ""), 16)); 
@@ -110,6 +137,11 @@ public class PrintInvoiceThemeConfiguration {
 		return this;
 	}
 
+	public String getBoxBodyTextColorHTML() {
+		if(AonStringUtils.isBlank(boxBodyTextColor) || isBlackAndWhite() || isAonBlue()) return "#404040";
+		else return boxBodyTextColor; 
+	}
+	
 	public Color getBoxBodyTextColor() {
 		if(AonStringUtils.isBlank(boxBodyTextColor) || isBlackAndWhite() || isAonBlue()) return new Color(0x404040);
 		else return new Color(Integer.parseInt(boxBodyTextColor.replaceFirst("#", ""), 16)); 

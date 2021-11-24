@@ -372,6 +372,7 @@ public interface IJsonNames {
 	String TAX = "tax";
 	String TECHNICAL = "technical";
 	String TEST = "test";
+	String THEME = "theme";
 	String THUMB_URL = "thumbUrl";
 	String TITLE = "title";
 	String TO = "to";
