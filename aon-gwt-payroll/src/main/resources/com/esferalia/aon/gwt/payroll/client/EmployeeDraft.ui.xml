@@ -27,14 +27,14 @@
 		<g:north size="50">
 			<s:AonToolbar ui:field="toolbar" /> 
 		</g:north> 
-	
 		<g:center> 
     		<g:DeckLayoutPanel ui:field="deckPanel">
-		    	<g:ScrollPanel>
-    				<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
+    			<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
+    				<g:HTMLPanel ui:field="messageContainer"/>
+		    		<g:ScrollPanel>
 	    				<e:Employee ui:field="employee"/>
-			    	</g:VerticalPanel>
-			    </g:ScrollPanel>
+			    	</g:ScrollPanel>
+			    </g:VerticalPanel>
     			<p:FullViewer styleName="reset" ui:field='pdfViewer' /> 
     		</g:DeckLayoutPanel>
 		</g:center>
