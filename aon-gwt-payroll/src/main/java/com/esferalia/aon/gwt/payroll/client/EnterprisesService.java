@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -301,6 +302,8 @@ public interface EnterprisesService extends RemoteService {
 
 	List<ITEmployee> getEmployeeITInfo(String currentDomainName, Integer contractId);
 
-	ContractConcepts getAllConcepts(String currentDomainName, String currentUser);	
+	ContractConcepts getAllConcepts(String currentDomainName, String currentUser);
+
+	EnterpriseContext getEnterpriseContext(String currentDomainName);	
 	
 }

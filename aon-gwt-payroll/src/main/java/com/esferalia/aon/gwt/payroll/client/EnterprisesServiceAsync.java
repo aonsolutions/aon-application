@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -195,5 +196,6 @@ public interface EnterprisesServiceAsync {
 	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType,AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getEmployeeITInfo(String currentDomainName, Integer contractId, AsyncCallback<List<ITEmployee>> asyncCallback);
 	void getAllConcepts(String currentDomainName, String currentUser, AsyncCallback<ContractConcepts> asyncCallback);
+	void getEnterpriseContext(String currentDomainName, AsyncCallback<EnterpriseContext> asyncCallback);
 	
 }
