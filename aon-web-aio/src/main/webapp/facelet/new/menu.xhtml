@@ -9,7 +9,7 @@
 
 	<ui:define name="menuContent">
 		<aon:graphicImage 
-			style="margin-left: 6px;margin-right: 4px; width:21px; height:21px;"
+			style="margin-left: 6px;margin-right: 4px; width:28px; height:28px;"
 			value="#{customize.toolbarLogo}" 
 			onmouseout="javascript:hideAonPopup()"
 			onmouseover="javascript:showAonPopup();"
@@ -352,7 +352,7 @@
 		id="menuContentPopup"
 		styleClass="aon-menu-popup" 
 		onclick="javascript:hideAllMenuPopup()"
-		style="position:fixed;  z-index:67; left: 34px; margin-top: -2.5px; min-width:50%; max-width: 90%; "
+		style="position:fixed;  z-index:67; left: 34px; margin-top: -3.5px; min-width:50%; max-width: 90%; "
 		>
 			<aon:if test="#{aonRole.fiscal}">
 				<ui:include src="/facelet/new/menu/fiscal.xhtml" />
@@ -392,7 +392,7 @@
 		<aon:div id="aonContentPopup" 
 		onmouseout="javascript:hideAonPopup()" 
 		onmouseover="javascript:showAonPopup()" 
-		style="position:fixed;  z-index:67; left:0px; margin-top: -5.5px; padding-top: 5.5px; display:none; width: 250px; min-height: 25%;" 
+		style="position:fixed;  z-index:67; left:0px; display:none; width: 250px; min-height: 25%;" 
 		>
 			<aon:form id="aonPopupForm">
 				<ui:include src="/facelet/new/portlet/menuPortlet.xhtml" />	
