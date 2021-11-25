@@ -96,6 +96,7 @@ public class InvoiceTemplate {
 	float bottomInfoHeight = 140;
 	float limit;
 	float commentSize;
+	float entriesStart;
 
 	byte[] background;
 	boolean adapt;
@@ -144,6 +145,7 @@ public class InvoiceTemplate {
 				template.drawSimplifiedEntries(doc, company, invoice, config, logo);
 
 			template.drawBottomInfo(doc, invoice, qrUrl, config.getTheme());
+			template.drawJail(template.limit);
 			
 			template.contents.close();
 			template.drawFooter(doc, company, config.getTheme());				
@@ -152,6 +154,29 @@ public class InvoiceTemplate {
 		} catch (Exception e)
 		{
 			throw new CanNotCreatePdfException(e);
+		}
+	}
+	
+	
+	private void drawJail(float end) throws IOException {
+		if (config.getTheme().isBoxBodyBorder()) {			
+			if (config.isDetailed()) {
+				drawBox(contents, 50f, entriesStart, 498f, 1f, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 50f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 299f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 369f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 439f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 479f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 548f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 50f, end, 498f, 1f, config.getTheme().getBoxTitleTextColor());
+			} else {
+				drawBox(contents, 50f, entriesStart, 499f, 1f, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 50f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 479f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 548f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 50f, end, 498f, 1f, config.getTheme().getBoxTitleTextColor());
+				
+			}
 		}
 	}
 	
@@ -326,26 +351,6 @@ public class InvoiceTemplate {
 			}
 		}
 	}
-	
-	private void drawPageNums(PDDocument doc, PrintInvoiceThemeConfiguration theme) throws IOException {
-		for (int i=0; i<this.pageNumber; i++) {
-			contents = new PDPageContentStream(doc, doc.getPage(i), PDPageContentStream.AppendMode.APPEND, true);
-			drawPageNumber(i+1, theme);
-			contents.close();
-		}
-	}
-	
-	//DRAW PAGE NUMBER
-	private void drawPageNumber(int num, PrintInvoiceThemeConfiguration theme) throws IOException {
-		drawTextRight(contents
-				, new PDRectangle(570, 5, 15, 15)
-				, "Pag. " + num + " de " + pageNumber
-				, theme.getTextColor()
-				, HELVETICA
-				, 9
-				, 0
-				, 0);
-	}
 
 	// DRAW PAGE
 	private PDPageContentStream drawPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] logo, boolean withHeader) throws IOException {
@@ -378,7 +383,7 @@ public class InvoiceTemplate {
 				drawDetailedHeader(config.getTheme());
 			else
 				drawSimpleHeader(config.getTheme());
-
+		
 		return contents;
 	}
 	// DRAW FIRST PAGE
@@ -509,6 +514,7 @@ public class InvoiceTemplate {
 
 	private void jumpToNewPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config,
 			byte[] logo) throws IOException {
+		drawJail(bottom);
 		contents.close();
 		contents = drawPage(doc, company, invoice, config, logo, true);
 		y		 = height - top - topInfoHeight - 5;
@@ -719,16 +725,31 @@ public class InvoiceTemplate {
 
 		drawBox(contents, x, y, 250, 80, config.getTheme().getCustomerBackgroundColor());
 		x += 10;
-		y  = height - top - 45 /*- (company != null ? 30 : 0)*/;
+		y  = height - top - 35 /*- (company != null ? 30 : 0)*/;
 		String str = safeString(invoice.getRegistryName())
 				.replace("\t", " ")
 				/*.getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8")*/;
 		
-		str = croppedString(str, 230, HELVETICA_BOLD, 12);
-		drawText(contents, str, x, y, config.getTheme().getTextColor(), HELVETICA_BOLD, 12, REGISTRY_NAME);
+		List<String> nameLines = PDFToolkit.getLines(str, 230, HELVETICA_BOLD, 10);
+		
+		if (nameLines != null) {
+			String line1 = nameLines.get(0).trim();
+			String line2 = null;
+			if (nameLines.size() > 1) {
+				line2 = nameLines.get(1).trim();
+			}
+			
+			if (line1 != null) {
+				drawText(contents, line1, x, y, config.getTheme().getTextColor(), HELVETICA_BOLD, 10, REGISTRY_NAME);
+				y -= 10;
+			}
+			if (line2 != null) {
+				drawText(contents, line2, x, y, config.getTheme().getTextColor(), HELVETICA_BOLD, 10, REGISTRY_NAME);				
+			}
+		}
 		y -= 15;
 		
-		if (invoice.getRegistryAddressData() != null) {
+		if (invoice.getRegistryAddressData() != null && !invoice.getRegistryAddressData().isEmpty()) {
 			RegistryAddress address = invoice.getRegistryAddressData();
 			str = safeString(address.getFullAddress());
 			str = croppedString(str, 230, HELVETICA, 9);
@@ -773,6 +794,21 @@ public class InvoiceTemplate {
 
 		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
 		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 5, 4.5f);
+		
+		if (config.getTheme().isBoxTitleBorder()) {
+//			PDFToolkit.drawBorderedBox(contents, x + .5f, y, 249, 15, theme.getBoxTitleTextColor(), 1f);
+			drawBox(contents, 50, y + 14, 499, 1f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50 + 249, y, 1f, 15f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50 + 249 + 70, y, 1f, 15f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50 + 249 + 70 + 70, y, 1f, 15f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50 + 249 + 70 + 70 + 40, y, 1f, 15f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50 + 249 + 70 + 70 + 40 + 69, y, 1f, 15f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50, y, 499, 1f, theme.getBoxTitleTextColor());
+			
+		}
+		
+		entriesStart = y;
 	}
 
 	// DRAW SIMPLE HEADER
@@ -784,6 +820,18 @@ public class InvoiceTemplate {
 
 		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().amount(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9);
+		
+		if (config.getTheme().isBoxTitleBorder()) {
+			drawBox(contents, 50, y + 14, 499, 1f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 479, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 548, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50, y, 499, 1f, theme.getBoxTitleTextColor());
+			
+		}
+		
+		
+		entriesStart = y;
 	}
 
 	// DRAW BOTTOM INFO
@@ -821,10 +869,22 @@ public class InvoiceTemplate {
 
 		drawBox(contents, x, y, 99, 15, theme.getBoxTitleBackgroundColor());
 		drawTextCenter(contents, new PDRectangle(x, y, 99, 15), getMsg().totalInvoice(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
-
+		
+		if (config.getTheme().isBoxTitleBorder()) {
+			drawBox(contents, 180, y + 14, 369, 1f, theme.getBoxTitleTextColor());
+			drawBox(contents, 180, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 259, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 339, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 399, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 449, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 548, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 180, y, 369, 1f, theme.getBoxTitleTextColor());
+		}
+		
 		if (invoice.getBreakdown() != null){
 //			double sum = 0;
 			int i = 0;
+			float initY = y;
 			for (InvoiceBreakdown tax : invoice.getBreakdown()) {
 				
 				x = 180;
@@ -855,8 +915,22 @@ public class InvoiceTemplate {
 				y	-= 10;
 				
 				i++;
-			}	
+			}
 			drawTextRight(contents, new PDRectangle(x, bottom + 107, 99, 15), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getBoxBodyTextColor(), HELVETICA_BOLD, 8, 5, -14, INVOICE_TOTAL);
+			
+			float finalY = y -10;
+			float height = initY - finalY;
+			
+			if (config.getTheme().isBoxBodyBorder()) {
+				drawBox(contents, 180, finalY + height, 369, 1f, theme.getBoxTitleTextColor());
+				drawBox(contents, 180, finalY, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 259, finalY, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 339, finalY, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 399, finalY, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 449, finalY, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 548, finalY, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 180, finalY, 369, 1f, theme.getBoxTitleTextColor());
+			}
 		}
 	}
 
@@ -880,10 +954,20 @@ public class InvoiceTemplate {
 
 		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
 		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), theme.getBoxTitleTextColor(), HELVETICA, 9, 5, 4.5f);
-
+		
+		if (config.getTheme().isBoxTitleBorder()) {
+			drawBox(contents, 180, y + 14, 369, 1f, theme.getBoxTitleTextColor());
+			drawBox(contents, 180, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 239, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 319, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 479, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 548, y, 1f, 14f, theme.getBoxTitleTextColor());
+			drawBox(contents, 180, y, 369, 1f, theme.getBoxTitleTextColor());
+		}
 
 		if(invoice.getFinances() != null) {
 			int i = 0;
+			float initY = y;
 			for (Finance finance : invoice.getFinances()) {
 				x = 180;
 				drawText(contents, formatDate(finance.getDueDate(), "dd/MM/yyyy").orElse(""), x + 5f, y - 12, theme.getBoxBodyTextColor(), HELVETICA, 7, i + FINANCE_DATE);
@@ -904,6 +988,19 @@ public class InvoiceTemplate {
 				y -= 10;
 				i++;
 			}
+			
+			if (config.getTheme().isBoxBodyBorder()) {
+				y -= 10;
+				float height  = initY - y;
+				drawBox(contents, 180, y, 369, 1f, theme.getBoxTitleTextColor());
+				drawBox(contents, 180, y, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 239, y, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 319, y, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 479, y, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 548, y, 1f, height, theme.getBoxTitleTextColor());
+				drawBox(contents, 180, initY, 369, 1f, theme.getBoxTitleTextColor());
+			}
+			
 		}
 	}
 	

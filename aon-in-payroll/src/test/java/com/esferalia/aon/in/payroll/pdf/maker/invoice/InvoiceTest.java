@@ -66,6 +66,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -521,7 +522,16 @@ public class InvoiceTest {
 			config.setHeader(50);
 			config.setFooter(0);
 			config.setCompany(true);
-			config.setTheme(new PrintInvoiceThemeConfiguration());
+			
+			PrintInvoiceThemeConfiguration themeconf = new PrintInvoiceThemeConfiguration();
+			themeconf.setTheme(PrintInvoiceTheme.PERSONALIZED);
+			themeconf.setBoxBodyBorder(true);
+			themeconf.setBoxTitleBackgroundColor("#3ad1c6");
+			themeconf.setCustomerBackgroundColor("#caa9e6");
+			themeconf.setBoxTitleTextColor("#f025c8");
+//			themeconf.setBoxTitleBorder(true);
+			
+			config.setTheme(themeconf);
 			
 			CompanyFull company = new CompanyFull();
 			LinkedList<RegistryMedia> rmediaList = new LinkedList<RegistryMedia>();
