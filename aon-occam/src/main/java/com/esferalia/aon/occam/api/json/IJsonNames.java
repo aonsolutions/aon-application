@@ -50,6 +50,12 @@ public interface IJsonNames {
 	String BEFORE_PERIOD_CREDIT = "beforePeriodCredit";
 	String BIC = "bic";
 	String BLOCKED = "blocked";
+	String BOX_BODY_BACKGROUND_COLOR = "boxBodyBackgroundColor";
+	String BOX_BODY_BORDER = "boxBodyBorder";
+	String BOX_BODY_TEXT_COLOR = "boxBodyTextColor";
+	String BOX_TITLE_BACKGROUND_COLOR = "boxTitleBackgroundColor";
+	String BOX_TITLE_BORDER = "boxTitleBorder";
+	String BOX_TITLE_TEXT_COLOR = "boxTitleTextColor";
 	String BRAND = "brand";
 	String BRAND_IDS = "brandIds";
 	String BREAKDOWN_ENABLED = "breakdownEnabled";
@@ -89,6 +95,8 @@ public interface IJsonNames {
 	String CREATION_DATE = "creation_date";
 	String CREATION_USER = "creation_user";
 	String CREDIT = "credit";
+	String CUSTOMER_BACKGROUND_COLOR = "customerBackgroundColor";
+	
 	// ---------------------------------------------------------------------------------------------	[D] 
 	String DATE = "date";
 	String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
@@ -372,6 +380,7 @@ public interface IJsonNames {
 	String TAX = "tax";
 	String TECHNICAL = "technical";
 	String TEST = "test";
+	String TEXT_COLOR = "textColor";
 	String THEME = "theme";
 	String THUMB_URL = "thumbUrl";
 	String TITLE = "title";

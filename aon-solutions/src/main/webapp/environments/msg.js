@@ -323,7 +323,8 @@ export const PENDING_DOCUMENTS = MSG.PENDING_DOCUMENTS;
 export const PENDING_INVOICES = MSG.PENDING_INVOICES;
 export const PENDING_TASKS = 'Tareas Pendientes';//TODO
 export const PENDINGS = MSG.PENDINGS;
-export const PERSONALIZATED = 'Personalizado';
+export const PERSONALIZED = 'Personalizado';
+export const PERSONALIZED_THEME = 'Tema Personalizado';
 export const PERMISSIONS = MSG.PERMISSIONS;
 export const PHONE = MSG.PHONE;
 export const PORTAL = 'Portal';
@@ -481,7 +482,7 @@ export const VOLUME = "Tomo";
 
 // ----- W
 export const WEB = MSG.WEB;
-export const WHITE_AND_WHITE = 'Blanco y Negro';
+export const BLACK_AND_WHITE = 'Blanco y Negro';
 export const WITHHOLDING = MSG.WITHHOLDING;
 export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca'; // TODO
 export const WORKGROUP = MSG.WORKGROUP;
