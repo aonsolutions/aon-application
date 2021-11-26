@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod202;
 
 import java.util.LinkedList;
 
@@ -6,8 +6,6 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Mod202Service;
-import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
-import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;

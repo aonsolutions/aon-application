@@ -26,14 +26,12 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
-import com.esferalia.aon.gwt.fiscal.client.mod131.Model131;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
-import com.esferalia.aon.gwt.fiscal.client.mod202.Model202;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
@@ -94,17 +92,27 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.mod303.Model303.run();
 			}
 		},
+		Model131 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod131.Model131.run();
+			}
+		},
+		Model202 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod202.Model202.run();
+			}
+		},
 		;
 		abstract void run();
 	}
-	private static final String FS_MOD131_ENTRY_POINT = "Model131";
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
 	private static final String FS_MOD190_ENTRY_POINT = "Model190";
 	private static final String FS_MOD193_ENTRY_POINT = "Model193";
 	private static final String FS_MOD180_ENTRY_POINT = "Model180";	
 	private static final String FS_MOD184_ENTRY_POINT = "Model184";
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
-	private static final String FS_MOD202_ENTRY_POINT = "Model202";
 	private static final String FS_MOD347_ENTRY_POINT = "Model347";
 	private static final String FS_MOD349_ENTRY_POINT = "Model349";
 	private static final String FS_MOD390_ENTRY_POINT = "Model390";
@@ -262,36 +270,36 @@ public class MainEntryPoint implements EntryPoint {
 //				}
 //				
 //			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD131_ENTRY_POINT)) {
-			GWT.runAsync(Model131.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model131 model131 = new Model131();
-					model131.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD202_ENTRY_POINT)) {
-			GWT.runAsync(Model202.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model202 model202 = new Model202();
-					model202.onModuleLoad();
-				}
-				
-			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD131_ENTRY_POINT)) {
+//			GWT.runAsync(Model131.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model131 model131 = new Model131();
+//					model131.onModuleLoad();
+//				}
+//				
+//			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD202_ENTRY_POINT)) {
+//			GWT.runAsync(Model202.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model202 model202 = new Model202();
+//					model202.onModuleLoad();
+//				}
+//				
+//			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
 			GWT.runAsync(Model200.class, new RunAsyncCallback() {
 

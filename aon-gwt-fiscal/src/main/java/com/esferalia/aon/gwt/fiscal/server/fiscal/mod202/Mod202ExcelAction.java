@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod202;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -11,6 +11,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
+import com.esferalia.aon.gwt.fiscal.server.ModelIRPFExcelAction;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.watson.util.AonStringUtils;

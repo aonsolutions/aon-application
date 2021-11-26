@@ -8,8 +8,6 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
@@ -36,10 +34,10 @@ public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202,Mode
 		super(mod202,reset, callback);
 	}
 	
+	@Override
 	protected void paintAdministration(Mod202 mod202) {
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		mod202.setAdministration( Administration.COMMON_TERRITORY );
 		replacement.setVisible(mod202.isReplacementDeclarationAvailable());
 		complementary.setVisible(mod202.isComplementaryDeclarationAvailable());
@@ -49,10 +47,10 @@ public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202,Mode
 		row++;
 	}
 	
+	@Override
 	protected void paintPeriod(Mod202 mod202) {
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.period()));
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		final PeriodListBox periodList = new PeriodListBox();
 		if (mod202.getPeriod() != null) {
 			for (int i = 0; i < periodList.getItemCount(); i++) {
@@ -64,19 +62,15 @@ public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202,Mode
 			}
 		}
 		periodList.setEnabled(!reset);
-		periodList.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				mod202.setPeriod( periodList.getValue() );
-			}
-		});
+		periodList.addChangeHandler( event -> mod202.setPeriod( periodList.getValue() ));
 		tab.setWidget(row, 1, periodList);
 		row++;
 	}
 	
+	@Override
 	protected void paintModelSpecificPanel(Mod202 mod202) {
 		tab.setWidget(row, 0, new Label(Mod202Key.X00.getDescription()));
-		tab.getFlexCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		
 		final ListBox r21Box = new ListBox();
 		r21Box.setWidth("350px");
@@ -84,14 +78,8 @@ public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202,Mode
 		r21Box.addItem(AON.MSG.calculation1(), "1");
 		r21Box.addItem(AON.MSG.calculation2(), "2");
 		mod202.putAmount(Mod202Key.X00, 0); 
-		r21Box.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				mod202.putAmount(Mod202Key.X00, r21Box.getSelectedIndex());
-			}
-		});
+		r21Box.addChangeHandler( event -> mod202.putAmount(Mod202Key.X00, r21Box.getSelectedIndex()));
 		tab.setWidget(row, 1, r21Box);
-		tab.getFlexCellFormatter().addStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 	}
 	

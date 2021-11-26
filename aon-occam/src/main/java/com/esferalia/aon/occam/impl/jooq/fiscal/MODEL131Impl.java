@@ -88,5 +88,10 @@ public class MODEL131Impl implements IMODEL131 {
 	public String getInfo(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod131DAO.getMod131Info(ctx,mod131,script,infoKey);
 	}
+	@Override
+	public Mod131 aeatPresentation(AONContext ctx, Mod131 mod131, String aeatResponse) {
+		return Mod131DAO.aeatPresentation(ctx, mod131, aeatResponse);
+	}
+
 
 }

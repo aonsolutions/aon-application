@@ -82,5 +82,8 @@ public class MODEL202Impl implements IMODEL202 {
 	public String getInfo(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod202DAO.getMod202Info(ctx,mod202,script,infoKey);
 	}
-
+	@Override
+	public Mod202 aeatPresentation(AONContext ctx, Mod202 mod202, String aeatResponse) {
+		return Mod202DAO.aeatPresentation(ctx, mod202, aeatResponse);
+	}
 }

@@ -1,10 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.mod202;
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCnae2009Panel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Model202.Model202Callback;
 import com.esferalia.aon.gwt.fiscal.shared.mod202.Model2022018AEATScript;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -12,14 +12,13 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
-import com.esferalia.aon.watson.util.Pair;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model2022018AEAT extends Model202Base {
 	
@@ -29,94 +28,78 @@ public class Model2022018AEAT extends Model202Base {
 	}
 	
 	@Override
-	protected void paintDeclaration(Model202Callback callback) {
-		super.paintDeclaration(callback);
+	protected void paintLiquidationTab(TabLayoutPanel tabPanel) {
+		super.paintLiquidationTab(tabPanel);
 		final FiscalModelDetail detail = getModel().ensureDetail(Mod202Key.X00);
 		int x00 = (int) detail.getAmount();
 		if (x00 < 0 || x00 > 2) x00 = 0;
-		calculationMethodChanged(callback,x00);
+		calculationMethodChanged(x00);
 	}
 
 	@Override
-	public LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<>();
-		list.add(new Pair<>("Tr\u00E1mites."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/GE00.shtml"));
-		list.add(new Pair<>("Informaci\u00F3n general." 
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/GE00.shtml"));
-		list.add(new Pair<>("Ficha."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/GE00.shtml"));
-		return list;
-	}
-
-	@Override
-	protected void paintParticularyRow(Model202Callback callback, IModelScript<Mod202Key> script) {
+	protected void paintParticularyRow(FlexTable table, Model202Callback callback, IModelScript<Mod202Key> script) {
 		if (script == Model2022018AEATScript.C01) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.C02) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.C03) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.C04) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.C05) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R01) {
-			paintDateRow(callback, script);
+			paintDateRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R02) {
-			paintCNAERow(callback, script);
+			paintCNAERow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R04) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R05) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R06) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R07) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R08) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R09) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R10) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R17) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R18) {
-			paintR18(callback, script);
+			paintR18(table, callback, script);
 		} else if (script == Model2022018AEATScript.R19) {
-			paintR19(callback, script);
+			paintR19(table, callback, script);
 		} else if (script == Model2022018AEATScript.R21) {
-			paintR21(callback, script);
+			paintR21(table, callback, script);
 		} else if (script == Model2022018AEATScript.R61) {
-			paintCheckRow(callback, script);
+			paintCheckRow(table, callback, script);
 		} else if (script == Model2022018AEATScript.R62) {
-			paintR62(callback, script);
+			paintR62(table, callback, script);
 		}
 	}
 	
-	private void paintCNAERow(final Model202Callback callback, IModelScript<Mod202Key> script) {
-		int row = getTable().getRowCount();
+	private void paintCNAERow(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
+		int row = table.getRowCount();
 		CNAE2009 cn = getModel().getCnae();
-		getTable().setWidget(row, 0,new Label(script.getLabel()));
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.setWidget(row, 0,new Label(script.getLabel()));
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		
 		final InlineLabel cnaeLabel = new InlineLabel(cn!=null?cn.getDescription():"");
-		cnaeLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
+		cnaeLabel.setStyleName(AON.CSS.aonMarginLeft());
 
 		FlowPanel cnaePanel = new FlowPanel();
-		final TextBox cnaeBox = new TextBox();
+		final AonTextBox cnaeBox = new AonTextBox();
 		cnaeBox.setValue(cn!=null?cn.getCode():"");
-		cnaeBox.setStyleName(AON.AON_CSS.aonInputText());
 		cnaeBox.setVisibleLength(4);
 		cnaeBox.setMaxLength(4);
 		cnaeBox.setReadOnly(true);
 		cnaePanel.add(cnaeBox);
-		Button cnaeButton = new Button();
-		cnaeButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		cnaeButton.addStyleName(AON.AON_CSS.aonIconLoupe());
-		cnaeButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
-		cnaeButton.setTitle(AON.MSG.mainActivityCNAE());
+		AonTableButton cnaeButton = new AonTableButton(AON.MSG.mainActivityCNAE(), AON.CSS.aonIconSearch());
+		cnaeButton.addStyleName(AON.CSS.aonMarginLeft());
 		final AonCnae2009Panel cnae2009Panel = new AonCnae2009Panel();
 		cnae2009Panel.addSelectionHandler(event -> {
 			CNAE2009 selected = event.getSelectedItem();
@@ -124,62 +107,61 @@ public class Model2022018AEAT extends Model202Base {
 			cnaeBox.setValue( selected.getCode());
 			cnaeLabel.setText( selected.getDescription() );
 			calculateAndRefresh( callback );
-			callback.markAsDirty();
+			markAsDirty();
 		});
 		cnaeButton.addClickHandler(event -> cnae2009Panel.onShow());
 		cnaePanel.add(cnaeButton);
 		cnaePanel.add(cnaeLabel);
-		getTable().setWidget(row, 1, cnaePanel );
-		getTable().getFlexCellFormatter().setColSpan(row, 1, 6);
+		table.setWidget(row, 1, cnaePanel );
+		table.getFlexCellFormatter().setColSpan(row, 1, 6);
 		
 	}
 	
-	private void paintDateRow(final Model202Callback callback, IModelScript<Mod202Key> script) {
-		int row = getTable().getRowCount();
-		getTable().setWidget(row, 0, new Label(script.getLabel()));
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+	private void paintDateRow(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
+		int row = table.getRowCount();
+		table.setWidget(row, 0, new Label(script.getLabel()));
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		
-		final DateBoxEx dateBox = new DateBoxEx();
+		final AonDateBox dateBox = new AonDateBox();
 		dateBox.setValue(getModel().getInitialDate());
 		dateBox.setEnabled(getModel().isNotFinished());
 		dateBox.addValueChangeHandler( event -> {
 			getModel().setInitialDate(dateBox.getValue());
 			calculateAndRefresh( callback );
-			callback.markAsDirty();
+			markAsDirty();
 		});
-		getTable().setWidget(row, 1, dateBox );
-		getTable().getFlexCellFormatter().setColSpan(row, 1, 6);
+		table.setWidget(row, 1, dateBox );
+		table.getFlexCellFormatter().setColSpan(row, 1, 6);
 	}
 	
-	private void paintCheckRow(final Model202Callback callback, IModelScript<Mod202Key> script) {
-		int row = getTable().getRowCount();
+	private void paintCheckRow(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
+		int row = table.getRowCount();
 		final Mod202Key key = script.getKeys()[0]; 
 		final CheckBox check = new CheckBox();
 		check.setText(script.getLabel());
 		check.setEnabled(getModel().isNotFinished());
 		check.setValue(getModel().getAmount(key) == 1);
 		check.addClickHandler(event -> {
-			getModel().putAmount(key,check.getValue()?1.0:0.0);
+			getModel().putAmount(key,check.getValue().booleanValue()?1.0:0.0);
 			calculateAndRefresh( callback );
-			callback.markAsDirty();
+			markAsDirty();
 		});
-		getTable().setWidget(row, 0, check );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
-		getTable().getFlexCellFormatter().setColSpan(row, 0, 7);
+		table.setWidget(row, 0, check );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
+		table.getFlexCellFormatter().setColSpan(row, 0, 7);
 		
 	}
 	
-	private void paintR18(final Model202Callback callback, IModelScript<Mod202Key> script) {
-		int row = getTable().getRowCount();
+	private void paintR18(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
+		int row = table.getRowCount();
 		final Mod202Key key = script.getKeys()[0];
-		getTable().setWidget(row, 0, new Label(script.getLabel()));
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.setWidget(row, 0, new Label(script.getLabel()));
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		
-		final TextBox textBox = new TextBox();
-		textBox.setStyleName(AON.AON_CSS.aonInputText());
+		final AonTextBox textBox = new AonTextBox();
 		textBox.setMaxLength(5);
 		textBox.setVisibleLength(6);
 		textBox.setValue(getModel().getDescription(key));
@@ -187,18 +169,18 @@ public class Model2022018AEAT extends Model202Base {
 		textBox.addValueChangeHandler( event -> {
 			getModel().putDescription(key,textBox.getValue());
 			calculateAndRefresh( callback );
-			callback.markAsDirty();
+			markAsDirty();
 		});
-		getTable().setWidget(row, 1, textBox );
-		getTable().getFlexCellFormatter().setColSpan(row, 1, 6);
+		table.setWidget(row, 1, textBox );
+		table.getFlexCellFormatter().setColSpan(row, 1, 6);
 	}
 
-	private void paintR19(final Model202Callback callback, IModelScript<Mod202Key> script) {
-		int row = getTable().getRowCount();
+	private void paintR19(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
+		int row = table.getRowCount();
 		Mod202Key key = script.getKeys()[0];
-		getTable().setWidget(row, 0, new Label(script.getLabel()));
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.setWidget(row, 0, new Label(script.getLabel()));
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		
 		final ListBox r19Box = new ListBox();
 		r19Box.setWidth("200px");
@@ -213,18 +195,18 @@ public class Model2022018AEAT extends Model202Base {
 		r19Box.addChangeHandler( event -> {
 			getModel().putAmount(key,r19Box.getSelectedIndex());		
 			calculateAndRefresh( callback );
-			callback.markAsDirty();
+			markAsDirty();
 		});
-		getTable().setWidget(row, 1, r19Box );
-		getTable().getFlexCellFormatter().setColSpan(row, 1, 6);
+		table.setWidget(row, 1, r19Box );
+		table.getFlexCellFormatter().setColSpan(row, 1, 6);
 	}
 	
-	private void paintR21(final Model202Callback callback, IModelScript<Mod202Key> script) {
-		int row = getTable().getRowCount();
+	private void paintR21(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
+		int row = table.getRowCount();
 		Mod202Key key = script.getKeys()[0];
-		getTable().setWidget(row, 0, new Label(script.getLabel()));
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
-		getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.setWidget(row, 0, new Label(script.getLabel()));
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonBorderBottom() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.CSS.aonPaddingLeft() );
 		
 		final ListBox r21Box = new ListBox();
 		r21Box.setWidth("350px");
@@ -237,23 +219,22 @@ public class Model2022018AEAT extends Model202Base {
 		r21Box.setEnabled(getModel().isNotFinished());
 		r21Box.addChangeHandler( event -> {
 			getModel().putAmount(Mod202Key.X00,r21Box.getSelectedIndex());
-			calculationMethodChanged(callback,r21Box.getSelectedIndex());
+			calculationMethodChanged(r21Box.getSelectedIndex());
 			calculateAndRefresh( callback );
-			callback.markAsDirty();
+			markAsDirty();
 		});
-		getTable().setWidget(row, 1, r21Box );
-		getTable().getFlexCellFormatter().setColSpan(row, 1, 6);
+		table.setWidget(row, 1, r21Box );
+		table.getFlexCellFormatter().setColSpan(row, 1, 6);
 	}
 
-	private void paintR62(final Model202Callback callback, IModelScript<Mod202Key> script) {
-		int row = getTable().getRowCount();
+	private void paintR62(FlexTable table, final Model202Callback callback, IModelScript<Mod202Key> script) {
+		int row = table.getRowCount();
 		Mod202Key key = script.getKeys()[0];
 
-		paintLabel(row, script);
-		getTable().getFlexCellFormatter().setColSpan(row, 0, 6);
+		paintLabel(table, row, script);
+		table.getFlexCellFormatter().setColSpan(row, 0, 6);
 		
-		final TextBox textBox = new TextBox();
-		textBox.setStyleName(AON.AON_CSS.aonInputText());
+		final AonTextBox textBox = new AonTextBox();
 		textBox.setMaxLength(22);
 		textBox.setVisibleLength(15);
 		textBox.setValue(getModel().getDescription(key));
@@ -261,17 +242,17 @@ public class Model2022018AEAT extends Model202Base {
 		textBox.addValueChangeHandler( event -> {
 			getModel().putDescription(key,textBox.getValue());
 			calculateAndRefresh( callback );
-			callback.markAsDirty();
+			markAsDirty();
 		});
-		getTable().setWidget(row, 1, textBox );
+		table.setWidget(row, 1, textBox );
 	}
 	
-	protected void calculationMethodChanged(Model202Callback callback,int method ) {
+	protected void calculationMethodChanged(int method ) {
 		
-		boolean methodA = getModel().isNotFinished() && (method == 0);
-		boolean methodB1 = getModel().isNotFinished() && (method == 1);
-		boolean methodB2 = getModel().isNotFinished() && (method == 2);
-		boolean methodB = getModel().isNotFinished() && (methodB1 || methodB2);
+		boolean methodA = (method == 0);
+		boolean methodB1 = (method == 1);
+		boolean methodB2 = (method == 2);
+		boolean methodB = (methodB1 || methodB2);
 		
 		// 	A) Calculo del pago fraccionado: modalidad artículo 40.2 LIS
 		getFieldsMap().get(Mod202Key.C01).setEnabled(methodA);

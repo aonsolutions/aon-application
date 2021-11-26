@@ -5,7 +5,6 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.AppParam;
 import com.esferalia.aon.occam.api.AONContext;
@@ -18,7 +17,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -73,8 +71,8 @@ public class FiscalMenuDAO {
 						.setStatus( FiscalStatus.MISSING)
 						.setPeriod("Y".equals(rec.getValue(APP_PARAM.VALUE))?Period.YEAR:"Q".equals(rec.getValue(APP_PARAM.VALUE))?Period.T1:Period.M01)
 				)
-				.map( mod -> serialize(mod,domain) )
-				.forEach(json -> allModels.put( json ) )
+				.map( FiscalMenuItemJSON::toJSON )
+				.forEach( allModels::put )
 				;
 		}
 		if (params.isMadeModelsVisible()) {
@@ -96,16 +94,19 @@ public class FiscalMenuDAO {
 							return fm;
 						})
 						.filter( fm -> fm.getModel() != FiscalModelType.M390 || (fm.getModel() == FiscalModelType.M390 && ( params.getModel() == null || params.getModel() == FiscalModelType.M390_HF)))
-						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+						.map( FiscalMenuItemJSON::toJSON )
+						.forEach( allModels::put )
+						;
 				}
 
 				@Override 
 				public void visitM347() {
 					if (params.getModel() == null  || FiscalModelType.M347 == params.getModel()) {
 						Mod347DAO.getHeaders(ctx, domain.getId(), params.getScope())
-						.filter( mod -> mod.getYear()== params.getYear())
-						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+							.filter( mod -> mod.getYear()== params.getYear())
+							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
+							.map( FiscalMenuItemJSON::toJSON )
+							.forEach( allModels::put );
 					}
 				}
 				@Override 
@@ -114,7 +115,8 @@ public class FiscalMenuDAO {
 						Mod349DAO.getHeaders(ctx, domain.getId(), params.getScope())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-							.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+							.map( FiscalMenuItemJSON::toJSON )
+							.forEach( allModels::put );
 					}
 				}
 				@Override 
@@ -123,7 +125,8 @@ public class FiscalMenuDAO {
 						Mod390DAO.getHeaders(ctx, domain.getId(), params.getScope())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-							.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+							.map( FiscalMenuItemJSON::toJSON )
+							.forEach( allModels::put );
 					}
 				}
 				@Override 
@@ -132,7 +135,8 @@ public class FiscalMenuDAO {
 						Mod180DAO.getHeaders(ctx, domain.getId(), params.getScope())
 							.filter( mod -> mod.getYear()== params.getYear())
 							.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-							.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+							.map( FiscalMenuItemJSON::toJSON )
+							.forEach( allModels::put );
 					}
 				}
 				@Override 
@@ -141,7 +145,8 @@ public class FiscalMenuDAO {
 						Mod184DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+						.map( FiscalMenuItemJSON::toJSON )
+						.forEach( allModels::put );
 					}
 				}
 				@Override 
@@ -150,7 +155,8 @@ public class FiscalMenuDAO {
 						Mod190DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+						.map( FiscalMenuItemJSON::toJSON )
+						.forEach( allModels::put );
 					}
 				}
 				@Override 
@@ -159,7 +165,8 @@ public class FiscalMenuDAO {
 						Mod193DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+						.map( FiscalMenuItemJSON::toJSON )
+						.forEach( allModels::put );
 					}
 				}
 				@Override 
@@ -168,7 +175,8 @@ public class FiscalMenuDAO {
 						Mod200DAO.getHeaders(ctx, domain.getId(), params.getScope())
 						.filter( mod -> mod.getYear()== params.getYear())
 						.filter( mod -> params.getAdministration() == null || mod.getAdministration() == params.getAdministration())
-						.forEach(mod -> allModels.put( serialize(mod,domain) ) );
+						.map( FiscalMenuItemJSON::toJSON )
+						.forEach( allModels::put );
 					}
 				}
 			};
@@ -188,11 +196,6 @@ public class FiscalMenuDAO {
 		return fmt;
 	}
 
-	private static JSONObject serialize(IFiscalModel model, Domain domain) {
-		JSONObject m = FiscalMenuItemJSON.toJSON(model) ;
-//		m.put(IJsonNames.DOMAIN_NAME,  domain.getDescription());
-		return m;
-	}
 
 	public static Filter getFilter(FiscalModelProperties p, Domain domain, FiscalMatrixParams params) {
 		Filter prop = p.getYearProperty().eq(params.getYear());

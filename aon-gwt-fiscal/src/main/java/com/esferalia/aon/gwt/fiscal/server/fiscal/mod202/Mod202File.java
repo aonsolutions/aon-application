@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod202;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,7 +30,7 @@ public class Mod202File extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			int id = Integer.parseInt(req.getParameter("mod202"));
+			int id = Integer.parseInt(req.getParameter("modelID"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user"); 

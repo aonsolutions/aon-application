@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonDisplayTable extends FlowPanel {
@@ -67,6 +68,9 @@ public class AonDisplayTable extends FlowPanel {
 		footer.setStyleName(AON.CSS.aonDisplayTableFooterRow());
 		add(footer);
 		return footer;
+	}
+	public AonDisplayTable addLabelWidgetRow(String label, Widget widget) {
+		return addLabelWidgetRow(new Label(label), widget);	
 	}
 
 	public AonDisplayTable addLabelWidgetRow(Widget label, Widget widget) {

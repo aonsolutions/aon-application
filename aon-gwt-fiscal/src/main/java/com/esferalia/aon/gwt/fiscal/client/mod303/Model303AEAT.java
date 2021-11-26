@@ -88,7 +88,7 @@ abstract class Model303AEAT extends Model303Base {
 
 					@Override
 					public String getModelInformationURL() {
-						return "https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/GH01.shtml";
+						return "https://www.agenciatributaria.gob.es/AEAT.sede/procedimientoini/G414.shtml";
 					}
 			};
 			admonPanel = new FiscalModelAdmonPanel<>(cbk);

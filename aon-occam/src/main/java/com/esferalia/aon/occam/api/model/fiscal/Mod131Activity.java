@@ -434,8 +434,9 @@ public class Mod131Activity implements Serializable {
 		return indiceEmpresasPequenaDimensionAplicable;
 	}
 
-	public void setIndiceEmpresasPequenaDimensionAplicable(boolean indiceEmpresasPequenaDimensionAplicable) {
+	public Mod131Activity setIndiceEmpresasPequenaDimensionAplicable(boolean indiceEmpresasPequenaDimensionAplicable) {
 		this.indiceEmpresasPequenaDimensionAplicable = indiceEmpresasPequenaDimensionAplicable;
+		return this;
 	}
 	public void initialize() {
 		this.setEpi(null);
@@ -474,5 +475,53 @@ public class Mod131Activity implements Serializable {
 		this.setRes(0);
 		this.setModules(new LinkedList<Mod131ActivityModule>());
 	}
-
+	
+	public static Mod131Activity clone(Mod131Activity toClone) {
+		Mod131Activity act =new Mod131Activity()
+			.setEpigraph(toClone.getEpigraph())
+			.setDescription(toClone.getDescription())
+			.setYear(toClone.getYear())
+			.setPeriod(toClone.getPeriod())
+			.setMaxImport(toClone.getMaxImport())
+			.setDis(toClone.isDis())
+			.setCom(toClone.getCom())		
+			.setTem(toClone.getTem())
+			.setNue(toClone.getNue())
+			.setCeu(toClone.isCeu())
+			.setLoc(toClone.isLoc())
+			.setVeh(toClone.getVeh())
+			.setCap(toClone.isCap())
+			.setTns(toClone.isTns())
+			.setTss(toClone.isTss())
+			.setMun(toClone.getMun())
+			.setEmp(toClone.getEmp())
+			.setLor(toClone.getLor())
+			.setBat(toClone.getBat())
+			.setPrc(toClone.getPrc())
+			.setRnp(toClone.getRnp())
+			.setIem(toClone.getIem())
+			.setIin(toClone.getIin())
+			.setRnm(toClone.getRnm())
+			.setIc1(toClone.getIc1())
+			.setIc2(toClone.getIc2())
+			.setIc3(toClone.getIc3())
+			.setIc4(toClone.getIc4())
+			.setIc5(toClone.getIc5())
+			.setRpf(toClone.getRpf())
+			.setRlo(toClone.getRlo())
+			.setRdr(toClone.getRdr())
+			.setDia(toClone.getDia())
+			.setNet(toClone.getNet())
+			.setPor(toClone.getPor())
+			.setRes(toClone.getRes())
+			.setIndiceEmpresasPequenaDimensionAplicable(toClone.isIndiceEmpresasPequenaDimensionAplicable())
+			;
+		if (toClone.getModules() != null) {
+			act.setModules( new LinkedList<>());
+			for (Mod131ActivityModule mod : toClone.getModules()) {
+				act.getModules().add( Mod131ActivityModule.clone(mod) );
+			}
+		}
+		return act;
+	}
 }

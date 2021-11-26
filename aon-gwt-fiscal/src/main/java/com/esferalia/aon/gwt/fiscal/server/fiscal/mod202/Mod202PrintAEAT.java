@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod202;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

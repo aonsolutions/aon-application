@@ -103,5 +103,11 @@ public class MODEL202 {
 			return getImpl().getInfo(ctx, mod202, script, infoKey);
 		}
 	}
+
+	public static Mod202 aeatPresentation(Occam occam, Mod202 mod202, String aeatResponse) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().aeatPresentation(ctx, mod202, aeatResponse);
+		}
+	}
 	
 }

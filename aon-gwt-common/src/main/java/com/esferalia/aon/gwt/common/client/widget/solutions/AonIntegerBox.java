@@ -45,8 +45,11 @@ public class AonIntegerBox extends ValueBox<Integer> {
 	};
 
 	public AonIntegerBox() {
+		this(VISIBLE_LENGTH);
+	}
+	public AonIntegerBox(int visibleLength) {
 		super(Document.get().createTextInputElement(), RENDERER, PARSER);
-		setVisibleLength(VISIBLE_LENGTH);
+		setVisibleLength(visibleLength);
 		setMaxLength(MAX_LENGTH);
 		setStyleName(AON.CSS.aonInputText());
 		addStyleName(AON.CSS.aonNumberBox());

@@ -21,11 +21,13 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod131Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -2040,5 +2042,16 @@ public class Mod131DAO extends FiscalModelDAO {
 		return mod;
 	}
 	
-	// --------------------------------------------------- KEY INTITIALIZATION
+	public static Mod131 aeatPresentation(AONContext ctx, Mod131 mod131, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			DataResponseDAO.insertAEATResponse(ctx, mod131, aeatResponse);
+			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
+			Mod131 changed = getMod131(ctx, mod131.getId());
+			if (changed != null) {
+				changed.setNumber(response.getJustificante());
+				return markAsSent(ctx, changed);
+			}
+		}
+		return mod131;
+	}
 }

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -27,6 +28,17 @@ public class Mod200DAO extends FiscalModelDAO {
 	}
 	public static Stream<Mod200> getHeaders(AONContext ctx, int domain, Integer scope) {
 		ctx.checkRead();
+		System.out.println( 
+				ctx.getDslContext()
+				.select(FS_MODEL200.fields())
+				.select(DOMAIN.DESCRIPTION)
+				.from(FS_MODEL200)
+				.join(DOMAIN).on(FS_MODEL200.DOMAIN.equal(DOMAIN.ID))
+				.where(FS_MODEL200.DOMAIN.equal(domain).or(DOMAIN.PARENT.equal(domain)))
+				.and( scope == null ? DSL.trueCondition() : DOMAIN.SCOPE.equal(scope))
+				.orderBy(FS_MODEL200.YEAR.desc(),FS_MODEL200.NAME.asc())				
+				.getSQL(ParamType.INLINED)
+				);
 		return  ctx.getDslContext()
 			.select(FS_MODEL200.fields())
 			.select(DOMAIN.DESCRIPTION)

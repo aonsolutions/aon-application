@@ -42,6 +42,8 @@ import com.esferalia.aon.occam.api.fiscal.MODEL111;
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
+import com.esferalia.aon.occam.api.fiscal.MODEL131;
+import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -54,6 +56,8 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
@@ -64,6 +68,8 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod303Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
@@ -393,6 +399,18 @@ public class ModelAdmonUtils {
 		Mod130Writer.fillWriter(mod130, writer);
 		return output.toByteArray();
 	}
+	public static byte[] getModelFile(Mod131 mod131) throws IOException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
+		Mod131Writer.fillWriter(mod131, writer);
+		return output.toByteArray();
+	}
+	public static byte[] getModelFile(Mod202 mod202) throws IOException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
+		Mod202Writer.fillWriter(mod202, writer);
+		return output.toByteArray();
+	}
 	
 	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod303 mod303, byte[] body) {
 		AEATResponse response = AEATJson.toJSON(body); 
@@ -477,6 +495,40 @@ public class ModelAdmonUtils {
 				.setUser(aeatParams.getUser());
 		mod130 = MODEL130.aeatPresentation(occam, mod130, aeatResponse);
 		giveDataResponseDataBack(resp, aeatParams, mod130);
+	}
+	
+	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod131 mod131, byte[] body) {
+		AEATResponse response = AEATJson.toJSON(body); 
+		if (response.isCorrect()) {
+			manageRightResponse(resp,aeatParams,mod131,new String(body));		
+		} else {
+			manageWrongResponse(resp, response);
+		}
+	}
+	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, Mod131 mod131, String aeatResponse) {
+		Occam occam = new Occam()
+				.setDomainName(aeatParams.getDomainName())
+				.setDomain(aeatParams.getDomainId())
+				.setUser(aeatParams.getUser());
+		mod131 = MODEL131.aeatPresentation(occam, mod131, aeatResponse);
+		giveDataResponseDataBack(resp, aeatParams, mod131);
+	}
+	
+	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod202 mod202, byte[] body) {
+		AEATResponse response = AEATJson.toJSON(body); 
+		if (response.isCorrect()) {
+			manageRightResponse(resp,aeatParams,mod202,new String(body));		
+		} else {
+			manageWrongResponse(resp, response);
+		}
+	}
+	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, Mod202 mod202, String aeatResponse) {
+		Occam occam = new Occam()
+				.setDomainName(aeatParams.getDomainName())
+				.setDomain(aeatParams.getDomainId())
+				.setUser(aeatParams.getUser());
+		mod202 = MODEL202.aeatPresentation(occam, mod202, aeatResponse);
+		giveDataResponseDataBack(resp, aeatParams, mod202);
 	}
 	
 }

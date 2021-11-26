@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class Model130AEAT extends Model130Base {
 
-	final Mod130ServiceAsync MOD130Service = GWT.create(Mod130Service.class);
 	private AonTextBox receiptBox;
 	
 	public Model130AEAT(Mod130 mod130,Model130Callback callback) {
