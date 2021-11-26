@@ -98,7 +98,8 @@ public class CheckItAPI implements IParamNames{
 		try {
 			JSONObject jsonObj = (JSONObject) json;
 			String result = jsonObj.optString("result");
-			if (result.isEmpty() || jsonObj.optString("result").equalsIgnoreCase("Success")) {
+			String message= jsonObj.optString("message");
+			if (result.isEmpty() || result.equalsIgnoreCase("Success") || AonStringUtils.containsIgnoreCase(message, "cuenta creada")) {
 				return jsonObj;
 			} else {				
 				throw new CheckItException(json.toString());

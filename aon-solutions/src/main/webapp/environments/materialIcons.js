@@ -163,6 +163,7 @@ export const NOTIFICATION_ADD = "notification_add";
 
 // ----- P
 
+export const PAYMENT = 'payment';
 export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
 export const PERSON_ADD = 'person_add';

@@ -66,6 +66,8 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
@@ -132,6 +134,12 @@ public class InvoiceTest {
 		invoice.setReferenceCode(referenceCode);
 		invoice.setIssueDate(issueDate);
 		invoice.setRegistryDocument(registryDocument);
+		
+		String listadecosas = "Lista de cosas:\n";
+		for (int i=1; i<=40; i++) {
+			listadecosas += "- Cosa (texto de relleno -como en Naruto xDDDD- para probar el ancho del comentario)" + i + ";\n";
+		}
+		invoice.setComments("Akatsuki (Akatsuki; literalmente Amanecer) fue en sus comienzos, una organización que buscaba acabar con la tiranía y la opresión a través de medios pacíficos, pero que pronto cambiaría sus métodos hasta volverse una organización criminal constituida por varios ninjas renegados de Clase S que se convirtieron en los principales antagonistas de la serie Naruto: Shippuuden. ");		
 		
 		/** BREAKDOWNS */
 		jump();
@@ -472,7 +480,21 @@ public class InvoiceTest {
 		detailFive.setQuantity(0);
 		detailFive.setTaxableBase(0);
 		
+		InvoiceDetail detailX= new InvoiceDetail();
+		detailX.setAccountCode("0192831010");
 		
+		String xdesc = "";
+		for (int i=1; i<=200; i++) {
+			xdesc += "línea" + i + "\n";
+		}
+		
+		detailX.setDescription(xdesc);
+		detailX.setPrice(0);
+		detailX.setDiscountExpression("30");
+		detailX.setQuantity(0);
+		detailX.setTaxableBase(0);
+		
+		details.add(detailX);
 		details.add(detailOne);
 		details.add(detailTwo);
 		details.add(detailThree);
@@ -487,7 +509,6 @@ public class InvoiceTest {
 			
 			OutputStream dos = new FileOutputStream("./InvoiceIntegrationTest.pdf");
 			os = new ByteArrayOutputStream();
-			byte[] qrCode = new InvoiceTest().getClass().getResourceAsStream("qr.png").readAllBytes();
 			byte[] back = new InvoiceTest().getClass().getResourceAsStream("bg.jpg").readAllBytes();
 			
 			PrintInvoiceConfiguration config = new PrintInvoiceConfiguration();
@@ -501,6 +522,16 @@ public class InvoiceTest {
 			config.setHeader(50);
 			config.setFooter(0);
 			config.setCompany(true);
+			
+			PrintInvoiceThemeConfiguration themeconf = new PrintInvoiceThemeConfiguration();
+			themeconf.setTheme(PrintInvoiceTheme.PERSONALIZED);
+			themeconf.setBoxBodyBorder(true);
+			themeconf.setBoxTitleBackgroundColor("#3ad1c6");
+			themeconf.setCustomerBackgroundColor("#caa9e6");
+			themeconf.setBoxTitleTextColor("#f025c8");
+//			themeconf.setBoxTitleBorder(true);
+			
+			config.setTheme(themeconf);
 			
 			CompanyFull company = new CompanyFull();
 			LinkedList<RegistryMedia> rmediaList = new LinkedList<RegistryMedia>();
@@ -576,8 +607,8 @@ public class InvoiceTest {
 //			company = null;
 //			logo = null;
 			
-			InvoiceTemplate.create(os, company, invoice, config, qrCode, logo);
-			InvoiceTemplate.create(dos, company, invoice, config, qrCode, logo);
+			InvoiceTemplate.create(os, company, invoice, config, "www.aonsolutions.es", logo);
+			InvoiceTemplate.create(dos, company, invoice, config, "www.aonsolutions.es", logo);
 			ByteArrayInputStream bis = new ByteArrayInputStream(os.toByteArray());
 			
 			PDDocument document = PDDocument.load(bis);

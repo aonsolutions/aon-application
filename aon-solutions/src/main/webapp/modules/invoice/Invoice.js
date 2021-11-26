@@ -27,6 +27,7 @@ export class Invoice {
   irpf;
   suplidos;
   comments;
+  remarks;
   selfconta;
   insight;
 
@@ -88,7 +89,8 @@ export class Invoice {
       total: 0
     };
     this.status = 'inbox';
-    this.comments = [];
+    this.remarks = [];
+    this.comments = '';
     this.selfconta = false;
 
     let company = JSON.parse(localStorage.getItem('company'));
@@ -146,7 +148,8 @@ export class Invoice {
         total: 0
       };
       this.file = invoice.file || undefined;
-      this.comments = invoice.comments || [];
+      this.comments = invoice.comments || '';
+      this.remarks = invoice.remarks || [];
       this.selfconta = invoice.selfconta || false;
 
       let company = JSON.parse(localStorage.getItem('company'));

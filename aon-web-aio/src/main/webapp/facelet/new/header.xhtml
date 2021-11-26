@@ -15,8 +15,18 @@
 	.aon-menuBar {
 		border-bottom: 1px #ddd solid;
 		background-image: none !important;
-		background-color: #f6f6f6 !important;
+		background-color: #ffffff !important;
 	}
+	
+	img[src*='LineSeparatorImage'] {
+		display: none;
+	}
+	
+	/*
+	.aon-top-menu-item:hover,
+	.aon-top-menu-item-select:hover {
+		background-color: #f6f6f6 !important;
+	}*/
 	
 	.aon-top-menu-item-select {
     	background-color: #fff !important;
@@ -63,9 +73,15 @@
 	
 	.aon-direct-access-list-element {
     	background: none;
-    	padding: 5px 0 8px 12px;
     	border-bottom: none;
-	}	
+    	padding: 5px 0 8px 12px;
+	}
+	.aon-direct-access-list-element a{
+    	width: 95%;
+    	height: 100%;
+    	display: inline-block;
+	}
+		
 	.aon-direct-access-list-element:hover {
     	background-color: #f6f6f6 !important;
 		border-top-right-radius: 50px 50px;
@@ -90,8 +106,13 @@
 	}	
 	
 	.aon-dataScroller {
-    	background-color: #f6f6f6;
-    	border: #ddd 1px solid;
+    	background-color: #fff;
+    	border: #fff 1px solid;
+	}
+	
+	.aon-dataScroller2-text {
+		font-size: 13px;
+		font-weight: normal;
 	}
 	
 	.aon-finding-toolbar-item {
@@ -907,7 +928,7 @@
 	.rich-fileupload-button-selection
 	 {
 		width: auto;
-		mouse: pointer;
+		cursor: pointer;
     	color: #4b4b4b;
     	background: none;
     	border-radius: 0px;
@@ -987,7 +1008,145 @@
     	border: solid #F3F3F3 1px !important;
     }
     
+	.aon-menu-popup
+	 {
+		opacity:0.94;	 
+	 	color: #FFF !important;
+	 	box-shadow: 0px 6px 6px #2152A5;
+    	background-color: #2152A5 !important;
+    }
     
+
+    .aon-menu-popup * ,
+    .aon-menu-popup a {
+    	color: #FFF;
+    	font-weight: bold;
+    	white-space: nowrap;
+    	
+	}   
+    .aon-menu-popup .aon-icon-new-text,
+    .aon-menu-popup .aon-icon-beta-text{
+    	background: none;
+    	margin-left: 0px !important;
+    	padding-left: 0px !important;
+     }
+
+    .aon-menu-popup .aon-direct-access-panel {
+    	color: #FFF;
+    	height: 24px;
+    	border-bottom: 1px solid #FFF;
+    	background-color: #2152A5 !important;
+    	padding-left: 12px;
+    	background-image: none;
+	}   
+
+    .aon-menu-popup .aon-menu-icon-aeat,
+    .aon-menu-popup .aon-menu-icon-araba,
+    .aon-menu-popup .aon-menu-icon-bizkaia,
+    .aon-menu-popup .aon-menu-icon-gipuzkoa,
+    .aon-menu-popup .aon-menu-icon-navarra
+     {
+    	border-color: #2152A5;
+    }
+    
+    .aon-menu-popup .aon-menu-fiscal-label {
+    	background-image: none;
+    }
+	.aon-menu-popup .aon-menu-fiscal{
+		border-bottom: 1px solid #2152A5;
+	}
+    
+    .aon-menu-popup .aon-direct-access-list-element {
+    	padding: 0px;
+    }
+    
+    .aon-menu-popup .aon-direct-access-list-element a {
+    	padding: 5px 0 8px 12px;
+    }
+
+    .aon-menu-popup .aon-direct-access-list-element:hover {
+    	color: #FFF;
+    	background-color: #2152A5 !important;
+	}
+
+    .aon-menu-popup .aon-direct-access-list-element *:hover {
+    	color: #2152A5 !important;
+    	background-color: #FFF !important;
+		border-top-right-radius: 50px 50px;
+    	border-bottom-right-radius: 50px 50px;
+	}
+	
+	/*.aon-top-menu-item:hover ,*/
+	.aon-top-menu-item-selected {
+    	opacity: 95%;
+    	color: #FFF !important;
+    	background-color: #2152A5 !important;
+	}
+
+	div[id$='aonContentPopup']{
+    	border-right: 1px solid #F6F6F6;
+	 	box-shadow: 0px 6px 6px #F3F3F3;
+    	background-color: #FFFFFF !important;
+    	
+    }
+
+	div[id$='aonContentPopup'] .aon-support{
+    	border: none !important;
+    	box-shadow: none !important;
+    	background-color: #FFFFFF !important;
+    }
+    
+    div[id$='infoGroupRightSupportDiv'] {
+    	padding-top: 50px;
+    }
+    
+	/*
+	div[id$='aonContentPopup'] .aon-button-parent,
+	div[id$='aonContentPopup'] .aon-button-tools-parent,
+	div[id$='aonContentPopup'] .aon-button-fiscal-parent,
+	div[id$='aonContentPopup'] .aon-button-account-parent,
+	div[id$='aonContentPopup'] .aon-button-payroll-parent
+	{
+		display: none;
+	}
+	*/
+
+	div[id$='aonContentPopup'] .aon-button,
+	div[id$='aonContentPopup'] .aon-button-notes,
+	div[id$='aonContentPopup'] .aon-button-tools,
+	div[id$='aonContentPopup'] .aon-button-fiscal,
+	div[id$='aonContentPopup'] .aon-button-account,
+	div[id$='aonContentPopup'] .aon-button-payroll,
+	div[id$='aonContentPopup'] .aon-button-document
+	{
+		padding-top: 2px;
+		padding-left: 34px;
+		padding-bottom: 2px;
+		background-size: 30px;
+		background-position-x: left;
+	}
+	
+	div[id$='aonContentPopup'] .aon-button:hover,
+	div[id$='aonContentPopup'] .aon-button-notes:hover,
+	div[id$='aonContentPopup'] .aon-button-tools:hover,
+	div[id$='aonContentPopup'] .aon-button-fiscal:hover,
+	div[id$='aonContentPopup'] .aon-button-account:hover,
+	div[id$='aonContentPopup'] .aon-button-payroll:hover,
+	div[id$='aonContentPopup'] .aon-button-document:hover
+	{
+		padding-left:40px;
+		background-size: 36px;
+	}
+	
+
+	div[id$='aonContentPopup'] .aon-rigth-menu {
+		text-align:left;
+		padding-left: 8px;
+	}
+
+	div[id$='aonContentPopup'] .aon-menu-portlet {
+		min-height: 300px;
+	}
 
 	</style>
 

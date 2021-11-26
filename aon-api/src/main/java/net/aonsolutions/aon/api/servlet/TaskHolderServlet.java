@@ -124,8 +124,9 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	
 	private JSONObject setTaskHolder(AonApiData api) {
 		TaskHolder th = TaskHolderJSON.fromJSON(api.getData());
-		th = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
-		return TaskHolderJSON.toJSON(th);
+		return TaskHolderJSON.toJSON( 
+				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th)
+		);
 	}
 	
 }

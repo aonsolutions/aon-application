@@ -15,6 +15,7 @@ export const ADD_CATEGORY = 'Engadir Categoría';
 export const ADD_COMMENT = 'Engadir Comentario';
 export const ADD_FILE = 'Achegar Ficheiro';
 export const ADD_INVOICE = 'Engadir Factura';
+export const ADD_REMARKS = 'Engadir Observacións';
 export const ADD_TAG = 'Engadir Etiqueta';
 export const ADD_TAX = 'Engadir Imposto';
 export const ADDITIONAL_INFORMATION = 'Información Adicional';
@@ -55,6 +56,7 @@ export const CATEGORIES = 'Categorías';
 export const CERTIFICATE = 'Certificado';
 export const CERTIFICATES = 'Certificados';
 export const CHANGE_TYPE = 'Cambiar Tipo';
+export const CHARGES_AND_PAYMENTS = 'Cargos e Pagamentos';
 export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicacións Clásicas';
 export const CLASSIC_VIEW = 'Vista Clásica';
@@ -202,6 +204,7 @@ export const LOCATION = 'Ubicación';
 
 // ----- M
 
+export const MANAGEMENT = 'Xestión';
 export const MODEL_111 = 'Modelo 111';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retencións e ingresos á conta. Rendementos do traballo e de actividades económicas, premios e determinadas ganancias patrimoniais e imputacións de Renda. Autoliquidación.';
 export const MODEL_190 = 'Modelo 190';
@@ -281,6 +284,7 @@ export const REJECT_INVOICES = 'Rexeitar Factures';
 export const REJECTED = 'Rexeitada';
 export const REJECTED_INVOICES = 'Factures Rexeitadas';
 export const REJECTEDS = 'Rexeitadas';
+export const REMARKS = 'Observacións';
 export const REMINDER = 'Recordatorio';
 export const REQUEST = 'Solicitude';
 export const REQUESTS = 'Solicitudes';

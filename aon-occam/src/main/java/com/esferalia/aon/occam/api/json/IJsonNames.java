@@ -50,6 +50,12 @@ public interface IJsonNames {
 	String BEFORE_PERIOD_CREDIT = "beforePeriodCredit";
 	String BIC = "bic";
 	String BLOCKED = "blocked";
+	String BOX_BODY_BACKGROUND_COLOR = "boxBodyBackgroundColor";
+	String BOX_BODY_BORDER = "boxBodyBorder";
+	String BOX_BODY_TEXT_COLOR = "boxBodyTextColor";
+	String BOX_TITLE_BACKGROUND_COLOR = "boxTitleBackgroundColor";
+	String BOX_TITLE_BORDER = "boxTitleBorder";
+	String BOX_TITLE_TEXT_COLOR = "boxTitleTextColor";
 	String BRAND = "brand";
 	String BRAND_IDS = "brandIds";
 	String BREAKDOWN_ENABLED = "breakdownEnabled";
@@ -84,15 +90,19 @@ public interface IJsonNames {
 	String CONTENT_TYPE = "contentType";
 	String COST_CENTER = "costCenter";
 	String COST_CENTERS = "costCenters";
+	String COUNT = "count";
 	String COUNTRY = "country";
 	String CREATION_DATE = "creation_date";
 	String CREATION_USER = "creation_user";
 	String CREDIT = "credit";
+	String CUSTOMER_BACKGROUND_COLOR = "customerBackgroundColor";
+	
 	// ---------------------------------------------------------------------------------------------	[D] 
 	String DATE = "date";
 	String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
 	String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
 	String DEBIT = "debit";
+	String DEFAULT_CERTIFICATE = "defaultCertificate";
 	String DEFINED_USERS = "definedUsers";
 	String DELIVERY_GROUPED = "deliveryGrouped";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
@@ -146,6 +156,7 @@ public interface IJsonNames {
 	String FROM_DATE = "fromDate";
 	String FROM_DUE_DATE = "fromDueDate";
 	String FROM = "from";
+	String FROM_NUMBER = "fromNumber";
 	// ---------------------------------------------------------------------------------------------	[G] 
 	String GLOBAL = "global";
 	String GROUP_BY_NIF = "groupByNif";
@@ -257,6 +268,7 @@ public interface IJsonNames {
 	String PARAMS = "params";
 	String PARENT = "parent";
 	String PARENT_ID = "parentId";
+	String PASSWORD = "password";
 	String PAYMENT = "payment";
 	String PAY_METHOD = "payMethod";
 	String PAYMETHOD = "paymethod";
@@ -307,6 +319,7 @@ public interface IJsonNames {
 	String REGISTRY_ID = "registryId";
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
+	String REMARKS = "remarks";
 	String REMOVED = "removed";
 	String REPLACEMENT = "replacement";
 	String RESERVATION = "reservation";
@@ -318,6 +331,7 @@ public interface IJsonNames {
 	String ROLES = "roles";
 	String ROOT_BAR = "/";
 	// ---------------------------------------------------------------------------------------------	[S] 
+	String SALES  = "sales";
 	String SALES_ACCOUNT  = "salesAccount";
 	String SALES_RATIO = "salesRatio";
 	String SCOPE = "scope";
@@ -332,13 +346,16 @@ public interface IJsonNames {
 	String SERIAL_DATE = "serialDate";
 	String SERIALIZABLE = "serializable";
 	String SERIES = "series";
+	String SERIES_INFO = "seriesInfo";
 	String SERIE = "serie";
 	String SERVICE = "service";
+	String SERVICE_NAME = "serviceName";
 	String SESSION_ID = "session_id";
 	String SETTLED = "settled";
 	String SHARED = "shared";
 	String SHEET = "sheet";
 	String SHOW_COVER = "showCover";
+	String SIGNATURE = "signature";
 	String SIZE = "size";
 	String SOURCE = "source";
 	String SOURCE_ID = "source_id";
@@ -362,11 +379,15 @@ public interface IJsonNames {
 	String TAXES = "taxes";
 	String TAX = "tax";
 	String TECHNICAL = "technical";
+	String TEST = "test";
+	String TEXT_COLOR = "textColor";
+	String THEME = "theme";
 	String THUMB_URL = "thumbUrl";
 	String TITLE = "title";
 	String TO = "to";
 	String TO_DATE = "toDate";
 	String TO_DUE_DATE = "toDueDate";
+	String TO_NUMBER = "toNumber";
 	String TOTAL = "total";
 	String TOTAL_BALANCE = "totalBalance";
 	String TRANSACTION = "transaction";

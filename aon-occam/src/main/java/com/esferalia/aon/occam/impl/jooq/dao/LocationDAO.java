@@ -18,6 +18,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.LocationPropertiesDAO
 
 public class LocationDAO {
 
+	private LocationDAO() {
+		  throw new IllegalStateException("Utility class");
+    }
+	
 	private static final LocationPropertiesDAO LOCATION_PROPERTIES = new LocationPropertiesDAO();
 //	 LocationFilter filter
 	public static Stream<Location> getStream(AONContext ctx, LocationFilter filter) {

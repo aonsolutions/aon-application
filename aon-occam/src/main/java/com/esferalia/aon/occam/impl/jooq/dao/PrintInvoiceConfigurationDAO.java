@@ -7,6 +7,8 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -63,7 +65,45 @@ public class PrintInvoiceConfigurationDAO {
 		f.getDomainProperty().eq(ctx.getDomainId())	
 		.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_LANGUAGE.toString())))
 		.findFirst().orElse(new ApplicationParameter());
-	
+		
+		ApplicationParameter theme = AppParamDAO.getApplicationParameterStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())	
+			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_THEME.toString())))
+			.findFirst().orElse(new ApplicationParameter());
+		
+		PrintInvoiceTheme t = theme.getValue() != null ? PrintInvoiceTheme.safeValueOf(Integer.parseInt(theme.getValue())) : PrintInvoiceTheme.BLACK_AND_WHITE;
+		PrintInvoiceThemeConfiguration tc = new PrintInvoiceThemeConfiguration(t);
+		if(tc.isPersonalized()) {
+			AppParamDAO.getApplicationParameterStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())	
+			.and(f.getNameProperty().like("INVOICE_PRINT_CONFIG_THEME%")))
+			.forEach(r -> {
+				if(AppParam.INVOICE_PRINT_CONFIG_THEME_BTBC.toString().equals(r.getName())) {
+					tc.setBoxTitleBackgroundColor(r.getValue());
+				}
+				if(AppParam.INVOICE_PRINT_CONFIG_THEME_BTTC.toString().equals(r.getName())) {
+					tc.setBoxTitleTextColor(r.getValue());
+				}
+				if(AppParam.INVOICE_PRINT_CONFIG_THEME_BTB.toString().equals(r.getName())) {
+					tc.setBoxTitleBorder(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				}
+				if(AppParam.INVOICE_PRINT_CONFIG_THEME_BBBC.toString().equals(r.getName())) {
+					tc.setBoxBodyBackgroundColor(r.getValue());
+				}
+				if(AppParam.INVOICE_PRINT_CONFIG_THEME_BBTC.toString().equals(r.getName())) {
+					tc.setBoxBodyTextColor(r.getValue());
+				}
+				if(AppParam.INVOICE_PRINT_CONFIG_THEME_BBB.toString().equals(r.getName())) {
+					tc.setBoxBodyBorder(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				}
+				if(AppParam.INVOICE_PRINT_CONFIG_THEME_TC.toString().equals(r.getName())) {
+					tc.setTextColor(r.getValue());
+				}
+				if(AppParam.INVOICE_PRINT_CONFIG_THEME_CBC.toString().equals(r.getName())) {
+					tc.setCustomerBackgroundColor(r.getValue());
+				}
+			});
+		}
 		
 		Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), withData)
 				.findFirst().orElse(new Attach());
@@ -80,7 +120,8 @@ public class PrintInvoiceConfigurationDAO {
 				.setBackground(attach)
 				.setRecordData(recordData.getValue() != null && (recordData.getValue().equalsIgnoreCase("true") || recordData.getValue().equals("1")))
 				.setContactData(contactData.getValue() != null && (contactData.getValue().equalsIgnoreCase("true") || contactData.getValue().equals("1")))
-				.setLanguage(AonLanguage.safeValueOf(language.getValue()));
+				.setLanguage(AonLanguage.safeValueOf(language.getValue()))
+				.setTheme(tc);
 		
 	}
 
@@ -123,6 +164,44 @@ public class PrintInvoiceConfigurationDAO {
 		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOICE_PRINT_CONFIG_LANGUAGE.toString(),
 				pic.getLanguage().getLanguage());
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOICE_PRINT_CONFIG_THEME.toString(),
+				pic.getTheme().getTheme().value().toString());
+		
+		if(pic.getTheme().isPersonalized()) {
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BTBC.toString(),
+					pic.getTheme().getBoxTitleBackgroundColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BTTC.toString(),
+					pic.getTheme().getBoxTitleTextColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BTB.toString(),
+					Boolean.toString(pic.getTheme().isBoxTitleBorder()));
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BBBC.toString(),
+					pic.getTheme().getBoxBodyBackgroundColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BBTC.toString(),
+					pic.getTheme().getBoxBodyTextColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BBB.toString(),
+					Boolean.toString(pic.getTheme().isBoxBodyBorder()));
+		
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_TC.toString(),
+					pic.getTheme().getTextColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_CBC.toString(),
+					pic.getTheme().getCustomerBackgroundColorHTML());
+		}
 		
 		if(pic.getBackground() != null && pic.getBackground().getData() != null) {
 			Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), false)

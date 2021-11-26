@@ -14,6 +14,7 @@ import './laboral/aon-laboral.js';
 import './messenger/aon-messenger.js';
 import './fiscal/aon-fiscal.js';
 import './accounting/aon-accounting.js';
+import { AonTimecontrol } from './timecontrol/aon-timecontrol.js';
 
 
 export class AonApps extends AonElement {
@@ -129,7 +130,7 @@ export class AonApps extends AonElement {
 				this.rootPanelHtml('<aon-invoice-panel></aon-invoice-panel>');
 				break;
 			case Apps.TIMECONTROL.app:
-				this.rootPanelHtml('<aon-signin></aon-signin>');
+				this.rootPanel(new AonTimecontrol());
 				break;
 			case Apps.MESSENGER.app:
 				this.isBeta() ? this.rootPanelHtml('<aon-messenger></aon-messenger>') : this.development('Solicitud');

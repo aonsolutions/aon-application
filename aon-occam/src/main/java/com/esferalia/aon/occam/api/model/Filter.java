@@ -374,6 +374,11 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface DataRequestFilter{
+		Filter filter(DataRequestProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface DataResponseFilter{
 		Filter filter(DataResponseProperties properties);
 	}
@@ -502,6 +507,11 @@ public interface Filter {
 	@FunctionalInterface
 	public interface LocationFilter{
 		Filter filter(LocationProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface EnterpriseCCCFilter{
+		Filter filter(EnterpriseCCCProperties properties);
 	}
 	
 	@FunctionalInterface

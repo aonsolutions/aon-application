@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -92,11 +91,14 @@ public class Employee implements Serializable{
 	private Integer employeeId;
 	private Integer workplaceId;
 	
-	private Map<String, Collection<ExpressionData>> dataMap ;
+	private Map<String, Collection<ExpressionData>> dataMap;
+	
+	private Map<String, Collection<ExpressionData>> infoMap;
 	
 	public Employee() {
 		this.sex = "U";
 		this.dataMap = new HashMap<String, Collection<ExpressionData>>();
+		this.infoMap = new HashMap<>();
 	}
 	
 	public String getNaf() {
@@ -359,12 +361,20 @@ public class Employee implements Serializable{
 		return Collections.unmodifiableMap(dataMap);
 	}
 	
+	public Map<String, Collection<ExpressionData>> getInfos() {
+		return Collections.unmodifiableMap(infoMap);
+	}
+	
 	public void addData(String name, String expression, Date startDate, Date endDate) {
 		addData(name, expression, toLocalDate(startDate), toLocalDate(endDate));
 	}
 	
 	public void addData(String name, String expression, java.sql.Date startDate, java.sql.Date endDate) {
 		addData(name, expression, startDate.toLocalDate(), endDate == null ? null : endDate.toLocalDate());
+	}
+	
+	public void addInfo(String name, String expression, Date startDate, Date endDate) {
+		addInfo(name, expression, toLocalDate(startDate), toLocalDate(endDate));
 	}
 	
 	// ----------------------------------------------------------------- Object
@@ -436,6 +446,19 @@ public class Employee implements Serializable{
 		expressionData.expression = expression;
 
 		Collection<ExpressionData> expressionDatas = dataMap.computeIfAbsent(name, key -> new LinkedList<>());
+		
+		expressionDatas.add(expressionData);
+		
+		return this;
+	}
+	
+	protected Employee addInfo(String name, String expression, LocalDate startDate, LocalDate endDate) {
+		ExpressionData expressionData = new ExpressionData();
+		expressionData.endDate = endDate;
+		expressionData.startDate = startDate;
+		expressionData.expression = expression;
+
+		Collection<ExpressionData> expressionDatas = infoMap.computeIfAbsent(name, key -> new LinkedList<>());
 		
 		expressionDatas.add(expressionData);
 		

@@ -2,14 +2,12 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
-import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
-import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -25,14 +23,11 @@ public class MainContrataContractObject {
 	private List<EmployeeContractInfo> employeesList;
 	private List<EmployeeContractInfo> trashEmployeesList;
 	
-	private List<Workplace> workplaces;
-	
 	private boolean hasCertificateSEPE;
 	
-	private List<Agreement> agreementsContext;
-	private List<Workplace> workplacesContext;
-	private ActivitiesCCC activitiesCCCContex;
-	private Map<String, String> payMethodsMapContext;
+	private EnterpriseContext enterpriseContext;
+	
+	private DomainUserRoles domainUserRoles;
 	
 	// ------------------------------------------ Constructor
 	
@@ -41,8 +36,8 @@ public class MainContrataContractObject {
 		this.allEmployeesList = new ArrayList<>();
 		this.employeesList = new ArrayList<>();
 		this.trashEmployeesList = new ArrayList<>();
-		this.workplaces = new ArrayList<>();
 		this.hasCertificateSEPE = false;
+		this.enterpriseContext = new EnterpriseContext();
 	}
 	
 	// ------------------------------------------ DataBase Methods
@@ -55,32 +50,17 @@ public class MainContrataContractObject {
 			public void onSuccess(List<EmployeeContractInfo> employeesInfoList) {
 				initEmployeeList(employeesInfoList);
 				
-				impl.getWorkplaces(new AsyncCallback<List<Workplace>>() {
-					
-					@Override
-					public void onSuccess(List<Workplace> dbWorkplaces) {
-						workplacesContext = dbWorkplaces;
-						workplaces.clear();
-						workplaces.addAll(dbWorkplaces);
-						
-						impl.hasCertificateSEPE(new AsyncCallback<Boolean>() {
+				impl.hasCertificateSEPE(new AsyncCallback<Boolean>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
-								failure.accept(caught);
-							}
-
-							@Override
-							public void onSuccess(Boolean result) {
-								hasCertificateSEPE = result.booleanValue();
-								success.accept(employeesInfoList);	
-							}
-						});
-					}
-					
 					@Override
 					public void onFailure(Throwable caught) {
 						failure.accept(caught);
+					}
+
+					@Override
+					public void onSuccess(Boolean result) {
+						hasCertificateSEPE = result.booleanValue();
+						success.accept(employeesInfoList);	
 					}
 				});
 			}
@@ -93,43 +73,31 @@ public class MainContrataContractObject {
 		
 	}
 	
-	public void getContextInfo(){
-		impl.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
+	public void getContextInfo(Consumer<EnterpriseContext> success, Consumer<Throwable> failure){
+		impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
 			
 			@Override
-			public void onSuccess(List<Agreement> dbAgreements) {
-				agreementsContext = dbAgreements;
+			public void onSuccess(DomainUserRoles domainUserRolesDB) {
+				domainUserRoles = domainUserRolesDB;
 				
-				impl.getActivityCCC(new AsyncCallback<ActivitiesCCC>() {
+				impl.getEnterpriseContext(new AsyncCallback<EnterpriseContext>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						caught.printStackTrace();
+						failure.accept(caught);
 					}
 
 					@Override
-					public void onSuccess(ActivitiesCCC dbActivitiesCCC) {
-						activitiesCCCContex = dbActivitiesCCC;
-						
-						impl.getPayMethods(new AsyncCallback<Map<String, String>>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								caught.printStackTrace();
-							}
-
-							@Override
-							public void onSuccess(Map<String, String> dbPayMethods) {
-								payMethodsMapContext = dbPayMethods;
-							}
-						});
-					}
-				});
+					public void onSuccess(EnterpriseContext enterpriseContextDB) {
+						enterpriseContext = enterpriseContextDB;
+						success.accept(enterpriseContext);
+					}}
+				);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
+				// Nothing to do here
 			}
 		});
 	}
@@ -167,10 +135,6 @@ public class MainContrataContractObject {
 	
 	public List<EmployeeContractInfo> getAllEmployeesList(){
 		return allEmployeesList;
-	} 
-	
-	public List<Workplace> getWorkplaces(){
-		return this.workplaces;
 	}
 
 	public void resetEmployeesList() {
@@ -297,24 +261,12 @@ public class MainContrataContractObject {
 
 	// ------------------------------------------ Auxiliar Methods
 	
-	public List<Agreement> getAgreementsContext() {
-		return agreementsContext;
+	public EnterpriseContext getEnterpriseContext() {
+		return enterpriseContext;
 	}
 
-	public void setAgreementsContext(List<Agreement> agreementsContext) {
-		this.agreementsContext = agreementsContext;
-	}
-
-	public List<Workplace> getWorkplacesContext() {
-		return workplacesContext;
-	}
-
-	public ActivitiesCCC getActivitiesCCCContex() {
-		return activitiesCCCContex;
-	}
-
-	public Map<String, String> getPayMethodsMapContext() {
-		return payMethodsMapContext;
+	public DomainUserRoles getDomainUserRoles() {
+		return this.domainUserRoles;
 	}
 
 }

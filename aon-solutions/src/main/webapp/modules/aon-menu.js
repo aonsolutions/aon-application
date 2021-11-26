@@ -11,7 +11,7 @@ import * as GWT from "../gwt/gwt.js";
 import { AonMessenger } from './messenger/aon-messenger.js';
 import { AonIconButton } from '../components/aon-icon-button.js';
 import { AonFiscal } from './fiscal/aon-fiscal.js';
-import { AonSignin } from './signin/aon-signin.js';
+import { AonTimecontrol } from './timecontrol/aon-timecontrol.js';
 import { AonLaboral } from './laboral/aon-laboral.js';
 import { AonIcon } from '../components/aon-icon.js';
 import { Note } from '../models/note/Note.js';
@@ -145,7 +145,7 @@ export class AonMenu extends AonElement {
 				this.rootPanel(new AonInvoicePanel());
 				break;
 			case Apps.TIMECONTROL.app:
-				this.rootPanel(new AonSignin());
+				this.rootPanel(new AonTimecontrol());
 				break;
 			case Apps.MESSENGER.app:
 				this.rootPanel(new AonMessenger());

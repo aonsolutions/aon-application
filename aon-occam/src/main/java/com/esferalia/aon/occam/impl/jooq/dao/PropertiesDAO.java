@@ -59,7 +59,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
-
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -89,6 +89,7 @@ import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.EnterpriseCCCFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
@@ -143,6 +144,7 @@ import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainAppProperties;
 import com.esferalia.aon.occam.api.model.Properties.EmployeeProperties;
+import com.esferalia.aon.occam.api.model.Properties.EnterpriseCCCProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
 import com.esferalia.aon.occam.api.model.Properties.InventoryDetailProperties;
@@ -1546,6 +1548,28 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getRadioProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.RADIO);}
 		@Override public Property<Double> getLatitudeProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.LATITUDE);}
 		@Override public Property<Double> getLongitudeProperty() {return new FilterDAO.PropertyDAO<>(LOCATION.LONGITUDE);}
+	}
+	
+	protected static class EnterpriseCCCPropertiesDAO implements EnterpriseCCCProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, EnterpriseCCCFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+
+		protected Condition[] getConditions(EnterpriseCCCFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.DOMAIN);}
+		@Override public Property<String> getCccProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.CCC);}
+		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.TYPE);}
+		@Override public Property<Integer> getEnterpriseActivityProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY);}
+		@Override public Property<Integer> getGeozoneProperty() {return new FilterDAO.PropertyDAO<>(ENTERPRISE_CCC.GEOZONE);}
 	}
 	
 	protected static class NotificationPropertiesDAO implements NotificationProperties {

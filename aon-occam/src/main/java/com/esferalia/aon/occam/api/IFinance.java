@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.product.OldItem;
@@ -49,6 +51,7 @@ public interface IFinance {
 	// 	**************************** INVOICE ***
 	// 	****************************************
 	Invoice getInvoice(AONContext ctx, Integer id);
+	void deleteInvoice(AONContext ctx, Integer invoiceId);
 	
 	Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
 	Invoice getFullInvoice(AONContext ctx, Integer id);
@@ -81,7 +84,9 @@ public interface IFinance {
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***
 	// 	***********************************************
+	
 	LinkedList<InvoiceSeries> getInvoiceSeries(AONContext ctx, Date from, Date to, boolean taxDate);
+	List<InvoiceSeries> getInvoiceSalesSeries(AONContext ctx);
 	
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***
@@ -148,7 +153,22 @@ public interface IFinance {
 
 	public PrintInvoiceConfiguration getPrintInvoiceConfiguration(AONContext ctx, Boolean withData);
 	public PrintInvoiceConfiguration savePrintInvoiceConfiguration(AONContext ctx, PrintInvoiceConfiguration pic);
+	
+	// 	***********************************************
+	// 	********** TICKET BAI CONFIGURATION ***********
+	// 	***********************************************
 
+	public TbaiConfiguration getTbaiConfiguration(AONContext ctx);
+	public TbaiConfiguration saveTbaiConfiguration(AONContext ctx, TbaiConfiguration config);
+
+	
+	// 	***********************************************
+	// 	***************** INVOICE FISCAL **************
+	// 	***********************************************
+
+	public void deleteInvoiceFiscal(AONContext ctx, Integer id);
+
+	
 	
 }
 	

@@ -124,6 +124,12 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     icon: MATERIAL_ICONS.INVENTORY_2
   }
 
+  export const CHARGES_PAYMENTS = {
+    id: CONSTANT.CHARGES_PAYMENTS.initCap(),
+    name: MSG.CHARGES_AND_PAYMENTS,
+    icon: MATERIAL_ICONS.PAYMENT
+  }
+
   export const CONCEPTS = {
     id: CONSTANT.CONCEPTS.initCap(),
     name: MSG.CONCEPTS,

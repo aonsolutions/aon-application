@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -54,7 +55,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 		LOGGER.info("AON API INVOICE SERVLET - POST METHOD");
 		try {
 			AonApiData api = initialize(req, resp);
-			if(BIDOQ_SESSION_ID.equals(api.getToken())) {
+			if(BIDOQ_SESSION_ID.equals(api.getToken()) || BIDOQ_SESSION_ID.equals(api.getData().optString(IJsonNames.SESSION_ID))) {
 				switch (api.getPath()) {
 				case "/":
 					response(req, resp, bidoq(api));
@@ -65,20 +66,6 @@ public class BidoqServlet extends AonApiHttpServlet {
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 				}
-			} else {
-				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
-				throw new Exception("El token es incorrecto.");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			error(req, resp, e);
-		}
-		
-		LOGGER.info("AON API BIDOQ SERVLET - POST METHOD");
-		try {
-			AonApiData api = initialize(req, resp);
-			if(BIDOQ_SESSION_ID.equals(api.getToken())) {
-				
 			} else {
 				LOGGER.info("TOKEN RECIBIDO: " + api.getToken());
 				throw new Exception("El token es incorrecto.");
@@ -162,7 +149,7 @@ public class BidoqServlet extends AonApiHttpServlet {
 		String company = api.getData().optString("company");
 		String action = api.getData().optString("action");
 		String email = api.getData().optString("email");
-
+		
 		if(AonStringUtils.isEmpty(user)) {
 			throw new Exception("El campo user está vacío");
 		}
@@ -171,7 +158,15 @@ public class BidoqServlet extends AonApiHttpServlet {
 			throw new Exception("El campo company está vacío");
 		}
 		
-		Auth auth = AON_SOLUTIONS.getAuthByDocument(user);
+		Auth auth = new Auth();
+		if(Utils.isEmail(email)) {
+			auth = AON_SOLUTIONS.getAuth(email);
+		}
+		
+		if(auth.isEmpty()) {
+			auth = AON_SOLUTIONS.getAuthByDocument(user);
+		}
+		
 		Company cp = new Company();
 		String token = "";
 		if(auth.getUuid() != null) {
@@ -232,10 +227,11 @@ public class BidoqServlet extends AonApiHttpServlet {
 		json.put("success", true);
 		json.put("appBlocked", true);
 		json.put("appMessage", "Hay una nueva aplicación disponible. Su usuario de acceso es " + auth.getEmail());
+
 		if(api.getData().opt("app") != null && api.getData().getString("app").equalsIgnoreCase("android")) {
-			json.put("appStore", "https://play.google.com/store/apps/details?id=aon.solutions");
+			json.put("appStore", "itms-apps://itunes.apple.com/app/aon.solutions");
 		} else if(api.getData().opt("app") != null && api.getData().getString("app").equalsIgnoreCase("ios")) {
-			json.put("appStore", "https://itunes.apple.com/es/app/aon-solutions/id1538461097");
+			json.put("appStore", "market://details?id=aon.solutions");
 		}
 		
 		return json;

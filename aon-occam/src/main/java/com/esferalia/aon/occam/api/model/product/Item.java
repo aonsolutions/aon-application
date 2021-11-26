@@ -29,7 +29,7 @@ public class Item implements Serializable {
 	private Double expensesFixed;
 	private Double profitPercent;
 	private Double purchasePrice;
-	private Boolean internet;
+	private boolean internet;
 	
 	private Tag packFormatTag;
 	private Integer packUnits;
@@ -182,11 +182,11 @@ public class Item implements Serializable {
 		return this;
 	}
 
-	public Boolean isInternet() {
+	public boolean isInternet() {
 		return internet;
 	}
 	
-	public Item setInternet(Boolean internet) {
+	public Item setInternet(boolean internet) {
 		this.internet = internet;
 		return this;
 	}

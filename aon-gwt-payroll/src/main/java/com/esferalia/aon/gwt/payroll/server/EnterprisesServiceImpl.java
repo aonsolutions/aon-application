@@ -87,6 +87,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus;
@@ -2360,7 +2361,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public void setContractSpecificData(String domainName, EmployeeContractInfo employeeContractData) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			JooqContractSEPE.setContractSpecificData(connection, employeeContractData);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqContractSEPE.setContractSpecificData(connection, domainId, employeeContractData);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -3303,10 +3305,25 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public ContractConcepts getAllConcepts(String domainName, String currentUser) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			
 			return JooqEmployeeContractPayments.getAllConcepts(connection, domainId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} 
+	}
+
+	@Override
+	public EnterpriseContext getEnterpriseContext(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			
+			EnterpriseContext enterpriseContext = new EnterpriseContext();
+			enterpriseContext.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
+			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainId));
+			enterpriseContext.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
+			enterpriseContext.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
+			
+			return enterpriseContext;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 

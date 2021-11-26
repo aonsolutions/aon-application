@@ -20,7 +20,7 @@ public interface CheckItServiceAsync {
 			, CheckItBankAccount checkItBankAccount, AsyncCallback<Integer> callback);
 	void getLogins(Integer bankId, AsyncCallback<List<CheckItLoginFields>> callback);
 	void addAccount(Integer enterpriseId, CheckitUnlinkedBankAccount checkitUnlinkedBankAccount
-			, String userID, String userPassword, String userPIN, AsyncCallback<Boolean> callback);
+			, String userID, String userPassword, String userPIN, AsyncCallback<String> callback);
 	void getCredentials(Integer enterpriseId, Integer loginId, AsyncCallback<CheckItLoginFields> callback);
 	void editCredentials(Integer enterpriseId, CheckItLoginFields checkItLoginFields, AsyncCallback<Boolean> callback);
 	void getFields(Integer loginId, AsyncCallback<CheckItLoginFields> callback);

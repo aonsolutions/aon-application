@@ -268,7 +268,6 @@ public class TaskUtils {
 		LinkedList<Auth> auths = new LinkedList<>();
 		Domain domain = api.getDomain();
 		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
-
 		//SEND SENDER
 		if(task.getSender()!=null && task.getSender().getUserId()!=null && Integer.compare(task.getSender().getUserId(), user.getId())!=0 ) {
 			User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getSender().getUserId()));
@@ -413,9 +412,9 @@ public class TaskUtils {
 	
 	private static Boolean isNotification(AonApiData api, Task task, String param) {
 		Boolean isExternal = 
-			(api.getDomain().getDomainType().equals(DomainType.OFFICE) && task.getRegistry()!=null && task.getRegistry().get()!=null) || 
+			(api.getDomain().getDomainType().equals(DomainType.OFFICE) && task.getRegistry()!=null && task.getRegistry().getId()!=null) || 
 			(!task.getDomain().getId().equals(api.getDomain().getId()));
-		
+
 		Domain domain = api.getDomain();
 		
 		if(Boolean.TRUE.equals(isExternal)) {
@@ -438,8 +437,7 @@ public class TaskUtils {
 		}
 		ApplicationParameter appParam = AON.getApplicationParameter(domain.getName(), domain.getId(), "", param);
 		System.out.println("param "+param+" "+ appParam.getName()+" "+appParam.getValue());
-//		appParam.getId() == null ||
-		return (appParam.getId()!=null && appParam.getValue().equals("true"));
+		return appParam.getId() == null || (appParam.getId()!=null && appParam.getValue().equals("true"));
 	}
 	
 	public interface APP_PARAMS_REQUEST {

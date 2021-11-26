@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 
@@ -19,11 +20,13 @@ public class DataResponse implements Serializable {
 	private Date responseDate;
 	private DataResponseSource source;
 	private Integer sourceId;
+	private Integer dataRequest;
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
-	
+	private List<DataResponseDetail> details;
+ 	
 	public Integer getId() {
 		return id;
 	}
@@ -95,5 +98,22 @@ public class DataResponse implements Serializable {
 		return this;
 	}
 	
+	public Integer getDataRequest() {
+		return dataRequest;
+	}
+	
+	public DataResponse setDataRequest(Integer dataRequest) {
+		this.dataRequest = dataRequest;
+		return this;
+	}
+	
+	public List<DataResponseDetail> getDetails() {
+		return details;
+	}
+	
+	public DataResponse setDetails(List<DataResponseDetail> details) {
+		this.details = details;
+		return this;
+	}
 	
 }

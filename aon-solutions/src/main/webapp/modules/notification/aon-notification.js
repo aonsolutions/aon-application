@@ -2,7 +2,7 @@ import { AonElement } from "../../components/AonElement.js";
 import { AonCard } from "../../components/aon-card.js";
 import { scrollInfinite, serializeForm } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
-import { firstLetters } from "../signin/time-control/utils.js";
+import { firstLetters } from "../timecontrol/time-control/utils.js";
 import { AonTabs } from "../../components/aon-tabs.js";
 import { Swipe } from "../../components/swipe.js";
 import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification, sendNotification } from "../../services/service.js";

@@ -122,6 +122,7 @@ public class NotificationRequest extends Notification {
 			    if(responseEntity!=null && response.getStatusCode() == 200 ) {
 			        JSONObject responseJSON = new JSONObject(EntityUtils.toString(responseEntity));
 			        success = responseJSON.optInt("success") > 0;
+			        System.out.println("----------------NOTIFICATION SENT---------");
 			        checkTokenFailed(responseJSON, tokens);
 			    } else {
 			    	throw new Exception(response.getReasonPhrase());

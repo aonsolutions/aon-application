@@ -253,7 +253,7 @@ export class AonAltaDirecta extends AonElement {
         let nss = this.getElement(`${this.id}NssDiv`);
         let dni = this.getElement(`${this.id}DniDiv`);
         if (nss && dni)
-            nss.parentNode.classList = dni.parentNode.classList = 'aonCol-sm-12 aonCol-md-6';
+            nss.parentNode.className = dni.parentNode.className = `${CSS.AON_COL_SM_12} ${CSS.AON_COL_MD_6}`;
     }
 
     selectTipojornada({ detail }) {
@@ -497,8 +497,14 @@ export class AonAltaDirecta extends AonElement {
     async alta() {
         this.applicationEl.startLoading();
         try {
-            await sendAlta(this.getContract());
-            this.addContract();
+            let contract = this.getContract();
+            await sendAlta(contract);
+
+            //----SAVED CONTRACT
+            await addContract({ ...contract, fra: contract.fecha, domain: LS.getDomainId()})
+            .then(()=> console.log("-----SAVED CONTRACT-----") )
+            .catch(e=>console.log(e));
+            
             this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
             this.applicationParentEl._movements = [];
             this.back();
@@ -506,18 +512,6 @@ export class AonAltaDirecta extends AonElement {
             this.showToast(error);
         }
         this.applicationEl.stopLoading();
-    }
-
-
-    addContract() {
-        const data = this.getContract();
-        let newData = {
-            ...data,
-            fra: data.fecha,
-            domain: LS.getDomainId()
-        }
-
-        addContract(newData).then(()=>console.log("------SAVED CONTRACT------")).catch(e=>console.log(e));
     }
 
     async baja(){
@@ -671,23 +665,27 @@ export class AonAltaDirecta extends AonElement {
         let d = this.getApplication().getOptionDialog();
         d.getContent().style.width = "133px";
         let moreActions = [];
-        //IDC
-        let idc = CONTRACT_OPTIONS.IDC;
-        idc.fn = () =>  this.applicationParentEl.getIdc(this.data);
-        moreActions.push(idc);
-        //TA
-        let ta = CONTRACT_OPTIONS.TA;
-        ta.fn = () =>  this.applicationParentEl.getTa(this.data);
-        moreActions.push(ta);
+
+        //---IDC
+        moreActions.push({
+            ...CONTRACT_OPTIONS.IDC,
+            fn: () =>  this.applicationParentEl.getIdc(this.data)
+        });
+
+        //----TA
+        moreActions.push({
+            ...CONTRACT_OPTIONS.TA,
+            fn: () =>  this.applicationParentEl.getTa(this.data)
+        });
 
         d.setMenuOptions(moreActions, top, left);
         d.open();
     }
 
     duplicateMov(){
-        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, {...this.data, fra:null, status:null, situation:"AL"}).then(el=>{
-            disabledForm(`${el.id}TrabajadorCard`);
-        });
+        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, {...this.data, fra:null, status:null, situation:"AL"}).then(el=>
+            disabledForm(`${el.id}TrabajadorCard`)
+        );
     }
 
     isAlta(){

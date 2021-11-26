@@ -14,7 +14,18 @@ public enum DataAttachmentSource implements IResourceable {
 	DELIVERY,
 	SII,
 	SERES,
-	INGENET;
+	INGENET,
+	MOD303,
+	MOD111,
+	MOD115,
+	MOD123,
+	MOD130,
+	MOD131,
+	MOD390,
+	IMPORTATION,
+	SISTEMA_RED,
+	INVOICE_PRINT_CONFIGURATION,
+	TBAI;
 	
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_data_attachment_source_";

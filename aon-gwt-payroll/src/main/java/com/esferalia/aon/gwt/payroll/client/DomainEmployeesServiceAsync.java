@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -447,6 +448,10 @@ public class DomainEmployeesServiceAsync {
 	
 	// ----- Payroll Salaries
 	
+	public void getSalariesDates(SalaryInfoFilter filter, AsyncCallback<Period> callback) {
+		employeesServiceAsync.getSalariesDates(getCurrentDomainName(), filter, callback);
+	}
+	
 	public void getSalaries(SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback) {
 		employeesServiceAsync.getSalaries(getCurrentDomainName(), filter, callback);
 	}
@@ -637,6 +642,16 @@ public class DomainEmployeesServiceAsync {
 	
 	public void setEmployeeIrpf(Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
 		employeesServiceAsync.setEmployeeIrpf(getCurrentDomainName(), contractId, ssNumber, employeeIrpfs, callback);
+	}
+	
+	// ------------------------------------------------- ContractVariables
+	
+	public void getContractVariables(Integer contractId, AsyncCallback<List<ContractVariable>> callback) {
+		employeesServiceAsync.getContractVariables(getCurrentDomainName(), contractId, callback);
+	}
+
+	public void updateContractVariables(List<ContractVariable> contractVariables, AsyncCallback<Void> callback) {
+		employeesServiceAsync.updateContractVariables(getCurrentDomainName(), contractVariables, callback);
 	}
 
 	// ------------------------------------------------------------------------

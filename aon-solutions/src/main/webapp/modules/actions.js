@@ -36,6 +36,12 @@ export const CHANGE_TYPE = {
     icon: MATERIAL_ICONS.EDIT
 };
 
+export const REMARKS = {
+    id: CONSTANT.REMARKS.initCap(),
+    name: MSG.ADD_REMARKS,
+    icon: MATERIAL_ICONS.COMMENT
+};
+
 export const COMMENT = {
     id: CONSTANT.COMMENT.initCap(),
     name: MSG.ADD_COMMENT,

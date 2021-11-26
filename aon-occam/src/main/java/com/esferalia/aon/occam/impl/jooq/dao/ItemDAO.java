@@ -25,8 +25,8 @@ import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
-import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
 
 
 public class ItemDAO {
@@ -110,8 +110,9 @@ public class ItemDAO {
 		if(item.getProduct().getId() == null) {
 			ProductDAO.save(ctx, item.getProduct());
 		}
-
+		
 		ctx.checkWrite();
+		ItemAutoComplete.autoComplete(ctx, item);
 		return item.getId() != null 
 			? update(ctx, item)
 			: insert(ctx, item);		
@@ -120,8 +121,6 @@ public class ItemDAO {
 	public static Item insert(AONContext ctx, Item item) {
 		Timestamp now = new Timestamp(new java.util.Date().getTime());
 		ctx.checkWrite();
-
-		//ProductValidation.validateItem(ctx, item);
 
 		Integer id = ctx.getDslContext().insertInto(ITEM)
 		.set(ITEM.DOMAIN, item.getDomain().getId())
@@ -161,8 +160,6 @@ public class ItemDAO {
 	public static Item update(AONContext ctx, Item item) {
 		Timestamp now = new Timestamp(new java.util.Date().getTime());
 		ctx.checkWrite();
-
-		//ProductValidation.validateItem(ctx, item);
 
 		ctx.getDslContext().update(ITEM)
 		.set(ITEM.DOMAIN, item.getDomain().getId())

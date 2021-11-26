@@ -30,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -529,6 +530,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getAllConcepts(AsyncCallback<ContractConcepts> asyncCallback) {
 		enterprisesServiceAsync.getAllConcepts(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+	
+	public void getEnterpriseContext(AsyncCallback<EnterpriseContext> asyncCallback) {
+		enterprisesServiceAsync.getEnterpriseContext(getCurrentDomainName(), asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.test.faker;
 
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 
@@ -9,7 +10,6 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
@@ -506,7 +506,7 @@ public class AonFaker {
 		return new Project()
 			.setDomain(new Domain().setId(ctx.getDomainId()))
 			.setName(faker.gameOfThrones().dragon())
-			.setAlias(faker.gameOfThrones().house())
+			.setAlias(AonRandom.alias(20, PROJECT.ALIAS.getDataType().length()))
 			.setRegistry(registry)
 			.setType(type)
 			.setDate(new Date())

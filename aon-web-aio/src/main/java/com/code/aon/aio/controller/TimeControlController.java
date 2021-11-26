@@ -42,6 +42,10 @@ public class TimeControlController implements Serializable {
 	private Optional<TimeControl> todayTimeControl;
 	private Optional<DomainUserRoles> domainUserRoles;
 	
+	private Optional<Double> latitude = Optional.empty();
+	private Optional<Double> longitude = Optional.empty();
+	
+	
 	public boolean isIn() {
 		return getOptionalTodayTimeControl().map( t -> t.getStatus() == TimeControlStatus.IN ).orElse(false)  ;
 	}
@@ -58,6 +62,22 @@ public class TimeControlController implements Serializable {
 		return getOptionalDomainUserRoles().map( d -> d.isTimecontrol()).orElse(false);
 	}
 	
+	public Double getLongitude() {
+		return longitude.orElse(null);
+	}
+	
+	public void setLongitude(Double longitude) {
+		this.longitude = Optional.ofNullable(longitude);
+	}
+	
+	public Double getLatitude() {
+		return latitude.orElse(null);
+	}
+	
+	public void setLatitude(Double latitude) {
+		this.latitude = Optional.ofNullable(latitude);
+	}
+
 	public long getTodayHours() {
 		long timeInMillis = getTodayTimeInMillis() + getInTimeInMillis();
 		return timeInMillis / 3600000;
@@ -155,7 +175,11 @@ public class TimeControlController implements Serializable {
 		Date date = new Date();
 		Location location = new Location();
 		Coordinates coordinates = new Coordinates();
-
+		if ( latitude.isPresent() && longitude.isPresent() ) {
+			coordinates.setLatitude(latitude.get());
+			coordinates.setLongitude(longitude.get());
+		}
+		
 		
 		TaskHolder taskHolder = getTaskHolder();
 

@@ -4,8 +4,6 @@ import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { getTasks } from "../../services/taskService.js";
 import { sortBy } from "../../services/utils.js";
-import { SigninSidenav } from "../signin/signinEnums.js";
-import { firstLetters } from "../signin/time-control/utils.js";
 import { MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
@@ -14,6 +12,8 @@ import { getCustomers } from "../../services/registryService.js";
 import { getTaskHolder } from "../../services/taskHolderService.js";
 import * as LS from '../../services/localStorageService.js';
 import { AonDateUtils } from "../utils/AonDateUtils.js";
+import { SigninSidenav } from "../timecontrol/signinEnums.js";
+import { firstLetters } from "../timecontrol/time-control/utils.js";
 
 export class AonMessengerList extends AonElement {
   MORE;

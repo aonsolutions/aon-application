@@ -1,12 +1,14 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,6 +29,9 @@ public class EmployeeSalaryObject {
 	
 	private String emailStatus;
 	
+	private Date minDate;
+	private Date maxDate;
+	
 	// --------------------------------------------- Constructor
 	
 	public EmployeeSalaryObject() {
@@ -41,6 +46,27 @@ public class EmployeeSalaryObject {
 	}
 	
 	// --------------------------------------------- Database Methods
+	
+	public void getSalariesDates(Consumer<Period> success, Consumer<Throwable> failure){
+		
+		filter.setEmployeeId(this.employeeId);
+		
+		employeesService.getSalariesDates(filter, new AsyncCallback<Period>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Period result) {
+				minDate = result.getStart();
+				maxDate = result.getEnd();
+				success.accept(result);
+			}
+			
+		});
+	}
 	
 	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
@@ -114,6 +140,14 @@ public class EmployeeSalaryObject {
 	
 	public String getEmailStatus(){
 		return this.emailStatus;
+	}
+	
+	public Date getMinDate() {
+		return minDate;
+	}
+
+	public Date getMaxDate() {
+		return maxDate;
 	}
 		
 }

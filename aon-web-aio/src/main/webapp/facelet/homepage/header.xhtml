@@ -15,6 +15,15 @@
 	.aon-menuBar {
 		border-bottom: 1px #ddd solid;
 		background-image: none !important;
+		background-color: #ffffff !important;
+	}
+	
+	img[src*='LineSeparatorImage'] {
+		display: none;
+	}
+	
+	.aon-top-menu-item:hover,
+	.aon-top-menu-item-select:hover {
 		background-color: #f6f6f6 !important;
 	}
 	
@@ -90,8 +99,13 @@
 	}	
 	
 	.aon-dataScroller {
-    	background-color: #f6f6f6;
-    	border: #ddd 1px solid;
+    	background-color: #fff;
+    	border: #fff 1px solid;
+	}
+	
+	.aon-dataScroller2-text {
+		font-size: 13px;
+		font-weight: normal;
 	}
 	
 	.aon-finding-toolbar-item {
@@ -907,7 +921,7 @@
 	.rich-fileupload-button-selection
 	 {
 		width: auto;
-		mouse: pointer;
+		cursor: pointer;
     	color: #4b4b4b;
     	background: none;
     	border-radius: 0px;
@@ -975,6 +989,19 @@
 		padding-left : 0px;
 		background-image: none;
 	}
+	.aon-card,
+	.aon-support,
+	div[id$='messageList'],
+	div[id$='GraphContainer'],
+	div[id$='__fiscal_status_div']
+	 {
+    	border-radius: 14px;
+    	box-shadow: 0px 6px 6px #f3f3f3;
+    	background-color: #FFFFFF !important;
+    	border: solid #F3F3F3 1px !important;
+    }
+    
+    
 
 	</style>
 
@@ -1009,20 +1036,9 @@
 
 			<aon:panelGroup>
 
-				<aon:outputConnectionStatus id="aonStatus" layout="block"
-					style=""
-					startStyle="#{customize.statusStartStyle}; margin-top: 5px;"
-					startStyleClass="aon-outputConnectionStatus-start"
-					stopStyle="#{customize.statusStopStyle}; margin-top: 5px;"
-					stopStyleClass="aon-outputConnectionStatus-stop"
-					onstart="resetStatusError();" />
-				<aon:div id="status_error"
-					style="#{customize.statusFailedStyle} display: none; margin-top: 5px;"
-					styleClass="aon-outputConnectionStatus-failed" />
-
 				<aon:div style="margin-bottom:2px;">
 					<aon:commandLink id="index" action="index" title="#{bundle.aon_home}" >
-					<aon:graphicImage style="margin-left: 150px; height: 24px; vertical-align: middle;"
+					<aon:graphicImage style="height: 24px; vertical-align: middle;"
 						value="#{customize.headerLogo}" />
 					</aon:commandLink>
 					<aon:if test="#{customize.separator != null}">					

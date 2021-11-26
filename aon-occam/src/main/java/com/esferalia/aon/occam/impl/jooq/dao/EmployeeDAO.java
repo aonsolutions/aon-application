@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractCost.CONTRACT_COST;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -54,6 +55,7 @@ import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractCostRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDeductionRecord;
+import com.esferalia.aon.jooq.tables.records.ContractInfoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
@@ -170,7 +172,7 @@ public class EmployeeDAO {
 		return employee;
 	}
 
-	public static  ContractRecord addEmployee(DSLContext dslContext, Integer domainId, Employee employee ) {
+	public static ContractRecord addEmployee(DSLContext dslContext, Integer domainId, Employee employee ) {
 		
 		EnterpriseCccRecord enterpriseCccRecord =
 		getEnterpriseCCC(dslContext, domainId, employee );
@@ -213,6 +215,25 @@ public class EmployeeDAO {
 				.set(CONTRACT_DATA.EXPRESSION, data.getExpression());
 			}
 		}
+
+		InsertSetMoreStep<ContractInfoRecord> insertContractInfo = null ; 
+		for ( Map.Entry<String, Collection<Employee.ExpressionData>> entry: employee.getInfos().entrySet() ) {
+			for( Employee.ExpressionData data :  entry.getValue()) {
+				insertContractInfo = 
+				(insertContractInfo != null ? 
+						insertContractInfo.newRecord():
+				dslContext.insertInto(CONTRACT_INFO))
+				.set(CONTRACT_DATA.DOMAIN, domainId)
+				.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+				.set(CONTRACT_DATA.NAME, entry.getKey() )
+				.set(CONTRACT_DATA.START_DATE, toSql(data.getStartDate()))
+				.set(CONTRACT_DATA.END_DATE, toSql(data.getEndDate()))
+				.set(CONTRACT_DATA.EXPRESSION, data.getExpression());
+			}
+		}
+		if(insertContractInfo!=null)
+			insertContractInfo.execute();
+		
 		
 		insertContractData.execute();
 		

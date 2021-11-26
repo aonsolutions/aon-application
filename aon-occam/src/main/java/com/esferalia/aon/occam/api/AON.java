@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -35,6 +36,7 @@ import com.esferalia.aon.occam.api.model.ElaborationDetail;
 import com.esferalia.aon.occam.api.model.ElaborationDetailComposition;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.Expedient;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
@@ -51,6 +53,7 @@ import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.CreditorFilter;
 import com.esferalia.aon.occam.api.model.Filter.CustomerFilter;
+import com.esferalia.aon.occam.api.model.Filter.DataRequestFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
@@ -60,6 +63,7 @@ import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
+import com.esferalia.aon.occam.api.model.Filter.EnterpriseCCCFilter;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
@@ -162,7 +166,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
-import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.management.Offer;
@@ -251,6 +255,7 @@ import com.esferalia.aon.occam.impl.jooq.AttachmentImpl;
 import com.esferalia.aon.occam.impl.jooq.CommercialImpl;
 import com.esferalia.aon.occam.impl.jooq.CommissionImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
+import com.esferalia.aon.occam.impl.jooq.EnterpriseImpl;
 import com.esferalia.aon.occam.impl.jooq.ExpedientImpl;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 import com.esferalia.aon.occam.impl.jooq.GroupwareImpl;
@@ -367,6 +372,10 @@ public class AON {
 	
 	private static IExpedient getExpedient() {
 		return new ExpedientImpl();
+	}
+	
+	private static IEnterprise getEnterprise() {
+		return new EnterpriseImpl();
 	}
 
 	// ********************************************
@@ -1689,6 +1698,12 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static void deleteInvoice(String domainName, Integer domainId, String login, Integer invoiceId) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getFinance().deleteInvoice(ctx, invoiceId);
 		}
 	}
 	
@@ -5193,13 +5208,14 @@ public class AON {
 
 	public static LinkedList<InvoiceSeries> getInvoiceSeries(String domainName,
 			int domainId, String login, Date from, Date to, boolean taxDate) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getInvoiceSeries(ctx, from, to, taxDate);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static List<InvoiceSeries> getInvoiceSalesSeries(String domainName, int domainId, String login) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getInvoiceSalesSeries(ctx);
 		}
 	}
 
@@ -5936,6 +5952,28 @@ public class AON {
 		}
 	}
 	
+	// ---------- DATA REQUEST
+	
+	public static Stream<DataRequest> getDataRequestStream(String domainName, Integer domainId, String login, DataRequestFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getDataRequestStream(ctx, filter);
+		}
+	}
+	
+	public static DataRequest getDataRequest(String domainName, Integer domainId, String login, DataRequestFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getDataRequest(ctx, filter);
+		}
+	}
+	
+	public static DataRequest saveDataRequest(String domainName, Integer domainId, String login, DataRequest dataRequest){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().saveDataRequest(ctx, dataRequest);
+		}
+	}
+	
+	// ---------- DATA RESPONSE	
+	
 	public static Stream<DataResponse> getDataResponseStream(String domainName, Integer domainId, String login, DataResponseSource source, DataResponseFilter filter){
 		AONContext ctx = null;
 		try {
@@ -5993,6 +6031,12 @@ public class AON {
 			return getCommon().getDataResponseDetailStream(ctx, filter);
 		} finally {
 			if (ctx != null) ctx.close();
+		}
+	}
+
+	public static DataResponse getLastDataResponse(String domainName, Integer domainId, String login, DataResponseFilter filter){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getCommon().getLastDataResponse(ctx, filter);
 		}
 	}
 	
@@ -6768,35 +6812,33 @@ public class AON {
 		}
 	}
 	
-	// PRINT INVOICE CONFIGURATION
-	
-	public static PrintInvoiceConfiguration get(Domain domain, User user) {
-		return get(domain.getName(), domain.getId(), user.getLogin());
+	// TICKET BAI CONFIGURATION
+
+	public static TbaiConfiguration getTbaiConfiguration(Domain domain, User user) {
+		return getTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	}
-	
-	public static PrintInvoiceConfiguration get(Domain domain, String login) {
-		return get(domain.getName(), domain.getId(), login);
+		
+	public static TbaiConfiguration getTbaiConfiguration(Domain domain, String login) {
+		return getTbaiConfiguration(domain.getName(), domain.getId(), login);
 	}
-	
-	public static PrintInvoiceConfiguration get(String domainName, Integer domainId, String login) {
+		
+	public static TbaiConfiguration getTbaiConfiguration(String domainName, Integer domainId, String login) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			// TODO get print invoice configuration
-			return new PrintInvoiceConfiguration();
+			return getFinance().getTbaiConfiguration(ctx);
 		}
 	}
-	
-	public static PrintInvoiceConfiguration save(Domain domain, User user, PrintInvoiceConfiguration config) {
-		return save(domain.getName(), domain.getId(), user.getLogin(), config);
+		
+	public static TbaiConfiguration saveTbaiConfiguration(Domain domain, User user, TbaiConfiguration config) {
+		return saveTbaiConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
 	}
-	
-	public static PrintInvoiceConfiguration save(Domain domain, String login, PrintInvoiceConfiguration config) {
-		return save(domain.getName(), domain.getId(), login, config);
+		
+	public static TbaiConfiguration saveTbaiConfiguration(Domain domain, String login, TbaiConfiguration config) {
+		return saveTbaiConfiguration(domain.getName(), domain.getId(), login, config);
 	}
-	
-	public static PrintInvoiceConfiguration save(String domainName, Integer domainId, String login, PrintInvoiceConfiguration config) {
+		
+	public static TbaiConfiguration saveTbaiConfiguration(String domainName, Integer domainId, String login, TbaiConfiguration config) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			// TODO save print invoice configuration
-			return new PrintInvoiceConfiguration();
+			return getFinance().saveTbaiConfiguration(ctx, config);
 		}
 	}
 	
@@ -6832,5 +6874,36 @@ public class AON {
 			getPerson().deletePerson(ctx, id);
 		}
 	}
-		
+	
+	//---------- INVOICE FISCAL
+	public static void deleteInvoiceFiscal(String schema, Integer invoiceId) {
+		try(AONContext ctx = AONContext.getAONContext(schema)){
+			getFinance().deleteInvoiceFiscal(ctx, invoiceId);
+		}
+	}	
+	
+	//-------------ENTERPRISE
+	public static EnterpriseCCC saveEnterpriseCCC(Domain domain, String login, EnterpriseCCC ec) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getEnterprise().saveEnterpriseCCC(ctx, ec);
+		}
+	}
+	
+	public static EnterpriseCCC getEnterpriseCCC(Domain domain, String login, EnterpriseCCCFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getEnterprise().getEnterpriseCCC(ctx, filter);
+		}
+	}
+
+	public static Stream<EnterpriseCCC> getEnterpriseCCCStream(Domain domain, String login, EnterpriseCCCFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getEnterprise().getEnterpriseCCCStream(ctx, filter);
+		}
+	}
+	
+	public static void deleteEnterpriseCCC(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getEnterprise().deleteEnterpriseCCC(ctx, id);
+		}
+	}
 }

@@ -163,7 +163,6 @@ export const fillTaskHolder = async (aonMessengerChat) => {
         let options = [];
         if(taskHolders && taskHolders.length>0){
             options = taskHolders.map( th=> ({...th, value: th.id}) )
-            .filter( (v,i,s)=>s.findIndex((m) => m.id === v.id) === i )
         } else if(task.task_holder.id && task.task_holder.name) {
             options = [{...task.task_holder, value:task.task_holder.id}];
         }

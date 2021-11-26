@@ -17,6 +17,7 @@ import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.payroll.sepe.contrata.Contrata;
@@ -52,8 +53,8 @@ public class JooqContractSEPE {
 		return getContractSpecificDataDB(DSL.using(conn, getDefaultSettings()), contractId);
 	}
 	
-	public static void setContractSpecificData(Connection conn, EmployeeContractInfo employeeContractInfo) {
-		setContractSpecificDataDB(DSL.using(conn, getDefaultSettings()), employeeContractInfo);
+	public static void setContractSpecificData(Connection conn, Integer domainId, EmployeeContractInfo employeeContractInfo) {
+		setContractSpecificDataDB(DSL.using(conn, getDefaultSettings()), domainId, employeeContractInfo);
 	}
 	
 	private static ContractSpecificData getContractSpecificDataDB(DSLContext dslContext, Integer contractId) {
@@ -76,15 +77,14 @@ public class JooqContractSEPE {
 			.orderBy(CONTRACT_ATTACH.ID.desc())
 			.fetch();
 		
-		Record contractAttachRecord = null;
-		
 		if(null == contractAttachRecords || contractAttachRecords.isEmpty()) {
 			System.out.println("GETTER - getContractSpecificData empty - id : null");
 			return contractSpecificData;	
-		} else {
-			// Clean DB
-			contractAttachRecord = contractAttachRecords.get(0);
-			
+		} 
+		
+		Record contractAttachRecord = contractAttachRecords.get(0);
+		
+		if(contractAttachRecords.size() > 1) {
 			dslContext.delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 				.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
 				.and(CONTRACT_ATTACH.MIMETYPE.eq((byte)5))
@@ -92,15 +92,12 @@ public class JooqContractSEPE {
 				.execute();
 		}
 
-		
-		
 		contractSpecificData.setId(contractAttachRecord.get(CONTRACT_ATTACH.ID));
 
-		Contrata contrata = new Contrata();
-		CONTRATOS contratos = contrata.getCONTRATOS(contractAttachRecord.get(CONTRACT_ATTACH.DATA));
-		if(null == contratos) return contractSpecificData;
-		
 		try {
+			Contrata contrata = new Contrata();
+			CONTRATOS contratos = contrata.getCONTRATOS(contractAttachRecord.get(CONTRACT_ATTACH.DATA));
+			if(null == contratos) return contractSpecificData;
 			Object obj = contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
 			JooqContrata.completeContratosParams(obj, contractSpecificData);
 		} catch (JAXBException | IOException | IndexOutOfBoundsException e) {
@@ -112,17 +109,15 @@ public class JooqContractSEPE {
 		return contractSpecificData;
 	}
 	
-	private static void setContractSpecificDataDB(DSLContext dslContext, EmployeeContractInfo employeeContractInfo) {
+	private static void setContractSpecificDataDB(DSLContext dslContext, Integer domainId, EmployeeContractInfo employeeContractInfo) {
 		ContractSpecificData contractSpecificData = employeeContractInfo.getContractSpecificData();
 		
 		Integer contractId = employeeContractInfo.getContractInfo().getContractId();
-		Integer domainId = employeeContractInfo.getEmployeeInfo().getDomain();
-		
-		Date startDate = new Date(employeeContractInfo.getContractInfo().getStartDate().getTime());
-		Date endDate = null == employeeContractInfo.getContractInfo().getEndDate() ? null : new Date(employeeContractInfo.getContractInfo().getEndDate().getTime());
-		
+		Date startDate = parseToSQLDate(employeeContractInfo.getContractInfo().getStartDate());
+		Date endDate = parseToSQLDate(employeeContractInfo.getContractInfo().getEndDate());
 		String cno = contractSpecificData.getCno();
-		if(!AonStringUtils.isBlank(cno)) {
+		
+		if(AonStringUtils.isNotBlank(cno)) {
 			dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.NAME.eq("CNO")).and(CONTRACT_DATA.CONTRACT.eq(contractId)).execute();
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domainId)
@@ -134,48 +129,65 @@ public class JooqContractSEPE {
 				.execute();
 		}
 		
-		IContratoType contrato = JooqContrata.createCONTRATOS(employeeContractInfo);
-		CONTRATOS contratos = new CONTRATOS();
-		contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().add(contrato);
-		
-		// ByteArrayOutputStream
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		
 		try {
-//			Utils.marshal(contratos, System.out);
-			Utils.marshal(contratos, out);
+			IContratoType contrato = JooqContrata.createCONTRATOS(employeeContractInfo);
 			
-			Integer attachId = employeeContractInfo.getContractSpecificData().getId();
-			
-			System.out.println("SETTER : setContractSpecificData - id : " + contractSpecificData.getId() + " - cno : " + contractSpecificData.getCno());
-			
-			if(null == attachId) {
-				dslContext.insertInto(CONTRACT_ATTACH)
-					.set(CONTRACT_ATTACH.DOMAIN, employeeContractInfo.getEmployeeInfo().getDomain())
-					.set(CONTRACT_ATTACH.CONTRACT, employeeContractInfo.getContractInfo().getContractId())
-					.set(CONTRACT_ATTACH.MIMETYPE, (byte)5)
-					.set(CONTRACT_ATTACH.DESCRIPTION, "CONTRACT - Contrat@")
-					.set(CONTRACT_ATTACH.DATA, out.toByteArray())
-					.set(CONTRACT_ATTACH.TYPE, (byte)4)
-					.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
-					.execute();
-			} else {
-				dslContext.update(CONTRACT_ATTACH)
-					.set(CONTRACT_ATTACH.DATA, out.toByteArray())
-					.where(CONTRACT_ATTACH.ID.eq(attachId))
-					.execute();
+			if(null != contrato) {
+				CONTRATOS contratos = new CONTRATOS();
+				contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().add(contrato);
+				
+				// ByteArrayOutputStream
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				
+//				Utils.marshal(contratos, System.out);
+				Utils.marshal(contratos, out);
+				
+				Integer attachId = employeeContractInfo.getContractSpecificData().getId();
+				
+				System.out.println("SETTER : setContractSpecificData - id : " + contractSpecificData.getId() + " - cno : " + contractSpecificData.getCno());
+				
+				if(null == attachId) {
+					dslContext.insertInto(CONTRACT_ATTACH)
+						.set(CONTRACT_ATTACH.DOMAIN, employeeContractInfo.getEmployeeInfo().getDomain())
+						.set(CONTRACT_ATTACH.CONTRACT, employeeContractInfo.getContractInfo().getContractId())
+						.set(CONTRACT_ATTACH.MIMETYPE, (byte)5)
+						.set(CONTRACT_ATTACH.DESCRIPTION, "CONTRACT - Contrat@")
+						.set(CONTRACT_ATTACH.DATA, out.toByteArray())
+						.set(CONTRACT_ATTACH.TYPE, (byte)4)
+						.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+						.execute();
+				} else {
+					dslContext.update(CONTRACT_ATTACH)
+						.set(CONTRACT_ATTACH.DATA, out.toByteArray())
+						.where(CONTRACT_ATTACH.ID.eq(attachId))
+						.execute();
+				}
 			}
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// ---------------------------------------------------- Auxiliar methods
 	
 	private static String parseContractData(String value) {
-		if(null == value)
-			return null;
+		String parsedValue = null;
+		if(AonStringUtils.isNotBlank(value) && value.contains("\""))
+			try {
+				parsedValue = value.split("\"")[1];
+			} catch (IndexOutOfBoundsException e) {
+				parsedValue = value;
+			}
+		else
+			parsedValue = value;
 		
-		return value.split("\"")[1];
+		return parsedValue;
+	}
+	
+	private static Date parseToSQLDate(java.util.Date date) {
+		if(null == date) return null;
+		
+		DateUtils.resetTime(date);
+		return new Date(date.getTime());
 	}
 }

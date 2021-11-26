@@ -822,6 +822,8 @@ public class JooqContrata {
 
 	public static IContratoType createCONTRATOS(EmployeeContractInfo employeeContractInfo) {
 		String tc2 = employeeContractInfo.getContractInfo().getContractType();
+		if(AonStringUtils.isBlank(tc2))
+			return null;
 		IContratoType contratoType = createContratoModel(tc2);
 		
 		try {

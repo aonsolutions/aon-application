@@ -1,8 +1,13 @@
 import {webkitRequestMobile} from '../services/service.js';
 import { CONSTANT, MSG, TAG } from "../environments/environments.js";
+import { DomainUserRoles } from '../models/DomainUserRoles.js';
+import { getDomainUserRoles } from '../services/companyService.js';
 
 export class AonElement extends HTMLElement{
+
   ROOT_PANEL = 'rootPanel';
+  dur;
+
   constructor () {
     super();
   }
@@ -131,6 +136,19 @@ export class AonElement extends HTMLElement{
 
   getApplicationParent(){
     return this.getApplication().getParent();
+  }
+
+  buildDur() {
+    return new Promise((resolve, reject) => {
+      getDomainUserRoles({}).then(r => {
+        this.dur = new DomainUserRoles(r);
+        resolve(this.dur);
+      }).catch(e => reject(e));
+    });
+  }
+
+  getDur() {
+    return this.dur;
   }
 
 	isBeta(){

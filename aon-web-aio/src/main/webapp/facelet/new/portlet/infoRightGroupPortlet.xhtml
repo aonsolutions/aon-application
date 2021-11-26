@@ -77,14 +77,13 @@
 
 		<aon:div id="infoGroupRightDiv"
 		styleClass="aon-rigth-bar" 
-		style="display:block;  position:relative; " 
+		style="display:block;  position:relative; transition-duration: 350ms;" 
 		onmouseout="javascript:hideInfoGroupRightSupportDiv()"
 		onmouseover="javascript:showInfoGroupRightSupportDiv()"
 		>
 			<ui:include src="/facelet/new/portlet/menuPortlet.xhtml" />	
 			
 			<aon:div id="infoGroupRightSupportDiv" style="display:none" >				
-				<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
 				<ui:include src="/facelet/homepage/portlet/emailVerifyPortlet.xhtml" />
 				<ui:include src="/facelet/homepage/portlet/supportPortlet.xhtml" />
 			</aon:div>

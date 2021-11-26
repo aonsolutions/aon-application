@@ -51,7 +51,7 @@ import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/cre
     div.appendChild(addButton);
 
     //OBSERVATION
-    createDivEditable(form, MSG.OBSERVATION,  data.observatio0n || "" , "observation" ,  MSG.TYPE_HERE);
+    createDivEditable(form, MSG.OBSERVATION,  data.observation || "" , "observation" ,  MSG.TYPE_HERE);
 
     if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isPayrollManager() || dur.isPayrollPortal()) ){
         let btnAccept = createBtnAccept();

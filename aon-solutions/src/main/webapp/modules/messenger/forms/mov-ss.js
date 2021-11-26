@@ -10,7 +10,6 @@ import { setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
 import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/creationUtils.js";
 import { getOccupation, getRlce, getContractType, getQuoteGroup, getTipoJornada, sendAlta } from "../../../services/comunicaService.js";
-import { addSpanDecimal } from "../../laboral/createComponent.js";
 
 /**
  * 

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,6 +32,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
@@ -157,6 +159,12 @@ public class CheckItModule extends MainEntryPoint {
 			sessionLog.add(loadingLabel);
 			openFootPanel();
 		}
+		
+		
+//		ScriptInjector.fromString("if($doc.querySelector('aon-application')) {"
+//				+ "$doc.querySelector('aon-application').stopLoader()"
+//				+ "}").inject();
+		
 	}
 
 	private FlowPanel paintEnterpiseData(CheckItModuleOptions opt) {
@@ -758,6 +766,7 @@ public class CheckItModule extends MainEntryPoint {
 						if (isMobile()) {
 							AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack()); 
 							
+							toolbar.setTitle("CREDENCIALES");
 							toolbar.add(back);
 							centerPanel.clear();
 							back.addClickHandler(h -> {
@@ -962,7 +971,7 @@ public class CheckItModule extends MainEntryPoint {
 						if (isMobile()) {
 							
 							AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack()); 
-							
+							toolbar.setTitle("CREDENCIALES");
 							toolbar.add(back);
 							centerPanel.clear();
 							back.addClickHandler(h -> {
@@ -1338,6 +1347,7 @@ public class CheckItModule extends MainEntryPoint {
 				
 				AonToolbarButton back = new AonToolbarButton(AON.MSG.backAction(), AON.CSS.aonIconBack()); 
 				
+				toolbar.setTitle("VINCULAR");
 				toolbar.add(back);
 				centerPanel.clear();
 				back.addClickHandler(h -> {
@@ -1568,7 +1578,7 @@ public class CheckItModule extends MainEntryPoint {
 				String user = userID.getValue();
 				String pass = userPassword.getValue();
 				String pin = userPIN.getValue();
-				CHECKIT_SERVICE.addAccount(enterpriseId, checkItUnlinkedBankAccount, user, pass, pin, new AsyncCallback<Boolean>() {
+				CHECKIT_SERVICE.addAccount(enterpriseId, checkItUnlinkedBankAccount, user, pass, pin, new AsyncCallback<String>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -1583,12 +1593,14 @@ public class CheckItModule extends MainEntryPoint {
 					}
 
 					@Override
-					public void onSuccess(Boolean result) {
-						if (result != null && result) {
+					public void onSuccess(String result) {
+						if (result != null && AonStringUtils.containsIgnoreCase(result, "cuenta creada")) {
 							Label sccsLabel = new Label("A\u00F1adida la cuenta " + checkItUnlinkedBankAccount.getIban());
+							Label res = new Label(result);
 							sccsLabel.setStyleName(AON.CSS.aonColorGreen());
 							if (!isMobile()) {
 								sessionLog.add(sccsLabel);								
+								sessionLog.add(res);								
 								openFootPanel();
 							}
 							
@@ -1767,48 +1779,101 @@ public class CheckItModule extends MainEntryPoint {
 			dateLabel.addStyleName(AON.CSS.aonFontMedium());
 			dateLabel.addStyleName(AON.CSS.aonBold());
 			dateLabel.getElement().getStyle().setColor("#002469");
+			dateLabel.getElement().getStyle().setMarginLeft(1, Unit.EM);
 			dateLabel.setWidth("100%");
 			dateLabel.getElement().getStyle().setMarginTop(12, Unit.PX);
 			dateLabel.getElement().getStyle().setMarginBottom(8, Unit.PX);
 			tab.setWidget(nextRow, 0, dateLabel);
+			tab.getElement().setAttribute("cellSpacing", "0");
 			
-			int[] index = {0};
-			
-			statements.stream()
+			List<BankStatement> st = statements.stream()
 			.filter(pen -> dte.equals(pen.getOperationDate() != null ? dtf.format(pen.getOperationDate()).toUpperCase() : ""))
-			.forEach(mov -> getPendingMovementTag(tab, mov, index[0]++ % 2 == 0));
+			.collect(Collectors.toList());
+			
+			for (int i=0; i< st.size(); i++) {
+				BankStatement mov = st.get(i);
+				getPendingMovementTag(tab, mov, i == st.size() - 1);
+			}
 		});
 		
+		boolean sugoiChiisai = Window.getClientWidth() < 350;
+		
 		tab.setWidth("100%");
-		tab.getColumnFormatter().setWidth(0, "70%");
-		tab.getColumnFormatter().setWidth(1, "30%");
+		tab.getColumnFormatter().setWidth(0, sugoiChiisai ? "55%" : "60%");
+		tab.getColumnFormatter().setWidth(1, sugoiChiisai ? "45" : "40%");
 		return tab;
 	}
 	
-	private void getPendingMovementTag(FlexTable table, BankStatement bankStatement, boolean gray) {
+	private void getPendingMovementTag(FlexTable table, BankStatement bankStatement, boolean last) {
 		
 		String description = bankStatement.getDescription();
 		Double amount = !bankStatement.isPayment() ? bankStatement.getAmount() : bankStatement.getAmount() * (-1);
 		
 		Label amountLabel = new Label(AON.FMT.format(amount) + " " + EURO);
-		amountLabel.setStyleName(AON.CSS.aonFontMedium());
+		amountLabel.addStyleName(AON.CSS.aonFontMedium());
+		amountLabel.addStyleName(AON.CSS.aonBold());
 		amountLabel.addStyleName(AON.CSS.aonTextRight());
+		amountLabel.getElement().getStyle().setPaddingRight(1, Unit.EM);
+		amountLabel.getElement().getStyle().setMarginTop(1, Unit.EM);
+		amountLabel.getElement().getStyle().setMarginBottom(1, Unit.EM);
 		amountLabel.setWidth("100%");
 		if (amount < 0) {
 			amountLabel.addStyleName(AON.CSS.aonColorRed());
+		} else if (amount > 0) {
+			amountLabel.addStyleName(AON.CSS.aonColorGreen());			
 		}
 		
 		Label descriptionLabel = new Label(description);
 		descriptionLabel.setStyleName(AON.CSS.aonFontLarger());
 		descriptionLabel.setWidth("100%");
+		descriptionLabel.getElement().getStyle().setMarginLeft(1, Unit.EM);
+		descriptionLabel.getElement().getStyle().setMarginTop(1, Unit.EM);
+		descriptionLabel.getElement().getStyle().setMarginBottom(1, Unit.EM);
+		AtomicBoolean multiple = new AtomicBoolean(true);
+		ClickHandler linesHandler = event -> {
+			descriptionLabel.getElement().getStyle().setProperty("overflow", multiple.get() ? "" : "hidden");
+			descriptionLabel.getElement().getStyle().setProperty("text-overflow", multiple.get() ? "" : "ellipsis");
+			descriptionLabel.getElement().getStyle().setProperty("display", multiple.get() ? "" : "-webkit-box");
+			descriptionLabel.getElement().getStyle().setProperty("-webkit-line-clamp", multiple.get() ? "" : "2");
+			descriptionLabel.getElement().getStyle().setProperty("-webkit-box-orient", multiple.get() ? "" : "vertical");
+			multiple.set(!multiple.get());
+		};
+		
+		
+		
+		if (isMobile()) {
+			descriptionLabel.getElement().getStyle().setProperty("overflow", "hidden");
+			descriptionLabel.getElement().getStyle().setProperty("text-overflow", "ellipsis");
+			descriptionLabel.getElement().getStyle().setProperty("display", "-webkit-box");
+			descriptionLabel.getElement().getStyle().setProperty("-webkit-line-clamp", "2");
+			descriptionLabel.getElement().getStyle().setProperty("-webkit-box-orient", "vertical");
+			
+			descriptionLabel.addClickHandler(linesHandler);
+			
+		}
+		
 		
 		int nextRow = table.getRowCount();
 		
-		if (gray)
-			table.getRowFormatter().addStyleName(nextRow, AON.CSS.aonBackgroundLigthGray());
+//		if (gray)
+//			table.getRowFormatter().addStyleName(nextRow, AON.CSS.aonBackgroundLigthGray());
 		table.setWidget(nextRow, 0, descriptionLabel);
 		table.setWidget(nextRow, 1, amountLabel);
-		table.getElement().setAttribute("cellSpacing", "0");
+		Label euskoLabel = new Label();
+		euskoLabel.setStyleName(AON.CSS.aonBlockCenter());
+		
+		String borderStyle = "dotted";
+		
+		if (!last) {			
+			euskoLabel.getElement().getStyle().setMarginLeft(1, Unit.EM);
+			euskoLabel.getElement().getStyle().setMarginRight(1, Unit.EM);
+		} else {
+			borderStyle = "solid";
+		}
+		euskoLabel.getElement().getStyle().setProperty("borderBottom", "2px " + borderStyle + " DarkGray");
+		table.setWidget(nextRow + 1, 0, euskoLabel);
+		table.getFlexCellFormatter().setColSpan(nextRow + 1, 0, 2);
+		
 	}
 	
 	private String formatIban(String iban) {

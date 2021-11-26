@@ -1,6 +1,6 @@
 import { AonElement } from '../../components/AonElement.js';
 import { Paymethods } from '../../services/paymethod.js';
-import { getInvoices, getInvoice, insertInvoice, deleteInvoices,
+import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
 	 sendInvoiceMail, downloadInvoices, getDomainUserRoles } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 
@@ -239,7 +239,7 @@ export class AonInvoiceList extends AonElement {
 		if(!this.isMobile()) d.width = '400px';
 		d.setTitle(MSG.DELETE_FOREVER);
 		d.setContentHTML('Estás seguro de eliminar las facturas seleccionadas');
-		d.addAcceptAction(() => deleteInvoices(aonInvoiceTable.selected.map(r => r.id)).then(() => this.init()));
+		d.addAcceptAction(() => deleteRawdocInvoices(aonInvoiceTable.selected.map(r => r.id)).then(() => this.init()));
 		d.open();
 	}
 

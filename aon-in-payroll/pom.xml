@@ -194,6 +194,12 @@
 	</dependency>
 
 	<dependency>
+   		<groupId>com.google.zxing</groupId>
+    	<artifactId>core</artifactId>
+    	<version>3.4.1</version>
+	</dependency>
+
+	<dependency>
 		<groupId>solutions.aon</groupId>
 		<artifactId>aon.seg.social</artifactId>
 		<type>test-jar</type>
@@ -207,6 +213,6 @@
 		<version>0.15</version>
 		<scope>test</scope>
      </dependency>
-                	
+                
 	</dependencies>
 </project>

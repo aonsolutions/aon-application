@@ -404,8 +404,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		Domain domain = new Domain();
 		
 		domain.setId(params.optInt("domain"));
-		domain.setName(AonServletUtils.getDomainName(domain.getId()));
-		
+		domain.setName(AonServletUtils.getDomainName(domain.getId()));		
 
 		String doc = params.optString("ipf");
 		String nss = params.optString("nss");
@@ -449,7 +448,7 @@ public class ContractServlet extends AonApiHttpServlet {
 			
 			PAYROLL.addEmployee(domain.getName(), domain.getId(), "", employee);
 	    } else {
-	    	throw new AonApiException("Ya existe un contrato para esa fecha");
+	    	throw new AonApiException("Ya existe un contrato activo.");
 	    }
 		return new JSONObject();
 	}

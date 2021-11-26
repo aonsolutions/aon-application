@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -33,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -543,6 +545,33 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 			@Override
 			public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs,
 					AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getContractVariables(String currentDomainName, Integer contractId,
+					AsyncCallback<List<ContractVariable>> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables,
+					AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getSalariesDates(String currentDomainName, SalaryInfoFilter filter,
+					AsyncCallback<Period> callback) {
 				// TODO Auto-generated method stub
 				
 			}

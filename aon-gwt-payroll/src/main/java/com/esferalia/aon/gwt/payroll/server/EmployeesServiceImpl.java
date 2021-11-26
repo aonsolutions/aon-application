@@ -106,6 +106,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendarNew;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractVariables;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeIrpf;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
@@ -135,6 +136,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -2833,6 +2835,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			costs.add(cost);
 		}
+		
+		if(!costs.isEmpty())
+			Collections.reverse(costs);
 
 		return costs;
 	}
@@ -2877,32 +2882,66 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		PreparedStatement stmt = null;
 
 		try {
-			String startCol = "START";
-			String endCol = "END";
+			String yearCol = "YEAR";
+			String monthCol = "MONTH";
 
-			String sql = "SELECT" + " MIN(" + CONTRACT + "." + ContractColumns.START_DATE + ") " + startCol
-					+ ", MAX(IFNULL(" + CONTRACT + "." + ContractColumns.END_DATE + ",CURDATE())) " + endCol + " FROM "
-					+ WORKPLACE + ", " + CONTRACT + " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = "
-					+ CONTRACT + "." + ContractColumns.WORKPLACE + " AND " + WORKPLACE + "." + WorkplaceColumns.ID
-					+ " = ?";
+			// We asume that one enterprise one domain. This way SELECT it's
+			// more clear.
+			String sql = "SELECT" 
+					+ " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol 
+					+ ", YEAR(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol 
+					+ " FROM " + WORKPLACE + ", " + SALARY
+					+ " WHERE " + WORKPLACE + "." + WorkplaceColumns.DOMAIN + " = " + SALARY + "." + SalaryColumns.DOMAIN 
+					+ " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?"
+					+ " AND " + SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal()
+					+ " GROUP BY 1, 2" 
+					+ " ORDER BY 2 , 1 ASC ";
 
 			stmt = connection.prepareStatement(sql);
 			stmt.setInt(1, workplaceId);
 			rs = stmt.executeQuery();
 
-			if (rs.next() && rs.getDate(startCol) != null) {
-				return getWorkplaceCosts(workplaceId, rs.getDate(startCol), rs.getDate(endCol));
-			}
+			return getWorkplaceCosts(rs, workplaceId, yearCol, monthCol);
 
-			return Collections.emptyList();
 		} finally {
 			if (rs != null) {
 				rs.close();
 			}
 			if (stmt != null) {
-				stmt.close();
+				rs.close();
 			}
 		}
+		
+//		ResultSet rs = null;
+//		PreparedStatement stmt = null;
+//
+//		try {
+//			String startCol = "START";
+//			String endCol = "END";
+//
+//			String sql = "SELECT" + " MIN(" + CONTRACT + "." + ContractColumns.START_DATE + ") " + startCol
+//					+ ", MAX(IFNULL(" + CONTRACT + "." + ContractColumns.END_DATE + ",CURDATE())) " + endCol + " FROM "
+//					+ WORKPLACE + ", " + CONTRACT + " WHERE" + " " + WORKPLACE + "." + WorkplaceColumns.ID + " = "
+//					+ CONTRACT + "." + ContractColumns.WORKPLACE + " AND " + WORKPLACE + "." + WorkplaceColumns.ID
+//					+ " = ?";
+//
+//			stmt = connection.prepareStatement(sql);
+//			stmt.setInt(1, workplaceId);
+//			rs = stmt.executeQuery();
+//
+//			if (rs.next() && rs.getDate(startCol) != null) {
+//				return getWorkplaceCosts(workplaceId, rs.getDate(startCol), rs.getDate(endCol));
+//			}
+//
+//			return Collections.emptyList();
+//		} finally {
+//			if (rs != null) {
+//				rs.close();
+//			}
+//			if (stmt != null) {
+//				stmt.close();
+//			}
+//		}
 	}
 
 	private static List<Cost> getSiteWorkplaceCosts(Connection connection, Integer workplaceId) throws SQLException {
@@ -2980,9 +3019,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			costs.add(cost);
 		}
+		
+		if(!costs.isEmpty())
+			Collections.reverse(costs);
 
 		return costs;
-
 	}
 
 	private static List<Cost> getWorkplaceCosts(Integer workplaceId, Date startDate, Date endDate) throws SQLException {
@@ -5525,6 +5566,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	// ----- Payroll Salaries
+	
+	@Override
+	public Period getSalariesDates(String domainName, SalaryInfoFilter filter) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqPayrollSalaries.getSalariesDates(connection, filter);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	@Override
 	public List<SalaryInfo> getSalaries(String domainName, SalaryInfoFilter filter) {
@@ -5584,19 +5634,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public EmployeeCalendarInfo getEmployeeCalendarInfo(String domainName, Integer contractId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domainName);
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqEmployeeCalendarNew.getEmployeeCalendar(connection, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
 		}
 	}
 
@@ -6431,7 +6472,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			if(AonStringUtils.isBlank(employeeContractInfo.getContractInfo().getSepeId()))
 				JooqContrataContract.setSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), ide);
 
-		} catch (SQLException | SepeException e) {
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} catch ( SQLException | SepeException e) {
 			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
@@ -6653,6 +6696,26 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	// ------------------------------------------------- ContractVariables
+	
+	@Override
+	public List<ContractVariable> getContractVariables(String domainName, Integer contractId) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEmployeeContractVariables.getContractVariables(connection, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void updateContractVariables(String domainName, List<ContractVariable> contractVariables) {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqEmployeeContractVariables.updateContractVariables(connection, contractVariables);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	// ------------------------------------------------- Auxiliar Methods
 
@@ -6723,6 +6786,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				? employeeAddress.getCountry().getIsoCode()
 				: Country.ES.getIsoCode()); 
 		builder.setCodMunDom(employeeContractInfo.getEmployeeInfo().getAddressCity());
+		if(AonStringUtils.isEmpty(employeeContractInfo.getContractSpecificData().getFormativeLevel()))
+			throw new IllegalArgumentException("Nivel formativo obligatorio. Rellene primero la pesta\u00F1a datos SEPE");
 		builder.setCodFormativo(Integer.parseInt(employeeContractInfo.getContractSpecificData().getFormativeLevel()));
 		builder.setCodOccupation(employeeContractInfo.getContractSpecificData().getCno()); 		
 		builder.setCodPaisWork(workAddress.getCountry() != null 

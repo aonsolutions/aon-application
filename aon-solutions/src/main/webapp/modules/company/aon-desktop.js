@@ -6,8 +6,8 @@ import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
-import { AonSign } from '../signin/aon-sign.js';
-import { AonSignin } from '../signin/aon-signin.js';
+import { AonSign } from '../timecontrol/aon-sign.js';
+import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
 import { uploadInvoices } from "../invoice/InvoiceUtils.js";
 import { uploadDocuments } from "../documental/DocumentalUtils.js";
 import { AonMessenger } from '../messenger/aon-messenger.js';
@@ -493,7 +493,7 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(new AonInvoicePanel());
 				break;
 			case Apps.TIMECONTROL.app:
-				this.rootPanel(new AonSignin());
+				this.rootPanel(new AonTimecontrol());
 				break;
 			case Apps.MESSENGER.app:
 				this.isBeta() ? this.rootPanel(new AonMessenger()) : this.development(MSG.REQUEST);
