@@ -87,7 +87,7 @@ public class RegistryImport extends Import {
 			reg.setLine(row.getRowNum() + 1);
 
 			Object obj = Utils.getObjectValue(row.getCell(0));
-			if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.REGISTRY_TITLES, obj.toString()))) {
+			if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.REGISTRY_TITLES, obj.toString().trim()))) {
 				indexTitle = indexTitle + 1;
 			} else if(titleList.isEmpty()) {
 				indexTitle = row.getRowNum();
