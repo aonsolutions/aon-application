@@ -15,6 +15,7 @@ public class Mod123 extends FiscalModel implements Serializable {
 		setModel(FiscalModelType.M123);
 	}
 	
+	@Override
 	public boolean isComplementaryDeclarationAvailable() {
 		if (getAdministration() == null) return false;
 		else if (isAEAT()) return true;
@@ -25,6 +26,7 @@ public class Mod123 extends FiscalModel implements Serializable {
 		return false;
 	}
 
+	@Override
 	public boolean isReplacementDeclarationAvailable() {
 		if (getAdministration() == null) return false;
 		else if (isAraba()) return true;
@@ -35,21 +37,24 @@ public class Mod123 extends FiscalModel implements Serializable {
 		return false;
 	}
 	
+	@Override
 	public boolean isReplacedNumberAvailable() {
 		if (getAdministration() == null) return false;
 		return  (isComplementaryDeclarationAvailable() && isAEAT() && isComplementary() ); 
 	}
 	
+	@Override
 	public double getResult() {
 		if (getAdministration() == null) return 0;
 		else if (isAraba()) return getAmount(Mod123Key.AR_C10);
-		else if (isAEAT()) return getAmount(Mod123Key.CT_C06);
+		else if (isAEAT()) return getAmount(Mod123Key.CT_C08);
 		else if (isBizkaia()) return  getAmount(Mod123Key.BZ_C06);
 		else if (isGipuzkoa()) return getAmount(Mod123Key.GP_C09);
 		else if (isNavarra()) return getAmount(Mod123Key.NF_C01);
 		return 0;
 	}
 	
+	@Override
 	public Mod123Key getDeclarationTypeKey() {
 		if (getAdministration() == null) return null;
 		else if (isAraba()) return Mod123Key.AR_TIP;
@@ -60,6 +65,7 @@ public class Mod123 extends FiscalModel implements Serializable {
 		return null;
 	}
 	
+	@Override
 	public void setDefaultDeclarationType(){
 		if (AonMathUtils.isGreatherThanZero(getResult() )) {
 			setDeclarationType(FiscalModelDeclarationType.DEPOSIT);
@@ -80,13 +86,11 @@ public class Mod123 extends FiscalModel implements Serializable {
 	
 	@Override
 	public boolean isDiffCalculationDisabled() {
-		//return getAmount(Mod123Key.CM_001) == 1;
 		return getAmount(Mod123Key.CM_001) == 0;
 	}
 
 	@Override
 	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
-		//ensureDetail(Mod123Key.CM_001).setAmount(diffCalculationDisabled?1:0);
 		ensureDetail(Mod123Key.CM_001).setAmount(diffCalculationDisabled?0:1);
 	}
 

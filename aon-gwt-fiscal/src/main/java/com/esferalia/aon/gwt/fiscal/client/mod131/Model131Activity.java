@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -242,7 +243,7 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 		tabLayoutPanel.add(modulesPanel, AON.MSG.modules());
 
 		ScrollPanel resultPanel = new ScrollPanel();
-		resultPanel.setWidget(getResultPanel(callback));
+		resultPanel.setWidget(getResultPanel());
 		tabLayoutPanel.add(resultPanel, AON.MSG.irpfActivityRpf());
 
 		add(tabLayoutPanel);
@@ -440,7 +441,7 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 		return table;
 	}
 	
-	private Widget getResultPanel(IMod131ActivityCallback callback) {
+	private Widget getResultPanel() {
 		AonDisplayTable table = new AonDisplayTable();
 		table.addStyleName(AON.CSS.aonWidthAlmostAll());
 		table.addStyleName(AON.CSS.aonBlockCenter());
@@ -580,7 +581,7 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 		result5.setValue(mod.getResult());		
 
 		mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
-		i++;
+		
 		description6.setText(mod.getDescription());
 		value6.setValue(mod.getValue());
 		unit6.setText(mod.getUnit());
@@ -609,28 +610,29 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 	}
 	
 	private void onFieldChange( IMod131ActivityCallback callback ) {
-		if (com.getValue() == null) com.setValue(0.0,false); 
-		if (tem.getValue() == null) tem.setValue(0,false);
+		com.setValue(AonNumberUtils.zeroIfNull(com.getValue()),false);
+		tem.setValue(AonNumberUtils.zeroIfNull(tem.getValue()),false);
 		if (tem.getValue() < 0) tem.setValue(0,false);
 		if (tem.getValue() > 180) tem.setValue(180,false);
-		if (nue.getValue() == null) nue.setValue(0,false);
-		if (veh.getValue() == null) veh.setValue(0,false);
-		if (emp.getValue() == null) emp.setValue(0,false);
-		if (prc.getValue() == null) prc.setValue(0.0,false);
-		if (value0.getValue() == null) value0.setValue(0.0,false);
-		if (value1.getValue() == null) value1.setValue(0.0,false);
-		if (value2.getValue() == null) value2.setValue(0.0,false);
-		if (value3.getValue() == null) value3.setValue(0.0,false);
-		if (value4.getValue() == null) value4.setValue(0.0,false);
-		if (value5.getValue() == null) value5.setValue(0.0,false);
-		if (value6.getValue() == null) value6.setValue(0.0,false);
-		if (iin.getValue() == null) iin.setValue(0.0,false);
-		if (dia.getValue() == null) dia.setValue(0,false);
+		nue.setValue(AonNumberUtils.zeroIfNull(nue.getValue()),false);
+		veh.setValue(AonNumberUtils.zeroIfNull(veh.getValue()),false);
+		emp.setValue(AonNumberUtils.zeroIfNull(emp.getValue()),false);
+		prc.setValue(AonNumberUtils.zeroIfNull(prc.getValue()),false);
+		value0.setValue(AonNumberUtils.zeroIfNull(value0.getValue()),false);
+		value1.setValue(AonNumberUtils.zeroIfNull(value1.getValue()),false);
+		value2.setValue(AonNumberUtils.zeroIfNull(value2.getValue()),false);
+		value3.setValue(AonNumberUtils.zeroIfNull(value3.getValue()),false);
+		value4.setValue(AonNumberUtils.zeroIfNull(value4.getValue()),false);
+		value5.setValue(AonNumberUtils.zeroIfNull(value5.getValue()),false);
+		value6.setValue(AonNumberUtils.zeroIfNull(value6.getValue()),false);
+		iin.setValue(AonNumberUtils.zeroIfNull(iin.getValue()),false);
+		dia.setValue(AonNumberUtils.zeroIfNull(dia.getValue()),false);
 		callback.getActivity().setCom(com.getValue());
 		callback.getActivity().setTem(tem.getValue());
 		callback.getActivity().setNue(nue.getValue());
 		callback.getActivity().setVeh(veh.getValue());
 		callback.getActivity().setEmp(emp.getValue());
+		callback.getActivity().setMun(mun.getSelectedIndex());
 		callback.getActivity().setLor(lor.getSelectedIndex());
 		callback.getActivity().setBat(bat.getSelectedIndex());
 		callback.getActivity().setPrc(prc.getValue());
@@ -640,7 +642,7 @@ public class Model131Activity extends DockLayoutPanel implements HasValueChangeH
 		callback.getActivity().setCap(cap.getValue());
 		callback.getActivity().setTns(tns.getValue());
 		callback.getActivity().setTss(tss.getValue());
-		if  (callback.getActivity().getModules().size() > 0)
+		if  (!callback.getActivity().getModules().isEmpty())
 			callback.getActivity().getModules().get(0).setValue(value0.getValue());
 		if  (callback.getActivity().getModules().size() > 1)
 			callback.getActivity().getModules().get(1).setValue(value1.getValue());
