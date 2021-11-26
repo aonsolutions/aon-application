@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -27,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.faces.context.ExternalContext;
@@ -144,56 +146,79 @@ public class DashboardController implements Serializable {
 	 * Aparecera la primera vez que se carga la pagina.
 	 */
 
-	public DashboardController() {
-		try {
-			this.getSalaryYears();
-			this.onSalaryYearChanged(null);
-			this.getContractYears();
-			this.onContractYearChanged(null);
-		} catch (ManagerBeanException ex) {
-			// No funciona el grafico
-		}
-
+//	public DashboardController() {
+//		try {
+//			this.getSalaryYears();
+//			this.onSalaryYearChanged(null);
+//			this.getContractYears();
+//			this.onContractYearChanged(null);
+//		} catch (ManagerBeanException ex) {
+//			// No funciona el grafico
+//		}
+//
+//	}
+	
+	
+	public List<SelectItem> getFiscalYears() {
+		List<SelectItem> fiscalYears = new LinkedList<>();
+		
+		int currentYear = AonDateUtils.getYear(new Date());
+		
+		for ( int i = 0 ; i < 2 ; i++)
+			fiscalYears.add(new SelectItem(currentYear - i, Integer.toString(currentYear - i )));
+		
+		return fiscalYears;
+	}
+	
+	public List<SelectItem> getPayrollYears() {
+		List<SelectItem> payrollYears = new LinkedList<>();
+		
+		int currentYear = AonDateUtils.getYear(new Date());
+		
+		
+		for ( int i = 0 ; i < 2 ; i++)
+			payrollYears.add(new SelectItem(currentYear - i, Integer.toString(currentYear -i )));
+		
+		return payrollYears;
 	}
 
-	public com.code.aon.accounting.Period getAccountingPeriod() {
-		if (accountingPeriod == null) {
-			try {
-				accountingPeriod = AccountingPeriodUtil.getDefaultPeriod();
-			} catch (ManagerBeanException e) {
-				LOGGER.debug(e.getMessage(), e);
-			}
-			if (accountingPeriod == null) {
-				try {
-					AccountingUtil au = new AccountingUtil();
-					accountingPeriod = au.obtainPeriod(new Date());
-				} catch (ManagerBeanException e1) {
-					LOGGER.debug(e1.getMessage(), e1);
-				}
-			}
-			if (accountingPeriod == null) {
-				try {
-					IManagerBean periodBean = BeanManager
-							.getManagerBean(com.code.aon.accounting.Period.class);
-					List<ITransferObject> list = periodBean.getList(null);
-					if (list != null && list.size() > 0) {
-						accountingPeriod = (com.code.aon.accounting.Period) list
-								.get(0);
-					}
-				} catch (ManagerBeanException e) {
-					LOGGER.debug(e.getMessage(), e);
-				}
-			}
-		}
+	public synchronized com.code.aon.accounting.Period getAccountingPeriod() {
 		return accountingPeriod;
 	}
 
-	public void setAccountingPeriod(
+
+	public com.code.aon.accounting.Period getDefaultAccountingPeriod() {
+		try {
+			return AccountingPeriodUtil.getDefaultPeriod();
+		} catch (ManagerBeanException e) {
+			LOGGER.debug(e.getMessage(), e);
+		}
+		try {
+			AccountingUtil au = new AccountingUtil();
+			return au.obtainPeriod(new Date());
+		} catch (ManagerBeanException e1) {
+			LOGGER.debug(e1.getMessage(), e1);
+		}
+		try {
+			IManagerBean periodBean = BeanManager
+					.getManagerBean(com.code.aon.accounting.Period.class);
+			List<ITransferObject> list = periodBean.getList(null);
+			if (list != null && list.size() > 0) {
+				return (com.code.aon.accounting.Period) list
+						.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.debug(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	public synchronized void setAccountingPeriod(
 			com.code.aon.accounting.Period accountingPeriod) {
 		this.accountingPeriod = accountingPeriod;
 	}
 
-	public void onAccountingPeriodChanged(ActionEvent event) {
+	public synchronized void onAccountingPeriodChanged(ActionEvent event) {
 		periodEntriesCount = null;
 		messages = null;
 		fiscalPortal = null;
@@ -203,8 +228,8 @@ public class DashboardController implements Serializable {
 			fiscalPortal = new DashboardFiscalPortal();
 			fiscalPortal.setDomainId(DomainManager.getCurrentDomain());
 			fiscalPortal.setDomainName(AonUtil.getDomainName());
-			fiscalPortal.setPygEntriesPeriod(getAccountingPeriod());
-			fiscalPortal.setExpensesPeriod(getAccountingPeriod());
+			fiscalPortal.setPygEntriesPeriod(accountingPeriod);
+			fiscalPortal.setExpensesPeriod(accountingPeriod);
 			DesktopController controller = (DesktopController) AonUtil.getRegisteredBean(DesktopController.CONTROLLER_NAME);
 			if ( controller.getState().isFiscalInfoVisibleForPortal() && ! controller.getState().isAccountingInfoVisibleForPortal() ) {
 				fiscalPortal.setSelectedTab(DashboardFiscalPortal.FISCAL_PORTLET_TAB);
@@ -213,29 +238,28 @@ public class DashboardController implements Serializable {
 		return fiscalPortal;
 	}
 
-	public void onFiscalPeriodChanged(ActionEvent event) {
+	public synchronized void onFiscalPeriodChanged(ActionEvent event) {
 		this.fiscalConfig = null;
 		this.fiscalConfig = getFiscalInfo();
 	}
 
-	public Integer getFiscalYear() {
-		if (fiscalYear == null) {
-			FiscalParametersController fiscalParams = (FiscalParametersController) AonUtil
-					.getRegisteredBean(FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
-			String defYear = fiscalParams.getDefaultYear();
-			try {
-				fiscalYear = Integer.parseInt(defYear);
-			} catch (NumberFormatException e) {
-				LOGGER.debug(e.getMessage(), e);
-			}
-			if (fiscalYear == null) {
-				fiscalYear = CommonUtil.getYear(new Date());
-			}
-		}
+	public synchronized Integer getFiscalYear() {
 		return fiscalYear;
 	}
 
-	public void setFiscalYear(Integer fiscalYear) {
+	public Integer getDefaultFiscalYear() {
+		FiscalParametersController fiscalParams = (FiscalParametersController) AonUtil
+				.getRegisteredBean(FiscalParametersController.FISCAL_PARAMS_BEAN_NAME);
+		String defYear = fiscalParams.getDefaultYear();
+		try {
+			return  Integer.parseInt(defYear);
+		} catch (NumberFormatException e) {
+			LOGGER.debug(e.getMessage(), e);
+		}
+		return  CommonUtil.getYear(new Date());
+	}
+
+	public synchronized void setFiscalYear(Integer fiscalYear) {
 		this.fiscalYear = fiscalYear;
 	}
 
@@ -246,8 +270,11 @@ public class DashboardController implements Serializable {
 		this.fiscalPortal = null;
 	}
 
-	public DashboardEntry[] getPeriodEntriesCount() throws ManagerBeanException {
-		if (periodEntriesCount == null && getAccountingPeriod() != null) {
+	public synchronized DashboardEntry[] getPeriodEntriesCount() throws ManagerBeanException {
+		if ( accountingPeriod == null )
+			return new DashboardEntry [0];
+		
+		if (periodEntriesCount == null ) {
 			Connection c = null;
 			periodEntriesCount = new DashboardEntry[12];
 			try {
@@ -267,7 +294,7 @@ public class DashboardController implements Serializable {
 						ctx.select(countFunc, monthFunc)
 							.from(ACCOUNT_ENTRY)
 							.where(ACCOUNT_ENTRY.DOMAIN.equal(domainId))
-							.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(getAccountingPeriod().getId()))
+							.and(ACCOUNT_ENTRY.ACCOUNT_PERIOD.equal(accountingPeriod.getId()))
 							.groupBy(monthFunc)
 							.fetch() ) {
 					int count = record.getValue(countFunc);
@@ -281,6 +308,7 @@ public class DashboardController implements Serializable {
 				DatabaseUtil.closeQuietly(c);
 			}
 		}
+		
 		return periodEntriesCount;
 	}
 	public class DashboardFiscalInfo {
@@ -288,6 +316,9 @@ public class DashboardController implements Serializable {
 	}
 	
 	public List<ModelConfig> getFiscalInfo() {
+		if ( fiscalYear == null )
+			return Collections.emptyList();
+			
 		if (fiscalConfig == null) {
 			fiscalConfig = new LinkedList<ModelConfig>();
 			Connection c = null;
@@ -361,13 +392,16 @@ public class DashboardController implements Serializable {
 			throw new AbortProcessingException(message);
 		}
 		
+		if ( fiscalYear == null )
+			return "";
+		
 		IFiscalModelController controller = (IFiscalModelController) FormUtil.getController(beanName);
 		try {
 			String navKey = "";
 			if (missing) {
-				navKey = controller.newModel(administration, getFiscalYear(), period);	
+				navKey = controller.newModel(administration, fiscalYear, period);	
 			} else {
-				navKey = controller.editModel(administration, getFiscalYear(), period);
+				navKey = controller.editModel(administration, fiscalYear, period);
 			}
 			this.fiscalConfig = null;
 			return navKey;
@@ -378,50 +412,51 @@ public class DashboardController implements Serializable {
 		}
 	}
 
-	public List<DashboardMessage> getMessages() {
+	public synchronized List<DashboardMessage> getMessages() {
+		if ( accountingPeriod == null )
+			return Collections.emptyList();
+		
 		Connection c = null;
-		if (messages == null && getAccountingPeriod() != null) {
+		if (messages == null ) {
 			messages = new LinkedList<DashboardMessage>();
 			try {
-				if (getAccountingPeriod() != null) {
-					String domainName = AonUtil.getDomainName();
-					int domainId = DomainManager.getCurrentDomain();
-					CheckParams params = new CheckParams(domainName,domainId);
-					params.setPeriod(getAccountingPeriod());
+				String domainName = AonUtil.getDomainName();
+				int domainId = DomainManager.getCurrentDomain();
+				CheckParams params = new CheckParams(domainName,domainId);
+				params.setPeriod(accountingPeriod);
 
-					UnbalancedAccountEntryCheck uc = new UnbalancedAccountEntryCheck();
-					uc.onExecute(params);
-					List<ICheckEntry> list = uc.getCheckList();
-					if (list != null && list.size() > 0) {
-						DashboardMessage msg = new DashboardMessage();
-						msg.setCategory("CONTABILIDAD");
-						msg.setLevel("red");
-						if (list.size() > 1) {
-							msg.setMessage("Existen "
-									+ list.size()
-									+ " apuntes descuadrados. Verifique la integridad de la contabilidad.");
-						} else {
-							msg.setMessage("Existe 1 apunte descuadrado. Verifique la integridad de la contabilidad.");
-						}
-						messages.add(msg);
+				UnbalancedAccountEntryCheck uc = new UnbalancedAccountEntryCheck();
+				uc.onExecute(params);
+				List<ICheckEntry> list = uc.getCheckList();
+				if (list != null && list.size() > 0) {
+					DashboardMessage msg = new DashboardMessage();
+					msg.setCategory("CONTABILIDAD");
+					msg.setLevel("red");
+					if (list.size() > 1) {
+						msg.setMessage("Existen "
+								+ list.size()
+								+ " apuntes descuadrados. Verifique la integridad de la contabilidad.");
+					} else {
+						msg.setMessage("Existe 1 apunte descuadrado. Verifique la integridad de la contabilidad.");
 					}
+					messages.add(msg);
+				} 
 
-					EmptyAccountEntryCheck ec = new EmptyAccountEntryCheck();
-					ec.onExecute(params);
-					list = ec.getCheckList();
-					if (list != null && list.size() > 0) {
-						DashboardMessage msg = new DashboardMessage();
-						msg.setCategory("CONTABILIDAD");
-						msg.setLevel("orange");
-						if (list.size() > 1) {
-							msg.setMessage("Existen "
-									+ list.size()
-									+ " apuntes sin líneas. Verifique la integridad de la contabilidad.");
-						} else {
-							msg.setMessage("Existe 1 apunte sin líneas. Verifique la integridad de la contabilidad.");
-						}
-						messages.add(msg);
+				EmptyAccountEntryCheck ec = new EmptyAccountEntryCheck();
+				ec.onExecute(params);
+				list = ec.getCheckList();
+				if (list != null && list.size() > 0) {
+					DashboardMessage msg = new DashboardMessage();
+					msg.setCategory("CONTABILIDAD");
+					msg.setLevel("orange");
+					if (list.size() > 1) {
+						msg.setMessage("Existen "
+								+ list.size()
+								+ " apuntes sin líneas. Verifique la integridad de la contabilidad.");
+					} else {
+						msg.setMessage("Existe 1 apunte sin líneas. Verifique la integridad de la contabilidad.");
 					}
+					messages.add(msg);
 				}
 				c = DatabaseUtil.getConnection(AonUtil.getDomainName());
 				messages.addAll(getInvestmentInvoices(c));
@@ -440,6 +475,9 @@ public class DashboardController implements Serializable {
 	}
 
 	private List<DashboardMessage> getRetentionInvoices(Connection c) {
+		if ( accountingPeriod == null )
+			return Collections.emptyList();
+		
 		String select = "SELECT count(DISTINCT i.id),it.withholding_type "
 				+ " FROM invoice_tax it"
 				+ " INNER JOIN invoice_detail id ON it.invoice_detail = id.id"
@@ -453,9 +491,9 @@ public class DashboardController implements Serializable {
 		try {
 			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
-			ps.setDate(1, new java.sql.Date(getAccountingPeriod()
+			ps.setDate(1, new java.sql.Date(accountingPeriod
 					.getInitiationDate().getTime()));
-			ps.setDate(2, new java.sql.Date(getAccountingPeriod().getDeadline()
+			ps.setDate(2, new java.sql.Date(accountingPeriod.getDeadline()
 					.getTime()));
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -480,6 +518,7 @@ public class DashboardController implements Serializable {
 						+ " ( " + i + " ).");
 				msgs.add(msg);
 			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -491,6 +530,9 @@ public class DashboardController implements Serializable {
 
 	private Collection<DashboardMessage> getIntracommunitaryInvoices(
 			Connection c) {
+		if ( accountingPeriod == null )
+			return Collections.emptyList();
+		
 		String select = "SELECT count(i.id)" + " FROM invoice i" + WHERE
 				+ DomainManager.getSQLWhereClause("i.domain")
 				+ " AND i.transaction = 1"
@@ -501,9 +543,9 @@ public class DashboardController implements Serializable {
 		try {
 			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
-			ps.setDate(1, new java.sql.Date(getAccountingPeriod()
+			ps.setDate(1, new java.sql.Date(accountingPeriod
 					.getInitiationDate().getTime()));
-			ps.setDate(2, new java.sql.Date(getAccountingPeriod().getDeadline()
+			ps.setDate(2, new java.sql.Date(accountingPeriod.getDeadline()
 					.getTime()));
 			rs = ps.executeQuery();
 			if (rs.next()) {
@@ -516,7 +558,7 @@ public class DashboardController implements Serializable {
 							+ " ).");
 					msgs.add(msg);
 				}
-			}
+			} 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -527,19 +569,24 @@ public class DashboardController implements Serializable {
 	}
 
 	private Collection<DashboardMessage> getInvestmentInvoices(Connection c) {
+		if ( accountingPeriod == null )
+			return Collections.emptyList();
+		
 		String select = "SELECT count(i.id)" + " FROM invoice i" + WHERE
 				+ DomainManager.getSQLWhereClause("i.domain")
 				+ " AND i.issue_date BETWEEN ? AND ?" + " AND i.investment = 1"
 				+ " AND i.id NOT IN (SELECT invoice FROM amortization_invoice)";
+		
+		
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		List<DashboardMessage> msgs = new LinkedList<DashboardMessage>();
 		try {
 			ps = c.prepareStatement(select, ResultSet.TYPE_FORWARD_ONLY,
 					ResultSet.CONCUR_READ_ONLY);
-			ps.setDate(1, new java.sql.Date(getAccountingPeriod()
+			ps.setDate(1, new java.sql.Date(accountingPeriod
 					.getInitiationDate().getTime()));
-			ps.setDate(2, new java.sql.Date(getAccountingPeriod().getDeadline()
+			ps.setDate(2, new java.sql.Date(accountingPeriod.getDeadline()
 					.getTime()));
 			rs = ps.executeQuery();
 			if (rs.next()) {
@@ -552,13 +599,14 @@ public class DashboardController implements Serializable {
 							+ i + " ).");
 					msgs.add(msg);
 				}
-			}
+			} 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			DatabaseUtil.closeQuietly(rs);
 			DatabaseUtil.closeQuietly(ps);
 		}
+		
 		return msgs;
 	}
 
@@ -603,8 +651,8 @@ public class DashboardController implements Serializable {
 					+ "COUNT(IF(type=0,type,NULL)) AS Nominas,"
 					+ " COUNT(IF(type=1,type,NULL)) AS Extras, "
 					+ "COUNT(IF(type=2,type,NULL)) AS Finiquito,"
-					+ " COUNT(IF(type=3,type,NULL)) AS Atrasos, "
-					+ "COUNT(IF(type=4,type,NULL)) AS Vacaciones FROM salary "
+					+ " COUNT(IF(type=3,type,NULL)) AS Atrasos "
+					+ "FROM salary "
 					+ "WHERE "
 					+ DomainManager.getSQLWhereClause("domain")
 					+ " AND YEAR(end_date)=?" + " GROUP BY Mes";
@@ -622,7 +670,6 @@ public class DashboardController implements Serializable {
 				int extras = rs.getInt(4);
 				int finiquito = rs.getInt(5);
 				int atrasos = rs.getInt(6);
-				int vacaciones = rs.getInt(7);
 				/*
 				 * int type = rs.getInt(1); int count = rs.getInt(1); int month
 				 * = rs.getInt(2) - 1;
@@ -634,7 +681,6 @@ public class DashboardController implements Serializable {
 				salaryEntriesCount.get(month).put("Extras", extras);
 				salaryEntriesCount.get(month).put("Finiquitos", finiquito);
 				salaryEntriesCount.get(month).put("Atrasos", atrasos);
-				salaryEntriesCount.get(month).put("Vacaciones", vacaciones);
 			}
 
 			/*
@@ -661,7 +707,7 @@ public class DashboardController implements Serializable {
 
 	public List<Map<String, Object>> getPeriodPayrollCount()
 			throws ManagerBeanException {
-		return salaryEntriesCount;
+		return salaryYear == null ? Collections.emptyList():salaryEntriesCount;
 	}
 
 	public Integer getSalaryYear() {
@@ -686,9 +732,9 @@ public class DashboardController implements Serializable {
 		this.payrollYear = payrollYear;
 	}
 	
-	public LinkedList<DashboardStaff> getPeriodContractCount()
+	public List<DashboardStaff> getPeriodContractCount()
 			throws ManagerBeanException {		
-		return staff;
+		return contractYear == null ? Collections.emptyList(): staff;
 	}
 
 	public LinkedList<DashboardStaff> onContractYearChanged(ActionEvent event)
@@ -809,10 +855,9 @@ public class DashboardController implements Serializable {
 			if(!isCurrentYear) 
 				list.add(new SelectItem(currentYear, currentYear.toString()));
 
-			if(getSalaryYear() == null) {
-				this.setSalaryYear(currentYear);
-				
-			}
+			//if(getSalaryYear() == null) {
+			//	this.setSalaryYear(currentYear);
+			//}
 						
 
 		} catch (SQLException e) {
@@ -861,9 +906,9 @@ public class DashboardController implements Serializable {
 			if(!isCurrentYear) 
 				list.add(new SelectItem(currentYear, currentYear.toString()));
 
-			if(getContractYear() == null) {
-				this.setContractYear(currentYear);		
-			}
+//			if(getContractYear() == null) {
+//				this.setContractYear(currentYear);		
+//			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			// Nothing. Se mostrara array vacio.
