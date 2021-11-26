@@ -9,7 +9,7 @@
 
 	<aon:if test="#{!domainSwitcher.udapa}">
 		<aon:div styleClass="aon-portlet">
-			<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+			<!--script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script-->
 			<aon:div styleClass="aon-portlet-title">								
 				<aon:div styleClass="aon-portlet-title-buttons">
 				</aon:div>
@@ -18,32 +18,24 @@
 			<aon:div styleClass="aon-portlet-body">
 				<aon:panelGrid columns="2" styleClass="aon-width-all"
 					columnClasses="aon-width-half aon-vertical-align-top,aon-width-half">
-					<aon:div id="fiscal_status_div">
+					<aon:div id="fiscal_status_div" >
 						<aon:div styleClass="aon-bold">
 							<aon:outputText value="Tabla fiscal del ejercicio "/>
-							<aon:selectOneMenu id="Dashboard_fiscalYear"
+							<aon:selectOneMenu id="fiscalYearSelect"
 								style="border: none;"
 								value="#{dashboard.fiscalYear}">
 								<a4j:support event="onchange"
 									actionListener="#{dashboard.onFiscalPeriodChanged}" 
 									reRender="fiscal_status_div_inner"
 									ajaxSingle="true" />
-								<f:selectItem itemLabel="2011" itemValue="2011" />
-								<f:selectItem itemLabel="2012" itemValue="2012" />
-								<f:selectItem itemLabel="2013" itemValue="2013" />
-								<f:selectItem itemLabel="2014" itemValue="2014" />
-								<f:selectItem itemLabel="2015" itemValue="2015" />
-								<f:selectItem itemLabel="2016" itemValue="2016" />
-								<f:selectItem itemLabel="2017" itemValue="2017" />
-								<f:selectItem itemLabel="2018" itemValue="2018" />
-								<f:selectItem itemLabel="2019" itemValue="2019" />
-								<f:selectItem itemLabel="2020" itemValue="2020" />
-								<f:selectItem itemLabel="2021" itemValue="2021" />
-								<f:selectItem itemLabel="2022" itemValue="2022" />
-								<f:selectItem itemLabel="2023" itemValue="2023" />
-								<f:selectItem itemLabel="2024" itemValue="2024" />
+								<f:selectItem itemLabel="-" itemValue="" />
+								<f:selectItems value="#{dashboard.fiscalYears}" />
 							</aon:selectOneMenu>
 						</aon:div>
+						
+						<!--
+						Fiscal Table ( reRender )
+						-->
 						<aon:div id="fiscal_status_div_inner">
 							<aon:if test="#{empty dashboard.fiscalInfo}">
 									<aon:div style="padding-top: 10px;">
@@ -123,82 +115,78 @@
 							</ui:repeat>
 							</table>
 						</aon:div>
+						
 					</aon:div>
 					
-					<aon:panelGrid columns="1" styleClass="aon-width-all" columnClasses="aon-width-all">
+					<aon:panelGrid id="accountMessagesDiv" columns="1" styleClass="aon-width-all" columnClasses="aon-width-all">
 						<aon:div id="accountingGraphContainer" 
 							style="width: 98%; min-height: 200px; border:solid #BBB 1px; text-align: center; margin-left: 5px;padding-top: 5px;">
 							<aon:div styleClass="aon-bold">
 								<aon:outputText value="Apuntes por Meses del Ejercicio"/>
-<!-- 								
- -->								
-								<aon:selectOneMenu id="Dashboard_accountPeriod"
+								<!--
+								 								
+ 								-->								
+								<aon:selectOneMenu id="accountPeriodSelect"
 									style="border: none;"
 									value="#{dashboard.accountingPeriod}">
 									<a4j:support event="onchange"
 										actionListener="#{dashboard.onAccountingPeriodChanged}" 
-										reRender="accountingGraphContainer,messageList"
+										reRender="accountMessagesDiv"
 										ajaxSingle="true" />
 									<f:selectItem itemLabel="-" itemValue="" />
 									<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 								</aon:selectOneMenu>
-<!-- 								
- -->								
 							</aon:div>
-							<aon:div id="bar_chart_div" style="width: 100%; min-height: 180px;"/>
-<!-- 								
- -->								
-<!-- 								
-							<aon:outputText value="Informacion temporalmente desactivada"/>
- -->								
-							<script type="text/javascript"> 
-								google.load("visualization", "1", {'callback' : 'drawCharts' ,'packages':["corechart"], 'language': 'en'});
-								function drawCharts(){
+							<!--
+							Loads account column chart
+							-->
+							<aon:div id="accountColumnChartDiv" style="width: 100%; min-height: 180px;"/>
+							<script type="text/javascript">
+								function drawAccountColumnChart(){
 									var data = new google.visualization.DataTable();
 									data.addColumn('string', 'Mes');
 									data.addColumn('number', 'Apuntes');
+									
 									<c:forEach var="entry" items="#{dashboard.periodEntriesCount}">
-										data.addRow(['#{entry.name}', #{entry.value}]);
+									data.addRow(['#{entry.name}', #{entry.value} ]);
 									</c:forEach>
 									var options = {
-										chartArea:{left:30,right:5,top:15,width:"90%",height:"60%"},
-										legend: {position: 'none'},
-										tooltip: {isHtml: true},
-										series: [{color: 'SteelBlue'}],
+										chartArea:{
+											left:30,
+											right:5,
+											top:15,
+											width:"90%",
+											height:"60%"
+										},
+										legend: {
+											position: 'none'
+										},
+										tooltip: {
+											isHtml: true,
+											
+										},
+										theme: 'material'
 									};
-									var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:bar_chart_div'));
-									chart.draw(data, options);
+									var accountChart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:accountColumnChartDiv'));
+									accountChart.draw(data, options);
+									
 								}
-						   </script>
-<!-- 								
- -->								
+																
+								google.charts.load('current', {packages: ['corechart']});
+								google.charts.setOnLoadCallback(drawAccountColumnChart);							
+								
+						   	</script>
 						</aon:div>
 						
-						<aon:div id="messageList" style="width: 99%; margin-left: 5px; border:solid #BBB 1px; text-align: center; margin-top: 10px;padding-bottom: 10px;padding-top: 5px;">
+						<aon:div id="messageList"  style="width: 99%; margin-left: 5px; border:solid #BBB 1px; text-align: center; margin-top: 10px;padding-bottom: 10px;padding-top: 5px;">
 							<aon:div styleClass="aon-bold">
-								<aon:outputText value="Datos relativos al ejercicio Contable "/>
-<!-- 								
- -->								
-								<aon:selectOneMenu id="Dashboard_accountPeriod2"
-									style="border: none;"
-									value="#{dashboard.accountingPeriod}">
-									<a4j:support event="onchange"
-										actionListener="#{dashboard.onAccountingPeriodChanged}" 
-										reRender="accountingGraphContainer,messageList"
-										ajaxSingle="true" />
-									<f:selectItem itemLabel="-" itemValue="" />
-									<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
-								</aon:selectOneMenu>
-<!-- 								
- -->								
+								<aon:outputText value="Datos relativos al ejercicio Contable #{dashboard.accountingPeriod.name}"/>
 							</aon:div>
+							<!--
+							Account messages list ( reRender )
+							-->
 							<ul class="aon-width-all aon-text-left" 
 								style="margin-left: 10px; margin-top: 10px; list-style-type:none">
-<!-- 								
-								<aon:outputText value="Informacion temporalmente desactivada"/>
- -->								
-<!-- 								
- -->								
 								<c:forEach var="msg" items="#{dashboard.messages}">
 									<li style="margin-left: 5px;">
 										<aon:outputText value="#{msg.category}" 
@@ -207,14 +195,40 @@
 										<aon:outputText value="#{msg.message}" styleClass="aon-padding-left" />
 									</li>
 								</c:forEach>
-<!-- 								
- -->								
 							</ul>
 						</aon:div>
+						
 					</aon:panelGrid>
 				</aon:panelGrid>	
 			
 			</aon:div>
+			
+			<!--
+			-->			
+			<script type="text/javascript" > 
+				//<![CDATA[
+				function selectFiscalYear() {
+					// current year
+					fiscalYear = new Date().getFullYear() ; 
+					
+					for ( id of  ['fiscalYearSelect', 'accountPeriodSelect'] ) {
+						let select = document.getElementById('aonContent:mainForm:'+id);
+							
+						for ( option of select.options ) {
+							if ( option.text == fiscalYear ) {
+								if ( select.value != option.value ){
+									select.value = option.value;
+									select.onchange();
+								}
+								break;
+							}
+						}
+					}
+				}
+				document.addEventListener('DOMContentLoaded', selectFiscalYear, false );
+				//]]>
+			</script>
+
 		</aon:div>
 	</aon:if>
 </ui:composition>
