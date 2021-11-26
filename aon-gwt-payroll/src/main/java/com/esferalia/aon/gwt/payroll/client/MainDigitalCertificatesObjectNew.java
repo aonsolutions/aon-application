@@ -8,10 +8,10 @@ import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateOwner;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType;
-import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -143,7 +143,7 @@ public class MainDigitalCertificatesObjectNew {
 	
 	// -------------------------------------------------- DataBase methods (Secondary users)
 	
-	public void getSecondaryUsers(Integer rattachId, Consumer<List<SecondaryUserCertificate>> success, Consumer<Throwable> failure){
+	public void getSecondaryUsers(Integer rattachId, Consumer<List<SecondaryUserCertificate>> success, Consumer<Throwable> failure) {
 		
 		impl.getSecondaryUsers(rattachId, new AsyncCallback<List<SecondaryUserCertificate>>() {
 			

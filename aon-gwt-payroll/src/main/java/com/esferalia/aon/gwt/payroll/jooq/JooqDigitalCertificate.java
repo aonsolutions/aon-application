@@ -199,6 +199,8 @@ public class JooqDigitalCertificate {
 		if(null == registryUserId)
 			registryUserId = createRegistryForUser(dslContext, userRecord, domainId);
 		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+		
 		// RAddInfo Password
 		if(null == raddinfoId) {
 			Record raddinfoRecord = dslContext.select().from(RADDINFO).where(RADDINFO.REGISTRY.eq(registryUserId)).and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD")).fetchOne();
@@ -248,12 +250,16 @@ public class JooqDigitalCertificate {
 					.set(RATTACH.DESCRIPTION, fileName)
 					.where(RATTACH.ID.eq(rattachId))
 					.execute();
+		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 	}
 
 	private static void updateCreateSEPECertificate(DSLContext dslContext, Integer domainId, byte mimeType, String fileName, byte[] data, String password, Integer rattachId, Integer raddinfoId) {
 		Integer registryEntepriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
 				.where(ENTERPRISE.DOMAIN.eq(domainId))
 				.fetchOne(ENTERPRISE.REGISTRY);
+		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
 		
 		// RAddInfo Password
 		if(null == raddinfoId) {
@@ -303,6 +309,8 @@ public class JooqDigitalCertificate {
 					.set(RATTACH.DESCRIPTION, fileName)
 					.where(RATTACH.ID.eq(rattachId))
 					.execute();
+		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 	}
 	
 	private static Integer createRegistryForUser(DSLContext dslContext, Record userRecord, Integer domainId) {

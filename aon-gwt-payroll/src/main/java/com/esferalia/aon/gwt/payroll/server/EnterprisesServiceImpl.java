@@ -3299,7 +3299,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
-				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
 				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
 			
@@ -3346,7 +3346,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
-				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
 				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
 			
@@ -3368,7 +3368,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
-				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
 				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
 			

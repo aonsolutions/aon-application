@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record2;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -36,6 +36,7 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqDigitalCertificateNew {
 	
@@ -79,11 +80,6 @@ public class JooqDigitalCertificateNew {
 		
 		for(Record certificateRecord : certificateRecords) {
 			
-			Record certificatePasswordRecord = dslContext.select().from(RADDINFO)
-					.where(RADDINFO.REGISTRY.eq(registryUserId))
-					.and(RADDINFO.ATTRIBUTE.eq("PASSWORD_CERTIFICATE_" + certificateRecord.get(RATTACH.ID)))
-					.fetchOne();
-			
 			List<Record> certificateTags = dslContext.select().from(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(certificateRecord.get(RATTACH.ID))).fetch();
 			
 			if(certificateTags.isEmpty())
@@ -99,9 +95,19 @@ public class JooqDigitalCertificateNew {
 			digitalCertitficate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
 			digitalCertitficate.setUpdateDate(updateDate);
 			
-			if(null != certificatePasswordRecord) {
-				digitalCertitficate.setRaddinfoId(certificatePasswordRecord.get(RADDINFO.ID));
-				digitalCertitficate.setPassword(certificatePasswordRecord.get(RADDINFO.VALUE));
+			if(AonStringUtils.isNotBlank(certificateRecord.get(RATTACH.DESCRIPTION)) && AonStringUtils.containsIgnoreCase(certificateRecord.get(RATTACH.DESCRIPTION), "HIDE")) {
+				String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
+				digitalCertitficate.setPassword(password);
+			} else {
+				Record certificatePasswordRecord = dslContext.select().from(RADDINFO)
+						.where(RADDINFO.REGISTRY.eq(registryUserId))
+						.and(RADDINFO.ATTRIBUTE.eq("PASSWORD_CERTIFICATE_" + certificateRecord.get(RATTACH.ID)))
+						.fetchOne();
+				
+				if(null != certificatePasswordRecord) {
+					digitalCertitficate.setRaddinfoId(certificatePasswordRecord.get(RADDINFO.ID));
+					digitalCertitficate.setPassword(certificatePasswordRecord.get(RADDINFO.VALUE));
+				}
 			}
 			
 			if(!certificateTags.isEmpty()) {
@@ -132,11 +138,6 @@ public class JooqDigitalCertificateNew {
 		
 		for(Record certificateRecord : certificateRecords) {
 			
-			Record certificatePasswordRecord = dslContext.select().from(RADDINFO)
-					.where(RADDINFO.REGISTRY.eq(registryEnterpriseId))
-					.and(RADDINFO.ATTRIBUTE.eq("PASSWORD_CERTIFICATE_" + certificateRecord.get(RATTACH.ID)))
-					.fetchOne();
-			
 			List<Record> certificateTags = dslContext.select().from(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(certificateRecord.get(RATTACH.ID))).fetch();
 			
 			if(certificateTags.isEmpty())
@@ -152,9 +153,19 @@ public class JooqDigitalCertificateNew {
 			digitalCertitficate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
 			digitalCertitficate.setUpdateDate(updateDate);
 			
-			if(null != certificatePasswordRecord) {
-				digitalCertitficate.setRaddinfoId(certificatePasswordRecord.get(RADDINFO.ID));
-				digitalCertitficate.setPassword(certificatePasswordRecord.get(RADDINFO.VALUE));
+			if(AonStringUtils.isNotBlank(certificateRecord.get(RATTACH.DESCRIPTION)) && AonStringUtils.containsIgnoreCase(certificateRecord.get(RATTACH.DESCRIPTION), "HIDE")) {
+				String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
+				digitalCertitficate.setPassword(password);
+			} else {
+				Record certificatePasswordRecord = dslContext.select().from(RADDINFO)
+						.where(RADDINFO.REGISTRY.eq(registryEnterpriseId))
+						.and(RADDINFO.ATTRIBUTE.eq("PASSWORD_CERTIFICATE_" + certificateRecord.get(RATTACH.ID)))
+						.fetchOne();
+				
+				if(null != certificatePasswordRecord) {
+					digitalCertitficate.setRaddinfoId(certificatePasswordRecord.get(RADDINFO.ID));
+					digitalCertitficate.setPassword(certificatePasswordRecord.get(RADDINFO.VALUE));
+				}
 			}
 			
 			if(!certificateTags.isEmpty()) {
@@ -222,6 +233,8 @@ public class JooqDigitalCertificateNew {
 		if(null == registryUserId)
 			registryUserId = createRegistryForUser(dslContext, userRecord, domainId);
 		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+		
 		// Rattach Data	
 		if(null == rattachId)
 			rattachId = dslContext.insertInto(RATTACH)
@@ -254,15 +267,7 @@ public class JooqDigitalCertificateNew {
 					.execute();
 		
 		// RaddInfo Password
-		if(null == raddinfoId)
-			dslContext.insertInto(RADDINFO)
-					.set(RADDINFO.DOMAIN, domainId)
-					.set(RADDINFO.REGISTRY, registryUserId)
-					.set(RADDINFO.ATTRIBUTE, "PASSWORD_CERTIFICATE_" + rattachId)
-					.set(RADDINFO.VALUE, password)
-					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
-					.execute();
-		else
+		if(null != raddinfoId)
 			dslContext.update(RADDINFO)
 				.set(RADDINFO.VALUE, password)
 				.where(RADDINFO.ID.eq(raddinfoId))
@@ -293,6 +298,8 @@ public class JooqDigitalCertificateNew {
 				.set(RATTACH_TAG.TAG, tagId)
 				.execute();
 		}
+		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 		
 	}
 	
@@ -321,6 +328,8 @@ public class JooqDigitalCertificateNew {
 				.where(ENTERPRISE.DOMAIN.eq(domainId))
 				.fetchOne(ENTERPRISE.REGISTRY);
 		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+		
 		// Rattach Data	
 		if(null == rattachId)
 			rattachId = dslContext.insertInto(RATTACH)
@@ -336,7 +345,7 @@ public class JooqDigitalCertificateNew {
 				.fetchOne()
 				.getId();
 		else
-			if(null != data)
+			if(null != data && data.length > 0)
 				dslContext.update(RATTACH)
 					.set(RATTACH.DATA, data)
 					.set(RATTACH.SECURITY_LEVEL, security)
@@ -353,15 +362,7 @@ public class JooqDigitalCertificateNew {
 					.execute();
 		
 		// RaddInfo Password
-		if(null == raddinfoId)
-			dslContext.insertInto(RADDINFO)
-					.set(RADDINFO.DOMAIN, domainId)
-					.set(RADDINFO.REGISTRY, registryEntepriseId)
-					.set(RADDINFO.ATTRIBUTE, "PASSWORD_CERTIFICATE_" + rattachId)
-					.set(RADDINFO.VALUE, password)
-					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
-					.execute();
-		else
+		if(null != raddinfoId)
 			dslContext.update(RADDINFO)
 				.set(RADDINFO.VALUE, password)
 				.where(RADDINFO.ID.eq(raddinfoId))
@@ -392,6 +393,8 @@ public class JooqDigitalCertificateNew {
 				.set(RATTACH_TAG.TAG, tagId)
 				.execute();
 		}
+		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 	}
 	
 	// ----------------------------------------------------------- GET CERTIFICATE
@@ -400,8 +403,15 @@ public class JooqDigitalCertificateNew {
 		Certificate certificate = new Certificate();
 		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
 		
-		byte[] data = dslContext.select(RATTACH.DATA).from(RATTACH).where(RATTACH.ID.eq(rattachId)).fetchOne(RATTACH.DATA);
-		String password = dslContext.select(RADDINFO.VALUE).from(RADDINFO).where(RADDINFO.ATTRIBUTE.eq("PASSWORD_CERTIFICATE_" + rattachId)).fetchOne(RADDINFO.VALUE);
+		Record2<byte[], String> rattachRecord = dslContext.select(RATTACH.DATA, RATTACH.DESCRIPTION).from(RATTACH).where(RATTACH.ID.eq(rattachId)).fetchOne();
+		byte[] data = rattachRecord.get(RATTACH.DATA);
+		String description = rattachRecord.get(RATTACH.DESCRIPTION);
+		String password;
+		
+		if(AonStringUtils.isNotBlank(description) && AonStringUtils.containsIgnoreCase(description, "HIDE"))
+			password = description.split("HIDE\\(")[1].split("\\)")[0];
+		else 
+			password = dslContext.select(RADDINFO.VALUE).from(RADDINFO).where(RADDINFO.ATTRIBUTE.eq("PASSWORD_CERTIFICATE_" + rattachId)).fetchOne(RADDINFO.VALUE);
 		
 		certificate.setType(MimeType.PKCS12.name());
 		certificate.setCertificate(data);

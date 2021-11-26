@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.finance.InvoiceFiscalCreation;
+import net.aonsolutions.db.up2date.payroll.CertificatesUpdate;
 
 public class Up2Date {
 
@@ -176,7 +177,8 @@ public class Up2Date {
     		//TaskWorkflowUpdate.TASK_WORKFLOW_UPDATE,
     		//ProjectHolderCreation.PROJECT_HOLDER_CREATION,
     		//SMI2021Update.SMI2020UPDATE
-        InvoiceFiscalCreation.INVOICE_FISCAL_CREATION
+    		//InvoiceFiscalCreation.INVOICE_FISCAL_CREATION
+    		CertificatesUpdate.CERTIFICATESUPDATE
     };
 
 

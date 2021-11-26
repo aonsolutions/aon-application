@@ -641,6 +641,7 @@ public class AgreementParser {
 		put("PLUS_ESPECIAL_HORAS", "PLUS_ESPECIAL");
 		put("PLUS_ESPECIAL_2_HORAS", "PLUS_ESPECIAL_2");
 		put("PLUS_ESPECIAL_MENSUAL", "PLUS_ESPECIAL");
+		put("PLUS_EX_JEFE_DE_EQUIPO_MENSUAL", "PLUS_EX_JEFE_EQUIPO");
 		put("PLUS_EXTRASALARIAL_ANUAL", "PLUS_XS_ANUAL");
 		put("PLUS_EXTRASALARIAL_DIARIO", "PLUS_XS_DIARIO");
 		put("PLUS_EXTRASALARIAL_HORAS", "PLUS_XS_HORAS");
@@ -1729,6 +1730,7 @@ public class AgreementParser {
 		name = name.replaceAll("/", "_");
 		name = name.replaceAll(":", "_");
 		name = name.replaceAll("º", "");
+		name = name.replaceAll("-", "_");
 		
 		switch (type) {
 		case "A":
