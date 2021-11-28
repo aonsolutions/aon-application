@@ -106,13 +106,13 @@ public interface ISecurity {
 	
 	// CERTIFICATE
 	public Certificate getCertificate(AONContext ctx, String domainName, Integer domainId, String login, Integer userId, String certificateType);
-	public Certificate getCertificate(AONContext ctx, UserFilter userFilter) ; 
+	public Certificate getCertificate(AONContext ctx, UserFilter userFilter) ;
 	public Certificate insertCertificate(AONContext ctx, UserFilter userFilter , Certificate certificate) ;
 	public Certificate getCertificateSEPE(AONContext ctx, Integer domainId);
 	
 	
 	public AuthDevice saveAuthDevice(AONContext ctx, AuthDevice ad);
-	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter ad);
+	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter filter);
 	public AuthDevice getAuthDevice(AONContext ctx, AuthDeviceFilter adf);
 	public LinkedList<AuthDevice> getAuthDevices(AONContext ctx, AuthDeviceFilter adf);
 	

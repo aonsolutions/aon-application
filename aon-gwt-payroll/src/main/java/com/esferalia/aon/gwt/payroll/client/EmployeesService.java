@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -205,6 +206,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String resetCalendar(String currentDomainName, Integer employeeId);
 	
+	Period getSalariesDates(String currentDomainName, SalaryInfoFilter filter);
+	
 	List<SalaryInfo> getSalaries(String currentDomainName, SalaryInfoFilter filter);
 
 	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids);
@@ -290,7 +293,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void removeContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;
 	
-	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId,
+			Certifica2Info certifica2Info);
 
 	String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate) throws IllegalArgumentException;
 
@@ -321,5 +325,11 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate);
 
 	void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs);
+
+	// ------------------------------------------------- ContractVariables
+	
+	List<ContractVariable> getContractVariables(String currentDomainName, Integer contractId);
+
+	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables);
 
 }

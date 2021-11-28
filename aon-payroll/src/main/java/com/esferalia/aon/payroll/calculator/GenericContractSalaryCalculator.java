@@ -1106,37 +1106,42 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	protected Double fillBonus(IContractSalaryCalculatorContext ctx) throws SalaryException {
-		double total = 0.00; // TODO; mejor null ???
 		try {
-
-			Collection<IContractBonus> contractBonuses = ctx.getContractBonus();
-
-			Date start = ctx.getStartDate();
-			Date end = ctx.getEndDate();
-
-			ExpressionContext expressionContext = ctx.getExpressionContext();
-
-			for (IContractBonus contractBonus : contractBonuses) {
-
-				Date bonusStart = Period.max(contractBonus.getStartDate(), start);
-				Date bonusEnd = Period.min(contractBonus.getEndDate(), end);
-
-				if (bonusEnd.before(bonusStart)) {
-					continue; // TODO : must be done in context ?
+			double total = 0.00; // TODO; mejor null ???
+	
+				Collection<IContractBonus> contractBonuses = ctx.getContractBonus();
+	
+				Date start = ctx.getStartDate();
+				Date end = ctx.getEndDate();
+	
+				ExpressionContext expressionContext = ctx.getExpressionContext();
+	
+				for (IContractBonus contractBonus : contractBonuses) {
+	
+					Date bonusStart = Period.max(contractBonus.getStartDate(), start);
+					Date bonusEnd = Period.min(contractBonus.getEndDate(), end);
+	
+					if (bonusEnd.before(bonusStart)) {
+						continue; // TODO : must be done in context ?
+					}
+					
+					try {
+						total += resolveBonus(bonusStart, bonusEnd, contractBonus, expressionContext);
+					} catch (UndefinedVariablesException e) {
+						// TODO: Something Here
+					} 
+	
 				}
-				
-				total += resolveBonus(bonusStart, bonusEnd, contractBonus, expressionContext);
-			}
-
-		} catch (UndefinedVariablesException e) {
-			// TODO: Something Here
+	
+			return total;
 		} catch (ExpressionException e) {
 			throw new SalaryException(e.getMessage(), e);
 		} catch (AonException e) {
 			throw new SalaryException(e.getMessage(), e);
+		} catch (Exception e) {
+			throw new SalaryException(e.getMessage(), e);
 		}
-
-		return total;
+		
 	}
 
 	protected double resolveBonus(Date bonusStart, Date bonusEnd, IContractBonus contractBonus,

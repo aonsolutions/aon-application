@@ -15,6 +15,7 @@ export const ADD_CATEGORY = 'Engadir Categoría';
 export const ADD_COMMENT = 'Engadir Comentario';
 export const ADD_FILE = 'Achegar Ficheiro';
 export const ADD_INVOICE = 'Engadir Factura';
+export const ADD_REMARKS = 'Engadir Observacións';
 export const ADD_TAG = 'Engadir Etiqueta';
 export const ADD_TAX = 'Engadir Imposto';
 export const ADDITIONAL_INFORMATION = 'Información Adicional';
@@ -33,7 +34,11 @@ export const AVAILABLE = 'Dispoñible';
 
 export const BACK = 'Atrás';
 export const BACKGROUND_ADJUST = 'Axustar Fondo';
+export const BANK = 'Banco';
+export const BANKS = 'Bancos';
+export const BARCODE = 'Código de Barras';
 export const BASE = 'Base';
+export const BASQUE = 'Euskera';
 export const BILLING = 'Facturación';
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Contratación';
@@ -45,17 +50,23 @@ export const BUSINESS_NAME = 'Nome da Empresa';
 // ----- C
 
 export const CANCEL = 'Cancelar'
+export const CATALAN = 'Catalán';
 export const CATEGORY = 'Categoría';
 export const CATEGORIES = 'Categorías';
+export const CERTIFICATE = 'Certificado';
+export const CERTIFICATES = 'Certificados';
 export const CHANGE_TYPE = 'Cambiar Tipo';
+export const CHARGES_AND_PAYMENTS = 'Cargos e Pagamentos';
 export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicacións Clásicas';
 export const CLASSIC_VIEW = 'Vista Clásica';
 export const CLOSE = 'Pechar';
+export const CLOSE_SESSION = 'Pechar Sesión';
 export const CODE = 'Código';
 export const COMMENT = 'Comentario';
 export const COMMENTS = 'Comentarios';
 export const COMMERCIAL_NAME = 'Nome Comercial';
+export const COMMUNICATION = 'Comunicación';
 export const COMPANIES = 'Empresas';
 export const COMPANY = 'Empresa';
 export const COMPANY_COSTS = 'Custos da Empresa';
@@ -73,6 +84,7 @@ export const COUNTRY = 'País'
 export const CREATE = 'Crear';
 export const CREDITOR = 'Acredor';
 export const CREDITORS = 'Acredores';
+export const CUSTOM_VIEW = 'Vista Personalizada';
 export const CUSTOMER = 'Cliente';
 export const CUSTOMERS = 'Clientes';
 
@@ -92,7 +104,9 @@ export const DELETE_LOGO_CONFIRM = 'Estás seguro de eliminar o logo';
 export const DELETE_TAG = 'Borrar Etiqueta';
 export const DELETE_TAX = 'Borrar Imposto';
 export const DELETED_DATA = 'Los datos se han eliminado correctamente';
+export const DESCRIPTION = 'Descrición';
 export const DETAILED = 'Detallado';
+export const DEUTSCH = 'Alemán';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
 export const DOCUMENTARY = 'Documental';
@@ -114,8 +128,14 @@ export const EDIT_FILES = 'Editar Ficheiros';
 export const EDIT_TAG = 'Editar Etiqueta';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Empregado';
-export const ENTERPRISE = 'Empresa'
+export const END_DATE = 'Data Fin';
+export const ENGLISH = 'Inglés';
+export const ENTERPRISE = 'Empresa';
+export const ENTRY = 'Entrada';
 export const EQUIVALENCE_SURCHARGE = 'Recargo de Equivalencia';
+export const EXIT = 'Saída';
+export const EXPENSE = 'Gasto';
+export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencementos';
 
 // ----- F
@@ -129,6 +149,7 @@ export const FOOTER = 'Pé';
 
 // ----- G
 
+export const GALICIAN = 'Galego';
 export const GENERAL_INFORMATION = 'Información General';
 export const GROUP_DATA = 'Datos do Grupo';
 export const GROUP_MANAGEMENT = 'Xestión de Grupos';
@@ -138,6 +159,7 @@ export const GROUPS = 'Grupos';
 // ----- H
 
 export const HEADER = 'Cabeceira';
+export const HELP = 'Axuda';
 export const HIRING = 'Contratación';
 export const HOLDER = 'Titular';
 export const HOLDERS = 'Titulares';
@@ -156,9 +178,11 @@ export const INFORMATION = 'Información';
 export const INVESTMENT = 'Investimento';
 export const INVOICE = 'Factura';
 export const INVOICE_CONCEPTS = 'Conceptos Factura';
+export const INVOICE_CONFIGURATION = 'Configuración de Factures';
 export const INVOICE_DATA = 'Datos Factura';
 export const INVOICE_ISSUED = 'Factura Emitida';
 export const INVOICE_NUMBER = 'Número Factura';
+export const INVOICE_PRINTING = 'Impresión de Facturas';
 export const INVOICE_RECEIVED = 'Factura Recibida';
 export const INVOICES = 'Factures';
 export const IRPF = 'IRPF';
@@ -172,12 +196,15 @@ export const ISSUEDS = 'Emitidas';
 
 // ----- L
 
+export const LANGUAGE = 'Idioma';
+export const LAST = 'Última';
 export const LAST_LOCATION = 'Última ubicación';
 export const LAST_STATUS = 'Último estado';
 export const LOCATION = 'Ubicación';
 
 // ----- M
 
+export const MANAGEMENT = 'Xestión';
 export const MODEL_111 = 'Modelo 111';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retencións e ingresos á conta. Rendementos do traballo e de actividades económicas, premios e determinadas ganancias patrimoniais e imputacións de Renda. Autoliquidación.';
 export const MODEL_190 = 'Modelo 190';
@@ -191,9 +218,12 @@ export const MY_USER = 'O Meu Usuario';
 export const NAME = 'Nome';
 export const NEW = 'Novo';
 export const NEW_COMPANY = 'Nova Empresa';
+export const NEW_EXPENSE = 'Novo Gasto';
 export const NEW_PRODUCT = 'Novo Produto';
 export const NEW_REQUEST = 'Nova Solicitude';
 export const NEXT = 'Seguinte';
+export const NOTES = 'Notas';
+export const NOTE = 'Nota';
 export const NUMBER = 'Número';
 
 // ----- O
@@ -210,6 +240,7 @@ export const OTHER_SERVICES = 'Outros Servizos';
 
 // ----- P
 
+export const PAUSE = 'Pausa';
 export const PAYMETHOD = 'Forma de Pagament'
 export const PAYROLL = "Nómina";
 export const PAYSHEET = 'Nómina';
@@ -225,7 +256,6 @@ export const POSTAL_CODE_MIN = 'C.P.';
 export const PREVIOUS = 'Anterior';
 export const PRICE = 'Prezo';
 export const PRINT_INVOICE = 'Imprimir Factura';
-export const PRINTING_INVOICES = 'Impresión de Facturas';
 export const PROCESSED_MOVEMENT = 'El alta se ha procesado correctamente';
 export const PRODUCT = 'Produto';
 export const PRODUCTS = 'Produtos';
@@ -254,6 +284,8 @@ export const REJECT_INVOICES = 'Rexeitar Factures';
 export const REJECTED = 'Rexeitada';
 export const REJECTED_INVOICES = 'Factures Rexeitadas';
 export const REJECTEDS = 'Rexeitadas';
+export const REMARKS = 'Observacións';
+export const REMINDER = 'Recordatorio';
 export const REQUEST = 'Solicitude';
 export const REQUESTS = 'Solicitudes';
 export const REQUESTS_SENT = 'Solicitudes Enviadas';
@@ -280,15 +312,18 @@ export const SERIE = 'Serie';
 export const SERVICE = 'Servizo';
 export const SERVICES = 'Servizos';
 export const SETTING = 'Configuración'; 
+export const SHARED = 'Compartidas';
 export const SHOW_FILE = 'Ensinar Ficheiro';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Tamaño';
+export const SPANISH = 'Castelán';
 export const STATISTICS = 'Estatística';
 export const STATUS = "Estado";
 export const SUPPLIED = 'Suplidos';
 export const SUPPLIER = 'Provedor';
 export const SUPPLIERS = 'Provedores';
+export const SUPPORT = 'Soporte';
 export const SURCHARGE = 'Recargo';
 export const SURNAME = 'Apelidos';
 export const SYSTEM_MESSAGES = 'Mesaxes do Sistema';
@@ -300,12 +335,16 @@ export const TAGS = 'Etiquetas';
 export const TAX = 'Imposto';
 export const TAX_BASE = 'Base Impoñible';
 export const TAXES_DETAIL = 'Detalle Impostos';
+export const TEST_ENVIRONMENT = 'Entorno de Proba';
 export const TICKET = 'Tícket';
 export const TICKETBAI = 'TicketBAI';
 export const TICKETS = 'Tíckets';
 export const TIMECONTROL = 'Control do Tempo';
+export const TITLE = 'Título';
 export const TITULAR_DATA = 'Datos do Titular';
 export const TO_TRASH = 'Enviar ao Papeleira';
+export const TODAY = 'Hoxe';
+export const TOMORROW = 'Mañá';
 export const TOOLS = 'Ferramentas';
 export const TOTAL = 'Total';
 export const TOTAL_SUPPLIED = 'Total Suplidos';
@@ -334,9 +373,42 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 export const WEB = 'Web';
 export const WITHHOLDING = 'Retención';
+export const WORKGROUP = 'Grupo de traballo';
+export const WRITE_YOUR_TITLE = "Escribe aquí o teu título";
+export const WRITE_A_COMMENT =  "Escribe un comentario";
+export const WRITE_A_DESCRIPTION = "Escribe unha descrición";
+export const WRITE_A_NOTE =  "Escribe unha nota";
+
 
 // ----- X
 
 // ----- Y
 
+export const YEAR = 'Ano';
+export const YESTERDAY = 'Onte';
+
 // ----- Z
+
+//-------------DAYS
+export const SUNDAY = "Domingo";
+export const MONDAY = "Luns"; 
+export const TUESDAY = "Martes";
+export const WEDNESDAY = "Mércores";
+export const THURSDAY = "Xoves"; 
+export const FRIDAY = "Venres"; 
+export const SATURDAY = "Sábado"; 
+
+//-------------MONTHS
+export const JANUARY = "Xaneiro"; 
+export const FEBRUARY = "Febreiro"; 
+export const MARCH = "Marzo"; 
+export const APRIL = "Abril"; 
+export const MAY = "Maio"; 
+export const JUNE = "Xuño"; 
+export const JULY = "Xullo"; 
+export const AUGUST = "Agosto";
+export const SEPTEMBER = "Setembro";
+export const OCTOBER = "Outubro"; 
+export const NOVEMBER = "Novembro"; 
+export const DECEMBER = "Decembro"; 
+

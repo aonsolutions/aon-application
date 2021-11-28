@@ -89,7 +89,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		byte[] b = null;
 		try {
 			ctx = JAXBContext.newInstance(SuministroLRFacturasRecibidas.class);
-			b = writeXml(ctx, suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, mod, terceros));
+			b = writeXml(ctx, suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, mod, terceros, false));
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -155,7 +155,7 @@ public class FacturasRecibidas extends SIIBuilt {
 	 * @param invoiceList
 	 */
 	protected SuministroLRFacturasRecibidas suministroFacturasRecibidas(Domain domain, String login, Company company,
-			Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
+			Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros, boolean errorPeriodo) {
 		SuministroLRFacturasRecibidas suministro = new SuministroLRFacturasRecibidas();
 
 		// CABECERA
@@ -168,17 +168,17 @@ public class FacturasRecibidas extends SIIBuilt {
 		LinkedList<VatData> noExenta = new LinkedList<>();
 		LinkedList<VatData> pasivoList = new LinkedList<>();
 		if (!vat.isIntracommunity()) {
-			noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && !f.isOtherISP())
+			noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && !f.isOtherISP() && !f.isPrepayment())
 					.map(h -> new VatData().setBase(h.getBase()).setPercentage(h.getPercentage()).setQuota(h.getQuota())
 							.setSurchargePercent(h.getSurchargePercent()).setSurchargeQuota(h.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 
-			pasivoList = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.isOtherISP())
+			pasivoList = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.isOtherISP() && !f.isPrepayment())
 					.map(f -> new VatData().setBase(f.getBase()).setPercentage(f.getPercentage()).setQuota(f.getQuota())
 							.setSurchargePercent(f.getSurchargePercent()).setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 		} else {
-			noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId))
+			noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && !f.isPrepayment())
 					.map(f -> new VatData().setBase(f.getBase()).setPercentage(f.getPercentage()).setQuota(f.getQuota())
 							.setSurchargePercent(f.getSurchargePercent()).setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
@@ -240,7 +240,7 @@ public class FacturasRecibidas extends SIIBuilt {
 		Boolean isRegistro = "R".equals(ap.getValue());
 		Date opDate = isRegistro ? vat.getCreationDate() : vat.getTaxDate();
 		// PeriodoLiquidacion || PeriodoImpositivo
-		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), opDate, false));
+		factura.setPeriodoLiquidacion(periodoLiquidacion(vat.getTaxDate(), opDate, false, errorPeriodo));
 		
 		ApplicationParameter ap2 = AON.getApplicationParameter(domain.getName(), domain.getId(), login,
 				AppParam.SII_INCLUDE_DATE);

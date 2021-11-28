@@ -4,7 +4,10 @@ import { API_URL } from "../environments/environments.js";
 
 export const getTastHolders = (data) => get(`${API_URL}/taskholder/enterprise`, data);
 
-export const getTastHoldersWorkGroup = (data) => get(`${API_URL}/taskholder/workgroup`, data);
+export const getTastHoldersWorkGroup = async (data) =>{
+  const resp = await get(`${API_URL}/taskholder/workgroup`, data);
+  return resp.filter( (v,i,s)=>s.findIndex((m) => m.id === v.id) === i );
+} 
 
 let taskHoldersUser;
 export const getTaskHoldersUser = (data) => {

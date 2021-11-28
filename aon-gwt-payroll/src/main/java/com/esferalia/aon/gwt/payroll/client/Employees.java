@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.CategoryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Predicate;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -215,7 +216,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private List<TreeItem> employeeCentinels;
 	
-	
+	private EnterpriseContext enterpriseContext;
 
 	public Employees() {
 		this(false, true);
@@ -310,6 +311,19 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				filter(toolbar.getSearchTextBox().getValue());
 			}
 		};
+		
+		enterprisesService.getEnterpriseContext(new AsyncCallback<EnterpriseContext>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("NO");
+			}
+
+			@Override
+			public void onSuccess(EnterpriseContext enterpriseContextDB) {
+				enterpriseContext = enterpriseContextDB;
+			}
+		});
 
 	}
 
@@ -749,6 +763,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	DomainEmployeesServiceAsync getEmployeesService() {
 		return employeesService;
+	}
+	
+	EnterpriseContext getEnterpriseContext() {
+		return enterpriseContext;
 	}
 
 	OptionsToolbar getOptionsToolbar() {

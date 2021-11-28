@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.CalendarHoursExtraCompl;
 import com.esferalia.aon.gwt.payroll.shared.CalendarHoursExtraCompl.DayHourExtraCompl;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployeeCalendarNew {
@@ -159,30 +160,39 @@ public class JooqEmployeeCalendarNew {
 		
 		// ----------------------------------- FULL TIME JOURNEY
 		
-		String journeyTypeEmployee = "";
-		
-		Result<Record> journeyTypeRecords = dslContext.select()
+		String journeyTypeEmployee = dslContext.select()
 				  .from(CONTRACT_DATA)
 				  .where(CONTRACT_DATA.CONTRACT.eq(contract))
-				  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
-				  .orderBy(CONTRACT_DATA.START_DATE.desc()) // If there is more than one contract
-				  .fetch();
+				  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
+				  .orderBy(CONTRACT_DATA.START_DATE.desc())
+				  .fetchStreamInto(CONTRACT_DATA)
+				  .map( data -> data.getExpression())
+				  .filter(tc2 -> AonStringUtils.isNotBlank(tc2))
+				  .findFirst()
+				  .orElse("true");
 		
-		if(!journeyTypeRecords.isEmpty())
-			journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
-		else {
-			journeyTypeEmployee = dslContext.select()
-					  .from(CONTRACT_DATA)
-					  .where(CONTRACT_DATA.CONTRACT.eq(contract))
-					  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
-					  .orderBy(CONTRACT_DATA.START_DATE.desc())
-					  .fetchStreamInto(CONTRACT_DATA)
-					  .map( data -> data.getExpression())
-					  .filter(tc2 -> AonStringUtils.isNotBlank(tc2))
-					  .findFirst()
-					  .orElse("true");
-			
-		}
+//		Result<Record> journeyTypeRecords = dslContext.select()
+//				  .from(CONTRACT_DATA)
+//				  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+//				  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
+//				  .orderBy(CONTRACT_DATA.START_DATE.desc()) // If there is more than one contract
+//				  .fetch();
+//		
+//		if(!journeyTypeRecords.isEmpty())
+//			journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+//		else {
+//			journeyTypeEmployee = dslContext.select()
+//					  .from(CONTRACT_DATA)
+//					  .where(CONTRACT_DATA.CONTRACT.eq(contract))
+//					  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
+//					  .orderBy(CONTRACT_DATA.START_DATE.desc())
+//					  .fetchStreamInto(CONTRACT_DATA)
+//					  .map( data -> data.getExpression())
+//					  .filter(tc2 -> AonStringUtils.isNotBlank(tc2))
+//					  .findFirst()
+//					  .orElse("true");
+//			
+//		}
 		
 		fullTimeJourney = isFullTimeJourney(journeyTypeEmployee);
 		
@@ -962,10 +972,29 @@ public class JooqEmployeeCalendarNew {
 	// ---------------------------------------------------------------------------------------------------
 
 	// Get employee calendar info from database
-	private static Boolean isFullTimeJourney(String journeyType) {
-		return ('1' == journeyType.charAt(1) || '4' == journeyType.charAt(1)|| "true" == journeyType) ? true : false;
+	private static Boolean isFullTimeJourney(String tc2CD) {
+		if(AonStringUtils.isBlank(tc2CD))
+			return false;
+		
+		String tc2 = parseContractData(tc2CD);
+		
+		Integer contractType = Integer.parseInt(tc2);
+		
+		return (!AonNumberUtils.between(contractType, 200, 300) && !AonNumberUtils.between(contractType, 500, 599) && !AonNumberUtils.equals(contractType, 0))
+			   || (('1' == tc2.charAt(1) || '4' == tc2.charAt(1)|| "true" == tc2));
 	}
 	
+	private static String parseContractData(String contractType) {
+		if(AonStringUtils.isNotBlank(contractType) && contractType.contains("\""))
+			try {
+				return contractType.split("\"")[1];
+			} catch (IndexOutOfBoundsException e) {
+				return contractType;
+			}	
+		else
+			return contractType;
+	}
+
 	private static Boolean isAgrarianContract(Integer contractCCCType) {
 		return (contractCCCType == 7) ? true : false;
 	}

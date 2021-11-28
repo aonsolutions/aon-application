@@ -1009,6 +1009,15 @@ public interface Properties {
 		Property<String> getDiscountExprProperty();
 		Property<Integer> getPurchaseDetailProperty();
 	}
+
+	public interface DataRequestProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Timestamp> getDateProperty();
+		Property<Byte> getTypeProperty();
+		Property<String> getBlackBoxProperty();
+		Property<String> getMd5Property();
+	}
 	
 	public interface DataResponseProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
@@ -1105,9 +1114,10 @@ public interface Properties {
 		Property<String> getCCCProperty();
 		Property<Date> getStartDateProperty();
 		Property<Date> getEndDateProperty();
-
 		Property<Integer> getDomainProperty();
-
+		
+		Property<String> getNameProperty();
+		Property<String> getDocumentProperty();
 	}
 
 	public interface ContractProperties{
@@ -1360,6 +1370,15 @@ public interface Properties {
 		Property<Integer> getRadioProperty();
 		Property<Double> getLatitudeProperty();
 		Property<Double> getLongitudeProperty();
+	}
+	
+	public interface EnterpriseCCCProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getCccProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getEnterpriseActivityProperty();
+		Property<Integer> getGeozoneProperty();
 	}
 	
 	public interface NoteProperties {

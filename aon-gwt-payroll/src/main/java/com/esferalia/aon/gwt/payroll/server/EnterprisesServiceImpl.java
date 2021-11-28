@@ -90,6 +90,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus;
@@ -173,6 +174,7 @@ import solutions.aon.sepe.exceptions.SepeException;
 		})
 public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		EnterprisesService {
+
 	
 	@Override
 	public Integer getDomain(String domain) {
@@ -2363,7 +2365,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public void setContractSpecificData(String domainName, EmployeeContractInfo employeeContractData) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			JooqContractSEPE.setContractSpecificData(connection, employeeContractData);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqContractSEPE.setContractSpecificData(connection, domainId, employeeContractData);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2795,6 +2798,82 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				contract.getEnterpriseCCC(), 
 				contract.getPersonSsNumber(),
 				contract.getEndDate() ) );
+	}
+
+	@Override
+	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, String userLogin) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
+			
+			List<SecondaryUser> secondaryUsers = new ArrayList<SecondaryUser>(secondaryUsersCollection);
+			List<SecondaryUserCertificate> secondaryUsersCertificate = new ArrayList<SecondaryUserCertificate>();
+			
+			for(SecondaryUser secondaryUser : secondaryUsers) {
+				secondaryUsersCertificate.add(new SecondaryUserCertificate(
+						secondaryUser.getAuthoritation(),
+						secondaryUser.getAuthoritationEntity(),
+						secondaryUser.getMainUserName(),
+						secondaryUser.getMainUserIpf(),
+						secondaryUser.getMainUserNaf(),
+						secondaryUser.getName(),
+						secondaryUser.getProvince(),
+						secondaryUser.getIpf(),
+						secondaryUser.getNaf(),
+						secondaryUser.getSituation(),
+						secondaryUser.getSituationDate(),
+						secondaryUser.getTelephone(),
+						secondaryUser.getFax(),
+						secondaryUser.getMobile(),
+						secondaryUser.getMail()
+				));
+			}
+			
+			return secondaryUsersCertificate;
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public void deleteSecondaryUser(String domainName, String userLogin, String ipfType, String ipf) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public void createSecondaryUser(String domainName, String userLogin, String ipfType, String ipf, String naf) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	@Override
@@ -3234,17 +3313,32 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public ContractConcepts getAllConcepts(String domainName, String currentUser) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			
 			return JooqEmployeeContractPayments.getAllConcepts(connection, domainId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} 
+	}
+
+	@Override
+	public EnterpriseContext getEnterpriseContext(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			
+			EnterpriseContext enterpriseContext = new EnterpriseContext();
+			enterpriseContext.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
+			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainId));
+			enterpriseContext.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
+			enterpriseContext.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
+			
+			return enterpriseContext;
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
 	
 	// ----------------------------------------------------------------- DigitalCertificates (New)
-	
+
 	@Override
 	public List<DigitalCertificateNew> getDigitalCertificates(String domainName, String userLogin) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
@@ -3271,23 +3365,24 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {	
 			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
-			
+
 			for(com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType tag : tags) {
 				if(tag == com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType.TGSS) {
 					InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 					SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 				}
-				
+
 				if(tag == com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType.SEPE) {
 					InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 					Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 				}
 			}
-			
+
 		} catch (SQLException | SepeException | SegSocialException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
+
 
 	@Override
 	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, String userLogin, Integer rattachId) throws IllegalArgumentException {
@@ -3389,4 +3484,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
+	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData) {
+		// TODO Auto-generated method stub
+	}
+	
 }

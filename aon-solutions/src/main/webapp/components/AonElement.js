@@ -1,8 +1,13 @@
 import {webkitRequestMobile} from '../services/service.js';
 import { CONSTANT, MSG, TAG } from "../environments/environments.js";
+import { DomainUserRoles } from '../models/DomainUserRoles.js';
+import { getDomainUserRoles } from '../services/companyService.js';
 
 export class AonElement extends HTMLElement{
+
   ROOT_PANEL = 'rootPanel';
+  dur;
+
   constructor () {
     super();
   }
@@ -133,17 +138,29 @@ export class AonElement extends HTMLElement{
     return this.getApplication().getParent();
   }
 
+  buildDur() {
+    return new Promise((resolve, reject) => {
+      getDomainUserRoles({}).then(r => {
+        this.dur = new DomainUserRoles(r);
+        resolve(this.dur);
+      }).catch(e => reject(e));
+    });
+  }
+
+  getDur() {
+    return this.dur;
+  }
+
 	isBeta(){
     const href = window.location.href;
 		return href.includes('aonsolutions.org') || href.includes('localhost') || href.includes('8080');
 	}
 
   showMessage(msg) {
-    msg = {
+    this.showToast({
       type: CONSTANT.SUCCESS,
       message: msg || MSG.SAVED_DATA
-    }
-    this.showToast(msg);
+    });
   }
 
   showError(e) {

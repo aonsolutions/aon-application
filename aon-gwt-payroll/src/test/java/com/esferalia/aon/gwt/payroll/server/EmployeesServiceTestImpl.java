@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -861,7 +862,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId)
+	public void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, Certifica2Info certifica2Info)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
@@ -970,6 +971,24 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<ContractVariable> getContractVariables(String currentDomainName, Integer contractId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Period getSalariesDates(String currentDomainName, SalaryInfoFilter filter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

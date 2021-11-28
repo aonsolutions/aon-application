@@ -136,11 +136,11 @@ public class AonCheckItBankBox extends ResizeComposite implements HasValue<Strin
 		}
 	}
 	
-	public AonCheckItBankBox(final String domainName, final int domain,final String user, List<CheckItBank> banks) {
-		this(domainName,domain,user,banks,true);
+	public AonCheckItBankBox(final String domainName, final int domain,final String user, List<CheckItBank> banks, boolean isMobile) {
+		this(domainName,domain,user,banks,true, isMobile);
 	}
 	
-	public AonCheckItBankBox(final String domainName, final int domain, final String user, List<CheckItBank> banks, boolean showDescription) {
+	public AonCheckItBankBox(final String domainName, final int domain, final String user, List<CheckItBank> banks, boolean showDescription, boolean isMobile) {
 		this.banks = banks;
 		
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
@@ -178,6 +178,11 @@ public class AonCheckItBankBox extends ResizeComposite implements HasValue<Strin
 			}
 		};
 		accountTextBox = new TextBox();
+		accountTextBox.setWidth("100%");
+		if (isMobile) {			
+			accountTextBox.setHeight("3em");
+			accountTextBox.getElement().getStyle().setProperty("borderRadius", "5px");
+		}
 		suggestionDisplay =  new AccountSuggestionDisplay();
 		account = new SuggestBox(oracle,accountTextBox,suggestionDisplay);
 		accountTextBox.setStyleName(AON.CSS.aonInputText());

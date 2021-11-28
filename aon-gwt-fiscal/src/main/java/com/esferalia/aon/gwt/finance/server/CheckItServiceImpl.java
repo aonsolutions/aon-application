@@ -67,7 +67,9 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		if (checkitAccounts != null) {
 			checkitAccounts.forEach(acc -> {
 				try {
+					List<BankStatement> allMovs = CheckItAPI.getAllMovements(domainName, domain, user, empresaId, acc.getCcc());
 					List<BankStatement> movs = CheckItAPI.getNewMovements(domainName, domain, user, empresaId, acc.getCcc());
+					acc.setAllMovements(allMovs);
 					acc.setPending(movs);
 				} catch (CheckItException e) {
 					throw new AonCoreException(e.getMessage());
@@ -179,7 +181,7 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 
 
 	@Override
-	public Boolean addAccount(Integer enterpriseId, CheckitUnlinkedBankAccount checkitUnlinkedBankAccount,
+	public String addAccount(Integer enterpriseId, CheckitUnlinkedBankAccount checkitUnlinkedBankAccount,
 			String userID, String userPassword, String userPIN) {
 		
 		if (checkitUnlinkedBankAccount != null) {
@@ -214,11 +216,13 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 				try {
 					if (credentials)
 						CheckItAPI.addCredentials(enterpriseId, login.getId(), userID, userPassword, userPIN);
-					CheckItAPI.addAccount(enterpriseId, bankId, login.getId(), iban, 1);
-					return true;
+					JSONObject johnson = CheckItAPI.addAccount(enterpriseId, bankId, login.getId(), iban, 1);
+					String msg = johnson.optString("message");
+					String code = johnson.optString("code");
+					return msg + ((code != null && !code.isEmpty()) ? ", código: " + code : "");
 				} catch (Exception e) {
 					throwException(e);
-					return false;
+					return null;
 				}
 			}
 		} else {

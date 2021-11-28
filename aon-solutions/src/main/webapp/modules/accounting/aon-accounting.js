@@ -13,6 +13,9 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
 import { AonGraphicsTrial } from './aon-graphics-trial.js';
 import Apps from '../../services/app.js';
 
+import * as GWT from '../../gwt/gwt.js';
+import { waitEl } from '../../services/utils.js';
+
 export class AonAccounting extends AonElement {
 
 	dur;
@@ -46,33 +49,70 @@ export class AonAccounting extends AonElement {
 			application.addMobileSidenavHeader(Apps.ACCOUNTING);
 		}
 
+
+		let options2 = [
+			{
+				id: 'VistaAnual',
+				name: 'Vista Anual',
+				icon: MATERIAL_ICONS.CALENDAR_TODAY,
+				fn: () => {}
+			},
+			{
+				id: 'VistaTrimestral',
+				name: 'Vista Trimestral',
+				icon: MATERIAL_ICONS.CALENDAR_TODAY,
+				fn: () => {}
+			},
+			{
+				id: 'VistaMensual',
+				name: 'Vista Mensual',
+				icon: MATERIAL_ICONS.CALENDAR_TODAY,
+				fn: () => {}
+			},];
+
+
 		let options = [{
+			id: 'PyG',
 			name: 'Pérdidas y Ganancias',
-			icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
-			fn: () => this.aonGraphicsTrialView ()
-		},];
+			icon: MATERIAL_ICONS.BAR_CHART,
+			fn: () => {
+				application.removeSidenavById("Opciones");
+				application.addSidenavOptions(MSG.OPTIONS , options2);
+				this.getApplication().stopLoader();
+				this.getApplication().startLoader();
+				this.aonGraphicsTrialView ();
+			}
+		}];
+		
+		if(this.dur.isBank())
+			options.push({
+				id: 'banks',
+				name: MSG.BANKS,
+				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
+				fn: () => {
+					/*application.removeSidenavById("Opciones");
+					this.getApplication().stopLoader();
+					this.getApplication().startLoader();
+					GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);*/
+					this.go2CheckIt();
+				}
+			});
+
 		application.addSidenavOptions(MSG.ACCOUNTING, options);
 
 
-		let options2 = [
-		{
-			name: 'Vista Anual',
-			icon: MATERIAL_ICONS.CALENDAR_TODAY,
-			fn: () => {}
-		},
-		{
-			name: 'Vista Trimestral',
-			icon: MATERIAL_ICONS.CALENDAR_TODAY,
-			fn: () => {}
-		},
-		{
-			name: 'Vista Mensual',
-			icon: MATERIAL_ICONS.CALENDAR_TODAY,
-			fn: () => {}
-		},];
+		
 		application.addSidenavOptions(MSG.OPTIONS , options2);
 	}
 
+	async go2CheckIt () {
+		this.clearElementById(this.getApplication().getContent().id);
+		this.getApplication().startLoader();
+			GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
+		waitEl(`#${this.getApplication().getContent().id} .aon_toolbar`)
+		.catch(e => console.log(e))
+		.finally(() => this.getApplication().stopLoader());
+	}
 
 	aonGraphicsTrialView () {
 		const aonGraphicsTrial = new AonGraphicsTrial();

@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateListBox;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -34,6 +37,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
@@ -432,6 +436,9 @@ public abstract class EmployeeDraft extends Composite {
 	@UiField (provided = true)
 	AonToolbar toolbar;
 	
+	@UiField
+	HTMLPanel messageContainer;
+	
 	@UiField (provided = true)
 	Employee employee;
 	
@@ -559,11 +566,13 @@ public abstract class EmployeeDraft extends Composite {
 	}
 
 	private void initActivitiesCCC() {
-		employee.initActivitiesCCC(employeeDraftObject.getActivities(), employeeDraftObject.getCCCs());
+		employee.initActivitiesCCC(
+				employeeDraftObject.getEnterpriseContext().getActivitiesCCC().getActivities(), 
+				employeeDraftObject.getEnterpriseContext().getActivitiesCCC().getCccs());
 	}
 	
 	private void initWorkplaces() {
-		employee.initWorkplaces(employeeDraftObject.getWorkplaces());
+		employee.initWorkplaces(employeeDraftObject.getEnterpriseContext().getWorkplaces());
 	}
 	
 	private void initContractType() {
@@ -575,7 +584,7 @@ public abstract class EmployeeDraft extends Composite {
 	}
 	
 	private void initPayMethods() {
-		employee.initPayMethods(employeeDraftObject.getPayMethods());
+		employee.initPayMethods(employeeDraftObject.getEnterpriseContext().getPayMethods());
 	}
 	
 	private void initIbans() {
@@ -700,7 +709,7 @@ public abstract class EmployeeDraft extends Composite {
 			} else
 				employee.showElementsFullTimeContract();
 		} catch (NumberFormatException e) {
-			// TODO: handle exception
+			// Not use here
 		}
 		
 		employee.updateModality(contractTypeInt);
@@ -843,11 +852,14 @@ public abstract class EmployeeDraft extends Composite {
 	}
 
 	private void onSaveContract() {
-		if(employee.checkIfSaveEmployeeIsPossible())
+		Map<String, String> messageMap = employee.checkSaveAndGetErrors();
+		if(messageMap.isEmpty())
 			employeeDraftObject.updateEmployee(
 					r -> saved(), 
 					t -> {}
 			);
+		else
+			AonMessagePanel.showError(messageContainer, messageMap);
 	}
 
 	private void onUndoAll() {
@@ -874,11 +886,10 @@ public abstract class EmployeeDraft extends Composite {
 				employee.quoteGroup.getSelectedValue(),
 				employee.occupation.getSelectedValue(),
 				employee.partialityCoef.getValue(),
-				employeeDraftObject.getPayrollDate(),
 				employeeDraftObject.getContractId(),
 				employeeDraftObject.getDomainId(),
-				employeeDraftObject.getWorkplaceId()
-				){
+				employeeDraftObject.getWorkplaceId(),
+				false){
 
 					@Override
 					protected void onAcceptCB() {
@@ -887,32 +898,32 @@ public abstract class EmployeeDraft extends Composite {
 
 					@Override
 					protected void onPartialityCoefContract(String partialityCoef, Date date) {
-						// Not use in this case}
+						// Not use in this case
 					}
 
 					@Override
 					protected void onOcupationContract(String ocupation, Date date) {
-						// Not use in this case}
+						// Not use in this case
 					}
 
 					@Override
 					protected void onQuoteContract(String quoteGroup, Date date) {
-						// Not use in this case}
+						// Not use in this case
 					}
 
 					@Override
 					protected void onChangeContract(String contract, Date date) {
-						// Not use in this case}
+						// Not use in this case
 					}
 
 					@Override
 					protected void onEndContract(String settleReason) {
-						// Not use in this case}
+						// Not use in this case
 					}
 
 					@Override
 					protected void onStartContract() {
-						// Not use in this case}
+						// Not use in this case
 					}
 		
 		};
@@ -925,7 +936,7 @@ public abstract class EmployeeDraft extends Composite {
 		showIdcPlNss(DateUtils.getFirstDayOfMonth());
 	}
 	
-	private void showIdcPlNss( Date month) {
+	private void showIdcPlNss(Date month) {
 		employeeDraftObject.downloadIdcPlNss( 
 		month,
 		dataURI -> {
@@ -933,26 +944,22 @@ public abstract class EmployeeDraft extends Composite {
 				idcMonthListBox.setVisible(true);
 				idcMonthListBox.setSelected(month, true);
 				pdfViewer.open(dataURI);
-		}, 
-		trowable -> {}
-		);
+		}, trowable -> {});
 	}
 	
 	private void showIdc() {
 		showIdc(idcDateListBox.getSelected());
 	}
 	
-	private void showIdc( Date date) {
+	private void showIdc(Date date) {
 		employeeDraftObject.downloadIdc( 
 		date,
-		(dataURI) -> {
+		dataURI -> {
 				showPdf();
 				idcDateListBox.setVisible(true);
 				idcDateListBox.setSelected(date, true);
 				pdfViewer.open(dataURI);
-		}, 
-		(trowable) -> {}
-		);
+		}, trowable -> {});
 	}
 
 	private void onClosePDF() {
@@ -997,6 +1004,10 @@ public abstract class EmployeeDraft extends Composite {
 	// ------------------------------------------------- Callback saved for check status
 	
 	private void saved() {
+		Map<String, String> messageSuccessMap = new HashMap<>();
+		messageSuccessMap.put("Guardado", "El contrato " + employeeDraftObject.getEmployeeFullName() + " ha sido actualizado correctamente");
+		AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
+		
 		onSaved.accept(employeeDraftObject);
 	}
 	

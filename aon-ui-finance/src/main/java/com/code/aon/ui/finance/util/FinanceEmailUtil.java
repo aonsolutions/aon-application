@@ -26,6 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.mail.Address;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -50,6 +51,7 @@ import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonMessage;
 import com.esferalia.aon.occam.api.AON;
@@ -62,6 +64,7 @@ import com.esferalia.aon.watson.server.io.AonFileUtils;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import solutions.aon.aws.ses.SES;
 
 public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConstants {
 	
@@ -339,10 +342,23 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 				if ( InvoiceController.isIncludeFacturae(invoice) ) {
 					xml = getInvoiceXml(invoice);	
 				}
-				AonMessage aonMessage = getEmailSender().sendMessage(recipients, _subject, _content, MimeType.MIME_HTML, file, xml );
-				if ( saveSent ) {
-					getEmailSender().storeMessage(aonMessage);
-				}
+				
+				AonMessage aonMessage = getEmailSender().createMessage(recipients, _subject, _content, MimeType.MIME_HTML, file, xml);
+				if(isProtocolAon(getEmailSender())) {
+					String from = getEmailSender().getMailAccount().getDisplayName() + "<no-reply@aon.solutions>";
+		    		MimeMessage message = (MimeMessage) aonMessage.getMessage();
+		            message.setFrom(new InternetAddress(from));
+		            Address replyTo = new InternetAddress(getEmailSender().getMailAccount().getEmail());
+		            Address[] addresses = {replyTo};
+		            message.setReplyTo(addresses);
+		            SES.sendEmail(message);
+		    	} else {
+		    		aonMessage = getEmailSender().sendMessage(recipients, _subject, _content, MimeType.MIME_HTML, file, xml );
+					if ( saveSent ) {
+						getEmailSender().storeMessage(aonMessage);
+					}
+		    	}
+				
 				String text = AonUtil.getMessage(FINANCE_INVOICE_SEND_EMAIL);
 				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName(), ArrayUtils.toString(emails), index );
 				logger.info( message );
@@ -366,4 +382,7 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceConsta
 		}
 	}
 	
+	public boolean isProtocolAon(EmailSender es) {
+		return es.getMailAccount().getProtocol() != null && "aon".equalsIgnoreCase(es.getMailAccount().getProtocol());
+	}
 }

@@ -1,8 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl} from  '../../services/service.js';
-import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import '../../components/aon-application.js';
-import {AonSign} from '../signin/aon-sign.js';
+import {AonSign} from '../timecontrol/aon-sign.js';
 import './aon-desktop.js';
 
 export class AonParent extends AonElement {
@@ -10,6 +10,8 @@ export class AonParent extends AonElement {
 	companies;
 	selected;
 	notice;
+	filter;
+
 	constructor () {
 		super();
 		this.id = 'aonParent';
@@ -30,8 +32,8 @@ export class AonParent extends AonElement {
 
 	buildSidenav() {
 		let aonParent = this.getElement('aonParentMain');
-		
 		let taskOptions = [{
+				id: 'PendingInvoices',
 				name: MSG.PENDING_INVOICES,
 				icon: MATERIAL_ICONS.INBOX,
 				fn: (count) => {
@@ -40,6 +42,7 @@ export class AonParent extends AonElement {
 					}
 				}
 			}, {
+				id: 'RejectedInvoices',
 				name: MSG.REJECTED_INVOICES,
 				icon: MATERIAL_ICONS.REPORT,
 				fn: (count) => {
@@ -57,7 +60,7 @@ export class AonParent extends AonElement {
 				fn: () => {}
 			}
 		];
-		aonParent.addSidenavOptions(MSG.PENDING_TASKS.toUpperCase(), taskOptions);
+		aonParent.addSidenavOptions(MSG.ACTIVITY_SUMMARY.toUpperCase(), taskOptions);
 		
 		let filterOptions = [{
 				name: MSG.ACTIVES,
@@ -88,15 +91,18 @@ export class AonParent extends AonElement {
 			let aonSign = new AonSign();
 			aonSign.setParent(true);
 			aonSign.setTimeControl(r);
-			aonParent.addSidenavWidget('CONTROL HORARIO', aonSign);
+			aonParent.addSidenavWidget(MSG.TIMECONTROL.toUpperCase(), aonSign);
 			let aonHeader = this.getElement('aonHeader');
 			aonHeader.timeControlStatus(r);
 		});
 
 		this.getNotices();
+		
+		
 	}
 
 	init(filter) {
+		this.filter = filter;
 		let aonParent = this.getElement('aonParentMain');
 		if(aonParent){
 			aonParent.startLoader();
@@ -104,10 +110,11 @@ export class AonParent extends AonElement {
 			getCompanies()
 			.then( companies => {
 				aonParent.stopLoader();
-				if(companies.length ===1){
+				if(companies.length === 1){
 					this.companySelection(companies[0], true);
 				} else {
-					this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)));
+					this.page = 1;
+					this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
 				}
 		  	}, () => closeSession());
 		}
@@ -175,8 +182,8 @@ export class AonParent extends AonElement {
 		if(this.notice.invoice && this.notice.invoice.rejected && this.notice.invoice.rejected.count && this.notice.invoice.rejected.count > 0) 
 			rejectedCount = this.notice.invoice.rejected.count;
 
-		application.updateSidenavCount(MSG.PENDING_INVOICES, inboxCount);
-		application.updateSidenavCount(MSG.REJECTED_INVOICES, rejectedCount);
+		application.updateSidenavCount('PendingInvoices', inboxCount);
+		application.updateSidenavCount('RejectedInvoices', rejectedCount);
 	}
 
  	build() {
@@ -191,21 +198,45 @@ export class AonParent extends AonElement {
 		div.style.paddingLeft = '16px';
 		div.innerHTML = MSG.COMPANIES.toUpperCase();
 		content.appendChild(div);
+		
 
-		let ul = this.createElement('ul');
+		let ul = this.createElement(TAG.UL);
 		ul.id = "UlCompanies";
-		ul.className = 'list-group';
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.NO_SCROLLBAR);
 		ul.style.marginLeft = '20px';
 		ul.style.marginRight = '20px';
+		ul.style.height = 'calc(100vh - 104px)';
+		ul.style.overflowY = 'auto';
 		content.appendChild(ul);
+		ul.addEventListener("scroll", () => {
+			let scrollTop = ul.scrollTop;
+			let offsetHeight = ul.offsetHeight;
+			let physicalSize = ul.scrollHeight;
+			let maxScrollPosition = physicalSize - offsetHeight;
+			console.log(scrollTop + ' - ' + maxScrollPosition);
+			if (scrollTop >= maxScrollPosition) {
+				this.more();
+			}
+		  });
 		aonParent.setContent(content);
+	}
+
+	more() {
+		this.getApplication().startLoader();
+		getCompanies().then( companies => {
+			this.getApplication().stopLoader();
+			let first = this.page * 30;
+			this.page = this.page + 1;
+			this.buildCompanies(companies.filter(f => this.companyFilter(f, this.filter)).slice(first, first + 30));	
+		});
 	}
 
 	buildCompanies(companies){
 		let ul = this.getElement("UlCompanies");
-		companies.map(company=>{
+		for(var company of companies) {
 			ul.appendChild(this.buildLi(company, 'transparent'));
-		})
+		}
 	}
 
 	buildLi(company, color) {

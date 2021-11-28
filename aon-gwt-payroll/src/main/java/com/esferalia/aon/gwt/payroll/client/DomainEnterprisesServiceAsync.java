@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -391,6 +392,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getContractBonus(getCurrentDomainName(), contractId, asyncCallback);
 	}
 
+	public void setContractBonus(EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.setContractBonus(getCurrentDomainName(), employeeContractData, asyncCallback);
+	}
+	
 	public void getCNOs(AsyncCallback<Map<String, CNO>> asyncCallback) {
 		enterprisesServiceAsync.getCNOs(getCurrentDomainName(), asyncCallback);
 	}
@@ -549,6 +554,22 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void validateCertJava(Integer rattachId, AsyncCallback<CertificateInfo> asyncCallback) {
 		enterprisesServiceAsync.validateCertJava(getCurrentDomainName(), rattachId, asyncCallback);
+	}
+	
+	public void getEnterpriseContext(AsyncCallback<EnterpriseContext> asyncCallback) {
+		enterprisesServiceAsync.getEnterpriseContext(getCurrentDomainName(), asyncCallback);
+	}
+
+	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) {
+		enterprisesServiceAsync.getSecondaryUsers(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+
+	public void deleteSecondaryUser(String ipfType, String ipf, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.deleteSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, asyncCallback);
+	}
+
+	public void createSecondaryUser(String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.createSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, naf, asyncCallback);
 	}
 
 	

@@ -21,7 +21,6 @@ export class AonCompany extends AonReg {
 
 
 	save() {
-		alert(this.registry.getName());
 		let medias = this.emails.concat(this.phones).concat(this.webs);
 		this.registry.setMedia(medias);
 

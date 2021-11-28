@@ -11,6 +11,7 @@ import { AonCtaList } from "./cta/aon-cta-list.js";
 import * as GWT from '../../gwt/gwt.js';
 import Apps from "../../services/app.js";
 
+import '../../css/aon.css';
 
 export class AonComunica extends AonElement {
 

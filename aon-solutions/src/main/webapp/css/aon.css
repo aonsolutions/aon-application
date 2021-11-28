@@ -38,8 +38,7 @@
   transform: translate(-50%, -50%);
 }
 
-
-body {
+.aonBody {
   padding: 0px !important;
   margin: 0px !important;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
@@ -48,7 +47,7 @@ body {
   line-height: normal !important;
 }
 
-ul {
+.aonUl {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -64,7 +63,7 @@ a {
   background-color: transparent;
 }
 
-.list-group {
+.aonListGroup {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
@@ -74,7 +73,7 @@ a {
   border-radius: .25rem;
 }
 
-.list-group-top {
+.aonListGroupTop {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
@@ -85,12 +84,12 @@ a {
   border-top: 1px solid rgba(0,0,0,.125);
 }
 
-.list-group-item:first-child {
+.aonListGroupItem:first-child {
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
 }
 
-.list-group-item {
+.aonListGroupItem {
   position: relative;
   display: block;
   padding: .75rem 1.25rem;
@@ -226,11 +225,19 @@ button:disabled, button[disabled]{
   cursor: pointer;
 }
 
-.aonLogo {
-  position: absolute;
-  margin-left: 10px;
-  top: 15px;
+.aonHeaderLogoSpan {
+  height: 60px;
+  width: 250px;
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
   cursor: pointer;
+}
+
+.aonLogo {
+  max-width: 250px;
+  max-height: 60px;
+  padding: 5px;
 }
 
 .aonParentLogo {

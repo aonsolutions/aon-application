@@ -381,8 +381,14 @@ class ConnectionInfoImpl extends ConnectionInfo{
 	}
 	
 	private Connection getMetadataConnection() throws AonConnectionException{
+		
 		if ( metadaConnection != null ) {
-			return metadaConnection;
+			try {
+				if ( metadaConnection.isValid(0))
+					return metadaConnection;
+			} catch (SQLException e) {
+				metadaConnection = null;
+			}
 		}
 		
 		metadaConnection = newMetadataConnection();

@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
+import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -226,6 +227,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void resetCalendar(String currentDomainName, Integer employeeId, AsyncCallback<String> callback);
 
+	void getSalariesDates(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<Period> callback);
+	
 	void getSalaries(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
 
 	void deleteSalaries(String currentDomainName, ArrayList<Integer> ids, AsyncCallback<Void> callback);
@@ -310,7 +313,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void removeContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback);
 	
-	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException;
 
@@ -341,5 +344,11 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback);
 
 	void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback);
+
+	// ------------------------------------------------- ContractVariables
+	
+	void getContractVariables(String currentDomainName, Integer contractId, AsyncCallback<List<ContractVariable>> callback);
+
+	void updateContractVariables(String currentDomainName, List<ContractVariable> contractVariables, AsyncCallback<Void> callback);
 
 }

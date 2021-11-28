@@ -13,9 +13,10 @@ import { AonEventAdd } from "./time-control/event/aon-event-add.js";
 import { AonApplication } from "../../components/aon-application.js";
 import { MSG } from "../../environments/environments.js";
 import Apps from "../../services/app.js";
-// import { AonStatistics } from "./time-control/statistics.js/aon-statistics.js";
 
-export class AonSignin extends AonElement {
+import '../../css/aon.css';
+
+export class AonTimecontrol extends AonElement {
   AON_SIGNIN;
   TASK_HOLDER;
   DATE_TMP;
@@ -180,9 +181,6 @@ export class AonSignin extends AonElement {
               aonView = new AonLocationList();
               this.periodSideNavDisplay(false);
             break;
-          // case SIGNIN_VIEWS.AON_STATISTICS:
-          //   aonView = new AonStatistics();// : this.applicationEl.development();
-          //   break;
           case SIGNIN_VIEWS.AON_LOCATION_ADD:
             aonView = new AonLocationAdd();
             if(data){
@@ -228,4 +226,4 @@ export class AonSignin extends AonElement {
   }
 
 }
-window.customElements.define("aon-signin", AonSignin);
+window.customElements.define("aon-timecontrol", AonTimecontrol);

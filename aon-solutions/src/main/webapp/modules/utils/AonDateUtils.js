@@ -1,3 +1,4 @@
+import { MSG } from "../../environments/environments.js";
 import { DAYS, MONTHS } from "../../models/enums.js";
 import { addZero } from "../../services/utils.js";
 
@@ -64,21 +65,23 @@ export const AonDateUtils = {
         let day = null;
         if( (date.getFullYear() === now.getFullYear()) && (date.getMonth() === now.getMonth()) ){
           if(date.getDate() === now.addDay(-1).getDate())
-            day = "ayer";
+            day = MSG.YESTERDAY;
           else if(date.getDate() === new Date().getDate())
-            day = "hoy";
+            day = MSG.TODAY;
           else if(date.getDate() === new Date().addDay(1).getDate())
-            day = "mañana";
+            day = MSG.TOMORROW;
         }
         return day;
+    },
+    getYearFirstDay: function(d) {
+        return new Date(d.getFullYear(), 0, 1);
     },
     dayStr: function(date) { //DAY STR
         return this.lastThreeDayStr(date) || DAYS[date.getDay()]
     },
     setDateTpDay: function(d) { // DAY, dd-MM-yyyy
         const date = new Date(d);
-        const day = this.dayStr(date);
-        return day+", "+this.formatDate(date);
+        return this.dayStr(date)+", "+this.formatDate(date);
     },
     setDateTimestampDay: function(d) { // DAY, dd-MM-yyyy H:m
         return this.setDateTpDay(new Date(d)) +" " + this.setTime(new Date(d));

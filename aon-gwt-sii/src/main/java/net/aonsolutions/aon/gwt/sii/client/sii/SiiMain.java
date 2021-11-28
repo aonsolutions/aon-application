@@ -131,6 +131,7 @@ public class SiiMain extends AonTemplate2{
 	Button sendAll;
 	Button send;
 	Button baja;
+	Button errorPeriodo;
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
 		Toolbar toolbar = new Toolbar("Suministro Inmediato de Informacion") {};
@@ -168,10 +169,20 @@ public class SiiMain extends AonTemplate2{
 				
 				SimpleLayoutPanel slp = p.getContent();
 				InvoiceGrid ig = (InvoiceGrid) slp.getWidget();
-				ig.anular(getFilterMap().get("sii").get(0)); // TODO
+				ig.anular(getFilterMap().get("sii").get(0));
 			}
 		});
-	
+		if(getAonData().getDomain().getName().equals("admin-alsaes.aonsolutions.net")) {
+			errorPeriodo = toolbar.addButton("Soluci\u00f3n Periodo Liquidaci\u00f3n", AON.AON_CSS.aonIconAeat());
+			errorPeriodo.setVisible(true);
+			errorPeriodo.addClickHandler(new ClickHandler() {
+			
+				@Override
+				public void onClick(ClickEvent event) {
+					sendErrorPeriodoSii();
+				}
+			});
+		}
 		setToolbar(toolbar);
 	}
 	
@@ -312,6 +323,110 @@ public class SiiMain extends AonTemplate2{
 		    	sendMap.put("terceros", list);
 
 		    	resultPanel(sendMap);
+			}
+		};
+		dialog.center();
+	}
+	
+	public void sendErrorPeriodoSii(){
+		VerticalPanel vp = new VerticalPanel();
+		
+		HorizontalPanel hp1 = new HorizontalPanel();
+		hp1.addStyleName(AON.AON_CSS.aonPaddingTop());
+		hp1.add(new Label("Certificado"));
+		ListBox lb = new ListBox();
+		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsAttach> result) {
+				result.getData().stream().forEach(a -> {
+					lb.addItem(a.getTitle(), a.getId() + "");
+				});
+			}
+
+			@Override public void onFailure(Throwable caught) {}
+		});
+		hp1.add(lb);
+		
+		HorizontalPanel hp2 = new HorizontalPanel();
+		hp2.addStyleName(AON.AON_CSS.aonPaddingTop());
+		hp2.add(new Label("Contrase\u00f1a"));
+		PasswordTextBox tb = new PasswordTextBox();
+		tb.setStyleName(AON.AON_CSS.aonInputText());
+		hp2.add(tb);
+		vp.add(hp1);
+		vp.add(hp2);
+		
+		HorizontalPanel hp3 = new HorizontalPanel();
+		hp3.addStyleName(AON.AON_CSS.aonPaddingTop());
+		Label l = new Label("NIF");
+		l.getElement().getStyle().setPaddingTop(5, Unit.PX);
+		l.getElement().getStyle().setPaddingLeft(5, Unit.PX);
+		l.setVisible(false);
+		TextBox t = new TextBox();t.setStyleName(AON.AON_CSS.aonInputText());
+		t.setVisible(false);
+		hp3.add(l);
+		hp3.add(t);
+		
+	
+		
+		CheckBox cb = new CheckBox("Por terceros");
+		cb.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				l.setVisible(cb.getValue());
+				t.setVisible(cb.getValue());	
+			}
+		});
+		vp.add(cb);
+		vp.add(hp3);
+		
+		AonDialog dialog = new AonDialog("Modificar Facturas", vp) {
+			
+			@Override
+			protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				HashMap<String, LinkedList<String>> sendMap =  new HashMap<>();
+				LinkedList<String> list = new LinkedList<>();
+				
+				sendMap.put("id", list);
+		    	list = new LinkedList<>();
+		    	list.add("suministro");
+		    	sendMap.put("action", list);
+		    	list = new LinkedList<>();
+		    	list.add(lb.getSelectedValue());
+		    	sendMap.put("cert", list);
+		    	list = new LinkedList<>();
+		    	list.add(tb.getText());
+		    	sendMap.put("pass", list);
+		    	hide();
+		    	
+		    	list = new LinkedList<>();
+		    	list.add(cb.getValue() ? t.getValue() : "false");
+		    	sendMap.put("terceros", list);
+		    	
+		    	list = new LinkedList<>();
+				list.add("true");
+				sendMap.put("errorPeriodo", list);
+				
+				getAPI().getFinance().sendSiiErrorPeriodo(sendMap, new AsyncCallback<JSON<JsObject>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsObject> result2) {	
+						
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						
+					}
+				});
+		    	
 			}
 		};
 		dialog.center();

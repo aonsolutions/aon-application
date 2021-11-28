@@ -70,9 +70,8 @@ export class AonIban extends AonElement {
     let aonInput = new AonInput();
     aonInput.id = this.INPUT;
     aonInput.description = MSG.BANK_ACCOUNT;
-    aonInput.title = this.bank.getBankAccount().getIban() 
-      + ' - ' + this.bank.getBankAccount().getBank();
-    aonInput.value = this.bank.getBankAccount().getIban();
+    aonInput.title = this.bank.fullName;
+    aonInput.value = this.bank.fullName;
     this.appendChild(aonInput);
     aonInput.readonly = CONSTANT.READONLY;
 

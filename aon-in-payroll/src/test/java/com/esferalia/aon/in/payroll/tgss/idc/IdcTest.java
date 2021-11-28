@@ -7,6 +7,9 @@ import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.SystemPayment.SYSTEM_PAYMENT;
+import static com.esferalia.aon.occam.api.model.type.DeductionType.BONUS;
+import static com.esferalia.aon.occam.api.model.type.DeductionType.JOB_TRAINING;
+import static com.esferalia.aon.occam.api.model.type.DeductionType.UNEMPLOYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
@@ -431,7 +434,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				}
 				
 				@Override
-				public void onEmployeeQuoteTypes(double it, double ims, double unemployment) {
+				public void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
 					assertEquals(it, 1.70, 0.00);
 					assertEquals(ims, 1.30, 0.00);
 					assertEquals(unemployment, 7.05, 0.00);
@@ -483,7 +486,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				}
 
 				@Override
-				public void onEmployeeQuoteTypes(double it, double ims, double unemployment) {
+				public void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
 					assertEquals(it, 0.80, 0.00);
 					assertEquals(ims, 0.70, 0.00);
 					assertEquals(unemployment, 7.05, 0.00);
@@ -1238,6 +1241,7 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 	
+
 	@Test
 	public void testIdcContractData() throws IOException, UnknownPDFException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idc.pdf") ){
@@ -1887,6 +1891,137 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcXVBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXV.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			Assert.assertTrue(ssPecs.size() > 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2020);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			calendar.set(Calendar.MONTH,Calendar.APRIL);
+
+			Date april012020 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( april012020 , pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> Assert.assertNull( pec.getEndDate()));
+			
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = " + pec.getFormula() + ", " + pec.getStartDate() ));
+			
+			calendar.set(Calendar.MONTH,Calendar.JUNE);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date june = calendar.getTime();
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), june);
+			
+			salary.getSalaryCosts().forEach(c -> System.out.println("COST :" + c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			salary.getSalaryDeductions().forEach(d -> System.out.println("DEDUCTION :" + d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
+			salary.getSalaryBonus().forEach(d -> System.out.println("BONUS :" + d.getBonusConcept() +" : " + d.getAmount() +", " + d.getType()));
+			
+			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
+			
+		}
+	}
+
+	@Test
+	public void testIdcXVIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXVI.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			Assert.assertTrue(ssPecs.size() == 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH,20);
+			calendar.set(Calendar.MONTH,Calendar.OCTOBER);
+
+			Date october2020201 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( october2020201 , pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> Assert.assertNull( pec.getEndDate()));
+			
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = " + pec.getFormula() + ", " + pec.getStartDate() ));
+			
+			calendar.set(Calendar.MONTH,Calendar.NOVEMBER);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date november = calendar.getTime();
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), november);
+			
+			salary.getSalaryCosts().forEach(c -> System.out.println("COST :" + c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			salary.getSalaryDeductions().forEach(d -> System.out.println("DEDUCTION :" + d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
+			salary.getSalaryBonus().forEach(d -> System.out.println("BONUS :" + d.getBonusConcept() +" : " + d.getAmount() +", " + d.getType()));
+			
+			assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			//assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
+			
+		}
+	}
+
+	@Test
+	public void testIdcXVIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
+		
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXVII.pdf") ){
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			Assert.assertTrue(ssPecs.size() == 1);
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH,21);
+			calendar.set(Calendar.MONTH,Calendar.OCTOBER);
+
+			Date october2120201 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( october2120201 , pec.getStartDate()));
+
+			
+			calendar.set(Calendar.YEAR, 2024);
+			calendar.set(Calendar.DAY_OF_MONTH,20);
+			calendar.set(Calendar.MONTH,Calendar.OCTOBER);
+
+			Date october2020204 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals( october2020204 , pec.getEndDate()));
+			
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = " + pec.getFormula() + ", " + pec.getStartDate() ));
+			
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.MONTH,Calendar.NOVEMBER);
+			calendar.set(Calendar.DAY_OF_MONTH,1);
+			Date november = calendar.getTime();
+			
+			Salary salary = calculate(ssPecs, Collections.emptyList(), november);
+			
+			salary.getSalaryCosts().forEach(c -> System.out.println("COST :" + c.getName() +" : " + c.getAmount() +", " + c.getType()));
+			salary.getSalaryDeductions().forEach(d -> System.out.println("DEDUCTION :" + d.getDeductionConcept() +" : " + d.getAmount() +", " + d.getType()));
+			salary.getSalaryBonus().forEach(d -> System.out.println("BONUS :" + d.getBonusConcept() +" : " + d.getAmount() +", " + d.getType()));
+			
+			
+			salary.getSalaryBonus().forEach(d -> assertEquals(43.75, d.getAmount(), DELTA) );
+			
+			//assertEquals(0.00, salary.getTotalEnterprise(), DELTA);
+			//assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
+			
+		}
+	}
+	@Test
 	public void testIdcXIPECs() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, ExpressionException, SalaryException, SQLException {
 		
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXI.pdf") ){
@@ -2176,6 +2311,64 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 	
 	@Test
+	public void testIdcplnssTrabajadoresTramosXI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplnssXI.pdf") ){
+			TrabajadoresTramos trabajadoresTramos = Idcplnss.getTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
+			
+			marshal(trabajadoresTramos, System.out);
+			
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+			
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("04", liquidacion.getCcc().getProvincia());
+			assertEquals("118744682", liquidacion.getCcc().getNumero());
+			
+			assertEquals("10", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2021", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("10", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2021", liquidacion.getPeriodoHasta().getAnho());
+			
+			assertEquals(1,liquidacion.getLiquidacionMes().size());
+			
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("10", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2021", liquidacionesMes.getMesLiquidativo().getAnho());
+			
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size() );
+			
+			for ( Trabajador trabajador : trabajadores.getTrabajador() ) {
+
+				assertEquals("411022261502", trabajador.getNaf());
+
+				assertEquals(2, trabajador.getTramos().getTramo().size() );
+				
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("05", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("10", tramo.getFechaDesde().getMes());
+				assertEquals("2021", tramo.getFechaDesde().getAnho());
+				assertEquals("28", tramo.getFechaHasta().getDia());
+				assertEquals("10", tramo.getFechaHasta().getMes());
+				assertEquals("2021", tramo.getFechaHasta().getAnho());
+				assertTramoActivoNormal(tramo);
+				
+				tramo = trabajador.getTramos().getTramo().get(1);
+				assertEquals("05", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("29", tramo.getFechaDesde().getDia());
+				assertEquals("10", tramo.getFechaDesde().getMes());
+				assertEquals("2021", tramo.getFechaDesde().getAnho());
+				assertEquals("31", tramo.getFechaHasta().getDia());
+				assertEquals("10", tramo.getFechaHasta().getMes());
+				assertEquals("2021", tramo.getFechaHasta().getAnho());
+				assertTramoITPagoDirecto(tramo);
+
+			}
+			
+		}
+	}
+
+	@Test
 	public void testIdcSyncI() throws IOException, UnknownPDFException {
 		try ( InputStream is = IdcTest.class.getResourceAsStream("idcI.pdf") ){
 			byte data []  = is.readAllBytes();
@@ -2228,6 +2421,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Assert.assertEquals(idcDate, unemployEnterprisePercentData.getStartDate());
 			Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
 			
+			ContractData partialFactorData = contractDatas.get(ContextVariable.PARTIAL_FACTOR.getName());
+			Assert.assertNull(partialFactorData);
 
 		} finally {
 			
@@ -2490,6 +2685,132 @@ public class IdcTest extends AbstractSQLTestCase {
 				}
 			}
 		}
+	}
+
+	@Test
+	public void testIdcSyncXV() throws IOException, UnknownPDFException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcXV.pdf") ){
+			byte data []  = is.readAllBytes();
+			
+			AONContext aonContext = new AONContext(getConnection());
+			
+			String ccc = "29136287700";
+			String naf = "111060977833";
+			Date contractDate = getDate(18, Calendar.MARCH, 2019);
+			String domainName = java.util.UUID.randomUUID().toString();
+			ContractRecord contract = newContract(aonContext, domainName, contractDate, ccc, naf);
+			
+			Date idcDate = getDate(01, Calendar.APRIL, 2020);
+			SistemaRED2AON.syncWithIdc(data, "login", domainName, contract.getDomain(), idcDate, ccc, naf);
+			
+			Map<String, ContractData> contractDatas = 
+			PAYROLL.getContractDataStream(
+			domainName, 
+			contract.getDomain(), 
+			"login", p -> p.getContractProperty().eq(contract.getId()))
+			.collect(Collectors.toMap( d -> d.getName() , d -> d ));
+			
+			ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
+			Assert.assertNull(tc2Data.getEndDate());
+			Assert.assertEquals(idcDate, tc2Data.getStartDate());
+			Assert.assertEquals("\"421\"", tc2Data.getExpression());
+
+			ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
+			Assert.assertNull(quoteGroupData.getEndDate());
+			Assert.assertEquals(idcDate, quoteGroupData.getStartDate());
+			Assert.assertEquals("\"10\"", quoteGroupData.getExpression());
+
+			ContractData unemployEmployeePercentData = contractDatas.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
+			Assert.assertNull(unemployEmployeePercentData.getEndDate());
+			Assert.assertEquals(idcDate, unemployEmployeePercentData.getStartDate());
+			Assert.assertEquals(1.55, Double.parseDouble(unemployEmployeePercentData.getExpression()), 0.00);
+
+			ContractData unemployEnterprisePercentData = contractDatas.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
+			Assert.assertNull(unemployEnterprisePercentData.getEndDate());
+			Assert.assertEquals(idcDate, unemployEnterprisePercentData.getStartDate());
+			Assert.assertEquals(5.50, Double.parseDouble(unemployEnterprisePercentData.getExpression()), 0.00);
+			
+			ContractData partialFactorData = contractDatas.get(ContextVariable.PARTIAL_FACTOR.getName());
+			Assert.assertNull(partialFactorData);
+
+			ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+			Assert.assertNull(itData);
+
+			ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+			Assert.assertNull(imsData);
+
+		} finally {
+			
+		}
+		
+	}
+
+	@Test
+	public void testIdcSyncVI() throws IOException, UnknownPDFException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcVI.pdf") ){
+			byte data []  = is.readAllBytes();
+			
+			AONContext aonContext = new AONContext(getConnection());
+			
+			String ccc = "01105577910";
+			String naf = "141026133260";
+			Date contractDate = getDate(01, Calendar.JANUARY, 2020);
+			String domainName = java.util.UUID.randomUUID().toString();
+			ContractRecord contract = newContract(aonContext, domainName, contractDate, ccc, naf);
+			
+			Date idcDate = getDate(01, Calendar.OCTOBER, 2020);
+			SistemaRED2AON.syncWithIdc(data, "login", domainName, contract.getDomain(), idcDate, ccc, naf);
+			
+			Map<String, ContractData> contractDatas = 
+			PAYROLL.getContractDataStream(
+			domainName, 
+			contract.getDomain(), 
+			"login", p -> p.getContractProperty().eq(contract.getId()))
+			.collect(Collectors.toMap( d -> d.getName() , d -> d ));
+			
+			ContractData tc2Data = contractDatas.get(ContextVariable.TC2.getName());
+			Assert.assertNull(tc2Data);
+
+			ContractData quoteGroupData = contractDatas.get(ContextVariable.QUOTE_GROUP.getName());
+			Assert.assertNull(quoteGroupData.getEndDate());
+			Assert.assertEquals(idcDate, quoteGroupData.getStartDate());
+			Assert.assertEquals("\"07\"", quoteGroupData.getExpression());
+
+			ContractData unemployEmployeePercentData = contractDatas.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT.getName());
+			Assert.assertNull(unemployEmployeePercentData);
+
+			ContractData unemployEnterprisePercentData = contractDatas.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT.getName());
+			Assert.assertNull(unemployEnterprisePercentData);
+			
+			ContractData partialFactorData = contractDatas.get(ContextVariable.PARTIAL_FACTOR.getName());
+			Assert.assertNull(partialFactorData);
+
+			ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+			Assert.assertNull(itData);
+
+			ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+			Assert.assertNull(imsData);
+			
+			Deduction[] deductions = PAYROLL.getDeductions(domainName, contract.getDomain(), "login", ccc, naf, contractDate, null);
+			Assert.assertEquals(3, deductions.length);
+			for (Deduction deduction : deductions) {
+				if ( deduction.getType() == UNEMPLOYMENT ) {
+					Assert.assertTrue(AonStringUtils.containsIgnoreCase(deduction.getExpression(), "REMOVE"));
+				} else if ( deduction.getType() == JOB_TRAINING) {
+					Assert.assertTrue(AonStringUtils.containsIgnoreCase(deduction.getExpression(), "REMOVE"));
+				} else if ( deduction.getType() == BONUS ) {
+					
+				} else {
+					Assert.fail("Unknow " + deduction.getType());
+				}
+			}
+			
+			
+
+		} finally {
+			
+		}
+		
 	}
 
 	public static final DomainRecord newDomain(AONContext aonContext, String name ) {

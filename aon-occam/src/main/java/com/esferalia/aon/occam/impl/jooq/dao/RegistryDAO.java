@@ -181,7 +181,7 @@ public class RegistryDAO {
 	public static <R extends RegistryFull<?>> R fillChilds(AONContext ctx, R full){
 		full.setAddresses( RegistryAddressDAO.getStreamByRegistry(ctx, full.getId()).collect(Collectors.toCollection(LinkedList::new)))
 			.setMedias( RegistryMediaDAO.getStreamByRegistry(ctx, full.getId()).collect(Collectors.toCollection(LinkedList::new)))
-		;
+			.setRecordDatas(RegistryOldDAO.getRecordDataStream(ctx, f-> f.getRegistryProperty().eq(full.getId())).collect(Collectors.toCollection(LinkedList::new)));
 		return full;
 	}
 	public static <R extends RegistryFull<?>> R saveChilds(AONContext ctx, R registryFull) {

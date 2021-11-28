@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.ItemJSON;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProductCategoryJSON;
 import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -20,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -153,13 +155,21 @@ public class ProductServlet extends AonApiHttpServlet {
 	}
 	
 	private Filter productFilter(AonApiData api, ProductProperties f) {
-		Filter filter = null; // = f.getDomainProperty().eq(api.getDomain().getId());
+		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+		
+		if(api.getParams().opt("expense") !=null) {
+			if(JsonUtils.getboolean(api.getParams(), "expense")) {
+				filter = filter.and(f.getTypeProperty().eq(ProductType.EXPENSE.value()));
+			} else {
+				filter = filter.and(f.getTypeProperty().ne(ProductType.EXPENSE.value()));
+			}
+		}
 		
 		if(!AonStringUtils.isBlank(api.getParams().optString(IJsonNames.VALUE))) {
 			String value = api.getParams().optString(IJsonNames.VALUE);
 			Filter valueFilter = f.getCodeProperty().like("%" + value + "%")
 					.or(f.getNameProperty().like("%" + value + "%"));
-			filter = valueFilter;
+			filter = filter.and(valueFilter);
 		}
 		
 		return filter;

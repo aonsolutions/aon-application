@@ -1,7 +1,7 @@
 import { AonElement } from './AonElement.js';
 
 import './aon-input.js';
-import { CONSTANT, EVENT } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { I } from '../environments/aonTag.js';
 
 export class AonSuggestion extends AonElement {
@@ -164,9 +164,10 @@ export class AonSuggestion extends AonElement {
     if(options && options.length > 0){
       let div = this.getElement(this.OPTIONS);
       div.classList.add('is-visible');
-      let ul = this.createElement('ul');
+      let ul = this.createElement(TAG.UL);
       ul.id = this.OPTIONS_UL;
-      ul.className = 'aonInputListOptionsUl';
+      ul.classList.add(CSS.AON_UL);
+      ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
       ul.setAttribute('for', this.getAttribute('id') + 'Icon');
       for (let i = 0; i < options.length; i++) {
         let li = this.createElement('li');

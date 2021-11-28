@@ -1,6 +1,8 @@
 import { AonElement } from "./AonElement.js";
 import { AonIconButton } from "./aon-icon-button.js";
 import {CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS} from '../environments/environments.js'
+import '../css/aon-input.css';
+import '../css/aon-input-loading.css';
 
 export class AonInput extends AonElement {
   SPAN;
@@ -405,6 +407,8 @@ export class AonInput extends AonElement {
     if (options.length === 0) return div;
 
     let ul = document.createElement(TAG.UL);
+    ul.classList.add(CSS.AON_UL);
+    ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
     ul.className = CSS.AON_INPUT_LIST_OPTIONS_UL;
     ul.setAttribute("for", this.ICON);
     for (let i = 0; i < options.length; i++) {

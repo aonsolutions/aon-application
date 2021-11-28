@@ -4001,6 +4001,22 @@ CREATE TABLE `data_attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='DATA ATTACH';
 
 #
+# Structure for the `data_request` table : 
+#
+
+CREATE TABLE `data_request` (
+  `id` int(4) NOT NULL COMMENT 'ID unico del vinculo',
+  `domain` int(4) NOT NULL DEFAULT 0 COMMENT 'Dominio',
+  `date` datetime DEFAULT NULL COMMENT 'Fecha',
+  `type` tinyint(2) NOT NULL DEFAULT 0 COMMENT 'Tipo',
+  `black_box` text COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Información necesaria para replicar la petición',
+  `md5` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Hash md5',
+  PRIMARY KEY (`id`),
+  KEY `IDX_DATA_REQUEST_DOMAIN` (`domain`),
+  CONSTRAINT `FK_DATA_REQUEST_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Data Request';
+
+#
 # Structure for the `data_response` table : 
 #
 
@@ -4011,13 +4027,16 @@ CREATE TABLE `data_response` (
   `response_date` date DEFAULT NULL COMMENT 'Fecha',
   `source` tinyint(2) NOT NULL COMMENT 'Origen',
   `source_id` int(4) DEFAULT NULL COMMENT 'Identificador del Origen',
+  `data_request` int(4) DEFAULT NULL COMMENT 'identificador de data_request',
   `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
   PRIMARY KEY (`id`),
   KEY `IDX_DATA_RESPONSE_DOMAIN` (`domain`),
-  CONSTRAINT `FK_DATA_RESPONSE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  KEY `IDX_DATA_RESPONSE_DATA_REQUEST` (`data_request`),
+  CONSTRAINT `FK_DATA_RESPONSE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_DATA_RESPONSE_DATA_REQUEST` FOREIGN KEY (`data_request`) REFERENCES `data_request` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='DATA RESPONSE';
 
 #
@@ -8367,7 +8386,7 @@ CREATE TABLE `system_payment` (
   `payment_concept` int(4) DEFAULT NULL COMMENT 'Identificador unico del concepto',
   `description` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `description_decorable` tinyint(2) NOT NULL DEFAULT '0',
-  `expression` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
+  `expression` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe',
   `irpf_expression` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe tributable',
   `quote_expression` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Importe cotizable',
   `start_date` date NOT NULL COMMENT 'Fecha de inicio',

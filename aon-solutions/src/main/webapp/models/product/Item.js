@@ -176,6 +176,7 @@ export class Item {
 
     setPrice(price) {
         this.price = price;
+        this.calculateProfitPercent();
         return this;
     }
 
@@ -202,7 +203,8 @@ export class Item {
     }
 
     setProfitPercent(profitPercent) {
-        this.profitPercent = profitPercent;
+        this.profitPercent = Number(profitPercent);
+        this.calculatePriceByPurchasePrice()
         return this;
     }
 
@@ -211,8 +213,25 @@ export class Item {
     }
 
     setPurchasePrice(purchasePrice) {
-        this.purchasePrice = purchasePrice;
+        this.purchasePrice = Number(purchasePrice);
+        this.calculatePriceByPurchasePrice()
         return this;
+    }
+
+    calculatePriceByPurchasePrice() {
+        let price = Number(this.purchasePrice);
+        if(this.profitPercent){
+            price = price + (price * Number(this.profitPercent) / 100);
+        }
+        this.price = price;
+    }
+
+    calculateProfitPercent() {
+        if(this.purchasePrice > 0) {
+            this.profitPercent = (this.price - this.purchasePrice) * 100 / this.purchasePrice;
+        } else {
+            this.profitPercent = 0;
+        }
     }
 
     isInternet() {

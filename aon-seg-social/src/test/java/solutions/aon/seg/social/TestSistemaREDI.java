@@ -3,6 +3,7 @@ package solutions.aon.seg.social;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -544,7 +545,13 @@ public class TestSistemaREDI extends SegSocialTest{
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			Collection<byte[]> pdfs = SistemaREDI.getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12",
 					"011005185924", "0111", "01105360062", d);
+			int i = 0;
+			System.out.println(pdfs.size());
 			for (byte[] pdf : pdfs) {
+				FileOutputStream fos = new FileOutputStream("/home/igonzalez/Escritorio/pruebaMultiPdfs/pedefe" + i + ".pdf");
+				i++;
+				fos.write(pdf);
+				fos.close();
 				if (!(pdf.length > 0))
 					fail("Should have returned a pdf");
 			}

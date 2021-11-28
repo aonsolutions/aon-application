@@ -120,7 +120,7 @@ public class DiaryImport {
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 			Object obj = Utils.getObjectValue(row.getCell(0));
-			if(titleList.isEmpty() && ( obj == null || !AonArrayUtils.constainsIgnoreCase(IConstants.DIARY_TITLES, obj.toString()))) {
+			if(titleList.isEmpty() && ( obj == null || !AonArrayUtils.constainsIgnoreCase(IConstants.DIARY_TITLES, obj.toString().trim()))) {
 				indexTitle = indexTitle + 1;
 			} else if(titleList.isEmpty()) {
 				indexTitle = row.getRowNum();

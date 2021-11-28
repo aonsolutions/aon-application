@@ -370,9 +370,9 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
-	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter adf) {
+	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter filter) {
 	    ctx.getDslContext().transaction(
-	    		configuration -> AuthDeviceDAO.deleteAuthDevice(ctx, adf)
+	    		configuration -> AuthDeviceDAO.delete(ctx, filter)
 	    );
 	}
 	

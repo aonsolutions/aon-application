@@ -16,22 +16,22 @@
 	
 	<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
 
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 	<aon:form id="mainForm">
 
 		<aon:div styleClass="aon-scroll-area" style="padding: 1.5em 1.5em 0 0 !important;">
 
 			<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting"
-				columnClasses="#{(desktop.showGraphicsPortlet)?'':'aon-portlets-column1,'}
-					aon-portlets-column2,aon-portlets-column3">
+				columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
 
-				<aon:if test="#{!desktop.showGraphicsPortlet}">
-	  						<aon:if test="#{!userUtils.newAONTheme}">				
-								<ui:include src="/facelet/homepage/portlet/infoLeftGroupPortlet.xhtml" />
-							</aon:if>
-	  						<aon:if test="#{userUtils.newAONTheme}">				
-								<ui:include src="/facelet/new/portlet/infoLeftGroupPortlet.xhtml" />
-							</aon:if>
+				<aon:if test="#{!userUtils.newAONTheme}">				
+					<ui:include src="/facelet/homepage/portlet/infoLeftGroupPortlet.xhtml" />
 				</aon:if>
+				<aon:if test="#{userUtils.newAONTheme}">				
+					<ui:include src="/facelet/new/portlet/infoLeftGroupPortlet.xhtml" />
+				</aon:if>
+				
 				<aon:div styleClass="aon-width-all">
 					<aon:if test="#{domainSwitcher.childDomain}">
 	  					<aon:if test="#{!userUtils.newAONTheme}">				
@@ -108,20 +108,6 @@
 							</aon:if>
 							
  							
-<!--
-							<aon:if test="#{desktop.state.payrollInfoVisibleForPortal}">
-								<ui:include	src="/facelet/homepage/portlet/payrollPortalDashboardPortlet.xhtml" />
-							</aon:if>
- 							<aon:if test="#{desktop.state.documentalEnabled and !desktop.state.documentalInfoVisibleForPortal and !desktop.state.documentalManagementVisibleForPortal}">
-								<ui:include	src="/facelet/homepage/portlet/documentalDashboardPortlet.xhtml" />
-							</aon:if>
- -->
-							<!-- docs -->
- 							
-<!-- 							<aon:if test="#{desktop.state.documentalInfoVisibleForPortal}">
-								<ui:include src="/facelet/homepage/portlet/documentalPortalDashboardPortlet.xhtml" />
-							</aon:if>
- -->
 						</aon:if>
 
 						<aon:if test="#{!desktop.showGraphicsPortlet}">
@@ -130,7 +116,7 @@
 
 					</aon:if>
 					<aon:if test="#{!domainSwitcher.childDomain}">
-						<aon:if test="#{domainSwitcher.domainCount > 0}">
+						<aon:if test="#{domainSwitcher.domainCount >= 0}">
 	  						<aon:if test="#{!userUtils.newAONTheme}">				
 								<ui:include	src="/facelet/homepage/portlet/domainSwitchPortlet.xhtml" />
 							</aon:if>
@@ -147,9 +133,6 @@
 
 				<aon:if test="#{!userUtils.newAONTheme}">				
 					<ui:include src="/facelet/homepage/portlet/infoRightGroupPortlet.xhtml" />
-				</aon:if>
-	  			<aon:if test="#{userUtils.newAONTheme}">				
-					<ui:include src="/facelet/new/portlet/infoRightGroupPortlet.xhtml" />
 				</aon:if>
 			</aon:panelGrid>
 

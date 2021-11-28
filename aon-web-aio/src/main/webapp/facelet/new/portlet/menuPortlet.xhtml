@@ -8,20 +8,38 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<script type='text/javascript' >
-		function showMenuPortlet(menuPortlet){
-			
-			document.getElementById("aonContent:mainForm:mainMenuPortlet").style.display='none';
-			document.getElementById("aonContent:mainForm:hideRightButton").style.display='none';
-			document.getElementById("aonContent:mainForm:infoGroupRightSupportDiv").style.visibility='hidden';
-
-			document.getElementById("aonContent:mainForm:"+menuPortlet+"MenuPortlet").style.display='block';
+	
+		function getParentForm(el){
+			return el.closest("form");
 		}
-		function hideMenuPortlet(menuPortlet){
-			document.getElementById("aonContent:mainForm:"+menuPortlet+"MenuPortlet").style.display='none';
+	
+		function showMenuPortlet(menuPortlet, commandLink){
 			
-			document.getElementById("aonContent:mainForm:mainMenuPortlet").style.display='block';
-			document.getElementById("aonContent:mainForm:hideRightButton").style.display='block';
-			document.getElementById("aonContent:mainForm:infoGroupRightSupportDiv").style.visibility='visible';
+			mainForm = getParentForm(commandLink).id;
+			
+			document.getElementById(mainForm+":mainMenuPortlet").style.display='none';
+			try {
+				document.getElementById(mainForm+":hideRightButton").style.display='none';
+				document.getElementById(mainForm+":infoGroupRightSupportDiv").style.visibility='hidden';
+			} catch ( e ) {
+			}
+
+			document.getElementById(mainForm+":"+menuPortlet+"MenuPortlet").style.display='block';
+		}
+		function hideMenuPortlet(menuPortlet, commandLink){
+
+			mainForm = getParentForm(commandLink).id;
+
+			document.getElementById(mainForm+":"+menuPortlet+"MenuPortlet").style.display='none';
+			
+			document.getElementById(mainForm+":mainMenuPortlet").style.display='block';
+		
+			try {
+				document.getElementById(mainForm+":hideRightButton").style.display='block';
+				document.getElementById(mainForm+":infoGroupRightSupportDiv").style.visibility='visible';
+			} catch ( e ) {
+			}
+			
 		}
 
 	</script>
@@ -29,52 +47,52 @@
 	<aon:div id="mainMenuPortlet" styleClass="">	
 		
 		<aon:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-parent">
 				<aon:if test="#{aonRole.admin}">
 					<aon:commandLink 
 						id="new_menu_enterprise"
 						styleClass="aon-button" 
 						value="#{bundle.aon_module_enterprise}"
-						onclick="javascript:showMenuPortlet('enterprise'); return;"
+						onclick="javascript:showMenuPortlet('enterprise', this); return;"
 						/>
 				</aon:if>
 			</aon:div>
 		</aon:if>
 
 		<aon:if test="#{aonRole.accountingOperator}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-account-parent">
 				<aon:commandLink 
 					id="new_menu_accounting"
 					styleClass="aon-button-account" 
 					value="#{bundle.aon_module_accounting}"
-					onclick="javascript:showMenuPortlet('accounting'); return;"
+					onclick="javascript:showMenuPortlet('accounting', this); return;"
 					/>
 			</aon:div>
 		</aon:if>
 
 		<aon:if test="#{aonRole.fiscal}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-fiscal-parent">
 				<aon:commandLink 
 				id="new_menu_fiscal"
 				styleClass="aon-button-fiscal" 
 				value="#{bundle.aon_module_fiscal}"
-				onclick="javascript:showMenuPortlet('fiscal'); return;"
+				onclick="javascript:showMenuPortlet('fiscal', this); return;"
 				/>
 			</aon:div>
 		</aon:if>
 
 		<aon:if test="#{aonRole.payroll}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-payroll-parent">
 				<aon:commandLink 
 				id="new_menu_payroll"
 				styleClass="aon-button-payroll"
 				value="#{bundle.aon_module_payroll}"
-				onclick="javascript:showMenuPortlet('payroll'); return;"
+				onclick="javascript:showMenuPortlet('payroll', this); return;"
 				/>
 			</aon:div>
 		</aon:if>
 
-		<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+		<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
 			<aon:commandLink 
 			id="new_menu_document" 
 			immediate="true"
@@ -84,18 +102,18 @@
 		</aon:div>
 
 		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-tools-parent">
 				<aon:commandLink 
 					id="new_menu_configuration"
 					styleClass="aon-button-tools" 
 					value="#{bundle.aon_module_configuration}"
-					onclick="javascript:showMenuPortlet('configuration'); return;"
+					onclick="javascript:showMenuPortlet('configuration', this); return;"
 					/>
 			</aon:div>
 		</aon:if>
 
 		<aon:if test="#{desktop.showGraphicsPortlet}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-notes-parent">
 				<aon:commandLink 
 					id="new_note-search" 
 					action="note_list"
@@ -114,8 +132,8 @@
 		id="enterpriseMenuPortlet" 
 		style="display:none"
 		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('enterprise');"  
-		onmouseover="javascript:showMenuPortlet('enterprise');" >
+		onmouseout="javascript:hideMenuPortlet('enterprise', this);"  
+		onmouseover="javascript:showMenuPortlet('enterprise', this);" >
 		<aon:div styleClass="aon-direct-access-list">
 			<aon:div 
 				style="background-color: #002469;" 
@@ -130,7 +148,7 @@
 								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
 					</aon:commandLink> 
 					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('enterprise');"
+							onclick="javascript:hideMenuPortlet('enterprise', this);"
 							style="cursor:pointer;"
 							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
 				</aon:div>
@@ -155,8 +173,8 @@
 		id="accountingMenuPortlet" 
 		style="display:none"
 		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('accounting');"  
-		onmouseover="javascript:showMenuPortlet('accounting');" >
+		onmouseout="javascript:hideMenuPortlet('accounting', this);"  
+		onmouseover="javascript:showMenuPortlet('accounting', this);" >
 		<aon:div styleClass="aon-direct-access-list">
 			<aon:div 
 				style="background-color: #1fd8b9;" 
@@ -171,7 +189,7 @@
 								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
 					</aon:commandLink> 
 					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('accounting');"
+							onclick="javascript:hideMenuPortlet('accounting', this);"
 							style="cursor:pointer;"
 							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
 				</aon:div>
@@ -289,8 +307,8 @@
 		id="fiscalMenuPortlet" 
 		style="display:none"
 		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('fiscal');"  
-		onmouseover="javascript:showMenuPortlet('fiscal');" >
+		onmouseout="javascript:hideMenuPortlet('fiscal', this);"  
+		onmouseover="javascript:showMenuPortlet('fiscal', this);" >
 		<aon:div styleClass="aon-direct-access-list">
 			<aon:div 
 				style="background-color: #1fbce5;" 
@@ -305,7 +323,7 @@
 								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
 					</aon:commandLink> 
 					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('fiscal');"
+							onclick="javascript:hideMenuPortlet('fiscal', this);"
 							style="cursor:pointer;"
 							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
 				</aon:div>
@@ -450,8 +468,8 @@
 		id="payrollMenuPortlet" 
 		style="display:none;"
 		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('payroll');"  
-		onmouseover="javascript:showMenuPortlet('payroll');" >
+		onmouseout="javascript:hideMenuPortlet('payroll', this);"  
+		onmouseover="javascript:showMenuPortlet('payroll', this);" >
 		
 		<aon:div styleClass="aon-direct-access-list">
 			<aon:div 
@@ -467,7 +485,7 @@
 								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
 					</aon:commandLink> 
 					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('payroll');"
+							onclick="javascript:hideMenuPortlet('payroll', this);"
 							style="cursor:pointer;"
 							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
 				</aon:div>
@@ -523,8 +541,8 @@
 		id="documentMenuPortlet" 
 		style="display:none"
 		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('document');"  
-		onmouseover="javascript:showMenuPortlet('document');" >
+		onmouseout="javascript:hideMenuPortlet('document', this);"  
+		onmouseover="javascript:showMenuPortlet('document', this);" >
 		<aon:div styleClass="aon-direct-access-list">
 			<aon:div 
 				style="background-color:#6986bb;" 
@@ -539,7 +557,7 @@
 								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
 					</aon:commandLink> 
 					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('document');"
+							onclick="javascript:hideMenuPortlet('document', this);"
 							style="cursor:pointer;"
 							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
 				</aon:div>
@@ -551,8 +569,8 @@
 		id="configurationMenuPortlet" 
 		style="display:none"
 		styleClass="aon-menu-portlet"
-		onmouseout="javascript:hideMenuPortlet('configuration');"  
-		onmouseover="javascript:showMenuPortlet('configuration');" >
+		onmouseout="javascript:hideMenuPortlet('configuration', this);"  
+		onmouseover="javascript:showMenuPortlet('configuration', this);" >
 		<aon:div styleClass="aon-direct-access-list">
 			<aon:div 
 				style="background-color:#535353;" 
@@ -567,7 +585,7 @@
 								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
 					</aon:commandLink> 
 					<aon:graphicImage 
-							onclick="javascript:hideMenuPortlet('configuration');"
+							onclick="javascript:hideMenuPortlet('configuration', this);"
 							style="cursor:pointer;"
 							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
 				</aon:div>

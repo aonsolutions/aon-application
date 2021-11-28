@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
 
 
 public class ItemDAO {
@@ -109,8 +110,9 @@ public class ItemDAO {
 		if(item.getProduct().getId() == null) {
 			ProductDAO.save(ctx, item.getProduct());
 		}
-
+		
 		ctx.checkWrite();
+		ItemAutoComplete.autoComplete(ctx, item);
 		return item.getId() != null 
 			? update(ctx, item)
 			: insert(ctx, item);		
@@ -119,8 +121,6 @@ public class ItemDAO {
 	public static Item insert(AONContext ctx, Item item) {
 		Timestamp now = new Timestamp(new java.util.Date().getTime());
 		ctx.checkWrite();
-
-		//ProductValidation.validateItem(ctx, item);
 
 		Integer id = ctx.getDslContext().insertInto(ITEM)
 		.set(ITEM.DOMAIN, item.getDomain().getId())
@@ -161,8 +161,6 @@ public class ItemDAO {
 		Timestamp now = new Timestamp(new java.util.Date().getTime());
 		ctx.checkWrite();
 
-		//ProductValidation.validateItem(ctx, item);
-
 		ctx.getDslContext().update(ITEM)
 		.set(ITEM.DOMAIN, item.getDomain().getId())
 		.set(ITEM.PRODUCT, item.getProduct().getId())
@@ -171,9 +169,9 @@ public class ItemDAO {
 		.set(ITEM.DETAIL3, item.getDetail3())
 		.set(ITEM.DESCRIPTION, item.getDescription())
 		.set(ITEM.SERIAL_NUMBER, item.getSerialNumber())
-		.set(ITEM.SERIAL_DATE, new Date(item.getSerialDate().getTime()))
+		.set(ITEM.SERIAL_DATE, item.getSerialDate() != null ? new Date(item.getSerialDate().getTime()) : null)
 		.set(ITEM.PRICE, item.getPrice())
-		.set(ITEM.STATUS, item.getStatus().value())
+		.set(ITEM.STATUS, item.getStatus() != null ? item.getStatus().value() : null)
 		.set(ITEM.EXPENSES_PERCENT, item.getExpensesPercent())
 		.set(ITEM.EXPENSES_FIXED, item.getExpensesFixed())
 		.set(ITEM.PROFIT_PERCENT, item.getProfitPercent())
@@ -194,6 +192,7 @@ public class ItemDAO {
 		.execute();
 		return item;
 	}
+
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.checkWrite();
 		ctx.getDslContext()

@@ -66,6 +66,7 @@ export const MESSENGER_IDS = {
     COMMENT_TASK: "commentTask",
     CUSTOMER_TASK: "customerTask",
     PROJECT_TASK: "projectTask",
+    ADVISORY_TASK: "advisoryTask",
     DESCRIPTION_TASK: "descriptionTask",
     GTASK_ID_TASK: "GTaskIdTask",
     TITLE_TASK: "titleTask",
@@ -168,10 +169,27 @@ export const TASK_FILTER = [
         title: MSG.STATUS,
         default:true
     },
-    // {
-    //   type: "date",
-    //   name: "startDate",
-    //   id: "startDate",
-    //   title: MSG.DATE,
-    // }
+    {
+      type: "select",
+      name: "workgroup",
+      id: "workgroup",
+      title: MSG.WORKGROUP,
+      default:true
+    }
 ];
+
+export const APP_PARAMS_REQUEST = {
+    APP_REQUESTS_INT_WORKGROUP: "APP_REQUESTS_INT_WORKGROUP",
+    APP_REQUESTS_INT_TASK_HOLDER: "APP_REQUESTS_INT_TASK_HOLDER",
+    APP_REQUESTS_INT_OPENED: "APP_REQUESTS_INT_OPENED",
+    APP_REQUESTS_INT_CLOSED: "APP_REQUESTS_INT_CLOSED",
+    APP_REQUESTS_INT_COMMENT: "APP_REQUESTS_INT_COMMENT",
+    APP_REQUESTS_INT_ASSIGN: "APP_REQUESTS_INT_ASSIGN",
+    APP_REQUESTS_EXT_WORKGROUP: "APP_REQUESTS_EXT_WORKGROUP",
+    APP_REQUESTS_EXT_TASK_HOLDER: "APP_REQUESTS_EXT_TASK_HOLDER",
+    APP_REQUESTS_EXT_OPENED: "APP_REQUESTS_EXT_OPENED",
+    APP_REQUESTS_EXT_CLOSED: "APP_REQUESTS_EXT_CLOSED",
+    APP_REQUESTS_EXT_COMMENT: "APP_REQUESTS_EXT_COMMENT",
+    APP_REQUESTS_EXT_ASSIGN: "APP_REQUESTS_EXT_ASSIGN",
+    APP_REQUESTS_EMAIL_RATING: "APP_REQUESTS_EMAIL_RATING",
+  }

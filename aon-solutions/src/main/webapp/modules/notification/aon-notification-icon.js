@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import { CONSTANT, EVENT, TAG } from '../../environments/environments.js';
 import { FirebaseService } from '../../services/firebaseService.js';
-import { getTotalNotification, saveAuthDevice } from '../../services/service.js';
+import { getTotalNotification, saveAuthDevice, deleteAuthDevice } from '../../services/service.js';
 import { waitEl } from '../../services/utils.js';
 import { createSpan } from '../../services/utilsComponents.js';
 import { AonNotification } from './aon-notification.js';
@@ -13,7 +13,7 @@ export class AonNotificationIcon extends AonElement {
     BADGE;
     COUNT;
     color;
-
+    AUTH_DEVICE;
     static get observedAttributes() {
         return [CONSTANT.BADGE];
     }
@@ -86,7 +86,7 @@ export class AonNotificationIcon extends AonElement {
 						(payload) => firebaseSrv.pushNotification(payload),
 						(err) => console.log(err)
 					);
-					saveAuthDevice({tokenFCM:token});
+					this.AUTH_DEVICE = await saveAuthDevice({tokenFCM:token});
 				}
 			} 
 		} catch(e){
@@ -106,6 +106,12 @@ export class AonNotificationIcon extends AonElement {
     async getTotalNotification(){
         this.COUNT = await getTotalNotification();
         this.changeBadge();
+    }
+    
+    deleteToken(){
+        let tokenFCM = window.tokenFCM;
+        if(tokenFCM)
+            deleteAuthDevice({tokenFCM}).then(console.log).catch(console.log);
     }
 
     getTotalCount(){

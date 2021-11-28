@@ -56,6 +56,7 @@ public class AttachServlet extends AonApiHttpServlet{
 	}
 	
 	private Filter attachFilter(Integer domainId, JSONObject json, AttachProperties f) {
+		domainId = json.opt(IJsonNames.DOMAIN_ID) != null ? json.optInt(IJsonNames.DOMAIN_ID) : domainId;
 		Filter filter = f.getDomainProperty().eq(domainId);
 		if(json.opt(IJsonNames.ATTACH_MODULE) != null) 
 			filter = filter.and(f.getAttachModuleProperty().eq(JsonUtils.getInteger(json, IJsonNames.ATTACH_MODULE)));

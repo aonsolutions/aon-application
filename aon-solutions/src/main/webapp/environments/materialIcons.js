@@ -53,6 +53,7 @@ export const AUTORENEW = 'autorenew';
 
 export const BACKUP = 'backup';
 export const BACKUP_TABLE = 'backup_table';
+export const BAR_CHART = 'bar_chart';
 export const BATCH_PREDICTION = 'batch_prediction';
 export const BOOK = 'book';
 export const BOOK_ONLINE = 'book_online';
@@ -70,7 +71,8 @@ export const CACHED = 'cached';
 export const CALENDAR_TODAY = 'calendar_today';
 export const CALENDAR_VIEW_DAY = 'calendar_view_day';
 export const CAMERA_ENHANCE = 'camera_enhance';
-export const CANCEL_SCHEDULE_SEND = 'cancel_schedule_end';
+export const CANCEL_SCHEDULE_END = 'cancel_schedule_end';
+export const CANCEL_SCHEDULE_SEND = 'cancel_schedule_send';
 export const CARD_GIFTCARD = 'card_giftcard';
 export const CARD_MEMBERSHIP = 'card_membership';
 export const CARD_TRAVEL = 'card_travel';
@@ -135,6 +137,7 @@ export const INBOX = 'inbox';
 export const INFO = 'info';
 export const INFO_OUTLINE = 'info_outline';
 export const INSERT_DRIVE_FILE = "insert_drive_file";
+export const INVENTORY_2 = "inventory_2";
 export const IOS_SHARE = 'ios_share';
 
 // ----- K
@@ -160,6 +163,7 @@ export const NOTIFICATION_ADD = "notification_add";
 
 // ----- P
 
+export const PAYMENT = 'payment';
 export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
 export const PERSON_ADD = 'person_add';

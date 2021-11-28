@@ -90,7 +90,7 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	private JSONArray getTaskHoldersEnterprise(AonApiData api) {
 		Domain domain = api.getDomain();
 		JSONArray array = new JSONArray();
-		AON.getTaskHolderStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()))
+		AON.getTaskHolderStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getActiveProperty().eq((byte)1)))
 		.forEach(th->{
 			JSONObject json = new JSONObject();
 			json.put("id", th.getId());
@@ -124,8 +124,9 @@ public class TaskHolderServlet extends AonApiHttpServlet{
 	
 	private JSONObject setTaskHolder(AonApiData api) {
 		TaskHolder th = TaskHolderJSON.fromJSON(api.getData());
-		th = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th);
-		return TaskHolderJSON.toJSON(th);
+		return TaskHolderJSON.toJSON( 
+				AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), th)
+		);
 	}
 	
 }

@@ -3,6 +3,7 @@ import { AonElement } from '../../components/AonElement.js';
 import { CONSTANT, MSG } from '../../environments/environments.js';
 import { getItem, getProducts } from '../../services/productService.js';
 import { AonProduct } from './aon-product.js';
+import * as OPTION from '../invoice/InvoiceOptions.js';
 
 export class AonProductList extends AonElement {
 
@@ -54,19 +55,19 @@ export class AonProductList extends AonElement {
 	}
 
 	aonProduct(product) {
-		if(this.isBeta()) {
-			if(product && product.id){
-				getItem({product: product.id}).then(item => {
-					let aonProduct = new AonProduct();
-					aonProduct.setProduct(product);
-					aonProduct.setItem(item);
-					this.getApplication().setContent(aonProduct);				
-				})
-			} else {
+		if(product && product.id){
+			getItem({product: product.id}).then(item => {
 				let aonProduct = new AonProduct();
-				this.getApplication().setContent(aonProduct);
-			}	
-		}
+				aonProduct.expense = this.isExpense();
+				aonProduct.setProduct(product);
+				aonProduct.setItem(item);
+				this.getApplication().setContent(aonProduct);				
+			})
+		} else {
+			let aonProduct = new AonProduct();
+			aonProduct.expense = this.isExpense();
+			this.getApplication().setContent(aonProduct);
+		}	
 	}
 
 	getFilter() {
@@ -76,6 +77,10 @@ export class AonProductList extends AonElement {
 	setFilter(filter) {
 		this.filter = filter;
 		this.init();
+	}
+
+	isExpense() {
+		return this.getApplication().getParent().selectedOption.id === OPTION.EXPENSES.id
 	}
 }
 window.customElements.define('aon-product-list', AonProductList);

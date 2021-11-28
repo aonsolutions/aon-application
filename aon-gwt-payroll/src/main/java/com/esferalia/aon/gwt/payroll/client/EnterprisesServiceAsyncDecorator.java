@@ -36,6 +36,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -657,6 +658,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
+	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.setContractBonus(currentDomainName, employeeContractData, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
 	public void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate, AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.deleteDigitalCertificate(currentDomainName, digitalCertificate, new AsyncCallbackWrapper<Void>(callback));
@@ -870,6 +877,30 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void validateCertJava(String currentDomainName, Integer rattachId, AsyncCallback<CertificateInfo> callback) {
 		AON.start();
 		enterprisesServiceAsync.validateCertJava(currentDomainName, rattachId, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getEnterpriseContext(String currentDomainName, AsyncCallback<EnterpriseContext> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterpriseContext(currentDomainName, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getSecondaryUsers(currentDomainName, currentUser, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteSecondaryUser(currentDomainName, currentUser, ipfType, ipf, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.createSecondaryUser(currentDomainName, currentUser, ipfType, ipf, naf, new AsyncCallbackWrapper<>(callback));
 	}
 	
 }

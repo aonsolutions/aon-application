@@ -1,3 +1,4 @@
+import { TAG } from "../../environments/environments.js";
 import { downscaleImage } from "../../services/compressImg.js";
 import { insertInvoice } from "../../services/invoiceService.js";
 import { getReader } from "../../services/utils.js";
@@ -23,8 +24,10 @@ export const uploadInvoice = (file) => {
             //compress 500kB / file, 500kb, quality default 0.9, maxResolution 1280
             downscaleImage(data.file, undefined, undefined, undefined).then(file => {
                 data.file = file;
-                return insertInvoice(data);
             });
-        } else return insertInvoice(data);
+        } 
+        insertInvoice(data).then((r) => {
+            
+        }).catch((e) => alert(e.message));
     }
 }

@@ -29,6 +29,7 @@ public interface IJsonNames {
 	String ADMINISTRATIVE = "administrative";
 	String ALIAS = "alias"; 
 	String AMOUNT = "amount";
+	String ATTACH = "attach";
 	String ATTACH_MODULE = "attachModule";
 	String ATTACH_TYPE = "attachType";
 	String AUTH = "auth";
@@ -49,6 +50,12 @@ public interface IJsonNames {
 	String BEFORE_PERIOD_CREDIT = "beforePeriodCredit";
 	String BIC = "bic";
 	String BLOCKED = "blocked";
+	String BOX_BODY_BACKGROUND_COLOR = "boxBodyBackgroundColor";
+	String BOX_BODY_BORDER = "boxBodyBorder";
+	String BOX_BODY_TEXT_COLOR = "boxBodyTextColor";
+	String BOX_TITLE_BACKGROUND_COLOR = "boxTitleBackgroundColor";
+	String BOX_TITLE_BORDER = "boxTitleBorder";
+	String BOX_TITLE_TEXT_COLOR = "boxTitleTextColor";
 	String BRAND = "brand";
 	String BRAND_IDS = "brandIds";
 	String BREAKDOWN_ENABLED = "breakdownEnabled";
@@ -75,6 +82,7 @@ public interface IJsonNames {
 	String CONFIDENTIAL = "confidential";
 	String CONFIGURED_VISIBLE = "configuredVisible";
 	String CONSOLIDATION = "consolidation";
+	String CONTACT_DATA = "contactData";
 	String CONTENT = "content";
 	String CONTENT_ENCODING = "contentEncoding";
 	String CONTENT_NAME = "contentName";
@@ -82,18 +90,24 @@ public interface IJsonNames {
 	String CONTENT_TYPE = "contentType";
 	String COST_CENTER = "costCenter";
 	String COST_CENTERS = "costCenters";
+	String COUNT = "count";
 	String COUNTRY = "country";
 	String CREATION_DATE = "creation_date";
 	String CREATION_USER = "creation_user";
 	String CREDIT = "credit";
+	String CUSTOMER_BACKGROUND_COLOR = "customerBackgroundColor";
+	
 	// ---------------------------------------------------------------------------------------------	[D] 
 	String DATE = "date";
 	String DAYS_BETWEEN_PYMNTS = "daysBetweenPymnts";
 	String DAYS_TO_FIRST_PYMNT = "daysToFirstPymnt";
 	String DEBIT = "debit";
+	String DEFAULT_CERTIFICATE = "defaultCertificate";
 	String DEFINED_USERS = "definedUsers";
+	String DELIVERY_GROUPED = "deliveryGrouped";
 	String DELIVERY_STATUS_INVOICED = "deliveryStatusInvoiced";
 	String DELIVERY_STATUS_PENDING = "deliveryStatusPending";
+	String DELIVERY_VALUATED = "deliveryValuated";
 	String DEADLINE = "deadline";
 	String DESCRIPTION = "description";
 	String DETAIL = "detail";
@@ -142,6 +156,7 @@ public interface IJsonNames {
 	String FROM_DATE = "fromDate";
 	String FROM_DUE_DATE = "fromDueDate";
 	String FROM = "from";
+	String FROM_NUMBER = "fromNumber";
 	// ---------------------------------------------------------------------------------------------	[G] 
 	String GLOBAL = "global";
 	String GROUP_BY_NIF = "groupByNif";
@@ -172,6 +187,7 @@ public interface IJsonNames {
 	String INTERVALS = "intervals";
 	String INVENTORIABLE = "inventoriable";
 	String INVESTMENT = "investment";
+	String INVOICING_GROUP = "invoicingGroup";
 	String INVOICE_TYPE_EXPENSES = "invoiceTypeExpenses";
 	String INVOICE_TYPE_PURCHASES = "invoiceTypePurchases";
 	String INVOICE_TYPE_SALES = "invoiceTypeSales";
@@ -186,6 +202,7 @@ public interface IJsonNames {
 	String KEY = "key";
 	String KIND = "kind";
 	// ---------------------------------------------------------------------------------------------	[L] 
+	String LANGUAGE = "language";
 	String LEDGER_ACCOUNT = "ledgerAccount";
 	String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
 	String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
@@ -214,6 +231,7 @@ public interface IJsonNames {
 	String NEARBY_NUMBERS = "nearbyNumbers";
 	String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
+	String NOTARY = "notary";
 	String NULL = "null";
 	String NUMBER = "number";
 	String NUMBER_OF_PYMNTS = "numberOfPymnts";
@@ -250,6 +268,7 @@ public interface IJsonNames {
 	String PARAMS = "params";
 	String PARENT = "parent";
 	String PARENT_ID = "parentId";
+	String PASSWORD = "password";
 	String PAYMENT = "payment";
 	String PAY_METHOD = "payMethod";
 	String PAYMETHOD = "paymethod";
@@ -272,12 +291,15 @@ public interface IJsonNames {
 	String PRODUCT_ID = "productId";
 	String PROFIT_PERCENT = "profitPercent";
 	String PROJECT = "project";
+	String PROJECT_GROUPED = "ProjectGrouped";
+ 	String PROJECTS = "projects";
 	String PROJECT_HOLDER = "projectHolder";
 	String PROMO = "promo";
 	String PROVINCE = "province";
 	String PURCHASE_ACCOUNT = "purchaseAccount";
 	String PURCHASE_PRICE = "purchasePrice";
 	String PURCHASES_RATIO = "purchasesRatio";
+	String PURCHASE_VALUATED = "purchaseValuated";
 	String PYMNT_DAYS = "pymntDays";
 
 	// ---------------------------------------------------------------------------------------------	[Q] 
@@ -286,14 +308,18 @@ public interface IJsonNames {
 	// ---------------------------------------------------------------------------------------------	[R] 
 	String RDOCUMENT = "rdocument";
 	String RECEIVER = "receiver";
+	String RECORD_DATA = "recordData";
+	String RECORD_DATE = "recordDate";
 	String RECTIFICATION = "rectification";
 	String RECTIFICATION_INVOICE = "rectification_invoice";
 	String RECTIFIED = "rectified";
 	String REFERENCE_CODE = "referenceCode";
 	String REFERENCE = "reference";
+	String REGISTRATION = "registration";
 	String REGISTRY_ID = "registryId";
 	String REGISTRY_PARAMS = "registryParams";
 	String REGISTRY = "registry";
+	String REMARKS = "remarks";
 	String REMOVED = "removed";
 	String REPLACEMENT = "replacement";
 	String RESERVATION = "reservation";
@@ -305,9 +331,11 @@ public interface IJsonNames {
 	String ROLES = "roles";
 	String ROOT_BAR = "/";
 	// ---------------------------------------------------------------------------------------------	[S] 
+	String SALES  = "sales";
 	String SALES_ACCOUNT  = "salesAccount";
 	String SALES_RATIO = "salesRatio";
 	String SCOPE = "scope";
+	String SECTION = "section";
 	String SECURITY_LEVEL = "securityLevel";
 	String SELECTED_ACCOUNT = "selectedAccount";
 	String SELECTED_ACTIVITY = "selectedActivity";
@@ -318,12 +346,16 @@ public interface IJsonNames {
 	String SERIAL_DATE = "serialDate";
 	String SERIALIZABLE = "serializable";
 	String SERIES = "series";
+	String SERIES_INFO = "seriesInfo";
 	String SERIE = "serie";
 	String SERVICE = "service";
+	String SERVICE_NAME = "serviceName";
 	String SESSION_ID = "session_id";
 	String SETTLED = "settled";
 	String SHARED = "shared";
+	String SHEET = "sheet";
 	String SHOW_COVER = "showCover";
+	String SIGNATURE = "signature";
 	String SIZE = "size";
 	String SOURCE = "source";
 	String SOURCE_ID = "source_id";
@@ -338,18 +370,24 @@ public interface IJsonNames {
 	String SURCHARGE_QUOTA = "surcharge_quota";
 	String SURCHARGE = "surcharge";
 	String SURNAME = "surname";
+	String SEARCH = "search";
 	// ---------------------------------------------------------------------------------------------	[T] 
+	String TARIFF = "tariff";
 	String TAS = "tas";
 	String TASK = "task";
 	String TASK_HOLDER = "task_holder";
 	String TAXES = "taxes";
 	String TAX = "tax";
 	String TECHNICAL = "technical";
+	String TEST = "test";
+	String TEXT_COLOR = "textColor";
+	String THEME = "theme";
 	String THUMB_URL = "thumbUrl";
 	String TITLE = "title";
 	String TO = "to";
 	String TO_DATE = "toDate";
 	String TO_DUE_DATE = "toDueDate";
+	String TO_NUMBER = "toNumber";
 	String TOTAL = "total";
 	String TOTAL_BALANCE = "totalBalance";
 	String TRANSACTION = "transaction";
@@ -360,14 +398,15 @@ public interface IJsonNames {
 	String UUID = "uuid";
 	// ---------------------------------------------------------------------------------------------	[V] 
 	String VALUE = "value";
-	String VAT_ACCRUAL_PAYMENT = "vat_accrual_payment";
+	String VAT_ACCRUAL_PAYMENT = "vatAccrualPayment";
 	String VAT_PARAMS = "vatParams";
 	String VAT_SUMMARY_TYPE = "vatSummaryType";
 	String VAT = "vat";
+	String VOLUME = "volume";
 	// ---------------------------------------------------------------------------------------------	[W] 
 	String WEB = "web";
 	String WITHHOLDING = "withholding";
-	String WITHHOLDING_FARMER = "withholding_farmer";
+	String WITHHOLDING_FARMER = "withholdingFarmer";
 	String WITHHOLDING_PERCENTAGE = "withholding_percentage";
 	String WITHHOLDING_QUOTA = "withholding_quota";
 	String WITHHOLDING_TYPE = "withholding_type";

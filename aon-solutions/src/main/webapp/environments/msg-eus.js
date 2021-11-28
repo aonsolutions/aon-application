@@ -15,6 +15,7 @@ export const ADD_CATEGORY = 'Kategoria Gehitu';
 export const ADD_COMMENT = 'Iruzkina Gehitu';
 export const ADD_FILE = 'Fitxategia Erantsi';
 export const ADD_INVOICE = 'Faktura Gehitu';
+export const ADD_REMARKS = 'Oharrak Gehitu';
 export const ADD_TAG = 'Etiketa Gehitu';
 export const ADD_TAX = 'Zerga Gehitu';
 export const ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
@@ -33,7 +34,11 @@ export const AVAILABLE = 'Eskuragai';
 
 export const BACK = 'Atzera';
 export const BACKGROUND_ADJUST = 'Atzealdea Estutu';
+export const BANK = 'Bankua';
+export const BANKS = 'Bankuak';
+export const BARCODE = 'Barra-kodea';
 export const BASE = 'Oinarria';
+export const BASQUE = 'Euskara';
 export const BILLING = 'Fakturazioa';
 export const BLOCKED_POPUP = "Ventana bloqueada!";
 export const BOOKING = 'Kontratazioa';
@@ -45,16 +50,22 @@ export const BUSINESS_NAME = 'Izen Sozial';
 // ----- C
 
 export const CANCEL = 'Ezeztatu';
+export const CATALAN = 'Katalana';
 export const CATEGORY = 'Kategoria';
 export const CATEGORIES = 'Kategoriak';
+export const CERTIFICATE = 'Ziurtagiria';
+export const CERTIFICATES = 'Ziurtagiriak';
 export const CHANGE_TYPE = 'Mota Aldatu';
+export const CHARGES_AND_PAYMENTS = 'Kobrantza eta Ordainketa';
 export const CITY = 'Hiria';
 export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
 export const CLASSIC_VIEW = 'Ikuspegi Klasikoa';
 export const CLOSE = 'Itxi';
+export const CLOSE_SESSION = 'Saioa Itxi';
 export const CODE = 'Kodea';
 export const COMMENT = 'Iruzkina';
 export const COMMENTS = 'Iruzkinak';
+export const COMMUNICATION = 'Komunikazioa';
 export const COMPANIES = 'Enpresak';
 export const COMPANY = 'Enpresa';
 export const COMPANY_COSTS = 'Enpresaren kostuak';
@@ -72,6 +83,7 @@ export const COUNTRY = 'Herrialde';
 export const CREATE = 'Sortu';
 export const CREDITOR = 'Hartzekodun';
 export const CREDITORS = 'Hartzekodunak';
+export const CUSTOM_VIEW = 'Ikuspegi Pertsonalizatua';
 export const CUSTOMER = 'Bezero';
 export const CUSTOMERS = 'Bezeroak';
 
@@ -91,7 +103,9 @@ export const DELETE_LOGO_CONFIRM = 'Ziur zaude logoa ezabatzeaz';
 export const DELETE_TAG = 'Etiketa Ezabatu';
 export const DELETE_TAX = 'Zerga Ezabatu';
 export const DELETED_DATA = 'Datuak zuzen ezabatu dira';
+export const DESCRIPTION = 'Deskribapena';
 export const DETAILED = 'Xehatua';
+export const DEUTSCH = 'Alemana';
 export const DOCUMENT = 'Dokumentua';
 export const DOCUMENTS = 'Dokumentuak';
 export const DOCUMENTARY = 'Dokumentala';
@@ -113,8 +127,14 @@ export const EDIT_FILES = 'Fitxategiak Editatu';
 export const EDIT_TAG = 'Etiketa Aldatu';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Langile';
+export const END_DATE = 'Amaiera-data';
+export const ENGLISH = 'Ingelesa';
 export const ENTERPRISE = 'Enpresa';
+export const ENTRY = 'Sarrera';
 export const EQUIVALENCE_SURCHARGE = 'Baliokidetasun Errekargua';
+export const EXIT = 'Irteera';
+export const EXPENSE = 'Gastu';
+export const EXPENSES = 'Gastuak';
 export const EXPIRATIONS = 'Epemugak';
 
 // ----- F
@@ -128,6 +148,7 @@ export const FOOTER = 'Oina';
 
 // ----- G
 
+export const GALICIAN = 'Galiziera';
 export const GENERAL_INFORMATION = 'Informazio Generala';
 export const GROUP_DATA = 'Taldeko Datuak';
 export const GROUP_MANAGEMENT = 'Taldeen Kudeaketa';
@@ -137,6 +158,7 @@ export const GROUPS = 'Taldeak';
 // ----- H
 
 export const HEADER = 'Goiburu';
+export const HELP = 'Laguntza';
 export const HIRING = 'Kontratazioa';
 export const HOLDER = 'Titularra';
 export const HOLDERS = 'Titularrak';
@@ -155,9 +177,11 @@ export const INFORMATION = 'Informazioa';
 export const INVESTMENT = 'Inbertsioa';
 export const INVOICE = 'Faktura';
 export const INVOICE_CONCEPTS = 'Fakturaren Kontzeptuak';
+export const INVOICE_CONFIGURATION = 'Fakturaren Konfigurazioa';
 export const INVOICE_DATA = 'Fakturaren Datuak';
 export const INVOICE_ISSUED = 'Igorritako Faktura';
 export const INVOICE_NUMBER = 'Faktura Zenbakia';
+export const INVOICE_PRINTING = 'Fakturen Inprimazioa';
 export const INVOICE_RECEIVED = 'Jasotako Faktura';
 export const INVOICES = 'Fakturak';
 export const IRPF = 'PFEZ';
@@ -170,12 +194,15 @@ export const ISSUEDS = 'Igorritakoak';
 
 // ----- L
 
+export const LANGUAGE = 'Hizkuntza';
+export const LAST = 'Azken';
 export const LAST_LOCATION = 'Azken kokapena';
 export const LAST_STATUS = 'Azken egoera';
 export const LOCATION = 'Kokapena';
 
 // ----- M
 
+export const MANAGEMENT = 'Kudeaketa';
 export const MODEL_111 = '111 Eredua';
 export const MODEL_111_DESCRIPTION = 'Modelo 111. Retenciones e ingresos a cuenta. Rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de Renta. Autoliquidación.';
 export const MODEL_190 = '190 Eredua';
@@ -189,9 +216,12 @@ export const MY_USER = 'Nire Erabiltzailea';
 export const NAME = 'Izena';
 export const NEW = 'Berria';
 export const NEW_COMPANY = 'Enpresa Berria';
+export const NEW_EXPENSE = 'Gastu Berria';
 export const NEW_PRODUCT = 'Produktu Berria';
 export const NEW_REQUEST = 'Eskaera Berria';
 export const NEXT = 'Hurrengoa';
+export const NOTES = 'Oharrak';
+export const NOTE = 'Oharra';
 export const NUMBER = 'Zenbakia';
 
 // ----- O
@@ -207,6 +237,7 @@ export const OTHER_SERVICES = 'Beste Zerbitzuak';
 
 // ----- P
 
+export const PAUSE = 'Pausa';
 export const PAYMETHOD = 'Ordainketa Era';
 export const PAYROLL = "Nómina";
 export const PAYSHEET = 'Nomina';
@@ -222,7 +253,6 @@ export const POSTAL_CODE_MIN = 'P.K.';
 export const PREVIOUS = 'Aurrekoa';
 export const PRICE = 'Prezioa';
 export const PRINT_INVOICE = 'Faktura Inprimatu';
-export const PRINTING_INVOICES = 'Fakturen Inprimazioa';
 export const PROCESSED_MOVEMENT = "Alta zuzen prozesatu da";
 export const PRODUCT = 'Produktua';
 export const PRODUCTS = 'Produktuak';
@@ -251,6 +281,8 @@ export const REJECT_INVOICES = 'Fakturak Baztertu'
 export const REJECTED = 'Baztertua';
 export const REJECTED_INVOICES = 'Baztertu Diren Fakturak';
 export const REJECTEDS = 'Baztertua';
+export const REMARKS = 'Oharrak';
+export const REMINDER = 'Oroigarri';
 export const REQUEST = 'Eskaera';
 export const REQUESTS = 'Eskaerak';
 export const REQUESTS_SENT = 'Bidalitako Eskaerak';
@@ -277,15 +309,18 @@ export const SERIE = 'Serie';
 export const SERVICE = 'Zerbitzu';
 export const SERVICES = 'Zerbitzuak';
 export const SETTING = 'Konfigurazioa';
+export const SHARED = 'Partekatuak';
 export const SHOW_FILE = 'Fitxategia Erakutsi';
 export const SII = 'SII';
 export const SII_TICKETBAI = 'SII / TicketBAI';
 export const SIZE = 'Neurria';
+export const SPANISH = 'Gaztelania';
 export const STATISTICS = 'Estatistikak';
 export const STATUS = "Estado";
 export const SUPPLIED = 'Ordezkatuak';
 export const SUPPLIER = 'Hornitzaile';
 export const SUPPLIERS = 'Hornitzaileak';
+export const SUPPORT = 'Euskarri';
 export const SURCHARGE = 'Errekargua';
 export const SURNAME = 'Abizenak';
 export const SYSTEM_MESSAGES = 'Sistemaren Mezuak';
@@ -297,12 +332,16 @@ export const TAGS = 'Etiketak';
 export const TAX = 'Zerga';
 export const TAX_BASE = 'Zerga-Oinarria';
 export const TAXES_DETAIL = 'Zergak';
+export const TEST_ENVIRONMENT = 'Proba-ingurunea';
 export const TICKET = 'Tiket';
 export const TICKETBAI = 'TicketBAI';
 export const TICKETS = 'Tiketak';
 export const TIMECONTROL = 'Denboraren Kontrola';
+export const TITLE = 'Izenburua';
 export const TITULAR_DATA = 'Titularraren Datuak';
 export const TO_TRASH = 'Paperontzira Bidali';
+export const TODAY = 'Gaur';
+export const TOMORROW = 'Bihar';
 export const TOOLS = 'Erremintak';
 export const TOTAL = 'Guztira';
 export const TOTAL_SUPPLIED = 'Guztira Ordezkatuak';
@@ -331,9 +370,41 @@ export const VIEW_PAYROLLS = "Ver nóminas";
 
 export const WEB = 'Web';
 export const WITHHOLDING = 'Atxikipen';
+export const WORKGROUP = 'Lan Taldea';
+export const WRITE_YOUR_TITLE = "Idatzi hemen zure izenburua";
+export const WRITE_A_COMMENT =  "Idatzi iruzkin bat";
+export const WRITE_A_DESCRIPTION = "Idatzi deskribapen bat";
+export const WRITE_A_NOTE =  "Idatzi ohar bat";
+
 
 // ----- X
 
 // ----- Y
 
+export const YEAR = 'Urtea';
+export const YESTERDAY = 'Atzo';
+
 // ----- Z
+
+//-------------DAYS
+export const SUNDAY = "Igandea";
+export const MONDAY = "Astelehena"; 
+export const TUESDAY = "Asteartea";
+export const WEDNESDAY = "Asteazkena";
+export const THURSDAY = "Osteguna"; 
+export const FRIDAY = "Ostirala"; 
+export const SATURDAY = "Larunbata"; 
+
+//-------------MONTHS
+export const JANUARY = "Urtarrila"; 
+export const FEBRUARY = "Otsaila"; 
+export const MARCH = "Martxoa"; 
+export const APRIL = "Apirila"; 
+export const MAY = "Maiatza"; 
+export const JUNE = "Ekaina"; 
+export const JULY = "Uztaila"; 
+export const AUGUST = "Abuztua";
+export const SEPTEMBER = "Iraila";
+export const OCTOBER = "Urria"; 
+export const NOVEMBER = "Azaroa"; 
+export const DECEMBER = "Abendua"; 

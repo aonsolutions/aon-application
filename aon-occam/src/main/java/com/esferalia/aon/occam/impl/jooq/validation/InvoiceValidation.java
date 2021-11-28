@@ -8,12 +8,19 @@ import java.util.function.BiConsumer;
 
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.TbaiConfigurationDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -231,6 +238,33 @@ public class InvoiceValidation {
 			}
 		}
 	};
+	
+	/**
+	 * Las facturas enviadas al SII y que no se han dado de baja en el SII no se pueden borrar.
+	 */
+	public static BiConsumer<Invoice, AonConfigurationContext> SII = (inv,ctx) -> {
+		Invoice a = InvoiceDAO.getSiiInvoiceStream(ctx.getContext(), f -> f.getIdProperty().eq(inv.getId()), false, true, true, false, false, "").findFirst().orElse(new Invoice());
+		if(a.getId() != null) {
+			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_SII.getMessage());
+		}
+	};
+	
+	/**
+	 * Las facturas enviadas a Ticket Bai y que no se han dado de baja en Ticket Bai no se pueden borrar.
+	 */
+	public static BiConsumer<Invoice, AonConfigurationContext> TBAI = (inv,ctx) -> {
+		TbaiConfiguration tbai = TbaiConfigurationDAO.get(ctx.getContext());
+		if(tbai.isActive()) {
+			DataResponse dr = DataResponseDAO.get(ctx.getContext(), f -> f.getSourceProperty().eq(DataResponseSource.TBAI.value())
+					.and(f.getSourceIdProperty().eq(inv.getId()))
+					.and(f.getCodeProperty().eq("ok")));
+			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(r -> r.getDataValue()).findFirst().orElse("alta");
+			
+			if(dr.getId() != null && "alta".equalsIgnoreCase(type)) {
+				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());
+			}
+		}
+	};
 
 	public static void validateInvoice(AONContext ctx,AonConfiguration config,Invoice inv) throws AonCoreException {
 		EMPTY_DOMAIN
@@ -266,10 +300,16 @@ public class InvoiceValidation {
 	}
 
 	public static void validateInvoiceDeletion(AONContext ctx, AonConfiguration config, Invoice inv) {
+		DataResponse dr = DataResponseDAO.get(ctx, f -> f.getSourceProperty().eq(DataResponseSource.TBAI.value())
+				.and(f.getSourceIdProperty().eq(inv.getId()))
+				.and(f.getCodeProperty().eq("ok")));
+
 		if (config == null) config = ConfigurationDAO.getConfiguration(ctx, inv.getIssueDate());
 		RECTIFIED_INVOICE
 		.andThen(DUA_LINKED_INVOICE)
 		.andThen(OPERATIONS_DEADLINE)
+		.andThen(SII)
+		.andThen(TBAI)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}
 

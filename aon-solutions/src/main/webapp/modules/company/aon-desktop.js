@@ -1,13 +1,13 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps} from  '../../services/app.js';
-import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getCompanyHeaderInfo} from  '../../services/service.js';
+import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
-import { AonSign } from '../signin/aon-sign.js';
-import { AonSignin } from '../signin/aon-signin.js';
+import { AonSign } from '../timecontrol/aon-sign.js';
+import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
 import { uploadInvoices } from "../invoice/InvoiceUtils.js";
 import { uploadDocuments } from "../documental/DocumentalUtils.js";
 import { AonMessenger } from '../messenger/aon-messenger.js';
@@ -26,6 +26,7 @@ import { Project } from '../../models/project/Project.js';
 import { getNoteCount } from '../../services/noteService.js';
 import { AonStat } from './aon-stat.js';
 import { AonAccounting } from '../accounting/aon-accounting.js';
+import { Attach } from '../../models/Attach.js';
 
 export class AonDesktop extends AonElement {
 
@@ -86,49 +87,96 @@ export class AonDesktop extends AonElement {
 		let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
 		inputDocumentFile.addEventListener(EVENT.CHANGE, ({target}) => uploadDocuments(inputDocumentFile, target.files, this.getDur()));
 
-		if(this.isBeta()) {
-			let divLogo = this.createElement(TAG.DIV);
-			divLogo.id = this.id + 'Logo';
-			divLogo.style.maxHeight = '60px';
-			divLogo.style.height = '100%';
-			divLogo.style.margin = '10px';
-			divLogo.style.justifyContent = 'center';
-			aonDesktop.getSidenav().appendChild(divLogo);
+		let divLogo = this.createElement(TAG.DIV);
+		divLogo.id = this.id + 'Logo';
+		aonDesktop.getSidenav().appendChild(divLogo);
 
-			getCompanyHeaderInfo().then((pi) =>{
+		let filter = {
+			attachType: 'registry',
+			attachModule: company.registry,
+			type: 0
+		}; 
+					
+		let parentFilter = {
+			attachType: 'registry',
+			domainId: company.parentId,
+			type: 0
+		};
+		let f = this.getDur().hasCustomView() || this.getDur().isEmployee() 
+			?  filter : parentFilter; 
+
+		getAttach(f).then(r => {
+			let attach = new Attach(r);
+			if(attach && attach.id && attach.getContentType().includes("image")){
+				divLogo.style.maxHeight = '60px';
+				divLogo.style.margin = '10px';
+				divLogo.style.justifyContent = 'center';
+
+				let data = {
+					domain_id: attach.getDomain().getId(),
+					attach_type: attach.getAttachType(),
+					domain_name: attach.getDomain().getName(),
+					id: attach.getId()
+				};
+				let url = location.href + 'ms/api/file/' + btoa(JSON.stringify(data));
+
 				let img = this.createElement(TAG.IMG);
 				img.id = this.id + 'LogoImg';
-				img.style.maxHeight = '100%';
+				img.style.maxHeight = '60px';
 				img.style.maxWidth = '100%';
-				img.src = pi.logo;
+				img.src = url;
 				divLogo.appendChild(img);
+			}
+		});
+
+		if(this.getDur().hasCustomView()){
+			getAttach(parentFilter).then(r => {
+				let attach = new Attach(r);
+				if(attach && attach.id && attach.getContentType().includes("image")){
+					let data = {
+						domain_id: attach.getDomain().getId(),
+						attach_type: attach.getAttachType(),
+						domain_name: attach.getDomain().getName(),
+						id: attach.getId()
+					};
+					let url = location.href + 'ms/api/file/' + btoa(JSON.stringify(data));
+	
+					let headerLogo = this.getElement('aonLogo');
+					headerLogo.src = url;
+				}
 			});
-			
+		}
+
+		if(this.isBeta()) {
 			let myGestor = {
 				id: 'Gestor',
 				name: 'MI GESTOR'
 			};
 			aonDesktop.addSidenavOptions2(myGestor, []);
-			getOfficeProjects({}).then(projects => {
+			getOfficeProjects({}).then(offices => {
 				this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
-           		projects.forEach(item => {
-					let p = new Project(item);
-					let h =  p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
-					let option = {
-                    	name: p.getType().getDescription() + (h ? ' - ' + h : '') ,
-                    	icon: 'support_agent',
-	                    fn: () => {}, 
-    	                actions: [{
-        	              id: 'Contact',
-            	          icon: 'chat',
-                	      action: () => {
-							let aonMessengerChat = new AonMessenger();	
-							aonMessengerChat.data = {source:TASK_SOURCE.QUERY, project: item};
-							this.rootPanel(aonMessengerChat);
-						  }
-                    	}]
-                	};
-                	aonDesktop.addSidenavOptionsListValue(myGestor, option);
+				offices.forEach(office => {
+					if(office.projects.length > 0) {
+						office.projects.forEach((item,idx) => {
+							let p = new Project(item);
+							let h =  p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
+							let option = {
+								name: p.getType().getDescription() + (h ? ' - ' + h : '') ,
+								icon: MATERIAL_ICONS.SUPPORT_AGENT,
+								fn: () => {}, 
+								actions: [{
+								  id: 'Contact'+idx,
+								  icon: 'chat',
+								  action: () => {
+									let aonMessengerChat = new AonMessenger();	
+									aonMessengerChat.data = {source:TASK_SOURCE.QUERY, project: item, domain: item.domain};
+									this.rootPanel(aonMessengerChat);
+								  }
+								}]
+							};
+							aonDesktop.addSidenavOptionsListValue(myGestor, option);
+						});
+					}
            		});
 			}); 
 		}
@@ -204,23 +252,24 @@ export class AonDesktop extends AonElement {
 		div.style.marginRight = '100px';
 		aonDesktop.setContent(div);
 
-		if(!this.isBeta()){
-			let divSlide = this.createElement(TAG.DIV);
-			divSlide.appendChild(new AonStat());
-			div.appendChild(divSlide);
-		}
+		// if(!this.isBeta()){
+		// 	let divSlide = this.createElement(TAG.DIV);
+		// 	divSlide.appendChild(new AonStat());
+		// 	div.appendChild(divSlide);
+		// }
 
 		div.appendChild(this.buildTitle(MSG.AVAILABLE.toUpperCase()));
 
 		let ul = this.createElement(TAG.UL);
-		ul.className = 'list-group';
-
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_LIST_GROUP);
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 			for (let key in Apps){
 				if(this.isApp(Apps[key])) {
 					let li = this.createElement(TAG.LI);
 					li.id = this.AON_DESKTOP + Apps[key].app.initCap();
-					li.className = 'list-group-item aonAppLi';
+					li.classList.add(CSS.AON_LIST_GROUP_ITEM);
+					li.classList.add(CSS.AON_APP_LI);
 					li.style.borderRight = '0px';
 					li.style.borderLeft = '0px';
 					li.style.cursor = 'pointer';
@@ -360,7 +409,7 @@ export class AonDesktop extends AonElement {
 								switch(Apps[key].app){
 								case Apps.DOCUMENTAL.app:
 									let inputDocumentFile = this.getElement(this.INPUT_DOCUMENT_FILE);
-									uploadDocuments(inputDocumentFile, files);
+									uploadDocuments(inputDocumentFile, files, this.getDur());
 									break;
 								case Apps.INVOICE.app:
 									let inputInvoiceFile = this.getElement(this.INPUT_INVOICE_FILE);
@@ -375,7 +424,8 @@ export class AonDesktop extends AonElement {
 			}
   	} else {
 			let li = this.createElement(TAG.LI);
-			li.className = 'list-group-item aonAppLi';
+			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
+			li.classList.add(CSS.AON_APP_LI);
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';
@@ -443,7 +493,7 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(new AonInvoicePanel());
 				break;
 			case Apps.TIMECONTROL.app:
-				this.rootPanel(new AonSignin());
+				this.rootPanel(new AonTimecontrol());
 				break;
 			case Apps.MESSENGER.app:
 				this.isBeta() ? this.rootPanel(new AonMessenger()) : this.development(MSG.REQUEST);
@@ -522,19 +572,20 @@ export class AonDesktop extends AonElement {
 			if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
 				rejectedCount = notice.invoice.rejected.count;
 			}
-			if(rejectedCount) this.SIDENAV_ACTIVITY_SUMMARY.push({
+
+			this.SIDENAV_ACTIVITY_SUMMARY.push({
 				name: MSG.PENDING_INVOICES,
 				icon: 'inbox',
-				count:rejectedCount,
+				count: inboxCount,
 				fn: () => {
 					this.rootPanel(new AonInvoicePanel());
 				}
 			});
 
-			if(inboxCount) this.SIDENAV_ACTIVITY_SUMMARY.push({
+			this.SIDENAV_ACTIVITY_SUMMARY.push({
 				name: MSG.REJECTED_INVOICES,
 				icon: MATERIAL_ICONS.REPORT,
-				count:inboxCount,
+				count: rejectedCount,
 				fn: () => {
 					let aonInvoice = new AonInvoicePanel();
 					aonInvoice.status = "refused";
@@ -556,13 +607,13 @@ export class AonDesktop extends AonElement {
 				count:count.task_holder,
 				fn: () =>{
 					if(this.isBeta()){
-						getTaskHolder().then(th=>{
+						getTaskHolder().then(({id})=>{
 							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.task_holder = th.id;
+							aonMessenger._filter.task_holder = id;
 							this.rootPanel(aonMessenger);
 						});
 					} else {
-						this.development(MSG.REQUEST)
+						this.development(MSG.REQUEST);
 					}
 				}
 			});
@@ -572,9 +623,9 @@ export class AonDesktop extends AonElement {
 				count:count.sender,
 				fn: () =>{
 					if(this.isBeta())
-						getTaskHolder().then(th=>{
+						getTaskHolder().then(({id})=>{
 							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.sender = th.id;
+							aonMessenger._filter.sender = id;
 							this.rootPanel(aonMessenger);
 						});
 					else 

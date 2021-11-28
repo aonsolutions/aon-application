@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 
 public class RegistryFull<R extends Registry> implements Serializable {
 
@@ -9,6 +10,7 @@ public class RegistryFull<R extends Registry> implements Serializable {
 	private R registry;
 	private LinkedList<RegistryAddress> addresses;
 	private LinkedList<RegistryMedia> medias;
+	private List<RecordData> recordData;
 	
 	// ------------------------------------------ REGISTRY
 	public R getRegistry() {
@@ -65,6 +67,18 @@ public class RegistryFull<R extends Registry> implements Serializable {
 	}
 	public boolean hasMedias() {
 		return this.medias != null && !this.medias.isEmpty();
+	}
+	
+	
+	// ------------------------------------------ RECORD DATA
+
+	public List<RecordData> getRecordDatas() {
+		return recordData;
+	}
+	
+	public RegistryFull<R> setRecordDatas(List<RecordData> recordData) {
+		this.recordData = recordData;
+		return this;
 	}
 	
 	// ------------------------------------------ OTHER

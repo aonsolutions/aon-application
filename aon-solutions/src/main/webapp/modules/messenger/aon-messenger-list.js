@@ -4,8 +4,6 @@ import { AonElement } from "../../components/AonElement.js";
 import { CONSTANT, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { getTasks } from "../../services/taskService.js";
 import { sortBy } from "../../services/utils.js";
-import { SigninSidenav } from "../signin/signinEnums.js";
-import { firstLetters } from "../signin/time-control/utils.js";
 import { MESSENGER_VIEWS, TASK_FILTER, TASK_SOURCE, TASK_STATUS, TASK_STATUS_VALUE } from "./MessengerEnums.js";
 import { AonMessenger } from "./aon-messenger.js";
 import { addTasks, setIndexTask, setTasks } from "./TaskCache.js";
@@ -14,6 +12,8 @@ import { getCustomers } from "../../services/registryService.js";
 import { getTaskHolder } from "../../services/taskHolderService.js";
 import * as LS from '../../services/localStorageService.js';
 import { AonDateUtils } from "../utils/AonDateUtils.js";
+import { SigninSidenav } from "../timecontrol/signinEnums.js";
+import { firstLetters } from "../timecontrol/time-control/utils.js";
 
 export class AonMessengerList extends AonElement {
   MORE;
@@ -130,7 +130,7 @@ export class AonMessengerList extends AonElement {
 
     btnSearch.addEventListener(EVENT.SEARCH_VALUE, ({detail})=>{
       if(detail) {
-        this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate});
+        this.setFilter({...this.getFilter(), page:0, perPage:30, task_holder:detail.task_holder, registry: detail.registry, startDate: detail.startDate, workgroup: detail.workgroup});
         this.loadMore(true);
       } 
     });
@@ -143,17 +143,22 @@ export class AonMessengerList extends AonElement {
     let registryEl = this.getElement("registry");
     let taskHolderEl = this.getElement("task_holder");
     let statusEl = this.getElement("status");
+    let workgroup = this.getElement("workgroup");
     getCustomers({reload:true, page:1, perPage:50}).then(customers=>{
       registryEl.setOptions(customers.map(c=> ({...c, value: c.id})) );
-    })
+    });
 
     registryEl.addEventListener(EVENT.INPUT,async({target})=>{
         const value = target.value;
         if(value.length > 2){
-          const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
+          const cs = await getCustomers({reload:true, page:1, perPage:30, value});
           registryEl.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
         }
     })
+    
+    this.getApplicationParent().getMyWorkgroups().then(wgs=>{
+      workgroup.setOptions(wgs);
+    });
 
     if(this.getApplicationParent())
       this.getApplicationParent().getTaskHoldersEnterprise().then(ths=>taskHolderEl.setOptions(ths));
@@ -184,24 +189,17 @@ export class AonMessengerList extends AonElement {
   getDataDesktop(datos){
     try {
       const company = LS.getCompany();
+      const domainId = parseInt(LS.getDomainId());
       const document = company ? company.document: undefined;
       const documentTh = this.TASK_HOLDER ? this.TASK_HOLDER.document  : undefined;
       datos.map((res, idx) => {
-        const dateParse = firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
-        let assigned = "";
-        if(res.task_holder&&res.task_holder.id)           assigned = res.task_holder.alias || res.task_holder.name; 
-        else if(res.workgroup&&res.workgroup.description) assigned = res.workgroup.description;
-  
-        const newTitle = this.getNewTitle(res, document, documentTh);
-
-        const newData = { 
+        this.AON_TABLE.addRow({ 
           ...res, 
-          newTitle,
-          assigned,
-          dateParse,
+          dateParse: firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date),
+          newTitle: this.getNewTitle(res, document, documentTh),
+          assigned: this.getAssigned(res, domainId),
           lettersHtml: this.getIcon(res),
-        };
-        this.AON_TABLE.addRow(newData, () =>  this.goMessengerChat(res, idx));
+        }, () =>  this.goMessengerChat(res, idx));
       });
     } catch (e) {
       console.log(e);
@@ -211,14 +209,11 @@ export class AonMessengerList extends AonElement {
   getDataMobile(datos){
     try{
       datos.map((res, idx) => {
-        const dateParse = firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date);
-        const newTitle  = `#${res.newNumber} ${res.title}`;
-        const options = {
-          title: newTitle,
-          subtitle: dateParse,
+        this.AON_TABLE.addLi({
+          title: `#${res.newNumber} ${res.title}`,
+          subtitle: firstLetters(AonDateUtils.setFullDate(res.date)) + " " + AonDateUtils.setTime(res.date),
           ...this.getIconList(res)
-        };
-        this.AON_TABLE.addLi(options, idx, () => this.goMessengerChat(res, idx));
+        }, idx, () => this.goMessengerChat(res, idx));
       });
     } catch (e) {
       console.log(e);
@@ -237,14 +232,11 @@ export class AonMessengerList extends AonElement {
       else {
         data = tasks
         .filter((v,idx, self)=>self.findIndex((m) => m.id === v.id) === idx )
-        .map(task=>{
-          const newNumber = (task.number ? task.number : 0).toString().padStart(5,0);
-          return {
+        .map(task=>({
             ...task,
             date:task.start_date,
-            newNumber
-          };
-        });
+            newNumber: (task.number ? task.number : 0).toString().padStart(5,0)
+        }));
       }
       data = sortBy(data, 'id','desc');
     } catch (error) {
@@ -254,20 +246,19 @@ export class AonMessengerList extends AonElement {
     return data;
   }
 
-  getIconList(res){      
-    return {
-      ...getIconJson(res),
-      icon_class:CONSTANT.MATERIAL_ICONS_OUTLINED,
-      icon_title:res.source,
-    }
-  }
+  getIconList = ({source,status}) => ({      
+    ...getIconJson({source,status}),
+    icon_class:CONSTANT.MATERIAL_ICONS_OUTLINED,
+    icon_title:source,
+  })
 
-  getIcon(res){
-    let icon = getIconJson(res);
+
+  getIcon({source,status}){
+    let icon = getIconJson({source,status});
 
     let span = this.createElement(TAG.SPAN);
     span.style.color = icon.icon_color;
-    span.title = res.source;
+    span.title = source;
 
     let iOne = this.createElement("i");
     iOne.className = CONSTANT.MATERIAL_ICONS_OUTLINED;
@@ -282,6 +273,17 @@ export class AonMessengerList extends AonElement {
     // }
 
     return span.outerHTML;
+  }
+
+  getAssigned(res, domainId){
+    let assigned = "";
+    if( res.domain && res.domain.id && domainId !== parseInt(res.domain.id) )  
+      assigned = res.domain.description;
+    else if(res.task_holder&&res.task_holder.id)                                                
+      assigned = res.task_holder.alias || res.task_holder.name; 
+    else if(res.workgroup&&res.workgroup.description) 
+      assigned = res.workgroup.description;
+    return assigned;
   }
 
   getNewTitle(res, document, documentTh){

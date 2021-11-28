@@ -6,7 +6,8 @@ public enum RegistryAdditionalInfo {
 	ADDRESSES,
 	BANKS,
 	PAYMETHOD,
-	MEDIA;
+	MEDIA,
+	RECORD_DATA;
 
 	private RegistryAdditionalInfo() {
 		// TODO Auto-generated constructor stub

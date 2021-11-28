@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -32,6 +34,9 @@ public class EnterpriseSalaryObject {
 	
 	private String emailStatus;
 	
+	private Date minDate;
+	private Date maxDate;
+	
 	// --------------------------------------------- Constructor
 	
 	public EnterpriseSalaryObject() {
@@ -45,6 +50,33 @@ public class EnterpriseSalaryObject {
 	}
 	
 	// --------------------------------------------- Database Methods
+	
+	public void getSalariesDates(Consumer<Period> success, Consumer<Throwable> failure){
+		
+		if(filter.getEmployeeId() == null && filter.getWorkplaceId() == null)
+			filter.setEnterpriseId(enterprise.getId());
+		else
+			filter.setEnterpriseId(null);
+		
+		employeesService.getSalariesDates(filter, new AsyncCallback<Period>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Period result) {
+				minDate = result.getStart();
+				maxDate = result.getEnd();
+				getEnterpriseEmployeesDB(
+						s -> success.accept(result), 
+						f -> {}
+				);
+			}
+			
+		});
+	}
 
 	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
@@ -63,10 +95,7 @@ public class EnterpriseSalaryObject {
 			@Override
 			public void onSuccess(List<SalaryInfo> result) {
 				enterpriseSalaries = result;
-				getEnterpriseEmployeesDB(
-						s -> success.accept(result), 
-						f -> {}
-				);
+				success.accept(result);
 			}
 			
 		});
@@ -145,6 +174,14 @@ public class EnterpriseSalaryObject {
 		return this.emailStatus;
 	}
 	
+	public Date getMinDate() {
+		return minDate;
+	}
+
+	public Date getMaxDate() {
+		return maxDate;
+	}
+
 	public List<String> getWorkplacesNames(){
 		List<String> workplaceNames = new ArrayList<>();
 		workplaces.forEach(workplace -> {

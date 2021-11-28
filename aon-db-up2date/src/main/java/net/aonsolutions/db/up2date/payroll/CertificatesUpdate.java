@@ -41,6 +41,12 @@ public class CertificatesUpdate implements Update {
 
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
+		// If exists TAGs not update!
+		
+		Result<Record> tagRecords = dslContext.select().from(TAG).where(TAG.DOMAIN.eq(0)).and(TAG.TYPE.eq((byte)13)).fetch();
+		if(tagRecords.isNotEmpty())
+			return;
+		
 		// Create TAGs on domain 0 if not exist
 		
 		Record tgssTagRecord = dslContext.select().from(TAG).where(TAG.DOMAIN.eq(0)).and(TAG.NAME.eq("TGSS")).and(TAG.TYPE.eq((byte)13)).fetchOne();

@@ -508,6 +508,35 @@ public class PDFToolkit {
 		return lines;
 	}
 	
+	
+	public static List<String> getLinesRespectOriginal(String text, float max, PDFont font, float fontSize) throws IOException {
+
+		ArrayList<String> lines	= new ArrayList<>();
+		ArrayList<String> words	= (ArrayList<String>) StringToolkit.toWordsWithLines(text);
+		String			  line	= "";
+
+		for (int i = 0; i < words.size(); i++) {
+			if (!words.get(i).equals("\n")) {
+				float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
+				if (fw < max) {
+					line += " " + words.get(i);
+				} else {
+					lines.add(line);
+					line = "" + words.get(i);
+				}
+				if (i == words.size() - 1)
+					lines.add(line);
+			} else {
+				lines.add(line);
+				line = "";
+			}
+		}
+		if (lines.isEmpty()) {
+			lines.add(line);			
+		}
+		return lines;
+	}
+	
 	public static String getFirstLine(String text, float max, PDFont font, float fontSize) throws IOException {
 
 		ArrayList<String> words	= (ArrayList<String>) StringToolkit.toWords(text);

@@ -1,8 +1,8 @@
 // COMPONENTS
 import {AonElement} from '../../components/AonElement.js';
-import {AonApplication} from '../../components/aon-application.js';
-import {AonMarketplace} from './aon-marketplace.js';
-
+import '../../components/aon-application.js';
+import './aon-marketplace.js';
+import '../../css/aon.css'
 // CONSTANTS
 import { CONSTANT, MSG } from '../../environments/environments.js'; 
 
@@ -29,10 +29,12 @@ export class AonMarketplacePanel extends AonElement {
 
  	build() {
 		let application = this.getApplication();
-		application.closeSidenav();
-		application.setContentHTML(
-			`<aon-marketplace id="aonMarketplace" > </aon-marketplace>`
-		);
+		if(application) {
+			application.closeSidenav();
+			application.setContentHTML(
+				`<aon-marketplace id="aonMarketplace" > </aon-marketplace>`
+			);
+		}
 
 	}
 }

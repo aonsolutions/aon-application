@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -467,6 +468,22 @@ public class InvoiceDAO {
 		return invoice;
 	}
 
+	public static List<InvoiceSeries> getSalesSeries(AONContext ctx) {
+		return ctx.getDslContext()
+			.select(INVOICE.SERIES, DSL.max(INVOICE.ISSUE_DATE), DSL.count(INVOICE.ID))
+			.from(INVOICE)
+			.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
+				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value())))
+			.groupBy(INVOICE.SERIES)
+			.orderBy(INVOICE.ISSUE_DATE)
+			.fetch().stream().map(r -> new InvoiceSeries()
+					.setSales(true)
+					.setSeriesInfo(false)
+					.setDescription(r.getValue(INVOICE.SERIES))
+					.setCount(r.getValue(DSL.count(INVOICE.ID))))
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	private static Account getInvoiceDetailAccount(AONContext ctx, Integer invoiceDetailId) {
 		return ctx.getDslContext().select().from(ACCOUNT)
 		.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))
@@ -584,7 +601,7 @@ public class InvoiceDAO {
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class, r.getValue(INVOICE.RECTIFICATION_TYPE)))	
 				.setRectificationInvoice(r.getValue(INVOICE.RECTIFICATION_INVOICE))	
 				.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(INVOICE.TRANSACTION)))
-				.setRecorded(r.getValue(INVOICE.STATUS) == 1 )	
+				.setRecorded(r.getValue(INVOICE.STATUS) != null && r.getValue(INVOICE.STATUS) == 1 )	
 				.setSurcharge(r.getValue(INVOICE.SURCHARGE) == 1 )	
 				.setWithholding(r.getValue(INVOICE.WITHHOLDING) == 1 )	
 				.setWithholdingFarmer(r.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	
@@ -638,7 +655,7 @@ public class InvoiceDAO {
 				.setRectificationType(AonEnumUtils.enumValue(RectificationType.class,record.getValue(INVOICE.RECTIFICATION_TYPE)))	
 				.setRectificationInvoice(record.getValue(INVOICE.RECTIFICATION_INVOICE))	
 				.setTransaction(AonEnumUtils.enumValue(InvoiceTransactionType.class,record.getValue(INVOICE.TRANSACTION)))
-				.setRecorded(record.getValue(INVOICE.STATUS) == 1 )	
+				.setRecorded(record.getValue(INVOICE.STATUS) != null && record.getValue(INVOICE.STATUS) == 1 )	
 				.setSurcharge(record.getValue(INVOICE.SURCHARGE) == 1 )	
 				.setWithholding(record.getValue(INVOICE.WITHHOLDING) == 1 )	
 				.setWithholdingFarmer(record.getValue(INVOICE.WITHHOLDING_FARMER) == 1 )	

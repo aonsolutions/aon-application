@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -11,12 +12,16 @@ public class PrintInvoiceConfiguration {
 	
 	private Integer header;
 	private Integer footer;
-	private Boolean detailed;
-	private Boolean adjustImage;
-	private Boolean logo;
-	private Boolean company;
+	private boolean detailed;
+	private boolean adjustImage;
+	private boolean logo;
+	private boolean company;
 	private Attach background;
+	private boolean recordData;
+	private boolean contactData;
+	private AonLanguage language;
 	
+	private PrintInvoiceThemeConfiguration theme;
 
 	@Deprecated
 	public InputStream getBackgroundImage() {
@@ -68,7 +73,7 @@ public class PrintInvoiceConfiguration {
 		return this;	
 	}
 
-	public Boolean isDetailed() {
+	public boolean isDetailed() {
 		return detailed;
 	}
 	
@@ -77,7 +82,7 @@ public class PrintInvoiceConfiguration {
 		return this;
 	}
 
-	public Boolean getAdjustImage() {
+	public boolean getAdjustImage() {
 		return adjustImage;
 	}
 
@@ -86,7 +91,7 @@ public class PrintInvoiceConfiguration {
 		return this;
 	}
 	
-	public Boolean isLogo() {
+	public boolean isLogo() {
 		return logo;
 	}
 	
@@ -95,7 +100,7 @@ public class PrintInvoiceConfiguration {
 		return this;
 	}
 	
-	public Boolean isCompany() {
+	public boolean isCompany() {
 		return company;
 	}
 	
@@ -104,4 +109,40 @@ public class PrintInvoiceConfiguration {
 		return this;
 	}
 	
+	public boolean isRecordData() {
+		return recordData;
+	}
+	
+	public PrintInvoiceConfiguration setRecordData(boolean recordData) {
+		this.recordData = recordData;
+		return this;
+	}
+	
+	public boolean isContactData() {
+		return contactData;
+	}
+	
+	public PrintInvoiceConfiguration setContactData(boolean contactData) {
+		this.contactData = contactData;
+		return this;
+	}
+	
+	public AonLanguage getLanguage() {
+		if(language == null) language = AonLanguage.SPANISH;
+		return language;
+	}
+	
+	public PrintInvoiceConfiguration setLanguage(AonLanguage language) {
+		this.language = language;
+		return this;
+	}
+
+	public PrintInvoiceThemeConfiguration getTheme() {
+		return theme;
+	}
+	
+	public PrintInvoiceConfiguration setTheme(PrintInvoiceThemeConfiguration theme) {
+		this.theme = theme;
+		return this;
+	}
 }

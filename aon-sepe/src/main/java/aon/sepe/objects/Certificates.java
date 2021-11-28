@@ -1,8 +1,10 @@
 package aon.sepe.objects;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Certificates {
 
@@ -22,13 +24,15 @@ public class Certificates {
 	private String causeSuspension; //01 - 33
 	private String officePublic;
 	private Integer dedicationPer;
-	private Date fAEd; // fecha de alta de empresa
-	private Date fSTd; // fecha de extension 
+	private Date fAEd; // Fecha de alta
+	private Date fSTd; // Fecha de suspensión o extinción
 	//data vacation
 	private Integer daysCtzVc; // Dias cotizados vacaciones
-	private String bcccVc; // Base cotizacion vacaciones
-	private String bcdVc; 
-	List<Map<String, String>> dataCtz;
+	private Double bcccVc; // Base cotizacion vacaciones 0.00
+	private Double bcdVc; // 0.00
+
+	private List<QuoteData> quoteData;
+	
 	private Integer durationContract; // Duracion contrato (horas)
 	
 	public Integer getDurationContract() {
@@ -59,12 +63,12 @@ public class Certificates {
 		return surnameManager;
 	}
 
-	public String getLastSurname() {
-		return lastSurnameManager;
+	public Optional<String> getLastSurname() {
+		return Optional.ofNullable(lastSurnameManager);
 	}
 
-	public String getCargoManager() {
-		return cargoManager;
+	public Optional<String> getCargoManager() {
+		return Optional.ofNullable(cargoManager);
 	}
 
 	public String getTypeContract() {
@@ -91,12 +95,12 @@ public class Certificates {
 		return causeSuspension;
 	}
 
-	public String getOfficePublic() {
-		return officePublic;
+	public Optional<String> getOfficePublic() {
+		return Optional.ofNullable(officePublic);
 	}
 
-	public Integer getDedicationPer() {
-		return dedicationPer;
+	public Optional<Integer> getDedicationPer() {
+		return Optional.ofNullable(dedicationPer);
 	}
 
 	public Date getfAEd() {
@@ -110,19 +114,46 @@ public class Certificates {
 	public Integer getDaysCtzVc() {
 		return daysCtzVc;
 	}
-
-	public String getBcccVc() {
-		return bcccVc;
-	}
-
-	public String getBcdVc() {
-		return bcdVc;
-	}
-
-	public List<Map<String, String>> getDataCtz() {
-		return dataCtz;
+	
+	public Optional<Double> getBcccVc() {
+		return Optional.ofNullable(bcccVc);
 	}
 	
+	public Optional<Double> getBcdVc() {
+		return Optional.ofNullable(bcdVc);
+	}
+	
+	public List<QuoteData> getQuoteData() {
+		return quoteData;
+	}
+	
+	@Override
+	public String toString() {
+		return "Certificates [\n\tregimen=" + regimen + 
+				",\n\tctaCti=" + ctaCti + 
+				",\n\tipf=" + ipf + 
+				",\n\tipfManager=" + ipfManager + 
+				",\n\tnameManager=" + nameManager + 
+				",\n\tsurnameManager=" + surnameManager + 
+				",\n\tlastSurnameManager=" + lastSurnameManager + 
+				",\n\tcargoManager=" + cargoManager + 
+				",\n\ttypeContract=" + typeContract + 
+				",\n\tgz=" + gz + 
+				",\n\ttypeDuration=" + typeDuration + 
+				",\n\tpublicPosition=" + publicPosition + 
+				",\n\tcatProfessional=" + catProfessional + 
+				",\n\tcauseSuspension=" + causeSuspension + 
+				",\n\tofficePublic=" + officePublic + 
+				",\n\tdedicationPer=" + dedicationPer + 
+				",\n\tfAEd=" + fAEd + 
+				",\n\tfSTd=" + fSTd + 
+				",\n\tdaysCtzVc=" + daysCtzVc + 
+				",\n\tbcccVc=" + bcccVc + 
+				",\n\tbcdVc=" + bcdVc + 
+				",\n\tdurationContract=" + durationContract+
+				", quoteData=" + quoteData + "\n]";
+	}
+
 	private Certificates() {}
 	public static class CertificatesBuilder {
 		private String regimen;
@@ -145,11 +176,17 @@ public class Certificates {
 		private Date fSTd; // fecha de extension 
 		//data vacation
 		private Integer daysCtzVc;
-		private String bcccVc;
-		private String bcdVc;
-		List<Map<String, String>> dataCtz;
+		private Double bcccVc;
+		private Double bcdVc;
 		private Integer durationContract;
+		private List<QuoteData> quoteData;
 		
+
+		public CertificatesBuilder setQuoteData(List<QuoteData> quoteData) {
+			this.quoteData = quoteData;
+			return this;
+		}
+
 		public CertificatesBuilder setDaysCtzVc(Integer daysCtzVc) {
 			this.daysCtzVc = daysCtzVc;
 			return this;
@@ -251,18 +288,29 @@ public class Certificates {
 		}
 
 
-		public CertificatesBuilder setBcccVc(String bcccVc) {
+		public CertificatesBuilder setBcccVc(Double bcccVc) {
 			this.bcccVc = bcccVc;
 			return this;
 		}
 
-		public CertificatesBuilder setBcdVc(String bcdVc) {
+		public CertificatesBuilder setBcdVc(Double bcdVc) {
 			this.bcdVc = bcdVc;
 			return this;
 		}
-
+		@Deprecated
 		public CertificatesBuilder setDataCtz(List<Map<String, String>> dataCtz) {
-			this.dataCtz = dataCtz;
+			List<QuoteData> quoteDatas = new LinkedList<>();
+			for(Map<String, String> ctz: dataCtz) {
+				quoteDatas.add(
+						new QuoteData()
+						.setAnio( Integer.parseInt(ctz.get("anioCtz")) )
+						.setMonth( Integer.parseInt(ctz.get("monthCtz")) )
+						.setDays( Integer.parseInt(ctz.get("daysCtz")) )
+						.setBccc( Double.parseDouble(ctz.get("bccc")) )
+						.setBcd( Double.parseDouble(ctz.get("bcd")) )
+				);
+			}
+			this.setQuoteData(quoteDatas);
 			return this;
 		}
 		
@@ -291,7 +339,7 @@ public class Certificates {
 			ct.daysCtzVc = this.daysCtzVc;
 			ct.bcccVc = this.bcccVc;
 			ct.bcdVc = this.bcdVc;
-			ct.dataCtz = this.dataCtz;
+			ct.quoteData = this.quoteData;
 			ct.durationContract = this.durationContract;
 			return ct;
 		}

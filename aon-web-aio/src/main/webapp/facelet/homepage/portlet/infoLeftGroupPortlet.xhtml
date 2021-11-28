@@ -8,11 +8,11 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 	
 	
-	<aon:div id="desktopDiv1" style="padding-top: 5px;" >
+	<aon:div id="desktopDiv1" style="padding-top: 5px; width:30px" >
 		
 	<style>
 		.aon-portlets-column1{
-			width : 10px;
+			width : 30px;
 			padding: 0px;
 			text-align: right;
 		}
@@ -34,26 +34,66 @@
 			border-top-right-radius: 50%; 
 			border-bottom-right-radius: 50%;  
 		}
+		
+		.aon-portlet-title {
+			color: gray;
+			font-size: 12px;
+			font-weight: normal;
+			margin-top: 15px;			
+			margin-left: 15px;
+			margin-bottom: 10px;
+			text-transform: uppercase;
+		}
+		
+		/* copied from aon.solutions's .aonButton */
+		.aonButton {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			background: var(--aonBlue);
+			border: none;
+			border-radius: 6px;
+			box-shadow: 0 2px 4px rgb(0,0,0,.15);
+			color: #fff;
+			cursor: pointer;
+			display: inline-block;
+			font-family: sans-serif;
+			font-size: 1rem;
+			font-weight: 700;
+			margin: 0;
+			outline: none !important;
+			padding: 1rem 2rem;
+			text-align: center;
+			text-decoration: none;
+			transition: background .25s ease-in-out,transform .15s ease;
+		}		
 	</style>
 	
 	<script type='text/javascript' >
+
+		function collapseMenuPortlet(el) {
+			el.nextSibling.style.display= "none";
+			el.firstChild.innerText= 'expand_more';
+			el.onclick=function() { expandMenuPortlet(el); };
+		} 
+		function expandMenuPortlet(el) {
+			el.nextSibling.style.display= "block";
+			el.firstChild.innerText= 'expand_less';
+			el.onclick=function() { collapseMenuPortlet(el); };
+		} 
+
 		function showInfoGroup() {
 			document.getElementById("aonContent:mainForm:showButton").style.display='none';
 			document.getElementById("aonContent:mainForm:hideButton").style.display='initial';
-			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='200px';
-			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.textAlign='right';
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='250px';
 			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='100%';
-			document.getElementById("aonContent:mainForm:desktopDiv1").style.paddingLeft='2px';
 			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='block';
 		}
 		
 		function hideInfoGroup() {
 			document.getElementById("aonContent:mainForm:showButton").style.display='initial';
 			document.getElementById("aonContent:mainForm:hideButton").style.display='none';
-			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='10px';
-			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.textAlign='left';
-			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='0%';
-			document.getElementById("aonContent:mainForm:desktopDiv1").style.paddingLeft='0px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='30px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='30px';
 			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='none';
 		}
 	</script>
@@ -72,23 +112,21 @@
 		onclick="javascript:hideInfoGroup()"/>	
 
 		<aon:div id="infoGroupDiv" style="display:none;  position:relative; top: -32px" >
-			<aon:div styleClass="aon-portlet" >
-				<aon:div styleClass="aon-portlet-title">								
-					<aon:commandLink id="menu_refresh"
-						title="#{bundle.aon_refresh}"
-						reRender="desktopDiv1" immediate="true"
-						actionListener="#{desktop.onRefresh}">
-						<aon:outputText value="#{bundle.aon_refresh}"
-							style="padding-bottom: 1px;padding-top: 1px;"
-							styleClass="aon-portlet-title-text aon-icon aon-icon-refresh"/>
-					</aon:commandLink>
-				</aon:div>
-			</aon:div>
-			<aon:if test="#{domainSwitcher.parentDomain or desktop.groupwareEnabled}">
-				<ui:include src="/facelet/homepage/portlet/taskPortlet.xhtml" />
+
+			<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
+
+			<aon:if test="#{!domainSwitcher.childDomain}">
+				<ui:include src="/facelet/new/portlet/filterControlPortlet.xhtml" />
 			</aon:if>
-			<ui:include src="/facelet/homepage/portlet/noticePortlet.xhtml" />
+
 		</aon:div>
+		
+		<aon:if test="#{!domainSwitcher.childDomain or timeControl.active}">
+			<script type='text/javascript' >
+				showInfoGroup();
+			</script>
+		</aon:if>
+	
 	</aon:div>
 					
 </ui:composition>

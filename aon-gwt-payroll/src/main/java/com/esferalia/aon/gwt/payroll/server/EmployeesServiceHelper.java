@@ -277,7 +277,7 @@ public class EmployeesServiceHelper {
 				}
 			});
 			employee.getFrb().orElseGet(() -> {
-				if ( endDate != null ) {
+				if ( endDate != null && DateUtils.getDaysBetween(currentDate, endDate) < 30 ) {
 					employeeStatus.and(new EmployeeStatus.EndDateNotFound());
 				}
 				return null;

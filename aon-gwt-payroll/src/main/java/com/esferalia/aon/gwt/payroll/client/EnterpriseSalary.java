@@ -289,7 +289,7 @@ public abstract class EnterpriseSalary extends Composite {
 	public void setEnterpriseSalaryObject(EnterpriseSalaryObject enterpriseSalaryObject) {
 		this.enterpriseSalaryObject = enterpriseSalaryObject;
 		setNewToolbarTitle();
-		this.enterpriseSalaryObject.getSalaries(
+		this.enterpriseSalaryObject.getSalariesDates(
 				s -> {
 					initDatesListBox();
 					initSuggestBox();
@@ -304,23 +304,12 @@ public abstract class EnterpriseSalary extends Composite {
 		yearTillT.clear();
 		yearTTo.clear();
 		
-		List<SalaryInfo> workplaceSalaries = this.enterpriseSalaryObject.getEnterpriseSalaries();
-		
-		Integer actualYear = DateUtils.getYear();
-		Integer firstPayroll = (null == workplaceSalaries || workplaceSalaries.isEmpty()) ? DateUtils.getYear() : DateUtils.getYear(workplaceSalaries.get(workplaceSalaries.size()-1).getStartDate());
-		Integer diffYears = actualYear - firstPayroll;
-		
-		Integer year = null;
+		Integer firstPayrollYear = DateUtils.getYear(this.enterpriseSalaryObject.getMinDate());
+		Integer lastPayrollYear = DateUtils.getYear(this.enterpriseSalaryObject.getMaxDate());
+		Integer diffYears = lastPayrollYear - firstPayrollYear;
 		
 		for(int i = 0; i <= diffYears; i++) {
-			year = actualYear - i;
-			String yearStr = year.toString();
-			yearTillT.addItem(yearStr, yearStr);
-			yearTTo.addItem(yearStr, yearStr);
-		}
-		
-		if(null != year && yearTillT.getItemCount() == 1) {
-			year--;
+			Integer year = lastPayrollYear - i;
 			String yearStr = year.toString();
 			yearTillT.addItem(yearStr, yearStr);
 			yearTTo.addItem(yearStr, yearStr);

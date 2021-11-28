@@ -251,6 +251,9 @@ public class Invoice implements Serializable, HasAudit {
 		return this;
 	}
 	public RegistryAddress getRegistryAddressData() {
+		if(registryAddressData == null) {
+			registryAddressData = new RegistryAddress();
+		}
 		return registryAddressData;
 	}
 	public Invoice setRegistryAddressData(RegistryAddress registryAddressData) {

@@ -3,30 +3,13 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client'>
 
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeContractPayments.MyStyle">
+	<ui:style>
 
-		.flexColumn{
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 10px;
-		}
-		
-		.heightAll{
-			height: 100%;
-		}
-		
-		.widthAll{
-			width: 100%;
-		}
-		
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
-			<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.heightAll} {style.widthAll}">
-				<c:DataGrid ui:field="contractConceptCalcDG" styleName="{style.heightAll} {style.widthAll}"></c:DataGrid>
-			</g:HTMLPanel>
+			<c:DataGrid ui:field="contractConceptCalcDG" />
 		</g:center>
 	</g:DockLayoutPanel>
 	

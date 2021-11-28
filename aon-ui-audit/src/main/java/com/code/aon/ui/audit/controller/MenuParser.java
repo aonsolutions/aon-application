@@ -41,7 +41,7 @@ public class MenuParser {
 	
 	private static final String TO_VIEW_ID = "to-view-id";
 	
-	private static final String MENU_TEMPLATE_PATH = "/facelet/homepage/menu.xhtml";
+	private static final String OLD_MENU_TEMPLATE_PATH = "/facelet/old/menu.xhtml";
 	
 	public static final String AON_COMMAND_LINK = "aon:commandLink";
 	
@@ -192,7 +192,7 @@ public class MenuParser {
 	
 	public void parse( ApplicationOptionController controller ) {
 		this.controller = controller;
-		Document document = getDocument(MENU_TEMPLATE_PATH);
+		Document document = getDocument(OLD_MENU_TEMPLATE_PATH);
 		if ( document != null ) {
 			parseMenu( document );
 		}		

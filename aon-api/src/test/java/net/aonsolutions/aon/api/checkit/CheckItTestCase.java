@@ -117,6 +117,16 @@ public class CheckItTestCase {
 				fail(e.getMessage());
 		}
 	}
+
+	@Test
+	public void testAddAccountWrongLogin() {
+		try {
+			System.out.println(CheckItAPI.addAccount(RAYSON_ID, 57, 39, "ES9121000418450200051332", 1));
+		} catch (Exception e) {
+			if (!e.getMessage().equals(CheckItException.NO_CONNECTION_MSG))
+				fail(e.getMessage());
+		}
+	}
 	
 	@Ignore("Ignored because it inserts a new account each time is called and they cannot be deleted for now")
 	@Test

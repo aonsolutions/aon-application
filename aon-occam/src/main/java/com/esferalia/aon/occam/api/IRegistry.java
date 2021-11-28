@@ -106,7 +106,8 @@ public interface IRegistry {
 	// ------------------- CUSTOMER
 	public Stream<Customer> getCustomerStream(AONContext ctx, CustomerFilter filter);
 	public Customer insertCustomer(AONContext ctx, Customer customer);
-
+	public Customer saveCustomer(AONContext ctx, Customer customer);
+	
 	// ------------------- SELLER
 	public Stream<Seller> getSellerStream(AONContext ctx, SellerFilter filter);
 	
@@ -116,10 +117,14 @@ public interface IRegistry {
 	
 	// ------------------- SUPPLIER
 	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter);
+	public Stream<Supplier> getSupplierStream(AONContext ctx, SupplierFilter filter, int offset, int limit);
+	public Supplier saveSupplier(AONContext ctx, Supplier supplier);
 	public Supplier insertSupplier(AONContext ctx, Supplier supplier);
 
 	// ------------------- CREDITOR
 	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter);
+	public Stream<Creditor> getCreditorStream(AONContext ctx, CreditorFilter filter, int offset, int limit);
+	public Creditor saveCreditor(AONContext ctx, Creditor creditor);
 	public Creditor insertCreditor(AONContext ctx, Creditor creditor);
 
 	// ------------------- TARGET
@@ -129,6 +134,7 @@ public interface IRegistry {
 
 	// ------------------- RECORD DATA
 	public Stream<RecordData> getRecordDataStream(AONContext ctx, RecordDataFilter filter);
+	public RecordData saveRecordData(AONContext ctx, RecordData recordData);
 
 	// ------------------- COMPANY
 	public Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] scopes);

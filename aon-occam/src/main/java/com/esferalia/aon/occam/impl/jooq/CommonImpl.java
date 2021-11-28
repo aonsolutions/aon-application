@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -21,6 +22,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
+import com.esferalia.aon.occam.api.model.Filter.DataRequestFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
@@ -45,6 +47,7 @@ import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataRequestDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
@@ -303,8 +306,35 @@ public class CommonImpl implements ICommon {
 				configuration -> TaxDAO.getTaxs(ctx, filter));
 	}
 
+	// ------------------ DATA REQUEST
+	
+	@Override
+	public DataRequest getDataRequest(AONContext ctx, DataRequestFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DataRequestDAO.get(ctx, filter));	
+	}
+	
+	@Override
+	public Stream<DataRequest> getDataRequestStream(AONContext ctx, DataRequestFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DataRequestDAO.getStream(ctx, filter));	
+	}
+	
+	@Override
+	public DataRequest saveDataRequest(AONContext ctx, DataRequest dataRequest) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DataRequestDAO.save(ctx, dataRequest));	
+	}
+	
+	
 	// ------------------ DATA RESPONSE
 
+	@Override
+	public DataResponse getLastDataResponse(AONContext ctx, DataResponseFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DataResponseDAO.getLast(ctx, filter));
+	}
+	
 	@Override
 	public Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseSource source, DataResponseFilter filter) {
 		return ctx.getDslContext().transactionResult(

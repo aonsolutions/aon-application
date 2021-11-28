@@ -7,8 +7,8 @@ import {  createMainView, createTitle, createAonTextArea, createChat, createSect
 import { addIconToolbar, buildForm, buildTextareaToolbar, dialogTaskTags, downChat, upChat } from "./utils.js";
 import { AonIconButton } from "../../../components/aon-icon-button.js";
 import { getNextTask, getPreviousTask } from "../TaskCache.js";
-import { SigninSidenav } from "../../signin/signinEnums.js";
 import * as ACTIONS from "../../actions.js";
+import { SigninSidenav } from "../../timecontrol/signinEnums.js";
 
 /**
  * 
@@ -52,12 +52,13 @@ const buildToolbar = (aonMessengerChat) => {
     toolbar.addButton2(ACTIONS.NEXT, () => aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getNextTask()) );
 		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
 
-    toolbar.addButton2({
+    if( task.status && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
+      toolbar.addButton2({
       id: 'Labels',
       name: 'Labels',
       icon: MATERIAL_ICONS.LABEL
-  }, (ev) =>  dialogTaskTags(ev, aonMessengerChat));
-
+      }, (ev) =>  dialogTaskTags(ev, aonMessengerChat));
+    }
 
     if(task.id){
       if( [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) ){
@@ -142,13 +143,13 @@ const addTextAreaChat = (wrapper) => {
 
     divs.aonTextArea.addEventListener(EVENT.KEYDOWN, (ev)=> {
       if (ev.ctrlKey && ev.keyCode == 13) {
-        aonMessengerChat.saveTaskWorkflow();
+        aonMessengerChat.saveComment();
       } else if(ev.ctrlKey && ev.keyCode == 88){
         openFullComment(aonMessengerChat, divs.aonTextArea);
       }
     });
 
-    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveTaskWorkflow());
+    divs.iconSend.addEventListener(EVENT.CLICK, ()=> aonMessengerChat.saveComment());
     divs.iconOpenFull.addEventListener(EVENT.CLICK,()=> openFullComment(aonMessengerChat, divs.aonTextArea));
   }
 }
@@ -173,7 +174,7 @@ const openFullComment = (aonMessengerChat, aonTextArea) => {
 
   let button = dialog.addSendAction(
     ()=>{
-      aonMessengerChat.saveTaskWorkflow();
+      aonMessengerChat.saveComment();
       dialog.close();
     }, 
     MSG.SEND

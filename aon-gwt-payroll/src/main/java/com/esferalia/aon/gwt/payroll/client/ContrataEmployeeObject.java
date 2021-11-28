@@ -221,7 +221,8 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	public void setContractSpecificData(Consumer<Void> success, Consumer<Throwable> failure) {
+	public void setContractSpecificData(ContractSpecificData contractSpecificData, Consumer<Void> success, Consumer<Throwable> failure) {
+		employeeContractData.setContractSpecificData(contractSpecificData);
 		enterprisesService.setContractSpecificData(employeeContractData, new AsyncCallback<Void>() {
 			
 			@Override
@@ -440,6 +441,13 @@ public class ContrataEmployeeObject {
 			}
 		});
 	}
+	
+	// ------------------------------------------------- Database Methods (ContractVariables)
+	
+		public void getEmployeeContractVariablesObject(Consumer<EmployeeContractVariablesObject> success) {
+			EmployeeContractVariablesObject employeeContractVariablesObject = new EmployeeContractVariablesObject(contractData.getContractId());
+			success.accept(employeeContractVariablesObject);
+		}
 	
 	// ------------------------------------------------- Database Methods (CheckStatus)
 	

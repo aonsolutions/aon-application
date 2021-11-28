@@ -1,41 +1,105 @@
 package com.esferalia.aon.occam.api.model.payroll;
 
+import static java.util.Objects.isNull;
+
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.mvel2.MVEL;
 
 public class Employee implements Serializable{
+	
+	public static final String TC2 = "TC2";
+	public static final String RLCE = "RLCE";
+	public static final String OCUPACION = "OCUPACION";
+	public static final String GRUPO_COTIZACION = "GRUPO_COTIZACION";
+	public static final String COEFICIENTE_PARCIALIDAD = "COEFICIENTE_PARCIALIDAD";
+
+	public static class Data<T> {
+		private T value;
+		private LocalDate endDate;
+		private LocalDate startDate;
+		
+		private Data() {
+			
+		}
+		
+		public T getValue() {
+			return value;
+		}
+		
+		public LocalDate getEndDate() {
+			return endDate;
+		}
+		
+		public LocalDate getStartDate() {
+			return startDate;
+		}
+		
+	}
+
+	public static class ExpressionData {
+		private String expression;
+		private LocalDate endDate;
+		private LocalDate startDate;
+		
+		public String getExpression() {
+			return expression;
+		}
+
+		public LocalDate getEndDate() {
+			return endDate;
+		}
+		
+		public LocalDate getStartDate() {
+			return startDate;
+		}
+		
+	}
+	
 	
 	private String naf;
 	private String dni;
 	private String name;
-	private Date birthDate;
+	private LocalDate birthDate;
 	private String phone;
 	private String sex; 
 	
 	private String cif;
 	private String ccc;
 	
-	private String group;
 	private String category;
 	private String regime;
 	private Date startDate;
 	private Date endDate;
-	private Double factor;
-//	private String status;
-//	private String statusDescription;
-	private String type = "000";
 	
 	private Date insertDate;
 	private Date deleteDate;
-	
-	
-	private String occupation;
-	private String rlce;
+	private String workplaceName;
 	
 	private Integer employeeId;
 	private Integer workplaceId;
 	
+	private Map<String, Collection<ExpressionData>> dataMap;
+	
+	private Map<String, Collection<ExpressionData>> infoMap;
+	
+	public Employee() {
+		this.sex = "U";
+		this.dataMap = new HashMap<String, Collection<ExpressionData>>();
+		this.infoMap = new HashMap<>();
+	}
 	
 	public String getNaf() {
 		return naf;
@@ -91,24 +155,6 @@ public class Employee implements Serializable{
 		return this;
 	}
 	
-	public String getContractType() {
-		return type;
-	}
-	
-	public Employee setContractType(String contractType) {
-		this.type = contractType;
-		return this;
-	}
-
-	public String getQuoteGroup() {
-		return group;
-	}
-	
-	public Employee setQuoteGroup(String group) {
-		this.group = group;
-		return this;
-	}
-	
 	public Integer getEmployeeId() {
 		return employeeId;
 	}
@@ -122,12 +168,23 @@ public class Employee implements Serializable{
 		return workplaceId;
 	}
 	
+	
+	public Employee setWorkplaceName(String workplaceName) {
+		this.workplaceName = workplaceName;
+		return this;
+	}
+
+	
 	public Employee setWorkplaceId(Integer workplaceId) {
 		this.workplaceId = workplaceId;
 		return this;
 	}
 
 	// ------------------------------------------------------------------------
+	
+	public Optional<String> getWorkplaceName() {
+		return Optional.ofNullable(workplaceName);
+	}
 	
 	public Optional<String> getSex() {
 		return Optional.ofNullable(sex);
@@ -157,23 +214,13 @@ public class Employee implements Serializable{
 	}
 
 	public Optional<Date> getBirthDate() {
-		return Optional.ofNullable(birthDate);
+		return Optional.ofNullable(toDate(birthDate));
 	}
 	
 	public Employee setBirthDate(Date birthDate) {
-		this.birthDate = birthDate;
-		return this;
+		return setBirthDate(toLocalDate(birthDate));
 	}
 	
-	public Optional<Double> getFactor() {
-		return Optional.ofNullable(factor);
-	}
-	
-	public Employee setFactor(double factor) {
-		this.factor = factor;
-		return this;
-	}
-
 	public Optional<Date> getEndDate() {
 		return Optional.ofNullable(endDate);
 	}
@@ -201,10 +248,6 @@ public class Employee implements Serializable{
 		return this;
 	}
 
-	//	public Optional<String> getStatus() {
-//		return Optional.ofNullable(status);
-//	}
-	
 	public Optional<String> getCategory() {
 		return Optional.ofNullable(category);
 	}
@@ -213,33 +256,261 @@ public class Employee implements Serializable{
 		this.category = category;
 		return this;
 	}
+	
+	public Optional<String> getContractType() {
+		return getContractType(LocalDate.now());
+	}
+	
+	public Collection<Data<String>> getContractTypes() {
+		return getDatas(TC2, String.class);
+	}
 
-//	public Optional<String> getStatusDescription() {
-//		return Optional.ofNullable(statusDescription);
-//	}
-	
-	public Optional<String> getOccupation() {
-		return Optional.ofNullable(occupation);
+	public Employee setContractType(String contractType ) {
+		return setString(TC2, contractType);
 	}
-	
-	public Employee setOccupation(String occupation) {
-		this.occupation = occupation;
-		return this;
+
+	public Optional<String> getContractType(LocalDate date) {
+		return getData(TC2, date, String.class);
 	}
-	
+
+	public Employee addContractType(String contractType, Date startDate, Date endDate) {
+		return addString(TC2, contractType, toLocalDate(startDate), toLocalDate(endDate));
+	}
+
 	public Optional<String> getRlce() {
-		return Optional.ofNullable(rlce);
+		return getRlce(LocalDate.now());
 	}
 	
-	public Employee setRlce(String rlce) {
-		this.rlce = rlce;
+	public Employee setRlce(String rlec ) {
+		return setString(RLCE, rlec);
+	}
+
+	public Collection<Data<String>> getRlces() {
+		return getDatas(RLCE, String.class);
+	}
+
+	public Optional<String> getRlce(LocalDate date) {
+		return getData(RLCE, date, String.class);
+	}
+
+	public Employee addRlce(String rlce, Date startDate, Date endDate) {
+		return addString(RLCE, rlce, toLocalDate(startDate), toLocalDate(endDate));
+	}
+
+	public Optional<String> getOccupation() {
+		return getOccupation(LocalDate.now());
+	}
+
+	public Employee setOccupation(String ocupation) {
+		return setString(OCUPACION, ocupation);
+	}
+
+	public Collection<Data<String>> getOccupations() {
+		return getDatas(OCUPACION, String.class);
+	}
+
+	public Optional<String> getOccupation(LocalDate date) {
+		return getData(OCUPACION, date, String.class);
+	}
+
+	public Employee addOccupation(String occupation, Date startDate, Date endDate) {
+		return addString(OCUPACION, occupation, toLocalDate(startDate), toLocalDate(endDate));
+	}
+
+	public Optional<String> getQuoteGroup() {
+		return getQuoteGroup(LocalDate.now());
+	}
+	
+	public Employee setQuoteGroup(String quoteGroup ) {
+		return setString(GRUPO_COTIZACION, quoteGroup);
+	}
+	
+	public Collection<Data<String>> getQuoteGroups() {
+		return getDatas(GRUPO_COTIZACION, String.class);
+	}
+
+	public Optional<String> getQuoteGroup(LocalDate date) {
+		return getData(GRUPO_COTIZACION, date, String.class);
+	}
+
+	public Employee addQuoteGroup(String quoteGroup, Date startDate, Date endDate) {
+		return addString(GRUPO_COTIZACION, quoteGroup, toLocalDate(startDate), toLocalDate(endDate));
+	}
+
+	public Optional<Double> getFactor() {
+		return getFactor(LocalDate.now());
+	}
+
+	public Employee setFactor(Double factor ) {
+		return setNumber(COEFICIENTE_PARCIALIDAD, factor);
+	}
+
+	public Collection<Data<Double>> getFactors() {
+		return getDatas(COEFICIENTE_PARCIALIDAD, Double.class);
+	}
+
+	public Optional<Double> getFactor(LocalDate date) {
+		return getData(COEFICIENTE_PARCIALIDAD, date, Double.class );
+	}
+	
+	public Employee addFactor(Double factor, Date startDate, Date endDate) {
+		return addNumber(COEFICIENTE_PARCIALIDAD, factor, toLocalDate(startDate), toLocalDate(endDate));
+	}
+
+	public Map<String, Collection<ExpressionData>> getDatas() {
+		return Collections.unmodifiableMap(dataMap);
+	}
+	
+	public Map<String, Collection<ExpressionData>> getInfos() {
+		return Collections.unmodifiableMap(infoMap);
+	}
+	
+	public void addData(String name, String expression, Date startDate, Date endDate) {
+		addData(name, expression, toLocalDate(startDate), toLocalDate(endDate));
+	}
+	
+	public void addData(String name, String expression, java.sql.Date startDate, java.sql.Date endDate) {
+		addData(name, expression, startDate.toLocalDate(), endDate == null ? null : endDate.toLocalDate());
+	}
+	
+	public void addInfo(String name, String expression, Date startDate, Date endDate) {
+		addInfo(name, expression, toLocalDate(startDate), toLocalDate(endDate));
+	}
+	
+	// ----------------------------------------------------------------- Object
+	public Employee setBirthDate(LocalDate birthDate) {
+		this.birthDate = birthDate;
 		return this;
 	}
 	
-	public Employee set(Date deleteDate) {
-		this.deleteDate = deleteDate;
+	@Override
+	public int hashCode() {
+		if ( employeeId != null )
+			return Objects.hashCode(employeeId);
+		else
+			return Objects.hash(naf, ccc, startDate, endDate);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Employee ) )
+			return false;
+		
+		Employee employee = (Employee) obj;
+		
+		if ( employeeId != null ) 
+			return Objects.equals(employeeId, employee.employeeId);
+		else 
+			return Objects.equals(naf, employee.naf)
+					&& Objects.equals(ccc, employee.ccc)
+					&& Objects.equals(startDate, employee.startDate)
+					&& Objects.equals(endDate, employee.endDate);
+	}
+
+	// -------------------------------------------------------------- protected
+	
+	protected Employee setString(String name, String str) {
+		String expression = str != null ? String.format("\"%s\"", str): null;
+		return setData(name, expression );
+	}
+
+	protected <T extends Number> Employee setNumber(String name, T t) {
+		String expression = t != null ? Double.toString(t.doubleValue()): null;
+		return setData(name, expression );
+	}
+
+	protected Employee addString(String name, String str, LocalDate startDate, LocalDate endDate) {
+		String expression = str != null ? String.format("\"%s\"", str): null;
+		return addData(name, expression, startDate, endDate );
+	}
+
+	protected <T extends Number> Employee addNumber(String name, T t, LocalDate startDate, LocalDate endDate) {
+		String expression = t != null ? Double.toString( t.doubleValue()): null;
+		return addData(name, expression, startDate, endDate );
+	}
+
+	protected Employee setData(String name, String expression) {
+		dataMap.remove(name);
+		ExpressionData expressionData = new ExpressionData();
+		expressionData.expression = expression;
+		expressionData.endDate = toLocalDate(this.endDate);
+		expressionData.startDate = toLocalDate(this.startDate);
+		dataMap.put(name, Arrays.asList(expressionData));
+		return this;
+	}
+
+	protected Employee addData(String name, String expression, LocalDate startDate, LocalDate endDate) {
+		ExpressionData expressionData = new ExpressionData();
+		expressionData.endDate = endDate;
+		expressionData.startDate = startDate;
+		expressionData.expression = expression;
+
+		Collection<ExpressionData> expressionDatas = dataMap.computeIfAbsent(name, key -> new LinkedList<>());
+		
+		expressionDatas.add(expressionData);
+		
 		return this;
 	}
 	
+	protected Employee addInfo(String name, String expression, LocalDate startDate, LocalDate endDate) {
+		ExpressionData expressionData = new ExpressionData();
+		expressionData.endDate = endDate;
+		expressionData.startDate = startDate;
+		expressionData.expression = expression;
+
+		Collection<ExpressionData> expressionDatas = infoMap.computeIfAbsent(name, key -> new LinkedList<>());
+		
+		expressionDatas.add(expressionData);
+		
+		return this;
+	}
 	
+	protected <T> Collection<Data<T>> getDatas(String name, Class<T> type ) {
+		return
+		getSortedDatas(name)
+		.map(d -> {
+			Data<T> data = new Data<>();
+			data.endDate = d.endDate;
+			data.startDate = d.startDate;
+			data.value = MVEL.eval(d.expression, type);
+			return data;
+		})
+		.collect(Collectors.toList())
+		;
+	}
+	
+	// ---------------------------------------------------------------- private
+	
+	private Stream<ExpressionData> getSortedDatas(String name ) {
+		return dataMap .getOrDefault(name, Collections.emptyList()).stream().sorted((d1,d2) -> d1.startDate.compareTo(d2.startDate) );
+	}
+
+	private <T> Optional<T> getData(String name, LocalDate date, Class<T> type) {
+		return dataMap.getOrDefault(name, Collections.emptySortedSet())
+		.stream()
+		.filter( data -> contains(data, date) )
+		.filter( data -> Objects.nonNull(data.expression))
+		.map( data -> MVEL.eval(data.expression, type))
+		.findFirst();
+	}
+	
+	private static boolean contains( ExpressionData expressionData, LocalDate date) {
+		return contains(expressionData.startDate, expressionData.endDate, date);
+	}
+
+	private static boolean contains( LocalDate startDate, LocalDate endDate, LocalDate date) {
+		return ( date.compareTo(startDate) >= 0 ) 
+				&& ( endDate == null || (date.compareTo(endDate) <= 0) ); 
+	}
+	
+	@SuppressWarnings("deprecation")
+    public static Date toDate(LocalDate date) {
+		return isNull(date) ? null : new Date(date.getYear() - 1900, date.getMonthValue() -1, date.getDayOfMonth()); 
+    }
+
+    @SuppressWarnings("deprecation")
+    public static LocalDate toLocalDate(Date date) {
+		return isNull(date) ? null : LocalDate.of(date.getYear() + 1900, date.getMonth() + 1, date.getDate()); 
+    }
+    
 }

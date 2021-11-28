@@ -681,7 +681,7 @@ public class AON_SOLUTIONS {
 	
 	public static Invoice acceptInvoice(String domainName, Integer domainId, String login, Invoice invoice) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().acceptInvoice(ctx, invoice, null);
+			return getFinance().acceptInvoice(ctx, invoice, invoice.getId());
 		}
 	}
 	

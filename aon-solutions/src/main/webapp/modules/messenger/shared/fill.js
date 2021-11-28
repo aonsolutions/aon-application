@@ -1,6 +1,6 @@
-import { EVENT, MSG } from "../../../environments/environments.js";
+import {  EVENT, MSG } from "../../../environments/environments.js";
 import {Apps} from "../../../services/app.js";
-import { getOfficeProjects, getProjects} from "../../../services/projectService.js";
+import { getProjects} from "../../../services/projectService.js";
 import { getCustomers } from "../../../services/registryService.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
 import { getTaskProcess } from "../../../services/taskService.js";
@@ -34,39 +34,36 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
     if(source){  aonSelect.value = source; } 
 }
 
-
-/**
- * fill typeRequest (Tipo de solicitud)
- * @param {Task} Class task
- */
- export const fillProject = async (task) => {
-    const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
+export const fillAdvisory = async (task, aonMessengerChat) => {
+    const aonSelect = document.getElementById(MESSENGER_IDS.ADVISORY_TASK);
     if(aonSelect){
         aonSelect.loading(true);
-        const project = task.getProject();
+        const domain = task.getDomain();
         try {
-            let projects = [];
-            let registry = task.getRegistry();
-            if(registry.id && task.isGestor())
-                projects = await getProjects({ registry: registry.id });
-            else
-                projects = await getOfficeProjects();
+            let offices = await aonMessengerChat.getOfficeProjects();
 
-            aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
+            aonSelect.setOptions(offices.map(office => ({...office, value:office.domain.id, name:office.domain.description})));
+            aonSelect.addEventListener(EVENT.CHANGE,  ({detail})=>{
+                if(detail && detail.value){
+                    task.setDomain(detail.domain);
+                    task.setRegistry(detail.registry);
+                    task.setAppParams(detail.appParams);
+                    task.changeWhAndTh();
+                    if(task.isExternal() || !task.id )
+                        task.setSender({});
 
-            
-            if(project && project.id){ aonSelect.value = project.id; } 
-
-            const fnProject = ({detail})=>{
-                if(detail && detail.id)
-                    task.setProject(detail);
-                else 
-                    task.setProject({});
-            };
-
-            aonSelect.removeEventListener(EVENT.CHANGE, fnProject);
-            aonSelect.addEventListener(EVENT.CHANGE, fnProject);
+                    task.setWorkflowTmp({...task.getWorkflowTmp(), domain: task.domain.id});
+                    fillProject(aonMessengerChat.task, detail.projects);
+                }
+            });
         
+            if(domain && domain.id && task.getId())
+                aonSelect.value = domain.id; 
+            else if(1===offices.length)
+                aonSelect.setIndexOf(0);
+
+            if( (domain && domain.id && task.getId()) || 1 === offices.length)
+                aonSelect.setDisabled(true);
         } catch (error) {
             console.log(error);
         }
@@ -76,27 +73,69 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
 
 
 /**
+ * fill typeRequest (Tipo de solicitud) RE
+ * @param {Task} Class task
+ * @param {Array} Array optionals
+ */
+export const fillProject = async (task, projects =[], registry = undefined) => {
+    const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
+    if(aonSelect){
+        aonSelect.loading(true);
+        const project = task.getProject();
+        try {
+            // if(projects.length ===0 && (task.id && !task.isExternal()) )
+            if( projects.length ===0 && registry )
+                projects = await getProjects({ registry: task.getRegistry().id });
+              
+            aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
+            
+            if(project && project.id)
+                aonSelect.value = project.id; 
+            else if(1===projects.length && !task.id){
+                aonSelect.setIndexOf(0);
+                aonSelect.parentNode.style.display = "none";
+            } else if(!projects.length)
+                aonSelect.parentNode.style.display = "none";
+
+            aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
+                if(detail && detail.id)
+                    task.setProject(detail);
+                else 
+                    task.setProject({});
+            });
+
+            // if(!task.isExternal() && task.getId())
+            //     aonSelect.setDisabled(true);
+        } catch (error) {
+            console.log(error);
+        }
+        aonSelect.loading(false);
+    }
+}
+
+/**
  * fill workgroup (Grupo de trabajo)
- * @param {Task} task Class task
  * @param {HTMLElement} aon-messenger-chat component
  */
-export const fillWorkGroup = async (task, aonMessengerChat) => {
+export const fillWorkGroup = async (aonMessengerChat) => {
     try {
+        const task = aonMessengerChat.task;
         const aonSelect = await waitEl(`#${MESSENGER_IDS.WORKGROUP}`);
+        const workgroup = task.getWorkgroup();
         aonSelect.loading(true);
         const workgroups = await aonMessengerChat.getWorkGroups();
         let options = [];
-        if(workgroups && workgroups.length>0){
+        if(workgroups && workgroups.length>0)
             options = workgroups.map( wg=> ({...wg, id: wg.value}) );
-        } else if(task.workgroup.id && task.workgroup.description) {
-            options = [{...task.workgroup, value:task.workgroup.id, name:task.workgroup.description}];
-        }
+        
+        const exist = options.some(({id})=> id  === workgroup.id );
+        if( !exist && workgroup.id && workgroup.description)
+            options.push({...workgroup, value:workgroup.id, name:workgroup.description});
         
         aonSelect.setOptions(options);
         
-        if(task.workgroup && task.workgroup.id){
+        if(task.workgroup && task.workgroup.id)
             aonSelect.value = task.workgroup.id;
-        } 
 
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
             if(detail)
@@ -124,7 +163,6 @@ export const fillTaskHolder = async (aonMessengerChat) => {
         let options = [];
         if(taskHolders && taskHolders.length>0){
             options = taskHolders.map( th=> ({...th, value: th.id}) )
-            .filter( (v,i,s)=>s.findIndex((m) => m.id === v.id) === i )
         } else if(task.task_holder.id && task.task_holder.name) {
             options = [{...task.task_holder, value:task.task_holder.id}];
         }
@@ -149,6 +187,7 @@ export const fillTaskHolder = async (aonMessengerChat) => {
  */
 export const fillCustomer = async ({registry}, aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
+    const task = aonMessengerChat.task;
     if(aonSelect){
         aonSelect.clear();
         aonSelect.loading(true);
@@ -157,9 +196,8 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
             const customers = await getCustomers({reload:false, page:1, perPage:50});
 
             let options = [];
-            if(customers && customers.length>0){
+            if(customers && customers.length>0)
                 options = customers.map( c=> ({...c, value: c.id}) ) ;
-            }
             
             const exist = options.some(({id})=> id  ===registry.id );
             if( !exist && registry.id && registry.name){
@@ -171,7 +209,7 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
             aonSelect.addEventListener(EVENT.INPUT, async({target})=>{
                 const value = target.value;
                 if(value.length > 2){
-                    const cs = await getCustomers({reload:true, page:1, perPage:30, search: value});
+                    const cs = await getCustomers({reload:true, page:1, perPage:30, value});
                     aonSelect.setOptions( cs.map( c=> ({...c, value: c.id}) ) );
                 }
             });
@@ -180,8 +218,8 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
     
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail){
-                    aonMessengerChat.task.setRegistry(detail);
-                    fillProject(aonMessengerChat.task);
+                    task.setRegistry(detail);
+                    fillProject(task, undefined,  task.getRegistry().id);
                 } 
             });
         } catch (error) { }

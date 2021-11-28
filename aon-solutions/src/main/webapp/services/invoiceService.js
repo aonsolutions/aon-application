@@ -4,12 +4,14 @@ import { API_URL } from "../environments/environments.js";
 
 
 // PRINT CONFIGURATION
+export const getInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/configuration`, data);
 
 export const getPrintInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/print_configuration`, data);
 
 export const savePrintInvoiceConfiguration = (data) =>  post(`${API_URL}/invoice/print_configuration`, data);
 
 // INVOICE
+export const getSalesSeries = (data) => get(`${API_URL}/invoice/series`, data)
 
 export const invoiceSelection = (inv) => invoice = inv;
 
@@ -25,7 +27,8 @@ export const sendInvoiceMail = (data) => post(`${API_URL}/send_mail/invoice`, da
 
 export const downloadInvoices = (data) => openFileUrl(`${API_URL}/multiple_download/invoice?json=${data}`);
 
-export const deleteInvoices = (invoiceIds) => remove(`${API_URL}/invoice`, { id: invoiceIds });
+export const deleteRawdocInvoices = (invoiceIds) => remove(`${API_URL}/invoice/rawdoc`, { id: invoiceIds });
+export const deleteInvoice = (invoiceId) => remove(`${API_URL}/invoice`, { id: invoiceId });
 
 export const getInvoiceAccounts = (data) => get(`${API_URL}/invoice/accounts`, data);
 

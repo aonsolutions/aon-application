@@ -92,22 +92,6 @@ public abstract class SalaryTable extends ResizeComposite {
 	    
 	    new ListDataProvider<SalaryInfo>(Collections.emptyList()).addDataDisplay(salaryDG);
 	    
-	    // Add style to table header
-	    addStyleToHeader();
-	}
-	
-	public void addStyleToHeader() {
-		String headerStyle = "rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header";
-		salaryDG.getHeader(0).setHeaderStyleNames(headerStyle);
-		salaryDG.getHeader(1).setHeaderStyleNames(headerStyle);
-	    salaryDG.getHeader(2).setHeaderStyleNames(headerStyle);
-	    salaryDG.getHeader(3).setHeaderStyleNames(headerStyle);
-	    salaryDG.getHeader(4).setHeaderStyleNames(headerStyle);
-	    salaryDG.getHeader(5).setHeaderStyleNames(headerStyle);
-	    salaryDG.getHeader(6).setHeaderStyleNames(headerStyle);
-	    salaryDG.getHeader(7).setHeaderStyleNames(headerStyle);
-	    salaryDG.getHeader(8).setHeaderStyleNames(headerStyle);
-	    salaryDG.getHeader(9).setHeaderStyleNames(headerStyle);
 	}
 	
 	private void addColumns(MultiSelectionModel<SalaryInfo> selectionModel) {
@@ -168,6 +152,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	    };
 
 	    startDateColumn.setSortable(true);
+	    startDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    salaryDG.setColumnWidth(startDateColumn, 10, Unit.PCT);
 	    
 	    // End date column.
@@ -179,6 +164,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	    };
 
 	    endDateColumn.setSortable(true);
+	    endDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    salaryDG.setColumnWidth(endDateColumn, 10, Unit.PCT);
 	    
 	    // Contract type column.
@@ -198,7 +184,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	    	public String getValue(SalaryInfo salaryInfo) {
 	    		if(isEmptyDoubleValue(salaryInfo.getTotalPayment()))
 	    			return EMPTYDOUBLEVALUE;
-	    		return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalPayment());
+	    		return NumberFormat.getFormat("0.00").format(salaryInfo.getTotalPayment());
 	    	}
 	    };
 	 
@@ -211,7 +197,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	    	public String getValue(SalaryInfo salaryInfo) {
 	    		if(isEmptyDoubleValue(salaryInfo.getTotalDecuction()))
 	    			return EMPTYDOUBLEVALUE;
-	    		return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalDecuction());
+	    		return NumberFormat.getFormat("0.00").format(salaryInfo.getTotalDecuction());
 	    	}
 	    };
 	    
@@ -224,7 +210,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	    	public String getValue(SalaryInfo salaryInfo) {
 	    		if(isEmptyDoubleValue(salaryInfo.getTotalLiquid()))
 	    			return EMPTYDOUBLEVALUE;
-	    		return NumberFormat.getFormat("#.00").format(salaryInfo.getTotalLiquid()) + " \u20AC";
+	    		return NumberFormat.getFormat("0.00").format(salaryInfo.getTotalLiquid()) + " \u20AC";
 	    	}
 	    };
 	    
