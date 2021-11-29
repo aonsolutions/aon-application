@@ -77,14 +77,14 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 	
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
-
+	
 	private Integer rattachId;
 
 	// -------------------------------------------------------------------------------------------
 	// ----------------------------------- CONSTRUCTOR -------------------------------------------
 	// -------------------------------------------------------------------------------------------
 	
-	public SecondaryUserDialog() {
+	protected SecondaryUserDialog(Integer rattachId) {
 		setCaption("Alta usuario secundario");
 		
 		setWidget(binder.createAndBindUi(this));
@@ -97,7 +97,7 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 		initView();
 	}
 	
-	public SecondaryUserDialog(String naf) {
+	protected SecondaryUserDialog(Integer rattachId, String naf) {
 		setCaption("Alta usuario secundario");
 		
 		setWidget(binder.createAndBindUi(this));
