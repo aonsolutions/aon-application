@@ -165,10 +165,7 @@ public class AonServletUtils {
 					.fetchOne(Domain.DOMAIN.PARENT);
 		} catch (Exception e) {
 			throw new SQLException(e.getMessage(), e);
-		} finally {
-			if ( connection != null )
-				connection.close();
-		}
+		} 
 	}
 
 	public static Integer getEnterpriseID(String domainName) throws SQLException {
