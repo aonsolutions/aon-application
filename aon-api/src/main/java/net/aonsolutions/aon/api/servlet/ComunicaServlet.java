@@ -181,7 +181,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private Collection<Employee> getMovements(AonApiData api) throws Exception {
 		
 		Domain domain = api.getDomain();
-		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		ArrayList<Employee> employees = new ArrayList<>();
 		List<String> errors = new ArrayList<>();
 
@@ -273,8 +273,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private JSONArray getIpfxNaf(AonApiData api) throws Exception {
 			Domain domain = api.getDomain();
-			JSONArray arr = new JSONArray();
-			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+
+			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
+
+			JSONArray arr = new JSONArray();			
 			final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 			
 			String nss = api.getParams().optString("nss");
@@ -427,7 +429,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private Employee getEmployee(AonApiData api) throws Exception{
         JSONObject params = api.getParams(); 
 		Domain domain = api.getDomain();
-		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 
 		String regime = params.optString("regime");
 		String ccc    = params.optString("ctaCti");
@@ -439,7 +441,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	private JSONObject updateContract(AonApiData api) throws Exception {
 		
 		Domain domain = api.getDomain();
-		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		
 		JSONObject json = new JSONObject();
 		JSONArray errors = new JSONArray();
@@ -557,7 +559,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				//SEND EMAIL
 				Domain domain = api.getDomain();
 				User user = AON_SOLUTIONS.getUser(domain, api.getToken());
-				Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+				Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
 				String regime = employee.getRegime();
 				String ccc = employee.getCtaCti().get();
 				String nss = employee.getNss();
