@@ -449,7 +449,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 
 	
 	protected String getDomain(HttpServletRequest req) {
-		return req.getServerName();
+		return req.getParameter(Parameter.DOMAIN.name())!=null ? req.getParameter(Parameter.DOMAIN.name()) : req.getServerName();
 	}
 	
 	protected Connection getConnection(HttpServletRequest req) throws SQLException {
