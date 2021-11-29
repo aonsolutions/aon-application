@@ -262,6 +262,16 @@
 										</aon:commandLink>
 									</aon:div>
 								</aon:if>
+								<aon:if test="#{domainSwitcher.betaUser}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_main_digital_certificates_new" 
+											action="gwt_main_digital_certificates_new"
+											title="#{bundle.certificate_management_menu}"
+											value="#{bundle.certificate_management_menu}" 
+											target="gwt">
+										</aon:commandLink>
+									</aon:div>
+								</aon:if>
 								<!--  
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
