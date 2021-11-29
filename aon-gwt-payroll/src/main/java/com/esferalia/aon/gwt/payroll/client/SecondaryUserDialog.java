@@ -78,6 +78,8 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 	private Button closeBtnDialog;
 	private Button acceptBtnDialog;
 
+	private Integer rattachId;
+
 	// -------------------------------------------------------------------------------------------
 	// ----------------------------------- CONSTRUCTOR -------------------------------------------
 	// -------------------------------------------------------------------------------------------
@@ -87,6 +89,7 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 		
 		setWidget(binder.createAndBindUi(this));
 		
+		this.rattachId = rattachId;
 		getButtonsPanel();
 		this.secondaryUserTable.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
 		loadingPanel.setVisible(false);
@@ -99,6 +102,7 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 		
 		setWidget(binder.createAndBindUi(this));
 		
+		this.rattachId = rattachId;
 		getButtonsPanel();
 		this.secondaryUserTable.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
 		loadingPanel.setVisible(false);
@@ -266,7 +270,7 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 		String nafStr = nss.getValue();
 		
 		if(AonStringUtils.isNotBlank(nieStr) && AonStringUtils.isNotBlank(nafStr))
-			impl.createSecondaryUser(checkIPFType(nieStr), nieStr, nafStr, new AsyncCallback<Void>() {
+			impl.createSecondaryUser(this.rattachId, checkIPFType(nieStr), nieStr, nafStr, new AsyncCallback<Void>() {
 					
 					@Override
 					public void onSuccess(Void result) {
