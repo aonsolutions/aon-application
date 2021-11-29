@@ -36,7 +36,7 @@ public interface IPayroll {
 	// -------------------- CONTRACT
 	
 	public Stream<Contract> getContractStream(AONContext ctx, ContractFilter filter);
-
+	public void deleteContracts(AONContext ctx, Integer ...contractsId);
 	// -------------------- CONTRACT DATA
 	
 	public Stream<ContractData> getContractDataStream(AONContext ctx, ContractDataFilter filter);
