@@ -493,7 +493,6 @@ public class InvoiceTest {
 		detailX.setDiscountExpression("30");
 		detailX.setQuantity(0);
 		detailX.setTaxableBase(0);
-		
 		details.add(detailX);
 		details.add(detailOne);
 		details.add(detailTwo);
@@ -522,14 +521,19 @@ public class InvoiceTest {
 			config.setHeader(50);
 			config.setFooter(0);
 			config.setCompany(true);
+			config.setContactData(true);
+			config.setRecordData(true);
 			
 			PrintInvoiceThemeConfiguration themeconf = new PrintInvoiceThemeConfiguration();
 			themeconf.setTheme(PrintInvoiceTheme.PERSONALIZED);
-			themeconf.setBoxBodyBorder(true);
-			themeconf.setBoxTitleBackgroundColor("#3ad1c6");
-			themeconf.setCustomerBackgroundColor("#caa9e6");
-			themeconf.setBoxTitleTextColor("#f025c8");
+//			themeconf.setBoxBodyBorder(true);
+			themeconf.setBoxTitleBackgroundColor("#0893ff");
+//			themeconf.setCustomerBackgroundColor("#caa9e6");
+//			themeconf.setBoxTitleTextColor("#f025c8");
+			themeconf.setBoxBodyBackgroundColor("#d0d793");
 //			themeconf.setBoxTitleBorder(true);
+			themeconf.setTextColor("#ff6400");
+//			themeconf.setBoxBodyTextColor("#ff6400");
 			
 			config.setTheme(themeconf);
 			

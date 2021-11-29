@@ -97,7 +97,9 @@ public class InvoiceTemplate {
 	float limit;
 	float commentSize;
 	float entriesStart;
-
+	float boxBorder = .5f;
+	float bottomExtra = 0;
+	
 	byte[] background;
 	boolean adapt;
 	PDPageContentStream	contents;
@@ -161,20 +163,20 @@ public class InvoiceTemplate {
 	private void drawJail(float end) throws IOException {
 		if (config.getTheme().isBoxBodyBorder()) {			
 			if (config.isDetailed()) {
-				drawBox(contents, 50f, entriesStart, 498f, 1f, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 50f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 299f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 369f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 439f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 479f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 548f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 50f, end, 498f, 1f, config.getTheme().getBoxTitleTextColor());
+//				drawBox(contents, 50f, entriesStart, 499f - boxBorder, boxBorder, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 50f, end, boxBorder, entriesStart - end, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 300 - boxBorder, end, boxBorder, entriesStart - end, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 370 - boxBorder, end, boxBorder, entriesStart - end, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 440 - boxBorder, end, boxBorder, entriesStart - end, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 480 - boxBorder, end, boxBorder, entriesStart - end, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 550 - boxBorder, end, boxBorder, entriesStart - end, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 50f, end, 500f - boxBorder, boxBorder, config.getTheme().getBoxTitleBackgroundColor());
 			} else {
-				drawBox(contents, 50f, entriesStart, 499f, 1f, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 50f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 479f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 548f, end, 1f, entriesStart - end, config.getTheme().getBoxTitleTextColor());
-				drawBox(contents, 50f, end, 498f, 1f, config.getTheme().getBoxTitleTextColor());
+				drawBox(contents, 50f, entriesStart, 500f, boxBorder, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 50f, end, boxBorder, entriesStart - end, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 479f + boxBorder, end, boxBorder, entriesStart - end, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 550f - boxBorder, end, boxBorder, entriesStart - end, config.getTheme().getBoxTitleBackgroundColor());
+				drawBox(contents, 50f, end, 500f, boxBorder, config.getTheme().getBoxTitleBackgroundColor());
 				
 			}
 		}
@@ -370,7 +372,8 @@ public class InvoiceTemplate {
 			}
 		}
 		
-		limit  = bottomInfoHeight + bottom;
+//		limit  = bottomInfoHeight + bottom;
+		
 
 		x = 50f;
 		y = height - top - 20;
@@ -406,6 +409,15 @@ public class InvoiceTemplate {
 		
 		limit  = bottomInfoHeight + bottom;
 		
+		int bottomStuff = invoice.getBreakdown() != null ? invoice.getBreakdown().size() : 0;
+		bottomStuff += invoice.getFinances() != null ? invoice.getFinances().size() : 0;
+		
+		if (bottomStuff > 8) {
+			bottomExtra = (bottomStuff - 7) * 10;
+			limit += bottomExtra;
+		}
+		
+		
 		x = 50f;
 		y = height - top - 20;
 		
@@ -431,6 +443,7 @@ public class InvoiceTemplate {
 			int i = 0;
 			int detailNum = invoice.getDetails().size();
 			for (InvoiceDetail detail : invoice.getDetails()) {
+				
 				x = 50;
 				String description = 
 						safeString(detail.getDescription())
@@ -446,22 +459,23 @@ public class InvoiceTemplate {
 				boolean isComment = invoice.getComments() != null && !invoice.getComments().isEmpty();
 				
 				float relativeLimit = (i < detailNum -1) ? bottom : limit;
+				if (relativeLimit == bottom)
+					drawExtraBoxBackground(config);
 				
 				if (start && isComment && y - stringHeight <= limit) {
+					drawExtraBoxBackground(config);
 					relativeLimit = bottom;
 					start = true;
 					if (y - stringHeight > bottom)
 						shounenJump = true;
 				}
-				
-				
+					
 				if (y <= relativeLimit) {
 					jumpToNewPage(doc, company, invoice, config, logo);
 				}
 				
 				if ( y - stringHeight <= relativeLimit) {
-					
-					
+					drawExtraBoxBackground(config);
 					StringBuilder extraBuilder = new StringBuilder("");
 					while ( y - stringHeight <= bottom) {
 						extraBuilder.insert(0, divided.get(divided.size() - 1) + "\n");
@@ -480,6 +494,7 @@ public class InvoiceTemplate {
 							xtra.add(extraLines.get(0));
 							extraLines.remove(0);
 						}
+						drawExtraBoxBackground(config);
 						drawExtraLines(i, xtra, lineDiff, config.getTheme());
 						extraLineNum = extraLines.size();
 						jumpToNewPage(doc, company, invoice, config, logo);
@@ -487,6 +502,7 @@ public class InvoiceTemplate {
 					}
 					
 					if (extraLineNum > maxLinesLast) {
+						drawExtraBoxBackground(config);
 						xtra.clear();
 						for (int j=0;j<maxLinesNoLast && !extraLines.isEmpty();j++) {
 							xtra.add(extraLines.get(0));
@@ -509,6 +525,22 @@ public class InvoiceTemplate {
 				i++;
 
 			}
+		}
+	}
+
+
+	private void drawExtraBoxBackground(PrintInvoiceConfiguration config) throws IOException {
+		if (config.isDetailed()) {			
+			drawBox(contents, 50, bottom, 250 - boxBorder, limit - bottom/* + 0.3f*/, config.getTheme().getBoxBodyBackgroundColor());
+			
+			drawBox(contents, 300, bottom, 70 - boxBorder, limit - bottom/* + 0.3f*/, config.getTheme().getBoxBodyBackgroundColor());
+			drawBox(contents, 370, bottom, 70 - boxBorder, limit - bottom/* + 0.3f*/, config.getTheme().getBoxBodyBackgroundColor());
+			drawBox(contents, 440, bottom, 40 - boxBorder, limit - bottom/* + 0.3f*/, config.getTheme().getBoxBodyBackgroundColor());
+			drawBox(contents, 480, bottom, 70, limit - bottom/* + 0.3f*/, config.getTheme().getBoxBodyBackgroundColor());
+			
+		} else {
+			drawBox(contents, 50, bottom, 429, limit - bottom + 0.3f, config.getTheme().getBoxBodyBackgroundColor());
+			drawBox(contents, 480, bottom, 70, limit - bottom + 0.3f, config.getTheme().getBoxBodyBackgroundColor());
 		}
 	}
 
@@ -547,7 +579,7 @@ public class InvoiceTemplate {
 	
 	private void drawExtraLines(int i, List<String> divided, float lineDiff, PrintInvoiceThemeConfiguration theme) throws IOException {
 		float dy = y;
-
+		
 		for (String str : divided)
 		{
 			drawText(contents, str.trim(), x + 5, dy, theme.getBoxBodyTextColor(), PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
@@ -559,20 +591,22 @@ public class InvoiceTemplate {
 	// DRAW SIMPLIFIED ENTRIES
 	public void drawSimplifiedEntries(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] logo) throws IOException {
 		if (invoice.getDetails() != null) {
-			
+			boolean xtraBack = false;
 			for (InvoiceDetail detail : invoice.getDetails()) {
 				x = 50;
 				
 				if (y <= bottom) {
-					contents.close();
-					contents = drawPage(doc, company, invoice, config, logo, true);
-					y		 = height - top - topInfoHeight - 5;
-					x		 = 50;
+					jumpToNewPage(doc, company, invoice, config, logo);
 				}
 				String description = detail.getDescription().replace("\t", " ");
 //						.getBytes(Charset.forName("ASCII")), Charset.forName("UTF-8");
 //				croppedString(description, 420, PdfFonts.HELVETICA, 8), x + 5, y,
 				
+				if (y < limit && !xtraBack) {
+					drawExtraBoxBackground(config);
+					xtraBack = true;
+				}
+					
 				drawText(
 					contents,
 					PDFToolkit.croppedStringWholeWord(description, 420, PdfFonts.HELVETICA, 8), x + 5, y,
@@ -655,23 +689,23 @@ public class InvoiceTemplate {
 			logoX = x;
 			logoY = tempY;
 
-			drawText(contents, companyName, x + 260, tempY + 35, Color.BLACK, HELVETICA_BOLD, 10);		
+			drawText(contents, companyName, x + 260, tempY + 35, config.getTheme().getTextColor(), HELVETICA_BOLD, 10);		
 			
-			drawText(contents, "NIF:", x + 260, tempY + 22, Color.BLACK, HELVETICA, 8);		
-			drawText(contents, nif, x + 280, tempY + 22, Color.BLACK, HELVETICA, 8);
+			drawText(contents, "NIF:", x + 260, tempY + 22, config.getTheme().getTextColor(), HELVETICA, 8);		
+			drawText(contents, nif, x + 280, tempY + 22, config.getTheme().getTextColor(), HELVETICA, 8);
 
 			List<String> addressLines = getLines(address, 235, HELVETICA, 8);
 			float addrPlus = 11;
 			
 			if (!addressLines.isEmpty()) {
-				drawText(contents, AonStringUtils.trimToEmpty(addressLines.get(0)), x + 260, tempY + addrPlus, Color.BLACK, HELVETICA, 8);
+				drawText(contents, AonStringUtils.trimToEmpty(addressLines.get(0)), x + 260, tempY + addrPlus, config.getTheme().getTextColor(), HELVETICA, 8);
 				addrPlus -= 9;
 				if (addressLines.size() > 1) {
 					StringBuilder addressBuilder = new StringBuilder("");
 					for(int i=1; i<addressLines.size(); i++) {
 						addressBuilder.append(addressLines.get(i));
 					}
-					drawText(contents, croppedString(AonStringUtils.trimToEmpty(addressBuilder.toString()), 235, HELVETICA, 8), x + 260, tempY + addrPlus, Color.BLACK, HELVETICA, 8);
+					drawText(contents, croppedString(AonStringUtils.trimToEmpty(addressBuilder.toString()), 235, HELVETICA, 8), x + 260, tempY + addrPlus, config.getTheme().getTextColor(), HELVETICA, 8);
 					addrPlus -= 9;
 				}
 			}
@@ -679,14 +713,14 @@ public class InvoiceTemplate {
 			
 				List<String> zipLines = getLines(zip, 235, HELVETICA, 8);
 				if (!zipLines.isEmpty()) {
-					drawText(contents, AonStringUtils.trimToEmpty(zipLines.get(0)), x + 260, tempY + addrPlus, Color.BLACK, HELVETICA, 8);
+					drawText(contents, AonStringUtils.trimToEmpty(zipLines.get(0)), x + 260, tempY + addrPlus, config.getTheme().getTextColor(), HELVETICA, 8);
 					addrPlus -= 9;
 					if (zipLines.size() > 1) {
 						StringBuilder zipBuilder = new StringBuilder("");
 						for(int i=1; i<zipLines.size(); i++) {
 							zipBuilder.append(zipLines.get(i));
 						}
-						drawText(contents, croppedString(AonStringUtils.trimToEmpty(zipBuilder.toString()), 235, HELVETICA, 8), x + 260, tempY + addrPlus, Color.BLACK, HELVETICA, 8);
+						drawText(contents, croppedString(AonStringUtils.trimToEmpty(zipBuilder.toString()), 235, HELVETICA, 8), x + 260, tempY + addrPlus, config.getTheme().getTextColor(), HELVETICA, 8);
 					}
 				}
 
@@ -776,59 +810,71 @@ public class InvoiceTemplate {
 	private void drawDetailedHeader(PrintInvoiceThemeConfiguration theme) throws IOException {
 		x  = 50;
 
-		drawBox(contents, x, y, 249, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 250 - boxBorder, 15, theme.getBoxTitleBackgroundColor());
 		drawTextCenter(contents, new PDRectangle(x, y, 249, 15), getMsg().description(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 		x += 250;
 
-		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 70 - boxBorder, 15, theme.getBoxTitleBackgroundColor());
 		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), getMsg().quantity(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 		x += 70;
 
-		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 70 - boxBorder, 15, theme.getBoxTitleBackgroundColor());
 		drawTextCenter(contents, new PDRectangle(x, y, 69, 15), getMsg().price(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 		x += 70;
 
-		drawBox(contents, x, y, 39, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 40 - boxBorder, 15, theme.getBoxTitleBackgroundColor());
 		drawTextCenter(contents, new PDRectangle(x, y, 39, 15), "%Dto.", theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 		x += 40;
 
-		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 70, 15, theme.getBoxTitleBackgroundColor());
 		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 5, 4.5f);
 		
 		if (config.getTheme().isBoxTitleBorder()) {
-//			PDFToolkit.drawBorderedBox(contents, x + .5f, y, 249, 15, theme.getBoxTitleTextColor(), 1f);
-			drawBox(contents, 50, y + 14, 499, 1f, theme.getBoxTitleTextColor());
-			drawBox(contents, 50, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 50 + 249, y, 1f, 15f, theme.getBoxTitleTextColor());
-			drawBox(contents, 50 + 249 + 70, y, 1f, 15f, theme.getBoxTitleTextColor());
-			drawBox(contents, 50 + 249 + 70 + 70, y, 1f, 15f, theme.getBoxTitleTextColor());
-			drawBox(contents, 50 + 249 + 70 + 70 + 40, y, 1f, 15f, theme.getBoxTitleTextColor());
-			drawBox(contents, 50 + 249 + 70 + 70 + 40 + 69, y, 1f, 15f, theme.getBoxTitleTextColor());
-			drawBox(contents, 50, y, 499, 1f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50, y + 14 + boxBorder, 500, boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 50, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 300 - boxBorder, y, boxBorder, 15f, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 370 - boxBorder, y, boxBorder, 15f, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 440 - boxBorder, y, boxBorder, 15f, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 480 - boxBorder, y, boxBorder, 15f, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 550 - boxBorder, y, boxBorder, 15f, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 50, y, 500, boxBorder, theme.getBoxTitleBackgroundColor());
 			
 		}
 		
+		drawBox(contents, 50, limit, 250 - boxBorder, y - limit, theme.getBoxBodyBackgroundColor());
+		drawBox(contents, 300, limit, 70 - boxBorder, y - limit, theme.getBoxBodyBackgroundColor());
+		drawBox(contents, 370, limit, 70 - boxBorder, y - limit, theme.getBoxBodyBackgroundColor());
+		drawBox(contents, 440, limit, 40 - boxBorder, y - limit, theme.getBoxBodyBackgroundColor());
+		drawBox(contents, 480, limit, 70, y - limit, theme.getBoxBodyBackgroundColor());
+		
 		entriesStart = y;
+		
+		
+		
+		
 	}
 
 	// DRAW SIMPLE HEADER
 	private void drawSimpleHeader(PrintInvoiceThemeConfiguration theme) throws IOException {
 		x  = 50;
-		drawBox(contents, x, y, 429, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 429 + boxBorder, 15, theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().description(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9);
 		x += 430;
 
-		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 70, 15, theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().amount(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9);
 		
 		if (config.getTheme().isBoxTitleBorder()) {
-			drawBox(contents, 50, y + 14, 499, 1f, theme.getBoxTitleTextColor());
-			drawBox(contents, 50, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 479, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 548, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 50, y, 499, 1f, theme.getBoxTitleTextColor());
+			drawBox(contents, 50, y + 14 + boxBorder, 500, boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 50, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 480 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 550 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 50, y, 500 - boxBorder, boxBorder, theme.getBoxTitleBackgroundColor());
 			
 		}
+		
+		drawBox(contents, 50, limit, 429 + boxBorder, y - limit, theme.getBoxBodyBackgroundColor());
+		drawBox(contents, 480, limit, 70, y - limit, theme.getBoxBodyBackgroundColor());
 		
 		
 		entriesStart = y;
@@ -837,7 +883,7 @@ public class InvoiceTemplate {
 	// DRAW BOTTOM INFO
 	private void drawBottomInfo(PDDocument doc, Invoice invoice, String qrUrl, PrintInvoiceThemeConfiguration theme) throws IOException, WriterException {
 		x = 50;
-		y = bottom + 10;
+		y = bottom + 10 + bottomExtra;
 		if(qrUrl != null) {
 			byte[] qrCode = createQR(qrUrl, 300, 300);
 			drawImage(doc, contents, qrCode, x, y, 120, 120);
@@ -849,42 +895,52 @@ public class InvoiceTemplate {
 	// DRAW TAXES
 	private void drawTaxes(Invoice invoice, PrintInvoiceThemeConfiguration theme) throws IOException {
 		x = 180;
-		y = bottom + 107;
+		y = bottom + 107 + bottomExtra;
 
-		drawBox(contents, x, y, 79, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 80 - boxBorder, 15, theme.getBoxTitleBackgroundColor());
 		drawTextRight(contents, new PDRectangle(x, y, 79, 15), getMsg().base(), theme.getBoxTitleTextColor(), HELVETICA, 9, 5, 4.5f);
 		x += 80;
 
-		drawBox(contents, x, y, 79, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 80 - boxBorder, 15, theme.getBoxTitleBackgroundColor());
 		drawTextRight(contents, new PDRectangle(x, y, 79, 15), "%", theme.getBoxTitleTextColor(), HELVETICA, 9, 5, 4.5f);
 		x += 80;
 
-		drawBox(contents, x, y, 59, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 60 - boxBorder, 15, theme.getBoxTitleBackgroundColor());
 		drawTextCenter(contents, new PDRectangle(x, y, 59, 15), getMsg().type(), theme.getBoxTitleTextColor(), HELVETICA, 9, 4.5f);
 		x += 60;
 		
-		drawBox(contents, x, y, 49, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 50 - boxBorder, 15, theme.getBoxTitleBackgroundColor());
 		drawTextRight(contents, new PDRectangle(x, y, 49, 15), getMsg().quota(), theme.getBoxTitleTextColor(), HELVETICA, 9, 5, 4.5f);
 		x += 50;
 
-		drawBox(contents, x, y, 99, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 100, 15, theme.getBoxTitleBackgroundColor());
 		drawTextCenter(contents, new PDRectangle(x, y, 99, 15), getMsg().totalInvoice(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 		
 		if (config.getTheme().isBoxTitleBorder()) {
-			drawBox(contents, 180, y + 14, 369, 1f, theme.getBoxTitleTextColor());
-			drawBox(contents, 180, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 259, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 339, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 399, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 449, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 548, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 180, y, 369, 1f, theme.getBoxTitleTextColor());
+			drawBox(contents, 180, y + 14 + boxBorder, 370, boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 180, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 260 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 340 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 400 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 450 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 550 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 180, y, 370, boxBorder, theme.getBoxTitleBackgroundColor());
 		}
 		
 		if (invoice.getBreakdown() != null){
 //			double sum = 0;
 			int i = 0;
 			float initY = y;
+			
+			float bdSize = invoice.getBreakdown().size() * 10 + 10;
+			
+			drawBox(contents, 180, y, 80 - boxBorder, -bdSize, theme.getBoxBodyBackgroundColor());
+			drawBox(contents, 260, y, 80 - boxBorder, -bdSize, theme.getBoxBodyBackgroundColor());
+			drawBox(contents, 340, y, 60 - boxBorder, -bdSize, theme.getBoxBodyBackgroundColor());
+			drawBox(contents, 400, y, 50 - boxBorder, -bdSize, theme.getBoxBodyBackgroundColor());
+			drawBox(contents, 450, y, 100f, -bdSize, theme.getBoxBodyBackgroundColor());
+			
+			
 			for (InvoiceBreakdown tax : invoice.getBreakdown()) {
 				
 				x = 180;
@@ -916,20 +972,20 @@ public class InvoiceTemplate {
 				
 				i++;
 			}
-			drawTextRight(contents, new PDRectangle(x, bottom + 107, 99, 15), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getBoxBodyTextColor(), HELVETICA_BOLD, 8, 5, -14, INVOICE_TOTAL);
+			drawTextRight(contents, new PDRectangle(x, bottom + 107 + bottomExtra, 99, 15), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getBoxBodyTextColor(), HELVETICA_BOLD, 8, 5, -14, INVOICE_TOTAL);
 			
 			float finalY = y -10;
 			float height = initY - finalY;
 			
 			if (config.getTheme().isBoxBodyBorder()) {
-				drawBox(contents, 180, finalY + height, 369, 1f, theme.getBoxTitleTextColor());
-				drawBox(contents, 180, finalY, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 259, finalY, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 339, finalY, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 399, finalY, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 449, finalY, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 548, finalY, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 180, finalY, 369, 1f, theme.getBoxTitleTextColor());
+				drawBox(contents, 180, finalY + height, 370, boxBorder, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 180, finalY, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 260 - boxBorder, finalY, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 340 - boxBorder, finalY, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 400 - boxBorder, finalY, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 450 - boxBorder, finalY, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 550 - boxBorder, finalY, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 180, finalY, 370, boxBorder, theme.getBoxTitleBackgroundColor());
 			}
 		}
 	}
@@ -938,36 +994,46 @@ public class InvoiceTemplate {
 	private void drawFinances(Invoice invoice, PrintInvoiceThemeConfiguration theme) throws IOException {
 
 		x = 180;
-		y = bottom + 50;
+//		y = bottom + 50 + bottomExtra;
+		y-= 28;
 
-		drawBox(contents, x, y, 59, 15,  theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 60 - boxBorder, 15,  theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().date(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA, 9);
 		x += 60;
 
-		drawBox(contents, x, y, 79, 15,  theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 80 - boxBorder, 15,  theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().payMethod(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA, 9);
 		x += 80;
 
-		drawBox(contents, x, y, 159, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 160 - boxBorder, 15, theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().bankAccount(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA, 9);
 		x += 160;
 
-		drawBox(contents, x, y, 69, 15, theme.getBoxTitleBackgroundColor());
+		drawBox(contents, x, y, 70, 15, theme.getBoxTitleBackgroundColor());
 		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), theme.getBoxTitleTextColor(), HELVETICA, 9, 5, 4.5f);
 		
 		if (config.getTheme().isBoxTitleBorder()) {
-			drawBox(contents, 180, y + 14, 369, 1f, theme.getBoxTitleTextColor());
-			drawBox(contents, 180, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 239, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 319, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 479, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 548, y, 1f, 14f, theme.getBoxTitleTextColor());
-			drawBox(contents, 180, y, 369, 1f, theme.getBoxTitleTextColor());
+			drawBox(contents, 180, y + 14 + boxBorder, 370, boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 180, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 240 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 320 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 480 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 550 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
+			drawBox(contents, 180, y, 370, boxBorder, theme.getBoxTitleBackgroundColor());
 		}
 
 		if(invoice.getFinances() != null) {
 			int i = 0;
 			float initY = y;
+			
+			float fSize = invoice.getFinances().size() * 10 + 10;
+			
+			drawBox(contents, 180, y, 60 - boxBorder, -fSize, theme.getBoxBodyBackgroundColor());
+			drawBox(contents, 240, y, 80 - boxBorder, -fSize, theme.getBoxBodyBackgroundColor());
+			drawBox(contents, 320, y, 160 - boxBorder, -fSize, theme.getBoxBodyBackgroundColor());
+			drawBox(contents, 480, y, 70f, -fSize, theme.getBoxBodyBackgroundColor());
+			
+			
 			for (Finance finance : invoice.getFinances()) {
 				x = 180;
 				drawText(contents, formatDate(finance.getDueDate(), "dd/MM/yyyy").orElse(""), x + 5f, y - 12, theme.getBoxBodyTextColor(), HELVETICA, 7, i + FINANCE_DATE);
@@ -992,13 +1058,13 @@ public class InvoiceTemplate {
 			if (config.getTheme().isBoxBodyBorder()) {
 				y -= 10;
 				float height  = initY - y;
-				drawBox(contents, 180, y, 369, 1f, theme.getBoxTitleTextColor());
-				drawBox(contents, 180, y, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 239, y, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 319, y, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 479, y, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 548, y, 1f, height, theme.getBoxTitleTextColor());
-				drawBox(contents, 180, initY, 369, 1f, theme.getBoxTitleTextColor());
+				drawBox(contents, 180, y, 370, boxBorder, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 180, y, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 240 - boxBorder, y, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 320 - boxBorder, y, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 480 - boxBorder, y, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 550 - boxBorder, y, boxBorder, height, theme.getBoxTitleBackgroundColor());
+				drawBox(contents, 180, initY, 370 - boxBorder, boxBorder, theme.getBoxTitleBackgroundColor());
 			}
 			
 		}
