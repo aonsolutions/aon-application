@@ -135,22 +135,6 @@ public interface IFiscal {
 	public void deleteMod3902018(AONContext ctx,Mod3902018 mod390);
 	public Mod3902018 changeStatusMod3902018(AONContext ctx, Mod3902018 mod184, FiscalStatus newStatus);
 
-	// 				   		  MOD390HF
-	public Mod390HF getMod390HF(AONContext ctx, int id);
-	public LinkedList<Mod390HF> getMod390HFs(AONContext ctx, int domain);
-	public Mod390HF calculateMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF saveMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF saveCommentsMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF initializeForFinishMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF markAsFinishedMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF markAsPendingMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF markAsSentMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF initializeMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF createMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF declarationChanged(AONContext ctx, Mod390HF mod303);
-	public void deleteMod390HF(AONContext ctx, Mod390HF mod303);
-	public String getMod390HFInfo(AONContext ctx, Mod390HF mod303, IModelScript<Mod390Key> script, FiscalModelKeyInfo infoKey);
-	
 	//		  					MOD200 
 	public Mod200 getMod200(AONContext ctx, int domainId, Integer id);
 	public LinkedList<Mod200> getMod200s(AONContext ctx, int domainId);

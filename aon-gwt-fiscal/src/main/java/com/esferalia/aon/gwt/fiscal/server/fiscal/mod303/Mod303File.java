@@ -38,7 +38,7 @@ public class Mod303File extends HttpServlet {
 				.setDomainName(domainName)
 				.setDomain(domainId)
 				.setUser(user);
-			Mod303 mod303 = MODEL303.getMod303(occam,id);
+			Mod303 mod390 = MODEL303.getMod303(occam,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -48,10 +48,10 @@ public class Mod303File extends HttpServlet {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			Mod303Writer.fillWriter(mod303, writer);
+			Mod303Writer.fillWriter(mod390, writer);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 			
-		    String fileName = AonFiscalFileUtils.getFileName(mod303);
+		    String fileName = AonFiscalFileUtils.getFileName(mod390);
 		    // MimeType mime = mod303.isAraba()?MimeType.XML:MimeType.TXT;
 		    MimeType mime = MimeType.TXT;
 		    resp.setCharacterEncoding("ISO-8859-1");

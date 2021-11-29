@@ -35,7 +35,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
-import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF;
+import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
@@ -104,6 +104,12 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.mod202.Model202.run();
 			}
 		},
+		Model390HF {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF.run();
+			}
+		},
 		;
 		abstract void run();
 	}
@@ -116,7 +122,6 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String FS_MOD347_ENTRY_POINT = "Model347";
 	private static final String FS_MOD349_ENTRY_POINT = "Model349";
 	private static final String FS_MOD390_ENTRY_POINT = "Model390";
-	private static final String FS_MOD390_HF_ENTRY_POINT = "Model390HF";
 	private static final String FS_MODEL_MATRIX_ENTRY_POINT = "ModelMatrix";
 	private static final String FS_CONFIG_POINT = "FiscalConfig";
 	//	
@@ -435,21 +440,21 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD390_HF_ENTRY_POINT)) {
-			GWT.runAsync(Model390HF.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model390HF model390HF = new Model390HF();
-					model390HF.onModuleLoad();
-				}
-				
-			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD390_HF_ENTRY_POINT)) {
+//			GWT.runAsync(Model390HF.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model390HF model390HF = new Model390HF();
+//					model390HF.onModuleLoad();
+//				}
+//				
+//			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MODEL_MATRIX_ENTRY_POINT)) {
 			GWT.runAsync(ModelMatrix.class, new RunAsyncCallback() {
 

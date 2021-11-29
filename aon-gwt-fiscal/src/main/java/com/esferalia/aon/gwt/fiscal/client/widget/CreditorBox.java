@@ -45,6 +45,7 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+@Deprecated
 public class CreditorBox extends ResizeComposite implements HasValue<String>
 	, HasDescription, Focusable, HasSelectionHandlers<Creditor>, HasAllFocusHandlers
 	,HasAllKeyHandlers, HasEnabled {

@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.mod390HF;
+package com.esferalia.aon.gwt.fiscal.client.mod390hf;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;

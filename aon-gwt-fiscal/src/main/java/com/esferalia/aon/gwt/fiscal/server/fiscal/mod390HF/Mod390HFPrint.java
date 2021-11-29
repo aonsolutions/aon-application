@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod390HF;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.shared.mod390.Model390ScriptProvider;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -34,7 +35,11 @@ public class Mod390HFPrint extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");
-			Mod390HF mod390 = FISCAL.getMod390HF(domainName, domainId, user,id);
+			Occam occam = new Occam()
+					.setDomainName(domainName)
+					.setDomain(domainId)
+					.setUser(user);
+			Mod390HF mod390  = MODEL390HF.getMod390HF(occam,id);
 
 			Mod390HFExcelAction action = new Mod390HFExcelAction(mod390);
 			action.initialize(FiscalModelUtils.getModelName(mod390));

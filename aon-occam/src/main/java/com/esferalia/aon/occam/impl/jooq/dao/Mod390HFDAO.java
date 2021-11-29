@@ -372,6 +372,13 @@ public class Mod390HFDAO extends FiscalModelDAO {
 		return mod;
 	}
 	
+	public static Mod390HF markAsCustomerCheck(AONContext ctx,Mod390HF mod) {
+		mod = FiscalModelDAO.finish(ctx, mod);
+		mod.setStatus(FiscalStatus.CUSTOMER_CHECK);
+		mod = saveMod390HF(ctx, mod);
+		return mod;
+	}
+
 	public static Stream<VatContext> getAccrualBreakdown(final AONContext ctx, final Mod390HF mod, boolean diffDisabled) {
 		Date fromDate = diffDisabled
 			?FiscalUtils.getPeriodStart(mod)		
