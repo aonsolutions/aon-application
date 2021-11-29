@@ -501,7 +501,8 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		} else {
 			employee.hideElementsFreelancerTable();
 			fillContractTable(contractData);
-			showHideContractOtherData(Integer.parseInt(contractData.getContractType()));
+			if(AonStringUtils.isNotBlank(contractData.getContractType()))
+				showHideContractOtherData(Integer.parseInt(contractData.getContractType()));
 		}
 	}
 	
@@ -543,22 +544,25 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
 		
 		Integer contractTypeInt = null;
-		try {
-			contractTypeInt = Integer.parseInt(contractData.getContractType());
-			if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
-				employee.showPartialTimeContract();
-				if(contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
-					employee.createJourneyDurationWarning();
-				} else {
-					employee.createJourneyDurationInfo(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
-				}
-			} else
-				employee.showElementsFullTimeContract();
-	
-			employee.updateModality(contractTypeInt);
-			setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
-		} catch (NumberFormatException e) {
-			// Nothing to do here
+		
+		if(AonStringUtils.isNotBlank(contractData.getContractType())) {
+			try {
+				contractTypeInt = Integer.parseInt(contractData.getContractType());
+				if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
+					employee.showPartialTimeContract();
+					if(contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
+						employee.createJourneyDurationWarning();
+					} else {
+						employee.createJourneyDurationInfo(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
+					}
+				} else
+					employee.showElementsFullTimeContract();
+		
+				employee.updateModality(contractTypeInt);
+				setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
+			} catch (NumberFormatException e) {
+				// Nothing to do here
+			}
 		}
 		
 		employee.startDate.setValue(contractData.getStartDate());
@@ -583,14 +587,17 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
 		}
 		
-		Double partialityCoef = contractData.getPartialityCoef();
-		if( (null == partialityCoef || partialityCoef == 0.00) && 
-			(null != contractTypeInt && (AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)))) {
-			
-			partialityCoef = calculatePartialityCoef();
-			contractData.setPartialityCoef(partialityCoef);
+		if(AonStringUtils.isNotBlank(contractData.getContractType())) {
+			Double partialityCoef = contractData.getPartialityCoef();
+			if( (null == partialityCoef || partialityCoef == 0.00) && 
+				(null != contractTypeInt && (AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)))) {
+				
+				partialityCoef = calculatePartialityCoef();
+				contractData.setPartialityCoef(partialityCoef);
+			}
+			employee.partialityCoef.setValue(contractData.getPartialityCoef());	
 		}
-		employee.partialityCoef.setValue(contractData.getPartialityCoef());	
+		
 	}
 	
 	private Double calculatePartialityCoef() {
