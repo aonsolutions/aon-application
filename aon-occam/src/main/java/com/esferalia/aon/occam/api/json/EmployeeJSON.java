@@ -1,5 +1,9 @@
 package com.esferalia.aon.occam.api.json;
 
+import static java.util.Objects.isNull;
+
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -33,14 +37,21 @@ public class EmployeeJSON {
 		json.put("naf", employee.getNaf());
 		json.put("startDate", employee.getStartDate());
 		
-		employee.getContractType().ifPresent(contract-> json.put("contractType", contract));
 		employee.getName().ifPresent(name-> json.put("name", name));
 		employee.getEndDate().ifPresent(endDate -> json.put("endDate", endDate));
+		employee.getWorkplaceName().ifPresent(w -> json.put("workplaceName", w));
+		
+		
+		employee.getContractType().ifPresent(contract-> json.put("contractType", contract));
 		employee.getOccupation().ifPresent(ocup -> json.put("occupation", ocup));
 		employee.getFactor().ifPresent(factor -> json.put("factor", factor));
-		employee.getWorkplaceName().ifPresent(w -> json.put("workplaceName", w));
 		employee.getQuoteGroup().ifPresent(gc -> json.put("quoteGroup", gc));
 
 		return json;
 	}
+	
+    @SuppressWarnings("deprecation")
+    public static LocalDate toLocalDate(Date date) {
+		return isNull(date) ? null : LocalDate.of(date.getYear() + 1900, date.getMonth() + 1, date.getDate()); 
+    }
 }

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
@@ -17,6 +18,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
+import com.esferalia.aon.occam.api.model.payroll.ContractAttach;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 
@@ -77,5 +79,11 @@ public interface IPayroll {
 	// -------------------- CCC
 	
 	public Stream<CCCInfo> getCCCStream(AONContext ctx);
-
+	
+	// ----------CONTRACT ATTACH
+	
+	public Stream<ContractAttach> getContractAttachStream(AONContext ctx, ContractAttachFilter filter);
+	public ContractAttach getContractAttach(AONContext ctx, ContractAttachFilter filter);
+	public ContractAttach saveContractAttach(AONContext ctx, ContractAttach attach);
+	public void deleteContractAttach(AONContext ctx, Integer id);
 }

@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.payroll;
 import static java.util.Objects.isNull;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -258,7 +259,7 @@ public class Employee implements Serializable{
 	}
 	
 	public Optional<String> getContractType() {
-		return getContractType(LocalDate.now());
+		return getContractType(toLocalDate(startDate));
 	}
 	
 	public Collection<Data<String>> getContractTypes() {
@@ -278,7 +279,7 @@ public class Employee implements Serializable{
 	}
 
 	public Optional<String> getRlce() {
-		return getRlce(LocalDate.now());
+		return getRlce(toLocalDate(startDate));
 	}
 	
 	public Employee setRlce(String rlec ) {
@@ -298,7 +299,7 @@ public class Employee implements Serializable{
 	}
 
 	public Optional<String> getOccupation() {
-		return getOccupation(LocalDate.now());
+		return getOccupation(toLocalDate(startDate));
 	}
 
 	public Employee setOccupation(String ocupation) {
@@ -318,7 +319,7 @@ public class Employee implements Serializable{
 	}
 
 	public Optional<String> getQuoteGroup() {
-		return getQuoteGroup(LocalDate.now());
+		return getQuoteGroup(toLocalDate(startDate));
 	}
 	
 	public Employee setQuoteGroup(String quoteGroup ) {
@@ -338,7 +339,7 @@ public class Employee implements Serializable{
 	}
 
 	public Optional<Double> getFactor() {
-		return getFactor(LocalDate.now());
+		return getFactor(toLocalDate(startDate));
 	}
 
 	public Employee setFactor(Double factor ) {
@@ -428,17 +429,29 @@ public class Employee implements Serializable{
 		String expression = t != null ? Double.toString( t.doubleValue()): null;
 		return addData(name, expression, startDate, endDate );
 	}
+	
+	protected ExpressionData setExpressionData(String expression) {
+		ExpressionData expressionData = new ExpressionData();
+		expressionData.expression = expression;
+		expressionData.startDate = toLocalDate(this.startDate);
+		expressionData.endDate = toLocalDate(this.endDate);
+		return expressionData;
+	}
 
 	protected Employee setData(String name, String expression) {
 		dataMap.remove(name);
-		ExpressionData expressionData = new ExpressionData();
-		expressionData.expression = expression;
-		expressionData.endDate = toLocalDate(this.endDate);
-		expressionData.startDate = toLocalDate(this.startDate);
+		ExpressionData expressionData = setExpressionData(expression);
 		dataMap.put(name, Arrays.asList(expressionData));
 		return this;
 	}
-
+	
+	public Employee setInfo(String name, String expression) {
+		infoMap.remove(name);
+		ExpressionData expressionData = setExpressionData(expression);
+		infoMap.put(name, Arrays.asList(expressionData));
+		return this;
+	}
+	
 	protected Employee addData(String name, String expression, LocalDate startDate, LocalDate endDate) {
 		ExpressionData expressionData = new ExpressionData();
 		expressionData.endDate = endDate;
@@ -488,7 +501,7 @@ public class Employee implements Serializable{
 	private <T> Optional<T> getData(String name, LocalDate date, Class<T> type) {
 		return dataMap.getOrDefault(name, Collections.emptySortedSet())
 		.stream()
-		.filter( data -> contains(data, date) )
+		.filter( data -> contains(data, date))
 		.filter( data -> Objects.nonNull(data.expression))
 		.map( data -> MVEL.eval(data.expression, type))
 		.findFirst();
@@ -508,9 +521,7 @@ public class Employee implements Serializable{
 		return isNull(date) ? null : new Date(date.getYear() - 1900, date.getMonthValue() -1, date.getDayOfMonth()); 
     }
 
-    @SuppressWarnings("deprecation")
     public static LocalDate toLocalDate(Date date) {
-		return isNull(date) ? null : LocalDate.of(date.getYear() + 1900, date.getMonth() + 1, date.getDate()); 
+		return isNull(date) ? null : new Timestamp(date.getTime()).toLocalDateTime().toLocalDate();
     }
-    
 }
