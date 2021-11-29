@@ -1,5 +1,5 @@
 import {webkitRequestMobile} from '../services/service.js';
-import { CONSTANT, MSG, TAG } from "../environments/environments.js";
+import { CONSTANT, EVENT, MSG, TAG } from "../environments/environments.js";
 import { DomainUserRoles } from '../models/DomainUserRoles.js';
 import { getDomainUserRoles } from '../services/companyService.js';
 
@@ -53,22 +53,25 @@ export class AonElement extends HTMLElement{
     return document.getElementById(id);
   }
 
-  createElement(tag){
-    return document.createElement(tag);
+  createElement(tag, id, className){
+    let el = document.createElement(tag);
+    if(id) el.id = id;
+    if(className) el.className = className;
+    return el;
   }
 
-  createAonElement(elem, id, title){
-    elem.id = id || '';
-    elem.title = title || '';
-    return elem;
+  createAonElement(el, id, title){
+    el.id = id || '';
+    el.title = title || '';
+    return el;
   }
 
   clear() {
     this.clearElement(this);
   }
 
-  clearElement(elem) {
-    if(elem) elem.innerHTML = '';
+  clearElement(el) {
+    if(el) el.innerHTML = '';
   }
 
   clearElementById(id) {
@@ -180,5 +183,13 @@ export class AonElement extends HTMLElement{
         toast.start(obj);
       }
     } catch (error) {}
+  }
+
+  onChange(fn) {
+    this.addEventListener(EVENT.CHANGE, fn);
+  }
+
+  onClick(fn) {
+    this.addEventListener(EVENT.CLICK, fn);
   }
 }

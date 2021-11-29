@@ -1160,7 +1160,6 @@ public class SecurityDAO {
 				.set(DOMAIN_APPLICATION_MODULE.DOMAIN_APPLICATION, domainApplication)
 				.set(DOMAIN_APPLICATION_MODULE.MODULE, module.value())
 				.execute();
-				;
 		}
 	}	
 	

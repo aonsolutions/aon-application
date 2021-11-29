@@ -2,7 +2,7 @@ import { AonToolbar } from "../../components/aon-toolbar.js";
 import { AonElement } from "../../components/AonElement.js";
 import { MSG, TAG } from "../../environments/environments.js";
 import { ToolbarType } from "../../models/enums.js";
-import { getInvoiceConfiguration } from "../../services/invoiceService.js";
+import { getInvoiceConfiguration, saveInvoiceConfiguration } from "../../services/invoiceService.js";
 import { AonInvoicePrint } from "./aon-invoice-print.js";
 import * as ACTION from '../actions.js';
 import { AonTab } from "../../components/aon-tab.js";
@@ -31,9 +31,12 @@ export class AonInvoiceConfiguration extends AonElement {
         this.TABS = 'invoiceConfigurationTabs';
         this.CONTENT = 'invoiceConfigurationContent';
         this.options = this.options || [
-			{ title: MSG.INVOICE_PRINTING, fn: () => this.buildPrintConfiguration()},
-			{ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}
+			{ title: MSG.INVOICE_PRINTING, fn: () => this.buildPrintConfiguration()}
         ];
+
+        if(this.isBeta()) {
+            this.options.push({ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()});
+        }
     }
 
     build() {
@@ -62,7 +65,12 @@ export class AonInvoiceConfiguration extends AonElement {
     buildPrintConfiguration() {
         let content = this.getElement(this.CONTENT);
         this.clearElement(content);
-        content.appendChild(new AonInvoicePrint());
+        let pc = new AonInvoicePrint();
+        pc.setPrintConfiguration(this.configuration.print);
+        pc.onChange(() => {
+            this.configuration.print = pc.getPrintConfiguration();
+        });
+        content.appendChild(pc);
     }
 
     buildCommunication() {
@@ -74,7 +82,7 @@ export class AonInvoiceConfiguration extends AonElement {
     }
 
     save() {
-
+        saveInvoiceConfiguration(this.configuration);
     }
 }
 if(!window.customElements.get(TAG.AON_INVOICE_CONFIGURATION)){

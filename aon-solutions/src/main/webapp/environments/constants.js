@@ -97,10 +97,12 @@ export const FILE = 'file';
 export const FILLED = 'filled';
 export const FILTER = 'filter';
 export const FISCAL = 'fiscal';
+export const FOOTER = 'footer';
 
 // ----- G
 
 // ----- H
+export const HEADER = 'header';
 export const HIDDEN = 'hidden';
 export const HOLDERS = 'holders';
 
@@ -123,6 +125,7 @@ export const INVOICE_TICKET = 'invoiceTicket';
 // ----- L
 
 export const LIST = 'list';
+export const LOGO = 'logo';
 
 // ----- M
 

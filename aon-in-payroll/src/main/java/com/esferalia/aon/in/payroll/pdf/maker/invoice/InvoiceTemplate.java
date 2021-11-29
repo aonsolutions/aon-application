@@ -161,7 +161,7 @@ public class InvoiceTemplate {
 	
 	
 	private void drawJail(float end) throws IOException {
-		if (config.getTheme().isBoxBodyBorder()) {			
+		if (config.isBorder()) {			
 			if (config.isDetailed()) {
 //				drawBox(contents, 50f, entriesStart, 499f - boxBorder, boxBorder, config.getTheme().getBoxTitleBackgroundColor());
 				drawBox(contents, 50f, end, boxBorder, entriesStart - end, config.getTheme().getBoxTitleBackgroundColor());
@@ -558,22 +558,22 @@ public class InvoiceTemplate {
 
 		for (String str : divided)
 		{
-			drawText(contents, str.trim(), x + 5, dy, theme.getBoxBodyTextColor(), PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
+			drawText(contents, str.trim(), x + 5, dy, theme.getTextColor(), PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
 			dy -= lineDiff;
 		}
 
 		x += 250;
 
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getQuantity()) + "", theme.getBoxBodyTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_AMOUNT);
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getQuantity()) + "", theme.getTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_AMOUNT);
 		x += 70;
 
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15),toLatinNumber(detail.getPrice()), theme.getBoxBodyTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_PRICE);
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15),toLatinNumber(detail.getPrice()), theme.getTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_PRICE);
 		x += 70;
 
-		drawTextRight(contents, new PDRectangle(x, y, 39, 15), safeString(detail.getDiscountExpression()), theme.getBoxBodyTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_DISCOUNT);
+		drawTextRight(contents, new PDRectangle(x, y, 39, 15), safeString(detail.getDiscountExpression()), theme.getTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_DISCOUNT);
 		x += 40;
 
-		drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getTaxableBase()), theme.getBoxBodyTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_TOTAL);
+		drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(detail.getTaxableBase()), theme.getTextColor(), HELVETICA, 8, 4.5f, 0, i + DETAIL_TOTAL);
 		y = dy - 3;
 	}
 	
@@ -582,7 +582,7 @@ public class InvoiceTemplate {
 		
 		for (String str : divided)
 		{
-			drawText(contents, str.trim(), x + 5, dy, theme.getBoxBodyTextColor(), PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
+			drawText(contents, str.trim(), x + 5, dy, theme.getTextColor(), PdfFonts.HELVETICA, 8, i + DETAIL_DESCRIPTION);
 			dy -= lineDiff;
 		}
 		y = dy - 3;
@@ -829,7 +829,7 @@ public class InvoiceTemplate {
 		drawBox(contents, x, y, 70, 15, theme.getBoxTitleBackgroundColor());
 		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 5, 4.5f);
 		
-		if (config.getTheme().isBoxTitleBorder()) {
+		if (config.isBorder()) {
 			drawBox(contents, 50, y + 14 + boxBorder, 500, boxBorder, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 50, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 300 - boxBorder, y, boxBorder, 15f, theme.getBoxTitleBackgroundColor());
@@ -838,7 +838,6 @@ public class InvoiceTemplate {
 			drawBox(contents, 480 - boxBorder, y, boxBorder, 15f, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 550 - boxBorder, y, boxBorder, 15f, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 50, y, 500, boxBorder, theme.getBoxTitleBackgroundColor());
-			
 		}
 		
 		drawBox(contents, 50, limit, 250 - boxBorder, y - limit, theme.getBoxBodyBackgroundColor());
@@ -863,14 +862,13 @@ public class InvoiceTemplate {
 
 		drawBox(contents, x, y, 70, 15, theme.getBoxTitleBackgroundColor());
 		drawText(contents, getMsg().amount(), x + 5f, y + 4.5f, theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9);
-		
-		if (config.getTheme().isBoxTitleBorder()) {
+
+		if (config.isBorder()) {
 			drawBox(contents, 50, y + 14 + boxBorder, 500, boxBorder, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 50, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 480 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 550 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 50, y, 500 - boxBorder, boxBorder, theme.getBoxTitleBackgroundColor());
-			
 		}
 		
 		drawBox(contents, 50, limit, 429 + boxBorder, y - limit, theme.getBoxBodyBackgroundColor());
@@ -916,7 +914,8 @@ public class InvoiceTemplate {
 		drawBox(contents, x, y, 100, 15, theme.getBoxTitleBackgroundColor());
 		drawTextCenter(contents, new PDRectangle(x, y, 99, 15), getMsg().totalInvoice(), theme.getBoxTitleTextColor(), HELVETICA_BOLD, 9, 4.5f);
 		
-		if (config.getTheme().isBoxTitleBorder()) {
+
+		if (config.isBorder()) {
 			drawBox(contents, 180, y + 14 + boxBorder, 370, boxBorder, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 180, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 260 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
@@ -944,7 +943,7 @@ public class InvoiceTemplate {
 			for (InvoiceBreakdown tax : invoice.getBreakdown()) {
 				
 				x = 180;
-				drawTextRight(contents, new PDRectangle(x, y, 79, 15), toLatinNumber(tax.getBase()), theme.getBoxBodyTextColor(), HELVETICA, 7, 5, -12, i + TAX_BASE);
+				drawTextRight(contents, new PDRectangle(x, y, 79, 15), toLatinNumber(tax.getBase()), theme.getTextColor(), HELVETICA, 7, 5, -12, i + TAX_BASE);
 				x += 80;
 				
 				String percent = "";
@@ -958,13 +957,13 @@ public class InvoiceTemplate {
 			
 				}
 
-				drawTextRight(contents, new PDRectangle(x, y, 79, 15), percent, theme.getBoxBodyTextColor(), HELVETICA, 7, 5, -12, i + TAX_PERCENTAGE);
+				drawTextRight(contents, new PDRectangle(x, y, 79, 15), percent, theme.getTextColor(), HELVETICA, 7, 5, -12, i + TAX_PERCENTAGE);
 				x += 80;
 				
-				drawTextCenter(contents, new PDRectangle(x, y, 59, 15), tax.getTaxType().getName(), theme.getBoxBodyTextColor(), HELVETICA, 7, -12, i + TAX_TYPE);
+				drawTextCenter(contents, new PDRectangle(x, y, 59, 15), tax.getTaxType().getName(), theme.getTextColor(), HELVETICA, 7, -12, i + TAX_TYPE);
 				x += 60;
 				
-				drawTextRight(contents, new PDRectangle(x, y, 49, 15), toLatinNumber(tax.getQuota() + tax.getSurchargeQuota()), theme.getBoxBodyTextColor(), HELVETICA, 7, 5, -12, i + TAX_QUOTE);
+				drawTextRight(contents, new PDRectangle(x, y, 49, 15), toLatinNumber(tax.getQuota() + tax.getSurchargeQuota()), theme.getTextColor(), HELVETICA, 7, 5, -12, i + TAX_QUOTE);
 				x += 50;
 				
 //				sum	+= tax.getQuota() + tax.getSurchargeQuota() + tax.getBase();
@@ -972,12 +971,12 @@ public class InvoiceTemplate {
 				
 				i++;
 			}
-			drawTextRight(contents, new PDRectangle(x, bottom + 107 + bottomExtra, 99, 15), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getBoxBodyTextColor(), HELVETICA_BOLD, 8, 5, -14, INVOICE_TOTAL);
+			drawTextRight(contents, new PDRectangle(x, bottom + 107 + bottomExtra, 99, 15), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getTextColor(), HELVETICA_BOLD, 8, 5, -14, INVOICE_TOTAL);
 			
 			float finalY = y -10;
 			float height = initY - finalY;
 			
-			if (config.getTheme().isBoxBodyBorder()) {
+			if (config.isBorder()) {
 				drawBox(contents, 180, finalY + height, 370, boxBorder, theme.getBoxTitleBackgroundColor());
 				drawBox(contents, 180, finalY, boxBorder, height, theme.getBoxTitleBackgroundColor());
 				drawBox(contents, 260 - boxBorder, finalY, boxBorder, height, theme.getBoxTitleBackgroundColor());
@@ -1012,7 +1011,7 @@ public class InvoiceTemplate {
 		drawBox(contents, x, y, 70, 15, theme.getBoxTitleBackgroundColor());
 		drawTextRight(contents, new PDRectangle(x, y, 69, 15), getMsg().amount(), theme.getBoxTitleTextColor(), HELVETICA, 9, 5, 4.5f);
 		
-		if (config.getTheme().isBoxTitleBorder()) {
+		if (config.isBorder()) {
 			drawBox(contents, 180, y + 14 + boxBorder, 370, boxBorder, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 180, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
 			drawBox(contents, 240 - boxBorder, y, boxBorder, 14f + boxBorder, theme.getBoxTitleBackgroundColor());
@@ -1036,26 +1035,26 @@ public class InvoiceTemplate {
 			
 			for (Finance finance : invoice.getFinances()) {
 				x = 180;
-				drawText(contents, formatDate(finance.getDueDate(), "dd/MM/yyyy").orElse(""), x + 5f, y - 12, theme.getBoxBodyTextColor(), HELVETICA, 7, i + FINANCE_DATE);
+				drawText(contents, formatDate(finance.getDueDate(), "dd/MM/yyyy").orElse(""), x + 5f, y - 12, theme.getTextColor(), HELVETICA, 7, i + FINANCE_DATE);
 				x += 60;
 				
 				String paymethod = finance.getPayMethodName() != null ? finance.getPayMethodName() : (finance.getPayMethodType() != null ? finance.getPayMethodType().getDescription(): "");
-				drawText(contents, paymethod, x + 5f, y - 12, theme.getBoxBodyTextColor(), HELVETICA,7, i + FINANCE_PAY_METHOD);
+				drawText(contents, paymethod, x + 5f, y - 12, theme.getTextColor(), HELVETICA,7, i + FINANCE_PAY_METHOD);
 				x += 80;
 			
 				if(finance.getBankAccount() != null && finance.getBankAccount().getIban() != null)
-					drawText(contents, finance.getBankAccount().getIban(), x + 5f, y - 12, theme.getBoxBodyTextColor(), HELVETICA, 7, i + FINANCE_BANK_ACCOUNT);
+					drawText(contents, finance.getBankAccount().getIban(), x + 5f, y - 12, theme.getTextColor(), HELVETICA, 7, i + FINANCE_BANK_ACCOUNT);
 				else
-					drawText(contents, "", x + 5f, y - 12, theme.getBoxBodyTextColor(), HELVETICA, 7, i + FINANCE_BANK_ACCOUNT);
+					drawText(contents, "", x + 5f, y - 12, theme.getTextColor(), HELVETICA, 7, i + FINANCE_BANK_ACCOUNT);
 			
 				x += 160;
-				drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(finance.getAmount()), theme.getBoxBodyTextColor(), HELVETICA, 7, 5, -12, i + FINANCE_AMOUNT);
+				drawTextRight(contents, new PDRectangle(x, y, 69, 15), toLatinNumber(finance.getAmount()), theme.getTextColor(), HELVETICA, 7, 5, -12, i + FINANCE_AMOUNT);
 				
 				y -= 10;
 				i++;
 			}
 			
-			if (config.getTheme().isBoxBodyBorder()) {
+			if (config.isBorder()) {
 				y -= 10;
 				float height  = initY - y;
 				drawBox(contents, 180, y, 370, boxBorder, theme.getBoxTitleBackgroundColor());

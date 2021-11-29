@@ -66,6 +66,7 @@ export const AVERAGE = "Media";// TODO
 // ----- B
 
 export const BACK = MSG.BACK;
+export const BACKGROUND = 'Fondo';
 export const BACKGROUND_ADJUST = MSG.BACKGROUND_ADJUST;
 export const BANK = MSG.BANK;
 export const BANKS = MSG.BANKS;
@@ -79,6 +80,7 @@ export const BARCODE = MSG.BARCODE;
 export const BILLING = MSG.BILLING;
 export const BLOCKED_POPUP = "Ventana bloqueada!";// TODO
 export const BOOKING = MSG.BOOKING;
+export const BORDER = 'Borde';
 export const BOX_CRITERION = MSG.BOX_CRITERION;
 export const BUDGET = MSG.BUDGET;
 export const BUDGETS = MSG.BUDGETS;
@@ -132,6 +134,7 @@ export const CREDITORS = MSG.CREDITORS;
 export const CUSTOM_VIEW = MSG.CUSTOM_VIEW;
 export const CUSTOMER = MSG.CUSTOMER;
 export const CUSTOMERS = MSG.CUSTOMERS;
+export const CUSTOMIZE_INVOICE = 'Personalizar Factura';
 
 // ----- D
 
@@ -388,6 +391,8 @@ export const RESUME_COSTS = "Resumen de costes"; // TODO
 export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
 export const REOPEN = "Reabrir"; // TODO
 export const REGIME = "Regimen"; // TODO
+export const RGPD_URL = 'RGPD Url';
+
 // ----- S
 
 export const SAVE = MSG.SAVE;

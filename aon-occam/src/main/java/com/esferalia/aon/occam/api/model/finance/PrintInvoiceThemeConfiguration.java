@@ -10,14 +10,12 @@ public class PrintInvoiceThemeConfiguration {
 	
 	String textColor;
 	String customerBackgroundColor;
+	String titleTextColor;
 	
 	String boxTitleBackgroundColor;
-	String boxTitleTextColor;
-	boolean boxTitleBorder;
-	
+	String boxTitleTextColor;	
 	String boxBodyBackgroundColor;
-	String boxBodyTextColor;
-	boolean boxBodyBorder;
+
 	
 	public PrintInvoiceThemeConfiguration() {
 		this.theme = PrintInvoiceTheme.BLACK_AND_WHITE;
@@ -112,16 +110,6 @@ public class PrintInvoiceThemeConfiguration {
 		return this;
 	}
 
-	public boolean isBoxTitleBorder() {
-		if(isBlackAndWhite() || isAonBlue()) return false;
-		else return boxTitleBorder;
-	}
-
-	public PrintInvoiceThemeConfiguration setBoxTitleBorder(boolean boxTitleBorder) {
-		this.boxTitleBorder = boxTitleBorder;
-		return this;
-	}
-
 	public String getBoxBodyBackgroundColorHTML() {
 		if(AonStringUtils.isBlank(boxBodyBackgroundColor) || isBlackAndWhite() || isAonBlue()) return "#ffffff";
 		else return boxBodyBackgroundColor; 
@@ -137,28 +125,18 @@ public class PrintInvoiceThemeConfiguration {
 		return this;
 	}
 
-	public String getBoxBodyTextColorHTML() {
-		if(AonStringUtils.isBlank(boxBodyTextColor) || isBlackAndWhite() || isAonBlue()) return "#404040";
-		else return boxBodyTextColor; 
+	public String getTitleTextColorHTML() {
+		if(AonStringUtils.isBlank(titleTextColor) || isBlackAndWhite() || isAonBlue()) return "#404040";
+		else return titleTextColor; 
 	}
 	
-	public Color getBoxBodyTextColor() {
-		if(AonStringUtils.isBlank(boxBodyTextColor) || isBlackAndWhite() || isAonBlue()) return new Color(0x404040);
-		else return new Color(Integer.parseInt(boxBodyTextColor.replaceFirst("#", ""), 16)); 
+	public Color getTitleTextColor() {
+		if(AonStringUtils.isBlank(titleTextColor) || isBlackAndWhite() || isAonBlue()) return new Color(0x404040);
+		else return new Color(Integer.parseInt(titleTextColor.replaceFirst("#", ""), 16)); 
 	}
 
-	public PrintInvoiceThemeConfiguration setBoxBodyTextColor(String boxBodyTextColor) {
-		this.boxBodyTextColor = boxBodyTextColor;
-		return this;
-	}
-
-	public boolean isBoxBodyBorder() {
-		if(isBlackAndWhite() || isAonBlue()) return false;
-		else return boxBodyBorder;
-	}
-
-	public PrintInvoiceThemeConfiguration setBoxBodyBorder(boolean boxBodyBorder) {
-		this.boxBodyBorder = boxBodyBorder;
+	public PrintInvoiceThemeConfiguration setTitleTextColor(String titleTextColor) {
+		this.titleTextColor = titleTextColor;
 		return this;
 	}
 	

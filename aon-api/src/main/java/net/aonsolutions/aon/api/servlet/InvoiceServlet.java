@@ -160,7 +160,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				response(req, resp, setInvoice(api));
 				break;
 			case "/print_configuration":
-				response(req, resp, setPrintConfiguration(api));
+				response(req, resp, savePrintConfiguration(api, api.getData()));
+				break;
+			case "/configuration":
+				response(req, resp, saveConfiguration(api));
 				break;
 			case "/selfconta":
 				response(req, resp, setSelfcontaInvoice(api));
@@ -566,18 +569,22 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
+	private JSONObject saveConfiguration(AonApiData api) {
+		JSONObject print = savePrintConfiguration(api, api.getData().getJSONObject("print"));
+		JSONObject tbai = saveTbaiConfiguration(api, api.getData().getJSONObject("tbai"));
+		
+		return new JSONObject()
+			.put("print", print)
+			.put("tbai", tbai);
+	}
+	
 	private JSONObject getPrintConfiguration(AonApiData api) {
 		PrintInvoiceConfiguration pic = AON_SOLUTIONS.getPrintInvoiceConfiguration(api.getDomain(), api.getUser(), false);
 		return PrintInvoiceConfigurationJSON.toJSON(pic);
 	}
 	
-	private JSONObject getTbaiConfiguration(AonApiData api) {
-		TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-		return TbaiConfigurationJSON.toJSON(tbai);
-	}
-	
-	private JSONObject setPrintConfiguration(AonApiData api) {
-		PrintInvoiceConfiguration pic = PrintInvoiceConfigurationJSON.fromJSON(api.getData());
+	private JSONObject savePrintConfiguration(AonApiData api, JSONObject json) {
+		PrintInvoiceConfiguration pic = PrintInvoiceConfigurationJSON.fromJSON(json);
 		AON_SOLUTIONS.savePrintInvoiceConfiguration(api.getDomain(), api.getUser(), pic);
 		if(api.getData().optBoolean("backgroundRemove")) {
 			AON.deleteAttach(api.getDomain().getName(),	api.getDomain().getId(), api.getUser().getLogin(), f ->
@@ -585,7 +592,19 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 		return getPrintConfiguration(api);
 	}
+
 	
+	private JSONObject getTbaiConfiguration(AonApiData api) {
+		TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
+		return TbaiConfigurationJSON.toJSON(tbai);
+	}
+	
+	private JSONObject saveTbaiConfiguration(AonApiData api, JSONObject json) {
+		TbaiConfiguration t = TbaiConfigurationJSON.fromJSON(json);
+		AON.saveTbaiConfiguration(api.getDomain(), api.getUser(), t);
+		return json;
+	}
+
 
 	private static InvoiceStatus getInvoiceStatus(String status) {
 		InvoiceStatus st = InvoiceStatus.safeValueOf(status);

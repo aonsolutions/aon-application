@@ -36,7 +36,9 @@ public class TbaiConfigurationDAO {
 			.findFirst().orElse(new ApplicationParameter());
 			
 		return new TbaiConfiguration()
-				.setAdministration(Administration.safeValueOf(Integer.parseInt(administration.getValue())))
+				.setAdministration(administration.getValue() != null
+					? Administration.safeValueOf(Integer.parseInt(administration.getValue()))
+					: Administration.UNKNOWN)
 				.setDefaultCertificate(defaultCertificate.getValue() != null ? Integer.parseInt(defaultCertificate.getValue()) : null)
 				.setTest(test.getValue() != null && ("true".equalsIgnoreCase(test.getValue()) || "1".equals(test.getValue())))
 				.setActive(active.getValue() != null && ("true".equalsIgnoreCase(active.getValue()) || "1".equals(active.getValue())));
