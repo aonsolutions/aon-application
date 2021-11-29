@@ -2,250 +2,263 @@ package net.aonsolutions.aon.tbai;
 
 import static net.aonsolutions.aon.tbai.responses.ResponseHandler.HandleStatusCode;
 import static net.aonsolutions.aon.tbai.responses.ResponseHandler.HandleTbaiResponse;
-import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.isEmpty;
-import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.isPresent;
-import static net.aonsolutions.aon.tbai.toolkit.DataToolkit.parseDate;
-import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getArray;
-import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getNumber;
-import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getObject;
-import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.getString;
-import static net.aonsolutions.aon.tbai.toolkit.JsonToolkit.read;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Date;
 
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 
-import com.esferalia.aon.occam.api.model.type.Country;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
-import net.aonsolutions.aon.tbai._beans.Entity;
-import net.aonsolutions.aon.tbai._beans.InvoiceDetailData;
-import net.aonsolutions.aon.tbai._enums.IDtype;
-import net.aonsolutions.aon.tbai._enums.Territory;
-import net.aonsolutions.aon.tbai.emision.EmisionInvoice;
-import net.aonsolutions.aon.tbai.emision.EmisionInvoice.TbaiEmisionInvoiceBuilder;
-import net.aonsolutions.aon.tbai.emision.araba.ArabaEmisionValidator;
-import net.aonsolutions.aon.tbai.emision.bizkaia.BizkaiaEmisionValidator;
-import net.aonsolutions.aon.tbai.emision.gipuzkoa.GipuzkoaEmisionValidator;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.DataRequest;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.server.AonDateUtils;
+
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
-import net.aonsolutions.aon.tbai.exceptions.json.JsonNotFoundException;
-import net.aonsolutions.aon.tbai.exceptions.json.JsonParseException;
 import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
-import net.aonsolutions.aon.tbai.exceptions.validation.ValidationException;
-import net.aonsolutions.aon.tbai.exceptions.xml.XMLCreationException;
-import net.aonsolutions.aon.tbai.toolkit.DataToolkit;
-import ticketbai.emision.Cabecera;
-import ticketbai.emision.Factura;
-import ticketbai.emision.HuellaTBAI;
-import ticketbai.emision.Sujetos;
+import net.aonsolutions.aon.tbai.responses.TbaiResponse;
 import ticketbai.emision.TicketBai;
 
 public class TbaiMain {
+
+	private TbaiMain() {
 	
-	public static EmisionInvoice jsonToInvoice(final InputStream is) throws JsonParseException, JsonNotFoundException {
-	
-		if(isEmpty(is)) throw new JsonParseException("Cannot parse JSON file");	
-		final JsonObject json ;
-				
-		try{json = read(is);}
-		catch(Exception e) {throw new JsonNotFoundException("Json not found");}
-		
-		final String date = 				getString(json, "date");
-		final JsonObject receiver_o = 		getObject(json, "receiver");
-		
-		final JsonObject address_o = 		getObject(receiver_o,"address");	
-		final String rec_zip = 				getString(address_o, "zip");
-		final String rec_address = 			getString(address_o, "address");
-		final String rec_province = 		getString(address_o, "province");
-		final String rec_city = 			getString(address_o, "city");
-		final String rec_document = 		getString(receiver_o,"document");
-		final String rec_name = 			getString(receiver_o,"name");	
-		
-		String rec_total_address = 	"";
-		if(isPresent(rec_address) && isPresent(rec_city) && isPresent(rec_province))
-		rec_total_address = rec_address + ". " + rec_city + ", " + rec_province; 		
-			
-		final String number = 				getString(json,"number");
-		final JsonNumber total = 			getNumber(json,"total");
-		
-		final JsonObject sender_o = 		getObject(json,"sender");
-		final JsonObject sender_address_o = getObject(sender_o ,"address");
-		final String sen_zip =  			getString(sender_address_o, "zip");
-		final String sen_country = 			getString(sender_address_o, "country");
-		final String sen_address = 			getString(sender_address_o, "address");
-		final String sen_province = 		getString(sender_address_o, "province");
-		final String sen_city = 			getString(sender_address_o, "city");			
-		final String sen_document = 		getString(sender_o, "document");
-		final String sen_name = 			getString(sender_o, "name");
-		
-		String sen_total_address = 	"";
-		if(isPresent(sen_address) && isPresent(sen_city) && isPresent(sen_province))
-		sen_total_address = sen_address + ". " + sen_city + ", " + sen_province; 
-		
-		final String series = 				getString(json, "series");	
-		final JsonArray details = 			getArray (json,  "details");
-		final String category =  			getString(json, "category");
-		
-		//final JsonNumber id =				getNumber(json, "id");
-		//final JsonArray taxes = 			getArray (json,"taxes");	
-		//final JsonArray finances = 		getArray (json,  "finances");
-		//final String transaction = 		getString(json, "transaction");
-	
-		final Entity   sender = new Entity();
-		sender	.setNif(sen_document)
-				.setName(sen_name)
-				.setCountry((sen_country == null) ? null : Country.valueOf(sen_country))
-				.setId_type(IDtype.NIF_IVA)
-				.setId("0")
-				.setZip(sen_zip)
-				.setAddress(sen_total_address);
-		
-		final ArrayList<Entity> receivers = new ArrayList<>();
-		Entity receiver = new Entity();
-		receiver	.setNif(rec_document)
-					.setName(rec_name)
-					.setId_type(IDtype.NIF_IVA)
-					.setId("0")
-					.setZip(rec_zip)
-					.setAddress(rec_total_address);
-		receivers.add(receiver);
-		
-		final ArrayList<InvoiceDetailData> detail_list = new ArrayList<>();
-		if(!isEmpty(details)) {
-			for (JsonValue det : details) {
-				final JsonObject o = 			(JsonObject) det;
-				final String description = 		getString(o, "description");
-				
-				final JsonNumber jquantity = 		getNumber(o, "quantity");
-				final JsonNumber jprice = 			getNumber(o, "price");
-				final JsonNumber jdiscount = 		getNumber(o, "discount");
-				final JsonNumber jtotal_amount = 	getNumber(o, "amount");
-						
-				final Double quantity = 		(isEmpty(jquantity)) 	 ? null : 	jquantity.doubleValue();
-				final Double price = 			(isEmpty(jprice))    	 ? null : 	jprice.doubleValue();
-				final Double discount = 		(isEmpty(jdiscount)) 	 ? null : 	jdiscount.doubleValue();
-				final Double total_amount =		(isEmpty(jtotal_amount)) ? null : 	jtotal_amount.doubleValue();
-				
-				detail_list.add(new InvoiceDetailData(description, quantity,price, discount, total_amount));
-			}	
-		}
-		
-		final TbaiEmisionInvoiceBuilder builder = new TbaiEmisionInvoiceBuilder();		
-		final EmisionInvoice invoice = 
-			 builder
-			.setSender				(sender)
-			.setRecievers			(receivers)
-			.setMultiple			(receivers.size() > 1)
-			.setSeries				(series)
-			.setNumber				(number)
-			.setExpedition_date		(parseDate(date, "yyyy-MM-dd'T'hh:mm"))
-			.setSimplified			(null)
-			.setReplace_simplified	(null)
-			.setRectification		(null)
-			.setOperation_date		(parseDate(date, "yyyy-MM-dd"))
-			.setDescription			(category)
-			.setDetails				(detail_list)
-			.setTotal_amount		((isEmpty(total))? null : total.doubleValue())
-			.setSupported_retention	(null)												//NOT COMPULSORY
-			.setTax_base_cost		(null)												//NOT COMPULSORY
-			.setId_keys				(new ArrayList<>())
-			.setBreakdown			(null)  
-			.build();
-		
-		return invoice;
 	}
 
-	public static void createEmisionTBAI(final EmisionInvoice i,final String name,Territory territory) throws XMLCreationException, ValidationException, StatusCodeException, TbaiResponseException {
-		try {			
-			switch (territory) {
-				case ARABA:				ArabaEmisionValidator.validate(i); 		break;
-				case BIZKAIA: 			BizkaiaEmisionValidator.validate(i);  	break;
-				case GIPUZKOA:			GipuzkoaEmisionValidator.validate(i); 	break;
-				default:  				throw new ValidationException("Territory is not defined");
-			}
+	public static void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws StatusCodeException, TbaiResponseException, JAXBException {
+		TbaiBlockchain blockchain = TbaiData.getBlockchain(company.getDomain(), new User().setLogin(""));
+		final TicketBai tbai = Invoice2tbai.build(company, invoice, blockchain); 
 			
-			final Cabecera 		cabecera = 	i.getCabecera();
-			final Sujetos 		sujetos = 	i.getSujetos();
-			final Factura 		factura = 	i.getFactura();
-			final HuellaTBAI 	huella =	i.getHuellaTbai();
+		final JAXBContext jaxbContext = JAXBContext.newInstance( TicketBai.class );
+		final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	 		
 			
-			final TicketBai tbai = new TicketBai();
-			tbai.setCabecera	(cabecera);
-			tbai.setSujetos		(sujetos);
-			tbai.setFactura		(factura);
-			tbai.setHuellaTBAI	(huella);
-			tbai.setSignature	(null);
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+						
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		jaxbMarshaller.marshal( tbai, bos );
+		
+		InputStream doc = new ByteArrayInputStream(bos.toByteArray());
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		String sign = SignXml.sign(tbaiConfiguration, doc, out);
+
+		TbaiBlockchain bc = new TbaiBlockchain()
+				.setDate(AonDateUtils.format(new Date(), "dd-MM-yyyy"))
+				.setNumber(Integer.toString(invoice.getNumber()))
+				.setSerie(invoice.getSeries())
+				.setSignature(sign);
 			
-			final JAXBContext jaxbContext     = JAXBContext.newInstance( TicketBai.class );
-			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	 		
-			
-			final OutputStream os = new FileOutputStream( "./" + name);
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			jaxbMarshaller.marshal( tbai, os );
-			jaxbMarshaller.marshal( tbai, bos );
-			
-			sendXML(new ByteArrayInputStream(bos.toByteArray()));		
-		} 
-		catch (JAXBException | FileNotFoundException e) {throw new XMLCreationException("ERROR WHILE ACCESSING DISK: Aborting...", e);} 
+		byte[] data = out.toByteArray(); 
+
+		TbaiResponse response = sendXML(tbaiConfiguration, new ByteArrayInputStream(data));		
+		
+		DataRequest request = TbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, data);
+		
+		TbaiData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, response, bc, request);
 	}
 	
-	public static void sendXML(InputStream xml) throws StatusCodeException, TbaiResponseException {
+	public static TbaiResponse sendXML(TbaiConfiguration tbaiConfiguration, InputStream xml) throws StatusCodeException, TbaiResponseException {
 		URL url;
 		try {
+			
+			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getCertificate());	
+			KeyStore keyStore = KeyStore.getInstance("PKCS12");
+			keyStore.load(key, tbaiConfiguration.getCertificate().getPassword().toCharArray());
+			
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+   			kmf.init(keyStore, tbaiConfiguration.getCertificate().getPassword().toCharArray());
+   	        
+            TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
+			SSLContext.setDefault(sslContext);
+          
+            
 			url = new URL("https://tbai-prep.egoitza.gipuzkoa.eus/WAS/HACI/HTBRecepcionFacturasWEB/rest/recepcionFacturas/alta");
 			URLConnection con = url.openConnection();
-			HttpURLConnection http = (HttpURLConnection)con;
+			HttpsURLConnection https = (HttpsURLConnection)con;
 			
-			http.setRequestMethod("POST"); 
-			con.setRequestProperty("Content-Type", "application/xml; charset=utf-8;");
-			http.setDoOutput(true);
+	        https.setHostnameVerifier(new TrustAllHosts());
+	        https.setRequestMethod("POST"); 
+			https.setRequestProperty("Content-Type", "application/xml; charset=utf-8;");
+			https.setDoOutput(true);
+			https.setDoInput(true);
 			
-			OutputStream os = http.getOutputStream();
+			OutputStream os = https.getOutputStream();
 			os.write(xml.readAllBytes());
 			os.close();
 			
-			System.out.println("\n\tServer status: \t" + http.getResponseCode() + ": " +http.getResponseMessage());			
-			System.out.println("\tMethod used: \t" + http.getRequestMethod());
-			System.out.println("\tEncoding used: \t" + http.getRequestProperty("Content-Type"));
+			System.out.println("\n\tServer status: \t" + https.getResponseCode() + ": " + https.getResponseMessage());			
+			System.out.println("\tMethod used: \t" + https.getRequestMethod());
+			System.out.println("\tEncoding used: \t" + https.getRequestProperty("Content-Type"));
 			
-			HandleStatusCode(http.getResponseCode());
+			HandleStatusCode(https.getResponseCode());
 			
 			System.out.println("\n\t-------------------------------------------------------------------------------------------------------------------------------------------------");
 			System.out.println("\t SERVICE RESPONSE: ");
 			System.out.println("\t-------------------------------------------------------------------------------------------------------------------------------------------------");
 			
-			InputStream response = (InputStream) http.getContent();
+			InputStream response = (InputStream) https.getContent();
 			byte[] bytes = response.readAllBytes();
 			HandleTbaiResponse(bytes);			
-			DataToolkit.buildFile(bytes, "./response.xml");
+			return getTbaiResponse(bytes);
 		} 
-		catch (MalformedURLException e) {e.printStackTrace();} 
-		catch (IOException e) {e.printStackTrace();}	
+		catch (MalformedURLException e) {
+			e.printStackTrace();
+			return new TbaiResponse().setDescription(e.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new TbaiResponse().setDescription(e.getMessage());
+		}catch (KeyStoreException e) {
+			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
+		} catch (CertificateException e) {
+			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
+		} catch (UnrecoverableKeyException e) {
+			e.printStackTrace();
+			throw new IllegalStateException(e.getMessage());
+		} catch (KeyManagementException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
-//	
-//	public static void main(String[] args) {
-//		try {for (int i = 0; i < 1; i++) sendXML(new FileInputStream("/home/akrck02/eclipse-workspace/aon.parent/aon-tbai/JSONtoTBAI.xml"));} 
-//		catch (FileNotFoundException e) {e.printStackTrace();}
-//	}
-//	
+	
+	private static class TrustAllCertificates implements X509TrustManager {
+	    public void checkClientTrusted(X509Certificate[] certs, String authType) {
+	    }
+	 
+	    public void checkServerTrusted(X509Certificate[] certs, String authType) {
+	    }
+	 
+	    public X509Certificate[] getAcceptedIssuers() {
+	        return null;
+	    }
+	}
+	
+	private static class TrustAllHosts implements HostnameVerifier {
+	    public boolean verify(String hostname, SSLSession session) {
+	        return true;
+	    }
+	}
+	
+	private static TbaiResponse getTbaiResponse(byte[] bytes) {
+		try {
+			System.out.println("\t Parsing XML response.... ");
+			
+			InputStream is = new ByteArrayInputStream(bytes);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(is);
+
+			System.out.println("\t XML version: \t " + doc.getXmlVersion());
+
+			
+			String idTbai;
+			try{idTbai = doc.getElementsByTagName("IdentificadorTBAI").item(0).getTextContent();}
+			catch(Exception e) {idTbai = null;}
+			
+			String estado;
+			try{estado = doc.getElementsByTagName("Estado").item(0).getTextContent();}
+			catch(Exception e) {estado = null;}
+			
+			String fecha_str;
+			try{fecha_str = doc.getElementsByTagName("FechaRecepcion").item(0).getTextContent();}
+			catch(Exception e) {fecha_str = null;}
+			
+			String descripcion;
+			try{descripcion = doc.getElementsByTagName("Descripcion").item(0).getTextContent();}
+			catch(Exception e) {descripcion = null;}
+			
+			String descripcion_eus;
+			try{descripcion_eus = doc.getElementsByTagName("Azalpena").item(0).getTextContent();}
+			catch(Exception e) {descripcion_eus = null;}
+			
+			String validation_code;
+			try{validation_code = doc.getElementsByTagName("Codigo").item(0).getTextContent();}
+			catch(Exception e) {validation_code = null;}
+			
+			String validation_desc;
+			try{validation_desc = doc.getElementsByTagName("Descripcion").item(1).getTextContent();}
+			catch(Exception e) {validation_desc = null;}
+			
+			String validation_desc_eus;
+			try{validation_desc_eus = doc.getElementsByTagName("Azalpena").item(1).getTextContent();}
+			catch(Exception e) {validation_desc_eus = null;}
+						
+			System.out.println(toString(doc));
+
+			return new TbaiResponse()
+					.setTbaiId(idTbai)
+					.setStatus(Integer.parseInt(estado))
+					.setDescription(descripcion)
+					.setDescriptionEUS(descripcion_eus)
+					.setReceptionDate(AonDateUtils.parse(fecha_str, "dd-MM-yyyy hh:mm:ss"))
+					.setValidationCode(Integer.parseInt(validation_code))
+					.setValidationDescription(validation_desc)
+					.setValidationDescriptionEUS(validation_desc_eus)
+					.setOk(idTbai != null)
+					.setData(bytes);
+
+		} catch(IOException | ParserConfigurationException | SAXException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String toString(Document doc) {
+	    try {
+	        java.io.StringWriter sw = new java.io.StringWriter();
+	        javax.xml.transform.TransformerFactory tf = javax.xml.transform.TransformerFactory.newInstance();
+	        javax.xml.transform.Transformer transformer = tf.newTransformer();
+	        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+	        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+	        transformer.transform(new javax.xml.transform.dom.DOMSource(doc), new javax.xml.transform.stream.StreamResult(sw));
+	        return sw.toString();
+	    } catch (Exception ex) {
+	        throw new RuntimeException("Error converting to String", ex);
+	    }
+	}
+	
 	public static void createAnulacionTBAI(){/*TO DO uwu*/}
 
 }

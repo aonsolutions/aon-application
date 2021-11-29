@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceSource;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceDetail implements Serializable {
 
@@ -226,6 +227,9 @@ public class InvoiceDetail implements Serializable {
 	}
 
 	public LinkedList<InvoiceTax> getInvoiceTaxes() {
+		if(invoiceTaxes == null) {
+			invoiceTaxes = new LinkedList<>();
+		}
 		return invoiceTaxes;
 	}
 	public InvoiceDetail setInvoiceTaxes(LinkedList<InvoiceTax> invoiceTaxes) {
@@ -259,6 +263,13 @@ public class InvoiceDetail implements Serializable {
 	public String getAccountDescription() {
 		return accountDescription;
 	}
+	
+	public double getAmount() {
+		double amount = getQuantity() * getPrice();
+		amount = amount - amount * (Double.parseDouble(getDiscountExpression()) / 100);
+		return AonMathUtils.round(amount);
+	}
+	
 	public InvoiceDetail setAccountDescription(String accountDescription) {
 		this.accountDescription = accountDescription;
 		return this;

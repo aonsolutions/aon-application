@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,6 +58,9 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
+import net.aonsolutions.aon.tbai.TbaiMain;
+import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
+import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -446,12 +450,12 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return InvoiceJSON.toJSON(invoice);
 	}
 	
-	public static void acceptCommunication(AonApiData api, Invoice invoice) {
+	public static void acceptCommunication(AonApiData api, Invoice invoice) throws StatusCodeException, TbaiResponseException, JAXBException {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
 		if(tbaiConfiguration.isActive()) {
-			// TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+			TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
 		}
 		
 		// SII
