@@ -109,6 +109,10 @@ public class PayrollImpl implements IPayroll {
 			ContractDAO.getContractStream(ctx, filter));
 	}
 
+	public void deleteContracts(AONContext ctx, Integer ...contractIds) {
+		ctx.getDslContext().transaction(configuration -> ContractDAO.delete(ctx, contractIds));
+	}
+
 	// -------------------- CONTRACT DATA
 	
 	public Stream<ContractData> getContractDataStream(AONContext ctx, ContractDataFilter filter){

@@ -1,13 +1,13 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, disabledForm, sortBy } from '../../../services/utils.js';
-import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, addContract, sendBaja, getTipoJornada, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja } from '../../../services/service.js'
+import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, addContract, getTipoJornada, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
 import { createBajaDialogContent, createFormComunica, createEnterpriseData, createEmployeeData, createContractData } from '../createComponent.js';
 import { createToolbar } from '../../notification/createComponent.js';
 import { AonDateUtils } from '../../utils/AonDateUtils.js';
-import * as LS from '../../../services/localStorageService.js';
+// import * as LS from '../../../services/localStorageService.js';
 
 export class AonAltaDirecta extends AonElement {
     _contract;
@@ -82,7 +82,7 @@ export class AonAltaDirecta extends AonElement {
         createEmployeeData(aonEmployeeCard.getContent(),  this.id);
  
         let aonContratoCard = this.getElement(`${this.id}ContratoCard`);
-        createContractData(aonContratoCard.getContent(), this.applicationParentEl.getDur().isComunicaManager() && !this.data);
+        createContractData(aonContratoCard.getContent(), this.applicationParentEl.getDur().isComunicaManager() && !(this.data && this.data.fra));
 
         if(!this.isMobile() && this.data && this.data.status) {
             const titleRight = aonContratoCard.getCardTitle2();
@@ -126,7 +126,7 @@ export class AonAltaDirecta extends AonElement {
     async initGets() {
         await Promise.all([
             this.getWorkplace(),
-            this.getContractTye(),
+            this.getContractType(),
             this.getTipoJornada(),
             this.getQuoteGroup(),
             this.getOccupation(),
@@ -210,7 +210,10 @@ export class AonAltaDirecta extends AonElement {
     
         if (data.coef) {
             obj.tipo_jornada = "semanal";
-            obj.coef = parseInt(data.coef.toString().replace(',', ''));
+            let coefStr = data.coef;
+            if(coefStr.indexOf(".")>=0)
+                coefStr = parseFloat(coefStr) * 1000;
+            obj.coef = parseInt(coefStr.toString().replace(',', ''));
         }
 
         for (const property in obj) 
@@ -336,6 +339,8 @@ export class AonAltaDirecta extends AonElement {
                 let options = cccs
                 .map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
                 ctaCti.setOptions(options);
+                if(options.length===1)
+                    ctaCti.setIndexOf(0);
             } catch (error) { }
         }
     }
@@ -355,7 +360,7 @@ export class AonAltaDirecta extends AonElement {
         return map;
     }
 
-    async getContractTye() {
+    async getContractType() {
         try {
             let manager = this.applicationParentEl.getDur().isComunicaManager();
             let resp = await getContractType();
@@ -500,11 +505,6 @@ export class AonAltaDirecta extends AonElement {
             let contract = this.getContract();
             await sendAlta(contract);
 
-            //----SAVED CONTRACT
-            await addContract({ ...contract, fra: contract.fecha, domain: LS.getDomainId()})
-            .then(()=> console.log("-----SAVED CONTRACT-----") )
-            .catch(e=>console.log(e));
-            
             this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
             this.applicationParentEl._movements = [];
             this.back();
@@ -513,6 +513,19 @@ export class AonAltaDirecta extends AonElement {
         }
         this.applicationEl.stopLoading();
     }
+
+
+    // async addContract(contract){
+    //     try {
+    //         let newContract= {...contract};
+    //         if(contract.coef)
+    //             newContract.coef = parseFloat(contract.coef) / 1000;
+
+    //         await addContract({ ...newContract, fra: newContract.fecha, domain: LS.getDomainId()}).then(()=> console.log("-----SAVED CONTRACT-----") )
+    //     } catch (error) {
+    //         console.log(error);
+    //     }     
+    // }
 
     async baja(){
         this.applicationEl.startLoading();

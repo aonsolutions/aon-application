@@ -40,11 +40,7 @@ export const appendNote = (ul, note) => {
     toolbarLeft.style.width = "80%";
     
     //SET STYLE BTN RIGHT TOOLBAR
-    setStyles(document.getElementById(textArea.RIGHT),{
-        paddingRight : 0,
-        // display : "none",
-        alignSelf : "flex-start"
-    });
+    setStyles(document.getElementById(textArea.RIGHT),{ paddingRight : 0, alignSelf : "flex-start" });
     
     //CHANGE STYLE TOOLBAR
     setStyles(textArea.getToolbar(),{ borderBottom:"none", color :"black"});
@@ -93,11 +89,12 @@ const dialogMoreVert = (ev, li, note, textAreaId) => {
     dialog.clear();
     let content = dialog.getContent()
     content.style.width = "133px";
+
     let moreActions = [{
             id: MATERIAL_ICONS.NOTIFICATION_ADD,
             icon: MATERIAL_ICONS.NOTIFICATION_ADD,
             name: MSG.REMINDER,
-            fn : (e) =>  reminder(e, note, textAreaId)
+            fn : (e) => reminder(e, note, textAreaId)
         },
         {
             name: MSG.DELETE,

@@ -586,6 +586,19 @@ public class AON {
 		}
 	}
 	
+	public static Certificate getCertificate(String domainName, Integer domainId, String login, Integer userId, String certificateType) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			Certificate certificate =  getSecurity().getCertificate(ctx, domainName, domainId, login, userId, certificateType);
+			if(null == certificate.getCertificate())
+				throw new CertificateNotFoundException();
+			return certificate;
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 	
 	public static Certificate getCertificate(String domainName, Integer domainId, String login, Integer userId) {
 		AONContext ctx = null;
@@ -618,7 +631,7 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			Certificate certificate =  getSecurity().getCertificateSEPE(ctx, domainId);
-			if(null == certificate.getCertificate())
+			if(null == certificate || null == certificate.getCertificate())
 				throw new CertificateNotFoundException();
 			return certificate;
 		} finally {

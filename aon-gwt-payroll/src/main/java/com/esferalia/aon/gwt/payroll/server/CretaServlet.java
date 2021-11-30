@@ -2212,7 +2212,8 @@ public class CretaServlet extends HttpServlet
 	
 	private static Certificate getCertificate(AONContext ctx) {
 		User user = AON.getUser(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser());
-		return AON.getCertificate(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), user.getId());
+		return AON.getCertificate(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), user.getId(), "TGSS");
+//		return AON.getCertificate(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), user.getId());
 	}
 
 	private static Optional<Employee> getEmployee(AONContext ctx, String ccc, String naf, Date startDate, Date endDate) {

@@ -214,6 +214,13 @@ public class PAYROLL {
 		}
 	}
 	
+	public static void deleteContracts(Domain domain, String login, Integer ...contractIds) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getPayroll().deleteContracts(ctx, contractIds);
+		}
+	}
+	
+	
 	
 	// -------------------- CONTRACT ATTACH
 	

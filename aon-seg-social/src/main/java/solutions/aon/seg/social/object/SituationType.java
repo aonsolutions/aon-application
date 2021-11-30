@@ -2,8 +2,18 @@ package solutions.aon.seg.social.object;
 
 
 public enum SituationType {
-	ALTA,
-	BAJA;
+	ALTA("ALTA"),
+	BAJA("BAJA");
+	
+	private String name;
+	
+	private SituationType(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
 	
 	public byte value() {
 		return (byte) ordinal();
