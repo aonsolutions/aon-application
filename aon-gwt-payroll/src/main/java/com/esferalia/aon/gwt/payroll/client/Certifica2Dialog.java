@@ -373,8 +373,8 @@ public class Certifica2Dialog extends AonCustomDialog {
 		AonToolbarSmallButton downloadCertifica2 = new AonToolbarSmallButton("Descargar XML", AON.CSS.aonIconDownload());
 		downloadCertifica2.getElement().getStyle().setMarginRight(10, Unit.PX);
 		downloadCertifica2.addClickHandler(e -> {
-			if(hasChange) {
-				messageL.setText("Generando nuevo Certifica2...");
+//			if(hasChange) {
+				messageL.setText("Generando Certifica2...");
 				messagesPanel.setVisible(true);
 				
 				employeesService.generateCertifaca2(contractId, certifica2Info, new AsyncCallback<String>() {
@@ -391,8 +391,8 @@ public class Certifica2Dialog extends AonCustomDialog {
 						// Not use here
 					}
 				});
-			} else
-				formPanel.submit();
+//			} else
+//				formPanel.submit();
 		});
 		
 		toolbar.add(downloadCertifica2);

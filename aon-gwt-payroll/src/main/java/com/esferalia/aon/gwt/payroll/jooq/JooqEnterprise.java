@@ -717,6 +717,7 @@ public class JooqEnterprise {
 					.fetch();
 		
 		System.err.println("enterpriseCCCActivities START");
+		System.err.println("enterpriseCCCActivities size : " + enterpriseCCCActivities.size());
 		
 		for(Record enterprise : enterpriseCCCActivities) {
 			Byte type = enterprise.get(ENTERPRISE_CCC.TYPE);
@@ -808,7 +809,7 @@ public class JooqEnterprise {
 			enterprisesCCCInfo.add(cccInfo);
 		}
 		
-		System.err.println("enterpriseCCCActivities size : " + enterpriseCCCActivities.size());
+		System.err.println("enterpriseCCCActivities size : " + enterprisesCCCInfo.size());
 		
 		return enterprisesCCCInfo;
 	}
