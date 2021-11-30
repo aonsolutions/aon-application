@@ -405,7 +405,8 @@ export class AonApplication extends AonElement {
       if(!ul){
         ul = this.createElement(TAG.UL);
         ul.id =idUl;
-        ul.className = "aonClip";
+        ul.classList.add(CSS.AON_UL);
+        ul.classList.add(CSS.AON_CLIP);
         div.appendChild(ul);
       }
       options.forEach((option, i) => {
@@ -424,7 +425,8 @@ export class AonApplication extends AonElement {
 
   buildSidenavSubOptions(data, options) {
     let ul = this.createElement(TAG.UL);
-    ul.className = "aonClip";
+    ul.classList.add(CSS.AON_UL);
+    ul.classList.add(CSS.AON_CLIP);
     ul.style.marginLeft = '12px';
     options.forEach((option, i) => {
       this.addSidenavOptionsListValue(data, option, ul);
@@ -547,8 +549,8 @@ export class AonApplication extends AonElement {
       if(!option.options || option.clickable){
         li.addEventListener(EVENT.CLICK, () => {
           let backgroundEl = li.style.backgroundColor;
-        
-          ul.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
+          // ul
+          this.querySelectorAll(`[id^='${sidenavId}'] li`).forEach((el) => {
             if (el.id !== sidenavId)
               el.style.backgroundColor = "transparent";
             else {
@@ -734,6 +736,10 @@ export class AonApplication extends AonElement {
 
   getSidenav() {
     return this.getElement(this.SIDENAV);
+  }
+
+  getMobileSidenav() {
+    return this.getElement(this.MOBILE_SIDENAV);
   }
 
   getContent() {

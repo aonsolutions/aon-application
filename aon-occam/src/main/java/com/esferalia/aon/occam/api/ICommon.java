@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyBank;
+import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.DomainGserviceaccountFilter;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
+import com.esferalia.aon.occam.api.model.Filter.DataRequestFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
@@ -127,8 +129,15 @@ public interface ICommon {
 	
 	//TAX
 	public Stream<Tax> getTaxStream(AONContext ctx, TaxFilter filter);
+
+	// DATA RESPONSE
+	
+	public DataRequest getDataRequest(AONContext ctx, DataRequestFilter filter);
+	public Stream<DataRequest> getDataRequestStream(AONContext ctx, DataRequestFilter filter);
+	public DataRequest saveDataRequest(AONContext ctx, DataRequest dataRequest);
 	
 	// DATA RESPONSE
+	public DataResponse getLastDataResponse(AONContext ctx, DataResponseFilter filter);
 	public Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseSource source, DataResponseFilter filter);
 	public DataResponse insertDataResponse(AONContext ctx, DataResponse dataResponse);
 	public Integer updateDataResponse(AONContext ctx, DataResponse dataResponse, DataResponseFilter filter);

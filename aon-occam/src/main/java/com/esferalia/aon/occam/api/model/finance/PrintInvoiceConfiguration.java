@@ -19,7 +19,10 @@ public class PrintInvoiceConfiguration {
 	private Attach background;
 	private boolean recordData;
 	private boolean contactData;
+	private boolean border;
 	private AonLanguage language;
+	
+	private PrintInvoiceThemeConfiguration theme;
 
 	@Deprecated
 	public InputStream getBackgroundImage() {
@@ -134,5 +137,23 @@ public class PrintInvoiceConfiguration {
 		this.language = language;
 		return this;
 	}
+
+	public boolean isBorder() {
+		return border;
+	}
+
+	public PrintInvoiceConfiguration setBorder(boolean border) {
+		this.border = border;
+		return this;
+	}
+
+	public PrintInvoiceThemeConfiguration getTheme() {
+		if(theme == null) theme = new PrintInvoiceThemeConfiguration();
+		return theme;
+	}
 	
+	public PrintInvoiceConfiguration setTheme(PrintInvoiceThemeConfiguration theme) {
+		this.theme = theme;
+		return this;
+	}
 }

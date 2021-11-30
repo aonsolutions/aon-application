@@ -29,9 +29,9 @@ public class PdfMaker {
 	 * @param invoice, Invoice Object
 	 * @param config, print invoice configuration
 	 */
-	public static void printInvoice(OutputStream out, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, byte[] qr, byte[] logo) {
+	public static void printInvoice(OutputStream out, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo) {
 		try {
-			InvoiceTemplate.create(out, company, invoice, config, qr, logo);
+			InvoiceTemplate.create(out, company, invoice, config, qrUrl, logo);
 		} catch (IOException | CanNotCreatePdfException e) {
 			e.printStackTrace();
 		}		

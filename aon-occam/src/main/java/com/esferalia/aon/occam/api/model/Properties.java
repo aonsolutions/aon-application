@@ -1009,6 +1009,15 @@ public interface Properties {
 		Property<String> getDiscountExprProperty();
 		Property<Integer> getPurchaseDetailProperty();
 	}
+
+	public interface DataRequestProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Timestamp> getDateProperty();
+		Property<Byte> getTypeProperty();
+		Property<String> getBlackBoxProperty();
+		Property<String> getMd5Property();
+	}
 	
 	public interface DataResponseProperties extends AuditProperties{
 		Property<Integer> getIdProperty();
@@ -1363,6 +1372,15 @@ public interface Properties {
 		Property<Double> getLongitudeProperty();
 	}
 	
+	public interface EnterpriseCCCProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getCccProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getEnterpriseActivityProperty();
+		Property<Integer> getGeozoneProperty();
+	}
+	
 	public interface NoteProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
@@ -1421,6 +1439,18 @@ public interface Properties {
 		Property<Timestamp> getModificationDateProperty();
 		Property<String> getModificationUserProperty();
 	}
+	
+	
+	public interface ContractAttachProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getContractProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getTypeProperty();
+		Property<Timestamp> getAttachDateProperty();
+		Property<String> getDriveIdProperty();
+	}
+	
 	
 	public interface TariffProperties {
 		Property<Integer> getIdProperty();

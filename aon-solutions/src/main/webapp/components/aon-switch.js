@@ -1,5 +1,6 @@
 import {AonElement} from './AonElement.js';
 import { CONSTANT, TAG, EVENT } from '../environments/environments.js';
+import '../css/aon-switch.css';
 
 export class AonSwitch extends AonElement {
 
@@ -163,7 +164,6 @@ export class AonSwitch extends AonElement {
     let span = this.getElement(this.TITLE);
     span.style.marginBottom = mb;
   }
-
 }
 if(!window.customElements.get('aon-switch')){
 	window.customElements.define('aon-switch',  AonSwitch);

@@ -14,6 +14,7 @@ import java.util.Optional;
 import javax.imageio.ImageIO;
 
 import org.apache.pdfbox.cos.COSArray;
+import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
@@ -24,7 +25,10 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedContent;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.form.PDTransparencyGroup;
+import org.apache.pdfbox.pdmodel.graphics.form.PDTransparencyGroupAttributes;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAppearanceDictionary;
@@ -501,6 +505,35 @@ public class PDFToolkit {
 			}
 			if (i == words.size() - 1)
 				lines.add(line);
+		}
+		if (lines.isEmpty()) {
+			lines.add(line);			
+		}
+		return lines;
+	}
+	
+	
+	public static List<String> getLinesRespectOriginal(String text, float max, PDFont font, float fontSize) throws IOException {
+
+		ArrayList<String> lines	= new ArrayList<>();
+		ArrayList<String> words	= (ArrayList<String>) StringToolkit.toWordsWithLines(text);
+		String			  line	= "";
+
+		for (int i = 0; i < words.size(); i++) {
+			if (!words.get(i).equals("\n")) {
+				float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
+				if (fw < max) {
+					line += " " + words.get(i);
+				} else {
+					lines.add(line);
+					line = "" + words.get(i);
+				}
+				if (i == words.size() - 1)
+					lines.add(line);
+			} else {
+				lines.add(line);
+				line = "";
+			}
 		}
 		if (lines.isEmpty()) {
 			lines.add(line);			

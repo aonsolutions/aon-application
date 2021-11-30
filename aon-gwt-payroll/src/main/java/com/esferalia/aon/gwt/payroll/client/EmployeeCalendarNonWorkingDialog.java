@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
@@ -47,9 +45,9 @@ public abstract class EmployeeCalendarNonWorkingDialog extends CustomDialog {
 	// --------------------------------- MAIN CLASS ----------------------------------
 	// -------------------------------------------------------------------------------
 	
-	private Byte nonWorkingDays[] = new Byte[7];
+	private Byte[] nonWorkingDays = new Byte[7];
 	
-	public EmployeeCalendarNonWorkingDialog(Byte[] nonWorkingDays) {
+	protected EmployeeCalendarNonWorkingDialog(Byte[] nonWorkingDays) {
 		setCaption("DIAS NO LABORABLES");
 		
 		setWidget(binder.createAndBindUi(this));
@@ -58,20 +56,12 @@ public abstract class EmployeeCalendarNonWorkingDialog extends CustomDialog {
 		
 		initCheckBox();
 		
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
+		cancelButton.addClickHandler(e -> hide());
 		
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAccept();
-				hide();
-			}
-		});	
+		acceptButton.addClickHandler(e -> {
+			onAccept();
+			hide();
+		});
 	}
 	
 	// -------------------------------------------------------------------------------
@@ -85,38 +75,38 @@ public abstract class EmployeeCalendarNonWorkingDialog extends CustomDialog {
 	// -------------------------------------------------------------------------------
 
 	private void initCheckBox() {
-		mondayCB.setValue(nonWorkingDays[1] == 1);
-		tuesdayCB.setValue(nonWorkingDays[2] == 1);
-		wednesdayCB.setValue(nonWorkingDays[3] == 1);
-		thursdayCB.setValue(nonWorkingDays[4] == 1);
-		fridayCB.setValue(nonWorkingDays[5] == 1);
-		saturdayCB.setValue(nonWorkingDays[6] == 1);
-		sundayCB.setValue(nonWorkingDays[0] == 1);
+		mondayCB.setValue(null != nonWorkingDays[1] && nonWorkingDays[1] == 1);
+		tuesdayCB.setValue(null != nonWorkingDays[2] && nonWorkingDays[2] == 1);
+		wednesdayCB.setValue(null != nonWorkingDays[3] && nonWorkingDays[3] == 1);
+		thursdayCB.setValue(null != nonWorkingDays[4] && nonWorkingDays[4] == 1);
+		fridayCB.setValue(null != nonWorkingDays[5] && nonWorkingDays[5] == 1);
+		saturdayCB.setValue(null != nonWorkingDays[6] && nonWorkingDays[6] == 1);
+		sundayCB.setValue(null != nonWorkingDays[0] && nonWorkingDays[0] == 1);
 	}
 	
 	protected Byte[] getNonWorkingDays() {
 		for(int day=0; day<7; day++) {
 			switch (day) {
 				case 1:
-					nonWorkingDays[day] = mondayCB.getValue() == true ? (byte)1 : (byte)0;
+					nonWorkingDays[day] = Boolean.TRUE.equals(mondayCB.getValue()) ? (byte)1 : (byte)0;
 					break;
 				case 2:
-					nonWorkingDays[day] = tuesdayCB.getValue() == true ? (byte)1 : (byte)0;
+					nonWorkingDays[day] = Boolean.TRUE.equals(tuesdayCB.getValue()) ? (byte)1 : (byte)0;
 					break;
 				case 3:
-					nonWorkingDays[day] = wednesdayCB.getValue() == true ? (byte)1 : (byte)0;
+					nonWorkingDays[day] = Boolean.TRUE.equals(wednesdayCB.getValue()) ? (byte)1 : (byte)0;
 					break;
 				case 4:
-					nonWorkingDays[day] = thursdayCB.getValue() == true ? (byte)1 : (byte)0;
+					nonWorkingDays[day] = Boolean.TRUE.equals(thursdayCB.getValue()) ? (byte)1 : (byte)0;
 					break;
 				case 5:
-					nonWorkingDays[day] = fridayCB.getValue() == true ? (byte)1 : (byte)0;
+					nonWorkingDays[day] = Boolean.TRUE.equals(fridayCB.getValue()) ? (byte)1 : (byte)0;
 					break;
 				case 6:
-					nonWorkingDays[day] = saturdayCB.getValue() == true ? (byte)1 : (byte)0;
+					nonWorkingDays[day] = Boolean.TRUE.equals(saturdayCB.getValue()) ? (byte)1 : (byte)0;
 					break;
 				case 0:
-					nonWorkingDays[day] = sundayCB.getValue() == true ? (byte)1 : (byte)0;
+					nonWorkingDays[day] = Boolean.TRUE.equals(sundayCB.getValue()) ? (byte)1 : (byte)0;
 					break;
 				default:
 					break;

@@ -43,6 +43,7 @@ export const ADD_DETAIL = MSG.ADD; // TODO
 export const ADD_FILE = MSG.ADD_FILE;
 export const ADD_FINANCE = MSG.ADD; // TODO
 export const ADD_INVOICE = MSG.ADD_INVOICE;
+export const ADD_REMARKS = MSG.ADD_REMARKS;
 export const ADD_TAG = MSG.ADD_TAG;
 export const ADD_TAX = MSG.ADD_TAX;
 export const ADD_TYPE = "Añadir Tipo"; // TODO
@@ -52,6 +53,7 @@ export const ADDRESS = MSG.ADDRESS;
 export const ALIAS = 'Alias';// TODO
 export const ALL_FILES = MSG.ALL_FILES;
 export const AMOUNT = MSG.AMOUNT;
+export const AON_BLUE = 'Azul Aon';
 export const API_DOCUMENTATION = MSG.API_DOCUMENTATION;
 export const APPLICATIONS = MSG.APPLICATIONS;
 export const ASESOR = MSG.ASESOR;
@@ -64,6 +66,7 @@ export const AVERAGE = "Media";// TODO
 // ----- B
 
 export const BACK = MSG.BACK;
+export const BACKGROUND = 'Fondo';
 export const BACKGROUND_ADJUST = MSG.BACKGROUND_ADJUST;
 export const BANK = MSG.BANK;
 export const BANKS = MSG.BANKS;
@@ -77,6 +80,7 @@ export const BARCODE = MSG.BARCODE;
 export const BILLING = MSG.BILLING;
 export const BLOCKED_POPUP = "Ventana bloqueada!";// TODO
 export const BOOKING = MSG.BOOKING;
+export const BORDER = 'Borde';
 export const BOX_CRITERION = MSG.BOX_CRITERION;
 export const BUDGET = MSG.BUDGET;
 export const BUDGETS = MSG.BUDGETS;
@@ -90,7 +94,10 @@ export const CATEGORY = MSG.CATEGORY;
 export const CAU = "Cau";// TODO
 export const CATALAN = MSG.CATALAN;
 export const CATEGORIES = MSG.CATEGORIES;
+export const CERTIFICATE = MSG.CERTIFICATE;
+export const CERTIFICATES = MSG.CERTIFICATES;
 export const CHANGE_TYPE = MSG.CHANGE_TYPE;
+export const CHARGES_AND_PAYMENTS = MSG.CHARGES_AND_PAYMENTS;
 export const CITY = MSG.CITY;
 export const CLASSIC_APPLICATIONS = MSG.CLASSIC_APPLICATIONS;
 export const CLASSIC_VIEW = MSG.CLASSIC_VIEW;
@@ -103,6 +110,7 @@ export const COMMERCIAL_NAME = 'Nombre Comercial'; // TODO
 export const COMMERCIAL_PRODUCT = 'Producto Comercial'; // TODO
 export const COMMUNICATE = "Comunicar";// TODO
 export const COMMUNICATE_CONFIRM = "¿Desea comunicar a la seguridad social?";// TODO
+export const COMMUNICATION = MSG.COMMUNICATION;
 export const COMPANIES = MSG.COMPANIES;
 export const COMPANY = MSG.COMPANY;
 export const COMPANY_COSTS = MSG.COMPANY_COSTS;
@@ -126,6 +134,7 @@ export const CREDITORS = MSG.CREDITORS;
 export const CUSTOM_VIEW = MSG.CUSTOM_VIEW;
 export const CUSTOMER = MSG.CUSTOMER;
 export const CUSTOMERS = MSG.CUSTOMERS;
+export const CUSTOMIZE_INVOICE = 'Personalizar Factura';
 
 // ----- D
 
@@ -236,9 +245,11 @@ export const INTERNAL = "Interno"; //TODO
 export const INVESTMENT = MSG.INVESTMENT;
 export const INVOICE = MSG.INVOICE;
 export const INVOICE_CONCEPTS = MSG.INVOICE_CONCEPTS;
+export const INVOICE_CONFIGURATION = MSG.INVOICE_CONFIGURATION;
 export const INVOICE_DATA = MSG.INVOICE_DATA;
 export const INVOICE_ISSUED = MSG.INVOICE_ISSUED;
 export const INVOICE_NUMBER = MSG.INVOICE_NUMBER;
+export const INVOICE_PRINTING = MSG.INVOICE_PRINTING;
 export const INVOICE_RECEIVED = MSG.INVOICE_RECEIVED;
 export const INVOICES = MSG.INVOICES;
 export const IRPF = MSG.IRPF;
@@ -260,6 +271,7 @@ export const LOCATION = MSG.LOCATION;
 
 // ----- M
 
+export const MANAGEMENT = MSG.MANAGEMENT;
 export const MODEL_111 = MSG.MODEL_111;
 export const MODEL_111_DESCRIPTION = MSG.MODEL_111_DESCRIPTION;
 export const MODEL_190 = MSG.MODEL_190;
@@ -314,6 +326,8 @@ export const PENDING_DOCUMENTS = MSG.PENDING_DOCUMENTS;
 export const PENDING_INVOICES = MSG.PENDING_INVOICES;
 export const PENDING_TASKS = 'Tareas Pendientes';//TODO
 export const PENDINGS = MSG.PENDINGS;
+export const PERSONALIZED = 'Personalizado';
+export const PERSONALIZED_THEME = 'Tema Personalizado';
 export const PERMISSIONS = MSG.PERMISSIONS;
 export const PHONE = MSG.PHONE;
 export const PORTAL = 'Portal';
@@ -322,7 +336,6 @@ export const POSTAL_CODE_MIN = MSG.POSTAL_CODE_MIN;
 export const PREVIOUS = MSG.PREVIOUS;
 export const PRICE = MSG.PRICE;
 export const PRINT_INVOICE = MSG.PRINT_INVOICE;
-export const PRINTING_INVOICES = MSG.PRINTING_INVOICES;
 export const PROCESSED_MOVEMENT  = MSG.PROCESSED_MOVEMENT;
 export const PROCESSED_MOVEMENT_BJ = "La baja se ha procesado correctamente";//TODO
 export const PRODUCT = MSG.PRODUCT;
@@ -364,6 +377,7 @@ export const REJECT_INVOICES = MSG.REJECT_INVOICES;
 export const REJECTED = MSG.REJECTED;
 export const REJECTED_INVOICES = MSG.REJECTED_INVOICES;
 export const REJECTEDS = MSG.REJECTEDS;
+export const REMARKS = MSG.REMARKS;
 export const REMINDER = MSG.REMINDER;
 export const REQUEST = MSG.REQUEST;
 export const REQUESTS = MSG.REQUESTS;
@@ -377,6 +391,8 @@ export const RESUME_COSTS = "Resumen de costes"; // TODO
 export const REQUEST_EMPTY_DATA = "Sin datos nuevos para la consulta"; // TODO
 export const REOPEN = "Reabrir"; // TODO
 export const REGIME = "Regimen"; // TODO
+export const RGPD_URL = 'RGPD Url';
+
 // ----- S
 
 export const SAVE = MSG.SAVE;
@@ -425,7 +441,9 @@ export const TASKS = "Tareas"; //TODO
 export const TAGS = MSG.TAGS;
 export const TAX = MSG.TAX;
 export const TAX_BASE = MSG.TAX_BASE;
-export const TAXES_DETAIL= MSG.TAXES_DETAIL;
+export const TAXES_DETAIL = MSG.TAXES_DETAIL;
+export const TEST_ENVIRONMENT = MSG.TEST_ENVIRONMENT;
+export const THEME = 'Tema';
 export const TICKET = MSG.TICKET;
 export const TICKETBAI = MSG.TICKETBAI;
 export const TICKETS = MSG.TICKETS;
@@ -469,6 +487,7 @@ export const VOLUME = "Tomo";
 
 // ----- W
 export const WEB = MSG.WEB;
+export const BLACK_AND_WHITE = 'Blanco y Negro';
 export const WITHHOLDING = MSG.WITHHOLDING;
 export const WITHHOLDING_FARMER = 'Reg. agri. gan. y pesca'; // TODO
 export const WORKGROUP = MSG.WORKGROUP;

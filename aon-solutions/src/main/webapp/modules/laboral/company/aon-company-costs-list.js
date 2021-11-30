@@ -12,7 +12,7 @@ import {
   getCompanyCostsExcel,
   getPeriodLaboral,
 } from "../../../services/service.js";
-import { PRESENCE_FILTER, SigninSidenav } from "../../signin/signinEnums.js";
+import { PRESENCE_FILTER, SigninSidenav } from "../../timecontrol/signinEnums.js";
 import {
   PAYROLL_FILTER,
   PAYROLL_VIEWS,

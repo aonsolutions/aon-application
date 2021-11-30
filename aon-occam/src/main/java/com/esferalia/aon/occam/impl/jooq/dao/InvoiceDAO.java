@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -467,6 +468,22 @@ public class InvoiceDAO {
 		return invoice;
 	}
 
+	public static List<InvoiceSeries> getSalesSeries(AONContext ctx) {
+		return ctx.getDslContext()
+			.select(INVOICE.SERIES, DSL.max(INVOICE.ISSUE_DATE), DSL.count(INVOICE.ID))
+			.from(INVOICE)
+			.where(INVOICE.DOMAIN.eq(ctx.getDomainId())
+				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value())))
+			.groupBy(INVOICE.SERIES)
+			.orderBy(INVOICE.ISSUE_DATE)
+			.fetch().stream().map(r -> new InvoiceSeries()
+					.setSales(true)
+					.setSeriesInfo(false)
+					.setDescription(r.getValue(INVOICE.SERIES))
+					.setCount(r.getValue(DSL.count(INVOICE.ID))))
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	private static Account getInvoiceDetailAccount(AONContext ctx, Integer invoiceDetailId) {
 		return ctx.getDslContext().select().from(ACCOUNT)
 		.join(INVOICE_DETAIL_ACCOUNT).on(INVOICE_DETAIL_ACCOUNT.ACCOUNT.eq(ACCOUNT.ID))

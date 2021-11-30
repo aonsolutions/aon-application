@@ -2,21 +2,18 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
-import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Rbank;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -38,11 +35,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	private EmployeeCalendarDraftObject employeeCalendar;
 	
-	private List<Agreement> agreements;
-	private List<Workplace> workplaces;
-	private ActivitiesCCC activitiesCCC;
-	
-	private Map<String, String> payMethodsMap;
+	private EnterpriseContext enterpriseContext;
 	
 	// ------------------------------------------------- Constructor
 	
@@ -55,9 +48,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		this.employeeData = new EmployeeInfo();
 		this.contractData = new ContractInfo();
 		
-		this.agreements = new ArrayList<>();
-		this.workplaces = new ArrayList<>();
-		this.payMethodsMap = new HashMap<>();
+		this.enterpriseContext = new EnterpriseContext();
 		
 		this.undoManager = new UndoManager<Undoable>();
 	}
@@ -92,61 +83,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				employeeContractData = employeeContractInfo;
 				employeeData = employeeContractInfo.getEmployeeInfo();
 				contractData = employeeContractInfo.getContractInfo();
-				
-				agreements = employeeContractData.getAgreements();
-				activitiesCCC = employeeContractData.getActivitiesCCC();
-				workplaces = employeeContractData.getWorkplaces();
-				payMethodsMap = employeeContractData.getPayMethods();
-				
-				enterprisesService.getAgreements(0, Integer.MAX_VALUE, new AsyncCallback<List<Agreement>>() {
-					
-					@Override
-					public void onSuccess(List<Agreement> dbAgreements) {
-						agreements = dbAgreements;
-						enterprisesService.getActivityCCC(new AsyncCallback<ActivitiesCCC>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								// Failure
-							}
-
-							@Override
-							public void onSuccess(ActivitiesCCC dbActivitiesCCC) {
-								activitiesCCC = dbActivitiesCCC;
-								enterprisesService.getPayMethods(new AsyncCallback<Map<String, String>>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										// Failure
-									}
-
-									@Override
-									public void onSuccess(Map<String, String> dbPayMethods) {
-										payMethodsMap = dbPayMethods;
-										enterprisesService.getWorkplaces(new AsyncCallback<List<Workplace>>() {
-											
-											@Override
-											public void onSuccess(List<Workplace> dbWorkplaces) {
-												workplaces = dbWorkplaces;
-												success.accept(employeeContractInfo);
-											}
-											
-											@Override
-											public void onFailure(Throwable caught) {
-												// Failure
-											}
-										});
-									}
-								});
-							}
-						});
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// Failure
-					}
-				});	
+				success.accept(employeeContractInfo);
 			}
 
 			@Override
@@ -319,6 +256,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 
 	// ------------------------------------------------- Getters
 	
+	public EnterpriseContext getEnterpriseContext() {
+		return enterpriseContext;
+	}
+
+	public void setEnterpriseContext(EnterpriseContext enterpriseContext) {
+		this.enterpriseContext = enterpriseContext;
+	}
+
 	public EmployeeContractInfo getEmployeeContractInfo() {
 		return this.employeeContractData;
 	}
@@ -337,27 +282,11 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	public List<Agreement> getActiveAgreements(){
 		List<Agreement> activeAgreements = new ArrayList<>();
-		for(Agreement a : this.agreements){
+		for(Agreement a : this.enterpriseContext.getAgreements()){
 			if(a.getId() >= 0)
 				activeAgreements.add(a);
 		}
 		return activeAgreements;
-	}
-	
-	public List<Workplace> getWorkplaces() {
-		return this.workplaces;
-	}
-	
-	public Map<Integer, String> getActivities() {
-		return activitiesCCC.getActivities();
-	}
-	
-	public Map<Integer, CCCInfo> getCCCs() {
-		return activitiesCCC.getCccs();
-	}
-	
-	public Map<String, String> getPayMethods() {
-		return payMethodsMap;
 	}
 	
 	public String getEmployeeFullName() {

@@ -285,12 +285,12 @@ public class ContractInfo implements Serializable{
 	}
 
 	public void setQuoteGroup(String quoteGroup) {
-		if(AonStringUtils.isNotBlank(contractType) && quoteGroup.contains("\""))
+		if(AonStringUtils.isNotBlank(quoteGroup) && quoteGroup.contains("\""))
 			try {
 				this.quoteGroup = quoteGroup.split("\"")[1];
 			} catch (IndexOutOfBoundsException e) {
 				this.quoteGroup = quoteGroup;
-			}
+			}	
 		else
 			this.quoteGroup = quoteGroup;
 	}
@@ -300,7 +300,7 @@ public class ContractInfo implements Serializable{
 	}
 
 	public void setOcupation(String ocupation) {
-		if(AonStringUtils.isNotBlank(contractType) && ocupation.contains("\""))
+		if(AonStringUtils.isNotBlank(ocupation) && ocupation.contains("\""))
 			try {
 				this.ocupation = ocupation.split("\"")[1];
 			} catch (IndexOutOfBoundsException e) {

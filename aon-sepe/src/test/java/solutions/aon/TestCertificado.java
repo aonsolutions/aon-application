@@ -36,25 +36,25 @@ public class TestCertificado {
 	@Test
 	@Ignore("SEND CERTIFICATE SEPE")
 	public void testCertEnterprise() {
-		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("SEPE.p12")) {			
-			String certificatePassword = "aon@FNMT";
+		try (final InputStream certificateInputStream = TestCertificado.class.getResourceAsStream("AYUDAT.p12")) {			
+			String certificatePassword = "SLLENsMMGPAkm3jF";
 			String certificateType = "pkcs12";
 			CertificatesBuilder bd  = new CertificatesBuilder();
 			bd.setRegimen("0111")
-			.setCtaCti("41108285354")
-			.setIpf("28805668P")
-			.setIpfManager("J41956632")
-			.setName("DEVORA")
-			.setSurname("ALVAREZ")
-			.setLastSurname("RODRIGUEZ")
-			.setTypeContract("502")
-			.setGz("09")
-			.setDurationContract(2)
+			.setCtaCti("43117353701")
+			.setIpf("Y4092896Z")
+			.setIpfManager("B55741847")
+			.setName("MATTHEW")
+			.setSurname("NEAL")
+			.setLastSurname(null)
+			.setTypeContract("402")
+			.setGz("07")
+			.setDurationContract(15)
 			.setTypeDuration(TypeDuration.DIAS)
-			.setCatProfessional("9210")
+			.setCatProfessional("4500")
 			.setCauseSuspension("11")
-			.setfAEd(new Date("2021/09/04"))
-			.setfSTd(new Date("2021/09/05"))
+			.setfAEd(new Date("2021/11/15"))
+			.setfSTd(new Date("2021/11/29"))
 			.setDaysCtzVc(0)
 			.setBcccVc(0.00)
 			.setBcdVc(0.00)
@@ -65,7 +65,7 @@ public class TestCertificado {
 			
 			List<QuoteData> quoteDatas = new LinkedList<>();
 			
-			quoteDatas.add(parseQuoteData(2021, 9, 2, 22.95, 22.95));
+			quoteDatas.add(parseQuoteData(2021, 11, 15, 806.31, 806.31));
 			
 			bd.setQuoteData(quoteDatas);
 		

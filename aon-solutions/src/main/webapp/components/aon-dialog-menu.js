@@ -1,5 +1,5 @@
 import {AonElement} from './AonElement.js';
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonIcon } from './aon-icon.js';
 
 
@@ -18,11 +18,10 @@ export class AonDialogMenu extends AonElement {
 
 	constructor () {
 		super();
-		this.DIALOG = this.id + 'DialogMenu';
-		this.CONTENT = this.DIALOG + 'Content';
 	}
 
 	connectedCallback () {
+		this.initialize();
 		let divOne = this.createElement(TAG.DIV);
 		divOne.className = `aonDialog`;
 		divOne.id = this.DIALOG;
@@ -34,7 +33,12 @@ export class AonDialogMenu extends AonElement {
 		divOne.appendChild(divTwo);
 
 		this.build();
-  }
+  	}
+
+	initialize() {
+		this.DIALOG = this.id + 'DialogMenu';
+		this.CONTENT = this.DIALOG + 'Content';
+	}
   
 
 	build() {
@@ -116,7 +120,8 @@ export class AonDialogMenu extends AonElement {
 		content.style.left = (left > (dialog.offsetWidth/2) ? left - 180 : left)+'px' ;
 
 		content.innerHTML = '';
-		let ul = document.createElement('ul');
+		let ul = document.createElement(TAG.UL);
+		ul.className = CSS.AON_UL;
 		content.appendChild(ul);
 		options.forEach((item, i) => {
 			let li = document.createElement('li');

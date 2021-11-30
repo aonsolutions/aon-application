@@ -156,7 +156,7 @@ public class MultipleDownloadServlet extends HttpServlet{
     					list.add(file);
     				
     				} else {
-    					Invoice invoice = AON.getInvoice(domain.getName(), domain.getId(), user.getLogin(), id);
+    					Invoice invoice = AON_SOLUTIONS.getInvoice(domain.getName(), domain.getId(), user.getLogin(), id);
     					if(InvoiceType.SALES.equals(invoice.getType())) {
     						CompanyFull company = AON.getCompanyFull(domain.getName(), domain.getId(), user.getLogin());
     						Attach logo = new Attach();
@@ -166,7 +166,7 @@ public class MultipleDownloadServlet extends HttpServlet{
     							logo = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f-> f.getAttachModuleProperty().eq(regId)
     								.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
     						}
-    						File file = File.createTempFile(invoice.getReferenceCode(), ".pdf");
+    						File file = File.createTempFile("Factura " + invoice.getReferenceCode(), ".pdf");
     						FileOutputStream out = new FileOutputStream(file);
     						PdfMaker.printInvoice(out, company, invoice, config, null, logo.getData());
     						list.add(file);	

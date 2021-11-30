@@ -442,6 +442,13 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	// ------------------------------------------------- Database Methods (ContractVariables)
+	
+		public void getEmployeeContractVariablesObject(Consumer<EmployeeContractVariablesObject> success) {
+			EmployeeContractVariablesObject employeeContractVariablesObject = new EmployeeContractVariablesObject(contractData.getContractId());
+			success.accept(employeeContractVariablesObject);
+		}
+	
 	// ------------------------------------------------- Database Methods (CheckStatus)
 	
 	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {

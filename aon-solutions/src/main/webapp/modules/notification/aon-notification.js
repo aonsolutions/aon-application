@@ -1,8 +1,8 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonCard } from "../../components/aon-card.js";
-import { scrollInfinite, serializeForm } from "../../services/utils.js";
+import { serializeForm } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
-import { firstLetters } from "../signin/time-control/utils.js";
+import { firstLetters } from "../timecontrol/time-control/utils.js";
 import { AonTabs } from "../../components/aon-tabs.js";
 import { Swipe } from "../../components/swipe.js";
 import { getDomainUserRoles, getNotification, getTastHolders, markReadNotification, sendNotification } from "../../services/service.js";
@@ -89,7 +89,7 @@ export class AonNotification extends AonElement {
     
     let elementScroll = this.getElement(this.ROOT_PANEL);
     elementScroll.classList.add(CSS.MATERIAL_SCROLL);
-    scrollInfinite(elementScroll , async()=>{
+    this.scrollInfinite(elementScroll , async()=>{
       await this.loadMore();
     })
   }
@@ -342,7 +342,6 @@ export class AonNotification extends AonElement {
       setStyles(span,{ bottom:0, top:76, right: "7%" });
 
     aonNotification.appendChild(span);
-    const color = "rgba(0, 36, 105, 0.1)";
     let icon = createIconButton({
       attributes:{
         id:span.id+"Button",
@@ -354,8 +353,7 @@ export class AonNotification extends AonElement {
       }
     }, span);
     let btn = icon.getButton(); 
-    btn.classList.add(CSS.PULSE, CSS.PULSE_INFINITE);
-    setStyles(btn,{ backgroundColor:color});
+    btn.classList.add("addNotification", CSS.PULSE)
     // btn.style.boxShadow = `0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%), 0 3px 1px -2px rgb(0 0 0 / 20%)`;
   }
 
@@ -440,7 +438,7 @@ export class AonNotification extends AonElement {
   }
 
   async listTaskHolder(){
-    if(this.TASK_HOLDERS.length<= 0){
+    if(this.TASK_HOLDERS.length <= 0){
       let result = await getTastHolders().catch(e=>null);
       if(result) this.TASK_HOLDERS = result.map(r=>({name:r.name,value:r.id}));
     }
@@ -463,6 +461,25 @@ export class AonNotification extends AonElement {
       dialog.close();
     }
   }
+
+    /**
+   * 
+   * @param {element html or undefined} element 
+   * @param {*} fn return end elment
+   */
+  scrollInfinite(element, fn) {
+    if(element){
+      element.addEventListener(EVENT.SCROLL, async ({target:{scrollTop, scrollHeight, offsetHeight}}) => {
+        if (scrollTop >= (scrollHeight - offsetHeight)) fn();
+      });
+    } else {
+      element = document.body;
+      window.addEventListener(EVENT.SCROLL, ()=>{
+        if ( (element.scrollTop + element.clientHeight) >= element.scrollHeight) fn();
+    }) 
+    }
+  }
+
 
   showToast(obj) {
     if(typeof obj === "string")  obj = JSON.parse(obj);

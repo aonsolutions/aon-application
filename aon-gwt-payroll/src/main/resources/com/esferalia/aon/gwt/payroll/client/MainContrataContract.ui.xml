@@ -1,134 +1,25 @@
-
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
-	xmlns:d='urn:import:com.esferalia.aon.gwt.payroll.client' >
+	xmlns:d='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions' >
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainContrataContract.MyStyle">
-		/*UI Style*/
 		
-		.panelGridSearch{
-			margin-top: 0px !important;
-		}
-		
-		.suggestBox{
-			width: 100%;
-			margin: 3px;
-			margin-left: 11px;
-		}
-		
-		/*XML Style*/
-	    
-	    .tableStylePanel{
-			/*margin: auto;*/
-			height: 100%;
-		    width: 100%;
-		}
-		
-		.widthAll{
-			width: 100%
-		}
-		
-		.pl20{
-			padding-left: 20px;
-		}
-		
-		.ml12{
-			margin-left: 12px;
-		}
-
-		.ml8{
-			margin-left: 8px;
-		}
-		
-		.hide{
-			display: none;
-		}
-		
-		/*New Styles*/
-		.pt9{
-			padding-top: 9px;
-		}
-		
-		.pt4{
-			padding-top: 4px;
-		}
-		
-		.ml9{
-			margin-left: 9px;
-		}
-		
-		.p5{
+		.flexColumn{
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
 			padding: 5px;
-		}
-		
-		.styleBorder{
-			border-style: solid;
-			border-width: 1px; 
-			margin: 15px 2px 15px 0px;
-			width: 99%;
-		}
-		
-		.headerStyle{
-			top: -0.5em;
-			font-size: 12px;
-			margin-left: 10px;
-		}
-		
-		.paddingTable{
-			padding: 0px 0px 0px 10px;
-		}
-		
-		.mr10{
-			margin-right: 10px;	
-		}
-		
-		.ml20{
-			margin-left: 20px;	
-		}
-		
-		.ml4{
-			margin-left: 4px;	
-		}
-		
-		.w600{
-			width: 600px;
-		}
-		
-		.mb0{
-			margin-top: 5px !important;
-			margin-bottom: 0 !important;
-		}
-		
-		.mt10{
-			margin: 5px 1em;
-		}
-		
-		.pt2{
-			padding-top: 2px;
-		}
-		
-		.mr16{
-			margin-right: 16px;
-		}
-		
-		.sb{
-			background-color: white; /* #f6f5e3; */
-			border: 1px solid #868686;
-			padding: 3px;
-			cursor: pointer;
 		}
 		
 		.pointer{
 			cursor: pointer;
-		}
-		
-		.ml5{
-			margin-left: 5px;
+			margin: 0 10px;
 		}
 		
 		.filterPanel{
@@ -142,40 +33,29 @@
 			align-items: center;
 		}
 		
-		.bold{
-			font-weight: bold;
-		}
-		
-		.contractaEmployeeScPanel{
-			margin: 0 0 10px;
-		}
-		
-		.mainContainer{
-			margin-top: 50px;
+		.suggestBox{
+			width: 100%;
+			margin: 3px;
+			margin-left: 11px;
 		}
 		
 	</ui:style>
 
 	<g:DeckPanel ui:field="deckPanel">
-		<g:DockLayoutPanel ui:field="dockLayoutPanel" >
+		
+		<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
+			<g:north size="50">
+				<aon:AonToolbar ui:field="employeeToolbar"/>
+			</g:north>
 			<g:center>
-				<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+				<g:SplitLayoutPanel>
 					<g:center>
-						<g:HTMLPanel ui:field="mainContainer" styleName="{style.mainContainer} {style.widthAll}">
-							<g:ScrollPanel height="100%" styleName="{style.p5}">
-								<g:VerticalPanel styleName="{style.tableStylePanel}">
-								
-									<g:HTMLPanel ui:field="filterEmployeePanel"></g:HTMLPanel>
-								
-								 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
-								 		<c:DataGrid ui:field="employeeDataGrid" styleName="{style.pointer}"></c:DataGrid>
-								 	</g:HTMLPanel>
-							 		
-								</g:VerticalPanel>
-							</g:ScrollPanel>
-						</g:HTMLPanel>	
+						<g:HTMLPanel styleName="{style.flexColumn}">
+							<g:HTMLPanel ui:field="filterEmployeePanel" />
+						 	<c:DataGrid ui:field="employeeDataGrid" styleName="{style.pointer}" />
+						</g:HTMLPanel>
 					</g:center>
-					<g:south size="15">
+					<g:south size="20">
 						<a:MinimizePanel ui:field="footPanel" styleName="{res.css.aonSelector}" >
 							<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
 						</a:MinimizePanel>
@@ -183,26 +63,17 @@
 				</g:SplitLayoutPanel>
 			</g:center>
 		</g:DockLayoutPanel>
+		
 
-		<g:DockLayoutPanel ui:field="trashDockLayoutPanel" >
+		<g:DockLayoutPanel unit="PX">
+			<g:north size="50">
+				<aon:AonToolbar ui:field="employeeTrashToolbar"/>
+			</g:north>
 			<g:center>
-				<g:SplitLayoutPanel ui:field="trashSplitLayoutPanel">
-					<g:center>
-						<g:HTMLPanel ui:field="trashMainContainer" styleName="{style.mainContainer} {style.widthAll}">
-							<g:ScrollPanel height="100%" styleName="{style.p5}">
-								<g:VerticalPanel styleName="{style.tableStylePanel}">
-								
-									<g:HTMLPanel ui:field="filterTrashEmployeePanel"></g:HTMLPanel>
-								
-								 	<g:HTMLPanel ui:field="mainTrashTablePanel" styleName="{style.mt10}">
-								 		<c:DataGrid ui:field="trashEmployeeDataGrid" styleName="{style.pointer}"></c:DataGrid>
-								 	</g:HTMLPanel>
-							 		
-								</g:VerticalPanel>
-							</g:ScrollPanel>
-						</g:HTMLPanel>	
-					</g:center>
-				</g:SplitLayoutPanel>
+				<g:HTMLPanel styleName="{style.flexColumn}">
+					<g:HTMLPanel ui:field="filterTrashEmployeePanel" />
+				 	<c:DataGrid ui:field="trashEmployeeDataGrid" styleName="{style.pointer}" />
+			 	</g:HTMLPanel>				
 			</g:center>
 		</g:DockLayoutPanel>
 		
@@ -212,4 +83,3 @@
 		
 	</g:DeckPanel>
 </ui:UiBinder> 
-

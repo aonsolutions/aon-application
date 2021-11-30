@@ -9,7 +9,7 @@ import {
   PERIOD_FILTER,
 } from "../../services/accountingService.js";
 import "../../components/aon-filter.js";
-import { SigninSidenav } from "../signin/signinEnums.js";
+import { SigninSidenav } from "../timecontrol/signinEnums.js";
 import { getPeriodAccounting } from "../../services/service.js";
 import { ToolbarType } from "../../models/enums.js";
 import * as ACTION from "../actions.js";
@@ -168,9 +168,17 @@ export class AonGraphicsTrial extends AonElement {
       div.style.margin = "auto";
 
       colChart(div, result, this.selectedPeriod, this.isMobile(), this.filter);
-      const el1 = this.getElement("aonAccountingSidenavVista Trimestral") || this.getElement("aonAccountingMobileSidenavContentVista Trimestral");
-      const el2 = this.getElement("aonAccountingSidenavVista Anual") || this.getElement("aonAccountingMobileSidenavContentVista Anual");
-      const el3 = this.getElement("aonAccountingSidenavVista Mensual") || this.getElement("aonAccountingMobileSidenavContentVista Mensual");
+
+      let sidenavBaseId = null;
+      try {
+        sidenavBaseId = this.isMobile() ? `${this.applicationEl.getMobileSidenav().id}Content` : this.applicationEl.getSidenav().id;
+      } catch (e) {
+        sidenavBaseId = "";
+      }
+
+      const el1 = this.getElement(`${sidenavBaseId}VistaTrimestral`);
+      const el2 = this.getElement(`${sidenavBaseId}VistaAnual`);
+      const el3 = this.getElement(`${sidenavBaseId}VistaMensual`);
       
       if (el1)
         el1.addEventListener("click", () => {

@@ -1,5 +1,5 @@
 // HTML
-
+export const A = 'a';
 export const DIV = 'div';
 export const IMG = 'img';
 export const I = 'i';
@@ -19,7 +19,7 @@ export const SECTION = 'section';
 export const IFRAME = 'iframe';
 
 // COMPONENTS
-
+export const AON_ELEMENT = 'aon-element';
 export const AON_ADDRESS = 'aon-address';
 export const AON_APPLICATION = 'aon-application';
 export const AON_BASIC_TABLE = 'aon-basic-table';
@@ -94,6 +94,9 @@ export const AON_WORKGROUP = 'aon-workgroup';
 
 export const AON_INVOICE = 'aon-invoice';
 export const AON_MOBILE_INVOICE = 'aon-mobile-invoice';
+export const AON_INVOICE_CONFIGURATION = 'aon-invoice-configuration';
+export const AON_INVOICE_COMMUNICATION = 'aon-invoice-communication';
+export const AON_INVOICE_PRINT = 'aon-invoice-print';
 
 // DEV DOC
 export const AON_API_DOC = 'aon-api-doc';
@@ -102,6 +105,9 @@ export const AON_COMPONENTS_DOC = 'aon-components-doc';
 
 export const AON_BANK_LIST = 'aon-bank-list';
 export const AON_BANK = 'aon-bank';
+
+export const AON_MARKETPLACE = 'aon-marketplace';
+export const AON_MARKETPLACE_PANEL = 'aon-marketplace-panel';
 
 export const AON_TAGS = [AON_INPUT, AON_DATE, AON_SELECT, AON_NUMBER, AON_SWITCH].join(", ");
 

@@ -9,10 +9,11 @@ import "../../components/aon-toast.js";
 import "../company/aon-mobile-desktop.js";
 import "../company/aon-parent.js";
 
-import { EVENT, MSG } from '../../environments/environments.js'; 
+import { EVENT, MSG, TAG } from '../../environments/environments.js'; 
 
 import { webkitRequestMobile } from "../../services/request.js";
 import { AonInput } from "../../components/aon-input.js";
+import * as LS from '../../services/localStorageService.js';
 
 export class AonLogin extends AonElement {
   tag;
@@ -146,7 +147,7 @@ export class AonLogin extends AonElement {
   buildAppLogo(){
     const div  = this.getElement('logosMobiles');
     div.style.textAlign = "center";
-    const playStore = this.createElement('a');
+    const playStore = this.createElement(TAG.A);
     playStore.href = "https://play.google.com/store/apps/details?id=aon.solutions";
     playStore.target = "_blank";
     const imgPlayStore = this.createElement('img');
@@ -155,7 +156,7 @@ export class AonLogin extends AonElement {
     playStore.appendChild(imgPlayStore);
     div.appendChild(playStore);
 
-    const appStore = this.createElement('a');
+    const appStore = this.createElement(TAG.A);
     appStore.href = "https://itunes.apple.com/es/app/aon-solutions/id1538461097";
     appStore.target = "_blank";
     const imgAppStore = this.createElement('img');
@@ -191,7 +192,9 @@ export class AonLogin extends AonElement {
       src = "assets/ayudat-logo4.png";
     } else if (href.includes("aonsolutions.org")){
      src = "assets/beta-logo.svg";
-    }
+    } else if("true"==localStorage.getItem("AYUDAT_APP"))
+      src = "assets/ayudat-logo.png";
+
     logo.src = src;
     logo.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;
@@ -219,10 +222,7 @@ export class AonLogin extends AonElement {
     login(data)
       .then(() => {
         loader.stop();
-        localStorage.removeItem('aon_domain_id');
-        localStorage.removeItem('aon_domain_name');
-        localStorage.removeItem('aon_domain_login');
-      
+        LS.removeDomain();
         this.getModule().buildHome();
         getCompanies().then(companies => {
           if(companies.length === 1){

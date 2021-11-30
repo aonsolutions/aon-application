@@ -53,6 +53,7 @@ export const AUTORENEW = 'autorenew';
 
 export const BACKUP = 'backup';
 export const BACKUP_TABLE = 'backup_table';
+export const BAR_CHART = 'bar_chart';
 export const BATCH_PREDICTION = 'batch_prediction';
 export const BOOK = 'book';
 export const BOOK_ONLINE = 'book_online';
@@ -162,6 +163,7 @@ export const NOTIFICATION_ADD = "notification_add";
 
 // ----- P
 
+export const PAYMENT = 'payment';
 export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
 export const PERSON_ADD = 'person_add';

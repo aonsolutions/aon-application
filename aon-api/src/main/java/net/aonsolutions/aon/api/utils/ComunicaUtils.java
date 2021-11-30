@@ -10,15 +10,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
 import com.esferalia.aon.in.payroll.tgss.report.CCCLaboralLife;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.watson.server.AonDateUtils;
+
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.seg.social.ServicioREDEmployee;
+import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
-import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class ComunicaUtils {
 
@@ -36,7 +38,9 @@ public class ComunicaUtils {
 			    String regimen = ccc.getCccRegimeCode();
 	            String cti = ccc.getCccAccount();
 	            try {
-		            employees.addAll(ServicioREDEmployee.getPrevEmployees(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regimen, cti));
+//	            	employees.addAll(ServicioREDEmployee.getPrevEmployees(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regimen, cti) );
+
+		            employees.addAll(SistemaRED.getPrevEmployees(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regimen, cti) );
 				} catch (Exception e) {e.printStackTrace();}
 		 }
 	     return employees;
@@ -86,9 +90,11 @@ public class ComunicaUtils {
 		  		    	data.getGc().ifPresent(empl::setGc);
 		  		    	data.getFrb().ifPresent(empl::setFrb);
 		  		    	data.getContract().ifPresent(empl::setContract);
-		  		    	data.getCoef().ifPresent(empl::setCoef);
 		  		    	data.getOccupation().ifPresent(empl::setOcup);
+		  		    	data.getCoef().ifPresent(coef-> empl.setFactor(Double.parseDouble(coef)));
+		  		    	
 		  		    	employees.add(empl.build());
+		  		    
 	  		      });
 	  		  } catch(Exception e)  {e.printStackTrace();}
 			 }
@@ -150,35 +156,4 @@ public class ComunicaUtils {
 				throw new Exception("Coeficiente parcial requerido");
 			}
 	}
-	
-	public static com.esferalia.aon.occam.api.model.payroll.Employee employeeParse(Employee data) {
-		String ipf = Toolkit.fillStringLeft(data.getIpf().length()>10 ? data.getIpf().substring(1) : data.getIpf(),  "0", 10);
-		com.esferalia.aon.occam.api.model.payroll.Employee employee = new com.esferalia.aon.occam.api.model.payroll.Employee();
-		employee.setRegime(data.getRegime());
-		employee.setDni(ipf);
-		employee.setNaf(data.getNss());
-		employee.setStartDate(data.getFra());
-		
-		data.getCtaCti().ifPresent(employee::setCcc);
-		
-		data.getName().ifPresent(employee::setName);
-		
-		data.getContract().ifPresent(employee::setContractType);
-		
-		data.getFrb().ifPresent(employee::setEndDate);
-		
-		data.getCoef().ifPresent(employee::setFactor);
-		
-		data.getSex().ifPresent(employee::setSex);
-
-		data.getGc().ifPresent(employee::setQuoteGroup);
-
-		data.getBirthDate().ifPresent(employee::setBirthDate);
-		
-		if(data.getOcup()!=null && !data.getOcup().isEmpty()) {
-			employee.setOccupation(data.getOcup().toLowerCase());
-		} 
-		return employee;
-	}
-	
 }

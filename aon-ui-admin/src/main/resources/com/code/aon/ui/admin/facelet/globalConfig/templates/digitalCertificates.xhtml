@@ -4,39 +4,109 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://java.sun.com/jsf/html">
-
-	<aon:form id="globalConfigDigitalCertificatesForm">
-
-		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-			<ui:param name="toolbarTitle" value="#{bundle.registry_digital_certificates}" />
-			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-			<ui:define name="toolbarContent">
-				<aon:commandButton id="save"
-					value="#{bundle.aon_save}"
-					actionListener="#{company.accept}"
-					styleClass="aon-finding-toolbar-item aon-icon-accept"
-					accesskey="#{bundle.aon_key_save}" />
-			</ui:define>				
-		</ui:decorate>
 	
-		<aon:div styleClass="aon-scroll-area">	
-	
-			<aon:panelGrid id="companyOtherData" columns="2">		
-				<ui:include
-					src="/com/code/aon/ui/company/facelet/company/digitalCerficateParameters.xhtml" />
-			</aon:panelGrid>
-						
-			<aon:div styleClass="aon-margin-top">
-				<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
-					<ui:param name="controller" value="#{companyCertificate}" />
-					<ui:param name="skipCategoryColumn" value="#{true}" />
-				</ui:include>
-			</aon:div>
-	
-		</aon:div>
-	</aon:form>
+	<meta name="gwt:property" content="locale=es_ES" />
 
+	<aon:valueParam name="module" default="aon_gwt_payroll" />	
+	<aon:valueParam name="entryPoint" default="MainDigitalCertificatesNew" />
+	<aon:valueParam name="subEntryPoint" default="" />
+	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
+	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
+	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
+
+	<style>
+		body {
+			margin: 0;
+		}
+	</style>
+
+	<div id="rootPanel"
+		style="position: absolute;width: calc(100% - 160px); min-height: 100%; height: auto !important; height: 100%; margin: 0;">
+	</div>
+
+	<script type="text/javascript">
+	  //<![CDATA[
+			
+		function drawChartsCallback(){
+		
+		}
+		
+	 	function getCurrentDomain() {
+			return #{gwtDomain};
+		}
+		function getCurrentDomainName() {
+	       	return "#{gwtDomainName}"
+	  	}
+		function getCurrentDomainNameURL() {
+        	return '#{domainSwitcher.currentDomainNameURL}';
+        }
+		function getCurrentUser() {
+	       	return "#{gwtUser}"
+	  	}
+		
+		function getSubEntryPoint() {
+        	return "#{subEntryPoint}";
+        }
+		
+		function isTediSnapshot() {
+	       	return false;
+	  	}
+
+		var search = "/#{module}.nocache.js";
+		var scripts = window.document.getElementsByTagName("script");
+		for (var i = 0; i < scripts.length; ++i) {
+			var script = scripts[i]; 
+			if (script.src != null && script.src.indexOf(search) != -1) {
+				var parent = script.parentNode;
+				parent.removeChild(script);
+				break;
+			}
+		}
+
+		var iframes = window.document.getElementsByTagName("iframe");
+		for (var i = 0; i < iframes.length; ++i) {
+			var iframe = iframes[i]; 
+			if (iframe.src != null && iframe.id == "#{module}") {
+				var parent = iframe.parentNode;
+				parent.removeChild(iframe);
+				break;
+			}
+		}
+
+	    	 
+		function startModule() {
+			localStorage.removeItem('rootPanel');
+			if (window.document.createElement && window.document.getElementsByTagName) {
+				var script = window.document.createElement("script");
+				script.type = "text/javascript";
+				script.defer = "true";
+				script.src = "#{module}/#{module}.nocache.js?entryPoint=#{entryPoint}";
+				var heads = window.document.getElementsByTagName("head");
+				if (heads && heads[0]) {
+					heads[0].appendChild(script);
+					triggerModuleStart();
+				}
+			}
+		}
+	
+	    function triggerModuleStart(){
+	        try{
+	        	#{module}.onInjectionDone("#{module}");
+	        	if ( !window.document.createEventObject ) {
+	            	var evt = window.document.createEvent("HTMLEvents");
+	            	evt.initEvent("DOMContentLoaded", true, true);
+	            	window.document.dispatchEvent(evt);
+	           	}
+	        } catch ( e ) {
+	        	// window.setTimeout("triggerModuleStart()", 100 );
+	        } 
+	    }
+		localStorage.setItem('aon_domain_id', #{domainSwitcher.domainId});
+		localStorage.setItem('aon_domain_name', '#{domainSwitcher.currentDomainNameURL}');
+		localStorage.setItem('aon_domain_login', '#{domainSwitcher.currentUser}');
+		localStorage.setItem('aon_solutions', 'true');
+		startModule();
+		//]]>
+	</script>
 </ui:composition>

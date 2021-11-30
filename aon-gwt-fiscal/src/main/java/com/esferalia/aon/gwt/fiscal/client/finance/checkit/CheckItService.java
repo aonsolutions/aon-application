@@ -18,7 +18,7 @@ public interface CheckItService extends RemoteService {
 	Integer saveEnterpriseData(String currentDomainName, int currentDomain, String user) throws AonCoreException;
 	Integer insertTransactions(String currentDomainName, int currentDomain, String user, Integer checkitEnterpriseId, CheckItBankAccount checkItBankAccount) throws AonCoreException;
 	List<CheckItLoginFields> getLogins(Integer bankId);
-	Boolean addAccount(Integer enterpriseId, CheckitUnlinkedBankAccount checkitUnlinkedBankAccount, String userID, String userPassword, String userPIN) throws IllegalArgumentException;
+	String addAccount(Integer enterpriseId, CheckitUnlinkedBankAccount checkitUnlinkedBankAccount, String userID, String userPassword, String userPIN) throws IllegalArgumentException;
 	CheckItLoginFields getCredentials(Integer enterpriseId, Integer loginId) throws IllegalArgumentException;
 	Boolean editCredentials(Integer enterpriseId, CheckItLoginFields checkItLoginFields) throws IllegalArgumentException;
 	CheckItLoginFields getFields(Integer loginId) throws IllegalArgumentException;

@@ -43,6 +43,7 @@ export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
 export const CATEGORY_NAME = 'categoryName';
 export const CHANGE_TYPE = 'changeType';
+export const CHARGES_PAYMENTS = 'chargesPayments';
 export const CHECKED = 'checked';
 export const CODE = 'code';
 export const COMMENT = 'comment';
@@ -96,10 +97,12 @@ export const FILE = 'file';
 export const FILLED = 'filled';
 export const FILTER = 'filter';
 export const FISCAL = 'fiscal';
+export const FOOTER = 'footer';
 
 // ----- G
 
 // ----- H
+export const HEADER = 'header';
 export const HIDDEN = 'hidden';
 export const HOLDERS = 'holders';
 
@@ -122,6 +125,7 @@ export const INVOICE_TICKET = 'invoiceTicket';
 // ----- L
 
 export const LIST = 'list';
+export const LOGO = 'logo';
 
 // ----- M
 
@@ -175,7 +179,6 @@ export const RAWDOC_INBOX_RECEIVED = 'rawdocInboxReceived';
 export const RAWDOC_INBOX_TICKET = 'rawdocInboxTicket';
 export const RAWDOC_REJECT = 'rawdocReject';
 export const READONLY = 'readonly';
-export const REQUIRED = 'required';
 export const RECORD = 'record';
 export const RECORD_INVOICE = 'recordInvoice';
 export const RECTIFIED = 'rectified';
@@ -191,7 +194,9 @@ export const REGISTRY_TARGET = 'registryTarget';
 export const REJECT = 'reject';
 export const REJECT_INVOICE = 'rejectInvoice';
 export const REJECTED = 'rejected';
+export const REMARKS = 'remarks';
 export const RENTING = 'renting';
+export const REQUIRED = 'required';
 export const RESTORE = 'restore';
 export const RESTORE_INVOICE = 'restoreInvoice';
 export const ROOT_PANEL = 'rootPanel';

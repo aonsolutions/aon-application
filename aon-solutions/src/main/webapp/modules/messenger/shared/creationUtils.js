@@ -431,7 +431,7 @@ export const createProcessType = () =>setAttributes( new AonSelect(),{
  export const createProject = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
-  title: MSG.TYPE,
+  title: "Receptor",
   autocomplete: CONSTANT.OFF
 });
 
@@ -451,7 +451,7 @@ export const createAonTextArea = (placeholder) =>  setAttributes(new AonTextArea
 });
 
 const iconComment = (icon_name) => {
-    const a = setStyles(document.createElement("a"),{
+    const a = setStyles(document.createElement(TAG.A),{
         boxShadow: "none",
         margin: "5px",
         marginTop: "auto",

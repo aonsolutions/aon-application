@@ -332,6 +332,11 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
+	public Certificate getCertificate(AONContext ctx, String domainName, Integer domainId, String login, Integer userId, String certificateType) {
+		return SecurityDAO.getCertificate(ctx, domainName, domainId, login, userId, certificateType);
+	}
+	
+	@Override
 	public Certificate getCertificate(AONContext ctx, UserFilter userFilter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> SecurityDAO.getCertificate(ctx, userFilter))
@@ -365,9 +370,9 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
-	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter adf) {
+	public void deleteAuthDevice(AONContext ctx, AuthDeviceFilter filter) {
 	    ctx.getDslContext().transaction(
-	    		configuration -> AuthDeviceDAO.deleteAuthDevice(ctx, adf)
+	    		configuration -> AuthDeviceDAO.delete(ctx, filter)
 	    );
 	}
 	

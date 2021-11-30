@@ -1,5 +1,5 @@
 import { AonElement } from './AonElement.js';
-import { CONSTANT, EVENT, MSG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, MSG, TAG } from '../environments/environments.js';
 import './aon-icon.js';
 
 
@@ -232,7 +232,8 @@ export class AonDialog extends AonElement {
 		content.style.top = top || '90px';
 		content.style.left = left > (dialog.offsetWidth / 2) ? left - 180 : left;
 		content.innerHTML = '';
-		let ul = document.createElement('ul');
+		let ul = document.createElement(TAG.UL);
+		ul.className = CSS.AON_UL;
 		content.appendChild(ul);
 		options.forEach((item, i) => {
 			let li = document.createElement('li');

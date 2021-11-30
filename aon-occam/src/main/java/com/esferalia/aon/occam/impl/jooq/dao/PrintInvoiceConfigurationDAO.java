@@ -1,12 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -18,69 +18,54 @@ public class PrintInvoiceConfigurationDAO {
 	
 	public static PrintInvoiceConfiguration get(AONContext ctx, Boolean withData) {
 		ctx.checkRead();
-		ApplicationParameter adjust = AppParamDAO.getApplicationParameterStream(ctx, f -> 
+		PrintInvoiceConfiguration config = new PrintInvoiceConfiguration();
+		AppParamDAO.getApplicationParameterStream(ctx, f -> 
 			f.getDomainProperty().eq(ctx.getDomainId())	
-			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_ADJUST.toString())))
-			.findFirst().orElse(new ApplicationParameter());
-		
-		ApplicationParameter detailed = AppParamDAO.getApplicationParameterStream(ctx, f -> 
-			f.getDomainProperty().eq(ctx.getDomainId())	
-			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_DETAILED.toString())))
-			.findFirst().orElse(new ApplicationParameter());
-		
-		ApplicationParameter header = AppParamDAO.getApplicationParameterStream(ctx, f -> 
-			f.getDomainProperty().eq(ctx.getDomainId())	
-			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_HEADER.toString())))
-			.findFirst().orElse(new ApplicationParameter());
-		
-		
-		ApplicationParameter footer = AppParamDAO.getApplicationParameterStream(ctx, f -> 
-			f.getDomainProperty().eq(ctx.getDomainId())	
-			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_FOOTER.toString())))
-			.findFirst().orElse(new ApplicationParameter());
-
-		ApplicationParameter logo = AppParamDAO.getApplicationParameterStream(ctx, f -> 
-			f.getDomainProperty().eq(ctx.getDomainId())	
-			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_LOGO.toString())))
-			.findFirst().orElse(new ApplicationParameter());
-
-		ApplicationParameter company = AppParamDAO.getApplicationParameterStream(ctx, f -> 
-			f.getDomainProperty().eq(ctx.getDomainId())	
-			.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_COMPANY.toString())))
-			.findFirst().orElse(new ApplicationParameter());
-		
-		ApplicationParameter recordData = AppParamDAO.getApplicationParameterStream(ctx, f -> 
-		f.getDomainProperty().eq(ctx.getDomainId())	
-		.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_RECORD_DATA.toString())))
-		.findFirst().orElse(new ApplicationParameter());
-		
-		ApplicationParameter contactData = AppParamDAO.getApplicationParameterStream(ctx, f -> 
-		f.getDomainProperty().eq(ctx.getDomainId())	
-		.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_CONTACT.toString())))
-		.findFirst().orElse(new ApplicationParameter());
-		
-		ApplicationParameter language = AppParamDAO.getApplicationParameterStream(ctx, f -> 
-		f.getDomainProperty().eq(ctx.getDomainId())	
-		.and(f.getNameProperty().eq(AppParam.INVOICE_PRINT_CONFIG_LANGUAGE.toString())))
-		.findFirst().orElse(new ApplicationParameter());
-	
+			.and(f.getNameProperty().like("INVOICE_PRINT_CONFIG%")))
+			.forEach(r -> {
+				if(AppParam.INVOICE_PRINT_CONFIG_ADJUST.toString().equals(r.getName())) {
+					config.setAdjustImage(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_DETAILED.toString().equals(r.getName())) {
+					config.setDetailed(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_HEADER.toString().equals(r.getName())) {
+					config.setHeader(AonNumberUtils.toInteger(r.getValue()));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_FOOTER.toString().equals(r.getName())) {
+					config.setFooter(AonNumberUtils.toInteger(r.getValue()));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_LOGO.toString().equals(r.getName())) {
+					config.setLogo(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_COMPANY.toString().equals(r.getName())) {
+					config.setCompany(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_RECORD_DATA.toString().equals(r.getName())) {
+					config.setRecordData(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_CONTACT.toString().equals(r.getName())) {
+					config.setContactData(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_LANGUAGE.toString().equals(r.getName())) {
+					config.setLanguage(AonLanguage.safeValueOf(r.getValue()));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_BORDER.toString().equals(r.getName())) {
+					config.setBorder(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME.toString().equals(r.getName())) {
+					config.getTheme().setTheme(r.getValue() != null ? PrintInvoiceTheme.safeValueOf(Integer.parseInt(r.getValue())) : PrintInvoiceTheme.BLACK_AND_WHITE);
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_BTBC.toString().equals(r.getName())) {
+					config.getTheme().setBoxTitleBackgroundColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_BTTC.toString().equals(r.getName())) {
+					config.getTheme().setBoxTitleTextColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_BBBC.toString().equals(r.getName())) {
+					config.getTheme().setBoxBodyBackgroundColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_TTC.toString().equals(r.getName())) {
+					config.getTheme().setTitleTextColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_TC.toString().equals(r.getName())) {
+					config.getTheme().setTextColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_CBC.toString().equals(r.getName())) {
+					config.getTheme().setCustomerBackgroundColor(r.getValue());
+				}				
+			});
 		
 		Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), withData)
 				.findFirst().orElse(new Attach());
-			
+		config.setBackground(attach);
 
 		
-		return new PrintInvoiceConfiguration()
-				.setAdjustImage(adjust.getValue() != null && (adjust.getValue().equalsIgnoreCase("true") || adjust.getValue().equals("1")))
-				.setDetailed(detailed.getValue() != null && (detailed.getValue().equalsIgnoreCase("true") || detailed.getValue().equals("1")))
-				.setHeader(AonNumberUtils.toInteger(header.getValue()))
-				.setFooter(AonNumberUtils.toInteger(footer.getValue()))
-				.setLogo(logo.getValue() != null && (logo.getValue().equalsIgnoreCase("true") || logo.getValue().equals("1")))
-				.setCompany(company.getValue() != null && (company.getValue().equalsIgnoreCase("true") || company.getValue().equals("1")))
-				.setBackground(attach)
-				.setRecordData(recordData.getValue() != null && (recordData.getValue().equalsIgnoreCase("true") || recordData.getValue().equals("1")))
-				.setContactData(contactData.getValue() != null && (contactData.getValue().equalsIgnoreCase("true") || contactData.getValue().equals("1")))
-				.setLanguage(AonLanguage.safeValueOf(language.getValue()));
+		return config;
 		
 	}
 
@@ -118,11 +103,44 @@ public class PrintInvoiceConfigurationDAO {
 		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOICE_PRINT_CONFIG_CONTACT.toString(),
 				Boolean.toString(pic.isContactData()));
-		
-		
+
 		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOICE_PRINT_CONFIG_LANGUAGE.toString(),
-				pic.getLanguage().getLanguage());
+				pic.getLanguage().getLanguage());		
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOICE_PRINT_CONFIG_BORDER.toString(),
+				Boolean.toString(pic.isBorder()));
+		
+		AppParamDAO.insertApplicationParameter(ctx,
+				AppParam.INVOICE_PRINT_CONFIG_THEME.toString(),
+				pic.getTheme().getTheme().value().toString());
+		
+		if(pic.getTheme().isPersonalized()) {
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BTBC.toString(),
+					pic.getTheme().getBoxTitleBackgroundColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BTTC.toString(),
+					pic.getTheme().getBoxTitleTextColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BBBC.toString(),
+					pic.getTheme().getBoxBodyBackgroundColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_TTC.toString(),
+					pic.getTheme().getTitleTextColorHTML());
+		
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_TC.toString(),
+					pic.getTheme().getTextColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_CBC.toString(),
+					pic.getTheme().getCustomerBackgroundColorHTML());
+		}
 		
 		if(pic.getBackground() != null && pic.getBackground().getData() != null) {
 			Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), false)

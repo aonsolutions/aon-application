@@ -5,10 +5,14 @@ import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DET
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -24,9 +28,33 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DataResponsePropertie
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DataResponseDAO {
+	
+	private DataResponseDAO() {
+
+	}
 
 	private static final DataResponsePropertiesDAO DATA_RESPONSE_PROPERTIES = new DataResponsePropertiesDAO();
 	private static final DataResponseDetailPropertiesDAO DATA_RESPONSE_DETAIL_PROPERTIES = new DataResponseDetailPropertiesDAO();
+	
+
+	
+	public static SelectConditionStep<Record> select(AONContext ctx, DataResponseFilter filter){	
+		return ctx.getDslContext()
+				.select()
+				.from(DATA_RESPONSE)
+				.where(DATA_RESPONSE_PROPERTIES.getConditions(filter));
+	}
+	
+	public static DataResponse get(AONContext ctx, DataResponseFilter filter) {
+		DataResponse dr = select(ctx, filter).orderBy(DATA_RESPONSE.ID.desc()).limit(1)
+			.fetch().stream().map(new DataResponseFiller()).findFirst().orElse(new DataResponse());
+		dr.setDetails(getDataResponseDetailStream(ctx, f -> f.getDataResponseProperty().eq(dr.getId())).collect(Collectors.toCollection(LinkedList::new)));
+		return dr;
+	}
+	
+	public static Stream<DataResponse> getStream(AONContext ctx, DataResponseFilter filter){	
+		return select(ctx, filter).fetch().stream().map(new DataResponseFiller());
+	}
 	
 	public static Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseSource source, DataResponseFilter filter){	
 		if(DataResponseSource.QUALITY.equals(source)) {
@@ -76,6 +104,15 @@ public class DataResponseDAO {
 		return DATA_RESPONSE_DETAIL_PROPERTIES.build( ctx.getDslContext()
 				.select().from(DATA_RESPONSE_DETAIL), filter)
 			.fetchInto(DATA_RESPONSE_DETAIL).stream().map(new DataResponseDetailFiller());		
+	}
+
+	public static DataResponse getLast(AONContext ctx, DataResponseFilter filter){
+		return ctx.getDslContext()
+			.select().from(DATA_RESPONSE)
+			.where(DATA_RESPONSE_PROPERTIES.getConditions(filter))
+			.orderBy(DATA_RESPONSE.ID.desc()).limit(1)
+			.fetch().stream().map(new DataResponseFiller())
+			.findFirst().orElse(new DataResponse());
 	}
 	
 	public static Stream<DataResponseDetail> getLastDataResponseDetailStream(AONContext ctx, DataResponseFilter filter){

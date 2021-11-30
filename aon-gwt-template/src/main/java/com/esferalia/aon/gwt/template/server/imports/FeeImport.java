@@ -81,7 +81,7 @@ public class FeeImport extends Import {
 			feeInfo.setLine(row.getRowNum() + 1);
 			fee = new Fee();
 			Object obj = Utils.getObjectValue(row.getCell(0));
-			if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.FEE_TITLES, obj.toString()))) {
+			if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.FEE_TITLES, obj.toString().trim()))) {
 				indexTitle = indexTitle + 1;
 			}
 			cellStream.forEach(cell -> {

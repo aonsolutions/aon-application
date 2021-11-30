@@ -124,6 +124,12 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
     icon: MATERIAL_ICONS.INVENTORY_2
   }
 
+  export const CHARGES_PAYMENTS = {
+    id: CONSTANT.CHARGES_PAYMENTS.initCap(),
+    name: MSG.CHARGES_AND_PAYMENTS,
+    icon: MATERIAL_ICONS.PAYMENT
+  }
+
   export const CONCEPTS = {
     id: CONSTANT.CONCEPTS.initCap(),
     name: MSG.CONCEPTS,
@@ -134,7 +140,7 @@ import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.j
 
   export const CONFIGURATION_PRINT = {
     id: CONSTANT.CONFIGURATION_PRINT.initCap(),
-    name: MSG.PRINTING_INVOICES,
+    name: MSG.INVOICE_PRINTING,
     icon: MATERIAL_ICONS.PRINT
   }
 

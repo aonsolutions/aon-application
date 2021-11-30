@@ -354,7 +354,9 @@ public class InvoiceAutoComplete {
 						.setQuantity(1)
 						.setTaxableBase(b.getBase())
 						.setSource(InvoiceSource.TEDI)
-						.setWorkPlace(ctx.getConfiguration().getWorkplaces().getFirst().getId());
+						.setWorkPlace(ctx.getConfiguration().getWorkplaces() != null
+							? ctx.getConfiguration().getWorkplaces().getFirst().getId() 
+							: null);
 				invoiceDetails.add(id);
 			});
 			inv.setDetails(invoiceDetails);
@@ -370,7 +372,7 @@ public class InvoiceAutoComplete {
 					it = detail.getInvoiceTaxes().get(i);
 			}
 			
-			if(detail.getWorkPlace() == null) {
+			if(detail.getWorkPlace() == null && ctx.getConfiguration().getWorkplaces() != null) {
 				detail.setWorkPlace(ctx.getConfiguration().getWorkplaces().getFirst().getId());
 			}
 			

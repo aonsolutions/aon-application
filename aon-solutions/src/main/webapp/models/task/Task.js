@@ -30,6 +30,8 @@ export class Task {
   workflowTmp;
   myTaskHolder;
   auth;
+  appParams;
+
   constructor(task) {
     if(task)
       this.setTask(task);
@@ -77,7 +79,7 @@ export class Task {
       this.setSourceId(task.source_id || undefined);
       this.setStartDate(task.start_date || undefined);
       this.setParent(task.parent || undefined);
-      this.setGTaskId(task.gtask_id || (!this.id && this.auth.email && !this.isAdvisoryCompany() ? this.auth.email : undefined));
+      this.setGTaskId(task.gtask_id  || undefined);
       this.setDomain(new Domain(task.domain)) 
       this.setWorkflow(task.workflow || []);
       this.setDomainTmp(this.domain);
@@ -321,6 +323,14 @@ export class Task {
     this.parent = parent;
   }
 
+  setAppParams(appParams){
+    this.appParams = appParams;
+  }
+
+  getAppParams(){
+    return this.appParams;
+  }
+
   isProject(){
     return this.project && this.project.id ? true : false;
   }
@@ -344,15 +354,38 @@ export class Task {
     return !this.isAdvisoryCompany() && this.isProject() && !this.isExternal() ? undefined : this.myTaskHolder;
   }
 
+  getWorkgroupDefault() {
+    let wg;
+    if(this.getAppParams()){
+      let exist = this.getAppParams().find(({name})=> name ==="APP_DEFAULT_REQUESTS_WORKGROUP");
+      if(exist) wg = parseInt(exist.value);
+    }
+    return wg;
+  }
+
+  getTaskHolderDefault() {
+    let th;
+    if(this.getAppParams()){
+      let exist = this.getAppParams().find(({name})=> name ==="APP_DEFAULT_REQUESTS_TASK_HOLDER");
+      if(exist) th = parseInt(exist.value);
+    }
+    return th;
+  }
+
+  changeWhAndTh(){
+    if(!this.id && this.isOtherDomain()){
+      if(!this.getWorkgroup().id && this.getWorkgroupDefault())
+        this.setWorkgroup({id: this.getWorkgroupDefault()});
+
+      if(!this.getTaskHolder().id && this.getTaskHolderDefault())
+        this.setTaskHolder({id: this.getTaskHolderDefault()});
+    }
+  }
 
   /**
    * CHANGE VALUES WHEN PROJECT CHANGE 
    */
   changeProject(){
-
-    // if(this.isProject() && !this.isExternal())
-    //   this.setDomain(new Domain(this.project.domain));
-
     if(this.isProject()){
       const {projectHolder} = this.project;
       const workgroup = projectHolder.workgroup && projectHolder.workgroup.id ?  projectHolder.workgroup : this.workgroup;
@@ -363,9 +396,6 @@ export class Task {
       this.setWorkgroup(new Workgroup());
       this.setTaskHolder(new TaskHolder());
     }
-
-    // const registry = this.project.registry && this.project.registry.id ? this.project.registry : this.registry;
-    // this.setRegistry(new Registry(registry));
 
     if(!this.id)
      this.setSender( new TaskHolder(this.senderCondition()));

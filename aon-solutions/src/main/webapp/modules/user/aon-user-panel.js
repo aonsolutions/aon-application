@@ -9,6 +9,7 @@ import {AonUserList} from '../user/aon-user-list.js';
 import '../user/aon-user.js';
 import { MSG } from '../../environments/environments.js';
 import { AonUser } from '../user/aon-user.js';
+import '../../css/aon.css';
 
 export class AonUserPanel extends AonElement {
 
@@ -102,5 +103,7 @@ export class AonUserPanel extends AonElement {
 		return this.getElement(this.AON_USER_PANEL);
 	}
 }
+if(!window.customElements.get('aon-user-panel')){
+	window.customElements.define('aon-user-panel', AonUserPanel);
+}
 
-window.customElements.define('aon-user-panel', AonUserPanel);

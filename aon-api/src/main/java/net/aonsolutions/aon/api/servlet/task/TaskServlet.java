@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.AppParamJSON;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.json.TagJSON;
 import com.esferalia.aon.occam.api.json.TaskAttachJSON;
 import com.esferalia.aon.occam.api.json.TaskJSON;
 import com.esferalia.aon.occam.api.json.TaskWorkflowJSON;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -116,6 +118,12 @@ public class TaskServlet extends AonApiHttpServlet{
 					break;
 				case "/tag":
 					response(req, resp, saveTaskTag(api));
+					break;
+				case "/app-params":
+					response(req, resp, saveAppParams(api));
+					break;
+				case "/get-app-params":
+					response(req, resp, getAppParams(api));
 					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -258,7 +266,6 @@ public class TaskServlet extends AonApiHttpServlet{
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		
 		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
-			
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
 			HashMap<Byte, Integer> aux = AON_SOLUTIONS.getTaskStatusCount(domain, new User(),  f -> TaskUtils.taskFilterStatusCount(f, api, domain, customer));
 			aux.keySet().stream().forEach(key -> {
@@ -430,5 +437,49 @@ public class TaskServlet extends AonApiHttpServlet{
 			});
 //		}
 		return arr;
+	}
+	
+	private JSONArray saveAppParams(AonApiData api) {
+		JSONArray arr = new JSONArray();
+		Domain domain = api.getDomain();
+		LinkedList<ApplicationParameter> appParams = AppParamJSON.fromJSON(api.getData().optJSONArray("appParams"));
+		for (ApplicationParameter param : appParams) {
+
+			 ApplicationParameter exists = AON.getApplicationParameter(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), param.getName());
+			 if(exists.getId()!=null) {
+				 if(param.getValue()!=null) {
+					 exists.setValue(param.getValue());
+					 System.out.println("--------UPDATE APP PARAMS "+ param.getName()+"-------------");
+					 AON.updateApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), exists, 
+								f->f.getDomainProperty().eq(exists.getDomain()).and(f.getNameProperty().eq(exists.getName()))
+					);
+				 } else {
+					 System.out.println("--------DELETE APP PARAMS "+ param.getName()+"-------------");
+					 AON.deleteApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(),
+							 f-> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().eq(param.getName()))
+					);
+				 }
+			 } else if(param.getValue()!=null) {
+				 System.out.println("--------SAVE APP PARAMS "+ param.getName()+"-------------");
+				 AON.insertApplicationParameter(domain.getName(), domain.getId(), api.getUser().getLogin(), param);
+			 }
+		}
+		return arr;
+	}
+	private JSONArray getAppParams(AonApiData api) {
+		JSONArray params = api.getData().optJSONArray("params");
+		if(params!=null) {
+		    String[] names = new String[params.length()];
+		    
+			for(int i=0; i<params.length(); i++) 
+				names[i]=params.optString(i);
+			
+			return AppParamJSON.toJSON(
+				AON.getApplicationParameterStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().in(names))
+				)
+			);
+		}
+		return new JSONArray();
 	}
 }

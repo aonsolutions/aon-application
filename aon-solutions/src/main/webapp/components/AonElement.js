@@ -1,8 +1,13 @@
 import {webkitRequestMobile} from '../services/service.js';
-import { CONSTANT, MSG, TAG } from "../environments/environments.js";
+import { CONSTANT, EVENT, MSG, TAG } from "../environments/environments.js";
+import { DomainUserRoles } from '../models/DomainUserRoles.js';
+import { getDomainUserRoles } from '../services/companyService.js';
 
 export class AonElement extends HTMLElement{
+
   ROOT_PANEL = 'rootPanel';
+  dur;
+
   constructor () {
     super();
   }
@@ -48,22 +53,25 @@ export class AonElement extends HTMLElement{
     return document.getElementById(id);
   }
 
-  createElement(tag){
-    return document.createElement(tag);
+  createElement(tag, id, className){
+    let el = document.createElement(tag);
+    if(id) el.id = id;
+    if(className) el.className = className;
+    return el;
   }
 
-  createAonElement(elem, id, title){
-    elem.id = id || '';
-    elem.title = title || '';
-    return elem;
+  createAonElement(el, id, title){
+    el.id = id || '';
+    el.title = title || '';
+    return el;
   }
 
   clear() {
     this.clearElement(this);
   }
 
-  clearElement(elem) {
-    if(elem) elem.innerHTML = '';
+  clearElement(el) {
+    if(el) el.innerHTML = '';
   }
 
   clearElementById(id) {
@@ -133,17 +141,29 @@ export class AonElement extends HTMLElement{
     return this.getApplication().getParent();
   }
 
+  buildDur() {
+    return new Promise((resolve, reject) => {
+      getDomainUserRoles({}).then(r => {
+        this.dur = new DomainUserRoles(r);
+        resolve(this.dur);
+      }).catch(e => reject(e));
+    });
+  }
+
+  getDur() {
+    return this.dur;
+  }
+
 	isBeta(){
     const href = window.location.href;
 		return href.includes('aonsolutions.org') || href.includes('localhost') || href.includes('8080');
 	}
 
   showMessage(msg) {
-    msg = {
+    this.showToast({
       type: CONSTANT.SUCCESS,
       message: msg || MSG.SAVED_DATA
-    }
-    this.showToast(msg);
+    });
   }
 
   showError(e) {
@@ -163,5 +183,13 @@ export class AonElement extends HTMLElement{
         toast.start(obj);
       }
     } catch (error) {}
+  }
+
+  onChange(fn) {
+    this.addEventListener(EVENT.CHANGE, fn);
+  }
+
+  onClick(fn) {
+    this.addEventListener(EVENT.CLICK, fn);
   }
 }

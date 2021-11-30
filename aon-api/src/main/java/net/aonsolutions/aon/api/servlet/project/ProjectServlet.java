@@ -8,8 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.AppParamJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
@@ -26,6 +27,7 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import net.aonsolutions.aon.api.utils.TaskUtils.APP_PARAMS_REQUEST;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonApiProjectServlet", urlPatterns = {"/ms/api/project/*"})
@@ -117,6 +119,7 @@ public class ProjectServlet extends AonApiHttpServlet{
 					project.setProjectHolder(holder);
 					projects.put(ProjectJSON.toJSON(project));	
 				});
+			json.put("appParams", getAppParams(domain));
 			json.put(IJsonNames.PROJECTS, projects);
 			arr.put(json);
 		});
@@ -132,6 +135,15 @@ public class ProjectServlet extends AonApiHttpServlet{
 			arr.put(ProjectJSON.toJSON(project));	
 		});
 		return arr;
+	}
+	
+	private JSONArray getAppParams(Domain domain) {
+		String[] names = new String[] {APP_PARAMS_REQUEST.APP_REQUESTS_EXT_WORKGROUP, APP_PARAMS_REQUEST.APP_REQUESTS_EXT_TASK_HOLDER};
+		return AppParamJSON.toJSON(
+			AON.getApplicationParameterStream(domain.getName(), domain.getId(), "",
+				f-> f.getDomainProperty().eq(domain.getId()).and(f.getNameProperty().in(names))
+			)
+		);
 	}
 	
     private Filter projectFilter(AonApiData api, ProjectProperties f) {

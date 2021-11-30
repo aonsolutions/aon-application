@@ -17,7 +17,8 @@ import '../../components/aon-input.js';
 import { getReader } from '../../services/utils.js';
 import Apps from '../../services/app.js';
 
-
+import '../../css/aon-mobile.css';
+import '../../css/aon.css';
 
 export class AonDocumental extends AonElement {
     _filter;

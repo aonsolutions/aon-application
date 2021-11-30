@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -31,6 +33,9 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.util.JooqPayrollBuilder;
 import com.esferalia.aon.in.payroll.excel.EnterprisePayrollExcel;
 import com.esferalia.aon.in.payroll.excel.ExcelType;
+import com.esferalia.aon.in.payroll.tgss.report.CCCLaboralLife;
+import com.esferalia.aon.in.payroll.tgss.report.Employee;
+import com.esferalia.aon.in.payroll.tgss.report.Employee.EmployeeBuilder;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
@@ -48,6 +53,8 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -55,6 +62,8 @@ import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
+import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 @MultipartConfig
@@ -398,14 +407,44 @@ public class ContractServlet extends AonApiHttpServlet {
 	        .put("endDate",  AonDateUtils.format( salaryInfo.getEndDate(), "yyyy-MM-dd"));
 	}
 
+	private void getMovementsSegSocial(AonApiData api) throws Exception {
+		ArrayList<Employee> employees = new ArrayList<>();
+		Domain domain = api.getDomain();
+		User user = AON_SOLUTIONS.getUser(domain, api.getToken());
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), "TGSS");
+		List<String> errors = new ArrayList<>();
+	
+		Date startDate = !api.getParams().optString("startDate").isEmpty() ?Toolkit.parseDate(api.getParams().optString("startDate"), "yyyy-MM-dd") : new Date();
+		Date endDate = !api.getParams().optString("endDate").isEmpty() ?Toolkit.parseDate(api.getParams().optString("endDate"), "yyyy-MM-dd") : new Date();
+		
+		PAYROLL.getCCCStream(domain.getName(), domain.getId(), "").forEach(ccc -> {
+		  String cti     = ccc.getCccAccount();
+		  String regimen = ccc.getCccRegimeCode();
+		  try {
+			  byte[] pdf = SistemaRED.getCccLaboralLife(
+					new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					regimen, 
+					cti, 
+					startDate, 
+					endDate
+			  );
+		      employees.addAll(CCCLaboralLife.parse(new ByteArrayInputStream(pdf), new EmployeeBuilder()));
+		  } catch(InvalidCertificateException e) {
+		      e.printStackTrace();
+		      errors.add(e.getClass().getSimpleName());
+		  } catch(Exception e) {}
+		});
+	}
+
 	private JSONObject addContract(AonApiData api) throws Exception{
 		JSONObject params = api.getData();
 
 		Domain domain = new Domain();
 		
 		domain.setId(params.optInt("domain"));
-		domain.setName(AonServletUtils.getDomainName(domain.getId()));
-		
+		domain.setName(AonServletUtils.getDomainName(domain.getId()));		
 
 		String doc = params.optString("ipf");
 		String nss = params.optString("nss");
@@ -449,7 +488,7 @@ public class ContractServlet extends AonApiHttpServlet {
 			
 			PAYROLL.addEmployee(domain.getName(), domain.getId(), "", employee);
 	    } else {
-	    	throw new AonApiException("Ya existe un contrato para esa fecha");
+	    	throw new AonApiException("Ya existe un contrato activo.");
 	    }
 		return new JSONObject();
 	}

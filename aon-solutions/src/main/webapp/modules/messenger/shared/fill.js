@@ -1,6 +1,6 @@
 import {  EVENT, MSG } from "../../../environments/environments.js";
 import {Apps} from "../../../services/app.js";
-import { getOfficeProjects, getProjects} from "../../../services/projectService.js";
+import { getProjects} from "../../../services/projectService.js";
 import { getCustomers } from "../../../services/registryService.js";
 import { getTastHoldersWorkGroup } from "../../../services/taskHolderService.js";
 import { getTaskProcess } from "../../../services/taskService.js";
@@ -34,19 +34,21 @@ export const fillRequestType = ({source}, aonMessengerChat) => {
     if(source){  aonSelect.value = source; } 
 }
 
-export const fillAdvisory = async (task) => {
+export const fillAdvisory = async (task, aonMessengerChat) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.ADVISORY_TASK);
     if(aonSelect){
         aonSelect.loading(true);
         const domain = task.getDomain();
         try {
-            let offices = await getOfficeProjects();
+            let offices = await aonMessengerChat.getOfficeProjects();
 
             aonSelect.setOptions(offices.map(office => ({...office, value:office.domain.id, name:office.domain.description})));
             aonSelect.addEventListener(EVENT.CHANGE,  ({detail})=>{
                 if(detail && detail.value){
                     task.setDomain(detail.domain);
-                    task.setRegistry(detail.registry)
+                    task.setRegistry(detail.registry);
+                    task.setAppParams(detail.appParams);
+                    task.changeWhAndTh();
                     if(task.isExternal() || !task.id )
                         task.setSender({});
 
@@ -75,24 +77,29 @@ export const fillAdvisory = async (task) => {
  * @param {Task} Class task
  * @param {Array} Array optionals
  */
-export const fillProject = async (task, projects =[]) => {
+export const fillProject = async (task, projects =[], registry = undefined) => {
     const aonSelect = document.getElementById(MESSENGER_IDS.PROJECT_TASK);
     if(aonSelect){
         aonSelect.loading(true);
         const project = task.getProject();
         try {
-
-            if(projects.length ===0 && !task.isExternal())
+            // if(projects.length ===0 && (task.id && !task.isExternal()) )
+            if( projects.length ===0 && registry )
                 projects = await getProjects({ registry: task.getRegistry().id });
               
             aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
             
+            let display = "block";
+    
             if(project && project.id)
                 aonSelect.value = project.id; 
             else if(1===projects.length && !task.id){
                 aonSelect.setIndexOf(0);
-                aonSelect.parentNode.style.display = "none";
-            }
+                display = "none";
+            } else if(!projects.length)
+               display = "none";
+
+            aonSelect.parentNode.style.display = block;
 
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail && detail.id)
@@ -100,7 +107,9 @@ export const fillProject = async (task, projects =[]) => {
                 else 
                     task.setProject({});
             });
-        
+
+            // if(!task.isExternal() && task.getId())
+            //     aonSelect.setDisabled(true);
         } catch (error) {
             console.log(error);
         }
@@ -110,26 +119,27 @@ export const fillProject = async (task, projects =[]) => {
 
 /**
  * fill workgroup (Grupo de trabajo)
- * @param {Task} task Class task
  * @param {HTMLElement} aon-messenger-chat component
  */
-export const fillWorkGroup = async (task, aonMessengerChat) => {
+export const fillWorkGroup = async (aonMessengerChat) => {
     try {
+        const task = aonMessengerChat.task;
         const aonSelect = await waitEl(`#${MESSENGER_IDS.WORKGROUP}`);
+        const workgroup = task.getWorkgroup();
         aonSelect.loading(true);
         const workgroups = await aonMessengerChat.getWorkGroups();
         let options = [];
-        if(workgroups && workgroups.length>0){
+        if(workgroups && workgroups.length>0)
             options = workgroups.map( wg=> ({...wg, id: wg.value}) );
-        } else if(task.workgroup.id && task.workgroup.description) {
-            options = [{...task.workgroup, value:task.workgroup.id, name:task.workgroup.description}];
-        }
+        
+        const exist = options.some(({id})=> id  === workgroup.id );
+        if( !exist && workgroup.id && workgroup.description)
+            options.push({...workgroup, value:workgroup.id, name:workgroup.description});
         
         aonSelect.setOptions(options);
         
-        if(task.workgroup && task.workgroup.id){
+        if(task.workgroup && task.workgroup.id)
             aonSelect.value = task.workgroup.id;
-        } 
 
         aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
             if(detail)
@@ -157,7 +167,6 @@ export const fillTaskHolder = async (aonMessengerChat) => {
         let options = [];
         if(taskHolders && taskHolders.length>0){
             options = taskHolders.map( th=> ({...th, value: th.id}) )
-            .filter( (v,i,s)=>s.findIndex((m) => m.id === v.id) === i )
         } else if(task.task_holder.id && task.task_holder.name) {
             options = [{...task.task_holder, value:task.task_holder.id}];
         }
@@ -182,6 +191,7 @@ export const fillTaskHolder = async (aonMessengerChat) => {
  */
 export const fillCustomer = async ({registry}, aonMessengerChat) => {
     const aonSelect = await waitEl(`#${MESSENGER_IDS.CUSTOMER_TASK}`).catch(e=>null);
+    const task = aonMessengerChat.task;
     if(aonSelect){
         aonSelect.clear();
         aonSelect.loading(true);
@@ -190,9 +200,8 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
             const customers = await getCustomers({reload:false, page:1, perPage:50});
 
             let options = [];
-            if(customers && customers.length>0){
+            if(customers && customers.length>0)
                 options = customers.map( c=> ({...c, value: c.id}) ) ;
-            }
             
             const exist = options.some(({id})=> id  ===registry.id );
             if( !exist && registry.id && registry.name){
@@ -213,8 +222,8 @@ export const fillCustomer = async ({registry}, aonMessengerChat) => {
     
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail){
-                    aonMessengerChat.task.setRegistry(detail);
-                    fillProject(aonMessengerChat.task);
+                    task.setRegistry(detail);
+                    fillProject(task, undefined,  task.getRegistry().id);
                 } 
             });
         } catch (error) { }

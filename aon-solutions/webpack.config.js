@@ -3,13 +3,16 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
-    entry: './src/main/webapp/index.js',
+    entry: {
+      app:'./src/main/webapp/index.js',
+      aio:'./src/main/webapp/aio.js'
+    },
     output: {
-        filename: 'app.min.js',
+        filename: '[name].min.js',
         path: path.resolve(__dirname, 'src/main/webapp/dist')
     },
     plugins: [new MiniCssExtractPlugin({
-        filename: 'styles.min.css'
+        filename: '[name].min.css'
     })],
     module: {
       rules: [

@@ -2511,6 +2511,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			refreshWorkplace();
 		});
 		employeeDetail.setWidget(getEmployeeDraft());
+		employeeDraftObject.setEnterpriseContext(employees.getEnterpriseContext());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 		singlenton.employee = employeeDraftObject.getEmployee();
 	}

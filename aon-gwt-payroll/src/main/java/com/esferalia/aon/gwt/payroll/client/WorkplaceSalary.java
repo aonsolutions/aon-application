@@ -283,7 +283,7 @@ public class WorkplaceSalary extends Composite {
 	public void setWorkplaceSalaryObject(WorkplaceSalaryObject workplaceSalaryObject) {
 		this.workplaceSalaryObject = workplaceSalaryObject;
 		setNewToolbarTitle();
-		this.workplaceSalaryObject.getSalaries(
+		this.workplaceSalaryObject.getSalariesDates(
 				s -> {
 					initDatesListBox();
 					initSuggestBox();
@@ -298,14 +298,12 @@ public class WorkplaceSalary extends Composite {
 		yearTillT.clear();
 		yearTTo.clear();
 		
-		List<SalaryInfo> workplaceSalaries = this.workplaceSalaryObject.getWorkplaceSalaries();
-		
-		Integer actualYear = DateUtils.getYear();
-		Integer firstPayroll = (null == workplaceSalaries || workplaceSalaries.isEmpty()) ? DateUtils.getYear() : DateUtils.getYear(workplaceSalaries.get(workplaceSalaries.size()-1).getStartDate());
-		Integer diffYears = actualYear - firstPayroll;
+		Integer firstPayrollYear = DateUtils.getYear(this.workplaceSalaryObject.getMinDate());
+		Integer lastPayrollYear = DateUtils.getYear(this.workplaceSalaryObject.getMaxDate());
+		Integer diffYears = lastPayrollYear - firstPayrollYear;
 		
 		for(int i = 0; i <= diffYears; i++) {
-			Integer year = actualYear - i;
+			Integer year = lastPayrollYear - i;
 			String yearStr = year.toString();
 			yearTillT.addItem(yearStr, yearStr);
 			yearTTo.addItem(yearStr, yearStr);

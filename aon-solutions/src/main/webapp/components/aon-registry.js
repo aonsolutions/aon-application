@@ -225,9 +225,10 @@ export class AonRegistry extends AonElement {
     if(options && options.length > 0){
       let div = this.getElement(this.OPTIONS);
       div.classList.add('is-visible');
-      let ul = this.createElement('ul');
+      let ul = this.createElement(TAG.UL);
       ul.id = this.OPTIONS_UL;
-      ul.className = CSS.AON_INPUT_LIST_OPTIONS_UL;
+      ul.classList.add(CSS.AON_UL);
+      ul.classList.add(CSS.AON_INPUT_LIST_OPTIONS_UL);
       ul.setAttribute('for', this.getAttribute('id') + 'Icon');
       for (let i = 0; i < options.length; i++) {
         let li = this.createElement('li');

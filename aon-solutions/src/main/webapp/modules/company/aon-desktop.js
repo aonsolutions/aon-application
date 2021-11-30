@@ -3,11 +3,11 @@ import { Apps} from  '../../services/app.js';
 import {getDomainNotice, getDomainUserRoles, getTaskCount, getTaskHolder, getTimeControl, getAttach} from  '../../services/service.js';
 import {getAccessBidoq} from  '../../services/bidoqService.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
-import { EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
+import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonDocumentalAyudat } from '../documental/ayudat/aon-documental-ayudat.js';
 import { AonDocumental } from '../documental/aon-documental.js';
-import { AonSign } from '../signin/aon-sign.js';
-import { AonSignin } from '../signin/aon-signin.js';
+import { AonSign } from '../timecontrol/aon-sign.js';
+import { AonTimecontrol } from '../timecontrol/aon-timecontrol.js';
 import { uploadInvoices } from "../invoice/InvoiceUtils.js";
 import { uploadDocuments } from "../documental/DocumentalUtils.js";
 import { AonMessenger } from '../messenger/aon-messenger.js';
@@ -157,15 +157,15 @@ export class AonDesktop extends AonElement {
 				this.clearElementById(aonDesktop.SIDENAV + myGestor.id + 'List');
 				offices.forEach(office => {
 					if(office.projects.length > 0) {
-						office.projects.forEach(item => {
+						office.projects.forEach((item,idx) => {
 							let p = new Project(item);
 							let h =  p.getProjectHolder().getTaskHolder().name || p.getProjectHolder().getWorkgroup().getDescription();
 							let option = {
 								name: p.getType().getDescription() + (h ? ' - ' + h : '') ,
-								icon: 'support_agent',
+								icon: MATERIAL_ICONS.SUPPORT_AGENT,
 								fn: () => {}, 
 								actions: [{
-								  id: 'Contact',
+								  id: 'Contact'+idx,
 								  icon: 'chat',
 								  action: () => {
 									let aonMessengerChat = new AonMessenger();	
@@ -261,14 +261,15 @@ export class AonDesktop extends AonElement {
 		div.appendChild(this.buildTitle(MSG.AVAILABLE.toUpperCase()));
 
 		let ul = this.createElement(TAG.UL);
-		ul.className = 'list-group';
-
+		ul.classList.add(CSS.AON_UL);
+		ul.classList.add(CSS.AON_LIST_GROUP);
 		if(company.parentId || company.type !== 'CONSULTANCY'){
 			for (let key in Apps){
 				if(this.isApp(Apps[key])) {
 					let li = this.createElement(TAG.LI);
 					li.id = this.AON_DESKTOP + Apps[key].app.initCap();
-					li.className = 'list-group-item aonAppLi';
+					li.classList.add(CSS.AON_LIST_GROUP_ITEM);
+					li.classList.add(CSS.AON_APP_LI);
 					li.style.borderRight = '0px';
 					li.style.borderLeft = '0px';
 					li.style.cursor = 'pointer';
@@ -423,7 +424,8 @@ export class AonDesktop extends AonElement {
 			}
   	} else {
 			let li = this.createElement(TAG.LI);
-			li.className = 'list-group-item aonAppLi';
+			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
+			li.classList.add(CSS.AON_APP_LI);
 			li.style.borderRight = '0px';
 			li.style.borderLeft = '0px';
 			li.style.cursor = 'pointer';
@@ -491,7 +493,7 @@ export class AonDesktop extends AonElement {
 				this.rootPanel(new AonInvoicePanel());
 				break;
 			case Apps.TIMECONTROL.app:
-				this.rootPanel(new AonSignin());
+				this.rootPanel(new AonTimecontrol());
 				break;
 			case Apps.MESSENGER.app:
 				this.isBeta() ? this.rootPanel(new AonMessenger()) : this.development(MSG.REQUEST);
@@ -605,13 +607,13 @@ export class AonDesktop extends AonElement {
 				count:count.task_holder,
 				fn: () =>{
 					if(this.isBeta()){
-						getTaskHolder().then(th=>{
+						getTaskHolder().then(({id})=>{
 							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.task_holder = th.id;
+							aonMessenger._filter.task_holder = id;
 							this.rootPanel(aonMessenger);
 						});
 					} else {
-						this.development(MSG.REQUEST)
+						this.development(MSG.REQUEST);
 					}
 				}
 			});
@@ -621,9 +623,9 @@ export class AonDesktop extends AonElement {
 				count:count.sender,
 				fn: () =>{
 					if(this.isBeta())
-						getTaskHolder().then(th=>{
+						getTaskHolder().then(({id})=>{
 							let aonMessenger = new AonMessenger();
-							aonMessenger._filter.sender = th.id;
+							aonMessenger._filter.sender = id;
 							this.rootPanel(aonMessenger);
 						});
 					else 

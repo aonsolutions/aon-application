@@ -67,7 +67,7 @@ public class AonCompany implements Serializable {
 	}
 
 	public JSONObject toJSON() {
-		JSONObject json = new JSONObject()
+		return new JSONObject()
 			.put("registry", getCompany().getId())
 			.put("id", getDomain().getId())
 			.put("domain", getDomain().getName())
@@ -83,8 +83,5 @@ public class AonCompany implements Serializable {
 			.put("withholding", getCompany().isWithholding())
 			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, getCompany().isVatAccrualPayment())
 			.put(IJsonNames.SURCHARGE, getCompany().isSurcharge());
-		
-		
-		return json;
 	}
 }

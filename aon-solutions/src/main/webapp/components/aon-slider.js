@@ -1,6 +1,6 @@
 import {AonElement} from './AonElement.js';
-
 import { CONSTANT, CSS, EVENT, TAG} from '../environments/environments.js';
+import '../css/aon-slider.css';
 
 export class AonSlider extends AonElement {
 
@@ -77,6 +77,10 @@ export class AonSlider extends AonElement {
 	setValue(value) {
 		this.value = value;
 		this.getElement(this.INPUT).value = value;
+	}
+
+	onchange(fn) {
+		this.addEventListener(EVENT.CHANGE, fn);
 	}
 }
 

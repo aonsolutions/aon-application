@@ -10,6 +10,7 @@ import { createDiv, createSpan, newComponent, setAttributes, setClasses, setEven
 export const createUl = (id) => newComponent({
   id,
   type: TAG.UL,
+  classes: [CSS.AON_UL],
   styles:{
     listStyle: "none",
     padding: 0,

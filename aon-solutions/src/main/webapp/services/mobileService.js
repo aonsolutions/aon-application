@@ -14,4 +14,5 @@ export const MOBILE_ACTION = {
     SET_WATCH_POSITION:'setWatchPosition', //SET POSITION  (window.setPosition)
     SET_BASE_URL: 'setBaseUrl', //CHANGE URL BASE APP
     CLOSE_APP: 'closeAPP', //CLOSE APP
+    REMOVE_SESSION_BIDOQ: 'removeSessionBidoq', //CLOSE APP
 }

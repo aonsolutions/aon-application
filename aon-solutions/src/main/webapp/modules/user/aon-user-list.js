@@ -108,4 +108,7 @@ export class AonUserList extends AonElement {
 	// }
 
 }
-window.customElements.define('aon-user-list', AonUserList);
+if(!window.customElements.get('aon-user-list')){
+	window.customElements.define('aon-user-list', AonUserList);
+}
+

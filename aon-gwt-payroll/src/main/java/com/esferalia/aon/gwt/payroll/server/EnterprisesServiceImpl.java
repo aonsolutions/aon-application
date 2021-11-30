@@ -49,6 +49,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqContractOtherInfo;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractSEPE;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
+import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeContractPayments;
@@ -73,6 +74,7 @@ import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -83,10 +85,12 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus;
@@ -171,6 +175,7 @@ import solutions.aon.sepe.exceptions.SepeException;
 public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		EnterprisesService {
 
+	
 	@Override
 	public Integer getDomain(String domain) {
 		try {
@@ -2166,7 +2171,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId );
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			List<CCC> cccs = getEnterprises(connection, userId, domainId, 0, Short.MAX_VALUE).stream()
 			.filter(e -> enterpriseId == null || e.getId().equals(enterpriseId) )
@@ -2360,7 +2365,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public void setContractSpecificData(String domainName, EmployeeContractInfo employeeContractData) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			JooqContractSEPE.setContractSpecificData(connection, employeeContractData);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqContractSEPE.setContractSpecificData(connection, domainId, employeeContractData);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -2877,7 +2883,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			
@@ -2903,7 +2909,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			
@@ -2931,7 +2937,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			float newBaseCC = JooqEmployee.getBaseCC(connection, docNum, dateFrom);
 //			baseCC = 0 == newBaseCC ? baseCC : newBaseCC;
@@ -2959,7 +2965,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.voidPaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
 		
@@ -3027,7 +3033,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITBaja(
 					certificate.getCertificate(), 
@@ -3064,7 +3070,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITConfirmation(
 					certificate.getCertificate(), 
@@ -3097,7 +3103,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITAlta(
 					certificate.getCertificate(), 
@@ -3130,7 +3136,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.removeIT(
 					certificate.getCertificate(), 
@@ -3152,11 +3158,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public String getContratoSepe(String domainName, String userLogin, String ipf, java.util.Date startDate, java.util.Date endDate) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificateSEPE = AON.getCertificateSEPE(domainName, domainId, userLogin);
-			InputStream is = new ByteArrayInputStream(certificateSEPE.getCertificate());
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			
-			Contract contract = Sepe.getContractData(is, certificateSEPE.getPassword(), certificateSEPE.getType(), ipf, startDate, endDate);
+			Contract contract = Sepe.getContractData(is, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate);
 			
 			return null == contract ? null : contract.getSepeId();
 			
@@ -3219,10 +3227,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public boolean hasCertificateSEPE(String domainName, String userLogin) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificateSEPE = AON.getCertificateSEPE(domainName, domainId, userLogin);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			
-			return null != certificateSEPE;
+			return null != certificate;
 			
 		} catch (CertificateNotFoundException e) {
 			return false;
@@ -3283,13 +3293,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = null;
 			
 			if(certificateType == CertificateType.TGSS) {
-				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 				SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}
 			
 			if(certificateType == CertificateType.SEPE) {
-				certificate = AON.getCertificateSEPE(domainName, domainId, userLogin);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
 				Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}
@@ -3303,13 +3313,180 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public ContractConcepts getAllConcepts(String domainName, String currentUser) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			
 			return JooqEmployeeContractPayments.getAllConcepts(connection, domainId);
-			
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
 
+	@Override
+	public EnterpriseContext getEnterpriseContext(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			
+			EnterpriseContext enterpriseContext = new EnterpriseContext();
+			enterpriseContext.setWorkplaces(JooqWorkplace.getWorkplaces(domainId, connection));
+			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, 0, Integer.MAX_VALUE, domainId, parentDomainId));
+			enterpriseContext.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
+			enterpriseContext.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
+			
+			return enterpriseContext;
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} 
+	}
+	
+	// ----------------------------------------------------------------- DigitalCertificates (New)
+
+	@Override
+	public List<DigitalCertificateNew> getDigitalCertificates(String domainName, String userLogin) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			return JooqDigitalCertificateNew.getDigitalCertificates(connection, domainId, userId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void deleteDigitalCertificate(String domainName, DigitalCertificateNew digitalCertificate) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqDigitalCertificateNew.deleteDigitalCertificate(connection, digitalCertificate);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void verifyCertificate(String domainName, String userLogin, Integer rattachId,
+			List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {	
+			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
+
+			for(com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType tag : tags) {
+				if(tag == com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType.TGSS) {
+					InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+					SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
+				}
+
+				if(tag == com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType.SEPE) {
+					InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+					Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
+				}
+			}
+
+		} catch (SQLException | SepeException | SegSocialException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} 
+	}
+
+
+	@Override
+	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, String userLogin, Integer rattachId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Certificate certificate = null;
+			
+			if(rattachId == null) {
+				Integer domainId = AonServletUtils.getDomainID(domainName);
+				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+				
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			} else
+				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
+			
+			List<SecondaryUser> secondaryUsers = new ArrayList<>(secondaryUsersCollection);
+			List<SecondaryUserCertificate> secondaryUsersCertificate = new ArrayList<>();
+			
+			for(SecondaryUser secondaryUser : secondaryUsers) {
+				secondaryUsersCertificate.add(new SecondaryUserCertificate(
+						secondaryUser.getAuthoritation(),
+						secondaryUser.getAuthoritationEntity(),
+						secondaryUser.getMainUserName(),
+						secondaryUser.getMainUserIpf(),
+						secondaryUser.getMainUserNaf(),
+						secondaryUser.getName(),
+						secondaryUser.getProvince(),
+						secondaryUser.getIpf(),
+						secondaryUser.getNaf(),
+						secondaryUser.getSituation(),
+						secondaryUser.getSituationDate(),
+						secondaryUser.getTelephone(),
+						secondaryUser.getFax(),
+						secondaryUser.getMobile(),
+						secondaryUser.getMail()
+				));
+			}
+			
+			return secondaryUsersCertificate;
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public void deleteSecondaryUser(String domainName, String userLogin, Integer rattachId, String ipfType, String ipf) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Certificate certificate = null;
+			
+			if(rattachId == null) {
+				Integer domainId = AonServletUtils.getDomainID(domainName);
+				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+				
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			} else
+				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public void createSecondaryUser(String domainName, String userLogin, Integer rattachId, String ipfType, String ipf, String naf) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Certificate certificate = null;
+			
+			if(rattachId == null) {
+				Integer domainId = AonServletUtils.getDomainID(domainName);
+				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+				
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			} else
+				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
+			
+			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
+			
+		} catch (SQLException | SegSocialException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public CertificateInfo validateCertJava(String domainName, Integer rattachId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqDigitalCertificateNew.validateCertJava(connection, rattachId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData) {
+		// TODO Auto-generated method stub
+	}
+	
 }

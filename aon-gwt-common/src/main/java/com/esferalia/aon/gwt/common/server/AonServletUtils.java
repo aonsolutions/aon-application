@@ -138,29 +138,34 @@ public class AonServletUtils {
 	}
 
 	public static Integer getDomainID(String domainName) throws SQLException {
-		try {
-			return ConnectionInfo.getDefaultConnectionInfo().getDomainMap().get(domainName);
-		} catch (AonConnectionException e) {
+		try(Connection connection = getConnection(domainName)) {
+			AONContext aonContext = new AONContext(connection);
+			return aonContext.getDslContext()
+				.select()
+				.from(Domain.DOMAIN)
+				.where(Domain.DOMAIN.NAME.eq(domainName))
+				.fetchOne(Domain.DOMAIN.ID);
+		} catch (Exception e) {
 			throw new SQLException(e.getMessage(), e);
-		}
+		} 
+//		try {
+//			return ConnectionInfo.getDefaultConnectionInfo().getDomainMap().get(domainName);
+//		} catch (AonConnectionException e) {
+//			throw new SQLException(e.getMessage(), e);
+//		}
 	}
 
 	public static Integer getParentDomainID(String domainName) throws SQLException {
-		Connection connection = null;
-		try {
-			connection = getConnection(domainName);
+		try(Connection connection = getConnection(domainName)) {
 			AONContext aonContext = new AONContext(connection);
-			return  aonContext.getDslContext()
-			.select()
-			.from(Domain.DOMAIN)
-			.where(Domain.DOMAIN.NAME.eq(domainName))
-			.fetchOne(Domain.DOMAIN.PARENT);
+			return aonContext.getDslContext()
+				.select()
+				.from(Domain.DOMAIN)
+				.where(Domain.DOMAIN.NAME.eq(domainName))
+				.fetchOne(Domain.DOMAIN.PARENT);
 		} catch (Exception e) {
 			throw new SQLException(e.getMessage(), e);
-		} finally {
-			if ( connection != null )
-				connection.close();
-		}
+		} 
 	}
 
 	public static Integer getEnterpriseID(String domainName) throws SQLException {

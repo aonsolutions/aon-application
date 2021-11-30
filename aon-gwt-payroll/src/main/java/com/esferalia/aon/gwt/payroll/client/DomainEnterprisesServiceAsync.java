@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.CertificateInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -26,10 +27,12 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -389,6 +392,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getContractBonus(getCurrentDomainName(), contractId, asyncCallback);
 	}
 
+	public void setContractBonus(EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.setContractBonus(getCurrentDomainName(), employeeContractData, asyncCallback);
+	}
+	
 	public void getCNOs(AsyncCallback<Map<String, CNO>> asyncCallback) {
 		enterprisesServiceAsync.getCNOs(getCurrentDomainName(), asyncCallback);
 	}
@@ -413,16 +420,16 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setMainCCCInfoDataBase(getCurrentDomainName(), getCurrentUser(), mainCCCInfo, asyncCallback);
 	}
 	
-	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getSecondaryUsers(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	public void getSecondaryUsers(Integer rattachId, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getSecondaryUsers(getCurrentDomainName(), getCurrentUser(), rattachId, asyncCallback);
 	}
 	
-	public void deleteSecondaryUser(String ipfType, String ipf, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.deleteSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, asyncCallback);
+	public void deleteSecondaryUser(Integer rattachId, String ipfType, String ipf, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.deleteSecondaryUser(getCurrentDomainName(), getCurrentUser(), rattachId, ipfType, ipf, asyncCallback);
 	}
 	
-	public void createSecondaryUser(String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) {
-		enterprisesServiceAsync.createSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, naf, asyncCallback);
+	public void createSecondaryUser(Integer rattachId, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.createSecondaryUser(getCurrentDomainName(), getCurrentUser(), rattachId, ipfType, ipf, naf, asyncCallback);
 	}
 	
 	public void getIpfxNaf(ArrayList<String> nssList, AsyncCallback<EmployeeSegSocial> asyncCallback) {
@@ -530,6 +537,41 @@ public class DomainEnterprisesServiceAsync {
 	public void getAllConcepts(AsyncCallback<ContractConcepts> asyncCallback) {
 		enterprisesServiceAsync.getAllConcepts(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
+	
+	// ----------------------------------------------------------------- DigitalCertificates (New)
+	
+	public void getDigitalCertificates(AsyncCallback<List<DigitalCertificateNew>> asyncCallback) {
+		enterprisesServiceAsync.getDigitalCertificates(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+	
+	public void deleteDigitalCertificate(DigitalCertificateNew digitalCertificate, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), digitalCertificate, asyncCallback);
+	}
+	
+	public void verifyCertificate(Integer rattachId, List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.verifyCertificate(getCurrentDomainName(), getCurrentUser(), rattachId, tags, asyncCallback);
+	}
+	
+	public void validateCertJava(Integer rattachId, AsyncCallback<CertificateInfo> asyncCallback) {
+		enterprisesServiceAsync.validateCertJava(getCurrentDomainName(), rattachId, asyncCallback);
+	}
+	
+	public void getEnterpriseContext(AsyncCallback<EnterpriseContext> asyncCallback) {
+		enterprisesServiceAsync.getEnterpriseContext(getCurrentDomainName(), asyncCallback);
+	}
+
+	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) {
+		enterprisesServiceAsync.getSecondaryUsers(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+
+	public void deleteSecondaryUser(String ipfType, String ipf, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.deleteSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, asyncCallback);
+	}
+
+	public void createSecondaryUser(String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.createSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, naf, asyncCallback);
+	}
+
 	
 	// ----------------------------------------------------------------- static
 	
