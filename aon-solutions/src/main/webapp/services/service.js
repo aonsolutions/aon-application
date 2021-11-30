@@ -1,9 +1,11 @@
 import {clearCompanyService} from './companyService.js';
 import {clearRegistryService} from './registryService.js';
+import { mobileAction, MOBILE_ACTION } from './mobileService.js';
 
 import './AonStringUtils.js';
 
 import './AonDateUtils.js';
+
 
 export * from './authService.js';
 
@@ -50,4 +52,5 @@ export * from './productService.js';
 export const clear = () => {
   clearCompanyService();
   clearRegistryService();
+  mobileAction({ action: MOBILE_ACTION.REMOVE_SESSION_BIDOQ });
 }

@@ -192,7 +192,9 @@ export class AonLogin extends AonElement {
       src = "assets/ayudat-logo4.png";
     } else if (href.includes("aonsolutions.org")){
      src = "assets/beta-logo.svg";
-    }
+    } else if("true"==localStorage.getItem("AYUDAT_APP"))
+      src = "assets/ayudat-logo.png";
+
     logo.src = src;
     logo.addEventListener(EVENT.CLICK, ()=>{
       this.tag = this.tag + 1;

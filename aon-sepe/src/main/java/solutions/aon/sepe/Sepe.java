@@ -33,9 +33,9 @@ public class Sepe {
 			return Certificado.certEnterprisePdf(certificateInputStream, certificatePassword, certificateType, nif, fecha);
 	}
 
-	public static void certEnterprise(final InputStream certificateInputStream, final String certificatePassword,
+	public static byte[] certEnterprise(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Certificates certificates) throws SepeException {
-			Certificado.certEnterprise(certificateInputStream, certificatePassword, certificateType, certificates);
+			return Certificado.certEnterprise(certificateInputStream, certificatePassword, certificateType, certificates);
 	}
 	
 	public static String sendContract(final InputStream certificateInputStream, final String certificatePassword,
