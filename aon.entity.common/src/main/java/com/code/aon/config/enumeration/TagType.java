@@ -57,7 +57,8 @@ public enum TagType implements IResourceable {
 	TASK_TYPE,
 	TASK_PRIORITY,
 	TASK_LABEL,
-	TASK_DOCUMENT
+	TASK_DOCUMENT,
+	CERTIFICATE
 	;
 
 	/**

@@ -290,7 +290,14 @@ public class DocumentalServlet extends HttpServlet{
 				.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value()).and(f.getAttachModuleProperty().in(arr))
 				.page(1)
 				.perPage(30)
-			), AttachType.REGISTRY, false).forEach(a -> {
+			), AttachType.REGISTRY, false).map(r -> {
+				String description = r.getDescription();
+				if(RegistryAttachmentType.safeValueOf(r.getType()).equals(RegistryAttachmentType.DIGITAL_CERTIFICATE) && description.contains("HIDE")) {
+					Integer i = description.indexOf("HIDE");
+					r.setDescription(description);
+				}
+				return r;
+			}).forEach(a -> {
 				array.put(ToJSON.attachToJSON(a));
 			});
 		
