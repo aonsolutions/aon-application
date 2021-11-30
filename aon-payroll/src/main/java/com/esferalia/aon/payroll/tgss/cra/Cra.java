@@ -439,7 +439,7 @@ public class Cra {
 				err.put("ERR1", "No hay ninguna nómina emitida para este periodo.");
 				errors.add(err);
 			
-			}else {
+			} else {
 			
 				// Prepare DDEAS
 				JSONArray ddeas = new JSONArray();
@@ -466,6 +466,21 @@ public class Cra {
 						
 						// Get craAmount
 						Double craAmount = Double.parseDouble(salaryData.get(SALARY_DATA.EXPRESSION));
+						String numAfilicionAtraso;
+						
+						if(null != salary.get(SALARY.SOCIAL_SECURITY_NUMBER) && salary.get(SALARY.SOCIAL_SECURITY_NUMBER).length()>0)
+							numAfilicionAtraso = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
+						else {
+							String ss = dslContext.select(PERSON.SOCIAL_SECURITY_NUM).from(PERSON)
+									.where(PERSON.REGISTRY.eq(
+											dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+												.where(CONTRACT.ID.eq(salary.get(SALARY.CONTRACT)))
+												.fetchOne(CONTRACT.PERSON)
+									)).fetchOne(PERSON.SOCIAL_SECURITY_NUM);
+							if(null == ss || StringUtils.isBlank(ss))
+								continue;
+							numAfilicionAtraso = ss;
+						}
 						
 						if(craAmount > 0 && salaryData.get(SALARY_DATA.START_DATE).before(endDateSQL)){
 								
@@ -488,7 +503,7 @@ public class Cra {
 							// Prepare TRBA
 							JSONObject trba = new JSONObject();
 						
-							trba.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
+							trba.put("numAfilicion", numAfilicionAtraso);
 						
 							// Prepare CRES
 							JSONArray cres = new JSONArray();
@@ -553,6 +568,22 @@ public class Cra {
 				
 				for(Record salary: salaryRecords) {
 					
+					String numAfilicionFiniquito;
+					
+					if(null != salary.get(SALARY.SOCIAL_SECURITY_NUMBER) && salary.get(SALARY.SOCIAL_SECURITY_NUMBER).length()>0)
+						numAfilicionFiniquito = salary.get(SALARY.SOCIAL_SECURITY_NUMBER);
+					else {
+						String ss = dslContext.select(PERSON.SOCIAL_SECURITY_NUM).from(PERSON)
+								.where(PERSON.REGISTRY.eq(
+										dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+											.where(CONTRACT.ID.eq(salary.get(SALARY.CONTRACT)))
+											.fetchOne(CONTRACT.PERSON)
+								)).fetchOne(PERSON.SOCIAL_SECURITY_NUM);
+						if(null == ss || StringUtils.isBlank(ss))
+							continue;
+						numAfilicionFiniquito = ss;
+					}
+					
 					// Get salaryId
 					Integer salaryId = salary.get(SALARY.ID);
 					Date issueDate = salary.get(SALARY.ISSUE_DATE);
@@ -573,7 +604,7 @@ public class Cra {
 					// Prepare TRBF
 					JSONObject trbf = new JSONObject();
 					
-					trbf.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
+					trbf.put("numAfilicion", numAfilicionFiniquito);
 					
 					// Prepare CRES
 					JSONArray cres = new JSONArray();
@@ -649,6 +680,7 @@ public class Cra {
 		System.out.println(mainCRAJSON);
 		
 		return mainCRAJSON;
+		
 	}
 	
 	private static void filterRETARecords(Result<Record> salaryRecords, DSLContext dslContext) {
