@@ -40,6 +40,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.IScopable;
 import com.code.aon.google.apis.DriveUtils;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.entity.master.RegistryAttachmentDB;
 
@@ -191,6 +192,17 @@ public class RegistryAttachment extends RegistryAttachmentDB implements IAttachm
 	@Override
 	@Transient
 	public void setAonType(String aonType) {
+	
 	}
 
+	@Override
+	@Transient
+	public String getDescription() {
+		String description = super.getDescription();
+		if(RegistryAttachmentType.DIGITAL_CERTIFICATE.equals(getRegistryAttachmentType()) && description.contains("HIDE")) {
+			Integer i = description.indexOf("HIDE");
+			description = description.substring(0, i);
+		}
+		return description;
+	}
 }
