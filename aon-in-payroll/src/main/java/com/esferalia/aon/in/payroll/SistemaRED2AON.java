@@ -489,7 +489,8 @@ public class SistemaRED2AON {
 		
 		try {
 	
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			byte data [] = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 			
@@ -505,7 +506,8 @@ public class SistemaRED2AON {
 		
 		try {
 	
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			byte data [] = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 			Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> ssBonus = com.esferalia.aon.in.payroll.tgss.idc.Idc.getSSPECs(data);
@@ -624,7 +626,8 @@ public class SistemaRED2AON {
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String naf, Date endDate) {
 	
-		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		try {
 			Collection<solutions.aon.seg.social.object.Idc> idcs = 
 			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
@@ -669,7 +672,8 @@ public class SistemaRED2AON {
 	public static void syncWithIdcs(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String naf, Date endDate) {
 	
-		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		try {
 			Collection<solutions.aon.seg.social.object.Idc> idcs = 
 			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);

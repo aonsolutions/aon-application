@@ -430,10 +430,10 @@ public class SistemaRED {
 				regimen, ctaCti, nss);
 	}
 	
-	public static void removeMovConsolidated(final InputStream certificateInputStream, final String certificatePassword,
+	public static void removeMovConsolidated(final byte certificateData[], final String certificatePassword,
 			final String certificateType, SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws SegSocialException {
 		
-		SistemaREDMov.removeMovConsolidated(certificateInputStream, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);;
+		SistemaREDMov.removeMovConsolidated(certificateData, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);;
 	}
 	
 	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream,

@@ -168,7 +168,7 @@ class SistemaREDMov {
 		
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		
-		try {altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, situation, regimen, ctaCti, nss);} 
+		try {altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti, nss);} 
 		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
@@ -176,12 +176,12 @@ class SistemaREDMov {
 		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 	}
 	
-	public static void removeMovConsolidated(final InputStream certificateInputStream, final String certificatePassword,
+	public static void removeMovConsolidated(final byte certificateData[], final String certificatePassword,
 			final String certificateType, SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws SegSocialException{
 		
-		InvalidCertificateException.checkCertificate(certificateInputStream);
+		InvalidCertificateException.checkCertificate(new ByteArrayInputStream(certificateData));
 		
-		try {removeMovConsolidatedImpl(certificateInputStream, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);} 
+		try {removeMovConsolidatedImpl(certificateData, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);} 
 		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
@@ -224,7 +224,6 @@ class SistemaREDMov {
 		catch (IOException e) {throw new CertificateNotFoundException();} 
 		catch (InterruptedException e) {throw new SegSocialException(e);}
 		catch (Exception e) {throw new SegSocialException(e.getMessage());}
-		return;
 	}	
 	
 	private static Employee sendAltaImpl(
@@ -246,8 +245,8 @@ class SistemaREDMov {
 	
 			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			
-			if(employee.getRlce()!=null && !employee.getRlce().isEmpty())
-				form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(employee.getRlce());
+			if(employee.getRlce().isPresent())
+				form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(employee.getRlce().get());
 			
 			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation); 
 			form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
@@ -259,31 +258,36 @@ class SistemaREDMov {
 				String conv = employee.getColec()!=null ? employee.getColec() : "60888888888888";
 				form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(conv); 
 			}
-			if ("0163" == employee.getRegime() && !employee.getMdctz().isEmpty()) {
+			if (employee.getRegime().equals("0163") && !employee.getMdctz().isEmpty()) {
 				form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(employee.getMdctz().get());
 			} else {
-				if(!employee.getCoef().isEmpty()) {
+				if(!employee.getFactor().isEmpty()) {
+					Integer coefInt =  (int) Math.round(employee.getFactor().get() * 1000);
+					form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(Integer.toString(coefInt)); 
+				} else if(!employee.getCoef().isEmpty()) {
 					String coef = Integer.toString(employee.getCoef().get().intValue());
 					form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
 				}
-				if (employee.getOcup()!=null) form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase()); 		
+				if (employee.getOcup()!=null) 
+					form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase()); 		
 			}
-		    
+	    
 			htmlPage = ((HtmlInput)form.querySelector("input[value=\"Continuar\"]")).click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-	
+			
 			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
-			if(msg1!=null && msg1.getTextContent().trim().indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") !=-1) {
+			if(msg1!=null && msg1.getTextContent().trim().indexOf("LA MECANIZACION DE ESTE TIPO DE REGISTROS PUEDE IMPLICAR") >=0 ) {
 				htmlPage = ((HtmlInput)htmlPage.querySelector("input[value=\"Continuar\"]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 			}
 			
 			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
-			if(msg2!=null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") !=-1) {
+			if(msg2!=null && msg2.getTextContent().trim().indexOf("Revise el contenido del coeficiente a tiempo parcial") >=0 ) {
 				htmlPage = ((HtmlInput)htmlPage.querySelector("input[value=\"Continuar\"]")).click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
-			}			
-
+			}	
+//			
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(),"test.html");
 			return employee;
 	}
 	
@@ -330,7 +334,7 @@ class SistemaREDMov {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	webClient.getOptions().setUseInsecureSSL(true);
-	    	Integer mov = "AL".equalsIgnoreCase(situation) ? 0 : 1;
+	    	Integer mov = situation.indexOf("AL")>=0 ? 0 : 1;
  			//Date
  			String[] fr = formatDate(fecha); //fecha [dia,mes,año]
  			
@@ -362,21 +366,19 @@ class SistemaREDMov {
 		} 
 	}
 		
-	private static void removeMovConsolidatedImpl(final InputStream certificateInputStream, 
+	private static void removeMovConsolidatedImpl(final byte certificateData[], 
 			final String certificatePassword, final String certificateType, 
 			SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws Exception  {
 			
 		if(SituationType.ALTA.equals(situationType)) {
-			altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, "", regimen, ctaCti, nss);
+			altaConsolidadaDeleteImpl(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, regimen, ctaCti, nss);
 		} else if(SituationType.BAJA.equals(situationType)) {
-			removeBajaConsolidatedImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti, nss, ipf, date);
+			removeBajaConsolidatedImpl(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, regimen, ctaCti, nss, ipf, date);
 		}
 	}
 	
 	private static void altaConsolidadaDeleteImpl(final InputStream certificateInputStream, 
-			final String certificatePassword, final String certificateType, 
-			String situation, String regimen, String ctaCti, String nss) throws Exception  {
-		
+			final String certificatePassword, final String certificateType, String regimen, String ctaCti, String nss) throws Exception  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	webClient.getOptions().setUseInsecureSSL(true);
 	    	webClient.getOptions().setJavaScriptEnabled(true);

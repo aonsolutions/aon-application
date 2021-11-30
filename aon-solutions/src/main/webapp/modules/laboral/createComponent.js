@@ -178,6 +178,7 @@ export const createContractData = (parent, isManager) => {
                 name:"rlce",
                 id:"rlce",
                 title:"RLCE (opcional)",
+                default:CONSTANT.TRUE,
                 autocomplete: CONSTANT.OFF
             }
         }, divC.element);

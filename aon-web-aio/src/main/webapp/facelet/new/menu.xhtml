@@ -308,8 +308,14 @@
 						return;
 					elementAtMouse = elementAtMouse.parentElement; 
 				}
+				
+				
+				//menuPopup.style.display = "none";
+				setTimeout(function(){
+					menuPopup.style.display = "none";
+				}, 260);
+				
 				 
-				menuPopup.style.display = "none"; 
 				cleanSelected();
 				enable();
 			}
@@ -330,10 +336,10 @@
 			function showMenuPopup(menuPopup, el){
 				if ( isDisabled(el) ) 
 					return;
+				select(el);
 				delayMenu( function() { 
 						menuPopup = getMenuPopup(menuPopup);
 						menuPopup.style.display = "block";
-						select(el);
 					} 
 				);
 			}

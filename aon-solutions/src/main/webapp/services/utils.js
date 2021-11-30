@@ -1,5 +1,4 @@
 import { AON_TAGS } from "../environments/aonTag.js";
-import { EVENT } from "../environments/environments.js";
 import { Attach } from "../models/Attach.js";
 
 export const getReader = (file) =>  new Promise((resolve) => {
@@ -74,21 +73,21 @@ export const waitEl = (selector)=> new Promise((resolve,reject)=>{
 
 export const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
-export const round = (value) => decimalAdjust('round', value, -2);
+export const round = (value) => {
+    const type = 'round';
+    let exp = -2;
 
-export const decimalAdjust = (type, value, exp) => {
-  // Si el exp no está definido o es cero...
-  if (typeof exp === 'undefined' || +exp === 0)  return Math[type](value);
-  value = +value;
-  exp = +exp;
-  // Si el valor no es un número o el exp no es un entero...
-  if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) return NaN;
-  // Shift
-  value = value.toString().split('e');
-  value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
-  // Shift back
-  value = value.toString().split('e');
-  return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+    if (typeof exp === 'undefined' || +exp === 0)  return Math[type](value);
+    value = +value;
+    exp = +exp;
+    // Si el valor no es un número o el exp no es un entero...
+    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) return NaN;
+    // Shift
+    value = value.toString().split('e');
+    value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+    // Shift back
+    value = value.toString().split('e');
+    return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
 }
 
 /**
@@ -134,23 +133,5 @@ export const disabledForm = (formId, elems) => {
   let elems_disabled = AON_TAGS;
   if (elems) elems_disabled = elems + ', ' + AON_TAGS;
   [...document.getElementById(formId).querySelectorAll(elems_disabled)].map(el => el.disabled = true);
-}
-
-/**
- * 
- * @param {element html or undefined} element 
- * @param {*} fn return end elment
- */
-export const scrollInfinite = (element, fn) => {
-    if(element){
-      element.addEventListener(EVENT.SCROLL, async ({target:{scrollTop, scrollHeight, offsetHeight}}) => {
-        if (scrollTop >= (scrollHeight - offsetHeight)) fn();
-      });
-    } else {
-      element = document.body;
-      window.addEventListener(EVENT.SCROLL, ()=>{
-        if ( (element.scrollTop + element.clientHeight) >= element.scrollHeight) fn();
-     }) 
-    }
 }
 

@@ -104,8 +104,6 @@ public class JooqContractSEPE {
 			e.printStackTrace();
 		}
 		
-		System.out.println("GETTER : getContractSpecificData hasData - id : " + contractSpecificData.getId() + " - cno : " + contractSpecificData.getCno());
-		
 		return contractSpecificData;
 	}
 	

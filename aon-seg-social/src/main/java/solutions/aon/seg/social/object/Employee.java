@@ -25,7 +25,8 @@ public class Employee {
 	private Date frb;
 	private Date feb;
 	private String contract;
-	private String coef; // Entero entre 000 - 1000
+	private String coef; // EXAMPLE "530"
+	private Double factor; //COEF EXAMPLE 0.53
 	private String colec;
 	private String epig;
 	private String ocup;
@@ -39,7 +40,10 @@ public class Employee {
 	private Employee() {}
 	
 	public void accept(Visitor visitor) {
-		
+		if(fra != null)				visitor.visitrFra(fra);
+		if(fea != null)				visitor.visitrFea(fea);
+		if(frb != null)				visitor.visitrFrb(frb);
+		if(feb != null)				visitor.visitrFeb(feb);
 		if (nss != null)			visitor.visitNSS(nss);
 		if (name != null)			visitor.visitName(name);
 		if(birthDate != null)		visitor.visitBirthDate(birthDate);
@@ -55,12 +59,10 @@ public class Employee {
 		if(gcDesc != null)			visitor.visitGcDesc(gcDesc);
 		if(agricultPromo != null)	visitor.visitAgricultPromo(agricultPromo);
 		if(workTimeReduct != null)	visitor.visitWorkTimeReduct(workTimeReduct);
-		if(fra != null)				visitor.visitrFra(fra);
-		if(fea != null)				visitor.visitrFea(fea);
-		if(frb != null)				visitor.visitrFrb(frb);
-		if(feb != null)				visitor.visitrFeb(feb);
 		if(contract != null)		visitor.visitContract(contract);
 		if(coef != null)			visitor.visitCoef(coef);
+		if(factor != null)			visitor.visitFactor(factor);
+		if(rlce != null)			visitor.visitRlce(rlce);
 		if(colec != null)			visitor.visitColec(colec);
 		if(epig != null)			visitor.visitEpig(epig);
 		if(ocup != null)			visitor.visitOcup(ocup);
@@ -88,18 +90,16 @@ public class Employee {
 			return Optional.empty();
 		}
 	}	
+	
+	public Optional<Double> getFactor(){return Optional.ofNullable(factor);}
+
 	public Optional<String> getSex() {return Optional.ofNullable(sex);}
 	public Integer getIdent() {return ident;}
 	public String getColec() {return colec;}
 	public String getOcup() {return ocup;}
 	public Optional<String> getMdctz(){return Optional.ofNullable(mdCtz);}
 	
-	public String getRlce() {return rlce;}
-
-	public Employee setRlce(String rlce) {
-		this.rlce = rlce;
-		return this;
-	}
+	public Optional<String> getRlce() {return Optional.ofNullable(rlce);}
 
 	@Override
 	public String toString() {
@@ -149,6 +149,10 @@ public class Employee {
 			@Override
 			public void visitCoef(String coef) {stringBuffer.append(String.format(" coef : \"%s\" ", coef));}
 			@Override
+			public void visitFactor(Double factor) {stringBuffer.append(String.format(" factor : \"%s\" ", factor));}
+			@Override
+			public void visitRlce(String rlce) {stringBuffer.append(String.format(" rlce : \"%s\" ", rlce));}
+			@Override
 			public void visitColec(String colec) {stringBuffer.append(String.format(" colec : \"%s\" ", colec));}
 			@Override
 			public void visitEpig(String epig) {stringBuffer.append(String.format(" epig : \"%s\" ", epig));}
@@ -188,6 +192,7 @@ public class Employee {
 		private Date feb;
 		private String contract;
 		private String coef;
+		private Double factor;
 		private String colec;
 		private String epig;
 		private String ocup;
@@ -332,13 +337,21 @@ public class Employee {
 			return this;
 		}
 
-
+		 /**
+		   * use setFactor
+		    * @deprecated (use setFactor)
+		    */
+		 @Deprecated
 		public EmployeeBuilder setCoef(String coef) {
 			if(coef != null && !coef.trim().equals("")) this.coef = coef.trim();
 			else this.coef = null;
 			return this;
 		}
-
+		
+		public EmployeeBuilder setFactor(Double factor) {
+			this.factor = factor;
+			return this;
+		}
 
 		public EmployeeBuilder setColec(String colec) {
 			if(colec != null && !colec.trim().equals("")) this.colec = colec.trim();
@@ -415,6 +428,7 @@ public class Employee {
 			employee.feb = this.feb;
 			employee.contract = this.contract;
 			employee.coef = this.coef;
+			employee.factor = this.factor;
 			employee.colec = this.colec;
 			employee.epig = this.epig;
 			employee.ocup = this.ocup;
@@ -430,6 +444,10 @@ public class Employee {
 	}	
 	
 	public static interface Visitor{
+		void visitrFra(Date fra);
+		void visitrFea(Date fea);
+		void visitrFrb(Date frb);
+		void visitrFeb(Date feb);
 		void visitNSS(String nss);
 		void visitName(String name);
 		void visitBirthDate(Date birthDate);
@@ -445,12 +463,10 @@ public class Employee {
 		void visitGcDesc(String gcDesc);
 		void visitAgricultPromo(Boolean agriculturePromo);
 		void visitWorkTimeReduct(Boolean workTimeReduct);
-		void visitrFra(Date fra);
-		void visitrFea(Date fea);
-		void visitrFrb(Date frb);
-		void visitrFeb(Date feb);
 		void visitContract(String contract);
 		void visitCoef(String coef);
+		void visitFactor(Double factor);
+		void visitRlce(String rlce);
 		void visitColec(String colec);
 		void visitEpig(String epig);
 		void visitOcup(String ocup);
@@ -460,7 +476,14 @@ public class Employee {
 	}
 	
 	public static abstract class AbstractVisitor implements Visitor {
-
+		@Override
+		public void visitrFra(Date fra) {}
+		@Override
+		public void visitrFea(Date fea) {}
+		@Override
+		public void visitrFrb(Date frb) {}
+		@Override
+		public void visitrFeb(Date feb) {}
 		@Override
 		public void visitNSS(String nss) {}
 		@Override
@@ -490,17 +513,13 @@ public class Employee {
 		@Override
 		public void visitWorkTimeReduct(Boolean workTimeReduct) {}
 		@Override
-		public void visitrFra(Date fra) {}
-		@Override
-		public void visitrFea(Date fea) {}
-		@Override
-		public void visitrFrb(Date frb) {}
-		@Override
-		public void visitrFeb(Date feb) {}
-		@Override
 		public void visitContract(String contract) {}
 		@Override
 		public void visitCoef(String coef) {}
+		@Override
+		public void visitFactor(Double factor) {}
+		@Override
+		public void visitRlce(String rlce) {}
 		@Override
 		public void visitColec(String colec) {}
 		@Override
@@ -514,7 +533,205 @@ public class Employee {
 		@Override
 		public void visitReducingcoefic(String reducingCoefic) {}
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((agricultPromo == null) ? 0 : agricultPromo.hashCode());
+		result = prime * result + ((birthDate == null) ? 0 : birthDate.hashCode());
+		result = prime * result + ((coef == null) ? 0 : coef.hashCode());
+		result = prime * result + ((colec == null) ? 0 : colec.hashCode());
+		result = prime * result + ((companyId == null) ? 0 : companyId.hashCode());
+		result = prime * result + ((companyName == null) ? 0 : companyName.hashCode());
+		result = prime * result + ((contract == null) ? 0 : contract.hashCode());
+		result = prime * result + ((ctaCti == null) ? 0 : ctaCti.hashCode());
+		result = prime * result + ((epig == null) ? 0 : epig.hashCode());
+		result = prime * result + ((fea == null) ? 0 : fea.hashCode());
+		result = prime * result + ((feb == null) ? 0 : feb.hashCode());
+		result = prime * result + ((fra == null) ? 0 : fra.hashCode());
+		result = prime * result + ((frb == null) ? 0 : frb.hashCode());
+		result = prime * result + ((gc == null) ? 0 : gc.hashCode());
+		result = prime * result + ((gcDesc == null) ? 0 : gcDesc.hashCode());
+		result = prime * result + ((ident == null) ? 0 : ident.hashCode());
+		result = prime * result + ((ipf == null) ? 0 : ipf.hashCode());
+		result = prime * result + ((mdCtz == null) ? 0 : mdCtz.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((nss == null) ? 0 : nss.hashCode());
+		result = prime * result + ((ocup == null) ? 0 : ocup.hashCode());
+		result = prime * result + ((profesCat == null) ? 0 : profesCat.hashCode());
+		result = prime * result + ((reducingCoefic == null) ? 0 : reducingCoefic.hashCode());
+		result = prime * result + ((regime == null) ? 0 : regime.hashCode());
+		result = prime * result + ((rlce == null) ? 0 : rlce.hashCode());
+		result = prime * result + ((sex == null) ? 0 : sex.hashCode());
+		result = prime * result + ((situation == null) ? 0 : situation.hashCode());
+		result = prime * result + ((tlf == null) ? 0 : tlf.hashCode());
+		result = prime * result + ((vinFam == null) ? 0 : vinFam.hashCode());
+		result = prime * result + ((workTimeReduct == null) ? 0 : workTimeReduct.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Employee other = (Employee) obj;
+		if (agricultPromo == null) {
+			if (other.agricultPromo != null)
+				return false;
+		} else if (!agricultPromo.equals(other.agricultPromo))
+			return false;
+		if (birthDate == null) {
+			if (other.birthDate != null)
+				return false;
+		} else if (!birthDate.equals(other.birthDate))
+			return false;
+		if (coef == null) {
+			if (other.coef != null)
+				return false;
+		} else if (!coef.equals(other.coef))
+			return false;
+		if (colec == null) {
+			if (other.colec != null)
+				return false;
+		} else if (!colec.equals(other.colec))
+			return false;
+		if (companyId == null) {
+			if (other.companyId != null)
+				return false;
+		} else if (!companyId.equals(other.companyId))
+			return false;
+		if (companyName == null) {
+			if (other.companyName != null)
+				return false;
+		} else if (!companyName.equals(other.companyName))
+			return false;
+		if (contract == null) {
+			if (other.contract != null)
+				return false;
+		} else if (!contract.equals(other.contract))
+			return false;
+		if (ctaCti == null) {
+			if (other.ctaCti != null)
+				return false;
+		} else if (!ctaCti.equals(other.ctaCti))
+			return false;
+		if (epig == null) {
+			if (other.epig != null)
+				return false;
+		} else if (!epig.equals(other.epig))
+			return false;
+		if (fea == null) {
+			if (other.fea != null)
+				return false;
+		} else if (!fea.equals(other.fea))
+			return false;
+		if (feb == null) {
+			if (other.feb != null)
+				return false;
+		} else if (!feb.equals(other.feb))
+			return false;
+		if (fra == null) {
+			if (other.fra != null)
+				return false;
+		} else if (!fra.equals(other.fra))
+			return false;
+		if (frb == null) {
+			if (other.frb != null)
+				return false;
+		} else if (!frb.equals(other.frb))
+			return false;
+		if (gc == null) {
+			if (other.gc != null)
+				return false;
+		} else if (!gc.equals(other.gc))
+			return false;
+		if (gcDesc == null) {
+			if (other.gcDesc != null)
+				return false;
+		} else if (!gcDesc.equals(other.gcDesc))
+			return false;
+		if (ident == null) {
+			if (other.ident != null)
+				return false;
+		} else if (!ident.equals(other.ident))
+			return false;
+		if (ipf == null) {
+			if (other.ipf != null)
+				return false;
+		} else if (!ipf.equals(other.ipf))
+			return false;
+		if (mdCtz == null) {
+			if (other.mdCtz != null)
+				return false;
+		} else if (!mdCtz.equals(other.mdCtz))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (nss == null) {
+			if (other.nss != null)
+				return false;
+		} else if (!nss.equals(other.nss))
+			return false;
+		if (ocup == null) {
+			if (other.ocup != null)
+				return false;
+		} else if (!ocup.equals(other.ocup))
+			return false;
+		if (profesCat == null) {
+			if (other.profesCat != null)
+				return false;
+		} else if (!profesCat.equals(other.profesCat))
+			return false;
+		if (reducingCoefic == null) {
+			if (other.reducingCoefic != null)
+				return false;
+		} else if (!reducingCoefic.equals(other.reducingCoefic))
+			return false;
+		if (regime == null) {
+			if (other.regime != null)
+				return false;
+		} else if (!regime.equals(other.regime))
+			return false;
+		if (rlce == null) {
+			if (other.rlce != null)
+				return false;
+		} else if (!rlce.equals(other.rlce))
+			return false;
+		if (sex == null) {
+			if (other.sex != null)
+				return false;
+		} else if (!sex.equals(other.sex))
+			return false;
+		if (situation == null) {
+			if (other.situation != null)
+				return false;
+		} else if (!situation.equals(other.situation))
+			return false;
+		if (tlf == null) {
+			if (other.tlf != null)
+				return false;
+		} else if (!tlf.equals(other.tlf))
+			return false;
+		if (vinFam == null) {
+			if (other.vinFam != null)
+				return false;
+		} else if (!vinFam.equals(other.vinFam))
+			return false;
+		if (workTimeReduct == null) {
+			if (other.workTimeReduct != null)
+				return false;
+		} else if (!workTimeReduct.equals(other.workTimeReduct))
+			return false;
+		return true;
+	}
 }
 
 

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
@@ -48,7 +49,9 @@ public class JooqDigitalCertificate {
 		
 		if(null != registryUserId) {
 			Result<Record> employeeCertificateRecords = dslContext.select().from(RATTACH)
-					.where(RATTACH.REGISTRY.eq(registryUserId))
+					.leftJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
+					.where(RATTACH_TAG.ID.isNull())
+					.and(RATTACH.REGISTRY.eq(registryUserId))
 					.and(RATTACH.TYPE.eq((byte)4))
 					.fetch();
 			
@@ -93,7 +96,9 @@ public class JooqDigitalCertificate {
 				.fetchOne(ENTERPRISE.REGISTRY);
 		
 		Result<Record> enterpriseCertificateRecords = dslContext.select().from(RATTACH)
-				.where(RATTACH.REGISTRY.eq(registryEntepriseId))
+				.leftJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
+				.where(RATTACH_TAG.ID.isNull())
+				.and(RATTACH.REGISTRY.eq(registryEntepriseId))
 				.and(RATTACH.TYPE.eq((byte)4))
 				.fetch();
 		
