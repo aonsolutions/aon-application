@@ -1,13 +1,46 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
+import static com.esferalia.aon.jooq.tables.Certifica2Batch.CERTIFICA2_BATCH;
+import static com.esferalia.aon.jooq.tables.Certifica2BatchDetail.CERTIFICA2_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
+import static com.esferalia.aon.jooq.tables.ContractBatch.CONTRACT_BATCH;
+import static com.esferalia.aon.jooq.tables.ContractBatchDetail.CONTRACT_BATCH_DETAIL;
+import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
+import static com.esferalia.aon.jooq.tables.ContractCalendarEvent.CONTRACT_CALENDAR_EVENT;
+import static com.esferalia.aon.jooq.tables.ContractClause.CONTRACT_CLAUSE;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
+import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
+import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
+import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
+import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
+import static com.esferalia.aon.jooq.tables.IrpfDataAscendants.IRPF_DATA_ASCENDANTS;
+import static com.esferalia.aon.jooq.tables.IrpfDataDescendients.IRPF_DATA_DESCENDIENTS;
+import static com.esferalia.aon.jooq.tables.IrpfRegularization.IRPF_REGULARIZATION;
+import static com.esferalia.aon.jooq.tables.IrpfResult.IRPF_RESULT;
+import static com.esferalia.aon.jooq.tables.LeaveBatch.LEAVE_BATCH;
+import static com.esferalia.aon.jooq.tables.LeaveBatchDetail.LEAVE_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
+import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
+import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
 import java.util.stream.Stream;
+
+import org.jooq.DSLContext;
+import org.jooq.Record1;
+import org.jooq.Result;
+import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
@@ -60,6 +93,83 @@ public class ContractDAO {
 		ctx.checkRead();
 		return AGREEMENT_LEVEL_CATEGORY_PROPERTIES.build(ctx.getDslContext().select()
 			.from(AGREEMENT_LEVEL_CATEGORY), filter).fetch().stream().map(new AgreementLevelCategoryFiller());		
+	}
+	
+	
+	public static void delete(AONContext ctx, Integer ...contractIds){
+		ctx.checkWrite();
+		DSLContext dslContext = ctx.getDslContext();
+
+		SelectConditionStep<Record1<Integer>> irpfSelect = dslContext
+				.select(IRPF_DATA.ID).from(IRPF_DATA)
+				.where(IRPF_DATA.CONTRACT.in(contractIds));
+		
+		SelectConditionStep<Record1<Integer>> salariesSelect = dslContext
+				.select(SALARY.ID).from(SALARY)
+				.where(SALARY.CONTRACT.in(contractIds));
+		
+		Result<Record1<Integer>> certifica2DetailSelect = dslContext
+				.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH)
+				.from(CERTIFICA2_BATCH_DETAIL)
+				.where(CERTIFICA2_BATCH_DETAIL.CONTRACT.in(contractIds)).fetch();
+		
+		Result<Record1<Integer>> batchDetailSelect = dslContext
+				.select(CONTRACT_BATCH_DETAIL.CONTRACT_BATCH)
+				.from(CONTRACT_BATCH_DETAIL)
+				.where(CONTRACT_BATCH_DETAIL.CONTRACT.in(contractIds)).fetch();
+		
+		SelectConditionStep<Record1<Integer>> leaveDetailSelect = dslContext
+				.select(CONTRACT_LEAVE.ID).from(CONTRACT_LEAVE)
+				.where(CONTRACT_LEAVE.CONTRACT.in(contractIds));
+
+		Result<Record1<Integer>> leaveBatchDetail = dslContext
+				.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
+				.from(LEAVE_BATCH_DETAIL
+						.join(CONTRACT_LEAVE_DETAIL)
+						.on(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL
+								.eq(CONTRACT_LEAVE_DETAIL.ID))
+						.join(CONTRACT_LEAVE)
+						.on(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.in(contractIds)))
+				.fetch();
+
+
+		dslContext.batch(	
+				// ----------------------------------IRPF-------------------------------------------
+				dslContext.delete(IRPF_DATA_ASCENDANTS).where(IRPF_DATA_ASCENDANTS.IRPF_DATA.in(irpfSelect)),
+				dslContext.delete(IRPF_DATA_DESCENDIENTS).where(IRPF_DATA_DESCENDIENTS.IRPF_DATA.in(irpfSelect)),
+				dslContext.delete(IRPF_REGULARIZATION).where(IRPF_REGULARIZATION.CONTRACT.in(contractIds)),
+				dslContext.delete(IRPF_RESULT).where(IRPF_RESULT.CONTRACT.in(contractIds)),
+				dslContext.delete(IRPF_DATA).where(IRPF_DATA.CONTRACT.in(contractIds)),
+				// ----------------------------------Salary------------------------------------------
+				dslContext.delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(salariesSelect)),
+				dslContext.delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(salariesSelect)),
+				dslContext.delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(salariesSelect)),
+				dslContext.delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(salariesSelect)),
+				dslContext.delete(SALARY_COST).where(SALARY_COST.SALARY.in(salariesSelect)),
+				dslContext.delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(salariesSelect)),
+				dslContext.delete(SALARY).where(SALARY.CONTRACT.in(contractIds)),
+				// --------------------------------CERTIFICA2_BATCH------------------------------------
+				dslContext.delete(CERTIFICA2_BATCH_DETAIL).where(CERTIFICA2_BATCH_DETAIL.CONTRACT.in(contractIds)),
+				dslContext.delete(CERTIFICA2_BATCH).where(CERTIFICA2_BATCH_DETAIL.ID.in(certifica2DetailSelect)),
+				 // ----------------------------------LEAVE_BATCH--------------------------------------
+				dslContext.delete(LEAVE_BATCH_DETAIL).where(LEAVE_BATCH_DETAIL.LEAVE_BATCH.in(leaveBatchDetail)),
+				dslContext.delete(LEAVE_BATCH).where(LEAVE_BATCH.ID.in(leaveBatchDetail)),
+				// ----------------------------------CONTRACT------------------------------------------
+				dslContext.delete(CONTRACT_BATCH).where(CONTRACT_BATCH.ID.in(batchDetailSelect)),
+				dslContext.delete(CONTRACT_LEAVE_DETAIL).where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.in(leaveDetailSelect)),
+				dslContext.delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT_BATCH_DETAIL).where(CONTRACT_BATCH_DETAIL.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT_BONUS).where(CONTRACT_BONUS.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT_CALENDAR_EVENT).where(CONTRACT_CALENDAR_EVENT.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT_CLAUSE).where(CONTRACT_CLAUSE.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT_DEDUCTION).where(CONTRACT_DEDUCTION.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT_EMBARGO).where(CONTRACT_EMBARGO.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT_PAYMENT).where(CONTRACT_PAYMENT.CONTRACT.in(contractIds)),
+				dslContext.delete(CONTRACT).where(CONTRACT.ID.in(contractIds))
+		).execute();
 	}
 }
 

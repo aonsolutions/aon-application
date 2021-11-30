@@ -141,7 +141,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				
 				for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {
 
-					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+//					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+					Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
 					
 					SistemaRED2AON.addCalcs(aonContext, 
 							userLogin, 
@@ -181,7 +182,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			
 			for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {
 
-				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+//				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
 				byte data [] = SistemaRED.getUp2DateSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
 				
 				
@@ -215,7 +217,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			String regime = req.getParameter(Parameter.REGIME.name());
 			String ccc = req.getParameter(Parameter.CCC.name());
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
 			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, date);
 			
 			
@@ -244,7 +247,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			String ccc = req.getParameter(Parameter.CCC.name());
 
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");		
 			byte data [] = SistemaRED.getUp2DateSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc);
 			
 			
@@ -327,7 +331,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 
 	private Employee addEmployee(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String naf) throws SegSocialException {
-		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		solutions.aon.seg.social.object.Employee ssEmployee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 		
 		String nss = ssEmployee.getNss();			
@@ -449,7 +454,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 
 	
 	protected String getDomain(HttpServletRequest req) {
-		return req.getServerName();
+		return req.getParameter(Parameter.DOMAIN.name())!=null ? req.getParameter(Parameter.DOMAIN.name()) : req.getServerName();
 	}
 	
 	protected Connection getConnection(HttpServletRequest req) throws SQLException {
@@ -503,7 +508,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
 			Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(date);
 
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			for ( String naf : nafs ) {
 				byte data [] = SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);

@@ -414,12 +414,17 @@ export const buildForm = (div, aonMessengerChat) => {
             requestTypeChange(aonMessengerChat, requestTypeSelect, divDinamic, divProcess);
         });
 
-        aonMessengerChat.getOfficeProjects().then(offices => {
-            if(offices.length){
-                divBtnForExternal.style.display = "block";
-            } else 
-                divRequest.className = CSS.AON_COL_XS_12;
-        });
+        if(!task.isAdvisoryCompany()){
+            aonMessengerChat.getOfficeProjects().then(offices => {
+                if(offices.length)
+                    divBtnForExternal.style.display = "block";
+                else 
+                    divRequest.className = CSS.AON_COL_XS_12;
+            });
+        } else 
+            divBtnForExternal.style.display = "block";
+
+        console.log(!task.isAdvisoryCompany());
     } else 
         divRequest.className = CSS.AON_COL_XS_12;
 

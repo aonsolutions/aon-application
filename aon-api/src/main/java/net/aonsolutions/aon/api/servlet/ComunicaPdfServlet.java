@@ -173,10 +173,14 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 	private Certificate getCert(AonApiData api, String typeCert) throws Exception {
 		Domain domain = api.getDomain();
 		Certificate certificate = null;
-		if(typeCert.equals("SEPE")) {
-			certificate = AON.getCertificateSEPE(domain.getName(), domain.getId(),  api.getUser().getLogin());
+
+		if("SEPE" == typeCert ) {
+//			certificate = AON.getCertificateSEPE(domain.getName(), domain.getId(),  api.getUser().getLogin());
+			certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "SEPE");
+
 		} else {
-			certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+//			certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
+			certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		}
 		if(certificate.getCertificate()==null) throw new Exception("Certificate Null");
 

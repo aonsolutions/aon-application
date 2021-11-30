@@ -72,7 +72,8 @@ public class ITPDFServlet extends HttpServlet {
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 	        
 	        ServletOutputStream output = res.getOutputStream();
 	        
