@@ -1,6 +1,6 @@
 import { AonElement } from "../../components/AonElement.js";
 import { AonCard } from "../../components/aon-card.js";
-import { scrollInfinite, serializeForm } from "../../services/utils.js";
+import { serializeForm } from "../../services/utils.js";
 import { setStyles } from "../../services/utilsComponents.js";
 import { firstLetters } from "../timecontrol/time-control/utils.js";
 import { AonTabs } from "../../components/aon-tabs.js";
@@ -89,7 +89,7 @@ export class AonNotification extends AonElement {
     
     let elementScroll = this.getElement(this.ROOT_PANEL);
     elementScroll.classList.add(CSS.MATERIAL_SCROLL);
-    scrollInfinite(elementScroll , async()=>{
+    this.scrollInfinite(elementScroll , async()=>{
       await this.loadMore();
     })
   }
@@ -461,6 +461,25 @@ export class AonNotification extends AonElement {
       dialog.close();
     }
   }
+
+    /**
+   * 
+   * @param {element html or undefined} element 
+   * @param {*} fn return end elment
+   */
+  scrollInfinite(element, fn) {
+    if(element){
+      element.addEventListener(EVENT.SCROLL, async ({target:{scrollTop, scrollHeight, offsetHeight}}) => {
+        if (scrollTop >= (scrollHeight - offsetHeight)) fn();
+      });
+    } else {
+      element = document.body;
+      window.addEventListener(EVENT.SCROLL, ()=>{
+        if ( (element.scrollTop + element.clientHeight) >= element.scrollHeight) fn();
+    }) 
+    }
+  }
+
 
   showToast(obj) {
     if(typeof obj === "string")  obj = JSON.parse(obj);

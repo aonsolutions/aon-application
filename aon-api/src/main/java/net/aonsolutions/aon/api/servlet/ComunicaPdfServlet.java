@@ -21,6 +21,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.sepe.Sepe;
 
@@ -95,29 +96,27 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 	}
 
 	private byte[] getTA(AonApiData api) throws Exception {
-		Certificate certificate = getCert(api, "SEG_SOCIAL");
+		Certificate certificate = getCert(api, "TGSS");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String regime = api.getParams().optString("regime");
 		String ccc = api.getParams().getString("ctaCti");
 		String nss = api.getParams().getString("nss");
-		Date fecha = AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
-		
-	    return SistemaRED.getTA(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc, nss, fecha);		
+		Date date = AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
+	    return ServicioRED.getTADuplicatePOST(certificateInputStream, certificate.getPassword(), certificate.getType(), ccc, regime, nss, date);		
 	}
 	
 	private byte[] getIDC(AonApiData api) throws Exception {
-		Certificate certificate = getCert(api, "SEG_SOCIAL");
+		Certificate certificate = getCert(api, "TGSS");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String regime = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ctaCti");
 		String nss = api.getParams().getString("nss");
-		Date fecha =AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
-		
-	    return SistemaRED.getIDC(certificateInputStream, certificate.getPassword(), certificate.getType(), regime, ccc, nss, fecha);	
+		Date date = AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
+		return ServicioRED.getIDCPOST(certificateInputStream, certificate.getPassword(), certificate.getType(), nss, regime, ccc, date);
 	}
 	
 	private byte[] getCertCorriente(AonApiData api) throws Exception {
-		Certificate certificate = getCert(api, "SEG_SOCIAL");
+		Certificate certificate = getCert(api, "TGSS");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String regime = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ccc");
@@ -144,7 +143,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 	}
 	
 	private byte[] getReportAffiliateInAlta(AonApiData api) throws Exception {
-		Certificate certificate = getCert(api, "SEG_SOCIAL");
+		Certificate certificate = getCert(api, "TGSS");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String regime = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ccc");
@@ -153,7 +152,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 	}
 	
 	private byte[] getReportAffiliateInMovPrev(AonApiData api) throws Exception {
-		Certificate certificate = getCert(api, "SEG_SOCIAL");
+		Certificate certificate = getCert(api, "TGSS");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String regime = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ccc");
@@ -161,7 +160,7 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 	}
 	
 	private byte[] getIdcCcc(AonApiData api) throws Exception {
-		Certificate certificate = getCert(api, "SEG_SOCIAL");
+		Certificate certificate = getCert(api, "TGSS");
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
 		String regime = api.getParams().getString("regime");
 		String ccc = api.getParams().getString("ccc");
@@ -172,16 +171,8 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 
 	private Certificate getCert(AonApiData api, String typeCert) throws Exception {
 		Domain domain = api.getDomain();
-		Certificate certificate = null;
-
-		if("SEPE" == typeCert ) {
-//			certificate = AON.getCertificateSEPE(domain.getName(), domain.getId(),  api.getUser().getLogin());
-			certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "SEPE");
-
-		} else {
-//			certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId());
-			certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
-		}
+		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), typeCert);
+	
 		if(certificate.getCertificate()==null) throw new Exception("Certificate Null");
 
 		return certificate;

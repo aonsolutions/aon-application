@@ -423,8 +423,6 @@ export const buildForm = (div, aonMessengerChat) => {
             });
         } else 
             divBtnForExternal.style.display = "block";
-
-        console.log(!task.isAdvisoryCompany());
     } else 
         divRequest.className = CSS.AON_COL_XS_12;
 
