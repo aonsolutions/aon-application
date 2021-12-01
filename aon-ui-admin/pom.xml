@@ -61,13 +61,13 @@
     <dependency>
       <groupId>javax.faces</groupId>
       <artifactId>jsf-api</artifactId>
-      <version>1.2_15-b01-jbossorg-1</version>
+      <version>1.2_14</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.faces</groupId>
       <artifactId>jsf-impl</artifactId>
-      <version>1.2_15-b01-jbossorg-1</version>
+      <version>1.2_14</version>
       <scope>provided</scope>
     </dependency>    
     <dependency>
@@ -79,7 +79,7 @@
     <dependency>
       <groupId>javax.servlet.jsp</groupId>
       <artifactId>javax.servlet.jsp-api</artifactId>
-      <version>2.3.3</version>
+      <version>2.3.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
