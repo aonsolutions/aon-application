@@ -993,7 +993,7 @@ public class InvoiceDAO {
 		ctx.log().debug("INSERT INVOICE invoice: {0} Act: {1}",invoice.getId(),invoice.getActivity());
 		insertDetails(ctx, config, invoice);
 		InvoiceFiscalDAO.save(ctx, config, invoice);
-		return invoice; 
+		return invoice.setCreationDate(new Date()); 
 	}
 	
 	private static void insertDetails(AONContext ctx, AonConfiguration config, Invoice invoice) {

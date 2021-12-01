@@ -19,7 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.data.DataRequestCreation;
+import net.aonsolutions.db.up2date.data.DataRequestUpdate;
 import net.aonsolutions.db.up2date.payroll.CertificatesUpdate;
 
 
@@ -184,7 +184,8 @@ public class Up2Date {
     		//RemoveDomainAppBankForParent.REMOVE_DOMAIN_APP_BANK_FOR_PARENT,
     		//RemoveDataResponse.REMOVE_DATA_RESPONSE,
     		//DataRequestCreation.DATA_REQUEST_CREATION,
-    		CertificatesUpdate.CERTIFICATESUPDATE
+    		CertificatesUpdate.CERTIFICATESUPDATE,
+    		DataRequestUpdate.DATA_REQUEST_UPDATE
 
     };
 

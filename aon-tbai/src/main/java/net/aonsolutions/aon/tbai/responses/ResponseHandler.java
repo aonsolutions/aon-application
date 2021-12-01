@@ -7,13 +7,15 @@ import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.esferalia.aon.watson.server.AonDateUtils;
+
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
-import net.aonsolutions.aon.tbai.toolkit.DataToolkit;
 
 public class ResponseHandler {
 
@@ -72,13 +74,9 @@ public class ResponseHandler {
 			case -1: throw new TbaiResponseException(-1, "NO RESPONSE FOUND");
 			case  0: break;
 			case  1: throw new TbaiResponseException(1,  "TBAI NOT ACCEPTED");  
-			default: throw new TbaiResponseException(status, "UNKNOWN RESPONSE: "  + response.getDescription().orElse("-"));
+			default: throw new TbaiResponseException(status, "UNKNOWN RESPONSE: "  + response.getDescription());
 		}	
 		
-		Integer validation_code = response.getValidation_code().orElse(-1);
-		switch (validation_code) {
-			default: throw new TbaiResponseException(validation_code, response.getValidation_description().orElse("-"));
-		}
 	}
 	
 	private static TbaiResponse getTbaiResponse(byte[] bytes) {
@@ -91,7 +89,12 @@ public class ResponseHandler {
 			Document doc = dBuilder.parse(is);
 
 			System.out.println("\t XML version: \t " + doc.getXmlVersion());
-						
+
+			
+			String idTbai;
+			try{idTbai = doc.getElementsByTagName("IdentificadorTBAI").item(0).getTextContent();}
+			catch(Exception e) {idTbai = null;}
+			
 			String estado;
 			try{estado = doc.getElementsByTagName("Estado").item(0).getTextContent();}
 			catch(Exception e) {estado = null;}
@@ -121,6 +124,7 @@ public class ResponseHandler {
 			catch(Exception e) {validation_desc_eus = null;}
 			
 			
+			System.out.println("\t Identificador TBAI: \t" + idTbai);
 			System.out.println("\t Status code: \t" + estado);
 			System.out.println("\t Reception date: \t" + fecha_str);
 			System.out.println("\t Description: \t" + descripcion);
@@ -131,20 +135,38 @@ public class ResponseHandler {
 			System.out.println("\t Description: \t" + validation_desc);
 			System.out.println("\t Azalpena: \t" + validation_desc_eus);
 	
+			System.out.println(toString(doc));
 			
-			TbaiResponse response = new TbaiResponse();
-			response
-			.setStatus(Integer.parseInt(estado))
-			.setDescription(descripcion)
-			.setDescription_eus(descripcion_eus)
-			.setReception_date(DataToolkit.parseDate(fecha_str, "dd-MM-yyyy hh:mm:ss"))
-			.setValidation_code(Integer.parseInt(validation_code))
-			.setValidation_description(validation_desc)
-			.setValidation_description_eus(validation_desc_eus);
-			
-			return response;
-		}catch(IOException | ParserConfigurationException | SAXException e) {e.printStackTrace();}
+			return new TbaiResponse()
+					.setTbaiId(idTbai)
+					.setStatus(Integer.parseInt(estado))
+					.setDescription(descripcion)
+					.setDescriptionEUS(descripcion_eus)
+					.setReceptionDate(AonDateUtils.parse(fecha_str, "dd-MM-yyyy hh:mm:ss"))
+					.setValidationCode(Integer.parseInt(validation_code))
+					.setValidationDescription(validation_desc)
+					.setValidationDescriptionEUS(validation_desc_eus);
+
+		} catch(IOException | ParserConfigurationException | SAXException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
+	public static String toString(Document doc) {
+	    try {
+	        java.io.StringWriter sw = new java.io.StringWriter();
+	        javax.xml.transform.TransformerFactory tf = javax.xml.transform.TransformerFactory.newInstance();
+	        javax.xml.transform.Transformer transformer = tf.newTransformer();
+	        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+	        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+	        transformer.transform(new javax.xml.transform.dom.DOMSource(doc), new javax.xml.transform.stream.StreamResult(sw));
+	        return sw.toString();
+	    } catch (Exception ex) {
+	        throw new RuntimeException("Error converting to String", ex);
+	    }
+	}
 }

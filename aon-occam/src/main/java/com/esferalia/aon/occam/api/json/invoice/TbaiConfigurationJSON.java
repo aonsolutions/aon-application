@@ -16,16 +16,16 @@ public class TbaiConfigurationJSON {
 	public static TbaiConfiguration fromJSON(JSONObject json) {
 		return new TbaiConfiguration()
 				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
-				.setAdministration(Administration.safeValueOf(IJsonNames.ADMINISTRATION))
-				.setDefaultCertificate(JsonUtils.getInteger(json, IJsonNames.DEFAULT_CERTIFICATE))
+//				.setAdministration(Administration.safeValueOf(IJsonNames.ADMINISTRATION))
+//				.setDefaultCertificate(JsonUtils.getInteger(json, IJsonNames.DEFAULT_CERTIFICATE))
 				.setTest(JsonUtils.getboolean(json, IJsonNames.TEST));
 	}
 	
 	public static JSONObject toJSON(TbaiConfiguration config) {
 		return new JSONObject()
 				.put(IJsonNames.ACTIVE, config.isActive())
-				.put(IJsonNames.ADMINISTRATION, config.getAdministration().name())
-				.put(IJsonNames.DEFAULT_CERTIFICATE, config.getDefaultCertificate())
+//				.put(IJsonNames.ADMINISTRATION, config.getAdministration().name())
+//				.put(IJsonNames.DEFAULT_CERTIFICATE, config.getDefaultCertificate())
 				.put(IJsonNames.TEST, config.isTest());
 	}
 	
