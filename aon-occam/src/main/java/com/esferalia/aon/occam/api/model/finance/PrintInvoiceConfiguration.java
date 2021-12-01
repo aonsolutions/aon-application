@@ -141,6 +141,16 @@ public class PrintInvoiceConfiguration {
 	public boolean isBorder() {
 		return border;
 	}
+	
+	public boolean isBoxBodyBorder() {
+		//TODO
+		return border;
+	}
+	
+	public boolean isBoxTitleBorder() {
+		//TODO
+		return border;
+	}
 
 	public PrintInvoiceConfiguration setBorder(boolean border) {
 		this.border = border;
