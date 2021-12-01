@@ -55,8 +55,8 @@ if [ "$i" = 0 ]; then
         exit 1
 fi
 
-docker load < /root/tomcat:9-jdk16.tar
-docker load < /root/openjdk:16-slim.tar
+docker load < /root/tomcat:9-jdk17.tar
+docker load < /root/openjdk:17-slim.tar
 
 echo
 echo 'Docker init process done. Ready for start up.'
