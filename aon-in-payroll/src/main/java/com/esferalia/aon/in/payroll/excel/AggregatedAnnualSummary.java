@@ -2,6 +2,8 @@ package com.esferalia.aon.in.payroll.excel;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -21,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -46,6 +49,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jooq.Condition;
+import org.jooq.Record;
 
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.CraTypes;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
@@ -222,9 +226,9 @@ public class AggregatedAnnualSummary {
 				}
 			}
 				
-			for (String nif : entries.keySet()) {
-				AggregatedAnnualYearlyEntry entry = entries.get(nif);
-				Sheet sheet = wb.createSheet(WorkbookUtil.createSafeSheetName(nif));
+			for (String identifier : entries.keySet()) {
+				AggregatedAnnualYearlyEntry entry = entries.get(identifier);
+				Sheet sheet = wb.createSheet(WorkbookUtil.createSafeSheetName(identifier));
 				
 				sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 4));
 				sheet.addMergedRegion(new CellRangeAddress(2, 2, 1, 2));
@@ -325,56 +329,56 @@ public class AggregatedAnnualSummary {
 				
 				//PAYMENTS
 				
-				writePayments(sheet, stylesMap, paymentConceptsSet, orderedConcepts, totalsFormulas, entry, nif,
+				writePayments(sheet, stylesMap, paymentConceptsSet, orderedConcepts, totalsFormulas, entry, identifier,
 						periods, complete);
 				
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//TOTAL RAW
-				putDataRow("TOTAL BRUTO", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("TOTAL BRUTO", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//DEDUCTIONS
-				writeDeductions(sheet, stylesMap, totalsFormulas, orderedConcepts, deductionConceptsSet, entry, nif,
+				writeDeductions(sheet, stylesMap, totalsFormulas, orderedConcepts, deductionConceptsSet, entry, identifier,
 						periods, complete);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//TOTAL LIQUID
-				putDataRow("TOTAL LÍQUIDO", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("TOTAL LÍQUIDO", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//EXTRA PRORATION
-				putDataRow("PRORRATA PAGAS EXTRAS", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("PRORRATA PAGAS EXTRAS", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//BONUSES
-				putDataRow("BONIFICACIONES/REDUCCIONES", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BONIFICACIONES/REDUCCIONES", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//ENTERPRISE SS
-				putDataRow("SEG.SOCIAL EMPRESA", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("SEG.SOCIAL EMPRESA", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//ENTERPRISE COST
-				putDataRow("COSTE EMPRESA", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("COSTE EMPRESA", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//RLC
-				putDataRow("RLC", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("RLC", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//CC BASE
-				putDataRow("BASE CONTINGENCIAS COMUNES", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BASE CONTINGENCIAS COMUNES", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//IT BASE
-				putDataRow("BASE ACCIDENTES", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BASE ACCIDENTES", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//IRPF MONEY BASE
-				putDataRow("BASE IRPF DINERARIA", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BASE IRPF DINERARIA", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//IRPF IN-KIND BASE
-				putDataRow("BASE IRPF EN ESPECIE", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BASE IRPF EN ESPECIE", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 				row = sheet.createRow(sheet.getLastRowNum() +1);
 				//IRPF TOTAL BASE
-				putDataRow("BASE IRPF TOTAL", periods, complete, stylesMap, totalsFormulas, nif, entry, sheet, row);
+				putDataRow("BASE IRPF TOTAL", periods, complete, stylesMap, totalsFormulas, identifier, entry, sheet, row);
 //				row = sheet.createRow(sheet.getLastRowNum() +1);
 
 				//DAYS AND HOURS
-				writeDaysAndHours(sheet, stylesMap, orderedConcepts, totalsFormulas, entry, nif, periods, complete);
+				writeDaysAndHours(sheet, stylesMap, orderedConcepts, totalsFormulas, entry, identifier, periods, complete);
 				
 //				sheet.createFreezePane(0, 6);
 				sheet.createFreezePane(3, firstDataRow-1, 3, firstDataRow-1);
@@ -1176,35 +1180,33 @@ public class AggregatedAnnualSummary {
 			LinkedHashMap<String, LinkedHashMap<String, String>> totalsFormulas, Sheet totalSheet, Row row,
 			String[] months, String field, boolean important) {
 		Cell cell;
-		{
-			LinkedHashMap<String, String> rawFormulas = totalsFormulas.get(field);
-			totalSheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
-			cell = row.createCell(0);
-			cell.setCellType(CellType.STRING);
-			if (field.contains("CRA_00") || AonArrayUtils.constainsIgnoreCase(CRA1_CONCEPT_ORDER, field)) {
-				cell.setCellValue(getDefinitivePaymentConcept(field));
-			} else {
-				cell.setCellValue(removeUnderscore(field));				
+		LinkedHashMap<String, String> rawFormulas = totalsFormulas.get(field);
+		totalSheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 0, 2));
+		cell = row.createCell(0);
+		cell.setCellType(CellType.STRING);
+		if (field.contains("CRA_00") || AonArrayUtils.constainsIgnoreCase(CRA1_CONCEPT_ORDER, field)) {
+			cell.setCellValue(getDefinitivePaymentConcept(field));
+		} else {
+			cell.setCellValue(removeUnderscore(field));				
+		}
+		int[] cNum = {3};
+		if (rawFormulas != null) {
+			for (String month : months) {
+				String formula = rawFormulas.get(month);
+				Cell formulaCell = row.createCell(cNum[0]++);
+				formulaCell.setCellType(CellType.FORMULA);
+				formulaCell.setCellStyle(stylesMap.get(important ? "boldNumberCellStyle" : "numberCellStyle"));
+				formulaCell.setCellFormula(formula);
 			}
-			int[] cNum = {3};
-			if (rawFormulas != null) {
-				for (String month : months) {
-					String formula = rawFormulas.get(month);
-					Cell formulaCell = row.createCell(cNum[0]++);
-					formulaCell.setCellType(CellType.FORMULA);
-					formulaCell.setCellStyle(stylesMap.get(important ? "boldNumberCellStyle" : "numberCellStyle"));
-					formulaCell.setCellFormula(formula);
-				}
-				cell = row.createCell(cNum[0]);
-				int realRowNum = cell.getRowIndex()+1;
-				cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
-			}
-			
+			cell = row.createCell(cNum[0]);
+			int realRowNum = cell.getRowIndex()+1;
+			cell.setCellFormula("SUM(D"+realRowNum+":"+CellReference.convertNumToColString(cell.getColumnIndex()-1)+realRowNum+")");
 		}
 	}
 	
 	public static Map<String, AggregatedAnnualYearlyEntry> getEntries (AONContext aonContext, Condition condition, SummaryType type) {
-		LinkedHashMap<Integer, String> idsAndWorkplaces = new LinkedHashMap<Integer, String>();
+		
+		LinkedHashMap<Integer, String> idsAndWorkplaces = new LinkedHashMap<>();
 		 
 		//EACH SALARY'S WORKPLACE
 		aonContext.getDslContext()
@@ -1225,7 +1227,7 @@ public class AggregatedAnnualSummary {
 		
 		DateFormat df = new SimpleDateFormat("MMMMMMMMMM", new Locale("es", "ES"));
 		salaries
-		.filter(s -> s != null)
+		.filter(Objects::nonNull)
 		.sorted(Comparator.comparing(s -> s.getEmployeeDocument() != null ? s.getEmployeeDocument() : ""))
 		.forEach(s -> {
 			String month = null;
@@ -1234,7 +1236,9 @@ public class AggregatedAnnualSummary {
 			else if (type == AggregatedAnnualSummary.SummaryType.QUARTERLY)
 				month = getQuarter(s.getIssueDate());
 			
-			AggregatedAnnualYearlyEntry yearlyEntry = entries.get(s.getEmployeeDocument()) != null ? entries.get(s.getEmployeeDocument()) : new AggregatedAnnualYearlyEntry(); 
+			String identifier = getIdentifier(aonContext, s);
+			
+			AggregatedAnnualYearlyEntry yearlyEntry = entries.get(identifier) != null ? entries.get(identifier) : new AggregatedAnnualYearlyEntry(); 
 			
 			Map<String, AggregatedAnnualEntry> monthlyEntries = yearlyEntry.getMonthlyEntries();
 			
@@ -1251,11 +1255,51 @@ public class AggregatedAnnualSummary {
 			
 			yearlyEntry.setWorkplace(idsAndWorkplaces.get(s.getId()));
 			
-			entries.put(s.getEmployeeDocument(), yearlyEntry);
+			entries.put(identifier, yearlyEntry);
 		});
 		return entries;
 	}
 	
+	private static String getIdentifier(AONContext aonContext, Salary s) {
+		if (s.getEmployeeDocument() == null || s.getEmployeeDocument().isEmpty()) {
+			return getAlternativeIdentifier(aonContext, s);
+		} else {
+			return s.getEmployeeDocument();
+		}
+	}
+	
+	private static String getAlternativeIdentifier(AONContext aonContext, Salary s) {
+		Integer contractId = aonContext.getDslContext()
+				.select(SALARY.CONTRACT)
+				.from(SALARY)
+				.where(SALARY.ID.eq(s.getId()))
+				.fetchOneInto(SALARY)
+				.getContract();
+			Record reg = aonContext.getDslContext()
+				.select(PERSON.SOCIAL_SECURITY_NUM, REGISTRY.DOCUMENT, REGISTRY.ID)
+				.from(CONTRACT)
+				.innerJoin(PERSON)
+				.on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+				.innerJoin(REGISTRY).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+				.where(CONTRACT.ID.eq(contractId))
+				.fetchStream()
+				.filter(Objects::nonNull)
+				.findFirst()
+				.orElse(null);
+			
+			if (reg == null)//THEORETICALLY CANNOT BE NULL
+				return null;
+			
+			if (reg.get(REGISTRY.DOCUMENT) != null && !reg.get(REGISTRY.DOCUMENT).isEmpty()) {
+				s.setEmployeeDocument(reg.get(REGISTRY.DOCUMENT));
+				return reg.get(REGISTRY.DOCUMENT);
+			} else if (reg.get(PERSON.SOCIAL_SECURITY_NUM) != null && !reg.get(PERSON.SOCIAL_SECURITY_NUM).isEmpty()){
+				s.setEmployeeSSNumber(reg.get(PERSON.SOCIAL_SECURITY_NUM));
+				return reg.get(PERSON.SOCIAL_SECURITY_NUM);					
+			} else {
+				return AonNumberUtils.toString(reg.get(REGISTRY.ID));
+			}
+	}
 	
 	private static String getQuarter(Date date) {
 		try {
