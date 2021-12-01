@@ -170,7 +170,6 @@ public class CCCLaboralLife {
 		String log = "[LOG] >> ";
 		if(object == null)  log += "{empty}";
 		else log += object.toString();
-		System.out.println(log);
 		return log;
 	}
 
@@ -201,7 +200,7 @@ public class CCCLaboralLife {
 
 	//	0111 01 105360062 9 0B01487271
 	private static final Pattern CCC_CIF =
-			Pattern.compile("^\\s*(?<regime>[0-9]+)\\s+(?<province>[0-9]+)\\s+(?<ccc>[0-9]+)\\s+[0-9]\\s+(?<cif>[A-Z,0-9]+)\\s*$"
+			Pattern.compile("^.*(?<regime>[0-9]{4,})\\s+(?<province>[0-9]+)\\s+(?<ccc>[0-9]+)\\s+[0-9]\\s+(?<cif>[A-Z,0-9]+)\\s*$"
 					, Pattern.CASE_INSENSITIVE);
 
 	//	CL DUQUE DE WELLINGTON 52 B

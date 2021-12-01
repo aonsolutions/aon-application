@@ -34,13 +34,13 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>3.6.0</version>
+			<version>3.8.4</version>
 			<scope>compile</scope>
 		</dependency>
 	    <dependency>
 	      <groupId>org.codehaus.plexus</groupId>
 	      <artifactId>plexus-compiler-api</artifactId>
-	      <version>1.9</version>
+	      <version>1.9.2-jboss-1</version>
 			<scope>compile</scope>
 	    </dependency>
 	    <dependency>
@@ -76,19 +76,19 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.13</version>
+			<version>8.0.27</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.8.0-beta2</version>
+			<version>1.8.0-beta4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.8.0-beta2</version>
+			<version>1.8.0-beta4</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

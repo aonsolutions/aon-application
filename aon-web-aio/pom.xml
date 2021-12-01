@@ -490,13 +490,13 @@
     <dependency>
       <groupId>org.openid4java</groupId>
       <artifactId>openid4java</artifactId>
-      <version>0.9.7</version>
+      <version>0.9.8</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
-      <version>9.0.14</version>
+      <version>9.0.55</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -514,13 +514,13 @@
     <dependency>
       <groupId>javax.faces</groupId>
       <artifactId>jsf-api</artifactId>
-      <version>1.2_14</version>
+      <version>1.2_15-b01-jbossorg-1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>javax.faces</groupId>
       <artifactId>jsf-impl</artifactId>
-      <version>1.2_14</version>
+      <version>1.2_15-b01-jbossorg-1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -548,19 +548,19 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.13</version>
+      <version>8.0.27</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.8.0-beta2</version>
+      <version>1.8.0-beta4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jcl</artifactId>
-      <version>1.7.25</version>
+      <version>1.7.32</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -572,7 +572,7 @@
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>1.1.1</version>
+      <version>1.2.0</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -617,7 +617,7 @@
     <dependency>
       <groupId>net.tascalate.javaflow</groupId>
       <artifactId>net.tascalate.javaflow.api</artifactId>
-      <version>2.2.1</version>
+      <version>2.6.4</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -674,7 +674,7 @@
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
-      <version>1.6</version>
+      <version>1.7</version>
       <exclusions>
         <exclusion>
           <artifactId>commons-digester</artifactId>
@@ -841,7 +841,7 @@
     <dependency>
       <groupId>org.richfaces.framework</groupId>
       <artifactId>richfaces-api</artifactId>
-      <version>3.3.3.Final</version>
+      <version>3.3.4.Final</version>
       <exclusions>
         <exclusion>
           <groupId>commons-digester</groupId>
@@ -872,7 +872,7 @@
     <dependency>
       <groupId>org.richfaces.ui</groupId>
       <artifactId>richfaces-ui</artifactId>
-      <version>3.3.3.Final</version>
+      <version>3.3.4.Final</version>
       <exclusions>
         <exclusion>
           <groupId>commons-digester</groupId>
@@ -903,13 +903,13 @@
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.11</version>
+      <version>1.15</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.richfaces.framework</groupId>
       <artifactId>richfaces-impl</artifactId>
-      <version>3.3.3.aon</version>
+      <version>3.3.4.Final</version>
       <exclusions>
         <exclusion>
           <groupId>commons-digester</groupId>

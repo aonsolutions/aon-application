@@ -14,20 +14,20 @@
     <dependency>
       <groupId>javax.faces</groupId>
       <artifactId>jsf-api</artifactId>
-      <version>1.2_14</version>
+      <version>1.2_15-b01-jbossorg-1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.richfaces.framework</groupId>
       <artifactId>richfaces-api</artifactId>
-      <version>3.3.3.Final</version>
+      <version>3.3.4.Final</version>
       <scope>compile</scope>
     </dependency>
     <!-- -->
     <dependency>
       <groupId>commons-cli</groupId>
       <artifactId>commons-cli</artifactId>
-      <version>1.4</version>
+      <version>1.5.0</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -86,7 +86,7 @@
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-jackson2</artifactId>
-      <version>1.27.0</version>
+      <version>1.40.1</version>
     </dependency>
     <!-- Google Calendar API -->
     <dependency>
@@ -133,20 +133,20 @@
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
-      <version>1.4</version>
+      <version>1.5.0-b01</version>
     </dependency>
     
     <!-- GSON -->
     <dependency>
     	<groupId>com.google.code.gson</groupId>
     	<artifactId>gson</artifactId>
-    	<version>2.8.5</version>
+    	<version>2.8.9</version>
 	</dependency>
     
     <dependency>
       <groupId>commons-net</groupId>
       <artifactId>commons-net</artifactId>
-      <version>3.6</version>
+      <version>3.8.0</version>
     </dependency>
   </dependencies>
 </project>

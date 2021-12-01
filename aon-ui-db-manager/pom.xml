@@ -24,7 +24,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.8.0-beta2</version>
+      <version>1.8.0-beta4</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -36,7 +36,7 @@
     <dependency>
       <groupId>javax.faces</groupId>
       <artifactId>jsf-api</artifactId>
-      <version>1.2_14</version>
+      <version>1.2_15-b01-jbossorg-1</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
