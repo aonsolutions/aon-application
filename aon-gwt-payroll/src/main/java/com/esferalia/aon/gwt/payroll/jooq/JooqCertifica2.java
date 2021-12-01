@@ -600,7 +600,7 @@ public class JooqCertifica2 {
 			
 			Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
 			Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
-			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate);
+			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate) - 1;
 			
 			Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
 					.where(SALARY_PAYMENT.SALARY.eq(settlementId))
@@ -864,7 +864,7 @@ public class JooqCertifica2 {
 			
 			Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
 			Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
-			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate);
+			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate) - 1;
 			
 			Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
 					.where(SALARY_PAYMENT.SALARY.eq(settlementId))

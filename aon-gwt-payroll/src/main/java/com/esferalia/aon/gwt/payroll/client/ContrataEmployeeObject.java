@@ -531,7 +531,7 @@ public class ContrataEmployeeObject {
 	
 	public void getCertifica2PDF(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getCertifica2PDF(
-				employeeContractData.getContractInfo().getContractId().toString(),
+				employeeContractData.getEmployeeInfo().getDocument(),
 				employeeContractData.getContractInfo().getEndDate(), 
 				new AsyncCallback<String>() {
 
