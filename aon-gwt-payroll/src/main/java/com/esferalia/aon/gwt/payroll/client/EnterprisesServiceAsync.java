@@ -199,13 +199,13 @@ public interface EnterprisesServiceAsync {
 	void verifyCertificate(String currentDomainName, String currentUser, CertificateType certificateType,AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getEmployeeITInfo(String currentDomainName, Integer contractId, AsyncCallback<List<ITEmployee>> asyncCallback);
 	void getAllConcepts(String currentDomainName, String currentUser, AsyncCallback<ContractConcepts> asyncCallback);
-	void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificateNew>> asyncCallback);
-	void deleteDigitalCertificate(String currentDomainName, DigitalCertificateNew digitalCertificate, AsyncCallback<Void> asyncCallback);
-	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags, AsyncCallback<Void> asyncCallback);
-	void validateCertJava(String currentDomainName, Integer rattachId, AsyncCallback<CertificateInfo> asyncCallback);
+	void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificateNew>> asyncCallback) throws IllegalArgumentException;
+	void deleteDigitalCertificate(String currentDomainName, DigitalCertificateNew digitalCertificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
+	void validateCertJava(String currentDomainName, Integer rattachId, AsyncCallback<CertificateInfo> asyncCallback) throws IllegalArgumentException ;
 	void getEnterpriseContext(String currentDomainName, AsyncCallback<EnterpriseContext> asyncCallback);
-	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback);
-	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> asyncCallback);
-	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback);
+	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
+	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 }
