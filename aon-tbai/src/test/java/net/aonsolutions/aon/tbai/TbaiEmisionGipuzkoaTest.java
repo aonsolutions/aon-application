@@ -1,16 +1,6 @@
 package net.aonsolutions.aon.tbai;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
 import java.util.Date;
-import java.util.Enumeration;
-
-import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -26,9 +16,6 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
-import com.esferalia.aon.watson.server.io.AonIOUtils;
-
-import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 
 public class TbaiEmisionGipuzkoaTest {
 
@@ -43,8 +30,8 @@ public class TbaiEmisionGipuzkoaTest {
 		Invoice invoice = new Invoice()
 		.setType(InvoiceType.SALES)
 		.setSeries("TEST1")
-		.setNumber(14)
-		.setReferenceCode("TEST1/0000014")
+		.setNumber(19)
+		.setReferenceCode("TEST1/0000019")
 		.setIssueDate(new Date())
 		.setTaxDate(new Date())
 		.setSecurityLevel(SecurityLevel.OFFICIAL)
@@ -98,37 +85,37 @@ public class TbaiEmisionGipuzkoaTest {
 		return invoice;
 	}
 	
-	@Test
-	public void certTest() {
-		try (final InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("FNMT_AON.p12")){
-	        KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-	        String password = "aon@FNMT";
-	        keystore.load(is, password.toCharArray());
-
-	        Enumeration<String> enumeration = keystore.aliases();
-	        while(enumeration.hasMoreElements()) {
-	            String alias = enumeration.nextElement();
-	            Certificate certificate = keystore.getCertificate(alias);
-	            Boolean a = alias.contains("B01487271") || certificate.toString().contains("B01487271");
-	            System.out.println(a);
-	            System.out.println("alias name: " + alias);
-	            System.out.println(certificate.toString());
-
-	        }
-
-	    } catch (java.security.cert.CertificateException e) {
-	        e.printStackTrace();
-	    } catch (NoSuchAlgorithmException e) {
-	        e.printStackTrace();
-	    } catch (FileNotFoundException e) {
-	        e.printStackTrace();
-	    } catch (KeyStoreException e) {
-	        e.printStackTrace();
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	}
-	
+//	@Test
+//	public void certTest() {
+//		try (final InputStream is = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("FNMT_AON.p12")){
+//	        KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+//	        String password = "aon@FNMT";
+//	        keystore.load(is, password.toCharArray());
+//
+//	        Enumeration<String> enumeration = keystore.aliases();
+//	        while(enumeration.hasMoreElements()) {
+//	            String alias = enumeration.nextElement();
+//	            Certificate certificate = keystore.getCertificate(alias);
+//	            Boolean a = alias.contains("B01487271") || certificate.toString().contains("B01487271");
+//	            System.out.println(a);
+//	            System.out.println("alias name: " + alias);
+//	            System.out.println(certificate.toString());
+//
+//	        }
+//
+//	    } catch (java.security.cert.CertificateException e) {
+//	        e.printStackTrace();
+//	    } catch (NoSuchAlgorithmException e) {
+//	        e.printStackTrace();
+//	    } catch (FileNotFoundException e) {
+//	        e.printStackTrace();
+//	    } catch (KeyStoreException e) {
+//	        e.printStackTrace();
+//	    } catch (IOException e) {
+//	        e.printStackTrace();
+//	    }
+//	}
+//	
 //	@Test
 //	public void SuccessTest() {
 //		try (final InputStream certificateInputStream = TbaiEmisionGipuzkoaTest.class.getResourceAsStream("FNMT_AON.p12")){
@@ -136,7 +123,12 @@ public class TbaiEmisionGipuzkoaTest {
 //			Invoice invoice = buildInvoice();
 //			
 //			byte[] certData = AonIOUtils.toByteArray(certificateInputStream);
-//			TbaiMain.createEmisionTBAI(certData, "aon@FNMT", invoice, company);
+//			TbaiConfiguration config = new TbaiConfiguration();
+//			com.esferalia.aon.occam.api.model.security.Certificate certificate = new com.esferalia.aon.occam.api.model.security.Certificate();
+//			certificate.setCertificate(certData);
+//			certificate.setPassword("aon@FNMT");
+//			config.setCertificate(certificate);
+//			TbaiMain.createEmisionTBAI(company, invoice, config);
 //		} catch (StatusCodeException e) {
 //			e.printStackTrace();
 //		} catch (Exception e) {
@@ -145,7 +137,7 @@ public class TbaiEmisionGipuzkoaTest {
 //		System.out.println();
 //		System.out.println("Test passed successfully.");
 //	}
-	
+//	
 //	@Test
 //	@Ignore("503: Service Unavailable")
 //	public void TbaiNotAcceptedTest() {

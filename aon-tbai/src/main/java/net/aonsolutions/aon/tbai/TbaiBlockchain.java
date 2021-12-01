@@ -65,7 +65,7 @@ public class TbaiBlockchain {
 		if(json == null) return new TbaiBlockchain();
 		return new TbaiBlockchain()
 				.setDate(JsonUtils.getString(json, IJsonNames.DATE))
-				.setNumber(JsonUtils.getString(json, IJsonNames.SERIE))
+				.setSerie(JsonUtils.getString(json, IJsonNames.SERIE))
 				.setNumber(JsonUtils.getString(json, IJsonNames.NUMBER))
 				.setSignature(JsonUtils.getString(json, IJsonNames.SIGNATURE));		
 	}

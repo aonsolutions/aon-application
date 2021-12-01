@@ -587,16 +587,11 @@ public class AON {
 	}
 	
 	public static Certificate getCertificate(String domainName, Integer domainId, String login, Integer userId, String certificateType) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			Certificate certificate =  getSecurity().getCertificate(ctx, domainName, domainId, login, userId, certificateType);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			Certificate certificate =  getSecurity().getCertificate(ctx, userId, certificateType);
 			if(null == certificate.getCertificate())
 				throw new CertificateNotFoundException();
 			return certificate;
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	

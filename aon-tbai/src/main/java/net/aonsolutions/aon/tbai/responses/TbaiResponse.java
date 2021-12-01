@@ -15,6 +15,7 @@ public class TbaiResponse {
 	private Integer validationCode;
 	private String validationDescription;
 	private String validationDescriptionEUS;
+	private String sign; 
 
 	private boolean ok; 
 	private byte[] data;
@@ -105,6 +106,15 @@ public class TbaiResponse {
 	
 	public TbaiResponse setData(byte[] data) {
 		this.data = data;
+		return this;
+	}
+	
+	public String getSign() {
+		return sign;
+	}
+	
+	public TbaiResponse setSign(String sign) {
+		this.sign = sign;
 		return this;
 	}
 	

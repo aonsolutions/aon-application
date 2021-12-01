@@ -1,7 +1,6 @@
 package net.aonsolutions.aon.tbai;
 
 import static net.aonsolutions.aon.tbai.responses.ResponseHandler.HandleStatusCode;
-import static net.aonsolutions.aon.tbai.responses.ResponseHandler.HandleTbaiResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -49,6 +48,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
 import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
 import net.aonsolutions.aon.tbai.responses.TbaiResponse;
+import net.aonsolutions.aon.tbai.sign.TbaiSign;
 import ticketbai.emision.TicketBai;
 
 public class TbaiMain {
@@ -68,30 +68,28 @@ public class TbaiMain {
 						
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		jaxbMarshaller.marshal( tbai, bos );
+		byte[] data = bos.toByteArray();
+//		InputStream doc = new ByteArrayInputStream(data);
 		
-		InputStream doc = new ByteArrayInputStream(bos.toByteArray());
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-		String sign = SignXml.sign(tbaiConfiguration, doc, out);
+		TbaiResponse response = sendXML(tbaiConfiguration, 
+				TbaiSign.sign(tbaiConfiguration.getCertificate(), data));		
 
 		TbaiBlockchain bc = new TbaiBlockchain()
 				.setDate(AonDateUtils.format(new Date(), "dd-MM-yyyy"))
 				.setNumber(Integer.toString(invoice.getNumber()))
 				.setSerie(invoice.getSeries())
-				.setSignature(sign);
-			
-		byte[] data = out.toByteArray(); 
-
-		TbaiResponse response = sendXML(tbaiConfiguration, new ByteArrayInputStream(data));		
+				.setSignature(response.getSign().substring(0, 100));
 		
 		DataRequest request = TbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, data);
 		
 		TbaiData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, response, bc, request);
 	}
 	
-	public static TbaiResponse sendXML(TbaiConfiguration tbaiConfiguration, InputStream xml) throws StatusCodeException, TbaiResponseException {
+	public static TbaiResponse sendXML(TbaiConfiguration tbaiConfiguration, byte[] xml) throws StatusCodeException, TbaiResponseException {
 		URL url;
 		try {
+			Document doc = getDocument(xml);
+			String sign = doc.getElementsByTagName("ds:SignatureValue").item(0).getTextContent();
 			
 			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getCertificate());	
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
@@ -106,7 +104,6 @@ public class TbaiMain {
             sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
 			SSLContext.setDefault(sslContext);
           
-            
 			url = new URL("https://tbai-prep.egoitza.gipuzkoa.eus/WAS/HACI/HTBRecepcionFacturasWEB/rest/recepcionFacturas/alta");
 			URLConnection con = url.openConnection();
 			HttpsURLConnection https = (HttpsURLConnection)con;
@@ -118,7 +115,7 @@ public class TbaiMain {
 			https.setDoInput(true);
 			
 			OutputStream os = https.getOutputStream();
-			os.write(xml.readAllBytes());
+			os.write(xml);
 			os.close();
 			
 			System.out.println("\n\tServer status: \t" + https.getResponseCode() + ": " + https.getResponseMessage());			
@@ -133,8 +130,8 @@ public class TbaiMain {
 			
 			InputStream response = (InputStream) https.getContent();
 			byte[] bytes = response.readAllBytes();
-			HandleTbaiResponse(bytes);			
-			return getTbaiResponse(bytes);
+//			HandleTbaiResponse(bytes);			
+			return getTbaiResponse(bytes, sign);
 		} 
 		catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -156,10 +153,13 @@ public class TbaiMain {
 			throw new IllegalStateException(e.getMessage());
 		} catch (KeyManagementException e) {
 			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
-	
 	private static class TrustAllCertificates implements X509TrustManager {
 	    public void checkClientTrusted(X509Certificate[] certs, String authType) {
 	    }
@@ -177,8 +177,15 @@ public class TbaiMain {
 	        return true;
 	    }
 	}
+	private static Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
+		InputStream is = new ByteArrayInputStream(data);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(is);
+		return doc;
+	}
 	
-	private static TbaiResponse getTbaiResponse(byte[] bytes) {
+	private static TbaiResponse getTbaiResponse(byte[] bytes, String sign) {
 		try {
 			System.out.println("\t Parsing XML response.... ");
 			
@@ -225,6 +232,7 @@ public class TbaiMain {
 			System.out.println(toString(doc));
 
 			return new TbaiResponse()
+					.setSign(sign)
 					.setTbaiId(idTbai)
 					.setStatus(Integer.parseInt(estado))
 					.setDescription(descripcion)
@@ -260,5 +268,4 @@ public class TbaiMain {
 	}
 	
 	public static void createAnulacionTBAI(){/*TO DO uwu*/}
-
 }

@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -443,17 +444,18 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.and(f.getIdProperty().in(idsArray)));
 	}
 	
-	public static JSONObject acceptInvoice(AonApiData api) {
+	public static JSONObject acceptInvoice(AonApiData api) throws StatusCodeException, TbaiResponseException, JAXBException {
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
-//		acceptCommunication(api, invoice);
+//		invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
+		acceptCommunication(api, invoice);
 		return InvoiceJSON.toJSON(invoice);
 	}
 	
 	public static void acceptCommunication(AonApiData api, Invoice invoice) throws StatusCodeException, TbaiResponseException, JAXBException {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-		
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
+		tbaiConfiguration.setCertificate(AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name()));
 		if(tbaiConfiguration.isActive()) {
 			TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
 		}

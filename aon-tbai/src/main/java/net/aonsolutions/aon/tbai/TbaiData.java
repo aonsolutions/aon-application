@@ -40,6 +40,7 @@ public class TbaiData {
 		request = AON.saveDataRequest(domain.getName(), domain.getId(), user.getLogin(), request);
 		
 		Attach attach = new Attach()
+				.setDomain(domain)
 				.setAttachType(AttachType.DATA)
 				.setType(DataAttachType.REQUEST.value())
 				.setSource(DataAttachSource.TBAI.value())
@@ -62,6 +63,24 @@ public class TbaiData {
 			.and(f.getDataVariableProperty().eq("blockchain"))).orElse(new DataResponseDetail());
 		
 		return TbaiBlockchain.fromJSON(drd.getDataValue());
+	}
+
+	public static String getTbaiId(String domainName, Integer domainId, String login, Integer invoiceId) {
+		DataResponse dr = AON.getDataResponse(domainName, domainId, login, DataResponseSource.TBAI, f -> 
+		f.getDomainProperty().eq(domainId)
+		.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
+		.and(f.getCodeProperty().eq("ok"))
+		.and(f.getSourceIdProperty().eq(invoiceId)));
+		DataResponseDetail drd = AON.getDataResponseDetail(domainName, domainId, login, f -> 
+			f.getDomainProperty().eq(domainId)
+			.and(f.getDataResponseProperty().eq(dr.getId()))
+			.and(f.getDataVariableProperty().eq("tbaiId"))).orElse(new DataResponseDetail());
+	
+		return drd.getDataValue();
+	}
+	
+	public static String getTbaiId(Domain domain, User user, Integer invoiceId) {
+		return getTbaiId(domain.getName(),  domain.getId(), user.getLogin(), invoiceId);
 	}
 	
 	public static void saveResponse(Domain domain, User user, Invoice invoice, TbaiResponse response, TbaiBlockchain blockchain, DataRequest dataRequest) {
@@ -100,6 +119,7 @@ public class TbaiData {
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd3);
 		
 		Attach attach = new Attach()
+				.setDomain(domain)
 				.setAttachType(AttachType.DATA)
 				.setType(response.isOk() 
 					? DataAttachType.RESPONSE_OK.value() 

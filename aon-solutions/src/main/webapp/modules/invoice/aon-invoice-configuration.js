@@ -78,6 +78,9 @@ export class AonInvoiceConfiguration extends AonElement {
         this.clearElement(content);
         let communication =  new AonInvoiceCommunication();
         communication.setConfiguration(this.configuration);
+        communication.onChange(() => {
+            this.configuration.tbai = communication.getTbaiConfiguration();
+        });
         content.appendChild(communication);
     }
 

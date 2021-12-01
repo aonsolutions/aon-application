@@ -17,9 +17,12 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
+import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 
 
 @SuppressWarnings("serial")
@@ -55,8 +58,28 @@ public class InvoicePdfServletAK extends AonApiHttpServlet {
 				logo = AON.getAttach(domainName, domainId, login, f-> f.getAttachModuleProperty().eq(id)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 			}
-		
-			PdfMaker.printInvoice(resp.getOutputStream(), company, new Invoice(), config, "www.aonsolutions.es", logo.getData());
+
+			Invoice invoice = new Invoice();
+
+			invoice.setSeries("TEST");
+			invoice.setNumber(1);
+			
+			invoice.getBreakdown().add(new InvoiceBreakdown()
+				.setBase(0.0)
+				.setPercentage(0.0)
+				.setQuota(0.0)
+				.setSurcharge(0.0)
+				.setSurchargeQuota(0.0)
+				.setTaxType(TaxType.VAT));
+			
+			invoice.getDetails().add(new InvoiceDetail()
+				.setDescription("Test")
+				.setDiscountExpression("0.0")
+				.setPrice(0.0)
+				.setQuantity(1.0)
+				.setPrepayment(false));
+			
+			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, "www.aonsolutions.es", logo.getData());
 			
 			responseFile(req, resp, "factura", MimeType.PDF);
 		} catch (IOException e) {

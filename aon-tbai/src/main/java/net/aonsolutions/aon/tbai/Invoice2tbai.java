@@ -1,8 +1,15 @@
 package net.aonsolutions.aon.tbai;
 
+import org.w3._2000._09.xmldsig.CanonicalizationMethodType;
+import org.w3._2000._09.xmldsig.SignatureType;
+
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import ticketbai.emision.Cabecera;
 import ticketbai.emision.CabeceraFacturaType;
@@ -150,14 +157,17 @@ public class Invoice2tbai {
 		datos.setDescripcionFactura("Descripción general ¿?");
 		
 		DetallesFacturaType detalles = new DetallesFacturaType();
+		
 		invoice.getDetails().stream().filter(f -> !f.isPrepayment()).forEach(detail -> {
 			IDDetalleFacturaType detalle = new IDDetalleFacturaType();
 			detalle.setCantidad(Double.toString(detail.getQuantity()));
 			detalle.setDescripcionDetalle(detail.getDescription());
-			detalle.setDescuento(detail.getDiscountExpression());
+			detalle.setDescuento(AonStringUtils.isBlank(detail.getDiscountExpression()) ? "0.0" : detail.getDiscountExpression());
 			detalle.setImporteUnitario(Double.toString(detail.getPrice()));
-			detalle.setImporteTotal(Double.toString(detail.getAmount()));
 			detalles.getIDDetalleFactura().add(detalle);
+			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
+			double total =  AonMathUtils.round(tax.getBase() + tax.getQuota());
+			detalle.setImporteTotal(Double.toString(total));
 		});
 		datos.setDetallesFactura(detalles);
 		datos.setImporteTotalFactura(Double.toString(invoice.getTotal()));
@@ -191,8 +201,9 @@ public class Invoice2tbai {
 				desgloseIVA.getDetalleIVA().add(detalleIVA);
 			});
 			
-			noExenta.getDetalleNoExenta().add(detalleNoExenta);
 			detalleNoExenta.setDesgloseIVA(desgloseIVA);
+			noExenta.getDetalleNoExenta().add(detalleNoExenta);
+
 			sujeta.setNoExenta(noExenta);
 			
 			desgloseFactura.setSujeta(sujeta);

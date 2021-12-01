@@ -33,6 +33,13 @@
 			<version>4.13-beta-1</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+    		<groupId>es.gob.afirma</groupId>
+    		<artifactId>afirma-crypto-xades</artifactId>
+    		<version>1.6.5</version>
+		</dependency>
+		
 
 	</dependencies>
 
