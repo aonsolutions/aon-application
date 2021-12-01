@@ -10,8 +10,6 @@ export class AonInvoiceCommunication extends AonElement {
     
     configuration;
     
-
-
     connectedCallback () {
         this.initialize();
         this.build();
@@ -64,7 +62,7 @@ export class AonInvoiceCommunication extends AonElement {
 		active.checked = this.configuration.tbai.active;
 		active.addEventListener(EVENT.CHANGE, () => {
 			this.configuration.tbai.active = active.isChecked();
-            // onchange!!!!!
+            this.dispatchEvent(new Event(EVENT.CHANGE));
 		});
 		table.addCell(active, 1);
 
@@ -75,20 +73,6 @@ export class AonInvoiceCommunication extends AonElement {
 		test.checked = true; //this.configuration.tbai.test;
         test.disabled = true;
         table.addCell(test, 1); 
-
-        table.addRow();
-
-        let defaultCertificate = new AonSelect();
-        defaultCertificate.setAlias('id', 'title');
-        defaultCertificate.id = this.TBAI_DEFAULT_CERTIFICATE;
-        defaultCertificate.title = MSG.CERTIFICATE;
-        defaultCertificate.addEventListener(EVENT.CHANGE, () => {
-            this.configuration.tbai.defaultCertificate = defaultCertificate.value;
-        });
-        getCertificates().then(r => {
-            defaultCertificate.setOptions(r);
-        });
-        table.addCell(defaultCertificate, 2);  
     }
 
     buildSii() {
@@ -97,6 +81,10 @@ export class AonInvoiceCommunication extends AonElement {
 
     buildEInvoice() {
    
+    }
+
+    getTbaiConfiguration() {
+        return this.configuration.tbai;
     }
 
     setConfiguration(configuration) {

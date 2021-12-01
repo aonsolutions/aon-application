@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -44,6 +45,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediRegistry;
 import net.aonsolutions.aon.api.ewok.IConstants;
+import net.aonsolutions.aon.tbai.CRC8;
+import net.aonsolutions.aon.tbai.TbaiData;
 
 
 @SuppressWarnings("serial")
@@ -72,7 +75,6 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 				param = new String(Base64.getDecoder().decode(param));
 				json = new JSONObject(param); 
 			}
-		
 
 			String domainName = json.optString("domain_name");
 			Integer domainId = json.optInt("domain_id");
@@ -99,9 +101,17 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 				logo = AON.getAttach(domainName, domainId, login, f-> f.getAttachModuleProperty().eq(logoId)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.LOGO.value())), AttachType.REGISTRY);
 			}
-			
-			
+
 			String qrUrl = domainName + "/dip?source=" + source + "&id=" + id;  
+			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
+			if(tbai.isActive()) {
+				String tbaiId = TbaiData.getTbaiId(domainName, domainId, login, invoice.getId());
+				qrUrl = "https://tbai.prep.gipuzkoa.eus/qr/?id=" + tbaiId + "&s=" + invoice.getSeries()
+					+ "&nf=" + invoice.getNumber() + "&i=" + invoice.getTotal();
+				String crc = CRC8.calculate(qrUrl);
+				qrUrl = qrUrl + "&cr=" + crc;
+			}
+
 			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData());
 			
 		

@@ -105,7 +105,7 @@ public interface ISecurity {
 	
 	
 	// CERTIFICATE
-	public Certificate getCertificate(AONContext ctx, String domainName, Integer domainId, String login, Integer userId, String certificateType);
+	public Certificate getCertificate(AONContext ctx, Integer userId, String certificateType);
 	public Certificate getCertificate(AONContext ctx, UserFilter userFilter) ;
 	public Certificate insertCertificate(AONContext ctx, UserFilter userFilter , Certificate certificate) ;
 	public Certificate getCertificateSEPE(AONContext ctx, Integer domainId);

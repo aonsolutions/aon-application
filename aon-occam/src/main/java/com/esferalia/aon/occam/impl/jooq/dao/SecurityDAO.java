@@ -62,7 +62,6 @@ import com.esferalia.aon.jooq.tables.records.ContactRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -90,6 +89,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
@@ -1176,15 +1176,15 @@ public class SecurityDAO {
 			.execute();
 	}
 	
-	public static Certificate getCertificate(AONContext ctx, String domainName, Integer domainId, String userLogin, Integer userId, String certificateType) {
+	public static Certificate getCertificate(AONContext ctx, Integer userId, String certificateType) {
 		Certificate certificate;
 		DSLContext dslContext = ctx.getDslContext();
 		
-		Integer parentDomainId = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(domainId)).fetchOne(DOMAIN.PARENT);
+		Integer parentDomainId = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(ctx.getDomainId())).fetchOne(DOMAIN.PARENT);
 		Record userRegistryRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
 		Integer userRegistryId = userRegistryRecord.get(USER.REGISTRY);
 		Integer userRegistryDomain = userRegistryRecord.get(USER.DOMAIN);
-		Integer enterpriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
+		Integer enterpriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(ctx.getDomainId())).fetchOne(ENTERPRISE.REGISTRY);
 		Integer enterpriseParentId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(parentDomainId)).fetchOne(ENTERPRISE.REGISTRY);
 		
 		certificate = getUserCertificateNew(dslContext, userRegistryId, certificateType);
@@ -1200,10 +1200,12 @@ public class SecurityDAO {
 		if(null != certificate) return certificate;
 
 		if(AonStringUtils.equalsIgnoreCase(certificateType, "TGSS")) {
-			certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			certificate = getCertificate(ctx, f -> f.getIdProperty().eq(userId))
+					.orElseThrow(CertificateNotFoundException::new);
 			if(null != certificate) return certificate;
 		} else {
-			certificate = AON.getCertificateSEPE(domainName, domainId, userLogin);
+			certificate = getCertificateSEPE(ctx, ctx.getDomainId())
+					.orElseThrow(CertificateNotFoundException::new);
 			if(null != certificate) return certificate;
 		}
 		
@@ -1214,7 +1216,7 @@ public class SecurityDAO {
 		Record certificateRecord = dslContext.select().from(RATTACH)
 				.innerJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
 				.innerJoin(TAG).on(RATTACH_TAG.TAG.eq(TAG.ID), TAG.TYPE.eq(TagType.CERTIFICATE.value()), TAG.NAME.eq(certificateType))
-				.where(RATTACH.TYPE.eq((byte)4))
+				.where(RATTACH.TYPE.eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value()))
 				.and(RATTACH.REGISTRY.eq(userRegistryId))
 				.fetchOne();
 		
@@ -1237,8 +1239,10 @@ public class SecurityDAO {
 				.fetchOne();
 		
 		if(null == certificateRecord) return null;
-		
-		String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
+
+		String password = null;
+		if(certificateRecord.get(RATTACH.DESCRIPTION).contains("HIDE"))
+			password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
 		
 		return new Certificate()
 				.setType(MimeType.PKCS12.name())

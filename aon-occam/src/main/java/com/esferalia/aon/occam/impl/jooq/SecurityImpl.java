@@ -332,8 +332,8 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
-	public Certificate getCertificate(AONContext ctx, String domainName, Integer domainId, String login, Integer userId, String certificateType) {
-		return SecurityDAO.getCertificate(ctx, domainName, domainId, login, userId, certificateType);
+	public Certificate getCertificate(AONContext ctx, Integer userId, String certificateType) {
+		return SecurityDAO.getCertificate(ctx, userId, certificateType);
 	}
 	
 	@Override
