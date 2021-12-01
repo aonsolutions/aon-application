@@ -540,11 +540,11 @@ public class DomainEnterprisesServiceAsync {
 	
 	// ----------------------------------------------------------------- DigitalCertificates (New)
 	
-	public void getDigitalCertificates(AsyncCallback<List<DigitalCertificateNew>> asyncCallback) {
+	public void getDigitalCertificates(AsyncCallback<List<DigitalCertificateNew>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getDigitalCertificates(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
-	public void deleteDigitalCertificate(DigitalCertificateNew digitalCertificate, AsyncCallback<Void> asyncCallback) {
+	public void deleteDigitalCertificate(DigitalCertificateNew digitalCertificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), digitalCertificate, asyncCallback);
 	}
 	
@@ -552,7 +552,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.verifyCertificate(getCurrentDomainName(), getCurrentUser(), rattachId, tags, asyncCallback);
 	}
 	
-	public void validateCertJava(Integer rattachId, AsyncCallback<CertificateInfo> asyncCallback) {
+	public void validateCertJava(Integer rattachId, AsyncCallback<CertificateInfo> asyncCallback)  throws IllegalArgumentException  {
 		enterprisesServiceAsync.validateCertJava(getCurrentDomainName(), rattachId, asyncCallback);
 	}
 	
@@ -560,15 +560,15 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEnterpriseContext(getCurrentDomainName(), asyncCallback);
 	}
 
-	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) {
+	public void getSecondaryUsers(AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getSecondaryUsers(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 
-	public void deleteSecondaryUser(String ipfType, String ipf, AsyncCallback<Void> asyncCallback) {
+	public void deleteSecondaryUser(String ipfType, String ipf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.deleteSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, asyncCallback);
 	}
 
-	public void createSecondaryUser(String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) {
+	public void createSecondaryUser(String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.createSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, naf, asyncCallback);
 	}
 

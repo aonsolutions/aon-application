@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqDigitalCertificateNew {
 	
@@ -86,22 +86,31 @@ public class JooqDigitalCertificateNew {
 			
 			List<Record> certificateTags = dslContext.select().from(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(certificateRecord.get(RATTACH.ID))).fetch();
 			
-			if(certificateTags.isEmpty())
-				continue;
+//			if(certificateTags.isEmpty())
+//				continue;
 			
 			java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
+			String description = certificateRecord.get(RATTACH.DESCRIPTION);
 			
 			DigitalCertificateNew digitalCertitficate = new DigitalCertificateNew();
 			digitalCertitficate.setRattachId(certificateRecord.get(RATTACH.ID));
 			digitalCertitficate.setOwner(CertificateOwner.USER);
-			digitalCertitficate.setDescription(certificateRecord.get(RATTACH.DESCRIPTION));
+			digitalCertitficate.setDescription(description);
 			digitalCertitficate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
 			digitalCertitficate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
 			digitalCertitficate.setUpdateDate(updateDate);
 			
-			if(null != certificatePasswordRecord) {
-				digitalCertitficate.setRaddinfoId(certificatePasswordRecord.get(RADDINFO.ID));
-				digitalCertitficate.setPassword(certificatePasswordRecord.get(RADDINFO.VALUE));
+			if(AonStringUtils.isNotBlank(description) && AonStringUtils.containsIgnoreCase(description, "HIDE(")) {
+				String password = "";
+				try {
+					password = description.split("HIDE\\(")[1].split("\\)")[0];
+				} catch (Exception e) {}
+				digitalCertitficate.setPassword(password);
+			} else {
+				if(null != certificatePasswordRecord) {
+					digitalCertitficate.setRaddinfoId(certificatePasswordRecord.get(RADDINFO.ID));
+					digitalCertitficate.setPassword(certificatePasswordRecord.get(RADDINFO.VALUE));
+				}
 			}
 			
 			if(!certificateTags.isEmpty()) {
@@ -139,22 +148,31 @@ public class JooqDigitalCertificateNew {
 			
 			List<Record> certificateTags = dslContext.select().from(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(certificateRecord.get(RATTACH.ID))).fetch();
 			
-			if(certificateTags.isEmpty())
-				continue;
+//			if(certificateTags.isEmpty())
+//				continue;
 			
 			java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
+			String description = certificateRecord.get(RATTACH.DESCRIPTION);
 			
 			DigitalCertificateNew digitalCertitficate = new DigitalCertificateNew();
 			digitalCertitficate.setRattachId(certificateRecord.get(RATTACH.ID));
 			digitalCertitficate.setOwner(CertificateOwner.ENTERPRISE);
-			digitalCertitficate.setDescription(certificateRecord.get(RATTACH.DESCRIPTION));
+			digitalCertitficate.setDescription(description);
 			digitalCertitficate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
 			digitalCertitficate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
 			digitalCertitficate.setUpdateDate(updateDate);
 			
-			if(null != certificatePasswordRecord) {
-				digitalCertitficate.setRaddinfoId(certificatePasswordRecord.get(RADDINFO.ID));
-				digitalCertitficate.setPassword(certificatePasswordRecord.get(RADDINFO.VALUE));
+			if(AonStringUtils.isNotBlank(description) && AonStringUtils.containsIgnoreCase(description, "HIDE(")) {
+				String password = "";
+				try {
+					password = description.split("HIDE\\(")[1].split("\\)")[0];
+				} catch (Exception e) {}
+				digitalCertitficate.setPassword(password);
+			} else {
+				if(null != certificatePasswordRecord) {
+					digitalCertitficate.setRaddinfoId(certificatePasswordRecord.get(RADDINFO.ID));
+					digitalCertitficate.setPassword(certificatePasswordRecord.get(RADDINFO.VALUE));
+				}
 			}
 			
 			if(!certificateTags.isEmpty()) {
@@ -200,6 +218,8 @@ public class JooqDigitalCertificateNew {
 			
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			
+			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+			
 			// TGSS CERTIFICATE
 			if(owner == CertificateOwner.USER)
 				setUserCertificate(dslContext, domainId, userId, tagTypes, fileName, data, password, security, rattachId, raddinfoId);
@@ -207,6 +227,8 @@ public class JooqDigitalCertificateNew {
 			// SEPE CERTIFICATE
 			if(owner == CertificateOwner.ENTERPRISE)
 				setEnterpriseCertificate(dslContext, domainId, tagTypes, fileName, data, password, security, rattachId, raddinfoId);
+			
+			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 			
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -223,7 +245,9 @@ public class JooqDigitalCertificateNew {
 			registryUserId = createRegistryForUser(dslContext, userRecord, domainId);
 		
 		// Rattach Data	
-		if(null == rattachId)
+		String description = parseDescriptionLength(fileName, password);
+		
+		if(null == rattachId) {
 			rattachId = dslContext.insertInto(RATTACH)
 				.set(RATTACH.DOMAIN, domainId)
 				.set(RATTACH.REGISTRY, registryUserId)
@@ -232,41 +256,34 @@ public class JooqDigitalCertificateNew {
 				.set(RATTACH.DATA, data)
 				.set(RATTACH.SECURITY_LEVEL, security)
 				.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-				.set(RATTACH.DESCRIPTION, fileName + "HIDE(" + password + ")")
+				.set(RATTACH.DESCRIPTION, description)
 				.returning(RATTACH.ID)
 				.fetchOne()
 				.getId();
-		else
+		} else {
 			if(null != data && data.length > 0)
 				dslContext.update(RATTACH)
 					.set(RATTACH.DATA, data)
 					.set(RATTACH.SECURITY_LEVEL, security)
 					.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-					.set(RATTACH.DESCRIPTION, fileName + "HIDE(" + password + ")")
+					.set(RATTACH.DESCRIPTION, description)
 					.where(RATTACH.ID.eq(rattachId))
 					.execute();
 			else
 				dslContext.update(RATTACH)
 					.set(RATTACH.SECURITY_LEVEL, security)
 					.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-					.set(RATTACH.DESCRIPTION, fileName + "HIDE(" + password + ")")
+					.set(RATTACH.DESCRIPTION, description)
 					.where(RATTACH.ID.eq(rattachId))
 					.execute();
+		}
 		
 		// RaddInfo Password
-		if(null == raddinfoId)
-			dslContext.insertInto(RADDINFO)
-					.set(RADDINFO.DOMAIN, domainId)
-					.set(RADDINFO.REGISTRY, registryUserId)
-					.set(RADDINFO.ATTRIBUTE, "PASSWORD_CERTIFICATE_" + rattachId)
-					.set(RADDINFO.VALUE, password)
-					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
-					.execute();
-		else
+		if(null != raddinfoId)
 			dslContext.update(RADDINFO)
-				.set(RADDINFO.VALUE, password)
-				.where(RADDINFO.ID.eq(raddinfoId))
-				.execute();
+			.set(RADDINFO.VALUE, password)
+			.where(RADDINFO.ID.eq(raddinfoId))
+			.execute();
 		
 		// Rattach Tags
 		
@@ -295,7 +312,7 @@ public class JooqDigitalCertificateNew {
 		}
 		
 	}
-	
+
 	private static Integer createRegistryForUser(DSLContext dslContext, Record userRecord, Integer domainId) {
 		String userName = userRecord.get(USER.NAME);
 		Integer userId = userRecord.get(USER.ID);
@@ -322,6 +339,8 @@ public class JooqDigitalCertificateNew {
 				.fetchOne(ENTERPRISE.REGISTRY);
 		
 		// Rattach Data	
+		String description = parseDescriptionLength(fileName, password);
+		
 		if(null == rattachId)
 			rattachId = dslContext.insertInto(RATTACH)
 				.set(RATTACH.DOMAIN, domainId)
@@ -331,7 +350,7 @@ public class JooqDigitalCertificateNew {
 				.set(RATTACH.DATA, data)
 				.set(RATTACH.SECURITY_LEVEL, security)
 				.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-				.set(RATTACH.DESCRIPTION, fileName + "HIDE(" + password + ")")
+				.set(RATTACH.DESCRIPTION, description)
 				.returning(RATTACH.ID)
 				.fetchOne()
 				.getId();
@@ -341,27 +360,19 @@ public class JooqDigitalCertificateNew {
 					.set(RATTACH.DATA, data)
 					.set(RATTACH.SECURITY_LEVEL, security)
 					.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-					.set(RATTACH.DESCRIPTION, fileName + "HIDE(" + password + ")")
+					.set(RATTACH.DESCRIPTION, description)
 					.where(RATTACH.ID.eq(rattachId))
 					.execute();
 			else
 				dslContext.update(RATTACH)
 					.set(RATTACH.SECURITY_LEVEL, security)
 					.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-					.set(RATTACH.DESCRIPTION, fileName + "HIDE(" + password + ")")
+					.set(RATTACH.DESCRIPTION, description)
 					.where(RATTACH.ID.eq(rattachId))
 					.execute();
 		
 		// RaddInfo Password
-		if(null == raddinfoId)
-			dslContext.insertInto(RADDINFO)
-					.set(RADDINFO.DOMAIN, domainId)
-					.set(RADDINFO.REGISTRY, registryEntepriseId)
-					.set(RADDINFO.ATTRIBUTE, "PASSWORD_CERTIFICATE_" + rattachId)
-					.set(RADDINFO.VALUE, password)
-					.set(RADDINFO.VALUE_DATE, new Date(new java.util.Date().getTime()))
-					.execute();
-		else
+		if(null != raddinfoId)
 			dslContext.update(RADDINFO)
 				.set(RADDINFO.VALUE, password)
 				.where(RADDINFO.ID.eq(raddinfoId))
@@ -394,14 +405,32 @@ public class JooqDigitalCertificateNew {
 		}
 	}
 	
+	private static String parseDescriptionLength(String fileName, String password) {
+		String description = fileName + "HIDE(" + password + ")";
+		if(description.length() > 64) {
+			Integer diff = description.length() - 62; // Asi nos aseguramos no apurar los 64 varchar
+			description = AonStringUtils.substring(fileName, 0, description.length() - diff) + "HIDE(" + password + ")";
+		}
+			
+		return description;
+	}
+	
 	// ----------------------------------------------------------- GET CERTIFICATE
 
 	public static Certificate getCertificate(Connection conn, Integer rattachId) {
 		Certificate certificate = new Certificate();
 		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
 		
-		byte[] data = dslContext.select(RATTACH.DATA).from(RATTACH).where(RATTACH.ID.eq(rattachId)).fetchOne(RATTACH.DATA);
-		String password = dslContext.select(RADDINFO.VALUE).from(RADDINFO).where(RADDINFO.ATTRIBUTE.eq("PASSWORD_CERTIFICATE_" + rattachId)).fetchOne(RADDINFO.VALUE);
+		Record rattachRecord = dslContext.select().from(RATTACH).where(RATTACH.ID.eq(rattachId)).fetchOne();
+		byte[] data = rattachRecord.get(RATTACH.DATA);
+		String description = rattachRecord.get(RATTACH.DESCRIPTION);
+		String password = "";
+		if(AonStringUtils.containsIgnoreCase(description, "HIDE")) {
+			try {
+				password = description.split("HIDE\\(")[1].split("\\)")[0];
+			} catch (Exception e) {}
+		} else
+			password = dslContext.select(RADDINFO.VALUE).from(RADDINFO).where(RADDINFO.ATTRIBUTE.eq("PASSWORD_CERTIFICATE_" + rattachId)).fetchOne(RADDINFO.VALUE);
 		
 		certificate.setType(MimeType.PKCS12.name());
 		certificate.setCertificate(data);
@@ -410,7 +439,7 @@ public class JooqDigitalCertificateNew {
 		return certificate;
 	}
 	
-	public static CertificateInfo validateCertJava(Connection conn, Integer rattachId) {
+	public static CertificateInfo validateCertJava(Connection conn, Integer rattachId) throws IllegalArgumentException {
 		Certificate certificate = getCertificate(conn, rattachId);
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate())) {	
 			KeyStore keyStore = KeyStore.getInstance(MimeType.PKCS12.name());
@@ -457,8 +486,7 @@ public class JooqDigitalCertificateNew {
 	            		.setToDate(toDate);
 	        }
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw new IllegalArgumentException(e.getMessage());
 		}
 		return null;
 	}

@@ -262,6 +262,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	}
 	
 	private void initLoadingPanel(HTMLPanel loadingPanel) {
+		loadingPanel.clear();
 		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
 		loadingBtn.addStyleName(style.loadingPanel());
 		
@@ -742,7 +743,11 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 					AonDialog dialog = new AonDialog("Informaci\u00F3n Certificado", new HTML(certificateInfoStr));
 					dialog.info();
 				}, 
-				f -> {});
+				f -> {
+					Map<String, String> warningMap = new HashMap<>();
+					warningMap.put("Error verificaci\u00F3n", f.getMessage());
+					AonMessagePanel.showWarning(messagePanel, warningMap);
+				});
 	}
 
 	private void onSecondaryUser(Integer rattachId, List<CertificateType> tags) {
