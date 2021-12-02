@@ -28,7 +28,8 @@ public interface IServicioRedConstants {
 	String TXT_PRACTICE_MENU = "txt_MenuPracticas";
 	String ACR69 = "Acr69";
 	String TXT_TRANSAC = "txt_Transac";
-	String SEG_SOCIAL_DOMAIN = "https://w2.seg-social.es/";
+	String BASE_URL_TGSS = "https://w2.seg-social.es";
+	String SEG_SOCIAL_DOMAIN = BASE_URL_TGSS+"/";
 	String SESSION = "session";
 	String AMPERSAND = "&amp;";
 	String SPM_CONTEXT = "CONTEXT";
