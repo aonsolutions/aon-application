@@ -98,6 +98,7 @@ public class SalaryDAO {
 			.from(SALARY)
 			.where(SALARY.DOMAIN.equal(ctx.getDomainId()))
 			.and(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(from),AonDateUtils.toSql(to)))
+			.and(SALARY.TYPE.in(SalaryType.SALARIES )) // Skip SLD ( L00, L13... )
 			.fetch()
 			.stream()
 			.forEach(rec -> {

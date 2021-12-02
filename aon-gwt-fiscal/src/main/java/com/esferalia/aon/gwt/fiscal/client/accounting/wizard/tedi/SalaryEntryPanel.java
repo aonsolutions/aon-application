@@ -4,10 +4,14 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.AccountBox;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.occam.api.model.Account;
@@ -18,23 +22,17 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 
 public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
@@ -45,31 +43,31 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	private FlowPanel centerPanel; 
 	private FlexTable flexTable;
 	
-	private TextBox concept;
-	private DoubleBox  moneySalary;
-	private AccountBox moneySalaryAccount;
-	private DoubleBox  inKindSalary;
-	private AccountBox inKindSalaryAccount;
-	private DoubleBox  allowances;
-	private AccountBox allowancesAccount;
-	private DoubleBox  salaryCompensations;
-	private AccountBox salaryCompensationsAccount;
-	private DoubleBox  salaryDedAdvPayment;
-	private AccountBox salaryDedAdvPaymentAccount;
-	private DoubleBox  salaryDedSeize;
-	private AccountBox salaryDedSeizeAccount;
-	private DoubleBox  salaryOtherDeductions;
-	private AccountBox salaryOtherDeductionsAccount;
-	private DoubleBox  irpf;
-	private AccountBox irpfAccount;
-	private DoubleBox  inKindIrpf;
-	private AccountBox inKindIrpfAccount;
-	private DoubleBox  employeeSocialInsurance;
-	private AccountBox employeeSocialInsuranceAccount;
-	private DoubleBox  companySocialInsurance;
-	private AccountBox companySocialInsuranceAccount;
-	private DoubleBox  netSalary;
-	private AccountBox netSalaryAccount;
+	private AonTextBox concept;
+	private AonDoubleBox  moneySalary;
+	private AonAccountBox moneySalaryAccount;
+	private AonDoubleBox  inKindSalary;
+	private AonAccountBox inKindSalaryAccount;
+	private AonDoubleBox  allowances;
+	private AonAccountBox allowancesAccount;
+	private AonDoubleBox  salaryCompensations;
+	private AonAccountBox salaryCompensationsAccount;
+	private AonDoubleBox  salaryDedAdvPayment;
+	private AonAccountBox salaryDedAdvPaymentAccount;
+	private AonDoubleBox  salaryDedSeize;
+	private AonAccountBox salaryDedSeizeAccount;
+	private AonDoubleBox  salaryOtherDeductions;
+	private AonAccountBox salaryOtherDeductionsAccount;
+	private AonDoubleBox  irpf;
+	private AonAccountBox irpfAccount;
+	private AonDoubleBox  inKindIrpf;
+	private AonAccountBox inKindIrpfAccount;
+	private AonDoubleBox  employeeSocialInsurance;
+	private AonAccountBox employeeSocialInsuranceAccount;
+	private AonDoubleBox  companySocialInsurance;
+	private AonAccountBox companySocialInsuranceAccount;
+	private AonDoubleBox  netSalary;
+	private AonAccountBox netSalaryAccount;
 	
 	private SalaryEntry salaryEntry;
 	
@@ -80,12 +78,13 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		
 		rootPanel.addEast(createExtraPanel(callback), 380);
 		
-		ScrollPanel centerPanel = new ScrollPanel();
-		centerPanel.setStyleName(AON.AON_CSS.aonInvoicePanel());
-		centerPanel.getElement().getStyle().setBackgroundColor(SalaryEntryPanel.BACKGROUND_COLOR);
+		ScrollPanel scrollPanel = new ScrollPanel();
+		scrollPanel.setStyleName(AON.CSS.aonMarginBottom());
+		scrollPanel.getElement().getStyle().setProperty("min-height", "200px");
+		scrollPanel.getElement().getStyle().setBackgroundColor(SalaryEntryPanel.BACKGROUND_COLOR);
 		createFlexTable();
-		centerPanel.setWidget(flexTable);
-		rootPanel.add(centerPanel);
+		scrollPanel.setWidget(flexTable);
+		rootPanel.add(scrollPanel);
 
 		initWidget(rootPanel);
 	}
@@ -103,28 +102,24 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	private void createFlexTable() {
 		int row = 0;
 		flexTable = new FlexTable();
-		flexTable.setStyleName(AON.AON_CSS.aonMarginTop());
-		flexTable.addStyleName(AON.AON_CSS.aonMarginLeft());
-		flexTable.addStyleName(AON.AON_CSS.aonWidth90Percent());
+		flexTable.setStyleName(AON.CSS.aonMarginTop());
+		flexTable.addStyleName(AON.CSS.aonMarginLeft());
+		flexTable.addStyleName(AON.CSS.aonWidthAlmostAll());
 		
-		String col0Width = AON.AON_CSS.aonWidth170(); 
-		String col1Width = AON.AON_CSS.aonWidth140();
-		String col2Width = AON.AON_CSS.aonWidth70();
+//		String col0Width = AON.CSS.aonWidth170(); 
+//		String col1Width = AON.CSS.aonWidth140();
+//		String col2Width = AON.CSS.aonWidth70();
 		
 		Label label = new Label(AON.MSG.concept());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
 		
-		concept = new TextBox();
-		concept.setStyleName(AON.AON_CSS.aonInputText());
-		concept.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getWrapper().setConcept(concept.getValue());
-				valueChanged();
-			}
+		concept = new AonTextBox();
+		concept.addValueChangeHandler(event -> {
+			getWrapper().setConcept(concept.getValue());
+			valueChanged();
 		});
 		concept.setVisibleLength(25); 
 		concept.setMaxLength(64);
@@ -133,327 +128,270 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		row++;
 		
 		
-		flexTable.getRowFormatter().setStyleName(row, AON.AON_CSS.aonBorderTop());
+		flexTable.getRowFormatter().setStyleName(row, AON.CSS.aonBorderTop());
 		label = new Label(AON.MSG.moneySalary());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		moneySalary = new DoubleBox();
+		moneySalary = new AonDoubleBox();
 		moneySalary.setValue(0.0);
-		moneySalary.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setMoneySalary(event.getValue());
-				valueChanged();
-			}
+		moneySalary.addValueChangeHandler( event -> {
+			getWrapper().setMoneySalary(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, moneySalary);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		moneySalaryAccount = createAccountBox();
-		moneySalaryAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setMoneySalaryAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		moneySalaryAccount.addSelectionHandler( event -> {
+			getWrapper().setMoneySalaryAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, moneySalaryAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 		
 
 		label = new Label(AON.MSG.inKindSalary());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		inKindSalary = new DoubleBox();
+		inKindSalary = new AonDoubleBox();
 		inKindSalary.setValue(0.0);
-		inKindSalary.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setInKindSalary(event.getValue());
-				valueChanged();
-			}
+		inKindSalary.addValueChangeHandler( event -> {
+			getWrapper().setInKindSalary(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, inKindSalary);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		inKindSalaryAccount = createAccountBox();
-		inKindSalaryAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setInKindSalaryAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		inKindSalaryAccount.addSelectionHandler( event -> {
+			getWrapper().setInKindSalaryAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, inKindSalaryAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 		
 
 		label = new Label(AON.MSG.allowances());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		allowances = new DoubleBox();
+		allowances = new AonDoubleBox();
 		allowances.setValue(0.0);
-		allowances.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setAllowance(event.getValue());
-				valueChanged();
-			}
+		allowances.addValueChangeHandler( event -> {
+			getWrapper().setAllowance(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, allowances);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		allowancesAccount = createAccountBox();
-		allowancesAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setAllowanceAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		allowancesAccount.addSelectionHandler( event -> {
+			getWrapper().setAllowanceAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, allowancesAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 
 		label = new Label(AON.MSG.salaryCompensations());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		salaryCompensations = new DoubleBox();
+		salaryCompensations = new AonDoubleBox();
 		salaryCompensations.setValue(0.0);
-		salaryCompensations.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setSalaryCompensation(event.getValue());
-				valueChanged();
-			}
+		salaryCompensations.addValueChangeHandler( event -> {
+			getWrapper().setSalaryCompensation(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, salaryCompensations);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		salaryCompensationsAccount = createAccountBox();
-		salaryCompensationsAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setSalaryCompensationAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		salaryCompensationsAccount.addSelectionHandler( event -> {
+			getWrapper().setSalaryCompensationAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, salaryCompensationsAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 		
 		label = new Label(AON.MSG.advance());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		salaryDedAdvPayment = new DoubleBox();
+		salaryDedAdvPayment = new AonDoubleBox();
 		salaryDedAdvPayment.setValue(0.0);
-		salaryDedAdvPayment.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setSalaryDedAdvPayment(event.getValue());
-				valueChanged();
-			}
+		salaryDedAdvPayment.addValueChangeHandler( event -> {
+			getWrapper().setSalaryDedAdvPayment(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, salaryDedAdvPayment);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		salaryDedAdvPaymentAccount = createAccountBox();
-		salaryDedAdvPaymentAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setSalaryDedAdvPaymentAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		salaryDedAdvPaymentAccount.addSelectionHandler( event -> {
+			getWrapper().setSalaryDedAdvPaymentAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, salaryDedAdvPaymentAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 		
 		
 		label = new Label(AON.MSG.seize());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		salaryDedSeize = new DoubleBox();
+		salaryDedSeize = new AonDoubleBox();
 		salaryDedSeize.setValue(0.0);
-		salaryDedSeize.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setSalaryDedSeize(event.getValue());
-				valueChanged();
-			}
+		salaryDedSeize.addValueChangeHandler( event -> {
+			getWrapper().setSalaryDedSeize(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, salaryDedSeize);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		salaryDedSeizeAccount = createAccountBox();
-		salaryDedSeizeAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setSalaryDedSeizeAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		salaryDedSeizeAccount.addSelectionHandler( event -> {
+			getWrapper().setSalaryDedSeizeAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, salaryDedSeizeAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 
 		label = new Label(AON.MSG.salaryOtherDeductions());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		salaryOtherDeductions = new DoubleBox();
+		salaryOtherDeductions = new AonDoubleBox();
 		salaryOtherDeductions.setValue(0.0);
-		salaryOtherDeductions.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setSalaryOtherDeductions(event.getValue());
-				valueChanged();
-			}
+		salaryOtherDeductions.addValueChangeHandler( event -> {
+			getWrapper().setSalaryOtherDeductions(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, salaryOtherDeductions);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		salaryOtherDeductionsAccount = createAccountBox();
-		salaryOtherDeductionsAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setSalaryOtherDeductionsAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		salaryOtherDeductionsAccount.addSelectionHandler( event -> {
+			getWrapper().setSalaryOtherDeductionsAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, salaryOtherDeductionsAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 
 		label = new Label(AON.MSG.irpf());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		irpf = new DoubleBox();
+		irpf = new AonDoubleBox();
 		irpf.setValue(0.0);
-		irpf.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setIrpf(event.getValue());
-				valueChanged();
-			}
+		irpf.addValueChangeHandler( event -> {
+			getWrapper().setIrpf(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, irpf);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		irpfAccount = createAccountBox();
-		irpfAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setIrpfAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		irpfAccount.addSelectionHandler( event -> {
+			getWrapper().setIrpfAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, irpfAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 
 		label = new Label(AON.MSG.inKindIrpf());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		inKindIrpf = new DoubleBox();
+		inKindIrpf = new AonDoubleBox();
 		inKindIrpf.setValue(0.0);
-		inKindIrpf.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setInKindIrpf(event.getValue());
-				valueChanged();
-			}
+		inKindIrpf.addValueChangeHandler( event -> {
+			getWrapper().setInKindIrpf(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, inKindIrpf);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		inKindIrpfAccount = createAccountBox();
-		inKindIrpfAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setInKindIrpfAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		inKindIrpfAccount.addSelectionHandler( event -> {
+			getWrapper().setInKindIrpfAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, inKindIrpfAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 
 		label = new Label(AON.MSG.employeeSocialInsurance());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		employeeSocialInsurance = new DoubleBox();
+		employeeSocialInsurance = new AonDoubleBox();
 		employeeSocialInsurance.setValue(0.0);
-		employeeSocialInsurance.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setEmployeeSocialInsurance(event.getValue());
-				valueChanged();
-			}
+		employeeSocialInsurance.addValueChangeHandler( event -> {
+			getWrapper().setEmployeeSocialInsurance(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, employeeSocialInsurance);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		employeeSocialInsuranceAccount = createAccountBox();
 		employeeSocialInsuranceAccount.addSelectionHandler( new SelectionHandler<Account>() {
@@ -464,67 +402,58 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			}
 		});
 		flexTable.setWidget(row, 3, employeeSocialInsuranceAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 
 		label = new Label(AON.MSG.companySocialInsurance());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		companySocialInsurance = new DoubleBox();
+		companySocialInsurance = new AonDoubleBox();
 		companySocialInsurance.setValue(0.0);
-		companySocialInsurance.addValueChangeHandler( new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				getWrapper().setCompanySocialInsurance(event.getValue());
-				valueChanged();
-			}
+		companySocialInsurance.addValueChangeHandler( event -> {
+			getWrapper().setCompanySocialInsurance(event.getValue());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 1, companySocialInsurance);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		companySocialInsuranceAccount = createAccountBox();
-		companySocialInsuranceAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setCompanySocialInsuranceAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		companySocialInsuranceAccount.addSelectionHandler( event -> {
+			getWrapper().setCompanySocialInsuranceAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, companySocialInsuranceAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 
 		label = new Label(AON.MSG.netSalary());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
-		flexTable.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 0, col0Width);
+		flexTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 0, label);
-		netSalary = new DoubleBox();
+		netSalary = new AonDoubleBox();
 		netSalary.setEnabled(false);
 		
 		flexTable.setWidget(row, 1, netSalary);
-		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
+//		flexTable.getCellFormatter().setStyleName(row, 1, col1Width);
 		label = new Label(AON.MSG.accountAbr());
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
-		flexTable.getCellFormatter().addStyleName(row, 2, AON.AON_CSS.aonNowrap());
+		label.setStyleName(AON.CSS.aonInnerLabel());
+//		flexTable.getCellFormatter().setStyleName(row, 2, col2Width);
+		flexTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonNowrap());
 		flexTable.setWidget(row, 2, label);
 		netSalaryAccount = createAccountBox();
-		netSalaryAccount.addSelectionHandler( new SelectionHandler<Account>() {
-			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				getWrapper().setNetSalaryAccount(event.getSelectedItem());
-				valueChanged();
-			}
+		netSalaryAccount.addSelectionHandler( event -> {
+			getWrapper().setNetSalaryAccount(event.getSelectedItem());
+			valueChanged();
 		});
 		flexTable.setWidget(row, 3, netSalaryAccount);
-		flexTable.getCellFormatter().setStyleName(row, 3, AON.AON_CSS.aonWidthAuto());
+		flexTable.getCellFormatter().setStyleName(row, 3, AON.CSS.aonWidthAuto());
 		row++;
 	}
 
@@ -534,8 +463,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		_paintEntry();
 	}
 
-	private AccountBox createAccountBox() {
-		 return new AccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
+	private AonAccountBox createAccountBox() {
+		 return new AonAccountBox(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser());
 	}
 
 	@Override
@@ -643,7 +572,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		getCallback().getModule().refreshIdLabel();
 	}
 
-	private void setAccount(AccountBox accountBox, Account account) {
+	private void setAccount(AonAccountBox accountBox, Account account) {
 		if (account != null) {
 			accountBox.setValue(account.getId(),account.getCode(),account.getDescription(),false);
 		} else {
@@ -897,38 +826,38 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	
 	private ScrollPanel createExtraPanel(final IAccountEntryModuleCallback callback) {
 		ScrollPanel extraPanel = new ScrollPanel();
-		extraPanel.setStyleName(AON.AON_CSS.aonInvoicePanelEast());
+		extraPanel.setStyleName(AON.CSS.aonBorderLeft());
+		extraPanel.addStyleName(AON.CSS.aonMarginBottom());
+		extraPanel.getElement().getStyle().setProperty("min-height", "200px");
 		extraPanel.getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);
 		final FlowPanel flexContainer = new  FlowPanel();
-		flexContainer.setStyleName(AON.AON_CSS.aonFlexContainer());
+		flexContainer.addStyleName(AON.CSS.aonWidthAlmostAll());
+		flexContainer.addStyleName(AON.CSS.aonBlockCenter());
 		extraPanel.add(flexContainer);
 		
-		final FlowPanel headerPanel = new  FlowPanel();
-		headerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
-		centerPanel = new  FlowPanel();
-		centerPanel.setStyleName(AON.AON_CSS.aonWidthAll());
-		flexContainer.add(headerPanel);
-		flexContainer.add(centerPanel);
-		headerPanel.add(getLabelPanel());
-		
+		Label label = new Label(AON.MSG.importSalaryAction());
+		label.setStyleName(AON.CSS.aonFontLarger());
+		label.addStyleName(AON.CSS.aonBold());
+		label.addStyleName(AON.CSS.aonNowrap());
+		label.addStyleName(AON.CSS.aonTextCenter());
+		flexContainer.add(label);
+
 		final FlowPanel filterPanel = new  FlowPanel();
-		filterPanel.setStyleName(AON.AON_CSS.aonPanelGridSearch());
-		filterPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		filterPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		filterPanel.addStyleName(AON.AON_CSS.aonMargin());
-		Button filter = new Button();
+		filterPanel.setStyleName(AON.CSS.aonSearchPanel());
+		filterPanel.addStyleName(AON.CSS.aonTextCenter());
+		
+		AonTextButton filter = new AonTextButton(AON.MSG.searchAction(),AON.CSS.aonIconSearch());
 		filterPanel.add(filter);
-		filter.setText(AON.MSG.searchAction());
-		filter.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		filter.addStyleName(AON.AON_CSS.aonIconSearch());
-		filter.addStyleName(AON.AON_CSS.aonMarginTop());
-		filter.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				fillCenterPanel(centerPanel);
-			}
-		});
-		headerPanel.add(filterPanel);
+		filter.addStyleName(AON.CSS.aonMarginTop());
+		filter.addClickHandler(event -> fillCenterPanel(centerPanel));
+		flexContainer.add(filterPanel);
+
+		centerPanel = new  FlowPanel();
+		centerPanel.setStyleName(AON.CSS.aonWidthAll());
+		centerPanel.addStyleName(AON.CSS.aonFlexBlock());
+		flexContainer.add(centerPanel);
+		
+		
 		return extraPanel;
 	}
 
@@ -943,12 +872,9 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 				end = ap.getDeadline();
 			}
 		}
-		final FlexTable tab = new FlexTable();
-		tab.getColumnFormatter().setWidth(0, "50px");
-		tab.getColumnFormatter().setWidth(0, "50px");
-		tab.getColumnFormatter().setWidth(0, "50px");
-		tab.getColumnFormatter().setWidth(0, "15px");
-		tab.getColumnFormatter().setWidth(0, "15px");
+		final AonDisplayGrid tab = new AonDisplayGrid();
+		tab.addStyleName(AON.CSS.aonMarginTop());
+		
 		centerPanel.add(tab);
 		getAccountEntryService().getSalaryEntries(getCallback().getCurrentDomainName()
 				,getCallback().getCurrentDomainId(),getCallback().getCurrentUser() ,start, end
@@ -956,139 +882,108 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 					
 			@Override
 			public void onSuccess(LinkedList<SalaryEntry> result) {
-				if (result == null || result.size() == 0) {
+				if (result == null || result.isEmpty()) {
 					centerPanel.add(new Label(AON.MSG.noData()));
 				} else {
 					for (final SalaryEntry entry : result ) {
 						
 						boolean hasEntry = entry.getAccountEntry().getId() != null;
-						int row = tab.getRowCount();
-						int col = 0;
+												
+						
 						String date = DATE_FORMAT.format(entry.getAccountEntry().getEntryDate());
 						InlineLabel dateLabel = new InlineLabel(date);
-						dateLabel.setStyleName(hasEntry?AON.AON_CSS.aonIconChecked():AON.AON_CSS.aonIconCheck());
-						dateLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-						dateLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-						dateLabel.addStyleName(AON.AON_CSS.aonBold());
-						tab.setWidget(row, col, dateLabel);
-						++col;
+						dateLabel.setStyleName(AON.CSS.aonLabelWithIcon());
+						dateLabel.addStyleName(hasEntry?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());
+						dateLabel.addStyleName(AON.CSS.aonMarginLeft());
+						dateLabel.addStyleName(AON.CSS.aonBold());
 						
-						
-						final Button reportButton = new Button(entry.getSalaryCount()+" n\u00F3minas");
+						final AonTextButton reportButton = new AonTextButton(entry.getSalaryCount()+" n\u00F3minas");
 						reportButton.setTitle(AON.MSG.informationBreakdown());
-						reportButton.setStyleName(AON.AON_CSS.aonIconInfo());
-						reportButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-						reportButton.addClickHandler(new ClickHandler() {
+						reportButton.addClickHandler(event -> 
+							getAccountEntryService().getSalaryFormatted(
+								getCallback().getCurrentDomainName()
+								, getCallback().getCurrentDomainId()
+								, getCallback().getCurrentUser()
+								, entry.getAccountEntry().getEntryDate()
+								, entry.getAccountEntry().getEntryDate()
+							,new AsyncCallback<String>() {
+
 							@Override
-							public void onClick(ClickEvent event) {
-								getAccountEntryService().getSalaryFormatted(
-										getCallback().getCurrentDomainName()
-									, getCallback().getCurrentDomainId()
-									, getCallback().getCurrentUser()
-									, entry.getAccountEntry().getEntryDate()
-									, entry.getAccountEntry().getEntryDate()
-									,new AsyncCallback<String>() {
-
-									@Override
-									public void onSuccess(String result) {
-										getCallback().getModule().addExtraInfo(result);	
-									}
-
-									@Override
-									public void onFailure(Throwable caught) {
-									}
-								});
-										
+							public void onSuccess(String result) {
+								getCallback().getModule().addExtraInfo(result);	
 							}
-						});
-						tab.setWidget(row, col, reportButton);
-						++col;
+
+							@Override
+							public void onFailure(Throwable caught) {
+								// Nothing
+							}
+						}));
+
+
+						AonTextButton viewButton = new AonTextButton("Existe Apunte",AON.CSS.aonIconSearch());
+						final AonTableButton removeButton = new AonTableButton(AON.MSG.deleteAction() + " apunte",AON.CSS.aonIconDelete());
+						final AonTextButton importButton = new AonTextButton(AON.MSG.importAction(), AON.CSS.aonIconImport());
 						
 						if (hasEntry) {
-							Button viewButton = new Button("Existe Apunte");
 							viewButton.setTitle( "Apunte: " + AON.MSG.preview());
-							viewButton.setStyleName(AON.AON_CSS.aonIconLoupe());
-							viewButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
-							viewButton.addStyleName(AON.AON_CSS.aonColorRed());
-							viewButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-							viewButton.addClickHandler(new ClickHandler() {
-								@Override
-								public void onClick(ClickEvent event) {
-									getCallback().getModule().onPreview( entry );
-								}
+							viewButton.addStyleName(AON.CSS.aonMarginLeft());
+							viewButton.addStyleName(AON.CSS.aonColorRed());
+							viewButton.addClickHandler(event -> getCallback().getModule().onPreview( entry ));
+
+							removeButton.addClickHandler(event -> {
+								removeButton.setEnabled(false);
+								AonConfirmDialog cd = new AonConfirmDialog();
+								cd.confirm(AON.MSG.confirmDeleteAction(), new AonConfirmDialogCallback() {
+
+									@Override
+									public void onCancel() {
+										removeButton.setEnabled(true);
+									}
+
+									@Override
+									public void onAccept() {
+										getAccountEntryService().deleteAccountEntry(
+												getCallback().getCurrentDomainName()
+												, getCallback().getCurrentDomainId()
+												, getCallback().getCurrentUser()
+												, entry.getAccountEntry().getId(),
+												new AsyncCallback<Void>() {
+
+											@Override
+											public void onSuccess(Void result) {
+												removeButton.setEnabled(true);
+												fillCenterPanel(centerPanel);
+											}
+
+											@Override
+											public void onFailure(Throwable caught) {
+												removeButton.setEnabled(true);
+											}
+										});
+									}
+								});
 							});
-							tab.setWidget(row, col, viewButton);
-							++col;
-
-							final Button removeButton = new Button();
-							removeButton.setTitle(AON.MSG.deleteAction() + " apunte");
-							removeButton.setStyleName(AON.AON_CSS.aonIconDelete());
-							removeButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-							removeButton.addClickHandler(new ClickHandler() {
-								@Override
-								public void onClick(ClickEvent event) {
-									removeButton.setEnabled(false);
-									ConfirmDialog cd = new ConfirmDialog();
-									cd.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
-
-										@Override
-										public void onCancel() {
-											removeButton.setEnabled(true);
-										}
-
-										@Override
-										public void onAccept() {
-											getAccountEntryService().deleteAccountEntry(
-													getCallback().getCurrentDomainName()
-													, getCallback().getCurrentDomainId()
-													, getCallback().getCurrentUser()
-													, entry.getAccountEntry().getId(),
-													new AsyncCallback<Void>() {
-
-												@Override
-												public void onSuccess(Void result) {
-													removeButton.setEnabled(true);
-													fillCenterPanel(centerPanel);
-												}
-
-												@Override
-												public void onFailure(Throwable caught) {
-													removeButton.setEnabled(true);
-												}
-											});
-										}
-									});
-								}
-							});
-							tab.setWidget(row, col, removeButton);
-							++col;
 						} else {
-							final Button importButton = new Button(AON.MSG.importAction());
 							importButton.setTitle(AON.MSG.importAction());
-							importButton.setStyleName(AON.AON_CSS.aonIconValidate());
-							importButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-							importButton.addStyleName(AON.AON_CSS.aonPaddingLeft20());
-							importButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
-							importButton.addClickHandler(new ClickHandler() {
+							importButton.addStyleName(AON.CSS.aonMarginLeft());
+							importButton.addClickHandler(event -> preselect(null, entry, new ISelectionCallback() {
+								
 								@Override
-								public void onClick(ClickEvent event) {
-									preselect(null, entry, new ISelectionCallback() {
-										
-										@Override
-										public void onSuccess() {
-											_paintEntry();
-										}
-
-										@Override
-										public void onFailure() {
-										}
-									});
+								public void onSuccess() {
+									_paintEntry();
 								}
-							});
-							tab.setWidget(row, col, importButton);
-							tab.getFlexCellFormatter().setColSpan(row, col, 3);
-							++col;
+
+								@Override
+								public void onFailure() {
+									// Nothing
+								}
+							}));
 						}
+						tab.addRow()
+							.addCell(dateLabel)
+							.addCell(reportButton)
+							.addCell((hasEntry)?viewButton:importButton)
+							.addCell((hasEntry)?removeButton:new Label());
 					}
 				}
 			}
@@ -1098,19 +993,6 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 				getCallback().getModule().onError(caught.getMessage());							
 			}
 		});
-	}
-
-	private FlowPanel getLabelPanel() {
-		FlowPanel labelPanel = new  FlowPanel();
-		labelPanel.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
-		labelPanel.addStyleName(AON.AON_CSS.aonNowrap());
-		InlineLabel label = new InlineLabel(AON.MSG.importSalaryAction());
-		label.setStyleName(AON.AON_CSS.aonWidthAll());
-		label.addStyleName(AON.AON_CSS.aonMarginAuto());
-		label.addStyleName(AON.AON_CSS.aonInvoiceLabel());
-		label.addStyleName(AON.AON_CSS.aonTextCenter());
-		labelPanel.add(label);
-		return labelPanel;
 	}
 
 	@Override
