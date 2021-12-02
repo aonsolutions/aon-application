@@ -1415,10 +1415,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkContractTransform();
 								})
 					, f -> {}), 
-				f -> {
-					AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
-					dialog.warning();
-				}
+				f -> showError("Error borrado movimiento previo", f.getMessage())
 		);
 	}
 
@@ -1441,10 +1438,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkContractTransform();
 								})	
 					, f -> {}), 
-				f -> {
-					AonDialog dialog = new AonDialog("Error", new HTML(f.getMessage()));
-					dialog.warning();
-				}
+				f -> showError("Error borrado alta consolidada", f.getMessage())
 		);
 	}
 	
@@ -1482,82 +1476,46 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 					@Override
 					protected void onPartialityCoefContract(String partialityCoef, Date date) {
-						contrataEmployeeObject.cambioCoef(partialityCoef, date, s -> {
-							Map<String, String> successMap = new HashMap<>();
-							successMap.put("AVISO: Parcialidad", "El coeficiente de parcialidad ha sido notificado a la Seguridad Social.");
-							AonMessagePanel.showSuccess(messageContainer, successMap);
-						}, f -> {
-							Map<String, String> errorMap = new HashMap<>();
-							errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-							AonMessagePanel.showError(messageContainer, errorMap);
-						});
+						contrataEmployeeObject.cambioCoef(partialityCoef, date, 
+								s -> showSuccess("AVISO: Parcialidad", "El coeficiente de parcialidad ha sido notificado a la Seguridad Social."), 
+								f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
 
 					@Override
 					protected void onOcupationContract(String ocupation, Date date) {
-						contrataEmployeeObject.cambioOcupacion(ocupation, date, s -> {
-							Map<String, String> successMap = new HashMap<>();
-							successMap.put("AVISO: Ocupaci\u00F3n", "El cambio de ocupaci\u00F3n ha sido notificado a la Seguridad Social.");
-							AonMessagePanel.showSuccess(messageContainer, successMap);
-						}, f -> {
-							Map<String, String> errorMap = new HashMap<>();
-							errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-							AonMessagePanel.showError(messageContainer, errorMap);
-						});
+						contrataEmployeeObject.cambioOcupacion(ocupation, date,
+							s -> showSuccess("AVISO: Ocupaci\u00F3n", "El cambio de ocupaci\u00F3n ha sido notificado a la Seguridad Social."), 
+							f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
 
 					@Override
 					protected void onQuoteContract(String quoteGroup, Date date) {
-						contrataEmployeeObject.cambioGrupCtz(quoteGroup, date, s -> {
-							Map<String, String> successMap = new HashMap<>();
-							successMap.put("AVISO: Grupo cotizaci\u00F3n", "El cambio de grupo de cotizaci\u00F3n ha sido notificado a la Seguridad Social.");
-							AonMessagePanel.showSuccess(messageContainer, successMap);
-						}, f -> {
-							Map<String, String> errorMap = new HashMap<>();
-							errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-							AonMessagePanel.showError(messageContainer, errorMap);
-						});
+						contrataEmployeeObject.cambioGrupCtz(quoteGroup, date, 
+							s -> showSuccess("AVISO: Grupo cotizaci\u00F3n", "El cambio de grupo de cotizaci\u00F3n ha sido notificado a la Seguridad Social."), 
+							f -> showError("Error comunicaci\u00F3n", f.getMessage()));								
 					}
 
 					@Override
 					protected void onChangeContract(String contract, Date date) {
-						contrataEmployeeObject.cambioContrato(contract, date, s -> {
-							Map<String, String> successMap = new HashMap<>();
-							successMap.put("AVISO: Tipo contrato", "El cambio de tipo de contrato ha sido notificado a la Seguridad Social.");
-							AonMessagePanel.showSuccess(messageContainer, successMap);
-						}, f -> {
-							Map<String, String> errorMap = new HashMap<>();
-							errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-							AonMessagePanel.showError(messageContainer, errorMap);
-						});
+						contrataEmployeeObject.cambioContrato(contract, date,
+							s -> showSuccess("AVISO: Tipo contrato", "El cambio de tipo de contrato ha sido notificado a la Seguridad Social."), 
+							f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
 
 					@Override
 					protected void onEndContract(String settleReason) {
-						contrataEmployeeObject.sendEmployeeBaja(settleReason, s -> {
-							Map<String, String> successMap = new HashMap<>();
-							successMap.put("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social.");
-							AonMessagePanel.showSuccess(messageContainer, successMap);
-						}, f -> {
-							Map<String, String> errorMap = new HashMap<>();
-							errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-							AonMessagePanel.showError(messageContainer, errorMap);
-						});
+						contrataEmployeeObject.sendEmployeeBaja(settleReason,
+							s -> showSuccess("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social."), 
+							f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
 
 					@Override
 					protected void onStartContract() {
-						contrataEmployeeObject.sendEmployeeAlta(s -> {
-							Map<String, String> successMap = new HashMap<>();
-							successMap.put("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
-							AonMessagePanel.showSuccess(messageContainer, successMap);
-							
-							downloadTAAndIDC();
-						}, f -> {
-							Map<String, String> errorMap = new HashMap<>();
-							errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-							AonMessagePanel.showError(messageContainer, errorMap);
-						});
+						contrataEmployeeObject.sendEmployeeAlta(
+							s -> {
+								showSuccess("AVISO: Alta", "El alta de este trabajador ha sido notificado a la Seguridad Social.");
+								downloadTAAndIDC();
+							}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
 				};
 	}
@@ -1603,15 +1561,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 					@Override
 					protected void onEndContract(String settleReason) {
-						contrataEmployeeObject.sendEmployeeBaja(settleReason, s -> {
-							Map<String, String> successMap = new HashMap<>();
-							successMap.put("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social.");
-							AonMessagePanel.showSuccess(messageContainer, successMap);
-						}, f -> {
-							Map<String, String> errorMap = new HashMap<>();
-							errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-							AonMessagePanel.showError(messageContainer, errorMap);
-						});
+						contrataEmployeeObject.sendEmployeeBaja(settleReason, 
+							s -> showSuccess("AVISO: Baja", "La baja de este trabajador ha sido notificada a la Seguridad Social."), 
+							f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 					}
 
 					@Override
@@ -1623,24 +1575,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private void downloadTAAndIDC() {
 		contrataEmployeeObject.downloadTAAndIDC(
-				s -> {
-					Map<String, String> successMap = new HashMap<>();
-					successMap.put("IDC y TA", "Se han descargado el IDC y el TA del trabajador. Ambos documentos se encuentran en el apartado de Adjuntos");
-					AonMessagePanel.showSuccess(messageContainer, successMap);
-				},
-				f -> {
-					Map<String, String> errorMap = new HashMap<>();
-					errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-					AonMessagePanel.showError(messageContainer, errorMap);
-				}
+				s -> showSuccess("IDC y TA", "Se han descargado el IDC y el TA del trabajador. Ambos documentos se encuentran en el apartado de Adjuntos"),
+				f -> showError("Error comunicaci\u00F3n", f.getMessage())
 		);
 	}
 
 	private void showTa() {
+		AonMessagePanel.showLoading(messageContainer, "Obteniendo TA...");
 		contrataEmployeeObject.downloadTa(dataURI -> {
+				hideMessage();
 				showPdf();
 				pdfViewer.open(dataURI);
-		}, trowable -> {});
+		}, f -> showError("Error TA", f.getMessage()));
 	}
 	
 	private void showIdc() {
@@ -1648,13 +1594,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void showIdc( Date date) {
+		AonMessagePanel.showLoading(messageContainer, "Obteniendo IDC...");
 		contrataEmployeeObject.downloadIdc(date,
 		dataURI -> {
+				hideMessage();
 				showPdf();
 				idcDateListBox.setVisible(true);
 				idcDateListBox.setSelected(date, true);
 				pdfViewer.open(dataURI);
-		}, trowable -> {});
+		}, f -> showError("Error IDC", f.getMessage()));
 	}
 
 	private void showIdcPlNss() {
@@ -1662,13 +1610,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void showIdcPlNss( Date month) {
+		AonMessagePanel.showLoading(messageContainer, "Obteniendo IDC PL NSS...");
 		contrataEmployeeObject.downloadIdcPlNss(month,
 		dataURI -> {
+				hideMessage();
 				showPdf();
 				idcMonthListBox.setVisible(true);
 				idcMonthListBox.setSelected(month, true);
 				pdfViewer.open(dataURI);
-		}, trowable -> {});
+		}, f -> showError("Error IDC PL NSS", f.getMessage()));
 	}
 
 	private void onCTO() {
@@ -1676,10 +1626,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void showCto() {
+		AonMessagePanel.showLoading(messageContainer, "Obteniendo CTO...");
 		contrataEmployeeObject.downloadCto(dataURI -> {
+				hideMessage();
 				showPdf();
 				pdfViewer.open(dataURI);
-		}, trowable -> {});
+		}, f -> showError("Error CTO", f.getMessage()));
 	}
 
 	private void onCBC() {
@@ -1687,17 +1639,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void showCbc() {
+		AonMessagePanel.showLoading(messageContainer, "Obteniendo CBC...");
 		contrataEmployeeObject.downloadCbc(dataURI -> {
+				hideMessage();
 				showPdf();
 				pdfViewer.open(dataURI);
-		}, trowable -> {});
+		}, f -> showError("Error CBC", f.getMessage()));
 	}
 	
 	private void showCertifica2PDF() {
+		AonMessagePanel.showLoading(messageContainer, "Obteniendo Certific@2...");
 		contrataEmployeeObject.getCertifica2PDF(dataURI -> {
+			hideMessage();
 			showPdf();
 			pdfViewer.open(dataURI);
-		}, trowable -> {});
+		}, f -> showError("Error Certific@2", f.getMessage()));
 	}
 	
 	private void onClosePDF() {
@@ -1707,9 +1663,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void sendBasicCopy() {
 		contrataEmployeeObject.sendBasicCopy(
 				s -> {
-					Map<String, String> successMap = new HashMap<>();
-					successMap.put("Comunicaci\u00F3n", "La copia basica ha sido notificada correctamente del SEPE");
-					AonMessagePanel.showSuccess(messageContainer, successMap);
+					showSuccess("Comunicaci\u00F3n", "La copia basica ha sido notificada correctamente del SEPE");
+					
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> 
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
@@ -1724,19 +1679,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 									checkContractTransform();
 								}), 
 						f -> {});
-				}, f -> {
-					Map<String, String> errorMap = new HashMap<>();
-					errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-					AonMessagePanel.showError(messageContainer, errorMap);
-				});
+				}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 	}
 
 	private void sendContract() {
 		contrataEmployeeObject.sendContract(
 				s -> {
-					Map<String, String> successMap = new HashMap<>();
-					successMap.put("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
-					AonMessagePanel.showSuccess(messageContainer, successMap);
+					showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
+					
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn ->
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
@@ -1756,26 +1706,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 										sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
 								}), 
 						f -> {});
-				},f -> {
-					Map<String, String> errorMap = new HashMap<>();
-					errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-					AonMessagePanel.showError(messageContainer, errorMap);
-					
-				});
+				},f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 	}
 	
 	private void sepeIDEContract() {
-		Map<String, String> infoMap = new HashMap<>();
-		infoMap.put("IDE Sepe", "El IDE del SEPE generado para este contrato es " + contrataEmployeeObject.getContractData().getSepeId());
-		AonMessagePanel.showInfo(messageContainer, infoMap);
+		showInfo("IDE Sepe", "El IDE del SEPE generado para este contrato es " + contrataEmployeeObject.getContractData().getSepeId());
 	}
 	
 	private void removeContract() {
 		contrataEmployeeObject.removeContract(
 				s -> {
-					Map<String, String> successMap = new HashMap<>();
-					successMap.put("Comunicaci\u00F3n", "El contrato ha sido eliminado correctamente del SEPE");
-					AonMessagePanel.showSuccess(messageContainer, successMap);
+					showSuccess("Comunicaci\u00F3n", "El contrato ha sido eliminado correctamente del SEPE");
+					
 					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn ->
 						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 								success -> {
@@ -1797,20 +1739,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						f -> {});
 				},
 					
-				f -> {
-					Map<String, String> errorMap = new HashMap<>();
-					errorMap.put("Error comunicaci\u00F3n", f.getMessage());
-					AonMessagePanel.showError(messageContainer, errorMap);
-				});
+				f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 	}
 	
 	private void contractExtension() {
 		new ContractExtensionDialog(this.contrataEmployeeObject.getContractEmployeeInfo()) {
 			@Override
 			protected void onExtensionDone() {
-				Map<String, String> successMap = new HashMap<>();
-				successMap.put("Pr\u00F3rroga", "La pr\u00F3rroga del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
-				AonMessagePanel.showSuccess(messageContainer, successMap);
+				showSuccess("Pr\u00F3rroga", "La pr\u00F3rroga del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
+				
 				contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
 						success -> {
 							// Check SS only if not RETA
@@ -1836,9 +1773,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		new ContractTransformDialog(this.contrataEmployeeObject.getContractEmployeeInfo()) {
 			@Override
 			protected void onTransformDone(Integer newContractId) {
-				Map<String, String> successMap = new HashMap<>();
-				successMap.put("Pr\u00F3rroga", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
-				AonMessagePanel.showSuccess(messageContainer, successMap);
+				showSuccess("Pr\u00F3rroga", "La transformaci\u00F3n del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido realizada correctamente");
 				onTransformContract(newContractId);
 			}
 
@@ -1852,9 +1787,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void deleteContractExtension() {
 		contrataEmployeeObject.deleteContractExtension(
 				s -> {
-					Map<String, String> successMap = new HashMap<>();
-					successMap.put("Borrado Pr\u00F3rroga", "La pr\u00F3rroga del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido eliminada correctamente");
-					AonMessagePanel.showSuccess(messageContainer, successMap);
+					showSuccess("Borrado Pr\u00F3rroga", "La pr\u00F3rroga del trabajador " + contrataEmployeeObject.getEmployeeFullName() + " ha sido eliminada correctamente");
 					
 					contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
 							success -> {
@@ -2342,5 +2275,29 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		return new HTML(message);
 	}
+	
+	
+	// ------------------------------------------------- Aon Messages panel
 
+	private void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(messageContainer, successMap);
+	}
+	
+	private void showInfo(String title, String message) {
+		Map<String, String> infoMap = new HashMap<>();
+		infoMap.put(title, message);
+		AonMessagePanel.showInfo(messageContainer, infoMap);
+	}
+	
+	private void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messageContainer, errorMap);
+	}
+	
+	private void hideMessage() {
+		messageContainer.setVisible(false);
+	}
 }
