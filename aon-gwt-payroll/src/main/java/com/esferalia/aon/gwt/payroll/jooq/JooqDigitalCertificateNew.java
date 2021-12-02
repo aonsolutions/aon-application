@@ -355,7 +355,7 @@ public class JooqDigitalCertificateNew {
 				.fetchOne()
 				.getId();
 		else
-			if(null != data)
+			if(null != data && data.length > 0)
 				dslContext.update(RATTACH)
 					.set(RATTACH.DATA, data)
 					.set(RATTACH.SECURITY_LEVEL, security)
