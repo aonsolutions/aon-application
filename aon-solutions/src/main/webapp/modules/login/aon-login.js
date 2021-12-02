@@ -187,13 +187,12 @@ export class AonLogin extends AonElement {
     const href = window.location.href;
     let src = "assets/aon-logo.png"; 
     if (href.includes("ayudat")) {
-      src = "assets/ayudat-logo4.png";
+      src = "assets/img/ayudat-logo.png";
     } else if (href.includes("translogia") || href.includes("tedi")) {
       src = "assets/ayudat-logo4.png";
     } else if (href.includes("aonsolutions.org")){
      src = "assets/beta-logo.svg";
-    } else if("true"==localStorage.getItem("AYUDAT_APP"))
-      src = "assets/ayudat-logo.png";
+    }
 
     logo.src = src;
     logo.addEventListener(EVENT.CLICK, ()=>{

@@ -150,7 +150,7 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public Boolean isAdmin() {
-		return  hasRole(AonRole.ADMIN); // && hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN);
+		return  hasRole(AonRole.ADMIN) && hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN);
 	}
 	
 	public Boolean isDev() {
