@@ -255,13 +255,13 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
-	void getEmployeeTa(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
+	void getEmployeeTa(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException;
 
-	void getEmployeeIdc(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
+	void getEmployeeIdc(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException;
 
-	void getEmployeeIdcPlNss(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
+	void getEmployeeIdcPlNss(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException ;
 	
-	void getEmployeeIdcDates(String domain,  String user, Integer contractId, Date date, AsyncCallback<List<Date>> callback);
+	void getEmployeeIdcDates(String domain,  String user, Integer contractId, Date date, AsyncCallback<List<Date>> callback) throws IllegalArgumentException;
 
 	void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback);
 
@@ -271,10 +271,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
 	void getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate, Date endDate,
-			AsyncCallback<String> callback);
+			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate,
-			AsyncCallback<String> callback);
+			AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications
 	
