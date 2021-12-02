@@ -103,8 +103,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 	private void createFlexTable() {
 		int row = 0;
 		flexTable = new FlexTable();
-		flexTable.setStyleName(AON.AON_CSS.aonMarginTop());
-		flexTable.addStyleName(AON.AON_CSS.aonMarginLeft());
+		flexTable.setStyleName(AON.CSS.aonMarginTop());
+		flexTable.addStyleName(AON.CSS.aonMarginRight());
 		flexTable.addStyleName(AON.AON_CSS.aonWidth90Percent());
 		
 		String col0Width = AON.AON_CSS.aonWidth170(); 
