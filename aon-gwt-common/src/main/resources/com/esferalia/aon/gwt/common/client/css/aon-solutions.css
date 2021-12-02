@@ -207,6 +207,8 @@
 .aon_icon_lock { background-image: iconLock;}
 @url iconRenew aonIconRenew;
 .aon_icon_renew { background-image: iconRenew;}
+@url iconRenewWhite aonIconRenewWhite;
+.aon_icon_renew_white { background-image: iconRenewWhite;}
 @url iconFx aonIconFx;
 .aon_icon_fx { background-image: iconFx;}
 @url iconAddTask aonIconAddTask;
@@ -820,6 +822,24 @@
 	gap: 1em;
 	padding: 0 1em;
 	font-size: 13px;
+}
+
+.aon_spin{
+	display: flex;
+	align-items: center;
+	animation-name: spin;
+	animation-duration: 2500ms;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
 }
 
 .aon_message_title{
