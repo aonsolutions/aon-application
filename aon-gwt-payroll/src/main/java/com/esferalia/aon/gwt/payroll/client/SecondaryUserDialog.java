@@ -295,7 +295,7 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 		if (dniPattern.test(ipf.toUpperCase()))
 			return "1";
 		else
-			return "2";
+			return "6";
 	}
 
 }
