@@ -528,12 +528,13 @@ public class InvoiceTest {
 			PrintInvoiceThemeConfiguration themeconf = new PrintInvoiceThemeConfiguration();
 			themeconf.setTheme(PrintInvoiceTheme.PERSONALIZED);
 
-			themeconf.setBoxTitleBackgroundColor("#0893ff");
+			themeconf.setBoxTitleBackgroundColor("#ffd700");
 //			themeconf.setCustomerBackgroundColor("#caa9e6");
 //			themeconf.setBoxTitleTextColor("#f025c8");
-			themeconf.setBoxBodyBackgroundColor("#d0d793");
+//			themeconf.setBoxBodyBackgroundColor("#d0d793");
 			themeconf.setTextColor("#ff6400");
-//			themeconf.setBoxBodyTextColor("#ff6400");
+			themeconf.setBoxTitleTextColor("#00ff00");
+			themeconf.setBorderColor("#0893ff");
 			
 			config.setTheme(themeconf);
 			
