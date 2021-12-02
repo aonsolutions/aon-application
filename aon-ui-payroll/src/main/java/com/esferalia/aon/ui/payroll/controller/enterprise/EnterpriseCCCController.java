@@ -153,12 +153,13 @@ public class EnterpriseCCCController extends LinesController {
 			SETTINGS = new Settings();
 			SETTINGS.setRenderSchema(false);
 			DSLContext ctx = DSL.using(connection, SETTINGS);
-			int recordCount = ctx
+			int recordCount = ctx.fetchCount( 
+					DSL
 					.select()
 					.from(RADDRESS).join(WORKPLACE, JoinType.LEFT_OUTER_JOIN)
 					.where(RADDRESS.DOMAIN.equal(DomainManager.getCurrentDomain()))
 					.and(RADDRESS.GEOZONE.equal(geoZone.getId()))
-					.fetchCount();
+					);
 			return recordCount > 0;
 		} catch (AonConnectionException e) {
 			AonUtil.addErrorMessage(e.getMessage());

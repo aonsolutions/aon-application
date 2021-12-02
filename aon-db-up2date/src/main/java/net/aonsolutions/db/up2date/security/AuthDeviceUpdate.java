@@ -29,7 +29,7 @@ public class AuthDeviceUpdate implements Update {
 		Settings settings = new Settings();
 		settings.setRenderSchema(false);
 		settings.setParamType(ParamType.INLINED);
-		DSLContext dslContext = DSL.using(connection, SQLDialect.MYSQL_5_7, settings);
+		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 
 		System.out.println("[START]");
 		System.out.println( "Update table `auth_device`" );

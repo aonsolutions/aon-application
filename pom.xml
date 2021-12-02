@@ -78,7 +78,6 @@
 		<module>aon-oauth2</module>
 		<module>aon-hhg-webservice</module>
 		<module>aon-webservice</module>
-		<module>aon-dump</module>
 		<module>aon-sii</module>
 		<module>aon-seres</module>
 		<module>aon-tbai</module>
@@ -181,7 +180,6 @@
 		<module>aon-gwt-issues</module>
 		<module>aon-gwt-warehouse</module>
 		<module>aon-gwt-udapa</module>
-		<module>aon-gwt-dump</module>
 		<module>aon-gwt-sii</module>
 		<module>aon-gwt-seres</module>
 		<module>aon-gwt-commercial</module>

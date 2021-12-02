@@ -662,9 +662,8 @@ public class JooqEnterprise {
 	// --------------------------------------------------------------------------------------------------
 	
 	public static List<CCC> getCCCs(Connection conn, Integer domainId) {
-		try (DSLContext dslContext = DSL.using(conn, getDefaultSettings())) {
-			return getCCCs(dslContext, domainId);
-		}
+		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
+		return getCCCs(dslContext, domainId);
 	}
 
 	private static List<CCC> getCCCs(DSLContext ctx, Integer domainId) {

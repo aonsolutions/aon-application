@@ -161,10 +161,11 @@ public class SistemaRED2AON {
 			
 			for( String schema : commandLine.getOptionValues(databasesOption.getLongOpt()) ) {
 				System.out.println(schema);;
-				try (Connection connection = AonDataSource.getInstance().getDatabaseConnection(schema);
-					AONContext aonContext = new AONContext(connection);
-					DSLContext dslContext = aonContext.getDslContext() ) {
+				try (Connection connection = AonDataSource.getInstance().getDatabaseConnection(schema) ) {
 					
+					AONContext aonContext = new AONContext(connection);
+					DSLContext dslContext = aonContext.getDslContext();
+
 					dslContext
 					.select()
 					.from(DOMAIN)

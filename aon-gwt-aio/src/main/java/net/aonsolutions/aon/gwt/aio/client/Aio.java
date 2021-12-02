@@ -183,6 +183,7 @@ public class Aio implements EntryPoint {
 				}
 			});		
 			break;
+		/*
 		case Modules.DUMP_FORM:
 			GWT.runAsync(com.esferalia.aon.gwt.dump.client.MainEntryPoint.class, new RunAsyncCallback() {
 
@@ -198,6 +199,7 @@ public class Aio implements EntryPoint {
 				}
 			});		
 			break;
+		*/
 		case Modules.QUALITY:
 			GWT.runAsync(Udapa.class, new RunAsyncCallback() {
 

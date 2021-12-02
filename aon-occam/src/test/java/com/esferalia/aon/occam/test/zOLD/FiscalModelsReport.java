@@ -39,7 +39,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.jooq.DSLContext;
+import org.jooq.CloseableDSLContext;
 import org.jooq.Field;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
@@ -65,7 +65,7 @@ public class FiscalModelsReport {
 	private static String PASSWORD = "password";
 	private static String TIMEZONE = "Europe/Madrid";
 	private static String USESSL = "false";
-	private static DSLContext CTX;
+	private static CloseableDSLContext CTX;
 
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
@@ -76,11 +76,11 @@ public class FiscalModelsReport {
 		properties.setProperty("password", PASSWORD);
 		properties.setProperty("useSSL", USESSL);
 		properties.setProperty("serverTimezone", TIMEZONE);
-		Connection conn = DriverManager.getConnection(URL, properties);
-		Settings settings = new Settings();
-		settings.setRenderSchema(false);
-		settings.setParamType(ParamType.INLINED);
-		CTX = DSL.using(conn, settings);
+		//Connection conn = DriverManager.getConnection(URL, properties);
+		//Settings settings = new Settings();
+		//settings.setRenderSchema(false);
+		//settings.setParamType(ParamType.INLINED);
+		CTX = DSL.using(URL, properties);
 	}
 
 	// @Test

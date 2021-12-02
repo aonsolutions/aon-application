@@ -203,13 +203,11 @@ public class PDF2Aon {
 		settings.setRenderSchema(false);
 		settings.setParamType(ParamType.INLINED);
 				
-		try (Connection connection = DriverManager.getConnection(url, properties); 
-			DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings)) {
+		try (Connection connection = DriverManager.getConnection(url, properties)) {
 			
+			DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 	
 			Class.forName("com.mysql.jdbc.Driver");
-			
-			
 			
 			try {
 				dslContext.transaction((c)->{

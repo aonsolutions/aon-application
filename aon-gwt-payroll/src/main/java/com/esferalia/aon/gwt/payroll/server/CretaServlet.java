@@ -2607,12 +2607,12 @@ public class CretaServlet extends HttpServlet
 	private static Collection<String> findCCCs(String domain , int domainId, java.sql.Date month, Collection<String> cccs) {
 		Settings settings = new Settings();
 		settings.setRenderSchema(false);
-		try ( 
-				Connection connection = AonServletUtils.getConnection(domain) ;
-				DSLContext dslContect = DSL.using(connection, settings );
-			){
+		try ( Connection connection = AonServletUtils.getConnection(domain) ){
+		
+			DSLContext dslContect = DSL.using(connection, settings );
+		
 			java.sql.Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(month);
-			java.sql.Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(month);
+			java.sql.Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(month);			
 			
 			SelectConditionStep<Record> selectCCCs = 
 			dslContect

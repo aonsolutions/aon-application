@@ -136,9 +136,9 @@ public class Salary2Contract {
 			System.out.println("Error: " + e.getLocalizedMessage());
 		} 
 		
-		try (Connection connection = DriverManager.getConnection(url, properties);
-			DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings)) {
+		try (Connection connection = DriverManager.getConnection(url, properties)) {
 			
+			DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 			dslContext.transaction(c -> {
 				JooqSalary2Contract.pullUp(dslContext, DSL.condition(where));
 //				throw new RollbackException();

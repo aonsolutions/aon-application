@@ -5830,21 +5830,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		java.sql.Date start = toSqlDate(p.getStart()); 
 		java.sql.Date end = toSqlDate(p.getEnd()); 
 		
-		try (AONContext aonContext = new AONContext(connection); 
-			DSLContext dslContext = aonContext.getDslContext() )
-		{
-			return 
-			dslContext
-			.select()
-			.from(ENTERPRISE_DATA)
-			.where(ENTERPRISE_DATA.ENTERPRISE.eq(getEnterpriseId() ))
-			.and(ENTERPRISE_DATA.NAME.eq(FULL_ERE.getName()))
-			.and(ENTERPRISE_DATA.START_DATE.le(end))
-			.and((ENTERPRISE_DATA.END_DATE.isNull().or(ENTERPRISE_DATA.END_DATE.ge(start))))
-			.fetchOptional(ENTERPRISE_DATA.START_DATE)
-			.orElseThrow(() -> new NotFoundVariableError(FULL_ERE.getName()))
-			;
-		}
+		return 
+		new AONContext(connection)
+		.getDslContext()
+		.select()
+		.from(ENTERPRISE_DATA)
+		.where(ENTERPRISE_DATA.ENTERPRISE.eq(getEnterpriseId() ))
+		.and(ENTERPRISE_DATA.NAME.eq(FULL_ERE.getName()))
+		.and(ENTERPRISE_DATA.START_DATE.le(end))
+		.and((ENTERPRISE_DATA.END_DATE.isNull().or(ENTERPRISE_DATA.END_DATE.ge(start))))
+		.fetchOptional(ENTERPRISE_DATA.START_DATE)
+		.orElseThrow(() -> new NotFoundVariableError(FULL_ERE.getName()))
+		;
 		
 	}
 	

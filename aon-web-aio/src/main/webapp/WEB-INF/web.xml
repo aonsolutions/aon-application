@@ -31,16 +31,6 @@
 		<servlet-name>TestServlet</servlet-name>
 		<url-pattern>/testServlet</url-pattern>
 	</servlet-mapping>
-	<!-- -Download Servlet -->
-	<servlet>
-		<servlet-name>DownloadDataServlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.dump.server.DownloadDataServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DownloadDataServlet</servlet-name>
-		<url-pattern>/downloadDataServlet</url-pattern>
-	</servlet-mapping>
-
 	<!-- -Login Servlet -->
 	<servlet>
 		<servlet-name>LoginServlet</servlet-name>
@@ -158,14 +148,6 @@
 		<servlet-name>Share Servlet</servlet-name>
 		<url-pattern>/aon_gwt_payroll/share</url-pattern>
 	</servlet-mapping>
-	<!-- servlet>
-		<servlet-name>Dump Servlet</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.dump.server.ConnectServiceImpl</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Dump Servlet</servlet-name>
-		<url-pattern>/aon_gwt_dump/dump</url-pattern>
-	</servlet-mapping-->
 	<servlet>
 		<servlet-name>DSI Import Servlet</servlet-name>
 		<servlet-class>com.esferalia.aon.gwt.connect.server.DSIImportServlet</servlet-class>
