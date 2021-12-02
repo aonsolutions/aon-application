@@ -89,13 +89,17 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
               
             aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
             
+            let display = "block";
+    
             if(project && project.id)
                 aonSelect.value = project.id; 
             else if(1===projects.length && !task.id){
                 aonSelect.setIndexOf(0);
-                aonSelect.parentNode.style.display = "none";
+                display = "none";
             } else if(!projects.length)
-                aonSelect.parentNode.style.display = "none";
+               display = "none";
+
+            aonSelect.parentNode.style.display = display;
 
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail && detail.id)

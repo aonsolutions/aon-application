@@ -430,10 +430,10 @@ public class SistemaRED {
 				regimen, ctaCti, nss);
 	}
 	
-	public static void removeMovConsolidated(final InputStream certificateInputStream, final String certificatePassword,
+	public static void removeMovConsolidated(final byte certificateData[], final String certificatePassword,
 			final String certificateType, SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws SegSocialException {
 		
-		SistemaREDMov.removeMovConsolidated(certificateInputStream, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);;
+		SistemaREDMov.removeMovConsolidated(certificateData, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);;
 	}
 	
 	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream,
@@ -546,13 +546,13 @@ public class SistemaRED {
 	
 	public static Collection<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType) throws SegSocialException {
-		return SistemaREDSecondaryUser.getSecondaryUsers(certificateInputStream, certificatePassword, certificateType);
+		return ServicioREDSecondaryUser.getSecondaryUsers(certificateInputStream, certificatePassword, certificateType);
 	}
 	
 	public static Collection<SecondaryUser> getSecondaryUsers(final byte[] certificateData,
 			final String certificatePassword, final String certificateType) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)){
-			return SistemaREDSecondaryUser.getSecondaryUsers(certificateInputStream, certificatePassword, certificateType);
+			return ServicioREDSecondaryUser.getSecondaryUsers(certificateInputStream, certificatePassword, certificateType);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
@@ -560,29 +560,29 @@ public class SistemaRED {
 	
 	public static void deleteSecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String ipfType, final String ipf) throws SegSocialException {
-		SistemaREDSecondaryUser.deleteSecondaryUser(certificateInputStream, certificatePassword, certificateType, ipfType, ipf);
+		ServicioREDSecondaryUser.deleteSecondaryUser(certificateInputStream, certificatePassword, certificateType, ipfType, ipf);
 	}
 	
 	public static void deleteSecondaryUser(final byte[] certificateData, final String certificatePassword,
 			final String certificateType, final String ipfType, final String ipf) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)){
-			SistemaREDSecondaryUser.deleteSecondaryUser(certificateInputStream, certificatePassword, certificateType, ipfType, ipf);
+			ServicioREDSecondaryUser.deleteSecondaryUser(certificateInputStream, certificatePassword, certificateType, ipfType, ipf);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
 	}
 	
 	public static void registerSecondaryUserByNie(final InputStream certificateInputStream,
-			final String certificatePassword, final String certificateType, final String typeIpf, final String nie,
+			final String certificatePassword, final String certificateType, final String ipfType, final String nie,
 			String naf) throws SegSocialException {
-		SistemaREDSecondaryUser.registerSecondaryUserByNie(certificateInputStream, certificatePassword, certificateType, typeIpf, nie, naf);
+		ServicioREDSecondaryUser.registerSecondaryUserByNie(certificateInputStream, certificatePassword, certificateType, ipfType, nie, naf);
 	}
 	
 	public static void registerSecondaryUserByNie(final byte[] certificateData,
-			final String certificatePassword, final String certificateType, final String typeIpf, final String nie,
+			final String certificatePassword, final String certificateType, final String ipfType, final String nie,
 			String naf) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)){
-			SistemaREDSecondaryUser.registerSecondaryUserByNie(certificateInputStream, certificatePassword, certificateType, typeIpf, nie, naf);
+			ServicioREDSecondaryUser.registerSecondaryUserByNie(certificateInputStream, certificatePassword, certificateType, ipfType, nie, naf);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}

@@ -9,7 +9,9 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
@@ -18,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
+import com.esferalia.aon.occam.api.model.payroll.ContractAttach;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.impl.jooq.PayrollImpl;
@@ -208,6 +211,39 @@ public class PAYROLL {
 			if (ctx != null){
 				ctx.close();
 			}
+		}
+	}
+	
+	public static void deleteContracts(Domain domain, String login, Integer ...contractIds) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getPayroll().deleteContracts(ctx, contractIds);
+		}
+	}
+	
+	
+	
+	// -------------------- CONTRACT ATTACH
+	
+	public static Stream<ContractAttach> getContractAttachStream(Domain domain, String login, ContractAttachFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPayroll().getContractAttachStream(ctx, filter);
+		}
+	}
+	
+	public static ContractAttach getContractAttach(Domain domain, String login, ContractAttachFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getPayroll().getContractAttach(ctx, filter);
+		}
+	}
+	public static ContractAttach saveContractAttach(String domainName, Integer domainId, String login, ContractAttach attach) {
+		try( AONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			return getPayroll().saveContractAttach(ctx, attach);
+		} 
+	}
+	
+	public static void deleteContractAttach(Domain domain, String login, Integer id) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			getPayroll().deleteContractAttach(ctx, id);
 		}
 	}
 	

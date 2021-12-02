@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.DecimalFormat;
+import java.util.Base64;
 import java.util.Date;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -89,7 +90,6 @@ public class Certificado {
 			HtmlRadioButtonInput inputRadio2 = htmlPage.querySelector("#contenido form input[value=\""+columnCheck+"\"]");
 	        htmlPage = (HtmlPage) inputRadio2.click();
 
-
 	        Page page = htmlPage.getElementByName("btMostrar").click();
 			if(page.isHtmlPage()) {
 				htmlPage = (HtmlPage) page;
@@ -105,10 +105,10 @@ public class Certificado {
 		return null; 
 	}
 	
-	public static void certEnterprise(final InputStream certificateInputStream,
+	public static byte[] certEnterprise(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, Certificates certificates) throws SepeException {
 			try {
-				certEnterpriseImpl(certificateInputStream, certificatePassword, certificateType, certificates);
+				return certEnterpriseImpl(certificateInputStream, certificatePassword, certificateType, certificates);
 			} 
 			catch (FailingHttpStatusCodeException e) {throw new SepeException(e);} 
 			catch (MalformedURLException e) {throw new SepeException(e);} 
@@ -117,7 +117,7 @@ public class Certificado {
 			catch (Exception e) {throw new SepeException(e);}
 	}
 	
-	private static void certEnterpriseImpl(final InputStream certificateInputStream, 
+	private static byte[] certEnterpriseImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, Certificates certificates ) throws IOException, SepeException, InterruptedException  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
@@ -228,13 +228,11 @@ public class Certificado {
 						.setValueAttribute(qdata.getDays().toString());
 						
 						if(qdata.getBccc().isPresent()) {
-							System.out.println("BCCC "+decimalFormat.format(qdata.getBccc().get()));
 							form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasComunes")
 							.setValueAttribute(decimalFormat.format(qdata.getBccc().get()));
 						}
 						
 						if(qdata.getBcd().isPresent()) {
-							System.out.println("BCD "+decimalFormat.format(qdata.getBcd().get()));
 							form.getInputByName("orDatosTrabajador.orDatosInsercionCotizacionPre.srBaseContingenciasDesempleo")
 							.setValueAttribute(decimalFormat.format(qdata.getBcd().get()));
 						}
@@ -254,13 +252,24 @@ public class Certificado {
 					htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btActualizarTotales]")).click();
 					handleSepeExceptions(htmlPage);
 				}
-				htmlPage = ((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
-				handleSepeExceptions(htmlPage);
+				
+				Page page =((HtmlSubmitInput)htmlPage.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btSiguiente]")).click();
+				if(page.isHtmlPage()) {
+					handleSepeExceptions((HtmlPage) page);
+				} else {
+					try{
+						byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
+//						System.out.println(Base64.getEncoder().encodeToString(pdf));
+						return pdf;
+					}
+					catch(Exception e){throw new InvalidDataException();}
+				}
 			}
-
+			
 //	        Toolkit.buildFile(htmlPage.getWebResponse().getContentAsStream().readAllBytes(),"testCertificates.html");
 	        System.out.println("END");
 		} 
+	    return null;
 	}
 	
 	private static HtmlPage firstPageSepeCert(WebClient webClient)  throws SepeException , IOException, InterruptedException{

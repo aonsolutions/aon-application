@@ -216,17 +216,18 @@ public class JooqCertifica2 {
 				.fetchOne(REGISTRY.DOCUMENT);
 		
 		// --------------------------- INSERT CERTIFICA2_BATCH_DETAIL TABLE
-		Record certifica2BatchDetailRecord = dslContext.select().from(CERTIFICA2_BATCH_DETAIL)
+		Result<Record> certifica2BatchDetailRecords = dslContext.select().from(CERTIFICA2_BATCH_DETAIL)
 			.where(CERTIFICA2_BATCH_DETAIL.DOMAIN.eq(domainId))
 			.and(CERTIFICA2_BATCH_DETAIL.CONTRACT.eq(contractId))
-			.fetchOne();
+			.orderBy(CERTIFICA2_BATCH_DETAIL.ID.desc())
+			.fetch();
 		
 		Integer certifica2BatchDetailId = null;
 		Integer cetifica2BatchId = null;
 		
-		if(null != certifica2BatchDetailRecord) {
-			certifica2BatchDetailId = certifica2BatchDetailRecord.get(CERTIFICA2_BATCH_DETAIL.ID);
-			cetifica2BatchId = certifica2BatchDetailRecord.get(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH);
+		if(certifica2BatchDetailRecords.isNotEmpty()) {
+			certifica2BatchDetailId = certifica2BatchDetailRecords.get(0).get(CERTIFICA2_BATCH_DETAIL.ID);
+			cetifica2BatchId = certifica2BatchDetailRecords.get(0).get(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH);
 			
 			dslContext.update(CERTIFICA2_BATCH_DETAIL)
 				.set(CERTIFICA2_BATCH_DETAIL.SUSPENSION_CAUSE_CODE, certifica2Info.getSuspensionCode())
@@ -376,7 +377,8 @@ public class JooqCertifica2 {
 	}
 	
 	private static String format(String value) {
-		return value.replace(",", "").replace("\\.", "");
+		String newValue = value.replaceAll("[,.]", "");
+		return newValue;
 	}
 
 	private static String getSuspensionReasonCode (String compensationReason) {
@@ -598,7 +600,7 @@ public class JooqCertifica2 {
 			
 			Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
 			Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
-			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate);
+			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate) - 1;
 			
 			Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
 					.where(SALARY_PAYMENT.SALARY.eq(settlementId))
@@ -862,7 +864,7 @@ public class JooqCertifica2 {
 			
 			Date chargeDate = settlementRecords.get(0).get(SALARY.CHARGE_DATE);
 			Date settlementEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
-			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate);
+			Long settlementDaysBetween = getDaysBetween(chargeDate, settlementEndDate) - 1;
 			
 			Record holidaysRecord = dslContext.select().from(SALARY_PAYMENT)
 					.where(SALARY_PAYMENT.SALARY.eq(settlementId))
@@ -990,16 +992,23 @@ public class JooqCertifica2 {
 			
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			
-			Integer cetifica2BatchId = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH).from(CERTIFICA2_BATCH_DETAIL)
+			List<Integer> cetifica2BatchRecords = dslContext.select(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH).from(CERTIFICA2_BATCH_DETAIL)
 				.where(CERTIFICA2_BATCH_DETAIL.CONTRACT.eq(contractId))
-				.fetchOne(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH);
+				.orderBy(CERTIFICA2_BATCH_DETAIL.ID.desc())
+				.fetch(CERTIFICA2_BATCH_DETAIL.CERTIFICA2_BATCH);
 			
-			if(null == cetifica2BatchId)
-				return null;
+			if(cetifica2BatchRecords.isEmpty()) return null;
 			
-			return dslContext.select(SEPE_BATCH_ATTACH.DATA).from(SEPE_BATCH_ATTACH)
+			Integer cetifica2BatchId = cetifica2BatchRecords.get(0);
+			
+			List<byte[]> sepeBatchAttachRecords = dslContext.select(SEPE_BATCH_ATTACH.DATA).from(SEPE_BATCH_ATTACH)
 				.where(SEPE_BATCH_ATTACH.SOURCE_BATCH.eq(cetifica2BatchId))
-				.fetchOne(SEPE_BATCH_ATTACH.DATA);
+				.orderBy(SEPE_BATCH_ATTACH.ID.desc())
+				.fetch(SEPE_BATCH_ATTACH.DATA);
+			
+			if(sepeBatchAttachRecords.isEmpty()) return null;
+			
+			return sepeBatchAttachRecords.get(0);
 			
 		}catch (SQLException e) {
 			throw new RuntimeException(e);

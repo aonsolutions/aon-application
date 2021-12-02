@@ -128,7 +128,7 @@ export const MAIN_CONTRATA = {
 
 export const MAIN_DIGITAL_CERTIFICATES = {
   module: GWT_PAYROLL,
-  entryPoint: 'MainDigitalCertificates'
+  entryPoint: 'MainDigitalCertificatesNEW'
 };
 
 export const MAIN_CCC = {

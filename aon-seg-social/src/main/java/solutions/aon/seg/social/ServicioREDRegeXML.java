@@ -18,7 +18,6 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
-import javax.sound.midi.Soundbank;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -41,6 +40,8 @@ import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.object.Liquidation.LiquidationBuilder;
+import solutions.aon.seg.social.object.SecondaryUser;
+import solutions.aon.seg.social.object.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.object.SituacionEmpresa.SituacionEmpresaBuilder;
 import solutions.aon.seg.social.object.WorkerLiquidation.WorkerLiquidationBuilder;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -191,6 +192,261 @@ public abstract class ServicioREDRegeXML {
         saxParser.parse(is, handler);
         	
         return employees;
+	}
+	
+	protected static List<SecondaryUser> extractSecondaryUsers(String xml) throws SegSocialException, ParserConfigurationException, SAXException, IOException {
+		List<SecondaryUser> users = new LinkedList<>();
+		
+		DefaultHandler handler = new DefaultHandler() {
+			private StringBuilder data;
+			SecondaryUserBuilder builder;
+			boolean empty;
+			boolean error;
+			boolean bSituation;
+			boolean tbaSituation;
+			boolean bNaf;
+			boolean bName;
+			boolean bFecha;
+			boolean bIpf;
+			boolean bPhone;
+			boolean bMobile;
+			boolean bFax;
+			boolean bProvince;
+			boolean bMail;
+			
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes attributes)
+					throws SAXException {
+				if (qName.equalsIgnoreCase("usuario")) {
+					empty = true;
+					builder = new SecondaryUserBuilder();
+				} else if (qName.equalsIgnoreCase("tbaSituacionUsuario")) {
+					tbaSituation = true;
+				} else if (tbaSituation && qName.equalsIgnoreCase("descripcion")) {
+					bSituation = true;
+				} else if (qName.equalsIgnoreCase("naf")) {
+					bNaf = true;
+				} else if (qName.equalsIgnoreCase("nombreApellidos")) {
+					bName = true;
+				} else if (qName.equalsIgnoreCase("fechaSituacion")) {
+					bFecha = true;
+				} else if (qName.equalsIgnoreCase("IP3DocumentoAutorizado")) {
+					bIpf = true;
+				} else if (qName.equalsIgnoreCase("telefono")) {
+					bPhone = true;
+				} else if (qName.equalsIgnoreCase("telefonoMovil")) {
+					bMobile = true;
+				} else if (qName.equalsIgnoreCase("fax")) {
+					bFax = true;
+				} else if (qName.equalsIgnoreCase("provincia")) {
+					bProvince = true;
+				} else if (qName.equalsIgnoreCase("mail")) {
+					bMail = true;
+				} 
+				
+				data = new StringBuilder();
+			}
+
+			@Override
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				if (bSituation) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					builder.setSituation(data.toString());
+					bSituation = false;
+					tbaSituation = false;
+				} else if (bNaf) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					builder.setNaf(data.toString().replace(" ", ""));
+					bNaf = false;
+				} else if (bName) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					builder.setName(data.toString());
+					bName = false;
+				} else if (bFecha) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					builder.setSituationDate(Toolkit.parseDate(data.toString(), DATE_FORMAT));
+					bFecha = false;
+				} else if (bIpf) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					builder.setIpf(data.toString());
+					bIpf = false;
+				} else if (bPhone) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					builder.setTelephone(data.toString());
+					bPhone = false;
+				} else if (bMobile) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					builder.setMobile(data.toString());
+					bMobile = false;
+				} else if (bFax) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					builder.setFax(data.toString());
+					bFax = false;
+				} else if (bProvince) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					builder.setProvince(data.toString());
+					bProvince = false;
+				} else if (bMail) {
+					if (data.toString() != null && !data.toString().isEmpty())
+						empty = false;
+					builder.setMail(data.toString());
+					bMail = false;
+				} else if (qName.equalsIgnoreCase("usuario")) {
+					users.add(builder.build());
+				}
+			}
+
+			@Override
+			public void characters(char[] ch, int start, int length) throws SAXException {
+				data.append(new String(ch, start, length));
+			}
+		};
+		
+		 
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser saxParser = factory.newSAXParser();
+		StringReader reader = new StringReader(xml);
+		InputSource is = new InputSource(reader);
+        is.setEncoding("UTF-8");
+        saxParser.parse(is, handler);
+        	
+        return users;
+	}
+	
+	protected static void checkErrors(String xml) throws SegSocialException, ParserConfigurationException, SAXException, IOException {
+		DefaultHandler handler = new DefaultHandler() {
+			StringBuilder data;
+			boolean error;
+			boolean bTextoError;
+
+			String errorText = null;
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes attributes)
+					throws SAXException {
+				if (error && qName.contentEquals("TEXTO")) {
+					bTextoError = true;
+				} else if (bTextoError) {
+					errorText = data.toString();
+					bTextoError = false;
+				}
+				data = new StringBuilder();
+			}
+
+			@Override
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				if (data.toString().equalsIgnoreCase("ERROR")) {
+					error = true;
+				} else if (error && qName.contentEquals("MESSAGE")) {
+					throw new SAXException(errorText != null ? errorText : "");
+				}		
+			}
+
+			@Override
+			public void characters(char[] ch, int start, int length) throws SAXException {
+				data.append(new String(ch, start, length));
+			}
+		};
+		
+		 
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser saxParser = factory.newSAXParser();
+		StringReader reader = new StringReader(xml);
+		InputSource is = new InputSource(reader);
+        is.setEncoding("UTF-8");
+        saxParser.parse(is, handler);
+	}
+	
+	protected static List<NameValuePair> extractSecondaryFormValues(String xml) throws SegSocialException, ParserConfigurationException, SAXException, IOException {
+		List<NameValuePair> params = new ArrayList<>();
+		params.add(new BasicNameValuePair("ARQ.SPM.OUT", "XML_STYLESHEET"));
+		params.add(new BasicNameValuePair("SPM.CONTEXT", IServicioRedConstants.INTERNET));
+		DefaultHandler handler = new DefaultHandler() {
+			StringBuilder data;
+			String session;
+			String urlFrom;
+			boolean dataABM;
+			boolean dataES;
+			boolean bTicket;
+			boolean bCodeSituation;
+			boolean bCodeProvince;
+			boolean textProvince;
+			boolean bSession;
+			boolean bUrl;
+			boolean urlFull;
+			@Override
+			public void startElement(String uri, String localName, String qName, Attributes attributes)
+					throws SAXException {
+				if (qName.equalsIgnoreCase("SPM.TICKET")) 
+					bTicket = true;
+				else if (qName.equalsIgnoreCase("datosABM")) 
+					dataABM = true;
+				else if (qName.equalsIgnoreCase("datosEntradaSalida")) 
+					dataES = true;
+				else if (dataABM && qName.equalsIgnoreCase("codigoStr"))  //mal
+					bCodeSituation = true;
+				else if (qName.equalsIgnoreCase("provincia"))  //mal
+					bCodeProvince = true;
+				else if (qName.equalsIgnoreCase("SPM.IDSESSION")) 
+					bSession = true;
+				else if (qName.equalsIgnoreCase("SPM.URLFRONTEND")) 
+					bUrl = true;
+				else if (qName.equalsIgnoreCase("desProvincia")) 
+					textProvince = true;
+				data = new StringBuilder();
+			}
+
+			@Override
+			public void endElement(String uri, String localName, String qName) throws SAXException {
+				if (bTicket) {
+					params.add(new BasicNameValuePair(IServicioRedConstants.TICKET, data.toString()));
+					bTicket = false;
+				} else if (bCodeSituation && dataABM) {
+					params.add(new BasicNameValuePair("seleccionSituacion", data.toString()));
+					bCodeSituation = false;
+					dataABM = false;
+				} else if (bCodeProvince && dataES) {
+					params.add(new BasicNameValuePair("seleccionProvincia", data.toString()));
+					bCodeProvince = false;
+					dataES = false;
+				} else if (textProvince) {
+					params.add(new BasicNameValuePair("ARQ_descseleccionProvincia", data.toString()));
+					textProvince = false;
+				} else if (bSession) {
+					session = data.toString();
+					bSession = false;
+				} else if (bUrl) {
+					urlFrom = data.toString();
+					bUrl = false;
+				} 
+				if(session!=null && urlFrom!=null && !urlFull) {
+					params.add(new BasicNameValuePair("url", urlFrom+session));
+					urlFull = true;
+				} 
+			}
+
+			@Override
+			public void characters(char[] ch, int start, int length) throws SAXException {
+				data.append(new String(ch, start, length));
+			}
+		};
+
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser saxParser = factory.newSAXParser();
+		StringReader reader = new StringReader(xml);
+		InputSource is = new InputSource(reader);
+        is.setEncoding("UTF-8");
+        saxParser.parse(is, handler);
+        	
+        return params;
 	}
 	
 	protected static Employee extractNafXIpfInfo (String xml) throws SegSocialException, ParserConfigurationException, SAXException, IOException {

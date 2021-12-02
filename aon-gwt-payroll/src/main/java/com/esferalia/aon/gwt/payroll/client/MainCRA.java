@@ -150,9 +150,6 @@ public class MainCRA extends MainEntryPoint {
 		// Provide DataGrid
 		provideCCCDataGrid();
 		provideCRAsDataGrid();
-
-		// Add style to table header
-		addStyleToHeader();
 		
 		// Create toolbar
 		getToolbarPanel();
@@ -587,32 +584,6 @@ public class MainCRA extends MainEntryPoint {
 	}
 
 	// --------------------------------------------------------------------------------------------
-	// HEADER STYLES
-	// --------------------------------------------------------------------------------------------
-
-	public void addStyleToHeader() {
-		String headerStyle = "rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header";
-
-		cccDataGrid.getHeader(0).setHeaderStyleNames(headerStyle);
-		cccDataGrid.getHeader(1).setHeaderStyleNames(headerStyle);
-		cccDataGrid.getHeader(2).setHeaderStyleNames(headerStyle);
-		cccDataGrid.getHeader(3).setHeaderStyleNames(headerStyle);
-		cccDataGrid.getHeader(4).setHeaderStyleNames(headerStyle);
-		cccDataGrid.getHeader(5).setHeaderStyleNames(headerStyle);
-
-		crasDataGrid.getHeader(0).setHeaderStyleNames(headerStyle);
-		crasDataGrid.getHeader(1).setHeaderStyleNames(headerStyle);
-		crasDataGrid.getHeader(2).setHeaderStyleNames(headerStyle);
-		crasDataGrid.getHeader(3).setHeaderStyleNames(headerStyle);
-		crasDataGrid.getHeader(4).setHeaderStyleNames(headerStyle);
-		crasDataGrid.getHeader(5).setHeaderStyleNames(headerStyle);
-		crasDataGrid.getHeader(6).setHeaderStyleNames(headerStyle);
-		crasDataGrid.getHeader(7).setHeaderStyleNames(headerStyle);
-		crasDataGrid.getHeader(8).setHeaderStyleNames(headerStyle);
-		crasDataGrid.getHeader(9).setHeaderStyleNames(headerStyle);
-	}
-
-	// --------------------------------------------------------------------------------------------
 	// VARIABLES
 	// --------------------------------------------------------------------------------------------
 
@@ -722,9 +693,6 @@ public class MainCRA extends MainEntryPoint {
 		// Set page size
 		cccDataGrid.setPageSize(cccs.size());
 
-		// Add style to table header
-		addStyleToHeader();
-
 		addSortColums(cccList);
 
 	}
@@ -734,7 +702,6 @@ public class MainCRA extends MainEntryPoint {
 		
 		columnSortHandler.setComparator(cccDataGrid.getColumn(1), 
 				(o1, o2) -> compareString(o1, o2, o1.getEnterpriseDesciption(), o2.getEnterpriseDesciption()));
-		
 		
 		columnSortHandler.setComparator(cccDataGrid.getColumn(2), 
 				(o1, o2) -> compareString(o1, o2, o1.getActivityDescription(), o2.getActivityDescription()));

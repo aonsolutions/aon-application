@@ -1440,6 +1440,18 @@ public interface Properties {
 		Property<String> getModificationUserProperty();
 	}
 	
+	
+	public interface ContractAttachProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getContractProperty();
+		Property<String> getDescriptionProperty();
+		Property<Byte> getTypeProperty();
+		Property<Timestamp> getAttachDateProperty();
+		Property<String> getDriveIdProperty();
+	}
+	
+	
 	public interface TariffProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

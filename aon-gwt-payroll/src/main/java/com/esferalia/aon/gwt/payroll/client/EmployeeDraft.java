@@ -697,23 +697,25 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.contractTypeLB, contractData.getContractType());
 		
 		Integer contractTypeInt = null;
-		try {
-			contractTypeInt = Integer.parseInt(contractData.getContractType());
-			if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
-				employee.showPartialTimeContract();
-				if(employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
-					employee.createJourneyDurationWarning();
-				} else {
-					employee.createJourneyDurationInfo(employeeDraftObject.getContractData().getContractJourneyDuration().getJourneyText());
-				}
-			} else
-				employee.showElementsFullTimeContract();
-		} catch (NumberFormatException e) {
-			// Not use here
+		if(AonStringUtils.isNotBlank(contractData.getContractType())) {
+			try {
+				contractTypeInt = Integer.parseInt(contractData.getContractType());
+				if(AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)) {
+					employee.showPartialTimeContract();
+					if(employeeDraftObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().isEmpty()) {
+						employee.createJourneyDurationWarning();
+					} else {
+						employee.createJourneyDurationInfo(employeeDraftObject.getContractData().getContractJourneyDuration().getJourneyText());
+					}
+				} else
+					employee.showElementsFullTimeContract();
+			} catch (NumberFormatException e) {
+				// Not use here
+			}
+			
+			employee.updateModality(contractTypeInt);
+			setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
 		}
-		
-		employee.updateModality(contractTypeInt);
-		setSelectedValueLB(employee.modality, contractData.getContractModel()+"");
 		
 		employee.startDate.setValue(contractData.getStartDate());
 		employee.seniorityDate.setValue(contractData.getSeniorityDate());
@@ -732,16 +734,18 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		
-		Double partialityCoef = contractData.getPartialityCoef();
-		if( (null == partialityCoef || partialityCoef == 0.00) && 
-				(null != contractTypeInt && (AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)))) {
+		if(AonStringUtils.isNotBlank(contractData.getContractType())) {
+			Double partialityCoef = contractData.getPartialityCoef();
+			if( (null == partialityCoef || partialityCoef == 0.00) && 
+					(null != contractTypeInt && (AonNumberUtils.between(contractTypeInt, 200, 300) || AonNumberUtils.between(contractTypeInt, 500, 599) || AonNumberUtils.equals(contractTypeInt, 0)))) {
+				
+				partialityCoef = calculatePartialityCoef();
+				contractData.setPartialityCoef(partialityCoef);
+			}
 			
-			partialityCoef = calculatePartialityCoef();
-			contractData.setPartialityCoef(partialityCoef);
+			if(null != contractData.getPartialityCoef())
+				employee.partialityCoef.setValue(contractData.getPartialityCoef());	
 		}
-		
-		if(null != contractData.getPartialityCoef())
-			employee.partialityCoef.setValue(contractData.getPartialityCoef());	
 	}
 	
 	private Double calculatePartialityCoef() {

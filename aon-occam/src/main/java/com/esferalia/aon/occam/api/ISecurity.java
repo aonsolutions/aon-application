@@ -105,7 +105,8 @@ public interface ISecurity {
 	
 	
 	// CERTIFICATE
-	public Certificate getCertificate(AONContext ctx, UserFilter userFilter ) ; 
+	public Certificate getCertificate(AONContext ctx, Integer userId, String certificateType);
+	public Certificate getCertificate(AONContext ctx, UserFilter userFilter) ;
 	public Certificate insertCertificate(AONContext ctx, UserFilter userFilter , Certificate certificate) ;
 	public Certificate getCertificateSEPE(AONContext ctx, Integer domainId);
 	
@@ -117,4 +118,5 @@ public interface ISecurity {
 	
 	@Deprecated
 	public void saveUserFinancePortal(AONContext ctx, Integer userId);
+
 }

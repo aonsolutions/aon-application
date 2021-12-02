@@ -419,6 +419,12 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface ContractAttachFilter{
+		Filter filter(ContractAttachProperties properties);
+	}
+	
+	
+	@FunctionalInterface
 	public interface IrpfDataFilter{
 		Filter filter(IrpfDataProperties properties);
 	}

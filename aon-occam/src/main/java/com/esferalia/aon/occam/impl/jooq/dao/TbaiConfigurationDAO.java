@@ -25,19 +25,15 @@ public class TbaiConfigurationDAO {
 			.and(f.getNameProperty().eq(AppParam.TBAI_ACTIVE.toString())))
 			.findFirst().orElse(new ApplicationParameter());
 		
-		ApplicationParameter defaultCertificate = AppParamDAO.getApplicationParameterStream(ctx, f -> 
-			f.getDomainProperty().eq(ctx.getDomainId())	
-			.and(f.getNameProperty().eq(AppParam.TBAI_DEFAULT_CERTIFICATE.toString())))
-			.findFirst().orElse(new ApplicationParameter());
-		
 		ApplicationParameter test = AppParamDAO.getApplicationParameterStream(ctx, f -> 
 			f.getDomainProperty().eq(ctx.getDomainId())
 			.and(f.getNameProperty().eq(AppParam.TBAI_TEST.toString())))
 			.findFirst().orElse(new ApplicationParameter());
-			
+
 		return new TbaiConfiguration()
-				.setAdministration(Administration.safeValueOf(Integer.parseInt(administration.getValue())))
-				.setDefaultCertificate(defaultCertificate.getValue() != null ? Integer.parseInt(defaultCertificate.getValue()) : null)
+				.setAdministration(administration.getValue() != null
+					? Administration.safeValueOf(Integer.parseInt(administration.getValue()))
+					: Administration.UNKNOWN)
 				.setTest(test.getValue() != null && ("true".equalsIgnoreCase(test.getValue()) || "1".equals(test.getValue())))
 				.setActive(active.getValue() != null && ("true".equalsIgnoreCase(active.getValue()) || "1".equals(active.getValue())));
 	}
@@ -48,10 +44,6 @@ public class TbaiConfigurationDAO {
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.TBAI_ACTIVE.toString(),
 				Boolean.toString(tc.isActive()));
-		
-		AppParamDAO.insertApplicationParameter(ctx, 
-				AppParam.TBAI_DEFAULT_CERTIFICATE.toString(),
-				Integer.toString(tc.getDefaultCertificate()));
 		
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.TBAI_TEST.toString(),

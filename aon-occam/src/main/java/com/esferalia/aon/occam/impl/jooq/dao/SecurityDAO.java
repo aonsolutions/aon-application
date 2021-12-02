@@ -22,11 +22,13 @@ import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
 import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.RattachTag.RATTACH_TAG;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Role.ROLE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Tag.TAG;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
@@ -51,6 +53,7 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record6;
 import org.jooq.Record8;
+import org.jooq.Result;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
@@ -86,8 +89,10 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
@@ -96,6 +101,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DomainAppPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
@@ -1160,7 +1166,6 @@ public class SecurityDAO {
 				.set(DOMAIN_APPLICATION_MODULE.DOMAIN_APPLICATION, domainApplication)
 				.set(DOMAIN_APPLICATION_MODULE.MODULE, module.value())
 				.execute();
-				;
 		}
 	}	
 	
@@ -1171,9 +1176,100 @@ public class SecurityDAO {
 			.execute();
 	}
 	
+	public static Certificate getCertificate(AONContext ctx, Integer userId, String certificateType) {
+		Certificate certificate;
+		DSLContext dslContext = ctx.getDslContext();
+		
+		Integer parentDomainId = dslContext.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(ctx.getDomainId())).fetchOne(DOMAIN.PARENT);
+		Record userRegistryRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
+		Integer userRegistryId = userRegistryRecord.get(USER.REGISTRY);
+		Integer userRegistryDomain = userRegistryRecord.get(USER.DOMAIN);
+		Integer enterpriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(ctx.getDomainId())).fetchOne(ENTERPRISE.REGISTRY);
+		Integer enterpriseParentId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(parentDomainId)).fetchOne(ENTERPRISE.REGISTRY);
+		
+		certificate = getUserCertificateNew(dslContext, userRegistryId, certificateType);
+		
+		if(null != certificate) return certificate;
+		
+		certificate = getEnterpriseCertificateNew(dslContext, enterpriseId, certificateType);
+		
+		if(null != certificate) return certificate;
+		
+		certificate = getEnterpriseParentCertificateNew(dslContext, enterpriseParentId, userRegistryDomain, certificateType);
+		
+		if(null != certificate) return certificate;
+
+		if(AonStringUtils.equalsIgnoreCase(certificateType, "TGSS")) {
+			certificate = getCertificate(ctx, f -> f.getIdProperty().eq(userId))
+					.orElseThrow(CertificateNotFoundException::new);
+			if(null != certificate) return certificate;
+		} else {
+			certificate = getCertificateSEPE(ctx, ctx.getDomainId())
+					.orElseThrow(CertificateNotFoundException::new);
+			if(null != certificate) return certificate;
+		}
+		
+		throw new CertificateNotFoundException();
+	}
 	
+	private static Certificate getUserCertificateNew(DSLContext dslContext, Integer userRegistryId, String certificateType) {
+		Record certificateRecord = dslContext.select().from(RATTACH)
+				.innerJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
+				.innerJoin(TAG).on(RATTACH_TAG.TAG.eq(TAG.ID), TAG.TYPE.eq(TagType.CERTIFICATE.value()), TAG.NAME.eq(certificateType))
+				.where(RATTACH.TYPE.eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value()))
+				.and(RATTACH.REGISTRY.eq(userRegistryId))
+				.fetchOne();
+		
+		if(null == certificateRecord) return null;
+		
+		String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
+		
+		return new Certificate()
+				.setType(MimeType.PKCS12.name())
+				.setPassword(password)
+				.setCertificate(certificateRecord.get(RATTACH.DATA));
+	}
 	
-	public static Optional<Certificate> getCertificate(AONContext aonContext, UserFilter userFilter ) {
+	private static Certificate getEnterpriseCertificateNew(DSLContext dslContext, Integer enterpriseId, String certificateType) {
+		Record certificateRecord = dslContext.select().from(RATTACH)
+				.innerJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
+				.innerJoin(TAG).on(RATTACH_TAG.TAG.eq(TAG.ID), TAG.TYPE.eq(TagType.CERTIFICATE.value()), TAG.NAME.eq(certificateType))
+				.where(RATTACH.TYPE.eq((byte)4))
+				.and(RATTACH.REGISTRY.eq(enterpriseId))
+				.fetchOne();
+		
+		if(null == certificateRecord) return null;
+
+		String password = null;
+		if(certificateRecord.get(RATTACH.DESCRIPTION).contains("HIDE"))
+			password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
+		
+		return new Certificate()
+				.setType(MimeType.PKCS12.name())
+				.setPassword(password)
+				.setCertificate(certificateRecord.get(RATTACH.DATA));
+	}
+	
+	private static Certificate getEnterpriseParentCertificateNew(DSLContext dslContext, Integer enterpriseParentId, Integer userRegistryDomain, String certificateType) {
+		Record certificateRecord = dslContext.select().from(RATTACH)
+				.innerJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
+				.innerJoin(TAG).on(RATTACH_TAG.TAG.eq(TAG.ID), TAG.TYPE.eq(TagType.CERTIFICATE.value()), TAG.NAME.eq(certificateType))
+				.where(RATTACH.TYPE.eq((byte)4))
+				.and(RATTACH.SECURITY_LEVEL.eq((byte)0).or(RATTACH.SECURITY_LEVEL.eq((byte)1).and(RATTACH.DOMAIN.eq(userRegistryDomain))))
+				.and(RATTACH.REGISTRY.eq(enterpriseParentId))
+				.fetchOne();
+		
+		if(null == certificateRecord) return null;
+		
+		String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
+		
+		return new Certificate()
+				.setType(MimeType.PKCS12.name())
+				.setPassword(password)
+				.setCertificate(certificateRecord.get(RATTACH.DATA));
+	}
+	
+	public static Optional<Certificate> getCertificate(AONContext aonContext, UserFilter userFilter) {
 		return 
 		getUserCertificate(aonContext.getDslContext(), userFilter)
 		.or(()->getDomainCertificate(aonContext.getDslContext(), userFilter))
@@ -1324,21 +1420,28 @@ public class SecurityDAO {
 	public static Optional<Certificate> getCertificateSEPE(AONContext aonContext, Integer domainId) {
 		return getCertificateSEPE(aonContext.getDslContext(), domainId);
 	}
-
-	private static Optional<Certificate> getCertificateSEPE(DSLContext dslContext, Integer domainId) {
-		return dslContext
-		.select()
-		.from(ENTERPRISE)
-		.innerJoin(REGISTRY).onKey()
-		.innerJoin(RATTACH).on(REGISTRY.ID.eq(RATTACH.REGISTRY), RATTACH.TYPE.eq(DIGITAL_CERTIFICATE.value()) )
-		.innerJoin(RADDINFO).on(REGISTRY.ID.eq(RADDINFO.REGISTRY), RADDINFO.ATTRIBUTE.eq(DIGITAL_CERTIFICATE_PASSWORD))
-		.where(ENTERPRISE.DOMAIN.eq(domainId))
-		.fetchOptional()
-		.map(r -> new Certificate()
-		.setType(MimeType.PKCS12.name())
-		.setPassword(r.get(RADDINFO.VALUE))
-		.setCertificate(r.get(RATTACH.DATA))
-		);
+	
+	public static Optional<Certificate> getCertificateSEPE(DSLContext dslContext, Integer domainId ) {
+		Certificate certificate = null; 
+		Result<Record> rattachRecords = dslContext
+				.select()
+				.from(ENTERPRISE)
+				.innerJoin(REGISTRY).onKey()
+				.innerJoin(RATTACH).on(REGISTRY.ID.eq(RATTACH.REGISTRY), RATTACH.TYPE.eq(DIGITAL_CERTIFICATE.value()) )
+				.innerJoin(RADDINFO).on(REGISTRY.ID.eq(RADDINFO.REGISTRY), RADDINFO.ATTRIBUTE.eq(DIGITAL_CERTIFICATE_PASSWORD))
+				.where(ENTERPRISE.DOMAIN.eq(domainId))
+				.fetch();
+		
+		for(Record r : rattachRecords) {
+			Result<Record> tagRecords = dslContext.select().from(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(r.get(RATTACH.ID))).fetch();
+			if(tagRecords.isEmpty())
+				certificate = new Certificate()
+						.setType(MimeType.PKCS12.name())
+						.setPassword(r.get(RADDINFO.VALUE))
+						.setCertificate(r.get(RATTACH.DATA));
+		}
+		
+		return null == certificate ? Optional.empty() : Optional.of(certificate);
 		
 	}
 	

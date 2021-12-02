@@ -5,9 +5,9 @@ import { API_URL } from "../environments/environments.js";
 
 // PRINT CONFIGURATION
 export const getInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/configuration`, data);
+export const saveInvoiceConfiguration = (data) =>  post(`${API_URL}/invoice/configuration`, data);
 
 export const getPrintInvoiceConfiguration = (data) =>  get(`${API_URL}/invoice/print_configuration`, data);
-
 export const savePrintInvoiceConfiguration = (data) =>  post(`${API_URL}/invoice/print_configuration`, data);
 
 // INVOICE

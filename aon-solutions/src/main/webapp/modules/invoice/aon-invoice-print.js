@@ -7,7 +7,7 @@ import '../../components/aon-viewer.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-card.js';
 
-import { EVENT, MSG, TAG } from "../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../environments/environments.js";
 import { getPrintInvoiceConfiguration, savePrintInvoiceConfiguration } from '../../services/invoiceService.js';
 import { getReader } from '../../services/utils.js';
 
@@ -22,11 +22,20 @@ import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
 import { AonColor } from '../../components/aon-color.js';
 import { AonSwitch } from '../../components/aon-switch.js';
+import { AonCard } from '../../components/aon-card.js';
+import { AonSlider } from '../../components/aon-slider.js';
+import { AonInput } from '../../components/aon-input.js';
 
 export class AonInvoicePrint extends AonElement {
 
   DATA;
   DATA_CARD;
+  DATA_TABLE;
+  LOGO;
+  COMPANY;
+  HEADER;
+  FOOTER;
+
   FILE;
   VIEWER;
   printConfiguration;
@@ -39,62 +48,69 @@ export class AonInvoicePrint extends AonElement {
     this.setAttribute('id', id);
   }
 
+	get autosave() {
+		return this.getAttribute(CONSTANT.AUTOSAVE);
+  	}
+
+  	set autosave(autosave) {
+		this.setAttribute(CONSTANT.AUTOSAVE, autosave);
+	}
+
   constructor () {
     super();
   }
 
   connectedCallback () {
     this.initialize();
-    this.getApplication().setDragAndDrop(false);
-    this.innerHTML = this.isMobile() ? 
-        `
-          <div style="display:block;">
-            <div id="${this.DATA}" class="aonSubContent" style="width:100%">
-              <aon-card id="${this.DATA_CARD}" title="PERSONALIZAR FACTURA"> </aon-card>
-            </div>
-            <div id="${this.FILE}" class="aonSubContent">
-
-            </div>
-          </div>
-        `
-      : `
-      <div style="display:flex; height:100%;">
-        <div id="${this.DATA}" class="aonSubContent" style="width:100%">
-          <aon-card id="${this.DATA_CARD}" title="${MSG.FILE_DATA}"> </aon-card>
-        </div>
-        <div id="${this.FILE}" class="aonSubContent">
-
-        </div>
-      </div>
-    `;
-    getPrintInvoiceConfiguration().then(r => {
-      this.printConfiguration = r;
-      this.build();
-    })
-  }
-
-
-  disconnectedCallback() {
-    this.getApplication().setDragAndDrop(true);
+    if(!this.printConfiguration) {
+      getPrintInvoiceConfiguration().then(r => {
+        this.printConfiguration = r;
+        this.build();
+      });
+    } else this.build();
   }
 
   initialize() {
     this.id = this.id || 'aonInvoicePrintConfiguration';
-    this.DATA = this.id + 'Data';
-    this.DATA_CARD = this.DATA + 'Card';
+    this.DATA = this.id + CONSTANT.DATA.initCap();
+    this.DATA_CARD = this.DATA + CONSTANT.CARD.initCap();
+    this.DATA_TABLE = this.DATA_CARD + CONSTANT.TABLE.initCap();
+    this.LOGO = this.id + CONSTANT.LOGO.initCap();
+    this.COMPANY = this.id + CONSTANT.COMPANY.initCap();
+    this.HEADER = this.id + CONSTANT.HEADER.initCap();
+    this.FOOTER = this.id + CONSTANT.FOOTER.initCap();
+    this.BORDER = this.id + 'Border';
+    this.REGISTRATION_DATA = this.id + 'RegistrationData';
+    this.CONTACT_DATA = this.id + 'ContactData';
+    this.LANGUAGE = this.id + 'Language';
+    this.THEME = this.id + 'Theme';
+    this.DETAILED = this.id + 'Detailed';
+    this.BACKGROUND = this.id + 'Background';
+    this.BACKGROUND_ADJUST = this.id + 'BackgroundAdjust';
+    this.PERSONALIZED = this.id + 'Personalized';
     this.FILE = this.id + 'File';
     this.VIEWER = this.id + 'Viewer';
   }
 
   build() {
-    let fileDiv = this.getElement(this.FILE);
+    let div = this.createElement(TAG.DIV);
+    this.appendChild(div);
+    if(!this.isMobile()){
+      div.style.display = 'flex';
+      div.style.height = '100%';
+    }
+    
+    let dataDiv = this.createElement(TAG.DIV, this.DATA, CSS.AON_SUB_CONTENT);
+    dataDiv.style.width = this.isMobile() ? '100%' : '50%';
+    dataDiv.style.height = '100%';
+    div.appendChild(dataDiv);
+
+    let fileDiv = this.createElement(TAG.DIV, this.FILE, CSS.AON_SUB_CONTENT);
     fileDiv.style.display = 'block';
     fileDiv.style.width = this.isMobile() ? '100%' : '50%';
     fileDiv.style.height = '100%';
+    div.appendChild(fileDiv);
     
-    let dataDiv = this.getElement(this.DATA);
-    dataDiv.style.width = this.isMobile() ? '100%' : '50%';
-    dataDiv.style.height = '100%';
 		if(localStorage.getItem('aon_solutions') === undefined || localStorage.getItem('aon_solutions') === null) {
       let offset1 = fileDiv.getBoundingClientRect();
       fileDiv.style.height = `calc(100vh - ${offset1.top + 2}px)`;
@@ -103,7 +119,7 @@ export class AonInvoicePrint extends AonElement {
   		dataDiv.style.height = `calc(100vh - ${offset2.top + 2}px)`;
     }
 
-    this.buildData();
+    this.buildData(dataDiv);
     this.reloadFile();
   }
 
@@ -131,22 +147,220 @@ export class AonInvoicePrint extends AonElement {
     } else viewer.printPdf();
   }
 
-  buildData() {
-    let card = this.getElement(this.DATA_CARD);
-    card.setContentHTML('');
-		let table = document.createElement('table');
-    table.id = 'aonInvoicePrintConfigurationTable';
-		table.style.width = '100%';
+  buildData(parent) {
+    let card = this.createAonElement(new AonCard(), this.DATA_CARD, MSG.CUSTOMIZE_INVOICE);
+    parent.appendChild(card);
+
+    let table = this.createAonElement(new AonBasicTable(), this.DATA_TABLE);
 		card.setContent(table);
 
-    let tr0 = document.createElement('tr');
-    table.appendChild(tr0);
+    table.addRow();
 
-    let tdFondo = document.createElement('td');
-    tdFondo.setAttribute('colspan', '2');
+    let logo = this.createAonElement(new AonSwitch(), this.LOGO, MSG.INCLUDE_LOGO);
+    logo.checked = this.printConfiguration.logo;
+    table.addCell(logo, 1).style.height = '60px';;
+    logo.setWidth('135px');
+    logo.onChange(() => {
+      this.printConfiguration.logo = logo.checked;
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+
+    let company = this.createAonElement(new AonSwitch(), this.COMPANY, MSG.INCLUDE_COMPANY_DATA);
+    company.checked = this.printConfiguration.company;
+    table.addCell(company, 1).style.height = '60px';
+    company.setWidth('135px');
+    company.onChange(() => {
+      this.printConfiguration.company = company.checked;
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    table.addRow();
+
+    let header = this.createAonElement(new AonSlider(), this.HEADER, MSG.HEADER);
+    header.min = 0;
+    header.max = 200;
+    table.addCell(header, 2).style.height = '60px';;
+    header.setValue(this.printConfiguration.header);
+    header.onChange(() => {
+      this.printConfiguration.header = header.value;
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+
+    table.addRow();
+
+    let footer = this.createAonElement(new AonSlider(), this.FOOTER, MSG.FOOTER);
+    footer.min = 0;
+    footer.max = 200;
+    table.addCell(footer, 2).style.height = '60px';;
+    footer.setValue(this.printConfiguration.footer);
+    footer.onChange(() => {
+      this.printConfiguration.footer = footer.value;
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+
+    table.addRow();
+
+    let detailed = this.createAonElement(new AonSwitch(), this.DETAILED, MSG.DETAILED);
+    detailed.checked = this.printConfiguration.detailed;
+    table.addCell(detailed, 1).style.height = '60px';;
+    detailed.setWidth('135px');
+    detailed.onChange(() => {
+      this.printConfiguration.detailed = detailed.checked;
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+
+    let border = this.createAonElement(new AonSwitch(), this.BORDER, MSG.BORDER);
+    border.checked = this.printConfiguration.border;
+    table.addCell(border, 1).style.height = '60px';;
+    border.setWidth('135px');
+    border.onChange(() => {
+      this.printConfiguration.border = border.checked;
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+
+    table.addRow();
+
+    let registrationData =  this.createAonElement(new AonSwitch(), this.REGISTRATION_DATA, MSG.INCLUDE_REGISTRATION_DATA);
+    registrationData.checked = this.printConfiguration.recordData;
+    table.addCell(registrationData, 1).style.height = '60px';;
+    registrationData.setWidth('135px');
+    registrationData.onChange(() => {
+      this.printConfiguration.recordData = recordData.checked;
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+
+    let contactData = this.createAonElement(new AonSwitch(), this.CONTACT_DATA, MSG.INCLUDE_CONTACT_DATA);
+    contactData.checked = this.printConfiguration.contactData;
+    table.addCell(contactData, 1).style.height = '60px';;
+    contactData.setWidth('135px');
+    contactData.onChange(() => {
+      this.printConfiguration.contactData = contactData.checked;
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+
+    table.addRow();
+
+    // let rgpd  = this.createAonElement(new AonInput(), this.RGPD, MSG.RGPD_URL);
+    // rgpd.value = this.printConfiguration.rgpd;
+    // rgpd.addEventListener(EVENT.CHANGE, () => {
+    //   this.printConfiguration.rgpd = rgpd.value;
+    //   if(this.autosave) this.save();
+    //   this.dispatchEvent(new Event(EVENT.CHANGE));
+    // })
+    // table.addCell(rgpd, 2).style.height = '60px';;
+
+    // table.addRow();
+
+    const languages = [
+      {value: Language.SPANISH, name: MSG.SPANISH},
+      {value: Language.ENGLISH, name: MSG.ENGLISH},
+      {value: Language.DEUTSCH, name: MSG.DEUTSCH},
+      {value: Language.BASQUE, name: MSG.BASQUE},
+      {value: Language.CATALAN, name: MSG.CATALAN},
+      {value: Language.GALICIAN, name: MSG.GALICIAN},
+    ];
+
+    let language = this.createAonElement(new AonSelect(), this.LANGUAGE, MSG.LANGUAGE);
+    language.setOptions(languages);
+    language.value = this.printConfiguration.language;
+    language.onChange(() => {
+      this.printConfiguration.language = language.value;
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    table.addCell(language, 1).style.height = '60px';;
+
+    const themes = [
+      {value: Theme.BLACK_AND_WHITE, name: MSG.BLACK_AND_WHITE},
+      {value: Theme.AON_BLUE, name: MSG.AON_BLUE},
+      {value: Theme.PERSONALIZED, name: MSG.PERSONALIZED}
+    ];
+
+    let bt = new AonBasicTable();
+    bt.id = 'themeTable';
+    table.addCell(bt, 1);
+    bt.addRow();
+
+    let themeSelect = this.createAonElement(new AonSelect(), this.THEME, MSG.THEME) ;
+    themeSelect.setOptions(themes);
+    themeSelect.value = this.printConfiguration.theme.theme;
+    themeSelect.addEventListener('change', () => {
+      this.printConfiguration.theme.theme = themeSelect.value;
+      this.getElement(this.PERSONALIZED)
+        .setDisabled(this.printConfiguration.theme.theme !== Theme.PERSONALIZED);
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+    bt.addCell(themeSelect);
+
+    let personalized = this.createAonElement(new AonIconButton(), this.PERSONALIZED, MSG.PERSONALIZED);
+    personalized.icon = 'palette';
+    personalized.onClick(() => {
+      if(this.printConfiguration.theme.theme === Theme.PERSONALIZED) {
+        this.buildThemeDialog();
+      }
+    });
+    bt.addCell(personalized);    
+    personalized.disabled = this.printConfiguration.theme.theme !== Theme.PERSONALIZED;
+
+    table.addRow(); 
+
+    let background = this.createAonElement(new AonSwitch(), this.BACKGROUND, MSG.BACKGROUND);
+    background.checked = this.printConfiguration.background;
+    table.addCell(background, 1).style.height = '60px';;
+    background.setWidth('135px');
+    background.onChange(() => {
+      if(background.checked == 'true') {
+        this.getElement(this.BACKGROUND_ADJUST).classList.remove(CSS.AON_NONE);
+        this.getElement( this.id + 'Upload').classList.remove(CSS.AON_NONE);
+      } else {
+        this.getElement(this.BACKGROUND_ADJUST).classList.add(CSS.AON_NONE);
+        this.getElement( this.id + 'Upload').classList.add(CSS.AON_NONE);
+        this.printConfiguration.backgroundRemove = true;
+        // if(this.autosave)
+          this.save();
+        this.dispatchEvent(new Event(EVENT.CHANGE));
+      }
+    });
+
+    let adjust = this.createAonElement(new AonSwitch(), this.BACKGROUND_ADJUST, MSG.BACKGROUND_ADJUST);
+    adjust.checked = this.printConfiguration.adjust;
+    table.addCell(adjust, 1);
+    if(!this.printConfiguration.background) {
+      adjust.classList.add(CSS.AON_NONE);
+    }
+    adjust.setWidth('135px');
+    adjust.onChange(() => {
+      this.printConfiguration.adjust = adjust.checked;
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
+    });
+
+    table.addRow();
 
     let uploadFondo = new AonUpload();
     uploadFondo.id = this.id + 'Upload';
+    if(!this.printConfiguration.background) {
+      uploadFondo.classList.add(CSS.AON_NONE);
+    }
     uploadFondo.setMessage(MSG.ATTACH_FILES_DRAGGING_DROPPING_BACKGROUND);
     uploadFondo.setDeleteMessage(MSG.DELETE_BACKGROUND_CONFIRM);
     uploadFondo.setShowDeleteButton(this.printConfiguration.background);
@@ -165,202 +379,20 @@ export class AonInvoicePrint extends AonElement {
       getReader(e.detail).then(f => {
         this.printConfiguration.backgroundRemove = false;
         this.printConfiguration.backgroundAttach = f;
-        this.save();
+				// if(this.autosave) 
+          this.save();
+        this.dispatchEvent(new Event(EVENT.CHANGE));
       });
     });
 
     uploadFondo.addEventListener(EVENT.DELETE, (e) => {
       this.printConfiguration.backgroundRemove = true;
-      this.save();
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
     });
 
-    tdFondo.appendChild(uploadFondo);
-		tr0.appendChild(tdFondo);
-
-    let tr = document.createElement('tr');
-    table.appendChild(tr);
-
-    let tdHeader= document.createElement('td');
-    tdHeader.setAttribute('colspan', '2');
-		tdHeader.innerHTML = `<aon-slider id="aonInvoicePrintConfigurationHeader" title="${MSG.HEADER}" min="0" max="200"></aon-slider>`;
-		tr.appendChild(tdHeader);
-		let header = document.getElementById('aonInvoicePrintConfigurationHeader');
-    header.setValue(this.printConfiguration.header);
-    header.addEventListener('change', () => {
-      this.printConfiguration.header = header.value;
-      this.save();
-    });
-
-    let tr2 = document.createElement('tr');
-    table.appendChild(tr2);
-
-    let tdFooter = document.createElement('td');
-    tdFooter.setAttribute('colspan', '2');
-    tdFooter.innerHTML = `<aon-slider id="aonInvoicePrintConfigurationFooter" title="${MSG.FOOTER}" min="0" max="200"></aon-slider>`;
-    tr2.appendChild(tdFooter);
-    let footer = document.getElementById('aonInvoicePrintConfigurationFooter');
-    footer.setValue(this.printConfiguration.footer);
-    footer.addEventListener('change', () => {
-      this.printConfiguration.footer = footer.value;
-      this.save();
-    });
-
-    let tr3 = document.createElement('tr');
-    table.appendChild(tr3);
-
-    let tdAdjust = document.createElement('td');
-    tdAdjust.setAttribute('colspan', '1');
-    tdAdjust.style.height = '60px';
-    tdAdjust.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationAdjust" title="${MSG.BACKGROUND_ADJUST}"></aon-switch>`;
-    tr3.appendChild(tdAdjust);
-    let adjust = document.getElementById('aonInvoicePrintConfigurationAdjust');
-    adjust.checked = this.printConfiguration.adjust;
-    adjust.setWidth('135px');
-    adjust.addEventListener('change', () => {
-      this.printConfiguration.adjust = adjust.checked;
-      this.save();
-    });
-
-    let tdLogo = document.createElement('td');
-    tdLogo.setAttribute('colspan', '1');
-    tdLogo.style.height = '60px';
-    tdLogo.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationLogo" title="${MSG.INCLUDE_LOGO}"></aon-switch>`;
-    tr3.appendChild(tdLogo);
-    let logo = document.getElementById('aonInvoicePrintConfigurationLogo');
-    logo.checked = this.printConfiguration.logo;
-    logo.setWidth('135px');
-    logo.addEventListener('change', () => {
-      this.printConfiguration.logo = logo.checked;
-      this.save();
-    });
-
-    let tr5 = document.createElement('tr');
-    table.appendChild(tr5);
-
-    let tdDetailed= document.createElement('td');
-    tdDetailed.setAttribute('colspan', '1');
-    tdDetailed.style.height = '60px';
-    tdDetailed.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationDetailed" title="${MSG.DETAILED}"></aon-switch>`;
-    tr5.appendChild(tdDetailed);
-    let detailed = document.getElementById('aonInvoicePrintConfigurationDetailed');
-    detailed.checked = this.printConfiguration.detailed;
-    detailed.setWidth('135px');
-    detailed.addEventListener('change', () => {
-      this.printConfiguration.detailed = detailed.checked;
-      this.save();
-    });
-
-    let tdCompany= document.createElement('td');
-    tdCompany.setAttribute('colspan', '1');
-    tdCompany.style.height = '60px';
-    tdCompany.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationCompanyData" title="${MSG.INCLUDE_COMPANY_DATA}"></aon-switch>`;
-    tr5.appendChild(tdCompany);
-    let company = document.getElementById('aonInvoicePrintConfigurationCompanyData');
-    company.checked = this.printConfiguration.company;
-    company.setWidth('135px');
-    company.addEventListener('change', () => {
-      this.printConfiguration.company = company.checked;
-      this.save();
-    });
-
-    let tr6 = document.createElement(TAG.TR);
-    table.appendChild(tr6);
-
-    let tdRecordData= document.createElement(TAG.TD);
-    tdRecordData.setAttribute('colspan', '1');
-    tdRecordData.style.height = '60px';
-    tdRecordData.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationRecordData" title="${MSG.INCLUDE_REGISTRATION_DATA}"></aon-switch>`;
-    tr6.appendChild(tdRecordData);
-    let recordData = document.getElementById('aonInvoicePrintConfigurationRecordData');
-    recordData.checked = this.printConfiguration.recordData;
-    recordData.setWidth('135px');
-    recordData.addEventListener('change', () => {
-      this.printConfiguration.recordData = recordData.checked;
-      this.save();
-    });
-
-    let tdContactData = document.createElement(TAG.TD);
-    tdContactData.setAttribute('colspan', '1');
-    tdContactData.style.height = '60px';
-    tdContactData.innerHTML = `<aon-switch id="aonInvoicePrintConfigurationContactData" title="${MSG.INCLUDE_CONTACT_DATA}"></aon-switch>`;
-    tr6.appendChild(tdContactData);
-    let contactData = document.getElementById('aonInvoicePrintConfigurationContactData');
-    contactData.checked = this.printConfiguration.contactData;
-    contactData.setWidth('135px');
-    contactData.addEventListener('change', () => {
-      this.printConfiguration.contactData = contactData.checked;
-      this.save();
-    });
-
-    let tr7 = document.createElement(TAG.TR);
-    table.appendChild(tr7);
-
-    const languages = [
-      {value: Language.SPANISH, name: MSG.SPANISH},
-      {value: Language.ENGLISH, name: MSG.ENGLISH},
-      {value: Language.DEUTSCH, name: MSG.DEUTSCH},
-      {value: Language.BASQUE, name: MSG.BASQUE},
-      {value: Language.CATALAN, name: MSG.CATALAN},
-      {value: Language.GALICIAN, name: MSG.GALICIAN},
-    ];
-
-    let tdLanguage = document.createElement(TAG.TD);
-    tdLanguage.setAttribute('colspan', '2');
-    tdLanguage.style.height = '60px';
-    let language = new AonSelect() ;
-    language.id = 'aonInvoicePrintConfigurationLanguage';
-    language.title = MSG.LANGUAGE;
-    language.setOptions(languages);
-    language.value = this.printConfiguration.language;
-    language.addEventListener('change', () => {
-      this.printConfiguration.language = language.value;
-      this.save();
-    });
-    tdLanguage.appendChild(language);
-    tr7.appendChild(tdLanguage);
-
-    let tr8 = document.createElement(TAG.TR);
-    table.appendChild(tr8);
-
-    const themes = [
-      {value: Theme.BLACK_AND_WHITE, name: MSG.BLACK_AND_WHITE},
-      {value: Theme.AON_BLUE, name: MSG.AON_BLUE},
-      {value: Theme.PERSONALIZED, name: MSG.PERSONALIZED}
-    ];
-
-    let tdTheme = document.createElement(TAG.TD);
-    tdTheme.setAttribute('colspan', '2');
-    tdTheme.style.height = '60px';
-    tr8.appendChild(tdTheme);
-    
-    let bt = new AonBasicTable();
-    bt.id = 'themeTable';
-    tdTheme.appendChild(bt);
-    bt.addRow();
-
-    let themeSelect = new AonSelect() ;
-    themeSelect.id = 'aonInvoicePrintConfigurationTheme';
-    themeSelect.title = MSG.THEME;
-    themeSelect.setOptions(themes);
-    themeSelect.value = this.printConfiguration.theme.theme;
-    themeSelect.addEventListener('change', () => {
-      this.printConfiguration.theme.theme = themeSelect.value;
-      this.getElement('aonInvoicePrintConfigurationThemeColor')
-        .setDisabled(this.printConfiguration.theme.theme !== Theme.PERSONALIZED);
-      this.save();
-    });
-    bt.addCell(themeSelect);
-
-    let colorInput = new AonIconButton();
-    colorInput.id = 'aonInvoicePrintConfigurationThemeColor';
-    colorInput.icon = 'palette';
-    colorInput.addEventListener(EVENT.CLICK, () => {
-      if(this.printConfiguration.theme.theme === Theme.PERSONALIZED) {
-        this.buildThemeDialog();
-      }
-    });
-    bt.addCell(colorInput);    
-    colorInput.disabled = this.printConfiguration.theme.theme !== Theme.PERSONALIZED;
+    table.addCell(uploadFondo, 2);
   }
 
   buildThemeDialog() {
@@ -372,7 +404,9 @@ export class AonInvoicePrint extends AonElement {
 		d.setTitle(MSG.PERSONALIZED_THEME);
 		d.setContent(div);
 		d.addAcceptAction(() => {
-      this.save();
+      // if(this.autosave) 
+        this.save();
+      this.dispatchEvent(new Event(EVENT.CHANGE));
 		});
 		d.open();
 
@@ -391,23 +425,34 @@ export class AonInvoicePrint extends AonElement {
 
     let textColor = new AonColor();
     textColor.id = 'aonColorTextColor';
-    textColor.title = 'Color del Texto';
+    textColor.title = 'Texto de la Factura';
     textColor.value = this.printConfiguration.theme.textColor;
     textColor.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.textColor = textColor.value);
     t1.addCell(textColor);
 
+    t1.addRow();
+
     let customerBackgroundColor = new AonColor();
     customerBackgroundColor.id = 'aonColorCustomerBackgroundColor';
-    customerBackgroundColor.title = 'Color del Fondo (Cliente)';
+    customerBackgroundColor.title = 'Fondo Datos Cliente';
     customerBackgroundColor.value = this.printConfiguration.theme.customerBackgroundColor;
     customerBackgroundColor.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.customerBackgroundColor = customerBackgroundColor.value);
     t1.addCell(customerBackgroundColor);
+
+    t1.addRow();
+
+    let titelTextColor = new AonColor();
+    titelTextColor.id = 'aonColorTitleTextColor';
+    titelTextColor.title = 'Texto Preimpreso';
+    titelTextColor.value = this.printConfiguration.theme.titleTextColor;
+    titelTextColor.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.titleTextColor = titelTextColor.value);
+    t1.addCell(titelTextColor);
 
     let div2 = this.createElement(TAG.DIV);
     div2.style.marginTop = '15px';
     let span2 = this.createElement(TAG.SPAN);
     span2.style.color = 'gray';
-    span2.innerHTML = 'Título Cajas';
+    span2.innerHTML = 'Tablas';
     div2.appendChild(span2);
     div.appendChild(div2);
 
@@ -418,63 +463,36 @@ export class AonInvoicePrint extends AonElement {
 
     let boxTitleBackground = new AonColor();
     boxTitleBackground.id = 'aonColorBoxTitleBackgroundColor';
-    boxTitleBackground.title = 'Color del Fondo';
+    boxTitleBackground.title = 'Fondo Título';
     boxTitleBackground.value = this.printConfiguration.theme.boxTitleBackgroundColor;
     boxTitleBackground.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.boxTitleBackgroundColor = boxTitleBackground.value);
     t2.addCell(boxTitleBackground);
 
+    t2.addRow();
+
     let boxTitleText = new AonColor();
     boxTitleText.id = 'aonColorBoxTitleTextColor';
-    boxTitleText.title = 'Color del Texto';
+    boxTitleText.title = 'Texto Título';
     boxTitleText.value = this.printConfiguration.theme.boxTitleTextColor;
     boxTitleText.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.boxTitleTextColor = boxTitleText.value);
     t2.addCell(boxTitleText);
 
     t2.addRow();
 
-    let boxTitleBorder = new AonSwitch();
-    boxTitleBorder.id = 'aonSwitchBoxTitleBorder';
-    boxTitleBorder.checked = this.printConfiguration.theme.boxTitleBorder;
-    boxTitleBorder.title = 'Borde';
-    boxTitleBorder.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.boxTitleBorder = boxTitleBorder.checked);
-    t2.addCell(boxTitleBorder, 2);
-
-    let div3 = this.createElement(TAG.DIV);
-    div3.style.marginTop = '15px';
-    let span3 = this.createElement(TAG.SPAN);
-    span3.style.color = 'gray';
-    span3.innerHTML = 'Contenido Cajas';
-    div3.appendChild(span3);
-    div.appendChild(div3);
-
-    let t3 = new AonBasicTable();
-    t3.id = 'aonTable3';
-    div.appendChild(t3);
-    t3.addRow();
-
     let boxBodyBackground = new AonColor();
     boxBodyBackground.id = 'aonColorBoxBodyBackgroundColor';
     boxBodyBackground.title = 'Color del Fondo';
     boxBodyBackground.value = this.printConfiguration.theme.boxBodyBackgroundColor;
     boxBodyBackground.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.boxBodyBackgroundColor = boxBodyBackground.value);
-    t3.addCell(boxBodyBackground);
+    t2.addCell(boxBodyBackground);
+  }
 
-    let boxBodyText = new AonColor();
-    boxBodyText.id = 'aonColorBoxBodyTextColor';
-    boxBodyText.title = 'Color del Texto';
-    boxBodyText.value = this.printConfiguration.theme.boxBodyTitleColor;
-    boxBodyText.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.boxBodyTitleColor = boxBodyText.value);
-    t3.addCell(boxBodyText);
+  getPrintConfiguration() {
+    return this.printConfiguration;
+  }
 
-    t3.addRow();
-
-    let boxBodyBorder = new AonSwitch();
-    boxBodyBorder.id = 'aonSwitchBoxBodyBorder';
-    boxBodyBorder.checked = this.printConfiguration.theme.boxBodyBorder;
-    boxBodyBorder.title = 'Borde';
-    boxBodyBorder.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.boxBodyBorder = boxBodyBorder.checked);
-    t3.addCell(boxBodyBorder, 2);
-
+  setPrintConfiguration(printConfiguration) {
+    this.printConfiguration = printConfiguration;
   }
 
 }

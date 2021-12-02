@@ -244,7 +244,7 @@ public class MainDigitalCertificatesObject {
 		if (dniPattern.test(ipf.toUpperCase()))
 			return "1";
 		else
-			return "2";
+			return "6";
 	}
 	
 	public boolean hasMoraThanOneSEPECertificates() {

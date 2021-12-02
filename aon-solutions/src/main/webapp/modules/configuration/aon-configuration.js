@@ -20,7 +20,7 @@ import { AonWorkgroup } from "./groups/aon-workgroup.js";
 import { AonReg } from "../registry/aon-reg.js";
 import * as LS from '../../services/localStorageService.js';
 import { Registry } from "../../models/registry/Registry.js";
-import { AonInvoicePrint } from "../invoice/aon-invoice-print.js";
+import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
 
 export class AonConfiguration extends AonElement {
@@ -239,8 +239,8 @@ export class AonConfiguration extends AonElement {
   }
 
 	buildInvoiceConfiguration() {
-    // this.getApplication().setContent(new AonInvoiceConfiguration());
-    this.getApplication().setContent(new AonInvoicePrint());
+    this.getApplication().setContent(new AonInvoiceConfiguration());
+    // this.getApplication().setContent(new AonInvoicePrint());
 	}
   
   buildMessengerConfiguration(){

@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 import { DomainUserRoles } from "../../models/DomainUserRoles.js";
 import { getDomainUserRoles, getIDC, getSalaryPdf, getTA, movDelete, updateContracts } from "../../services/service.js";
-import { setValueName } from "../../services/utils.js";
+import { setValueName, waitEl } from "../../services/utils.js";
 import { AonPayrollList } from "./payroll/aon-payroll-list.js";
 import { AonDocumentalList } from "../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../documental/aon-mobile-documental-list.js";
@@ -78,9 +78,8 @@ export class AonLaboral extends AonElement {
   }
 
   buildToolbar(){
-    if(this.isMobile()){
+    if(this.isMobile())
 			this.applicationEl.addMobileSidenavHeader(Apps.PAYROLL);
-		}
 
     let laboralOptions = [];
     let conf = [];
@@ -288,17 +287,19 @@ export class AonLaboral extends AonElement {
             aonView.setFilter({type: 'system'});
             break;
           case PAYROLL_VIEWS.AON_CONTRACT_LIST:
+            if(this.isMobile()) 
               aonView = new AonContractList();
+            else
+              this.goContractDesk();
             break;
           case PAYROLL_VIEWS.AON_CERT:
-              GWT.load(GWT.MAIN_DIGITAL_CERTIFICATES, this.applicationEl.CONTENT);
+            this.loadGwt(GWT.MAIN_DIGITAL_CERTIFICATES);
             break;
           case PAYROLL_VIEWS.AON_CTA_LIST:
-            if(this.isMobile()){
-                aonView = new AonCtaList();
-            } else {
-                GWT.load(GWT.MAIN_CCC, this.applicationEl.CONTENT);
-            }
+            if(this.isMobile())
+              aonView = new AonCtaList();
+            else 
+              this.loadGwt(GWT.MAIN_CCC);
             break;
           case PAYROLL_VIEWS.AON_MOVEMENTS_LIST:
             aonView = new AonMovementsList();
@@ -318,6 +319,27 @@ export class AonLaboral extends AonElement {
         }
       resolve(aonView);
     });
+  }
+
+  goContractDesk(){
+    this.getApplication().removeToolbarOptions();
+
+    this.loadGwt(GWT.MAIN_CONTRATA);
+
+    this.getApplication().closeSidenav();
+  }
+
+  loadGwt(module){
+
+    let application = this.getApplication();
+    
+    this.clearElementById(application.CONTENT);
+
+    application.startLoader();
+
+    GWT.load(module, application.CONTENT);
+
+    waitEl(`#${application.CONTENT} .aon_toolbar`).finally(()=> application.stopLoader() );
   }
 
   isComunica(){

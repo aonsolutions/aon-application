@@ -78,6 +78,10 @@ export class AonSlider extends AonElement {
 		this.value = value;
 		this.getElement(this.INPUT).value = value;
 	}
+
+	onchange(fn) {
+		this.addEventListener(EVENT.CHANGE, fn);
+	}
 }
 
 if(!window.customElements.get(TAG.AON_SLIDER)){

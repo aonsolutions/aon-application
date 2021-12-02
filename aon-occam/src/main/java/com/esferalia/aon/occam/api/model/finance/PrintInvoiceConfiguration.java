@@ -19,6 +19,7 @@ public class PrintInvoiceConfiguration {
 	private Attach background;
 	private boolean recordData;
 	private boolean contactData;
+	private boolean border;
 	private AonLanguage language;
 	
 	private PrintInvoiceThemeConfiguration theme;
@@ -137,7 +138,27 @@ public class PrintInvoiceConfiguration {
 		return this;
 	}
 
+	public boolean isBorder() {
+		return border;
+	}
+	
+	public boolean isBoxBodyBorder() {
+		//TODO
+		return border;
+	}
+	
+	public boolean isBoxTitleBorder() {
+		//TODO
+		return border;
+	}
+
+	public PrintInvoiceConfiguration setBorder(boolean border) {
+		this.border = border;
+		return this;
+	}
+
 	public PrintInvoiceThemeConfiguration getTheme() {
+		if(theme == null) theme = new PrintInvoiceThemeConfiguration();
 		return theme;
 	}
 	

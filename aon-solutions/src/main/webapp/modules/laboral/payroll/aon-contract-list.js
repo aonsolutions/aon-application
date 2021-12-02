@@ -35,7 +35,7 @@ export class AonContractList extends AonElement {
     this.TABLE_ID = this.id + "Table";
     this.applicationEl = this.getApplication();
     this.applicationParentEl = this.getApplicationParent();
-    this._filter= {
+    this._filter = {
       contractAll: false 
     };
   }
@@ -129,7 +129,7 @@ export class AonContractList extends AonElement {
           let options = {
             icon: MATERIAL_ICONS.ASSIGNMENT,
             title: res.name,
-            subtitle: `(${res.ipf}) ${AonDateUtils.setDate(res.startDateParse)}`,
+            subtitle: `(${res.ipf}) ${res.startDateParse}`,
           };
           if (res.contractType) options.option = this.getOptions(res);
           aonTable.addLi(options, idx);

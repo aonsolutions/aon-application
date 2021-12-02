@@ -13,7 +13,9 @@
 		method="#{actionDenied.renderedCommand}">
 		<aon:componentGroupMethod family="javax.faces.Panel"
 			method="#{actionDenied.renderedGroup}" />
-		<ui:insert name="content" />
+		<aon:div style="overflow: auto; height: calc(100vh - 103px)" >
+			<ui:insert name="content" />
+		</aon:div>
 	</aon:componentGroup>
 
 </ui:composition>

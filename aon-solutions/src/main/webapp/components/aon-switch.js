@@ -164,7 +164,6 @@ export class AonSwitch extends AonElement {
     let span = this.getElement(this.TITLE);
     span.style.marginBottom = mb;
   }
-
 }
 if(!window.customElements.get('aon-switch')){
 	window.customElements.define('aon-switch',  AonSwitch);

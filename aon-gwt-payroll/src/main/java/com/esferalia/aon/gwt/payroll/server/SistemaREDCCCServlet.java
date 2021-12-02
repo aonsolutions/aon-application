@@ -62,7 +62,8 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			byte[] dataURI = null;
 			

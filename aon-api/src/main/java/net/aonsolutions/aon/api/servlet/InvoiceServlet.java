@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +41,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -57,6 +59,9 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
+import net.aonsolutions.aon.tbai.TbaiMain;
+import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
+import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -160,7 +165,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				response(req, resp, setInvoice(api));
 				break;
 			case "/print_configuration":
-				response(req, resp, setPrintConfiguration(api));
+				response(req, resp, savePrintConfiguration(api, api.getData()));
+				break;
+			case "/configuration":
+				response(req, resp, saveConfiguration(api));
 				break;
 			case "/selfconta":
 				response(req, resp, setSelfcontaInvoice(api));
@@ -436,19 +444,20 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.and(f.getIdProperty().in(idsArray)));
 	}
 	
-	public static JSONObject acceptInvoice(AonApiData api) {
+	public static JSONObject acceptInvoice(AonApiData api) throws StatusCodeException, TbaiResponseException, JAXBException {
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
-//		acceptCommunication(api, invoice);
+//		invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
+		acceptCommunication(api, invoice);
 		return InvoiceJSON.toJSON(invoice);
 	}
 	
-	public static void acceptCommunication(AonApiData api, Invoice invoice) {
+	public static void acceptCommunication(AonApiData api, Invoice invoice) throws StatusCodeException, TbaiResponseException, JAXBException {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
-		
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
+		tbaiConfiguration.setCertificate(AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name()));
 		if(tbaiConfiguration.isActive()) {
-			// TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+			TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
 		}
 		
 		// SII
@@ -566,18 +575,22 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
+	private JSONObject saveConfiguration(AonApiData api) {
+		JSONObject print = savePrintConfiguration(api, api.getData().getJSONObject("print"));
+		JSONObject tbai = saveTbaiConfiguration(api, api.getData().getJSONObject("tbai"));
+		
+		return new JSONObject()
+			.put("print", print)
+			.put("tbai", tbai);
+	}
+	
 	private JSONObject getPrintConfiguration(AonApiData api) {
 		PrintInvoiceConfiguration pic = AON_SOLUTIONS.getPrintInvoiceConfiguration(api.getDomain(), api.getUser(), false);
 		return PrintInvoiceConfigurationJSON.toJSON(pic);
 	}
 	
-	private JSONObject getTbaiConfiguration(AonApiData api) {
-		TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
-		return TbaiConfigurationJSON.toJSON(tbai);
-	}
-	
-	private JSONObject setPrintConfiguration(AonApiData api) {
-		PrintInvoiceConfiguration pic = PrintInvoiceConfigurationJSON.fromJSON(api.getData());
+	private JSONObject savePrintConfiguration(AonApiData api, JSONObject json) {
+		PrintInvoiceConfiguration pic = PrintInvoiceConfigurationJSON.fromJSON(json);
 		AON_SOLUTIONS.savePrintInvoiceConfiguration(api.getDomain(), api.getUser(), pic);
 		if(api.getData().optBoolean("backgroundRemove")) {
 			AON.deleteAttach(api.getDomain().getName(),	api.getDomain().getId(), api.getUser().getLogin(), f ->
@@ -585,7 +598,19 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 		return getPrintConfiguration(api);
 	}
+
 	
+	private JSONObject getTbaiConfiguration(AonApiData api) {
+		TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
+		return TbaiConfigurationJSON.toJSON(tbai);
+	}
+	
+	private JSONObject saveTbaiConfiguration(AonApiData api, JSONObject json) {
+		TbaiConfiguration t = TbaiConfigurationJSON.fromJSON(json);
+		AON.saveTbaiConfiguration(api.getDomain(), api.getUser(), t);
+		return json;
+	}
+
 
 	private static InvoiceStatus getInvoiceStatus(String status) {
 		InvoiceStatus st = InvoiceStatus.safeValueOf(status);
