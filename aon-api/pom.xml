@@ -96,14 +96,14 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20180813</version>
+			<version>20210307</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
     		<groupId>com.itextpdf</groupId>
     		<artifactId>itextpdf</artifactId>
-    		<version>5.5.13</version>
+    		<version>5.5.13.2</version>
 			<scope>compile</scope>
 	    </dependency>
 	    			    <dependency>
@@ -139,7 +139,7 @@
 		<dependency>
 			<groupId>com.github.javafaker</groupId>
 			<artifactId>javafaker</artifactId>
-			<version>0.18</version>
+			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>
 		

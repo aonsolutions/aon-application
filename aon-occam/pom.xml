@@ -145,7 +145,7 @@
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>3.15.4</version>
+			<version>3.15.5</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -220,7 +220,7 @@
 		<dependency>
 			<groupId>com.github.javafaker</groupId>
 			<artifactId>javafaker</artifactId>
-			<version>0.18</version>
+			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
