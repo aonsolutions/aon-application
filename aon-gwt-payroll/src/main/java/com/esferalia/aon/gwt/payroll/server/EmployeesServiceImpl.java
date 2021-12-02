@@ -5716,12 +5716,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			JooqContractAttach.setContractIDC(connection, domainId, contractId, Base64.getDecoder().decode(base64Pdf_IDC));
 			
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
 	@Override
-	public String getEmployeeTa(String domainName, String userLogin, Integer contractId, Date date) {
+	public String getEmployeeTa(String domainName, String userLogin, Integer contractId, Date date) throws IllegalArgumentException {
 
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
@@ -5740,12 +5740,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
 	@Override
-	public String getEmployeeIdc(String domainName, String userLogin, Integer contractId, Date date) {
+	public String getEmployeeIdc(String domainName, String userLogin, Integer contractId, Date date) throws IllegalArgumentException {
 
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
@@ -5764,12 +5764,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
 	@Override
-	public String getEmployeeIdcPlNss(String domainName, String userLogin, Integer contractId, Date date) {
+	public String getEmployeeIdcPlNss(String domainName, String userLogin, Integer contractId, Date date) throws IllegalArgumentException {
 
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
@@ -5788,12 +5788,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
 	@Override
-	public List<Date> getEmployeeIdcDates(String domainName, String userLogin, Integer contractId, Date date) {
+	public List<Date> getEmployeeIdcDates(String domainName, String userLogin, Integer contractId, Date date) throws IllegalArgumentException {
 
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
@@ -5804,7 +5804,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					date);
 
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
@@ -5994,7 +5994,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String getEmployeeCbc(String domainName, String userLogin, String ipf, Date startDate, Date endDate) {
+	public String getEmployeeCbc(String domainName, String userLogin, String ipf, Date startDate, Date endDate) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6018,13 +6018,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			stringWriter.close();
 
 			return dataUri;
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
+		} catch (SQLException | SepeException | IOException e) {
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
 	@Override
-	public String getEmployeeCto(String domainName, String userLogin, String ipf, Date startDate, Date endDate) {
+	public String getEmployeeCto(String domainName, String userLogin, String ipf, Date startDate, Date endDate) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6048,8 +6048,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			stringWriter.close();
 			
 			return dataUri;
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
+		} catch (SQLException | SepeException | IOException e) {
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 	

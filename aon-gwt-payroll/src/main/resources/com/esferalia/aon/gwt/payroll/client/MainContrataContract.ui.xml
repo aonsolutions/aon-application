@@ -51,6 +51,7 @@
 				<g:SplitLayoutPanel>
 					<g:center>
 						<g:HTMLPanel styleName="{style.flexColumn}">
+							<g:HTMLPanel ui:field="messageContainer" />
 							<g:HTMLPanel ui:field="filterEmployeePanel" />
 						 	<c:DataGrid ui:field="employeeDataGrid" styleName="{style.pointer}" />
 						</g:HTMLPanel>

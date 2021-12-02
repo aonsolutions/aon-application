@@ -240,13 +240,13 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
 	
-	String getEmployeeTa(String domain, String user, Integer contractId, Date date);
+	String getEmployeeTa(String domain, String user, Integer contractId, Date date) throws IllegalArgumentException;
 
-	String getEmployeeIdc(String domain, String user, Integer contractId, Date date);
+	String getEmployeeIdc(String domain, String user, Integer contractId, Date date) throws IllegalArgumentException;
 
-	String getEmployeeIdcPlNss(String domain, String user, Integer contractId, Date date);
+	String getEmployeeIdcPlNss(String domain, String user, Integer contractId, Date date) throws IllegalArgumentException;
 	
-	List<Date> getEmployeeIdcDates(String domain, String user, Integer contractId, Date date);
+	List<Date> getEmployeeIdcDates(String domain, String user, Integer contractId, Date date) throws IllegalArgumentException;
 
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
 
@@ -254,9 +254,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
 
-	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate, Date endDate);
+	String getEmployeeCbc(String currentDomainName, String currentUser, String document, Date startDate, Date endDate) throws IllegalArgumentException;
 
-	String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate);
+	String getEmployeeCto(String currentDomainName, String currentUser, String document, Date startDate, Date endDate) throws IllegalArgumentException;
 
 	// ------------------------------------------------- TGSS Comunications
 	

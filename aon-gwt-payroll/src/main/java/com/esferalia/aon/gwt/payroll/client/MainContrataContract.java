@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -238,6 +239,9 @@ public class MainContrataContract extends MainEntryPoint {
 
 	@UiField (provided = true)
 	AonToolbar employeeToolbar;
+	
+	@UiField
+	HTMLPanel messageContainer;
 	
 	@UiField
 	HTMLPanel filterEmployeePanel;
@@ -755,14 +759,19 @@ public class MainContrataContract extends MainEntryPoint {
 					initEnterpriseSB();
 					initContractTable();
 					setTableHeights();
+					AonMessagePanel.showLoading(messageContainer, "Obteniendo contexto de la empresa...");
 					checkStatus(this.mainContrataContractObject);
 				}, 
 				f -> {}
 		);
 
 		this.mainContrataContractObject.getContextInfo(
-				s -> initWorkplaceLB(),
-				f -> {}
+				s -> {
+					hideMessage();
+					setTableHeights();
+					employeeDataGrid.redraw();
+					initWorkplaceLB();
+				}, f -> {}
 		);
 
 	}
@@ -1259,5 +1268,10 @@ public class MainContrataContract extends MainEntryPoint {
 		}
 		return selectedEmployee;
 	}
-
+	
+	// ------------------------------------------------- Aon Messages panel
+	
+	private void hideMessage() {
+		messageContainer.setVisible(false);
+	}
 }

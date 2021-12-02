@@ -502,19 +502,19 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.downloadTA_IDC(getCurrentDomainName(), getCurrentUser(), contractId, callback);
 	}
 	
-	public void getEmployeeTa(Integer contractId, Date date, AsyncCallback<String> callback) {
+	public void getEmployeeTa(Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeTa(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
 	}
 	
-	public void getEmployeeIdc(Integer contractId, Date date, AsyncCallback<String> callback) {
+	public void getEmployeeIdc(Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
 	}
 
-	public void getEmployeeIdcPlNss(Integer contractId, Date date, AsyncCallback<String> callback) {
+	public void getEmployeeIdcPlNss(Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeIdcPlNss(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
 	}
 	
-	public void getEmployeeIdcDates(Integer contractId, Date date, AsyncCallback<List<Date>> callback) {
+	public void getEmployeeIdcDates(Integer contractId, Date date, AsyncCallback<List<Date>> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeIdcDates(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
 	}
 
@@ -530,11 +530,11 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setData(getCurrentDomainName(), getCurrentUser(), contractId, data, callback);
 	}
 	
-	public void getEmployeeCbc(String document, Date startDate, Date endDate, AsyncCallback<String> callback) {
+	public void getEmployeeCbc(String document, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeCbc(getCurrentDomainName(), getCurrentUser(), document, startDate, endDate, callback);
 	}
 
-	public void getEmployeeCto(String document, Date startDate, Date endDate, AsyncCallback<String> callback) {
+	public void getEmployeeCto(String document, Date startDate, Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException  {
 		employeesServiceAsync.getEmployeeCto(getCurrentDomainName(), getCurrentUser(), document, startDate, endDate, callback);
 	}
 	

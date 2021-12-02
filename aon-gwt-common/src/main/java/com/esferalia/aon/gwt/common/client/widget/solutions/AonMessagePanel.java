@@ -197,6 +197,22 @@ public class AonMessagePanel extends FlowPanel {
 		return aonMessagePanel;
 	}
 	
+	// ------------------------------------------------ Show Loading
+	
+	public static void showLoading(HTMLPanel panel, String message) {
+		clearEntryPanel(panel);
+		AonMessagePanel aonMessagePanel = getAonLoadingMessagePanel();
+		fillLoadingMessages(aonMessagePanel, message);
+		showAndAddMainPanel(panel, aonMessagePanel);
+	}
+	
+	private static AonMessagePanel getAonLoadingMessagePanel() {
+		AonMessagePanel aonMessagePanel = getMainPanel();
+		addInfoStyle(aonMessagePanel);
+		showClosePanel(aonMessagePanel, false);
+		return aonMessagePanel;
+	}
+	
 	// ------------------------------------------------ Auxiliar Methods
 	
 	private static void clearEntryPanel(HTMLPanel panel) {
@@ -253,6 +269,20 @@ public class AonMessagePanel extends FlowPanel {
 			messageRowPanel.add(messageText);
 			aonMessagePanel.messagePanel.add(messageRowPanel);
 		}
+	}
+	
+	private static void fillLoadingMessages(AonMessagePanel aonMessagePanel, String message) {
+		HTMLPanel messageRowPanel = new HTMLPanel("");
+		messageRowPanel.addStyleName(AON.CSS.aonMessageRow());
+		
+		AonTableButton loading = new AonTableButton("", AON.CSS.aonIconRenewWhite());
+		loading.addStyleName(AON.CSS.aonSpin());
+		
+		Label messageText = new Label(message);
+		
+		messageRowPanel.add(loading);
+		messageRowPanel.add(messageText);
+		aonMessagePanel.messagePanel.add(messageRowPanel);
 	}
 	
 	// ------------------------------------------------ Styles Methods
