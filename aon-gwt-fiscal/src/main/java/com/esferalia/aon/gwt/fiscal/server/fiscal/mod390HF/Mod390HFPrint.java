@@ -31,7 +31,7 @@ public class Mod390HFPrint extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			int id = Integer.parseInt(req.getParameter("mod390"));
+			int id = Integer.parseInt(req.getParameter("mod390HF"));
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");

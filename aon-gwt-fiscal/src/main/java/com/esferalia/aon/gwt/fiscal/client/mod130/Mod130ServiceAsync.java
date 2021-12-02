@@ -24,5 +24,6 @@ public interface Mod130ServiceAsync {
 	void markAsCustomerCheck(Occam occam, Mod130 mod130,AsyncCallback<Mod130> asyncCallback);
 	void initialize(Occam occam, Mod130 mod130,AsyncCallback<Mod130> asyncCallback);
 	void create(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback);
+	void reset(Occam occam, Mod130 model, AsyncCallback<Mod130> asyncCallback);
 	void getInfo(Occam occam, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 }

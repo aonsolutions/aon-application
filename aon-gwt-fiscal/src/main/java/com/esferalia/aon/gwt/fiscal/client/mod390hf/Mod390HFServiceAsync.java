@@ -22,6 +22,7 @@ public interface Mod390HFServiceAsync {
 	void markAsPending(Occam occam, Mod390HF mod390HF,AsyncCallback<Mod390HF> asyncCallback);
 	void initialize(Occam occam, Mod390HF mod390HF,AsyncCallback<Mod390HF> asyncCallback);
 	void create(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback);
+	void reset(Occam occam, Mod390HF model, AsyncCallback<Mod390HF> asyncCallback);
 	void getInfo(Occam occam, Mod390HF mod390HF, IModelScript<Mod390Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 	void declarationChanged(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback);
 	void markAsSent(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> asyncCallback);

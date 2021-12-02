@@ -27,6 +27,7 @@ public interface Mod130Service extends RemoteService {
 	void delete(Occam occam, Mod130 mod130) throws AonCoreException;
 	Mod130 initialize(Occam occam, Mod130 mod130);
 	Mod130 create(Occam occam, Mod130 mod130) throws AonCoreException;
+	Mod130 reset(Occam occam, Mod130 model) throws AonCoreException;
 	String getInfo(Occam occam, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 
 }

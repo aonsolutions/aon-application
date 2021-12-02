@@ -114,6 +114,8 @@ public abstract class Model202Base extends DockLayoutPanel {
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
+		showPaymentInfo(mod202);
+		
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
 		paintLiquidationTab(tabPanel);
@@ -174,7 +176,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
 		
-		resetButton.addClickHandler( event -> getCallback().onReset(getModel()));
+		resetButton.addClickHandler( event -> onReset());
 		toolbarPanel.add(resetButton);		
 		
 		printButton.addClickHandler( event ->  print());
@@ -214,6 +216,8 @@ public abstract class Model202Base extends DockLayoutPanel {
 
 		auditButton.addClickHandler( event -> audit());
 		toolbarPanel.add(auditButton);
+		
+		toolbarPanel.add(diskForm);
 
 		return toolbarPanel;
 	}
@@ -305,14 +309,13 @@ public abstract class Model202Base extends DockLayoutPanel {
 
 	private void refreshToolbarState() {
 		toolbarPanel.setTitle(AonStringUtils.join(model.getDocument(),AonStringUtils.SPACE,model.getFullName()));
-		resetButton.setVisible(!model.isNew());
+		resetButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
 		auditButton.setVisible(!model.isNew());
 		newButton.setVisible(!model.isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
 		saveButton.setVisible(!model.isFinished() && !model.isSent());
 		deleteButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
 		printButton.setVisible(!model.isNew());
-		resetButton.setVisible(!model.isFinished() && !model.isSent());
 		markAsPendingButton.setVisible(!model.isNew() &&
 				(model.getStatus() == FiscalStatus.FINISHED 
 				|| model.getStatus() == FiscalStatus.BATCHED
@@ -391,6 +394,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 		Model202.SERVICE.save(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod202>() {
 			@Override
 			public void onSuccess(Mod202 result) {
+				setDirty( false );
 				select(result);
 				popup.hide();
 				saveButton.setEnabled(true);
@@ -488,6 +492,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 		Model202.SERVICE.markAsPending(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						popup.hide();
 						markAsPendingButton.setEnabled(true);
@@ -508,6 +513,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 		Model202.SERVICE.markAsSent(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						markAsSentButton.setEnabled(true);
 					}
@@ -526,6 +532,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 				new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 m202) {
+						setDirty(false);
 						selectAndPopulate(m202);
 						showFinalizePopup(m202);
 						markAsFinishedButton.setEnabled(true);
@@ -575,6 +582,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 		Model202.SERVICE.markAsFinished(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod202>() {
 			@Override
 			public void onSuccess(Mod202 result) {
+				setDirty(false);
 				selectAndPopulate(result);
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
@@ -601,6 +609,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 		Model202.SERVICE.markAsCustomerCheck(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod202>() {
 			@Override
 			public void onSuccess(Mod202 result) {
+				setDirty(false);
 				select(result);
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
@@ -617,6 +626,10 @@ public abstract class Model202Base extends DockLayoutPanel {
 	}
 
 	private void showPaymentInfo(Mod202 mod) {
+		if (paymentContainer != null) {
+			this.remove(paymentContainer);
+			this.forceLayout();
+		}
 		if (mod.isFinished() || mod.isSent()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
 			buff.append(AonStringUtils.SPACE);
@@ -640,11 +653,6 @@ public abstract class Model202Base extends DockLayoutPanel {
 			paymentContainer.add(label);
 			this.insert( paymentContainer, Direction.NORTH, 30, decToolbar);
 			this.forceLayout();
-		} else {
-			if (paymentContainer != null) {
-				this.remove(paymentContainer);
-				this.forceLayout();
-			}
 		}
 	}
 
@@ -803,6 +811,35 @@ public abstract class Model202Base extends DockLayoutPanel {
 		}
 	}
 
+	private void onReset() {
+		resetButton.setEnabled(false);
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
+
+			@Override
+			public void onAccept() {
+				Model202.SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
+						new AsyncCallback<Mod202>() {
+							@Override
+							public void onSuccess(Mod202 m202) {
+								setDirty( true );
+								selectAndPopulate(m202);
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
+								
+							}
+						});
+			}
+			@Override
+			public void onCancel() {
+				resetButton.setEnabled(true);
+			}
+		});
+	}
+
 	public void calculateAndRefresh(final Model202Callback callback) {
 		Model202.SERVICE.calculate(callback.getOptions().getOccam(),getModel(),
 				new AsyncCallback<Mod202>() {
@@ -822,7 +859,15 @@ public abstract class Model202Base extends DockLayoutPanel {
 	}
 
 	protected void submitForm(String action) {
+		diskForm.setMethod(FormPanel.METHOD_POST);
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		diskForm.clear();
+		FlowPanel diskPanel = new FlowPanel();
+		diskPanel.add(mod202Hidden);
+		diskPanel.add(domainIdHidden);
+		diskPanel.add(domainNameHidden);
+		diskPanel.add(userHidden);
+		diskForm.add(diskPanel);
 		mod202Hidden.setValue(String.valueOf(getModel().getId()));
 		domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
 		domainNameHidden.setValue(getCallback().getOptions().getDomainName());
@@ -924,6 +969,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 							getModel().getId(), new AsyncCallback<Mod202>() {
 						@Override
 						public void onSuccess(Mod202 selected) {
+							setDirty(false);
 							selectAndPopulate(selected);
 						}
 						@Override

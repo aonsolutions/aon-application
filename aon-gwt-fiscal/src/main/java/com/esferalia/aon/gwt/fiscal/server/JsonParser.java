@@ -74,6 +74,11 @@ public class JsonParser {
 		if (AonStringUtils.isNotBlank(nrc)) {
 			params.setNrc(nrc);			
 		}
+		
+		Long test = (Long) jsonParams.get(IRequestParamsNames.TEST);
+		if (test != null) {
+			params.setTest(test==1);
+		}
 		return params;
 	}
 

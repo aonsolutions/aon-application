@@ -79,6 +79,10 @@ public class MODEL303Impl implements IMODEL303 {
 		return Mod303DAO.createMod303(ctx,mod303);
 	}
 	@Override
+	public Mod303 resetMod303(AONContext ctx, Mod303 mod303) {
+		return Mod303DAO.resetMod303(ctx,mod303);
+	}
+	@Override
 	public Mod303 declarationChanged(AONContext ctx, Mod303 mod303) {
 		return Mod303DAO.declarationChanged(ctx,mod303);
 	}

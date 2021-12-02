@@ -15,6 +15,7 @@ public interface Mod303ServiceAsync {
 	void getMod303s(Occam occam,AsyncCallback<LinkedList<Mod303>> callback);
 	void initialize(Occam occam, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void create(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback);
+	void reset(Occam occam, Mod303 model, AsyncCallback<Mod303> asyncCallback);
 	void declarationChanged(Occam occam, Mod303 mod303, AsyncCallback<Mod303> callback);
 
 	void delete(Occam occam, Mod303 mod303,AsyncCallback<Void> callback);

@@ -28,10 +28,7 @@ public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202,Mode
 	}
 
 	public Model202NewDeclarationPopup(Mod202 mod202, Model202Callback callback) {
-		super(mod202,false, callback);
-	}
-	public Model202NewDeclarationPopup(Mod202 mod202,boolean reset, Model202Callback callback) {
-		super(mod202,reset, callback);
+		super(mod202, callback);
 	}
 	
 	@Override
@@ -61,7 +58,6 @@ public class Model202NewDeclarationPopup extends NewDeclarationPopup<Mod202,Mode
 				}
 			}
 		}
-		periodList.setEnabled(!reset);
 		periodList.addChangeHandler( event -> mod202.setPeriod( periodList.getValue() ));
 		tab.setWidget(row, 1, periodList);
 		row++;

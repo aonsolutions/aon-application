@@ -79,6 +79,10 @@ public class MODEL202Impl implements IMODEL202 {
 		return Mod202DAO.createMod202(ctx,mod202);
 	}
 	@Override
+	public Mod202 reset(AONContext ctx, Mod202 mod202) {
+		return Mod202DAO.resetMod202(ctx,mod202);
+	}
+	@Override
 	public String getInfo(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod202DAO.getMod202Info(ctx,mod202,script,infoKey);
 	}

@@ -664,7 +664,6 @@ class Model303AEAT2018 extends Model303AEAT {
 		AonTextBox cnae = new AonTextBox();
 		cnae.setVisibleLength(4);
 		cnae.setMaxLength(4);
-		cnae.setStyleName(AON.CSS.aonInputText());
 		cnae.setValue(getModel().getDescription(cnaeKey));
 		cnae.addValueChangeHandler(event -> {
 			getModel().putDescription(cnaeKey, cnae.getValue() );
@@ -733,7 +732,6 @@ class Model303AEAT2018 extends Model303AEAT {
 		AonTextBox epi = new AonTextBox();
 		epi.setVisibleLength(5);
 		epi.setMaxLength(4);
-		epi.setStyleName(AON.CSS.aonInputText());
 		epi.setValue(getModel().getDescription(epiKey));
 		epi.addValueChangeHandler(event -> {
 			getModel().putDescription(epiKey,epi.getValue());
@@ -744,7 +742,6 @@ class Model303AEAT2018 extends Model303AEAT {
 		AonTextBox key = new AonTextBox();
 		key.setVisibleLength(2);
 		key.setMaxLength(1);
-		key.setStyleName(AON.CSS.aonInputText());
 		key.setValue(getModel().getDescription(keyKey));
 		key.addValueChangeHandler(event ->  {
 			getModel().putDescription(keyKey,key.getValue());
@@ -755,7 +752,6 @@ class Model303AEAT2018 extends Model303AEAT {
 		AonTextBox description = new AonTextBox();
 		description.setVisibleLength(40);
 		description.setMaxLength(40);
-		description.setStyleName(AON.CSS.aonInputText());
 		description.setValue(getModel().getDescription(desKey));
 		description.addValueChangeHandler(event -> {
 			getModel().putDescription(desKey,description.getValue());

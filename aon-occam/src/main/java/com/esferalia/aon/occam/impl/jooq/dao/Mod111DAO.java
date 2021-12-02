@@ -695,6 +695,13 @@ public class Mod111DAO extends FiscalModelDAO {
 		return mod111;
 	}
 	
+	public static Mod111 resetMod111(AONContext ctx,Mod111 mod111) {
+		mod111.setMap(null);
+		initializeIdentificationData(ctx, mod111);
+		createMod111(ctx,mod111);
+		return mod111;
+	}
+	
 	public static Mod111 createMod111(AONContext ctx,Mod111 mod111) {
 		for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
 			if (key.acceptModel(mod111)) {
@@ -738,7 +745,6 @@ public class Mod111DAO extends FiscalModelDAO {
 			IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111)
 				.forEach(
 						br -> {
-							System.out.println( br.getBase() +  " / " + br.getQuota());
 							for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
 								if (key.acceptValue(mod111,br)) {
 									key.initialize(ctx, mod111, docs, pdocs, br);
@@ -752,7 +758,6 @@ public class Mod111DAO extends FiscalModelDAO {
 			IRPFDAO.getSalaryDiffIrpfBreakdown(ctx, mod111)
 				.forEach(
 						br -> {
-							System.out.println( br.getBase() +  " / " + br.getQuota());
 							for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
 								if (key.acceptValue(mod111,br)) {
 									key.initialize(ctx, mod111, docs, pdocs, br);

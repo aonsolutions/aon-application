@@ -89,8 +89,7 @@ class Model111Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 			}
 		});
 	}
-	
-	
+
 	private Widget getToolbarPanel(Model111Callback cbk) {
 		AonToolbar toolbar = new AonToolbar( AON.MSG.fiscalModelDescriptionlong( FiscalModelType.M111));
 		
@@ -98,6 +97,10 @@ class Model111Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 		newButton.addClickHandler( event -> cbk.onNew());
 		toolbar.add(newButton);
 		
+		final AonToolbarButton refreshButton = new AonToolbarButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh() );
+		refreshButton.addClickHandler( event -> refresh(cbk));
+		toolbar.add(refreshButton);
+
 		return toolbar;
 	}
 

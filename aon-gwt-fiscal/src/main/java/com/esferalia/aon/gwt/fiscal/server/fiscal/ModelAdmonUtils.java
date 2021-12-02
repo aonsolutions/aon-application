@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -15,23 +16,32 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.jooq.tools.json.ParseException;
+import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.server.fiscal.aeat.RespuestaCorrecta;
@@ -51,7 +61,9 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
@@ -74,6 +86,7 @@ import com.esferalia.aon.occam.server.fiscal.format.Mod303Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.api.services.drive.Drive;
@@ -335,7 +348,7 @@ public class ModelAdmonUtils {
 		buff.append("<table id=\"response\">");
 		String labelTD = "<tr><td id=\"label\">{0}</td>"; 
 		String valueTD = "<td>{0}</td></tr>";
-		String valueTD2 = "<td>{0, date, DD-MM-YYYY hh:mm:ss}</td></tr>";
+		String valueTD2 = "<td>{0, date, dd/MM/YYYY HH:mm:ss}</td></tr>";
 		
 		for (RespuestaCorrecta rc : scd.getRespuestaCorrecta()) {
 			buff.append(MessageFormat.format(labelTD,"Ejercicio"));
@@ -366,169 +379,276 @@ public class ModelAdmonUtils {
 		return buff;
 	}
 	
-	/*
-	 *  POSIBLE ENUM !!! 	
-	 */
-	public static byte[] getModelFile(Mod303 mod303) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
-		Mod303Writer.fillWriter(mod303, writer);
-		return output.toByteArray();
+	private static Mod111 getMod111(FiscalModel fm) {
+		return (fm instanceof Mod111)?(Mod111)fm:null;
 	}
-	public static byte[] getModelFile(Mod111 mod111) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
-		Mod111Writer.fillWriter(mod111, writer);
-		return output.toByteArray();
+	private static Mod115 getMod115(FiscalModel fm) {
+		return (fm instanceof Mod115)?(Mod115)fm:null;
 	}
-	public static byte[] getModelFile(Mod115 mod115) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
-		Mod115Writer.fillWriter(mod115, writer);
-		return output.toByteArray();
+	private static Mod123 getMod123(FiscalModel fm) {
+		return (fm instanceof Mod123)?(Mod123)fm:null;
 	}
-	public static byte[] getModelFile(Mod123 mod123) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
-		Mod123Writer.fillWriter(mod123, writer);
-		return output.toByteArray();
+	private static Mod130 getMod130(FiscalModel fm) {
+		return (fm instanceof Mod130)?(Mod130)fm:null;
 	}
-	public static byte[] getModelFile(Mod130 mod130) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
-		Mod130Writer.fillWriter(mod130, writer);
-		return output.toByteArray();
+	private static Mod131 getMod131(FiscalModel fm) {
+		return (fm instanceof Mod131)?(Mod131)fm:null;
 	}
-	public static byte[] getModelFile(Mod131 mod131) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
-		Mod131Writer.fillWriter(mod131, writer);
-		return output.toByteArray();
+	private static Mod202 getMod202(FiscalModel fm) {
+		return (fm instanceof Mod202)?(Mod202)fm:null;
 	}
-	public static byte[] getModelFile(Mod202 mod202) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
-		Mod202Writer.fillWriter(mod202, writer);
-		return output.toByteArray();
+	private static Mod303 getMod303(FiscalModel fm) {
+		return (fm instanceof Mod303)?(Mod303)fm:null;
 	}
 	
-	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod303 mod303, byte[] body) {
-		AEATResponse response = AEATJson.toJSON(body); 
-		if (response.isCorrect()) {
-			manageRightResponse(resp,aeatParams,mod303,new String(body));		
-		} else {
-			manageWrongResponse(resp, response);
-		}
-	}
-	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, Mod303 mod303, String aeatResponse) {
-		Occam occam = new Occam()
-				.setDomainName(aeatParams.getDomainName())
-				.setDomain(aeatParams.getDomainId())
-				.setUser(aeatParams.getUser());
-		mod303 = MODEL303.aeatPresentationMod303(occam, mod303, aeatResponse);
-		giveDataResponseDataBack(resp, aeatParams, mod303);
+	private static byte[] getModelFile(FiscalModel fm) throws AonCoreException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
+		fm.getModel().visit(new IFiscalModelTypeVisitor() {
+			
+			@Override 
+			public void visitM111() {
+				try {
+					Mod111Writer.fillWriter( getMod111(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
+			@Override public void visitM115() { 
+				try {
+					Mod115Writer.fillWriter( getMod115(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM123() { 
+				try {
+					Mod123Writer.fillWriter( getMod123(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM130() { 
+				try {
+					Mod130Writer.fillWriter( getMod130(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM131() { 
+				try {
+					Mod131Writer.fillWriter( getMod131(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM202() { 
+				try {
+					Mod202Writer.fillWriter( getMod202(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM303() { 
+				try {
+					Mod303Writer.fillWriter( getMod303(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override public void visitM390HF() { /* Auto-generated method stub */}
+			@Override public void visitM390() { /* Auto-generated method stub */}
+			@Override public void visitM349() { /* Auto-generated method stub */}
+			@Override public void visitM347() { /* Auto-generated method stub */}
+			@Override public void visitM200() { /* Auto-generated method stub */}
+			@Override public void visitM193() { /* Auto-generated method stub */}
+			@Override public void visitM190() { /* ODO Auto-generated method stub */}
+			@Override public void visitM184() { /* Auto-generated method stub */}
+			@Override public void visitM180() { /* Auto-generated method stub */}
+		});
+		return output.toByteArray();
 	}
 
-	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod111 mod111, byte[] body) {
+	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, FiscalModel fm, byte[] body) {
 		AEATResponse response = AEATJson.toJSON(body); 
 		if (response.isCorrect()) {
-			manageRightResponse(resp,aeatParams,mod111,new String(body));		
+			manageRightResponse(resp,aeatParams,fm,new String(body));		
 		} else {
 			manageWrongResponse(resp, response);
 		}
 	}
-	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, Mod111 mod111, String aeatResponse) {
+	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, FiscalModel fm, String aeatResponse) {
 		Occam occam = new Occam()
 				.setDomainName(aeatParams.getDomainName())
 				.setDomain(aeatParams.getDomainId())
 				.setUser(aeatParams.getUser());
-		mod111 = MODEL111.aeatPresentation(occam, mod111, aeatResponse);
-		giveDataResponseDataBack(resp, aeatParams, mod111);
+		fm.getModel().visit(new IFiscalModelTypeVisitor() {
+			
+			@Override 
+			public void visitM111() {
+				MODEL111.aeatPresentation(occam, getMod111(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM115() { 
+				MODEL115.aeatPresentationMod115(occam, getMod115(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM123() { 
+				MODEL123.aeatPresentation(occam, getMod123(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM130() { 
+				MODEL130.aeatPresentation(occam, getMod130(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM131() { 
+				MODEL131.aeatPresentation(occam, getMod131(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM202() { 
+				MODEL202.aeatPresentation(occam, getMod202(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM303() { 
+				MODEL303.aeatPresentationMod303(occam, getMod303(fm) , aeatResponse);
+			}
+			@Override public void visitM390HF() { /* Auto-generated method stub */}
+			@Override public void visitM390() { /* Auto-generated method stub */}
+			@Override public void visitM349() { /* Auto-generated method stub */}
+			@Override public void visitM347() { /* Auto-generated method stub */}
+			@Override public void visitM200() { /* Auto-generated method stub */}
+			@Override public void visitM193() { /* Auto-generated method stub */}
+			@Override public void visitM190() { /* Auto-generated method stub */}
+			@Override public void visitM184() { /* Auto-generated method stub */}
+			@Override public void visitM180() { /* Auto-generated method stub */}
+		});
+		giveDataResponseDataBack(resp, aeatParams, fm);
 	}
 
-	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod115 mod115, byte[] body) {
-		AEATResponse response = AEATJson.toJSON(body); 
-		if (response.isCorrect()) {
-			manageRightResponse(resp,aeatParams,mod115,new String(body));		
-		} else {
-			manageWrongResponse(resp, response);
+	public static void send(HttpServletResponse resp, AEATParams aeatParams, FiscalModel model ) {
+		try {
+			byte[] fileContent = getModelFile(model);
+			JSONObject params = new JSONObject();
+			params.put("MODELO", model.getModel().getValue());
+			params.put("EJERCICIO", AonNumberUtils.toString( model.getYear()));
+			params.put("PERIODO", model.getPeriod().getName());
+			params.put("NRC", (model.isStrictToDeposit()?aeatParams.getNrc() : ""));
+			params.put("IDI", "ES");
+			params.put("F01", ModelAdmonUtils.getUnencodedFile(fileContent,StandardCharsets.UTF_8));
+			params.put("FIR", "FirmaBasica");
+			params.put("FIRNIF", aeatParams.getDocument());
+			params.put("FIRNOMBRE", aeatParams.getName());
+			
+			String url = aeatParams.isTest() 
+				? "https://prewww1.aeat.es/wlpl/PFTW-PICW/PresBasicaDos"
+				: "DESACTIVADO_https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
+
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.POST(HttpRequest.BodyPublishers.ofString(params.toString()))
+				.build();
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+			
+			if (response.statusCode() == 302) {
+				ModelAdmonUtils.giveRedirectBack( resp,response,httpClient );
+			} else {
+				String ct = ModelAdmonUtils.getContentTypeHeader(response);
+				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
+					ModelAdmonUtils.manageJSONContent( resp, aeatParams, model ,response.body() );
+				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
+					ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
+				} else {	
+					ModelAdmonUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
+				}
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
-	}
-	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, Mod115 mod115, String aeatResponse) {
-		Occam occam = new Occam()
-				.setDomainName(aeatParams.getDomainName())
-				.setDomain(aeatParams.getDomainId())
-				.setUser(aeatParams.getUser());
-		mod115 = MODEL115.aeatPresentationMod115(occam, mod115, aeatResponse);
-		giveDataResponseDataBack(resp, aeatParams, mod115);
-	}
-	
-	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod123 mod123, byte[] body) {
-		AEATResponse response = AEATJson.toJSON(body); 
-		if (response.isCorrect()) {
-			manageRightResponse(resp,aeatParams,mod123,new String(body));		
-		} else {
-			manageWrongResponse(resp, response);
-		}
-	}
-	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, Mod123 mod123, String aeatResponse) {
-		Occam occam = new Occam()
-				.setDomainName(aeatParams.getDomainName())
-				.setDomain(aeatParams.getDomainId())
-				.setUser(aeatParams.getUser());
-		mod123 = MODEL123.aeatPresentation(occam, mod123, aeatResponse);
-		giveDataResponseDataBack(resp, aeatParams, mod123);
 	}
 
-	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod130 mod130, byte[] body) {
-		AEATResponse response = AEATJson.toJSON(body); 
-		if (response.isCorrect()) {
-			manageRightResponse(resp,aeatParams,mod130,new String(body));		
-		} else {
-			manageWrongResponse(resp, response);
+	public static void checkAEAT(HttpServletResponse resp, AEATParams aeatParams, FiscalModel model) {
+		try {
+			String year = AonNumberUtils.toString(model.getYear());
+			
+			String urlParameters = MessageFormat.format(
+				"NIF={0}"
+				+"&ANR={1}"
+				+"&MOD={2}"
+				+"&EJF={3}"
+				+"&PER={4}"
+				+"&FED={5}"
+				+"&FEH={6}"
+				+"&HOD={7}"
+				+"&HOH={8}"
+					,model.getDocument()
+					,model.getFullName()
+					,FiscalModelUtils.getModelName(model)
+					,year
+					,model.getPeriod().getName()
+					,year+"0101"
+					,year+"1231"
+					,"0000"
+					,"2359"
+					);
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+			
+			String url = "https://www1.agenciatributaria.gob.es/wlpl/SCEJ-MANT/ConsultaExt";
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
+				.POST(HttpRequest.BodyPublishers.ofString(urlParameters.toString()))
+				.build();
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+			
+			StringReader reader = new  StringReader(new String(response.body()));
+			JAXBContext context = JAXBContext.newInstance(ServicioConsultasDirectas.class);
+			Unmarshaller um = context.createUnmarshaller();
+			ServicioConsultasDirectas scd = (ServicioConsultasDirectas) um.unmarshal(reader);
+			if ( scd.getError() != null) {
+				ModelAdmonUtils.giveExceptionBack(resp,true,scd.getError().getDescripcionError());	
+			} else if ( scd.getRespuestaCorrecta()  != null) {
+				StringBuilder buff = ModelAdmonUtils.formatRespuestaCorrecta( scd);
+				ModelAdmonUtils.giveBase64Back(resp, buff.toString().getBytes(), MimeType.HTML);
+			} else{
+				ModelAdmonUtils.giveExceptionBack(resp,"La Agencia Tributaria ha devuelto un mensaje, pero no se han encontrado mensajes en el mismo.");
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+		} catch (JAXBException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
 		}
 	}
-	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, Mod130 mod130, String aeatResponse) {
-		Occam occam = new Occam()
-				.setDomainName(aeatParams.getDomainName())
-				.setDomain(aeatParams.getDomainId())
-				.setUser(aeatParams.getUser());
-		mod130 = MODEL130.aeatPresentation(occam, mod130, aeatResponse);
-		giveDataResponseDataBack(resp, aeatParams, mod130);
-	}
-	
-	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod131 mod131, byte[] body) {
-		AEATResponse response = AEATJson.toJSON(body); 
-		if (response.isCorrect()) {
-			manageRightResponse(resp,aeatParams,mod131,new String(body));		
-		} else {
-			manageWrongResponse(resp, response);
-		}
-	}
-	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, Mod131 mod131, String aeatResponse) {
-		Occam occam = new Occam()
-				.setDomainName(aeatParams.getDomainName())
-				.setDomain(aeatParams.getDomainId())
-				.setUser(aeatParams.getUser());
-		mod131 = MODEL131.aeatPresentation(occam, mod131, aeatResponse);
-		giveDataResponseDataBack(resp, aeatParams, mod131);
-	}
-	
-	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, Mod202 mod202, byte[] body) {
-		AEATResponse response = AEATJson.toJSON(body); 
-		if (response.isCorrect()) {
-			manageRightResponse(resp,aeatParams,mod202,new String(body));		
-		} else {
-			manageWrongResponse(resp, response);
-		}
-	}
-	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, Mod202 mod202, String aeatResponse) {
-		Occam occam = new Occam()
-				.setDomainName(aeatParams.getDomainName())
-				.setDomain(aeatParams.getDomainId())
-				.setUser(aeatParams.getUser());
-		mod202 = MODEL202.aeatPresentation(occam, mod202, aeatResponse);
-		giveDataResponseDataBack(resp, aeatParams, mod202);
-	}
-	
 }

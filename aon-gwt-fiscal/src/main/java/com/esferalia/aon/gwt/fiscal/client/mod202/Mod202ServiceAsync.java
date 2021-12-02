@@ -25,5 +25,6 @@ public interface Mod202ServiceAsync {
 	void markAsCustomerCheck(Occam occam, Mod202 mod202, AsyncCallback<Mod202> callback);
 	void create(Occam occam, Mod202 mod202, AsyncCallback<Mod202> callback);
 	void getInfo(Occam occam, Mod202 mod202, IModelScript<Mod202Key> script,FiscalModelKeyInfo infoKey, AsyncCallback<String> callback);
+	void reset(Occam occam, Mod202 model, AsyncCallback<Mod202> asyncCallback);
 
 }

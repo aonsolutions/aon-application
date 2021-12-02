@@ -13,9 +13,11 @@ import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -95,18 +97,88 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
+		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsAttach> result) {
+				if ( result == null || result.getData() == null || result.getData().length() == 0 ) {
+					paintError("No se han encontrado certificados");
+				} else {
+					paintPanel(params, result);
+					
+				}
+			}
+
+			@Override 
+			public void onFailure(Throwable caught) {
+				paintError("Se ha producido un error. [" + caught.getMessage() + "]");
+			}
+
+		});
+		
+	}
+	
+	private void paintError(String message) {
+		FlowPanel rootPanel = new FlowPanel();
+		Label messageLabel = new Label(message); 
+		messageLabel.setStyleName(AON.CSS.aonMarginBottom());
+		messageLabel.addStyleName(AON.CSS.aonMarginTop());
+		messageLabel.addStyleName(AON.CSS.aonBlockCenter());
+		messageLabel.addStyleName(AON.CSS.aonBlockMessage());
+		messageLabel.addStyleName(AON.CSS.aonBlockErrorMessage());
+		
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.setStyleName(AON.CSS.aonPadding());
+		buttonsPanel.addStyleName(AON.CSS.aonMarginTop());
+		buttonsPanel.addStyleName(AON.CSS.aonTextCenter());
+
+		Button cancelButton = new Button();
+    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
+    	cancelButton.setText( AON.MSG.close());
+		cancelButton.addClickHandler(event -> {
+			hide();
+			onCancel();
+		});
+		buttonsPanel.add(cancelButton);
+
+		rootPanel.add(messageLabel);
+		rootPanel.add(buttonsPanel);
+		add(rootPanel);
+		
+	}
+	
+	private void paintPanel(AonCertificationPopupParams params, JSON<JsAttach> result) {
 		FlowPanel rootPanel = new FlowPanel();  
 		
 		if (AonStringUtils.isNotBlank( params.getInfoMessage())) {
-			String msg = params.getInfoMessage() + (params.isTestEnvironment()?" [Entorno de pruebas]":" [AEAT]");
-			Label messageLabel = new Label( msg );
-			messageLabel.setStyleName(AON.CSS.aonMarginBottom());
-			messageLabel.addStyleName(AON.CSS.aonMarginTop());
-			messageLabel.addStyleName(AON.CSS.aonBlockCenter());
-			messageLabel.addStyleName(AON.CSS.aonBlockMessage());
-			messageLabel.addStyleName(AON.CSS.aonBlockInfoMessage());
-			messageLabel.setWidth("80%");
-			rootPanel.add(messageLabel);	
+			FlowPanel messagePanel = new FlowPanel(); 
+			messagePanel.setStyleName(AON.CSS.aonMarginBottom());
+			messagePanel.addStyleName(AON.CSS.aonMarginTop());
+			messagePanel.addStyleName(AON.CSS.aonBlockCenter());
+			messagePanel.addStyleName(AON.CSS.aonBlockMessage());
+			messagePanel.addStyleName(AON.CSS.aonBlockInfoMessage());
+			messagePanel.addStyleName(AON.CSS.aonBlockInfoMessage());
+			
+			InlineLabel messageLabel = new InlineLabel( params.getInfoMessage() );
+			messageLabel.setStyleName(AON.CSS.aonFlexGrow1());
+			messagePanel.add(messageLabel);
+			
+			InlineLabel serverLabel = new InlineLabel();
+			serverLabel.setStyleName(AON.CSS.aonMarginLeft());
+			serverLabel.getElement().getStyle().setPadding(2.0, Unit.PX);
+			if (params.isTestEnvironment()) {
+				serverLabel.setText("[Entorno de pruebas]");
+				serverLabel.getElement().getStyle().setBackgroundColor("red");
+				serverLabel.addStyleName(AON.CSS.aonColorWhite());
+			} else {
+				serverLabel.setText("[Presentaci\u00F3n en AEAT]");
+				serverLabel.addStyleName(AON.CSS.aonMarginLeft());
+				serverLabel.addStyleName(AON.CSS.aonAeatBackgroundColor());
+				serverLabel.addStyleName(AON.CSS.aonColorWhite());
+			}
+			messagePanel.add(serverLabel);
+			rootPanel.add(messagePanel);	
 		}
 		
 		AonDisplayTable table = new AonDisplayTable();
@@ -118,18 +190,8 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		certificates.setWidth("350px");
 		certificates.addItem("-- Seleccione --");
 		certificates.addChangeHandler(event -> certificates.removeStyleName(AON.CSS.aonInputTextError()));
-		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsAttach> result) {
-				result.getData().stream().forEach(a -> certificates.addItem(a.getTitle(), a.getId() + ""));
-			}
-
-			@Override 
-			public void onFailure(Throwable caught) {
-				// Nothing
-			}
-		});
+		result.getData().stream().forEach(a -> certificates.addItem(a.getTitle(), a.getId() + ""));
+		
 		table.addRow()
 			.addCell(l1)
 			.addCell(certificates);
@@ -213,6 +275,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 						.setCertificateId( AonNumberUtils.toInteger(certificates.getSelectedValue()) )
 						.setPass(AonStringUtils.trim(password.getValue()))
 						.setNrc(AonStringUtils.trim(nrc.getValue()))
+						.setTest(params.isTestEnvironment())
 						);
 			}
 		});

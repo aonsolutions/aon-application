@@ -129,74 +129,6 @@ public class Model111 extends MainEntryPoint {
 				}
 			});
 		}
-
-		@Override
-		public void onReset(Mod111 oldModel) {
-			SERVICE.initialize(getOptions().getOccam(), null,
-				new AsyncCallback<Mod111>() {
-					@Override
-					public void onSuccess(Mod111 newMod111) {
-						cleanInfoPanel();
-						tabLayout.selectTab(INFORMATION_TAB);
-						closeFootPanel();
-						// Valores de la declaración actual
-						newMod111.setAdministration(oldModel.getAdministration());
-						newMod111.setYear(oldModel.getYear());
-						newMod111.setPeriod(oldModel.getPeriod());
-						newMod111.setComplementary(oldModel.isComplementary());
-						newMod111.setReplacement(oldModel.isReplacement());
-						newMod111.setReplacedNumber(oldModel.getReplacedNumber());
-						showResetDeclarationPopup(newMod111, oldModel);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-					}
-				});
-		}
-
-		private void showResetDeclarationPopup(Mod111 newMod111, Mod111 oldMod111) {
-			NewDeclarationPopup<Mod111,Model111ModuleOptions> newDialog = new NewDeclarationPopup<>(newMod111, true,
-				new Model111Callback() {
-
-						@Override
-						public void onAccept(Mod111 mod111) {
-							
-							SERVICE.delete(getOptions().getOccam(), oldMod111, new AsyncCallback<Void>() {
-								
-								@Override
-								public void onSuccess(Void result) {
-									SERVICE.create(getOptions().getOccam(), newMod111,
-											new AsyncCallback<Mod111>() {
-												@Override
-												public void onSuccess(Mod111 m111) {
-													select(m111);
-												}
-
-												@Override
-												public void onFailure(Throwable caught) {
-													showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-												}
-											});
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {
-									showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));								
-								}
-							});
-						}
-
-						@Override
-						public void onCancel(Mod111 mod111) {
-							// Nothing
-						}
-					}
-				); 
-				newDialog.center();
-				newDialog.show();
-		}
 	}
 	
 	
@@ -494,6 +426,13 @@ public class Model111 extends MainEntryPoint {
 								}
 							});
 					}
+					@Override
+					public void onCancel(Mod111 model) {
+						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+							getOptions().getExternalCallback().onExit(model);
+						}						
+					}
+
 				}
 			); 
 			newDialog.center();

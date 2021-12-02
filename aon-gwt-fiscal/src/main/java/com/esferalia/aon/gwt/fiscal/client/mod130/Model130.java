@@ -127,11 +127,6 @@ public class Model130 extends MainEntryPoint {
 				}
 			});
 		}
-
-		@Override
-		public void onReset(Mod130 oldModel) {
-			// Nothing
-		}
 	}
 
 	@Override
@@ -340,6 +335,12 @@ public class Model130 extends MainEntryPoint {
 									showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 								}
 							});
+				}
+				@Override
+				public void onCancel(Mod130 model) {
+					if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+						getOptions().getExternalCallback().onExit(model);
+					}						
 				}
 
 			}

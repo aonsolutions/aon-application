@@ -79,6 +79,10 @@ public class MODEL130Impl implements IMODEL130 {
 		return Mod130DAO.createMod130(ctx,mod130);
 	}
 	@Override
+	public Mod130 reset(AONContext ctx, Mod130 mod130) {
+		return Mod130DAO.resetMod130(ctx,mod130);
+	}
+	@Override
 	public String getInfo(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod130DAO.getMod130Info(ctx,mod130,script,infoKey);
 	}

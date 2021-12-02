@@ -74,6 +74,10 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return MODEL303.createMod303(occam, mod303);
 	}
 	@Override
+	public Mod303 reset(Occam occam, Mod303 mod303) {
+		return MODEL303.resetMod303(occam, mod303);
+	}
+	@Override
 	public Mod303 declarationChanged(Occam occam, Mod303 mod303) throws AonCoreException {
 		return MODEL303.declarationChanged(occam, mod303);
 	}

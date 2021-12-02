@@ -25,7 +25,8 @@ public interface Mod123Service extends RemoteService {
 	Mod123 markAsPending(Occam occam, Mod123 mod123) throws AonCoreException;
 	Mod123 markAsSent(Occam occam, Mod123 mod123) throws AonCoreException;
 	Mod123 markAsCustomerCheck(Occam occam, Mod123 mod123) throws AonCoreException;
-	Mod123 initialize(Occam occam, Mod123 mod123);
+	Mod123 initialize(Occam occam, Mod123 mod123) throws AonCoreException;
 	Mod123 create(Occam occam, Mod123 mod123) throws AonCoreException;
 	String getInfo(Occam occam, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
+	Mod123 reset(Occam occam, Mod123 model);
 }

@@ -444,6 +444,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Confirme si desea cancelar la confecci\u00F3n de la declaraci\u00F3n.")
 	String confirmDeclarationCancelAction();
 
+	@DefaultMessage("Confirme si desea inicializar la declaraci\u00F3n.")
+	String confirmDeclarationinitializationAction();
+
 	@DefaultMessage("\u00BFConfirma el borrado definitivo del documento?")
 	String confirmDeleteForever();
 

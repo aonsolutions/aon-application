@@ -96,6 +96,10 @@ class Model390HFTable extends SimpleLayoutPanel implements HasSelectionHandlers<
 		newButton.addClickHandler( event -> cbk.onNew());
 		toolbar.add(newButton);
 		
+		final AonToolbarButton refreshButton = new AonToolbarButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh() );
+		refreshButton.addClickHandler( event -> refresh(cbk));
+		toolbar.add(refreshButton);
+
 		return toolbar;
 	}
 

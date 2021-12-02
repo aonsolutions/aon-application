@@ -416,7 +416,7 @@ public class FiscalModelDAO {
 	}
 	
 	static void initializeFiscalModel(AONContext ctx, FiscalModel fm) {
-		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx); 
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		 
 		if (fm.getDomain() == 0) throw new AonCoreException("[INTERNO] No se ha indicado el dominio para la declaraci\u00F3n.");
 		fm.setDocument(conf.getCompany().getDocument());
 		fm.setName(conf.getCompany().getName());
@@ -441,7 +441,14 @@ public class FiscalModelDAO {
 		fm.setAdmonAeat(conf.fiscal().getAdministrationCode());
 		fm.setStatus(FiscalStatus.PENDING);
 		
-		// ---------------------------
+		initializeIdentificationData(ctx, fm, conf);
+	}
+	
+	static void initializeIdentificationData(AONContext ctx, FiscalModel fm) {
+		initializeIdentificationData(ctx, fm, ConfigurationDAO.getConfiguration(ctx));	
+	}
+	
+	static void initializeIdentificationData(AONContext ctx, FiscalModel fm,AonConfiguration conf) {
 		Company company = CompanyDAO.getCompany(ctx,fm.getDomain());
 		Enterprise enterprise = CompanyDAO.getEnterprise(ctx, company.getId() );
 		fm.setDocument(enterprise==null?company.getDocument():enterprise.getDocument());
@@ -465,10 +472,7 @@ public class FiscalModelDAO {
 			fm.setStreetNumber( enterprise.getNumber() ); 
 			fm.setTown( AonStringUtils.left(enterprise.getCity(),20));
 			fm.setProvince(enterprise.getProvince()==null?"":enterprise.getProvince().toString());
-			fm.setZip("00000");
-			if (enterprise.getZip() != null){
-				fm.setZip(enterprise.getZip());
-			}
+			fm.setZip(AonStringUtils.defaultIfBlank(enterprise.getZip(), "00000"));
 			fm.setPhone(enterprise.getPhone() );
 		}
 		fm.setContactPerson( conf.fiscal().getContactPerson() );

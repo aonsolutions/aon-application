@@ -31,16 +31,10 @@ public class NewDeclarationPopup<T extends FiscalModel,O extends FiscalModelModu
 		
 	protected int row = 0;
 	private IFiscalModelCallback<T,O> callback;
-	protected boolean reset;
 	
 	public NewDeclarationPopup(T model, final IFiscalModelCallback<T,O> callback) {
-		this(model, false, callback);
-	}
-
-	public NewDeclarationPopup(T model, final boolean reset, final IFiscalModelCallback<T,O> callback) {
 		this.callback = callback;
-		this.reset = reset;
-		setCaption(reset?AON.MSG.resetDeclaration():AON.MSG.newDeclaration());
+		setCaption(AON.MSG.newDeclaration());
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		
@@ -53,14 +47,6 @@ public class NewDeclarationPopup<T extends FiscalModel,O extends FiscalModelModu
 		paintModelSpecificPanel(model);
 		rootPanel.add(tab);
 		
-		// MENSAJE DE AVISO PARA INICIALIZAR EL MODELO
-		if (reset) {
-			Label labelReset = new Label(AON.MSG.resetWarning());
-			labelReset.addStyleName(AON.CSS.aonMarginTop());
-			labelReset.addStyleName(AON.CSS.aonColorRed());
-			tab.setWidget(row, 0, labelReset);
-			tab.getFlexCellFormatter().setColSpan(row, 0, 2);
-		}
 		rootPanel.add(getButtonsPanels( model ));
 		add(rootPanel);
 	}
@@ -105,7 +91,6 @@ public class NewDeclarationPopup<T extends FiscalModel,O extends FiscalModelModu
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 		admonList.setSelectedIndex( model.getAdministration().ordinal());
-		admonList.setEnabled(!reset);
 		admonList.addChangeHandler( event -> {
 			model.setAdministration( admonList.getValue() );
 			replacement.setVisible(model.isReplacementDeclarationAvailable());
@@ -123,7 +108,6 @@ public class NewDeclarationPopup<T extends FiscalModel,O extends FiscalModelModu
 		yearBox.setValue(model.getYear());
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
-		yearBox.setEnabled(!reset);
 		yearBox.addValueChangeHandler(event -> model.setYear(yearBox.getValue()));
 		tab.setWidget(row, 1,yearBox);
 		row++;
@@ -143,7 +127,6 @@ public class NewDeclarationPopup<T extends FiscalModel,O extends FiscalModelModu
 				}
 			}
 		}
-		periodList.setEnabled(!reset);
 		periodList.addChangeHandler( event -> model.setPeriod( periodList.getValue() ));
 		tab.setWidget(row, 1, periodList);
 		row++;
@@ -152,9 +135,9 @@ public class NewDeclarationPopup<T extends FiscalModel,O extends FiscalModelModu
 	private void paintVariablePanel(T model) {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		FlowPanel decPanel = new FlowPanel();
-		decPanel.add(getDiffCalculationPanel(model));		
 		decPanel.add(getComplementaryPanel(model));
 		decPanel.add(getReplacementPanel(model));		
+		decPanel.add(getDiffCalculationPanel(model));		
 		tab.setWidget(row, 0, decPanel);
 		tab.setWidget(row, 1, getPreviousNumberPanel(model));
 		row++;
@@ -163,7 +146,6 @@ public class NewDeclarationPopup<T extends FiscalModel,O extends FiscalModelModu
 	private FlowPanel getReplacementPanel(T model) {
 		FlowPanel replPanel = new FlowPanel();
 		replacement.setText(AON.MSG.replacement());
-		replacement.setEnabled(!reset);
 		replacement.setValue(model.isReplacement());
 		replacement.addClickHandler(event -> {
 			model.setReplacement(replacement.getValue());
@@ -182,7 +164,6 @@ public class NewDeclarationPopup<T extends FiscalModel,O extends FiscalModelModu
 	private Widget getComplementaryPanel(T model) {
 		FlowPanel compPanel = new FlowPanel();
 		complementary.setText(AON.MSG.complementary());
-		complementary.setEnabled(!reset);
 		complementary.setValue(model.isComplementary());
 		complementary.addClickHandler(event -> {
 			model.setComplementary(complementary.getValue());

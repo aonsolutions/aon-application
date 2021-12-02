@@ -84,6 +84,12 @@ public class MODEL131Impl implements IMODEL131 {
 	public Mod131 create(AONContext ctx, Mod131 mod131) {
 		return Mod131DAO.createMod131(ctx,mod131);
 	}
+	
+	@Override
+	public Mod131 reset(AONContext ctx, Mod131 mod131) {
+		return Mod131DAO.resetMod131(ctx,mod131);
+	}
+
 	@Override
 	public String getInfo(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod131DAO.getMod131Info(ctx,mod131,script,infoKey);

@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod123;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod123.Model123.Model123Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
@@ -12,7 +13,6 @@ import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class Model123Gipuzkoa extends Model123Base {
 	
@@ -35,8 +35,7 @@ public class Model123Gipuzkoa extends Model123Base {
 			table.getFlexCellFormatter().setColSpan(row, 0, 6);
 			Mod123Key key = Mod123Key.GP_X00;
 			final FiscalModelDetail det1 = getModel().ensureDetail(key);
-			final TextBox input = new TextBox();
-			input.setStyleName(AON.CSS.aonInputText());
+			final AonTextBox input = new AonTextBox();
 			input.setVisibleLength(10);
 			input.setMaxLength(9);
 			input.setEnabled(getModel().isNotFinished() && script.isEnabled()); 

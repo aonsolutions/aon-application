@@ -361,6 +361,13 @@ public class Mod123DAO extends FiscalModelDAO {
 		return mod123;
 	}
 	
+	public static Mod123 resetMod123(AONContext ctx,Mod123 mod123) {
+		mod123.setMap(null);
+		initializeIdentificationData(ctx, mod123);
+		createMod123(ctx,mod123);
+		return mod123;
+	}
+	
 	public static Mod123 createMod123(AONContext ctx,Mod123 mod123) {
 		for (Mod123KeyDAO key : Mod123KeyDAO.values()) {
 			if (key.acceptModel(mod123)) {

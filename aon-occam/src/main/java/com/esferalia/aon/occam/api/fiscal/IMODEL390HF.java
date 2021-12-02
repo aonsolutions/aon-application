@@ -25,5 +25,6 @@ public interface IMODEL390HF {
 	public Mod390HF declarationChanged(AONContext ctx, Mod390HF mod303);
 	public void deleteMod390HF(AONContext ctx, Mod390HF mod303);
 	public String getMod390HFInfo(AONContext ctx, Mod390HF mod303, IModelScript<Mod390Key> script, FiscalModelKeyInfo infoKey);
+	public Mod390HF resetMod390HF(AONContext ctx, Mod390HF mod);
 	
 }

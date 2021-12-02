@@ -94,6 +94,12 @@ public class MODEL111 {
 		}
 	}
 
+	public static Mod111 resetMod111(Occam occam,Mod111 mod111) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().reset(ctx, mod111);
+		}
+	}
+
 	public static String getMod111Info(Occam occam, Mod111 mod111
 			,IModelScript<Mod111Key> script,FiscalModelKeyInfo infoKey) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {

@@ -255,6 +255,13 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 	
 
+	public static Mod303 resetMod303(AONContext ctx,Mod303 mod303) {
+		mod303.setMap(null);
+		initializeIdentificationData(ctx, mod303);
+		createMod303(ctx,mod303);
+		return mod303;
+	}
+
 	public static Mod303 createMod303(AONContext ctx,final Mod303 mod303) {
 		final Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 

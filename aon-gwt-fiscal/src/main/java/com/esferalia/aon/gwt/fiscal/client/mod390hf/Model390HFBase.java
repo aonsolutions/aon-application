@@ -154,7 +154,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
 		
-		resetButton.addClickHandler( event -> getCallback().onReset(getModel()));
+		resetButton.addClickHandler( event -> onReset());
 		toolbarPanel.add(resetButton);		
 		
 		printButton.addClickHandler( event ->  print());
@@ -194,6 +194,8 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 
 		auditButton.addClickHandler( event -> audit());
 		toolbarPanel.add(auditButton);
+		
+		toolbarPanel.add(diskForm);
 
 		return toolbarPanel;
 	}
@@ -261,14 +263,13 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	
 	private void refreshToolbarState() {
 		toolbarPanel.setTitle(AonStringUtils.join(mod390HF.getDocument(),AonStringUtils.SPACE,mod390HF.getFullName()));
-		resetButton.setVisible(!mod390HF.isNew());
+		resetButton.setVisible(!mod390HF.isNew() && !mod390HF.isFinished() && !mod390HF.isSent());
 		auditButton.setVisible(!mod390HF.isNew());
 		newButton.setVisible(!mod390HF.isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
 		saveButton.setVisible(!mod390HF.isFinished() && !mod390HF.isSent());
 		deleteButton.setVisible(!mod390HF.isNew() && !mod390HF.isFinished() && !mod390HF.isSent());
 		printButton.setVisible(!mod390HF.isNew());
-		resetButton.setVisible(!mod390HF.isFinished() && !mod390HF.isSent());
 		markAsPendingButton.setVisible(!mod390HF.isNew() &&
 				(mod390HF.getStatus() == FiscalStatus.FINISHED 
 				|| mod390HF.getStatus() == FiscalStatus.BATCHED
@@ -473,7 +474,15 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	}
 	
 	private void submitForm(String action) {
+		diskForm.setMethod(FormPanel.METHOD_POST);
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		diskForm.clear();
+		FlowPanel diskPanel = new FlowPanel();
+		diskPanel.add(mod390HFHidden);
+		diskPanel.add(domainIdHidden);
+		diskPanel.add(domainNameHidden);
+		diskPanel.add(userHidden);
+		diskForm.add(diskPanel);
 		mod390HFHidden.setValue(String.valueOf(getModel().getId()));
 		domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
 		domainNameHidden.setValue(getCallback().getOptions().getDomainName());
@@ -587,6 +596,10 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	}
 	
 	protected void showPaymentInfo(Mod390HF mod) {
+		if (paymentContainer != null) {
+			this.remove(paymentContainer);
+			this.forceLayout();
+		}
 		if (mod.isFinished() || mod.isSent()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
 			buff.append(AonStringUtils.SPACE);
@@ -610,11 +623,6 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			paymentContainer.add(label);
 			this.insert( paymentContainer, Direction.NORTH, 30, decToolbar);
 			this.forceLayout();
-		} else {
-			if (paymentContainer != null) {
-				this.remove(paymentContainer);
-				this.forceLayout();
-			}
 		}
 	}
 
@@ -641,6 +649,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		Model390HF.MOD_SERVICE.save(getCallback().getOptions().getOccam(), this.mod390HF, new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
+						setDirty( false );
 						selectAndPopulate(result);
 						popup.hide();
 						saveButton.setEnabled(true);
@@ -691,6 +700,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 				new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						showFinalizePopup();
 						markAsFinishedButton.setEnabled(true);
@@ -734,6 +744,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		Model390HF.MOD_SERVICE.markAsCustomerCheck(getCallback().getOptions().getOccam(), mod390HF, new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						popup.hide();
 						markAsFinishedButton.setEnabled(true);
@@ -759,6 +770,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		Model390HF.MOD_SERVICE.markAsFinished(getCallback().getOptions().getOccam(), mod390HF, new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						popup.hide();
 						markAsFinishedButton.setEnabled(true);
@@ -803,6 +815,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		Model390HF.MOD_SERVICE.markAsPending(getCallback().getOptions().getOccam(), mod390HF, new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						popup.hide();
 						markAsPendingButton.setEnabled(true);
@@ -823,6 +836,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		Model390HF.MOD_SERVICE.markAsSent(getCallback().getOptions().getOccam(), mod390HF, new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						markAsSentButton.setEnabled(true);
 					}
@@ -906,6 +920,35 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			
 				}
 			);	
+	}
+
+	private void onReset() {
+		resetButton.setEnabled(false);
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
+
+			@Override
+			public void onAccept() {
+				Model390HF.MOD_SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
+						new AsyncCallback<Mod390HF>() {
+							@Override
+							public void onSuccess(Mod390HF m390HF) {
+								setDirty( true );
+								selectAndPopulate(m390HF);
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
+								
+							}
+						});
+			}
+			@Override
+			public void onCancel() {
+				resetButton.setEnabled(true);
+			}
+		});
 	}
 
 	public void calculateAndRefresh() {

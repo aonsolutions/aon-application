@@ -110,6 +110,8 @@ public abstract class Model111Base extends DockLayoutPanel {
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
+		showPaymentInfo(mod111);
+		
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
 		paintLiquidationTab(tabPanel);
@@ -135,6 +137,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	protected void selectAndPopulate( Mod111 mod111) {
 		select(mod111);
 		populate(mod111);
+		showPaymentInfo(mod111);		
 		decorateDeclarationTab();
 		decorateAdministrationTab();
 	}
@@ -158,7 +161,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 		cancelButton.addClickHandler(event ->  cancel() );
 		toolbarPanel.add(cancelButton);
 
-		newButton.addClickHandler( event ->  getCallback().onNew() );
+		newButton.addClickHandler( event ->  getCallback().onNew( ) );
 		toolbarPanel.add(newButton);
 
 		saveButton.addClickHandler(event ->  save());
@@ -167,7 +170,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
 		
-		resetButton.addClickHandler( event -> getCallback().onReset(getModel()));
+		resetButton.addClickHandler( event -> onReset());
 		toolbarPanel.add(resetButton);		
 		
 		printButton.addClickHandler( event ->  print());
@@ -208,6 +211,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 		auditButton.addClickHandler( event -> audit());
 		toolbarPanel.add(auditButton);
 
+		toolbarPanel.add(diskForm);
 		return toolbarPanel;
 	}
 
@@ -271,6 +275,36 @@ public abstract class Model111Base extends DockLayoutPanel {
 		return decToolbar;
 	}
 	
+	private void onReset() {
+		resetButton.setEnabled(false);
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
+
+			@Override
+			public void onAccept() {
+				Model111.SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
+						new AsyncCallback<Mod111>() {
+							@Override
+							public void onSuccess(Mod111 m111) {
+								setDirty( true );
+								selectAndPopulate(m111);
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
+								
+							}
+						});
+			}
+			@Override
+			public void onCancel() {
+				resetButton.setEnabled(true);
+			}
+		});
+	}
+
+	
 	protected void markAsDirty() {
 		setDirty(true);
 	}
@@ -298,14 +332,13 @@ public abstract class Model111Base extends DockLayoutPanel {
 
 	private void refreshToolbarState() {
 		toolbarPanel.setTitle(AonStringUtils.join(model.getDocument(),AonStringUtils.SPACE,model.getFullName()));
-		resetButton.setVisible(!model.isNew());
+		resetButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
 		auditButton.setVisible(!model.isNew());
 		newButton.setVisible(!model.isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
 		saveButton.setVisible(!model.isFinished() && !model.isSent());
 		deleteButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
 		printButton.setVisible(!model.isNew());
-		resetButton.setVisible(!model.isFinished() && !model.isSent());
 		markAsPendingButton.setVisible(!model.isNew() &&
 				(model.getStatus() == FiscalStatus.FINISHED 
 				|| model.getStatus() == FiscalStatus.BATCHED
@@ -384,6 +417,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 		Model111.SERVICE.save(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod111>() {
 			@Override
 			public void onSuccess(Mod111 result) {
+				setDirty( false );
 				select(result);
 				popup.hide();
 				saveButton.setEnabled(true);
@@ -481,10 +515,10 @@ public abstract class Model111Base extends DockLayoutPanel {
 		Model111.SERVICE.markAsPending(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod111>() {
 					@Override
 					public void onSuccess(Mod111 result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						popup.hide();
 						markAsPendingButton.setEnabled(true);
-						showPaymentInfo(getModel());
 					}
 
 					@Override
@@ -501,6 +535,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 		Model111.SERVICE.markAsSent(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod111>() {
 					@Override
 					public void onSuccess(Mod111 result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						markAsSentButton.setEnabled(true);
 					}
@@ -519,6 +554,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 				new AsyncCallback<Mod111>() {
 					@Override
 					public void onSuccess(Mod111 m111) {
+						setDirty(false);
 						selectAndPopulate(m111);
 						showFinalizePopup(model);
 						markAsFinishedButton.setEnabled(true);
@@ -571,7 +607,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 				selectAndPopulate(result);
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
-				showPaymentInfo(getModel());
 			}
 
 			@Override
@@ -594,10 +629,10 @@ public abstract class Model111Base extends DockLayoutPanel {
 		Model111.SERVICE.markAsCustomerCheck(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod111>() {
 			@Override
 			public void onSuccess(Mod111 result) {
+				setDirty(false);
 				select(result);
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
-				showPaymentInfo(getModel());
 			}
 
 			@Override
@@ -610,6 +645,10 @@ public abstract class Model111Base extends DockLayoutPanel {
 	}
 
 	private void showPaymentInfo(Mod111 mod) {
+		if (paymentContainer != null) {
+			this.remove(paymentContainer);
+			this.forceLayout();
+		}
 		if (mod.isFinished() || mod.isSent()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
 			buff.append(AonStringUtils.SPACE);
@@ -633,11 +672,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 			paymentContainer.add(label);
 			this.insert( paymentContainer, Direction.NORTH, 30, decToolbar);
 			this.forceLayout();
-		} else {
-			if (paymentContainer != null) {
-				this.remove(paymentContainer);
-				this.forceLayout();
-			}
 		}
 	}
 	
@@ -861,7 +895,15 @@ public abstract class Model111Base extends DockLayoutPanel {
 	}
 	
 	protected void submitForm(String action) {
+		diskForm.setMethod(FormPanel.METHOD_POST);
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		diskForm.clear();
+		FlowPanel diskPanel = new FlowPanel();
+		diskPanel.add(mod111Hidden);
+		diskPanel.add(domainIdHidden);
+		diskPanel.add(domainNameHidden);
+		diskPanel.add(userHidden);
+		diskForm.add(diskPanel);
 		mod111Hidden.setValue(String.valueOf(getModel().getId()));
 		domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
 		domainNameHidden.setValue(getCallback().getOptions().getDomainName());

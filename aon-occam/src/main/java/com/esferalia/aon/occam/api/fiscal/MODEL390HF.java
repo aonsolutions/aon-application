@@ -109,4 +109,10 @@ public class MODEL390HF {
 		}
 	}
 
+	public static Mod390HF resetMod390HF(Occam occam, Mod390HF mod) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().resetMod390HF(ctx, mod);
+		}
+	}
+
 }

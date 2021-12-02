@@ -402,12 +402,13 @@ public class FiscalConfigPanel extends SimpleLayoutPanel {
 		box.addItem(AEAT_TEST_PRODUCTION);
 		box.addItem(AEAT_TEST_TEST);
 		
-		box.setSelectedIndex(options.getConfiguration().fiscal().isTestEnvironment()?0:1);
+		box.setSelectedIndex(options.getConfiguration().fiscal().isTestEnvironment()?1:0);
 		box.addChangeHandler( event -> {
-			options.getConfiguration().fiscal().setTestEnvironment(box.getSelectedIndex()==0);
+			options.getConfiguration().fiscal().setTestEnvironment(box.getSelectedIndex()==1);
 			saveParam(options, 
-				new ApplicationParameter().setName(AppParam.FS_AEAT_TEST_ENV)
-				.setValue(Boolean.toString(options.getConfiguration().fiscal().isTestEnvironment()))
+				new ApplicationParameter()
+					.setName(AppParam.FS_AEAT_TEST_ENV)
+					.setValue(Boolean.toString(options.getConfiguration().fiscal().isTestEnvironment()))
 				,msg);
 		});
 		addRow(tab, new Label(AEAT_TEST),box,msg);

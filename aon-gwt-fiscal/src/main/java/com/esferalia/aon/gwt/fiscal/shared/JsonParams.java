@@ -92,6 +92,7 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.NAME 	 	 	,AonStringUtils.isBlank(params.getName())? JSON_NULL : new JSONString( params.getName()));
 		json.put(IRequestParamsNames.DOCUMENT 	 	,AonStringUtils.isBlank(params.getDocument())? JSON_NULL : new JSONString( params.getDocument()));
 		json.put(IRequestParamsNames.NRC 	 		,AonStringUtils.isBlank(params.getNrc())? JSON_NULL : new JSONString( params.getNrc()));
+		json.put(IRequestParamsNames.TEST			,new JSONNumber( params.isTest()?1:0));
 		return json.toString();
 	}
 	

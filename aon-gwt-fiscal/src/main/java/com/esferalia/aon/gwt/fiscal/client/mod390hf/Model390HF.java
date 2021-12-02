@@ -103,34 +103,6 @@ public class Model390HF extends MainEntryPoint {
 		}
 		
 		@Override
-		public void onReset(Mod390HF oldMod390HF) {
-			aonLayout.hideErrorPanel();
-			MOD_SERVICE.initialize(getOptions().getOccam(),null,
-					new AsyncCallback<Mod390HF>() {
-						@Override
-						public void onSuccess(Mod390HF newMod390HF) {
-							cleanInfoPanel();
-							tabLayout.selectTab(INFORMATION_TAB);
-							closeFootPanel();
-							// Asignamos determinadas propiedades del modelo 
-							// que queremos reinicializar
-							newMod390HF.setAdministration(oldMod390HF.getAdministration());
-							newMod390HF.setYear(oldMod390HF.getYear());
-							newMod390HF.setPeriod(oldMod390HF.getPeriod());
-							newMod390HF.setComplementary(oldMod390HF.isComplementary());
-							newMod390HF.setReplacement(oldMod390HF.isReplacement());
-							newMod390HF.setReplacedNumber(oldMod390HF.getReplacedNumber());
-							showResetDeclarationPopup(newMod390HF,oldMod390HF);
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-						}
-					});
-		}
-		
-		@Override
 		public void showInfoPanel(String htmlText) {
 			openFootPanelIfNeeded();
 			tabLayout.selectTab(INFORMATION_TAB);
@@ -155,57 +127,6 @@ public class Model390HF extends MainEntryPoint {
 		@Override
 		public Model390HFModuleOptions getOptions() {
 			return Model390HF.this.getOptions();
-		}
-
-		private void showResetDeclarationPopup(Mod390HF newMod390HF, Mod390HF oldMod390HF) {
-			Model390HFNewDeclarationPopup newDialog = new Model390HFNewDeclarationPopup( newMod390HF, true, new Model390HFCallback() {
-
-						@Override
-						public void onAccept(Mod390HF mod390HF) {
-							final PopupPanel popup = new PopupPanel(false, true);
-							popup.add(new AonSplash());
-							popup.setGlassEnabled(true);
-							popup.setAnimationEnabled(true);
-							popup.center();
-							
-							// Primero borrar el modelo actual
-							MOD_SERVICE.delete(getOptions().getOccam(), oldMod390HF,
-									new AsyncCallback<Void>() {
-								@Override
-								public void onSuccess(Void m390HF) {
-									MOD_SERVICE.create(getOptions().getOccam(),mod390HF,
-											new AsyncCallback<Mod390HF>() {
-												@Override
-												public void onSuccess(Mod390HF m390HF) {
-													popup.hide();
-													select(m390HF);
-												}
-
-												@Override
-												public void onFailure(Throwable caught) {
-													popup.hide();
-													aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-												}
-											});
-								}
-
-								@Override
-								public void onFailure(Throwable caught) {
-									popup.hide();									
-									aonLayout.showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
-								}
-							});
-						}
-						
-						@Override
-						public void onCancel(Mod390HF mod390HF) {
-							// Nothing
-						}
-						
-					}
-				); 
-				newDialog.center();
-				newDialog.show();
 		}
 
 	}
@@ -355,6 +276,12 @@ public class Model390HF extends MainEntryPoint {
 									}
 								});
 
+					}
+					@Override
+					public void onCancel(Mod390HF model) {
+						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+							getOptions().getExternalCallback().onExit(model);
+						}						
 					}
 				}
 			); 

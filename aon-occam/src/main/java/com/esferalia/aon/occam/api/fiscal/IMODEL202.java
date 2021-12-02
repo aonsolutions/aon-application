@@ -25,5 +25,6 @@ public interface IMODEL202 {
 	public Mod202 create(AONContext ctx, Mod202 mod202);
 	public String getInfo(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey);
 	public Mod202 aeatPresentation(AONContext ctx, Mod202 mod202, String aeatResponse);
+	public Mod202 reset(AONContext ctx, Mod202 mod202);
 	
 }

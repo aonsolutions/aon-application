@@ -89,7 +89,12 @@ public class Mod115ServiceAsyncDecorator implements Mod115ServiceAsync {
 	public void create(Occam occam, Mod115 mod115, AsyncCallback<Mod115> callback) {
 		AON.start();
 		fsa.create(occam, mod115,new AsyncCallbackWrapper<Mod115>(callback));
+	}
 
+	@Override
+	public void reset(Occam occam, Mod115 mod115, AsyncCallback<Mod115> callback) {
+		AON.start();
+		fsa.reset(occam, mod115,new AsyncCallbackWrapper<Mod115>(callback));
 	}
 
 	@Override

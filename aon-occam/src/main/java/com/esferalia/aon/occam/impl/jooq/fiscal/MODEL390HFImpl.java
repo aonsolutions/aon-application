@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 
 public class MODEL390HFImpl implements IMODEL390HF {
@@ -18,7 +19,7 @@ public class MODEL390HFImpl implements IMODEL390HF {
 
 	@Override
 	public LinkedList<Mod390HF> getMod390HFs(AONContext ctx, int domain) {
-		LinkedList<Mod390HF> list = new LinkedList<Mod390HF>();
+		LinkedList<Mod390HF> list = new LinkedList<>();
 		Mod390HFDAO.getMod390HFs(ctx, domain).forEach(list::add);
 		return list;
 	}
@@ -40,7 +41,7 @@ public class MODEL390HFImpl implements IMODEL390HF {
 
 	@Override
 	public Mod390HF initializeForFinishMod390HF(AONContext ctx, Mod390HF mod390HF) {
-		return Mod390HFDAO.initializeForFinish(ctx, mod390HF);
+		return FiscalModelDAO.initializeForFinish(ctx, mod390HF);
 	}
 
 	@Override
@@ -65,7 +66,7 @@ public class MODEL390HFImpl implements IMODEL390HF {
 
 	@Override
 	public void deleteMod390HF(AONContext ctx, Mod390HF mod390HF) {
-		ctx.getDslContext().transaction(configuration -> Mod390HFDAO.delete(ctx, mod390HF));
+		ctx.getDslContext().transaction(configuration -> FiscalModelDAO.delete(ctx, mod390HF));
 	}
 
 	@Override
@@ -76,6 +77,10 @@ public class MODEL390HFImpl implements IMODEL390HF {
 	@Override
 	public Mod390HF createMod390HF(AONContext ctx, Mod390HF mod390HF) {
 		return Mod390HFDAO.createMod390HF(ctx, mod390HF);
+	}
+	@Override
+	public Mod390HF resetMod390HF(AONContext ctx, Mod390HF mod390HF) {
+		return Mod390HFDAO.resetMod390HF(ctx, mod390HF);
 	}
 
 	@Override

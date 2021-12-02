@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod111;
 
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;

@@ -404,6 +404,12 @@ public class Mod202DAO extends FiscalModelDAO {
 		return mod202;
 	}
 	
+	public static Mod202 resetMod202(AONContext ctx,Mod202 mod202) {
+		mod202.setMap(null);
+		initializeIdentificationData(ctx, mod202);
+		createMod202(ctx,mod202);
+		return mod202;
+	}
 	
 	public static Mod202 createMod202(AONContext ctx,Mod202 mod202) {
 		for (Mod202KeyDAO key : Mod202KeyDAO.values()) {

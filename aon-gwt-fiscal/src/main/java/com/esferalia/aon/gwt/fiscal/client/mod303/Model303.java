@@ -103,34 +103,6 @@ public class Model303 extends MainEntryPoint {
 		}
 		
 		@Override
-		public void onReset(Mod303 oldMod303) {
-			aonLayout.hideErrorPanel();
-			service.initialize(getOptions().getOccam(),null,
-					new AsyncCallback<Mod303>() {
-						@Override
-						public void onSuccess(Mod303 newMod303) {
-							cleanInfoPanel();
-							tabLayout.selectTab(INFORMATION_TAB);
-							closeFootPanel();
-							// Asignamos determinadas propiedades del modelo 
-							// que queremos reinicializar
-							newMod303.setAdministration(oldMod303.getAdministration());
-							newMod303.setYear(oldMod303.getYear());
-							newMod303.setPeriod(oldMod303.getPeriod());
-							newMod303.setComplementary(oldMod303.isComplementary());
-							newMod303.setReplacement(oldMod303.isReplacement());
-							newMod303.setReplacedNumber(oldMod303.getReplacedNumber());
-							showResetDeclarationPopup(newMod303,oldMod303);
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-						}
-					});
-		}
-		
-		@Override
 		public void showInfoPanel(String htmlText) {
 			openFootPanelIfNeeded();
 			tabLayout.selectTab(INFORMATION_TAB);
@@ -156,58 +128,6 @@ public class Model303 extends MainEntryPoint {
 		public Model303ModuleOptions getOptions() {
 			return Model303.this.getOptions();
 		}
-
-		private void showResetDeclarationPopup(Mod303 newMod303, Mod303 oldMod303) {
-			Model303NewDeclarationPopup newDialog = new Model303NewDeclarationPopup( newMod303, true, new Model303Callback() {
-
-						@Override
-						public void onAccept(Mod303 mod303) {
-							final PopupPanel popup = new PopupPanel(false, true);
-							popup.add(new AonSplash());
-							popup.setGlassEnabled(true);
-							popup.setAnimationEnabled(true);
-							popup.center();
-							
-							// Primero borrar el modelo actual
-							service.delete(getOptions().getOccam(), oldMod303,
-									new AsyncCallback<Void>() {
-								@Override
-								public void onSuccess(Void m303) {
-									service.create(getOptions().getOccam(),mod303,
-											new AsyncCallback<Mod303>() {
-												@Override
-												public void onSuccess(Mod303 m303) {
-													popup.hide();
-													select(m303);
-												}
-
-												@Override
-												public void onFailure(Throwable caught) {
-													popup.hide();
-													aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-												}
-											});
-								}
-
-								@Override
-								public void onFailure(Throwable caught) {
-									popup.hide();									
-									aonLayout.showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
-								}
-							});
-						}
-						
-						@Override
-						public void onCancel(Mod303 mod303) {
-							// Nothing
-						}
-						
-					}
-				); 
-				newDialog.center();
-				newDialog.show();
-		}
-
 	}
 	
 	@Override
@@ -355,6 +275,12 @@ public class Model303 extends MainEntryPoint {
 									}
 								});
 
+					}
+					@Override
+					public void onCancel(Mod303 model) {
+						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+							getOptions().getExternalCallback().onExit(model);
+						}						
 					}
 				}
 			); 

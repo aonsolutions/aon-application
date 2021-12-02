@@ -18,6 +18,7 @@ public interface Mod390HFService extends RemoteService {
 	LinkedList<Mod390HF> getMod390HFs(Occam occam) throws AonCoreException;
 	Mod390HF initialize(Occam occam, Mod390HF mod);
 	Mod390HF create(Occam occam, Mod390HF mod) throws AonCoreException;
+	Mod390HF reset(Occam occam, Mod390HF model) throws AonCoreException;
 	Mod390HF declarationChanged(Occam occam, Mod390HF mod) throws AonCoreException;
 	void delete(Occam occam, Mod390HF mod) throws AonCoreException;
 	Mod390HF save(Occam occam, Mod390HF mod) throws AonCoreException;

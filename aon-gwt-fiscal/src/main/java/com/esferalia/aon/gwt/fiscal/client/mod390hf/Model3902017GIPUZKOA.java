@@ -255,7 +255,6 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		AonTextBox cnae = new AonTextBox();
 		cnae.setVisibleLength(4);
 		cnae.setMaxLength(4);
-		cnae.setStyleName(AON.CSS.aonInputText());
 		cnae.setValue(getModel().getDescription(cnaeKey));
 		cnae.addValueChangeHandler(event -> {
 			getModel().putDescription(cnaeKey, cnae.getValue() );
@@ -372,7 +371,6 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		AonTextBox series = new AonTextBox();
 		series.setVisibleLength(8);
 		series.setMaxLength(5);
-		series.setStyleName(AON.CSS.aonInputText());
 		series.setValue(getModel().getDescription(seriesKey));
 		series.addValueChangeHandler(event -> {
 			getModel().putDescription(seriesKey, series.getValue() );
@@ -383,7 +381,6 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		AonTextBox from = new AonTextBox();
 		from.setVisibleLength(10);
 		from.setMaxLength(10);
-		from.setStyleName(AON.CSS.aonInputText());
 		from.setValue(getModel().getDescription(fromKey));
 		from.addValueChangeHandler(event -> {
 			getModel().putDescription(fromKey, from.getValue() );
@@ -394,7 +391,6 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		AonTextBox to = new AonTextBox();
 		to.setVisibleLength(10);
 		to.setMaxLength(10);
-		to.setStyleName(AON.CSS.aonInputText());
 		to.setValue(getModel().getDescription(toKey));
 		to.addValueChangeHandler(event -> {
 			getModel().putDescription(toKey, to.getValue() );

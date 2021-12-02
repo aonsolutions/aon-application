@@ -69,8 +69,8 @@ public class FiscalModelAdmonPanel<T extends FiscalModel,O extends FiscalModelMo
 	private AonLink downloadLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconDownload(), "Archivo para la presentaci\u00F3n");
 
 	private AonLink validateLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconValid(), "Validar / Borrador PDF via AEAT");
-	private AonLink sendLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconSend(), "Presentaci\u00F3n via AEAT.");
-	private AonLink checkLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconAeatBw(), "Consultar Presentaci\u00F3n via AEAT.");
+	private AonLink sendLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconSend(), "Envio de la presentaci\u00F3n a la AEAT.");
+	private AonLink checkLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconAeatBw(), "Consultar Presentaci\u00F3n en AEAT.");
 	private AonLink viewDocumentLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconPdf(), "Consultar Presentaci\u00F3n guardada.");
 	
 	private boolean validating;
@@ -248,10 +248,10 @@ public class FiscalModelAdmonPanel<T extends FiscalModel,O extends FiscalModelMo
 					@Override
 					protected void onAccept( AEATParams params) {
 						params
-						.setDomainName(getCallback().getOptions().getDomainName())
-						.setDomainId(getCallback().getOptions().getDomain())
-						.setUser(getCallback().getOptions().getUser())
-						.setMod(getCallback().getModel().getId())
+							.setDomainName(getCallback().getOptions().getDomainName())
+							.setDomainId(getCallback().getOptions().getDomain())
+							.setUser(getCallback().getOptions().getUser())
+							.setMod(getCallback().getModel().getId())
 						;
 						sendAEAT(params);
 					}
@@ -451,7 +451,7 @@ public class FiscalModelAdmonPanel<T extends FiscalModel,O extends FiscalModelMo
 				) {
 			validateLink.setVisible( getCallback().getModel().isFinished() );
 			sendLink.setVisible( getCallback().getModel().isFinished() );
-			checkLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getModel().getNumber()) ); 
+			checkLink.setVisible( getCallback().getModel().isSent() ); 
 			viewDocumentLink.setVisible( getCallback().getModel().isSent() ); 
 		} else {
 			validateLink.setVisible( false );

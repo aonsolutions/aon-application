@@ -19,6 +19,7 @@ public interface Mod303Service extends RemoteService {
 	LinkedList<Mod303> getMod303s(Occam occam) throws AonCoreException;
 	Mod303 initialize(Occam occam, Mod303 mod303);
 	Mod303 create(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 reset(Occam occam, Mod303 model) throws AonCoreException;
 	Mod303 declarationChanged(Occam occam, Mod303 mod303) throws AonCoreException;
 	
 	void delete(Occam occam, Mod303 mod303) throws AonCoreException;

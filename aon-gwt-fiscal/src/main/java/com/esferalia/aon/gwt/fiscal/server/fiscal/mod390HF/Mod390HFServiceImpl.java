@@ -75,6 +75,11 @@ public class Mod390HFServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 
 	@Override
+	public Mod390HF reset(Occam occam, Mod390HF mod303) {
+		return MODEL390HF.resetMod390HF(occam, mod303);
+	}
+	
+	@Override
 	public Mod390HF declarationChanged(Occam occam, Mod390HF mod303) throws AonCoreException {
 		return MODEL390HF.declarationChanged(occam, mod303);
 	}

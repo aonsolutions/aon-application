@@ -16,6 +16,7 @@ public class AEATParams implements Serializable {
 	private String name;
 	private String document;
 	private String nrc;
+	private boolean test;
 	
 	public int getDomainId() {
 		return domainId;
@@ -94,6 +95,13 @@ public class AEATParams implements Serializable {
 	}
 	public AEATParams setNrc(String nrc) {
 		this.nrc = nrc;
+		return this;
+	}
+	public boolean isTest() {
+		return test;
+	}
+	public AEATParams setTest(boolean test) {
+		this.test = test;
 		return this;
 	}
 	

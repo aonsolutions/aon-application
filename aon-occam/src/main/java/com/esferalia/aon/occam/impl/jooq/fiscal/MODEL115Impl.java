@@ -82,6 +82,12 @@ public class MODEL115Impl implements IMODEL115 {
 	public Mod115 create(AONContext ctx, Mod115 mod115) {
 		return Mod115DAO.createMod115(ctx,mod115);
 	}
+	
+	@Override
+	public Mod115 reset(AONContext ctx, Mod115 mod115) {
+		return Mod115DAO.resetMod115(ctx,mod115);
+	}
+	
 	@Override
 	public String getInfo(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod115DAO.getMod115Info(ctx,mod115,script,infoKey);

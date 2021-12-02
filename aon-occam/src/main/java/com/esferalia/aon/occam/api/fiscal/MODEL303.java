@@ -3,13 +3,11 @@ package com.esferalia.aon.occam.api.fiscal;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.IFiscal;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
 import com.esferalia.aon.occam.impl.jooq.fiscal.MODEL303Impl;
 
 public class MODEL303 {
@@ -112,6 +110,12 @@ public class MODEL303 {
 	public static Mod303 aeatPresentationMod303(Occam occam, Mod303 mod303, String aeatResponse) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().aeatPresentationMod303(ctx, mod303, aeatResponse);
+		}
+	}
+
+	public static Mod303 resetMod303(Occam occam, Mod303 mod303) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().resetMod303(ctx, mod303);
 		}
 	}
 

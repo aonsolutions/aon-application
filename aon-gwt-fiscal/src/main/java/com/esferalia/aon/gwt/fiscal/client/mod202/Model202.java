@@ -47,9 +47,6 @@ public class Model202 extends MainEntryPoint {
 		SERVICE = new Mod202ServiceAsyncDecorator(serviceRaw);
 	}
 	
-//	private static final String MODEL202_PRINT = "/aon_gwt_fiscal/ms/Model202Print";
-//	private static final String MODEL202_FILE = "/aon_gwt_fiscal/ms/Model202File";
-
 	private Model202ModuleOptions options;
 	
 	private AonLayoutPanel aonLayout;
@@ -130,11 +127,6 @@ public class Model202 extends MainEntryPoint {
 					showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 				}
 			});
-		}
-
-		@Override
-		public void onReset(Mod202 oldModel) {
-			// Nothing
 		}
 	}
 	
@@ -347,6 +339,12 @@ public class Model202 extends MainEntryPoint {
 								}
 							});
 				}
+				@Override
+				public void onCancel(Mod202 model) {
+					if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+						getOptions().getExternalCallback().onExit(model);
+					}						
+				}
 
 			}
 		); 
@@ -374,4 +372,5 @@ public class Model202 extends MainEntryPoint {
 			
 		});
 	}
+	
 }

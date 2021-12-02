@@ -115,4 +115,10 @@ public class MODEL131 {
 			return getImpl().aeatPresentation(ctx, mod131, aeatResponse);
 		}
 	}
+
+	public static Mod131 resetMod131(Occam occam, Mod131 mod131) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().reset(ctx, mod131);
+		}
+	}
 }

@@ -38,8 +38,10 @@ public class Mod111ExcelAction extends ModelIRPFExcelAction<Mod111,Mod111Key> {
 			cell.setCellValue(amount == 1?"SI":"NO");
 		} else if (key == Mod111Key.AR_908) {
 			style.setFont(smallFont);
-			cell.setCellValue(amount == 1?"Preconsursal"
-				:(amount == 2?"Postconsursal":" "));
+			String content = " ";
+			if (amount == 1) content = "Preconsursal";
+			else if (amount == 2) content = "Postconsursal"; 
+			cell.setCellValue(content);
 		} else if (key == Mod111Key.AR_909) {
 			String date = model.ensureDetail(key).getDescription();		
 			cell.setCellValue(AonStringUtils.defaultString(date));

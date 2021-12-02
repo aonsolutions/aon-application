@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod111;
 
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.mod111.Model111.Model111Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;

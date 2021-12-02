@@ -191,6 +191,13 @@ public class Mod390HFDAO extends FiscalModelDAO {
 		}
 	}
 	
+	public static Mod390HF resetMod390HF(AONContext ctx,Mod390HF mod390HF) {
+		mod390HF.setMap(null);
+		initializeIdentificationData(ctx, mod390HF);
+		createMod390HF(ctx,mod390HF);
+		return mod390HF;
+	}
+
 	public static Mod390HF createMod390HF(AONContext ctx,final Mod390HF mod) {
 		final Mod390HFDeclaration dec = Mod390HFDeclaration.getInstance(mod);
 

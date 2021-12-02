@@ -119,6 +119,8 @@ public abstract class Model131Base extends DockLayoutPanel {
 		centerPanel.setWidget(tabPanel);
 		add(centerPanel);
 		
+		showPaymentInfo(mod131);
+		
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
 		paintLiquidationTab(tabPanel);
@@ -176,7 +178,7 @@ public abstract class Model131Base extends DockLayoutPanel {
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
 		
-		resetButton.addClickHandler( event -> getCallback().onReset(getModel()));
+		resetButton.addClickHandler( event -> onReset());
 		toolbarPanel.add(resetButton);		
 		
 		printButton.addClickHandler( event ->  print());
@@ -217,6 +219,8 @@ public abstract class Model131Base extends DockLayoutPanel {
 		auditButton.addClickHandler( event -> audit());
 		toolbarPanel.add(auditButton);
 
+		toolbarPanel.add(diskForm);
+		
 		return toolbarPanel;
 	}
 
@@ -307,14 +311,13 @@ public abstract class Model131Base extends DockLayoutPanel {
 
 	private void refreshToolbarState() {
 		toolbarPanel.setTitle(AonStringUtils.join(model.getDocument(),AonStringUtils.SPACE,model.getFullName()));
-		resetButton.setVisible(!model.isNew());
+		resetButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
 		auditButton.setVisible(!model.isNew());
 		newButton.setVisible(!model.isNew() && !getCallback().getOptions().isBackButtonVisible() && !getCallback().getOptions().hasExternalCallback());
 		cancelButton.setVisible(true);
 		saveButton.setVisible(!model.isFinished() && !model.isSent());
 		deleteButton.setVisible(!model.isNew() && !model.isFinished() && !model.isSent());
 		printButton.setVisible(!model.isNew());
-		resetButton.setVisible(!model.isFinished() && !model.isSent());
 		markAsPendingButton.setVisible(!model.isNew() &&
 				(model.getStatus() == FiscalStatus.FINISHED 
 				|| model.getStatus() == FiscalStatus.BATCHED
@@ -393,6 +396,7 @@ public abstract class Model131Base extends DockLayoutPanel {
 		Model131.SERVICE.save(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod131>() {
 			@Override
 			public void onSuccess(Mod131 result) {
+				setDirty( false );
 				select(result);
 				popup.hide();
 				saveButton.setEnabled(true);
@@ -490,6 +494,7 @@ public abstract class Model131Base extends DockLayoutPanel {
 		Model131.SERVICE.markAsPending(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod131>() {
 					@Override
 					public void onSuccess(Mod131 result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						popup.hide();
 						markAsPendingButton.setEnabled(true);
@@ -510,6 +515,7 @@ public abstract class Model131Base extends DockLayoutPanel {
 		Model131.SERVICE.markAsSent(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod131>() {
 					@Override
 					public void onSuccess(Mod131 result) {
+						setDirty(false);
 						selectAndPopulate(result);
 						markAsSentButton.setEnabled(true);
 					}
@@ -528,6 +534,7 @@ public abstract class Model131Base extends DockLayoutPanel {
 				new AsyncCallback<Mod131>() {
 					@Override
 					public void onSuccess(Mod131 m131) {
+						setDirty(false);
 						selectAndPopulate(m131);
 						showFinalizePopup(model);
 						markAsFinishedButton.setEnabled(true);
@@ -577,6 +584,7 @@ public abstract class Model131Base extends DockLayoutPanel {
 		Model131.SERVICE.markAsFinished(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod131>() {
 			@Override
 			public void onSuccess(Mod131 result) {
+				setDirty(false);
 				selectAndPopulate(result);
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
@@ -603,6 +611,7 @@ public abstract class Model131Base extends DockLayoutPanel {
 		Model131.SERVICE.markAsCustomerCheck(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod131>() {
 			@Override
 			public void onSuccess(Mod131 result) {
+				setDirty(false);
 				select(result);
 				popup.hide();
 				markAsFinishedButton.setEnabled(true);
@@ -619,6 +628,10 @@ public abstract class Model131Base extends DockLayoutPanel {
 	}
 
 	private void showPaymentInfo(Mod131 mod) {
+		if (paymentContainer != null) {
+			this.remove(paymentContainer);
+			this.forceLayout();
+		}
 		if (mod.isFinished() || mod.isSent()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
 			buff.append(AonStringUtils.SPACE);
@@ -642,11 +655,6 @@ public abstract class Model131Base extends DockLayoutPanel {
 			paymentContainer.add(label);
 			this.insert( paymentContainer, Direction.NORTH, 30, decToolbar);
 			this.forceLayout();
-		} else {
-			if (paymentContainer != null) {
-				this.remove(paymentContainer);
-				this.forceLayout();
-			}
 		}
 	}
 	
@@ -923,8 +931,45 @@ public abstract class Model131Base extends DockLayoutPanel {
 		);	
 	}
 
+	private void onReset() {
+		resetButton.setEnabled(false);
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
+
+			@Override
+			public void onAccept() {
+				Model131.SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
+						new AsyncCallback<Mod131>() {
+							@Override
+							public void onSuccess(Mod131 m131) {
+								setDirty( true );
+								selectAndPopulate(m131);
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
+								
+							}
+						});
+			}
+			@Override
+			public void onCancel() {
+				resetButton.setEnabled(true);
+			}
+		});
+	}
+	
 	protected void submitForm(String action) {
+		diskForm.setMethod(FormPanel.METHOD_POST);
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+		diskForm.clear();
+		FlowPanel diskPanel = new FlowPanel();
+		diskPanel.add(mod131Hidden);
+		diskPanel.add(domainIdHidden);
+		diskPanel.add(domainNameHidden);
+		diskPanel.add(userHidden);
+		diskForm.add(diskPanel);
 		mod131Hidden.setValue(String.valueOf(getModel().getId()));
 		domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
 		domainNameHidden.setValue(getCallback().getOptions().getDomainName());
@@ -951,131 +996,4 @@ public abstract class Model131Base extends DockLayoutPanel {
 	void paintAdministrationTab(TabLayoutPanel tabPanel) {}
 	void decorateDeclarationTab() {}
 	
-//	@Override
-//	public void calculateAndRefresh(final Model131Callback callback) {
-//		Model131.SERVICE.calculate(
-//				callback.getOptions().getOccam(),
-//				getModel(),
-//				new AsyncCallback<Mod131>() {
-//
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						callback.showError(AON.MSG.errorMessage());
-//					}
-//
-//					@Override
-//					public void onSuccess(Mod131 result) {
-//						for (Mod131Key key : fieldsMap.keySet()) {
-//							double d1 = result.getAmount(key);
-//							double d2 = fieldsMap.get(key).getValue();
-//							if (!AonNumberUtils.equals(d1, d2)) {
-//								fieldsMap.get(key).setValue(d1,true,true);
-//							}
-//						}
-//					}
-//			
-//				}
-//			);	
-//	}
-	
-//	protected FlowPanel getAnchorPanel(Mod131 mod131, String label, String href) {
-//		FlowPanel p = new FlowPanel();
-//		p.setStyleName(AON.CSS.aonPadding2());
-//		Anchor a = new Anchor(label,href,"_blank");
-//		a.setStyleName(AON.CSS.aonIconPaddingLeft());
-//		a.addStyleName(FiscalModelUtils.getAdministrationIconStyle(mod131.getAdministration()));
-//		p.add(a);
-//		return p;
-//	}
-	
-//	public void printButtonClick() {
-//		if (getCallback().isDirty()) {
-//			new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
-//				, new ConfirmDialogCallback() {
-//				
-//				@Override
-//				public void onAccept() {
-//					submitForm(MODEL131_PRINT);
-//				}
-//
-//				@Override
-//				public void onCancel() {
-//					// Nothing
-//				}
-//			});
-//		} else {
-//			submitForm(MODEL131_PRINT);
-//		}
-//	}
-	
-//	protected void submitForm(String action) {
-//		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-//		mod131Hidden.setValue(String.valueOf(getModel().getId()));
-//		domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
-//		domainNameHidden.setValue(getCallback().getOptions().getDomainName());
-//		userHidden.setValue(getCallback().getOptions().getUser());
-//		diskForm.submit();
-//	}
-//
-//	protected void submitAEAT(String action) {
-//		submitAEAT(action, "null", "null", "null", "null", "null");
-//	}
-	
-//	protected void submitAEAT(String action, String cert, String pass, String document, String name, String nrc) {
-//		aeatForm.setAction(GWT.getHostPageBaseURL() + action);
-//		modAeatHidden.setValue(String.valueOf(getModel().getId()));
-//		domainIdAeatHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
-//		domainNameAeatHidden.setValue(getCallback().getOptions().getDomainName());
-//		userAeatHidden.setValue(getCallback().getOptions().getUser());
-//		certAeatHidden.setValue(cert);
-//		passAeatHidden.setValue(pass);
-//		nameAeatHidden.setValue(name);
-//		documentAeatHidden.setValue(document);
-//		nrcAeatHidden.setValue(nrc != null ? nrc : "null");
-//		testHidden.setValue(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment() ? "1" : "0");
-//		aeatForm.submit();
-//	}
-//	
-//	public FlowPanel getInformationPanel() {
-//		FlowPanel panel = new FlowPanel();
-//		panel.setStyleName(AON.CSS.aonScrollArea());
-//		panel.addStyleName(AON.CSS.aonWidthAll());
-//		panel.addStyleName(AON.CSS.aonMarginTop());
-//		panel.addStyleName(AON.CSS.aonPaddingTop());
-//		panel.addStyleName(AON.CSS.aonPaddingLeft());
-//		 
-//		FlexTable tab = new FlexTable();
-//		tab.getColumnFormatter().setWidth(0, "30px");
-//		tab.getColumnFormatter().setWidth(1
-//				, "auto");
-//		tab.setStyleName(AON.CSS.aonWidth90Percent());
-//		tab.addStyleName(AON.CSS.aonBlockCenter());
-//		tab.addStyleName(AON.CSS.aonPanelGrid());
-//		Label title = new Label("Informaci\u00F3n \u00FAtil para la confecci\u00F3n del modelo");
-//		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
-//		tab.getCellFormatter().setStyleName(0, 0, AON.CSS.aonPanelGridEven());
-//		tab.getCellFormatter().addStyleName(0, 0, AON.CSS.aonMarginTop());
-//		tab.getCellFormatter().addStyleName(0, 0, AON.CSS.aonFiscalModelTableHeaderTitle());
-//		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()));
-//		tab.setWidget(0, 0, title);
-//		
-//		int row = 1;
-//		for (Pair<String, String> pair : getInformationLinks()) {
-//			Label icon = new Label();
-//			icon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
-//			tab.setWidget(row, 0, icon );
-//			tab.getCellFormatter().setStyleName(row, 0, AON.CSS.aonPanelGridEven());
-//
-//			FlowPanel p = new FlowPanel();
-//			p.setStyleName(AON.CSS.aonPadding2());
-//			Anchor a = new Anchor(pair.getLeft(),pair.getRight(), "_blank");
-//			a.setStyleName(AON.CSS.aonPaddingLeft());
-//			p.add(a);
-//			tab.setWidget(row, 1, p );
-//			tab.getCellFormatter().setStyleName(row, 1, AON.CSS.aonPanelGridEven());
-//			row++;
-//		}
-//		panel.add(tab);
-//		return panel;
-//	}
 }

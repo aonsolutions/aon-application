@@ -1,8 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.mod130;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod130.Model130.Model130Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -14,24 +15,18 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130,Model130ModuleOptions>{
 	
 	public Model130NewDeclarationPopup(Mod130 mod130, Model130Callback callback) {
-		this(mod130, false, callback);
+		super(mod130, callback);
 	}
 
-	public Model130NewDeclarationPopup(Mod130 mod130, boolean reset, Model130Callback callback) {
-		super(mod130, reset, callback);
-	}
-	
 	@Override
 	protected void paintAdministration(Mod130 mod130) {
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.administration()));
 
-		admonList.setEnabled(!reset);
 		admonList.setSelectedIndex( mod130.getAdministration().ordinal());
 		admonList.addChangeHandler( event -> {
 			mod130.setAdministration( admonList.getValue() );
@@ -47,15 +42,13 @@ public class Model130NewDeclarationPopup extends NewDeclarationPopup<Mod130,Mode
 	@Override
 	protected void paintModelSpecificPanel(Mod130 mod130) {
 		final ListBox deponentBox = new ListBox();
-		final DocumentTextBox documentBox = new DocumentTextBox();
+		final AonDocumentTextBox documentBox = new AonDocumentTextBox();
 		final Label nameLabel = new Label( AON.MSG.nameCompanyName());
-		final TextBox nameBox = new TextBox();
-		nameBox.setStyleName(AON.CSS.aonInputText());
+		final AonTextBox nameBox = new AonTextBox();
 		final Label surnameLabel = new Label( AON.MSG.surname());
-		final TextBox surnameBox = new TextBox();
-		surnameBox.setStyleName(AON.CSS.aonInputText());
+		final AonTextBox surnameBox = new AonTextBox();
 		final Label percentLabel = new Label(AON.MSG.partPercent());
-		final DoubleBox percentBox = new DoubleBox();
+		final AonDoubleBox percentBox = new AonDoubleBox();
 		final CheckBox regularHome = new CheckBox();
 		final Label regimeLabel = new Label(AON.MSG.regime());
 		final ListBox regimeList = new ListBox();

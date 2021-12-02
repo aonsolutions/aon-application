@@ -25,4 +25,5 @@ public interface IMODEL303 {
 	public void deleteMod303(AONContext ctx, Mod303 mod303);
 	public String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey);
 	public Mod303 aeatPresentationMod303(AONContext ctx, Mod303 mod303, String aeatResponse);
+	public Mod303 resetMod303(AONContext ctx, Mod303 mod303);
 }

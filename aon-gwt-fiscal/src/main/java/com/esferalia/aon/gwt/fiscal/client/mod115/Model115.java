@@ -129,74 +129,6 @@ public class Model115 extends MainEntryPoint {
 				}
 			});
 		}
-
-		@Override
-		public void onReset(Mod115 oldModel) {
-			SERVICE.initialize(getOptions().getOccam(), null,
-				new AsyncCallback<Mod115>() {
-					@Override
-					public void onSuccess(Mod115 newMod115) {
-						cleanInfoPanel();
-						tabLayout.selectTab(INFORMATION_TAB);
-						closeFootPanel();
-						// Valores de la declaración actual
-						newMod115.setAdministration(oldModel.getAdministration());
-						newMod115.setYear(oldModel.getYear());
-						newMod115.setPeriod(oldModel.getPeriod());
-						newMod115.setComplementary(oldModel.isComplementary());
-						newMod115.setReplacement(oldModel.isReplacement());
-						newMod115.setReplacedNumber(oldModel.getReplacedNumber());
-						showResetDeclarationPopup(newMod115, oldModel);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-					}
-				});
-		}
-
-		private void showResetDeclarationPopup(Mod115 newMod115, Mod115 oldMod115) {
-			NewDeclarationPopup<Mod115,Model115ModuleOptions> newDialog = new NewDeclarationPopup<>(newMod115, true,
-				new Model115Callback() {
-
-						@Override
-						public void onAccept(Mod115 mod115) {
-							
-							SERVICE.delete(getOptions().getOccam(), oldMod115, new AsyncCallback<Void>() {
-								
-								@Override
-								public void onSuccess(Void result) {
-									SERVICE.create(getOptions().getOccam(), newMod115,
-											new AsyncCallback<Mod115>() {
-												@Override
-												public void onSuccess(Mod115 m115) {
-													select(m115);
-												}
-
-												@Override
-												public void onFailure(Throwable caught) {
-													showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-												}
-											});
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {
-									showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));								
-								}
-							});
-						}
-
-						@Override
-						public void onCancel(Mod115 mod115) {
-							// Nothing
-						}
-					}
-				); 
-				newDialog.center();
-				newDialog.show();
-		}
 	}
 	
 	
@@ -432,22 +364,6 @@ public class Model115 extends MainEntryPoint {
 		}
 	}
 
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	// *************************************************************
-	
-
 	private void onSelectionChange(SelectionEvent<Mod115> event) {
 		Mod115 sel = event.getSelectedItem();
 		SERVICE.getMod115(getOptions().getOccam(),sel.getId(), new AsyncCallback<Mod115>() {
@@ -486,6 +402,13 @@ public class Model115 extends MainEntryPoint {
 								}
 							});
 					}
+					@Override
+					public void onCancel(Mod115 model) {
+						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+							getOptions().getExternalCallback().onExit(model);
+						}						
+					}
+
 				}
 			); 
 			newDialog.center();

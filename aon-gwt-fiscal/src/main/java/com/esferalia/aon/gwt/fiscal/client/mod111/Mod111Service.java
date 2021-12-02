@@ -25,8 +25,9 @@ public interface Mod111Service extends RemoteService {
 	Mod111 markAsSent(Occam occam, Mod111 mod111) throws AonCoreException;
 	Mod111 markAsCustomerCheck(Occam occam, Mod111 mod111) throws AonCoreException;
 	void delete(Occam occam, Mod111 mod111) throws AonCoreException;
-	Mod111 initialize(Occam occam, Mod111 mod111);
+	Mod111 initialize(Occam occam, Mod111 mod111) throws AonCoreException;
 	Mod111 create(Occam occam, Mod111 mod111) throws AonCoreException;
+	Mod111 reset(Occam occam, Mod111 mod111) throws AonCoreException;
 	String getInfo(Occam occam, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 	
 }

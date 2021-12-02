@@ -1,7 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod131;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131.Model131Callback;
 import com.esferalia.aon.gwt.fiscal.client.model.NewDeclarationPopup;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
@@ -15,15 +16,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class Model131NewDeclarationPopup extends NewDeclarationPopup<Mod131,Model131ModuleOptions>{
 
 	public Model131NewDeclarationPopup(Mod131 mod131,Model131Callback callback) {
-		super(mod131,false,callback);
-	}
-	public Model131NewDeclarationPopup(Mod131 mod131,boolean reset, Model131Callback callback) {
-		super(mod131,reset, callback);
+		super(mod131,callback);
 	}
 	
 	@Override
@@ -42,13 +39,11 @@ public class Model131NewDeclarationPopup extends NewDeclarationPopup<Mod131,Mode
 	@Override
 	protected void paintModelSpecificPanel(Mod131 mod131) {
 		final ListBox deponentBox = new ListBox();
-		final DocumentTextBox documentBox = new DocumentTextBox();
+		final AonDocumentTextBox documentBox = new AonDocumentTextBox();
 		final Label nameLabel = new Label( AON.MSG.nameCompanyName());
-		final TextBox nameBox = new TextBox();
-		nameBox.setStyleName(AON.CSS.aonInputText());
+		final AonTextBox nameBox = new AonTextBox();
 		final Label surnameLabel = new Label( AON.MSG.surname());
-		final TextBox surnameBox = new TextBox();
-		surnameBox.setStyleName(AON.CSS.aonInputText());
+		final AonTextBox surnameBox = new AonTextBox();
 		final CheckBox regularHome = new CheckBox();
 		
 		if (mod131.getDeponents() != null && mod131.getDeponents().size() > 1) {

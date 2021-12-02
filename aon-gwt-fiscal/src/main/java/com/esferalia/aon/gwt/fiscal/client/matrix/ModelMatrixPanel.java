@@ -88,9 +88,7 @@ public class ModelMatrixPanel extends FlowPanel {
 							fm.setDomain(AonNumberUtils.toint(domainId));
 							fm.setDomainName(domainName);
 							AonDisplayTable periodTable = paintFiscalModelRow(options,fm,admKey,perKey,docKey,table);
-							fillPeriodTable(options, fm, periodTable, 
-								matrixData.getItems(domKey, admKey, perKey, modKey, docKey)
-							);
+							fillPeriodTable(options, fm, periodTable, matrixData.getItems(domKey, admKey, perKey, modKey, docKey) );
 						}
 					}
 				}
@@ -102,63 +100,66 @@ public class ModelMatrixPanel extends FlowPanel {
 	private void fillPeriodTable(MatrixModuleOptions options, FiscalModel fm, AonDisplayTable periodTable, List<JsFiscalMenuItem> items) {
 		for (JsFiscalMenuItem model : items) {
 			if (model != null) {
-				FiscalStatus status = FiscalStatus.safeValueOf(model.getStatus());
 				Period period = Period.valueOf(model.getPeriod());
 				int col = (period.isQuarterPeriod()?(period.getStartMonth()/3):period.getStartMonth());
-				
-				FocusPanel focusPanel = new FocusPanel();
-				Label mod = new Label();
-				mod.setTitle(AON.MSG.viewDeclaration(FiscalModelUtils.getModelName( fm ), period.getDescription()));
-				mod.setStyleName(AON.CSS.aonClickable());
-				mod.addStyleName(AON.CSS.aonIconLabel());
-				mod.addStyleName(AON.CSS.aonIconBullet());
-				mod.addStyleName(AON.CSS.aonTextCenter());
-				focusPanel.add(mod);
 				AonDisplayTableRow row = (AonDisplayTableRow) periodTable.getWidget(0);
 				AonDisplayTableCell cell = (AonDisplayTableCell) row.getWidget(col);
-				cell.clear();
-				cell.add(focusPanel);
-				cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( status ));									
 				FiscalModel cloned = cloneModel(fm);
 				cloned.setId(Integer.valueOf(model.getId() + ""));
-				focusPanel.addClickHandler( event -> fm.getModel().visit(new MatrixViewVisitor(options,cloned, new AonModuleCallback<FiscalModel>() {
-
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void onChange(FiscalModel changed) {
-						LOGGER.info("Change " + changed.getStatus().getName());
-						refresh( changed );
-					}
-
-
-					@Override
-					public void onRemove(FiscalModel removed) {
-						LOGGER.info("Remove " + removed.getStatus().getName());
-						refresh( removed );
-					}
-
-					@Override
-					public void onExit(FiscalModel edited) {
-						LOGGER.info("Exit " + edited.getStatus().getName());
-						refresh( edited );
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						LOGGER.info("Failure");
-						showError(caught.getMessage());
-					}
-					
-					private void refresh(FiscalModel model) {
-						cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));
-					}
-					
-				})));
+				cloned.setStatus( FiscalStatus.safeValueOf( model.getStatus() ));
+				fillModelCell( options, cloned , cell);
 			}
 		}
 	}
 	
+	private void fillModelCell(MatrixModuleOptions options, FiscalModel model, AonDisplayTableCell cell) {
+		FocusPanel focusPanel = new FocusPanel();
+		Label mod = new Label();
+		mod.setTitle(AON.MSG.viewDeclaration(FiscalModelUtils.getModelName( model ), model.getPeriod().getDescription()));
+		mod.setStyleName(AON.CSS.aonClickable());
+		mod.addStyleName(AON.CSS.aonIconLabel());
+		mod.addStyleName(AON.CSS.aonIconBullet());
+		mod.addStyleName(AON.CSS.aonTextCenter());
+		focusPanel.add(mod);
+		cell.clear();
+		cell.add(focusPanel);
+		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));									
+		focusPanel.addClickHandler( event -> model.getModel().visit(new MatrixViewVisitor(options,model, new AonModuleCallback<FiscalModel>() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onChange(FiscalModel changed) {
+				LOGGER.info("Change " + changed.getStatus().getName());
+				refresh( changed );
+			}
+
+
+			@Override
+			public void onRemove(FiscalModel removed) {
+				LOGGER.info("Remove " + removed.getStatus().getName());
+				refresh( removed );
+			}
+
+			@Override
+			public void onExit(FiscalModel edited) {
+				LOGGER.info("Exit " + edited.getStatus().getName());
+				refresh( edited );
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				LOGGER.info("Failure");
+				showError(caught.getMessage());
+			}
+			
+			private void refresh(FiscalModel model) {
+				cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));
+			}
+			
+		})));
+	}
+
 	private AonDisplayTable paintFiscalModelRow(MatrixModuleOptions options, FiscalModel fm, Administration admKey, MatrixPeriodType perKey, String docKey, AonDisplayTable table) {
 		Label admonLabel = getAdmonLabel( admKey );
 		AonDisplayTableRow periodRow = table.addRow();
@@ -213,13 +214,50 @@ public class ModelMatrixPanel extends FlowPanel {
 			model.setModel(fm.getModel());
 			model.setYear(fm.getYear());
 			model.setDomain(fm.getDomain());
-			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
-			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model)));
 			AonDisplayTableCell cell = row.addCell();
+			
+			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
 			cell.add(addButton);
 			cell.addStyleName( AON.CSS.aonBorderBottom() );
 			cell.addStyleName( AON.CSS.aonTextCenter() );
 			cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( FiscalStatus.MISSING ));									
+			addButton.addClickHandler(event -> model.getModel().visit(new MatrixNewModelVisitor(options.getConfiguration(),model
+					, new AonModuleCallback<FiscalModel>() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onChange(FiscalModel changed) {
+					LOGGER.info("Change " + changed.getStatus().getName());
+					refresh( changed );
+				}
+
+
+				@Override
+				public void onRemove(FiscalModel removed) {
+					LOGGER.info("Remove " + removed.getStatus().getName());
+					refresh( removed );
+				}
+
+				@Override
+				public void onExit(FiscalModel edited) {
+					LOGGER.info("Exit " + edited.getStatus().getName());
+					if (edited.getId() != null) {
+						refresh( edited );
+					}
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					LOGGER.info("Failure");
+					showError(caught.getMessage());
+				}
+				
+				private void refresh(FiscalModel model) {
+					ModelMatrixPanel.this.fillModelCell( options, model, cell);
+				}
+				
+			})));
 		}
 		return periodTable;
 	}
@@ -319,6 +357,7 @@ public class ModelMatrixPanel extends FlowPanel {
 				.setAdministration(fm.getAdministration())
 				.setModel( fm.getModel() )
 				.setPeriod( fm.getPeriod() )
+				.setStatus( fm.getStatus() )
 				.setDomain(fm.getDomain())
 				.setDomainName(fm.getDomainName());
 	}

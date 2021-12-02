@@ -39,22 +39,6 @@ public enum Period implements Serializable {
     public String getName() {
     	return name;
     }
-    
-    public String getFormatName(Administration admon) {
-    	if (admon == Administration.GIPUZKOA) {
-    		if (this == T1) return "01";
-    		if (this == T2) return "02";
-    		if (this == T3) return "03";
-    		if (this == T4) return "04";
-    	} else if (admon == Administration.NAVARRA) {
-    		if (this == T1) return "1";
-    		if (this == T2) return "2";
-    		if (this == T3) return "3";
-    		if (this == T4) return "4";
-    	}
-    	return name;
-    }
-    
     public String getDescription() {
     	return description;
 	}
@@ -62,17 +46,27 @@ public enum Period implements Serializable {
 	public int getStartMonth() {
 		return startMonth;
 	}
-	public void setStartMonth(int startMonth) {
-		this.startMonth = startMonth;
-	}
-
+	
 	public int getDueMonth() {
 		return dueMonth;
 	}
-	public void setDueMonth(int dueMonth) {
-		this.dueMonth = dueMonth;
-	}
 
+    
+    public String getFormatName(Administration admon) {
+    	if (admon == Administration.GIPUZKOA) {
+    		if (this == T1) return "01";
+    		else if (this == T2) return "02";
+    		else if (this == T3) return "03";
+    		else if (this == T4) return "04";
+    	} else if (admon == Administration.NAVARRA) {
+    		if (this == T1) return "1";
+    		else if (this == T2) return "2";
+    		else if (this == T3) return "3";
+    		else if (this == T4) return "4";
+    	}
+    	return name;
+    }
+    
 	public static Period getMonthlyPeriod(int month) {
 		if (month==0) return M01;
 		else if (month==1) return M02;

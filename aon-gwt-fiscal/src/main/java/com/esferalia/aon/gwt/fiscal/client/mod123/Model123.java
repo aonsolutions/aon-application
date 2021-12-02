@@ -129,74 +129,6 @@ public class Model123 extends MainEntryPoint {
 				}
 			});
 		}
-
-		@Override
-		public void onReset(Mod123 oldModel) {
-			SERVICE.initialize(getOptions().getOccam(), null,
-				new AsyncCallback<Mod123>() {
-					@Override
-					public void onSuccess(Mod123 newMod123) {
-						cleanInfoPanel();
-						tabLayout.selectTab(INFORMATION_TAB);
-						closeFootPanel();
-						// Valores de la declaración actual
-						newMod123.setAdministration(oldModel.getAdministration());
-						newMod123.setYear(oldModel.getYear());
-						newMod123.setPeriod(oldModel.getPeriod());
-						newMod123.setComplementary(oldModel.isComplementary());
-						newMod123.setReplacement(oldModel.isReplacement());
-						newMod123.setReplacedNumber(oldModel.getReplacedNumber());
-						showResetDeclarationPopup(newMod123, oldModel);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-					}
-				});
-		}
-
-		private void showResetDeclarationPopup(Mod123 newMod123, Mod123 oldMod123) {
-			NewDeclarationPopup<Mod123,Model123ModuleOptions> newDialog = new NewDeclarationPopup<>(newMod123, true,
-				new Model123Callback() {
-
-						@Override
-						public void onAccept(Mod123 mod123) {
-							
-							SERVICE.delete(getOptions().getOccam(), oldMod123, new AsyncCallback<Void>() {
-								
-								@Override
-								public void onSuccess(Void result) {
-									SERVICE.create(getOptions().getOccam(), newMod123,
-											new AsyncCallback<Mod123>() {
-												@Override
-												public void onSuccess(Mod123 m123) {
-													select(m123);
-												}
-
-												@Override
-												public void onFailure(Throwable caught) {
-													showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-												}
-											});
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {
-									showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));								
-								}
-							});
-						}
-
-						@Override
-						public void onCancel(Mod123 mod123) {
-							// Nothing
-						}
-					}
-				); 
-				newDialog.center();
-				newDialog.show();
-		}
 	}
 	
 	
@@ -474,6 +406,13 @@ public class Model123 extends MainEntryPoint {
 								}
 							});
 					}
+					@Override
+					public void onCancel(Mod123 model) {
+						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+							getOptions().getExternalCallback().onExit(model);
+						}						
+					}
+					
 				}
 			); 
 			newDialog.center();

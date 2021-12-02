@@ -153,8 +153,8 @@ public abstract class ModelIRPFExcelAction<T extends FiscalModel,K extends IFisc
 			anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
 			anchor.setCol1(0);
 			anchor.setRow1(0);
-			anchor.setDx1(20);
-			anchor.setDy1(20);
+			anchor.setDx1(40);
+			anchor.setDy1(40);
 			Picture pict = drawing.createPicture(anchor, pictureureIdx);
 			pict.resize();
 		} catch (IOException e) {

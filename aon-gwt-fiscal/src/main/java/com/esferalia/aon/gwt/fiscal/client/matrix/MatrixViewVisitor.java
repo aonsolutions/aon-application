@@ -32,47 +32,6 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
-	private class AonModuleCallbackWrapper<T extends FiscalModel> implements AonModuleCallback<T> {
-		
-		private static final long serialVersionUID = 1L;
-		
-		private AonCustomPopup dialog;
-		private AonModuleCallback<FiscalModel> callback;
-		
-		private AonModuleCallbackWrapper(AonCustomPopup entryDialog, AonModuleCallback<FiscalModel> cbk) {
-			this.dialog = entryDialog;
-			this.callback = cbk;
-		}
-
-		@Override
-		public void onRemove(T removed) {
-			hide();
-			callback.onRemove(removed);
-		}
-
-		@Override
-		public void onFailure(Throwable caught) {
-			callback.onFailure(caught);
-		}
-		
-		@Override
-		public void onExit(T edited) {
-			hide();
-			callback.onExit(edited);
-		}
-		
-		@Override
-		public void onChange(T changed) {
-			hide();
-			callback.onChange(changed);
-		}
-		
-		private void hide() {
-			dialog.hide();
-			dialog.clear();
-		}
-	}	
-
 	private MatrixModuleOptions opt;
 	private FiscalModel model;
 	private AonModuleCallback<FiscalModel> callback;
@@ -83,6 +42,10 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 		this.callback = callback;
 	}
 	
+	private <T extends FiscalModel> AonModuleCallback<T> getExternalCallback(AonCustomPopup modelDialog, AonModuleCallback<FiscalModel> callback) {
+		return new AonModuleCallbackWrapper<>(modelDialog,callback);
+	}
+
 	private AonCustomPopup getModelDialog(String caption) {
 		AonCustomPopup modelDialog = new AonCustomPopup( false );
 		modelDialog.setWidth((Window.getClientWidth() - 50) + "px");
@@ -103,18 +66,18 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			Model111ModuleOptions options = new Model111ModuleOptions();
 			options.setParentWidget(modelDialog);
 			options.setDomainName(opt.getConfiguration().getDomain().getName());
-			options.setDomain( opt.getConfiguration().getDomain().getId() );
+			options.setDomain( model.getDomain() );
 			options.setUser(opt.getConfiguration().getUser().getLogin());
 			options.setConfiguration(opt.getConfiguration());
 			options.setFiscalModelId( model.getId() );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( new AonModuleCallbackWrapper<>(modelDialog, callback) );
+			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
 			model111.onModuleLoad( options );
 			modelDialog.center();
 			modelDialog.show();
 		} catch (Exception t) {
-			Window.alert("Error inesperado! [" + t.getMessage() + "]");
+			callback.onFailure(t);
 		}
 	}
 	
@@ -127,18 +90,18 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			Model115ModuleOptions options = new Model115ModuleOptions();
 			options.setParentWidget(modelDialog);
 			options.setDomainName(opt.getConfiguration().getDomain().getName());
-			options.setDomain( opt.getConfiguration().getDomain().getId() );
+			options.setDomain( model.getDomain() );
 			options.setUser(opt.getConfiguration().getUser().getLogin());
 			options.setConfiguration(opt.getConfiguration());
 			options.setFiscalModelId( model.getId() );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( new AonModuleCallbackWrapper<>(modelDialog, callback) );
+			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
 			model115.onModuleLoad( options );
 			modelDialog.center();
 			modelDialog.show();
 		} catch (Exception t) {
-			Window.alert("Error inesperado! [" + t.getMessage() + "]");
+			callback.onFailure(t);
 		}
 	}
 	
@@ -150,18 +113,18 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			Model123ModuleOptions options = new Model123ModuleOptions();
 			options.setParentWidget(modelDialog);
 			options.setDomainName(opt.getConfiguration().getDomain().getName());
-			options.setDomain( opt.getConfiguration().getDomain().getId() );
+			options.setDomain( model.getDomain() );
 			options.setUser(opt.getConfiguration().getUser().getLogin());
 			options.setConfiguration(opt.getConfiguration());
 			options.setFiscalModelId( model.getId() );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( new AonModuleCallbackWrapper<>(modelDialog, callback) );
+			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
 			model123.onModuleLoad( options );
 			modelDialog.center();
 			modelDialog.show();
 		} catch (Exception t) {
-			Window.alert("Error inesperado! [" + t.getMessage() + "]");
+			callback.onFailure(t);
 		}
 	}
 	
@@ -174,18 +137,19 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			Model130ModuleOptions options = new Model130ModuleOptions();
 			options.setParentWidget(modelDialog);
 			options.setDomainName(opt.getConfiguration().getDomain().getName());
-			options.setDomain( opt.getConfiguration().getDomain().getId() );
+			options.setDomain( model.getDomain() );
 			options.setUser(opt.getConfiguration().getUser().getLogin());
 			options.setConfiguration(opt.getConfiguration());
 			options.setFiscalModelId( model.getId() );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( new AonModuleCallbackWrapper<>(modelDialog, callback) );
+			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
 			model130.onModuleLoad( options );
 			modelDialog.center();
 			modelDialog.show();
 		} catch (Exception t) {
-			Window.alert("Error inesperado! [" + t.getMessage() + "]");
+			callback.onFailure(t);
+
 		}
 	}
 	
@@ -198,18 +162,18 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			Model131ModuleOptions options = new Model131ModuleOptions();
 			options.setParentWidget(modelDialog);
 			options.setDomainName(opt.getConfiguration().getDomain().getName());
-			options.setDomain( opt.getConfiguration().getDomain().getId() );
+			options.setDomain( model.getDomain() );
 			options.setUser(opt.getConfiguration().getUser().getLogin());
 			options.setConfiguration(opt.getConfiguration());
 			options.setFiscalModelId( model.getId() );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( new AonModuleCallbackWrapper<>(modelDialog, callback) );
+			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
 			model131.onModuleLoad( options );
 			modelDialog.center();
 			modelDialog.show();
 		} catch (Exception t) {
-			Window.alert("Error inesperado! [" + t.getMessage() + "]");
+			callback.onFailure(t);
 		}
 	}
 
@@ -222,18 +186,18 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			Model202ModuleOptions options = new Model202ModuleOptions();
 			options.setParentWidget(modelDialog);
 			options.setDomainName(opt.getConfiguration().getDomain().getName());
-			options.setDomain( opt.getConfiguration().getDomain().getId() );
+			options.setDomain( model.getDomain() );
 			options.setUser(opt.getConfiguration().getUser().getLogin());
 			options.setConfiguration(opt.getConfiguration());
 			options.setFiscalModelId( model.getId() );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( new AonModuleCallbackWrapper<>(modelDialog, callback) );
+			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
 			model202.onModuleLoad( options );
 			modelDialog.center();
 			modelDialog.show();
 		} catch (Exception t) {
-			Window.alert("Error inesperado! [" + t.getMessage() + "]");
+			callback.onFailure(t);
 		}
 	}
 
@@ -246,35 +210,30 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			Model303ModuleOptions options = new Model303ModuleOptions();
 			options.setParentWidget(modelDialog);
 			options.setDomainName(opt.getConfiguration().getDomain().getName());
-			options.setDomain( opt.getConfiguration().getDomain().getId() );
+			options.setDomain( model.getDomain() );
 			options.setUser(opt.getConfiguration().getUser().getLogin());
 			options.setConfiguration(opt.getConfiguration());
 			options.setFiscalModelId( model.getId() );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( new AonModuleCallbackWrapper<>(modelDialog, callback) );
+			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
 			model303.onModuleLoad( options );
 			modelDialog.center();
 			modelDialog.show();
 		} catch (Exception t) {
-			Window.alert("Error inesperado! [" + t.getMessage() + "]");
+			callback.onFailure(t);
 		}
 	}
 
-	// ********************************************************************************
-	// ********************************************************************************
-	// ********************************************************************************
-	// ********************************************************************************
-	// ********************************************************************************
-
-	@Override public void visitM347() {}
-	@Override public void visitM349() {}
-	@Override public void visitM390() {}
-	@Override public void visitM390HF() {}
-	@Override public void visitM180() {}
-	@Override public void visitM184() {}
-	@Override public void visitM190() {}
-	@Override public void visitM193() {}
-	@Override public void visitM200() {}
+	private static final String ERROR = "Consulta no soportada";
+	@Override public void visitM347()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
+	@Override public void visitM349()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
+	@Override public void visitM390()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
+	@Override public void visitM390HF(){ callback.onFailure( new UnsupportedOperationException( ERROR )); }
+	@Override public void visitM180()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
+	@Override public void visitM184()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
+	@Override public void visitM190()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
+	@Override public void visitM193()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
+	@Override public void visitM200()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 
 }

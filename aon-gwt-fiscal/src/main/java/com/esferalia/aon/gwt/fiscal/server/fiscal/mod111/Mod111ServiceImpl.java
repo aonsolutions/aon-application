@@ -82,6 +82,11 @@ public class Mod111ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 
 	@Override
+	public Mod111 reset(Occam occam, Mod111 mod111) {
+		return MODEL111.resetMod111(occam, mod111);
+	}
+
+	@Override
 	public void delete(Occam occam, Mod111 mod111) {
 		MODEL111.deleteMod111(occam, mod111);
 	}

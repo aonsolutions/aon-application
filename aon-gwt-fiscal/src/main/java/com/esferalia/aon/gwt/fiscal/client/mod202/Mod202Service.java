@@ -27,6 +27,7 @@ public interface Mod202Service extends RemoteService {
 	Mod202 markAsCustomerCheck(Occam occam, Mod202 mod202) throws AonCoreException;
 	Mod202 markAsPending(Occam occam, Mod202 mod202) throws AonCoreException;
 	Mod202 create(Occam occam, Mod202 mod202) throws AonCoreException;
+	Mod202 reset(Occam occam, Mod202 model) throws AonCoreException;
 	String getInfo(Occam occam, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 
 }

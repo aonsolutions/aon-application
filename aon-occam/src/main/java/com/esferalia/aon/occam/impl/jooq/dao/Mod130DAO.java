@@ -455,6 +455,13 @@ public class Mod130DAO extends FiscalModelDAO {
 		
 	}
 
+	public static Mod130 resetMod130(AONContext ctx,Mod130 mod130) {
+		mod130.setMap(null);
+		initializeIdentificationData(ctx, mod130);
+		createMod130(ctx,mod130);
+		return mod130;
+	}
+
 	public static Mod130 createMod130(AONContext ctx,Mod130 mod130) {
 		for (Mod130KeyDAO key : Mod130KeyDAO.values()) {
 			if (key.acceptModel(mod130)) {

@@ -31,11 +31,11 @@ import com.esferalia.aon.jooq.tables.User;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -49,10 +49,10 @@ import com.mysql.jdbc.Driver;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 
-public class AbstractOccamTest {
+public abstract class AbstractOccamTest {
 
 	protected static AONContext ctx;
-	protected static String DOMAIN_NAME = "occamTest.aonsolutions.test";
+	protected static String DOMAIN_NAME = "occamtest.aonsolutions.test";
 	protected static Integer DOMAIN_ID;
 	protected static String USER = "admin";
 	
@@ -63,9 +63,16 @@ public class AbstractOccamTest {
 	private static String getDbPasswd() {	return System.getProperty("dbPasswd", "serubd2000");	}
 	private static String getDbUseSSL() {	return System.getProperty("dbUseSSL", "false");	}
 	private static String getDbTimeZone() {	return System.getProperty("dbTimeZone", TimeZone.getDefault().getID());	}
-
+	
 	@Rule
 	public RepeatRule repeatRule = new RepeatRule();
+
+	protected Occam getOccam() {
+		return new Occam()
+				.setDomainName(DOMAIN_NAME)
+				.setDomain(DOMAIN_ID)
+				.setUser(USER);
+	}
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {

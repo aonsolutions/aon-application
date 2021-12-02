@@ -110,4 +110,10 @@ public class MODEL123 {
 		}
 	}
 
+	public static Mod123 resetMod123(Occam occam, Mod123 mod123) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().reset(ctx, mod123);
+		}
+	}
+
 }

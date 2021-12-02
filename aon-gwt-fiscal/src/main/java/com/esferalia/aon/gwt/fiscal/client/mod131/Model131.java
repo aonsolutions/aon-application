@@ -127,11 +127,7 @@ public class Model131 extends MainEntryPoint {
 				}
 			});
 		}
-
-		@Override
-		public void onReset(Mod131 oldModel) {
-			// Nothing
-		}
+	
 	}
 
 	@Override
@@ -329,6 +325,12 @@ public class Model131 extends MainEntryPoint {
 								}
 							});
 				}
+				@Override
+				public void onCancel(Mod131 model) {
+					if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+						getOptions().getExternalCallback().onExit(model);
+					}						
+				}
 
 			}
 		); 
@@ -336,6 +338,7 @@ public class Model131 extends MainEntryPoint {
 		newDialog.show();
 	}
 	
+
 	private void showErrorMessage(String msg) {
 		aonLayout.showErrorPanel(msg);
 	}

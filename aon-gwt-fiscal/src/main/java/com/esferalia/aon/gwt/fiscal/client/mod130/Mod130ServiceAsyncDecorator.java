@@ -22,84 +22,90 @@ public class Mod130ServiceAsyncDecorator implements Mod130ServiceAsync {
 	@Override
 	public void getMod130(Occam occam, int id, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.getMod130(occam, id, new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.getMod130(occam, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void getMod130s(Occam occam, AsyncCallback<LinkedList<Mod130>> callback) {
 		AON.start();
-		fsa.getMod130s(occam, new AsyncCallbackWrapper<LinkedList<Mod130>>(callback));
+		fsa.getMod130s(occam, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void calculate(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.calculate(occam, mod130, new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.calculate(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void save(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.save(occam, mod130, new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.save(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
 	public void saveComments(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.saveComments(occam, mod130, new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.saveComments(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void initializeForFinish(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.initializeForFinish(occam, mod130, new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.initializeForFinish(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
 	public void markAsFinished(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.markAsFinished(occam, mod130, new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.markAsFinished(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
 	public void markAsSent(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.markAsSent(occam, mod130, new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.markAsSent(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void markAsCustomerCheck(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.markAsCustomerCheck(occam, mod130, new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.markAsCustomerCheck(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void markAsPending(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.markAsPending(occam, mod130, new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.markAsPending(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void initialize(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.initialize(occam,mod130,new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.initialize(occam,mod130,new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
 	public void create(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.create(occam, mod130,new AsyncCallbackWrapper<Mod130>(callback));
+		fsa.create(occam, mod130,new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
+	public void reset(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.reset(occam, mod130,new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
 	public void delete(Occam occam, Mod130 mod130, AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.delete(occam, mod130, new AsyncCallbackWrapper<Void>(callback));
+		fsa.delete(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 	@Override
 	public void getInfo(Occam occam, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback) {
 		AON.start();
-		fsa.getInfo(occam, mod130, script, infoKey,new AsyncCallbackWrapper<String>(callback));
+		fsa.getInfo(occam, mod130, script, infoKey,new AsyncCallbackWrapper<>(callback));
 	}
 	
 }

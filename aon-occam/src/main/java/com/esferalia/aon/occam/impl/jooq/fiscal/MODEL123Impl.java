@@ -79,6 +79,10 @@ public class MODEL123Impl implements IMODEL123 {
 		return Mod123DAO.createMod123(ctx,mod123);
 	}
 	@Override
+	public Mod123 reset(AONContext ctx, Mod123 mod123) {
+		return Mod123DAO.resetMod123(ctx,mod123);
+	}
+	@Override
 	public String getInfo(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod123DAO.getMod123Info(ctx,mod123,script,infoKey);
 	}
