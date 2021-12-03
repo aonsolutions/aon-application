@@ -12,6 +12,11 @@
 			padding: 10px;
 		}
 		
+		.flexColumn {
+			display: flex;
+			flex-direction: column;
+		}
+		
 		.toolbar{
 			padding: 0 10px;
 		}
@@ -75,49 +80,50 @@
 		
 	</ui:style>
 
-	<g:HTMLPanel >
+	<g:HTMLPanel styleName="{style.flexColumn}">
 	
-		<g:HTMLPanel styleName="{style.form}">
+			<g:HTMLPanel ui:field="messagePanel" />
+			<g:HTMLPanel styleName="{style.form}">
 	
-			<table ui:field="secondaryUserTable">
-		        <tbody>
-		            <tr>
-		            	<td>
-		                    <g:Label>Buscar por DNI</g:Label>
-		                </td>
-		                <td>
-		                    <g:Button ui:field="dniBtn"></g:Button>
-		                </td>
-		                <td>
-		                    <g:TextBox ui:field="nss"></g:TextBox>
-		                </td>
-		                <td>
-		                    <g:TextBox ui:field="nie"></g:TextBox>
-		                </td>
-		            </tr>
-		            <tr>
-		                <td colspan="4">
-		                	<g:HTMLPanel styleName="{style.flex}">
-		                		<g:TextBox ui:field="surname" styleName="{style.tb49}"></g:TextBox>
-		                		<g:TextBox ui:field="secondSurname" styleName="{style.tb49}"></g:TextBox>
-		                	</g:HTMLPanel>  
-		                </td>
-		            </tr>
-		            <tr>
-		            	<td colspan="4">
-		                    <g:TextBox ui:field="name" enabled="false" styleName="{style.tb98}"></g:TextBox>
-		                </td>
-		                
-		            </tr>
-		        </tbody>
-		    </table>
-			
-			<g:HTMLPanel ui:field="mainButtonsPanel" styleName="{style.mainButtonsPanel}">
-				<g:HTMLPanel ui:field="loadingPanel" styleName="{style.loadingPanel}"></g:HTMLPanel>
-				<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
-			</g:HTMLPanel>
+				<table ui:field="secondaryUserTable">
+			        <tbody>
+			            <tr>
+			            	<td>
+			                    <g:Label>Buscar por DNI</g:Label>
+			                </td>
+			                <td>
+			                    <g:Button ui:field="dniBtn"></g:Button>
+			                </td>
+			                <td>
+			                    <g:TextBox ui:field="nss"></g:TextBox>
+			                </td>
+			                <td>
+			                    <g:TextBox ui:field="nie"></g:TextBox>
+			                </td>
+			            </tr>
+			            <tr>
+			                <td colspan="4">
+			                	<g:HTMLPanel styleName="{style.flex}">
+			                		<g:TextBox ui:field="surname" styleName="{style.tb49}"></g:TextBox>
+			                		<g:TextBox ui:field="secondSurname" styleName="{style.tb49}"></g:TextBox>
+			                	</g:HTMLPanel>  
+			                </td>
+			            </tr>
+			            <tr>
+			            	<td colspan="4">
+			                    <g:TextBox ui:field="name" enabled="false" styleName="{style.tb98}"></g:TextBox>
+			                </td>
+			                
+			            </tr>
+			        </tbody>
+			    </table>
+				
+				<g:HTMLPanel ui:field="mainButtonsPanel" styleName="{style.mainButtonsPanel}">
+					<g:HTMLPanel ui:field="loadingPanel" styleName="{style.loadingPanel}"></g:HTMLPanel>
+					<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
+				</g:HTMLPanel>
 		
-		</g:HTMLPanel>
+			</g:HTMLPanel>
 
 	</g:HTMLPanel>
 
