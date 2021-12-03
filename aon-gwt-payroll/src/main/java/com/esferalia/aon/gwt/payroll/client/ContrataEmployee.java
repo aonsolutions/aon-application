@@ -852,27 +852,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			switch (itemIdx) {
 			case 0:
 				showLoadingPanel();
-				contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> {
-					showContractButtons();
-					contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
-							success -> {
-								// Check SS only if not RETA
-								Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-								if (null == ssRegime || ssRegime != 3) 
-									checkStatus(this.contrataEmployeeObject);
-								
-								checkCertificateSEPE();
-								checkTGSSStatus();
-								checkContractExtension();
-								checkContractTransform();
-								hideLoadingPanel();
-								
-								if(AonStringUtils.isBlank(contrataEmployeeObject.getContractData().getSepeId()))
-									sepeContextMenu.getSepeIDE().getElement().getStyle().setDisplay(Display.NONE);
-								else
-									sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
-							});
-				}, f -> {});
+				showContractButtons();
+				contractEmployeeUI.setContrataEmployeeObject(this.contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+						success -> {
+							// Check SS only if not RETA
+							Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+							if (null == ssRegime || ssRegime != 3) 
+								checkStatus(this.contrataEmployeeObject);
+							
+							checkCertificateSEPE();
+							checkTGSSStatus();
+							checkContractExtension();
+							checkContractTransform();
+							hideLoadingPanel();
+							
+							if(AonStringUtils.isBlank(contrataEmployeeObject.getContractData().getSepeId()))
+								sepeContextMenu.getSepeIDE().getElement().getStyle().setDisplay(Display.NONE);
+							else
+								sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
+						});
 				break;
 			case 1:
 				showLoadingPanel();
@@ -1401,20 +1399,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void movPrevDelete() {
 		contrataEmployeeObject.movPrevDelete(
 				s -> 
-					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn ->
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
-								success -> {
-									// Check SS only if not RETA
-									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-									if (null == ssRegime || ssRegime != 3) 
-										checkStatus(this.contrataEmployeeObject);
-									
-									checkCertificateSEPE();
-									checkTGSSStatus();
-									checkContractExtension();
-									checkContractTransform();
-								})
-					, f -> {}), 
+					contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+						success -> {
+							// Check SS only if not RETA
+							Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+							if (null == ssRegime || ssRegime != 3) 
+								checkStatus(this.contrataEmployeeObject);
+							
+							checkCertificateSEPE();
+							checkTGSSStatus();
+							checkContractExtension();
+							checkContractTransform();
+						}), 
 				f -> showError("Error borrado movimiento previo", f.getMessage())
 		);
 	}
@@ -1422,22 +1418,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void altaConsolidadaDelete() {
 		contrataEmployeeObject.altaConsolidadaDelete(
 				s ->
-					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn ->
-						contractEmployeeUI.setContrataEmployeeObject(
-								contrataEmployeeObject, 
-								this.contrataEmployeeObject.getContractId(),
-								success -> {
-									// Check SS only if not RETA
-									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-									if (null == ssRegime || ssRegime != 3) 
-										checkStatus(this.contrataEmployeeObject);
-									
-									checkCertificateSEPE();
-									checkTGSSStatus();
-									checkContractExtension();
-									checkContractTransform();
-								})	
-					, f -> {}), 
+					contractEmployeeUI.setContrataEmployeeObject(
+						contrataEmployeeObject, 
+						this.contrataEmployeeObject.getContractId(),
+						success -> {
+							// Check SS only if not RETA
+							Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+							if (null == ssRegime || ssRegime != 3) 
+								checkStatus(this.contrataEmployeeObject);
+							
+							checkCertificateSEPE();
+							checkTGSSStatus();
+							checkContractExtension();
+							checkContractTransform();
+						}), 
 				f -> showError("Error borrado alta consolidada", f.getMessage())
 		);
 	}
@@ -1458,20 +1452,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 					@Override
 					protected void onAcceptCB() {
-						contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn ->
-							contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
-									success -> {
-										// Check SS only if not RETA
-										Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-										if (null == ssRegime || ssRegime != 3) 
-											checkStatus(contrataEmployeeObject);
-										
-										checkCertificateSEPE();
-										checkTGSSStatus();
-										checkContractExtension();
-										checkContractTransform();
-									}), 
-							f -> {});
+						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, contrataEmployeeObject.getContractId(),
+							success -> {
+								// Check SS only if not RETA
+								Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+								if (null == ssRegime || ssRegime != 3) 
+									checkStatus(contrataEmployeeObject);
+								
+								checkCertificateSEPE();
+								checkTGSSStatus();
+								checkContractExtension();
+								checkContractTransform();
+							});
 					}
 			
 					@Override
@@ -1665,21 +1657,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				s -> {
 					showSuccess("Comunicaci\u00F3n", "La copia basica ha sido notificada correctamente del SEPE");
 					
-					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn -> 
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
-								success -> {
-									// Check SS only if not RETA
-									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-									if (null == ssRegime || ssRegime != 3) 
-										checkStatus(this.contrataEmployeeObject);
-									
-									checkCertificateSEPE();
-									checkTGSSStatus();
-									checkContractExtension();
-									checkContractTransform();
-								}), 
-						f -> {});
-				}, f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+					contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+						success -> {
+							// Check SS only if not RETA
+							Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+							if (null == ssRegime || ssRegime != 3) 
+								checkStatus(this.contrataEmployeeObject);
+							
+							checkCertificateSEPE();
+							checkTGSSStatus();
+							checkContractExtension();
+							checkContractTransform();
+						});
+				},
+				f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 	}
 
 	private void sendContract() {
@@ -1687,26 +1678,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				s -> {
 					showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
 					
-					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn ->
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
-								success -> {
-									// Check SS only if not RETA
-									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-									if (null == ssRegime || ssRegime != 3) 
-										checkStatus(this.contrataEmployeeObject);
-									
-									checkCertificateSEPE();
-									checkTGSSStatus();
-									checkContractExtension();
-									checkContractTransform();
-									
-									if(AonStringUtils.isBlank(contrataEmployeeObject.getContractData().getSepeId()))
-										sepeContextMenu.getSepeIDE().getElement().getStyle().setDisplay(Display.NONE);
-									else
-										sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
-								}), 
-						f -> {});
-				},f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+					contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+						success -> {
+							// Check SS only if not RETA
+							Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+							if (null == ssRegime || ssRegime != 3) 
+								checkStatus(this.contrataEmployeeObject);
+							
+							checkCertificateSEPE();
+							checkTGSSStatus();
+							checkContractExtension();
+							checkContractTransform();
+							
+							if(AonStringUtils.isBlank(contrataEmployeeObject.getContractData().getSepeId()))
+								sepeContextMenu.getSepeIDE().getElement().getStyle().setDisplay(Display.NONE);
+							else
+								sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
+					});
+				},
+				f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 	}
 	
 	private void sepeIDEContract() {
@@ -1718,27 +1708,24 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				s -> {
 					showSuccess("Comunicaci\u00F3n", "El contrato ha sido eliminado correctamente del SEPE");
 					
-					contrataEmployeeObject.getEmployeeContract(employeeContractInfoIn ->
-						contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
-								success -> {
-									// Check SS only if not RETA
-									Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
-									if (null == ssRegime || ssRegime != 3) 
-										checkStatus(this.contrataEmployeeObject);
-									
-									checkCertificateSEPE();
-									checkTGSSStatus();
-									checkContractExtension();
-									checkContractTransform();
-									
-									if(AonStringUtils.isBlank(employeeContractInfoIn.getContractInfo().getSepeId()))
-										sepeContextMenu.getSepeIDE().getElement().getStyle().setDisplay(Display.NONE);
-									else
-										sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
-								}), 
-						f -> {});
-				},
-					
+					contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
+						success -> {
+							// Check SS only if not RETA
+							Byte ssRegime = contrataEmployeeObject.getContractData().getSsRegimen();
+							if (null == ssRegime || ssRegime != 3) 
+								checkStatus(this.contrataEmployeeObject);
+							
+							checkCertificateSEPE();
+							checkTGSSStatus();
+							checkContractExtension();
+							checkContractTransform();
+							
+							if(AonStringUtils.isBlank(contrataEmployeeObject.getContractData().getSepeId()))
+								sepeContextMenu.getSepeIDE().getElement().getStyle().setDisplay(Display.NONE);
+							else
+								sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
+						});
+				},	
 				f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 	}
 	

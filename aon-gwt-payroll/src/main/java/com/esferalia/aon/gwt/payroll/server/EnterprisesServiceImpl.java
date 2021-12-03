@@ -2807,7 +2807,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
@@ -2849,7 +2849,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
@@ -2866,7 +2866,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
@@ -3234,9 +3234,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return null != certificate;
 			
-		} catch (CertificateNotFoundException e) {
-			return false;
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -3397,7 +3395,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
-				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
 				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
 			
@@ -3444,7 +3442,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
-				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
 				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
 			
@@ -3466,7 +3464,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
-				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
 				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
 			
