@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.api.client.documental.JsAttach;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -79,7 +80,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 	public API getAPI() {
 		return api;
 	}
-	
+	private FlowPanel rootPanel; 	
 	private AonTextBox name = new AonTextBox();
 	private AonTextBox document = new AonTextBox();
 	private ListBox certificates = new ListBox();
@@ -96,6 +97,10 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		setCaption("Certificado Digital");
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
+		
+		rootPanel = new FlowPanel();
+		rootPanel.add(new AonSplash());
+		add(rootPanel);
 		
 		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
 			
@@ -119,7 +124,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 	}
 	
 	private void paintError(String message) {
-		FlowPanel rootPanel = new FlowPanel();
+		rootPanel.clear();
 		Label messageLabel = new Label(message); 
 		messageLabel.setStyleName(AON.CSS.aonMarginBottom());
 		messageLabel.addStyleName(AON.CSS.aonMarginTop());
@@ -144,13 +149,10 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 
 		rootPanel.add(messageLabel);
 		rootPanel.add(buttonsPanel);
-		add(rootPanel);
-		
 	}
 	
 	private void paintPanel(AonCertificationPopupParams params, JSON<JsAttach> result) {
-		FlowPanel rootPanel = new FlowPanel();  
-		
+		rootPanel.clear();
 		if (AonStringUtils.isNotBlank( params.getInfoMessage())) {
 			FlowPanel messagePanel = new FlowPanel(); 
 			messagePanel.setStyleName(AON.CSS.aonMarginBottom());
@@ -293,6 +295,5 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		
 		rootPanel.add(table);
 		rootPanel.add(buttonsPanel);
-		add(rootPanel);
 	}
 }
