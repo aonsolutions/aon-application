@@ -59,6 +59,10 @@ export class AonBasicTable extends AonElement {
     return this.rows;
   }
 
+  getRow(i) {
+    return this.getElement(this.TABLE_ROW + i);
+  }
+
   getRowsCount(){
     return this.querySelectorAll(`[id*=${this.TABLE_ROW}]`).length;
   }

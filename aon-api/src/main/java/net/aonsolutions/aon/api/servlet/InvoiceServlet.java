@@ -26,8 +26,10 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceSeriesJSON;
 import com.esferalia.aon.occam.api.json.invoice.PrintInvoiceConfigurationJSON;
+import com.esferalia.aon.occam.api.json.invoice.SiiConfigurationJSON;
 import com.esferalia.aon.occam.api.json.invoice.TbaiConfigurationJSON;
 import com.esferalia.aon.occam.api.model.AccountProperties;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -40,9 +42,12 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
@@ -567,26 +572,56 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	}
 	
 	private JSONObject getConfiguration(AonApiData api) {
+		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		JSONObject json = new JSONObject();
 		json.put("print", getPrintConfiguration(api));
+		json.put(IJsonNames.E_INVOICE, company.iseInvoice());
 		json.put("tbai", getTbaiConfiguration(api));
-//		json.put("sii", getSiiConfiguration(api));
-//		json.put("eInvoice", getEInvoiceConfiguration(api));
+		json.put("sii", getSiiConfiguration(api));
+		json.put(IJsonNames.ADMINISTRATION, getAdministration(api));
 		return json;
 	}
 	
 	private JSONObject saveConfiguration(AonApiData api) {
+		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		company.seteInvoice(JsonUtils.getboolean(api.getData(), IJsonNames.E_INVOICE));
+		
+		AON.saveCompany(api.getDomain(), api.getUser(), company);
+
+		Administration administration = saveAdministration(api, JsonUtils.getString(api.getData(), IJsonNames.ADMINISTRATION));
+
 		JSONObject print = savePrintConfiguration(api, api.getData().getJSONObject("print"));
 		JSONObject tbai = saveTbaiConfiguration(api, api.getData().getJSONObject("tbai"));
-		
+		JSONObject sii = saveSiiConfiguration(api, api.getData().getJSONObject("sii"));
 		return new JSONObject()
+			.put("administration", administration.name())	
 			.put("print", print)
-			.put("tbai", tbai);
+			.put("tbai", tbai)
+			.put("sii", sii)
+			.put(IJsonNames.E_INVOICE, company.iseInvoice());
 	}
 	
 	private JSONObject getPrintConfiguration(AonApiData api) {
 		PrintInvoiceConfiguration pic = AON_SOLUTIONS.getPrintInvoiceConfiguration(api.getDomain(), api.getUser(), false);
 		return PrintInvoiceConfigurationJSON.toJSON(pic);
+	}
+
+	private Administration getAdministration(AonApiData api) {
+		ApplicationParameter administration = AON.getApplicationParameter(api.getDomain().getName(),
+			api.getDomain().getId(), api.getUser().getLogin(), AppParam.FS_DEFAULT_ADMINISTRATION.toString());
+
+		return administration.getValue() != null
+			? Administration.safeValueOf(Integer.parseInt(administration.getValue()))
+			: Administration.UNKNOWN;
+	}
+	
+	private Administration saveAdministration(AonApiData api, String value) {
+		Administration administration = Administration.safeValueOf(value);
+		AON.insertApplicationParameter(api.getDomain().getName(),
+				api.getDomain().getId(), api.getUser().getLogin(), 
+				AppParam.FS_DEFAULT_ADMINISTRATION,
+				Integer.toString(administration.value()));
+		return administration;
 	}
 	
 	private JSONObject savePrintConfiguration(AonApiData api, JSONObject json) {
@@ -598,7 +633,17 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 		return getPrintConfiguration(api);
 	}
-
+	
+	private JSONObject getSiiConfiguration(AonApiData api) {
+		SiiConfiguration sii = AON.getSiiConfiguration(api.getDomain(), api.getUser());
+		return SiiConfigurationJSON.toJSON(sii);
+	}
+	
+	private JSONObject saveSiiConfiguration(AonApiData api, JSONObject json) {
+		SiiConfiguration sii = SiiConfigurationJSON.fromJSON(json);
+		AON.saveSiiConfiguration(api.getDomain(), api.getUser(), sii);
+		return json;
+	}
 	
 	private JSONObject getTbaiConfiguration(AonApiData api) {
 		TbaiConfiguration tbai = AON.getTbaiConfiguration(api.getDomain(), api.getUser());

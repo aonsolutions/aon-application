@@ -164,6 +164,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
@@ -1055,6 +1056,12 @@ public class AON {
 		return getCompany(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId));
 	}
 
+	public static Company saveCompany(Domain domain, User user, Company company) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getRegistry().saveCompany(ctx, company);
+		}
+	}
+	
 	public static LinkedList<CompanyBank> getCompanyBanks(String domainName, int domain, String login, int enterprise) {
 		AONContext ctx = null;
 		try {
@@ -6846,6 +6853,36 @@ public class AON {
 	public static TbaiConfiguration saveTbaiConfiguration(String domainName, Integer domainId, String login, TbaiConfiguration config) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().saveTbaiConfiguration(ctx, config);
+		}
+	}
+	
+	// SII CONFIGURATION
+
+	public static SiiConfiguration getSiiConfiguration(Domain domain, User user) {
+		return getSiiConfiguration(domain.getName(), domain.getId(), user.getLogin());
+	}
+		
+	public static SiiConfiguration getSiiConfiguration(Domain domain, String login) {
+		return getSiiConfiguration(domain.getName(), domain.getId(), login);
+	}
+		
+	public static SiiConfiguration getSiiConfiguration(String domainName, Integer domainId, String login) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().getSiiConfiguration(ctx);
+		}
+	}
+		
+	public static SiiConfiguration saveSiiConfiguration(Domain domain, User user, SiiConfiguration config) {
+		return saveSiiConfiguration(domain.getName(), domain.getId(), user.getLogin(), config);
+	}
+		
+	public static SiiConfiguration saveSiiConfiguration(Domain domain, String login, SiiConfiguration config) {
+		return saveSiiConfiguration(domain.getName(), domain.getId(), login, config);
+	}
+		
+	public static SiiConfiguration saveSiiConfiguration(String domainName, Integer domainId, String login, SiiConfiguration config) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().saveSiiConfiguration(ctx, config);
 		}
 	}
 	

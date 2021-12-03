@@ -20,6 +20,7 @@ public class PrintInvoiceThemeConfigurationJSON {
 				.setTitleTextColor(JsonUtils.getString(json, IJsonNames.TITLE_TEXT_COLOR))
 				.setBoxTitleBackgroundColor(JsonUtils.getString(json, IJsonNames.BOX_TITLE_BACKGROUND_COLOR))
 				.setBoxTitleTextColor(JsonUtils.getString(json, IJsonNames.BOX_TITLE_TEXT_COLOR))
+				.setBorderColor(JsonUtils.getString(json, IJsonNames.BOX_BORDER_COLOR))
 				.setCustomerBackgroundColor(JsonUtils.getString(json, IJsonNames.CUSTOMER_BACKGROUND_COLOR))
 				.setTextColor(JsonUtils.getString(json, IJsonNames.TEXT_COLOR));
 	}
@@ -31,6 +32,7 @@ public class PrintInvoiceThemeConfigurationJSON {
 				.put(IJsonNames.TITLE_TEXT_COLOR, pic.getTitleTextColorHTML())
 				.put(IJsonNames.BOX_TITLE_BACKGROUND_COLOR, pic.getBoxTitleBackgroundColorHTML())
 				.put(IJsonNames.BOX_TITLE_TEXT_COLOR, pic.getBoxTitleTextColorHTML())
+				.put(IJsonNames.BOX_BORDER_COLOR, pic.getBorderColor())
 				.put(IJsonNames.CUSTOMER_BACKGROUND_COLOR, pic.getCustomerBackgroundColorHTML())
 				.put(IJsonNames.TEXT_COLOR, pic.getTextColorHTML());
 	}

@@ -145,9 +145,15 @@ public class PrintInvoiceThemeConfiguration {
 		this.borderColor = borderColor;
 		return this;
 	}
+
+	public String getBorderColorHTML() {
+		if(AonStringUtils.isBlank(borderColor) || isBlackAndWhite() || isAonBlue()) return "#808080";
+		else return borderColor;
+	}
 	
 	public Color getBorderColor() {
-		return Color.GRAY;
+		if(AonStringUtils.isBlank(borderColor) || isBlackAndWhite() || isAonBlue()) return Color.GRAY;
+		else return new Color(Integer.parseInt(borderColor.replaceFirst("#", ""), 16));
 	}
 
 	public PrintInvoiceThemeConfiguration setTitleTextColor(String titleTextColor) {
