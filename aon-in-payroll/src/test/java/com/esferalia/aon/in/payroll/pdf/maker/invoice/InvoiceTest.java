@@ -521,7 +521,7 @@ public class InvoiceTest {
 			config.setHeader(50);
 			config.setFooter(0);
 			config.setCompany(true);
-			config.setBorder(true);
+			config.setBorder(0);
 			config.setContactData(true);
 			config.setRecordData(true);
 			

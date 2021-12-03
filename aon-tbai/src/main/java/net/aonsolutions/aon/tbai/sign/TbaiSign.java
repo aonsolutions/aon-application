@@ -24,11 +24,27 @@ import es.gob.afirma.signers.xades.AOXAdESSigner;
 public class TbaiSign {
 
 	private static final AdESPolicy POLICY_TBAI_GIPUZKOA = new AdESPolicy(
-		"https://www.gipuzkoa.eus/ticketbai/sinadura", //$NON-NLS-1$
-		"6NrKAm60o7u62FUQwzZew24ra2ve9PRQYwC21AM6In0=", //$NON-NLS-1$
-		"SHA256", //$NON-NLS-1$
+		"https://www.gipuzkoa.eus/ticketbai/sinadura",
+		"6NrKAm60o7u62FUQwzZew24ra2ve9PRQYwC21AM6In0=",
+		"SHA256",
 		null
-	);    
+	);
+	
+	private static final AdESPolicy POLICY_TBAI_BIZKAIA = new AdESPolicy(
+		"https://www.batuz.eus/fitxategiak/batuz/ticketbai/sinadura_elektronikoaren_zehaztapenak_especificaciones_de_la_firma_electronica_v1_0.pdf",
+		"Quzn98x3PMbSHwbUzaj5f5KOpiH0u8bvmwbbbNkO9Es=",
+		"SHA256",
+		null
+	);
+	
+	private static final AdESPolicy POLICY_TBAI_ARABA = new AdESPolicy(
+		"https://ticketbai.araba.eus/tbai/sinadura",
+		"iOgvkX7/yHIDRRiPy/LYQ0UUn7QV8/11D1BFbs8yMuQ=",
+		"SHA256",
+		null
+	);
+	
+
 
     private static final AOSigner XADES_SIGNER = new AOXAdESSigner();
 	

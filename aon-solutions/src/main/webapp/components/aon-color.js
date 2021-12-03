@@ -65,14 +65,6 @@ export class AonColor extends AonElement {
     label.className = "aonColor";
     this.appendChild(label);
 
-    let span = this.createElement(TAG.SPAN);
-    span.id = this.TITLE;
-    span.style.marginRight = '15px';
-    label.appendChild(span);
-		span.innerHTML = this.hasAttribute(CONSTANT.TITLE)
-			? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
-
-
     let input = this.createElement(TAG.INPUT);
     input.id   = this.INPUT;
     input.name = this.name || this.INPUT ;
@@ -81,6 +73,12 @@ export class AonColor extends AonElement {
     input.value = this.value || '#002469';
     label.appendChild(input);
 
+    let span = this.createElement(TAG.SPAN);
+    span.id = this.TITLE;
+    span.style.marginLeft = '15px';
+    label.appendChild(span);
+		span.innerHTML = this.hasAttribute(CONSTANT.TITLE)
+			? this.getAttribute(CONSTANT.TITLE) : CONSTANT.EMPTY;
 
     input.addEventListener(EVENT.CHANGE, () => {
       this.value = input.value;

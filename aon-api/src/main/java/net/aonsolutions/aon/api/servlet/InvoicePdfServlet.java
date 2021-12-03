@@ -47,6 +47,7 @@ import es.translogia.tedi.ewok.TediRegistry;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.tbai.CRC8;
 import net.aonsolutions.aon.tbai.TbaiData;
+import net.aonsolutions.aon.tbai.TbaiUri;
 
 
 @SuppressWarnings("serial")
@@ -106,7 +107,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
 			if(tbai.isActive()) {
 				String tbaiId = TbaiData.getTbaiId(domainName, domainId, login, invoice.getId());
-				qrUrl = "https://tbai.prep.gipuzkoa.eus/qr/?id=" + tbaiId + "&s=" + invoice.getSeries()
+				qrUrl = TbaiUri.getUrlQr(tbai) + "?id=" + tbaiId + "&s=" + invoice.getSeries()
 					+ "&nf=" + invoice.getNumber() + "&i=" + invoice.getTotal();
 				String crc = CRC8.calculate(qrUrl);
 				qrUrl = qrUrl + "&cr=" + crc;
