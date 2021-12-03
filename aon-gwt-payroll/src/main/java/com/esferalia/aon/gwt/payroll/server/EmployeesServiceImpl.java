@@ -5803,8 +5803,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return EmployeesServiceHelper.getIDCDates(connection, domainName, domainId, userLogin, userId, contractId,
 					date);
 
-		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e.getCause().getMessage());
+		} catch (SQLException | IOException | SegSocialException | CertificateNotFoundException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 

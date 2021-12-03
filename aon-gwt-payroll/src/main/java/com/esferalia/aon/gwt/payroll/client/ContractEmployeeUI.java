@@ -28,6 +28,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -377,7 +378,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		getSplitLayoutPanel().setWidgetSize(getFootPanel(), 25);
 		
 		// Load info and fill fields
-		this.contrataEmployeeObject.initializeEmployee(contractId,
+		this.contrataEmployeeObject.getEmployeeContract(contractId,
 				r -> {
 					// Init toolbar
 					getToolbar().setTitle(this.contrataEmployeeObject.getEmployeeFullName());		
@@ -586,6 +587,13 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 			setSelectedValueLB(employee.journeyType, contractData.getJourneyType() == 0 ? "false" : "true");
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.journeyType); 
 		}
+		
+		if(null != contractData.getContractJourneyDuration() && null != contractData.getContractJourneyDuration().getContractJourneyDuration() && 
+				!contractData.getContractJourneyDuration().getContractJourneyDuration().isEmpty()) {
+			employee.journeyDuration.clear();
+			employee.journeyDuration.add(new Label(contractData.getContractJourneyDuration().getJourneyText()));
+		}
+			
 		
 		if(AonStringUtils.isNotBlank(contractData.getContractType())) {
 			Double partialityCoef = contractData.getPartialityCoef();
