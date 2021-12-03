@@ -383,7 +383,13 @@ public class JooqDigitalCertificateNew {
 		dslContext.delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(rattachId)).execute();
 		
 		for(CertificateType tagType : tagTypes) {
-			Record tagRecord = dslContext.select().from(TAG).where(TAG.NAME.eq(tagType.name())).fetchOne();
+			Record tagRecord = dslContext.select()
+					.from(TAG)
+					.where(TAG.NAME.eq(tagType.name()))
+					.and(TAG.TYPE.eq(TagType.CERTIFICATE.value()))
+					.and(TAG.DOMAIN.eq(0))
+					.fetchOne();
+			
 			Integer tagId = null;
 			if(null == tagRecord) {
 				tagId = dslContext.insertInto(TAG)
