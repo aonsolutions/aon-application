@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificateNew;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateOwner;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType;
@@ -85,15 +84,21 @@ public class CertificatesServletNew extends HttpServlet {
 		CertificateOwner owner = AonStringUtils.equalsIgnoreCase(ownerValue, "USER") ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
 		
 		// Get FilePart
-		Part filePart = req.getPart("uploader");
-		byte[] data = null;
-		
-		try (InputStream is = filePart.getInputStream()) {
+		try {
+			Part filePart = req.getPart("uploader");
+			byte[] data = null;
+			InputStream is = filePart.getInputStream();
 			data = readAllBytes(is);
-		}
 			
-		JooqDigitalCertificateNew.setDigitalCertificateData(domainName, currentUser, fileName, tagTypes, owner, data, password, security, rattachId, raddinfoId);
-		
+			JooqDigitalCertificateNew.setDigitalCertificateData(domainName, currentUser, fileName, tagTypes, owner, data, password, security, rattachId, raddinfoId);
+			
+		} catch (IOException | ServletException e) {
+			try {
+				res.sendError(123, "Algo ha fallado");
+			} catch (IOException ex) {
+				System.out.println("Algo ha fallado");
+			}
+		}
 	}
 	
 	protected static byte [] readAllBytes ( InputStream is ) throws IOException {
