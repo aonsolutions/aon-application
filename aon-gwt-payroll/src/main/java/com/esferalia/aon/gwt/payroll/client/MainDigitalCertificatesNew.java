@@ -868,7 +868,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		deleteDialog.confirm(new AonAcceptDialogCallback() {
 			
 			@Override
-			public void onCancel() {}
+			public void onCancel() {
+				// Nothing to do here
+			}
 			
 			@Override
 			public void onAccept() {
