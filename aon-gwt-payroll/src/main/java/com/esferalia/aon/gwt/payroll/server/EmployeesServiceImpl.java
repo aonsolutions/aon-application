@@ -6620,6 +6620,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return dataUri;
 
 		} catch (SQLException | SepeException | CertificateNotFoundException | IOException e) {
+			if(e instanceof CertificateNotFoundException)
+				throw new IllegalArgumentException("No existe certificado SEPE. Por favor introduzcalo desde el apartado Gesti\u00F3n Certificados");
 			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
