@@ -442,7 +442,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			cto.ensureDebugId("cto");
 			
-			cbc = addItem("Copia B\u00E1sica", new CTOCommand(), 
+			cbc = addItem("Copia B\u00E1sica", new CBCCommand(), 
 					AON.CSS.aonIconSepe(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			cbc.ensureDebugId("cbc");
 			
@@ -1397,8 +1397,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void movPrevDelete() {
+		showLoading("Borrando movimiento previo...");
 		contrataEmployeeObject.movPrevDelete(
-				s -> 
+				s -> {
+					hideMessage();
 					contractEmployeeUI.setContrataEmployeeObject(contrataEmployeeObject, this.contrataEmployeeObject.getContractId(),
 						success -> {
 							// Check SS only if not RETA
@@ -1410,14 +1412,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							checkTGSSStatus();
 							checkContractExtension();
 							checkContractTransform();
-						}), 
-				f -> showError("Error borrado movimiento previo", f.getMessage())
+						});
+				}, f -> showError("Error borrado movimiento previo", f.getMessage())
 		);
 	}
 
 	private void altaConsolidadaDelete() {
+		showLoading("Borrando alta consolidad...");
 		contrataEmployeeObject.altaConsolidadaDelete(
-				s ->
+				s -> {
+					hideMessage();
 					contractEmployeeUI.setContrataEmployeeObject(
 						contrataEmployeeObject, 
 						this.contrataEmployeeObject.getContractId(),
@@ -1431,8 +1435,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							checkTGSSStatus();
 							checkContractExtension();
 							checkContractTransform();
-						}), 
-				f -> showError("Error borrado alta consolidada", f.getMessage())
+						});
+				}, f -> showError("Error borrado alta consolidada", f.getMessage())
 		);
 	}
 	
@@ -1573,7 +1577,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void showTa() {
-		AonMessagePanel.showLoading(messageContainer, "Obteniendo TA...");
+		showLoading("Obteniendo TA...");
 		contrataEmployeeObject.downloadTa(dataURI -> {
 				hideMessage();
 				showPdf();
@@ -1586,7 +1590,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void showIdc( Date date) {
-		AonMessagePanel.showLoading(messageContainer, "Obteniendo IDC...");
+		showLoading("Obteniendo IDC...");
 		contrataEmployeeObject.downloadIdc(date,
 		dataURI -> {
 				hideMessage();
@@ -1602,7 +1606,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void showIdcPlNss( Date month) {
-		AonMessagePanel.showLoading(messageContainer, "Obteniendo IDC PL NSS...");
+		showLoading("Obteniendo IDC PL NSS...");
 		contrataEmployeeObject.downloadIdcPlNss(month,
 		dataURI -> {
 				hideMessage();
@@ -1618,7 +1622,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void showCto() {
-		AonMessagePanel.showLoading(messageContainer, "Obteniendo CTO...");
+		showLoading("Obteniendo CTO...");
 		contrataEmployeeObject.downloadCto(dataURI -> {
 				hideMessage();
 				showPdf();
@@ -1631,7 +1635,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void showCbc() {
-		AonMessagePanel.showLoading(messageContainer, "Obteniendo CBC...");
+		showLoading("Obteniendo CBC...");
 		contrataEmployeeObject.downloadCbc(dataURI -> {
 				hideMessage();
 				showPdf();
@@ -1640,7 +1644,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void showCertifica2PDF() {
-		AonMessagePanel.showLoading(messageContainer, "Obteniendo Certific@2...");
+		showLoading("Obteniendo Certific@2...");
 		contrataEmployeeObject.getCertifica2PDF(dataURI -> {
 			hideMessage();
 			showPdf();
@@ -1653,6 +1657,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void sendBasicCopy() {
+		showLoading("Notificando copia basica...");
 		contrataEmployeeObject.sendBasicCopy(
 				s -> {
 					showSuccess("Comunicaci\u00F3n", "La copia basica ha sido notificada correctamente del SEPE");
@@ -1674,6 +1679,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 
 	private void sendContract() {
+		showLoading("Notificando contrato...");
 		contrataEmployeeObject.sendContract(
 				s -> {
 					showSuccess("Comunicaci\u00F3n", "El contrato ha sido notificado correctamente del SEPE");
@@ -1704,6 +1710,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void removeContract() {
+		showLoading("Eliminando contrato...");
 		contrataEmployeeObject.removeContract(
 				s -> {
 					showSuccess("Comunicaci\u00F3n", "El contrato ha sido eliminado correctamente del SEPE");
@@ -2284,7 +2291,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		AonMessagePanel.showError(messageContainer, errorMap);
 	}
 	
+	private void showLoading(String message) {
+		AonMessagePanel.showLoading(messageContainer, message);
+	}
+	
 	private void hideMessage() {
-		messageContainer.setVisible(false);
+		AonMessagePanel.hideMessage(messageContainer);
 	}
 }
