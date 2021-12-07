@@ -7,11 +7,12 @@
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeDraft.MyStyle">
 		
-		.document {
+		.horizontal-center  {
 			margin-top: 5px;
 			margin-left: auto;
 			margin-right: auto;
 			margin-bottom: 15px;
+			position: initial;
 		}
 		
 		.cmdBtn{
@@ -20,6 +21,7 @@
 			padding-left: 25px !important;
 			background-size: contain;
 		}
+		
 			
 	</ui:style>
 
@@ -29,7 +31,7 @@
 		</g:north> 
 		<g:center> 
     		<g:DeckLayoutPanel ui:field="deckPanel">
-    			<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
+    			<g:VerticalPanel styleName="{style.horizontal-center}" ui:field="scrolledPanel" >
     				<g:HTMLPanel ui:field="messageContainer"/>
 		    		<g:ScrollPanel>
 	    				<e:Employee ui:field="employee"/>

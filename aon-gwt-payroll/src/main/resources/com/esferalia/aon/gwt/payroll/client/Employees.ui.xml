@@ -5,6 +5,12 @@
 
 	<ui:style>
 	
+	.gwt-TreeItem img {
+		filter: grayscale(100%) contrast(200%);
+	}
+	
+	@external .gwt-TreeItem;
+	
 	</ui:style>
 
 
