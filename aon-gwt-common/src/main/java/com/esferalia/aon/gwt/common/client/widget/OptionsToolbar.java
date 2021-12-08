@@ -14,6 +14,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -56,6 +57,9 @@ public class OptionsToolbar extends Composite {
 	
 	@UiField
 	TextBox searchTextBox;
+	
+	@UiField
+	FlowPanel buttonBar;
 
 	private List<Listener> listeners;
 
@@ -63,6 +67,12 @@ public class OptionsToolbar extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.listeners = new ArrayList<Listener>();
+	}
+	
+	@Override
+	public void setHeight(String height) {
+		super.setHeight(height);
+		buttonBar.setHeight(height);
 	}
 
 	public void setVisibleSearchTextBox(boolean visible) {
