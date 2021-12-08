@@ -113,13 +113,22 @@
 		</aon:if>
 
 		<aon:if test="#{desktop.showGraphicsPortlet}">
-			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-notes-parent">
+			<!--aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-notes-parent">
 				<aon:commandLink 
 					id="new_note-search" 
 					action="note_list"
 					value="#{bundle.aon_notes}"
 					styleClass="aon-button-notes"
 					actionListener="#{note.onSearch}" 
+					>
+				</aon:commandLink>
+			</aon:div-->
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-notes-parent">
+				<aon:commandLink 
+					id="new_note-search" 
+					value="#{bundle.aon_notes}"
+					styleClass="aon-button-notes"
+					onclick="javascript:showMenuPortlet('notes', this); return;"
 					>
 				</aon:commandLink>
 			</aon:div>
@@ -605,5 +614,123 @@
 		</aon:div>
 	</aon:div>		
 		
+	<aon:div 
+		id="notesMenuPortlet" 
+		style="display:none"
+		styleClass="aon-menu-portlet"
+		onmouseout="javascript:event.stopPropagation();"  
+		onmouseover="javascript:showMenuPortlet('notes', this);" 
+		onmouseout_="javascript:hideMenuPortlet('notes', this);"  
+		>
+		<aon:div styleClass="aon-direct-access-list">
+			<aon:div 
+				style="background-color:#FFD700;" 
+				styleClass="aon-direct-access-list-head">
+				<aon:outputText value="#{bundle.aon_notes}"  />
+				<aon:div style="vertical-align: middle; float:right; ">
+					<!--
+					<aon:outputText
+						value="add" 
+						styleClass="material-icons"
+						style="cursor:pointer; margin-right:1em;"
+						onclick="javascript:hideMenuPortlet('notes', this);"
+					/>
+					-->
+
+					<aon:commandLink 
+						id="main_menu_notes"
+						immediate="true"
+						action="note_list" 
+						actionListener="#{note.onSearch}" 
+						>
+						<aon:graphicImage 
+								value="#{aonResource.resolve['/images/aon-icon-launch-white.svg']}" />
+					</aon:commandLink>
+					 
+					<aon:graphicImage 
+							style="cursor:pointer;"
+							onclick="javascript:hideMenuPortlet('notes', this);"
+							value="#{aonResource.resolve['/images/aon-icon-close-white.svg']}" />
+				</aon:div>
+			</aon:div>
+			
+			<aon:div>
+			
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			
+					<ui:param name="controller" value="#{note}" />
+					<ui:param name="showDataScroller" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:param name="rowSelectorReRender" value="#{false}" />
+			
+					<ui:define name="columns">
+						<!--
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-150" alias="Note.date">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.date}">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						-->
+						<!--
+						<aon:column styleClass="aon-editDataTable-textColumn" alias="Note.subject">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_subject}" />
+							</f:facet>
+							<aon:outputText value="#{to.subject}" />
+						</aon:column>
+						-->
+						<!--
+						<aon:column styleClass="aon-editDataTable-textColumn" style="padding: 10px; border:none;" >
+							<aon:div style="border-radius: 8px; border: 1px solid #ddd; box-shadow: 0px 6px 6px #fffde7; background: #fffde7; padding: 3px; " >
+								
+								<aon:inputTextarea style="font-weight: bold; color: black; border: none; width: 85%; background: #fffde7; resize: vertical;" value="#{to.subject}" rows="1" />
+								
+								<aon:outputText styleClass="material-icons" style="width: 10%; text-align: right; vertical-align:top;" value="delete" />
+								
+								<aon:inputTextarea style="border: none; width: 95%; background: #fffde7; resize: vertical;" value="#{to.note}" rows="7" />
+								
+								<aon:outputText value="#{to.date}" style="color: black; width: 95%; background: #fffde7; text-align: right; #{now > to.date ? 'color:red': ''} ">
+									<f:convertDateTime pattern="dd MMMM yyyy"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+							</aon:div>
+						</aon:column>
+						-->
+						<aon:column
+							style="padding: 10px; border:none;"  
+							styleClass="aon-editDataTable-textColumn" 
+						>
+							<a class="aon-note" contenteditable="true" >
+								<aon:outputText styleClass="aon-note-title"  value="#{to.subject}" />
+								<aon:outputText styleClass="aon-note-text" value="#{to.note}"  />
+								<aon:outputText styleClass="aon-note-date" value="#{to.date}"  >
+									<f:convertDateTime pattern="dd MMMM yyyy"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</aon:outputText>
+							</a>	
+						</aon:column>
+						
+					</ui:define>
+				</ui:decorate>
+				
+				<aon:div style="position: absolute; width: 250px; height: 180px;"/>
+					
+			</aon:div>
+
+			<!--aon:div styleClass="aon-direct-access-list-element">
+				<aon:commandLink 
+					id="newGlobalConfiguration"
+					action="globalConfig_form"
+					actionListener="#{globalConfig.onInit}"
+					value="#{bundle.admin_global_configuration}" />
+			</aon:div-->
+					
+			
+		</aon:div>
+	</aon:div>		
 					
 </ui:composition>
