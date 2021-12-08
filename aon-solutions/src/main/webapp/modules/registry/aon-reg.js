@@ -29,6 +29,7 @@ import { AonIban } from '../../components/aon-iban.js';
 import { AonNumber } from '../../components/aon-number.js';
 import { getPaymethods } from '../../services/invoiceService.js';
 import { AonDate } from '../../components/aon-date.js';
+import * as GWT from '../../gwt/gwt.js';
 
 export class AonReg extends AonElement {
 
@@ -124,7 +125,8 @@ export class AonReg extends AonElement {
 		this.options = this.options || [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
-			{ title: MSG.REGISTRATION_DATA, fn: () => this.buildRegistralData()}
+			{ title: MSG.REGISTRATION_DATA, fn: () => this.buildRegistralData()},
+			{ title: MSG.CERTIFICATES, fn: () => this.buildCertificates()}
 		];
 	}
 
@@ -172,6 +174,13 @@ export class AonReg extends AonElement {
 		this.clearElement(div);
 		this.buildBankAccountCard(div);
 		this.buildPaymethodCard(div);
+	}
+
+	buildCertificates() {
+		let div = this.getElement(this.DIV);
+		div.style.position = 'absolute';
+		div.style.height = '100%';
+		GWT.load(GWT.MAIN_DIGITAL_CERTIFICATES, this.DIV);
 	}
 
 	buildRegistralData() {
