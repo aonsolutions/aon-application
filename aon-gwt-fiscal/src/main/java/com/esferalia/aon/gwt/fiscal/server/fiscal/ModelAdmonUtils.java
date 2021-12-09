@@ -63,6 +63,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
@@ -75,6 +76,7 @@ import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
@@ -533,11 +535,17 @@ public class ModelAdmonUtils {
 
 	public static void send(HttpServletResponse resp, AEATParams aeatParams, FiscalModel model ) {
 		try {
+			String period = model.getPeriod().getName();
+			if ( model.getModel() == FiscalModelType.M202) {
+				if ( model.getPeriod() == Period.T1) period = "1P";
+				else if ( model.getPeriod() == Period.T2) period = "2P";
+				else if ( model.getPeriod() == Period.T3) period = "3P";
+			}
 			byte[] fileContent = getModelFile(model);
 			JSONObject params = new JSONObject();
 			params.put("MODELO", model.getModel().getValue());
 			params.put("EJERCICIO", AonNumberUtils.toString( model.getYear()));
-			params.put("PERIODO", model.getPeriod().getName());
+			params.put("PERIODO", period);
 			params.put("NRC", (model.isStrictToDeposit()?aeatParams.getNrc() : ""));
 			params.put("IDI", "ES");
 			params.put("F01", ModelAdmonUtils.getUnencodedFile(fileContent,StandardCharsets.UTF_8));

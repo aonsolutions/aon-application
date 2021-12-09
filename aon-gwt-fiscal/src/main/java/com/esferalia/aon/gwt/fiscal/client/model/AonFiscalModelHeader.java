@@ -68,7 +68,7 @@ public class AonFiscalModelHeader extends SimpleLayoutPanel {
 		yearPeriodCell.getElement().getStyle().setWidth(80, Unit.PX);
 		Label modelYear = new Label( AonNumberUtils.toString( m.getYear() ));
 		yearPeriodCell.add(modelYear);
-		Label modelPeriod = new Label( m.getPeriod()==null?"----":m.getPeriod().getDescription());
+		Label modelPeriod = new Label( m.getPeriod()==null?"----":FiscalModelUtils.getPeriodDescription(m));
 		yearPeriodCell.add(modelPeriod);
 		
 		setWidget(header);

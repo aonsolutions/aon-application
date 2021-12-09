@@ -785,7 +785,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 		final FiscalModelDetail det1 = getModel().ensureDetail(key);
 		final AonDoubleBox input = new AonDoubleBox();
 		fieldsMap.put(key, input);
-		input.setEnabled(getModel().isNotFinished() && script.isEnabled()); 
+		input.setEnabled(script.isEnabled()); 
 		input.setValue(det1.getAmount());
 		input.addValueChangeHandler(event -> {
 			if (event.getValue() == null) input.setValue(0.0, false);

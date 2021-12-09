@@ -247,18 +247,26 @@ public class DataResponseDAO {
 			public void visitM130() {
 				pair.setLeft( DataResponseSource.MOD130 ).setRight(DataAttachSource.MOD130);
 			}
+			@Override 
+			public void visitM131() {
+				pair.setLeft( DataResponseSource.MOD131 ).setRight(DataAttachSource.MOD131);
+			}
 			
+			@Override 
+			public void visitM202() {
+				pair.setLeft( DataResponseSource.MOD202 ).setRight(DataAttachSource.MOD202);
+			}
 			@Override public void visitM390HF() { /* nothing */ }
 			@Override public void visitM390() { /* nothing */ }
 			@Override public void visitM349() { /* nothing */ }
 			@Override public void visitM347() { /* nothing */ }
-			@Override public void visitM202() { /* nothing */ }
+			
 			@Override public void visitM200() { /* nothing */ }
 			@Override public void visitM193() { /* nothing */ }
 			@Override public void visitM190() { /* nothing */ }
 			@Override public void visitM184() { /* nothing */ }
 			@Override public void visitM180() { /* nothing */ }
-			@Override public void visitM131() { /* nothing */ }
+			
 		});
 		return pair;
 	}
@@ -266,7 +274,7 @@ public class DataResponseDAO {
 	public static void deleteAEATResponse(AONContext ctx, IFiscalModel fm) {
 		final Pair<DataResponseSource,DataAttachSource> pair = getDataResponseData( fm );
 		if (pair.getLeft() == null || pair.getRight() == null) {
-			throw new AonCoreException(" Modelo no soportado en la grabación de la respuesta");
+			throw new AonCoreException(" Modelo no soportado en la grabación de la respuesta (DataResponseDAO).");
 		}
 		ctx.getDslContext()
 			.select(DATA_RESPONSE.fields())

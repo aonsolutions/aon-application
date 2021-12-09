@@ -9,8 +9,10 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -447,8 +449,8 @@ public class FiscalModelAdmonPanel<T extends FiscalModel,O extends FiscalModelMo
 		downloadLink.setVisible( getCallback().getModel().isFinished() );
 		if (getCallback().getModel().isAEAT() &&
 		   ((getCallback().getModel().getYear() > 2021)  
-		   || (getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester()))
-				) {
+		   || (getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester())
+		   || (getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2))) {
 			validateLink.setVisible( getCallback().getModel().isFinished() );
 			sendLink.setVisible( getCallback().getModel().isFinished() );
 			checkLink.setVisible( getCallback().getModel().isSent() ); 

@@ -125,7 +125,6 @@ public class Model2022018AEAT extends Model202Base {
 		
 		final AonDateBox dateBox = new AonDateBox();
 		dateBox.setValue(getModel().getInitialDate());
-		dateBox.setEnabled(getModel().isNotFinished());
 		dateBox.addValueChangeHandler( event -> {
 			getModel().setInitialDate(dateBox.getValue());
 			calculateAndRefresh( callback );
@@ -140,7 +139,6 @@ public class Model2022018AEAT extends Model202Base {
 		final Mod202Key key = script.getKeys()[0]; 
 		final CheckBox check = new CheckBox();
 		check.setText(script.getLabel());
-		check.setEnabled(getModel().isNotFinished());
 		check.setValue(getModel().getAmount(key) == 1);
 		check.addClickHandler(event -> {
 			getModel().putAmount(key,check.getValue().booleanValue()?1.0:0.0);
@@ -165,7 +163,6 @@ public class Model2022018AEAT extends Model202Base {
 		textBox.setMaxLength(5);
 		textBox.setVisibleLength(6);
 		textBox.setValue(getModel().getDescription(key));
-		textBox.setEnabled(getModel().isNotFinished());
 		textBox.addValueChangeHandler( event -> {
 			getModel().putDescription(key,textBox.getValue());
 			calculateAndRefresh( callback );
@@ -191,7 +188,6 @@ public class Model2022018AEAT extends Model202Base {
 		int value = (int) getModel().getAmount(key);
 		if (value < 0 || value > 4) value = 0;
 		r19Box.setSelectedIndex(value);
-		r19Box.setEnabled(getModel().isNotFinished());
 		r19Box.addChangeHandler( event -> {
 			getModel().putAmount(key,r19Box.getSelectedIndex());		
 			calculateAndRefresh( callback );
@@ -216,7 +212,6 @@ public class Model2022018AEAT extends Model202Base {
 		int value = (int) getModel().getAmount(key);
 		if (value < 0 || value > 2) value = 0;
 		r21Box.setSelectedIndex(value);
-		r21Box.setEnabled(getModel().isNotFinished());
 		r21Box.addChangeHandler( event -> {
 			getModel().putAmount(Mod202Key.X00,r21Box.getSelectedIndex());
 			calculationMethodChanged(r21Box.getSelectedIndex());
@@ -238,7 +233,6 @@ public class Model2022018AEAT extends Model202Base {
 		textBox.setMaxLength(22);
 		textBox.setVisibleLength(15);
 		textBox.setValue(getModel().getDescription(key));
-		textBox.setEnabled(getModel().isNotFinished());
 		textBox.addValueChangeHandler( event -> {
 			getModel().putDescription(key,textBox.getValue());
 			calculateAndRefresh( callback );

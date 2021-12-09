@@ -22,6 +22,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -67,12 +68,17 @@ public class FiscalConfigPanel extends SimpleLayoutPanel {
 	public FiscalConfigPanel( FiscalConfigModuleOptions options ) {
 		this.layout = new AonLayoutPanel();
 		this.layout.addNorth(new AonToolbar(AON.MSG.fiscalParameters()), AonToolbar.HEIGTH);
+		ScrollPanel scrollPanel = new ScrollPanel();
+		scrollPanel.setStyleName(AON.CSS.aonScrollArea());
+		
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonBlockCenter());
 		tab.addStyleName(AON.CSS.aonMarginTop());
 		
-		this.layout.add(tab);
+		scrollPanel.setWidget(tab);
+		this.layout.add(scrollPanel);
 		setWidget(this.layout);
+		
 		if (!options.getConfiguration().getCompany().getDomain().isParent()) {
 			paintDefaultYear(options, tab);
 			paintDefaultAdministration(options, tab);
@@ -414,29 +420,3 @@ public class FiscalConfigPanel extends SimpleLayoutPanel {
 		addRow(tab, new Label(AEAT_TEST),box,msg);
 	}
 }
-
-
-
-/*
-private static final EnumMap<AppParam, IAppParamFiller> APM = new EnumMap<>(AppParam.class);
-static {
-	
-	// ****************************************************** [FISCAL VALUES]
-	APM.put(AppParam.FS_CONCTACT_PERSON, 
-		(config, value) -> config.fiscal().setContactPerson(value));
-	APM.put(AppParam.FS_CONCTACT_PHONE, 
-		(config, value) -> config.fiscal().setContactPhone(value));
-	APM.put(AppParam.FS_CONCTACT_CELLULAR,
-		(config, value) -> config.fiscal().setContactCellular(value));
-	APM.put(AppParam.FS_CONCTACT_MAIL, 
-		(config, value) -> config.fiscal().setContactMail(value));
-	APM.put(AppParam.FS_MOD303_BY_DIFFERENCE_DISABLED, 
-		(config, value) -> config.fiscal().setMod303ByDifferenceDisabled( AonEnumUtils.getAonBoolean(value) ));
-	APM.put(AppParam.FS_CUSTOMER_CHECK_ENABLED, 
-		(config, value) -> config.fiscal().setCustomerCheckEnabled(AonEnumUtils.getAonBoolean(value) ));
-}
-
-DEPRECADOS!!!
-AppParam.FS_TAX_REGIME
-AppParam.FS_ADMINISTRATION_CODE
-*/
