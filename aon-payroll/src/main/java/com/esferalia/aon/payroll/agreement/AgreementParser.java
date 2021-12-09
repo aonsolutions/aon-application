@@ -24,9 +24,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -1043,11 +1045,11 @@ public class AgreementParser {
 	
 	public static Pair<Integer,String> getAgreement(DSLContext dslContext, String agreementCode, Integer domainId) throws IllegalArgumentException {
 		DOMAIN_ID = domainId;
-		Pair<Integer,String> agreementLog = new Pair<Integer, String>(-1, "");
+		Pair<Integer,String> agreementLog = new Pair<>(-1, "");
 		
 		String log = "";
-		Map<String, String> varNotInsertMap = new HashMap<String, String>();
-		Pair<Integer,Map<String, String>> insertResult = new Pair<Integer, Map<String,String>>(-1, new HashMap<String, String>());
+		Map<String, String> varNotInsertMap = new HashMap<>();
+		Pair<Integer,Map<String, String>> insertResult = new Pair<>(-1, new HashMap<>());
 		
 		InputStream is = null;
 		if(AonStringUtils.contains(agreementCode, 'a'))
@@ -1063,17 +1065,28 @@ public class AgreementParser {
 			Document document = documentBuilder.parse(is);
 			
 			// Agreement general info
-			Agreement agreement = getAgreementInfo(dslContext, document);
+			Agreement agreement = getAgreementInfo(document);
 			
 			// Agreement Concepts
-			getAgreementConcepts(dslContext, document, agreement);
+			getAgreementConcepts(document, agreement);
 			
 			// Agreement levels and categories
-			getAgreementLevelAndCategory(dslContext, document, agreement);
+			getAgreementLevelAndCategory(document, agreement);
 			
 			// Agreement levels data
 			getAgreementLevelData(dslContext, document, agreement);
 			
+//			try (PrintWriter out = new PrintWriter("/Users/sergio/Desktop/agreement(NotParsed).txt")) {
+//			    out.println(agreement.toString());
+//			}
+			
+			// Parse agreement to group leves
+			agreement = parseAgreement(agreement);
+			
+//			try (PrintWriter out = new PrintWriter("/Users/sergio/Desktop/agreement(Parsed).txt")) {
+//			    out.println(agreement.toString());
+//			}
+
 			// Insert Agreement to DataBase
 			insertResult = insertAgreementDB(dslContext, agreement, agreementCode);
 			
@@ -1085,14 +1098,10 @@ public class AgreementParser {
 				log = getAgreementLog(dslContext, domainId, agreement, varNotInsertMap);
 			}
 			
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException("El convenio con c\u00F3digo " + agreementCode + " no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
-		} catch (IOException e) {
+		} catch (ParserConfigurationException | IOException | SAXException e) {
 			e.printStackTrace();
 		}
 		
@@ -1196,10 +1205,12 @@ public class AgreementParser {
 		
 		return html;
 	}
+	
+	// ------------------------------------------------------------ AGREEMENT INFO
 
-	private static Agreement getAgreementInfo(DSLContext dslContext, Document document) {
-		NodeList list = document.getElementsByTagName("DATOS_GENERALES");
+	private static Agreement getAgreementInfo(Document document) {
 		Agreement agreement = null;
+		NodeList list = document.getElementsByTagName("DATOS_GENERALES");
 		
 		for(int i=0; i<list.getLength(); i++) {
 			Node node = list.item(i);
@@ -1215,9 +1226,7 @@ public class AgreementParser {
 	            Date lastUpdate = null;
 				try {
 					lastUpdate = dateFormat.parse(element.getElementsByTagName("FECHA_ULT_ACT").item(0).getTextContent());
-				} catch (DOMException e) {
-					e.printStackTrace();
-				} catch (ParseException e) {
+				} catch (DOMException | ParseException e) {
 					e.printStackTrace();
 				}
 				
@@ -1228,16 +1237,15 @@ public class AgreementParser {
 				startDateCal.set(Calendar.DAY_OF_MONTH, 1);
 				Date startDate = startDateCal.getTime();
 				
-	            
 	            agreement = new Agreement(description, ssCode, serviAgreementCode, lastUpdate, startDate);
-	            
+	     
 	        }
 		}
 		
 		return agreement;
 	}
 	
-	private static void getAgreementConcepts(DSLContext dslContext, Document document, Agreement agreement) {
+	private static void getAgreementConcepts(Document document, Agreement agreement) {
 		NodeList listCPR = document.getElementsByTagName("CATALOGO_CPTOS_RETRIB");
 		
 		for(int i=0; i<listCPR.getLength(); i++) {
@@ -1269,7 +1277,7 @@ public class AgreementParser {
 		}
 	}
 
-	private static void getAgreementLevelAndCategory(DSLContext dslContext, Document document, Agreement agreement) {
+	private static void getAgreementLevelAndCategory(Document document, Agreement agreement) {
 		NodeList list = document.getElementsByTagName("CATALOGO_CAT_PROF");
 		for(int i=0; i<list.getLength(); i++) {
 			Node node = list.item(i);
@@ -1297,16 +1305,13 @@ public class AgreementParser {
 	    	            } else {
 		    	            for(int b=0; b<listdescriptions.getLength(); b++)
 		    	            	description += listdescriptions.item(b).getTextContent() + " ";
-		    	            description.trim();
+		    	            description = description.trim();
 	    	            }
 	    	            
 	    	            String category = elementCatProfIt.getElementsByTagName("NOMBRE").item(0).getTextContent();
 	    	            
-//	    	            AgreementLevel agreementLevel = agreement.checkLevelExist(description);
-//	    	            
-//	    	            if(null != agreementLevel)
-//	    	            	description = agreementLevel + "_" + j;
-//	    	            
+//	    	            System.out.println(code + " - " + description + " - " + category);
+	    	            
 	    	            agreement.addAgreementLevel(code, description, category);
 	    	            
 	    	        }
@@ -1374,7 +1379,7 @@ public class AgreementParser {
 		    		    	            else {
 			    		    	            for(int b=0; b<listdescriptions.getLength(); b++)
 			    		    	            	description += listdescriptions.item(b).getTextContent() + " ";
-			    		    	            description.trim();
+			    		    	            description = description.trim();
 		    		    	            }
 		    		    	            
 			   	    	            	String category = elementCPI.getElementsByTagName("NOMBRE").item(0).getTextContent();
@@ -1399,7 +1404,7 @@ public class AgreementParser {
 						   	    	            	
 						   	    	            	String realName = getParseName(name, type);
 						   	    	            	
-//						   	    	            	System.out.println(realName + " -> " + value);
+//						   	    	            	System.out.println(realName + " -> " + value + " || " + startDate.getTime());
 						   	    	            	
 						   	    	            	agreementLevel.addLevelData(realName, value, startDate.getTime());
 				    	     	            	}
@@ -1415,13 +1420,82 @@ public class AgreementParser {
 		}
 	}
 	
+	private static Agreement parseAgreement(Agreement agreement) {
+		Agreement parsedAgreement = new Agreement(
+				agreement.getAgreementDescription(), 
+				agreement.getSSCode(), 
+				agreement.getServiAgreementCode(), 
+				agreement.getLastUpdate(), 
+				agreement.getStartDate());
+		
+		parsedAgreement.setAgreementConcepts(agreement.getAgreementConcepts());
+		
+		List<AgreementLevel> analizedAgreementLevels = new ArrayList<>();
+		
+		for(AgreementLevel agreementLevel : agreement.getAgreementLevels()) {
+		
+			List<AgreementLevel> duplicateAgreementLevels = getDuplicateAgreementLevels(agreement, agreementLevel, analizedAgreementLevels);
+			analizedAgreementLevels.addAll(duplicateAgreementLevels);
+			
+			AgreementLevel newAgreementLevel = parsedAgreement.createAgreementLevel(agreementLevel.getCode(), agreementLevel.getDescription());
+			newAgreementLevel.setLevelDatas(agreementLevel.getLevelDatas());
+			List<String> categories = new ArrayList<>();
+			
+			for(AgreementLevel duplicateAgreementLevel : duplicateAgreementLevels)
+				categories.addAll(duplicateAgreementLevel.getCategories());
+				
+			newAgreementLevel.setCategories(categories);
+			
+			if(!categories.isEmpty())
+				parsedAgreement.addAgreementLevel(newAgreementLevel);
+		}
+		
+		return parsedAgreement;
+	}
+	
+	private static List<AgreementLevel> getDuplicateAgreementLevels(Agreement agreement, AgreementLevel checkedAgreementLevel, List<AgreementLevel> analizedAgreementLevels) {
+		List<AgreementLevel> duplicateAgreementLevels = new ArrayList<>();
+		
+		for(AgreementLevel agreementLevel : agreement.getAgreementLevels()) {
+			if(!analizedAgreementLevels.contains(agreementLevel) && isSameLevelAndValues(agreementLevel, checkedAgreementLevel))
+				duplicateAgreementLevels.add(agreementLevel);
+		}
+		
+		return duplicateAgreementLevels;
+	}
+
+	private static boolean isSameLevelAndValues(AgreementLevel agreementLevel, AgreementLevel checkedAgreementLevel) {
+		return AonStringUtils.equalsIgnoreCase(checkedAgreementLevel.getDescription(), agreementLevel.getDescription()) && haveSameValues(agreementLevel, checkedAgreementLevel);
+	}
+
+	private static boolean haveSameValues(AgreementLevel agreementLevel, AgreementLevel checkedAgreementLevel) {
+		for(AgreementLevelData levelData : checkedAgreementLevel.getLevelDatas()) {
+			if(!containsLevelData(levelData, agreementLevel))
+				return false;
+		}
+		
+		return true;
+	}
+
+	private static boolean containsLevelData(AgreementLevelData cehckedlevelData, AgreementLevel agreementLevel) {
+		for(AgreementLevelData levelData : agreementLevel.getLevelDatas()) {
+			if(AonStringUtils.equalsIgnoreCase(cehckedlevelData.getName(), levelData.getName()) && 
+				AonStringUtils.equalsIgnoreCase(cehckedlevelData.getValue(), levelData.getValue()) && 
+				cehckedlevelData.getStartDate().equals(levelData.getStartDate()) &&
+				((null == cehckedlevelData.getEndDate() && null == levelData.getEndDate()) || cehckedlevelData.getEndDate().equals(levelData.getEndDate())))
+				return true;
+		}
+		return false;
+	}
+
 	private static Pair<Integer,Map<String, String>> insertAgreementDB(DSLContext dslContext, Agreement agreement, String agreementCode) {
 		boolean hasWinterPay = false;
 		boolean hasSummerPay = false;
 		
-		Pair<Integer,Map<String, String>> result = new Pair<Integer, Map<String,String>>(-1, new HashMap<String, String>());
+		Pair<Integer,Map<String, String>> result = new Pair<>(-1, new HashMap<>());
+		
 		// Variables not insert
-		Map<String, String> mapVarNotInsert = new HashMap<String, String>();
+		Map<String, String> mapVarNotInsert = new HashMap<>();
 		
 		// Agreement
 		
