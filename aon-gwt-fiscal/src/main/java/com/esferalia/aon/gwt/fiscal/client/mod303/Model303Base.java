@@ -543,7 +543,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			double d1 = mod303.getAmount(entry.getKey());
 			double d2 = entry.getValue().getValue();
 			if (!AonNumberUtils.equals(d1, d2)) {
-				entry.getValue().setValue(d1,true,true);
+				entry.getValue().setValue(d1,false,true);
 			}
 		}
 	}
@@ -646,7 +646,6 @@ public abstract class Model303Base extends DockLayoutPanel  {
 				new AsyncCallback<Mod303>() {
 					@Override
 					public void onSuccess(Mod303 result) {
-						setDirty(false);
 						selectAndPopulate(result);
 						showFinalizePopup();
 						markAsFinishedButton.setEnabled(true);

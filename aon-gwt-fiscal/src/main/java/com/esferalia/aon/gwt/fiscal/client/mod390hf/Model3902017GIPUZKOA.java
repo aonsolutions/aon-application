@@ -227,19 +227,20 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		tab2.getColumnFormatter().setWidth(6, "auto");
 		
 		tab2.setWidget(1, 0, new Label( "C.N.A.E.") ); 
-		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 1, new Label() ); 
-		tab2.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 2, new Label( AON.MSG.operationsAmount()) );
-		tab2.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 3, new Label( AON.MSG.operationsAmountWithRight()) );
-		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonDisplayTableHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonTextCenter());
 		tab2.setWidget(1, 4, new Label( AON.MSG.type()) );
-		tab2.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 5, new Label( AON.MSG.prorrataPercent()) );
-		tab2.getFlexCellFormatter().addStyleName(1,5,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,5,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 6, new Label() ); 
-		tab2.getFlexCellFormatter().addStyleName(1,6,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,6,AON.CSS.aonDisplayTableHeader());
 		
 		paintProrrateRow(tab2,Mod390Key.GP_P1C,Mod390Key.GP_P1I,Mod390Key.GP_P1D,Mod390Key.GP_P1T,Mod390Key.GP_P1P);
 		paintProrrateRow(tab2,Mod390Key.GP_P2C,Mod390Key.GP_P2I,Mod390Key.GP_P2D,Mod390Key.GP_P2T,Mod390Key.GP_P2P);
@@ -279,6 +280,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 			markAsDirty();
 		});
 		tab.setWidget(row, 2, amount);
+		tab.getFlexCellFormatter().addStyleName(row, 2, AON.CSS.aonTextCenter());		
 		
 		AonDoubleBox amountRight = new AonDoubleBox();
 		amountRight.setValue(getModel().getAmount(amountRightKey));
@@ -287,6 +289,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 			markAsDirty();
 		});
 		tab.setWidget(row, 3, amountRight);
+		tab.getFlexCellFormatter().addStyleName(row, 3, AON.CSS.aonTextCenter());
 		
 		ListBox typeBox = new ListBox();
 		typeBox.setWidth("40px");
@@ -303,8 +306,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		});
 		tab.setWidget(row, 4, typeBox);
 		
-		
-		AonDoubleBox percent = new AonDoubleBox();
+		AonDoubleBox percent = new AonDoubleBox(6);
 		percent.setValue(getModel().getAmount(percentKey));
 		percent.addValueChangeHandler(event -> {
 			getModel().putAmount(percentKey, percent.getValue() );
@@ -327,29 +329,29 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		tab2.getColumnFormatter().setWidth(6, "auto");
 		
 		tab2.setWidget(0, 0, new Label( "Facturas emitidas") );
-		tab2.getFlexCellFormatter().addStyleName(0,0,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(0,0,AON.CSS.aonDisplayTableHeader());
 		tab2.getFlexCellFormatter().setColSpan(0, 0, 4);
 		tab2.setWidget(0, 1, new Label("Facturas recibidas") ); 
-		tab2.getFlexCellFormatter().addStyleName(0,1,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(0,1,AON.CSS.aonDisplayTableHeader());
 		tab2.getFlexCellFormatter().setColSpan(0, 1, 4);
 
 		tab2.setWidget(1, 0, new Label( "Serie") );
-		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 1, new Label("Inicio") ); 
-		tab2.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 2, new Label("Terminaci\u00F3n") );
-		tab2.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 3, new Label("Registros") );
-		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonDisplayTableHeader());
 		
 		tab2.setWidget(1, 4, new Label( "Serie") );
-		tab2.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 5, new Label("Inicio") ); 
-		tab2.getFlexCellFormatter().addStyleName(1,5,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,5,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 6, new Label("Terminaci\u00F3n") );
-		tab2.getFlexCellFormatter().addStyleName(1,6,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,6,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 7, new Label("Registros") );
-		tab2.getFlexCellFormatter().addStyleName(1,7,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,7,AON.CSS.aonDisplayTableHeader());
 
 		tab2.setWidget(1, 8, new Label() ); 
 		

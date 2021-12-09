@@ -18,6 +18,7 @@ public interface FiscalMSService extends RemoteService {
 	// -------------------------------------------------------------- ACCOUNT
 	LinkedList<Creditor> getBasicCreditors(Occam occam,String query) throws AonCoreException;
 	// -------------------------------------------------------------- ACTIVITIES
+	@Deprecated
 	LinkedList<Activity> getActivities(int activityGroup) throws AonCoreException;
 	// --------------------------------------------------------------- GWT API INFO
 //	AonData getAonData(String domainName, Integer domainId, String user);

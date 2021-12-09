@@ -543,7 +543,7 @@ public class ModelAdmonUtils {
 			}
 			byte[] fileContent = getModelFile(model);
 			JSONObject params = new JSONObject();
-			params.put("MODELO", model.getModel().getValue());
+			params.put("MODELO", FiscalModelUtils.getModelName(model));
 			params.put("EJERCICIO", AonNumberUtils.toString( model.getYear()));
 			params.put("PERIODO", period);
 			params.put("NRC", (model.isStrictToDeposit()?aeatParams.getNrc() : ""));

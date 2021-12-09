@@ -49,7 +49,7 @@ import com.google.gwt.user.client.ui.TextArea;
 public abstract class Model390HFBase extends DockLayoutPanel  {
 
 	protected static final String MODEL390HF_FILE = "/aon_gwt_fiscal/Model390HFFile";
-	private static final String MODEL390HF_PRINT = "/aon_gwt_fiscal/Model390HFPrint";
+	private static final  String MODEL390HF_PRINT = "/aon_gwt_fiscal/Model390HFPrint";
 
 	protected static final String WIDTH_250PX = "250px";
 	protected static final String WIDTH_150PX = "150px";
@@ -700,7 +700,6 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 				new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF result) {
-						setDirty(false);
 						selectAndPopulate(result);
 						showFinalizePopup();
 						markAsFinishedButton.setEnabled(true);
@@ -898,7 +897,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 			double d1 = mod390HF.getAmount(entry.getKey());
 			double d2 = entry.getValue().getValue();
 			if (!AonNumberUtils.equals(d1, d2)) {
-				entry.getValue().setValue(d1,true,true);
+				entry.getValue().setValue(d1,false,true);
 			}
 		}
 	}

@@ -19,6 +19,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod202.Model202;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Model202ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF;
+import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HFModuleOptions;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -225,11 +227,34 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 		}
 	}
 
+	@Override 
+	public void visitM390HF() {
+		LOGGER.info("Before visitM390HF");
+		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
+		try {
+			Model390HF model390HF = new Model390HF();
+			Model390HFModuleOptions options = new Model390HFModuleOptions();
+			options.setParentWidget(modelDialog);
+			options.setDomainName(opt.getConfiguration().getDomain().getName());
+			options.setDomain( model.getDomain() );
+			options.setUser(opt.getConfiguration().getUser().getLogin());
+			options.setConfiguration(opt.getConfiguration());
+			options.setFiscalModelId( model.getId() );
+			options.setEmbedded(true);
+			options.setBackButtonVisible(true);
+			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
+			model390HF.onModuleLoad( options );
+			modelDialog.center();
+			modelDialog.show();
+		} catch (Exception t) {
+			callback.onFailure(t);
+		}
+	}
+
 	private static final String ERROR = "Consulta no soportada";
 	@Override public void visitM347()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM349()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM390()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
-	@Override public void visitM390HF(){ callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM180()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM184()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM190()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }

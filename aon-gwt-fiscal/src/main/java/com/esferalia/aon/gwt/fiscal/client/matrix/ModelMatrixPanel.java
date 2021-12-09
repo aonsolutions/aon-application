@@ -123,8 +123,9 @@ public class ModelMatrixPanel extends FlowPanel {
 		focusPanel.add(mod);
 		cell.clear();
 		cell.add(focusPanel);
-		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));									
-		focusPanel.addClickHandler( event -> model.getModel().visit(new MatrixViewVisitor(options,model, new AonModuleCallback<FiscalModel>() {
+		cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));
+		focusPanel.addClickHandler( event -> model.getModel().visit(
+			new MatrixViewVisitor(options,model, new AonModuleCallback<FiscalModel>() {
 
 			private static final long serialVersionUID = 1L;
 
@@ -149,7 +150,7 @@ public class ModelMatrixPanel extends FlowPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				LOGGER.info("Failure");
+				LOGGER.info("Failure ---> " + (model.getModel()==null?"NULL":model.getModel().toString()));
 				showError(caught.getMessage());
 			}
 			

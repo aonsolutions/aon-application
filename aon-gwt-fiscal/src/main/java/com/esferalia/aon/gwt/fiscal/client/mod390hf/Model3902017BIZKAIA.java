@@ -8,13 +8,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF.Model390HFCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
-import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel;
-import com.esferalia.aon.gwt.fiscal.client.widget.ActivityPanel.SelectionCallBack;
+import com.esferalia.aon.gwt.fiscal.client.widget.AonActivityPanel;
 import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017BIZKAIAAdditionalDataScript;
 import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017BIZKAIAScript1;
 import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017BIZKAIAScript2;
 import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017BIZKAIASpecificOperationsScript;
-import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -223,24 +221,17 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 		clearButton.setVisible(
 			AonStringUtils.isNotBlank( getModel().getDescription(Mod390Key.BZ_A001))		
 		 || AonStringUtils.isNotBlank( getModel().getDescription(Mod390Key.BZ_A002)));
-		ActivityPanel activityPanel = new ActivityPanel();
-		activityPanel.setCallback(new SelectionCallBack() {
-			@Override
-			public void onSelect(Activity activity) {
-				getModel().putDescription(Mod390Key.BZ_A001, activity.getEpigraph());
-				epiText.setValue(activity.getEpigraph()); 
-				getModel().putDescription(Mod390Key.BZ_A002, activity.getDescription());
-				descText.setValue(activity.getDescription());
+		AonActivityPanel activityPanel = new AonActivityPanel();
+		activityPanel.addSelectionHandler(event -> {
+				getModel().putDescription(Mod390Key.BZ_A001, event.getSelectedItem().getEpigraph());
+				epiText.setValue(event.getSelectedItem().getEpigraph()); 
+				getModel().putDescription(Mod390Key.BZ_A002, event.getSelectedItem().getDescription());
+				descText.setValue(event.getSelectedItem().getDescription());
 				clearButton.setVisible(AonStringUtils.isNotBlank( getModel().getDescription(Mod390Key.BZ_A001))		
 					|| AonStringUtils.isNotBlank( getModel().getDescription(Mod390Key.BZ_A002)));
 				markAsDirty();
 			}
-			
-			@Override
-			public void onClose() {
-				// Nothing
-			}
-		});
+		);
 
 		final AonTableButton actButton = new AonTableButton("Actividad",AON.CSS.aonIconSearch());
 		actButton.addClickHandler(event -> {
@@ -364,19 +355,19 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 		tab2.getColumnFormatter().setWidth(6, "auto");
 		
 		tab2.setWidget(1, 0, new Label( "C.N.A.E.") ); 
-		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 1, new Label() ); 
-		tab2.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 2, new Label( AON.MSG.operationsAmount()) );
-		tab2.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 3, new Label( AON.MSG.operationsAmountWithRight()) );
-		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 4, new Label( AON.MSG.type()) );
-		tab2.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 5, new Label( AON.MSG.prorrataPercent()) );
-		tab2.getFlexCellFormatter().addStyleName(1,5,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,5,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 6, new Label() ); 
-		tab2.getFlexCellFormatter().addStyleName(1,6,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,6,AON.CSS.aonDisplayTableHeader());
 		
 		paintProrrateRow(tab2,Mod390Key.BZ_P1C,Mod390Key.BZ_P1I,Mod390Key.BZ_P1D,Mod390Key.BZ_P1T,Mod390Key.BZ_P1P);
 		paintProrrateRow(tab2,Mod390Key.BZ_P2C,Mod390Key.BZ_P2I,Mod390Key.BZ_P2D,Mod390Key.BZ_P2T,Mod390Key.BZ_P2P);
@@ -464,27 +455,27 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 		tab2.getColumnFormatter().setWidth(6, "auto");
 		
 		tab2.setWidget(0, 0, new Label( "Facturas emitidas") );
-		tab2.getFlexCellFormatter().addStyleName(0,0,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(0,0,AON.CSS.aonDisplayTableHeader());
 		tab2.getFlexCellFormatter().setColSpan(0, 0, 3);
 		tab2.setWidget(0, 1, new Label("Facturas recibidas") ); 
-		tab2.getFlexCellFormatter().addStyleName(0,1,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(0,1,AON.CSS.aonDisplayTableHeader());
 		tab2.getFlexCellFormatter().setColSpan(0, 1, 3);
 
 		tab2.setWidget(1, 0, new Label( "Serie") );
-		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,0,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 1, new Label("Inicio") ); 
-		tab2.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,1,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 2, new Label("terminaci\u00F3n") );
-		tab2.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,2,AON.CSS.aonDisplayTableHeader());
 		
 		tab2.setWidget(1, 3, new Label( "Serie") );
-		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,3,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 4, new Label("Inicio") ); 
-		tab2.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,4,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 5, new Label("terminaci\u00F3n") );
-		tab2.getFlexCellFormatter().addStyleName(1,5,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,5,AON.CSS.aonDisplayTableHeader());
 		tab2.setWidget(1, 6, new Label() ); 
-		tab2.getFlexCellFormatter().addStyleName(1,6,AON.CSS.aonGridHeader());
+		tab2.getFlexCellFormatter().addStyleName(1,6,AON.CSS.aonDisplayTableHeader());
 		
 		paintInvoiceFields(tab2,2,0,Mod390Key.BZ_SE1N,Mod390Key.BZ_SE1D,Mod390Key.BZ_SE1H);
 		paintInvoiceFields(tab2,2,3,Mod390Key.BZ_SR1N,Mod390Key.BZ_SR1D,Mod390Key.BZ_SR1H);

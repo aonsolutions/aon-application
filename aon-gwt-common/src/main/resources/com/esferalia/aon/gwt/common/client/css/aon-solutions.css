@@ -365,6 +365,12 @@
 	box-sizing: border-box;
 }
 
+.aon_display_table_header {
+	font-weight: bold;
+	border-bottom: 1PX;		
+	
+}
+
 .aon_display_table_row {
 	display: table-row;
 }
@@ -789,7 +795,7 @@
 	font-weight: bold;
 	font-size: smaller;
 	text-transform: uppercase;
-	background-image: linear-gradient(#EEE, #DDD);
+	background-image: linear-gradient(#FFF, #EEE);
 }
 .aon_align_items_baseline {
 	align-items: baseline;

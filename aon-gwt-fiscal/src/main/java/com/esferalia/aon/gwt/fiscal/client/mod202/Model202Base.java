@@ -153,7 +153,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 			double d1 = mod202.getAmount(entry.getKey());
 			double d2 = entry.getValue().getValue();
 			if (!AonNumberUtils.equals(d1, d2)) {
-				entry.getValue().setValue(d1,true,true);
+				entry.getValue().setValue(d1,false,true);
 			}
 		}
 	}
@@ -532,7 +532,6 @@ public abstract class Model202Base extends DockLayoutPanel {
 				new AsyncCallback<Mod202>() {
 					@Override
 					public void onSuccess(Mod202 m202) {
-						setDirty(false);
 						selectAndPopulate(m202);
 						showFinalizePopup(m202);
 						markAsFinishedButton.setEnabled(true);

@@ -147,7 +147,7 @@ public abstract class Model130Base extends DockLayoutPanel {
 			double d1 = mod130.getAmount(entry.getKey());
 			double d2 = entry.getValue().getValue();
 			if (!AonNumberUtils.equals(d1, d2)) {
-				entry.getValue().setValue(d1,true,true);
+				entry.getValue().setValue(d1,false,true);
 			}
 		}
 	}
@@ -526,7 +526,6 @@ public abstract class Model130Base extends DockLayoutPanel {
 				new AsyncCallback<Mod130>() {
 					@Override
 					public void onSuccess(Mod130 m130) {
-						setDirty(false);
 						selectAndPopulate(m130);
 						showFinalizePopup(model);
 						markAsFinishedButton.setEnabled(true);

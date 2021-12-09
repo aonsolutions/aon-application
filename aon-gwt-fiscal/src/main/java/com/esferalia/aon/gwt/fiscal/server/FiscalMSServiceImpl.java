@@ -23,7 +23,7 @@ import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "Aon MS Fiscal Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Fiscal" })
-public class FiscalMSServiceServiceImpl extends AonStatelessRemoteServiceServlet implements FiscalMSService {
+public class FiscalMSServiceImpl extends AonStatelessRemoteServiceServlet implements FiscalMSService {
 
 	private static final long serialVersionUID = 4908377540728384390L;
 

@@ -90,13 +90,20 @@ public class FiscalMenuDAO {
 					FiscalModelDAO.getMatrixRecords(ctx, domain.getId(), p -> getFilter(p, domain, params))
 						.map(record -> {
 							FiscalModel fm = FiscalModelDAO.map(record);
+							if (fm.getModel() == FiscalModelType.M390) {
+								fm.setModel(FiscalModelType.M390_HF);
+							}
 							fm.setDomainName(record.get(DOMAIN.DESCRIPTION));
 							return fm;
 						})
-						.filter( fm -> fm.getModel() != FiscalModelType.M390 || (fm.getModel() == FiscalModelType.M390 && ( params.getModel() == null || params.getModel() == FiscalModelType.M390_HF)))
+						.filter(fm -> fm.getModel() != FiscalModelType.M390_HF 
+							|| (fm.getModel() == FiscalModelType.M390_HF
+								&& ( params.getModel() == null 
+								  || params.getModel() == FiscalModelType.M390_HF))
+								)
 						.map( FiscalMenuItemJSON::toJSON )
 						.forEach( allModels::put )
-						;
+										;
 				}
 
 				@Override 

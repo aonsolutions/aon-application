@@ -505,6 +505,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_display_table")
 	String aonDisplayTable();
 
+	@ClassName("aon_display_table_header")
+	String aonDisplayTableHeader();
+	
 	@ClassName("aon_display_table_row")
 	String aonDisplayTableRow();
 	
