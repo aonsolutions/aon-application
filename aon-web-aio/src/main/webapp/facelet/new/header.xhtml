@@ -345,7 +345,7 @@
 		background-color: #fff;
 		border-bottom: 1px solid #ddd;	
 	}
-
+	
 	.aon-dataTable,
 	.aon-dataTable tr ,
 	.aon-editDataTable,
@@ -1146,6 +1146,63 @@
 
 	div[id$='aonContentPopup'] .aon-menu-portlet {
 		min-height: 300px;
+	}
+	
+	div[id$='companyLogo'] {
+		height: 70px;
+		padding-left: 1em;
+		display: table-cell;
+		vertical-align: middle;
+	}
+	
+	.aon-note{
+		color:#000;
+  		padding:1em;
+  		display:block;
+  		background:#FFD70045;
+		text-decoration:none;
+		box-shadow: 3px 3px 5px rgba(200,200,200,.7);
+	}
+	
+	.aon-note:hover,
+	.aon-note:focus { 
+  		z-index:5;
+  		box-shadow:6px 6px 5px rgba(100,100,100,.7);
+  		transform: scale(1.07) !important;
+  	}
+	
+	div[id$='notesMenuPortlet'] {
+		/*min-height: 65vh !important;*/
+	}
+	
+	div[id$='notesMenuPortlet'] table tr:nth-child(odd) .aon-note {
+		transform:rotate(-2deg);
+	}
+	
+	div[id$='notesMenuPortlet'] table tr:nth-child(even) .aon-note {
+		transform:rotate(2deg);
+	}
+
+
+	.aon-note-text {
+		display:block;
+		padding-top: 0.5em;
+  		font-weight: normal;
+  		word-wrap: break-word;
+  		/*font-family: 'Reenie Beanie';*/
+	}
+
+	.aon-note-title {
+		display:block;
+  		font-weight: bold;
+  		word-wrap: break-word;
+	}
+	
+	.aon-note-date {
+		display:block;
+		text-align:right;
+		padding-top: 0.5em;
+  		font-weight: normal;
 	}
 
 	</style>

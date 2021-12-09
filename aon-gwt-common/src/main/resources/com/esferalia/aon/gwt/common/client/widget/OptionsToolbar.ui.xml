@@ -8,7 +8,10 @@
 	}
 	.searchTextBox {
 		float: left;
-		margin-top: 2px;
+		margin-left: 2px;
+    	top: 50%;
+		position: relative;
+    	transform: translateY(-50%);		
 	}
 	
 	.legend-icon {

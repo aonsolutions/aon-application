@@ -58,6 +58,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.storage.client.Storage;
@@ -157,6 +158,15 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		void onSuprPress(Employee employee);
 	}
+
+	interface Template extends SafeHtmlTemplates {
+
+		@SafeHtmlTemplates.Template("<span class=\"material-icons\" style=\"vertical-align: middle; color: black; font-size: 20px;\" >{0}</span>")
+		SafeHtml materialIcon(String materialIcon);
+
+	}
+
+	private static final Template TEMPLATE = GWT.create(Template.class);
 
 	interface Binder extends UiBinder<Widget, Employees> {
 	}
@@ -358,21 +368,21 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		List<Workplace> workplaces = enterprise.getWorkplaces();
 
-		final TreeItem enterpriseItem = new TreeItem(imageItemHTML(images.enterprise(), enterprise.getName()));
+		final TreeItem enterpriseItem = new TreeItem(materialIconItemHTML("domain", enterprise.getName()));
 		enterpriseItem.ensureDebugId(getId(enterprise));
 		
 		enterpriseItem.setUserObject(enterprise);
 		tree.addItem(enterpriseItem);
 
-		addImageItem(enterpriseItem, "Costes", images.costs());
+		addMaterialIconItem(enterpriseItem, "Costes", "euro");
 		
 		// Nominas Beta Empresa
-		addImageItem(enterpriseItem, "N\u00F3minas", images.salaries())
+		addMaterialIconItem(enterpriseItem, "N\u00F3minas", "payments")
 			.setUserObject(new EnterpriseSalaryObject(enterprise));
 
-		addImageItem(enterpriseItem, "Estad\u00EDsticas", images.statistics());
+		addMaterialIconItem(enterpriseItem, "Estad\u00EDsticas", "bar_chart");
 		
-		addImageItem(enterpriseItem, "Partes IT", images.itDatas())
+		addMaterialIconItem(enterpriseItem, "Partes IT", "medication")
 			.setUserObject(new EnterpriseITObject());
 		
 //		addImageItem(enterpriseItem, "N\u00F3minas (Old)", images.salaries());
@@ -788,27 +798,27 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private TreeItem loadWorkplace(Enterprise enterprise, final TreeItem workplaceItem, Workplace workplace) {
 		String description = workplace.getDescription();
 
-		workplaceItem.setHTML(imageItemHTML(images.workplace(), description));
+		workplaceItem.setHTML(materialIconItemHTML("place", description));
 		workplaceItem.setUserObject(workplace);
 		workplaceItem.setVisible(isWorkPlaceVisible(workplace));
 		workplaceItem.ensureDebugId(getId(workplace));
 
-		addImageItem(workplaceItem, "Costes", images.costs());
+		addMaterialIconItem(workplaceItem, "Costes", "euro");
 		
-		addImageItem(workplaceItem, "N\u00F3minas", images.salaries())
+		addMaterialIconItem(workplaceItem, "N\u00F3minas", "payments")
 			.setUserObject(new WorkplaceSalaryObject(workplace));
 
-		addImageItem(workplaceItem, "Calendario", images.laboralCalendar())
+		addMaterialIconItem(workplaceItem, "Calendario", "calendar_today")
 				.setUserObject(new CalendarDraftObjectData(workplace.getId()));
 		
-		addImageItem(workplaceItem, "Estad\u00EDsticas", images.statistics());
+		addMaterialIconItem(workplaceItem, "Estad\u00EDsticas","bar_chart");
 		
-		addImageItem(workplaceItem, "Partes IT", images.itDatas())
+		addMaterialIconItem(workplaceItem, "Partes IT", "medication")
 			.setUserObject(new WorkplaceITObject(workplace.getId()));
 		
 		if (extended) {
 
-			final TreeItem eventsItem = addImageItem(workplaceItem, "Variables C\u00E1lculo", images.data());
+			final TreeItem eventsItem = addMaterialIconItem(workplaceItem, "Variables C\u00E1lculo", "calendar_month");
 			// final TreeItem eventsItem = new TreeItem();
 
 			// --------------------------------------------------------------
@@ -861,7 +871,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		if (extended && (agreement != null)) {
 
-			final TreeItem agreementItem = addImageItem(workplaceItem, agreement.getDescription(), images.agreement());
+			final TreeItem agreementItem = addMaterialIconItem(workplaceItem, agreement.getDescription(), "article");
 
 			AgreementDraft agreementDraft = new AgreementDraft();
 			agreementDraft.setId(agreement.getId());
@@ -898,7 +908,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				public void onChange(UndoManager undoManager) {
 					ImageResource resource = agreementDraftObject.canUndo() ? images.agreement_changed()
 							: images.agreement();
-					agreementItem.setHTML(imageItemHTML(resource, agreementDraftObject.getDescription()));
+					agreementItem.setHTML(materialIconItemHTML("article", agreementDraftObject.getDescription()));
 				}
 			});
 
@@ -1495,18 +1505,18 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			text.append(")");
 		}
 
-		employeeItem.setHTML(imageItemHTML(current ? images.employee() : images.oldemployee(), text.toString()));
+		employeeItem.setHTML(materialIconItemHTML(current ? "person" : "person_off", text.toString()));
 		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(((Workplace) workplaceItem.getUserObject()), employee);
 		employeeItem.setUserObject(employeeDraftObject);
 		employeeItem.ensureDebugId(getId(employee));
 
-		TreeItem salarytItem = addImageItem(employeeItem, "N\u00F3minas", images.salaries());
+		TreeItem salarytItem = addMaterialIconItem(employeeItem, "N\u00F3minas", "payments");
 		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(employee.getId(), employee.getFullname());
 		salarytItem.setUserObject(employeeSalaryObject);
 		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
 		
 		//Employee Calendar (BETA)
-		TreeItem calendarNewDraftItem = addImageItem(employeeItem, "Calendario", images.laboralCalendar());
+		TreeItem calendarNewDraftItem = addMaterialIconItem(employeeItem, "Calendario", "calendar_today");
 		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(
 				employee.getId(), 
 				employeesService);
@@ -1523,7 +1533,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
 			Date issueDate = endDate;
 
-			TreeItem salaryDraftItem = addImageItem(employeeItem, "Borrador", images.draft());
+			TreeItem salaryDraftItem = addMaterialIconItem(employeeItem, "Borrador", "edit");
 			salaryDraftItem.ensureDebugId(getId(employee)+"-draft");
 
 			SalaryDraft salaryDraft = new SalaryDraft();
@@ -1536,7 +1546,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, /*dataObject,*/ employeesService);
 			salaryDraftItem.setUserObject(draftObject);
 
-			final TreeItem employeeEventsItem = addImageItem(employeeItem, "Variables C\u00E1lculo", images.data());
+			final TreeItem employeeEventsItem = addMaterialIconItem(employeeItem, "Variables C\u00E1lculo", "calendar_month");
 			EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(employee.getId());
 			
 			employeeEventsItem.setUserObject(employeeEventsDraftObject);
@@ -1565,8 +1575,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			TreeItem enterpriseItem = workplaceItem.getParentItem();
 			Enterprise enterprise = (Enterprise) enterpriseItem.getUserObject();
 
-			final TreeItem categoryItem = addImageItem(employeeItem,
-					category.getLevel() + ". " + category.getDescription(), images.agreement());
+			final TreeItem categoryItem = addMaterialIconItem(employeeItem,
+					category.getLevel() + ". " + category.getDescription(), "article");
 			categoryItem.ensureDebugId(getId(employee)+"-category");
 			
 			CategoryDraft categoryDraft = new CategoryDraft();
@@ -1605,6 +1615,23 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	/**
+	 * A helper method to simplify adding tree items that have attached material icon.
+	 * {@link #addImageItem(TreeItem, String, childs, ImageResource) code}
+	 * 
+	 */
+	private TreeItem addMaterialIconItem(TreeItem root, String title, String materialIcon) {
+		TreeItem item = new TreeItem(materialIconItemHTML(materialIcon, title));
+		root.addItem(item);
+		return item;
+	}
+
+	private TreeItem insertMatrialIconItem(TreeItem root, int beforeIndex, String title, String materialIcon) {
+		TreeItem item = new TreeItem(materialIconItemHTML(materialIcon, title));
+		root.insertItem(beforeIndex, item);
+		return item;
+	}
+
+	/**
 	 * A helper method to simplify adding tree items that have attached images.
 	 * {@link #addImageItem(TreeItem, String, childs, ImageResource) code}
 	 * 
@@ -1615,18 +1642,23 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return item;
 	}
 
-	private TreeItem insertImageItem(TreeItem root, int beforeIndex, String title, ImageResource imageProto) {
-		TreeItem item = new TreeItem(imageItemHTML(imageProto, title));
-		root.insertItem(beforeIndex, item);
-		return item;
-	}
-
 	/**
 	 * Generates HTML for a tree item with an attached icon.
 	 */
 	private SafeHtml imageItemHTML(ImageResource imageProto, String title) {
 		SafeHtmlBuilder builder = new SafeHtmlBuilder();
 		builder.append(AbstractImagePrototype.create(imageProto).getSafeHtml());
+		builder.append(' ');
+		builder.appendEscaped(title);
+		return builder.toSafeHtml();
+	}
+
+	/**
+	 * Generates HTML for a tree item with an attached material icon.
+	 */
+	private SafeHtml materialIconItemHTML(String materialIcon, String title) {
+		SafeHtmlBuilder builder = new SafeHtmlBuilder();
+		builder.append(TEMPLATE.materialIcon(materialIcon));
 		builder.append(' ');
 		builder.appendEscaped(title);
 		return builder.toSafeHtml();
@@ -1887,7 +1919,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				}
 				boolean current = isActive(employee);
 				employeeItem
-						.setHTML(imageItemHTML(current ? images.employee() : images.oldemployee(), text.toString()));
+						.setHTML(materialIconItemHTML(current ? "person" : "person_off", text.toString()));
 
 			}
 		}
