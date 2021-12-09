@@ -53,8 +53,8 @@ public class Agreement {
 		public AgreementLevel(String code, String description) {
 			this.code = code;
 			this.description = description;
-			this.categories = new ArrayList<String>();
-			this.levelDatas = new ArrayList<Agreement.AgreementLevelData>();
+			this.categories = new ArrayList<>();
+			this.levelDatas = new ArrayList<>();
 		}
 		
 		public void addCategory(String category){
@@ -67,6 +67,10 @@ public class Agreement {
 		
 		public String getDescription() {
 			return this.description;
+		}
+		
+		public String getCode() {
+			return this.code;
 		}
 		
 		public void setEndDateToExistingLevelData(Date endDate) {
@@ -83,6 +87,27 @@ public class Agreement {
 		public List<AgreementLevelData> getLevelDatas(){
 			return this.levelDatas;
 		}
+		
+		public void setLevelDatas(List<AgreementLevelData> levelDatas){
+			this.levelDatas = levelDatas;
+		}
+
+		public List<String> getCategories() {
+			return categories;
+		}
+
+		public void setCategories(List<String> categories) {
+			this.categories = categories;
+		}
+
+		public void setCode(String code) {
+			this.code = code;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+		
 	}
 	
 	private String description;
@@ -101,10 +126,58 @@ public class Agreement {
 		this.serviAgreementCode = serviAgreementCode;
 		this.lastUpdate = lastUpdate;
 		this.startDate = startDate;
-		this.levels = new ArrayList<Agreement.AgreementLevel>();
-		this.agreementConcepts = new ArrayList<String>();
+		this.levels = new ArrayList<>();
+		this.agreementConcepts = new ArrayList<>();
 	}
 	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getSsCode() {
+		return ssCode;
+	}
+
+	public void setSsCode(String ssCode) {
+		this.ssCode = ssCode;
+	}
+
+	public List<AgreementLevel> getLevels() {
+		return levels;
+	}
+
+	public void setLevels(List<AgreementLevel> levels) {
+		this.levels = levels;
+	}
+
+	public SimpleDateFormat getDateFormat() {
+		return dateFormat;
+	}
+
+	public void setDateFormat(SimpleDateFormat dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
+	public void setServiAgreementCode(String serviAgreementCode) {
+		this.serviAgreementCode = serviAgreementCode;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setAgreementConcepts(List<String> agreementConcepts) {
+		this.agreementConcepts = agreementConcepts;
+	}
+
 	public void addAgreementConcept(String concept){
 		this.agreementConcepts.add(concept);
 	}
@@ -126,6 +199,10 @@ public class Agreement {
 //			//Si existe el nivel, se añade la category
 //			levelExist.addCategory(category);
 //		}
+	}
+	
+	public void addAgreementLevel(AgreementLevel agreementLevel) {
+		this.levels.add(agreementLevel);
 	}
 
 	public AgreementLevel checkLevelExist(String description) {
@@ -179,6 +256,10 @@ public class Agreement {
 		return this.startDate;
 	}
 	
+	public Date getLastUpdate() {
+		return this.lastUpdate;
+	}
+	
 	@Override
 	public String toString() {
 		String result = "---------------------- AGREEMENT ---------------------- \n";
@@ -211,5 +292,9 @@ public class Agreement {
 		}
 		
 		return result;
+	}
+
+	public AgreementLevel createAgreementLevel(String code, String description) {
+		return new AgreementLevel(code, description);
 	}
 }
