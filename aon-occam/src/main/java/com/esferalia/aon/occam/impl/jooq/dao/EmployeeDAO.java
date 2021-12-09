@@ -62,6 +62,7 @@ import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
 import com.esferalia.aon.jooq.tables.records.PersonRecord;
+import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -355,12 +356,56 @@ public class EmployeeDAO {
 					.from(WORKPLACE)
 					.where(WORKPLACE.DOMAIN.eq(domainId))
 					.fetchStreamInto(WORKPLACE).findFirst()
-					.orElse(null)
+					.orElseGet(() ->
+						// No enterprise activity, return new one
+						dslContext
+						.insertInto(WORKPLACE)
+						.set(WORKPLACE.DOMAIN, domainId)
+						.set(WORKPLACE.ENTERPRISE, getEnterprise(dslContext, domainId).getRegistry())
+						.set(WORKPLACE.DESCRIPTION, "CT AUTOGENERADO")
+						.set(WORKPLACE.ADDRESS, getEnterpriseDefaultAddress(dslContext, domainId).get(0).get(RADDRESS.ID))
+						.set(WORKPLACE.SCOPE, getEnterprise(dslContext, domainId).getScope())
+						.returning()
+						.fetchOne()
+					)
 				)
 			)
 		);
 		
 		
+	}
+	
+	private static Result<Record> getEnterpriseDefaultAddress(DSLContext dslContext, Integer domainId) {
+		Result<Record> raddresses = dslContext
+		.select()
+		.from(RADDRESS)
+		.where(RADDRESS.REGISTRY.eq(getEnterprise(dslContext, domainId).getRegistry()))
+		.fetch();
+		
+		if(raddresses.isEmpty())
+			throw new IllegalArgumentException("No existe direcci\u00F3n para esta empresa");
+		
+		return raddresses;
+	}
+
+	private static Optional<GeozoneRecord> getEnScope(DSLContext dslContext, Integer domainId, String ccc) {
+		String code = AonStringUtils.substring(ccc, 0, 2);
+		return 
+		dslContext
+		.select()
+		.from(GEOZONE)
+		.where(GEOZONE.DOMAIN.eq(domainId))
+		.and(GEOZONE.CODE.eq(code))
+		.fetchOptionalInto(GEOZONE)
+		.or(() ->
+			dslContext
+			.select()
+			.from(GEOZONE)
+			.where(GEOZONE.DOMAIN.eq(DSL.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(domainId))))
+			.and(GEOZONE.CODE.eq(code))
+			.fetchOptionalInto(GEOZONE)
+		)
+		;
 	}
 
 	private static Optional<GeozoneRecord> getGeozone(DSLContext dslContext, Integer domainId, String ccc) {
