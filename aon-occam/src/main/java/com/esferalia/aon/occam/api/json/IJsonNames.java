@@ -51,6 +51,7 @@ public interface IJsonNames {
 	String BIC = "bic";
 	String BLOCKED = "blocked";
 	String BORDER = "border";
+	String BOX_BORDER_COLOR = "boxBorderColor";
 	String BOX_BODY_BACKGROUND_COLOR = "boxBodyBackgroundColor";
 	String BOX_TITLE_BACKGROUND_COLOR = "boxTitleBackgroundColor";
 	String BOX_TITLE_TEXT_COLOR = "boxTitleTextColor";

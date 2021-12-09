@@ -449,7 +449,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 					public void onSuccess(Void result) {
 						messagesPanel.setVisible(false);
 						comunicateCertifica2PDF.setVisible(true);
-						AonDialog dialog = new AonDialog("Comunic@", new HTML("Certifica2 comunicado correctamente"));
+						AonDialog dialog = new AonDialog("Comunic@", new HTML("Certifica2 comunicado correctamente. Puede consultar la respuesta en el apartado de Documentos"));
 						dialog.info();
 					}
 					

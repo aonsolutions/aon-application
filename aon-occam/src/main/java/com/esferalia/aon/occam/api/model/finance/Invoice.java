@@ -34,7 +34,11 @@ public class Invoice implements Serializable, HasAudit {
 	private Date taxDate;
 	private RectificationType rectificationType;
 	private SecurityLevel securityLevel;
+	
 	private Integer rectificationInvoice;
+	private String rectificationInvoiceSeries;
+	private Integer rectificationInvoiceNumber;
+	private Date rectificationInvoiceDate;
 
 	private Integer registry;
 	private String registryDocument;
@@ -199,6 +203,31 @@ public class Invoice implements Serializable, HasAudit {
 		this.rectificationInvoice = rectificationInvoice;
 		return this;
 	}
+	
+	public String getRectificationInvoiceSeries() {
+		return rectificationInvoiceSeries;
+	}
+	public Invoice setRectificationInvoiceSeries(String rectificationInvoiceSeries) {
+		this.rectificationInvoiceSeries = rectificationInvoiceSeries;
+		return this;
+	}
+	
+	public Integer getRectificationInvoiceNumber() {
+		return rectificationInvoiceNumber;
+	}
+	public Invoice setRectificationInvoiceNumber(Integer rectificationInvoiceNumber) {
+		this.rectificationInvoiceNumber = rectificationInvoiceNumber;
+		return this;
+	}
+	
+	public Date getRectificationInvoiceDate() {
+		return rectificationInvoiceDate;
+	}
+	public Invoice setRectificationInvoiceDate(Date rectificationInvoiceDate) {
+		this.rectificationInvoiceDate = rectificationInvoiceDate;
+		return this;
+	}
+	
 	public Integer getRegistry() {
 		return registry;
 	}
@@ -518,6 +547,9 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	
 	public LinkedList<InvoiceDetail> getDetails() {
+		if(details == null) {
+			details = new LinkedList<>();
+		}
 		return details;
 	}
 	public Invoice setDetails(LinkedList<InvoiceDetail> details) {
@@ -526,6 +558,9 @@ public class Invoice implements Serializable, HasAudit {
 	}
 
 	public LinkedList<InvoiceBreakdown> getBreakdown() {
+		if(breakdown == null) {
+			this.breakdown = new LinkedList<>();
+		}
 		return breakdown;
 	}
 	public Invoice setBreakdown(LinkedList<InvoiceBreakdown> breakdown) {

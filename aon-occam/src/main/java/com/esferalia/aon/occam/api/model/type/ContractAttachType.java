@@ -6,6 +6,7 @@ public enum ContractAttachType implements Serializable {
 	
 	 TA(98)
 	,IDC(99)
+	,CERTIFICA2(100)
 	;
 
 	private Integer value;

@@ -308,19 +308,19 @@ public interface EnterprisesService extends RemoteService {
 
 	ContractConcepts getAllConcepts(String currentDomainName, String currentUser);
 
-	List<DigitalCertificateNew> getDigitalCertificates(String currentDomainName, String currentUser);
+	List<DigitalCertificateNew> getDigitalCertificates(String currentDomainName, String currentUser) throws IllegalArgumentException;
 
-	void deleteDigitalCertificate(String currentDomainName, DigitalCertificateNew digitalCertificate);
+	void deleteDigitalCertificate(String currentDomainName, DigitalCertificateNew digitalCertificate) throws IllegalArgumentException;
 
-	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags);
+	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags) throws IllegalArgumentException;
 
-	CertificateInfo validateCertJava(String currentDomainName, Integer rattachId);
+	CertificateInfo validateCertJava(String currentDomainName, Integer rattachId) throws IllegalArgumentException ;
 
 	EnterpriseContext getEnterpriseContext(String currentDomainName);
 
-	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser);
+	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser) throws IllegalArgumentException;
 
-	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf);
+	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf) throws IllegalArgumentException;
 
-	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf);
+	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf) throws IllegalArgumentException;
 }

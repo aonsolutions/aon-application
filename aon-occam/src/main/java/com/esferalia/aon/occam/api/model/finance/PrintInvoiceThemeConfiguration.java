@@ -15,6 +15,8 @@ public class PrintInvoiceThemeConfiguration {
 	String boxTitleBackgroundColor;
 	String boxTitleTextColor;	
 	String boxBodyBackgroundColor;
+	
+	String borderColor;
 
 	
 	public PrintInvoiceThemeConfiguration() {
@@ -85,8 +87,10 @@ public class PrintInvoiceThemeConfiguration {
 	}
 	
 	public Color getBoxTitleBackgroundColor() {
-		if(isAonBlue()) return new Color(0x002469);
-		else if(AonStringUtils.isBlank(boxTitleBackgroundColor) || isBlackAndWhite()) return new Color(0x404040);
+		if (isAonBlue()) return new Color(0x002469);
+		else if(isBlackAndWhite()) return new Color(0x404040);
+		else if (boxTitleBackgroundColor == null)
+			return null;
 		else return new Color(Integer.parseInt(boxTitleBackgroundColor.replaceFirst("#", ""), 16)); 
 	}
 
@@ -116,7 +120,9 @@ public class PrintInvoiceThemeConfiguration {
 	}
 	
 	public Color getBoxBodyBackgroundColor() {
-		if(AonStringUtils.isBlank(boxBodyBackgroundColor) || isBlackAndWhite() || isAonBlue()) return new Color(0xffffff);
+		if(isBlackAndWhite() || isAonBlue()) return new Color(0xffffff);
+		else if (boxBodyBackgroundColor == null)
+			return null;
 		else return new Color(Integer.parseInt(boxBodyBackgroundColor.replaceFirst("#", ""), 16)); 
 	}
 
@@ -133,6 +139,21 @@ public class PrintInvoiceThemeConfiguration {
 	public Color getTitleTextColor() {
 		if(AonStringUtils.isBlank(titleTextColor) || isBlackAndWhite() || isAonBlue()) return new Color(0x404040);
 		else return new Color(Integer.parseInt(titleTextColor.replaceFirst("#", ""), 16)); 
+	}
+	
+	public PrintInvoiceThemeConfiguration setBorderColor(String borderColor) {
+		this.borderColor = borderColor;
+		return this;
+	}
+
+	public String getBorderColorHTML() {
+		if(AonStringUtils.isBlank(borderColor) || isBlackAndWhite() || isAonBlue()) return "#808080";
+		else return borderColor;
+	}
+	
+	public Color getBorderColor() {
+		if(AonStringUtils.isBlank(borderColor) || isBlackAndWhite() || isAonBlue()) return Color.GRAY;
+		else return new Color(Integer.parseInt(borderColor.replaceFirst("#", ""), 16));
 	}
 
 	public PrintInvoiceThemeConfiguration setTitleTextColor(String titleTextColor) {

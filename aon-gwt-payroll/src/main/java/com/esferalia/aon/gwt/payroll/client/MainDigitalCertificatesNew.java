@@ -9,6 +9,7 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -262,6 +263,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	}
 	
 	private void initLoadingPanel(HTMLPanel loadingPanel) {
+		loadingPanel.clear();
 		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
 		loadingBtn.addStyleName(style.loadingPanel());
 		
@@ -410,11 +412,13 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	// ------------------------------------------------------ Create certificate tables
 
 	private void createUserCertDataTable() {
+		hideSecondaryUsers();
 		initUserCertDataTable();
 		createUserCertDataTableRows();
 	}
 
 	private void createEntepriseCertDataTable() {
+		hideSecondaryUsers();
 		initEnterpriseCertDataTable();
 		createEnterpriseCertDataTableRows();
 	}
@@ -453,15 +457,17 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 
 	private void createFormPanel(Grid table, int row, DigitalCertificateNew digitalCertificate) {
 		
+		// Save Button
+		AonTableButton saveButton = new AonTableButton("Guardar", AON.CSS.aonIconSave());
+		
 		// Create Form Panel
 		FormPanel formPanel = new FormPanel();
 		formPanel.setAction(GWT.getModuleBaseURL()+ "certificate_new/");
 		formPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		formPanel.addSubmitCompleteHandler(e -> {
-			Map<String, String> successMap = new HashMap<>();
-			successMap.put("Certitficado", "Los certidicados han sido actualizados correctamente");
-			AonMessagePanel.showSuccess(messagePanel, successMap);
+			saveButton.setEnabled(true);
+			showSuccess("Certitficado", "Los certidicados han sido actualizados correctamente");
 			loadDigitalCertificates();
 		});
 		
@@ -478,9 +484,6 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		Hidden sepeHidden = new Hidden("sepe", hasSEPECertificate(digitalCertificate) ? "sepe" : "");
 		Hidden aeatHidden = new Hidden("aeat", hasAEATCertificate(digitalCertificate) ? "aeat" : "");
 		Hidden ownerHidden = new Hidden("owner", digitalCertificate.getOwner().name());
-		
-		// Save Button
-		AonTableButton saveButton = new AonTableButton("Guardar", AON.CSS.aonIconSave());
 		
 		// Password Panel
 		HTMLPanel passwordPanel = new HTMLPanel("");
@@ -559,9 +562,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		tgssCB.addValueChangeHandler(e -> {
 			if(Boolean.TRUE.equals(e.getValue())) {
 				if(this.mainDigitalCertificatesObject.hasOtherHasType(CertificateType.TGSS, owner)) {
-					Map<String, String> warningMap = new HashMap<>();
-					warningMap.put("Tipo certificado", "El tipo de certificado " + CertificateType.TGSS.name() + " ya existe");
-					AonMessagePanel.showWarning(messagePanel, warningMap);
+					showWarning("Tipo certificado", "El tipo de certificado " + CertificateType.TGSS.name() + " ya existe");
 					tgssCB.setValue(false);
 				} else {
 					digitalCertificate.addTag(CertificateType.TGSS);
@@ -579,9 +580,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		sepeCB.addValueChangeHandler(e -> {
 			if(Boolean.TRUE.equals(e.getValue())) {
 				if(this.mainDigitalCertificatesObject.hasOtherHasType(CertificateType.SEPE, owner)) {
-					Map<String, String> warningMap = new HashMap<>();
-					warningMap.put("Tipo certificado", "El tipo de certificado " + CertificateType.SEPE.name() + " ya existe");
-					AonMessagePanel.showWarning(messagePanel, warningMap);
+					showWarning("Tipo certificado", "El tipo de certificado " + CertificateType.SEPE.name() + " ya existe");
 					sepeCB.setValue(false);
 				} else{
 					digitalCertificate.addTag(CertificateType.SEPE);
@@ -599,9 +598,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		aeatCB.addValueChangeHandler(e -> {
 			if(Boolean.TRUE.equals(e.getValue())) {
 				if(this.mainDigitalCertificatesObject.hasOtherHasType(CertificateType.AEAT, owner)) {
-					Map<String, String> warningMap = new HashMap<>();
-					warningMap.put("Tipo certificado", "El tipo de certificado " + CertificateType.AEAT.name() + " ya existe");
-					AonMessagePanel.showWarning(messagePanel, warningMap);
+					showWarning("Tipo certificado", "El tipo de certificado " + CertificateType.AEAT.name() + " ya existe");
 					aeatCB.setValue(false);
 				} else {
 					digitalCertificate.addTag(CertificateType.AEAT);
@@ -619,30 +616,23 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		saveButton.addClickHandler(e -> {
 			if(hasTGSSCertificate(digitalCertificate) || hasSEPECertificate(digitalCertificate) || hasAEATCertificate(digitalCertificate)) {
+				saveButton.setEnabled(false);
+				AonMessagePanel.showLoading(messagePanel, "Guardando certificado digital...");
 				formPanel.submit();
-			} else {
-				Map<String, String> errorMap = new HashMap<>();
-				errorMap.put("Certitficado", "Debe seleccionar un tipo de certificado para poder guardarlo");
-				AonMessagePanel.showError(messagePanel, errorMap);
-			}
+			} else 
+				showError("Certitficado", "Debe seleccionar un tipo de certificado para poder guardarlo");
 		});
 		
 		AonTableButton verifyButton = new AonTableButton("Verificar Certificado", AON.CSS.aonIconVerify());
-		verifyButton.addClickHandler(e -> 
+		verifyButton.addClickHandler(e ->  {
+			hideSecondaryUsers();
 			mainDigitalCertificatesObject.verifyCertificate(
 				digitalCertificate.getRattachId(), 
 				digitalCertificate.getTags(), 
-				s -> {
-					Map<String, String> successMap = new HashMap<>();
-					successMap.put("Certificado", "Certificado validado correctamente");
-					AonMessagePanel.showSuccess(messagePanel, successMap);
-				}, f -> {
-					Map<String, String> warningMap = new HashMap<>();
-					warningMap.put("Error verificaci\u00F3n", f.getMessage());
-					AonMessagePanel.showWarning(messagePanel, warningMap);
-				}
-			)
-		);
+				s -> showSuccess("Certificado", "Certificado validado correctamente"), 
+				f -> showWarning("Error verificaci\u00F3n", f.getMessage())
+			);
+		});
 		verifyButton.setVisible(false);
 		
 		AonTableButton secondaryUsersButton = new AonTableButton("Usuarios Secundarios", AON.CSS.aonIconList());
@@ -737,12 +727,13 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		mainDigitalCertificatesObject.validateCertJava(
 				digitalCertificate.getRattachId(), 
 				certificateInfo -> {
+					hideSecondaryUsers();
 					String certificateInfoStr = certificateInfo.toString();
 					certificateInfoStr += "<br>Validez desde : " + formatFullDate.format(certificateInfo.getFromDate()) + " hasta : " + formatFullDate.format(certificateInfo.getToDate());
 					AonDialog dialog = new AonDialog("Informaci\u00F3n Certificado", new HTML(certificateInfoStr));
 					dialog.info();
 				}, 
-				f -> {});
+				f -> showWarning("Error verificaci\u00F3n", f.getMessage()));
 	}
 
 	private void onSecondaryUser(Integer rattachId, List<CertificateType> tags) {
@@ -779,9 +770,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 						else
 							enterpriseSecondayUsersPanel.setVisible(false);
 						
-						Map<String, String> warningMap = new HashMap<>();
-						warningMap.put("Error usuarios secundarios", f.getMessage());
-						AonMessagePanel.showWarning(messagePanel, warningMap);
+						showWarning("Error usuarios secundarios", f.getMessage());
 					}
 				);
 			
@@ -791,9 +780,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 				else
 					enterpriseSecondayUsersPanel.setVisible(false);
 				
-				Map<String, String> warningMap = new HashMap<>();
-				warningMap.put("Error verificaci\u00F3n", failure.getMessage());
-				AonMessagePanel.showWarning(messagePanel, warningMap);
+				showWarning("Error verificaci\u00F3n", failure.getMessage());
 			}
 		);	
 	}
@@ -880,10 +867,22 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	// ------------------------------------------------------ Delete Certificate Methods
 
 	private void deleteCertificate(DigitalCertificateNew digitalCertificate) {
-		this.mainDigitalCertificatesObject.deleteDigitalCertificate(
-				digitalCertificate, 
-				s -> loadDigitalCertificates(), 
-				f -> {});
+		AonDialog deleteDialog = new AonDialog("Eliminar certificado", new HTML("\u00BFDesea eliminar este certificado\u003F"));
+		deleteDialog.confirm(new AonAcceptDialogCallback() {
+			
+			@Override
+			public void onCancel() {
+				// Nothing to do here
+			}
+			
+			@Override
+			public void onAccept() {
+				mainDigitalCertificatesObject.deleteDigitalCertificate(
+						digitalCertificate, 
+						s -> loadDigitalCertificates(), 
+						f -> {});
+			}
+		});
 	}
 
 	// ------------------------------------------------------ Insert Secondary Users
@@ -946,9 +945,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 					
 					@Override
 					protected void onAccept() {
-						Map<String, String> successMap = new HashMap<>();
-						successMap.put("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
-						AonMessagePanel.showSuccess(messagePanel, successMap);
+						showSuccess("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
 						
 						mainDigitalCertificatesObject.getSecondaryUsers(
 								mainDigitalCertificatesObject.getCertificateTGSSId(owner), 
@@ -974,9 +971,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 						@Override
 						public void onAccept() {
 							mainDigitalCertificatesObject.deleteSecondaryUser(mainDigitalCertificatesObject.getCertificateTGSSId(owner), secondaryUser, s -> {
-								Map<String, String> successMap = new HashMap<>();
-								successMap.put("AVISO: Borrado", "El usuario secundario ha sido borrado correctamente.");
-								AonMessagePanel.showSuccess(messagePanel, successMap);
+								showSuccess("AVISO: Borrado", "El usuario secundario ha sido borrado correctamente.");
 								
 								mainDigitalCertificatesObject.getSecondaryUsers(
 										mainDigitalCertificatesObject.getCertificateTGSSId(owner), 
@@ -1007,6 +1002,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		dataTable.setWidget(row, 4, comunicateBtn);
 		dataTable.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
 	}
+	
 	
 	// ------------------------------------------------------ Insert Secondary Users.Toolbar
 	
@@ -1046,9 +1042,7 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 			
 			@Override
 			protected void onAccept() {
-				Map<String, String> successMap = new HashMap<>();
-				successMap.put("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
-				AonMessagePanel.showSuccess(messagePanel, successMap);
+				showSuccess("AVISO: Creado", "El usuario secundario ha sido creado correctamente.");
 				
 				mainDigitalCertificatesObject.getSecondaryUsers(
 						mainDigitalCertificatesObject.getCertificateTGSSId(owner), 
@@ -1068,6 +1062,14 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	}
 	
 	// ------------------------------------------------------ Auxiliar Methods
+	
+	private void hideSecondaryUsers() {
+		Integer index = tabLayoutPanel.getSelectedIndex();
+		if(index == 0)
+			userSecondayUsersPanel.setVisible(false);
+		else if(index == 1)
+			enterpriseSecondayUsersPanel.setVisible(false);
+	}
 	
 	private Button getEnableDisableButton() {
 		Button showInactiveUserBtn = new Button();
@@ -1126,6 +1128,26 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 			panel.remove(panel.getWidgetCount() - 1);
 		
 		widget.removeStyleName(style.warningTB());
+	}
+	
+	// ------------------------------------------------- Aon Messages panel
+
+	private void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(messagePanel, successMap);
+	}
+	
+	private void showWarning(String title, String message) {
+		Map<String, String> warningMap = new HashMap<>();
+		warningMap.put(title, message);
+		AonMessagePanel.showWarning(messagePanel, warningMap);
+	}
+	
+	private void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messagePanel, errorMap);
 	}
 	
 }

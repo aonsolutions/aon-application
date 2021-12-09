@@ -99,7 +99,7 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
             } else if(!projects.length)
                display = "none";
 
-            aonSelect.parentNode.style.display = block;
+            aonSelect.parentNode.style.display = display;
 
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail && detail.id)

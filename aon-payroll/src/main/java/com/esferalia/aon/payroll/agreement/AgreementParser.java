@@ -24,9 +24,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -283,12 +285,14 @@ public class AgreementParser {
 		put("COMPLEMENTO_CALZADO_DIARIO", "COMPL_CALZADO");
 		put("COMPLEMENTO_CALZADO_MENSUAL", "COMPL_CALZADO");
 		put("COMPLEMENTO_CALZADO_CATEGORIA_B_MENSUAL", "COMPL_CALZADO_CAT_B");
+		put("COMPLEMENTO_CONDUCTOR_Y_REPARTIDOR_HORAS", "C_CONDUCTOR_Y_REPARTIDOR");
 		put("COMPLEMENTO_CONVENIO_DIARIO", "PLUS_CONVENIO");
 		put("COMPLEMENTO_CONVENIO_MENSUAL", "PLUS_CONVENIO");
 		put("COMPLEMENTO_COORDINACION_EQUIPOS_4_O_5_PERSONAS_ANUAL", "COMPL_COORD_EQUIP_4_5_P");
 		put("COMPLEMENTO_COORDINACION_EQUIPOS_6_A_8_PERSONAS_ANUAL", "COMPL_COORD_EQUIP_6_8_P");
 		put("COMPLEMENTO_COORDINACION_EQUIPO_HASTA_3_PERSONAS_ANUAL", "COMPL_COORD_EQUIP_3_P");
 		put("COMPLEMENTO_COORDINACION_EQUIPOS_MAS_DE_8_PERSONAS_ANUAL", "COMPL_COORD_EQUIP_8_P");
+		put("COMPLEMENTO_DE_FORMACION_MENSUAL", "COMPLEMENTO_FORMACION");
 		put("COMPLEMENTO_DIARIO", "PLUS_CONVENIO");
 		put("COMPLEMENTO_DISPONIBILIDAD_DIARIO", "COMPLEMENTO_DISPONIBILIDAD");
 		put("COMPLEMENTO_ESPECIFICO_CON_ANTIGUEDAD_MENSUAL", "COMPL_ESPECIFICO_ANTIG");
@@ -305,6 +309,8 @@ public class AgreementParser {
 		put("COMPLEMENTO_MENSUAL", "COMPLEMENTO");
 		put("COMPLEMENTO_MOVILIDAD_MENSUAL", "COMPL_MOVILIDAD_M");
 		put("COMPLEMENTO_NACIMIENTO_O_ADOPCION_DE_HIJO_ANUAL", "COMPL_NAC_ADOP_HIJO");
+		put("COMPLEMENTO_NOCHEBUENA_Y_NOCHEVIEJA_HORAS", "C_NOCHEBUENA_NOCHEVIEJA");
+		put("COMPLEMENTO_NOCHEBUENA_Y_NOCHEVIEJA_DIARIO", "C_NOCHEBUENA_NOCHEVIEJA");
 		put("COMPLEMENTO_NO_SALARIAL_ANUAL", "COMPL_NO_SALARIAL_ANUAL");
 		put("COMPLEMENTO_NO_SALARIAL_DIARIO", "COMPL_NO_SALARIAL_DIA");
 		put("COMPLEMENTO_NO_SALARIAL_MENSUAL", "COMPL_NO_SALARIAL_MEN");
@@ -325,6 +331,7 @@ public class AgreementParser {
 		put("COMPLEMENTO_SUBDIRECTOR_ANUAL", "COMPL_SUBDIRECTOR");
 		put("COMPLEMENTO_SUBDIRECTOR_MENSUAL", "COMPL_SUBDIRECTOR");
 		put("COORDINACION_MENSUAL", "COORDINACION");
+		put("COOPERATIVAS_DE_CONSUMO_MENSUAL", "COOPERATIVAS_CONSUMO");
 		put("COR_MENSUAL", "COR");
 		put("C_P_P__MENSUAL", "C_P_P");
 		put("C_TEMP_CARGO_MENSUAL", "C_TEMP_CARGO");
@@ -398,6 +405,9 @@ public class AgreementParser {
 		put("DIETA_PERNOCTA_SERVICIOS_REGULARES_DIARIO", "DIETA_PERNOCTA_SR");
 		put("DIETA_TERRITORIO_NACIONAL_DIARIO", "DIETA_TERRIT_NAC");
 		put("DIETA_UNA_COMIDA_DIARIO", "DIETA_1_COMIDA");
+		put("DIETA_VEHICULO_PROPIO_POBLACION_MENOS_DE_250_000_HABITANTES_HORAS", "VEHICULO_PROPIO_MENOS_250M");
+		put("DIETA_VEHICULO_PROPIO_POBLACION_ENTRE_250_000_Y_500_000_HABITANTES_HORAS", "VEHICULO_PROPIO_ENTRE_250M_500M");
+		put("DIETA_VEHICULO_PROPIO_POBLACION_MAS_DE_500_000_HABITANTES_HORAS", "VEHICULO_PROPIO_MAS_500M");
 		put("DIFERENCIA_MENSUAL", "DIFERENCIA");
 		put("DIRECCION_CENTRO_EDUCATIVO_ANUAL", "DIR_CENTRO_EDUC");
 		put("DIRECCION_CENTRO_EDUCATIVO_MENSUAL", "DIR_CENTRO_EDUC");
@@ -428,9 +438,12 @@ public class AgreementParser {
 		put("GRATIFICACION_FIESTAS_DIARIO", "GRATIFICACION_FIESTAS");
 		put("GRATIFICACION_MATRIMONIO_ANUAL", "GRATIFI_MATRIMONIO");
 		put("GRATIFICACION_MATRIMONIO_MENSUAL", "GRATIFI_MATRIMONIO");
+		put("GRATIFICACION_MATRIMONIO_MAS_DE_2_AÑOS_DE_ANTIGUEDAD_MENSUAL", "GRATIFI_MATRIMONIO_2_ANTIG");
 		put("GRATIFICACION_NAVIDAD_ANUAL", "GRATIFICACION_NAVIDAD_A");
 		put("GRATIFICACION_NAVIDAD_MENSUAL", "GRATIF_NAVIDAD");
+		put("GRATIFICACION_PERMANENCIA_15_AÑOS_ANUAL", "GRATIF_PERMANEN_15");
 		put("GRATIFICACION_PERMANENCIA_20_AÑOS_ANUAL", "GRATIF_PERMANEN_20");
+		put("GRATIFICACION_PERMANENCIA_25_AÑOS_ANUAL", "GRATIF_PERMANEN_25");
 		put("GRATIFICACION_PERMANENCIA_30_AÑOS_ANUAL", "GRATIF_PERMANEN_30");
 		put("GRATIFICACION_PERMANENCIA_60_AÑOS_ANUAL", "GRATIF_PERMANEN_60");
 		put("GRATIFICACION_PERMANENCIA_61_AÑOS_ANUAL", "GRATIF_PERMANEN_61");
@@ -511,7 +524,8 @@ public class AgreementParser {
 		put("HORA_JORNADA_CONTINUADA_CON_DISPONIBILIDAD_HORAS", "H_J_CONTINUADA_CON_DISP");
 		put("HORA_JORNADA_CONTINUADA_HORAS", "H_J_CONTINUADA");
 		put("HORA_NOCTURNA_DISPONIBLE_HORAS", "H_NOCTURNA_DISP_H");
-		put("HORA_NOCTURNA_HORAS", "H_NOCTURNA_H");
+		put("HORA_NOCTURNA_HORAS", "H_NOCTURNA");
+		put("HORA_NOCTURNA_MENSUAL", "H_NOCTURNA");
 		put("HORA_ORDINARIA_HORAS", "H_ORDINARIA");
 		put("HORA_REGULARIZACION_HORAS", "H_REGULARIZACION");
 		put("HOTEL_1_MENSUAL", "HOTEL_1_M");
@@ -521,6 +535,7 @@ public class AgreementParser {
 		put("HOTEL_5_MENSUAL", "HOTEL_5_M");
 		put("HOTEL_EMBLEMATICO_MENSUAL", "HOTEL_EMBLEM_M");
 		put("HOTEL_RURAL_MENSUAL", "HOTEL_RURAL");
+		put("IGUALA_MENSUAL", "IGUALA");
 		put("INCAPACIDAD_ABSOLUTA_POR_ACCIDENTE_DE_TRABAJO_ANUAL", "INCAPACIDAD_ABS_ACC");
 		put("INCENTIVOS_DIARIO", "INCENTIVO_DIARIO");
 		put("INCENTIVOS_MARMOLERIAS_DIARIO", "INCENTIVOS_MARMOL");
@@ -537,7 +552,10 @@ public class AgreementParser {
 		put("JUBILACION_64_AÑOS_ANUAL", "JUBILACION_64");
 		put("JUBILACION_VOLUNTARIA_1_AÑO_ANTES_ANUAL", "JUBILACION_VOLUNTARIA_1");
 		put("JUBILACION_VOLUNTARIA_2_AÑOS_ANTES_ANUAL", "JUBILACION_VOLUNTARIA_2");
+		put("LIMPIEZA_DE_UNIFORMES_MENSUAL", "LIMPIEZA_UNIFORMES");
 		put("LIMPIEZA_VEHICULO_MENSUAL", "LIMPIEZA_VEHICULO");
+		put("MANIPULACION_DE_ALIMENTOS_ANUAL", "MANIPULACION_ALIMENTOS");
+		put("MANIPULACION_DE_ALIMENTOS_MENSUAL", "MANIPULACION_ALIMENTOS");
 		put("MEDIA_DIETA_ANUAL", "MEDIA_DIETA");
 		put("MEDIA_DIETA_DESPL_MAS_100KMS_DIARIO", "MEDIA_DIETA_G_100");
 		put("MEDIA_DIETA_DESPL_MENOS_100KMS_DIARIO", "MEDIA_DIETA_L_100");
@@ -601,6 +619,7 @@ public class AgreementParser {
 		put("PLUS_DEDICACION_ANUAL", "PLUS_DEDICACION");
 		put("PLUS_DESCANSO_ANUAL", "PLUS_DESCANSO");
 		put("PLUS_DESCANSO_DIARIO", "PLUS_DESCANSO");
+		put("PLUS_DESCANSO_HORAS", "PLUS_DESCANSO");
 		put("PLUS_DESPLAZAMIENTOS_DIARIO", "PLUS_DESPLAZAMIENTOS");
 		put("PLUS_DESPLAZAMIENTOS_HORAS", "PLUS_DESPLAZAMIENTOS");
 		put("PLUS_DESPLAZAMIENTOS_MENSUAL", "PLUS_DESPLAZAMIENTOS");
@@ -657,12 +676,15 @@ public class AgreementParser {
 		put("PLUS_EXTRA_SALARIAL_FIJO_MENSUAL", "PLUS_XS_FIJO");
 		put("PLUS_EXTRA_SALARIAL_LABORAL_DIARIO", "PLUS_XS_LABORABLES");
 		put("PLUS_EXTRA_SALARIAL_MENSUAL", "PLUS_XS_MENSUAL");
+		put("PLUS_FERIAS_DIARIO", "PLUS_FERIAS");
+		put("PLUS_FIESTAS_PATRONALES_DIARIO", "PLUS_FIESTAS_PATRONALES");
 		put("PLUS_FESTIVOS_DIARIO", "PLUS_FESTIVO");
 		put("PLUS_FESTIVOS_ESPECIALES_DIARIO", "PLUS_FESTIVO_ESP");
 		put("PLUS_FESTIVO_NOCTURNO_DIARIO", "P_FESTIVO_NOCT_D");
 		put("PLUS_FIDELIDAD_MENSUAL", "PLUS_FIDELIDAD");
 		put("PLUS_FIESTAS_PATRONALES_ANUAL", "P_FIESTAS_PATRONALES_A");
 		put("PLUS_FIN_DE_SEMANA_DIARIO", "PLUS_FIN_SEMANA");
+		put("PLUS_FINALIZACION_SERVICIOS_MENSUAL", "P_FINALIZACION_SERVICIOS");
 		put("PLUS_FOMENTO_A_LA_CULTURA_ANUAL", "PLUS_FOMENTO_CULTURA");
 		put("PLUS_FOMENTO_A_LA_CULTURA_MENSUAL", "PLUS_FOMENTO_CULTURA");
 		put("PLUS_FORMACION_ANUAL", "PLUS_FORMACION");
@@ -671,6 +693,7 @@ public class AgreementParser {
 		put("PLUS_FUNCIONAL_INSPECCION_CON_PERNOCA_ANUAL", "P_FUNC_INSPECCION_CP");
 		put("PLUS_FUNCIONAL_INSPECCION_SIN_PERNOCA_ANUAL", "P_FUNC_INSPECCION_SP");
 		put("PLUS_GERIATRICO_HORAS", "PLUS_GERIATRICO_H");
+		put("PLUS_GESTION_MENSUAL", "PLUS_GESTION");
 		put("PLUS_GRUA_MENSUAL", "PLUS_GRUA");
 		put("PLUS_GRUA_DIARIO", "PLUS_GRUA");
 		put("PLUS_HORAS_HORAS", "PLUS_HORAS");
@@ -683,6 +706,7 @@ public class AgreementParser {
 		put("PLUS_HOSPITALIZACION_DIARIO", "PLUS_HOSPITALIZACION");
 		put("PLUS_HOSPITALIZACION_MENSUAL", "PLUS_HOSPITALIZACION");
 		put("PLUS_IDIOMAS_MENSUAL", "PLUS_IDIOMAS_M");
+		put("PLUS_INTENSIDAD_MENSUAL", "PLUS_INTENSIDAD");
 		put("PLUS_JEFE_DE_EQUIPO_MENSUAL", "PLUS_JEFE_EQUIPO");
 		put("PLUS_MANUTENCION_ANUAL", "P_MANUTENCION_A");
 		put("PLUS_MANUTENCION_DIARIO", "P_MANUTENCION_D");
@@ -702,6 +726,7 @@ public class AgreementParser {
 		put("PLUS_NOCTURNIDAD_TURNO_10_HORAS_DIARIO", "P_NOCTURNIDAD_10");
 		put("PLUS_PAGA_OCTUBRE_ANUAL", "P_PAGA_OCTUBRE");
 		put("PLUS_PAGA_OCTUBRE_MENSUAL", "P_PAGA_OCTUBRE");
+		put("PLUS_PAGA_SEPTIEMBRE_MENSUAL", "P_PAGA_SEPTIEMBRE");
 		put("PLUS_PELIGROSIDAD_MENSUAL", "PLUS_PELIGROSIDAD");
 		put("PLUS_PELIGROSIDAD_DIARIO", "PLUS_PELIGROSIDAD");
 		put("PLUS_PELIGROSIDAD_HORAS", "PLUS_PELIGROSIDAD");
@@ -723,12 +748,15 @@ public class AgreementParser {
 		put("PLUS_PROLONGACION_DE_JORNADA_TECNICOS_DE_JUEGO_DIARIO", "P_PROLONG_TECNICO_JUEGO");
 		put("PLUS_PROLONGACION_DE_JORNADA_TECNICOS_DE_SALA_DIARIO", "P_PROLONG_TECNICO_SALA");
 		put("PLUS_PUNTUALIDAD_MENSUAL", "PLUS_PUNTUALIDAD_M");
+		put("PLUS_RECEPCIONISTA_ANUAL", "PLUS_RECEPCIONISTA");
 		put("PLUS_REDUCCION_ABSENTISMO_DIARIO", "PLUS_REDUC_ABSENTISMO");
 		put("PLUS_REDUCCION_ABSENTISMO_MENSUAL", "PLUS_REDUC_ABSENTISMO");
+		put("PLUS_RESPONSABLE_OFICINA_MENSUAL", "P_RESPONSABLE_OFICINA");
 		put("PLUS_RESPONSABILIDAD_ANUAL", "P_RESPONSABILIDAD_A");
 		put("PLUS_RESPONSABILIDAD_MENSUAL", "PLUS_RESPONSABILIDAD_M");
 		put("PLUS_RESPONSABILIDAD_RVOG_ANUAL", "P_RESP_RVOG_A");
 		put("PLUS_RESPONSABILIDAD_RVOG_MENSUAL", "P_RESP_RVOG_A");
+		put("PLUS_RESIDENCIA_MENSUAL", "PLUS_RESIDENCIA");
 		put("PLUS_REFUERZO_DIARIO", "PLUS_REFUERZO");
 		put("PLUS_REFUERZO_MEDIO_TURNO_DIARIO", "PLUS_REFUERZO_M_TURNO");
 		put("PLUS_RETEN_DIARIO", "PLUS_RETEN");
@@ -771,6 +799,7 @@ public class AgreementParser {
 		put("PLUS_VESTUARIO_ANUAL", "PLUS_VESTUARIO");
 		put("PLUS_VESTUARIO_DIARIO", "PLUS_VESTUARIO");
 		put("PLUS_VESTUARIO_MENSUAL", "PLUS_VESTUARIO");
+		put("PLUS_VINCULACION_MENSUAL", "PLUS_VINCULACION");
 		put("PLUS_VINCULACION_10_AÑOS_ANUAL", "P_VINCULACION_10_AÑOS_A");
 		put("PLUS_VINCULACION_10_AÑOS_MENSUAL", "P_VINCULACION_10_AÑOS_M");
 		put("PLUS_VINCULACION_11_AÑOS_ANUAL", "P_VINCULACION_11_AÑOS_A");
@@ -798,6 +827,7 @@ public class AgreementParser {
 		put("PLUS_VINCULACION_20_AÑOS_MENSUAL", "P_VINCULACION_20_AÑOS_M");
 		put("PLUS_VINCULACION_21_AÑOS_ANUAL", "P_VINCULACION_21_AÑOS_A");
 		put("PLUS_VINCULACION_21_AÑOS_MENSUAL", "P_VINCULACION_21_AÑOS_M");
+		put("PLUS_VINCULACION_29_AÑOS_ANUAL", "P_VINCULACION_29_AÑOS_A");
 		put("PLUS_VINCULACION_2_AÑOS_ANUAL", "P_VINCULACION_2_AÑOS_A");
 		put("PLUS_VINCULACION_2_AÑOS_MENSUAL", "P_VINCULACION_2_AÑOS_M");
 		put("PLUS_VINCULACION_3_AÑOS_ANUAL", "P_VINCULACION_3_AÑOS_A");
@@ -861,6 +891,7 @@ public class AgreementParser {
 		put("POLIVALENCIA_ANUAL", "POLIVALENCIA_ANUAL");
 		put("POLIVALENCIA_MENSUAL", "POLIVALENCIA_MENSUAL");
 		put("POLIZA_SEGURO_DE_VIDA_ANUAL", "POLIZA_SEG_VIDA");
+		put("POLIZA_SEGURO_DE_VIDA_MENSUAL", "POLIZA_SEG_VIDA");
 		
 		put("POR_MES_MENSUAL", "POR_MES");
 		put("POR_SEMANA_MENSUAL", "POR_SEMANA");
@@ -879,11 +910,13 @@ public class AgreementParser {
 		put("PRODUCTIVIDAD_ANUAL", "PRODUCTIVIDAD");
 		put("PRODUCTIVIDAD_MENSUAL", "PRODUCTIVIDAD");
 		put("PRODUCTIVIDAD_DIARIO", "PRODUCTIVIDAD");
+		put("PRORRATA_VACACIONES_HORAS", "PRORRATA_VACACIONES");
 		put("PROTECCION_FAMILIAR_MENSUAL", "PROTECCION_FAMILIAR");
 		put("P_C_I__MENSUAL", "PCI_MENUSAL");
 		put("QUEBRANDO_DE_MONEDA_ANUAL", "QUEBRANDO_MONEDA");
 		put("QUEBRANDO_DE_MONEDA_MENSUAL", "QUEBRANDO_MONEDA");
 		put("QUEBRANDO_DE_MONEDA_DIARIO", "QUEBRANDO_MONEDA");
+		put("QUEBRANDO_DE_MONEDA_HORAS", "QUEBRANDO_MONEDA");
 		put("QUEBRANTO_MONEDA_TRAMO_1_DIARIO", "QUEBRANTO_MONEDA_T1");
 		put("QUEBRANTO_MONEDA_TRAMO_2_DIARIO", "QUEBRANTO_MONEDA_T2");
 		put("QUINQUENIOS_DIARIO", "QUINQUENIOS_DIARIO");
@@ -896,8 +929,10 @@ public class AgreementParser {
 		put("RETRIBUCION_FIJA_MENSUAL", "RETRIBUCION_FIJA_M");
 		put("RETRIBUCION_FIJA_RVOG_ANUAL", "RETRIB_FIJA_RVOG_A");
 		put("RETRIBUCION_FIJA_RVOG_MENSUAL", "RETRIB_FIJA_RVOG_M");
+		put("REVISION_DIARIO", "REVISION");
 		put("ROPA_TRABAJO_INTEMPERIE_ANUAL", "ROPA_TRABAJO_INTEMPERIE");
 		put("ROPA_TRABAJO_PERSONAL_MOSTRADOR_MENSUAL", "ROPA_TRABAJO_PERSONAL");
+		put("ROPA_TRABAJO_TRAJE_CHAQUETA_ANUAL", "ROPA_TRABAJO_TRAJE");
 		put("ROPA_TRABAJO_TRAJE_CHAQUETA_MENSUAL", "ROPA_TRABAJO_TRAJE");
 		put("RTES_Y_BARES_DE_LUJO_MENSUAL", "RTES_BARES_DE_LUJO");
 		put("SALARIO_14_PAGAS_ANUAL", "SALARIO_14P");
@@ -953,12 +988,15 @@ public class AgreementParser {
 		put("SERVICIO_EXTRA_CAMARERO_DIARIO", "S_E_CAMARERO_D");
 		put("SERVICIO_EXTRA_CAMARERO_FESTIVOS_DIARIO", "S_E_CAMARERO_FEST_D");
 		put("SERVICIO_EXTRA_COBRADOR_DIARIO", "S_E_COBRADOR_D");
-		put("SERVICIO_EXTRA_COCINERO_DIARIO", "S_E_COCINERO_D");
+		put("SERVICIO_EXTRA_COCINERO_MENSUAL", "S_E_COCINERO");
+		put("SERVICIO_EXTRA_COCINERO_DIARIO", "S_E_COCINERO");
+		put("SERVICIO_EXTRA_CAMARERO_MENSUAL", "S_E_CAMARERO");
 		put("SERVICIO_EXTRA_HASTA_4_HORAS_DIARIO", "SERVICIO_EXTRA_H4H");
 		put("SERVICIO_EXTRA_LAVAPLATOS_DIARIO", "S_E_LAVAPLATOS_D");
 		put("SERVICIO_EXTRA_LAVAPLATOS_FESTIVOS_DIARIO", "S_E_LAVAPLATOS_FEST_D");
 		put("SERVICIO_EXTRA_MAS_4_HORAS_HORAS", "SERVICIO_EXTRA_M4H");
 		put("SERVICIO_EXTRA_MENSUAL", "SERVICIO_E_MENSUAL");
+		put("SERVICIO_EXTRA_MONTAJE_MENSUAL", "S_E_MONTAJE");
 		put("SISTEMA_INCENTIVACION_Y_PROMOCION_A5_ANUAL", "SIST_INCENT_PROMO_A5_A");
 		put("SISTEMA_INCENTIVACION_Y_PROMOCION_A5_MENSUAL", "S_INCENT_PROMO_A5_M");
 		put("SISTEMA_INCENTIVACION_Y_PROMOCION_A5_RVOG_ANUAL", "S_INCENT_PROMO_A5_RVOG_A");
@@ -971,6 +1009,7 @@ public class AgreementParser {
 		put("SISTEMA_INCENTIVACION_Y_PROMOCION_C10_MENSUAL", "SIST_INCENT_PROMO_C10_M");
 		put("SISTEMA_INCENTIVACION_Y_PROMOCION_C10_RVOG_ANUAL", "SIST_INC_PROM_C10_RVOG_M");
 		put("SISTEMA_INCENTIVACION_Y_PROMOCION_C10_RVOG_MENSUAL", "SIS_INCEN_PROM_C10_RVOG_M");
+		put("SUBSIDIO_POR_DEFUNCION_ANUAL", "SUBSIDIO_DEFUNCION");
 		put("SUPLIDO_DIARIO", "SUPLIDO_DIARIO");
 		put("SUPLIDO_MENSUAL", "SUPLIDO_MENSUAL");
 		put("TRANSFER_SERVICIO_DIURNO_DIARIO", "T_SERVI_DIUR_DI");
@@ -1006,11 +1045,11 @@ public class AgreementParser {
 	
 	public static Pair<Integer,String> getAgreement(DSLContext dslContext, String agreementCode, Integer domainId) throws IllegalArgumentException {
 		DOMAIN_ID = domainId;
-		Pair<Integer,String> agreementLog = new Pair<Integer, String>(-1, "");
+		Pair<Integer,String> agreementLog = new Pair<>(-1, "");
 		
 		String log = "";
-		Map<String, String> varNotInsertMap = new HashMap<String, String>();
-		Pair<Integer,Map<String, String>> insertResult = new Pair<Integer, Map<String,String>>(-1, new HashMap<String, String>());
+		Map<String, String> varNotInsertMap = new HashMap<>();
+		Pair<Integer,Map<String, String>> insertResult = new Pair<>(-1, new HashMap<>());
 		
 		InputStream is = null;
 		if(AonStringUtils.contains(agreementCode, 'a'))
@@ -1026,17 +1065,28 @@ public class AgreementParser {
 			Document document = documentBuilder.parse(is);
 			
 			// Agreement general info
-			Agreement agreement = getAgreementInfo(dslContext, document);
+			Agreement agreement = getAgreementInfo(document);
 			
 			// Agreement Concepts
-			getAgreementConcepts(dslContext, document, agreement);
+			getAgreementConcepts(document, agreement);
 			
 			// Agreement levels and categories
-			getAgreementLevelAndCategory(dslContext, document, agreement);
+			getAgreementLevelAndCategory(document, agreement);
 			
 			// Agreement levels data
 			getAgreementLevelData(dslContext, document, agreement);
 			
+//			try (PrintWriter out = new PrintWriter("/Users/sergio/Desktop/agreement(NotParsed).txt")) {
+//			    out.println(agreement.toString());
+//			}
+			
+			// Parse agreement to group leves
+			agreement = parseAgreement(agreement);
+			
+//			try (PrintWriter out = new PrintWriter("/Users/sergio/Desktop/agreement(Parsed).txt")) {
+//			    out.println(agreement.toString());
+//			}
+
 			// Insert Agreement to DataBase
 			insertResult = insertAgreementDB(dslContext, agreement, agreementCode);
 			
@@ -1048,14 +1098,10 @@ public class AgreementParser {
 				log = getAgreementLog(dslContext, domainId, agreement, varNotInsertMap);
 			}
 			
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException("El convenio con c\u00F3digo " + agreementCode + " no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
-		} catch (IOException e) {
+		} catch (ParserConfigurationException | IOException | SAXException e) {
 			e.printStackTrace();
 		}
 		
@@ -1159,10 +1205,12 @@ public class AgreementParser {
 		
 		return html;
 	}
+	
+	// ------------------------------------------------------------ AGREEMENT INFO
 
-	private static Agreement getAgreementInfo(DSLContext dslContext, Document document) {
-		NodeList list = document.getElementsByTagName("DATOS_GENERALES");
+	private static Agreement getAgreementInfo(Document document) {
 		Agreement agreement = null;
+		NodeList list = document.getElementsByTagName("DATOS_GENERALES");
 		
 		for(int i=0; i<list.getLength(); i++) {
 			Node node = list.item(i);
@@ -1178,9 +1226,7 @@ public class AgreementParser {
 	            Date lastUpdate = null;
 				try {
 					lastUpdate = dateFormat.parse(element.getElementsByTagName("FECHA_ULT_ACT").item(0).getTextContent());
-				} catch (DOMException e) {
-					e.printStackTrace();
-				} catch (ParseException e) {
+				} catch (DOMException | ParseException e) {
 					e.printStackTrace();
 				}
 				
@@ -1191,16 +1237,15 @@ public class AgreementParser {
 				startDateCal.set(Calendar.DAY_OF_MONTH, 1);
 				Date startDate = startDateCal.getTime();
 				
-	            
 	            agreement = new Agreement(description, ssCode, serviAgreementCode, lastUpdate, startDate);
-	            
+	     
 	        }
 		}
 		
 		return agreement;
 	}
 	
-	private static void getAgreementConcepts(DSLContext dslContext, Document document, Agreement agreement) {
+	private static void getAgreementConcepts(Document document, Agreement agreement) {
 		NodeList listCPR = document.getElementsByTagName("CATALOGO_CPTOS_RETRIB");
 		
 		for(int i=0; i<listCPR.getLength(); i++) {
@@ -1232,7 +1277,7 @@ public class AgreementParser {
 		}
 	}
 
-	private static void getAgreementLevelAndCategory(DSLContext dslContext, Document document, Agreement agreement) {
+	private static void getAgreementLevelAndCategory(Document document, Agreement agreement) {
 		NodeList list = document.getElementsByTagName("CATALOGO_CAT_PROF");
 		for(int i=0; i<list.getLength(); i++) {
 			Node node = list.item(i);
@@ -1260,16 +1305,13 @@ public class AgreementParser {
 	    	            } else {
 		    	            for(int b=0; b<listdescriptions.getLength(); b++)
 		    	            	description += listdescriptions.item(b).getTextContent() + " ";
-		    	            description.trim();
+		    	            description = description.trim();
 	    	            }
 	    	            
 	    	            String category = elementCatProfIt.getElementsByTagName("NOMBRE").item(0).getTextContent();
 	    	            
-//	    	            AgreementLevel agreementLevel = agreement.checkLevelExist(description);
-//	    	            
-//	    	            if(null != agreementLevel)
-//	    	            	description = agreementLevel + "_" + j;
-//	    	            
+//	    	            System.out.println(code + " - " + description + " - " + category);
+	    	            
 	    	            agreement.addAgreementLevel(code, description, category);
 	    	            
 	    	        }
@@ -1337,7 +1379,7 @@ public class AgreementParser {
 		    		    	            else {
 			    		    	            for(int b=0; b<listdescriptions.getLength(); b++)
 			    		    	            	description += listdescriptions.item(b).getTextContent() + " ";
-			    		    	            description.trim();
+			    		    	            description = description.trim();
 		    		    	            }
 		    		    	            
 			   	    	            	String category = elementCPI.getElementsByTagName("NOMBRE").item(0).getTextContent();
@@ -1362,7 +1404,7 @@ public class AgreementParser {
 						   	    	            	
 						   	    	            	String realName = getParseName(name, type);
 						   	    	            	
-//						   	    	            	System.out.println(realName + " -> " + value);
+//						   	    	            	System.out.println(realName + " -> " + value + " || " + startDate.getTime());
 						   	    	            	
 						   	    	            	agreementLevel.addLevelData(realName, value, startDate.getTime());
 				    	     	            	}
@@ -1378,13 +1420,82 @@ public class AgreementParser {
 		}
 	}
 	
+	private static Agreement parseAgreement(Agreement agreement) {
+		Agreement parsedAgreement = new Agreement(
+				agreement.getAgreementDescription(), 
+				agreement.getSSCode(), 
+				agreement.getServiAgreementCode(), 
+				agreement.getLastUpdate(), 
+				agreement.getStartDate());
+		
+		parsedAgreement.setAgreementConcepts(agreement.getAgreementConcepts());
+		
+		List<AgreementLevel> analizedAgreementLevels = new ArrayList<>();
+		
+		for(AgreementLevel agreementLevel : agreement.getAgreementLevels()) {
+		
+			List<AgreementLevel> duplicateAgreementLevels = getDuplicateAgreementLevels(agreement, agreementLevel, analizedAgreementLevels);
+			analizedAgreementLevels.addAll(duplicateAgreementLevels);
+			
+			AgreementLevel newAgreementLevel = parsedAgreement.createAgreementLevel(agreementLevel.getCode(), agreementLevel.getDescription());
+			newAgreementLevel.setLevelDatas(agreementLevel.getLevelDatas());
+			List<String> categories = new ArrayList<>();
+			
+			for(AgreementLevel duplicateAgreementLevel : duplicateAgreementLevels)
+				categories.addAll(duplicateAgreementLevel.getCategories());
+				
+			newAgreementLevel.setCategories(categories);
+			
+			if(!categories.isEmpty())
+				parsedAgreement.addAgreementLevel(newAgreementLevel);
+		}
+		
+		return parsedAgreement;
+	}
+	
+	private static List<AgreementLevel> getDuplicateAgreementLevels(Agreement agreement, AgreementLevel checkedAgreementLevel, List<AgreementLevel> analizedAgreementLevels) {
+		List<AgreementLevel> duplicateAgreementLevels = new ArrayList<>();
+		
+		for(AgreementLevel agreementLevel : agreement.getAgreementLevels()) {
+			if(!analizedAgreementLevels.contains(agreementLevel) && isSameLevelAndValues(agreementLevel, checkedAgreementLevel))
+				duplicateAgreementLevels.add(agreementLevel);
+		}
+		
+		return duplicateAgreementLevels;
+	}
+
+	private static boolean isSameLevelAndValues(AgreementLevel agreementLevel, AgreementLevel checkedAgreementLevel) {
+		return AonStringUtils.equalsIgnoreCase(checkedAgreementLevel.getDescription(), agreementLevel.getDescription()) && haveSameValues(agreementLevel, checkedAgreementLevel);
+	}
+
+	private static boolean haveSameValues(AgreementLevel agreementLevel, AgreementLevel checkedAgreementLevel) {
+		for(AgreementLevelData levelData : checkedAgreementLevel.getLevelDatas()) {
+			if(!containsLevelData(levelData, agreementLevel))
+				return false;
+		}
+		
+		return true;
+	}
+
+	private static boolean containsLevelData(AgreementLevelData cehckedlevelData, AgreementLevel agreementLevel) {
+		for(AgreementLevelData levelData : agreementLevel.getLevelDatas()) {
+			if(AonStringUtils.equalsIgnoreCase(cehckedlevelData.getName(), levelData.getName()) && 
+				AonStringUtils.equalsIgnoreCase(cehckedlevelData.getValue(), levelData.getValue()) && 
+				cehckedlevelData.getStartDate().equals(levelData.getStartDate()) &&
+				((null == cehckedlevelData.getEndDate() && null == levelData.getEndDate()) || cehckedlevelData.getEndDate().equals(levelData.getEndDate())))
+				return true;
+		}
+		return false;
+	}
+
 	private static Pair<Integer,Map<String, String>> insertAgreementDB(DSLContext dslContext, Agreement agreement, String agreementCode) {
 		boolean hasWinterPay = false;
 		boolean hasSummerPay = false;
 		
-		Pair<Integer,Map<String, String>> result = new Pair<Integer, Map<String,String>>(-1, new HashMap<String, String>());
+		Pair<Integer,Map<String, String>> result = new Pair<>(-1, new HashMap<>());
+		
 		// Variables not insert
-		Map<String, String> mapVarNotInsert = new HashMap<String, String>();
+		Map<String, String> mapVarNotInsert = new HashMap<>();
 		
 		// Agreement
 		

@@ -19,7 +19,7 @@ public class PrintInvoiceConfiguration {
 	private Attach background;
 	private boolean recordData;
 	private boolean contactData;
-	private boolean border;
+	private int border;
 	private AonLanguage language;
 	
 	private PrintInvoiceThemeConfiguration theme;
@@ -138,11 +138,19 @@ public class PrintInvoiceConfiguration {
 		return this;
 	}
 
-	public boolean isBorder() {
+	public int getBorder() {
 		return border;
 	}
+	
+	public boolean isBoxBodyBorder() {
+		return border == 2;
+	}
+	
+	public boolean isBoxTitleBorder() {
+		return border == 1 || border == 2;
+	}
 
-	public PrintInvoiceConfiguration setBorder(boolean border) {
+	public PrintInvoiceConfiguration setBorder(int border) {
 		this.border = border;
 		return this;
 	}

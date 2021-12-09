@@ -78,7 +78,7 @@ public class ContrataEmployeeObject {
 	
 	// ------------------------------------------------- Database Methods (Employee)
 	
-	public void initializeEmployee(Integer contractId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
+	public void getEmployeeContract(Integer contractId, Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeInfoDataBase(contractId, workplace, new AsyncCallback<EmployeeContractInfo>() {
 			
 			@Override
@@ -86,37 +86,9 @@ public class ContrataEmployeeObject {
 				employeeContractData = result;
 				employeeData = result.getEmployeeInfo();
 				contractData = result.getContractInfo();
-				
-				Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
-				contractData.setContractJourneyDuration(journies);
-				
 				success.accept(result);
 			}
 
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-			
-		});
-	}
-	
-	public void getEmployeeContract(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
-		employeeContractData.setEmployeeInfo(employeeData);
-		employeeContractData.setContractInfo(contractData);
-		
-		employeesService.getEmployeeInfoDataBase(contractData.getContractId(), workplace, new AsyncCallback<EmployeeContractInfo>() {
-			
-			@Override
-			public void onSuccess(EmployeeContractInfo result) {
-				employeeContractData = result;
-				employeeData = result.getEmployeeInfo();
-				contractData = result.getContractInfo();
-				employeeContractData.setEmployeeInfo(employeeData);
-				employeeContractData.setContractInfo(contractData);
-				success.accept(result);
-			}
-			
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
@@ -531,7 +503,7 @@ public class ContrataEmployeeObject {
 	
 	public void getCertifica2PDF(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getCertifica2PDF(
-				employeeContractData.getContractInfo().getContractId().toString(),
+				employeeContractData.getEmployeeInfo().getDocument(),
 				employeeContractData.getContractInfo().getEndDate(), 
 				new AsyncCallback<String>() {
 

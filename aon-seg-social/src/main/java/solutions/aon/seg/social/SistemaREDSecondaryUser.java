@@ -34,6 +34,7 @@ import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.object.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 
+@Deprecated
 class SistemaREDSecondaryUser {
 
 	// HANDLE SECONDARYUSERS EXCEPTIONS

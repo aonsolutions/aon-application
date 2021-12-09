@@ -757,28 +757,28 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	
 	@Override
 	public void getEmployeeTa(String domain, String user, Integer contractId, Date date,
-			AsyncCallback<String> callback) {
+			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeTa(domain, user, contractId, date, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
 	public void getEmployeeIdc(String domain, String user, Integer contractId, Date date,
-			AsyncCallback<String> callback) {
+			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeIdc(domain, user, contractId, date, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
 	public void getEmployeeIdcPlNss(String domain, String user, Integer contractId, Date date,
-			AsyncCallback<String> callback) {
+			AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeIdcPlNss(domain, user, contractId, date, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
 	public void getEmployeeIdcDates(String domain, String user, Integer contractId, Date date,
-			AsyncCallback<List<Date>> callback) {
+			AsyncCallback<List<Date>> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeIdcDates(domain, user, contractId, date, new AsyncCallbackWrapper<List<Date>>(callback));
 	}
@@ -804,14 +804,14 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 
 	@Override
 	public void getEmployeeCbc(String currentDomainName, String user, String document, Date startDate,
-			Date endDate, AsyncCallback<String> callback) {
+			Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeCbc(currentDomainName, user, document, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
 	public void getEmployeeCto(String currentDomainName, String user, String document, Date startDate,
-			Date endDate, AsyncCallback<String> callback) {
+			Date endDate, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeCto(currentDomainName, user, document, startDate, endDate, new AsyncCallbackWrapper<String>(callback));
 	}

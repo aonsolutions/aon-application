@@ -218,12 +218,17 @@ export class AonInvoicePrint extends AonElement {
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
 
-    let border = this.createAonElement(new AonSwitch(), this.BORDER, MSG.BORDER);
-    border.checked = this.printConfiguration.border;
-    table.addCell(border, 1).style.height = '60px';;
-    border.setWidth('135px');
+    let borderOptions = [
+      {value: "0", name: 'Sin Bordes'},
+      {value: "1", name: 'Solo Títulos'},
+      {value: "2", name: 'Títulos y Cuerpo'}, 
+    ]
+    let border = this.createAonElement(new AonSelect(), this.BORDER, MSG.BORDER);
+    border.setOptions(borderOptions);
+    border.value = this.printConfiguration.border;
+    table.addCell(border, 1).style.height = '60px';
     border.onChange(() => {
-      this.printConfiguration.border = border.checked;
+      this.printConfiguration.border = border.value;
       // if(this.autosave) 
         this.save();
       this.dispatchEvent(new Event(EVENT.CHANGE));
@@ -284,7 +289,7 @@ export class AonInvoicePrint extends AonElement {
         this.save();
       this.dispatchEvent(new Event(EVENT.CHANGE));
     });
-    table.addCell(language, 1).style.height = '60px';;
+    table.addCell(language, 1).style.height = '60px';
 
     const themes = [
       {value: Theme.BLACK_AND_WHITE, name: MSG.BLACK_AND_WHITE},
@@ -485,6 +490,15 @@ export class AonInvoicePrint extends AonElement {
     boxBodyBackground.value = this.printConfiguration.theme.boxBodyBackgroundColor;
     boxBodyBackground.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.boxBodyBackgroundColor = boxBodyBackground.value);
     t2.addCell(boxBodyBackground);
+
+    t2.addRow();
+
+    let boxBorder = new AonColor();
+    boxBorder.id = 'aonColorBoxBorderColor';
+    boxBorder.title = 'Color del Borde';
+    boxBorder.value = this.printConfiguration.theme.boxBorderColor;
+    boxBorder.addEventListener(EVENT.CHANGE, () => this.printConfiguration.theme.boxBorderColor = boxBorder.value);
+    t2.addCell(boxBorder);
   }
 
   getPrintConfiguration() {

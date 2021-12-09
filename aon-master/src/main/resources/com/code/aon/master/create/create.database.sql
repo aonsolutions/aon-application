@@ -4005,7 +4005,7 @@ CREATE TABLE `data_attach` (
 #
 
 CREATE TABLE `data_request` (
-  `id` int(4) NOT NULL COMMENT 'ID unico del vinculo',
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
   `domain` int(4) NOT NULL DEFAULT 0 COMMENT 'Dominio',
   `date` datetime DEFAULT NULL COMMENT 'Fecha',
   `type` tinyint(2) NOT NULL DEFAULT 0 COMMENT 'Tipo',

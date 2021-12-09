@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -13,7 +15,6 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
@@ -28,12 +29,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class SecondaryUserDialog extends AonCustomDialog {
 	
-	//Starting Service
-	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	// -------------------------------------------------- UI BINDER
 	
 	interface Binder extends UiBinder<Widget, SecondaryUserDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	// -------------------------------------------------- UI FIELDS
 	
 	@UiField
 	MyStyle style;
@@ -42,6 +44,9 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 		String toolbar();
 		String pr20();
 	}
+	
+	@UiField
+	HTMLPanel messagePanel;
 	
 	@UiField
 	TableElement secondaryUserTable;
@@ -73,16 +78,14 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 	@UiField
 	HTMLPanel buttonsPanel;
 	
-	private boolean isDNI = false;
-	
-	private Button closeBtnDialog;
+	// -------------------------------------------------- VARIABLES
+
+	private final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	private Button acceptBtnDialog;
-	
+	private boolean isDNI = false;
 	private Integer rattachId;
 
-	// -------------------------------------------------------------------------------------------
-	// ----------------------------------- CONSTRUCTOR -------------------------------------------
-	// -------------------------------------------------------------------------------------------
+	// -------------------------------------------------- CONSTRUCTOR
 	
 	protected SecondaryUserDialog(Integer rattachId) {
 		setCaption("Alta usuario secundario");
@@ -111,13 +114,8 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 		nss.setValue(naf, true);
 	}
 	
-	private void initTableStyles() {
-		for(int i=0; i<this.secondaryUserTable.getRows().getLength(); i++){
-			this.secondaryUserTable.getRows().getItem(i).getStyle().setMarginTop(5, Unit.PX);
-		}
-		
-	}
-
+	// -------------------------------------------------- UI HANDLERS
+	
 	@UiHandler("dniBtn")
 	public void onDniBtnClick(ClickEvent event) {
 		isDNI = !isDNI;
@@ -132,22 +130,22 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 	@UiHandler("nss")
 	public void onNSSValueChange(ValueChangeEvent<String> event) {
 		if(AonStringUtils.isNotBlank(event.getValue())) {
-			ArrayList<String> nssList = new ArrayList<String>();
+			ArrayList<String> nssList = new ArrayList<>();
 			nssList.add(event.getValue());
-			this.acceptBtnDialog.setEnabled(false);
+			acceptBtnDialog.setEnabled(false);
 			loadingPanel.setVisible(true);
 			impl.getIpfxNaf(nssList, new AsyncCallback<EmployeeSegSocial>() {
 				
 				@Override
 				public void onSuccess(EmployeeSegSocial result) {
 					initEmployeeSegSocial(result);
-					acceptBtnDialog.setEnabled(false);
+					acceptBtnDialog.setEnabled(true);
 					loadingPanel.setVisible(false);
 				}
 
 				@Override
 				public void onFailure(Throwable caught) {
-					// TODO Auto-generated method stub
+					showWarning("Error Ipf x Naf", caught.getMessage());
 				}
 			});
 		}
@@ -168,6 +166,8 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 			checkCanFindByIPF();
 	}
 	
+	// -------------------------------------------------- UI HANDLERS (AUX METHODS)
+	
 	private void checkCanFindByIPF() {
 		String nieStr = nie.getValue();
 		String surnameStr = surname.getValue();
@@ -178,8 +178,8 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 			AonStringUtils.isNotBlank(secondSurnameStr)) {
 			
 			loadingPanel.setVisible(true);
+			acceptBtnDialog.setEnabled(false);
 			
-			this.acceptBtnDialog.setEnabled(false);
 			impl.getNafxIpf(nieStr, surnameStr, secondSurnameStr, new AsyncCallback<EmployeeSegSocial>() {
 				
 				@Override
@@ -191,10 +191,17 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					// TODO Auto-generated method stub
+					showWarning("Error Naf x Ipf", caught.getMessage());
 				}
 			});
 		}
+	}
+	
+	// -------------------------------------------------- AUX METHODS
+	
+	private void initTableStyles() {
+		for(int i=0; i<this.secondaryUserTable.getRows().getLength(); i++)
+			this.secondaryUserTable.getRows().getItem(i).getStyle().setMarginTop(5, Unit.PX);
 	}
 
 	private void initEmployeeSegSocial(EmployeeSegSocial employeeSegSocial) {
@@ -228,22 +235,38 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 		dniBtn.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 	}
 
+	public String checkIPFType(String ipf) {
+		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
+
+		if (dniPattern.test(ipf.toUpperCase()))
+			return "1";
+		else
+			return "6";
+	}
+
+	private void showWarning(String title, String message) {
+		Map<String, String> warningMap = new HashMap<>();
+		warningMap.put(title, message);
+		AonMessagePanel.showWarning(messagePanel, warningMap);
+	}
+	
+	private void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messagePanel, errorMap);
+	}
+	
+	// -------------------------------------------------- BUTTONS PANEL
+	
 	private void getButtonsPanel() {
 		AonTableButton loadingBtn = new AonTableButton("", AON.CSS.aonIconRenew());
 		loadingPanel.add(loadingBtn);
 		
-		closeBtnDialog = new Button();
+		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText( AON.MSG.cancelAction());
-		closeBtnDialog.setAccessKey('C');
-		closeBtnDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onCloseDialog(event);
-			}
-		});
-		
 		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		closeBtnDialog.addClickHandler(e -> hide());
 		
 		buttonsPanel.add(closeBtnDialog);
 		
@@ -251,21 +274,12 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 		acceptBtnDialog.setStyleName(AON.CSS.aonSendButtonSmall());
 		acceptBtnDialog.setText( "COMUNICAR" );
 		acceptBtnDialog.setAccessKey('A');
-		acceptBtnDialog.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAcceptDialog(event);
-			}
-		});
+		acceptBtnDialog.addClickHandler(e -> onAcceptDialog());
 		
 		buttonsPanel.add(acceptBtnDialog);
 	}
 	
-	private void onCloseDialog(ClickEvent event) {
-		hide();
-	}
-	
-	private void onAcceptDialog(ClickEvent event) {
+	private void onAcceptDialog() {
 		String nieStr = nie.getValue();
 		String nafStr = nss.getValue();
 		
@@ -280,22 +294,13 @@ public abstract class SecondaryUserDialog extends AonCustomDialog {
 	
 					@Override
 					public void onFailure(Throwable caught) {
-						AonConfirmDialog dialog = new AonConfirmDialog();
-						dialog.info("ERROR: Creacion", "El usuario secundario no se ha podido crear.");
-						hide();
+						showError("ERROR: Creacion", caught.getMessage());
 					}
 				});
 	}
+	
+	// -------------------------------------------------- ABSTRACT METHODS
 
 	protected abstract void onAccept();
-	
-	public String checkIPFType(String ipf) {
-		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
-
-		if (dniPattern.test(ipf.toUpperCase()))
-			return "1";
-		else
-			return "2";
-	}
 
 }

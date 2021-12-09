@@ -2807,7 +2807,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
@@ -2849,7 +2849,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
@@ -2866,7 +2866,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
 			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
@@ -3234,10 +3234,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return null != certificate;
 			
-		} catch (CertificateNotFoundException e) {
+		} catch (Exception e) {
 			return false;
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
 		}
 	}
 	
@@ -3340,29 +3338,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// ----------------------------------------------------------------- DigitalCertificates (New)
 
 	@Override
-	public List<DigitalCertificateNew> getDigitalCertificates(String domainName, String userLogin) {
+	public List<DigitalCertificateNew> getDigitalCertificates(String domainName, String userLogin) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			return JooqDigitalCertificateNew.getDigitalCertificates(connection, domainId, userId);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
-	public void deleteDigitalCertificate(String domainName, DigitalCertificateNew digitalCertificate) {
+	public void deleteDigitalCertificate(String domainName, DigitalCertificateNew digitalCertificate) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			JooqDigitalCertificateNew.deleteDigitalCertificate(connection, digitalCertificate);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
 	public void verifyCertificate(String domainName, String userLogin, Integer rattachId,
-			List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags) {
+			List<com.esferalia.aon.gwt.payroll.shared.DigitalCertificateNew.CertificateType> tags) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {	
 			Certificate certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
 
@@ -3379,6 +3377,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 
 		} catch (SQLException | SepeException | SegSocialException e) {
+			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "java.io.IOException: keystore password was incorrect"))
+				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
+			
 			throw new IllegalArgumentException(e.getMessage());
 		} 
 	}
@@ -3386,7 +3387,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 	@Override
 	public List<SecondaryUserCertificate> getSecondaryUsers(String domainName, String userLogin, Integer rattachId) throws IllegalArgumentException {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)){
 			Certificate certificate = null;
 			
 			if(rattachId == null) {
@@ -3394,7 +3395,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
-				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
 				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
 			
@@ -3432,7 +3433,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public void deleteSecondaryUser(String domainName, String userLogin, Integer rattachId, String ipfType, String ipf) {
+	public void deleteSecondaryUser(String domainName, String userLogin, Integer rattachId, String ipfType, String ipf) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Certificate certificate = null;
 			
@@ -3441,7 +3442,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
-				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
 				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
 			
@@ -3449,12 +3450,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
 			
 		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
 	@Override
-	public void createSecondaryUser(String domainName, String userLogin, Integer rattachId, String ipfType, String ipf, String naf) {
+	public void createSecondaryUser(String domainName, String userLogin, Integer rattachId, String ipfType, String ipf, String naf) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Certificate certificate = null;
 			
@@ -3463,7 +3464,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 				Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 				
-				certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			} else
 				certificate = JooqDigitalCertificateNew.getCertificate(connection, rattachId);
 			
@@ -3471,16 +3472,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
 			
 		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
-	public CertificateInfo validateCertJava(String domainName, Integer rattachId) {
+	public CertificateInfo validateCertJava(String domainName, Integer rattachId)  throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqDigitalCertificateNew.validateCertJava(connection, rattachId);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (SQLException | IllegalArgumentException e) {
+			if(AonStringUtils.equalsIgnoreCase(e.getMessage(), "keystore password was incorrect"))
+				throw new IllegalArgumentException("Contrase\u00F1a incorrecta");
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

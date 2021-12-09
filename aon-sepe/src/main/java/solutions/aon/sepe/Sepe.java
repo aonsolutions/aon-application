@@ -14,7 +14,7 @@ import solutions.aon.sepe.exceptions.SepeException;
 public class Sepe {
 	
 	public static byte[] getContratoPdf( final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ipf, Date fini, Date fend) throws Exception {
+			final String certificateType, String ipf, Date fini, Date fend) throws SepeException {
 		return Contrato.contratoPdf(certificateInputStream, certificatePassword, certificateType, ipf, fini, fend);
 	}
 

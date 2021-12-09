@@ -199,6 +199,7 @@ import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
+import com.esferalia.aon.occam.api.model.type.ContractAttachType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.RDirStaffDAO;
@@ -5715,12 +5716,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			JooqContractAttach.setContractIDC(connection, domainId, contractId, Base64.getDecoder().decode(base64Pdf_IDC));
 			
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
 	@Override
-	public String getEmployeeTa(String domainName, String userLogin, Integer contractId, Date date) {
+	public String getEmployeeTa(String domainName, String userLogin, Integer contractId, Date date) throws IllegalArgumentException {
 
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
@@ -5739,12 +5740,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
 	@Override
-	public String getEmployeeIdc(String domainName, String userLogin, Integer contractId, Date date) {
+	public String getEmployeeIdc(String domainName, String userLogin, Integer contractId, Date date) throws IllegalArgumentException {
 
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
@@ -5763,12 +5764,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
 	@Override
-	public String getEmployeeIdcPlNss(String domainName, String userLogin, Integer contractId, Date date) {
+	public String getEmployeeIdcPlNss(String domainName, String userLogin, Integer contractId, Date date) throws IllegalArgumentException {
 
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
@@ -5787,12 +5788,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			return dataUri;
 		} catch (SQLException | IOException | SegSocialException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
 	@Override
-	public List<Date> getEmployeeIdcDates(String domainName, String userLogin, Integer contractId, Date date) {
+	public List<Date> getEmployeeIdcDates(String domainName, String userLogin, Integer contractId, Date date) throws IllegalArgumentException {
 
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
@@ -5802,7 +5803,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return EmployeesServiceHelper.getIDCDates(connection, domainName, domainId, userLogin, userId, contractId,
 					date);
 
-		} catch (SQLException | IOException | SegSocialException e) {
+		} catch (SQLException | IOException | SegSocialException | CertificateNotFoundException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -5993,7 +5994,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String getEmployeeCbc(String domainName, String userLogin, String ipf, Date startDate, Date endDate) {
+	public String getEmployeeCbc(String domainName, String userLogin, String ipf, Date startDate, Date endDate) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6017,13 +6018,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			stringWriter.close();
 
 			return dataUri;
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
+		} catch (SQLException | SepeException | IOException e) {
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 
 	@Override
-	public String getEmployeeCto(String domainName, String userLogin, String ipf, Date startDate, Date endDate) {
+	public String getEmployeeCto(String domainName, String userLogin, String ipf, Date startDate, Date endDate) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6047,8 +6048,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			stringWriter.close();
 			
 			return dataUri;
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
+		} catch (SQLException | SepeException | IOException e) {
+			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 	
@@ -6555,26 +6556,40 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
 			
-			// Get suspensionReason Code
-			String suspensionReasonCode = JooqCertifica2.getSuspensionReasonCode(connection, contractId);
-			
 			// Create certificates
 			Certificates certificates = JooqCertifica2.createCertificates(connection, contractId, certifica2Info.getSuspensionCode());
 			
 			System.out.println(certificates.toString());
 			
 			// Send certificates
-			Sepe.certEnterprise(
+			byte[] certifica2PDF = Sepe.certEnterprise(
 					new ByteArrayInputStream(certificate.getCertificate()), 
 					certificate.getPassword(), 
 					certificate.getType(), 
 					certificates);
+			
+			
+			if(null != certifica2PDF && certifica2PDF.length > 0)
+				saveCertifica2Attach(domainName, domainId, userLogin, contractId, certifica2PDF);
 
 		} catch (SQLException | SepeException e) {
 			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}
 	
+	private void saveCertifica2Attach(String domainName, Integer domainId, String login, Integer contractId, byte[] data) {
+		com.esferalia.aon.occam.api.model.payroll.ContractAttach contractAttach = new com.esferalia.aon.occam.api.model.payroll.ContractAttach();
+		contractAttach.setDomain(domainId)
+					  .setContract(contractId)
+					  .setMimeType(MimeType.PDF)
+					  .setDescription("Certific@2 PDF")
+					  .setData(data)
+					  .setType(ContractAttachType.CERTIFICA2)
+					  .setAttachDate(new Date());
+		
+		PAYROLL.saveContractAttach(domainName, domainId, login, contractAttach);
+	}
+
 	@Override
 	public String getCertifica2PDF(String domainName, String userLogin, String nif, Date endDate) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
@@ -6605,6 +6620,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return dataUri;
 
 		} catch (SQLException | SepeException | CertificateNotFoundException | IOException e) {
+			if(e instanceof CertificateNotFoundException)
+				throw new IllegalArgumentException("No existe certificado SEPE. Por favor introduzcalo desde el apartado Gesti\u00F3n Certificados");
 			throw new IllegalArgumentException(e.getCause().getMessage());
 		}
 	}

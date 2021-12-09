@@ -53,8 +53,8 @@ public class Certificado {
 	    	
 	    	webClient.getOptions().setUseInsecureSSL(true);
 	    	
-			if(fecha==null) fecha = new Date();
-			String[] fra = Toolkit.formatDate(fecha);
+			//if(fecha==null) fecha = new Date();
+			//String[] fra = Toolkit.formatDate(fecha);
 
 			HtmlPage htmlPage = firstPageSepeCert(webClient);
   
@@ -66,29 +66,25 @@ public class Certificado {
 			htmlPage = formDatos1.getInputByName("btBuscar").click();
 			handleSepeExceptions(htmlPage);
 			
-			htmlPage = htmlPage.getElementByName("btMasCert").click();
-			handleSepeExceptions(htmlPage);
+			// La fecha fin ya no importa (lo dejo comentado) y creo que se podria quitar este argumento,
+			// ya que ahora no se guarda con fecha fin de contrato si no con fecha de presentacion del Certfic@2
+			// String finicio = fra[0]+"/"+fra[1]+"/"+fra[2];
 			
-			String finicio = fra[0]+"/"+fra[1]+"/"+fra[2];
-			HtmlTable table = (HtmlTable) htmlPage.querySelector("#contenido > form > table");
+			// Ahora la tabla esta dentro de un fieldset
+			HtmlTable table = (HtmlTable) htmlPage.querySelector("#contenido > form > fieldset > table");
 			HtmlRadioButtonInput firstColumn;
 			String columnCheck = "0";
-			for (final HtmlTableRow row : table.getRows()) {
-				HtmlTableCell cell = row.getCell(6);
-				if(cell.getVisibleText().indexOf(finicio)>= 0) {
-					firstColumn = row.getCell(0).querySelector("input[name=certSeleccionado]");
-					columnCheck  = firstColumn.getValueAttribute();
-					break;
-				}
-			}
-
-			HtmlRadioButtonInput inputRadio = htmlPage.querySelector("#contenido form input[name=certSeleccionado][value=\""+columnCheck+"\"]");
-	        htmlPage = (HtmlPage) inputRadio.click();
-			htmlPage = htmlPage.getElementByName("btAceptar").click();
-			handleSepeExceptions(htmlPage);
 			
-			HtmlRadioButtonInput inputRadio2 = htmlPage.querySelector("#contenido form input[value=\""+columnCheck+"\"]");
-	        htmlPage = (HtmlPage) inputRadio2.click();
+			// Creo que siempre va a ser el ultimo Certific@2 el primero de la tabla
+			// Pero para el futuro igual habria que guardar la fecha de presentacion por que cuando un trabajador tenga varios Certific@2 presentados
+			// habra que buscar la forma de filtrarlo, ahora de momento lo he dejado para que siempre coja el mas reciente
+			if(null != table) {
+				firstColumn = table.getRows().get(1).getCell(0).querySelector("input[name=documentoSeleccionado]");
+				columnCheck  = firstColumn.getValueAttribute();
+			}
+			
+			HtmlRadioButtonInput inputRadio = htmlPage.querySelector("#contenido form input[name=documentoSeleccionado][value=\""+columnCheck+"\"]");
+	        htmlPage = (HtmlPage) inputRadio.click();
 
 	        Page page = htmlPage.getElementByName("btMostrar").click();
 			if(page.isHtmlPage()) {
@@ -96,12 +92,12 @@ public class Certificado {
 				handleSepeExceptions(htmlPage);
 			} else {
 				try{
-					byte[] pdf = page.getWebResponse().getContentAsStream().readAllBytes();
-					return pdf;
+					return page.getWebResponse().getContentAsStream().readAllBytes();
 				}
 				catch(Exception e){throw new InvalidDataException();}
 			}
 		}
+	    
 		return null; 
 	}
 	
