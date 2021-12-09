@@ -279,6 +279,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		toolbar.setVisibleCopyButton(false);
 		toolbar.setVisiblePasteButton(false);
 		toolbar.setVisibleDraftButton(false);
+		toolbar.setSearchHint("Empleados (Nombre, NIF, NAF)");
 		// employeesService.getEnterprise(this);
 
 
