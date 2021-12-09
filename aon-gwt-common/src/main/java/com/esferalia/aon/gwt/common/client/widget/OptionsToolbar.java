@@ -179,5 +179,10 @@ public class OptionsToolbar extends Composite {
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
 	}
+	
+	public void setSearchHint(String hint) {
+		searchTextBox.setVisibleLength(hint.length());
+		searchTextBox.getElement().setPropertyString("placeholder", hint);
+	}
 
 }
