@@ -2985,14 +2985,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public int getServiAgreement(String domainName, String serviAgreementCode) throws IllegalArgumentException  {
+	public int getServiAgreement(String domainName, String serviAgreementCode, List<Integer> selectedDates) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
 			AONContext ctx = new AONContext(connection);
 			DSLContext dslContext = ctx.getDslContext();
 			
-			Pair<Integer,String> agreementLog = AgreementParser.getAgreement(dslContext, serviAgreementCode, domainId);
+			Pair<Integer,String> agreementLog = AgreementParser.getAgreement(dslContext, serviAgreementCode, selectedDates, domainId);
 			
 			String log = agreementLog.getSecond();
 			if(!AonStringUtils.isBlank(log)) {
@@ -3005,6 +3005,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("El convenio con c\u00F3digo " + serviAgreementCode + " (ServiConvenios) no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
 		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+
+
+	@Override
+	public List<Integer> getServiAgreementDates(String agreementCode) throws IllegalArgumentException {
+		try {
+			return AgreementParser.getAgreementYears(agreementCode);
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

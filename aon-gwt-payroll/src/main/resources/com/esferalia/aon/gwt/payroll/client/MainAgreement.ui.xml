@@ -43,9 +43,13 @@
 				<aon:Agreements debugId="agreements" ui:field='agreements' />
 			</g:west>
 			<g:center>
-				<g:SimpleLayoutPanel>
-					<aon:AgreementDraft debugId="agreementDraft" ui:field="agreementDraft" />
-				</g:SimpleLayoutPanel>
+				<g:DockLayoutPanel ui:field="containerLayoutPanel" unit="PX">
+					<g:center>
+						<g:SimpleLayoutPanel>
+							<aon:AgreementDraft debugId="agreementDraft" ui:field="agreementDraft" />
+						</g:SimpleLayoutPanel>
+					</g:center>
+				</g:DockLayoutPanel>
 			</g:center>
 		</g:DockLayoutPanel>
 		

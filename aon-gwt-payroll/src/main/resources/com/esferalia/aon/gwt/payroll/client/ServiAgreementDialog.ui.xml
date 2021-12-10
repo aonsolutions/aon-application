@@ -7,14 +7,16 @@
 
 	<ui:Style type="com.esferalia.aon.gwt.payroll.client.ServiAgreementDialog.MyStyle">
 		
-		.noselect {
-			-webkit-touch-callout: none; /* iOS Safari */
-			-webkit-user-select: none; /* Safari */
-			-khtml-user-select: none; /* Konqueror HTML */
-			-moz-user-select: none; /* Firefox */
-			-ms-user-select: none; /* Internet Explorer/Edge */
-			user-select: none; /* Non-prefixed version, currently
-				                                  supported by Chrome and Opera */
+		.column{
+			display: flex;
+			flex-direction: column;
+			gap: 1em;
+			padding: 1em;
+		}
+		
+		.flex{
+			display: flex;
+			gap: 1em;
 		}
 		
 		.title{
@@ -22,19 +24,6 @@
 			text-transform: uppercase;
 			font-size: 1em;
 			margin-right: 10px; 
-		}
-		
-		.buttonsPanel{
-			display: flex;
-			justify-content: flex-end;
-			margin: 5px 10px;
-		}
-		
-		.mainPanel{
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin: 10px;
 		}
 		
 		.w400{
@@ -46,21 +35,59 @@
 			max-width: 475px;
 		}
 		
+		.datesPanel{
+			display: flex;
+			flex-direction: column;
+			gap: .4em;
+		}
+		
+		.mainButtonsPanel{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			gap: 1em;
+		}
+		
+		.loadingPanel{
+			display: flex;
+			align-items: center;
+			animation-name: spin;
+			animation-duration: 2500ms;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+		
+		@keyframes spin {
+		    from {
+		        transform:rotate(0deg);
+		    }
+		    to {
+		        transform:rotate(360deg);
+		    }
+		}
 		
 	</ui:Style>
 
-
-	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel"> 
-		<g:VerticalPanel>
-			<g:HTMLPanel styleName="{style.mainPanel}">
-				<g:Label styleName="{style.title}">Convenio</g:Label>
-				<g:SuggestBox ui:field="serviAgreementsSB" styleName="{style.w400}"></g:SuggestBox>
-			</g:HTMLPanel>
-			<g:HTMLPanel ui:field="messagePanel" styleName="{style.mainPanel}">
-				<g:Label styleName="{style.message}">AonSolutions: Importación de convenios INACTIVA.</g:Label>
-			</g:HTMLPanel>
-			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
-		</g:VerticalPanel>
+	<g:HTMLPanel styleName="{style.column}">
+		<g:HTMLPanel styleName="{style.flex}">
+			<g:Label styleName="{style.title}">Convenio</g:Label>
+			<g:SuggestBox ui:field="serviAgreementsSB" styleName="{style.w400}" />
+		</g:HTMLPanel>
+		<g:HTMLPanel ui:field="datesPanel" styleName="{style.datesPanel}" visible="false" />
+		<g:HTMLPanel ui:field="messagePanel" styleName="{style.flex}">
+			<g:Label styleName="{style.message}">AonSolutions: Importación de convenios INACTIVA.</g:Label>
+		</g:HTMLPanel>
+		<g:HTMLPanel ui:field="mainButtonsPanel" styleName="{style.mainButtonsPanel}">
+			<g:HTMLPanel ui:field="loadingPanel" styleName="{style.flex}" />
+			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
+		</g:HTMLPanel>
 	</g:HTMLPanel>
 
 </ui:UiBinder>
