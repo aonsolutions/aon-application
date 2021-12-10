@@ -729,9 +729,15 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Integer> callback) throws IllegalArgumentException {
+	public void getServiAgreement(String currentDomainName, String serviAgreementCode, List<Integer> selectedDates, AsyncCallback<Integer> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getServiAgreement(currentDomainName, serviAgreementCode, new AsyncCallbackWrapper<Integer>(callback));
+		enterprisesServiceAsync.getServiAgreement(currentDomainName, serviAgreementCode, selectedDates, new AsyncCallbackWrapper<Integer>(callback));
+	}
+	
+	@Override
+	public void getServiAgreementDates(String serviAgreementCode, AsyncCallback<List<Integer>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getServiAgreementDates(serviAgreementCode, new AsyncCallbackWrapper<List<Integer>>(callback));
 	}
 
 	@Override
