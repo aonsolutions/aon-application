@@ -49,6 +49,9 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 	
 	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
 		ScrollPanel additionalDataScrollPanel = new ScrollPanel();
+		FlowPanel container = new FlowPanel();
+		container.add(getExistenciasTable());
+		
 		FlexTable table = new FlexTable();
 		table.setWidth("100%");
 		table.addStyleName(AON.CSS.aonMarginBottom());
@@ -73,11 +76,41 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(8, WIDTH_140PX);
 
 		table.getColumnFormatter().setWidth(9, "50px");
-		additionalDataScrollPanel.setWidget(table);
+		container.add(table);
+		additionalDataScrollPanel.setWidget(container);
 		tabPanel.add(additionalDataScrollPanel, "Inf. Adicional");
 		paintDeclaration(table,Model3902017BIZKAIAAdditionalDataScript.values(),10);
 	}
 
+	private FlexTable getExistenciasTable() {
+		FlexTable table = new FlexTable();
+		table.setWidth("100%");
+		table.addStyleName(AON.CSS.aonMarginBottom());
+		
+		table.getColumnFormatter().setWidth(0, "auto");
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingLeft() );
+		table.getColumnFormatter().addStyleName(0, AON.CSS.aonPaddingRight() );
+		table.getColumnFormatter().setWidth(1, "40px");
+		table.getColumnFormatter().setStyleName(1, AON.CSS.aonTextCenter());
+		table.getColumnFormatter().setWidth(2, WIDTH_140PX);
+		
+		table.getColumnFormatter().setWidth(3, "40px");
+		table.getColumnFormatter().setStyleName(3, AON.CSS.aonTextCenter());
+		table.getColumnFormatter().setWidth(4, WIDTH_140PX);
+
+		table.getColumnFormatter().setWidth(5, "50px");
+		
+		paintLabel(table, 0, "Existencias Iniciales (1 de enero)", false);
+		paintBox(table, 0, 1, Mod390Key.BZ_C140);
+		paintField(table, 0, 2, Mod390Key.BZ_C140, 12, true);
+		
+		paintLabel(table, 1, "Existencias Finales (31 de diciembre)", false);
+		paintBox(table, 1, 1, Mod390Key.BZ_C140);
+		paintField(table, 1, 2, Mod390Key.BZ_C141, 12, true);
+		
+		return table;
+	}
+	
 	private void paintSpecificOperationsTab(TabLayoutPanel tabPanel) {
 		ScrollPanel specificOpDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();

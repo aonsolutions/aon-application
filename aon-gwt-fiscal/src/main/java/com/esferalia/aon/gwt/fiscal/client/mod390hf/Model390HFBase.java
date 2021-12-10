@@ -327,7 +327,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		}
 	}
 	
-	private int paintBox(FlexTable table, int row, int col, Mod390Key key) {
+	protected int paintBox(FlexTable table, int row, int col, Mod390Key key) {
 		if (AonStringUtils.isNumeric(key.getBoxCode())) {
 			table.setWidget(row, col, new AonBoxLabel(key.getBoxCode()));
 		} else {
