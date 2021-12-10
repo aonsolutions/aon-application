@@ -42,7 +42,7 @@ public class PrintInvoiceConfigurationDAO {
 				} else if(AppParam.INVOICE_PRINT_CONFIG_LANGUAGE.toString().equals(r.getName())) {
 					config.setLanguage(AonLanguage.safeValueOf(r.getValue()));
 				} else if(AppParam.INVOICE_PRINT_CONFIG_BORDER.toString().equals(r.getName())) {
-					config.setBorder(r.getValue() != null && (r.getValue().equalsIgnoreCase("true") || r.getValue().equals("1")));
+					config.setBorder(AonNumberUtils.isNumber(r.getValue()) ? Integer.parseInt(r.getValue()) : 0);
 				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME.toString().equals(r.getName())) {
 					config.getTheme().setTheme(r.getValue() != null ? PrintInvoiceTheme.safeValueOf(Integer.parseInt(r.getValue())) : PrintInvoiceTheme.BLACK_AND_WHITE);
 				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_BTBC.toString().equals(r.getName())) {
@@ -51,6 +51,8 @@ public class PrintInvoiceConfigurationDAO {
 					config.getTheme().setBoxTitleTextColor(r.getValue());
 				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_BBBC.toString().equals(r.getName())) {
 					config.getTheme().setBoxBodyBackgroundColor(r.getValue());
+				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_BBC.toString().equals(r.getName())) {
+					config.getTheme().setBorderColor(r.getValue());
 				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_TTC.toString().equals(r.getName())) {
 					config.getTheme().setTitleTextColor(r.getValue());
 				} else if(AppParam.INVOICE_PRINT_CONFIG_THEME_TC.toString().equals(r.getName())) {
@@ -110,7 +112,7 @@ public class PrintInvoiceConfigurationDAO {
 		
 		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOICE_PRINT_CONFIG_BORDER.toString(),
-				Boolean.toString(pic.isBorder()));
+				Integer.toString(pic.getBorder()));
 		
 		AppParamDAO.insertApplicationParameter(ctx,
 				AppParam.INVOICE_PRINT_CONFIG_THEME.toString(),
@@ -128,6 +130,10 @@ public class PrintInvoiceConfigurationDAO {
 			AppParamDAO.insertApplicationParameter(ctx,
 					AppParam.INVOICE_PRINT_CONFIG_THEME_BBBC.toString(),
 					pic.getTheme().getBoxBodyBackgroundColorHTML());
+			
+			AppParamDAO.insertApplicationParameter(ctx,
+					AppParam.INVOICE_PRINT_CONFIG_THEME_BBC.toString(),
+					pic.getTheme().getBorderColorHTML());
 			
 			AppParamDAO.insertApplicationParameter(ctx,
 					AppParam.INVOICE_PRINT_CONFIG_THEME_TTC.toString(),

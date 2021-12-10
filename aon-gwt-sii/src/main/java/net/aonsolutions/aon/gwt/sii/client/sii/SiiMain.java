@@ -172,7 +172,7 @@ public class SiiMain extends AonTemplate2{
 				ig.anular(getFilterMap().get("sii").get(0));
 			}
 		});
-		if(getAonData().getDomain().getName().equals("admin-alsaes.aonsolutions.net")) {
+		if(getAonData().getDomain().getName().equals("miguelangelelvira-tuasesorlegal.aonsolutions.net")) {
 			errorPeriodo = toolbar.addButton("Soluci\u00f3n Periodo Liquidaci\u00f3n", AON.AON_CSS.aonIconAeat());
 			errorPeriodo.setVisible(true);
 			errorPeriodo.addClickHandler(new ClickHandler() {

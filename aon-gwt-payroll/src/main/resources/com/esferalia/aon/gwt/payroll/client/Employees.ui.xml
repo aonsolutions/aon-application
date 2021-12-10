@@ -5,19 +5,21 @@
 
 	<ui:style>
 	
+	.employees img {
+		filter: grayscale(100%) contrast(200%);
+	}
+	
 	</ui:style>
 
 
-	<g:DockLayoutPanel unit='PX'>
-		<g:north size='26'>
-			<g:FlowPanel styleName="gwt-MenuBar-horizontal" ui:field="buttonBar">
-				<common:OptionsToolbar ui:field="toolbar" />
-			</g:FlowPanel>
+	<g:DockLayoutPanel unit='PX' >
+		<g:north size='37'>
+			<common:OptionsToolbar ui:field="toolbar" height="36px" />
 		</g:north>
 
 		<g:center>
-			<g:ScrollPanel ui:field="scrollPanel">
-				<g:Tree ui:field="tree" />
+			<g:ScrollPanel styleName="{style.employees}"  ui:field="scrollPanel">
+				<g:Tree  ui:field="tree" />
 			</g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>

@@ -53,6 +53,7 @@ import ticketbai.emision.TicketBai;
 
 public class TbaiMain {
 
+	
 	private TbaiMain() {
 	
 	}
@@ -104,7 +105,7 @@ public class TbaiMain {
             sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
 			SSLContext.setDefault(sslContext);
           
-			url = new URL("https://tbai-prep.egoitza.gipuzkoa.eus/WAS/HACI/HTBRecepcionFacturasWEB/rest/recepcionFacturas/alta");
+			url = new URL(TbaiUri.getUrlEmision(tbaiConfiguration));
 			URLConnection con = url.openConnection();
 			HttpsURLConnection https = (HttpsURLConnection)con;
 			
@@ -160,6 +161,9 @@ public class TbaiMain {
 		}
 		return null;
 	}
+	
+
+	
 	private static class TrustAllCertificates implements X509TrustManager {
 	    public void checkClientTrusted(X509Certificate[] certs, String authType) {
 	    }

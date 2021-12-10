@@ -9,21 +9,11 @@
 
 	<ui:style>
 	
-	.stackHeader {
-	  padding: .7em .5em .7em .6em;
-	  
-	}
-
 	@sprite .configIcon {
 	     gwt-image: 'configgroup';
 	     float: left;
 	   }
 
-	@sprite .employeesIcon {
-	     gwt-image: 'employeesgroup';
-	     float: left;
-	   }
-	 
 	</ui:style>
 
 	<ui:image field='configgroup' src='configgroup.png' />
@@ -32,20 +22,8 @@
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
 		<g:west size='275'>
-
-			<g:StackLayoutPanel unit='EM'>
-
-				<g:stack ui:field="employeesStack" >
-					<g:header size='3'>									
-						<div class='{style.stackHeader}'>
-							<div class='{style.employeesIcon}' />
-							EMPLEADOS
-						</div>
-					</g:header>
-					<payroll:Employees ui:field='employees' extended="true" formers="false"/>
-				</g:stack>
-
-			</g:StackLayoutPanel>
+			
+			<payroll:Employees ui:field='employees' extended="true" formers="false"/>
 
 
 		</g:west>

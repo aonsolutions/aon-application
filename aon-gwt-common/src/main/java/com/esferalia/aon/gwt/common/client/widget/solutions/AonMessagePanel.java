@@ -213,6 +213,12 @@ public class AonMessagePanel extends FlowPanel {
 		return aonMessagePanel;
 	}
 	
+	// ------------------------------------------------ Hide Message
+	
+	public static void hideMessage(HTMLPanel panel) {
+		clearEntryPanel(panel);
+	}
+	
 	// ------------------------------------------------ Auxiliar Methods
 	
 	private static void clearEntryPanel(HTMLPanel panel) {

@@ -457,12 +457,16 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 
 	private void createFormPanel(Grid table, int row, DigitalCertificateNew digitalCertificate) {
 		
+		// Save Button
+		AonTableButton saveButton = new AonTableButton("Guardar", AON.CSS.aonIconSave());
+		
 		// Create Form Panel
 		FormPanel formPanel = new FormPanel();
 		formPanel.setAction(GWT.getModuleBaseURL()+ "certificate_new/");
 		formPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
 		formPanel.setMethod(FormPanel.METHOD_POST);
 		formPanel.addSubmitCompleteHandler(e -> {
+			saveButton.setEnabled(true);
 			showSuccess("Certitficado", "Los certidicados han sido actualizados correctamente");
 			loadDigitalCertificates();
 		});
@@ -480,9 +484,6 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		Hidden sepeHidden = new Hidden("sepe", hasSEPECertificate(digitalCertificate) ? "sepe" : "");
 		Hidden aeatHidden = new Hidden("aeat", hasAEATCertificate(digitalCertificate) ? "aeat" : "");
 		Hidden ownerHidden = new Hidden("owner", digitalCertificate.getOwner().name());
-		
-		// Save Button
-		AonTableButton saveButton = new AonTableButton("Guardar", AON.CSS.aonIconSave());
 		
 		// Password Panel
 		HTMLPanel passwordPanel = new HTMLPanel("");
@@ -614,9 +615,11 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		buttonsPanel.addStyleName(style.flex());
 		
 		saveButton.addClickHandler(e -> {
-			if(hasTGSSCertificate(digitalCertificate) || hasSEPECertificate(digitalCertificate) || hasAEATCertificate(digitalCertificate))
+			if(hasTGSSCertificate(digitalCertificate) || hasSEPECertificate(digitalCertificate) || hasAEATCertificate(digitalCertificate)) {
+				saveButton.setEnabled(false);
+				AonMessagePanel.showLoading(messagePanel, "Guardando certificado digital...");
 				formPanel.submit();
-			else 
+			} else 
 				showError("Certitficado", "Debe seleccionar un tipo de certificado para poder guardarlo");
 		});
 		
@@ -868,7 +871,9 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		deleteDialog.confirm(new AonAcceptDialogCallback() {
 			
 			@Override
-			public void onCancel() {}
+			public void onCancel() {
+				// Nothing to do here
+			}
 			
 			@Override
 			public void onAccept() {
