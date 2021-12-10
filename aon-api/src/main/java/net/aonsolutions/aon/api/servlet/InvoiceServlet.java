@@ -13,10 +13,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
@@ -66,7 +68,6 @@ import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.request.BidoqRequest;
 import net.aonsolutions.aon.tbai.TbaiMain;
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
-import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
 import net.aonsolutions.aon.tedi.TEDI;
 import net.aonsolutions.aon.tedi.TediContext;
 import net.aonsolutions.aon.tedi.TediException;
@@ -449,7 +450,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 				.and(f.getIdProperty().in(idsArray)));
 	}
 	
-	public static JSONObject acceptInvoice(AonApiData api) throws StatusCodeException, TbaiResponseException, JAXBException {
+	public static JSONObject acceptInvoice(AonApiData api) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
 //		invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
@@ -457,7 +458,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return InvoiceJSON.toJSON(invoice);
 	}
 	
-	public static void acceptCommunication(AonApiData api, Invoice invoice) throws StatusCodeException, TbaiResponseException, JAXBException {
+	public static void acceptCommunication(AonApiData api, Invoice invoice) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
 		tbaiConfiguration.setCertificate(AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name()));

@@ -1,11 +1,9 @@
 package net.aonsolutions.aon.tbai;
 
-import org.w3._2000._09.xmldsig.CanonicalizationMethodType;
-import org.w3._2000._09.xmldsig.SignatureType;
-
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -51,17 +49,18 @@ public class Invoice2tbai {
 	
 	}
 	
-	private static final String TBAI_VERSION = "1.2";	
+	private static final String TBAI_VERSION = "1.2";
 	private static final String DEVICE_NUMBER = "TBAIGIPRE00000000131";
-	private static final String SOFTWARE_NAME = "aonSolutions" ;
+	private static final String DEVICE_NUMBER_ARABA_TEST = "TBAIARbjlCHFMFK00416";
+	private static final String SOFTWARE_NAME = "aonSolutions";
 	private static final String SOFTWARE_VERSION = "9.23" ;
 
-	public static TicketBai build(Company company, Invoice invoice, TbaiBlockchain blockchain) {
+	public static TicketBai build(Company company, Invoice invoice, TbaiConfiguration config, TbaiBlockchain blockchain) {
 		TicketBai tbai = new TicketBai();
 		tbai.setCabecera(getCabecera());
 		tbai.setSujetos(getSujetos(company, invoice));
 		tbai.setFactura(getFactura(invoice));
-		tbai.setHuellaTBAI(getHuella(blockchain));
+		tbai.setHuellaTBAI(getHuella(config, blockchain));
 		return tbai;
 	}
 	
@@ -71,7 +70,7 @@ public class Invoice2tbai {
 		return c; 
 	}
 	
-	private static HuellaTBAI getHuella(TbaiBlockchain blockchain) {
+	private static HuellaTBAI getHuella(TbaiConfiguration tbai, TbaiBlockchain blockchain) {
 		HuellaTBAI huella = new HuellaTBAI();
 		
 		if(!blockchain.isEmpty()) {
@@ -87,7 +86,9 @@ public class Invoice2tbai {
 		EntidadDesarrolladoraType entidad = new EntidadDesarrolladoraType();
 		entidad.setNIF("B01487271");
 		software.setEntidadDesarrolladora(entidad);
-		software.setLicenciaTBAI(DEVICE_NUMBER);
+		if(tbai.isAraba() && tbai.isTest())
+			software.setLicenciaTBAI(DEVICE_NUMBER_ARABA_TEST);
+		else software.setLicenciaTBAI(DEVICE_NUMBER);
 		software.setNombre(SOFTWARE_NAME);
 		software.setVersion(SOFTWARE_VERSION);
 		huella.setSoftware(software);
@@ -154,10 +155,9 @@ public class Invoice2tbai {
 			
 		DatosFacturaType datos = new DatosFacturaType();
 		datos.setFechaOperacion(AonDateUtils.format(invoice.getCreationDate(), "dd-MM-yyyy"));
-		datos.setDescripcionFactura("Descripción general ¿?");
+		datos.setDescripcionFactura("FACTURA " + invoice.getReferenceCode());
 		
 		DetallesFacturaType detalles = new DetallesFacturaType();
-		
 		invoice.getDetails().stream().filter(f -> !f.isPrepayment()).forEach(detail -> {
 			IDDetalleFacturaType detalle = new IDDetalleFacturaType();
 			detalle.setCantidad(Double.toString(detail.getQuantity()));
@@ -169,8 +169,11 @@ public class Invoice2tbai {
 			double total =  AonMathUtils.round(tax.getBase() + tax.getQuota());
 			detalle.setImporteTotal(Double.toString(total));
 		});
+		
+		Double totalAmount = detalles.getIDDetalleFactura().stream().mapToDouble(r -> Double.parseDouble(r.getImporteTotal())).sum();
+		
 		datos.setDetallesFactura(detalles);
-		datos.setImporteTotalFactura(Double.toString(invoice.getTotal()));
+		datos.setImporteTotalFactura(Double.toString(AonMathUtils.round(totalAmount)));
 //		datos.setRetencionSoportada("");
 //		datos.setBaseImponibleACoste("");
 	
@@ -190,7 +193,7 @@ public class Invoice2tbai {
 			DetalleNoExentaType detalleNoExenta = new DetalleNoExentaType();
 			detalleNoExenta.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1); // TODO ISP O NO
 			DesgloseIVAType desgloseIVA = new DesgloseIVAType();
-			invoice.getBreakdown().stream().filter(f -> f.getPercentage() > 0).forEach(r -> {
+			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() > 0).forEach(r -> {
 				DetalleIVAType  detalleIVA = new DetalleIVAType();
 				detalleIVA.setBaseImponible(Double.toString(r.getBase()));
 				detalleIVA.setCuotaImpuesto(Double.toString(r.getQuota()));

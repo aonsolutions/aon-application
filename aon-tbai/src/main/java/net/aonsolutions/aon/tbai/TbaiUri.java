@@ -14,7 +14,7 @@ public class TbaiUri {
 	private static final String URL_ARABA_ANULACION = "";
 	private static final String URL_ARABA_ANULACION_TEST = "https://pruebas-ticketbai.araba.eus/TicketBAI/v1/anulaciones/";
 	private static final String URL_ARABA_QR = "https://ticketbai.araba.eus/TBAI/QRTBAI";
-	private static final String URL_ARABA_QR_TEST = "https://ticketbai.araba.eus/TBAI/QRTBAI";
+	private static final String URL_ARABA_QR_TEST = "https://pruebas-ticketbai.araba.eus/tbai/qrtbai/";
 	
 	private static final String URL_BIZKAIA_EMISION = "https://sarrerak.bizkaia.eus/N3B4000M/aurkezpena";
 	private static final String URL_BIZKAIA_EMISION_TEST = "https://pruesarrerak.bizkaia.eus/N3B4000M/aurkezpena";
@@ -28,7 +28,7 @@ public class TbaiUri {
 	private static final String URL_GIPUZKOA_ANULACION = "https://tbai-z.egoitza.gipuzkoa.eus/sarrerak/baja";
 	private static final String URL_GIPUZKOA_ANULACION_TEST = "https://tbai-prep.egoitza.gipuzkoa.eus/WAS/HACI/HTBRecepcionFacturasWEB/rest/recepcionFacturas/anulacion";
 	private static final String URL_GIPUZKOA_QR = "https://tbai.egoitza.gipuzkoa.eus/qr/";
-	private static final String URL_GIPUZKOA_QR_TEST = "https://tbai.egoitza.gipuzkoa.eus/qr/";
+	private static final String URL_GIPUZKOA_QR_TEST = "https://tbai.prep.gipuzkoa.eus/qr/";
 	
 	
 	public static String getUrlEmision(TbaiConfiguration  tbai) {

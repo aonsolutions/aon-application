@@ -383,7 +383,7 @@ public interface IJsonNames {
 	String THEME = "theme";
 	String THUMB_URL = "thumbUrl";
 	String TITLE = "title";
-	String TITLE_TEXT_COLOR = "TitleTextColor";
+	String TITLE_TEXT_COLOR = "titleTextColor";
 	String TO = "to";
 	String TO_DATE = "toDate";
 	String TO_DUE_DATE = "toDueDate";

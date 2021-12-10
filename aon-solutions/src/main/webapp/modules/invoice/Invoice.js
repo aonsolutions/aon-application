@@ -376,6 +376,9 @@ export class Invoice {
       this.calculateWithholdingFromDetail();
       this.calculateTotalFromDetail();
     }
+    this.details.forEach((detail, i) => {
+      this.details[i] = this.calculateDetail(detail);
+    });
   }
 
   isWithholdingFarmer() {
@@ -673,11 +676,22 @@ export class Invoice {
         detail.quota = round(detail.amount / 100 * detail.percentage);
         detail.surcharge = this.isSurcharge() ? getSurchargeByVat(detail.percentage) : 0.0;
         detail.surcharge_quota = round(detail.amount / 100 * detail.surcharge);
+        if(this.isWithholding()) {
+          let wh = this.getWitholdingTax();
+          detail.withholding = true;
+          detail.withholding_type = wh.type;
+          detail.withholding_percentage = wh.percentage;
+          detail.withholding_quota = round(detail.amount / 100 * wh.percentage);
+        }
       } else {
         detail.percentage = undefined;
         detail.quota = 0.0;
         detail.surcharge = 0.0;
         detail.surcharge_quota = 0.0;
+        detail.withholding = false;
+        detail.withholding_type = undefined;
+        detail.withholding_percentage = undefined;
+        detail.withholding_quota = 0.0;
       }
       return detail;
   }
