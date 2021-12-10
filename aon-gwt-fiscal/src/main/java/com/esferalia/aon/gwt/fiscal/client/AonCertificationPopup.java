@@ -99,6 +99,7 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 		setAnimationEnabled(true);
 		
 		rootPanel = new FlowPanel();
+		rootPanel.setStyleName(AON.CSS.aonWidthAll());
 		rootPanel.add(new AonSplash());
 		add(rootPanel);
 		
@@ -125,9 +126,14 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 	
 	private void paintError(String message) {
 		rootPanel.clear();
+
+		FlowPanel messageContainerPanel = new FlowPanel();
+		messageContainerPanel.setStyleName(AON.CSS.aonMarginBottom());
+		messageContainerPanel.addStyleName(AON.CSS.aonMarginTop());
+		messageContainerPanel.addStyleName(AON.CSS.aonBlockCenter());
+		messageContainerPanel.addStyleName(AON.CSS.aonWidthAlmostAll());
+
 		Label messageLabel = new Label(message); 
-		messageLabel.setStyleName(AON.CSS.aonMarginBottom());
-		messageLabel.addStyleName(AON.CSS.aonMarginTop());
 		messageLabel.addStyleName(AON.CSS.aonBlockCenter());
 		messageLabel.addStyleName(AON.CSS.aonBlockMessage());
 		messageLabel.addStyleName(AON.CSS.aonBlockErrorMessage());
@@ -146,8 +152,8 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 			onCancel();
 		});
 		buttonsPanel.add(cancelButton);
-
-		rootPanel.add(messageLabel);
+		messageContainerPanel.add(messageLabel);
+		rootPanel.add(messageContainerPanel);
 		rootPanel.add(buttonsPanel);
 	}
 	
@@ -158,13 +164,16 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 			messagePanel.setStyleName(AON.CSS.aonMarginBottom());
 			messagePanel.addStyleName(AON.CSS.aonMarginTop());
 			messagePanel.addStyleName(AON.CSS.aonBlockCenter());
-			messagePanel.addStyleName(AON.CSS.aonBlockMessage());
-			messagePanel.addStyleName(AON.CSS.aonBlockInfoMessage());
-			messagePanel.addStyleName(AON.CSS.aonBlockInfoMessage());
+			messagePanel.addStyleName(AON.CSS.aonWidthAlmostAll());
+			
+			FlowPanel messageContainerPanel = new FlowPanel();
+			messageContainerPanel.setStyleName(AON.CSS.aonBlockMessage());
+			messageContainerPanel.addStyleName(AON.CSS.aonBlockInfoMessage());
+			messageContainerPanel.addStyleName(AON.CSS.aonDisplayFlex());
 			
 			InlineLabel messageLabel = new InlineLabel( params.getInfoMessage() );
 			messageLabel.setStyleName(AON.CSS.aonFlexGrow1());
-			messagePanel.add(messageLabel);
+			messageContainerPanel.add(messageLabel);
 			
 			InlineLabel serverLabel = new InlineLabel();
 			serverLabel.setStyleName(AON.CSS.aonMarginLeft());
@@ -179,7 +188,8 @@ public abstract class AonCertificationPopup extends AonCustomDialog {
 				serverLabel.addStyleName(AON.CSS.aonAeatBackgroundColor());
 				serverLabel.addStyleName(AON.CSS.aonColorWhite());
 			}
-			messagePanel.add(serverLabel);
+			messageContainerPanel.add(serverLabel);
+			messagePanel.add(messageContainerPanel);
 			rootPanel.add(messagePanel);	
 		}
 		

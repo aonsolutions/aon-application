@@ -969,8 +969,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 		if (AonMathUtils.isNotZero(mod303.getProratePercent()) &&  !AonMathUtils.equals(mod303.getProratePercent(), 100.0)) {
 			prorataLabel.setStyleName(AON.CSS.aonMarginLeft());
-			prorataLabel.setText(AON.MSG.prorrata() + ": " + mod303.getProratePercent() + "%");
+			prorataLabel.setText(AON.MSG.prorrata() + ": " + mod303.getProratePercent() + "%" + (mod303.isSpecialProrate()?" Especial":""));
 			prorataLabel.addStyleName(AON.CSS.aonBold());
+			
 		}
 		marksPanels.add(replacedLabel);
 		marksPanels.add(prorataLabel);
