@@ -58,10 +58,11 @@ public class TbaiData {
 			.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
 //			.and(f.getCodeProperty().eq("ok").or(f.getCodeProperty().eq("pending")))
 			);
-		DataResponseDetail drd = AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
+		
+		DataResponseDetail drd = dr.getId() != null ? AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
 			f.getDomainProperty().eq(domain.getId())
 			.and(f.getDataResponseProperty().eq(dr.getId()))
-			.and(f.getDataVariableProperty().eq("blockchain"))).orElse(new DataResponseDetail());
+			.and(f.getDataVariableProperty().eq("blockchain"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
 		
 		return TbaiBlockchain.fromJSON(drd.getDataValue());
 	}

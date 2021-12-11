@@ -986,7 +986,9 @@ public class InvoiceDAO {
 			.set(INVOICE.COMMENTS, invoice.getComments() )
 			.set(INVOICE.REMARKS, invoice.getRemarks() )
 			.set(INVOICE.CREATION_USER, ctx.getUser()) 
-			.set(INVOICE.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(INVOICE.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.set(INVOICE.MODIFICATION_USER, ctx.getUser()) 
+			.set(INVOICE.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.returning(INVOICE.ID)
 			.fetchOne();
 		invoice.setId(record.getValue(INVOICE.ID));

@@ -130,8 +130,8 @@ public class Invoice2tbai {
 		CabeceraFacturaType cabecera = new CabeceraFacturaType();
 		cabecera.setSerieFactura(invoice.getSeries());
 		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
-		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getCreationDate(), "dd-MM-yyyy"));
-		cabecera.setHoraExpedicionFactura(AonDateUtils.format(invoice.getCreationDate(), "HH:mm:ss"));
+		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getModificationDate(), "dd-MM-yyyy"));
+		cabecera.setHoraExpedicionFactura(AonDateUtils.format(invoice.getModificationDate(), "HH:mm:ss"));
 			
 		cabecera.setFacturaSimplificada(SiNoType.N);
 		cabecera.setFacturaEmitidaSustitucionSimplificada(SiNoType.N);

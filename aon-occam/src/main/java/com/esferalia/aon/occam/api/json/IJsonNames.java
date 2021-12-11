@@ -205,6 +205,7 @@ public interface IJsonNames {
 	String LEDGER_ACCOUNT = "ledgerAccount";
 	String LEDGER_DEBIT_BALANCE = "ledgerDebitBalance";
 	String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
+	String LEGAL = "legal";
 	String LEGAL_PERSON = "legalPerson";
 	String LEVEL = "level";
 	String LIMIT = "limit";

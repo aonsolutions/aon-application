@@ -452,6 +452,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 	
 	public static JSONObject acceptInvoice(AonApiData api) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
 		Invoice invoice = InvoiceJSON.fromJSON(api.getData());
+		invoice.setIssueDate(new Date());
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
 //		invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
 		acceptCommunication(api, invoice);

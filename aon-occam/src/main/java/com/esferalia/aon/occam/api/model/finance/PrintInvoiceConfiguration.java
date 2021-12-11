@@ -21,6 +21,7 @@ public class PrintInvoiceConfiguration {
 	private boolean contactData;
 	private int border;
 	private AonLanguage language;
+	private String legal;
 	
 	private PrintInvoiceThemeConfiguration theme;
 
@@ -162,6 +163,15 @@ public class PrintInvoiceConfiguration {
 	
 	public PrintInvoiceConfiguration setTheme(PrintInvoiceThemeConfiguration theme) {
 		this.theme = theme;
+		return this;
+	}
+	
+	public String getLegal() {
+		return legal;
+	}
+	
+	public PrintInvoiceConfiguration setLegal(String legal) {
+		this.legal = legal;
 		return this;
 	}
 }
