@@ -18,8 +18,12 @@ public class AonCustomPopup extends PopupPanel implements HasClickHandlers {
 	private DockLayoutPanel dockLayoutPanel;
 	private Label caption;
 	private Button closeButton;
-
+	
 	public AonCustomPopup() {
+		this(true);
+	}
+
+	public AonCustomPopup( boolean showCloseButton) {
 		setGlassEnabled(true);
 		setAnimationEnabled(false);
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);	
@@ -32,17 +36,21 @@ public class AonCustomPopup extends PopupPanel implements HasClickHandlers {
 		title.setStyleName(AON.CSS.aonCustomDialogTitle());
 		caption = new Label();
 		title.add(caption);
-		closeButton = new Button();
-		closeButton.setStyleName(AON.CSS.aonCustomDialogClose());
-		closeButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-				ClickEvent.fireNativeEvent(event.getNativeEvent(), AonCustomPopup.this);
-			}
-		});
 		header.add(title);
-		header.add(closeButton);
+		
+		if (showCloseButton) {
+			closeButton = new Button();
+			closeButton.setStyleName(AON.CSS.aonCustomDialogClose());
+			closeButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					hide();
+					ClickEvent.fireNativeEvent(event.getNativeEvent(), AonCustomPopup.this);
+				}
+			});
+			header.add(closeButton);
+		}
+		
 		dialogBar.add(header);
 		dockLayoutPanel.addNorth(dialogBar, 27);
 		

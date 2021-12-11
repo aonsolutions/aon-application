@@ -134,7 +134,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	
 	private void fillNorthPanel(final AccountingReportModuleOptions options) {
 		period = new AccountPeriodBox();
-		period.fill(options.getConfiguration().getPeriods(),true);
+		period.fill(options.getConfiguration().accounting().getPeriods(),true);
 		period.addChangeHandler(new ChangeHandler() {
 			
 			@Override

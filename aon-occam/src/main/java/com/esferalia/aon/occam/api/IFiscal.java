@@ -11,12 +11,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
-import com.esferalia.aon.occam.api.model.fiscal.Mod111;
-import com.esferalia.aon.occam.api.model.fiscal.Mod115;
-import com.esferalia.aon.occam.api.model.fiscal.Mod123;
-import com.esferalia.aon.occam.api.model.fiscal.Mod130;
-import com.esferalia.aon.occam.api.model.fiscal.Mod131;
-import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
@@ -24,8 +18,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
-import com.esferalia.aon.occam.api.model.fiscal.Mod202;
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
@@ -48,13 +40,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.Mod111Key;
-import com.esferalia.aon.occam.api.model.type.Mod115Key;
-import com.esferalia.aon.occam.api.model.type.Mod123Key;
-import com.esferalia.aon.occam.api.model.type.Mod130Key;
-import com.esferalia.aon.occam.api.model.type.Mod131Key;
-import com.esferalia.aon.occam.api.model.type.Mod202Key;
-import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 
 public interface IFiscal {
@@ -150,137 +135,6 @@ public interface IFiscal {
 	public void deleteMod3902018(AONContext ctx,Mod3902018 mod390);
 	public Mod3902018 changeStatusMod3902018(AONContext ctx, Mod3902018 mod184, FiscalStatus newStatus);
 
-	// 				   		  MOD303
-	public Mod303 getMod303(AONContext ctx, int id);
-	public LinkedList<Mod303> getMod303s(AONContext ctx, int domain);
-	public Mod303 calculateMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 saveMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 saveCommentsMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 initializeForFinishMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 markAsFinishedMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 markAsPendingMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 markAsSentMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 markAsCustomerCheckMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 initializeMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 createMod303(AONContext ctx, Mod303 mod303);
-	public Mod303 declarationChanged(AONContext ctx, Mod303 mod303);
-	public void deleteMod303(AONContext ctx, Mod303 mod303);
-	public String getMod303Info(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey);
-//	public void importMod303(AONContext ctx, int domain);
-
-	// 				   		  MOD390HF
-	public Mod390HF getMod390HF(AONContext ctx, int id);
-	public LinkedList<Mod390HF> getMod390HFs(AONContext ctx, int domain);
-	public Mod390HF calculateMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF saveMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF saveCommentsMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF initializeForFinishMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF markAsFinishedMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF markAsPendingMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF markAsSentMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF initializeMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF createMod390HF(AONContext ctx, Mod390HF mod303);
-	public Mod390HF declarationChanged(AONContext ctx, Mod390HF mod303);
-	public void deleteMod390HF(AONContext ctx, Mod390HF mod303);
-	public String getMod390HFInfo(AONContext ctx, Mod390HF mod303, IModelScript<Mod390Key> script, FiscalModelKeyInfo infoKey);
-
-	// 				   		  MOD111
-	public Mod111 getMod111(AONContext ctx, int id);
-	public LinkedList<Mod111> getMod111s(AONContext ctx, int domain);
-	public Mod111 calculate(AONContext ctx, Mod111 mod111);
-	public Mod111 save(AONContext ctx, Mod111 mod111);
-	public Mod111 saveComments(AONContext ctx, Mod111 mod111);
-	public Mod111 initializeForFinish(AONContext ctx, Mod111 mod111);
-	public Mod111 markAsFinished(AONContext ctx, Mod111 mod111);
-	public Mod111 markAsPending(AONContext ctx, Mod111 mod111);
-	public Mod111 markAsSent(AONContext ctx, Mod111 mod111);
-	public Mod111 markAsCustomerCheck(AONContext ctx, Mod111 mod111);
-	public Mod111 initialize(AONContext ctx, Mod111 mod111);
-	public Mod111 create(AONContext ctx, Mod111 mod111);
-	public void delete(AONContext ctx, Mod111 mod111);
-	public String getInfo(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey);
-	
-	// 				   		  MOD115
-	public Mod115 getMod115(AONContext ctx, int id);
-	public LinkedList<Mod115> getMod115s(AONContext ctx, int domain);
-	public Mod115 calculate(AONContext ctx, Mod115 mod115);
-	public Mod115 save(AONContext ctx, Mod115 mod115);
-	public Mod115 saveComments(AONContext ctx, Mod115 mod115);
-	public Mod115 initializeForFinish(AONContext ctx, Mod115 mod115);
-	public Mod115 markAsFinished(AONContext ctx, Mod115 mod115);
-	public Mod115 markAsPending(AONContext ctx, Mod115 mod115);
-	public Mod115 markAsSent(AONContext ctx, Mod115 mod115);
-	public Mod115 markAsCustomerCheck(AONContext ctx, Mod115 mod115);
-	public Mod115 initialize(AONContext ctx, Mod115 mod115);
-	public Mod115 create(AONContext ctx, Mod115 mod115);
-	public void delete(AONContext ctx, Mod115 mod115);
-	public String getInfo(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey);
-
-	// 				   		  MOD123
-	public Mod123 getMod123(AONContext ctx, int id);
-	public LinkedList<Mod123> getMod123s(AONContext ctx, int domain);
-	public Mod123 calculate(AONContext ctx, Mod123 mod123);
-	public Mod123 save(AONContext ctx, Mod123 mod123);
-	public Mod123 saveComments(AONContext ctx, Mod123 mod123);
-	public Mod123 initializeForFinish(AONContext ctx, Mod123 mod123);
-	public Mod123 markAsFinished(AONContext ctx, Mod123 mod123);
-	public Mod123 markAsSent(AONContext ctx, Mod123 mod123);
-	public Mod123 markAsPending(AONContext ctx, Mod123 mod123);
-	public Mod123 markAsCustomerCheck(AONContext ctx, Mod123 mod123);
-	public Mod123 initialize(AONContext ctx, Mod123 mod123);
-	public Mod123 create(AONContext ctx, Mod123 mod123);
-	public void delete(AONContext ctx, Mod123 mod123);
-	public String getInfo(AONContext ctx, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey);
-
-	// 				   		  MOD130
-	public Mod130 getMod130(AONContext ctx, int id);
-	public LinkedList<Mod130> getMod130s(AONContext ctx, int domain);
-	public Mod130 calculate(AONContext ctx, Mod130 mod130);
-	public Mod130 save(AONContext ctx, Mod130 mod130);
-	public Mod130 saveComments(AONContext ctx, Mod130 mod130);
-	public Mod130 initializeForFinish(AONContext ctx, Mod130 mod130);
-	public Mod130 markAsFinished(AONContext ctx, Mod130 mod130);
-	public Mod130 markAsSent(AONContext ctx, Mod130 mod130);
-	public Mod130 markAsPending(AONContext ctx, Mod130 mod130);
-	public Mod130 markAsCustomerCheck(AONContext ctx, Mod130 mod130);
-	public Mod130 initialize(AONContext ctx, Mod130 mod130);
-	public Mod130 create(AONContext ctx, Mod130 mod130);
-	public void delete(AONContext ctx, Mod130 mod130);
-	public String getInfo(AONContext ctx, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey);
-	
-	// 				   		  MOD131
-	public Mod131 getMod131(AONContext ctx, int id);
-	public LinkedList<Mod131> getMod131s(AONContext ctx, int domain);
-	public Mod131 calculate(AONContext ctx, Mod131 mod131);
-	public Mod131Activity calculateActivity(AONContext ctx, Mod131 mod131, Mod131Activity activity);
-	public Mod131 save(AONContext ctx, Mod131 mod131);
-	public Mod131 saveComments(AONContext ctx, Mod131 mod131);
-	public Mod131 initializeForFinish(AONContext ctx, Mod131 mod131);
-	public Mod131 markAsFinished(AONContext ctx, Mod131 mod131);
-	public Mod131 markAsSent(AONContext ctx, Mod131 mod131);
-	public Mod131 markAsPending(AONContext ctx, Mod131 mod131);
-	public Mod131 markAsCustomerCheck(AONContext ctx, Mod131 mod131);
-	public Mod131 initialize(AONContext ctx, Mod131 mod131);
-	public Mod131 create(AONContext ctx, Mod131 mod131);
-	public void delete(AONContext ctx, Mod131 mod131);
-	public String getInfo(AONContext ctx, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey);
-
-	// 				   		  MOD202
-	public Mod202 getMod202(AONContext ctx, int id);
-	public LinkedList<Mod202> getMod202s(AONContext ctx, int domain);
-	public Mod202 calculate(AONContext ctx, Mod202 mod202);
-	public Mod202 save(AONContext ctx, Mod202 mod202);
-	public Mod202 initialize(AONContext ctx, Mod202 mod202);
-	public void delete(AONContext ctx, Mod202 mod202);
-	public Mod202 saveComments(AONContext ctx, Mod202 mod202);
-	public Mod202 initializeForFinish(AONContext ctx, Mod202 mod202);
-	public Mod202 markAsFinished(AONContext ctx, Mod202 mod202);
-	public Mod202 markAsSent(AONContext ctx, Mod202 mod202);
-	public Mod202 markAsPending(AONContext ctx, Mod202 mod202);
-	public Mod202 markAsCustomerCheck(AONContext ctx, Mod202 mod202);
-	public Mod202 create(AONContext ctx, Mod202 mod202);
-	public String getInfo(AONContext ctx, Mod202 mod202, IModelScript<Mod202Key> script, FiscalModelKeyInfo infoKey);
-	
 	//		  					MOD200 
 	public Mod200 getMod200(AONContext ctx, int domainId, Integer id);
 	public LinkedList<Mod200> getMod200s(AONContext ctx, int domainId);

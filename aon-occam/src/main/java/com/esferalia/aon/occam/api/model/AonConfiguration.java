@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.config.AccountingConfig;
+import com.esferalia.aon.occam.api.model.config.FiscalConfig;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PayMethodTypeDetail;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -17,8 +19,15 @@ public class AonConfiguration implements Serializable {
 	private static final long serialVersionUID = 7723888010939038114L;
 	
 	private Company company;
+	private Domain domain;
+	private Integer userOperator;
+	private String md5;
+	private boolean aonSolutions;
+	private AccountingConfig accounting = new AccountingConfig();
+	private FiscalConfig fiscal = new FiscalConfig();
+	
+	// 	------------------- Revisar	
 	private User user;
-	private LinkedList<AccountPeriod> periods;
 	private LinkedList<String> invoiceSalesSeries;
 	private LinkedList<String> invoiceRectificationSeries;
 	private LinkedList<EnterpriseActivity> enterpriseActivities;
@@ -29,42 +38,19 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<Scope> availableScopes;
 	private LinkedList<PayMethod> payMethods;
 	private LinkedList<PayMethodTypeDetail> payMethodTypeDetails;
-	private LinkedList<String> autoConcepts;
-	private LinkedList<String> costCenters;
-	private Tax defaultVatPercent;
 	private LinkedList<Tax> withholdingTaxes;
+	
+	private boolean ocrActive;
+	private boolean betaEnabled;
+	private boolean alphaEnabled;
+
+	private Tax defaultVatPercent;
 	private Tax defaultWithholdingPercent;
 	private String defaultInvoiceSeries;
-	private Account defaultSalesAccount;
-	private Account defaultPurchaseAccount;
-	private Account defaultChargedVatAccount;
-	private Account defaultPaidVatAccount;
-	private Account defaultChargedRetAccount;
-	private Account defaultPaidRetAccount;
-	private Account defaultCashAccount;
-	private Account vatNegativeAdjustAccount;
-	private Account defaultDUAVatAccount;
-	private Account defaultDUADutyAccount;
-	private Account defaultSalary;
-	private Account defaultSalaryInKind;
-	private Account defaultAllowance;
-	private Account defaultCompensation;
-	private Account defaultCompanySocIns;
-	private Account salaryChargedRet;
-	private Account salaryChargedRetInKind;
-	private Account defaultSocialInsurance;
-	private Account defaultPendingSalary;
-	private Account salaryOtherDeductions;
-	private Account salaryDedAdvPayment;
-	private Account salaryDedSeize;
-	private Account defaultPrepayment;
-	private boolean ocrActive;
-	
-	private AccountingRegistry defaultCreditor;
-	
 	private Date	operationsDeadline;
-
+	private AccountingRegistry defaultCreditor;
 	private LinkedList<Domain> childDomains;
+	// 	------------------- Revisar
 	
 	public Company getCompany() {
 		return company;
@@ -72,6 +58,14 @@ public class AonConfiguration implements Serializable {
 	
 	public AonConfiguration setCompany(Company company) {
 		this.company = company;
+		return this;
+	}
+	
+	public Domain getDomain() {
+		return domain;
+	}
+	public AonConfiguration setDomain(Domain domain) {
+		this.domain = domain;
 		return this;
 	}
 	
@@ -83,20 +77,30 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 	
-	public LinkedList<AccountPeriod> getPeriods() {
-		return periods;
+	public Integer getUserOperator() {
+		return userOperator;
 	}
-	public AonConfiguration setPeriods(LinkedList<AccountPeriod> periods) {
-		this.periods = periods;
+	public AonConfiguration setUserOperator(Integer userOperator) {
+		this.userOperator = userOperator;
 		return this;
 	}
-	public AccountPeriod getDefaultAccountPeriod() {
-		for (AccountPeriod period : periods) {
-			if (period.isDefaultPeriod()) return period; 
-		}
-		return null;
+	
+	public String getMd5() {
+		return md5;
 	}
-
+	public AonConfiguration setMd5(String md5) {
+		this.md5 = md5;
+		return this;
+	}
+	
+	public boolean isAonSolutions() {
+		return aonSolutions;
+	}
+	public AonConfiguration setAonSolutions(boolean aonSolutions) {
+		this.aonSolutions = aonSolutions;
+		return this;
+	}
+	
 	public LinkedList<String> getInvoiceSalesSeries() {
 		return invoiceSalesSeries;
 	}
@@ -138,9 +142,6 @@ public class AonConfiguration implements Serializable {
 	public boolean hasActivities() {
 		return this.enterpriseActivities != null && this.enterpriseActivities.size() > 0;
 	}
-	public boolean hasCostCenters() {
-		return this.costCenters != null && this.costCenters.size() > 0;
-	}
 	
 	public EnterpriseActivity getMainActivity() {
 		if (hasActivities()) {
@@ -166,6 +167,9 @@ public class AonConfiguration implements Serializable {
 	public AonConfiguration setInvestAsset(LinkedList<InvestAsset> investAsset) {
 		this.investAsset = investAsset;
 		return this;
+	}
+	public boolean isInvestAssetsAvailable() {
+		return (getInvestAssets() != null && getInvestAssets().size() > 0);
 	}
 
 	public LinkedList<Workplace> getWorkplaces() {
@@ -206,20 +210,6 @@ public class AonConfiguration implements Serializable {
 	}
 	public AonConfiguration setPayMethodTypeDetails(LinkedList<PayMethodTypeDetail> payMethodTypeDetails) {
 		this.payMethodTypeDetails = payMethodTypeDetails;
-		return this;
-	}
-	public LinkedList<String> getAutoConcepts() {
-		return autoConcepts;
-	}
-	public AonConfiguration setAutoConcepts(LinkedList<String> autoConcepts) {
-		this.autoConcepts = autoConcepts;
-		return this;
-	}
-	public LinkedList<String> getCostCenters() {
-		return costCenters;
-	}
-	public AonConfiguration setCostCenters(LinkedList<String> costCenters) {
-		this.costCenters = costCenters;
 		return this;
 	}
 	public LinkedList<Scope> getAvailableScopes() {
@@ -264,97 +254,6 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 
-	public Account getDefaultSalesAccount() {
-		return defaultSalesAccount;
-	}
-
-	public AonConfiguration setDefaultSalesAccount(Account defaultSalesAccount) {
-		this.defaultSalesAccount = defaultSalesAccount;
-		return this;
-	}
-
-	public Account getDefaultPurchaseAccount() {
-		return defaultPurchaseAccount;
-	}
-
-	public AonConfiguration setDefaultPurchaseAccount(Account defaultPurchaseAccount) {
-		this.defaultPurchaseAccount = defaultPurchaseAccount;
-		return this;
-	}
-
-	public Account getDefaultChargedVatAccount() {
-		return defaultChargedVatAccount;
-	}
-
-	public AonConfiguration setDefaultChargedVatAccount(Account defaultChargedVatAccount) {
-		this.defaultChargedVatAccount = defaultChargedVatAccount;
-		return this;
-	}
-
-	public Account getDefaultPaidVatAccount() {
-		return defaultPaidVatAccount;
-	}
-
-	public AonConfiguration setDefaultPaidVatAccount(Account defaultPaidVatAccount) {
-		this.defaultPaidVatAccount = defaultPaidVatAccount;
-		return this;
-	}
-
-	public Account getDefaultChargedRetAccount() {
-		return defaultChargedRetAccount;
-	}
-
-	public AonConfiguration setDefaultChargedRetAccount(Account defaultChargedRetAccount) {
-		this.defaultChargedRetAccount = defaultChargedRetAccount;
-		return this;
-	}
-
-	public Account getDefaultPaidRetAccount() {
-		return defaultPaidRetAccount;
-	}
-
-	public AonConfiguration setDefaultPaidRetAccount(Account defaultPaidRetAccount) {
-		this.defaultPaidRetAccount = defaultPaidRetAccount;
-		return this;
-	}
-
-	public Account getDefaultCashAccount() {
-		return  this.defaultCashAccount;
-	}
-
-	public AonConfiguration setDefaultCashAccount(Account defaultCashAccount) {
-		this.defaultCashAccount = defaultCashAccount;
-		return this;
-	}
-
-	public boolean isInvestAssetsAvailable() {
-		return (getInvestAssets() != null && getInvestAssets().size() > 0);
-	}
-	
-	public Account getVatNegativeAdjustAccount() {
-		return vatNegativeAdjustAccount;
-	}
-	public AonConfiguration setVatNegativeAdjustAccount(Account vatNegativeAdjustAccount) {
-		this.vatNegativeAdjustAccount = vatNegativeAdjustAccount;
-		return this;
-	}
-	
-	public Account getDefaultDUAVatAccount() {
-		return defaultDUAVatAccount;
-	}
-	public AonConfiguration setDefaultDUAVatAccount(Account defaultDUAVatAccount) {
-		this.defaultDUAVatAccount = defaultDUAVatAccount;
-		return this;
-	}
-	
-	public Account getDefaultDUADutyAccount() {
-		return defaultDUADutyAccount;
-	}
-	public AonConfiguration setDefaultDUADutyAccount(Account defaultDUADutyAccount) {
-		this.defaultDUADutyAccount = defaultDUADutyAccount;
-		return this;
-	}
-	
 	public Date getOperationsDeadline() {
 		return operationsDeadline;
 	}
@@ -371,114 +270,6 @@ public class AonConfiguration implements Serializable {
 		this.childDomains = childDomains;
 		return this;
 	}
-	
-	public Account getDefaultSalary() {
-		return defaultSalary;
-	}
-
-	public AonConfiguration setDefaultSalary(Account defaultSalary) {
-		this.defaultSalary = defaultSalary;
-		return this;
-	}
-	
-	public Account getDefaultPrepayment() {
-		return defaultPrepayment;
-	}
-	
-	public AonConfiguration setDefaultPrepayment(Account defaultPrepayment) {
-		this.defaultPrepayment = defaultPrepayment;
-		return this;
-	}
-
-	public Account getDefaultSalaryInKind() {
-		return defaultSalaryInKind;
-	}
-
-	public AonConfiguration setDefaultSalaryInKind(Account defaultSalaryInKind) {
-		this.defaultSalaryInKind = defaultSalaryInKind;
-		return this;
-	}
-
-	public Account getDefaultAllowance() {
-		return defaultAllowance;
-	}
-
-	public AonConfiguration setDefaultAllowance(Account defaultAllowance) {
-		this.defaultAllowance = defaultAllowance;
-		return this;
-	}
-
-	public Account getDefaultCompensation() {
-		return defaultCompensation;
-	}
-
-	public AonConfiguration setDefaultCompensation(Account defaultCompensation) {
-		this.defaultCompensation = defaultCompensation;
-		return this;
-	}
-
-	public Account getDefaultCompanySocIns() {
-		return defaultCompanySocIns;
-	}
-
-	public AonConfiguration setDefaultCompanySocIns(Account defaultCompanySocIns) {
-		this.defaultCompanySocIns = defaultCompanySocIns;
-		return this;
-	}
-
-	public Account getSalaryChargedRet() {
-		return salaryChargedRet;
-	}
-
-	public AonConfiguration setSalaryChargedRet(Account salaryChargedRet) {
-		this.salaryChargedRet = salaryChargedRet;
-		return this;
-	}
-
-	public Account getSalaryChargedRetInKind() {
-		return salaryChargedRetInKind;
-	}
-
-	public AonConfiguration setSalaryChargedRetInKind(Account salaryChargedRetInKind) {
-		this.salaryChargedRetInKind = salaryChargedRetInKind;
-		return this;
-	}
-
-	public Account getDefaultSocialInsurance() {
-		return defaultSocialInsurance;
-	}
-
-	public AonConfiguration setDefaultSocialInsurance(Account defaultSocialInsurance) {
-		this.defaultSocialInsurance = defaultSocialInsurance;
-		return this;
-	}
-
-	public Account getDefaultPendingSalary() {
-		return defaultPendingSalary;
-	}
-
-	public AonConfiguration setDefaultPendingSalary(Account defaultPendingSalary) {
-		this.defaultPendingSalary = defaultPendingSalary;
-		return this;
-	}
-
-	public Account getSalaryDedAdvPayment() {
-		return salaryDedAdvPayment;
-	}
-
-	public AonConfiguration setSalaryDedAdvPayment(Account salaryDedAdvPayment) {
-		this.salaryDedAdvPayment = salaryDedAdvPayment;
-		return this;
-	}
-	
-	public Account getSalaryOtherDeductions() {
-		return salaryOtherDeductions;
-	}
-
-	public AonConfiguration setSalaryOtherDeductions(Account salaryOtherDeductions) {
-		this.salaryOtherDeductions = salaryOtherDeductions;
-		return this;
-	}
 
 	public AccountingRegistry getDefaultCreditor() {
 		return defaultCreditor;
@@ -488,21 +279,34 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 	
-	public Account getSalaryDedSeize() {
-		return salaryDedSeize;
+	public boolean isBetaEnabled() {
+		return betaEnabled;
 	}
-
-	public AonConfiguration setSalaryDedSeize(Account salaryDedSeize) {
-		this.salaryDedSeize = salaryDedSeize;
+	public AonConfiguration setBetaEnabled(boolean betaEnabled) {
+		this.betaEnabled = betaEnabled;
 		return this;
 	}
-
+	
+	public boolean isAlphaEnabled() {
+		return alphaEnabled;
+	}
+	public AonConfiguration setAlphaEnabled(boolean alphaEnabled) {
+		this.alphaEnabled = alphaEnabled;
+		return this;
+	}
 	public boolean isOCRActive() {
 		return ocrActive;
 	}
 	public AonConfiguration setOCRActive(boolean ocrActive) {
 		this.ocrActive = ocrActive;
 		return this;
+	}
+	
+	public FiscalConfig fiscal() {
+		return fiscal;
+	}
+	public AccountingConfig accounting() {
+		return accounting;
 	}
 	
 }

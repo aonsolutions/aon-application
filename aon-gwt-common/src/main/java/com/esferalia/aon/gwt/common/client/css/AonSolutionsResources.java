@@ -532,18 +532,34 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconAraba();
 	
+	@Source("icons/aon-icon-araba-bw.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconArabaBw();
+
 	@Source("icons/aon-icon-bizkaia.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconBizkaia();
+
+	@Source("icons/aon-icon-bizkaia-bw.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconBizkaiaBw();
 
 	@Source("icons/aon-icon-gipuzkoa.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconGipuzkoa();
 
+	@Source("icons/aon-icon-gipuzkoa-bw.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconGipuzkoaBw();
+
 	@Source("icons/aon-icon-navarra.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconNavarra();
-	
+
+	@Source("icons/aon-icon-navarra-bw.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconNavarraBw();
+
 	@Source("icons/aon-icon-model-finish.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconModelFinish();
@@ -603,5 +619,21 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-link.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconLink();
+	
+	@Source("icons/aon-icon-notification.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconNotification();
+	
+	@Source("icons/aon-icon-dirty.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconDirty();
+
+	@Source("icons/aon-icon-diff.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconDiff();
+
+	@Source("icons/aon-icon-bullet.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconBullet();
 }
 

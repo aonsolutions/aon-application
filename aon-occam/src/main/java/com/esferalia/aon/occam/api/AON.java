@@ -123,10 +123,10 @@ import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.OldTask;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
@@ -152,6 +152,8 @@ import com.esferalia.aon.occam.api.model.commission.CommissionType;
 import com.esferalia.aon.occam.api.model.commission.CommissionTypeCommission;
 import com.esferalia.aon.occam.api.model.commission.InvoiceDetailCommission;
 import com.esferalia.aon.occam.api.model.commission.OfferDetailCommission;
+import com.esferalia.aon.occam.api.model.config.ConfigBlock;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -380,18 +382,29 @@ public class AON {
 	// ********************************************
 	// *************************** CONFIGURATION **
 	// ********************************************
+	public static AonConfiguration getConfiguration(Occam occam,Date atDate) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getConfiguration(ctx, atDate);
+		}
+	}
+	public static AonConfiguration getConfiguration(Occam occam, ConfigParams params) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getCommon().getConfiguration(ctx, params);
+		}
+	}
+
+	public static AonConfiguration getFiscalConfiguration(Occam occam) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getCommon().getConfiguration(ctx, new Date(), ConfigBlock.FISCAL);
+		}
+	}
 	public static AonConfiguration getConfiguration(String domainName, int domainId, String login) {
 		return getConfiguration(domainName, domainId, login, null);
 	}
 	
 	public static AonConfiguration getConfiguration(String domainName, int domainId, String login,Date atDate) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getConfiguration(ctx, atDate);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 	
@@ -402,6 +415,13 @@ public class AON {
 	public static AonConfiguration getConfiguration(AONContext ctx,Date atDate) {
 		return getCommon().getConfiguration(ctx, atDate);
 	}
+	
+	public static ApplicationParameter saveApplicationParameter(Occam occam, ApplicationParameter ap) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return getCommon().saveApplicationParameter(ctx, ap);
+		}
+	}
+	
 	// ********************************************
 	// ******************************** SECURITY **
 	// ********************************************
@@ -868,18 +888,6 @@ public class AON {
 				.and(f.getNameProperty().eq(id))
 				.perPage(1))
 			.findFirst().orElse(new ApplicationParameter()); // TODO Devolver Optional
-	}
-
-	public static FiscalParameters getFiscalParameters(String domainName,
-			int domainId, String login) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getFiscalParameters(ctx);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
 	}
 
 	public static ApplicationParameter fetchApplicationParameter(AONContext ctx,
@@ -5118,17 +5126,10 @@ public class AON {
 		} 
 	}
 	
-	public static Stream<Creditor> getBasicCreditors(String domainName,
-			int domainId, String login, CreditorFilter filter) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static Stream<Creditor> getBasicCreditors(Occam occam, CreditorFilter filter) {
+		try ( AONContext ctx = AONContext.getAONContext(occam)) {
 			return getRegistry().getBasicCreditors(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
-
 	}
 
 	// ********************************************

@@ -3,15 +3,16 @@ package com.esferalia.aon.gwt.fiscal.client.mod347;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Asset;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
@@ -60,8 +61,15 @@ public class Model347 extends MainEntryPoint {
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int BREAKDOWN_TAB = 1;
 	
-	static Model347ServiceAsync SERVICE;
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
+	static final Model347ServiceAsync SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
+		
+		Model347ServiceAsync serviceRaw = GWT.create(Model347Service.class);
+		SERVICE = new Model347ServiceAsyncDecorator(serviceRaw);
+	}
 	
 	interface Model347Binder extends UiBinder<Widget, Model347> {}
 	private static final Model347Binder MODEL_347_BINDER = GWT.create(Model347Binder.class);
@@ -124,7 +132,7 @@ public class Model347 extends MainEntryPoint {
 		public void cleanBreakdownPanel() {
 			Model347.this.cleanBreakdownPanel();
 		}
-	};
+	}
 
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
@@ -151,17 +159,17 @@ public class Model347 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
 			
 			@Override
-			public void onSuccess(AonData aonData) {
+			public void onSuccess(AonConfiguration config) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 				Model347ModuleOptions options = new Model347ModuleOptions();
 				options.setParentWidget(root);
 				options.setDomainName(getCurrentDomainName());
 				options.setDomain(getCurrentDomain());
 				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
+				options.setConfiguration(config);
 				onModuleLoad( options );
 			}
 			
@@ -173,9 +181,6 @@ public class Model347 extends MainEntryPoint {
 	
 	public void onModuleLoad(Model347ModuleOptions options) {
 		AON.ensureInjected();
-
-		Model347ServiceAsync serviceRaw = GWT.create(Model347Service.class);
-		SERVICE = new Model347ServiceAsyncDecorator(serviceRaw);
 
 		Widget ui = MODEL_347_BINDER.createAndBindUi(this);
 

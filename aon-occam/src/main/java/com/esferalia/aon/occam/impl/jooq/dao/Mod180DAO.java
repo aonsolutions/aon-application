@@ -23,7 +23,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel180Record;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -395,19 +395,19 @@ public class Mod180DAO {
 
 	public static Mod180 initialize(AONContext ctx, int year) {
 		Mod180 mod180 = new Mod180();
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-		mod180.setEnterprise(params.getCompany());
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+		mod180.setEnterprise(conf.getCompany().getId());
 		mod180.setDomain(ctx.getDomainId());
-		mod180.setDocument(params.getDocument());
-		mod180.setName(AonStringUtils.left(params.getName(), FS_MODEL180.NAME
+		mod180.setDocument(conf.getCompany().getDocument());
+		mod180.setName(AonStringUtils.left(conf.getCompany().getName(), FS_MODEL180.NAME
 				.getDataType().length()));
 		mod180.setYear(year);
-		mod180.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY));
-		mod180.setContactPerson(AonStringUtils.left(params.getContactPerson(),
+		mod180.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
+		mod180.setContactPerson(AonStringUtils.left(conf.fiscal().getContactPerson(),
 				FS_MODEL180.CONTACT_PERSON.getDataType().length()));
-		mod180.setContactPhone(AonStringUtils.left(params.getContactPhone(),
+		mod180.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(),
 				FS_MODEL180.CONTACT_PHONE.getDataType().length()));
-		mod180.setContactMail(AonStringUtils.left(params.getContactMail(),
+		mod180.setContactMail(AonStringUtils.left(conf.fiscal().getContactMail(),
 				FS_MODEL180.CONTACT_MAIL.getDataType().length()));
 		mod180.setReceipt("1800000000001");
 		mod180.setStatus(FiscalStatus.PENDING);

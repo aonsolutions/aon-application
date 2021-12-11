@@ -409,8 +409,8 @@ public class InvoiceDUAPanel extends AonDisplayTable implements HasSelectionHand
 			duaInvoice.setInfo(new AccountingDUAInfo()
 					.setPrice(duaInvoice.getAccountingInvoice().getTotalInvoice())
 					.setStatisticalValue(duaInvoice.getAccountingInvoice().getTotalInvoice())
-					.setVatAccount(callback.getConfiguration().getDefaultDUAVatAccount() )
-					.setDutyAccount(callback.getConfiguration().getDefaultDUADutyAccount() )
+					.setVatAccount(callback.getConfiguration().accounting().getDefaultDUAVatAccount() )
+					.setDutyAccount(callback.getConfiguration().accounting().getDefaultDUADutyAccount() )
 					.setDutyBase(duaInvoice.getAccountingInvoice().getTotalInvoice())
 					.setAuthCalcEnabled(true)
 			);

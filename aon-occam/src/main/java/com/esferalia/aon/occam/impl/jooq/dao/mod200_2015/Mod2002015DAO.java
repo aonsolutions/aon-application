@@ -24,7 +24,7 @@ import com.esferalia.aon.jooq.tables.records.FsModel200RegistryRecord;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
@@ -45,7 +45,7 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2014.Mod2002014DAO;
@@ -508,14 +508,13 @@ public class Mod2002015DAO  {
 			mod200.setBalanceType( BalanceType.ABREVIADO );
 			mod200.setPygType(BalanceType.ABREVIADO );
 			
-			FiscalParameters fiscalParameters = AppParamDAO.getFiscalParameters(ctx);
-			
-			mod200.setEnterprise(fiscalParameters.getCompany());
-			mod200.setEnterpriseDocument(fiscalParameters.getDocument());
-			mod200.setEnterpriseName(fiscalParameters.getName());
-			mod200.setEnterprisePhone1(fiscalParameters.getContactPhone());
-			mod200.setEnterprisePhone2(fiscalParameters.getContactCellular());
-			Administration adm = fiscalParameters.getAdministration(Administration.COMMON_TERRITORY);
+			AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+			mod200.setEnterprise(conf.getCompany().getId());
+			mod200.setEnterpriseDocument(conf.getCompany().getDocument());
+			mod200.setEnterpriseName(conf.getCompany().getName());
+			mod200.setEnterprisePhone1(conf.fiscal().getContactPhone());
+			mod200.setEnterprisePhone2(conf.fiscal().getContactCellular());
+			Administration adm = conf.fiscal().getAdministration(Administration.COMMON_TERRITORY);
 			mod200.setAdministration(adm);
 			mod200.setInitializedFromLastYear(false);
 		}

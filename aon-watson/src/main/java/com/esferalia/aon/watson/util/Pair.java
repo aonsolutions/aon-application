@@ -21,8 +21,17 @@ public class Pair<L, R> implements Serializable {
     public L getLeft() {
     	return l;
     }
+    public Pair<L, R> setLeft( L l) {
+    	this.l = l;
+    	return this;
+    }
+    
     public R getRight() {
     	return r;
+    }
+    public Pair<L, R> setRight( R r) {
+    	this.r = r;
+    	return this;
     }
 
     public final L getKey() {

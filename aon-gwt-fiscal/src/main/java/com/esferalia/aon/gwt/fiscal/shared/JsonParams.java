@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -76,6 +77,22 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.RECTIFICATION	,params.getRectificationType()	== null? JSON_NULL : new JSONNumber( params.getRectificationType().ordinal()));
 		json.put(IRequestParamsNames.ORDER_BY		,params.getOrderBy()			== null? JSON_NULL : new JSONNumber( params.getOrderBy()));
 		json.put(IRequestParamsNames.GROUP_BY_NIF	,params.getGroupByNif()			== null? JSON_NULL : new JSONNumber( params.getGroupByNif()));
+		return json.toString();
+	}
+	
+	public static String convert(AEATParams params) {
+		JSONObject json = new JSONObject();
+		JSONNull JSON_NULL = JSONNull.getInstance();
+		json.put(IRequestParamsNames.DOMAIN_NAME	,new JSONString( params.getDomainName()));
+		json.put(IRequestParamsNames.DOMAIN_ID 		,new JSONNumber( params.getDomainId()));
+		json.put(IRequestParamsNames.USER   		,new JSONString( params.getUser()));
+		json.put(IRequestParamsNames.MOD   		 	,params.getMod() == null? JSON_NULL : new JSONNumber( params.getMod()));
+		json.put(IRequestParamsNames.CERTIFICATE_ID	,params.getCertificateId() == null? JSON_NULL : new JSONNumber( params.getCertificateId()));	
+		json.put(IRequestParamsNames.PASS 	 	 	,AonStringUtils.isBlank(params.getPass())? JSON_NULL : new JSONString( params.getPass()));
+		json.put(IRequestParamsNames.NAME 	 	 	,AonStringUtils.isBlank(params.getName())? JSON_NULL : new JSONString( params.getName()));
+		json.put(IRequestParamsNames.DOCUMENT 	 	,AonStringUtils.isBlank(params.getDocument())? JSON_NULL : new JSONString( params.getDocument()));
+		json.put(IRequestParamsNames.NRC 	 		,AonStringUtils.isBlank(params.getNrc())? JSON_NULL : new JSONString( params.getNrc()));
+		json.put(IRequestParamsNames.TEST			,new JSONNumber( params.isTest()?1:0));
 		return json.toString();
 	}
 	

@@ -3,15 +3,16 @@ package com.esferalia.aon.gwt.fiscal.client.mod180;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.google.gwt.core.client.GWT;
@@ -53,8 +54,15 @@ public class Model180 extends MainEntryPoint {
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int BREAKDOWN_TAB = 1;
 	
-	static Model180ServiceAsync SERVICE;
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
+	static final Model180ServiceAsync SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
+		
+		Model180ServiceAsync serviceRaw = GWT.create(Model180Service.class);
+		SERVICE = new Model180ServiceAsyncDecorator(serviceRaw);
+	}
 	
 	interface Model180Binder extends UiBinder<Widget, Model180> {}
 	private static final Model180Binder MODEL_180_BINDER = GWT.create(Model180Binder.class);
@@ -130,17 +138,17 @@ public class Model180 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
 			
 			@Override
-			public void onSuccess(AonData aonData) {
+			public void onSuccess(AonConfiguration aonConfiguration) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 				Model180ModuleOptions options = new Model180ModuleOptions();
 				options.setParentWidget(root);
 				options.setDomainName(getCurrentDomainName());
 				options.setDomain(getCurrentDomain());
 				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
+				options.setConfiguration(aonConfiguration);
 				onModuleLoad( options );
 			}
 			
@@ -152,9 +160,6 @@ public class Model180 extends MainEntryPoint {
 	
 	public void onModuleLoad(Model180ModuleOptions options) {
 		AON.ensureInjected();
-
-		Model180ServiceAsync serviceRaw = GWT.create(Model180Service.class);
-		SERVICE = new Model180ServiceAsyncDecorator(serviceRaw);
 
 		Widget ui = MODEL_180_BINDER.createAndBindUi(this);
 

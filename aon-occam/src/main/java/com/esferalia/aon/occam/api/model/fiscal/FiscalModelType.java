@@ -66,6 +66,7 @@ public enum FiscalModelType implements Serializable{
 	}
 
 	public void visit(IFiscalModelTypeVisitor visitor) {
+		// Redefine
 	}
 
 	public boolean isMonthly(Administration admon) {

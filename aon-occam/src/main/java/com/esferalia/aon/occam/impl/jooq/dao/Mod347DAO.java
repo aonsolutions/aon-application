@@ -29,7 +29,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsMod347Record;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
@@ -176,18 +176,17 @@ public class Mod347DAO {
 			year = year - 1;			
 		}
 		
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);		
-		
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		
 		Mod347 mod347 = new Mod347();
 		mod347.setDomain(ctx.getDomainId());
 		mod347.setYear(year);		
-		mod347.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY));
+		mod347.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
 		mod347.setNumber("3470000000001");
-		mod347.setDocument(params.getDocument());
-		mod347.setName(AonStringUtils.left(params.getName(), FS_MOD347.NAME.getDataType().length()));
-		mod347.setContactPhone(AonStringUtils.left(params.getContactPhone(), FS_MOD347.CONTACT_PHONE.getDataType().length()));
-		mod347.setContactPerson(AonStringUtils.left(params.getContactPerson(), FS_MOD347.CONTACT_PERSON.getDataType().length()));
-		mod347.setContactMail(AonStringUtils.left(params.getContactMail(), FS_MOD347.CONTACT_MAIL.getDataType().length()));
+		mod347.setDocument(conf.getCompany().getDocument());
+		mod347.setName(AonStringUtils.left(conf.getCompany().getName(), FS_MOD347.NAME.getDataType().length()));
+		mod347.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(), FS_MOD347.CONTACT_PHONE.getDataType().length()));
+		mod347.setContactPerson(AonStringUtils.left(conf.fiscal().getContactPerson(), FS_MOD347.CONTACT_PERSON.getDataType().length()));
+		mod347.setContactMail(AonStringUtils.left(conf.fiscal().getContactMail(), FS_MOD347.CONTACT_MAIL.getDataType().length()));
 		mod347.setStatus(FiscalStatus.PENDING);
 		mod347.setDeclared(new LinkedList<Mod347Declared>());
 		mod347.setAssets(new LinkedList<Mod347Asset>());

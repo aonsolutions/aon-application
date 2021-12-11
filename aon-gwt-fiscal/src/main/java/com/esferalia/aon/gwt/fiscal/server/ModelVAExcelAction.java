@@ -138,7 +138,7 @@ public abstract class ModelVAExcelAction<M extends FiscalModel,K extends IFiscal
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
 		try {
-			InputStream inputStream = Mod115ExcelAction.class.getResourceAsStream(
+			InputStream inputStream = ModelVAExcelAction.class.getResourceAsStream(
 					IMAGES[ model.getAdministration().ordinal()]);
 			byte[] imageBytes = AonIOUtils.toByteArray(inputStream);
 			int pictureureIdx = workbook.addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);

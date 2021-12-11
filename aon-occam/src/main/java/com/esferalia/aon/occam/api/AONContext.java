@@ -22,6 +22,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -102,6 +103,10 @@ public class AONContext implements AutoCloseable{
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
+	}
+	
+	public static AONContext getAONContext(Occam occam) {
+		return getAONContext(occam.getDomainName(),occam.getDomain(),occam.getUser());
 	}
 	
 	public static AONContext getAONContext(String domainName, int domainId, String user) {

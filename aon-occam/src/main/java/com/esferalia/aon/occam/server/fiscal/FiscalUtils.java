@@ -12,7 +12,47 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class FiscalUtils {
-	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	private static final String FILTRO = "Filtro:";
+	private static final String ACTIVIDAD = " (Actividad:";
+	private static final String HASTA = " (Hasta:";
+	private static final String DESDE = " (Desde:";
+	private static final String DD_MM_YYYY = "dd/MM/yyyy";
+
+	private FiscalUtils() {
+		
+	}
+	public static Period getMonthPeriod(Date date) {
+		if (date == null) return null;
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		int month = c.get(Calendar.MONTH);
+		Period period = null;
+		for ( Period per : Period.values()) {
+			if (per.getStartMonth() <= month &&
+				per.getDueMonth() >= month &&
+				per.isMonthPeriod()) {
+				period = per;
+				break;
+			}
+		}
+		return period;
+	}
+	public static Period getQuarterPeriod(Date date) {
+		if (date == null) return null;
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		int month = c.get(Calendar.MONTH);
+		Period period = null;
+		for ( Period per : Period.values()) {
+			if (per.getStartMonth() <= month &&
+				per.getDueMonth() >= month &&
+				per.isQuarterPeriod()) {
+				period = per;
+				break;
+			}
+		}
+		return period;
+	}
 	
 	public static Date getPeriodStart( int year, Period period) {
 		Calendar c = Calendar.getInstance();
@@ -48,15 +88,16 @@ public class FiscalUtils {
 	}
 	
 	public static String toString(AccountingReportParams params) {
-		StringBuffer buf = new StringBuffer();
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(DD_MM_YYYY);
+		StringBuilder buf = new StringBuilder();
 		if (params.getFromDate() != null) {
-			buf.append(" (Desde:");
-			buf.append( DATE_FORMATTER.format(params.getFromDate()));
+			buf.append(DESDE);
+			buf.append( dateFormatter.format(params.getFromDate()));
 			buf.append(")");
 		}
 		if (params.getToDate() != null) {
-			buf.append(" (Hasta:");
-			buf.append( DATE_FORMATTER.format(params.getToDate()));
+			buf.append(HASTA);
+			buf.append( dateFormatter.format(params.getToDate()));
 			buf.append(")");
 		}
 		if (params.getRegistry() != null) {
@@ -65,12 +106,12 @@ public class FiscalUtils {
 			buf.append(")");
 		}
 		if (params.getActivity() != null) {
-			buf.append(" (Actividad:");
+			buf.append(ACTIVIDAD);
 			buf.append(params.getActivity());
 			buf.append(")");
 		}
 		if (params.getOutput() != null) {
-			buf.append(params.getOutput() ?" (Emitidas)":" (Recibidas)");
+			buf.append(params.getOutput().booleanValue() ?" (Emitidas)":" (Recibidas)");
 		}
 		if (params.getVatSummaryType() != null) {
 			buf.append(" (");
@@ -83,34 +124,34 @@ public class FiscalUtils {
 			buf.append(")");
 		}
 		if (params.getSurcharge()!= null) {
-			buf.append(params.getSurcharge()?" (Rec.Equiv. SI)":" (Rec.Equiv. NO)");
+			buf.append(params.getSurcharge().booleanValue()?" (Rec.Equiv. SI)":" (Rec.Equiv. NO)");
 		}
-		
 		if (params.getFarmerRegime()!= null) {
-			buf.append(params.getFarmerRegime()?" (Reg.Agric. SI)":" (Reg.Agric. NO)");
+			buf.append(params.getFarmerRegime().booleanValue()?" (Reg.Agric. SI)":" (Reg.Agric. NO)");
 		} 
 		if (params.getAccrualRegime()!= null) {
-			buf.append(params.getAccrualRegime()?" (Crit.Caja. SI)":" (Crit.Caja. NO)");
+			buf.append(params.getAccrualRegime().booleanValue()?" (Crit.Caja. SI)":" (Crit.Caja. NO)");
 		} 
 		if (params.getInvestment()!= null) {
-			buf.append(params.getInvestment()?" (Bien Inv.)":" (Bien Corr.)");
+			buf.append(params.getInvestment().booleanValue()?" (Bien Inv.)":" (Bien Corr.)");
 		} 
 		if (params.getService() != null) {
-			buf.append(params.getService() ?" (Serv. SI)":" (Serv. NO)");
+			buf.append(params.getService().booleanValue()?" (Serv. SI)":" (Serv. NO)");
 		} 
-		return buf.length()>0 ? buf.insert(0,"Filtro:").toString():"";
+		return buf.length()>0 ? buf.insert(0,FILTRO).toString():"";
 	}
 	
 	public static String toString(IRPFParams params) {
-		StringBuffer buf = new StringBuffer();
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(DD_MM_YYYY);
+		StringBuilder buf = new StringBuilder();
 		if (params.getFromDate() != null) {
-			buf.append(" (Desde:");
-			buf.append( DATE_FORMATTER.format(params.getFromDate()));
+			buf.append(DESDE);
+			buf.append( dateFormatter.format(params.getFromDate()));
 			buf.append(")");
 		}
 		if (params.getToDate() != null) {
-			buf.append(" (Hasta:");
-			buf.append( DATE_FORMATTER.format(params.getToDate()));
+			buf.append(HASTA);
+			buf.append( dateFormatter.format(params.getToDate()));
 			buf.append(")");
 		}
 		if (params.getRegistry() != null) {
@@ -119,12 +160,12 @@ public class FiscalUtils {
 			buf.append(")");
 		}
 		if (params.getActivity() != null) {
-			buf.append(" (Actividad:");
+			buf.append(ACTIVIDAD);
 			buf.append(params.getActivity());
 			buf.append(")");
 		}
 		if (params.getOutput() != null) {
-			buf.append(params.getOutput() ?" (Emitidas)":" (Recibidas)");
+			buf.append(params.getOutput().booleanValue() ?" (Emitidas)":" (Recibidas)");
 		}
 		if (params.getWithholdingType() != null) {
 			buf.append(" (");
@@ -137,35 +178,36 @@ public class FiscalUtils {
 			buf.append(")");
 		}
 		if (params.getAccrualRegime()!= null) {
-			buf.append(params.getAccrualRegime()?" (Crit.Caja. SI)":" (Crit.Caja. NO)");
+			buf.append(params.getAccrualRegime().booleanValue()?" (Crit.Caja. SI)":" (Crit.Caja. NO)");
 		} 
 		if (params.getInvestment()!= null) {
-			buf.append(params.getInvestment()?" (Bien Inv.)":" (Bien Corr.)");
+			buf.append(params.getInvestment().booleanValue()?" (Bien Inv.)":" (Bien Corr.)");
 		} 
 		if (params.getService() != null) {
-			buf.append(params.getService() ?" (Serv. SI)":" (Serv. NO)");
+			buf.append(params.getService().booleanValue() ?" (Serv. SI)":" (Serv. NO)");
 		} 
-		return buf.length()>0 ? buf.insert(0,"Filtro:").toString():"";
+		return buf.length()>0 ? buf.insert(0,FILTRO).toString():"";
 	}
 
 	public static String toString(OperationParams params) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(DD_MM_YYYY);
 		if (params.getFromDate() != null) {
-			buf.append(" (Desde:");
-			buf.append( DATE_FORMATTER.format(params.getFromDate()));
+			buf.append(DESDE);
+			buf.append( dateFormatter.format(params.getFromDate()));
 			buf.append(")");
 		}
 		if (params.getToDate() != null) {
-			buf.append(" (Hasta:");
-			buf.append( DATE_FORMATTER.format(params.getToDate()));
+			buf.append(HASTA);
+			buf.append( dateFormatter.format(params.getToDate()));
 			buf.append(")");
 		}
 		if (params.getActivity() != null) {
-			buf.append(" (Actividad:");
+			buf.append(ACTIVIDAD);
 			buf.append(params.getActivity());
 			buf.append(")");
 		}
-		return buf.length()>0 ? buf.insert(0,"Filtro:").toString():"";
+		return buf.length()>0 ? buf.insert(0,FILTRO).toString():"";
 	}
 
 }

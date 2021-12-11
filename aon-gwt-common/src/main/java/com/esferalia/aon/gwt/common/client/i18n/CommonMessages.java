@@ -4,21 +4,20 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.type.ActivityGroup;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// ¡ --> \u00C1 · --> \u00E1 
-	// … --> \u00C9 È --> \u00E9 
-	// Õ --> \u00CD Ì --> \u00ED 
-	// ” --> \u00D3 Û --> \u00F3 
-	// ⁄ --> \u00DA ˙ --> \u00FA ... acento
-	// ‹ --> \u00DC ¸ --> \u00fc ... diÈresis
+	// ¡ --> \u00C1 · --> \u00E1
+	// … --> \u00C9 È --> \u00E9
+	// Õ --> \u00CD Ì --> \u00ED
+	// ” --> \u00D3 Û --> \u00F3
+	// ⁄ --> \u00DA ˙ --> \u00FA
 	// — --> \u00D1 Ò --> \u00F1
-	// ∫ --> \u00BA ™ --> \u00AA 
-	// ø --> \u00BF 
-	// EUR-> \u20AC
+	// ™ --> \u00AA ∫ --> \u00BA
+	// ø --> \u00BF
 	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
@@ -165,6 +164,19 @@ public interface CommonMessages extends Messages {
 		})	
 	String fiscalModelDescriptionlong(@Select FiscalModelType f);
 
+	@DefaultMessage("-----")
+	@AlternateMessage(
+		{"ALAVA"			,"Diputaci\u00F3n foral \u00C1lava"
+		,"BIZKAIA" 			,"Diputaci\u00F3n foral Bizkaia"
+		,"GIPUZKOA"			,"Diputaci\u00F3n foral Gipuzkoa"
+		,"NAVARRA"			,"Gobierno foral de Navarra"
+		,"COMMON_TERRITORY"	,"Agencia Tributaria"
+		})	
+	String administrationName(@Select Administration administration);
+
+	@DefaultMessage("Ver declaraci\u00F3n del {0} del periodo: {1}")
+	String viewDeclaration(String model, String period);
+	
 	@DefaultMessage("ESP")
 	String currencyCode();
 	
@@ -419,6 +431,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa.\n \u00BFContinuar con el borrado?")
 	String confirmDeclarationDeleteAction();
+	
+	@DefaultMessage("La declaraci\u00F3n se encuentra en estado \"PRESENTADO\", si contin\u00FAa se borrar\u00E1n los documentos relativos a su presentaci\u00F3n, si los hubiere, \u00BFRealmente desea continuar?")
+	String confirmReopenDeclarationAction();
 
 	@DefaultMessage("Si continua se borrar\u00E1n los todos los datos de la actividad.\n \u00BFContinuar con el borrado?")
 	String newEpigrapSelected();
@@ -428,6 +443,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Confirme si desea cancelar la confecci\u00F3n de la declaraci\u00F3n.")
 	String confirmDeclarationCancelAction();
+
+	@DefaultMessage("Confirme si desea inicializar la declaraci\u00F3n.")
+	String confirmDeclarationinitializationAction();
 
 	@DefaultMessage("\u00BFConfirma el borrado definitivo del documento?")
 	String confirmDeleteForever();
@@ -459,8 +477,14 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Marcar")
 	String check();
 
+	@DefaultMessage("Activado")
+	String checked();
+
 	@DefaultMessage("Desmarcar")
 	String uncheck();
+
+	@DefaultMessage("Desactivado")
+	String unchecked();
 
 	@DefaultMessage("Aceptar")
 	String accept();
@@ -513,6 +537,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Ver detalle")
 	String seeDetail();
+
+	@DefaultMessage("Comunicaci\u00F3n AEAT")
+	String communicationAeat();
 
 	@DefaultMessage("Imprimir via AEAT")
 	String printViaAeat();
@@ -1266,6 +1293,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ingreso a cuenta")
 	String income();
 
+	@DefaultMessage("Ing. a cta.")
+	String incomeAbbr();
+
 	@DefaultMessage("RESULTADO")
 	String page6F();
 
@@ -1444,7 +1474,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia")
 	String box102Msg();
 
-	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antig√ºedades y objetos de colecci\u00F3n")
+	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antig√É¬ºedades y objetos de colecci\u00F3n")
 	String box227Msg();
 
 	@DefaultMessage("Operaciones en r\u00E9gimen especial de Agencias de Viajes")
@@ -4042,6 +4072,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Registro")
 	String register();
 	
+	@DefaultMessage("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.")
+	String mustFinishModel();
+
 	@DefaultMessage("Inicializar declaraci\u00F3n")
 	String resetDeclaration();
 	
@@ -4050,6 +4083,15 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Inicializar")
 	String resetAction();
+
+	@DefaultMessage("Valor calculado ..: {0}. Se ha realizado un ajuste por valor de {1}")
+	String difCalc(String calc, String adjust);
+	
+	@DefaultMessage("Par\u00E1metros fiscales")
+	String fiscalParameters();
+	
+	@DefaultMessage("Error al cargar el \"m\u00F3dulo {0}\"")
+	String loadError(String module);
 
 }
 

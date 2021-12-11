@@ -108,7 +108,7 @@ public class TediParser {
 								aon.setPayMethod(paymethod.getId());								
 								aon.setPayMethodName(paymethod.getName());
 								if ( temp == PayMethodType.CASH_BASIS ) {
-									Account cashAccount = aonCtx.getDefaultCashAccount();
+									Account cashAccount = aonCtx.accounting().getDefaultCashAccount();
 									if (cashAccount != null) {
 										result.getAccountingInvoice().setPayAccountId(cashAccount.getId());	
 										result.getAccountingInvoice().setPayAccountCode(cashAccount.getCode());
@@ -201,8 +201,8 @@ public class TediParser {
 			for (InvoiceBreakdown ib : invoice.getBreakdown() ) {
 				if (ib.getTaxType() == TaxType.RETENTION) {
 					Account retentionAccount =(invoice.isSales() )
-						?(aonCtx!=null?aonCtx.getDefaultPaidRetAccount():null)
-						:(aonCtx!=null?aonCtx.getDefaultChargedRetAccount():null);
+						?(aonCtx!=null?aonCtx.accounting().getDefaultPaidRetAccount():null)
+						:(aonCtx!=null?aonCtx.accounting().getDefaultChargedRetAccount():null);
 					withholding = true;
 					invoice.setWithholding(true);
 					InvoiceWithholding iw = new InvoiceWithholding()
@@ -221,9 +221,9 @@ public class TediParser {
 		}
 		
 		if (aonCtx != null) {
-			Account outputAccount = aonCtx.getDefaultChargedVatAccount();
-			Account inputAccount = aonCtx.getDefaultPaidVatAccount();
-			Account adjAccount = aonCtx.getVatNegativeAdjustAccount();
+			Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
+			Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
+			Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
 			Account expAccount = null;
 			if (invoice.isSales() ) {
 				expAccount = getSalesAccount( ctx,aonCtx,result);
@@ -282,11 +282,11 @@ public class TediParser {
 	}
 	
 	private static Account getSalesAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-		return aonCtx.getDefaultSalesAccount();
+		return aonCtx.accounting().getDefaultSalesAccount();
 	}
 	
 	private static Account getPurchaseAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {
-		Account purchaseAccount = aonCtx.getDefaultPurchaseAccount(); 
+		Account purchaseAccount = aonCtx.accounting().getDefaultPurchaseAccount(); 
 		return purchaseAccount;
 	}
 	private static Account getUndeductibleAccount(AONContext ctx, AonConfiguration aonCtx, TediResult result) {

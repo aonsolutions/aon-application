@@ -30,12 +30,13 @@ import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.config.ConfigBlock;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
@@ -49,7 +50,10 @@ public interface ICommon {
 	// CONFIGURATION
 	// --------------------------------------------
 	public AonConfiguration getConfiguration(AONContext ctx, Date atDate);
-
+	public AonConfiguration getConfiguration(AONContext ctx, Date atDate, ConfigBlock ... block );
+	public AonConfiguration getConfiguration(AONContext ctx, ConfigParams params);
+	public ApplicationParameter saveApplicationParameter(AONContext ctx, ApplicationParameter ap);
+	
 	// --------------------------------------------
 	// APPLICATION PARATEMER
 	// --------------------------------------------
@@ -57,7 +61,6 @@ public interface ICommon {
 	public void deleteApplicationParameter(AONContext ctx, ApplicationParameterFilter filter);
 	
 	public ApplicationParameter fetchOne(AONContext ctx, AppParam param);
-	public FiscalParameters getFiscalParameters(AONContext ctx);	
 	public ApplicationParameter insertApplicationParameter(AONContext ctx, String param, String value);
 	public ApplicationParameter insertApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter);
 	public ApplicationParameter updateApplicationParameter(AONContext ctx, ApplicationParameter applicationParameter, ApplicationParameterFilter filter);

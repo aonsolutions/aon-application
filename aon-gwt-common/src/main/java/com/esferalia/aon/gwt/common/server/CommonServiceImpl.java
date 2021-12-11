@@ -13,12 +13,12 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -38,7 +38,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	public AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain,String user, Date atDate) {
 		return AON.getConfiguration(currentDomainName, currentDomain,user, atDate);
 	}
-
+	@Override
+	public AonConfiguration getAonConfiguration(Occam occam, ConfigParams params) throws AonCoreException {
+		return AON.getConfiguration(occam, params);
+	}
 	// **************************************************
 	// *************************************** [SECURITY]
 	// **************************************************
@@ -126,22 +129,6 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	@Override
 	public void deletePayMethod(String domainName, int domain, String user, Integer id) throws AonCoreException {
 		AON.deletePayMethod(domainName, domain, user, id);
-	}
-
-	// **************************************************
-	// *************************************** [CREDITOR]
-	// **************************************************
-	@Override
-	public LinkedList<Creditor> getBasicCreditors(String domainName, int domain,String user, String query) throws AonCoreException {
-		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
-			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
-				:(query);
-		return AON.getBasicCreditors(domainName, domain,user,
-				p ->  p.getStatusProperty().eq( RegistryStatus.ACTIVE.value())
-					.and(p.getDocumentProperty().like(q)
-					 .or(p.getNameProperty().like(q))
-					 .or(p.getAliasProperty().like(q)))
-				).collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	// **************************************************

@@ -1,22 +1,30 @@
 package com.esferalia.aon.gwt.common.shared;
 
+import java.io.Serializable;
+
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class AonData implements IsSerializable{
+/**
+ * @author ecastellano
+ * @deprecated Use aonConfiguration
+ *
+ */
+@Deprecated
+public class AonData implements Serializable {
 
-	User user;
-	Integer userOperator;
-	String md5;
-	Domain domain;
-	Company company;
-	Boolean betaEnabled;
-	Boolean alphaEnabled;
-	Boolean aonSolutions;
-	boolean customerCheckEnabled;
-	String rootPanel;
+	private static final long serialVersionUID = -4746030973585760037L;
+	
+	private User user;
+	private Integer userOperator;
+	private String md5;
+	private Domain domain;
+	private Company company;
+	private Boolean betaEnabled;
+	private Boolean alphaEnabled;
+	private Boolean aonSolutions;
+	private String rootPanel;
 	
 	public User getUser() {
 		return user;
@@ -72,14 +80,6 @@ public class AonData implements IsSerializable{
 		return aonSolutions;
 	}
 	
-	public boolean isCustomerCheckEnabled() {
-		return customerCheckEnabled;
-	}
-	public AonData setCustomerCheckEnabled(boolean customerCheckEnabled) {
-		this.customerCheckEnabled = customerCheckEnabled;
-		return this;
-	}
-	
 	public AonData setAonSolutions(Boolean aonSolutions) {
 		this.aonSolutions = aonSolutions;
 		return this;
@@ -91,6 +91,5 @@ public class AonData implements IsSerializable{
 		this.rootPanel = rootPanel;
 		return this;
 	}
-	
 	
 }

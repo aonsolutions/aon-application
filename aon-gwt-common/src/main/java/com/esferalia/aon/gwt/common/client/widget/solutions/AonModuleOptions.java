@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.common.client.widget.solutions;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.google.gwt.user.client.ui.HasWidgets;
 
 public class AonModuleOptions<T extends AonModuleOptions<T>> implements Serializable {
@@ -15,6 +16,13 @@ public class AonModuleOptions<T extends AonModuleOptions<T>> implements Serializ
 	private AonConfiguration configuration;
 
 	private HasWidgets parentWidget;
+	
+	public Occam getOccam() {
+		return new Occam()
+			.setDomainName( getDomainName())
+			.setDomain(getDomain())
+			.setUser(getUser());
+	}
 
 	public String getDomainName() {
 		return domainName;
