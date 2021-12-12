@@ -19,10 +19,14 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.tgss.AgriculturalBases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.Bases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.FellowsPercentages2021Update;
+import net.aonsolutions.db.up2date.tgss.HomeBases2019Close;
 import net.aonsolutions.db.up2date.tgss.HomeBases2021UpdateIII;
-import net.aonsolutions.db.up2date.data.DataRequestUpdate;
-import net.aonsolutions.db.up2date.payroll.CertificatesUpdate;
+import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
+import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
 
 
 public class Up2Date {
@@ -76,7 +80,7 @@ public class Up2Date {
     		//PlusSalarialInsert.PLUSSALARIALINSERT,
     		//TrainningPercentages2019Update.TRAINNINGPERCENTAGES2019UPDATE,
     		//FellowsPercentages2019Fix.FELLOWSPERCENTAGES2019UPDATE,
-    		//AgriculturalITInsert.AGRICULTURALITINSERT,
+    		//AgriculturalITInsert.AGRICULTURALITINSERT,"http://payroll-test.aonsolutions.org:8080/aon-aio/"
     		//Bases2019UpdateIII.BASES2019UPDATEIII,
     		//SalarioBaseReadOnlyUpdate.SALARIOBASEREADONLYUPDATE,
     		//NetoAndBrutoReadOnlyUpdate.NETOBRUTOREADONLYUPDATE,
@@ -187,10 +191,17 @@ public class Up2Date {
     		//RemoveDataResponse.REMOVE_DATA_RESPONSE,
     		//DataRequestCreation.DATA_REQUEST_CREATION,
     		//CertificatesUpdate.CERTIFICATESUPDATE
+    		//CertificatesUpdate.CERTIFICATESUPDATE,
+    		//DataRequestUpdate.DATA_REQUEST_UPDATE,
     		Bases2021UpdateIII.BASES2021UPDATEIII,
+    		HomeBases2019Close.HOMEBASES2019CLOSE,
     		HomeBases2021UpdateIII.HOMEBASES2021UPDATEIII,
-    		CertificatesUpdate.CERTIFICATESUPDATE,
-    		DataRequestUpdate.DATA_REQUEST_UPDATE
+    		SalaryHours2021UpdateIII.SALARYHOURS2021UPDATEIII,
+    		TrainingBases2021UpdateIII.TRAININGBASES2021UPDATEIII,
+    		AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
+    		TrainingPercentages2021Update.TRAINNINGPERCENTAGES2021UPDATE,
+    		FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE
+    		
 
     };
 
