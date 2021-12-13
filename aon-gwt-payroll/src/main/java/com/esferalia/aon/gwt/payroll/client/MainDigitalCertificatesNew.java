@@ -277,11 +277,11 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 	private void resetPreview(Grid dataTableHeader, Grid dataTable) {
 		dataTableHeader.clear();
 		dataTableHeader.resize(0, 0);
-		dataTableHeader.resizeColumns(7);
+		dataTableHeader.resizeColumns(tabLayoutPanel.getSelectedIndex() == 0 ? 6 :7);
 		
 		dataTable.clear();
 		dataTable.resize(0, 0);
-		dataTable.resizeColumns(7);
+		dataTable.resizeColumns(tabLayoutPanel.getSelectedIndex() == 0 ? 6 :7);
 		
 		paintHeader(dataTableHeader);
 		setColumnWidth(dataTableHeader, dataTable);
@@ -315,11 +315,18 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		dataTableHeader.setWidget(row, 0, password);
 		dataTableHeader.setWidget(row, 1, certificate);
-		dataTableHeader.setWidget(row, 2, security);
-		dataTableHeader.setWidget(row, 3, tgss);
-		dataTableHeader.setWidget(row, 4, sepe);
-		dataTableHeader.setWidget(row, 5, aeat);
-		dataTableHeader.setWidget(row, 6, buttons);
+		if(tabLayoutPanel.getSelectedIndex() == 0) {
+			dataTableHeader.setWidget(row, 2, tgss);
+			dataTableHeader.setWidget(row, 3, sepe);
+			dataTableHeader.setWidget(row, 4, aeat);
+			dataTableHeader.setWidget(row, 5, buttons);
+		} else {
+			dataTableHeader.setWidget(row, 2, security);
+			dataTableHeader.setWidget(row, 3, tgss);
+			dataTableHeader.setWidget(row, 4, sepe);
+			dataTableHeader.setWidget(row, 5, aeat);
+			dataTableHeader.setWidget(row, 6, buttons);
+		}
 	}
 	
 	private void setColumnWidth(Grid dataTableHeader, Grid dataTable) {
@@ -330,21 +337,37 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		dataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(230, Unit.PX);
 		dataTable.getColumnFormatter().getElement(1).getStyle().setWidth(230, Unit.PX);
 		
-		dataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
-		dataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
+		if(tabLayoutPanel.getSelectedIndex() == 0) {
+			dataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
+			
+			dataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
+			
+			dataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
+			
+		} else {
+			dataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(2).getStyle().setWidth(50, Unit.PX);
+			
+			dataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
+			
+			dataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
+			
+			dataTableHeader.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
+			dataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setTextAlign(TextAlign.CENTER);
+			dataTable.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
+		}
 		
-		dataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
-		dataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
-		
-		dataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
-		dataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.getColumnFormatter().getElement(4).getStyle().setWidth(50, Unit.PX);
-		
-		dataTableHeader.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
-		dataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setTextAlign(TextAlign.CENTER);
-		dataTable.getColumnFormatter().getElement(5).getStyle().setWidth(50, Unit.PX);
 	}
 	
 	// ------------------------------------------------------ onModuleLoad
@@ -712,15 +735,27 @@ public class MainDigitalCertificatesNew extends MainEntryPoint{
 		
 		table.setWidget(row, 0, passwordPanel);
 		table.setWidget(row, 1, fileNameTB);
-		table.setWidget(row, 2, securityCB);
-		table.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
-		table.setWidget(row, 3, tgssCB);
-		table.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
-		table.setWidget(row, 4, sepeCB);
-		table.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
-		table.setWidget(row, 5, aeatCB);
-		table.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
-		table.setWidget(row, 6, buttonsPanel);
+		if(tabLayoutPanel.getSelectedIndex() == 0) {
+			table.setWidget(row, 2, tgssCB);
+			table.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 3, sepeCB);
+			table.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 4, aeatCB);
+			table.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 5, buttonsPanel);
+			table.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.RIGHT);
+		} else {
+			table.setWidget(row, 2, securityCB);
+			table.getCellFormatter().getElement(row, 2).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 3, tgssCB);
+			table.getCellFormatter().getElement(row, 3).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 4, sepeCB);
+			table.getCellFormatter().getElement(row, 4).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 5, aeatCB);
+			table.getCellFormatter().getElement(row, 5).getStyle().setTextAlign(TextAlign.CENTER);
+			table.setWidget(row, 6, buttonsPanel);
+			table.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.RIGHT);
+		}
 	}
 	
 	private void getCertificateInfo(DigitalCertificateNew digitalCertificate) {
