@@ -418,7 +418,7 @@ public class InvoiceTemplate {
 		}
 		
 		if (config.getLegal() != null && !config.getLegal().isEmpty()) {
-			legalLines = PDFToolkit.getLinesRespectOriginal(config.getLegal(), 490, regularFont, LEGAL_TEXT_SIZE);
+			legalLines = PDFToolkit.getLinesRespectOriginal(config.getLegal(), 500, regularFont, LEGAL_TEXT_SIZE);
 			limit += legalLines.size() * LEGAL_TEXT_SIZE;
 //			if (config.getBorder() > 0)
 //				bottomExtra += 10;
@@ -1034,7 +1034,7 @@ public class InvoiceTemplate {
 		x = 50;
 		y-= 10;
 		
-		PDFToolkit.drawTextWellJustified(legalLines, 490, LEGAL_TEXT_SIZE, regularFont, x, y -= LEGAL_TEXT_SIZE, PdfColors.BLACK, contents);
+		PDFToolkit.drawTextWellJustified(legalLines, 500, LEGAL_TEXT_SIZE, regularFont, x, y -= LEGAL_TEXT_SIZE, PdfColors.BLACK, contents);
 	}
 	
 	public static byte[] createQR(String datos, int ancho, int altura) throws WriterException, IOException {
