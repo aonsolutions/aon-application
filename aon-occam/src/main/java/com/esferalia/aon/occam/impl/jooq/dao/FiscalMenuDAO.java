@@ -24,6 +24,10 @@ public class FiscalMenuDAO {
 	
 	private static final String PARAM_PREFIX = "FS_MODEL_CFG_";
 	private static final String PARAM_PREFIX_LIKE = PARAM_PREFIX + "%";
+	
+	private FiscalMenuDAO() {
+		
+	}
 
 	public static JSONArray  getDomainsModels(AONContext ctx, int domainId, FiscalMatrixParams params) {
 		final JSONArray allModels = new JSONArray();
@@ -213,7 +217,7 @@ public class FiscalMenuDAO {
 		}
 		
 		if (params.getAdministration() != null) {
-			prop = prop.and( p.getAdministrationProperty().eq(params.getAdministration().getValue()));
+			prop = prop.and( p.getAdministrationProperty().eq(params.getAdministration().value()));
 		}
 		if (params.getModel() != null) {
 			prop = prop.and( p.getModelProperty().eq(params.getModel().getValue()));
