@@ -318,7 +318,7 @@ class SistemaREDEmployee {
 						.setCtaCti(ccc).setRegime(regime);
 				 
 				if(!situation.contains("AL")) 
-					builder.setFeb(fra);
+					builder.setFrb(fra);
 				
 				employees.add(builder.build());
 			}

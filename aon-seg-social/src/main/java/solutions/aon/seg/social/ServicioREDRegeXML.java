@@ -934,15 +934,17 @@ public abstract class ServicioREDRegeXML {
 					Date date = parseDateWithDashes(tds.get(2));
 					String situation = tds.get(3) != null && !tds.get(3).isEmpty() ? tds.get(3) : "AL";
 					String ipf = Toolkit.removeExtraZeros(removeSpaces(tds.get(4)));
-					Employee employee = builder.setNss(nss)
-												.setName(name)
-												.setFra(date)
-												.setSituation(situation)
-												.setIpf(ipf)
-												.setCtaCti(ccc)
-												.setRegime(regime).build();
-					
-					employees.add(employee);
+					builder.setNss(nss)
+					.setName(name)
+					.setFra(date)
+					.setSituation(situation)
+					.setIpf(ipf)
+					.setCtaCti(ccc)
+					.setRegime(regime);
+					if(!situation.contains("AL")) 
+						builder.setFrb(date);
+				
+					employees.add(builder.build());
 				}
 			}
 			
