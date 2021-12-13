@@ -73,10 +73,11 @@ public class TbaiData {
 		.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
 //		.and(f.getCodeProperty().eq("ok").or(f.getCodeProperty().eq("pending")))
 		.and(f.getSourceIdProperty().eq(invoiceId)));
-		DataResponseDetail drd = AON.getDataResponseDetail(domainName, domainId, login, f -> 
+
+		DataResponseDetail drd = dr != null && dr.getId() != null ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
 			f.getDomainProperty().eq(domainId)
 			.and(f.getDataResponseProperty().eq(dr.getId()))
-			.and(f.getDataVariableProperty().eq("tbaiId"))).orElse(new DataResponseDetail());
+			.and(f.getDataVariableProperty().eq("tbaiId"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
 	
 		return drd.getDataValue();
 	}

@@ -55,4 +55,23 @@ public enum InvoiceSource implements Serializable {
 	public void visit(InvoiceDetail detail, IInvoiceSourceVisitor visitor) {
 		this.walker.visit(detail, visitor);
 	}
+	
+	public static InvoiceSource safeValueOf( Byte i ) {
+		if (i == null) return null;
+		return safeValueOf( i.intValue() ); 
+	}
+	
+	public static InvoiceSource safeValueOf( Integer i ) {
+		if (i == null) return null;
+		if (i < 0 || i >= InvoiceSource.values().length) return null;
+		return InvoiceSource.values()[i];
+	}
+	
+	public static InvoiceSource safeValueOf( String i ) {
+		for (InvoiceSource rs : values()) {
+			if(i.equalsIgnoreCase(rs.name()))
+				return rs;
+		}
+		return null;
+	}
 }

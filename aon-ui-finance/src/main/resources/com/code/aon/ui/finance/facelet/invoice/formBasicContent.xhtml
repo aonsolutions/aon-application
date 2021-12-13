@@ -20,11 +20,12 @@
 					<ui:param name="sfc_seriesValid" value="#{invoiceController.seriesValid}" />
 					<ui:param name="sfc_editable" value="#{!invoiceController.readOnly and financeController.allPending}" />								
 					<ui:param name="sfc_numberReset" value="#{invoiceController.nevv}" />								
+					<ui:param name="sfc_showNumberEditable" value="#{!invoiceController.tbai}"/>
 					<ui:define name="additionalSeriesContent">
 						<aon:commandButton id="Invoice_NextNumber" immediate="#{true}"
 							title="#{bundle.finance_invoice_find_next_number}"
 							styleClass="aon-icon-commandButton aon-icon-ambito"
-							rendered="#{sfc_editable}" value="&#160;"
+							rendered="#{sfc_editable and !invoiceController.tbai}" value="&#160;"
 							actionListener="#{invoiceController.onFindNextFreeNumber}"
 							reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
 						</aon:commandButton>															

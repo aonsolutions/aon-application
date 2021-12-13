@@ -108,7 +108,7 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
 			String tbaiId = TbaiData.getTbaiId(domainName, domainId, login, invoice.getId());			
 			if(tbai.isActive() && !AonStringUtils.isBlank(tbaiId)) {	
-				qrUrl = TbaiUri.getUrlQr(tbai) + "?id=" + tbaiId + "&s=" + invoice.getSeries()
+				qrUrl = TbaiUri.getUrlQr(tbai) + "?id=" + tbaiId + "&s=" + (invoice.getSeries() != null ? invoice.getSeries() : "")
 					+ "&nf=" + invoice.getNumber() + "&i=" + invoice.getTotal();
 				String crc = CRC8.calculate(qrUrl);
 				qrUrl = qrUrl + "&cr=" + crc;

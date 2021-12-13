@@ -1,9 +1,12 @@
 package net.aonsolutions.aon.tbai;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -104,7 +107,12 @@ public class Invoice2tbai {
 		entities.setEmisor(sender);
 			
 		Destinatarios receivers = new Destinatarios();
-		
+		if(AonStringUtils.isBlank(invoice.getAddressZIP())) {
+			RegistryAddressFilter filter = f -> f.getIdProperty().eq(invoice.getRegistryAddress());
+			RegistryAddress a = AON.get(company.getDomain().getName(), company.getDomain().getId(), "", filter);
+			invoice.setAddressZIP(a.getZip());
+			invoice.setAddress(a.getFullAddress());
+		}
 		IDDestinatario receiver = new IDDestinatario();
 		receiver.setApellidosNombreRazonSocial(invoice.getRegistryName());
 		receiver.setCodigoPostal(invoice.getAddressZIP());
@@ -166,6 +174,9 @@ public class Invoice2tbai {
 			detalle.setImporteUnitario(Double.toString(detail.getPrice()));
 			detalles.getIDDetalleFactura().add(detalle);
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
+			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
+				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
+			}
 			double total =  AonMathUtils.round(tax.getBase() + tax.getQuota());
 			detalle.setImporteTotal(Double.toString(total));
 		});
@@ -194,6 +205,9 @@ public class Invoice2tbai {
 			detalleNoExenta.setTipoNoExenta(TipoOperacionSujetaNoExentaType.S_1); // TODO ISP O NO
 			DesgloseIVAType desgloseIVA = new DesgloseIVAType();
 			invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() > 0).forEach(r -> {
+				if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
+					r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
+				}
 				DetalleIVAType  detalleIVA = new DetalleIVAType();
 				detalleIVA.setBaseImponible(Double.toString(r.getBase()));
 				detalleIVA.setCuotaImpuesto(Double.toString(r.getQuota()));
