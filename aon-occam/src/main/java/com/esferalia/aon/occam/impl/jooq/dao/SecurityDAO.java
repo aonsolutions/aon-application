@@ -1203,7 +1203,7 @@ public class SecurityDAO {
 			certificate = getCertificate(ctx, f -> f.getIdProperty().eq(userId))
 					.orElseThrow(CertificateNotFoundException::new);
 			if(null != certificate) return certificate;
-		} else {
+		} else if(AonStringUtils.equalsIgnoreCase(certificateType, "SEPE")) {
 			certificate = getCertificateSEPE(ctx, ctx.getDomainId())
 					.orElseThrow(CertificateNotFoundException::new);
 			if(null != certificate) return certificate;
