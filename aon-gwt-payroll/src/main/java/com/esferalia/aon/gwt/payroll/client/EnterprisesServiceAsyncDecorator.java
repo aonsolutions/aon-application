@@ -428,7 +428,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getEmployeeSSBonuses(String domain, String user, Integer contractId, AsyncCallback<List<SSBonusData>> callback) {
+	public void getEmployeeSSBonuses(String domain, String user, Integer contractId, AsyncCallback<List<SSBonusData>> callback)  throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getEmployeeSSBonuses(domain, user, contractId, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
 	}

@@ -257,7 +257,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setEmployeePeculiarities(getCurrentDomainName(), contractId, peculiarities, asyncCallback);
 	}
 	
-	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
+	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getEmployeeSSBonuses(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
 	}
 	

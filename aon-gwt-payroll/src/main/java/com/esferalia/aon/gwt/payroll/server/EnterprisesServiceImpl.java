@@ -1935,23 +1935,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			
-			syncWithIdcs(currentDomainName, currentUser, contractId, connection);
-			
+	public List<SSBonusData> getEmployeeSSBonuses(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			syncWithIdcs(domainName, userLogin, contractId, connection);
 			return JooqSSBonus.getSSBonus(connection, contractId);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
+		} catch (SQLException | CertificateNotFoundException e) {
+			if(e instanceof CertificateNotFoundException)
+				throw new IllegalArgumentException("No existe certificado de la TGSS, por lo que no se pueden obtener las bonificaciones");
+			else
+				throw new IllegalArgumentException(e);
 		}
 	}
 

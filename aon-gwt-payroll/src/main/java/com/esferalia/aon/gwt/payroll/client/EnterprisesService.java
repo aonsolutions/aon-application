@@ -157,7 +157,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId);
 
-	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId);
+	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId)  throws IllegalArgumentException;
 
 	List<SSBonusData> getBonusConcepts(String currentDomainName);
 
