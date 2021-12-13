@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.payroll.shared.AcademicTitulation;
@@ -1789,8 +1788,8 @@ public class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
-		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
-		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+//		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+//		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
