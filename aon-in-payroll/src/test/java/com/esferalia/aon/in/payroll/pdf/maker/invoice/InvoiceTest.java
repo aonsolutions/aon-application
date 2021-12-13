@@ -484,7 +484,7 @@ public class InvoiceTest {
 		detailX.setAccountCode("0192831010");
 		
 		String xdesc = "";
-		for (int i=1; i<=200; i++) {
+		for (int i=1; i<=188; i++) {
 			xdesc += "línea" + i + "\n";
 		}
 		
@@ -494,7 +494,7 @@ public class InvoiceTest {
 		detailX.setQuantity(0);
 		detailX.setTaxableBase(0);
 		details.add(detailX);
-		details.add(detailOne);
+//		details.add(detailOne);
 //		details.add(detailTwo);
 //		details.add(detailThree);
 //		details.add(detailThreeAndAHalf);
@@ -524,7 +524,26 @@ public class InvoiceTest {
 			config.setBorder(0);
 			config.setContactData(true);
 			config.setRecordData(true);
-			
+			config.setLegal("Rodrigo Díaz nació, según afirma una tradición constante, aunque sin corroboración documental, en Vivar, hoy Vivar del Cid, un lugar perteneciente al ayuntamiento de Quintanilla de Vivar y situado en el valle del río Ubierna, a diez kilómetros al norte de Burgos.\n"
+					+ "\n"
+					+ "En 1068 Sancho II y Alfonso VI se enfrentaron en la batalla de Llantada, a orillas del Pisuerga, vencida por el primero, pero que no resultó decisiva. En 1071, Alfonso logró controlar Galicia, que quedó nominalmente repartida entre él y Sancho, pero esto no logró acabar con los enfrentamientos y en 1072 se libró la batalla de Golpejera o Vulpejera, cerca de Carrión, en la que Sancho venció y capturó a Alfonso y se adueñó de su reino.\n"
+					+ "\n"
+					+ "El joven Rodrigo (que a la sazón andaría por los veintitrés años) se destacó en estas luchas y, según una vieja tradición, documentada ya a fines del siglo XII, fue el alférez o abanderado de don Sancho en dichas lides, aunque en los documentos de la época nunca consta con ese cargo. En cambio, es bastante probable que ganase entonces el sobrenombre de Campeador, es decir, «el Batallador», que le acompañaría toda su vida, hasta el punto de ser habitualmente conocido, tanto entre cristianos como entre musulmanes, por Rodrigo el Campeador.\n"
+					+ "\n"
+					+ "Después de la derrota de don Alfonso (que logró exiliarse en Toledo), Sancho II había reunificado los territorios regidos por su padre. Sin embargo, no disfrutaría mucho tiempo de la nueva situación. A finales del mismo año de 1072, un grupo de nobles leoneses descontentos, agrupados entorno a la infanta doña Urraca, hermana del rey, se alzaron contra él en Zamora. Don Sancho acudió a sitiarla con su ejército, cerco en el que Rodrigo realizó también notables acciones, pero que al rey le costó la vida, al ser abatido en un audaz golpe de mano por el caballero zamorano Bellido Dolfos.\n"
+					+ "\n"
+					+ "La imprevista muerte de Sancho II hizo pasar el trono a su hermano Alfonso, que regresó rápidamente de Toledo para ocuparlo. Las leyendas del siglo XIII han transmitido la célebre imagen de un severo Rodrigo que, tomando la voz de los desconfiados vasallos de don Sancho, obliga a jurar a don Alfonso en la iglesia de Santa Gadea (o Águeda) de Burgos que nada tuvo que ver en la muerte de su hermano, osadía que le habría ganado la duradera enemistad del nuevo monarca.\n"
+					+ "\n"
+					+ "Por el contrario, nadie le exigió semejante juramento y además el Campeador, que figuró regularmente en la corte, gozaba de la confianza de Alfonso VI, quien lo nombró juez en sendos pleitos asturianos en 1075. Es más, por esas mismas fechas (en 1074, seguramente), el rey lo casó con una pariente suya, su prima tercera doña Jimena Díaz, una noble dama leonesa que, según las investigaciones más recientes, era además sobrina segunda del propio Rodrigo por parte de padre. Un matrimonio de semejante alcurnia era una de las aspiraciones de todo noble que no fuese de primera fila, lo cual revela que el Campeador estaba cada vez mejor situado en la corte.\n"
+					+ "\n"
+					+ "Así lo muestra también que don Alfonso lo pusiese al frente de la embajada enviada a Sevilla en 1079 para recaudar las parias que le adeudaba el rey Almutamid, mientras que García Ordóñez (uno de los garantes de las capitulaciones matrimoniales de Rodrigo y Jimena) acudía a Granada con una misión similar. Mientras Rodrigo desempeñaba su delegación, el rey Abdalá de Granada, secundado por los embajadores castellanos, atacó al rey de Sevilla. Como éste se hallaba bajo la protección de Alfonso VI, precisamente por el pago de las parias que había ido a recaudar el Campeador, éste tuvo que salir en defensa de Almutamid y derrotó a los invasores junto a la localidad de Cabra (en la actual provincia de Córdoba), capturando a García Ordóñez y a otros magnates castellanos.\n"
+					+ "\n"
+					+ "La versión tradicional es que en los altos círculos cortesanos sentó muy mal que Rodrigo venciera a uno de los suyos, por lo que empezaron a murmurar de él ante el rey. Sin embargo, no hay seguridad de que esto provocase hostilidad contra el Campeador, entre otras cosas porque a Alfonso VI le interesaba, por razones políticas, apoyar al rey de Sevilla frente al de Badajoz, de modo que la participación de sus nobles en el ataque granadino no debió de gustarle gran cosa.\n"
+					+ "\n"
+					+ "De todos modos, fueron similares causas políticas las que hicieron caer en desgracia a Rodrigo. En esos delicados momentos, Alfonso VI mantenía en el trono de Toledo al rey títere Alqadir, pese a la oposición de buena parte de sus súbditos. En 1080, mientras el monarca castellano dirigía una campaña destinada a restaurar el gobierno de su protegido, una incontrolada partida andalusí procedente del norte toledano se adentró por tierras sorianas. Rodrigo hizo frente a los saqueadores y los persiguió con su mesnada hasta más allá de la frontera, lo que, en principio, era sólo una operación rutinaria.\n"
+					+ "\n"
+					+ "Sin embargo, en tales circunstancias, el ataque castellano iba a servir de excusa para la facción contraria a Alqadir y a Alfonso VI. Además, los restantes reyes de taifas se preguntarían de qué servía pagar las parias, si eso no les garantizaba la protección. Al margen, pues, de que interviniesen en el asunto García Ordóñez (que era conde de Nájera) u otros cortesanos opuestos a Rodrigo, el rey debía tomar una decisión ejemplar al respecto, conforme a los usos de la época. Así que desterró al Campeador.");
+//			config.setLegal(null);
 			PrintInvoiceThemeConfiguration themeconf = new PrintInvoiceThemeConfiguration();
 			themeconf.setTheme(PrintInvoiceTheme.PERSONALIZED);
 

@@ -41,6 +41,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,11 +54,12 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
+import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.model.Company;
@@ -87,6 +89,7 @@ public class InvoiceTemplate {
 	public static final float BOX_BORDER = .5f;
 	public static final float BOTTOM_TOLERANCE = 0.3f;
 	public static final float TITLE_BOX_SIZE = 17f;
+	public static final float LEGAL_TEXT_SIZE = 6;
 	
 	
 	
@@ -114,6 +117,7 @@ public class InvoiceTemplate {
 	InvoiceTemplateMsg msg;
 	PrintInvoiceConfiguration config;
 	byte[] logo;
+	List<String> legalLines;
 	
 	// THE PDF DOCUMENT
 	public static void create(OutputStream os, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, String qrUrl, byte[] logo) throws IOException, CanNotCreatePdfException {
@@ -128,6 +132,7 @@ public class InvoiceTemplate {
 			template.regularFont = PdfFonts.HELVETICA;
 			template.boldFont = PdfFonts.HELVETICA_BOLD;
 					
+			template.legalLines = Collections.emptyList();
 			template.pageNumber = 0;
 			template.msg = new InvoiceTemplateMsg(config.getLanguage());
 			template.config = config;
@@ -389,7 +394,6 @@ public class InvoiceTemplate {
 	// DRAW FIRST PAGE
 	private PDPageContentStream drawFirstPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
 		PDPage page = createVerticalPage();
-		
 		doc.addPage(page);
 		this.pageNumber++;
 		contents = new PDPageContentStream(doc, page);
@@ -411,8 +415,17 @@ public class InvoiceTemplate {
 		
 		if (bottomStuff > 8) {
 			bottomExtra = (bottomStuff - 7) * 10;
-			limit += bottomExtra;
 		}
+		
+		if (config.getLegal() != null && !config.getLegal().isEmpty()) {
+			legalLines = PDFToolkit.getLinesRespectOriginal(config.getLegal(), 490, regularFont, LEGAL_TEXT_SIZE);
+			limit += legalLines.size() * LEGAL_TEXT_SIZE;
+//			if (config.getBorder() > 0)
+//				bottomExtra += 10;
+		}
+		
+		limit += bottomExtra;
+		System.out.println(limit);
 		
 		
 		x = 50f;
@@ -821,20 +834,23 @@ public class InvoiceTemplate {
 	// DRAW BOTTOM INFO
 	private void drawBottomInfo(PDDocument doc, Invoice invoice, String qrUrl, PrintInvoiceThemeConfiguration theme) throws IOException, WriterException {
 		x = 50;
-		y = bottom + 10 + bottomExtra;
+		float legalSize = legalLines.size() * LEGAL_TEXT_SIZE;
+		y = bottom + 10 + bottomExtra + legalSize;
 		if(qrUrl != null) {
 			byte[] qrCode = createQR(qrUrl, 300, 300);
 			drawImage(doc, contents, qrCode, x, y, 120, 120);
 		}
 		drawTaxes(invoice, theme);
 		drawFinances(invoice, theme);
+		y = bottom + 10 + legalSize;
+		drawLegal(theme);
 	}
 
 	// DRAW TAXES
 	private void drawTaxes(Invoice invoice, PrintInvoiceThemeConfiguration theme) throws IOException {
 		x = 180;
-		y = bottom + 107 + bottomExtra;
-		
+		float legalSize = legalLines.size() * LEGAL_TEXT_SIZE;
+		y = bottom + 113 + bottomExtra + legalSize;
 		if (theme.getBoxTitleBackgroundColor() != null)
 			drawBox(contents, x, y, 80 - BOX_BORDER, TITLE_BOX_SIZE, theme.getBoxTitleBackgroundColor());
 		drawTextRight(contents, new PDRectangle(x, y, 79, TITLE_BOX_SIZE), getMsg().base(), theme.getBoxTitleTextColor(), regularFont, 9, 5, 5.5f);
@@ -912,7 +928,7 @@ public class InvoiceTemplate {
 				
 				i++;
 			}
-			drawTextRight(contents, new PDRectangle(x, bottom + 107 + bottomExtra, 99, 15), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getTextColor(), boldFont, 8, 5, -14, INVOICE_TOTAL);
+			drawTextRight(contents, new PDRectangle(x, bottom + 107 + bottomExtra + legalSize, 99, 15), toLatinNumber(invoice.getTotal()) + " \u20AC", theme.getTextColor(), boldFont, 8, 5, -14, INVOICE_TOTAL);
 			
 			float finalY = y -10;
 			float backHeight = initY - finalY;
@@ -1012,6 +1028,13 @@ public class InvoiceTemplate {
 			}
 			
 		}
+	}
+	
+	private void drawLegal(PrintInvoiceThemeConfiguration theme) throws IOException {
+		x = 50;
+		y-= 10;
+		
+		PDFToolkit.drawTextWellJustified(legalLines, 490, LEGAL_TEXT_SIZE, regularFont, x, y -= LEGAL_TEXT_SIZE, PdfColors.BLACK, contents);
 	}
 	
 	public static byte[] createQR(String datos, int ancho, int altura) throws WriterException, IOException {
