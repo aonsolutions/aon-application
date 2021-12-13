@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.Objects;
 
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
@@ -140,6 +141,9 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	private Boolean hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole role) {
+		if ( getUser().getUserRoles() == null )
+			return false;
+
 		Boolean bool = false;
 		for (com.esferalia.aon.occam.api.model.type.AonRole ar : getUser().getUserRoles()) {
 			if(ar.equals(role)) {
