@@ -387,10 +387,13 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 					initLogicWindow();
 					initializeIdcMonthListBox();
 					initExistingEmployee(this.contrataEmployeeObject.getContractData().hasPayroll());
-					if(null == this.contrataEmployeeObject.getContractData().getEndDate())
+					if(null == this.contrataEmployeeObject.getContractData().getEndDate()) {
 						getAFIEnd().getElement().getStyle().setDisplay(Display.NONE);
-					else
+						getTaEnd().getElement().getStyle().setDisplay(Display.NONE);
+					} else {
 						getAFIEnd().getElement().getStyle().clearDisplay();
+						getTaEnd().getElement().getStyle().clearDisplay();
+					}
 					success.accept(this.contrataEmployeeObject.getContractEmployeeInfo());
 				}, t -> {}
 		);
@@ -708,6 +711,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract AonToolbar getToolbar();
 	protected abstract AonToolbarButton getExportContract();
 	protected abstract MenuItem getAFIEnd();
+	protected abstract MenuItem getTaEnd();
 	protected abstract MinimizePanel getFootPanel();
 	protected abstract MonthListBox getIDCMonthListBox();
 	
