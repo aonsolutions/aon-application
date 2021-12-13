@@ -751,6 +751,19 @@ public class ContrataEmployeeObject {
 			}
 		});
 	}
+	
+	public void downloadTaEnd(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeTa(contractData.getContractId(), contractData.getEndDate(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
 
 	public void downloadIdc(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeIdcPlNss(contractData.getContractId(), new Date(), new AsyncCallback<String>() {

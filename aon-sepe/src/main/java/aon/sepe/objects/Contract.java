@@ -400,7 +400,7 @@ public class Contract {
 		
 		public static JndType safeValueOf( String i ) {
 			for (JndType rs : values()) {
-				if(i.equalsIgnoreCase(rs.name()))
+				if(i.equalsIgnoreCase(rs.getValue()))
 					return rs;
 			}
 			return null;

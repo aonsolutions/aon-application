@@ -105,7 +105,7 @@ public interface EnterprisesServiceAsync {
 	void getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId,
 			AsyncCallback<List<SSPECData>> asyncCallback);
 	void getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId,
-			AsyncCallback<List<SSBonusData>> asyncCallback);
+			AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
