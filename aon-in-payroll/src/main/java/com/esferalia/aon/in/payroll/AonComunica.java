@@ -67,7 +67,7 @@ public class AonComunica {
 						situationType, employee.getRegime(), employee.getCcc(), employee.getNaf(), date);
 			} else {
 				System.out.println("DELETE MOV CONSOLIDATED TGSS");
-				SistemaRED.removeMovConsolidated(certificateData, certificatePassword, certificateType, 
+				SistemaRED.removeMovConsolidated(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, 
 						situationType, employee.getRegime(),  employee.getCcc(), employee.getNaf(), employee.getDni(), date);
 			}
 		 }
