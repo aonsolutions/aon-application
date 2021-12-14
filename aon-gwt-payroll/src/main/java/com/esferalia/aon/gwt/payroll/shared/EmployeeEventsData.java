@@ -165,7 +165,7 @@ public class EmployeeEventsData implements Serializable {
 	public void addEventData(String var, Date startDate, Date endDate, String value) {
 		
 		// Get varList and sort it
-		ArrayList<Quartet<Date, Date, String, String>> varList = contractEventsList.get(var);
+		ArrayList<Quartet<Date, Date, String, String>> varList = contractEventsList.getOrDefault(var, new ArrayList<Quartet<Date,Date,String,String>>());
 		
 		varList.sort(new Comparator<Quartet<Date, Date, String, String>>() {
 			@Override

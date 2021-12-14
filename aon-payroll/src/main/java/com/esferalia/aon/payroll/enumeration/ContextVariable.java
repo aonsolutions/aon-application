@@ -301,6 +301,8 @@ public enum ContextVariable implements IResourceable {
 	NON_STRUCTURAL_OVERTIME_EMPLOYEE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE), 
 	NON_STRUCTURAL_OVERTIME_ENTERPRISE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE), 
 	
+	DELAY_AMOUNT("ATRASO", VariableType.DOUBLE, false )
+	
 	;
 
 	public static final String ALL = "_P";
