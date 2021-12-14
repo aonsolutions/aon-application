@@ -137,11 +137,9 @@ class SistemaREDMov {
 	}
 	
 	public static void movPrevDelete(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String situation, String regimen, String ctaCti, String nss, Date fecha) throws SegSocialException{
-		
+			final String certificateType, SituationType sit, String regimen, String ctaCti, String nss, Date fecha) throws SegSocialException{
 		InvalidCertificateException.checkCertificate(certificateInputStream);
-		
-		try {movPrevDeleteImpl(certificateInputStream, certificatePassword, certificateType,situation, regimen, ctaCti, nss, fecha);} 
+		try {movPrevDeleteImpl(certificateInputStream, certificatePassword, certificateType, sit, regimen, ctaCti, nss, fecha);} 
 		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
@@ -330,11 +328,11 @@ class SistemaREDMov {
 
 	private static void movPrevDeleteImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, 
-			String situation, String regimen, String ctaCti, String nss, Date fecha) throws Exception  {
+			SituationType situation, String regimen, String ctaCti, String nss, Date fecha) throws Exception  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 	    	webClient.getOptions().setUseInsecureSSL(true);
-	    	Integer mov = situation.indexOf("AL")>=0 ? 0 : 1;
+	    	Integer mov = SituationType.ALTA.equals(situation) ? 0 : 1;
  			//Date
  			String[] fr = formatDate(fecha); //fecha [dia,mes,año]
  			

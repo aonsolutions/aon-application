@@ -25,12 +25,15 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.IMod303KeyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.Mod303Declaration;
+import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -251,6 +254,13 @@ public class Mod303DAO extends FiscalModelDAO {
 		return declarations.values().stream();
 	}
 	
+
+	public static Mod303 resetMod303(AONContext ctx,Mod303 mod303) {
+		mod303.setMap(null);
+		initializeIdentificationData(ctx, mod303);
+		createMod303(ctx,mod303);
+		return mod303;
+	}
 
 	public static Mod303 createMod303(AONContext ctx,final Mod303 mod303) {
 		final Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
@@ -523,9 +533,16 @@ public class Mod303DAO extends FiscalModelDAO {
 	}
 	
 	public static Mod303 markAsPending(AONContext ctx,Mod303 mod303) {
+		Finance finance = mod303.getFinance();
+		if (finance != null) {
+			FinanceValidation.validateDelete(ctx, finance);
+		}
+		if (AonStringUtils.isNotBlank( mod303.getNumber())) {
+			DataResponseDAO.deleteAEATResponse(ctx, mod303);
+			mod303.setNumber( null);
+		}
 		mod303.setDeclarationType( (String) null);
 		mod303.setStatus(FiscalStatus.PENDING);
-		Finance finance = mod303.getFinance();
 		mod303.setFinance(null);
 		mod303 = saveMod303(ctx, mod303);
 		if (finance != null) {
@@ -536,8 +553,8 @@ public class Mod303DAO extends FiscalModelDAO {
 	
 	public static Mod303 markAsSent(AONContext ctx,Mod303 mod303) {
 		mod303.setStatus(FiscalStatus.SENT);
-		mod303 = saveMod303(ctx, mod303);
-		return mod303;
+		FiscalModel fm = saveOnlyMod303(ctx, mod303);
+		return getMod303(ctx, fm.getId());
 	}
 	
 	public static Mod303 markAsCustomerCheckMod303(AONContext ctx,Mod303 mod303) {
@@ -623,5 +640,65 @@ public class Mod303DAO extends FiscalModelDAO {
 		return VATDAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
 	}
 	
-	
+	public static Mod303 aeatPresentation(AONContext ctx, Mod303 mod303, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			DataResponseDAO.insertAEATResponse(ctx, mod303, aeatResponse);
+			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
+			Mod303 changed = getMod303(ctx, mod303.getId());
+			if (changed != null) {
+				changed.setNumber(response.getJustificante());
+				return markAsSent(ctx, changed);
+			}
+		}
+		return mod303;
+	}
+
+/*
+	public void saveHistory(JSONObject json) throws IOException, JSONException {
+		Boolean ok = json.opt("CEL")!= null;
+		DataResponse dr = new DataResponse()
+				.setSource(getDataResponseSource())
+				.setSourceId(getId())
+				.setCode(isCert() ? (ok ? "Presentación Correcta": "Presentación Fallida"):(ok ? "Validacion Correcta": "Validacion Fallida"))
+				.setDomain(getDomainId())
+				.setResponseDate(new Date());
+		dr = AON.insertDataResponse(getDomainName(), getDomainId(), getUser(), dr);
+		for (Iterator<String> keys = json.keys(); keys.hasNext(); ) {
+		    String key = keys.next();
+		    DataResponseDetail drd = new DataResponseDetail()
+		    		.setDomain(getDomainId())
+		    		.setDataResponse(dr.getId())
+		    		.setDataVariable(key)
+		    		.setDataValue(json.getString(key));
+		    AON.insertDataResponseDetail(getDomainName(), getDomainId(), getUser(), drd);
+		}
+		if(ok && json.opt("url") != null) {
+			Attach attach = AON.getAttach(getDomainName(), getDomainId(), getUser(), f-> 
+				f.getDomainProperty().eq(getDomainId())
+				.and(f.getSourceTypeProperty().eq(getDataAttachSource().value()))
+				.and(f.getSourceBatchProperty().eq(getId()))
+				.and(f.getDescriptionProperty().eq("Presentacion AEAT"))
+				,AttachType.DATA, false);
+			if(attach.getId() != null) {
+				AON.updateAttachData(getDomainName(), getDomainId(), getUser(), 
+						attach.setData(getUrlFile(json.get("url").toString())));
+				json.put("data", attach.getId());
+			} else {
+				Integer attachId = AON.insertAttach(getDomainName(), getDomainId(), getUser(), new Attach()
+						.setSourceType(getDataAttachSource().value())
+						.setSourceBatch(getId())
+						.setType(DataAttachType.RESPONSE_OK.value())
+						.setAttachModule(dr.getId())
+						.setAttachType(AttachType.DATA)
+						.setDomain(new Domain().setName(getDomainName()).setId(getDomainId()))
+						.setData(getUrlFile(json.get("url").toString()))
+						.setMimeType(MimeType.PDF)
+						.setDescription("Presentacion AEAT"));
+				json.put("data", attachId);
+			}
+			updateMod(json);
+		}
+		
+	}
+ */
 }

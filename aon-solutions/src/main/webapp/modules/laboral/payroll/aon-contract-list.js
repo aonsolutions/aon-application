@@ -153,7 +153,7 @@ export class AonContractList extends AonElement {
 
     options.push({
       ...CONTRACT_OPTIONS.TA,
-      fn: (el) => this.applicationParentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.naf, fra:res.startDate }, el)
+      fn: (el) => this.applicationParentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.naf, fra:res.startDate, frb:res.endDate }, el)
     });
     
     if(!prev){

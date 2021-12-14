@@ -45,6 +45,8 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", "6,67");
 		calculate(Calendar.DECEMBER, 2017);
 		assertText("common_contingency", "6,67");
+		calculate(Calendar.SEPTEMBER, 2021);
+		assertText("common_contingency", "9,10");
 
 
 		draft("FORMACIÓN Y EL, APRENDIZAJE");
@@ -66,11 +68,18 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertNotElement("job_training");
 		assertValue("cgcBaseLabel", "1.050,00");
 		assertValue("cgpBaseLabel", "1.050,00");
+		calculate(Calendar.SEPTEMBER, 2021);
+		assertText("common_contingency", "9,10");
+		assertText("unemployment", "17,45");
+		assertNotElement("job_training");
+		assertValue("cgcBaseLabel", "1.125,90");
+		assertValue("cgpBaseLabel", "1.125,90");
 		
 		getElementById("costsCheck-input").click();
 		wait4Id("common_contingency_cost");
-		assertText("common_contingency_cost", "42,56");
-		assertText("unemployment_cost", "57,75");
+		assertText("common_contingency_cost", "45,63");
+		assertText("unemployment_cost", "61,93");
+		assertText("fogasa_cost", "3,46");
 //		assertText("job_training_cost", "1,38");
 		
 		//costsCheck-input
@@ -84,11 +93,13 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", "6,94");
 		calculate(Calendar.APRIL, 2019);
 		assertText("common_contingency", "8,49");
+		calculate(Calendar.SEPTEMBER, 2021);
+		assertText("common_contingency", "9,10");
 
 		//assertValue("cgcBaseLabel", "858,60");
 		//assertValue("cgpBaseLabel", "858,60");
 		wait4Id("common_contingency_cost");
-		assertText("common_contingency_cost", "42,56");
+		assertText("common_contingency_cost", "45,63");
 
 		draft("FORMACION Y APRENDIZAJE, IT");
 		calculate(Calendar.OCTOBER, 2018);
@@ -103,6 +114,12 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertNotElement("job_training");
 		assertValue("cgcBaseLabel", "1.050,00");
 		assertValue("cgpBaseLabel", "1.050,00");
+//		calculate(Calendar.SEPTEMBER, 2021);
+//		assertText("common_contingency", "9,10");
+//		assertText("unemployment", "17.45");
+//		assertNotElement("job_training");
+//		assertValue("cgcBaseLabel", "1.125,90");
+//		assertValue("cgpBaseLabel", "1.125,90");
 	}
 
 

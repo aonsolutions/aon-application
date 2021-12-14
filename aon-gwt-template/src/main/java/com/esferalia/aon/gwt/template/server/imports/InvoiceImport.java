@@ -412,9 +412,9 @@ public class InvoiceImport {
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	
 		PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
-		Account outputAccount = aonCtx.getDefaultChargedVatAccount();
-		Account inputAccount = aonCtx.getDefaultPaidVatAccount();
-		Account adjAccount = aonCtx.getVatNegativeAdjustAccount();
+		Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
+		Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
+		Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
 		
 		try {
 			if(ivs.get(i).getAccount() == null || ivs.get(i).getAccount().isBlank()) {
@@ -596,8 +596,8 @@ public class InvoiceImport {
 		
 			if(ai.getInvoice().isWithholding()) {
 				Account retentionAccount = (invoice.isSales() )
-						?aonCtx.getDefaultPaidRetAccount()
-						:aonCtx.getDefaultChargedRetAccount();
+						?aonCtx.accounting().getDefaultPaidRetAccount()
+						:aonCtx.accounting().getDefaultChargedRetAccount();
 		
 				InvoiceWithholding iw = new InvoiceWithholding()
 					.setWithholdingType(getWithholdingType(ivs.get(i).getRetentionKey(), ivs.get(i).getAccount()))
@@ -671,9 +671,9 @@ public class InvoiceImport {
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	
 		PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
-		Account outputAccount = aonCtx.getDefaultChargedVatAccount();
-		Account inputAccount = aonCtx.getDefaultPaidVatAccount();
-		Account adjAccount = aonCtx.getVatNegativeAdjustAccount();
+		Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
+		Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
+		Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
 		
 		try {
 			if(iic.getAccount() == null || iic.getAccount().isBlank()) {
@@ -850,8 +850,8 @@ public class InvoiceImport {
 		
 			if(ai.getInvoice().isWithholding()) {
 				Account retentionAccount = (invoice.isSales() )
-						?aonCtx.getDefaultPaidRetAccount()
-						:aonCtx.getDefaultChargedRetAccount();
+						?aonCtx.accounting().getDefaultPaidRetAccount()
+						:aonCtx.accounting().getDefaultChargedRetAccount();
 		
 				InvoiceWithholding iw = new InvoiceWithholding()
 					.setWithholdingType(getWithholdingType(iic.getRetentionKey(), iic.getAccount()))

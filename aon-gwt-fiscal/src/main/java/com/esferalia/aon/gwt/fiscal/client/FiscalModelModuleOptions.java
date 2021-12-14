@@ -1,14 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
 import com.esferalia.aon.gwt.common.client.AonModuleCallback;
-import com.esferalia.aon.gwt.common.shared.AonData;
 
 public class FiscalModelModuleOptions<T> extends  ModuleOptions<FiscalModelModuleOptions<T>> {
 
 	private static final long serialVersionUID = -8275746757276688771L;
 	private Integer fiscalModelId;
 	private AonModuleCallback<T> externalCallback;
-	private AonData aonData;
 	private boolean embedded = false;
 	private boolean backButtonVisible = false;
 
@@ -34,14 +32,6 @@ public class FiscalModelModuleOptions<T> extends  ModuleOptions<FiscalModelModul
 		return this;
 	}
 	
-	public AonData getAonData() {
-		return aonData;
-	}
-	public FiscalModelModuleOptions<T> setAonData(AonData aonData) {
-		this.aonData = aonData;
-		return this;
-	}
-
 	public boolean isEmbedded() {
 		return embedded;
 	}

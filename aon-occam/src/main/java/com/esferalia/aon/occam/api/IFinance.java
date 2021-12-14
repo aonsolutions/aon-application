@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public interface IFinance {
 	
@@ -59,6 +60,7 @@ public interface IFinance {
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
 	Invoice insertInvoice(AONContext ctx, Invoice invoice);
 	Invoice updateInvoice(AONContext ctx, Invoice invoice);
+	Invoice updateInvoice(AONContext ctx, Invoice invoice, boolean only);
 	InvoiceDetail insertInvoiceDetail(AONContext ctx, InvoiceDetail invoiceDetail);
 	Stream<Invoice> getSiiInvoiceStream(AONContext ctx, InvoiceFilter filter, Boolean pending,  Boolean aceptada, Boolean aceptadaErrores, Boolean incorrecta, Boolean anulada, String sii);
 	Stream<InvoiceDetail> getInvoiceMovements(AONContext ctx, InvoiceFilter filter, ProductFilter pFilter,
@@ -72,7 +74,9 @@ public interface IFinance {
 	LinkedList<InvoiceDetail> getInvoiceDetailList(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId);
 	LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId, Integer warehouseId, Date date);
 	Integer getInvoiceNextNumber(AONContext ctx, Byte[] types, String series);
-
+	Integer getInvoiceMinNumber(AONContext ctx, InvoiceType type, String series);
+	Integer getInvoiceMinNumber(AONContext ctx, Byte[] types, String series);
+	
 	Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter);
 	
 	// 	***********************************************

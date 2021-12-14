@@ -1,145 +1,136 @@
 package com.esferalia.aon.gwt.fiscal.client.mod131;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Module;
 import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model131Activity extends DockLayoutPanel {
+public class Model131Activity extends DockLayoutPanel implements HasValueChangeHandlers<Mod131Activity> {
 	
-	final Label epigraph = new Label();
-	final Label epigraphLabel = new Label();
+	private static final String WIDTH_150PX = "150px";
+	private final Label epigraph = new Label();
+	private final Label epigraphLabel = new Label();
 	
-	@UiField TabLayoutPanel tab;
+	private TabLayoutPanel tabLayoutPanel = new TabLayoutPanel(26, Unit.PX);
 	
-	@UiField CheckBox dis;
-	@UiField DoubleBox com;
-	@UiField IntegerBox tem;
-	@UiField IntegerBox nue;
-	@UiField CheckBox ceu;
-	@UiField CheckBox loc;
-	@UiField IntegerBox veh;
-	@UiField CheckBox cap;
-	@UiField CheckBox tns;
-	@UiField CheckBox tss;
-	@UiField ListBox mun;
-	@UiField IntegerBox emp;
-	@UiField ListBox lor;
-	@UiField ListBox bat;
-	@UiField DoubleBox prc;
+	private CheckBox dis = new CheckBox();
+	private AonDoubleBox com = new AonDoubleBox(6);
+	private AonIntegerBox tem = new AonIntegerBox(6);
+	private AonIntegerBox nue = new AonIntegerBox(6);
+	private CheckBox ceu = new CheckBox();
+	private CheckBox loc = new CheckBox();
+	private AonIntegerBox veh = new AonIntegerBox(6);
+	private CheckBox cap = new CheckBox();
+	private CheckBox tns = new CheckBox(); 
+	private CheckBox tss = new CheckBox();
+	private ListBox mun = new ListBox();
+	private AonIntegerBox emp = new AonIntegerBox(6);
+	private ListBox lor = new ListBox();
+	private ListBox bat = new ListBox();
+	private AonDoubleBox prc = new AonDoubleBox(6);
 
-	@UiField Label description0;
-	@UiField DoubleBox value0;
-	@UiField Label unit0;
-	@UiField DoubleBox factor0;
-	@UiField DoubleBox result0;
+	private Label description0 = new Label();
+	private AonDoubleBox value0 = new AonDoubleBox(6);
+	private Label unit0 = new Label();
+	private AonDoubleBox factor0 = new AonDoubleBox(6);
+	private AonDoubleBox result0 = new AonDoubleBox(6);
 
-	@UiField Label description1;
-	@UiField DoubleBox value1;
-	@UiField Label unit1;
-	@UiField DoubleBox factor1;
-	@UiField DoubleBox result1;
+	private Label description1 = new Label();
+	private AonDoubleBox value1 = new AonDoubleBox(6);
+	private Label unit1 = new Label();
+	private AonDoubleBox factor1 = new AonDoubleBox(6);
+	private AonDoubleBox result1 = new AonDoubleBox(6);
 
-	@UiField Label description2;
-	@UiField DoubleBox value2;
-	@UiField Label unit2;
-	@UiField DoubleBox factor2;
-	@UiField DoubleBox result2;
+	private Label description2 = new Label();
+	private AonDoubleBox value2 = new AonDoubleBox(6);
+	private Label unit2 = new Label();
+	private AonDoubleBox factor2 = new AonDoubleBox(6);
+	private AonDoubleBox result2 = new AonDoubleBox(6);
 
-	@UiField Label description3;
-	@UiField DoubleBox value3;
-	@UiField Label unit3;
-	@UiField DoubleBox factor3;
-	@UiField DoubleBox result3;
+	private Label description3 = new Label();
+	private AonDoubleBox value3 = new AonDoubleBox(6);
+	private Label unit3 = new Label();
+	private AonDoubleBox factor3 = new AonDoubleBox(6);
+	private AonDoubleBox result3 = new AonDoubleBox(6);
 
-	@UiField Label description4;
-	@UiField DoubleBox value4;
-	@UiField Label unit4;
-	@UiField DoubleBox factor4;
-	@UiField DoubleBox result4;
+	private Label description4 = new Label();
+	private AonDoubleBox value4 = new AonDoubleBox(6);
+	private Label unit4 = new Label();
+	private AonDoubleBox factor4 = new AonDoubleBox(6);
+	private AonDoubleBox result4 = new AonDoubleBox(6);
 
-	@UiField Label description5;
-	@UiField DoubleBox value5;
-	@UiField Label unit5;
-	@UiField DoubleBox factor5;
-	@UiField DoubleBox result5;
+	private Label description5 = new Label();
+	private AonDoubleBox value5 = new AonDoubleBox(6);
+	private Label unit5 = new Label();
+	private AonDoubleBox factor5 = new AonDoubleBox(6);
+	private AonDoubleBox result5 = new AonDoubleBox(6);
 
-	@UiField Label description6;
-	@UiField DoubleBox value6;
-	@UiField Label unit6;
-	@UiField DoubleBox factor6;
-	@UiField DoubleBox result6;
+	private Label description6 = new Label();
+	private AonDoubleBox value6 = new AonDoubleBox(6);
+	private Label unit6 = new Label();
+	private AonDoubleBox factor6 = new AonDoubleBox(6);
+	private AonDoubleBox result6 = new AonDoubleBox(6);
 
-	@UiField DoubleBox rnp0;
-	@UiField DoubleBox rnp;
-	@UiField DoubleBox iem;
-	@UiField DoubleBox iin;
-	@UiField DoubleBox rnm;
-	@UiField DoubleBox ic1;
-	@UiField DoubleBox ic2;
-	@UiField DoubleBox ic3;
-	@UiField DoubleBox ic4;
-	@UiField DoubleBox ic5;
-	@UiField DoubleBox rpf;
-	@UiField DoubleBox rlo;
-	@UiField DoubleBox rdr;
-	@UiField IntegerBox dia;
-	@UiField DoubleBox net;
-	@UiField DoubleBox por;
-	@UiField DoubleBox res;
+	private AonDoubleBox rnp0 = new AonDoubleBox(6);
+	private AonDoubleBox rnp = new AonDoubleBox(6);
+	private AonDoubleBox iem = new AonDoubleBox(6);
+	private AonDoubleBox iin = new AonDoubleBox(6);
+	private AonDoubleBox rnm = new AonDoubleBox(6);
+	private AonDoubleBox ic1 = new AonDoubleBox(6);
+	private AonDoubleBox ic2 = new AonDoubleBox(6);
+	private AonDoubleBox ic3 = new AonDoubleBox(6);
+	private AonDoubleBox ic4 = new AonDoubleBox(6);
+	private AonDoubleBox ic5 = new AonDoubleBox(6);
+	private AonDoubleBox rpf = new AonDoubleBox(6);
+	private AonDoubleBox rlo = new AonDoubleBox(6);
+	private AonDoubleBox rdr = new AonDoubleBox(6);
+	private AonIntegerBox dia = new AonIntegerBox(6);
+	private AonDoubleBox net = new AonDoubleBox(6);
+	private AonDoubleBox por = new AonDoubleBox(6);
+	private AonDoubleBox res = new AonDoubleBox(6);
 	
-	final EpigraphPanel epigraphPanel = new EpigraphPanel( new EpigraphPanelCallback(), null);
-
 	public static interface IMod131ActivityCallback {
+		Model131ModuleOptions getOptions();
 		Mod131 getModel();
 		Mod131Activity getActivity();
-		void onAccept();
+		void onAccept(Mod131Activity act);
 		void onCancel();
 		void onRemove();
-		String getDomainName();
-		int getDomain();
-		String getUser();
 	}
 	
-	
-	private IMod131ActivityCallback callback;
-	
-	interface Model131ActivityBinder extends UiBinder<Widget, Model131Activity> {}
-	private static final Model131ActivityBinder BINDER = GWT.create(Model131ActivityBinder.class);
-
 	public Model131Activity(final IMod131ActivityCallback callback) {
 		super(Unit.PX);
-		setStyleName(AON.AON_CSS.aonSelector());
+		setStyleName(AON.CSS.aonSelector());
 		setWidth("700px");
 		setHeight("590px");
-		Widget ui = BINDER.createAndBindUi(this);
 		
 		mun.addItem("Hasta 2.000 habitantes.");
 		mun.addItem("Desde 2.001 hasta 5.000 habitantes.");
@@ -148,12 +139,12 @@ public class Model131Activity extends DockLayoutPanel {
 		mun.addItem("Desde 50.001 hasta 100.000 habitantes.");
 		mun.addItem("M\u00E1s de 100.000 habitantes.");
 		mun.addItem("Madrid o Barcelona.");
-		mun.setWidth("150px");
+		mun.setWidth(WIDTH_150PX);
 		
 		lor.addItem("-");
 		lor.addItem("Actividad realizada exclusivamente en Lorca.");
 		lor.addItem("Actividad realizada en Lorca y otros municipios.");
-		lor.setWidth("150px");
+		lor.setWidth(WIDTH_150PX);
 		
 		bat.addItem("-");
 		bat.addItem("Una batea y ning\u00FAn barco");
@@ -163,174 +154,366 @@ public class Model131Activity extends DockLayoutPanel {
 		bat.addItem("Dos bateas y ning\u00FAn barco");
 		bat.addItem("Dos bateas y un barco de menos de 15 TRB");
 		bat.addItem("Otros: n\u00FAmero de bateas, barcos o TRB distintos de los anteriores");
-		bat.setWidth("150px");
-				
-		this.callback = callback;
-		populateActivity(this.callback.getActivity());
-		addNorth(getHeaderPanel(), 80);
-		add(ui);
+		bat.setWidth(WIDTH_150PX);
+
+		AonToolbar toolbarPanel = new AonToolbar("");
+		addNorth(toolbarPanel, AonToolbar.HEIGTH);
+
+		final AonToolbarButton accept = new AonToolbarButton(AON.MSG.saveAction(),AON.CSS.aonIconSave());
+		accept.addClickHandler(event -> callback.onAccept(callback.getActivity()));
+		toolbarPanel.add(accept);
 		
-		tab.selectTab(2);
+		final AonToolbarButton cancel = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconCancel());
+		cancel.addClickHandler(event -> callback.onCancel());
+		toolbarPanel.add(cancel);
+		
+		final AonToolbarButton remove = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+		remove.addClickHandler(event -> {
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.confirm(AON.MSG.confirmDeleteAction(), new AonConfirmDialogCallback() {
+				@Override
+				public void onCancel() {
+					// Nothing
+				}
+				
+				@Override
+				public void onAccept() {
+					callback.onRemove();
+				}
+			});
+		});
+		toolbarPanel.add(remove);
+		
+		FlowPanel epigraphContainerPanel = new FlowPanel();
+		epigraphContainerPanel.setStyleName(AON.CSS.aonPadding());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonWidthAlmostAll());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonBlockCenter());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonBorder());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonFlexBlock());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonMarginBottom());
+		epigraphContainerPanel.addStyleName(AON.CSS.aonBackgroundLigthGray());
+		
+		epigraph.setStyleName(AON.CSS.aonBold());
+		epigraph.addStyleName(AON.CSS.aonFontLarger());
+		epigraph.getElement().getStyle().setWidth(60, Unit.PX);
+		epigraphContainerPanel.add(epigraph);
+
+		AonTableButton showEpigraphs = new AonTableButton(AON.MSG.epigraph() ,AON.CSS.aonIconSearch());
+		epigraphContainerPanel.add(showEpigraphs);
+		
+		epigraphLabel.setStyleName(AON.CSS.aonFontLarger());
+		epigraphLabel.addStyleName(AON.CSS.aonNowrap());
+		epigraphLabel.addStyleName(AON.CSS.aonFlexGrow1());
+		epigraphLabel.addStyleName(AON.CSS.aonMarginLeft());
+		epigraphContainerPanel.add(epigraphLabel);
+		
+		addNorth(epigraphContainerPanel, 40);
+		
+		EpigraphPanel epigraphPanel = new EpigraphPanel( callback.getModel().getYear() );
+		epigraphPanel.addSelectionHandler(event -> {
+			if (AonStringUtils.isNotBlank( callback.getActivity().getEpigraph())) {
+				AonConfirmDialog dialog = new AonConfirmDialog();
+				dialog.confirm(AON.MSG.newEpigrapSelected(), new AonConfirmDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						// Nothing
+					}
+					
+					@Override
+					public void onAccept() {
+						accept(callback, event.getSelectedItem());
+					}
+				});
+			} else {
+				accept(callback,event.getSelectedItem());
+			}
+		});
+		showEpigraphs.addClickHandler(event -> epigraphPanel.onShow());
+		addNorth(epigraphContainerPanel, 40);
+
+		populateActivity(callback);
+		
+		ScrollPanel additionalDataPanel = new ScrollPanel();
+		additionalDataPanel.setWidget(getAdditionalDataPanel(callback));
+		tabLayoutPanel.add(additionalDataPanel, AON.MSG.additionalData());
+		
+		ScrollPanel modulesPanel = new ScrollPanel();
+		modulesPanel.setWidget(getModulesPanel(callback));
+		tabLayoutPanel.add(modulesPanel, AON.MSG.modules());
+
+		ScrollPanel resultPanel = new ScrollPanel();
+		resultPanel.setWidget(getResultPanel());
+		tabLayoutPanel.add(resultPanel, AON.MSG.irpfActivityRpf());
+
+		add(tabLayoutPanel);
 		
 		onResize();
 	}
 
-	private Widget getHeaderPanel() {
-		FlowPanel headerPanel = new FlowPanel();
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label(AON.MSG.activity()));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.setWidget(0, 1, new Label(AON.MSG.additionalData()));
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-		final Button accept = new Button();
-		accept.setText(AON.MSG.saveAction());
-		accept.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		accept.addStyleName(AON.AON_CSS.aonIconSave());
-		accept.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.onAccept();
-			}
-		});
-		buttonContainer.add(accept);
-		final Button cancel = new Button();
-		cancel.setText(AON.MSG.cancelAction());
-		cancel.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		cancel.addStyleName(AON.AON_CSS.aonIconCancel());
-		cancel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.onCancel();
-			}
-		});
-		buttonContainer.add(cancel);
+	private Widget getAdditionalDataPanel(IMod131ActivityCallback callback) {
+		AonDisplayTable table = new AonDisplayTable();
+		table.addStyleName(AON.CSS.aonWidthAlmostAll());
+		table.addStyleName(AON.CSS.aonBlockCenter());
+		table.addStyleName(AON.CSS.aonMarginBottom());
 		
-		final Button remove = new Button();
-		remove.setText(AON.MSG.deleteAction());
-		remove.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		remove.addStyleName(AON.AON_CSS.aonIconDelete());
-		remove.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				ConfirmDialog dialog = new ConfirmDialog();
-				dialog.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
-					@Override
-					public void onCancel() {
-					}
-					
-					@Override
-					public void onAccept() {
-						callback.onRemove();
-					}
-				});
-			}
-		});
-		buttonContainer.add(remove);
 		
-		toolbarPanel.add(toolbar);
-		headerPanel.add(toolbarPanel);
+		dis.addClickHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityDis()),AON.CSS.aonBold() )
+			.addCell(dis);
 		
-		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.setStyleName(AON.AON_CSS.aonPadding());
-		FlexTable tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab.addStyleName(AON.AON_CSS.aonDataTable());
-		tab.addStyleName(AON.AON_CSS.aonBorderBottom());
-		epigraph.setStyleName(AON.AON_CSS.aonBold());
-		epigraph.setStyleName(AON.AON_CSS.aonFontBig());
-		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonWidth80());
-		tab.setWidget(0, 0, epigraph);
-		Button showEpigraphs = new Button();
-		showEpigraphs.setStyleName(AON.AON_CSS.aonIconLoupe());
-		showEpigraphs.addStyleName(AON.AON_CSS.aonBorderNone());
-		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonWidth20());
-		tab.setWidget(0, 1, showEpigraphs);
+		com.addValueChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityCom()),AON.CSS.aonBold() )
+			.addCell(com);
+
+		tem.addValueChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityTem()),AON.CSS.aonBold() )
+			.addCell(tem);
+
+		nue.addValueChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityNue()),AON.CSS.aonBold() )
+			.addCell(nue);
+
+		ceu.addValueChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityCeu()),AON.CSS.aonBold() )
+			.addCell(ceu);
+
+		loc.addValueChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityLoc()),AON.CSS.aonBold() )
+			.addCell(loc);
 		
-		epigraphLabel.setStyleName(AON.AON_CSS.aonFontBig());
-		epigraphLabel.setStyleName(AON.AON_CSS.aonNowrap());
-		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonWidthAuto());
-		tab.setWidget(0, 2, epigraphLabel);
+		veh.addValueChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityVeh()),AON.CSS.aonBold() )
+			.addCell(veh);
 		
-		showEpigraphs.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				epigraphPanel.onShow( callback.getActivity().getYear() );
-				
-			}
-		});
-		flowPanel.add(tab);
-		headerPanel.add(flowPanel);
-		return headerPanel;
+		cap.addValueChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityCap()),AON.CSS.aonBold() )
+			.addCell(cap);
+		
+		tns.addClickHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityTns()),AON.CSS.aonBold() )
+			.addCell(tns);
+		
+		tss.addClickHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityTss()),AON.CSS.aonBold() )
+			.addCell(tss);
+		
+		mun.addChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityMun()),AON.CSS.aonBold() )
+			.addCell(mun);
+		
+		emp.addValueChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityEmp()),AON.CSS.aonBold() )
+			.addCell(emp);
+
+		lor.addChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityLor()),AON.CSS.aonBold() )
+			.addCell(lor);
+
+		bat.addChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityBat()),AON.CSS.aonBold() )
+			.addCell(bat);
+		
+		prc.addValueChangeHandler(event -> onFieldChange(callback));
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityPrc()),AON.CSS.aonBold() )
+			.addCell(prc);
+
+		return table;
+	}
+
+	private Widget getModulesPanel(IMod131ActivityCallback callback) {
+		AonDisplayTable table = new AonDisplayTable();
+		table.addStyleName(AON.CSS.aonWidthAlmostAll());
+		table.addStyleName(AON.CSS.aonBlockCenter());
+		table.addStyleName(AON.CSS.aonMarginBottom());
+		
+//	<colgropup>
+//		<col width="auto" />
+//		<col width="100px" />
+//		<col width="150px" />
+//		<col width="100px" />
+//		<col width="100px" />
+//	</colgropup>
+		
+		table.addRow()
+			.addCell(new Label(AON.MSG.description()), AON.CSS.aonDisplayGridHeaderCell(), AON.CSS.aonFlexGrow1())
+			.addCell(new Label(AON.MSG.amount()), AON.CSS.aonDisplayGridHeaderCell())
+			.addCell(new Label(AON.MSG.unit()), AON.CSS.aonDisplayGridHeaderCell())
+			.addCell(new Label(AON.MSG.factor()), AON.CSS.aonDisplayGridHeaderCell())
+			.addCell(new Label(AON.MSG.result()), AON.CSS.aonDisplayGridHeaderCell());
+
+		factor0.setEnabled(false);
+		result0.setEnabled(false);
+		factor1.setEnabled(false);
+		result1.setEnabled(false);
+		factor2.setEnabled(false);
+		result2.setEnabled(false);
+		factor3.setEnabled(false);
+		result3.setEnabled(false);
+		factor4.setEnabled(false);
+		result4.setEnabled(false);
+		factor5.setEnabled(false);
+		result5.setEnabled(false);
+		factor6.setEnabled(false);
+		result6.setEnabled(false);
+		rnp0.setEnabled(false);
+		
+		value0.addValueChangeHandler(event -> onFieldChange(callback));
+		value1.addValueChangeHandler(event -> onFieldChange(callback));
+		value2.addValueChangeHandler(event -> onFieldChange(callback));
+		value3.addValueChangeHandler(event -> onFieldChange(callback));
+		value4.addValueChangeHandler(event -> onFieldChange(callback));
+		value5.addValueChangeHandler(event -> onFieldChange(callback));
+		value6.addValueChangeHandler(event -> onFieldChange(callback));
+		
+		table.addRow()
+			.addCell(description0)
+			.addCell(value0)
+			.addCell(unit0)
+			.addCell(factor0)
+			.addCell(result0);
+
+		table.addRow()
+			.addCell(description1)
+			.addCell(value1)
+			.addCell(unit1)
+			.addCell(factor1)
+			.addCell(result1);
+		
+		table.addRow()
+			.addCell(description2)
+			.addCell(value2)
+			.addCell(unit2)
+			.addCell(factor2)
+			.addCell(result2);
+		
+		table.addRow()
+			.addCell(description3)
+			.addCell(value3)
+			.addCell(unit3)
+			.addCell(factor3)
+			.addCell(result3);
+
+		table.addRow()
+			.addCell(description4)
+			.addCell(value4)
+			.addCell(unit4)
+			.addCell(factor4)
+			.addCell(result4);
+
+		table.addRow()
+			.addCell(description5)
+			.addCell(value5)
+			.addCell(unit5)
+			.addCell(factor5)
+			.addCell(result5);
+
+
+		table.addRow()
+			.addCell(description6)
+			.addCell(value6)
+			.addCell(unit6)
+			.addCell(factor6)
+			.addCell(result6);
+		
+		table.addRow()
+			.addCell(new Label(AON.MSG.irpfActivityRnp()), AON.CSS.aonTableLabel())
+			.addCell(new Label())
+			.addCell(new Label())
+			.addCell(new Label())
+			.addCell(rnp0, AON.CSS.aonBold());
+
+		return table;
 	}
 	
-	private class EpigraphPanelCallback implements EpigraphPanel.SelectionCallBack {
-		@Override
-		public void onSelect(final IEpigraph selected) {
-			if (AonStringUtils.isNotBlank( callback.getActivity().getEpigraph())) {
-				ConfirmDialog dialog = new ConfirmDialog();
-				dialog.confirm(AON.MSG.newEpigrapSelected(), new ConfirmDialogCallback() {
-					
-					@Override
-					public void onCancel() {}
-					
-					@Override
-					public void onAccept() {
-						accept(selected);
-					}
-				});
-			} else {
-				accept(selected);
-			}
-		}
+	private Widget getResultPanel() {
+		AonDisplayTable table = new AonDisplayTable();
+		table.addStyleName(AON.CSS.aonWidthAlmostAll());
+		table.addStyleName(AON.CSS.aonBlockCenter());
+		table.addStyleName(AON.CSS.aonMarginBottom());
+
+		rnp.setEnabled(false);
+		iem.setEnabled(false);
+		rnm.setEnabled(false);
+		ic1.setEnabled(false);
+		ic2.setEnabled(false);
+		ic3.setEnabled(false);
+		ic4.setEnabled(false);
+		ic5.setEnabled(false);
+		rpf.setEnabled(false);
+		rlo.setEnabled(false);
+		rdr.setEnabled(false);
+		net.setEnabled(false);
+		por.setEnabled(false);
+		res.setEnabled(false);
 		
-		@Override
-		public void onClose() {}
+		table
+			.addLabelWidgetRow(AON.MSG.irpfActivityRnp(), rnp)
+			.addLabelWidgetRow(AON.MSG.irpfActivityIem(), iem)
+			.addLabelWidgetRow(AON.MSG.irpfActivityIin(), iin)
+			.addLabelWidgetRow(AON.MSG.irpfActivityRnm(), rnm)
+			.addLabelWidgetRow(AON.MSG.irpfActivityIc1(), ic1)
+			.addLabelWidgetRow(AON.MSG.irpfActivityIc2(), ic2)
+			.addLabelWidgetRow(AON.MSG.irpfActivityIc3(), ic3)
+			.addLabelWidgetRow(AON.MSG.irpfActivityIc4(), ic4)
+			.addLabelWidgetRow(AON.MSG.irpfActivityIc5(), ic5)
+			.addLabelWidgetRow(AON.MSG.irpfActivityRpf(), rpf)
+			.addLabelWidgetRow(AON.MSG.irpfActivityRlo(), rlo)
+			.addLabelWidgetRow(AON.MSG.irpfActivityRdr(), rdr)
+			.addLabelWidgetRow(AON.MSG.irpfActivityDia(), dia)
+			.addLabelWidgetRow(AON.MSG.irpfActivityNet(), net)
+			.addLabelWidgetRow(AON.MSG.irpfActivityPor(), por)
+			.addLabelWidgetRow(AON.MSG.irpfActivityRes(), res)
+		;
 		
-		private void accept(final IEpigraph selected) {
-			Model131Activity.this.tab.setVisible(true);
-			callback.getActivity().initialize();
-			callback.getActivity().setEpi(selected);
-			callback.getActivity().setEpigraph(selected.getEpigraph());
-			callback.getActivity().setDescription(selected.getDescription());
-			callback.getActivity().setMaxImport(selected.getLimExceso());
-			for (Module mod : selected.getIRPFModules()) {
-				Mod131ActivityModule m = new Mod131ActivityModule();
-				m.setDescription(mod.getKey().getDescription());
-				m.setValue(0.0);
-				m.setUnit(mod.getUnit());
-				m.setFactor(mod.getAmount());
-				m.setResult(0.0);
-				m.setSalariedStaff(mod.isSalariedStaff());
-				m.setNoSalariedStaff(mod.isNoSalariedStaff());
-				callback.getActivity().getModules().add(m);
-			}
-			calculate();
-		}
+		return table;
 	}
 	
-	private void populateActivity(Mod131Activity act) {
+
+	private void accept(IMod131ActivityCallback callback, final IEpigraph selected) {
+		Model131Activity.this.tabLayoutPanel.setVisible(true);
+		callback.getActivity().initialize();
+		callback.getActivity().setEpi(selected);
+		callback.getActivity().setEpigraph(selected.getEpigraph());
+		callback.getActivity().setDescription(selected.getDescription());
+		callback.getActivity().setMaxImport(selected.getLimExceso());
+		for (Module mod : selected.getIRPFModules()) {
+			Mod131ActivityModule m = new Mod131ActivityModule();
+			m.setDescription(mod.getKey().getDescription());
+			m.setValue(0.0);
+			m.setUnit(mod.getUnit());
+			m.setFactor(mod.getAmount());
+			m.setResult(0.0);
+			m.setSalariedStaff(mod.isSalariedStaff());
+			m.setNoSalariedStaff(mod.isNoSalariedStaff());
+			callback.getActivity().getModules().add(m);
+		}
+		calculate(callback);
+	}
+	
+	
+	private void populateActivity(IMod131ActivityCallback callback) {
+		Mod131Activity act = callback.getActivity();
 		epigraph.setText(act.getEpigraph());
 		epigraphLabel.setText(AonStringUtils.abbreviate(act.getDescription(),100));
 		epigraphLabel.setTitle(act.getDescription());
 		
-		Model131Activity.this.tab.setVisible(AonStringUtils.isNotBlank( act.getEpigraph()) );
+		Model131Activity.this.tabLayoutPanel.setVisible(AonStringUtils.isNotBlank( act.getEpigraph()) );
 		
 		dis.setValue(act.isDis());
 		com.setValue(act.getCom());
@@ -398,7 +581,7 @@ public class Model131Activity extends DockLayoutPanel {
 		result5.setValue(mod.getResult());		
 
 		mod = (act.getModules().size() > i)?act.getModules().get(i):new Mod131ActivityModule();
-		i++;
+		
 		description6.setText(mod.getDescription());
 		value6.setValue(mod.getValue());
 		unit6.setText(mod.getUnit());
@@ -423,73 +606,64 @@ public class Model131Activity extends DockLayoutPanel {
 		por.setValue(act.getPor());
 		res.setValue(act.getRes());
 		
-		enableFields();
+		enableFields(callback);
 	}
 	
-	@UiHandler({"dis","ceu","loc","cap","tns","tss"})
-	void onFieldClick(ClickEvent event) {
-		this.callback.getActivity().setDis(dis.getValue());
-		this.callback.getActivity().setCeu(ceu.getValue());
-		this.callback.getActivity().setLoc(loc.getValue());
-		this.callback.getActivity().setCap(cap.getValue());
-		this.callback.getActivity().setTns(tns.getValue());
-		this.callback.getActivity().setTss(tss.getValue());
-		calculate();
-	}
-
-		
-	@UiHandler({"com","tem","nue","veh","mun","emp","lor","bat","prc"
-		,"value0","value1","value2","value3","value4","value5","value6"
-		,"iin","dia"})
-
-	void onFieldChange(ChangeEvent event) {
-		if (com.getValue() == null) com.setValue(0.0,false); 
-		if (tem.getValue() == null) tem.setValue(0,false);
+	private void onFieldChange( IMod131ActivityCallback callback ) {
+		com.setValue(AonNumberUtils.zeroIfNull(com.getValue()),false);
+		tem.setValue(AonNumberUtils.zeroIfNull(tem.getValue()),false);
 		if (tem.getValue() < 0) tem.setValue(0,false);
 		if (tem.getValue() > 180) tem.setValue(180,false);
-		if (nue.getValue() == null) nue.setValue(0,false);
-		if (veh.getValue() == null) veh.setValue(0,false);
-		if (emp.getValue() == null) emp.setValue(0,false);
-		if (prc.getValue() == null) prc.setValue(0.0,false);
-		if (value0.getValue() == null) value0.setValue(0.0,false);
-		if (value1.getValue() == null) value1.setValue(0.0,false);
-		if (value2.getValue() == null) value2.setValue(0.0,false);
-		if (value3.getValue() == null) value3.setValue(0.0,false);
-		if (value4.getValue() == null) value4.setValue(0.0,false);
-		if (value5.getValue() == null) value5.setValue(0.0,false);
-		if (value6.getValue() == null) value6.setValue(0.0,false);
-		if (iin.getValue() == null) iin.setValue(0.0,false);
-		if (dia.getValue() == null) dia.setValue(0,false);
-		this.callback.getActivity().setCom(com.getValue());
-		this.callback.getActivity().setTem(tem.getValue());
-		this.callback.getActivity().setNue(nue.getValue());
-		this.callback.getActivity().setVeh(veh.getValue());
-		this.callback.getActivity().setEmp(emp.getValue());
-		this.callback.getActivity().setMun(mun.getSelectedIndex());
-		this.callback.getActivity().setLor(lor.getSelectedIndex());
-		this.callback.getActivity().setBat(bat.getSelectedIndex());
-		this.callback.getActivity().setPrc(prc.getValue());
-		if  (this.callback.getActivity().getModules().size() > 0)
-			this.callback.getActivity().getModules().get(0).setValue(value0.getValue());
-		if  (this.callback.getActivity().getModules().size() > 1)
-			this.callback.getActivity().getModules().get(1).setValue(value1.getValue());
-		if  (this.callback.getActivity().getModules().size() > 2)
-			this.callback.getActivity().getModules().get(2).setValue(value2.getValue());
-		if  (this.callback.getActivity().getModules().size() > 3)
-			this.callback.getActivity().getModules().get(3).setValue(value3.getValue());
-		if  (this.callback.getActivity().getModules().size() > 4)
-			this.callback.getActivity().getModules().get(4).setValue(value4.getValue());
-		if  (this.callback.getActivity().getModules().size() > 5)
-			this.callback.getActivity().getModules().get(5).setValue(value5.getValue());
-		if  (this.callback.getActivity().getModules().size() > 6)
-			this.callback.getActivity().getModules().get(6).setValue(value6.getValue());
-		this.callback.getActivity().setIin(iin.getValue());
-		this.callback.getActivity().setDia(dia.getValue());
-		calculate();
+		nue.setValue(AonNumberUtils.zeroIfNull(nue.getValue()),false);
+		veh.setValue(AonNumberUtils.zeroIfNull(veh.getValue()),false);
+		emp.setValue(AonNumberUtils.zeroIfNull(emp.getValue()),false);
+		prc.setValue(AonNumberUtils.zeroIfNull(prc.getValue()),false);
+		value0.setValue(AonNumberUtils.zeroIfNull(value0.getValue()),false);
+		value1.setValue(AonNumberUtils.zeroIfNull(value1.getValue()),false);
+		value2.setValue(AonNumberUtils.zeroIfNull(value2.getValue()),false);
+		value3.setValue(AonNumberUtils.zeroIfNull(value3.getValue()),false);
+		value4.setValue(AonNumberUtils.zeroIfNull(value4.getValue()),false);
+		value5.setValue(AonNumberUtils.zeroIfNull(value5.getValue()),false);
+		value6.setValue(AonNumberUtils.zeroIfNull(value6.getValue()),false);
+		iin.setValue(AonNumberUtils.zeroIfNull(iin.getValue()),false);
+		dia.setValue(AonNumberUtils.zeroIfNull(dia.getValue()),false);
+		callback.getActivity().setCom(com.getValue());
+		callback.getActivity().setTem(tem.getValue());
+		callback.getActivity().setNue(nue.getValue());
+		callback.getActivity().setVeh(veh.getValue());
+		callback.getActivity().setEmp(emp.getValue());
+		callback.getActivity().setMun(mun.getSelectedIndex());
+		callback.getActivity().setLor(lor.getSelectedIndex());
+		callback.getActivity().setBat(bat.getSelectedIndex());
+		callback.getActivity().setPrc(prc.getValue());
+		callback.getActivity().setDis(dis.getValue());
+		callback.getActivity().setCeu(ceu.getValue());
+		callback.getActivity().setLoc(loc.getValue());
+		callback.getActivity().setCap(cap.getValue());
+		callback.getActivity().setTns(tns.getValue());
+		callback.getActivity().setTss(tss.getValue());
+		if  (!callback.getActivity().getModules().isEmpty())
+			callback.getActivity().getModules().get(0).setValue(value0.getValue());
+		if  (callback.getActivity().getModules().size() > 1)
+			callback.getActivity().getModules().get(1).setValue(value1.getValue());
+		if  (callback.getActivity().getModules().size() > 2)
+			callback.getActivity().getModules().get(2).setValue(value2.getValue());
+		if  (callback.getActivity().getModules().size() > 3)
+			callback.getActivity().getModules().get(3).setValue(value3.getValue());
+		if  (callback.getActivity().getModules().size() > 4)
+			callback.getActivity().getModules().get(4).setValue(value4.getValue());
+		if  (callback.getActivity().getModules().size() > 5)
+			callback.getActivity().getModules().get(5).setValue(value5.getValue());
+		if  (callback.getActivity().getModules().size() > 6)
+			callback.getActivity().getModules().get(6).setValue(value6.getValue());
+		callback.getActivity().setIin(iin.getValue());
+		callback.getActivity().setDia(dia.getValue());
+		calculate( callback );
+		ValueChangeEvent.<Mod131Activity>fire(Model131Activity.this, callback.getActivity());
 	}
 
-	private void enableFields() {
-		if (this.callback.getActivity().getEpi() == Epigraph.E____) {
+	private void enableFields(IMod131ActivityCallback callback) {
+		if (callback.getActivity().getEpi() == Epigraph.E____) {
 			bat.setEnabled(true);
 			loc.setEnabled(false);
 			veh.setEnabled(false);
@@ -497,9 +671,9 @@ public class Model131Activity extends DockLayoutPanel {
 			tns.setEnabled(false);
 			tss.setEnabled(false);
 			mun.setEnabled(false);
-		} else if (this.callback.getActivity().getEpi() == Epigraph.E_722A 
-			|| this.callback.getActivity().getEpi() == Epigraph.E_722B
-			|| this.callback.getActivity().getEpi() == Epigraph.E_757
+		} else if (callback.getActivity().getEpi() == Epigraph.E_722A 
+			|| callback.getActivity().getEpi() == Epigraph.E_722B
+			|| callback.getActivity().getEpi() == Epigraph.E_757
 			) {
 			bat.setEnabled(false);
 			tss.setEnabled(true);
@@ -509,42 +683,47 @@ public class Model131Activity extends DockLayoutPanel {
 			tss.setEnabled(false);
 			tns.setEnabled(false);
 		}
-		cap.setEnabled( this.callback.getActivity().getVeh() > 0 );
+		cap.setEnabled( callback.getActivity().getVeh() > 0 );
 	}
 	
-	private void calculate() {
-		Model131.SERVICE.calculateActivity( callback.getDomainName(), callback.getUser(), callback.getDomain(),
-				callback.getModel(), this.callback.getActivity(), new AsyncCallback<Mod131Activity>() {
-					
-					@Override
-					public void onSuccess(Mod131Activity result) {
-						for (int i = 0 ; i < callback.getActivity().getModules().size(); i++) {
-							callback.getActivity().getModules().get(i).setResult(result.getModules().get(i).getResult());	
-						}
-						callback.getActivity().setPrc(result.getPrc());
-						callback.getActivity().setRnp(result.getRnp());
-						callback.getActivity().setIem(result.getIem());
-						callback.getActivity().setRnm(result.getRnm());
-						callback.getActivity().setIc1(result.getIc1());
-						callback.getActivity().setIc2(result.getIc2());
-						callback.getActivity().setIc3(result.getIc3());
-						callback.getActivity().setIc4(result.getIc4());
-						callback.getActivity().setIc5(result.getIc5());
-						callback.getActivity().setRpf(result.getRpf());
-						callback.getActivity().setRlo(result.getRlo());
-						callback.getActivity().setRdr(result.getRdr());
-						callback.getActivity().setNet(result.getNet());
-						callback.getActivity().setPor(result.getPor());
-						callback.getActivity().setRes(result.getRes());
-						populateActivity(callback.getActivity());						
+	private void calculate(IMod131ActivityCallback callback) {
+		Model131.SERVICE.calculateActivity( 
+			callback.getOptions().getOccam(), 
+			callback.getModel(), callback.getActivity(), new AsyncCallback<Mod131Activity>() {
+				
+				@Override
+				public void onSuccess(Mod131Activity result) {
+					for (int i = 0 ; i < callback.getActivity().getModules().size(); i++) {
+						callback.getActivity().getModules().get(i).setResult(result.getModules().get(i).getResult());	
 					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
-					}
-				});
+					callback.getActivity().setPrc(result.getPrc());
+					callback.getActivity().setRnp(result.getRnp());
+					callback.getActivity().setIem(result.getIem());
+					callback.getActivity().setRnm(result.getRnm());
+					callback.getActivity().setIc1(result.getIc1());
+					callback.getActivity().setIc2(result.getIc2());
+					callback.getActivity().setIc3(result.getIc3());
+					callback.getActivity().setIc4(result.getIc4());
+					callback.getActivity().setIc5(result.getIc5());
+					callback.getActivity().setRpf(result.getRpf());
+					callback.getActivity().setRlo(result.getRlo());
+					callback.getActivity().setRdr(result.getRdr());
+					callback.getActivity().setNet(result.getNet());
+					callback.getActivity().setPor(result.getPor());
+					callback.getActivity().setRes(result.getRes());
+					populateActivity(callback);						
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());
+				}
+			});
 	}
 	
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Mod131Activity> handler) {
+		return super.addHandler(handler, ValueChangeEvent.getType());
+	}
 
 }

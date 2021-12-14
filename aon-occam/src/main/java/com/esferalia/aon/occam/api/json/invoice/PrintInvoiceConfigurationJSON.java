@@ -46,7 +46,8 @@ public class PrintInvoiceConfigurationJSON {
 				.setRecordData(JsonUtils.getboolean(json, IJsonNames.RECORD_DATA))
 				.setContactData(JsonUtils.getboolean(json, IJsonNames.CONTACT_DATA))
 				.setLanguage(AonLanguage.safeValueOf(JsonUtils.getString(json, IJsonNames.LANGUAGE)))
-				.setTheme(PrintInvoiceThemeConfigurationJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.THEME)));
+				.setTheme(PrintInvoiceThemeConfigurationJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.THEME)))
+				.setLegal(JsonUtils.getString(json, IJsonNames.LEGAL));
 	}
 	
 	public static JSONObject toJSON(PrintInvoiceConfiguration pic) {
@@ -62,7 +63,8 @@ public class PrintInvoiceConfigurationJSON {
 				.put(IJsonNames.RECORD_DATA, pic.isRecordData())
 				.put(IJsonNames.CONTACT_DATA, pic.isContactData())
 				.put(IJsonNames.LANGUAGE, pic.getLanguage().getLanguage())
-				.put(IJsonNames.THEME, PrintInvoiceThemeConfigurationJSON.toJSON(pic.getTheme()));
+				.put(IJsonNames.THEME, PrintInvoiceThemeConfigurationJSON.toJSON(pic.getTheme()))
+				.put(IJsonNames.LEGAL, pic.getLegal());
 	}
 	
 }

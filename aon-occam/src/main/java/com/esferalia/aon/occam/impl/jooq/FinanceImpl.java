@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
@@ -136,6 +137,16 @@ public class FinanceImpl implements IFinance {
 	public LinkedList<InvoiceDetail> getInvoiceDetailListUntilDate(AONContext ctx, OldItem item, Integer workplaceId,
 			Integer warehouseId, Date date) {
 		return InvoiceOLDDAO.getInvoiceDetailListUntilDate(ctx, item, workplaceId, warehouseId, date);
+	}
+
+	@Override
+	public Integer getInvoiceMinNumber(AONContext ctx, Byte[] types, String series) {
+		return InvoiceDAO.getMinNumber(ctx, types, series);
+	}
+	
+	@Override
+	public Integer getInvoiceMinNumber(AONContext ctx, InvoiceType type, String series) {
+		return InvoiceDAO.getMinNumber(ctx, type, series);
 	}
 	
 	@Override
@@ -240,6 +251,13 @@ public class FinanceImpl implements IFinance {
 			InvoiceDAO.insert(ctx, invoice));		
 	}
 
+	@Override
+	public Invoice updateInvoice(AONContext ctx, Invoice invoice, boolean only) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			InvoiceDAO.update(ctx, invoice, only));		
+	}
+
+	
 	@Override
 	public Invoice updateInvoice(AONContext ctx, Invoice invoice) {
 		return ctx.getDslContext().transactionResult(configuration -> 

@@ -4,18 +4,19 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -48,8 +49,15 @@ public class Model390 extends MainEntryPoint {
 	private final static int INFORMATION_TAB = 1;
 	private final static int AEAT_TAB = 2;
 
-	public static Model390ServiceAsync MOD390_SERVICE;
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
+	public static final Model390ServiceAsync MOD390_SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
+		
+		Model390ServiceAsync serviceRaw = GWT.create(Model390Service.class);
+		MOD390_SERVICE = new Model390ServiceAsyncDecorator(serviceRaw);
+	}
 	
 	interface Model390Binder extends UiBinder<Widget, Model390> {
 	}
@@ -116,17 +124,17 @@ public class Model390 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
 			
 			@Override
-			public void onSuccess(AonData aonData) {
+			public void onSuccess(AonConfiguration config) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 				Model390ModuleOptions options = new Model390ModuleOptions();
 				options.setParentWidget(root);
 				options.setDomainName(getCurrentDomainName());
 				options.setDomain(getCurrentDomain());
 				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
+				options.setConfiguration(config);
 				onModuleLoad( options );
 			}
 			
@@ -139,9 +147,6 @@ public class Model390 extends MainEntryPoint {
 	public void onModuleLoad(Model390ModuleOptions options) {
 		AON.ensureInjected();
 
-		Model390ServiceAsync serviceRaw = GWT.create(Model390Service.class);
-		MOD390_SERVICE = new Model390ServiceAsyncDecorator(serviceRaw);
-		
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
 		
 		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");

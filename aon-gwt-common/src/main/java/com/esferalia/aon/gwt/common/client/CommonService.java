@@ -7,9 +7,10 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -24,6 +25,7 @@ public interface CommonService extends RemoteService {
 	// **************************************************
 	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, String user) throws AonCoreException;
 	AonConfiguration getAonConfiguration(String currentDomainName, int currentDomain, String user, Date atDate) throws AonCoreException;
+	AonConfiguration getAonConfiguration(Occam occam, ConfigParams params) throws AonCoreException;
 	
 	// **************************************************
 	// *************************************** [SECURITY]
@@ -54,11 +56,6 @@ public interface CommonService extends RemoteService {
 	LinkedList<PayMethod> getPayMethods(String domainName, int domain, String user);
 	PayMethod savePayMethod(String domainName,int domain, String user, PayMethod payMethod) throws AonCoreException;
 	void deletePayMethod(String domainName,int domain, String user, Integer id) throws AonCoreException;
-
-	// **************************************************
-	// *************************************** [CREDITOR]
-	// **************************************************
-	LinkedList<Creditor> getBasicCreditors(String domainName,int domain, String user,String query) throws AonCoreException;
 
 	// **************************************************
 	// **************************************** [INVOICE]

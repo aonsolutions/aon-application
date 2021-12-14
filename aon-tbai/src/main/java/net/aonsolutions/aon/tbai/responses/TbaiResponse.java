@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class TbaiResponse {
 	
 	private String tbaiId;
@@ -16,7 +18,7 @@ public class TbaiResponse {
 	private String validationDescription;
 	private String validationDescriptionEUS;
 	private String sign; 
-
+	private String responseStatus;
 	private boolean ok; 
 	private byte[] data;
 	
@@ -97,6 +99,17 @@ public class TbaiResponse {
 	
 	public TbaiResponse setOk(boolean ok) {
 		this.ok = ok;
+		return this;
+	}
+	
+	public String getResponseStatus() {
+		if(!AonStringUtils.isBlank(responseStatus))
+			return responseStatus;
+		else return isOk() ? "ok" : "error";
+	}
+	
+	public TbaiResponse setResponseStatus(String responseStatus) {
+		this.responseStatus = responseStatus;
 		return this;
 	}
 	

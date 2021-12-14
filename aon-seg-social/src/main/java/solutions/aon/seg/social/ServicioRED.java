@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -43,6 +44,7 @@ import solutions.aon.seg.social.object.Liquidation;
 import solutions.aon.seg.social.object.Liquidation.LiquidationBuilder;
 import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.object.SituacionEmpresa;
+import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.SituacionEmpresa.SituacionEmpresaBuilder;
 import solutions.aon.seg.social.object.WorkerLiquidation;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -370,6 +372,109 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair("btn_FkeyButton", "+"));
 			params.add(new BasicNameValuePair("tbl_cbo_Sub0900112079_0_0", "Select"));
 			
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+			
+			body = Toolkit.getBodyPOST(httpClient, httpPost);
+			ServicioREDRegeXML.checkOldSsError(body);
+			httpPost = Toolkit.reportGenerationForm(body);
+			
+			try (CloseableHttpResponse resp = httpClient.execute(httpPost)) {
+				Toolkit.checkResponseStatus(resp);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				resp.getEntity().writeTo(baos);
+				return baos.toByteArray();
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new InvalidCertificateException();
+		}
+		
+	}
+	
+	/**
+	 * DUPLICADOS DE DOCUMENTOS TA
+	 * @param certificateInputStream
+	 * @param certificatePassword
+	 * @param certificateType
+	 * @param ccc
+	 * @param regime
+	 * @param affiliationNumber
+	 * @param date
+	 * @return a PDF file
+	 * @throws SegSocialException
+	 */
+	public static byte[] getTADuplicatePOST(InputStream certificateInputStream, String certificatePassword, String certificateType,
+			String ccc, String regime, SituationType situationType, String affiliationNumber, Date date) throws SegSocialException{
+
+		SSLContext sslContext = null;
+
+		try {
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		String link = "";
+		String sessionId = "";
+		
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			
+			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR");
+			link = Toolkit.getLink(body);
+			sessionId = Toolkit.getSessionId(body);
+			
+			HttpPost httpPost = new HttpPost(link);
+			
+			String txtSDFTESNAF = affiliationNumber.length() > 2 ? affiliationNumber.substring(0, 2) : "";
+			String txtSDFNAF = affiliationNumber.length() > 2 ? affiliationNumber.substring(2) : "";
+
+			String txtSDFTESCTA = ccc.length() > 2 ? ccc.substring(0, 2) : "";
+			String txtSDFCUENTA = ccc.length() > 2 ? ccc.substring(2) : "";
+			
+			List<NameValuePair> params = new ArrayList<>();
+			params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, IServicioRedConstants.LIBAFCON));
+			params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6500"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+			params.add(new BasicNameValuePair(IServicioRedConstants.FOCUSED_CONTROL, IServicioRedConstants.SUB2207601004));
+			params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFTESNAF, txtSDFTESNAF));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFNAF, txtSDFNAF));
+			params.add(new BasicNameValuePair("txt_SDFREGCTA_NH", regime));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFTESCTA, txtSDFTESCTA));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFCUENTA, txtSDFCUENTA));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFDIA, String.format("%td", date)));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFMES, String.format("%tm", date)));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFAO, String.format("%tY", date)));
+			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
+			params.add(new BasicNameValuePair("chk_SDFINFTA1", "1"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, ""));
+			
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+			
+			body = Toolkit.getBodyPOST(httpClient, httpPost);
+			ServicioREDRegeXML.checkOldSsError(body);
+			link = Toolkit.getLink(body);
+			sessionId = Toolkit.getSessionId(body);
+			httpPost = new HttpPost(link);
+			
+			String select = "tbl_cbo_Sub0900112079_0_0";
+			
+			Optional<String> element = Toolkit.getElementsContainingAttribute(body, "name", "_1_").stream().filter(el-> el.contains(situationType.getName())).findAny();
+			if(element.isPresent()) 
+				select = "tbl_cbo_Sub0900112079_0_"+Toolkit.getAttribute(element.get(), "name").substring(3);
+			
+			params = new ArrayList<>();
+			params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, IServicioRedConstants.LIBAFCON));
+			params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM6501"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+			params.add(new BasicNameValuePair(IServicioRedConstants.FOCUSED_CONTROL, select));
+			params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_COMMAND_EDIT, "EN"));
+			params.add(new BasicNameValuePair("btn_FkeyButton", "+"));
+			params.add(new BasicNameValuePair(select, "Select"));
+			
+		
 			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);

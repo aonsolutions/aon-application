@@ -8,9 +8,10 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Enterprise;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
-import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,8 +21,9 @@ public interface CommonServiceAsync {
 	// **************************************************
 	// ********************************** [CONFIGURATION]
 	// **************************************************
-	void getAonConfiguration(String currentDomainName, int currentDomain, String user, AsyncCallback<AonConfiguration> asyncCallback);
+	void getAonConfiguration(String currentDomainName, int currentDomain, String user, AsyncCallback<AonConfiguration> callback);
 	void getAonConfiguration(String currentDomainName, int currentDomain, String user, Date atDate, AsyncCallback<AonConfiguration> callback);
+	void getAonConfiguration(Occam occam, ConfigParams params, AsyncCallback<AonConfiguration> asyncCallback);
 
 	// **************************************************
 	// *************************************** [SECURITY]
@@ -53,12 +55,6 @@ public interface CommonServiceAsync {
 	void getPayMethods(String domainName, int domain, String user,AsyncCallback<LinkedList<PayMethod>> callback);
 	void savePayMethod(String domainName,int domain, String user, PayMethod payMethod ,AsyncCallback<PayMethod> callback);
 	void deletePayMethod(String domainName,int domain, String user, Integer id, AsyncCallback<Void> callback);
-	
-	// **************************************************
-	// *************************************** [CREDITOR]
-	// **************************************************
-	void getBasicCreditors(String domainName, int domain, String user, String query, 
-			AsyncCallback<LinkedList<Creditor>> callback);
 
 	// **************************************************
 	// **************************************** [INVOICE]

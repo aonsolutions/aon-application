@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod303;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -14,25 +15,22 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface Mod303Service extends RemoteService {
 
 	// ---------------------------------------------------------------MODELO 303
-	Mod303 getMod303(String domainName,String user, int domain, int id) throws AonCoreException;
-	LinkedList<Mod303> getMod303s(String domainName,String user, int domain) throws AonCoreException;
-	Mod303 initialize(String domainName,String user, int domain, Mod303 mod303);
-	Mod303 create(String domainName,String user, int domain, Mod303 mod303) throws AonCoreException;
-	Mod303 declarationChanged(String domainName,String user, int domain, Mod303 mod303) throws AonCoreException;
+	Mod303 getMod303(Occam occam, int id) throws AonCoreException;
+	LinkedList<Mod303> getMod303s(Occam occam) throws AonCoreException;
+	Mod303 initialize(Occam occam, Mod303 mod303);
+	Mod303 create(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 reset(Occam occam, Mod303 model) throws AonCoreException;
+	Mod303 declarationChanged(Occam occam, Mod303 mod303) throws AonCoreException;
 	
-	void delete(String domainName,String user, Mod303 mod303) throws AonCoreException;
-	Mod303 save(String domainName,String user, Mod303 mod303) throws AonCoreException;
-	Mod303 saveComments(String domainName,String user, Mod303 mod303) throws AonCoreException;
-	Mod303 initializeForFinish(String domainName,String user, Mod303 mod303) throws AonCoreException;
-	Mod303 calculate(String domainName,String user, Mod303 mod303) throws AonCoreException;
-	String getInfo(String domainName,String user, int domain, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
-	Mod303 markAsFinished(String domainName,String user, Mod303 mod303) throws AonCoreException;
-	Mod303 markAsPending(String domainName,String user, Mod303 mod303) throws AonCoreException;
-	Mod303 markAsSent(String domainName,String user, Mod303 mod303) throws AonCoreException;
-	Mod303 markAsCustomerCheck(String domainName, String user, Mod303 mod303) throws AonCoreException;
-
-	Double mathExpression(String expression) throws AonCoreException;
+	void delete(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 save(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 saveComments(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 initializeForFinish(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 calculate(Occam occam, Mod303 mod303) throws AonCoreException;
+	String getInfo(Occam occam, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
+	Mod303 markAsFinished(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 markAsPending(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 markAsSent(Occam occam, Mod303 mod303) throws AonCoreException;
+	Mod303 markAsCustomerCheck(Occam occam, Mod303 mod303) throws AonCoreException;
 	
-	Integer validationFile(String domainName, Integer domainId, String user, Integer id);
-	Integer presentationFile(String domainName, Integer domainId, String user, Integer id);
 }

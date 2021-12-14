@@ -1,167 +1,74 @@
 package com.esferalia.aon.gwt.fiscal.client.mod303;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.css.AonCellTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.cell.client.ImageResourceCell;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.view.client.NoSelectionModel;
-import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 
-public class Model303AEATActivityFarmerTable extends CellTable<Mod303ActivityFarmer> implements HasSelectionHandlers<Mod303ActivityFarmer> {
-	private static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
+class Model303AEATActivityFarmerTable extends FlowPanel implements HasSelectionHandlers<Mod303ActivityFarmer> {
 	
-	public Model303AEATActivityFarmerTable(ProvidesKey<Mod303ActivityFarmer> providesKey, boolean lastPeriod) {
-		super(1,TABLE_STYLE, providesKey);
-		this.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
-		this.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-		
-		NoSelectionModel<Mod303ActivityFarmer> modelFarmer = new NoSelectionModel<Mod303ActivityFarmer>(providesKey);		
-		setSelectionModel(modelFarmer);
-		modelFarmer.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+	private boolean lastPeriod;
+	private AonDisplayGrid grid;
 
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				SelectionEvent.<Mod303ActivityFarmer>fire(Model303AEATActivityFarmerTable.this, modelFarmer.getLastSelectedObject());
-			}
-			
-		});
-		addSelectorColumn();
-		addEpigraphColumn();
+	public Model303AEATActivityFarmerTable(boolean lastPeriod) {
+		setStyleName(AON.CSS.aonWidthAll());
 		
-		addVolColumn();
-		addIndColumn();
-		addCuoColumn();
-		if ( lastPeriod ) {
-			addSopColumn();
-			addCadColumn();
-		} else {
-			addPorColumn();
-			addResColumn();
+		this.lastPeriod = lastPeriod;
+		grid = new AonDisplayGrid();
+		grid.addStyleName(AON.CSS.aonNoPadding());
+		grid.addStyleName(AON.CSS.aonBlockCenter());
+		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
+
+		add(grid);
+	}
+	
+	protected void paint( LinkedList<Mod303ActivityFarmer> activities ) {
+		grid.clear();
+
+		Label actLabel = new Label( AON.MSG.activity() );
+		Label labelVol = new Label( AON.MSG.operationsVolume());
+		Label labelInd = new Label( AON.MSG.f03Msg());
+		Label labelCuo = new Label( AON.MSG.quota());
+		Label labelSop = new Label( AON.MSG.page6DAbbr());
+		Label labelCad = new Label( AON.MSG.derQuota() + " [B]");
+		Label labelPor = new Label( AON.MSG.percentAbbr());
+		Label labelRes = new Label( AON.MSG.result() + " [A]");
+		
+		grid.addHeaderRow()
+			.addCell( actLabel )
+			.addCell( labelVol , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCell( labelInd , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCell( labelCuo , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCellIf(lastPeriod, labelSop , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCellIf(lastPeriod, labelCad , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCellIf(!lastPeriod, labelPor , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCellIf(!lastPeriod, labelRes , AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+		;
+
+		for (Mod303ActivityFarmer act : activities) {
+			AonDisplayGridRow actRow = grid.addRow();
+			actRow
+				.addCell( new Label( AonStringUtils.abbreviate(act.getFullDescription(), 80) ), AON.CSS.aonFlexGrow1() )
+				.addCell( new Label( AON.FMT.format(act.getVol()) ), AON.CSS.aonTextRight())
+				.addCell( new Label( AonNumberUtils.toString( act.getInd() )) , AON.CSS.aonTextRight())
+				.addCell( new Label(AON.FMT.format(act.getCuo()) ),AON.CSS.aonTextRight())
+				.addCellIf(lastPeriod, new Label(AON.FMT.format(act.getSop())), AON.CSS.aonTextRight() , AON.CSS.aonTextRight())
+				.addCellIf(lastPeriod, new Label(AON.FMT.format(act.getCad())), AON.CSS.aonTextRight() , AON.CSS.aonTextRight())
+				.addCellIf(!lastPeriod, new Label(AON.FMT.format(act.getPor())), AON.CSS.aonTextRight() , AON.CSS.aonTextRight())
+				.addCellIf(!lastPeriod, new Label(AON.FMT.format(act.getIng())), AON.CSS.aonTextRight() , AON.CSS.aonTextRight())
+			;
+			actRow.addClickHandler(event -> SelectionEvent.<Mod303ActivityFarmer>fire(Model303AEATActivityFarmerTable.this, act) );
 		}
-		
-		this.setEmptyTableWidget(new HTML(AON.MSG.noData()));
-	}
-	
-
-	private void addSelectorColumn() {
-		final Column<Mod303ActivityFarmer, ImageResource> selectorColumn = new Column<Mod303ActivityFarmer, ImageResource>(
-				new ImageResourceCell()) {
-			@Override
-			public ImageResource getValue(Mod303ActivityFarmer model) {
-				return AON.AON_RESOURCES.aonIconRowSelector();
-			}
-		};
-		this.addColumn(selectorColumn);
-		this.setColumnWidth(selectorColumn, 20, Unit.PX);
-	}
-
-	private void addEpigraphColumn() {
-		final TextColumn<Mod303ActivityFarmer> epigraphColumn = new TextColumn<Mod303ActivityFarmer>() {
-			@Override
-			public String getValue(Mod303ActivityFarmer model) {
-				return AonStringUtils.abbreviate(model.getFullDescription(), 80);
-			}
-		};
-		this.addColumn(epigraphColumn, AON.MSG.activity());
-		this.setColumnWidth(epigraphColumn, "auto");
-	}
-
-	private void addVolColumn() {
-		final TextColumn<Mod303ActivityFarmer> netYieldColumn = new TextColumn<Mod303ActivityFarmer>() {
-			@Override
-			public String getValue(Mod303ActivityFarmer act) {
-				return act.isEmpty()?AonStringUtils.EMPTY:AON.FMT.format(act.getVol());
-			}
-		};
-		this.addColumn(netYieldColumn, AON.MSG.operationsVolume());
-		netYieldColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(netYieldColumn, 175, Unit.PX);
-	}	
-
-	private void addIndColumn() {
-		final TextColumn<Mod303ActivityFarmer> percentColumn = new TextColumn<Mod303ActivityFarmer>() {
-			@Override
-			public String getValue(Mod303ActivityFarmer act) {
-				return act.isEmpty()?AonStringUtils.EMPTY:AonNumberUtils.toString( act.getInd() );
-			}
-		};
-		this.addColumn(percentColumn, AON.MSG.f03Msg());
-		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(percentColumn, 100, Unit.PX);
-	}	
-
-	private void addCuoColumn() {
-		final TextColumn<Mod303ActivityFarmer> percentColumn = new TextColumn<Mod303ActivityFarmer>() {
-			@Override
-			public String getValue(Mod303ActivityFarmer act) {
-				return act.isEmpty()?AonStringUtils.EMPTY:AON.FMT.format(act.getCuo());
-			}
-		};
-		this.addColumn(percentColumn, AON.MSG.quota());
-		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(percentColumn, 125, Unit.PX);
-	}	
- 
-	private void addPorColumn() {
-		final TextColumn<Mod303ActivityFarmer> percentColumn = new TextColumn<Mod303ActivityFarmer>() {
-			@Override
-			public String getValue(Mod303ActivityFarmer act) {
-				return act.isEmpty()?AonStringUtils.EMPTY:AON.FMT.format(act.getPor());
-			}
-		};
-		this.addColumn(percentColumn, AON.MSG.percentAbbr());
-		percentColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(percentColumn, 100, Unit.PX);
-	}	
-
-	private void addResColumn() {
-		final TextColumn<Mod303ActivityFarmer> amountColumn = new TextColumn<Mod303ActivityFarmer>() {
-			@Override
-			public String getValue(Mod303ActivityFarmer act) {
-				return act.isEmpty()?AonStringUtils.EMPTY:AON.FMT.format(act.getIng());
-			}
-		};
-		this.addColumn(amountColumn, AON.MSG.result() + " [A]");
-		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 120, Unit.PX);
-	}
-
-	private void addSopColumn() {
-		final TextColumn<Mod303ActivityFarmer> amountColumn = new TextColumn<Mod303ActivityFarmer>() {
-			@Override
-			public String getValue(Mod303ActivityFarmer act) {
-				return act.isEmpty()?AonStringUtils.EMPTY:AON.FMT.format(act.getSop());
-			}
-		};
-		this.addColumn(amountColumn, AON.MSG.page6DAbbr());
-		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 140, Unit.PX);
-	}
-
-	private void addCadColumn() {
-		final TextColumn<Mod303ActivityFarmer> amountColumn = new TextColumn<Mod303ActivityFarmer>() {
-			@Override
-			public String getValue(Mod303ActivityFarmer act) {
-				return act.isEmpty()?AonStringUtils.EMPTY:AON.FMT.format(act.getCad());
-			}
-		};
-		this.addColumn(amountColumn, AON.MSG.derQuota() + " [B]");
-		amountColumn.setCellStyleNames(AON.AON_CSS.aonTextRight());
-		this.setColumnWidth(amountColumn, 140, Unit.PX);
 	}
 
 	@Override

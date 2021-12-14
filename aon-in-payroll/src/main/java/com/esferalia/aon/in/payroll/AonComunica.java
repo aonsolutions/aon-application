@@ -64,7 +64,7 @@ public class AonComunica {
 			if(parseDate(employee.getStartDate()).compareTo(parseDate(new Date())) > 0 ) {
 				System.out.println("DELETE MOV PREV TGSS");
 				SistemaRED.movPrevDelete(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, 
-						situationType.getName(), employee.getRegime(), employee.getCcc(), employee.getNaf(), date);
+						situationType, employee.getRegime(), employee.getCcc(), employee.getNaf(), date);
 			} else {
 				System.out.println("DELETE MOV CONSOLIDATED TGSS");
 				SistemaRED.removeMovConsolidated(certificateData, certificatePassword, certificateType, 
@@ -116,25 +116,28 @@ public class AonComunica {
 	private static void saveContractAttach(final byte certificateData[], final String certificatePassword,
 			final String certificateType, Domain domain, Employee emp) {
 			new Thread(() -> {
-				saveTA(certificateData, certificatePassword, certificateType, domain, emp.getEmployeeId(), emp.getCcc(), emp.getRegime(), emp.getNaf(), emp.getStartDate());
-				saveIDC(certificateData, certificatePassword, certificateType, domain, emp.getEmployeeId(), emp.getCcc(), emp.getRegime(), emp.getNaf(), emp.getStartDate());
+				saveTA(certificateData, certificatePassword, certificateType, domain, emp);
+				saveIDC(certificateData, certificatePassword, certificateType, domain, emp);
 			})
 			.start();
 	}
 	
+	// employee.getEmployeeId(), employee.getCcc(), employee.getRegime(), employee.getNaf(), employee.getStartDate(), employee.getEndDate() (Optional) 
 	private static void saveTA(final byte certificateData[], final String certificatePassword,
-			final String certificateType, Domain domain, Integer contractId, String ccc, String regime, String nss, Date date) {
+			final String certificateType, Domain domain, Employee employee) {
 		try {
 			System.out.println("--------PROCESSING TA---------");
+			Date date = employee.getEndDate().isEmpty() ? employee.getStartDate() : employee.getEndDate().get();
 			byte[] fileByte = ServicioRED.getTADuplicatePOST(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, 
-					ccc, regime, nss, date);
+					employee.getCcc(), employee.getRegime(), SituationType.ALTA, employee.getNaf(), date);
 
 			ContractAttach attach = new ContractAttach()
 			.setDomain(domain.getId())
-			.setContract(contractId)
+			.setContract(employee.getEmployeeId())
 			.setMimeType(MimeType.PDF)
 			.setDescription("TGSS - TA (ALTA)")
 			.setData(fileByte)
+			.setAttachDate(date)
 			.setType(ContractAttachType.TA);
 			PAYROLL.saveContractAttach(domain.getName(), domain.getId(), "", attach);
 		} catch (Exception e) {
@@ -143,20 +146,20 @@ public class AonComunica {
 	}
 	
 	private static void saveIDC(final byte certificateData[], final String certificatePassword,
-			final String certificateType, Domain domain, Integer contractId, String ccc, String regime, String nss, Date date) {
+			final String certificateType, Domain domain, Employee employee) {
 		
-		if(parseDate(date).compareTo(parseDate(new Date())) <= 0 ) {
+		if(parseDate(employee.getStartDate()).compareTo(parseDate(new Date())) <= 0 ) {
 			try {
 				System.out.println("--------PROCESSING IDC--------");
 				byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, 
-						nss, regime, ccc, date);
+						employee.getNaf(), employee.getRegime(), employee.getCcc(), employee.getStartDate());
 				ContractAttach attach = new ContractAttach()
 				.setDomain(domain.getId())
-				.setContract(contractId)
+				.setContract(employee.getEmployeeId())
 				.setMimeType(MimeType.PDF)
 				.setDescription("TGSS - IDC")
 				.setData(fileByte)
-				.setAttachDate(date)
+				.setAttachDate(employee.getStartDate())
 				.setType(ContractAttachType.IDC);
 				PAYROLL.saveContractAttach(domain.getName(), domain.getId(), "", attach);
 			} catch (Exception e) {

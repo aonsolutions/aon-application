@@ -24,6 +24,18 @@ public class TbaiConfiguration {
 		return administration;
 	}
 	
+	public boolean isAraba() {
+		return Administration.ALAVA.equals(getAdministration());
+	}
+	
+	public boolean isBizkaia() {
+		return Administration.BIZKAIA.equals(getAdministration());
+	}
+	
+	public boolean isGipuzkoa() {
+		return Administration.GIPUZKOA.equals(getAdministration());
+	}
+	
 	public TbaiConfiguration setAdministration(Administration administration) {
 		this.administration = administration;
 		return this;

@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -145,11 +146,44 @@ public class PDFToolkit {
 	 * @see PdfText
 	 */
 	public static void drawTextJustified(
-			ArrayList<String> lines, float max, float fontSize, PDFont font, float x, float y, Color color,
+			List<String> lines, float max, float fontSize, PDFont font, float x, float y, Color color,
 			PDPageContentStream stream
 	) throws IOException {
-		for (int i = 0; i < lines.size() - 1; i++, y -= 10)
+		for (int i = 0; i < lines.size() - 1; i++, y -= 10) {
+			if (lines.get(i).isEmpty())
 			drawTextJustified(lines.get(i), max, fontSize, font, x, y, stream);
+		}
+	}
+	
+	public static void drawTextWellJustified(
+			List<String> lines, float max, float fontSize, PDFont font, float x, float y, Color color,
+			PDPageContentStream stream
+	) throws IOException {
+		stream.setNonStrokingColor(color);
+		for (int i = 0; i < lines.size(); i++, y -= fontSize) {
+			String line = lines.get(i) != null ? lines.get(i).trim() : "";
+			boolean isNextEmpty = false;
+			if (i < lines.size() -1) {
+				isNextEmpty = lines.get(i + 1).isEmpty();
+			} else
+				isNextEmpty = true;
+			
+			if (!isNextEmpty) {
+				
+				float size = fontSize * font.getStringWidth(line) / 1000;
+				float free = max - size;
+				
+				if (free > max*0.1) {					
+					drawText(stream, line, x, y, color, font, fontSize);
+				} else {					
+					drawTextJustified(line, max, fontSize, font, x, y, stream);
+				}
+				
+			} else {
+				drawText(stream, line, x, y, color, font, fontSize);
+			}
+			
+		}
 	}
 
 	/**
@@ -514,31 +548,34 @@ public class PDFToolkit {
 	
 	
 	public static List<String> getLinesRespectOriginal(String text, float max, PDFont font, float fontSize) throws IOException {
+		try {
+			ArrayList<String> lines	= new ArrayList<>();
+			ArrayList<String> words	= (ArrayList<String>) StringToolkit.toWordsWithLines(text);
+			String			  line	= "";
 
-		ArrayList<String> lines	= new ArrayList<>();
-		ArrayList<String> words	= (ArrayList<String>) StringToolkit.toWordsWithLines(text);
-		String			  line	= "";
-
-		for (int i = 0; i < words.size(); i++) {
-			if (!words.get(i).equals("\n")) {
-				float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
-				if (fw < max) {
-					line += " " + words.get(i);
+			for (int i = 0; i < words.size(); i++) {
+				if (!words.get(i).equals("\n")) {
+					float fw = (font.getStringWidth(line + " " + words.get(i)) / 1000.0f) * fontSize;
+					if (fw < max) {
+						line += " " + words.get(i);
+					} else {
+						lines.add(line);
+						line = "" + words.get(i);
+					}
+					if (i == words.size() - 1)
+						lines.add(line);
 				} else {
 					lines.add(line);
-					line = "" + words.get(i);
+					line = "";
 				}
-				if (i == words.size() - 1)
-					lines.add(line);
-			} else {
-				lines.add(line);
-				line = "";
 			}
+			if (lines.isEmpty()) {
+				lines.add(line);			
+			}
+			return lines;
+		} catch (Exception e) {
+			return Collections.emptyList();
 		}
-		if (lines.isEmpty()) {
-			lines.add(line);			
-		}
-		return lines;
 	}
 	
 	public static String getFirstLine(String text, float max, PDFont font, float fontSize) throws IOException {

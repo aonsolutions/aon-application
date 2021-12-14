@@ -173,12 +173,12 @@ export class AonLaboral extends AonElement {
     let option = [];
     option.push({
       ...CONTRACT_OPTIONS.TA,
-      fn: (el) => this.getTa(res, el)
+      fn: () => this.getTa(res)
     });
     if(!res.prev){
       option.push({
 				...CONTRACT_OPTIONS.IDC,
-				fn: (el) => this.getIdc(res, el)
+				fn: () => this.getIdc(res)
 		  });
     }
 		if (this.anularCondition(res.situation, res.fra)) {
@@ -190,11 +190,13 @@ export class AonLaboral extends AonElement {
 		return option;
 	}
 
-  async getTa(data, el) {
+  async getTa(data) {
 		this.applicationEl.startLoading();
 		try {
-			const { regime, ctaCti, nss, fra } = data;
-			await getTA({ regime, ctaCti, nss, fra }); // open pdf
+			const { regime, ctaCti, nss, fra, frb } = data;
+      let newData = { regime, ctaCti, nss, fra };
+      if(frb) newData["frb"] = frb;
+			await getTA(newData); // open pdf
 		} catch (error) {
       this.showToast(error);
 		}
@@ -208,7 +210,7 @@ export class AonLaboral extends AonElement {
 		return (date_prev.getTime() <= new Date(fecha).getTime());
 	}
 
-	async getIdc(data, el) {
+	async getIdc(data) {
 		this.applicationEl.startLoading();
 		try {
 			const { regime, ctaCti, nss, fra, fea } = data;

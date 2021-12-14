@@ -25,9 +25,11 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -693,6 +695,13 @@ public class Mod111DAO extends FiscalModelDAO {
 		return mod111;
 	}
 	
+	public static Mod111 resetMod111(AONContext ctx,Mod111 mod111) {
+		mod111.setMap(null);
+		initializeIdentificationData(ctx, mod111);
+		createMod111(ctx,mod111);
+		return mod111;
+	}
+	
 	public static Mod111 createMod111(AONContext ctx,Mod111 mod111) {
 		for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
 			if (key.acceptModel(mod111)) {
@@ -736,7 +745,6 @@ public class Mod111DAO extends FiscalModelDAO {
 			IRPFDAO.getSalaryIrpfBreakdown(ctx, mod111)
 				.forEach(
 						br -> {
-							System.out.println( br.getBase() +  " / " + br.getQuota());
 							for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
 								if (key.acceptValue(mod111,br)) {
 									key.initialize(ctx, mod111, docs, pdocs, br);
@@ -750,7 +758,6 @@ public class Mod111DAO extends FiscalModelDAO {
 			IRPFDAO.getSalaryDiffIrpfBreakdown(ctx, mod111)
 				.forEach(
 						br -> {
-							System.out.println( br.getBase() +  " / " + br.getQuota());
 							for (Mod111KeyDAO key : Mod111KeyDAO.values()) {
 								if (key.acceptValue(mod111,br)) {
 									key.initialize(ctx, mod111, docs, pdocs, br);
@@ -976,5 +983,19 @@ public class Mod111DAO extends FiscalModelDAO {
 		} 
 		return getEffectivePreviousModels(ctx,fiscalModel);
 	}
+	
+	public static Mod111 aeatPresentation(AONContext ctx, Mod111 mod111, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			DataResponseDAO.insertAEATResponse(ctx, mod111, aeatResponse);
+			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
+			Mod111 changed = getMod111(ctx, mod111.getId());
+			if (changed != null) {
+				changed.setNumber(response.getJustificante());
+				return markAsSent(ctx, changed);
+			}
+		}
+		return mod111;
+	}
+	
 }
 

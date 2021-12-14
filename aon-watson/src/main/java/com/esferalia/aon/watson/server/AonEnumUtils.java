@@ -1,5 +1,6 @@
 package com.esferalia.aon.watson.server;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AonEnumUtils {
 	
@@ -15,6 +16,19 @@ public class AonEnumUtils {
 		if (value == null)
 			return false;
 		return (value == 1);
+	}
+	
+	public static boolean getBoolean(Boolean value) {
+		if (value == null)
+			return false;
+		return (value.booleanValue());
+	}
+	
+	public static boolean getAonBoolean(String value) {
+		if (value == null) return false;
+		if (AonStringUtils.equalsIgnoreCase("true", AonStringUtils.trim(value))) return true;
+		if (AonStringUtils.equalsIgnoreCase("1", AonStringUtils.trim(value))) return true;
+		return false;
 	}
 	
 }

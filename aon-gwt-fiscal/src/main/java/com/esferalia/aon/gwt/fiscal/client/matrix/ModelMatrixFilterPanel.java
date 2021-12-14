@@ -16,10 +16,6 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -89,13 +85,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				year.setSelectedIndex(year.getItemCount() - 1);	
 			}
 		}
-		year.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				fireValueChangeEvent();
-			}
-		});
+		year.addChangeHandler(event -> fireValueChangeEvent());
 		
 		InlineLabel modelLabel = new InlineLabel(AON.MSG.fiscalModels());
 		modelLabel.setStyleName(AON.CSS.aonMarginRight());
@@ -107,13 +97,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 				model.addItem(AON.MSG.fiscalModelType(m), m.toString());
 			}
 		}
-		model.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				fireValueChangeEvent();
-			}
-		});
+		model.addChangeHandler(event -> fireValueChangeEvent());
 
 		InlineLabel admonLabel = new InlineLabel(AON.MSG.administration());
 		admonLabel.setStyleName(AON.CSS.aonMarginRight());
@@ -124,13 +108,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		for (Administration a : Administration.values()) {
 			admon.addItem(a.getDescription());
 		}
-		admon.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				fireValueChangeEvent();
-			}
-		});
+		admon.addChangeHandler(event -> fireValueChangeEvent());
 		
 		
 		InlineLabel scopeLabel = new InlineLabel(AON.MSG.scope());
@@ -143,13 +121,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 			for (Scope scope : options.getConfiguration().getAvailableScopes()) {
 				scopeBox.addItem(scope.getDescription(),AonNumberUtils.toString(scope.getId()));
 			}
-			scopeBox.addChangeHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					fireValueChangeEvent();
-				}
-			});
+			scopeBox.addChangeHandler(event -> fireValueChangeEvent());
 		}
 		
 		
@@ -158,43 +130,21 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 		showConfigurated.setValue(false);
 		showConfigurated.setStyleName(AON.CSS.aonMarginRight());
 		showConfigurated.setText("Mostrar los configurados en par\u00E1metros fiscales");
-		showConfigurated.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				fireValueChangeEvent();
-			}
-		});
+		showConfigurated.addClickHandler( event -> fireValueChangeEvent());
 		
 		showMadeModels = new CheckBox();
 		showMadeModels.setValue(true);
 		showMadeModels.setStyleName(AON.CSS.aonMarginRight());
 		showMadeModels.setText("Mostrar los realizados");
-		showMadeModels.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				fireValueChangeEvent();
-			}
-		});
+		showMadeModels.addClickHandler( event -> fireValueChangeEvent());
 		
 		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
 		refreshButton.addStyleName(AON.CSS.aonMarginRight());
-		refreshButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				fireValueChangeEvent();
-			}
-		});
+		refreshButton.addClickHandler(event -> fireValueChangeEvent());
 
 		configButton = new AonSearchPanelButton(AON.MSG.settings(),AON.CSS.aonIconSettings());
 		configButton.addStyleName(AON.CSS.aonMarginRight());
-		configButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				showConfigurationPanel();
-			}
-		});
+		configButton.addClickHandler(event -> showConfigurationPanel());
 		
 		addRow()
 			.addCell(yearLabel,AON.CSS.aonTableLabel())
@@ -250,6 +200,7 @@ class ModelMatrixFilterPanel extends AonDisplayTable implements HasValueChangeHa
 
 	@Override
 	public void setAccessKey(char key) {
+		// Nothing
 	}
 
 	@Override

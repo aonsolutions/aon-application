@@ -17,6 +17,11 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 
+/**
+ * @deprecated Use com.esferalia.aon.gwt.common.client.widget.solutions.AonIbanTextBox
+ *
+ */
+@Deprecated
 public class IbanTextBox extends SimplePanel implements HasSelectionHandlers<Suggestion>, HasEnabled {
 	
 	SuggestBox iban1;

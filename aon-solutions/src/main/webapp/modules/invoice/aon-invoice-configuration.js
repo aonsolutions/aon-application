@@ -31,12 +31,9 @@ export class AonInvoiceConfiguration extends AonElement {
         this.TABS = 'invoiceConfigurationTabs';
         this.CONTENT = 'invoiceConfigurationContent';
         this.options = this.options || [
-			{ title: MSG.INVOICE_PRINTING, fn: () => this.buildPrintConfiguration()}
+			{ title: MSG.INVOICE_PRINTING, fn: () => this.buildPrintConfiguration()},
+            { title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}
         ];
-
-        if(this.isBeta()) {
-            this.options.push({ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()});
-        }
     }
 
     build() {

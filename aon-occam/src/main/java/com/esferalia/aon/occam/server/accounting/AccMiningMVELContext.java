@@ -90,7 +90,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 				}
 			}
 		}
-		return new Double(0);
+		return Double.valueOf(0);
 	}
 	
 	public Object evaluateExpression(String key,String expression) {

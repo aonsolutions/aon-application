@@ -3,13 +3,10 @@ package com.esferalia.aon.gwt.fiscal.client.widget;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Country2ListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasKeyUpHandlers;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -22,27 +19,26 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class BankAccountBox extends SimplePanel implements HasValueChangeHandlers<BankAccount>, HasKeyUpHandlers, HasEnabled {
 	
 	private Country2ListBox countryBox = new Country2ListBox();
-	private TextBox check = new TextBox();
+	private AonTextBox check = new AonTextBox();
 	
-	private TextBox bban1 = new TextBox();
-	private TextBox bban2 = new TextBox();
-	private TextBox bban3 = new TextBox();
-	private TextBox bban4 = new TextBox();
-	private TextBox bban5 = new TextBox();
-	private TextBox bban6 = new TextBox();
-	private TextBox bban7 = new TextBox();
-	private TextBox bban8 = new TextBox();
+	private AonTextBox bban1 = new AonTextBox();
+	private AonTextBox bban2 = new AonTextBox();
+	private AonTextBox bban3 = new AonTextBox();
+	private AonTextBox bban4 = new AonTextBox();
+	private AonTextBox bban5 = new AonTextBox();
+	private AonTextBox bban6 = new AonTextBox();
+	private AonTextBox bban7 = new AonTextBox();
+	private AonTextBox bban8 = new AonTextBox();
 	
 	private InlineLabel ccc0 = new InlineLabel();
-	private TextBox ccc1 = new TextBox();
-	private TextBox ccc2 = new TextBox();
-	private TextBox ccc3 = new TextBox();
-	private TextBox ccc4 = new TextBox();
+	private AonTextBox ccc1 = new AonTextBox();
+	private AonTextBox ccc2 = new AonTextBox();
+	private AonTextBox ccc3 = new AonTextBox();
+	private AonTextBox ccc4 = new AonTextBox();
 	
 	private InlineLabel okIcon = new InlineLabel(); 
 	private InlineLabel koIcon = new InlineLabel();
@@ -58,278 +54,218 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		setValue(ba);
 		
 		FlexTable tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonWidthAll());
+		tab.setStyleName(AON.CSS.aonWidthAll());
 		tab.getColumnFormatter().setWidth(0, "50px;");
 		tab.getColumnFormatter().setWidth(1,"auto");
 		int row = 0; 
 		int col = 0;
 		
-		tab.addStyleName(AON.AON_CSS.aonWidthAll());
+		tab.addStyleName(AON.CSS.aonWidthAll());
 		this.setWidget(tab);
 		
 		FlowPanel dataPanel = new FlowPanel();
 		
 		InlineLabel ibanLabel = new InlineLabel(ibanMode?"IBAN:":"CCC:");
-		ibanLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		ibanLabel.addStyleName(AON.AON_CSS.aonClickableLabel());
-		ibanLabel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				ibanMode = !ibanMode;
-				ibanLabel.setText(ibanMode?"IBAN:":"CCC:");
-				if (!ibanMode) {
-					BankAccountBox.this.bankAccount.setCountry(Country.ES);
-				}
-				enableWidgets();
-				validate();
+		ibanLabel.setStyleName(AON.CSS.aonInnerLabel());
+		ibanLabel.addStyleName(AON.CSS.aonClickableLabel());
+		ibanLabel.addClickHandler(event -> {
+			ibanMode = !ibanMode;
+			ibanLabel.setText(ibanMode?"IBAN:":"CCC:");
+			if (!ibanMode) {
+				BankAccountBox.this.bankAccount.setCountry(Country.ES);
 			}
+			enableWidgets();
+			validate();
 		});
 		tab.setWidget(row, col, ibanLabel);
 		col++;
 
-		dataPanel.setStyleName(AON.AON_CSS.aonNowrap());
+		dataPanel.setStyleName(AON.CSS.aonNowrap());
 		countryBox.setValue(this.bankAccount.getCountry());
 		countryBox.setVisible(ibanMode);
-		countryBox.addChangeHandler( new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				BankAccountBox.this.bankAccount.setCountry(countryBox.getValue());
-				enableWidgets();
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		countryBox.addChangeHandler( event -> {
+			BankAccountBox.this.bankAccount.setCountry(countryBox.getValue());
+			enableWidgets();
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(countryBox);
 		
 		enableWidgets();
 
-		check.setStyleName(AON.AON_CSS.aonInputText());
-		check.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		check.addStyleName(AON.CSS.aonMarginLeft());
 		check.setMaxLength(2);
 		check.setVisibleLength(2);
 		check.setValue( this.bankAccount.getCheck());
 		check.setVisible(ibanMode);
-		check.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setCheck(check.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		check.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setCheck(check.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(check);
 
-		ccc0.setStyleName(AON.AON_CSS.aonBold());
+		ccc0.setStyleName(AON.CSS.aonBold());
 		ccc0.setVisible(!ibanMode);
 		dataPanel.add(ccc0);
 		
-		ccc1.setStyleName(AON.AON_CSS.aonInputText());
-		ccc1.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		ccc1.addStyleName(AON.CSS.aonMarginLeft());
 		ccc1.setMaxLength(4);
 		ccc1.setVisibleLength(4);
 		ccc1.setValue( this.bankAccount.getCCC1());
 		ccc1.setVisible(!ibanMode);
-		ccc1.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setCCC1(ccc1.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		ccc1.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setCCC1(ccc1.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(ccc1);
 
-		ccc2.setStyleName(AON.AON_CSS.aonInputText());
-		ccc2.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		ccc2.addStyleName(AON.CSS.aonMarginLeft());
 		ccc2.setMaxLength(4);
 		ccc2.setVisibleLength(4);
 		ccc2.setValue( this.bankAccount.getCCC2());
 		ccc2.setVisible(!ibanMode);
-		ccc2.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setCCC2(ccc2.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		ccc2.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setCCC2(ccc2.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(ccc2);
 
-		ccc3.setStyleName(AON.AON_CSS.aonInputText());
-		ccc3.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		ccc3.addStyleName(AON.CSS.aonMarginLeft());
 		ccc3.setMaxLength(2);
 		ccc3.setVisibleLength(2);
 		ccc3.setValue( this.bankAccount.getCCC3());
 		ccc3.setVisible(!ibanMode);
-		ccc3.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setCCC3(ccc3.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		ccc3.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setCCC3(ccc3.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(ccc3);
 
-		ccc4.setStyleName(AON.AON_CSS.aonInputText());
-		ccc4.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		ccc4.addStyleName(AON.CSS.aonMarginLeft());
 		ccc4.setMaxLength(10);
 		ccc4.setVisibleLength(10);
 		ccc4.setValue( this.bankAccount.getCCC4());
 		ccc4.setVisible(!ibanMode);
-		ccc4.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setCCC4(ccc4.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		ccc4.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setCCC4(ccc4.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(ccc4);
 //-------
-		bban1.setStyleName(AON.AON_CSS.aonInputText());
-		bban1.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		bban1.addStyleName(AON.CSS.aonMarginLeft());
 		bban1.setMaxLength(4);
 		bban1.setVisibleLength(4);
 		bban1.setValue( this.bankAccount.getBban1());
 		bban1.setVisible(ibanMode);
-		bban1.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setBban1(bban1.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		bban1.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setBban1(bban1.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(bban1);
 
-		bban2.setStyleName(AON.AON_CSS.aonInputText());
-		bban2.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		bban2.addStyleName(AON.CSS.aonMarginLeft());
 		bban2.setMaxLength(4);
 		bban2.setVisibleLength(4);
 		bban2.setValue( this.bankAccount.getBban2());
 		bban2.setVisible(ibanMode);
-		bban2.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setBban2(bban2.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		bban2.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setBban2(bban2.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(bban2);
 
-		bban3.setStyleName(AON.AON_CSS.aonInputText());
-		bban3.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		bban3.addStyleName(AON.CSS.aonMarginLeft());
 		bban3.setMaxLength(4);
 		bban3.setVisibleLength(4);
 		bban3.setValue( this.bankAccount.getBban3());
 		bban3.setVisible(ibanMode);
-		bban3.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setBban3(bban3.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		bban3.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setBban3(bban3.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(bban3);
 
-		bban4.setStyleName(AON.AON_CSS.aonInputText());
-		bban4.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		bban4.addStyleName(AON.CSS.aonMarginLeft());
 		bban4.setMaxLength(4);
 		bban4.setVisibleLength(4);
 		bban4.setValue( this.bankAccount.getBban4());
 		bban4.setVisible(ibanMode);
-		bban4.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setBban4(bban4.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		bban4.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setBban4(bban4.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(bban4);
 
-		bban5.setStyleName(AON.AON_CSS.aonInputText());
-		bban5.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		bban5.addStyleName(AON.CSS.aonMarginLeft());
 		bban5.setMaxLength(4);
 		bban5.setVisibleLength(4);
 		bban5.setValue( this.bankAccount.getBban5());
 		bban5.setVisible(ibanMode);
-		bban5.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setBban5(bban5.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		bban5.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setBban5(bban5.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(bban5);
 
-		bban6.setStyleName(AON.AON_CSS.aonInputText());
-		bban6.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		bban6.addStyleName(AON.CSS.aonMarginLeft());
 		bban6.setMaxLength(4);
 		bban6.setVisibleLength(4);
 		bban6.setValue( this.bankAccount.getBban6());
 		bban6.setVisible(ibanMode);
-		bban6.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setBban6(bban6.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		bban6.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setBban6(bban6.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(bban6);
 
-		bban7.setStyleName(AON.AON_CSS.aonInputText());
-		bban7.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		bban7.addStyleName(AON.CSS.aonMarginLeft());
 		bban7.setMaxLength(4);
 		bban7.setVisibleLength(4);
 		bban7.setValue( this.bankAccount.getBban7());
 		bban7.setVisible(ibanMode);
-		bban7.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setBban7(bban7.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		bban7.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setBban7(bban7.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(bban7);
 
-		bban8.setStyleName(AON.AON_CSS.aonInputText());
-		bban8.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		bban8.addStyleName(AON.CSS.aonMarginLeft());
 		bban8.setMaxLength(2);
 		bban8.setVisibleLength(2);
 		bban8.setValue( this.bankAccount.getBban8());
 		bban8.setVisible(ibanMode);
-		bban8.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				BankAccountBox.this.bankAccount.setBban8(bban6.getValue());
-				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
-			}
+		bban8.addValueChangeHandler(event -> {
+			BankAccountBox.this.bankAccount.setBban8(bban6.getValue());
+			validate();
+			ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 		});
 		dataPanel.add(bban8);
 		
 		FlowPanel iconPanel = new FlowPanel();
-		iconPanel.setStyleName(AON.AON_CSS.aonNowrap());
-		iconPanel.setStyleName(AON.AON_CSS.aonInline());
+		iconPanel.setStyleName(AON.CSS.aonNowrap());
+		iconPanel.setStyleName(AON.CSS.aonInline());
 		okIcon = new InlineLabel();
-		okIcon.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		okIcon.addStyleName(AON.AON_CSS.aonIconValidate());
-		okIcon.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		okIcon.setStyleName(AON.CSS.aonIconLabel());
+		okIcon.addStyleName(AON.CSS.aonIconValid());
+		okIcon.addStyleName(AON.CSS.aonMarginLeft());
 		iconPanel.add(okIcon);
 
 		koIcon = new InlineLabel();
-		koIcon.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		koIcon.addStyleName(AON.AON_CSS.aonIconIncorrect());
-		koIcon.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		koIcon.setStyleName(AON.CSS.aonIconLabel());
+		koIcon.addStyleName(AON.CSS.aonIconInvalid());
+		koIcon.addStyleName(AON.CSS.aonMarginLeft());
 		iconPanel.add(koIcon);
 		dataPanel.add(iconPanel);
 		tab.setWidget(row, col, dataPanel);
@@ -398,19 +334,19 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		if (this.bankAccount.getCountry() == null) {
 			this.bankAccount.setCountry(Country.ES);
 		}
-		countryBox.setValue(this.bankAccount==null?null:this.bankAccount.getCountry() );
-		check.setValue(this.bankAccount==null?null:this.bankAccount.getCheck() );
-		bban1.setValue( this.bankAccount==null?null:this.bankAccount.getBban1() );
-		bban2.setValue( this.bankAccount==null?null:this.bankAccount.getBban2() );
-		bban3.setValue( this.bankAccount==null?null:this.bankAccount.getBban3() );
-		bban4.setValue( this.bankAccount==null?null:this.bankAccount.getBban4() );
-		bban5.setValue( this.bankAccount==null?null:this.bankAccount.getBban5() );
-		bban6.setValue( this.bankAccount==null?null:this.bankAccount.getBban6() );
-		bban7.setValue( this.bankAccount==null?null:this.bankAccount.getBban7() );
-		ccc1.setValue( this.bankAccount==null?null:this.bankAccount.getCCC1() );
-		ccc2.setValue( this.bankAccount==null?null:this.bankAccount.getCCC2() );
-		ccc3.setValue( this.bankAccount==null?null:this.bankAccount.getCCC3() );
-		ccc4.setValue( this.bankAccount==null?null:this.bankAccount.getCCC4() );
+		countryBox.setValue(this.bankAccount.getCountry());
+		check.setValue(this.bankAccount.getCheck());
+		bban1.setValue(this.bankAccount.getBban1());
+		bban2.setValue(this.bankAccount.getBban2());
+		bban3.setValue(this.bankAccount.getBban3());
+		bban4.setValue(this.bankAccount.getBban4());
+		bban5.setValue(this.bankAccount.getBban5());
+		bban6.setValue(this.bankAccount.getBban6());
+		bban7.setValue(this.bankAccount.getBban7());
+		ccc1.setValue(this.bankAccount.getCCC1());
+		ccc2.setValue(this.bankAccount.getCCC2());
+		ccc3.setValue(this.bankAccount.getCCC3());
+		ccc4.setValue(this.bankAccount.getCCC4());
 		validate();
 	}
 	@Override

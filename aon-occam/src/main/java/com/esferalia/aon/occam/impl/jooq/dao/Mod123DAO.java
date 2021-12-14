@@ -23,9 +23,11 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -359,6 +361,13 @@ public class Mod123DAO extends FiscalModelDAO {
 		return mod123;
 	}
 	
+	public static Mod123 resetMod123(AONContext ctx,Mod123 mod123) {
+		mod123.setMap(null);
+		initializeIdentificationData(ctx, mod123);
+		createMod123(ctx,mod123);
+		return mod123;
+	}
+	
 	public static Mod123 createMod123(AONContext ctx,Mod123 mod123) {
 		for (Mod123KeyDAO key : Mod123KeyDAO.values()) {
 			if (key.acceptModel(mod123)) {
@@ -568,6 +577,19 @@ public class Mod123DAO extends FiscalModelDAO {
 			return previousModels.stream(); 
 		} 
 		return getEffectivePreviousModels(ctx,fiscalModel);
+	}
+
+	public static Mod123 aeatPresentation(AONContext ctx, Mod123 mod123, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			DataResponseDAO.insertAEATResponse(ctx, mod123, aeatResponse);
+			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
+			Mod123 changed = getMod123(ctx, mod123.getId());
+			if (changed != null) {
+				changed.setNumber(response.getJustificante());
+				return markAsSent(ctx, changed);
+			}
+		}
+		return mod123;
 	}
 }
 

@@ -121,7 +121,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 	}
 
 	private ListBox getPeriodBox(final AccountingReportModuleOptions options, String selectedValue) {
-		LinkedList<AccountPeriod> periods = options.getConfiguration().getPeriods();
+		LinkedList<AccountPeriod> periods = options.getConfiguration().accounting().getPeriods();
 		ListBox periodBox = new ListBox();
 		periodBox.clear();
 		periodBox.addItem(" --- ", "");
@@ -221,7 +221,7 @@ public class ConsolidatedBalancePanelFilter extends SimpleLayoutPanel implements
 		dateTab.getColumnFormatter().setWidth(5, "80px");
 	
 		// ***********************************************************************  EJERCICIO
-		period.fill(options.getConfiguration().getPeriods(),true);
+		period.fill(options.getConfiguration().accounting().getPeriods(),true);
 		dateTab.setWidget(0, 0, period);
 		period.addStyleName(AON.AON_CSS.aonMarginRight());
 		

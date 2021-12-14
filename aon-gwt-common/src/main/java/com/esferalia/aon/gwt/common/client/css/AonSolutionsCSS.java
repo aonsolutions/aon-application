@@ -402,14 +402,26 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_araba")
 	String aonIconAraba();
 
+	@ClassName("aon_icon_araba_bw")
+	String aonIconArabaBw();
+	
 	@ClassName("aon_icon_bizkaia")
 	String aonIconBizkaia();
+
+	@ClassName("aon_icon_bizkaia_bw")
+	String aonIconBizkaiaBw();
 
 	@ClassName("aon_icon_gipuzkoa")
 	String aonIconGipuzkoa();
 
+	@ClassName("aon_icon_gipuzkoa_bw")
+	String aonIconGipuzkoaBw();
+
 	@ClassName("aon_icon_navarra")
 	String aonIconNavarra();
+
+	@ClassName("aon_icon_navarra_bw")
+	String aonIconNavarraBw();
 
 	@ClassName("aon_icon_model_finish")
 	String aonIconModelFinish();
@@ -456,6 +468,18 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_link")
 	String aonIconLink();
 
+	@ClassName("aon_icon_notification")
+	String aonIconNotification();
+
+	@ClassName("aon_icon_dirty")
+	String aonIconDirty();
+	
+	@ClassName("aon_icon_diff")
+	String aonIconDiff();
+
+	@ClassName("aon_icon_bullet")
+	String aonIconBullet();
+
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
@@ -475,9 +499,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_display_none")
 	String aonDisplayNone();
 	
+	@ClassName("aon_display_flex")
+	String aonDisplayFlex();
+	
 	@ClassName("aon_display_table")
 	String aonDisplayTable();
 
+	@ClassName("aon_display_table_header")
+	String aonDisplayTableHeader();
+	
 	@ClassName("aon_display_table_row")
 	String aonDisplayTableRow();
 	
@@ -531,6 +561,18 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_width_auto_important")
 	String aonWidthAutoImportant();
+	
+	@ClassName("aon_width_80")
+	String aonWidth80();
+	
+	@ClassName("aon_width_100")
+	String aonWidth100();
+	
+	@ClassName("aon_width_150")
+	String aonWidth150();
+
+	@ClassName("aon_width_400")
+	String aonWidth400();
 
 	@ClassName("aon_height_all")
 	String aonHeightAll();
@@ -562,6 +604,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_nowrap")
 	String aonNowrap();
 		
+	@ClassName("aon_wrap")
+	String aonWrap();
+	
 	@ClassName("aon_ellipsis")
 	String aonEllipsis();
 
@@ -573,6 +618,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_text_line_through")
 	String aonTextLineThrough();
+	
+	@ClassName("aon_text_uppercase")
+	String aonTextUppercase();
 	
 	@ClassName("aon_vertical_align_top")
 	String aonVerticalAlignTop();
@@ -700,6 +748,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_background_orange")
 	String aonBackgroundOrange();
 	
+	@ClassName("aon_background_white")
+	String aonBackgroundWhite();
+	
 	@ClassName("aon_background_yellow")
 	String aonBackgroundYellow();
 
@@ -708,6 +759,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_background_ligthgray")
 	String aonBackgroundLigthGray();
+	
+	@ClassName("aon_background_ligth_blue")
+	String aonBackgroundLigthBlue();
 	
 	@ClassName("aon_background_highlighted_green")
 	String aonBackgroundHighlightedGreen();
@@ -1023,5 +1077,16 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_context_menu_item")
 	String aonContextMenuItem();
+
+	
+	@ClassName("aon_floating_message")
+	String aonFloatingMessage();
+	
+	@ClassName("aon_floating_message_header")
+	String aonFloatingMessageHeader();
+
+	@ClassName("aon_floating_message_content")
+	String aonFloatingMessageContent();
+
 }
 

@@ -572,5 +572,8 @@ public class FiscalModel implements IFiscalModel, HasAudit {
 	public void setDiffCalculationDisabled(boolean diffCalculationDisabled) {
 		// REDEFINE
 	}
+	public boolean isStrictToDeposit() {
+		return (isFinished() || isSent()) && (getDeclarationType() == FiscalModelDeclarationType.DEPOSIT);
+	}
 	
 }

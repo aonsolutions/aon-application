@@ -5,6 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,10 +15,12 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.persistence.Transient;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -23,6 +28,7 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.config.util.SeriesUtil;
@@ -50,6 +56,7 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.PrintParametersController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.customer.util.CustomerValidationManager;
@@ -65,7 +72,15 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.bridge.DeliveryTransferManager;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
+
+import net.aonsolutions.aon.tbai.TbaiMain;
 
 public class SaleInvoiceController extends InvoiceController {
 	
@@ -444,6 +459,14 @@ public class SaleInvoiceController extends InvoiceController {
 	
 	@Override
 	protected synchronized void accept() {
+		if(isNevv() && isTbai()) {
+			Invoice invoice = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			Integer number = AON.getInvoiceMinNumber(domainName, domainId, login, com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, invoice.getSeries());
+			invoice.setNumber(number < 0 ? number : -1);
+		}
 		super.accept();
 	}
 	
@@ -456,6 +479,7 @@ public class SaleInvoiceController extends InvoiceController {
 
 	@Override
 	protected synchronized void resetTo() {
+
 		super.resetTo();
 	}
 	
@@ -468,5 +492,46 @@ public class SaleInvoiceController extends InvoiceController {
 	protected synchronized  void synchronizeAddedPojo() throws ManagerBeanException {
 		super.synchronizeAddedPojo();
 	}
+	
+	public String getDownloadURL() {
+		Invoice invoice = (Invoice) getTo();
+		JSONObject json = new JSONObject()
+				.put(IJsonNames.ID, invoice.getId())
+				.put(IJsonNames.SOURCE, "invoice")
+				.put("domain_id", DomainManager.getCurrentDomain())
+				.put("domain_name", AonUtil.getDomainName())
+				.put(IJsonNames.LOGIN, UserUtils.getInstance().getLoggedUser().getLogin());		
+		return "/ms/api/download_invoice_pdf?json=" + Base64.getEncoder().encodeToString(json.toString().getBytes(StandardCharsets.UTF_8));
+	}
 
+	@Transient
+	public synchronized void issueInvoice() {
+		Invoice inv = (Invoice) getTo();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		Integer userId = UserUtils.getInstance().getLoggedUser().getId();
+	
+		com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+
+		Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+		Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
+		invoice.setNumber(number);
+		invoice.setReferenceCode(null);
+		invoice.setIssueDate(new Date());
+		
+		AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
+		Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+		
+		tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
+		if(tbaiConfiguration.isActive()) {
+			try {
+				TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+			} catch (Exception e ) {
+				e.printStackTrace();
+			}
+		}
+		
+		// SII
+	}
 }

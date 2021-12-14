@@ -38,7 +38,7 @@ import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
-
+@Deprecated
 public class ActivityPanel extends CustomDialog {
 
 	public static final ProvidesKey<Activity> ACTIVITY_PROVIDES_KEY = new ProvidesKey<Activity>() {

@@ -41,7 +41,7 @@ public enum Administration implements Serializable {
 			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getDescription()))
 				return rs;
 		}
-		return UNKNOWN;
+		return null;
 	}
 	
 	

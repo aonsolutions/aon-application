@@ -32,7 +32,8 @@ import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.config.ConfigBlock;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Workgroup;
@@ -63,7 +64,20 @@ public class CommonImpl implements ICommon {
 	// --------------------------- CONFIGURATION
 	@Override
 	public AonConfiguration getConfiguration(AONContext ctx, Date atDate) {
-		return ConfigurationDAO.getConfiguration(ctx, atDate);
+		return getConfiguration(ctx, atDate, ConfigBlock.ALL);
+	}
+	@Override
+	public AonConfiguration getConfiguration(AONContext ctx, Date atDate, ConfigBlock... blocks) {
+		return ConfigurationDAO.getConfiguration(ctx, new ConfigParams().setAtDate(atDate).setBlocks(blocks));
+	}
+	@Override
+	public ApplicationParameter saveApplicationParameter(AONContext ctx, ApplicationParameter ap) {
+		return ctx.getDslContext().transactionResult(configuration -> 
+			AppParamDAO.saveApplicationParameter(ctx, ap));
+	}
+	@Override
+	public AonConfiguration getConfiguration(AONContext ctx, ConfigParams params) {
+		return ConfigurationDAO.getConfiguration(ctx, params);
 	}
 	
 	// ------------------ APPLICATION PARAMETERS
@@ -98,13 +112,6 @@ public class CommonImpl implements ICommon {
 		return AppParamDAO.updateApplicationParameter(ctx, applicationParameter, filter);
 	}
 	
-	// ------------------ FISCAL PARAMETERS
-
-	@Override
-	public FiscalParameters getFiscalParameters(AONContext ctx) {
-		return AppParamDAO.getFiscalParameters(ctx);
-	}
-
 	// ------------------ ENTERPRISE
 	@Override
 	public Enterprise getEnterprise(AONContext ctx, int id) {
