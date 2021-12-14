@@ -75,8 +75,6 @@ import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
-import jdk.nashorn.internal.ir.CallNode.EvalArgs;
-
 public class SQLContractDelayCalculatorContext extends
 		SQLContractSalaryCalculatorContext {
 	
