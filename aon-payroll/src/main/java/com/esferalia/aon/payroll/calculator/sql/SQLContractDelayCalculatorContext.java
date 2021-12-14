@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -63,6 +64,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
@@ -437,7 +439,22 @@ public class SQLContractDelayCalculatorContext extends
 				.getContractPayments();
 
 		try {
-			Collection<IContractPayment> implicitPayments = getDifferencePayments();
+			Collection<IContractPayment> overridePayments = getOverridePayments();
+			Collection<IContractPayment> differencePayments = getDifferencePayments();
+			
+			List<Period> overridePeriods = overridePayments.stream()
+					.map( p -> new Period(p.getStartDate(), p.getEndDate()))
+					.collect(Collectors.toList());
+			
+			ArrayList<IContractPayment> implicitPayments = new ArrayList<IContractPayment>(overridePayments);
+			for (IContractPayment differencePayment : differencePayments) {
+				Period differencePeriod = new Period(differencePayment.getStartDate(), differencePayment.getEndDate());
+				boolean intersects = overridePeriods.stream().anyMatch( p -> differencePeriod.intersects(p));
+				if ( intersects ) 
+					continue;
+				else 
+					implicitPayments.add(differencePayment);
+			}
 
 			return new CompositeIterator<IContractPayment>(
 					explicitPayments.iterator(), implicitPayments.iterator());
@@ -462,6 +479,42 @@ public class SQLContractDelayCalculatorContext extends
 		return salaryBuilder;
 	}
 	
+	private Collection<IContractPayment> getOverridePayments()
+			throws ExpressionException, SQLException, SalaryException {
+
+
+		final Collection<IContractPayment> payments = new LinkedList<IContractPayment>();
+
+		Collection<Period> periods = getPeriods(ContextVariable.DELAY_AMOUNT);
+
+		for (Period period : periods) {
+
+			ContractPayment payment = new DelayPaymentBuilder.DelayContractPayment();
+			payment.setId(null);
+			payment.setStartDate(period.getStart());
+			payment.setEndDate(period.getEnd());
+			payment.setSalaryType(SalaryType.DELAY);
+
+			// TODO: Generic Delays ? 
+			payment.setType(PaymentType.CRA_0008 );
+			payment.setIrpfExpression(ContextVariable.ALL);
+			payment.setQuoteExpression(ContextVariable.ALL);
+			payment.setExpression(ContextVariable.DELAY_AMOUNT.getName());
+			payment.setDescription(getDescriptionForSalaryDelay(payment, payments.size()));
+			
+			payments.add(payment);
+		}
+
+		
+		if ( payments.isEmpty() )  {
+			ExpressionImpl expression = new ExpressionImpl().setName(ContextVariable.DELAY_AMOUNT.getName()).setScope(ExpressionScope.SYSTEM);
+			onUndefinedData(expression, ContextVariable.DELAY_AMOUNT.getName(), getStartDate(), getEndDate(), ContextVariable.DELAY_AMOUNT.getName());
+		}
+		
+		return payments;
+
+	}
+
 	private Collection<IContractPayment> getDifferencePayments()
 			throws ExpressionException, SQLException, SalaryException {
 
