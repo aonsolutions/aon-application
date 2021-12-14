@@ -6457,7 +6457,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	// ------------------------------------------------- SEPE Comunications
 	
 	@Override
-	public void sendContractoSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) {
+	public void sendContractoSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -6813,7 +6813,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setNss(employeeContractInfo.getEmployeeInfo().getSsNumber());
 		builder.setIpf(ipf);
 		builder.setName(employeeContractInfo.getEmployeeInfo().getName());
-		builder.setSex(SexType.values()[Integer.parseInt(employeeContractInfo.getEmployeeInfo().getGender() + "")]);
+		int gender = Integer.parseInt(employeeContractInfo.getEmployeeInfo().getGender() + "");
+		if(2 == gender)
+			throw new IllegalArgumentException("El sexo del trabajador es requerido. Debe rellenarlo en la pesta\u00F1a Datos Afiliaci\u00F3n");
+		builder.setSex(SexType.values()[gender]);
 		builder.setSurname(employeeContractInfo.getEmployeeInfo().getSurName());
 		builder.setLastSurname(employeeContractInfo.getEmployeeInfo().getSecondSurName());
 		builder.setCodNationality(	Country.safeValueOf(employeeContractInfo.getEmployeeInfo().getNationalityCode()).getIsoCode());
@@ -6822,7 +6825,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				: Country.ES.getIsoCode()); 
 		builder.setCodMunDom(employeeContractInfo.getEmployeeInfo().getAddressCity());
 		if(AonStringUtils.isEmpty(employeeContractInfo.getContractSpecificData().getFormativeLevel()))
-			throw new IllegalArgumentException("Nivel formativo obligatorio. Rellene primero la pesta\u00F1a datos SEPE");
+			throw new IllegalArgumentException("Nivel formativo obligatorio. Debe rellenarlo en la pesta\u00F1a Datos SEPE");
 		builder.setCodFormativo(Integer.parseInt(employeeContractInfo.getContractSpecificData().getFormativeLevel()));
 		builder.setCodOccupation(employeeContractInfo.getContractSpecificData().getCno()); 		
 		builder.setCodPaisWork(workAddress.getCountry() != null 
