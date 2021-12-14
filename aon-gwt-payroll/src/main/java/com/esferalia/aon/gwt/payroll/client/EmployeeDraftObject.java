@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Rbank;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDraftObject extends AbstractDraftObject{
@@ -154,7 +155,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 	
 	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeTa(employee.getId(), new Date(), new AsyncCallback<String>() {
+		String situation = null ==  employeeContractData.getContractInfo().getEndDate() ? "ALTA" : "BAJA";
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
+		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getStartDate() : employeeContractData.getContractInfo().getEndDate();
+		
+		
+		employeesService.getEmployeeTa(situation, regimen, ctaCti, nss, fecha, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
