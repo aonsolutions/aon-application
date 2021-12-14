@@ -498,12 +498,12 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), contractId, certifica2Info, callback);
 	}
 	
-	public void downloadTA_IDC(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.downloadTA_IDC(getCurrentDomainName(), getCurrentUser(), contractId, callback);
+	public void downloadTA_IDC(String situation, String regimen, String ctaCti, String nss, Date fecha, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.downloadTA_IDC(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, fecha, contractId, callback);
 	}
 	
-	public void getEmployeeTa(Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException  {
-		employeesServiceAsync.getEmployeeTa(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);
+	public void getEmployeeTa(String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException  {
+		employeesServiceAsync.getEmployeeTa(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, fecha, callback);
 	}
 	
 	public void getEmployeeIdc(Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException  {
@@ -552,8 +552,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.movPrevDelete(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, fecha, callback);
 	}
 	
-	public void altaConsolidadaDelete(String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) throws IllegalArgumentException {
-		employeesServiceAsync.altaConsolidadaDelete(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, callback);
+	public void altaConsolidadaDelete(String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.altaConsolidadaDelete(getCurrentDomainName(), getCurrentUser(), situation, regimen, ctaCti, nss, fecha, callback);
 	}
 	
 	public void cambioCoef(EmployeeContractInfo employeeContractInfo, String coef, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {

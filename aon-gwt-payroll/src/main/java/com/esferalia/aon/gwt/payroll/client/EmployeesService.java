@@ -238,9 +238,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 //	
 //	EmployeeStatus unregister(String domain, Integer contractId);
 	
-	void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+	void downloadTA_IDC(String currentDomainName, String currentUser, String situation, String regimen, String ctaCti, String nss, Date fecha, Integer contractId) throws IllegalArgumentException;
 	
-	String getEmployeeTa(String domain, String user, Integer contractId, Date date) throws IllegalArgumentException;
+	String getEmployeeTa(String domain, String user, String situation, String regimen, String ctaCti, String nss, Date fecha) throws IllegalArgumentException;
 
 	String getEmployeeIdc(String domain, String user, Integer contractId, Date date) throws IllegalArgumentException;
 
@@ -268,7 +268,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 			String nss, Date fecha) throws IllegalArgumentException;
 
 	void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation, String regimen,
-			String ctaCti, String nss) throws IllegalArgumentException;
+			String ctaCti, String nss, Date fecha);
 
 	void cambioCoef(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			String coef, Date fecha) throws IllegalArgumentException;
@@ -293,8 +293,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void removeContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractData) throws IllegalArgumentException;
 	
-	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId,
-			Certifica2Info certifica2Info);
+	void sendCertifica2(String currentDomainName, String currentUser, Integer contractId, Certifica2Info certifica2Info)  throws IllegalArgumentException;
 
 	String getCertifica2PDF(String currentDomainName, String currentUser, String nif, Date endDate) throws IllegalArgumentException;
 
