@@ -86,7 +86,12 @@ public class TbaiMain {
 		
 		DataRequest request = TbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, xml);
 		
-		DataResponse dr = TbaiData.saveResponsePending(company.getDomain(), new User().setLogin(""), invoice, response, bc, request);
+		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + response.getTbaiId() + "&s=" + (invoice.getSeries() != null ? invoice.getSeries() : "")
+				+ "&nf=" + invoice.getNumber() + "&i=" + tbai.getFactura().getDatosFactura().getImporteTotalFactura();
+		String crc = CRC8.calculate(qrUrl);
+		qrUrl = qrUrl + "&cr=" + crc;
+
+		DataResponse dr = TbaiData.saveResponsePending(company.getDomain(), new User().setLogin(""), invoice, response, bc, request, qrUrl);
 		
 		if(!tbaiConfiguration.isBizkaia()) {
 			response = sendXML(tbaiConfiguration, xml);			

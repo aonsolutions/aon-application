@@ -45,6 +45,9 @@ export class Invoice {
 
   creation_user;
 
+  tbai; // boolean
+  tbaiUrl;
+
   constructor(type) {
     
     
@@ -98,6 +101,8 @@ export class Invoice {
     this.vatAccrualPayment = company.vatAccrualPayment;
     this.withholding = false; //this.isEmitida() ? company.withholding : false;
     this.creation_user = LS.getDomainLogin();
+    this.tbai = false;
+    this.tbaiUrl = '';
   }
 
   createInvoice(invoice) {
@@ -165,6 +170,8 @@ export class Invoice {
       this.rectification_invoice = invoice.rectification_invoice || undefined;
       this.documentNumber = invoice.documentNumber || undefined;
       this.creation_user = invoice.creation_user || LS.getDomainLogin();
+      this.tbai = invoice.tbai || false;
+      this.tbaiUrl = invoice.tbaiUrl || '';
     }
   }
 
@@ -309,6 +316,14 @@ export class Invoice {
 
   isService() {
     return this.service && this.service != CONSTANT.FALSE;
+  }
+
+  isTbai() {
+    return this.tbai;
+  }
+
+  getTbaiUrl() {
+    return this.tbaiUrl;
   }
 
   setService(service) {
@@ -551,8 +566,17 @@ export class Invoice {
             ? 2.0 : (tax.percentage === 2.0 ? 15.0 : tax.percentage);
           tax.base = base;
           this.taxes[i] = this.calculateTax(tax); 
+          this.details.forEach((d, i) => {
+            if(!d.prepayment) {
+              d.withholding = true;
+              d.withholding_type = tax.type;
+              d.withholding_percentage = tax.percentage;
+              d.withholding_quota = round(d.amount / 100 * tax.percentage);
+              this.details[i] = d;
+            }
+          });
         }
-      });
+      })
     } else if(this.taxes.filter(f => TaxType.IRPF === f.tax).length > 0){
       let index;
       this.taxes.forEach((tax, i) => {
@@ -561,8 +585,16 @@ export class Invoice {
         }
       });
       this.taxes.splice(index, 1);
+      this.details.forEach((d, i) => {
+        if(!d.prepayment) {
+          d.withholding = false;
+          d.withholding_type = undefined;
+          d.withholding_percentage = 0.0;
+          d.withholding_quota = 0.0;
+          this.details[i] = d;
+        }
+      });
     }     
-
   }
 
   calculateTotalFromTax() {

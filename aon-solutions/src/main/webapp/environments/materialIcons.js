@@ -174,6 +174,10 @@ export const PUBLISHED_WITH_CHANGES = 'published_with_changes';
 export const PEOPLE_ALT = 'people_alt';
 export const PEOPLE = 'people';
 
+// ----- Q
+
+export const QR_CODE_2 = 'qr_code_2';
+
 // ----- R
 
 export const RECEIPT = 'receipt';

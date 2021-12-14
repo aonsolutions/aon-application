@@ -659,6 +659,33 @@ public class SalaryDraft extends ResizeComposite
 		}
 	}
 
+	static class EventConstantEditorFactory implements VariableEditorFactory<EventConstantLabel> {
+		
+		private String names [];
+		
+		
+		public EventConstantEditorFactory(String... names ) {
+			this.names = names;
+		}
+		
+		@Override
+		public boolean accept(Variable variable) {
+			for ( String name : names )
+				if ( name.equals(variable.getName()))
+					return true;
+			
+			return false;
+		}
+		
+		@Override
+		public EventConstantLabel create(Variable variable) {
+			EventConstantLabel constantLabel = new EventConstantLabel();
+			constantLabel.ensureDebugId("editor-" + variable.getName().toLowerCase());
+			constantLabel.addClickHandler(e -> EmployeeTree.showEmployeeEvents(variable.getName()));
+			return constantLabel;
+		}
+	}
+
 	static class CalendarConstantEditorFactory implements VariableEditorFactory<CalendarConstantLabel> {
 		
 		private String names [];
@@ -6584,6 +6611,7 @@ public class SalaryDraft extends ResizeComposite
 					"COEFICIENTE_ERE_FZA", 
 					"COEFICIENTE_ERE_FZA_EXONERADO", 
 					"COEFICIENTE_HUELGA"  ), 
+			new EventConstantEditorFactory("ATRASO"), 
 			new AgreementConstantEditorFactory(), 
 			new ConstantEditorFactory("SMI"), 
 			new BooleanEditorFactory(), 

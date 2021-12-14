@@ -64,7 +64,8 @@ public class PrintInvoiceConfigurationJSON {
 				.put(IJsonNames.CONTACT_DATA, pic.isContactData())
 				.put(IJsonNames.LANGUAGE, pic.getLanguage().getLanguage())
 				.put(IJsonNames.THEME, PrintInvoiceThemeConfigurationJSON.toJSON(pic.getTheme()))
-				.put(IJsonNames.LEGAL, pic.getLegal());
+				.put(IJsonNames.LEGAL, pic.getLegal())
+				.put(IJsonNames.ACTIVE, pic.isActive());
 	}
 	
 }

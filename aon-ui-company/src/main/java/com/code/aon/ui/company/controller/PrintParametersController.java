@@ -105,6 +105,10 @@ public class PrintParametersController implements Serializable {
 		return saleInvoiceParams;
 	}
 	
+	public boolean isSaleInvoiceDefault() {
+		return SaleInvoiceTemplate.DEFAULT.equals(getSaleInvoiceParams().getSaleInvoiceTemplate());
+	}
+	
 	public SaleInvoiceFooter getSaleInvoiceFooter() {
 		if(saleInvoiceFooter==null){
 			saleInvoiceFooter = new SaleInvoiceFooter();

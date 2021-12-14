@@ -362,10 +362,15 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(ACTION.DELETE, () => this.trashPendingInvoice());
 		}
 		invoiceToolbar.addButton2(ACTION.BACK, () => this.back());
+		
 		if(!this.getInvoice().file && !this.invoice.isEmitida()){
 			invoiceToolbar.addButtonTitle(ACTION.ADD_FILE, () => this.addInvoiceFile());
 		} else {
 			invoiceToolbar.addButtonTitle(ACTION.SHOW_FILE, () => this.showFile());
+		}
+
+		if(this.getInvoice().isTbai()) {
+			invoiceToolbar.addButtonTitle(ACTION.TICKETBAI, () => open(this.getInvoice().getTbaiUrl()));
 		}
 	}
 
@@ -941,6 +946,7 @@ export class AonInvoice extends AonElement {
 			this.invoice.setWithholding(false);
 			irpf.setDisabled(true);
 		}
+		if(this.invoice.isReadonly()) irpf.setDisabled(true);
 		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
 	}
 

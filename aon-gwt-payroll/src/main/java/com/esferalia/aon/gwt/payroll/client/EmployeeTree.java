@@ -3364,6 +3364,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	}
 
+	protected static void showEmployeeEvents(String ...variables) {
+		EmployeeTree employeeTree = getEmployeeTree();
+		EmployeeEventsDraftObject events = employeeTree.getSalaryDraft().getSalaryDraftObject()
+				.getEmployeeEventsDraftObjecta();
+		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeEventsDraft());
+		employeeTree.getEmployeeEventsDraft().setEmployeeEventsDraftObject(events.getEmployeeEventsDraftObject(variables));
+	}
+
 	protected static void showEmployeeCalendar() {
 		EmployeeTree employeeTree = getEmployeeTree();
 		EmployeeCalendarDraftObject calendar = employeeTree.getSalaryDraft().getSalaryDraftObject()

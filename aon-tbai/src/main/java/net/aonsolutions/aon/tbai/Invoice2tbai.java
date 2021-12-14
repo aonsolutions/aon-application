@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.tbai;
 
+import java.util.Date;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
@@ -134,6 +136,9 @@ public class Invoice2tbai {
 	}
 	
 	private static Factura getFactura(Invoice invoice) {
+		if(invoice.getModificationDate() == null) {
+			invoice.setModificationDate(new Date());
+		}
 		Factura factura = new Factura();
 		CabeceraFacturaType cabecera = new CabeceraFacturaType();
 		cabecera.setSerieFactura(invoice.getSeries());

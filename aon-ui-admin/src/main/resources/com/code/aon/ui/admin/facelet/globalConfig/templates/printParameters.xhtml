@@ -95,18 +95,30 @@
 								<aon:selectOneMenu id="Sale_invoice_template"
 									value="#{printParams.saleInvoiceParams.saleInvoiceTemplate}" >
 									<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
-									<a4j:support event="onchange" reRender="saleInvoice_footer-panel" ajaxSingle="#{true}" />
+									<a4j:support event="onchange" reRender="globalConfigPrintParametersForm" ajaxSingle="#{true}" />
 								</aon:selectOneMenu>
+								
+								<aon:if test="#{printParams.saleInvoiceDefault}">
+									<aon:commandButton id="new_suite_invoice-2"
+										value=""
+										styleClass="aon-finding-toolbar-item aon-icon-config"
+										action="new_suite_invoice">
+									</aon:commandButton>			
+								</aon:if>
 							</aon:if>
 							<aon:if test="#{printParams.saleInvoiceParams.customReportTemplate}">
 								<aon:outputText id="Company_invoice_template"
 									value="#{bundle.company_custom_template}" />
 							</aon:if>
 						</aon:div>
-						<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_sales1.xhtml" />
+						<aon:if test="#{!printParams.saleInvoiceDefault}">
+							<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_sales1.xhtml" />
+						</aon:if>
 					</aon:panelGrid>
 					<aon:panelGrid columns="2" style="width:350px;">
-						<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_sales2.xhtml" />
+						<aon:if test="#{!printParams.saleInvoiceDefault}">
+							<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_sales2.xhtml" />
+						</aon:if>
 					</aon:panelGrid>
 				</h:panelGrid>
 				
@@ -114,8 +126,9 @@
 			
 			<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_reportBackground.xhtml" />
 			
-			<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_saleInvoiceFooter.xhtml" />
-			
+			<aon:if test="#{!printParams.saleInvoiceDefault}">
+				<ui:include src="/com/code/aon/ui/company/facelet/printParameters/form_saleInvoiceFooter.xhtml" />
+			</aon:if>		
 			<aon:panel>
 				<f:facet name="header">
 					<aon:outputLabel value="#{bundle.finance_fPaymentPrint_module}" />
