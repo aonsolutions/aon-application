@@ -174,12 +174,12 @@ class SistemaREDMov {
 		catch (Exception e) {throw new SegSocialException(e.getMessage());}
 	}
 	
-	public static void removeMovConsolidated(final byte certificateData[], final String certificatePassword,
+	public static void removeMovConsolidated(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws SegSocialException{
 		
-		InvalidCertificateException.checkCertificate(new ByteArrayInputStream(certificateData));
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		
-		try {removeMovConsolidatedImpl(certificateData, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);} 
+		try {removeMovConsolidatedImpl(certificateInputStream, certificatePassword, certificateType, situationType, regimen, ctaCti, nss, ipf, date);} 
 		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
@@ -364,14 +364,14 @@ class SistemaREDMov {
 		} 
 	}
 		
-	private static void removeMovConsolidatedImpl(final byte certificateData[], 
+	private static void removeMovConsolidatedImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, 
 			SituationType situationType, String regimen, String ctaCti, String nss, String ipf, Date date) throws Exception  {
 			
 		if(SituationType.ALTA.equals(situationType)) {
-			altaConsolidadaDeleteImpl(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, regimen, ctaCti, nss);
+			altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti, nss);
 		} else if(SituationType.BAJA.equals(situationType)) {
-			removeBajaConsolidatedImpl(new ByteArrayInputStream(certificateData), certificatePassword, certificateType, regimen, ctaCti, nss, ipf, date);
+			removeBajaConsolidatedImpl(certificateInputStream, certificatePassword, certificateType, regimen, ctaCti, nss, ipf, date);
 		}
 	}
 	
