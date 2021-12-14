@@ -23,6 +23,8 @@ public class PrintInvoiceConfiguration {
 	private AonLanguage language;
 	private String legal;
 	
+	private boolean active;
+	
 	private PrintInvoiceThemeConfiguration theme;
 
 	@Deprecated
@@ -174,4 +176,14 @@ public class PrintInvoiceConfiguration {
 		this.legal = legal;
 		return this;
 	}
+	
+	public boolean isActive() {
+		return active;
+	}
+	
+	public PrintInvoiceConfiguration setActive(boolean active) {
+		this.active = active;
+		return this;
+	}
+	
 }

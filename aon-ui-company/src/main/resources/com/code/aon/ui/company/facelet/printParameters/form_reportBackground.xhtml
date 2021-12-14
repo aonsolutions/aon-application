@@ -30,8 +30,7 @@
 		</f:facet>
 		<h:panelGrid columns="4"
 			columnClasses="aon-vertical-align-top, aon-vertical-align-top, aon-vertical-align-top, aon-vertical-align-top">
-
-			<aon:if test="#{!printParams.saleInvoiceParams.customReportTemplate}">
+			<aon:if test="#{!printParams.saleInvoiceDefault and !printParams.saleInvoiceParams.customReportTemplate}">
 				<h:panelGroup id="saleInvoiceBackground-panel">
 					<rich:panel>
 						<f:facet name="header">
