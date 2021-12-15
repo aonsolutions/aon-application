@@ -504,6 +504,9 @@ public class RemunerationRecord {
 				int id = 1;
 				int rowNum = 8;
 				if (remunerationRecordData.getEntries() != null) {
+
+					Integer lastEmployeeRow = 8;
+
 					for (String nss : remunerationRecordData.getEntries().keySet()) {
 						
 						LinkedList<IRemunerationRecordEntry> entries = remunerationRecordData.getEntries().get(nss);
@@ -643,7 +646,8 @@ public class RemunerationRecord {
 											cell.setCellValue(payments.get(conceptOrder[i]));
 										}
 									}
-								}	
+								}
+								lastEmployeeRow = row.getRowNum();
 							}
 						}
 						id++;
@@ -683,7 +687,7 @@ public class RemunerationRecord {
 //							sheet.getRow(i).getCell(91).setCellFormula("VLOOKUP($CK"+rowNum+",CONTRATOS!$J$5:$K$10,2,1)");
 //						}
 						
-						for (int i= 8+remunerationRecordData.getEntries().values().size(); i<=sheet.getLastRowNum();i++) {
+						for (int i=lastEmployeeRow+1; i<=sheet.getLastRowNum(); i++) {
 							if (sheet.getRow(i) == null)
 								break;
 							sheet.removeRow(sheet.getRow(i));
