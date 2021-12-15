@@ -1498,6 +1498,18 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_INVOICE);
 		return invoiceDetailBean.getCount(criteria) > 0;
 	}
+	
+	public boolean isTediReadOnly() throws ManagerBeanException {
+		return isReadOnly() || isTediReadOnly(getInvoice());
+	}
+	
+	private boolean isTediReadOnly(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.TEDI);
+		return invoiceDetailBean.getCount(criteria) > 0;
+	}
 
 	@Override
 	public IManagerBean getAttachmentBean() {

@@ -45,6 +45,10 @@ public class InvoiceTemplateMsg extends Properties implements Serializable{
 		return getProperty("invoice");
 	}
 	
+	public String simplifiedInvoice() {
+		return getProperty("simplifiedInvoice");
+	}
+	
 	public String number() {
 		return getProperty("number");
 	}

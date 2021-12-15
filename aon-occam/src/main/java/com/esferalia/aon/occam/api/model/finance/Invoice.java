@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Invoice implements Serializable, HasAudit {
 	
@@ -706,6 +707,15 @@ public class Invoice implements Serializable, HasAudit {
 	public Invoice setVatImportation( boolean value) {
 		ensureFiscal().setVatRegime(VATTaxRegime.VAT_IMPORTATION, value);
 		return this;
+	}
+	
+	public boolean isSimplified() {
+		return AonStringUtils.isBlank(getRegistryDocument()) || AonStringUtils.isBlank(getRegistryName())
+				|| AonStringUtils.isBlank(getAddressZIP());
+	}
+	
+	public boolean isProforma() {
+		return getNumber() <= 0;
 	}
 	
 	

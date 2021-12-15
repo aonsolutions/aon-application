@@ -55,11 +55,9 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
-import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfColors;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
-import com.esferalia.aon.in.payroll.pdf.api.setting.PdfSettings.ALIGNMENT;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.occam.api.model.Company;
@@ -73,6 +71,7 @@ import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.zxing.BarcodeFormat;
@@ -683,11 +682,12 @@ public class InvoiceTemplate {
 			PDFToolkit.drawResizedLogo(doc, doc.getPage(pageNumber - 1), contents, logo, logoX, logoY, maxHeight, maxWidth, web);
 		}
 		
-		drawText(contents, getMsg().invoice().toUpperCase(), x, y, config.getTheme().getTitleTextColor(), boldFont, 16);
+		drawText(contents, invoice.isSimplified() ? getMsg().simplifiedInvoice() : getMsg().invoice().toUpperCase(), x, y, config.getTheme().getTitleTextColor(), boldFont, 16);
 		y -= 30;
 
 		drawText(contents, getMsg().number() + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11,REFERENCE_NUMBER);
-		drawText(contents, safeString(invoice.getReferenceCode()), x + 50, y, config.getTheme().getTextColor(), regularFont, 11,REFERENCE_NUMBER);
+		String reference = invoice.isProforma() ? "PROFORMA" : invoice.getReferenceCode();
+		drawText(contents, safeString(reference), x + 50, y, config.getTheme().getTextColor(), regularFont, 11,REFERENCE_NUMBER);
 		y -= 4;
 
 		y -= 16;
@@ -836,7 +836,7 @@ public class InvoiceTemplate {
 		x = 50;
 		float legalSize = legalLines.size() * LEGAL_TEXT_SIZE;
 		y = bottom + 10 + bottomExtra + legalSize;
-		if(qrUrl != null) {
+		if(qrUrl != null && !invoice.isProforma()) {
 			byte[] qrCode = createQR(qrUrl, 300, 300);
 			drawImage(doc, contents, qrCode, x, y, 120, 120);
 		}
