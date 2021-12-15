@@ -1,6 +1,11 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.sql.Connection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -11,68 +16,121 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.enumeration.MimeType;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import solutions.aon.sepe.Sepe;
 
 @MultipartConfig
 @SuppressWarnings("serial")
 @WebServlet(name = "Certifica2-Servlet", urlPatterns = { "/aon_gwt_payroll/certifica2/*" })
 public class Certifica2Servlet extends HttpServlet {
 	
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		doGet(req, res);
+		try {
+			doGet(req, res);
+		} catch (Exception e) {
+			// Nothing to do here
+		}
 	}
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		try {
-			
 			// Get currentUser
-			String currentUser = req.getParameter("currentUser");
+			String userLogin = req.getParameter("userLogin");
 			
 			// Get currentUser
 			String domainName = req.getParameter("currentDomain");
-			
-			if(AonStringUtils.isEmpty(currentUser)) {
-				String token = req.getParameter("token");
-				Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
-				currentUser = AON_SOLUTIONS.getUser(domain, token).getLogin();
-			}
 			
 			// Get contractId
 			String contractIdStr = req.getParameter("contractId");
 			Integer contractId = Integer.parseInt(contractIdStr);
 			
-			// Get employee documente
+			// Get employee document
 			String document = req.getParameter("document");
 			
-			// Set MimeType and header
-			res.setContentType(MimeType.MIME_XML.getName());
-			res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".xml\"");
+			// Get employee type
+			String type = req.getParameter("type");
 			
 			// Get Servlet outputStream
-			ServletOutputStream output = res.getOutputStream();
+			ServletOutputStream output = res.getOutputStream();	
 			
-			// Try to get Certifica2
-			byte[] data = JooqCertifica2.getCertitica2Data(domainName, contractId);
+			byte[] data = new byte[0];
 			
-			// If not exist, create it and get it
-			if(null == data) {
-				JooqCertifica2.generateCertifica2(domainName, contractId);
+			// Set MimeType and header
+			if(AonStringUtils.equalsIgnoreCase(type, "XML")) {
+				res.setContentType(MimeType.MIME_XML.getName());
+				res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".xml\"");
+				
+				// Try to get Certifica2
 				data = JooqCertifica2.getCertitica2Data(domainName, contractId);
+				
+				// If not exist, create it and get it
+				if(null == data) {
+					JooqCertifica2.generateCertifica2(domainName, contractId);
+					data = JooqCertifica2.getCertitica2Data(domainName, contractId);
+				}
+				
+			} else if(AonStringUtils.equalsIgnoreCase(type, "PDF")) {
+				res.setContentType(MimeType.MIME_PDF.getName());
+				res.setHeader("Content-disposition", "attachment; filename=\"Certifica2_" + document + ".pdf\"");
+				
+				// Get employee endDate
+				String endDateStr = req.getParameter("endDate");
+				Date endDate = formatEndDate(endDateStr);
+				
+				data = getCertEnterprisePDF(domainName, userLogin, document, endDate);
 			}
 			
+			res.setStatus(HttpServletResponse.SC_OK);
 			output.write(data);
-			res.flushBuffer();
+			output.flush();
+			output.close();
 		
-		}catch (IOException e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
+		} catch (IOException | NumberFormatException e) {
+			e.printStackTrace();
 		}
 		
+	}
+
+	private byte[] getCertEnterprisePDF(String domainName, String userLogin, String document, Date endDate) {
+		try {
+			
+			// Get domain id
+			Connection connection = AonServletUtils.getConnection(domainName);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			
+			// Get Certifica2 PDF
+			return Sepe.certEnterprisePdf(new ByteArrayInputStream(certificate.getCertificate()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					document, 
+					endDate);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	private Date formatEndDate(String endDateStr) {
+		try {
+			return dateFormat.parse(endDateStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 }
