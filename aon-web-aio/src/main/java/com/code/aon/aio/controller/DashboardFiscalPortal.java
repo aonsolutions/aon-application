@@ -76,6 +76,9 @@ public class DashboardFiscalPortal implements Serializable {
 		this.domainName = domainName;
 	}
 	public Period getPygEntriesPeriod() {
+		if(pygEntriesPeriod == null) {
+			pygEntriesPeriod = new Period();
+		}
 		return pygEntriesPeriod;
 	}
 	public void setPygEntriesPeriod(Period pygEntriesPeriod) {
@@ -91,8 +94,10 @@ public class DashboardFiscalPortal implements Serializable {
 	private AccMiningParameters getParams( Period period) {
 		AccMiningParameters params = new AccMiningParameters();
 		params.setDomain(getDomainId());
-		params.setStartDate(period.getInitiationDate() );
-		params.setEndDate(period.getDeadline());
+		if(period != null) {
+			params.setStartDate(period.getInitiationDate() );
+			params.setEndDate(period.getDeadline());
+		}
 		return params;
 	}
 	public void onPygGraph(ActionEvent event) {
