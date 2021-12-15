@@ -789,7 +789,7 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) {
+	public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.fillContract(currentDomainName, contractId, contractType, formativeLvl, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
 	}

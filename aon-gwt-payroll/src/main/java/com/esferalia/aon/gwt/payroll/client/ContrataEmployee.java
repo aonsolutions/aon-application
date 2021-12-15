@@ -126,6 +126,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		@Override
 		protected void onExportPDF() {
+			showLoading("Generando borrador de contrato");
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
 					contrataEmployeeObject.getContractSpecificData(su -> {
@@ -133,10 +134,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 						contrataEmployeeObject.saveContractExport(
 								a -> {
+									showSuccess("Generaci\u00F3n Contrato", "El borrador de contrato se ha generado correctamente");
 									contractAttachUI.setContractAttachments(a);
 									this.refreshPage();
 								},
-								e -> {}
+								e -> {
+									showError("Generaci\u00F3n Contrato", e.getMessage());
+								}
 						);
 					}, f -> {});
 				else {

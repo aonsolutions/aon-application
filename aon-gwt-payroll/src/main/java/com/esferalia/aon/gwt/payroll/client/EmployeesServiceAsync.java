@@ -266,7 +266,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback);
 
 	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl,
-			AsyncCallback<List<ContractAttach>> callback);
+			AsyncCallback<List<ContractAttach>> callback) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
