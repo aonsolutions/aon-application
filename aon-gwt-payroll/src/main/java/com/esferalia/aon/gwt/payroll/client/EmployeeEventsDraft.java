@@ -483,7 +483,10 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 					setSelectedValueLB(yearLB, (year+1900)+"");
 					initializeVariablesToShow();
 					showEvents();
+					
 				},t -> {});
+		
+		initializeToolBar();
 	}
 	
 	// ----------------------------------------------- setEmployeeEventsDraftObject.Methods
@@ -513,6 +516,11 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		setSelectedValueLB(yearLB, year+"");
 		year = year - 1900;
 		
+	}
+	
+	public void initializeToolBar() {
+		newValueButton.setVisible(employeeEventsDraft.isEmployeeEvents());
+		visibilityButton.setVisible(employeeEventsDraft.isEmployeeEvents());
 	}
 	
 	private void hideYearLBOptions() {

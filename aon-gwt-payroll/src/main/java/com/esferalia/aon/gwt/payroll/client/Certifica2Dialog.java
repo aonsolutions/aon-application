@@ -36,8 +36,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.aonsolutions.gwt.pdfjs.client.FullViewer;
-
 public class Certifica2Dialog extends AonCustomDialog {
 	
 	// ------------------------------------------------- UIBinder
@@ -134,9 +132,10 @@ public class Certifica2Dialog extends AonCustomDialog {
 	private Integer contractId;
 	private Certifica2Info certifica2Info;
 	
-	private FullViewer pdfViewer;
-	private FormPanel formPanel;
+	private FormPanel formPanelXML;
+	private FormPanel formPanelPDF;
 	private Hidden documentHidden;
+	private Hidden endDateHidden;
 	
 	private Map<String, CNO> cnoMap;
 	
@@ -151,7 +150,6 @@ public class Certifica2Dialog extends AonCustomDialog {
 		setWidget(binder.createAndBindUi(this));
 		
 		this.contractId = contractId;
-		this.pdfViewer = new FullViewer();
 		this.cnoMap = new HashMap<>();
 		
 		getToolbarPanel();
@@ -192,6 +190,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 							public void onSuccess(Certifica2Info certifica2InfoDB) {
 								certifica2Info = certifica2InfoDB;
 								documentHidden.setValue(certifica2Info.getDocument());
+								endDateHidden.setValue(dateFormat.format(certifica2Info.getEndDate()));
 								fillFields();
 								showDialog();
 							}
@@ -373,7 +372,9 @@ public class Certifica2Dialog extends AonCustomDialog {
 		AonToolbarSmallButton downloadCertifica2 = new AonToolbarSmallButton("Descargar XML", AON.CSS.aonIconDownload());
 		downloadCertifica2.getElement().getStyle().setMarginRight(10, Unit.PX);
 		downloadCertifica2.addClickHandler(e -> {
-//			if(hasChange) {
+				if(!isSuspensionCode())
+					return;
+				
 				messageL.setText("Generando Certifica2...");
 				messagesPanel.setVisible(true);
 				
@@ -383,7 +384,7 @@ public class Certifica2Dialog extends AonCustomDialog {
 					public void onSuccess(String result) {
 						messageL.setText("Descargando XML Certifica2...");
 						hasChange = false;
-						formPanel.submit();
+						formPanelXML.submit();
 					}
 					
 					@Override
@@ -391,8 +392,6 @@ public class Certifica2Dialog extends AonCustomDialog {
 						// Not use here
 					}
 				});
-//			} else
-//				formPanel.submit();
 		});
 		
 		toolbar.add(downloadCertifica2);
@@ -400,6 +399,8 @@ public class Certifica2Dialog extends AonCustomDialog {
 		comunicateCertifica2 = new AonToolbarSmallButton("Comunicar Certifica2", AON.CSS.aonIconSend());
 		comunicateCertifica2.getElement().getStyle().setMarginRight(10, Unit.PX);
 		comunicateCertifica2.addClickHandler(e -> {
+			if(!isSuspensionCode())
+				return;
 			
 			if(hasChange) {
 				messageL.setText("Generando nuevo Certifica2...");
@@ -473,42 +474,40 @@ public class Certifica2Dialog extends AonCustomDialog {
 			messageL.setText("Obteniendo Certifica2 PDF del SEPE...");
 			messagesPanel.setVisible(true);
 			
-			employeesService.getCertifica2PDF(certifica2Info.getDocument(), certifica2Info.getEndDate(), new AsyncCallback<String>() {
-				
-				@Override
-				public void onSuccess(String dataURI) {
-					messagesPanel.setVisible(false);
-					pdfViewer.open(dataURI);
-				}
-				
-				@Override
-				public void onFailure(Throwable caught) {
-					messagesPanel.setVisible(false);
-					AonDialog dialog = new AonDialog("Error Certifica2 PDF", new HTML(caught.getMessage()));
-					dialog.warning();
-				}
-			});
+			formPanelPDF.submit();
 		});
 		
 		toolbar.add(comunicateCertifica2PDF);
 		
-		createFormPanel();
-		toolbar.add(formPanel);
+		createFormXMLPanel();
+		toolbar.add(formPanelXML);
+		
+		createFormPDFPanel();
+		toolbar.add(formPanelPDF);
 		
 		toolbarPanel.add(toolbar);
 	}
 
-	private void createFormPanel() {
+	private boolean isSuspensionCode() {
+		if(suspensionCodeLB.getSelectedIndex() == 0) {
+			AonDialog dialog = new AonDialog("Certific@2", new HTML("El c\u00F3digo de suspensi\u00F3n es obligatorio"));
+			dialog.warning();
+			return false;
+		}
+		return true;
+	}
+
+	private void createFormXMLPanel() {
 		// Create Form Panel
-		formPanel = new FormPanel();
-		formPanel.setAction(GWT.getModuleBaseURL()+ "certifica2/");
-		formPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
-		formPanel.setMethod(FormPanel.METHOD_POST);
+		formPanelXML = new FormPanel();
+		formPanelXML.setAction(GWT.getModuleBaseURL()+ "certifica2/");
+		formPanelXML.setEncoding(FormPanel.ENCODING_MULTIPART);
+		formPanelXML.setMethod(FormPanel.METHOD_POST);
 		
-		Hidden userLoginHidden = new Hidden("currentUser", Wnd.getCurrentUser());
+		Hidden userLoginHidden = new Hidden("userLogin", Wnd.getCurrentUser());
 		Hidden currentDomainHidden = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
-		Hidden tokenHidden = new Hidden("token", Wnd.getToken());
 		Hidden contractIdHidden = new Hidden("contractId", contractId.toString());
+		Hidden fileTypeHidden = new Hidden("type", "XML");
 		documentHidden = new Hidden("document", "");
 		
 		//Add all to FlowPanel to add to FormPanel
@@ -516,12 +515,40 @@ public class Certifica2Dialog extends AonCustomDialog {
 				
 		flowPanel.add(userLoginHidden);
 		flowPanel.add(currentDomainHidden);
-		flowPanel.add(tokenHidden);
 		flowPanel.add(contractIdHidden);
+		flowPanel.add(fileTypeHidden);
 		flowPanel.add(documentHidden);
 		
-		formPanel.add(flowPanel);
-		formPanel.addSubmitHandler(e -> messagesPanel.setVisible(false));
+		formPanelXML.add(flowPanel);
+		formPanelXML.addSubmitCompleteHandler(e -> messagesPanel.setVisible(false));
+	}
+	
+	private void createFormPDFPanel() {
+		// Create Form Panel
+		formPanelPDF = new FormPanel();
+		formPanelPDF.setAction(GWT.getModuleBaseURL()+ "certifica2/");
+		formPanelPDF.setEncoding(FormPanel.ENCODING_MULTIPART);
+		formPanelPDF.setMethod(FormPanel.METHOD_POST);
+		
+		Hidden userLoginHidden = new Hidden("userLogin", Wnd.getCurrentUser());
+		Hidden currentDomainHidden = new Hidden("currentDomain", Wnd.getCurrentDomainNameURL());
+		Hidden contractIdHidden = new Hidden("contractId", contractId.toString());
+		Hidden fileTypeHidden = new Hidden("type", "PDF");
+		documentHidden = new Hidden("document", "");
+		endDateHidden = new Hidden("endDate", "");
+		
+		//Add all to FlowPanel to add to FormPanel
+		FlowPanel flowPanel = new FlowPanel();
+				
+		flowPanel.add(userLoginHidden);
+		flowPanel.add(currentDomainHidden);
+		flowPanel.add(contractIdHidden);
+		flowPanel.add(fileTypeHidden);
+		flowPanel.add(documentHidden);
+		flowPanel.add(endDateHidden);
+		
+		formPanelPDF.add(flowPanel);
+		formPanelPDF.addSubmitCompleteHandler(e -> messagesPanel.setVisible(false));
 	}
 
 	// ------------------------------------------------- ButtonsPanel

@@ -18,11 +18,20 @@
 						value="#{bundle.finance_sale_invoice_management_module}" />
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipFocusFirst" value="#{!saleInvoice.nevv}" />
-					<ui:param name="skipSaveButton" value="#{saleInvoice.readOnly}" />
+					<ui:param name="skipSaveButton" value="#{saleInvoice.registryReadOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!saleInvoice.nevv and saleInvoiceDetail.to == null}" />
 					<ui:define name="beforeSpinToolbarContent">
+						<aon:if test="#{saleInvoice.to.number le 0}"> 
+							<aon:commandButton id="accept"	
+								value="#{bundle.aon_accept}"
+								action="#{saleInvoice.issueInvoice}"
+								onclick="#{saveOnClick}" 
+								styleClass="aon-finding-toolbar-item aon-icon-check-black"/>
+						</aon:if>
+						
+					
 						<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"
 								actionListener="#{saleInvoice.onSendInvoiceByEmail}"
@@ -42,15 +51,24 @@
 								<f:param name="outputFormat" value="DOCX" />
 							</aon:htmlCommandLink>
 						</aon:if>
+
+		
+						<aon:outputLink id="saleInvoice-downloadPdf"
+							target="_blank" value="#{saleInvoice.downloadURL}" 
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and saleInvoice.tbai}"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+					    </aon:outputLink>
+
 						<aon:htmlCommandLink id="saleInvoice-report"
 							value="#{bundle.finance_invoice}" target="_new" 
-							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and !saleInvoice.tbai}"
 							action="#{saleInvoiceSigner.onReport}"
 							accesskey="#{bundle.aon_key_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf"
 							actionListener="#{printParams.onInit}">
 							<f:param name="reportKey" value="#{printParams.saleInvoiceParams.saleInvoiceTemplateValue}" />
 						</aon:htmlCommandLink>
+						
 						<aon:htmlCommandLink id="saleInvoice-facturae"
 							value="#{bundle.finance_facturae}" target="_blank" 
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and saleInvoiceDetail.to == null and saleInvoice.downloadFacturae}"
@@ -108,7 +126,7 @@
 						</aon:menuItem>
 						<aon:menuItem id="rectify"
 							value="#{bundle.finance_rectify}"
-							rendered="#{!saleInvoice.rectifier and !saleInvoice.accountSource and saleInvoiceDetail.model.rowCount > 0}"
+							rendered="#{saleInvoice.to.number > 0 and !saleInvoice.rectifier and !saleInvoice.accountSource and saleInvoiceDetail.model.rowCount > 0}"
 							iconClass="aon-icon-version"
 							actionListener="#{saleInvoice.onRectificationShow}"
 							reRender="showRectificationWindow">
@@ -119,7 +137,7 @@
 							<aon:menuItem id="record"
 								value="#{bundle.finance_record}"
 								actionListener="#{saleInvoice.onRecordInvoice}"
-								rendered="#{!saleInvoice.recorded and saleInvoiceDetail.model.rowCount > 0}"
+								rendered="#{saleInvoice.to.number > 0 and !saleInvoice.recorded and saleInvoiceDetail.model.rowCount > 0}"
 								iconClass="aon-icon-task-assume"
 								reRender="saleInvoiceForm" 
 								onclick="Richfaces.showModalPanel('waitProccess')" 

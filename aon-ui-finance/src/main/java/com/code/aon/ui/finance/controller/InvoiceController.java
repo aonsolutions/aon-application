@@ -97,6 +97,7 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.HeaderObjectController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.finance.util.InvoiceImportManager;
 import com.code.aon.ui.finance.util.InvoiceOcrProcess;
@@ -111,6 +112,8 @@ import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 
 public class InvoiceController extends HeaderObjectController implements ISignatureController, IFinanceConstants, IAuditableController {
@@ -174,7 +177,7 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	private FinanceEmailUtil emailController;
 	private AonFile invoiceAttachFile;
 	private RegistryAddressFilter addressesFilter;
-	
+	private TbaiConfiguration tbaiConfiguration;
 	
 	public InvoiceController() {
 		this.emailController = new FinanceEmailUtil();
@@ -1919,6 +1922,24 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 			AonUtil.addErrorMessage(th.getMessage());
 		}
 		return null;
+	}
+	
+	public boolean isTbai() {
+		return getTbaiConfiguration().isActive();
+	}
+	
+	public TbaiConfiguration getTbaiConfiguration() {
+		if(tbaiConfiguration == null) {
+			String domainName = AonUtil.getDomainName();
+			Integer domainId = DomainManager.getCurrentDomain();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			tbaiConfiguration = AON.getTbaiConfiguration(domainName, domainId, login);
+		}
+		return tbaiConfiguration;
+	}
+	
+	public void setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
+		this.tbaiConfiguration = tbaiConfiguration;
 	}
 
 }

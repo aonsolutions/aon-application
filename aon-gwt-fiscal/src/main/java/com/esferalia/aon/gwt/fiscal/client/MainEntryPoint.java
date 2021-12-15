@@ -174,7 +174,7 @@ public class MainEntryPoint implements EntryPoint {
 			Occam occam = new Occam()
 				.setDomainName(getCurrentDomainName())
 				.setDomain(getCurrentDomain())
-				.setUser(getToken());
+				.setUser(getCurrentUser());
 			ConfigParams params = new ConfigParams().setToken(getToken());
 			COMMON_SERVICE.getAonConfiguration(occam, params, new AsyncCallback<AonConfiguration>() {
 				
@@ -890,13 +890,13 @@ public class MainEntryPoint implements EntryPoint {
 	}-*/;
 	
 	public static String getCurrentUser() {
-		return getToken() != null ? aonConfiguration.getUser().getLogin() : getCurrentUserJs();
+		return getCurrentUserJs();
 	}
 	
 	public static native String getCurrentUserJs()
 	/*-{
 		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? "" : $wnd.getCurrentUser();
+		return token ? $wnd.localStorage.getItem("aon_domain_login") : $wnd.getCurrentUser();
 	}-*/;
 	/**
 	 * Fetches a parameter passed to the module's nocache script.

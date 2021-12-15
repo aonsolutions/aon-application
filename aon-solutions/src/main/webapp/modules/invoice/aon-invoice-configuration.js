@@ -7,6 +7,7 @@ import { AonInvoicePrint } from "./aon-invoice-print.js";
 import * as ACTION from '../actions.js';
 import { AonTab } from "../../components/aon-tab.js";
 import { AonInvoiceCommunication } from "./aon-invoice-communication.js";
+import * as LS from '../../services/localStorageService.js';
 
 export class AonInvoiceConfiguration extends AonElement {
     
@@ -34,6 +35,9 @@ export class AonInvoiceConfiguration extends AonElement {
 			{ title: MSG.INVOICE_PRINTING, fn: () => this.buildPrintConfiguration()},
             { title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}
         ];
+        if(!LS.isAonSolutions() && !this.configuration.print.active){
+            this.options = [{ title: MSG.COMMUNICATION, fn: () => this.buildCommunication()}];
+        }
     }
 
     build() {
@@ -48,8 +52,9 @@ export class AonInvoiceConfiguration extends AonElement {
         let content = this.createElement(TAG.DIV);
         content.id = this.CONTENT;
         this.appendChild(content);
-
-        this.buildPrintConfiguration();
+        if(!LS.isAonSolutions() && !this.configuration.print.active){
+            this.buildCommunication();
+        } else this.buildPrintConfiguration();
     }
     
 	buildTabs() {

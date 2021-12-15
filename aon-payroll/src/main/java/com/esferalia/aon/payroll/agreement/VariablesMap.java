@@ -751,6 +751,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_VESTUARIO_ANUAL", "PLUS_VESTUARIO");
 		variablesMap.put("PLUS_VESTUARIO_DIARIO", "PLUS_VESTUARIO");
 		variablesMap.put("PLUS_VESTUARIO_MENSUAL", "PLUS_VESTUARIO");
+		variablesMap.put("PLUS_VESTUARIO_CON_ANTIGUEDAD_MENSUAL", "PLUS_VESTUARIO_ANTIGUEDAD");
 		variablesMap.put("PLUS_VINCULACION_MENSUAL", "PLUS_VINCULACION");
 		variablesMap.put("PLUS_VINCULACION_10_AÑOS_ANUAL", "P_VINCULACION_10_AÑOS_A");
 		variablesMap.put("PLUS_VINCULACION_10_AÑOS_MENSUAL", "P_VINCULACION_10_AÑOS_M");

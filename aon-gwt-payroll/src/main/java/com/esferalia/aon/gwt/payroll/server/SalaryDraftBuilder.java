@@ -777,7 +777,8 @@ public class SalaryDraftBuilder
 		draftPayment.setType(getPaymentType(payment.getType()));
 
 		if (siblingPayment != null) {
-			if ( isNotZero(amount) 
+			if (isDelay(payment)
+				|| isNotZero(amount) 
 				|| isNotZero(quote)
 				|| isNotZero(tax) ) {
 				Payment compositePayment = newCompositePayment(siblingPayment, draftPayment);
@@ -1356,7 +1357,7 @@ public class SalaryDraftBuilder
 			composite = (CompositePayment) payment;
 			composite.addChild(childPayment);
 			composite.setDescription(childPayment.getDescription());
-		} else if (isNotZero(payment)){
+		} else if (isDelay(payment) || isNotZero(payment)){
 			composite = newCompositePayment(payment);
 			composite.addChild(childPayment);
 			composite.setDescription(childPayment.getDescription());
@@ -1682,6 +1683,14 @@ public class SalaryDraftBuilder
 		;
 	}
 	
+	private boolean isDelay(IPayment payment) {
+		return (( payment instanceof IContractPayment) && (((IContractPayment)payment).getSalaryType() == SalaryType.DELAY ));
+	}
+
+	private boolean isDelay(Payment payment) {
+		return payment.getSalaryType() == Salary.Type.DELAY;
+	}
+
 	private boolean isNotZero(Double amount) {
 		return AonNumberUtils.zeroIfNull(amount) != 0.00;
 	}

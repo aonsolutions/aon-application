@@ -58,6 +58,7 @@ import net.aonsolutions.aon.api.notification.NotificationRequest;
 import net.aonsolutions.aon.api.utils.ComunicaUtils;
 import solutions.aon.aws.ses.SES;
 import solutions.aon.aws.ses.SESMessage;
+import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.ServicioREDEmployee;
 import solutions.aon.seg.social.ServicioREDMov;
 import solutions.aon.seg.social.SistemaRED;
@@ -119,7 +120,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
-		
 	}
 
 	@Override
@@ -244,21 +244,21 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		return employees;
 	}
 	
-	private JSONArray getRlce() throws Exception {
+	private JSONArray getRlce() {
 		JSONArray arr = new JSONArray();
 		for( Entry<String, String> rlce : RLCE.getRLCE().entrySet()) 
 			arr.put(new JSONObject().put("value", rlce.getKey()).put("name", rlce.getValue()));
 		return arr;
 	}
 	
-	private JSONArray getContractType() throws Exception {
+	private JSONArray getContractType() {
 		 JSONArray arr = new JSONArray();
 		for( Entry<Integer, ContractTypeRecord> contractType : new ContractType().getContractTypes().entrySet()) 
 			arr.put(new JSONObject().put("value", contractType.getKey()).put("name", contractType.getValue()));
 		return arr;
 	}
 	
-	private JSONArray getOccupation() throws Exception {
+	private JSONArray getOccupation() {
 		JSONArray arr = new JSONArray();
 		for (Entry<String, String> v : Occupation.getOccupation().entrySet()) 
 			arr.put(new JSONObject().put("value", v.getValue()).put("name",  v.getKey()));		
@@ -266,7 +266,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		return arr;
 	}
 	
-	private JSONArray getQuoteGroup() throws Exception {
+	private JSONArray getQuoteGroup() {
 		JSONArray arr = new JSONArray();
 		for (Entry<String, String> v : QuoteGroup.getQuoteGroup().entrySet()) 
 			arr.put(new JSONObject().put("value", v.getValue()).put("name",  v.getKey()));	
@@ -302,7 +302,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private JSONObject getNafxIpf(AonApiData api) throws Exception{
         JSONObject params = api.getParams(); 
-		Domain domain = api.getDomain();
+		Domain domain = api.getDomain();//
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		String ipf       =  params.optString("ipf");
 		String apellido1 =  params.optString("apellido1");
@@ -576,18 +576,29 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				String regime = employee.getRegime();
 				String ccc = employee.getCtaCti().get();
 				String nss = employee.getNss();
-				Date fra = employee.getFra();
+				Date dat = employee.getFra();
 
 				LinkedList<File> files = new LinkedList<>();
 				
 				try {
-					byte[] fileByte = SistemaRED.getTA(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), regime, ccc, nss, fra);
-					File file = File.createTempFile("duplicado", ".pdf");
+					byte[] fileByte = ServicioRED.getTADuplicatePOST(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), ccc, regime, situation, nss, dat);
+					File file = File.createTempFile("duplicateTA", ".pdf");
 					FileOutputStream os = new FileOutputStream(file);
 		            os.write(fileByte);
 		            os.close();
 					files.add(file);
 				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				try {
+					byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, dat);
+					File file = File.createTempFile("duplicateIDC", ".pdf");
+					FileOutputStream os = new FileOutputStream(file);
+		            os.write(fileByte);
+		            os.close();
+					files.add(file);
+				}catch (Exception e) {
 					e.printStackTrace();
 				}
 
@@ -613,6 +624,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
     			toList.add(AON_SOLUTIONS.getAuth(usr.getAuth().getAuth()).getEmail());
     		}
     	});
+	    
 		return toList;
 	}
 	
@@ -715,12 +727,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					// CONTRACT NO EXIST
 					if(contract.isEmpty()) { 
 						if(data.getGc().isEmpty()) {
-							  data = SistemaRED.getEmployee(
-										new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), 
-										data.getRegime(), data.getCtaCti().get(), nss
-								  );
-							  
-
+							data = SistemaRED.getEmployee(
+								new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(), certificate.getType(), 
+								data.getRegime(), data.getCtaCti().get(), nss
+							);
 						}
 						
 						if( nss!=null) {

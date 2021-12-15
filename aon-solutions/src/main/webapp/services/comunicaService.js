@@ -59,7 +59,6 @@ export const getOccupation = (data) =>  get(`${API_URL}/comunica/occupation`, da
  
 export const getQuoteGroup = (data) => get(`${API_URL}/comunica/quote-group`, data);
  
-  
 // {
 //   const resp = await get(`${API_URL}/comunica/contract-type`, data);
 //   let options = [];

@@ -235,6 +235,7 @@ import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
@@ -1694,14 +1695,15 @@ public class AON {
 		}
 	}
 	
+	public static Invoice updateInvoice(String domainName, Integer domainId, String login, Invoice invoice, boolean only){
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().updateInvoice(ctx, invoice, only);
+		}
+	}
+	
 	public static Invoice updateInvoice(String domainName, Integer domainId, String login, Invoice invoice){
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().updateInvoice(ctx, invoice);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 
@@ -1926,6 +1928,13 @@ public class AON {
 		} finally {
 			if (ctx != null)
 				ctx.close();
+		}
+	}
+	
+	public static Integer getInvoiceMinNumber(String domainName, Integer domainId, String login,
+			InvoiceType type, String series) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getInvoiceMinNumber(ctx, type, series);
 		}
 	}
 	

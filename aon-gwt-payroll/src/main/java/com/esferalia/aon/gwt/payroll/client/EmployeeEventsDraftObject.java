@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,6 +24,156 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
 	
+	private static class EmployeeVariablesDrafObject extends  EmployeeEventsDraftObject {
+		
+		private static final ArrayList<String> EMPTY_LIST = new ArrayList<String>();
+		
+		private EmployeeEventsDraftObject delegate;
+		private ArrayList<String> variables = new ArrayList<String>();
+		
+		private EmployeeVariablesDrafObject(Collection<String> variables, EmployeeEventsDraftObject delegate){
+			super(delegate.idEmployee);
+			this.delegate = delegate;
+			this.variables.addAll(variables);
+		}
+
+		public boolean isEmployeeEvents() {
+			return false;
+		}
+		
+
+		public ArrayList<String> getCalendarVariables() {
+			return EMPTY_LIST;
+		}
+
+		public ArrayList<String> getAgreementOnlyVariables() {
+			return EMPTY_LIST;
+		}
+
+		public ArrayList<String> getContractVariables() {
+			return EMPTY_LIST;
+		}
+
+		public ArrayList<String> getAllVariables() {
+			return variables;
+		}
+
+		public ArrayList<String> getAgreementVariables() {
+			return EMPTY_LIST;
+		}
+
+		public Integer getIdEmployee() {
+			return delegate.getIdEmployee();
+		}
+
+		public void setEmployeeCalendar(EmployeeCalendarDraftObject employeeCalendarDraftobject) {
+			delegate.setEmployeeCalendar(employeeCalendarDraftobject);
+		}
+
+		public EmployeeCalendarDraftObject getEmployeeCalendar() {
+			return delegate.getEmployeeCalendar();
+		}
+
+		public ArrayList<String> getEmployeeContractVariables(ArrayList<String> variablesToShow) {
+			return variables;
+		}
+
+		public ArrayList<String> getEmployeeContractVariables() {
+			return variables;
+		}
+
+		public Double getAcumulateYear(String var) {
+			return delegate.getAcumulateYear(var);
+		}
+
+		public EmployeeEventsVariable getEmployeeEventsVariable(String variableName) {
+			return delegate.getEmployeeEventsVariable(variableName);
+		}
+
+		public Boolean isCalendarVariable(String var) {
+			return delegate.isCalendarVariable(var);
+		}
+
+		public Boolean isAgreementVariable(String var) {
+			return delegate.isAgreementVariable(var);
+		}
+
+		public boolean isContractVariable(String var) {
+			return delegate.isContractVariable(var);
+		}
+
+		public String getAgreementVariablesValue(String var) {
+			return delegate.getAgreementVariablesValue(var);
+		}
+
+		public Map<String, ArrayList<EmployeeEventsVariable>> getMapEventsVar() {
+			return delegate.getMapEventsVar();
+		}
+
+		public void setMapEventsVar(Map<String, ArrayList<EmployeeEventsVariable>> mapEventsVar) {
+			delegate.setMapEventsVar(mapEventsVar);
+		}
+
+		public boolean isFullJourney() {
+			return delegate.isFullJourney();
+		}
+
+		public String getTC2() {
+			return delegate.getTC2();
+		}
+
+		public Date getContractStartDate() {
+			return delegate.getContractStartDate();
+		}
+
+		public Date getContractEndDate() {
+			return delegate.getContractEndDate();
+		}
+
+		public void initializeDBEventsVariables(int year, Consumer<ContextDescriptor> success,
+				Consumer<Throwable> failure) {
+			delegate.initializeDBEventsVariables(year, success, failure);
+		}
+
+		public void initializeDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
+			delegate.initializeDBCalendar(success, failure);
+		}
+
+		public void updateDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
+			delegate.updateDBCalendar(success, failure);
+		}
+
+		public ArrayList<EmployeeEventsVariable> getListEmployeeEventsVaribales(String varName) {
+			return delegate.getListEmployeeEventsVaribales(varName);
+		}
+
+		public void setListEmployeeEventsVaribales(String varName,
+				ArrayList<EmployeeEventsVariable> employeeEventsVariables) {
+			delegate.setListEmployeeEventsVaribales(varName, employeeEventsVariables);
+		}
+
+		public Double getAcumulateVariableByMonth(String varName, int month, Integer year) {
+			return delegate.getAcumulateVariableByMonth(varName, month, year);
+		}
+
+		public boolean hasMoreThanOneValue(String varName, int month, Integer year) {
+			return delegate.hasMoreThanOneValue(varName, month, year);
+		}
+
+		public void setValueByMonth(String variableName, String value, Date startDate, Date endDate) {
+			delegate.setValueByMonth(variableName, value, startDate, endDate);
+		}
+
+		public void setSettleHolidayValueByMonth(String variableName, String value, Date startDate, Date endDate) {
+			delegate.setSettleHolidayValueByMonth(variableName, value, startDate, endDate);
+		}
+
+		public EmployeeEventsDraftObject getEmployeeEventsDraftObject(String... variables) {
+			return delegate.getEmployeeEventsDraftObject(variables);
+		}
+
+		
+	}
 	// ----------------------------------------------- Variables 
 	
 	private EmployeeEventsData employeeEventsData;
@@ -65,6 +218,10 @@ public class EmployeeEventsDraftObject {
 		calendarVariables.add("DIAS_ERE_FZA_EXON");
 		calendarVariables.add("HORAS_COMPLEMENTARIAS");
 		calendarVariables.add("HORAS_EXTRAS");
+	}
+	
+	public boolean isEmployeeEvents() {
+		return true;
 	}
 	
 	public ArrayList<String> getCalendarVariables() {
@@ -147,6 +304,7 @@ public class EmployeeEventsDraftObject {
 		else
 			filterVariablesList.add("HORAS_EXTRAS");
 		
+
 		// Result List
 		ArrayList<String> result = new ArrayList<String>();
 		
@@ -556,6 +714,10 @@ public class EmployeeEventsDraftObject {
 		employeeEventsData.removeEventData(variableName);
 		employeeEventsData.addEventData(variableName, startDate, endDate, value);
 		mapEventsVar = employeeEventsData.getEventDateVarList();
+	}
+	
+	public EmployeeEventsDraftObject getEmployeeEventsDraftObject(String ...variables) {
+		return new EmployeeVariablesDrafObject(Arrays.asList(variables), this);
 	}
 
 }

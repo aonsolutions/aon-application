@@ -19,6 +19,7 @@ import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.LiquidationDoesNotExist;
 import solutions.aon.seg.social.object.SecondaryUser;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
@@ -26,6 +27,7 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 	
 	public static List<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType) throws SegSocialException{
+		List<SecondaryUser> list = null;
 		SSLContext sslContext = null;
 		try {
 			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
@@ -36,13 +38,11 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 		String ticket = "";
 		HttpPost httpPost = null;
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
-			
-			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P003");
-			
-			link = "https://w2.seg-social.es"+Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "id", "FORMULARIO_1"), "action");
+			String body = Toolkit.getBodyGET(httpClient, IServicioRedConstants.BASE_URL_TGSS+"/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P003");
+			checkAuthorization(body);
+			link = IServicioRedConstants.BASE_URL_TGSS+Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "id", "FORMULARIO_1"), "action");
 
-			ticket = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "name", "ARQ.SPM.TICKET"), "value");
-			
+			ticket = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "name", IServicioRedConstants.TICKET), "value");
 			List<NameValuePair> params = new ArrayList<>();
 			params.add(new BasicNameValuePair(IServicioRedConstants.TICKET, ticket));
 			params.add(new BasicNameValuePair(IServicioRedConstants.SPM_CONTEXT, IServicioRedConstants.INTERNET));
@@ -58,12 +58,13 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
 			Toolkit.checkProsaError(body);
 			
-			return ServicioREDRegeXML.extractSecondaryUsers(body);
+			list = ServicioREDRegeXML.extractSecondaryUsers(body);
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
-		} 
+		}
+		return list;
 	}
 	
 	
@@ -81,11 +82,11 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 		HttpPost httpPost = null;
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			
-			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P004");
+			String body = Toolkit.getBodyGET(httpClient, IServicioRedConstants.BASE_URL_TGSS+"/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P004");
 			
 			link = IServicioRedConstants.BASE_URL_TGSS+Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "id", "formulario_altaBajaMod"), "action");
 
-			ticket = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "name", "ARQ.SPM.TICKET"), "value");
+			ticket = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "name", IServicioRedConstants.TICKET), "value");
 			
 			List<NameValuePair> params = new ArrayList<>();
 			params.add(new BasicNameValuePair(IServicioRedConstants.TICKET, ticket));
@@ -141,11 +142,11 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 		HttpPost httpPost = null;
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			
-			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P004");
+			String body = Toolkit.getBodyGET(httpClient, IServicioRedConstants.BASE_URL_TGSS+"/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P004");
 			
 			link = IServicioRedConstants.BASE_URL_TGSS+Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "id", "formulario_altaBajaMod"), "action");
 
-			ticket = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "name", "ARQ.SPM.TICKET"), "value");
+			ticket = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "name", IServicioRedConstants.TICKET), "value");
 			
 			List<NameValuePair> params = new ArrayList<>();
 			params.add(new BasicNameValuePair(IServicioRedConstants.TICKET, ticket));
@@ -176,4 +177,9 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 		} 
 	}
 	
+	private static void checkAuthorization(String body) throws SegSocialException {
+		String error = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "class", "cabMensaje"), "innerText");
+		if(error!=null)
+			throw new SegSocialException(error);
+	}
 }

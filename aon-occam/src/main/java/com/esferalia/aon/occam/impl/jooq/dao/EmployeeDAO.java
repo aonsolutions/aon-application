@@ -494,9 +494,9 @@ public class EmployeeDAO {
 			.set(REGISTRY.TYPE,  (byte) 0 )
 			.set(REGISTRY.DOMAIN, domainId)
 			.set(REGISTRY.DOCUMENT, trim(employee.getDni()))
-			.set(REGISTRY.DOCUMENT_TYPE, getDniType(employee.getDni()))
-			.set(REGISTRY.DOCUMENT_COUNTRY, getDniCountry(employee.getDni()))
-			.set(REGISTRY.NATIONALITY,  getDniCountry(employee.getDni()));
+			.set(REGISTRY.DOCUMENT_TYPE, getDniType(trim(employee.getDni())))
+			.set(REGISTRY.DOCUMENT_COUNTRY, getDniCountry(trim(employee.getDni())))
+			.set(REGISTRY.NATIONALITY,  getDniCountry(trim(employee.getDni())));
 			employee.getName().ifPresent(name -> insertRegistry.set(REGISTRY.NAME, name));
 		
 			RegistryRecord registryRecord = insertRegistry.returning().fetchOne();

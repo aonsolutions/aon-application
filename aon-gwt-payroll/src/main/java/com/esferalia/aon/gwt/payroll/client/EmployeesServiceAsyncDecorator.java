@@ -750,16 +750,15 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 	
 	@Override
-	public void downloadTA_IDC(String domain, String user, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void downloadTA_IDC(String domain, String user, String situation, String regimen, String ctaCti, String nss, Date fecha, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.downloadTA_IDC(domain, user, contractId, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.downloadTA_IDC(domain, user, situation, regimen, ctaCti, nss, fecha, contractId, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	@Override
-	public void getEmployeeTa(String domain, String user, Integer contractId, Date date,
-			AsyncCallback<String> callback) throws IllegalArgumentException {
+	public void getEmployeeTa(String domain, String user, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.getEmployeeTa(domain, user, contractId, date, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.getEmployeeTa(domain, user, situation, regimen, ctaCti, nss, fecha, new AsyncCallbackWrapper<String>(callback));
 	}
 
 	@Override
@@ -837,9 +836,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void altaConsolidadaDelete(String currentDomainName, String user, String situation, String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) throws IllegalArgumentException {
+	public void altaConsolidadaDelete(String currentDomainName, String user, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.altaConsolidadaDelete(currentDomainName, user, situation, regimen, ctaCti, nss, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.altaConsolidadaDelete(currentDomainName, user, situation, regimen, ctaCti, nss, fecha, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override

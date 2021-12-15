@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -64,6 +65,8 @@ public class PrintInvoiceConfigurationDAO {
 				}				
 			});
 		
+		ApplicationParameter saleInvoice = AppParamDAO.getApplicationParameterStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getNameProperty().eq(AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM.name()))).findFirst().orElse(new ApplicationParameter());		
+		config.setActive(AonStringUtils.isBlank(saleInvoice.getValue()) || saleInvoice.getValue().equalsIgnoreCase("saleInvoice"));
 		Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), withData)
 				.findFirst().orElse(new Attach());
 		config.setBackground(attach);
