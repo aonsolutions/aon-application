@@ -244,21 +244,21 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		return employees;
 	}
 	
-	private JSONArray getRlce() throws Exception {
+	private JSONArray getRlce() {
 		JSONArray arr = new JSONArray();
 		for( Entry<String, String> rlce : RLCE.getRLCE().entrySet()) 
 			arr.put(new JSONObject().put("value", rlce.getKey()).put("name", rlce.getValue()));
 		return arr;
 	}
 	
-	private JSONArray getContractType() throws Exception {
+	private JSONArray getContractType() {
 		 JSONArray arr = new JSONArray();
 		for( Entry<Integer, ContractTypeRecord> contractType : new ContractType().getContractTypes().entrySet()) 
 			arr.put(new JSONObject().put("value", contractType.getKey()).put("name", contractType.getValue()));
 		return arr;
 	}
 	
-	private JSONArray getOccupation() throws Exception {
+	private JSONArray getOccupation() {
 		JSONArray arr = new JSONArray();
 		for (Entry<String, String> v : Occupation.getOccupation().entrySet()) 
 			arr.put(new JSONObject().put("value", v.getValue()).put("name",  v.getKey()));		
@@ -266,7 +266,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		return arr;
 	}
 	
-	private JSONArray getQuoteGroup() throws Exception {
+	private JSONArray getQuoteGroup() {
 		JSONArray arr = new JSONArray();
 		for (Entry<String, String> v : QuoteGroup.getQuoteGroup().entrySet()) 
 			arr.put(new JSONObject().put("value", v.getValue()).put("name",  v.getKey()));	
@@ -302,7 +302,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	
 	private JSONObject getNafxIpf(AonApiData api) throws Exception{
         JSONObject params = api.getParams(); 
-		Domain domain = api.getDomain();
+		Domain domain = api.getDomain();//
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		String ipf       =  params.optString("ipf");
 		String apellido1 =  params.optString("apellido1");

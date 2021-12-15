@@ -92,13 +92,11 @@ public class Employee {
 	}	
 	
 	public Optional<Double> getFactor(){return Optional.ofNullable(factor);}
-
 	public Optional<String> getSex() {return Optional.ofNullable(sex);}
 	public Integer getIdent() {return ident;}
 	public String getColec() {return colec;}
 	public String getOcup() {return ocup;}
 	public Optional<String> getMdctz(){return Optional.ofNullable(mdCtz);}
-	
 	public Optional<String> getRlce() {return Optional.ofNullable(rlce);}
 
 	@Override
@@ -205,7 +203,6 @@ public class Employee {
 
 		public EmployeeBuilder(){}		
 		
-	
 		public EmployeeBuilder setNss(String nss) {
 			if(nss != null && !nss.trim().equals("")) this.nss = nss.trim();
 			else this.nss = null;
@@ -255,13 +252,11 @@ public class Employee {
 			return this;
 		}
 
-
 		public EmployeeBuilder setRegime(String regime) {
 			if(regime != null && !regime.trim().equals("")) this.regime = regime.trim();
 			else this.regime = null;
 			return this;
 		}
-
 
 		public EmployeeBuilder setCompanyId(String companyId) {
 			if(companyId != null && !companyId.trim().equals("")) this.companyId = companyId.trim();
@@ -269,20 +264,17 @@ public class Employee {
 			return this;
 		}
 
-
 		public EmployeeBuilder setCompanyName(String companyName) {
 			if(companyName != null && !companyName.trim().equals("")) this.companyName = companyName.trim();
 			else this.companyName = null;
 			return this;
 		}
 
-
 		public EmployeeBuilder setSituation(String situation) {
 			if(situation != null && !situation.trim().equals("")) this.situation = situation.trim();
 			else this.situation = null;
 			return this;
 		}
-
 
 		public EmployeeBuilder setGc(String gc) {
 			if(gc != null && !gc.trim().equals("")) this.gc = gc.trim();
@@ -318,7 +310,6 @@ public class Employee {
 			return this;
 		}
 
-
 		public EmployeeBuilder setFrb(Date frb) {
 			this.frb = frb;
 			return this;
@@ -329,7 +320,6 @@ public class Employee {
 			this.feb = feb;
 			return this;
 		}
-
 
 		public EmployeeBuilder setContract(String contract) {
 			if(contract != null && !contract.trim().equals("")) this.contract = contract.trim();
@@ -359,20 +349,17 @@ public class Employee {
 			return this;
 		}
 
-
 		public EmployeeBuilder setEpig(String epig) {
 			if(epig != null && !epig.trim().equals("")) this.epig = epig.trim();
 			else this.epig = null;
 			return this;
 		}
 
-
 		public EmployeeBuilder setOcup(String ocup) {
-			if(ocup != null && !ocup.trim().equals("")) this.ocup = ocup.trim();
+			if(ocup != null && !ocup.trim().equals("")) this.ocup = ocup.trim().toLowerCase();
 			else this.ocup = null;
 			return this;
 		}
-
 
 		public EmployeeBuilder setVinFam(String vinFam) {
 			if(vinFam != null && !vinFam.trim().equals("")) this.vinFam = vinFam.trim();
@@ -380,13 +367,11 @@ public class Employee {
 			return this;
 		}
 
-
 		public EmployeeBuilder setProfesCat(String profesCat) {
 			if(profesCat != null && !profesCat.trim().equals("")) this.profesCat = profesCat.trim();
 			else this.profesCat = null;
 			return this;
 		}
-
 
 		public EmployeeBuilder setReducingCoefic(String reducingCoefic) {
 			if(reducingCoefic != null && !reducingCoefic.trim().equals("")) this.reducingCoefic = reducingCoefic.trim();
