@@ -5835,19 +5835,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 	@Override
 	public List<ContractAttach> fillContract(String domainName, Integer contractId, Integer contractType,
-			String formativeLvl) {
+			String formativeLvl) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 
-			byte[] pdfBytes = JooqContractPDF.contractFill(connection, domainId, parentDomainId, contractId, contractType,
-					formativeLvl);
+			byte[] pdfBytes = JooqContractPDF.contractFill(connection, domainId, parentDomainId, contractId, contractType, formativeLvl);
 			
 			JooqContractPDF.saveDraftContract(domainName, contractId, pdfBytes);
 			return JooqContractAttach.getContractAttachments(connection, domainId, contractId);
 
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (SQLException | IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

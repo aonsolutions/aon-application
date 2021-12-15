@@ -522,7 +522,7 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeStatus(getCurrentDomainName(), getCurrentUser(), contractId, callback);
 	}
 	
-	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) {
+	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<List<ContractAttach>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.fillContract(getCurrentDomainName(), contractId, contractType, formativeLvl, callback);
 	}
 	
