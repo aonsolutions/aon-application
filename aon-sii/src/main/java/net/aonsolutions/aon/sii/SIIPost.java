@@ -67,9 +67,10 @@ public class SIIPost {
    			kmf.init(keyStore, pass.toCharArray());
    	        
             TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
-
-            SSLContext sslContext = SSLContext.getInstance("SSLv3");
+            
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
+			SSLContext.setDefault(sslContext);
             // Set trust all certificates context to HttpsURLConnection
             
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());

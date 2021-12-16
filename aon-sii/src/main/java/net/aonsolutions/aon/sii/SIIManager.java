@@ -321,7 +321,7 @@ public class SIIManager {
     }
 	
 	protected JSONArray bajaFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String terceros) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
-		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS, administration);
+		String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS, administration) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS, administration);
 
 		if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).bajaFacturasRecibidas(domain, login, company, invoiceId, contextList, terceros, uri);
@@ -336,7 +336,7 @@ public class SIIManager {
 	}
 	
 	protected JSONArray suministroFacturasRecibidasPagos(Domain domain, String login, Company company, LinkedList<Finance> financeList, Integer invoiceId) throws JAXBException, ParserConfigurationException, SOAPException, IOException {
-    	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration());
+    	String uri = pruebas ? SIIUri.getInstance().getURIPruebas(SIIType.FACTURAS_RECIBIDAS_PAGOS, getAdministration()) : SIIUri.getInstance().getURI(SIIType.FACTURAS_EMITIDAS_COBROS, getAdministration());
 
 		if(isAeat() || isNavarra()) {
 			return SIIAeatPost.getInstance(getCert(), getPass()).suministroFacturasRecibidasPagos(domain, login, company, financeList, invoiceId, uri);
