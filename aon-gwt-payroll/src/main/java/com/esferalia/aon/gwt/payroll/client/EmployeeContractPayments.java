@@ -87,6 +87,9 @@ public class EmployeeContractPayments extends Composite {
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField(provided = true)
+	AonToolbar toolbar;
+
+	@UiField(provided = true)
 	DataGrid<ContractConceptCalc> contractConceptCalcDG;
 	
 	// ----------------------------------------------- Variables 
@@ -94,7 +97,6 @@ public class EmployeeContractPayments extends Composite {
 	private EmployeeContractPaymentsObject employeeContractPaymentsObject;
 	private List<ContractConceptCalc> contractConceptCalcList;
 	
-	private AonToolbar toolbar;
 	private AonToolbarButton saveButton;
 	private ListBox yearLB;
 	
@@ -105,7 +107,7 @@ public class EmployeeContractPayments extends Composite {
 		provideContractConceptCalcDG();
 		initWidget(uiBinder.createAndBindUi(this));
 		this.getElement().getStyle().setHeight(100, Unit.PCT);
-		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
+		//dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		setScrollPanelHeight();
 		saveButton.setEnabled(false);
 	}
@@ -447,6 +449,7 @@ public class EmployeeContractPayments extends Composite {
 		toolbar.add(addButton);
 		
 		this.yearLB = new ListBox();
+		initializeYearLB(this.yearLB);
 		this.toolbar.add(this.yearLB);
 	}
 
