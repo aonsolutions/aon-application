@@ -278,6 +278,7 @@ export class AonRegistry extends AonElement {
         let data = {registry: registry.id, global: registry.global};
         getRegistryAddress(data).then(ra => {
             ra.registry = registry.id;
+            ra.global = registry.global;
             address.setAddress(ra, true);
             this.registry.address = ra;
             this.dispatchEvent(new Event(EVENT.SELECT_REGISTRY));

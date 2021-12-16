@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
@@ -294,10 +295,21 @@ public class InvoiceAutoComplete {
 	 * Aseguramos el nombre del titular de la factura.
 	 */
 	public static final BiConsumer<Invoice,AonConfigurationContext> COMPLETE_REGISTRY_ADDRESS_DATA = (inv,ctx) -> {
-		if(inv.getRegistryAddressData() != null && inv.getRegistryAddressData().getId() == null) {
-			if(inv.getRegistryAddressData().getRegistry() == null) {
-				inv.getRegistryAddressData().setRegistry(inv.getRegistry());
+		if(inv.getRegistryAddressData().isGlobal()) {
+			inv.setRegistryAddress(null);
+			inv.getRegistryAddressData().setId(null);
+		}
+		if(inv.getRegistryAddressData().getId() != null) {
+			RegistryAddressFilter filter = f -> f.getDomainProperty().eq(inv.getDomain()).and(f.getIdProperty().eq(inv.getRegistryAddressData().getId()));
+			RegistryAddress ra = RegistryAddressDAO.get(ctx.getContext(), filter);
+			if(ra.getId() == null) {
+				inv.setRegistryAddress(null);
+				inv.getRegistryAddressData().setId(null);
 			}
+		}
+		
+		if(inv.getRegistryAddressData() != null && inv.getRegistryAddressData().getId() == null) {
+			inv.getRegistryAddressData().setRegistry(inv.getRegistry());
 			RegistryAddress raddress = RegistryAddressDAO.save(ctx.getContext(), inv.getRegistryAddressData());
 			inv.setRegistryAddress(raddress.getId());
 			inv.setRegistryAddressData(raddress);

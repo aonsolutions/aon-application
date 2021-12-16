@@ -23,6 +23,7 @@ import org.xml.sax.SAXException;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.json.CompanyJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
@@ -586,6 +587,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		JSONObject json = new JSONObject();
 		json.put("print", getPrintConfiguration(api));
+		json.put("company", CompanyJSON.toJSON(company));
 		json.put(IJsonNames.E_INVOICE, company.iseInvoice());
 		json.put("tbai", getTbaiConfiguration(api));
 		json.put("sii", getSiiConfiguration(api));

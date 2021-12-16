@@ -3,6 +3,7 @@ import { RegistryType } from "../../models/enums.js";
 import { round } from "../../services/utils.js";
 import { getSurchargeByVat, TaxType } from "./invoiceEnums.js";
 import * as LS from '../../services/localStorageService.js';
+import {getCompany} from '../../services/companyService.js';
 
 export class Invoice {
 
@@ -48,64 +49,11 @@ export class Invoice {
   tbai; // boolean
   tbaiUrl;
 
-  constructor(type) {
-    
-    
-    this.domain = localStorage.getItem('aon_domain_id');
-    this.type = type || 'ticket';
-    this.series = new Date().getFullYear();
-    this.serie = new Date().getFullYear();
-    this.number = '';
-    this.reference = '';
-    this.date = new Date(Date.now());
-    this.total = 0;
-    this.sender = {
-      document: '',
-      name: '',
-      address: {
-        country: 'ES',
-        address: '',
-        zip: '',
-        city: '',
-        province: ''
-      }
-    };
-    this.receiver = {
-      document: '',
-      name: '',
-      address: {
-        country: 'ES',
-        address: '',
-        zip: '',
-        city: '',
-        province: ''
-      }
-    };
-    this.category = '';
-    this.transaction = 'NAC';
-    this.taxes = [];
-    this.details = [];
-    this.finances = [];
-    this.suplidos = {
-      active:false,
-      description: '',
-      total: 0
-    };
-    this.status = 'inbox';
-    this.remarks = [];
-    this.comments = '';
-    this.selfconta = false;
-
-    let company = JSON.parse(localStorage.getItem('company'));
-    this.surcharge = company.surcharge;
-    this.vatAccrualPayment = company.vatAccrualPayment;
-    this.withholding = false; //this.isEmitida() ? company.withholding : false;
-    this.creation_user = LS.getDomainLogin();
-    this.tbai = false;
-    this.tbaiUrl = '';
+  constructor(invoice) {
+    this.buildObject(invoice);
   }
 
-  createInvoice(invoice) {
+  buildObject(invoice) {
     if(invoice) {
       this.id = invoice.id || undefined;
       this.domain = invoice.domain || localStorage.getItem('aon_domain_id');
@@ -157,22 +105,76 @@ export class Invoice {
       this.remarks = invoice.remarks || [];
       this.selfconta = invoice.selfconta || false;
 
-      let company = JSON.parse(localStorage.getItem('company'));
       this.activity = invoice.activity;
 
       this.service = invoice.service || false;// boolean | servicio
       this.withholding = invoice.withholding || false; //this.isEmitida() ? company.withholding : false; // boolean | retencion 
       this.investment = invoice.investment || false; // boolean | bienes de inversion
       this.withholdingFarmer = invoice.withholdingFarmer || false; // boolean | regimen agrario
-      this.vatAccrualPayment = invoice.vatAccrualPayment || company.vatAccrualPayment; // boolean | criterio de caja
-      this.surcharge = invoice.surcharge || company.surcharge;
+      this.vatAccrualPayment = invoice.vatAccrualPayment;// boolean | criterio de caja
+      this.surcharge = invoice.surcharge;
       this.rectified = invoice.rectified || false;
       this.rectification_invoice = invoice.rectification_invoice || undefined;
       this.documentNumber = invoice.documentNumber || undefined;
       this.creation_user = invoice.creation_user || LS.getDomainLogin();
       this.tbai = invoice.tbai || false;
       this.tbaiUrl = invoice.tbaiUrl || '';
+    } else {
+      this.domain = LS.getDomainId();
+      this.type = 'ticket';
+      this.series = new Date().getFullYear();
+      this.serie = new Date().getFullYear();
+      this.number = '';
+      this.reference = '';
+      this.date = new Date(Date.now());
+      this.total = 0;
+      this.sender = {
+        document: '',
+        name: '',
+        address: {
+          country: 'ES',
+          address: '',
+          zip: '',
+          city: '',
+          province: ''
+        }
+      };
+      this.receiver = {
+        document: '',
+        name: '',
+        address: {
+          country: 'ES',
+          address: '',
+          zip: '',
+          city: '',
+          province: ''
+        }
+      };
+      this.category = '';
+      this.transaction = 'NAC';
+      this.taxes = [];
+      this.details = [];
+      this.finances = [];
+      this.suplidos = {
+        active:false,
+        description: '',
+        total: 0
+      };
+      this.status = 'inbox';
+      this.remarks = [];
+      this.comments = '';
+      this.selfconta = false;
+
+      this.withholding = false; //this.isEmitida() ? company.withholding : false;
+      this.creation_user = LS.getDomainLogin();
+      this.tbai = false;
+      this.tbaiUrl = '';
     }
+
+    getCompany().then(company => {
+      this.surcharge = this.surcharge || company.surcharge;
+      this.vatAccrualPayment = this.vatAccrualPayment || company.vatAccrualPayment;
+    });
   }
 
   getType() {
@@ -181,6 +183,7 @@ export class Invoice {
 
   setType(type) {
     this.type = type;
+    return this;
   }
 
   getActivity() {
@@ -189,14 +192,16 @@ export class Invoice {
 
   setActivity(activity) {
     this.activity = activity;
+    return this;
   }
 
   getSerie() {
-      return this.serie;
+    return this.serie;
   }
 
   setSerie(serie) {
-      this.serie = serie;
+    this.serie = serie;
+    return this;
   }
 
   getNumber() {
@@ -205,6 +210,7 @@ export class Invoice {
 
   setNumber(number) {
     this.number = number;
+    return this;
   }
 
   getReference() {
@@ -213,6 +219,7 @@ export class Invoice {
 
   setReference(reference) {
     this.reference = reference;
+    return this;
   }
 
   getDate() {
@@ -221,6 +228,7 @@ export class Invoice {
 
   setDate(date) {
     this.date = date;
+    return this;
   }
 
   getTotal(){
@@ -231,6 +239,7 @@ export class Invoice {
     this.total = total;
     this.calculateTaxFromTotal();
     this.calculateFinances();
+    return this;
   }
 
   getCategory() {
@@ -247,6 +256,7 @@ export class Invoice {
         detail.category = category;
         this.details[i] = detail;
     }); 
+    return this;
   }
   
   getPaymethod() {
@@ -256,6 +266,7 @@ export class Invoice {
   setPaymethod(paymethod) {
     this.paymethod = paymethod;    
     this.calculateFinances();
+    return this;
   }
 
   isEmitida() {
@@ -328,6 +339,7 @@ export class Invoice {
 
   setService(service) {
     this.service = service;
+    return this;
   }
 
   isVatAccrualPayment() {
@@ -336,6 +348,7 @@ export class Invoice {
 
   setVatAccrualPayment(vatAccrualPayment) {
     this.vatAccrualPayment = vatAccrualPayment;
+    return this;
   }
 
   isInvestment() {
@@ -344,6 +357,7 @@ export class Invoice {
 
   setInvestment(investment) {
     this.investment = investment;
+    return this;
   }
 
   isRectified() {
@@ -352,6 +366,7 @@ export class Invoice {
 
   setRectified(rectified) {
     this.rectified = rectified;
+    return this;
   }
 
   getRectificationInvoice() {
@@ -361,6 +376,7 @@ export class Invoice {
   setRectificationInvoice(invoice) {
     this.setRectified(true);
     this.rectification_invoice = invoice.id;
+    return this;
   }
 
   isSurcharge() {
@@ -376,6 +392,7 @@ export class Invoice {
       this.calculateWithholdingFromTax();
     }
     this.calculateTotalFromTax();
+    return this;
   }
 
   isWithholding() {
@@ -394,6 +411,7 @@ export class Invoice {
     this.details.forEach((detail, i) => {
       this.details[i] = this.calculateDetail(detail);
     });
+    return this;
   }
 
   isWithholdingFarmer() {
@@ -404,6 +422,7 @@ export class Invoice {
     this.withholdingFarmer = withholdingFarmer;
     this.calculateWithholdingFromTax();
     this.calculateTotalFromTax();
+    return this;
   }
 
   getTransaction() {
@@ -427,6 +446,7 @@ export class Invoice {
         detail[i] = this.calculateDetail(detail);
       });
     }
+    return this;
   }
 
   getRegistry() {
@@ -438,6 +458,7 @@ export class Invoice {
       this.receiver = registry;
     } else this.sender = registry;
     this.name = registry.name;
+    return this;
   }
  
   getRegistryType() {
@@ -477,12 +498,14 @@ export class Invoice {
      };
      this.taxes.push(tax);
      this.calculateTotalFromTax();
+     return this;
   }
 
   setTax(tax, i) {
     this.taxes[i] = this.calculateTax(tax);
     this.calculateWithholdingFromTax();
     this.calculateTotalFromTax();
+    return this;
   }
 
   deleteTax(tax, i) {
@@ -491,6 +514,7 @@ export class Invoice {
     this.taxes.splice(i, 1);
     this.calculateWithholdingFromTax();
     this.calculateTotalFromTax();
+    return this;
   }
 
   calculateWithholdingFromDetail() {
@@ -683,7 +707,7 @@ export class Invoice {
      if(this.isNacional()) this.calculateTaxFromDetail();
      else if(this.isCcm()) this.calculateWithholdingFromDetail();
      this.calculateTotalFromDetail();
-      
+      return this;
   }
 
   deleteDetail(detail, i) {
@@ -691,6 +715,7 @@ export class Invoice {
     if(this.isNacional()) this.calculateTaxFromDetail();
      else if(this.isCcm()) this.calculateWithholdingFromDetail();
     this.calculateTotalFromDetail();
+    return this;
   }
 
   setDetail(detail, i) {  
@@ -698,6 +723,7 @@ export class Invoice {
     if(this.isNacional()) this.calculateTaxFromDetail();
     else if(this.isCcm()) this.calculateWithholdingFromDetail();
     this.calculateTotalFromDetail();
+    return this;
   }
 
   calculateDetail(detail){
@@ -777,6 +803,7 @@ export class Invoice {
     this.finances.forEach((finance,i) => {
       this.finances[i].bank_account = bankAccount;
     });
+    return this;
   }
 
   calculateFinances() {
@@ -838,14 +865,17 @@ export class Invoice {
       };
       this.finances.push(finance);
     }
+    return this;
   }
 
   setFinance(finance, i) {
-   this.finances[i] = finance;
+    this.finances[i] = finance;
+    return this;
   }
 
   deleteFinance(finance, i) {
     this.finances.splice(i, 1);
+    return this;
   }
 }
 
