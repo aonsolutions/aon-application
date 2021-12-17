@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.data.DataRequestUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.Bases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2021Update;
@@ -190,9 +191,8 @@ public class Up2Date {
     		//RemoveDomainAppBankForParent.REMOVE_DOMAIN_APP_BANK_FOR_PARENT,
     		//RemoveDataResponse.REMOVE_DATA_RESPONSE,
     		//DataRequestCreation.DATA_REQUEST_CREATION,
-    		//CertificatesUpdate.CERTIFICATESUPDATE
     		//CertificatesUpdate.CERTIFICATESUPDATE,
-    		//DataRequestUpdate.DATA_REQUEST_UPDATE,
+    		DataRequestUpdate.DATA_REQUEST_UPDATE,
     		Bases2021UpdateIII.BASES2021UPDATEIII,
     		HomeBases2019Close.HOMEBASES2019CLOSE,
     		HomeBases2021UpdateIII.HOMEBASES2021UPDATEIII,
