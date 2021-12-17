@@ -28,17 +28,17 @@
 						value="&#160;"
 						actionListener="#{enterprise.onSelectFirst}"
 						styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-excel" target="_blank"
-						action="#{enterpriseSalaryReport.onExcel}">
+						action="#{report.onExecute}">
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
+							target="#{salaryExpense.startDate}" value="#{reportPrint.fromDate}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
+							target="#{salaryExpense.endDate}" value="#{reportPrint.toDate}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.salaryTypes}" value="#{reportPrint.salaryTypes}" />
+							target="#{salaryExpense.salaryTypes}" value="#{reportPrint.salaryTypes}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
+							target="#{salaryExpense.person}" value="#{reportPrint.person}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
+							target="#{salaryExpense.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
 						<f:param name="reportKey" value="#{reportPrint.groupByEmployee?'salaryExpenseMonthlyReport':'salaryExpenseReport'}" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
@@ -46,17 +46,17 @@
 						value="Listado"
 						actionListener="#{enterprise.onSelectFirst}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						action="#{enterpriseSalaryReport.onPDF}">
+						action="#{report.onExecute}">
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
+							target="#{salaryExpense.startDate}" value="#{reportPrint.fromDate}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
+							target="#{salaryExpense.endDate}" value="#{reportPrint.toDate}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.salaryTypes}" value="#{reportPrint.salaryTypes}" />
+							target="#{salaryExpense.salaryTypes}" value="#{reportPrint.salaryTypes}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
+							target="#{salaryExpense.person}" value="#{reportPrint.person}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
+							target="#{salaryExpense.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
 						<f:param name="reportKey" value="#{reportPrint.groupByEmployee?'salaryExpenseMonthlyReport':'salaryExpenseReport'}" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
@@ -65,17 +65,17 @@
 						value="&#160;"
 						actionListener="#{enterprise.onSelectFirst}"
 						styleClass="aon-finding-toolbar-item aon-finding-toolbar-item-no-border aon-icon-excel" target="_blank"
-						action="#{enterpriseSalaryReport.onDetailedExcel}">
+						action="#{report.onExecute}">
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
+							target="#{salaryExpense.startDate}" value="#{reportPrint.fromDate}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
+							target="#{salaryExpense.endDate}" value="#{reportPrint.toDate}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.salaryTypes}" value="#{reportPrint.salaryTypes}" />
+							target="#{salaryExpense.salaryTypes}" value="#{reportPrint.salaryTypes}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
+							target="#{salaryExpense.person}" value="#{reportPrint.person}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
+							target="#{salaryExpense.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
 						<f:param name="reportKey" value="#{reportPrint.groupByEmployee?'salaryExpenseMonthlyDetailed':'salaryExpenseDetailed'}" />
 						<f:param name="outputFormat" value="MS Excel" />
 					</aon:htmlCommandLink>
@@ -83,17 +83,17 @@
 						value="Listado detallado"
 						actionListener="#{enterprise.onSelectFirst}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						action="#{enterpriseSalaryReport.onDetailedPDF}">
+						action="#{report.onExecute}">
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.startDate}" value="#{reportPrint.fromDate}" />
+							target="#{salaryExpense.startDate}" value="#{reportPrint.fromDate}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.endDate}" value="#{reportPrint.toDate}" />
+							target="#{salaryExpense.endDate}" value="#{reportPrint.toDate}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.salaryTypes}" value="#{reportPrint.salaryTypes}" />
+							target="#{salaryExpense.salaryTypes}" value="#{reportPrint.salaryTypes}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.person}" value="#{reportPrint.person}" />
+							target="#{salaryExpense.person}" value="#{reportPrint.person}" />
 						<f:setPropertyActionListener
-							target="#{enterpriseSalaryReport.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
+							target="#{salaryExpense.groupByPerson}" value="#{reportPrint.groupByEmployee}" />
 						<f:param name="reportKey" value="#{reportPrint.groupByEmployee?'salaryExpenseMonthlyDetailed':'salaryExpenseDetailed'}" />
 						<f:param name="outputFormat" value="PDF" />
 					</aon:htmlCommandLink>
