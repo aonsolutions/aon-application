@@ -111,7 +111,7 @@ export class AonInvoice extends AonElement {
 		this.REMARKS_CARD = this.DATA + 'RemarksCard';
 		this.FILE = this.id + 'File';
 		this.INPUT_FILE = this.id + 'InputFile'
-		this.invoice = this.invoice || new Invoice().setType(this.getAttribute('type'));
+		this.invoice = this.invoice || new Invoice().setType(this.type);
 
 		this.SERIE = CONSTANT.AON_INVOICE + CONSTANT.SERIE.initCap();
 		this.SERVICE = CONSTANT.AON_INVOICE + CONSTANT.SERVICE.initCap();
@@ -184,6 +184,8 @@ export class AonInvoice extends AonElement {
 
 	setInvoice(invoice) {
 		this.invoice = new Invoice(invoice);
+		if(!invoice)
+			this.invoice.setType(this.type);
 	}
 
 	setType(type) {

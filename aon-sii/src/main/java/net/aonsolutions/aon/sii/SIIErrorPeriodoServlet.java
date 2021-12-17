@@ -34,8 +34,10 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -76,17 +78,19 @@ public class SIIErrorPeriodoServlet extends HttpServlet{
 			Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(cert)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
 			
-			ApplicationParameter param= AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_DEFAULT_ADMINISTRATION);
-			Administration administration = param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
-			
 			if(attach.getData() == null){
 				DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
 				Drive drive = AonDrive.getInstace().serviceInitialize(g);
 				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			}
-			
+
+			SiiConfiguration siiConfiguration = AON.getSiiConfiguration(domain, login);
+			siiConfiguration.setCertificate(new Certificate()
+					.setCertificate(attach.getData())
+					.setPassword(pass)
+					.setType(CertificateType.AEAT.name()));
 			try{
-				SIIManager manager = SIIManager.getInstance(attach.getData(), pass, administration);
+				SIIManager manager = SIIManager.getInstance(siiConfiguration);
 				invIds.stream().forEach(id -> {
 					Integer[] ids = new Integer[1];
 					ids[0] = id;
@@ -105,9 +109,6 @@ public class SIIErrorPeriodoServlet extends HttpServlet{
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			
-
 		}
 	}
 	

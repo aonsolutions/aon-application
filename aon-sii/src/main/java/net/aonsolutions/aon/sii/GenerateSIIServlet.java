@@ -22,14 +22,12 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
@@ -77,11 +75,9 @@ public class GenerateSIIServlet extends HttpServlet{
 		LOGGER.info("AFTER GET SII VAT CONTEXT");		
 		LOGGER.info("SII. TAMAÑO VAT CONTEXT: " + contextList.size());
 
-			
-		ApplicationParameter param= AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_DEFAULT_ADMINISTRATION);
-		Administration administration = param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
+		SiiConfiguration siiConfiguration = AON.getSiiConfiguration(domain, login);
 		try{
-			SIIManager manager = SIIManager.getInstance(administration);
+			SIIManager manager = SIIManager.getInstance(siiConfiguration);
 
 			byte[] object = null;
 				
