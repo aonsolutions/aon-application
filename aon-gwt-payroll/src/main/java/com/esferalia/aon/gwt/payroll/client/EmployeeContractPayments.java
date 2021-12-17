@@ -109,7 +109,7 @@ public class EmployeeContractPayments extends Composite {
 		this.getElement().getStyle().setHeight(100, Unit.PCT);
 		//dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		setScrollPanelHeight();
-		saveButton.setEnabled(false);
+		//saveButton.setEnabled(false);
 	}
 	
 	// ----------------------------------------------- Auxiliar Methods (Constructor & DataGrid) 
