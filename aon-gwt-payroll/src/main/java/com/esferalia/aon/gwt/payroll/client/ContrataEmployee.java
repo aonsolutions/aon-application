@@ -1053,8 +1053,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		previusContract.setVisible(true);
 		employeeCounter.setVisible(true);
 		nextContract.setVisible(true);
-		tgss.setVisible(true);
-		sepe.setVisible(true);
+		if(tabLayOutPanel.getSelectedIndex() == 0)
+			tgss.setVisible(true);
+		else if(tabLayOutPanel.getSelectedIndex() == 1)
+			sepe.setVisible(true);
 		
 		closePDF.setVisible(false);
 		idcDateListBox.setVisible(false);
