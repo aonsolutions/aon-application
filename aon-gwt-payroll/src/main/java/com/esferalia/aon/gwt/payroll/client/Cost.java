@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -28,15 +29,28 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -55,6 +69,8 @@ public class Cost extends ResizeComposite {
 	
 	// ----------------------------------------------- Static Variables 
 
+	private static final Logger LOGGER = Logger.getLogger(Cost.class.getName());
+	
 	private static final String STYLENAME_CHECKED_ITEM = "aon-MenuItemCheckYes";
 
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.YEAR_MONTH);
@@ -65,7 +81,9 @@ public class Cost extends ResizeComposite {
 		void onStartSLD();
 		void onFinishSLD();
 		void onPublish(CostDocuments documents, String type);
-	}
+		void onNoSex(String naf, String name);
+		void onGeneratingDocument();
+		}
 	
 	// ----------------------------------------------- ScheduledCommand (Excel)
 	
@@ -101,7 +119,13 @@ public class Cost extends ResizeComposite {
 		private MenuItem csv = null;
 		private ContextMenu aggregatedAnnualSummary = null;
 		private ContextMenu remunerationRecord = null;
+		private PopupPanel ppp = null;
 		
+		void removePpp() {
+			if (ppp != null) {
+				ppp.hide();
+			}
+		}
 		
 		public ExcelMenu() {
 			
@@ -134,7 +158,7 @@ public class Cost extends ResizeComposite {
 						.forEach(y -> availableYears.add(y));
 					}
 					
-					if (availableYears != null & !availableYears.isEmpty()) {
+					if (availableYears != null && !availableYears.isEmpty()) {
 						
 						aggregatedAnnualSummary = new ContextMenu();
 						for (Integer year : availableYears) {
@@ -146,7 +170,7 @@ public class Cost extends ResizeComposite {
 					
 					}
 					
-					PopupPanel ppp = new PopupPanel(true);
+					ppp = new PopupPanel(true);
 					ppp.add(aggregatedAnnualSummary);
 					ppp.setPopupPosition(summaryItem.getAbsoluteLeft() + summaryItem.getOffsetWidth(), summaryItem.getAbsoluteTop());
 					ppp.show();
@@ -166,7 +190,7 @@ public class Cost extends ResizeComposite {
 						.forEach(y -> availableYears.add(y));
 					}
 					
-					if (availableYears != null & !availableYears.isEmpty()) {
+					if (availableYears != null && !availableYears.isEmpty()) {
 						
 						aggregatedAnnualSummary = new ContextMenu();
 						for (Integer year : availableYears) {
@@ -178,7 +202,7 @@ public class Cost extends ResizeComposite {
 					
 					}
 					
-					PopupPanel ppp = new PopupPanel(true);
+					ppp = new PopupPanel(true);
 					ppp.add(aggregatedAnnualSummary);
 					ppp.setPopupPosition(summaryQuarterlyItem.getAbsoluteLeft() + summaryQuarterlyItem.getOffsetWidth(), summaryQuarterlyItem.getAbsoluteTop());
 					ppp.show();
@@ -187,6 +211,7 @@ public class Cost extends ResizeComposite {
 				
 				MenuItem recordItem = addItem("Registro Retributivo (.xsl)", () -> {},
 						AON.CSS.aonIconRight(), AON.AON_ICON_CMD_BUTTON, AON.CSS.aonContextMenuItem());
+				
 				recordItem.setScheduledCommand(() -> {
 					availableYears.clear();
 					if (costDocuments != null && costDocuments.getCosts() != null) {
@@ -197,7 +222,7 @@ public class Cost extends ResizeComposite {
 						.forEach(y -> availableYears.add(y));
 					}
 					
-					if (availableYears != null & !availableYears.isEmpty()) {
+					if (availableYears != null && !availableYears.isEmpty()) {
 						
 						remunerationRecord = new ContextMenu();
 						for (Integer year : availableYears) {
@@ -209,7 +234,7 @@ public class Cost extends ResizeComposite {
 					
 					}
 					
-					PopupPanel ppp = new PopupPanel(true);
+					ppp = new PopupPanel(true);
 					ppp.add(remunerationRecord);
 					ppp.setPopupPosition(recordItem.getAbsoluteLeft() + recordItem.getOffsetWidth(), recordItem.getAbsoluteTop());
 					ppp.show();
@@ -736,14 +761,46 @@ public class Cost extends ResizeComposite {
 	}
 	
 	public void printRemunerationRecord (Integer year) {
+		listeners.forEach(l -> l.onGeneratingDocument());
 		
 		com.esferalia.aon.gwt.payroll.shared.Cost cost = costDocuments.geCurrentCost();
 		
 		String printURL = URL.encode(GWT.getModuleBaseURL() + "remuneration_record/Registro_Retributivo_" + year);
 		
-		FormPanel formPanel = new FormPanel("_blank");
+		FormPanel formPanel = new FormPanel(/*"_blank"*/);
 		formPanel.setAction(printURL);
 		formPanel.setMethod(FormPanel.METHOD_POST);
+		formPanel.addSubmitCompleteHandler(event -> {
+			
+			JSONObject json = new JSONObject(JsonUtils.safeEval(event.getResults()));
+			JSONValue noSex = json.get("noSex");
+			JSONArray noSexArr = new JSONArray(JsonUtils.safeEval(noSex.toString()));
+			
+			
+			for (int i=0; i<noSexArr.size(); i++) {
+				
+				JSONObject unsexed = new JSONObject(JsonUtils.safeEval(noSexArr.get(i).toString()));
+				
+				LOGGER.info(unsexed.toString());
+				String name = unsexed.get("name").isString().stringValue();
+				String nss = unsexed.get("nss").isString().stringValue();
+				
+				listeners.forEach(l -> l.onNoSex(nss, name));
+			}
+			String base64Excel = json.get("excel").isString().stringValue();
+			
+//			if (base64Excel.charAt(0) == '\"' && base64Excel.charAt(base64Excel.length() - 1) == '\"') {
+//				base64Excel = base64Excel.substring(1, base64Excel.length() - 1);
+//			}
+//			
+			
+			String url = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," + base64Excel;
+			
+			LOGGER.info(url);
+			
+			Window.open(url, "Registro Retributivo", "");
+			
+		});
 		
 		FlowPanel flowPanel = new FlowPanel();
 		flowPanel.add(new Hidden(RemunerationRecordService.Params.YEAR.getName(), String.valueOf(year)));
@@ -869,10 +926,34 @@ public class Cost extends ResizeComposite {
 	
 	// ----------------------------------------------- Toolbar.Methods
 
+	HandlerRegistration handler;
+	HandlerRegistration handler2;
 	private void onExcel(ClickEvent e) {
 		NativeEvent nativeEvent = e.getNativeEvent();
 		excelMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		excelMenu.show();
+		
+		NodeList<Element> iframes = Document.get().getElementsByTagName("iframe");
+		
+		if (iframes != null && iframes.getLength() > 0) {
+			IFrameElement iframe = (IFrameElement) Document.get().getElementsByTagName("iframe").getItem(0);
+			
+			if (iframe != null) {			
+				Element outerContainer = iframe.getContentDocument().getElementById("outerContainer");
+				
+				if (outerContainer != null) {					
+					Event.sinkEvents(outerContainer, Event.ONCLICK);
+					Event.setEventListener(outerContainer, event -> {
+						if (excelMenu != null) {							
+							excelMenu.removePpp();
+							excelMenu.hide();
+						}
+					});
+				}
+				
+			}			
+		}
+		
 	}
 	
 	private void onPDF(ClickEvent e) {
