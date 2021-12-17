@@ -100,7 +100,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -2066,6 +2068,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private ResultsPanel resultsPanel;
 	private ProgressPanel progressPanel;
+	private FlowPanel costsProblemsPanel;
 
 	private CCCContextMenu cccContextMenu;
 	private EmployeeContextMenu employeeContextMenu;
@@ -2214,6 +2217,31 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@Override
 	public void onFinishSLD() {
 		hideProgressPanel();
+	}
+	
+	@Override
+	public void onNoSex(String naf, String name) {
+		if (costsProblemsPanel == null)
+			costsProblemsPanel = new FlowPanel();
+		Label lbl = new Label("ADVERTENCIA: Sexo no definido - NAF: " + naf + ", Nombre: "+ name);
+		lbl.getElement().getStyle().setColor("orange");
+		costsProblemsPanel.add(lbl);
+		
+		showCostProblemsPanel();
+		
+	}
+	
+	
+	@Override
+	public void onGeneratingDocument() {
+		if (costsProblemsPanel == null)
+			costsProblemsPanel = new FlowPanel();
+		
+		Label lbl = new Label("Se est\u00E1 generando su informe. Por favor, espere unos segundos...");
+		lbl.addStyleName(AON.CSS.aonColorGreen());		
+		costsProblemsPanel.add(lbl);
+		
+		showCostProblemsPanel();
 	}
 
 	// ------------------------------------------------- Salary.Listener methods
@@ -2594,6 +2622,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		footTabPanel.selectTab(resultsPanel);
 		EmployeeTree.this.splitLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
 
+	}
+	
+	private void showCostProblemsPanel() {
+		
+		InlineLabel tab = new InlineLabel("Costes");
+		tab.addStyleName(AON.AON_ICON_TIME);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.costsProblemsPanel, tab);
+		footTabPanel.selectTab(costsProblemsPanel);
+		EmployeeTree.this.splitLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+		
 	}
 
 	private void selectResultsPanel() {
@@ -3814,5 +3853,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		resultsPanel.setWidget(messageTree);
 		showResultsPanel();
 	}
+
+
 
 }
