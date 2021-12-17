@@ -20,6 +20,7 @@ import com.esferalia.aon.payroll.sql.AbstractSQL.AgreementExtra;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 
@@ -83,6 +84,10 @@ public class SQLAgreementPaymentsFactory
 			this.extraIssueDate = extraIssueDate;
 		}
 		
+		@Override
+		public SalaryType getSalaryType() {
+			return this.extraId != 0  ? SalaryType.EXTRA : super.getSalaryType();
+		}
 	}
 	
 	private static final String SQL = 

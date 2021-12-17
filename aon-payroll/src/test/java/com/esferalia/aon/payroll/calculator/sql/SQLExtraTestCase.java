@@ -4320,6 +4320,182 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testExtrasAtSalaryXI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+					new Extra() {
+						{
+							this.expression = "SALARIO_BASE + 0.00";
+							this.month = Month.MARCH;
+							this.start = "01/01";
+							this.end = "31/12";
+							this.issue = "31/03";
+						}
+					}, 
+					new Extra() {
+						{
+							this.expression = "SALARIO_BASE + PLUS_SALARIAL";
+							this.month = Month.JUNE;
+							this.start = "01/01";
+							this.end = "30/06";
+							this.issue = "30/06";
+						}
+					}, 
+					new Extra() {
+						{
+							this.expression = "SALARIO_BASE + PLUS_SALARIAL";
+							this.month = Month.DECEMBER;
+							this.start = "01/07";
+							this.end = "31/12";
+							this.issue = "20/12";
+						}
+					}, 
+				},
+				new Payment[] {
+						new Payment() {
+							{
+								this.concept = conceptSalarioBase.getId();
+								this.expression = "1000.00 * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptPlusSalarial.getId();
+								this.expression = "100.00 * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						}
+				});
+		
+		
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+
+		for ( AgreementPaymentRecord p: getAgreementPayments(aonContext, agreement.getId()) ) {
+			p.setSalaryType((byte) SalaryType.SALARY.ordinal());
+			p.update();
+		}
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.JUNE);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date contractDate = new Date(calendar.getTimeInMillis());
+
+		ContractRecord contract = newContract(
+				aonContext
+				,new String[] {} 
+				,new String[] {} 
+				,category);
+		//@formatter:off
+		
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+
+		//for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+		//	System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+		
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		
+		// 
+		// MARCH
+		//
+		startDate = add(startDate, Calendar.MONTH, 2);
+		endDate = getLastDayOfMonth(startDate);
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		//for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+		//	System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+		
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00, salary.getTotalPayment());
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		
+		calendar.set(MONTH, Calendar.MARCH);
+		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date issueDate = new Date(calendar.getTimeInMillis());
+		int year = calendar.get(Calendar.YEAR);
+		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "31/03");
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder)
+		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate));
+		jooqSalaryBuilder.execute();
+		
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+
+		// 
+		// JULY
+		//
+		startDate = add(startDate, Calendar.MONTH, 3);
+		endDate = getLastDayOfMonth(startDate);
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		//for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+		//	System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+		
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment());
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+
+		calendar.set(MONTH, Calendar.JUNE);
+		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		issueDate = new Date(calendar.getTimeInMillis());
+		year = calendar.get(Calendar.YEAR);
+		agreement = getAgreement(aonContext, category.getAgreementLevel());
+		extra = getExtra(aonContext, agreement.getId(), "30/06");
+		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder)
+		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate));
+		jooqSalaryBuilder.execute();
+
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+
+		// 
+		// DECEMBER
+		//
+		startDate = add(startDate, Calendar.MONTH, 6);
+		endDate = getLastDayOfMonth(startDate);
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+		
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 /*+ 1100.00*/, salary.getTotalPayment());
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+
+		calendar.set(MONTH, Calendar.DECEMBER);
+		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		issueDate = new Date(calendar.getTimeInMillis());
+		year = calendar.get(Calendar.YEAR);
+		agreement = getAgreement(aonContext, category.getAgreementLevel());
+		extra = getExtra(aonContext, agreement.getId(), "20/12");
+		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder)
+		.calculate(getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate));
+		jooqSalaryBuilder.execute();
+
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+	}
+
+	@Test
 	public void testExtrasAtSalaryWithoutAgreementI() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
