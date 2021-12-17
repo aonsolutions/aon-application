@@ -77,6 +77,7 @@ public class EmployeeSalary extends Composite {
 		private void onEmailEmployees() {
 			sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type.EMPLOYEE);
 		}
+		
 	}
 	
 	class NewEmailEnterpriseCommand implements ScheduledCommand {
@@ -397,6 +398,7 @@ public class EmployeeSalary extends Composite {
 		
 		this.employeeSalaryObject.getSalaries(
 				s -> {
+					setSettlePDFVisibility();
 					salaryTable.setSalariesList(employeeSalaryObject.getEmployeeSalaries());
 					initSalariesTable();
 				}, f -> { }
@@ -460,6 +462,7 @@ public class EmployeeSalary extends Composite {
 	private void enableDisableButtons(boolean isSomethingSelected) {
 		deleteButton.setEnabled(isSomethingSelected);
     	pdfButton.setEnabled(isSomethingSelected);
+    	pdfSettleButton.setEnabled(isSomethingSelected);
     	publishButton.setEnabled(isSomethingSelected);
     	bidoqPublishButton.setEnabled(isSomethingSelected);
     	email.setEnabled(isSomethingSelected);
