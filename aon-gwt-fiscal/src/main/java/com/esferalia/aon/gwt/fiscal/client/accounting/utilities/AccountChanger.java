@@ -170,7 +170,7 @@ class AccountChanger extends OptionBase {
 		changeInMastersEnabled.setValue(true);
 		
 		period = new AccountPeriodBox();
-		period.fill(config.getPeriods(),true);
+		period.fill(config.accounting().getPeriods(),true);
 		period.setSelectedIndex(0);
 		
 		fromDate = new AonDateBox();

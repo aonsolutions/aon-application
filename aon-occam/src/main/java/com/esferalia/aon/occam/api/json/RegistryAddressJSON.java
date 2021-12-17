@@ -40,7 +40,8 @@ public class RegistryAddressJSON {
 			.setCountry(Country.safeValueOf(json.optString(IJsonNames.COUNTRY)))
 			.setZip(json.optString(IJsonNames.ZIP))
 			.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY))
-			.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED));
+			.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED))
+			.setGlobal(JsonUtils.getboolean(json, IJsonNames.GLOBAL));
 	}
 	
 	public static JSONArray toJSON(List<RegistryAddress> addresses) {

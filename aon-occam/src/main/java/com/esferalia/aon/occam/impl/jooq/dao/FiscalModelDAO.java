@@ -23,12 +23,14 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.Properties.FiscalModelProperties;
+import com.esferalia.aon.occam.api.model.config.ConfigBlock;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -414,12 +416,12 @@ public class FiscalModelDAO {
 	}
 	
 	static void initializeFiscalModel(AONContext ctx, FiscalModel fm) {
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		 
 		if (fm.getDomain() == 0) throw new AonCoreException("[INTERNO] No se ha indicado el dominio para la declaraci\u00F3n.");
-		fm.setDocument(params.getDocument());
-		fm.setName(params.getName());
+		fm.setDocument(conf.getCompany().getDocument());
+		fm.setName(conf.getCompany().getName());
 		if (fm.getAdministration() == null) {
-			fm.setAdministration(params.getAdministration(Administration.COMMON_TERRITORY));
+			fm.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
 		}
 		if (fm.getYear() < 2005 || fm.getYear() > 2050) {
 			Date today = new Date();
@@ -436,10 +438,17 @@ public class FiscalModelDAO {
 				fm.setPeriod( Period.getQuarterlyPeriod(month-1));
 			}
 		}
-		fm.setAdmonAeat(params.getAdministrationCode());
+		fm.setAdmonAeat(conf.fiscal().getAdministrationCode());
 		fm.setStatus(FiscalStatus.PENDING);
 		
-		// ---------------------------
+		initializeIdentificationData(ctx, fm, conf);
+	}
+	
+	static void initializeIdentificationData(AONContext ctx, FiscalModel fm) {
+		initializeIdentificationData(ctx, fm, ConfigurationDAO.getConfiguration(ctx));	
+	}
+	
+	static void initializeIdentificationData(AONContext ctx, FiscalModel fm,AonConfiguration conf) {
 		Company company = CompanyDAO.getCompany(ctx,fm.getDomain());
 		Enterprise enterprise = CompanyDAO.getEnterprise(ctx, company.getId() );
 		fm.setDocument(enterprise==null?company.getDocument():enterprise.getDocument());
@@ -463,16 +472,13 @@ public class FiscalModelDAO {
 			fm.setStreetNumber( enterprise.getNumber() ); 
 			fm.setTown( AonStringUtils.left(enterprise.getCity(),20));
 			fm.setProvince(enterprise.getProvince()==null?"":enterprise.getProvince().toString());
-			fm.setZip("00000");
-			if (enterprise.getZip() != null){
-				fm.setZip(enterprise.getZip());
-			}
+			fm.setZip(AonStringUtils.defaultIfBlank(enterprise.getZip(), "00000"));
 			fm.setPhone(enterprise.getPhone() );
 		}
-		fm.setContactPerson( params.getContactPerson() );
-		fm.setContactPhone(params.getContactPhone() );
-		fm.setContactCellular( params.getContactCellular() );
-		fm.setContactEmail( params.getContactMail() );
+		fm.setContactPerson( conf.fiscal().getContactPerson() );
+		fm.setContactPhone(conf.fiscal().getContactPhone() );
+		fm.setContactCellular( conf.fiscal().getContactCellular() );
+		fm.setContactEmail( conf.fiscal().getContactMail() );
 	}
 
 	public static FiscalModel fullMap(AONContext ctx, Record record) {
@@ -481,24 +487,24 @@ public class FiscalModelDAO {
 		return fm;
 	}
 	
-	public static FiscalModel map(Record record) {
-		FiscalModelType type = FiscalModelType.safeValueOf( record.getValue(FS_MODEL.MODEL));
+	public static FiscalModel map(Record rec) {
+		FiscalModelType type = FiscalModelType.safeValueOf( rec.getValue(FS_MODEL.MODEL));
 		if (type == FiscalModelType.M111) {
-			return map111(new Mod111(), record);
+			return map111(new Mod111(), rec);
 		} else if (type == FiscalModelType.M115) {
-			return map115(new Mod115(), record);
+			return map115(new Mod115(), rec);
 		} else if (type == FiscalModelType.M123) {
-			return map123(new Mod123(), record);
+			return map123(new Mod123(), rec);
 		} else if (type == FiscalModelType.M130) {
-			return map130(new Mod130(), record);
+			return map130(new Mod130(), rec);
 		} else if (type == FiscalModelType.M131) {
-			return map131(new Mod131(), record);
+			return map131(new Mod131(), rec);
 		} else if (type == FiscalModelType.M303) {
-			return map303(new Mod303(), record);
+			return map303(new Mod303(), rec);
 		} else if (type == FiscalModelType.M390_HF) {
-			return map303(new Mod303(), record);
+			return map303(new Mod303(), rec);
 		} else {
-			return mapGeneric(new FiscalModel(), record);
+			return mapGeneric(new FiscalModel(), rec);
 		}
 	}
 	
@@ -557,23 +563,16 @@ public class FiscalModelDAO {
 	public static <T extends FiscalModel> T initializeForFinish(AONContext ctx,T fiscalModel) {
 		fiscalModel.setDefaultDeclarationType();
 		if (fiscalModel.getDeclarationType().mustCreateFinance()) {
-			FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-			Integer credId = null;
-			if (fiscalModel.getModel() != null && fiscalModel.getModel().isVat()) {
-				credId = params.getAdmonVatCreditor();
-			} else if (fiscalModel.getModel() != null && fiscalModel.getModel().isRetention()) {
-				credId = params.getAdmonRetentionCreditor();
-			}
-			if ( credId == null ) {
-				credId = params.getAdmonCreditor();	
-			}
+			AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx, 
+					new ConfigParams().setBlocks(ConfigBlock.FISCAL)); 
 			Creditor creditor = null;
-			Integer creditorId = credId;
-			if ( creditorId != null ) {
-				creditor = CreditorDAO
-						.getBasicCreditors(ctx, p -> p.getIdProperty().eq(creditorId))
-						.findFirst()
-						.orElse(null);
+			if (fiscalModel.getModel() != null && fiscalModel.getModel().isVat()) {
+				creditor = conf.fiscal().getAdmonVatCreditor();
+			} else if (fiscalModel.getModel() != null && fiscalModel.getModel().isRetention()) {
+				creditor = conf.fiscal().getAdmonRetentionCreditor();
+			}
+			if ( creditor == null ) {
+				creditor = conf.fiscal().getAdmonCreditor();	
 			}
 			String concept = "Mod." + FiscalModelUtils.getModelName(fiscalModel) 
 				+ " - " + fiscalModel.getYear() 

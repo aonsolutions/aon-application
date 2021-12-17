@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod131;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131Activity;
@@ -14,23 +15,21 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("ms/Mod131")
 public interface Mod131Service extends RemoteService {
 
-	Mod131 getMod131(String domainName, String user, int domain, int id) throws AonCoreException;
-	LinkedList<Mod131> getMod131s(String domainName, String user, int domain) throws AonCoreException;
-	Mod131 calculate(String domainName, String user, Mod131 mod131) throws AonCoreException;
-	Mod131Activity calculateActivity(String domainName, String user, int domain, Mod131 mod131, Mod131Activity activity) throws AonCoreException;
-	Mod131 save(String domainName, String user, Mod131 mod131) throws AonCoreException;
-	Mod131 saveComments(String domainName, String user, Mod131 mod131) throws AonCoreException;
-	Mod131 initializeForFinish(String domainName, String user, Mod131 mod131) throws AonCoreException;
-	Mod131 markAsFinished(String domainName, String user, Mod131 mod131) throws AonCoreException;
-	Mod131 markAsSent(String domainName, String user, Mod131 mod131) throws AonCoreException;
-	Mod131 markAsPending(String domainName, String user, Mod131 mod131) throws AonCoreException;
-	Mod131 markAsCustomerCheck(String domainName, String user, Mod131 mod131) throws AonCoreException;
-	void delete(String domainName, String user, Mod131 mod131) throws AonCoreException;
-	Mod131 initialize(String domainName, String user, int domain, Mod131 mod131);
-	Mod131 create(String domainName, String user, int domain, Mod131 mod131) throws AonCoreException;
-	String getInfo(String domainName, String user, int domain, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
-	Double mathExpression(String expression) throws AonCoreException;
-	
-	Integer presentationFile(String domainName, Integer domainId, String user, Integer id);
+	Mod131 getMod131(Occam occam, int id) throws AonCoreException;
+	LinkedList<Mod131> getMod131s(Occam occam) throws AonCoreException;
+	Mod131 calculate(Occam occam, Mod131 mod131) throws AonCoreException;
+	Mod131Activity calculateActivity(Occam occam, Mod131 mod131, Mod131Activity activity) throws AonCoreException;
+	Mod131 save(Occam occam, Mod131 mod131) throws AonCoreException;
+	Mod131 saveComments(Occam occam, Mod131 mod131) throws AonCoreException;
+	Mod131 initializeForFinish(Occam occam, Mod131 mod131) throws AonCoreException;
+	Mod131 markAsFinished(Occam occam, Mod131 mod131) throws AonCoreException;
+	Mod131 markAsSent(Occam occam, Mod131 mod131) throws AonCoreException;
+	Mod131 markAsPending(Occam occam, Mod131 mod131) throws AonCoreException;
+	Mod131 markAsCustomerCheck(Occam occam, Mod131 mod131) throws AonCoreException;
+	void delete(Occam occam, Mod131 mod131) throws AonCoreException;
+	Mod131 initialize(Occam occam, Mod131 mod131);
+	Mod131 create(Occam occam, Mod131 mod131) throws AonCoreException;
+	Mod131 reset(Occam occam, Mod131 model) throws AonCoreException;
+	String getInfo(Occam occam, Mod131 mod131, IModelScript<Mod131Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 
 }

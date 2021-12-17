@@ -130,10 +130,10 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 		toDate = new AonDateBox();
 		
 		boolean periodBoxShown = false;
-		period.fill(options.getConfiguration().getPeriods(),true);
+		period.fill(options.getConfiguration().accounting().getPeriods(),true);
 		if (params != null) {
 			if (params.getPeriod() != null) {
-				for (AccountPeriod p : options.getConfiguration().getPeriods()) {
+				for (AccountPeriod p : options.getConfiguration().accounting().getPeriods()) {
 					if (AonNumberUtils.equals(p.getId(), params.getPeriod())) {
 						period.select(params.getPeriod());
 						ListBox periodBox = getPeriodBox(options,period.getSelectedValue());
@@ -408,7 +408,7 @@ public class StatementPanelReport extends DockLayoutPanel implements Focusable, 
 	}
 
 	private ListBox getPeriodBox(final AccountingReportModuleOptions options, String selectedValue) {
-		LinkedList<AccountPeriod> periods = options.getConfiguration().getPeriods();
+		LinkedList<AccountPeriod> periods = options.getConfiguration().accounting().getPeriods();
 		ListBox periodBox = new ListBox();
 		periodBox.clear();
 		periodBox.addItem(" --- ", "");

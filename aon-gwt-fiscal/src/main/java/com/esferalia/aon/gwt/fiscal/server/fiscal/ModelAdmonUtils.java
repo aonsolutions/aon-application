@@ -1,0 +1,662 @@
+package com.esferalia.aon.gwt.fiscal.server.fiscal;
+
+import static com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO.getDataResponseData;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
+import java.time.Duration;
+import java.util.Base64;
+import java.util.List;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.jooq.tools.json.ParseException;
+import org.json.JSONObject;
+
+import com.esferalia.aon.gwt.fiscal.server.JsonParser;
+import com.esferalia.aon.gwt.fiscal.server.fiscal.aeat.RespuestaCorrecta;
+import com.esferalia.aon.gwt.fiscal.server.fiscal.aeat.ServicioConsultasDirectas;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.fiscal.MODEL111;
+import com.esferalia.aon.occam.api.fiscal.MODEL115;
+import com.esferalia.aon.occam.api.fiscal.MODEL123;
+import com.esferalia.aon.occam.api.fiscal.MODEL130;
+import com.esferalia.aon.occam.api.fiscal.MODEL131;
+import com.esferalia.aon.occam.api.fiscal.MODEL202;
+import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
+import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.fiscal.Mod115;
+import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod130;
+import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
+import com.esferalia.aon.occam.server.fiscal.format.Mod111Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod115Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod123Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod303Writer;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.http.AonHttpUtils;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
+
+public class ModelAdmonUtils {
+	
+	private static final String ERROR_TEMPLATE_START = "<html>"
+			+"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>"
+			+"<body>";
+	private static final String ERROR_TEMPLATE_AEAT = "<div style=\""
+				+"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+				+"font-weight: bold;"
+				+"margin-top: 20px;"
+			+"\">"
+			+ "La Agencia Tributaria devolvió el siguiente mensaje:"
+			+"</div>";
+			
+	private static final String ERROR_TEMPLATE_BEFORE = "<html>"
+			+"<ul style=\""
+				 +"background-attachment: scroll;"
+				 +"background-clip: border-box;"
+				 +"background-position: 3px 2px;"
+				 +"background-repeat: no-repeat;"
+				 +"background-size: auto auto;"
+				 +"background-color: #ffd0d0;"
+				 +"border: solid black 1px;"
+				 +"font-size: small;"
+				 +"font-family: arial, 'lucida Grande', 'Trebuchet MS', sans-serif;"
+				 +"font-weight: bold;"
+				 +"border: solid black 1px;"
+				 +"padding-top: 20px;"
+				 +"padding-bottom: 20px;"
+			+"\">";
+	private static final String ERROR_TEMPLATE_BODY = "<li>{0}</li>";
+	private static final String ERROR_TEMPLATE_AFTER = "</ul>";
+	private static final String ERROR_TEMPLATE_END = "</body></html>";
+
+	private ModelAdmonUtils() {
+		
+	}
+	
+	public static String getHeader(HttpResponse<byte[]> response, String header) {
+		HttpHeaders headers = response.headers();
+		List<String> headerList =  headers.map().get(header);
+		if (headerList != null && !headerList.isEmpty() ) {
+			return headerList.get(0);
+		}
+		return null;
+	}
+	
+	public static String getContentTypeHeader(HttpResponse<byte[]> response) {
+		return getHeader(response, AonHttpUtils.CONTENT_TYPE);
+	}
+	public static String getLocationHeader(HttpResponse<byte[]> response) {
+		return getHeader(response, AonHttpUtils.LOCATION);
+	}
+	
+	public static AEATParams getAEATParams(HttpServletRequest req) {
+		String aeatParamsString = req.getParameter(IRequestParamsNames.AEAT_PARAMS);
+		if (AonStringUtils.isBlank(aeatParamsString)) {
+			throw new AonCoreException("[INT] No se han indicado par\u00C1metros.");	
+		}
+		AEATParams aeatParams = null;
+		try {
+			aeatParams = JsonParser.parseAEATParams(aeatParamsString);
+		} catch (ParseException e) {
+			throw new AonCoreException(MessageFormat.format("[INT] Error en la evaluaci\u00F3n de los par\u00C1metros {0}", e.getMessage()));	
+		}
+		return aeatParams; 
+	}
+	
+	public static int getFiscalModelId(HttpServletRequest req) {
+		return getFiscalModelId(getAEATParams(req)); 
+	}
+
+	public static int getFiscalModelId(AEATParams aeatParams) {
+		if (aeatParams == null) {
+			throw new AonCoreException("[INT] Error en la evaluación de los parámetros (VACIO)");	
+		}
+		if (aeatParams.getDomainName()  == null) {
+			throw new AonCoreException("[INT] Nombre de dominio no indicado.");	
+		}
+		if (aeatParams.getDomainId() == 0) {
+			throw new AonCoreException("[INT] Identificador de dominio no indicado.");	
+		}
+		if (aeatParams.getUser()  == null) {
+			throw new AonCoreException("[INT] Usuario no indicado.");	
+		}
+		if (aeatParams.getMod() == null) {
+			throw new AonCoreException("[INT] Identificador de modelo no indicado.");	
+		}
+		return aeatParams.getMod();
+	}
+
+	public static synchronized void giveRedirectBack(HttpServletResponse resp, HttpResponse<byte[]> response, HttpClient httpClient) throws IOException, InterruptedException {
+		String locationHeader = ModelAdmonUtils.getLocationHeader(response); 
+		if (AonStringUtils.isBlank( locationHeader)) {
+			ModelAdmonUtils.giveExceptionBack(resp, "Redirect code");
+		} else {
+			ModelAdmonUtils.giveRedirectBack(httpClient, resp, locationHeader, MimeType.HTML);
+		}
+	}
+
+	private static synchronized  void giveRedirectBack( HttpClient httpClient, HttpServletResponse resp, String location, MimeType mimeType) throws IOException, InterruptedException {
+		HttpRequest locationRequest = HttpRequest.newBuilder()
+				.uri(URI.create( location ))
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.GET()
+				.build();
+		HttpResponse<byte[]> locationResponse = httpClient
+				.send(locationRequest, HttpResponse.BodyHandlers.ofByteArray());
+		ModelAdmonUtils.giveBase64Back(resp, locationResponse.body(), mimeType);
+	}
+
+	public static synchronized  void giveExceptionBack( HttpServletResponse resp, String ... msgs)  {
+		giveExceptionBack(resp, false, msgs); 	
+	}
+	public static synchronized  void giveExceptionBack( HttpServletResponse resp, boolean fromAEAT, String ... msgs)  {
+		StringBuilder buff = new StringBuilder();
+		buff.append(ERROR_TEMPLATE_START);
+		if (fromAEAT) {
+			buff.append(ERROR_TEMPLATE_AEAT);	
+		}
+		buff.append(ERROR_TEMPLATE_BEFORE);
+		for (String msg : msgs) {
+			if ("keystore password was incorrect".equals(msg) ){
+				msg = "La contraseña no es correcta.";	
+			}
+			buff.append(MessageFormat.format(ERROR_TEMPLATE_BODY, msg));
+		}
+		buff.append(ERROR_TEMPLATE_AFTER);
+		buff.append(ERROR_TEMPLATE_END);
+		giveBase64Back(resp, buff.toString().getBytes(StandardCharsets.UTF_8), MimeType.HTML);
+	}
+	 
+	
+	public static synchronized KeyManager[] getKeyManagers(AEATParams params) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, UnrecoverableKeyException{
+		Attach attach = AON.getAttach(params.getDomainName(), params.getDomainId(), params.getUser(), f ->
+			f.getIdProperty().eq(params.getCertificateId())
+			.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
+		if(attach.getData() == null){
+			DomainGserviceaccount g = AON.getDomainGserviceaccount(params.getDomainName(), params.getDomainId(), params.getUser());
+			Drive drive = AonDrive.getInstace().serviceInitialize(g);
+			attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
+		}
+		ByteArrayInputStream key = new ByteArrayInputStream(attach.getData());
+		KeyStore keyStore = KeyStore.getInstance("PKCS12");
+	    keyStore.load(key, params.getPass().toCharArray());
+    	KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+   		kmf.init(keyStore, params.getPass().toCharArray());
+   		return kmf.getKeyManagers();
+	}
+    
+	public static synchronized  void giveBase64Back( HttpServletResponse resp, byte[] data, MimeType mimeType )  {
+		try {
+			resp.setHeader(AonHttpUtils.CONTENT_TYPE, mimeType.getName());
+			resp.setHeader(AonHttpUtils.CONTENT_ENCODING, StandardCharsets.UTF_8.displayName());				
+			AonIOUtils.write( Base64.getEncoder().encode(data), resp.getOutputStream() );
+			resp.flushBuffer();
+		} catch (IOException e) {
+			throw new AonCoreException(MessageFormat.format("Unexpected exception [{0}] ", e.getMessage()));	
+		}
+	}
+	
+	public static synchronized String getUnencodedFile(byte[] content, Charset charset) {
+		return changeCharacters(new String(content, charset));
+	}
+
+	public static synchronized String getEncodedFile(byte[] content, Charset charset) throws UnsupportedEncodingException {
+		String fileString = changeCharacters(new String(content, charset));
+		return URLEncoder.encode(fileString, charset.displayName());
+	}
+	
+	private static String changeCharacters(String fileString) {
+		fileString = fileString.replace("'", " ");
+		fileString = fileString.replace("&", " ");
+		fileString = fileString.replace("\n", "");
+		fileString = fileString.replace("\r", "");
+		return fileString;
+	}
+	
+	public static class DefaultTrustManager implements X509TrustManager {
+
+		@Override
+		public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+		}
+
+		@Override
+		public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+		}
+
+		@Override
+		public X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
+	}
+
+	private static AEATResponse manageWrongResponse(HttpServletResponse resp, AEATResponse response) {
+		if (response.getErrores() == null || response.getErrores().isEmpty()) {
+			ModelAdmonUtils.giveExceptionBack(resp,"La Agencia Tributaria ha devuelto un error, pero no se han encontrado mensajes del mismo.");			
+		} else {
+			String[] array = response.getErrores().toArray(new String[0]);
+			ModelAdmonUtils.giveExceptionBack(resp, true, array);
+		}
+		return response;
+	}
+
+	public static synchronized  void giveDataResponseDataBack( HttpServletResponse resp, AEATParams params, FiscalModel model)  {
+		Pair<DataResponseSource,DataAttachSource> pair = getDataResponseData( model );
+		Attach attach = AON.getAttach(params.getDomainName(), params.getDomainId(), params.getUser(), 
+				f -> f.getDomainProperty().eq( model.getDomain())
+				.and(f.getSourceTypeProperty().eq( pair.getRight().value() ))
+				.and(f.getSourceBatchProperty().eq( model.getId() ))
+				,AttachType.DATA);
+		if (attach == null || attach.getData() == null || attach.getData().length == 0) {
+			ModelAdmonUtils.giveExceptionBack(resp, "Declaración no encontrada" );				
+		} else {
+			boolean pdfContentType = MimeType.PDF == attach.getMimeType(); 
+			ModelAdmonUtils.giveBase64Back(resp, attach.getData(), (pdfContentType?MimeType.PDF:MimeType.HTML));
+		}
+	}
+	
+	public static StringBuilder formatRespuestaCorrecta(ServicioConsultasDirectas scd) {
+		StringBuilder buff = new StringBuilder();
+		buff.append("<html>");
+		buff.append("<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>");
+		buff.append("<style>");
+		buff.append("#aeat {");
+		buff.append(" margin: 10px;");
+		buff.append(" padding: 10px;");
+		buff.append(" border: #c4c4c4 1px solid;");
+		buff.append(" font: 12px \"arial\", \"lucida Grande\", \"Trebuchet MS\", sans-serif;");
+		buff.append(" text-align: center;");
+		buff.append(" font-weight: bold;");
+		buff.append("}");
+		buff.append("#response {");
+		buff.append(" font: 12px/1.333 \"arial\", \"lucida Grande\", \"Trebuchet MS\", sans-serif;");
+		buff.append(" margin-left: auto;");
+		buff.append(" margin-right: auto;");
+		buff.append(" border-collapse: collapse;");
+		buff.append(" width: 80%;");
+		buff.append("}");
+		buff.append("#response td {");
+		buff.append(" padding: 1px 0.5em 1px 0.5em;");
+		buff.append(" vertical-align: middle;");
+		buff.append(" border: #c4c4c4 1px solid;");
+		buff.append("}");
+		buff.append("#label {");
+		buff.append(" font-weight: bold;");
+		buff.append(" white-space: nowrap;");
+		buff.append(" width: 10%;");
+		buff.append(" background-color: AliceBlue;");
+		buff.append("}");
+		buff.append("</style>");
+		buff.append("<body>");
+		buff.append("<div id=\"aeat\">La Agencia Tributaria devolvió el siguiente mensaje:</div>");
+		buff.append("<table id=\"response\">");
+		String labelTD = "<tr><td id=\"label\">{0}</td>"; 
+		String valueTD = "<td>{0}</td></tr>";
+		String valueTD2 = "<td>{0, date, dd/MM/YYYY HH:mm:ss}</td></tr>";
+		
+		for (RespuestaCorrecta rc : scd.getRespuestaCorrecta()) {
+			buff.append(MessageFormat.format(labelTD,"Ejercicio"));
+			buff.append(MessageFormat.format(valueTD, rc.getEjercicio()));
+			buff.append(MessageFormat.format(labelTD,"Modelo"));
+			buff.append(MessageFormat.format(valueTD, rc.getModelo()));
+			buff.append(MessageFormat.format(labelTD,"Periodo"));
+			buff.append(MessageFormat.format(valueTD, rc.getPeriodo()));
+			buff.append(MessageFormat.format(labelTD,"NIF"));
+			buff.append(MessageFormat.format(valueTD, rc.getNif()));
+			buff.append(MessageFormat.format(labelTD,"CSV"));
+			buff.append(MessageFormat.format(valueTD, rc.getCsv()));
+			buff.append(MessageFormat.format(labelTD,"Expediente"));
+			buff.append(MessageFormat.format(valueTD, rc.getExpediente()));
+			buff.append(MessageFormat.format(labelTD,"Justificante"));
+			buff.append(MessageFormat.format(valueTD, rc.getJustificante()));
+			if (AonStringUtils.isNotBlank(rc.getJustAnterior())) {
+				buff.append(MessageFormat.format(labelTD,"Justificante anterior"));
+				buff.append(MessageFormat.format(valueTD, rc.getJustAnterior()));
+			}
+			if (rc.getFechaYHoraPresentacion() != null) {
+				buff.append(MessageFormat.format(labelTD,"Fecha y hora de presentación"));
+				buff.append(MessageFormat.format(valueTD2, rc.getFechaYHoraPresentacion().toGregorianCalendar().getTime()));
+			}
+		}
+		buff.append("</table>");
+		buff.append("</body></html>");
+		return buff;
+	}
+	
+	private static Mod111 getMod111(FiscalModel fm) {
+		return (fm instanceof Mod111)?(Mod111)fm:null;
+	}
+	private static Mod115 getMod115(FiscalModel fm) {
+		return (fm instanceof Mod115)?(Mod115)fm:null;
+	}
+	private static Mod123 getMod123(FiscalModel fm) {
+		return (fm instanceof Mod123)?(Mod123)fm:null;
+	}
+	private static Mod130 getMod130(FiscalModel fm) {
+		return (fm instanceof Mod130)?(Mod130)fm:null;
+	}
+	private static Mod131 getMod131(FiscalModel fm) {
+		return (fm instanceof Mod131)?(Mod131)fm:null;
+	}
+	private static Mod202 getMod202(FiscalModel fm) {
+		return (fm instanceof Mod202)?(Mod202)fm:null;
+	}
+	private static Mod303 getMod303(FiscalModel fm) {
+		return (fm instanceof Mod303)?(Mod303)fm:null;
+	}
+	
+	private static byte[] getModelFile(FiscalModel fm) throws AonCoreException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		PrintWriter writer = new PrintWriter(output, true, StandardCharsets.UTF_8);
+		fm.getModel().visit(new IFiscalModelTypeVisitor() {
+			
+			@Override 
+			public void visitM111() {
+				try {
+					Mod111Writer.fillWriter( getMod111(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
+			@Override public void visitM115() { 
+				try {
+					Mod115Writer.fillWriter( getMod115(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM123() { 
+				try {
+					Mod123Writer.fillWriter( getMod123(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM130() { 
+				try {
+					Mod130Writer.fillWriter( getMod130(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM131() { 
+				try {
+					Mod131Writer.fillWriter( getMod131(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM202() { 
+				try {
+					Mod202Writer.fillWriter( getMod202(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override 
+			public void visitM303() { 
+				try {
+					Mod303Writer.fillWriter( getMod303(fm) , writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			@Override public void visitM390HF() { /* Auto-generated method stub */}
+			@Override public void visitM390() { /* Auto-generated method stub */}
+			@Override public void visitM349() { /* Auto-generated method stub */}
+			@Override public void visitM347() { /* Auto-generated method stub */}
+			@Override public void visitM200() { /* Auto-generated method stub */}
+			@Override public void visitM193() { /* Auto-generated method stub */}
+			@Override public void visitM190() { /* ODO Auto-generated method stub */}
+			@Override public void visitM184() { /* Auto-generated method stub */}
+			@Override public void visitM180() { /* Auto-generated method stub */}
+		});
+		return output.toByteArray();
+	}
+
+	public static void manageJSONContent(HttpServletResponse resp, AEATParams aeatParams, FiscalModel fm, byte[] body) {
+		AEATResponse response = AEATJson.toJSON(body); 
+		if (response.isCorrect()) {
+			manageRightResponse(resp,aeatParams,fm,new String(body));		
+		} else {
+			manageWrongResponse(resp, response);
+		}
+	}
+	private static void manageRightResponse(HttpServletResponse resp, AEATParams aeatParams, FiscalModel fm, String aeatResponse) {
+		Occam occam = new Occam()
+				.setDomainName(aeatParams.getDomainName())
+				.setDomain(aeatParams.getDomainId())
+				.setUser(aeatParams.getUser());
+		fm.getModel().visit(new IFiscalModelTypeVisitor() {
+			
+			@Override 
+			public void visitM111() {
+				MODEL111.aeatPresentation(occam, getMod111(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM115() { 
+				MODEL115.aeatPresentationMod115(occam, getMod115(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM123() { 
+				MODEL123.aeatPresentation(occam, getMod123(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM130() { 
+				MODEL130.aeatPresentation(occam, getMod130(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM131() { 
+				MODEL131.aeatPresentation(occam, getMod131(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM202() { 
+				MODEL202.aeatPresentation(occam, getMod202(fm) , aeatResponse);
+			}
+			@Override 
+			public void visitM303() { 
+				MODEL303.aeatPresentationMod303(occam, getMod303(fm) , aeatResponse);
+			}
+			@Override public void visitM390HF() { /* Auto-generated method stub */}
+			@Override public void visitM390() { /* Auto-generated method stub */}
+			@Override public void visitM349() { /* Auto-generated method stub */}
+			@Override public void visitM347() { /* Auto-generated method stub */}
+			@Override public void visitM200() { /* Auto-generated method stub */}
+			@Override public void visitM193() { /* Auto-generated method stub */}
+			@Override public void visitM190() { /* Auto-generated method stub */}
+			@Override public void visitM184() { /* Auto-generated method stub */}
+			@Override public void visitM180() { /* Auto-generated method stub */}
+		});
+		giveDataResponseDataBack(resp, aeatParams, fm);
+	}
+
+	public static void send(HttpServletResponse resp, AEATParams aeatParams, FiscalModel model ) {
+		try {
+			String period = model.getPeriod().getName();
+			if ( model.getModel() == FiscalModelType.M202) {
+				if ( model.getPeriod() == Period.T1) period = "1P";
+				else if ( model.getPeriod() == Period.T2) period = "2P";
+				else if ( model.getPeriod() == Period.T3) period = "3P";
+			}
+			byte[] fileContent = getModelFile(model);
+			JSONObject params = new JSONObject();
+			params.put("MODELO", FiscalModelUtils.getModelName(model));
+			params.put("EJERCICIO", AonNumberUtils.toString( model.getYear()));
+			params.put("PERIODO", period);
+			params.put("NRC", (model.isStrictToDeposit()?aeatParams.getNrc() : ""));
+			params.put("IDI", "ES");
+			params.put("F01", ModelAdmonUtils.getUnencodedFile(fileContent,StandardCharsets.UTF_8));
+			params.put("FIR", "FirmaBasica");
+			params.put("FIRNIF", aeatParams.getDocument());
+			params.put("FIRNOMBRE", aeatParams.getName());
+			
+			String url = aeatParams.isTest() 
+				? "https://prewww1.aeat.es/wlpl/PFTW-PICW/PresBasicaDos"
+				: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
+
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/json;charset=UTF-8")
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.POST(HttpRequest.BodyPublishers.ofString(params.toString()))
+				.build();
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+			
+			if (response.statusCode() == 302) {
+				ModelAdmonUtils.giveRedirectBack( resp,response,httpClient );
+			} else {
+				String ct = ModelAdmonUtils.getContentTypeHeader(response);
+				if (AonStringUtils.contains(ct, MimeType.JSON.getName())) {
+					ModelAdmonUtils.manageJSONContent( resp, aeatParams, model ,response.body() );
+				} else if (AonStringUtils.contains(ct, MimeType.HTML.getName())) {
+					ModelAdmonUtils.giveBase64Back(resp, response.body(), MimeType.HTML);
+				} else {	
+					ModelAdmonUtils.giveExceptionBack(resp,"No se ha encontrado una respuesta válida por parte de la Agencia Tributaria.");
+				}
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+		} catch (AonCoreException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+		}
+	}
+
+	public static void checkAEAT(HttpServletResponse resp, AEATParams aeatParams, FiscalModel model) {
+		try {
+			String year = AonNumberUtils.toString(model.getYear());
+			
+			String urlParameters = MessageFormat.format(
+				"NIF={0}"
+				+"&ANR={1}"
+				+"&MOD={2}"
+				+"&EJF={3}"
+				+"&PER={4}"
+				+"&FED={5}"
+				+"&FEH={6}"
+				+"&HOD={7}"
+				+"&HOH={8}"
+					,model.getDocument()
+					,model.getFullName()
+					,FiscalModelUtils.getModelName(model)
+					,year
+					,model.getPeriod().getName()
+					,year+"0101"
+					,year+"1231"
+					,"0000"
+					,"2359"
+					);
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),
+					new TrustManager[] { new ModelAdmonUtils.DefaultTrustManager() },
+					new SecureRandom());
+			HttpClient httpClient = HttpClient.newBuilder()
+		            .version(HttpClient.Version.HTTP_2)
+		            .connectTimeout(Duration.ofSeconds(120))
+		            .sslContext(sslContext)
+		            .build();
+			
+			String url = "https://www1.agenciatributaria.gob.es/wlpl/SCEJ-MANT/ConsultaExt";
+			HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create( url ))
+				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
+				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
+				.POST(HttpRequest.BodyPublishers.ofString(urlParameters.toString()))
+				.build();
+			HttpResponse<byte[]> response = httpClient
+				.send(request, HttpResponse.BodyHandlers.ofByteArray());
+			
+			StringReader reader = new  StringReader(new String(response.body()));
+			JAXBContext context = JAXBContext.newInstance(ServicioConsultasDirectas.class);
+			Unmarshaller um = context.createUnmarshaller();
+			ServicioConsultasDirectas scd = (ServicioConsultasDirectas) um.unmarshal(reader);
+			if ( scd.getError() != null) {
+				ModelAdmonUtils.giveExceptionBack(resp,true,scd.getError().getDescripcionError());	
+			} else if ( scd.getRespuestaCorrecta()  != null) {
+				StringBuilder buff = ModelAdmonUtils.formatRespuestaCorrecta( scd);
+				ModelAdmonUtils.giveBase64Back(resp, buff.toString().getBytes(), MimeType.HTML);
+			} else{
+				ModelAdmonUtils.giveExceptionBack(resp,"La Agencia Tributaria ha devuelto un mensaje, pero no se han encontrado mensajes en el mismo.");
+			}
+		} catch (InterruptedException e) {
+			// Restore interrupted state...
+			Thread.currentThread().interrupt();
+		} catch (JAXBException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | UnrecoverableKeyException e) {
+			ModelAdmonUtils.giveExceptionBack(resp,e.getMessage());
+		}
+	}
+}

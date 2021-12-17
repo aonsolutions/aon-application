@@ -11,9 +11,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Listener;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
@@ -278,6 +280,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	DockLayoutPanel splitLayoutPanel;
 	
 	@UiField
+	DockLayoutPanel containerLayoutPanel;
+	
+	@UiField
 	AonAgreementsToolbar toolbar;
 
 	@UiField
@@ -289,6 +294,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	@UiField(provided = true)
 	MainTrashAgreement mainTrashAgreement;
 	
+	private HTMLPanel messagesPanel = new HTMLPanel("");
 	private Integer parentDomain;	
 	private Storage storage;
 	private Map<Integer, AgreementDraftObject> agreementDrafts;	
@@ -671,8 +677,11 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		ServiAgreementDialog serviAgreementDialog = new ServiAgreementDialog() {
 
 			@Override
-			protected void onAccept(String serviAgreementCode) {
-				getAgreementsTree().getEnterpriseService().getServiAgreement(serviAgreementCode, 
+			protected void onAccept(String serviAgreementCode, List<Integer> selectedDates) {
+				AonMessagePanel.showLoading(messagesPanel, "Descargando convenio desde ServiConvenios...");
+				containerLayoutPanel.addNorth(messagesPanel, 50);
+				
+				getAgreementsTree().getEnterpriseService().getServiAgreement(serviAgreementCode, selectedDates,
 						new AsyncCallback<Integer>() {
 
 					@Override
@@ -683,7 +692,15 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 					@Override
 					public void onSuccess(Integer importedAgreementId) {
-						agreements.getAgreementsAndSelectImported(importedAgreementId);
+						AonMessagePanel.showLoading(messagesPanel, "Cargando visualizaci\u00F3n convenio...");
+						containerLayoutPanel.remove(messagesPanel);
+						containerLayoutPanel.addNorth(messagesPanel, 50);
+						agreements.getAgreementsAndSelectImported(
+								importedAgreementId, 
+								s -> {
+									containerLayoutPanel.remove(messagesPanel);
+									AonMessagePanel.hideMessage(messagesPanel);
+								});
 					}
 				});
 			}
@@ -691,8 +708,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		};
 		
 		serviAgreementDialog.setMessageVisible(!userRoles.isConvenios());
-		serviAgreementDialog.center();
-		serviAgreementDialog.show();
 	}
 
 	private AgreementsTree getAgreementsTree() {

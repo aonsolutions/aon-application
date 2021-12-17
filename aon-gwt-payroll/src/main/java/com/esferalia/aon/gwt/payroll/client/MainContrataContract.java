@@ -35,6 +35,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -49,8 +50,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -912,6 +916,26 @@ public class MainContrataContract extends MainEntryPoint {
 		deckPanel.showWidget(4);
 	}
 	
+	protected void exportEnterpriseContracts() {
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "enteprise_contracts/");
+		
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(printURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			employeeToolbar.remove(formPanel);
+		});
+		
+		employeeToolbar.add(formPanel);
+		
+		formPanel.submit();
+	}
+	
 	// ------------------------------------------ Redraw Tables
 
 	private void redrawTable() {
@@ -1176,6 +1200,10 @@ public class MainContrataContract extends MainEntryPoint {
 		AonToolbarButton salariesBtn = new AonToolbarButton("N\u00F3minas Empresa", AON.CSS.aonIconReceipt());
 		salariesBtn.addClickHandler(e -> showEnterpriseSalary());
 		employeeToolbar.add(salariesBtn);
+		
+		AonToolbarButton exportExcelBtn = new AonToolbarButton("Exportar Contratos Empresa", AON.CSS.aonIconExcel());
+		exportExcelBtn.addClickHandler(e -> exportEnterpriseContracts());
+		employeeToolbar.add(exportExcelBtn);
 	}
 	
 	// ------------------------------------------ Toolbar. Methods

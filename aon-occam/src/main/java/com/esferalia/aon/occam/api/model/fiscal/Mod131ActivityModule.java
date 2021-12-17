@@ -170,6 +170,27 @@ public class Mod131ActivityModule implements Serializable {
 		this.childDisHours = childDisHours;
 		return this;
 	}
+
+	public static Mod131ActivityModule clone(Mod131ActivityModule mod) {
+		return new Mod131ActivityModule()
+			.setDescription(mod.getDescription())
+			.setValue(mod.getValue())
+			.setUnit(mod.getUnit())
+			.setFactor(mod.getFactor())
+			.setResult(mod.getResult())
+			.setSalariedStaff(mod.isSalariedStaff())
+			.setNoSalariedStaff(mod.isNoSalariedStaff())
+			.setMay19Hours(mod.getMay19Hours())
+			.setMen19Hours(mod.getMen19Hours())
+			.setDisHours(mod.getDisHours())
+			.setYearHours(mod.getYearHours())
+			.setOwnerHours(mod.getOwnerHours())
+			.setSpouseHours(mod.getSpouseHours())
+			.setSpouseDis(mod.isSpouseDis())
+			.setChildMen18Hours(mod.getChildMen18Hours())
+			.setChildDisHours(mod.getChildDisHours())
+			;
+	}
 	
 
 }

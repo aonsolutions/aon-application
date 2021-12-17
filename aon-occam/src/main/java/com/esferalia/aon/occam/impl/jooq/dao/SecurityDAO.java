@@ -1191,7 +1191,7 @@ public class SecurityDAO {
 		
 		if(null != certificate) return certificate;
 		
-		certificate = getEnterpriseCertificateNew(dslContext, enterpriseId, certificateType);
+		certificate = getEnterpriseCertificateNew(dslContext, enterpriseId, userRegistryDomain, certificateType);
 		
 		if(null != certificate) return certificate;
 		
@@ -1203,7 +1203,7 @@ public class SecurityDAO {
 			certificate = getCertificate(ctx, f -> f.getIdProperty().eq(userId))
 					.orElseThrow(CertificateNotFoundException::new);
 			if(null != certificate) return certificate;
-		} else {
+		} else if(AonStringUtils.equalsIgnoreCase(certificateType, "SEPE")) {
 			certificate = getCertificateSEPE(ctx, ctx.getDomainId())
 					.orElseThrow(CertificateNotFoundException::new);
 			if(null != certificate) return certificate;
@@ -1230,13 +1230,21 @@ public class SecurityDAO {
 				.setCertificate(certificateRecord.get(RATTACH.DATA));
 	}
 	
-	private static Certificate getEnterpriseCertificateNew(DSLContext dslContext, Integer enterpriseId, String certificateType) {
+	private static Certificate getEnterpriseCertificateNew(DSLContext dslContext, Integer enterpriseId, Integer userRegistryDomain, String certificateType) {
 		Record certificateRecord = dslContext.select().from(RATTACH)
 				.innerJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
 				.innerJoin(TAG).on(RATTACH_TAG.TAG.eq(TAG.ID), TAG.TYPE.eq(TagType.CERTIFICATE.value()), TAG.NAME.eq(certificateType))
 				.where(RATTACH.TYPE.eq((byte)4))
+				.and(RATTACH.SECURITY_LEVEL.eq((byte)0).or(RATTACH.SECURITY_LEVEL.eq((byte)1).and(RATTACH.DOMAIN.eq(userRegistryDomain))))
 				.and(RATTACH.REGISTRY.eq(enterpriseId))
 				.fetchOne();
+		
+//		Record certificateRecord = dslContext.select().from(RATTACH)
+//				.innerJoin(RATTACH_TAG).on(RATTACH.ID.eq(RATTACH_TAG.RATTACH))
+//				.innerJoin(TAG).on(RATTACH_TAG.TAG.eq(TAG.ID), TAG.TYPE.eq(TagType.CERTIFICATE.value()), TAG.NAME.eq(certificateType))
+//				.where(RATTACH.TYPE.eq((byte)4))
+//				.and(RATTACH.REGISTRY.eq(enterpriseId))
+//				.fetchOne();
 		
 		if(null == certificateRecord) return null;
 

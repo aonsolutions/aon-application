@@ -8,7 +8,6 @@ import java.util.function.BiConsumer;
 
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -256,8 +255,7 @@ public class InvoiceValidation {
 		TbaiConfiguration tbai = TbaiConfigurationDAO.get(ctx.getContext());
 		if(tbai.isActive()) {
 			DataResponse dr = DataResponseDAO.get(ctx.getContext(), f -> f.getSourceProperty().eq(DataResponseSource.TBAI.value())
-					.and(f.getSourceIdProperty().eq(inv.getId()))
-					.and(f.getCodeProperty().eq("ok")));
+					.and(f.getSourceIdProperty().eq(inv.getId())));
 			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(r -> r.getDataValue()).findFirst().orElse("alta");
 			
 			if(dr.getId() != null && "alta".equalsIgnoreCase(type)) {

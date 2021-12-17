@@ -113,6 +113,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			return tgssContextMenu.getAfiEnd();
 		}
 		
+		@Override
+		protected MenuItem getTaEnd() {
+			return tgssContextMenu.getTaEnd();
+		}
+		
 	}
 	
 	// ------------------------------------------------- ContractAttachUIImpl
@@ -121,6 +126,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		@Override
 		protected void onExportPDF() {
+			showLoading("Generando borrador de contrato");
 			contrataEmployeeObject.getContractOtherInfo(s -> {
 				if(AonStringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
 					contrataEmployeeObject.getContractSpecificData(su -> {
@@ -128,10 +134,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 						contrataEmployeeObject.saveContractExport(
 								a -> {
+									showSuccess("Generaci\u00F3n Contrato", "El borrador de contrato se ha generado correctamente");
 									contractAttachUI.setContractAttachments(a);
 									this.refreshPage();
 								},
-								e -> {}
+								e -> {
+									showError("Generaci\u00F3n Contrato", e.getMessage());
+								}
 						);
 					}, f -> {});
 				else {
@@ -215,6 +224,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	class TAEndCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showTaEnd();
+		}
+	}
+	
 	class PeculiaritiesCommand implements ScheduledCommand {
 
 		@Override
@@ -244,6 +261,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	class NewTGSSContextMenu extends ContextMenu {
 		
 		private MenuItem ta;
+		private MenuItem taEnd;
 		private MenuItem afi;
 		private MenuItem afiEnd;
 		private MenuItem idc;
@@ -271,6 +289,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			ta.ensureDebugId("ta");
 			
+			taEnd = addItem("Duplicados de Documentos TA (Baja)", new TAEndCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			taEnd.ensureDebugId("taEnd");
+			
 			idc = addItem("Informe de Cotizaci\u00F3n-Trab Cuenta Ajena", new IDCCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idc.ensureDebugId("idc");
@@ -293,6 +315,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		public MenuItem getTa() {
 			return ta;
+		}
+		
+		public MenuItem getTaEnd() {
+			return taEnd;
 		}
 
 		public MenuItem getAfi() {
@@ -823,10 +849,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				Map<String, String> messageMap = contractEmployeeUI.checkSaveAndGetErrors();
 				if(messageMap.isEmpty())
 					contrataEmployeeObject.setEmployeeContract(s -> {
-						if(null == this.contrataEmployeeObject.getContractData().getEndDate())
+						if(null == this.contrataEmployeeObject.getContractData().getEndDate()) {
 							tgssContextMenu.getAfiEnd().getElement().getStyle().setDisplay(Display.NONE);
-						else
+							tgssContextMenu.getTaEnd().getElement().getStyle().setDisplay(Display.NONE);
+						} else {
 							tgssContextMenu.getAfiEnd().getElement().getStyle().clearDisplay();
+							tgssContextMenu.getTaEnd().getElement().getStyle().clearDisplay();
+						}
 					}, f -> {});
 				break;
 			case 1:
@@ -865,6 +894,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							checkContractExtension();
 							checkContractTransform();
 							hideLoadingPanel();
+							showTgssOption();
+							hideSepeOption();
 							
 							if(AonStringUtils.isBlank(contrataEmployeeObject.getContractData().getSepeId()))
 								sepeContextMenu.getSepeIDE().getElement().getStyle().setDisplay(Display.NONE);
@@ -877,6 +908,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.getContractSpecificData(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showContractButtons();
+					hideTgssOption();
+					showSepeOption();
 					contractSpecificData.setEmployeeContractInfo(
 							contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType(), 
 							contrataEmployeeObject.getContractEmployeeInfo().getContractSpecificData());
@@ -892,12 +925,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 							showContractButtons();
 							contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 							hideLoadingPanel();
+							hideTgssOption();
+							hideSepeOption();
 						}, f -> {});
 					else {
 						exportContract.getElement().getStyle().clearDisplay();
 						showContractButtons();
 						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 						hideLoadingPanel();
+						hideTgssOption();
+						hideSepeOption();
 					}
 				}, f -> {});
 				break;
@@ -908,6 +945,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					showContractButtons();
 					contractClauseUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					hideLoadingPanel();
+					hideTgssOption();
+					hideSepeOption();
 				}, f -> {});
 				break;
 			case 4:
@@ -917,6 +956,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					showContractButtons();
 					contractAttachUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					hideLoadingPanel();
+					hideTgssOption();
+					hideSepeOption();
 				}, f -> {});
 				break;
 			case 5:
@@ -926,7 +967,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					showContractButtons();
 					contractBonusUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 					hideLoadingPanel();
-				}, f -> {});
+					hideTgssOption();
+					hideSepeOption();
+				}, f -> {
+					hideLoadingPanel();
+					showError("Bonificaciones", f.getMessage());
+				});
 				break;
 			case 6:
 				showLoadingPanel();
@@ -1007,8 +1053,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		previusContract.setVisible(true);
 		employeeCounter.setVisible(true);
 		nextContract.setVisible(true);
-		tgss.setVisible(true);
-		sepe.setVisible(true);
+		if(tabLayOutPanel.getSelectedIndex() == 0)
+			tgss.setVisible(true);
+		else if(tabLayOutPanel.getSelectedIndex() == 1)
+			sepe.setVisible(true);
 		
 		closePDF.setVisible(false);
 		idcDateListBox.setVisible(false);
@@ -1066,6 +1114,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						sepeContextMenu.getSepeIDE().getElement().getStyle().clearDisplay();
 					
 					checkBetaAlphaUser();
+					hideSepeOption();
 					
 					success.accept("");
 				});
@@ -1331,10 +1380,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					messageSuccessMap.put("Guardado", "El contrato " + contrataEmployeeObject.getEmployeeFullName() + " ha sido actualizado correctamente");
 					AonMessagePanel.showSuccess(messageContainer, messageSuccessMap);
 					
-					if(null == this.contrataEmployeeObject.getContractData().getEndDate())
+					if(null == this.contrataEmployeeObject.getContractData().getEndDate()) {
 						tgssContextMenu.getAfiEnd().getElement().getStyle().setDisplay(Display.NONE);
-					else
+						tgssContextMenu.getTaEnd().getElement().getStyle().setDisplay(Display.NONE);
+					} else {
 						tgssContextMenu.getAfiEnd().getElement().getStyle().clearDisplay();
+						tgssContextMenu.getTaEnd().getElement().getStyle().clearDisplay();
+					}
 				}, f -> {});
 			else
 				AonMessagePanel.showError(messageContainer, messageMap);
@@ -1583,6 +1635,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				showPdf();
 				pdfViewer.open(dataURI);
 		}, f -> showError("Error TA", f.getMessage()));
+	}
+	
+	private void showTaEnd() {
+		showLoading("Obteniendo TA (Baja)...");
+		contrataEmployeeObject.downloadTaEnd(dataURI -> {
+				hideMessage();
+				showPdf();
+				pdfViewer.open(dataURI);
+		}, f -> showError("Error TA (Baja)", f.getMessage()));
 	}
 	
 	private void showIdc() {
@@ -2107,9 +2168,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						showFootPanel();
 						ifSistemaREDEnabled(employeeStatus, () -> {
 							ContrataEmployee.this.setTaVisible(true);
+							ContrataEmployee.this.setTaEndVisible(true);
 							ContrataEmployee.this.setIdcVisible(true);
 						}, () -> {
 							ContrataEmployee.this.setTaVisible(false);
+							ContrataEmployee.this.setTaEndVisible(false);
 							ContrataEmployee.this.setIdcVisible(false);
 
 						});
@@ -2120,6 +2183,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					}, throwable -> {
 						closeFootPanel();
 						ContrataEmployee.this.setTaVisible(false);
+						ContrataEmployee.this.setTaEndVisible(false);
 						ContrataEmployee.this.setIdcVisible(false);
 
 					});
@@ -2132,9 +2196,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 			ifSistemaREDEnabled(employeeStatus, () -> {
 				ContrataEmployee.this.setTaVisible(true);
+				ContrataEmployee.this.setTaEndVisible(true);
 				ContrataEmployee.this.setIdcVisible(true);
 			}, () -> {
 				ContrataEmployee.this.setTaVisible(false);
+				ContrataEmployee.this.setTaEndVisible(false);
 				ContrataEmployee.this.setIdcVisible(false);
 			});
 			
@@ -2143,6 +2209,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}, throwable -> {
 			closeFootPanel();
 			ContrataEmployee.this.setTaVisible(false);
+			ContrataEmployee.this.setTaEndVisible(false);
 			ContrataEmployee.this.setIdcVisible(false);
 		});
 	}
@@ -2172,6 +2239,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	public void setTaVisible(boolean visible ) {
 		tgssContextMenu.getTa().setVisible(visible);
 	}
+	
+	public void setTaEndVisible(boolean visible ) {
+		tgssContextMenu.getTaEnd().setVisible(visible);
+	}
 
 	public void setIdcVisible(boolean visible ) {
 		initializeIdcDateListBox();
@@ -2197,6 +2268,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	// ------------------------------------------------- SEPE status
+	
+	private void hideSepeOption() {
+		setVisible(sepe.getElement(), false);
+	}
+	
+	private void showSepeOption() {
+		setVisible(sepe.getElement(), true);
+	}
+	
+	private void hideTgssOption() {
+		setVisible(tgss.getElement(), false);
+	}
+	
+	private void showTgssOption() {
+		setVisible(tgss.getElement(), true);
+	}
 	
 	public void setHasCertificateSEPE(boolean hasCertificateSEPE) {
 		this.hasCertificateSEPE = hasCertificateSEPE;

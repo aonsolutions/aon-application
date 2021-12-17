@@ -1935,23 +1935,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(currentDomainName);
-			
-			syncWithIdcs(currentDomainName, currentUser, contractId, connection);
-			
+	public List<SSBonusData> getEmployeeSSBonuses(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			syncWithIdcs(domainName, userLogin, contractId, connection);
 			return JooqSSBonus.getSSBonus(connection, contractId);
-		} catch (SQLException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			if ( connection != null ) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-				}
-			}
+		} catch (SQLException | CertificateNotFoundException e) {
+			if(e instanceof CertificateNotFoundException)
+				throw new IllegalArgumentException("No existe certificado de la TGSS, por lo que no se pueden obtener las bonificaciones");
+			else
+				throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -2985,14 +2977,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public int getServiAgreement(String domainName, String serviAgreementCode) throws IllegalArgumentException  {
+	public int getServiAgreement(String domainName, String serviAgreementCode, List<Integer> selectedDates) throws IllegalArgumentException  {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
 			AONContext ctx = new AONContext(connection);
 			DSLContext dslContext = ctx.getDslContext();
 			
-			Pair<Integer,String> agreementLog = AgreementParser.getAgreement(dslContext, serviAgreementCode, domainId);
+			Pair<Integer,String> agreementLog = AgreementParser.getAgreement(dslContext, serviAgreementCode, selectedDates, domainId);
 			
 			String log = agreementLog.getSecond();
 			if(!AonStringUtils.isBlank(log)) {
@@ -3005,6 +2997,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("El convenio con c\u00F3digo " + serviAgreementCode + " (ServiConvenios) no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
 		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+
+
+	@Override
+	public List<Integer> getServiAgreementDates(String agreementCode) throws IllegalArgumentException {
+		try {
+			return AgreementParser.getAgreementYears(agreementCode);
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

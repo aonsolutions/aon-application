@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -105,16 +106,11 @@ public class InvoicePdfServlet extends AonApiHttpServlet {
 
 			String qrUrl = domainName + "/dip?source=" + source + "&id=" + id;  
 			TbaiConfiguration tbai = AON.getTbaiConfiguration(domainName, domainId, login);
-			if(tbai.isActive()) {
-				String tbaiId = TbaiData.getTbaiId(domainName, domainId, login, invoice.getId());
-				qrUrl = TbaiUri.getUrlQr(tbai) + "?id=" + tbaiId + "&s=" + invoice.getSeries()
-					+ "&nf=" + invoice.getNumber() + "&i=" + invoice.getTotal();
-				String crc = CRC8.calculate(qrUrl);
-				qrUrl = qrUrl + "&cr=" + crc;
+			if(tbai.isActive()) {	
+				String tbaiUrl = TbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
+				qrUrl = AonStringUtils.isBlank(tbaiUrl) ? qrUrl : tbaiUrl;
 			}
-
 			PdfMaker.printInvoice(resp.getOutputStream(), company, invoice, config, qrUrl, logo.getData());
-			
 		
 			responseFile(req, resp, "factura", MimeType.PDF);
 		} catch (IOException e) {

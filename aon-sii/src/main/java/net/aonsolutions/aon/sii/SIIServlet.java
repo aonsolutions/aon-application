@@ -1,7 +1,9 @@
 package net.aonsolutions.aon.sii;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -21,7 +23,6 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -31,9 +32,10 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.AppParam;
+import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
@@ -65,10 +67,8 @@ public class SIIServlet extends HttpServlet{
 		String idStr = parameters.get("id");
 		Integer[] ids = new Integer[1];
 		ids[0] = Integer.parseInt(idStr);
-	
-//		String accessToken = req.getParameter(MSG.ACCESS_TOKEN); TODO
-//		String md5 = Utils.getMd5(login+domainName);
-		if(true){//accessToken.equals(md5)){
+
+		if(true){
 			String action = parameters.get("action"); // consulta || suministro || anulacion
 			String option = parameters.get("option"); 
 			String terceros = parameters.get("terceros"); 
@@ -79,27 +79,29 @@ public class SIIServlet extends HttpServlet{
 			AccountingReportParams params = new AccountingReportParams();
 			params.setDomain(domain.getId());
 			params.setInvoices(ids);
-			LOGGER.info("GET SII VAT CONTEXT");
+			
 			LinkedList<VatContext> contextList = FISCAL.getSiiVatContext(domain.getName(), domain.getId(), login, params, option)
 					.collect(Collectors.toCollection(LinkedList::new));
-			LOGGER.info("AFTER GET SII VAT CONTEXT");		
-			LOGGER.info("SII. TAMAÑO VAT CONTEXT: " + contextList.size());
-			// TODO dividir invoiceList en las demas listas.
+			
 			Integer cert = Integer.parseInt(parameters.get("cert"));
 			String pass = parameters.get("pass");
+			
 			Attach attach = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(cert)
 					.and(f.getTypeProperty().eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value())), AttachType.REGISTRY, true);
-			LOGGER.info("SII. data is not null?? -> " + (attach.getData() != null));
+
 			if(attach.getData() == null){
 				DomainGserviceaccount g = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
 				Drive drive = AonDrive.getInstace().serviceInitialize(g);
 				attach.setData(AonDrive.getInstace().downloadFileByteArray(drive, attach.getDriveId()));
 			}
-			
-			ApplicationParameter param= AON.getApplicationParameter(domain.getName(), domain.getId(), login, AppParam.FS_DEFAULT_ADMINISTRATION);
-			Administration administration = param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
+
+			SiiConfiguration siiConfiguration = AON.getSiiConfiguration(domain, login);
+			siiConfiguration.setCertificate(new Certificate()
+					.setCertificate(attach.getData())
+					.setPassword(pass)
+					.setType(CertificateType.AEAT.name()));
 			try{
-				SIIManager manager = SIIManager.getInstance(attach.getData(), pass, administration);
+				SIIManager manager = SIIManager.getInstance(siiConfiguration);
 
 				Object object = new Object();
 				
@@ -152,7 +154,8 @@ public class SIIServlet extends HttpServlet{
 					} else if(isBaja(action)){
 						object = manager.bajaAgenciasViajes(domain, login, company, ids[0], contextList, terceros);
 					}
-				}				
+				}
+				saveCertificate(domain, siiConfiguration.getCertificate(), attach);
 				giveBack(req, resp, object, new JSONObject());
 			} catch (Exception e) {
 				LOGGER.info(e.getMessage());
@@ -164,6 +167,36 @@ public class SIIServlet extends HttpServlet{
 				array.put(json);
 				giveBack(req, resp, array, new JSONObject());
 			}
+		}
+	}
+	
+	private void saveCertificate(Domain domain, Certificate certificate, Attach attach) {
+		if(!attach.getDescription().contains("HIDE") && checkCert(attach.getData(), certificate.getPassword())) {
+			attach.setDescription(attach.getDescription() + "HIDE(" + certificate.getPassword() + ")");
+		} else if(attach.getDescription().contains("HIDE")){
+			String password = attach.getDescription().split("HIDE\\(")[1].split("\\)")[0];
+			Integer index = attach.getDescription().indexOf("HIDE");
+			if(!certificate.getPassword().equals(password)) {
+				if(checkCert(attach.getData(), certificate.getPassword())) {
+					attach.setDescription(attach.getDescription().substring(0, index) + "HIDE(" + certificate.getPassword() + ")");
+				} else if(!checkCert(attach.getData(), password)) {
+					attach.setDescription(attach.getDescription().substring(0, index));
+				}
+			} else if(!checkCert(attach.getData(), password)) {
+				attach.setDescription(attach.getDescription().substring(0, index));
+			}
+		}
+		AON.updateAttach(domain.getName(), domain.getId(), "", attach);
+	}
+
+	public static boolean checkCert(byte[] cert, String password) {
+		try {
+			ByteArrayInputStream is = new ByteArrayInputStream(cert);
+			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keystore.load(is, password.toCharArray());
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
 	}
 	

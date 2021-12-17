@@ -257,7 +257,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setEmployeePeculiarities(getCurrentDomainName(), contractId, peculiarities, asyncCallback);
 	}
 	
-	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
+	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getEmployeeSSBonuses(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
 	}
 	
@@ -458,8 +458,12 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setComunicationIT(getCurrentDomainName(), getCurrentUser(), itEmployee, it, asyncCallback);
 	}
 	
-	public void getServiAgreement(String serviAgreementCode, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getServiAgreement(getCurrentDomainName(), serviAgreementCode, asyncCallback);
+	public void getServiAgreement(String serviAgreementCode, List<Integer> selectedDates, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getServiAgreement(getCurrentDomainName(), serviAgreementCode, selectedDates, asyncCallback);
+	}
+	
+	public void getServiAgreementDates(String serviAgreementCode, AsyncCallback<List<Integer>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getServiAgreementDates(serviAgreementCode, asyncCallback);
 	}
 	
 	public void checkIfRectificative(Date findingDate, ArrayList<Integer> selectedCCCList, AsyncCallback<Boolean> asyncCallback) {

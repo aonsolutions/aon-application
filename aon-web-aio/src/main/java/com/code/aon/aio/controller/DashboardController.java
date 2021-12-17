@@ -1502,6 +1502,7 @@ public class DashboardController implements Serializable {
 	public  List<SelectItem> getYears(){
 		List<SelectItem> list = new Vector<SelectItem>();
 		boolean found = false;
+		if(salaries == null) salaries = new HashMap<Integer, HashMap<String,DashboardPayrollPortal>>();
 		for (Integer salary: salaries.keySet()) {
 			SelectItem si = new SelectItem(salary, salary.toString());
 			if (salary!=null && this.year != null && salary.intValue() ==  this.year.intValue() ) {

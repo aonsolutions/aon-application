@@ -2,6 +2,9 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.type.AppParam;
+
+
 public class ApplicationParameter implements Serializable {
 
 	private static final long serialVersionUID = 3940903705871158256L;
@@ -35,6 +38,9 @@ public class ApplicationParameter implements Serializable {
 	public ApplicationParameter setName(String name) {
 		this.name = name;
 		return this;
+	}
+	public ApplicationParameter setName(AppParam appParam) {
+		return setName((appParam==null?null:appParam.toString()));
 	}
 
 	public String getValue() {

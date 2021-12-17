@@ -40,27 +40,27 @@ import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
+import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import net.aonsolutions.aon.tbai.exceptions.http.StatusCodeException;
-import net.aonsolutions.aon.tbai.exceptions.response.TbaiResponseException;
 import net.aonsolutions.aon.tbai.responses.TbaiResponse;
 import net.aonsolutions.aon.tbai.sign.TbaiSign;
 import ticketbai.emision.TicketBai;
 
 public class TbaiMain {
 
-	
 	private TbaiMain() {
 	
 	}
 
-	public static void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws StatusCodeException, TbaiResponseException, JAXBException {
+	public static void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {
 		TbaiBlockchain blockchain = TbaiData.getBlockchain(company.getDomain(), new User().setLogin(""));
-		final TicketBai tbai = Invoice2tbai.build(company, invoice, blockchain); 
+		final TicketBai tbai = Invoice2tbai.build(company, invoice, tbaiConfiguration, blockchain); 
 			
 		final JAXBContext jaxbContext = JAXBContext.newInstance( TicketBai.class );
 		final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	 		
@@ -70,10 +70,13 @@ public class TbaiMain {
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		jaxbMarshaller.marshal( tbai, bos );
 		byte[] data = bos.toByteArray();
-//		InputStream doc = new ByteArrayInputStream(data);
-		
-		TbaiResponse response = sendXML(tbaiConfiguration, 
-				TbaiSign.sign(tbaiConfiguration.getCertificate(), data));		
+
+		byte[] xml = TbaiSign.sign(tbaiConfiguration, data);
+		String sign = TbaiSign.getSign(xml);
+		TbaiResponse response = new TbaiResponse()
+				.setResponseStatus("pending")
+				.setSign(sign)
+				.setTbaiId(TbaiSign.buildTbaiId(tbai, sign));
 
 		TbaiBlockchain bc = new TbaiBlockchain()
 				.setDate(AonDateUtils.format(new Date(), "dd-MM-yyyy"))
@@ -81,12 +84,23 @@ public class TbaiMain {
 				.setSerie(invoice.getSeries())
 				.setSignature(response.getSign().substring(0, 100));
 		
-		DataRequest request = TbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, data);
+		DataRequest request = TbaiData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, xml);
 		
-		TbaiData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, response, bc, request);
+		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + response.getTbaiId() + "&s=" + (invoice.getSeries() != null ? invoice.getSeries() : "")
+				+ "&nf=" + invoice.getNumber() + "&i=" + tbai.getFactura().getDatosFactura().getImporteTotalFactura();
+		String crc = CRC8.calculate(qrUrl);
+		qrUrl = qrUrl + "&cr=" + crc;
+
+		DataResponse dr = TbaiData.saveResponsePending(company.getDomain(), new User().setLogin(""), invoice, response, bc, request, qrUrl);
+		
+		if(!tbaiConfiguration.isBizkaia()) {
+			response = sendXML(tbaiConfiguration, xml);			
+			TbaiData.saveResponse(company.getDomain(), new User().setLogin(""), response, dr);
+			HandleStatusCode(response.getStatus().get());
+		}
 	}
 	
-	public static TbaiResponse sendXML(TbaiConfiguration tbaiConfiguration, byte[] xml) throws StatusCodeException, TbaiResponseException {
+	public static TbaiResponse sendXML(TbaiConfiguration tbaiConfiguration, byte[] xml) throws StatusCodeException {
 		URL url;
 		try {
 			Document doc = getDocument(xml);
@@ -115,6 +129,12 @@ public class TbaiMain {
 			https.setDoOutput(true);
 			https.setDoInput(true);
 			
+			System.out.println("\n\t-------------------------------------------------------------------------------------------------------------------------------------------------");
+			System.out.println("\t SERVICE REQUEST: ");
+			System.out.println("\t-------------------------------------------------------------------------------------------------------------------------------------------------");
+			
+			System.out.println(toString(doc));
+			
 			OutputStream os = https.getOutputStream();
 			os.write(xml);
 			os.close();
@@ -123,15 +143,12 @@ public class TbaiMain {
 			System.out.println("\tMethod used: \t" + https.getRequestMethod());
 			System.out.println("\tEncoding used: \t" + https.getRequestProperty("Content-Type"));
 			
-			HandleStatusCode(https.getResponseCode());
-			
 			System.out.println("\n\t-------------------------------------------------------------------------------------------------------------------------------------------------");
 			System.out.println("\t SERVICE RESPONSE: ");
 			System.out.println("\t-------------------------------------------------------------------------------------------------------------------------------------------------");
 			
 			InputStream response = (InputStream) https.getContent();
 			byte[] bytes = response.readAllBytes();
-//			HandleTbaiResponse(bytes);			
 			return getTbaiResponse(bytes, sign);
 		} 
 		catch (MalformedURLException e) {
@@ -181,7 +198,8 @@ public class TbaiMain {
 	        return true;
 	    }
 	}
-	private static Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
+	
+	public static Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
 		InputStream is = new ByteArrayInputStream(data);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -234,7 +252,7 @@ public class TbaiMain {
 			catch(Exception e) {validation_desc_eus = null;}
 						
 			System.out.println(toString(doc));
-
+			
 			return new TbaiResponse()
 					.setSign(sign)
 					.setTbaiId(idTbai)
@@ -242,7 +260,7 @@ public class TbaiMain {
 					.setDescription(descripcion)
 					.setDescriptionEUS(descripcion_eus)
 					.setReceptionDate(AonDateUtils.parse(fecha_str, "dd-MM-yyyy hh:mm:ss"))
-					.setValidationCode(Integer.parseInt(validation_code))
+					.setValidationCode(AonNumberUtils.toInteger(validation_code))
 					.setValidationDescription(validation_desc)
 					.setValidationDescriptionEUS(validation_desc_eus)
 					.setOk(idTbai != null)

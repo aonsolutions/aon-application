@@ -3,15 +3,16 @@ package com.esferalia.aon.gwt.fiscal.client.mod190;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.google.gwt.core.client.GWT;
@@ -52,8 +53,15 @@ public class Model190 extends MainEntryPoint {
 	private final static int NOTIFICATIONS_TAB = 0;
 	private final static int BREAKDOWN_TAB = 1;
 	
-	static Model190ServiceAsync SERVICE;
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
+	static final Model190ServiceAsync SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
+		
+		Model190ServiceAsync serviceRaw = GWT.create(Model190Service.class);
+		SERVICE = new Model190ServiceAsyncDecorator(serviceRaw);
+	}
 	
 	interface Model190Binder extends UiBinder<Widget, Model190> {}
 	private static final Model190Binder MODEL_190_BINDER = GWT.create(Model190Binder.class);
@@ -102,7 +110,7 @@ public class Model190 extends MainEntryPoint {
 		public void showError(String msg) {
 			Model190.this.showErrorPanel(msg);
 		}
-	};
+	}
 
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
@@ -129,17 +137,17 @@ public class Model190 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
 			
 			@Override
-			public void onSuccess(AonData aonData) {
+			public void onSuccess(AonConfiguration config) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 				Model190ModuleOptions options = new Model190ModuleOptions();
 				options.setParentWidget(root);
 				options.setDomainName(getCurrentDomainName());
 				options.setDomain(getCurrentDomain());
 				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
+				options.setConfiguration(config);
 				onModuleLoad( options );
 			}
 			
@@ -151,9 +159,6 @@ public class Model190 extends MainEntryPoint {
 	
 	public void onModuleLoad(Model190ModuleOptions options) {
 		AON.ensureInjected();
-
-		Model190ServiceAsync serviceRaw = GWT.create(Model190Service.class);
-		SERVICE = new Model190ServiceAsyncDecorator(serviceRaw);
 
 		Widget ui = MODEL_190_BINDER.createAndBindUi(this);
 

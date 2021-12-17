@@ -120,7 +120,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 	}
 
 	private ListBox getPeriodBox(final AccountingReportModuleOptions options, String selectedValue) {
-		LinkedList<AccountPeriod> periods = options.getConfiguration().getPeriods();
+		LinkedList<AccountPeriod> periods = options.getConfiguration().accounting().getPeriods();
 		ListBox periodBox = new ListBox();
 		periodBox.clear();
 		periodBox.addItem(" --- ", "");
@@ -229,7 +229,7 @@ public class TrialBalancePanelFilter extends SimpleLayoutPanel implements HasVal
 		dateTab.getColumnFormatter().setWidth(5, "80px");
 	
 		// ***********************************************************************  EJERCICIO
-		period.fill(options.getConfiguration().getPeriods(),true);
+		period.fill(options.getConfiguration().accounting().getPeriods(),true);
 		if (params != null && params.getPeriod() != null) {
 			for (int i = 0; i < period.getItemCount(); i++) {
 				if (params.getPeriod() == AonNumberUtils.toInteger( period.getValue(i))) {

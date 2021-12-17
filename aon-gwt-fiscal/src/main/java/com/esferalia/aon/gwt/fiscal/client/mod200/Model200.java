@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.ContextMenu;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2013.Mod2002013Object;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2013.Model2002013;
@@ -26,6 +26,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod200.e2019.Mod2002019Object;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2019.Model2002019;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2020.Mod2002020Object;
 import com.esferalia.aon.gwt.fiscal.client.mod200.e2020.Model2002020;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -65,6 +66,12 @@ public class Model200 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
+	}
+	
 	static Mod200ServiceAsync mod200Service;
 	static Mod2002013ServiceAsync mod2002013Service;
 	static Mod2002014ServiceAsync mod2002014Service;
@@ -74,7 +81,6 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002018ServiceAsync mod2002018Service;
 	static Mod2002019ServiceAsync mod2002019Service;
 	static Mod2002020ServiceAsync mod2002020Service;
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
 	
 	Model200Table table;
 	DeckLayoutPanel deckPanel;
@@ -171,17 +177,17 @@ public class Model200 extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
 			
 			@Override
-			public void onSuccess(AonData aonData) {
+			public void onSuccess(AonConfiguration config) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 				Model200ModuleOptions options = new Model200ModuleOptions();
 				options.setParentWidget(root);
 				options.setDomainName(getCurrentDomainName());
 				options.setDomain(getCurrentDomain());
 				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
+				options.setConfiguration(config);
 				onModuleLoad( options );
 			}
 			

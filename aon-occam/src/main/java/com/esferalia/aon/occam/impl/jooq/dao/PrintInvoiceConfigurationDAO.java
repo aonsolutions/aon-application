@@ -1,14 +1,17 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceTheme;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PrintInvoiceConfigurationDAO {
 	
@@ -62,10 +65,20 @@ public class PrintInvoiceConfigurationDAO {
 				}				
 			});
 		
+		ApplicationParameter saleInvoice = AppParamDAO.getApplicationParameterStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getNameProperty().eq(AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM.name()))).findFirst().orElse(new ApplicationParameter());		
+		config.setActive(AonStringUtils.isBlank(saleInvoice.getValue()) || saleInvoice.getValue().equalsIgnoreCase("saleInvoice"));
 		Attach attach = AttachmentDAO.getDataAttachStream(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getSourceTypeProperty().eq(DataAttachSource.INVOICE_PRINT_CONFIGURATION.value())), withData)
 				.findFirst().orElse(new Attach());
 		config.setBackground(attach);
-
+		
+		Attach legalAttach = AttachmentDAO.getRegistryAttachStream(ctx, f -> 
+			f.getDomainProperty().eq(ctx.getDomainId())
+			.and(f.getTypeProperty().eq(RegistryAttachmentType.INVOICE_FOOTER_TEXT.value())),
+			true).findFirst().orElse(new Attach());	
+			
+		if(legalAttach.getData() != null) {
+			config.setLegal(new String(legalAttach.getData()));
+		}
 		
 		return config;
 		
@@ -157,6 +170,19 @@ public class PrintInvoiceConfigurationDAO {
 			if(attach.getId() != null) {
 				AttachmentDAO.updateDataAttach(ctx, pic.getBackground());
 			} else AttachmentDAO.insertDataAttach(ctx, pic.getBackground());
+		}
+		
+		if(!AonStringUtils.isBlank(pic.getLegal())) {
+			Attach legalAttach = AttachmentDAO.getRegistryAttachStream(ctx, f -> 
+				f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getTypeProperty().eq(RegistryAttachmentType.INVOICE_FOOTER_TEXT.value())),
+				false).findFirst().orElse(new Attach());
+
+			legalAttach.setDescription("Texto en pie de F.Venta");
+			legalAttach.setData(pic.getLegal().getBytes());
+			if(legalAttach.getId() != null)
+				AttachmentDAO.updateRegistryAttach(ctx, legalAttach);
+			else AttachmentDAO.insertRegistryAttach(ctx, legalAttach);
 		}
 		return pic;
 	}

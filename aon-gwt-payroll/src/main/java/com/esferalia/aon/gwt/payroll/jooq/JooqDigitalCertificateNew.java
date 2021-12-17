@@ -290,15 +290,16 @@ public class JooqDigitalCertificateNew {
 		dslContext.delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(rattachId)).execute();
 		
 		for(CertificateType tagType : tagTypes) {
-			Record tagRecord = dslContext.select()
+
+			Integer tagId = dslContext.select()
 					.from(TAG)
 					.where(TAG.NAME.eq(tagType.name()))
 					.and(TAG.TYPE.eq(TagType.CERTIFICATE.value()))
 					.and(TAG.DOMAIN.eq(0))
-					.fetchOne();
+					.limit(1)
+					.fetch().stream().map(r -> r.getValue(TAG.ID)).findFirst().orElse(null);
 			
-			Integer tagId = null;
-			if(null == tagRecord) {
+			if(tagId == null) {
 				tagId = dslContext.insertInto(TAG)
 							.set(TAG.DOMAIN, 0)
 							.set(TAG.NAME, tagType.name())
@@ -306,9 +307,7 @@ public class JooqDigitalCertificateNew {
 							.returning(TAG.ID)
 							.fetchOne()
 							.getId();
-			} else
-				tagId = tagRecord.get(TAG.ID);
-				
+			}
 			
 			dslContext.insertInto(RATTACH_TAG)
 				.set(RATTACH_TAG.DOMAIN, domainId)
@@ -389,15 +388,15 @@ public class JooqDigitalCertificateNew {
 		dslContext.delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(rattachId)).execute();
 		
 		for(CertificateType tagType : tagTypes) {
-			Record tagRecord = dslContext.select()
+			Integer tagId = dslContext.select()
 					.from(TAG)
 					.where(TAG.NAME.eq(tagType.name()))
 					.and(TAG.TYPE.eq(TagType.CERTIFICATE.value()))
 					.and(TAG.DOMAIN.eq(0))
-					.fetchOne();
+					.limit(1)
+					.fetch().stream().map(r -> r.getValue(TAG.ID)).findFirst().orElse(null);
 			
-			Integer tagId = null;
-			if(null == tagRecord) {
+			if(tagId == null) {
 				tagId = dslContext.insertInto(TAG)
 							.set(TAG.DOMAIN, 0)
 							.set(TAG.NAME, tagType.name())
@@ -405,9 +404,7 @@ public class JooqDigitalCertificateNew {
 							.returning(TAG.ID)
 							.fetchOne()
 							.getId();
-			} else
-				tagId = tagRecord.get(TAG.ID);
-				
+			} 
 			
 			dslContext.insertInto(RATTACH_TAG)
 				.set(RATTACH_TAG.DOMAIN, domainId)
@@ -458,48 +455,60 @@ public class JooqDigitalCertificateNew {
 	        keyStore.load(certificateInputStream, certificate.getPassword().toCharArray());
 	        Enumeration<String> enums = keyStore.aliases();
 	        while (enums.hasMoreElements()) {
-	            String alias = enums.nextElement();
-	            X509Certificate c = (X509Certificate) keyStore.getCertificate(alias);
-	            
-	            System.out.println(c.getSubjectDN());
-	            
-	            String subjectDN = c.getSubjectDN().getName();
-	            String enterprise = null;
-	            String ocupation = null;
-	            String cif = null;
-	            String type = null;
-	            try {
-	            	enterprise = subjectDN.split("O=\"")[1].split("\"")[0];
-		            ocupation = subjectDN.split("OU=")[1].split(",")[0];
-		            cif = subjectDN.split("=VATES-")[1].split(",")[0];
-		            type = subjectDN.split("T=")[1].split(",")[0];
-	            } catch (Exception e) {}
-	            
-	            String surname = subjectDN.split("SURNAME=")[1].split(",")[0];
-	            String name = subjectDN.split("GIVENNAME=")[1].split(",")[0];
-	            String document = subjectDN.split("SERIALNUMBER=IDCES-")[1].split(" ")[0];
-	            java.util.Date fromDate = c.getNotBefore();
-	            java.util.Date toDate = c.getNotAfter();
-	            
-//	            System.out.println(c.getSubjectDN());
-//	            System.out.println(c.getIssuerDN());
-//	            System.out.println(c.getNotAfter());
-//	            System.out.println(c.getNotBefore());
-	            
-	            return new CertificateInfo()
-	            		.setEnterprise(enterprise)
-	            		.setOcupation(ocupation)
-	            		.setCif(cif)
-	            		.setType(type)
-	            		.setSurname(surname)
-	            		.setName(name)
-	            		.setDocument(document)
-	            		.setFromDate(fromDate)
-	            		.setToDate(toDate);
+	        	try {
+		            String alias = enums.nextElement();
+		            X509Certificate c = (X509Certificate) keyStore.getCertificate(alias);
+		            
+		            System.out.println(c.getSubjectDN());
+		            
+		            String subjectDN = c.getSubjectDN().getName();
+		            String enterprise = null;
+		            String ocupation = null;
+		            String cif = null;
+		            String type = null;
+		            try {
+		            	enterprise = subjectDN.split("O=\"")[1].split("\"")[0];
+			            ocupation = subjectDN.split("OU=")[1].split(",")[0];
+			            cif = subjectDN.split("=VATES-")[1].split(",")[0];
+			            type = subjectDN.split("T=")[1].split(",")[0];
+		            } catch (Exception e) {}
+		            
+		            String surname = subjectDN.split("SURNAME=")[1].split(",")[0];
+		            String name = subjectDN.split("GIVENNAME=")[1].split(",")[0];
+		            String document = "";
+		            try {
+		            	document = subjectDN.split("SERIALNUMBER=IDCES-")[1].split(" ")[0];
+		            } catch (Exception e) {
+						try {
+							document = subjectDN.split("SERIALNUMBER=")[1].split(",")[0];
+						} catch (Exception e1) {}
+					}
+		            java.util.Date fromDate = c.getNotBefore();
+		            java.util.Date toDate = c.getNotAfter();
+		            
+	//	            System.out.println(c.getSubjectDN());
+	//	            System.out.println(c.getIssuerDN());
+	//	            System.out.println(c.getNotAfter());
+	//	            System.out.println(c.getNotBefore());
+		            
+		            return new CertificateInfo()
+		            		.setEnterprise(enterprise)
+		            		.setOcupation(ocupation)
+		            		.setCif(cif)
+		            		.setType(type)
+		            		.setSurname(surname)
+		            		.setName(name)
+		            		.setDocument(document)
+		            		.setFromDate(fromDate)
+		            		.setToDate(toDate);
+	        	} catch (Exception e) {
+	        		throw new IllegalArgumentException("Certificado validado correctamente");
+				}
 	        }
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
+		
 		return null;
 	}
 	

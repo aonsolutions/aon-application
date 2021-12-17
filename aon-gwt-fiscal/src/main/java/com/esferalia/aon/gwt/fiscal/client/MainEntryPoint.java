@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
-import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountAnalyticalReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountConsolidatedBalanceReport;
@@ -13,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountStatementReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountTrialBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.period.AccountingPeriodModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilities;
+import com.esferalia.aon.gwt.fiscal.client.config.FiscalConfig;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.paymethod.PayMethodModule;
@@ -23,27 +26,23 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
-import com.esferalia.aon.gwt.fiscal.client.mod111.Model111;
-import com.esferalia.aon.gwt.fiscal.client.mod115.Model115;
-import com.esferalia.aon.gwt.fiscal.client.mod123.Model123;
-import com.esferalia.aon.gwt.fiscal.client.mod130.Model130;
-import com.esferalia.aon.gwt.fiscal.client.mod131.Model131;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
-import com.esferalia.aon.gwt.fiscal.client.mod202.Model202;
-import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
-import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF;
+import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -51,31 +50,80 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainEntryPoint implements EntryPoint {
-
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
+	
+	private static final String ERROR_MSG = "Error al cargar";
+	private static AonConfiguration aonConfiguration;
+	
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
+	}
+	
 	
 	private static final String ENTRY_POINT_PARAM = "entryPoint";
 	//
 	//    ================================================================== FISCAL
 	//
-	private static final String FS_MOD111_ENTRY_POINT = "Model111";
-	private static final String FS_MOD115_ENTRY_POINT = "Model115";
-	private static final String FS_MOD123_ENTRY_POINT = "Model123";
-	private static final String FS_MOD130_ENTRY_POINT = "Model130";
-	private static final String FS_MOD131_ENTRY_POINT = "Model131";
+	private enum FiscalEntryPoint {
+		Model111 {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod111.Model111.run();
+			}
+		},
+		Model115 {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod115.Model115.run();
+			}
+		},
+		Model123 {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod123.Model123.run();
+			}
+		},
+		Model130 {
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod130.Model130.run();
+			}
+		},
+		Model303 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod303.Model303.run();
+			}
+		},
+		Model131 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod131.Model131.run();
+			}
+		},
+		Model202 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod202.Model202.run();
+			}
+		},
+		Model390HF {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF.run();
+			}
+		},
+		;
+		abstract void run();
+	}
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
 	private static final String FS_MOD190_ENTRY_POINT = "Model190";
 	private static final String FS_MOD193_ENTRY_POINT = "Model193";
 	private static final String FS_MOD180_ENTRY_POINT = "Model180";	
 	private static final String FS_MOD184_ENTRY_POINT = "Model184";
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
-	private static final String FS_MOD202_ENTRY_POINT = "Model202";
-	private static final String FS_MOD303_ENTRY_POINT = "Model303";
 	private static final String FS_MOD347_ENTRY_POINT = "Model347";
 	private static final String FS_MOD349_ENTRY_POINT = "Model349";
 	private static final String FS_MOD390_ENTRY_POINT = "Model390";
-	private static final String FS_MOD390_HF_ENTRY_POINT = "Model390HF";
 	private static final String FS_MODEL_MATRIX_ENTRY_POINT = "ModelMatrix";
+	private static final String FS_CONFIG_POINT = "FiscalConfig";
 	//	
 	//    ================================================================== REGISTRY
 	//
@@ -119,35 +167,45 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	private static final String CHECKIT_ENTRY_POINT = "CheckItModule";
 
-	private static AonData aonData;
-	
 	@Override
 	public void onModuleLoad() {
 		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);	
 		if(getToken() != null) {
-			FISCAL_SERVICE.getAonDataToken(getCurrentDomainName(), getCurrentDomain(), getToken(), new AsyncCallback<AonData>() {
+			Occam occam = new Occam()
+				.setDomainName(getCurrentDomainName())
+				.setDomain(getCurrentDomain())
+				.setUser(getCurrentUser());
+			ConfigParams params = new ConfigParams().setToken(getToken());
+			COMMON_SERVICE.getAonConfiguration(occam, params, new AsyncCallback<AonConfiguration>() {
 				
-				@Override public void onSuccess(AonData result) {
-					aonData = result;
-					selection(entryPoint);
+				@Override public void onSuccess(AonConfiguration config) {
+					selection(entryPoint,aonConfiguration);
 				}
 				
-				@Override public void onFailure(Throwable arg0) {}
+				@Override public void onFailure(Throwable arg0) {
+					Window.alert(ERROR_MSG);
+				}
 			});
 		} else {
-			selection(entryPoint);			
+			selection(entryPoint,null);
 		}
 
 		
 	}
 	
-	private void selection(String entryPoint) {
+	private void selection(String entryPoint,AonConfiguration aonConfiguration) {
+		try {
+			FiscalEntryPoint fiscalEntryPoint = FiscalEntryPoint.valueOf(entryPoint);
+			fiscalEntryPoint.run();
+		} catch (IllegalArgumentException e) {
+			// De momento nada. Cuando todos los EntryPoint esten en el enumerado, gestionar error. 
+		}
 		if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
 			GWT.runAsync(Model140.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -157,102 +215,102 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD111_ENTRY_POINT)) {
-			GWT.runAsync(Model111.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					Model111 model111 = new Model111();
-					model111.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD115_ENTRY_POINT)) {
-			GWT.runAsync(Model115.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					Model115 model115 = new Model115();
-					model115.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD123_ENTRY_POINT)) {
-			GWT.runAsync(Model123.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					Model123 model123 = new Model123();
-					model123.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD130_ENTRY_POINT)) {
-			GWT.runAsync(Model130.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					Model130 model130 = new Model130();
-					model130.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD131_ENTRY_POINT)) {
-			GWT.runAsync(Model131.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					Model131 model131 = new Model131();
-					model131.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD202_ENTRY_POINT)) {
-			GWT.runAsync(Model202.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					Model202 model202 = new Model202();
-					model202.onModuleLoad();
-				}
-				
-			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD111_ENTRY_POINT)) {
+//			GWT.runAsync(Model111.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model111 model111 = new Model111();
+//					model111.onModuleLoad(aonConfiguration);
+//				}
+//				
+//			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD115_ENTRY_POINT)) {
+//			GWT.runAsync(Model115.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model115 model115 = new Model115();
+//					model115.onModuleLoad();
+//				}
+//				
+//			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD123_ENTRY_POINT)) {
+//			GWT.runAsync(Model123.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model123 model123 = new Model123();
+//					model123.onModuleLoad();
+//				}
+//				
+//			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD130_ENTRY_POINT)) {
+//			GWT.runAsync(Model130.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model130 model130 = new Model130();
+//					model130.onModuleLoad();
+//				}
+//				
+//			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD131_ENTRY_POINT)) {
+//			GWT.runAsync(Model131.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model131 model131 = new Model131();
+//					model131.onModuleLoad();
+//				}
+//				
+//			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD202_ENTRY_POINT)) {
+//			GWT.runAsync(Model202.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model202 model202 = new Model202();
+//					model202.onModuleLoad();
+//				}
+//				
+//			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD200_ENTRY_POINT)) {
 			GWT.runAsync(Model200.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -267,7 +325,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -282,7 +340,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -297,7 +355,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -312,7 +370,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -322,27 +380,27 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD303_ENTRY_POINT)) {
-			GWT.runAsync(Model303.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					Model303 model303 = new Model303();
-					model303.onModuleLoad();
-				}
-				
-			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD303_ENTRY_POINT)) {
+//			GWT.runAsync(Model303.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model303 model303 = new Model303();
+//					model303.onModuleLoad();
+//				}
+//				
+//			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MOD347_ENTRY_POINT)) {
 			GWT.runAsync(Model347.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -357,7 +415,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -372,7 +430,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -382,27 +440,27 @@ public class MainEntryPoint implements EntryPoint {
 				}
 				
 			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD390_HF_ENTRY_POINT)) {
-			GWT.runAsync(Model390HF.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
-				}
-
-				@Override
-				public void onSuccess() {
-					Model390HF model390HF = new Model390HF();
-					model390HF.onModuleLoad();
-				}
-				
-			});
+//		} else if ( entryPoint.equalsIgnoreCase(FS_MOD390_HF_ENTRY_POINT)) {
+//			GWT.runAsync(Model390HF.class, new RunAsyncCallback() {
+//
+//				@Override
+//				public void onFailure(Throwable reason) {
+//					Window.alert(ERROR_MSG);
+//				}
+//
+//				@Override
+//				public void onSuccess() {
+//					Model390HF model390HF = new Model390HF();
+//					model390HF.onModuleLoad();
+//				}
+//				
+//			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_MODEL_MATRIX_ENTRY_POINT)) {
 			GWT.runAsync(ModelMatrix.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -411,12 +469,26 @@ public class MainEntryPoint implements EntryPoint {
 					modelMatrix.onModuleLoad();
 				}
 			});
+		} else if ( entryPoint.equalsIgnoreCase(FS_CONFIG_POINT)) {
+			GWT.runAsync(FiscalConfig.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					FiscalConfig fiscalConfig = new FiscalConfig();
+					fiscalConfig.onModuleLoad();
+				}
+			});
 		} else if ( entryPoint.equalsIgnoreCase(RG_CUSTOMER_ENTRY_POINT)) {
 			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -431,7 +503,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -446,7 +518,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -461,7 +533,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -476,7 +548,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -491,7 +563,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -506,7 +578,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -521,7 +593,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -536,7 +608,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -551,7 +623,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -566,7 +638,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -581,7 +653,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -596,7 +668,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -611,7 +683,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -626,7 +698,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -641,7 +713,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -656,7 +728,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -671,7 +743,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -686,7 +758,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -701,7 +773,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -716,7 +788,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -731,7 +803,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -746,7 +818,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -761,7 +833,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -776,7 +848,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onFailure(Throwable reason) {
-					Window.alert("Error al cargar");
+					Window.alert(ERROR_MSG);
 				}
 
 				@Override
@@ -788,7 +860,13 @@ public class MainEntryPoint implements EntryPoint {
 			});
 		}
 	}
-
+	protected Occam getOccam() {
+		return new Occam()
+			.setDomainName(getCurrentDomainName())
+			.setDomain(getCurrentDomain())
+			.setUser(getCurrentUser());
+	}
+	
 	public static native String getToken()
 	/*-{
 		return $wnd.localStorage.getItem("aon_session_id");
@@ -812,13 +890,13 @@ public class MainEntryPoint implements EntryPoint {
 	}-*/;
 	
 	public static String getCurrentUser() {
-		return getToken() != null ? aonData.getUser().getLogin() : getCurrentUserJs();
-	};
+		return getCurrentUserJs();
+	}
 	
 	public static native String getCurrentUserJs()
 	/*-{
 		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? "" : $wnd.getCurrentUser();
+		return token ? $wnd.localStorage.getItem("aon_domain_login") : $wnd.getCurrentUser();
 	}-*/;
 	/**
 	 * Fetches a parameter passed to the module's nocache script.

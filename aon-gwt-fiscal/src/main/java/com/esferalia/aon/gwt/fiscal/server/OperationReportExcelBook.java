@@ -31,13 +31,13 @@ import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -116,10 +116,11 @@ public class OperationReportExcelBook extends HttpServlet {
 			String companyDocument = "";
 			String companyName = "";
 			ctx = AONContext.getAONContext(domainName, domainId, user);
-			FiscalParameters p = AppParamDAO.getFiscalParameters(ctx);
-			companyDocument = p.getDocument();				
+
+			Company company = CompanyDAO.getCompany(ctx, domainId);
+			companyDocument = company.getDocument();				
 			
-			String s = p.getName();
+			String s = company.getName();
 			StringBuilder sb = new StringBuilder();
 			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
 				sb.append("_");

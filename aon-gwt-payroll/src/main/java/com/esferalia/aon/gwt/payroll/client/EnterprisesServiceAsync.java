@@ -105,7 +105,7 @@ public interface EnterprisesServiceAsync {
 	void getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId,
 			AsyncCallback<List<SSPECData>> asyncCallback);
 	void getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId,
-			AsyncCallback<List<SSBonusData>> asyncCallback);
+			AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
@@ -166,7 +166,8 @@ public interface EnterprisesServiceAsync {
 			String contributionAccount, Date dateFrom, Date dateTo, Date startDate, AsyncCallback<Void> asyncCallback);
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it,
 			AsyncCallback<Void> asyncCallback);
-	void getServiAgreement(String currentDomainName, String serviAgreementCode, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException;
+	void getServiAgreement(String currentDomainName, String serviAgreementCode, List<Integer> selectedDates, AsyncCallback<Integer> asyncCallback) throws IllegalArgumentException;
+	void getServiAgreementDates(String serviAgreementCode, AsyncCallback<List<Integer>> asyncCallback) throws IllegalArgumentException;
 	void checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList,
 			AsyncCallback<Boolean> asyncCallback);
 	void registerITBaja(String domainName, String userLogin, String regime, String ccc, String naf, String contingency,
@@ -207,5 +208,6 @@ public interface EnterprisesServiceAsync {
 	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
 	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
 	
 }

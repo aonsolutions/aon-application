@@ -63,7 +63,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		@Override
 		public void requestSuggestions(Request request, Callback callback) {
 		    String query = request.getQuery();
-			LinkedList<String> autoConcepts =  wizardContent.getConfiguration().getAutoConcepts();
+			LinkedList<String> autoConcepts =  wizardContent.getConfiguration().accounting().getAutoConcepts();
 			if (autoConcepts == null || autoConcepts.size() == 0) {
 				callback.onSuggestionsReady(request, new Response());	
 			} else {

@@ -292,9 +292,9 @@ public class DocumentalServlet extends HttpServlet{
 				.perPage(30)
 			), AttachType.REGISTRY, false).map(r -> {
 				String description = r.getDescription();
-				if(RegistryAttachmentType.safeValueOf(r.getType()).equals(RegistryAttachmentType.DIGITAL_CERTIFICATE) && description.contains("HIDE")) {
+				if(description != null && RegistryAttachmentType.safeValueOf(r.getType()).equals(RegistryAttachmentType.DIGITAL_CERTIFICATE) && description.contains("HIDE")) {
 					Integer i = description.indexOf("HIDE");
-					r.setDescription(description);
+					r.setDescription(description.substring(0, i));
 				}
 				return r;
 			}).forEach(a -> {

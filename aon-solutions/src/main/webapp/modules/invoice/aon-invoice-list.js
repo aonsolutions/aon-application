@@ -158,8 +158,7 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	getInvoiceStatusIcon(invoice) {
-		let inv = new Invoice();
-		inv.createInvoice(invoice);
+		let inv = new Invoice(invoice);
 		if(inv.isRawdoc()) {
 			if(inv.isEmitida()) return MATERIAL_ICONS.UNARCHIVE;
 			if(inv.isRecibida()) return MATERIAL_ICONS.ARCHIVE;
@@ -171,8 +170,7 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	getInvoiceStatusIconText(invoice) {
-		let inv = new Invoice();
-		inv.createInvoice(invoice);
+		let inv = new Invoice(invoice);
 		if(inv.isRawdoc()) {
 			if(inv.isEmitida()) return 'Emitida';
 			if(inv.isRecibida()) return 'Recibida';
@@ -184,8 +182,7 @@ export class AonInvoiceList extends AonElement {
 	}
 
 	getInvoiceStatusIconColor(invoice) {
-		let inv = new Invoice();
-		inv.createInvoice(invoice);
+		let inv = new Invoice(invoice);
 		if(inv.isRawdoc()) {
 			return "#5f6368";
 		} else {
@@ -344,9 +341,8 @@ export class AonInvoiceList extends AonElement {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		const number = aonInvoiceTable.selected.length;
 		
-		let inv =	new Invoice(invoice.type);
-		inv.createInvoice(invoice);
-
+		let inv = new Invoice(invoice);
+	
 		e.preventDefault();
 		let rect = e.target.getBoundingClientRect();
     	let x = e.clientX - rect.left;

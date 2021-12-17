@@ -111,8 +111,8 @@ public class Mod347MergeMail extends HttpServlet {
 					registryId = (supplier != null)?supplier.getId():null;
 					tipo = "Proveedor";
 					if (registryId == null) {
-						Creditor creditor = AON.getBasicCreditors(domainName, domainId, user, p-> p.getDomainProperty().eq(domainId).and(p.getDocumentProperty().eq(declared.getDocument())))
-								.findFirst().orElse(new Creditor());
+						Creditor creditor = AON.getCreditor(domainName, domainId, user, p-> p.getDomainProperty().eq(domainId).and(p.getDocumentProperty().eq(declared.getDocument())))
+								.orElse(new Creditor());
 						registryId = (creditor != null)?creditor.getId():null;
 						tipo = "Acreedor";
 					}

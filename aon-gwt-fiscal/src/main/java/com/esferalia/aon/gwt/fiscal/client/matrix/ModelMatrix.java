@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.matrix;
 
+
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
@@ -10,133 +10,61 @@ import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.fiscal.JsFiscalMenuItem;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableCell;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeHandler;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeHandler;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.json.IJsonNames;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class ModelMatrix extends MainEntryPoint {
 
-	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
-		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
-		SafeHtml tab(String title, String icon);
-	}
-	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
-
+	
 	private static final Logger LOGGER = Logger.getLogger(ModelMatrix.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	@FunctionalInterface
-	private interface IPeriodTypeAccepter {
-		boolean accept(Period mod);
+	protected static final FiscalModelServiceAsync SERVICE;
+	private static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		FiscalModelServiceAsync serviceRaw = GWT.create(FiscalModelService.class);
+		SERVICE = new FiscalModelServiceAsyncDecorator(serviceRaw);
+		
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw); 
 	}
 	
-	private enum PeriodType {
-		 MONTHLY	("Mensual",12,period -> period.isMonthPeriod())
-		,QUARTERLY	("Trimes.", 4,period -> period.isQuarterPeriod())
-		,YEARLY		("Anual", 1,period -> period == Period.YEAR)
-		;
-		private String value;
-		private int arraySize;
-		private IPeriodTypeAccepter accepter;
-		private PeriodType( String value, int arraySize, IPeriodTypeAccepter accepter) {
-			this.value = value;
-			this.arraySize = arraySize;
-			this.accepter = accepter;
-		}
-		private String getValue() {
-			return value;
-		}
-		private int getArraySize() {
-			return arraySize;
-		}
-		private int getIndex(Period period) {
-			if (period == Period.YEAR) return 0;
-			if (period.isMonthPeriod()) return period.ordinal();
-			return (period.ordinal() - 12);
-		}
-		private static PeriodType getPeriodType(Period period) {
-			for (PeriodType type : PeriodType.values()) {
-				if (type.accepter.accept(period)) return type;
-			}
-			return null;
-		}
-	}
-	
-	protected static FiscalModelServiceAsync SERVICE;
-	final FiscalMSServiceAsync FISCAL_SERVICE = GWT.create(FiscalMSService.class);
-	
-	private SplitLayoutPanel splitLayoutPanel;
 	private ScrollPanel scrollPanel; 
-	private ModelMatrixFilterPanel filterPanel; 
-	private TabLayoutPanel tabLayout;
-	private AonMinimizePanel footPanel;
-	boolean minimizedByUser;
-	private NeoMatrix neo;
-	
-	private NeoMatrix getNeo() {
-		return neo;
-	}
 	
 	@Override
 	public void onModuleLoad() {
-		FISCAL_SERVICE.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
 
-			@Override public void onFailure(Throwable caught) {}
+			@Override public void onFailure(Throwable caught) { /* Nothing */ }
 
 			@Override
-			public void onSuccess(AonData aonData) {
+			public void onSuccess(AonConfiguration aonConfiguration) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 				MatrixModuleOptions options = new MatrixModuleOptions();
 				options.setParentWidget(root);
 				options.setDomainName(getCurrentDomainName());
 				options.setDomain(getCurrentDomain());
 				options.setUser(getCurrentUser());
-				options.setAonData(aonData);
+				options.setConfiguration(aonConfiguration);
 				onModuleLoad(options);
 			}
 		});
@@ -145,500 +73,82 @@ public class ModelMatrix extends MainEntryPoint {
 	public void onModuleLoad(MatrixModuleOptions options) {
 		AON.ensureInjected();
 		
-		FiscalModelServiceAsync serviceRaw = GWT.create(FiscalModelService.class);
-		SERVICE = new FiscalModelServiceAsyncDecorator(serviceRaw);
-
 		DockLayoutPanel dockLayout = new DockLayoutPanel(Unit.PX);
-		filterPanel = new ModelMatrixFilterPanel(options);
-		filterPanel.addValueChangeHandler( new ValueChangeHandler<FiscalMatrixParams>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<FiscalMatrixParams> event) {
-				search( options, event.getValue() );
-			}
-		});
+		ModelMatrixFilterPanel filterPanel = new ModelMatrixFilterPanel(options);
+		filterPanel.addValueChangeHandler( event -> search( options, event.getValue() ));
 		dockLayout.addNorth(filterPanel, 100);
-		splitLayoutPanel = new SplitLayoutPanel();
-		this.neo = new NeoMatrix(options.getAonData()) {
-			@Override
-			protected void onParentLoad() {
-				filterPanel.fireValueChangeEvent();				
-			}
-
-			@Override
-			protected void onOpenPanel() {
-				openFootPanel();
-			}
-
-			@Override
-			protected void onClosePanel() {
-				closeFootPanel();
-			}
-		};
-		splitLayoutPanel.addSouth(getMinimizePanel( options.getAonData() ), 30);
 		scrollPanel = new ScrollPanel();
-		splitLayoutPanel.add(scrollPanel);
-		dockLayout.add(splitLayoutPanel);
+		dockLayout.add(scrollPanel);
 		options.getParentWidget().add(dockLayout);
-		// filterPanel.fireValueChangeEvent();
 	}
 
-	private FlowPanel paint(MatrixModuleOptions options, AonJsArray<JsFiscalMenuItem> aonJsArray, FiscalMatrixParams fiscalMatrixParams) {
-		FlowPanel content = new FlowPanel();
-		content.setStyleName(AON.CSS.aonMarginRight());
-		content.addStyleName(AON.CSS.aonMarginLeft());
-		content.addStyleName(AON.CSS.aonBlockCenter());
-
-		if (aonJsArray == null || aonJsArray.length() == 0) {
-			Label noData = new Label(AON.MSG.noData());
-			noData.setStyleName(AON.CSS.aonTextCenter());
-			noData.addStyleName(AON.CSS.aonMarginTop());
-			noData.addStyleName(AON.CSS.aonPadding());
-			noData.addStyleName(AON.CSS.aonColorRed());
-			noData.addStyleName(AON.CSS.aonBold());
-			content.add(noData);
-			return content;
-		}
-		
-		
-		FlexTable tab = new FlexTable();
-		tab.setCellSpacing(0);
-		tab.addStyleName(AON.CSS.aonMarginTop());
-		tab.addStyleName(AON.CSS.aonBlockCenter());
-		tab.addStyleName(AON.CSS.aonTable());
-		
-		int col = 0;
-		
-		tab.getColumnFormatter().setWidth(col++, "450px");
-		tab.getColumnFormatter().setWidth(col++, "50px");
-		tab.getColumnFormatter().setWidth(col++, "25px");
-		tab.getColumnFormatter().setWidth(col++, "70px");
-		
-		int modelOffset = col;
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-		tab.getColumnFormatter().setWidth(col++, "30px");
-
-		int colspan = col;
-		int documentCol = 0;
-		int modelCol = 1;
-		int admonCol = 2;
-		int periodCol = 3;
-		
-		int row = 0;
-		col = 0;
-		
-		AonTableButton helpButton  = new AonTableButton("Leyenda",AON.CSS.aonIconHelp());
-		helpButton.setText("Leyenda");
-		helpButton.addStyleName(AON.CSS.aonMarginRight());
-		helpButton.addStyleName(AON.CSS.aonMarginLeft());
-		helpButton.getElement().getStyle().setPaddingLeft(3, Unit.EM);
-		helpButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				final AonCustomDialog dialog = new AonCustomDialog();
-				dialog.setCaption("Leyenda");
-				FlowPanel tabContainer = new FlowPanel();
-				tabContainer.addStyleName(AON.CSS.aonPadding());
-
-				AonDisplayTable statusLegendTab = new AonDisplayTable();
-				statusLegendTab.getElement().getStyle().setProperty("border-collapse", "separate");
-				statusLegendTab.getElement().getStyle().setProperty("border-spacing", "2px");
-				statusLegendTab.setStyleName(AON.CSS.aonMarginTop());
-				statusLegendTab.setStyleName(AON.CSS.aonMarginBottom());
-				FiscalStatus[] statuses = new FiscalStatus[] {FiscalStatus.MISSING,FiscalStatus.PENDING,FiscalStatus.CUSTOMER_CHECK,FiscalStatus.FINISHED,FiscalStatus.SENT};
-				for (FiscalStatus st : statuses) {
-					InlineLabel statusLabel = new InlineLabel(st == FiscalStatus.MISSING? "No realizado" : st.getName());
-					statusLabel.setStyleName(AON.CSS.aonMarginLeft());
-					statusLabel.getElement().getStyle().setPadding(3, Unit.PX);
-					AonDisplayTableRow legendRow = statusLegendTab.addRow();
-					AonDisplayTableCell cell0 = legendRow.addCell();
-					cell0.setWidth("200px");
-					cell0.add(statusLabel);
-					AonDisplayTableCell cell = legendRow.addCell();
-					cell.addStyleName(AON.CSS.aonBorder());
-					cell.setWidth("20px");
-					cell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.gettStatusBckColorRGB( st ));
-					cell.add(new InlineLabel());
-				}
-				tabContainer.add( statusLegendTab );
-				FlowPanel buttons = new FlowPanel();
-		    	buttons.setStyleName(AON.CSS.aonTextCenter());
-		    	buttons.addStyleName(AON.CSS.aonMarginTop());
-		    	buttons.addStyleName(AON.CSS.aonMarginBottom());
-		    	final Button okButton = new Button();
-		    	okButton.setStyleName(AON.CSS.aonOkButton());
-		    	okButton.setText( AON.MSG.accept());
-		    	okButton.addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						dialog.hide();
-					}
-				});
-		    	buttons.add(okButton);
-		    	
-				tabContainer.add( buttons );
-				dialog.add( tabContainer );
-				dialog.center();
-				dialog.show();
-			}
-		});
-		tab.setWidget(row, col, helpButton );
-		
-		col = modelOffset;
-		String[] months = new String[]{"Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"};
-		for (String month : months) {
-			tab.setWidget(row, col, new Label( month ));
-			tab.getCellFormatter().setStyleName(row, col  , AON.CSS.aonBorder());
-			tab.getCellFormatter().addStyleName(row, col  , AON.CSS.aonTextCenter());
-			tab.getCellFormatter().addStyleName(row, col++, AON.CSS.aonBold());
-		}
-		row++;
-		
-		col = modelOffset;
-		String[] quars = new String[]{"1\u00BA Trim","2\u00BA Trim","3\u00BA Trim","4\u00BA Trim"};
-		for (String quar : quars) {
-			tab.setWidget(row, col, new Label( quar ));
-			tab.getFlexCellFormatter().setColSpan(row, col, 3);
-			tab.getCellFormatter().setStyleName(row, col  , AON.CSS.aonBorder());
-			tab.getCellFormatter().addStyleName(row, col  , AON.CSS.aonTextCenter());
-			tab.getCellFormatter().addStyleName(row, col++, AON.CSS.aonBold());
-		}
-		row++;
-
-		LinkedHashMap<String, LinkedHashMap<Administration, LinkedHashMap<PeriodType, LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>>>> domainMap = sortInfo(aonJsArray);
-		for (String complexDomainName : domainMap.keySet()) {
-			String domainId = AonStringUtils.substringBefore(complexDomainName, "|");
-			String domainName = AonStringUtils.substringAfter(complexDomainName, "|");
-
-			if (fiscalMatrixParams.getModel() == null) {
-				Label emptyLabel = new Label();
-				emptyLabel.setStyleName(AON.CSS.aonMarginTop());
-				tab.setWidget(row, 0, emptyLabel);
-				tab.getFlexCellFormatter().setColSpan(row, 0, colspan);
-				row++;
-				
-				Label domainLabel = new Label(domainName);
-				tab.getCellFormatter().setStyleName(row, 0 , AON.CSS.aonBold());
-				tab.getCellFormatter().addStyleName(row, 0 , AON.CSS.aonTextCenter());
-				tab.setWidget(row, 0, domainLabel);
-				tab.getFlexCellFormatter().setColSpan(row, 0, colspan);
-				row++;
-			}
-
-			LinkedHashMap<Administration, LinkedHashMap<PeriodType, LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>>> admonMap = domainMap.get(complexDomainName);
-			for (Administration admon : admonMap.keySet()) {
-				LinkedHashMap<PeriodType, LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>> periodMap = admonMap.get(admon);
-				for (PeriodType type : periodMap.keySet()) {
-					LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>> modelMap = periodMap.get(type);
-					for (String modelName : modelMap.keySet()) {
-						LinkedHashMap<String, LinkedList<JsFiscalMenuItem>> documentMap = modelMap.get(modelName);
-						for (String document : documentMap.keySet()) {
-							
-							tab.getCellFormatter().setStyleName(row, documentCol, AON.CSS.aonBorder());
-							tab.setWidget(row, documentCol, new Label( document ));
-
-							tab.getCellFormatter().setStyleName(row, modelCol, AON.CSS.aonBold());
-							tab.getCellFormatter().addStyleName(row, modelCol, AON.CSS.aonBorder());
-							tab.getCellFormatter().addStyleName(row, modelCol, AON.CSS.aonTextCenter());
-							FiscalModel fm = new FiscalModel();
-							fm.setAdministration(admon);
-							FiscalModelType modelType = FiscalModelType.valueOf(modelName);
-							fm.setModel(modelType);
-							if (type == PeriodType.YEARLY) fm.setPeriod(Period.YEAR);
-							else if (type == PeriodType.QUARTERLY) fm.setPeriod(Period.T1);
-							else fm.setPeriod(Period.M01);
-							tab.setWidget(row, modelCol, new Label( FiscalModelUtils.getModelName(fm) ));
-
-							Label admonLabel = new Label();
-							if (admon == Administration.UNKNOWN) {
-								admonLabel.setText("\u2022");
-							} else {
-								admonLabel.setStyleName(AON.CSS.aonIconLabel());
-								admonLabel.addStyleName(FiscalModelUtils.getAdministrationIconStyle(admon));	
-							}
-							tab.getCellFormatter().setStyleName(row, admonCol, AON.CSS.aonBorder());
-							tab.getCellFormatter().addStyleName(row, admonCol, AON.CSS.aonTextCenter());
-							tab.setWidget(row, admonCol, admonLabel);
-							
-							Label periodLabel = new Label(type.getValue());
-							tab.getCellFormatter().setStyleName(row, periodCol, AON.CSS.aonBorder());
-							tab.getCellFormatter().addStyleName(row, periodCol, AON.CSS.aonTextCenter());
-							tab.setWidget(row, periodCol, periodLabel);
-							int colspan2 = 12 / (type.getArraySize());
-							for (int x = 0; x < type.getArraySize(); x++) {
-								int c = x + modelOffset;
-								tab.getFlexCellFormatter().setColSpan(row, c, colspan2);
-								tab.getCellFormatter().setStyleName(row, c  , AON.CSS.aonBorder());
-								tab.getCellFormatter().addStyleName(row, c, AON.CSS.aonTextCenter());
-								
-								AonTableButton addButton = new AonTableButton(AON.MSG.newAction(),null);
-								addButton.getElement().getStyle().setPaddingLeft(0, Unit.PX);
-								addButton.setText("+");
-								
-								FiscalModel model = new FiscalModel();
-								model.setAdministration(admon);
-								model.setModel(modelType);
-								model.setYear(fiscalMatrixParams.getYear());
-								model.setDomain(AonNumberUtils.toInteger(domainId));
-								model.setDomain(AonNumberUtils.toInteger(domainId));
-								if (type == PeriodType.YEARLY) {
-									model.setPeriod(Period.YEAR);	
-								}  else if (type == PeriodType.QUARTERLY) {
-									model.setPeriod( Period.values()[12 + x] );
-								} else {
-									model.setPeriod( Period.values()[x] );
-								};
-
-								addButton.addClickHandler(new ClickHandler() {
-									
-									@Override
-									public void onClick(ClickEvent event) {
-										model.getModel().visit(new MatrixNewModelVisitor(options.getAonData(),model));
-									}
-								});
-								tab.setWidget(row, c, addButton);
-//								tab.setWidget(row, c, new InlineLabel());
-								tab.getWidget(row, c ).getElement().getParentElement().getStyle().setBackgroundColor(FiscalModelUtils.gettStatusBckColorRGB( FiscalStatus.MISSING));
-								
-							}
-							
-							LinkedList<JsFiscalMenuItem> models = documentMap.get(document);
-							for (JsFiscalMenuItem model : models) {
-								if (model != null) {
-									
-									FiscalStatus status = FiscalStatus.safeValueOf(model.getStatus());
-									Period period = Period.valueOf(model.getPeriod());
-									col = (period.isQuarterPeriod()?(period.getStartMonth()/3):period.getStartMonth()) + modelOffset;
-									FocusPanel focusPanel = new FocusPanel();
-									focusPanel.setTitle(AON.MSG.selectAction());
-									Label mod = new Label();
-									mod.setText("\u2022");
-									if (status != FiscalStatus.MISSING) {
-										mod.setStyleName(AON.CSS.aonClickable());
-										mod.addStyleName(AON.CSS.aonTextCenter());
-//										if (status == FiscalStatus.FINISHED || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.SENT) {
-//											mod.setText( AON.FMT.format(model.getResult()));
-//											// mod.setStyleName(AonMathUtils.isGreatherThanZero(model.getResult()) ? AON.CSS.aonColorRed() : AON.CSS.aonColorBlue() );
-//										}
-										if (status == FiscalStatus.FINISHED) {
-											focusPanel.addStyleName(AON.CSS.aonClickable());
-											focusPanel.setTitle("Seleccionar");
-											focusPanel.addClickHandler( new ClickHandler() {
-												
-												@Override
-												public void onClick(ClickEvent event) {
-													openFootPanel();
-													if(!getNeo().hasModel(model)) {
-														getNeo().addModel(model);
-													}
-												}
-												
-											});
-										} else {
-											focusPanel.addClickHandler( new ClickHandler() {
-												@Override
-												public void onClick(ClickEvent event) {
-													modelType.visit(new MatrixViewModelVisitor(options.getAonData(),model));
-												}
-											});
-										}
-									} else {
-										mod.setText("+");
-										focusPanel.addStyleName(AON.CSS.aonClickable());
-										focusPanel.addClickHandler( new ClickHandler() {
-											@Override
-											public void onClick(ClickEvent event) {
-												FiscalModel fs = new FiscalModel();
-												fs.setModel(modelType);
-												fs.setAdministration(admon);
-												fs.setPeriod(period);
-												fs.setYear(fiscalMatrixParams.getYear());
-												fs.setDomain(Integer.valueOf(model.getDomain() + ""));
-												modelType.visit(new MatrixNewModelVisitor(options.getAonData(), fs));
-											}
-										});
-									}
-									focusPanel.add(mod);
-									tab.setWidget(row, col, focusPanel);
-									tab.getWidget(row, col ).getElement().getParentElement().getStyle().setBackgroundColor(FiscalModelUtils.gettStatusBckColorRGB( status ));
-								}
-							}
-						}
-						row++;
-					}
-					
-				}
-			}
-		}
-		content.add(tab);
-		return content;
-	}
-	
-	private LinkedHashMap<String, LinkedHashMap<Administration, LinkedHashMap<PeriodType, LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>>>>
-		sortInfo( AonJsArray<JsFiscalMenuItem> aonJsArray) {
-
-		
-		LinkedHashMap<String										// domainMap
-			, LinkedHashMap<Administration							// admonMap
-				, LinkedHashMap<PeriodType							// periodMap
-					, LinkedHashMap<String							// modelMap
-						, LinkedHashMap<String						// documentMap
-							, LinkedList<JsFiscalMenuItem>>>>>>  		// models
-		domainMap = new LinkedHashMap<String, LinkedHashMap<Administration, LinkedHashMap<PeriodType, LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>>>>();
-		for (int i = 0; i < aonJsArray.length() ; i++ ) {
-			JsFiscalMenuItem item = aonJsArray.get(i);
-			String domainName = item.getDomain() + "|" + item.getDomainName();
-			String doc = item.getDocument();
-			String n = item.getName();
-			String s = item.getSurname();
-			String name = AonStringUtils.join(new String[]{s,n}, AonStringUtils.isBlank(s)?"":", ");
-			name = AonStringUtils.abbreviate(AonStringUtils.join(new String[]{doc,name}, " "), 50);
-			Administration admon = Administration.safeValueOf(item.getAdministration());
-			if (admon == null) admon = Administration.UNKNOWN;
-			FiscalModelType modelType = FiscalModelType.valueOf(item.getModel());
-			Period period = Period.valueOf(item.getPeriod());
-			PeriodType type = PeriodType.getPeriodType(period);
-			LinkedHashMap<Administration, LinkedHashMap<PeriodType, LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>>> admonMap = domainMap.get(domainName);
-			if (admonMap == null) {
-				admonMap = new LinkedHashMap<Administration, LinkedHashMap<PeriodType, LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>>>();
-				domainMap.put(domainName,admonMap);	
-			}
-			
-			LinkedHashMap<PeriodType, LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>> periodMap = admonMap.get(admon);
-			if (periodMap == null) {
-				periodMap = new LinkedHashMap<PeriodType, LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>>();
-				admonMap.put(admon,periodMap);	
-			}
-			
-			LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>> modelMap = periodMap.get(type);
-			if (modelMap == null) {
-				modelMap = new LinkedHashMap<String, LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>>();
-				periodMap.put(type,modelMap);	
-			}
-			
-			LinkedHashMap<String, LinkedList<JsFiscalMenuItem>> documentMap = modelMap.get(modelType.toString());
-			if (documentMap == null) {
-				documentMap = new LinkedHashMap<String, LinkedList<JsFiscalMenuItem>>();
-				modelMap.put(modelType.toString(),documentMap);	
-			}
-			
-			LinkedList<JsFiscalMenuItem> list = documentMap.get(name);
-			if (list == null) {
-				list = new LinkedList<JsFiscalMenuItem>();
-				for (int x = 0; x < type.getArraySize(); x++) {
-					list.add(null);
-				}
-				documentMap.put(name, list);				
-			}
-			list.set(type.getIndex(period), item);
-		}
-		return domainMap;
-	}
-	
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 30);
-		splitLayoutPanel.animate(500);
+	private MatrixData sortInfo( AonJsArray<JsFiscalMenuItem> aonJsArray) {
+		MatrixData matrixData = new MatrixData();
+		aonJsArray.stream().forEach( matrixData::add );
+		return matrixData;
 	}
 
-	private void openFootPanel() {
-		int effectiveHeigth = 3;
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
-		splitLayoutPanel.animate(500);
-	}
-
-	private AonMinimizePanel getMinimizePanel(AonData aonData) {
-		footPanel = new AonMinimizePanel();
-		footPanel.addMinimizeHandler(new MinimizeHandler() {
-			
-			@Override
-			public void onMinimize(MinimizeEvent event) {
-				minimizedByUser = true;
-				closeFootPanel();
-			}
-		});
-		footPanel.addMaximizeHandler(new MaximizeHandler() {
-			
-			@Override
-			public void onMaximize(MaximizeEvent event) {
-				openFootPanel();
-			}
-		});
-		footPanel.setStyleName(AON.CSS.aonSelector());
-		tabLayout = new TabLayoutPanel(26, Unit.PX);
-		tabLayout.setWidth("100%");
-		
-		footPanel.add(tabLayout);
-		tabLayout.add(getNeo(), TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.actions(), AON.CSS.aonIconList()));
-		return footPanel; 
-	}
-	
 	private void search(MatrixModuleOptions options, FiscalMatrixParams params) {
-		API API = new API(GWT.getHostPageBaseURL(), options.getAonData().getMd5(),
-				options.getAonData().getDomain().getName(), options.getAonData().getDomain().getId(),
-				options.getAonData().getUser().getLogin());
-		HashMap<String, LinkedList<String>> filterMap = new HashMap<String, LinkedList<String>>();
-		LinkedList<String> yearListt = new LinkedList<String>();
+		final PopupPanel popup = new PopupPanel(false, true);
+		popup.add(new AonSplash());
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		
+		API api = new API(GWT.getHostPageBaseURL(), 
+				options.getConfiguration().getMd5(),
+				options.getConfiguration().getDomain().getName(), 
+				options.getConfiguration().getDomain().getId(),
+				options.getConfiguration().getUser().getLogin());
+		HashMap<String, LinkedList<String>> filterMap = new HashMap<>();
+		LinkedList<String> yearListt = new LinkedList<>();
 		yearListt.add(AonNumberUtils.toString(params.getYear()) );
 		filterMap.put(IJsonNames.YEAR, yearListt);
-		LinkedList<String> modelListt = new LinkedList<String>();
+		LinkedList<String> modelListt = new LinkedList<>();
 		modelListt.add(params.getModel() == null ? "" : params.getModel().toString());
 		filterMap.put(IJsonNames.MODEL, modelListt);
-		LinkedList<String> admonListt = new LinkedList<String>();
+		LinkedList<String> admonListt = new LinkedList<>();
 		admonListt.add(params.getAdministration()==null?"":params.getAdministration().toString());
 		filterMap.put(IJsonNames.ADMINISTRATION, admonListt);
-		LinkedList<String> scopeListt = new LinkedList<String>();
+		LinkedList<String> scopeListt = new LinkedList<>();
 		scopeListt.add(AonNumberUtils.toString(params.getScope()) );
 		filterMap.put(IJsonNames.SCOPE, scopeListt);
-		LinkedList<String> configuredVisibleListt = new LinkedList<String>();
+		LinkedList<String> configuredVisibleListt = new LinkedList<>();
 		configuredVisibleListt.add( params.isConfiguredVisible()?Boolean.TRUE.toString() : Boolean.FALSE.toString() );
 		filterMap.put(IJsonNames.CONFIGURED_VISIBLE, configuredVisibleListt);
-		LinkedList<String> madeModelsVisibleList = new LinkedList<String>();
+		LinkedList<String> madeModelsVisibleList = new LinkedList<>();
 		madeModelsVisibleList.add( params.isMadeModelsVisible()?Boolean.TRUE.toString() : Boolean.FALSE.toString() );
 		filterMap.put(IJsonNames.MADE_MODELS_VISIBLE, madeModelsVisibleList);
-		API.getFiscal().getFiscalModels( filterMap, new AsyncCallback<JSON<JsFiscalMenuItem>>() {
+		api.getFiscal().getFiscalModels( filterMap, new AsyncCallback<JSON<JsFiscalMenuItem>>() {
 			
 			@Override
 			public void onSuccess(JSON<JsFiscalMenuItem> result) {
-				scrollPanel.setWidget( paint(options, result.getData(), params));
+				AonJsArray<JsFiscalMenuItem> aonJsArray = result.getData();
+				if (aonJsArray == null || aonJsArray.length() == 0) {
+					FlowPanel content = new FlowPanel();
+					content.setStyleName(AON.CSS.aonMarginRight());
+					content.addStyleName(AON.CSS.aonMarginLeft());
+					content.addStyleName(AON.CSS.aonBlockCenter());
+					
+					Label noData = new Label(AON.MSG.noData());
+					noData.setStyleName(AON.CSS.aonTextCenter());
+					noData.addStyleName(AON.CSS.aonMarginTop());
+					noData.addStyleName(AON.CSS.aonPadding());
+					noData.addStyleName(AON.CSS.aonColorRed());
+					noData.addStyleName(AON.CSS.aonBold());
+					content.add(noData);
+					scrollPanel.setWidget( content );
+				} else {
+					MatrixData matrixData = sortInfo(aonJsArray);
+					scrollPanel.setWidget( new ModelMatrixPanel(options, matrixData , params));
+				}
+				popup.hide();
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				popup.hide();
 			}
-		});;
-//		XMLHttpRequest xhr = XMLHttpRequest.create();
-//		xhr.open(FormPanel.METHOD_POST, FISCAL_API_SERVLET);
-//		xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-//		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
-//			@Override
-//			public void onReadyStateChange(XMLHttpRequest xhr) {
-//				if (xhr.getReadyState() == XMLHttpRequest.DONE) {
-//					String json = xhr.getResponseText();
-//					LOGGER.info(json);
-//					JavaScriptObject unk = JsonUtils.safeEval(json);
-//					JSONArray domains = new JSONArray(unk);
-//					paint(aonData, domains, params);
-//				}
-//			}
-//		});
-//		JSONObject json = new JSONObject();
-//		json.put(IJsonNames.YEAR, new JSONNumber((double) params.getYear()));
-//		json.put(IJsonNames.MODEL, new JSONString(params.getModel()));
-//		json.put(IJsonNames.ADMINISTRATION, new JSONString(params.getAdministration()==null?"":params.getAdministration().toString()));
-//		json.put(IJsonNames.CONFIGURED_VISIBLE, JSONBoolean.getInstance(params.isConfiguredVisible()));
-//		json.put(IJsonNames.MADE_MODELS_VISIBLE, JSONBoolean.getInstance(params.isMadeModelsVisible()));
-//		xhr.send(json.toString());
+		});
 	}
 }

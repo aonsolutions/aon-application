@@ -67,7 +67,7 @@ public class TrialBalancePanelReport extends DockLayoutPanel implements HasAccou
 	}
 	
 	private void fill(final AccountingReportModuleOptions options, AccountingReportParams params) {
-		if (options.getConfiguration().getPeriods() == null || options.getConfiguration().getPeriods().size() == 0 ) {
+		if (options.getConfiguration().accounting().getPeriods() == null || options.getConfiguration().accounting().getPeriods().size() == 0 ) {
 			Window.alert("No se han encontrado ejercicios contables");
 		} else {
 			addStyleName(AON.CSS.aonScrollArea());

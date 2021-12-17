@@ -131,10 +131,10 @@ public class Agreements extends ResizeComposite implements
 		}, f -> {});
 	}
 	
-	public void getAgreementsAndSelectImported(Integer agreementId) {
+	public void getAgreementsAndSelectImported(Integer agreementId, Consumer<Boolean> success) {
 		agreementsTree.clearTree();
 		getAgreements(0, 10, s -> {
-			selectImportAgreement(agreementId);
+			selectImportAgreement(agreementId, su -> success.accept(true));
 			showAgreements(false); // Show active agreements
 			agreementsTree.scrollToTop();
 			toolbar.setEnabledViewAgreementsButton(true);
@@ -170,7 +170,9 @@ public class Agreements extends ResizeComposite implements
 	}
 	
 	public void addNewItemTree(Agreement agreement) {
-		getAgreementsTree().getEnterpriseService().getServiAgreement("a0000001", 
+		List<Integer> selectedDates = new ArrayList<>();
+		selectedDates.add(2015); // Change this if own XML change dates
+		getAgreementsTree().getEnterpriseService().getServiAgreement("a0000001", selectedDates,
 				new AsyncCallback<Integer>() {
 
 			@Override
@@ -180,7 +182,7 @@ public class Agreements extends ResizeComposite implements
 
 			@Override
 			public void onSuccess(Integer importedAgreementId) {
-				getAgreementsAndSelectImported(importedAgreementId);
+				getAgreementsAndSelectImported(importedAgreementId, s -> {});
 			}
 		});
 				
@@ -431,7 +433,7 @@ public class Agreements extends ResizeComposite implements
 			agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), true);
 	}
 	
-	private void selectImportAgreement(Integer agreementId) {
+	private void selectImportAgreement(Integer agreementId, Consumer<Boolean> success) {
 		Tree tree = agreementsTree.tree;
 		boolean isSelected = false;
 		for ( int i = 0; i < tree.getItemCount(); i++ ) {
@@ -441,6 +443,7 @@ public class Agreements extends ResizeComposite implements
 			if(AonNumberUtils.equals(agreementId, agreement.getId()) && !isSelected) {
 				agreementsTree.tree.setSelectedItem(item, true);
 				isSelected = true;
+				success.accept(true);
 			}
 		}
 	}

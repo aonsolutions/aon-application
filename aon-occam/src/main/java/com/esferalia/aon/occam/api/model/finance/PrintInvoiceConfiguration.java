@@ -21,6 +21,9 @@ public class PrintInvoiceConfiguration {
 	private boolean contactData;
 	private int border;
 	private AonLanguage language;
+	private String legal;
+	
+	private boolean active;
 	
 	private PrintInvoiceThemeConfiguration theme;
 
@@ -164,4 +167,23 @@ public class PrintInvoiceConfiguration {
 		this.theme = theme;
 		return this;
 	}
+	
+	public String getLegal() {
+		return legal;
+	}
+	
+	public PrintInvoiceConfiguration setLegal(String legal) {
+		this.legal = legal;
+		return this;
+	}
+	
+	public boolean isActive() {
+		return active;
+	}
+	
+	public PrintInvoiceConfiguration setActive(boolean active) {
+		this.active = active;
+		return this;
+	}
+	
 }

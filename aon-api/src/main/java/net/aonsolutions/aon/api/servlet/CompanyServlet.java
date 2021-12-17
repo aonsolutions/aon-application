@@ -334,9 +334,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 		Company company =  api.getParams().opt("id") != null
 			? AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 				f.getIdProperty().eq(api.getParams().optInt("id"))) 
-			:AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
+			: AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 				f.getDomainProperty().eq(api.getDomain().getId()));
-		JSONObject json = RegistryJSON.toJSON(company);
+		JSONObject json = CompanyJSON.toJSON(company);
 		
 		LinkedList<RegistryAdditionalInfo> list = new LinkedList<>();
 		list.add(RegistryAdditionalInfo.ADDRESS);

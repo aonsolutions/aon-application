@@ -9,104 +9,108 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class FiscalModelUtils {
 	
-	@FunctionalInterface
-	private interface IFiscalModelTypeName {
-		boolean accept(IFiscalModel mod);
+	private FiscalModelUtils() {
+		
 	}
 	
-	private enum FiscalModelTypeName {
-		// ********** MODELO 111 ********** 
-		 M111	("111"	,mod -> mod.getModel() == FiscalModelType.M111 && ( mod.isAEAT() || (mod.isMonthPeriod() && (mod.isAraba() || mod.isBizkaia() || mod.isGipuzkoa() ) ) ) ) 
-		,M110	("110"	,mod -> mod.getModel() == FiscalModelType.M111 && mod.isQuarterPeriod() && (mod.isAraba() || mod.isBizkaia() || mod.isGipuzkoa() ) )
-		,M745	("745"	,mod -> mod.getModel() == FiscalModelType.M111 && mod.isNavarra() && mod.isMonthPeriod() )
-		,M715	("715"	,mod -> mod.getModel() == FiscalModelType.M111 && mod.isNavarra() && mod.isQuarterPeriod() )
-		// ********** MODELO 115 ********** 
-		,M115 	("115"	,mod -> mod.getModel() == FiscalModelType.M115 && !mod.isAraba() && !mod.isNavarra() )
-		,M115A 	("115-A",mod -> mod.getModel() == FiscalModelType.M115 && mod.isAraba())
-		,M760 	("760"	,mod -> mod.getModel() == FiscalModelType.M115 && mod.isNavarra() && mod.isMonthPeriod() )
-		,M759 	("759"	,mod -> mod.getModel() == FiscalModelType.M115 && mod.isNavarra() && mod.isQuarterPeriod() )
-		// ********** MODELO 123 ********** 
-		,M123 	("123"	,mod -> mod.getModel() == FiscalModelType.M123 && !mod.isNavarra() )
-		,M716 	("716"	,mod -> mod.getModel() == FiscalModelType.M123 && mod.isNavarra() )
-
-		// ********** MODELO IVA **********		
-		,MF69	("F69",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isNavarra() )	
-		,M303	("303",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303 ) 
-				&& (mod.isAEAT() || ((mod.isAraba() || mod.isBizkaia()) && !mod.isLastPeriod()))
-		)
-		,M300	("300",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isQuarterPeriod() && !mod.isLastPeriod() )	
-		,M320	("320",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isMonthPeriod() && !mod.isLastPeriod() )	
-		
-		// ********** MODELO 390 **********
-		,M390	("390",mod -> mod.getModel() == FiscalModelType.M390 
-			|| mod.getModel() == FiscalModelType.M390_HF
-			|| ( (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303 )
-					&& (mod.isAraba() || mod.isBizkaia() || mod.isGipuzkoa()) 
-					&& mod.isLastPeriod() )
-		)
-		
-		// ********** MODELO 130 ********** 
-		,M130	("130",mod -> mod.getModel() == FiscalModelType.M130)
-		// ********** MODELO 131 ********** 
-		,M131	("131",mod -> mod.getModel() == FiscalModelType.M131)
-		// ********** MODELO 340 ********** 
-		,M340	("340",mod -> mod.getModel() == FiscalModelType.M340)
-		// ********** MODELO 347 ********** 
-		,M347	("347",mod -> mod.getModel() == FiscalModelType.M347)
-		// ********** MODELO 349 ********** 
-		,M349	("349",mod -> mod.getModel() == FiscalModelType.M349)
-		// ********** MODELO 180 ********** 
-		,M180	("180",mod -> mod.getModel() == FiscalModelType.M180)
-		// ********** MODELO 184 ********** 
-		,M184	("184",mod -> mod.getModel() == FiscalModelType.M184)
-		// ********** MODELO 190 ********** 
-		,M190	("190",mod -> mod.getModel() == FiscalModelType.M190)
-		// ********** MODELO 193 ********** 
-		,M193	("193",mod -> mod.getModel() == FiscalModelType.M193)
-		// ********** MODELO 200 ********** 
-		,M200	("200",mod -> mod.getModel() == FiscalModelType.M200)
-		// ********** MODELO 202 ********** 
-		,M202	("202",mod -> mod.getModel() == FiscalModelType.M202)
-		;
-		
-		private String name;
-		private IFiscalModelTypeName accepter;
-		
-		private FiscalModelTypeName( String name, IFiscalModelTypeName getter) {
-			this.name = name;
-			this.accepter = getter;
-		}
-		public String getName() {
-			return name;
-		}
-		private boolean accept(IFiscalModel mod) {
-			return this.accepter.accept(mod);
-		}
-		private static String getName(IFiscalModel mod) {
-			for (FiscalModelTypeName f : FiscalModelTypeName.values()) {
-				if (f.accept(mod)) return f.getName();
-			}
-			return null;
-		}
-	}
+//	@FunctionalInterface
+//	private interface IFiscalModelTypeName {
+//		boolean accept(IFiscalModel mod);
+//	}
+//	
+//	private enum FiscalModelTypeName {
+//		// ********** MODELO 111 ********** 
+//		 M111	("111"	,mod -> mod.getModel() == FiscalModelType.M111 && ( mod.isAEAT() || (mod.isMonthPeriod() && (mod.isAraba() || mod.isBizkaia() || mod.isGipuzkoa() ) ) ) ) 
+//		,M110	("110"	,mod -> mod.getModel() == FiscalModelType.M111 && mod.isQuarterPeriod() && (mod.isAraba() || mod.isBizkaia() || mod.isGipuzkoa() ) )
+//		,M745	("745"	,mod -> mod.getModel() == FiscalModelType.M111 && mod.isNavarra() && mod.isMonthPeriod() )
+//		,M715	("715"	,mod -> mod.getModel() == FiscalModelType.M111 && mod.isNavarra() && mod.isQuarterPeriod() )
+//		// ********** MODELO 115 ********** 
+//		,M115 	("115"	,mod -> mod.getModel() == FiscalModelType.M115 && !mod.isAraba() && !mod.isNavarra() )
+//		,M115A 	("115-A",mod -> mod.getModel() == FiscalModelType.M115 && mod.isAraba())
+//		,M760 	("760"	,mod -> mod.getModel() == FiscalModelType.M115 && mod.isNavarra() && mod.isMonthPeriod() )
+//		,M759 	("759"	,mod -> mod.getModel() == FiscalModelType.M115 && mod.isNavarra() && mod.isQuarterPeriod() )
+//		// ********** MODELO 123 ********** 
+//		,M123 	("123"	,mod -> mod.getModel() == FiscalModelType.M123 && !mod.isNavarra() )
+//		,M716 	("716"	,mod -> mod.getModel() == FiscalModelType.M123 && mod.isNavarra() )
+//
+//		// ********** MODELO IVA **********		
+//		,MF69	("F69",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isNavarra() )	
+//		,M303	("303",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303 ) 
+//				&& (mod.isAEAT() || ((mod.isAraba() || mod.isBizkaia()) && !mod.isLastPeriod()))
+//		)
+//		,M300	("300",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isQuarterPeriod() && !mod.isLastPeriod() )	
+//		,M320	("320",mod -> (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303) && mod.isGipuzkoa() && mod.isMonthPeriod() && !mod.isLastPeriod() )	
+//		
+//		// ********** MODELO 390 **********
+//		,M390	("390",mod -> mod.getModel() == FiscalModelType.M390 
+//			|| mod.getModel() == FiscalModelType.M390_HF
+//			|| ( (mod.getModel() == FiscalModelType.M303_RG || mod.getModel() == FiscalModelType.M303_RS || mod.getModel() == FiscalModelType.M303 )
+//					&& (mod.isAraba() || mod.isBizkaia() || mod.isGipuzkoa()) 
+//					&& mod.isLastPeriod() )
+//		)
+//		
+//		// ********** MODELO 130 ********** 
+//		,M130	("130",mod -> mod.getModel() == FiscalModelType.M130)
+//		// ********** MODELO 131 ********** 
+//		,M131	("131",mod -> mod.getModel() == FiscalModelType.M131)
+//		// ********** MODELO 340 ********** 
+//		,M340	("340",mod -> mod.getModel() == FiscalModelType.M340)
+//		// ********** MODELO 347 ********** 
+//		,M347	("347",mod -> mod.getModel() == FiscalModelType.M347)
+//		// ********** MODELO 349 ********** 
+//		,M349	("349",mod -> mod.getModel() == FiscalModelType.M349)
+//		// ********** MODELO 180 ********** 
+//		,M180	("180",mod -> mod.getModel() == FiscalModelType.M180)
+//		// ********** MODELO 184 ********** 
+//		,M184	("184",mod -> mod.getModel() == FiscalModelType.M184)
+//		// ********** MODELO 190 ********** 
+//		,M190	("190",mod -> mod.getModel() == FiscalModelType.M190)
+//		// ********** MODELO 193 ********** 
+//		,M193	("193",mod -> mod.getModel() == FiscalModelType.M193)
+//		// ********** MODELO 200 ********** 
+//		,M200	("200",mod -> mod.getModel() == FiscalModelType.M200)
+//		// ********** MODELO 202 ********** 
+//		,M202	("202",mod -> mod.getModel() == FiscalModelType.M202)
+//		;
+//		
+//		private String name;
+//		private IFiscalModelTypeName accepter;
+//		
+//		private FiscalModelTypeName( String name, IFiscalModelTypeName getter) {
+//			this.name = name;
+//			this.accepter = getter;
+//		}
+//		public String getName() {
+//			return name;
+//		}
+//		private boolean accept(IFiscalModel mod) {
+//			return this.accepter.accept(mod);
+//		}
+//		private static String getName(IFiscalModel mod) {
+//			for (FiscalModelTypeName f : FiscalModelTypeName.values()) {
+//				if (f.accept(mod)) return f.getName();
+//			}
+//			return null;
+//		}
+//	}
+//	public static String getModelName(IFiscalModel fm) {
+//		String name = FiscalModelTypeName.getName(fm);
+//		return AonStringUtils.isNotBlank(name)?name:fm.getModel().getName();
+//	}
 	
 	public static String getModelName(IFiscalModel fm) {
-		String name = FiscalModelTypeName.getName(fm);
-		return AonStringUtils.isNotBlank(name)?name:fm.getModel().getName();
+		return  com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils.getModelName(fm);
 	}
 	
 	public static String getPeriodDescription(IFiscalModel fm) {
@@ -125,6 +129,10 @@ public class FiscalModelUtils {
 		return description;
 	}
 	
+	/**
+	 * @deprecated Use com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader
+	 */
+	@Deprecated
 	public static void paintHeaderTable(SimplePanel headerPanel, IFiscalModel fm) {
 		Administration admon = (fm == null?Administration.COMMON_TERRITORY:fm.getAdministration());
 		headerPanel.clear();
@@ -167,6 +175,7 @@ public class FiscalModelUtils {
 		headerPanel.setWidget(headerTable);
 	}
 
+	@Deprecated
 	public static String getAdministrationBG(Administration admon) {
 		if (admon == Administration.ALAVA) {
 			return AON.AON_CSS.aonFiscalArabaBg();
@@ -179,7 +188,8 @@ public class FiscalModelUtils {
 		} 
 		return AON.AON_CSS.aonFiscalAeatBg();
 	}
-
+	
+	@Deprecated
 	public static String getAdministrationImage(Administration adm) {
 		if (adm == Administration.ALAVA) {
 			return AON.AON_CSS.aonArabaHeaderImage();
@@ -213,7 +223,7 @@ public class FiscalModelUtils {
 		} 
 		return AON.AON_CSS.aonIconAeat();
 	}
-
+	@Deprecated
 	public static String getAdministrationIconBW(Administration adm) {
 		if (adm == Administration.ALAVA) {
 			return AON.AON_CSS.aonIconArabaBW();
@@ -281,6 +291,7 @@ public class FiscalModelUtils {
 		}
 	}
 	
+	@Deprecated
 	public static FlowPanel getAnchorPanel(IFiscalModel model, String label, String href) {
 		FlowPanel p = new FlowPanel();
 		p.setStyleName(AON.AON_CSS.aonPadding2());
@@ -290,7 +301,7 @@ public class FiscalModelUtils {
 		p.add(a);
 		return p;
 	}
-	
+	@Deprecated
 	public static ImageResource getStatusImage(FiscalStatus status) {
 		if (status == FiscalStatus.FINISHED) return AON.AON_RESOURCES.aonIconPointLightGreen();
 		if (status == FiscalStatus.BATCHED) return AON.AON_RESOURCES.aonIconPointLightGreen();
@@ -300,7 +311,7 @@ public class FiscalModelUtils {
 		if (status  == FiscalStatus.MISSING)	return AON.AON_RESOURCES.aonIconQuestion();
 		return AON.AON_RESOURCES.aonIconPointOrange();
 	}
-	
+	@Deprecated
 	public static String getStatusIconStyle(FiscalStatus status) {
 		if (status == FiscalStatus.FINISHED)	return AON.AON_CSS.aonIconPointLightGreen();
 		if (status == FiscalStatus.BATCHED)		return AON.AON_CSS.aonIconPointLightGreen();
@@ -318,7 +329,7 @@ public class FiscalModelUtils {
 //		if (status  == FiscalStatus.SENT )		return AON.AON_CSS.aonIconPointGreen();
 //		return AON.AON_CSS.aonIconPointOrange();
 //	}
-	
+	@Deprecated
 	public static String gettStatusBckColor(FiscalStatus status) {
 		if (status == FiscalStatus.FINISHED)	return AON.AON_CSS.aonBgFinished();
 		if (status == FiscalStatus.BATCHED)		return AON.AON_CSS.aonBgFinished();
@@ -371,8 +382,7 @@ public class FiscalModelUtils {
 		@Override public String visitCustomerCheck() {return "LightYellow";}
 	}
 	private static final IFiscalStatusVisitor<String> FISCAL_STATUS_BACKGROUND_RGB = new FiscalStatusBackgroundRGB();
-
-	public static String gettStatusBckColorRGB(FiscalStatus status) {
+	public static String getStatusBckColorRGB(FiscalStatus status) {
 		return ((status != null) ? status : FiscalStatus.MISSING).visit(FISCAL_STATUS_BACKGROUND_RGB);
 	}
 
@@ -386,8 +396,7 @@ public class FiscalModelUtils {
 		@Override public String visitCustomerCheck() {return "black";}
 	}
 	private static final IFiscalStatusVisitor<String> FISCAL_STATUS_FOREGROUND_RGB = new FiscalStatusForegroundRGB();
-
-	public static String gettStatusFrgColorRGB(FiscalStatus status) {
+	public static String getStatusFrgColorRGB(FiscalStatus status) {
 		return ((status != null) ? status : FiscalStatus.MISSING).visit(FISCAL_STATUS_FOREGROUND_RGB);
 	}
 	
@@ -400,11 +409,23 @@ public class FiscalModelUtils {
 		@Override public String visitUnknown() 	{return AON.CSS.aonIconUnknown();}
 	}
 	private static final IAdministrationVisitor<String> ADMINISTRATION_ICON_STYLE = new AdministrationIconStyle();
-
 	public static String getAdministrationIconStyle(Administration adm) {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_ICON_STYLE);
 	}
 	
+	private static class AdministrationBWIconStyle implements IAdministrationVisitor<String> {
+		@Override public String visitAlava() 	{return AON.CSS.aonIconArabaBw();}
+		@Override public String visitBizkaia() 	{return AON.CSS.aonIconBizkaiaBw();}
+		@Override public String visitGipuzkoa() {return AON.CSS.aonIconGipuzkoaBw();}
+		@Override public String visitNavarra() 	{return AON.CSS.aonIconNavarraBw();}
+		@Override public String visitCommonTerritory() 	{return AON.CSS.aonIconAeatBw();}
+		@Override public String visitUnknown() 	{return AON.CSS.aonIconUnknown();}
+	}
+	private static final IAdministrationVisitor<String> ADMINISTRATION_BW_ICON_STYLE = new AdministrationBWIconStyle();
+	public static String getAdministrationBWIconStyle(Administration adm) {
+		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BW_ICON_STYLE);
+	}
+
 	private static class AdministrationIconResource implements IAdministrationVisitor<DataResource> {
 		@Override public DataResource visitAlava() 		{return AON.AON_SOLUTIONS_RESOURCES.aonIconAraba();}
 		@Override public DataResource visitBizkaia() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconBizkaia();}
@@ -414,11 +435,23 @@ public class FiscalModelUtils {
 		@Override public DataResource visitUnknown() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconUnknown();}
 	}
 	private static final IAdministrationVisitor<DataResource> ADMINISTRATION_ICON_RESOURCE = new AdministrationIconResource();
-
 	public static DataResource getAdministrationIconDataResource(Administration adm) {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_ICON_RESOURCE);
 	}
 
+	private static class AdministrationBWIconResource implements IAdministrationVisitor<DataResource> {
+		@Override public DataResource visitAlava() 		{return AON.AON_SOLUTIONS_RESOURCES.aonIconArabaBw();}
+		@Override public DataResource visitBizkaia() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconBizkaiaBw();}
+		@Override public DataResource visitGipuzkoa() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconGipuzkoaBw();}
+		@Override public DataResource visitNavarra() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconNavarraBw();}
+		@Override public DataResource visitCommonTerritory() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconAeatBw();}
+		@Override public DataResource visitUnknown() 	{return AON.AON_SOLUTIONS_RESOURCES.aonIconUnknown();}
+	}
+	private static final IAdministrationVisitor<DataResource> ADMINISTRATION_BW_ICON_RESOURCE = new AdministrationBWIconResource();
+	public static DataResource getAdministrationBWIconDataResource(Administration adm) {
+		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BW_ICON_RESOURCE);
+	}
+	
 	private static class AdministrationBackgroundStyle implements IAdministrationVisitor<String> {
 		@Override public String visitAlava() 	{return AON.CSS.aonArabaBackgroundColor();}
 		@Override public String visitBizkaia() 	{return AON.CSS.aonBizkaiaBackgroundColor();}
@@ -428,25 +461,8 @@ public class FiscalModelUtils {
 		@Override public String visitUnknown() 	{return AON.CSS.aonAeatBackgroundColor();}
 	}
 	private static final IAdministrationVisitor<String> ADMINISTRATION_BACKGROUND_STYLE = new AdministrationBackgroundStyle();
-
 	public static String getAdministrationBackgroundStyle(Administration adm) {
 		return ((adm != null) ? adm : Administration.COMMON_TERRITORY).visit(ADMINISTRATION_BACKGROUND_STYLE);
-	}
-
-	
-	public static Widget getSplashWidget() {
-		HorizontalPanel hp = new HorizontalPanel();
-		hp.setStyleName(AON.CSS.aonBlockCenter());
-		hp.addStyleName(AON.CSS.aonMarginTop() );
-		Label iconWaitLabel = new Label();
-		iconWaitLabel.setStyleName(AON.CSS.aonLoader());
-		iconWaitLabel.addStyleName(AON.CSS.aonMargin());
-		hp.add(iconWaitLabel);
-		Label textWaitLabel = new Label("Procesando la extracci\u00F3n de datos del documento.");
-		textWaitLabel.setStyleName(AON.CSS.aonMargin());
-		textWaitLabel.addStyleName(AON.CSS.aonBold());
-		hp.add(textWaitLabel);
-		return hp;
 	}
 	
 }

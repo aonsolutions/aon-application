@@ -26,7 +26,6 @@ public class AonErrorPanel extends FlowPanel {
 		add(panel);
 		
 		AonTableButton hide = new AonTableButton(AON.MSG.hide() ,AON.CSS.aonIconClose());
-		hide.addStyleName(AON.AON_CSS.aonIconCommandButton());
 		hide.setTitle(AON.MSG.hide());
 		add(hide);
 		hide.addClickHandler(new ClickHandler() {
@@ -66,6 +65,9 @@ public class AonErrorPanel extends FlowPanel {
 		setVisible(true);
 	}
 	public void addError(String msg) {
+		this.addStyleName(AON.CSS.aonBlockErrorMessage());
+		this.removeStyleName(AON.CSS.aonBlockWarningMessage());
+		this.removeStyleName(AON.CSS.aonBlockInfoMessage());
 		Label error = new Label(msg);
 		panel.add(error);
 	}
@@ -84,8 +86,10 @@ public class AonErrorPanel extends FlowPanel {
 		this.addWarning(caught.getMessage());
 	}
 	public void addWarning(String msg) {
+		this.removeStyleName(AON.CSS.aonBlockErrorMessage());
+		this.removeStyleName(AON.CSS.aonBlockInfoMessage());
+		this.addStyleName(AON.CSS.aonBlockWarningMessage());
 		Label error = new Label(msg);
-		error.setStyleName(AON.AON_CSS.aonErrorPanelWarn());
 		panel.add(error);
 	}
 	
@@ -103,8 +107,10 @@ public class AonErrorPanel extends FlowPanel {
 		this.addInfo(caught.getMessage());
 	}
 	public void addInfo(String msg) {
+		this.removeStyleName(AON.CSS.aonBlockErrorMessage());
+		this.removeStyleName(AON.CSS.aonBlockWarningMessage());
+		this.addStyleName(AON.CSS.aonBlockInfoMessage());
 		Label error = new Label(msg);
-		error.setStyleName(AON.AON_CSS.aonErrorPanelInfo());
 		panel.add(error);
 	}
 

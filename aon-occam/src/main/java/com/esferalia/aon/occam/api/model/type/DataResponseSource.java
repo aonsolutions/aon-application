@@ -28,7 +28,8 @@ public enum DataResponseSource implements Serializable{
 	ANALYTIC_ACCOUNTING,
 	INVOICE, // NOT IN USE
 	IMPORTATION,
-	NOTIFICATION_TOKEN
+	NOTIFICATION_TOKEN,
+	MOD202,
 	;
 
 

@@ -24,7 +24,6 @@ import { AonColor } from '../../components/aon-color.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonSlider } from '../../components/aon-slider.js';
-import { AonInput } from '../../components/aon-input.js';
 
 export class AonInvoicePrint extends AonElement {
 
@@ -241,7 +240,7 @@ export class AonInvoicePrint extends AonElement {
     table.addCell(registrationData, 1).style.height = '60px';;
     registrationData.setWidth('135px');
     registrationData.onChange(() => {
-      this.printConfiguration.recordData = recordData.checked;
+      this.printConfiguration.recordData = registrationData.checked;
       // if(this.autosave) 
         this.save();
       this.dispatchEvent(new Event(EVENT.CHANGE));
@@ -324,6 +323,25 @@ export class AonInvoicePrint extends AonElement {
     });
     bt.addCell(personalized);    
     personalized.disabled = this.printConfiguration.theme.theme !== Theme.PERSONALIZED;
+
+    table.addRow();
+
+    let div = this.createElement(TAG.DIV, this.LEGAL);
+    let divTitle = this.createElement(TAG.DIV, this.LEGAL_TITLE);
+    divTitle.style.fontSize = '14px';
+    divTitle.innerHTML = 'Aviso Legal';
+    div.appendChild(divTitle);
+
+    let textarea = this.createElement('textarea', this.LEGAL_TEXTAREA);
+    textarea.style.width = '100%';
+    textarea.style.height = '100px';
+    textarea.value = this.printConfiguration.legal;
+    textarea.addEventListener(EVENT.CHANGE, () => {
+      this.printConfiguration.legal = textarea.value;
+      this.save();
+    });
+    div.appendChild(textarea)
+    table.addCell(div, 2);
 
     table.addRow(); 
 

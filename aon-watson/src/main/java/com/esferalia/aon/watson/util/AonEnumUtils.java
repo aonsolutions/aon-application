@@ -17,6 +17,12 @@ public class AonEnumUtils {
 		return (value == 1);
 	}
 
+	public static boolean getBoolean(Boolean value) {
+		if (value == null)
+			return false;
+		return (value.booleanValue());
+	}
+
 	public static <T extends Enum<?>, N extends Number> T enumValue(Class<T> clazz, N n){
 		if ( n == null )
 			return null;

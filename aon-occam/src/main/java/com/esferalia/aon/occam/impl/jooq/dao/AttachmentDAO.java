@@ -28,6 +28,7 @@ import org.jooq.Record7;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectField;
 import org.jooq.SelectJoinStep;
+import org.jooq.conf.ParamType;
 
 import com.esferalia.aon.jooq.tables.records.AuthAttachRecord;
 import com.esferalia.aon.jooq.tables.records.ContractAttachRecord;
@@ -186,6 +187,10 @@ public class AttachmentDAO {
 	public static Stream<Attach> getDataAttachStream(AONContext ctx, AttachFilter filter, Boolean withData){	
 		SelectJoinStep<Record> select = ctx.getDslContext().select(dataAttachWD).from(DATA_ATTACH);
 		if(withData) select = ctx.getDslContext().select().from(DATA_ATTACH);
+		System.out.println(
+				DATA_ATTACH_PROPERTIES.build(select, filter)
+				.getSQL(ParamType.INLINED)
+				);
 		return DATA_ATTACH_PROPERTIES.build(select, filter).fetchInto(DATA_ATTACH).stream().map(new FullDataAttachFiller());
 	}
 	
@@ -722,8 +727,8 @@ public class AttachmentDAO {
 		ctx.getDslContext().delete(SEPE_BATCH_ATTACH).where(SEPE_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 	
-	public static void deleteDataAttach(AONContext ctx, AttachFilter filter){
-		ctx.getDslContext().delete(DATA_ATTACH).where(DATA_ATTACH_PROPERTIES.getConditions(filter)).execute();
+	public static int deleteDataAttach(AONContext ctx, AttachFilter filter){
+		return ctx.getDslContext().delete(DATA_ATTACH).where(DATA_ATTACH_PROPERTIES.getConditions(filter)).execute();
 	}
 	
 	public static void deleteRegistryAttachTag(AONContext ctx, Integer rattachId){

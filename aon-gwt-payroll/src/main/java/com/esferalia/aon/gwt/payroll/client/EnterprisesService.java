@@ -157,7 +157,7 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId);
 
-	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId);
+	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId)  throws IllegalArgumentException;
 
 	List<SSBonusData> getBonusConcepts(String currentDomainName);
 
@@ -237,7 +237,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate);
 
-	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId);
+	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId) throws IllegalArgumentException;
 
 	void deleteSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf);
 
@@ -257,7 +257,9 @@ public interface EnterprisesService extends RemoteService {
 
 	void setComunicationIT(String currentDomainName, String currentUser, ITEmployee itEmployee, IT it);
 
-	int getServiAgreement(String currentDomainName, String serviAgreementCode) throws IllegalArgumentException;
+	int getServiAgreement(String currentDomainName, String serviAgreementCode, List<Integer> selectedDates);
+	
+	List<Integer> getServiAgreementDates(String serviAgreementCode) throws IllegalArgumentException;
 
 	boolean checkIfRectificative(String currentDomainName, Date findingDate, ArrayList<Integer> selectedCCCList);
 
@@ -323,4 +325,6 @@ public interface EnterprisesService extends RemoteService {
 	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf) throws IllegalArgumentException;
 
 	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf) throws IllegalArgumentException;
+
+	
 }

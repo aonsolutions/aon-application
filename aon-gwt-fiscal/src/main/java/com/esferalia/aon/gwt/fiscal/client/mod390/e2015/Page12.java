@@ -4,18 +4,13 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.shared.AonData;
-import com.esferalia.aon.gwt.fiscal.client.CertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -52,15 +47,15 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 
 	private Mod3902015 model;
 	private API API;
-	private AonData aonData;
-	private Boolean test = false;
 	
-	public Page12(Mod3902015 m390, AonData aonData,IMod3902015CallBack callback) {
+	public Page12(Mod3902015 m390, Model390ModuleOptions options,IMod3902015CallBack callback) {
 		super();
 		setCallback(callback);
-		this.API = new API(GWT.getModuleBaseURL(), aonData.getMd5(),
-				aonData.getDomain().getName(), aonData.getDomain().getId(),
-				aonData.getUser().getLogin());
+		this.API = new API(GWT.getModuleBaseURL(), 
+				options.getConfiguration().getMd5(),
+				options.getConfiguration().getDomain().getName(), 
+				options.getConfiguration().getDomain().getId(),
+				options.getConfiguration().getUser().getLogin());
 		this.model = m390;
 
 		setWidth("98%");	
@@ -122,12 +117,12 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
 		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getModel().getAdministration()));
+		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()));
 		tab.setWidget(0, 0, title);
 
 		int row = 1;
 		Label icon1 = new Label();
-		icon1.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
+		icon1.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
 		tab.setWidget(row, 0, icon1 );
 		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 
@@ -138,14 +133,11 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 		button1.addStyleName(AON.AON_CSS.aonBorderNone());
 		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
 		button1.addStyleName(AON.AON_CSS.aonClickable());
-		button1.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (getModel().isFinished() || getModel().isSent()) {
-					submitForm(MODEL390_FILE);
-				} else {
-					getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-				}
+		button1.addClickHandler( event -> {
+			if (getModel().isFinished() || getModel().isSent()) {
+				submitForm(MODEL390_FILE);
+			} else {
+				getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 			}
 		});
 		p1.add(button1);
@@ -155,7 +147,7 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 		row++;
 
 		Label icon2 = new Label();
-		icon2.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
+		icon2.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
 		tab.setWidget(row, 0, icon2 );
 		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		FlowPanel p2 = new FlowPanel();
@@ -165,15 +157,12 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 		button2.addStyleName(AON.AON_CSS.aonBorderNone());
 		button2.addStyleName(AON.AON_CSS.aonEvenBackground());
 		button2.addStyleName(AON.AON_CSS.aonClickable());
-		button2.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (getModel().isFinished() || getModel().isSent()) {
-					submitAEAT(MODEL390_PRINT_AEAT);
-					getCallback().showVisorAEAT();
-				} else {
-					getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-				}
+		button2.addClickHandler( event -> {
+			if (getModel().isFinished() || getModel().isSent()) {
+				submitAEAT(MODEL390_PRINT_AEAT);
+				getCallback().showVisorAEAT();
+			} else {
+				getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 			}
 		});
 
@@ -181,77 +170,7 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 		tab.setWidget(row, 1, p2 );
 		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		tab.getFlexCellFormatter().setColSpan(2, 1, 2);
-		row++;
-
-		// CON FIRMA NO CRIPTOGRAFICA
-		Label icon3 = new Label();
-		icon3.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
-		tab.setWidget(row, 0, icon3 );
-		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		FlowPanel p3 = new FlowPanel();
-		p3.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button3 = new Button("Presentaci\u00F3n via Agencia Tributaria con firma no criptogr\u00e1fica (a partir de los datos guardados).");
-		button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button3.addStyleName(AON.AON_CSS.aonBorderNone());
-		button3.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button3.addStyleName(AON.AON_CSS.aonClickable());
-		button3.addStyleName("aon-icon-beta-text");
-		button3.getElement().getStyle().setPaddingLeft(20, Unit.PX);
-		button3.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {		
-				CertificationPopup certPopup = new CertificationPopup(getAPI(), getModel().getName(), getModel().getDocument(), false) {
-								
-					@Override
-					protected void onCancel() {
-					
-					}
-							
-					@Override
-					protected void onAccept() {
-						if(getModel().isSent()) {
-							getCallback().showInfoPanel("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");
-						} else if (getModel().isFinished()) {
-							submitAEAT(MODEL390_PRINT_AEAT, getCert(), getPass(), getDocument(), getName());
-							getCallback().showVisorAEAT();
-						} else {
-							getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-						}	
-					}
-				};
-				certPopup.center();
-			}
-		});
-
-		p3.add(button3);
-		tab.setWidget(row, 1, p3 );
-		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		
-		MOD390Service.presentationFile(getCallback().getDomainName(), getCallback().getDomainId(), getCallback().getUser(), getModel().getId(), new AsyncCallback<Integer>() {
-
-			@Override public void onFailure(Throwable caught) {}
-
-			@Override
-			public void onSuccess(Integer result) {
-				if(result > 0) {
-					Button download2 = new Button();
-					download2.setStyleName("aon-icon-mail-save");
-					download2.addStyleName(AON.AON_CSS.aonIconCommandButton());
-					download2.getElement().getStyle().setPaddingTop(16, Unit.PX);
-					download2.addClickHandler(new ClickHandler() {
-							
-						@Override
-						public void onClick(ClickEvent event) {
-							getAPI().getFiscal().download(result +"");
-						}
-					});
-					tab.setWidget(3, 2, download2 );
-					tab.getCellFormatter().setStyleName(3, 2, AON.AON_CSS.aonPanelGridEven());
-				} else tab.getFlexCellFormatter().setColSpan(3, 1, 2);
-			}
-		});
-		row++;
-
 		panel.add(tab);
 		return panel;
 	}
@@ -276,13 +195,13 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
 		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
 		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getModel().getAdministration()));
+		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()));
 		tab.setWidget(0, 0, title);
 		
 		int row = 1;
 		for (Pair<String, String> pair : getInformationLinks()) {
 			Label icon = new Label();
-			icon.addStyleName(FiscalModelUtils.getAdministrationIcon(getModel().getAdministration()));
+			icon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
 			tab.setWidget(row, 0, icon );
 			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 
@@ -300,12 +219,12 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 	}
 	
 	public LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<Pair<String, String>>();
-		list.add(new Pair<String, String>("Tr\u00E1mites."
+		LinkedList<Pair<String, String>> list = new LinkedList<>();
+		list.add(new Pair<>("Tr\u00E1mites."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/G412.shtml"));
-		list.add(new Pair<String, String>("Informaci\u00F3n general." 
+		list.add(new Pair<>("Informaci\u00F3n general." 
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/G412.shtml"));
-		list.add(new Pair<String, String>("Ficha."
+		list.add(new Pair<>("Ficha."
 				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G412.shtml"));
 		return list;
 	}
@@ -333,15 +252,14 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 		passAeatHidden.setValue(pass);
 		nameAeatHidden.setValue(name);
 		documentAeatHidden.setValue(document);
-		testHidden.setValue(getTest() ? "1" : "0");
+		testHidden.setValue("1");
 		aeatForm.submit();
 	}
 	
 	
 	@Override
 	public void refresh(Mod3902015 m390) {
-		// TODO Auto-generated method stub
-		
+		// Auto-generated method stub
 	}
 	
 	public IMod3902015CallBack getCallback() {
@@ -359,22 +277,9 @@ public class Page12 extends FlowPanel implements IMod3902015Page {
 	public API getAPI() {
 		return API;
 	}
-	
-	public AonData getAonData() {
-		return aonData;
-	}
-	
-	public Boolean getTest() {
-		return test;
-	}
-
-
-	public void setTest(Boolean test) {
-		this.test = test;
-	}
 
 	@Override
 	public void populate(Mod3902015 m390) {
-		
+		// Nothing
 	}
 }

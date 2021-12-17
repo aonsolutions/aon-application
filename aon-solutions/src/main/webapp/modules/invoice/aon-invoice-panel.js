@@ -419,7 +419,7 @@ export class AonInvoicePanel extends AonElement {
 		  const f = await downscaleImage(file, undefined, undefined, undefined);
 		  const data = {
 				file:f,
-				invoice: new Invoice('recibida')
+				invoice: new Invoice().setType('recibida')
 		   };
 		   let aonInvoice = document.getElementById('aonInvoice');
 		   aonInvoice.startLoader();
@@ -445,7 +445,7 @@ export class AonInvoicePanel extends AonElement {
 		if (file) {
 			const data = {
 				file,
-				invoice: new Invoice('recibida')
+				invoice: new Invoice().setType('recibida')
 			};
 			if(this.isMobile()) {
 				if (data.file.contentType.indexOf("image") >= 0) {

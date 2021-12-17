@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 
 import eus.bizkaia.ogasuna.sii.documentos.respuestasuministro.EstadoRegistroType;
@@ -58,13 +59,13 @@ import net.aonsolutions.aon.sii.SendType;
 
 public class SIIBizkaiaPost extends SIIPost{
 
-	public static SIIBizkaiaPost getInstance(byte[] cert, String pass) {
-		return new SIIBizkaiaPost(cert, pass);
+	public static SIIBizkaiaPost getInstance(SiiConfiguration siiConfiguration) {
+		return new SIIBizkaiaPost(siiConfiguration);
 	}
 	
 
-	public SIIBizkaiaPost(byte[] cert, String pass) {
-		super(cert, pass);
+	public SIIBizkaiaPost(SiiConfiguration siiConfiguration) {
+		super(siiConfiguration);
 	}
 	
 	// -------------------- FACTURAS EMITIDAS

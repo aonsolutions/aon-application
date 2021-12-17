@@ -164,7 +164,7 @@ export class AonInvoiceCommunication extends AonElement {
         siiTest.id = this.SII_TEST;
 		siiTest.title = MSG.TEST_ENVIRONMENT;
 		siiTest.checked = this.configuration.sii.test;
-        siiTest.disabled = true;
+        siiTest.disabled = !this.isBeta();
         if(!this.configuration.sii.active) {
             siiTest.classList.add(CSS.AON_NONE);
         }

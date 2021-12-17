@@ -198,6 +198,12 @@ export const SEND_INVOICE = {
     icon: MATERIAL_ICONS.MAIL
 };
 
+export const TICKETBAI = {
+    id: 'Ticketbai',
+    name: MSG.TICKETBAI,
+    icon: MATERIAL_ICONS.QR_CODE_2
+};
+
 export const SEND_EMAIL = {
     id: CONSTANT.SEND.initCap(),
     name: MSG.SEND,

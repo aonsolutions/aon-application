@@ -188,15 +188,15 @@ public class BidoqRequest {
 
 				String account = calculateAccount(detail.optString("account"));
 
-				Account outputAccount = aonCtx.getDefaultChargedVatAccount();
+				Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
 				if(outputAccount == null || outputAccount.getId() == null) {
 					outputAccount = getIVArepercutido(domain, user);
 				}
-				Account inputAccount = aonCtx.getDefaultPaidVatAccount();
+				Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
 				if(inputAccount == null || outputAccount.getId() == null) {
 					inputAccount = getIVAsoportado(domain, user);
 				}
-				Account adjAccount = aonCtx.getVatNegativeAdjustAccount();
+				Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
 				Account expAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), account);
 				if(expAccount == null) {
 					expAccount = new Account()
@@ -917,7 +917,7 @@ public class BidoqRequest {
 	}
 	
 	private static Account getDetaultPaidRetAccount(Domain domain, User user, AonConfiguration aonCtx) {
-		Account acc = aonCtx.getDefaultPaidRetAccount();
+		Account acc = aonCtx.accounting().getDefaultPaidRetAccount();
 		if(acc == null || acc.getId() == null) {
 			acc = getRaidRet(domain, user);
 		}
@@ -925,7 +925,7 @@ public class BidoqRequest {
 	}
 	
 	private static Account getDefaultChargedRetAccount(Domain domain, User user, AonConfiguration aonCtx) {
-		Account acc = aonCtx.getDefaultChargedRetAccount();
+		Account acc = aonCtx.accounting().getDefaultChargedRetAccount();
 		if(acc == null || acc.getId() == null) {
 			acc = getChargedRet(domain, user);
 		}
@@ -1331,15 +1331,15 @@ public class BidoqRequest {
 
 			String account = detail.opt("account") != null ? detail.optString("account") : category;
 
-			Account outputAccount = aonCtx.getDefaultChargedVatAccount();
+			Account outputAccount = aonCtx.accounting().getDefaultChargedVatAccount();
 			if (outputAccount == null || outputAccount.getId() == null) {
 				outputAccount = getIVArepercutido(domain, user);
 			}
-			Account inputAccount = aonCtx.getDefaultPaidVatAccount();
+			Account inputAccount = aonCtx.accounting().getDefaultPaidVatAccount();
 			if (inputAccount == null || outputAccount.getId() == null) {
 				inputAccount = getIVAsoportado(domain, user);
 			}
-			Account adjAccount = aonCtx.getVatNegativeAdjustAccount();
+			Account adjAccount = aonCtx.accounting().getVatNegativeAdjustAccount();
 			Account expAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), account);
 			if (expAccount == null) {
 				expAccount = new Account().setCode(account)

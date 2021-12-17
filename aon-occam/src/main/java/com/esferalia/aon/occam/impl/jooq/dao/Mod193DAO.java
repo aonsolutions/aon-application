@@ -24,7 +24,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel193Record;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.FiscalParameters;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
@@ -565,17 +565,17 @@ public class Mod193DAO {
 
 	public static Mod193 initialize(AONContext ctx, int year) {
 		Mod193 mod193 = new Mod193();
-		FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-		mod193.setEnterprise(params.getCompany());
+		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
+		mod193.setEnterprise(conf.getCompany().getId());
 		mod193.setDomain(ctx.getDomainId());
-		mod193.setDocument(params.getDocument());
-		mod193.setName(AonStringUtils.left(params.getName(), FS_MODEL193.NAME.getDataType().length()));
+		mod193.setDocument(conf.getCompany().getDocument());
+		mod193.setName(AonStringUtils.left(conf.getCompany().getName(), FS_MODEL193.NAME.getDataType().length()));
 		mod193.setYear(year);
 		mod193.setReceipt("1930000000001");
-		mod193.setAdministration(params.getAdministration()!=null?Administration.safeValueOf(params.getAdministration()):Administration.COMMON_TERRITORY);
-		mod193.setContactPerson(AonStringUtils.left(params.getContactPerson(),FS_MODEL193.CONTACT_PERSON.getDataType().length()));
-		mod193.setContactPhone(AonStringUtils.left(params.getContactPhone(),FS_MODEL193.CONTACT_PHONE.getDataType().length()));
-		mod193.setContactMail(AonStringUtils.left(params.getContactMail(),FS_MODEL193.CONTACT_MAIL.getDataType().length()));
+		mod193.setAdministration(conf.fiscal().getAdministration()!=null?Administration.safeValueOf(conf.fiscal().getAdministration()):Administration.COMMON_TERRITORY);
+		mod193.setContactPerson(AonStringUtils.left(conf.fiscal().getContactPerson(),FS_MODEL193.CONTACT_PERSON.getDataType().length()));
+		mod193.setContactPhone(AonStringUtils.left(conf.fiscal().getContactPhone(),FS_MODEL193.CONTACT_PHONE.getDataType().length()));
+		mod193.setContactMail(AonStringUtils.left(conf.fiscal().getContactMail(),FS_MODEL193.CONTACT_MAIL.getDataType().length()));
 		return mod193;
 	}
 

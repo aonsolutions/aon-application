@@ -253,9 +253,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	
 	void generateCertifaca2(String currentDomainName, Integer contractId, Certifica2Info certifica2Info, AsyncCallback<String> callback);
 	
-	void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	void downloadTA_IDC(String currentDomainName, String currentUser, String situation, String regimen, String ctaCti, String nss, Date fecha, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
-	void getEmployeeTa(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException;
+	void getEmployeeTa(String domain,  String user,  String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException;
 
 	void getEmployeeIdc(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback) throws IllegalArgumentException;
 
@@ -266,7 +266,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback);
 
 	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl,
-			AsyncCallback<List<ContractAttach>> callback);
+			AsyncCallback<List<ContractAttach>> callback) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
@@ -288,7 +288,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			String nss, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation, String regimen,
-			String ctaCti, String nss, AsyncCallback<Void> callback) throws IllegalArgumentException;
+			String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void cambioCoef(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 			String coef, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;

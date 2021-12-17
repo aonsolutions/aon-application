@@ -40,7 +40,7 @@ public class TbaiConfigurationDAO {
 
 	public static TbaiConfiguration save(AONContext ctx, TbaiConfiguration tc) {
 		ctx.checkWrite();	
-
+		
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.TBAI_ACTIVE.toString(),
 				Boolean.toString(tc.isActive()));
@@ -48,6 +48,12 @@ public class TbaiConfigurationDAO {
 		AppParamDAO.insertApplicationParameter(ctx, 
 				AppParam.TBAI_TEST.toString(),
 				Boolean.toString(tc.isTest()));
+		
+		if(tc.isActive()) {
+			AppParamDAO.insertApplicationParameter(ctx, 
+				AppParam.APP_SALE_INVOICE_TEMPLATE_PARAM.toString(),
+				"saleInvoice");
+		}
 		
 		return tc;
 	}
