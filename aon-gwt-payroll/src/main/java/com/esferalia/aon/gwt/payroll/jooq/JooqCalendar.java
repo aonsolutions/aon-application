@@ -23,6 +23,7 @@ import java.util.TreeMap;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
@@ -87,16 +88,19 @@ public class JooqCalendar {
 
 		CalendarDraft calendarDraft = new CalendarDraft();
 
-		Record record = dslContext.select()
+		Result<Record> records = dslContext.select()
 				.from(PAYROLL_WORKPLACE)
 				.join(CALENDAR)
 				.on(PAYROLL_WORKPLACE.CALENDAR.eq(CALENDAR.ID))
-				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId)).fetchOne();
+				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId))
+				.orderBy(PAYROLL_WORKPLACE.ID.desc())
+				.fetch();
 
 		List<HolidayDraft> holidays = new LinkedList<HolidayDraft>();
 
-		if (record != null) {
+		if (records.isNotEmpty()) {
 
+			Record record = records.get(0);
 			Integer calendar = record.getValue(PAYROLL_WORKPLACE.CALENDAR);
 
 			if (calendar != null) {
@@ -196,16 +200,20 @@ public class JooqCalendar {
 
 		DSLContext dslContext = DSL.using(conn, getDefaultSettings());
 
-		PayrollWorkplaceRecord result = dslContext
+		Result<PayrollWorkplaceRecord> resultRecords = dslContext
 				.selectFrom(PAYROLL_WORKPLACE)
-				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId)).fetchOne();
+				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId))
+				.orderBy(PAYROLL_WORKPLACE.ID.desc())
+				.fetch();
 
-		if (result == null) { // No hay registro del workplace en
+		if (resultRecords.isEmpty()) { // No hay registro del workplace en
 			// payroll_workplace
 			insertHolidayWithoutCalendar(dslContext, domain, workplaceId,
 					holidayDescription, holidayListBox, map);
-		}
-			else { // Hay un registro en payroll_workplace
+		} else { // Hay un registro en payroll_workplace
+				
+				PayrollWorkplaceRecord result = resultRecords.get(0);
+				
 				Integer calendar = result.getValue(PAYROLL_WORKPLACE.CALENDAR);
 
 				if (calendar == null) {
