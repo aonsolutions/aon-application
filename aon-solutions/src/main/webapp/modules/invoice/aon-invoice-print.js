@@ -24,6 +24,7 @@ import { AonColor } from '../../components/aon-color.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { AonCard } from '../../components/aon-card.js';
 import { AonSlider } from '../../components/aon-slider.js';
+import { AonDialog } from '../../components/aon-dialog.js';
 
 export class AonInvoicePrint extends AonElement {
 
@@ -37,6 +38,7 @@ export class AonInvoicePrint extends AonElement {
 
   FILE;
   VIEWER;
+  DIALOG;
   printConfiguration;
 
   get id() {
@@ -89,6 +91,7 @@ export class AonInvoicePrint extends AonElement {
     this.PERSONALIZED = this.id + 'Personalized';
     this.FILE = this.id + 'File';
     this.VIEWER = this.id + 'Viewer';
+    this.DIALOG = this.id + "Dialog";
   }
 
   build() {
@@ -420,8 +423,11 @@ export class AonInvoicePrint extends AonElement {
 
   buildThemeDialog() {
     let div = this.createElement(TAG.DIV);
-
-    let d = this.getApplication().getDialog();;
+    let d = this.getElement(this.DIALOG);
+    if(!d) {
+      d = this.createAonElement(new AonDialog(), this.DIALOG);
+      this.appendChild(d);
+    }
 		d.clear();
 		if(!this.isMobile()) d.width = '450px';
 		d.setTitle(MSG.PERSONALIZED_THEME);
