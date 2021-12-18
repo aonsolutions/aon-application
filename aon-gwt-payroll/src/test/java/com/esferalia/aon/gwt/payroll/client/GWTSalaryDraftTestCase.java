@@ -591,6 +591,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear,
+					AsyncCallback<Date> asyncCallback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 		

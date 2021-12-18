@@ -991,4 +991,11 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		
 	}
 
+	@Override
+	public Date checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -381,8 +381,9 @@
 		<g:DockLayoutPanel unit="PX" debugId='draftPanel' ui:field='draftPanel'>
 			<g:center>
 				<g:ScrollPanel styleName="{style.editor}" debugId='draftScrollPane' ui:field='draftScrollPane'>
-					<g:VerticalPanel styleName="{style.document}">
-						<g:VerticalPanel width="auto">
+					<g:VerticalPanel width="100%">
+						<g:HTMLPanel ui:field="messageContainer" />
+						<g:VerticalPanel width="auto" styleName="{style.document}">
 
 							<g:Grid width="100%">
 								<g:row>
