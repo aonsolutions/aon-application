@@ -273,7 +273,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private DomainEmployeesServiceAsync employeesService;
 	private DomainEnterprisesServiceAsync enterprisesService;
 
-	private boolean shorten = false;
+//	private boolean shorten = false;
 	private boolean formers = true;
 	private boolean endDate = true;
 	private boolean extended = false;
@@ -418,9 +418,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	}
 	
-	public void setShorten(boolean shorten) {
-		this.shorten = shorten;
-	}
+//	public void setShorten(boolean shorten) {
+//		this.shorten = shorten;
+//	}
 
 	public void addListener(Listener listener) {
 		listeners.add(listener);
@@ -1759,24 +1759,24 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			private MenuItem inactiveMenuItem;
 			private MenuItem endDateMenuItem;
 			private MenuItem filterMenuItem;
-			private MenuItem shortenMenuItem;
+//			private MenuItem shortenMenuItem;
 			private FilterDialog filterDialog;
 
 			{
 				MenuBar menuBar = new MenuBar(true);
 
-				shortenMenuItem = new MenuItem("Reducido", new Command() {
-					@Override
-					public void execute() {
-						shorten = !shorten;
-						shortenTree(shorten);
-						formerMenuItem.setStyleName("aon-MenuItemCheckYes", shorten);
-						popup.hide();
-					}
-				});
-				shortenMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
-				shortenMenuItem.ensureDebugId("shortenMenuItem");
-				menuBar.addItem(shortenMenuItem);
+//				shortenMenuItem = new MenuItem("Reducido", new Command() {
+//					@Override
+//					public void execute() {
+//						shorten = !shorten;
+//						shortenTree(shorten);
+//						shortenMenuItem.setStyleName("aon-MenuItemCheckYes", shorten);
+//						popup.hide();
+//					}
+//				});
+//				shortenMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
+//				shortenMenuItem.ensureDebugId("shortenMenuItem");
+//				menuBar.addItem(shortenMenuItem);
 
 				endDateMenuItem = new MenuItem("Fecha Fin", new Command() {
 					@Override
@@ -1913,34 +1913,34 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return Math.max(visibleItems + 1, MIN_EMPLOYEE_LIMIT);
 	}
 
-	private void shortenTree(boolean shorten) {
-		for (int i = 0; i < tree.getItemCount(); i++) {
-			shortenTreeItem(tree.getItem(i), shorten);
-		}
-	}
-
-	private void shortenTreeItem(TreeItem treeItem, boolean shorten) {
-		Object userObject = treeItem.getUserObject();
-		treeItem.setVisible(
-				(!shorten ) || 
-				(userObject instanceof CCC) ||
-				(userObject instanceof Activity) ||
-				(userObject instanceof Workplace) ||
-				(userObject instanceof Enterprise) || 
-				(userObject instanceof EmployeeDraftObject) 
-		);
-		
-		if ( userObject instanceof EmployeeDraftObject  ) {
-			NodeList<Element> imgs = treeItem.getElement().getElementsByTagName("img");
-			for ( int i = 0; i < imgs.getLength(); i++ ) {
-				imgs.getItem(i).getStyle().setDisplay(shorten ? Display.NONE: Display.INITIAL);
-			}
-		}
-		
-		for (int i = 0; i < treeItem.getChildCount(); i++) {
-			shortenTreeItem(treeItem.getChild(i), shorten);
-		}
-	}
+//	private void shortenTree(boolean shorten) {
+//		for (int i = 0; i < tree.getItemCount(); i++) {
+//			shortenTreeItem(tree.getItem(i), shorten);
+//		}
+//	}
+//
+//	private void shortenTreeItem(TreeItem treeItem, boolean shorten) {
+//		Object userObject = treeItem.getUserObject();
+//		treeItem.setVisible(
+//				(!shorten ) || 
+//				(userObject instanceof CCC) ||
+//				(userObject instanceof Activity) ||
+//				(userObject instanceof Workplace) ||
+//				(userObject instanceof Enterprise) || 
+//				(userObject instanceof EmployeeDraftObject) 
+//		);
+//		
+//		if ( userObject instanceof EmployeeDraftObject  ) {
+//			NodeList<Element> imgs = treeItem.getElement().getElementsByTagName("img");
+//			for ( int i = 0; i < imgs.getLength(); i++ ) {
+//				imgs.getItem(i).getStyle().setDisplay(shorten ? Display.NONE: Display.INITIAL);
+//			}
+//		}
+//		
+//		for (int i = 0; i < treeItem.getChildCount(); i++) {
+//			shortenTreeItem(treeItem.getChild(i), shorten);
+//		}
+//	}
 	
 
 	/**
