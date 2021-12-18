@@ -190,6 +190,9 @@ export const MESSENGER = {
     }, {
       value: 'Empresa',
       name: 'Empresa'
+    }, {
+      value: 'Empleado',
+      name: 'Empleado'
     }],
   price: ' ', //'-',
   disabled: true,

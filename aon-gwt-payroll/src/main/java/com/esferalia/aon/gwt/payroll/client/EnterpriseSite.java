@@ -154,14 +154,27 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	}
 
 	@Override
-	public void onCostsSelected(CostDocuments docs) {
+	public void onEnterpriseCostsSelected(CostDocuments docs) {
 		cost.setTitle("Costes");
 		detailPanel.setWidget(cost);
 		cost.setCostDocuments(docs);
 	}
 	
 	@Override
-	public void onStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
+	public void onWorkplaceCostsSelected(CostDocuments docs) {
+		cost.setTitle("Costes");
+		detailPanel.setWidget(cost);
+		cost.setCostDocuments(docs);
+	}
+
+	@Override
+	public void onWorkplaceStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
+		detailPanel.setWidget(stats);
+		stats.setStatistics(statistics);
+	}	
+
+	@Override
+	public void onEnterpriseStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
 		detailPanel.setWidget(stats);
 		stats.setStatistics(statistics);
 	}	

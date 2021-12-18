@@ -1,5 +1,6 @@
 import { request, post, put, get, getToken} from "./request.js";
-import { API_URL } from "../environments/environments.js";
+import { API } from "../environments/environments.js";
+import * as LS from './localStorageService.js';
 
 let companies;
 let company;
@@ -15,7 +16,7 @@ export const clearCompanies = () => companies = undefined;
 export const clearCompany = () => companies = undefined;
 export const clearDurum = () => durum = undefined;
 
-export const getDomainCompanies = (filter) => get(`${API_URL}/company`, filter);
+export const getDomainCompanies = (filter) => get(API.COMPANY, filter);
 
 export const getCompanies = () => {
   return new Promise((resolve, reject) => {
@@ -24,7 +25,7 @@ export const getCompanies = () => {
     } else {
       request(
         "GET",
-        `${API_URL}/company`,
+        API.COMPANY,
         getToken(),
         undefined,
         (r, error) => {
@@ -44,55 +45,46 @@ export const getCompanies = () => {
 };
 
 export const getCompany = () => {
+  const domain = LS.getDomainId();
   return new Promise((resolve, reject) => {
-    if (!company && localStorage.getItem("aon_domain_id")) {
-      getCompanies().then((companies) => {
-        for (let i = 0; i < companies.length; i++) {
-          if (companies[i].id == localStorage.getItem("aon_domain_id")) {
-            setCompany(companies[i]);
-          }
-        }
-      });
-    }
-    resolve(company);
+    if(!domain) resolve({});
+    else if (company && company.domain && domain === company.domain.id)
+      resolve(company);
+    else 
+      get(API.COMPANY_ONE, {}).then(r => {
+        company = r;
+        resolve(r);
+      }).catch(e => reject(e));
   });
-};
+}
 
-export const setDomainApp = (data) => post(`${API_URL}/company/app`, data);
+export const setDomainApp = (data) => post(API.COMPANY_APP, data);
 
-export const getDomainNotice = (data) => get(`${API_URL}/company/notice`, data);
+export const getDomainNotice = (data) => get(API.COMPANY_NOTICE, data);
 
-export const getCompanyOne = (data) => get(`${API_URL}/company/one`, data);
-export const getCompanyMedia = (data) => get(`${API_URL}/company/media`, data);
-export const getCompanyAddress = (data) => get(`${API_URL}/company/address`, data);
+export const getCompanyOne = (data) => get(API.COMPANY_ONE, data);
+export const getCompanyMedia = (data) => get(API.COMPANY_MEDIA, data);
+export const getCompanyAddress = (data) => get(API.COMPANY_ADDRESS, data);
 
-export const getCompanyBanks = (data) => get(`${API_URL}/company/banks`, data);
+export const getCompanyBanks = (data) => get(API.COMPANY_BANKS, data);
 
-export const getCompanyActivities = (data) => get(`${API_URL}/company/activities`, data);
+export const getCompanyActivities = (data) => get(API.COMPANY_ACTIVITIES, data);
 
-export const saveCompany = (data) => put(`${API_URL}/company`, data)
+export const saveCompany = (data) => put(API.COMPANY, data)
 
 // export const getDomainUserRoles = (data) => get(`${API_URL}/company/approles`, data);
 
 export const getDomainUserRoles = (data) => {
-
-  let company = JSON.parse(localStorage.getItem("company"));
+  const domain = LS.getDomainId();
   return new Promise((resolve, reject) => {
-    if(!company && !localStorage.getItem("aon_domain_id")){
-      resolve({});
-    } else if (durum && company && durum.domain === company.id && !data.reload) {
+    if(!domain) resolve({});
+    else if (durum && durum.domain === domain && !data.reload)
       resolve(durum);
-    } else {
-      request("GET", `${API_URL}/company/approles`, getToken(), data, (result, error) => {
-        try{
-          if (error) reject(error);
-          else {
-            durum = JSON.parse(result);
-            resolve(durum);
-          }
-        } catch(e){reject(e);}
-      });
-    }
+    else 
+      get(API.COMPANY_APPROLES, data).then(r => {
+        durum = r;
+        resolve(r);
+      }).catch(e => reject(e));
   });
 }
 
@@ -108,7 +100,7 @@ export const getDomainApps = (domain) => {
     return new Promise((resolve, reject) => {
       request(
         "GET",
-        `${API_URL}/company/app`,
+        API.COMPANY_APP,
         getToken(),
         undefined,
         (result, error) => {
@@ -127,4 +119,4 @@ export const getDomainApps = (domain) => {
     });
   };
 
-  export const getCompanyHeaderInfo = (data) => get(`${API_URL}/company/header`, data);
+  export const getCompanyHeaderInfo = (data) => get(API.COMPANY_HEADER, data);

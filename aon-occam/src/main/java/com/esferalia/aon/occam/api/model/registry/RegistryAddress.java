@@ -37,6 +37,7 @@ public class RegistryAddress implements Serializable {
 	
 	private boolean dirty;
 	private boolean removed;
+	private boolean global;
 	
 	public RegistryAddress() {
 
@@ -273,4 +274,14 @@ public class RegistryAddress implements Serializable {
 			&&  AonStringUtils.isBlank(recipient) && streetType == null && AonStringUtils.isBlank(address)
 			&&  AonStringUtils.isBlank(zip) &&  AonStringUtils.isBlank(city) && geozone == null;
 	}
+	
+	public boolean isGlobal() {
+		return global;
+	}
+	
+	public RegistryAddress setGlobal(boolean global) {
+		this.global = global;
+		return this;
+	}
+	
 }

@@ -34,11 +34,14 @@ import com.esferalia.aon.gwt.payroll.shared.Predicate;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.StatisticYears;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -98,14 +101,18 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		void onWorkplaceSelected(Workplace workplace);
 
-		void onCostsSelected(CostDocuments docs);
+		void onWorkplaceCostsSelected(CostDocuments docs);
+
+		void onEnterpriseCostsSelected(CostDocuments docs);
 
 		void onCalendarSelected(CalendarDraftObjectData calendar);
 
 		void onIrpfsSelected(IrpfDocuments docs);
 
-		void onStatisticsSelected(Statistics stats);
+		void onWorkplaceStatisticsSelected(Statistics stats);
 		
+		void onEnterpriseStatisticsSelected(Statistics stats);
+
 		void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpiseSalary);
 		
 		void onEnterpriseITSelected(EnterpriseITObject enterpiseITObject);
@@ -158,6 +165,65 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		void onSuprPress(Employee employee);
 	}
+	
+	private static class EnterpriseCostDocuments extends CostDocuments {
+
+		public EnterpriseCostDocuments(List<Cost> costs) {
+			super(costs);
+		}
+		
+	}
+
+	private static class WorkplaceCostDocuments extends CostDocuments {
+		
+		public WorkplaceCostDocuments(List<Cost> costs) {
+			super(costs);
+		}
+	}
+
+	private static class EnterpriseStatistics extends Statistics {
+		
+		private Statistics statistics;
+		
+		public EnterpriseStatistics(Statistics statistics) {
+			this.statistics = statistics;
+		}
+
+		public void initializedListYears(int pCont) {
+			statistics.initializedListYears(pCont);
+		}
+
+		public void addYear(int pCont, int pYear) {
+			statistics.addYear(pCont, pYear);
+		}
+
+		public LinkedList<StatisticYears> getStatisticYears() {
+			return statistics.getStatisticYears();
+		}
+		
+	}
+
+	private static class WorkplaceStatistics extends Statistics {
+
+		private Statistics statistics;
+		
+		public WorkplaceStatistics(Statistics statistics) {
+			this.statistics = statistics;
+		}
+
+		public void initializedListYears(int pCont) {
+			statistics.initializedListYears(pCont);
+		}
+
+		public void addYear(int pCont, int pYear) {
+			statistics.addYear(pCont, pYear);
+		}
+
+		public LinkedList<StatisticYears> getStatisticYears() {
+			return statistics.getStatisticYears();
+		}
+		
+	}
 
 	interface Template extends SafeHtmlTemplates {
 
@@ -207,6 +273,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private DomainEmployeesServiceAsync employeesService;
 	private DomainEnterprisesServiceAsync enterprisesService;
 
+//	private boolean shorten = false;
 	private boolean formers = true;
 	private boolean endDate = true;
 	private boolean extended = false;
@@ -232,7 +299,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		this(false, true);
 	}
 
-	public Employees(boolean extended, boolean formers ) {
+	public Employees(boolean extended, boolean formers) {
 
 		this.formers = formers;
 		this.extended = extended;
@@ -350,6 +417,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		this.formers = formers;
 
 	}
+	
+//	public void setShorten(boolean shorten) {
+//		this.shorten = shorten;
+//	}
 
 	public void addListener(Listener listener) {
 		listeners.add(listener);
@@ -478,12 +549,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		// If not, onSalariesSelected(SalariesDocuments) method won't be called.
 		else if (userObject instanceof SalariesDocuments) {
 			// onSalariesSelected((SalariesDocuments) userObject);
-//			onSalariesDocumentsSelected(item);
+			// onSalariesDocumentsSelected(item);
 		} else if (userObject instanceof CostDocuments) {
-			// onCostsSelected((CostDocuments) userObject); 
 			onCostsDocumentsSelected(item);
-		} else if (userObject instanceof Statistics) {
-			onStatisticsSelected((Statistics) userObject);
+		} else if (userObject instanceof EnterpriseStatistics) {
+			onEnterpriseStatisticsSelected((Statistics) userObject);
+		} else if (userObject instanceof WorkplaceStatistics) {
+			onWorkplaceStatisticsSelected((Statistics) userObject);
 		} else if (userObject instanceof EnterpriseSalaryObject) {
 			onEnterpriseSalariesSelected((EnterpriseSalaryObject) userObject);
 		} else if (userObject instanceof EnterpriseITObject) {
@@ -770,6 +842,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	public void setVerticalScrollPosition(int position) {
 		scrollPanel.setVerticalScrollPosition(position);
 	}
+	
+	
+
 	// ------------------------------------------------------------------------
 
 	DomainEmployeesServiceAsync getEmployeesService() {
@@ -967,7 +1042,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 				@Override
 				public void onSuccess(List<Cost> costs) {
-					CostDocuments documents = new CostDocuments(costs);
+					CostDocuments documents = new EnterpriseCostDocuments(costs);
 					costsItem.setUserObject(documents);
 
 //					SalariesDocuments salariesDocuments = new SalariesDocuments(costs, employeesService);
@@ -984,7 +1059,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 				@Override
 				public void onSuccess(Statistics stats) {
-					statisticsItem.setUserObject(stats);
+					statisticsItem.setUserObject( new EnterpriseStatistics(stats));
 				}
 
 				@Override
@@ -1027,45 +1102,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		final TreeItem costsItem = workplaceItem.getChild(WORKPLACE_COSTS_INDEX);
 
-//		final TreeItem salariesItem = workplaceItem.getChild(WORKPLACE_SALARIES_INDEX);
-
 		if (costsItem.getUserObject() == null) {
-			employeesService.getWorkplaceCosts(workplace.getId(), new AsyncCallback<List<Cost>>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					// TODO Auto-generated method stub
-					Window.alert(caught.getLocalizedMessage());
-
-				}
-
-				@Override
-				public void onSuccess(List<Cost> costs) {
-					CostDocuments costDocuments = new CostDocuments(costs);
-					costsItem.setUserObject(costDocuments);
-
-//					SalariesDocuments salariesDocuments = new SalariesDocuments(costs, employeesService);
-//					salariesItem.setUserObject(salariesDocuments);
-				}
-			});
+			getServiceWorkplaceCost(workplace, costsItem::setUserObject );
 		} // end-if: Costs of this workplace haven't been loaded yet.
 
 		final TreeItem statisticsItem = workplaceItem.getChild(WORKPLACE_STATISTICS_INDEX);
 
 		if (null == statisticsItem.getUserObject()) {
-
-			employeesService.getWorkplaceStats(workplace.getId(), new AsyncCallback<Statistics>() {
-
-				@Override
-				public void onSuccess(Statistics stats) {
-					statisticsItem.setUserObject(stats);
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					// TODO Apéndice de método generado automáticamente
-					Window.alert(caught.getLocalizedMessage());
-				}
-			});
+			getServiceWorkplaceStatistics(workplace, statisticsItem::setUserObject );
 		}
 		if (workplaceItem.getChildCount() > getEmployeesOffset(workplaceItem)) {
 			callback.run();
@@ -1091,6 +1135,36 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	}
 
+	private void getServiceWorkplaceCost(Workplace workplace, Consumer<WorkplaceCostDocuments> consumer) {
+		employeesService.getWorkplaceCosts(workplace.getId(), new AsyncCallback<List<Cost>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getLocalizedMessage());
+
+			}
+
+			@Override
+			public void onSuccess(List<Cost> costs) {
+				consumer.accept(new WorkplaceCostDocuments(costs));
+			}
+		});
+	}
+
+	private void getServiceWorkplaceStatistics(Workplace workplace, Consumer<Statistics> consumer) {
+		employeesService.getWorkplaceStats(workplace.getId(), new AsyncCallback<Statistics>() {
+
+			@Override
+			public void onSuccess(Statistics stats) {
+				consumer.accept(new WorkplaceStatistics(stats));
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Apéndice de método generado automáticamente
+				Window.alert(caught.getLocalizedMessage());
+			}
+		});
+	}
 	
 	private void onEmployeeOpen(TreeItem employeeItem) {
 
@@ -1153,9 +1227,15 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 
-	private void onCostsSelected(CostDocuments docs) {
+	private void onWorkplaceCostsSelected(CostDocuments docs) {
 		for (Listener listener : listeners) {
-			listener.onCostsSelected(docs);
+			listener.onWorkplaceCostsSelected(docs);
+		}
+	}
+
+	private void onEnetrpriseCostsSelected(CostDocuments docs) {
+		for (Listener listener : listeners) {
+			listener.onEnterpriseCostsSelected(docs);
 		}
 	}
 
@@ -1170,12 +1250,18 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			listener.onCalendarSelected(calendar);
 	}
 
-	private void onStatisticsSelected(Statistics stats) {
+	private void onWorkplaceStatisticsSelected(Statistics stats) {
 		for (Listener listener : listeners) {
-			listener.onStatisticsSelected(stats);
+			listener.onWorkplaceStatisticsSelected(stats);
 		}
 	}
 	
+	private void onEnterpriseStatisticsSelected(Statistics stats) {
+		for (Listener listener : listeners) {
+			listener.onEnterpriseStatisticsSelected(stats);
+		}
+	}
+
 	private void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpriseSalaryObject) {
 		for (Listener listener : listeners) {
 			listener.onEnterpriseSalariesSelected(enterpriseSalaryObject);
@@ -1308,12 +1394,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			@Override
 			public void onSuccess(List<Cost> costs) {
-				CostDocuments docs = new CostDocuments(costs);
+				CostDocuments docs = new WorkplaceCostDocuments(costs);
 				costsItem.setUserObject(docs);
 
 				costsItem.setUserObject(docs);
 				for (Listener listener : listeners) {
-					listener.onCostsSelected(docs);
+					listener.onWorkplaceCostsSelected(docs);
 				}
 			}
 		});
@@ -1330,12 +1416,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			@Override
 			public void onSuccess(List<Cost> costs) {
-				CostDocuments docs = new CostDocuments(costs);
+				CostDocuments docs = new EnterpriseCostDocuments(costs);
 				costsItem.setUserObject(docs);
 
 				costsItem.setUserObject(docs);
 				for (Listener listener : listeners) {
-					listener.onCostsSelected(docs);
+					listener.onEnterpriseCostsSelected(docs);
 				}
 			}
 		});
@@ -1610,7 +1696,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				};
 			});
 			
-			
 		}
 
 	}
@@ -1674,10 +1759,24 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			private MenuItem inactiveMenuItem;
 			private MenuItem endDateMenuItem;
 			private MenuItem filterMenuItem;
+//			private MenuItem shortenMenuItem;
 			private FilterDialog filterDialog;
 
 			{
 				MenuBar menuBar = new MenuBar(true);
+
+//				shortenMenuItem = new MenuItem("Reducido", new Command() {
+//					@Override
+//					public void execute() {
+//						shorten = !shorten;
+//						shortenTree(shorten);
+//						shortenMenuItem.setStyleName("aon-MenuItemCheckYes", shorten);
+//						popup.hide();
+//					}
+//				});
+//				shortenMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
+//				shortenMenuItem.ensureDebugId("shortenMenuItem");
+//				menuBar.addItem(shortenMenuItem);
 
 				endDateMenuItem = new MenuItem("Fecha Fin", new Command() {
 					@Override
@@ -1813,6 +1912,36 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		int visibleItems = browserHeight / itemHeight;
 		return Math.max(visibleItems + 1, MIN_EMPLOYEE_LIMIT);
 	}
+
+//	private void shortenTree(boolean shorten) {
+//		for (int i = 0; i < tree.getItemCount(); i++) {
+//			shortenTreeItem(tree.getItem(i), shorten);
+//		}
+//	}
+//
+//	private void shortenTreeItem(TreeItem treeItem, boolean shorten) {
+//		Object userObject = treeItem.getUserObject();
+//		treeItem.setVisible(
+//				(!shorten ) || 
+//				(userObject instanceof CCC) ||
+//				(userObject instanceof Activity) ||
+//				(userObject instanceof Workplace) ||
+//				(userObject instanceof Enterprise) || 
+//				(userObject instanceof EmployeeDraftObject) 
+//		);
+//		
+//		if ( userObject instanceof EmployeeDraftObject  ) {
+//			NodeList<Element> imgs = treeItem.getElement().getElementsByTagName("img");
+//			for ( int i = 0; i < imgs.getLength(); i++ ) {
+//				imgs.getItem(i).getStyle().setDisplay(shorten ? Display.NONE: Display.INITIAL);
+//			}
+//		}
+//		
+//		for (int i = 0; i < treeItem.getChildCount(); i++) {
+//			shortenTreeItem(treeItem.getChild(i), shorten);
+//		}
+//	}
+	
 
 	/**
 	 * Change formers. Note that we assume that workplaces start at position 2,
@@ -2135,6 +2264,88 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 	
 	// ------------------------------------------------------------------------
+	
+	
+	public void getEnterpriseCost(Enterprise enterprise, Consumer<CostDocuments> consumer) {
+		consumer.accept(getUserObject(enterprise, EnterpriseCostDocuments.class));
+	}
+	
+	public void getEnterpriseStatistics(Enterprise enterprise, Consumer<Statistics> consumer) {
+		consumer.accept(getUserObject(enterprise, EnterpriseStatistics.class));
+	}
+	
+	public void getEnterpriseIT(Enterprise enterprise, Consumer<EnterpriseITObject> consumer) {
+		consumer.accept(getUserObject(enterprise, EnterpriseITObject.class));
+	}
+
+	public void getEnterpriseSalary(Enterprise enterprise, Consumer<EnterpriseSalaryObject> consumer) {
+		consumer.accept(getUserObject(enterprise, EnterpriseSalaryObject.class));
+	}
+
+	public void getWorkplaceCost(Workplace workplace, Consumer<CostDocuments> consumer) {
+		CostDocuments costDocuments = getUserObject(workplace, WorkplaceCostDocuments.class);
+		if ( costDocuments != null ) {
+			consumer.accept(getUserObject(workplace, CostDocuments.class));
+		} else {
+			getServiceWorkplaceCost(workplace, aCostDocuments -> {
+				consumer.accept(aCostDocuments );
+				TreeItem workplaceItem = getTreeItem(workplace);
+				TreeItem costsItem = workplaceItem.getChild(WORKPLACE_COSTS_INDEX);
+				costsItem.setUserObject(aCostDocuments );
+			});
+		}
+	}
+
+	public void getWorkplaceStatistics(Workplace workplace, Consumer<Statistics> consumer) {
+		Statistics statistics = getUserObject(workplace, WorkplaceStatistics.class);
+		if ( statistics != null ) {
+			consumer.accept(statistics);
+		} else {
+			getServiceWorkplaceStatistics(workplace, aStatistics -> {
+				consumer.accept(aStatistics);
+				TreeItem workplaceItem = getTreeItem(workplace);
+				TreeItem statisticsItem = workplaceItem.getChild(WORKPLACE_STATISTICS_INDEX);
+				statisticsItem.setUserObject(aStatistics);
+				
+			});
+		}
+	}
+	
+	public void getWorkplaceCalendar(Workplace workplace, Consumer<CalendarDraftObjectData> consumer) {
+		consumer.accept(getUserObject(workplace, CalendarDraftObjectData.class));
+	}
+
+	public void getWorkplaceSalary(Workplace workplace, Consumer<WorkplaceSalaryObject> consumer) {
+		consumer.accept(getUserObject(workplace, WorkplaceSalaryObject.class));
+	}
+	
+	public void getWorkplaceIT(Workplace workplace, Consumer<WorkplaceITObject> consumer) {
+		consumer.accept(getUserObject(workplace, WorkplaceITObject.class));
+	}
+
+	public void getWorkplaceEvents(Workplace workplace, Consumer<EventsDraftObject> consumer) {
+		consumer.accept(getUserObject(workplace, EventsDraftObject.class));
+	}
+	
+	public void getEmployeeCalendar(EmployeeDraftObject employee, Consumer<EmployeeCalendarDraftObject> consumer) {
+		consumer.accept(getUserObject(employee, EmployeeCalendarDraftObject.class));
+	}
+
+	public void getEmployeeSalaryDraft(EmployeeDraftObject employee, Consumer<SalaryDraftObject> consumer) {
+		consumer.accept(getUserObject(employee, SalaryDraftObject.class));
+	}
+
+	public void getEmployeeEvents(EmployeeDraftObject employee, Consumer<EmployeeEventsDraftObject> consumer) {
+		consumer.accept(getUserObject(employee, EmployeeEventsDraftObject.class));
+	}
+	
+	public void getEmployeeSalary(EmployeeDraftObject employee, Consumer<EmployeeSalaryObject> consumer) {
+		consumer.accept(getUserObject(employee, EmployeeSalaryObject.class));
+	}
+	
+	
+
+	// ------------------------------------------------------------------------
 
 	private void load() {
 		
@@ -2292,6 +2503,69 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		return null;
 		
+		
 	}
 	
+	private <T> T  getUserObject(TreeItem treeItem, Class<T> clazz) {
+		for (int i = 0; i < treeItem.getChildCount(); i++) {
+			TreeItem child = treeItem.getChild(i);
+			Object userObject = child.getUserObject();
+			if ( userObject != null && userObject.getClass() == clazz )
+				return (T) userObject;
+		}
+		return null;
+	}
+	
+	private <T> T getUserObject(Enterprise enterprise, Class<T> clazz) {
+		for (int i = 0; i < tree.getItemCount(); i++) {
+			if ( enterprise == tree.getItem(i).getUserObject() )
+				return getUserObject(tree.getItem(i), clazz);
+		}
+		return null;
+	}
+
+	private <T> T getUserObject(EmployeeDraftObject employee, Class<T> clazz) {
+		TreeItem employeeTreeItem = getTreeItem(employee);
+		return getUserObject(employeeTreeItem, clazz);
+	}
+	
+	private <T> T getUserObject(Workplace workplace, Class<T> clazz) {
+		TreeItem workplaceTreeItem = getTreeItem(workplace);
+		return getUserObject(workplaceTreeItem, clazz);
+	}
+
+	private TreeItem getTreeItem( Object userObject  ) {
+		for (int i = 0; i < tree.getItemCount(); i++) {
+			TreeItem treeItem = tree.getItem(i);
+			if ( treeItem.getUserObject() == userObject ) { 
+				return treeItem;
+			}
+		}
+		
+		for (int i = 0; i < tree.getItemCount(); i++) {
+			TreeItem treeItem = getTreeItem(tree.getItem(i), userObject);
+			if ( treeItem != null ) {
+				return treeItem;
+			}
+		}
+		return null;
+	}
+
+	private TreeItem getTreeItem( TreeItem treeItem, Object userObject  ) {
+		for (int i = 0; i < treeItem.getChildCount(); i++) {
+			TreeItem child = treeItem.getChild(i);
+			if ( child.getUserObject() == userObject ) { 
+				return child;
+			}
+		}
+		
+		for (int i = 0; i < treeItem.getChildCount(); i++) {
+			TreeItem child = getTreeItem(treeItem.getChild(i), userObject);
+			if ( child != null  ) { 
+				return child;
+			}
+		}
+
+		return null;
+	}
 }

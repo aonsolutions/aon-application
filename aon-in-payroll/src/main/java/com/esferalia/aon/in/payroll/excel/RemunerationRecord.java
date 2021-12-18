@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -63,6 +65,7 @@ import org.jooq.impl.DSL;
 import com.code.aon.person.enumeration.Gender;
 import com.esferalia.aon.in.payroll.excel.IRetributiveConcept.RetributionForm;
 import com.esferalia.aon.in.payroll.excel.IRetributiveConcept.RetributionType;
+import com.esferalia.aon.jooq.tables.ContractData;
 import com.esferalia.aon.jooq.tables.SalaryData;
 import com.esferalia.aon.jooq.tables.SalaryPayment;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
@@ -79,8 +82,31 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class RemunerationRecord {
 	
+	public static interface RemunerationRecordCallback {
+		
+		default void personWithNoSex(String socialSecurityNum, String name) {}
+		
+	}
+	
 	public static class RemunerationRecordEntry implements IRemunerationRecordEntry{
 		
+		@Override
+		public String toString() {
+			return "RemunerationRecordEntry [name=" + name + ", socialSecurityNumber=" + socialSecurityNumber
+					+ ", gender=" + gender + ", birthDate=" + birthDate + ", studies=" + studies + ", familySituation="
+					+ familySituation + ", children=" + children + ", hireDate=" + hireDate + ", contractEndDate="
+					+ contractEndDate + ", seniorityDate=" + seniorityDate + ", contractSituationStartDate="
+					+ contractSituationStartDate + ", contractSituationEndDate=" + contractSituationEndDate
+					+ ", workdayPercent=" + workdayPercent + ", reducedWorkdayPercent=" + reducedWorkdayPercent
+					+ ", workdayReductionReason=" + workdayReductionReason + ", contractKey=" + contractKey
+					+ ", enterpriseArea=" + enterpriseArea + ", enterpriseDepartment=" + enterpriseDepartment
+					+ ", category=" + category + ", schedule=" + schedule + ", byTurns=" + byTurns
+					+ ", enterpriseScale=" + enterpriseScale + ", professionalClass=" + professionalClass + ", scale="
+					+ scale + ", agreement=" + agreement + ", professionalCategory=" + professionalCategory
+					+ ", professionalGroup=" + professionalGroup + ", level=" + level + ", quoteGroup=" + quoteGroup
+					+ ", payments=" + payments + "]";
+		}
+
 		private String name;
 		private String socialSecurityNumber;
 		private Gender gender;
@@ -504,13 +530,20 @@ public class RemunerationRecord {
 				int id = 1;
 				int rowNum = 8;
 				if (remunerationRecordData.getEntries() != null) {
+					
+					Integer lastEmployeeRow = 8;
+
 					for (String nss : remunerationRecordData.getEntries().keySet()) {
 						
 						LinkedList<IRemunerationRecordEntry> entries = remunerationRecordData.getEntries().get(nss);
 						
 						for (IRemunerationRecordEntry entry : entries) {
+							
+						
+							
 							if (entry != null ) {
 								row = sheet.getRow(rowNum) != null ? sheet.getRow(rowNum++) : sheet.createRow(rowNum++);
+								
 								//ID
 								{
 									cell = row.getCell(1) != null ? row.getCell(1) : row.createCell(1);
@@ -636,14 +669,14 @@ public class RemunerationRecord {
 									Map<String, Double> payments = entry.getPayments();
 //									System.out.println(payments);
 									for (int i=0; i<conceptOrder.length; i++) {
-//										System.out.println(conceptOrder[i]);
 										cell = row.getCell(cellNum+i) != null ? row.getCell(cellNum+i) : row.createCell(cellNum+i);
 //										copyCellProperties(wb, cell, firstRow.getCell(cellNum+i));
 										if (payments.get(conceptOrder[i]) != null) {
 											cell.setCellValue(payments.get(conceptOrder[i]));
 										}
 									}
-								}	
+								}
+								lastEmployeeRow = row.getRowNum();
 							}
 						}
 						id++;
@@ -683,7 +716,8 @@ public class RemunerationRecord {
 //							sheet.getRow(i).getCell(91).setCellFormula("VLOOKUP($CK"+rowNum+",CONTRATOS!$J$5:$K$10,2,1)");
 //						}
 						
-						for (int i= 8+remunerationRecordData.getEntries().values().size(); i<=sheet.getLastRowNum();i++) {
+						
+						for (int i= lastEmployeeRow + 1; i<=sheet.getLastRowNum();i++) {
 							if (sheet.getRow(i) == null)
 								break;
 							sheet.removeRow(sheet.getRow(i));
@@ -715,10 +749,94 @@ public class RemunerationRecord {
 		}
 	}
 	
-	private static void fillData(RemunerationRecordData remunerationRecordData, AONContext aonContext, Stream<Record3<Byte, String, String>> payments, Condition condition) {
+	private static class PartialityCoef  {
+		private Double coef; 
+		private Date startDate;
+		private Date endDate;
+		public Double getCoef() {
+			return coef;
+		}
+		public PartialityCoef setCoef(Double coef) {
+			this.coef = coef;
+			return this;
+		}
+		public Date getStartDate() {
+			return startDate;
+		}
+		public PartialityCoef setStartDate(Date startDate) {
+			this.startDate = startDate;
+			return this;
+		}
+		public Date getEndDate() {
+			return endDate;
+		}
+		public PartialityCoef setEndDate(Date endDate) {
+			this.endDate = endDate;
+			return this;
+		}
+		
+		
+	}
+	
+	private static class AuxiliaryData {
+		private Integer salary;
+		private Date startDate;
+		private Date endDate;
+		List<PartialityCoef> coefs;
+		
+		private AuxiliaryData() {
+			coefs = new LinkedList<>();
+		}
+		
+		public Integer getSalary() {
+			return salary;
+		}
+		public AuxiliaryData setSalary(Integer salary) {
+			this.salary = salary;
+			return this;
+		}
+		public Date getStartDate() {
+			return startDate;
+		}
+		public AuxiliaryData setStartDate(Date startDate) {
+			this.startDate = startDate;
+			return this;
+		}
+		public Date getEndDate() {
+			return endDate;
+		}
+		public AuxiliaryData setEndDate(Date endDate) {
+			this.endDate = endDate;
+			return this;
+		}
+
+		public List<PartialityCoef> getCoefs() {
+			return coefs;
+		}
+
+		public AuxiliaryData setCoefs(List<PartialityCoef> coefs) {
+			if (this.coefs == null)
+				this.coefs = new LinkedList<>();
+			else if (coefs != null)
+				this.coefs = coefs;
+			return this;
+		}
+		
+		public AuxiliaryData addCoef(PartialityCoef coef) {
+			if (this.coefs == null)
+				this.coefs = new LinkedList<>();
+			if (coef != null)
+				coefs.add(coef);
+			return this;
+		}
+		
+		
+		
+	}
+	
+	private static void fillData(RemunerationRecordData remunerationRecordData, AONContext aonContext, Stream<Record3<Byte, String, String>> payments, Condition condition, Date startDate, Date endDate, List<RemunerationRecordCallback> callbacks) {
 		//ALIASED TABLES
 		SalaryData contractKey = SalaryData.SALARY_DATA.as("CONTRACT_KEY");
-		SalaryData parcialityCoef = SalaryData.SALARY_DATA.as("PARCIALITY_COEF");
 		SalaryData quoteGroup = SalaryData.SALARY_DATA.as("QUOTE_GROUP");
 		
 		//BUILDING THE QUERY
@@ -732,10 +850,74 @@ public class RemunerationRecord {
 		.leftJoin(AGREEMENT_LEVEL).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
 		.leftJoin(AGREEMENT).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT.ID))
 		.leftJoin(contractKey).on(SALARY.ID.eq(contractKey.SALARY)).and(contractKey.NAME.eq("TC2"))
-		.leftJoin(parcialityCoef).on(SALARY.ID.eq(parcialityCoef.SALARY)).and(parcialityCoef.NAME.eq("COEFICIENTE_PARCIALIDAD"))
 		.leftJoin(quoteGroup).on(SALARY.ID.eq(quoteGroup.SALARY)).and(quoteGroup.NAME.eq("GRUPO_COTIZACION"))
 		.where(condition).groupBy(CONTRACT.ID).orderBy(CONTRACT.START_DATE);
 		
+		
+		
+		Map<Integer, List<AuxiliaryData>> auxDataMap = new LinkedHashMap<>();
+		
+		
+		aonContext.getDslContext()
+		.select(CONTRACT.ID, SALARY_DATA.NAME, SALARY_DATA.EXPRESSION, SALARY_DATA.START_DATE, SALARY_DATA.END_DATE, SALARY.ID, SALARY.START_DATE, SALARY.END_DATE)
+		.from(SALARY)
+		.innerJoin(CONTRACT).on(CONTRACT.ID.eq(SALARY.CONTRACT))
+		.innerJoin(WORKPLACE).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+		.leftJoin(SALARY_DATA).on(SALARY_DATA.SALARY.eq(SALARY.ID)).and(SALARY_DATA.NAME.eq("COEFICIENTE_PARCIALIDAD"))
+		.where(condition)
+		.fetchStream()
+		.filter(Objects::nonNull)
+		.forEach(ad -> {
+			
+			PartialityCoef partCoef = new PartialityCoef();
+
+			Date partStart = null;
+			Date partEnd = null;
+			Double coeficient = 1d;
+			
+			if (ad.get(SALARY_DATA.EXPRESSION) != null) {
+				partStart = ad.get(SALARY_DATA.START_DATE) != null ? ad.get(SALARY_DATA.START_DATE) : ad.get(SALARY.START_DATE);
+				partEnd = ad.get(SALARY_DATA.END_DATE) != null ? ad.get(SALARY_DATA.END_DATE) : ad.get(SALARY.END_DATE);
+				try {
+					coeficient = Double.parseDouble(ad.get(SALARY_DATA.EXPRESSION));
+				} catch (Exception e) {}
+			} else {
+				partStart = ad.get(SALARY.START_DATE);
+				partEnd = ad.get(SALARY.END_DATE);
+			}
+			partCoef.setCoef(coeficient).setStartDate(partStart).setEndDate(partEnd);
+			
+			
+			if (auxDataMap.containsKey(ad.get(CONTRACT.ID))) {
+				
+				List<AuxiliaryData> datas = auxDataMap.get(ad.get(CONTRACT.ID));
+				
+				Optional<AuxiliaryData> optData = datas.stream().filter(d -> d.getSalary() == ad.get(SALARY.ID)).findFirst();
+				
+				if (!optData.isEmpty()) {
+					optData.get().addCoef(partCoef);
+				} else {
+					AuxiliaryData newAD = new AuxiliaryData()
+							.setSalary(ad.get(SALARY.ID))
+							.setStartDate(ad.get(SALARY.START_DATE))
+							.setEndDate(ad.get(SALARY.END_DATE))
+							.addCoef(partCoef);
+					datas.add(newAD);
+				}
+			} else {
+				List<AuxiliaryData> datas = new LinkedList<>();
+				AuxiliaryData newAD = new AuxiliaryData()
+						.setSalary(ad.get(SALARY.ID))
+						.setStartDate(ad.get(SALARY.START_DATE))
+						.setEndDate(ad.get(SALARY.END_DATE))
+						.addCoef(partCoef);
+				datas.add(newAD);
+				
+				auxDataMap.put(ad.get(CONTRACT.ID), datas);
+				
+			}
+			
+		});
 		
 		HashSet<SalaryPayment> aliasedTables = new HashSet<SalaryPayment>();
 		LinkedList<IRetributiveConcept> concepts = new LinkedList<IRetributiveConcept>();
@@ -781,11 +963,38 @@ public class RemunerationRecord {
 //		SelectSeekStep1<Record, java.sql.Date> newSql = sql.where(condition).groupBy(CONTRACT.ID).orderBy(CONTRACT.START_DATE);
 		
 		
-		LinkedHashMap<String, LinkedList<IRemunerationRecordEntry>> entries = new LinkedHashMap<String, LinkedList<IRemunerationRecordEntry>>();
+		LinkedHashMap<String, LinkedList<IRemunerationRecordEntry>> entries = new LinkedHashMap<>();
 		
 		//ADDING THE ENTRIES TO A MAP WHICH KEY'LL BE THE QUOTE GROUP
 		sql.fetchStream().forEach(r -> {
 			RemunerationRecordEntry remunerationRecordEntry = new RemunerationRecordEntry();
+			
+			List<AuxiliaryData> auxDataList = auxDataMap.get(r.get(CONTRACT.ID));
+			
+			double[] accum = {0};
+			int[] days = {0};
+			
+			auxDataList.forEach(ad -> {
+				List<PartialityCoef> coefs = ad.getCoefs();
+				
+				coefs.forEach(coe -> {
+					
+					Integer daysBetween = daysBetween(coe.getStartDate(), coe.getEndDate());
+					daysBetween = daysBetween != null ? daysBetween : 0;
+					
+					accum[0] += daysBetween * coe.getCoef();
+					
+					days[0] += daysBetween;
+					
+				});
+				
+			});
+			
+			days[0] = days[0] > 0 ? days[0] : 1;
+			
+			double workdayPercent = accum[0] / days[0];
+			workdayPercent = workdayPercent > 0 ? workdayPercent : 1;
+			
 			{
 				remunerationRecordEntry.agreement = r.get(AGREEMENT.DESCRIPTION);
 				remunerationRecordEntry.birthDate = r.get(PERSON.BIRTH_DATE);
@@ -794,18 +1003,25 @@ public class RemunerationRecord {
 				remunerationRecordEntry.contractKey = r.get(contractKey.EXPRESSION);
 				remunerationRecordEntry.familySituation = typeOf(r.get(IRPF_DATA.FAMILY_SITUATION), FamilySituation.class);
 				remunerationRecordEntry.gender = typeOf(r.get(PERSON.GENDER), Gender.class);
+				
 				remunerationRecordEntry.hireDate = r.get(CONTRACT.START_DATE);
 				remunerationRecordEntry.name = r.get(SALARY.EMPLOYEE_NAME);
 				try {
 					remunerationRecordEntry.quoteGroup = Integer.parseInt(r.get(quoteGroup.EXPRESSION));
-				} catch (NullPointerException | NumberFormatException e) {
+				} catch (Exception e) {
 					remunerationRecordEntry.quoteGroup = null;
 				}
-				if (r.get(parcialityCoef.EXPRESSION) != null)
-					remunerationRecordEntry.workdayPercent = Double.parseDouble(r.get(parcialityCoef.EXPRESSION));
+				
+					remunerationRecordEntry.workdayPercent = workdayPercent;
+				
 				remunerationRecordEntry.seniorityDate = r.get(CONTRACT.SENIORITY_DATE);
 				remunerationRecordEntry.socialSecurityNumber = r.get(PERSON.SOCIAL_SECURITY_NUM);
 				remunerationRecordEntry.level = r.get(AGREEMENT_LEVEL.DESCRIPTION);
+				
+				
+				if (remunerationRecordEntry.gender == null || remunerationRecordEntry.gender.equals(Gender.UNKNOWN)) {
+					callbacks.forEach(cb -> cb.personWithNoSex(remunerationRecordEntry.socialSecurityNumber, remunerationRecordEntry.name));
+				}
 			}
 			
 			LinkedHashMap<String, Double> map = new LinkedHashMap<String, Double>();   
@@ -884,6 +1100,35 @@ public class RemunerationRecord {
 		
 	}
 	
+	private static Integer daysBetween(Date date1, Date date2) {
+		if (date1 == null || date2 == null)
+			return null;
+		try {			
+			Calendar c = Calendar.getInstance();
+			c.setTime(date1);
+			c.set(Calendar.MILLISECOND, 0);
+			c.set(Calendar.SECOND, 0);
+			c.set(Calendar.MINUTE, 0);
+			c.set(Calendar.HOUR, 0);
+			long d1t = c.getTimeInMillis();
+			c.setTime(date2);
+			c.set(Calendar.MILLISECOND, 0);
+			c.set(Calendar.SECOND, 0);
+			c.set(Calendar.MINUTE, 0);
+			c.set(Calendar.HOUR, 0);
+			long d2t = c.getTimeInMillis();
+			
+			long diff = Math.abs(d1t - d2t);
+			
+			long days = diff / (1000 * 60 * 60 * 24);
+			
+			return (int) days;
+		} catch (Exception e) {
+			return null;
+		}
+		
+	}
+	
 	/**
 	 * Picks up the data for the remuneration record
 	 * @param domainName The domain name
@@ -892,7 +1137,7 @@ public class RemunerationRecord {
 	 * @param endDate The end date of the period chosen for the remuneration record
 	 * @return RemunerationRecordData object containing the remuneration record's data
 	 */
-	public static RemunerationRecordData getData(String domainName, String user, Optional<Integer> enterpriseId, Date startDate, Date endDate) {
+	public static RemunerationRecordData getData(String domainName, String user, Optional<Integer> enterpriseId, Date startDate, Date endDate, List<RemunerationRecordCallback> callbacks) {
 		java.sql.Date sqlStartDate = new java.sql.Date(startDate.getTime());
 		java.sql.Date sqlEndDate = new java.sql.Date(endDate.getTime());
 		RemunerationRecordData remunerationRecordData = new RemunerationRecordData();
@@ -951,7 +1196,7 @@ public class RemunerationRecord {
 		
 		
 		
-		fillData(remunerationRecordData, aonContext, payments, condition2);
+		fillData(remunerationRecordData, aonContext, payments, condition2, startDate, endDate, callbacks);
 		}
 		return remunerationRecordData;
 	}
@@ -963,8 +1208,8 @@ public class RemunerationRecord {
 	 * @param startDate The start date of the period chosen for the remuneration record
 	 * @param endDate The end date of the period chosen for the remuneration record
 	 */
-	public static void generateExcel (OutputStream outputStream, String domainName, String user, Optional<Integer> enterpriseId, Date startDate, Date endDate) {
-		getExcel(outputStream, getData(domainName, user, enterpriseId, startDate, endDate));
+	public static void generateExcel (OutputStream outputStream, String domainName, String user, Optional<Integer> enterpriseId, Date startDate, Date endDate, RemunerationRecordCallback ...callbacks) {
+		getExcel(outputStream, getData(domainName, user, enterpriseId, startDate, endDate, Arrays.asList(callbacks)));
 	}
 	
 	/**
@@ -974,7 +1219,7 @@ public class RemunerationRecord {
 	 * @param enterpriseId If not given, the method uses just the domain name to pick up data
 	 * @param year The chosen year for the remuneration record
 	 */
-	public static void generateExcel (OutputStream outputStream, String domainName, String user, Optional<Integer> enterpriseId, Integer year) {
+	public static void generateExcel (OutputStream outputStream, String domainName, String user, Optional<Integer> enterpriseId, Integer year, RemunerationRecordCallback ...callbacks) {
 		if (year != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.set(Calendar.MILLISECOND, 0);
@@ -1001,7 +1246,7 @@ public class RemunerationRecord {
 			
 			
 			
-			getExcel(outputStream, getData(domainName, user, enterpriseId, startDate, endDate));
+			getExcel(outputStream, getData(domainName, user, enterpriseId, startDate, endDate, Arrays.asList(callbacks)));
 		} else
 			throw new NullPointerException("Null year");
 	}

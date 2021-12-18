@@ -77,22 +77,24 @@ export class AonInvoice extends AonElement {
 		this.buildDur().then(r => {
 			this.build();
 		});
+		getCompany().then(company => {
+			const registry = this.getInvoice().isEmitida()
+				? this.getInvoice().getRegistry().id 
+				: company.id;
 
-		let registry = this.getInvoice().isEmitida()
-			? this.getInvoice().getRegistry().id : LS.getCompany().registry;
+			if(registry) {
+				let data = {
+					id: registry,
+					registry: registry,
+					additional_info: ['banks', 'paymethods']
+				};
 
-		if(registry) {
-			let data = {
-				id: registry,
-				registry: registry,
-				additional_info: ['banks', 'paymethods']
-			};
-
-			getRegistry(data).then(r => {
-				this.rbanks = r.banks;
-				this.rpaymethods = r.paymethods;
-			});
-		} 
+				getRegistry(data).then(r => {
+					this.rbanks = r.banks;
+					this.rpaymethods = r.paymethods;
+				});
+			}
+		});
 	}
 
 	initialize(){
@@ -109,7 +111,7 @@ export class AonInvoice extends AonElement {
 		this.REMARKS_CARD = this.DATA + 'RemarksCard';
 		this.FILE = this.id + 'File';
 		this.INPUT_FILE = this.id + 'InputFile'
-		this.invoice = this.invoice || new Invoice(this.getAttribute('type'));
+		this.invoice = this.invoice || new Invoice().setType(this.type);
 
 		this.SERIE = CONSTANT.AON_INVOICE + CONSTANT.SERIE.initCap();
 		this.SERVICE = CONSTANT.AON_INVOICE + CONSTANT.SERVICE.initCap();
@@ -181,8 +183,9 @@ export class AonInvoice extends AonElement {
 	}
 
 	setInvoice(invoice) {
-		this.invoice = this.invoice || new Invoice(this.getAttribute('type'));
-		this.invoice.createInvoice(invoice);
+		this.invoice = new Invoice(invoice);
+		if(!invoice)
+			this.invoice.setType(this.type);
 	}
 
 	setType(type) {
@@ -280,7 +283,7 @@ export class AonInvoice extends AonElement {
 			aonInvoice.startLoader();
 			insertInvoice(data).then((r) => {
 				aonInvoice.stopLoader();
-				this.invoice.createInvoice(r);
+				this.invoice = new Invoice(r);
 				this.reload();
 			});
 		}
@@ -1533,8 +1536,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	changeInvoice(invoice) {
-		let inv = new Invoice();
-		inv.createInvoice(invoice);
+		let inv = new Invoice(invoice);
 
 		if(invoice && inv && !inv.isRawdoc()){
 			getInvoice(invoice.id).then((inv) => {
@@ -1548,7 +1550,7 @@ export class AonInvoice extends AonElement {
 
 	acceptInvoice() {
 		acceptInvoice(this.getInvoice()).then(r => {
-			this.invoice.createInvoice(r);
+			this.invoice = this.invoice = new Invoice(r);
 			this.reload();
 		}).catch(e => this.showError(e));
 	}

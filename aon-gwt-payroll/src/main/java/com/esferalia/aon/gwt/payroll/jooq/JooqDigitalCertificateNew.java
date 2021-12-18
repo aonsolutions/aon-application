@@ -290,15 +290,16 @@ public class JooqDigitalCertificateNew {
 		dslContext.delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(rattachId)).execute();
 		
 		for(CertificateType tagType : tagTypes) {
-			Record tagRecord = dslContext.select()
+
+			Integer tagId = dslContext.select()
 					.from(TAG)
 					.where(TAG.NAME.eq(tagType.name()))
 					.and(TAG.TYPE.eq(TagType.CERTIFICATE.value()))
 					.and(TAG.DOMAIN.eq(0))
-					.fetchOne();
+					.limit(1)
+					.fetch().stream().map(r -> r.getValue(TAG.ID)).findFirst().orElse(null);
 			
-			Integer tagId = null;
-			if(null == tagRecord) {
+			if(tagId == null) {
 				tagId = dslContext.insertInto(TAG)
 							.set(TAG.DOMAIN, 0)
 							.set(TAG.NAME, tagType.name())
@@ -306,9 +307,7 @@ public class JooqDigitalCertificateNew {
 							.returning(TAG.ID)
 							.fetchOne()
 							.getId();
-			} else
-				tagId = tagRecord.get(TAG.ID);
-				
+			}
 			
 			dslContext.insertInto(RATTACH_TAG)
 				.set(RATTACH_TAG.DOMAIN, domainId)
@@ -389,15 +388,15 @@ public class JooqDigitalCertificateNew {
 		dslContext.delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(rattachId)).execute();
 		
 		for(CertificateType tagType : tagTypes) {
-			Record tagRecord = dslContext.select()
+			Integer tagId = dslContext.select()
 					.from(TAG)
 					.where(TAG.NAME.eq(tagType.name()))
 					.and(TAG.TYPE.eq(TagType.CERTIFICATE.value()))
 					.and(TAG.DOMAIN.eq(0))
-					.fetchOne();
+					.limit(1)
+					.fetch().stream().map(r -> r.getValue(TAG.ID)).findFirst().orElse(null);
 			
-			Integer tagId = null;
-			if(null == tagRecord) {
+			if(tagId == null) {
 				tagId = dslContext.insertInto(TAG)
 							.set(TAG.DOMAIN, 0)
 							.set(TAG.NAME, tagType.name())
@@ -405,9 +404,7 @@ public class JooqDigitalCertificateNew {
 							.returning(TAG.ID)
 							.fetchOne()
 							.getId();
-			} else
-				tagId = tagRecord.get(TAG.ID);
-				
+			} 
 			
 			dslContext.insertInto(RATTACH_TAG)
 				.set(RATTACH_TAG.DOMAIN, domainId)

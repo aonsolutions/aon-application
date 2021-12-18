@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.slf4j.Logger;
@@ -58,6 +60,16 @@ public class UserUtils implements Serializable {
 
 	public boolean isNewAONTheme() {
 		return getLoggedUser().getToolbar() == Toolbar.AON_SOLUTIONS;
+	}
+	
+	public void disableNewAONTheme(ActionEvent event) {
+		getLoggedUser().setToolbar(Toolbar.GOOGLE);
+		updateUser(getLoggedUser());
+	}
+
+	public void enableNewAONTheme(ActionEvent event) {
+		getLoggedUser().setToolbar(Toolbar.AON_SOLUTIONS);
+		updateUser(getLoggedUser());
 	}
 	
 	public boolean isAonNewSuite() {
@@ -324,5 +336,6 @@ public class UserUtils implements Serializable {
 	public boolean isAddScopeExpression() {
 		return this.addScopeExpression;
 	}	
+	
 	
 }

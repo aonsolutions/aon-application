@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 
 import https.www2_agenciatributaria_gob_es.static_files.common.internet.dep.aplicaciones.es.aeat.ssii.fact.ws.respuestasuministro.EstadoRegistroType;
@@ -58,13 +59,13 @@ import net.aonsolutions.aon.sii.SendType;
 
 public class SIIAeatPost extends SIIPost{
 
-	public static SIIAeatPost getInstance(byte[] cert, String pass) {
-		return new SIIAeatPost(cert, pass);
+	public static SIIAeatPost getInstance(SiiConfiguration siiConfiguration) {
+		return new SIIAeatPost(siiConfiguration );
 	}
 	
 
-	public SIIAeatPost(byte[] cert, String pass) {
-		super(cert, pass);
+	public SIIAeatPost(SiiConfiguration siiConfiguration) {
+		super(siiConfiguration);
 	}
 	
 	// -------------------- FACTURAS EMITIDAS

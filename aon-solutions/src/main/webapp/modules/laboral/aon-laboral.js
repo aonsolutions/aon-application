@@ -190,10 +190,9 @@ export class AonLaboral extends AonElement {
 		return option;
 	}
 
-  async getTa(data) {
+  async getTa({ regime, ctaCti, nss, fra, frb }) {
 		this.applicationEl.startLoading();
 		try {
-			const { regime, ctaCti, nss, fra, frb } = data;
       let newData = { regime, ctaCti, nss, fra };
       if(frb) newData["frb"] = frb;
 			await getTA(newData); // open pdf
@@ -203,24 +202,23 @@ export class AonLaboral extends AonElement {
 		this.applicationEl.stopLoading();
 	}
 
-  anularCondition(situation, fecha) {
-		const date_prev = new Date().addDay(-2);
-		// const sit = ["AL", "BJ", "BAJA", "ALTA"];
-		// (situation.indexOf(sit) > -1) &&
-		return (date_prev.getTime() <= new Date(fecha).getTime());
-	}
-
-	async getIdc(data) {
+  async getIdc({ regime, ctaCti, nss, fra, frb }) {
 		this.applicationEl.startLoading();
 		try {
-			const { regime, ctaCti, nss, fra, fea } = data;
-      const fecha = fea || fra;
+      const fecha = frb || fra;
 			await getIDC({ regime, ctaCti, nss, fra:fecha }); // open pdf
 		} catch (error) {
       this.showToast(error);
 		}
     this.applicationEl.stopLoading();
   }
+
+  anularCondition(situation, fecha) {
+		const date_prev = new Date().addDay(-2);
+		// const sit = ["AL", "BJ", "BAJA", "ALTA"];
+		// (situation.indexOf(sit) > -1) &&
+		return (date_prev.getTime() <= new Date(fecha).getTime());
+	}
 
   async deleteMov(data, el) {
     this.applicationEl.confirmDialog(MSG.DELETE, `${MSG.DELETE_CONFIRM} el movimiento de ${data.name} ?`, async() => {

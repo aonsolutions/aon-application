@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.sii;
 
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.type.Administration;
 
 public class SIIUri {
@@ -197,5 +198,11 @@ public class SIIUri {
 			if(Administration.NAVARRA.equals(place))return "https://www7.aeat.es/wlpl/SSII-FACT/ws/bi/SiiFactBIV1SOAP";
 		}
 		return "";
+	}
+	
+	public String getURI(SiiConfiguration siiConfiguration, SIIType type) {
+		return siiConfiguration.isTest() 
+			? getURIPruebas(type, siiConfiguration.getAdministration())
+			: getURI(type, siiConfiguration.getAdministration());
 	}
 }

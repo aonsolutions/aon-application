@@ -2,14 +2,15 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.stream.Stream;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.occam.api.model.task.TaskPeriod;
 import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.type.Priority;
-import com.esferalia.aon.occam.api.model.Domain;
 
 public class TaskJSON {
 	

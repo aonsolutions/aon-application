@@ -100,7 +100,17 @@
 			value="#{bundle.aon_module_document}"
 			styleClass="aon-button-document" />
 		</aon:div>
-
+		
+		<aon:if test="#{dur.invoice}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
+				<aon:commandLink 
+				id="new_menu_invoice" 
+				immediate="true"
+				action="portal_invoice"
+				value="#{bundle.aon_invoices}"
+				styleClass="aon-button-invoice" />
+			</aon:div>
+		</aon:if>
 		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
 			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-tools-parent">
 				<aon:commandLink 

@@ -135,7 +135,7 @@ public class AonComunica {
 			.setDomain(domain.getId())
 			.setContract(employee.getEmployeeId())
 			.setMimeType(MimeType.PDF)
-			.setDescription("TGSS - TA (ALTA)")
+			.setDescription("TGSS - TA")
 			.setData(fileByte)
 			.setAttachDate(date)
 			.setType(ContractAttachType.TA);

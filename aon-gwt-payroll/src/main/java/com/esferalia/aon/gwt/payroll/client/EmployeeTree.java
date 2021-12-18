@@ -77,6 +77,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -90,6 +92,8 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.layout.client.Layout.Alignment;
+import com.google.gwt.resources.client.CommonResources;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -100,9 +104,16 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.ProvidesResize;
+import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
@@ -2010,6 +2021,284 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			jsTrabajadoresYTramoss.clear();
 		}
 	}
+	
+	private static class CustomTabLayoutPanel extends ResizeComposite implements ProvidesResize {
+		
+		private static interface SelectCallback {
+			void selected();
+		}
+		
+		private class Tab extends SimplePanel {
+			private Element containerElement;
+
+			public Tab(Widget child) {
+				super(Document.get().createDivElement());
+				containerElement = Document.get().createDivElement();
+				getElement().appendChild(containerElement);
+
+				setWidget(child);
+				setStyleName("gwt-TabLayoutPanelTab");
+				containerElement.setClassName("gwt-TabLayoutPanelTabInner");
+
+				getElement().addClassName(CommonResources.getInlineBlockStyle());
+				
+			}
+
+			public void setSelected(boolean selected) {
+				if (selected) {
+					addStyleDependentName("selected");
+				} else {
+					removeStyleDependentName("selected");
+				}
+			}
+			
+			public HandlerRegistration addClickHandler(ClickHandler handler) {
+				return addDomHandler(handler, ClickEvent.getType());
+			}
+			
+			
+		    @Override
+		    protected com.google.gwt.user.client.Element getContainerElement() {
+		      return containerElement.cast();
+		    }
+			
+		    
+
+		}
+
+		private int selectedIndex = -1;
+		private final FlowPanel tabBar = new FlowPanel();
+		private final ArrayList<Tab> tabs = new ArrayList<Tab>();
+		private final SimpleLayoutPanel widgetPanel = new SimpleLayoutPanel();
+		private final ArrayList<Widget> widgets = new ArrayList<Widget>();
+		
+		
+		public CustomTabLayoutPanel() {
+			this(38, Unit.PX);
+		}
+		
+		public CustomTabLayoutPanel(double barHeight, Unit barUnit) {
+			LayoutPanel panel = new LayoutPanel();
+			initWidget(panel);
+			
+			// Add the tab bar to the panel.
+			panel.add(tabBar);
+			panel.setWidgetLeftRight(tabBar, 0, Unit.PX, 0, Unit.PX);
+			panel.setWidgetTopHeight(tabBar, 0, Unit.PX, barHeight, barUnit);
+			panel.setWidgetVerticalPosition(tabBar, Alignment.END);
+			
+			// Add the deck panel to the panel.
+			panel.add(widgetPanel);
+			panel.setWidgetLeftRight(widgetPanel, 0, Unit.PX, 0, Unit.PX);
+			panel.setWidgetTopBottom(widgetPanel, barHeight, barUnit, 0, Unit.PX);
+			
+			
+			setStyleName("gwt-TabLayoutPanel");
+			tabBar.setStyleName("gwt-TabLayoutPanelTabs");
+			widgetPanel.addStyleName("gwt-TabLayoutPanelContentContainer");
+
+			// Make the tab bar extremely wide so that tabs themselves never wrap.
+			// (Its layout container is overflow:hidden)
+			tabBar.getElement().getStyle().setWidth(16384, Unit.PX);
+
+		}
+		
+		public int getTabCount() {
+			return tabs.size();
+		}
+		
+		public void add(String text, Widget w, SelectCallback callback) {
+			Tab tab = new Tab(new Label(text));
+			tabs.add(tab);
+			widgets.add(w);
+			tabBar.add(tab);
+		    tab.addClickHandler(event -> {
+		    	showWidget(w);
+		    	selectTab(tab);
+		    	callback.selected();
+		    });
+		}
+		
+		public void select(int index) {
+			selectTab(index);
+			showWidget(index);
+		}
+
+		public void selectWidget(Widget w) {
+			select( widgets.indexOf(w));
+		}
+		
+		private void selectTab(Tab tab) {
+			selectTab(tabs.indexOf(tab));
+		}
+
+		private void selectTab(int index) {
+		    checkIndex(index);
+		    if (index == selectedIndex) {
+		      return;
+		    }
+
+		    // Update the tabs being selected and unselected.
+		    if (selectedIndex != -1) {
+		      tabs.get(selectedIndex).setSelected(false);
+		    }
+
+		    tabs.get(index).setSelected(true);
+		    selectedIndex = index;
+
+		}
+		
+		private void showWidget(Widget w) {
+			widgetPanel.setWidget(w);
+		}
+		
+		private void showWidget(int index) {
+		    checkIndex(index);
+		    Widget widget = widgets.get(index);
+		    if ( widget == widgetPanel.getWidget())
+		    	return;
+			widgetPanel.setWidget(widget);
+		}
+
+		private void checkIndex(int index) {
+		    assert (index >= 0) && (index < getTabCount()) : "Index out of bounds";
+		}
+		
+	}
+	
+	private class EmployeeTabLayoutPanel extends CustomTabLayoutPanel {
+		
+		private EmployeeDraftObject employee;
+		
+		private Map<Integer, EmployeeContractPaymentsObject> contractPaymentsMap ;  
+		
+		public EmployeeTabLayoutPanel() {
+			contractPaymentsMap = new HashMap<Integer, EmployeeContractPaymentsObject>();
+			add("Empleado", getEmployeeDraft(), this::onEmployeeSelected);
+			add("N\u00f3minas", getEmployeeSalary(), this::onSalariesSelected);
+			add("Calendario", getEmployeeCalendarDraftNew(), this::onCalendarSelected);
+			add("Borrador", getSalaryDraft(), this::onDraftSelected);
+			add("Variables de C\u00e1lculo", getEmployeeEventsDraft(), this::onEventsSelected);
+			add("Conceptos de C\u00e1lculo", getEmployeeContractPayments(), this::onPaymentsSelected);
+		}
+
+		void onDraftSelected() {
+			employees.getEmployeeSalaryDraft(employee, o -> getSalaryDraft().setSalaryDraftObject(o));
+		}
+
+		void onEventsSelected() {
+			employees.getEmployeeEvents(employee, o -> getEmployeeEventsDraft().setEmployeeEventsDraftObject(o));
+		}
+
+		void onCalendarSelected() {
+			employees.getEmployeeCalendar(employee, o -> getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(o));
+		}
+
+		void onSalariesSelected() {
+			employees.getEmployeeSalary(employee, o -> getEmployeeSalary().setEmployeeSalaryObject(o));
+		}
+
+		void onPaymentsSelected() {
+			EmployeeContractPaymentsObject employeeContractPaymentsObject = 
+					contractPaymentsMap.computeIfAbsent(employee.getContractId(), EmployeeContractPaymentsObject::new );
+			getEmployeeContractPayments().setEmployeeContractPaymentsObject(employeeContractPaymentsObject);
+		}
+
+		void onEmployeeSelected() {
+		 //NOOP	
+		}
+		
+		public void setEmployee(EmployeeDraftObject employee) {
+			this.employee = employee;
+		}
+		
+	}
+
+	private class WorkplaceTabLayoutPanel extends CustomTabLayoutPanel {
+		
+		private Workplace workplace;
+		
+		public WorkplaceTabLayoutPanel() {
+			add("Centro de Trabajo", getWorkplaceDraft(), this::onWorkplaceSelected);
+			add("Costes", getCost(), this::onCostsSelected);
+			add("N\u00f3minas", getWorkplceSalary(), this::onSalariesSelected);
+			add("Calendario", getCalendarDraft(), this::onCalendarSelected);
+			add("Estad\u00edsticas", getStats(), this::onStatsSelected);
+			add("Partes IT", getWorkplceIT(), this::onITsSelected);
+			add("Variables de C\u00e1lculo", getEventsDraft(), this::onEventsSelected);
+		}
+
+		void onITsSelected() {
+			employees.getWorkplaceIT(workplace, o -> getWorkplceIT().setWorkplaceITObject(o));
+		}
+
+		void onCostsSelected() {
+			employees.getWorkplaceCost(workplace, o -> getCost().setCostDocuments(o));
+		}
+
+		void onStatsSelected() {
+			employees.getWorkplaceStatistics(workplace, o -> getStats().setStatistics(o));
+		}
+
+		void onCalendarSelected() {
+			employees.getWorkplaceCalendar(workplace, o -> getCalendarDraft().setCalendarDraftObject(null, o) );
+		}
+
+		void onEventsSelected() {
+			employees.getWorkplaceEvents(workplace, o -> getEventsDraft().setEventsDraftObject(o));
+		}
+
+		void onSalariesSelected() {
+			employees.getWorkplaceSalary(workplace, o -> getWorkplceSalary().setWorkplaceSalaryObject(o));
+		}
+
+		void onWorkplaceSelected() {
+			// NOOP
+		}
+		
+		public void setWorkplace(Workplace workplace) {
+			this.workplace = workplace;
+		}
+	}
+
+	private class EnterpriseTabLayoutPanel extends CustomTabLayoutPanel {
+		
+		private Enterprise enterprise;
+		
+		public EnterpriseTabLayoutPanel() {
+			add("Empresa", getEnterpriseDraft(), this::onEnterpriseSelected);
+			add("Costes", getCost(), this::onCostsSelected);
+			add("N\u00f3minas", getEnterpriseSalary(), this::onSalariesSelected);
+			add("Estad\u00edsticas", getStats(), this::onStatsSelected);
+			add("Partes IT", getEnterpriseIT(), this::onITsSelected);
+		}
+		
+		void onITsSelected() {
+			employees.getEnterpriseIT(enterprise, o-> getEnterpriseIT().setEnterpriseITObject(o));
+		}
+
+		void onCostsSelected() {
+			employees.getEnterpriseCost(enterprise, o -> getCost().setCostDocuments(o));
+			
+		}
+
+		void onStatsSelected() {
+			employees.getEnterpriseStatistics(enterprise, o -> getStats().setStatistics(o));
+		}
+
+		void onSalariesSelected() {
+			employees.getEnterpriseSalary(enterprise, o -> getEnterpriseSalary().setEnterpriseSalaryObject(o));
+		}
+
+		void onEnterpriseSelected() {
+			
+		}
+
+		public void setEnterprise(Enterprise enterprise) {
+			this.enterprise = enterprise;
+		}
+		
+	}
 
 	private static EmployeeTree singlenton;
 
@@ -2054,6 +2343,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EmployeeDraft employeeDraft;
 	private EmployeeCalendarDraft employeeCalendarDraft;
 	private EmployeeCalendarDraftNew employeeCalendarDraftNew;
+	private EmployeeContractPayments employeeContractPayments; 
 	private EmployeeSalary employeeSalary;
 	private CategoryDraft categoryDraft;
 	private AgreementDraft agreementDraft;
@@ -2066,6 +2356,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private ResultsPanel resultsPanel;
 	private ProgressPanel progressPanel;
+	private FlowPanel costsProblemsPanel;
 
 	private CCCContextMenu cccContextMenu;
 	private EmployeeContextMenu employeeContextMenu;
@@ -2085,6 +2376,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private MenuItem pasteItem;
 
 	private Storage storage;
+	
+	
+	private EmployeeTabLayoutPanel employeePanel;
+	private WorkplaceTabLayoutPanel workplacePanel;
+	private EnterpriseTabLayoutPanel enterprisePanel;
 
 	// Cret@
 	private CCCCretaDetail cccCretaDetail;
@@ -2215,6 +2511,31 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	public void onFinishSLD() {
 		hideProgressPanel();
 	}
+	
+	@Override
+	public void onNoSex(String naf, String name) {
+		if (costsProblemsPanel == null)
+			costsProblemsPanel = new FlowPanel();
+		Label lbl = new Label("ADVERTENCIA: Sexo no definido - NAF: " + naf + ", Nombre: "+ name);
+		lbl.getElement().getStyle().setColor("orange");
+		costsProblemsPanel.add(lbl);
+		
+		showCostProblemsPanel();
+		
+	}
+	
+	
+	@Override
+	public void onGeneratingDocument() {
+		if (costsProblemsPanel == null)
+			costsProblemsPanel = new FlowPanel();
+		
+		Label lbl = new Label("Se est\u00E1 generando su informe. Por favor, espere unos segundos...");
+		lbl.addStyleName(AON.CSS.aonColorGreen());		
+		costsProblemsPanel.add(lbl);
+		
+		showCostProblemsPanel();
+	}
 
 	// ------------------------------------------------- Salary.Listener methods
 
@@ -2278,16 +2599,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	public void onEnterpriseSelected(Enterprise enterprise) {
 		EnterpriseDraftObject enterpriseDraftObject = new EnterpriseDraftObject(enterprise);
 
-		employeeDetail.setWidget(getEnterpriseDraft());
+		employeeDetail.setWidget(getEnterprisePanel());
+		getEnterprisePanel().setEnterprise(enterprise);
+		getEnterprisePanel().selectWidget(getEnterpriseDraft());
 		getEnterpriseDraft().setEnterpriseDraftObject(enterpriseDraftObject);
 
 //		checkStatus(enterpriseDraftObject);
 
-//		int pos = employees.getVerticalScrollPosition();
-//		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
-//
-//		employeeDetail.setWidget(jsf);
-//		jsf.enterpriseSelected(enterprise.getId());
 		this.enterprise = enterprise;
 	}
 
@@ -2296,25 +2614,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(enterprise, workplace);
 
-		employeeDetail.setWidget(getWorkplaceDraft());
+		employeeDetail.setWidget(getWorkplacePanel());
+		getWorkplacePanel().setWorkplace(workplace);
+		getWorkplacePanel().selectWidget(getWorkplaceDraft());
 		getWorkplaceDraft().setWorkplaceDraftObject(employeeNewDraftObject);
 
-//		int pos = employees.getVerticalScrollPosition();
-//		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
-//
-//		employeeDetail.setWidget(jsf);
-//		jsf.workplaceSelected(workplace.getId());
 		this.workplace = workplace;
 	}
 
 	@Override
 	public void onEmployeeSelected(Employee employee) {
-//		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
-//		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
-//		
-//		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(getEmployeeTree().workplace, employee, employeesService, domainEnterprisesServiceAsync);
-//		employeeDetail.setWidget(getEmployeeDraft());
-//		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 
 		int pos = employees.getVerticalScrollPosition();
 		jsf.setRerenderHandler(() -> employees.setVerticalScrollPosition(pos));
@@ -2340,7 +2649,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		getCCCCretaDetail().onTrabajadoresYTramos();
 		employeeDetail.setWidget(getCCCCretaDetail());
 	}
-
+	// onSalariesSelected
 	@Override
 	public void onSalariesSelected(SalaryDocuments docs) {
 		employeeDetail.setWidget(getSalary());
@@ -2354,28 +2663,48 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	@Override
-	public void onCostsSelected(CostDocuments docs) {
+	public void onEnterpriseCostsSelected(CostDocuments docs) {
 		getCost().setTitle("Costes");
-		employeeDetail.setWidget(getCost());
+		employeeDetail.setWidget(getEnterprisePanel());
+		getEnterprisePanel().selectWidget(getCost());
 		getCost().setCostDocuments(docs);
 
 	}
 
 	@Override
-	public void onStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
-		employeeDetail.setWidget(getStats());
+	public void onWorkplaceCostsSelected(CostDocuments docs) {
+		getCost().setTitle("Costes");
+		employeeDetail.setWidget(getWorkplacePanel());
+		getWorkplacePanel().selectWidget(getCost());
+		getCost().setCostDocuments(docs);
+
+	}
+
+	@Override
+	public void onWorkplaceStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
+		employeeDetail.setWidget(getWorkplacePanel());
+		getWorkplacePanel().selectWidget(getStats());
+		getStats().setStatistics(statistics);
+	}
+
+	@Override
+	public void onEnterpriseStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
+		employeeDetail.setWidget(getEnterprisePanel());
+		getEnterprisePanel().selectWidget(getStats());
 		getStats().setStatistics(statistics);
 	}
 
 	@Override
 	public void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpriseSalaryObject) {
-		employeeDetail.setWidget(getEnterpriseSalary());
+		employeeDetail.setWidget(getEnterprisePanel());
+		getEnterprisePanel().selectWidget(getEnterpriseSalary());
 		getEnterpriseSalary().setEnterpriseSalaryObject(enterpriseSalaryObject);
 	}
 	
 	@Override
 	public void onEnterpriseITSelected(EnterpriseITObject enterpriseITObject) {
-		employeeDetail.setWidget(getEnterpriseIT());
+		employeeDetail.setWidget(getEnterprisePanel());
+		getEnterprisePanel().selectWidget(getEnterpriseIT());
 		getEnterpriseIT().setEnterpriseITObject(enterpriseITObject);
 	}
 
@@ -2387,19 +2716,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onWorkplaceSalarySelected(WorkplaceSalaryObject dataObject) {
-		employeeDetail.setWidget(getWorkplceSalary());
+		employeeDetail.setWidget(getWorkplacePanel());
+		getWorkplacePanel().selectWidget(getWorkplceSalary());
 		getWorkplceSalary().setWorkplaceSalaryObject(dataObject);
 	}
 	
 	@Override
 	public void onWorkplaceITSelected(WorkplaceITObject workplaceITObject) {
-		employeeDetail.setWidget(getWorkplceIT());
+		employeeDetail.setWidget(getWorkplacePanel());
+		getWorkplacePanel().selectWidget(getWorkplceIT());
 		getWorkplceIT().setWorkplaceITObject(workplaceITObject);
 	}
 
 	@Override
 	public void onCalendarSelected(CalendarDraftObjectData calendarDraftObjectData) {
-		employeeDetail.setWidget(getCalendarDraft());
+		employeeDetail.setWidget(getWorkplacePanel());
+		getWorkplacePanel().selectWidget(getCalendarDraft());
 		getCalendarDraft().setCalendarDraftObject(null, calendarDraftObjectData);
 	}
 
@@ -2411,13 +2743,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onEmployeeNewCalendarSelected(EmployeeCalendarDraftObject calendar) {
-		employeeDetail.setWidget(getEmployeeCalendarDraftNew());
+		employeeDetail.setWidget(getEmployeePanel());
+		getEmployeePanel().selectWidget(getEmployeeCalendarDraftNew());
 		getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(calendar);
 	}
 
 	@Override
 	public void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary) {
-		employeeDetail.setWidget(getEmployeeSalary());
+		employeeDetail.setWidget(getEmployeePanel());
+		getEmployeePanel().selectWidget(getEmployeeSalary());
 		getEmployeeSalary().setEmployeeSalaryObject(employeeSalary);
 	}
 
@@ -2436,7 +2770,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onSalaryDraftSelected(SalaryDraftObject salaryDraftObject) {
-		employeeDetail.setWidget(getSalaryDraft());
+		employeeDetail.setWidget(getEmployeePanel());
+		getEmployeePanel().selectWidget(getSalaryDraft());
 		getSalaryDraft().setSalaryDraftObject(salaryDraftObject);
 	}
 
@@ -2494,13 +2829,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onEventsDraftSelected(EventsDraftObject eventsDraftObject) {
-		employeeDetail.setWidget(getEventsDraft());
+		employeeDetail.setWidget(getWorkplacePanel());
+		getWorkplacePanel().selectWidget(getEventsDraft());
 		getEventsDraft().setEventsDraftObject(eventsDraftObject);
 	}
 
 	@Override
 	public void onEmployeeEventsDraftSelected(EmployeeEventsDraftObject employeeEventsDraft) {
-		employeeDetail.setWidget(getEmployeeEventsDraft());
+		employeeDetail.setWidget(getEmployeePanel());
+		getEmployeePanel().selectWidget(getEmployeeEventsDraft());
 		getEmployeeEventsDraft().setEmployeeEventsDraftObject(employeeEventsDraft);
 	}
 
@@ -2510,7 +2847,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 //			checkStatus(e);
 			refreshWorkplace();
 		});
-		employeeDetail.setWidget(getEmployeeDraft());
+		employeeDetail.setWidget(getEmployeePanel());
+		getEmployeePanel().setEmployee(employeeDraftObject);
+		getEmployeePanel().selectWidget(getEmployeeDraft());
 		employeeDraftObject.setEnterpriseContext(employees.getEnterpriseContext());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 		singlenton.employee = employeeDraftObject.getEmployee();
@@ -2594,6 +2933,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		footTabPanel.selectTab(resultsPanel);
 		EmployeeTree.this.splitLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
 
+	}
+	
+	private void showCostProblemsPanel() {
+		
+		InlineLabel tab = new InlineLabel("Costes");
+		tab.addStyleName(AON.AON_ICON_TIME);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.costsProblemsPanel, tab);
+		footTabPanel.selectTab(costsProblemsPanel);
+		EmployeeTree.this.splitLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+		
 	}
 
 	private void selectResultsPanel() {
@@ -2736,7 +3086,37 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				}}.setOnSaved(w -> refreshEnterprise());
 		return enterpriseDraft;
 	}
+	
+	private EnterpriseDraft newEnterpriseDraft() {
+		return  new EnterpriseDraft() {
+			@Override
+			protected void onCheckStatus(EnterpriseDraftObject enterpriseDraftObject) {
+				checkStatus(enterpriseDraftObject);
+			}}.setOnSaved(w -> refreshEnterprise());
+	}
 
+	private EmployeeTabLayoutPanel getEmployeePanel() {
+		if ( employeePanel == null ) {
+			employeePanel = new EmployeeTabLayoutPanel();
+		}
+		return employeePanel;
+	}
+
+	private WorkplaceTabLayoutPanel getWorkplacePanel() {
+		if ( workplacePanel == null ) {
+			workplacePanel = new WorkplaceTabLayoutPanel();
+		}
+		return workplacePanel;
+	}
+
+
+	private EnterpriseTabLayoutPanel getEnterprisePanel() {
+		if ( enterprisePanel == null ) {
+			enterprisePanel = new EnterpriseTabLayoutPanel();
+		}
+		return enterprisePanel;
+	}
+	
 	private WorkplaceDraft getWorkplaceDraft() {
 		if (workplaceDraft == null)
 			workplaceDraft = new WorkplaceDraft();
@@ -2769,6 +3149,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		return cccCretaDetail;
+	}
+
+	private EmployeeContractPayments getEmployeeContractPayments() {
+		if (employeeContractPayments == null) {
+			employeeContractPayments = new EmployeeContractPayments() ;
+		}
+		return employeeContractPayments;
 	}
 
 	private EmployeeEventsDraft getEmployeeEventsDraft() {
@@ -3814,5 +4201,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		resultsPanel.setWidget(messageTree);
 		showResultsPanel();
 	}
+
+
 
 }
