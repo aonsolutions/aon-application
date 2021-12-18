@@ -8,9 +8,11 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
@@ -32,6 +34,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
@@ -552,16 +555,29 @@ public class EmployeeSalary extends Composite {
 	// --------------------------------------------- Toolbar Methods
 
 	public void onDelete() {
-		employeeSalaryObject.deleteSalaries(
-				salaryTable.getSelectedSalaries(), 
-				s -> 
-					reloadTable(success -> {
-						Map<String, String> successMap = new HashMap<>();
-						successMap.put("Borrado", "La(s) n\u00F3minas han sido eliminadas correctamente");
-						AonMessagePanel.showSuccess(messagePanel, successMap);
-					})
-				, f -> {}
-		);
+		AonDialog deleteDialog = new AonDialog("Eliminar n\u00F3minas", new HTML("\u00BFDesea eliminar la n\u00F3minas seleccionadas\u003F"));
+		deleteDialog.confirm(new AonAcceptDialogCallback() {
+			
+			@Override
+			public void onCancel() {
+				// Nothing to do here
+			}
+			
+			@Override
+			public void onAccept() {
+				employeeSalaryObject.deleteSalaries(
+						salaryTable.getSelectedSalaries(), 
+						s -> 
+							reloadTable(success -> {
+								Map<String, String> successMap = new HashMap<>();
+								successMap.put("Borrado", "La(s) n\u00F3minas han sido eliminadas correctamente");
+								AonMessagePanel.showSuccess(messagePanel, successMap);
+							})
+						, f -> {}
+				);
+			}
+		});
+		
 	}
 	
 	private void reloadTable(Consumer<List<SalaryInfo>> success) {
