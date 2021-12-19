@@ -111,9 +111,11 @@ public class AgreementServiceAsyncDecorator implements AgreementServiceAsync {
 				new AsyncCallbackWrapper<SortedSet<Date>>(callback));
 	}
 
+	@Override
+	public void checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear, AsyncCallback<Date> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		agreementServiceAsync.checkAndUpdateServiAgreement(domain, agreementId, ssNumber, lastDateYear, new AsyncCallbackWrapper<Date>(callback));
+	}
 
-	
-
-	
-	
 }

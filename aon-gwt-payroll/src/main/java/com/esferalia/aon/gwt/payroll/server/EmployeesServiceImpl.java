@@ -216,6 +216,7 @@ import com.esferalia.aon.payroll.SalaryDeductionsFactory;
 import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.SalaryPaymentsFactory;
+import com.esferalia.aon.payroll.agreement.AgreementUpdate;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -6886,6 +6887,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		} catch (ManagerBeanException e) {
 			throw new IllegalArgumentException(e);
 		} catch (CanNotCreatePdfException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public Date checkAndUpdateServiAgreement(String domainName, Integer agreementId, String ssNumber, Integer lastDateYear) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return AgreementUpdate.checkAndUpdateServiAgreement(connection, domainId, agreementId, ssNumber, lastDateYear);
+		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
