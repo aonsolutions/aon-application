@@ -5,7 +5,6 @@ import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDEr
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -25,7 +24,6 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -591,9 +589,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	ContractAttachUI contractAttachUI;
 	
 	@UiField (provided = true)
-	ContractBonusUI contractBonusUI;
-	
-	@UiField (provided = true)
 	EmployeeSalary employeeSalary;
 	
 	@UiField (provided = true)
@@ -637,9 +632,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	@UiField
 	ScrollPanel scrolledPanelAttach;
-	
-	@UiField
-	ScrollPanel scrolledPanelBonus;
 	
 	@UiField
 	SimpleLayoutPanel scrolledPDFPanel;
@@ -712,7 +704,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contractOtherData = new ContractOtherData();
 		contractClauseUI = new ContractClauseUI();
 		contractAttachUI = new ContractAttachUIImpl();
-		contractBonusUI = new ContractBonusUI();
 		
 		employeeSalary = new EmployeeSalary();
 		employeeSalary.hideToolbar();
@@ -760,7 +751,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	private void checkBetaAlphaUser() {
 		if(!getDomainUserRole().isBeta() && !getDomainUserRole().isAlpha())
-			tabLayOutPanel.remove(12);
+			tabLayOutPanel.remove(11);
 	}
 
 	private void initLoadingPanel() {
@@ -796,20 +787,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		case 4:
 			return "Cargando documentos ...";
 		case 5:
-			return "Cargando bonificaciones ...";
-		case 6:
 			return "Cargando n\u00F3minas ...";
-		case 7:
+		case 6:
 			return "Cargando calendario ...";
-		case 8:
+		case 7:
 			return "Cargando variables de calculo ...";
-		case 9:
+		case 8:
 			return "Cargando conceptos de calculo ...";
-		case 10:
+		case 9:
 			return "Cargando datos IRPF ...";
-		case 11:
+		case 10:
 			return "Cargando borrador n\u00F3mina ...";
-		case 12:
+		case 11:
 			return "Cargando variables contrato ...";
 		default:
 			return "Cargando datos afiliaci\u00F3n ...";
@@ -823,7 +812,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		scrolledPanelContractOtherData.getElement().getStyle().setHeight(Window.getClientHeight() - 250.00, Unit.PX);
 		scrolledPanelClauses.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
 		scrolledPanelAttach.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
-		scrolledPanelBonus.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
 		scrolledPanelContractSpecificData.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
 		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 170.00, Unit.PX);
 	}
@@ -962,20 +950,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				break;
 			case 5:
 				showLoadingPanel();
-				getContractBonus(s -> {
-					exportContract.getElement().getStyle().setDisplay(Display.NONE);
-					showContractButtons();
-					contractBonusUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
-					hideLoadingPanel();
-					hideTgssOption();
-					hideSepeOption();
-				}, f -> {
-					hideLoadingPanel();
-					showError("Bonificaciones", f.getMessage());
-				});
-				break;
-			case 6:
-				showLoadingPanel();
 				contrataEmployeeObject.getEmployeeSalaryObject(employeeSalaryObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					showSalariesButtons();
@@ -984,7 +958,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					hideLoadingPanel();
 				});
 				break;
-			case 7:
+			case 6:
 				showLoadingPanel();
 				contrataEmployeeObject.getEmployeeCalendarObject(employeeCalendarObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
@@ -993,7 +967,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					hideLoadingPanel();
 				});
 				break;
-			case 8:
+			case 7:
 				showLoadingPanel();
 				contrataEmployeeObject.getEmployeeEventsObject(employeeEventsObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
@@ -1002,7 +976,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					hideLoadingPanel();
 				});
 				break;
-			case 9:
+			case 8:
 				showLoadingPanel();
 				contrataEmployeeObject.getEmployeeContractPaymentsObject(employeeContractPaymentsObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
@@ -1011,7 +985,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					hideLoadingPanel();
 				});
 				break;
-			case 10:
+			case 9:
 				showLoadingPanel();
 				contrataEmployeeObject.getEmployeeContractIrpfObject(employeeContractIrpfObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
@@ -1020,7 +994,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					hideLoadingPanel();
 				});
 				break;
-			case 11:
+			case 10:
 				showLoadingPanel();
 				contrataEmployeeObject.getSalaryDraftObject(salaryDraftObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
@@ -1029,7 +1003,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					hideLoadingPanel();
 				}, f -> {});
 				break;
-			case 12:
+			case 11:
 				showLoadingPanel();
 				contrataEmployeeObject.getEmployeeContractVariablesObject(employeeContractVariablesObject -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
@@ -1080,12 +1054,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		tabLayOutPanel.getElement().getStyle().setDisplay(Display.NONE);
 		pdfViewer.getElement().getStyle().clearDisplay();
-	}
-	
-	// ------------------------------------------------- Initialize View (Auxiliar Method)
-	
-	protected void getContractBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
-		contrataEmployeeObject.getSSBonus(success, failure);
 	}
 	
 	// ------------------------------------------------- setContrataEmployeeObject

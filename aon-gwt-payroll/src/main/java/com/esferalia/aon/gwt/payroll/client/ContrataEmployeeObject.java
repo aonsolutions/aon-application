@@ -22,11 +22,10 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ContrataEmployeeObject {
@@ -328,25 +327,6 @@ public class ContrataEmployeeObject {
 				failure.accept(caught);
 			}
 			
-		});
-	}
-	
-	// ------------------------------------------------- Database Methods (Bonuses)
-	
-	public void getSSBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
-		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		enterprisesService.getEmployeeSSBonuses(contractId, new AsyncCallback<List<SSBonusData>>() {
-			
-			@Override
-			public void onSuccess(List<SSBonusData> result) {
-				employeeContractData.setContractBonus(result);
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
 		});
 	}
 	
