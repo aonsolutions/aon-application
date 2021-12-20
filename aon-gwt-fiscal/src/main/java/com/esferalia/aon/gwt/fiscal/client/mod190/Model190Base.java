@@ -37,62 +37,11 @@ abstract class Model190Base extends DockLayoutPanel {
 
 	private static final String MODEL190_DRAFT = "/aon_gwt_fiscal/ms/Model190Draft";
 	protected static final String MODEL190_FILE = "/aon_gwt_fiscal/ms/Model190File";
-	
-//	private static final String MODEL190_PRINT = "/aon_gwt_fiscal/ms/Model190Print";
-// 	private static final String MODEL190_CERTIFICATE_PRINT = "/aon_gwt_fiscal/ms/Model190CertificatePrint";
+	private static final String MODEL190_CERTIFICATE_PRINT = "/aon_gwt_fiscal/ms/Model190CertificatePrint";
 	
 	protected interface IModel190Detail extends IsWidget {
 		Integer getSelectedPerceptorIndex();
 	}
-/*
-	protected class Model190BaseCallback implements IModel190Callback {
-		private Model190Callback cbk;
-		
-		protected Model190BaseCallback( Model190Callback cbk ) {
-			this.cbk = cbk;
-		}
-		public Mod190 getModel() {
-			return Model190Base.this.getModel();
-		}
-		@Override
-		public void onAccept(Mod190 mod190) {
-			cbk.onAccept(mod190);
-		}
-		@Override	
-		public void onCancel() {
-			cbk.onCancel();
-		}
-		@Override	
-		public void onSelect(Model190ModuleOptions options,Mod190 mod190, Integer selectedIndex) {
-			cbk.onSelect(options, mod190, selectedIndex);
-		}
-		@Override
-		public void showError(String msg) {
-			cbk.showError(msg);
-		}
-		@Override
-		public void cleanErrorPanel() {
-			cbk.cleanErrorPanel();
-		}
-		@Override
-		public void onNew() {
-			cbk.onNew();
-		}
-		@Override
-		public void onReset(Model190ModuleOptions options, Mod190 mod190) {
-			cbk.onReset(options, mod190);
-		}
-		@Override
-		public void onDuplicate(Model190ModuleOptions options, int id) {
-			cbk.onDuplicate( options, id );
-		}
-		@Override
-		public Model190ModuleOptions getOptions() {
-			return cbk.getOptions();
-		}
-
-	}
-*/	
 	
 	private Mod190 mod190;
 	private Model190Callback callback;
@@ -113,6 +62,7 @@ abstract class Model190Base extends DockLayoutPanel {
 	protected final AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
 	protected final AonToolbarButton duplicateButton = new AonToolbarButton(AON.MSG.duplicate(),AON.CSS.aonIconCopy());
 	protected final AonToolbarButton commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
+	protected final AonToolbarButton certificateButton = new AonToolbarButton(AON.MSG.mod190CertificatePrint(),AON.CSS.aonIconPdf());
 	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
 	
 	protected final AonToolbar decToolbar = new AonToolbar();
@@ -201,6 +151,9 @@ abstract class Model190Base extends DockLayoutPanel {
 		printButton.addClickHandler( event ->  print());
 		toolbarPanel.add(printButton);
 		
+		certificateButton.addClickHandler( event ->  certificate());
+		toolbarPanel.add(certificateButton);
+
 		commentsButton.addClickHandler( event -> {
 			final AonToast toast = new AonToast();
 			FlowPanel commentPanel = new FlowPanel();
@@ -443,6 +396,26 @@ abstract class Model190Base extends DockLayoutPanel {
 		}
 	}
 	
+	private void certificate() {
+		if (isDirty()) {
+			new AonConfirmDialog().confirm(AON.MSG.mod190CertificatePrint(),AON.MSG.mod190CertificatePrintNote() 
+					, new AonConfirmDialogCallback() {
+					
+					@Override
+					public void onAccept() {
+						submitForm(MODEL190_CERTIFICATE_PRINT);
+					}
+	
+					@Override
+					public void onCancel() {
+						// Nothing
+					}
+				});
+		} else {
+			submitForm(MODEL190_CERTIFICATE_PRINT);
+		}
+	}
+
 	private void audit() {
 		AonAuditDialog dialog = new AonAuditDialog();
 		dialog.show(getModel());

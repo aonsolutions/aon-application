@@ -451,10 +451,10 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		   ((getCallback().getModel().getYear() > 2021)  
 		   || (getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester())
 		   || (getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2))) {
-			validateLink.setVisible( getCallback().getModel().isFinished() );
-			sendLink.setVisible( getCallback().getModel().isFinished() );
-			checkLink.setVisible( getCallback().getModel().isSent() ); 
-			viewDocumentLink.setVisible( getCallback().getModel().isSent() ); 
+			validateLink.setVisible( getCallback().getModel().isFinished() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
+			sendLink.setVisible( getCallback().getModel().isFinished() && AonStringUtils.isNotBlank(getCallback().getSendAction() ));
+			checkLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckAction() ));
+			viewDocumentLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction() )); 
 		} else {
 			validateLink.setVisible( false );
 			sendLink.setVisible( false );

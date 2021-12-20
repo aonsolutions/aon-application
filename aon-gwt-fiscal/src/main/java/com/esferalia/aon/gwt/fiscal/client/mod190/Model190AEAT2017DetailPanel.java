@@ -368,10 +368,10 @@ public class Model190AEAT2017DetailPanel extends SimpleLayoutPanel implements Fo
 		tab4.setWidget(1, 6, new Model190SmallerLabel(AON.MSG.disability()));
 		ListBox disability = new ListBox();
 		disability.setWidth("40px");
-		disability.addItem("0 - Si el perceptor no padece ninguna discapacidad o si, padeci\u00E9ndola, el grado de minusval\u00EDa es inferior al 33 por 100.");
-		disability.addItem("1 - Si el grado de minusval\u00EDa del perceptor es igual o superior al 33 por 100 e inferior al 65 por 100.");
-		disability.addItem("2 - Si el grado de minusval\u00EDa del perceptor es igual o superior al 33 por 100 e inferior al 65 por 100, siempre que, adem\u00E1s, acredite necesitar ayuda de terceras personas o movilidad reducida.");
-		disability.addItem("3 - Si el grado de minusval\u00EDa del perceptor es igual o superior al 65 por 100.");
+		disability.addItem("0 - No padece ninguna discapacidad o grado de minusval\u00EDa es inferior al 33 por 100.");
+		disability.addItem("1 - Grado de minusval\u00EDa >= 33% y <65%");
+		disability.addItem("2 - Grado de minusval\u00EDa >= 33% y <65% ...(consulte instrucciones)"); 
+		disability.addItem("3 - Grado de minusval\u00EDa >= 65%.");
 		disability.setSelectedIndex(detail.getDisability());
 		disability.addChangeHandler(event -> {
 			detail.setDisability((byte) disability.getSelectedIndex());
@@ -383,10 +383,10 @@ public class Model190AEAT2017DetailPanel extends SimpleLayoutPanel implements Fo
 		ListBox contract = new ListBox();
 		contract.setWidth("40px");
 		contract.addItem("-");
-		contract.addItem("1 - Contrato o relaci\u00F3n de car\u00E1cter general, que comprender\u00E1 todas las situaciones no contempladas en los c\u00F3digos num\u00E9ricos siguientes.");
-		contract.addItem("2 - Contrato o relaci\u00F3n de duraci\u00F3n inferior al a\u00F1o, con excepci\u00F3n de los supuestos contemplados en el c\u00F3digo 4.");
-		contract.addItem("3 - Contrato o relaci\u00F3n laboral especial de car\u00E1cter dependiente, con excepci\u00F3n de los rendimientos obtenidos por los penados en las instituciones penitenciarias y de las relaciones laborales de car\u00E1cter especial que afecten a discapacitados, que se considerar\u00E1n comprendidos en el c\u00F3digo 1.");
-		contract.addItem("4 - Relaci\u00F3n espor\u00E1dica propia de los trabajadores manuales que perciben sus retribuciones por peonadas o jornales diarios, a que se refiere la regla 2.\u00AA del art\u00EDculo 83.2 del Reglamento del Impuesto.");
+		contract.addItem("1 - Contrato o relaci\u00F3n de car\u00E1cter general,  ... (consulte instrucciones)");
+		contract.addItem("2 - Contrato o relaci\u00F3n de duraci\u00F3n inferior al a\u00F1o ...(consulte instrucciones).");
+		contract.addItem("3 - Contrato o relaci\u00F3n laboral especial de car\u00E1cter dependiente ... (consulte instrucciones)");
+		contract.addItem("4 - Relaci\u00F3n espor\u00E1dica propia de los trabajadores manuales ... (consulte instrucciones)");
 		contract.setSelectedIndex(detail.getContract());
 		contract.addChangeHandler(event -> {
 			detail.setContract((byte) contract.getSelectedIndex());

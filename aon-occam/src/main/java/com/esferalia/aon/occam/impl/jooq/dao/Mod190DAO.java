@@ -64,6 +64,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod190DAO {
 	private static byte ZERO_BYTE = 0;
 	private static String PREST_IT = "PREST_IT";
+	
+	private Mod190DAO() {
+		
+	}
 
 	public static Mod190 saveComments(AONContext ctx, Mod190 fm) {
 		try {
@@ -855,7 +859,11 @@ public class Mod190DAO {
 				.setReceiverCountTotal(record.getValue(FS_MODEL190.RECEIVER_COUNT_TOTAL))
 				.setReceiptTotal(record.getValue(FS_MODEL190.RECEIPT_TOTAL))
 				.setRetentionTotal(record.getValue(FS_MODEL190.RETENTION_TOTAL))
-				.setComments(record.getValue(FS_MODEL190.COMMENTS));
+				.setComments(record.getValue(FS_MODEL190.COMMENTS))
+				.setCreationDate(record.getValue(FS_MODEL190.CREATION_DATE))
+				.setCreationUser(record.getValue(FS_MODEL190.CREATION_USER))
+				.setModificationDate(record.getValue(FS_MODEL190.MODIFICATION_DATE))
+				.setModificationUser(record.getValue(FS_MODEL190.MODIFICATION_USER));
 		}
 	}
 	
