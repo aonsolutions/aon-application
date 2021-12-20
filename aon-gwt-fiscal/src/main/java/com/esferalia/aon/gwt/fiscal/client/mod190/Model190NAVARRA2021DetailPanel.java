@@ -30,12 +30,6 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements Focusable {
 	
-	private static class MediumLabel extends InlineLabel {
-		private MediumLabel(String label) {
-			super(label);
-			setStyleName(AON.AON_CSS.aonFontMedium());
-		}
-	}
 	private int tabIndex; 
 	private DocumentTextBox document;
 	
@@ -44,9 +38,9 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		FlowPanel ilPanel = new FlowPanel();
 		
 		ScrollPanel scroll = new ScrollPanel();
-		scroll.setStyleName(AON.AON_CSS.aonWidthAll());
+		scroll.setStyleName(AON.CSS.aonWidthAll());
 		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.setStyleName(AON.CSS.aonScrollArea());
 		
 		FlexTable tab1 = new FlexTable();
 		panel.add(tab1);
@@ -54,18 +48,18 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		tab1.getColumnFormatter().setWidth(1, "100px");
 		tab1.getColumnFormatter().setWidth(2, "300px");
 		tab1.getColumnFormatter().setWidth(3, "auto");
-		tab1.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab1.addStyleName(AON.AON_CSS.aonNowrap());
+		tab1.setStyleName(AON.CSS.aonWidthAll());
+		tab1.addStyleName(AON.CSS.aonNowrap());
 		
-		tab1.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBorderBottom());
-		tab1.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
+		tab1.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab1.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab1.getFlexCellFormatter().setColSpan(0, 0, 4);
 		tab1.setWidget(0, 0, new InlineLabel(AON.MSG.perceptionData()));
 
- 		tab1.setWidget(1, 0, new MediumLabel(AON.MSG.receiverDocument()));
-		tab1.setWidget(1, 1, new MediumLabel(AON.MSG.representativeDocument()));
-		tab1.setWidget(1, 2, new MediumLabel(AON.MSG.fullName()));
-		tab1.setWidget(1, 3, new MediumLabel(AON.MSG.province()));
+ 		tab1.setWidget(1, 0, new Model190SmallerLabel(AON.MSG.receiverDocument()));
+		tab1.setWidget(1, 1, new Model190SmallerLabel(AON.MSG.representativeDocument()));
+		tab1.setWidget(1, 2, new Model190SmallerLabel(AON.MSG.fullName()));
+		tab1.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.province()));
 		
 		document = new DocumentTextBox();
 		document.setValue(detail.getDocument());
@@ -92,7 +86,7 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		TextBox name = new TextBox();
 		name.setVisibleLength(40);
 		name.setMaxLength(40);
-		name.setStyleName(AON.AON_CSS.aonInputText());
+		name.setStyleName(AON.CSS.aonInputText());
 		name.setValue(detail.getName());
 		name.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
@@ -125,11 +119,11 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		tab2.getColumnFormatter().setWidth(7, "150px");
 		tab2.getColumnFormatter().setWidth(8, "auto");
 		
-		tab2.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab2.addStyleName(AON.AON_CSS.aonNowrap());
+		tab2.setStyleName(AON.CSS.aonWidthAll());
+		tab2.addStyleName(AON.CSS.aonNowrap());
 		
 		
-		tab2.setWidget(0, 0, new MediumLabel(AON.MSG.key()));
+		tab2.setWidget(0, 0, new Model190SmallerLabel(AON.MSG.key()));
 		tab2.getFlexCellFormatter().setRowSpan(0, 0, 4);
 		
 		final ListBox subkey = new ListBox();
@@ -184,19 +178,19 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 				callback.onValueChanged(detail);
 			}
 		});
-		tab2.setWidget(0, 2, new MediumLabel(AON.MSG.subkey()));
+		tab2.setWidget(0, 2, new Model190SmallerLabel(AON.MSG.subkey()));
 		tab2.getFlexCellFormatter().setRowSpan(0, 2, 4);
 		
 		tab2.setWidget(0, 3, subkey);
 		tab2.getFlexCellFormatter().setRowSpan(0, 3, 4);
 
-		tab2.setWidget(0, 4, new MediumLabel(AON.MSG.money()));
+		tab2.setWidget(0, 4, new Model190SmallerLabel(AON.MSG.money()));
 		tab2.getFlexCellFormatter().setRowSpan(0, 4, 2);
 		
-		tab2.setWidget(0, 5, new MediumLabel(AON.MSG.perception()));
-		tab2.setWidget(0, 6, new MediumLabel(AON.MSG.retention()));
+		tab2.setWidget(0, 5, new Model190SmallerLabel(AON.MSG.perception()));
+		tab2.setWidget(0, 6, new Model190SmallerLabel(AON.MSG.retention()));
 		tab2.setWidget(0, 7, new Label());
-		tab2.setWidget(0, 8, new MediumLabel(AON.MSG.accrualYear()));
+		tab2.setWidget(0, 8, new Model190SmallerLabel(AON.MSG.accrualYear()));
 		
 		
 		DoubleBox perception = new DoubleBox();
@@ -239,12 +233,12 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab2.setWidget(1, 3, accrualYear);
 		
-		tab2.setWidget(2, 0, new MediumLabel(AON.MSG.inKind()));
+		tab2.setWidget(2, 0, new Model190SmallerLabel(AON.MSG.inKind()));
 		tab2.getFlexCellFormatter().setRowSpan(2, 0, 2);
 		
-		tab2.setWidget(2, 1, new MediumLabel(AON.MSG.inKindPerception()));
-		tab2.setWidget(2, 2, new MediumLabel(AON.MSG.inKindDeposit()));
-		tab2.setWidget(2, 3, new MediumLabel(AON.MSG.inKindOutputDeposit()));
+		tab2.setWidget(2, 1, new Model190SmallerLabel(AON.MSG.inKindPerception()));
+		tab2.setWidget(2, 2, new Model190SmallerLabel(AON.MSG.inKindDeposit()));
+		tab2.setWidget(2, 3, new Model190SmallerLabel(AON.MSG.inKindOutputDeposit()));
 		tab2.setWidget(2, 4, new Label());
 		
 		DoubleBox inKindPerception = new DoubleBox();
@@ -284,7 +278,6 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		tab2.setWidget(3, 2, inKindOutputDeposit);
 
 		CheckBox ceutaMelilla = new CheckBox(AON.MSG.ceutaMelillaAbbrv());
-		ceutaMelilla.setStyleName(AON.AON_CSS.aonFontMedium());
 		ceutaMelilla.setValue(detail.isCeutaMelilla());
 		ceutaMelilla.addClickHandler(new ClickHandler() {
 			
@@ -302,22 +295,22 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		tab3.getColumnFormatter().setWidth(2, "150px");
 		tab3.getColumnFormatter().setWidth(3, "150px");
 		tab3.getColumnFormatter().setWidth(4, "auto");
-		tab3.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab3.addStyleName(AON.AON_CSS.aonNowrap());
+		tab3.setStyleName(AON.CSS.aonWidthAll());
+		tab3.addStyleName(AON.CSS.aonNowrap());
 		
-		tab3.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBorderBottom());
-		tab3.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
+		tab3.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab3.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab3.getFlexCellFormatter().setColSpan(0, 0, 5);
 		tab3.setWidget(0, 0, new InlineLabel("Percepciones derivadas de incapacidad laboral (s\u00F3lo para percepciones de las claves A, B.01)"));
 
 		tab3.setWidget(1, 0, new Label());
-		tab3.setWidget(1, 1, new MediumLabel(AON.MSG.perceptionValoration()));
-		tab3.setWidget(1, 2, new MediumLabel(AON.MSG.retentionIncome()));
-		tab3.setWidget(1, 3, new MediumLabel(AON.MSG.inKindOutputDeposit()));
+		tab3.setWidget(1, 1, new Model190SmallerLabel(AON.MSG.perceptionValoration()));
+		tab3.setWidget(1, 2, new Model190SmallerLabel(AON.MSG.retentionIncome()));
+		tab3.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.inKindOutputDeposit()));
 		tab3.setWidget(1, 4, new Label());
 		
-		tab3.setWidget(2, 0, new MediumLabel(AON.MSG.money()));
-		tab3.getCellFormatter().addStyleName(2, 0, AON.AON_CSS.aonTextRight());
+		tab3.setWidget(2, 0, new Model190SmallerLabel(AON.MSG.money()));
+		tab3.getCellFormatter().addStyleName(2, 0, AON.CSS.aonTextRight());
 
 		DoubleBox perceptionIL = new DoubleBox();
 		perceptionIL.setValue(detail.getPerceptionIL());
@@ -343,8 +336,8 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab3.setWidget(2, 2, retentionIL);
 		
-		tab3.setWidget(3, 0, new MediumLabel(AON.MSG.inKind()));
-		tab3.getCellFormatter().addStyleName(3, 0, AON.AON_CSS.aonTextRight());		
+		tab3.setWidget(3, 0, new Model190SmallerLabel(AON.MSG.inKind()));
+		tab3.getCellFormatter().addStyleName(3, 0, AON.CSS.aonTextRight());		
 		
 		DoubleBox inKindPerceptionIL = new DoubleBox();
 		inKindPerceptionIL.setValue(detail.getInKindPerceptionIL());
@@ -397,15 +390,15 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		tab4.getColumnFormatter().setWidth( 7, "50px");
 		tab4.getColumnFormatter().setWidth( 8, "120px");
 		tab4.getColumnFormatter().setWidth( 9, "auto");
-		tab4.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab4.addStyleName(AON.AON_CSS.aonNowrap());
+		tab4.setStyleName(AON.CSS.aonWidthAll());
+		tab4.addStyleName(AON.CSS.aonNowrap());
 		
-		tab4.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBorderBottom());
-		tab4.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
+		tab4.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab4.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab4.getFlexCellFormatter().setColSpan(0, 0, 10);
 		tab4.setWidget(0, 0, new InlineLabel(AON.MSG.additionalData()));
 		
-		tab4.setWidget(1, 0, new MediumLabel(AON.MSG.birthYear()));
+		tab4.setWidget(1, 0, new Model190SmallerLabel(AON.MSG.birthYear()));
 		IntegerBox birthYear = new IntegerBox();
 		birthYear.setMaxLength(4);
 		birthYear.setVisibleLength(4);
@@ -420,7 +413,7 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab4.setWidget(1, 1, birthYear);
 		
-		tab4.setWidget(1, 2, new MediumLabel(AON.MSG.familySituation()));
+		tab4.setWidget(1, 2, new Model190SmallerLabel(AON.MSG.familySituation()));
 		ListBox familySituation = new ListBox();
 		familySituation.setWidth("40px");
 		familySituation.addItem("-");
@@ -438,7 +431,7 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab4.setWidget(1, 3, familySituation);
 		
-		tab4.setWidget(1, 4, new MediumLabel(AON.MSG.spouseDocument()));
+		tab4.setWidget(1, 4, new Model190SmallerLabel(AON.MSG.spouseDocument()));
 		DocumentTextBox spouseDocument = new DocumentTextBox();
 		spouseDocument.setVisibleLength(9);
 		spouseDocument.setMaxLength(9);
@@ -453,7 +446,7 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab4.setWidget(1, 5, spouseDocument);
 		
-		tab4.setWidget(1, 6, new MediumLabel(AON.MSG.disability()));
+		tab4.setWidget(1, 6, new Model190SmallerLabel(AON.MSG.disability()));
 		ListBox disability = new ListBox();
 		disability.setWidth("40px");
 		disability.addItem("0");
@@ -471,7 +464,7 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab4.setWidget(1, 7, disability);
 		
-		tab4.setWidget(1, 8, new MediumLabel(AON.MSG.contract()));
+		tab4.setWidget(1, 8, new Model190SmallerLabel(AON.MSG.contract()));
 		ListBox contract = new ListBox();
 		contract.setWidth("40px");
 		contract.addItem("-");
@@ -499,11 +492,10 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		tab5.getColumnFormatter().setWidth(3, "170px");
 		tab5.getColumnFormatter().setWidth(4, "150px");
 		tab5.getColumnFormatter().setWidth(5, "auto");
-		tab5.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab5.addStyleName(AON.AON_CSS.aonNowrap());
+		tab5.setStyleName(AON.CSS.aonWidthAll());
+		tab5.addStyleName(AON.CSS.aonNowrap());
 		
 		CheckBox geographicMobility = new CheckBox(AON.MSG.geographicMobility());
-		geographicMobility.setStyleName(AON.AON_CSS.aonFontMedium());
 		geographicMobility.setValue(detail.isGeographicMobility());
 		geographicMobility.addClickHandler(new ClickHandler() {
 			
@@ -515,15 +507,14 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab5.setWidget(0, 0, geographicMobility);
 
-		tab5.setWidget(0, 1, new MediumLabel(AON.MSG.applicableReduction()));
-		tab5.setWidget(0, 2, new MediumLabel(AON.MSG.deducibleExpense()));
-		tab5.setWidget(0, 3, new MediumLabel(AON.MSG.compensatoryPension()));
-		tab5.setWidget(0, 4, new MediumLabel(AON.MSG.foodAnnuality()));
+		tab5.setWidget(0, 1, new Model190SmallerLabel(AON.MSG.applicableReduction()));
+		tab5.setWidget(0, 2, new Model190SmallerLabel(AON.MSG.deducibleExpense()));
+		tab5.setWidget(0, 3, new Model190SmallerLabel(AON.MSG.compensatoryPension()));
+		tab5.setWidget(0, 4, new Model190SmallerLabel(AON.MSG.foodAnnuality()));
 		tab5.setWidget(0, 5, new Label());
 		
 
 		CheckBox homeLoanCommunnication = new CheckBox(AON.MSG.homeLoanCommunnication());
-		homeLoanCommunnication.setStyleName(AON.AON_CSS.aonFontMedium());
 		homeLoanCommunnication.setValue(detail.isHomeLoanCommunnication());
 		homeLoanCommunnication.addClickHandler(new ClickHandler() {
 			
@@ -597,24 +588,24 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		tab6.getColumnFormatter().setWidth(7, "40px");
 		tab6.getColumnFormatter().setWidth(8, "40px");
 		tab6.getColumnFormatter().setWidth(9, "auto");
-		tab6.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab6.addStyleName(AON.AON_CSS.aonNowrap());
+		tab6.setStyleName(AON.CSS.aonWidthAll());
+		tab6.addStyleName(AON.CSS.aonNowrap());
 
-		MediumLabel descendant = new MediumLabel( AonStringUtils.abbreviate(AON.MSG.descendant(),34) );
-		descendant.addStyleName(AON.AON_CSS.aonBold());
+		Model190SmallerLabel descendant = new Model190SmallerLabel( AonStringUtils.abbreviate(AON.MSG.descendant(),34) );
+		descendant.addStyleName(AON.CSS.aonBold());
 		tab6.setWidget(0, 0, descendant );
-		tab6.setWidget(0, 1, new MediumLabel(AON.MSG.total()));
-		tab6.setWidget(0, 2, new MediumLabel(AON.MSG.byInteger()));
+		tab6.setWidget(0, 1, new Model190SmallerLabel(AON.MSG.total()));
+		tab6.setWidget(0, 2, new Model190SmallerLabel(AON.MSG.byInteger()));
 		tab6.setWidget(0, 3, new Label());
-		tab6.setWidget(0, 4, new MediumLabel(AON.MSG.total()));
-		tab6.setWidget(0, 5, new MediumLabel(AON.MSG.byInteger()));
+		tab6.setWidget(0, 4, new Model190SmallerLabel(AON.MSG.total()));
+		tab6.setWidget(0, 5, new Model190SmallerLabel(AON.MSG.byInteger()));
 		tab6.setWidget(0, 6, new Label());
-		tab6.setWidget(0, 7, new MediumLabel(AON.MSG.first()));
-		tab6.setWidget(0, 8, new MediumLabel(AON.MSG.second()));
-		tab6.setWidget(0, 9, new MediumLabel(AON.MSG.third()));
+		tab6.setWidget(0, 7, new Model190SmallerLabel(AON.MSG.first()));
+		tab6.setWidget(0, 8, new Model190SmallerLabel(AON.MSG.second()));
+		tab6.setWidget(0, 9, new Model190SmallerLabel(AON.MSG.third()));
 
-		tab6.setWidget(1, 0, new MediumLabel(AON.MSG.lessThan3()));
-		tab6.getCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonTextRight());
+		tab6.setWidget(1, 0, new Model190SmallerLabel(AON.MSG.lessThan3()));
+		tab6.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTextRight());
 		IntegerBox lessThan3Descendent = new IntegerBox();
 		lessThan3Descendent.setMaxLength(1);
 		lessThan3Descendent.setVisibleLength(1);
@@ -643,8 +634,8 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab6.setWidget(1, 2, lessThan3DescendentRatio);
 
-		tab6.setWidget(1, 3, new MediumLabel(AON.MSG.remainder()));
-		tab6.getCellFormatter().setStyleName(1, 3, AON.AON_CSS.aonTextRight());
+		tab6.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.remainder()));
+		tab6.getCellFormatter().setStyleName(1, 3, AON.CSS.aonTextRight());
 		IntegerBox otherDescendent = new IntegerBox();
 		otherDescendent.setMaxLength(1);
 		otherDescendent.setVisibleLength(1);
@@ -673,7 +664,7 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab6.setWidget(1, 5, otherDescendentRatio);
 
-		tab6.setWidget(1, 6, new MediumLabel(AON.MSG.first3Calculation()));
+		tab6.setWidget(1, 6, new Model190SmallerLabel(AON.MSG.first3Calculation()));
 		ListBox firstChildCalculation = new ListBox();
 		firstChildCalculation.setWidth("40px");
 		firstChildCalculation.addItem("-");
@@ -722,21 +713,21 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab6.setWidget(1, 9, thirdChildCalculation);
 
-		MediumLabel disabilityDescendant = new MediumLabel( AonStringUtils.abbreviate(AON.MSG.disabilityDescendant(),34) );
-		disabilityDescendant.addStyleName(AON.AON_CSS.aonBold());
+		Model190SmallerLabel disabilityDescendant = new Model190SmallerLabel( AonStringUtils.abbreviate(AON.MSG.disabilityDescendant(),34) );
+		disabilityDescendant.addStyleName(AON.CSS.aonBold());
 		tab6.setWidget(2, 0, disabilityDescendant );
-		tab6.setWidget(2, 1, new MediumLabel(AON.MSG.total()));
-		tab6.setWidget(2, 2, new MediumLabel(AON.MSG.byInteger()));
+		tab6.setWidget(2, 1, new Model190SmallerLabel(AON.MSG.total()));
+		tab6.setWidget(2, 2, new Model190SmallerLabel(AON.MSG.byInteger()));
 		tab6.setWidget(2, 3, new Label());
-		tab6.setWidget(2, 4, new MediumLabel(AON.MSG.total()));
-		tab6.setWidget(2, 5, new MediumLabel(AON.MSG.byInteger()));
+		tab6.setWidget(2, 4, new Model190SmallerLabel(AON.MSG.total()));
+		tab6.setWidget(2, 5, new Model190SmallerLabel(AON.MSG.byInteger()));
 		tab6.setWidget(2, 6, new Label());
-		tab6.setWidget(2, 7, new MediumLabel(AON.MSG.total()));
-		tab6.setWidget(2, 8, new MediumLabel(AON.MSG.byInteger()));
+		tab6.setWidget(2, 7, new Model190SmallerLabel(AON.MSG.total()));
+		tab6.setWidget(2, 8, new Model190SmallerLabel(AON.MSG.byInteger()));
 		tab6.setWidget(2, 9, new Label());
 
-		tab6.setWidget(3, 0, new MediumLabel(AON.MSG.moreThan33lessThan65()));
-		tab6.getCellFormatter().setStyleName(3, 0, AON.AON_CSS.aonTextRight());
+		tab6.setWidget(3, 0, new Model190SmallerLabel(AON.MSG.moreThan33lessThan65()));
+		tab6.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTextRight());
 		IntegerBox disabilityDescendent33 = new IntegerBox();
 		disabilityDescendent33.setMaxLength(2);
 		disabilityDescendent33.setVisibleLength(2);
@@ -765,8 +756,8 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab6.setWidget(3, 2, disabilityDescendent33Ratio);
 
-		tab6.setWidget(3, 3, new MediumLabel(AON.MSG.reducedMovilitiy()));
-		tab6.getCellFormatter().setStyleName(3, 3, AON.AON_CSS.aonTextRight());
+		tab6.setWidget(3, 3, new Model190SmallerLabel(AON.MSG.reducedMovilitiy()));
+		tab6.getCellFormatter().setStyleName(3, 3, AON.CSS.aonTextRight());
 		IntegerBox disabilityDescendentDependence = new IntegerBox();
 		disabilityDescendentDependence.setMaxLength(2);
 		disabilityDescendentDependence.setVisibleLength(2);
@@ -795,8 +786,8 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab6.setWidget(3, 5, disabilityDescendentDependenceRatio);
 		
-		tab6.setWidget(3, 6, new MediumLabel(AON.MSG.moreThan65()));
-		tab6.getCellFormatter().setStyleName(3, 6, AON.AON_CSS.aonTextRight());
+		tab6.setWidget(3, 6, new Model190SmallerLabel(AON.MSG.moreThan65()));
+		tab6.getCellFormatter().setStyleName(3, 6, AON.CSS.aonTextRight());
 		IntegerBox disabilityDescendent65 = new IntegerBox();
 		disabilityDescendent65.setMaxLength(2);
 		disabilityDescendent65.setVisibleLength(2);
@@ -826,21 +817,21 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		tab6.setWidget(3, 8, disabilityDescendent65Ratio);
 		tab6.setWidget(3, 9, new Label());
 
-		MediumLabel ascendantLabel = new MediumLabel( AonStringUtils.abbreviate(AON.MSG.ascendant(),34) );
-		ascendantLabel.addStyleName(AON.AON_CSS.aonBold());
+		Model190SmallerLabel ascendantLabel = new Model190SmallerLabel( AonStringUtils.abbreviate(AON.MSG.ascendant(),34) );
+		ascendantLabel.addStyleName(AON.CSS.aonBold());
 		tab6.setWidget(4, 0, ascendantLabel );
-		tab6.setWidget(4, 1, new MediumLabel(AON.MSG.total()));
-		tab6.setWidget(4, 2, new MediumLabel(AON.MSG.byInteger()));
+		tab6.setWidget(4, 1, new Model190SmallerLabel(AON.MSG.total()));
+		tab6.setWidget(4, 2, new Model190SmallerLabel(AON.MSG.byInteger()));
 		tab6.setWidget(4, 3, new Label());
-		tab6.setWidget(4, 4, new MediumLabel(AON.MSG.total()));
-		tab6.setWidget(4, 5, new MediumLabel(AON.MSG.byInteger()));
+		tab6.setWidget(4, 4, new Model190SmallerLabel(AON.MSG.total()));
+		tab6.setWidget(4, 5, new Model190SmallerLabel(AON.MSG.byInteger()));
 		tab6.setWidget(4, 6, new Label());
 		tab6.setWidget(4, 7, new Label());
 		tab6.setWidget(4, 8, new Label());
 		tab6.setWidget(4, 9, new Label());
 
-		tab6.setWidget(5, 0, new MediumLabel(AON.MSG.lessThan75()));
-		tab6.getCellFormatter().setStyleName(5, 0, AON.AON_CSS.aonTextRight());
+		tab6.setWidget(5, 0, new Model190SmallerLabel(AON.MSG.lessThan75()));
+		tab6.getCellFormatter().setStyleName(5, 0, AON.CSS.aonTextRight());
 		IntegerBox lessThan75Ascendant = new IntegerBox();
 		lessThan75Ascendant.setMaxLength(1);
 		lessThan75Ascendant.setVisibleLength(1);
@@ -869,8 +860,8 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab6.setWidget(5, 2, lessThan75AscendantRatio);
 
-		tab6.setWidget(5, 3, new MediumLabel(AON.MSG.greatherThan75()));
-		tab6.getCellFormatter().setStyleName(5, 3, AON.AON_CSS.aonTextRight());
+		tab6.setWidget(5, 3, new Model190SmallerLabel(AON.MSG.greatherThan75()));
+		tab6.getCellFormatter().setStyleName(5, 3, AON.CSS.aonTextRight());
 		IntegerBox ascendant = new IntegerBox();
 		ascendant.setMaxLength(1);
 		ascendant.setVisibleLength(1);
@@ -903,22 +894,22 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		tab6.setWidget(5, 7, new Label());
 		tab6.setWidget(5, 8, new Label());
 		
-		MediumLabel disabilityAscendant = new MediumLabel( AonStringUtils.abbreviate(AON.MSG.disabilityAscendant(),34) );
-		disabilityAscendant.addStyleName(AON.AON_CSS.aonBold());
+		Model190SmallerLabel disabilityAscendant = new Model190SmallerLabel( AonStringUtils.abbreviate(AON.MSG.disabilityAscendant(),34) );
+		disabilityAscendant.addStyleName(AON.CSS.aonBold());
 		tab6.setWidget(6, 0, disabilityAscendant );
-		tab6.setWidget(6, 1, new MediumLabel(AON.MSG.total()));
-		tab6.setWidget(6, 2, new MediumLabel(AON.MSG.byInteger()));
+		tab6.setWidget(6, 1, new Model190SmallerLabel(AON.MSG.total()));
+		tab6.setWidget(6, 2, new Model190SmallerLabel(AON.MSG.byInteger()));
 		tab6.setWidget(6, 3, new Label());
-		tab6.setWidget(6, 4, new MediumLabel(AON.MSG.total()));
-		tab6.setWidget(6, 5, new MediumLabel(AON.MSG.byInteger()));
+		tab6.setWidget(6, 4, new Model190SmallerLabel(AON.MSG.total()));
+		tab6.setWidget(6, 5, new Model190SmallerLabel(AON.MSG.byInteger()));
 		tab6.setWidget(6, 6, new Label());
-		tab6.setWidget(6, 7, new MediumLabel(AON.MSG.total()));
-		tab6.setWidget(6, 8, new MediumLabel(AON.MSG.byInteger()));
+		tab6.setWidget(6, 7, new Model190SmallerLabel(AON.MSG.total()));
+		tab6.setWidget(6, 8, new Model190SmallerLabel(AON.MSG.byInteger()));
 		tab6.setWidget(6, 9, new Label());
 		additionalDataPanel.add(tab6);
 
-		tab6.setWidget(7, 0, new MediumLabel(AON.MSG.moreThan33lessThan65()));
-		tab6.getCellFormatter().setStyleName(7, 0, AON.AON_CSS.aonTextRight());
+		tab6.setWidget(7, 0, new Model190SmallerLabel(AON.MSG.moreThan33lessThan65()));
+		tab6.getCellFormatter().setStyleName(7, 0, AON.CSS.aonTextRight());
 		IntegerBox disabilityAscendant33 = new IntegerBox();
 		disabilityAscendant33.setMaxLength(1);
 		disabilityAscendant33.setVisibleLength(1);
@@ -947,8 +938,8 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab6.setWidget(7, 2, disabilityAscendant33Ratio);
 
-		tab6.setWidget(7, 3, new MediumLabel(AON.MSG.reducedMovilitiy()));
-		tab6.getCellFormatter().setStyleName(7, 3, AON.AON_CSS.aonTextRight());
+		tab6.setWidget(7, 3, new Model190SmallerLabel(AON.MSG.reducedMovilitiy()));
+		tab6.getCellFormatter().setStyleName(7, 3, AON.CSS.aonTextRight());
 		IntegerBox disabilityAscendantDependence = new IntegerBox();
 		disabilityAscendantDependence.setMaxLength(1);
 		disabilityAscendantDependence.setVisibleLength(1);
@@ -977,8 +968,8 @@ public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements
 		});
 		tab6.setWidget(7, 5, disabilityAscendantDependenceRatio);
 
-		tab6.setWidget(7, 6, new MediumLabel(AON.MSG.moreThan65()));
-		tab6.getCellFormatter().setStyleName(7, 6, AON.AON_CSS.aonTextRight());
+		tab6.setWidget(7, 6, new Model190SmallerLabel(AON.MSG.moreThan65()));
+		tab6.getCellFormatter().setStyleName(7, 6, AON.CSS.aonTextRight());
 		IntegerBox disabilityAscendant65 = new IntegerBox();
 		disabilityAscendant65.setMaxLength(1);
 		disabilityAscendant65.setVisibleLength(1);

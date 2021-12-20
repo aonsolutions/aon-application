@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificatio
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -37,7 +37,7 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
-public class FiscalModelAdmonPanel<T extends FiscalModel,O extends FiscalModelModuleOptions<T>> extends DockLayoutPanel {
+public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelModuleOptions<T>> extends DockLayoutPanel {
 	
 	public static interface IFiscalModelAdmonPanelCallback<T,O> {
 		O getOptions();

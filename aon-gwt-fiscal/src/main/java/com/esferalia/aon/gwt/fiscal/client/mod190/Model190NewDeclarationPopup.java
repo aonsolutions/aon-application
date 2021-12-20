@@ -175,7 +175,7 @@ public class Model190NewDeclarationPopup extends AonCustomDialog {
     	cancelButton.setText( AON.MSG.cancelAction());
 		cancelButton.addClickHandler(event -> {
 			hide();
-			callback.onCancel();
+			callback.onCancel(mod190);
 		});
 		buttonsPanel.add(cancelButton);
 		rootPanel.add(buttonsPanel);
