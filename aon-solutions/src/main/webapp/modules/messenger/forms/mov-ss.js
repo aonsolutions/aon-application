@@ -4,7 +4,7 @@ import { AonSelect } from "../../../components/aon-select.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
 import { AonNumber } from "../../../components/aon-number.js";
 import { TAG, EVENT, MSG, CONSTANT, CSS, COLORS } from "../../../environments/environments.js";
-import { addContract, getCccForActivity } from "../../../services/contractService.js";
+import {  getCccForActivity } from "../../../services/contractService.js";
 import {  serializeForm, sortBy } from "../../../services/utils.js";
 import { setAttributes, setStyles } from "../../../services/utilsComponents.js";
 import { MESSENGER_IDS, TASK_STATUS } from "../MessengerEnums.js";
@@ -427,13 +427,8 @@ const processAccept = async (aonMessengerChat) => {
         if(data.ocu) newData.ocupacion = data.ocu;
         if(data.coef) newData.coefparcial = parseInt(data.coef);
 
-        // application.development();
-
         //---SEND MOV TGSS
         await sendAlta(newData);
-
-        // ---ADD CONTRACT
-        await addContract(newData);
 
         //---CLOSE TASK
         await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);

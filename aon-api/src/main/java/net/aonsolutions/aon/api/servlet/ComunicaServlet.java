@@ -362,10 +362,12 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		
 		Employee employee = builder.build();
 		
-		AonComunica.addContract(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), domain, 
-				EmployeeParse.toEmployeeOccam(employee) , true);
+		Boolean communicateTGSS = true;
 		
-		if(employee.getName().isPresent()) 
+		AonComunica.addContract(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), domain, 
+				EmployeeParse.toEmployeeOccam(employee) , communicateTGSS);
+		
+		if(communicateTGSS && employee.getName().isPresent()) 
 			sendMovEmailNotification(api, employee, fra, SituationType.ALTA);
 		return new JSONObject();
 	}
