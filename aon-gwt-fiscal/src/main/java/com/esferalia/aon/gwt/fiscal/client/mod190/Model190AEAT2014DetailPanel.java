@@ -1,10 +1,11 @@
 package com.esferalia.aon.gwt.fiscal.client.mod190;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190AEATDetail2014.IModel190DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.type.Mod1902014Key;
@@ -26,12 +27,11 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Focusable {
 	
 	private int tabIndex; 
-	private DocumentTextBox document;
+	private AonDocumentTextBox document;
 	
 	public Model190AEAT2014DetailPanel(Mod190Detail detail, IModel190DetailCallback callback) {
 		FlowPanel additionalDataPanel = new FlowPanel();
@@ -60,7 +60,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		tab1.setWidget(1, 2, new Model190SmallerLabel(AON.MSG.fullName()));
 		tab1.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.province()));
 		
-		document = new DocumentTextBox();
+		document = new AonDocumentTextBox();
 		document.setValue(detail.getDocument());
 		document.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
@@ -71,7 +71,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab1.setWidget(2, 0, document);
 		
-		DocumentTextBox representativeDocument = new DocumentTextBox();
+		AonDocumentTextBox representativeDocument = new AonDocumentTextBox();
 		representativeDocument.setValue(detail.getRepresentativeDocument());
 		representativeDocument.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
@@ -82,10 +82,9 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab1.setWidget(2, 1, representativeDocument);
 		
-		TextBox name = new TextBox();
+		AonTextBox name = new AonTextBox();
 		name.setVisibleLength(40);
 		name.setMaxLength(40);
-		name.setStyleName(AON.CSS.aonInputText());
 		name.setValue(detail.getName());
 		name.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
@@ -191,7 +190,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(0, 8, new Model190SmallerLabel(AON.MSG.accrualYear()));
 		
 		
-		DoubleBox perception = new DoubleBox();
+		AonDoubleBox perception = new AonDoubleBox();
 		perception.setValue(detail.getPerception());
 		perception.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -203,7 +202,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(1, 0, perception);
 		
-		DoubleBox retention = new DoubleBox();
+		AonDoubleBox retention = new AonDoubleBox();
 		retention.setValue(detail.getRetention());
 		retention.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -217,7 +216,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab2.setWidget(1, 2, new Label());
 		
-		IntegerBox accrualYear = new IntegerBox();
+		AonIntegerBox accrualYear = new AonIntegerBox();
 		accrualYear.setMaxLength(4);
 		accrualYear.setVisibleLength(4);
 		accrualYear.setValue(detail.getAccrualYear());
@@ -239,7 +238,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.setWidget(2, 3, new Model190SmallerLabel(AON.MSG.inKindOutputDeposit()));
 		tab2.setWidget(2, 4, new Label());
 		
-		DoubleBox inKindPerception = new DoubleBox();
+		AonDoubleBox inKindPerception = new AonDoubleBox();
 		inKindPerception.setValue(detail.getInKindPerception());
 		inKindPerception.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -251,7 +250,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(3, 0, inKindPerception);
 		
-		DoubleBox inKindDeposit = new DoubleBox();
+		AonDoubleBox inKindDeposit = new AonDoubleBox();
 		inKindDeposit.setValue(detail.getInKindDeposit());
 		inKindDeposit.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -263,7 +262,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab2.setWidget(3, 1, inKindDeposit);
 		
-		DoubleBox inKindOutputDeposit = new DoubleBox();
+		AonDoubleBox inKindOutputDeposit = new AonDoubleBox();
 		inKindOutputDeposit.setValue(detail.getInKindOutputDeposit());
 		inKindOutputDeposit.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -307,7 +306,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		tab4.setWidget(0, 0, new InlineLabel(AON.MSG.additionalData()));
 		
 		tab4.setWidget(1, 0, new Model190SmallerLabel(AON.MSG.birthYear()));
-		IntegerBox birthYear = new IntegerBox();
+		AonIntegerBox birthYear = new AonIntegerBox();
 		birthYear.setMaxLength(4);
 		birthYear.setVisibleLength(4);
 		birthYear.setValue(detail.getBirthYear());
@@ -340,7 +339,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		tab4.setWidget(1, 3, familySituation);
 		
 		tab4.setWidget(1, 4, new Model190SmallerLabel(AON.MSG.spouseDocument()));
-		DocumentTextBox spouseDocument = new DocumentTextBox();
+		AonDocumentTextBox spouseDocument = new AonDocumentTextBox();
 		spouseDocument.setVisibleLength(9);
 		spouseDocument.setMaxLength(9);
 
@@ -452,7 +451,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab5.setWidget(2, 0, new Label());
 
-		DoubleBox applicableReduction = new DoubleBox();
+		AonDoubleBox applicableReduction = new AonDoubleBox();
 		applicableReduction.setValue(detail.getApplicableReduction());
 		applicableReduction.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -464,7 +463,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab5.setWidget(2, 1, applicableReduction);
 
-		DoubleBox deducibleExpense = new DoubleBox();
+		AonDoubleBox deducibleExpense = new AonDoubleBox();
 		deducibleExpense.setValue(detail.getDeducibleExpense());
 		deducibleExpense.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -476,7 +475,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab5.setWidget(2, 2, deducibleExpense);
 		
-		DoubleBox compensatoryPension = new DoubleBox();
+		AonDoubleBox compensatoryPension = new AonDoubleBox();
 		compensatoryPension.setValue(detail.getCompensatoryPension());
 		compensatoryPension.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -488,7 +487,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab5.setWidget(2, 3, compensatoryPension);
 
-		DoubleBox foodAnnuality = new DoubleBox();
+		AonDoubleBox foodAnnuality = new AonDoubleBox();
 		foodAnnuality.setValue(detail.getFoodAnnuality());
 		foodAnnuality.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -532,7 +531,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab6.setWidget(1, 0, new Model190SmallerLabel(AON.MSG.lessThan3()));
 		tab6.getCellFormatter().setStyleName(1, 0, AON.CSS.aonTextRight());
-		IntegerBox lessThan3Descendent = new IntegerBox();
+		AonIntegerBox lessThan3Descendent = new AonIntegerBox();
 		lessThan3Descendent.setMaxLength(1);
 		lessThan3Descendent.setVisibleLength(1);
 		lessThan3Descendent.setValue(detail.getLessThan3Descendent());
@@ -546,7 +545,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(1, 1, lessThan3Descendent);
 		
-		IntegerBox lessThan3DescendentRatio = new IntegerBox();
+		AonIntegerBox lessThan3DescendentRatio = new AonIntegerBox();
 		lessThan3DescendentRatio.setMaxLength(1);
 		lessThan3DescendentRatio.setVisibleLength(1);
 		lessThan3DescendentRatio.setValue(detail.getLessThan3DescendentRatio());
@@ -562,7 +561,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab6.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.remainder()));
 		tab6.getCellFormatter().setStyleName(1, 3, AON.CSS.aonTextRight());
-		IntegerBox otherDescendent = new IntegerBox();
+		AonIntegerBox otherDescendent = new AonIntegerBox();
 		otherDescendent.setMaxLength(1);
 		otherDescendent.setVisibleLength(1);
 		otherDescendent.setValue(detail.getOtherDescendent());
@@ -576,7 +575,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(1, 4, otherDescendent);
 		
-		IntegerBox otherDescendentRatio = new IntegerBox();
+		AonIntegerBox otherDescendentRatio = new AonIntegerBox();
 		otherDescendentRatio.setMaxLength(1);
 		otherDescendentRatio.setVisibleLength(1);
 		otherDescendentRatio.setValue(detail.getOtherDescendentRatio());
@@ -654,7 +653,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab6.setWidget(3, 0, new Model190SmallerLabel(AON.MSG.moreThan33lessThan65()));
 		tab6.getCellFormatter().setStyleName(3, 0, AON.CSS.aonTextRight());
-		IntegerBox disabilityDescendent33 = new IntegerBox();
+		AonIntegerBox disabilityDescendent33 = new AonIntegerBox();
 		disabilityDescendent33.setMaxLength(2);
 		disabilityDescendent33.setVisibleLength(2);
 		disabilityDescendent33.setValue(detail.getDisabilityDescendent33());
@@ -668,7 +667,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(3, 1, disabilityDescendent33);
 		
-		IntegerBox disabilityDescendent33Ratio = new IntegerBox();
+		AonIntegerBox disabilityDescendent33Ratio = new AonIntegerBox();
 		disabilityDescendent33Ratio.setMaxLength(2);
 		disabilityDescendent33Ratio.setVisibleLength(2);
 		disabilityDescendent33Ratio.setValue(detail.getDisabilityDescendent33Ratio());
@@ -684,7 +683,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab6.setWidget(3, 3, new Model190SmallerLabel(AON.MSG.reducedMovilitiy()));
 		tab6.getCellFormatter().setStyleName(3, 3, AON.CSS.aonTextRight());
-		IntegerBox disabilityDescendentDependence = new IntegerBox();
+		AonIntegerBox disabilityDescendentDependence = new AonIntegerBox();
 		disabilityDescendentDependence.setMaxLength(2);
 		disabilityDescendentDependence.setVisibleLength(2);
 		disabilityDescendentDependence.setValue(detail.getDisabilityDescendentDependence());
@@ -698,7 +697,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(3, 4, disabilityDescendentDependence);
 		
-		IntegerBox disabilityDescendentDependenceRatio = new IntegerBox();
+		AonIntegerBox disabilityDescendentDependenceRatio = new AonIntegerBox();
 		disabilityDescendentDependenceRatio.setMaxLength(2);
 		disabilityDescendentDependenceRatio.setVisibleLength(2);
 		disabilityDescendentDependenceRatio.setValue(detail.getDisabilityDescendentDependenceRatio());
@@ -714,7 +713,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		
 		tab6.setWidget(3, 6, new Model190SmallerLabel(AON.MSG.moreThan65()));
 		tab6.getCellFormatter().setStyleName(3, 6, AON.CSS.aonTextRight());
-		IntegerBox disabilityDescendent65 = new IntegerBox();
+		AonIntegerBox disabilityDescendent65 = new AonIntegerBox();
 		disabilityDescendent65.setMaxLength(2);
 		disabilityDescendent65.setVisibleLength(2);
 		disabilityDescendent65.setValue(detail.getDisabilityDescendent65());
@@ -728,7 +727,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(3, 7, disabilityDescendent65);
 		
-		IntegerBox disabilityDescendent65Ratio = new IntegerBox();
+		AonIntegerBox disabilityDescendent65Ratio = new AonIntegerBox();
 		disabilityDescendent65Ratio.setMaxLength(2);
 		disabilityDescendent65Ratio.setVisibleLength(2);
 		disabilityDescendent65Ratio.setValue(detail.getDisabilityDescendent65Ratio());
@@ -758,7 +757,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab6.setWidget(5, 0, new Model190SmallerLabel(AON.MSG.lessThan75()));
 		tab6.getCellFormatter().setStyleName(5, 0, AON.CSS.aonTextRight());
-		IntegerBox lessThan75Ascendant = new IntegerBox();
+		AonIntegerBox lessThan75Ascendant = new AonIntegerBox();
 		lessThan75Ascendant.setMaxLength(1);
 		lessThan75Ascendant.setVisibleLength(1);
 		lessThan75Ascendant.setValue(detail.getLessThan75Ascendant());
@@ -772,7 +771,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(5, 1, lessThan75Ascendant);
 		
-		IntegerBox lessThan75AscendantRatio = new IntegerBox();
+		AonIntegerBox lessThan75AscendantRatio = new AonIntegerBox();
 		lessThan75AscendantRatio.setMaxLength(1);
 		lessThan75AscendantRatio.setVisibleLength(1);
 		lessThan75AscendantRatio.setValue(detail.getLessThan75AscendantRatio());
@@ -788,7 +787,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab6.setWidget(5, 3, new Model190SmallerLabel(AON.MSG.greatherThan75()));
 		tab6.getCellFormatter().setStyleName(5, 3, AON.CSS.aonTextRight());
-		IntegerBox ascendant = new IntegerBox();
+		AonIntegerBox ascendant = new AonIntegerBox();
 		ascendant.setMaxLength(1);
 		ascendant.setVisibleLength(1);
 		ascendant.setValue(detail.getAscendant());
@@ -802,7 +801,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(5, 4, ascendant);
 		
-		IntegerBox ascendantRatio = new IntegerBox();
+		AonIntegerBox ascendantRatio = new AonIntegerBox();
 		ascendantRatio.setMaxLength(1);
 		ascendantRatio.setVisibleLength(1);
 		ascendantRatio.setValue(detail.getAscendantRatio());
@@ -836,7 +835,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab6.setWidget(7, 0, new Model190SmallerLabel(AON.MSG.moreThan33lessThan65()));
 		tab6.getCellFormatter().setStyleName(7, 0, AON.CSS.aonTextRight());
-		IntegerBox disabilityAscendant33 = new IntegerBox();
+		AonIntegerBox disabilityAscendant33 = new AonIntegerBox();
 		disabilityAscendant33.setMaxLength(1);
 		disabilityAscendant33.setVisibleLength(1);
 		disabilityAscendant33.setValue(detail.getDisabilityAscendant33());
@@ -850,7 +849,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(7, 1, disabilityAscendant33);
 		
-		IntegerBox disabilityAscendant33Ratio = new IntegerBox();
+		AonIntegerBox disabilityAscendant33Ratio = new AonIntegerBox();
 		disabilityAscendant33Ratio.setMaxLength(1);
 		disabilityAscendant33Ratio.setVisibleLength(1);
 		disabilityAscendant33Ratio.setValue(detail.getDisabilityAscendant33Ratio());
@@ -866,7 +865,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab6.setWidget(7, 3, new Model190SmallerLabel(AON.MSG.reducedMovilitiy()));
 		tab6.getCellFormatter().setStyleName(7, 3, AON.CSS.aonTextRight());
-		IntegerBox disabilityAscendantDependence = new IntegerBox();
+		AonIntegerBox disabilityAscendantDependence = new AonIntegerBox();
 		disabilityAscendantDependence.setMaxLength(1);
 		disabilityAscendantDependence.setVisibleLength(1);
 		disabilityAscendantDependence.setValue(detail.getDisabilityAscendantDependence());
@@ -880,7 +879,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(7, 4, disabilityAscendantDependence);
 		
-		IntegerBox disabilityAscendantDependenceRatio = new IntegerBox();
+		AonIntegerBox disabilityAscendantDependenceRatio = new AonIntegerBox();
 		disabilityAscendantDependenceRatio.setMaxLength(1);
 		disabilityAscendantDependenceRatio.setVisibleLength(1);
 		disabilityAscendantDependenceRatio.setValue(detail.getDisabilityAscendantDependenceRatio());
@@ -896,7 +895,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 
 		tab6.setWidget(7, 6, new Model190SmallerLabel(AON.MSG.moreThan65()));
 		tab6.getCellFormatter().setStyleName(7, 6, AON.CSS.aonTextRight());
-		IntegerBox disabilityAscendant65 = new IntegerBox();
+		AonIntegerBox disabilityAscendant65 = new AonIntegerBox();
 		disabilityAscendant65.setMaxLength(1);
 		disabilityAscendant65.setVisibleLength(1);
 		disabilityAscendant65.setValue(detail.getDisabilityAscendant65());
@@ -910,7 +909,7 @@ public class Model190AEAT2014DetailPanel extends SimpleLayoutPanel implements Fo
 		});
 		tab6.setWidget(7, 7, disabilityAscendant65);
 		
-		IntegerBox disabilityAscendant65Ratio = new IntegerBox();
+		AonIntegerBox disabilityAscendant65Ratio = new AonIntegerBox();
 		disabilityAscendant65Ratio.setMaxLength(1);
 		disabilityAscendant65Ratio.setVisibleLength(1);
 		disabilityAscendant65Ratio.setValue(detail.getDisabilityAscendant65Ratio());

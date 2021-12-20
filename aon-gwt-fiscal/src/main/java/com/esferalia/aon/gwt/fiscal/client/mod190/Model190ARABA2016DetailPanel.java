@@ -2,9 +2,10 @@ package com.esferalia.aon.gwt.fiscal.client.mod190;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190ARABADetail2016.IModel190DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.type.Mod1902016Key;
@@ -23,7 +24,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements Focusable {
 	
@@ -80,10 +80,9 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		});
 		tab1.setWidget(2, 1, representativeDocument);
 		
-		TextBox name = new TextBox();
+		AonTextBox name = new AonTextBox();
 		name.setVisibleLength(40);
 		name.setMaxLength(40);
-		name.setStyleName(AON.CSS.aonInputText());
 		name.setValue(detail.getName());
 		name.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
@@ -189,7 +188,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		tab2.setWidget(0, 7, new Model190SmallerLabel(AON.MSG.accrualYear()));
 		
 		
-		DoubleBox perception = new DoubleBox();
+		AonDoubleBox perception = new AonDoubleBox();
 		perception.setValue(detail.getPerception());
 		perception.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -201,7 +200,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		});
 		tab2.setWidget(1, 0, perception);
 		
-		DoubleBox retention = new DoubleBox();
+		AonDoubleBox retention = new AonDoubleBox();
 		retention.setValue(detail.getRetention());
 		retention.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -213,7 +212,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		});
 		tab2.setWidget(1, 1, retention);
 
-		IntegerBox accrualYear = new IntegerBox();
+		AonIntegerBox accrualYear = new AonIntegerBox();
 		accrualYear.setMaxLength(4);
 		accrualYear.setVisibleLength(4);
 		accrualYear.setValue(detail.getAccrualYear());
@@ -234,7 +233,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		tab2.setWidget(2, 2, new Model190SmallerLabel(AON.MSG.inKindDeposit()));
 		tab2.setWidget(2, 3, new Model190SmallerLabel(AON.MSG.inKindOutputDeposit()));
 		
-		DoubleBox inKindPerception = new DoubleBox();
+		AonDoubleBox inKindPerception = new AonDoubleBox();
 		inKindPerception.setValue(detail.getInKindPerception());
 		inKindPerception.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -246,7 +245,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		});
 		tab2.setWidget(3, 0, inKindPerception);
 		
-		DoubleBox inKindDeposit = new DoubleBox();
+		AonDoubleBox inKindDeposit = new AonDoubleBox();
 		inKindDeposit.setValue(detail.getInKindDeposit());
 		inKindDeposit.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -258,7 +257,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		});
 		tab2.setWidget(3, 1, inKindDeposit);
 		
-		DoubleBox inKindOutputDeposit = new DoubleBox();
+		AonDoubleBox inKindOutputDeposit = new AonDoubleBox();
 		inKindOutputDeposit.setValue(detail.getInKindOutputDeposit());
 		inKindOutputDeposit.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -292,7 +291,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		tab3.setWidget(1, 4, new Label());
 		
 		tab3.setWidget(2, 0, new Label());
-		DoubleBox perceptionIL = new DoubleBox();
+		AonDoubleBox perceptionIL = new AonDoubleBox();
 		perceptionIL.setValue(detail.getPerceptionIL());
 		perceptionIL.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -305,7 +304,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		tab3.setWidget(2, 1, perceptionIL);
 		
 		
-		DoubleBox retentionIL = new DoubleBox();
+		AonDoubleBox retentionIL = new AonDoubleBox();
 		retentionIL.setValue(detail.getRetentionIL());
 		retentionIL.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -317,7 +316,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		});
 		tab3.setWidget(2, 2, retentionIL);
 		
-		DoubleBox outputRetentionIL = new DoubleBox();
+		AonDoubleBox outputRetentionIL = new AonDoubleBox();
 		outputRetentionIL.setValue(detail.getOutputRetentionIL());
 		outputRetentionIL.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -391,7 +390,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		});
 		tab4.setWidget(2, 1, contract);
 
-		DoubleBox applicableReduction = new DoubleBox();
+		AonDoubleBox applicableReduction = new AonDoubleBox();
 		applicableReduction.setValue(detail.getApplicableReduction());
 		applicableReduction.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -404,7 +403,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		tab4.setWidget(2, 2, applicableReduction);
 
 		
-		DoubleBox deducibleExpense = new DoubleBox();
+		AonDoubleBox deducibleExpense = new AonDoubleBox();
 		deducibleExpense.setValue(detail.getDeducibleExpense());
 		deducibleExpense.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -417,7 +416,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		tab4.setWidget(2, 3, deducibleExpense);
 
 		
-		DoubleBox compensatoryPension = new DoubleBox();
+		AonDoubleBox compensatoryPension = new AonDoubleBox();
 		compensatoryPension.setValue(detail.getCompensatoryPension());
 		compensatoryPension.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
@@ -429,7 +428,7 @@ public class Model190ARABA2016DetailPanel extends SimpleLayoutPanel implements F
 		});
 		tab4.setWidget(2, 4, compensatoryPension);
 		
-		IntegerBox otherDescendent = new IntegerBox();
+		AonIntegerBox otherDescendent = new AonIntegerBox();
 		otherDescendent.setMaxLength(1);
 		otherDescendent.setVisibleLength(1);
 		otherDescendent.setValue(detail.getOtherDescendent());

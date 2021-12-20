@@ -552,7 +552,6 @@ abstract class Model190Base extends DockLayoutPanel {
 		table.setWidget( 1, 0, new InlineLabel(AON.MSG.enterpriseName()));
 		table.getCellFormatter().setStyleName(1,0, AON.CSS.aonTableLabel());
 		AonTextBox name = new AonTextBox();
-		name.setStyleName(AON.CSS.aonInputText());
 		name.setVisibleLength(45);
 		name.setMaxLength(45);
 		name.setValue(getModel().getName());
@@ -566,7 +565,6 @@ abstract class Model190Base extends DockLayoutPanel {
 		table.setWidget( 2, 0, new InlineLabel(AON.MSG.contactPerson()));
 		table.getCellFormatter().setStyleName(2,0, AON.CSS.aonTableLabel());
 		AonTextBox contactPerson = new AonTextBox();
-		contactPerson.setStyleName(AON.CSS.aonInputText());
 		contactPerson.setMaxLength(40);
 		contactPerson.setVisibleLength(30);
 		contactPerson.setValue(getModel().getContactPerson());
@@ -579,7 +577,6 @@ abstract class Model190Base extends DockLayoutPanel {
 		table.setWidget( 3, 0, new InlineLabel(AON.MSG.contactPhone()));
 		table.getCellFormatter().setStyleName(3,0, AON.CSS.aonTableLabel());
 		AonTextBox contactPhone = new AonTextBox();
-		contactPhone.setStyleName(AON.CSS.aonInputText());
 		contactPhone.setMaxLength(9);
 		contactPhone.setVisibleLength(10);
 		contactPhone.setValue(getModel().getContactPhone());
@@ -593,7 +590,6 @@ abstract class Model190Base extends DockLayoutPanel {
 		table.setWidget( 4, 0, new InlineLabel(AON.MSG.contactMail()));
 		table.getCellFormatter().setStyleName(4,0, AON.CSS.aonTableLabel());
 		AonTextBox contactMail = new AonTextBox();
-		contactMail.setStyleName(AON.CSS.aonInputText());
 		contactMail.setMaxLength(50);
 		contactMail.setVisibleLength(50);
 		contactMail.setValue(getModel().getContactMail());
@@ -606,7 +602,6 @@ abstract class Model190Base extends DockLayoutPanel {
 		table.setWidget( 5, 0, new InlineLabel(AON.MSG.receipt()));
 		table.getCellFormatter().setStyleName(5,0, AON.CSS.aonTableLabel());
 		receiptBox = new AonTextBox();
-		receiptBox.setStyleName(AON.CSS.aonInputText());
 		receiptBox.setMaxLength(13);
 		receiptBox.setVisibleLength(13);
 		receiptBox.setEnabled(getModel().isAEAT());
@@ -620,7 +615,6 @@ abstract class Model190Base extends DockLayoutPanel {
 		table.setWidget( 6, 0, new InlineLabel(AON.MSG.previousDeclaration()));
 		table.getCellFormatter().setStyleName(6,0, AON.CSS.aonTableLabel());
 		AonTextBox replaced = new AonTextBox();
-		replaced.setStyleName(AON.CSS.aonInputText());
 		replaced.setMaxLength(13);
 		replaced.setVisibleLength(13);
 		replaced.setEnabled(getModel().isAEAT() && (getModel().isComplementary() || getModel().isReplacement()));
