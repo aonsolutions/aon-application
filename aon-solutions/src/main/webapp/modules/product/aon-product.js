@@ -169,6 +169,8 @@ export class AonProduct extends AonElement {
 			});
 		
         	table2.addCell(typeSelect);
+		} else {
+			this.product.setType('EXPENSE');
 		}
 		let categorySelect = this.createSelect(this.PRODUCT_CATEGORY, MSG.CATEGORY);
 		categorySelect.setAlias('id', 'name');
