@@ -428,12 +428,6 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getEmployeeSSBonuses(String domain, String user, Integer contractId, AsyncCallback<List<SSBonusData>> callback)  throws IllegalArgumentException {
-		AON.start();
-		enterprisesServiceAsync.getEmployeeSSBonuses(domain, user, contractId, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
-	}
-
-	@Override
 	public void getBonusConcepts(String domain, AsyncCallback<List<SSBonusData>> callback) {
 		AON.start();
 		enterprisesServiceAsync.getBonusConcepts(domain, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
@@ -857,7 +851,7 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getAllConcepts(domainName, currentUser, new AsyncCallbackWrapper<>(callback));
 	}
 
-	// ----------------------------------------------------------------- DigitalCertificates (New)
+	// ------------------------------------------------ DigitalCertificates (New)
 
 	@Override
 	public void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificateNew>> callback) throws IllegalArgumentException {
@@ -907,6 +901,20 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.createSecondaryUser(currentDomainName, currentUser, ipfType, ipf, naf, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	// ------------------------------------------------ SSBonus
+	
+	@Override
+	public void syncSSBonus(String domain, String user, Integer contractId, AsyncCallback<List<SSBonusData>> callback)  throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.syncSSBonus(domain, user, contractId, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
+	}
+
+	@Override
+	public void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getEmployeeSSBonuses(domain, contractId, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
 	}
 	
 }

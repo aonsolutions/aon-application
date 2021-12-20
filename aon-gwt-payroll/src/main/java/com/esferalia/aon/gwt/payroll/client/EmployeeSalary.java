@@ -312,7 +312,7 @@ public class EmployeeSalary extends Composite {
 		SalaryInfoFilter filter = employeeSalaryObject.getFilter();
 		
 		Date startDate = DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -1);
-		Date endDate = DateUtils.getLastDayOfYear(new Date());
+		Date endDate = DateUtils.getLastDayOfMonth(employeeSalaryObject.getMaxDate());
 		
 		setSelectedValueLB(monthTillT, DateUtils.getMonth(startDate) + "");
 		setSelectedValueLB(monthTTo, DateUtils.getMonth(endDate) + "");

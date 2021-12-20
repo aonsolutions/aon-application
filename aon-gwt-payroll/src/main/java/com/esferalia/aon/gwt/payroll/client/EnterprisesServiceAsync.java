@@ -104,8 +104,6 @@ public interface EnterprisesServiceAsync {
 			AsyncCallback<String> asyncCallback);
 	void getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId,
 			AsyncCallback<List<SSPECData>> asyncCallback);
-	void getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId,
-			AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
@@ -208,6 +206,8 @@ public interface EnterprisesServiceAsync {
 	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
 	void deleteSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void syncSSBonus(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
+	void getEmployeeSSBonuses(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException;
 	
 	
 }

@@ -1934,19 +1934,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
-	@Override
-	public List<SSBonusData> getEmployeeSSBonuses(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			syncWithIdcs(domainName, userLogin, contractId, connection);
-			return JooqSSBonus.getSSBonus(connection, contractId);
-		} catch (SQLException | CertificateNotFoundException e) {
-			if(e instanceof CertificateNotFoundException)
-				throw new IllegalArgumentException("No existe certificado de la TGSS, por lo que no se pueden obtener las bonificaciones");
-			else
-				throw new IllegalArgumentException(e);
-		}
-	}
-
 
 	@Override
 	public List<SSBonusData> getBonusConcepts(String currentDomainName) {
@@ -3493,6 +3480,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData) {
 		// TODO Auto-generated method stub
+	}
+	
+	// ------------------------------------------------ SSBonus
+	
+	@Override
+	public List<SSBonusData> syncSSBonus(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			syncWithIdcs(domainName, userLogin, contractId, connection);
+			return JooqSSBonus.getSSBonus(connection, contractId);
+		} catch (CertificateNotFoundException e) {
+			throw new IllegalArgumentException("No existe certificado de la TGSS, por lo que no se pueden obtener las bonificaciones");
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public List<SSBonusData> getEmployeeSSBonuses (String domainName, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqSSBonus.getSSBonus(connection, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 	
 }

@@ -157,6 +157,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		void onEmployeeNewCalendarSelected(EmployeeCalendarDraftObject calendar);
 		
+		void onEmployeeSSBonusSelected(ContractBonusObject contractBonusObject);
+		
 		void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary);
 
 		void onEmployeeCopy(Employee employee);
@@ -586,6 +588,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onEmployeeCalendarDraftSelected((EmployeeCalendarDraftObjectData) userObject);
 		} else if (userObject instanceof EmployeeCalendarDraftObject) {
 			onEmployeeNewCalendarDraftSelected((EmployeeCalendarDraftObject) userObject);
+		} else if (userObject instanceof ContractBonusUI) {
+			onEmployeeSSBonusSelected((ContractBonusObject) userObject);
 		} else if (userObject instanceof EmployeeSalaryObject) {
 			onEmployeeSalarySelected((EmployeeSalaryObject) userObject);
 		} else if (userObject instanceof EmployeeDraftObject) {
@@ -1541,6 +1545,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 	
+	private void onEmployeeSSBonusSelected(ContractBonusObject contractBonusObject) {
+		for (Listener listener : listeners) {
+			listener.onEmployeeSSBonusSelected(contractBonusObject);
+		}
+	}
+	
 	private void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalaryObject) {
 		for (Listener listener : listeners) {
 			listener.onEmployeeSalarySelected(employeeSalaryObject);
@@ -2332,6 +2342,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	
 	public void getEmployeeCalendar(EmployeeDraftObject employee, Consumer<EmployeeCalendarDraftObject> consumer) {
 		consumer.accept(getUserObject(employee, EmployeeCalendarDraftObject.class));
+	}
+	
+	public void getEmployeeSSBonus(EmployeeDraftObject employee, Consumer<ContractBonusObject> consumer) {
+		consumer.accept(getUserObject(employee, ContractBonusObject.class));
 	}
 
 	public void getEmployeeSalaryDraft(EmployeeDraftObject employee, Consumer<SalaryDraftObject> consumer) {

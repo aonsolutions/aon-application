@@ -906,7 +906,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 	
 	private AonToolbar getToolbarPanel() {
 		
-		AonToolbar toolbar = new AonToolbar("Incidencias");
+		AonToolbar toolbar = new AonToolbar("Variables de c\u00e1lculo");
 		
 		undoAllButton = new AonToolbarButton( "Restaurar últimos valores guardados", AON.CSS.aonIconUndo() );
 		undoAllButton.addClickHandler(e -> {
