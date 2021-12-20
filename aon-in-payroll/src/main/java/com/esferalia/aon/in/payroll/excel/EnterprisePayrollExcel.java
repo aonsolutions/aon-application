@@ -984,6 +984,11 @@ public class EnterprisePayrollExcel {
 			public Boolean visitDelay(SalaryType type) {
 				return ss != null && ss.equals(SalaryType.L03);
 			}
+			
+			@Override
+			public Boolean visitM190(SalaryType type) {
+				return ss != null && ss.equals(SalaryType.M190);
+			}
 		};
 		
 		return original.accept(visitor);
@@ -2303,6 +2308,10 @@ public class EnterprisePayrollExcel {
 						return "L13";
 					}
 					
+					@Override
+					public String visitM190(SalaryType type) {
+						return "M190";
+					}
 					
 				});
 			} else {
