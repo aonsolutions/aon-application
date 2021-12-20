@@ -257,10 +257,6 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setEmployeePeculiarities(getCurrentDomainName(), contractId, peculiarities, asyncCallback);
 	}
 	
-	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException {
-		enterprisesServiceAsync.getEmployeeSSBonuses(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
-	}
-	
 	public void getEmployeeSSPECs(Integer contractId, AsyncCallback<List<SSPECData>> asyncCallback) {
 		enterprisesServiceAsync.getEmployeeSSPECs(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
 	}
@@ -542,7 +538,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getAllConcepts(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
-	// ----------------------------------------------------------------- DigitalCertificates (New)
+	// ------------------------------------------------ DigitalCertificates (New)
 	
 	public void getDigitalCertificates(AsyncCallback<List<DigitalCertificateNew>> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getDigitalCertificates(getCurrentDomainName(), getCurrentUser(), asyncCallback);
@@ -574,6 +570,16 @@ public class DomainEnterprisesServiceAsync {
 
 	public void createSecondaryUser(String ipfType, String ipf, String naf, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.createSecondaryUser(getCurrentDomainName(), getCurrentUser(), ipfType, ipf, naf, asyncCallback);
+	}
+	
+	// ------------------------------------------------ SSBonus
+	
+	public void syncSSBonus(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.syncSSBonus(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
+	}
+	
+	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getEmployeeSSBonuses(getCurrentDomainName(), contractId, asyncCallback);
 	}
 
 	
