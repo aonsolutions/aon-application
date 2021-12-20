@@ -466,7 +466,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newPaymentSummer.setIrpfExpression("_P");
 				newPaymentSummer.setQuoteExpression("_P");
 				newPaymentSummer.setType(Payment.Type.CRA_0004);
-				newPaymentSummer.setSalaryType(Salary.Type.SALARY);
+				newPaymentSummer.setSalaryType(Salary.Type.EXTRA);
 			} else {
 				newPaymentSummer.setType(conceptSummer.getType());
 				newPaymentSummer.setName(conceptSummer.getName());
@@ -475,7 +475,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newPaymentSummer.setExpression(agreementPayment.getExpression());
 				newPaymentSummer.setIrpfExpression(conceptSummer.getIrpfExpression());
 				newPaymentSummer.setQuoteExpression(conceptSummer.getQuoteExpression());
-				newPaymentSummer.setSalaryType(Salary.Type.SALARY);	
+				newPaymentSummer.setSalaryType(Salary.Type.EXTRA);	
 			}
 				
 			paymentResultList.add(newPaymentSummer);
@@ -509,7 +509,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newPaymentWinter.setIrpfExpression("_P");
 				newPaymentWinter.setQuoteExpression("_P");
 				newPaymentWinter.setType(Payment.Type.CRA_0004);
-				newPaymentWinter.setSalaryType(Salary.Type.SALARY);
+				newPaymentWinter.setSalaryType(Salary.Type.EXTRA);
 			} else {
 				newPaymentWinter.setType(conceptWinter.getType());
 				newPaymentWinter.setName(conceptWinter.getName());
@@ -518,7 +518,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newPaymentWinter.setExpression(agreementPayment.getExpression());
 				newPaymentWinter.setIrpfExpression(conceptWinter.getIrpfExpression());
 				newPaymentWinter.setQuoteExpression(conceptWinter.getQuoteExpression());
-				newPaymentWinter.setSalaryType(Salary.Type.SALARY);
+				newPaymentWinter.setSalaryType(Salary.Type.EXTRA);
 			}
 				
 			paymentResultList.add(newPaymentWinter);
@@ -557,7 +557,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newPaymentBenefit.setIrpfExpression("_P");
 				newPaymentBenefit.setQuoteExpression("_P");
 				newPaymentBenefit.setType(Payment.Type.CRA_0004);
-				newPaymentBenefit.setSalaryType(Salary.Type.SALARY);
+				newPaymentBenefit.setSalaryType(Salary.Type.EXTRA);
 			} else {
 				newPaymentBenefit.setType(conceptBenefit.getType());
 				newPaymentBenefit.setName(conceptBenefit.getName());
@@ -566,7 +566,7 @@ public abstract class AgreementPaymentDialog extends AonCustomDialog {
 				newPaymentBenefit.setExpression(agreementPayment.getExpression());
 				newPaymentBenefit.setIrpfExpression(conceptBenefit.getIrpfExpression());
 				newPaymentBenefit.setQuoteExpression(conceptBenefit.getQuoteExpression());
-				newPaymentBenefit.setSalaryType(Salary.Type.SALARY);	
+				newPaymentBenefit.setSalaryType(Salary.Type.EXTRA);	
 			}
 				
 			paymentResultList.add(newPaymentBenefit);

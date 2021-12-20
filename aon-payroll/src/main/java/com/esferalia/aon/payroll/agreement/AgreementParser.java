@@ -766,6 +766,7 @@ public class AgreementParser {
 						
 						dslContext.update(AGREEMENT_PAYMENT)
 							.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
+							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte)1)
 							.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
 							.execute();
 					}
@@ -783,6 +784,7 @@ public class AgreementParser {
 						
 						dslContext.update(AGREEMENT_PAYMENT)
 							.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
+							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte)1)
 							.where(AGREEMENT_PAYMENT.ID.eq(agreementPaymentId))
 							.execute();
 					}
@@ -823,7 +825,7 @@ public class AgreementParser {
 				.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 				.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 				.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
-				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
 				.returning(AGREEMENT_PAYMENT.ID)
@@ -854,7 +856,7 @@ public class AgreementParser {
 				.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(startDateCal.getTime()))
 				.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 				.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
-				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
+				.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
 				.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, "_P")
 				.set(AGREEMENT_PAYMENT.QUOTE_EXPRESSION, "_P")
 				.returning(AGREEMENT_PAYMENT.ID)
