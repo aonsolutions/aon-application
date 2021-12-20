@@ -86,7 +86,7 @@ public class ProductJSON {
 	public static JSONObject toJSON(Product product) {
 		return new JSONObject()
 				.put(IJsonNames.ID, product.getId())
-				.put(IJsonNames.DOMAIN, product.getDomain().getId())
+				.put(IJsonNames.DOMAIN, DomainJSON.toJSON(product.getDomain()))
 				.put(IJsonNames.CODE, product.getCode())
 				.put(IJsonNames.NAME, product.getName())
 				.put(IJsonNames.BRAND, BrandJSON.toJSON(product.getBrand()))
