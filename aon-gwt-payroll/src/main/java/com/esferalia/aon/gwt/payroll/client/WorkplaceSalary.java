@@ -329,7 +329,7 @@ public class WorkplaceSalary extends Composite {
 		SalaryInfoFilter filter = workplaceSalaryObject.getFilter();
 		
 		Date startDate = DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -1);
-		Date endDate = DateUtils.getLastDayOfYear(new Date());
+		Date endDate = DateUtils.getLastDayOfMonth(workplaceSalaryObject.getMaxDate());
 		
 		setSelectedValueLB(monthTillT, DateUtils.getMonth(startDate) + "");
 		setSelectedValueLB(monthTTo, DateUtils.getMonth(endDate) + "");
@@ -338,7 +338,7 @@ public class WorkplaceSalary extends Composite {
 		setSelectedValueLB(yearTTo, DateUtils.getYear(endDate) + "");
 		
 		filter.setDateTillT(startDate);
-		filter.setDateTTo(endDate);
+		filter.setDateTTo(workplaceSalaryObject.getMaxDate());
 		
 		// Salary Type
 		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());

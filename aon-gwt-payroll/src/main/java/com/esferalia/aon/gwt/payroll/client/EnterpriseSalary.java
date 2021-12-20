@@ -345,7 +345,7 @@ public abstract class EnterpriseSalary extends Composite {
 		SalaryInfoFilter filter = enterpriseSalaryObject.getFilter();
 		
 		Date startDate = DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -1);
-		Date endDate = DateUtils.getLastDayOfYear(new Date());
+		Date endDate = DateUtils.getLastDayOfMonth(enterpriseSalaryObject.getMaxDate());
 		
 		setSelectedValueLB(monthTillT, DateUtils.getMonth(startDate) + "");
 		setSelectedValueLB(monthTTo, DateUtils.getMonth(endDate) + "");
