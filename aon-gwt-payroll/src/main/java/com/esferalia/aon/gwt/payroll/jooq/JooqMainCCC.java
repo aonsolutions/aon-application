@@ -17,17 +17,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record2;
 import org.jooq.Result;
-import org.jooq.Table;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
+import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 
@@ -278,7 +276,7 @@ public class JooqMainCCC {
 		);
 		
 		//---------PAYROLL_WORKPLACE
-		dslContext
+		PayrollWorkplaceRecord payrollRecord = dslContext
 		.select()
 		.from(PAYROLL_WORKPLACE)
 		.innerJoin(WORKPLACE).onKey()
@@ -293,6 +291,16 @@ public class JooqMainCCC {
 				.returning()
 				.fetchOne()
 		);
+
+		if(null == payrollRecord.getEnterpriseActivity()){
+			dslContext
+			.update(PAYROLL_WORKPLACE)
+			.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, enterpriseActivityId)
+			.where(PAYROLL_WORKPLACE.ID.in(payrollRecord.getId()))
+			.execute();
+		}
+
+
 	}
 	
 

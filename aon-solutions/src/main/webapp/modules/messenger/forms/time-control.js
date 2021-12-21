@@ -82,7 +82,11 @@ const createDataForm = (form, aonMessengerChat) => {
         let btnAccept = createBtnAccept();
         btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(times.getDetail(), {date: date.value, time: time.value}, aonMessengerChat) );
          
-        createDivGrid(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+        createDivGrid(form, btnAccept, {
+            styles:{
+                textAlign: "center"
+            }
+        });
     }
 
 }
