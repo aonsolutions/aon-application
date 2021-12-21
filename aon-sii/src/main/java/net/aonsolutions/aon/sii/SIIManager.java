@@ -106,15 +106,7 @@ public class SIIManager {
     	LinkedList<VatContext> newList = contextList.stream().filter(v-> "Pendiente".equals(v.getSiiStatus())
     			|| "Incorrecto".equals(v.getSiiStatus())).collect(Collectors.toCollection(LinkedList::new));
 
-		if(getSiiConfiguration().isCommonTerritory() || getSiiConfiguration().isNafarroa()) {
-			if(newList.size() > 0){
-				return SIIAeatPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
-			}
-
-			if(modList.size() > 0){
-				return SIIAeatPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
-			}
-		} else if(getSiiConfiguration().isAraba()) {
+		if(getSiiConfiguration().isAraba()) {
 			if(newList.size() > 0){
 				return SIIArabaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
 			}
@@ -137,6 +129,14 @@ public class SIIManager {
 
 			if(modList.size() > 0){
 				return SIIBizkaiaPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
+			}
+		} else { //if(getSiiConfiguration().isCommonTerritory() || getSiiConfiguration().isNafarroa()) {
+			if(newList.size() > 0){
+				return SIIAeatPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, newList, SendType.ALTA_EMITIDAS);
+			}
+
+			if(modList.size() > 0){
+				return SIIAeatPost.getInstance(getSiiConfiguration()).suministroFacturasEmitidas(domain, login, company, invoiceId, contextList, terceros, uri, modList, SendType.MOD_EMITIDAS);
 			}
 		}
 		return new JSONArray();
