@@ -50,6 +50,13 @@ public enum SalaryType {
 		public <E> E accept(TypeVisitor<E> visitor) {
 			return visitor.visitL13(this);
 		}
+	},
+	M190 
+	{
+		@Override
+		public <E> E accept(TypeVisitor<E> visitor) {
+			return null;
+		}
 	}
 	
 	;
