@@ -50,7 +50,7 @@ public enum SalaryType {
 		public <E> E accept(TypeVisitor<E> visitor) {
 			return visitor.visitL13(this);
 		}
-	,
+	},
 	M190 
 	{
 		@Override
@@ -100,6 +100,7 @@ public enum SalaryType {
 		SALARY.value(),
 		EXTRA.value(),
 		SETTLE.value(),
-		DELAY.value()
+		DELAY.value(),
+		M190.value()
 	);
 }
