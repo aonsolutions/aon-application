@@ -51,14 +51,6 @@ public enum SalaryType {
 			return visitor.visitL13(this);
 		}
 	},
-	M191 
-	{
-		@Override
-		public <E> E accept(TypeVisitor<E> visitor) {
-			return null;
-		}
-	}
-	
 	;
 	
 	
@@ -99,7 +91,6 @@ public enum SalaryType {
 		SALARY.value(),
 		EXTRA.value(),
 		SETTLE.value(),
-		DELAY.value(),
-		M191.value()
+		DELAY.value()
 	);
 }
