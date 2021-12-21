@@ -128,6 +128,7 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.OldTask;
+import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
@@ -1149,9 +1150,40 @@ public class AON {
 		}
 	}	
 
+	public static Workplace saveWorkplace(Domain domain, User user, Workplace workplace) {
+		return saveWorkplace(domain.getName(), domain.getId(), user.getLogin(), workplace);
+	}
+	
+	public static Workplace saveWorkplace(Domain domain, String login, Workplace workplace) {
+		return saveWorkplace(domain.getName(), domain.getId(), login, workplace);
+	}
+	
+	public static Workplace saveWorkplace(String domainName, Integer domainId, String login, Workplace workplace) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().saveWorkplace(ctx, workplace);
+		} 
+	}
+	
+	@Deprecated
 	public static void updateWorkplace(String domainName, Integer domainId, String login, Workplace workplace) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getCommon().updateWorkplace(ctx, workplace);
+		} 
+	}
+	
+	// ---------- 	PAYROLL WORKPLACE
+	
+	public static PayrollWorkplace savePayrollWorkplace(Domain domain, User user, PayrollWorkplace payrollWorkplace) {
+		return savePayrollWorkplace(domain.getName(), domain.getId(), user.getLogin(), payrollWorkplace);
+	}
+	
+	public static PayrollWorkplace savePayrollWorkplace(Domain domain, String login, PayrollWorkplace payrollWorkplace) {
+		return savePayrollWorkplace(domain.getName(), domain.getId(), login, payrollWorkplace);
+	}
+	
+	public static PayrollWorkplace savePayrollWorkplace(String domainName, Integer domainId, String login, PayrollWorkplace payrollWorkplace) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().savePayrollWorkplace(ctx, payrollWorkplace);
 		} 
 	}
 	

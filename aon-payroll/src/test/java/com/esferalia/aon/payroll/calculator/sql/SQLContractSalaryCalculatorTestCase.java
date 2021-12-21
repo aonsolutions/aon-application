@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
@@ -55,6 +56,8 @@ import junit.framework.Assert;
  *
  */
 public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
+
+	private static final double DELTA = 0.01;
 
 	@Test
 	public void testListener()
@@ -1241,6 +1244,91 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1056.90, salary.getCommonBase());
 		Assert.assertEquals(1056.000, salary.getProfessionalBase());
 		Assert.assertEquals(1056.00, salary.getIrpfBase());
+
+	}	
+	@Test
+	public void testBaseCgpMaxMsg()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, new HashMap<String, String>(){
+			{
+				put("DIAS_MES","30.00");
+				
+				put("BASE_CGP_MIN",
+						"1125.90");
+				put("BASE_CGP_MAX",
+						"4070.10");
+				put("BASE_CGC_MIN",
+						"1572.30");
+				put("BASE_CGC_MAX",
+						"4070.10");
+				
+			}
+		});
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION","\"01\"");
+					}
+				},
+				new String[] { 
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				},
+				new String[] { 
+				}, 
+				null);
+		
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder() );
+		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
+			@Override
+			public void onCheckError(String message) {
+				org.junit.Assert.fail(message);
+			}
+			
+		});
+		
+		ISalary salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(500.00, salary.getTotalPayment());
+		Assert.assertEquals(1572.30, salary.getCommonBase());
+		Assert.assertEquals(1125.90, salary.getProfessionalBase());
+		Assert.assertEquals(500.00, salary.getIrpfBase());
+		
+		
+		addPayment(aonContext, contract, "5000.00");
+		
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		calculator.setListener(new GenericContractSalaryCalculator.Listener() {
+			
+		});
+		
+			salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(5500.00, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(4070.10, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(4070.10, salary.getProfessionalBase(), DELTA);
+		Assert.assertEquals(5500.00, salary.getIrpfBase(), DELTA);
+		Assert.assertEquals(5500.00, salary.getRawCommonBase(), DELTA);
+		
+		
 
 	}	
 

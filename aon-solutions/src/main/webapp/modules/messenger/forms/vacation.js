@@ -56,7 +56,12 @@ import { createBtnAccept, createDivEditable, createDivGrid } from "../shared/cre
     if(task.id && [TASK_STATUS.PENDING, TASK_STATUS.IN_PROGRESS].includes(task.status) && (dur.isPayrollManager() || dur.isPayrollPortal()) ){
         let btnAccept = createBtnAccept();
         btnAccept.addEventListener(EVENT.CLICK, ()=> processAccept(aonMessengerChat) );
-        createDivGrid(form, btnAccept, {classes:[CSS.AON_COL_XS_12, CSS.AON_COL_XS_OFFSET_4]});
+           
+        createDivGrid(form, btnAccept, {
+            styles:{
+                textAlign: "center"
+            }
+        });
     }
 }
 

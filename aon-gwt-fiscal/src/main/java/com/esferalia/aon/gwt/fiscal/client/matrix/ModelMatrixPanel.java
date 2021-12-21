@@ -87,8 +87,23 @@ public class ModelMatrixPanel extends FlowPanel {
 							fm.setPeriod( perKey.getInitialPeriod() );
 							fm.setDomain(AonNumberUtils.toint(domainId));
 							fm.setDomainName(domainName);
+							fm.setDocument(domKey);
+							List<JsFiscalMenuItem> items = matrixData.getItems(domKey, admKey, perKey, modKey, docKey);
+							if ( items.isEmpty() ) {
+								fm.setName(domainName);	
+							} else {
+								JsFiscalMenuItem firstItem = null;
+								for (JsFiscalMenuItem it : items) {
+									if (it != null) {
+										firstItem = it;
+										break;
+									}
+								}
+								fm.setName((firstItem == null)?domainName:firstItem.getName());	
+							}
+							
 							AonDisplayTable periodTable = paintFiscalModelRow(options,fm,admKey,perKey,docKey,table);
-							fillPeriodTable(options, fm, periodTable, matrixData.getItems(domKey, admKey, perKey, modKey, docKey) );
+							fillPeriodTable(options, fm, periodTable, items );
 						}
 					}
 				}
@@ -105,7 +120,11 @@ public class ModelMatrixPanel extends FlowPanel {
 				AonDisplayTableRow row = (AonDisplayTableRow) periodTable.getWidget(0);
 				AonDisplayTableCell cell = (AonDisplayTableCell) row.getWidget(col);
 				FiscalModel cloned = cloneModel(fm);
-				cloned.setId(Integer.valueOf(model.getId() + ""));
+				if (model.getId() != null) {
+					cloned.setId(Integer.valueOf(model.getId() + ""));
+				} else {
+					cloned.setId(null);
+				}
 				cloned.setStatus( FiscalStatus.safeValueOf( model.getStatus() ));
 				fillModelCell( options, cloned , cell);
 			}
@@ -165,7 +184,7 @@ public class ModelMatrixPanel extends FlowPanel {
 		Label admonLabel = getAdmonLabel( admKey );
 		AonDisplayTableRow periodRow = table.addRow();
 		periodRow
-			.addCell( new Label( docKey ), AON.CSS.aonBorderBottom())
+			.addCell( new Label( docKey + " " + fm.getName() ), AON.CSS.aonBorderBottom())
 			.addCell( new Label( FiscalModelUtils.getModelName( fm) ), AON.CSS.aonBold(), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter() )
 			.addCell( admonLabel, AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter() )
 			.addCell( new Label(perKey.getValue()), AON.CSS.aonBorderBottom(), AON.CSS.aonTextCenter() )

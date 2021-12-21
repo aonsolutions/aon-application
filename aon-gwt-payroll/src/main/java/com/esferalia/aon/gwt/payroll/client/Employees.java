@@ -82,6 +82,8 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
+import sun.util.logging.resources.logging;
+
 public class Employees extends ResizeComposite implements OpenHandler<TreeItem>, SelectionHandler<TreeItem>,
 		ScrollHandler, ContextMenuHandler, KeyDownHandler, LoadHandler, OptionsToolbar.Listener {
 
@@ -1961,7 +1963,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	 */
 
 	private void changeVisibleEmployees() {
-
 		TreeItem enterpriseItem = tree.getItem(0);
 		int childCount = enterpriseItem.getChildCount();
 		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
@@ -1969,13 +1970,15 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			TreeItem workplaceItem = enterpriseItem.getChild(i);
 			boolean inViewport = elementInViewport(workplaceItem.getElement());
 			boolean opened = workplaceItem.getState();
-			workplaceItem.setState(false); // close workplace
+			try {
+				workplaceItem.setState(false); // close workplace
+			}catch ( Exception e ) {
+			}
 			removeEmployeeItems(workplaceItem);
 			if (inViewport & opened) {
 				workplaceItem.setState(true);
 			}
 		}
-
 	}
 
 	private void changeVisibleWorkplaces() {
@@ -2582,4 +2585,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		return null;
 	}
+
+	private static native void log (String message ) /*-{
+		console.log(message);
+	}-*/
+;
+	
 }

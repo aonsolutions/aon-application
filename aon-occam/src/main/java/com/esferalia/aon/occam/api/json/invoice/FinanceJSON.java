@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import es.translogia.tedi.json.TediJSONUtils;
@@ -26,7 +27,7 @@ public class FinanceJSON {
 	}
 	
 	public static Finance fromJSON(JSONObject json) {
-		Date date = TediJSONUtils.parseDate(json.optString(IJsonNames.DUE_DATE));
+		Date date = JsonUtils.getDateFormat(json, IJsonNames.DUE_DATE, "yyyy-MM-dd");
 		Integer paymethod = null;
 		if(AonNumberUtils.isNumber(json.optString(IJsonNames.PAYMETHOD)))
 			paymethod = AonNumberUtils.toInteger(json.optString(IJsonNames.PAYMETHOD));
@@ -48,12 +49,10 @@ public class FinanceJSON {
 	}
 	
 	public static JSONObject toJSON(Finance finance) {
-		String date = TediJSONUtils.formatDate(finance.getDueDate());
-
 		return new JSONObject()
 			.put(IJsonNames.ID, finance.getId())
 			.put(IJsonNames.DOMAIN, finance.getDomain())
-			.put(IJsonNames.DUE_DATE, date) //JsonUtils.getDateJSON(finance.getDueDate()))
+			.put(IJsonNames.DUE_DATE, AonDateUtils.format(finance.getDueDate(), "yyyy-MM-dd"))
 			.put(IJsonNames.PAYMETHOD, finance.getPayMethod())
 			.put(IJsonNames.BANK_ACCOUNT, finance.getBankAccount() != null
 				? finance.getBankAccount().getIban() : null)

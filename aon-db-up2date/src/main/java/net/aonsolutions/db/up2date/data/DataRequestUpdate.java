@@ -31,13 +31,22 @@ public class DataRequestUpdate implements Update {
 		LOGGER.info("[START]");
 		LOGGER.info("UPDATE table `data_request`");
 		
-		String sql1 = "ALTER TABLE `data_response` DROP CONSTRAINT `FK_DATA_RESPONSE_DATA_REQUEST`";
-		String sql2 = "ALTER TABLE `data_request` MODIFY COLUMN `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo'";
-		String sql3 = "ALTER TABLE `data_response` ADD CONSTRAINT `FK_DATA_RESPONSE_DATA_REQUEST` FOREIGN KEY (`data_request`) REFERENCES `data_request` (`id`)";
+//		String sql1 = "ALTER TABLE `data_response` DROP CONSTRAINT `FK_DATA_RESPONSE_DATA_REQUEST`";
+//		String sql2 = "ALTER TABLE `data_request` MODIFY COLUMN `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo'";
+//		String sql3 = "ALTER TABLE `data_response` ADD CONSTRAINT `FK_DATA_RESPONSE_DATA_REQUEST` FOREIGN KEY (`data_request`) REFERENCES `data_request` (`id`)";
 		
-		dslContext.execute(sql1);
-		dslContext.execute(sql2);
-		dslContext.execute(sql3);
+		String sql4 = "SET FOREIGN_KEY_CHECKS = 0;";
+		String sql5 = "ALTER TABLE `data_request` MODIFY COLUMN `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo'";
+		String sql6 = "SET FOREIGN_KEY_CHECKS = 1;";
+		
+		
+//		dslContext.execute(sql1);
+//		dslContext.execute(sql2);
+//		dslContext.execute(sql3);
+		
+		dslContext.execute(sql4);
+		dslContext.execute(sql5);
+		dslContext.execute(sql6);
 	
 		LOGGER.info("[END]");
 	}

@@ -28,6 +28,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Domain;
@@ -442,8 +443,8 @@ public class CompanyDAO {
 				.where(INVEST_ASSET.DOMAIN.equal(domainId)
 						.and(atDate == null
 							?DSL.trueCondition()
-							:((INVEST_ASSET.START_DATE.isNull().or(INVEST_ASSET.START_DATE.ge(AonDateUtils.toSql(atDate))))
-							.and(INVEST_ASSET.END_DATE.isNull().or(INVEST_ASSET.END_DATE.le(AonDateUtils.toSql(atDate)))))
+							:((INVEST_ASSET.START_DATE.isNull().or(INVEST_ASSET.START_DATE.le(AonDateUtils.toSql(atDate))))
+							.and(INVEST_ASSET.END_DATE.isNull().or(INVEST_ASSET.END_DATE.ge(AonDateUtils.toSql(atDate)))))
 							)
 						)
 				.fetch()

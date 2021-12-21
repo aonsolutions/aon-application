@@ -6,7 +6,7 @@ import { URL_MAP } from "../../../../environments/constants.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import * as ACTION from '../../../actions.js';
-import { CONSTANT, CSS, MSG, TAG } from "../../../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
 import { createCard, createForm, createInput, createToolbar } from "../../../notification/createComponent.js";
 
 
@@ -81,7 +81,7 @@ export class AonLocationAdd extends AonElement {
     div.className = className;
     form.appendChild(div);
     let div2 = this.createElement(TAG.DIV);
-    div2.className = CSS.AON_COL_SM_12;
+    div2.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
     div.appendChild(div2);
     
     const aonCard = createCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
@@ -106,18 +106,10 @@ export class AonLocationAdd extends AonElement {
         name:"radio",
         id:"radio" ,
         description:MSG.RADIO,
-        type:"text"
+        type:"number"
       }
     }, divG);
 
-
-    divG = this.createElement(TAG.DIV);
-    divG.className = CSS.AON_COL_XS_12;
-    aonCard.appendChild(divG);
-    let divM = this.createElement(TAG.DIV);
-    divM.id = this.id+"Map";
-    divM.title = "Mapa";
-    divG.appendChild(divM);
 
     createInput({
       attributes:{
@@ -146,6 +138,10 @@ export class AonLocationAdd extends AonElement {
       }
     }, aonCard);
 
+    const divMap = this.createElement(TAG.DIV);
+    divMap.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
+    divMap.id = "divMap";
+    div.appendChild(divMap);
   }
 
   buildToolbar(){
@@ -162,8 +158,11 @@ export class AonLocationAdd extends AonElement {
   }
 
   async paintViewMap(data) {
-    let aonMap = await waitEl(`#${this.id}Map`);
-    aonMap.innerHTML = "";
+    let divMap = await waitEl(`#divMap`);
+    divMap.innerHTML = "";
+
+    const aonMap = createCard({id: this.id+"Map", title:"Mapa", flex:"true"}, divMap).getContent();
+    
     const zoom = 16;
     let iframeId = this.id + "Iframe";
     let iframe = this.createElement("iframe");
@@ -176,6 +175,14 @@ export class AonLocationAdd extends AonElement {
       iframe.loading = "lazy";
       iframe.src = `${CONSTANT.URL_MAP_EMBED}&q=${data.latitude},${data.longitude}&zoom=${zoom}&language=es`;
     } else {
+      // createInput({
+      //   attributes:{
+      //     name:"address",
+      //     id:"address" ,
+      //     type:"text",
+      //     description:"Dirección",
+      //   }
+      // }, aonMap);  
       iframe = this.iframeOnload(iframe, zoom);
     }
     aonMap.appendChild(iframe);
@@ -183,52 +190,20 @@ export class AonLocationAdd extends AonElement {
 
   iframeOnload(iframe, zoom) {
     iframe.onload = async () => {
-      const setCoordinates = (ev) => this.setCoordinates(ev);
-      let doc = iframe.contentDocument;
-      let pos = await getPosition()
-        .then(({ latitude, longitude }) => ({ latitude, longitude }))
-        .catch((e) => null);
-      if (pos) {
-        iframe.contentWindow.showNewMap = function () {
-          let mapContainer = doc.createElement("div");
-          mapContainer.style.width = "100%"; 
-          mapContainer.style.height = "100%"; 
-          doc.body.appendChild(mapContainer);
-          const mapOptions = {
-            center: new this.google.maps.LatLng(pos.latitude, pos.longitude),
-            zoom,
-            mapTypeId: this.google.maps.MapTypeId.ROADMAP,
-          };
-          setCoordinates({ latitude: pos.latitude, longitude: pos.longitude }); //setFormValues default lat lng
-          const map = new this.google.maps.Map(mapContainer, mapOptions);
-          const position = new this.google.maps.LatLng(
-            pos.latitude,
-            pos.longitude
-          );
-          // add marker map
-          const marker = new this.google.maps.Marker({
-            position,
-            map,
-            title: "Ubicación del sitio de trabajo!",
-            draggable: true,
-          });
 
-          // ev drag
-          this.google.maps.event.addListener(marker, "dragend", (ev) =>
-            setCoordinates({
-              latitude: ev.latLng.lat(),
-              longitude: ev.latLng.lng(),
-            })
-          );
-        };
+      const doc = iframe.contentDocument;
+      const wd = iframe.contentWindow;
 
-        let script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = URL_MAP;
-        iframe.contentDocument
-          .getElementsByTagName("head")[0]
-          .appendChild(script);
-      } //pos
+      await Promise.all([
+        this.loadLink("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css", doc),
+        this.loadLink("https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css", doc),
+        this.loadScript("https://unpkg.com/leaflet@1.7.1/dist/leaflet.js", doc),
+        this.loadScript("https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js", doc)
+      ]);
+
+      let pos = await getPosition().then(({ latitude, longitude }) => ({ latitude, longitude })).catch((e) => null);
+      if (pos) 
+        this.initMap(doc, wd, pos, zoom);
     }; //onload
     return iframe;
   }
@@ -238,20 +213,13 @@ export class AonLocationAdd extends AonElement {
     return serializeForm(form);
   }
 
-
-  setCoordinates(data) {
-    if (data && data.latitude && data.longitude) {
-      setValueName("latitude", data.latitude);
-      setValueName("longitude", data.longitude);
-    }
-  }
-
   async setFormValues() {
     await waitEl('#latitude');
     const data = this.data;
     if (data) {
       const obj = { ...data };
-      for (const property in obj) setValueName(property, obj[property]);
+      for (const property in obj)
+        setValueName(property, obj[property]);
       this.paintViewMap(data);
     }
   }
@@ -287,6 +255,111 @@ export class AonLocationAdd extends AonElement {
         this.showToast(error);
       }
       this.applicationEl.stopLoading();
+    });
+  }
+
+  initMap(doc, wd, pos, zoom){
+      let geocoder, map, marker;
+      const position = { lat: parseFloat(pos.latitude), lng: parseFloat(pos.longitude) };   
+      let mapContainer = doc.createElement("div");
+      mapContainer.style.width = "100%"; 
+      mapContainer.style.height = "100%"; 
+      mapContainer.id = "map";
+
+      doc.body.appendChild(mapContainer);
+
+      map = wd.L.map(mapContainer, {attributionControl: false}).setView(position, zoom);   
+
+      new wd.L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{ subdomains:['mt0','mt1','mt2','mt3']}).addTo(map);
+
+      geocoder = wd.L.Control.Geocoder.nominatim({ geocodingQueryParams: {countrycodes: 'es'} });
+
+      marker = this.addMarker(map, geocoder, doc, wd, position);
+
+      this.setCoordinates(position);
+
+      this.geocodeReverse(map, geocoder, doc, position);
+
+      wd.L.Control.geocoder({
+          placeholder: "Dirección",
+          position:"topright",
+          errorMessage: "Dirección no encontrada. Arrastre manualmente el marcador <br> a la ubicación (puede acercar o alejar la imagen)",
+          defaultMarkGeocode: false,
+          collapsed: false,
+          geocoder: geocoder,
+      }) .on('markgeocode', (result)=> {
+          const geocode = result.geocode;
+
+          if (marker) map.removeLayer(marker);
+
+          const latlng = geocode.center;
+
+          this.setCoordinates(latlng);
+
+          marker = this.addMarker(map, geocoder, doc, wd, latlng).bindPopup(geocode.name).openPopup();
+
+          map.fitBounds(geocode.bbox);
+          map.invalidateSize();
+      })
+      .addTo(map);
+  }
+
+  setCoordinates(data) {
+    let lat = data.latitude || data.lat;
+    let lng = data.longitude || data.lng;
+    if (lat && lng) {
+      setValueName("latitude", lat);
+      setValueName("longitude", lng);
+    }
+  }
+
+  geocodeReverse(map, geocoder, doc, {lat, lng}){
+    geocoder.reverse({lat, lng}, map.options.crs.scale(map.getZoom()), (results) => {
+        let r = results[0];
+        if (r && r.name) {
+          const name = r.name;
+          doc.querySelector(".leaflet-control-geocoder-form > input").value = name;
+          this.updateMarkerAddress(name);
+        }
+    });
+  }
+
+  addMarker(map, geocoder, doc, wd, {lat, lng}){
+    let marker = wd.L.marker([lat, lng], { draggable: true }).addTo(map);
+    marker.on('dragend',  () =>{
+      this.setCoordinates(marker.getLatLng());
+      this.geocodeReverse(map, geocoder, doc, marker.getLatLng());
+    });
+    return marker;
+  } 
+
+  updateMarkerAddress(str) {
+    // this.getElement('address').value = str;
+  }
+
+
+  loadLink(url, doc){ 
+    return new Promise((resolve, reject) => {
+      const link = doc.createElement('link');
+      doc.head.appendChild(link);
+      link.onload = resolve;
+      link.onerror = reject;
+      link.href = url;
+      link.rel = "stylesheet";
+      link.type = "text/css";
+  });
+}
+
+  loadScript(url, doc) {
+    return new Promise((resolve, reject) => {
+      let script = doc.querySelector(`script[src="${url}"]`);
+      if(!script){
+          script = doc.createElement('script');
+          doc.head.appendChild(script);
+          script.onload = resolve;
+          script.onerror = reject;
+          script.src = url;
+      } else resolve(true);
     });
   }
 

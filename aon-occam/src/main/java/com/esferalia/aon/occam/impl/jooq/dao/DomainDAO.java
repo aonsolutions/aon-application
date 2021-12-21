@@ -45,7 +45,6 @@ import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
-import com.esferalia.aon.watson.server.AonEnumUtils;
 
 import net.aonsolutions.core.dbutils.AonSQLException;
 import net.aonsolutions.core.dbutils.AonSQLFile;

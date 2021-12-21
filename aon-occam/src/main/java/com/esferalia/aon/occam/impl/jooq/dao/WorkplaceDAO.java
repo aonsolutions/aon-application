@@ -13,6 +13,7 @@ import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.WorkplaceProperties;
+import com.esferalia.aon.occam.impl.jooq.validation.WorkplaceAutoComplete;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
 
@@ -52,8 +53,31 @@ public class WorkplaceDAO {
 				.map(new FullWorkplaceFiller())
 				.collect(Collectors.toCollection(LinkedList::new));	
 	}
+
+	public static Workplace save(AONContext ctx, Workplace workplace) {
+		WorkplaceAutoComplete.completeWorkplace(ctx, workplace);
+		return workplace.getId() != null 
+			? update(ctx, workplace)
+			: insert(ctx, workplace);
+	}
+
+	public static Workplace insert(AONContext ctx, Workplace workplace) {
+		Integer id = ctx.getDslContext().insertInto(WORKPLACE)
+			.set(WORKPLACE.DOMAIN, workplace.getDomain())
+			.set(WORKPLACE.ENTERPRISE, workplace.getEnterprise())
+			.set(WORKPLACE.DESCRIPTION, workplace.getDescription())
+			.set(WORKPLACE.ADDRESS, workplace.getAddress())
+			.set(WORKPLACE.CUSTOMER, workplace.getCustomer())
+			.set(WORKPLACE.SCOPE, workplace.getScope())
+			.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicagreement())
+			.set(WORKPLACE.ACTIVE, workplace.getActive())
+			.returning(WORKPLACE.ID).fetchOne().getValue(WORKPLACE.ID);
+		workplace.setId(id);
+		ctx.log().debug("UPDATE WORKPLACE id: " + workplace.getId());	
+		return workplace;
+	}
 	
-	public static void updateWorkplace(AONContext ctx, Workplace workplace) {
+	public static Workplace update(AONContext ctx, Workplace workplace) {
 		ctx.getDslContext().update(WORKPLACE)
 		.set(WORKPLACE.ENTERPRISE, workplace.getEnterprise())
 		.set(WORKPLACE.DESCRIPTION, workplace.getDescription())
@@ -65,6 +89,7 @@ public class WorkplaceDAO {
 		.where(WORKPLACE.ID.eq(workplace.getId()))
 		.execute();
 		ctx.log().debug("UPDATE WORKPLACE id: " + workplace.getId());	
+		return workplace;
 	}
 	
 	private static class FullWorkplaceFiller implements Function<WorkplaceRecord, Workplace> {
