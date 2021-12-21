@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.data.DataRequestUpdate;
+import net.aonsolutions.db.up2date.payroll.WorkplaceUpdate;
 
 
 public class Up2Date {
@@ -193,7 +194,8 @@ public class Up2Date {
     		//AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
     		//TrainingPercentages2021Update.TRAINNINGPERCENTAGES2021UPDATE,
     		//FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE,
-    		DataRequestUpdate.DATA_REQUEST_UPDATE
+    		DataRequestUpdate.DATA_REQUEST_UPDATE,
+    		WorkplaceUpdate.WORKPLACE_UPDATE
     };
 
 
