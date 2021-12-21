@@ -203,9 +203,9 @@ public class Up2Date {
     		//AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
     		//TrainingPercentages2021Update.TRAINNINGPERCENTAGES2021UPDATE,
     		//FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE,
-        DataRequestUpdate.DATA_REQUEST_UPDATE,
+    		DataRequestUpdate.DATA_REQUEST_UPDATE,
     		WorkplaceUpdate.WORKPLACE_UPDATE,
-        IrpfM190Update.IRPFM190UPDATE
+    		IrpfM190Update.IRPFM190UPDATE
     };
 
 

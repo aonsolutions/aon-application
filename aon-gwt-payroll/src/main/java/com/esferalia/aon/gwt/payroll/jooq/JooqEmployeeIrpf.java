@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -393,6 +394,26 @@ public class JooqEmployeeIrpf {
 					.set(SALARY_DATA.START_DATE, parseDateToSQL(startDate))
 					.set(SALARY_DATA.END_DATE, parseDateToSQL(endDate))
 					.set(SALARY_DATA.SALARY, newSalaryId)
+					.execute();
+				
+				dslContext.insertInto(SALARY_PAYMENT)
+					.set(SALARY_PAYMENT.DOMAIN, domainId)
+					.set(SALARY_PAYMENT.SALARY, newSalaryId)
+					.set(SALARY_PAYMENT.TYPE, (byte)1)
+					.set(SALARY_PAYMENT.DESCRIPTION, "RETRIBUCI\u00d3N NO INCLUIDA OTROS APARTADOS (M190)")
+					.set(SALARY_PAYMENT.AMOUNT, employeeIrpf.getMoneyBase())
+					.set(SALARY_PAYMENT.IRPF, employeeIrpf.getMoneyBase())
+					.set(SALARY_PAYMENT.QUOTE, employeeIrpf.getMoneyQuote())
+					.execute();
+				
+				dslContext.insertInto(SALARY_PAYMENT)
+					.set(SALARY_PAYMENT.DOMAIN, domainId)
+					.set(SALARY_PAYMENT.SALARY, newSalaryId)
+					.set(SALARY_PAYMENT.TYPE, (byte)13)
+					.set(SALARY_PAYMENT.DESCRIPTION, "RETRIBUCI\u00d3N EN ESPECIE (M190)")
+					.set(SALARY_PAYMENT.AMOUNT, employeeIrpf.getInkindBase())
+					.set(SALARY_PAYMENT.IRPF, employeeIrpf.getInkindBase())
+					.set(SALARY_PAYMENT.QUOTE, employeeIrpf.getInkindQuote())
 					.execute();
 				
 			}
