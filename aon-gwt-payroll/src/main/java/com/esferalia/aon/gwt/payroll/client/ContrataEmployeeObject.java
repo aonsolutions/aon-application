@@ -344,7 +344,7 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (IRPF)
 	
 	public void getEmployeeContractIrpfObject(Consumer<EmployeeContractIrpfObject> success) {
-		EmployeeContractIrpfObject employeeContractIrpfObject = new EmployeeContractIrpfObject(contractData.getContractId(), employeeData.getSsNumber(), contractData.getStartDate());
+		EmployeeContractIrpfObject employeeContractIrpfObject = new EmployeeContractIrpfObject(contractData.getContractId(), employeeData.getFullName(), employeeData.getDocument(), employeeData.getSsNumber(), contractData.getStartDate());
 		success.accept(employeeContractIrpfObject);
 	}
 	

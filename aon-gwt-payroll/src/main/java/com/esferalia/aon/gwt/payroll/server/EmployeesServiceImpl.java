@@ -6736,7 +6736,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	// ------------------------------------------------- EmployeeIrpf
 	
 	@Override
-	public List<EmployeeIrpf> getEmployeeIrpf(String domainName, String ssNumber, Date startDate) {
+	public List<EmployeeIrpf> getEmployeeIrpf(String domainName, String ssNumber, Date startDate) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqEmployeeIrpf.getEmployeeIrpf(connection, ssNumber, startDate);
 		} catch (SQLException e) {
@@ -6745,10 +6745,10 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public void setEmployeeIrpf(String domainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs) {
+	public void setEmployeeIrpf(String domainName, Integer contractId,  String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			JooqEmployeeIrpf.setEmployeeIrpf(connection, domainId, contractId, ssNumber, employeeIrpfs);
+			JooqEmployeeIrpf.setEmployeeIrpf(connection, domainId, contractId, fullName, document, ssNumber, employeeIrpfs);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

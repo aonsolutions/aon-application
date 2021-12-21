@@ -636,12 +636,12 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- EmployeeIrpf
 	
-	public void getEmployeeIrpf(String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) {
+	public void getEmployeeIrpf(String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getEmployeeIrpf(getCurrentDomainName(), ssNumber, startDate, callback);
 	}
 	
-	public void setEmployeeIrpf(Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
-		employeesServiceAsync.setEmployeeIrpf(getCurrentDomainName(), contractId, ssNumber, employeeIrpfs, callback);
+	public void setEmployeeIrpf(Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.setEmployeeIrpf(getCurrentDomainName(), contractId, fullName, document, ssNumber, employeeIrpfs, callback);
 	}
 	
 	// ------------------------------------------------- ContractVariables

@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeIrpf;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeContractIrpfObject {
@@ -19,13 +18,17 @@ public class EmployeeContractIrpfObject {
 	private List<EmployeeIrpf> employeeIrpfList;
 	private Integer contractId;
 	private String ssNumber;
+	private String fullName;
+	private String document;
 	private Date contractStartDate;
 	
 	// ----------------------------------------------- Constructor 
 	
-	public EmployeeContractIrpfObject(Integer contractId,  String ssNumber, Date contractStartDate) {
+	public EmployeeContractIrpfObject(Integer contractId, String fullName, String document, String ssNumber, Date contractStartDate) {
 		this.contractId = contractId;
 		this.ssNumber = ssNumber;
+		this.fullName = fullName;
+		this.document = document;
 		this.contractStartDate = contractStartDate;
 		this.employeeIrpfList = new ArrayList<>();
 	}
@@ -55,7 +58,7 @@ public class EmployeeContractIrpfObject {
 	}
 	
 	public void setEmployeeIrpf(Consumer<Void> success, Consumer<Throwable> failure) {
-		employeesService.setEmployeeIrpf(contractId, ssNumber, employeeIrpfList, new AsyncCallback<Void>() {
+		employeesService.setEmployeeIrpf(contractId, fullName, document, ssNumber, employeeIrpfList, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {

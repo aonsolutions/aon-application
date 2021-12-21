@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
@@ -49,11 +50,11 @@ public class JooqEmployeeIrpf {
 	
 	// --------------------------------------------- Methods. getEmployeeIrpf
 	
-	public static List<EmployeeIrpf> getEmployeeIrpf(Connection conn, String ssNumber, Date startDate) {
+	public static List<EmployeeIrpf> getEmployeeIrpf(Connection conn, String ssNumber, Date startDate) throws IllegalArgumentException {
 		return getEmployeeIrpf(DSL.using(conn, getDefaultSettings()), ssNumber, startDate);
 	}
 
-	private static List<EmployeeIrpf> getEmployeeIrpf(DSLContext dslContext, String ssNumber, Date startDate) {
+	private static List<EmployeeIrpf> getEmployeeIrpf(DSLContext dslContext, String ssNumber, Date startDate) throws IllegalArgumentException {
 		List<EmployeeIrpf> employeeIrpfList = new ArrayList<>();
 		
 		// Iterator Date
@@ -215,7 +216,7 @@ public class JooqEmployeeIrpf {
 		return employeeIrpfList;
 	}
 
-	private static EmployeeIrpf createEmployeeIrpfL190(DSLContext dslContext, Date iteratorDate, Integer salaryId, String salaryType, Record salaryRecord) {
+	private static EmployeeIrpf createEmployeeIrpfL190(DSLContext dslContext, Date iteratorDate, Integer salaryId, String salaryType, Record salaryRecord) throws IllegalArgumentException {
 		Double employeeSSQuote = salaryRecord.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
 		if(employeeSSQuote == 0.00) {
 			Result<Record> salaryDeductions = dslContext.select().from(SALARY_DEDUCTION)
@@ -329,11 +330,11 @@ public class JooqEmployeeIrpf {
 
 	// --------------------------------------------- Methods. setEmployeeIrpf
 	
-	public static void setEmployeeIrpf(Connection conn, Integer domainId, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs) {
-		setEmployeeIrpf(DSL.using(conn, getDefaultSettings()), domainId, contractId, ssNumber, employeeIrpfs);
+	public static void setEmployeeIrpf(Connection conn, Integer domainId, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs) throws IllegalArgumentException {
+		setEmployeeIrpf(DSL.using(conn, getDefaultSettings()), domainId, contractId, document, fullName, ssNumber, employeeIrpfs);
 	}
 
-	private static void setEmployeeIrpf(DSLContext dslContext, Integer domainId, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs) {
+	private static void setEmployeeIrpf(DSLContext dslContext, Integer domainId, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs) throws IllegalArgumentException {
 		// Salary L131 equals salary type DB (byte) 7
 		for(EmployeeIrpf employeeIrpf : employeeIrpfs) {
 			if(!employeeIrpf.isNew() && !employeeIrpf.isDelete())
@@ -361,6 +362,8 @@ public class JooqEmployeeIrpf {
 					.set(SALARY.START_DATE, parseDateToSQL(startDate))
 					.set(SALARY.END_DATE, parseDateToSQL(endDate))
 					.set(SALARY.SOCIAL_SECURITY_NUMBER, ssNumber)
+					.set(SALARY.EMPLOYEE_NAME, fullName)
+					.set(SALARY.EMPLOYEE_DOCUMENT, document)
 					.set(SALARY.REGISTRATION, 0)
 					.set(SALARY.TIME_UNITS, 30)
 					.set(SALARY.ISSUE_DATE, parseDateToSQL(endDate))
@@ -383,6 +386,7 @@ public class JooqEmployeeIrpf {
 					.set(SALARY_DATA.END_DATE, parseDateToSQL(endDate))
 					.set(SALARY_DATA.SALARY, newSalaryId)
 					.execute();
+				
 			}
 		}
 	}

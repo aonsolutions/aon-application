@@ -448,8 +448,8 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 
 		@Override
-		public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs,
-				AsyncCallback<Void> callback) {
+		public void setEmployeeIrpf(String currentDomainName, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs,
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}
@@ -933,8 +933,8 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 
 					@Override
-					public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber,
-							List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
+					public void setEmployeeIrpf(String currentDomainName, Integer contractId, String fullName, String document, String ssNumber,
+							List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}
