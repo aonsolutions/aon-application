@@ -321,9 +321,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	// ------------------------------------------------- EmployeeIrpf
 	
-	List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate);
+	List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate) throws IllegalArgumentException;
 
-	void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs);
+	void setEmployeeIrpf(String currentDomainName, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs) throws IllegalArgumentException;
 
 	// ------------------------------------------------- ContractVariables
 	

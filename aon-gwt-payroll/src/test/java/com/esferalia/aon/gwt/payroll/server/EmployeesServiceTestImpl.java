@@ -955,13 +955,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate) {
+	public List<EmployeeIrpf> getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs) {
+	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
 	}
