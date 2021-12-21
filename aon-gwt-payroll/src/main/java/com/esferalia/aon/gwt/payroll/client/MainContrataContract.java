@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -23,7 +22,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -35,6 +33,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -49,8 +48,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -68,8 +70,6 @@ public class MainContrataContract extends MainEntryPoint {
 
 	private class ContrataEmployeeImpl extends ContrataEmployee {
 
-		Task syncTask;
-
 		@Override
 		protected void onListShow(boolean reloadEmployees) {
 			if (reloadEmployees)
@@ -78,28 +78,6 @@ public class MainContrataContract extends MainEntryPoint {
 				employeeDataGrid.redraw();
 
 			deckPanel.showWidget(0);
-		}
-
-		@Override
-		protected void getContractBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
-
-			syncTask = new Task();
-			syncTask.setDescription("Comprobando bonificaciones...");
-			MainContrataContract.this.progressPanel.showTask(syncTask);
-
-			dockLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
-
-			InlineLabel tab = new InlineLabel("Progreso");
-			tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
-			tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
-			footTabPanel.add(progressPanel, tab);
-			footTabPanel.selectTab(progressPanel);
-
-			super.getContractBonus(l -> {
-				success.accept(l);
-				syncTask.messageChanged("Bonificaciones actualizadas :-)");
-				syncTask.finished();
-			}, failure);
 		}
 
 		@Override
@@ -912,6 +890,26 @@ public class MainContrataContract extends MainEntryPoint {
 		deckPanel.showWidget(4);
 	}
 	
+	protected void exportEnterpriseContracts() {
+		String printURL = URL.encode(GWT.getModuleBaseURL() + "enteprise_contracts/");
+		
+		FormPanel formPanel = new FormPanel("_blank");
+		formPanel.setAction(printURL);
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		
+		FlowPanel flowPanel = new FlowPanel();
+		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
+		formPanel.add(flowPanel);
+		
+		formPanel.addSubmitCompleteHandler(e1 -> {
+			employeeToolbar.remove(formPanel);
+		});
+		
+		employeeToolbar.add(formPanel);
+		
+		formPanel.submit();
+	}
+	
 	// ------------------------------------------ Redraw Tables
 
 	private void redrawTable() {
@@ -1176,6 +1174,10 @@ public class MainContrataContract extends MainEntryPoint {
 		AonToolbarButton salariesBtn = new AonToolbarButton("N\u00F3minas Empresa", AON.CSS.aonIconReceipt());
 		salariesBtn.addClickHandler(e -> showEnterpriseSalary());
 		employeeToolbar.add(salariesBtn);
+		
+		AonToolbarButton exportExcelBtn = new AonToolbarButton("Exportar Contratos Empresa", AON.CSS.aonIconExcel());
+		exportExcelBtn.addClickHandler(e -> exportEnterpriseContracts());
+		employeeToolbar.add(exportExcelBtn);
 	}
 	
 	// ------------------------------------------ Toolbar. Methods

@@ -81,6 +81,16 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!--  **** DOMAIN USER ROLES CONTROLLER **** -->
+	<managed-bean>
+		<managed-bean-name>dur</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.aio.controller.DomainUserRolesController
+		</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
 	
 	<!--  **** SEARCH CONTROLLER **** -->
 	<managed-bean>
@@ -94,7 +104,7 @@
 			<value>searchController</value>
 		</managed-property>
 	</managed-bean>
-
+	
 	<!--  **** TIMECONTROL CONTROLLER **** -->
 	<managed-bean>
 		<managed-bean-name>timeControl</managed-bean-name>

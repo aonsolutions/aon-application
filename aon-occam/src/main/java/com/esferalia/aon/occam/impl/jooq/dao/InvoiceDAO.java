@@ -352,6 +352,7 @@ public class InvoiceDAO {
 				,ITEM.PRICE
 				
 				,INVOICE_DETAIL.DESCRIPTION
+				,INVOICE_DETAIL.DOMAIN
 				,INVOICE_DETAIL.QUANTITY
 				,INVOICE_DETAIL.PRICE
 				,INVOICE_DETAIL.DISCOUNT_EXPR
@@ -360,6 +361,7 @@ public class InvoiceDAO {
 				,INVOICE_DETAIL.PROJECT
 				,INVOICE_DETAIL.WAREHOUSE
 				,INVOICE_DETAIL.WORKPLACE
+				,INVOICE_DETAIL.SOURCE
 				,SELLER_ALIAS.NAME
 				,WORKPLACE.DESCRIPTION
 				,WAREHOUSE.NAME
@@ -492,7 +494,7 @@ public class InvoiceDAO {
 	}
 	
 	public static Stream<InvoiceTax> getInvoiceTaxStream(AONContext ctx, Integer invoiceId) {
-		return ctx.getDslContext().select(INVOICE_TAX.TAX_TYPE,  INVOICE_TAX.PERCENTAGE, DSL.sum(INVOICE_TAX.BASE),
+		return ctx.getDslContext().select(INVOICE_TAX.TAX_TYPE, INVOICE_TAX.DOMAIN, INVOICE_TAX.PERCENTAGE, DSL.sum(INVOICE_TAX.BASE),
 					DSL.sum(INVOICE_TAX.SURCHARGE), DSL.sum(INVOICE_TAX.QUOTA), DSL.sum(INVOICE_TAX.SURCHARGE_QUOTA))
 				.from(INVOICE).join(INVOICE_DETAIL).on(INVOICE.ID.eq(INVOICE_DETAIL.INVOICE))
 				.join(INVOICE_TAX).on(INVOICE_DETAIL.ID.eq(INVOICE_TAX.INVOICE_DETAIL))
@@ -514,6 +516,7 @@ public class InvoiceDAO {
 		public InvoiceTax apply(Record record) {
 			return new InvoiceTax()
 					.setId(record.getValue(INVOICE_TAX.ID))
+					.setDomain(record.getValue(INVOICE_TAX.DOMAIN))
 					.setTaxType(TaxType.values()[record.getValue(INVOICE_TAX.TAX_TYPE)])
 					.setPercentage(record.getValue(INVOICE_TAX.PERCENTAGE))
 					.setBase(record.getValue(INVOICE_TAX.BASE))
@@ -722,6 +725,7 @@ public class InvoiceDAO {
 				.setWorkPlaceName(record.getValue(WORKPLACE.DESCRIPTION))
 				.setWarehouse(record.getValue(INVOICE_DETAIL.WAREHOUSE))
 				.setWarehouseName(record.getValue(WAREHOUSE.NAME))
+				.setSource(InvoiceSource.safeValueOf(record.getValue(INVOICE_DETAIL.SOURCE)))
 				;
 		}
 		
@@ -855,10 +859,33 @@ public class InvoiceDAO {
 		}
 	}
 	
+	public static int getMinNumber(AONContext ctx, InvoiceType type, String series ) {
+		return getMinNumber(ctx, new Byte[]{type.value()} , series);
+	}
+	
+	public static int getMinNumber(AONContext ctx, Byte[] types, String series ) {
+		Integer min = ctx.getDslContext()
+			.select( DSL.min(INVOICE.NUMBER))
+			.from(INVOICE)
+			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+			.and(INVOICE.TYPE.in(types))
+			.and( AonStringUtils.isBlank(series)
+					?INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
+					:INVOICE.SERIES.eq(series))
+			.fetch()
+			.stream()
+			.mapToInt(rec -> (rec != null && rec.getValue(DSL.min(INVOICE.NUMBER)) != null) 
+					? rec.getValue(DSL.min(INVOICE.NUMBER)) 
+					: 0)
+			.findFirst()
+			.orElse(0);
+		return --min;
+	}
+	
 	public static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
 		return getNextNumber(ctx, new Byte[]{type.value()} , series);
 	}
-
+	
 	public static int getNextNumber(AONContext ctx, Byte[] types, String series ) {
 		Integer next = ctx.getDslContext()
 			.select( DSL.max(INVOICE.NUMBER))
@@ -1072,7 +1099,15 @@ public class InvoiceDAO {
 		return update(ctx,ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate()),invoice); 
 	}
 	
+	public static Invoice update(AONContext ctx, Invoice invoice, boolean only) {
+		return update(ctx,ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate()),invoice, only); 
+	}
+
 	public static Invoice update(AONContext ctx, AonConfiguration config, Invoice invoice) {
+		return update(ctx, config, invoice, false);
+	}
+	
+	public static Invoice update(AONContext ctx, AonConfiguration config, Invoice invoice, boolean only) {
 		ctx.checkWrite();
 		InvoiceValidation.validateInvoice(ctx, config, invoice);
 		InvoiceAutoComplete.completeInvoice(ctx, config, invoice);
@@ -1121,8 +1156,10 @@ public class InvoiceDAO {
 			.where(INVOICE.ID.equal( invoice.getId()))
 			.execute();
 		ctx.log().debug("UPDATE INVOICE invoice: {0} ({1} rows)",invoice.getId(),i);
-		InvoiceFiscalDAO.save(ctx, config, invoice);
-		updateDetails(ctx, config, invoice);
+		if(!only) {
+			InvoiceFiscalDAO.save(ctx, config, invoice);
+			updateDetails(ctx, config, invoice);
+		}
 		return invoice; 
 	}
 	
@@ -1410,6 +1447,7 @@ public class InvoiceDAO {
 	}
 	private static void afterInsertDetail(AONContext ctx, AonConfiguration config, Invoice invoice, InvoiceDetail detail) {
 		if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
+			if(detail.getDomain() == null) detail.setDomain(invoice.getDomain());
 			insertInvoiceTaxes(ctx,detail);
 		} else {
 			ctx.log().debug("\t\tSKIPPING INVOICE TAX CREATION ({0})",(detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE"));

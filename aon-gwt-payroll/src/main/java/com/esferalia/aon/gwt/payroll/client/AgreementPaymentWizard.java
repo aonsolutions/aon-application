@@ -997,7 +997,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 		paymentExtra.setIrpfExpression("_P");
 		paymentExtra.setQuoteExpression("_P");
 		paymentExtra.setType(paymentTypeListBox.getSelected());
-		paymentExtra.setSalaryType(Salary.Type.SALARY);
+		paymentExtra.setSalaryType(Salary.Type.EXTRA);
 		paymentExtra.setName(paymentConcept.getValue());
 		
 		try {

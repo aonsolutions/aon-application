@@ -73,13 +73,29 @@ public class TbaiData {
 		.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
 //		.and(f.getCodeProperty().eq("ok").or(f.getCodeProperty().eq("pending")))
 		.and(f.getSourceIdProperty().eq(invoiceId)));
-		DataResponseDetail drd = AON.getDataResponseDetail(domainName, domainId, login, f -> 
+
+		DataResponseDetail drd = dr != null && dr.getId() != null ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
 			f.getDomainProperty().eq(domainId)
 			.and(f.getDataResponseProperty().eq(dr.getId()))
-			.and(f.getDataVariableProperty().eq("tbaiId"))).orElse(new DataResponseDetail());
+			.and(f.getDataVariableProperty().eq("tbaiId"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
 	
 		return drd.getDataValue();
 	}
+	
+	public static String getTbaiUrl(String domainName, Integer domainId, String login, Integer invoiceId) {
+		DataResponse dr = AON.getDataResponse(domainName, domainId, login, DataResponseSource.TBAI, f -> 
+		f.getDomainProperty().eq(domainId)
+		.and(f.getSourceProperty().eq(DataResponseSource.TBAI.value()))
+		.and(f.getSourceIdProperty().eq(invoiceId)));
+
+		DataResponseDetail drd = dr != null && dr.getId() != null ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
+			f.getDomainProperty().eq(domainId)
+			.and(f.getDataResponseProperty().eq(dr.getId()))
+			.and(f.getDataVariableProperty().eq("tbaiUrl"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
+	
+		return drd.getDataValue();
+	}
+	
 	
 	public static String getTbaiId(Domain domain, User user, Integer invoiceId) {
 		return getTbaiId(domain.getName(),  domain.getId(), user.getLogin(), invoiceId);
@@ -114,7 +130,7 @@ public class TbaiData {
 		return dr;
 	}
 	
-	public static DataResponse saveResponsePending(Domain domain, User user, Invoice invoice, TbaiResponse response, TbaiBlockchain blockchain, DataRequest dataRequest) {
+	public static DataResponse saveResponsePending(Domain domain, User user, Invoice invoice, TbaiResponse response, TbaiBlockchain blockchain, DataRequest dataRequest, String tbaiUrl) {
 		DataResponse dr = new DataResponse()
 				.setDomain(domain.getId())
 				.setCode(response.getResponseStatus())
@@ -132,14 +148,23 @@ public class TbaiData {
 				.setDataValue(response.getTbaiId());
 		
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd1);
-		
+	
 		DataResponseDetail drd2 = new DataResponseDetail()
 				.setDomain(domain.getId())
 				.setDataResponse(dr.getId())
 				.setDataVariable("blockchain")
 				.setDataValue(blockchain.toJSON().toString());
-
+		
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd2);
+
+		DataResponseDetail drd3 = new DataResponseDetail()
+				.setDomain(domain.getId())
+				.setDataResponse(dr.getId())
+				.setDataVariable("tbaiUrl")
+				.setDataValue(tbaiUrl);
+		
+		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd3);
+		
 		return dr;
 	}
 	

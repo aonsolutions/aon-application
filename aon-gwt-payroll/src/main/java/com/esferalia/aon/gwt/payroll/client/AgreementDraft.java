@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
@@ -1312,6 +1313,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	ScrollPanel draftScrollPane;
 	
 	@UiField
+	HTMLPanel messageContainer;
+	
+	@UiField
 	TextBox ssNumberTextBox;
 	
 	@UiField
@@ -1394,6 +1398,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private AonToolbarButton fxButton;
 	private AonExpandButton addPaymentButton;
 	private AonToolbarButton printPreviewButton;
+	private AonToolbarButton serviAgreementUpdateButton;
 	private AonToolbarButton serviAgreementPDFButton;
 	private AonToolbarButton serviAgreementXLSButton;
 	
@@ -2163,6 +2168,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		// ServiAgreements Buttons
 		boolean isServiAgreement = this.agreementDraftObject.isServiAgreement();
 		setVisible(serviAgreementPanel.getElement(), isServiAgreement);
+		setVisible(serviAgreementUpdateButton.getElement(), isServiAgreement);
 		
 	}
 
@@ -4907,6 +4913,26 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		};
 		toolbar.add(addPaymentButton);
 		
+		serviAgreementUpdateButton = new AonToolbarButton("Actualizar Convenio", AON.CSS.aonIconCloudImport());
+		serviAgreementUpdateButton.addClickHandler(e -> {
+			showLoading("Actualizando convenio");
+			agreementDraftObject.checkAndUpdateServiAgreement(
+					newDate -> {
+						showSuccess("Actualizaci\u00F3n", "El convenio ha sido actualizado correctamente");
+						if(null != newDate) {
+							AgreementDraftObject agreementDraftObjectNew = agreementDraftObject.createAgreementDraftObject();
+							agreementDraftObject.getChanges(
+									agreementDraftObjectNew, 
+									s -> {
+										this.setAgreementDraftObject(agreementDraftObjectNew);
+										calculate();
+									}, f -> {});
+						}
+					}, 
+					f -> showError("Error actualizaci\u00F3n", f.getMessage()));
+		});
+		toolbar.add(serviAgreementUpdateButton);
+		
 		CheckBox changesCheck = new CheckBox();
 		changesCheck.setText("Cambios");
 		changesCheck.setVisible(false);
@@ -4918,6 +4944,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		undoAllButton.ensureDebugId("undoAllButton");
 		acceptButton.ensureDebugId("acceptButton");
 		printPreviewButton.ensureDebugId("printPreviewButton");
+		serviAgreementUpdateButton.ensureDebugId("serviAgreementUpdateButton");
 		
 		return toolbar;
 	}
@@ -4951,6 +4978,34 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		serviAgreementXLSButton.ensureDebugId("serviAgreementXLSButton");
 		
 		serviAgreementPanel.setVisible(false);
+	}
+	
+	// ------------------------------------------------- Aon Messages panel
+
+	private void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(messageContainer, successMap);
+	}
+	
+	private void showInfo(String title, String message) {
+		Map<String, String> infoMap = new HashMap<>();
+		infoMap.put(title, message);
+		AonMessagePanel.showInfo(messageContainer, infoMap);
+	}
+	
+	private void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(messageContainer, errorMap);
+	}
+	
+	private void showLoading(String message) {
+		AonMessagePanel.showLoading(messageContainer, message);
+	}
+	
+	private void hideMessage() {
+		AonMessagePanel.hideMessage(messageContainer);
 	}
 	
 }

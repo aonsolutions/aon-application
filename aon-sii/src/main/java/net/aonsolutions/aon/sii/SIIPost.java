@@ -36,40 +36,43 @@ import javax.xml.soap.SOAPMessage;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
+import com.esferalia.aon.occam.api.model.security.Certificate;
+
 public class SIIPost {
 	
-	public static SIIPost getInstance(byte[] cert, String pass) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		return new SIIPost(cert, pass);
+	public static SIIPost getInstance(SiiConfiguration siiConfiguration) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		return new SIIPost(siiConfiguration);
 	}
 	
-	byte[] cert;
-	String pass;
+	SiiConfiguration siiConfiguration;
+
 	Marshaller marshaller;
 	Unmarshaller unmarshaller;
-	public SIIPost(byte[] cert, String pass) {
-		this.cert = cert;
-		this.pass = pass;
+	
+	public SIIPost(SiiConfiguration siiConfiguration) {
+		this.siiConfiguration = siiConfiguration;
+	}
+	
+	public SiiConfiguration getSiiConfiguration() {
+		return siiConfiguration;
 	}
 	
 	private void secure(String uri) {
 		try {
-			ByteArrayInputStream key = new ByteArrayInputStream(cert);
-	
+			Certificate cert = getSiiConfiguration().getCertificate();
+			ByteArrayInputStream key = new ByteArrayInputStream(cert.getCertificate());
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
-
-			if(cert == null) {
-				System.out.println("SII CERT LOG - NULLPOINTER cert value");
-			}
-			System.out.println("SII CERT LOG -/" + pass + "/-" + key);
-			keyStore.load(key, pass.toCharArray());
+			keyStore.load(key, cert.getPassword().toCharArray());
     	
     		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-   			kmf.init(keyStore, pass.toCharArray());
+   			kmf.init(keyStore, cert.getPassword().toCharArray());
    	        
             TrustManager[] trustAll = new TrustManager[] {new TrustAllCertificates()};
-
-            SSLContext sslContext = SSLContext.getInstance("SSLv3");
+            
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(kmf.getKeyManagers(), trustAll, new SecureRandom());
+			SSLContext.setDefault(sslContext);
             // Set trust all certificates context to HttpsURLConnection
             
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
@@ -183,9 +186,4 @@ public class SIIPost {
     	json.put("name", "Factura " + referenceCode + (!id.equals(200) ?  " - Error " + id + ": " : " - ") + name);
     	return json;
 	}
-	
-	public byte[] getCert() {
-		return cert;
-	}
-	
 }

@@ -157,8 +157,6 @@ public interface EnterprisesService extends RemoteService {
 	
 	List<SSPECData> getEmployeeSSPECs(String currentDomainName, String currentUser, Integer contractId);
 
-	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId)  throws IllegalArgumentException;
-
 	List<SSBonusData> getBonusConcepts(String currentDomainName);
 
 	List<SSBonusData> setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses);
@@ -237,7 +235,7 @@ public interface EnterprisesService extends RemoteService {
 
 	void deleteDigitalCertificate(String currentDomainName, DigitalCertificate digitalCertificate);
 
-	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId);
+	List<SecondaryUserCertificate> getSecondaryUsers(String currentDomainName, String currentUser, Integer rattachId) throws IllegalArgumentException;
 
 	void deleteSecondaryUser(String currentDomainName, String currentUser, Integer rattachId, String ipfType, String ipf);
 
@@ -326,5 +324,8 @@ public interface EnterprisesService extends RemoteService {
 
 	void createSecondaryUser(String currentDomainName, String currentUser, String ipfType, String ipf, String naf) throws IllegalArgumentException;
 
-	
+	List<SSBonusData> syncSSBonus(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+
+	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, Integer contractId) throws IllegalArgumentException;
+
 }

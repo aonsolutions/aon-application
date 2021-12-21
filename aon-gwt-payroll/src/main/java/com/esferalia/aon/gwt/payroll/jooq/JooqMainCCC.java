@@ -2,10 +2,12 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
@@ -15,14 +17,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record2;
 import org.jooq.Result;
+import org.jooq.Table;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
-import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
+import com.esferalia.aon.jooq.tables.records.RaddressRecord;
+import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 
 public class JooqMainCCC {
 
@@ -204,8 +211,11 @@ public class JooqMainCCC {
 	}
 
 	private static void insertCompleteComunicaCCC(DSLContext dslContext, Integer domainId, Integer geozoneId, CCCInfo cccInfo) {
-		Record enterpriseRecord = dslContext.select().from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne();
-		Integer enterpriseId = enterpriseRecord.get(ENTERPRISE.REGISTRY);
+		EnterpriseRecord enterpriseRecord = dslContext.select().from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId))
+				.fetchOptionalInto(ENTERPRISE)
+				.orElseThrow(IllegalArgumentException::new);
+		
+		Integer enterpriseId = enterpriseRecord.getRegistry();
 		
 		Record enterpriseActivityRecord = dslContext.insertInto(ENTERPRISE_ACTIVITY)
 			.set(ENTERPRISE_ACTIVITY.DOMAIN, domainId)
@@ -220,7 +230,70 @@ public class JooqMainCCC {
 		dslContext.insertInto(ENTERPRISE_CCC, ENTERPRISE_CCC.DOMAIN, ENTERPRISE_CCC.CCC, ENTERPRISE_CCC.TYPE, ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, ENTERPRISE_CCC.GEOZONE)
 			.values(domainId, cccInfo.getCcc(), cccInfo.getType(), enterpriseActivityId, geozoneId)
 			.execute();
+		
+		setWorkplace(dslContext, domainId, enterpriseRecord, enterpriseActivityId, cccInfo.getCcc(), geozoneId);
 			
 	}
+	
+	private static void setWorkplace(DSLContext dslContext, Integer domainId, EnterpriseRecord enterpriseRecord, Integer enterpriseActivityId, String ccc, Integer geozoneId){
+		Integer registry = enterpriseRecord.getRegistry();
+		
+		///---RADDRESS
+		RaddressRecord raddress = dslContext
+		.select()
+		.from(RADDRESS)
+		.where(RADDRESS.DOMAIN.eq(domainId))
+		.and(RADDRESS.GEOZONE.eq(geozoneId))
+		.and(RADDRESS.REGISTRY.eq(registry))
+		.fetchStreamInto(RADDRESS).findFirst()
+		.orElseGet(() ->
+			dslContext
+			.insertInto(RADDRESS)
+			.set(RADDRESS.DOMAIN, domainId)
+			.set(RADDRESS.GEOZONE, geozoneId )
+			.set(RADDRESS.TYPE, (byte)0)
+			.set(RADDRESS.REGISTRY, registry)
+			.returning()
+			.fetchOne()
+		);
+		//---------WORKPLACE
+		WorkplaceRecord workplaceRecord = dslContext
+		.select()
+		.from(WORKPLACE)
+		.innerJoin(RADDRESS).onKey()
+		.innerJoin(GEOZONE).onKey()
+		.where(WORKPLACE.DOMAIN.eq(domainId))
+		.and(GEOZONE.CODE.eq(ccc.substring(0,2)))
+		.fetchStreamInto(WORKPLACE).findFirst()
+		.orElseGet(() ->
+			dslContext
+			.insertInto(WORKPLACE)
+			.set(WORKPLACE.DOMAIN, domainId)
+			.set(WORKPLACE.ENTERPRISE, registry)
+			.set(WORKPLACE.DESCRIPTION, "CT AUTOGENERADO")
+			.set(WORKPLACE.ADDRESS, raddress.getId())
+			.set(WORKPLACE.SCOPE, enterpriseRecord.getScope())
+			.returning()
+			.fetchOne()
+		);
+		
+		//---------PAYROLL_WORKPLACE
+		dslContext
+		.select()
+		.from(PAYROLL_WORKPLACE)
+		.innerJoin(WORKPLACE).onKey()
+		.where(WORKPLACE.DOMAIN.eq(domainId))
+		.fetchStreamInto(PAYROLL_WORKPLACE).findFirst()
+		.orElseGet(() ->
+				dslContext
+				.insertInto(PAYROLL_WORKPLACE)
+				.set(PAYROLL_WORKPLACE.DOMAIN, domainId)
+				.set(PAYROLL_WORKPLACE.WORKPLACE, workplaceRecord.getId())
+				.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, enterpriseActivityId)
+				.returning()
+				.fetchOne()
+		);
+	}
+	
 
 }

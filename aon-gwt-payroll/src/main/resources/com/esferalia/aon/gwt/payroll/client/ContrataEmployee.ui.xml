@@ -201,16 +201,6 @@
 							  	</g:tab>
 							  	<g:tab>
 							    	<g:customHeader size='7'>
-							      		<g:Label>Bonificaciones</g:Label>
-							    	</g:customHeader>
-							    	<g:HTMLPanel styleName="{style.mt10}">
-							    		<g:ScrollPanel ui:field="scrolledPanelBonus" styleName="{style.center}">
-											<a:ContractBonusUI ui:field="contractBonusUI"/>
-										</g:ScrollPanel>
-							    	</g:HTMLPanel>
-							  	</g:tab>
-							  	<g:tab>
-							    	<g:customHeader size='7'>
 							      		<g:Label>Nóminas</g:Label>
 							    	</g:customHeader>
 							    	<g:HTMLPanel styleName="{style.mt10}">

@@ -349,7 +349,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation,
-					String regimen, String ctaCti, String nss, AsyncCallback<Void> callback) {
+					String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<Void> callback) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -467,15 +467,6 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId,
-					AsyncCallback<Void> callback) throws IllegalArgumentException {
-				// TODO Auto-generated method stub
-				
-			}
-
-
-
-			@Override
 			public void setEmployeeEventsByContract(String currentDomainName, Integer contractId,
 					EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback) {
 				// TODO Auto-generated method stub
@@ -577,6 +568,34 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			@Override
 			public void getSalariesDates(String currentDomainName, SalaryInfoFilter filter,
 					AsyncCallback<Period> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void downloadTA_IDC(String currentDomainName, String currentUser, String situation, String regimen,
+					String ctaCti, String nss, Date fecha, Integer contractId, AsyncCallback<Void> callback)
+					throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getEmployeeTa(String domain, String user, String situation, String regimen, String ctaCti,
+					String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear,
+					AsyncCallback<Date> asyncCallback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}

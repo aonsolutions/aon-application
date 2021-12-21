@@ -18,6 +18,9 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.safecss.shared.SafeStyles;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.cellview.client.CellTable;
 
 public class AON {
@@ -29,6 +32,14 @@ public class AON {
 	private static final String CONNECTION_STATUS_ELEMENTS[] = {
 			"_viewRoot:status.stop", "_viewRoot:status.start", "status_error" };
 
+	public static interface Material extends SafeHtmlTemplates {
+
+		@SafeHtmlTemplates.Template("<span class=\"material-icons\" style=\"{1} vertical-align: middle; \" >{0}</span>")
+		SafeHtml icon(String icon, SafeStyles safeStyles );
+
+	}
+	
+	public static final Material MATERIAL = GWT.create(Material.class);
 	// ------------------------------------------------------------------------
 	public static final CommonMessages MSG = GWT.create(CommonMessages.class);
 	public static final AonHubMessages AONHUB = GWT.create(AonHubMessages.class);

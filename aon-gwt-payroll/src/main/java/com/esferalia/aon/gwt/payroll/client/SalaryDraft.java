@@ -93,6 +93,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -659,6 +660,33 @@ public class SalaryDraft extends ResizeComposite
 		}
 	}
 
+	static class EventConstantEditorFactory implements VariableEditorFactory<EventConstantLabel> {
+		
+		private String names [];
+		
+		
+		public EventConstantEditorFactory(String... names ) {
+			this.names = names;
+		}
+		
+		@Override
+		public boolean accept(Variable variable) {
+			for ( String name : names )
+				if ( name.equals(variable.getName()))
+					return true;
+			
+			return false;
+		}
+		
+		@Override
+		public EventConstantLabel create(Variable variable) {
+			EventConstantLabel constantLabel = new EventConstantLabel();
+			constantLabel.ensureDebugId("editor-" + variable.getName().toLowerCase());
+			constantLabel.addClickHandler(e -> EmployeeTree.showEmployeeEvents(variable.getName()));
+			return constantLabel;
+		}
+	}
+
 	static class CalendarConstantEditorFactory implements VariableEditorFactory<CalendarConstantLabel> {
 		
 		private String names [];
@@ -1128,7 +1156,7 @@ public class SalaryDraft extends ResizeComposite
 
 	class VariableChangeHandler<T extends HasValue<String> & HasAllFocusHandlers & Focusable > 
 			implements FocusHandler, BlurHandler, ValueChangeHandler<String> {
-
+		
 		protected T editor;
 		protected Timer reset;
 		protected Variable variable;
@@ -1205,7 +1233,7 @@ public class SalaryDraft extends ResizeComposite
 			if (value == null)
 				editor.setValue(null);
 			else if (value instanceof Double)
-				editor.setValue(SalaryDraft.format((Double) value));
+				editor.setValue(formatValue((Double) value));
 			else if (value instanceof Date)
 				editor.setValue(AON.DATE_FORMAT.format((Date) value));
 			else
@@ -1242,6 +1270,14 @@ public class SalaryDraft extends ResizeComposite
 					.setEndDate(variable.getEndDate()).setStartDate(variable.getStartDate()).create();
 			// @formatter:on
 		}
+		
+
+		private String formatValue(Double value) {
+			if ( AonNumberUtils.isNotValid(value)  )
+				return "0.00";
+			return NumberFormat.getFormat("#,##0.00#").format(Math.round(value * 1000.00) / 1000.00);
+		}
+		
 		
 	}
 
@@ -6584,6 +6620,7 @@ public class SalaryDraft extends ResizeComposite
 					"COEFICIENTE_ERE_FZA", 
 					"COEFICIENTE_ERE_FZA_EXONERADO", 
 					"COEFICIENTE_HUELGA"  ), 
+			new EventConstantEditorFactory("ATRASO"), 
 			new AgreementConstantEditorFactory(), 
 			new ConstantEditorFactory("SMI"), 
 			new BooleanEditorFactory(), 

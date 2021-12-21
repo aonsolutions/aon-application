@@ -12,6 +12,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.Certificate;
@@ -23,6 +25,7 @@ import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.sepe.Sepe;
 
 
@@ -97,12 +100,20 @@ public class ComunicaPdfServlet extends AonApiHttpServlet{
 
 	private byte[] getTA(AonApiData api) throws Exception {
 		Certificate certificate = getCert(api, "TGSS");
+		JSONObject params = api.getParams();
+		SituationType situationType = SituationType.ALTA;
 		final InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
-		String regime = api.getParams().optString("regime");
-		String ccc = api.getParams().getString("ctaCti");
-		String nss = api.getParams().getString("nss");
-		Date date = AonDateUtils.parse(api.getParams().getString("fra"), FORMAT_DATE);
-	    return ServicioRED.getTADuplicatePOST(certificateInputStream, certificate.getPassword(), certificate.getType(), ccc, regime, nss, date);		
+		String regime = params.optString("regime");
+		String ccc = params.getString("ctaCti");
+		String nss = params.getString("nss");
+		Date date = AonDateUtils.parse(params.getString("fra"), FORMAT_DATE);
+
+		if(!params.optString("frb").isEmpty()) {
+			date = AonDateUtils.parse(params.getString("frb"), FORMAT_DATE);
+			situationType = SituationType.BAJA;
+		}
+
+	    return ServicioRED.getTADuplicatePOST(certificateInputStream, certificate.getPassword(), certificate.getType(), ccc, regime, situationType, nss, date);		
 	}
 	
 	private byte[] getIDC(AonApiData api) throws Exception {

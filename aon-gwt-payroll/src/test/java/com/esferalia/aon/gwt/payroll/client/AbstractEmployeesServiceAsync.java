@@ -27,7 +27,6 @@ import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Period;
-import com.esferalia.aon.gwt.payroll.shared.ReportData;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
@@ -463,8 +462,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 	
 	@Override
-	public void getEmployeeTa(String domain, String user, Integer contractId, Date date,
-			AsyncCallback<String> callback) {
+	public void getEmployeeTa(String domain, String user, String situation, String regimen, String ctaCti, String nss, Date fecha, AsyncCallback<String> callback) {
 		failure(callback);		
 	}
 	

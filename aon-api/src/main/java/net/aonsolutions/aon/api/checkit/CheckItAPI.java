@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItLog;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItParams;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckitUnlinkedBankAccount;
@@ -958,7 +959,7 @@ public class CheckItAPI implements IParamNames{
 				
 	}
 	
-	public static List<BankStatement> getAllBankStatements(Integer empresaId, Integer accountId) throws CheckItException {
+	public static List<CheckItBankStatement> getAllBankStatements(Integer empresaId, Integer accountId) throws CheckItException {
 		JSONObject requestParams = new JSONObject();
 		
 		requestParams.put(API_KEY_PARAM, API_KEY);
@@ -969,13 +970,13 @@ public class CheckItAPI implements IParamNames{
 
 		JSONArray transactionsArray = CheckItAPI.getTransactions(requestParams);
 		
-		List<BankStatement> bankStatements = new LinkedList<>();
+		List<CheckItBankStatement> bankStatements = new LinkedList<>();
 		
 		for (int i = 0; i < transactionsArray.length(); i++) {
 
 			JSONObject transactionJson = transactionsArray.optJSONObject(i);
 
-			BankStatement bankStatement = bankStatementFromJson(transactionJson);
+			CheckItBankStatement bankStatement = bankStatementFromJson(transactionJson);
 			bankStatements.add(bankStatement);
 
 		}
@@ -983,7 +984,7 @@ public class CheckItAPI implements IParamNames{
 		return bankStatements;
 	}
 	
-	public static List<BankStatement> getBankStatements(Integer empresaId, Integer accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
+	public static List<CheckItBankStatement> getBankStatements(Integer empresaId, Integer accountId, Date lastOperationDate, Integer maximumId) throws CheckItException {
 		Date today = new Date();
 		
 		
@@ -1003,7 +1004,7 @@ public class CheckItAPI implements IParamNames{
 
 		JSONArray transactionsArray = CheckItAPI.getTransactions(requestParams);
 		
-		List<BankStatement> bankStatements = new LinkedList<>();
+		List<CheckItBankStatement> bankStatements = new LinkedList<>();
 		
 		for (int i = 0; i < transactionsArray.length(); i++) {
 
@@ -1015,7 +1016,7 @@ public class CheckItAPI implements IParamNames{
 			
 			if ((maximumId == null && operationDate.after(nextOperationDate)) 
 					|| (maximumId != null && maximumId != 0 && movementId > maximumId)) {
-				BankStatement bankStatement = bankStatementFromJson(transactionJson);
+				CheckItBankStatement bankStatement = bankStatementFromJson(transactionJson);
 				bankStatements.add(bankStatement);
 			}
 
@@ -1025,7 +1026,7 @@ public class CheckItAPI implements IParamNames{
 
 	}
 
-	private static BankStatement bankStatementFromJson(JSONObject transactionJson) throws CheckItException {
+	private static CheckItBankStatement bankStatementFromJson(JSONObject transactionJson) throws CheckItException {
 		Date operationDate = parseTZDate(transactionJson.optString("fecha_operacion"));
 
 		String description = transactionJson.optString("descripcion");
@@ -1035,19 +1036,30 @@ public class CheckItAPI implements IParamNames{
 
 		Double amount = transactionJson.optDouble("importe");
 		amount = amount.isNaN() ? 0.00 : amount;
+		
+		Double currentBalance = transactionJson.optDouble("saldo");
+		currentBalance = currentBalance.isNaN() ? 0.00 : currentBalance;
 
+		Integer checkitMovementId = transactionJson.optInt("id_movimiento");
+
+		
 		boolean bpayment = amount < 0;
 		
 		
-		BankStatement bankStatement = new BankStatement();
-		bankStatement.setOperationDate(operationDate);
-		bankStatement.setCommonConcept(StatementConcept.UNKNOWN);
-		bankStatement.setPayment(bpayment);
-		bankStatement.setAmount(Math.abs(amount));
-		bankStatement.setDescription(description);
-		bankStatement.setStatus(StatementStatus.PENDING);
-		bankStatement.setReference1(CHECKIT_R1);
-		bankStatement.setReference2(leadingZeros(transactionJson.optInt("id_movimiento"), 16));
+		CheckItBankStatement bankStatement = new CheckItBankStatement();
+		bankStatement
+			.setOperationDate(operationDate)
+			.setCommonConcept(StatementConcept.UNKNOWN)
+			.setPayment(bpayment)
+			.setAmount(Math.abs(amount))
+			.setDescription(description)
+			.setStatus(StatementStatus.PENDING)
+			.setReference1(CHECKIT_R1)
+			.setReference2(leadingZeros(transactionJson.optInt("id_movimiento"), 16));
+		bankStatement
+			.setCurrentBalance(currentBalance)
+			.setCheckitMovementId(checkitMovementId);
+		
 		return bankStatement;
 	}
 	
@@ -1069,7 +1081,7 @@ public class CheckItAPI implements IParamNames{
 
 		String iban = params.getIban();
 		Integer empresaId = params.getCheckitEmpresaId();
-		List<BankStatement> bankStatements = getNewMovements(domainName, domainId, user, empresaId, iban);
+		List<CheckItBankStatement> bankStatements = getNewMovements(domainName, domainId, user, empresaId, iban);
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {
 					return 	aonContext.getDslContext().transactionResult( 
 						confi -> CheckItDAO.insertStatements(aonContext, bankStatements)
@@ -1105,22 +1117,22 @@ public class CheckItAPI implements IParamNames{
 		return insertTransactions(params);
 	}
 	
-	public static List<BankStatement> getAllMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
+	public static List<CheckItBankStatement> getAllMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
 //			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
-			List<BankStatement> bankStatements = getAllBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban));
+			List<CheckItBankStatement> bankStatements = getAllBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban));
 //			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
 			return bankStatements;
 		}
 	}
 	
-	public static List<BankStatement> getNewMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
+	public static List<CheckItBankStatement> getNewMovements(String domainName, Integer domainId, String user, Integer empresaId, String iban) throws CheckItException {
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, user)) {		
 			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
 			Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
 			Pair<String, Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
 			Integer movId = idAndDate != null ? Integer.valueOf(idAndDate.getKey()) : null;
-			List<BankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban), lastDate, movId);
+			List<CheckItBankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban), lastDate, movId);
 			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
 			return bankStatements;
 		}

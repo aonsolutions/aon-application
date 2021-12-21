@@ -204,6 +204,13 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.tbai</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 		<!--dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.pms</artifactId>

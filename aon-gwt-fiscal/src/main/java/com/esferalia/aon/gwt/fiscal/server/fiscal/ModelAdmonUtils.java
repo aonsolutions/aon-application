@@ -569,7 +569,7 @@ public class ModelAdmonUtils {
 			
 			String url = aeatParams.isTest() 
 				? "https://prewww1.aeat.es/wlpl/PFTW-PICW/PresBasicaDos"
-				: "DESACTIVADO_https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
+				: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");
 			sslContext.init( ModelAdmonUtils.getKeyManagers(aeatParams),

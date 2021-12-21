@@ -117,8 +117,6 @@ public class EmployeeParse {
 			@Override public void visitProfesCat(String profesCat) {}
 		});
 		
-		employee.getFactor().ifPresent(factor-> System.out.println("FACTOR: "+factor));
-		
 		return employee;
 	}
 	

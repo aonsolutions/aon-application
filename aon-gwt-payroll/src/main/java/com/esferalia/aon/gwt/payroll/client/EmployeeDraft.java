@@ -34,12 +34,14 @@ import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
@@ -437,6 +439,9 @@ public abstract class EmployeeDraft extends Composite {
 	AonToolbar toolbar;
 	
 	@UiField
+	ScrollPanel scrolledPanel;
+	
+	@UiField
 	HTMLPanel messageContainer;
 	
 	@UiField (provided = true)
@@ -483,6 +488,8 @@ public abstract class EmployeeDraft extends Composite {
 		employee.hideClearEmployee();
 		
 		onSaved = this::onSavedNoop;
+		
+		scrolledPanel.setHeight((Window.getClientHeight() - 200) + "px");
 				
 	}
 		

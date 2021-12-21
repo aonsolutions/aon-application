@@ -14,7 +14,7 @@ import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Enterprise;
-import com.esferalia.aon.occam.api.model.finance.BankStatement;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBank;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankAccount;
 import com.esferalia.aon.occam.api.model.finance.checkit.CheckItConfiguration;
@@ -67,8 +67,8 @@ public class CheckItServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		if (checkitAccounts != null) {
 			checkitAccounts.forEach(acc -> {
 				try {
-					List<BankStatement> allMovs = CheckItAPI.getAllMovements(domainName, domain, user, empresaId, acc.getCcc());
-					List<BankStatement> movs = CheckItAPI.getNewMovements(domainName, domain, user, empresaId, acc.getCcc());
+					List<CheckItBankStatement> allMovs = CheckItAPI.getAllMovements(domainName, domain, user, empresaId, acc.getCcc());
+					List<CheckItBankStatement> movs = CheckItAPI.getNewMovements(domainName, domain, user, empresaId, acc.getCcc());
 					acc.setAllMovements(allMovs);
 					acc.setPending(movs);
 				} catch (CheckItException e) {

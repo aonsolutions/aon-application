@@ -380,8 +380,7 @@ public class AggregatedAnnualSummary {
 				//DAYS AND HOURS
 				writeDaysAndHours(sheet, stylesMap, orderedConcepts, totalsFormulas, entry, identifier, periods, complete);
 				
-//				sheet.createFreezePane(0, 6);
-				sheet.createFreezePane(3, firstDataRow-1, 3, firstDataRow-1);
+				sheet.createFreezePane(3, firstDataRow, 3, firstDataRow);
 				
 				
 				
@@ -561,7 +560,7 @@ public class AggregatedAnnualSummary {
 				}
 
 				
-				totalSheet.createFreezePane(3, firstDataRow - 1, 3, firstDataRow -1);
+				totalSheet.createFreezePane(3, firstDataRow, 3, firstDataRow);
 				
 				resizeSheet(firstDataRow,stylesMap, totalSheet);
 				

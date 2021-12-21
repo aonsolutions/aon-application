@@ -22,11 +22,10 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ContrataEmployeeObject {
@@ -328,25 +327,6 @@ public class ContrataEmployeeObject {
 				failure.accept(caught);
 			}
 			
-		});
-	}
-	
-	// ------------------------------------------------- Database Methods (Bonuses)
-	
-	public void getSSBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
-		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		enterprisesService.getEmployeeSSBonuses(contractId, new AsyncCallback<List<SSBonusData>>() {
-			
-			@Override
-			public void onSuccess(List<SSBonusData> result) {
-				employeeContractData.setContractBonus(result);
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
 		});
 	}
 	
@@ -709,8 +689,9 @@ public class ContrataEmployeeObject {
 		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
 		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
 		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
+		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getEndDate() : employeeContractData.getContractInfo().getStartDate();
 		
-		employeesService.altaConsolidadaDelete(situation, regimen, ctaCti, nss, new AsyncCallback<Void>() {
+		employeesService.altaConsolidadaDelete(situation, regimen, ctaCti, nss, fecha, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
@@ -727,7 +708,13 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (TGSS Get files)
 	
 	public void downloadTAAndIDC(Consumer<Void> success, Consumer<Throwable> failure) {
-		employeesService.downloadTA_IDC(contractData.getContractId(), new AsyncCallback<Void>() {
+		String situation = null ==  employeeContractData.getContractInfo().getEndDate() ? "ALTA" : "BAJA";
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
+		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getStartDate() : employeeContractData.getContractInfo().getEndDate();
+		
+		employeesService.downloadTA_IDC(situation, regimen, ctaCti, nss, fecha, contractData.getContractId(), new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
 				success.accept(result);
@@ -740,7 +727,13 @@ public class ContrataEmployeeObject {
 	}
 
 	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeTa(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
+		String situation = null ==  employeeContractData.getContractInfo().getEndDate() ? "ALTA" : "BAJA";
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ctaCti = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		String nss = employeeContractData.getEmployeeInfo().getSsNumber();
+		Date fecha = AonStringUtils.equalsIgnoreCase(situation, "ALTA") ? employeeContractData.getContractInfo().getStartDate() : employeeContractData.getContractInfo().getEndDate();
+		
+		employeesService.getEmployeeTa(situation, regimen, ctaCti, nss, fecha, new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -753,16 +746,7 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void downloadTaEnd(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeTa(contractData.getContractId(), contractData.getEndDate(), new AsyncCallback<String>() {
-			@Override
-			public void onSuccess(String result) {
-				success.accept(result);
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
+		downloadTa(success, failure);
 	}
 
 	public void downloadIdc(Consumer<String> success, Consumer<Throwable> failure) {

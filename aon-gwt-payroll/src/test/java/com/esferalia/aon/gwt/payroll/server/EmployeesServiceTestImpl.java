@@ -736,7 +736,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public String getEmployeeTa(String domain, String user, Integer contractId, Date date) {
+	public String getEmployeeTa(String domain, String user, String situation, String regimen, String ctaCti, String nss, Date fecha) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;
@@ -821,7 +821,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void altaConsolidadaDelete(String currentDomainName, String currentUser, String situation, String regimen,
-			String ctaCti, String nss) {
+			String ctaCti, String nss, Date fecha) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -910,13 +910,6 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void downloadTA_IDC(String currentDomainName, String currentUser, Integer contractId)
-			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public EmployeeEventsData setEmployeeEventsByContract(String currentDomainName, Integer contractId,
 			EmployeeEventsData employeeEventsData) {
 		// TODO Auto-generated method stub
@@ -987,6 +980,20 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 
 	@Override
 	public Period getSalariesDates(String currentDomainName, SalaryInfoFilter filter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void downloadTA_IDC(String currentDomainName, String currentUser, String situation, String regimen,
+			String ctaCti, String nss, Date fecha, Integer contractId) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Date checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear)
+			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return null;
 	}

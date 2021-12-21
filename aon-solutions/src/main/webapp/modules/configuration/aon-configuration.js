@@ -264,6 +264,11 @@ export class AonConfiguration extends AonElement {
     aonCompany.id = this.getApplication().id + 'Company';
     let reg = new Registry();
     reg.domain = undefined;
+    aonCompany.options = [
+      { title: MSG.GENERAL_DATA, fn: () => aonCompany.buildGeneralData()},
+			{ title: MSG.BANK_DATA, fn: () => aonCompany.buildBankData()},
+			{ title: MSG.REGISTRATION_DATA, fn: () => aonCompany.buildRegistralData()}
+    ];
     aonCompany.setRegistry(reg);
     this.getApplication().setContent(aonCompany);
   }

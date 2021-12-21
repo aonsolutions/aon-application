@@ -17,7 +17,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +33,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -219,6 +217,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		for ( IContractPayment p : super.getContractPayments() )
 			if ( filter.accept(p)) extraPayments.add(new SimpleContractPayment(p));
 		
+		extraPayments.forEach( p -> System.out.println( "EXTRA : " + p.getDescription() ));
+
 		List<IContractPayment> monthlyQuotedPayments = new ArrayList<IContractPayment>();
 		
 		int contractId = getId();
@@ -235,20 +235,21 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			salary.getPayments().stream()
 			.filter( p -> p.getAmount() == null || p.getAmount() == 0.00)
 			.distinct().forEach( salaryPayment -> 
-			getSalaryPaymentOf(salaryPayment, extraPayments)
+			getContractPaymentByDescription(salaryPayment, extraPayments)
 			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
 			);
 			
+			
 			if ( payments.isEmpty() )  {
 				salary.getPayments().forEach( salaryPayment -> 
-				getSalaryPaymentOf(salaryPayment, extraPayments)
+				getContractPaymentByDescription(salaryPayment, extraPayments)
 				.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
 				);
 			}
 
 			if ( payments.isEmpty() )  {
 				salary.getPayments().forEach( salaryPayment -> 
-				getSalaryPaymentOff(salaryPayment, extraPayments)
+				getContractPaymentByName(salaryPayment, extraPayments)
 				.ifPresent( p -> {
 					if ( payments.isEmpty() )
 						payments.add(salary2ContractPayment(salary,salaryPayment, p));
@@ -348,7 +349,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return payment;
 	}
 
-	private Optional<IContractPayment> getSalaryPaymentOf(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, Collection<IContractPayment> contractPayments ) {
+	private Optional<IContractPayment> getContractPaymentByDescription(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, Collection<IContractPayment> contractPayments ) {
 		for (IContractPayment contractPayment : contractPayments) {
 			if ( AonStringUtils.equals(contractPayment.getDescription(), salaryPayment.getDescription()) ) {
 				return Optional.of(contractPayment);
@@ -358,7 +359,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return Optional.empty();
 	}
 
-	private Optional<IContractPayment> getSalaryPaymentOff(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, Collection<IContractPayment> contractPayments ) {
+	private Optional<IContractPayment> getContractPaymentByName(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, Collection<IContractPayment> contractPayments ) {
 		for (IContractPayment contractPayment : contractPayments) {
 			if ( AonStringUtils.equals(contractPayment.getName(), salaryPayment.getName()) ) {
 				return Optional.of(contractPayment);
@@ -723,6 +724,9 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			pIssueDate.get(DAY_OF_MONTH) ==  issueDate.get(DAY_OF_MONTH) 
 			;
 			} catch ( Exception c ) {
+				if ( e instanceof DelegateContractPayment ) {
+					return accept(((DelegateContractPayment) e).getPayment());
+				}
 				return  ( e.getSalaryType() == SalaryType.EXTRA 
 						|| e.getType() == PaymentType.CRA_0004  )
 						&& e.getMonth() == this.month; 

@@ -641,17 +641,17 @@ public class AON_SOLUTIONS {
 	}
 
 	public static JSONObject getInvoiceJSON(String domainName, Integer domainId, String login, Integer id) {
+		Invoice invoice = getInvoice(domainName, domainId, login, id);
+		return InvoiceJSON.toJSON(invoice);
+	}
+	
+	public static Invoice getInvoice(String domainName, Integer domainId, String login, Integer id) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Invoice invoice = getFinance().getFullInvoice(ctx, id);
 			if(invoice.getRegistryAddressData().getId() == null) {
 				invoice.setRegistryAddressData(getRegistry().getMain(ctx, invoice.getRegistry()));
 			}
-			return InvoiceJSON.toJSON(invoice);
-		}
-	}
-	public static Invoice getInvoice(String domainName, Integer domainId, String login, Integer id) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getFinance().getFullInvoice(ctx, id);
+			return invoice;
 		}
 	}
 	

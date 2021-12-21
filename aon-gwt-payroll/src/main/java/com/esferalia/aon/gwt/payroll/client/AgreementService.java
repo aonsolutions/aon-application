@@ -40,4 +40,6 @@ public interface AgreementService extends RemoteService{
 	String getAgreementDraftReceiptHTML(String domain, AgreementDraft agreementDraft, int levelId, Salary.Type type, int zoom)
 			throws IllegalArgumentException;
 
+	Date checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear);
+
 }

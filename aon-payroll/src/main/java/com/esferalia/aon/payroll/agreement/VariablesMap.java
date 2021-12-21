@@ -510,6 +510,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("MEDIA_DIETA_DESPL_MAS_100KMS_DIARIO", "MEDIA_DIETA_G_100");
 		variablesMap.put("MEDIA_DIETA_DESPL_MENOS_100KMS_DIARIO", "MEDIA_DIETA_L_100");
 		variablesMap.put("MEDIA_DIETA_DIARIO", "MEDIA_DIETA");
+		variablesMap.put("MEDIA_DIETA_HORAS", "MEDIA_DIETA");
 		variablesMap.put("MEDIA_DIETA_EXTRANJERO_DIARIO", "MEDIA_DIETA_EXT");
 		variablesMap.put("MEDIA_DIETA_MONTAJE_DIARIO", "MEDIA_DIETA_MONTAJE");
 		variablesMap.put("MEDIA_DIETA_TERRITORIO_NACIONAL_DIARIO", "MEDIA_DIETA_NACIONAL");
@@ -617,6 +618,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_ESPECIAL_HORAS", "PLUS_ESPECIAL");
 		variablesMap.put("PLUS_ESPECIAL_2_HORAS", "PLUS_ESPECIAL_2");
 		variablesMap.put("PLUS_ESPECIAL_MENSUAL", "PLUS_ESPECIAL");
+		variablesMap.put("PLUS_EX_JEFE_DE_EQUIPO_MENSUAL", "PLUS_EX_JEFE_EQUIPO");
 		variablesMap.put("PLUS_EXTRASALARIAL_ANUAL", "PLUS_XS_ANUAL");
 		variablesMap.put("PLUS_EXTRASALARIAL_DIARIO", "PLUS_XS_DIARIO");
 		variablesMap.put("PLUS_EXTRASALARIAL_HORAS", "PLUS_XS_HORAS");
@@ -651,6 +653,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_HERRAMIENTAS_ANUAL", "PLUS_HERRAMIENTAS_A");
 		variablesMap.put("PLUS_HERRAMIENTAS_DIARIO", "PLUS_HERRAMIENTAS_D");
 		variablesMap.put("PLUS_HERRAMIENTAS_MENSUAL", "PLUS_HERRAMIENTAS_M");
+		variablesMap.put("PLUS_HIGIENE_MENSUAL", "PLUS_HIGIENE");
 		variablesMap.put("PLUS_HOSPITAL_DIARIO", "PLUS_HOSPITAL");
 		variablesMap.put("PLUS_HOSPITAL_HORAS", "PLUS_HOSPITAL");
 		variablesMap.put("PLUS_HOSPITAL_MENSUAL", "PLUS_HOSPITAL");
@@ -751,6 +754,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_VESTUARIO_ANUAL", "PLUS_VESTUARIO");
 		variablesMap.put("PLUS_VESTUARIO_DIARIO", "PLUS_VESTUARIO");
 		variablesMap.put("PLUS_VESTUARIO_MENSUAL", "PLUS_VESTUARIO");
+		variablesMap.put("PLUS_VESTUARIO_CON_ANTIGUEDAD_MENSUAL", "PLUS_VESTUARIO_ANTIGUEDAD");
 		variablesMap.put("PLUS_VINCULACION_MENSUAL", "PLUS_VINCULACION");
 		variablesMap.put("PLUS_VINCULACION_10_AÑOS_ANUAL", "P_VINCULACION_10_AÑOS_A");
 		variablesMap.put("PLUS_VINCULACION_10_AÑOS_MENSUAL", "P_VINCULACION_10_AÑOS_M");

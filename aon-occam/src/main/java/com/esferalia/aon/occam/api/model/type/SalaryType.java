@@ -50,7 +50,14 @@ public enum SalaryType {
 		public <E> E accept(TypeVisitor<E> visitor) {
 			return visitor.visitL13(this);
 		}
-	},
+	,
+	M190 
+	{
+		@Override
+		public <E> E accept(TypeVisitor<E> visitor) {
+			return visitor.visitM190(this);
+		}
+	}
 	;
 	
 	
@@ -69,6 +76,8 @@ public enum SalaryType {
 		default E visitL03(SalaryType type) { return visitDelay(type); };
 	
 		default E visitL13(SalaryType type) { return visitSettle(type); };
+
+		E visitM190(SalaryType type) ;
 	}
 
 	

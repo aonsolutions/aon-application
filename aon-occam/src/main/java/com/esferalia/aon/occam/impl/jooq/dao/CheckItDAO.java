@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.BankStatement;
+import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.validation.BankStatementValidator;
 import com.esferalia.aon.occam.impl.jooq.validation.RegistryValidation;
@@ -87,7 +88,7 @@ public class CheckItDAO {
 		}
 	}
 	
-	public static void completeBankStatements(AONContext aonContext, Integer domainId, String iban, List<BankStatement> bankStatements) {
+	public static <E extends BankStatement> void completeBankStatements(AONContext aonContext, Integer domainId, String iban, List<E> bankStatements) {
 		RegistryBank rbank = getRbankByIban(aonContext, iban);
 		Integer lotNumber = getNextLotNumber(aonContext, domainId, rbank);
 		bankStatements.forEach(bankStatement -> {
@@ -99,7 +100,7 @@ public class CheckItDAO {
 		});
 	}
 	
-	public static Integer insertStatements(AONContext aonContext, List<BankStatement> bankStatements) throws AonCoreException {
+	public static Integer insertStatements(AONContext aonContext, List<CheckItBankStatement> bankStatements) throws AonCoreException {
 		
 		InsertValuesStep11<BankStatementRecord, Integer, Integer, Integer, java.sql.Date, Byte, Byte, Double, String, Byte, String, String> query =
 				aonContext.getDslContext()

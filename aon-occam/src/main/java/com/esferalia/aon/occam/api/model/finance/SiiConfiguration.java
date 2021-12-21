@@ -28,6 +28,26 @@ public class SiiConfiguration {
 		return administration;
 	}
 	
+	public boolean isAraba() {
+		return Administration.ALAVA.equals(getAdministration());
+	}
+	
+	public boolean isBizkaia() {
+		return Administration.BIZKAIA.equals(getAdministration());
+	}
+	
+	public boolean isGipuzkoa() {
+		return Administration.GIPUZKOA.equals(getAdministration());
+	}
+	
+	public boolean isNafarroa() {
+		return Administration.NAVARRA.equals(getAdministration());
+	}
+	
+	public boolean isCommonTerritory() {
+		return Administration.COMMON_TERRITORY.equals(getAdministration());
+	}
+	
 	public SiiConfiguration setAdministration(Administration administration) {
 		this.administration = administration;
 		return this;
