@@ -3,8 +3,9 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
-import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class JooqEmployeeIrpf {
 						continue;
 					}
 					
-					Double employeeSSQuote = 0.00;
+					Double employeeSSQuote;
 					if(AonStringUtils.equalsIgnoreCase(salaryType, "L00") || AonStringUtils.equalsIgnoreCase(salaryType, "L13"))
 						employeeSSQuote = salaryRecord.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
 					else {
@@ -331,7 +332,7 @@ public class JooqEmployeeIrpf {
 	// --------------------------------------------- Methods. setEmployeeIrpf
 	
 	public static void setEmployeeIrpf(Connection conn, Integer domainId, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs) throws IllegalArgumentException {
-		setEmployeeIrpf(DSL.using(conn, getDefaultSettings()), domainId, contractId, document, fullName, ssNumber, employeeIrpfs);
+		setEmployeeIrpf(DSL.using(conn, getDefaultSettings()), domainId, contractId, fullName, document, ssNumber, employeeIrpfs);
 	}
 
 	private static void setEmployeeIrpf(DSLContext dslContext, Integer domainId, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs) throws IllegalArgumentException {
@@ -355,6 +356,13 @@ public class JooqEmployeeIrpf {
 				endDateCalendar.set(Calendar.DAY_OF_MONTH, endDateCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 				Date endDate = endDateCalendar.getTime();
 				
+				double irpfBase = employeeIrpf.getMoneyBase() + employeeIrpf.getInkindBase();
+				try {
+					irpfBase = round(irpfBase, 2);
+				} catch (Exception e) {
+					// Nothing to do here
+				}
+				
 				SalaryRecord salaryRecord = dslContext.insertInto(SALARY)
 					.set(SALARY.DOMAIN, domainId)
 					.set(SALARY.TYPE, (byte)7)
@@ -369,7 +377,7 @@ public class JooqEmployeeIrpf {
 					.set(SALARY.ISSUE_DATE, parseDateToSQL(endDate))
 					.set(SALARY.MONEY_IRPF_BASE, employeeIrpf.getMoneyBase())
 					.set(SALARY.INKIND_IRPF_BASE, employeeIrpf.getInkindBase())
-					.set(SALARY.IRPF_BASE,	employeeIrpf.getMoneyBase() + employeeIrpf.getInkindBase())
+					.set(SALARY.IRPF_BASE,	irpfBase)
 					.set(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS, employeeIrpf.getEmployeeSSQuote())
 					.set(SALARY.TOTAL_IRPF, employeeIrpf.getTotalIrpf())
 					.set(SALARY.CHARGE_DATE, parseDateToSQL(endDate))
@@ -392,6 +400,14 @@ public class JooqEmployeeIrpf {
 	}
 
 	// --------------------------------------------- Auxiliar Methods
+	
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    BigDecimal bd = BigDecimal.valueOf(value);
+	    bd = bd.setScale(places, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
+	}
 	
 	private static java.sql.Date parseDateToSQL(java.util.Date dateJava) {
 		if(null == dateJava)
