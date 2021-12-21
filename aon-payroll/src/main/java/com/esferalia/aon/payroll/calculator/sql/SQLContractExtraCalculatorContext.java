@@ -11,12 +11,14 @@ import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,6 +36,7 @@ import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.DelegateContractPayment;
+import com.esferalia.aon.payroll.DelegateIterator;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
@@ -41,6 +44,7 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
+import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -59,6 +63,9 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculatorContext {
+	
+	private static final String DEFAULT_EXTRA_NAME = "PAGA_EXTRA";
+	
 
 	public SQLContractExtraCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate)
 			throws SQLException, ExpressionException {
@@ -106,11 +113,9 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		if ( ssRegime == SSRegimeType.SELF_EMPLOYED ) {
 			addSalaryContractPayments();
 
-			Collection<IContractPayment> extraPayments = 
-					new FilterCollection<IContractPayment>(
+			return new FilterCollection<>(
 					getExtraPaymentFilter(), 
 					super.getContractPayments());
-			return extraPayments;
 		} // TODO: This should not be necessary!!!
 		
 		Collection<IContractPayment> monthlyQuotedPayments= getMonthlyQuotedPayments();
@@ -119,14 +124,17 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		
 		
 		addSalaryContractPayments();
+		
+		Filter<IContractPayment> extraPaymentFilter = getExtraPaymentFilter();
+		
+		Collection<IContractPayment> contractPayments = new ContractPayments(super.getContractPayments(), extraPaymentFilter);
 
-		Collection<IContractPayment> extraPayments = 
-				new FilterCollection<IContractPayment>(
-				getExtraPaymentFilter(), 
-				new CompositePayments<IContractPayment>(monthlyQuotedPayments, super.getContractPayments(),getWarnPayment(monthlyQuotedPayments)));
-
-		return extraPayments;
+		return  
+		new FilterCollection<>(extraPaymentFilter, new CompositePayments<IContractPayment>(monthlyQuotedPayments, contractPayments,getWarnPayment(monthlyQuotedPayments)));
+		
 	}
+	
+	
 
 	@Override
 	protected void loadContractData(ExpressionContext ctx) throws SQLException {
@@ -214,11 +222,12 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 		Collection<IContractPayment> extraPayments = new ArrayList<IContractPayment>();
 		FilterCollection.Filter<IContractPayment> filter = getExtraPaymentFilter();
-		for ( IContractPayment p : super.getContractPayments() )
-			if ( filter.accept(p)) extraPayments.add(new SimpleContractPayment(p));
+		for ( IContractPayment p : super.getContractPayments() ) {
+			if ( filter.accept(p) )  {
+				extraPayments.add(new SimpleContractPayment(p));
+			}
+		}
 		
-		extraPayments.forEach( p -> System.out.println( "EXTRA : " + p.getDescription() ));
-
 		List<IContractPayment> monthlyQuotedPayments = new ArrayList<IContractPayment>();
 		
 		int contractId = getId();
@@ -262,7 +271,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			payments.stream().findFirst()
 			.ifPresentOrElse(
 			(p) -> monthlyQuotedPayments.addAll(payments), 
-			() -> extraPayments.forEach(p -> monthlyQuotedPayments.add(salary2ContractPayment(salary, p,"0.00"))));
+			() -> extraPayments.stream().findAny().ifPresent(p -> monthlyQuotedPayments.add(salary2ContractPayment(salary, p,"0.00"))));
 
 		})
 		;
@@ -305,6 +314,12 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			@Override
 			public String getExpression() {
 				return Double.toString(salaryPayment.getQuote());
+			}
+			
+			@Override
+			public String getName() {
+				String name = super.getName();
+				return AonStringUtils.isNotBlank(name) ? name : DEFAULT_EXTRA_NAME ;
 			}
 		};
 		
@@ -682,10 +697,49 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		
 	}
 	
+	private boolean intercets ( IContractPayment p ) {
+		return new Period(p.getStartDate(), p.getEndDate()).intersects(new Period(getStart(), getEnd()));
+	}
+	
 	
 	// -------------------------------------------
 	//
 	// -------------------------------------------
+
+	private static final class ContractPayments extends AbstractCollection<IContractPayment> {
+		private Collection<IContractPayment> contractPayments ;
+		private final Filter<IContractPayment> extraPaymentFilter;
+
+		private ContractPayments(Collection<IContractPayment> contractPayments, Filter<IContractPayment> extraPaymentFilter) {
+			this.contractPayments = contractPayments;
+			this.extraPaymentFilter = extraPaymentFilter;
+		}
+
+		@Override
+		public int size() {
+			return contractPayments.size();
+		}
+
+		@Override
+		public Iterator<IContractPayment> iterator() {
+			return new DelegateIterator<IContractPayment>(contractPayments.iterator()) {
+				@Override
+				public IContractPayment next() {
+					return new DelegateContractPayment(super.next()) {
+						@Override
+						public String getName() {
+							String name = super.getName();
+							if ( AonStringUtils.isNotBlank(name) ) 
+								return name;
+							if ( extraPaymentFilter.accept(this) ) 
+								return DEFAULT_EXTRA_NAME ;
+							return name;
+						}
+					};
+				}
+			};
+		}
+	}
 
 	public static class DateFormatException extends IllegalArgumentException {
 

@@ -1198,13 +1198,18 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				throw new NotNowException();
 				//return 0.00;
 			
-			return new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()) {
+			Salary extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() ) {
+					
 					@Override
 					protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 						return TaxCalculator.getTaxCalculator(ctx);
 					}
 			}
-			.calculate(extraCtx).getSalary().getTotalPayment();
+			.calculate(extraCtx);
+			
+			
+			return extra.getTotalPayment();
+			
 		} catch (NotNowException e) {
 			throw e;
 		} catch (Exception e) {
