@@ -124,7 +124,7 @@ public class Model115AEAT extends Model115Base {
 
 				@Override
 				public String getModelInformationURL() {
-					return "https://www.agenciatributaria.gob.es/AEAT.sede/procedimientoini/GH02.shtml";
+					return "https://sede.agenciatributaria.gob.es/Sede/procedimientoini/GH02.shtml";
 				}
 		};
 		admonPanel = new FiscalModelAdmonPanel<>(cbk);
