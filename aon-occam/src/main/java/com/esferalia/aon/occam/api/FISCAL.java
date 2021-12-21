@@ -12,8 +12,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
@@ -163,112 +161,6 @@ public class FISCAL {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain,userLogin);
 			return getFiscal().duplicateMod180(ctx, mod180);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	// ----------------------------------MODELO 190
-	public static LinkedList<Mod190> getMod190s(String domainName, int domainId,
-			String user) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFiscal().getMod190s(ctx, domainId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod190 getMod190(String domainName, int domainId, String user,
-			Integer id) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFiscal().getMod190(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod190 initializeMod190(String domainName, int domainId,
-			String user, Integer year) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFiscal().initializeMod190(ctx, year);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod190 saveMod190(String domainName, int domainId,
-			String user, Mod190 mod190) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFiscal().saveMod190(ctx, mod190);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static void deleteMod190(String domainName, int domainId,
-			String user, Mod190 mod190) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			getFiscal().deleteMod190(ctx, mod190);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod190Detail getMod190Detail(String domainName, int domainId,
-			String user, Integer id) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, user);
-			return getFiscal().getMod190Detail(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod190 saveComments(String domainName, String user, Mod190 mod190) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, mod190.getDomain(),user);
-			return getFiscal().saveCommentsMod190(ctx, mod190);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static Mod190 changeStatusMod190(String domainName, String user, Mod190 mod190, FiscalStatus newStatus) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, mod190.getDomain(),user);
-			return getFiscal().changeStatusMod190(ctx, mod190, newStatus);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static Mod190 duplicateMod190(String domainName, Integer domain, String userLogin, Mod190 mod190) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain,userLogin);
-			return getFiscal().duplicateMod190(ctx, mod190);
 		} finally {
 			if (ctx != null)
 				ctx.close();

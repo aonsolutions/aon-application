@@ -50,8 +50,7 @@ public enum SalaryType {
 		public <E> E accept(TypeVisitor<E> visitor) {
 			return visitor.visitL13(this);
 		}
-	}
-	,
+	},
 	M190 
 	{
 		@Override
@@ -59,7 +58,6 @@ public enum SalaryType {
 			return visitor.visitM190(this);
 		}
 	}
-	
 	;
 	
 	
@@ -98,4 +96,11 @@ public enum SalaryType {
 		DELAY.value()
 	);
 
+	public static final Collection<Byte> IRPF_SALARIES = Arrays.asList(
+		SALARY.value(),
+		EXTRA.value(),
+		SETTLE.value(),
+		DELAY.value(),
+		M190.value()
+	);
 }

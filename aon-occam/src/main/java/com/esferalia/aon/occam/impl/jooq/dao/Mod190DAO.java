@@ -64,6 +64,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class Mod190DAO {
 	private static byte ZERO_BYTE = 0;
 	private static String PREST_IT = "PREST_IT";
+	
+	private Mod190DAO() {
+		
+	}
 
 	public static Mod190 saveComments(AONContext ctx, Mod190 fm) {
 		try {
@@ -128,7 +132,7 @@ public class Mod190DAO {
 				.set(FS_MODEL190.DOMAIN, mod190.getDomain())
 				.set(FS_MODEL190.ENTERPRISE, mod190.getEnterprise())
 				.set(FS_MODEL190.YEAR, mod190.getYear())
-				.set(FS_MODEL190.ADMINISTRATION,mod190.getAdministration().getValue())
+				.set(FS_MODEL190.ADMINISTRATION,mod190.getAdministration().value())
 				.set(FS_MODEL190.STATUS,AonEnumUtils.getByte( mod190.getStatus()  ))
 				.set(FS_MODEL190.SECURITY_LEVEL,AonEnumUtils.getByte(mod190.isConfidential()))
 				.set(FS_MODEL190.DOCUMENT, mod190.getDocument())
@@ -165,7 +169,7 @@ public class Mod190DAO {
 		ctx.getDslContext()
 				.update(FS_MODEL190)
 				.set(FS_MODEL190.YEAR, mod190.getYear())
-				.set(FS_MODEL190.ADMINISTRATION,mod190.getAdministration().getValue())
+				.set(FS_MODEL190.ADMINISTRATION,mod190.getAdministration().value())
 				.set(FS_MODEL190.STATUS,AonEnumUtils.getByte( mod190.getStatus()  ))
 				.set(FS_MODEL190.SECURITY_LEVEL,AonEnumUtils.getByte(mod190.isConfidential()))
 				.set(FS_MODEL190.DOCUMENT, mod190.getDocument())
@@ -470,7 +474,7 @@ public class Mod190DAO {
 			if (!ctx.getDslContext().selectOne()
 					.from(FS_MODEL190)
 					.where(FS_MODEL190.YEAR.equal(mod190.getYear())
-					.and(FS_MODEL190.ADMINISTRATION.equal(mod190.getAdministration().getValue()))
+					.and(FS_MODEL190.ADMINISTRATION.equal(mod190.getAdministration().value()))
 					.and(FS_MODEL190.ENTERPRISE.equal(mod190.getEnterprise()))
 					)
 					.fetch()
@@ -484,7 +488,7 @@ public class Mod190DAO {
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MODEL190)
 				.where(FS_MODEL190.YEAR.equal(mod190.getYear())
-				.and(FS_MODEL190.ADMINISTRATION.equal(mod190.getAdministration().getValue()))
+				.and(FS_MODEL190.ADMINISTRATION.equal(mod190.getAdministration().value()))
 				.and(FS_MODEL190.ENTERPRISE.equal(mod190.getEnterprise()))
 				.and(FS_MODEL190.REPLACEMENT.equal(ZERO_BYTE))
 				.and(FS_MODEL190.COMPLEMENTARY.equal(ZERO_BYTE)))
@@ -855,7 +859,11 @@ public class Mod190DAO {
 				.setReceiverCountTotal(record.getValue(FS_MODEL190.RECEIVER_COUNT_TOTAL))
 				.setReceiptTotal(record.getValue(FS_MODEL190.RECEIPT_TOTAL))
 				.setRetentionTotal(record.getValue(FS_MODEL190.RETENTION_TOTAL))
-				.setComments(record.getValue(FS_MODEL190.COMMENTS));
+				.setComments(record.getValue(FS_MODEL190.COMMENTS))
+				.setCreationDate(record.getValue(FS_MODEL190.CREATION_DATE))
+				.setCreationUser(record.getValue(FS_MODEL190.CREATION_USER))
+				.setModificationDate(record.getValue(FS_MODEL190.MODIFICATION_DATE))
+				.setModificationUser(record.getValue(FS_MODEL190.MODIFICATION_USER));
 		}
 	}
 	
@@ -945,8 +953,8 @@ public class Mod190DAO {
 				.join(PERSON).on(PERSON.REGISTRY.equal(CONTRACT.PERSON))
 				.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 				.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
-				.and(SALARY.TYPE.in(SalaryType.SALARIES )) // Skip SLD ( L00, L13... )
+				.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
+				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 				.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 				.fetch()
 				.stream()
@@ -1047,8 +1055,8 @@ public class Mod190DAO {
 		.leftOuterJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.equal(ENTERPRISE_CCC.ID))
 		.where(SALARY.ISSUE_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
 		.and(WORKPLACE.ENTERPRISE.equal(mod190.getEnterprise()))
-		.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().getValue()))
-		.and(SALARY.TYPE.in(SalaryType.SALARIES )) // Skip SLD ( L00, L13... )
+		.and(WORKPLACE.ECONOMICAGREEMENT.equal(mod190.getAdministration().value()))
+		.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
 		.fetch()
 		.stream()

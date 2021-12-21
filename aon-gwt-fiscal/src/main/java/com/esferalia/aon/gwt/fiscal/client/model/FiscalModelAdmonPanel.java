@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificatio
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -37,7 +37,7 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
-public class FiscalModelAdmonPanel<T extends FiscalModel,O extends FiscalModelModuleOptions<T>> extends DockLayoutPanel {
+public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelModuleOptions<T>> extends DockLayoutPanel {
 	
 	public static interface IFiscalModelAdmonPanelCallback<T,O> {
 		O getOptions();
@@ -451,10 +451,10 @@ public class FiscalModelAdmonPanel<T extends FiscalModel,O extends FiscalModelMo
 		   ((getCallback().getModel().getYear() > 2021)  
 		   || (getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester())
 		   || (getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2))) {
-			validateLink.setVisible( getCallback().getModel().isFinished() );
-			sendLink.setVisible( getCallback().getModel().isFinished() );
-			checkLink.setVisible( getCallback().getModel().isSent() ); 
-			viewDocumentLink.setVisible( getCallback().getModel().isSent() ); 
+			validateLink.setVisible( getCallback().getModel().isFinished() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
+			sendLink.setVisible( getCallback().getModel().isFinished() && AonStringUtils.isNotBlank(getCallback().getSendAction() ));
+			checkLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckAction() ));
+			viewDocumentLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction() )); 
 		} else {
 			validateLink.setVisible( false );
 			sendLink.setVisible( false );

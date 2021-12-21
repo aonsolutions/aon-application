@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
@@ -18,57 +19,57 @@ public class Model190ServiceAsyncDecorator implements Model190ServiceAsync {
 	}
 
 	@Override
-	public void getMod190s(String domainName, String user, int domain, AsyncCallback<LinkedList<Mod190>> callback) {
+	public void getMod190s(Occam occam, AsyncCallback<LinkedList<Mod190>> callback) {
 		AON.start();
-		fsa.getMod190s(domainName, user, domain, new AsyncCallbackWrapper<LinkedList<Mod190>>(callback));
+		fsa.getMod190s(occam, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getMod190(String domainName, String user, int domain, Integer id, AsyncCallback<Mod190> callback) {
+	public void getMod190(Occam occam, Integer id, AsyncCallback<Mod190> callback) {
 		AON.start();
-		fsa.getMod190(domainName, user, domain, id, new AsyncCallbackWrapper<Mod190>(callback));
+		fsa.getMod190(occam, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void delete(String domainName, String user, int domain, Mod190 mod190, AsyncCallback<Void> callback) {
+	public void delete(Occam occam, Mod190 mod190, AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.delete(domainName, user, domain, mod190,new AsyncCallbackWrapper<Void>(callback));
+		fsa.delete(occam, mod190,new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void save(String domainName, String user, int domain, Mod190 mod190,AsyncCallback<Mod190> callback) {
+	public void save(Occam occam, Mod190 mod190,AsyncCallback<Mod190> callback) {
 		AON.start();
-		fsa.save(domainName, user, domain, mod190,new AsyncCallbackWrapper<Mod190>(callback));
+		fsa.save(occam, mod190,new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void initialize(String domainName, String user, Integer domain,Integer year, AsyncCallback<Mod190> callback) {
+	public void initialize(Occam occam,Integer year, AsyncCallback<Mod190> callback) {
 		AON.start();
-		fsa.initialize(domainName, user, domain, year,new AsyncCallbackWrapper<Mod190>(callback));
+		fsa.initialize(occam, year,new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getDetail(String domainName, String user, int domain, Integer id, AsyncCallback<Mod190Detail> callback) {
+	public void getDetail(Occam occam, Integer id, AsyncCallback<Mod190Detail> callback) {
 		AON.start();
-		fsa.getDetail(domainName, user, domain, id,new AsyncCallbackWrapper<Mod190Detail>(callback));
+		fsa.getDetail(occam, id,new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void saveComments(String domainName, String user, Mod190 mod190,AsyncCallback<Mod190> callback) {
+	public void saveComments(Occam occam, Mod190 mod190,AsyncCallback<Mod190> callback) {
 		AON.start();
-		fsa.saveComments(domainName, user, mod190, new AsyncCallbackWrapper<Mod190>(callback));
+		fsa.saveComments(occam, mod190, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void changeStatus(String domainName, String user, Mod190 mod190, FiscalStatus newStatus,AsyncCallback<Mod190> callback) {
+	public void changeStatus(Occam occam, Mod190 mod190, FiscalStatus newStatus,AsyncCallback<Mod190> callback) {
 		AON.start();
-		fsa.changeStatus(domainName, user, mod190, newStatus, new AsyncCallbackWrapper<Mod190>(callback));
+		fsa.changeStatus(occam, mod190, newStatus, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void duplicateMod190(String domainName, String user, Integer domain, Mod190 mod190, AsyncCallback<Mod190> callback) {
+	public void duplicate(Occam occam, Mod190 mod190, AsyncCallback<Mod190> callback) {
 		AON.start();
-		fsa.duplicateMod190(domainName, user, domain, mod190, new AsyncCallbackWrapper<Mod190>(callback));
+		fsa.duplicate(occam, mod190, new AsyncCallbackWrapper<>(callback));
 	}
 	
 

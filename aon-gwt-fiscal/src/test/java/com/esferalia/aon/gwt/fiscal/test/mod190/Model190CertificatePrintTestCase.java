@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.jasperreports.engine.JRException;
-
 import org.apache.commons.io.FileUtils;
 
-import com.esferalia.aon.gwt.fiscal.server.Mod190CertificatePrint;
+import com.esferalia.aon.gwt.fiscal.server.fiscal.mod190.Mod190CertificatePrint;
 import com.esferalia.aon.occam.api.model.fiscal.RetentionCertificate;
+
+import net.sf.jasperreports.engine.JRException;
 
 
 public class Model190CertificatePrintTestCase {

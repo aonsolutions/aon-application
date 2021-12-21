@@ -10,11 +10,11 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Model190GIPUZKOA extends Model190Base {
+public class Model190NAVARRA extends Model190Base {
 
 	private static final int PERCEPTORS_TAB = 1;
 
-	public Model190GIPUZKOA(Model190Callback cbk,Mod190 mod190,Integer selectedIndex) {
+	public Model190NAVARRA(Model190Callback cbk,Mod190 mod190,Integer selectedIndex) {
 		super(cbk, mod190);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -28,7 +28,7 @@ public class Model190GIPUZKOA extends Model190Base {
 		paintAdministrationTab(tabPanel);
 		
 		tabPanel.selectTab(PERCEPTORS_TAB, false);
-
+		
 	}
 
 	protected void paintAdministrationTab(TabLayoutPanel tabPanel) {
@@ -42,7 +42,7 @@ public class Model190GIPUZKOA extends Model190Base {
 
 				@Override
 				public Mod190 getModel() {
-					return Model190GIPUZKOA.this.getModel();
+					return Model190NAVARRA.this.getModel();
 				}
 
 				@Override
@@ -83,7 +83,7 @@ public class Model190GIPUZKOA extends Model190Base {
 
 				@Override
 				public String getModelInformationURL() {
-					return "https://www.gipuzkoa.eus/es/web/ogasuna/impuestos/modelo/190";
+					return "https://www.navarra.es/es/tramites/on/-/line/Retenciones-por-rendimientos-de-trabajo-190";
 				}
 		};
 		admonPanel = new FiscalModelAdmonPanel<>(cbk);
@@ -91,7 +91,10 @@ public class Model190GIPUZKOA extends Model190Base {
 	}
 
 	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
-		setDetailManager( new Model190GIPUZKOADetail2016( getCallback() , getModel(), selectedIndex ));
+		if ( getModel().getYear() >= 2021) {
+			setDetailManager( new Model190NAVARRADetail2021( getCallback() , getModel(), selectedIndex ));
+		}
 		tabPanel.add( (Widget) getDetailManager(),  AON.MSG.receiverList());
 	}
+	
 }

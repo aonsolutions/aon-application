@@ -990,7 +990,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 
 				@Override
 				public String getModelInformationURL() {
-					return "https://www.agenciatributaria.gob.es/AEAT.sede/procedimientoini/GE00.shtml";
+					return "https://sede.agenciatributaria.gob.es/Sede/procedimientoini/GE00.shtml";
 				}
 		};
 		admonPanel = new FiscalModelAdmonPanel<>(cbk);

@@ -1,22 +1,16 @@
 package com.esferalia.aon.gwt.fiscal.client.mod190;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190AEATDetail2016.IModel190DetailCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod190.Model190NAVARRADetail2021.IModel190DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.type.Mod1902016Key;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -28,12 +22,16 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Focusable {
+public class Model190NAVARRA2021DetailPanel extends SimpleLayoutPanel implements Focusable {
 	
+	private static final String COMPUTADO_POR_MITAD = "2 - Computado por mitad.";
+	private static final String COMPUTADO_POR_ENTERO = "1 - Computado por entero.";
+	private static final String WIDTH_150PX = "150px";
+	private static final String WIDTH_100PX = "100px";
 	private int tabIndex; 
-	private DocumentTextBox document;
+	private AonDocumentTextBox document;
 	
-	public Model190AEAT2016DetailPanel(Mod190Detail detail, IModel190DetailCallback callback) {
+	public Model190NAVARRA2021DetailPanel(Mod190Detail detail, IModel190DetailCallback callback) {
 		FlowPanel additionalDataPanel = new FlowPanel();
 		FlowPanel ilPanel = new FlowPanel();
 		
@@ -44,8 +42,8 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		
 		FlexTable tab1 = new FlexTable();
 		panel.add(tab1);
-		tab1.getColumnFormatter().setWidth(0, "100px");
-		tab1.getColumnFormatter().setWidth(1, "100px");
+		tab1.getColumnFormatter().setWidth(0, WIDTH_100PX);
+		tab1.getColumnFormatter().setWidth(1, WIDTH_100PX);
 		tab1.getColumnFormatter().setWidth(2, "300px");
 		tab1.getColumnFormatter().setWidth(3, "auto");
 		tab1.setStyleName(AON.CSS.aonWidthAll());
@@ -61,25 +59,19 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		tab1.setWidget(1, 2, new Model190SmallerLabel(AON.MSG.fullName()));
 		tab1.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.province()));
 		
-		document = new DocumentTextBox();
+		document = new AonDocumentTextBox();
 		document.setValue(detail.getDocument());
-		document.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setDocument(document.getValue());
-				callback.onValueChanged(detail);
-			}
+		document.addValueChangeHandler(event -> {
+			detail.setDocument(document.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab1.setWidget(2, 0, document);
 		
-		DocumentTextBox representativeDocument = new DocumentTextBox();
+		AonDocumentTextBox representativeDocument = new AonDocumentTextBox();
 		representativeDocument.setValue(detail.getRepresentativeDocument());
-		representativeDocument.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setRepresentativeDocument(representativeDocument.getValue());
-				callback.onValueChanged(detail);
-			}
+		representativeDocument.addValueChangeHandler(event -> {
+			detail.setRepresentativeDocument(representativeDocument.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab1.setWidget(2, 1, representativeDocument);
 		
@@ -87,23 +79,17 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		name.setVisibleLength(40);
 		name.setMaxLength(40);
 		name.setValue(detail.getName());
-		name.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setName(name.getValue());
-				callback.onNameChanged(detail);
-			}
+		name.addValueChangeHandler(event -> {
+			detail.setName(name.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab1.setWidget(2, 2, name);
 		
 		ProvinceListBox province = new ProvinceListBox();
 		province.setSelectedIndex(detail.getProvince());
-		province.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setProvince(province.getSelectedIndex());
-				callback.onValueChanged(detail);
-			}
+		province.addChangeHandler( event -> {
+			detail.setProvince(province.getSelectedIndex());
+			callback.onValueChanged(detail);
 		});
 		tab1.setWidget(2, 3, province);
 		FlexTable tab2 = new FlexTable();
@@ -113,9 +99,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		tab2.getColumnFormatter().setWidth(2, "40px");
 		tab2.getColumnFormatter().setWidth(3, "40px");
 		tab2.getColumnFormatter().setWidth(4, "90px");
-		tab2.getColumnFormatter().setWidth(5, "150px");
-		tab2.getColumnFormatter().setWidth(6, "150px");
-		tab2.getColumnFormatter().setWidth(7, "150px");
+		tab2.getColumnFormatter().setWidth(5, WIDTH_150PX);
+		tab2.getColumnFormatter().setWidth(6, WIDTH_150PX);
+		tab2.getColumnFormatter().setWidth(7, WIDTH_150PX);
 		tab2.getColumnFormatter().setWidth(8, "auto");
 		
 		tab2.setStyleName(AON.CSS.aonWidthAll());
@@ -134,48 +120,41 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 			key.addItem(k.getDescription(),k.getValue());
 		}
 		
-		Model190AEAT2016DetailPanel.setValue(key, subkey, detail);
+		Model190NAVARRA2021DetailPanel.setValue(key, subkey, detail);
 		
-		key.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				subkey.clear();
-				Mod1902016Key keyEnum = Mod1902016Key.values()[key.getSelectedIndex()];
-				detail.setKey( keyEnum.toString() );
-				if (keyEnum.hasSubkeys()) {
-					subkey.setEnabled(true);
-					for (int i = 0; i < keyEnum.getSubKeys().length; i++) {
-						subkey.addItem(keyEnum.getSubKeys()[i]);
-					}
-					detail.setSubKey(keyEnum.getSubKeys()[0]);
-				} else {
-					subkey.setEnabled(false);
-					detail.setSubKey(null);
+		key.addChangeHandler(event -> {
+			subkey.clear();
+			Mod1902016Key keyEnum = Mod1902016Key.values()[key.getSelectedIndex()];
+			detail.setKey( keyEnum.toString() );
+			if (keyEnum.hasSubkeys()) {
+				subkey.setEnabled(true);
+				for (int i = 0; i < keyEnum.getSubKeys().length; i++) {
+					subkey.addItem(keyEnum.getSubKeys()[i]);
 				}
-				Model190AEAT2016DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
-				Model190AEAT2016DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
-				callback.onValueChanged(detail);
+				detail.setSubKey(keyEnum.getSubKeys()[0]);
+			} else {
+				subkey.setEnabled(false);
+				detail.setSubKey(null);
 			}
+			Model190NAVARRA2021DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
+			Model190NAVARRA2021DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(0, 1, key);
 		tab2.getFlexCellFormatter().setRowSpan(0, 1, 4);
 		
-		subkey.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				Mod1902016Key keyEnum = Mod1902016Key.values()[key.getSelectedIndex()];
-				if (keyEnum.hasSubkeys()) {
-					int idx = subkey.getSelectedIndex() == -1 ? 0 : subkey.getSelectedIndex();
-					detail.setSubKey(keyEnum.getSubKeys()[idx]);
-				} else {
-					subkey.setEnabled(false);
-					detail.setSubKey(null);
-				}
-				Model190AEAT2016DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
-				Model190AEAT2016DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
-				callback.onValueChanged(detail);
+		subkey.addChangeHandler(event -> {
+			Mod1902016Key keyEnum = Mod1902016Key.values()[key.getSelectedIndex()];
+			if (keyEnum.hasSubkeys()) {
+				int idx = subkey.getSelectedIndex() == -1 ? 0 : subkey.getSelectedIndex();
+				detail.setSubKey(keyEnum.getSubKeys()[idx]);
+			} else {
+				subkey.setEnabled(false);
+				detail.setSubKey(null);
 			}
+			Model190NAVARRA2021DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
+			Model190NAVARRA2021DetailPanel.enableOrDisableAdditionalDataPanel(key, subkey, additionalDataPanel);
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(0, 2, new Model190SmallerLabel(AON.MSG.subkey()));
 		tab2.getFlexCellFormatter().setRowSpan(0, 2, 4);
@@ -194,25 +173,17 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		
 		AonDoubleBox perception = new AonDoubleBox();
 		perception.setValue(detail.getPerception());
-		perception.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setPerception(perception.getValue());
-				callback.onValueChanged(detail);
-			}
+		perception.addValueChangeHandler(event -> {
+			detail.setPerception(perception.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(1, 0, perception);
 		
 		AonDoubleBox retention = new AonDoubleBox();
 		retention.setValue(detail.getRetention());
-		retention.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setRetention(retention.getValue());
-				callback.onValueChanged(detail);
-			}
+		retention.addValueChangeHandler(event -> {
+			detail.setRetention(retention.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(1, 1, retention);
 
@@ -222,13 +193,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		accrualYear.setMaxLength(4);
 		accrualYear.setVisibleLength(4);
 		accrualYear.setValue(detail.getAccrualYear());
-		accrualYear.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setAccrualYear(accrualYear.getValue());
-				callback.onValueChanged(detail);
-			}
+		accrualYear.addValueChangeHandler(event -> {
+			detail.setAccrualYear(accrualYear.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(1, 3, accrualYear);
 		
@@ -242,57 +209,41 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		
 		AonDoubleBox inKindPerception = new AonDoubleBox();
 		inKindPerception.setValue(detail.getInKindPerception());
-		inKindPerception.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setInKindPerception(inKindPerception.getValue());
-				callback.onValueChanged(detail);
-			}
+		inKindPerception.addValueChangeHandler(event -> {
+			detail.setInKindPerception(inKindPerception.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(3, 0, inKindPerception);
 		
 		AonDoubleBox inKindDeposit = new AonDoubleBox();
 		inKindDeposit.setValue(detail.getInKindDeposit());
-		inKindDeposit.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setInKindDeposit(inKindDeposit.getValue());
-				callback.onValueChanged(detail);
-			}
+		inKindDeposit.addValueChangeHandler(event -> {
+			detail.setInKindDeposit(inKindDeposit.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(3, 1, inKindDeposit);
 		
 		AonDoubleBox inKindOutputDeposit = new AonDoubleBox();
 		inKindOutputDeposit.setValue(detail.getInKindOutputDeposit());
-		inKindOutputDeposit.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setInKindOutputDeposit(inKindOutputDeposit.getValue());
-				callback.onValueChanged(detail);
-			}
+		inKindOutputDeposit.addValueChangeHandler(event -> {
+			detail.setInKindOutputDeposit(inKindOutputDeposit.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(3, 2, inKindOutputDeposit);
 
 		CheckBox ceutaMelilla = new CheckBox(AON.MSG.ceutaMelillaAbbrv());
 		ceutaMelilla.setValue(detail.isCeutaMelilla());
-		ceutaMelilla.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				detail.setCeutaMelilla(ceutaMelilla.getValue());
-				callback.onValueChanged(detail);
-			}
+		ceutaMelilla.addClickHandler(event -> {
+			detail.setCeutaMelilla(ceutaMelilla.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(3, 3, ceutaMelilla);
 		
 		FlexTable tab3 = new FlexTable();
 		tab3.getColumnFormatter().setWidth(0, "160px");
-		tab3.getColumnFormatter().setWidth(1, "150px");
-		tab3.getColumnFormatter().setWidth(2, "150px");
-		tab3.getColumnFormatter().setWidth(3, "150px");
+		tab3.getColumnFormatter().setWidth(1, WIDTH_150PX);
+		tab3.getColumnFormatter().setWidth(2, WIDTH_150PX);
+		tab3.getColumnFormatter().setWidth(3, WIDTH_150PX);
 		tab3.getColumnFormatter().setWidth(4, "auto");
 		tab3.setStyleName(AON.CSS.aonWidthAll());
 		tab3.addStyleName(AON.CSS.aonNowrap());
@@ -300,7 +251,7 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		tab3.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
 		tab3.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab3.getFlexCellFormatter().setColSpan(0, 0, 5);
-		tab3.setWidget(0, 0, new InlineLabel("Percepciones derivadas de incapacidad laboral (s\u00F3lo para percepciones de las claves A, B.01"));
+		tab3.setWidget(0, 0, new InlineLabel("Percepciones derivadas de incapacidad laboral (s\u00F3lo para percepciones de las claves A, B.01)"));
 
 		tab3.setWidget(1, 0, new Label());
 		tab3.setWidget(1, 1, new Model190SmallerLabel(AON.MSG.perceptionValoration()));
@@ -308,55 +259,64 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		tab3.setWidget(1, 3, new Model190SmallerLabel(AON.MSG.inKindOutputDeposit()));
 		tab3.setWidget(1, 4, new Label());
 		
-		tab3.setWidget(2, 0, new Label());
+		tab3.setWidget(2, 0, new Model190SmallerLabel(AON.MSG.money()));
+		tab3.getCellFormatter().addStyleName(2, 0, AON.CSS.aonTextRight());
+
 		AonDoubleBox perceptionIL = new AonDoubleBox();
 		perceptionIL.setValue(detail.getPerceptionIL());
-		perceptionIL.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setPerceptionIL(perceptionIL.getValue());
-				callback.onValueChanged(detail);
-			}
+		perceptionIL.addValueChangeHandler(event -> {
+			detail.setPerceptionIL(perceptionIL.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab3.setWidget(2, 1, perceptionIL);
 		
-		
 		AonDoubleBox retentionIL = new AonDoubleBox();
 		retentionIL.setValue(detail.getRetentionIL());
-		retentionIL.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setRetentionIL(retentionIL.getValue());
-				callback.onValueChanged(detail);
-			}
+		retentionIL.addValueChangeHandler(event -> {
+			detail.setRetentionIL(retentionIL.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab3.setWidget(2, 2, retentionIL);
 		
-		AonDoubleBox outputRetentionIL = new AonDoubleBox();
-		outputRetentionIL.setValue(detail.getOutputRetentionIL());
-		outputRetentionIL.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setOutputRetentionIL(outputRetentionIL.getValue());
-				callback.onValueChanged(detail);
-			}
+		tab3.setWidget(3, 0, new Model190SmallerLabel(AON.MSG.inKind()));
+		tab3.getCellFormatter().addStyleName(3, 0, AON.CSS.aonTextRight());		
+		
+		AonDoubleBox inKindPerceptionIL = new AonDoubleBox();
+		inKindPerceptionIL.setValue(detail.getInKindPerceptionIL());
+		inKindPerceptionIL.addValueChangeHandler(event -> {
+			detail.setInKindPerceptionIL(inKindPerceptionIL.getValue());
+			callback.onValueChanged(detail);
 		});
-		tab3.setWidget(2, 3, outputRetentionIL);
-		Model190AEAT2016DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
+		tab3.setWidget(3, 1, inKindPerceptionIL);
+
+		AonDoubleBox inKindDepositIL = new AonDoubleBox();
+		inKindDepositIL.setValue(detail.getInKindDepositIL());
+		inKindDepositIL.addValueChangeHandler(event -> {
+			detail.setInKindDepositIL(inKindDepositIL.getValue());
+			callback.onValueChanged(detail);
+		});
+		tab3.setWidget(3, 2, inKindDepositIL);
+
+		AonDoubleBox inKindOutputDepositIL = new AonDoubleBox();
+		inKindOutputDepositIL.setValue(detail.getInKindOutputDepositIL());
+		inKindOutputDepositIL.addValueChangeHandler(event -> {
+			detail.setInKindOutputDepositIL(inKindOutputDepositIL.getValue());
+			callback.onValueChanged(detail);
+		});
+		tab3.setWidget(3, 3, inKindOutputDepositIL);
+		
+		Model190NAVARRA2021DetailPanel.enableOrDisableIlPanel(key, subkey, ilPanel);
 		ilPanel.add(tab3);
 		panel.add(ilPanel);
 		
 		FlexTable tab4 = new FlexTable();
 		tab4.getColumnFormatter().setWidth( 0, "110px");
 		tab4.getColumnFormatter().setWidth( 1, "80px");
-		tab4.getColumnFormatter().setWidth( 2, "100px");
+		tab4.getColumnFormatter().setWidth( 2, WIDTH_100PX);
 		tab4.getColumnFormatter().setWidth( 3, "50px");
 		tab4.getColumnFormatter().setWidth( 4, "80px");
-		tab4.getColumnFormatter().setWidth( 5, "100px");
-		tab4.getColumnFormatter().setWidth( 6, "100px");
+		tab4.getColumnFormatter().setWidth( 5, WIDTH_100PX);
+		tab4.getColumnFormatter().setWidth( 6, WIDTH_100PX);
 		tab4.getColumnFormatter().setWidth( 7, "50px");
 		tab4.getColumnFormatter().setWidth( 8, "120px");
 		tab4.getColumnFormatter().setWidth( 9, "auto");
@@ -373,13 +333,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		birthYear.setMaxLength(4);
 		birthYear.setVisibleLength(4);
 		birthYear.setValue(detail.getBirthYear());
-		birthYear.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setBirthYear(birthYear.getValue());
-				callback.onValueChanged(detail);
-			}
+		birthYear.addValueChangeHandler(event -> {
+			detail.setBirthYear(birthYear.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab4.setWidget(1, 1, birthYear);
 		
@@ -387,50 +343,39 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		ListBox familySituation = new ListBox();
 		familySituation.setWidth("40px");
 		familySituation.addItem("-");
-		familySituation.addItem("1");
-		familySituation.addItem("2");
-		familySituation.addItem("3");
+		familySituation.addItem("1 - Soltero, viudo, divorciado ... (consulte instrucciones)");
+		familySituation.addItem("2 - Casado y no separado legalmente ... (consulte instrucciones)");
+		familySituation.addItem("3 - Distinta de las anteriores ... (consulte instrucciones)");
 		familySituation.setSelectedIndex(detail.getFamilySituation());
-		familySituation.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setFamilySituation((byte) familySituation.getSelectedIndex());
-				callback.onValueChanged(detail);
-			}
+		familySituation.addChangeHandler(event -> {
+			detail.setFamilySituation((byte) familySituation.getSelectedIndex());
+			callback.onValueChanged(detail);
 		});
 		tab4.setWidget(1, 3, familySituation);
 		
 		tab4.setWidget(1, 4, new Model190SmallerLabel(AON.MSG.spouseDocument()));
-		DocumentTextBox spouseDocument = new DocumentTextBox();
+		AonDocumentTextBox spouseDocument = new AonDocumentTextBox();
 		spouseDocument.setVisibleLength(9);
 		spouseDocument.setMaxLength(9);
 
 		spouseDocument.setValue(detail.getSpouseDocument());
-		spouseDocument.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setSpouseDocument(spouseDocument.getValue());
-				callback.onValueChanged(detail);
-			}
+		spouseDocument.addValueChangeHandler(event -> {
+			detail.setSpouseDocument(spouseDocument.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab4.setWidget(1, 5, spouseDocument);
 		
 		tab4.setWidget(1, 6, new Model190SmallerLabel(AON.MSG.disability()));
 		ListBox disability = new ListBox();
 		disability.setWidth("40px");
-		disability.addItem("0");
-		disability.addItem("1");
-		disability.addItem("2");
-		disability.addItem("3");
+		disability.addItem("0 - No padece ninguna discapacidad o grado de minusval\u00EDa es inferior al 33 por 100.");
+		disability.addItem("1 - Grado de minusval\u00EDa >= 33% y <65%");
+		disability.addItem("2 - Grado de minusval\u00EDa >= 33% y <65% ...(consulte instrucciones)"); 
+		disability.addItem("3 - Grado de minusval\u00EDa >= 65%.");
 		disability.setSelectedIndex(detail.getDisability());
-		disability.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setDisability((byte) disability.getSelectedIndex());
-				callback.onValueChanged(detail);
-			}
+		disability.addChangeHandler(event -> {
+			detail.setDisability((byte) disability.getSelectedIndex());
+			callback.onValueChanged(detail);
 		});
 		tab4.setWidget(1, 7, disability);
 		
@@ -438,42 +383,34 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		ListBox contract = new ListBox();
 		contract.setWidth("40px");
 		contract.addItem("-");
-		contract.addItem("1");
-		contract.addItem("2");
-		contract.addItem("3");
-		contract.addItem("4");
+		contract.addItem("1 - Contrato o relaci\u00F3n de car\u00E1cter general,  ... (consulte instrucciones)");
+		contract.addItem("2 - Contrato o relaci\u00F3n de duraci\u00F3n inferior al a\u00F1o ...(consulte instrucciones).");
+		contract.addItem("3 - Contrato o relaci\u00F3n laboral especial de car\u00E1cter dependiente ... (consulte instrucciones)");
+		contract.addItem("4 - Relaci\u00F3n espor\u00E1dica propia de los trabajadores manuales ... (consulte instrucciones)");
 		contract.setSelectedIndex(detail.getContract());
-		contract.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setContract((byte) contract.getSelectedIndex());
-				callback.onValueChanged(detail);
-			}
+		contract.addChangeHandler(event -> {
+			detail.setContract((byte) contract.getSelectedIndex());
+			callback.onValueChanged(detail);
 		});
 		tab4.setWidget(1, 9, contract);
 		
 		additionalDataPanel.add(tab4);
 		
 		FlexTable tab5 = new FlexTable();
-		tab5.getColumnFormatter().setWidth(0, "150px");
-		tab5.getColumnFormatter().setWidth(1, "150px");
-		tab5.getColumnFormatter().setWidth(2, "150px");
+		tab5.getColumnFormatter().setWidth(0, WIDTH_150PX);
+		tab5.getColumnFormatter().setWidth(1, WIDTH_150PX);
+		tab5.getColumnFormatter().setWidth(2, WIDTH_150PX);
 		tab5.getColumnFormatter().setWidth(3, "170px");
-		tab5.getColumnFormatter().setWidth(4, "150px");
+		tab5.getColumnFormatter().setWidth(4, WIDTH_150PX);
 		tab5.getColumnFormatter().setWidth(5, "auto");
 		tab5.setStyleName(AON.CSS.aonWidthAll());
 		tab5.addStyleName(AON.CSS.aonNowrap());
 		
 		CheckBox geographicMobility = new CheckBox(AON.MSG.geographicMobility());
 		geographicMobility.setValue(detail.isGeographicMobility());
-		geographicMobility.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				detail.setGeographicMobility(geographicMobility.getValue());
-				callback.onValueChanged(detail);
-			}
+		geographicMobility.addClickHandler(event -> {
+			detail.setGeographicMobility(geographicMobility.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab5.setWidget(0, 0, geographicMobility);
 
@@ -486,61 +423,41 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 
 		CheckBox homeLoanCommunnication = new CheckBox(AON.MSG.homeLoanCommunnication());
 		homeLoanCommunnication.setValue(detail.isHomeLoanCommunnication());
-		homeLoanCommunnication.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				detail.setHomeLoanCommunnication(homeLoanCommunnication.getValue());
-				callback.onValueChanged(detail);
-			}
+		homeLoanCommunnication.addClickHandler(event -> {
+			detail.setHomeLoanCommunnication(homeLoanCommunnication.getValue());
+			callback.onValueChanged(detail);
 		});
-		tab5.setWidget(1, 0, geographicMobility);
+		tab5.setWidget(1, 0, homeLoanCommunnication);
 
 		AonDoubleBox applicableReduction = new AonDoubleBox();
 		applicableReduction.setValue(detail.getApplicableReduction());
-		applicableReduction.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setApplicableReduction(applicableReduction.getValue());
-				callback.onValueChanged(detail);
-			}
+		applicableReduction.addValueChangeHandler(event -> {
+			detail.setApplicableReduction(applicableReduction.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab5.setWidget(1, 1, applicableReduction);
 
 		AonDoubleBox deducibleExpense = new AonDoubleBox();
 		deducibleExpense.setValue(detail.getDeducibleExpense());
-		deducibleExpense.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setDeducibleExpense(deducibleExpense.getValue());
-				callback.onValueChanged(detail);
-			}
+		deducibleExpense.addValueChangeHandler(event -> {
+			detail.setDeducibleExpense(deducibleExpense.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab5.setWidget(1, 2, deducibleExpense);
 		
 		AonDoubleBox compensatoryPension = new AonDoubleBox();
 		compensatoryPension.setValue(detail.getCompensatoryPension());
-		compensatoryPension.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setCompensatoryPension(compensatoryPension.getValue());
-				callback.onValueChanged(detail);
-			}
+		compensatoryPension.addValueChangeHandler(event -> {
+			detail.setCompensatoryPension(compensatoryPension.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab5.setWidget(1, 3, compensatoryPension);
 
 		AonDoubleBox foodAnnuality = new AonDoubleBox();
 		foodAnnuality.setValue(detail.getFoodAnnuality());
-		foodAnnuality.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setFoodAnnuality(foodAnnuality.getValue());
-				callback.onValueChanged(detail);
-			}
+		foodAnnuality.addValueChangeHandler(event -> {
+			detail.setFoodAnnuality(foodAnnuality.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab5.setWidget(1, 4, foodAnnuality);
 		
@@ -554,7 +471,7 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		tab6.getColumnFormatter().setWidth(3, "50px");
 		tab6.getColumnFormatter().setWidth(4, "60px");
 		tab6.getColumnFormatter().setWidth(5, "60px");
-		tab6.getColumnFormatter().setWidth(6, "150px");
+		tab6.getColumnFormatter().setWidth(6, WIDTH_150PX);
 		tab6.getColumnFormatter().setWidth(7, "40px");
 		tab6.getColumnFormatter().setWidth(8, "40px");
 		tab6.getColumnFormatter().setWidth(9, "auto");
@@ -580,13 +497,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		lessThan3Descendent.setMaxLength(1);
 		lessThan3Descendent.setVisibleLength(1);
 		lessThan3Descendent.setValue(detail.getLessThan3Descendent());
-		lessThan3Descendent.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setLessThan3Descendent( AonNumberUtils.toByte( lessThan3Descendent.getValue()));
-				callback.onValueChanged(detail);
-			}
+		lessThan3Descendent.addValueChangeHandler(event -> {
+			detail.setLessThan3Descendent( AonNumberUtils.toByte( lessThan3Descendent.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(1, 1, lessThan3Descendent);
 		
@@ -594,13 +507,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		lessThan3DescendentRatio.setMaxLength(1);
 		lessThan3DescendentRatio.setVisibleLength(1);
 		lessThan3DescendentRatio.setValue(detail.getLessThan3DescendentRatio());
-		lessThan3DescendentRatio.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setLessThan3DescendentRatio( AonNumberUtils.toByte( lessThan3DescendentRatio.getValue()));
-				callback.onValueChanged(detail);
-			}
+		lessThan3DescendentRatio.addValueChangeHandler(event -> {
+			detail.setLessThan3DescendentRatio( AonNumberUtils.toByte( lessThan3DescendentRatio.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(1, 2, lessThan3DescendentRatio);
 
@@ -610,13 +519,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		otherDescendent.setMaxLength(1);
 		otherDescendent.setVisibleLength(1);
 		otherDescendent.setValue(detail.getOtherDescendent());
-		otherDescendent.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setOtherDescendent( AonNumberUtils.toByte( otherDescendent.getValue()));
-				callback.onValueChanged(detail);
-			}
+		otherDescendent.addValueChangeHandler(event -> {
+			detail.setOtherDescendent( AonNumberUtils.toByte( otherDescendent.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(1, 4, otherDescendent);
 		
@@ -624,13 +529,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		otherDescendentRatio.setMaxLength(1);
 		otherDescendentRatio.setVisibleLength(1);
 		otherDescendentRatio.setValue(detail.getOtherDescendentRatio());
-		otherDescendentRatio.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setOtherDescendentRatio( AonNumberUtils.toByte( otherDescendentRatio.getValue()));
-				callback.onValueChanged(detail);
-			}
+		otherDescendentRatio.addValueChangeHandler(event -> {
+			detail.setOtherDescendentRatio( AonNumberUtils.toByte( otherDescendentRatio.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(1, 5, otherDescendentRatio);
 
@@ -638,48 +539,36 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		ListBox firstChildCalculation = new ListBox();
 		firstChildCalculation.setWidth("40px");
 		firstChildCalculation.addItem("-");
-		firstChildCalculation.addItem("1");
-		firstChildCalculation.addItem("2");
+		firstChildCalculation.addItem(COMPUTADO_POR_ENTERO);
+		firstChildCalculation.addItem(COMPUTADO_POR_MITAD);
 		firstChildCalculation.setSelectedIndex(detail.getFirstChildCalculation());
-		firstChildCalculation.addChangeHandler( new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setFirstChildCalculation(AonNumberUtils.toByte( firstChildCalculation.getSelectedIndex()));
-				callback.onValueChanged(detail);
-			}
+		firstChildCalculation.addChangeHandler( event -> {
+			detail.setFirstChildCalculation(AonNumberUtils.toByte( firstChildCalculation.getSelectedIndex()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(1, 7, firstChildCalculation);
 		
 		ListBox secondChildCalculation = new ListBox();
 		secondChildCalculation.setWidth("40px");
 		secondChildCalculation.addItem("-");
-		secondChildCalculation.addItem("1");
-		secondChildCalculation.addItem("2");
+		secondChildCalculation.addItem(COMPUTADO_POR_ENTERO);
+		secondChildCalculation.addItem(COMPUTADO_POR_MITAD);
 		secondChildCalculation.setSelectedIndex(detail.getSecondChildCalculation());
-		secondChildCalculation.addChangeHandler( new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setSecondChildCalculation(AonNumberUtils.toByte( secondChildCalculation.getSelectedIndex()));
-				callback.onValueChanged(detail);
-			}
+		secondChildCalculation.addChangeHandler( event -> {
+			detail.setSecondChildCalculation(AonNumberUtils.toByte( secondChildCalculation.getSelectedIndex()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(1, 8, secondChildCalculation);
 
 		ListBox thirdChildCalculation = new ListBox();
 		thirdChildCalculation.setWidth("40px");
 		thirdChildCalculation.addItem("-");
-		thirdChildCalculation.addItem("1");
-		thirdChildCalculation.addItem("2");
+		thirdChildCalculation.addItem(COMPUTADO_POR_ENTERO);
+		thirdChildCalculation.addItem(COMPUTADO_POR_MITAD);
 		thirdChildCalculation.setSelectedIndex(detail.getThirdChildCalculation());
-		thirdChildCalculation.addChangeHandler( new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setThirdChildCalculation(AonNumberUtils.toByte( thirdChildCalculation.getSelectedIndex()));
-				callback.onValueChanged(detail);
-			}
+		thirdChildCalculation.addChangeHandler( event -> {
+			detail.setThirdChildCalculation(AonNumberUtils.toByte( thirdChildCalculation.getSelectedIndex()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(1, 9, thirdChildCalculation);
 
@@ -702,13 +591,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityDescendent33.setMaxLength(2);
 		disabilityDescendent33.setVisibleLength(2);
 		disabilityDescendent33.setValue(detail.getDisabilityDescendent33());
-		disabilityDescendent33.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityDescendent33( AonNumberUtils.toByte( disabilityDescendent33.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityDescendent33.addValueChangeHandler(event -> {
+			detail.setDisabilityDescendent33( AonNumberUtils.toByte( disabilityDescendent33.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(3, 1, disabilityDescendent33);
 		
@@ -716,13 +601,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityDescendent33Ratio.setMaxLength(2);
 		disabilityDescendent33Ratio.setVisibleLength(2);
 		disabilityDescendent33Ratio.setValue(detail.getDisabilityDescendent33Ratio());
-		disabilityDescendent33Ratio.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityDescendent33Ratio( AonNumberUtils.toByte( disabilityDescendent33Ratio.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityDescendent33Ratio.addValueChangeHandler(event -> {
+			detail.setDisabilityDescendent33Ratio( AonNumberUtils.toByte( disabilityDescendent33Ratio.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(3, 2, disabilityDescendent33Ratio);
 
@@ -732,13 +613,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityDescendentDependence.setMaxLength(2);
 		disabilityDescendentDependence.setVisibleLength(2);
 		disabilityDescendentDependence.setValue(detail.getDisabilityDescendentDependence());
-		disabilityDescendentDependence.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityDescendentDependence( AonNumberUtils.toByte( disabilityDescendentDependence.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityDescendentDependence.addValueChangeHandler(event -> {
+			detail.setDisabilityDescendentDependence( AonNumberUtils.toByte( disabilityDescendentDependence.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(3, 4, disabilityDescendentDependence);
 		
@@ -746,13 +623,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityDescendentDependenceRatio.setMaxLength(2);
 		disabilityDescendentDependenceRatio.setVisibleLength(2);
 		disabilityDescendentDependenceRatio.setValue(detail.getDisabilityDescendentDependenceRatio());
-		disabilityDescendentDependenceRatio.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityDescendentDependenceRatio( AonNumberUtils.toByte( disabilityDescendentDependenceRatio.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityDescendentDependenceRatio.addValueChangeHandler(event -> {
+			detail.setDisabilityDescendentDependenceRatio( AonNumberUtils.toByte( disabilityDescendentDependenceRatio.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(3, 5, disabilityDescendentDependenceRatio);
 		
@@ -762,13 +635,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityDescendent65.setMaxLength(2);
 		disabilityDescendent65.setVisibleLength(2);
 		disabilityDescendent65.setValue(detail.getDisabilityDescendent65());
-		disabilityDescendent65.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityDescendent65( AonNumberUtils.toByte( disabilityDescendent65.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityDescendent65.addValueChangeHandler(event -> {
+			detail.setDisabilityDescendent65( AonNumberUtils.toByte( disabilityDescendent65.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(3, 7, disabilityDescendent65);
 		
@@ -776,13 +645,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityDescendent65Ratio.setMaxLength(2);
 		disabilityDescendent65Ratio.setVisibleLength(2);
 		disabilityDescendent65Ratio.setValue(detail.getDisabilityDescendent65Ratio());
-		disabilityDescendent65Ratio.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityDescendent65Ratio( AonNumberUtils.toByte( disabilityDescendent65Ratio.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityDescendent65Ratio.addValueChangeHandler(event -> {
+			detail.setDisabilityDescendent65Ratio( AonNumberUtils.toByte( disabilityDescendent65Ratio.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(3, 8, disabilityDescendent65Ratio);
 		tab6.setWidget(3, 9, new Label());
@@ -806,13 +671,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		lessThan75Ascendant.setMaxLength(1);
 		lessThan75Ascendant.setVisibleLength(1);
 		lessThan75Ascendant.setValue(detail.getLessThan75Ascendant());
-		lessThan75Ascendant.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setLessThan75Ascendant( AonNumberUtils.toByte( lessThan75Ascendant.getValue()));
-				callback.onValueChanged(detail);
-			}
+		lessThan75Ascendant.addValueChangeHandler(event -> {
+			detail.setLessThan75Ascendant( AonNumberUtils.toByte( lessThan75Ascendant.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(5, 1, lessThan75Ascendant);
 		
@@ -820,13 +681,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		lessThan75AscendantRatio.setMaxLength(1);
 		lessThan75AscendantRatio.setVisibleLength(1);
 		lessThan75AscendantRatio.setValue(detail.getLessThan75AscendantRatio());
-		lessThan75AscendantRatio.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setLessThan75AscendantRatio( AonNumberUtils.toByte( lessThan75AscendantRatio.getValue()));
-				callback.onValueChanged(detail);
-			}
+		lessThan75AscendantRatio.addValueChangeHandler(event -> {
+			detail.setLessThan75AscendantRatio( AonNumberUtils.toByte( lessThan75AscendantRatio.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(5, 2, lessThan75AscendantRatio);
 
@@ -836,13 +693,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		ascendant.setMaxLength(1);
 		ascendant.setVisibleLength(1);
 		ascendant.setValue(detail.getAscendant());
-		ascendant.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setAscendant( AonNumberUtils.toByte( ascendant.getValue()));
-				callback.onValueChanged(detail);
-			}
+		ascendant.addValueChangeHandler(event -> {
+			detail.setAscendant( AonNumberUtils.toByte( ascendant.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(5, 4, ascendant);
 		
@@ -850,13 +703,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		ascendantRatio.setMaxLength(1);
 		ascendantRatio.setVisibleLength(1);
 		ascendantRatio.setValue(detail.getAscendantRatio());
-		ascendantRatio.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setAscendantRatio( AonNumberUtils.toByte( ascendantRatio.getValue()));
-				callback.onValueChanged(detail);
-			}
+		ascendantRatio.addValueChangeHandler(event -> {
+			detail.setAscendantRatio( AonNumberUtils.toByte( ascendantRatio.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(5, 5, ascendantRatio);
 		
@@ -884,13 +733,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityAscendant33.setMaxLength(1);
 		disabilityAscendant33.setVisibleLength(1);
 		disabilityAscendant33.setValue(detail.getDisabilityAscendant33());
-		disabilityAscendant33.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityAscendant33( AonNumberUtils.toByte( disabilityAscendant33.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityAscendant33.addValueChangeHandler(event -> {
+			detail.setDisabilityAscendant33( AonNumberUtils.toByte( disabilityAscendant33.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(7, 1, disabilityAscendant33);
 		
@@ -898,13 +743,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityAscendant33Ratio.setMaxLength(1);
 		disabilityAscendant33Ratio.setVisibleLength(1);
 		disabilityAscendant33Ratio.setValue(detail.getDisabilityAscendant33Ratio());
-		disabilityAscendant33Ratio.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityAscendant33Ratio( AonNumberUtils.toByte( disabilityAscendant33Ratio.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityAscendant33Ratio.addValueChangeHandler(event -> {
+			detail.setDisabilityAscendant33Ratio( AonNumberUtils.toByte( disabilityAscendant33Ratio.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(7, 2, disabilityAscendant33Ratio);
 
@@ -914,13 +755,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityAscendantDependence.setMaxLength(1);
 		disabilityAscendantDependence.setVisibleLength(1);
 		disabilityAscendantDependence.setValue(detail.getDisabilityAscendantDependence());
-		disabilityAscendantDependence.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityAscendantDependence( AonNumberUtils.toByte( disabilityAscendantDependence.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityAscendantDependence.addValueChangeHandler(event -> {
+			detail.setDisabilityAscendantDependence( AonNumberUtils.toByte( disabilityAscendantDependence.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(7, 4, disabilityAscendantDependence);
 		
@@ -928,13 +765,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityAscendantDependenceRatio.setMaxLength(1);
 		disabilityAscendantDependenceRatio.setVisibleLength(1);
 		disabilityAscendantDependenceRatio.setValue(detail.getDisabilityAscendantDependenceRatio());
-		disabilityAscendantDependenceRatio.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityAscendantDependenceRatio( AonNumberUtils.toByte( disabilityAscendantDependenceRatio.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityAscendantDependenceRatio.addValueChangeHandler(event -> {
+			detail.setDisabilityAscendantDependenceRatio( AonNumberUtils.toByte( disabilityAscendantDependenceRatio.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(7, 5, disabilityAscendantDependenceRatio);
 
@@ -944,13 +777,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityAscendant65.setMaxLength(1);
 		disabilityAscendant65.setVisibleLength(1);
 		disabilityAscendant65.setValue(detail.getDisabilityAscendant65());
-		disabilityAscendant65.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityAscendant65( AonNumberUtils.toByte( disabilityAscendant65.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityAscendant65.addValueChangeHandler(event -> {
+			detail.setDisabilityAscendant65( AonNumberUtils.toByte( disabilityAscendant65.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(7, 7, disabilityAscendant65);
 		
@@ -958,13 +787,9 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		disabilityAscendant65Ratio.setMaxLength(1);
 		disabilityAscendant65Ratio.setVisibleLength(1);
 		disabilityAscendant65Ratio.setValue(detail.getDisabilityAscendant65Ratio());
-		disabilityAscendant65Ratio.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setDisabilityAscendant65Ratio( AonNumberUtils.toByte( disabilityAscendant65Ratio.getValue()));
-				callback.onValueChanged(detail);
-			}
+		disabilityAscendant65Ratio.addValueChangeHandler(event -> {
+			detail.setDisabilityAscendant65Ratio( AonNumberUtils.toByte( disabilityAscendant65Ratio.getValue()));
+			callback.onValueChanged(detail);
 		});
 		tab6.setWidget(7, 8, disabilityAscendant65Ratio);
 		tab6.setWidget(7, 9, new Label());
@@ -983,6 +808,7 @@ public class Model190AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 
 	@Override
 	public void setAccessKey(char key) {
+		// Nothing
 	}
 
 	@Override

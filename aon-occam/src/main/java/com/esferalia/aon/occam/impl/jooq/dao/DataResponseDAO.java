@@ -256,6 +256,10 @@ public class DataResponseDAO {
 			public void visitM202() {
 				pair.setLeft( DataResponseSource.MOD202 ).setRight(DataAttachSource.MOD202);
 			}
+			@Override 
+			public void visitM190() { 
+				pair.setLeft( DataResponseSource.MOD190 ).setRight(DataAttachSource.MOD190);
+			}
 			@Override public void visitM390HF() { /* nothing */ }
 			@Override public void visitM390() { /* nothing */ }
 			@Override public void visitM349() { /* nothing */ }
@@ -263,7 +267,6 @@ public class DataResponseDAO {
 			
 			@Override public void visitM200() { /* nothing */ }
 			@Override public void visitM193() { /* nothing */ }
-			@Override public void visitM190() { /* nothing */ }
 			@Override public void visitM184() { /* nothing */ }
 			@Override public void visitM180() { /* nothing */ }
 			
