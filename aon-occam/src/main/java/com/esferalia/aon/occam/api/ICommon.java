@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
 import com.esferalia.aon.occam.api.model.Filter.WorkgroupFilter;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -85,7 +86,15 @@ public interface ICommon {
 	
 	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter);
 	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter);
+	@Deprecated
 	public void updateWorkplace(AONContext ctx, Workplace workplace);
+	public Workplace saveWorkplace(AONContext ctx, Workplace workplace);
+	
+	// --------------------------------------------
+	// PAYROLL WORKPLACE
+	// --------------------------------------------
+	
+	public PayrollWorkplace savePayrollWorkplace(AONContext ctx, PayrollWorkplace workplace);
 	
 	// --------------------------------------------
 	// PRODUCT
