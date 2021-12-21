@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -228,170 +229,6 @@ public class Model190 extends MainEntryPoint {
 		}
 	}
 	
-//	protected static interface IModel190Callback{
-//
-//		void onAccept(Mod190 mod190);
-//		Model190ModuleOptions getOptions();
-//		void onCancel();
-//		void onSelect(Model190ModuleOptions options,Mod190 mod190, Integer selectedIndex);
-//		void showError(String msg);
-//		void cleanErrorPanel();
-//		void onNew();
-//		void onReset(Model190ModuleOptions options, Mod190 mod190);
-//		void onDuplicate(Model190ModuleOptions options, int id);		
-//	}
-//
-//	protected class Model190Callback implements IModel190Callback {
-//		
-//		@Override
-//		public void onSelect(Model190ModuleOptions options, Mod190 mod190, Integer selectedIndex) {
-//			select(options,mod190, selectedIndex);
-//		}
-//		
-//		public void onReset(Model190ModuleOptions options, Mod190 mod190) {
-//			cleanErrorPanel();
-//			SERVICE.initialize(options.getOccam(), mod190.getYear(),
-//					new AsyncCallback<Mod190>() {
-//						@Override
-//						public void onSuccess(Mod190 newMod190) {
-//							cleanBreakdownPanel();
-//							tabLayout.selectTab(BREAKDOWN_TAB);
-//							closeFootPanel();
-//							
-//							newMod190.setAdministration(mod190.getAdministration());
-//							newMod190.setYear(mod190.getYear());
-//							newMod190.setComplementary(mod190.isComplementary());
-//							newMod190.setReplacement(mod190.isReplacement());
-//							newMod190.setReplacedReceipt(mod190.getReplacedReceipt());						
-//							showResetDeclarationPopup(options, newMod190, mod190);
-//						}
-//
-//						@Override
-//						public void onFailure(Throwable caught) {
-//							showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-//						}
-//					});
-//		}
-//		@Override
-//		public void onDuplicate(Model190ModuleOptions options, int id) {
-//			cleanErrorPanel();
-//			SERVICE.getMod190(options.getOccam(), id,
-//					new AsyncCallback<Mod190>() {
-//						@Override
-//						public void onSuccess(Mod190 m190) {
-//							cleanBreakdownPanel();
-//							tabLayout.selectTab(BREAKDOWN_TAB);
-//							closeFootPanel();
-//							showDuplicateDeclarationPopup(options, m190);
-//						}
-//
-//						@Override
-//						public void onFailure(Throwable caught) {
-//							showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-//						}
-//					});
-//		}
-//		@Override
-//		public void cleanErrorPanel() {
-//			Model190.this.cleanErrorPanel();
-//		}
-//		@Override
-//		public void showError(String msg) {
-//			Model190.this.showErrorMessage(msg);
-//		}
-//		
-//		private void showResetDeclarationPopup(Model190ModuleOptions options, Mod190 newMod190, Mod190 oldMod190) {
-//			Model190NewDeclarationPopup newDialog = new Model190NewDeclarationPopup( newMod190, false, true,
-//				new Model190Callback() {
-//
-//						@Override
-//						public void onAccept(Mod190 model) {
-//							final PopupPanel popup = new PopupPanel(false, true);
-//							popup.add( new AonSplash() );
-//							popup.setGlassEnabled(true);
-//							popup.setAnimationEnabled(true);
-//							popup.center();
-//							
-//							SERVICE.delete(options.getOccam(), oldMod190, 
-//									new AsyncCallback<Void>() {
-//										
-//										@Override
-//										public void onSuccess(Void result) {
-//											SERVICE.save(options.getOccam(),model,
-//													new AsyncCallback<Mod190>() {
-//														@Override
-//														public void onSuccess(Mod190 model) {
-//															popup.hide();
-//															select(options,model, null);
-//														}
-//
-//														@Override
-//														public void onFailure(Throwable caught) {
-//															popup.hide();
-//															showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-//														}
-//													});
-//										}
-//										
-//										@Override
-//										public void onFailure(Throwable caught) {
-//											popup.hide();
-//											showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
-//										}
-//									});
-//						}
-//						
-//						@Override
-//						public void onCancel() {
-//							// Nothing
-//						}
-//					}
-//				); 
-//				newDialog.center();
-//				newDialog.show();
-//		}
-//		
-//		private void showDuplicateDeclarationPopup(Model190ModuleOptions options, Mod190 model) {
-//			Model190NewDeclarationPopup newDialog = new Model190NewDeclarationPopup(model, true, false, 
-//				new Model190Callback() {
-//
-//						@Override
-//						public void onAccept(Mod190 model) {
-//							final PopupPanel popup = new PopupPanel(false, true);
-//							popup.add(new AonSplash());
-//							popup.setGlassEnabled(true);
-//							popup.setAnimationEnabled(true);
-//							popup.center();
-//
-//							SERVICE.duplicate(options.getOccam(), model,
-//									new AsyncCallback<Mod190>() {
-//										@Override
-//										public void onSuccess(Mod190 model) {
-//											popup.hide();
-//											select(options, model, null);
-//										}
-//
-//										@Override
-//										public void onFailure(Throwable caught) {
-//											popup.hide();
-//											showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-//										}
-//									});
-//						}
-//						
-//						@Override
-//						public void onCancel() {
-//							// Nothing
-//						}
-//
-//					}
-//				); 
-//				newDialog.center();
-//				newDialog.show();
-//		}
-//		
-//	}
-
 	private Model190ModuleOptions options;
 	
 	private AonLayoutPanel aonLayout;
@@ -620,5 +457,21 @@ public class Model190 extends MainEntryPoint {
 			newDialog.center();
 			newDialog.show();
 	}
-	
+
+	public static void run() {
+		GWT.runAsync(Model190.class, new RunAsyncCallback() {
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				Window.alert(AON.MSG.loadError("Modelo 190"));
+			}
+			
+			@Override
+			public void onSuccess() {
+				Model190 model190 = new Model190();
+				model190.onModuleLoad();
+			}
+		});
+	}
+
 }

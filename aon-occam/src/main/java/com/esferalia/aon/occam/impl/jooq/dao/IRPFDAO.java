@@ -95,8 +95,8 @@ public class IRPFDAO extends FiscalModelDAO {
 			.join(WORKPLACE).on(CONTRACT.WORKPLACE.equal(WORKPLACE.ID))
 			.where(SALARY.DOMAIN.equal(fm.getDomain()))
 				.and(SALARY.ISSUE_DATE.between(dateFrom,dateTo))
-				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().getValue()))
-				.and(SALARY.TYPE.in(SalaryType.SALARIES )) // Skip SLD ( L00, L13... )
+				.and(WORKPLACE.ECONOMICAGREEMENT.equal(fm.getAdministration().value()))
+				.and(SALARY.TYPE.in(SalaryType.IRPF_SALARIES )) // Skip SLD ( L00, L13... )
 			.fetch()
 			.stream()
 			.forEach( rec -> {
@@ -243,9 +243,9 @@ public class IRPFDAO extends FiscalModelDAO {
 					,INVOICE.RDOCUMENT
 					,INVOICE.RNAME
 					
-					,INVOICE_TAX.BASE.sum().as("INVOICE_TAX.BASE_SUM")
-					,INVOICE_TAX.QUOTA.sum().as("INVOICE_TAX.QUOTA_SUM")
-					,INVOICE_TAX.DEDUCTIBLE_QUOTA.sum().as("INVOICE_TAX.DEDUCTIBLE_QUOTA_SUM")
+					,DSL.sum(INVOICE_TAX.BASE).as("INVOICE_TAX.BASE_SUM")
+					,DSL.sum(INVOICE_TAX.QUOTA).as("INVOICE_TAX.QUOTA_SUM")
+					,DSL.sum(INVOICE_TAX.DEDUCTIBLE_QUOTA).as("INVOICE_TAX.DEDUCTIBLE_QUOTA_SUM")
 				)
 				.from(INVOICE)
 				.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
