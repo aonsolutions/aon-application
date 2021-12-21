@@ -36,7 +36,7 @@ public class DataRequestUpdate implements Update {
 //		String sql3 = "ALTER TABLE `data_response` ADD CONSTRAINT `FK_DATA_RESPONSE_DATA_REQUEST` FOREIGN KEY (`data_request`) REFERENCES `data_request` (`id`)";
 		
 		String sql4 = "SET FOREIGN_KEY_CHECKS = 0;";
-		String sql5 = "ALTER TABLE `data_request` MODIFY COLUMN `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo'";
+		String sql5 = "ALTER TABLE `data_request` MODIFY COLUMN `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo';";
 		String sql6 = "SET FOREIGN_KEY_CHECKS = 1;";
 		
 		
