@@ -238,7 +238,7 @@ public class ModelMatrixPanel extends FlowPanel {
 			model.setModel(fm.getModel());
 			model.setYear(fm.getYear());
 			model.setDomain(fm.getDomain());
-			model.setPeriod(Period.values()[ ((times == 4)?10:0) + x]);
+			model.setPeriod(Period.values()[ ((times == 4)?12:0) + x]);
 			AonDisplayTableCell cell = row.addCell();
 			
 			AonTableButton addButton = new AonTableButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
