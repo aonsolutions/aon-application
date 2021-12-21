@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod190;
 
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
@@ -12,14 +13,14 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("ms/Mod190")
 public interface Model190Service extends RemoteService {
 	
-	LinkedList<Mod190> getMod190s(String domainName, String user, int domain) throws AonCoreException;
-	Mod190 getMod190(String domainName, String user, int domain,Integer id) throws AonCoreException;
-	Mod190Detail getDetail(String domainName, String user, int domain,Integer id) throws AonCoreException;
-	void delete(String domainName, String user, int domain,Mod190 mod190) throws AonCoreException;
-	Mod190 save(String domainName, String user, int domain,Mod190 mod190) throws AonCoreException;
-	Mod190 initialize(String domainName, String user, Integer domain, Integer year);
-	Mod190 saveComments(String domainName, String user, Mod190 mod190) throws AonCoreException;
-	Mod190 changeStatus(String domainName, String user, Mod190 mod190, FiscalStatus newStatus) throws AonCoreException;
-	Mod190 duplicateMod190(String domainName, String user, Integer domain, Mod190 mod190) throws AonCoreException;
+	LinkedList<Mod190> getMod190s(Occam occam) throws AonCoreException;
+	Mod190 getMod190(Occam occam,Integer id) throws AonCoreException;
+	Mod190Detail getDetail(Occam occam,Integer id) throws AonCoreException;
+	void delete(Occam occam,Mod190 mod190) throws AonCoreException;
+	Mod190 save(Occam occam,Mod190 mod190) throws AonCoreException;
+	Mod190 initialize(Occam occam, Integer year);
+	Mod190 saveComments(Occam occam, Mod190 mod190) throws AonCoreException;
+	Mod190 changeStatus(Occam occam, Mod190 mod190, FiscalStatus newStatus) throws AonCoreException;
+	Mod190 duplicate(Occam occam, Mod190 mod190) throws AonCoreException;
 
 }

@@ -1,7 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod190;
 
+import com.esferalia.aon.gwt.fiscal.client.mod190.Model190.Model190Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190Base.IModel190Detail;
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190Base.Model190BaseCallback;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
@@ -11,7 +12,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class Model190GIPUZKOADetail2017 extends DockLayoutPanel implements IModel190Detail {
+public class Model190NAVARRADetail2021 extends DockLayoutPanel implements IModel190Detail {
 	
 	protected interface IModel190DetailCallback {
 		void onNameChanged( Mod190Detail detail );
@@ -19,9 +20,9 @@ public class Model190GIPUZKOADetail2017 extends DockLayoutPanel implements IMode
 	}
 	private Model190DetailTable table;
 	
-	public Model190GIPUZKOADetail2017( Model190BaseCallback callback, Integer selectedIndex ) {
+	public Model190NAVARRADetail2021( Model190Callback callback, Mod190 model,Integer selectedIndex ) {
 		super(Unit.PX);
-		table = new Model190DetailTable(callback, selectedIndex);
+		table = new Model190DetailTable(callback, model, selectedIndex);
 		addWest(table, 300);
 		
 		SimpleLayoutPanel container = new SimpleLayoutPanel();
@@ -29,7 +30,7 @@ public class Model190GIPUZKOADetail2017 extends DockLayoutPanel implements IMode
 			
 			@Override
 			public void onSelection(SelectionEvent<Mod190Detail> event) {
-				Model190GIPUZKOA2017DetailPanel panel = new Model190GIPUZKOA2017DetailPanel(event.getSelectedItem(), new IModel190DetailCallback() {
+				Model190NAVARRA2021DetailPanel panel = new Model190NAVARRA2021DetailPanel(event.getSelectedItem(), new IModel190DetailCallback() {
 					
 					@Override
 					public void onValueChanged(Mod190Detail detail) {

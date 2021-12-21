@@ -1940,6 +1940,18 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return getTbaiConfiguration().isActive();
 	}
 	
+	public boolean isAraba() {
+		return getTbaiConfiguration().isAraba();
+	}
+	
+	public boolean isBizkaia() {
+		return getTbaiConfiguration().isBizkaia();
+	}
+	
+	public boolean isGipuzkoa() {
+		return getTbaiConfiguration().isGipuzkoa();
+	}
+	
 	public TbaiConfiguration getTbaiConfiguration() {
 		if(tbaiConfiguration == null) {
 			String domainName = AonUtil.getDomainName();

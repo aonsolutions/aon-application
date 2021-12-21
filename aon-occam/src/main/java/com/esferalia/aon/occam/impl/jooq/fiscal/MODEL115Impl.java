@@ -5,12 +5,10 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.IMODEL115;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod115DAO;
 
 public class MODEL115Impl implements IMODEL115 {

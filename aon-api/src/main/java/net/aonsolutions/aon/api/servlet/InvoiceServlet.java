@@ -472,7 +472,15 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		}
 		invoice = AON_SOLUTIONS.acceptInvoice(api.getDomain(), api.getUser(), invoice);
 		acceptTbai(tbaiConfiguration, company, invoice);
-		return InvoiceJSON.toJSON(invoice);
+		JSONObject json = InvoiceJSON.toJSON(invoice);
+		if(invoice.isSales() && tbaiConfiguration.isActive()) {	
+			String tbaiUrl = TbaiData.getTbaiUrl(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoice.getId());
+			if(!AonStringUtils.isBlank(tbaiUrl)) {
+				json.put("tbai", true);
+				json.put("tbaiUrl", tbaiUrl);
+			}
+		}
+		return json;
 	}
 	
 	public static void acceptTbai(TbaiConfiguration tbaiConfiguration, Company company,  Invoice invoice) throws JAXBException, ParserConfigurationException, SAXException, IOException, StatusCodeException {

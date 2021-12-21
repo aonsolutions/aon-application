@@ -10,14 +10,11 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
@@ -28,7 +25,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -42,13 +38,11 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod190DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod193DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod347DAO;
@@ -57,7 +51,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod3902014DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902015DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902018DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OperationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.Mod2002013DAO;
@@ -140,54 +133,6 @@ public class FiscalImpl implements IFiscal {
 	public Mod180 duplicateMod180(AONContext ctx, Mod180 mod180) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod180DAO.duplicate(ctx, mod180));		
-	}
-
-	// ----------------------------------------------------------- [MODELO 190]
-	@Override
-	public LinkedList<Mod190> getMod190s(AONContext ctx, int domain) {
-		return Mod190DAO.getByDomain(ctx, domain);
-	}
-
-	@Override
-	public Mod190 getMod190(AONContext ctx, Integer id) {
-		return Mod190DAO.getById(ctx, id);
-	}
-
-	@Override
-	public Mod190 initializeMod190(AONContext ctx, int year) {
-		return Mod190DAO.initialize(ctx, year);
-	}
-	@Override
-	public Mod190 saveMod190(AONContext ctx, Mod190 mod190) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod190DAO.save(ctx, mod190));
-	}
-
-	@Override
-	public void deleteMod190(AONContext ctx, Mod190 mod190) {
-		ctx.getDslContext().transaction(
-				configuration -> Mod190DAO.delete(ctx, mod190));
-	}
-
-	@Override
-	public Mod190Detail getMod190Detail(AONContext ctx, Integer id) {
-		return Mod190DAO.getDetail(ctx, id);
-	}
-	
-	@Override
-	public Mod190 saveCommentsMod190(AONContext ctx, Mod190 mod190) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod190DAO.saveComments(ctx, mod190));		
-	}
-	@Override
-	public Mod190 changeStatusMod190(AONContext ctx, Mod190 mod190, FiscalStatus newStatus) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod190DAO.changeStatus(ctx, mod190, newStatus));		
-	}
-	@Override
-	public Mod190 duplicateMod190(AONContext ctx, Mod190 mod190) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod190DAO.duplicate(ctx, mod190));		
 	}
 
 	// ----------------------------------------------------------- [MODELO 193]
