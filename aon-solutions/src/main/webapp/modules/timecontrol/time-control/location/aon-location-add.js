@@ -2,7 +2,6 @@ import { AonElement } from "../../../../components/AonElement.js";
 import { setValueName, serializeForm, waitEl } from "../../../../services/utils.js";
 import { deleteLocation, saveLocation } from "../../../../services/service.js";
 import { getPosition } from "../../../../services/maps.js";
-import { URL_MAP } from "../../../../environments/constants.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import * as ACTION from '../../../actions.js';
@@ -171,24 +170,16 @@ export class AonLocationAdd extends AonElement {
     iframe.style.border = 0;
     iframe.style.height = "400px";
     iframe.style.width = "100%";
-    if (data && data.latitude && data.longitude) {
-      iframe.loading = "lazy";
-      iframe.src = `${CONSTANT.URL_MAP_EMBED}&q=${data.latitude},${data.longitude}&zoom=${zoom}&language=es`;
-    } else {
-      // createInput({
-      //   attributes:{
-      //     name:"address",
-      //     id:"address" ,
-      //     type:"text",
-      //     description:"Dirección",
-      //   }
-      // }, aonMap);  
-      iframe = this.iframeOnload(iframe, zoom);
-    }
+    let position = null;
+    if (data && data.latitude && data.longitude) 
+      position = { ...data}
+
+    iframe = this.iframeOnload(iframe, zoom, position);
+    
     aonMap.appendChild(iframe);
   }
 
-  iframeOnload(iframe, zoom) {
+  iframeOnload(iframe, zoom, position = null) {
     iframe.onload = async () => {
 
       const doc = iframe.contentDocument;
@@ -201,9 +192,11 @@ export class AonLocationAdd extends AonElement {
         this.loadScript("https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js", doc)
       ]);
 
-      let pos = await getPosition().then(({ latitude, longitude }) => ({ latitude, longitude })).catch((e) => null);
-      if (pos) 
-        this.initMap(doc, wd, pos, zoom);
+      if(!position)
+        position = await getPosition().then(({ latitude, longitude }) => ({ latitude, longitude })).catch((e) => null);
+
+      if (position) 
+        this.initMap(doc, wd, position, zoom);
     }; //onload
     return iframe;
   }
@@ -313,15 +306,33 @@ export class AonLocationAdd extends AonElement {
     }
   }
 
-  geocodeReverse(map, geocoder, doc, {lat, lng}){
-    geocoder.reverse({lat, lng}, map.options.crs.scale(map.getZoom()), (results) => {
-        let r = results[0];
-        if (r && r.name) {
-          const name = r.name;
-          doc.querySelector(".leaflet-control-geocoder-form > input").value = name;
-          this.updateMarkerAddress(name);
-        }
+  async geocodeReverse(map, geocoder, doc, {lat, lng}){
+    this.geocodeLoading(doc, true);
+    let data = await new Promise((resolve, reject) => {
+      geocoder.reverse({lat, lng}, map.options.crs.scale(map.getZoom()), (results) => {
+        try {
+          let r = results[0];
+          if (r && r.name) 
+            resolve(r.name);
+        } catch (error) { }
+        reject(null);
+     });
     });
+
+    if(data)
+      doc.querySelector(".leaflet-control-geocoder-form > input").value = data;
+    
+    this.geocodeLoading(doc, false);
+
+  }
+
+  geocodeLoading(doc, load = false){
+    try {
+      const classLoad = "leaflet-control-geocoder-throbber";
+      let buttonParent = doc.querySelector("button.leaflet-control-geocoder-icon").parentNode;
+      if(buttonParent)
+        load ?  buttonParent.classList.add(classLoad) : buttonParent.classList.remove(classLoad);
+    } catch (error) {}
   }
 
   addMarker(map, geocoder, doc, wd, {lat, lng}){
@@ -332,11 +343,6 @@ export class AonLocationAdd extends AonElement {
     });
     return marker;
   } 
-
-  updateMarkerAddress(str) {
-    // this.getElement('address').value = str;
-  }
-
 
   loadLink(url, doc){ 
     return new Promise((resolve, reject) => {

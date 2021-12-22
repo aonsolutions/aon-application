@@ -270,10 +270,10 @@ export const HTML_ELEMENT = 'htmlElement';
 
 // ----- Z
 
-export const API_KEY_MAP = 'AIzaSyAr2rzslqS8G6uy5IWEczcPFHpaXOfVjO4';
+// export const API_KEY_MAP = 'AIzaSyAr2rzslqS8G6uy5IWEczcPFHpaXOfVjO4';
 
-export const URL_MAP = `https://maps.googleapis.com/maps/api/js?key=${API_KEY_MAP}&hl=es&callback=showNewMap`;
-export const URL_MAP_EMBED = `https://www.google.com/maps/embed/v1/place?key=${API_KEY_MAP}`;
+// export const URL_MAP = `https://maps.googleapis.com/maps/api/js?key=${API_KEY_MAP}&hl=es&callback=showNewMap`;
+// export const URL_MAP_EMBED = `https://www.google.com/maps/embed/v1/place?key=${API_KEY_MAP}`;
 
 
 

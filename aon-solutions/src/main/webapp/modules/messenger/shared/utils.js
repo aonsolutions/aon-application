@@ -398,7 +398,7 @@ export const buildForm = (div, aonMessengerChat) => {
         createDivGrid(divStatic, selectApp, {classes:[CSS.AON_COL_XS_6]})
         fillSelectAppCau(aonMessengerChat);
     } else //if(   (!task.id || task.isExternal()) && !( dataDefault.source_id && [1,3].includes(dataDefault.source_id) ))
-    if(!task.id || task.isExternal()){
+    if((!task.id || task.isExternal()) && !aonMessengerChat.getDur().isEmployee()){
 
         let initText = !task.id || task.isExternal() ? 'Para' : 'De';
         let titleBtn = isAdvisoryCompany ?  `${initText} tu ${MSG.CUSTOMER}` : `${initText} tu Gestor`;

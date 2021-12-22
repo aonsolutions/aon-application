@@ -19,7 +19,7 @@ export const createFormEvent = (id, parent) => {
 
     divC = createDiv({classes:[CSS.AON_COL_SM_12]});
     divC.appendTo(div.element);
-    createCard({id: id+"CardCoordinate", title:"Coordenadas", visible:"false"}, divC.element);
+    createCard({id: id+"CardCoordinate", title:"Mapa", visible: false}, divC.element);
   
     return form.element;
 }
