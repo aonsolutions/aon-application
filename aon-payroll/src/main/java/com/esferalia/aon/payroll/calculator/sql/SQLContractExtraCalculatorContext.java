@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.DelegateIterator;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
@@ -52,6 +54,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -60,6 +63,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculatorContext {
@@ -118,9 +122,14 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 					super.getContractPayments());
 		} // TODO: This should not be necessary!!!
 		
-		Collection<IContractPayment> monthlyQuotedPayments= getMonthlyQuotedPayments();
-		if ( monthlyQuotedPayments.size() == getMonths() ) 
-			return monthlyQuotedPayments;
+		Collection<IContractPayment> overridePayments = getOverridePayments();
+		
+		Collection<IContractPayment> monthlyQuotedPayments = getMonthlyQuotedPayments();
+
+		Collection<IContractPayment> implicitPayemnts = merge(overridePayments, monthlyQuotedPayments); 
+		
+		if ( implicitPayemnts.size() == getMonths() ) 
+			return implicitPayemnts;
 		
 		
 		addSalaryContractPayments();
@@ -130,7 +139,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		Collection<IContractPayment> contractPayments = new ContractPayments(super.getContractPayments(), extraPaymentFilter);
 
 		return  
-		new FilterCollection<>(extraPaymentFilter, new CompositePayments<IContractPayment>(monthlyQuotedPayments, contractPayments,getWarnPayment(monthlyQuotedPayments)));
+		new FilterCollection<>(extraPaymentFilter, new CompositePayments<IContractPayment>(implicitPayemnts, contractPayments,getWarnPayment(monthlyQuotedPayments)));
 		
 	}
 	
@@ -242,22 +251,24 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			
 			
 			salary.getPayments().stream()
-			.filter( p -> p.getAmount() == null || p.getAmount() == 0.00)
+			.filter( p -> isNotProrrated(salary,p))
 			.distinct().forEach( salaryPayment -> 
 			getContractPaymentByDescription(salaryPayment, extraPayments)
 			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
 			);
 			
 			
-			if ( payments.isEmpty() )  {
-				salary.getPayments().forEach( salaryPayment -> 
-				getContractPaymentByDescription(salaryPayment, extraPayments)
-				.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
-				);
-			}
+//			if ( payments.isEmpty() )  {
+//				salary.getPayments().forEach( salaryPayment -> 
+//				getContractPaymentByDescription(salaryPayment, extraPayments)
+//				.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
+//				);
+//			}
 
 			if ( payments.isEmpty() )  {
-				salary.getPayments().forEach( salaryPayment -> 
+				salary.getPayments().stream()
+				.filter(p -> isNotProrrated(salary,p))
+				.forEach( salaryPayment -> 
 				getContractPaymentByName(salaryPayment, extraPayments)
 				.ifPresent( p -> {
 					if ( payments.isEmpty() )
@@ -280,6 +291,85 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return monthlyQuotedPayments;
 	}
 	
+	private Collection<IContractPayment> getOverridePayments()  {
+		int issueDay = AonDateUtils.get(getIssueDate(), Calendar.DAY_OF_MONTH ); 
+		int issueMonth = AonDateUtils.get(getIssueDate(), Calendar.MONTH ) +1; 
+		String overrideVarName = String.format("%s_%d_%d", DEFAULT_EXTRA_NAME, issueDay, issueMonth);
+		
+		Filter<IContractPayment> extraPaymentFilter = getExtraPaymentFilter();
+		
+		try {
+			for ( IContractPayment p : super.getContractPayments() )
+				if ( extraPaymentFilter.accept(p))
+					return getOverridePayments( overrideVarName , p);
+		} catch (AonException e) {
+		}
+		
+		return Collections.emptyList();
+	}
+	
+	
+	private Collection<IContractPayment> getOverridePayments(String varName, IContractPayment contractPayment){
+
+
+		final Collection<IContractPayment> payments = new LinkedList<IContractPayment>();
+
+		Period[] periods = getPeriods(varName);
+
+		for (Period period : periods) {
+
+			DelegateContractPayment payment = new DelegateContractPayment(contractPayment) {
+				
+				@Override
+				public Integer getId() {
+					return  Integer.MIN_VALUE + ( contractPayment.getId() % 1000 ); //;super.getId() * (-1)
+				}
+				
+				@Override
+				public Date getEndDate() {
+					return period.getEnd();
+				}
+
+				@Override
+				public Date getStartDate() {
+					return period.getStart();
+				}
+				
+				@Override
+				public SalaryType getSalaryType() {
+					return SalaryType.EXTRA;
+				}
+
+				@Override
+				public ExpressionScope getScope() {
+					return ExpressionScope.APPLICATION;
+				}
+				
+				@Override
+				public String getExpression() {
+					return varName;
+				}
+				
+				@Override
+				public String getName() {
+					String name = super.getName();
+					return AonStringUtils.isNotBlank(name) ? name : DEFAULT_EXTRA_NAME ;
+				}
+			};
+			
+			payments.add(payment);
+		}
+
+		
+		if ( payments.isEmpty() )  {
+			ExpressionImpl expression = new ExpressionImpl().setName(varName).setScope(ExpressionScope.SYSTEM);
+			onUndefinedData(expression, varName, getStartDate(), getEndDate(), varName);
+		}
+		
+		return payments;
+
+	}
+
 	private IContractPayment salary2ContractPayment(
 			com.esferalia.aon.occam.api.model.Salary salary, 
 			com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, 
@@ -701,6 +791,18 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return new Period(p.getStartDate(), p.getEndDate()).intersects(new Period(getStart(), getEnd()));
 	}
 	
+	private boolean isNotProrrated(Salary salary, Salary.Payment salaryPayment) {
+		int extraMonth = AonDateUtils.get(getIssueDate(), Calendar.MONTH);
+		int salaryMonth = AonDateUtils.get(salary.getIssueDate(), Calendar.MONTH);
+		
+		Double amount = salaryPayment.getAmount();
+		return
+			AonNumberUtils.isNotValid(amount) 
+			|| AonNumberUtils.todouble(amount)  == 0.00 
+			|| extraMonth == salaryMonth ;
+				
+		
+	}
 	
 	// -------------------------------------------
 	//
@@ -819,4 +921,23 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return ( p.getType() == PaymentType.CRA_0001 ) 
 				&& !AonStringUtils.equals(ContextVariable.PREST_IT, p.getName());		
 	}
+	
+	private static Collection<IContractPayment>  merge ( Collection<IContractPayment> l1, Collection<IContractPayment> l2 ){
+		
+		if ( l1.isEmpty() )
+			return l2;
+		
+		ArrayList<IContractPayment> merge = new ArrayList<>(l1);
+		for (IContractPayment p : l2) {
+			if ( !intersects(l1, p))  
+				merge.add(p);
+		}
+		return merge;
+	}
+
+	private static boolean  intersects ( Collection<IContractPayment> payments, IContractPayment payment){
+		Period period = new Period(payment.getStartDate(), payment.getEndDate());
+		return payments.stream().map( p -> new Period(p.getStartDate(), p.getEndDate())).anyMatch( period::intersects );
+	}
+	
 }
