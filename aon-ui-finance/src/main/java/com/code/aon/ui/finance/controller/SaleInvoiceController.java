@@ -547,4 +547,11 @@ public class SaleInvoiceController extends InvoiceController {
 		
 		// SII
 	}
+	
+	public String getRemoveConfirmMessage() {
+		return this.isTbaiInvoice() 
+			? "La factura está enviada a Ticket Bai. Solo se permitirá borrarla en el periodo de pruebas"
+			: "¿Borrar?";
+				
+	}
 }

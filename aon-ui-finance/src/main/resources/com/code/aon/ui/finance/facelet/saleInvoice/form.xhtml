@@ -22,6 +22,7 @@
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!saleInvoice.nevv and saleInvoiceDetail.to == null}" />
+					<ui:param name="removeConfirmMessage" value="#{saleInvoice.removeConfirmMessage}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:if test="#{!saleInvoice.nevv and saleInvoice.tbai and !saleInvoice.tbaiInvoice and saleInvoice.to.number le 0}"> 
 							<aon:commandButton id="accept"	
