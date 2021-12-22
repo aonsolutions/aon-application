@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.json.AuthJSON;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.UserJSON;
 import com.esferalia.aon.occam.api.json.WorkgroupJSON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -70,6 +71,12 @@ public class UserServlet extends AonApiHttpServlet {
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getDomainUsers(api));
+				break;
+			case "/roles":
+				response(req, resp, getUserRoles(api.getDomain(), JsonUtils.getInteger(api.getParams(), IJsonNames.USER)));
+				break;
+			case "/list":
+				response(req, resp, getUsers(api));
 				break;
 			case "/notice":
 				List<String> schemas = AONContext.getSchemas();
@@ -167,6 +174,17 @@ public class UserServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
+	private JSONArray getUsers(AonApiData api) {
+		Integer page = JsonUtils.getInteger(api.getParams(), IJsonNames.PAGE);
+		Integer perPage = JsonUtils.getInteger(api.getParams(), IJsonNames.PER_PAGE);
+		return UserJSON.toJSON(
+			AON.getDomainUserStream(api.getDomain(), api.getUser(), page, perPage, f -> userFilter(api, f))
+			.map(r -> !r.getAuth().isEmpty() && r.getAuth().getEmail() == null
+				? r.setAuth(AON_SOLUTIONS.getAuth(r.getAuth().getAuth())) 
+				: r)
+			);
+	}
+	
 	private JSONArray getDomainUsers(AonApiData api) {
 		JSONArray jsArray = new JSONArray();
 		AON.getDomainUserStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> userFilter(api, f))
@@ -189,7 +207,7 @@ public class UserServlet extends AonApiHttpServlet {
 				json.put(IJsonNames.SURNAME, auth.getSurname() != null ? auth.getSurname() : "");
 				json.put(IJsonNames.DOCUMENT, auth.getDocument() != null ? auth.getDocument() : "");
 				json.put(IJsonNames.PHONE, auth.getPhone() != null ? auth.getPhone() : "");
-				json.put(IJsonNames.ROLES, getUserRoles(api.getDomain(), r));
+				json.put(IJsonNames.ROLES, getUserRoles(api.getDomain(), r.getId()));
 				json.put(IJsonNames.PORTAL, r.isPortal());
 				json.put(IJsonNames.SHARED, r.isShared());
 				json.put(IJsonNames.LOGIN, r.getLogin());
@@ -215,12 +233,19 @@ public class UserServlet extends AonApiHttpServlet {
 		if(!AonStringUtils.isBlank(api.getParams().optString(IJsonNames.VALUE))) {
 			String value = api.getParams().optString(IJsonNames.VALUE);
 			Filter valueFilter = f.getLoginProperty().like("%" + value + "%")
-					.or(f.getNameProperty().like("%" + value + "%"));
-			filter = valueFilter;
+					.or(f.getNameProperty().like("%" + value + "%"))
+					.or(f.getAuthEmailProperty().like("%" + value + "%"))
+					.or(f.getAuthNameProperty().like("%" + value + "%"))
+					.or(f.getAuthDocumentProperty().like("%" + value + "%"));
+			filter = filter.and(valueFilter);
 		}
 		
 		if(api.getParams().opt(IJsonNames.WORKGROUP) != null) {
 			filter = filter.and(f.getWorkgroupProperty().eq(api.getParams().optInt(IJsonNames.WORKGROUP)));
+		}
+		
+		if(api.getParams().opt(IJsonNames.ID) != null) {
+			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getParams(), IJsonNames.ID)));
 		}
 		
 		return filter;
@@ -272,8 +297,8 @@ public class UserServlet extends AonApiHttpServlet {
 		return json;
 	}
 	
-	private JSONArray getUserRoles(Domain domain, User user) {
-		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(user.getId())).collect(Collectors.toCollection(LinkedList::new));
+	private JSONArray getUserRoles(Domain domain, Integer userId) {
+		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(userId)).collect(Collectors.toCollection(LinkedList::new));
 		JSONArray userAppRoles = new JSONArray();
 		if(roles.stream().count() == 0) {
 //			User usr = AON.getUser(domain.getName(), user.getDomain(), user.getLogin());
@@ -707,7 +732,7 @@ public class UserServlet extends AonApiHttpServlet {
 				js.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
 				js.put("document", auth.getDocument() != null ? auth.getDocument() : "");
 				js.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
-				js.put("roles", getUserRoles(api.getDomain(), user));
+				js.put("roles", getUserRoles(api.getDomain(), user.getId()));
 				js.put("portal", user.isPortal());
 				js.put("shared", user.isShared());
 				js.put("login", user.getLogin());

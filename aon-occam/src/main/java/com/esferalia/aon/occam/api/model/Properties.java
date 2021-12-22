@@ -1354,6 +1354,9 @@ public interface Properties {
 		Property<byte[]> getAuthProperty();
 		Property<Byte> getSharedProperty();
 		Property<Integer> getWorkgroupProperty();
+		Property<String> getAuthNameProperty();
+		Property<String> getAuthEmailProperty();
+		Property<String> getAuthDocumentProperty();
 	}
 
 	public interface TimeControlProperties {

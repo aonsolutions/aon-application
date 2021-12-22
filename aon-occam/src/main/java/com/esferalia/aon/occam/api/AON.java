@@ -2593,6 +2593,12 @@ public class AON {
 		} 
 	}
 	
+	public static Stream<User> getDomainUserStream(Domain domain, User user, Integer page, Integer perPage, UserFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain, user)){
+			return getSecurity().getDomainUserStream(ctx, page, perPage, filter);
+		} 
+	}
+	
 	
 	/**
 	 * @deprecated  Replaced by AON.getUserStream

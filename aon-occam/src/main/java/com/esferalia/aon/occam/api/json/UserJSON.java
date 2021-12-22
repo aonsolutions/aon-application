@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class UserJSON {
 	
@@ -34,9 +35,14 @@ public class UserJSON {
 	}
 	
 	public static JSONObject toJSON(User user) {
-		return new JSONObject()
+		JSONObject json = !user.getAuth().isEmpty() 
+				? AuthJSON.toJSON(user.getAuth())
+				: new JSONObject();
+		return json
 			.put(IJsonNames.ID, user.getId())
-			.put(IJsonNames.AUTH, AuthJSON.toJSON(user.getAuth()))
+			.put(IJsonNames.NAME, AonStringUtils.isBlank(user.getAuth().getName())
+					? user.getName()
+					: user.getAuth().getName())
 			.put(IJsonNames.PORTAL, user.isPortal())
 			.put(IJsonNames.SHARED, user.isShared())
 			.put(IJsonNames.LOGIN, user.getLogin());

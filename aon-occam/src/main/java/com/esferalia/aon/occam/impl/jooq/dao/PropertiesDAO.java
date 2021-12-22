@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.Auth.AUTH;
 import static com.esferalia.aon.jooq.tables.AuthDevice.AUTH_DEVICE;
 import static com.esferalia.aon.jooq.tables.Carrier.CARRIER;
 import static com.esferalia.aon.jooq.tables.CarrierPacking.CARRIER_PACKING;
@@ -41,13 +42,10 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 import static com.esferalia.aon.jooq.tables.Purchase.PURCHASE;
 import static com.esferalia.aon.jooq.tables.PurchaseDetail.PURCHASE_DETAIL;
-import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
-import static com.esferalia.aon.jooq.tables.RdirStaff.RDIR_STAFF;
 import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
-import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Rseller.RSELLER;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
@@ -59,7 +57,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
-import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -105,14 +103,11 @@ import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
-import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryNoteFilter;
-import com.esferalia.aon.occam.api.model.Filter.RegistryPayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
@@ -123,7 +118,6 @@ import com.esferalia.aon.occam.api.model.Filter.TimeControlFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
-import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.AuthDeviceProperties;
@@ -159,13 +153,10 @@ import com.esferalia.aon.occam.api.model.Properties.OfferDetailCommissionPropert
 import com.esferalia.aon.occam.api.model.Properties.PersonProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.PurchaseProperties;
-import com.esferalia.aon.occam.api.model.Properties.RDirStaffProperties;
 import com.esferalia.aon.occam.api.model.Properties.RecordDataProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryBankProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryNoteProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryPayMethodProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistrySellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
@@ -177,7 +168,6 @@ import com.esferalia.aon.occam.api.model.Properties.TimeControlProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserAppRoleProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
-import com.esferalia.aon.occam.api.model.Properties.UserWorkgroupProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 
@@ -1442,6 +1432,9 @@ public class PropertiesDAO {
 		@Override public Property<byte[]> getAuthProperty() { return new FilterDAO.PropertyDAO<>(USER.AUTH);}
 		@Override public Property<Byte> getSharedProperty() {return new FilterDAO.PropertyDAO<>(USER.SHARED);}
 		@Override public Property<Integer> getWorkgroupProperty() { return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.WORKGROUP);}
+		@Override public Property<String> getAuthNameProperty() {return new FilterDAO.PropertyDAO<>(AUTH.NAME);}
+		@Override public Property<String> getAuthEmailProperty() {return new FilterDAO.PropertyDAO<>(AUTH.EMAIL);}
+		@Override public Property<String> getAuthDocumentProperty() {return new FilterDAO.PropertyDAO<>(AUTH.DOCUMENT);}
 	}
 	
 	

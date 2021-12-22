@@ -538,6 +538,18 @@ public class SecurityDAO {
 				.fetch().stream().map(new UserFiller());
 	}
 	
+	public static Stream<User> getDomainUserStream(AONContext ctx, Integer page, Integer perPage, UserFilter filter) {
+		return ctx.getDslContext()
+				.select()
+				.from(USER)
+				.leftOuterJoin(AUTH).on(USER.AUTH.eq(AUTH.ID))
+				.where(USER_PROPERTIES.getConditions(filter))
+				.orderBy(USER.NAME)
+				.limit(perPage)
+				.offset(perPage * (page -1))				
+				.fetch().stream().map(new UserFiller());
+	}
+	
 	public static Stream<User> getUserStream(AONContext ctx, UserFilter filter) {
 		return USER_PROPERTIES.build(ctx.getDslContext().select().from(USER), filter)
 				.fetch().stream().map(new UserFiller());
