@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server.fiscal.mod190;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod180;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,28 +19,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.server.fiscal.ModelAdmonUtils;
-import com.esferalia.aon.occam.api.fiscal.MODEL190;
+import com.esferalia.aon.occam.api.fiscal.MODEL180;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod190Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod180Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.ibm.icu.text.MessageFormat;
 
-@WebServlet(name = "Mod190 Validate Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Mod190ValidatePrintAEAT" })
-public class Mod190ValidatePrintAEAT extends HttpServlet {
+@WebServlet(name = "Mod180 Validate Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Mod180ValidatePrintAEAT" })
+public class Mod180ValidatePrintAEAT extends HttpServlet {
 
-	private static final Logger LOGGER = Logger.getLogger(Mod190ValidatePrintAEAT.class.getName()); 
+	private static final Logger LOGGER = Logger.getLogger(Mod180ValidatePrintAEAT.class.getName()); 
 	private static final long serialVersionUID = -898176379168968783L;
 
 	private enum AeatUrl {
-		URL_1901 {
+		URL_1801 {
 
 			@Override
-			protected boolean accept(Mod190 mod190) {
+			protected boolean accept(Mod180 mod180) {
 				return true;
 			}
 
@@ -50,18 +50,18 @@ public class Mod190ValidatePrintAEAT extends HttpServlet {
 			}
 
 			@Override
-			protected String getUrlParameters(Mod190 mod190) throws IOException {
+			protected String getUrlParameters(Mod180 mod180) throws IOException {
 				ByteArrayOutputStream output = new ByteArrayOutputStream();
 				PrintWriter writer = new PrintWriter(output, true, StandardCharsets.ISO_8859_1);
-				Mod190Writer.fillWriter(mod190, writer);
-				return MessageFormat.format("MOD=190&EJF={0}&FIC={1}&IDI=ES"
-						,AonNumberUtils.toString( mod190.getYear())
+				Mod180Writer.fillWriter(mod180, writer);
+				return MessageFormat.format("MOD=180&EJF={0}&FIC={1}&IDI=ES"
+						,AonNumberUtils.toString( mod180.getYear())
 						,ModelAdmonUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1));
 			}
 		};
-		private static AeatUrl getAeatUrl(Mod190 mod190) {
+		private static AeatUrl getAeatUrl(Mod180 mod180) {
 			for (AeatUrl aeatUrl : AeatUrl.values()) {
-				if (aeatUrl.accept(mod190)) {
+				if (aeatUrl.accept(mod180)) {
 					return aeatUrl;
 				}
 			}
@@ -69,9 +69,9 @@ public class Mod190ValidatePrintAEAT extends HttpServlet {
 				" Descargue el archivo para su presentación y acceda a los servidores de la Agencia Tributaria manualmente.");
 		}
 
-		protected abstract boolean accept( Mod190 mod190);
+		protected abstract boolean accept( Mod180 mod180);
 		protected abstract String getUrl();
-		protected abstract String getUrlParameters(Mod190 mod190) throws IOException;
+		protected abstract String getUrlParameters(Mod180 mod180) throws IOException;
 	}
 
 	@Override
@@ -84,15 +84,15 @@ public class Mod190ValidatePrintAEAT extends HttpServlet {
 					.setDomainName(aeatParams.getDomainName())
 					.setDomain(aeatParams.getDomainId())
 					.setUser(aeatParams.getUser());
-			Mod190 mod190 = MODEL190.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			Mod180 mod180 = MODEL180.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 			
-			if (mod190 == null) {
+			if (mod180 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}
-			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod190);
+			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod180);
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( aeatURL.getUrl() ))
-				.POST(HttpRequest.BodyPublishers.ofString(aeatURL.getUrlParameters(mod190)))
+				.POST(HttpRequest.BodyPublishers.ofString(aeatURL.getUrlParameters(mod180)))
 				.setHeader( AonHttpUtils.USER_AGENT  , "Java 11 HttpClient Bot")
 				.setHeader( AonHttpUtils.CONTENT_TYPE, "application/x-www-form-urlencoded")
 				.build();
