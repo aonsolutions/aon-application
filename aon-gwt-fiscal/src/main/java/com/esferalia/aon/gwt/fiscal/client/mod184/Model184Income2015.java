@@ -1,7 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod184;
 
+import com.esferalia.aon.gwt.fiscal.client.mod184.Model184.Model184Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184Base.IModel184Income;
-import com.esferalia.aon.gwt.fiscal.client.mod184.Model184Base.Model184BaseCallback;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
@@ -19,9 +20,9 @@ public class Model184Income2015 extends DockLayoutPanel implements IModel184Inco
 	}
 	private Model184IncomeTable table;
 	
-	public Model184Income2015( Model184BaseCallback callback, Integer selectedIndex ) {
+	public Model184Income2015( Model184Callback callback, Mod184 mod184, Integer selectedIndex ) {
 		super(Unit.PX);
-		table = new Model184IncomeTable(callback, selectedIndex);
+		table = new Model184IncomeTable(callback, mod184, selectedIndex);
 		addWest(table, 300);
 		
 		SimpleLayoutPanel container = new SimpleLayoutPanel();

@@ -8,14 +8,8 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
-import com.esferalia.aon.occam.api.model.fiscal.Mod180;
-import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190;
-import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
@@ -26,7 +20,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -40,7 +33,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
-import com.esferalia.aon.occam.api.model.type.Mod390Key;
 
 public interface IFiscal {
 	// 			        IRPF
@@ -72,16 +64,6 @@ public interface IFiscal {
 	public Mod193 changeStatusMod193(AONContext ctx, Mod193 mod193, FiscalStatus newStatus);
 	public Mod193 duplicateMod193(AONContext ctx, Mod193 mod193);
 	
-	// 				   		  MOD184
-	public LinkedList<Mod184> getMod184s(AONContext ctx,int domain);
-	public Mod184 getMod184(AONContext ctx,Integer id);
-	public Mod184 initializeMod184(AONContext ctx, int year);
-	public Mod184 saveMod184(AONContext ctx,Mod184 mod184);
-	public void deleteMod184(AONContext ctx,Mod184 mod184);
-	public Mod184 saveCommentsMod184(AONContext ctx, Mod184 mod184);
-	public Mod184 changeStatusMod184(AONContext ctx, Mod184 mod184, FiscalStatus newStatus);
-	public Mod184 duplicateMod184(AONContext ctx, Mod184 mod184);
-
 	// 				   		  	MOD390
 	public Mod390 getMod390(AONContext ctx, int domain, Integer id);
 	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain);

@@ -1,22 +1,17 @@
 package com.esferalia.aon.gwt.fiscal.client.mod184;
 
-import java.util.Date;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184Income2015.IModel184IncomeCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -24,30 +19,33 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class Model1842015IncomePanel extends SimpleLayoutPanel implements Focusable {
 	
-	private static enum Mod184IncomeKey {
+	private static final String WIDTH_200PX = "200px";
+	private static final String RENDIMIENTOS_EXTRANJERO = "02 - Rendimientos obtenidos en el extranjero";
+	private static final String RENDIMIENTOS_ESPANA = "01 - Rendimientos obtenidos en Espa\u00F1a";
+
+	private enum Mod184IncomeKey {
 		 A ("A - Rendimientos del capital mobiliario."
 			 ,new String[] {"01","02","03"}
 		 	 ,new String[] {
-	 			 "01 - Rendimientos obtenidos en Espa\u00F1a"
-		 		,"02 - Rendimientos obtenidos en el extranjero"
+	 			 RENDIMIENTOS_ESPANA
+		 		,RENDIMIENTOS_EXTRANJERO
 		 		,"03 - Reducciones aplicable"})
 		,B ("B - Identificaci\u00F3n de la persona o entidad cesionaria de los capitales propios."
 				,null,null)
 		,C ("C - Rendimientos del capital inmobiliario."
 			,new String[] {"01","02","03"}
 		 	 ,new String[] {
-	 			 "01 - Rendimientos obtenidos en Espa\u00F1a"
-	 			,"02 - Rendimientos obtenidos en el extranjero"
+	 			 RENDIMIENTOS_ESPANA
+	 			,RENDIMIENTOS_EXTRANJERO
 	 			,"03 - Reducciones aplicable"})
 		,D ("D - Rendimientos de actividades econ\u00F3micas."
 			,new String[] {"01","02","03"}
 		 	 ,new String[] {
-	 			 "01 - Rendimientos obtenidos en Espa\u00F1a"
-		 		,"02 - Rendimientos obtenidos en el extranjero"
+	 			 RENDIMIENTOS_ESPANA
+		 		,RENDIMIENTOS_EXTRANJERO
 		 		,"03 - Importe del rendimientocon derecho a reducci\u00F3n"})
 		,E ("E - Rentas contabilizadas derivadas de la participaci\u00F3n en Instituciones de Inversi\u00F3n Colectiva."
 			,null,null)
@@ -110,8 +108,6 @@ public class Model1842015IncomePanel extends SimpleLayoutPanel implements Focusa
 				,"G - Ganancias y p\u00E9rdidas patrimoniales derivadas de transmisiones de elementos patrimoniales."
 			})
 		;
-
-
 		
 		private String description;
 		private String[] subkeys;
@@ -141,69 +137,57 @@ public class Model1842015IncomePanel extends SimpleLayoutPanel implements Focusa
 		}
 	}
 
-	private static class MediumLabel extends InlineLabel {
-		private MediumLabel(String label) {
-			super();
-			if (AonStringUtils.length(label) > 35) {
-				setText(AonStringUtils.abbreviate(label, 35));
-				setTitle(label);
-			} else {
-				setText(label);
-			}
-			setStyleName(AON.AON_CSS.aonFontMedium());
-		}
-	}
 	private int tabIndex; 
 
 	private ListBox key = new ListBox();
 	private ListBox subkey = new ListBox();
 	private CountryListBox country = new CountryListBox();
-	private DocumentTextBox granteeDocument = new DocumentTextBox();
-	private TextBox granteeName = new TextBox();
-	private DateBoxEx adqDate = new DateBoxEx();
+	private AonDocumentTextBox granteeDocument = new AonDocumentTextBox();
+	private AonTextBox granteeName = new AonTextBox();
+	private AonDateBox adqDate = new AonDateBox();
 	private ListBox activityType = new ListBox();
-	private IntegerBox epigraph = new IntegerBox();
+	private AonIntegerBox epigraph = new AonIntegerBox();
 	private ListBox regime = new ListBox();
-	private DoubleBox accountingResult = new DoubleBox();
-	private DoubleBox expenses = new DoubleBox();
-	private DoubleBox netYield = new DoubleBox();
-	private DoubleBox reductionPercent = new DoubleBox();
-	private DoubleBox deductionRightRent = new DoubleBox();
-	private DoubleBox result = new DoubleBox();
-	private DoubleBox decrease = new DoubleBox();
-	private DoubleBox increase = new DoubleBox();
-	private DoubleBox deductionBase = new DoubleBox();
-	private DoubleBox retention = new DoubleBox();
+	private AonDoubleBox accountingResult = new AonDoubleBox();
+	private AonDoubleBox expenses = new AonDoubleBox();
+	private AonDoubleBox netYield = new AonDoubleBox();
+	private AonDoubleBox reductionPercent = new AonDoubleBox();
+	private AonDoubleBox deductionRightRent = new AonDoubleBox();
+	private AonDoubleBox result = new AonDoubleBox();
+	private AonDoubleBox decrease = new AonDoubleBox();
+	private AonDoubleBox increase = new AonDoubleBox();
+	private AonDoubleBox deductionBase = new AonDoubleBox();
+	private AonDoubleBox retention = new AonDoubleBox();
 
 	private ListBox location = new ListBox();
-	private TextBox cadasdralReference = new TextBox();
-	private DoubleBox staffExpenses = new DoubleBox();
-	private DoubleBox assetAcquisition = new DoubleBox();
-	private DoubleBox taxDeduction = new DoubleBox();
-	private DoubleBox otherTaxDeduction = new DoubleBox();
+	private AonTextBox cadasdralReference = new AonTextBox();
+	private AonDoubleBox staffExpenses = new AonDoubleBox();
+	private AonDoubleBox assetAcquisition = new AonDoubleBox();
+	private AonDoubleBox taxDeduction = new AonDoubleBox();
+	private AonDoubleBox otherTaxDeduction = new AonDoubleBox();
 	
 
 	public Model1842015IncomePanel(Mod184Income income, IModel184IncomeCallback callback) {
 		ScrollPanel scroll = new ScrollPanel();
-		scroll.setStyleName(AON.AON_CSS.aonWidthAll());
+		scroll.setStyleName(AON.CSS.aonWidthAll());
 		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.setStyleName(AON.CSS.aonScrollArea());
 		
 		FlexTable tab1 = new FlexTable();
 		tab1.getColumnFormatter().setWidth(0, "110px");
 		tab1.getColumnFormatter().setWidth(1, "110px");
 		tab1.getColumnFormatter().setWidth(2, "auto");
 		
-		tab1.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab1.addStyleName(AON.AON_CSS.aonNowrap());
-		tab1.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBorderBottom());
-		tab1.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
+		tab1.setStyleName(AON.CSS.aonWidthAll());
+		tab1.addStyleName(AON.CSS.aonNowrap());
+		tab1.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab1.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab1.getFlexCellFormatter().setColSpan(0, 0, 4);
 		tab1.setWidget(0, 0, new InlineLabel(AON.MSG.entityIncomes()));
 
- 		tab1.setWidget(1, 0, new MediumLabel(AON.MSG.key()));
-		tab1.setWidget(1, 1, new MediumLabel(AON.MSG.subkey()));
-		tab1.setWidget(1, 2, new MediumLabel(AON.MSG.country()));
+ 		tab1.setWidget(1, 0, new Model184SmallerLabel(AON.MSG.key()));
+		tab1.setWidget(1, 1, new Model184SmallerLabel(AON.MSG.subkey()));
+		tab1.setWidget(1, 2, new Model184SmallerLabel(AON.MSG.country()));
 
 		subkey.setWidth("100px");
 
@@ -214,110 +198,88 @@ public class Model1842015IncomePanel extends SimpleLayoutPanel implements Focusa
 		
 		Model1842015IncomePanel.setValue(key, subkey, income);
 		
-		key.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				subkey.clear();
-				Mod184IncomeKey keyEnum = Mod184IncomeKey.values()[key.getSelectedIndex()];
-				income.setKey( keyEnum.toString() );
-				if (keyEnum.hasSubkeys()) {
-					subkey.setEnabled(true);
-					for (int i = 0; i < keyEnum.getSubkeys().length; i++) {
-						subkey.addItem(keyEnum.getSubkeyDescriptions()[i],keyEnum.getSubkeys()[i]);
-					}
-					income.setSubKey(keyEnum.getSubkeys()[0]);
-				} else {
-					subkey.setEnabled(false);
-					income.setSubKey(null);
+		key.addChangeHandler(event -> {
+			subkey.clear();
+			Mod184IncomeKey keyEnum = Mod184IncomeKey.values()[key.getSelectedIndex()];
+			income.setKey( keyEnum.toString() );
+			if (keyEnum.hasSubkeys()) {
+				subkey.setEnabled(true);
+				for (int i = 0; i < keyEnum.getSubkeys().length; i++) {
+					subkey.addItem(keyEnum.getSubkeyDescriptions()[i],keyEnum.getSubkeys()[i]);
 				}
-				enableWidgets( income );
-				callback.onTableChanged(income);
+				income.setSubKey(keyEnum.getSubkeys()[0]);
+			} else {
+				subkey.setEnabled(false);
+				income.setSubKey(null);
 			}
+			enableWidgets( income );
+			callback.onTableChanged(income);
 		});
 		tab1.setWidget(2, 0, key);
 		
-		subkey.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				Mod184IncomeKey keyEnum = Mod184IncomeKey.values()[key.getSelectedIndex()];
-				if (keyEnum.hasSubkeys()) {
-					int idx = subkey.getSelectedIndex() == -1 ? 0 : subkey.getSelectedIndex();
-					income.setSubKey(keyEnum.getSubkeys()[idx]);
-				} else {
-					subkey.setEnabled(false);
-					income.setSubKey(null);
-				}
-				enableWidgets( income );
-				callback.onTableChanged(income);
+		subkey.addChangeHandler(event -> {
+			Mod184IncomeKey keyEnum = Mod184IncomeKey.values()[key.getSelectedIndex()];
+			if (keyEnum.hasSubkeys()) {
+				int idx = subkey.getSelectedIndex() == -1 ? 0 : subkey.getSelectedIndex();
+				income.setSubKey(keyEnum.getSubkeys()[idx]);
+			} else {
+				subkey.setEnabled(false);
+				income.setSubKey(null);
 			}
+			enableWidgets( income );
+			callback.onTableChanged(income);
 		});
 		tab1.setWidget(2, 1, subkey);
 		
 		country.setValue( Country.safeValueOf( income.getCountry() ));
-		country.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				income.setCountry(country.getSelectedValue());
-				callback.onValueChanged(income);
-			}
+		country.addChangeHandler(event -> {
+			income.setCountry(country.getSelectedValue());
+			callback.onValueChanged(income);
 		});
 		tab1.setWidget(2, 2, country);
 		
 		
 
 		FlexTable tab2 = new FlexTable();
-		tab2.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab2.addStyleName(AON.AON_CSS.aonNowrap());
+		tab2.setStyleName(AON.CSS.aonWidthAll());
+		tab2.addStyleName(AON.CSS.aonNowrap());
 		
 		tab2.getColumnFormatter().setWidth(0, "150px");
-		tab2.getColumnFormatter().setWidth(1, "200px");
-		tab2.getColumnFormatter().setWidth(2, "200px");
+		tab2.getColumnFormatter().setWidth(1, WIDTH_200PX);
+		tab2.getColumnFormatter().setWidth(2, WIDTH_200PX);
 		tab2.getColumnFormatter().setWidth(3, "auto");
 
- 		tab2.setWidget(0, 0, new MediumLabel(AON.MSG.granteeDocument()));
-		tab2.setWidget(0, 1, new MediumLabel(AON.MSG.granteeName()));
-		tab2.setWidget(0, 2, new MediumLabel(AON.MSG.adqDate()));
+ 		tab2.setWidget(0, 0, new Model184SmallerLabel(AON.MSG.granteeDocument()));
+		tab2.setWidget(0, 1, new Model184SmallerLabel(AON.MSG.granteeName()));
+		tab2.setWidget(0, 2, new Model184SmallerLabel(AON.MSG.adqDate()));
 
 		
 		granteeDocument.setValue(income.getGranteeDocument());
-		granteeDocument.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				income.setGranteeDocument(granteeDocument.getValue());
-				callback.onValueChanged(income);
-			}
+		granteeDocument.addValueChangeHandler(event -> {
+			income.setGranteeDocument(granteeDocument.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(1, 0, granteeDocument);
 		
-		granteeName.setStyleName(AON.AON_CSS.aonInputText());
 		granteeName.setMaxLength(20); 
 		granteeName.setVisibleLength(20);
 		granteeName.setValue(income.getGranteeName());
-		granteeName.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				income.setGranteeName(granteeName.getValue());
-				callback.onValueChanged(income);
-			}
+		granteeName.addValueChangeHandler(event -> {
+			income.setGranteeName(granteeName.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(1, 1, granteeName);
 		
 		adqDate.setValue(income.getAdqDate());
-		adqDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				income.setAdqDate(adqDate.getValue());
-				callback.onValueChanged(income);
-			}
+		adqDate.addValueChangeHandler(event -> {
+			income.setAdqDate(adqDate.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(1, 2, adqDate);
 		
- 		tab2.setWidget(2, 0, new MediumLabel(AON.MSG.activityType()));
-		tab2.setWidget(2, 1, new MediumLabel(AON.MSG.epigraph()));
-		tab2.setWidget(2, 2, new MediumLabel(AON.MSG.regime()));
+ 		tab2.setWidget(2, 0, new Model184SmallerLabel(AON.MSG.activityType()));
+		tab2.setWidget(2, 1, new Model184SmallerLabel(AON.MSG.epigraph()));
+		tab2.setWidget(2, 2, new Model184SmallerLabel(AON.MSG.regime()));
 		
 		activityType.addItem("-","");
 		activityType.addItem("1 - Actividades empresariales de car\u00E1cter mercantil","1");
@@ -327,26 +289,18 @@ public class Model1842015IncomePanel extends SimpleLayoutPanel implements Focusa
 		activityType.addItem("5 - Restantes actividades profesionales","5");
 		activityType.setWidth("150px");
 		activityType.setSelectedIndex(income.getActivityType());
-		activityType.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				income.setActivityType((byte) activityType.getSelectedIndex());
-				callback.onValueChanged(income);
-			}
+		activityType.addChangeHandler(event -> {
+			income.setActivityType((byte) activityType.getSelectedIndex());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(3, 0, activityType);
 		
-		epigraph.setStyleName(AON.AON_CSS.aonInputText());
 		epigraph.setMaxLength(3); 
 		epigraph.setVisibleLength(3);
 		epigraph.setValue( income.getEpigraph() );
-		epigraph.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				income.setEpigraph( epigraph.getValue());
-				callback.onValueChanged(income);
-			}
+		epigraph.addValueChangeHandler(event -> {
+			income.setEpigraph( epigraph.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(3, 1, epigraph);
 
@@ -358,46 +312,34 @@ public class Model1842015IncomePanel extends SimpleLayoutPanel implements Focusa
 		regime.addItem("1 - Estimaci\u00F3n directa modalidad normal","1");
 		regime.addItem("2 - Estimaci\u00F3n directa modalidad simplificada","2");
 		regime.addItem("3 - Estimaci\u00F3n objetiva","3");
-		regime.setWidth("200px");
+		regime.setWidth(WIDTH_200PX);
 		regime.setSelectedIndex(income.getRegime());
-		regime.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				income.setRegime((byte) regime.getSelectedIndex());
-				enableWidgets( income );
-				callback.onValueChanged(income);
-			}
+		regime.addChangeHandler(event -> {
+			income.setRegime((byte) regime.getSelectedIndex());
+			enableWidgets( income );
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(3, 2, regime);
 		
- 		tab2.setWidget(4, 0, new MediumLabel(AON.MSG.accountingResult()));
-		tab2.setWidget(4, 1, new MediumLabel(AON.MSG.expenses()));
-		tab2.setWidget(4, 2, new MediumLabel(AON.MSG.netYieldExt()));
+ 		tab2.setWidget(4, 0, new Model184SmallerLabel(AON.MSG.accountingResult()));
+		tab2.setWidget(4, 1, new Model184SmallerLabel(AON.MSG.expenses()));
+		tab2.setWidget(4, 2, new Model184SmallerLabel(AON.MSG.netYieldExt()));
 		
 		accountingResult.setValue(income.getAccountingResult());
-		accountingResult.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setAccountingResult(accountingResult.getValue());
-				income.setNetYield( AonMathUtils.round(income.getAccountingResult() - income.getExpenses()));
-				netYield.setValue(income.getNetYield());
-				callback.onValueChanged(income);
-			}
+		accountingResult.addValueChangeHandler(event -> {
+			income.setAccountingResult(accountingResult.getValue());
+			income.setNetYield( AonMathUtils.round(income.getAccountingResult() - income.getExpenses()));
+			netYield.setValue(income.getNetYield());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(5, 0, accountingResult);
 		
 		expenses.setValue(income.getExpenses());
-		expenses.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setExpenses(expenses.getValue());
-				income.setNetYield( AonMathUtils.round(income.getAccountingResult() - income.getExpenses()));
-				netYield.setValue(income.getNetYield());
-				callback.onValueChanged(income);
-			}
+		expenses.addValueChangeHandler(event -> {
+			income.setExpenses(expenses.getValue());
+			income.setNetYield( AonMathUtils.round(income.getAccountingResult() - income.getExpenses()));
+			netYield.setValue(income.getNetYield());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(5, 1, expenses);
 		
@@ -406,100 +348,72 @@ public class Model1842015IncomePanel extends SimpleLayoutPanel implements Focusa
 		tab2.setWidget(5, 2, netYield);
 		
 		
- 		tab2.setWidget(6, 0, new MediumLabel(AON.MSG.reductionPercent()));
-		tab2.setWidget(6, 1, new MediumLabel(AON.MSG.deductionRightRent()));
-		tab2.setWidget(6, 2, new MediumLabel(AON.MSG.profitLoss()));
+ 		tab2.setWidget(6, 0, new Model184SmallerLabel(AON.MSG.reductionPercent()));
+		tab2.setWidget(6, 1, new Model184SmallerLabel(AON.MSG.deductionRightRent()));
+		tab2.setWidget(6, 2, new Model184SmallerLabel(AON.MSG.profitLoss()));
 
 		reductionPercent.setValue(income.getReductionPercent());
-		reductionPercent.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setReductionPercent(reductionPercent.getValue());
-				callback.onValueChanged(income);
-			}
+		reductionPercent.addValueChangeHandler(event -> {
+			income.setReductionPercent(reductionPercent.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(7, 0, reductionPercent);
 
 		deductionRightRent.setValue(income.getDeductionRightRent());
-		deductionRightRent.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setDeductionRightRent(deductionRightRent.getValue());
-				callback.onValueChanged(income);
-			}
+		deductionRightRent.addValueChangeHandler(event -> {
+			income.setDeductionRightRent(deductionRightRent.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(7, 1, deductionRightRent);
 
 		result.setValue(income.getResult());
-		result.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setDeductionRightRent(result.getValue());
-				callback.onValueChanged(income);
-			}
+		result.addValueChangeHandler(event -> {
+			income.setDeductionRightRent(result.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(7, 2, result);
 		
- 		tab2.setWidget(8, 0, new MediumLabel(AON.MSG.adjustDecrease()));
-		tab2.setWidget(8, 1, new MediumLabel(AON.MSG.adjustIncrease()));
-		tab2.setWidget(8, 2, new MediumLabel(AON.MSG.deductionBase()));
-		tab2.setWidget(8, 3, new MediumLabel(AON.MSG.retentionAccountDeposit()));
+ 		tab2.setWidget(8, 0, new Model184SmallerLabel(AON.MSG.adjustDecrease()));
+		tab2.setWidget(8, 1, new Model184SmallerLabel(AON.MSG.adjustIncrease()));
+		tab2.setWidget(8, 2, new Model184SmallerLabel(AON.MSG.deductionBase()));
+		tab2.setWidget(8, 3, new Model184SmallerLabel(AON.MSG.retentionAccountDeposit()));
 		
 		decrease.setValue(income.getDecrease());
-		decrease.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setDecrease(decrease.getValue());
-				callback.onValueChanged(income);
-			}
+		decrease.addValueChangeHandler(event -> {
+			income.setDecrease(decrease.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(9, 0, decrease);
 
 		increase.setValue(income.getIncrease());
-		increase.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setIncrease(increase.getValue());
-				callback.onValueChanged(income);
-			}
+		increase.addValueChangeHandler(event -> {
+			income.setIncrease(increase.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(9, 1, increase);
 
 		deductionBase.setValue(income.getDeductionBase());
-		deductionBase.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setDeductionBase(deductionBase.getValue());
-				callback.onValueChanged(income);
-			}
+		deductionBase.addValueChangeHandler(event -> {
+			income.setDeductionBase(deductionBase.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(9, 2, deductionBase);
 
 		retention.setValue(income.getRetention());
-		retention.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setRetention(retention.getValue());
-				callback.onValueChanged(income);
-			}
+		retention.addValueChangeHandler(event -> {
+			income.setRetention(retention.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(9, 3, retention);
 		
-		tab2.getCellFormatter().setStyleName(10, 0, AON.AON_CSS.aonBorderBottom());
-		tab2.getCellFormatter().addStyleName(10, 0, AON.AON_CSS.aonBold());
+		tab2.getCellFormatter().setStyleName(10, 0, AON.CSS.aonBorderBottom());
+		tab2.getCellFormatter().addStyleName(10, 0, AON.CSS.aonBold());
 		tab2.getFlexCellFormatter().setColSpan(10, 0, 4);
 		tab2.setWidget(10, 0, new InlineLabel(AON.MSG.buildingData()));
 
- 		tab2.setWidget(11, 0, new MediumLabel(AON.MSG.buildingLocation()));
+ 		tab2.setWidget(11, 0, new Model184SmallerLabel(AON.MSG.buildingLocation()));
  		tab2.getFlexCellFormatter().setColSpan(11, 0, 2);
-		tab2.setWidget(11, 1, new MediumLabel(AON.MSG.cadasdralReference()));
+		tab2.setWidget(11, 1, new Model184SmallerLabel(AON.MSG.cadasdralReference()));
 		tab2.getFlexCellFormatter().setColSpan(11, 1, 2);
 		
 		location.addItem( AON.MSG.buildingLocationValue(0) );
@@ -515,82 +429,58 @@ public class Model1842015IncomePanel extends SimpleLayoutPanel implements Focusa
 		} else {
 			location.setSelectedIndex( 0 );
 		}
-		location.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				income.setLocation(Integer.toString( location.getSelectedIndex()));
-				callback.onValueChanged(income);
-			}
+		location.addChangeHandler(event -> {
+			income.setLocation(Integer.toString( location.getSelectedIndex()));
+			callback.onValueChanged(income);
 		});
  		tab2.setWidget(12, 0, location);
  		tab2.getFlexCellFormatter().setColSpan(12, 0, 2);
 
-		cadasdralReference.setStyleName(AON.AON_CSS.aonInputText());
 		cadasdralReference.setMaxLength(20); 
 		cadasdralReference.setVisibleLength(20);
 		cadasdralReference.setValue(income.getCadasdralReference());
-		cadasdralReference.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				income.setCadasdralReference(cadasdralReference.getValue());
-				callback.onValueChanged(income);
-			}
+		cadasdralReference.addValueChangeHandler(event -> {
+			income.setCadasdralReference(cadasdralReference.getValue());
+			callback.onValueChanged(income);
 		});
  		tab2.setWidget(12, 1, cadasdralReference);
  		tab2.getFlexCellFormatter().setColSpan(12, 1, 2);
  		
-		tab2.getCellFormatter().setStyleName(13, 0, AON.AON_CSS.aonBorderBottom());
-		tab2.getCellFormatter().addStyleName(13, 0, AON.AON_CSS.aonBold());
+		tab2.getCellFormatter().setStyleName(13, 0, AON.CSS.aonBorderBottom());
+		tab2.getCellFormatter().addStyleName(13, 0, AON.CSS.aonBold());
 		tab2.getFlexCellFormatter().setColSpan(13, 0, 4);
- 		tab2.setWidget(13, 0, new MediumLabel(AON.MSG.expenseDetail()));
+ 		tab2.setWidget(13, 0, new Model184SmallerLabel(AON.MSG.expenseDetail()));
  		
-		tab2.setWidget(14, 0, new MediumLabel(AON.MSG.staffExpenses()));
-		tab2.setWidget(14, 1, new MediumLabel(AON.MSG.assetAcquisition()));
- 		tab2.setWidget(14, 2, new MediumLabel(AON.MSG.taxDeduction()));
-		tab2.setWidget(14, 3, new MediumLabel(AON.MSG.otherTaxDeduction()));
+		tab2.setWidget(14, 0, new Model184SmallerLabel(AON.MSG.staffExpenses()));
+		tab2.setWidget(14, 1, new Model184SmallerLabel(AON.MSG.assetAcquisition()));
+ 		tab2.setWidget(14, 2, new Model184SmallerLabel(AON.MSG.taxDeduction()));
+		tab2.setWidget(14, 3, new Model184SmallerLabel(AON.MSG.otherTaxDeduction()));
 		
 		staffExpenses.setValue(income.getStaffExpenses());
-		staffExpenses.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setStaffExpenses(staffExpenses.getValue());
-				callback.onValueChanged(income);
-			}
+		staffExpenses.addValueChangeHandler(event -> {
+			income.setStaffExpenses(staffExpenses.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(15, 0, staffExpenses);
 
 		assetAcquisition.setValue(income.getAssetAcquisition());
-		assetAcquisition.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setAssetAcquisition(assetAcquisition.getValue());
-				callback.onValueChanged(income);
-			}
+		assetAcquisition.addValueChangeHandler(event -> {
+			income.setAssetAcquisition(assetAcquisition.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(15, 1, assetAcquisition);
 		
 		taxDeduction.setValue(income.getTaxDeduction());
-		taxDeduction.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setTaxDeduction(taxDeduction.getValue());
-				callback.onValueChanged(income);
-			}
+		taxDeduction.addValueChangeHandler(event -> {
+			income.setTaxDeduction(taxDeduction.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(15, 2, taxDeduction);
 		
 		otherTaxDeduction.setValue(income.getOtherTaxDeduction());
-		otherTaxDeduction.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				income.setOtherTaxDeduction(otherTaxDeduction.getValue());
-				callback.onValueChanged(income);
-			}
+		otherTaxDeduction.addValueChangeHandler(event -> {
+			income.setOtherTaxDeduction(otherTaxDeduction.getValue());
+			callback.onValueChanged(income);
 		});
 		tab2.setWidget(15, 3, otherTaxDeduction);
 
@@ -605,6 +495,7 @@ public class Model1842015IncomePanel extends SimpleLayoutPanel implements Focusa
 
 	@Override
 	public void setAccessKey(char key) {
+		// Nothing
 	}
 
 	@Override
