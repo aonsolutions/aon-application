@@ -1357,6 +1357,7 @@ public interface Properties {
 		Property<String> getAuthNameProperty();
 		Property<String> getAuthEmailProperty();
 		Property<String> getAuthDocumentProperty();
+		Property<Integer> getScopeProperty();
 	}
 
 	public interface TimeControlProperties {

@@ -224,6 +224,9 @@ public class UserServlet extends AonApiHttpServlet {
 		if(!api.getDomain().isParent() && api.getParams().opt("filter") != null 
 				&& api.getParams().optString("filter").equals("entorno")) {
 			filter = f.getDomainProperty().eq(api.getDomain().getParentId());
+			if(api.getDomain().getScope() != null) {
+				filter = filter.and(f.getScopeProperty().eq(api.getDomain().getScope()));
+			}
 		} else if(api.getParams().opt("filter") != null &&
 				api.getParams().optString("filter").equals("shared")) {
 			filter = f.getDomainProperty().eq(api.getDomain().getId())

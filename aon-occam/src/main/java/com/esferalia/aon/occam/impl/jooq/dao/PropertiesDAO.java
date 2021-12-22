@@ -1435,6 +1435,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getAuthNameProperty() {return new FilterDAO.PropertyDAO<>(AUTH.NAME);}
 		@Override public Property<String> getAuthEmailProperty() {return new FilterDAO.PropertyDAO<>(AUTH.EMAIL);}
 		@Override public Property<String> getAuthDocumentProperty() {return new FilterDAO.PropertyDAO<>(AUTH.DOCUMENT);}
+ 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(USER_SCOPE.SCOPE);}
 	}
 	
 	
