@@ -6986,6 +6986,142 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), ( 1000.00 + 10.00 * 15.00) / 12 * 6, extra.getTotalPayment(), 0.005 );
 	}
 
+	
+	
+	
+
+	@Test
+	public void testExtraProrratedAndNot() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+					new Extra() {
+						{
+							this.concept = conceptPagaExtra.getId();
+							this.expression = "/*NAVIDAD*/(SALARIO_BASE + PLUS_SALARIAL)";
+							this.quoteExpression = "PRORRATEAR(_P)";
+							this.month = Month.DECEMBER;
+							this.start = "01/07";
+							this.end = "31/12";
+							this.issue = "21/12";
+						}
+					}, 
+					new Extra() {
+						{
+							this.concept = conceptPagaExtra.getId();
+							this.expression = "/*VERANO*/(SALARIO_BASE + PLUS_SALARIAL)";
+							this.quoteExpression = "PRORRATEAR(_P)";
+							this.month = Month.JUNE;
+							this.start = "01/01";
+							this.end = "30/06";
+							this.issue = "30/06";
+						}
+					}
+				},
+				new Payment[] {
+						new Payment() {
+							{
+								this.concept = conceptSalarioBase.getId();
+								this.expression = "SALARIO_MENSUAL * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						},
+						new Payment() {
+							{
+								this.concept = conceptPlusSalarial.getId();
+								this.expression = "PLUS_MENSUAL * DIAS_TRABAJADOS/DIAS_MES";
+							}
+						}
+				});
+		
+		addData(aonContext, category, getFirstDayOfYear(getToday()), null, new HashMap<String,String>(){
+			{
+				put("PLUS_MENSUAL", "10.00");
+				put("SALARIO_MENSUAL", "1000.00");
+			}
+		});
+		
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday()); 
+		Date contractStartDate = firstDayOfYear; // 01/01
+
+		ContractRecord contract = newContract(
+				aonContext
+				,contractStartDate
+				, new HashMap<String,String>(){
+					{
+						put("DIAS_MES", "30.00");
+					}
+				}				
+				,category);
+		
+		
+		Date lastDayOfYear = getLastDayOfYear(contractStartDate);
+		
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.FEBRUARY);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date startProrratedDate = new Date(calendar.getTimeInMillis());
+		
+		calendar.set(MONTH, Calendar.MARCH);
+		calendar.set(DAY_OF_MONTH, 31);
+		Date endProrratedDate = new Date(calendar.getTimeInMillis());
+
+		addPayment(aonContext, contract, startProrratedDate, endProrratedDate, conceptPagaExtra, "/*NAVIDAD*/(SALARIO_BASE + PLUS_SALARIAL)", "SALARIO_BASE + PLUS_SALARIAL" , "_P", "_P", PaymentType.CRA_0004, null);
+		addPayment(aonContext, contract, startProrratedDate, endProrratedDate, conceptPagaExtra, "/*VERANO*/(SALARIO_BASE + PLUS_SALARIAL)", "SALARIO_BASE + PLUS_SALARIAL" , "_P", "_P", PaymentType.CRA_0004, null);
+
+		
+		for ( Date startDate = firstDayOfYear ; 
+				get(startDate, Calendar.MONTH) < 5  ; 
+				startDate = add(startDate, Calendar.MONTH,1) ) 
+		{
+			Date endDate = getLastDayOfMonth(startDate);
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+
+			JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection) {
+				
+				@Override
+				public void addPayment(Double amount, Double quote, Double tax, String description,
+						java.util.Date startDate, java.util.Date endDate, IPayment payment,
+						Map<String, ITimedVariable<?>> context) {
+					System.out.println( startDate + "[" + description + " ]: " + amount + ", " + quote );
+					super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+				}
+			};
+			new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder).calculate(ctx);
+			jooqSalaryBuilder.execute();
+		}
+
+		//@formatter:off
+		
+		calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.JUNE);
+		calendar.set(DAY_OF_MONTH, 30);
+		Date issueDate = new Date(calendar.getTimeInMillis());
+		int year = calendar.get(Calendar.YEAR);
+
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "30/06");
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
+		SmartContractSalaryCalculator<Salary> contractSalaryCalculator = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder());
+		contractSalaryCalculator.setListener(new Listener() {
+		});
+		Salary salary = contractSalaryCalculator.calculate(extraCtx);
+		
+		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount() ));
+
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 /  6 * 4 , salary.getTotalPayment(), 0.005 );
+	}
+
 	protected void addBaseCgcMin(AONContext aonContext) {
 		addSystemData(aonContext, getFirstDayOfYear(getToday()), null,
 				new HashMap<String,String>() {

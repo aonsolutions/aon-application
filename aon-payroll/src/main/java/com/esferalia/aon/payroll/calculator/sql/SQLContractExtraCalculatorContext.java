@@ -35,6 +35,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.DelegateIterator;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
@@ -60,6 +61,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculatorContext {
@@ -242,22 +244,24 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			
 			
 			salary.getPayments().stream()
-			.filter( p -> p.getAmount() == null || p.getAmount() == 0.00)
+			.filter( p -> isNotProrrated(salary,p))
 			.distinct().forEach( salaryPayment -> 
 			getContractPaymentByDescription(salaryPayment, extraPayments)
 			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
 			);
 			
 			
-			if ( payments.isEmpty() )  {
-				salary.getPayments().forEach( salaryPayment -> 
-				getContractPaymentByDescription(salaryPayment, extraPayments)
-				.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
-				);
-			}
+//			if ( payments.isEmpty() )  {
+//				salary.getPayments().forEach( salaryPayment -> 
+//				getContractPaymentByDescription(salaryPayment, extraPayments)
+//				.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
+//				);
+//			}
 
 			if ( payments.isEmpty() )  {
-				salary.getPayments().forEach( salaryPayment -> 
+				salary.getPayments().stream()
+				.filter(p -> isNotProrrated(salary,p))
+				.forEach( salaryPayment -> 
 				getContractPaymentByName(salaryPayment, extraPayments)
 				.ifPresent( p -> {
 					if ( payments.isEmpty() )
@@ -701,6 +705,18 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return new Period(p.getStartDate(), p.getEndDate()).intersects(new Period(getStart(), getEnd()));
 	}
 	
+	private boolean isNotProrrated(Salary salary, Salary.Payment salaryPayment) {
+		int extraMonth = AonDateUtils.get(getIssueDate(), Calendar.MONTH);
+		int salaryMonth = AonDateUtils.get(salary.getIssueDate(), Calendar.MONTH);
+		
+		Double amount = salaryPayment.getAmount();
+		return
+			AonNumberUtils.isNotValid(amount) 
+			|| AonNumberUtils.todouble(amount)  == 0.00 
+			|| extraMonth == salaryMonth ;
+				
+		
+	}
 	
 	// -------------------------------------------
 	//
