@@ -552,7 +552,7 @@ public abstract class Employee extends ResizeComposite {
 	void onContractJourneyTypeChangeValue(ChangeEvent event) {
 		Boolean journeyTypeStr = Boolean.valueOf(this.journeyType.getSelectedValue());
 		if(Boolean.TRUE.equals(journeyTypeStr))
-			showElementsFullTimeContract();
+			showElementsFullTimeJourneyTypeContract();
 		else
 			showPartialTimeContract();
 		
@@ -1030,7 +1030,7 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		
 		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();
-		
+
 		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 	}
 	
@@ -1054,6 +1054,10 @@ public abstract class Employee extends ResizeComposite {
 	
 	public void showElementsFullTimeContract() {
 		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+	}
+	
+	public void showElementsFullTimeJourneyTypeContract() {
 		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
 	}
 	
