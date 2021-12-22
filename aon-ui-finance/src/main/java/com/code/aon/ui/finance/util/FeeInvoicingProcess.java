@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.util;
 import static com.code.aon.common.IProgression.FINISH_VALUE;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import com.code.aon.common.IProgression;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.User;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.invoicing.IInvoicingFeedBack;
 import com.code.aon.finance.invoicing.InvoicingException;
@@ -22,15 +24,29 @@ import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.fee.CustomerFeeInvoicingEngine;
 import com.code.aon.ui.common.ILongProcess;
 import com.code.aon.ui.finance.controller.FeeInvoicingController;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
+
+import net.aonsolutions.aon.tbai.TbaiMain;
 
 public class FeeInvoicingProcess implements ILongProcess {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(FeeInvoicingProcess.class.getName());
 
 	private FeeInvoicingController controller;
+	private User user;
 	
 	public FeeInvoicingProcess(FeeInvoicingController controller) {
 		this.controller = controller;
+	}
+	
+	public FeeInvoicingProcess(FeeInvoicingController controller, User user) {
+		this.controller = controller;
+		this.user = user;
 	}
 	
 	private IInvoicingEngine getEngine() throws InvoicingException {
@@ -74,6 +90,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 					int recordingInvoice = 0;
 					AccountEntryInvoiceWriter accountWriter = new AccountEntryInvoiceWriter();
 					for (Invoice invoice : invoicedList) {
+						ticketbai(invoice);
 						invoice = (Invoice)HibernateUtil.getSession(sessionName).merge(invoice);
 						accountWriter.recordAndUpdateInvoice(invoice);
 						recordingInvoice++;
@@ -106,6 +123,27 @@ public class FeeInvoicingProcess implements ILongProcess {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);			
 		}
+	}
+	
+	private void ticketbai(Invoice inv) {
+		String domainName = AonUtil.getDomainName();
+		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, inv.getDomain(), user.getLogin());
+		if(tbaiConfiguration.isActive()) {
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
+			invoice.setIssueDate(new Date());
+
+			AON.updateInvoice(domainName, invoice.getDomain(), user.getLogin(), invoice, true);
+			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), user.getLogin());
+			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), user.getLogin(), user.getId(), CertificateType.AEAT.name()));
+			try {
+				TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+			} catch (Exception e ) {
+				e.printStackTrace();
+			}
+		}
+
+		
+		// SII
 	}
 
 	private class InvoicingFeedBack implements IInvoicingFeedBack {
