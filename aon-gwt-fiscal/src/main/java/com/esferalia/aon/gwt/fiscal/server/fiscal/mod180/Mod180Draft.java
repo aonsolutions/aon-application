@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod180;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL180;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -31,7 +32,11 @@ public class Mod180Draft extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod180 mod180 = FISCAL.getMod180(domainName, domainId, user,id);
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(user);
+			Mod180 mod180 = MODEL180.get(occam, id);
 
 			Mod180ExcelAction action = new Mod180ExcelAction(mod180);
 			action.initialize(FiscalModelUtils.getModelName(mod180));

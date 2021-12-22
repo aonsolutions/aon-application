@@ -15,6 +15,8 @@ import com.esferalia.aon.gwt.fiscal.client.mod130.Model130;
 import com.esferalia.aon.gwt.fiscal.client.mod130.Model130ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Model202;
@@ -30,6 +32,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
@@ -526,11 +529,61 @@ public class MatrixViewVisitor implements IFiscalModelTypeVisitor {
 			callback.onFailure(t);
 		}
 	}
+	
+	@Override 
+	public void visitM180()  { 
+		LOGGER.info("Before visit180");
+		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
+		try {
+			Model180 model180 = new Model180();
+			Model180ModuleOptions options = new Model180ModuleOptions();
+			options.setParentWidget(modelDialog);
+			options.setDomainName(opt.getConfiguration().getDomain().getName());
+			options.setDomain( model.getDomain() );
+			options.setUser(opt.getConfiguration().getUser().getLogin());
+			options.setConfiguration(opt.getConfiguration());
+			options.setFiscalModelId( model.getId() );
+			options.setEmbedded(true);
+			options.setBackButtonVisible(true);
+			options.setExternalCallback( new AonModuleCallback<Mod180>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod180 removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod180 edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod180 changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
+			model180.onModuleLoad( options );
+			modelDialog.center();
+			modelDialog.show();
+		} catch (Exception t) {
+			callback.onFailure(t);
+		}
+	}
 
 	@Override public void visitM347()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM349()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM390()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
-	@Override public void visitM180()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM184()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM193()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM200()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }

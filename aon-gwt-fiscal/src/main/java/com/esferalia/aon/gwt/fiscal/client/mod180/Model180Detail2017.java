@@ -1,7 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod180;
 
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180.Model180Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod180.Model180Base.IModel180Detail;
-import com.esferalia.aon.gwt.fiscal.client.mod180.Model180Base.Model180BaseCallback;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
@@ -19,9 +20,9 @@ public class Model180Detail2017 extends DockLayoutPanel implements IModel180Deta
 	}
 	private Model180DetailTable table;
 	
-	public Model180Detail2017( Model180BaseCallback callback, Integer selectedIndex ) {
+	public Model180Detail2017( Model180Callback callback, Mod180 model, Integer selectedIndex ) {
 		super(Unit.PX);
-		table = new Model180DetailTable(callback, selectedIndex);
+		table = new Model180DetailTable(callback, model, selectedIndex);
 		addWest(table, 300);
 		
 		SimpleLayoutPanel container = new SimpleLayoutPanel();
