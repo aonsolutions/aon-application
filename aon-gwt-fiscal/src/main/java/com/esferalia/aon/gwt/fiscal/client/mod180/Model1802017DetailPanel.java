@@ -213,7 +213,6 @@ public class Model1802017DetailPanel extends SimpleLayoutPanel implements Focusa
 		AonTextBox cadasdralReference = new AonTextBox();
 		cadasdralReference.setVisibleLength(23);
 		cadasdralReference.setMaxLength(20);
-		cadasdralReference.setStyleName(AON.CSS.aonInputText());
 		cadasdralReference.setValue(detail.getCadasdralReference());
 		cadasdralReference.addValueChangeHandler(event -> {
 			detail.setCadasdralReference(cadasdralReference.getValue());
@@ -346,7 +345,6 @@ public class Model1802017DetailPanel extends SimpleLayoutPanel implements Focusa
 		tab5.setWidget(1, 6, floor);
 		
 		AonTextBox door = new AonTextBox();
-		door.setStyleName(AON.CSS.aonInputText());
 		door.setMaxLength(3);
 		door.setVisibleLength(3);
 		door.setValue(detail.getDoor());

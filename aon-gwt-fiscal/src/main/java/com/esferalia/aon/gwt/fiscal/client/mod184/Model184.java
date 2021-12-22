@@ -7,36 +7,27 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ProvidesKey;
 
 public class Model184 extends MainEntryPoint {
 
@@ -45,21 +36,7 @@ public class Model184 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	public static final ProvidesKey<Mod184Income> MOD184_INCOME_PROVIDES_KEY = new ProvidesKey<Mod184Income>() {
-		@Override
-		public Object getKey(Mod184Income det) {
-			return det == null ?null: det.getId() == null? det.getTempId(): det.getId();
-		}
-	};
-	public static final ProvidesKey<Mod184Partner> MOD184_PARTNER_PROVIDES_KEY = new ProvidesKey<Mod184Partner>() {
-		@Override
-		public Object getKey(Mod184Partner det) {
-			return det == null ?null: det.getId() == null? det.getTempId(): det.getId();
-		}
-	};
-	
-	private final static int NOTIFICATIONS_TAB = 0;
-	private final static int BREAKDOWN_TAB = 1;
+	private static final int INFORMATION_TAB = 0;
 	
 	static final Model184ServiceAsync SERVICE;
 	private static final CommonServiceAsync COMMON_SERVICE;
@@ -71,78 +48,204 @@ public class Model184 extends MainEntryPoint {
 		SERVICE = new Model184ServiceAsyncDecorator(serviceRaw);
 	}
 	
-	interface Model184Binder extends UiBinder<Widget, Model184> {}
-	private static final Model184Binder MODEL_184_BINDER = GWT.create(Model184Binder.class);
+	protected class Model184Callback implements IFiscalModelCallback<Mod184,Model184ModuleOptions> {
 
-	protected static interface IModel184Callback{
-		void onAccept(Mod184 mod184);
-		void onCancel();
-		void onSelect(Model184ModuleOptions options,Mod184 mod184, Integer selectedIncomeIndex, Integer selectedPartnerIndex, Integer tabIndex);
-		void showError(String msg);
-		void cleanErrorPanel();
-		void onNew(Model184ModuleOptions options);
-		void onReset(Model184ModuleOptions options, Mod184 mod184);
-		void onDuplicate(Model184ModuleOptions options, int id);		
-	}
-	
-	protected class Model184Callback implements IModel184Callback {
+		@Override
+		public Model184ModuleOptions getOptions() {
+			return Model184.this.options;
+		}
 		
 		@Override
 		public void onAccept(Mod184 mod184) {
 			// 
 		}
+		
 		@Override
-		public void onCancel() {
-			cancel();
+		public void onRemove(Mod184 model) {
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(model);
+			} else {
+				onCancel(model);
+			}
 		}
+		
 		@Override
-		public void onSelect(Model184ModuleOptions options,Mod184 mod184, Integer selectedIncomeIndex, Integer selectedPartnerIndex, Integer tabIndex) {
-			select(options,mod184, selectedIncomeIndex,selectedPartnerIndex,tabIndex);
+		public void onCancel(Mod184 model) {
+			cleanErrorMessage();
+			declarationContainer.setWidget(model184Table);
+			model184Table.refresh( new Model184Callback() );
+			closeFootPanel();
 		}
+
 		@Override
-		public void onNew(Model184ModuleOptions options) {
-			newModel(options);
+		public void onNew() {
+			newModel(getOptions(), 2021);
 		}
-		@Override
-		public void onReset(Model184ModuleOptions options, Mod184 mod184) {
-			resetModel(options, mod184);
-		}
-		@Override
-		public void onDuplicate(Model184ModuleOptions options, int id) {
-			duplicateModel(options, id);
-		}
-		@Override
-		public void cleanErrorPanel() {
-			Model184.this.cleanErrorPanel();
-		}
+		
 		@Override
 		public void showError(String msg) {
-			Model184.this.showErrorPanel(msg);
+			showErrorMessage(msg);
 		}
-	};
+		@Override
+		public void showInfoPanel(String htmlText) {
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			HTMLPanel panel = new HTMLPanel(htmlText);
+			breakdownPanel.setWidget(panel);
+			breakdownPanel.scrollToTop();
+		}
 
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+		@Override
+		public void cleanInfoPanel() {
+			Widget w = breakdownPanel.getWidget();
+			if (w != null) {
+				breakdownPanel.remove( breakdownPanel.getWidget() ); 
+			}
+		}
+		public Integer getSelecttedTab() {
+			return Model184.this.getSelectedTab();
+		}
+		public void setSelectedTab(Integer tabIndex) {
+			Model184.this.setSelectedTab(tabIndex);
+		}
+		
+		public void onSelect(Mod184 mod184, Integer selectedIncomeIndex, Integer selectedPartnerIndex) {
+			select(mod184, selectedIncomeIndex, selectedPartnerIndex);
+		}
+		
+		public void onReset(Model184ModuleOptions options, Mod184 mod184) {
+			cleanErrorMessage();
+			SERVICE.initialize(options.getOccam(), mod184.getYear(),
+					new AsyncCallback<Mod184>() {
+						@Override
+						public void onSuccess(Mod184 newMod184) {
+							cleanAndClose();
+							newMod184.setAdministration(mod184.getAdministration());
+							newMod184.setYear(mod184.getYear());
+							newMod184.setComplementary(mod184.isComplementary());
+							newMod184.setReplacement(mod184.isReplacement());
+							newMod184.setReplacedReceipt(mod184.getReplacedReceipt());						
+							showResetDeclarationPopup(options, newMod184, mod184);
+						}
 
-	@UiField
-	SimpleLayoutPanel declarationContainer;
-	
-	@UiField
-	TabLayoutPanel tabLayout;
-	
-	@UiField
-	ResultsPanel notificationsPanel;
-	
-	@UiField
-	MinimizePanel footPanel;
+						@Override
+						public void onFailure(Throwable caught) {
+							showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						}
+					});
+		}
+		
+		public void onDuplicate(Model184ModuleOptions options, int id) {
+			cleanErrorMessage();
+			SERVICE.get(options.getOccam(), id,
+					new AsyncCallback<Mod184>() {
+						@Override
+						public void onSuccess(Mod184 m184) {
+							cleanAndClose();
+							showDuplicateDeclarationPopup(options, m184);
+						}
 
-	@UiField
-	ScrollPanel breakdownPanel;
+						@Override
+						public void onFailure(Throwable caught) {
+							showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						}
+					});
+		}
+		
+		private void showResetDeclarationPopup(Model184ModuleOptions options, Mod184 newMod184, Mod184 oldMod184) {
+			Model184NewDeclarationPopup newDialog = new Model184NewDeclarationPopup( newMod184, false, true,
+				new Model184Callback() {
 
-	Model184Table model184Table;
+						@Override
+						public void onAccept(Mod184 model) {
+							final PopupPanel popup = new PopupPanel(false, true);
+							popup.add( new AonSplash() );
+							popup.setGlassEnabled(true);
+							popup.setAnimationEnabled(true);
+							popup.center();
+							
+							SERVICE.delete(options.getOccam(), oldMod184, 
+									new AsyncCallback<Void>() {
+										
+										@Override
+										public void onSuccess(Void result) {
+											SERVICE.save(options.getOccam(),model,
+													new AsyncCallback<Mod184>() {
+														@Override
+														public void onSuccess(Mod184 model) {
+															popup.hide();
+															select(model, null, null);
+														}
+
+														@Override
+														public void onFailure(Throwable caught) {
+															popup.hide();
+															showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+														}
+													});
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											popup.hide();
+											showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+										}
+									});
+						}
+						
+					}
+				); 
+				newDialog.center();
+				newDialog.show();
+		}
+		
+		private void showDuplicateDeclarationPopup(Model184ModuleOptions options, Mod184 model) {
+			Model184NewDeclarationPopup newDialog = new Model184NewDeclarationPopup(model, true, false, 
+				new Model184Callback() {
+
+						@Override
+						public void onAccept(Mod184 model) {
+							final PopupPanel popup = new PopupPanel(false, true);
+							popup.add(new AonSplash());
+							popup.setGlassEnabled(true);
+							popup.setAnimationEnabled(true);
+							popup.center();
+
+							SERVICE.duplicate(options.getOccam(), model,
+									new AsyncCallback<Mod184>() {
+										@Override
+										public void onSuccess(Mod184 model) {
+											popup.hide();
+											select(model, null, null);
+										}
+
+										@Override
+										public void onFailure(Throwable caught) {
+											popup.hide();
+											showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+										}
+									});
+						}
+						
+					}
+				); 
+				newDialog.center();
+				newDialog.show();
+		}
+
+	}
+
+	private Model184ModuleOptions options;
 	
-	Panel formContainer;
-	SimplePanel headerPanel = new SimplePanel();
+	private AonLayoutPanel aonLayout;
+	private SplitLayoutPanel splitLayoutPanel;
+	private SimpleLayoutPanel declarationContainer;
+	
+	private Model184Table model184Table;
+	private TabLayoutPanel tabLayout;
+	private AonMinimizePanel footPanel;
+	private ScrollPanel breakdownPanel;
+	private Integer selectedTab;
 	
 	@Override
 	public void onModuleLoad() {
@@ -151,13 +254,13 @@ public class Model184 extends MainEntryPoint {
 			@Override
 			public void onSuccess(AonConfiguration config) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-				Model184ModuleOptions options = new Model184ModuleOptions();
-				options.setParentWidget(root);
-				options.setDomainName(getCurrentDomainName());
-				options.setDomain(getCurrentDomain());
-				options.setUser(getCurrentUser());
-				options.setConfiguration(config);
-				onModuleLoad( options );
+				Model184ModuleOptions opts = new Model184ModuleOptions();
+				opts.setParentWidget(root);
+				opts.setDomainName(getCurrentDomainName());
+				opts.setDomain(getCurrentDomain());
+				opts.setUser(getCurrentUser());
+				opts.setConfiguration(config);
+				onModuleLoad( opts );
 			}
 			
 			@Override public void onFailure(Throwable caught) {
@@ -167,228 +270,155 @@ public class Model184 extends MainEntryPoint {
 	}
 	
 	public void onModuleLoad(Model184ModuleOptions options) {
+		this.options = options;
 		AON.ensureInjected();
+		aonLayout = new AonLayoutPanel();
+		splitLayoutPanel = new SplitLayoutPanel( 2 );
+		aonLayout.add(splitLayoutPanel);
+		
+		declarationContainer = new SimpleLayoutPanel();
+		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 
-		Widget ui = MODEL_184_BINDER.createAndBindUi(this);
-
-		model184Table = new Model184Table(options,new Model184Callback());
-		model184Table.addSelectionHandler(new SelectionHandler<Mod184>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Mod184> event) {
-				onSelectionChange(options, event);
-			}
-		});
+		splitLayoutPanel.add(declarationContainer);
+		
+		model184Table = new Model184Table(new Model184Callback());
+		model184Table.addSelectionHandler(event -> onSelectionChange(options,event));
 		
 		declarationContainer.setWidget(model184Table);
-		
-		options.getParentWidget().add(ui);
+
+		options.getParentWidget().add(aonLayout);
 		if (options.getFiscalModelId() != null ) {
-			LOGGER.info("Access to Model184 with a ID: " + options.getFiscalModelId());
 			onSelect(options,options.getFiscalModelId());
 		} else if (options.getNewModel() != null ) {
-			LOGGER.info("Access to Model184 new Model");
 			newModel(options, options.getNewModel().getYear()); 
 		} else {
-			model184Table.refresh();
-			LOGGER.info("Model184 setting NOTIFICATIONS_TAB");
-			tabLayout.selectTab(NOTIFICATIONS_TAB);
+			model184Table.refresh( new Model184Callback());
 		}
 
 	}
 	
-	private void onSelect(Model184ModuleOptions options, Integer id ) {
-		LOGGER.info("OnSelect Model184 with a ID: " + options.getFiscalModelId());
-		SERVICE.getMod184(options.getDomainName(), options.getUser(), options.getDomain(), id , new AsyncCallback<Mod184>() {
-			@Override
-			public void onSuccess(Mod184 selected) {
-				if (selected == null) {
-					showErrorPanel(AON.MSG.unableToFindDeclaration());
-				} else {
-					select(options, selected, null, null, null);
-				}
-			}
+	protected Integer getSelectedTab() {
+		return selectedTab;
+	}
+	protected void setSelectedTab(Integer selectedTab) {
+		this.selectedTab = selectedTab;
+	}
 
-			@Override
-			public void onFailure(Throwable caught) {
-				showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
-			}
+	private AonMinimizePanel getMinimizePanel() {
+		footPanel = new AonMinimizePanel();
+		footPanel.addMinimizeHandler( event -> closeFootPanel() );
+		footPanel.addMaximizeHandler( event -> {
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
+			splitLayoutPanel.animate(500);
 		});
-	}
-
-	private void onSelectionChange(Model184ModuleOptions options, SelectionEvent<Mod184> event) {
-		Mod184 sel = event.getSelectedItem();
-		SERVICE.getMod184(options.getDomainName(),options.getUser(), options.getDomain(),
-				sel.getId(), new AsyncCallback<Mod184>() {
-					@Override
-					public void onSuccess(Mod184 selected) {
-						if (selected == null) {
-							showErrorPanel(AON.MSG.unableToFindDeclaration());
-						} else {
-							select(options, selected, null, null, null);
-						}
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
-					}
-				} );
-	}
-	
-
-	private void select(Model184ModuleOptions options,Mod184 selected, Integer selectedIncomeIndex, Integer selectedPartnerIndex,Integer tabIndex) {
-		cleanErrorPanel();
-		if ( selected.isAEAT() ) {
-			declarationContainer.setWidget( new Model184AEAT(selected,options,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
-		} else if ( selected.isAraba() ) {
-			declarationContainer.setWidget( new Model184ARABA(selected,options,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
-		} else if ( selected.isBizkaia() ) {
-			declarationContainer.setWidget( new Model184BIZKAIA(selected,options,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
-		} else if ( selected.isGipuzkoa() ) {
-			declarationContainer.setWidget( new Model184GIPUZKOA(selected,options,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
-		} else if ( selected.isNavarra() ) {
-			declarationContainer.setWidget( new Model184NAVARRA(selected,options,new Model184Callback(),selectedIncomeIndex,selectedPartnerIndex,tabIndex));
-		} else {
-			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
-		}
-	}
+		footPanel.setStyleName(AON.CSS.aonSelector());
+		tabLayout = new TabLayoutPanel(26, Unit.PX);
+		tabLayout.setWidth("100%");
+		footPanel.add(tabLayout);
 		
-	private void newModel(Model184ModuleOptions options) {
-		newModel(options, 2020 );
+		breakdownPanel = new ScrollPanel();
+		tabLayout.add(breakdownPanel, AON.MSG.informationBreakdown());
+
+		tabLayout.setAnimationDuration(300);
+		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
+		return footPanel; 
 	}
 
-	private void newModel(Model184ModuleOptions options, int year) {
-		cleanErrorPanel();
-		SERVICE.initializeMod184(options.getDomainName(),options.getUser(),options.getDomain(), year,
-				new AsyncCallback<Mod184>() {
-					@Override
-					public void onSuccess(Mod184 m184) {
-						cleanBreakdownPanel();
-						tabLayout.selectTab(BREAKDOWN_TAB);
-						closeFootPanel();
-						showNewDeclarationPopup(options, m184);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
-				});
-	}
-	
-	private void resetModel(Model184ModuleOptions options, Mod184 oldMod184) {
-		cleanErrorPanel();
-		SERVICE.initializeMod184(options.getDomainName(),options.getUser(),options.getDomain(), oldMod184.getYear(),
-				new AsyncCallback<Mod184>() {
-					@Override
-					public void onSuccess(Mod184 newMod184) {
-						cleanBreakdownPanel();
-						tabLayout.selectTab(BREAKDOWN_TAB);
-						closeFootPanel();
-						
-						newMod184.setAdministration(oldMod184.getAdministration());
-						newMod184.setYear(oldMod184.getYear());
-						newMod184.setComplementary(oldMod184.isComplementary());
-						newMod184.setReplacement(oldMod184.isReplacement());
-						newMod184.setReplacedReceipt(oldMod184.getReplacedReceipt());
-						showResetDeclarationPopup(options, newMod184, oldMod184);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
-				});
-	}
-	
-	private void duplicateModel(Model184ModuleOptions options, int id) {
-		cleanErrorPanel();
-		SERVICE.getMod184(options.getDomainName(),options.getUser(),options.getDomain(), id,
-				new AsyncCallback<Mod184>() {
-					@Override
-					public void onSuccess(Mod184 m184) {
-						cleanBreakdownPanel();
-						tabLayout.selectTab(BREAKDOWN_TAB);
-						closeFootPanel();
-						showDuplicateDeclarationPopup(options, m184);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
-				});
-	}
-
-	private void cancel() {
-		cleanErrorPanel();
-		declarationContainer.setWidget(model184Table);
-		model184Table.refresh();
+	private void cleanAndClose() {
+		cleanBreakdownPanel();
+		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
 	}
 	
-	@UiHandler("footPanel")
-	protected void onFootMinimize(MinimizeEvent event) {
-		closeFootPanel();
-	}
-
-	@UiHandler("footPanel")
-	protected void onFootMaximize(MaximizeEvent event) {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
-		splitLayoutPanel.animate(500);
-	}
-
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
 		splitLayoutPanel.animate(500);
 	}
-
-	private void openFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
-		splitLayoutPanel.animate(500);
-	}
-	
-	private void cleanErrorPanel() {
-		SimpleLayoutPanel panel = new SimpleLayoutPanel();
-		notificationsPanel.setWidget(panel);
-		closeFootPanel();
-	}
 	private void openFootPanelIfNeeded() {
 		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
-			openFootPanel();
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
+			splitLayoutPanel.animate(500);
 		}
 	}
-	private void showErrorPanel(String msg) {
-		//openFootPanelIfNeeded();
+	
+	private void onSelect(Model184ModuleOptions options, Integer id ) {
+		LOGGER.info("OnSelect Model184 with a ID: " + options.getFiscalModelId());
+		SERVICE.get(options.getOccam(), id , new AsyncCallback<Mod184>() {
+			@Override
+			public void onSuccess(Mod184 selected) {
+				if (selected == null) {
+					showErrorMessage(AON.MSG.unableToFindDeclaration());
+				} else {
+					select(selected, null, null);
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+			}
+		});
+	}
+	
+	private void onSelectionChange(Model184ModuleOptions options, SelectionEvent<Mod184> event) {
+		Mod184 sel = event.getSelectedItem();
+		SERVICE.get(options.getOccam(), sel.getId(), new AsyncCallback<Mod184>() {
+			@Override
+			public void onSuccess(Mod184 selected) {
+				if (selected == null) {
+					showErrorMessage(AON.MSG.unableToFindDeclaration());
+				} else {
+					select(selected, null, null);
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+			}
+		} );
+	}
+	
+	private void select(Mod184 selected, Integer selectedIncomeIndex, Integer selectedPartnerIndex) {
+		cleanErrorMessage();
+		if ( selected.isAEAT() ) {
+			declarationContainer.setWidget( new Model184AEAT(new Model184Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
+		} else if ( selected.isAraba() ) {
+			declarationContainer.setWidget( new Model184ARABA(new Model184Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
+		} else if ( selected.isBizkaia() ) {
+			declarationContainer.setWidget( new Model184BIZKAIA(new Model184Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
+		} else if ( selected.isGipuzkoa() ) {
+			declarationContainer.setWidget( new Model184GIPUZKOA(new Model184Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
+		} else if ( selected.isNavarra() ) {
+			declarationContainer.setWidget( new Model184NAVARRA(new Model184Callback(),selected,selectedIncomeIndex,selectedPartnerIndex));
+		} else {
+			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
+		}
+	}
+	
+	private void newModel(Model184ModuleOptions options, int year) {
+		cleanErrorMessage();
+		SERVICE.initialize(options.getOccam(), year,
+				new AsyncCallback<Mod184>() {
+					@Override
+					public void onSuccess(Mod184 m184) {
+						cleanAndClose();
+						showNewDeclarationPopup(options,m184);
+					}
 
-		ScrollPanel panel = new ScrollPanel();
-		FlexTable tab = new FlexTable();
-		tab.setWidth("95%");
-		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab.getColumnFormatter().setWidth(0, "20px");
-		tab.getColumnFormatter().setWidth(1, "auto");
-		
-		InlineLabel icon = new InlineLabel("");
-		icon.setStyleName(AON.AON_CSS.aonIconPointRed());
-		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		tab.setWidget(0, 0, icon);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		
-		InlineLabel label = new InlineLabel(msg);
-		label.addStyleName(AON.AON_CSS.aonColorRed());
-		label.addStyleName(AON.AON_CSS.aonBold());
-		tab.setWidget(0, 1, label);
-		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		
-		panel.add(tab);
-		notificationsPanel.setWidget(panel);
-		
-		// Abrimos el panel inferior, si es necesario y seleccionamos la pestaña de notificaciones
-		openFootPanelIfNeeded();		
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
+					@Override
+					public void onFailure(Throwable caught) {
+						showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
+	}
+
+	private void cleanErrorMessage() {
+		aonLayout.hideErrorPanel();
+	}
+	
+	private void showErrorMessage(String msg) {
+		aonLayout.showErrorPanel(msg);
 	}
 	
 	private void cleanBreakdownPanel() {
@@ -399,129 +429,59 @@ public class Model184 extends MainEntryPoint {
 	}
 	
 	private void showNewDeclarationPopup(Model184ModuleOptions options, Mod184 model) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup( model,
+		Model184NewDeclarationPopup newDialog = new Model184NewDeclarationPopup( model,
 			new Model184Callback() {
 
 					@Override
 					public void onAccept(Mod184 model) {
 						final PopupPanel popup = new PopupPanel(false, true);
-						Label label = new Label(AON.MSG.processing());
-						label.addStyleName(AON.AON_CSS.aonTimer());
-						popup.add(label);
+						popup.add(new AonSplash());
 						popup.setGlassEnabled(true);
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						SERVICE.saveMod184(options.getDomainName(),options.getUser(),options.getDomain(),model,
+						SERVICE.save(options.getOccam(),model,
 								new AsyncCallback<Mod184>() {
 									@Override
 									public void onSuccess(Mod184 model) {
 										popup.hide();
-										select(options, model, null, null, null);
+										select(model, null, null);
 									}
 
 									@Override
 									public void onFailure(Throwable caught) {
 										popup.hide();
-										showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-									}
-								});
-					}
-				}
-			); 
-			newDialog.center();
-			newDialog.show();
-	}
-	
-	private void showResetDeclarationPopup(Model184ModuleOptions options, Mod184 newMod184, Mod184 oldMod184) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup( newMod184, false, true, 
-			new Model184Callback() {
-
-					@Override
-					public void onAccept(Mod184 model) {
-						final PopupPanel popup = new PopupPanel(false, true);
-						Label label = new Label(AON.MSG.processing());
-						label.addStyleName(AON.AON_CSS.aonTimer());
-						popup.add(label);
-						popup.setGlassEnabled(true);
-						popup.setAnimationEnabled(true);
-						popup.center();
-						
-						SERVICE.deleteMod184(options.getDomainName(),options.getUser(),options.getDomain(), oldMod184, 
-								new AsyncCallback<Void>() {
-									
-									@Override
-									public void onSuccess(Void result) {
-										SERVICE.saveMod184(options.getDomainName(),options.getUser(),options.getDomain(),model,
-												new AsyncCallback<Mod184>() {
-													@Override
-													public void onSuccess(Mod184 model) {
-														popup.hide();
-														select(options, model, null, null, null);
-													}
-
-													@Override
-													public void onFailure(Throwable caught) {
-														popup.hide();
-														showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-													}
-												});
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										popup.hide();
-										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
-									}
-								});
-
-					}
-					
-					@Override
-					public void onCancel() {};
-				}
-			); 
-			newDialog.center();
-			newDialog.show();
-	}
-	
-	private void showDuplicateDeclarationPopup(Model184ModuleOptions options, Mod184 model) {
-		NewDeclarationPopup newDialog = new NewDeclarationPopup(model, true, false, 
-			new Model184Callback() {
-
-					@Override
-					public void onAccept(Mod184 model) {
-						final PopupPanel popup = new PopupPanel(false, true);
-						Label label = new Label(AON.MSG.processing());
-						label.addStyleName(AON.AON_CSS.aonTimer());
-						popup.add(label);
-						popup.setGlassEnabled(true);
-						popup.setAnimationEnabled(true);
-						popup.center();
-
-						SERVICE.duplicateMod184(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), model,
-								new AsyncCallback<Mod184>() {
-									@Override
-									public void onSuccess(Mod184 model) {
-										popup.hide();
-										select(options, model, null, null, null);
-									}
-
-									@Override
-									public void onFailure(Throwable caught) {
-										popup.hide();
-										showErrorPanel(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+										showErrorMessage(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 									}
 								});
 					}
 					
 					@Override
-					public void onCancel() {}
-
+					public void onCancel(Mod184 model) {
+						if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+							getOptions().getExternalCallback().onExit(model);
+						}						
+					}
+					
 				}
 			); 
 			newDialog.center();
 			newDialog.show();
 	}
-	
+
+	public static void run() {
+		GWT.runAsync(Model184.class, new RunAsyncCallback() {
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				Window.alert(AON.MSG.loadError("Modelo 184"));
+			}
+			
+			@Override
+			public void onSuccess() {
+				Model184 model184 = new Model184();
+				model184.onModuleLoad();
+			}
+		});
+	}
 }
