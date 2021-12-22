@@ -2136,6 +2136,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		else {
 			createSalaryTable();
 			agreementDraftObject.showValueVariables();
+			if(agreementDraftObject.getShownVariables().isEmpty())
+				agreementDraftObject.showNoValueVariables();
 			reloadSalaryTable();
 		}
 		
@@ -2459,11 +2461,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 	
 	private void setSSNumber() {
-		// TODO: When null it will be desirable warn user.
 		String ssNumber = this.agreementDraftObject.getSSNumber();
 		ssNumberTextBox.setText(ssNumber == null ? "" : ssNumber);
-		// descriptionTextBox.setEnabled(isEditable());
-
 	}
 
 	private void dumpEvents() {
