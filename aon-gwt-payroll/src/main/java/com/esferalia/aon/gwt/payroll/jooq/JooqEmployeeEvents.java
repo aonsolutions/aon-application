@@ -234,13 +234,23 @@ public class JooqEmployeeEvents {
 						}
 					}
 					
-					quarterVariableEmployeeInfo
-					.setStartDate(parseDateToJava(startDate))
-					.setEndDate(parseDateToJava(endDate))
-					.setName(name)
-					.setExpression(MVEL.eval(expression).toString());
+					if(AonStringUtils.isNoneEmpty(expression)) {
+						Object expressionEval = MVEL.eval(expression);
+						if(null != expressionEval) {
+							quarterVariableEmployeeInfo
+								.setStartDate(parseDateToJava(startDate))
+								.setEndDate(parseDateToJava(endDate))
+								.setName(name)
+								.setExpression(expressionEval.toString());
+							
+							varibaleList.add(quarterVariableEmployeeInfo);
+						}
+						else
+							System.out.println("MVEL.eval() -> " + name + " = " + expressionEval);
+					} else
+						System.out.println(name + " = " + expression);
 					
-					varibaleList.add(quarterVariableEmployeeInfo);
+					
 				}
 			}
 			

@@ -474,6 +474,8 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		
 		this.employeeEventsDraft = employeeEventsDraft;
 		
+		showLoading();
+		
 		//Descargar Variables actualizadas
 		Integer actualYear = DateUtils.getYear();
 		employeeEventsDraft.initializeDBEventsVariables(actualYear,

@@ -418,7 +418,7 @@ public class JooqDigitalCertificateNew {
 		String description = fileName + "HIDE(" + password + ")";
 		if(description.length() > 64) {
 			Integer diff = description.length() - 62; // Asi nos aseguramos no apurar los 64 varchar
-			description = AonStringUtils.substring(fileName, 0, description.length() - diff) + "HIDE(" + password + ")";
+			description = AonStringUtils.substring(fileName, 0, fileName.length() - diff) + "HIDE(" + password + ")";
 		}
 			
 		return description;
