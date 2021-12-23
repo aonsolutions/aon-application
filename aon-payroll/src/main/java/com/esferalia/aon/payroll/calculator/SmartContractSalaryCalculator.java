@@ -49,6 +49,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.payroll.DelegateContractPayment;
+import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
@@ -68,6 +69,7 @@ import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
@@ -1194,17 +1196,41 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 					, AonDateUtils.get(issueDate, YEAR)			//year
 					, issueDate									//chargeDate
 					, criteria);
+			
+
 			if ( !extraCtx.next() )
 				throw new NotNowException();
 				//return 0.00;
 			
-			return new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()) {
+			
+			extraCtx.setListener(new IContractSalaryCalculatorContext.IListener() {
+				
+				@Override
+				public void onIrpf(IrpfOutcome irpfOutcome) {
+				}
+				
+				@Override
+				public void onUndefinedData(IExpression expression, String variableName, String message, Date start,
+						Date end) {
+					if ( ctx.getListener() == null ) 
+						return;
+					if ( AonStringUtils.startsWith(variableName, "PAGA_EXTRA_")) {
+						ctx.getListener().onUndefinedData(expression, variableName, message, start, end);
+					}
+				}
+			});
+
+			Salary extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() ) {
+					
 					@Override
 					protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
 						return TaxCalculator.getTaxCalculator(ctx);
 					}
 			}
-			.calculate(extraCtx).getSalary().getTotalPayment();
+			.calculate(extraCtx);
+			
+			return extra.getTotalPayment();
+			
 		} catch (NotNowException e) {
 			throw e;
 		} catch (Exception e) {

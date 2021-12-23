@@ -1,5 +1,14 @@
 let users;
 let index;
+let filter;
+
+export const getFilter = () => {
+  return filter;
+}
+
+export const setFilter = (data) => {
+  filter = data;
+}
 
 export const getUsers = () => {
   return users;
@@ -9,7 +18,7 @@ export const setUsers = (data) => {
   users = data;
 }
 
-export const addInvoices = (data) => {
+export const addUsers = (data) => {
   if(users) {
     data.forEach((item, i) => {
       users.push(item);

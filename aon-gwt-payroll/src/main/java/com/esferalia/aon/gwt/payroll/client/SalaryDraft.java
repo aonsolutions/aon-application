@@ -662,17 +662,17 @@ public class SalaryDraft extends ResizeComposite
 
 	static class EventConstantEditorFactory implements VariableEditorFactory<EventConstantLabel> {
 		
-		private String names [];
+		private String patterns [];
 		
 		
-		public EventConstantEditorFactory(String... names ) {
-			this.names = names;
+		public EventConstantEditorFactory(String... patterns ) {
+			this.patterns = patterns;
 		}
 		
 		@Override
 		public boolean accept(Variable variable) {
-			for ( String name : names )
-				if ( name.equals(variable.getName()))
+			for ( String pattern : patterns )
+				if ( RegExp.compile(pattern).test(variable.getName()) )
 					return true;
 			
 			return false;
@@ -6620,7 +6620,7 @@ public class SalaryDraft extends ResizeComposite
 					"COEFICIENTE_ERE_FZA", 
 					"COEFICIENTE_ERE_FZA_EXONERADO", 
 					"COEFICIENTE_HUELGA"  ), 
-			new EventConstantEditorFactory("ATRASO"), 
+			new EventConstantEditorFactory("ATRASO", "PAGA_EXTRA_[0-9]+_[0-9]+"), 
 			new AgreementConstantEditorFactory(), 
 			new ConstantEditorFactory("SMI"), 
 			new BooleanEditorFactory(), 

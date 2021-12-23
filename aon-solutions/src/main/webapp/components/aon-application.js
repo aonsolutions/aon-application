@@ -646,6 +646,11 @@ export class AonApplication extends AonElement {
     return toolbar.addSearchButton();
   }
 
+  cleanSearchValue() {
+    let toolbar = this.getElement(this.TOOLBAR);
+    return toolbar.cleanSearchValue();
+  }
+
   addToolbarTitle(title) {
     let toolbar = this.getElement(this.TOOLBAR);
     if (toolbar) {

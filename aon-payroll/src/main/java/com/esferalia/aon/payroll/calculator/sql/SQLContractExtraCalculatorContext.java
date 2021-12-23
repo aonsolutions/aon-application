@@ -11,12 +11,15 @@ import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,7 +36,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.payroll.DelegateContractPayment;
+import com.esferalia.aon.payroll.DelegateIterator;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
@@ -41,6 +46,7 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SimpleContractPayment;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
+import com.esferalia.aon.payroll.calculator.sql.FilterCollection.Filter;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -48,6 +54,7 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -56,9 +63,13 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculatorContext {
+	
+	private static final String DEFAULT_EXTRA_NAME = "PAGA_EXTRA";
+	
 
 	public SQLContractExtraCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate)
 			throws SQLException, ExpressionException {
@@ -106,27 +117,33 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		if ( ssRegime == SSRegimeType.SELF_EMPLOYED ) {
 			addSalaryContractPayments();
 
-			Collection<IContractPayment> extraPayments = 
-					new FilterCollection<IContractPayment>(
+			return new FilterCollection<>(
 					getExtraPaymentFilter(), 
 					super.getContractPayments());
-			return extraPayments;
 		} // TODO: This should not be necessary!!!
 		
-		Collection<IContractPayment> monthlyQuotedPayments= getMonthlyQuotedPayments();
-		if ( monthlyQuotedPayments.size() == getMonths() ) 
-			return monthlyQuotedPayments;
+		Collection<IContractPayment> overridePayments = getOverridePayments();
+		
+		Collection<IContractPayment> monthlyQuotedPayments = getMonthlyQuotedPayments();
+
+		Collection<IContractPayment> implicitPayemnts = merge(overridePayments, monthlyQuotedPayments); 
+		
+		if ( implicitPayemnts.size() == getMonths() ) 
+			return implicitPayemnts;
 		
 		
 		addSalaryContractPayments();
+		
+		Filter<IContractPayment> extraPaymentFilter = getExtraPaymentFilter();
+		
+		Collection<IContractPayment> contractPayments = new ContractPayments(super.getContractPayments(), extraPaymentFilter);
 
-		Collection<IContractPayment> extraPayments = 
-				new FilterCollection<IContractPayment>(
-				getExtraPaymentFilter(), 
-				new CompositePayments<IContractPayment>(monthlyQuotedPayments, super.getContractPayments(),getWarnPayment(monthlyQuotedPayments)));
-
-		return extraPayments;
+		return  
+		new FilterCollection<>(extraPaymentFilter, new CompositePayments<IContractPayment>(implicitPayemnts, contractPayments,getWarnPayment(monthlyQuotedPayments)));
+		
 	}
+	
+	
 
 	@Override
 	protected void loadContractData(ExpressionContext ctx) throws SQLException {
@@ -214,11 +231,12 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 
 		Collection<IContractPayment> extraPayments = new ArrayList<IContractPayment>();
 		FilterCollection.Filter<IContractPayment> filter = getExtraPaymentFilter();
-		for ( IContractPayment p : super.getContractPayments() )
-			if ( filter.accept(p)) extraPayments.add(new SimpleContractPayment(p));
+		for ( IContractPayment p : super.getContractPayments() ) {
+			if ( filter.accept(p) )  {
+				extraPayments.add(new SimpleContractPayment(p));
+			}
+		}
 		
-		extraPayments.forEach( p -> System.out.println( "EXTRA : " + p.getDescription() ));
-
 		List<IContractPayment> monthlyQuotedPayments = new ArrayList<IContractPayment>();
 		
 		int contractId = getId();
@@ -233,22 +251,24 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			
 			
 			salary.getPayments().stream()
-			.filter( p -> p.getAmount() == null || p.getAmount() == 0.00)
+			.filter( p -> isNotProrrated(salary,p))
 			.distinct().forEach( salaryPayment -> 
 			getContractPaymentByDescription(salaryPayment, extraPayments)
 			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
 			);
 			
 			
-			if ( payments.isEmpty() )  {
-				salary.getPayments().forEach( salaryPayment -> 
-				getContractPaymentByDescription(salaryPayment, extraPayments)
-				.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
-				);
-			}
+//			if ( payments.isEmpty() )  {
+//				salary.getPayments().forEach( salaryPayment -> 
+//				getContractPaymentByDescription(salaryPayment, extraPayments)
+//				.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
+//				);
+//			}
 
 			if ( payments.isEmpty() )  {
-				salary.getPayments().forEach( salaryPayment -> 
+				salary.getPayments().stream()
+				.filter(p -> isNotProrrated(salary,p))
+				.forEach( salaryPayment -> 
 				getContractPaymentByName(salaryPayment, extraPayments)
 				.ifPresent( p -> {
 					if ( payments.isEmpty() )
@@ -262,7 +282,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			payments.stream().findFirst()
 			.ifPresentOrElse(
 			(p) -> monthlyQuotedPayments.addAll(payments), 
-			() -> extraPayments.forEach(p -> monthlyQuotedPayments.add(salary2ContractPayment(salary, p,"0.00"))));
+			() -> extraPayments.stream().findAny().ifPresent(p -> monthlyQuotedPayments.add(salary2ContractPayment(salary, p,"0.00"))));
 
 		})
 		;
@@ -271,6 +291,85 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return monthlyQuotedPayments;
 	}
 	
+	private Collection<IContractPayment> getOverridePayments()  {
+		int issueDay = AonDateUtils.get(getIssueDate(), Calendar.DAY_OF_MONTH ); 
+		int issueMonth = AonDateUtils.get(getIssueDate(), Calendar.MONTH ) +1; 
+		String overrideVarName = String.format("%s_%d_%d", DEFAULT_EXTRA_NAME, issueDay, issueMonth);
+		
+		Filter<IContractPayment> extraPaymentFilter = getExtraPaymentFilter();
+		
+		try {
+			for ( IContractPayment p : super.getContractPayments() )
+				if ( extraPaymentFilter.accept(p))
+					return getOverridePayments( overrideVarName , p);
+		} catch (AonException e) {
+		}
+		
+		return Collections.emptyList();
+	}
+	
+	
+	private Collection<IContractPayment> getOverridePayments(String varName, IContractPayment contractPayment){
+
+
+		final Collection<IContractPayment> payments = new LinkedList<IContractPayment>();
+
+		Period[] periods = getPeriods(varName);
+
+		for (Period period : periods) {
+
+			DelegateContractPayment payment = new DelegateContractPayment(contractPayment) {
+				
+				@Override
+				public Integer getId() {
+					return  Integer.MIN_VALUE + ( contractPayment.getId() % 1000 ); //;super.getId() * (-1)
+				}
+				
+				@Override
+				public Date getEndDate() {
+					return period.getEnd();
+				}
+
+				@Override
+				public Date getStartDate() {
+					return period.getStart();
+				}
+				
+				@Override
+				public SalaryType getSalaryType() {
+					return SalaryType.EXTRA;
+				}
+
+				@Override
+				public ExpressionScope getScope() {
+					return ExpressionScope.APPLICATION;
+				}
+				
+				@Override
+				public String getExpression() {
+					return varName;
+				}
+				
+				@Override
+				public String getName() {
+					String name = super.getName();
+					return AonStringUtils.isNotBlank(name) ? name : DEFAULT_EXTRA_NAME ;
+				}
+			};
+			
+			payments.add(payment);
+		}
+
+		
+		if ( payments.isEmpty() )  {
+			ExpressionImpl expression = new ExpressionImpl().setName(varName).setScope(ExpressionScope.SYSTEM);
+			onUndefinedData(expression, varName, getStartDate(), getEndDate(), varName);
+		}
+		
+		return payments;
+
+	}
+
 	private IContractPayment salary2ContractPayment(
 			com.esferalia.aon.occam.api.model.Salary salary, 
 			com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, 
@@ -305,6 +404,12 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			@Override
 			public String getExpression() {
 				return Double.toString(salaryPayment.getQuote());
+			}
+			
+			@Override
+			public String getName() {
+				String name = super.getName();
+				return AonStringUtils.isNotBlank(name) ? name : DEFAULT_EXTRA_NAME ;
 			}
 		};
 		
@@ -682,10 +787,61 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		
 	}
 	
+	private boolean intercets ( IContractPayment p ) {
+		return new Period(p.getStartDate(), p.getEndDate()).intersects(new Period(getStart(), getEnd()));
+	}
+	
+	private boolean isNotProrrated(Salary salary, Salary.Payment salaryPayment) {
+		int extraMonth = AonDateUtils.get(getIssueDate(), Calendar.MONTH);
+		int salaryMonth = AonDateUtils.get(salary.getIssueDate(), Calendar.MONTH);
+		
+		Double amount = salaryPayment.getAmount();
+		return
+			AonNumberUtils.isNotValid(amount) 
+			|| AonNumberUtils.todouble(amount)  == 0.00 
+			|| extraMonth == salaryMonth ;
+				
+		
+	}
 	
 	// -------------------------------------------
 	//
 	// -------------------------------------------
+
+	private static final class ContractPayments extends AbstractCollection<IContractPayment> {
+		private Collection<IContractPayment> contractPayments ;
+		private final Filter<IContractPayment> extraPaymentFilter;
+
+		private ContractPayments(Collection<IContractPayment> contractPayments, Filter<IContractPayment> extraPaymentFilter) {
+			this.contractPayments = contractPayments;
+			this.extraPaymentFilter = extraPaymentFilter;
+		}
+
+		@Override
+		public int size() {
+			return contractPayments.size();
+		}
+
+		@Override
+		public Iterator<IContractPayment> iterator() {
+			return new DelegateIterator<IContractPayment>(contractPayments.iterator()) {
+				@Override
+				public IContractPayment next() {
+					return new DelegateContractPayment(super.next()) {
+						@Override
+						public String getName() {
+							String name = super.getName();
+							if ( AonStringUtils.isNotBlank(name) ) 
+								return name;
+							if ( extraPaymentFilter.accept(this) ) 
+								return DEFAULT_EXTRA_NAME ;
+							return name;
+						}
+					};
+				}
+			};
+		}
+	}
 
 	public static class DateFormatException extends IllegalArgumentException {
 
@@ -765,4 +921,23 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return ( p.getType() == PaymentType.CRA_0001 ) 
 				&& !AonStringUtils.equals(ContextVariable.PREST_IT, p.getName());		
 	}
+	
+	private static Collection<IContractPayment>  merge ( Collection<IContractPayment> l1, Collection<IContractPayment> l2 ){
+		
+		if ( l1.isEmpty() )
+			return l2;
+		
+		ArrayList<IContractPayment> merge = new ArrayList<>(l1);
+		for (IContractPayment p : l2) {
+			if ( !intersects(l1, p))  
+				merge.add(p);
+		}
+		return merge;
+	}
+
+	private static boolean  intersects ( Collection<IContractPayment> payments, IContractPayment payment){
+		Period period = new Period(payment.getStartDate(), payment.getEndDate());
+		return payments.stream().map( p -> new Period(p.getStartDate(), p.getEndDate())).anyMatch( period::intersects );
+	}
+	
 }

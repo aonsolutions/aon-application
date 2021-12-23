@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod184;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL184;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.Mod184Writer;
@@ -29,11 +30,15 @@ public class Mod184File extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			int id = Integer.parseInt(req.getParameter("mod184"));
+			int id = Integer.parseInt(req.getParameter("modelID"));
 			String domainName = req.getParameter("domainName");
-			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			Mod184 mod184 = FISCAL.getMod184(domainName, domainId,user, id);
+			String user = req.getParameter("user");
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(user);
+			Mod184 mod184 = MODEL184.get(occam, id);
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

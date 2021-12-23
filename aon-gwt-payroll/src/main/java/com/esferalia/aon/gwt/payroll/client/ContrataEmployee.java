@@ -667,6 +667,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- Constructor
 	
 	protected ContrataEmployee() {
+		
 		// Init Tabs Elements
 		contractEmployeeUI = new ContractEmployeeUIImpl();
 		contractSpecificData = new ContractSpecificData();
@@ -687,11 +688,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employeeContractVariables = new EmployeeContractVariables();
 		employeeContractVariables.hideToolbar();
 		
-		// Init toolbar
-		getToolbarPanel();
+		this.toolbar = new AonToolbar("Contrato");
 		
 		// Init Widget
 		initWidget(uiBinder.createAndBindUi(this));
+
+		// Init toolbar
+		getToolbarPanel();
+		
 		
 		// Show contract buttons
 		showContractButtons();
@@ -1080,7 +1084,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- Toolbar panel
 	
 	private AonToolbar getToolbarPanel() {
-		this.toolbar = new AonToolbar("Contrato");
 		
 		listEmployees = new AonToolbarButton( "Volver a contratos", AON.CSS.aonIconBack() );
 		listEmployees.addClickHandler(e -> onListEmployees());

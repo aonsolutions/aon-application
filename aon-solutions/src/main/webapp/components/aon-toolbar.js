@@ -204,6 +204,15 @@ export class AonToolbar extends AonElement {
 		return search;
 	}
 
+	cleanSearchValue() {
+		const id = this.TOOL_SECTION + 'Search';
+		let search = this.getElement(id);
+		if(search) {
+			let input = this.getElement(search.SEARCH_INPUT);
+			input.value = '';
+		}
+	}
+
 	addButton2(action, fn) {
 		const id = this.TOOL_SECTION + action.id + 'Button';
 		let span = this.createElement(TAG.SPAN);

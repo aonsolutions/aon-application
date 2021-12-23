@@ -146,7 +146,7 @@ abstract class Model190Base extends DockLayoutPanel {
 		toolbarPanel.add(resetButton);		
 		
 		duplicateButton.addClickHandler( event -> getCallback().onDuplicate(getCallback().getOptions(),getModel().getId()));
-		toolbarPanel.add(resetButton);		
+		toolbarPanel.add(duplicateButton);		
 
 		printButton.addClickHandler( event ->  print());
 		toolbarPanel.add(printButton);
@@ -490,11 +490,6 @@ abstract class Model190Base extends DockLayoutPanel {
 	private void identificationLabelChanged() {
 		toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 	}
-
-	// *********************************************************************
-	// *********************************************************************
-	// *********************************************************************
-
 
 	protected void paintDeclarationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();

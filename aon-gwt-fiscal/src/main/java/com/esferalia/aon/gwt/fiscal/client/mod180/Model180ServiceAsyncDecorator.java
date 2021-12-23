@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
@@ -18,57 +19,57 @@ public class Model180ServiceAsyncDecorator implements Model180ServiceAsync {
 	}
 
 	@Override
-	public void deleteMod180(String domainName, String user, int domainId, Mod180 mod180, AsyncCallback<Void> callback) {
+	public void delete(Occam occam, Mod180 mod180, AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.deleteMod180(domainName, user, domainId, mod180, new AsyncCallbackWrapper<Void>(callback));
+		fsa.delete(occam, mod180, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void saveMod180(String domainName, String user, int domainId, Mod180 mod180, AsyncCallback<Mod180> callback) {
+	public void save(Occam occam, Mod180 mod180, AsyncCallback<Mod180> callback) {
 		AON.start();
-		fsa.saveMod180(domainName, user, domainId, mod180, new AsyncCallbackWrapper<Mod180>(callback));
+		fsa.save(occam, mod180, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getMod180s(String domainName, String user, int domainId, AsyncCallback<LinkedList<Mod180>> callback) {
+	public void getMod180s(Occam occam, AsyncCallback<LinkedList<Mod180>> callback) {
 		AON.start();
-		fsa.getMod180s(domainName, user, domainId, new AsyncCallbackWrapper<LinkedList<Mod180>>(callback));
+		fsa.getMod180s(occam, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void initializeMod180(String domainName, String user, Integer domain, Integer year, AsyncCallback<Mod180> callback) {
+	public void initialize(Occam occam, Integer year, AsyncCallback<Mod180> callback) {
 		AON.start();
-		fsa.initializeMod180(domainName, user, domain, year, new AsyncCallbackWrapper<Mod180>(callback));
+		fsa.initialize(occam, year, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getMod180(String domainName, String user, int domainId, Integer id, AsyncCallback<Mod180> callback) {
+	public void get(Occam occam, Integer id, AsyncCallback<Mod180> callback) {
 		AON.start();
-		fsa.getMod180(domainName, user, domainId, id, new AsyncCallbackWrapper<Mod180>(callback));
+		fsa.get(occam, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getMod180Detail(String domainName, String user, int domainId, Integer id, AsyncCallback<Mod180Detail> callback) {
+	public void getDetail(Occam occam, Integer id, AsyncCallback<Mod180Detail> callback) {
 		AON.start();
-		fsa.getMod180Detail(domainName, user, domainId, id, new AsyncCallbackWrapper<Mod180Detail>(callback));
+		fsa.getDetail(occam, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void saveCommentsMod180(String domainName, String user, Mod180 mod180, AsyncCallback<Mod180> callback) {
+	public void saveComments(Occam occam, Mod180 mod180, AsyncCallback<Mod180> callback) {
 		AON.start();
-		fsa.saveCommentsMod180(domainName, user, mod180, new AsyncCallbackWrapper<Mod180>(callback));
+		fsa.saveComments(occam, mod180, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void changeStatusMod180(String domainName, String user, Mod180 mod180, FiscalStatus newStatus, AsyncCallback<Mod180> callback) {
+	public void changeStatus(Occam occam, Mod180 mod180, FiscalStatus newStatus, AsyncCallback<Mod180> callback) {
 		AON.start();
-		fsa.changeStatusMod180(domainName, user, mod180, newStatus, new AsyncCallbackWrapper<Mod180>(callback));
+		fsa.changeStatus(occam, mod180, newStatus, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void duplicateMod180(String domainName, String user, Integer domain, Mod180 mod180, AsyncCallback<Mod180> callback) {
+	public void duplicate(Occam occam, Mod180 mod180, AsyncCallback<Mod180> callback) {
 		AON.start();
-		fsa.duplicateMod180(domainName, user, domain, mod180, new AsyncCallbackWrapper<Mod180>(callback));
+		fsa.duplicate(occam, mod180, new AsyncCallbackWrapper<>(callback));
 	}
 
 }

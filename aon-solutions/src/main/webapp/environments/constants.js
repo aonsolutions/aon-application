@@ -22,6 +22,7 @@ export const AON_MARKETPLACE_PANEL = 'aonMarketplacePanel';
 export const AON_MOBILE_PROFILE = 'aonMobileProfile';
 export const AON_PRODUCT = 'aonProduct';
 export const AON_SEARCH = 'aonSearch';
+export const AON_USER_LIST = 'aonUserList';
 export const AUTOCOMPLETE = 'autocomplete';
 export const AUTOSAVE = 'autosave';
 export const AON_FILE = 'aonFile';
@@ -73,6 +74,7 @@ export const DISCOUNT = 'discount';
 export const DISABLED = 'disabled';
 export const DIV = 'div';
 export const DRAFT = 'draft';
+export const DOCUMENT = 'document';
 export const DOCUMENTAL = 'documental';
 export const DOWNLOAD = 'download';
 export const DOWNLOAD_FILE = 'downloadFile';
@@ -85,6 +87,7 @@ export const DUPLICATE_INVOICE = 'duplicateInvoice';
 
 export const EDIT = 'edit';
 export const EDIT_FILE = 'editFile';
+export const EMAIL = 'email';
 export const ENTERPRISE = 'enterprise';
 export const ERROR = "error";
 export const EXPENSES = "expenses";
@@ -224,6 +227,7 @@ export const STATUS = 'status';
 export const STRING = 'string';
 export const SUCCESS = "success";
 export const SURCHARGE = 'surcharge';
+export const SURNAME = 'surname';
 
 // ----- T
 
@@ -266,10 +270,10 @@ export const HTML_ELEMENT = 'htmlElement';
 
 // ----- Z
 
-export const API_KEY_MAP = 'AIzaSyAr2rzslqS8G6uy5IWEczcPFHpaXOfVjO4';
+// export const API_KEY_MAP = 'AIzaSyAr2rzslqS8G6uy5IWEczcPFHpaXOfVjO4';
 
-export const URL_MAP = `https://maps.googleapis.com/maps/api/js?key=${API_KEY_MAP}&hl=es&callback=showNewMap`;
-export const URL_MAP_EMBED = `https://www.google.com/maps/embed/v1/place?key=${API_KEY_MAP}`;
+// export const URL_MAP = `https://maps.googleapis.com/maps/api/js?key=${API_KEY_MAP}&hl=es&callback=showNewMap`;
+// export const URL_MAP_EMBED = `https://www.google.com/maps/embed/v1/place?key=${API_KEY_MAP}`;
 
 
 

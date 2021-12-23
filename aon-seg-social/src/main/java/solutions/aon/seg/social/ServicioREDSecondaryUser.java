@@ -39,6 +39,7 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 		HttpPost httpPost = null;
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			String body = Toolkit.getBodyGET(httpClient, IServicioRedConstants.BASE_URL_TGSS+"/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24P003");
+			Toolkit.checkProsaError(body);
 			checkAuthorization(body);
 			link = IServicioRedConstants.BASE_URL_TGSS+Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "id", "FORMULARIO_1"), "action");
 

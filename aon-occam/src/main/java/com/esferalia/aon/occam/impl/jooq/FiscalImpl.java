@@ -12,9 +12,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
-import com.esferalia.aon.occam.api.model.fiscal.Mod180;
-import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
@@ -41,8 +38,6 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod180DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod193DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod347DAO;
@@ -86,55 +81,6 @@ public class FiscalImpl implements IFiscal {
 		return FiscalModelDAO.getFiscalModel(ctx, id);
 	}
 
-	// ---------------------------------------------------- [MODELO 180]
-	@Override
-	public LinkedList<Mod180> getMod180s(AONContext ctx, int domain) {
-		return Mod180DAO.getByDomain(ctx, domain);
-	}
-
-	@Override
-	public Mod180 getMod180(AONContext ctx, Integer id) {
-		return Mod180DAO.getById(ctx, id);
-	}
-
-	@Override
-	public Mod180 initializeMod180(AONContext ctx, int year) {
-		return Mod180DAO.initialize(ctx, year);
-	}
-
-	@Override
-	public Mod180 saveMod180(AONContext ctx, Mod180 mod180) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod180DAO.save(ctx, mod180));
-	}
-
-	@Override
-	public void deleteMod180(AONContext ctx, Mod180 mod180) {
-		ctx.getDslContext().transaction(
-				configuration -> Mod180DAO.delete(ctx, mod180));
-	}
-
-	@Override
-	public Mod180Detail getMod180Detail(AONContext ctx, Integer id) {
-		return Mod180DAO.getDetail(ctx, id);
-	}
-	
-	@Override
-	public Mod180 saveCommentsMod180(AONContext ctx, Mod180 mod180) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod180DAO.saveComments(ctx, mod180));		
-	}
-	@Override
-	public Mod180 changeStatusMod180(AONContext ctx, Mod180 mod180, FiscalStatus newStatus) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod180DAO.changeStatusMod180(ctx, mod180, newStatus));		
-	}
-	@Override
-	public Mod180 duplicateMod180(AONContext ctx, Mod180 mod180) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod180DAO.duplicate(ctx, mod180));		
-	}
-
 	// ----------------------------------------------------------- [MODELO 193]
 	@Override
 	public LinkedList<Mod193> getMod193s(AONContext ctx, int domain) {
@@ -176,48 +122,6 @@ public class FiscalImpl implements IFiscal {
 	public Mod193 duplicateMod193(AONContext ctx, Mod193 mod193) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod193DAO.duplicate(ctx, mod193));		
-	}
-	// ----------------------------------------------------------- [MODELO 184]
-	@Override
-	public LinkedList<Mod184> getMod184s(AONContext ctx, int domain) {
-		return Mod184DAO.getByDomain(ctx, domain);
-	}
-
-	@Override
-	public Mod184 getMod184(AONContext ctx, Integer id) {
-		return Mod184DAO.getById(ctx, id);
-	}
-
-	@Override
-	public Mod184 initializeMod184(AONContext ctx, int year) {
-		return Mod184DAO.initialize(ctx, year);
-	}
-	@Override
-	public Mod184 saveMod184(AONContext ctx, Mod184 mod184) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod184DAO.save(ctx, mod184));
-	}
-
-	@Override
-	public void deleteMod184(AONContext ctx, Mod184 mod184) {
-		ctx.getDslContext().transaction(
-				configuration -> Mod184DAO.delete(ctx, mod184));
-	}
-
-	@Override
-	public Mod184 saveCommentsMod184(AONContext ctx, Mod184 mod184) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod184DAO.saveComments(ctx, mod184));		
-	}
-	@Override
-	public Mod184 changeStatusMod184(AONContext ctx, Mod184 mod184, FiscalStatus newStatus) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod184DAO.changeStatusMod184(ctx, mod184, newStatus));		
-	}
-	@Override
-	public Mod184 duplicateMod184(AONContext ctx, Mod184 mod184) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod184DAO.duplicate(ctx, mod184));		
 	}
 	// ----------------------------------------------------------- [MODELO 390]
 	@Override

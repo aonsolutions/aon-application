@@ -59,6 +59,7 @@ export const AON_COMPANY_LIST = 'aon-company-list';
 // MODULES - USER
 
 export const AON_USER = 'aon-user';
+export const AON_USER_LIST = 'aon-user-list';
 export const AON_MOBILE_PROFILE = 'aon-mobile-profile';
 
 export const AON_REG = 'aon-reg';

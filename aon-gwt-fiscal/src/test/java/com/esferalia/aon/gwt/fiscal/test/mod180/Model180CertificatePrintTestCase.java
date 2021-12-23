@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
 
-import com.esferalia.aon.gwt.fiscal.server.Mod180CertificatePrint;
+import com.esferalia.aon.gwt.fiscal.server.fiscal.mod180.Mod180CertificatePrint;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
 import com.esferalia.aon.occam.api.model.type.Administration;

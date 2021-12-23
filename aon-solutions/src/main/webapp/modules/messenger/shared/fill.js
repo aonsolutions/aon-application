@@ -83,8 +83,13 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
         aonSelect.loading(true);
         const project = task.getProject();
         try {
+            const aonSelectParet = aonSelect.parentNode;
+
+            aonSelectParet.style.display = "none";
+            
             // if(projects.length ===0 && (task.id && !task.isExternal()) )
-            if( projects.length ===0 && registry )
+
+            if( projects.length === 0 && registry )
                 projects = await getProjects({ registry: task.getRegistry().id });
               
             aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
@@ -99,7 +104,7 @@ export const fillProject = async (task, projects =[], registry = undefined) => {
             } else if(!projects.length)
                display = "none";
 
-            aonSelect.parentNode.style.display = display;
+            aonSelectParet.style.display = display;
 
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail && detail.id)
