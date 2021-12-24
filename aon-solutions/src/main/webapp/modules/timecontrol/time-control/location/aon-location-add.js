@@ -81,7 +81,7 @@ export class AonLocationAdd extends AonElement {
     form.appendChild(div);
 
     let div2 = this.createElement(TAG.DIV);
-    div2.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
+    div2.classList.add(CSS.AON_COL_XS_12);
     div.appendChild(div2);
     
     const aonCard = createCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
@@ -141,7 +141,7 @@ export class AonLocationAdd extends AonElement {
     }, aonCard);
 
     const divMap = this.createElement(TAG.DIV);
-    divMap.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
+    divMap.classList.add(CSS.AON_COL_XS_12);
     divMap.id = "divMap";
     div.appendChild(divMap);
   }

@@ -74,7 +74,8 @@ export class AonMessengerChat extends AonElement {
   }
 
   setTask(){
-    let data = {...this.data};
+
+    let data = {...this.data, domainCompany:this.getDur().domain};
 
     const myTaskHolder = this.applicationParentEl.TASK_HOLDER;
     if(myTaskHolder && myTaskHolder.id) 
@@ -82,7 +83,7 @@ export class AonMessengerChat extends AonElement {
       
     if(this.applicationParentEl.cauData.auth && this.applicationParentEl.cauData.auth.email)  
       data.auth = this.applicationParentEl.cauData.auth;
-
+      
     this.setData(data); 
     this.task = new Task(this.getData());
   }

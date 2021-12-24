@@ -58,7 +58,7 @@ export class AonMap extends AonElement {
         await waitEl("script[src*='leaflet.js']", this.DOC);
 
         if(!this.POSITION)
-            this.POSITION = await getPosition().then(({ latitude, longitude }) => ({ lat:latitude, lng:longitude })).catch((e) => null);
+          this.POSITION = await getPosition().then(({ latitude, longitude }) => ({ lat:latitude, lng:longitude })).catch((e) => null);
         
         this.POSITION = { lat: this.POSITION.latitude || this.POSITION.lat, lng: this.POSITION.longitude || this.POSITION.lng };
 
@@ -75,7 +75,10 @@ export class AonMap extends AonElement {
 
     this.DOC.body.appendChild(mapContainer);
 
-    this.MAP = this.WD.L.map(mapContainer, { attributionControl: false }).setView(this.POSITION, this.ZOOM);
+    this.MAP = this.WD.L.map(mapContainer, { attributionControl: false, zoomControl: false }).setView(this.POSITION, this.ZOOM);
+    
+    //ZOOM
+    this.WD.L.control.zoom({ position: 'bottomright' }).addTo(this.MAP);
 
     new this.WD.L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{  subdomains: ["mt0", "mt1", "mt2", "mt3"] }).addTo(this.MAP);
 
