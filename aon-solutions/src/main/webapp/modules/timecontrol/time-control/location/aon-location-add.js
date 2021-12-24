@@ -87,7 +87,7 @@ export class AonLocationAdd extends AonElement {
     const aonCard = createCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
 
     let divG = this.createElement(TAG.DIV);
-    divG.className = CSS.AON_COL_XS_10;
+    divG.classList.add(CSS.AON_COL_SM_5, CSS.AON_COL_XS_10);
     aonCard.appendChild(divG);
 
     createInput({
@@ -100,7 +100,7 @@ export class AonLocationAdd extends AonElement {
     }, divG);
 
     divG = this.createElement(TAG.DIV);
-    divG.className = CSS.AON_COL_XS_2;
+    divG.classList.add(CSS.AON_COL_SM_1, CSS.AON_COL_XS_2);
     aonCard.appendChild(divG);
 
     createInput({
@@ -113,6 +113,21 @@ export class AonLocationAdd extends AonElement {
     }, divG);
 
 
+    divG = this.createElement(TAG.DIV);
+    divG.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
+    aonCard.appendChild(divG);
+
+     createInput({
+      attributes:{
+        name:"direction",
+        id:"direction" ,
+        type:"text",
+        description:"Dirección",
+        disabled:true
+      }
+    }, divG);
+    
+  
     createInput({
       attributes:{
         name:"latitude",
@@ -172,6 +187,11 @@ export class AonLocationAdd extends AonElement {
     aonMap.geocoder = true;
     aonMap.addEventListener(EVENT.COORDINATES, ({detail})=>{
       this.setCoordinates(detail);
+    });
+
+    aonMap.addEventListener(EVENT.GEOCODE, ({detail})=>{
+      if(detail && detail.name)
+        this.getElement("direction").value = detail.name
     });
 
     const cardContentMap = createCard({id: this.id+"Map", title:"Mapa", flex:"true"}, divMap).getContent();
