@@ -1,31 +1,24 @@
 package com.esferalia.aon.gwt.fiscal.client.mod193;
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
-import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.mod193.Model193.IModel193Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193.Model193Callback;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -36,120 +29,75 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
 abstract class Model193Base extends DockLayoutPanel {
 
-	private static final String MODEL193_PRINT = "/aon_gwt_fiscal/ms/Model193Print";
-	private static final String MODEL193_FILE = "/aon_gwt_fiscal/ms/Model193File";
+	protected static final String MODEL193_FILE = "/aon_gwt_fiscal/ms/Model193File";
 	
 	protected interface IModel193Detail extends IsWidget {
 		Integer getSelectedPerceptorIndex();
 	}
-	interface TabLabelTemplate extends SafeHtmlTemplates {
-		@Template("<span class=\"{1} aon-padding-right aon-padding-left-20\" style=\"width: auto !important\">{0}</span>")
-		SafeHtml render(String label, String iconStyle);
-	}
-	protected static final TabLabelTemplate TAB_TEMPLATE = GWT.create(TabLabelTemplate.class);
-
-	protected class Model193BaseCallback implements IModel193Callback {
-		private Model193Callback cbk;
-		
-		protected Model193BaseCallback( Model193Callback cbk ) {
-			this.cbk = cbk;
-		}
-		public Mod193 getMod193() {
-			return Model193Base.this.getMod193();
-		}
-		@Override
-		public void onAccept(Mod193 mod193) {
-			cbk.onAccept(mod193);
-		}
-		@Override	
-		public void onCancel() {
-			cbk.onCancel();
-		}
-		@Override	
-		public void onSelect(Model193ModuleOptions options, Mod193 mod193, Integer selectedIndex) {
-			cbk.onSelect(options,mod193, selectedIndex);
-		}
-		@Override
-		public void showError(String msg) {
-			cbk.showError(msg);
-		}
-		@Override
-		public void cleanErrorPanel() {
-			cbk.cleanErrorPanel();
-		}
-		@Override
-		public void onNew(Model193ModuleOptions options) {
-			cbk.onNew(options);
-		}
-		@Override
-		public void onReset(Model193ModuleOptions options, Mod193 mod193) {
-			cbk.onReset(options, mod193);		
-		}
-		@Override
-		public void onDuplicate(Model193ModuleOptions options, int id) {
-			cbk.onDuplicate( options, id );
-		}
-	}
-	
 	
 	private Mod193 mod193;
-	private Model193BaseCallback callback;
+	private Model193Callback callback;
 	private boolean dirty;
 
-	protected InlineLabel documentLabel = new InlineLabel();
-	protected InlineLabel nameLabel = new InlineLabel();
-	protected FlowPanel  dirtyPanel = new FlowPanel ();
-	protected InlineLabel statusLabel = new InlineLabel();
-	protected InlineLabel replacedLabel = new InlineLabel();
-	protected Button commentsButton = new Button();
+	protected FiscalModelAdmonPanel<Mod193, Model193ModuleOptions> admonPanel;
+	protected AonTextBox receiptBox;
 
-	protected final Button newButton = new Button();
-	protected final Button saveButton = new Button();
-	protected final Button cancelButton = new Button();		
-	protected final Button deleteButton = new Button();
-	protected final Button resetButton = new Button();
-	protected final Button markAsPendingButton = new Button();
-	protected final Button markAsFinishedButton = new Button();
-	protected final Button markAsSentButton = new Button();
-	protected final Button duplicateButton = new Button();
-	protected final Button auditButton = new Button();
+	protected final AonToolbar toolbarPanel = new AonToolbar(); 
+	protected final AonToolbarButton newButton = new AonToolbarButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
+	protected final AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave());
+	protected final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconBack());
+	protected final AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+	protected final AonToolbarButton resetButton = new AonToolbarButton(AON.MSG.resetAction(),AON.CSS.aonIconRefresh());
+	protected final AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
+	protected final AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
+	protected final AonToolbarButton markAsSentButton = new AonToolbarButton(AON.MSG.markAsSent(),AON.CSS.aonIconModelSent());
+	protected final AonToolbarButton duplicateButton = new AonToolbarButton(AON.MSG.duplicate(),AON.CSS.aonIconCopy());
+	protected final AonToolbarButton commentsButton = new AonToolbarButton(AON.MSG.comments(), AON.CSS.aonIconNoComments());
+	protected final AonToolbarButton auditButton = new AonToolbarButton(AON.MSG.audit(),AON.CSS.aonIconAudit());
+	
+	protected final AonToolbar decToolbar = new AonToolbar();
+	protected final InlineLabel dirtyLabel = new InlineLabel();
+	protected final InlineLabel replacedLabel = new InlineLabel();
+	protected final Label statusLabel = new Label();
+
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
 	protected Hidden mod193Hidden = new Hidden("mod193");
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
+	
 	private IModel193Detail detailManager;
 	
-	public Model193Base(Model193ModuleOptions options, Mod193 mod193,Model193Callback cbk) {
+	protected Model193Base(Model193Callback cbk,Mod193 mod193) {
 		super(Unit.PX);
-		select( options, mod193 );
+		this.callback = cbk;
 		
-		addNorth(getToolbarPanel(options,cbk), 25);
+		select( mod193 );
 		
-		SimplePanel modelPanel = new SimplePanel();
-		FiscalModelUtils.paintHeaderTable(modelPanel, this.mod193 );
-		addNorth(modelPanel, 65);
+		AonFiscalModelHeader modelHeader = new AonFiscalModelHeader(this.mod193);
+		addNorth(modelHeader, AonFiscalModelHeader.HEIGTH);
+		addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
+		addNorth(getDeclarationToolbarPanel(), AonToolbar.HEIGTH);
 		
-		ScrollPanel headerPanel = new ScrollPanel();
-		headerPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		headerPanel.setWidget( getDeclarationHeaderTable(options,cbk));
-		addNorth(headerPanel, 45);
-		
-		this.callback = new Model193BaseCallback(cbk);
-
-
-		setStyleName(AON.AON_CSS.aonSelector());
+		setStyleName(AON.CSS.aonSelector());
 	}
 	
+	public Model193Callback getCallback() {
+		return callback;
+	}
+	protected Mod193 getModel() {
+		return mod193;
+	}
+	public void setModel(Mod193 mod193) {
+		this.mod193 = mod193;
+	}
+
 	public IModel193Detail getDetailManager() {
 		return detailManager;
 	}
@@ -157,15 +105,6 @@ abstract class Model193Base extends DockLayoutPanel {
 		this.detailManager = detailManager;
 	}
 
-	public Model193BaseCallback getCallback() {
-		return callback;
-	}
-	protected Mod193 getMod193() {
-		return mod193;
-	}
-	public void setMod193(Mod193 mod193) {
-		this.mod193 = mod193;
-	}
 	protected void markAsDirty() {
 		setDirty(true);
 	}
@@ -176,765 +115,426 @@ abstract class Model193Base extends DockLayoutPanel {
 		this.dirty = dirty;
 		styleDirtyLabel();
 	}
-	protected void select(Model193ModuleOptions options, Mod193 mod193) {
-		setMod193(mod193);
-		refreshToolbarState(options);
+	protected void select(Mod193 mod193) {
+		setModel(mod193);
+		refreshToolbarState( );
 	}
 
-	
-	private Widget getToolbarPanel(Model193ModuleOptions options,Model193Callback cbk) {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label( "Modelo 193."));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-		
-		newButton.setText(AON.MSG.newAction());
-		newButton.setTitle(newButton.getText());
-		newButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		newButton.addStyleName(AON.AON_CSS.aonIconReset());
-		newButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.onNew(options);
-			}
-		});
-		buttonContainer.add(newButton);
-		
-		
-		saveButton.setText(AON.MSG.saveAction());
-		saveButton.setTitle(newButton.getText());
-		saveButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		saveButton.addStyleName(AON.AON_CSS.aonIconSave());
-		saveButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if (getMod193().getYear() == 0) {
-					throw new IllegalArgumentException(AON.MSG.requiredField(AON.MSG.fiscalYear()));
-				}
-				final PopupPanel popup = new PopupPanel(false, true);
-				Label label = new Label(AON.MSG.processing());
-				label.addStyleName(AON.AON_CSS.aonTimer());
-				popup.add(label);
-				popup.setGlassEnabled(true);
-				popup.setAnimationEnabled(true);
-				popup.center();
-				Model193.SERVICE.save(options.getDomainName(), options.getUser(), options.getDomain(),
-						getMod193(), new AsyncCallback<Mod193>() {
-							@Override
-							public void onSuccess(Mod193 result) {
-								popup.hide();
-								callback.onSelect(options, result, detailManager.getSelectedPerceptorIndex() );
-							}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								popup.hide();
-								callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-							}
-						});
-			}
-		});
-		buttonContainer.add(saveButton);
-		
-		cancelButton.setText(AON.MSG.cancelAction());
-		if (options.isBackButtonVisible() && options.hasExternalCallback()) {
+	private AonToolbar getToolbarPanel() {
+		 
+		if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
 			cancelButton.setText(AON.MSG.backAction());
+			cancelButton.setTitle(AON.MSG.backAction());
 		}
-		cancelButton.setTitle(cancelButton.getText());
-		cancelButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		cancelButton.addStyleName(AON.AON_CSS.aonIconCancel());
-		cancelButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				cancelButton.setEnabled(false);
-				if (isDirty()) {
-					ConfirmDialog cd = new ConfirmDialog();
-					cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new ConfirmDialogCallback() {
+		cancelButton.addClickHandler(event ->  cancel() );
+		toolbarPanel.add(cancelButton);
 
-						@Override
-						public void onAccept() {
-							if (options.isBackButtonVisible() && options.hasExternalCallback()) {
-								options.getExternalCallback().onExit(mod193);
-							} else {
-								callback.onCancel();
-							}
-						}
+		newButton.addClickHandler( event ->  getCallback().onNew() );
+		toolbarPanel.add(newButton);
 
-						@Override
-						public void onCancel() {
-							cancelButton.setEnabled(true);
-						}
-					});
-				} else {
-					if (options.isBackButtonVisible() && options.hasExternalCallback()) {
-						options.getExternalCallback().onExit(mod193);
-					} else {
-						callback.onCancel();
-					}
-				}
-			}
-		});
-		buttonContainer.add(cancelButton);
-
-		deleteButton.setText(AON.MSG.deleteAction());
-		deleteButton.setTitle(deleteButton.getText());
-		deleteButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		deleteButton.addStyleName(AON.AON_CSS.aonIconDelete());
-		deleteButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				deleteButton.setEnabled(false);
-				ConfirmDialog cd = new ConfirmDialog();
-				cd.confirm(AON.MSG.confirmDeclarationDeleteAction(), new ConfirmDialogCallback() {
-
-					@Override
-					public void onAccept() {
-						Model193.SERVICE.delete(options.getDomainName(), options.getUser(), options.getDomain() 
-							, getMod193(), new AsyncCallback<Void>() {
-							@Override
-							public void onSuccess(Void result) {
-								deleteButton.setEnabled(true);
-								callback.onCancel();
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								deleteButton.setEnabled(true);
-								callback.showError(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
-							}
-						});
-					}
-
-					@Override
-					public void onCancel() {
-						deleteButton.setEnabled(true);
-					}
-				});
-			}
-		});
-		buttonContainer.add(deleteButton);
+		saveButton.addClickHandler(event ->  save());
+		toolbarPanel.add(saveButton);
 		
-		// Botón Inicializar
-		resetButton.setText(AON.MSG.resetAction());
-		resetButton.setTitle(resetButton.getText());
-		resetButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		resetButton.addStyleName(AON.AON_CSS.aonIconReset());
-		resetButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.onReset(options, getMod193());
-			}
-		});
-		buttonContainer.add(resetButton);
+		deleteButton.addClickHandler(event -> delete());
+		toolbarPanel.add(deleteButton);
 		
-		markAsFinishedButton.setText(AON.MSG.finish());
-		markAsFinishedButton.setTitle(markAsFinishedButton.getText());
-		markAsFinishedButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		markAsFinishedButton.addStyleName(AON.AON_CSS.aonIconPointLightGreen());
-		markAsFinishedButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				markAsFinishedButton.setEnabled(false);
-				Model193.SERVICE.changeStatus(options.getDomainName(), options.getUser(), getMod193(), FiscalStatus.FINISHED, new AsyncCallback<Mod193>() {
+		resetButton.addClickHandler( event -> getCallback().onReset(getCallback().getOptions(),getModel()));
+		toolbarPanel.add(resetButton);		
+		
+		duplicateButton.addClickHandler( event -> getCallback().onDuplicate(getCallback().getOptions(),getModel().getId()));
+		toolbarPanel.add(duplicateButton);		
+
+		commentsButton.addClickHandler( event -> {
+			final AonToast toast = new AonToast();
+			FlowPanel commentPanel = new FlowPanel();
+			commentPanel.setStyleName( FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()) );
+			commentPanel.addStyleName(AON.CSS.aonHeightAll());
+			commentPanel.addStyleName(AON.CSS.aonTextCenter());
+			TextArea comment = new TextArea();
+			comment.addValueChangeHandler(event1 -> {
+				getModel().setComments(event1.getValue());
+				styleCommentsButton();
+				Model193.SERVICE.saveComments( getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Mod193>() {
 					@Override
 					public void onSuccess(Mod193 result) {
-						callback.onSelect(options, result , detailManager.getSelectedPerceptorIndex() );
+						toast.hide();
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						markAsFinishedButton.setEnabled(true);
-						callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						toast.hide();
+						getCallback().showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
 					}
 				});
-			}
+			});
+			comment.setText(getModel().getComments());
+			comment.setWidth("90%");
+			comment.setHeight("5em");
+			commentPanel.add(comment);
+			toast.show(AON.MSG.comments(), commentPanel);
 		});
-		buttonContainer.add(markAsFinishedButton);
+		toolbarPanel.add( commentsButton );
+		styleCommentsButton();
 
-		markAsSentButton.setText(AON.MSG.markAsSent());
-		markAsSentButton.setTitle(markAsSentButton.getText());
-		markAsSentButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		markAsSentButton.addStyleName(AON.AON_CSS.aonIconPointGreen());
-		markAsSentButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				markAsSentButton.setEnabled(false);
-				Model193.SERVICE.changeStatus(options.getDomainName(), options.getUser(), getMod193(), FiscalStatus.SENT, new AsyncCallback<Mod193>() {
-					@Override
-					public void onSuccess(Mod193 result) {
-						callback.onSelect(options, result, detailManager.getSelectedPerceptorIndex());
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						markAsSentButton.setEnabled(true);
-						callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
-				});
-			}
-		});
-		buttonContainer.add(markAsSentButton);
-
-		markAsPendingButton.setText(AON.MSG.reopen());
-		markAsPendingButton.setTitle(markAsPendingButton.getText());
-		markAsPendingButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		markAsPendingButton.addStyleName(AON.AON_CSS.aonIconPointOrange());
-		markAsPendingButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				markAsPendingButton.setEnabled(false);
-				Model193.SERVICE.changeStatus(options.getDomainName(), options.getUser(), getMod193(), FiscalStatus.PENDING, new AsyncCallback<Mod193>() {
-					@Override
-					public void onSuccess(Mod193 result) {
-						callback.onSelect(options,result, detailManager.getSelectedPerceptorIndex());
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						markAsPendingButton.setEnabled(true);
-						callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-					}
-				});
-			}
-		});
-		buttonContainer.add(markAsPendingButton);
+		auditButton.addClickHandler( event -> audit());
+		toolbarPanel.add(auditButton);
 		
-		duplicateButton.setText(AON.MSG.duplicate());
-		duplicateButton.setTitle(duplicateButton.getText());
-		duplicateButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		duplicateButton.addStyleName(AON.AON_CSS.aonIconDuplicate());
-		duplicateButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				duplicateButton.setEnabled(false);
-				callback.onDuplicate(options, mod193.getId());
-				duplicateButton.setEnabled(true);
-//				ConfirmDialog cd = new ConfirmDialog();
-//				String msg = "Desea duplicar el modelo para el ejercicio " + (mod193.getYear() + 1 ) + "?";
-//				cd.confirm(msg, new ConfirmDialogCallback() {
-//					
-//					@Override
-//					public void onCancel() {}
-//							
-//					@Override
-//					public void onAccept() {
-//						Model193.SERVICE.duplicateNextYear(options.getDomainName(), options.getUser(), options.getDomain(), 
-//								mod193.getId(), new AsyncCallback<Mod193>() {
-//							@Override
-//							public void onSuccess(Mod193 result) {
-//								callback.onCancel();
-//							}
-//
-//							@Override
-//							public void onFailure(Throwable caught) {
-//								duplicateButton.setEnabled(true);
-//								callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-//							}
-//						});
-//					}
-//				}); 
-			}
-		});
-		buttonContainer.add(duplicateButton);
+		toolbarPanel.add(diskForm);
 
-		auditButton.setText(AON.MSG.audit());
-		auditButton.setTitle(auditButton.getText());
-		auditButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		auditButton.addStyleName(AON.AON_CSS.aonIconAudit());
-		auditButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				audit();
-			}
-		});
-		buttonContainer.add(auditButton);
-
-		toolbarPanel.add(toolbar);
-		
-		FlowPanel formContainer = new FlowPanel();
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		FlowPanel formFlowPanel = new FlowPanel();
-		diskForm.add(formFlowPanel);
-		formFlowPanel.add(mod193Hidden);
-		formFlowPanel.add(domainIdHidden);
-		formFlowPanel.add(domainNameHidden);
-		formFlowPanel.add(userHidden);
-		formContainer.add(diskForm);
-		toolbarPanel.add(formContainer);
-		
 		return toolbarPanel;
 	}
 	
-	private void audit() {
-		AuditDialog dialog = new AuditDialog();
-		dialog.show(getMod193());
+	protected void save() {
+		save(null);
 	}
-	
-	protected void submitForm(Model193ModuleOptions options, String action) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		mod193Hidden.setValue(String.valueOf(getMod193().getId()));
-		domainIdHidden.setValue(String.valueOf(options.getDomain()));
-		domainNameHidden.setValue(options.getDomainName());
-		userHidden.setValue(options.getUser());
-		diskForm.submit();
-	}
-	
-	protected void identificationLabelChanged() {
-		documentLabel.setText(getMod193().getDocument());
-		nameLabel.setText(getMod193().getName());
+	protected void save(AsyncCallback<Mod193> cbk) {
+		if (getModel().getYear() == 0) {
+			throw new IllegalArgumentException(AON.MSG.requiredField(AON.MSG.fiscalYear()));
+		}
+		saveButton.setEnabled(false);
+		final PopupPanel popup = new PopupPanel(false, true);
+		popup.add( new AonSplash());
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();
+		Model193.SERVICE.save(getCallback().getOptions().getOccam(),
+				getModel(), new AsyncCallback<Mod193>() {
+					@Override
+					public void onSuccess(Mod193 result) {
+						popup.hide();
+						getCallback().onSelect( result, detailManager.getSelectedPerceptorIndex() );
+						if (cbk != null) cbk.onSuccess(result);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						popup.hide();
+						callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
 	}
 
-	protected void styleDirtyLabel() {
-		dirtyPanel.clear();
-		if ( isDirty()) {
-			InlineLabel dirtyLabel = new InlineLabel("[*]");
-			dirtyLabel.setStyleName(AON.AON_CSS.aonColorRed());
-			dirtyPanel.add(dirtyLabel);
+	private void cancel() {
+		cancelButton.setEnabled(false);
+		if (isDirty()) {
+			AonConfirmDialog cd = new AonConfirmDialog();
+			cd.confirm(AON.MSG.confirmDeclarationCancelAction(), new AonConfirmDialogCallback() {
+				
+				@Override
+				public void onAccept() {
+					if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
+						getCallback().getOptions().getExternalCallback().onExit(mod193);
+					} else {
+						getCallback().onCancel( getModel() );
+					}
+				}
+				
+				@Override
+				public void onCancel() {
+					cancelButton.setEnabled(true);
+				}
+			});
+		} else {
+			if (getCallback().getOptions().isBackButtonVisible() && getCallback().getOptions().hasExternalCallback()) {
+				getCallback().getOptions().getExternalCallback().onExit(mod193);
+			} else {
+				getCallback().onCancel( getModel() );
+			}
 		}
+	}
+	
+	private void delete() {
+		deleteButton.setEnabled(false);
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeclarationDeleteAction(), new AonConfirmDialogCallback() {
+
+			@Override
+			public void onAccept() {
+				Model193.SERVICE.delete(getCallback().getOptions().getOccam(), getModel(), new AsyncCallback<Void>() {
+					@Override
+					public void onSuccess(Void result) {
+						deleteButton.setEnabled(true);
+						getCallback().onRemove(mod193);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						deleteButton.setEnabled(true);
+						getCallback().showError(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+					}
+				});
+			}
+
+			@Override
+			public void onCancel() {
+				deleteButton.setEnabled(true);
+			}
+		});
+	}
+	
+	private AonToolbar getDeclarationToolbarPanel() {
+		
+		markAsFinishedButton.setText(markAsFinishedButton.getTitle());
+		markAsFinishedButton.addClickHandler( event -> markAsFinished());
+		decToolbar.add(markAsFinishedButton);
+
+		markAsSentButton.setText(markAsSentButton.getTitle());
+		markAsSentButton.addClickHandler( event -> markAsSent());
+		decToolbar.add(markAsSentButton);
+
+		markAsPendingButton.setText(markAsPendingButton.getTitle());
+		markAsPendingButton.addClickHandler( event -> markAsPending());
+		decToolbar.add(markAsPendingButton);
+
+		FlowPanel marksPanels = new FlowPanel();
+		marksPanels.setStyleName(AON.CSS.aonFlexBlock());
+		
+		dirtyLabel.setStyleName(AON.CSS.aonIconLabel());
+		dirtyLabel.addStyleName(AON.CSS.aonIconDirty());
+		dirtyLabel.setTitle("Cambios sin guardar");
+		dirtyLabel.getElement().getStyle().setWidth(10, Unit.PX);
+		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
+		marksPanels.add(dirtyLabel);
+		
+		if (getModel().isReplacement()) {
+			replacedLabel.setText(AON.MSG.replacement());
+			replacedLabel.setStyleName(AON.CSS.aonMarginLeft());
+			replacedLabel.addStyleName(AON.CSS.aonIconChecked());
+			replacedLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+		}
+		if (getModel().isComplementary()) {
+			replacedLabel.setText( AON.MSG.complementary());
+			replacedLabel.setStyleName(AON.CSS.aonMarginLeft());
+			replacedLabel.addStyleName(AON.CSS.aonIconChecked());
+			replacedLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+		}
+		marksPanels.add(replacedLabel);
+
+		styleDirtyLabel();
+		styleStatusLabel();
+		
+		decToolbar.getMessagePanel().add(marksPanels);
+		
+		decToolbar.setTitle(statusLabel);
+		return decToolbar;
+	}
+	
+	
+	private void markAsFinished() {
+		markAsFinishedButton.setEnabled(false);
+		Model193.SERVICE.changeStatus(getCallback().getOptions().getOccam(), getModel(), FiscalStatus.FINISHED, new AsyncCallback<Mod193>() {
+			@Override
+			public void onSuccess(Mod193 result) {
+				getCallback().onSelect(result , detailManager.getSelectedPerceptorIndex() );
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				markAsFinishedButton.setEnabled(true);
+				callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+			}
+		});
+	}
+	private void markAsSent() {
+		markAsSentButton.setEnabled(false);
+		Model193.SERVICE.changeStatus(getCallback().getOptions().getOccam(), getModel(), FiscalStatus.SENT, new AsyncCallback<Mod193>() {
+			@Override
+			public void onSuccess(Mod193 result) {
+				callback.onSelect(result, detailManager.getSelectedPerceptorIndex());
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				markAsSentButton.setEnabled(true);
+				callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+			}
+		});
+	}
+	private void markAsPending() {
+		markAsPendingButton.setEnabled(false);
+		Model193.SERVICE.changeStatus(getCallback().getOptions().getOccam(), getModel(), FiscalStatus.PENDING, new AsyncCallback<Mod193>() {
+			@Override
+			public void onSuccess(Mod193 result) {
+				callback.onSelect(result, detailManager.getSelectedPerceptorIndex());
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				markAsPendingButton.setEnabled(true);
+				callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+			}
+		});
+	}
+	
+	private void audit() {
+		AonAuditDialog dialog = new AonAuditDialog();
+		dialog.show(getModel());
+	}
+	
+	protected void styleDirtyLabel() {
+		dirtyLabel.setVisible(isDirty());
+	}
+	
+	protected void styleStatusLabel() {
+		statusLabel.setText(getModel().getStatus().getName());
+		statusLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( getModel().getStatus() ));
+		statusLabel.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB( getModel().getStatus() ));
+		statusLabel.setStyleName(AON.CSS.aonToolbarTitle());
+		statusLabel.addStyleName(AON.CSS.aonPaddingLeft());
+		statusLabel.addStyleName(AON.CSS.aonPaddingRight());
+		statusLabel.addStyleName(AON.CSS.aonTextCenter());
+		statusLabel.addStyleName(AON.CSS.aonBorder());
+		statusLabel.addStyleName(AON.CSS.aonNowrap());
 	}
 	
 	private void styleCommentsButton() {
-		if (AonStringUtils.isEmpty(mod193.getComments())) {
-			commentsButton.addStyleName(AON.AON_CSS.aonIconComment());
-			commentsButton.removeStyleName(AON.AON_CSS.aonIconCommentRed());
+		if (AonStringUtils.isEmpty(getModel().getComments())) {
+			commentsButton.addStyleName(AON.CSS.aonIconNoComments());
+			commentsButton.removeStyleName(AON.CSS.aonIconComments());
 		} else {
-			commentsButton.addStyleName(AON.AON_CSS.aonIconCommentRed());
-			commentsButton.removeStyleName(AON.AON_CSS.aonIconComment());
+			commentsButton.addStyleName(AON.CSS.aonIconComments());
+			commentsButton.removeStyleName(AON.CSS.aonIconNoComments());
 		}
-		commentsButton.setTitle(mod193.getComments());
-	}
-	
-	private void styleStatusLabel(Mod193 mod) {
-		statusLabel.setText(mod.getStatus().getName());
-		statusLabel.setStyleName(FiscalModelUtils.getStatusIconStyle(mod.getStatus()));
-		statusLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+		commentsButton.setTitle(getModel().getComments());
 	}
 
-	private void refreshToolbarState(Model193ModuleOptions options) {
-		newButton.setVisible(!getMod193().isNew() && !options.isBackButtonVisible() && !options.hasExternalCallback());
-		saveButton.setVisible(!getMod193().isFinished() && !getMod193().isSent());
-		deleteButton.setVisible(!getMod193().isNew() && !getMod193().isFinished() && !getMod193().isSent());
-		resetButton.setVisible(!getMod193().isNew() && !getMod193().isFinished() && !getMod193().isSent());
+	private void refreshToolbarState() {
+		toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
+		newButton.setVisible(!getModel().isNew() 
+				&& !getCallback().getOptions().isBackButtonVisible() 
+				&& !getCallback().getOptions().hasExternalCallback());
+		saveButton.setVisible(!getModel().isFinished() && !getModel().isSent());
+		deleteButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
+		resetButton.setVisible(!getModel().isNew() && !getModel().isFinished() && !getModel().isSent());
 		cancelButton.setVisible(true);
-		markAsPendingButton.setVisible(!getMod193().isNew() &&
-			(getMod193().getStatus() == FiscalStatus.FINISHED 
-			|| getMod193().getStatus() == FiscalStatus.BATCHED
-			|| getMod193().getStatus() == FiscalStatus.SENT
-			|| getMod193().getStatus() == FiscalStatus.BLOCKED));
-		markAsFinishedButton.setVisible(!getMod193().isNew() &&
-			(getMod193().getStatus() == FiscalStatus.PENDING 
-			|| getMod193().getStatus() == FiscalStatus.MISSING));
-		markAsSentButton.setVisible(!getMod193().isNew() &&
-			(getMod193().getStatus() == FiscalStatus.FINISHED));
-		duplicateButton.setVisible(!getMod193().isNew());
-		auditButton.setVisible(!getMod193().isNew());
+		markAsPendingButton.setVisible(!getModel().isNew() &&
+			(getModel().getStatus() == FiscalStatus.FINISHED 
+			|| getModel().getStatus() == FiscalStatus.BATCHED
+			|| getModel().getStatus() == FiscalStatus.SENT
+			|| getModel().getStatus() == FiscalStatus.BLOCKED));
+		markAsFinishedButton.setVisible(!getModel().isNew() &&
+			(getModel().getStatus() == FiscalStatus.PENDING 
+			|| getModel().getStatus() == FiscalStatus.MISSING));
+		markAsSentButton.setVisible(!getModel().isNew() &&
+			(getModel().getStatus() == FiscalStatus.FINISHED));
+		duplicateButton.setVisible(!getModel().isNew());
+		auditButton.setVisible(!getModel().isNew());
+	}
+	private void identificationLabelChanged() {
+		toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
 	}
 
 	protected void paintDeclarationTab(TabLayoutPanel tabPanel) {
 		ScrollPanel declarationScrollPanel = new ScrollPanel();
-		declarationScrollPanel.setStyleName(AON.AON_CSS.aonWidthAll());
-		declarationScrollPanel.addStyleName(AON.AON_CSS.aonScrollArea());
+		declarationScrollPanel.setStyleName(AON.CSS.aonWidthAll());
+		declarationScrollPanel.addStyleName(AON.CSS.aonScrollArea());
 		
 		FlexTable table = new FlexTable();
-		table.setStyleName(AON.AON_CSS.aonPanelGrid());
-		table.addStyleName(AON.AON_CSS.aonWidth98Percent());
-		table.addStyleName(AON.AON_CSS.aonBlockCenter());
+		table.setStyleName(AON.CSS.aonTable());
+		table.addStyleName(AON.CSS.aonWidthAlmostAll());
+		table.addStyleName(AON.CSS.aonBlockCenter());
 		table.getColumnFormatter().setWidth(0, "300px");
 		
 		table.getColumnFormatter().setWidth(1, "auto");
 		
-		table.getColumnFormatter().setStyleName(1, AON.AON_CSS.aonPanelGridEven());
 		
 		
 		table.setWidget( 0, 0, new InlineLabel(AON.MSG.document()));
-		table.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
-		DocumentTextBox document = new DocumentTextBox();
-		document.setValue(getMod193().getDocument());
-		document.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod193().setDocument(document.getValue());
-				identificationLabelChanged();
-				markAsDirty();
-			}
+		table.getCellFormatter().setStyleName(0,0, AON.CSS.aonTableLabel());
+		AonDocumentTextBox document = new AonDocumentTextBox();
+		document.setValue(getModel().getDocument());
+		document.addValueChangeHandler( event -> {
+			getModel().setDocument(document.getValue());
+			identificationLabelChanged();
+			markAsDirty();
 		});
 		table.setWidget(0, 1, document);
-		table.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridEven());
 		
 		table.setWidget( 1, 0, new InlineLabel(AON.MSG.enterpriseName()));
-		table.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox name = new TextBox();
-		name.setStyleName(AON.AON_CSS.aonInputText());
+		table.getCellFormatter().setStyleName(1,0, AON.CSS.aonTableLabel());
+		AonTextBox name = new AonTextBox();
 		name.setVisibleLength(45);
 		name.setMaxLength(45);
-		name.setValue(getMod193().getName());
-		name.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod193().setName(name.getValue());
-				identificationLabelChanged();
-				markAsDirty();
-			}
+		name.setValue(getModel().getName());
+		name.addValueChangeHandler( event -> {
+			getModel().setName(name.getValue());
+			identificationLabelChanged();
+			markAsDirty();
 		});
 		table.setWidget(1, 1, name);
-		table.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
 		
 		table.setWidget( 2, 0, new InlineLabel(AON.MSG.contactPerson()));
-		table.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox contactPerson = new TextBox();
-		contactPerson.setStyleName(AON.AON_CSS.aonInputText());
+		table.getCellFormatter().setStyleName(2,0, AON.CSS.aonTableLabel());
+		AonTextBox contactPerson = new AonTextBox();
 		contactPerson.setMaxLength(40);
 		contactPerson.setVisibleLength(30);
-		contactPerson.setValue(getMod193().getContactPerson());
-		contactPerson.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod193().setContactPerson(contactPerson.getValue());
-				markAsDirty();
-			}
+		contactPerson.setValue(getModel().getContactPerson());
+		contactPerson.addValueChangeHandler( event -> {
+			getModel().setContactPerson(contactPerson.getValue());
+			markAsDirty();
 		});
 		table.setWidget(2, 1, contactPerson);
-		table.getCellFormatter().setStyleName(2,1, AON.AON_CSS.aonPanelGridEven());
 
 		table.setWidget( 3, 0, new InlineLabel(AON.MSG.contactPhone()));
-		table.getCellFormatter().setStyleName(3,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox contactPhone = new TextBox();
-		contactPhone.setStyleName(AON.AON_CSS.aonInputText());
+		table.getCellFormatter().setStyleName(3,0, AON.CSS.aonTableLabel());
+		AonTextBox contactPhone = new AonTextBox();
 		contactPhone.setMaxLength(9);
 		contactPhone.setVisibleLength(10);
-		contactPhone.setValue(getMod193().getContactPhone());
-		contactPhone.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod193().setContactPhone(contactPhone.getValue());
-				markAsDirty();
-			}
+		contactPhone.setValue(getModel().getContactPhone());
+		contactPhone.addValueChangeHandler( event -> {
+			getModel().setContactPhone(contactPhone.getValue());
+			markAsDirty();
 		});
 		table.setWidget(3, 1, contactPhone);
-		table.getCellFormatter().setStyleName(3,1, AON.AON_CSS.aonPanelGridEven());
 		
 
 		table.setWidget( 4, 0, new InlineLabel(AON.MSG.contactMail()));
-		table.getCellFormatter().setStyleName(4,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox contactMail = new TextBox();
-		contactMail.setStyleName(AON.AON_CSS.aonInputText());
+		table.getCellFormatter().setStyleName(4,0, AON.CSS.aonTableLabel());
+		AonTextBox contactMail = new AonTextBox();
 		contactMail.setMaxLength(50);
 		contactMail.setVisibleLength(50);
-		contactMail.setValue(getMod193().getContactMail());
-		contactMail.addValueChangeHandler( new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod193().setContactMail(contactMail.getValue());
-				markAsDirty();
-			}
+		contactMail.setValue(getModel().getContactMail());
+		contactMail.addValueChangeHandler( event -> {
+			getModel().setContactMail(contactMail.getValue());
+			markAsDirty();
 		});
 		table.setWidget(4, 1, contactMail);
-		table.getCellFormatter().setStyleName(4,1, AON.AON_CSS.aonPanelGridEven());
 		
 		table.setWidget( 5, 0, new InlineLabel(AON.MSG.receipt()));
-		table.getCellFormatter().setStyleName(5,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox receipt = new TextBox();
-		receipt.setStyleName(AON.AON_CSS.aonInputText());
-		receipt.setMaxLength(13);
-		receipt.setVisibleLength(13);
-		receipt.setValue(getMod193().getReceipt());
-		receipt.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod193().setReceipt(receipt.getValue());
-				markAsDirty();
-			}
+		table.getCellFormatter().setStyleName(5,0, AON.CSS.aonTableLabel());
+		receiptBox = new AonTextBox();
+		receiptBox.setMaxLength(13);
+		receiptBox.setVisibleLength(13);
+		receiptBox.setEnabled(getModel().isAEAT());
+		receiptBox.setValue(getModel().getReceipt());
+		receiptBox.addValueChangeHandler(event -> {
+			getModel().setReceipt(receiptBox.getValue());
+			markAsDirty();
 		});
-		table.setWidget(5, 1, receipt);
-		table.getCellFormatter().setStyleName(5,1, AON.AON_CSS.aonPanelGridEven());
-		
+		table.setWidget(5, 1, receiptBox);
+
 		table.setWidget( 6, 0, new InlineLabel(AON.MSG.previousDeclaration()));
-		table.getCellFormatter().setStyleName(6,0, AON.AON_CSS.aonPanelGridOdd());
-		TextBox replaced = new TextBox();
-		replaced.setStyleName(AON.AON_CSS.aonInputText());
+		table.getCellFormatter().setStyleName(6,0, AON.CSS.aonTableLabel());
+		AonTextBox replaced = new AonTextBox();
 		replaced.setMaxLength(13);
 		replaced.setVisibleLength(13);
-		replaced.setEnabled(getMod193().isComplementary() || getMod193().isReplacement());
-		replaced.setValue(getMod193().getReplacedReceipt());
-		replaced.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				getMod193().setReplacedReceipt(replaced.getValue());
-				markAsDirty();
-			}
+		replaced.setEnabled(getModel().isAEAT() && (getModel().isComplementary() || getModel().isReplacement()));
+		replaced.setValue(getModel().getReplacedReceipt());
+		replaced.addValueChangeHandler(event -> {
+			getModel().setReplacedReceipt(replaced.getValue());
+			markAsDirty();
 		});
 		table.setWidget(6, 1, replaced);
-		table.getCellFormatter().setStyleName(6,1, AON.AON_CSS.aonPanelGridEven());
 		
 		declarationScrollPanel.setWidget(table);
-		tabPanel.add(declarationScrollPanel, TAB_TEMPLATE.render(AON.MSG.declaration(), AON.AON_CSS.aonIconModel()));
+		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
 	
-	private Widget getDeclarationHeaderTable(Model193ModuleOptions options,Model193Callback cbk) {
-		FlexTable table = new FlexTable();
-		table.setStyleName(AON.AON_CSS.aonPanelGrid());
-		table.addStyleName(AON.AON_CSS.aonWidthAll());
-		table.addStyleName(AON.AON_CSS.aonBlockCenter());
-		
-		table.getColumnFormatter().setWidth(0, "auto");
-		table.getColumnFormatter().setWidth(1, "150px");
-		table.getColumnFormatter().setWidth(2, "150px");
-		table.getColumnFormatter().setWidth(3, "150px");
-		table.getColumnFormatter().setWidth(4, "110px");
-		
-		FlowPanel namePanel = new FlowPanel();
-		namePanel.setStyleName(AON.AON_CSS.aonFontBig());
-		namePanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		documentLabel.setText(getMod193().getDocument());
-		namePanel.add(documentLabel);
-		nameLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
-		nameLabel.setText(getMod193().getName());
-		namePanel.add(nameLabel);
-		
-		table.setWidget(0, 0, namePanel);
-		table.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		table.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonNowrap());
-
-		if (getMod193().isReplacement()) {
-			replacedLabel.setText("Sustit.");
-			replacedLabel.setStyleName(AON.AON_CSS.aonIconChecked());
-			replacedLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+	protected void decorateDeclarationTab() {
+		if (receiptBox != null) {
+			receiptBox.setValue( getModel().getReceipt() );
 		}
-		if (getMod193().isComplementary()) {
-			replacedLabel.setText("Complem.");
-			replacedLabel.setStyleName(AON.AON_CSS.aonIconChecked());
-			replacedLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		}
-		table.setWidget(0, 1, replacedLabel);
-		table.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		table.getCellFormatter().addStyleName(0, 1, AON.AON_CSS.aonTextCenter());
-		
-		styleDirtyLabel();
-		table.setWidget(0, 2, dirtyPanel);
-		table.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonPanelGridEven());
-		table.getCellFormatter().addStyleName(0, 2, AON.AON_CSS.aonTextCenter());
-		
-		styleStatusLabel(getMod193());
-		table.setWidget(0, 3, statusLabel);
-		table.getCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonPanelGridEven());
-		table.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonNowrap());
-		table.getCellFormatter().addStyleName(0, 3, AON.AON_CSS.aonTextCenter());
-		
-		FlowPanel commentsPanel = new FlowPanel();
-		commentsButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		commentsButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				final AonToast toast = new AonToast();
-				FlowPanel commentPanel = new FlowPanel();
-				commentPanel.setStyleName( FiscalModelUtils.getAdministrationBG(getMod193().getAdministration()) );
-				commentPanel.setStyleName(AON.AON_CSS.aonHeightAll());
-				commentPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-				TextArea comment = new TextArea();
-				comment.addValueChangeHandler(new ValueChangeHandler<String>() {
-					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						getMod193().setComments(event.getValue());
-						styleCommentsButton();
-						Model193.SERVICE.saveComments(options.getDomainName(), options.getUser(), getMod193(), new AsyncCallback<Mod193>() {
-							@Override
-							public void onSuccess(Mod193 result) {
-								toast.hide();
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								toast.hide();
-								callback.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-							}
-						});
-					}
-				});
-				comment.setText(mod193.getComments());
-				comment.setWidth("90%");
-				comment.setHeight("5em");
-				commentPanel.add(comment);
-				toast.show(AON.MSG.comments(), commentPanel);
-			}
-		});
-		commentsPanel.add(commentsButton);
-		commentsPanel.add(new InlineLabel(AON.MSG.comments()));
-		table.setWidget(0, 4, commentsPanel);
-		styleCommentsButton();
-		table.getCellFormatter().setStyleName(0, 4, AON.AON_CSS.aonPanelGridEven());
-		table.getCellFormatter().addStyleName(0, 4, AON.AON_CSS.aonTextCenter());
-		return table;
-		
 	}
-	
-	protected FlowPanel getInformationPanel() {
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.addStyleName(AON.AON_CSS.aonWidthAll());
-		panel.addStyleName(AON.AON_CSS.aonMarginTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-		 
-		FlexTable tab = new FlexTable();
-		tab.getColumnFormatter().setWidth(0, "30px");
-		tab.getColumnFormatter().setWidth(1
-				, "auto");
-		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
-		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
-		Label title = new Label("Informaci\u00F3n \u00FAtil para la confecci\u00F3n del modelo");
-		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getMod193().getAdministration()));
-		tab.setWidget(0, 0, title);
-		
-		int row = 1;
-		for (Pair<String, String> pair : getInformationLinks()) {
-			Label icon = new Label();
-			icon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getMod193().getAdministration()));
-			tab.setWidget(row, 0, icon );
-			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-
-			FlowPanel p = new FlowPanel();
-			p.setStyleName(AON.AON_CSS.aonPadding2());
-			Anchor a = new Anchor(pair.getLeft(),pair.getRight(), "_blank");
-			a.setStyleName(AON.AON_CSS.aonPaddingLeft());
-			p.add(a);
-			tab.setWidget(row, 1, p );
-			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-			row++;
-		}
-		panel.add(tab);
-		return panel;
-	}
-
-	protected FlowPanel getAdministrationPanel(Model193ModuleOptions options,Model193Callback cbk) {
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.addStyleName(AON.AON_CSS.aonWidthAll());
-		panel.addStyleName(AON.AON_CSS.aonMarginTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-		 
-		FlexTable tab = new FlexTable();
-		tab.getColumnFormatter().setWidth(0, "30px");
-		tab.getColumnFormatter().setWidth(1
-				, "auto");
-		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
-		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
-		Label title = new Label("Presentaci\u00F3n del modelo");
-		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getMod193().getAdministration()));
-		tab.setWidget(0, 0, title);
-		
-		int row = 1;
-
-		Label icon1 = new Label();
-		icon1.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getMod193().getAdministration()));
-		tab.setWidget(row, 0, icon1 );
-		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		FlowPanel p1 = new FlowPanel();
-		p1.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button1 = new Button("Descargar fichero para su presentaci\u00F3n");
-		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button1.addStyleName(AON.AON_CSS.aonBorderNone());
-		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button1.addStyleName(AON.AON_CSS.aonClickable());
-		button1.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if (getMod193().isFinished() || getMod193().isSent()) {
-					submitForm(options,MODEL193_FILE);
-				} else {
-					getCallback().showError("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-				}
-			}
-		});
-		p1.add(button1);
-		tab.setWidget(row, 1, p1 );
-		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		row++;
-		
-		Label icon3 = new Label();
-		icon3.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getMod193().getAdministration()));
-		tab.setWidget(row, 0, icon3 );
-		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		FlowPanel p3 = new FlowPanel();
-		p3.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button3 = new Button("Validar e imprimir (PDF) via Agencia Tributaria (a partir de los datos guardados).");
-		button3.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button3.addStyleName(AON.AON_CSS.aonBorderNone());
-		button3.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button3.addStyleName(AON.AON_CSS.aonClickable());
-		button3.addClickHandler( new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				submitForm(options,MODEL193_PRINT);
-			}
-		});
-		p3.add(button3);
-		tab.setWidget(row, 1, p3 );
-		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		row++;
-		panel.add(tab);
-		
-		FlexTable tab2 = new FlexTable();
-		tab2.getColumnFormatter().setWidth(0, "30px");
-		tab2.getColumnFormatter().setWidth(1, "auto");
-		tab2.setStyleName(AON.AON_CSS.aonWidth90Percent());
-		tab2.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab2.addStyleName(AON.AON_CSS.aonPanelGrid());
-		tab2.addStyleName(AON.AON_CSS.aonMarginTop());
-		Label title2 = new Label("Otros");
-		tab2.getFlexCellFormatter().setColSpan(0, 0, 2);
-		tab2.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		tab2.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
-		tab2.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab2.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBG(getMod193().getAdministration()));
-		tab2.setWidget(0, 0, title2);
-		
-		panel.add(tab2);
-		
-		return panel;
-	}
-
-	protected abstract void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex);
-	protected abstract LinkedList<Pair<String, String>> getInformationLinks();
-	
 	
 }
