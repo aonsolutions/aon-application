@@ -12,7 +12,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
@@ -38,7 +37,6 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMatrixDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod193DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod347DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod349DAO;
@@ -81,48 +79,6 @@ public class FiscalImpl implements IFiscal {
 		return FiscalModelDAO.getFiscalModel(ctx, id);
 	}
 
-	// ----------------------------------------------------------- [MODELO 193]
-	@Override
-	public LinkedList<Mod193> getMod193s(AONContext ctx, int domain) {
-		return Mod193DAO.getByDomain(ctx, domain);
-	}
-
-	@Override
-	public Mod193 getMod193(AONContext ctx, Integer id) {
-		return Mod193DAO.getById(ctx, id);
-	}
-
-	@Override
-	public Mod193 initializeMod193(AONContext ctx, int year) {
-		return Mod193DAO.initialize(ctx, year);
-	}
-	@Override
-	public Mod193 saveMod193(AONContext ctx, Mod193 mod193) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod193DAO.save(ctx, mod193));
-	}
-
-	@Override
-	public void deleteMod193(AONContext ctx, Mod193 mod193) {
-		ctx.getDslContext().transaction(
-				configuration -> Mod193DAO.delete(ctx, mod193));
-	}
-
-	@Override
-	public Mod193 saveCommentsMod193(AONContext ctx, Mod193 mod193) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod193DAO.saveComments(ctx, mod193));		
-	}
-	@Override
-	public Mod193 changeStatusMod193(AONContext ctx, Mod193 mod193, FiscalStatus newStatus) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod193DAO.changeStatus(ctx, mod193, newStatus));		
-	}
-	@Override
-	public Mod193 duplicateMod193(AONContext ctx, Mod193 mod193) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod193DAO.duplicate(ctx, mod193));		
-	}
 	// ----------------------------------------------------------- [MODELO 390]
 	@Override
 	public Mod390 getMod390(AONContext ctx, int domain, Integer id) {

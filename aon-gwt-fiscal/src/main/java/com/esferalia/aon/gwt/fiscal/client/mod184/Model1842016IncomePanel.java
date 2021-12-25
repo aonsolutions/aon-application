@@ -2,10 +2,11 @@ package com.esferalia.aon.gwt.fiscal.client.mod184;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod184.Model184Income2016.IModel184IncomeCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -18,7 +19,6 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class Model1842016IncomePanel extends SimpleLayoutPanel implements Focusable {
 	
@@ -144,30 +144,29 @@ public class Model1842016IncomePanel extends SimpleLayoutPanel implements Focusa
 	private ListBox subkey = new ListBox();
 	private CountryListBox country = new CountryListBox();
 	private CheckBox vatAccrualPayment = new CheckBox();
-	private DocumentTextBox granteeDocument = new DocumentTextBox();
-	private TextBox granteeName = new TextBox();
-	private DateBoxEx adqDate = new DateBoxEx();
+	private AonDocumentTextBox granteeDocument = new AonDocumentTextBox();
+	private AonTextBox granteeName = new AonTextBox();
+	private AonDateBox adqDate = new AonDateBox();
 	private ListBox activityType = new ListBox();
-	private IntegerBox epigraph = new IntegerBox();
+	private AonIntegerBox epigraph = new AonIntegerBox();
 	private ListBox regime = new ListBox();
-	private DoubleBox accountingResult = new DoubleBox();
-	private DoubleBox expenses = new DoubleBox();
-	private DoubleBox netYield = new DoubleBox();
-	private DoubleBox reductionPercent = new DoubleBox();
-	private DoubleBox deductionRightRent = new DoubleBox();
-	private DoubleBox result = new DoubleBox();
-	private DoubleBox decrease = new DoubleBox();
-	private DoubleBox increase = new DoubleBox();
-	private DoubleBox deductionBase = new DoubleBox();
-	private DoubleBox retention = new DoubleBox();
+	private AonDoubleBox accountingResult = new AonDoubleBox();
+	private AonDoubleBox expenses = new AonDoubleBox();
+	private AonDoubleBox netYield = new AonDoubleBox();
+	private AonDoubleBox reductionPercent = new AonDoubleBox();
+	private AonDoubleBox deductionRightRent = new AonDoubleBox();
+	private AonDoubleBox result = new AonDoubleBox();
+	private AonDoubleBox decrease = new AonDoubleBox();
+	private AonDoubleBox increase = new AonDoubleBox();
+	private AonDoubleBox deductionBase = new AonDoubleBox();
+	private AonDoubleBox retention = new AonDoubleBox();
 
 	private ListBox location = new ListBox();
-	private TextBox cadasdralReference = new TextBox();
-	private DoubleBox staffExpenses = new DoubleBox();
-	private DoubleBox assetAcquisition = new DoubleBox();
-	private DoubleBox taxDeduction = new DoubleBox();
-	private DoubleBox otherTaxDeduction = new DoubleBox();
-	
+	private AonTextBox cadasdralReference = new AonTextBox();
+	private AonDoubleBox staffExpenses = new AonDoubleBox();
+	private AonDoubleBox assetAcquisition = new AonDoubleBox();
+	private AonDoubleBox taxDeduction = new AonDoubleBox();
+	private AonDoubleBox otherTaxDeduction = new AonDoubleBox();
 
 	public Model1842016IncomePanel(Mod184Income income, IModel184IncomeCallback callback) {
 		ScrollPanel scroll = new ScrollPanel();

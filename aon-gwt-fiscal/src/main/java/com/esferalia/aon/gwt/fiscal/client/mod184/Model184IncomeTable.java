@@ -139,6 +139,8 @@ public class Model184IncomeTable extends SimpleLayoutPanel implements HasSelecti
 	private void newPerceptor() {
 		Mod184Income detail = new Mod184Income()
 				.setDirty(true)
+				.setKey("A")
+				.setSubKey("01")
 				.setTempId((model.getIncomes().size() * (-1)));
 		model.getIncomes().add(detail);
 		selectionIndex = model.getIncomes().size() - 1;
