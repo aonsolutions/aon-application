@@ -5,28 +5,27 @@ import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 
 @SuppressWarnings("serial")
-public class CalendarHoursExtraCompl implements Serializable {
+public class CalendarExtraHours implements Serializable {
 	
-	public static class DayHourExtraCompl implements Serializable {
+	public static class DayHourExtra implements Serializable {
+		
 		private String startDate;
 		private String endDate;
 		private Double value;
 		
-		public DayHourExtraCompl() {
+		public DayHourExtra() {
 			super();
 		}
 		
-		public DayHourExtraCompl(Date startDate, Date endDate, Double value) {
+		public DayHourExtra(Date startDate, Date endDate, Double value) {
 			this.startDate = format(startDate);
 			this.endDate = format(endDate);
 			this.value = value;
@@ -36,7 +35,7 @@ public class CalendarHoursExtraCompl implements Serializable {
 			return parse(startDate);
 		}
 
-		public DayHourExtraCompl setStartDate(Date startDate) {
+		public DayHourExtra setStartDate(Date startDate) {
 			this.startDate = format(startDate);
 			return this;
 		}
@@ -45,7 +44,7 @@ public class CalendarHoursExtraCompl implements Serializable {
 			return parse(endDate);
 		}
 
-		public DayHourExtraCompl setEndDate(Date endDate) {
+		public DayHourExtra setEndDate(Date endDate) {
 			this.endDate = format(endDate);
 			return this;
 		}
@@ -54,80 +53,80 @@ public class CalendarHoursExtraCompl implements Serializable {
 			return value;
 		}
 
-		public DayHourExtraCompl setValue(Double value) {
+		public DayHourExtra setValue(Double value) {
 			this.value = value;
 			return this;
 		}
 		
 	}
 	
-	// -----------------------------------------------------
-	// 						VARIABLES
-	// -----------------------------------------------------
+	// ------------------------------------- Variables
 	
-	private List<DayHourExtraCompl> dayHoursComplementary;
-	private Map<Date, Double> mapDayHoursComplementary;
+	private List<DayHourExtra> extraHours;
+	private Map<Date, Double> extraHoursMap;
 
 	private String contractStartDate;
-	private static String contractEndDate;
+	private String contractEndDate;
 	
-	public CalendarHoursExtraCompl() {
+	// ------------------------------------- Constructor
+	
+	public CalendarExtraHours() {
 		super();
-		dayHoursComplementary = new ArrayList<CalendarHoursExtraCompl.DayHourExtraCompl>();
-		mapDayHoursComplementary = new HashMap<Date, Double>();
+		extraHours = new ArrayList<>();
+		extraHoursMap = new TreeMap<>();
 	}
 	
-	public CalendarHoursExtraCompl(List<DayHourExtraCompl> dayHoursComplementary, Map<Date, Double> mapDayHoursComplementary) {
-		this.dayHoursComplementary = dayHoursComplementary;
-		this.mapDayHoursComplementary = mapDayHoursComplementary;
+	public CalendarExtraHours(List<DayHourExtra> extraHours, Map<Date, Double> extraHoursMap) {
+		this.extraHours = extraHours;
+		this.extraHoursMap = extraHoursMap;
 	}
+	
+	// ------------------------------------- Getter/Setter
 	
 	public Date getContractStartDate() {
 		return parse(contractStartDate);
 	}
-
-	public void setDayHoursComplementary(List<DayHourExtraCompl> dayHoursComplementary) {
-		this.dayHoursComplementary = dayHoursComplementary;
-	}
-
+	
 	public void setContractStartDate(Date contractStartDate) {
 		this.contractStartDate = format(contractStartDate);
 	}
-
-	public static Date getContractEndDate() {
-		return Shared.parse(contractEndDate);
+	
+	public Date getContractEndDate() {
+		return parse(contractEndDate);
 	}
 
-	public void setContractEndDate(Date contractEndDateIn) {
-		contractEndDate = format(contractEndDateIn);
+	public void setContractEndDate(Date contractEndDate) {
+		this.contractEndDate = format(contractEndDate);
 	}
 	
-	public List<DayHourExtraCompl> getComplementaryHours() {
-		sortDayHoursComplementary();
-		return dayHoursComplementary;
+	public List<DayHourExtra> getExtraHours() {
+		sortExtraHours();
+		return extraHours;
 	}
 	
-	// -----------------------------------------------------
-	// 						METHODS INIT
-	// -----------------------------------------------------
+	public void setDayHoursComplementary(List<DayHourExtra> extraHours) {
+		this.extraHours = extraHours;
+	}
+
+	// ------------------------------------- Auxiliar Methods
 	
-	public void initMapDayHoursComplementary() {
-		this.mapDayHoursComplementary = new HashMap<Date, Double>();
+	public void initExtraHoursMap() {
+		this.extraHoursMap = new TreeMap<>();
 		
-		sortDayHoursComplementary();
+		sortExtraHours();
 		
-		for(DayHourExtraCompl dayHourComplementary : dayHoursComplementary) {
+		for(DayHourExtra extraHour : extraHours) {
 			
-			Date iterableDate = DateUtils.copyDateOnly(dayHourComplementary.getStartDate());
+			Date iterableDate = DateUtils.copyDateOnly(extraHour.getStartDate());
 			DateUtils.resetTime(iterableDate);
 			
 			// Si es null la fecha fin le pongo el 1 de enero del 2021 para ver como se dibuja
 			Date newEndDate = null;
 			
-			if(null == dayHourComplementary.getEndDate())
+			if(null == extraHour.getEndDate())
 				newEndDate = DateUtils.getLastDayOfYear(DateUtils.getYear() - 1900 + 1);
 			else
-				newEndDate = DateUtils.copyDateOnly(dayHourComplementary.getEndDate());
+				newEndDate = DateUtils.copyDateOnly(extraHour.getEndDate());
 			
 			DateUtils.resetTime(newEndDate);
 			
@@ -135,7 +134,7 @@ public class CalendarHoursExtraCompl implements Serializable {
 				
 				Date date = DateUtils.copyDateOnly(iterableDate);
 				DateUtils.resetTime(date);
-				mapDayHoursComplementary.put(date, dayHourComplementary.getValue());
+				extraHoursMap.put(date, extraHour.getValue());
 				
 				DateUtils.addDays2Date(iterableDate, 1);
 			}
@@ -143,238 +142,212 @@ public class CalendarHoursExtraCompl implements Serializable {
 		
 	}
 	
-	private void sortDayHoursComplementary() {
-		dayHoursComplementary.sort(new Comparator<DayHourExtraCompl>() {
-
-			@Override
-			public int compare(DayHourExtraCompl dayHourComplementary1, DayHourExtraCompl dayHourComplementary2) {
-				return DateUtils.compare(dayHourComplementary1.getStartDate(), dayHourComplementary2.getStartDate());
-			}
-		});
+	private void sortExtraHours() {
+		extraHours.sort((dayHourExtra1, dayHourExtra2) -> DateUtils.compare(dayHourExtra1.getStartDate(), dayHourExtra2.getStartDate()));
 	}
 
-	// -----------------------------------------------------
-	// 						AUX METHODS
-	// -----------------------------------------------------
-	
 	public boolean isEmpty() {
-		return dayHoursComplementary.isEmpty();
+		return extraHours.isEmpty();
 	}
 	
-	public Double getHourByDate(Date date) {
+	public Double getExtraHourByDate(Date date) {
 		DateUtils.resetTime(date);
-		return this.mapDayHoursComplementary.get(date);
+		return this.extraHoursMap.get(date);
 	}
 	
-	public void addDayHourComplementary(DayHourExtraCompl newDayHourExtraCompl) {
+	public void addExtraHour(DayHourExtra newDayHourExtra) {
 		// Ordenamos los tramos existentes
-		this.dayHoursComplementary.sort(new Comparator<DayHourExtraCompl>() {
-			@Override
-			public int compare(DayHourExtraCompl dayHourExtraCompl1, DayHourExtraCompl dayHourExtraCompl2) {
-				return dayHourExtraCompl1.getStartDate().compareTo(dayHourExtraCompl2.getStartDate());
-			}
-		});
+		sortExtraHours();
 		
 		// Creamos la nueva lista
-		ArrayList<DayHourExtraCompl> newHourExtraComplList = new ArrayList<DayHourExtraCompl>();
+		ArrayList<DayHourExtra> newExtraHourList = new ArrayList<>();
 		
 		// Inicializamos si variable que nos indica si ha sido insertado
 		Boolean added = false;
 		
 		// Si eta vacio se inserta directamente
-		if(this.dayHoursComplementary.isEmpty()) {
-			newHourExtraComplList.add(newDayHourExtraCompl);
+		if(this.extraHours.isEmpty()) {
+			newExtraHourList.add(newDayHourExtra);
 			added = true;
 		}
 		
-		for(DayHourExtraCompl dayHourExtraCompl: this.dayHoursComplementary) {
-			if(added) {
+		for(DayHourExtra dayHourExtra: this.extraHours) {
+			if(Boolean.TRUE.equals(added)) {
 				// Si la fecha fin del nuevo tramo es null ya no se inserta ninguno mas
-				if(!isNullOrEndContract(newDayHourExtraCompl.getEndDate())) {
+				if(!isNullOrEndContract(newDayHourExtra.getEndDate())) {
 					// Si el dia que estamos analizando es null cogemos el endDate del ultimo dia insertado y se lo ponemos con startDate
-					if(isNullOrEndContract(dayHourExtraCompl.getEndDate())) {
-						DayHourExtraCompl lastDayHour = newHourExtraComplList.get(newHourExtraComplList.size()-1);
+					if(isNullOrEndContract(dayHourExtra.getEndDate())) {
+						DayHourExtra lastDayHour = newExtraHourList.get(newExtraHourList.size()-1);
 						Date newStartDate = DateUtils.copyDateOnly(lastDayHour.getEndDate());
 						newStartDate = DateUtils.addDays2Date(newStartDate, 1);
 						
-						dayHourExtraCompl.setStartDate(newStartDate);
+						dayHourExtra.setStartDate(newStartDate);
 						
-						newHourExtraComplList.add(dayHourExtraCompl);
-					} else if(newDayHourExtraCompl.getEndDate().equals(dayHourExtraCompl.getStartDate())) {
-						Date newStartDate = DateUtils.copyDateOnly(dayHourExtraCompl.getStartDate());
+						newExtraHourList.add(dayHourExtra);
+					} else if(newDayHourExtra.getEndDate().equals(dayHourExtra.getStartDate())) {
+						Date newStartDate = DateUtils.copyDateOnly(dayHourExtra.getStartDate());
 						DateUtils.resetTime(newStartDate);
 						DateUtils.addDays2Date(newStartDate, 1);
 						
-						dayHourExtraCompl.setStartDate(newStartDate);
-						newHourExtraComplList.add(dayHourExtraCompl);
+						dayHourExtra.setStartDate(newStartDate);
+						newExtraHourList.add(dayHourExtra);
 			
 					// Si la fecha fin del nuevo es posterior al analizado, no se añade
-					}else if(afterOrEqual(newDayHourExtraCompl.getEndDate(), dayHourExtraCompl.getEndDate())) {
+					} else if(afterOrEqual(newDayHourExtra.getEndDate(), dayHourExtra.getEndDate())) {
 						continue;
-					} else if(newDayHourExtraCompl.getEndDate().before(dayHourExtraCompl.getEndDate()) && newDayHourExtraCompl.getEndDate().after(dayHourExtraCompl.getStartDate())) {
-						Date newStartDate = DateUtils.copyDateOnly(newDayHourExtraCompl.getEndDate());
+					} else if(newDayHourExtra.getEndDate().before(dayHourExtra.getEndDate()) && newDayHourExtra.getEndDate().after(dayHourExtra.getStartDate())) {
+						Date newStartDate = DateUtils.copyDateOnly(newDayHourExtra.getEndDate());
 						DateUtils.addDays2Date(newStartDate, 1);
 						DateUtils.resetTime(newStartDate);
 						
-						newHourExtraComplList.add(new DayHourExtraCompl(newStartDate, dayHourExtraCompl.getEndDate(), dayHourExtraCompl.getValue()));	
+						newExtraHourList.add(new DayHourExtra(newStartDate, dayHourExtra.getEndDate(), dayHourExtra.getValue()));	
 					} else
-						newHourExtraComplList.add(dayHourExtraCompl);
+						newExtraHourList.add(dayHourExtra);
 				}
 			} else {
 				// Si el elemento de la lista es anterior al insertado
-				if(beforeOrEqual(dayHourExtraCompl.getStartDate(), newDayHourExtraCompl.getStartDate())) {
+				if(beforeOrEqual(dayHourExtra.getStartDate(), newDayHourExtra.getStartDate())) {
 					
 					// Si el elemento de la lista tiene fecha fin null, tendremos que meter el nuevo tramo entre medias
-					if(isNullOrEndContract(dayHourExtraCompl.getEndDate())) {
-						if(isNullOrEndContract(newDayHourExtraCompl.getEndDate())) {
-							if(dayHourExtraCompl.getStartDate().equals(newDayHourExtraCompl.getStartDate())) {
-								newHourExtraComplList.add(newDayHourExtraCompl);
+					if(isNullOrEndContract(dayHourExtra.getEndDate())) {
+						if(isNullOrEndContract(newDayHourExtra.getEndDate())) {
+							if(dayHourExtra.getStartDate().equals(newDayHourExtra.getStartDate())) {
+								newExtraHourList.add(newDayHourExtra);
 								added = true;
-								continue;
 							}else {
-								Date newEndDate = DateUtils.copyDateOnly(newDayHourExtraCompl.getStartDate());
+								Date newEndDate = DateUtils.copyDateOnly(newDayHourExtra.getStartDate());
 								newEndDate = DateUtils.deleteDays2Date(newEndDate, 1);
-								dayHourExtraCompl.setEndDate(newEndDate);
+								dayHourExtra.setEndDate(newEndDate);
 								
-								newHourExtraComplList.add(dayHourExtraCompl);
-								newHourExtraComplList.add(newDayHourExtraCompl);
+								newExtraHourList.add(dayHourExtra);
+								newExtraHourList.add(newDayHourExtra);
 								added = true;
-								continue;
 							}
 						} else {
 							Date oldEndDate = null;
-							if(null != dayHourExtraCompl.getEndDate()) {
-								oldEndDate = DateUtils.copyDateOnly(dayHourExtraCompl.getEndDate());
+							if(null != dayHourExtra.getEndDate()) {
+								oldEndDate = DateUtils.copyDateOnly(dayHourExtra.getEndDate());
 								DateUtils.resetTime(oldEndDate);
 							}
 							
-							Date newEndDate = DateUtils.copyDateOnly(newDayHourExtraCompl.getStartDate());
+							Date newEndDate = DateUtils.copyDateOnly(newDayHourExtra.getStartDate());
 							newEndDate = DateUtils.deleteDays2Date(newEndDate, 1);
-							dayHourExtraCompl.setEndDate(newEndDate);
+							dayHourExtra.setEndDate(newEndDate);
 							
-							newHourExtraComplList.add(dayHourExtraCompl);
-							newHourExtraComplList.add(newDayHourExtraCompl);
+							newExtraHourList.add(dayHourExtra);
+							newExtraHourList.add(newDayHourExtra);
 							
-							Date newStartDate = DateUtils.copyDateOnly(newDayHourExtraCompl.getEndDate());
+							Date newStartDate = DateUtils.copyDateOnly(newDayHourExtra.getEndDate());
 							newStartDate = DateUtils.addDays2Date(newStartDate, 1);
-							DayHourExtraCompl postNewDayHour = new DayHourExtraCompl(newStartDate, oldEndDate, dayHourExtraCompl.getValue());
+							DayHourExtra postNewDayHour = new DayHourExtra(newStartDate, oldEndDate, dayHourExtra.getValue());
 							
-							newHourExtraComplList.add(postNewDayHour);
+							newExtraHourList.add(postNewDayHour);
 							
 							added = true;
-							continue;
 						}
 					// Si el elemento a añadir es el mismo tramo de la lista
-					} else if (dayHourExtraCompl.getEndDate().equals(newDayHourExtraCompl.getStartDate())) {
+					} else if (dayHourExtra.getEndDate().equals(newDayHourExtra.getStartDate())) {
 						
-						Date newEndDate = DateUtils.copyDateOnly(dayHourExtraCompl.getEndDate());
+						Date newEndDate = DateUtils.copyDateOnly(dayHourExtra.getEndDate());
 						DateUtils.resetTime(newEndDate);
 						DateUtils.deleteDays2Date(newEndDate, 1);
 						
-						dayHourExtraCompl.setEndDate(newEndDate);
+						dayHourExtra.setEndDate(newEndDate);
 						
-						newHourExtraComplList.add(dayHourExtraCompl);
-						newHourExtraComplList.add(newDayHourExtraCompl);
+						newExtraHourList.add(dayHourExtra);
+						newExtraHourList.add(newDayHourExtra);
 						added = true;
-						continue;
-					} else if(newDayHourExtraCompl.getStartDate().equals(dayHourExtraCompl.getStartDate()) && newDayHourExtraCompl.getEndDate().equals(dayHourExtraCompl.getEndDate())) {
-						newHourExtraComplList.add(newDayHourExtraCompl);
+					} else if(newDayHourExtra.getStartDate().equals(dayHourExtra.getStartDate()) && newDayHourExtra.getEndDate().equals(dayHourExtra.getEndDate())) {
+						newExtraHourList.add(newDayHourExtra);
 						added = true;
-						continue;
 					// Si el elemento a añadir es posterior al tramo de la lista
-					} else if(beforeOrEqual(dayHourExtraCompl.getEndDate(), newDayHourExtraCompl.getStartDate()) &&
-							!isBetween(dayHourExtraCompl, newDayHourExtraCompl)) {
-						newHourExtraComplList.add(dayHourExtraCompl);
-						continue;
+					} else if(beforeOrEqual(dayHourExtra.getEndDate(), newDayHourExtra.getStartDate()) && !isBetween(dayHourExtra, newDayHourExtra)) {
+						newExtraHourList.add(dayHourExtra);
 					// Si el elemento a añadir esta en un tramo existente
-					} else if(afterOrEqual(dayHourExtraCompl.getEndDate(), newDayHourExtraCompl.getStartDate())) {
-						DayHourExtraCompl postNewDayHour = null;
+					} else if(afterOrEqual(dayHourExtra.getEndDate(), newDayHourExtra.getStartDate())) {
+						DayHourExtra postNewDayHour = null;
 						
-						if(!isNullOrEndContract(newDayHourExtraCompl.getEndDate()) && newDayHourExtraCompl.getEndDate().before(dayHourExtraCompl.getEndDate())) {
-							Date newStartDate = DateUtils.copyDateOnly(newDayHourExtraCompl.getEndDate());
+						if(!isNullOrEndContract(newDayHourExtra.getEndDate()) && newDayHourExtra.getEndDate().before(dayHourExtra.getEndDate())) {
+							Date newStartDate = DateUtils.copyDateOnly(newDayHourExtra.getEndDate());
 							newStartDate = DateUtils.addDays2Date(newStartDate, 1);
 							
-							postNewDayHour = new DayHourExtraCompl(newStartDate, dayHourExtraCompl.getEndDate(), dayHourExtraCompl.getValue());
+							postNewDayHour = new DayHourExtra(newStartDate, dayHourExtra.getEndDate(), dayHourExtra.getValue());
 						}
 						
-						if(!newDayHourExtraCompl.getStartDate().equals(dayHourExtraCompl.getStartDate()) &&
-								!newDayHourExtraCompl.getEndDate().equals(dayHourExtraCompl.getEndDate()) &&
-								!isBetween(dayHourExtraCompl, newDayHourExtraCompl)) {
-								Date newEndDate = DateUtils.copyDateOnly(newDayHourExtraCompl.getStartDate());
+						if(!newDayHourExtra.getStartDate().equals(dayHourExtra.getStartDate()) &&
+								!newDayHourExtra.getEndDate().equals(dayHourExtra.getEndDate()) &&
+								!isBetween(dayHourExtra, newDayHourExtra)) {
+								Date newEndDate = DateUtils.copyDateOnly(newDayHourExtra.getStartDate());
 								newEndDate = DateUtils.deleteDays2Date(newEndDate, 1);
-								dayHourExtraCompl.setEndDate(newEndDate);
+								dayHourExtra.setEndDate(newEndDate);
 								
-								newHourExtraComplList.add(dayHourExtraCompl);
-							} else if(newDayHourExtraCompl.getEndDate().equals(dayHourExtraCompl.getEndDate())) {
-								Date newEndDate = DateUtils.copyDateOnly(newDayHourExtraCompl.getStartDate());
+								newExtraHourList.add(dayHourExtra);
+							} else if(newDayHourExtra.getEndDate().equals(dayHourExtra.getEndDate())) {
+								Date newEndDate = DateUtils.copyDateOnly(newDayHourExtra.getStartDate());
 								newEndDate = DateUtils.deleteDays2Date(newEndDate, 1);
-								dayHourExtraCompl.setEndDate(newEndDate);
+								dayHourExtra.setEndDate(newEndDate);
 								
-								newHourExtraComplList.add(dayHourExtraCompl);
+								newExtraHourList.add(dayHourExtra);
 							}
 							
-							newHourExtraComplList.add(newDayHourExtraCompl);
+						newExtraHourList.add(newDayHourExtra);
 							
 							if(null != postNewDayHour)
-								newHourExtraComplList.add(postNewDayHour);
+								newExtraHourList.add(postNewDayHour);
 							
 							added = true;
-							continue;
 					}
 				} else {
 					
 					// Si el elemento a añadir es anterior al tramo de la lista
-					if(isNullOrEndContract(newDayHourExtraCompl.getEndDate())) {
-						newHourExtraComplList.add(newDayHourExtraCompl);
+					if(isNullOrEndContract(newDayHourExtra.getEndDate())) {
+						newExtraHourList.add(newDayHourExtra);
 						added = true;
-						continue;
-					} else if (beforeOrEqual(newDayHourExtraCompl.getEndDate(), dayHourExtraCompl.getStartDate())) {
-						if(newDayHourExtraCompl.getEndDate().equals(dayHourExtraCompl.getStartDate())) {
-							Date newStartDate = DateUtils.copyDateOnly(dayHourExtraCompl.getStartDate());
+					} else if (beforeOrEqual(newDayHourExtra.getEndDate(), dayHourExtra.getStartDate())) {
+						if(newDayHourExtra.getEndDate().equals(dayHourExtra.getStartDate())) {
+							Date newStartDate = DateUtils.copyDateOnly(dayHourExtra.getStartDate());
 							DateUtils.resetTime(newStartDate);
 							DateUtils.addDays2Date(newStartDate, 1);
-							dayHourExtraCompl.setStartDate(newStartDate);
+							dayHourExtra.setStartDate(newStartDate);
 						}
 						
-						newHourExtraComplList.add(newDayHourExtraCompl);
-						newHourExtraComplList.add(dayHourExtraCompl);
+						newExtraHourList.add(newDayHourExtra);
+						newExtraHourList.add(dayHourExtra);
 						added = true;
-						continue;
-					} else if (afterOrEqual(newDayHourExtraCompl.getEndDate(), dayHourExtraCompl.getStartDate()))	{
-						Date newStartDate = DateUtils.copyDateOnly(newDayHourExtraCompl.getEndDate());
+					} else if (afterOrEqual(newDayHourExtra.getEndDate(), dayHourExtra.getStartDate()))	{
+						Date newStartDate = DateUtils.copyDateOnly(newDayHourExtra.getEndDate());
 						DateUtils.resetTime(newStartDate);
 						DateUtils.addDays2Date(newStartDate, 1);
 						
-						dayHourExtraCompl.setStartDate(newStartDate);
+						dayHourExtra.setStartDate(newStartDate);
 						
-						newHourExtraComplList.add(newDayHourExtraCompl);
-						newHourExtraComplList.add(dayHourExtraCompl);
+						newExtraHourList.add(newDayHourExtra);
+						newExtraHourList.add(dayHourExtra);
 						
 						added = true;
-						continue;
 					} else
-						newHourExtraComplList.add(dayHourExtraCompl);
+						newExtraHourList.add(dayHourExtra);
 				}
 			}
 				
 		}
 		
 		//Si todavía no se ha añadido es por que va al final de la lista y se añade al final de la lista
-		if(!added){
-			newHourExtraComplList.add(newDayHourExtraCompl);
+		if(Boolean.FALSE.equals(added)){
+			newExtraHourList.add(newDayHourExtra);
 		}
 		
 		// Asignamos la nueva lista a la antigua
-		this.dayHoursComplementary = newHourExtraComplList;	
+		this.extraHours = newExtraHourList;	
 	}
 	
 	// -----------------------------------------------------
 	// 						AUX METHODS
 	// -----------------------------------------------------
 	
-	private boolean isBetween(DayHourExtraCompl dayHourComplementary, DayHourExtraCompl newDayHourComplementary) {
-		return afterOrEqual(dayHourComplementary.getStartDate(), newDayHourComplementary.getStartDate()) &&
-				beforeOrEqual(dayHourComplementary.getEndDate(), newDayHourComplementary.getEndDate());
+	private boolean isBetween(DayHourExtra dayHourExtra, DayHourExtra newDayHourExtra) {
+		return afterOrEqual(dayHourExtra.getStartDate(), newDayHourExtra.getStartDate()) &&
+				beforeOrEqual(dayHourExtra.getEndDate(), newDayHourExtra.getEndDate());
 	}
 
 	// -----------------------------------------------------
@@ -395,19 +368,15 @@ public class CalendarHoursExtraCompl implements Serializable {
 	
 	@Override
 	public String toString() {
-		String result = "";
-		for( Entry<Date, Double> entry: this.mapDayHoursComplementary.entrySet()) {
-			result += entry.getKey() + " -> " + entry.getValue() + "\n";
-		}
-		return result;
+		StringBuilder builder = new StringBuilder();
+		this.extraHoursMap.entrySet().forEach(entry -> builder.append(entry.getKey() + " -> " + entry.getValue() + "\n"));
+		return builder.toString();
 	}
 	
 	public String toStringList() {
-		String result = "";
-		for(DayHourExtraCompl dayHourComplementary: this.dayHoursComplementary) {
-			result += dayHourComplementary.getStartDate() + " - " +  dayHourComplementary.getEndDate() + " -> " +  dayHourComplementary.getValue() + "\n";
-		}
-		return result;
+		StringBuilder builder = new StringBuilder();
+		this.extraHours.forEach(extraHour -> builder.append(extraHour.getStartDate() + " - " +  extraHour.getEndDate() + " -> " +  extraHour.getValue() + "\n"));
+		return builder.toString();
 	}
 	
 }

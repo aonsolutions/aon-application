@@ -5593,7 +5593,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	// ----- New employee calendar
 
 	@Override
-	public EmployeeCalendarInfo getEmployeeCalendarInfo(String domainName, Integer contractId) {
+	public EmployeeCalendarInfo getEmployeeCalendarInfo(String domainName, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqEmployeeCalendarNew.getEmployeeCalendar(connection, contractId);
 		} catch (SQLException e) {
@@ -5602,19 +5602,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	@Override
-	public String setEmployeeCalendarInfo(String domainName, Integer contractId,
-			EmployeeCalendarInfo employeeCalendarInfo) {
+	public void setEmployeeCalendarInfo(String domainName, Integer contractId, EmployeeCalendarInfo employeeCalendarInfo) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqEmployeeCalendarNew.setEmployeeCalendar(connection, contractId, employeeCalendarInfo);
+			JooqEmployeeCalendarNew.setEmployeeCalendar(connection, contractId, employeeCalendarInfo);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
-	public String resetEmployeeCalendarInfo(String domainName, Integer contractId) {
+	public void resetEmployeeCalendarInfo(String domainName, Integer contractId) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqEmployeeCalendarNew.resetEmployeeCalendar(connection, contractId);
+			JooqEmployeeCalendarNew.resetEmployeeCalendar(connection, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

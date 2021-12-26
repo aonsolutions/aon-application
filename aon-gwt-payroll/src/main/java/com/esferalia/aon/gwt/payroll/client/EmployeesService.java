@@ -216,12 +216,11 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId);
 
-	EmployeeCalendarInfo getEmployeeCalendarInfo(String currentDomainName, Integer contractId);
+	EmployeeCalendarInfo getEmployeeCalendarInfo(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
-	String setEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-			EmployeeCalendarInfo employeeCalendarInfo);
+	void setEmployeeCalendarInfo(String currentDomainName, Integer contractId, EmployeeCalendarInfo employeeCalendarInfo) throws IllegalArgumentException;
 
-	String resetEmployeeCalendarInfo(String currentDomainName, Integer contractId);
+	void resetEmployeeCalendarInfo(String currentDomainName, Integer contractId) throws IllegalArgumentException;
 
 	EmployeeEventsData setEmployeeEvents(String currentDomainName, Integer idEmployee,
 			EmployeeEventsData employeeEventsData);

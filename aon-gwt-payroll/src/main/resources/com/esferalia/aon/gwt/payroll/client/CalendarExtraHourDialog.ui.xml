@@ -38,6 +38,7 @@
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
+			gap: .5rem;
 		}
 		
 		.labelStyle{
@@ -78,14 +79,14 @@
 			</g:HTMLPanel>
 		
 			<g:HTMLPanel styleName="{style.hoursPanel}">
-				<g:HTMLPanel ui:field="complementaryBlock" styleName="{style.rowPanel}">
+				<g:HTMLPanel ui:field="extraHourBlock" styleName="{style.rowPanel}">
 					<g:Label styleName="{style.labelStyle}">Horas:</g:Label>
-					<g:TextBox ui:field="complementaryHoursOpt" styleName="{style.borderBx}"/>
+					<g:TextBox ui:field="extraHourOpt" styleName="{style.borderBx}"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel  styleName="{style.infoPanel}">
-				<g:Label ui:field="errorMessage">Días en blanco equivale a no horas complementarias.</g:Label>
+				<g:Label ui:field="errorMessage">Días en blanco equivale a no horas extras.</g:Label>
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.buttonsPanel}">

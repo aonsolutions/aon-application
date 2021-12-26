@@ -5,16 +5,10 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -27,9 +21,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 
+	// ------------------------------------ UiBinder
+	
 	interface Binder extends UiBinder<Widget, EmployeeCalendarInactivityDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	// ------------------------------------ UiFields
 	
 	@UiField
 	ListBox typeInactivity;
@@ -61,19 +59,18 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	@UiField
 	Button acceptButton;
 	
-	// -------------------------------------------------------------------------------
-	// --------------------------------- MAIN CLASS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Variables
 	
 	private Double percent = 1.00;
 	private Date contractStartDate;
 	private Date contractEndDate;
+	
+	// ------------------------------------ Constructor
 
-	public EmployeeCalendarInactivityDialog(String caption, List<Date> selectedDates, Date contractStartDate, Date contractEndDate) {
+	protected EmployeeCalendarInactivityDialog(String caption, List<Date> selectedDates, Date contractStartDate, Date contractEndDate) {
 		setCaption(caption);
-		
 		setWidget(binder.createAndBindUi(this));
-		
+		this.hideClose();
 		errorMessage.getElement().getStyle().setDisplay(Display.NONE);
 		percentPanel.getElement().getStyle().setDisplay(Display.NONE);
 		endERTEPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -88,8 +85,7 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 		typeInactivity.addItem("Suspensi\u00f3n de Empleo y Sueldo");
 		typeInactivity.addItem("ERE");
 		typeInactivity.addItem("ERE Fuerza mayor");
-		typeInactivity.addItem("ERE Fuerza mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
-//		typeInactivity.addItem("ERE Fuerza mayor Parcial (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
+		typeInactivity.addItem("ERE Fuerza mayor (Exoneraci\u00F3n de cuotas)");
 		
 		if(!selectedDates.isEmpty()) {
 			selectedDates.sort(null);
@@ -100,115 +96,79 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 		this.contractStartDate = contractStartDate;
 		this.contractEndDate = contractEndDate;
 		
-		startDateDB.getTextBox().addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				startDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; ");
-			}
+		startDateDB.getTextBox().addClickHandler(e -> startDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; "));
+		endDateDB.getTextBox().addClickHandler(e -> endDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; "));
+		
+		cancelButton.addClickHandler(e -> hide());
+		acceptButton.addClickHandler(e -> {
+			if(null != startDateDB.getValue())
+				onAccept();
+			hide();
 		});
 		
-		endDateDB.getTextBox().addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				endDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; ");
-			}
-		});
-		
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
-		
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				if(null != startDateDB.getValue())
-					onAccept();
-				hide();
-			}
-		});	
-		
-		percentBox.addBlurHandler(new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event) {
-				try {
-					percent = Double.parseDouble(percentBox.getValue());
-					errorMessage.getElement().getStyle().setDisplay(Display.NONE);
-					acceptButton.setEnabled(true);
-					
-					if(percent == 0.00)
-						percent = 1.00;
-					else {
-						percent = percent / 100;
-					}
+		percentBox.addBlurHandler(e -> {
+			try {
+				percent = Double.parseDouble(percentBox.getValue());
+				errorMessage.getElement().getStyle().setDisplay(Display.NONE);
+				acceptButton.setEnabled(true);
 				
-				} catch (NumberFormatException e) {
-					errorMessage.getElement().getStyle().clearDisplay();
-					acceptButton.setEnabled(false);
-					percentBox.setValue("");
+				if(percent == 0.00)
 					percent = 1.00;
+				else {
+					percent = percent / 100;
 				}
+			
+			} catch (NumberFormatException ex) {
+				errorMessage.getElement().getStyle().clearDisplay();
+				acceptButton.setEnabled(false);
+				percentBox.setValue("");
+				percent = 1.00;
 			}
 		});
 		
-		typeInactivity.addChangeHandler(new ChangeHandler() {
+		typeInactivity.addChangeHandler(e -> {
+			Integer selectedIdx = getTypeIdxInactivity();
 			
-			@Override
-			public void onChange(ChangeEvent event) {
-				Integer selectedIdx = getTypeIdxInactivity();
-				
-				if(selectedIdx <= 3) {
-					percentPanel.getElement().getStyle().setDisplay(Display.NONE);
-					errorMessage.getElement().getStyle().setDisplay(Display.NONE);
-					percentBox.setValue("");
-					acceptButton.setEnabled(true);
-				} else {
-					percentPanel.getElement().getStyle().clearDisplay();
-					acceptButton.setEnabled(false);
-				}
-				
-				if(selectedIdx == 6 || selectedIdx == 7) {
-					endERTEPanel.getElement().getStyle().clearDisplay();
-				} else
-					endERTEPanel.getElement().getStyle().setDisplay(Display.NONE);
-				
+			if(selectedIdx <= 3) {
+				percentPanel.getElement().getStyle().setDisplay(Display.NONE);
+				errorMessage.getElement().getStyle().setDisplay(Display.NONE);
+				percentBox.setValue("");
+				acceptButton.setEnabled(true);
+			} else {
+				percentPanel.getElement().getStyle().clearDisplay();
+				acceptButton.setEnabled(false);
 			}
+			
+			if(selectedIdx == 6 || selectedIdx == 7) {
+				endERTEPanel.getElement().getStyle().clearDisplay();
+			} else
+				endERTEPanel.getElement().getStyle().setDisplay(Display.NONE);
 		});
+		
+		showDialog();
 	}
 	
-	// -------------------------------------------------------------------------------
-	// ------------------------------ ABSTRACT METHODS -------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Abstract methods
 	
 	protected abstract void onAccept();
 	
-	// -------------------------------------------------------------------------------
-	// -------------------------------- UI HANDLERS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ UiHandlers
 
 	@UiHandler("startDateDB")
 	public void onStartDateDBChange(ValueChangeEvent<Date> event) {
 		Date date = event.getValue();
-		if(null != date) {
-			if(date.before(contractStartDate))
-				startDateDB.setValue(contractStartDate);
-		}
+		if(null != date && date.before(contractStartDate))
+			startDateDB.setValue(contractStartDate);
 	}
 	
 	@UiHandler("endDateDB")
 	public void onEndDateDBChange(ValueChangeEvent<Date> event) {
 		Date date = event.getValue();
-		if(null != date && null != contractEndDate) {
-			if(date.after(contractEndDate))
-				endDateDB.setValue(contractEndDate);
-		}
+		if(null != date && null != contractEndDate && date.after(contractEndDate))
+			endDateDB.setValue(contractEndDate);
 	}
 	
-	// -------------------------------------------------------------------------------
-	// -------------------------------- AUX METHODS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Auxiliar methods
 	
 	public Integer getTypeIdxInactivity(){
 		return typeInactivity.getSelectedIndex();
@@ -240,6 +200,16 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	
 	public Boolean isEndERTE() {
 		return endERTECB.getValue();
+	}
+	
+	// ------------------------------------ Show dialog
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
 	}
 
 }

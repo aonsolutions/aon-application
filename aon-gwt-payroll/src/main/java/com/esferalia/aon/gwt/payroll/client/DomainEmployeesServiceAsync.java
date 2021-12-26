@@ -470,15 +470,15 @@ public class DomainEmployeesServiceAsync {
 	
 	// ----- New employee calendar
 	
-	public void getEmployeeCalendarInfo(Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback) {
+	public void getEmployeeCalendarInfo(Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getEmployeeCalendarInfo(getCurrentDomainName(), contractId, callback);
 	}
 	
-	public void setEmployeeCalendarInfo(Integer contractId, EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<String> callback) {
+	public void setEmployeeCalendarInfo(Integer contractId, EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.setEmployeeCalendarInfo(getCurrentDomainName(), contractId, employeeCalendarInfo, callback);
 	}
 	
-	public void resetEmployeeCalendarInfo(Integer contractId, AsyncCallback<String> callback) {
+	public void resetEmployeeCalendarInfo(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.resetEmployeeCalendarInfo(getCurrentDomainName(), contractId, callback);
 	}
 	

@@ -4,10 +4,10 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -16,9 +16,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class EmployeeCalendarDatesDialog extends CustomDialog {
 
+	// ------------------------------------ UiBinder
+	
 	interface Binder extends UiBinder<Widget, EmployeeCalendarDatesDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	// ------------------------------------ UiFields
 	
 	@UiField
 	DateBoxEx startDateDB;
@@ -31,51 +35,41 @@ public abstract class EmployeeCalendarDatesDialog extends CustomDialog {
 	
 	@UiField
 	Button cancelButton;
-
-	interface MyStyle extends CssResource {}
 	
-	// -------------------------------------------------------------------------------
-	// --------------------------------- MAIN CLASS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Variables
 
 	private Date contractStartDate;
 	private Date contractEndDate;
 	
-	public EmployeeCalendarDatesDialog(String caption, Date contractStartDate, Date contractEndDate) {
+	// ------------------------------------ Constructor
+	
+	protected EmployeeCalendarDatesDialog(String caption, Date contractStartDate, Date contractEndDate) {
 		setCaption(caption);
 		setWidget(binder.createAndBindUi(this));
-		
+		this.hideClose();
 		this.contractStartDate = contractStartDate;
 		this.contractEndDate = contractEndDate;
-		
+		showDialog();
 	}
 	
-	// -------------------------------------------------------------------------------
-	// ------------------------------ ABSTRACT METHODS -------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Abstract methods
 	
 	protected abstract void onAccept();
 	
-	// -------------------------------------------------------------------------------
-	// -------------------------------- UI HANDLERS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ UiHandlers
 	
 	@UiHandler("startDateDB")
 	public void onStartDateDBChange(ValueChangeEvent<Date> event) {
 		Date date = event.getValue();
-		if(null != date) {
-			if(date.before(contractStartDate))
-				startDateDB.setValue(contractStartDate);
-		}
+		if(null != date && date.before(contractStartDate))
+			startDateDB.setValue(contractStartDate);
 	}
 	
 	@UiHandler("endDateDB")
 	public void onEndDateDBChange(ValueChangeEvent<Date> event) {
 		Date date = event.getValue();
-		if(null != date && null != contractEndDate) {
-			if(date.after(contractEndDate))
-				endDateDB.setValue(contractEndDate);
-		}
+		if(null != date && null != contractEndDate && date.after(contractEndDate))
+			endDateDB.setValue(contractEndDate);
 	}
 	
 	@UiHandler("acceptButton")
@@ -90,9 +84,7 @@ public abstract class EmployeeCalendarDatesDialog extends CustomDialog {
 		this.hide();
 	}
 	
-	// -------------------------------------------------------------------------------
-	// -------------------------------- AUX METHDOS ----------------------------------
-	// -------------------------------------------------------------------------------
+	// ------------------------------------ Auxiliar methods
 	
 	public Date getStartDate() {
 		return this.startDateDB.getValue();
@@ -108,6 +100,16 @@ public abstract class EmployeeCalendarDatesDialog extends CustomDialog {
 	
 	public void setEndDate(Date date) {
 		this.endDateDB.setValue(date);
+	}
+	
+	// ------------------------------------ Show dialog
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
 	}
 
 }

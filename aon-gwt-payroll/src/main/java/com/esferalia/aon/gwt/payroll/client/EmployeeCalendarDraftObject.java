@@ -8,22 +8,26 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.CalendarDayType;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
+import com.esferalia.aon.gwt.payroll.shared.CalendarExtraHours.DayHourExtra;
 import com.esferalia.aon.gwt.payroll.shared.CalendarHours.DayHours.DayHour;
-import com.esferalia.aon.gwt.payroll.shared.CalendarHoursExtraCompl.DayHourExtraCompl;
-import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeCalendarDraftObject {
 	
+	// -------------------------------------------- Variables
+	
 	// DomainEmployeesServiceAsync
-	private DomainEmployeesServiceAsync employeesService;
+	private DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
 	// DomainEmployeesServiceAsync
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
@@ -43,25 +47,26 @@ public class EmployeeCalendarDraftObject {
 	// User Roles
 	private DomainUserRoles userRoles;
 	
-	public EmployeeCalendarDraftObject(Integer contractId, DomainEmployeesServiceAsync employeesService) {
-		// DomainEmployeesServiceAsync
-		this.employeesService = employeesService;
+	// DateFormat
+	private DateTimeFormat dayOfWeek = DateTimeFormat.getFormat("c");
+	
+	// -------------------------------------------- Constructor
+	
+	public EmployeeCalendarDraftObject(Integer contractId) {
 		
 		// Default data
 		this.contractId = contractId;
 		
 		// IT data
-		this.employeesList = new ArrayList<ITEmployee>();
-		this.itsList = new ArrayList<IT>();
+		this.employeesList = new ArrayList<>();
+		this.itsList = new ArrayList<>();
 		
 		// User Roles
 		this.userRoles = new DomainUserRoles();
 	}
 	
 	
-	// ----------------------------------------------------------------------------------
-	// 									DB METHODS CALENDAR
-	// ----------------------------------------------------------------------------------
+	// -------------------------------------------- Calendar (DataBase)
 	
 	public void initCalendarInfo(Consumer<EmployeeCalendarInfo> success, Consumer<Throwable> failure) {
 		this.employeesService.getEmployeeCalendarInfo(contractId, new AsyncCallback<EmployeeCalendarInfo>() {
@@ -82,8 +87,8 @@ public class EmployeeCalendarDraftObject {
 		});
 	}
 	
-	public void saveCalendarInfo(Consumer<String> success, Consumer<Throwable> failure) {
-		this.employeesService.setEmployeeCalendarInfo(contractId, employeeCalendarInfo, new AsyncCallback<String>() {
+	public void saveCalendarInfo(Consumer<Void> success, Consumer<Throwable> failure) {
+		this.employeesService.setEmployeeCalendarInfo(contractId, employeeCalendarInfo, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -91,15 +96,15 @@ public class EmployeeCalendarDraftObject {
 			}
 
 			@Override
-			public void onSuccess(String message) {
-				success.accept(message);
+			public void onSuccess(Void result) {
+				success.accept(result);
 			}
 			
 		});
 	}
 	
-	public void resetCalendarInfo(Consumer<String> success, Consumer<Throwable> failure) {
-		this.employeesService.resetEmployeeCalendarInfo(contractId, new AsyncCallback<String>() {
+	public void resetCalendarInfo(Consumer<Void> success, Consumer<Throwable> failure) {
+		this.employeesService.resetEmployeeCalendarInfo(contractId, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -107,11 +112,9 @@ public class EmployeeCalendarDraftObject {
 			}
 
 			@Override
-			public void onSuccess(String message) {
+			public void onSuccess(Void result) {
 				initCalendarInfo(
-						r ->{
-							success.accept(message);
-							},
+						r -> success.accept(result),
 						f->{}
 				);
 			}
@@ -119,9 +122,7 @@ public class EmployeeCalendarDraftObject {
 		});
 	}
 	
-	// ----------------------------------------------------------------------------------
-	// 									DB METHODS CALENDAR (IT)
-	// ----------------------------------------------------------------------------------
+	// -------------------------------------------- IT (DataBase & Comunications)
 	
 	public void getEmployeeITInfo(Consumer<List<ITEmployee>> success, Consumer<Throwable> failure){
 		
@@ -130,7 +131,7 @@ public class EmployeeCalendarDraftObject {
 			@Override
 			public void onSuccess(List<ITEmployee> employeesInfoList) {
 				initEmployeeList(employeesInfoList);
-				initITList(employeesInfoList);
+				initITList();
 				
 				impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
 					
@@ -141,13 +142,17 @@ public class EmployeeCalendarDraftObject {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
 					
 				});
 			}
 
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 		
 	}
@@ -161,7 +166,9 @@ public class EmployeeCalendarDraftObject {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 	}
 	
@@ -174,13 +181,15 @@ public class EmployeeCalendarDraftObject {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) { }
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
 		});
 	}
 	
 	public void removeIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
 		deleteIT(it, s -> {
-			if(it.isComunicate())
+			if(Boolean.TRUE.equals(it.isComunicate()))
 				impl.getNafxIpf(itEmployee.getEmployeeInfo().getDocument(), itEmployee.getEmployeeInfo().getSurName(), 
 						itEmployee.getEmployeeInfo().getSecondSurName(), new AsyncCallback<EmployeeSegSocial>() {
 							
@@ -214,12 +223,12 @@ public class EmployeeCalendarDraftObject {
 	
 							@Override
 							public void onFailure(Throwable caught) {
-							
+								failure.accept(caught);
 							}
 						});
 			else
 				success.accept(null);
-		}, f -> {});
+		}, f -> failure.accept(f));
 		
 	}
 	
@@ -259,12 +268,16 @@ public class EmployeeCalendarDraftObject {
 									}
 									
 									@Override
-									public void onFailure(Throwable caught) {}
+									public void onFailure(Throwable caught) {
+										failure.accept(caught);
+									}
 								});
 					}
 
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
 				});
 	}
 
@@ -288,21 +301,25 @@ public class EmployeeCalendarDraftObject {
 						
 						Date dateFrom = it.getStartDate();
 						Date dateTo = null != it.getEndDate() ? it.getEndDate() : DateUtils.addDays2Date(DateUtils.copyDateOnly(it.getStartDate()), (16*7));
-						if("P" == applicantType || applicantType.equals("P"))
+						if(applicantType.equals("P"))
 							dateTo = null != it.getEndDate() ? it.getEndDate() : DateUtils.addDays2Date(DateUtils.copyDateOnly(it.getStartDate()), (12*7));
 						dateTo = DateUtils.addDays2Date(dateTo, -1);
 						
 						impl.createITCertificate(affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days, new AsyncCallback<Boolean>() {
 
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								failure.accept(caught);
+							}
 
 							@Override
 							public void onSuccess(Boolean result) {
 								impl.setComunicationIT(itEmployee, it, new AsyncCallback<Void>() {
 
 									@Override
-									public void onFailure(Throwable caught) {}
+									public void onFailure(Throwable caught) {
+										failure.accept(caught);
+									}
 
 									@Override
 									public void onSuccess(Void res) {
@@ -314,7 +331,9 @@ public class EmployeeCalendarDraftObject {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
 				});
 	}
 	
@@ -329,12 +348,14 @@ public class EmployeeCalendarDraftObject {
 						String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
 						Date dateFrom = it.getComunicationDate();
 						Date dateTo = it.getComunicationDate();
-						Date startDate = it.getStartDate();
+						Date startDateIT = it.getStartDate();
 						
-						impl.deleteComunicateIT(affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallback<Void>() {
+						impl.deleteComunicateIT(affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDateIT, new AsyncCallback<Void>() {
 
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								failure.accept(caught);
+							}
 
 							@Override
 							public void onSuccess(Void result) {
@@ -343,7 +364,9 @@ public class EmployeeCalendarDraftObject {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
 				});
 	}
 	
@@ -357,20 +380,20 @@ public class EmployeeCalendarDraftObject {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
 				});
 	}
 	
-	// ----------------------------------------------------------------------------------
-	// 									IT AUXILIAR METHODS
-	// ----------------------------------------------------------------------------------
+	// -------------------------------------------- IT (Auxiliar Methods)
 	
 	private void initEmployeeList(List<ITEmployee> employeesInfoList) {
 		employeesList.clear();
 		employeesList.addAll(employeesInfoList);
 	}
 	
-	private void initITList(List<ITEmployee> employeesInfoList) {
+	private void initITList() {
 		itsList.clear();
 
 		for(ITEmployee employee : employeesList)
@@ -388,15 +411,15 @@ public class EmployeeCalendarDraftObject {
 	
 	public IT getITByDate(Date itDate) {
 		DateUtils.resetTime(itDate);
-		for(IT it : itsList) {
+		for(IT it : itsList)
 			if(DateUtils.isAfterOrEquals(itDate, it.getStartDate()) && (null == it.getEndDate() || DateUtils.isBeforeOrEquals(itDate, it.getEndDate())))
 				return it;
-		}
+		
 		return null;
 	}
 	
 	public List<ITEmployee> getActiveEmployeesList(){
-		List<ITEmployee> activeEmployeeList = new ArrayList<ITEmployee>();
+		List<ITEmployee> activeEmployeeList = new ArrayList<>();
 		Date today = new Date();
 		
 		for(ITEmployee itEmployee : employeesList) {
@@ -438,66 +461,42 @@ public class EmployeeCalendarDraftObject {
 		case (byte)1:
 			return "Fallecimiento de la madre";
 		case (byte)2:
-			return "Cesi" + String.valueOf("\u00F3") + "n/Opci" + String.valueOf("\u00F3") + "n en favor del otro progenitor";
+			return "Cesi\u00F3n/Opci\u00F3n en favor del otro progenitor";
 		case (byte)3:
-			return "Parto m" + String.valueOf("\u00FA") + "ltiple";
+			return "Parto m\u00FAltiple";
 		case (byte)4:
-			return "Inicio del descanso antes del parto (solo para madre biol" + String.valueOf("\u00F3") + "gica ET)";
+			return "Inicio del descanso antes del parto (solo para madre biol\u00F3gica ET)";
 		default:
-			return "Adopci" + String.valueOf("\u00F3") + "n/Tutela/Acogimiento";
+			return "Adopci\u00F3n/Tutela/Acogimiento";
 		}
 	}
 	
 	public String checkIPFType(String ipf) {
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
-
-		if (dniPattern.test(ipf.toUpperCase()))
-			return "NIF";
-		else
-			return "NIE";
+		return dniPattern.test(ipf.toUpperCase()) ? "NIF" : "NIE";
 	}
 	
 	private String getContractType(String contractType) {
 		Integer contractTypeInt = Integer.parseInt(contractType);
-		
-		if((contractTypeInt >= 200 && contractTypeInt < 300) || (contractTypeInt >= 500 && contractTypeInt< 600 || contractTypeInt == 0))
-			return "FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL";
-		else
-			return "RESTO_Y_AUTONOMOS";
+		return (contractTypeInt >= 200 && contractTypeInt < 300) || (contractTypeInt >= 500 && contractTypeInt< 600 || contractTypeInt == 0) ? "FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL" : "RESTO_Y_AUTONOMOS";
 	}
 
 	private String getLicenseNumber(IT it) {
-		for( ITPart itPart : it.getITParts()) {
+		for( ITPart itPart : it.getITParts())
 			if(itPart.getType() == (byte)0)
 				return itPart.getCollegeNumber();
-		}
+		
 		return "";
 	}
 	
 	private String getCias(IT it) {
-		for( ITPart itPart : it.getITParts()) {
+		for( ITPart itPart : it.getITParts())
 			if(itPart.getType() == (byte)0)
 				return itPart.getCias();
-		}
+		
 		return "";
 	}
 	
-	private String getLicenseNumberAlta(IT it) {
-		for( ITPart itPart : it.getITParts()) {
-			if(itPart.getType() == (byte)2)
-				return itPart.getCollegeNumber();
-		}
-		return "";
-	}
-	
-	private String getCiasAlta(IT it) {
-		for( ITPart itPart : it.getITParts()) {
-			if(itPart.getType() == (byte)2)
-				return itPart.getCias();
-		}
-		return "";
-	}
-
 	private String getContingency(Byte typeLowPart) {
 		switch (typeLowPart) {
 		case (byte) 0:
@@ -515,34 +514,7 @@ public class EmployeeCalendarDraftObject {
 		}
 	}
 	
-	private String getCauseType(Byte typeHihgPart) {
-		switch (typeHihgPart) {
-		case (byte) 0:
-			return "CURACION";
-		case (byte) 1:
-			return "FALLECIMIENTO";
-		case (byte) 2:
-			return "INSPECCION_MEDICA";
-		case (byte) 3:
-			return "PROPUESTA_INVALIDEZ";
-		case (byte) 4:
-			return "AGOTAMIENTO_PLAZO";
-		case (byte) 5:
-			return "MEJORIA_PERMITE_TRABAJAR";
-		case (byte) 6:
-			return "INCOMPARECENCIA";
-		case (byte) 7:
-			return "CONTROL_INSS_12_MESES";
-		case (byte) 8:
-			return "RECUP_CAPACIDAD_PROF";
-		default:
-			return "INCOMP_CTOS_FORM";
-		}
-	}
-	
-	// ----------------------------------------------------------------------------------
-	// 								METHODS (PAINT CALENDAR)
-	// ----------------------------------------------------------------------------------
+	// -------------------------------------------- Calendar
 	
 	public Date getContractStartDate() {
 		return this.startDate;
@@ -552,34 +524,36 @@ public class EmployeeCalendarDraftObject {
 		return this.endDate;
 	}
 	
-	public boolean isFullTimeJourney() {
-		return this.employeeCalendarInfo.getFullTimeJourney();
+	public boolean isFullTime() {
+		return this.employeeCalendarInfo.isFullTime();
 	}
 	
-	public boolean isAgrarianContract() {
-		return this.employeeCalendarInfo.getAgrarianContract();
+	public boolean isAgrarian() {
+		return this.employeeCalendarInfo.isAgrarian();
 	}
 	
 	public DayType getDayTypeByDate(Date date) {
 		DayType dayType = employeeCalendarInfo.getCalendarDaysType().getDayTypeByDate(date);
-		
 		return null == dayType ? DayType.NOTYPEDAY : dayType;
 	}
 	
 	public boolean isPartialityDayTypeByDate(Date date) {
 		DayType dayType = employeeCalendarInfo.getPartialityDaysType().getDayTypeByDate(date);
-		
-		return (null == dayType || DayType.NOTYPEDAY == dayType)? false : true;
+		return null != dayType && DayType.NOTYPEDAY != dayType;
 	}
 	
 	public String getPartialityCoefficientByDate(Date date) {
 		String coefficient = employeeCalendarInfo.getPartialityDaysType().getExpressionByDate(date);
-		
 		return null == coefficient ? "Revisar Parcialiad" : coefficient;
 	}
 	
 	public boolean isDefaultNonWorkongDay(Date date) {
-		return null != date && employeeCalendarInfo.getCalendarHours().isEmpty() && null != employeeCalendarInfo.getNonWorkingDays()[date.getDay()] && employeeCalendarInfo.getNonWorkingDays()[date.getDay()] == (byte)1;
+		try {
+			Integer day = Integer.parseInt(dayOfWeek.format(date));
+			return employeeCalendarInfo.getCalendarHours().isEmpty() && null != employeeCalendarInfo.getWorkingDays()[day] && employeeCalendarInfo.getWorkingDays()[day] == (byte)1;
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 	
 	public String getExpressionByDate(Date date) {
@@ -590,89 +564,85 @@ public class EmployeeCalendarDraftObject {
 		return employeeCalendarInfo.getCalendarHours().getHourByDate(date);
 	}
 	
-	public Double getHourExtraComplByDate(Date date) {
-		return employeeCalendarInfo.getCalendarHoursExtraCompl().getHourByDate(date);
+	public Double getExtraHourByDate(Date date) {
+		return employeeCalendarInfo.getCalendarExtraHours().getExtraHourByDate(date);
+	}
+	
+	public Double getComplementaryHourByDate(Date date) {
+		return employeeCalendarInfo.getCalendarComplementaryHours().get(date);
 	}
 	
 	public boolean isCalendarHourIsEmpty() {
 		return employeeCalendarInfo.getCalendarHours().isEmpty();
 	}
 	
-	public boolean isCalendarHourExtraComplIsEmpty() {
-		return employeeCalendarInfo.getCalendarHoursExtraCompl().isEmpty();
+	public boolean isExtraHourIsEmpty() {
+		return employeeCalendarInfo.getCalendarExtraHours().getExtraHours().isEmpty();
 	}
 	
-	public Byte[] getNonWorkingDays() {
-		return this.employeeCalendarInfo.getNonWorkingDays();
-	}
-
-
-	public void setNonWorkingDays(Byte[] nonWorkingDays) {
-		this.employeeCalendarInfo.setNonWorkingDays(nonWorkingDays);
+	public boolean isComplementaryHourIsEmpty() {
+		return employeeCalendarInfo.getCalendarComplementaryHours().isEmpty();
 	}
 	
-	public String getExtraHourByDate(Date date) {
-		return this.employeeCalendarInfo.getMonthExtraHoursMap().get(date);
+	public Byte[] getWorkingDays() {
+		return this.employeeCalendarInfo.getWorkingDays();
 	}
 
-
-	public void setExtraHourByDate(Date date, String hourMonth) {
-		this.employeeCalendarInfo.getMonthExtraHoursMap().put(date, hourMonth);
+	public void setWorkingDays(Byte[] workingDays) {
+		this.employeeCalendarInfo.setWorkingDays(workingDays);
 	}
-	
+		
 	public boolean isDefaultFreeDay(Date date) {
-		String freedayDescription = this.employeeCalendarInfo.getFestiveDaysMap().get(date);
-		return null == freedayDescription ? false : true;
+		String freedayDescription = this.employeeCalendarInfo.getFestiveDays().get(date);
+		return AonStringUtils.isNotBlank(freedayDescription);
 	}
 	
-	// ----------------------------------------------------------------------------------
-	// 										ADD DAYS TYPE
-	// ----------------------------------------------------------------------------------
+	// -------------------------------------------- Calendar Days Type
 	
 	public void addDayType(Date startDate, Date endDate, DayType dayType, String expression) {
 		CalendarDayType newCalendarDayType = new CalendarDayType(startDate, endDate, dayType, expression);
 		this.employeeCalendarInfo.getCalendarDaysType().addDayType(newCalendarDayType);
-//		Window.alert(this.employeeCalendarInfo.getCalendarDaysType().toString(newCalendarDayType));
 		this.employeeCalendarInfo.getCalendarDaysType().initMapDaysDayType();
 	}
 	
 	public void addPartialityDayType(Date startDate, Date endDate, DayType dayType, String expression) {
 		CalendarDayType newCalendarDayType = new CalendarDayType(startDate, endDate, dayType, expression);
 		this.employeeCalendarInfo.getPartialityDaysType().addDayType(newCalendarDayType);
-//		Window.alert(this.employeeCalendarInfo.getPartialityDaysType().toString(newCalendarDayType));
 		this.employeeCalendarInfo.getPartialityDaysType().initMapDaysDayType();
 	}
 	
-	// ----------------------------------------------------------------------------------
-	// 										ADD DAYS HOUR
-	// ----------------------------------------------------------------------------------
+	// -------------------------------------------- Calendar Days Hour
 	
 	public void addDayHour(Date startDate, Date endDate, int day, Double expression) {
 		DayHour dayHour = new DayHour(startDate, endDate, expression);
 		this.employeeCalendarInfo.getCalendarHours().getDayHours()[day].addDayHour(dayHour);
-//		Window.alert(this.employeeCalendarInfo.getCalendarHours().getDayHours()[day].toString(dayHour));
 		this.employeeCalendarInfo.getCalendarHours().initMapDaysHour();
 	}
 	
-	public void addDayHourExtraCompl(Date startDate, Date endDate, Double expression) {
-		DayHourExtraCompl dayHourExtraCompl = new DayHourExtraCompl(startDate, endDate, expression);
-		this.employeeCalendarInfo.getCalendarHoursExtraCompl().addDayHourComplementary(dayHourExtraCompl);
-//		Window.alert(this.employeeCalendarInfo.getCalendarHoursExtraCompl().toStringList());
-		this.employeeCalendarInfo.getCalendarHoursExtraCompl().initMapDayHoursComplementary();
+	public void addExtraHour(Date startDate, Date endDate, Double expression) {
+		DayHourExtra dayHourExtra = new DayHourExtra(startDate, endDate, expression);
+		this.employeeCalendarInfo.getCalendarExtraHours().addExtraHour(dayHourExtra);
+		this.employeeCalendarInfo.getCalendarExtraHours().initExtraHoursMap();
+	}
+	
+	public void addComplementaryHour(Date date, Double expression) {
+		this.employeeCalendarInfo.getCalendarComplementaryHours().put(date, expression);
+	}
+	
+	public void removeComplementaryHour(Date date) {
+		this.employeeCalendarInfo.getCalendarComplementaryHours().remove(date);
 	}
 
-	// ----------------------------------------------------------------------------------
-	// 										LEYEND METHOD
-	// ----------------------------------------------------------------------------------
+	// -------------------------------------------- Leyend
 	
 	public Integer getTotalYearDays(DayType dayType) {
 		Integer countDays = 0;
 		
-		Date startDate = DateUtils.getFirstDayOfYear();
-		Date endDate = DateUtils.getLastDayOfYear(startDate);
-		Date iteratorDate = DateUtils.copyDateOnly(startDate);
+		Date startDateTotal = DateUtils.getFirstDayOfYear();
+		Date endDateTotal = DateUtils.getLastDayOfYear(startDateTotal);
+		Date iteratorDate = DateUtils.copyDateOnly(startDateTotal);
 		
-		while (DateUtils.isBeforeOrEquals(iteratorDate, endDate)) {
+		while (DateUtils.isBeforeOrEquals(iteratorDate, endDateTotal)) {
 			DayType iteratorDayType = employeeCalendarInfo.getCalendarDaysType().getDayTypeByDate(iteratorDate);
 			
 			if(null != iteratorDayType && iteratorDayType == dayType)
