@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod390;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,15 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod3902015Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod3902018Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod390 2015 File download", urlPatterns = { "/aon_gwt_fiscal/Model3902015File" })
-public class Mod3902015File extends HttpServlet {
+@WebServlet(name = "Mod390 2018 File download", urlPatterns = { "/aon_gwt_fiscal/Model3902018File" })
+public class Mod3902018File extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -33,7 +33,7 @@ public class Mod3902015File extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");
-			Mod3902015 mod390 = FISCAL.getMod3902015(domainName, domainId, user, id);
+			Mod3902018 mod390 = FISCAL.getMod3902018(domainName, domainId, user, id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -43,7 +43,7 @@ public class Mod3902015File extends HttpServlet {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			Mod3902015Writer.fillWriter(mod390, writer);
+			Mod3902018Writer.fillWriter(mod390, writer);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 
 			

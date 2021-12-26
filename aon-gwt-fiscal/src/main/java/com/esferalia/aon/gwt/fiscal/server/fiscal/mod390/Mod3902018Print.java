@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.server;
+package com.esferalia.aon.gwt.fiscal.server.fiscal.mod390;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.esferalia.aon.gwt.fiscal.server.DefaultTrustManager;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -38,16 +39,16 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
-import com.esferalia.aon.occam.server.fiscal.format.Mod3902015Writer;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
+import com.esferalia.aon.occam.server.fiscal.format.Mod3902018Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.google.api.services.drive.Drive;
 
 import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod390 2015 Print", urlPatterns = { "/aon_gwt_fiscal/Model3902015Print" })
-public class Mod3902015Print extends HttpServlet {
+@WebServlet(name = "Mod390 2018 Print", urlPatterns = { "/aon_gwt_fiscal/Model3902018Print" })
+public class Mod3902018Print extends HttpServlet {
 	// "IVAXML.sh"
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -58,7 +59,7 @@ public class Mod3902015Print extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");
-			Mod3902015 mod390 = FISCAL.getMod3902015(domainName, domainId, user, id);
+			Mod3902018 mod390 = FISCAL.getMod3902018(domainName, domainId, user, id);
 			
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -68,7 +69,7 @@ public class Mod3902015Print extends HttpServlet {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			Mod3902015Writer.fillWriter(mod390, writer);
+			Mod3902018Writer.fillWriter(mod390, writer);
 			
 			String s = mod390.getName();
 			StringBuilder sb = new StringBuilder();
@@ -114,38 +115,14 @@ public class Mod3902015Print extends HttpServlet {
 
 		String urlParameters = null;
 		String request = null;
-		if (year == 2015) {
-			request = "https://www6.aeat.es/es13/l/zi21zilk0021";
-			urlParameters = "HID=INF5390A" 
-				+ "&IDI=ES"
-				+ "&LEV=000000000000"
-				+ "&F01=" + encodedFile 
-				+ "&ANA=" + "CAP" 
-				+ "&FIN=" 
-				+ "&MOD=390" 
-				+ "&PRG=PTLINK9T"
-				+ "&EJF=2015";
-		} else if (year == 2016) {
-			request = "https://www6.aeat.es/es13/l/zi21zilk0021";
-			urlParameters = "HID=INF6390A" 
-				+ "&IDI=ES"
-				+ "&LEV=000000000000"
-				+ "&F01=" + encodedFile 
-				+ "&ANA=" + "CAP" 
-				+ "&FIN=" 
-				+ "&MOD=390" 
-				+ "&PRG=PTLINKF3"
-				+ "&EJF=2016";
-		} else if (year == 2017) {
+		if (year == 2018) {
 			request = "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
-			urlParameters = "HID=INF7390A" 
-				+ "&IDI=ES"
-				+ "&LEV=000000000000"
+			urlParameters = "&IDI=ES"
 				+ "&FIC=" + encodedFile 
 				+ "&RUT="  
-				+ "&PRG=PTLINKN3"
+				+ "&PRG="
 				+ "&FIN=" 
-				+ "&EJF=2017"
+				+ "&EJF=2018"
 				+ "&MOD=390";
 		} else {
 			throw new ServletException("Ejercicio no soportado.");
