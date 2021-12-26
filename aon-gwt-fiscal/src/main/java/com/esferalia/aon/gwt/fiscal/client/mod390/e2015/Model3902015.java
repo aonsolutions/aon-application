@@ -45,10 +45,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class Model3902015 extends DockLayoutPanel  {
 	
 	private static final Integer DEFAULT_YEAR = 2017;
-	private static final  String MOD390_2015_PRINT = "/aon_gwt_fiscal/Model3902015Print";
-	private static final  String MOD390_2015_FILE = "/aon_gwt_fiscal/Model3902015File";
 			
-	private Mod3902015ServiceAsync MOD390_SERVICE;
+	private Mod3902015ServiceAsync MOD3902015_SERVICE;
 	
 	static interface IMod3902015CallBack {
 		String getDomainName();
@@ -75,14 +73,13 @@ public class Model3902015 extends DockLayoutPanel  {
 	private Hidden domainIdHidden = new Hidden("domainId");
 	private Hidden domainNameHidden = new Hidden("domainName");
 	private Hidden userHidden = new Hidden("user");
-	private Model390Callback cbk;
+	
 	public Model3902015(Model390ModuleOptions options, Mod390 mod390, final Model390Callback cbk) {
 		super(Unit.PX);
-		this.cbk = cbk;
 		AON.ensureInjected();
 
 		Mod3902015ServiceAsync mod3902015ServiceRaw = GWT.create(Mod3902015Service.class);
-		MOD390_SERVICE = new Mod3902015ServiceAsyncDecorator(mod3902015ServiceRaw);
+		MOD3902015_SERVICE = new Mod3902015ServiceAsyncDecorator(mod3902015ServiceRaw);
 		
 		
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -93,8 +90,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		try {
-			MOD390_SERVICE.getMod3902015(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(),
-					mod390, new AsyncCallback<Mod3902015>() {
+			MOD3902015_SERVICE.get(options.getOccam(), mod390, new AsyncCallback<Mod3902015>() {
 				@Override
 				public void onSuccess(Mod3902015 selected) {
 					if (selected == null) {
@@ -173,7 +169,7 @@ public class Model3902015 extends DockLayoutPanel  {
 				popup.setAnimationEnabled(true);
 				popup.center();
 				try {
-					m390.setDomain(getCurrentDomain());
+					m390.setDomain(options.getDomain());
 					m390.setConfidential(false);
 					for (int i = 0 ; i < linkContainer.getWidgetCount(); i ++) {
 						WestFocusPanel page = (WestFocusPanel) linkContainer.getWidget(i);
@@ -181,20 +177,19 @@ public class Model3902015 extends DockLayoutPanel  {
 					}
 					cbk.cleanErrorPanel();
 					validate(m390, cbk);
-					MOD390_SERVICE.saveMod3902015(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),m390
-							, new AsyncCallback<Mod3902015>() {
-								@Override
-								public void onSuccess(Mod3902015 result) {
-									select(options, result, cbk);
-									popup.hide();
-								}
+					MOD3902015_SERVICE.save(options.getOccam(),m390 , new AsyncCallback<Mod3902015>() {
+						@Override
+						public void onSuccess(Mod3902015 result) {
+							select(options, result, cbk);
+							popup.hide();
+						}
 
-								@Override
-								public void onFailure(Throwable caught) {
-									popup.hide();
-									cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-								}
-							});
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+						}
+					});
 				} catch (IllegalArgumentException e) {
 					popup.hide();
 					cbk.showError(e.getMessage());
@@ -241,15 +236,14 @@ public class Model3902015 extends DockLayoutPanel  {
 
 					@Override
 					public void onAccept() {
-						MOD390_SERVICE.deleteMod3902015(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),
-								m390, new AsyncCallback<Void>() {
+						MOD3902015_SERVICE.delete(options.getOccam(), m390, new AsyncCallback<Void>() {
 							@Override
 							public void onSuccess(Void result) {
 								deleteButton.setEnabled(true);
 								cbk.cleanErrorPanel();
 								cbk.onCancel();
 							}
-
+	
 							@Override
 							public void onFailure(Throwable caught) {
 								deleteButton.setEnabled(true);
@@ -281,7 +275,7 @@ public class Model3902015 extends DockLayoutPanel  {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsFinishedButton.setEnabled(false);
-				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(),m390, FiscalStatus.FINISHED, new AsyncCallback<Mod3902015>() {
+				MOD3902015_SERVICE.changeStatus(options.getOccam(),m390, FiscalStatus.FINISHED, new AsyncCallback<Mod3902015>() {
 					@Override
 					public void onSuccess(Mod3902015 result) {
 						select(options, result, cbk);
@@ -308,7 +302,7 @@ public class Model3902015 extends DockLayoutPanel  {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsSentButton.setEnabled(false);
-				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(),m390, FiscalStatus.SENT, new AsyncCallback<Mod3902015>() {
+				MOD3902015_SERVICE.changeStatus(options.getOccam(),m390, FiscalStatus.SENT, new AsyncCallback<Mod3902015>() {
 					@Override
 					public void onSuccess(Mod3902015 result) {
 						select(options, result, cbk);
@@ -339,7 +333,7 @@ public class Model3902015 extends DockLayoutPanel  {
 			@Override
 			public void onClick(ClickEvent event) {
 				markAsPendingButton.setEnabled(false);
-				MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(),m390, FiscalStatus.PENDING, new AsyncCallback<Mod3902015>() {
+				MOD3902015_SERVICE.changeStatus(options.getOccam(),m390, FiscalStatus.PENDING, new AsyncCallback<Mod3902015>() {
 					@Override
 					public void onSuccess(Mod3902015 result) {
 						select(options,result, cbk);
@@ -371,21 +365,6 @@ public class Model3902015 extends DockLayoutPanel  {
 		return toolbarPanel;
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-
-	public static native String getCurrentUser()
-	/*-{
-		return $wnd.getCurrentUser();
-	}-*/;
-	
 	private void showPage(int page) {
 		WestFocusPanel panel = (WestFocusPanel) linkContainer.getWidget(page);
 		panel.showPage();	
@@ -427,17 +406,17 @@ public class Model3902015 extends DockLayoutPanel  {
 			
 			@Override
 			public String getDomainName() {
-				return getCurrentDomainName();
+				return options.getDomainName();
 			}
 			
 			@Override
 			public Integer getDomainId() {
-				return getCurrentDomain();
+				return options.getDomain();
 			}
 			
 			@Override
 			public String getUser() {
-				return getCurrentUser();
+				return options.getUser();
 			}
 
 			@Override
@@ -472,15 +451,6 @@ public class Model3902015 extends DockLayoutPanel  {
 	}
 
 	// -------------------------------------------------------------- UiHandler
-
-	protected void submitForm(String action, Integer id) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		mod390Hidden.setValue(String.valueOf(id));
-		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-		domainNameHidden.setValue(getCurrentDomainName());
-		userHidden.setValue(getCurrentUser());
-		diskForm.submit();
-	}
 
 	private SimplePanel getHeaderPanel(Mod3902015 m390, Model390Callback cbk) {
 		SimplePanel headerPanel	= new SimplePanel(); 

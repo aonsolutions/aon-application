@@ -17,9 +17,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -39,8 +36,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod347DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod349DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod3902015DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod3902018DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OperationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.Mod2002013DAO;
@@ -74,96 +69,6 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public FiscalModel getModel(AONContext ctx, int id) {
 		return FiscalModelDAO.getFiscalModel(ctx, id);
-	}
-
-	// ----------------------------------------------------------- [MODELO 390 - 2015]
-	
-	@Override
-	public Mod3902015 getMod3902015(AONContext ctx, Mod390 mod390) {
-		try {
-			return Mod3902015DAO.getMod3902015(ctx, mod390);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-
-	@Override
-	public Mod3902015 getMod3902015(AONContext ctx, Integer id) {
-		try {
-			return Mod3902015DAO.getById(ctx, id);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-
-	@Override
-	public String getMod3902015XML(AONContext ctx, int id) {
-		return Mod3902015DAO.getXMLContentById(ctx, id);
-	}
-	
-	@Override
-	public Mod3902015 saveMod3902015(AONContext ctx, Mod3902015 mod390) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod3902015DAO.save(ctx, mod390));
-	}
-
-	@Override
-	public void deleteMod3902015(AONContext ctx, Mod3902015 mod390) {
-		ctx.getDslContext().transaction(
-				configuration -> Mod3902015DAO.delete(ctx, mod390));
-	}
-	
-	@Override
-	public Mod3902015 changeStatusMod3902015(AONContext ctx, Mod3902015 mod390, FiscalStatus newStatus) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod3902015DAO.changeStatus(ctx, mod390, newStatus));		
-	}
-
-	// ----------------------------------------------------------- [MODELO 390 - 2018]
-	
-	@Override
-	public Mod3902018 getMod3902018(AONContext ctx, Mod390 mod390) {
-		try {
-			return Mod3902018DAO.getMod3902018(ctx, mod390);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-
-	@Override
-	public Mod3902018 getMod3902018(AONContext ctx, Integer id) {
-		try {
-			return Mod3902018DAO.getById(ctx, id);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-
-	@Override
-	public String getMod3902018XML(AONContext ctx, int id) {
-		return Mod3902018DAO.getXMLContentById(ctx, id);
-	}
-	
-	@Override
-	public Mod3902018 saveMod3902018(AONContext ctx, Mod3902018 mod390) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod3902018DAO.save(ctx, mod390));
-	}
-
-	@Override
-	public void deleteMod3902018(AONContext ctx, Mod3902018 mod390) {
-		ctx.getDslContext().transaction(
-				configuration -> Mod3902018DAO.delete(ctx, mod390));
-	}
-	
-	@Override
-	public Mod3902018 changeStatusMod3902018(AONContext ctx, Mod3902018 mod390, FiscalStatus newStatus) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod3902018DAO.changeStatus(ctx, mod390, newStatus));		
 	}
 
 	// ----------------------------------------------------------- [MODELO 200]

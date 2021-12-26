@@ -21,12 +21,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.fiscal.server.ModPrintAEAT;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902018;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
-import com.esferalia.aon.occam.server.fiscal.format.Mod3902015Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod3902018Writer;
 
 @WebServlet(name = "Mod390 Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Model390PrintAEAT" })
 public class Mod390PrintAEAT extends ModPrintAEAT {
@@ -43,8 +44,8 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 		try {
 			JSONObject json = getRequestJSON(req);
 			init(json);
-			
-			Mod3902015 mod390 = FISCAL.getMod3902015(getDomainName(), getDomainId(), getUser(), getId());
+			Occam occam = new Occam().setDomainName(getDomainName()).setDomain(getDomainId()).setUser(getUser());			
+			Mod3902018 mod390 = MODEL3902018.get(occam, getId());
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -54,7 +55,7 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			Mod3902015Writer.fillWriter(mod390, writer);
+			Mod3902018Writer.fillWriter(mod390, writer);
 						
 			send(req, resp, mod390, output.toByteArray());
 		} catch (Throwable e) {
@@ -65,7 +66,7 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 		}
 	}
 
-	private void send(HttpServletRequest req, HttpServletResponse resp, Mod3902015 mod390, byte[] content) throws JSONException, KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, ScriptException {
+	private void send(HttpServletRequest req, HttpServletResponse resp, Mod3902018 mod390, byte[] content) throws JSONException, KeyManagementException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, ScriptException {
 		String urlParameters = isCert() 
 			? getCertUrlParameters(mod390, getEncodedFile(content), getName(), getDocument())
 			: getUrlParameters(mod390, getEncodedFile(content));
@@ -80,14 +81,12 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 			return isTest() 
 				? "https://www7.aeat.es/wlpl/PFTW-PICW/PresBasica" 
 				: "https://www1.agenciatributaria.gob.es/wlpl/PFTW-PICW/PresBasica";
-		else if(year == 2015 || year == 2016)
-			return "https://www6.aeat.es/es13/l/zi21zilk0021";
 		else if(year >= 2017)
 			return "https://www6.aeat.es/wlpl/PFTW-PICW/ServVali";
 		return "";
 	}
 	
-	public String getUrlParameters(Mod3902015 mod390, String encodedFile){
+	public String getUrlParameters(Mod3902018 mod390, String encodedFile){
 		if (mod390.getYear() == 2015) {
 			return "HID=INF5390A" 
 				+ "&IDI=ES"
@@ -122,7 +121,7 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 		return "";
 	}
 	
-	public String getCertUrlParameters(Mod3902015 mod390, String encodedFile, String name, String document){
+	public String getCertUrlParameters(Mod3902018 mod390, String encodedFile, String name, String document){
 		
 		return "HID=INF7390A"
 				+ "&FIRNIF=" + document
@@ -159,7 +158,8 @@ public class Mod390PrintAEAT extends ModPrintAEAT {
 
 	@Override
 	protected void updateMod(JSONObject json) throws JSONException {
-		Mod3902015 mod390 = FISCAL.getMod3902015(getDomainName(), getDomainId(), getUser(), getId());
-		FISCAL.changeStatusMod3902015(getDomainName(), getUser(), mod390, FiscalStatus.SENT);
+		Occam occam = new Occam().setDomainName(getDomainName()).setDomain(getDomainId()).setUser(getUser());
+		Mod3902018 mod390 = MODEL3902018.get(occam, getId());
+		MODEL3902018.changeStatus(occam, mod390, FiscalStatus.SENT);
 	}
 }

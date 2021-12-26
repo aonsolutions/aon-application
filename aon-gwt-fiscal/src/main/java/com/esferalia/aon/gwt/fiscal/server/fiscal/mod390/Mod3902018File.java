@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902018;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.server.fiscal.format.Mod3902018Writer;
@@ -33,7 +34,11 @@ public class Mod3902018File extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");
-			Mod3902018 mod390 = FISCAL.getMod3902018(domainName, domainId, user, id);
+			Occam occam = new Occam()
+					.setDomainName(domainName)
+					.setDomain(domainId)
+					.setUser(user);			
+			Mod3902018 mod390 = MODEL3902018.get(occam, id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

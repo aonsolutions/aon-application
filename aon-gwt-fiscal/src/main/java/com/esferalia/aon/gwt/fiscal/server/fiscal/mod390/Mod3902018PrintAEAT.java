@@ -21,7 +21,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.fiscal.server.ModPrintAEAT;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902018;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
@@ -43,8 +44,8 @@ public class Mod3902018PrintAEAT extends ModPrintAEAT {
 		try {
 			JSONObject json = getRequestJSON(req);
 			init(json);
-			
-			Mod3902018 mod390 = FISCAL.getMod3902018(getDomainName(), getDomainId(), getUser(), getId());
+			Occam occam = new Occam().setDomainName(getDomainName()).setDomain(getDomainId()).setUser(getUser());			
+			Mod3902018 mod390 = MODEL3902018.get(occam, getId());
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -120,7 +121,8 @@ public class Mod3902018PrintAEAT extends ModPrintAEAT {
 
 	@Override
 	protected void updateMod(JSONObject json) throws JSONException {
-		Mod3902018 mod390 = FISCAL.getMod3902018(getDomainName(), getDomainId(), getUser(), getId());
-		FISCAL.changeStatusMod3902018(getDomainName(), getUser(), mod390, FiscalStatus.SENT);
+		Occam occam = new Occam().setDomainName(getDomainName()).setDomain(getDomainId()).setUser(getUser());
+		Mod3902018 mod390 = MODEL3902018.get(occam, getId());
+		MODEL3902018.changeStatus(occam, mod390, FiscalStatus.SENT);
 	}
 }

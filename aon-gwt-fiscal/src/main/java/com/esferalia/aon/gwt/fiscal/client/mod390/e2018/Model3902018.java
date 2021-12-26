@@ -45,7 +45,7 @@ public class Model3902018 extends DockLayoutPanel  {
 	private static final  String MOD390_2018_FILE = "/aon_gwt_fiscal/Model3902018File";
 	private static final  String MOD390_2018_DRAFT = "/aon_gwt_fiscal/Model3902018Draft";
 			
-	private Mod3902018ServiceAsync MOD390_SERVICE;
+	private Mod3902018ServiceAsync MOD3902018_SERVICE;
 	
 	static interface IMod3902018CallBack {
 		Model390ModuleOptions getOptions();
@@ -78,7 +78,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		AON.ensureInjected();
 
 		Mod3902018ServiceAsync mod3902018ServiceRaw = GWT.create(Mod3902018Service.class);
-		MOD390_SERVICE = new Mod3902018ServiceAsyncDecorator(mod3902018ServiceRaw);
+		MOD3902018_SERVICE = new Mod3902018ServiceAsyncDecorator(mod3902018ServiceRaw);
 		
 		
 		final PopupPanel popup = new PopupPanel(false, true);
@@ -89,8 +89,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		try {
-			MOD390_SERVICE.getMod3902018(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(),
-					mod390, new AsyncCallback<Mod3902018>() {
+			MOD3902018_SERVICE.get(options.getOccam(), mod390, new AsyncCallback<Mod3902018>() {
 				@Override
 				public void onSuccess(Mod3902018 selected) {
 					if (selected == null) {
@@ -162,7 +161,7 @@ public class Model3902018 extends DockLayoutPanel  {
 			popup.setAnimationEnabled(true);
 			popup.center();
 			try {
-				m390.setDomain(getCurrentDomain());
+				m390.setDomain(options.getDomain());
 				m390.setConfidential(false);
 				for (int i = 0 ; i < linkContainer.getWidgetCount(); i ++) {
 					WestFocusPanel page = (WestFocusPanel) linkContainer.getWidget(i);
@@ -170,20 +169,19 @@ public class Model3902018 extends DockLayoutPanel  {
 				}
 				cbk.cleanErrorPanel();
 				validate(m390);
-				MOD390_SERVICE.saveMod3902018(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),m390
-						, new AsyncCallback<Mod3902018>() {
-							@Override
-							public void onSuccess(Mod3902018 result) {
-								select(options,result, cbk);
-								popup.hide();
-							}
+				MOD3902018_SERVICE.save(options.getOccam(),m390 , new AsyncCallback<Mod3902018>() {
+					@Override
+					public void onSuccess(Mod3902018 result) {
+						select(options,result, cbk);
+						popup.hide();
+					}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								popup.hide();
-								cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
-							}
-						});
+					@Override
+					public void onFailure(Throwable caught) {
+						popup.hide();
+						cbk.showError(AON.MSG.unableToSaveDeclaration(caught.getMessage()));
+					}
+				});
 			} catch (IllegalArgumentException e) {
 				popup.hide();
 				cbk.showError(e.getMessage());
@@ -222,8 +220,7 @@ public class Model3902018 extends DockLayoutPanel  {
 
 				@Override
 				public void onAccept() {
-					MOD390_SERVICE.deleteMod3902018(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),
-							m390, new AsyncCallback<Void>() {
+					MOD3902018_SERVICE.delete(options.getOccam(), m390, new AsyncCallback<Void>() {
 						@Override
 						public void onSuccess(Void result) {
 							deleteButton.setEnabled(true);
@@ -268,7 +265,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		markAsFinishedButton.addStyleName(AON.AON_CSS.aonIconPointLightGreen());
 		markAsFinishedButton.addClickHandler(event -> {
 			markAsFinishedButton.setEnabled(false);
-			MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.FINISHED, new AsyncCallback<Mod3902018>() {
+			MOD3902018_SERVICE.changeStatus(options.getOccam(), m390, FiscalStatus.FINISHED, new AsyncCallback<Mod3902018>() {
 				@Override
 				public void onSuccess(Mod3902018 result) {
 					select(options, result, cbk);
@@ -291,7 +288,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		markAsSentButton.addStyleName(AON.AON_CSS.aonIconPointGreen());
 		markAsSentButton.addClickHandler(event -> {
 			markAsSentButton.setEnabled(false);
-			MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.SENT, new AsyncCallback<Mod3902018>() {
+			MOD3902018_SERVICE.changeStatus(options.getOccam(), m390, FiscalStatus.SENT, new AsyncCallback<Mod3902018>() {
 				@Override
 				public void onSuccess(Mod3902018 result) {
 					select(options, result, cbk);
@@ -318,7 +315,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		markAsPendingButton.addStyleName(AON.AON_CSS.aonIconPointOrange());
 		markAsPendingButton.addClickHandler(event -> {
 			markAsPendingButton.setEnabled(false);
-			MOD390_SERVICE.changeStatus(getCurrentDomainName(), getCurrentUser(), m390, FiscalStatus.PENDING, new AsyncCallback<Mod3902018>() {
+			MOD3902018_SERVICE.changeStatus(options.getOccam(), m390, FiscalStatus.PENDING, new AsyncCallback<Mod3902018>() {
 				@Override
 				public void onSuccess(Mod3902018 result) {
 					select(options, result, cbk);
@@ -338,7 +335,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		draftButton.setTitle(draftButton.getText());
 		draftButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
 		draftButton.addStyleName(AON.AON_CSS.aonIconExcel());
-		draftButton.addClickHandler(event -> submitForm(MOD390_2018_DRAFT,m390.getId()));
+		draftButton.addClickHandler(event -> submitForm(options,MOD390_2018_DRAFT,m390.getId()));
 		buttonContainer.add(draftButton);
 		
 		toolbarPanel.add(toolbar);
@@ -357,21 +354,6 @@ public class Model3902018 extends DockLayoutPanel  {
 		return toolbarPanel;
 	}
 
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-
-	public static native String getCurrentUser()
-	/*-{
-		return $wnd.getCurrentUser();
-	}-*/;
-	
 	private void showPage(int page) {
 		WestFocusPanel panel = (WestFocusPanel) linkContainer.getWidget(page);
 		panel.showPage();	
@@ -386,7 +368,7 @@ public class Model3902018 extends DockLayoutPanel  {
 
 				@Override
 				public void onAccept() {
-					MOD390_SERVICE.deleteMod3902018(getCurrentDomainName(),getCurrentDomain(),getCurrentUser(),
+					MOD3902018_SERVICE.delete(options.getOccam(),
 							m390, new AsyncCallback<Void>() {
 						@Override
 						public void onSuccess(Void result) {
@@ -478,12 +460,12 @@ public class Model3902018 extends DockLayoutPanel  {
 
 	// -------------------------------------------------------------- UiHandler
 
-	protected void submitForm(String action, Integer id) {
+	protected void submitForm(Model390ModuleOptions options, String action, Integer id) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
 		mod390Hidden.setValue(String.valueOf(id));
-		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
-		domainNameHidden.setValue(getCurrentDomainName());
-		userHidden.setValue(getCurrentUser());
+		domainIdHidden.setValue(String.valueOf(options.getDomain()));
+		domainNameHidden.setValue(options.getDomainName());
+		userHidden.setValue(options.getUser());
 		diskForm.submit();
 	}
 
