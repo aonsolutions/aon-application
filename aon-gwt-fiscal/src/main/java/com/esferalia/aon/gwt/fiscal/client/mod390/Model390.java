@@ -289,7 +289,7 @@ public class Model390 extends MainEntryPoint {
 		cleanBreakdownPanel();
 		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
-		NewDeclarationPopup newDialog = new NewDeclarationPopup( m390, new Model390Callback() {
+		Model390NewDeclarationPopup newDialog = new Model390NewDeclarationPopup( m390, new Model390Callback() {
 
 					@Override
 					public void onAccept(Mod390 mod390) {
@@ -353,7 +353,7 @@ public class Model390 extends MainEntryPoint {
 		cleanBreakdownPanel();
 		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
-		NewDeclarationPopup newDialog = new NewDeclarationPopup( newMod390, true, new Model390Callback() {
+		Model390NewDeclarationPopup newDialog = new Model390NewDeclarationPopup( newMod390, true, new Model390Callback() {
 
 					@Override
 					public void onAccept(Mod390 mod390) {
