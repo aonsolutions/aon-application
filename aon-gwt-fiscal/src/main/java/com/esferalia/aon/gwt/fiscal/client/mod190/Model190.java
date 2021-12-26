@@ -47,7 +47,7 @@ public class Model190 extends MainEntryPoint {
 		SERVICE = new Model190ServiceAsyncDecorator(serviceRaw);
 	}
 	
-	protected class Model190Callback implements IFiscalModelCallback<Mod190,Model190ModuleOptions> {
+	public class Model190Callback implements IFiscalModelCallback<Mod190,Model190ModuleOptions> {
 
 		@Override
 		public Model190ModuleOptions getOptions() {

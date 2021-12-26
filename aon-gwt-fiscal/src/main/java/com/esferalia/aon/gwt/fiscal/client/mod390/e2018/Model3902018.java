@@ -202,7 +202,7 @@ public class Model3902018 extends DockLayoutPanel  {
 				options.getExternalCallback().onExit(m390);
 			} else {
 				cbk.cleanErrorPanel();
-				cbk.onCancel();
+				cbk.onCancel( m390 );
 			}
 		});
 		buttonContainer.add(cancelButton);
@@ -225,7 +225,7 @@ public class Model3902018 extends DockLayoutPanel  {
 						public void onSuccess(Void result) {
 							deleteButton.setEnabled(true);
 							cbk.cleanErrorPanel();
-							cbk.onCancel();
+							cbk.onCancel(m390);
 						}
 
 						@Override
@@ -373,7 +373,7 @@ public class Model3902018 extends DockLayoutPanel  {
 						@Override
 						public void onSuccess(Void result) {
 							cbk.cleanErrorPanel();
-							cbk.onCancel();
+							cbk.onCancel( m390);
 						}
 
 						@Override
@@ -386,7 +386,7 @@ public class Model3902018 extends DockLayoutPanel  {
 				@Override
 				public void onCancel() {
 					cbk.cleanErrorPanel();
-					cbk.onCancel();
+					cbk.onCancel( m390 );
 				}
 			});
 		} else {

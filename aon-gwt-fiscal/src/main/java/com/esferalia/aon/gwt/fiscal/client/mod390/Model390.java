@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018;
+import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -87,18 +88,30 @@ public class Model390 extends MainEntryPoint {
 	Model390Table model390Table;
 	private Model390ModuleOptions options;
 	
-	public class Model390Callback {
+	public class Model390Callback implements IFiscalModelCallback<Mod390,Model390ModuleOptions> {
+		@Override
 		public Model390ModuleOptions getOptions() {
 			return Model390.this.getOptions(); 
 		}
+		@Override
 		public void onAccept(Mod390 mod390) {
 			// REDEFINE
 		}
-		public void onCancel() {
+		@Override
+		public void onCancel(Mod390 mod390) {
 			cancel();
 		}
+		@Override
 		public void onNew() {
 			Model390.this.onNew(  );
+		}
+		@Override
+		public void onRemove(Mod390 model) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void showError(String msg) {
+			Model390.this.showErrorPanel(msg);
 		}
 		public void onNew(Model390ModuleOptions options, int year) {
 			Model390.this.onNew( options, year );
@@ -120,11 +133,16 @@ public class Model390 extends MainEntryPoint {
 		public void cleanErrorPanel() {
 			Model390.this.cleanErrorPanel();
 		}
-		public void showError(String msg) {
-			Model390.this.showErrorPanel(msg);
-		}
 		public void showError(LinkedList<Widget> messages) {
 			Model390.this.showErrorPanel(messages);
+		}
+		@Override
+		public void showInfoPanel(String text) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void cleanInfoPanel() {
+			// TODO Auto-generated method stub
 		}
 	}
 	
@@ -362,10 +380,10 @@ public class Model390 extends MainEntryPoint {
 							}
 						});				
 					}
-
 					@Override
-					public void onCancel() {
-					}
+					public void onCancel(Mod390 mod390) {
+						// Nothing
+					};
 				}
 			); 
 			newDialog.center();

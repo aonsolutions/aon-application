@@ -215,7 +215,7 @@ public class NewDeclarationPopup extends CustomDialog {
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
-				callback.onCancel();
+				callback.onCancel( mod390);
 			}
 			
 		});

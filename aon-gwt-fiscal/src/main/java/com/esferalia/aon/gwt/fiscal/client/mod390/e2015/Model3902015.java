@@ -214,7 +214,7 @@ public class Model3902015 extends DockLayoutPanel  {
 					options.getExternalCallback().onExit( m390 );
 				} else {
 					cbk.cleanErrorPanel();
-					cbk.onCancel();
+					cbk.onCancel( m390 );
 				}
 			}
 		});
@@ -241,7 +241,7 @@ public class Model3902015 extends DockLayoutPanel  {
 							public void onSuccess(Void result) {
 								deleteButton.setEnabled(true);
 								cbk.cleanErrorPanel();
-								cbk.onCancel();
+								cbk.onCancel( m390 );
 							}
 	
 							@Override
