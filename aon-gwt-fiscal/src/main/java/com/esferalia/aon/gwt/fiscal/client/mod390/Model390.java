@@ -85,14 +85,20 @@ public class Model390 extends MainEntryPoint {
 	SimpleLayoutPanel aeatPanel;
 	
 	Model390Table model390Table;
+	private Model390ModuleOptions options;
 	
 	public class Model390Callback {
-
+		public Model390ModuleOptions getOptions() {
+			return Model390.this.getOptions(); 
+		}
 		public void onAccept(Mod390 mod390) {
 			// REDEFINE
 		}
 		public void onCancel() {
 			cancel();
+		}
+		public void onNew() {
+			Model390.this.onNew(  );
 		}
 		public void onNew(Model390ModuleOptions options, int year) {
 			Model390.this.onNew( options, year );
@@ -129,13 +135,13 @@ public class Model390 extends MainEntryPoint {
 			@Override
 			public void onSuccess(AonConfiguration config) {
 				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-				Model390ModuleOptions options = new Model390ModuleOptions();
-				options.setParentWidget(root);
-				options.setDomainName(getCurrentDomainName());
-				options.setDomain(getCurrentDomain());
-				options.setUser(getCurrentUser());
-				options.setConfiguration(config);
-				onModuleLoad( options );
+				Model390ModuleOptions opts = new Model390ModuleOptions();
+				opts.setParentWidget(root);
+				opts.setDomainName(getCurrentDomainName());
+				opts.setDomain(getCurrentDomain());
+				opts.setUser(getCurrentUser());
+				opts.setConfiguration(config);
+				onModuleLoad( opts );
 			}
 			
 			@Override public void onFailure(Throwable caught) {
@@ -145,6 +151,8 @@ public class Model390 extends MainEntryPoint {
 	}
 	
 	public void onModuleLoad(Model390ModuleOptions options) {
+		this.options = options;
+		
 		AON.ensureInjected();
 
 		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
@@ -154,7 +162,7 @@ public class Model390 extends MainEntryPoint {
 		html.setHeight("100%");
 		aeatPanel.setWidget(html);
 		
-		model390Table = new Model390Table(options,new Model390Callback());
+		model390Table = new Model390Table(new Model390Callback());
 		model390Table.addSelectionHandler(new SelectionHandler<Mod390>() {
 			
 			@Override
@@ -172,7 +180,7 @@ public class Model390 extends MainEntryPoint {
 			LOGGER.info("Access to Model390 new Model");
 			onNew(options, options.getNewModel().getYear());
 		} else {
-			model390Table.refresh();
+			model390Table.refresh( new Model390Callback());
 			LOGGER.info("Model390 setting NOTIFICATIONS_TAB");
 			tabLayout.selectTab(NOTIFICATIONS_TAB);
 		}
@@ -185,6 +193,10 @@ public class Model390 extends MainEntryPoint {
 				openFootPanelIfNeeded();
 			}
 		});
+	}
+	
+	public Model390ModuleOptions getOptions() {
+		return options;
 	}
 
 
@@ -231,6 +243,9 @@ public class Model390 extends MainEntryPoint {
 		} else {
 			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
+	}
+	private void onNew() {
+		onNew( getOptions(), 2021 );
 	}
 
 	private void onNew(Model390ModuleOptions options,int year) {
@@ -362,7 +377,7 @@ public class Model390 extends MainEntryPoint {
 		cleanErrorPanel();
 		cleanBreakdownPanel();
 		declarationContainer.setWidget(model390Table);
-		model390Table.refresh();
+		model390Table.refresh( new Model390Callback());
 		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
 	}
