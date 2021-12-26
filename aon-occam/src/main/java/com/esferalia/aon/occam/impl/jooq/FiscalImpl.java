@@ -41,7 +41,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.Mod347DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod349DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902015DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902018DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.OperationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2013.Mod2002013DAO;
@@ -75,62 +74,6 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public FiscalModel getModel(AONContext ctx, int id) {
 		return FiscalModelDAO.getFiscalModel(ctx, id);
-	}
-
-	// ----------------------------------------------------------- [MODELO 390]
-	@Override
-	public Mod390 getMod390(AONContext ctx, int domain, Integer id) {
-		try {
-			return Mod390DAO.getById(ctx, domain, id);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-	
-	@Override
-	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain) {
-		try {
-			return Mod390DAO.getByDomain(ctx, domain);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-
-	@Override
-	public Mod390 initialize(AONContext ctx, int year) {
-		try {
-			return Mod390DAO.initialize(ctx, year);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-
-	@Override
-	public Mod390 create(AONContext ctx, Mod390 mod390) {
-		try {
-			return Mod390DAO.create(ctx, mod390);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-	@Override
-	public Mod390 saveComments(AONContext ctx, Mod390 mod390) {
-		try {
-			return Mod390DAO.saveComments(ctx, mod390);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-	
-	@Override
-	public void deleteMod390(AONContext ctx, Mod390 mod390) {
-		ctx.getDslContext().transaction(
-				configuration -> Mod390DAO.delete(ctx, mod390));
 	}
 
 	// ----------------------------------------------------------- [MODELO 390 - 2015]

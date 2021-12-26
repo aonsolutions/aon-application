@@ -197,18 +197,17 @@ public class Model390Table extends SimpleLayoutPanel implements HasSelectionHand
 			
 			@Override
 			public void onRangeChange(RangeChangeEvent event) {
-				Model390.MOD390_SERVICE.getMod390s(options.getDomainName(), options.getDomain(), options.getUser(),
-						new AsyncCallback<LinkedList<Mod390>>() {
-							@Override
-							public void onSuccess(LinkedList<Mod390> result) {
-								table.setRowData(result);
-							}
+				Model390.MOD390_SERVICE.getMod390s(options.getOccam(), new AsyncCallback<LinkedList<Mod390>>() {
+					@Override
+					public void onSuccess(LinkedList<Mod390> result) {
+						table.setRowData(result);
+					}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								cbk.showError( AON.MSG.unableToReadDeclaration(caught.getMessage()) );
-							}
-						});
+					@Override
+					public void onFailure(Throwable caught) {
+						cbk.showError( AON.MSG.unableToReadDeclaration(caught.getMessage()) );
+					}
+				});
 			}
 		});
 		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);

@@ -396,7 +396,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		clear();
 		addNorth( getToolbar(options,m390,cbk), 26 );
 		addNorth( getHeaderPanel(m390,cbk), 60 );
-		addNorth( getDeclarationHeaderTable(m390,cbk) , 40);
+		addNorth( getDeclarationHeaderTable(options,m390,cbk) , 40);
 		pagesPanel = new DeckPanel();  
 		addWest( getLinksPanel(options, m390,cbk), 300 );
 		ScrollPanel container = new ScrollPanel();
@@ -607,7 +607,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		}		
 	}
 	
-	protected SimplePanel getDeclarationHeaderTable(Mod3902015 m390, Model390Callback cbk) {
+	protected SimplePanel getDeclarationHeaderTable(Model390ModuleOptions options, Mod3902015 m390, Model390Callback cbk) {
 		SimplePanel panel = new SimplePanel();
 		panel.addStyleName(AON.AON_CSS.aonScrollArea());
 		FlexTable table = new FlexTable();
@@ -705,7 +705,7 @@ public class Model3902015 extends DockLayoutPanel  {
 					public void onValueChange(ValueChangeEvent<String> event) {
 						m390.setComments(event.getValue());
 						styleCommentsButton(m390,commentsButton);
-						Model390.MOD390_SERVICE.saveComments(getCurrentDomainName(),getCurrentUser(), m390, new AsyncCallback<Mod390>() {
+						Model390.MOD390_SERVICE.saveComments(options.getOccam(), m390, new AsyncCallback<Mod390>() {
 							@Override
 							public void onSuccess(Mod390 result) {
 								toast.hide();

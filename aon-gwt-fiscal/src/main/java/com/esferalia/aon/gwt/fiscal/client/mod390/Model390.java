@@ -45,9 +45,9 @@ public class Model390 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	private final static int NOTIFICATIONS_TAB = 0;
-	private final static int INFORMATION_TAB = 1;
-	private final static int AEAT_TAB = 2;
+	private static final int NOTIFICATIONS_TAB = 0;
+	private static final int INFORMATION_TAB = 1;
+	private static final int AEAT_TAB = 2;
 
 	public static final Model390ServiceAsync MOD390_SERVICE;
 	private static final CommonServiceAsync COMMON_SERVICE;
@@ -120,7 +120,7 @@ public class Model390 extends MainEntryPoint {
 		public void showError(LinkedList<Widget> messages) {
 			Model390.this.showErrorPanel(messages);
 		}
-	};
+	}
 	
 	@Override
 	public void onModuleLoad() {
@@ -190,7 +190,7 @@ public class Model390 extends MainEntryPoint {
 
 	private void onSelect(Model390ModuleOptions options, Integer id ) {
 		LOGGER.info("OnSelect Model390 with a ID: " + options.getFiscalModelId());
-		MOD390_SERVICE.getMod390(options.getDomainName(), options.getDomain(), options.getUser(), id , new AsyncCallback<Mod390>() {
+		MOD390_SERVICE.getMod390(options.getOccam(), id , new AsyncCallback<Mod390>() {
 			@Override
 			public void onSuccess(Mod390 selected) {
 				if (selected == null) {
@@ -222,10 +222,7 @@ public class Model390 extends MainEntryPoint {
 			if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
 				Model3902015 model3902015 = new Model3902015(options, selected,new Model390Callback());
 				declarationContainer.setWidget(model3902015);
-			}  else if (selected.getYear() == 2018 || selected.getYear() == 2019) {
-				Model3902018 model3902018 = new Model3902018(options, selected,new Model390Callback());
-				declarationContainer.setWidget(model3902018);
-			}  else if (selected.getYear() == 2020) {
+			}  else if (selected.getYear() == 2018 || selected.getYear() == 2019 || selected.getYear() == 2020) {
 				Model3902018 model3902018 = new Model3902018(options, selected,new Model390Callback());
 				declarationContainer.setWidget(model3902018);
 			} else {
@@ -238,21 +235,20 @@ public class Model390 extends MainEntryPoint {
 
 	private void onNew(Model390ModuleOptions options,int year) {
 		cleanErrorPanel();
-		MOD390_SERVICE.initialize(options.getDomainName(),options.getDomain(),options.getUser(),year,
-				new AsyncCallback<Mod390>() {
-					@Override
-					public void onSuccess(Mod390 m390) {
-						cleanBreakdownPanel();
-						tabLayout.selectTab(INFORMATION_TAB);
-						closeFootPanel();
-						showNewDeclarationPopup(options,m390);
-					}
+		MOD390_SERVICE.initialize(options.getOccam(),year, new AsyncCallback<Mod390>() {
+			@Override
+			public void onSuccess(Mod390 m390) {
+				cleanBreakdownPanel();
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+				showNewDeclarationPopup(options,m390);
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+			}
+		});
 	}
 	
 	private void showNewDeclarationPopup(Model390ModuleOptions options,Mod390 m390) {
@@ -297,27 +293,26 @@ public class Model390 extends MainEntryPoint {
 	
 	private void onReset(Model390ModuleOptions options, Mod390 oldMod390) {
 		cleanErrorPanel();
-		MOD390_SERVICE.initialize(options.getDomainName(),options.getDomain(),options.getUser(), oldMod390.getYear(),
-				new AsyncCallback<Mod390>() {
-					@Override
-					public void onSuccess(Mod390 newMod390) {
-						cleanBreakdownPanel();
-						tabLayout.selectTab(INFORMATION_TAB);
-						closeFootPanel();
-						// Valores de la declaración actual
-						newMod390.setAdministration(oldMod390.getAdministration());
-						newMod390.setYear(oldMod390.getYear());
-						newMod390.setComplementary(oldMod390.isComplementary());
-						newMod390.setReplacement(oldMod390.isReplacement());
-						newMod390.setReplacedReceipt(oldMod390.getReplacedReceipt());						
-						showResetDeclarationPopup(options, newMod390, oldMod390);
-					}
+		MOD390_SERVICE.initialize(options.getOccam(), oldMod390.getYear(), new AsyncCallback<Mod390>() {
+			@Override
+			public void onSuccess(Mod390 newMod390) {
+				cleanBreakdownPanel();
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+				// Valores de la declaración actual
+				newMod390.setAdministration(oldMod390.getAdministration());
+				newMod390.setYear(oldMod390.getYear());
+				newMod390.setComplementary(oldMod390.isComplementary());
+				newMod390.setReplacement(oldMod390.isReplacement());
+				newMod390.setReplacedReceipt(oldMod390.getReplacedReceipt());						
+				showResetDeclarationPopup(options, newMod390, oldMod390);
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+			}
+		});
 	}
 	
 	private void showResetDeclarationPopup(Model390ModuleOptions options, Mod390 newMod390, Mod390 oldMod390) {
@@ -338,21 +333,19 @@ public class Model390 extends MainEntryPoint {
 						popup.setAnimationEnabled(true);
 						popup.center();
 
-						MOD390_SERVICE.delete(options.getDomainName(), options.getDomain(), options.getUser(), oldMod390,
-								new AsyncCallback<Void>() {
-									@Override
-									public void onSuccess(Void result) {
-										popup.hide();
-										select(options, mod390);
-									}
+						MOD390_SERVICE.delete(options.getOccam(), oldMod390, new AsyncCallback<Void>() {
+							@Override
+							public void onSuccess(Void result) {
+								popup.hide();
+								select(options, mod390);
+							}
 
-									@Override
-									public void onFailure(Throwable caught) {
-										popup.hide();
-										showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
-									}
-								});				
-
+							@Override
+							public void onFailure(Throwable caught) {
+								popup.hide();
+								showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+							}
+						});				
 					}
 
 					@Override

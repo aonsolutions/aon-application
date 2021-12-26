@@ -6,7 +6,8 @@ import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390Service;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.fiscal.MODEL390;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.watson.error.AonCoreException;
 
@@ -16,33 +17,33 @@ public class Model390ServiceImpl extends AonStatelessRemoteServiceServlet implem
 	private static final long serialVersionUID = 5103358252992734363L;
 
 	@Override
-	public Mod390 getMod390(String domainName, Integer domain, String user, Integer id) {
-		return FISCAL.getMod390(domainName, domain, user, id);
+	public Mod390 getMod390(Occam occam, Integer id) {
+		return MODEL390.getMod390(occam, id);
 	}
 
 	@Override
-	public LinkedList<Mod390> getMod390s(String domainName, Integer domain, String user) {
-		return FISCAL.getMod390s(domainName, domain, user);
+	public LinkedList<Mod390> getMod390s(Occam occam) {
+		return MODEL390.getMod390s(occam);
 	}
 
 	@Override
-	public Mod390 initialize(String domainName, int domain, String user, int year) {
-		return FISCAL.initialize(domainName, domain, user, year);
+	public Mod390 initialize(Occam occam, int year) {
+		return MODEL390.initialize(occam, year);
 	}
 
 	@Override
-	public Mod390 create(String domainName, int domain, String user, Mod390 mod390) throws AonCoreException {
-		return FISCAL.create(domainName, domain, user, mod390);
+	public Mod390 create(Occam occam, Mod390 mod390) throws AonCoreException {
+		return MODEL390.create(occam, mod390);
 	}
 
 	@Override
-	public Mod390 saveComments(String domainName, String user, Mod390 mod390) {
-		return FISCAL.saveComments(domainName, mod390.getDomain(), user, mod390);
+	public Mod390 saveComments(Occam occam, Mod390 mod390) {
+		return MODEL390.saveComments(occam, mod390);
 	}
 	
 	@Override
-	public void delete(String domainName, Integer domain, String user, Mod390 mod390) {
-		FISCAL.deleteMod390(domainName, domain, user, mod390);
+	public void delete(Occam occam, Mod390 mod390) {
+		MODEL390.deleteMod390(occam, mod390);
 	}
 
 }
