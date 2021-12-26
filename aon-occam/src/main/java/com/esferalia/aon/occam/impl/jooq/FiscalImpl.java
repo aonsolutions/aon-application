@@ -18,7 +18,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
@@ -40,7 +39,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.IRPFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod347DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod349DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod3902014DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902015DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod3902018DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
@@ -135,44 +133,6 @@ public class FiscalImpl implements IFiscal {
 				configuration -> Mod390DAO.delete(ctx, mod390));
 	}
 
-	// ----------------------------------------------------------- [MODELO 390 - 2014]
-	@Override
-	public Mod3902014 getMod3902014(AONContext ctx, Mod390 mod390) {
-		try {
-			return Mod3902014DAO.getMod3902014(ctx, mod390);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-
-	@Override
-	public Mod3902014 getMod3902014(AONContext ctx, Integer id) {
-		try {
-			return Mod3902014DAO.getById(ctx, id);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-
-	@Override
-	public String getMod3902014XML(AONContext ctx, int id) {
-		return Mod3902014DAO.getXMLContentById(ctx, id);
-	}
-	
-	@Override
-	public Mod3902014 saveMod3902014(AONContext ctx, Mod3902014 mod390) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> Mod3902014DAO.save(ctx, mod390));
-	}
-
-	@Override
-	public void deleteMod3902014(AONContext ctx, Mod3902014 mod390) {
-		ctx.getDslContext().transaction(
-				configuration -> Mod3902014DAO.delete(ctx, mod390));
-	}
-	
 	// ----------------------------------------------------------- [MODELO 390 - 2015]
 	
 	@Override

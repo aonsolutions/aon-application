@@ -10,14 +10,12 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
-import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod347Declared;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349Detail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902014;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
@@ -61,13 +59,6 @@ public interface IFiscal {
 	public Mod390 create(AONContext ctx, Mod390 mod390);
 	public Mod390 saveComments(AONContext ctx, Mod390 mod390);
 	public void deleteMod390(AONContext ctx, Mod390 mod390);
-
-	// 							MOD390 -- 2014
-	public Mod3902014 getMod3902014(AONContext ctx,Mod390 mod390);
-	public Mod3902014 getMod3902014(AONContext ctx,Integer id);
-	public String getMod3902014XML(AONContext aonContext, int id);
-	public Mod3902014 saveMod3902014(AONContext ctx,Mod3902014 mod390);
-	public void deleteMod3902014(AONContext ctx,Mod3902014 mod390);
 
 	// 							MOD390 -- 2015
 	public Mod3902015 getMod3902015(AONContext ctx,Mod390 mod390);

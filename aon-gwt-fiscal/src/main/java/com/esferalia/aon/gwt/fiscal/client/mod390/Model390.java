@@ -13,10 +13,10 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2014.Model3902014;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -209,17 +209,17 @@ public class Model390 extends MainEntryPoint {
 
 	private void onSelectionChange(Model390ModuleOptions options, SelectionEvent<Mod390> event) {
 		Mod390 sel = event.getSelectedItem();
-		select(options,sel);
+		if (sel.getStatus() ==  FiscalStatus.BLOCKED) {
+			showErrorPanel("El visor de la declaraci\u00F3n ya no está disponible");
+		} else {
+			select(options,sel);
+		}
 	}
 	
 	private void select(Model390ModuleOptions options, Mod390 selected) {
 		cleanErrorPanel();
 		if (selected.isAEAT()) {
-			if (selected.getYear() == 2013 || selected.getYear() == 2014) {
-				Model3902014 model3902014 = new Model3902014(new Model390Callback());
-				model3902014.select(selected);
-				declarationContainer.setWidget( model3902014 );
-			} else if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
+			if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
 				Model3902015 model3902015 = new Model3902015(options, selected,new Model390Callback());
 				declarationContainer.setWidget(model3902015);
 			}  else if (selected.getYear() == 2018 || selected.getYear() == 2019) {
