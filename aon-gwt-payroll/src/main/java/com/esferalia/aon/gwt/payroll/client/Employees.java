@@ -40,24 +40,30 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.resources.client.ImageResource;
@@ -73,6 +79,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasTreeItems;
+import com.google.gwt.user.client.ui.IsTreeItem;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -81,8 +89,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
-
-import sun.util.logging.resources.logging;
 
 public class Employees extends ResizeComposite implements OpenHandler<TreeItem>, SelectionHandler<TreeItem>,
 		ScrollHandler, ContextMenuHandler, KeyDownHandler, LoadHandler, OptionsToolbar.Listener {
@@ -168,7 +174,28 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onSuprPress(Employee employee);
 	}
 	
-	private static class EnterpriseCostDocuments extends CostDocuments {
+	protected static class HideScrollPanel extends ScrollPanel {
+		
+		public HideScrollPanel() {
+			super();
+			hideScrollBars();
+			addDomHandler(e -> hideScrollBars() , BlurEvent.getType());
+			addDomHandler(e -> hideScrollBars() , MouseOutEvent.getType());
+			addDomHandler(e -> showScrollBars() , FocusEvent.getType());
+			addDomHandler(e -> showScrollBars() , MouseOverEvent.getType());
+		}
+		
+		private void hideScrollBars() {
+			getScrollableElement().getStyle().setOverflow(Overflow.HIDDEN);
+		}
+		
+		private void showScrollBars() {
+			getScrollableElement().getStyle().setOverflow(Overflow.AUTO);
+		}
+
+	}
+	
+	protected static class EnterpriseCostDocuments extends CostDocuments {
 
 		public EnterpriseCostDocuments(List<Cost> costs) {
 			super(costs);
@@ -176,14 +203,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 	}
 
-	private static class WorkplaceCostDocuments extends CostDocuments {
+	protected static class WorkplaceCostDocuments extends CostDocuments {
 		
 		public WorkplaceCostDocuments(List<Cost> costs) {
 			super(costs);
 		}
 	}
 
-	private static class EnterpriseStatistics extends Statistics {
+	protected static class EnterpriseStatistics extends Statistics {
 		
 		private Statistics statistics;
 		
@@ -205,7 +232,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 	}
 
-	private static class WorkplaceStatistics extends Statistics {
+	protected static class WorkplaceStatistics extends Statistics {
 
 		private Statistics statistics;
 		
@@ -263,7 +290,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	@UiField(provided = true)
 	Tree tree;
-	@UiField
+	@UiField(provided = true)
 	ScrollPanel scrollPanel;
 
 	@UiField
@@ -335,6 +362,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			}
 		}, false);
 		
+		scrollPanel = new HideScrollPanel();
+		
 		initWidget(binder.createAndBindUi(this));
 
 
@@ -368,8 +397,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		});
 
 		scrollPanel.addScrollHandler(this);
-
-
+		
 		employeesService.getAvaiableEmployees(new AsyncCallback<Map<String, String>>() {
 
 			@Override
@@ -442,46 +470,27 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		List<Workplace> workplaces = enterprise.getWorkplaces();
 
-		final TreeItem enterpriseItem = new TreeItem(materialIconItemHTML("domain", enterprise.getName()));
-		enterpriseItem.ensureDebugId(getId(enterprise));
-		
-		enterpriseItem.setUserObject(enterprise);
-		tree.addItem(enterpriseItem);
+		final TreeItem enterpriseItem = addEnterpriseItem(enterprise);
 
-		addMaterialIconItem(enterpriseItem, "Costes", "euro");
+		addEnterpriseCostsItem(enterpriseItem, enterprise);
 		
-		// Nominas Beta Empresa
-		addMaterialIconItem(enterpriseItem, "N\u00F3minas", "payments")
-			.setUserObject(new EnterpriseSalaryObject(enterprise));
+		addEnterpriseSalariesItem(enterpriseItem, enterprise);
 
-		addMaterialIconItem(enterpriseItem, "Estad\u00EDsticas", "bar_chart");
+		addEnterpriseStatsItem(enterpriseItem, enterprise);
 		
-		addMaterialIconItem(enterpriseItem, "Partes IT", "medication")
-			.setUserObject(new EnterpriseITObject());
-		
-//		addImageItem(enterpriseItem, "N\u00F3minas (Old)", images.salaries());
-		
+		addEnterpriseITsItem(enterpriseItem, enterprise);
 		
 		if (extended) {
 			List<Activity> activities = enterprise.getActivities();
 			for (Activity activity : activities) {
-				String description = activity.getDescription();
-				TreeItem activityItem = addImageItem(enterpriseItem, description, images.ine());
-				activityItem.setUserObject(activity);
-				
-				activity.getCccs().forEach( (ccc ) ->{
-					TreeItem cccItem = addImageItem(activityItem, ccc.getRegime() + ccc.getGeozone() + ccc.getCode(), images.segsocial());
-					cccItem.setUserObject(ccc);
-				} );
+				addEnterpriseActivityIem(enterpriseItem, activity);
 			}
 		}
 
 		TreeItem workplaceItem = null;
 
 		for (Workplace workplace : workplaces) {
-			workplaceItem = new TreeItem();
-			enterpriseItem.addItem(workplaceItem);
-			workplaceItem = loadWorkplace(enterprise, workplaceItem, workplace);
+			workplaceItem = addEnterpriseWorkplaceItem(enterpriseItem, enterprise, workplace);
 		}
 
 		enterpriseItem.setState(true, true);
@@ -496,6 +505,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		toolbar.setVisibleSearchTextBox(true);
 
 	}
+
 
 	public void clearEnterprise(Enterprise enterprise) {
 		for (int i = 0; i < tree.getItemCount(); i++) {
@@ -861,7 +871,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return toolbar;
 	}
 
-	// ------------------------------------------------------------------------
+	// -------------------------------------------------------------- protected
 
 	protected Date getFromDate() {
 		return formers ? (fromDate == null ? new Date(0) : fromDate) : DateUtils.getFirstDayOfMonth();
@@ -871,32 +881,391 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return namePattern;
 	}
 
-	// ------------------------------------------------------------------------
+	protected TreeItem addEnterpriseItem(Enterprise enterprise) {
+		final TreeItem enterpriseItem = new TreeItem(materialIconItemHTML("domain", enterprise.getName()));
+		enterpriseItem.ensureDebugId(getId(enterprise));
+		
+		enterpriseItem.setUserObject(enterprise);
+		tree.addItem(enterpriseItem);
+		return enterpriseItem;
+	}
 
-	private TreeItem loadWorkplace(Enterprise enterprise, final TreeItem workplaceItem, Workplace workplace) {
+	protected <T extends HasTreeItems> void addEnterpriseITsItem(final T enterpriseItem, Enterprise enterprise) {
+		addMaterialIconItem(enterpriseItem, "Partes IT", "medication")
+			.setUserObject(new EnterpriseITObject());
+	}
+
+	protected <T extends HasTreeItems> void addEnterpriseStatsItem(final T enterpriseItem, Enterprise enterprise) {
+		addMaterialIconItem(enterpriseItem, "Estad\u00EDsticas", "bar_chart");
+	}
+
+	protected <T extends HasTreeItems> void addWorkplaceStatsItem(final T workplaceItem, Workplace workplace) {
+		addMaterialIconItem(workplaceItem, "Estad\u00EDsticas", "bar_chart");
+	}
+
+	protected <T extends HasTreeItems> void addEnterpriseSalariesItem(final T enterpriseItem, Enterprise enterprise) {
+		// Nominas Beta Empresa
+		addMaterialIconItem(enterpriseItem, "N\u00F3minas", "payments")
+			.setUserObject(new EnterpriseSalaryObject(enterprise));
+	}
+
+	protected <T extends HasTreeItems> void addWorkplaceITsItem(final T workplaceItem, Workplace workplace) {
+		addMaterialIconItem(workplaceItem, "Partes IT", "medication")
+			.setUserObject(new WorkplaceITObject(workplace.getId()));
+	}
+
+	protected <T extends HasTreeItems> void addWorkplaceSalariesItem(final T workplaceItem, Workplace workplace) {
+		addMaterialIconItem(workplaceItem, "N\u00F3minas", "payments")
+			.setUserObject(new WorkplaceSalaryObject(workplace));
+	}
+
+	protected <T extends HasTreeItems> void addEnterpriseCostsItem(final T enterpriseItem, Enterprise enterprise) {
+		addMaterialIconItem(enterpriseItem, "Costes", "euro");
+	}
+
+	protected <T extends HasTreeItems> void addWorkplaceCostsItem(final T workplaceItem, Workplace workplace) {
+		addMaterialIconItem(workplaceItem, "Costes", "euro");
+	}
+
+	protected <T extends HasTreeItems> void addWorkplaceCalendarItem(final T workplaceItem, Workplace workplace) {
+		addMaterialIconItem(workplaceItem, "Calendario", "calendar_today")
+				.setUserObject(new CalendarDraftObjectData(workplace.getId()));
+	}
+
+	protected <T extends HasTreeItems> void addEnterpriseActivityIem(final T enterpriseItem, Activity activity) {
+		String description = activity.getDescription();
+		TreeItem activityItem = addImageItem(enterpriseItem, description, images.ine());
+		activityItem.setUserObject(activity);
+		
+		activity.getCccs().forEach( (ccc ) ->{
+			addActivityCCCItem(activityItem, ccc);
+		} );
+	}
+
+	protected <T extends HasTreeItems> void addActivityCCCItem(T activityItem, CCC ccc) {
+		TreeItem cccItem = addImageItem(activityItem, ccc.getRegime() + ccc.getGeozone() + ccc.getCode(), images.segsocial());
+		cccItem.setUserObject(ccc);
+	}
+
+	protected <T extends HasTreeItems> TreeItem addEnterpriseWorkplaceItem(final T enterpriseItem, Enterprise enterprise, Workplace workplace) {
+		TreeItem workplaceItem;
+		workplaceItem = new TreeItem();
 		String description = workplace.getDescription();
-
 		workplaceItem.setHTML(materialIconItemHTML("place", description));
 		workplaceItem.setUserObject(workplace);
 		workplaceItem.setVisible(isWorkPlaceVisible(workplace));
 		workplaceItem.ensureDebugId(getId(workplace));
+		enterpriseItem.addItem(workplaceItem);
+		loadWorkplace(enterprise, workplaceItem, workplace);
+		return workplaceItem;
+	}
 
-		addMaterialIconItem(workplaceItem, "Costes", "euro");
-		
-		addMaterialIconItem(workplaceItem, "N\u00F3minas", "payments")
-			.setUserObject(new WorkplaceSalaryObject(workplace));
+	protected <T extends HasTreeItems> void addWorkplaceEventsItem(final T workplaceItem, final EventsDraftObject eventsDraftObject) {
+		final TreeItem eventsItem = addMaterialIconItem(workplaceItem, "Variables C\u00E1lculo", "calendar_month");
+		eventsItem.setUserObject(eventsDraftObject);
+	}
 
-		addMaterialIconItem(workplaceItem, "Calendario", "calendar_today")
-				.setUserObject(new CalendarDraftObjectData(workplace.getId()));
+	protected <T extends HasTreeItems> void addWorkplaceAgreementItem(final T workplaceItem, Enterprise enterprise, Agreement agreement) {
+		final TreeItem agreementItem = addMaterialIconItem(workplaceItem, agreement.getDescription(), "article");
+
+		AgreementDraft agreementDraft = new AgreementDraft();
+		agreementDraft.setId(agreement.getId());
+		agreementDraft.setDomain(agreement.getDomain());
+		agreementDraft.setDescription(agreement.getDescription());
+		agreementDraft.setSSNumber(agreement.getSSNumber());
+		agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
+		agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
+		final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
+				enterprise.getDomain(),
+				Wnd.getCurrentDomainNameURL(),
+				agreementDraft, employeesService);
+
+		employeesService.getChanges(
+				Wnd.getCurrentDomainNameURL(),
+				agreement, new AsyncCallback<SortedSet<Date>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				agreementItem.setUserObject(agreementDraftObject);
+			}
+
+			public void onSuccess(SortedSet<Date> result) {
+				if (!CollectionUtils.isEmpty(result)) {
+					Date lastChange = result.last();
+					agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(lastChange));
+					agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(lastChange));
+				}
+				agreementItem.setUserObject(agreementDraftObject);
+			};
+		});
+
+		agreementDraftObject.addListener(new UndoManager.Listener() {
+			@Override
+			public void onChange(UndoManager undoManager) {
+				ImageResource resource = agreementDraftObject.canUndo() ? images.agreement_changed()
+						: images.agreement();
+				agreementItem.setHTML(materialIconItemHTML("article", agreementDraftObject.getDescription()));
+			}
+		});
+	}
+
+	protected void getServiceEnterpriseStats(Enterprise enterprise, Consumer<EnterpriseStatistics> consumer) {
+		employeesService.getEnterpriseStats(enterprise.getId(), new AsyncCallback<Statistics>() {
+
+			@Override
+			public void onSuccess(Statistics stats) {
+				consumer.accept(new EnterpriseStatistics(stats));
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Apéndice de método generado automáticamente
+				Window.alert(caught.getLocalizedMessage());
+			}
+		});
+	}
+	
+	protected void getServiceEnterpriseCost(Enterprise enterprise, Consumer<EnterpriseCostDocuments> consumer ) {
+		employeesService.getEnterpriseCosts(enterprise.getId(), new AsyncCallback<List<Cost>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				Window.alert(caught.getLocalizedMessage());
+
+			}
+
+			@Override
+			public void onSuccess(List<Cost> costs) {
+				consumer.accept(new EnterpriseCostDocuments(costs));
+			}
+		});
 		
-		addMaterialIconItem(workplaceItem, "Estad\u00EDsticas","bar_chart");
+	}
+
+	protected void getServiceWorkplaceEmployees(Workplace workplace, int offset, int limit, Consumer<List<Employee>> consumer) {
+		employeesService.getEmployees(workplace.getId(), getFromDate(), namePattern, offset, limit,
+				new AsyncCallback<List<Employee>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						Window.alert(caught.getLocalizedMessage());
+
+					}
+
+					@Override
+					public void onSuccess(List<Employee> employees) {
+						consumer.accept(employees);
+					}
+				});
+	}
+	
+	protected void getServiceWorkplaceCost(Workplace workplace, Consumer<WorkplaceCostDocuments> consumer) {
+		employeesService.getWorkplaceCosts(workplace.getId(), new AsyncCallback<List<Cost>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getLocalizedMessage());
+
+			}
+
+			@Override
+			public void onSuccess(List<Cost> costs) {
+				consumer.accept(new WorkplaceCostDocuments(costs));
+			}
+		});
+	}
+
+	protected void getServiceWorkplaceStatistics(Workplace workplace, Consumer<Statistics> consumer) {
+		employeesService.getWorkplaceStats(workplace.getId(), new AsyncCallback<Statistics>() {
+
+			@Override
+			public void onSuccess(Statistics stats) {
+				consumer.accept(new WorkplaceStatistics(stats));
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Apéndice de método generado automáticamente
+				Window.alert(caught.getLocalizedMessage());
+			}
+		});
+	}
+
+	protected void loadWorkplaceCosts(final TreeItem workplaceItem, Workplace workplace) {
+		final TreeItem costsItem = workplaceItem.getChild(WORKPLACE_COSTS_INDEX);
+
+		if (costsItem.getUserObject() == null) {
+			getServiceWorkplaceCost(workplace, costsItem::setUserObject );
+		} // end-if: Costs of this workplace haven't been loaded yet.
+	}
+
+	protected void loadWorkplaceStats(final TreeItem workplaceItem, Workplace workplace) {
+		final TreeItem statisticsItem = workplaceItem.getChild(WORKPLACE_STATISTICS_INDEX);
+
+		if (null == statisticsItem.getUserObject()) {
+			getServiceWorkplaceStatistics(workplace, statisticsItem::setUserObject );
+		}
+	}
+	protected <T extends HasTreeItems & IsTreeItem> void addWorkplaceEmployeeItem(T workplaceItem, Employee employee) {
+		TreeItem employeeItem = new TreeItem();
+		workplaceItem.addItem(employeeItem);
+		loadEmployee(workplaceItem.asTreeItem(), employeeItem, employee);
+	}
+
+	protected <T extends HasTreeItems> void addEmployeeSalariesItem(T employeeItem, Employee employee) {
+		TreeItem salarytItem = addMaterialIconItem(employeeItem, "N\u00F3minas", "payments");
+		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(employee.getId(), employee.getFullname());
+		salarytItem.setUserObject(employeeSalaryObject);
+		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
+	}
+
+	protected <T extends HasTreeItems> EmployeeCalendarDraftObject addEmployeeCalendarItem(T employeeItem,Employee employee) {
+		//Employee Calendar (BETA)
+		TreeItem calendarNewDraftItem = addMaterialIconItem(employeeItem, "Calendario", "calendar_today");
+		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(
+				employee.getId(), 
+				employeesService);
 		
-		addMaterialIconItem(workplaceItem, "Partes IT", "medication")
-			.setUserObject(new WorkplaceITObject(workplace.getId()));
+		calendarNewDraftItem.setUserObject(employeeCalendarDraftObject);
+		calendarNewDraftItem.ensureDebugId(getId(employee)+"-employeecalendarnew");
+		return employeeCalendarDraftObject;
+	}
+
+	protected <Y extends HasTreeItems> SalaryDraftObject addEmployeeSalaryDraftItem(Y employeeItem, Employee employee) {
+		Date salaryDate = DateUtils.before(DateUtils.after(new Date(), employee.getStartDate()),
+				employee.getEndDate());
+		Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
+		Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
+		Date issueDate = endDate;
+
+		TreeItem salaryDraftItem = addMaterialIconItem(employeeItem, "Borrador", "edit");
+		salaryDraftItem.ensureDebugId(getId(employee)+"-draft");
+
+		SalaryDraft salaryDraft = new SalaryDraft();
+		salaryDraft.setEmployee(employee);
+		salaryDraft.setStartDate(startDate);
+		salaryDraft.setEndDate(endDate);
+		salaryDraft.setIssueDate(issueDate);
+		salaryDraft.setType(Type.SALARY);
+
+		SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, /*dataObject,*/ employeesService);
+		salaryDraftItem.setUserObject(draftObject);
+		return draftObject;
+	}
+
+	protected <T extends HasTreeItems & IsTreeItem, Y extends HasTreeItems> void loadEmployee(T workplaceItem, Y employeeItem, Employee employee, EmployeeDraftObject employeeDraftObject) {
+
+
+		addEmployeeSalariesItem(employeeItem, employee);
+		
+		EmployeeCalendarDraftObject employeeCalendarDraftObject = addEmployeeCalendarItem(employeeItem, employee);
+		
 		
 		if (extended) {
 
-			final TreeItem eventsItem = addMaterialIconItem(workplaceItem, "Variables C\u00E1lculo", "calendar_month");
+			SalaryDraftObject draftObject = addEmployeeSalaryDraftItem(employeeItem, employee);
+
+			final TreeItem employeeEventsItem = addMaterialIconItem(employeeItem, "Variables C\u00E1lculo", "calendar_month");
+			EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(employee.getId());
+			
+			employeeEventsItem.setUserObject(employeeEventsDraftObject);
+			
+			employeeEventsItem.ensureDebugId(getId(employee)+"-events");
+
+			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
+			
+			//Add employeeCalendar to Draft
+			employeeDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
+			employeeEventsDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
+			draftObject.setEmployeeCalendarDraftObject(employeeCalendarDraftObject);
+						
+			Category category = employee.getCategory();
+
+			// Agreement Category
+			if (category == null)
+				return;
+
+			Agreement agreement = category.getAgreement();
+			Agreement workplaceAgreement = ((Workplace) workplaceItem.asTreeItem().getUserObject()).getAgreement();
+
+			if (workplaceAgreement != null && NumberUtils.equals(workplaceAgreement.getId(), agreement.getId()))
+				return;
+
+			TreeItem enterpriseItem = workplaceItem.asTreeItem().getParentItem();
+			Enterprise enterprise = (Enterprise) enterpriseItem.getUserObject();
+
+			final TreeItem categoryItem = addMaterialIconItem(employeeItem,
+					category.getLevel() + ". " + category.getDescription(), "article");
+			categoryItem.ensureDebugId(getId(employee)+"-category");
+			
+			CategoryDraft categoryDraft = new CategoryDraft();
+			categoryDraft.setId(agreement.getId());
+			categoryDraft.setDomain(agreement.getDomain());
+			categoryDraft.setLevelId(category.getLevelId());
+			categoryDraft.setDescription(agreement.getDescription());
+			categoryDraft.setSSNumber(agreement.getSSNumber());
+			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
+			categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
+			final CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
+					enterprise.getDomain(),
+					Wnd.getCurrentDomainNameURL(),
+					categoryDraft, 
+					employeesService);
+
+			employeesService.getChanges(Wnd.getCurrentDomainNameURL(),agreement, new AsyncCallback<SortedSet<Date>>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					categoryItem.setUserObject(categoryDraftObject);
+				}
+
+				public void onSuccess(SortedSet<Date> result) {
+					if (!CollectionUtils.isEmpty(result)) {
+						Date lastChange = result.last();
+						categoryDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(lastChange));
+						categoryDraftObject.setEndDate(DateUtils.getLastDayOfMonth(lastChange));
+					}
+					categoryItem.setUserObject(categoryDraftObject);
+				};
+			});
+			
+		}
+
+	}
+
+	// ------------------------------------------------------------------------
+	private <T extends HasTreeItems & IsTreeItem> void loadEmployee(T workplaceItem, TreeItem employeeItem, Employee employee) {
+		boolean current = isActive(employee);
+
+		String fullName = employee.getFullname();
+
+		StringBuilder text = new StringBuilder(fullName);
+		if (endDate && (employee.getEndDate() != null)) {
+			text.append(" (");
+			text.append(END_DATE_FORMAT.format(employee.getEndDate()));
+			text.append(")");
+		}
+
+		employeeItem.setHTML(materialIconItemHTML(current ? "person" : "person_off", text.toString()));
+		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(((Workplace) workplaceItem.asTreeItem().getUserObject()), employee);
+		employeeItem.setUserObject(employeeDraftObject);
+		employeeItem.ensureDebugId(getId(employee));
+
+		loadEmployee(workplaceItem.asTreeItem(), employeeItem, employee, employeeDraftObject);
+		
+	}
+
+	private TreeItem loadWorkplace(Enterprise enterprise, final TreeItem workplaceItem, Workplace workplace) {
+
+		addWorkplaceCostsItem(workplaceItem, workplace);
+		
+		addWorkplaceSalariesItem(workplaceItem, workplace);
+
+		addWorkplaceCalendarItem(workplaceItem, workplace);
+		
+		addWorkplaceStatsItem(workplaceItem, workplace);
+		
+		addWorkplaceITsItem(workplaceItem, workplace);
+		
+		if (extended) {
+
 			// final TreeItem eventsItem = new TreeItem();
 
 			// --------------------------------------------------------------
@@ -926,73 +1295,19 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 						new EventMetaData("OBSERVACIONES", DateField.MONTH));
 
 			
-			eventsItem.setUserObject(eventsDraftObject);
-//			Date date = new Date();
-//
-//			eventsDraftObject.setPeriod(DateUtils.getFirstDayOfWorkWeek(date), DateUtils.getLastDayOfWorkWeek(date),
-//					new EventsDraftObject.Callback() {
-//
-//						@Override
-//						public void onSucces() {
-//							eventsItem.setUserObject(eventsDraftObject);
-//						}
-//
-//						@Override
-//						public void onFailure(Throwable throwable) {
-//							eventsItem.setUserObject(eventsDraftObject);
-//						}
-//
-//					});
+			addWorkplaceEventsItem(workplaceItem, eventsDraftObject);
 		}
 
 		Agreement agreement = workplace.getAgreement();
 
 		if (extended && (agreement != null)) {
 
-			final TreeItem agreementItem = addMaterialIconItem(workplaceItem, agreement.getDescription(), "article");
-
-			AgreementDraft agreementDraft = new AgreementDraft();
-			agreementDraft.setId(agreement.getId());
-			agreementDraft.setDomain(agreement.getDomain());
-			agreementDraft.setDescription(agreement.getDescription());
-			agreementDraft.setSSNumber(agreement.getSSNumber());
-			agreementDraft.setStartDate(DateUtils.getFirstDayOfMonth());
-			agreementDraft.setEndDate(DateUtils.getLastDayOfMonth());
-			final AgreementDraftObject agreementDraftObject = new AgreementDraftObject(
-					enterprise.getDomain(),
-					Wnd.getCurrentDomainNameURL(),
-					agreementDraft, employeesService);
-
-			employeesService.getChanges(
-					Wnd.getCurrentDomainNameURL(),
-					agreement, new AsyncCallback<SortedSet<Date>>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					agreementItem.setUserObject(agreementDraftObject);
-				}
-
-				public void onSuccess(SortedSet<Date> result) {
-					if (!CollectionUtils.isEmpty(result)) {
-						Date lastChange = result.last();
-						agreementDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(lastChange));
-						agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(lastChange));
-					}
-					agreementItem.setUserObject(agreementDraftObject);
-				};
-			});
-
-			agreementDraftObject.addListener(new UndoManager.Listener() {
-				@Override
-				public void onChange(UndoManager undoManager) {
-					ImageResource resource = agreementDraftObject.canUndo() ? images.agreement_changed()
-							: images.agreement();
-					agreementItem.setHTML(materialIconItemHTML("article", agreementDraftObject.getDescription()));
-				}
-			});
+			addWorkplaceAgreementItem(workplaceItem, enterprise, agreement);
 
 		} // TODO: extended ? Yes I'm know , it's awful.
 		return workplaceItem;
 	}
+
 
 	private void loadEmployees(final TreeItem workplaceItem, final int limit) {
 		loadEmployees(workplaceItem, limit, null);
@@ -1032,64 +1347,15 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		final TreeItem costsItem = enterpriseItem.getChild(ENTERPRISE_COSTS_INDEX);
 
 		if (null == costsItem.getUserObject()) {
-//			final TreeItem salariesItem = enterpriseItem.getChild(ENTERPRISE_SALARIES_INDEX);
-
-			employeesService.getEnterpriseCosts(enterprise.getId(), new AsyncCallback<List<Cost>>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					// TODO Auto-generated method stub
-					Window.alert(caught.getLocalizedMessage());
-
-				}
-
-				@Override
-				public void onSuccess(List<Cost> costs) {
-					CostDocuments documents = new EnterpriseCostDocuments(costs);
-					costsItem.setUserObject(documents);
-
-//					SalariesDocuments salariesDocuments = new SalariesDocuments(costs, employeesService);
-//					salariesItem.setUserObject(salariesDocuments);
-				}
-			});
+			getServiceEnterpriseCost(enterprise, costsItem::setUserObject);
 		} // end-if: Cost of enterprise have been already loaded.
 
 		final TreeItem statisticsItem = enterpriseItem.getChild(ENTERPRISE_STATISTICS_INDEX);
 
 		if (null == statisticsItem.getUserObject()) {
-
-			employeesService.getEnterpriseStats(enterprise.getId(), new AsyncCallback<Statistics>() {
-
-				@Override
-				public void onSuccess(Statistics stats) {
-					statisticsItem.setUserObject( new EnterpriseStatistics(stats));
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					// TODO Apéndice de método generado automáticamente
-					Window.alert(caught.getLocalizedMessage());
-				}
-			});
+			getServiceEnterpriseStats(enterprise, statisticsItem::setUserObject);
 		}
 
-//		final TreeItem partsItItem = enterpriseItem.getChild(ENTERPRISE_PARTSIT_INDEX);
-//
-//		if (null == partsItItem.getUserObject()) {
-//
-//			employeesService.getEnterpriseITData(enterprise.getId(), new AsyncCallback<ITData>() {
-//
-//				@Override
-//				public void onSuccess(ITData partsIt) {
-//					partsItItem.setUserObject(partsIt);
-//				}
-//
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					// TODO Apéndice de método generado automáticamente
-//					Window.alert(caught.getLocalizedMessage());
-//				}
-//			});
-//		}
 	}
 
 	/*
@@ -1102,71 +1368,22 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		Workplace workplace = (Workplace) workplaceItem.getUserObject();
 
-		final TreeItem costsItem = workplaceItem.getChild(WORKPLACE_COSTS_INDEX);
+		loadWorkplaceCosts(workplaceItem, workplace);
 
-		if (costsItem.getUserObject() == null) {
-			getServiceWorkplaceCost(workplace, costsItem::setUserObject );
-		} // end-if: Costs of this workplace haven't been loaded yet.
-
-		final TreeItem statisticsItem = workplaceItem.getChild(WORKPLACE_STATISTICS_INDEX);
-
-		if (null == statisticsItem.getUserObject()) {
-			getServiceWorkplaceStatistics(workplace, statisticsItem::setUserObject );
-		}
+		loadWorkplaceStats(workplaceItem, workplace);
+		
 		if (workplaceItem.getChildCount() > getEmployeesOffset(workplaceItem)) {
 			callback.run();
 			return;
 		} // end-if: Employees of this workplace already loaded .
 
-		
-		employeesService.getEmployees(workplace.getId(), getFromDate(), namePattern, 0, limit,
-				new AsyncCallback<List<Employee>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-						Window.alert(caught.getLocalizedMessage());
-
-					}
-
-					@Override
-					public void onSuccess(List<Employee> employees) {
-						loadEmployess(workplaceItem, employees, limit);
-						callback.run();
-					}
-				});
-
-	}
-
-	private void getServiceWorkplaceCost(Workplace workplace, Consumer<WorkplaceCostDocuments> consumer) {
-		employeesService.getWorkplaceCosts(workplace.getId(), new AsyncCallback<List<Cost>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(caught.getLocalizedMessage());
-
-			}
-
-			@Override
-			public void onSuccess(List<Cost> costs) {
-				consumer.accept(new WorkplaceCostDocuments(costs));
-			}
+		getServiceWorkplaceEmployees(workplace, 0, limit, employees -> {
+			loadEmployess(workplaceItem, employees, limit);
+			callback.run();
 		});
+
 	}
-
-	private void getServiceWorkplaceStatistics(Workplace workplace, Consumer<Statistics> consumer) {
-		employeesService.getWorkplaceStats(workplace.getId(), new AsyncCallback<Statistics>() {
-
-			@Override
-			public void onSuccess(Statistics stats) {
-				consumer.accept(new WorkplaceStatistics(stats));
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Apéndice de método generado automáticamente
-				Window.alert(caught.getLocalizedMessage());
-			}
-		});
-	}
+	
 	
 	private void onEmployeeOpen(TreeItem employeeItem) {
 
@@ -1564,7 +1781,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		for (Employee employee : employees) {
 			if (employee.getId() < 0)
 				continue;
-			loadEmployee(workplaceItem, workplaceItem.getChildCount(), employee);
+			addWorkplaceEmployeeItem(workplaceItem, employee);
 		}
 
 		if (employees.size() >= limit) {
@@ -1575,139 +1792,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	}
 
-	private void loadEmployee(TreeItem workplaceItem, int beforeIndex, Employee employee) {
-		TreeItem employeeItem = new TreeItem();
-		workplaceItem.insertItem(beforeIndex, employeeItem);
-		loadEmployee(workplaceItem, employeeItem, employee);
-	}
 
-	private void loadEmployee(TreeItem workplaceItem, TreeItem employeeItem, Employee employee) {
-
-		boolean current = isActive(employee);
-
-		String fullName = employee.getFullname();
-
-		StringBuffer text = new StringBuffer(fullName);
-		if (endDate && (employee.getEndDate() != null)) {
-			text.append(" (");
-			text.append(END_DATE_FORMAT.format(employee.getEndDate()));
-			text.append(")");
-		}
-
-		employeeItem.setHTML(materialIconItemHTML(current ? "person" : "person_off", text.toString()));
-		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(((Workplace) workplaceItem.getUserObject()), employee);
-		employeeItem.setUserObject(employeeDraftObject);
-		employeeItem.ensureDebugId(getId(employee));
-
-		TreeItem salarytItem = addMaterialIconItem(employeeItem, "N\u00F3minas", "payments");
-		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(employee.getId(), employee.getFullname());
-		salarytItem.setUserObject(employeeSalaryObject);
-		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
-		
-		//Employee Calendar (BETA)
-		TreeItem calendarNewDraftItem = addMaterialIconItem(employeeItem, "Calendario", "calendar_today");
-		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(
-				employee.getId(), 
-				employeesService);
-		
-		calendarNewDraftItem.setUserObject(employeeCalendarDraftObject);
-		calendarNewDraftItem.ensureDebugId(getId(employee)+"-employeecalendarnew");
-		
-		
-		if (extended) {
-
-			Date salaryDate = DateUtils.before(DateUtils.after(new Date(), employee.getStartDate()),
-					employee.getEndDate());
-			Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
-			Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
-			Date issueDate = endDate;
-
-			TreeItem salaryDraftItem = addMaterialIconItem(employeeItem, "Borrador", "edit");
-			salaryDraftItem.ensureDebugId(getId(employee)+"-draft");
-
-			SalaryDraft salaryDraft = new SalaryDraft();
-			salaryDraft.setEmployee(employee);
-			salaryDraft.setStartDate(startDate);
-			salaryDraft.setEndDate(endDate);
-			salaryDraft.setIssueDate(issueDate);
-			salaryDraft.setType(Type.SALARY);
-
-			SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, /*dataObject,*/ employeesService);
-			salaryDraftItem.setUserObject(draftObject);
-
-			final TreeItem employeeEventsItem = addMaterialIconItem(employeeItem, "Variables C\u00E1lculo", "calendar_month");
-			EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(employee.getId());
-			
-			employeeEventsItem.setUserObject(employeeEventsDraftObject);
-			
-			employeeEventsItem.ensureDebugId(getId(employee)+"-events");
-
-			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
-			
-			//Add employeeCalendar to Draft
-			employeeDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
-			employeeEventsDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
-			draftObject.setEmployeeCalendarDraftObject(employeeCalendarDraftObject);
-						
-			Category category = employee.getCategory();
-
-			// Agreement Category
-			if (category == null)
-				return;
-
-			Agreement agreement = category.getAgreement();
-			Agreement workplaceAgreement = ((Workplace) workplaceItem.getUserObject()).getAgreement();
-
-			if (workplaceAgreement != null && NumberUtils.equals(workplaceAgreement.getId(), agreement.getId()))
-				return;
-
-			TreeItem enterpriseItem = workplaceItem.getParentItem();
-			Enterprise enterprise = (Enterprise) enterpriseItem.getUserObject();
-
-			final TreeItem categoryItem = addMaterialIconItem(employeeItem,
-					category.getLevel() + ". " + category.getDescription(), "article");
-			categoryItem.ensureDebugId(getId(employee)+"-category");
-			
-			CategoryDraft categoryDraft = new CategoryDraft();
-			categoryDraft.setId(agreement.getId());
-			categoryDraft.setDomain(agreement.getDomain());
-			categoryDraft.setLevelId(category.getLevelId());
-			categoryDraft.setDescription(agreement.getDescription());
-			categoryDraft.setSSNumber(agreement.getSSNumber());
-			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
-			categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
-			final CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
-					enterprise.getDomain(),
-					Wnd.getCurrentDomainNameURL(),
-					categoryDraft, 
-					employeesService);
-
-			employeesService.getChanges(Wnd.getCurrentDomainNameURL(),agreement, new AsyncCallback<SortedSet<Date>>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					categoryItem.setUserObject(categoryDraftObject);
-				}
-
-				public void onSuccess(SortedSet<Date> result) {
-					if (!CollectionUtils.isEmpty(result)) {
-						Date lastChange = result.last();
-						categoryDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(lastChange));
-						categoryDraftObject.setEndDate(DateUtils.getLastDayOfMonth(lastChange));
-					}
-					categoryItem.setUserObject(categoryDraftObject);
-				};
-			});
-			
-		}
-
-	}
 
 	/**
 	 * A helper method to simplify adding tree items that have attached material icon.
 	 * {@link #addImageItem(TreeItem, String, childs, ImageResource) code}
 	 * 
 	 */
-	private TreeItem addMaterialIconItem(TreeItem root, String title, String materialIcon) {
+	private <T extends HasTreeItems> TreeItem addMaterialIconItem(T root, String title, String materialIcon) {
 		TreeItem item = new TreeItem(materialIconItemHTML(materialIcon, title));
 		root.addItem(item);
 		return item;
@@ -1724,7 +1816,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	 * {@link #addImageItem(TreeItem, String, childs, ImageResource) code}
 	 * 
 	 */
-	private TreeItem addImageItem(TreeItem root, String title, ImageResource imageProto) {
+	private <T extends HasTreeItems> TreeItem addImageItem(T root, String title, ImageResource imageProto) {
 		TreeItem item = new TreeItem(imageItemHTML(imageProto, title));
 		root.addItem(item);
 		return item;
@@ -1907,9 +1999,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private int getEmployeeLimit() {
 		TreeItem root = tree.getItem(0);
 
-		TreeItem item = root.getChild(ENTERPRISE_COSTS_INDEX);
+		//TreeItem item = root.getChild(ENTERPRISE_COSTS_INDEX);
 
-		int itemHeight = item.getOffsetHeight();
+		int itemHeight = root.getOffsetHeight();
 		int browserHeight = Window.getClientHeight();
 		int visibleItems = browserHeight / itemHeight;
 		return Math.max(visibleItems + 1, MIN_EMPLOYEE_LIMIT);
@@ -2571,7 +2663,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		return null;
 	}
-
+	
 	private static native void log (String message ) /*-{
 		console.log(message);
 	}-*/
