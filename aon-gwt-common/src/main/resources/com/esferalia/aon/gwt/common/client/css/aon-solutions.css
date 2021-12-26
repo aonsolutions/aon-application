@@ -187,6 +187,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconSchedule aonIconSchedule;
+.aon_icon_schedule { background-image: iconSchedule;}
 @url iconReceipt aonIconReceipt;
 .aon_icon_receipt { background-image: iconReceipt;}
 @url iconMoveTo aonIconMoveTo;
