@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390;
 
-import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -8,10 +7,8 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018;
@@ -20,17 +17,12 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.logging.client.ConsoleLogHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -46,9 +38,7 @@ public class Model390 extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	private static final int NOTIFICATIONS_TAB = 0;
-	private static final int INFORMATION_TAB = 1;
-	private static final int AEAT_TAB = 2;
+	private static final int INFORMATION_TAB = 0;
 
 	public static final Model390ServiceAsync MOD390_SERVICE;
 	private static final CommonServiceAsync COMMON_SERVICE;
@@ -60,38 +50,10 @@ public class Model390 extends MainEntryPoint {
 		MOD390_SERVICE = new Model390ServiceAsyncDecorator(serviceRaw);
 	}
 	
-	interface Model390Binder extends UiBinder<Widget, Model390> {
-	}
-	private static final Model390Binder MODEL_390_BINDER = GWT.create(Model390Binder.class);
-	
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
-
-	@UiField
-	SimpleLayoutPanel declarationContainer;
-	
-	@UiField
-	TabLayoutPanel tabLayout;
-	
-	@UiField
-	ResultsPanel resultsPanel;
-	
-	@UiField
-	MinimizePanel footPanel;
-	
-	@UiField
-	ScrollPanel breakdownPanel;
-	
-	@UiField
-	SimpleLayoutPanel aeatPanel;
-	
-	Model390Table model390Table;
-	private Model390ModuleOptions options;
-	
 	public class Model390Callback implements IFiscalModelCallback<Mod390,Model390ModuleOptions> {
 		@Override
 		public Model390ModuleOptions getOptions() {
-			return Model390.this.getOptions(); 
+			return Model390.this.options; 
 		}
 		@Override
 		public void onAccept(Mod390 mod390) {
@@ -103,7 +65,7 @@ public class Model390 extends MainEntryPoint {
 		}
 		@Override
 		public void onNew() {
-			Model390.this.onNew(  );
+			onNew( 2021 );
 		}
 		@Override
 		public void onRemove(Mod390 model) {
@@ -111,10 +73,10 @@ public class Model390 extends MainEntryPoint {
 		}
 		@Override
 		public void showError(String msg) {
-			Model390.this.showErrorPanel(msg);
+			Model390.this.showErrorMessage(msg);
 		}
-		public void onNew(Model390ModuleOptions options, int year) {
-			Model390.this.onNew( options, year );
+		public void onNew(int year) {
+			Model390.this.onNew( year );
 		}
 		public void onReset(Model390ModuleOptions options, Mod390 mod390) {
 			Model390.this.onReset( options, mod390 );
@@ -123,19 +85,15 @@ public class Model390 extends MainEntryPoint {
 			Model390.this.showBreakdownPanel(htmlText);
 		}
 	
-		public void showVisorAEAT() {
-			Model390.this.showVisorAEAT();
-		}
-		
 		public void cleanBreakdownPanel() {
 			Model390.this.cleanBreakdownPanel();
 		}
 		public void cleanErrorPanel() {
-			Model390.this.cleanErrorPanel();
+			Model390.this.cleanErrorMessage();
 		}
-		public void showError(LinkedList<Widget> messages) {
-			Model390.this.showErrorPanel(messages);
-		}
+//		public void showError(LinkedList<Widget> messages) {
+//			Model390.this.showErrorMessage(messages);
+//		}
 		@Override
 		public void showInfoPanel(String text) {
 			// TODO Auto-generated method stub
@@ -145,6 +103,17 @@ public class Model390 extends MainEntryPoint {
 			// TODO Auto-generated method stub
 		}
 	}
+	
+	private Model390ModuleOptions options;
+	
+	private AonLayoutPanel aonLayout;
+	private SplitLayoutPanel splitLayoutPanel;
+	private SimpleLayoutPanel declarationContainer;
+	
+	private Model390Table model390Table;
+	private TabLayoutPanel tabLayout;
+	private AonMinimizePanel footPanel;
+	private ScrollPanel breakdownPanel;	
 	
 	@Override
 	public void onModuleLoad() {
@@ -173,58 +142,89 @@ public class Model390 extends MainEntryPoint {
 		
 		AON.ensureInjected();
 
-		Widget ui = MODEL_390_BINDER.createAndBindUi(this);
+		aonLayout = new AonLayoutPanel();
+		splitLayoutPanel = new SplitLayoutPanel( 2 );
+		aonLayout.add(splitLayoutPanel);
 		
-		HTMLPanel html = new HTMLPanel("<iframe name='aeatForm' width='100%' height='100%' style='border:none'/>");
-		html.setWidth("100%");
-		html.setHeight("100%");
-		aeatPanel.setWidget(html);
+		declarationContainer = new SimpleLayoutPanel();
+		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
+
+		splitLayoutPanel.add(declarationContainer);
 		
 		model390Table = new Model390Table(new Model390Callback());
-		model390Table.addSelectionHandler(new SelectionHandler<Mod390>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Mod390> event) {
-				onSelectionChange(options,event);
-			}
-		});
+		model390Table.addSelectionHandler(event -> onSelectionChange(options,event));
 		
 		declarationContainer.setWidget(model390Table);
-		options.getParentWidget().add(ui);
+
+		options.getParentWidget().add(aonLayout);
 		if (options.getFiscalModelId() != null ) {
-			LOGGER.info("Access to Model390 with a ID: " + options.getFiscalModelId());
 			onSelect(options,options.getFiscalModelId());
 		} else if (options.getNewModel() != null ) {
-			LOGGER.info("Access to Model390 new Model");
-			onNew(options, options.getNewModel().getYear());
+			onNew(options.getNewModel().getYear());
 		} else {
 			model390Table.refresh( new Model390Callback());
-			LOGGER.info("Model390 setting NOTIFICATIONS_TAB");
-			tabLayout.selectTab(NOTIFICATIONS_TAB);
 		}
 		
-		tabLayout.setAnimationDuration(300);
-		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<Integer> event) {
-				openFootPanelIfNeeded();
-			}
-		});
 	}
 	
-	public Model390ModuleOptions getOptions() {
-		return options;
+
+	private AonMinimizePanel getMinimizePanel() {
+		footPanel = new AonMinimizePanel();
+		footPanel.addMinimizeHandler( event -> closeFootPanel() );
+		footPanel.addMaximizeHandler( event -> {
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2.0);
+			splitLayoutPanel.animate(500);
+		});
+		footPanel.setStyleName(AON.CSS.aonSelector());
+		tabLayout = new TabLayoutPanel(26, Unit.PX);
+		tabLayout.setWidth("100%");
+		footPanel.add(tabLayout);
+		
+		breakdownPanel = new ScrollPanel();
+		tabLayout.add(breakdownPanel, AON.MSG.informationBreakdown());
+
+		tabLayout.setAnimationDuration(300);
+		tabLayout.addSelectionHandler( event -> openFootPanelIfNeeded());
+		return footPanel; 
 	}
 
+	private void cleanAndClose() {
+		cleanBreakdownPanel();
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
+	}
+	
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 30);
+		splitLayoutPanel.animate(500);
+	}
+	private void openFootPanelIfNeeded() {
+		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
+			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.0);
+			splitLayoutPanel.animate(500);
+		}
+	}
+	
+	private void cleanErrorMessage() {
+		aonLayout.hideErrorPanel();
+	}
+	
+	private void showErrorMessage(String msg) {
+		aonLayout.showErrorPanel(msg);
+	}
 
+	// ********************************************************
+	// ********************************************************
+	// ********************************************************
+	// ********************************************************
+	// ********************************************************
 	private void onSelect(Model390ModuleOptions options, Integer id ) {
 		LOGGER.info("OnSelect Model390 with a ID: " + options.getFiscalModelId());
 		MOD390_SERVICE.getMod390(options.getOccam(), id , new AsyncCallback<Mod390>() {
 			@Override
 			public void onSuccess(Mod390 selected) {
 				if (selected == null) {
-					showErrorPanel(AON.MSG.unableToFindDeclaration());
+					showErrorMessage(AON.MSG.unableToFindDeclaration());
 				} else {
 					select(options, selected);
 				}
@@ -232,7 +232,7 @@ public class Model390 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				showErrorPanel(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+				showErrorMessage(AON.MSG.unableToReadDeclaration(caught.getMessage()));
 			}
 		});
 	}
@@ -240,14 +240,14 @@ public class Model390 extends MainEntryPoint {
 	private void onSelectionChange(Model390ModuleOptions options, SelectionEvent<Mod390> event) {
 		Mod390 sel = event.getSelectedItem();
 		if (sel.getStatus() ==  FiscalStatus.BLOCKED) {
-			showErrorPanel("El visor de la declaraci\u00F3n ya no está disponible");
+			showErrorMessage("El visor de la declaraci\u00F3n ya no está disponible");
 		} else {
 			select(options,sel);
 		}
 	}
 	
 	private void select(Model390ModuleOptions options, Mod390 selected) {
-		cleanErrorPanel();
+		cleanErrorMessage();
 		if (selected.isAEAT()) {
 			if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
 				Model3902015 model3902015 = new Model3902015(options, selected,new Model390Callback());
@@ -256,36 +256,33 @@ public class Model390 extends MainEntryPoint {
 				Model3902018 model3902018 = new Model3902018(options, selected,new Model390Callback());
 				declarationContainer.setWidget(model3902018);
 			} else {
-				showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
+				showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 			}
 		} else {
-			showErrorPanel("Administraci\u00F3n y/o ejercicio no soportado.");
+			showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 		}
 	}
-	private void onNew() {
-		onNew( getOptions(), 2021 );
-	}
-
-	private void onNew(Model390ModuleOptions options,int year) {
-		cleanErrorPanel();
+	
+	private void onNew(int year) {
+		cleanErrorMessage();
 		MOD390_SERVICE.initialize(options.getOccam(),year, new AsyncCallback<Mod390>() {
 			@Override
 			public void onSuccess(Mod390 m390) {
 				cleanBreakdownPanel();
 				tabLayout.selectTab(INFORMATION_TAB);
 				closeFootPanel();
-				showNewDeclarationPopup(options,m390);
+				showNewDeclarationPopup(m390);
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
-				showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+				showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 			}
 		});
 	}
 	
-	private void showNewDeclarationPopup(Model390ModuleOptions options,Mod390 m390) {
-		cleanErrorPanel();
+	private void showNewDeclarationPopup(Mod390 m390) {
+		cleanErrorMessage();
 		cleanBreakdownPanel();
 		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
@@ -314,7 +311,7 @@ public class Model390 extends MainEntryPoint {
 //									@Override
 //									public void onFailure(Throwable caught) {
 //										popup.hide();
-//										showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+//										showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 //									}
 //								});
 					}
@@ -325,7 +322,7 @@ public class Model390 extends MainEntryPoint {
 	}
 	
 	private void onReset(Model390ModuleOptions options, Mod390 oldMod390) {
-		cleanErrorPanel();
+		cleanErrorMessage();
 		MOD390_SERVICE.initialize(options.getOccam(), oldMod390.getYear(), new AsyncCallback<Mod390>() {
 			@Override
 			public void onSuccess(Mod390 newMod390) {
@@ -343,13 +340,13 @@ public class Model390 extends MainEntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+				showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
 			}
 		});
 	}
 	
 	private void showResetDeclarationPopup(Model390ModuleOptions options, Mod390 newMod390, Mod390 oldMod390) {
-		cleanErrorPanel();
+		cleanErrorMessage();
 		cleanBreakdownPanel();
 		tabLayout.selectTab(INFORMATION_TAB);
 		closeFootPanel();
@@ -376,7 +373,7 @@ public class Model390 extends MainEntryPoint {
 							@Override
 							public void onFailure(Throwable caught) {
 								popup.hide();
-								showErrorPanel(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
+								showErrorMessage(AON.MSG.unableToDeleteDeclaration(caught.getMessage()));
 							}
 						});				
 					}
@@ -392,7 +389,7 @@ public class Model390 extends MainEntryPoint {
 	
 
 	private void cancel() {
-		cleanErrorPanel();
+		cleanErrorMessage();
 		cleanBreakdownPanel();
 		declarationContainer.setWidget(model390Table);
 		model390Table.refresh( new Model390Callback());
@@ -400,94 +397,94 @@ public class Model390 extends MainEntryPoint {
 		closeFootPanel();
 	}
 
-	@UiHandler("footPanel")
-	void onFootMinimize(MinimizeEvent event) {
-		closeFootPanel();
-	}
-
-	@UiHandler("footPanel")
-	void onFootMaximize(MaximizeEvent event) {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
-		splitLayoutPanel.animate(500);
-	}
-
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 30);
-		splitLayoutPanel.animate(500);
-	}
-
-	private void openFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
-		splitLayoutPanel.animate(500);
-	}
-	private void openFootPanelIfNeeded() {
-		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
-			openFootPanel();
-		}
-	}
+//	@UiHandler("footPanel")
+//	void onFootMinimize(MinimizeEvent event) {
+//		closeFootPanel();
+//	}
+//
+//	@UiHandler("footPanel")
+//	void onFootMaximize(MaximizeEvent event) {
+//		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 2);
+//		splitLayoutPanel.animate(500);
+//	}
+//
+//	private void closeFootPanel() {
+//		splitLayoutPanel.setWidgetSize(footPanel, 30);
+//		splitLayoutPanel.animate(500);
+//	}
+//
+//	private void openFootPanel() {
+//		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+//		splitLayoutPanel.animate(500);
+//	}
+//	private void openFootPanelIfNeeded() {
+//		if (splitLayoutPanel.getWidgetSize(footPanel) <= 50) {
+//			openFootPanel();
+//		}
+//	}
 	
-	private void cleanErrorPanel() {
-		SimpleLayoutPanel panel = new SimpleLayoutPanel();
-		resultsPanel.setWidget(panel);
-		closeFootPanel();
-	}
+//	private void cleanErrorPanel() {
+//		SimpleLayoutPanel panel = new SimpleLayoutPanel();
+//		resultsPanel.setWidget(panel);
+//		closeFootPanel();
+//	}
 	
-	private void showErrorPanel(LinkedList<Widget> messages) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		ScrollPanel panel = new ScrollPanel();
-		FlexTable tab = new FlexTable();
-		tab.setWidth("95%");
-		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab.getColumnFormatter().setWidth(0, "20px");
-		tab.getColumnFormatter().setWidth(1, "auto");
-		
-		int row = 0;
-		for (Widget message : messages) {
-			InlineLabel icon = new InlineLabel("");
-			icon.setStyleName(AON.AON_CSS.aonIconPointOrange());
-			icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			tab.setWidget(row, 0, icon);
-			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+//	private void showErrorPanel(LinkedList<Widget> messages) {
+//		openFootPanelIfNeeded();
+//		tabLayout.selectTab(NOTIFICATIONS_TAB);
+//		ScrollPanel panel = new ScrollPanel();
+//		FlexTable tab = new FlexTable();
+//		tab.setWidth("95%");
+//		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
+//		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+//		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+//		tab.getColumnFormatter().setWidth(0, "20px");
+//		tab.getColumnFormatter().setWidth(1, "auto");
+//		
+//		int row = 0;
+//		for (Widget message : messages) {
+//			InlineLabel icon = new InlineLabel("");
+//			icon.setStyleName(AON.AON_CSS.aonIconPointOrange());
+//			icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+//			tab.setWidget(row, 0, icon);
+//			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+//
+//			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+//			tab.setWidget(row++, 1, message);	
+//		}
+//		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
+//		
+//		panel.add(tab);
+//		resultsPanel.setWidget(panel);
+//	}
 
-			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-			tab.setWidget(row++, 1, message);	
-		}
-		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		
-		panel.add(tab);
-		resultsPanel.setWidget(panel);
-	}
-
-	private void showErrorPanel(String msg) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		ScrollPanel panel = new ScrollPanel();
-		FlexTable tab = new FlexTable();
-		tab.setWidth("95%");
-		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab.getColumnFormatter().setWidth(0, "20px");
-		tab.getColumnFormatter().setWidth(1, "auto");
-		
-		InlineLabel icon = new InlineLabel("");
-		icon.setStyleName(AON.AON_CSS.aonIconPointRed());
-		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		tab.setWidget(0, 0, icon);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		
-		InlineLabel label = new InlineLabel(msg);
-		label.addStyleName(AON.AON_CSS.aonColorRed());
-		label.addStyleName(AON.AON_CSS.aonBold());
-		tab.setWidget(0, 1, label);
-		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		
-		panel.add(tab);
-		resultsPanel.setWidget(panel);
-	}
+//	private void showErrorPanel(String msg) {
+//		openFootPanelIfNeeded();
+//		tabLayout.selectTab(NOTIFICATIONS_TAB);
+//		ScrollPanel panel = new ScrollPanel();
+//		FlexTable tab = new FlexTable();
+//		tab.setWidth("95%");
+//		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
+//		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
+//		tab.addStyleName(AON.AON_CSS.aonMarginTop());
+//		tab.getColumnFormatter().setWidth(0, "20px");
+//		tab.getColumnFormatter().setWidth(1, "auto");
+//		
+//		InlineLabel icon = new InlineLabel("");
+//		icon.setStyleName(AON.AON_CSS.aonIconPointRed());
+//		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+//		tab.setWidget(0, 0, icon);
+//		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+//		
+//		InlineLabel label = new InlineLabel(msg);
+//		label.addStyleName(AON.AON_CSS.aonColorRed());
+//		label.addStyleName(AON.AON_CSS.aonBold());
+//		tab.setWidget(0, 1, label);
+//		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
+//		
+//		panel.add(tab);
+//		resultsPanel.setWidget(panel);
+//	}
 	
 	private void cleanBreakdownPanel() {
 		Widget w = breakdownPanel.getWidget();
@@ -504,11 +501,6 @@ public class Model390 extends MainEntryPoint {
 		breakdownPanel.scrollToTop();
 	}
 	
-	private void showVisorAEAT() {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(AEAT_TAB);	
-	}
-
 	public static void main(String[] args) {
 		System.out.println("dd2");
 	}

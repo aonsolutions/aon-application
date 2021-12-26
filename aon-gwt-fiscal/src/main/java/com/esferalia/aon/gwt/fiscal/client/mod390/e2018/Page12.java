@@ -160,7 +160,6 @@ public class Page12 extends FlowPanel implements IMod3902018Page {
 		button2.addClickHandler( event -> {
 			if (getModel().isFinished() || getModel().isSent()) {
 				submitAEAT(MODEL390_PRINT_AEAT);
-				getCallback().showVisorAEAT();
 			} else {
 				getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
 			}

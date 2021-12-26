@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2018;
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
@@ -10,13 +8,10 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390ModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage;
-import com.esferalia.aon.gwt.fiscal.client.mod390.ValidationMessage.ValidationMessages;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
-import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -51,7 +46,6 @@ public class Model3902018 extends DockLayoutPanel  {
 		Model390ModuleOptions getOptions();
 		void calculateAndRefresh();
 		Mod3902018 getMod390();
-		void showVisorAEAT();
 		void showInfoPanel(String str);
 		
 	}	
@@ -142,7 +136,7 @@ public class Model3902018 extends DockLayoutPanel  {
 		newButton.addStyleName(AON.AON_CSS.aonIconReset());
 		newButton.addClickHandler(event -> {
 			cbk.cleanErrorPanel();
-			cbk.onNew(options, DEFAULT_YEAR);
+			cbk.onNew(DEFAULT_YEAR);
 		});
 		buttonContainer.add(newButton);
 		
@@ -168,7 +162,6 @@ public class Model3902018 extends DockLayoutPanel  {
 					page.populate(m390);	
 				}
 				cbk.cleanErrorPanel();
-				validate(m390);
 				MOD3902018_SERVICE.save(options.getOccam(),m390 , new AsyncCallback<Mod3902018>() {
 					@Override
 					public void onSuccess(Mod3902018 result) {
@@ -428,11 +421,6 @@ public class Model3902018 extends DockLayoutPanel  {
 			}
 			
 			@Override
-			public void showVisorAEAT() {
-				cbk.showVisorAEAT();
-			}
-
-			@Override
 			public void showInfoPanel(String str) {
 				cbk.showBreakdownPanel(str);
 			}
@@ -533,52 +521,6 @@ public class Model3902018 extends DockLayoutPanel  {
 			content.populate(m390);
 		}
 		
-	}
-	
-	private void validate(Mod3902018 m390) {
-		LinkedList<ValidationMessage> msg = new LinkedList<>();
-		if (m390.getYear() != 2020 
-			&& m390.getYear() != 2019 
-			&& m390.getYear() != 2018 
-			&& m390.getYear() != 2016
-			&& m390.getYear() != 2017) msg.add(ValidationMessages.EMPTY_YEAR.getMsg());
-		if (!m390.isLegalEntity()) {
-			if (AonStringUtils.isEmpty(m390.getDocument())) msg.add(ValidationMessages.EMPTY_DOCUMENT.getMsg());
-			if (!AonDocumentUtil.isValid(m390.getDocument())) msg.add(ValidationMessages.WRONG_DOCUMENT.getMsg());
-			if (AonStringUtils.isEmpty(m390.getName())) msg.add(ValidationMessages.REQ_NAME.getMsg());
-			if (AonStringUtils.isEmpty(m390.getFirstSurname())) msg.add(ValidationMessages.REQ_SURNAME.getMsg());
-		} else {
-			if (AonStringUtils.isEmpty(m390.getName())) msg.add(ValidationMessages.EMPTY_NAME.getMsg());
-		}
-		if (m390.getMainActivity() == null || AonStringUtils.isEmpty(m390.getMainActivity().getKey())) 
-			msg.add(ValidationMessages.EMPTY_ACTI.getMsg());
-		if (!m390.isLegalEntity()) {
-			if (m390.getAddress() == null) msg.add(ValidationMessages.EMPTY_REPR.getMsg());
-			if (AonStringUtils.isEmpty(m390.getAddress().getRdocument())) msg.add(ValidationMessages.EMPTY_REPR_DOC.getMsg());
-			if (!AonDocumentUtil.isValid(m390.getAddress().getRdocument())) msg.add(ValidationMessages.WRONG_REPR_DOC.getMsg());
-		} else {
-			if (m390.getLegalRepr1() != null &&
-				!AonDocumentUtil.isValid(m390.getLegalRepr1().getDocument())) msg.add(ValidationMessages.LG1_WRONG_DOC.getMsg());
-			if (m390.getLegalRepr2() != null &&
-				!AonDocumentUtil.isValid(m390.getLegalRepr2().getDocument())) msg.add(ValidationMessages.LG2_WRONG_DOC.getMsg());
-			if (m390.getLegalRepr3() != null &&
-				!AonDocumentUtil.isValid(m390.getLegalRepr3().getDocument())) msg.add(ValidationMessages.LG3_WRONG_DOC.getMsg());
-		}
-		if (!msg.isEmpty()) {
-			LinkedList<Widget> widgets = new LinkedList<>();
-			for (ValidationMessage m : msg ) {
-				String text = m.getPage()>=0?("P\u00E1g: " + Integer.toString(m.getPage()+1) + " "):"";
-				text += AonStringUtils.isEmpty(m.getKey())?"":("Casilla: " + m.getKey() + " ");
-				text += m.getMessage();
-				InlineLabel label = new InlineLabel(text);
-				label.addStyleName(AON.AON_CSS.aonBold());
-				if (m.getPage()>=0) {
-					label.addClickHandler( event -> showPage(m.getPage()));
-				}
-				widgets.add(label);
-			}
-			cbk.showError(widgets);
-		}		
 	}
 	
 	protected SimplePanel getDeclarationHeaderTable(Model390ModuleOptions options, Mod3902018 m390, Model390Callback cbk) {
