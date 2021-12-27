@@ -47,14 +47,14 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.OrderedMultiSelectionModel;
 
 public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHandler {
+	
+	// -------------------------------------------- UiBinder
 
 	private static EmployeeCalendarDraftNewUiBinder uiBinder = GWT.create(EmployeeCalendarDraftNewUiBinder.class);
 
 	interface EmployeeCalendarDraftNewUiBinder extends UiBinder<Widget, EmployeeCalendarDraftNew> {}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//										CALENDAR DAYS TYPE CELL
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- Calendar day type cell
 	
 	public static interface CalendarDayTypeCell{
 		void setAsType(DayType daytype, int row, int col);
@@ -223,9 +223,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		}
 	}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//										CALENDAR TYPE CELL
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- Calendar type cell
 	
 	public static interface CalendarTypeCell{
 		void select(int row, int col);
@@ -378,25 +376,22 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		}
 	}
 	
-	// ----------------------------------------------- ScheduledCommand (DefinitionMenu)
+	// -------------------------------------------- ScheduledCommand (DefinitionMenu)
 	
-	class NonWorkingCommand implements ScheduledCommand {
+	class WorkingCommand implements ScheduledCommand {
 
 		@Override
 		public void execute() {
-			EmployeeCalendarNonWorkingDialog nonWorkingDialog = new EmployeeCalendarNonWorkingDialog(
-					employeeCalendarDraftObject.getNonWorkingDays()) {
+			new EmployeeCalendarNonWorkingDialog(
+					employeeCalendarDraftObject.getWorkingDays()) {
 				
 				@Override
 				protected void onAccept() {
-					employeeCalendarDraftObject.setNonWorkingDays(getNonWorkingDays());
+					employeeCalendarDraftObject.setWorkingDays(getNonWorkingDays());
 					onChange();
 					changeYear();
 				}
 			};
-			
-			nonWorkingDialog.center();
-			nonWorkingDialog.show();
 		}
 	}
 	
@@ -461,7 +456,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	class DefinitionMenu extends ContextMenu {
 				
-		private MenuItem nonWorkingMenuItem = null;
+		private MenuItem workingMenuItem = null;
 		private MenuItem hourMenuItem = null;
 		private MenuItemSeparator separator;
 		private MenuItem showHourMenuItem = null;
@@ -470,9 +465,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		
 		public DefinitionMenu() {
 			
-			nonWorkingMenuItem = addItem("Definir semana laboral", new NonWorkingCommand(), 
+			workingMenuItem = addItem("Definir semana laboral", new WorkingCommand(), 
 					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			nonWorkingMenuItem.ensureDebugId("nonWorkingMenuItem");
+			workingMenuItem.ensureDebugId("workingMenuItem");
 			
 			hourMenuItem = addItem("Definir horas semanales", new HourCommand(), 
 					AON.CSS.aonIconEditCalendar(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
@@ -493,8 +488,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			showHourComplMenuItem.ensureDebugId("showHourComplMenuItem");
 		}
 
-		public MenuItem getNonWorkingMenuItem() {
-			return nonWorkingMenuItem;
+		public MenuItem getWorkingMenuItem() {
+			return workingMenuItem;
 		}
 
 		public MenuItem getHourMenuItem() {
@@ -523,7 +518,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		
 	}
 	
-	// ----------------------------------------------- ScheduledCommand (UtilityMenu)
+	// -------------------------------------------- ScheduledCommand (UtilityMenu)
 	
 	class EraseEventCommand implements ScheduledCommand {
 
@@ -604,9 +599,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		
 	}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//											UI FIELDS
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- UiField
 	
 	@UiField
 	MyStyle style;
@@ -702,11 +695,15 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	@UiField
 	Button leyendButton;
 	
+	// -------------------------------------------- Variable
 	
 	private int totalCols = 38;
 	private int totalRows = 37;
 	
-	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private DateTimeFormat fullDateFormat = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private DateTimeFormat yearFormat = DateTimeFormat.getFormat("yyyy");
+	private DateTimeFormat monthFormat = DateTimeFormat.getFormat("MM");
+	private DateTimeFormat dayOfWeekFormat = DateTimeFormat.getFormat("c");
 	
 	private EmployeeCalendarDraftObject employeeCalendarDraftObject;
 	
@@ -729,6 +726,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	private AonToolbarButton saveButton;
 	private ListBox yearLB;
 	
+	// -------------------------------------------- Constructor
+	
 	public EmployeeCalendarDraftNew() {
 		getToolbarPanel();
 		//Inicializamos la vista del calendario
@@ -737,23 +736,20 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		dockLayoutPanel.addStyleName(style.container());
 		
-		scrollInfo.setHeight((Window.getClientHeight() - 220) + "px");
+		scrollInfo.setHeight((Window.getClientHeight() - 260) + "px");
 		
 		definitionMenu = new DefinitionMenu();
 		utilityMenu = new UtilityMenu();
 		
 		// Add contextMenu
 		calendarGrid.addDomHandler(this, ContextMenuEvent.getType());
-		
 	}
 	
 	public void setContrataEmployeeCalendarHeight(){
 		scrollInfo.setHeight((Window.getClientHeight() - 290) + "px");
 	}
 
-	// ----------------------------------------------------------------------------------------------------
-	//									SET EMPLOYEE CALENDAR DRAFT
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- setEmployeeCalendarObject
 	
 	public void setEmployeeCalendarDraftObject(EmployeeCalendarDraftObject employeeCalendarDraftObject) {
 		this.employeeCalendarDraftObject = employeeCalendarDraftObject;
@@ -769,10 +765,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		
 	}
 	
-	
-	// ----------------------------------------------------------------------------------------------------
-	//											UI HANDLERS
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- UiField
 	
 	@UiHandler("calendarGrid")
 	public void onCalendarClick(ClickEvent event) {
@@ -783,8 +776,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		int col = calendarGrid.getCellForEvent(event).getCellIndex();
 		int pos = (row * totalCols) + col;
 		
-		if(cellsType[row][col] == null)
+		if(cellsType[row][col] == null) {
+			unSelectSelectedDates();
+			cleanSelectedDates();
 			return;
+		}
 		
 		//Pulsacion celda con SHIFT
 		if (event.isShiftKeyDown()){ 
@@ -906,27 +902,20 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 	@UiHandler("leyendButton")
 	public void onLeyendButtonClick(ClickEvent event) {
-		EmployeeCalendarLeyendDialog leyendDialog = new EmployeeCalendarLeyendDialog() {
+		new EmployeeCalendarLeyendDialog() {
 
 			@Override
 			protected Integer getTotalYearDays(DayType realDays) {
 				return employeeCalendarDraftObject.getTotalYearDays(realDays);
 			}
 		};
-			
-		leyendDialog.center();
-		leyendDialog.show();
 	}
-	
-	
 
-	// ----------------------------------------------------------------------------------------------------
-	//											MAIN METHODS
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- Init calendar
 
 	private void initCalendar() {
 		// Set fulltime journey
-		if(this.employeeCalendarDraftObject.isFullTimeJourney()) {
+		if(this.employeeCalendarDraftObject.isFullTime()) {
 			this.showHours = false;
 			this.showHoursExtraCompl = false;
 			
@@ -940,7 +929,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			definitionMenu.showSeparator();
 			
 			extraHoursButton.setText("H. Extras");
-			definitionMenu.getNonWorkingMenuItem().getElement().getStyle().clearDisplay();
+			definitionMenu.getWorkingMenuItem().getElement().getStyle().clearDisplay();
 			definitionMenu.getHourMenuItem().getElement().getStyle().setDisplay(Display.NONE);
 			
 		} else {
@@ -959,7 +948,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			
 			extraHoursButton.setText("H. Compl.");
 			extraHoursButton.setTitle("Horas Complementarias");
-			definitionMenu.getNonWorkingMenuItem().getElement().getStyle().setDisplay(Display.NONE);
+			definitionMenu.getWorkingMenuItem().getElement().getStyle().setDisplay(Display.NONE);
 			definitionMenu.getHourMenuItem().getElement().getStyle().clearDisplay();
 		}
 		
@@ -971,7 +960,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		this.month = 0;
 		
 		// Set agrarian contract
-		if(this.employeeCalendarDraftObject.isAgrarianContract()) {
+		if(this.employeeCalendarDraftObject.isAgrarian()) {
 			showElement(peonadasDayButton.getElement());
 		} else {
 			hideElement(peonadasDayButton.getElement());
@@ -982,13 +971,12 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			paintCalendar(row);		
 	}
 
-	@SuppressWarnings("deprecation")
 	private void paintCalendar(int row) {
 		// Mostrar días del mes
 		Integer contDays = 1;
-		
-		int firstDayOfMonth = calculateNumberDayOfWeek(new Date(year, month, 1));
-		int lastDayOfMonth = calculateLastDayOfMonth(new Date(year, month, 1));
+		Date date = fullDateFormat.parse(1 + "/" + (month + 1) + "/" + (year + 1900));
+		int firstDayOfMonth = calculateNumberDayOfWeek(date);
+		int lastDayOfMonth = calculateLastDayOfMonth(date);
 		
 		// Primera semana
 		for (int i = 1; i <= 7; i++) {
@@ -1006,8 +994,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				cellsType[row + 1][i] = new NoneCell();
 				cellsType[row + 2][i] = new NoneCell();
 			} else {
-				
-				Date currentDay = new Date(year, month, contDays);
+				Date currentDay = fullDateFormat.parse(contDays + "/" + (month + 1) + "/" + (year + 1900));
 				DateUtils.resetTime(currentDay);
 				
 				// Set Label day and Label hours
@@ -1088,12 +1075,12 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					// ------------ Set Hour Extra / Complementary Hour
 					
 					// Add hour info is not is empty CalendarHours
-					if(!this.employeeCalendarDraftObject.isCalendarHourExtraComplIsEmpty()) {
-						Double dayHourExtraCompl = this.employeeCalendarDraftObject.getHourExtraComplByDate(currentDay);
-						
-						if(null != dayHourExtraCompl)
-							hourExtraComplDay.setText(dayHourExtraCompl.toString());
-						
+					if(!this.employeeCalendarDraftObject.isExtraHourIsEmpty() || !this.employeeCalendarDraftObject.isComplementaryHourIsEmpty()) {
+						Double dayHourExtraCompl = this.employeeCalendarDraftObject.isFullTime() ? 
+								this.employeeCalendarDraftObject.getExtraHourByDate(currentDay) :
+								this.employeeCalendarDraftObject.getComplementaryHourByDate(currentDay);
+								
+						if(null != dayHourExtraCompl) hourExtraComplDay.setText(dayHourExtraCompl.toString());
 					}
 					
 				}
@@ -1113,7 +1100,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		
 		while (contDays <= lastDayOfMonth) {
 			// Dia Acutal
-			Date currentDay = new Date(year, month, contDays);
+			Date currentDay = fullDateFormat.parse(contDays + "/" + (month + 1) + "/" + (year + 1900));
 			DateUtils.resetTime(currentDay);
 			
 			// Por que ya llevamos 7 dias pintados
@@ -1193,13 +1180,14 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				// ------------ Set Hour Complementary Day
 				
 				// Add hour info is not is empty CalendarHours
-				if(!this.employeeCalendarDraftObject.isCalendarHourExtraComplIsEmpty()) {
-					Double dayHourExtraCompl = this.employeeCalendarDraftObject.getHourExtraComplByDate(currentDay);
-					
-					if(null != dayHourExtraCompl)
-						hourExtraComplDay.setText(dayHourExtraCompl.toString());
-					
+				if(!this.employeeCalendarDraftObject.isExtraHourIsEmpty() || !this.employeeCalendarDraftObject.isComplementaryHourIsEmpty()) {
+					Double dayHourExtraCompl = this.employeeCalendarDraftObject.isFullTime() ? 
+							this.employeeCalendarDraftObject.getExtraHourByDate(currentDay) :
+							this.employeeCalendarDraftObject.getComplementaryHourByDate(currentDay);
+							
+					if(null != dayHourExtraCompl) hourExtraComplDay.setText(dayHourExtraCompl.toString());
 				}
+				
 			}
 			
 			calendarGrid.setWidget(row, column, labelDay);
@@ -1215,9 +1203,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		month++;
 	}
 
-	// ----------------------------------------------------------------------------------------------------
-	//									AUXILIAR METHODS (CALENDAR VIEW)
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- Show/hide methods
 
 	private void showHoursRows() {
 		for (int i = 2; i < totalRows; i += 3)
@@ -1247,13 +1233,14 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		element.getStyle().clearDisplay();
 	}
 	
-	@SuppressWarnings("deprecation")
+	// -------------------------------------------- isOutOfContratPeriod
+	
 	private boolean isOutOfContractPeriod(Date date) {
 		Date contractEndDate = this.employeeCalendarDraftObject.getContractEndDate();
 		Date newEndDate = null;
 		if(null == contractEndDate) {
-			Integer nextYear = new Date().getYear() + 2;
-			newEndDate = new Date(nextYear, 11, 31);
+			Integer nextYear = Integer.parseInt(yearFormat.format(new Date())) + 2;
+			newEndDate = fullDateFormat.parse("31/12/"+nextYear);
 		} else {
 			newEndDate = DateUtils.copyDateOnly(contractEndDate);
 		}
@@ -1263,13 +1250,12 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		return date.before(startDate) || date.after(newEndDate);
 	}
 	
-	@SuppressWarnings("deprecation")
 	private boolean isOutOfContractPeriodIncludeCurrentYear(Date date) {
 		Date contractEndDate = this.employeeCalendarDraftObject.getContractEndDate();
 		Date newEndDate = null;
 		if(null == contractEndDate) {
-			Integer nextYear = new Date().getYear() + 2;
-			newEndDate = new Date(nextYear, 11, 31);
+			Integer nextYear = Integer.parseInt(yearFormat.format(new Date())) + 2;
+			newEndDate = fullDateFormat.parse("31/12/"+nextYear);
 		} else {
 			newEndDate = DateUtils.copyDateOnly(contractEndDate);
 			newEndDate = DateUtils.getLastDayOfYear(newEndDate);
@@ -1280,9 +1266,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		return date.before(startDate) || date.after(newEndDate);
 	}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//										SAVE / UNDO ALL
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- onSaved/onChange
 	
 	private void onSaved(){
 		saveButton.setEnabled(false);
@@ -1313,9 +1297,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		});
 	}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//										CHANGE YEAR EVENT
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- ChangeYear
 	
 	private void changeYear() {
 		String fullYear = this.yearLB.getSelectedValue();
@@ -1324,16 +1306,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		initCalendar();
 	}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//									INIT DAY TYPES DIALOG
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- InitDates dialog
 
 	private void initDatesDialog(DayType dayType) {
 		// Si no hay nada seleccionado en el calendario mostramos dialogo
 		if(this.selectedDates.getSelectedList().isEmpty()) {
 			String caption = getCaptionByDayType(dayType);
-			EmployeeCalendarDatesDialog datesDialog =
-				new EmployeeCalendarDatesDialog(
+			new EmployeeCalendarDatesDialog(
 					caption, 
 					this.employeeCalendarDraftObject.getContractStartDate(),
 					this.employeeCalendarDraftObject.getContractEndDate()) {
@@ -1347,9 +1326,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 						addPartialityDayType(startDate, endDate, dayType, Integer.toString(daysBetween));
 				}
 			};
-			
-			datesDialog.center();
-			datesDialog.show();
 		} else {
 			this.selectedDates.getSelectedList().sort(null);
 			Date startDate = this.selectedDates.getSelectedList().get(0);
@@ -1364,8 +1340,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	private void initiInactivityDialog(DayType dayType) {
 		String caption = getCaptionByDayType(dayType);
-		EmployeeCalendarInactivityDialog inactivityDialog = 
-			new EmployeeCalendarInactivityDialog(
+		new EmployeeCalendarInactivityDialog(
 				caption, 
 				this.selectedDates.getSelectedList(),
 				this.employeeCalendarDraftObject.getContractStartDate(),
@@ -1405,14 +1380,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				
 			}
 		};
-		inactivityDialog.center();
-		inactivityDialog.show();
 	}
 	
 	private void initiAgrarianDialog(DayType dayType) {
 		String caption = getCaptionByDayType(dayType);
-		EmployeeCalendarAgrarianDialog agrarianDialog = 
-			new EmployeeCalendarAgrarianDialog(
+		new EmployeeCalendarAgrarianDialog(
 				caption, 
 				this.selectedDates.getSelectedList(),
 				this.employeeCalendarDraftObject.getContractStartDate(),
@@ -1435,13 +1407,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				}
 			}
 		};
-		agrarianDialog.center();
-		agrarianDialog.show();
 	}
 
 	private void initDropDialog(DayType dayType) {
 		String caption = getCaptionByDayType(dayType);
-		EmployeeCalendarPercentDialog percentDialog = new EmployeeCalendarPercentDialog(
+		new EmployeeCalendarPercentDialog(
 				caption, 
 				this.selectedDates.getSelectedList(),
 				this.employeeCalendarDraftObject.getContractStartDate(),
@@ -1465,15 +1435,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				}	
 			}
 		};
-		
-		percentDialog.center();
-		percentDialog.show();
 	}
-	
 	
 	private void initPartialityDialog(DayType dayType) {
 		String caption = getCaptionByDayType(dayType);
-		EmployeeCalendarPartialityDialog partialityDialog = new EmployeeCalendarPartialityDialog(
+		new EmployeeCalendarPartialityDialog(
 				caption,
 				this.selectedDates.getSelectedList(),
 				this.employeeCalendarDraftObject.getContractStartDate(),
@@ -1487,9 +1453,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				addPartialityDayType(startDate, endDate, dayType, coefficient);
 			}
 		};
-		
-		partialityDialog.center();
-		partialityDialog.show();
 	}
 	
 	private void openITDialog() {
@@ -1585,7 +1548,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}	
 	
 	private void initHourDialog() {
-		EmployeeCalendarHoursDialog hourDialog = new EmployeeCalendarHoursDialog(
+		new EmployeeCalendarHoursDialog(
 				this.selectedDates.getSelectedList(),
 				this.employeeCalendarDraftObject.getContractStartDate(),
 				this.employeeCalendarDraftObject.getContractEndDate(),
@@ -1598,33 +1561,42 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				changeYear();
 			}
 		};
-		
-		hourDialog.center();
-		hourDialog.show();
 	}
 	
 	private void initHourExtraComplDialog() {
-		EmployeeCalendarHoursExtraComplDialog hourDialog = new EmployeeCalendarHoursExtraComplDialog(
-				this.selectedDates.getSelectedList(),
-				this.employeeCalendarDraftObject.getContractStartDate(),
-				this.employeeCalendarDraftObject.getContractEndDate(),
-				this.employeeCalendarDraftObject) {
-			
-			@Override
-			protected void onAccept() {
-				cleanSelectedDates();
-				onChange();
-				changeYear();
-			}
-		};
-		
-		hourDialog.center();
-		hourDialog.show();
+		if(this.employeeCalendarDraftObject.isFullTime()) {
+			new CalendarExtraHourDialog(
+					this.selectedDates.getSelectedList(),
+					this.employeeCalendarDraftObject.getContractStartDate(),
+					this.employeeCalendarDraftObject.getContractEndDate(),
+					this.employeeCalendarDraftObject) {
+				
+				@Override
+				protected void onAccept() {
+					cleanSelectedDates();
+					onChange();
+					changeYear();
+				}
+			};
+		} else {
+			new CalendarComplementaryHourDialog(
+					this.selectedDates.getSelectedList(),
+					this.employeeCalendarDraftObject.getContractStartDate(),
+					this.employeeCalendarDraftObject.getContractEndDate(),
+					this.year + 1900,
+					this.employeeCalendarDraftObject) {
+				
+				@Override
+				protected void onAccept() {
+					cleanSelectedDates();
+					onChange();
+					changeYear();
+				}
+			};
+		}
 	}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//									IT DIALOG AUX METHODS
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- IT methods
 
 	private void accept(ITEmployee itEmployee) {
 		employeeCalendarDraftObject.createUpdateITEmployee(itEmployee,
@@ -1658,14 +1630,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		}
 	}
 	
-	private void reloadCalendar() {
-		employeeCalendarDraftObject.initCalendarInfo(t -> {
-			// Init save and undo all
-			onSaved();
-			changeYear();
-		}, f -> {});
-	}
-	
 	private void comunicateIT(ITEmployee itEmployee, IT it) {
 		employeeCalendarDraftObject.comunicateITBaja(itEmployee, it, t -> {
 			AonConfirmDialog dialog = new AonConfirmDialog();
@@ -1685,9 +1649,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			String affiliationNumber = s.getNss();
 			String regime = itEmployee.getContractInfo().getCompleteCCC().substring(0, 4);
 			String contributionAccount = itEmployee.getContractInfo().getCompleteCCC().substring(4, itEmployee.getContractInfo().getCompleteCCC().length());
-			String dateFromStr = formatFullDate.format(new Date());
-			String dateToStr = formatFullDate.format(new Date());
-			String startDateStr = formatFullDate.format(it.getStartDate());
+			String dateFromStr = fullDateFormat.format(new Date());
+			String dateToStr = fullDateFormat.format(new Date());
+			String startDateStr = fullDateFormat.format(it.getStartDate());
 			
 			String fileDownloadURL = GWT.getModuleBaseURL()+ "it_export/";
 			String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
@@ -1704,9 +1668,15 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		}, f -> {});
 	}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//									DAY TYPES DIALOG (AUX METHODS)
-	// ----------------------------------------------------------------------------------------------------
+	private void reloadCalendar() {
+		employeeCalendarDraftObject.initCalendarInfo(t -> {
+			// Init save and undo all
+			onSaved();
+			changeYear();
+		}, f -> {});
+	}
+	
+	// -------------------------------------------- DayTypes dialog auxiliar methods
 	
 	private String getCaptionByDayType(DayType dayType) {
 		switch (dayType) {
@@ -1745,9 +1715,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		changeYear();
 	}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//										RESET CALENDAR METHODS
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- Reset calendar
 	
 	private void cleanCalendar() {
 		for (int i = 1; i < totalRows; i++)
@@ -1767,20 +1735,21 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				cellsDayType[row][column] = new DayTypeCell(DayType.NOTYPEDAY);
 	}
 	
-	// ----------------------------------------------------------------------------------------------------
-	//									PAINT CALENDAR AUX METHODS
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- Calendar view auxiliar methods
 
-	@SuppressWarnings("deprecation")
 	private int calculateNumberDayOfWeek(Date date) {
 		DateUtils.resetTime(date);
-		int numDay = date.getDay();
+		try {
+			int numDay = Integer.parseInt(dayOfWeekFormat.format(date));
+			
+			// Tratamiento calendario español, 0 = Lunes, 6 = Domingo
+			if (0 == numDay)
+				numDay = 7;
 
-		// Tratamiento calendario español, 0 = Lunes, 6 = Domingo
-		if (0 == numDay)
-			numDay = 7;
-
-		return numDay;
+			return numDay;
+		} catch (NumberFormatException e) {
+			return -1;
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -1801,7 +1770,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		return null == endDate ? 0 : (DateUtils.getDaysBetween(startDate, endDate) + 1);
 	}
 	
-	
 	private void cleanSelectedDates() {
 		this.selectedDates.clear();
 	}
@@ -1815,17 +1783,20 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				row == 28 || row == 31 || row == 34;
 	}
 	
-	@SuppressWarnings("deprecation")
 	private int calculateDatePosition(Date date) {
-		int row = calculateMonthRow(date.getMonth());
 		int pos = -1;
-		for(int col = 1; col < totalCols; col++){
-			if(date.equals(cellsDates[row][col])){
-				pos = (row * totalCols) + col;
-				return pos;
-			}
+		try {
+			int row = calculateMonthRow(Integer.parseInt(monthFormat.format(date))-1);
+			for(int col = 1; col < totalCols; col++)
+				if(date.equals(cellsDates[row][col])) {
+					pos = (row * totalCols) + col;
+					return pos;
+				}
+			
+			return pos;
+		} catch (NumberFormatException e) {
+			return pos;
 		}
-		return pos;
 	}
 	
 	private int calculateMonthRow(int month) {
@@ -1922,6 +1893,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		}
 	}
 	
+	// -------------------------------------------- Auxiliar methods
+	
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
 	    int indexToFind = 0;
@@ -1956,9 +1929,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			}
 	}
 
-	// ----------------------------------------------------------------------------------------------------
-	//											CONTEXT MENU
-	// ----------------------------------------------------------------------------------------------------
+	// -------------------------------------------- ContextMenu
 	
 	@Override
 	public void onContextMenu(ContextMenuEvent event) {
@@ -1973,9 +1944,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		menu.addItem("A\u00f1adir dia(s) ausencia", () -> initDatesDialog(DayType.DROPDAY));
 		menu.addItem("A\u00f1adir dia(s) vacaciones", () -> initDatesDialog(DayType.HOLIDAY));
 		menu.addItem("A\u00f1adir dia(s) parcialidad", () -> initDatesDialog(DayType.PARTIALITY));
-		if(this.employeeCalendarDraftObject.isAgrarianContract())
+		if(this.employeeCalendarDraftObject.isAgrarian())
 			menu.addItem("A\u00f1adir dia(s) peonadas", () -> initDatesDialog(DayType.REAL_DAYS));
-		if(!this.employeeCalendarDraftObject.isFullTimeJourney()) {
+		if(!this.employeeCalendarDraftObject.isFullTime()) {
 			menu.addSeparator();
 			menu.addItem("A\u00f1adir horas", () -> initHourDialog());
 		}
@@ -1986,7 +1957,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	    menu.show();
 	}
 	
-	// ----------------------------------------------- Toolbar
+	// -------------------------------------------- Toolbar
 	
 	private AonToolbar getToolbarPanel() {
 		

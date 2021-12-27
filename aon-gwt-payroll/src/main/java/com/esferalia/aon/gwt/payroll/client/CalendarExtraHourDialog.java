@@ -12,27 +12,35 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class EmployeeCalendarAgrarianDialog extends CustomDialog {
+public abstract class CalendarExtraHourDialog extends CustomDialog {
 
 	// ------------------------------------ UiBinder
 	
-	interface Binder extends UiBinder<Widget, EmployeeCalendarAgrarianDialog> {}
+	interface Binder extends UiBinder<Widget, CalendarExtraHourDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	// ------------------------------------ UiFields
 	
 	@UiField
-	ListBox typeListBox;
-	
-	@UiField
 	DateBoxEx startDateDB;
 	
 	@UiField
 	DateBoxEx endDateDB;
+	
+	@UiField
+	HTMLPanel extraHourBlock;
+	
+	@UiField
+	TextBox extraHourOpt;
+	
+	@UiField
+	Label errorMessage;
 	
 	@UiField
 	Button cancelButton;
@@ -42,48 +50,61 @@ public abstract class EmployeeCalendarAgrarianDialog extends CustomDialog {
 	
 	// ------------------------------------ Variables
 	
-	private Double percent = 1.00;
+	private EmployeeCalendarDraftObject employeeCalendarDraftObject;
+	private List<Date> selectedDates;
+	
 	private Date contractStartDate;
 	private Date contractEndDate;
 	
 	// ------------------------------------ Constructor
-
-	protected EmployeeCalendarAgrarianDialog(String caption, List<Date> selectedDates, Date contractStartDate, Date contractEndDate) {
-		setCaption(caption);
+	
+	protected CalendarExtraHourDialog(List<Date> selectedDates, Date contractStartDate, Date contractEndDate, EmployeeCalendarDraftObject employeeCalendarDraftObject) {
+		setCaption("HORAS EXTRAS");
 		setWidget(binder.createAndBindUi(this));
 		this.hideClose();
-		typeListBox.clear();
-		typeListBox.addItem("Jornadas Reales", "JORNADAS_REALES");
-		typeListBox.addItem("Jornadas Te\u00f3ricas", "JORNADAS_TEORICAS");
-		
-		if(!selectedDates.isEmpty()) {
-			selectedDates.sort(null);
-			startDateDB.setValue(selectedDates.get(0));
-			endDateDB.setValue(selectedDates.get(selectedDates.size() - 1));
-		}
-		
 		this.contractStartDate = contractStartDate;
 		this.contractEndDate = contractEndDate;
+		this.selectedDates = selectedDates;
+		this.employeeCalendarDraftObject = employeeCalendarDraftObject;
+		
+		setDefaultDates();
+		initDefaultValuesTB();
 		
 		startDateDB.getTextBox().addClickHandler(e -> startDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; "));
 		endDateDB.getTextBox().addClickHandler(e -> endDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; "));
 		
 		cancelButton.addClickHandler(e -> hide());
 		acceptButton.addClickHandler(e -> {
-			if(null != startDateDB.getValue())
+			if(null != startDateDB.getValue()) {
+				accept();
 				onAccept();
+			}
 			hide();
 		});
-	
+		
 		showDialog();
 	}
 	
-	// ------------------------------------ Abstract methods
+	private void setDefaultDates() {
+		if(null != selectedDates && !selectedDates.isEmpty()) {
+			startDateDB.setValue(selectedDates.get(0));
+			endDateDB.setValue(selectedDates.get(selectedDates.size() - 1));
+		} else {
+			this.startDateDB.setValue(contractStartDate);
+			this.endDateDB.setValue(contractEndDate);
+		}
+	}
+
+	private void accept() {
+		this.employeeCalendarDraftObject.addExtraHour(startDateDB.getValue(), endDateDB.getValue(), getExtraHours());
+	}
+	
+	// ------------------------------------ Abstract method
 	
 	protected abstract void onAccept();
 	
 	// ------------------------------------ UiHandlers
-
+	
 	@UiHandler("startDateDB")
 	public void onStartDateDBChange(ValueChangeEvent<Date> event) {
 		Date date = event.getValue();
@@ -99,33 +120,44 @@ public abstract class EmployeeCalendarAgrarianDialog extends CustomDialog {
 	}
 	
 	// ------------------------------------ Auxiliar methods
-	
-	public Integer getTypeIdx(){
-		return typeListBox.getSelectedIndex();
+
+	private void initDefaultValuesTB() {
+		Double hourComplementary = getDefaultExtraHoury();
+		this.extraHourOpt.setValue(null == hourComplementary ? "" : Double.toString(hourComplementary));
 	}
+
+	// ------------------------------------ Get hours
 	
-	public double getPercentValue() {
-		return Math.round(this.percent * 100.0) / 100.0;
+	private Double getDefaultExtraHoury() {
+		if(null == selectedDates || selectedDates.isEmpty())
+			return null;
+		
+		Double defaultValue = employeeCalendarDraftObject.getExtraHourByDate(selectedDates.get(0));
+		
+		for(Date date : selectedDates) {
+			Double iteratorValue =  employeeCalendarDraftObject.getExtraHourByDate(date);
+			if(defaultValue != iteratorValue)
+				return null;
+		}
+		
+		return defaultValue;
 	}
 	
 	public Date getStartDate() {
-		return startDateDB.getValue();
-	}
-	
-	public void setStartDate(Date date){
-		startDateDB.setValue(date);
+		return this.startDateDB.getValue();
 	}
 	
 	public Date getEndDate() {
-		return endDateDB.getValue();
+		return this.endDateDB.getValue();
 	}
 	
-	public void setEndDate(Date date){
-		endDateDB.setValue(date);
-	}
-	
-	public String getType() {
-		return typeListBox.getSelectedValue();
+	public Double getExtraHours(){
+		try {
+			String hourStr = extraHourOpt.getValue();
+			return Double.parseDouble(hourStr);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 	
 	// ------------------------------------ Show dialog
@@ -137,5 +169,5 @@ public abstract class EmployeeCalendarAgrarianDialog extends CustomDialog {
 			show();
 		});
 	}
-
+	
 }

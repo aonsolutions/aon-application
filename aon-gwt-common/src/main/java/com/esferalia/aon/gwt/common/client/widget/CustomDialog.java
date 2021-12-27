@@ -2,8 +2,8 @@ package com.esferalia.aon.gwt.common.client.widget;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
@@ -18,7 +18,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -35,11 +34,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CustomDialog extends PopupPanel
-		implements CustomDialogBar.Listener {
+public class CustomDialog extends PopupPanel implements CustomDialogBar.Listener {
 
-	private static class SimpleResizePanel extends SimplePanel
-			implements RequiresResize, ProvidesResize {
+	private static class SimpleResizePanel extends SimplePanel implements RequiresResize, ProvidesResize {
 
 		public SimpleResizePanel() {
 			Element element = getElement();
@@ -48,8 +45,8 @@ public class CustomDialog extends PopupPanel
 
 		@Override
 		public void onResize() {
-			Widget child = getWidget();
-			if ((child != null) && (child instanceof RequiresResize)) {
+			Widget child = super.getWidget();
+			if (child instanceof RequiresResize) {
 				((RequiresResize) child).onResize();
 			}
 		}
@@ -59,8 +56,8 @@ public class CustomDialog extends PopupPanel
 	/**
 	 * Handles the logic to track click-drag movements with the mouse.
 	 */
-	private abstract class MouseDragHandler
-			implements MouseMoveHandler, MouseUpHandler, MouseDownHandler {
+	private abstract class MouseDragHandler implements MouseMoveHandler, MouseUpHandler, MouseDownHandler {
+		
 		protected int dragStartX;
 		protected int dragStartY;
 		protected boolean dragging = false;
@@ -74,7 +71,6 @@ public class CustomDialog extends PopupPanel
 				hamh.addMouseDownHandler(this);
 				hamh.addMouseUpHandler(this);
 				hamh.addMouseMoveHandler(this);
-
 			}
 		}
 
@@ -86,13 +82,15 @@ public class CustomDialog extends PopupPanel
 			DOM.setCapture(widget.getElement());
 			dragStartX = event.getClientX();
 			dragStartY = event.getClientY();
-			DOM.eventPreventDefault(DOM.eventGetCurrentEvent());
+			event.preventDefault();
 		}
 
 		public void onMouseMove(MouseMoveEvent event) {
 			if (dragging) {
-				handleDrag(event.getClientX() - dragStartX,
-						event.getClientY() - dragStartY);
+				handleDrag(
+					event.getClientX() - dragStartX,
+					event.getClientY() - dragStartY
+				);
 				dragStartX = event.getClientX();
 				dragStartY = event.getClientY();
 			}
@@ -218,12 +216,12 @@ public class CustomDialog extends PopupPanel
 			Element dialogElement = CustomDialog.this.getElement();
 
 			Element div = DOM.createDiv();
-			DOM.setStyleAttribute(div, "position", "absolute");
-			DOM.setStyleAttribute(div, "top", top);
-			DOM.setStyleAttribute(div, "left", left);
-			DOM.setStyleAttribute(div, "width", width);
-			DOM.setStyleAttribute(div, "height", height);
-			DOM.setStyleAttribute(div, "cursor", cursor);
+			div.setAttribute("position", "absolute");
+			div.setAttribute("top", top);
+			div.setAttribute("left", left);
+			div.setAttribute("width", width);
+			div.setAttribute("height", height);
+			div.setAttribute("cursor", cursor);
 
 			dialogElement.appendChild(div);
 			dragHandler.setWidgets(HTML.wrap(div));
@@ -256,6 +254,10 @@ public class CustomDialog extends PopupPanel
 		setAnimationEnabled(false);
 
 	}
+	
+	public void hideClose() {
+		dialogBar.hideClose();
+	}
 
 	private void initWidget() {
 
@@ -286,6 +288,7 @@ public class CustomDialog extends PopupPanel
 	}
 
 	public void handleMaximize() {
+		// Handle future maximize
 	}
 
 	@Override
@@ -370,19 +373,11 @@ public class CustomDialog extends PopupPanel
 		htmlPanel.add(inputTextBox, inputDivId);
 		
 		final Button cancelButton = new Button("Cancelar");
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				inputDialog.hide();
-			}
-		});
+		cancelButton.addClickHandler(e -> inputDialog.hide());
 		final Button acceptButton = new Button("Aceptar");
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				inputDialog.hide();
-				cb.onSuccess(inputTextBox.getText());
-			}
+		acceptButton.addClickHandler(e -> {
+			inputDialog.hide();
+			cb.onSuccess(inputTextBox.getText());
 		});
 
 		htmlPanel.add(cancelButton, buttonsDivId);
@@ -391,7 +386,6 @@ public class CustomDialog extends PopupPanel
 		inputDialog.setWidget(htmlPanel);
 
 		inputDialog.center();
-		
 		
 	}
 	
@@ -431,21 +425,13 @@ public class CustomDialog extends PopupPanel
 		htmlPanel.add(listBox, inputDivId);
 		
 		final Button cancelButton = new Button("Cancelar");
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				inputDialog.hide();
-			}
-		});
+		cancelButton.addClickHandler(e -> inputDialog.hide());
 		final Button acceptButton = new Button("Aceptar");
-		acceptButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				inputDialog.hide();
-				cb.onSuccess(listBox.getSelectedValue());
-			}
+		acceptButton.addClickHandler(e -> {
+			inputDialog.hide();
+			cb.onSuccess(listBox.getSelectedValue());
 		});
-
+		
 		htmlPanel.add(cancelButton, buttonsDivId);
 		htmlPanel.add(acceptButton, buttonsDivId);
 		

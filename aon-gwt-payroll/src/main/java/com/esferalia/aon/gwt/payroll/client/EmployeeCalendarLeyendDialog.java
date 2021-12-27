@@ -1,18 +1,23 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.payroll.shared.CalendarDaysType.DayType;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class EmployeeCalendarLeyendDialog extends AonCustomDialog {
+public abstract class EmployeeCalendarLeyendDialog extends CustomDialog {
 
+	// ------------------------------------ UiBinder
+	
 	interface Binder extends UiBinder<Widget, EmployeeCalendarLeyendDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	// ------------------------------------ UiFields
 	
 	@UiField
 	Label nonWorkingDays;
@@ -50,11 +55,13 @@ public abstract class EmployeeCalendarLeyendDialog extends AonCustomDialog {
 	@UiField
 	Label peonadasDays;
 	
-	public EmployeeCalendarLeyendDialog() {
+	// ------------------------------------ Constructor
+	
+	protected EmployeeCalendarLeyendDialog() {
 		setCaption("Leyenda");
 		setWidget(binder.createAndBindUi(this));
-		this.showCloseButton(true);
 		initAccumulateTypeDays();
+		showDialog();
 	}
 
 	private void initAccumulateTypeDays() {
@@ -94,7 +101,19 @@ public abstract class EmployeeCalendarLeyendDialog extends AonCustomDialog {
 		Integer peonadasDaysCount = getTotalYearDays(DayType.REAL_DAYS);
 		peonadasDays.setText(0 == peonadasDaysCount ? "" : "(" + peonadasDaysCount + " d\u00EDas)");
 	}
+	
+	// ------------------------------------ Abstract methods
 
 	protected abstract Integer getTotalYearDays(DayType realDays);
+	
+	// ------------------------------------ Show dialog
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
+	}
 
 }

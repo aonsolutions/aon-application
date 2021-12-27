@@ -1,0 +1,62 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+    <ui:style type="com.esferalia.aon.gwt.payroll.client.CalendarComplementaryHourDialog.MyStyle">
+    
+    	.container{
+			display: flex;
+			flex-direction: column;
+			gap: .7rem;
+			padding: 1rem;
+		}
+		
+		.row {
+			display: flex;
+			gap: .5rem;
+			align-items: center;
+		}
+		
+		.spaceBetween{
+			justify-content: space-between;
+		}
+	
+		.month {
+			padding-left: .5rem;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			width: 100%;
+			gap: .5rem;
+			justify-content: flex-end;
+		}
+		
+		.cell {
+			width: 1.5rem;
+			text-align: center;
+			padding: 0 !important;
+		}
+
+	</ui:style>
+
+	<g:HTMLPanel styleName="{style.container}">
+	
+		<g:HTMLPanel styleName="{style.row} {style.month}">
+			<g:Label text="Mes: "/>
+			<g:ListBox ui:field="monthLB" />
+		</g:HTMLPanel>
+	
+		<g:HTMLPanel ui:field="header" styleName="{style.row} {style.spaceBetween}" />
+		<g:HTMLPanel ui:field="table" styleName="{style.row} {style.spaceBetween}" />
+		
+		<g:HTMLPanel  styleName="{style.row}">
+			<g:Label ui:field="errorMessage" text="Días en blanco o 0 equivale a no horas complementarias." />
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
+
+	</g:HTMLPanel>
+
+</ui:UiBinder>

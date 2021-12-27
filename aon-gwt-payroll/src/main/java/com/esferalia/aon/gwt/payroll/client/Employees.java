@@ -1022,7 +1022,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO ApÈndice de mÈtodo generado autom·ticamente
+				// TODO Ap√©ndice de m√©todo generado autom√°ticamente
 				Window.alert(caught.getLocalizedMessage());
 			}
 		});
@@ -1087,7 +1087,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO ApÈndice de mÈtodo generado autom·ticamente
+				// TODO Ap√©ndice de m√©todo generado autom√°ticamente
 				Window.alert(caught.getLocalizedMessage());
 			}
 		});
@@ -1802,7 +1802,128 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	}
 
+	private void loadEmployee(TreeItem workplaceItem, int beforeIndex, Employee employee) {
+		TreeItem employeeItem = new TreeItem();
+		workplaceItem.insertItem(beforeIndex, employeeItem);
+		loadEmployee(workplaceItem, employeeItem, employee);
+	}
 
+	private void loadEmployee(TreeItem workplaceItem, TreeItem employeeItem, Employee employee) {
+
+		boolean current = isActive(employee);
+
+		String fullName = employee.getFullname();
+
+		StringBuffer text = new StringBuffer(fullName);
+		if (endDate && (employee.getEndDate() != null)) {
+			text.append(" (");
+			text.append(END_DATE_FORMAT.format(employee.getEndDate()));
+			text.append(")");
+		}
+
+		employeeItem.setHTML(materialIconItemHTML(current ? "person" : "person_off", text.toString()));
+		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(((Workplace) workplaceItem.getUserObject()), employee);
+		employeeItem.setUserObject(employeeDraftObject);
+		employeeItem.ensureDebugId(getId(employee));
+
+		TreeItem salarytItem = addMaterialIconItem(employeeItem, "N\u00F3minas", "payments");
+		EmployeeSalaryObject employeeSalaryObject = new EmployeeSalaryObject(employee.getId(), employee.getFullname());
+		salarytItem.setUserObject(employeeSalaryObject);
+		salarytItem.ensureDebugId(getId(employee)+"-employeesalary");
+		
+		//Employee Calendar (BETA)
+		TreeItem calendarNewDraftItem = addMaterialIconItem(employeeItem, "Calendario", "calendar_today");
+		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(employee.getId());
+		
+		calendarNewDraftItem.setUserObject(employeeCalendarDraftObject);
+		calendarNewDraftItem.ensureDebugId(getId(employee)+"-employeecalendarnew");
+		
+		
+		if (extended) {
+
+			Date salaryDate = DateUtils.before(DateUtils.after(new Date(), employee.getStartDate()),
+					employee.getEndDate());
+			Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
+			Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
+			Date issueDate = endDate;
+
+			TreeItem salaryDraftItem = addMaterialIconItem(employeeItem, "Borrador", "edit");
+			salaryDraftItem.ensureDebugId(getId(employee)+"-draft");
+
+			SalaryDraft salaryDraft = new SalaryDraft();
+			salaryDraft.setEmployee(employee);
+			salaryDraft.setStartDate(startDate);
+			salaryDraft.setEndDate(endDate);
+			salaryDraft.setIssueDate(issueDate);
+			salaryDraft.setType(Type.SALARY);
+
+			SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, /*dataObject,*/ employeesService);
+			salaryDraftItem.setUserObject(draftObject);
+
+			final TreeItem employeeEventsItem = addMaterialIconItem(employeeItem, "Variables C\u00E1lculo", "calendar_month");
+			EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(employee.getId());
+			
+			employeeEventsItem.setUserObject(employeeEventsDraftObject);
+			
+			employeeEventsItem.ensureDebugId(getId(employee)+"-events");
+
+			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
+			
+			//Add employeeCalendar to Draft
+			employeeDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
+			employeeEventsDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
+			draftObject.setEmployeeCalendarDraftObject(employeeCalendarDraftObject);
+						
+			Category category = employee.getCategory();
+
+			// Agreement Category
+			if (category == null)
+				return;
+
+			Agreement agreement = category.getAgreement();
+			Agreement workplaceAgreement = ((Workplace) workplaceItem.getUserObject()).getAgreement();
+
+			if (workplaceAgreement != null && NumberUtils.equals(workplaceAgreement.getId(), agreement.getId()))
+				return;
+
+			TreeItem enterpriseItem = workplaceItem.getParentItem();
+			Enterprise enterprise = (Enterprise) enterpriseItem.getUserObject();
+
+			final TreeItem categoryItem = addMaterialIconItem(employeeItem,
+					category.getLevel() + ". " + category.getDescription(), "article");
+			categoryItem.ensureDebugId(getId(employee)+"-category");
+			
+			CategoryDraft categoryDraft = new CategoryDraft();
+			categoryDraft.setId(agreement.getId());
+			categoryDraft.setDomain(agreement.getDomain());
+			categoryDraft.setLevelId(category.getLevelId());
+			categoryDraft.setDescription(agreement.getDescription());
+			categoryDraft.setSSNumber(agreement.getSSNumber());
+			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
+			categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
+			final CategoryDraftObject categoryDraftObject = new CategoryDraftObject(
+					enterprise.getDomain(),
+					Wnd.getCurrentDomainNameURL(),
+					categoryDraft, 
+					employeesService);
+
+			employeesService.getChanges(Wnd.getCurrentDomainNameURL(),agreement, new AsyncCallback<SortedSet<Date>>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					categoryItem.setUserObject(categoryDraftObject);
+				}
+
+				public void onSuccess(SortedSet<Date> result) {
+					if (!CollectionUtils.isEmpty(result)) {
+						Date lastChange = result.last();
+						categoryDraftObject.setStartDate(DateUtils.getFirstDayOfMonth(lastChange));
+						categoryDraftObject.setEndDate(DateUtils.getLastDayOfMonth(lastChange));
+					}
+					categoryItem.setUserObject(categoryDraftObject);
+				};
+			});
+			
+		}
 
 	/**
 	 * A helper method to simplify adding tree items that have attached material icon.

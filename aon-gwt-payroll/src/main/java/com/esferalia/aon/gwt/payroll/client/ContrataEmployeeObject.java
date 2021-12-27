@@ -337,7 +337,7 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (Calendar)
 	
 	public void getEmployeeCalendarObject(Consumer<EmployeeCalendarDraftObject> success) {
-		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(contractData.getContractId(), employeesService);
+		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(contractData.getContractId());
 		success.accept(employeeCalendarDraftObject);
 	}
 	

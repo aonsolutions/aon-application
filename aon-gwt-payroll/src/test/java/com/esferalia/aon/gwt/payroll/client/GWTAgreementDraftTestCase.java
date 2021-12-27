@@ -217,21 +217,21 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 		@Override
 		public void getEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-				AsyncCallback<EmployeeCalendarInfo> callback) {
+				AsyncCallback<EmployeeCalendarInfo> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void setEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-				EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<String> callback) {
+				EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void resetEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-				AsyncCallback<String> callback) {
+				AsyncCallback<Void> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}
@@ -682,21 +682,21 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void getEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-							AsyncCallback<EmployeeCalendarInfo> callback) {
+							AsyncCallback<EmployeeCalendarInfo> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}
 
 					@Override
 					public void setEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-							EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<String> callback) {
+							EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}
 
 					@Override
 					public void resetEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-							AsyncCallback<String> callback) {
+							AsyncCallback<Void> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}

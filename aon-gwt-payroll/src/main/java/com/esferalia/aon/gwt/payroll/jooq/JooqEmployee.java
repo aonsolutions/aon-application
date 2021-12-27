@@ -513,7 +513,7 @@ public class JooqEmployee {
 				.execute();
 		}
 		
-		if(null != contractData.getMdctz() && !!AonStringUtils.equalsIgnoreCase(contractData.getMdctz(), "-1")) {
+		if(null != contractData.getMdctz() && !AonStringUtils.equalsIgnoreCase(contractData.getMdctz(), "-1")) {
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
 				.set(CONTRACT_DATA.NAME, "MODELO_COTIZACION_AGRARIO")
