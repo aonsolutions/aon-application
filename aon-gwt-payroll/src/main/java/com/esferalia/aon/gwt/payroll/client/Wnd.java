@@ -16,14 +16,12 @@ public class Wnd {
 	
 	public static native String getCurrentUser()
 	/*-{
-		var newAon = $wnd.localStorage.getItem("aon_solutions");
-		return newAon ? $wnd.localStorage.getItem("aon_domain_login") : $wnd.getCurrentUser();
+		return $wnd.getCurrentUser();
 	}-*/;
 
 	public static native String getCurrentDomainNameURL()
 	/*-{
-		var newAon = $wnd.localStorage.getItem("aon_solutions");
-		return newAon ? $wnd.localStorage.getItem("aon_domain_name") : $wnd.getCurrentDomainNameURL();
+		return $wnd.getCurrentDomainNameURL();
 	}-*/;
 
 }
