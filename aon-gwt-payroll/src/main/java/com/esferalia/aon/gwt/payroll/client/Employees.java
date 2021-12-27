@@ -1124,9 +1124,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	protected <T extends HasTreeItems> EmployeeCalendarDraftObject addEmployeeCalendarItem(T employeeItem,Employee employee) {
 		//Employee Calendar (BETA)
 		TreeItem calendarNewDraftItem = addMaterialIconItem(employeeItem, "Calendario", "calendar_today");
-		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(
-				employee.getId(), 
-				employeesService);
+		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(employee.getId());
 		
 		calendarNewDraftItem.setUserObject(employeeCalendarDraftObject);
 		calendarNewDraftItem.ensureDebugId(getId(employee)+"-employeecalendarnew");
@@ -1924,6 +1922,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			});
 			
 		}
+	}
 
 	/**
 	 * A helper method to simplify adding tree items that have attached material icon.
