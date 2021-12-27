@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.data.DataRequestUpdate;
+import net.aonsolutions.db.up2date.payroll.Holidays2022Insert;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.Bases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2021Update;
@@ -192,19 +193,19 @@ public class Up2Date {
     		//RemoveDataResponse.REMOVE_DATA_RESPONSE,
     		//DataRequestCreation.DATA_REQUEST_CREATION,
     		//CertificatesUpdate.CERTIFICATESUPDATE,
-    		DataRequestUpdate.DATA_REQUEST_UPDATE,
-    		Bases2021UpdateIII.BASES2021UPDATEIII,
-    		HomeBases2019Close.HOMEBASES2019CLOSE,
-    		HomeBases2021UpdateIII.HOMEBASES2021UPDATEIII,
-    		SalaryHours2021UpdateIII.SALARYHOURS2021UPDATEIII,
-    		TrainingBases2021UpdateIII.TRAININGBASES2021UPDATEIII,
-    		AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
-    		TrainingPercentages2021Update.TRAINNINGPERCENTAGES2021UPDATE,
-    		FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE
-    		
+    		//DataRequestUpdate.DATA_REQUEST_UPDATE,
+    		//Bases2021UpdateIII.BASES2021UPDATEIII,
+    		//HomeBases2019Close.HOMEBASES2019CLOSE,
+    		//HomeBases2021UpdateIII.HOMEBASES2021UPDATEIII,
+    		//SalaryHours2021UpdateIII.SALARYHOURS2021UPDATEIII,
+    		//TrainingBases2021UpdateIII.TRAININGBASES2021UPDATEIII,
+    		//AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
+    		//TrainingPercentages2021Update.TRAINNINGPERCENTAGES2021UPDATE,
+    		//FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE
+    		Holidays2022Insert.HOLIDAYS2022INSERT
 
     };
-
+    
 
 	// ------------------------------------------------------------------------
 
