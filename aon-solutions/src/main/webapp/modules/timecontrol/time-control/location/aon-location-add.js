@@ -1,12 +1,12 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { setValueName, serializeForm, waitEl } from "../../../../services/utils.js";
 import { deleteLocation, saveLocation } from "../../../../services/service.js";
-import { getPosition } from "../../../../services/maps.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import * as ACTION from '../../../actions.js';
-import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from "../../../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
 import { createCard, createForm, createInput, createToolbar } from "../../../notification/createComponent.js";
+import { AonMap } from "../../../../components/aon-map.js";
 
 
 export class AonLocationAdd extends AonElement {
@@ -53,12 +53,10 @@ export class AonLocationAdd extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (CONSTANT.DATA == name && newValue) {
+    if (CONSTANT.DATA == name && newValue) 
       this.setFormValues();
-    }
-    if (CONSTANT.ADD == name && newValue) {
+    else if (CONSTANT.ADD == name && newValue) 
       this.paintViewMap(undefined);
-    }
   }
 
 
@@ -74,20 +72,24 @@ export class AonLocationAdd extends AonElement {
 
     const form = createForm(this.id+"Form");
     this.appendChild(form.element);
+
     let div = this.createElement(TAG.DIV);
     div.id = this.id+"Div";
+
     const className = this.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
     div.className = className;
     form.appendChild(div);
+
     let div2 = this.createElement(TAG.DIV);
-    div2.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
+    div2.classList.add(CSS.AON_COL_XS_12);
     div.appendChild(div2);
     
     const aonCard = createCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
 
     let divG = this.createElement(TAG.DIV);
-    divG.className = CSS.AON_COL_XS_10;
+    divG.classList.add(CSS.AON_COL_SM_5, CSS.AON_COL_XS_10);
     aonCard.appendChild(divG);
+
     createInput({
       attributes:{
         name:"description",
@@ -98,8 +100,9 @@ export class AonLocationAdd extends AonElement {
     }, divG);
 
     divG = this.createElement(TAG.DIV);
-    divG.className = CSS.AON_COL_XS_2;
+    divG.classList.add(CSS.AON_COL_SM_1, CSS.AON_COL_XS_2);
     aonCard.appendChild(divG);
+
     createInput({
       attributes:{
         name:"radio",
@@ -110,6 +113,21 @@ export class AonLocationAdd extends AonElement {
     }, divG);
 
 
+    divG = this.createElement(TAG.DIV);
+    divG.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
+    aonCard.appendChild(divG);
+
+     createInput({
+      attributes:{
+        name:"direction",
+        id:"direction" ,
+        type:"text",
+        description:"Dirección",
+        disabled:true
+      }
+    }, divG);
+    
+  
     createInput({
       attributes:{
         name:"latitude",
@@ -138,7 +156,7 @@ export class AonLocationAdd extends AonElement {
     }, aonCard);
 
     const divMap = this.createElement(TAG.DIV);
-    divMap.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
+    divMap.classList.add(CSS.AON_COL_XS_12);
     divMap.id = "divMap";
     div.appendChild(divMap);
   }
@@ -160,45 +178,24 @@ export class AonLocationAdd extends AonElement {
     let divMap = await waitEl(`#divMap`);
     divMap.innerHTML = "";
 
-    const aonMap = createCard({id: this.id+"Map", title:"Mapa", flex:"true"}, divMap).getContent();
-    
-    const zoom = 16;
-    let iframeId = this.id + "Iframe";
-    let iframe = this.createElement("iframe");
-    iframe.id = iframeId;
-    iframe.frameborder = 0;
-    iframe.style.border = 0;
-    iframe.style.height = "400px";
-    iframe.style.width = "100%";
     let position = null;
     if (data && data.latitude && data.longitude) 
-      position = { ...data}
+      position = { lat: data.latitude, lng: data.longitude}
 
-    iframe = this.iframeOnload(iframe, zoom, position);
-    
-    aonMap.appendChild(iframe);
-  }
+    let aonMap = new AonMap();
+    aonMap.POSITION = position;
+    aonMap.geocoder = true;
+    aonMap.addEventListener(EVENT.COORDINATES, ({detail})=>{
+      this.setCoordinates(detail);
+    });
 
-  iframeOnload(iframe, zoom, position = null) {
-    iframe.onload = async () => {
+    aonMap.addEventListener(EVENT.GEOCODE, ({detail})=>{
+      if(detail && detail.name)
+        this.getElement("direction").value = detail.name
+    });
 
-      const doc = iframe.contentDocument;
-      const wd = iframe.contentWindow;
-
-      await Promise.all([
-        this.loadLink("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css", doc),
-        this.loadLink("https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css", doc),
-        this.loadScript("https://unpkg.com/leaflet@1.7.1/dist/leaflet.js", doc),
-        this.loadScript("https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js", doc)
-      ]);
-
-      if(!position)
-        position = await getPosition().then(({ latitude, longitude }) => ({ latitude, longitude })).catch((e) => null);
-
-      if (position) 
-        this.initMap(doc, wd, position, zoom);
-    }; //onload
-    return iframe;
+    const cardContentMap = createCard({id: this.id+"Map", title:"Mapa", flex:"true"}, divMap).getContent();
+    cardContentMap.appendChild(aonMap);
   }
 
   getFormValues() {
@@ -251,50 +248,8 @@ export class AonLocationAdd extends AonElement {
     });
   }
 
-  initMap(doc, wd, pos, zoom){
-      let geocoder, map, marker;
-      const position = { lat: parseFloat(pos.latitude), lng: parseFloat(pos.longitude) };   
-      let mapContainer = doc.createElement("div");
-      mapContainer.style.width = "100%"; 
-      mapContainer.style.height = "100%"; 
-      mapContainer.id = "map";
-
-      doc.body.appendChild(mapContainer);
-
-      map = wd.L.map(mapContainer, {attributionControl: false}).setView(position, zoom);   
-
-      new wd.L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{ subdomains:['mt0','mt1','mt2','mt3']}).addTo(map);
-
-      geocoder = wd.L.Control.Geocoder.nominatim({ geocodingQueryParams: {countrycodes: 'es'} });
-
-      marker = this.addMarker(map, geocoder, doc, wd, position);
-
-      this.setCoordinates(position);
-
-      this.geocodeReverse(map, geocoder, doc, position);
-
-      wd.L.Control.geocoder({
-          placeholder: "Dirección",
-          position:"topright",
-          errorMessage: "Dirección no encontrada. Arrastre manualmente el marcador <br> a la ubicación (puede acercar o alejar la imagen)",
-          defaultMarkGeocode: false,
-          collapsed: false,
-          geocoder: geocoder,
-      }) .on('markgeocode', (result)=> {
-          const geocode = result.geocode;
-
-          if (marker) map.removeLayer(marker);
-
-          const latlng = geocode.center;
-
-          this.setCoordinates(latlng);
-
-          marker = this.addMarker(map, geocoder, doc, wd, latlng).bindPopup(geocode.name).openPopup();
-
-          map.fitBounds(geocode.bbox);
-          map.invalidateSize();
-      })
-      .addTo(map);
+  deleteManual(id){
+    deleteLocation({id});
   }
 
   setCoordinates(data) {
@@ -304,69 +259,6 @@ export class AonLocationAdd extends AonElement {
       setValueName("latitude", lat);
       setValueName("longitude", lng);
     }
-  }
-
-  async geocodeReverse(map, geocoder, doc, {lat, lng}){
-    this.geocodeLoading(doc, true);
-    let data = await new Promise((resolve, reject) => {
-      geocoder.reverse({lat, lng}, map.options.crs.scale(map.getZoom()), (results) => {
-        try {
-          let r = results[0];
-          if (r && r.name) 
-            resolve(r.name);
-        } catch (error) { }
-        reject(null);
-     });
-    });
-
-    if(data)
-      doc.querySelector(".leaflet-control-geocoder-form > input").value = data;
-    
-    this.geocodeLoading(doc, false);
-
-  }
-
-  geocodeLoading(doc, load = false){
-    try {
-      const classLoad = "leaflet-control-geocoder-throbber";
-      let buttonParent = doc.querySelector("button.leaflet-control-geocoder-icon").parentNode;
-      if(buttonParent)
-        load ?  buttonParent.classList.add(classLoad) : buttonParent.classList.remove(classLoad);
-    } catch (error) {}
-  }
-
-  addMarker(map, geocoder, doc, wd, {lat, lng}){
-    let marker = wd.L.marker([lat, lng], { draggable: true }).addTo(map);
-    marker.on('dragend',  () =>{
-      this.setCoordinates(marker.getLatLng());
-      this.geocodeReverse(map, geocoder, doc, marker.getLatLng());
-    });
-    return marker;
-  } 
-
-  loadLink(url, doc){ 
-    return new Promise((resolve, reject) => {
-      const link = doc.createElement('link');
-      doc.head.appendChild(link);
-      link.onload = resolve;
-      link.onerror = reject;
-      link.href = url;
-      link.rel = "stylesheet";
-      link.type = "text/css";
-  });
-}
-
-  loadScript(url, doc) {
-    return new Promise((resolve, reject) => {
-      let script = doc.querySelector(`script[src="${url}"]`);
-      if(!script){
-          script = doc.createElement('script');
-          doc.head.appendChild(script);
-          script.onload = resolve;
-          script.onerror = reject;
-          script.src = url;
-      } else resolve(true);
-    });
   }
 
   back() {

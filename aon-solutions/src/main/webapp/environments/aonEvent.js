@@ -30,3 +30,5 @@ export const MORE = 'more';
 export const SCROLL = 'scroll';
 export const UPLOAD = 'upload';
 export const DELETE = 'delete';
+export const GEOCODE = 'geocode';
+export const COORDINATES = 'coordinates';

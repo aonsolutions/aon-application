@@ -177,6 +177,8 @@ public class Model184PartnerTable extends SimpleLayoutPanel implements HasSelect
 	private void newPerceptor() {
 		Mod184Partner detail = new Mod184Partner()
 				.setDirty(true)
+				.setKey("A")
+				.setSubKey("01")
 				.setTempId((model.getPartners().size() * (-1)));
 		model.getPartners().add(detail);
 		selectionIndex = model.getPartners().size() - 1;

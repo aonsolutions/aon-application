@@ -398,21 +398,23 @@ export class AonApplication extends AonElement {
 
   addSidenavOptionsList(data, options) {
     let sidenav = this.isMobile() ? this.getElement(this.MOBILE_SIDENAV_CONTENT) : this.getElement(this.SIDENAV);
-    let div = this.getElement(sidenav.id + data.id);
-    if(div){
-      const idUl = div.id + "List";
-      let ul =  this.getElement(idUl); 
-      if(!ul){
-        ul = this.createElement(TAG.UL);
-        ul.id =idUl;
-        ul.classList.add(CSS.AON_UL);
-        ul.classList.add(CSS.AON_CLIP);
-        div.appendChild(ul);
+    if(data && data.id && sidenav){
+      let div = this.getElement(sidenav.id + data.id);
+      if(div){
+        const idUl = div.id + "List";
+        let ul =  this.getElement(idUl); 
+        if(!ul){
+          ul = this.createElement(TAG.UL);
+          ul.id =idUl;
+          ul.classList.add(CSS.AON_UL);
+          ul.classList.add(CSS.AON_CLIP);
+          div.appendChild(ul);
+        }
+        options.forEach((option, i) => {
+          this.addSidenavOptionsListValue(data, option, ul);
+        });
+        return ul;
       }
-      options.forEach((option, i) => {
-        this.addSidenavOptionsListValue(data, option, ul);
-      });
-      return ul;
     }
     return null;
   }

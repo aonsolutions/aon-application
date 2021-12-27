@@ -1470,7 +1470,7 @@ public class SecurityDAO {
 	public static DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId) {
 		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
 		
-		User user = userId != null ? getUser(ctx, userId) : new User();
+		User user = userId != null ? UserDAO.get(ctx, f -> f.getIdProperty().eq(userId)) : new User();
 		
 		LinkedList<AonApp> domainApps = getDomainAppStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getActiveProperty().eq((byte) 1)))
 				.map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new));

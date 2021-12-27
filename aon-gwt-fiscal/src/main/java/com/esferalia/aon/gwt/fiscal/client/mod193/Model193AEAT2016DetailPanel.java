@@ -1,21 +1,16 @@
 package com.esferalia.aon.gwt.fiscal.client.mod193;
 
-import java.util.Date;
-
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193AEATDetail2016.IModel193DetailCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.esferalia.aon.occam.api.model.type.Mod1932015Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -27,116 +22,136 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Focusable {
 	
-	private static class MediumLabel extends InlineLabel {
-		private MediumLabel(String label) {
-			super(label);
-			setStyleName(AON.AON_CSS.aonFontMedium());
+	private static final String WIDTH_160PX = "160px";
+
+
+	private final class ValueChangeHandlerImplementation2 implements ValueChangeHandler<String> {
+		private final Mod193Detail detail;
+		private final IModel193DetailCallback callback;
+		private final AonTextBox issuingCode;
+
+		private ValueChangeHandlerImplementation2(Mod193Detail detail, IModel193DetailCallback callback,
+				AonTextBox issuingCode) {
+			this.detail = detail;
+			this.callback = callback;
+			this.issuingCode = issuingCode;
+		}
+
+		@Override
+		public void onValueChange(ValueChangeEvent<String> event) {
+			detail.setIssuingCode(issuingCode.getValue());
+			callback.onNameChanged(detail);
 		}
 	}
+
+
+	private final class ValueChangeHandlerImplementation implements ValueChangeHandler<String> {
+		private final IModel193DetailCallback callback;
+		private final Mod193Detail detail;
+		private final AonTextBox name;
+
+		private ValueChangeHandlerImplementation(IModel193DetailCallback callback, Mod193Detail detail,
+				AonTextBox name) {
+			this.callback = callback;
+			this.detail = detail;
+			this.name = name;
+		}
+
+		@Override
+		public void onValueChange(ValueChangeEvent<String> event) {
+			detail.setName(name.getValue());
+			callback.onNameChanged(detail);
+		}
+	}
+
+
+	private static final String WIDTH_100PX = "100px";
 	private int tabIndex; 
-	private DocumentTextBox document;
+	private AonDocumentTextBox document;
 	
 	public Model193AEAT2016DetailPanel(Mod193Detail detail, IModel193DetailCallback callback) {
 		ScrollPanel scroll = new ScrollPanel();
-		scroll.setStyleName(AON.AON_CSS.aonWidthAll());
+		scroll.setStyleName(AON.CSS.aonWidthAll());
 		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
+		panel.setStyleName(AON.CSS.aonScrollArea());
 		
 		FlexTable tab1 = new FlexTable();
 		panel.add(tab1);
-		tab1.getColumnFormatter().setWidth(0, "100px");
-		tab1.getColumnFormatter().setWidth(1, "100px");
-		tab1.getColumnFormatter().setWidth(2, "100px");
+		tab1.getColumnFormatter().setWidth(0, WIDTH_100PX);
+		tab1.getColumnFormatter().setWidth(1, WIDTH_100PX);
+		tab1.getColumnFormatter().setWidth(2, WIDTH_100PX);
 		tab1.getColumnFormatter().setWidth(3, "300px");
 		tab1.getColumnFormatter().setWidth(4, "auto");
-		tab1.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab1.addStyleName(AON.AON_CSS.aonNowrap());
+		tab1.setStyleName(AON.CSS.aonWidthAll());
+		tab1.addStyleName(AON.CSS.aonNowrap());
 		
-		tab1.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBorderBottom());
-		tab1.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
+		tab1.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab1.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab1.getFlexCellFormatter().setColSpan(0, 0, 5);
 		tab1.setWidget(0, 0, new InlineLabel(AON.MSG.perceptionData()));
 
- 		tab1.setWidget(1, 1, new MediumLabel(AON.MSG.receiverDocument()));
-		tab1.setWidget(1, 2, new MediumLabel(AON.MSG.representativeDocument()));
-		tab1.setWidget(1, 3, new MediumLabel(AON.MSG.fullName()));
+ 		tab1.setWidget(1, 1, new Model193SmallerLabel(AON.MSG.receiverDocument()));
+		tab1.setWidget(1, 2, new Model193SmallerLabel(AON.MSG.representativeDocument()));
+		tab1.setWidget(1, 3, new Model193SmallerLabel(AON.MSG.fullName()));
 		
 		CheckBox pending = new CheckBox(AON.MSG.pending());
 		pending.setValue(detail.isPending());
-		pending.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				detail.setPending(pending.getValue());
-				callback.onValueChanged(detail);
-			}
+		pending.addClickHandler(event -> {
+			detail.setPending(pending.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab1.setWidget(2, 0, pending);
 		
-		document = new DocumentTextBox();
+		document = new AonDocumentTextBox();
 		document.setValue(detail.getDocument());
-		document.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setDocument(document.getValue());
-				callback.onValueChanged(detail);
-			}
+		document.addValueChangeHandler(event -> {
+			detail.setDocument(document.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab1.setWidget(2, 1, document);
 		
-		DocumentTextBox representativeDocument = new DocumentTextBox();
+		AonDocumentTextBox representativeDocument = new AonDocumentTextBox();
 		representativeDocument.setValue(detail.getRepresentativeDocument());
-		representativeDocument.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setRepresentativeDocument(representativeDocument.getValue());
-				callback.onValueChanged(detail);
-			}
+		representativeDocument.addValueChangeHandler(event -> {
+			detail.setRepresentativeDocument(representativeDocument.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab1.setWidget(2, 2, representativeDocument);
 		
-		TextBox name = new TextBox();
+		AonTextBox name = new AonTextBox();
 		name.setVisibleLength(40);
 		name.setMaxLength(40);
-		name.setStyleName(AON.AON_CSS.aonInputText());
 		name.setValue(detail.getName());
-		name.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setName(name.getValue());
-				callback.onNameChanged(detail);
-			}
-		});
+		name.addValueChangeHandler(new ValueChangeHandlerImplementation(callback, detail, name));
 		tab1.setWidget(2, 3, name);
 		
 		FlexTable tab2 = new FlexTable();
 		panel.add(tab2);
 		tab2.getColumnFormatter().setWidth(0, "60px");
 		tab2.getColumnFormatter().setWidth(1, "60px");
-		tab2.getColumnFormatter().setWidth(2, "100px");
+		tab2.getColumnFormatter().setWidth(2, WIDTH_100PX);
 		tab2.getColumnFormatter().setWidth(3, "120px");
 		tab2.getColumnFormatter().setWidth(4, "60px");
 		tab2.getColumnFormatter().setWidth(5, "130px");
 		tab2.getColumnFormatter().setWidth(6, "auto");
-		tab2.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab2.addStyleName(AON.AON_CSS.aonNowrap());
+		tab2.setStyleName(AON.CSS.aonWidthAll());
+		tab2.addStyleName(AON.CSS.aonNowrap());
 		
-		tab2.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBorderBottom());
-		tab2.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
+		tab2.getCellFormatter().setStyleName(0, 0, AON.CSS.aonBorderBottom());
+		tab2.getCellFormatter().addStyleName(0, 0, AON.CSS.aonBold());
 		tab2.getFlexCellFormatter().setColSpan(0, 0, 7);
 		tab2.setWidget(0, 0, new InlineLabel(AON.MSG.operationData()));
 
- 		tab2.setWidget(1, 0, new MediumLabel(AON.MSG.key()));
-		tab2.setWidget(1, 1, new MediumLabel(AON.MSG.nature()));
+ 		tab2.setWidget(1, 0, new Model193SmallerLabel(AON.MSG.key()));
+		tab2.setWidget(1, 1, new Model193SmallerLabel(AON.MSG.nature()));
 		tab2.setWidget(1, 2, new Label());
-		tab2.setWidget(1, 3, new MediumLabel(AON.MSG.province()));
-		tab2.setWidget(1, 4, new MediumLabel(AON.MSG.keyCode()));
-		tab2.setWidget(1, 5, new MediumLabel(AON.MSG.issuingCode()));
-		tab2.setWidget(1, 6, new MediumLabel(AON.MSG.accrualYear()));
+		tab2.setWidget(1, 3, new Model193SmallerLabel(AON.MSG.province()));
+		tab2.setWidget(1, 4, new Model193SmallerLabel(AON.MSG.keyCode()));
+		tab2.setWidget(1, 5, new Model193SmallerLabel(AON.MSG.issuingCode()));
+		tab2.setWidget(1, 6, new Model193SmallerLabel(AON.MSG.accrualYear()));
 
 		final ListBox nature = new ListBox();
 		nature.setWidth("40px");
@@ -149,55 +164,41 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		
 		Model193AEAT2016DetailPanel.setValue(key, nature, detail);
 		
-		key.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				nature.clear();
-				Mod1932015Key keyEnum = Mod1932015Key.values()[key.getSelectedIndex()];
-				detail.setKey( keyEnum.toString() );
-				nature.setEnabled(true);
-				for (int i = 0; i < keyEnum.getNatures().length; i++) {
-					nature.addItem(AonStringUtils.abbreviate(keyEnum.getNatureDescriptions()[i],150), keyEnum.getNatures()[i]);
-				}
-				detail.setNature(keyEnum.getNatures()[0]);
-				callback.onValueChanged(detail);
+		key.addChangeHandler(event -> {
+			nature.clear();
+			Mod1932015Key keyEnum = Mod1932015Key.values()[key.getSelectedIndex()];
+			detail.setKey( keyEnum.toString() );
+			nature.setEnabled(true);
+			for (int i = 0; i < keyEnum.getNatures().length; i++) {
+				nature.addItem(AonStringUtils.abbreviate(keyEnum.getNatureDescriptions()[i],150), keyEnum.getNatures()[i]);
 			}
+			detail.setNature(keyEnum.getNatures()[0]);
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(2, 0, key);
 
-		nature.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				Mod1932015Key keyEnum = Mod1932015Key.values()[key.getSelectedIndex()];
-				int idx = nature.getSelectedIndex() == -1 ? 0 : nature.getSelectedIndex();
-				detail.setNature(keyEnum.getNatures()[idx]);
-				callback.onValueChanged(detail);
-			}
+		nature.addChangeHandler(event -> {
+			Mod1932015Key keyEnum = Mod1932015Key.values()[key.getSelectedIndex()];
+			int idx = nature.getSelectedIndex() == -1 ? 0 : nature.getSelectedIndex();
+			detail.setNature(keyEnum.getNatures()[idx]);
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(2, 1, nature);
 
 		CheckBox intermediaryPayment = new CheckBox(AON.MSG.intermediaryPayment());
-		intermediaryPayment.setStyleName(AON.AON_CSS.aonFontMedium());
+		intermediaryPayment.setStyleName(AON.CSS.aonFontMedium());
 		intermediaryPayment.setValue(detail.isIntermediaryPayment());
-		intermediaryPayment.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				detail.setIntermediaryPayment(intermediaryPayment.getValue());
-				callback.onValueChanged(detail);
-			}
+		intermediaryPayment.addClickHandler(event -> {
+			detail.setIntermediaryPayment(intermediaryPayment.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(2, 2, intermediaryPayment);
 
 		ProvinceListBox province = new ProvinceListBox();
 		province.setSelectedIndex(detail.getProvince());
-		province.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setProvince(province.getSelectedIndex());
-				callback.onValueChanged(detail);
-			}
+		province.addChangeHandler( event -> {
+			detail.setProvince(province.getSelectedIndex());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(2, 3, province);
 		
@@ -208,50 +209,36 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		keyCode.addItem("2 - El c\u00F3digo emisor corresponde a un c\u00F3digo ISIN.");
 		keyCode.addItem("3 - El c\u00F3digo emisor corresponde a valores extranjeros que no tienen asignado ISIN.");
 		keyCode.setSelectedIndex(detail.getKeyCode());
-		keyCode.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setKeyCode((byte) keyCode.getSelectedIndex());
-				callback.onValueChanged(detail);
-			}
+		keyCode.addChangeHandler( event -> {
+			detail.setKeyCode((byte) keyCode.getSelectedIndex());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(2, 4, keyCode);
 		
-		TextBox issuingCode = new TextBox();
+		AonTextBox issuingCode = new AonTextBox();
 		issuingCode.setVisibleLength(12);
 		issuingCode.setMaxLength(12);
-		issuingCode.setStyleName(AON.AON_CSS.aonInputText());
 		issuingCode.setValue(detail.getIssuingCode());
-		issuingCode.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setIssuingCode(issuingCode.getValue());
-				callback.onNameChanged(detail);
-			}
-		});
+		issuingCode.addValueChangeHandler(new ValueChangeHandlerImplementation2(detail, callback, issuingCode));
 		tab2.setWidget(2, 5, issuingCode);
 
-		IntegerBox accrualYear = new IntegerBox();
+		AonIntegerBox accrualYear = new AonIntegerBox();
 		accrualYear.setMaxLength(4);
 		accrualYear.setVisibleLength(4);
 		accrualYear.setValue(detail.getAccrualYear());
-		accrualYear.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				detail.setAccrualYear(accrualYear.getValue());
-				callback.onValueChanged(detail);
-			}
+		accrualYear.addValueChangeHandler(event -> {
+			detail.setAccrualYear(accrualYear.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(2, 6, accrualYear);
 		
-		tab2.setWidget(3, 0, new MediumLabel(AON.MSG.payment()));
-		tab2.setWidget(3, 1, new MediumLabel(AON.MSG.codeType()));
-		tab2.setWidget(3, 2, new MediumLabel(AON.MSG.ccv()));
+		tab2.setWidget(3, 0, new Model193SmallerLabel(AON.MSG.payment()));
+		tab2.setWidget(3, 1, new Model193SmallerLabel(AON.MSG.codeType()));
+		tab2.setWidget(3, 2, new Model193SmallerLabel(AON.MSG.ccv()));
 		tab2.setWidget(3, 3, new Label());
-		tab2.setWidget(3, 4, new MediumLabel(AON.MSG.lenderAmount()));
+		tab2.setWidget(3, 4, new Model193SmallerLabel(AON.MSG.lenderAmount()));
 		tab2.getFlexCellFormatter().setColSpan(3, 4, 2);
-		tab2.setWidget(3, 5, new MediumLabel(AON.MSG.reductions()));
+		tab2.setWidget(3, 5, new Model193SmallerLabel(AON.MSG.reductions()));
 
 		ListBox payment = new ListBox();
 		payment.setWidth("40px");
@@ -260,12 +247,9 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		payment.addItem("2 - Como mediador de valor nacional.");
 		payment.addItem("3 - Como mediador de valor extranjero.");
 		payment.setSelectedIndex(detail.getPayment());
-		payment.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setPayment((byte) payment.getSelectedIndex());
-				callback.onValueChanged(detail);
-			}
+		payment.addChangeHandler( event -> {
+			detail.setPayment((byte) payment.getSelectedIndex());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(4, 0, payment);
 		
@@ -284,180 +268,140 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 		} else {
 			codeType.setSelectedIndex(0);
 		}
-		codeType.addChangeHandler( new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				detail.setCodeType( codeType.getValue( codeType.getSelectedIndex()) );
-				callback.onValueChanged(detail);
-			}
+		codeType.addChangeHandler( event -> {
+			detail.setCodeType( codeType.getValue( codeType.getSelectedIndex()) );
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(4, 1, codeType);
 
 		
-		TextBox accountCode = new TextBox();
+		AonTextBox accountCode = new AonTextBox();
 		accountCode.setVisibleLength(12);
 		accountCode.setMaxLength(12);
-		accountCode.setStyleName(AON.AON_CSS.aonInputText());
+		accountCode.setStyleName(AON.CSS.aonInputText());
 		accountCode.setValue(detail.getAccountCode());
-		accountCode.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				detail.setAccountCode(accountCode.getValue());
-				callback.onNameChanged(detail);
-			}
+		accountCode.addValueChangeHandler(event -> {
+			detail.setAccountCode(accountCode.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab2.setWidget(4, 2, accountCode);
 				
 		CheckBox inKind = new CheckBox(AON.MSG.inKind());
-		inKind.setStyleName(AON.AON_CSS.aonFontMedium());
+		inKind.setStyleName(AON.CSS.aonFontMedium());
 		inKind.setValue(detail.isInKind());
-		inKind.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				detail.setInKind(inKind.getValue());
-				callback.onValueChanged(detail);
-			}
+		inKind.addClickHandler(event -> {
+			detail.setInKind(inKind.getValue());
+			callback.onValueChanged(detail);
 		});
 		tab2.setWidget(4, 3, inKind);
 				
 
-		DoubleBox lenderAmount = new DoubleBox();
+		AonDoubleBox lenderAmount = new AonDoubleBox();
 		lenderAmount.setValue(detail.getLenderAmount());
-		lenderAmount.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setLenderAmount(lenderAmount.getValue());
-				callback.onNameChanged(detail);
-			}
+		lenderAmount.addValueChangeHandler(event -> {
+			detail.setLenderAmount(lenderAmount.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab2.setWidget(4, 4, lenderAmount);
 		tab2.getFlexCellFormatter().setColSpan(4, 4, 2);
 		
-		DoubleBox reduction = new DoubleBox();
+		AonDoubleBox reduction = new AonDoubleBox();
 		reduction.setValue(detail.getReduction());
-		reduction.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setReduction(reduction.getValue());
-				callback.onNameChanged(detail);
-			}
+		reduction.addValueChangeHandler(event -> {
+			detail.setReduction(reduction.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab2.setWidget(4, 5, reduction);
 		
 		FlexTable tab3 = new FlexTable();
 		panel.add(tab3);
-		tab3.getColumnFormatter().setWidth(0, "160px");
-		tab3.getColumnFormatter().setWidth(1, "160px");
+		tab3.getColumnFormatter().setWidth(0, WIDTH_160PX);
+		tab3.getColumnFormatter().setWidth(1, WIDTH_160PX);
 		tab3.getColumnFormatter().setWidth(2, "auto");
-		tab3.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab3.addStyleName(AON.AON_CSS.aonNowrap());
+		tab3.setStyleName(AON.CSS.aonWidthAll());
+		tab3.addStyleName(AON.CSS.aonNowrap());
 		
- 		tab3.setWidget(1, 0, new MediumLabel(AON.MSG.retentionBase()));
-		tab3.setWidget(1, 1, new MediumLabel(AON.MSG.percent()));
-		tab3.setWidget(1, 2, new MediumLabel(AON.MSG.retentionAccount()));
+ 		tab3.setWidget(1, 0, new Model193SmallerLabel(AON.MSG.retentionBase()));
+		tab3.setWidget(1, 1, new Model193SmallerLabel(AON.MSG.percent()));
+		tab3.setWidget(1, 2, new Model193SmallerLabel(AON.MSG.retentionAccount()));
 		
-		DoubleBox retentionBase = new DoubleBox();
+		AonDoubleBox retentionBase = new AonDoubleBox();
 		retentionBase.setValue(detail.getRetentionBase());
-		retentionBase.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setRetentionBase(retentionBase.getValue());
-				callback.onNameChanged(detail);
-			}
+		retentionBase.addValueChangeHandler(event -> {
+			detail.setRetentionBase(retentionBase.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab3.setWidget(2, 0, retentionBase);
 		
-		DoubleBox percent = new DoubleBox();
+		AonDoubleBox percent = new AonDoubleBox();
 		percent.setValue(detail.getPercent());
-		percent.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setPercent(percent.getValue());
-				callback.onNameChanged(detail);
-			}
+		percent.addValueChangeHandler(event -> {
+			detail.setPercent(percent.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab3.setWidget(2, 1, percent);
 
-		DoubleBox retention = new DoubleBox();
+		AonDoubleBox retention = new AonDoubleBox();
 		retention.setValue(detail.getRetention());
-		retention.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setRetention(retention.getValue());
-				callback.onNameChanged(detail);
-			}
+		retention.addValueChangeHandler(event -> {
+			detail.setRetention(retention.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab3.setWidget(2, 2, retention);
 		
 		FlexTable tab4 = new FlexTable();
 		panel.add(tab4);
-		tab4.getColumnFormatter().setWidth(0, "160px");
-		tab4.getColumnFormatter().setWidth(1, "160px");
-		tab4.getColumnFormatter().setWidth(2, "160px");
-		tab4.getColumnFormatter().setWidth(3, "160px");
+		tab4.getColumnFormatter().setWidth(0, WIDTH_160PX);
+		tab4.getColumnFormatter().setWidth(1, WIDTH_160PX);
+		tab4.getColumnFormatter().setWidth(2, WIDTH_160PX);
+		tab4.getColumnFormatter().setWidth(3, WIDTH_160PX);
 		tab4.getColumnFormatter().setWidth(4, "auto");
-		tab4.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab4.addStyleName(AON.AON_CSS.aonNowrap());
+		tab4.setStyleName(AON.CSS.aonWidthAll());
+		tab4.addStyleName(AON.CSS.aonNowrap());
 		
- 		tab4.setWidget(1, 0, new MediumLabel(AON.MSG.loanStart() + " 2016"));
-		tab4.setWidget(1, 1, new MediumLabel(AON.MSG.loanDueStart()));
-		tab4.setWidget(1, 2, new MediumLabel(AON.MSG.penalizations()));
-		tab4.setWidget(1, 3, new MediumLabel(AON.MSG.compensations()));
-		tab4.setWidget(1, 4, new MediumLabel(AON.MSG.guarantee()));
+ 		tab4.setWidget(1, 0, new Model193SmallerLabel(AON.MSG.loanStart() + " 2016"));
+		tab4.setWidget(1, 1, new Model193SmallerLabel(AON.MSG.loanDueStart()));
+		tab4.setWidget(1, 2, new Model193SmallerLabel(AON.MSG.penalizations()));
+		tab4.setWidget(1, 3, new Model193SmallerLabel(AON.MSG.compensations()));
+		tab4.setWidget(1, 4, new Model193SmallerLabel(AON.MSG.guarantee()));
 
-		DateBoxEx loanStartDate = new DateBoxEx();
+		AonDateBox loanStartDate = new AonDateBox();
 		loanStartDate.setValue(detail.getLoanStartDate());
-		loanStartDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				detail.setLoanStartDate(loanStartDate.getValue());
-				callback.onNameChanged(detail);
-			}
+		loanStartDate.addValueChangeHandler(event -> {
+			detail.setLoanStartDate(loanStartDate.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab4.setWidget(2, 0, loanStartDate);
 		
-		DateBoxEx loanDueDate = new DateBoxEx();
+		AonDateBox loanDueDate = new AonDateBox();
 		loanDueDate.setValue(detail.getLoanDueDate());
-		loanDueDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				detail.setLoanDueDate(loanDueDate.getValue());
-				callback.onNameChanged(detail);
-			}
+		loanDueDate.addValueChangeHandler(event -> {
+			detail.setLoanDueDate(loanDueDate.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab4.setWidget(2, 1, loanDueDate);
 		
-		DoubleBox penalization = new DoubleBox();
+		AonDoubleBox penalization = new AonDoubleBox();
 		penalization.setValue(detail.getPenalization());
-		penalization.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setPenalization(penalization.getValue());
-				callback.onNameChanged(detail);
-			}
+		penalization.addValueChangeHandler(event -> {
+			detail.setPenalization(penalization.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab4.setWidget(2, 2, penalization);
 
-		DoubleBox compensation = new DoubleBox();
+		AonDoubleBox compensation = new AonDoubleBox();
 		compensation.setValue(detail.getCompensation());
-		compensation.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setCompensation(compensation.getValue());
-				callback.onNameChanged(detail);
-			}
+		compensation.addValueChangeHandler(event -> {
+			detail.setCompensation(compensation.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab4.setWidget(2, 3, compensation);
 
-		DoubleBox guarantee = new DoubleBox();
+		AonDoubleBox guarantee = new AonDoubleBox();
 		guarantee.setValue(detail.getGuarantee());
-		guarantee.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> event) {
-				detail.setGuarantee(guarantee.getValue());
-				callback.onNameChanged(detail);
-			}
+		guarantee.addValueChangeHandler(event -> {
+			detail.setGuarantee(guarantee.getValue());
+			callback.onNameChanged(detail);
 		});
 		tab4.setWidget(2, 4, guarantee);
 
@@ -472,6 +416,7 @@ public class Model193AEAT2016DetailPanel extends SimpleLayoutPanel implements Fo
 
 	@Override
 	public void setAccessKey(char key) {
+		// Nothing
 	}
 
 	@Override

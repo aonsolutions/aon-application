@@ -1,7 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod193;
 
+import com.esferalia.aon.gwt.fiscal.client.mod193.Model193.Model193Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193Base.IModel193Detail;
-import com.esferalia.aon.gwt.fiscal.client.mod193.Model193Base.Model193BaseCallback;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
@@ -19,9 +20,9 @@ public class Model193AEATDetail2016 extends DockLayoutPanel implements IModel193
 	}
 	private Model193DetailTable table;
 	
-	public Model193AEATDetail2016( Model193BaseCallback callback, Integer selectedIndex ) {
+	public Model193AEATDetail2016( Model193Callback callback, Mod193 model, Integer selectedIndex ) {
 		super(Unit.PX);
-		table = new Model193DetailTable(callback, selectedIndex);
+		table = new Model193DetailTable(callback, model, selectedIndex);
 		addWest(table, 300);
 		
 		SimpleLayoutPanel container = new SimpleLayoutPanel();

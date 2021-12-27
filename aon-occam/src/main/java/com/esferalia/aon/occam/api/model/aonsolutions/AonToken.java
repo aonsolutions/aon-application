@@ -9,6 +9,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -77,7 +78,7 @@ public class AonToken implements Serializable{
 
 	public static AonToken parse(JSONObject json) {
 		return new AonToken()
-				.setSchema(json.getString(SCHEMA))
+				.setSchema(JsonUtils.getString(json, SCHEMA))
 				.setUuid(json.getString(UUID))
 				.setSchemaFirstDomain(json.getString(SCHEMA_FIRST_DOMAIN));
 	}

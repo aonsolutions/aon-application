@@ -1,5 +1,5 @@
 import { AonElement } from "../../components/AonElement.js";
-import { getAuth, getDomainUserRoles, getRegistry } from "../../services/service.js";
+import { getAuth, getCompany, getDomainUserRoles, getRegistry } from "../../services/service.js";
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
@@ -22,13 +22,15 @@ import * as LS from '../../services/localStorageService.js';
 import { Registry } from "../../models/registry/Registry.js";
 import { AonInvoiceConfiguration } from "../invoice/aon-invoice-configuration.js";
 import { AonMessengerConfig } from "../messenger/aon-messenger-config.js";
+import { AonMarketplace } from "../marketplace/aon-marketplace.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
   COMPANY;
   COMPANY_LIST;
-  selected;
 
+  selected;
+  company;
   dur;
 
   get id() {
@@ -37,14 +39,6 @@ export class AonConfiguration extends AonElement {
 
   set id(id) {
     this.setAttribute(CONSTANT.ID, id);
-  }
-
-  get company() {
-    return this.getAttribute("company");
-  }
-
-  set company(company) {
-    this.setAttribute("company", company);
   }
 
   get user() {
@@ -73,7 +67,11 @@ export class AonConfiguration extends AonElement {
 
     getDomainUserRoles({}).then(r => {
       this.dur = new DomainUserRoles(r);
-      this.build();
+      getCompany().then(company => {
+        this.company = company;
+        this.build();
+      });
+
     }).catch(() => this.build());
   }
 
@@ -103,10 +101,9 @@ export class AonConfiguration extends AonElement {
     );
 
     if (
-      localStorage.getItem("aon_domain_id") &&
-      localStorage.getItem("company") && this.dur.isAdmin()
+      localStorage.getItem("aon_domain_id") && this.dur.isAdmin()
     ) {
-      let company = JSON.parse(localStorage.getItem("company"));
+
       let companyOptions = [];
       companyOptions.push({
         name: MSG.GENERAL_INFORMATION,
@@ -118,7 +115,7 @@ export class AonConfiguration extends AonElement {
         icon: MATERIAL_ICONS.PEOPLE,
         fn: () => this.buildUser(),
       });
-      if (!company.parentId) {
+      if (!this.company.domain.parentId) {
         companyOptions.push({
           name: MSG.COMPANY_MANAGEMENT,
           icon: MATERIAL_ICONS.BUSINESS,
@@ -143,7 +140,7 @@ export class AonConfiguration extends AonElement {
       aonConfiguration.addSidenavOptions(MSG.COMPANY.toUpperCase(), companyOptions);
     }
 
-    if (localStorage.getItem("aon_domain_id") && localStorage.getItem("company")) {
+    if (localStorage.getItem("aon_domain_id")) {
       let appOptions = [];
       if (this.dur.isInvoice()) {
         appOptions.push({
@@ -287,15 +284,9 @@ export class AonConfiguration extends AonElement {
   buildStore() {
     let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
     aonConfiguration.removeToolbarOptions();
-
-    aonConfiguration.setContentHTML(
-      `<aon-marketplace id="aonMarketplace" > </aon-marketplace>`
-    );
-
-    if (this.getAttribute("company")) {
-      let aonMarketplace = this.getElement("aonMarketplace");
-      aonMarketplace.setAttribute("company", this.getAttribute("company"));
-    }
+    let marketplace = new AonMarketplace();
+    marketplace.id = 'aonMarketplace';
+    aonConfiguration.setContent(marketplace);
   }
 
   buildGroups(){

@@ -295,13 +295,13 @@ const fillCtaCti = (aonSelect, data) => {
 
     getCccForActivity().then(({cccs})=>{
         
-        let options = [];
+        let opts = [];
         for (const key in cccs) {
             const ccc = cccs[key];
-            options.push(ccc);
+            opts.push(ccc);
         }
 
-        options = options.filter( (v,index, self)=>self.findIndex((m) => m.ccc === v.ccc) === index ).map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
+        const options = opts.filter( (v,index)=>opts.findIndex((m) => m.ccc === v.ccc) === index ).map(r => ({ ...r, name: `${r.cccRegimeCode} - ${r.ccc}`, value: r.ccc }));
 
         if(data.ctaCti &&  data.regime){
             const exists = options.some(v => v.ccc === data.ctaCti);

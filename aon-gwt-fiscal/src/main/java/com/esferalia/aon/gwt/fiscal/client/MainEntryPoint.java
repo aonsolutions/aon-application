@@ -27,7 +27,6 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
-import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
 import com.esferalia.aon.gwt.fiscal.client.mod200.Model200;
 import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
@@ -106,6 +105,12 @@ public class MainEntryPoint implements EntryPoint {
 				com.esferalia.aon.gwt.fiscal.client.mod190.Model190.run();
 			}
 		},
+		Model193 {
+			@Override
+			void run() {
+				com.esferalia.aon.gwt.fiscal.client.mod193.Model193.run();
+			}
+		},
 		Model202 {
 			@Override
 			void run() {
@@ -128,7 +133,6 @@ public class MainEntryPoint implements EntryPoint {
 		abstract void run();
 	}
 	private static final String FS_MOD140_ENTRY_POINT = "Model140";
-	private static final String FS_MOD193_ENTRY_POINT = "Model193";
 	private static final String FS_MOD200_ENTRY_POINT = "Model200";
 	private static final String FS_MOD347_ENTRY_POINT = "Model347";
 	private static final String FS_MOD349_ENTRY_POINT = "Model349";
@@ -238,21 +242,6 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					Model200 model200 = new Model200();
 					model200.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(FS_MOD193_ENTRY_POINT)) {
-			GWT.runAsync(Model193.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					Model193 model193 = new Model193();
-					model193.onModuleLoad();
 				}
 				
 			});

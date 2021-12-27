@@ -10,7 +10,9 @@ import { AonMessenger } from "../../../messenger/aon-messenger.js";
 import { TASK_SOURCE } from "../../../messenger/MessengerEnums.js";
 import { AON_TAGS } from "../../../../environments/aonTag.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
+import { AonMap } from "../../../../components/aon-map.js";
 import * as ACTION from '../../../actions.js';
+
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -78,63 +80,15 @@ export class AonEventAdd extends AonElement {
   }
 
   async paintViewMap() {
-    let aonMap = document.querySelector(`#${this.id}CardCoordinate`);
+    let cardCoordinate = document.querySelector(`#${this.id}CardCoordinate`);
     const { coordinates } = this.data;
-    const zoom = 16;
-    const iframeId = this.id + "Iframe";
-    let iframe = this.createElement("iframe");
-    iframe.id = iframeId;
-    iframe.frameborder = 0;
-    iframe.style.border = 0;
-    iframe.style.height = "400px";
-    iframe.style.width = "100%";
-  
-    iframe = this.iframeOnload(iframe, zoom, coordinates);
-
-    aonMap.setContent(iframe);
+    let aonMap = new AonMap();
+    aonMap.POSITION = coordinates;
+    cardCoordinate.setContent(aonMap);
     
-    aonMap.setAttribute("visible", true);
+    cardCoordinate.setAttribute("visible", true);
   }
 
-  iframeOnload(iframe, zoom, position = null) {
-    iframe.onload = async () => {
-      const doc = iframe.contentDocument;
-      const wd = iframe.contentWindow;
-
-      await Promise.all([
-        this.loadLink("https://unpkg.com/leaflet@1.7.1/dist/leaflet.css", doc),
-        this.loadScript("https://unpkg.com/leaflet@1.7.1/dist/leaflet.js", doc)
-      ]);
-
-      this.initMap(doc, wd, position, zoom);
-    }; //onload
-    return iframe;
-  }
-
-  loadLink(url, doc){ 
-    return new Promise((resolve, reject) => {
-      const link = doc.createElement('link');
-      doc.head.appendChild(link);
-      link.onload = resolve;
-      link.onerror = reject;
-      link.href = url;
-      link.rel = "stylesheet";
-      link.type = "text/css";
-  });
-}
-
-  loadScript(url, doc) {
-    return new Promise((resolve, reject) => {
-      let script = doc.querySelector(`script[src="${url}"]`);
-      if(!script){
-          script = doc.createElement('script');
-          doc.head.appendChild(script);
-          script.onload = resolve;
-          script.onerror = reject;
-          script.src = url;
-      } else resolve(true);
-    });
-  }
 
   async initLists() {
     this.listStatus();
@@ -235,22 +189,6 @@ export class AonEventAdd extends AonElement {
     
     if(this.applicationParentEl.isEmployee()) 
       this.formRead();
-  }
-
-  initMap(doc, wd, pos, zoom){
-      const position = { lat: parseFloat(pos.latitude), lng: parseFloat(pos.longitude) };   
-      let mapContainer = doc.createElement("div");
-      mapContainer.style.width = "100%"; 
-      mapContainer.style.height = "100%"; 
-
-      doc.body.appendChild(mapContainer);
-
-      let map = wd.L.map(mapContainer, {attributionControl: false}).setView(position, zoom);   
-
-      new wd.L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{ subdomains:['mt0','mt1','mt2','mt3']}).addTo(map);
-
-      //ADD MARKER
-      wd.L.marker(position, { draggable: false }).addTo(map);
   }
 
   async save() {

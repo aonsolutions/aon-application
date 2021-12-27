@@ -54,16 +54,6 @@ public interface IFiscal {
 	public void delete(AONContext ctx, FiscalModel fm);
 	public FiscalModel getModel(AONContext ctx, int id);
 	
-	// 				   		  	MOD193
-	public LinkedList<Mod193> getMod193s(AONContext ctx,int domain);
-	public Mod193 getMod193(AONContext ctx,Integer id);
-	public Mod193 initializeMod193(AONContext ctx, int year);
-	public Mod193 saveMod193(AONContext ctx,Mod193 mod193);
-	public void deleteMod193(AONContext ctx,Mod193 mod193);
-	public Mod193 saveCommentsMod193(AONContext ctx, Mod193 mod193);
-	public Mod193 changeStatusMod193(AONContext ctx, Mod193 mod193, FiscalStatus newStatus);
-	public Mod193 duplicateMod193(AONContext ctx, Mod193 mod193);
-	
 	// 				   		  	MOD390
 	public Mod390 getMod390(AONContext ctx, int domain, Integer id);
 	public LinkedList<Mod390> getMod390s(AONContext ctx, int domain);

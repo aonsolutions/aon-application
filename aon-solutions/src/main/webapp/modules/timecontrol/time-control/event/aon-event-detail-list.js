@@ -1,11 +1,7 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { removeEmpty, setValueName, sortBy} from "../../../../services/utils.js";
 import { setAttributes} from "../../../../services/utilsComponents.js";
-import {
-  getStatus,
-  getPeriod,
-  getTimeControlDetail,
-} from "../../../../services/service.js";
+import { getStatus, getPeriod, getTimeControlDetail } from "../../../../services/service.js";
 import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { dateCustomDayHour } from "../utils.js";

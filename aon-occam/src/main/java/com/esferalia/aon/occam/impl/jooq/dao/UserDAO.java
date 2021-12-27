@@ -4,10 +4,13 @@ import static com.esferalia.aon.jooq.tables.Auth.AUTH;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.TaskHolderWorkgroup;
@@ -15,6 +18,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserToolbar;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.AuthFiller;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
@@ -22,6 +26,25 @@ public class UserDAO {
 
 	private UserDAO() {
 		throw new IllegalStateException("Utility class");
+	}
+	
+	private static final UserPropertiesDAO USER_PROPERTIES = new UserPropertiesDAO();
+
+	private static SelectConditionStep<Record> select(AONContext ctx, UserFilter filter) {
+		return ctx.getDslContext().select()
+			.from(USER)
+			.leftOuterJoin(AUTH).on(AUTH.ID.eq(USER.AUTH))
+			.where(USER_PROPERTIES.getConditions(filter));
+	}
+	
+	public static User get(AONContext ctx, UserFilter filter) {
+		return select(ctx, filter).limit(1).fetch()
+			.stream().map(new UserFiller()).findFirst().orElse(new User());
+	}
+	
+	public static Stream<User> getStream(AONContext ctx, UserFilter filter) {
+		return select(ctx, filter).limit(1).fetch()
+				.stream().map(new UserFiller());
 	}
 	
 	public static User save(AONContext ctx, User user) {
