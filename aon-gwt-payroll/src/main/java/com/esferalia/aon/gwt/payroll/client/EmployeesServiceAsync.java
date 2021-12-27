@@ -237,11 +237,11 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId, AsyncCallback<List<EmployeeInfo>> callback);
 
-	void getEmployeeCalendarInfo(String currentDomainName, Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback);
+	void getEmployeeCalendarInfo(String currentDomainName, Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback) throws IllegalArgumentException;
 
-	void setEmployeeCalendarInfo(String currentDomainName, Integer contractId, EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<String> callback);
+	void setEmployeeCalendarInfo(String currentDomainName, Integer contractId, EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
-	void resetEmployeeCalendarInfo(String currentDomainName, Integer contractId, AsyncCallback<String> callback);
+	void resetEmployeeCalendarInfo(String currentDomainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void setEmployeeEvents(String currentDomainName, Integer idEmployee, EmployeeEventsData employeeEventsData,
 			AsyncCallback<EmployeeEventsData> callback);
@@ -341,9 +341,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	// ------------------------------------------------- EmployeeIrpf
 	
-	void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback);
+	void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) throws IllegalArgumentException;
 
-	void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback);
+	void setEmployeeIrpf(String currentDomainName, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	// ------------------------------------------------- ContractVariables
 	

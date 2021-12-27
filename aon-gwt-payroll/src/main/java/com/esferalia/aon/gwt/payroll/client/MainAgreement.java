@@ -425,7 +425,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		if (agreementDraftObject == null) {
 			com.esferalia.aon.gwt.payroll.shared.AgreementDraft draft = new 
 					com.esferalia.aon.gwt.payroll.shared.AgreementDraft();
-
+	
 			draft.setId(agreement.getId());
 			draft.setDomain(agreement.getDomain());
 			draft.setDescription(agreement.getDescription());
@@ -440,10 +440,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 					, Wnd.getCurrentDomainNameURL()
 					, draft 
 					, agreementServiceAsync);
+			
+			agreementDraftObject.setAgreement(agreement);
+			
 			agreementDrafts.put(agreement.getId(), agreementDraftObject);
 			
 			TreeItem treeItem = agreements.getAgreementsTree().getSelectedItem();
-
+	
 			agreementDraftObject.addListener(new DraftObjectListener(treeItem,
 					agreementDraftObject));
 			

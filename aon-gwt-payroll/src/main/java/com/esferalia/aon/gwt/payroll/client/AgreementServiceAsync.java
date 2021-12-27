@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -49,6 +48,8 @@ public interface AgreementServiceAsync {
 
 	void getChanges(String domain, Agreement agreement, AsyncCallback<SortedSet<Date>> callback)
 			throws IllegalArgumentException;
+
+	void checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear, AsyncCallback<Date> asyncCallback) throws IllegalArgumentException;
 
 	
 }

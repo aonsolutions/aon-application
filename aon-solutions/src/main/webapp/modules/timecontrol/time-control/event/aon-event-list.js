@@ -1,12 +1,7 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { setValueName, sortBy, isEmptyObject } from "../../../../services/utils.js";
 import { setAttributes } from "../../../../services/utilsComponents.js";
-import {
-  getGroups,
-  getPeriod,
-  getStatus,
-  getTaskHolderTimeControl,
-} from "../../../../services/service.js";
+import { getPeriod, getStatus, getTaskHolderTimeControl } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { EVENT_LIST_FILTER, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { firstLetters, timeHour} from "../utils.js";
@@ -118,7 +113,7 @@ export class AonEventList extends AonElement {
   async searchValueDefault(){
 
     let groupEl = this.getElement('group');
-    groupEl.options = JSON.stringify(getGroups());
+    groupEl.options = JSON.stringify(this.getGroups());
 
     let periodEl = this.getElement("period");
     periodEl.options = JSON.stringify(getPeriod());
@@ -249,7 +244,7 @@ export class AonEventList extends AonElement {
     let groupEl = this.getElement('group');
     let gv = {value:"DAY", name:"DIA"};
     if(groupEl && groupEl.value){
-      const groups = getGroups(groupEl.value);
+      const groups = this.getGroups(groupEl.value);
       if(groups) gv = groups;
     }
     return gv;
@@ -268,6 +263,30 @@ export class AonEventList extends AonElement {
     }
     return v;
   }
+
+  getGroups(data) {
+    let jsonValues = [
+      {
+        name: "Día",
+        value: "DAY",
+      },
+      {
+        name: "Semana",
+        value: "WEEK",
+      },
+      {
+        name: MSG.MONTH,
+        value: "MONTH",
+      },
+      {
+        name: MSG.YEAR,
+        value: "YEAR",
+      },
+    ];
+  
+    if (data) jsonValues = jsonValues.find((f) => f.value.indexOf(data) >= 0);
+    return jsonValues;
+  };
 
   async paintName(){
     const taskHolder = this.applicationParentEl.TASK_HOLDER;

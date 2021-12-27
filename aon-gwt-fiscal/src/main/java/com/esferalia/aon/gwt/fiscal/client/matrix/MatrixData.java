@@ -12,7 +12,6 @@ import com.esferalia.aon.gwt.api.client.fiscal.JsFiscalMenuItem;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 
 class MatrixData {
@@ -35,10 +34,11 @@ class MatrixData {
 	protected MatrixData add(JsFiscalMenuItem item) {
 		String domainName = item.getDomain() + "|" + item.getDomainName();
 		String document = item.getDocument();
-		String n = item.getName();
-		String s = item.getSurname();
-		String name = AonStringUtils.join(new String[]{s,n}, AonStringUtils.isBlank(s)?"":", ");
-		name = AonStringUtils.abbreviate(AonStringUtils.join(new String[]{document,name}, " "), 50);
+//		String n = item.getName();
+//		String s = item.getSurname();
+//		String name = AonStringUtils.join(new String[]{s,n}, AonStringUtils.isBlank(s)?"":", ");
+//		name = AonStringUtils.abbreviate(AonStringUtils.join(new String[]{document,name}, " "), 50);
+		String name = document;
 		Administration admon = Optional
 				.ofNullable( Administration.safeValueOf(item.getAdministration()))
 				.orElse(Administration.UNKNOWN);

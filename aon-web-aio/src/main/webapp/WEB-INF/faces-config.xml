@@ -216,6 +216,23 @@
 	</navigation-rule>
 	
 	<navigation-rule>
+
+		<navigation-case>
+			<from-outcome>portal_accounting</from-outcome>
+			<to-view-id>/facelet/portal/accounting.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>portal_fiscal</from-outcome>
+			<to-view-id>/facelet/portal/fiscal.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>portal_payroll</from-outcome>
+			<to-view-id>/facelet/portal/payroll.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>portal_configuration</from-outcome>
+			<to-view-id>/facelet/portal/configuration.xhtml</to-view-id>
+		</navigation-case>
 		<navigation-case>
 			<from-outcome>portal_invoice</from-outcome>
 			<to-view-id>/facelet/portal/invoice.xhtml</to-view-id>
@@ -231,6 +248,10 @@
 		<navigation-case>
 			<from-outcome>portal_timecontrol</from-outcome>
 			<to-view-id>/facelet/portal/timecontrol.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>portal_messenger</from-outcome>
+			<to-view-id>/facelet/portal/messenger.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

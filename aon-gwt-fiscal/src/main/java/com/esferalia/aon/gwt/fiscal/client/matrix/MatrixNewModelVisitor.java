@@ -15,6 +15,14 @@ import com.esferalia.aon.gwt.fiscal.client.mod130.Model130;
 import com.esferalia.aon.gwt.fiscal.client.mod130.Model130ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131;
 import com.esferalia.aon.gwt.fiscal.client.mod131.Model131ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180;
+import com.esferalia.aon.gwt.fiscal.client.mod180.Model180ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod184.Model184;
+import com.esferalia.aon.gwt.fiscal.client.mod184.Model184ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod190.Model190;
+import com.esferalia.aon.gwt.fiscal.client.mod190.Model190ModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.mod193.Model193;
+import com.esferalia.aon.gwt.fiscal.client.mod193.Model193ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Model202;
 import com.esferalia.aon.gwt.fiscal.client.mod202.Model202ModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303;
@@ -23,12 +31,16 @@ import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HFModuleOptions;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelTypeVisitor;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
+import com.esferalia.aon.occam.api.model.fiscal.Mod180;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
@@ -39,10 +51,10 @@ import com.google.gwt.user.client.Window;
 public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 	
 	private AonConfiguration config;
-	private FiscalModel model;
-	private AonModuleCallback<FiscalModel> callback;
+	private IFiscalModel model;
+	private final AonModuleCallback<IFiscalModel> callback;
 	
-	public MatrixNewModelVisitor(AonConfiguration config, FiscalModel model, AonModuleCallback<FiscalModel> callback) {
+	public MatrixNewModelVisitor(AonConfiguration config, IFiscalModel model, AonModuleCallback<IFiscalModel> callback) {
 		this.config = config;
 		this.model = model;
 		this.callback = callback;
@@ -53,10 +65,6 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 	
-	private <T extends FiscalModel> AonModuleCallback<T> getExternalCallback(AonCustomPopup modelDialog, AonModuleCallback<FiscalModel> callback) {
-		return new AonModuleCallbackWrapper<>(modelDialog,callback);
-	}
-
 	private AonCustomPopup getModelDialog(String caption) {
 		AonCustomPopup modelDialog = new AonCustomPopup( false );
 		modelDialog.setWidth((Window.getClientWidth() - 50) + "px");
@@ -74,7 +82,7 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
 		try {
 			Mod303 mod303 = new Mod303();
-			FiscalModel.map(model,mod303);
+			MatrixUtils.map(model,mod303);
 			Model303 model303 = new Model303();
 			Model303ModuleOptions options = new Model303ModuleOptions();
 			options.setParentWidget(modelDialog);
@@ -85,7 +93,34 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 			options.setNewModel(mod303);
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
+			options.setExternalCallback( new AonModuleCallback<Mod303>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod303 removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod303 edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod303 changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
 			modelDialog.addCloseHandler(event -> modelDialog.clear());
 			model303.onModuleLoad( options );
 			modelDialog.center();
@@ -101,7 +136,7 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
 		try {
 			Mod111 mod111 = new Mod111();
-			FiscalModel.map(model,mod111);
+			MatrixUtils.map(model,mod111);
 			Model111 model111 = new Model111();
 			Model111ModuleOptions options = new Model111ModuleOptions();
 			options.setParentWidget(modelDialog);
@@ -112,7 +147,34 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 			options.setNewModel( mod111 );
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
+			options.setExternalCallback( new AonModuleCallback<Mod111>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod111 removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod111 edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod111 changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
 			modelDialog.addCloseHandler(event -> modelDialog.clear());
 			model111.onModuleLoad( options );
 			modelDialog.center();
@@ -128,7 +190,7 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
 		try {
 			Mod115 mod115 = new Mod115();
-			FiscalModel.map(model,mod115);
+			MatrixUtils.map(model,mod115);
 			Model115 model115 = new Model115();
 			Model115ModuleOptions options = new Model115ModuleOptions();
 			options.setParentWidget(modelDialog);
@@ -139,7 +201,34 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 			options.setNewModel(mod115);
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
+			options.setExternalCallback( new AonModuleCallback<Mod115>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod115 removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod115 edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod115 changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
 			model115.onModuleLoad( options );
 			modelDialog.center();
 			modelDialog.show();
@@ -154,7 +243,7 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
 		try {
 			Mod123 mod123 = new Mod123();
-			FiscalModel.map(model,mod123);
+			MatrixUtils.map(model,mod123);
 			Model123 model123 = new Model123();
 			Model123ModuleOptions options = new Model123ModuleOptions();
 			options.setParentWidget(modelDialog);
@@ -165,7 +254,34 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 			options.setNewModel(mod123);
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
+			options.setExternalCallback( new AonModuleCallback<Mod123>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod123 removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod123 edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod123 changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
 			modelDialog.addCloseHandler(event -> modelDialog.clear());
 			model123.onModuleLoad( options );
 			modelDialog.center();
@@ -181,7 +297,7 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
 		try {
 			Mod130 mod130 = new Mod130();
-			FiscalModel.map(model,mod130);
+			MatrixUtils.map(model,mod130);
 			Model130 model130 = new Model130();
 			Model130ModuleOptions options = new Model130ModuleOptions();
 			options.setParentWidget(modelDialog);
@@ -192,7 +308,34 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 			options.setNewModel(mod130);
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
+			options.setExternalCallback( new AonModuleCallback<Mod130>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod130 removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod130 edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod130 changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
 			modelDialog.addCloseHandler(event -> modelDialog.clear());
 			model130.onModuleLoad( options );
 			modelDialog.center();
@@ -208,7 +351,7 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
 		try {
 			Mod131 mod131 = new Mod131();
-			FiscalModel.map(model,mod131);
+			MatrixUtils.map(model,mod131);
 			Model131 model131 = new Model131();
 			Model131ModuleOptions options = new Model131ModuleOptions();
 			options.setParentWidget(modelDialog);
@@ -219,7 +362,34 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 			options.setNewModel(mod131);
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
+			options.setExternalCallback( new AonModuleCallback<Mod131>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod131 removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod131 edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod131 changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
 			model131.onModuleLoad( options );
 			modelDialog.center();
 			modelDialog.show();
@@ -234,7 +404,7 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
 		try {
 			Mod202 mod202 = new Mod202();
-			FiscalModel.map(model,mod202);
+			MatrixUtils.map(model,mod202);
 			Model202 model202 = new Model202();
 			Model202ModuleOptions options = new Model202ModuleOptions();
 			options.setParentWidget(modelDialog);
@@ -245,7 +415,34 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 			options.setNewModel(mod202);
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
+			options.setExternalCallback( new AonModuleCallback<Mod202>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod202 removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod202 edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod202 changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
 			modelDialog.addCloseHandler(event -> modelDialog.clear());
 			model202.onModuleLoad( options );
 			modelDialog.center();
@@ -261,7 +458,7 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
 		try {
 			Mod390HF mod390HF = new Mod390HF();
-			FiscalModel.map(model,mod390HF);
+			MatrixUtils.map(model,mod390HF);
 			Model390HF model390HF = new Model390HF();
 			Model390HFModuleOptions options = new Model390HFModuleOptions();
 			options.setParentWidget(modelDialog);
@@ -272,7 +469,34 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 			options.setNewModel(mod390HF);
 			options.setEmbedded(true);
 			options.setBackButtonVisible(true);
-			options.setExternalCallback( getExternalCallback(modelDialog, callback) );
+			options.setExternalCallback( new AonModuleCallback<Mod390HF>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod390HF removed) {
+					modelDialog.hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod390HF edited) {
+					modelDialog.hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod390HF changed) {
+					modelDialog.hide();
+					callback.onChange(changed);
+				}
+				
+			} );
 			modelDialog.addCloseHandler(event -> modelDialog.clear());
 			LOGGER.info("Before visitM303 model390HF.onModuleLoad( options )");
 			model390HF.onModuleLoad( options );
@@ -283,14 +507,250 @@ public class MatrixNewModelVisitor implements IFiscalModelTypeVisitor {
 		}
 	}
 	
+	@Override 
+	public void visitM190()  { 
+		LOGGER.info("Before visitM190");
+		final AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
+		try {
+			Mod190 mod190 = new Mod190();
+			MatrixUtils.map(model,mod190);
+			Model190 model190 = new Model190();
+			Model190ModuleOptions options = new Model190ModuleOptions();
+			options.setParentWidget(modelDialog);
+			options.setDomainName(config.getDomain().getName());
+			options.setDomain( model.getDomain() );
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
+			options.setNewModel(mod190);
+			options.setEmbedded(true);
+			options.setBackButtonVisible(true);
+			final AonModuleCallback<Mod190> extCallback = new AonModuleCallback<Mod190>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod190 removed) {
+					hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod190 edited) {
+					hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod190 changed) {
+					hide();
+					callback.onChange(changed);
+				}
+				
+				private void hide() {
+					modelDialog.hide();
+					modelDialog.clear();
+				}
+			};
+			options.setExternalCallback( extCallback );
+			modelDialog.addCloseHandler(event -> modelDialog.clear());
+			LOGGER.info("Before visitM303 model190.onModuleLoad( options )");
+			model190.onModuleLoad( options );
+			modelDialog.center();
+			modelDialog.show();
+		} catch (Exception t) {
+			callback.onFailure(t);
+		}
+	}
+	
+	@Override 
+	public void visitM180()  { 
+		LOGGER.info("Before visit180");
+		final AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
+		try {
+			Mod180 mod180 = new Mod180();
+			MatrixUtils.map(model,mod180);
+			Model180 model180 = new Model180();
+			Model180ModuleOptions options = new Model180ModuleOptions();
+			options.setParentWidget(modelDialog);
+			options.setDomainName(config.getDomain().getName());
+			options.setDomain( model.getDomain() );
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
+			options.setNewModel(mod180);
+			options.setEmbedded(true);
+			options.setBackButtonVisible(true);
+			final AonModuleCallback<Mod180> extCallback = new AonModuleCallback<Mod180>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod180 removed) {
+					hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod180 edited) {
+					hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod180 changed) {
+					hide();
+					callback.onChange(changed);
+				}
+				
+				private void hide() {
+					modelDialog.hide();
+					modelDialog.clear();
+				}
+			};
+			options.setExternalCallback( extCallback );
+			modelDialog.addCloseHandler(event -> modelDialog.clear());
+			LOGGER.info("Before visitM303 model180.onModuleLoad( options )");
+			model180.onModuleLoad( options );
+			modelDialog.center();
+			modelDialog.show();
+		} catch (Exception t) {
+			callback.onFailure(t);
+		}
+	}
+	
+	@Override 
+	public void visitM184()  { 
+		LOGGER.info("Before visit184");
+		final AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
+		try {
+			Mod184 mod184 = new Mod184();
+			MatrixUtils.map(model,mod184);
+			Model184 model184 = new Model184();
+			Model184ModuleOptions options = new Model184ModuleOptions();
+			options.setParentWidget(modelDialog);
+			options.setDomainName(config.getDomain().getName());
+			options.setDomain( model.getDomain() );
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
+			options.setNewModel(mod184);
+			options.setEmbedded(true);
+			options.setBackButtonVisible(true);
+			final AonModuleCallback<Mod184> extCallback = new AonModuleCallback<Mod184>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod184 removed) {
+					hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod184 edited) {
+					hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod184 changed) {
+					hide();
+					callback.onChange(changed);
+				}
+				
+				private void hide() {
+					modelDialog.hide();
+					modelDialog.clear();
+				}
+			};
+			options.setExternalCallback( extCallback );
+			modelDialog.addCloseHandler(event -> modelDialog.clear());
+			LOGGER.info("Before visitM303 model184.onModuleLoad( options )");
+			model184.onModuleLoad( options );
+			modelDialog.center();
+			modelDialog.show();
+		} catch (Exception t) {
+			callback.onFailure(t);
+		}
+	}
+
+	@Override 
+	public void visitM193()  { 
+		LOGGER.info("Before visit193");
+		final AonCustomPopup modelDialog = getModelDialog(AON.MSG.fiscalModelDescriptionlong(model.getModel()));
+		try {
+			Mod193 mod193 = new Mod193();
+			MatrixUtils.map(model,mod193);
+			Model193 model193 = new Model193();
+			Model193ModuleOptions options = new Model193ModuleOptions();
+			options.setParentWidget(modelDialog);
+			options.setDomainName(config.getDomain().getName());
+			options.setDomain( model.getDomain() );
+			options.setUser(config.getUser().getLogin());
+			options.setConfiguration(config);
+			options.setNewModel(mod193);
+			options.setEmbedded(true);
+			options.setBackButtonVisible(true);
+			final AonModuleCallback<Mod193> extCallback = new AonModuleCallback<Mod193>() {
+				
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void onRemove(Mod193 removed) {
+					hide();
+					callback.onRemove(removed);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+				
+				@Override
+				public void onExit(Mod193 edited) {
+					hide();
+					callback.onExit(edited);
+				}
+				
+				@Override
+				public void onChange(Mod193 changed) {
+					hide();
+					callback.onChange(changed);
+				}
+				
+				private void hide() {
+					modelDialog.hide();
+					modelDialog.clear();
+				}
+			};
+			options.setExternalCallback( extCallback );
+			modelDialog.addCloseHandler(event -> modelDialog.clear());
+			LOGGER.info("Before visitM303 model193.onModuleLoad( options )");
+			model193.onModuleLoad( options );
+			modelDialog.center();
+			modelDialog.show();
+		} catch (Exception t) {
+			callback.onFailure(t);
+		}
+	}
+
 	private static final String ERROR = "Operaci\u00F3n no soportada";
 	@Override public void visitM347()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM349()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM390()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
-	@Override public void visitM180()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
-	@Override public void visitM184()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
-	@Override public void visitM190()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
-	@Override public void visitM193()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 	@Override public void visitM200()  { callback.onFailure( new UnsupportedOperationException( ERROR )); }
 
 }

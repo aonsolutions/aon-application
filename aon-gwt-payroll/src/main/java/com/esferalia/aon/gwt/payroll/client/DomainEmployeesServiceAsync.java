@@ -470,15 +470,15 @@ public class DomainEmployeesServiceAsync {
 	
 	// ----- New employee calendar
 	
-	public void getEmployeeCalendarInfo(Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback) {
+	public void getEmployeeCalendarInfo(Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getEmployeeCalendarInfo(getCurrentDomainName(), contractId, callback);
 	}
 	
-	public void setEmployeeCalendarInfo(Integer contractId, EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<String> callback) {
+	public void setEmployeeCalendarInfo(Integer contractId, EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.setEmployeeCalendarInfo(getCurrentDomainName(), contractId, employeeCalendarInfo, callback);
 	}
 	
-	public void resetEmployeeCalendarInfo(Integer contractId, AsyncCallback<String> callback) {
+	public void resetEmployeeCalendarInfo(Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.resetEmployeeCalendarInfo(getCurrentDomainName(), contractId, callback);
 	}
 	
@@ -636,12 +636,12 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- EmployeeIrpf
 	
-	public void getEmployeeIrpf(String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) {
+	public void getEmployeeIrpf(String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getEmployeeIrpf(getCurrentDomainName(), ssNumber, startDate, callback);
 	}
 	
-	public void setEmployeeIrpf(Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
-		employeesServiceAsync.setEmployeeIrpf(getCurrentDomainName(), contractId, ssNumber, employeeIrpfs, callback);
+	public void setEmployeeIrpf(Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.setEmployeeIrpf(getCurrentDomainName(), contractId, fullName, document, ssNumber, employeeIrpfs, callback);
 	}
 	
 	// ------------------------------------------------- ContractVariables

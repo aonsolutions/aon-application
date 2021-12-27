@@ -1,13 +1,12 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { setValueName, serializeForm, waitEl } from "../../../../services/utils.js";
 import { deleteLocation, saveLocation } from "../../../../services/service.js";
-import { getPosition } from "../../../../services/maps.js";
-import { URL_MAP } from "../../../../environments/constants.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
 import * as ACTION from '../../../actions.js';
-import { CONSTANT, CSS, MSG, TAG } from "../../../../environments/environments.js";
+import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../../environments/environments.js";
 import { createCard, createForm, createInput, createToolbar } from "../../../notification/createComponent.js";
+import { AonMap } from "../../../../components/aon-map.js";
 
 
 export class AonLocationAdd extends AonElement {
@@ -54,12 +53,10 @@ export class AonLocationAdd extends AonElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (CONSTANT.DATA == name && newValue) {
+    if (CONSTANT.DATA == name && newValue) 
       this.setFormValues();
-    }
-    if (CONSTANT.ADD == name && newValue) {
+    else if (CONSTANT.ADD == name && newValue) 
       this.paintViewMap(undefined);
-    }
   }
 
 
@@ -75,20 +72,24 @@ export class AonLocationAdd extends AonElement {
 
     const form = createForm(this.id+"Form");
     this.appendChild(form.element);
+
     let div = this.createElement(TAG.DIV);
     div.id = this.id+"Div";
+
     const className = this.isMobile() ? CSS.AON_MOBILE_SUB_CONTENT : CSS.AON_SUB_CONTENT;
     div.className = className;
     form.appendChild(div);
+
     let div2 = this.createElement(TAG.DIV);
-    div2.className = CSS.AON_COL_SM_12;
+    div2.classList.add(CSS.AON_COL_XS_12);
     div.appendChild(div2);
     
     const aonCard = createCard({id: this.id+"Card", title:"Datos de la " +this.NAME, flex:"true"}, div2).getContent();
 
     let divG = this.createElement(TAG.DIV);
-    divG.className = CSS.AON_COL_XS_10;
+    divG.classList.add(CSS.AON_COL_SM_5, CSS.AON_COL_XS_10);
     aonCard.appendChild(divG);
+
     createInput({
       attributes:{
         name:"description",
@@ -99,26 +100,34 @@ export class AonLocationAdd extends AonElement {
     }, divG);
 
     divG = this.createElement(TAG.DIV);
-    divG.className = CSS.AON_COL_XS_2;
+    divG.classList.add(CSS.AON_COL_SM_1, CSS.AON_COL_XS_2);
     aonCard.appendChild(divG);
+
     createInput({
       attributes:{
         name:"radio",
         id:"radio" ,
         description:MSG.RADIO,
-        type:"text"
+        type:"number"
       }
     }, divG);
 
 
     divG = this.createElement(TAG.DIV);
-    divG.className = CSS.AON_COL_XS_12;
+    divG.classList.add(CSS.AON_COL_SM_6, CSS.AON_COL_XS_12);
     aonCard.appendChild(divG);
-    let divM = this.createElement(TAG.DIV);
-    divM.id = this.id+"Map";
-    divM.title = "Mapa";
-    divG.appendChild(divM);
 
+     createInput({
+      attributes:{
+        name:"direction",
+        id:"direction" ,
+        type:"text",
+        description:"Dirección",
+        disabled:true
+      }
+    }, divG);
+    
+  
     createInput({
       attributes:{
         name:"latitude",
@@ -146,6 +155,10 @@ export class AonLocationAdd extends AonElement {
       }
     }, aonCard);
 
+    const divMap = this.createElement(TAG.DIV);
+    divMap.classList.add(CSS.AON_COL_XS_12);
+    divMap.id = "divMap";
+    div.appendChild(divMap);
   }
 
   buildToolbar(){
@@ -162,75 +175,27 @@ export class AonLocationAdd extends AonElement {
   }
 
   async paintViewMap(data) {
-    let aonMap = await waitEl(`#${this.id}Map`);
-    aonMap.innerHTML = "";
-    const zoom = 16;
-    let iframeId = this.id + "Iframe";
-    let iframe = this.createElement("iframe");
-    iframe.id = iframeId;
-    iframe.frameborder = 0;
-    iframe.style.border = 0;
-    iframe.style.height = "400px";
-    iframe.style.width = "100%";
-    if (data && data.latitude && data.longitude) {
-      iframe.loading = "lazy";
-      iframe.src = `${CONSTANT.URL_MAP_EMBED}&q=${data.latitude},${data.longitude}&zoom=${zoom}&language=es`;
-    } else {
-      iframe = this.iframeOnload(iframe, zoom);
-    }
-    aonMap.appendChild(iframe);
-  }
+    let divMap = await waitEl(`#divMap`);
+    divMap.innerHTML = "";
 
-  iframeOnload(iframe, zoom) {
-    iframe.onload = async () => {
-      const setCoordinates = (ev) => this.setCoordinates(ev);
-      let doc = iframe.contentDocument;
-      let pos = await getPosition()
-        .then(({ latitude, longitude }) => ({ latitude, longitude }))
-        .catch((e) => null);
-      if (pos) {
-        iframe.contentWindow.showNewMap = function () {
-          let mapContainer = doc.createElement("div");
-          mapContainer.style.width = "100%"; 
-          mapContainer.style.height = "100%"; 
-          doc.body.appendChild(mapContainer);
-          const mapOptions = {
-            center: new this.google.maps.LatLng(pos.latitude, pos.longitude),
-            zoom,
-            mapTypeId: this.google.maps.MapTypeId.ROADMAP,
-          };
-          setCoordinates({ latitude: pos.latitude, longitude: pos.longitude }); //setFormValues default lat lng
-          const map = new this.google.maps.Map(mapContainer, mapOptions);
-          const position = new this.google.maps.LatLng(
-            pos.latitude,
-            pos.longitude
-          );
-          // add marker map
-          const marker = new this.google.maps.Marker({
-            position,
-            map,
-            title: "Ubicación del sitio de trabajo!",
-            draggable: true,
-          });
+    let position = null;
+    if (data && data.latitude && data.longitude) 
+      position = { lat: data.latitude, lng: data.longitude}
 
-          // ev drag
-          this.google.maps.event.addListener(marker, "dragend", (ev) =>
-            setCoordinates({
-              latitude: ev.latLng.lat(),
-              longitude: ev.latLng.lng(),
-            })
-          );
-        };
+    let aonMap = new AonMap();
+    aonMap.POSITION = position;
+    aonMap.geocoder = true;
+    aonMap.addEventListener(EVENT.COORDINATES, ({detail})=>{
+      this.setCoordinates(detail);
+    });
 
-        let script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = URL_MAP;
-        iframe.contentDocument
-          .getElementsByTagName("head")[0]
-          .appendChild(script);
-      } //pos
-    }; //onload
-    return iframe;
+    aonMap.addEventListener(EVENT.GEOCODE, ({detail})=>{
+      if(detail && detail.name)
+        this.getElement("direction").value = detail.name
+    });
+
+    const cardContentMap = createCard({id: this.id+"Map", title:"Mapa", flex:"true"}, divMap).getContent();
+    cardContentMap.appendChild(aonMap);
   }
 
   getFormValues() {
@@ -238,20 +203,13 @@ export class AonLocationAdd extends AonElement {
     return serializeForm(form);
   }
 
-
-  setCoordinates(data) {
-    if (data && data.latitude && data.longitude) {
-      setValueName("latitude", data.latitude);
-      setValueName("longitude", data.longitude);
-    }
-  }
-
   async setFormValues() {
     await waitEl('#latitude');
     const data = this.data;
     if (data) {
       const obj = { ...data };
-      for (const property in obj) setValueName(property, obj[property]);
+      for (const property in obj)
+        setValueName(property, obj[property]);
       this.paintViewMap(data);
     }
   }
@@ -288,6 +246,19 @@ export class AonLocationAdd extends AonElement {
       }
       this.applicationEl.stopLoading();
     });
+  }
+
+  deleteManual(id){
+    deleteLocation({id});
+  }
+
+  setCoordinates(data) {
+    let lat = data.latitude || data.lat;
+    let lng = data.longitude || data.lng;
+    if (lat && lng) {
+      setValueName("latitude", lat);
+      setValueName("longitude", lng);
+    }
   }
 
   back() {

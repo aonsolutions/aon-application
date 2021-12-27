@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -22,6 +23,7 @@ import com.esferalia.aon.gwt.common.shared.HasStartAndEndDate;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.UndoManager.Listener;
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
@@ -258,6 +260,8 @@ public class AgreementDraftObject {
 	private AgreementServiceAsync agreementsServiceAsync;
 	private ArrayList<Date> newDatesChanges;
 	private ArrayList<Date> deleteDatesChanges;
+	private DomainEmployeesServiceAsync employeesServiceAsync = DomainEmployeesServiceAsync.newInstance();
+	private Agreement agreement;
 
 	public AgreementDraftObject(
 			Integer draftDomain,
@@ -281,6 +285,10 @@ public class AgreementDraftObject {
 			AgreementDraft agreementDraft,
 			DomainEmployeesServiceAsync employeesServiceAsync) {
 		this(draftDomain, draftDomainName, agreementDraft, employeesServiceAsync.asAgreementServiceAsync());
+	}
+	
+	public DomainEmployeesServiceAsync getEmployeesService() {
+		return this.employeesServiceAsync;
 	}
 
 	public boolean isMine() {
@@ -748,6 +756,21 @@ public class AgreementDraftObject {
 
 	public boolean hasWarnings() {
 		return agreementDraft.hasLevelsWithoutCategories();
+	}
+	
+	public void checkAndUpdateServiAgreement(Consumer<Date> success, Consumer<Throwable> failure) {
+		Integer lastDateYear = DateUtils.getYear(getDatesWithChanges().last());
+		agreementsServiceAsync.checkAndUpdateServiAgreement(draftDomainName, getId(), getSSNumber(), lastDateYear, new AsyncCallback<Date>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Date result) {
+				success.accept(result);
+			}});
 	}
 
 	// -------------------------------------------------------------------------
@@ -1313,6 +1336,36 @@ public class AgreementDraftObject {
 				addDraftCategories(level, "Cat " + level.getDescription());
 		}
 		
+	}
+	
+	public AgreementDraftObject createAgreementDraftObject() {
+		return new AgreementDraftObject(
+				draftDomain
+				, draftDomainName
+				, agreementDraft 
+				, agreementsServiceAsync);
+	}
+	
+	public void setAgreement(Agreement agreementIn) {
+		this.agreement = agreementIn;
+	}
+
+	public void getChanges(AgreementDraftObject agreementDraftObjectNew, Consumer<SortedSet<Date>> succes, Consumer<Throwable> failure) {
+		employeesServiceAsync.getChanges(draftDomainName, agreement, new AsyncCallback<SortedSet<Date>>() {
+			
+			@Override
+			public void onSuccess(SortedSet<Date> result) {
+				Date lastChange = result.last();
+				agreementDraftObjectNew.setStartDate(lastChange);
+				agreementDraftObjectNew.setEndDate(DateUtils.getLastDayOfMonth(lastChange));
+				succes.accept(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
 	}
 
 }

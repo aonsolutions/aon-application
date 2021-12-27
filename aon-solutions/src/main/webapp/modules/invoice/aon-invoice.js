@@ -1,7 +1,8 @@
 import { AonElement } from '../../components/AonElement.js';
 import { getInvoice, getInvoiceAccounts, insertInvoice, acceptInvoice, deleteInvoice, deleteRawdocInvoices,
 	 getCompanyActivities, getPaymethods, getRegistry, sendInvoiceMail, getRegistryPaymethod, getSalesSeries} from '../../services/service.js';
-import { Invoice } from './Invoice.js';
+import { getCompany } from '../../services/companyService.js';
+	 import { Invoice } from './Invoice.js';
 import { getNextInvoice, getPreviousInvoice } from './InvoiceCache.js';
 import { ToolbarType } from '../../models/enums.js';
 
@@ -98,6 +99,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	initialize(){
+		this.accept = true;
 		this.rbanks = [];
 		this.fileOpened = false;
 		this.id = this.id || 'aonInvoiceSheet';
@@ -1549,10 +1551,19 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
-		acceptInvoice(this.getInvoice()).then(r => {
-			this.invoice = this.invoice = new Invoice(r);
-			this.reload();
-		}).catch(e => this.showError(e));
+		if(this.accept) {
+			this.getApplication().startLoader();
+			this.accept = false;
+			acceptInvoice(this.getInvoice()).then(r => {
+				this.invoice = new Invoice(r);
+				this.getApplication().stopLoader(); 
+				this.reload();
+			}).catch(e => {
+				this.accept = true;
+				this.getApplication().stopLoader(); 
+				this.showError(e)
+			});
+		}
 	}
 
 	recordInvoice() {

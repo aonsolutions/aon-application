@@ -711,7 +711,8 @@ public class Invoice implements Serializable, HasAudit {
 	
 	public boolean isSimplified() {
 		return AonStringUtils.isBlank(getRegistryDocument()) || AonStringUtils.isBlank(getRegistryName())
-				|| AonStringUtils.isBlank(getAddressZIP());
+				|| (AonStringUtils.isBlank(getAddressZIP()) && getRegistryAddress() == null)
+				;
 	}
 	
 	public boolean isProforma() {

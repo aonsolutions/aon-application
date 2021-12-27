@@ -461,7 +461,7 @@ public class ContractServlet extends AonApiHttpServlet {
 			.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(fraSql))));
 		}
 
-	    if(contract.isEmpty()) { // CONTRACT NO EXIST
+	    if(contract.isPresent()) { // CONTRACT NO EXIST
 			com.esferalia.aon.occam.api.model.payroll.Employee employee = new com.esferalia.aon.occam.api.model.payroll.Employee();
 			
 			employee.setRegime(params.optString("regime"));
@@ -505,7 +505,7 @@ public class ContractServlet extends AonApiHttpServlet {
 					.and(f.getPersonProperty().eq(registry))
 					.and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(now))));
 			
-			if(!contract.isEmpty()) {
+			if(contract.isPresent()) {
 				for (int i = 0; i < dates.length(); i++) {
 					org.json.JSONObject json = dates.getJSONObject(i);
 					if(!json.optString("startDate").isEmpty() && !json.optString("endDate").isEmpty()) {

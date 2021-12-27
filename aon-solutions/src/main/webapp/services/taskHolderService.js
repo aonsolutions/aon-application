@@ -6,7 +6,7 @@ export const getTastHolders = (data) => get(`${API_URL}/taskholder/enterprise`, 
 
 export const getTastHoldersWorkGroup = async (data) =>{
   const resp = await get(`${API_URL}/taskholder/workgroup`, data);
-  return resp.filter( (v,i,s)=>s.findIndex((m) => m.id === v.id) === i );
+  return resp.filter( (v,i)=>resp.findIndex((m) => m.id === v.id) === i );
 } 
 
 let taskHoldersUser;

@@ -31,7 +31,8 @@ export class Task {
   myTaskHolder;
   auth;
   appParams;
-
+  domainCompany;
+  
   constructor(task) {
     if(task)
       this.setTask(task);
@@ -80,9 +81,11 @@ export class Task {
       this.setStartDate(task.start_date || undefined);
       this.setParent(task.parent || undefined);
       this.setGTaskId(task.gtask_id  || undefined);
-      this.setDomain(new Domain(task.domain)) 
+      this.setDomain(new Domain(task.domain));
       this.setWorkflow(task.workflow || []);
       this.setDomainTmp(this.domain);
+      if(task.domainCompany) 
+        this.setDomainCompany(task.domainCompany);
 
       this.setWorkflowTmp({
         comment:"",
@@ -171,6 +174,14 @@ export class Task {
 
   setDomainTmp(domainTmp) {
     this.domainTmp = domainTmp;
+  }
+
+  getDomainCompany() {
+    return this.domainCompany;
+  }
+
+  setDomainCompany(domainCompany) {
+    this.domainCompany = domainCompany;
   }
 
   getSender() {
@@ -347,7 +358,7 @@ export class Task {
   }
 
   isAdvisoryCompany(){
-    return "OFFICE" === LS.getCompany().type ? true : false;
+    return "OFFICE" === this.getDomainCompany().domainType ? true : false;
   }
 
   senderCondition(){

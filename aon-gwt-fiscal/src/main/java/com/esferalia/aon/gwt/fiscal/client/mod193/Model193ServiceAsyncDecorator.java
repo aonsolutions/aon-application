@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -17,50 +18,50 @@ public class Model193ServiceAsyncDecorator implements Model193ServiceAsync {
 	}
 
 	@Override
-	public void getMod193s(String domainName, String user, int domain, AsyncCallback<LinkedList<Mod193>> callback) {
+	public void getMod193s(Occam occam, AsyncCallback<LinkedList<Mod193>> callback) {
 		AON.start();
-		fsa.getMod193s(domainName, user, domain, new AsyncCallbackWrapper<LinkedList<Mod193>>(callback));
+		fsa.getMod193s(occam, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void getMod193(String domainName, String user, int domain, Integer id, AsyncCallback<Mod193> callback) {
+	public void get(Occam occam, Integer id, AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.getMod193(domainName, user, domain, id, new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.get(occam, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void delete(String domainName, String user, int domain, Mod193 mod193,AsyncCallback<Void> callback) {
+	public void delete(Occam occam, Mod193 mod193,AsyncCallback<Void> callback) {
 		AON.start();
-		fsa.delete(domainName, user, domain, mod193,new AsyncCallbackWrapper<Void>(callback));
+		fsa.delete(occam, mod193,new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void save(String domainName, String user, int domain, Mod193 mod193,AsyncCallback<Mod193> callback) {
+	public void save(Occam occam, Mod193 mod193,AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.save(domainName, user, domain, mod193,new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.save(occam, mod193,new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void initialize(String domainName, String user, Integer domain, Integer year, AsyncCallback<Mod193> callback) {
+	public void initialize(Occam occam, Integer year, AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.initialize(domainName, user, domain, year, new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.initialize(occam, year, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void saveComments(String domainName, String user, Mod193 mod193,AsyncCallback<Mod193> callback) {
+	public void saveComments(Occam occam, Mod193 mod193,AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.saveComments(domainName, user, mod193, new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.saveComments(occam, mod193, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void changeStatus(String domainName, String user, Mod193 mod193, FiscalStatus newStatus,AsyncCallback<Mod193> callback) {
+	public void changeStatus(Occam occam, Mod193 mod193, FiscalStatus newStatus,AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.changeStatus(domainName, user, mod193, newStatus, new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.changeStatus(occam, mod193, newStatus, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
-	public void duplicateMod193(String domainName, String user, Integer domain, Mod193 mod193, AsyncCallback<Mod193> callback) {
+	public void duplicate(Occam occam, Mod193 mod193, AsyncCallback<Mod193> callback) {
 		AON.start();
-		fsa.duplicateMod193(domainName, user, domain, mod193, new AsyncCallbackWrapper<Mod193>(callback));
+		fsa.duplicate(occam, mod193, new AsyncCallbackWrapper<>(callback));
 	}
 }

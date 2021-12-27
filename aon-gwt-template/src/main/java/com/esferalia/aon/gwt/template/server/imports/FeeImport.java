@@ -397,7 +397,9 @@ public class FeeImport extends Import {
 	
 	private static Filter sellerFilter(Domain domain, User user, Seller seller, SellerProperties f) {
 		return f.getDomainProperty().eq(domain.getId())
-			.and(f.getDocumentProperty().eq(seller.getAlias()).or(f.getNameProperty().eq(seller.getAlias())));
+			.and(f.getDocumentProperty().eq(seller.getAlias())
+				.or(f.getNameProperty().eq(seller.getAlias()))
+				.or(f.getAliasProperty().eq(seller.getAlias())));
 	}
 	
 	private static Filter workplaceFilter(Domain domain, User user, Workplace workplace, WorkplaceProperties f) {

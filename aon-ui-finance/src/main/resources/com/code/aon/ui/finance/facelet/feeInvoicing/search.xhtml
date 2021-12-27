@@ -123,6 +123,7 @@
 							<ui:param name="sfc_editable" value="#{true}" />
 							<ui:param name="sfc_seriesProperty" value="#{feeInvoicing.params.invoiceSeries}" />
 							<ui:param name="sfc_numberProperty" value="#{feeInvoicing.params.invoiceNumber}" />
+							<ui:param name="sfc_showNumberEditable" value="#{!feeInvoicing.tbai}"/>
 							<aon:methodParam name="sfc_onSeriesChanged" type="valueChangeListener"
 								value="#{feeInvoicing.onInvoiceSeriesChanged}" />	
 							<aon:methodParam name="sfc_onNumberEditable" type="actionListener"

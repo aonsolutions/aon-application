@@ -78,11 +78,12 @@ export class AonUserPanel extends AonElement {
 		aonUserPanel.closeSidenav();
 	}
 
-	init(filter){
+	init(type){
+		this.getApplication().cleanSearchValue();
 		let aonUserPanel = this.getElement(this.AON_USER_PANEL);
 		
 		let userList = new AonUserList();
-		userList.setFilter(filter);
+		userList.setType(type);
 		aonUserPanel.setContent(userList);
 		userList.init();
 		// aonUserPanel.setContent(`<aon-user-list filter="${filter}"> </aon-user-list>`);

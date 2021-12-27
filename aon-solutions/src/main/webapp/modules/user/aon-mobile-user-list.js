@@ -1,6 +1,7 @@
 import {AonMobileList} from '../../components/aon-mobile-list.js';
 import { MATERIAL_ICONS } from '../../environments/environments.js';
 import {getUserList} from '../../services/service.js';
+import { AonUser } from './aon-user.js';
 
 export class AonMobileUserList extends AonMobileList {
 
@@ -53,16 +54,18 @@ export class AonMobileUserList extends AonMobileList {
     }
 
     aonUser(user, i) {
-        setIndex(index);
-    
-        let aonUser = new AonUser();
-        aonUser.id = 'aonUser-' + user.id;
-        aonUser.setShowApps(true);
-        aonUser.setShowToolbar(true);
-        aonUser.setUser(user);
-        aonUser.style.width = "100%";
-    
-        this.getApplication().setContent(aonUser);	
+        setIndex(i);
+    	getUserRoles({user: user.id}).then(roles => {
+			user.roles = roles;
+			let aonUser = new AonUser();
+			aonUser.id = 'aonUser-' + user.id;
+			aonUser.setShowApps(true);
+			aonUser.setShowToolbar(true);
+			aonUser.setUser(user);
+			aonUser.style.width = "100%";
+	
+			this.getApplication().setContent(aonUser);
+		});
 	}
 
     setValue(value) {

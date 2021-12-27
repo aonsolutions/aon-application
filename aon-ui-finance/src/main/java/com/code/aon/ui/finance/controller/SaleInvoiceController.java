@@ -79,7 +79,9 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
 public class SaleInvoiceController extends InvoiceController {
@@ -117,6 +119,18 @@ public class SaleInvoiceController extends InvoiceController {
 			deliveryTransferManager = new DeliveryTransferManager(); 
 		}
 		return deliveryTransferManager;
+	}
+	
+	public boolean isTbaiInvoice() {
+		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
+	}
+	
+	public String getTbaiUrl() {
+		Invoice invoice = (Invoice) this.getTo();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String domainName = AonUtil.getDomainName();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		return TbaiData.getTbaiUrl(domainName, domainId, login, invoice.getId());
 	}
 
 	public void setDeliveryTransferManager(DeliveryTransferManager deliveryTransferManager) {
@@ -439,8 +453,7 @@ public class SaleInvoiceController extends InvoiceController {
 			out = DownloadUtil.initDownload(response, fileName + ".edi", null, size);
 			InputStream fileIn = new BufferedInputStream( new ByteArrayInputStream(data) );
 			IOUtils.copy( fileIn, out );
-			IOUtils.closeQuietly(fileIn);
-			
+			IOUtils.closeQuietly(fileIn);			
         } catch (IOException e) {
         	AonUtil.addErrorMessage(e.getMessage());
         	throw new AbortProcessingException(e.getMessage(), e);
@@ -533,5 +546,12 @@ public class SaleInvoiceController extends InvoiceController {
 		}
 		
 		// SII
+	}
+	
+	public String getRemoveConfirmMessage() {
+		return this.isTbaiInvoice() 
+			? "La factura está enviada a Ticket Bai. Solo se permitirá borrarla en el periodo de pruebas"
+			: "¿Borrar?";
+				
 	}
 }

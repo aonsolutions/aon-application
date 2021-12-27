@@ -187,6 +187,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconSchedule aonIconSchedule;
+.aon_icon_schedule { background-image: iconSchedule;}
 @url iconReceipt aonIconReceipt;
 .aon_icon_receipt { background-image: iconReceipt;}
 @url iconMoveTo aonIconMoveTo;
@@ -465,9 +467,10 @@
 .aon_width_almost_all {
 	width: 98%;
 }
+.aon_width_20 { width: 20px; }
 .aon_width_80 { width: 80px; }
-.aon_width_100 { width: 80px; }
-.aon_width_150 { width: 80px; }
+.aon_width_100 { width: 100px; }
+.aon_width_150 { width: 150px; }
 .aon_width_400 { width: 400px; }
 
 .aon_fixed_font {

@@ -189,6 +189,7 @@
 				<table ui:field="contractDataTable" debugId="contractDataTable"
 					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
 					<tbody>
+						<!-- LINEA 0 -->
 					    <tr>
 					        <td></td>
 					        <td></td>
@@ -198,6 +199,7 @@
 					        <td></td>
 					        <td></td>
 					    </tr>
+					    <!-- LINEA 1 -->
 					    <tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.firstColumnTextStyle}'>Documento</g:Label>
@@ -231,6 +233,7 @@
 								</g:HorizontalPanel>
 							</td>
 						</tr>
+						<!-- LINEA 2 -->
 					    <tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Nombre</g:Label>
@@ -254,6 +257,7 @@
 								<g:TextBox ui:field="secondSurname" debugId="second_surname" styleName='aon-inputText {style.maxWidthTextBox4} {style.heightTB}'></g:TextBox>
 							</td>
 						</tr>
+						<!-- LINEA 3 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de cotización</g:Label>
@@ -262,6 +266,7 @@
 								<g:ListBox ui:field="ssRegimeType" debugId="ssRegimeType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
+						<!-- LINEA 4 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Actividad - Cuenta de cotización</g:Label>
@@ -272,6 +277,7 @@
 								</g:HTMLPanel>
 							</td>
 						</tr>
+						<!-- LINEA 5 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Modalidad Cotización</g:Label>
@@ -280,6 +286,7 @@
 								<g:ListBox ui:field="mdCTZLB" debugId="mdCTZ" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
+						<!-- LINEA 6 -->
 						<tr>
 						    <td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Centro de trabajo</g:Label>
@@ -290,6 +297,7 @@
 								</g:HTMLPanel>
 							</td>
 						</tr>
+						<!-- LINEA 7 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de contrato</g:Label>
@@ -306,6 +314,7 @@
 								</g:Label>
 							</td>
 						</tr>
+						<!-- LINEA 8 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Modalidad</g:Label>
@@ -314,6 +323,7 @@
 								<g:ListBox ui:field="modality" debugId="modality" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
+						<!-- LINEA 9 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Periodo contratación</g:Label>
@@ -341,6 +351,7 @@
 								</g:HTMLPanel>
 							</td>
 						</tr>
+						<!-- LINEA 10 -->
 						<tr>
 							<td rowspan="2" style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Categoría/Nivel retributario</g:Label>
@@ -352,6 +363,7 @@
 								<g:ListBox ui:field="agreement" debugId="agreement" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
+						<!-- LINEA 11 -->
 						<tr>
 							<td>
 								<g:Label>Nivel/Categoría</g:Label>
@@ -366,6 +378,7 @@
 								<g:TextBox ui:field="category" debugId="category" styleName='aon-inputText {style.maxWidthTextBox3} {style.heightTB}'></g:TextBox>
 							</td>
 						</tr>
+						<!-- LINEA 12 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Grupo de cotización</g:Label>
@@ -374,6 +387,7 @@
 								<g:ListBox ui:field="quoteGroup" debugId="quote_group" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
+						<!-- LINEA 13 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Ocupación</g:Label>
@@ -382,6 +396,7 @@
 								<g:ListBox ui:field="occupation" debugId="occupation" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
+						<!-- LINEA 14 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">RLCE</g:Label>
@@ -390,6 +405,7 @@
 								<g:ListBox ui:field="rlce" debugId="rlce" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
+						<!-- LINEA 15 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.requiredColor} {style.firstColumnTextStyle}">Tipo de jornada</g:Label>
@@ -398,6 +414,7 @@
 								<g:ListBox ui:field="journeyType" debugId="journeyType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
+						<!-- LINEA 16 -->
 						<tr>
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Duración de lo jornada</g:Label>

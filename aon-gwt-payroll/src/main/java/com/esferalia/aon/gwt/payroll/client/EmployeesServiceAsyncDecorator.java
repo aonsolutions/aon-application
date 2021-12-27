@@ -706,21 +706,21 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	// ----- New employee calendar
 
 	@Override
-	public void getEmployeeCalendarInfo(String domainName, Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback) {
+	public void getEmployeeCalendarInfo(String domainName, Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeCalendarInfo(domainName, contractId, new AsyncCallbackWrapper<EmployeeCalendarInfo>(callback));
 	}
 
 	@Override
-	public void setEmployeeCalendarInfo(String domainName, Integer contractId, EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<String> callback) {
+	public void setEmployeeCalendarInfo(String domainName, Integer contractId, EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.setEmployeeCalendarInfo(domainName, contractId, employeeCalendarInfo, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.setEmployeeCalendarInfo(domainName, contractId, employeeCalendarInfo, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
-	public void resetEmployeeCalendarInfo(String domainName, Integer contractId, AsyncCallback<String> callback) {
+	public void resetEmployeeCalendarInfo(String domainName, Integer contractId, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.resetEmployeeCalendarInfo(domainName, contractId, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.resetEmployeeCalendarInfo(domainName, contractId, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
@@ -957,15 +957,15 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	// ------------------------------------------------- EmployeeIrpf
 
 	@Override
-	public void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) {
+	public void getEmployeeIrpf(String currentDomainName, String ssNumber, Date startDate, AsyncCallback<List<EmployeeIrpf>> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.getEmployeeIrpf(currentDomainName, ssNumber, startDate, new AsyncCallbackWrapper<List<EmployeeIrpf>>(callback));
 	}
 
 	@Override
-	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) {
+	public void setEmployeeIrpf(String currentDomainName, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.setEmployeeIrpf(currentDomainName, contractId, ssNumber, employeeIrpfs, new AsyncCallbackWrapper<Void>(callback));
+		employeesServiceAsync.setEmployeeIrpf(currentDomainName, contractId, fullName, document, ssNumber, employeeIrpfs, new AsyncCallbackWrapper<Void>(callback));
 	}
 	
 	// ------------------------------------------------- ContractVariables

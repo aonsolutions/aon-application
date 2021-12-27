@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.config.ConfigBlock;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.MailTemplate;
+import com.esferalia.aon.occam.api.model.PayrollWorkplace;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
@@ -53,6 +54,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.GeoZoneDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.MailDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PayrollWorkplaceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TagDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TaxDAO;
@@ -154,12 +156,29 @@ public class CommonImpl implements ICommon {
 		return ctx.getDslContext().transactionResult(configuration -> 
 			WorkplaceDAO.getWorkplaceList(ctx, filter));
 	}
+
+	@Override
+	public Workplace saveWorkplace(AONContext ctx, Workplace workplace) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> WorkplaceDAO.save(ctx, workplace));
+	}
 	
 	@Override
+	@Deprecated
 	public void updateWorkplace(AONContext ctx, Workplace workplace) {
 		ctx.getDslContext().transaction(
-			configuration -> WorkplaceDAO.updateWorkplace(ctx, workplace));
+			configuration -> WorkplaceDAO.update(ctx, workplace));
 	}
+	
+	// ---------- PAYROLL WORKPLACE
+	
+	@Override
+	public PayrollWorkplace savePayrollWorkplace(AONContext ctx, PayrollWorkplace payrollWorkplace) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> PayrollWorkplaceDAO.save(ctx, payrollWorkplace));
+	}
+	
+	
 	// ------------------ PRODUCT
 	@Override
 	public List<String> getProductTags(AONContext ctx) {

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -22,11 +21,8 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
-import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
-import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
-import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ContrataEmployeeObject {
@@ -331,25 +327,6 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
-	// ------------------------------------------------- Database Methods (Bonuses)
-	
-	public void getSSBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
-		Integer contractId = employeeContractData.getContractInfo().getContractId();
-		enterprisesService.getEmployeeSSBonuses(contractId, new AsyncCallback<List<SSBonusData>>() {
-			
-			@Override
-			public void onSuccess(List<SSBonusData> result) {
-				employeeContractData.setContractBonus(result);
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-	}
-	
 	// ------------------------------------------------- Database Methods (Salaries)
 	
 	public void getEmployeeSalaryObject(Consumer<EmployeeSalaryObject> success) {
@@ -360,58 +337,15 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (Calendar)
 	
 	public void getEmployeeCalendarObject(Consumer<EmployeeCalendarDraftObject> success) {
-		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(contractData.getContractId(), employeesService);
+		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(contractData.getContractId());
 		success.accept(employeeCalendarDraftObject);
-	}
-	
-	// ------------------------------------------------- Database Methods (Events)
-	
-	public void getEmployeeEventsObject(Consumer<EmployeeEventsDraftObject> success) {
-		EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(contractData.getContractId());
-		success.accept(employeeEventsDraftObject);
-	}
-	
-	// ------------------------------------------------- Database Methods (Payments)
-	
-	public void getEmployeeContractPaymentsObject(Consumer<EmployeeContractPaymentsObject> success) {
-		EmployeeContractPaymentsObject employeeContractPaymentsObject = new EmployeeContractPaymentsObject(contractData.getContractId());
-		success.accept(employeeContractPaymentsObject);
 	}
 	
 	// ------------------------------------------------- Database Methods (IRPF)
 	
 	public void getEmployeeContractIrpfObject(Consumer<EmployeeContractIrpfObject> success) {
-		EmployeeContractIrpfObject employeeContractIrpfObject = new EmployeeContractIrpfObject(contractData.getContractId(), employeeData.getSsNumber(), contractData.getStartDate());
+		EmployeeContractIrpfObject employeeContractIrpfObject = new EmployeeContractIrpfObject(contractData.getContractId(), employeeData.getFullName(), employeeData.getDocument(), employeeData.getSsNumber(), contractData.getStartDate());
 		success.accept(employeeContractIrpfObject);
-	}
-	
-	// ------------------------------------------------- Database Methods (Salary Draft)
-	
-	public void getSalaryDraftObject(Consumer<SalaryDraftObject> success, Consumer<Throwable> failure) {
-		employeesService.getEmployee(contractData.getContractId(), new AsyncCallback<Employee>() {
-			@Override
-			public void onSuccess(Employee employee) {
-				Date salaryDate = DateUtils.before(DateUtils.after(new Date(), employee.getStartDate()), employee.getEndDate());
-				Date startDate = DateUtils.getFirstDayOfMonth(salaryDate);
-				Date endDate = DateUtils.getLastDayOfMonth(salaryDate);
-				Date issueDate = endDate;
-
-				SalaryDraft salaryDraft = new SalaryDraft();
-				salaryDraft.setEmployee(employee);
-				salaryDraft.setStartDate(startDate);
-				salaryDraft.setEndDate(endDate);
-				salaryDraft.setIssueDate(issueDate);
-				salaryDraft.setType(Type.SALARY);
-
-				SalaryDraftObject salaryDraftObject = new SalaryDraftObject(salaryDraft, employeesService);
-				success.accept(salaryDraftObject);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
 	}
 	
 	// ------------------------------------------------- Database Methods (ContractVariables)

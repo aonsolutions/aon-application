@@ -372,5 +372,11 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		
 	}
 
+	@Override
+	public void onEmployeeSSBonusSelected(ContractBonusObject contractBonusObject) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

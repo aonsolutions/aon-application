@@ -1,74 +1,103 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getUserList} from  '../../services/service.js';
-import {setUsers, setIndex} from './UserCache.js';
+import {getUserListSpeed, getUserRoles} from  '../../services/service.js';
+import {setUsers, setIndex, addUsers, getFilter, setFilter, getUsers} from './UserCache.js';
 
-import '../../components/aon-table.js';
 import { AonUser } from './aon-user.js';
-import { EVENT } from '../../environments/environments.js';
+import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
+import { AonTable } from '../../components/aon-table.js';
 
 export class AonUserList extends AonElement {
 
-	users; 
+	get id() {
+		return this.getAttribute(CONSTANT.ID);
+	}
+
+	set id(id) {
+		this.setAttribute(CONSTANT.ID, id);
+	}
+
+	TABLE;
+	more;
 	filter;
+	type;
+	back;
 
 	constructor () {
 		super();
 	}
 
 	connectedCallback() {
-		this.innerHTML = `
-			<aon-table id='aonUserTable'></aon-table>
-		`;
 		this.initialize()
 		this.build();
  	}
 
 	initialize() {
-		this.filter = this.filter || {filter: 'company'};
+		this.back = this.back || false;
+		this.more = true;
+		this.id = this.id || CONSTANT.AON_USER_LIST;
+		this.TABLE = this.id + CONSTANT.TABLE.initCap();
+		this.filter = this.filter || {
+			filter: this.type || 'company',
+			page: 1,
+			perPage: 30		
+		};
+		if(this.back) 
+			this.filter = getFilter();
 	}
 
 	build() {
+		let table = this.createAonElement(new AonTable(), this.TABLE);
+		this.appendChild(table);
 
 		const btnSearch = this.getApplication().addSearchOption();
 		let searchFn = (event) => this.search(event.detail);
 		btnSearch.addEventListener(EVENT.SEARCH, searchFn);
-
-		let table = this.getElement('aonUserTable');
-		table.addColumn('Nombre', 'string', 'name', '25%');
-		table.addColumn('Apellidos', 'string', 'surname', '25%');
-		table.addColumn('Email', 'string', 'email', '25%');
-		table.addColumn('DNI/NIE', 'number', 'document', '25%');
-		// INFO
-		// aonInvoiceTable.addColumn('', '', '');
-
+		
+		table.addColumn(MSG.NAME, CONSTANT.STRING, CONSTANT.NAME, '25%');
+		table.addColumn(MSG.SURNAME, CONSTANT.STRING, CONSTANT.SURNAME, '25%');
+		table.addColumn(MSG.EMAIL, CONSTANT.STRING, CONSTANT.EMAIL, '25%');
+		table.addColumn(MSG.NIF, CONSTANT.NUMBER, CONSTANT.DOCUMENT, '25%');
+		table.addEventListener('more', () => {
+			if(this.more) this.loadMore()
+		});
 		this.init();
 	}
 
-
-	setFilter(filter) {
-		this.filter = {filter};
-	}
-
 	search(value) {
-		const usrs = this.users.filter( f => (f.name && f.name.includes(value)) || (f.surname && f.surname.includes(value)) 
-			|| (f.document && f.document.includes(value)) || (f.email && f.email.includes(value)));
-		setUsers(usrs);
-		let table = this.getElement('aonUserTable');
-
-		table.removeRows();
-		usrs.forEach((user, i) => {
-			table.addRow(user, () => this.aonUser(user, i));
-		});
+		this.filter.value = value;
+		this.init();		
 	}
 
 	init() {
-		let filter = this.filter.filter || 'company';
-		let table = document.getElementById('aonUserTable');
+		let table = document.getElementById(this.TABLE);
 		if(table) {
-			getUserList({filter}).then(users => {
-				setUsers(users);
-				this.users = users;
-				table.removeRows();
+			if(this.back) {
+				this.back = false;
+				getUsers().forEach((user, i) => {
+					table.addRow(user, () => this.aonUser(user, i));
+				});
+			} else {
+				this.filter.page = 1;
+				getUserListSpeed(this.filter).then(users => {
+					setUsers(users);
+					table.removeRows();
+					users.forEach((user, i) => {
+						table.addRow(user, () => this.aonUser(user, i));
+					});
+				});
+			}
+		}
+	}
+
+	loadMore() {
+		this.more = false;
+		let table = this.getElement(this.TABLE);
+		if(table && this.filter.page) {
+			this.filter.page = this.filter.page + 1;
+			getUserListSpeed(this.filter).then(users => {
+				addUsers(users);
+				if(users.length > 0)
+					this.more = true;
 				users.forEach((user, i) => {
 					table.addRow(user, () => this.aonUser(user, i));
 				});
@@ -78,37 +107,31 @@ export class AonUserList extends AonElement {
 
 	aonUser(user, index) {
 		setIndex(index);
+		setFilter(this.filter);
 
-		let aonUser = new AonUser();
-		aonUser.id = 'aonUser-' + user.id;
-		aonUser.setShowApps(true);
-		aonUser.setShowToolbar(true);
-		aonUser.setUser(user);
-		aonUser.style.width = "100%";
-
-		this.getApplication().setContent(aonUser);	
+		getUserRoles({user: user.id}).then(roles => {
+			user.roles = roles;
+			let aonUser = new AonUser();
+			aonUser.id = 'aonUser-' + user.id;
+			aonUser.setShowApps(true);
+			aonUser.setShowToolbar(true);
+			aonUser.setUser(user);
+			aonUser.style.width = "100%";
+	
+			this.getApplication().setContent(aonUser);
+		});
+	
 	}
 
-	// setValue(value) {
-	// 	let filter = {
-	// 		filter: this.hasAttribute('filter') ? this.getAttribute('filter') : 'company'
-	// 	};
-	// 	let table = document.getElementById('aonUserTable');
-	// 	if(table) {
-	// 		getUsers(filter).then(users => {
-	// 			table.removeRows();
-	// 			users.filter(f => 
-	// 				f.name.toLowerCase().includes(value.toLowerCase()) || f.surname.toLowerCase().includes(value.toLowerCase()) 
-	// 				|| f.email.toLowerCase().includes(value.toLowerCase()) || f.document.toLowerCase().includes(value.toLowerCase())
-	// 			).forEach((user, i) => {
-	// 				table.addRow(user, () => this.aonUser(user, i));
-	// 			});
-	// 		});
-	// 	}
-	// }
+	setType(type) {
+		this.type = type || 'company';
+	}
 
+	setBack(back) {
+		this.back = back || false;
+	}
 }
-if(!window.customElements.get('aon-user-list')){
-	window.customElements.define('aon-user-list', AonUserList);
+if(!window.customElements.get(TAG.AON_USER_LIST)){
+	window.customElements.define(TAG.AON_USER_LIST, AonUserList);
 }
 

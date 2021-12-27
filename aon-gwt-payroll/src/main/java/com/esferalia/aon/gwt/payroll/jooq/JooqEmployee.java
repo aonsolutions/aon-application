@@ -15,7 +15,6 @@ import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
-import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -408,16 +407,6 @@ public class JooqEmployee {
 					.set(CONTRACT_DATA.START_DATE, contractStartDate)
 					.set(CONTRACT_DATA.END_DATE, contractEndDate)
 					.execute();	
-			
-			if(AonStringUtils.isNotBlank(contractData.getRlce()))
-				dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, domain)
-					.set(CONTRACT_DATA.NAME, "RLCE")
-					.set(CONTRACT_DATA.CONTRACT, contractId)
-					.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getRlce()))
-					.set(CONTRACT_DATA.START_DATE, contractStartDate)
-					.set(CONTRACT_DATA.END_DATE, contractEndDate)
-					.execute();	
 				
 		} else { //ES RETA
 		
@@ -457,6 +446,16 @@ public class JooqEmployee {
 					.execute();
 			
 		}
+		
+		if(AonStringUtils.isNotBlank(contractData.getRlce()))
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "RLCE")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getRlce()))
+				.set(CONTRACT_DATA.START_DATE, contractStartDate)
+				.set(CONTRACT_DATA.END_DATE, contractEndDate)
+				.execute();
 		
 		dslContext.insertInto(CONTRACT_INFO)
 			.set(CONTRACT_INFO.DOMAIN, domain)
@@ -514,7 +513,7 @@ public class JooqEmployee {
 				.execute();
 		}
 		
-		if(null != contractData.getMdctz() && !!AonStringUtils.equalsIgnoreCase(contractData.getMdctz(), "-1")) {
+		if(null != contractData.getMdctz() && !AonStringUtils.equalsIgnoreCase(contractData.getMdctz(), "-1")) {
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
 				.set(CONTRACT_DATA.NAME, "MODELO_COTIZACION_AGRARIO")

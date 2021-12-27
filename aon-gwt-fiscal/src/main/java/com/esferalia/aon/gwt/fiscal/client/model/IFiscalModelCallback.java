@@ -1,9 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.model;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 
-public interface IFiscalModelCallback<T extends FiscalModel,O extends FiscalModelModuleOptions<T>> {
+public interface IFiscalModelCallback<T extends IFiscalModel,O extends FiscalModelModuleOptions<T>> {
 	O getOptions();
 	void onAccept(T model);
 	void onCancel(T model);

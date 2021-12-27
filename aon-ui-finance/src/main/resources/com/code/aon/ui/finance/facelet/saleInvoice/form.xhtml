@@ -18,12 +18,13 @@
 						value="#{bundle.finance_sale_invoice_management_module}" />
 					<ui:param name="controller" value="#{saleInvoice}" />
 					<ui:param name="skipFocusFirst" value="#{!saleInvoice.nevv}" />
-					<ui:param name="skipSaveButton" value="#{saleInvoice.tediReadOnly}" />
+					<ui:param name="skipSaveButton" value="#{saleInvoice.tediReadOnly or saleInvoice.tbaiInvoice}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
 					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
 					<ui:param name="showMoreMenu" value="#{!saleInvoice.nevv and saleInvoiceDetail.to == null}" />
+					<ui:param name="removeConfirmMessage" value="#{saleInvoice.removeConfirmMessage}" />
 					<ui:define name="beforeSpinToolbarContent">
-						<aon:if test="#{saleInvoice.to.number le 0}"> 
+						<aon:if test="#{!saleInvoice.nevv and saleInvoice.tbai and !saleInvoice.tbaiInvoice and saleInvoice.to.number le 0}"> 
 							<aon:commandButton id="accept"	
 								value="#{bundle.aon_accept}"
 								action="#{saleInvoice.issueInvoice}"
@@ -31,6 +32,32 @@
 								styleClass="aon-finding-toolbar-item aon-icon-check-black"/>
 						</aon:if>
 						
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.araba}"> 
+							<a id="tbaiUrl"	
+								href="#{saleInvoice.tbaiUrl}"
+								target="_blank" 
+								class="aon-finding-toolbar-item aon-icon-araba">
+								Ticket Bai
+							</a>
+						</aon:if>
+						
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.gipuzkoa}"> 
+							<a id="tbaiUrl"	
+								href="#{saleInvoice.tbaiUrl}"
+								target="_blank" 
+								class="aon-finding-toolbar-item aon-icon-gipuzkoa">
+								Ticket Bai
+							</a>
+						</aon:if>
+						
+						<aon:if test="#{saleInvoice.tbaiInvoice and saleInvoice.bizkaia}"> 
+							<a id="tbaiUrl"	
+								href="#{saleInvoice.tbaiUrl}"
+								target="_blank" 
+								class="aon-finding-toolbar-item aon-icon-bizkaia">
+								Ticket Bai
+								</a>
+						</aon:if>
 					
 						<aon:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
 							<aon:commandButton value="&#160;" id="email"

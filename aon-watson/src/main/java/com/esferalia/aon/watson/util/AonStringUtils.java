@@ -5817,6 +5817,9 @@ public class AonStringUtils {
 	public static String defaultIfBlank(String str, String defaultStr) {
 		return isBlank(str) ? defaultStr : str;
 	}
+	public static String defaultIfBlank(String str) {
+		return isBlank(str) ? EMPTY : str;
+	}
 
 	/**
 	 * <p>

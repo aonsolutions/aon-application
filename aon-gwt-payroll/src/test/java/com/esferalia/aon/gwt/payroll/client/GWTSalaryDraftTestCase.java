@@ -243,7 +243,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void getEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-					AsyncCallback<EmployeeCalendarInfo> callback) {
+					AsyncCallback<EmployeeCalendarInfo> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}
@@ -252,7 +252,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void setEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-					EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<String> callback) {
+					EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}
@@ -261,7 +261,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 			@Override
 			public void resetEmployeeCalendarInfo(String currentDomainName, Integer contractId,
-					AsyncCallback<String> callback) {
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}
@@ -539,8 +539,8 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void setEmployeeIrpf(String currentDomainName, Integer contractId, String ssNumber, List<EmployeeIrpf> employeeIrpfs,
-					AsyncCallback<Void> callback) {
+			public void setEmployeeIrpf(String currentDomainName, Integer contractId, String fullName, String document, String ssNumber, List<EmployeeIrpf> employeeIrpfs,
+					AsyncCallback<Void> callback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}
@@ -587,6 +587,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			@Override
 			public void getEmployeeTa(String domain, String user, String situation, String regimen, String ctaCti,
 					String nss, Date fecha, AsyncCallback<String> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void checkAndUpdateServiAgreement(String domain, Integer agreementId, String ssNumber, Integer lastDateYear,
+					AsyncCallback<Date> asyncCallback) throws IllegalArgumentException {
 				// TODO Auto-generated method stub
 				
 			}

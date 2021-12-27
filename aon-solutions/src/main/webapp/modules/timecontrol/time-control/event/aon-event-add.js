@@ -1,19 +1,8 @@
 import { AonElement } from "../../../../components/AonElement.js";
-import {
-  setValueName,
-  serializeForm,
-  isEmptyObject,
-  waitEl
-} from "../../../../services/utils.js";
-import {
-  deleteTimeControl,
-  getLocation,
-  getStatus,
-  saveTimeControlDetail,
-} from "../../../../services/service.js";
+import { setValueName, serializeForm, isEmptyObject } from "../../../../services/utils.js";
+import { deleteTimeControl, getLocation, getStatus, saveTimeControlDetail } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { SIGNIN_VIEWS } from "../../signinEnums.js";
-import * as ACTION from '../../../actions.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG } from "../../../../environments/environments.js";
 import { createFormEvent, createCardEvent } from "../../createComponent.js";
 import { createToolbar } from "../../../notification/createComponent.js";
@@ -21,6 +10,9 @@ import { AonMessenger } from "../../../messenger/aon-messenger.js";
 import { TASK_SOURCE } from "../../../messenger/MessengerEnums.js";
 import { AON_TAGS } from "../../../../environments/aonTag.js";
 import { AonDateUtils } from "../../../utils/AonDateUtils.js";
+import { AonMap } from "../../../../components/aon-map.js";
+import * as ACTION from '../../../actions.js';
+
 
 export class AonEventAdd extends AonElement {
   ACTION;
@@ -83,32 +75,24 @@ export class AonEventAdd extends AonElement {
     let aonCardEvent = this.getElement(`${this.id}CardEvent`);
     createCardEvent(aonCardEvent.getContent());
 
-    // if (!this.isMobile()) this.paintViewMap();
+    if (!isEmptyObject(this.data) && !isEmptyObject(this.data.coordinates)) 
+      this.paintViewMap();
   }
 
   async paintViewMap() {
-    let aonMap = await waitEl(`#${this.id}CardCoordinate`);
-    if (!isEmptyObject(this.data) && !isEmptyObject(this.data.coordinates)) {
-      const { coordinates } = this.data;
-      const zoom = 16;
-      let iframeId = this.id + "Iframe";
-      let iframe = this.createElement("iframe");
-      iframe.id = iframeId;
-      iframe.frameborder = 0;
-      iframe.style.border = 0;
-      iframe.style.height = "400px";
-      iframe.style.width = "100%";
-      iframe.src = `${CONSTANT.URL_MAP_EMBED}&q=${coordinates.latitude},${coordinates.longitude}&zoom=${zoom}&language=es`;
-      aonMap.setContent(iframe);
-      aonMap.setAttribute("visible", true);
-    }
+    let cardCoordinate = document.querySelector(`#${this.id}CardCoordinate`);
+    const { coordinates } = this.data;
+    let aonMap = new AonMap();
+    aonMap.POSITION = coordinates;
+    cardCoordinate.setContent(aonMap);
+    
+    cardCoordinate.setAttribute("visible", true);
   }
 
+
   async initLists() {
-    await Promise.all([
-      this.listStatus(),
-      this.listLocation()
-    ]).catch(()=>null)
+    this.listStatus();
+    await this.listLocation().catch(()=>null);
     this.setValues();
   }
 
@@ -117,10 +101,7 @@ export class AonEventAdd extends AonElement {
     location.addEventListener(EVENT.CHANGE, ({ detail }) => {
       if (detail && detail.coordinates) {
         const coordinates = detail.coordinates;
-        setValueName(
-          "coordinates",
-          `${coordinates.latitude},${coordinates.longitude}`
-        );
+        setValueName("coordinates", `${coordinates.latitude},${coordinates.longitude}`);
       }
     });
 
@@ -163,7 +144,7 @@ export class AonEventAdd extends AonElement {
     };
   }
 
-  async listStatus() {
+  listStatus() {
     let status = this.getElement("status");
     try {
       const resp = getStatus();
@@ -215,12 +196,10 @@ export class AonEventAdd extends AonElement {
     try {
       let formValues = this.getFormValues();
       const { id, date:start_date } = await saveTimeControlDetail(formValues);
-      if (id) {
-        setValueName("id", id);
-      }
-      if(start_date){
-        this.START_DATE =  AonDateUtils.formatDateOrigin(new Date(start_date));
-      }
+      if (id) setValueName("id", id);
+ 
+      if(start_date) this.START_DATE =  AonDateUtils.formatDateOrigin(new Date(start_date));
+
       this.showToast({
         message: MSG.SAVED_DATA,
         type: CONSTANT.SUCCESS,

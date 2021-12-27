@@ -2171,12 +2171,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		private EmployeeDraftObject employee;
 		
 		private Map<Integer, EmployeeContractPaymentsObject> contractPaymentsMap ;  
+		private Map<Integer, ContractBonusObject> contractBonusMap ;  
 		
 		public EmployeeTabLayoutPanel() {
-			contractPaymentsMap = new HashMap<Integer, EmployeeContractPaymentsObject>();
+			contractPaymentsMap = new HashMap<>();
+			contractBonusMap = new HashMap<>();
 			add("Empleado", getEmployeeDraft(), this::onEmployeeSelected);
 			add("N\u00f3minas", getEmployeeSalary(), this::onSalariesSelected);
 			add("Calendario", getEmployeeCalendarDraftNew(), this::onCalendarSelected);
+			add("Bonificaciones", getEmployeeSSBonus(), this::onSSBonusSelected);
 			add("Borrador", getSalaryDraft(), this::onDraftSelected);
 			add("Variables de C\u00e1lculo", getEmployeeEventsDraft(), this::onEventsSelected);
 			add("Conceptos de C\u00e1lculo", getEmployeeContractPayments(), this::onPaymentsSelected);
@@ -2192,6 +2195,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		void onCalendarSelected() {
 			employees.getEmployeeCalendar(employee, o -> getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(o));
+		}
+		
+		void onSSBonusSelected() {
+			ContractBonusObject contractBonusObject = 
+					contractBonusMap.computeIfAbsent(employee.getContractId(), ContractBonusObject::new );
+			getEmployeeSSBonus().setContractBonusObject(contractBonusObject);
+//			employees.getEmployeeSSBonus(employee, o -> getEmployeeSSBonus().setContractBonusObject(o));
 		}
 
 		void onSalariesSelected() {
@@ -2343,6 +2353,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EmployeeDraft employeeDraft;
 	private EmployeeCalendarDraft employeeCalendarDraft;
 	private EmployeeCalendarDraftNew employeeCalendarDraftNew;
+	private ContractBonusUI employeeSSBonus;
 	private EmployeeContractPayments employeeContractPayments; 
 	private EmployeeSalary employeeSalary;
 	private CategoryDraft categoryDraft;
@@ -2523,8 +2534,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		showCostProblemsPanel();
 		
 	}
-	
-	
+		
 	@Override
 	public void onGeneratingDocument() {
 		if (costsProblemsPanel == null)
@@ -2649,7 +2659,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		getCCCCretaDetail().onTrabajadoresYTramos();
 		employeeDetail.setWidget(getCCCCretaDetail());
 	}
-	// onSalariesSelected
+	
 	@Override
 	public void onSalariesSelected(SalaryDocuments docs) {
 		employeeDetail.setWidget(getSalary());
@@ -2746,6 +2756,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getEmployeePanel());
 		getEmployeePanel().selectWidget(getEmployeeCalendarDraftNew());
 		getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(calendar);
+	}
+	
+	@Override
+	public void onEmployeeSSBonusSelected(ContractBonusObject contractBonusObject) {
+		employeeDetail.setWidget(getEmployeePanel());
+		getEmployeePanel().selectWidget(getEmployeeSSBonus());
+		getEmployeeSSBonus().setContractBonusObject(contractBonusObject);
 	}
 
 	@Override
@@ -3109,7 +3126,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		return workplacePanel;
 	}
 
-
 	private EnterpriseTabLayoutPanel getEnterprisePanel() {
 		if ( enterprisePanel == null ) {
 			enterprisePanel = new EnterpriseTabLayoutPanel();
@@ -3202,6 +3218,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			employeeCalendarDraftNew = new EmployeeCalendarDraftNew();
 		return employeeCalendarDraftNew;
 	}
+	
+	
+	private ContractBonusUI getEmployeeSSBonus() {
+		if (employeeSSBonus == null)
+			employeeSSBonus = new ContractBonusUI();
+		return employeeSSBonus;
+	}
 
 	private EmployeeSalary getEmployeeSalary() {
 		if (employeeSalary == null)
@@ -3279,7 +3302,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		.map( s -> "on".equalsIgnoreCase(s))
 		.orElse(false)
 		;
-	}	
+	}
+	
+	
+	
 	private void showResultsPanel(Void v) {
 		showResultsPanel();
 	}
@@ -3513,6 +3539,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			getCCCCretaDetail().setSLDButtonsVisible(false);
 		});
 	}
+	
 	// ------------------------------------------------------ Protected methods
 
 	protected static String getDescription(CCC ccc, Enterprise enterprise) {
@@ -4201,7 +4228,5 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		resultsPanel.setWidget(messageTree);
 		showResultsPanel();
 	}
-
-
 
 }
