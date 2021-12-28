@@ -69,5 +69,5 @@ abstract class PageAbs extends SimpleLayoutPanel {
 	
 
 	protected abstract void setValue();
-	protected abstract void populate();
+//	protected abstract void populate();
 }

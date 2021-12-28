@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod390.e2018;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018.IMod3902018CallBack;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018.IMod3902018Page;
-import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902018.SimpliedRegimeActivity;
@@ -376,48 +375,48 @@ public class Page04 extends ResizeComposite implements RequiresResize , IMod3902
 		return activity2;
 	}
 
-	public void setFarmerValue(int f, Mod311Results farmer) {
-		if (f==0) {
-			f01A.setValue(farmer.getCodigo());
-			f01B.setValue(farmer.getIncomes());
-			f01C.setValue(farmer.getQuotaIndex());
-			f01D.setValue(farmer.getAccrualQuota());
-			f01E.setValue(farmer.getInputQuotas());
-			f01K.setValue(farmer.getQuota());
-		}
-		if (f==1) {
-			f02A.setValue(farmer.getCodigo());
-			f02B.setValue(farmer.getIncomes());
-			f02C.setValue(farmer.getQuotaIndex());
-			f02D.setValue(farmer.getAccrualQuota());
-			f02E.setValue(farmer.getInputQuotas());
-			f02K.setValue(farmer.getQuota());
-		}
-		if (f==2) {
-			f03A.setValue(farmer.getCodigo());
-			f03B.setValue(farmer.getIncomes());
-			f03C.setValue(farmer.getQuotaIndex());
-			f03D.setValue(farmer.getAccrualQuota());
-			f03E.setValue(farmer.getInputQuotas());
-			f03K.setValue(farmer.getQuota());
-		}
-		if (f==3) {
-			f04A.setValue(farmer.getCodigo());
-			f04B.setValue(farmer.getIncomes());
-			f04C.setValue(farmer.getQuotaIndex());
-			f04D.setValue(farmer.getAccrualQuota());
-			f04E.setValue(farmer.getInputQuotas());
-			f04K.setValue(farmer.getQuota());
-		}
-		if (f==4) {
-			f05A.setValue(farmer.getCodigo());
-			f05B.setValue(farmer.getIncomes());
-			f05C.setValue(farmer.getQuotaIndex());
-			f05D.setValue(farmer.getAccrualQuota());
-			f05E.setValue(farmer.getInputQuotas());
-			f05K.setValue(farmer.getQuota());
-		}
-	}
+//	public void setFarmerValue(int f, Mod311Results farmer) {
+//		if (f==0) {
+//			f01A.setValue(farmer.getCodigo());
+//			f01B.setValue(farmer.getIncomes());
+//			f01C.setValue(farmer.getQuotaIndex());
+//			f01D.setValue(farmer.getAccrualQuota());
+//			f01E.setValue(farmer.getInputQuotas());
+//			f01K.setValue(farmer.getQuota());
+//		}
+//		if (f==1) {
+//			f02A.setValue(farmer.getCodigo());
+//			f02B.setValue(farmer.getIncomes());
+//			f02C.setValue(farmer.getQuotaIndex());
+//			f02D.setValue(farmer.getAccrualQuota());
+//			f02E.setValue(farmer.getInputQuotas());
+//			f02K.setValue(farmer.getQuota());
+//		}
+//		if (f==2) {
+//			f03A.setValue(farmer.getCodigo());
+//			f03B.setValue(farmer.getIncomes());
+//			f03C.setValue(farmer.getQuotaIndex());
+//			f03D.setValue(farmer.getAccrualQuota());
+//			f03E.setValue(farmer.getInputQuotas());
+//			f03K.setValue(farmer.getQuota());
+//		}
+//		if (f==3) {
+//			f04A.setValue(farmer.getCodigo());
+//			f04B.setValue(farmer.getIncomes());
+//			f04C.setValue(farmer.getQuotaIndex());
+//			f04D.setValue(farmer.getAccrualQuota());
+//			f04E.setValue(farmer.getInputQuotas());
+//			f04K.setValue(farmer.getQuota());
+//		}
+//		if (f==4) {
+//			f05A.setValue(farmer.getCodigo());
+//			f05B.setValue(farmer.getIncomes());
+//			f05C.setValue(farmer.getQuotaIndex());
+//			f05D.setValue(farmer.getAccrualQuota());
+//			f05E.setValue(farmer.getInputQuotas());
+//			f05K.setValue(farmer.getQuota());
+//		}
+//	}
 	
 	@Override
 	public void setCallback(IMod3902018CallBack callback) {

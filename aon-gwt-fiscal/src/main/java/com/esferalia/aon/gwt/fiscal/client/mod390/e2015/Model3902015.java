@@ -306,7 +306,7 @@ public class Model3902015 extends DockLayoutPanel  {
 		page01Link.addClickHandler(event -> showContent(pageLinks, 1,new Page01(cbk),false));
 		page02Link.addClickHandler(event -> showContent(pageLinks, 2,new Page02(cbk),false));
 		page03Link.addClickHandler(event -> showContent(pageLinks, 3,new Page03(cbk),false));
-		page04Link.addClickHandler(event -> showContent(pageLinks, 4,new Page04(getModel()),true));
+		page04Link.addClickHandler(event -> showContent(pageLinks, 4,new Page04(cbk),false));
 		page05Link.addClickHandler(event -> showContent(pageLinks, 5,new Page05(getModel()),true));
 		page06Link.addClickHandler(event -> showContent(pageLinks, 6,new Page06(getModel()),true));
 		page07Link.addClickHandler(event -> showContent(pageLinks, 7,new Page07(getModel()),true));

@@ -9,9 +9,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.Model3902015Callback;
-import com.esferalia.aon.occam.api.model.fiscal.Address;
-import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -145,55 +142,55 @@ public class Page02 extends PageAbs {
 		notary3.setEnabled(getModel().isLegalEntity());
 	}
 
-	@Override
-	protected void populate() {
-		Address address = new Address();
-		address.setRdocument(rdocument.getValue());
-		address.setRname(rname.getValue());
-		address.setRstreetType(rstreetType.getValue());
-		address.setRstreetName(rstreetName.getValue());
-		address.setRstreetNumber(rstreetNumber.getValue());
-		address.setRstreetStair(rstreetStair.getValue());
-		address.setRstreetFloor(rstreetFloor.getValue());
-		address.setRstreetDoor(rstreetDoor.getValue());
-		address.setRphone(rphone.getValue());
-		address.setRtown(rtown.getValue());
-		address.setRprovince(rprovince.getSelectedIndex());
-		address.setRzip(rzip.getValue());
-		getModel().setAddress(address);
-		
-		if (!AonStringUtils.isEmpty( document1.getValue() ) ) {
-			LegalRepresentative legalRepr = new LegalRepresentative();
-			legalRepr.setDocument(document1.getValue());
-			legalRepr.setName(name1.getValue());
-			legalRepr.setNotary(notary1.getValue());
-			legalRepr.setNotaryDate(notaryDate1.getValue());
-			getModel().setLegalRepr1(legalRepr);
-			
-		} else {
-			getModel().setLegalRepr1(null);
-		}
-		if (!AonStringUtils.isEmpty( document2.getValue() ) ) {
-			LegalRepresentative legalRepr = new LegalRepresentative();
-			legalRepr.setDocument(document2.getValue());
-			legalRepr.setName(name2.getValue());
-			legalRepr.setNotary(notary2.getValue());
-			legalRepr.setNotaryDate(notaryDate2.getValue());
-			getModel().setLegalRepr2(legalRepr);
-		} else {
-			getModel().setLegalRepr2(null);
-		}
-		if (!AonStringUtils.isEmpty( document3.getValue() ) ) {
-			LegalRepresentative legalRepr = new LegalRepresentative();
-			legalRepr.setDocument(document3.getValue());
-			legalRepr.setName(name3.getValue());
-			legalRepr.setNotary(notary3.getValue());
-			legalRepr.setNotaryDate(notaryDate3.getValue());
-			getModel().setLegalRepr3(legalRepr);
-		} else {
-			getModel().setLegalRepr3(null);
-		}
-	}
+//	@Override
+//	protected void populate() {
+//		Address address = new Address();
+//		address.setRdocument(rdocument.getValue());
+//		address.setRname(rname.getValue());
+//		address.setRstreetType(rstreetType.getValue());
+//		address.setRstreetName(rstreetName.getValue());
+//		address.setRstreetNumber(rstreetNumber.getValue());
+//		address.setRstreetStair(rstreetStair.getValue());
+//		address.setRstreetFloor(rstreetFloor.getValue());
+//		address.setRstreetDoor(rstreetDoor.getValue());
+//		address.setRphone(rphone.getValue());
+//		address.setRtown(rtown.getValue());
+//		address.setRprovince(rprovince.getSelectedIndex());
+//		address.setRzip(rzip.getValue());
+//		getModel().setAddress(address);
+//		
+//		if (!AonStringUtils.isEmpty( document1.getValue() ) ) {
+//			LegalRepresentative legalRepr = new LegalRepresentative();
+//			legalRepr.setDocument(document1.getValue());
+//			legalRepr.setName(name1.getValue());
+//			legalRepr.setNotary(notary1.getValue());
+//			legalRepr.setNotaryDate(notaryDate1.getValue());
+//			getModel().setLegalRepr1(legalRepr);
+//			
+//		} else {
+//			getModel().setLegalRepr1(null);
+//		}
+//		if (!AonStringUtils.isEmpty( document2.getValue() ) ) {
+//			LegalRepresentative legalRepr = new LegalRepresentative();
+//			legalRepr.setDocument(document2.getValue());
+//			legalRepr.setName(name2.getValue());
+//			legalRepr.setNotary(notary2.getValue());
+//			legalRepr.setNotaryDate(notaryDate2.getValue());
+//			getModel().setLegalRepr2(legalRepr);
+//		} else {
+//			getModel().setLegalRepr2(null);
+//		}
+//		if (!AonStringUtils.isEmpty( document3.getValue() ) ) {
+//			LegalRepresentative legalRepr = new LegalRepresentative();
+//			legalRepr.setDocument(document3.getValue());
+//			legalRepr.setName(name3.getValue());
+//			legalRepr.setNotary(notary3.getValue());
+//			legalRepr.setNotaryDate(notaryDate3.getValue());
+//			getModel().setLegalRepr3(legalRepr);
+//		} else {
+//			getModel().setLegalRepr3(null);
+//		}
+//	}
 	
 	private void paint() {
 		ScrollPanel scroll = new ScrollPanel();
@@ -215,8 +212,8 @@ public class Page02 extends PageAbs {
 		rname.setVisibleLength(42);
 		rname.setMaxLength(40);
 		tab0.addRow()
-		.addCell(rdocument)
-		.addCell(rname);
+			.addCell(rdocument)
+			.addCell(rname);
 		
 		AonDisplayTable tab1 = new AonDisplayTable();
 		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());

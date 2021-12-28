@@ -811,10 +811,18 @@ public class Mod3902015 extends Mod390  {
 	public FarmerRegimeActivity getFarmerRegime1() {
 		return farmerRegime1;
 	}
+	public FarmerRegimeActivity ensureFarmerRegime1() {
+		if (farmerRegime1 == null) setFarmerRegime1( new FarmerRegimeActivity());
+		return farmerRegime1;
+	}
 	public void setFarmerRegime1(FarmerRegimeActivity farmerRegime1) {
 		this.farmerRegime1 = farmerRegime1;
 	}
 	public FarmerRegimeActivity getFarmerRegime2() {
+		return farmerRegime2;
+	}
+	public FarmerRegimeActivity ensureFarmerRegime2() {
+		if (farmerRegime2 == null) setFarmerRegime2( new FarmerRegimeActivity());
 		return farmerRegime2;
 	}
 	public void setFarmerRegime2(FarmerRegimeActivity farmerRegime2) {
@@ -823,16 +831,28 @@ public class Mod3902015 extends Mod390  {
 	public FarmerRegimeActivity getFarmerRegime3() {
 		return farmerRegime3;
 	}
+	public FarmerRegimeActivity ensureFarmerRegime3() {
+		if (farmerRegime3 == null) setFarmerRegime3( new FarmerRegimeActivity());
+		return farmerRegime3;
+	}
 	public void setFarmerRegime3(FarmerRegimeActivity farmerRegime3) {
 		this.farmerRegime3 = farmerRegime3;
 	}
 	public FarmerRegimeActivity getFarmerRegime4() {
 		return farmerRegime4;
 	}
+	public FarmerRegimeActivity ensureFarmerRegime4() {
+		if (farmerRegime4 == null) setFarmerRegime4( new FarmerRegimeActivity());
+		return farmerRegime4;
+	}
 	public void setFarmerRegime4(FarmerRegimeActivity farmerRegime4) {
 		this.farmerRegime4 = farmerRegime4;
 	}
 	public FarmerRegimeActivity getFarmerRegime5() {
+		return farmerRegime5;
+	}
+	public FarmerRegimeActivity ensureFarmerRegime5() {
+		if (farmerRegime5 == null) setFarmerRegime5( new FarmerRegimeActivity());
 		return farmerRegime5;
 	}
 	public void setFarmerRegime5(FarmerRegimeActivity farmerRegime5) {

@@ -1272,6 +1272,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Operaciones realizadas en R\u00E9gimen simplificado")
 	String simplifiedRegimeOperations();
 
+	@DefaultMessage("Actividades en r\u00E9gimen simplificado (excepto agr\u00EDcolas, ganaderas y forestales)")
+	String noFarmerActivity();
+	
 	@DefaultMessage("N\u00BA Unidades de m\u00F3dulo")
 	String moduleUnits();
 
