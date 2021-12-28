@@ -742,10 +742,18 @@ public class Mod3902015 extends Mod390  {
 	public Address getAddress() {
 		return address;
 	}
+	public Address ensureAddress() {
+		if (address==null) setAddress(new Address());
+		return address;
+	}
 	public void setAddress(Address address) {
 		this.address = address;
 	}
 	public LegalRepresentative getLegalRepr1() {
+		return legalRepr1;
+	}
+	public LegalRepresentative ensureLegalRepr1() {
+		if (legalRepr1 ==null) setLegalRepr1(new LegalRepresentative());
 		return legalRepr1;
 	}
 	public void setLegalRepr1(LegalRepresentative legalRepr1) {
@@ -754,10 +762,18 @@ public class Mod3902015 extends Mod390  {
 	public LegalRepresentative getLegalRepr2() {
 		return legalRepr2;
 	}
+	public LegalRepresentative ensureLegalRepr2() {
+		if (legalRepr2 ==null) setLegalRepr2(new LegalRepresentative());
+		return legalRepr2;
+	}
 	public void setLegalRepr2(LegalRepresentative legalRepr2) {
 		this.legalRepr2 = legalRepr2;
 	}
 	public LegalRepresentative getLegalRepr3() {
+		return legalRepr3;
+	}
+	public LegalRepresentative ensureLegalRepr3() {
+		if (legalRepr3 ==null) setLegalRepr3(new LegalRepresentative());
 		return legalRepr3;
 	}
 	public void setLegalRepr3(LegalRepresentative legalRepr3) {

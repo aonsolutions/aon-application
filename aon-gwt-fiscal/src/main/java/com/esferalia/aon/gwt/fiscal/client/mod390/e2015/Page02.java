@@ -2,149 +2,115 @@ package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ProvinceListBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDocumentTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.Model3902015Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class Page02 extends ResizeComposite implements IMod3902015Page {
+public class Page02 extends PageAbs {
 
-	interface PageBinder extends
-			UiBinder<Widget, Page02> {
-	}
-
-	private static final PageBinder BINDER = GWT
-			.create(PageBinder.class);
-
-	IMod3902015CallBack callback;
-
-	@UiField
-	DocumentTextBox rdocument;
-	@UiField
-	TextBox rname;
-	@UiField
-	TextBox rstreetType;
-	@UiField
-	TextBox rstreetName;
-	@UiField
-	TextBox rstreetNumber;
-	@UiField
-	TextBox rstreetStair;
-	@UiField
-	TextBox rstreetFloor;
-	@UiField
-	TextBox rstreetDoor;
-	@UiField
-	TextBox rphone;
-	@UiField
-	TextBox rtown;
-	@UiField
-	ProvinceListBox rprovince;
-	@UiField
-	TextBox rzip;
+	AonDocumentTextBox rdocument = new AonDocumentTextBox();
+	AonTextBox rname = new AonTextBox();
+	AonTextBox rstreetType = new AonTextBox();
+	AonTextBox rstreetName = new AonTextBox();
+	AonTextBox rstreetNumber = new AonTextBox();
+	AonTextBox rstreetStair = new AonTextBox();
+	AonTextBox rstreetFloor = new AonTextBox();
+	AonTextBox rstreetDoor = new AonTextBox();
+	AonTextBox rphone = new AonTextBox();
+	AonTextBox rtown = new AonTextBox();
+	ProvinceListBox rprovince = new ProvinceListBox();
+	AonTextBox rzip = new AonTextBox();
 	
-	@UiField
-	TextBox name1;
-	@UiField
-	DocumentTextBox document1;
-	@UiField
-	DateBoxEx notaryDate1;
-	@UiField
-	TextBox notary1;
+	AonTextBox name1 = new AonTextBox();
+	AonDocumentTextBox document1 = new AonDocumentTextBox();
+	AonDateBox notaryDate1 = new AonDateBox();
+	AonTextBox notary1 = new AonTextBox();
 	
-	@UiField
-	TextBox name2;
-	@UiField
-	DocumentTextBox document2;
-	@UiField
-	DateBoxEx notaryDate2;
-	@UiField
-	TextBox notary2;
+	AonTextBox name2 = new AonTextBox();
+	AonDocumentTextBox document2 = new AonDocumentTextBox();
+	AonDateBox notaryDate2 = new AonDateBox();
+	AonTextBox notary2 = new AonTextBox();
 
-	@UiField
-	TextBox name3;
-	@UiField
-	DocumentTextBox document3;
-	@UiField
-	DateBoxEx notaryDate3;
-	@UiField
-	TextBox notary3;
+	AonTextBox name3 = new AonTextBox();
+	AonDocumentTextBox document3 = new AonDocumentTextBox();
+	AonDateBox notaryDate3 = new AonDateBox();
+	AonTextBox notary3 = new AonTextBox();
 
-	public Page02(Mod3902015 m390) {
-		Widget ui = BINDER.createAndBindUi(this);
-		initWidget(ui);
-		setValue(m390);
+	public Page02(Model3902015Callback callback) {
+		super(callback);
+		paint();
+		setValue();
 	}
-
-	private void setValue(Mod3902015 m390) {
-		if (m390.getAddress() != null) {
-			rdocument.setValue(m390.getAddress().getRdocument());
-			rname.setValue(m390.getAddress().getRname());
-			rstreetType.setValue(m390.getAddress().getRstreetType());
-			rstreetName.setValue(m390.getAddress().getRstreetName());
-			rstreetNumber.setValue(m390.getAddress().getRstreetNumber());
-			rstreetStair.setValue(m390.getAddress().getRstreetStair());
-			rstreetFloor.setValue(m390.getAddress().getRstreetFloor());
-			rstreetDoor.setValue(m390.getAddress().getRstreetDoor());
-			rphone.setValue(m390.getAddress().getRphone());
-			rtown.setValue(m390.getAddress().getRtown());
-			rprovince.setSelectedIndex(m390.getAddress().getRprovince());
-			rzip.setValue(m390.getAddress().getRzip());
+	
+	@Override
+	protected void setValue() {
+		if (getModel().getAddress() != null) {
+			rdocument.setValue(getModel().getAddress().getRdocument(),false);
+			rname.setValue(getModel().getAddress().getRname(),false);
+			rstreetType.setValue(getModel().getAddress().getRstreetType(),false);
+			rstreetName.setValue(getModel().getAddress().getRstreetName(),false);
+			rstreetNumber.setValue(getModel().getAddress().getRstreetNumber(),false);
+			rstreetStair.setValue(getModel().getAddress().getRstreetStair(),false);
+			rstreetFloor.setValue(getModel().getAddress().getRstreetFloor(),false);
+			rstreetDoor.setValue(getModel().getAddress().getRstreetDoor(),false);
+			rphone.setValue(getModel().getAddress().getRphone(),false);
+			rtown.setValue(getModel().getAddress().getRtown(),false);
+			rprovince.setSelectedIndex(getModel().getAddress().getRprovince());
+			rzip.setValue(getModel().getAddress().getRzip(),false);
 		} else {
-			rdocument.setValue(null);
-			rname.setValue(null);
-			rstreetType.setValue(null);
-			rstreetName.setValue(null);
-			rstreetNumber.setValue(null);
-			rstreetStair.setValue(null);
-			rstreetFloor.setValue(null);
-			rstreetDoor.setValue(null);
-			rphone.setValue(null);
-			rtown.setValue(null);
+			rdocument.setValue(null,false);
+			rname.setValue(null,false);
+			rstreetType.setValue(null,false);
+			rstreetName.setValue(null,false);
+			rstreetNumber.setValue(null,false);
+			rstreetStair.setValue(null,false);
+			rstreetFloor.setValue(null,false);
+			rstreetDoor.setValue(null,false);
+			rphone.setValue(null,false);
+			rtown.setValue(null,false);
 			rprovince.setSelectedIndex(0);
-			rzip.setValue(null);
+			rzip.setValue(null,false);
 		}
 		
-		if (m390.getLegalRepr1() != null) {
-			name1.setValue(m390.getLegalRepr1().getName());
-			document1.setValue(m390.getLegalRepr1().getDocument());
-			notary1.setValue(m390.getLegalRepr1().getNotary());
-			Date date = m390.getLegalRepr1().getNotaryDate();
-			notaryDate1.setValue(date);
+		if (getModel().getLegalRepr1() != null) {
+			name1.setValue(getModel().getLegalRepr1().getName(),false);
+			document1.setValue(getModel().getLegalRepr1().getDocument(),false);
+			notary1.setValue(getModel().getLegalRepr1().getNotary(),false);
+			Date date = getModel().getLegalRepr1().getNotaryDate();
+			notaryDate1.setValue(date,false);
 		} else {
-			name1.setValue(null);
-			document1.setValue(null);
-			notary1.setValue(null);
-			notaryDate1.setValue(null);
+			name1.setValue(null,false);
+			document1.setValue(null,false);
+			notary1.setValue(null,false);
+			notaryDate1.setValue(null,false);
 		}
-		if (m390.getLegalRepr2() != null) {
-			name2.setValue(m390.getLegalRepr2().getName());
-			document2.setValue(m390.getLegalRepr2().getDocument());
-			notary2.setValue(m390.getLegalRepr2().getNotary());
-			Date date = m390.getLegalRepr2().getNotaryDate();
-			notaryDate2.setValue(date);
+		if (getModel().getLegalRepr2() != null) {
+			name2.setValue(getModel().getLegalRepr2().getName(),false);
+			document2.setValue(getModel().getLegalRepr2().getDocument(),false);
+			notary2.setValue(getModel().getLegalRepr2().getNotary(),false);
+			Date date = getModel().getLegalRepr2().getNotaryDate();
+			notaryDate2.setValue(date,false);
 		} else {
 			name2.setValue(null);
 			document2.setValue(null);
 			notary2.setValue(null);
 			notaryDate2.setValue(null);
 		}
-		if (m390.getLegalRepr3() != null) {
-			name3.setValue(m390.getLegalRepr3().getName());
-			document3.setValue(m390.getLegalRepr3().getDocument());
-			notary3.setValue(m390.getLegalRepr3().getNotary());
-			Date date = m390.getLegalRepr3().getNotaryDate();
+		if (getModel().getLegalRepr3() != null) {
+			name3.setValue(getModel().getLegalRepr3().getName());
+			document3.setValue(getModel().getLegalRepr3().getDocument());
+			notary3.setValue(getModel().getLegalRepr3().getNotary());
+			Date date = getModel().getLegalRepr3().getNotaryDate();
 			notaryDate3.setValue(date);
 		} else {
 			name3.setValue(null);
@@ -153,34 +119,34 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 			notaryDate3.setValue(null);
 		}
 		
-		rdocument.setEnabled(!m390.isLegalEntity());
-		rname.setEnabled(!m390.isLegalEntity());
-		rstreetType.setEnabled(!m390.isLegalEntity());
-		rstreetName.setEnabled(!m390.isLegalEntity());
-		rstreetNumber.setEnabled(!m390.isLegalEntity());
-		rstreetStair.setEnabled(!m390.isLegalEntity());
-		rstreetFloor.setEnabled(!m390.isLegalEntity());
-		rstreetDoor.setEnabled(!m390.isLegalEntity());
-		rphone.setEnabled(!m390.isLegalEntity());
-		rtown.setEnabled(!m390.isLegalEntity());
-		rprovince.setEnabled(!m390.isLegalEntity());
-		rzip.setEnabled(!m390.isLegalEntity());
-		name1.setEnabled(m390.isLegalEntity());
-		document1.setEnabled(m390.isLegalEntity());
-		notaryDate1.setEnabled(m390.isLegalEntity());
-		notary1.setEnabled(m390.isLegalEntity());
-		name2.setEnabled(m390.isLegalEntity());
-		document2.setEnabled(m390.isLegalEntity());
-		notaryDate2.setEnabled(m390.isLegalEntity());
-		notary2.setEnabled(m390.isLegalEntity());
-		name3.setEnabled(m390.isLegalEntity());
-		document3.setEnabled(m390.isLegalEntity());
-		notaryDate3.setEnabled(m390.isLegalEntity());
-		notary3.setEnabled(m390.isLegalEntity());
+		rdocument.setEnabled(!getModel().isLegalEntity());
+		rname.setEnabled(!getModel().isLegalEntity());
+		rstreetType.setEnabled(!getModel().isLegalEntity());
+		rstreetName.setEnabled(!getModel().isLegalEntity());
+		rstreetNumber.setEnabled(!getModel().isLegalEntity());
+		rstreetStair.setEnabled(!getModel().isLegalEntity());
+		rstreetFloor.setEnabled(!getModel().isLegalEntity());
+		rstreetDoor.setEnabled(!getModel().isLegalEntity());
+		rphone.setEnabled(!getModel().isLegalEntity());
+		rtown.setEnabled(!getModel().isLegalEntity());
+		rprovince.setEnabled(!getModel().isLegalEntity());
+		rzip.setEnabled(!getModel().isLegalEntity());
+		name1.setEnabled(getModel().isLegalEntity());
+		document1.setEnabled(getModel().isLegalEntity());
+		notaryDate1.setEnabled(getModel().isLegalEntity());
+		notary1.setEnabled(getModel().isLegalEntity());
+		name2.setEnabled(getModel().isLegalEntity());
+		document2.setEnabled(getModel().isLegalEntity());
+		notaryDate2.setEnabled(getModel().isLegalEntity());
+		notary2.setEnabled(getModel().isLegalEntity());
+		name3.setEnabled(getModel().isLegalEntity());
+		document3.setEnabled(getModel().isLegalEntity());
+		notaryDate3.setEnabled(getModel().isLegalEntity());
+		notary3.setEnabled(getModel().isLegalEntity());
 	}
 
 	@Override
-	public void populate(Mod3902015 mod390) {
+	protected void populate() {
 		Address address = new Address();
 		address.setRdocument(rdocument.getValue());
 		address.setRname(rname.getValue());
@@ -194,7 +160,7 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 		address.setRtown(rtown.getValue());
 		address.setRprovince(rprovince.getSelectedIndex());
 		address.setRzip(rzip.getValue());
-		mod390.setAddress(address);
+		getModel().setAddress(address);
 		
 		if (!AonStringUtils.isEmpty( document1.getValue() ) ) {
 			LegalRepresentative legalRepr = new LegalRepresentative();
@@ -202,10 +168,10 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 			legalRepr.setName(name1.getValue());
 			legalRepr.setNotary(notary1.getValue());
 			legalRepr.setNotaryDate(notaryDate1.getValue());
-			mod390.setLegalRepr1(legalRepr);
+			getModel().setLegalRepr1(legalRepr);
 			
 		} else {
-			mod390.setLegalRepr1(null);
+			getModel().setLegalRepr1(null);
 		}
 		if (!AonStringUtils.isEmpty( document2.getValue() ) ) {
 			LegalRepresentative legalRepr = new LegalRepresentative();
@@ -213,9 +179,9 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 			legalRepr.setName(name2.getValue());
 			legalRepr.setNotary(notary2.getValue());
 			legalRepr.setNotaryDate(notaryDate2.getValue());
-			mod390.setLegalRepr2(legalRepr);
+			getModel().setLegalRepr2(legalRepr);
 		} else {
-			mod390.setLegalRepr2(null);
+			getModel().setLegalRepr2(null);
 		}
 		if (!AonStringUtils.isEmpty( document3.getValue() ) ) {
 			LegalRepresentative legalRepr = new LegalRepresentative();
@@ -223,19 +189,239 @@ public class Page02 extends ResizeComposite implements IMod3902015Page {
 			legalRepr.setName(name3.getValue());
 			legalRepr.setNotary(notary3.getValue());
 			legalRepr.setNotaryDate(notaryDate3.getValue());
-			mod390.setLegalRepr3(legalRepr);
+			getModel().setLegalRepr3(legalRepr);
 		} else {
-			mod390.setLegalRepr3(null);
+			getModel().setLegalRepr3(null);
 		}
 	}
 	
-	@Override
-	public void setCallback(IMod3902015CallBack callback) {
-		this.callback = callback;
-	}
+	private void paint() {
+		ScrollPanel scroll = new ScrollPanel();
+		FlowPanel basePanel = new FlowPanel();
+		scroll.add(basePanel);
+		setWidget(scroll);
+		
+		basePanel.add(getTitle(AON.MSG.representativeData()));
+		basePanel.add(getSubtitle(AON.MSG.nonLegalEntities()));
+		
+		AonDisplayTable tab0 = new AonDisplayTable();
+		tab0.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab0.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab0);
+		tab0.addRow()
+			.addCell(new Label(AON.MSG.representativeData()), AON.CSS.aonWidth150() )
+			.addCell(new Label(AON.MSG.name()));
+		
+		rname.setVisibleLength(42);
+		rname.setMaxLength(40);
+		tab0.addRow()
+		.addCell(rdocument)
+		.addCell(rname);
+		
+		AonDisplayTable tab1 = new AonDisplayTable();
+		tab1.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab1.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab1);
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.representativeData()), AON.CSS.aonWidth150() )
+			.addCell(new Label(AON.MSG.name()) );
+		tab1.addRow()
+			.addCell(new Label(AON.MSG.streetType()), AON.CSS.aonWidth80() )
+			.addCell(new Label(AON.MSG.streetName()), AON.CSS.aonWidth150() )
+			.addCell(new Label(AON.MSG.streetNumber()), AON.CSS.aonWidth80() )
+			.addCell(new Label(AON.MSG.streetStair()), AON.CSS.aonWidth80() )
+			.addCell(new Label(AON.MSG.streetFloor()), AON.CSS.aonWidth80() )
+			.addCell(new Label(AON.MSG.streetDoor()), AON.CSS.aonWidth80() )
+			.addCell(new Label(AON.MSG.phone()), AON.CSS.aonWidthAuto() );
+		rstreetType.setVisibleLength(4);
+		rstreetType.setMaxLength(4);
+		rstreetName.setVisibleLength(30);
+		rstreetName.setMaxLength(30);
+		rstreetNumber.setVisibleLength(5);
+		rstreetNumber.setMaxLength(5);
+		rstreetStair.setVisibleLength(3);
+		rstreetStair.setMaxLength(3);
+		rstreetFloor.setVisibleLength(3);
+		rstreetFloor.setMaxLength(3);
+		rstreetDoor.setVisibleLength(3);
+		rstreetDoor.setMaxLength(3);
+		rphone.setVisibleLength(9);
+		rphone.setMaxLength(9);
+		tab1.addRow()
+			.addCell(rstreetType)
+			.addCell(rstreetName)
+			.addCell(rstreetNumber) 
+			.addCell(rstreetStair)
+			.addCell(rstreetFloor) 
+			.addCell(rstreetDoor)
+			.addCell(rphone);
+		
+		AonDisplayTable tab2 = new AonDisplayTable();
+		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab2.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab2);
+		tab2.addRow()
+			.addCell(new Label(AON.MSG.town()), AON.CSS.aonWidth150() )
+			.addCell(new Label(AON.MSG.province()), AON.CSS.aonWidth150() )
+			.addCell(new Label(AON.MSG.zip()), AON.CSS.aonWidthAuto() )
+			;
+		rtown.setVisibleLength(30);
+		rtown.setMaxLength(30);
+		rzip.setVisibleLength(5);
+		rzip.setMaxLength(5);
+		tab2.addRow()
+			.addCell(rtown)
+			.addCell(rprovince )
+			.addCell(rzip);
+		
+		basePanel.add(getSubtitle(AON.MSG.legalEntities()));
+		
+		name1.setVisibleLength(25);
+		name1.setMaxLength(40);
+		name2.setVisibleLength(25);
+		name2.setMaxLength(40);
+		name3.setVisibleLength(25);
+		name3.setMaxLength(40);
 
-	@Override
-	public void refresh(Mod3902015 m390) {
-		setValue(m390);
+		notary1.setVisibleLength(20);
+		notary1.setMaxLength(20);
+		notary2.setVisibleLength(20);
+		notary2.setMaxLength(20);
+		notary3.setVisibleLength(20);
+		notary3.setMaxLength(20);
+		
+		AonDisplayTable tab3 = new AonDisplayTable();
+		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
+		tab3.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tab3);
+		tab3.addRow()
+			.addCell(new Label(""), AON.CSS.aonWidth20() )
+			.addCell(new Label("D."), AON.CSS.aonWidth150() )
+			.addCell(new Label("NIF"), AON.CSS.aonWidth150() )
+			.addCell(new Label(AON.MSG.registrationDate()), AON.CSS.aonWidth150() )
+			.addCell(new Label(AON.MSG.notary()), AON.CSS.aonWidthAuto() )
+			;
+		tab3.addRow()
+			.addCell(new Label("(1)"), AON.CSS.aonWidth20() )
+			.addCell(name1)
+			.addCell(document1)
+			.addCell(notaryDate1)
+			.addCell(notary1)
+			;
+		tab3.addRow()
+			.addCell(new Label("(2)"), AON.CSS.aonWidth20() )
+			.addCell(name2)
+			.addCell(document2)
+			.addCell(notaryDate2)
+			.addCell(notary2)
+			;
+		tab3.addRow()
+			.addCell(new Label("(3)"), AON.CSS.aonWidth20() )
+			.addCell(name3)
+			.addCell(document3)
+			.addCell(notaryDate3)
+			.addCell(notary3)
+			;
+	}
+	void f() {
+		rdocument.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRdocument(rdocument.getValue());
+			markAsDirty();
+		});
+		rname.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRname(rname.getValue());
+			markAsDirty();
+		});
+		rstreetType.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRstreetType(rstreetType.getValue());
+			markAsDirty();
+		});
+		rstreetName.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRstreetName(rstreetName.getValue());
+			markAsDirty();
+		});
+		rstreetNumber.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRstreetNumber(rstreetNumber.getValue());
+			markAsDirty();
+		});
+		rstreetStair.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRstreetStair(rstreetStair.getValue());
+			markAsDirty();
+		});
+		rstreetFloor.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRstreetFloor(rstreetFloor.getValue());	
+			markAsDirty();
+		});
+		rstreetDoor.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRstreetDoor(rstreetDoor.getValue());
+			markAsDirty();
+		});
+		rphone.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRphone(rphone.getValue());
+			markAsDirty();
+		});
+		rtown.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRtown(rtown.getValue());
+			markAsDirty();
+		});
+		rprovince.addChangeHandler( event -> {
+			getModel().ensureAddress().setRprovince(rprovince.getSelectedIndex());
+			markAsDirty();
+		});
+		rzip.addValueChangeHandler( event -> {
+			getModel().ensureAddress().setRzip(rzip.getValue());
+			markAsDirty();
+		});
+		
+		document1.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr1().setDocument(document1.getValue());
+			markAsDirty();
+		});
+		name1.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr1().setName(name1.getValue());
+			markAsDirty();
+		});
+		notary1.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr1().setNotary(notary1.getValue());
+			markAsDirty();
+		});
+		notaryDate1.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr1().setNotaryDate(notaryDate1.getValue());
+			markAsDirty();
+		});
+
+		document2.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr2().setDocument(document2.getValue());
+			markAsDirty();
+		});
+		name2.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr2().setName(name2.getValue());
+			markAsDirty();
+		});
+		notary2.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr2().setNotary(notary2.getValue());
+			markAsDirty();
+		});
+		notaryDate2.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr2().setNotaryDate(notaryDate2.getValue());
+			markAsDirty();
+		});
+		
+		document3.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr3().setDocument(document3.getValue());
+			markAsDirty();
+		});
+		name3.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr3().setName(name3.getValue());
+			markAsDirty();
+		});
+		notary3.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr3().setNotary(notary3.getValue());
+			markAsDirty();
+		});
+		notaryDate3.addValueChangeHandler( event -> {
+			getModel().ensureLegalRepr3().setNotaryDate(notaryDate3.getValue());
+			markAsDirty();
+		});
 	}
 }

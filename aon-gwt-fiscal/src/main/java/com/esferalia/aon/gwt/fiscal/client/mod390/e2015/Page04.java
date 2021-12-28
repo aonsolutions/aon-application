@@ -1,8 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
 import com.esferalia.aon.gwt.fiscal.shared.Mod311Results;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.FarmerRegimeActivity;
@@ -14,20 +12,17 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page04 extends ResizeComposite implements RequiresResize , IMod3902015Page {
+class Page04 extends ResizeComposite {
 
 	interface PageBinder extends UiBinder<Widget, Page04> {
 	}
 
 	private static final PageBinder BINDER = GWT
 			.create(PageBinder.class);
-
-	IMod3902015CallBack callback;
 
 	@UiField
 	SimplifiedRegimePanel activity1;
@@ -296,7 +291,6 @@ public class Page04 extends ResizeComposite implements RequiresResize , IMod3902
 	}
 		
 		
-	@Override
 	public void populate(Mod3902015 mod390) {
 		SimpliedRegimeActivity regime = activity1.populate();
 		mod390.setSimpRegime1((regime != null)?regime:null);
@@ -419,12 +413,6 @@ public class Page04 extends ResizeComposite implements RequiresResize , IMod3902
 		}
 	}
 	
-	@Override
-	public void setCallback(IMod3902015CallBack callback) {
-		this.callback = callback;
-	}
-	
-	@Override
 	public void refresh(Mod3902015 m390) {
 		setValue(m390);
 	}

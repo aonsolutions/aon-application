@@ -1,26 +1,19 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Page09 extends ResizeComposite implements RequiresResize , IMod3902015Page {
+class Page09 extends ResizeComposite {
 
 	interface PageBinder extends UiBinder<Widget, Page09> {}
 
 	private static final PageBinder BINDER = GWT.create(PageBinder.class);
 
-	IMod3902015CallBack callback;
-	
 	@UiField
 	DoubleBox box230;
 	
@@ -58,6 +51,52 @@ public class Page09 extends ResizeComposite implements RequiresResize , IMod3902
 		Widget ui = BINDER.createAndBindUi(this);
 		initWidget(ui);
 		setValue(m390);
+		
+		box230.addValueChangeHandler(event -> {
+			if (box230.getValue() == null)
+				box230.setValue(0.0, false);
+		});
+		box109.addValueChangeHandler(event -> {
+			if (box109.getValue() == null)
+				box109.setValue(0.0, false);
+		});
+		box231.addValueChangeHandler(event -> {
+			if (box231.getValue() == null)
+				box231.setValue(0.0, false);
+		});
+		box232.addValueChangeHandler(event -> {
+			if (box232.getValue() == null)
+				box232.setValue(0.0, false);
+		});
+		box111.addValueChangeHandler(event -> {
+			if (box111.getValue() == null)
+				box111.setValue(0.0, false);
+		});
+		box113.addValueChangeHandler(event -> {
+			if (box113.getValue() == null)
+				box113.setValue(0.0, false);
+		});
+		box523.addValueChangeHandler(event -> {
+			if (box523.getValue() == null)
+				box523.setValue(0.0, false);
+		});
+		box654.addValueChangeHandler(event -> {
+			if (box654.getValue() == null)
+				box654.setValue(0.0, false);
+		});
+		box655.addValueChangeHandler(event -> {
+			if (box655.getValue() == null)
+				box655.setValue(0.0, false);
+		});
+		box656.addValueChangeHandler(event -> {
+			if (box656.getValue() == null)
+				box656.setValue(0.0, false);
+		});
+		box657.addValueChangeHandler(event -> {
+			if (box657.getValue() == null)
+				box657.setValue(0.0, false);
+		});
+
 	}
 
 	private void setValue(Mod3902015 m390) {
@@ -74,7 +113,6 @@ public class Page09 extends ResizeComposite implements RequiresResize , IMod3902
 		box657.setValue(m390.getBox657());
 	}
 
-	@Override
 	public void populate(Mod3902015 mod390) {
 		mod390.setBox230(box230.getValue());
 		mod390.setBox109(box109.getValue());
@@ -89,27 +127,8 @@ public class Page09 extends ResizeComposite implements RequiresResize , IMod3902
 		mod390.setBox657(box657.getValue());
 	}
 	
-	@Override
-	public void setCallback(IMod3902015CallBack callback) {
-		this.callback = callback;
-	}
-
-	@Override
 	public void refresh(Mod3902015 m390) {
 		setValue(m390);
 	}
-	
-	@UiHandler("box230") void onChangeBox230(ChangeEvent event) {	if (box230.getValue() == null) box230.setValue(0.0,false);}
-	@UiHandler("box109") void onChangeBox109(ChangeEvent event) {	if (box109.getValue() == null) box109.setValue(0.0,false);}
-	@UiHandler("box231") void onChangeBox231(ChangeEvent event) {	if (box231.getValue() == null) box231.setValue(0.0,false);}
-	@UiHandler("box232") void onChangeBox232(ChangeEvent event) {	if (box232.getValue() == null) box232.setValue(0.0,false);}
-	@UiHandler("box111") void onChangeBox111(ChangeEvent event) {	if (box111.getValue() == null) box111.setValue(0.0,false);}
-	@UiHandler("box113") void onChangeBox113(ChangeEvent event) {	if (box113.getValue() == null) box113.setValue(0.0,false);}
-	@UiHandler("box523") void onChangeBox523(ChangeEvent event) {	if (box523.getValue() == null) box523.setValue(0.0,false);}
-	@UiHandler("box654") void onChangeBox654(ChangeEvent event) {	if (box654.getValue() == null) box654.setValue(0.0,false);}
-	@UiHandler("box655") void onChangeBox655(ChangeEvent event) {	if (box655.getValue() == null) box655.setValue(0.0,false);}
-	@UiHandler("box656") void onChangeBox656(ChangeEvent event) {	if (box656.getValue() == null) box656.setValue(0.0,false);}
-	@UiHandler("box657") void onChangeBox657(ChangeEvent event) {	if (box657.getValue() == null) box657.setValue(0.0,false);}
-	
 
 }

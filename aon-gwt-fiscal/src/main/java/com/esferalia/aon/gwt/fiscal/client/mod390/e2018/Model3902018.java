@@ -422,7 +422,7 @@ public class Model3902018 extends DockLayoutPanel  {
 			
 			@Override
 			public void showInfoPanel(String str) {
-				cbk.showBreakdownPanel(str);
+				cbk.showInfoPanel(str);
 			}
 			
 		};

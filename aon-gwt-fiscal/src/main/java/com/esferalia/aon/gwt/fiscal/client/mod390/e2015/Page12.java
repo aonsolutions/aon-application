@@ -1,284 +1,77 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
-import java.util.LinkedList;
-
-import com.esferalia.aon.gwt.api.client.API;
-import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.mod390.Model390.Model390Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390ModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
+import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
-import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ResizeComposite;
 
-public class Page12 extends FlowPanel implements IMod3902015Page {
-
-	final Mod3902015ServiceAsync MOD390Service = GWT.create(Mod3902015Service.class);
-	IMod3902015CallBack callback;
+class Page12 extends ResizeComposite {
 
 	protected static final String MODEL390_FILE = "/aon_gwt_fiscal/Model3902015File";
-	protected static final String MODEL390_PRINT_AEAT = "/aon_gwt_fiscal/ms/Model390PrintAEAT";
 	
-	protected FormPanel diskForm = new FormPanel("_blank");
-	protected FormPanel aeatForm = new FormPanel("aeatForm");
-	
-	protected Hidden mod390Hidden = new Hidden("mod390");
-	protected Hidden domainIdHidden = new Hidden("domainId");
-	protected Hidden domainNameHidden = new Hidden("domainName");
-	protected Hidden userHidden = new Hidden("user");
-	
-	protected Hidden modAeatHidden = new Hidden("mod");
-	protected Hidden domainIdAeatHidden = new Hidden("domainId");
-	protected Hidden domainNameAeatHidden = new Hidden("domainName");
-	protected Hidden userAeatHidden = new Hidden("user");
-	protected Hidden certAeatHidden = new Hidden("cert");
-	protected Hidden passAeatHidden = new Hidden("pass");
-	protected Hidden nameAeatHidden = new Hidden("name");
-	protected Hidden documentAeatHidden = new Hidden("document");
-	protected Hidden testHidden = new Hidden("test");
-
-	private Mod3902015 model;
-	private API API;
-	
-	public Page12(Mod3902015 m390, Model390ModuleOptions options,IMod3902015CallBack callback) {
+	public Page12(final Mod3902015 m390, final Model390Callback callback) {
 		super();
-		setCallback(callback);
-		this.API = new API(GWT.getModuleBaseURL(), 
-				options.getConfiguration().getMd5(),
-				options.getConfiguration().getDomain().getName(), 
-				options.getConfiguration().getDomain().getId(),
-				options.getConfiguration().getUser().getLogin());
-		this.model = m390;
-
-		setWidth("98%");	
-
-		FlowPanel formContainer = new FlowPanel();
-		aeatForm.setMethod(FormPanel.METHOD_POST);
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		FlowPanel formFlowPanel = new FlowPanel();
-		FlowPanel aeatFormFlowPanel = new FlowPanel();
-		diskForm.add(formFlowPanel);
-		aeatForm.add(aeatFormFlowPanel);
-
-		formFlowPanel.add(mod390Hidden);
-		formFlowPanel.add(domainIdHidden);
-		formFlowPanel.add(domainNameHidden);
-		formFlowPanel.add(userHidden);
-
-		aeatFormFlowPanel.add(modAeatHidden);
-		aeatFormFlowPanel.add(domainIdAeatHidden);
-		aeatFormFlowPanel.add(domainNameAeatHidden);
-		aeatFormFlowPanel.add(userAeatHidden);
-		aeatFormFlowPanel.add(nameAeatHidden);
-		aeatFormFlowPanel.add(documentAeatHidden);
-		aeatFormFlowPanel.add(certAeatHidden);
-		aeatFormFlowPanel.add(passAeatHidden);
-		aeatFormFlowPanel.add(testHidden);
-
-		formContainer.add(diskForm);
-		formContainer.add(aeatForm);
-
-		add(formContainer);
-
-		FlowPanel administrationPanel = getAdministrationPanel(); 
-
-		add(administrationPanel);
-
-		FlowPanel informationPanel = getInformationPanel();
-		add(informationPanel);
-	}
-	
-	
-	public FlowPanel getAdministrationPanel() {
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.addStyleName(AON.AON_CSS.aonWidthAll());
-		panel.addStyleName(AON.AON_CSS.aonMarginTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-
-		FlexTable tab = new FlexTable();
-		tab.getColumnFormatter().setWidth(0, "30px");
-		tab.getColumnFormatter().setWidth(1, "auto");
-		tab.getColumnFormatter().setWidth(2, "30px");
-		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
-		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
-		Label title = new Label("Presentaci\u00F3n del modelo");
-		tab.getFlexCellFormatter().setColSpan(0, 0, 3);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()));
-		tab.setWidget(0, 0, title);
-
-		int row = 1;
-		Label icon1 = new Label();
-		icon1.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
-		tab.setWidget(row, 0, icon1 );
-		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-
-		FlowPanel p1 = new FlowPanel();
-		p1.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button1 = new Button("Descargar fichero para su presentaci\u00F3n");
-		button1.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button1.addStyleName(AON.AON_CSS.aonBorderNone());
-		button1.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button1.addStyleName(AON.AON_CSS.aonClickable());
-		button1.addClickHandler( event -> {
-			if (getModel().isFinished() || getModel().isSent()) {
-				submitForm(MODEL390_FILE);
-			} else {
-				getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-			}
-		});
-		p1.add(button1);
-		tab.setWidget(row, 1, p1 );
-		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		tab.getFlexCellFormatter().setColSpan(row, 1, 2);
-		row++;
-
-		Label icon2 = new Label();
-		icon2.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
-		tab.setWidget(row, 0, icon2 );
-		tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-		FlowPanel p2 = new FlowPanel();
-		p2.setStyleName(AON.AON_CSS.aonPadding2());
-		Button button2 = new Button("Validar e imprimir (PDF) via Agencia Tributaria (a partir de los datos guardados).");
-		button2.setStyleName(AON.AON_CSS.aonPaddingLeft());
-		button2.addStyleName(AON.AON_CSS.aonBorderNone());
-		button2.addStyleName(AON.AON_CSS.aonEvenBackground());
-		button2.addStyleName(AON.AON_CSS.aonClickable());
-		button2.addClickHandler( event -> {
-			if (getModel().isFinished() || getModel().isSent()) {
-				submitAEAT(MODEL390_PRINT_AEAT);
-			} else {
-				getCallback().showInfoPanel("Para generar el fichero debe finalizar la confecci\u00F3n del modelo.");
-			}
-		});
-
-		p2.add(button2);
-		tab.setWidget(row, 1, p2 );
-		tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		tab.getFlexCellFormatter().setColSpan(2, 1, 2);
 		
-		panel.add(tab);
-		return panel;
-	}
-	
-	public FlowPanel getInformationPanel() {
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.AON_CSS.aonScrollArea());
-		panel.addStyleName(AON.AON_CSS.aonWidthAll());
-		panel.addStyleName(AON.AON_CSS.aonMarginTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingTop());
-		panel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-		 
-		FlexTable tab = new FlexTable();
-		tab.getColumnFormatter().setWidth(0, "30px");
-		tab.getColumnFormatter().setWidth(1
-				, "auto");
-		tab.setStyleName(AON.AON_CSS.aonWidth90Percent());
-		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonPanelGrid());
-		Label title = new Label("Informaci\u00F3n \u00FAtil para la confecci\u00F3n del modelo");
-		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonMarginTop());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonFiscalModelTableHeaderTitle());
-		tab.getCellFormatter().addStyleName(0, 0, FiscalModelUtils.getAdministrationBackgroundStyle(getModel().getAdministration()));
-		tab.setWidget(0, 0, title);
-		
-		int row = 1;
-		for (Pair<String, String> pair : getInformationLinks()) {
-			Label icon = new Label();
-			icon.addStyleName(FiscalModelUtils.getAdministrationIconStyle(getModel().getAdministration()));
-			tab.setWidget(row, 0, icon );
-			tab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+		IFiscalModelAdmonPanelCallback<Mod390, Model390ModuleOptions> cbk = 
+			new IFiscalModelAdmonPanelCallback<Mod390, Model390ModuleOptions>() {
 
-			FlowPanel p = new FlowPanel();
-			p.setStyleName(AON.AON_CSS.aonPadding2());
-			Anchor a = new Anchor(pair.getLeft(),pair.getRight(), "_blank");
-			a.setStyleName(AON.AON_CSS.aonPaddingLeft());
-			p.add(a);
-			tab.setWidget(row, 1, p );
-			tab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-			row++;
-		}
-		panel.add(tab);
-		return panel;
-	}
-	
-	public LinkedList<Pair<String, String>> getInformationLinks() {
-		LinkedList<Pair<String, String>> list = new LinkedList<>();
-		list.add(new Pair<>("Tr\u00E1mites."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/tramitacion/G412.shtml"));
-		list.add(new Pair<>("Informaci\u00F3n general." 
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/Ayuda/G412.shtml"));
-		list.add(new Pair<>("Ficha."
-				,"https://www.agenciatributaria.gob.es/AEAT.sede/procedimientos/G412.shtml"));
-		return list;
-	}
-	
-	protected void submitForm(String action) {
-		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		mod390Hidden.setValue(String.valueOf(getModel().getId()));
-		domainIdHidden.setValue(String.valueOf(getCallback().getDomainId()));
-		domainNameHidden.setValue(getCallback().getDomainName());
-		userHidden.setValue(getCallback().getUser());
-		diskForm.submit();
-	}
+				@Override
+				public Model390ModuleOptions getOptions() {
+					return callback.getOptions();
+				}
 
-	protected void submitAEAT(String action) {
-		submitAEAT(action, "null", "null", "null", "null");
-	}
-	
-	protected void submitAEAT(String action, String cert, String pass, String document, String name) {
-		aeatForm.setAction(GWT.getHostPageBaseURL() + action);
-		modAeatHidden.setValue(String.valueOf(getModel().getId()));
-		domainIdAeatHidden.setValue(String.valueOf(getCallback().getDomainId()));
-		domainNameAeatHidden.setValue(getCallback().getDomainName());
-		userAeatHidden.setValue(getCallback().getUser());
-		certAeatHidden.setValue(cert);
-		passAeatHidden.setValue(pass);
-		nameAeatHidden.setValue(name);
-		documentAeatHidden.setValue(document);
-		testHidden.setValue("1");
-		aeatForm.submit();
-	}
-	
-	
-	@Override
-	public void refresh(Mod3902015 m390) {
-		// Auto-generated method stub
-	}
-	
-	public IMod3902015CallBack getCallback() {
-		return callback;
-	}
-	
-	public void setCallback(IMod3902015CallBack callback) {
-		this.callback = callback;
-	}
+				@Override
+				public Mod390 getModel() {
+					return m390;
+				}
 
-	public Mod3902015 getModel() {
-		return model;
-	}
+				@Override
+				public void showError(String msg) {
+					callback.showError(msg);
+				}
 
-	public API getAPI() {
-		return API;
-	}
+				@Override
+				public String getValidatePrintAction() {
+					return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod390ValidatePrintAEAT";
+					
+				}
 
-	@Override
-	public void populate(Mod3902015 m390) {
-		// Nothing
+				@Override
+				public String getDownloadFileAction() {
+					return "/aon_gwt_fiscal/Model3902015File";
+				}
+
+				@Override
+				public String getSendAction() {
+					return null;
+				}
+
+				@Override
+				public void sendSuccessfully() {
+					// Nothing
+				}
+
+				@Override
+				public String getCheckAction() {
+					return null;
+				}
+
+				@Override
+				public String getCheckDataResponseDataAction() {
+					return null;
+				}
+
+				@Override
+				public String getModelInformationURL() {
+					return "https://sede.agenciatributaria.gob.es/Sede/procedimientoini/G412.shtml";
+				}
+		};
+		FiscalModelAdmonPanel<Mod390, Model390ModuleOptions> admonPanel = new FiscalModelAdmonPanel<>(cbk);
+		initWidget(admonPanel);
 	}
+	
 }

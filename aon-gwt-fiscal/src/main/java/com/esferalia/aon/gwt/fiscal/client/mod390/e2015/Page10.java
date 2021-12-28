@@ -3,8 +3,6 @@ package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.Cnae2009Panel;
 import com.esferalia.aon.gwt.common.client.widget.cell.SizableTextInputCell;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015CallBack;
-import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.IMod3902015Page;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Prorrata;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
@@ -27,12 +25,11 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
-public class Page10 extends ResizeComposite implements RequiresResize , IMod3902015Page {
+class Page10 extends ResizeComposite {
 
 	interface CnaeButtonTemplate extends SafeHtmlTemplates {
 		@Template("<input type=\"button\" value=\"&nbsp;\" class=\"aon-icon-lookup\" style=\"border: medium none !important;\">")
@@ -86,8 +83,6 @@ public class Page10 extends ResizeComposite implements RequiresResize , IMod3902
 
 	private static final PageBinder BINDER = GWT.create(PageBinder.class);
 
-	IMod3902015CallBack cbk;
-	
 	private Cnae2009Panel cnaePanel;
 	
 	private ListDataProvider<Prorrata> dataProvider;
@@ -321,17 +316,10 @@ public class Page10 extends ResizeComposite implements RequiresResize , IMod3902
 		table.redraw();
 	}
 
-	@Override
 	public void populate(Mod3902015 mod390) {
 		// Nothing
 	}
 	
-	@Override
-	public void setCallback(IMod3902015CallBack callback) {
-		this.cbk = callback;
-	}
-	
-	@Override
 	public void refresh(Mod3902015 m390) {
 		setValue(m390);
 	}
