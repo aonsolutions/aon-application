@@ -522,6 +522,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("OCIO_NOCTURNO_MENSUAL", "OCIO_NOCTURNO");
 		variablesMap.put("PAGA_BENEFICIOS_MENSUAL", "PAGA_BENEFICIOS");
 		variablesMap.put("PAGA_BENEFICIOS_DIARIO", "PAGA_BENEFICIOS");
+		variablesMap.put("PAGA_EXTRA_MENSUAL", "PAGA_EXTRA");
 		variablesMap.put("PAGAS_EXTRA_MENSUAL", "PAGAS_EXTRA_MENSUAL");
 		variablesMap.put("PAGAS_EXTRA_VERANO_Y_NAVIDAD_ANUAL", "P_E_VERANO_Y_NAVIDAD_A");
 		variablesMap.put("PAGAS_EXTRA_VERANO_Y_NAVIDAD_MENSUAL", "P_E_VERANO_Y_NAVIDAD_M");
@@ -1001,8 +1002,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("TURNICIDAD_ANUAL", "TURNICIDAD_ANUAL");
 		variablesMap.put("TURNICIDAD_DIARIO", "TURNICIDAD_DIARIO");
 		variablesMap.put("TURNICIDAD_MENSUAL", "TURNICIDAD_MENSUAL");
-		variablesMap.put("VACACIONES_ANUAL", "VACACIONES_ANUAL");
-		variablesMap.put("VACACIONES_DIARIO", "VACACIONES_DIARIO");
+		variablesMap.put("VACACIONES_ANUAL", "VACACIONES");
+		variablesMap.put("VACACIONES_DIARIO", "VACACIONES");
 		variablesMap.put("VACACIONES_MENSUAL", "VACACIONES");
 		variablesMap.put("VIVIENDA_VACACIONAL_MENSUAL", "VIVIENDA_VACAC_M");
 	}
