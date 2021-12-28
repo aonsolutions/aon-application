@@ -1064,7 +1064,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		}
 	}
 
-	private class ContextProvider implements IContextProvider {
+	public class ContextProvider implements IContextProvider {
 
 		@Override
 		public boolean isEditable(String name) {
@@ -4870,7 +4870,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		toolbar.add(fxButton);
 		fxButton.setEnabled(false);
 		
-		addPaymentButton = new AonExpandButton("A" + String.valueOf("\u00F1") + "adir Pago", AON.CSS.aonIconAddBlock()) {
+		addPaymentButton = new AonExpandButton("A\u00F1adir Pago", AON.CSS.aonIconAddBlock()) {
 			
 			@Override
 			public void onExpandClick(ClickEvent event) {
@@ -4881,7 +4881,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			
 			@Override
 			public void onDefaultClick(ClickEvent evet) {
-				AgreementPaymentWizard wizard = new AgreementPaymentWizard(agreementDraftObject.getPayments()) {
+				new AgreementPaymentWizard(agreementDraftObject.getPayments(), contextProvider) {
 					@Override
 					protected void onAccept(Payment payment) {
 						AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
@@ -4906,8 +4906,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						}
 					}
 				};
-				
-				wizard.showDialog();
 			}
 		};
 		toolbar.add(addPaymentButton);

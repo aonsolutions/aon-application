@@ -7,112 +7,47 @@
     
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementPaymentWizard.MyStyle">
-	
-		.body {
-			margin-top: 5px;
-			padding: 20px 10px;
+		
+		.container{
 			display: flex;
 			flex-direction: column;
+			padding: 1rem;
 			height: 585px;
 			min-width: 600px;
+			gap: 1rem;
 		}
 		
-		.title{
-			font-weight: bold;
-		}
-		
-		.pagePanel{
+		.flexColumnBetween{
 			display: flex;
 			flex-direction: column;
-			width: auto !important;
-		}
-		
-		.flexColumnPanel{
-			display: flex;
-			flex-direction: column;
-			padding: 5px 20px;
+			justify-content: space-between;
+			gap: .5rem;
+			height: 100%;
 		}
 		
 		.flexColumn{
 			display: flex;
 			flex-direction: column;
-		}
-		
-		.flexBetween{
-			justify-content: space-between;
-		}
-		
-		.flexColumn2{
-			display: flex;
-			flex-direction: column;
-		}
-		
-		.flexCenter{
-			display: flex;
-			justify-content: center;
+			gap: .5rem;
 		}
 		
 		.flex{
 			display: flex;
-			gap: 5px;
-			align-items: center;
-		}
-		
-		.buttonsPanel{
-			display: flex;
-			padding: 0px 30px;
-			align-items: center;
-			margin-bottom: 45px;
-		}
-		
-		.buttonPage{
-			border: 1px solid #eee;
-			border-radius: 50%;
-			background-color: transparent;
-			font-weight: bold;
-			width: 60px;
-			height: 50px;
-			cursor: pointer;
-		}
-		
-		.buttonFillPage{
-			background-color: #eee;
-		}
-		
-		.line{
-			width: 100%;
-			height: 5px;
-			border: 1px solid #eee;
-		}
-		
-		.lineFill{
-			background-color: #eee;
-		}
-		
-		.buttonsAcceptCancelPanel{
-			display: flex;
-			justify-content: flex-end;
-			margin: 5px 20px;
-		}
-		
-		.uppercase{
-			text-transform: uppercase;
-		}
-		
-		.visibilityDisabled{
-			display: block !important;
-			visibility: visible !important;
-		}
-		
-		.flexPanel{
-			display: flex;
-			gap: 15px;
-			padding: 5px 20px;
-			align-items: flex-end;
+			gap: .5rem;
 		}
 		
 		.flexWrap{
 			flex-wrap: wrap;
+		}
+		
+		.element{
+			display: flex;
+			flex-direction: column;
+			gap: .2rem;
+		}
+		
+		.title{
+			font-weight: bold;
 		}
 		
 		.w180{
@@ -120,33 +55,15 @@
 		}
 		
 		.maxWidth{
-			width: 98%;
+			width: 100%;
 		}
 		
-		.w40{
-			width: 40px;
-		}
-		
-		.w103{
-			width: 103px;
-		}
-		
-		.extraPayDate{
-			width: 45px;
-			text-align: center;
-		}
-		
-		.extraPayValue{
-			width: 74px;
-			text-align: center;
+		.uppercase{
+			text-transform: uppercase;
 		}
 		
 		.tbHeight{
-			height: 1.32em;
-		}
-		
-		.widthAll{
-			width: 100%;
+			height: 1.2rem;
 		}
 		
 		.paymentPos{
@@ -154,115 +71,127 @@
 			text-align: center;
 		}
 		
-		.gridStyle{
-			margin-left: 10px;
-			width: 950px;
+		.aon-toolbar-button {
+		    height: 24px;
+		    padding-left: 25px;
+		    background-position: .2rem;
+		    background-repeat: no-repeat;
+		    background-color: transparent;
+		    background-size: 20px;
+		    border: none;
+			cursor: pointer;
 		}
 		
-		.scrollStyle {
-			margin-left: 10px;
-			margin-bottom: 10px;
+		.visibilityDisabled{
+			display: block !important;
+			visibility: visible !important;
 		}
 		
-		.footerToolbar{
-			padding: 10px;
+		.buttonsPanel{
 			display: flex;
-		    align-items: center;
-		    justify-content: space-between;
-		}
-		
-		.footerOptionsToolbar{
-			display: flex;
-		    align-items: center;
+			justify-content: flex-end;
+			gap: .5rem;
 		}
 		
 	</ui:style>
 	
-	<g:DockLayoutPanel ui:field="dockLayoutPanel" styleName="{style.body}">
-		<g:center>	
-			<g:HTMLPanel styleName="{style.flexColumn} {style.flexBetween}">
+	<g:HTMLPanel ui:field="container" styleName="{style.container}">
+		<g:HTMLPanel styleName="{style.flexColumnBetween}">
+			
+			<g:HTMLPanel styleName="{style.flexColumn}">
 				
-				<g:HTMLPanel styleName="{style.flexColumn}">
-				
-					<g:HTMLPanel ui:field="firstPage" styleName="{style.pagePanel}">
-						
-						<g:HTMLPanel styleName="{style.flexPanel}">
-							<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.flexColumn}">
-								<g:Label styleName="{style.title}">Tipo de devengo</g:Label>
-								<g:ListBox ui:field="paymentType" styleName="aon-selectOneMenu {style.w180}" />
-							</g:HTMLPanel>
-							<g:HTMLPanel ui:field="extraPanel" styleName="{style.flexColumn} {style.maxWidth}">
-								<g:Label ui:field="extraLabel" styleName="{style.title}"/>
-								<g:TextBox ui:field="extraName" styleName="aon-inputText {style.uppercase} {style.maxWidth} {style.tbHeight}" />
-							</g:HTMLPanel>
+				<g:HTMLPanel ui:field="firstPage" styleName="{style.flexColumn}">	
+					
+					<g:HTMLPanel styleName="{style.flex}">	
+						<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.element}">
+							<g:Label styleName="{style.title}">Tipo de devengo</g:Label>
+							<g:ListBox ui:field="paymentType" styleName="aon-selectOneMenu {style.w180}" />
 						</g:HTMLPanel>
-						
-						<g:HTMLPanel ui:field="normalFieldsPanel" styleName="{style.flexPanel} {style.flexWrap}">
-							<g:HTMLPanel ui:field="periodicityPanel" styleName="{style.flexColumn}">
-								<g:Label styleName="{style.title}">Periocidad devengo</g:Label>
-								<g:ListBox ui:field="periodicityType" styleName="aon-selectOneMenu {style.w180}" />
-							</g:HTMLPanel>
-							<g:HTMLPanel ui:field="extraPayDatePanel" styleName="{style.flex}">
-								<g:Label styleName="{style.title}">Fecha cobro</g:Label>
-								<g:TextBox ui:field="extraPayDate" styleName="aon-inputText {style.extraPayDate}  {style.tbHeight}" />
-							</g:HTMLPanel>
-							<g:HTMLPanel ui:field="extraPayCalcPanel" styleName="{style.flex}">
-								<g:Label styleName="{style.title}">Cálculo</g:Label>
-								<g:ListBox ui:field="extraPayCalc" styleName="aon-selectOneMenu" />
-							</g:HTMLPanel>
-							<g:HTMLPanel ui:field="extraPayTypePanel" styleName="{style.flex}">
-								<g:Label styleName="{style.title}">Tipo importe</g:Label>
-								<g:ListBox ui:field="extraPayType" styleName="aon-selectOneMenu {style.w103}" />
-							</g:HTMLPanel>
-							<g:HTMLPanel ui:field="partialityPanel" styleName="{style.flex}">
-								<g:Label styleName="{style.title}">¿Aplicar parcialidad?</g:Label>
-								<g:Button ui:field="partialityButton" />
-							</g:HTMLPanel>
-							
+						<g:HTMLPanel ui:field="extraPanel" styleName="{style.element} {style.maxWidth}">
+							<g:Label ui:field="extraLabel" styleName="{style.title}"/>
+							<g:TextBox ui:field="extraName" styleName="{style.uppercase} {style.maxWidth} {style.tbHeight}" />
 						</g:HTMLPanel>
-						
 					</g:HTMLPanel>
 					
-					<aon:GtzdoWizard ui:field="gtzdoWizard"/>
-					
-					<g:HTMLPanel ui:field="paymentsDataGridPanel" styleName="{style.flexColumnPanel}">
-						<g:Label styleName="{style.title}">Selecciona los conceptos</g:Label>
-						<cell:DataGrid debugId="paymentsDataGrid" ui:field="paymentsDataGrid" title="Conceptos" />
+					<g:HTMLPanel ui:field="normalFieldsPanel" styleName="{style.flex} {style.flexWrap}">
+						<g:HTMLPanel ui:field="periodicityPanel" styleName="{style.element}">
+							<g:Label styleName="{style.title}">Periocidad devengo</g:Label>
+							<g:ListBox ui:field="periodicityType" styleName="aon-selectOneMenu {style.w180}" />
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="extraPayDatePanel" styleName="{style.element}">
+							<g:Label styleName="{style.title}">Fecha cobro</g:Label>
+							<g:TextBox ui:field="extraPayDate" styleName="aon-inputText {style.tbHeight}" />
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="extraPayCalcPanel" styleName="{style.element}">
+							<g:Label styleName="{style.title}">Cálculo</g:Label>
+							<g:ListBox ui:field="extraPayCalc" styleName="aon-selectOneMenu" />
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="extraPayTypePanel" styleName="{style.element}">
+							<g:Label styleName="{style.title}">Tipo importe</g:Label>
+							<g:ListBox ui:field="extraPayType" styleName="aon-selectOneMenu" />
+						</g:HTMLPanel>
+						<g:HTMLPanel ui:field="partialityPanel" styleName="{style.element}">
+							<g:Label styleName="{style.title}">¿Aplicar parcialidad?</g:Label>
+							<g:Button ui:field="partialityButton" />
+						</g:HTMLPanel>	
 					</g:HTMLPanel>
-				
+					
 				</g:HTMLPanel>
 				
-				<g:HTMLPanel styleName="{style.flexColumnPanel}">
-					<g:HTMLPanel ui:field="paymentConceptPanel" styleName="{style.flexColumn2}">
-						<g:Label styleName="{style.title}">Concepto</g:Label>
-						<g:TextBox ui:field="paymentConcept" />
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="paymentCRATypePanel" styleName="{style.flexColumn2}">
-						<g:Label styleName="{style.title}">Tipo CRA</g:Label>
-						<g:HTMLPanel ui:field="paymentCRAPanel" />
-					</g:HTMLPanel>
-					<g:HTMLPanel ui:field="paymentDescriptionPanel" styleName="{style.flex}">
-						<g:HTMLPanel styleName="{style.flexColumn2}">
-							<g:Label styleName="{style.title}">Pos</g:Label>
-							<g:IntegerBox ui:field="paymentDescriptionPos" styleName="{style.paymentPos}" title="Orden numérico en el que apareceran los conceptos en el convenio" />	
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="{style.flexColumn} {style.widthAll}">
-							<g:Label styleName="{style.title}">Descripción</g:Label>
-							<g:TextBox ui:field="paymentDescription"/>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					
-					<g:HTMLPanel ui:field="paymentExpressionPanel" styleName="{style.flexColumn2}">
-						<g:Label ui:field="paymentExpressionTitle" styleName="{style.title}">Expresión</g:Label>
-						<g:TextBox ui:field="paymentExpression" enabled="false"/>
-					</g:HTMLPanel>
+				<aon:GtzdoWizard ui:field="gtzdoWizard"/>
+				
+				<g:HTMLPanel ui:field="paymentsDataGridPanel" styleName="{style.flexColumn}">
+					<g:Label styleName="{style.title}">Selecciona los conceptos</g:Label>
+					<cell:DataGrid debugId="paymentsDataGrid" ui:field="paymentsDataGrid" title="Conceptos" />
 				</g:HTMLPanel>
 				
 			</g:HTMLPanel>
-		</g:center>
-		<g:south size="40">
-			<g:HTMLPanel ui:field="buttonsAcceptCancelPanel" styleName="{style.buttonsAcceptCancelPanel}"></g:HTMLPanel>
-		</g:south>
-	</g:DockLayoutPanel>
+			
+			<g:HTMLPanel styleName="{style.flexColumn}">
+				<g:HTMLPanel ui:field="paymentConceptPanel" styleName="{style.element}">
+					<g:Label styleName="{style.title}">Concepto</g:Label>
+					<g:TextBox ui:field="paymentConcept" />
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="paymentCRATypePanel" styleName="{style.element}">
+					<g:Label styleName="{style.title}">Tipo CRA</g:Label>
+					<g:HTMLPanel ui:field="paymentCRAPanel" />
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="paymentDescriptionPanel" styleName="{style.flex}">
+					<g:HTMLPanel styleName="{style.element}">
+						<g:Label styleName="{style.title}">Pos</g:Label>
+						<g:IntegerBox ui:field="paymentDescriptionPos" styleName="{style.paymentPos} {style.tbHeight}" title="Orden numérico en el que apareceran los conceptos en el convenio" />	
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element} {style.maxWidth}">
+						<g:Label styleName="{style.title}">Descripción</g:Label>
+						<g:TextBox ui:field="paymentDescription"/>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel ui:field="paymentExpressionPanel" styleName="{style.element}">
+					<g:Label ui:field="paymentExpressionTitle" styleName="{style.title}">Expresión</g:Label>
+					<g:TextBox ui:field="paymentExpression" enabled="false"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel ui:field="taxedPanel" styleName="{style.element}">
+					<g:Label ui:field="taxedTitle" styleName="{style.title}">Tributa</g:Label>
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:ListBox ui:field="taxedTypeLB"/>
+						<g:TextBox ui:field="taxedExpression" styleName="{style.maxWidth}"/>
+						<g:Button styleName="{style.aon-toolbar-button} aon_icon_fx" ui:field="taxedFxButton"/>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="quotePanel" styleName="{style.element}">
+					<g:Label ui:field="quoteTitle" styleName="{style.title}">Cotiza</g:Label>
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:ListBox ui:field="quoteTypeLB"/>
+						<g:TextBox ui:field="quoteExpression" styleName="{style.maxWidth}"/>
+						<g:Button styleName="{style.aon-toolbar-button} aon_icon_fx" ui:field="quoteFxButton"/>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+		</g:HTMLPanel>
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
+	</g:HTMLPanel>
 
 </ui:UiBinder>

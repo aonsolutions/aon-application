@@ -662,6 +662,11 @@ public class AgreementParser {
 					if((AonStringUtils.containsIgnoreCase(realName, "PAGA") || AonStringUtils.containsIgnoreCase(realName, "P_E_")) && (AonStringUtils.containsIgnoreCase(realName, "NAVIDAD") || AonStringUtils.containsIgnoreCase(realName, "DICIEMBRE")))
 						hasWinterPay = true;
 					
+					if(AonStringUtils.equalsIgnoreCase(realName, "PAGA_EXTRA_MENSUAL") || AonStringUtils.equalsIgnoreCase(realName, "VACACIONES")) {
+						hasSummerPay = true;
+						hasWinterPay = true;
+					}
+					
 					dslContext.insertInto(AGREEMENT_LEVEL_DATA)
 						.set(AGREEMENT_LEVEL_DATA.DOMAIN, domainId)
 						.set(AGREEMENT_LEVEL_DATA.NAME, realName)

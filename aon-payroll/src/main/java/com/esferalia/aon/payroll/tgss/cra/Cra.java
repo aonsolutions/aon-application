@@ -373,7 +373,8 @@ public class Cra {
 						if(typeCRA == craType) {
 							
 							// Accumulate craAmount (important if exists amount)
-							craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+							// Mirar amount por que en quote a veces está la base y eso es mucho mas que la percepcion en si
+							craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE);
 							
 							// Last iteration
 							if(i+1 == salaryPaymentRecords.size()) {
@@ -765,7 +766,7 @@ public class Cra {
 			amount = craAmountStr.split("[.]")[0] + craAmountStr.split("[.]")[1];
 		
 		// Add CRE to CRES if craAmount > 0
-		if(craAmount > 0){
+		if(craAmount > 0.001){
 			String includeExclude = "I";
 			
 			if(craType.isBBCCIncluded() && craType.isBBCCExcluded())
