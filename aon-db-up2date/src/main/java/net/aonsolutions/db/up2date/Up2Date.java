@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.data.DataRequestUpdate;
+import net.aonsolutions.db.up2date.payroll.Holidays2022Insert;
 import net.aonsolutions.db.up2date.payroll.IrpfM190Update;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.Bases2021UpdateIII;
@@ -202,12 +203,13 @@ public class Up2Date {
     		//TrainingBases2021UpdateIII.TRAININGBASES2021UPDATEIII,
     		//AgriculturalBases2021UpdateIII.AGRICULTURALBASES2021UPDATEIII,
     		//TrainingPercentages2021Update.TRAINNINGPERCENTAGES2021UPDATE,
-    		//FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE,
+    		//FellowsPercentages2021Update.FELLOWSPERCENTAGES2021UPDATE
     		DataRequestUpdate.DATA_REQUEST_UPDATE,
     		WorkplaceUpdate.WORKPLACE_UPDATE,
-    		IrpfM190Update.IRPFM190UPDATE
+    		IrpfM190Update.IRPFM190UPDATE,
+    		Holidays2022Insert.HOLIDAYS2022INSERT
     };
-
+    
 
 	// ------------------------------------------------------------------------
 

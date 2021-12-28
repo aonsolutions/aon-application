@@ -709,14 +709,12 @@ public class MainEntryPoint implements EntryPoint {
 	
 	public static native String getCurrentDomainName()
 	/*-{
-		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? $wnd.localStorage.getItem("aon_domain_name") : $wnd.getCurrentDomainName();
+		return $wnd.getCurrentDomainName();
 	}-*/;
 
 	public static native int getCurrentDomain()
 	/*-{
-		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? $wnd.localStorage.getItem("aon_domain_id") :  $wnd.getCurrentDomain();
+		return $wnd.getCurrentDomain();
 	}-*/;
 	
 	public static native String getRootPanel()
@@ -730,8 +728,7 @@ public class MainEntryPoint implements EntryPoint {
 	
 	public static native String getCurrentUserJs()
 	/*-{
-		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? $wnd.localStorage.getItem("aon_domain_login") : $wnd.getCurrentUser();
+		return $wnd.getCurrentUser();
 	}-*/;
 	/**
 	 * Fetches a parameter passed to the module's nocache script.

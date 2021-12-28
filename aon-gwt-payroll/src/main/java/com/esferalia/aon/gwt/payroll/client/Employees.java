@@ -93,7 +93,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class Employees extends ResizeComposite implements OpenHandler<TreeItem>, SelectionHandler<TreeItem>,
 		ScrollHandler, ContextMenuHandler, KeyDownHandler, LoadHandler, OptionsToolbar.Listener {
 
-	private static final int MIN_EMPLOYEE_LIMIT = 15;
+	private static final int MIN_EMPLOYEE_LIMIT = 35;
 
 	interface Listener {
 
