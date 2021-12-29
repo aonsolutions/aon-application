@@ -13,17 +13,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.occam.api.fiscal.MODEL3902015;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902021;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod3902015Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod3902021Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod390 2015 File download", urlPatterns = { "/aon_gwt_fiscal/Model3902015File" })
-public class Mod3902015File extends HttpServlet {
+@WebServlet(name = "Mod390 2021 File download", urlPatterns = { "/aon_gwt_fiscal/Model3902021File" })
+public class Mod3902021File extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -35,10 +35,10 @@ public class Mod3902015File extends HttpServlet {
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			String user = req.getParameter("user");
 			Occam occam = new Occam()
-				.setDomainName(domainName)
-				.setDomain(domainId)
-				.setUser(user);			
-			Mod3902015 mod390 = MODEL3902015.get(occam, id);
+					.setDomainName(domainName)
+					.setDomain(domainId)
+					.setUser(user);			
+			Mod3902021 mod390 = MODEL3902021.get(occam, id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -48,7 +48,7 @@ public class Mod3902015File extends HttpServlet {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			Mod3902015Writer.fillWriter(mod390, writer);
+			Mod3902021Writer.fillWriter(mod390, writer);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 
 			

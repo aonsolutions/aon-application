@@ -152,6 +152,8 @@ public class Mod390DAO {
 			throw new AonCoreException("La generaci\u00F3n de modelos anteriores al ejercicio 2014 no est\u00E1 soportada");
 		} else if (mod390.getYear() == 2015 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
 			return Mod3902015DAO.create(ctx, mod390);
+		} else if (mod390.getYear() == 2018 || mod390.getYear() == 2019 || mod390.getYear() == 2020) {
+			return Mod3902018DAO.create(ctx, mod390);
 		} 
 		return Mod3902018DAO.create(ctx, mod390);
 	}

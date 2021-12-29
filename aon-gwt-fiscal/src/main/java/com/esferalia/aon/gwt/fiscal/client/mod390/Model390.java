@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2021.Model3902021;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -331,6 +332,9 @@ public class Model390 extends MainEntryPoint {
 			}  else if (selected.getYear() == 2018 || selected.getYear() == 2019 || selected.getYear() == 2020) {
 				Model3902018 model3902018 = new Model3902018(new Model390Callback(),selected);
 				declarationContainer.setWidget(model3902018);
+			}  else if (selected.getYear() == 2021) {
+				Model3902021 model3902021 = new Model3902021(new Model390Callback(),selected);
+				declarationContainer.setWidget(model3902021);
 			} else {
 				showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 			}
