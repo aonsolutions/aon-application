@@ -307,13 +307,13 @@ public class Model3902015 extends DockLayoutPanel  {
 		page02Link.addClickHandler(event -> showContent(pageLinks, 2,new Page02(cbk),false));
 		page03Link.addClickHandler(event -> showContent(pageLinks, 3,new Page03(cbk),false));
 		page04Link.addClickHandler(event -> showContent(pageLinks, 4,new Page04(cbk),false));
-		page05Link.addClickHandler(event -> showContent(pageLinks, 5,new Page05(getModel()),true));
-		page06Link.addClickHandler(event -> showContent(pageLinks, 6,new Page06(getModel()),true));
-		page07Link.addClickHandler(event -> showContent(pageLinks, 7,new Page07(getModel()),true));
-		page08Link.addClickHandler(event -> showContent(pageLinks, 8,new Page08(getModel()),true));
-		page09Link.addClickHandler(event -> showContent(pageLinks, 9,new Page09(getModel()),true));
-		page10Link.addClickHandler(event -> showContent(pageLinks,10,new Page10(getModel()),true));
-		page11Link.addClickHandler(event -> showContent(pageLinks,11,new Page11(getModel()),true));
+		page05Link.addClickHandler(event -> showContent(pageLinks, 5,new Page05(cbk),false));
+		page06Link.addClickHandler(event -> showContent(pageLinks, 6,new Page06(cbk),false));
+		page07Link.addClickHandler(event -> showContent(pageLinks, 7,new Page07(cbk),false));
+		page08Link.addClickHandler(event -> showContent(pageLinks, 8,new Page08(cbk),false));
+		page09Link.addClickHandler(event -> showContent(pageLinks, 9,new Page09(cbk),false));
+		page10Link.addClickHandler(event -> showContent(pageLinks,10,new Page10(cbk),false));
+		page11Link.addClickHandler(event -> showContent(pageLinks,11,new Page11(cbk),false));
 		page12Link.addClickHandler(event -> showContent(pageLinks,12,new Page12(getModel(), getCallback()),false));
 		
 		

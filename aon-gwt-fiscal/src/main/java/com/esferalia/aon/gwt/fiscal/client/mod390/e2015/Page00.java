@@ -236,29 +236,6 @@ class Page00 extends PageAbs {
 		onClickSpecialGroupRegime();
 	}
 
-//	@Override
-//	protected void populate() {
-//		getModel().setName(name.getValue());
-//		getModel().setFirstSurname(firstSurname.getValue());
-//		getModel().setSecondSurname(secondSurname.getValue());
-//		getModel().setContactPhone(phone.getValue());
-//		getModel().setReplacement(replacement.getValue());
-//		getModel().setReplacementDueInsolvencyState(replacementDueInsolvencyState.getValue());
-//		getModel().setReplacedReceipt(replacedReceipt.getValue());
-//		getModel().setInsolvencyDeclarations(insolvencyDeclarations.getValue());
-//		getModel().setInsolvencyStateThisYear(insolvencyStateThisYear.getValue());
-//		getModel().setInsolvencyStateLastPeriod(insolvencyStateLastPeriod.getValue());
-//		getModel().setAccrualRegime(accrualRegime.getValue());
-//		getModel().setAccrualRegimeTarget(accrualRegimeTarget.getValue());
-//		getModel().setTaxRefund(taxRefund.getValue());
-//		getModel().setSpecialGroupRegime(specialGroupRegime.getValue());
-//		getModel().setGroupNumber( groupNumber.getValue());
-//		getModel().setGroupDependent( groupDependent.getValue());
-//		getModel().setGroupRegimeType(groupRegimeType.getValue());
-//		getModel().setGroupDocument( groupDocument.getValue());
-//		getModel().setGroupDeclarations( groupDeclarations.getValue());
-//	}
-
 	private void onClickSpecialGroupRegime() {
 		groupNumber.setEnabled(specialGroupRegime.getValue());
 		groupDependent.setEnabled(specialGroupRegime.getValue());

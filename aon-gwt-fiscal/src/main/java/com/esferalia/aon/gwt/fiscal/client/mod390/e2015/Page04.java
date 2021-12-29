@@ -7,16 +7,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.Model3902015Callback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.FarmerRegimeActivity;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 class Page04 extends PageAbs {
-
-	private SimplifiedRegimePanel activity1;
-	private SimplifiedRegimePanel activity2;
 
 	private AonTextBox f01A = new AonTextBox(); 
 	private AonDoubleBox f01B = new AonDoubleBox();
@@ -140,71 +135,6 @@ class Page04 extends PageAbs {
 		box83.setValue(getModel().getBox83(),false);
 	}
 
-//	@Override
-//	protected void populate() {
-//		FarmerRegimeActivity farmer = null;
-//		if (!AonStringUtils.isBlank(f01A.getValue()) ) {
-//			farmer = new FarmerRegimeActivity();
-//			farmer.setCodigo(f01A.getValue());
-//			farmer.setIncomes(f01B.getValue());
-//			farmer.setQuotaIndex(f01C.getValue());
-//			farmer.setAccrualQuota(f01D.getValue());
-//			farmer.setInputQuotas(f01E.getValue());
-//			farmer.setQuota(f01K.getValue());
-//			getModel().setFarmerRegime1(farmer);
-//		}
-//		if (!AonStringUtils.isBlank(f02A.getValue()) ) {
-//			farmer = new FarmerRegimeActivity();
-//			farmer.setCodigo(f02A.getValue());
-//			farmer.setIncomes(f02B.getValue());
-//			farmer.setQuotaIndex(f02C.getValue());
-//			farmer.setAccrualQuota(f02D.getValue());
-//			farmer.setInputQuotas(f02E.getValue());
-//			farmer.setQuota(f02K.getValue());
-//			getModel().setFarmerRegime2(farmer);
-//		}
-//		if (!AonStringUtils.isBlank(f03A.getValue()) ) {
-//			farmer = new FarmerRegimeActivity();
-//			farmer.setCodigo(f03A.getValue());
-//			farmer.setIncomes(f03B.getValue());
-//			farmer.setQuotaIndex(f03C.getValue());
-//			farmer.setAccrualQuota(f03D.getValue());
-//			farmer.setInputQuotas(f03E.getValue());
-//			farmer.setQuota(f03K.getValue());
-//			getModel().setFarmerRegime3(farmer);
-//		}
-//		if (!AonStringUtils.isBlank(f04A.getValue()) ) {
-//			farmer = new FarmerRegimeActivity();
-//			farmer.setCodigo(f04A.getValue());
-//			farmer.setIncomes(f04B.getValue());
-//			farmer.setQuotaIndex(f04C.getValue());
-//			farmer.setAccrualQuota(f04D.getValue());
-//			farmer.setInputQuotas(f04E.getValue());
-//			farmer.setQuota(f04K.getValue());
-//			getModel().setFarmerRegime4(farmer);
-//		}
-//		if (!AonStringUtils.isBlank(f05A.getValue()) ) {
-//			farmer = new FarmerRegimeActivity();
-//			farmer.setCodigo(f05A.getValue());
-//			farmer.setIncomes(f05B.getValue());
-//			farmer.setQuotaIndex(f05C.getValue());
-//			farmer.setAccrualQuota(f05D.getValue());
-//			farmer.setInputQuotas(f05E.getValue());
-//			farmer.setQuota(f05K.getValue());
-//			getModel().setFarmerRegime5(farmer);
-//		}
-//		getModel().setBox74(box74.getValue());
-//		getModel().setBox75(box75.getValue());
-//		getModel().setBox76(box76.getValue());
-//		getModel().setBox77(box77.getValue());
-//		getModel().setBox78(box78.getValue());
-//		getModel().setBox79(box79.getValue());
-//		getModel().setBox80(box80.getValue());
-//		getModel().setBox81(box81.getValue());
-//		getModel().setBox82(box82.getValue());
-//		getModel().setBox83(box83.getValue());
-//	}
-
 	private void paint() {
 		ScrollPanel scroll = new ScrollPanel();
 		FlowPanel basePanel = new FlowPanel();
@@ -214,14 +144,14 @@ class Page04 extends PageAbs {
 		basePanel.add(getTitle(AON.MSG.simplifiedRegimeOperations()));
 		basePanel.add(getSubtitle(AON.MSG.noFarmerActivity()));
 		
-		activity1 = new SimplifiedRegimePanel(getModel().getSimpRegime1());
+		SimplifiedRegimePanel activity1 = new SimplifiedRegimePanel(getModel().getSimpRegime1());
 		activity1.addValueChangeHandler(event -> {
 			getModel().setSimpRegime1(event.getValue());
 			calculateAndRefresh();
 			markAsDirty();
 		});
 		
-		activity2 = new SimplifiedRegimePanel(getModel().getSimpRegime2());
+		SimplifiedRegimePanel activity2 = new SimplifiedRegimePanel(getModel().getSimpRegime2());
 		activity2.addValueChangeHandler(event -> {
 			getModel().setSimpRegime2(event.getValue());
 			calculateAndRefresh();

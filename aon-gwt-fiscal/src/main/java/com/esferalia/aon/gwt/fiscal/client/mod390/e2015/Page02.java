@@ -142,56 +142,6 @@ public class Page02 extends PageAbs {
 		notary3.setEnabled(getModel().isLegalEntity());
 	}
 
-//	@Override
-//	protected void populate() {
-//		Address address = new Address();
-//		address.setRdocument(rdocument.getValue());
-//		address.setRname(rname.getValue());
-//		address.setRstreetType(rstreetType.getValue());
-//		address.setRstreetName(rstreetName.getValue());
-//		address.setRstreetNumber(rstreetNumber.getValue());
-//		address.setRstreetStair(rstreetStair.getValue());
-//		address.setRstreetFloor(rstreetFloor.getValue());
-//		address.setRstreetDoor(rstreetDoor.getValue());
-//		address.setRphone(rphone.getValue());
-//		address.setRtown(rtown.getValue());
-//		address.setRprovince(rprovince.getSelectedIndex());
-//		address.setRzip(rzip.getValue());
-//		getModel().setAddress(address);
-//		
-//		if (!AonStringUtils.isEmpty( document1.getValue() ) ) {
-//			LegalRepresentative legalRepr = new LegalRepresentative();
-//			legalRepr.setDocument(document1.getValue());
-//			legalRepr.setName(name1.getValue());
-//			legalRepr.setNotary(notary1.getValue());
-//			legalRepr.setNotaryDate(notaryDate1.getValue());
-//			getModel().setLegalRepr1(legalRepr);
-//			
-//		} else {
-//			getModel().setLegalRepr1(null);
-//		}
-//		if (!AonStringUtils.isEmpty( document2.getValue() ) ) {
-//			LegalRepresentative legalRepr = new LegalRepresentative();
-//			legalRepr.setDocument(document2.getValue());
-//			legalRepr.setName(name2.getValue());
-//			legalRepr.setNotary(notary2.getValue());
-//			legalRepr.setNotaryDate(notaryDate2.getValue());
-//			getModel().setLegalRepr2(legalRepr);
-//		} else {
-//			getModel().setLegalRepr2(null);
-//		}
-//		if (!AonStringUtils.isEmpty( document3.getValue() ) ) {
-//			LegalRepresentative legalRepr = new LegalRepresentative();
-//			legalRepr.setDocument(document3.getValue());
-//			legalRepr.setName(name3.getValue());
-//			legalRepr.setNotary(notary3.getValue());
-//			legalRepr.setNotaryDate(notaryDate3.getValue());
-//			getModel().setLegalRepr3(legalRepr);
-//		} else {
-//			getModel().setLegalRepr3(null);
-//		}
-//	}
-	
 	private void paint() {
 		ScrollPanel scroll = new ScrollPanel();
 		FlowPanel basePanel = new FlowPanel();

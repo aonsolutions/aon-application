@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -593,7 +593,7 @@ public class Mod3902015 extends Mod390  {
 	private double box656;
 	private double box657;
 	
-	private ArrayList<Prorrata> prorratas = new ArrayList<Mod3902015.Prorrata>();
+	private LinkedList<Prorrata> prorratas = new LinkedList<>();
 	
 	private DeductionRegime regime1;
 	private DeductionRegime regime2;
@@ -1194,10 +1194,10 @@ public class Mod3902015 extends Mod390  {
 	public void setBox657(double box657) {
 		this.box657 = box657;
 	}
-	public ArrayList<Prorrata> getProrratas() {
+	public LinkedList<Prorrata> getProrratas() {
 		return prorratas;
 	}
-	public void setProrratas(ArrayList<Prorrata> prorratas) {
+	public void setProrratas(LinkedList<Prorrata> prorratas) {
 		this.prorratas = prorratas;
 	}
 	
@@ -1208,16 +1208,28 @@ public class Mod3902015 extends Mod390  {
 	public DeductionRegime getRegime1() {
 		return regime1;
 	}
+	public DeductionRegime ensureRegime1() {
+		if (regime1 == null) setRegime1(new DeductionRegime());
+		return regime1;
+	}
 	public void setRegime1(DeductionRegime regime1) {
 		this.regime1 = regime1;
 	}
 	public DeductionRegime getRegime2() {
 		return regime2;
 	}
+	public DeductionRegime ensureRegime2() {
+		if (regime2 == null) setRegime2(new DeductionRegime());
+		return regime2;
+	}
 	public void setRegime2(DeductionRegime regime2) {
 		this.regime2 = regime2;
 	}
 	public DeductionRegime getRegime3() {
+		return regime3;
+	}
+	public DeductionRegime ensureRegime3() {
+		if (regime3 == null) setRegime3(new DeductionRegime());
 		return regime3;
 	}
 	public void setRegime3(DeductionRegime regime3) {

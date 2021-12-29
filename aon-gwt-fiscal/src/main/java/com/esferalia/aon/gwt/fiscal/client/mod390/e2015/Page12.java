@@ -11,8 +11,6 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 
 class Page12 extends ResizeComposite {
 
-	protected static final String MODEL390_FILE = "/aon_gwt_fiscal/Model3902015File";
-	
 	public Page12(final Mod3902015 m390, final Model390Callback callback) {
 		super();
 		
