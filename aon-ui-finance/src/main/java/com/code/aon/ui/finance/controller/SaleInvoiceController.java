@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Iterator;
@@ -77,6 +78,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -519,33 +521,77 @@ public class SaleInvoiceController extends InvoiceController {
 
 	@Transient
 	public synchronized void issueInvoice() {
-		Invoice inv = (Invoice) getTo();
+		try {
+			checkCertificate();		
+			Invoice inv = (Invoice) getTo();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
+			
+			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
+
+			Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
+			Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
+			invoice.setNumber(number);
+			invoice.setReferenceCode(null);
+			invoice.setIssueDate(new Date());
+			
+			AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
+			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
+			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
+			
+			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
+			if(tbaiConfiguration.isActive()) {
+				try {
+					TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
+				} catch (Exception e ) {
+					e.printStackTrace();
+				}
+			}
+		
+			// SII
+		} catch (Exception e) {
+			AonUtil.addErrorMessage(e.getMessage());
+		}
+	}
+	
+	private static Certificate checkCertificate() throws Exception {
+		Integer domainId = DomainManager.getCurrentDomain();
 		String domainName = AonUtil.getDomainName();
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		Integer userId = UserUtils.getInstance().getLoggedUser().getId();
-	
-		com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
-
-		Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};
-		Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
-		invoice.setNumber(number);
-		invoice.setReferenceCode(null);
-		invoice.setIssueDate(new Date());
-		
-		AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
-		Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
-		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, invoice.getDomain(), login);
-		
-		tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), login, userId, CertificateType.AEAT.name()));
-		if(tbaiConfiguration.isActive()) {
-			try {
-				TbaiMain.createEmisionTBAI(company, invoice, tbaiConfiguration);
-			} catch (Exception e ) {
-				e.printStackTrace();
-			}
+		Certificate cert = new Certificate();
+		try {
+			cert =  AON.getCertificate(domainName, domainId, login, userId, CertificateType.AEAT.name());
+		} catch (Exception e) {
+//			AonUtil.addErrorMessage("Error al obtener el certificado.");
+			throw new AbortProcessingException("Error al obtener el certificado.");
 		}
-		
-		// SII
+		try {
+			if(!checkCert(cert.getCertificate(), cert.getPassword())) {
+//				AonUtil.addErrorMessage("El certificado o la contraseña no son correctos.");
+				throw new AbortProcessingException("El certificado o la contraseña no son correctos.");
+			}
+		} catch (Exception e) {
+//			AonUtil.addErrorMessage("El certificado o la contraseña no son correctos.");
+			throw new AbortProcessingException("El certificado o la contraseña no son correctos.");
+		}		
+		if(cert.isEmpty()) {
+//			AonUtil.addErrorMessage("El certificado no existe.");
+			throw new AbortProcessingException("El certificado no existe.");
+		}
+		return cert;		
+	}
+	
+	public static boolean checkCert(byte[] cert, String password) {
+		try {
+			ByteArrayInputStream is = new ByteArrayInputStream(cert);
+			KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keystore.load(is, password.toCharArray());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	public String getRemoveConfirmMessage() {
