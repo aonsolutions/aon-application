@@ -329,7 +329,7 @@ public class Model390 extends MainEntryPoint {
 				Model3902015 model3902015 = new Model3902015(new Model390Callback(),selected);
 				declarationContainer.setWidget(model3902015);
 			}  else if (selected.getYear() == 2018 || selected.getYear() == 2019 || selected.getYear() == 2020) {
-				Model3902018 model3902018 = new Model3902018(options, selected,new Model390Callback());
+				Model3902018 model3902018 = new Model3902018(new Model390Callback(),selected);
 				declarationContainer.setWidget(model3902018);
 			} else {
 				showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");

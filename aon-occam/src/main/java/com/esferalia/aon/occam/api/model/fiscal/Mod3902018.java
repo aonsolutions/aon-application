@@ -750,10 +750,18 @@ public class Mod3902018 extends Mod390  {
 	public Address getAddress() {
 		return address;
 	}
+	public Address ensureAddress() {
+		if (address == null) setAddress(new Address());
+		return address;
+	}
 	public void setAddress(Address address) {
 		this.address = address;
 	}
 	public LegalRepresentative getLegalRepr1() {
+		return legalRepr1;
+	}
+	public LegalRepresentative ensureLegalRepr1() {
+		if (legalRepr1 == null) setLegalRepr1(new LegalRepresentative());
 		return legalRepr1;
 	}
 	public void setLegalRepr1(LegalRepresentative legalRepr1) {
@@ -762,10 +770,18 @@ public class Mod3902018 extends Mod390  {
 	public LegalRepresentative getLegalRepr2() {
 		return legalRepr2;
 	}
+	public LegalRepresentative ensureLegalRepr2() {
+		if (legalRepr2 == null) setLegalRepr2(new LegalRepresentative());
+		return legalRepr2;
+	}
 	public void setLegalRepr2(LegalRepresentative legalRepr2) {
 		this.legalRepr2 = legalRepr2;
 	}
 	public LegalRepresentative getLegalRepr3() {
+		return legalRepr3;
+	}
+	public LegalRepresentative ensureLegalRepr3() {
+		if (legalRepr3 == null) setLegalRepr3(new LegalRepresentative());
 		return legalRepr3;
 	}
 	public void setLegalRepr3(LegalRepresentative legalRepr3) {
@@ -803,10 +819,18 @@ public class Mod3902018 extends Mod390  {
 	public FarmerRegimeActivity getFarmerRegime1() {
 		return farmerRegime1;
 	}
+	public FarmerRegimeActivity ensureFarmerRegime1() {
+		if (farmerRegime1 == null) setFarmerRegime1(new FarmerRegimeActivity());
+		return farmerRegime1;
+	}
 	public void setFarmerRegime1(FarmerRegimeActivity farmerRegime1) {
 		this.farmerRegime1 = farmerRegime1;
 	}
 	public FarmerRegimeActivity getFarmerRegime2() {
+		return farmerRegime2;
+	}
+	public FarmerRegimeActivity ensureFarmerRegime2() {
+		if (farmerRegime2 == null) setFarmerRegime2(new FarmerRegimeActivity());
 		return farmerRegime2;
 	}
 	public void setFarmerRegime2(FarmerRegimeActivity farmerRegime2) {
@@ -815,16 +839,28 @@ public class Mod3902018 extends Mod390  {
 	public FarmerRegimeActivity getFarmerRegime3() {
 		return farmerRegime3;
 	}
+	public FarmerRegimeActivity ensureFarmerRegime3() {
+		if (farmerRegime3 == null) setFarmerRegime3(new FarmerRegimeActivity());
+		return farmerRegime3;
+	}
 	public void setFarmerRegime3(FarmerRegimeActivity farmerRegime3) {
 		this.farmerRegime3 = farmerRegime3;
 	}
 	public FarmerRegimeActivity getFarmerRegime4() {
 		return farmerRegime4;
 	}
+	public FarmerRegimeActivity ensureFarmerRegime4() {
+		if (farmerRegime4 == null) setFarmerRegime4(new FarmerRegimeActivity());
+		return farmerRegime4;
+	}
 	public void setFarmerRegime4(FarmerRegimeActivity farmerRegime4) {
 		this.farmerRegime4 = farmerRegime4;
 	}
 	public FarmerRegimeActivity getFarmerRegime5() {
+		return farmerRegime5;
+	}
+	public FarmerRegimeActivity ensureFarmerRegime5() {
+		if (farmerRegime5 == null) setFarmerRegime5(new FarmerRegimeActivity());
 		return farmerRegime5;
 	}
 	public void setFarmerRegime5(FarmerRegimeActivity farmerRegime5) {
@@ -1186,16 +1222,28 @@ public class Mod3902018 extends Mod390  {
 	public DeductionRegime getRegime1() {
 		return regime1;
 	}
+	public DeductionRegime ensureRegime1() {
+		if (regime1 == null) setRegime1(new DeductionRegime());
+		return regime1;
+	}
 	public void setRegime1(DeductionRegime regime1) {
 		this.regime1 = regime1;
 	}
 	public DeductionRegime getRegime2() {
 		return regime2;
 	}
+	public DeductionRegime ensureRegime2() {
+		if (regime2 == null) setRegime2(new DeductionRegime());
+		return regime2;
+	}
 	public void setRegime2(DeductionRegime regime2) {
 		this.regime2 = regime2;
 	}
 	public DeductionRegime getRegime3() {
+		return regime3;
+	}
+	public DeductionRegime ensureRegime3() {
+		if (regime3 == null) setRegime3(new DeductionRegime());
 		return regime3;
 	}
 	public void setRegime3(DeductionRegime regime3) {
