@@ -1,7 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -580,7 +580,10 @@ public class Mod3902021 extends Mod390  {
 	private double box104;
 	private double box105;
 	private double box110;
-	private double box112;
+	private double box125;
+	private double box126;
+	private double box127;
+	private double box128;
 	private double box100;
 	private double box101;
 	private double box102;
@@ -601,7 +604,7 @@ public class Mod3902021 extends Mod390  {
 	private double box656;
 	private double box657;
 	
-	private ArrayList<Prorrata> prorratas = new ArrayList<Mod3902021.Prorrata>();
+	private LinkedList<Prorrata> prorratas = new LinkedList<>();
 	
 	private DeductionRegime regime1;
 	private DeductionRegime regime2;
@@ -1088,11 +1091,29 @@ public class Mod3902021 extends Mod390  {
 	public void setBox110(double box110) {
 		this.box110 = box110;
 	}
-	public double getBox112() {
-		return box112;
+	public double getBox125() {
+		return box125;
 	}
-	public void setBox112(double box112) {
-		this.box112 = box112;
+	public void setBox125(double box125) {
+		this.box125 = box125;
+	}
+	public double getBox126() {
+		return box126;
+	}
+	public void setBox126(double box126) {
+		this.box126 = box126;
+	}
+	public double getBox127() {
+		return box127;
+	}
+	public void setBox127(double box127) {
+		this.box127 = box127;
+	}
+	public double getBox128() {
+		return box128;
+	}
+	public void setBox128(double box128) {
+		this.box128 = box128;
 	}
 	public double getBox100() {
 		return box100;
@@ -1208,10 +1229,10 @@ public class Mod3902021 extends Mod390  {
 	public void setBox657(double box657) {
 		this.box657 = box657;
 	}
-	public ArrayList<Prorrata> getProrratas() {
+	public LinkedList<Prorrata> getProrratas() {
 		return prorratas;
 	}
-	public void setProrratas(ArrayList<Prorrata> prorratas) {
+	public void setProrratas(LinkedList<Prorrata> prorratas) {
 		this.prorratas = prorratas;
 	}
 	
@@ -1343,8 +1364,9 @@ public class Mod3902021 extends Mod390  {
 		box92 = AonMathUtils.round(box84 * box87 / 100);
 		box94 = AonMathUtils.round(box92 + box659 - box93);
 		box108 =  AonMathUtils.round(box99+box653+box103+box104+box105
-				+box110+box112+box100+box101+box102+box227
-				+box228-box106-box107);
+				+box110+box125+box126+box127
+				+box128+box100+box101+box102
+				+box227+box228-box106-box107);
 	}
 	
 	public Mod390Detail ensure(Mod3902021DetailKey key) {

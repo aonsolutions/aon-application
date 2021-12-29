@@ -547,8 +547,10 @@ public class AEATIVA2021toMod390 {
 			mod390.setBox105(ensureBigDecimal(vol
 					.getOpExentasSinDrchoDeduccion()));
 			mod390.setBox110(ensureBigDecimal(vol.getOpNoSujetas()));
-			mod390.setBox112(ensureBigDecimal(vol
-					.getEntregasBienesInstalacionOtrosEM()));
+			mod390.setBox125(ensureBigDecimal(vol.getBox125()));
+			mod390.setBox126(ensureBigDecimal(vol.getBox126()));
+			mod390.setBox127(ensureBigDecimal(vol.getBox127()));
+			mod390.setBox128(ensureBigDecimal(vol.getBox128()));
 			mod390.setBox100(ensureBigDecimal(vol.getOpRegSimplificado()));
 			mod390.setBox101(ensureBigDecimal(vol.getOpRegEspAgricPescGanad()));
 			mod390.setBox102(ensureBigDecimal(vol.getOpRegEspRecEquivalencia()));

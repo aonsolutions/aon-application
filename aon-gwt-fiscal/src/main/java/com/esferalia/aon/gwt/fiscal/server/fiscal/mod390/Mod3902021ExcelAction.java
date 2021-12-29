@@ -222,7 +222,10 @@ public class Mod3902021ExcelAction extends AbsExcelAction {
 		addBox("Volumen de Operaciones", "Exportaciones y otras operaciones exentas con derecho a deducción", m390.getBox104());
 		addBox("Volumen de Operaciones", "Operaciones exentas sin derecho a deducción", m390.getBox105());
 		addBox("Volumen de Operaciones", "Operaciones no sujetas por reglas de localización o con inversión del sujeto pasivo", m390.getBox110());	
-		addBox("Volumen de Operaciones", "Entregas de bienes objeto de instalación o montaje en otros Estados miembros", m390.getBox112());
+		addBox("Volumen de operaciones", "Operaciones sujetas con inversión del sujeto pasivo", m390.getBox125());
+		addBox("Volumen de operaciones", "OSS. Operaciones no sujetas por reglas de localización acogidas a la OSS", m390.getBox126());
+		addBox("Volumen de operaciones", "OSS. Operaciones sujetas y acogidas a la OSS", m390.getBox127());
+		addBox("Volumen de operaciones", "Operaciones intragrupo valoradas conforme a lo dispuesto en los arts. 78 y 79 LIVA", m390.getBox128());
 		addBox("Volumen de Operaciones", "Operaciones en régimen simplificado", m390.getBox100());	
 		addBox("Volumen de Operaciones", "Operaciones en régimen especial de la agricultura, ganadería y pesca", m390.getBox101());
 		addBox("Volumen de Operaciones", "Operaciones realizadas por sujetos pasivos acogidos al régimen especial del recargo de equivalencia", m390.getBox102());				

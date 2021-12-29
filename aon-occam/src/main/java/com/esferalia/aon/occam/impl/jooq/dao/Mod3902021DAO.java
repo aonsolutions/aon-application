@@ -46,7 +46,6 @@ import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.Mod390toAEATIVA2021;
@@ -433,7 +432,10 @@ public class Mod3902021DAO {
 		 ,B104	 (Mod3902021DetailKey.C0104, (vc -> (vc.isSales() && !vc.isWithoutRightDeductionType() && (vc.isExtracommunity() || vc.isCanCeuMel()) )))
 		 ,B105	 (Mod3902021DetailKey.C0105, (vc -> (vc.isSales() && !vc.isNational() && vc.isWithoutRightDeductionType())))
 		 ,B110	 (Mod3902021DetailKey.C0110, (vc -> (vc.isSales() && !vc.isWithoutRightDeductionType() && vc.isOtherISP())))
-		 ,B112	 (Mod3902021DetailKey.C0112, null)
+		 ,B125	 (Mod3902021DetailKey.C0125, null)
+		 ,B126	 (Mod3902021DetailKey.C0126, null)
+		 ,B127	 (Mod3902021DetailKey.C0127, null)
+		 ,B128	 (Mod3902021DetailKey.C0128, null)
 		 ,B100	 (Mod3902021DetailKey.C0100, null)
 		 ,B101	 (Mod3902021DetailKey.C0101, null)
 		 ,B102	 (Mod3902021DetailKey.C0102, (vc -> (vc.isNationalSales() && vc.isSurcharge())))
@@ -910,7 +912,15 @@ public class Mod3902021DAO {
 			mod390.setBox107(map.get(Mod3902021DetailKey.C0107).getTaxableBase());
 			mod390.setBox108(map.get(Mod3902021DetailKey.C0108).getTaxableBase());
 			mod390.setBox110(map.get(Mod3902021DetailKey.C0110).getTaxableBase());
-			mod390.setBox112(map.get(Mod3902021DetailKey.C0112).getTaxableBase());
+			mod390.setBox125(map.get(Mod3902021DetailKey.C0125).getTaxableBase());
+			mod390.setBox126(map.get(Mod3902021DetailKey.C0126).getTaxableBase());
+			mod390.setBox127(map.get(Mod3902021DetailKey.C0127).getTaxableBase());
+			mod390.setBox128(map.get(Mod3902021DetailKey.C0128).getTaxableBase());
+			mod390.setBox125(map.get(Mod3902021DetailKey.C0125).getTaxableBase());
+			mod390.setBox126(map.get(Mod3902021DetailKey.C0126).getTaxableBase());
+			mod390.setBox127(map.get(Mod3902021DetailKey.C0127).getTaxableBase());
+			mod390.setBox128(map.get(Mod3902021DetailKey.C0128).getTaxableBase());
+			
 			mod390.setBox227(map.get(Mod3902021DetailKey.C0227).getTaxableBase());
 			mod390.setBox228(map.get(Mod3902021DetailKey.C0228).getTaxableBase());
 			mod390.setBox654(map.get(Mod3902021DetailKey.C0654).getTaxableBase());

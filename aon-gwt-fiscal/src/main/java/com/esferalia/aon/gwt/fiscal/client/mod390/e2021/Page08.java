@@ -17,7 +17,10 @@ class Page08 extends PageAbs {
 	private AonDoubleBox box104 = new AonDoubleBox();
 	private AonDoubleBox box105 = new AonDoubleBox();
 	private AonDoubleBox box110 = new AonDoubleBox();
-	private AonDoubleBox box112 = new AonDoubleBox();
+	private AonDoubleBox box125 = new AonDoubleBox();
+	private AonDoubleBox box126 = new AonDoubleBox();
+	private AonDoubleBox box127 = new AonDoubleBox();
+	private AonDoubleBox box128 = new AonDoubleBox();
 	private AonDoubleBox box100 = new AonDoubleBox();
 	private AonDoubleBox box101 = new AonDoubleBox();
 	private AonDoubleBox box102 = new AonDoubleBox();
@@ -41,7 +44,10 @@ class Page08 extends PageAbs {
 		box104.setValue(getModel().getBox104());
 		box105.setValue(getModel().getBox105());
 		box110.setValue(getModel().getBox110());
-		box112.setValue(getModel().getBox112());
+		box125.setValue(getModel().getBox125());
+		box126.setValue(getModel().getBox126());
+		box127.setValue(getModel().getBox127());
+		box128.setValue(getModel().getBox128());
 		box100.setValue(getModel().getBox100());
 		box101.setValue(getModel().getBox101());
 		box102.setValue(getModel().getBox102());
@@ -138,17 +144,49 @@ class Page08 extends PageAbs {
 			.addCell(box110,AON.CSS.aonWidth120());
 		
 		
-		box112.addValueChangeHandler(event -> {
-			if (box112.getValue() == null) box112.setValue(0.0,false);
-			getModel().setBox112(box112.getValue());
+		box125.addValueChangeHandler(event -> {
+			if (box125.getValue() == null) box125.setValue(0.0,false);
+			getModel().setBox125(box125.getValue());
 			calculateAndRefresh();
 			markAsDirty();
 		});
 		tab.addRow()
-			.addCell(new Label(AON.MSG.box112Msg()),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
-			.addCell(new AonBoxLabel(112),AON.CSS.aonWidth40())
-			.addCell(box112,AON.CSS.aonWidth120());
+			.addCell(new Label("Operaciones sujetas con inversión del sujeto pasivo"),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(125),AON.CSS.aonWidth40())
+			.addCell(box125,AON.CSS.aonWidth120());
+
+		box126.addValueChangeHandler(event -> {
+			if (box126.getValue() == null) box126.setValue(0.0,false);
+			getModel().setBox126(box126.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label("OSS. Operaciones no sujetas por reglas de localización acogidas a la OSS"),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(126),AON.CSS.aonWidth40())
+			.addCell(box126,AON.CSS.aonWidth120());
 		
+		box127.addValueChangeHandler(event -> {
+			if (box127.getValue() == null) box127.setValue(0.0,false);
+			getModel().setBox127(box127.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label("OSS. Operaciones sujetas y acogidas a la OSS"),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(127),AON.CSS.aonWidth40())
+			.addCell(box127,AON.CSS.aonWidth120());
+
+		box128.addValueChangeHandler(event -> {
+			if (box128.getValue() == null) box128.setValue(0.0,false);
+			getModel().setBox128(box128.getValue());
+			calculateAndRefresh();
+			markAsDirty();
+		});
+		tab.addRow()
+			.addCell(new Label("Operaciones intragrupo valoradas conforme a lo dispuesto en los arts. 78 y 79 LIVA"),AON.CSS.aonBorderBottom(),AON.CSS.aonWidthAuto())
+			.addCell(new AonBoxLabel(128),AON.CSS.aonWidth40())
+			.addCell(box128,AON.CSS.aonWidth120());
 		
 		box100.addValueChangeHandler(event -> {
 			if (box100.getValue() == null) box100.setValue(0.0,false);

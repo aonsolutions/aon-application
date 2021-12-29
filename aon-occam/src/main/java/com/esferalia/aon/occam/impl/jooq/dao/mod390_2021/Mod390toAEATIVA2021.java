@@ -1073,9 +1073,10 @@ public class Mod390toAEATIVA2021 {
 		if (mod390.getBox110()>0) {
 			vol.setOpNoSujetas(ensureBigDecimal(mod390.getBox110()));
 		}
-		if (mod390.getBox112()>0) {
-			vol.setEntregasBienesInstalacionOtrosEM(ensureBigDecimal(mod390.getBox112()));
+		if (mod390.getBox125()>0) {
+			vol.setBox125(ensureBigDecimal(mod390.getBox125()));
 		}
+		
 		if (mod390.getBox100()>0) {
 			vol.setOpRegSimplificado(ensureBigDecimal(mod390.getBox100()));
 		}
