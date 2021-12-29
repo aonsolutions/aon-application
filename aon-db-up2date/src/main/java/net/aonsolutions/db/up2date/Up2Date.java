@@ -30,6 +30,7 @@ import net.aonsolutions.db.up2date.tgss.HomeBases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.SalaryHours2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.TrainingBases2021UpdateIII;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2021Update;
+import net.aonsolutions.db.up2date.timecontrol.TimeControlUpdate;
 import net.aonsolutions.db.up2date.payroll.WorkplaceUpdate;
 
 
@@ -207,7 +208,8 @@ public class Up2Date {
     		DataRequestUpdate.DATA_REQUEST_UPDATE,
     		WorkplaceUpdate.WORKPLACE_UPDATE,
     		IrpfM190Update.IRPFM190UPDATE,
-    		Holidays2022Insert.HOLIDAYS2022INSERT
+    		Holidays2022Insert.HOLIDAYS2022INSERT,
+    		TimeControlUpdate.TIMECONTROL_UPDATE
     };
     
 

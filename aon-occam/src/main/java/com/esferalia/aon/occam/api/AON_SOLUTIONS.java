@@ -448,6 +448,12 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Stream<TimeControlDetail> getTimeControlHistoric(Domain domain, String login, TimeControlFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			return getTimeControl().getTimeControlHistoric(ctx, filter);
+		}
+	}
+	
 	public static Stream<TimeControl> getTaskHolderTimeControlStream(Domain domain, String login, Integer taskHolderId, Date startDate, Date endDate, TimeControlGroup group) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
 			return getTimeControl().getTaskHolderTimeControlStream(ctx, taskHolderId, startDate, endDate, group);

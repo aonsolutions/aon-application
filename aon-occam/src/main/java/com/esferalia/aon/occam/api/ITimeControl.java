@@ -19,6 +19,7 @@ public interface ITimeControl {
 	public TimeControl getTaskHolderTimeControl(AONContext ctx, Integer taskHolderId, Date startDate, Date endDate);
 	
 	public Stream<TimeControlDetail> getTimeControlDetailStream(AONContext ctx, TimeControlFilter filter);
+	public Stream<TimeControlDetail> getTimeControlHistoric(AONContext ctx, TimeControlFilter filter);
 	public LinkedList<TimeControlDetail> getTimeControlDetailList(AONContext ctx, TimeControlFilter filter);
 	public TimeControlDetail saveTimeControlDetail(AONContext ctx, TimeControlDetail tcd);
 	public void deleteTimeControlDetail(AONContext ctx, Integer id);

@@ -1365,6 +1365,7 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Timestamp> getDateProperty();
 		Property<Integer> getTaskHolderProperty();
+		Property<Integer> getModificatedTimeControlProperty();
 	}
 
 	public interface LocationProperties {
