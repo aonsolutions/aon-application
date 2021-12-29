@@ -174,15 +174,12 @@ export class AonMessengerChat extends AonElement {
   async save() {
     this.applicationEl.startLoading();
     this.autoComplete();
-    // let btnInternal = this.getElement(MESSENGER_IDS.EXTERNAL_TASK);
-    // if(btnInternal && btnInternal.isChecked() && !this.task.project.id){
-    //   this.showError({message:"Proyecto requerido", type:CONSTANT.ERROR});
-    // } else {
-      if(this.task.source === TASK_SOURCE.REQUEST)
-        await this.saveSourceRequest();
-      else 
-        await this.saveSourceQuery();
-    // }
+    
+    if(this.task.source === TASK_SOURCE.REQUEST)
+      await this.saveSourceRequest();
+    else 
+      await this.saveSourceQuery();
+
     this.applicationParentEl.updateCount();
     this.applicationEl.stopLoading();    
   }

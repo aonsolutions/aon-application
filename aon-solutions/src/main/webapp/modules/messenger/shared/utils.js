@@ -298,14 +298,15 @@ const changeFormProcess = ({value,name}, aonMessengerChat) => {
     if(task.id && aonMessengerChat.getDur().isMessengerManager()){ //BUTTON SHOW JSON
         aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
             let d = aonMessengerChat.applicationEl.getDialog();
-             if(d){
+            if(d){
                 d.clear();
-                if (!aonMessengerChat.isMobile()) d.width = '400px';
+                if (!aonMessengerChat.isMobile()) 
+                    d.width = '400px';
                 d.setTitle("JSON");
                 d.setContent(jsonDiv());
                 d.addAcceptAction(() => {});
                 d.open();
-              }
+            }
         });
     }
 
