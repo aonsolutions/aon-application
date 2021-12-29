@@ -349,7 +349,7 @@ public class DomainUserRoles implements Serializable {
 	}
 
 	public boolean isBeta() {
-		return this.hasRole(AonRole.BETA);
+		return this.hasRole(AonRole.BETA) || getDomain().getName().contains("aonsolutions.org");
 	}
 
 	public boolean isEmployee() {

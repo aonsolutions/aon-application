@@ -1490,7 +1490,7 @@ public class SecurityDAO {
 						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new))
 				: new LinkedList<>();	
 		
-		Long userNum = getDomainUserStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getEnterpriseProperty().isNull()).and(f.getSharedProperty().eq((byte)0))).count();
+		Long userNum = getDomainUserStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getEnterpriseProperty().isNull()).and(f.getActiveProperty().eq((byte) 1)).and(f.getSharedProperty().eq((byte)0))).count();
 		domain.setDefinedUsers(userNum.intValue());
 		
 
